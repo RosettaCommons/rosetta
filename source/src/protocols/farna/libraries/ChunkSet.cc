@@ -203,7 +203,7 @@ ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & 
 	for ( core::Size i=1; i <= pose.fold_tree().num_jump(); ++i ) {
 		initial_jumps.push_back( pose.jump( i ));
 	}
-	
+
 	core::pose::copydofs::copy_dofs( pose, scratch_pose,
 		atom_id_map, atom_id_domain_map );
 

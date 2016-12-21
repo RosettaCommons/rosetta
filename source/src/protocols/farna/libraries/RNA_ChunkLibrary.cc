@@ -136,10 +136,10 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 	std::string sequence_of_big_pose( pose.annotated_sequence() );
 	std::map< Size, std::string > non_standard_residue_map = core::sequence::parse_out_non_standard_residues( sequence_of_big_pose );
 	// Find the RNA and see if it's coarse (rather than
-	// just using the first residue to decide this 
+	// just using the first residue to decide this
 	// (in case it's protein))
 	for ( core::Size i =1; i<= pose.total_residue(); ++i ) {
-		if (pose.residue( i ).is_RNA()) {
+		if ( pose.residue( i ).is_RNA() ) {
 			coarse_rna_ = pose.residue( i ).is_coarse();
 			break;
 		}
@@ -340,7 +340,8 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 			TR << TR.Red  << "////////////////////////////////////////////////////////////////////" << std::endl;
 			TR << TR.Red << "Pose FOLD-TREE " << pose.fold_tree() << std::endl;
 			TR << TR.Red << "Chunk Set mapping: " << std::endl;
-			for ( auto it = chunk_set.res_map().begin(); it != chunk_set.res_map().end(); it++ ) TR << TR.Red << " pose " << it->first << " to chunk " << it->second << std::endl;;
+			for ( auto it = chunk_set.res_map().begin(); it != chunk_set.res_map().end(); it++ ) TR << TR.Red << " pose " << it->first << " to chunk " << it->second << std::endl;
+			;
 			print_backtrace( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 			//utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 		}
@@ -468,7 +469,7 @@ RNA_ChunkLibrary::insert_random_protein_chunks( pose::Pose & pose ) const {
 		}
 
 	}
-	
+
 }
 
 

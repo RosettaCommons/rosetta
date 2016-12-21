@@ -213,16 +213,16 @@ void
 add_chi_constraints( pose::Pose & pose,
 	core::scoring::func::FuncOP chi_potential_restraint,
 	utility::vector1< Size > const & rna_chi_res );
-	
+
 void
 add_syn_chi_constraints( core::pose::Pose & pose );
-	
+
 void
 add_anti_chi_constraints( core::pose::Pose & pose );
 
 void
 add_syn_anti_chi_constraints( core::pose::Pose & pose );
-	
+
 } //ns rna
 } //ns pose
 } //ns core

@@ -227,8 +227,8 @@ PoseResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std
 
 ResidueTypeCOPs
 PoseResidueTypeSet::get_all_types_with_variants_aa( AA aa,
-		utility::vector1< std::string > const & variants,
-		utility::vector1< VariantType > const & exceptions ) const
+	utility::vector1< std::string > const & variants,
+	utility::vector1< VariantType > const & exceptions ) const
 {
 	ResidueTypeCOPs the_types( ResidueTypeSet::get_all_types_with_variants_aa(aa, variants, exceptions) );
 	if ( default_rts_ ) {
@@ -273,8 +273,8 @@ PoseResidueTypeSet::remove_unpatchable_residue_type( std::string const & name ) 
 }
 void
 PoseResidueTypeSet::add_patches(
-		utility::vector1< std::string > const & patch_filenames,
-		utility::vector1< std::string > const & metapatch_filenames
+	utility::vector1< std::string > const & patch_filenames,
+	utility::vector1< std::string > const & metapatch_filenames
 ) {
 	ResidueTypeSet::add_patches( patch_filenames, metapatch_filenames );
 }

@@ -851,47 +851,47 @@ strip_spacers( std::string & sequence, bool const annotations_in_brackets /* = t
 	sequence = new_sequence;
 	return spacer_pos;
 }
-	
-	
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // Converts sequences to one-letter-sequences, but outputs a map of any fullnames (as would be enclosed in brackets, like for Z[IGU]).
 std::map< Size, std::string >
 parse_out_non_standard_residues( vector1< core::sequence::SequenceOP > & fasta_sequences ) {
-		
+
 	using namespace core::sequence;
 	std::map< Size, std::string > non_standard_residues;
 	vector1< core::sequence::SequenceOP > fasta_sequences_new;
-	
+
 	Size offset( 0 );
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
 		std::string sequence = fasta_sequences[ n ]->sequence();
 		std::map< Size, std::string > non_standard_residues_local = parse_out_non_standard_residues( sequence );
-		
+
 		SequenceOP new_sequence( new Sequence( sequence, fasta_sequences[n]->id()) );
 		new_sequence->spacer_positions( fasta_sequences[n]->spacer_positions() );
 		fasta_sequences_new.push_back( new_sequence );
 		for ( std::map< Size, std::string >::iterator it = non_standard_residues_local.begin(),
-			 end = non_standard_residues_local.end(); it != end; ++it ) {
+				end = non_standard_residues_local.end(); it != end; ++it ) {
 			non_standard_residues[ it->first + offset ] = it->second;
 		}
-		
+
 		offset += sequence.size();
 	}
-	
+
 	fasta_sequences = fasta_sequences_new;
 	return non_standard_residues;
 }
-	
+
 ///////////////////////////////////////////////////////////////////////////////////////
 std::map< Size, std::string >
 parse_out_non_standard_residues( std::string & sequence ) {
 	utility::vector1< std::string > fullname_list; // a vector of non-standard full names
 	std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
 	std::string one_letter_sequence;
-	
+
 	core::pose::parse_sequence( sequence, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
 	sequence = one_letter_sequence;
-	
+
 	std::map< Size, std::string > non_standard_residues;
 	for ( Size k = 1; k <= oneletter_to_fullname_index.size(); k++ ) {
 		Size const pos = oneletter_to_fullname_index[ k - 1 ];

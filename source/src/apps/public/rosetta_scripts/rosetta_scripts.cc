@@ -247,7 +247,7 @@ main( int argc, char * argv [] )
 		} else if ( option[ parser::output_schema ].user() ) {
 			save_schema( option[ parser::output_schema ] );
 		} else if ( ! option[ parser::protocol ].user() ) { // Just print a template script and exit if no input script is provided.
-				print_template_script();
+			print_template_script();
 		} else { // If an input script has been provided, then we're not printing a template script and exiting.
 			bool const view( option[ parser::view ] );
 			protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.

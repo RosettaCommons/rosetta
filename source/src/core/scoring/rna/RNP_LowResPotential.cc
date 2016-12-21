@@ -77,16 +77,16 @@ RNP_LowResPotential::RNP_LowResPotential():
 	// I don't want all of these arrays initialized by default
 	// only initialize them if there are nonzero wts for these score terms
 	// (otherwise bound to have memory issues)
-//	rnp_basepair_xy_.dimension( num_xbins_, num_ybins_, max_base_ /*4*/, max_aa_ /*20*/ );
-//	rnp_stack_xy_.dimension( num_xbins_, num_ybins_, max_base_ /*4*/, max_aa_ /*20*/ );
+	// rnp_basepair_xy_.dimension( num_xbins_, num_ybins_, max_base_ /*4*/, max_aa_ /*20*/ );
+	// rnp_stack_xy_.dimension( num_xbins_, num_ybins_, max_base_ /*4*/, max_aa_ /*20*/ );
 	//rnp_pair_.dimension( num_dbins_, max_base_, max_aa_ );
-//	rnp_pair_base_interface_protein_buried_.dimension( num_dbins_, max_base_, max_aa_ );
-//	rnp_pair_base_interface_protein_notburied_.dimension( num_dbins_, max_base_, max_aa_ );
+	// rnp_pair_base_interface_protein_buried_.dimension( num_dbins_, max_base_, max_aa_ );
+	// rnp_pair_base_interface_protein_notburied_.dimension( num_dbins_, max_base_, max_aa_ );
 
 	// initialize the first time that evaluate is called
 	initialize_rnp_base_pair();
-//	initialize_rnp_pair();
-//	initialize_rnp_stack_xy();
+	// initialize_rnp_pair();
+	// initialize_rnp_stack_xy();
 	initialize_rnp_aa_rna_backbone();
 }
 
@@ -113,7 +113,7 @@ RNP_LowResPotential::initialize_rnp_base_pair() {
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 	}
 	TR << "Reading RNP basepair x - y potential file: " << filename << std::endl;
-	
+
 	// read in the data
 	// just copying what's been done in other potentials, look up base by number, AA by name
 	chemical::AA aa;
@@ -126,15 +126,15 @@ RNP_LowResPotential::initialize_rnp_base_pair() {
 		data_stream >> aa >> xbin >> ybin >> potential;
 		rnp_basepair_xy_( xbin, ybin, base_num, aa ) = potential;
 	}
-//	std::string aa_str( "VAL" );
-//	chemical::AA aa_val( chemical::aa_from_name( aa_str ) );
-//	std::cout << "Some example values!" << std::endl;
-//	std::cout << rnp_basepair_xy_(9,2,2,aa_val ) << std::endl;
-//	std::cout << rnp_basepair_xy_(9,9,2,aa_val ) << std::endl;
-	
+	// std::string aa_str( "VAL" );
+	// chemical::AA aa_val( chemical::aa_from_name( aa_str ) );
+	// std::cout << "Some example values!" << std::endl;
+	// std::cout << rnp_basepair_xy_(9,2,2,aa_val ) << std::endl;
+	// std::cout << rnp_basepair_xy_(9,9,2,aa_val ) << std::endl;
+
 	TR << "Finished reading RNP basepair x - y potential file: " << filename << std::endl;
 	data_stream.close();
-	
+
 }
 
 
@@ -157,7 +157,7 @@ RNP_LowResPotential::initialize_rnp_aa_rna_backbone() {
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 	}
 	TR << "Reading RNP AA RNA backbone potential file: " << filename << std::endl;
-	
+
 	// read in the data
 	// just copying what's been done in other potentials, look up base by number, AA by name
 	chemical::AA aa;
@@ -170,12 +170,12 @@ RNP_LowResPotential::initialize_rnp_aa_rna_backbone() {
 		rnp_aa_rna_backbone_( dbin, aa ) = potential;
 	}
 
-//	for ( Size j =1; j <= max_aa_; ++j ) {
-//		for ( Size i = 1; i <= num_backbone_dbins_; ++i ) {
-//			std::cout << j << " " << i << " " << rnp_aa_rna_backbone_( i, j) << std::endl;
-//		}
-//	}
-	
+	// for ( Size j =1; j <= max_aa_; ++j ) {
+	//  for ( Size i = 1; i <= num_backbone_dbins_; ++i ) {
+	//   std::cout << j << " " << i << " " << rnp_aa_rna_backbone_( i, j) << std::endl;
+	//  }
+	// }
+
 	TR << "Finished reading RNP AA RNA backbone potential file: " << filename << std::endl;
 	data_stream.close();
 
@@ -185,38 +185,38 @@ RNP_LowResPotential::initialize_rnp_aa_rna_backbone() {
 /////////////////////////////////////////////////////////////////////////////
 //void
 //RNP_LowResPotential::initialize_rnp_stack_xy() {
-//	rnp_stack_xy_.dimension( num_xbins_, num_ybins_, max_base_ /*4*/, max_aa_ /*20*/ );
+// rnp_stack_xy_.dimension( num_xbins_, num_ybins_, max_base_ /*4*/, max_aa_ /*20*/ );
 //
-//	std::string const filename( "scoring/rna/rnp_stack.txt" );
-//	utility::io::izstream data_stream( basic::database::full_name( filename ) );
+// std::string const filename( "scoring/rna/rnp_stack.txt" );
+// utility::io::izstream data_stream( basic::database::full_name( filename ) );
 //
-//	if ( !data_stream ) {
-//		std::cerr << "Can't file specified RNP stack potential file: " << filename << std::endl;
-//		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
-//	}
-//	TR << "Reading RNP stack potential file: " << filename << std::endl;
-//	
-//	// read in the data
-//	// just copying what's been done in other potentials, look up base by number, AA by name
-//	chemical::AA aa;
-//	char base;
-//	Size base_num, xbin, ybin;
-//	Real potential;
-//	while ( data_stream >> base ) {
-//		base_num = core::chemical::rna::convert_acgu_to_1234( base );
-//		//data_stream >> aa >> xbin >> ybin >> potential >> skip;
-//		data_stream >> aa >> xbin >> ybin >> potential;
-//		rnp_stack_xy_( xbin, ybin, base_num, aa ) = potential;
-//	}
-////	std::string aa_str( "VAL" );
-////	chemical::AA aa_val( chemical::aa_from_name( aa_str ) );
-////	std::cout << "Some example values!" << std::endl;
-////	std::cout << rnp_basepair_xy_(9,2,2,aa_val ) << std::endl;
-////	std::cout << rnp_basepair_xy_(9,9,2,aa_val ) << std::endl;
+// if ( !data_stream ) {
+//  std::cerr << "Can't file specified RNP stack potential file: " << filename << std::endl;
+//  utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
+// }
+// TR << "Reading RNP stack potential file: " << filename << std::endl;
 //
-//	TR << "Finished reading RNP stack potential file: " << filename << std::endl;
-//	data_stream.close();
-//	
+// // read in the data
+// // just copying what's been done in other potentials, look up base by number, AA by name
+// chemical::AA aa;
+// char base;
+// Size base_num, xbin, ybin;
+// Real potential;
+// while ( data_stream >> base ) {
+//  base_num = core::chemical::rna::convert_acgu_to_1234( base );
+//  //data_stream >> aa >> xbin >> ybin >> potential >> skip;
+//  data_stream >> aa >> xbin >> ybin >> potential;
+//  rnp_stack_xy_( xbin, ybin, base_num, aa ) = potential;
+// }
+//// std::string aa_str( "VAL" );
+//// chemical::AA aa_val( chemical::aa_from_name( aa_str ) );
+//// std::cout << "Some example values!" << std::endl;
+//// std::cout << rnp_basepair_xy_(9,2,2,aa_val ) << std::endl;
+//// std::cout << rnp_basepair_xy_(9,9,2,aa_val ) << std::endl;
+//
+// TR << "Finished reading RNP stack potential file: " << filename << std::endl;
+// data_stream.close();
+//
 //
 //}
 /////////////////////////////////////////////////////////////////////////////
@@ -292,11 +292,11 @@ RNP_LowResPotential::evaluate_rnp_base_pair_score(
 ) const {
 
 	// Only evaluate these score terms between RNA and protein residues
-	if (!(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() ))) {
+	if ( !(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() )) ) {
 		rnp_bp_score = 0.0;
 		return;
 	}
-	
+
 	chemical::AA aa;
 	Size base_num;
 
@@ -323,44 +323,44 @@ RNP_LowResPotential::evaluate_rnp_base_pair_score(
 //
 //void
 //RNP_LowResPotential::evaluate_rnp_stack_xy_score(
-//	conformation::Residue const & rsd1,
-//	conformation::Residue const & rsd2,
-//	Real const & x,
-//	Real const & y,
-//	Real & rnp_stack_score
+// conformation::Residue const & rsd1,
+// conformation::Residue const & rsd2,
+// Real const & x,
+// Real const & y,
+// Real & rnp_stack_score
 //) const {
 //
-//	// Only evaluate these score terms between RNA and protein residues
-//	if (!(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() ))) {
-//		rnp_stack_score = 0.0;
-//		return;
-//	}
-//	
-//	chemical::AA aa;
-//	Size base_num;
+// // Only evaluate these score terms between RNA and protein residues
+// if (!(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() ))) {
+//  rnp_stack_score = 0.0;
+//  return;
+// }
 //
-//	if ( rsd1.is_protein() ) {
-//		aa = rsd1.aa();
-//		base_num = core::chemical::rna::convert_acgu_to_1234( rsd2.name1() );
-//	} else {
-//		aa = rsd2.aa();
-//		base_num = core::chemical::rna::convert_acgu_to_1234( rsd1.name1() );
-//	}
-//	// probably need to do some interpolation, this is not smooth...
-//	Size xbin = Size( ( x + 10 ) / 2 ) + 1;
-//	Size ybin = Size( ( y + 10 ) / 2 ) + 1;
+// chemical::AA aa;
+// Size base_num;
 //
-//	if ( xbin < 1 ) xbin = 1;
-//	if ( ybin < 1 ) ybin = 1;
-//	if ( xbin > 10 ) xbin = 10;
-//	if ( ybin > 10 ) ybin = 10;
+// if ( rsd1.is_protein() ) {
+//  aa = rsd1.aa();
+//  base_num = core::chemical::rna::convert_acgu_to_1234( rsd2.name1() );
+// } else {
+//  aa = rsd2.aa();
+//  base_num = core::chemical::rna::convert_acgu_to_1234( rsd1.name1() );
+// }
+// // probably need to do some interpolation, this is not smooth...
+// Size xbin = Size( ( x + 10 ) / 2 ) + 1;
+// Size ybin = Size( ( y + 10 ) / 2 ) + 1;
 //
-//	rnp_stack_score = rnp_stack_xy_( xbin, ybin, base_num, aa );
+// if ( xbin < 1 ) xbin = 1;
+// if ( ybin < 1 ) ybin = 1;
+// if ( xbin > 10 ) xbin = 10;
+// if ( ybin > 10 ) ybin = 10;
+//
+// rnp_stack_score = rnp_stack_xy_( xbin, ybin, base_num, aa );
 //
 //}
 /////////////////////////////////////////////////////////////////////////////
 Real
-RNP_LowResPotential::evaluate_rnp_aa_rna_backbone_score( 
+RNP_LowResPotential::evaluate_rnp_aa_rna_backbone_score(
 	conformation::Residue const & protein_rsd,
 	Real const & dist_to_backbone
 ) const {
@@ -381,7 +381,7 @@ RNP_LowResPotential::evaluate_rnp_aa_rna_backbone_score(
 /////////////////////////////////////////////////////////////////////////////
 
 void
-RNP_LowResPotential::evaluate_rnp_pair_score( 
+RNP_LowResPotential::evaluate_rnp_pair_score(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	bool const & rsd1_is_interface,
@@ -417,7 +417,7 @@ RNP_LowResPotential::evaluate_rnp_pair_score(
 	if ( d_bin > num_dbins_ ) d_bin = num_dbins_;
 
 	if ( is_protein_buried ) {
-	//if ( rsd1_is_buried ) {
+		//if ( rsd1_is_buried ) {
 		rnp_pair_score = rnp_pair_base_interface_protein_buried_( d_bin, base_num, aa );
 	} else {
 		rnp_pair_score = rnp_pair_base_interface_protein_notburied_( d_bin, base_num, aa );

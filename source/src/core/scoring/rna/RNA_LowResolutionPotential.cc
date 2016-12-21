@@ -351,7 +351,7 @@ RNA_LowResolutionPotential::initialize_rna_repulsive_weights(){
 	// O2' --> weight stays at zero.
 }
 
-Size 
+Size
 convert_na_to_1234( core::chemical::AA const foo ) {
 	if ( foo == core::chemical::na_rad ) {
 		return 1;
@@ -365,7 +365,7 @@ convert_na_to_1234( core::chemical::AA const foo ) {
 		utility_exit_with_message( "No idea how we got here." );
 	}
 }
-	
+
 Size get_bin( conformation::Residue const & res_i ) {
 	return ( res_i.type().na_analogue() == chemical::aa_unp ) ? chemical::rna::convert_acgu_to_1234( res_i.name1() ) : convert_na_to_1234( res_i.type().na_analogue() );
 }

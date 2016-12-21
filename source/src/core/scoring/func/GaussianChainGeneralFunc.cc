@@ -48,7 +48,7 @@ namespace scoring {
 namespace func {
 
 GaussianChainGeneralFunc::GaussianChainGeneralFunc(
-  Real const gaussian_variance,
+	Real const gaussian_variance,
 	Real const loop_fixed_cost,
 	utility::vector1< Real > const & other_distances ):
 	gaussian_variance_( gaussian_variance ),
@@ -112,7 +112,7 @@ GaussianChainGeneralFunc::erfc_integral( Real const & x, int const N ) const
 	if ( N == -3 ) {
 		// -3th integral (i.e., third derivative ) of erfc
 		return ( 2.0 / sqrt( pi ) ) * 2 * ( -1 + 2 * x * x ) * exp( -1.0 * x * x );
-	}	else if ( N == -2 ) {
+	} else if ( N == -2 ) {
 		// -2th integral (i.e., second derivative ) of erfc
 		return ( 2.0 / sqrt( pi ) ) * 2 * x * exp( -1.0 * x * x );
 	} else if ( N == -1 ) {
@@ -135,8 +135,8 @@ GaussianChainGeneralFunc::erfc_integral( Real const & x, int const N ) const
 
 Real
 GaussianChainGeneralFunc::func( Real const z,
-																bool const calc_deriv,
-																Real & deriv ) const
+	bool const calc_deriv,
+	Real & deriv ) const
 {
 	Real const s = sqrt( 2 * gaussian_variance_ );
 	Real L_sum( 0.0 ), deriv_sum( 0.0 );
@@ -211,7 +211,7 @@ GaussianChainGeneralFunc::show_definition( std::ostream &out ) const {
 		' ' << loop_fixed_cost_ <<
 		' ' << gaussian_variance_;
 	for ( auto distance : other_distances_ ) out << distance;
-	out	<< std::endl;
+	out << std::endl;
 }
 
 

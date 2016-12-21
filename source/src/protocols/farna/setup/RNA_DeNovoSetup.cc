@@ -227,7 +227,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	vector1< Size > remove_pair =
 		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_pair ].resnum_and_chain() );
 	vector1< Size > remove_obligate_pair =
-	full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_obligate_pair ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_obligate_pair ].resnum_and_chain() );
 
 	////////////////////
 	// Step 3
@@ -449,7 +449,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			Size const new_pos2 = std::max( segment1_end, segment2_start );
 			obligate_pair.push_back( new_pos1 );
 			obligate_pair.push_back( new_pos2 );
-			//			TR << TR.Cyan << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
+			//   TR << TR.Cyan << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
 			n_jumps++;
 		}
 	}
@@ -854,22 +854,22 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	//////////////////////////
 	////Read in native if it exists.
 	//if ( option[ in::file::native ].user() ) {
-	//	//Read in native if it exists.
-	//	std::string native_pdb_file  = option[ in::file::native ]();
-	//	native_pose_ = PoseOP( new Pose );
-	//	core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
-	//	pdbslice( *native_pose_, working_res );
-	//	// set the pose equal to the native pose if user wants to refine_native
-	//	// does having this way down here mess anything up?
-	//	if ( option[ OptionKeys::rna::farna::refine_native ]() ) {
-	//		pose_ = native_pose_->clone();
-	//	}
+	// //Read in native if it exists.
+	// std::string native_pdb_file  = option[ in::file::native ]();
+	// native_pose_ = PoseOP( new Pose );
+	// core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+	// pdbslice( *native_pose_, working_res );
+	// // set the pose equal to the native pose if user wants to refine_native
+	// // does having this way down here mess anything up?
+	// if ( option[ OptionKeys::rna::farna::refine_native ]() ) {
+	//  pose_ = native_pose_->clone();
+	// }
 	//} else if ( option[ OptionKeys::rna::farna::working_native ].user() ) {
-	//	std::string native_pdb_file  = option[ OptionKeys::rna::farna::working_native ];
-	//	native_pose_ = PoseOP( new Pose );
-	//	core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+	// std::string native_pdb_file  = option[ OptionKeys::rna::farna::working_native ];
+	// native_pose_ = PoseOP( new Pose );
+	// core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 	//} else {
-	//	runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
+	// runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
 	//}
 
 	if ( !option[ OptionKeys::rna::farna::minimize_rna ].user() ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
@@ -959,7 +959,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	}
 
 	rna_params_ = RNA_DeNovoParametersOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
-	
+
 	/*
 	using namespace core::pose::full_model_info;
 	// Set up FullModelInfo (so we can use FullModel

@@ -1032,7 +1032,7 @@ public:
 	///  Please use Pose.freal_to_virtual, unless you know what you are doing!
 	void
 	real_to_virtual();
-	
+
 
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////////atoms////////////////////////////////////////
@@ -1818,14 +1818,14 @@ public:
 	{
 		backbone_aa_ = aa_from_name( type );
 	}
-	
+
 	/// @brief NA to use for fragment sampling
 	void
 	na_analogue( std::string const & type )
 	{
 		na_analogue_ = aa_from_name( type );
 	}
-	
+
 	/// @brief AA to use for rotamer scoring
 	void
 	rotamer_aa( std::string const & type )
@@ -1964,7 +1964,7 @@ public:
 		if ( backbone_aa_==aa_unk ) return aa_;
 		return backbone_aa_;
 	}
-	
+
 	/// @brief Returns the nucleic acid type to be used for fragment sampling.
 	AA const &
 	na_analogue() const
@@ -2573,7 +2573,7 @@ private:
 	// aa_ = THIS residue's aa-type
 	// rotamer_aa_ = the aa-type on which rotamers will be based
 	// backbone_aa_ = the aa-type on which the backbone scoring (rama, p_aa_pp) will be based
-	// na_analogue_ = the aa-type for a nucleic acid (generally, canonical) that 
+	// na_analogue_ = the aa-type for a nucleic acid (generally, canonical) that
 	// fragment sampling will use.
 	AA aa_, rotamer_aa_, backbone_aa_, na_analogue_;
 

@@ -129,7 +129,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'params' section");
 	}
 
-	// Annotate params files for later insertion into the Pose.
+// Annotate params files for later insertion into the Pose.
 	if ( param_group_data.size() > 0 ) {
 		for ( auto & i : param_group_data ) {
 			std::string param_name = i.get_str();
@@ -176,7 +176,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
 		}
 
-		// If we specify a native structure, store it
+// If we specify a native structure, store it
 		bool native_present = false;
 		std::string native_string;
 		if ( group_map.find("native") != group_map.end() ) {

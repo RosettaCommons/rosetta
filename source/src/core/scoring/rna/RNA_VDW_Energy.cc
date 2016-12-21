@@ -130,7 +130,7 @@ RNA_VDW_Energy::residue_pair_energy(
 	if ( (rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA()) ) {
 
 		bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
-		if (rsd1.is_protein()) {
+		if ( rsd1.is_protein() ) {
 			bool is_centroid = rsd1.type().mode() == core::chemical::CENTROID_t;
 			if ( !is_centroid && !use_actual_centroid ) {
 				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
@@ -210,10 +210,10 @@ RNA_VDW_Energy::residue_pair_energy(
 /////////////////////////////////
 Real
 RNA_VDW_Energy::evaluate_rnp_vdw_score(
-		conformation::Residue const & rna_rsd,
-		conformation::Residue const & protein_rsd,
-		rna::RNA_ScoringInfo const & rna_scoring_info,
-		bool const & centroid_mode )
+	conformation::Residue const & rna_rsd,
+	conformation::Residue const & protein_rsd,
+	rna::RNA_ScoringInfo const & rna_scoring_info,
+	bool const & centroid_mode )
 const {
 
 	Size RNA_pos;

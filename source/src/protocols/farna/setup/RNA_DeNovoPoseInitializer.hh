@@ -89,8 +89,8 @@ private:
 
 	void
 	setup_block_stack_variants(
-														 core::pose::Pose & pose,
-														 protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
+		core::pose::Pose & pose,
+		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
 
 	void
 	insert_base_pair_jumps( core::pose::Pose & pose, protocols::farna::movers::RNA_JumpMover const & jump_mover,  bool & success ) const;

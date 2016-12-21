@@ -180,7 +180,7 @@ calpha_superimpose_with_mapping(
 
 utility::vector1< core::Size >
 strip_spacers( std::string & sequence, bool const annotations_in_brackets = true /* remove [ and ]*/ );
-	
+
 std::map< Size, std::string >
 parse_out_non_standard_residues( utility::vector1< core::sequence::SequenceOP > & fasta_sequences );
 

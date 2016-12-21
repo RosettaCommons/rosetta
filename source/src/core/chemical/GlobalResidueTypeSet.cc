@@ -181,7 +181,7 @@ GlobalResidueTypeSet::init_restypes_from_database() {
 		// Note on thread safety. This method is (probably) being called during RTS initialization within
 		// the ChemicalManager. As long as we don't attempt to get a RTS from the CM we should avoid deadlock issues,
 		// even as we access other type sets.
-		if ( tag == "TYPE_SET_MODE" || tag == "TYPE_SET_CATEGORY") {
+		if ( tag == "TYPE_SET_MODE" || tag == "TYPE_SET_CATEGORY" ) {
 			l >> tag;
 			mode( type_set_mode_from_string( tag ) );
 		} else if ( tag == "ATOM_TYPE_SET" ) {
@@ -508,7 +508,7 @@ void GlobalResidueTypeSet::init_patches_from_database() {
 			if ( mpline.size() < 1 || mpline[0] == '#' ) continue;
 			metapatch_filenames.push_back( database_directory_ + mpline );
 		}
-	}	else {
+	} else {
 		TR.Debug << "Skipping metapatch loading for " << name() << " as metapatches.txt can't be found. " << std::endl;
 	}
 

@@ -167,9 +167,9 @@ void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Number of relax rounds to perform.  Will be multiplied by the number of glycan residues.")
 		+ XMLSchemaAttribute::attribute_w_default("final_min", xsct_rosetta_bool, "Perform a final minimization", "true")
 		+ XMLSchemaAttribute::attribute_w_default("pymol_movie", xsct_rosetta_bool, "Output a PyMOL movie of the run", "false")
-	
+
 		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do not start with a random glycan conformation.", "false")
-	
+
 		+ XMLSchemaAttribute("pack_distance", xsct_real, "Neighbor distance for packing")
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
 		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true");
@@ -504,7 +504,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 			glycan_dih_movemap->set_bb( i, torsion_id, true );
 			sugar_bb_movemap->set_bb(i, torsion_id, true);
-			
+
 			//Randomize starting structure if set if not refining.
 			if ( ! refine_ ) {
 				random_sampler->set_torsion_type( static_cast< core::id::MainchainTorsionType >( torsion_id ) );

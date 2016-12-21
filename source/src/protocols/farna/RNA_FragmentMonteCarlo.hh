@@ -146,7 +146,7 @@ private:
 
 	void
 	randomize_rigid_body_orientations( core::pose::Pose & pose );
-	
+
 	void
 	randomize_rnp_rigid_body_orientations( core::pose::Pose & pose );
 
@@ -172,7 +172,7 @@ private:
 	random_jump_trial( core::pose::Pose & pose );
 
 	void
-	rnp_docking_trial( core::pose::Pose & pose ); 
+	rnp_docking_trial( core::pose::Pose & pose );
 
 	core::kinematics::FoldTree
 	get_rnp_docking_fold_tree( core::pose::Pose const & pose );

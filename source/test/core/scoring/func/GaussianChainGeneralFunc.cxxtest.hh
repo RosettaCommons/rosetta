@@ -86,10 +86,10 @@ public:
 
 	Real
 	get_gaussian_chain_func( vector1< Distance > const & dists,
-													 Real const & gaussian_variance,
-													 Real const & loop_fixed_cost,
-													 Size const idx,
-													 bool const force_use_general )
+		Real const & gaussian_variance,
+		Real const & loop_fixed_cost,
+		Size const idx,
+		bool const force_use_general )
 	{
 		using namespace core::scoring::func;
 		Distance dist( dists[ idx ] );
@@ -106,7 +106,7 @@ public:
 
 		// test derivs.
 		Distance delta = 1.0e-6;
-		//		TR << "Checking deriv " << ( func->func(dist + delta) - func->func(dist ) )/delta << " vs " << func->dfunc( dist ) << std::endl;
+		//  TR << "Checking deriv " << ( func->func(dist + delta) - func->func(dist ) )/delta << " vs " << func->dfunc( dist ) << std::endl;
 
 		TS_ASSERT_DELTA( ( func->func(dist + delta) - func->func(dist ) )/delta, func->dfunc( dist ), 1.0e-4 );
 

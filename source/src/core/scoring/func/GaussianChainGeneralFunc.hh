@@ -38,7 +38,7 @@ class GaussianChainGeneralFunc : public Func {
 public:
 
 	GaussianChainGeneralFunc(
-	  Real const gaussian_variance_,
+		Real const gaussian_variance_,
 		Real const loop_fixed_cost,
 		utility::vector1< Distance > const & other_distances );
 
@@ -50,8 +50,8 @@ public:
 
 	Real
 	func( Real const z,
-				bool const calc_deriv,
-				Real & deriv ) const;
+		bool const calc_deriv,
+		Real & deriv ) const;
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

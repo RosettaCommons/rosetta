@@ -124,7 +124,7 @@ private:
 		Size const & i ) const;
 
 	Real
-	evaluate_rnp_vdw_score( 
+	evaluate_rnp_vdw_score(
 		conformation::Residue const & rna_rsd,
 		conformation::Residue const & protein_rsd,
 		rna::RNA_ScoringInfo const & rna_scoring_info,

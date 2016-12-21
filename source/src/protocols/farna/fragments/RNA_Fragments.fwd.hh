@@ -25,7 +25,7 @@ enum SYN_ANTI_RESTRICTION {
 	ANTI,
 	ANY
 };
-	
+
 class RNA_Fragments;
 
 typedef utility::pointer::shared_ptr< RNA_Fragments > RNA_FragmentsOP;

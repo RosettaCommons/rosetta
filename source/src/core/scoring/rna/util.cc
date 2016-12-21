@@ -54,7 +54,7 @@ protein_atom_name_to_num( std::string const & name )
 }
 
 Size
-protein_atom_name_to_num( std::string const & name, std::string const & resname ) 
+protein_atom_name_to_num( std::string const & name, std::string const & resname )
 {
 	// I should do this in a smarter way later, for now I'm just copying what is done for RNA
 
@@ -69,47 +69,47 @@ protein_atom_name_to_num( std::string const & name, std::string const & resname 
 	if ( name == "OCbb" ) return 5;
 	if ( name == " O  " ) return 5;
 	if ( name == " CEN" && resname != "" ) {
-		if ( resname == "ALA" ) return 6; 
-		if ( resname == "CYS" ) return 7; 
-		if ( resname == "ASP" ) return 8; 
-		if ( resname == "GLU" ) return 9; 
-		if ( resname == "PHE" ) return 10; 
-		if ( resname == "GLY" ) return 11; 
-		if ( resname == "HIS" ) return 12; 
-		if ( resname == "ILE" ) return 13; 
-		if ( resname == "LYS" ) return 14; 
-		if ( resname == "LEU" ) return 15; 
-		if ( resname == "MET" ) return 16; 
-		if ( resname == "ASN" ) return 17; 
-		if ( resname == "PRO" ) return 18; 
-		if ( resname == "GLN" ) return 19; 
-		if ( resname == "ARG" ) return 20; 
-		if ( resname == "SER" ) return 21; 
-		if ( resname == "THR" ) return 22; 
-		if ( resname == "VAL" ) return 23; 
-		if ( resname == "TRP" ) return 24; 
-		if ( resname == "TYR" ) return 25; 
+		if ( resname == "ALA" ) return 6;
+		if ( resname == "CYS" ) return 7;
+		if ( resname == "ASP" ) return 8;
+		if ( resname == "GLU" ) return 9;
+		if ( resname == "PHE" ) return 10;
+		if ( resname == "GLY" ) return 11;
+		if ( resname == "HIS" ) return 12;
+		if ( resname == "ILE" ) return 13;
+		if ( resname == "LYS" ) return 14;
+		if ( resname == "LEU" ) return 15;
+		if ( resname == "MET" ) return 16;
+		if ( resname == "ASN" ) return 17;
+		if ( resname == "PRO" ) return 18;
+		if ( resname == "GLN" ) return 19;
+		if ( resname == "ARG" ) return 20;
+		if ( resname == "SER" ) return 21;
+		if ( resname == "THR" ) return 22;
+		if ( resname == "VAL" ) return 23;
+		if ( resname == "TRP" ) return 24;
+		if ( resname == "TYR" ) return 25;
 	} else if ( resname == "" ) {
-		if ( name == "CEN_ALA" ) return 6; 
-		if ( name == "CEN_CYS" ) return 7; 
-		if ( name == "CEN_ASP" ) return 8; 
-		if ( name == "CEN_GLU" ) return 9; 
-		if ( name == "CEN_PHE" ) return 10; 
-		if ( name == "CEN_GLY" ) return 11; 
-		if ( name == "CEN_HIS" ) return 12; 
-		if ( name == "CEN_ILE" ) return 13; 
-		if ( name == "CEN_LYS" ) return 14; 
-		if ( name == "CEN_LEU" ) return 15; 
-		if ( name == "CEN_MET" ) return 16; 
-		if ( name == "CEN_ASN" ) return 17; 
-		if ( name == "CEN_PRO" ) return 18; 
-		if ( name == "CEN_GLN" ) return 19; 
-		if ( name == "CEN_ARG" ) return 20; 
-		if ( name == "CEN_SER" ) return 21; 
-		if ( name == "CEN_THR" ) return 22; 
-		if ( name == "CEN_VAL" ) return 23; 
-		if ( name == "CEN_TRP" ) return 24; 
-		if ( name == "CEN_TYR" ) return 25; 
+		if ( name == "CEN_ALA" ) return 6;
+		if ( name == "CEN_CYS" ) return 7;
+		if ( name == "CEN_ASP" ) return 8;
+		if ( name == "CEN_GLU" ) return 9;
+		if ( name == "CEN_PHE" ) return 10;
+		if ( name == "CEN_GLY" ) return 11;
+		if ( name == "CEN_HIS" ) return 12;
+		if ( name == "CEN_ILE" ) return 13;
+		if ( name == "CEN_LYS" ) return 14;
+		if ( name == "CEN_LEU" ) return 15;
+		if ( name == "CEN_MET" ) return 16;
+		if ( name == "CEN_ASN" ) return 17;
+		if ( name == "CEN_PRO" ) return 18;
+		if ( name == "CEN_GLN" ) return 19;
+		if ( name == "CEN_ARG" ) return 20;
+		if ( name == "CEN_SER" ) return 21;
+		if ( name == "CEN_THR" ) return 22;
+		if ( name == "CEN_VAL" ) return 23;
+		if ( name == "CEN_TRP" ) return 24;
+		if ( name == "CEN_TYR" ) return 25;
 	}
 
 	std::cout << "What is this? " << name << std::endl;

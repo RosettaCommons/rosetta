@@ -27,10 +27,10 @@ Size
 rna_residue_name_to_num( char const c );
 
 Size
-protein_atom_name_to_num( std::string const & name ); 
+protein_atom_name_to_num( std::string const & name );
 
 Size
-protein_atom_name_to_num( std::string const & name, std::string const & resname ); 
+protein_atom_name_to_num( std::string const & name, std::string const & resname );
 
 }
 }

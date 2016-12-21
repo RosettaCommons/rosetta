@@ -86,7 +86,7 @@ void check_structures() {
 	pose.dump_pdb("input_pose.pdb");
 
 	// Ok now what if I want to change one residue to be coarse grained
-	
+
 	// Get the centroid residue type set
 	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 	//core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID_ROT );
@@ -115,7 +115,7 @@ void check_structures() {
 	sfxn_rna = core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_lores.wts" );
 
 	std::cout << "trying to score with rna_lores" << std::endl;
-	
+
 	sfxn->show( pose );
 	sfxn_rna->show( pose );
 	// If you try to score with the coarse score function, it seg faults!
@@ -131,7 +131,7 @@ void check_structures() {
 	// centroid residues at the correct place??
 	// Yes, b/c this is defined for each residue type by averaging over observed
 	// side-chain conformations in known protein structures
-	
+
 }
 
 int main( int argc, char ** argv ) {

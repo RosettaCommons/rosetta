@@ -107,33 +107,33 @@ void get_distances( core::pose::Pose const & pose, std::string struct_name, std:
 		// Loop through the remaining residues
 		for ( core::Size rsd2 = (rsd1 + 1); rsd2 <= pose.total_residue(); ++rsd2 ) {
 			bool is_rsd2_protein( pose.residue( rsd2 ).is_protein() );
-			// Only look at distances between RNA and protein 
+			// Only look at distances between RNA and protein
 			// (don't care about protein/protein or RNA/RNA distances)
-			if ( (is_rsd1_protein && is_rsd2_protein) || (!is_rsd1_protein && !is_rsd2_protein)) {
+			if ( (is_rsd1_protein && is_rsd2_protein) || (!is_rsd1_protein && !is_rsd2_protein) ) {
 				continue;
 			}
 			// Calculate all atom/atom distances
-			for ( core::Size atom1 = 1; atom1 <= pose.residue( rsd1 ).natoms(); ++atom1 ){
+			for ( core::Size atom1 = 1; atom1 <= pose.residue( rsd1 ).natoms(); ++atom1 ) {
 				// only want to look at heavy atoms
-				if ( !pose.residue( rsd1 ).atom_type(atom1).is_heavyatom() || 
-					pose.residue( rsd1 ).atom_name(atom1)==" H5'" ||
-					pose.residue( rsd1 ).atom_name(atom1)=="H5''" ) continue;
+				if ( !pose.residue( rsd1 ).atom_type(atom1).is_heavyatom() ||
+						pose.residue( rsd1 ).atom_name(atom1)==" H5'" ||
+						pose.residue( rsd1 ).atom_name(atom1)=="H5''" ) continue;
 				core::Vector xyz1( pose.residue( rsd1 ).xyz( atom1 ));
-				for ( core::Size atom2 = 1; atom2 <= pose.residue( rsd2 ).natoms(); ++atom2 ){
+				for ( core::Size atom2 = 1; atom2 <= pose.residue( rsd2 ).natoms(); ++atom2 ) {
 					// only want to look at heavy atoms
 					if ( !pose.residue( rsd2 ).atom_type(atom2).is_heavyatom() ||
-						pose.residue( rsd2 ).atom_name(atom2)==" H5'" ||
-						pose.residue( rsd2 ).atom_name(atom2)=="H5''" ) continue;
+							pose.residue( rsd2 ).atom_name(atom2)==" H5'" ||
+							pose.residue( rsd2 ).atom_name(atom2)=="H5''" ) continue;
 					core::Vector xyz2( pose.residue( rsd2 ).xyz( atom2 ));
 					core::Vector delta_xyz = xyz1 - xyz2;
 					core::Real distance = ( delta_xyz ).length();
 					// Print out resnum1, residue1, atom1, resnum2, residue2, atom2, resnum2, distance
-					// For testing 
+					// For testing
 					//if ( distance < 10.0 ) {
-						out_file << struct_name << " " << rsd1 << " " << pose.residue(rsd1).name3() << " " 
-						<< pose.residue(rsd1).atom_name(atom1) 
+					out_file << struct_name << " " << rsd1 << " " << pose.residue(rsd1).name3() << " "
+						<< pose.residue(rsd1).atom_name(atom1)
 						<< " " << rsd2 << " " << pose.residue(rsd2).name3() << " "
-						<< pose.residue(rsd2).atom_name(atom2) 
+						<< pose.residue(rsd2).atom_name(atom2)
 						<< " distance: " << distance << "\n";
 					//}
 				}
@@ -143,16 +143,16 @@ void get_distances( core::pose::Pose const & pose, std::string struct_name, std:
 }
 
 void get_atom_vdw( core::pose::Pose const & poseFA,
-			//std::string const & struct_name,
-			std::ofstream & out_file,
-			utility::vector1< std::string > const & RNA_atoms_common,
-			utility::vector1< std::string > const & protein_atoms,
-			utility::vector1< std::string > const & RNA_atoms_A,
-			utility::vector1< std::string > const & RNA_atoms_C,
-			utility::vector1< std::string > const & RNA_atoms_G,
-			utility::vector1< std::string > const & RNA_atoms_U )
+	//std::string const & struct_name,
+	std::ofstream & out_file,
+	utility::vector1< std::string > const & RNA_atoms_common,
+	utility::vector1< std::string > const & protein_atoms,
+	utility::vector1< std::string > const & RNA_atoms_A,
+	utility::vector1< std::string > const & RNA_atoms_C,
+	utility::vector1< std::string > const & RNA_atoms_G,
+	utility::vector1< std::string > const & RNA_atoms_U )
 {
-// Convert to centroid for protein part
+	// Convert to centroid for protein part
 	core::pose::Pose pose = poseFA;
 	if ( basic::options::option[ use_CEN ]() ) {
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true, true );
@@ -165,7 +165,7 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 	char seq_c = 'c';
 	char seq_u = 'u';
 
-	for ( core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1 ){
+	for ( core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1 ) {
 		if ( !pose.residue( rsd1 ).is_RNA() ) continue;
 		//core::Vector P, C5p, C1p, C3p, N1, O2p;
 		//core::Vector N6, N7, N3, N4, C6, O2, O6, N7, N2, O4, C6, O2;
@@ -187,23 +187,23 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 				for ( core::Size RNA_atom = 1; RNA_atom <= RNA_atoms_common.size(); ++RNA_atom ) {
 					//std::cout << "RNA atom " << RNA_atoms_common[ RNA_atom ] << std::endl;
 					//std::cout << "protein atom " << protein_atoms[ prot_atom ] << std::endl;
-					
+
 					core::Vector rna_to_prot;
 					if ( !basic::options::option[ use_CEN ]() && protein_atoms[prot_atom] == "CEN" ) {
-						rna_to_prot = pose.residue( rsd1 ).xyz( RNA_atoms_common[ RNA_atom ] ) - 
+						rna_to_prot = pose.residue( rsd1 ).xyz( RNA_atoms_common[ RNA_atom ] ) -
 							pose.residue( rsd2 ).actcoord();
 					} else {
-						rna_to_prot = pose.residue( rsd1 ).xyz( RNA_atoms_common[ RNA_atom ] ) - 
+						rna_to_prot = pose.residue( rsd1 ).xyz( RNA_atoms_common[ RNA_atom ] ) -
 							pose.residue( rsd2 ).xyz( protein_atoms[ prot_atom ] );
 					}
 					core::Real distance = rna_to_prot.length();
 					out_file << pose.residue( rsd1 ).name1() << " "
-					<< pose.residue( rsd2 ).name1() << " "
-					<< RNA_atoms_common[ RNA_atom ] << " "
-					<< protein_atoms[ prot_atom ] << " "
-					<< distance << "\n";
+						<< pose.residue( rsd2 ).name1() << " "
+						<< RNA_atoms_common[ RNA_atom ] << " "
+						<< protein_atoms[ prot_atom ] << " "
+						<< distance << "\n";
 				}
-				
+
 				if ( pose.residue( rsd1 ).name1() == seq_a ) {
 					for ( core::Size RNA_atom = 1; RNA_atom <= RNA_atoms_A.size(); ++RNA_atom ) {
 						core::Vector rna_to_prot;
@@ -216,10 +216,10 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 						}
 						core::Real distance = rna_to_prot.length();
 						out_file << pose.residue( rsd1 ).name1() << " "
-						<< pose.residue( rsd2 ).name1() << " "
-						<< RNA_atoms_A[ RNA_atom ] << " "
-						<< protein_atoms[ prot_atom ] << " "
-						<< distance << "\n";
+							<< pose.residue( rsd2 ).name1() << " "
+							<< RNA_atoms_A[ RNA_atom ] << " "
+							<< protein_atoms[ prot_atom ] << " "
+							<< distance << "\n";
 					}
 				}
 				if ( pose.residue( rsd1 ).name1() == seq_g ) {
@@ -234,10 +234,10 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 						}
 						core::Real distance = rna_to_prot.length();
 						out_file << pose.residue( rsd1 ).name1() << " "
-						<< pose.residue( rsd2 ).name1() << " "
-						<< RNA_atoms_G[ RNA_atom ] << " "
-						<< protein_atoms[ prot_atom ] << " "
-						<< distance << "\n";
+							<< pose.residue( rsd2 ).name1() << " "
+							<< RNA_atoms_G[ RNA_atom ] << " "
+							<< protein_atoms[ prot_atom ] << " "
+							<< distance << "\n";
 					}
 				}
 				if ( pose.residue( rsd1 ).name1() == seq_c ) {
@@ -252,10 +252,10 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 						}
 						core::Real distance = rna_to_prot.length();
 						out_file << pose.residue( rsd1 ).name1() << " "
-						<< pose.residue( rsd2 ).name1() << " "
-						<< RNA_atoms_C[ RNA_atom ] << " "
-						<< protein_atoms[ prot_atom ] << " "
-						<< distance << "\n";
+							<< pose.residue( rsd2 ).name1() << " "
+							<< RNA_atoms_C[ RNA_atom ] << " "
+							<< protein_atoms[ prot_atom ] << " "
+							<< distance << "\n";
 					}
 				}
 				if ( pose.residue( rsd1 ).name1() == seq_u ) {
@@ -270,23 +270,23 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 						}
 						core::Real distance = rna_to_prot.length();
 						out_file << pose.residue( rsd1 ).name1() << " "
-						<< pose.residue( rsd2 ).name1() << " "
-						<< RNA_atoms_U[ RNA_atom ] << " "
-						<< protein_atoms[ prot_atom ] << " "
-						<< distance << "\n";
+							<< pose.residue( rsd2 ).name1() << " "
+							<< RNA_atoms_U[ RNA_atom ] << " "
+							<< protein_atoms[ prot_atom ] << " "
+							<< distance << "\n";
 					}
 				}
-			
-			
+
+
 			}
 
 		}
 	}
 }
 
-void get_distance_around_rna_base( core::pose::Pose const & poseFA, 
-					std::string const & struct_name, 
-					std::ofstream & out_file ) {
+void get_distance_around_rna_base( core::pose::Pose const & poseFA,
+	std::string const & struct_name,
+	std::ofstream & out_file ) {
 	// Get the distance from the rna base centroid to the centroid of protein residues
 	// Want delta x, y, and z (not just distance)
 	// Use the RNA base coordinate system to get these values
@@ -297,8 +297,8 @@ void get_distance_around_rna_base( core::pose::Pose const & poseFA,
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true, true );
 	}
 	//core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false, true );
-	for ( core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1 ){
-		if (!pose.residue(rsd1).is_RNA()) continue;
+	for ( core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1 ) {
+		if ( !pose.residue(rsd1).is_RNA() ) continue;
 		numeric::xyzMatrix< core::Real > rna_base_coord_sys;
 		core::Vector rna_centroid;
 		rna_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd1), false /*verbose*/);
@@ -306,14 +306,14 @@ void get_distance_around_rna_base( core::pose::Pose const & poseFA,
 		core::Vector x_1 = rna_base_coord_sys.col_x();
 		core::Vector y_1 = rna_base_coord_sys.col_y();
 		core::Vector z_1 = rna_base_coord_sys.col_z();
-		for (core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ){
-			if (!pose.residue(rsd2).is_protein()) continue;
+		for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
+			if ( !pose.residue(rsd2).is_protein() ) continue;
 			core::Vector protein_centroid;
 			// For using the C-beta atom
 			//if (pose.residue(rsd2).name3() != "GLY"){
-			//	protein_centroid = pose.residue( rsd2 ).xyz( " CB " );
+			// protein_centroid = pose.residue( rsd2 ).xyz( " CB " );
 			//} else {
-			//	protein_centroid = pose.residue( rsd2 ).xyz( " CA " );
+			// protein_centroid = pose.residue( rsd2 ).xyz( " CA " );
 			//}
 			// Use the actual centroid
 			//protein_centroid = pose.residue( rsd2 ).actcoord();
@@ -325,24 +325,24 @@ void get_distance_around_rna_base( core::pose::Pose const & poseFA,
 			// Figure out the delta_x, delta_y, and delta_z in the RNA coordinate system
 			core::Vector dist_1_2 = protein_centroid - rna_centroid;
 			core::Real distance( dist_1_2.length() );
-			if (distance > 20.0) continue;
+			if ( distance > 20.0 ) continue;
 			core::Real const dist_x = dot_product(dist_1_2, x_1);
 			core::Real const dist_y = dot_product(dist_1_2, y_1);
 			core::Real const dist_z = dot_product(dist_1_2, z_1);
 			// Write it to the file
 			out_file << struct_name << " " << rsd1 << " "
-			<< pose.residue(rsd1).name3() << " "
-			<< rsd2 << " " << pose.residue(rsd2).name3() << " "
-			<< dist_x << " " << dist_y << " " << dist_z << " " 
-			<< distance << "\n";
+				<< pose.residue(rsd1).name3() << " "
+				<< rsd2 << " " << pose.residue(rsd2).name3() << " "
+				<< dist_x << " " << dist_y << " " << dist_z << " "
+				<< distance << "\n";
 		}
 	}
-	
+
 }
 
 void get_distances_around_rna_backbone( core::pose::Pose const & poseFA,
-					std::string const & struct_name,
-					std::ofstream & out_file ) {
+	std::string const & struct_name,
+	std::ofstream & out_file ) {
 
 	// Get the distance from the backbone phosphate to the centroid of protein residues
 	// For now just look at the distance (not x, y, z, b/c unclear what the coordinate
@@ -353,18 +353,18 @@ void get_distances_around_rna_backbone( core::pose::Pose const & poseFA,
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true, true );
 	}
 
-	for ( core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1 ){
-		if (!pose.residue(rsd1).is_RNA()) continue;
+	for ( core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1 ) {
+		if ( !pose.residue(rsd1).is_RNA() ) continue;
 		core::Vector rna_phosphate;
 		rna_phosphate = pose.residue(rsd1).xyz(" P  ");
-		for (core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ){
-			if (!pose.residue(rsd2).is_protein()) continue;
+		for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
+			if ( !pose.residue(rsd2).is_protein() ) continue;
 			core::Vector protein_centroid;
 			// For using the C-beta atom
 			//if (pose.residue(rsd2).name3() != "GLY"){
-			//	protein_centroid = pose.residue( rsd2 ).xyz( " CB " );
+			// protein_centroid = pose.residue( rsd2 ).xyz( " CB " );
 			//} else {
-			//	protein_centroid = pose.residue( rsd2 ).xyz( " CA " );
+			// protein_centroid = pose.residue( rsd2 ).xyz( " CA " );
 			//}
 			// Use the actual centroid
 			if ( basic::options::option[ use_CEN ]() ) {
@@ -375,15 +375,15 @@ void get_distances_around_rna_backbone( core::pose::Pose const & poseFA,
 			// Figure out the delta_x, delta_y, and delta_z in the RNA coordinate system
 			core::Vector dist_1_2 = protein_centroid - rna_phosphate;
 			core::Real distance( dist_1_2.length() );
-			if (distance > 20.0) continue;
+			if ( distance > 20.0 ) continue;
 			// Write it to the file
 			out_file << struct_name << " " << rsd1 << " "
-			<< pose.residue(rsd1).name3() << " "
-			<< rsd2 << " " << pose.residue(rsd2).name3() << " "
-			<< distance << "\n";
+				<< pose.residue(rsd1).name3() << " "
+				<< rsd2 << " " << pose.residue(rsd2).name3() << " "
+				<< distance << "\n";
 		}
 	}
-	
+
 }
 
 utility::vector1< std::pair< core::Size, bool > > get_interface_type( core::pose::Pose const & poseFA ) {
@@ -401,10 +401,10 @@ utility::vector1< std::pair< core::Size, bool > > get_interface_type( core::pose
 		// use the rna base centroid for RNA
 		core::Vector rsd_centroid;
 		bool const is_rsd_protein( pose.residue(rsd).is_protein() );
-		if (pose.residue(rsd).is_RNA()) {
+		if ( pose.residue(rsd).is_RNA() ) {
 			rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
 		} else {
-			if (!pose.residue(rsd).is_protein()) continue; // only look at RNA and protein
+			if ( !pose.residue(rsd).is_protein() ) continue; // only look at RNA and protein
 			//rsd_centroid = pose.residue(rsd).actcoord();
 			if ( basic::options::option[ use_CEN ]() ) {
 				rsd_centroid = pose.residue(rsd).xyz("CEN");
@@ -417,12 +417,12 @@ utility::vector1< std::pair< core::Size, bool > > get_interface_type( core::pose
 			core::Vector rsd2_centroid;
 			bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
 			// Only look at RNA/protein and protein/RNA distances here
-			if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) continue;
-			
-			if (pose.residue(rsd2).is_RNA()) {
+			if ( (is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein) ) continue;
+
+			if ( pose.residue(rsd2).is_RNA() ) {
 				rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
 			} else {
-				if (!pose.residue(rsd2).is_protein()) continue;
+				if ( !pose.residue(rsd2).is_protein() ) continue;
 				if ( basic::options::option[ use_CEN ]() ) {
 					rsd2_centroid = pose.residue(rsd2).xyz("CEN");
 				} else {
@@ -461,10 +461,10 @@ utility::vector1< std::pair< core::Size, core::Size > > get_num_nbrs( core::pose
 		// use the rna base centroid for RNA
 		core::Vector rsd_centroid;
 		bool const is_rsd_protein( pose.residue(rsd).is_protein() );
-		if (pose.residue(rsd).is_RNA()) {
+		if ( pose.residue(rsd).is_RNA() ) {
 			rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
 		} else {
-			if (!pose.residue(rsd).is_protein()) continue;
+			if ( !pose.residue(rsd).is_protein() ) continue;
 			if ( basic::options::option[ use_CEN ]() ) {
 				rsd_centroid = pose.residue(rsd).xyz("CEN");
 			} else {
@@ -476,12 +476,12 @@ utility::vector1< std::pair< core::Size, core::Size > > get_num_nbrs( core::pose
 			core::Vector rsd2_centroid;
 			bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
 			// Only look at RNA/RNA and protein/protein distances here
-			if ((is_rsd2_protein && !is_rsd_protein) || (!is_rsd2_protein && is_rsd_protein)) continue;
-			
-			if (pose.residue(rsd2).is_RNA()) {
+			if ( (is_rsd2_protein && !is_rsd_protein) || (!is_rsd2_protein && is_rsd_protein) ) continue;
+
+			if ( pose.residue(rsd2).is_RNA() ) {
 				rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
 			} else {
-				if (!pose.residue(rsd2).is_protein()) continue;
+				if ( !pose.residue(rsd2).is_protein() ) continue;
 				if ( basic::options::option[ use_CEN ]() ) {
 					rsd2_centroid = pose.residue(rsd2).xyz("CEN");
 				} else {
@@ -500,15 +500,15 @@ utility::vector1< std::pair< core::Size, core::Size > > get_num_nbrs( core::pose
 	return neighbors;
 }
 
-void write_to_restype_file( std::ofstream & restype_file, 
-		utility::vector1< std::pair< core::Size, bool > > is_interface ,
-		utility::vector1< std::pair< core::Size, core::Size > > num_nbrs,
-		std::string const & pdb_name ) {
+void write_to_restype_file( std::ofstream & restype_file,
+	utility::vector1< std::pair< core::Size, bool > > is_interface ,
+	utility::vector1< std::pair< core::Size, core::Size > > num_nbrs,
+	std::string const & pdb_name ) {
 	for ( core::Size i = 1; i<= is_interface.size(); ++i ) {
 		restype_file << pdb_name;
 		restype_file << " ";
 		restype_file << i;
-		if ( is_interface[i].second ){
+		if ( is_interface[i].second ) {
 			restype_file << " INTERFACE ";
 		} else {
 			restype_file << " NON-INTERFACE ";
@@ -522,29 +522,29 @@ void write_to_restype_file( std::ofstream & restype_file,
 void test_actcoord( core::pose::Pose const & pose ) {
 	// Just do this for 3 residues
 	core::Size i = 0;
-		for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
-			if (i > 3) break;
-			if ( !pose.residue( rsd ).is_protein() ) continue;
-			std::cout << pose.residue(rsd).name3() << std::endl;
-			core::Vector centroid( 0.0, 0.0, 0.0 );
-			core::Size num_atoms = 0;
-			for ( core::Size atom = 1; atom <= pose.residue(rsd).natoms(); ++atom ) {
-				if (!pose.residue( rsd ).atom_type( atom ).is_heavyatom() ) continue;
-				centroid += pose.residue(rsd).xyz(atom);
-				std::cout << "centroid " << atom << std::endl;
-				num_atoms += 1;
-			}
-			for ( core::Size s = 1; s<=pose.residue(rsd).actcoord_atoms().size(); ++s ){
-				core::Size actcoord = pose.residue(rsd).actcoord_atoms()[s];
-				std::cout << "actcoord " << pose.residue(rsd).actcoord_atoms()[s] << std::endl;
-				std::cout << pose.residue(rsd).atom_name( actcoord ) << std::endl;
-				
-			}
-			std::cout << "Centroid: " << (centroid/num_atoms).length() << std::endl;
-			std::cout << "Actcoord: " << (pose.residue(rsd).actcoord()).length() << std::endl;
-			//std::cout << pose.residue(rsd).actcoord_atoms().size() << std::endl;
-			++i;
+	for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
+		if ( i > 3 ) break;
+		if ( !pose.residue( rsd ).is_protein() ) continue;
+		std::cout << pose.residue(rsd).name3() << std::endl;
+		core::Vector centroid( 0.0, 0.0, 0.0 );
+		core::Size num_atoms = 0;
+		for ( core::Size atom = 1; atom <= pose.residue(rsd).natoms(); ++atom ) {
+			if ( !pose.residue( rsd ).atom_type( atom ).is_heavyatom() ) continue;
+			centroid += pose.residue(rsd).xyz(atom);
+			std::cout << "centroid " << atom << std::endl;
+			num_atoms += 1;
 		}
+		for ( core::Size s = 1; s<=pose.residue(rsd).actcoord_atoms().size(); ++s ) {
+			core::Size actcoord = pose.residue(rsd).actcoord_atoms()[s];
+			std::cout << "actcoord " << pose.residue(rsd).actcoord_atoms()[s] << std::endl;
+			std::cout << pose.residue(rsd).atom_name( actcoord ) << std::endl;
+
+		}
+		std::cout << "Centroid: " << (centroid/num_atoms).length() << std::endl;
+		std::cout << "Actcoord: " << (pose.residue(rsd).actcoord()).length() << std::endl;
+		//std::cout << pose.residue(rsd).actcoord_atoms().size() << std::endl;
+		++i;
+	}
 }
 
 void calculate_distances( ) {
@@ -585,7 +585,7 @@ void calculate_distances( ) {
 	protein_atoms.push_back(" C  ");
 	protein_atoms.push_back(" O  ");
 	protein_atoms.push_back(" N  ");
-	
+
 	core::pose::Pose pose;
 
 	std::ofstream distance_file;
@@ -626,11 +626,11 @@ void calculate_distances( ) {
 	// Can make handling PDB vs silent files nicer later, just want it to work for now
 	// Read in the PDB files
 	using namespace core::import_pose::pose_stream;
-	if ( option[ in::file::s ].user() ){
+	if ( option[ in::file::s ].user() ) {
 		utility::vector1< std::string > input_structs = basic::options::option[ basic::options::OptionKeys::in::file::s ]();
-		for ( core::Size s = 1; s <= input_structs.size(); ++s ){
-			std::cout << "Working on " << input_structs[ s ] << " " << s 
-			<< " out of " << input_structs.size() << std::endl;
+		for ( core::Size s = 1; s <= input_structs.size(); ++s ) {
+			std::cout << "Working on " << input_structs[ s ] << " " << s
+				<< " out of " << input_structs.size() << std::endl;
 			core::import_pose::pose_from_file( pose, input_structs[ s ] );
 			//std::cout << pose.sequence() << std::endl;
 			//test_actcoord( pose );
@@ -655,11 +655,11 @@ void calculate_distances( ) {
 				tag += input_structs[ s ];
 				pose.dump_pdb( tag );
 			}
-			
+
 		}
 	} else if ( option[ in::file::silent ].user() ) {
-	// Read in silent file
-	
+		// Read in silent file
+
 		// setup input stream
 		PoseInputStreamOP input;
 		if ( option[ in::file::tags ].user() ) {
@@ -679,7 +679,7 @@ void calculate_distances( ) {
 			input->fill_pose( pose, *rsd_set );
 			std::string tag = tag_from_pose( pose );
 
-			std::cout << "Working on " << tag << std::endl; 
+			std::cout << "Working on " << tag << std::endl;
 			if ( option[ get_dist ]() ) {
 				//get_distances( pose, input_structs[ s ], distance_file );
 				get_distance_around_rna_base( pose, tag, distance_from_base_file );
@@ -709,15 +709,15 @@ void calculate_distances( ) {
 	}
 
 
-//	// what's up with my heavy atom calculation?
-//	for (core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1) {
-//		for (core::Size atom =1; atom<= pose.residue(rsd1).natoms(); ++atom) {
-//			if ( !pose.residue( rsd1).atom_type(atom).is_heavyatom() ){
-//				std::cout << pose.residue( rsd1).atom_name(atom) << std::endl;
-//			}
-//		}
-//	}
-//	// H5' and H5'' are considered heavy atoms?! according to above!
+	// // what's up with my heavy atom calculation?
+	// for (core::Size rsd1 = 1; rsd1 <= pose.total_residue(); ++rsd1) {
+	//  for (core::Size atom =1; atom<= pose.residue(rsd1).natoms(); ++atom) {
+	//   if ( !pose.residue( rsd1).atom_type(atom).is_heavyatom() ){
+	//    std::cout << pose.residue( rsd1).atom_name(atom) << std::endl;
+	//   }
+	//  }
+	// }
+	// // H5' and H5'' are considered heavy atoms?! according to above!
 
 	// Also want to figure out the environment: interface or non-interface
 	// and for proteins: buried or exposed
@@ -731,86 +731,86 @@ void calculate_distances( ) {
 	// For now actually let's just do this for both RNA and protein, look at the centroid of the residue
 	// figure out how many residue centroid are within a certain distance of this, write this out
 	// might not be natural enough for RNA, but I think it's ok to start
-//	core::Real const CUTOFF( 10.0 );
-//
-//	for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
-//		core::Size nbrs = 0;
-//		// Get the rsd_centroid
-//		// use the rna base centroid for RNA
-//		core::Vector rsd_centroid;
-//		bool const is_rsd_protein( pose.residue(rsd).is_protein() );
-//		if (pose.residue(rsd).is_RNA()) {
-//			rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
-//		} else {
-//			rsd_centroid = pose.residue(rsd).actcoord();
-//		}
-//		for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
-//			if ( rsd == rsd2 ) continue;
-//			core::Vector rsd2_centroid;
-//			bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
-//			// Only look at RNA/RNA and protein/protein distances here
-//			if ((is_rsd2_protein && !is_rsd_protein) || (!is_rsd2_protein && is_rsd_protein)) continue;
-//			
-//			if (pose.residue(rsd2).is_RNA()) {
-//				rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
-//			} else {
-//				rsd2_centroid = pose.residue(rsd2).actcoord();
-//			}
-//			core::Real distance = ( rsd_centroid - rsd2_centroid ).length();
-//			if ( distance < CUTOFF ) {
-//				++nbrs;
-//			}
-//		}
-//		// Write out the number of neighbors for this residue
-//		std::cout << rsd << " has " << nbrs << " neighbors" << std::endl;
-//	}
-//
-//	// Figure out if it's an interface or non-interface residue
-//
-//	core::Real const INTERFACE_CUTOFF( 10.0 );
-//
-//	for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
-//		core::Size nbrs = 0;
-//		// Get the rsd_centroid
-//		// use the rna base centroid for RNA
-//		core::Vector rsd_centroid;
-//		bool const is_rsd_protein( pose.residue(rsd).is_protein() );
-//		if (pose.residue(rsd).is_RNA()) {
-//			rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
-//		} else {
-//			rsd_centroid = pose.residue(rsd).actcoord();
-//		}
-//		for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
-//			if ( rsd == rsd2 ) continue;
-//			core::Vector rsd2_centroid;
-//			bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
-//			// Only look at RNA/protein and protein/RNA distances here
-//			if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) continue;
-//			
-//			if (pose.residue(rsd2).is_RNA()) {
-//				rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
-//			} else {
-//				rsd2_centroid = pose.residue(rsd2).actcoord();
-//			}
-//			core::Real distance = ( rsd_centroid - rsd2_centroid ).length();
-//			if ( distance < INTERFACE_CUTOFF ) {
-//				++nbrs;
-//			}
-//		}
-//		// Write out the number of neighbors for this residue
-//		if ( nbrs > 0 ) {
-//			std::cout << rsd << " INTERFACE " << std::endl;
-//		} else {
-//			std::cout << rsd << " NON-INTERFACE " << std::endl;
-//		}
-//	}
+	// core::Real const CUTOFF( 10.0 );
+	//
+	// for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
+	//  core::Size nbrs = 0;
+	//  // Get the rsd_centroid
+	//  // use the rna base centroid for RNA
+	//  core::Vector rsd_centroid;
+	//  bool const is_rsd_protein( pose.residue(rsd).is_protein() );
+	//  if (pose.residue(rsd).is_RNA()) {
+	//   rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
+	//  } else {
+	//   rsd_centroid = pose.residue(rsd).actcoord();
+	//  }
+	//  for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
+	//   if ( rsd == rsd2 ) continue;
+	//   core::Vector rsd2_centroid;
+	//   bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
+	//   // Only look at RNA/RNA and protein/protein distances here
+	//   if ((is_rsd2_protein && !is_rsd_protein) || (!is_rsd2_protein && is_rsd_protein)) continue;
+	//
+	//   if (pose.residue(rsd2).is_RNA()) {
+	//    rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
+	//   } else {
+	//    rsd2_centroid = pose.residue(rsd2).actcoord();
+	//   }
+	//   core::Real distance = ( rsd_centroid - rsd2_centroid ).length();
+	//   if ( distance < CUTOFF ) {
+	//    ++nbrs;
+	//   }
+	//  }
+	//  // Write out the number of neighbors for this residue
+	//  std::cout << rsd << " has " << nbrs << " neighbors" << std::endl;
+	// }
+	//
+	// // Figure out if it's an interface or non-interface residue
+	//
+	// core::Real const INTERFACE_CUTOFF( 10.0 );
+	//
+	// for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
+	//  core::Size nbrs = 0;
+	//  // Get the rsd_centroid
+	//  // use the rna base centroid for RNA
+	//  core::Vector rsd_centroid;
+	//  bool const is_rsd_protein( pose.residue(rsd).is_protein() );
+	//  if (pose.residue(rsd).is_RNA()) {
+	//   rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
+	//  } else {
+	//   rsd_centroid = pose.residue(rsd).actcoord();
+	//  }
+	//  for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
+	//   if ( rsd == rsd2 ) continue;
+	//   core::Vector rsd2_centroid;
+	//   bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
+	//   // Only look at RNA/protein and protein/RNA distances here
+	//   if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) continue;
+	//
+	//   if (pose.residue(rsd2).is_RNA()) {
+	//    rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
+	//   } else {
+	//    rsd2_centroid = pose.residue(rsd2).actcoord();
+	//   }
+	//   core::Real distance = ( rsd_centroid - rsd2_centroid ).length();
+	//   if ( distance < INTERFACE_CUTOFF ) {
+	//    ++nbrs;
+	//   }
+	//  }
+	//  // Write out the number of neighbors for this residue
+	//  if ( nbrs > 0 ) {
+	//   std::cout << rsd << " INTERFACE " << std::endl;
+	//  } else {
+	//   std::cout << rsd << " NON-INTERFACE " << std::endl;
+	//  }
+	// }
 
 	// Write out 2 files, one that lists every residue in every structure and
 	// lists the number of neighbors and whether it's interface or non-interface
 	// the second file lists every heavy atom in every structure and the distance
 	// to every other atom
 
-	if ( basic::options::option[ get_vdw ]()) {
+	if ( basic::options::option[ get_vdw ]() ) {
 		atom_vdw_file.close();
 	}
 

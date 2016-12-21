@@ -51,11 +51,11 @@ class ConvertVirtualToRealMover : public protocols::moves::Mover {
 public:
 
 	ConvertVirtualToRealMover();
-	
+
 	/// @brief Constructor with residue selector.  If you need a particular set of residues,
 	///  use the ReturnSubsetResidueSelector.
 	ConvertVirtualToRealMover( core::select::residue_selector::ResidueSelectorCOP selector );
-	
+
 	// copy constructor (not needed unless you need deep copies)
 	//ConvertVirtualToRealMover( ConvertVirtualToRealMover const & src );
 
@@ -71,7 +71,7 @@ public:
 	///  use the ReturnSubsetResidueSelector.
 	void
 	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
-	
+
 	// mover virtual API
 	virtual void
 	apply( core::pose::Pose & pose );
@@ -104,10 +104,10 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	
+
 private:
-    /// @brief The ResidueSelector to use.
-    core::select::residue_selector::ResidueSelectorCOP selector_;
+	/// @brief The ResidueSelector to use.
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 };// VirtualToFa class
 

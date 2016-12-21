@@ -319,28 +319,28 @@ void DetectProteinLigandInterface::provide_xml_schema( utility::tag::XMLSchemaDe
 
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "repack_only", xsct_rosetta_bool, "XRW TO DO", "false" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "cut1", xsct_real,
-			"Design all residues with Calphas within this distance to the ligand", "6.0" ) );
+		"Design all residues with Calphas within this distance to the ligand", "6.0" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "cut2", xsct_real,
-			"Design all residues with Calpha-Cbeta vectors pointing toward the ligand, and with Calphas within this distance to the ligand", "8.0" ) );
+		"Design all residues with Calpha-Cbeta vectors pointing toward the ligand, and with Calphas within this distance to the ligand", "8.0" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "cut3", xsct_real,
-			"Repack all residues with Calphas within this distance to the ligand", "10.0" ) );
+		"Repack all residues with Calphas within this distance to the ligand", "10.0" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "cut4", xsct_real,
-			"Repack all residues with Calpha-Cbeta vectors pointing toward the ligand, and with Calphas within this distance to the ligand", "12.0" ) );
+		"Repack all residues with Calpha-Cbeta vectors pointing toward the ligand, and with Calphas within this distance to the ligand", "12.0" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "arg_sweep_cutoff", xsct_real, "XRW TO DO", "3.7" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "Enable design of residues?", "true" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "resfile", xs_string,
-			"Use behavior specified in resfile, autodetecting only those residues with property AUTO", "" ) );
+		"Use behavior specified in resfile, autodetecting only those residues with property AUTO", "" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "design_to_cys", xsct_rosetta_bool,
-			"Permit changing non-cysteine residues to cysteine?", "false" ) );
+		"Permit changing non-cysteine residues to cysteine?", "false" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "segment_interface", xsct_rosetta_bool, "XRW TO DO", "true" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "catres_interface", xsct_rosetta_bool,
-			"Consider catalytic (enzdes constrained) residues as part of the interface", "true" ) );
+		"Consider catalytic (enzdes constrained) residues as part of the interface", "true" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "arg_sweep_interface", xsct_rosetta_bool,
-			"Use arginine-reachability to interface as the criterion for defining designable positions instead of distance", "true" ) );
+		"Use arginine-reachability to interface as the criterion for defining designable positions instead of distance", "true" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "catres_only_interface", xsct_rosetta_bool,
-			"Consider only neighbors of catalytic residues (not ligand) for defining interface", "true" ) );
+		"Consider only neighbors of catalytic residues (not ligand) for defining interface", "true" ) );
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "target_cstids", xs_string,
-			"Comma-separated list of particular constrained residues to be considered as exclusive targets for interface detection (e.g. 1B,2B,3B)", "" ) );
+		"Comma-separated list of particular constrained residues to be considered as exclusive targets for interface detection (e.g. 1B,2B,3B)", "" ) );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

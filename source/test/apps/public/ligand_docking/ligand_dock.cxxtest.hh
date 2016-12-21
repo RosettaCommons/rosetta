@@ -57,8 +57,8 @@ public:
 			+" -docking:ligand:minimize_ligand"
 			+" -docking:ligand:harmonic_torsions 10"
 			+" -extra_res_fa apps/public/ligand_docking/ZNx.params"
-				+" apps/public/ligand_docking/7cpa.params"
-				+" apps/public/ligand_docking/1aq1.params"
+			+" apps/public/ligand_docking/7cpa.params"
+			+" apps/public/ligand_docking/1aq1.params"
 		);
 		/*
 		// Residue definitions can't be supplied on the command line b/c

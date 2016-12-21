@@ -74,17 +74,17 @@ public:
 
 		/*
 		ResidueTypeSet & restype_set(
-			ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ));
+		ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ));
 		if ( ! restype_set.has_name( "CARBARYL_LG1" ) ) {
-			utility::vector1< std::string > carbaryl_list;
-			carbaryl_list.push_back( "protocols/match/carbaryl_LG1.params" );
-			restype_set.read_files_for_custom_residue_types(carbaryl_list);
+		utility::vector1< std::string > carbaryl_list;
+		carbaryl_list.push_back( "protocols/match/carbaryl_LG1.params" );
+		restype_set.read_files_for_custom_residue_types(carbaryl_list);
 		}
 
 		if ( ! restype_set.has_name( "MBH_LG1" ) ) {
-			utility::vector1< std::string > carbaryl_list;
-			carbaryl_list.push_back( "protocols/match/MBH_LG.params" );
-			restype_set.read_files_for_custom_residue_types(carbaryl_list);
+		utility::vector1< std::string > carbaryl_list;
+		carbaryl_list.push_back( "protocols/match/MBH_LG.params" );
+		restype_set.read_files_for_custom_residue_types(carbaryl_list);
 		}
 		*/
 

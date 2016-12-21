@@ -182,7 +182,7 @@ GatherPosesMover::get_distance_measure(
 			return scoring::CA_rmsd_symmetric( pose1, pose2 );
 		}
 		return scoring::CA_rmsd( pose1, pose2, residues );
-	} 
+	}
 	if ( option[ OptionKeys::cluster::skip_align ].user() && option[ OptionKeys::cluster::rna_P ]() ) {
 
 		// RNA backbone atoms:
@@ -194,8 +194,8 @@ GatherPosesMover::get_distance_measure(
 		for ( core::Size i = 1; i<= pose1.total_residue(); ++i ) {
 			for ( core::Size j = 1; j<= RNA_atoms.size(); ++j ) {
 				std::string name = RNA_atoms[ j ];
-				if (!pose1.residue(i).has( name )) continue;
-				if (!pose2.residue(i).has( name )) continue;
+				if ( !pose1.residue(i).has( name ) ) continue;
+				if ( !pose2.residue(i).has( name ) ) continue;
 				id::AtomID const id1( pose1.residue(i ).atom_index(name), i);
 				id::AtomID const id2( pose2.residue( i).atom_index(name), i );
 				atom_map_rms[ id1 ] = id2;

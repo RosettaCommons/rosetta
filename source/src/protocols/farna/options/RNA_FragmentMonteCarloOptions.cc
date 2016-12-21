@@ -164,7 +164,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_convert_protein_centroid( option[ rna::farna::convert_protein_CEN ]() ); // default true
 
 	// default true, but of course only happens if structure contains both rna and protein
-	set_rna_protein_docking( option[ rna::farna::rna_protein_docking ]() ); 
+	set_rna_protein_docking( option[ rna::farna::rna_protein_docking ]() );
 	set_rna_protein_docking_freq( option[ rna::farna::rna_protein_docking_freq ]() ); // default 10
 
 	set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );

@@ -68,13 +68,13 @@ ConvertVirtualToRealMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const &)
 {
-   if ( tag->hasOption( "residue_selector" ) ) {
-        // set the selector_ private variable
-        selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
-        if ( !selector_ ) {
-            throw utility::excn::EXCN_RosettaScriptsOption( "ResidueSelector passed to VirtualToFa mover could not be found." );
-        }
-    }
+	if ( tag->hasOption( "residue_selector" ) ) {
+		// set the selector_ private variable
+		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
+		if ( !selector_ ) {
+			throw utility::excn::EXCN_RosettaScriptsOption( "ResidueSelector passed to VirtualToFa mover could not be found." );
+		}
+	}
 }
 
 void
@@ -83,11 +83,11 @@ ConvertVirtualToRealMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	AttributeList attributes;
 	protocols::rosetta_scripts::attributes_for_parse_residue_selector(attributes);
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
-	
-	"Mover for switching from VIRTUAL residues to REAL residues."
-	" A VIRTUAL residue is one that is not scored or output.",
-	
-	attributes );
+
+		"Mover for switching from VIRTUAL residues to REAL residues."
+		" A VIRTUAL residue is one that is not scored or output.",
+
+		attributes );
 }
 
 protocols::moves::MoverOP
@@ -132,19 +132,19 @@ ConvertVirtualToRealMover::apply( core::pose::Pose & pose)
 {
 
 	/// Get a ResidueSubset (list of bools) from ResidueSelector
-    core::select::residue_selector::ResidueSubset subset;
-    if ( selector_ ) {
+	core::select::residue_selector::ResidueSubset subset;
+	if ( selector_ ) {
 		subset = selector_->apply( pose );
-    } else {
-        subset.resize( pose.total_residue(), true );
+	} else {
+		subset.resize( pose.total_residue(), true );
 		TR << "No residues selected. Switch all residues from virtual to full atom." << std::endl;
-    }
+	}
 
 	/// Go through the subset list and switch to a full atom residue type if subset[i]=1
-    for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-        if ( !subset[i] ) continue; //Skip residues masked by the ResidueSelector.
-        	pose.virtual_to_real( i );
-    }
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( !subset[i] ) continue; //Skip residues masked by the ResidueSelector.
+		pose.virtual_to_real( i );
+	}
 
 }
 

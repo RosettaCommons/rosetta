@@ -28,27 +28,27 @@ class FragmentLibrary : public utility::pointer::ReferenceCount  {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FragmentLibrary();
-	
+
 	core::Real get_fragment_torsion(
 		core::Size const num_torsion,
 		Size const which_frag,
 		core::Size const offset );
-	
+
 	TorsionSet const & get_fragment_torsion_set( core::Size const which_frag ) const;
-	
+
 	void  add_torsion( TorsionSet const & torsion_set );
-	
+
 	void  add_torsion(
 		FullAtomRNA_Fragments const & vall,
 		core::Size const position,
 		core::Size const size
 	);
-	
+
 	core::Size get_align_depth() const;
-	
+
 private:
 	std::vector< TorsionSet > align_torsions_;
-	
+
 };
 
 

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   
-/// @brief  
+/// @file
+/// @brief
 /// @author watkins
 
 #ifndef INCLUDED_protocols_farna_RNA_FragmentHomologyExclusion_FWD_HH

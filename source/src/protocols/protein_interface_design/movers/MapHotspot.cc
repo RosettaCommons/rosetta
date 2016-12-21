@@ -214,9 +214,9 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 		using namespace core::chemical;
 		using namespace core::scoring;
 		ResidueType const & restype( *core::pose::get_restype_for_pose(
-				start_pose,
-				name_from_aa( aa_from_oneletter_code( residue_type1 ) ),
-				start_pose.residue_type( hotspot_resnum ).mode()) );
+			start_pose,
+			name_from_aa( aa_from_oneletter_code( residue_type1 ) ),
+			start_pose.residue_type( hotspot_resnum ).mode()) );
 
 		copy_hotspot_to_pose( start_pose, curr_pose, hotspot_resnum, restype, jump_number );
 		core::pack::rotamer_set::RotamerSetCOP rotset( create_rotamer_set( curr_pose, hotspot_resnum, explosion_[ jump_number ]) );

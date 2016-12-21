@@ -1504,24 +1504,24 @@ public:
 	///  VIRTUAL residues are the same except not SCORED or DUMPED.
 	///
 	/// example(s):
-	/// 	pose.real_to_virtual(3)
+	///  pose.real_to_virtual(3)
 	/// See also:
-	/// 	Pose
-	///		ResidueType
+	///  Pose
+	///  ResidueType
 	void
 	real_to_virtual( core::Size seqpos );
-	
+
 
 	/// @brief Switch residues from VIRTUAL to a REAL residue
 	///
 	/// example(s):
-	/// 	pose.virtual_to_real(3)
+	///  pose.virtual_to_real(3)
 	/// See also:
-	/// 	Pose
-	///		ResidueType
+	///  Pose
+	///  ResidueType
 	void
 	virtual_to_real( core::Size seqpos );
-	
+
 
 	/// @brief Export pose data to a file, <file_name>, determining which type of file format to write based on the file extension
 	///

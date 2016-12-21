@@ -86,41 +86,41 @@ public:
 
 
 	//void dont_test_CloseContactResidueSelector_parse_my_tag_str() {
-	//	std::string tag_string = "<CloseContact name=neighbor_rs resnums=2,3,5 distance=5.2/>";
-	//	std::stringstream ss( tag_string );
-	//	utility::tag::TagOP tag( new utility::tag::Tag() );
-	//	tag->read( ss );
-	//	basic::datacache::DataMap dm;
+	// std::string tag_string = "<CloseContact name=neighbor_rs resnums=2,3,5 distance=5.2/>";
+	// std::stringstream ss( tag_string );
+	// utility::tag::TagOP tag( new utility::tag::Tag() );
+	// tag->read( ss );
+	// basic::datacache::DataMap dm;
 	//
-	//	ResidueSelectorOP neighbor_rs( new CloseContactResidueSelector );
-	//	neighbor_rs->parse_my_tag( tag, dm );
+	// ResidueSelectorOP neighbor_rs( new CloseContactResidueSelector );
+	// neighbor_rs->parse_my_tag( tag, dm );
 	//
-	//	ResidueSubset subset = neighbor_rs->apply( trpcage );
+	// ResidueSubset subset = neighbor_rs->apply( trpcage );
 	//
-	//	utility::vector1< core::Size > testFocus(trpcage.size(), false);
-	//	testFocus[2] = true;
-	//	testFocus[3] = true;
-	//	testFocus[5] = true;
+	// utility::vector1< core::Size > testFocus(trpcage.size(), false);
+	// testFocus[2] = true;
+	// testFocus[3] = true;
+	// testFocus[5] = true;
 	//
-	//	TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );
+	// TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );
 	//
 	//}
 	//
 	//// make sure we fail if neither selector nor focus string are provided
 	//void dont_test_NeighbohoodResidueSelector_fail_no_focus() {
-	//	std::string tag_string = "<CloseContact name=neighbor_rs distance=5.2/>";
-	//	std::stringstream ss( tag_string );
-	//	utility::tag::TagOP tag( new utility::tag::Tag() );
-	//	tag->read( ss );
-	//	basic::datacache::DataMap dm;
+	// std::string tag_string = "<CloseContact name=neighbor_rs distance=5.2/>";
+	// std::stringstream ss( tag_string );
+	// utility::tag::TagOP tag( new utility::tag::Tag() );
+	// tag->read( ss );
+	// basic::datacache::DataMap dm;
 	//
-	//	ResidueSelectorOP neighbor_rs( new CloseContactResidueSelector );
-	//	try {
-	//		neighbor_rs->parse_my_tag( tag, dm );
-	//		TS_ASSERT( false ); //parsing should fail!
-	//	} catch ( utility::excn::EXCN_Msg_Exception e ) {
-	//		TS_ASSERT(true == true); //We should always get here.
-	//	}
+	// ResidueSelectorOP neighbor_rs( new CloseContactResidueSelector );
+	// try {
+	//  neighbor_rs->parse_my_tag( tag, dm );
+	//  TS_ASSERT( false ); //parsing should fail!
+	// } catch ( utility::excn::EXCN_Msg_Exception e ) {
+	//  TS_ASSERT(true == true); //We should always get here.
+	// }
 	//}
 	//
 	//
@@ -128,36 +128,36 @@ public:
 	//// determines which source of focus residues is used
 	//void dont_test_CloseContactResidueSelector_use_last_provided_source_of_focus() {
 	//
-	//	utility::vector1< core::Size > focus_set(trpcage.size(), false);
-	//	focus_set[2] = true;
-	//	focus_set[3] = true;
-	//	CloseContactResidueSelectorOP neighbor_rs( new CloseContactResidueSelector(focus_set, 5.0) );
-	//	ResidueSelectorOP odd_rs( new OddResidueSelector );
+	// utility::vector1< core::Size > focus_set(trpcage.size(), false);
+	// focus_set[2] = true;
+	// focus_set[3] = true;
+	// CloseContactResidueSelectorOP neighbor_rs( new CloseContactResidueSelector(focus_set, 5.0) );
+	// ResidueSelectorOP odd_rs( new OddResidueSelector );
 	//
-	//	ResidueSubset subset( trpcage.size(), false );
-	//	TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+	// ResidueSubset subset( trpcage.size(), false );
+	// TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 	//
-	//	utility::vector1< core::Size > testFocus_odd(trpcage.size(), false);
-	//	for ( core::Size ii = 1; ii <= trpcage.size(); ii += 2 ) {
-	//		testFocus_odd[ ii ] = true;
-	//	}
+	// utility::vector1< core::Size > testFocus_odd(trpcage.size(), false);
+	// for ( core::Size ii = 1; ii <= trpcage.size(); ii += 2 ) {
+	//  testFocus_odd[ ii ] = true;
+	// }
 	//
-	//	try {
-	//		subset = neighbor_rs->apply( trpcage );
-	//		TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
+	// try {
+	//  subset = neighbor_rs->apply( trpcage );
+	//  TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
 	//
-	//		neighbor_rs->set_focus_selector( odd_rs );
-	//		subset = neighbor_rs->apply( trpcage );
-	//		TS_ASSERT( check_calculation( trpcage, subset, testFocus_odd, 5.0 ) );
+	//  neighbor_rs->set_focus_selector( odd_rs );
+	//  subset = neighbor_rs->apply( trpcage );
+	//  TS_ASSERT( check_calculation( trpcage, subset, testFocus_odd, 5.0 ) );
 	//
-	//		neighbor_rs->set_focus( focus_set );
-	//		subset = neighbor_rs->apply( trpcage );
-	//		TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
+	//  neighbor_rs->set_focus( focus_set );
+	//  subset = neighbor_rs->apply( trpcage );
+	//  TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
 	//
-	//	} catch ( utility::excn::EXCN_Msg_Exception e ) {
-	//		std::cerr << "Exception! " << e.msg();
-	//		TS_ASSERT( false );
-	//	}
+	// } catch ( utility::excn::EXCN_Msg_Exception e ) {
+	//  std::cerr << "Exception! " << e.msg();
+	//  TS_ASSERT( false );
+	// }
 	//}
 
 	bool

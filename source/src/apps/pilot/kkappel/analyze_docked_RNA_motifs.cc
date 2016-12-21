@@ -197,7 +197,7 @@ void get_RNA_binding_residues( core::pose::Pose const & pose, std::string const 
 void
 count_contacts()
 {
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
@@ -246,48 +246,48 @@ count_contacts()
 			get_contacts( pose, tag );
 		}
 
-//		// Loop through the RNA binding residues
-//		// count how many of them are in contact with RNA
-//
-//		// contact defined as: at least one RNA atom within 3.5A of one of the protein atoms
-//
-//		utility::vector1< core::Size > RNA_binding_res_in_contact;
-//		bool protein_res_contacted;
-//
-//		// I'm sure there's a smarter way to do this
-//		// for each RNA binding residue
-//		for ( core::Size i = 1; i <= option[ RNA_binding_res ]().size(); ++i ) {
-//			protein_res_contacted = false;
-//			core::Size prot_res = option[ RNA_binding_res ]()[i];
-//			// loop through all the protein atoms in this residue
-//			for ( core::Size prot_atom = 1; prot_atom <= pose.residue( prot_res ).natoms(); ++prot_atom ) {
-//				Vector protein_xyz( pose.residue( prot_res ).xyz( prot_atom ));
-//				// loop through all the RNA residues
-//				for ( core::Size RNA_res = 1; RNA_res <= pose.total_residue(); ++RNA_res ) {
-//					if ( !pose.residue( RNA_res ).is_RNA() ) continue;
-//					// loop through all the atoms in the RNA residue
-//					for ( core::Size RNA_atom = 1; RNA_atom <= pose.residue( RNA_res ).natoms(); ++RNA_atom ) {
-//
-//						Vector RNA_xyz( pose.residue( RNA_res ).xyz( RNA_atom ));
-//						// if the distance is greater than 20A, get out of this for loop, nothing is ever
-//						// going to contact the protein
-//						Vector r_vector = protein_xyz - RNA_xyz;
-//						core::Real distance( r_vector.length() );
-//						if ( distance > 20.0 ) break;
-//						if ( distance <= 3.5 ) {
-//							RNA_binding_res_in_contact.push_back( i );
-//							protein_res_contacted = true;
-//							break; // only need 1 for it to count as in contact
-//						}
-//					}
-//					if ( protein_res_contacted ) break;
-//				}
-//				if ( protein_res_contacted ) break;
-//			}
-//		}
-//
-//		core::Real num_contacts = RNA_binding_res_in_contact.size();
-//		TR << TR.Blue << tag << " contacts " << num_contacts << "/" << option[ RNA_binding_res ]().size() << " predicted RNA binding residues" << std::endl;
+		//  // Loop through the RNA binding residues
+		//  // count how many of them are in contact with RNA
+		//
+		//  // contact defined as: at least one RNA atom within 3.5A of one of the protein atoms
+		//
+		//  utility::vector1< core::Size > RNA_binding_res_in_contact;
+		//  bool protein_res_contacted;
+		//
+		//  // I'm sure there's a smarter way to do this
+		//  // for each RNA binding residue
+		//  for ( core::Size i = 1; i <= option[ RNA_binding_res ]().size(); ++i ) {
+		//   protein_res_contacted = false;
+		//   core::Size prot_res = option[ RNA_binding_res ]()[i];
+		//   // loop through all the protein atoms in this residue
+		//   for ( core::Size prot_atom = 1; prot_atom <= pose.residue( prot_res ).natoms(); ++prot_atom ) {
+		//    Vector protein_xyz( pose.residue( prot_res ).xyz( prot_atom ));
+		//    // loop through all the RNA residues
+		//    for ( core::Size RNA_res = 1; RNA_res <= pose.total_residue(); ++RNA_res ) {
+		//     if ( !pose.residue( RNA_res ).is_RNA() ) continue;
+		//     // loop through all the atoms in the RNA residue
+		//     for ( core::Size RNA_atom = 1; RNA_atom <= pose.residue( RNA_res ).natoms(); ++RNA_atom ) {
+		//
+		//      Vector RNA_xyz( pose.residue( RNA_res ).xyz( RNA_atom ));
+		//      // if the distance is greater than 20A, get out of this for loop, nothing is ever
+		//      // going to contact the protein
+		//      Vector r_vector = protein_xyz - RNA_xyz;
+		//      core::Real distance( r_vector.length() );
+		//      if ( distance > 20.0 ) break;
+		//      if ( distance <= 3.5 ) {
+		//       RNA_binding_res_in_contact.push_back( i );
+		//       protein_res_contacted = true;
+		//       break; // only need 1 for it to count as in contact
+		//      }
+		//     }
+		//     if ( protein_res_contacted ) break;
+		//    }
+		//    if ( protein_res_contacted ) break;
+		//   }
+		//  }
+		//
+		//  core::Real num_contacts = RNA_binding_res_in_contact.size();
+		//  TR << TR.Blue << tag << " contacts " << num_contacts << "/" << option[ RNA_binding_res ]().size() << " predicted RNA binding residues" << std::endl;
 
 	}
 

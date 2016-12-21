@@ -57,9 +57,9 @@ public:
 
 	/// @brief Constructor.
 	ReturnResidueSubsetSelector();
-	
+
 	ReturnResidueSubsetSelector( ResidueSubset const & subset );
-	
+
 	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 	//ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & src);
 
@@ -71,13 +71,13 @@ public:
 	/// to the copy.  All ResidueSelectors must implement this.
 
 	ResidueSelectorOP clone() const override;
-	
+
 public:
-	
+
 	///@brief Set the ResidueSubset, which will be returned at apply-time.
 	void
 	set_residue_subset(ResidueSubset const & subset );
-	
+
 	/// @brief "Apply" function.
 	/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 	/// indicating whether each residue is selected ("true") or not ("false").
@@ -106,8 +106,8 @@ public:
 
 private:
 	ResidueSubset subset_;
-	
-	
+
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

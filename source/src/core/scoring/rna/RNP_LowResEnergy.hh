@@ -88,17 +88,17 @@ public:
 		EnergyMap &
 	) const {}
 
-//	virtual
-//	void
-//	eval_atom_derivative(
-//		id::AtomID const & atom_id,
-//		pose::Pose const & pose,
-//		kinematics::DomainMap const & domain_map,
-//		ScoreFunction const & scorefxn,
-//		EnergyMap const & weights,
-//		Vector & F1,
-//		Vector & F2
-//	) const {};
+	// virtual
+	// void
+	// eval_atom_derivative(
+	//  id::AtomID const & atom_id,
+	//  pose::Pose const & pose,
+	//  kinematics::DomainMap const & domain_map,
+	//  ScoreFunction const & scorefxn,
+	//  EnergyMap const & weights,
+	//  Vector & F1,
+	//  Vector & F2
+	// ) const {};
 
 	virtual
 	bool
@@ -107,9 +107,9 @@ public:
 	//virtual
 	//void
 	//finalize_total_energy(
-	//	pose::Pose & pose,
-	//	ScoreFunction const &,
-	//	EnergyMap &// totals
+	// pose::Pose & pose,
+	// ScoreFunction const &,
+	// EnergyMap &// totals
 	//) const;
 
 	virtual

@@ -3492,7 +3492,7 @@ ResidueType::perform_checks()
 	}
 	if ( (na_analogue_ != core::chemical::aa_unp) && ( ! properties_->has_property( RNA )  || properties_->has_property( CANONICAL_NUCLEIC ) ) ) {
 		msg << "Error!  A residue type " << name() << " specifies a standard nucleic acid to use as a fragment analogue"
-		" but it is not itself an RNA residue OR it is a canonical RNA residue" << std::endl;
+			" but it is not itself an RNA residue OR it is a canonical RNA residue" << std::endl;
 		checkspass=false;
 	}
 
@@ -4561,15 +4561,15 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 /// @author Sebastian Rämisch <raemisch@scripps.edu>
 void
 ResidueType::real_to_virtual() {
-    std::string VIRT = "VIRT";
-    for(Size i=1; i<=this->natoms(); ++i){
-        this->set_atom_type( (this->atom_name(i) ), VIRT);
-        this->atom(i).charge(0.0);
-        this->atom(i).is_virtual( true );
+	std::string VIRT = "VIRT";
+	for ( Size i=1; i<=this->natoms(); ++i ) {
+		this->set_atom_type( (this->atom_name(i) ), VIRT);
+		this->atom(i).charge(0.0);
+		this->atom(i).is_virtual( true );
 	}
 	this->add_property("VIRTUAL_RESIDUE");
 	this->finalize();
-	
+
 }
 
 

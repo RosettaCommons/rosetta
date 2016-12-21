@@ -202,7 +202,7 @@ public:
 
 	bool checkpoint() const { return checkpoint_; }
 	void set_checkpoint( bool const setting ){ checkpoint_ = setting; }
-		
+
 	Size checkpointing_frequency() const { return checkpointing_frequency_; }
 	void set_checkpointing_frequency( Size const setting ) { checkpointing_frequency_ = setting; }
 

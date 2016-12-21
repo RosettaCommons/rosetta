@@ -386,7 +386,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			tr.Debug << "SCORE_FUNCTION: " << score_function_name << " (min: " <<
 				pair_func.func_->min_dis() << " max: " << pair_func.func_->max_dis() << ")" << std::endl;
 
-			if( residue_type_set.size() == 0 ) {
+			if ( residue_type_set.size() == 0 ) {
 				utility_exit_with_message( "You must specify RESIDUE_TYPE_SET before SCORE_FUNCTION in fa_custom_pair_distance_file" );
 			}
 

@@ -486,7 +486,7 @@ detect_ld_chirality_from_polymer_residue(
 
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
 		return;
-	} 
+	}
 
 	// Explicitly exclude peptoids and PNAs.
 	if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {

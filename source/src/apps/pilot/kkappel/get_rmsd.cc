@@ -169,7 +169,7 @@ get_rmsd()
 
 		utility::vector1< core::Size > native_super_residues, super_residues;
 		if ( !option[ rmsd_nosuper ]() ) {
-			if ( option[ protein_align ]() ){
+			if ( option[ protein_align ]() ) {
 				for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
 					if ( pose.residue( i).is_protein() ) {
 						super_residues.push_back( i );
@@ -188,7 +188,7 @@ get_rmsd()
 
 		// if calculate rmsd over RNA:
 		utility::vector1< core::Size > native_rmsd_residues, rmsd_residues;
-		if ( option[ rna_rmsd ]() ){
+		if ( option[ rna_rmsd ]() ) {
 			for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
 				if ( pose.residue( i ).is_RNA() ) {
 					rmsd_residues.push_back( i );
@@ -242,8 +242,8 @@ get_rmsd()
 		for ( core::Size i = 1; i<= native_rmsd_residues.size(); ++i ) {
 			for ( core::Size j = 1; j<= RNA_backbone_atoms.size(); ++j ) {
 				std::string name = RNA_backbone_atoms[ j ];
-				if (!pose.residue(rmsd_residues[i]).has( name )) continue;
-				if (!native_pose->residue(native_rmsd_residues[i]).has( name )) continue;
+				if ( !pose.residue(rmsd_residues[i]).has( name ) ) continue;
+				if ( !native_pose->residue(native_rmsd_residues[i]).has( name ) ) continue;
 				id::AtomID const id1( pose.residue( rmsd_residues[ i ] ).atom_index(name), rmsd_residues[ i ]);
 				id::AtomID const id2( native_pose->residue( native_rmsd_residues[ i ]).atom_index(name), native_rmsd_residues[ i ] );
 				atom_map_rms[ id1 ] = id2;
@@ -256,22 +256,22 @@ get_rmsd()
 		rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose, atom_map_rms );
 		//rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose, atom_map_rms, rmsd_residues );
 
-//		if ( native_exists ) {
-//			Real rmsd;
-//			if ( option[ rmsd_nosuper ]() ) {
-//				if ( option[ rmsd_residues ].user() ) {
-//					rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose, option[ rmsd_residues ]() );
-//				} else {
-//					rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
-//				}
-//			} else {
-//				//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
-//				rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
-//				//Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
-//			}
-//			std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
-//
-//		}
+		//  if ( native_exists ) {
+		//   Real rmsd;
+		//   if ( option[ rmsd_nosuper ]() ) {
+		//    if ( option[ rmsd_residues ].user() ) {
+		//     rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose, option[ rmsd_residues ]() );
+		//    } else {
+		//     rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
+		//    }
+		//   } else {
+		//    //Real const rmsd      = all_atom_rmsd( *native_pose, pose );
+		//    rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+		//    //Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+		//   }
+		//   std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
+		//
+		//  }
 		std::cout << "Align rmsd: " << tag << " " << align_rmsd << std::endl;
 		std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
 
@@ -290,8 +290,8 @@ get_rmsd()
 
 		//// backbone atoms
 		//for ( Size i = 1; i <= native_pose->residue( 2 ).nheavyatoms(); ++i ) {
-		//	if (native_pose->residue( 2 ).atom_is_hydrogen( i )) continue;
-		//	std::cout << native_pose->residue(2).atom_name( i ) << " is backbone: " << native_pose->residue(2).atom_is_backbone(2) << std::endl;
+		// if (native_pose->residue( 2 ).atom_is_hydrogen( i )) continue;
+		// std::cout << native_pose->residue(2).atom_name( i ) << " is backbone: " << native_pose->residue(2).atom_is_backbone(2) << std::endl;
 		//}
 
 	}

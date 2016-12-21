@@ -50,7 +50,7 @@ ReturnResidueSubsetSelector::ReturnResidueSubsetSelector( ResidueSubset const & 
 	ResidueSelector(),
 	subset_(subset)
 {
-	
+
 }
 
 void
@@ -65,7 +65,7 @@ ReturnResidueSubsetSelector::~ReturnResidueSubsetSelector() {}
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 //ReturnResidueSubsetSelector::ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & src):
-//	ResidueSelector( src )
+// ResidueSelector( src )
 //{
 //}
 
@@ -102,8 +102,8 @@ void ReturnResidueSubsetSelector::provide_xml_schema( utility::tag::XMLSchemaDef
 	//using namespace utility::tag;
 	//AttributeList attributes;
 	//attributes
-	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "true" )
-	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "true" );
+	// + XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "true" )
+	// + XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "true" );
 	//xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 
 }
@@ -116,11 +116,11 @@ ReturnResidueSubsetSelector::ResidueSubset
 ReturnResidueSubsetSelector::apply(
 	core::pose::Pose const & pose//pose
 ) const {
-	
-	if (subset_.empty()){
+
+	if ( subset_.empty() ) {
 		utility_exit_with_message("A subset must be set for the ReturnResidueSubsetSelector!");
 	}
-	
+
 	debug_assert(subset_.size() == pose.size()); //Assert that we are returning a subset FOR THIS POSE //
 	return subset_;
 }

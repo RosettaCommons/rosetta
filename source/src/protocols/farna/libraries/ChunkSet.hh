@@ -59,7 +59,7 @@ public:
 	insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 		bool do_rosetta_library_domain_check = true ) const;
 
-	
+
 	Size
 	num_chunks() const{ return mini_pose_list_.size(); };
 

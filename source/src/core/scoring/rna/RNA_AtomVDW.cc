@@ -114,7 +114,7 @@ void
 RNA_AtomVDW::initialize_rnp_vdw_parameters() {
 
 	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
-	
+
 	utility::io::izstream stream;
 	std::string filename;
 	if ( use_actual_centroid ) {
@@ -135,14 +135,14 @@ RNA_AtomVDW::initialize_rnp_vdw_parameters() {
 	// RNA base   RNA atom   protein atom   distance
 
 	//if ( use_actual_centroid ) {
-	//	// this is a really stupid way of doing it...
-	//	// get the atom set so that we can get indices for the protein residues
-	//	chemical::AtomTypeSet const & atom_set
-	//		( *chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) );
+	// // this is a really stupid way of doing it...
+	// // get the atom set so that we can get indices for the protein residues
+	// chemical::AtomTypeSet const & atom_set
+	//  ( *chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) );
 	//} else {
-	//	// get the centroid atom set so that we can get indices for the protein residues
-	//	chemical::AtomTypeSet const & atom_set
-	//		( *chemical::ChemicalManager::get_instance()->atom_type_set( chemical::CENTROID ) );
+	// // get the centroid atom set so that we can get indices for the protein residues
+	// chemical::AtomTypeSet const & atom_set
+	//  ( *chemical::ChemicalManager::get_instance()->atom_type_set( chemical::CENTROID ) );
 	//}
 
 	//Size const num_protein_atom_types( atom_set.n_atomtypes() );
@@ -160,7 +160,7 @@ RNA_AtomVDW::initialize_rnp_vdw_parameters() {
 		lines.push_back( line );
 		std::istringstream l( line );
 		l >> which_residue1 >> atom_name1 >> atom_name2 >> input_bump_parameter;
-		
+
 		// index for the RNA atom for given base
 		Size const pos1 = get_position_in_vector( rna_vdw_atom_[which_residue1], atom_name1 );
 		// index for the protein atom
@@ -183,7 +183,7 @@ RNA_AtomVDW::initialize_rnp_vdw_parameters() {
 	//    }
 	//   }
 	//  }
-	
+
 
 
 }
@@ -204,7 +204,7 @@ RNA_AtomVDW::vdw_atom_list( chemical::ResidueType const & rt ) const
 	} else if ( rt.name1() == 't' ) {
 		which_nucleotide = 't';
 	}
-	
+
 	auto iter = rna_vdw_atom_.find( which_nucleotide );
 
 	if ( iter == rna_vdw_atom_.end() ) {
@@ -228,12 +228,12 @@ rna_residue_type_to_num( chemical::ResidueType const & rt ) {
 	if ( rt.name1() == 'u' ) return 4;
 	if ( rt.name1() == 't' ) return 4;
 	if ( rt.name1() == 'Z' ) return 5; // Mg(2+)
-	
+
 	if ( rt.na_analogue() == chemical::na_rad ) return 1;
 	if ( rt.na_analogue() == chemical::na_rcy ) return 2;
 	if ( rt.na_analogue() == chemical::na_rgu ) return 3;
 	if ( rt.na_analogue() == chemical::na_ura ) return 4;
-	
+
 	tr << "What is this? " << rt.name() << std::endl;
 	utility_exit_with_message( "Asked for rna_residue_name_to_num for unknown residue_name" );
 	return 0;
@@ -251,7 +251,7 @@ RNA_AtomVDW::bump_parameter( Size const atom1, Size const atom2,
 
 Real
 RNA_AtomVDW::bump_parameter_rnp( Size const atom_RNA, Size const atom_protein,
-		char const which_residue ) const
+	char const which_residue ) const
 {
 	return rnp_vdw_parameter_( atom_RNA, atom_protein,
 		rna_residue_name_to_num( which_residue ) );

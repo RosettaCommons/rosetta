@@ -133,22 +133,22 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 	// Figure out the interface residues
 	// and buried or not for protein residues
 	for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
-	        core::Size interface_nbrs = 0;
+		core::Size interface_nbrs = 0;
 		core::Size buried_nbrs = 0;
 
-	        // Get the rsd_centroid
-	        // use the rna base centroid for RNA
-	        Vector rsd_centroid;
-	        bool const is_rsd_protein( pose.residue(rsd).is_protein() );
+		// Get the rsd_centroid
+		// use the rna base centroid for RNA
+		Vector rsd_centroid;
+		bool const is_rsd_protein( pose.residue(rsd).is_protein() );
 		bool is_centroid = pose.residue_type(rsd).mode() == core::chemical::CENTROID_t;
 		if ( is_rsd_protein && !is_centroid && !use_actual_centroid ) {
 			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
 		}
-	        if (pose.residue(rsd).is_RNA()) {
-	                rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
-	        } else {
-	                if (!pose.residue(rsd).is_protein()) {
+		if ( pose.residue(rsd).is_RNA() ) {
+			rsd_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd), false /*verbos*/ );
+		} else {
+			if ( !pose.residue(rsd).is_protein() ) {
 				// the residue is not RNA or protein
 				// then say 0 interface and 0 buried
 				is_interface_residues.push_back( false );
@@ -157,56 +157,55 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 				continue;
 			}
 			if ( !use_actual_centroid ) {
-	                	rsd_centroid = pose.residue(rsd).xyz("CEN");
+				rsd_centroid = pose.residue(rsd).xyz("CEN");
 			} else {
 				rsd_centroid = pose.residue(rsd).actcoord();
 			}
-	        }
+		}
 
 		// Loop through the rest of the residues in the pose
 		// this is going to be really stupid if the pose is big though...
-	        for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
-	                if ( rsd == rsd2 ) continue;
-	                Vector rsd2_centroid;
-	                bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
-	                // Only look at RNA/protein and protein/RNA distances here
-	                //if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) continue;
+		for ( core::Size rsd2 = 1; rsd2 <= pose.total_residue(); ++rsd2 ) {
+			if ( rsd == rsd2 ) continue;
+			Vector rsd2_centroid;
+			bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
+			// Only look at RNA/protein and protein/RNA distances here
+			//if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) continue;
 			if ( pose.residue(rsd).is_RNA() && pose.residue(rsd2).is_RNA() ) {
 				// then this interaction doesn't count for "interface"
 				// would just count for buried, but we dont care about "buried" for RNA
 				continue;
 			}
 
-	                if (pose.residue(rsd2).is_RNA()) {
-	                        rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
-	                } else {
-	                        if (!pose.residue(rsd2).is_protein()) continue;
+			if ( pose.residue(rsd2).is_RNA() ) {
+				rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
+			} else {
+				if ( !pose.residue(rsd2).is_protein() ) continue;
 				if ( !use_actual_centroid ) {
-	                        	rsd2_centroid = pose.residue(rsd2).xyz("CEN");
+					rsd2_centroid = pose.residue(rsd2).xyz("CEN");
 				} else {
 					rsd2_centroid = pose.residue(rsd2).actcoord();
 				}
-	                        //rsd2_centroid = pose.residue(rsd2).actcoord();
-	                }
-	                core::Real distance = ( rsd_centroid - rsd2_centroid ).length();
-	                if ((is_rsd2_protein && !is_rsd_protein) || (!is_rsd2_protein && is_rsd_protein)) {
-	                	if ( distance < INTERFACE_CUTOFF ) {
-	                        	++interface_nbrs;
-	                	}
+				//rsd2_centroid = pose.residue(rsd2).actcoord();
 			}
-			else if ( is_rsd2_protein && is_rsd_protein ) {
-			//else if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) {
+			core::Real distance = ( rsd_centroid - rsd2_centroid ).length();
+			if ( (is_rsd2_protein && !is_rsd_protein) || (!is_rsd2_protein && is_rsd_protein) ) {
+				if ( distance < INTERFACE_CUTOFF ) {
+					++interface_nbrs;
+				}
+			} else if ( is_rsd2_protein && is_rsd_protein ) {
+				//else if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) {
 				if ( distance < NEIGHBOR_CUTOFF ) {
 					++buried_nbrs;
 				}
 			}
-	        }
-	        // Write out the number of neighbors for this residue
-	        if ( interface_nbrs > 0 ) {
+		}
+		// Write out the number of neighbors for this residue
+		if ( interface_nbrs > 0 ) {
 			is_interface_residues.push_back( true );
-	        } else {
+		} else {
 			is_interface_residues.push_back( false );
-	        }
+		}
 		// not buried if the residue is RNA
 		if ( buried_nbrs > 10 ) {
 			is_buried_residues.push_back( true );
@@ -294,25 +293,25 @@ RNP_LowResEnergy::residue_pair_energy(
 	}
 	emap[ rnp_base_pair ] += rnp_base_pair_score;
 
-//	// Get the stack score
-//	Real rnp_stack_xy_score( 0.0 );
-//	if ( std::abs(dist_z) > 3.0 && std::abs(dist_z) < 6.5 ) {
-//		potential_.evaluate_rnp_stack_xy_score( rsd1, rsd2, dist_x, dist_y, rnp_stack_xy_score );
-//	}
-//	emap[ rnp_stack_xy ] += rnp_stack_xy_score;
+	// // Get the stack score
+	// Real rnp_stack_xy_score( 0.0 );
+	// if ( std::abs(dist_z) > 3.0 && std::abs(dist_z) < 6.5 ) {
+	//  potential_.evaluate_rnp_stack_xy_score( rsd1, rsd2, dist_x, dist_y, rnp_stack_xy_score );
+	// }
+	// emap[ rnp_stack_xy ] += rnp_stack_xy_score;
 
 	// stack score (not xy)
 	bool calculate_rnp_stack = false;
 	// check protein residue type, stacking only occurs with certain restypes
 	if ( rsd1.is_protein() ) {
 		// check if this is TRP, TYR, PHE (perhaps expand this further...)
-		if ( rsd1.name1() == 'W' || rsd1.name1() == 'Y' || rsd1.name1() == 'F' || rsd1.name1() == 'V' || rsd1.name1() == 'L') {
-		//if ( rsd1.name1() == 'W' || rsd1.name1() == 'Y' || rsd1.name1() == 'F' ) {
+		if ( rsd1.name1() == 'W' || rsd1.name1() == 'Y' || rsd1.name1() == 'F' || rsd1.name1() == 'V' || rsd1.name1() == 'L' ) {
+			//if ( rsd1.name1() == 'W' || rsd1.name1() == 'Y' || rsd1.name1() == 'F' ) {
 			calculate_rnp_stack = true;
 		}
 	} else { // rsd2 is protein
 		//if ( rsd2.name1() == 'W' || rsd2.name1() == 'Y' || rsd2.name1() == 'F' ) {
-		if ( rsd2.name1() == 'W' || rsd2.name1() == 'Y' || rsd2.name1() == 'F' || rsd2.name1() == 'V' || rsd2.name1() == 'L') {
+		if ( rsd2.name1() == 'W' || rsd2.name1() == 'Y' || rsd2.name1() == 'F' || rsd2.name1() == 'V' || rsd2.name1() == 'L' ) {
 			calculate_rnp_stack = true;
 		}
 	}
@@ -348,36 +347,36 @@ RNP_LowResEnergy::residue_pair_energy(
 
 	emap[ rnp_aa_to_rna_backbone ] += backbone_score;
 
-//	// Get the pair score
-//	Real rnp_pair_score( 0.0 );
-//
-//	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-//	utility::vector1< bool > const & is_interface = rna_scoring_info.is_interface();
-//	utility::vector1< bool > const & is_buried = rna_scoring_info.is_buried();
-//
-//	bool const rsd1_is_interface = is_interface[ rsd1.seqpos() ];
-//	bool const rsd1_is_buried = is_buried[ rsd1.seqpos() ];
-//
-//	bool const rsd2_is_interface = is_interface[ rsd2.seqpos() ];
-//	bool const rsd2_is_buried = is_buried[ rsd2.seqpos() ];
-//
-//	//std::cout << "About to evaluate rnp pair score" << std::endl;
-//	potential_.evaluate_rnp_pair_score( rsd1, rsd2, rsd1_is_interface, rsd1_is_buried,
-//			rsd2_is_interface, rsd2_is_buried, dist_rna_protein.length(), rnp_pair_score );
-//	//std::cout << "Done evaluating rnp pair score" << std::endl;
-//
-//	emap[ rnp_pair ] += rnp_pair_score;
-//
-//	// TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
+	// // Get the pair score
+	// Real rnp_pair_score( 0.0 );
+	//
+	// rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	// utility::vector1< bool > const & is_interface = rna_scoring_info.is_interface();
+	// utility::vector1< bool > const & is_buried = rna_scoring_info.is_buried();
+	//
+	// bool const rsd1_is_interface = is_interface[ rsd1.seqpos() ];
+	// bool const rsd1_is_buried = is_buried[ rsd1.seqpos() ];
+	//
+	// bool const rsd2_is_interface = is_interface[ rsd2.seqpos() ];
+	// bool const rsd2_is_buried = is_buried[ rsd2.seqpos() ];
+	//
+	// //std::cout << "About to evaluate rnp pair score" << std::endl;
+	// potential_.evaluate_rnp_pair_score( rsd1, rsd2, rsd1_is_interface, rsd1_is_buried,
+	//   rsd2_is_interface, rsd2_is_buried, dist_rna_protein.length(), rnp_pair_score );
+	// //std::cout << "Done evaluating rnp pair score" << std::endl;
+	//
+	// emap[ rnp_pair ] += rnp_pair_score;
+	//
+	// // TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //void
 //RNP_LowResEnergy::finalize_total_energy(
-//	pose::Pose & pose,
-//	ScoreFunction const &,
-//	EnergyMap &
+// pose::Pose & pose,
+// ScoreFunction const &,
+// EnergyMap &
 //) const {
 //
 //}
@@ -399,21 +398,21 @@ RNP_LowResEnergy::version() const
 
 //etable::count_pair::CountPairFunctionCOP
 //RNP_LowResEnergy::get_intrares_countpair(
-//	conformation::Residue const &,
-//	pose::Pose const &,
-//	ScoreFunction const &
+// conformation::Residue const &,
+// pose::Pose const &,
+// ScoreFunction const &
 //) const
 //{
-//	utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
-//	return 0;
+// utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
+// return 0;
 //}
 //
 //etable::count_pair::CountPairFunctionCOP
 //RNP_LowResEnergy::get_count_pair_function(
-//	Size const res1,
-//	Size const res2,
-//	pose::Pose const & pose,
-//	ScoreFunction const &
+// Size const res1,
+// Size const res2,
+// pose::Pose const & pose,
+// ScoreFunction const &
 //) const
 //{
 //}
@@ -421,8 +420,8 @@ RNP_LowResEnergy::version() const
 //
 //etable::count_pair::CountPairFunctionCOP
 //RNP_LowResEnergy::get_count_pair_function(
-//	conformation::Residue const & rsd1,
-//	conformation::Residue const & rsd2
+// conformation::Residue const & rsd1,
+// conformation::Residue const & rsd2
 //) const
 //{
 //}

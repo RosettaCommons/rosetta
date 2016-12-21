@@ -42,13 +42,13 @@ namespace fragments {
 
 using namespace core;
 using namespace basic::options;
-	
+
 utility::vector1< std::pair< Size, std::string > >
 split_segments_longer_than_6mers(
 	utility::vector1< std::pair< Size, std::string > > const & secstruct_segments
 ) {
 	utility::vector1< std::pair< Size, std::string > > new_segments;
-	
+
 	for ( auto const & segment : secstruct_segments ) {
 		if ( segment.second.size() <= 6 ) new_segments.push_back( segment );
 		else {
@@ -60,13 +60,13 @@ split_segments_longer_than_6mers(
 			}
 		}
 	}
-	
+
 	return new_segments;
 }
-	
+
 void
 obtain_secstruct_segments(
-	utility::vector1< std::pair< Size, std::string > > & secstruct_segments, 
+	utility::vector1< std::pair< Size, std::string > > & secstruct_segments,
 	std::string const & secstruct
 ) {
 	// NOTE: X is defined as != H
@@ -77,7 +77,7 @@ obtain_secstruct_segments(
 		//TR << ii << " " << temp << std::endl;
 		if ( secstruct[ ii-1 ] == 'H' ) {
 			accumulate_next = false;
-			if ( pos != 0 )	secstruct_segments.emplace_back( pos, temp );
+			if ( pos != 0 ) secstruct_segments.emplace_back( pos, temp );
 			temp = "";
 			pos = 0;
 		}
@@ -90,17 +90,17 @@ obtain_secstruct_segments(
 		}
 	}
 }
-	
+
 std::string
 figure_out_secstruct( pose::Pose & pose ){
 	using namespace core::scoring;
 	using namespace ObjexxFCL;
-	
+
 	// Need some stuff to figure out which residues are base paired. First score.
 	ScoreFunctionOP scorefxn( new ScoreFunction );
 	scorefxn->set_weight( rna_base_pair, 1.0 );
 	(*scorefxn)( pose );
-	
+
 	std::string secstruct = "";
 	FArray1D < bool > edge_is_base_pairing( 3, false );
 	char secstruct1( 'X' );
@@ -109,11 +109,11 @@ figure_out_secstruct( pose::Pose & pose ){
 		protocols::farna::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
 		secstruct += secstruct1;
 	}
-	
+
 	//TR << "SECSTRUCT: " << secstruct << std::endl;
 	return secstruct;
 }
-	
+
 utility::vector1< core::Size > analyze_for_homology( std::string const & in_file, RNA_Fragments const & fragments ) {
 	using namespace core::pose;
 	using namespace core::pose::copydofs;
@@ -125,20 +125,20 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 	using namespace protocols::stepwise::setup;
 	using namespace protocols::toolbox;
 	using namespace utility::file;
-	
+
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	
+
 	PoseOP pose_op = get_pdb_and_cleanup( in_file, rsd_set );
 	Pose & pose_input = *pose_op;
-	
+
 	std::string const secstruct = figure_out_secstruct( pose_input );
-	
+
 	utility::vector1< std::pair< Size, std::string > > secstruct_segments; // position, secstruct
 	obtain_secstruct_segments( secstruct_segments, secstruct );
 	secstruct_segments = split_segments_longer_than_6mers( secstruct_segments );
-	
+
 	utility::vector1< Size > foo;
 	for ( auto const & elem : secstruct_segments ) {
 		// search for all fragments that might match sequence
@@ -148,25 +148,25 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 		Size const frag_length( secstruct.size());
 		std::string const sequence = pose_input.sequence().substr( position - 1, frag_length ); // uucg loop
 		Size type( MATCH_EXACT );
-		
+
 		// This seems curious. Of course, we could maybe pass `this`, and speed
 		// up our searches. Maybe.
 		FragmentLibrary const & library = *( fragments.get_fragment_library_pointer( sequence, secstruct, nullptr, utility::vector1< SYN_ANTI_RESTRICTION >(), type ) );
 		//TR << "Found library for " << sequence << " with number of matches: " << library.get_align_depth() << std::endl;
-		
+
 		// Now try all the fragments one-by-one in a "scratch pose"
 		// make the scratch pose.
 		Pose pose;
 		make_pose_from_sequence( pose, sequence, ResidueTypeSetCOP( rsd_set ), false );
 		cleanup( pose );
-		
+
 		// get ready to compute rmsd's.
 		Real rmsd( 0.0 );
 		std::map< Size, Size > res_map;
 		for ( Size i = 1; i <= frag_length; i++ ) res_map[ i ] = i + position - 1;
 		std::map< AtomID, AtomID > atom_id_map;
 		setup_atom_id_map_match_atom_names( atom_id_map, res_map, pose, pose_input );
-		
+
 		// Let's do the loop
 		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
 		for ( Size n = 1; n <= library.get_align_depth(); n++ ) {
@@ -177,7 +177,7 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 			if ( rmsd < option[ OptionKeys::rna::farna::fragment_homology_rmsd ]() ) {
 				// For e.g. a 4-mer overlap, this just excludes the first one.
 				//foo.push_back( torsion_set.get_index_in_vall() );
-				
+
 				for ( Size ii = 1; ii <= secstruct.size(); ++ii ) {
 					foo.push_back( torsion_set.get_index_in_vall() + ii - 1 );
 				}
@@ -188,13 +188,13 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 }
 
 RNA_FragmentHomologyExclusion::RNA_FragmentHomologyExclusion( RNA_Fragments const & all_rna_fragments ) {
-	
-	
+
+
 	// AMW: Insert any vall lines explicitly specified from the command line
- 	fragment_lines_.insert(
+	fragment_lines_.insert(
 		option[ OptionKeys::rna::farna::exclude_fragments ]().begin(),
 		option[ OptionKeys::rna::farna::exclude_fragments ]().end() );
-	
+
 	if ( option[ OptionKeys::rna::farna::exclude_native_fragments ].value() ) {
 		auto homologous_lines = analyze_for_homology( option[ OptionKeys::in::file::native ].value(), all_rna_fragments );
 		fragment_lines_.insert( homologous_lines.begin(), homologous_lines.end() );

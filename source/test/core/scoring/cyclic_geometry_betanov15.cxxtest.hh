@@ -56,7 +56,7 @@ public:
 
 	void setUp() {
 		core_init_with_additional_options( "-beta_nov15 -score:weights beta_nov15.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
-		
+
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
 		core::import_pose::pose_from_file( *initial_pose, "core/scoring/cyclic_peptide.pdb" , core::import_pose::PDB_file );

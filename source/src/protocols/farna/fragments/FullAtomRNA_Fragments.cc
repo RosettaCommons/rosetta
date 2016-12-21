@@ -90,17 +90,17 @@ bool satisfies_restriction( Real const torsion, SYN_ANTI_RESTRICTION const restr
 	// This means that some residues will be neither  -- and thus only accepted by
 	// ANY.
 	static core::chemical::rna::RNA_FittedTorsionInfo rna_info;
-	
+
 	if ( restriction == ANY ) return true;
 	else if ( restriction == SYN ) {
 		return std::abs( rna_info.chi_north_syn() - torsion ) < 30;
-	} else { // restriction == ANTI 
+	} else { // restriction == ANTI
 		return std::abs( rna_info.chi_north_anti() - torsion ) < 30;
 	}
-	
+
 	return false;
 }
-	
+
 FullAtomRNA_Fragments::FullAtomRNA_Fragments( std::string const & filename):
 	RNA_Fragments()
 {
@@ -117,13 +117,13 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 	std::string const RNA_secstruct_string = std::get< 1 >( key );
 	RNA_FragmentHomologyExclusionCOP const exclusion = std::get< 2 >( key );
 	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = std::get< 3 >( key );
-	
+
 	Size const BASE_CHI_TORSION_INDEX = 7;
-	
+
 	std::set< Size > exclude_fragments;
 	if ( exclusion ) exclude_fragments = exclusion->get_fragment_lines();
 	// Otherwise, empty set.
-	
+
 	Size const size = RNA_string.length();
 
 	runtime_assert( RNA_string.length() == RNA_secstruct_string.length() );
@@ -136,14 +136,14 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 	for ( Size i = 1; i <= vall_size_ - size + 1; i++ ) {
 
 		bool match( true );
-		
+
 		// Does it hit homologs?
 		if ( exclude_fragments.find( i ) != exclude_fragments.end() ) {
 			TR.Trace << "Excluding due to hitting a homolog for " << RNA_string << " " << RNA_secstruct_string << " at " << i << std::endl;
 			match = false;
 			continue;
 		}
-		
+
 		for ( Size offset = 0; offset < size; offset++ ) {
 			vall_current_sequence [offset] = vall_sequence_ ( i + offset );
 			vall_current_secstruct[offset] = vall_secstruct_( i + offset );
@@ -176,7 +176,7 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 				match = false;
 				continue;
 			}
-			
+
 			for ( Size offset = 0; offset < size; offset++ ) {
 				vall_current_sequence [offset] = vall_sequence_ ( i + offset );
 
@@ -186,7 +186,7 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 				}
 			}
 
-			
+
 			if ( match ) {
 				fragment_library_p->add_torsion( *this, i, size );
 			}
@@ -195,8 +195,8 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 
 
 	TR << "Picked Fragment Library for sequence " << RNA_string << " " <<
-	" and sec. struct " << RNA_secstruct_string;
- 
+		" and sec. struct " << RNA_secstruct_string;
+
 	std::stringstream restriction_ss;
 	bool restriction_nontrivial = false;
 	for ( auto const r : restriction ) {
@@ -206,14 +206,13 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 		} else if ( r == ANTI ) {
 			restriction_ss << "A";
 			restriction_nontrivial = true;
-		}
-		else if ( r == ANY ) restriction_ss << "X";
+		} else if ( r == ANY ) restriction_ss << "X";
 	}
-	
+
 	if ( restriction.size() != 0 && used_restriction && restriction_nontrivial ) {
 		TR << " and syn/anti restriction " << restriction_ss.str();
 	}
-	
+
 	TR << " ... found " << fragment_library_p->get_align_depth() << " potential fragments" << std::endl;
 
 	fragment_library_pointer_map[ key ] = fragment_library_p;
@@ -443,7 +442,7 @@ FullAtomRNA_Fragments::read_vall_torsions( std::string const & filename ){
 	if ( vall_in.fail() ) {
 		utility_exit_with_message(  "Bad vall torsions file? " + filename );
 	}
-	
+
 	std::string line;//, tag;
 
 	char dummy_char;

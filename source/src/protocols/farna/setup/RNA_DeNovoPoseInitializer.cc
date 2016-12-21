@@ -398,7 +398,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			count++;
 			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
 			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
-			  // TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			// TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 		//  TR << std::endl;
 
@@ -550,8 +550,8 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoPoseInitializer::setup_block_stack_variants(
-    pose::Pose & pose,
-		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
+	pose::Pose & pose,
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
 	using namespace chemical;
 	for ( auto m : rna_params_.block_stack_above_res() ) add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, m );

@@ -69,11 +69,11 @@ public:
 	utility::vector0< TagCOP > const & getTags() const;
 	utility::vector0< TagCOP > const & getTags( std::string const& name ) const;
 	TagCOP const & getTag( std::string const& name ) const;
-	
+
 	///@brief Does the Tag have a specific sub-tag (branch) within (such as a MoveMap, etc.)?
 	bool
 	hasTag( std::string const& name ) const;
-	
+
 	///@brief Does the Tag have a specific option?
 	bool
 	hasOption( std::string const& key ) const;

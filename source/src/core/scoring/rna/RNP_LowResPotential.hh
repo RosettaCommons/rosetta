@@ -73,18 +73,18 @@ public:
 
 	//void
 	//evaluate_rnp_stack_xy_score(
-	//	conformation::Residue const & rsd1,
-	//	conformation::Residue const & rsd2,
-	//	Real const & x,
-	//	Real const & y,
-	//	Real & rnp_stack_score
+	// conformation::Residue const & rsd1,
+	// conformation::Residue const & rsd2,
+	// Real const & x,
+	// Real const & y,
+	// Real & rnp_stack_score
 	//) const;
 
 	Real
-	evaluate_rnp_aa_rna_backbone_score( 
+	evaluate_rnp_aa_rna_backbone_score(
 		conformation::Residue const & protein_rsd,
 		Real const & dist_to_backbone ) const;
-	
+
 	void
 	evaluate_rnp_pair_score(
 		conformation::Residue const & rsd1,
@@ -97,46 +97,46 @@ public:
 		Real & rnp_pair_score
 	) const;
 
-//	void
-//	compute_centroid_environment(
-//		pose::Pose & pose
-//	) const;
-//
-//	void
-//	finalize( pose::Pose & pose ) const;
-//
-//
-//	void
-//	evaluate_env_and_cbeta_scores(
-//		pose::Pose const & pose,
-//		conformation::Residue const & rsd,
-//		Real & env_score,
-//		Real & cb_score6,
-//		Real & cb_score12
-//	) const;
-//
-//
-//	void
-//	evaluate_pair_and_cenpack_score(
-//		conformation::Residue const & rsd1,
-//		conformation::Residue const & rsd2,
-//		Real const cendist,
-//		Real & pair_contribution,
-//		Real & cenpack_contribution
-//	) const;
+	// void
+	// compute_centroid_environment(
+	//  pose::Pose & pose
+	// ) const;
+	//
+	// void
+	// finalize( pose::Pose & pose ) const;
+	//
+	//
+	// void
+	// evaluate_env_and_cbeta_scores(
+	//  pose::Pose const & pose,
+	//  conformation::Residue const & rsd,
+	//  Real & env_score,
+	//  Real & cb_score6,
+	//  Real & cb_score12
+	// ) const;
+	//
+	//
+	// void
+	// evaluate_pair_and_cenpack_score(
+	//  conformation::Residue const & rsd1,
+	//  conformation::Residue const & rsd2,
+	//  Real const cendist,
+	//  Real & pair_contribution,
+	//  Real & cenpack_contribution
+	// ) const;
 
-//private: // functions
-//
-//	void
-//	fill_cenlist(
-//		CenListInfo & cenlist,
-//		Size const res1,
-//		Size const res2,
-//		Real const cendist
-//	) const;
-//
-//	void
-//	truncate_cenlist_values( CenListInfo & cenlist ) const;
+	//private: // functions
+	//
+	// void
+	// fill_cenlist(
+	//  CenListInfo & cenlist,
+	//  Size const res1,
+	//  Size const res2,
+	//  Real const cendist
+	// ) const;
+	//
+	// void
+	// truncate_cenlist_values( CenListInfo & cenlist ) const;
 
 private: // data
 

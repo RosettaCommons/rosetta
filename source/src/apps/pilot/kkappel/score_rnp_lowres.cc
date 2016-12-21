@@ -125,7 +125,7 @@ void check_structures() {
 			std::string out_pdb_file = tag + "_dump.pdb";
 			pose.dump_pdb( out_pdb_file );
 		}
-	
+
 		core::scoring::ScoreFunctionOP sfxn;
 		//sfxn = core::scoring::get_score_function( "rnp_lowres" );
 		sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "rnp_lores" );

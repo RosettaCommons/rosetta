@@ -279,7 +279,7 @@ ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & b
 {
 
 	std::map< std::string, std::set< std::string > > const & name3_generated_by_base_residue_name(
-			cache_object()->name3_generated_by_base_residue_name() );
+		cache_object()->name3_generated_by_base_residue_name() );
 
 	if ( name3_generated_by_base_residue_name.find( base_residue_name ) ==
 			name3_generated_by_base_residue_name.end() ) return false;
@@ -295,7 +295,7 @@ ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( st
 {
 	/// @brief interchangeability groups that appear upon patch application.
 	std::map< std::string, std::set< std::string > > const & interchangeability_group_generated_by_base_residue_name(
-			cache_object()->interchangeability_group_generated_by_base_residue_name() );
+		cache_object()->interchangeability_group_generated_by_base_residue_name() );
 
 	if ( interchangeability_group_generated_by_base_residue_name.find( base_residue_name ) ==
 			interchangeability_group_generated_by_base_residue_name.end() ) {

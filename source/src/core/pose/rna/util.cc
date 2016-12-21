@@ -1411,23 +1411,23 @@ add_chi_constraints( pose::Pose & pose,
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	using namespace core::pose::full_model_info;
-	
+
 	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 	for ( Size const n : rna_chi_res ) {
 		//TR << "Thinking about " << n << std::endl;
 		if ( ! res_list.has_value( n ) ) continue;
-		
+
 		//TR << "Trying " << n << std::endl;
-		
+
 		Size const j = res_list.index( n );
 		runtime_assert( pose.residue_type( j ).is_RNA() );
-		
+
 		AtomID id1,id2,id3,id4;
 		pose.conformation().get_torsion_angle_atom_ids( TorsionID( j, core::id::CHI, 1 ), id1, id2, id3, id4 );
 		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, chi_potential_restraint, rna_torsion ) ) );
 	}
 }
-	
+
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 add_syn_chi_constraints( core::pose::Pose & pose ) {
@@ -1443,7 +1443,7 @@ add_syn_chi_constraints( core::pose::Pose & pose ) {
 	FuncOP chi_potential_syn_restraint( new CircularSplineFunc( 1.0, energies, true /*convert_to_degrees*/ ) );
 	add_chi_constraints( pose, chi_potential_syn_restraint, const_full_model_info( pose ).rna_syn_chi_res() );
 }
-	
+
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 add_anti_chi_constraints( core::pose::Pose & pose ) {
@@ -1457,7 +1457,7 @@ add_anti_chi_constraints( core::pose::Pose & pose ) {
 	FuncOP chi_potential_anti_restraint( new CircularSplineFunc( 1.0, energies, true /*convert_to_degrees*/ ) );
 	add_chi_constraints( pose, chi_potential_anti_restraint, const_full_model_info( pose ).rna_anti_chi_res() );
 }
-	
+
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 add_syn_anti_chi_constraints( core::pose::Pose & pose ) {

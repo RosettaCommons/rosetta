@@ -128,7 +128,7 @@ RNP_LowResStackEnergy::residue_pair_energy(
 	Vector rna_centroid;
 	Vector protein_centroid;
 	numeric::xyzMatrix< core::Real > rna_base_coord_sys;
-	
+
 	if ( rsd1.is_RNA() ) {
 		rna_centroid = chemical::rna::get_rna_base_centroid( rsd1 );
 		rna_base_coord_sys = chemical::rna::get_rna_base_coordinate_system( rsd1, rna_centroid );
@@ -160,9 +160,9 @@ RNP_LowResStackEnergy::residue_pair_energy(
 //////////////////////////////////////////////////////////////////////////////////////////
 //void
 //RNP_LowResStackEnergy::finalize_total_energy(
-//	pose::Pose & pose,
-//	ScoreFunction const &,
-//	EnergyMap &
+// pose::Pose & pose,
+// ScoreFunction const &,
+// EnergyMap &
 //) const {
 //
 //}
@@ -183,21 +183,21 @@ RNP_LowResStackEnergy::version() const
 
 //etable::count_pair::CountPairFunctionCOP
 //RNP_LowResStackEnergy::get_intrares_countpair(
-//	conformation::Residue const &,
-//	pose::Pose const &,
-//	ScoreFunction const &
+// conformation::Residue const &,
+// pose::Pose const &,
+// ScoreFunction const &
 //) const
 //{
-//	utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
-//	return 0;
+// utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
+// return 0;
 //}
 //
 //etable::count_pair::CountPairFunctionCOP
 //RNP_LowResStackEnergy::get_count_pair_function(
-//	Size const res1,
-//	Size const res2,
-//	pose::Pose const & pose,
-//	ScoreFunction const &
+// Size const res1,
+// Size const res2,
+// pose::Pose const & pose,
+// ScoreFunction const &
 //) const
 //{
 //}
@@ -205,8 +205,8 @@ RNP_LowResStackEnergy::version() const
 //
 //etable::count_pair::CountPairFunctionCOP
 //RNP_LowResStackEnergy::get_count_pair_function(
-//	conformation::Residue const & rsd1,
-//	conformation::Residue const & rsd2
+// conformation::Residue const & rsd1,
+// conformation::Residue const & rsd2
 //) const
 //{
 //}

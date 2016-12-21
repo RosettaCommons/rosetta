@@ -26,9 +26,9 @@ namespace fragments {
 class RNA_FragmentHomologyExclusion {
 public:
 	RNA_FragmentHomologyExclusion( RNA_Fragments const & all_rna_fragments );
-	
+
 	std::set< core::Size > const & get_fragment_lines() const { return fragment_lines_; }
-					
+
 private:
 	std::set< core::Size > fragment_lines_;
 

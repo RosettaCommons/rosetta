@@ -92,7 +92,7 @@ RNP_LowResStackData::initialize_rnp_stack_xy() {
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 	}
 	TR << "Reading RNP stack potential file: " << filename << std::endl;
-	
+
 	// read in the data
 	// just copying what's been done in other potentials, look up base by number, AA by name
 	chemical::AA aa;
@@ -105,15 +105,15 @@ RNP_LowResStackData::initialize_rnp_stack_xy() {
 		data_stream >> aa >> xbin >> ybin >> potential;
 		rnp_stack_xy_( xbin, ybin, base_num, aa ) = potential;
 	}
-//	std::string aa_str( "VAL" );
-//	chemical::AA aa_val( chemical::aa_from_name( aa_str ) );
-//	std::cout << "Some example values!" << std::endl;
-//	std::cout << rnp_basepair_xy_(9,2,2,aa_val ) << std::endl;
-//	std::cout << rnp_basepair_xy_(9,9,2,aa_val ) << std::endl;
+	// std::string aa_str( "VAL" );
+	// chemical::AA aa_val( chemical::aa_from_name( aa_str ) );
+	// std::cout << "Some example values!" << std::endl;
+	// std::cout << rnp_basepair_xy_(9,2,2,aa_val ) << std::endl;
+	// std::cout << rnp_basepair_xy_(9,9,2,aa_val ) << std::endl;
 
 	TR << "Finished reading RNP stack potential file: " << filename << std::endl;
 	data_stream.close();
-	
+
 
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -127,11 +127,11 @@ RNP_LowResStackData::evaluate_rnp_stack_xy_score(
 ) const {
 
 	// Only evaluate these score terms between RNA and protein residues
-	if (!(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() ))) {
+	if ( !(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() )) ) {
 		rnp_stack_score = 0.0;
 		return;
 	}
-	
+
 	chemical::AA aa;
 	Size base_num;
 

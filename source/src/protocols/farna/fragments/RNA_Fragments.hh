@@ -63,7 +63,7 @@ public:
 		/// STUBBED OUT!
 		return nullptr;
 	}
-	
+
 	virtual void
 	insert_fragment(
 		core::pose::Pose & ,//pose,

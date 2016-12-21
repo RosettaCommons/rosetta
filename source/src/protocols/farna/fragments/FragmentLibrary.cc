@@ -22,42 +22,42 @@
 namespace protocols {
 namespace farna {
 namespace fragments {
-	
+
 using namespace core;
-	
+
 FragmentLibrary::~FragmentLibrary() {}
-	
+
 Real FragmentLibrary::get_fragment_torsion( Size const num_torsion,  Size const which_frag, Size const offset ){
 	return align_torsions_[ which_frag - 1 ].torsions( num_torsion, offset) ;
 }
-	
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 TorsionSet const &
 FragmentLibrary::get_fragment_torsion_set( Size const which_frag ) const
 {
 	return align_torsions_[ which_frag - 1 ];
 }
-	
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void  FragmentLibrary::add_torsion( TorsionSet const & torsion_set ){
 	align_torsions_.push_back( torsion_set );
 }
-	
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void  FragmentLibrary::add_torsion(
 	FullAtomRNA_Fragments const & vall,
 	Size const position,
-	Size const size 
+	Size const size
 ) {
 	TorsionSet torsion_set( size, position );
-	
+
 	for ( Size offset = 0; offset < size; offset++ ) {
 		for ( Size j = 1; j <= core::chemical::rna::NUM_RNA_TORSIONS; j++ ) {
 			torsion_set.torsions( j, offset) = vall.torsions( j, position+offset);
 		}
 		torsion_set.torsion_source_name( offset ) = vall.name( position+offset );
 		torsion_set.secstruct( offset ) = vall.secstruct( position+offset );
-		
+
 		//Defined non-ideal geometry of sugar ring -- to keep it closed.
 		if ( vall.non_main_chain_sugar_coords_defined() ) {
 			torsion_set.non_main_chain_sugar_coords_defined = true;
@@ -65,18 +65,18 @@ void  FragmentLibrary::add_torsion(
 			for ( Size j = 1; j <= 3; j++ ) {
 				for ( Size k = 1; k <= 3; k++ ) {
 					torsion_set.non_main_chain_sugar_coords( offset, j, k ) =
-					vall.non_main_chain_sugar_coords( position+offset, j, k );
+						vall.non_main_chain_sugar_coords( position+offset, j, k );
 				}
 			}
 		} else {
 			torsion_set.non_main_chain_sugar_coords_defined = false;
 		}
-		
+
 	}
-	
+
 	align_torsions_.push_back( torsion_set );
 }
-	
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 Size FragmentLibrary::get_align_depth() const {
 	return align_torsions_.size();

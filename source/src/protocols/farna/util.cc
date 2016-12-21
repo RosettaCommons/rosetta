@@ -1610,11 +1610,11 @@ base_pair_moving( core::pose::rna::BasePair const & base_pair,
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void 
+void
 delete_non_protein_from_pose( core::pose::Pose & pose ) {
 
 	// Delete all residues that aren't protein from a pose
-	
+
 	utility::vector1< std::pair< core::Size, core::Size > > rna_start_and_end_residues;
 	core::Size start = 0;
 	core::Size end = 0;
@@ -1629,7 +1629,7 @@ delete_non_protein_from_pose( core::pose::Pose & pose ) {
 				start = 0;
 			}
 		}
-		if ( (i == pose.total_residue()) && (start > end) ){
+		if ( (i == pose.total_residue()) && (start > end) ) {
 			end = i;
 			rna_start_and_end_residues.push_back( std::make_pair( start, end ) );
 		}

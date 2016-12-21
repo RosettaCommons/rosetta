@@ -86,8 +86,8 @@ AtomTypeSet::AtomTypeSet( std::string const & directory ):
 }
 
 AtomTypeSet::AtomTypeSet(
-		std::string const & name,
-		utility::sql_database::sessionOP db_session):
+	std::string const & name,
+	utility::sql_database::sessionOP db_session):
 	mode_( INVALID_t )
 {
 
@@ -280,7 +280,7 @@ AtomTypeSet::read_meta_file( std::string const & filename ) {
 		if ( line.size() < 1 || line[0] == '#' ) continue;
 		std::stringstream l( line );
 		l >> tag;
-		if ( tag == "TYPE_SET_MODE" || tag == "TYPE_SET_CATEGORY") {
+		if ( tag == "TYPE_SET_MODE" || tag == "TYPE_SET_CATEGORY" ) {
 			l >> tag;
 			mode_ = type_set_mode_from_string( tag );
 		}

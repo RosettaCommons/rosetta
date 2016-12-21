@@ -74,13 +74,13 @@ ConvertRealToVirtualMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-   if ( tag->hasOption( "residue_selector" ) ) {
-        // set the selector_ private variable
+	if ( tag->hasOption( "residue_selector" ) ) {
+		// set the selector_ private variable
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
-        if ( !selector_ ) {
-            throw utility::excn::EXCN_RosettaScriptsOption( "ResidueSelector passed to FaToVirtual mover could not be found." );
-        }
-    }
+		if ( !selector_ ) {
+			throw utility::excn::EXCN_RosettaScriptsOption( "ResidueSelector passed to FaToVirtual mover could not be found." );
+		}
+	}
 }
 
 void
@@ -89,11 +89,11 @@ ConvertRealToVirtualMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	AttributeList attributes;
 	protocols::rosetta_scripts::attributes_for_parse_residue_selector(attributes);
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
-	
-	"A mover for switching a residue type to all VIRTUAL."
-	"A VIRTUAL Residue is one that is not scored or output.",
-	
-	attributes );
+
+		"A mover for switching a residue type to all VIRTUAL."
+		"A VIRTUAL Residue is one that is not scored or output.",
+
+		attributes );
 }
 
 
@@ -147,10 +147,10 @@ ConvertRealToVirtualMover::apply( core::pose::Pose & pose )
 	core::select::residue_selector::ResidueSubset subset;
 	if ( selector_ ) {
 		subset = selector_->apply( pose );
-    } else {
+	} else {
 		subset.resize( pose.total_residue(), true );
 		TR << "Setting all residues to Virtual." << std::endl;
-    }
+	}
 
 	/// Go through the subset list and make VIRT if suset[i]=1
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {

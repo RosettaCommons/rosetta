@@ -367,8 +367,8 @@ rna_score_test()
 			Real rmsd;
 			if ( option[ rmsd_nosuper ]() ) {
 				if ( option[ rmsd_residues ].user() ) {
-				//rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
-				rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose, option[ rmsd_residues ]() );
+					//rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
+					rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose, option[ rmsd_residues ]() );
 				} else {
 					rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
 				}
