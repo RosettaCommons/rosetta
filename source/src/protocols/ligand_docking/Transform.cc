@@ -10,6 +10,7 @@
 /// @file   src/protocols/ligand_docking/Transform.cc
 /// @author Sam DeLuca
 
+// Testing
 
 #include <protocols/ligand_docking/TransformCreator.hh>
 #include <protocols/ligand_docking/Transform.hh>
@@ -31,6 +32,7 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/xyz.functions.hh>
+#include <numeric/random/random_xyz.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random.functions.hh>
 #include <numeric/conversions.hh>
@@ -72,7 +74,6 @@ Transform::Transform():
 	// & in class defaults
 {}
 
-
 Transform::Transform(Transform const & ) = default;
 
 Transform::Transform(
@@ -84,6 +85,7 @@ Transform::Transform(
 	core::Real const & temp
 ) : Mover("Transform")
 	// & in class defaults
+
 {
 	transform_info_.chain = chain;
 	transform_info_.box_size = box_size;
@@ -130,13 +132,19 @@ void Transform::parse_my_tag
 	if ( !tag->hasOption("temperature") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
 
 	transform_info_.chain = tag->getOption<std::string>("chain");
-	transform_info_.move_distance = tag->getOption<core::Real>("move_distance");
+
+//Divides by root(3) so the center can only move a total equal to move_distance in each step
+	transform_info_.move_distance = (tag->getOption<core::Real>("move_distance")); // sqrt(3);
+
 	transform_info_.box_size = tag->getOption<core::Real>("box_size");
 	transform_info_.angle = tag->getOption<core::Real>("angle");
 	transform_info_.cycles = tag->getOption<core::Size>("cycles");
 	transform_info_.temperature = tag->getOption<core::Real>("temperature");
 	transform_info_.repeats = tag->getOption<core::Size>("repeats",1);
 	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
+
+	use_conformers_ = tag->getOption<bool>("use_conformers",true);
+
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
 	if ( initial_perturb_ < 0 ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The initial_perturb option to the Transform mover must be positive.");
@@ -174,28 +182,26 @@ void Transform::apply(core::pose::Pose & pose)
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
 
-
 	grid_manager->initialize_all_grids(center);
 	grid_manager->update_grids(pose,center);
 
 	core::Real last_score(10000.0);
-
-	core::Real best_score(last_score);
-	core::pose::Pose best_pose(pose);
-	core::pose::Pose starting_pose(pose);
-	core::conformation::UltraLightResidue best_ligand(pose.residue(begin).get_self_ptr());
-	core::conformation::UltraLightResidue original_ligand(best_ligand);
-
-	core::Real temperature = transform_info_.temperature;
-	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
-
-	ligand_conformers_.clear();
-	rotamers_for_trials(pose,begin,ligand_conformers_);
-	transform_tracer << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
+	core::Real best_score(10000.0);
 	core::Size accepted_moves = 0;
 	core::Size rejected_moves = 0;
 	core::Size outside_grid_moves = 0;
 
+    core::pose::Pose best_pose(pose);
+
+    //Setup UltraLight residues for docking movements
+    core::conformation::UltraLightResidue original_ligand(pose.residue(begin).get_self_ptr());
+	core::conformation::UltraLightResidue ligand_residue = original_ligand;
+	core::conformation::UltraLightResidue best_ligand = ligand_residue;
+
+	core::Real temperature = transform_info_.temperature;
+	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
+
+	setup_conformers(pose, begin);
 
 	utility::io::ozstream sampled_space;
 	if ( output_sampled_space_ ) {
@@ -204,25 +210,60 @@ void Transform::apply(core::pose::Pose & pose)
 
 
 	for ( core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat ) {
-		pose = starting_pose;
 		core::Size cycle = 1;
 		bool not_converged = true;
-		core::conformation::UltraLightResidue ligand_residue(pose.residue(begin).get_self_ptr());
+		ligand_residue = original_ligand;
+		core::conformation::UltraLightResidue last_accepted_ligand_residue = ligand_residue;
 
+		//Initial Perturbation for benchmarking purposes or sampling a large binding volume
 		// For benchmarking purposes it is sometimes desirable to translate the ligand
 		// away from the starting point and randomize its orientation before beginning a trajectory.
 		// The defaults of 0.0 & -360.0 won't trigger, but if either are set to positive they will.
-		if ( initial_perturb_ > 0.0 || initial_angle_perturb_ > 0.0 ) {
-			randomize_ligand( ligand_residue, initial_perturb_, initial_angle_perturb_ );
+
+		//Setting an initial perturb will also randomize the startign conformer
+
+		if(initial_perturb_ > 0.0 || initial_angle_perturb_ > 0)
+		{
+			bool perturbed = false;
+			while(!perturbed)
+			{
+				perturbed=true;
+				randomize_ligand( ligand_residue, initial_perturb_, initial_angle_perturb_ );
+
+				//Also randomize starting conformer to remove bias
+				if(ligand_conformers_.size() > 1 && use_conformers_ == true)
+				{
+					change_conformer(ligand_residue);
+				}
+				core::Vector new_center(ligand_residue.center());
+				core::Real distance = new_center.distance(original_center);
+
+
+				//Not everything in grid, also checks center distance
+				if(!check_grid(grid_manager, ligand_residue, distance))
+				{
+					ligand_residue = last_accepted_ligand_residue;
+					perturbed = false;
+					continue;
+				}
+			}
+			last_accepted_ligand_residue = ligand_residue;
 		}
+
 		last_score = grid_manager->total_score(ligand_residue);
-		core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
-		while ( not_converged )
+
+		//Define starting ligand model (after perturb) as best model/score
+		best_score = last_score;
+		best_ligand = ligand_residue;
+
+		while(not_converged)
+		{
+
+			if(optimize_until_score_is_negative_)
+			{
+				if(cycle >= transform_info_.cycles && last_score <= 0.0)
 				{
 
-
-			if ( optimize_until_score_is_negative_ ) {
-				if ( cycle >= transform_info_.cycles && last_score <= 0.0 ) {
 					not_converged= false;
 				}
 			} else {
@@ -234,43 +275,50 @@ void Transform::apply(core::pose::Pose & pose)
 			cycle++;
 
 			//during each move either move the ligand or try a new conformer (if there is more than one conformer)
-			if ( ligand_conformers_.size() > 1 ) {
-				if ( numeric::random::rg().uniform() >= 0.5 ) {
+			if(ligand_conformers_.size() > 1 && use_conformers_ == true)
+			{
+				if(numeric::random::rg().uniform() >= 0.5)
+				{
 					transform_ligand(ligand_residue);
 				} else {
 					change_conformer(ligand_residue);
 				}
-			} else {
+
+			}else
+			{
 				transform_ligand(ligand_residue);
 			}
-			//The score is meaningless if any atoms are outside of the grid
-			if ( !grid_manager->is_in_grid(ligand_residue) ) { //Reject the pose
+
+			core::Vector new_center(ligand_residue.center());
+			core::Real distance = new_center.distance(original_center);
+
+			//Not everything in grid - Check distance too
+			if(!check_grid(grid_manager, ligand_residue, distance))
+			{
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 				outside_grid_moves++;
-				//transform_tracer.Trace << "probability: " << probability << " rejected (out of grid)"<<std::endl;
 				continue;
-			}
-
-			if ( output_sampled_space_ ) {
-				dump_conformer(ligand_residue,sampled_space);
 			}
 
 			core::Real current_score = grid_manager->total_score(ligand_residue);
 			core::Real const boltz_factor((last_score-current_score)/temperature);
 			core::Real const probability = std::exp( boltz_factor ) ;
-			core::Vector new_center(ligand_residue.center());
 
-			if ( new_center.distance(original_center) > transform_info_.box_size ) { //Reject the new pose
-				ligand_residue = last_accepted_ligand_residue;
-				rejected_moves++;
 
-			} else if ( check_rmsd_ && !check_rmsd(original_ligand, ligand_residue) ) { //reject the new pose
+			if(output_sampled_space_)
+			{
+				dump_conformer(ligand_residue,sampled_space);
+			}
+
+			if(check_rmsd_ && !check_rmsd(original_ligand, ligand_residue)) //reject the new pose
+			{
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 			} else if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {  //reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
+		//		transform_tracer << "Move rejected- did not meet Monte Carlo probability " << std::endl;
 
 			} else if ( probability < 1 ) {  // Accept the new pose
 				last_score = current_score;
@@ -281,17 +329,23 @@ void Transform::apply(core::pose::Pose & pose)
 				last_score = current_score;
 				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
-
 			}
-			if ( last_score <= best_score ) {
+
+
+			if(last_score <= best_score)
+			{
 				best_score = last_score;
 				best_ligand = last_accepted_ligand_residue;
-				//transform_tracer << "accepting new pose" << std::endl;
-			} else {
-				//transform_tracer << "not accepting new pose" << std::endl;
+	//			transform_tracer << "accepting new best pose" << std::endl;
+			}else
+			{
+	//			transform_tracer << "not accepting new best pose" << std::endl;
+
 			}
 
 		}
+
+
 		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
 		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
 		if ( outside_grid_moves > 0 ) {
@@ -309,6 +363,7 @@ void Transform::apply(core::pose::Pose & pose)
 	pose = best_pose;
 
 	transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
+	jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Grid_score", best_score);
 
 }
 
@@ -330,7 +385,8 @@ void Transform::randomize_ligand(core::conformation::UltraLightResidue & residue
 	numeric::xyzMatrix<core::Real> rotation(
 		numeric::rotation_matrix( axis, numeric::conversions::to_radians( chosen_angle ) ) );
 
-	residue.transform(rotation,translation);
+	residue.transform(rotation,translation,residue.center());
+
 }
 
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
@@ -350,7 +406,34 @@ void Transform::transform_ligand(core::conformation::UltraLightResidue & residue
 		numeric::y_rotation_matrix_degrees( transform_info_.angle*numeric::random::rg().gaussian() ) *
 		numeric::x_rotation_matrix_degrees( transform_info_.angle*numeric::random::rg().gaussian() ) ));
 
-	residue.transform(rotation,translation);
+	residue.transform(rotation,translation,residue.center());
+
+}
+
+bool Transform::check_grid(qsar::scoring_grid::GridManager* grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance) //distance=0 default
+{
+
+	if(distance > transform_info_.box_size)
+	{
+		return false;
+	}
+
+	//The score is meaningless if any atoms are outside of the grid
+	if(!grid->is_in_grid(ligand_residue)) //Reject the pose
+	{
+		return false;
+	}
+
+	//Everything is awesome!
+	return true;
+
+}
+
+void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
+{
+	ligand_conformers_.clear();
+	rotamers_for_trials(pose,begin,ligand_conformers_);
+	transform_tracer << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 }
 
 void Transform::change_conformer(core::conformation::UltraLightResidue & residue)

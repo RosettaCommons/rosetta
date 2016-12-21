@@ -32,10 +32,24 @@ void move_ligand_to_desired_centroid(
 	core::pose::Pose & pose
 );
 
+/// @brief Move the center of specified multiple chains to the desired_centroid
+void move_ligand_to_desired_centroid(
+	utility::vector1<std::string> const & chains,
+	core::Vector const & desired_centroid,
+	core::pose::Pose & pose
+);
+
 /// @brief Move the center of the object(s) downstream of jump_id to the desired_centroid
 void move_ligand_to_desired_centroid(
 	core::Size const jump_id,
 	core::Vector const & desired_centroid,
+	core::pose::Pose & pose
+);
+
+/// @brief Move the neighbor atom of the specified multiple chains to the desired_position
+void move_ligand_neighbor_to_desired_position(
+	utility::vector1<std::string> const & chains,
+	core::Vector const & desired_position,
 	core::pose::Pose & pose
 );
 

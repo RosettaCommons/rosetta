@@ -15,6 +15,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/ligand_docking/Transform.fwd.hh>
+#include <protocols/qsar/scoring_grid/GridManager.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
@@ -94,14 +95,15 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-private:
-
 	/// @brief Performa a randomization of the ligand residue, translating by some random value within a uniform distribution with a max of distance,
-	/// and rotating around a random axis with a uniformly random angle of between -angle/2 and +angle/2 (in degrees).
+	/// and rotating around a random axis with a uniformly random angle of between -angle/2 and +angle/2 (in degrees). Also randomizes starting conformer if available
 	void randomize_ligand(core::conformation::UltraLightResidue & residue, core::Real distance, core::Real angle);
 
 	/// @brief translate and rotate a random value by the distances specified in the Transform_info object, using a gaussian distribution
 	void transform_ligand(core::conformation::UltraLightResidue & residue);
+
+	/// @brief setup conformers for use
+	void setup_conformers(core::pose::Pose & pose, core::Size begin);
 
 	/// @brief randomly change the ligand conformation
 	void change_conformer(core::conformation::UltraLightResidue & residue);
@@ -112,6 +114,9 @@ private:
 	/// @brief return true if the rmsd is within the specified cutoff
 	bool check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const;
 
+	/// @brief check ligand still inside the grid
+	bool check_grid(qsar::scoring_grid::GridManager* grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
+
 private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
@@ -119,6 +124,7 @@ private:
 	bool optimize_until_score_is_negative_ = false;
 	bool output_sampled_space_ = false;
 	bool check_rmsd_ = false;
+	bool use_conformers_ = true;
 	std::string sampled_space_file_;
 	core::Real initial_perturb_ = 0.0;
 	core::Real initial_angle_perturb_ = -360.0;

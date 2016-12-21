@@ -10,6 +10,7 @@
 /// @file   numeric/random/random_xyz.hh
 /// @brief  Random vectors and stuff
 /// @author Will Sheffler
+/// @author Darwin Fu for uniform sphere sampling
 
 #ifndef INCLUDED_numeric_sampling_random_xyz_hh
 #define INCLUDED_numeric_sampling_random_xyz_hh
@@ -21,11 +22,13 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzTransform.hh>
 #include <numeric/Quaternion.hh>
+#include <numeric/trig.functions.hh>
 
 
 namespace numeric {
 namespace random {
 
+numeric::xyzVector<numeric::Real> uniform_vector_sphere(numeric::Real radius = 1);
 numeric::xyzVector<numeric::Real> random_vector();
 numeric::xyzVector<numeric::Real> random_vector_spherical();
 numeric::xyzVector<numeric::Real> random_vector_unit_cube();

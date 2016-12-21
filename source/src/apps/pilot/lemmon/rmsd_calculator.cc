@@ -59,8 +59,8 @@ chain_rmsd(core::pose::Pose & after, core::pose::Pose & before, core::Size const
 		core::pose::PoseOP after_copy= new core::pose::Pose(after);
 		before_copy.remove_constraints();/// TODO fix split_by_chain to avoid this
 		after_copy->remove_constraints();/// TODO fix split_by_chain to avoid this
-		before_ligand= before_copy.split_by_chain(before_chain);
-		after_ligand= after_copy->split_by_chain(after_chain);
+		before_ligand= *(before_copy.split_by_chain(before_chain));
+		after_ligand= *(after_copy->split_by_chain(after_chain));
 	}
 
 	if(superimpose){

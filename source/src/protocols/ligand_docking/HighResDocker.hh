@@ -60,7 +60,6 @@ public:
 	HighResDocker(
 		Size num_cycles,
 		Size repack_every_Nth,
-		std::vector<std::string> chains,
 		core::scoring::ScoreFunctionOP score_fxn,
 		MoveMapBuilderOP movemap_builder,
 		std::string resfile=""
@@ -79,6 +78,8 @@ public:
 	) override;
 
 	void apply(core::pose::Pose & pose) override;
+	void apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<char> qsar_chars, core::Size cycle);
+	void apply(core::pose::Pose & pose, core::Real & current_score, char qsar_char, core::Size cycle);
 
 	std::string
 	get_name() const override;
@@ -100,8 +101,8 @@ private:
 	MoveMapBuilderOP movemap_builder_;
 	std::string resfile_;
 
-	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose pose);
-	TetherLigandOPs tether_ligands(core::pose::Pose & pose);
+	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose pose, char chain = 0);
+	TetherLigandOPs tether_ligands(core::pose::Pose & pose, char chain = 0);
 	void remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers);
 
 	void enable_ligand_rotamer_packing(

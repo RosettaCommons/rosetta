@@ -19,6 +19,7 @@
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/util.hh>
 
 // ObjexxFCL Headers
 
@@ -34,6 +35,10 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+// Boost headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 
 using basic::T;
@@ -75,6 +80,48 @@ random_reorientation_matrix(const double phi_range, const double psi_range)
 		numeric::z_rotation_matrix_degrees(  phi   );
 }
 
+//Calculate the centroid for a set of residues given a set of residue pointers, returns it as vector
+core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_pointers)
+{
+	core::Vector centroid_sum(0);
+	core::Size atom_count=0;
+
+	foreach(core::conformation::ResidueCOP residue_pointer, residue_c_pointers)
+	{
+		atom_count = atom_count + residue_pointer->natoms();
+
+		for(
+				core::conformation::Atoms::const_iterator atom = residue_pointer->atom_begin(),
+				end = residue_pointer->atom_end();
+				atom != end;
+				++atom
+		)
+		{
+			centroid_sum += atom->xyz();
+		}
+	}
+	return centroid_sum / atom_count;
+}
+
+
+//Calculate the centroid of a set of chains given a vector of chain ids
+core::Vector centroid_by_chains(
+		core::pose::Pose const & pose,
+		utility::vector1<core::Size> chain_ids
+)
+{
+	return centroid_by_residues(core::pose::get_residues_from_chains(pose, chain_ids));
+}
+
+//Calculate the centroid of a chain from its id
+core::Vector centroid_by_chain(
+		core::pose::Pose const & pose,
+		core::Size const chain_id
+)
+{
+	core::conformation::ResidueCOPs residue_pointers = core::pose::get_chain_residues(pose, chain_id);
+	return centroid_by_residues(residue_pointers);
+}
 
 /// @brief Unweighted centroids of all atoms upstream of the jump
 ///  vs. all atoms downstream of the jump.

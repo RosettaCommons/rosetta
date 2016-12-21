@@ -624,6 +624,164 @@ fixEigenvector( FArray2A< numeric::Real > m_v )
 } // fixEigenvector
 
 void
+rms_fit(
+	int npoints,
+	ObjexxFCL::FArray2D< double > xx,
+	ObjexxFCL::FArray2D< double > &yy,
+	ObjexxFCL::FArray1D< double > ww,
+	int natsel,
+	double & esq
+)
+{
+	xx.dimension( 3, npoints );
+	yy.dimension( 3, npoints );
+	ww.dimension( npoints );
+
+
+	double det;
+	int i,j,k;
+	double temp1,temp3;
+	FArray1D< double > ev( 3 );
+	FArray2D< double > m_moment( 3, 3 );
+	FArray2D< double > rr_moment( 3, 3 );
+	double rms_ctx;
+	double rms_sum;
+	double handedness;
+	FArray1D< double > t( 3 );
+	FArray2D< double > R( 3, 3 );
+	double XPC, YPC, ZPC, XEC, YEC, ZEC;
+//       //COMMON /TRANSFORM/ XPC,YPC,ZPC,XEC,YEC,ZEC,R
+
+// align center of mass to origin
+
+	COMAS(xx,ww,npoints,XPC,YPC,ZPC);
+	COMAS(yy,ww,npoints,XEC,YEC,ZEC);
+	temp3 = 0.0;
+	for ( i = 1; i <= npoints; ++i ) {
+		temp3 += ww(i);
+		// this is outrageous, but there are cases (e.g. in a single-residue pose) where
+		// all the z's are at 0, and this makes the det zero.
+		xx(3,i) -= 1.0e-7;
+		yy(3,i) += 1.0e-7;
+	}
+
+//       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
+	for ( k = 1; k <= 3; ++k ) {
+		for ( j = 1; j <= 3; ++j ) {
+			temp1 = 0.0;
+			for ( i = 1; i <= npoints; ++i ) {
+				temp1 += ww(i)*yy(k,i)*xx(j,i);
+			}
+			m_moment(k,j) = temp1    /(temp3); // rescale by temp3
+		}
+	}
+	det = det3(m_moment); // will get handedness  of frame from determinant
+
+	if ( std::abs(det) <= 1.0E-24 ) {
+//     //  std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
+//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
+
+		esq = 0.0;
+		return;
+
+	}
+	handedness = numeric::sign_transfered(det, 1.0);
+//  // weird but documented fortran "feature" of sign(a,b) (but not SIGN) is that if fails if a < 0
+
+//  //  multiply cross moments by itself
+
+	for ( i = 1; i <= 3; ++i ) {
+		for ( j = i; j <= 3; ++j ) {
+			rr_moment(j,i) = rr_moment(i,j) = // well it is symmetric afterall
+			 m_moment(1,i)*m_moment(1,j) +
+			 m_moment(2,i)*m_moment(2,j) +
+			 m_moment(3,i)*m_moment(3,j);
+		}
+	}
+
+//            //  compute eigen values of cross-cross moments
+
+	rsym_eigenval(rr_moment,ev);
+
+//               // reorder eigen values  so that ev(3) is the smallest eigenvalue
+
+	if ( ev(2) > ev(3) ) {
+		if ( ev(3) > ev(1) ) {
+			temp1 = ev(3);
+			ev(3) = ev(1);
+			ev(1) = temp1;
+		}
+	} else {
+		if ( ev(2) > ev(1) ) {
+			temp1 = ev(3);
+			ev(3) = ev(1);
+			ev(1) = temp1;
+		} else {
+			temp1 = ev(3);
+			ev(3) = ev(2);
+			ev(2) = temp1;
+		}
+	}
+
+//                 // ev(3) is now the smallest eigen value.  the other two are not
+//                 //  sorted.  this is prefered order for rotation matrix
+
+
+	rsym_rotation(m_moment,rr_moment,ev,R);
+
+//$$$             for ( i = 1; i <= npoints; ++i ) {
+//$$$               for ( j = 1; j <= 3; ++j ) {
+//$$$                 temp1 = 0.0;
+//$$$                for ( k = 1; k <= 3; ++k ) {
+//$$$                  temp1 += R(j,k)*yy(k,i);
+//$$$                }
+//$$$                t(j) = temp1;
+//$$$               }
+//$$$               yy(1,i) = t(1);
+//$$$               yy(2,i) = t(2);
+//$$$               yy(3,i) = t(3);
+//$$$             }
+
+	for ( i = 1; i <= npoints; ++i ) {
+		for ( j = 1; j <= 3; ++j ) { // compute rotation
+			t(j) = R(j,1)*yy(1,i) + R(j,2)*yy(2,i) + R(j,3)*yy(3,i);
+		}
+		yy(1,i) = t(1);
+		yy(2,i) = t(2);
+		yy(3,i) = t(3);
+	}
+//   // now we must catch the special case of the rotation with inversion.
+//   // we cannot allow inversion rotations.
+//   // fortunatley, and curiously, the optimal non-inverted rotation matrix
+//   // will have the similar eigen values.
+//   // we just have to make a slight change in how we handle things depending on determinant
+
+	rms_ctx = std::sqrt(std::abs(ev(1))) + std::sqrt(std::abs(ev(2))) +
+	 handedness*std::sqrt(std::abs(ev(3)));
+
+	rms_ctx *= temp3;
+
+//   // the abs() are theoretically unneccessary since the eigen values of a real symmetric
+//   // matrix are non-negative.  in practice sometimes small eigen vals end up just negative
+	rms_sum = 0.0;
+	for ( i = 1; i <= npoints; ++i ) {
+		for ( j = 1; j <= 3; ++j ) {
+			rms_sum += ww(i)*( ( yy(j,i) * yy(j,i) ) + ( xx(j,i) * xx(j,i) ) );
+		}
+	}
+	// rms_sum = rms_sum; //   /temp3   (will use natsel instead)
+
+//  // and combine the outer and cross terms into the final calculation.
+//  //  (the abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
+
+	esq = std::sqrt( std::abs( rms_sum - ( 2.0 * rms_ctx ) ) / natsel );
+
+} // rms_fit
+
+
+
+
+void
 rmsfitca2(
 	int npoints,
 	ObjexxFCL::FArray2A< double > xx,

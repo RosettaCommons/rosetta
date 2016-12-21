@@ -49,6 +49,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
@@ -163,6 +167,52 @@ utility::vector1<std::string> GridManager::get_grid_names()
 	}
 	return grid_names;
 }
+
+core::Real GridManager::ideal_score(utility::vector1<core::conformation::UltraLightResidue> & residues)
+{
+
+    core::Real score=0.0;
+
+    //Does not use weighted average because the maximum score of each residue already scales with atom size
+    //Hence, the contribution to total_score from larger ligands is already greater
+
+    foreach(core::conformation::UltraLightResidue residue, residues)
+    {
+    	score += ideal_score(residue);
+     }
+
+    score = (score)/(residues.size());
+    return score;
+
+}
+
+core::Real GridManager::ideal_score(core::conformation::UltraLightResidue const & residue)
+{
+
+	core::Real score = 0;
+	score= (core::Real)(-1) * residue.natoms();
+
+	return score;
+
+}
+
+core::Real GridManager::total_score(utility::vector1<core::conformation::UltraLightResidue> & residues)
+{
+           core::Real score=0.0;
+
+           //Does not use weighted average because the maximum score of each residue already scales with atom size
+           //Hence, the contribution to total_score from larger ligands is already greater
+
+           foreach(core::conformation::UltraLightResidue residue, residues)
+           {
+                  score += total_score(residue);
+                                                         }
+
+           score = (score)/(residues.size());
+           return score;
+
+}
+
 
 core::Real GridManager::total_score(core::conformation::UltraLightResidue const & residue)
 {
@@ -283,6 +333,16 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 	}
 }
 
+//void GridManager::reset_grids()
+//{
+//	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+//	for(;map_iterator != grid_map_.end(); ++map_iterator)
+//	{
+//		GridBaseOP current_grid(*map_iterator->second);
+//		current_grid->reset();
+//	}
+//	grid_map_cache_.clear();
+//}
 
 void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude)
 {
@@ -295,11 +355,20 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 	}
 }
 
-
-void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector const & center)
+void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector const & center, bool multi) //def: multi=false
 {
 
-	std::string chain_hash = core::pose::get_sha1_hash_excluding_chain(chain_,pose);
+	std::string chain_hash;
+
+	if(multi)
+	{
+		chain_hash = core::pose::get_sha1_hash_from_chain(chain_,pose);
+	}
+	else
+	{
+		chain_hash = core::pose::get_sha1_hash_excluding_chain(chain_,pose);
+	}
+
 	std::map<std::string,GridMap>::const_iterator grid_cache_entry(grid_map_cache_.find(chain_hash));
 
 	bool grid_directory_active = basic::options::option[basic::options::OptionKeys::qsar::grid_dir].user();
@@ -455,8 +524,22 @@ void GridManager::deserialize(utility::json_spirit::mArray data)
 	}
 }
 
+bool GridManager::is_in_grid(utility::vector1<core::conformation::UltraLightResidue> const & residues)
+{
+     foreach(core::conformation::UltraLightResidue residue, residues)
+     {
+         if(is_in_grid(residue) == false)
+         {return false;}
+      }
+
+     return true;
+
+ }
+
+
 bool GridManager::is_in_grid(core::conformation::UltraLightResidue const & residue)
 {
+
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		GridBaseOP current_grid(map_iterator->second);

@@ -54,7 +54,7 @@ void ClassicGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 // return "ClassicGrid";
 //}
 
-ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid"), atr_radius_(4.75), rep_radius_(2.25)
+ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid"), atr_radius_(4.75), rep_radius_(2.25), atr_weight_(-1), rep_weight_(1)
 {
 	//
 }
@@ -79,8 +79,19 @@ void ClassicGrid::deserialize(utility::json_spirit::mObject data)
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
-void ClassicGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
+void ClassicGrid::parse_my_tag(utility::tag::TagCOP const tag)
 {
+	//Set custom attraction and republsion weights
+
+	if (tag->hasOption("atr"))
+	{
+		atr_weight_= tag->getOption<core::Real>("atr");
+	}
+
+	if (tag->hasOption("rep"))
+	{
+		rep_weight_= tag->getOption<core::Real>("rep");
+	}
 
 }
 
@@ -89,9 +100,10 @@ void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	//set attractive zones
 	for ( core::Size residue_index = 1; residue_index <=pose.size(); ++residue_index ) {
 		core::conformation::Residue const & residue(pose.residue(residue_index));
+
 		if ( !residue.is_protein() ) continue;
 		for ( core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index ) {
-			set_sphere(residue.xyz(atom_index),atr_radius_,-1);
+			set_sphere(residue.xyz(atom_index),atr_radius_,atr_weight_);
 		}
 	}
 
@@ -107,12 +119,13 @@ void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	//set repulsive zones
 	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::Residue const & residue = pose.residue(residue_index);
-		if ( !residue.is_protein() ) continue;
-		if ( residue.has("CB") ) set_sphere(residue.xyz("CB"), rep_radius_, 1);
-		if ( residue.has("N") ) set_sphere(residue.xyz("N"), rep_radius_, 1);
-		if ( residue.has("CA") ) set_sphere(residue.xyz("CA"), rep_radius_, 1);
-		if ( residue.has("C") ) set_sphere(residue.xyz("C"), rep_radius_, 1);
-		if ( residue.has("O") ) set_sphere(residue.xyz("O"), rep_radius_, 1);
+		if( !residue.is_protein() ) continue;
+		if( residue.has("CB") ) set_sphere(residue.xyz("CB"), rep_radius_, rep_weight_);
+		if( residue.has("N") ) set_sphere(residue.xyz("N"), rep_radius_, rep_weight_);
+		if( residue.has("CA") ) set_sphere(residue.xyz("CA"), rep_radius_, rep_weight_);
+		if( residue.has("C") ) set_sphere(residue.xyz("C"), rep_radius_, rep_weight_);
+		if( residue.has("O") ) set_sphere(residue.xyz("O"), rep_radius_, rep_weight_);
+
 	}
 }
 
@@ -136,9 +149,12 @@ void ClassicGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" )
+		 + XMLSchemaAttribute::attribute_w_default("atr", xsct_real, "Score for attractive term of grid (negative scoring is better)", "-1.0")
+				+ XMLSchemaAttribute::attribute_w_default("rep", xsct_real, "Score for repulsive term of grid (negative scoring is better)", "1.0");
 
-	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that treats all atoms as both attractive within 4.75A (getting a score of -1) and repulsive within 2.25A (getting a score of +1); no parameters may be customized currently", attributes );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that treats all atoms as both attractive within 4.75A (getting a default score of -1) and repulsive within 2.25A (getting a default score of +1) atr and rep changes scoring weights; ", attributes );
 
 }
 
