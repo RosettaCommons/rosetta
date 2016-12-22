@@ -5,6 +5,8 @@
 -n_cycle 1000 
 -angle_range_bb 60 
 -angle_range_chi 180 
+-angle_range_free_bb 60 
+-angle_range_free_chi 180 
 -dump_pdb true 
 -dump_freq 100 
 -out_torsions true 
