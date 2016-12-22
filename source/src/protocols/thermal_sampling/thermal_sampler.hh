@@ -10,8 +10,8 @@
 /// @file
 /// @brief
 
-#ifndef INCLUDED_protocols_farna_thermal_sampling_thermal_sampler_HH
-#define INCLUDED_protocols_farna_thermal_sampling_thermal_sampler_HH
+#ifndef INCLUDED_protocols_thermal_sampling_thermal_sampler_HH
+#define INCLUDED_protocols_thermal_sampling_thermal_sampler_HH
 
 // libRosetta headers
 #include <core/types.hh>
@@ -23,7 +23,7 @@
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 
-#include <protocols/farna/thermal_sampling/util.hh>
+#include <protocols/thermal_sampling/util.hh>
 #include <protocols/stepwise/sampler/MC_OneTorsion.hh>
 
 // C++ headers
@@ -31,7 +31,6 @@
 #include <string>
 
 namespace protocols {
-namespace farna {
 namespace thermal_sampling {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,9 +50,8 @@ void set_gaussian_stdevs(
 	utility::vector1<bool> is_free
 );
 
-}
-}
-}
+} //thermal_sampling
+} //protocols
 
 #endif
 

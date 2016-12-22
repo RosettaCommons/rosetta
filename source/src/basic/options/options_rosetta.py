@@ -6933,26 +6933,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'extra_minimize_res', 'ResidueChainVector', desc= "Extra residues during minimize step",default=[]  ),
           Option( 'extra_minimize_chi_res', 'ResidueChainVector', desc= "Extra side-chain chis to move during minimize step",default=[]  ),
 		 		), # -rna:farna:minimize
-
-		   Option_Group('thermal_sampling',
-          Option( 'out_prefix', 'String', desc="prefix for the out file", default = 'thermal' ),
-          Option( 'sample_residues', 'IntegerVector', desc="residues to sample", default=[] ),
-          Option( 'free_residues', 'IntegerVector', desc="residues that are 'free,' affects stdev of chi sampler", default=[] ),
-          Option( 'loop_residues', 'IntegerVector', desc="residues that are in loops and merit total BB sampling", default=[] ),
-          Option( 'n_cycle', 'Integer', desc="cycle number for Random sampling", default='0' ),
-          Option( 'angle_range_bb', 'Real', desc="range bb torsions are allowed to move", default='180' ),
-          Option( 'angle_range_chi', 'Real', desc="range chi torsions are allowed to move", default='180' ),
-          Option( 'chi_stdev', 'Real', desc="standard deviation for chi sampler", default='20' ),
-          Option( 'bb_stdev', 'Real', desc="standard deviation for backbone sampler", default='1' ),
-          Option( 'standard_bb_stdev', 'Real', desc="standard deviation for standard backbone sampler", default='1' ),
-          Option( 'dump_pdb', 'Boolean', desc="Dump pdb files", default='false' ),
-          Option( 'dump_silent', 'Boolean', desc="Dump structures to a silent file", default='false' ),
-          Option( 'out_torsions', 'Boolean', desc="Print out torsion angles", default='false' ),
-          Option( 'temps', 'RealVector', desc="Simulated tempering temperatures", default=[] ),
-          Option( 'st_weights', 'RealVector', desc="Simulated tempering weights", default=[] ),
-          Option( 'dump_freq', 'Integer', desc="Frequency to dump pdb or silent files", default='500' ),
-				  Option( 'output_min_pose', 'Boolean', desc="Make last pose the minimum score pose ('recover low')", default='true' ),
-			), # -rna:farna:thermal_sampling
 		), # -rna:farna
 	), # -rna
 
@@ -7286,6 +7266,26 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'sample_sugar_res', 'ResidueChainVector', desc="optional: residues in fixed input pose whose sugars can still move", default=[] ),
 		), # -full_model:rna
 	), # -full_model
+
+  Option_Group('thermal_sampling',
+		  Option( 'out_prefix', 'String', desc="prefix for the out file", default = 'thermal' ),
+		  Option( 'sample_residues', 'IntegerVector', desc="residues to sample", default=[] ),
+      Option( 'free_residues', 'IntegerVector', desc="residues that are 'free,' affects stdev of chi sampler", default=[] ),
+      Option( 'loop_residues', 'IntegerVector', desc="residues that are in loops and merit total BB sampling", default=[] ),
+      Option( 'n_cycle', 'Integer', desc="cycle number for Random sampling", default='0' ),
+      Option( 'angle_range_bb', 'Real', desc="range bb torsions are allowed to move", default='180' ),
+      Option( 'angle_range_chi', 'Real', desc="range chi torsions are allowed to move", default='180' ),
+      Option( 'chi_stdev', 'Real', desc="standard deviation for chi sampler", default='20' ),
+      Option( 'bb_stdev', 'Real', desc="standard deviation for backbone sampler", default='1' ),
+      Option( 'standard_bb_stdev', 'Real', desc="standard deviation for standard backbone sampler", default='1' ),
+      Option( 'dump_pdb', 'Boolean', desc="Dump pdb files", default='false' ),
+      Option( 'dump_silent', 'Boolean', desc="Dump structures to a silent file", default='false' ),
+      Option( 'out_torsions', 'Boolean', desc="Print out torsion angles", default='false' ),
+      Option( 'temps', 'RealVector', desc="Simulated tempering temperatures", default=[] ),
+      Option( 'st_weights', 'RealVector', desc="Simulated tempering weights", default=[] ),
+      Option( 'dump_freq', 'Integer', desc="Frequency to dump pdb or silent files", default='500' ),
+			Option( 'output_min_pose', 'Boolean', desc="Make last pose the minimum score pose ('recover low')", default='true' ),
+	), # -thermal_sampling
 
 	## strand assembly options
 	Option_Group( 'strand_assembly',

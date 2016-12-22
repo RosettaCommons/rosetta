@@ -203,6 +203,9 @@ bool
 check_sample_sugar_in_full_model_info( core::pose::Pose const & pose,
 	core::Size const i );
 
+void
+append_virtual_residue_to_full_model_info( core::pose::Pose & pose );
+
 } //full_model_info
 } //pose
 } //core

@@ -51,9 +51,9 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/farna/thermal_sampling/ThermalSamplingMover.hh>
-#include <protocols/farna/thermal_sampling/thermal_sampler.hh>
-#include <protocols/farna/thermal_sampling/util.hh>
+#include <protocols/thermal_sampling/ThermalSamplingMover.hh>
+#include <protocols/thermal_sampling/thermal_sampler.hh>
+#include <protocols/thermal_sampling/util.hh>
 
 #include <core/id/TorsionID.hh>
 #include <protocols/stepwise/sampler/MC_OneTorsion.hh>
@@ -73,6 +73,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -88,7 +89,7 @@ using namespace protocols;
 using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
-using namespace protocols::farna::thermal_sampling;
+using namespace protocols::thermal_sampling;
 using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,7 +144,7 @@ thermal_sampler()
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
-	using namespace protocols::farna::thermal_sampling;
+	using namespace protocols::thermal_sampling;
 
 	ThermalSamplingMoverOP ts( new ThermalSamplingMover );
 	ts->set_dumping_app( true );
@@ -191,25 +192,25 @@ main( int argc, char * argv [] )
 		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( score::weights );
 
-		//option.add_relevant( OptionKeys::rna::farna::thermal_sampling::seq1 );
-		//option.add_relevant( OptionKeys::rna::farna::thermal_sampling::seq2 );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::n_cycle );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::temps );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::st_weights );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::out_prefix );
-		//option.add_relevant( OptionKeys::rna::farna::thermal_sampling::save_terms );
-		//option.add_relevant( OptionKeys::rna::farna::thermal_sampling::save_scores );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::dump_pdb );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::dump_silent );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::sample_residues );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::free_residues );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::angle_range_chi );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::angle_range_bb );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::chi_stdev );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::bb_stdev );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::standard_bb_stdev );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::out_torsions );
-		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::dump_freq );
+		//option.add_relevant( OptionKeys::thermal_sampling::seq1 );
+		//option.add_relevant( OptionKeys::thermal_sampling::seq2 );
+		option.add_relevant( OptionKeys::thermal_sampling::n_cycle );
+		option.add_relevant( OptionKeys::thermal_sampling::temps );
+		option.add_relevant( OptionKeys::thermal_sampling::st_weights );
+		option.add_relevant( OptionKeys::thermal_sampling::out_prefix );
+		//option.add_relevant( OptionKeys::thermal_sampling::save_terms );
+		//option.add_relevant( OptionKeys::thermal_sampling::save_scores );
+		option.add_relevant( OptionKeys::thermal_sampling::dump_pdb );
+		option.add_relevant( OptionKeys::thermal_sampling::dump_silent );
+		option.add_relevant( OptionKeys::thermal_sampling::sample_residues );
+		option.add_relevant( OptionKeys::thermal_sampling::free_residues );
+		option.add_relevant( OptionKeys::thermal_sampling::angle_range_chi );
+		option.add_relevant( OptionKeys::thermal_sampling::angle_range_bb );
+		option.add_relevant( OptionKeys::thermal_sampling::chi_stdev );
+		option.add_relevant( OptionKeys::thermal_sampling::bb_stdev );
+		option.add_relevant( OptionKeys::thermal_sampling::standard_bb_stdev );
+		option.add_relevant( OptionKeys::thermal_sampling::out_torsions );
+		option.add_relevant( OptionKeys::thermal_sampling::dump_freq );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

@@ -159,7 +159,6 @@ static MoverRegistrator< enzymatic_movers::GlycosyltransferaseMoverCreator > reg
 
 // F //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
-static MoverRegistrator< farna::thermal_sampling::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 static MoverRegistrator< farna::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
@@ -538,6 +537,8 @@ static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
 // T //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< thermal_sampling::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
+
 static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;

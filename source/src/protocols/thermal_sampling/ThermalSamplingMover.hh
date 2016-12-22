@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farna/thermal_sampling/ThermalSamplingMover.hh
+/// @file protocols/thermal_sampling/ThermalSamplingMover.hh
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
-#ifndef INCLUDED_protocols_farna_thermal_sampling_ThermalSamplingMover_hh
-#define INCLUDED_protocols_farna_thermal_sampling_ThermalSamplingMover_hh
+#ifndef INCLUDED_protocols_thermal_sampling_ThermalSamplingMover_hh
+#define INCLUDED_protocols_thermal_sampling_ThermalSamplingMover_hh
 
 // Unit headers
-#include <protocols/farna/thermal_sampling/ThermalSamplingMover.fwd.hh>
+#include <protocols/thermal_sampling/ThermalSamplingMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -31,7 +31,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {
-namespace farna {
 namespace thermal_sampling {
 
 ///@brief Use a simulated tempering simulation to refine a pose
@@ -149,8 +148,7 @@ private: // data
 std::ostream &
 operator<<( std::ostream & os, ThermalSamplingMover const & mover );
 
-} //protocols
-} //farna
 } //thermal_sampling
+} //protocols
 
-#endif //protocols/farna/thermal_sampling_ThermalSamplingMover_hh
+#endif //protocols/thermal_sampling_ThermalSamplingMover_hh

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farna/thermal_sampling/ThermalSamplingMover.fwd.hh
+/// @file protocols/thermal_sampling/ThermalSamplingMover.fwd.hh
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
 
-#ifndef INCLUDED_protocols_farna_thermal_sampling_ThermalSamplingMover_fwd_hh
-#define INCLUDED_protocols_farna_thermal_sampling_ThermalSamplingMover_fwd_hh
+#ifndef INCLUDED_protocols_thermal_sampling_ThermalSamplingMover_fwd_hh
+#define INCLUDED_protocols_thermal_sampling_ThermalSamplingMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,7 +22,6 @@
 
 // Forward
 namespace protocols {
-namespace farna {
 namespace thermal_sampling {
 
 class ThermalSamplingMover;
@@ -32,12 +31,11 @@ typedef utility::pointer::shared_ptr< ThermalSamplingMover const > ThermalSampli
 
 
 
-} //protocols
-} //farna
 } //thermal_sampling
+} //protocols
 
 
-#endif //INCLUDED_protocols_farna_thermal_sampling_ThermalSamplingMover_fwd_hh
+#endif //INCLUDED_protocols_thermal_sampling_ThermalSamplingMover_fwd_hh
 
 
 

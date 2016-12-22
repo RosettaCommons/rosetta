@@ -1364,6 +1364,8 @@ setup_for_density_scoring( core::pose::Pose & pose ) {
 	// add virtual root for density scoring
 	TR << "Adding virtual residue as root" << std::endl;
 	pose::addVirtualResAsRoot( pose );
+	// Note from rhiju -- should we update full_model_info & full_model_parameters?
+	// I put a new function in core/pose/full_model_info/util.hh called append_virtual_residue_to_full_model_info().
 }
 
 } //setup

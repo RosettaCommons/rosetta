@@ -49,8 +49,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/farna/thermal_sampling/util.hh>
-#include <protocols/farna/thermal_sampling/thermal_sampler.hh>
+#include <protocols/thermal_sampling/util.hh>
+#include <protocols/thermal_sampling/thermal_sampler.hh>
 
 #include <core/id/TorsionID.hh>
 #include <protocols/stepwise/sampler/MC_OneTorsion.hh>
@@ -77,6 +77,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
 
 
 using namespace core::pose;
@@ -88,12 +89,11 @@ using namespace protocols;
 using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
-using namespace basic::options::OptionKeys::rna::farna::thermal_sampling;
-using namespace protocols::farna::thermal_sampling;
+using namespace basic::options::OptionKeys::thermal_sampling;
+using namespace protocols::thermal_sampling;
 using utility::vector1;
 
 namespace protocols {
-namespace farna {
 namespace thermal_sampling {
 
 
@@ -141,7 +141,6 @@ void set_gaussian_stdevs(
 	standard_bb_sampler.set_gaussian_stdev( standard_bb_stdev );
 }
 
-}
-}
-}
+} //thermal_sampling
+} //protocols
 

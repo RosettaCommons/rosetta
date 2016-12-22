@@ -64,11 +64,6 @@ sources = {
         "RNA_DeNovoPoseInitializer",
         "RNA_DeNovoParameters",
     ],
-    "protocols/farna/thermal_sampling": [
-        "ThermalSamplingMover",
-        "thermal_sampler",
-        "util",
-    ],
     "protocols/magnesium": [
         "MgOrbitalFrameFinder",
         "MgHydrater",
@@ -338,6 +333,12 @@ sources = {
     ],
     "protocols/stepwise/monte_carlo/submotif": [
         "SubMotifLibrary",
+    ],
+    "protocols/thermal_sampling": [
+        "RECCES_Mover",
+        "ThermalSamplingMover",
+        "thermal_sampler",
+        "util",
     ],
 }
 include_path = [

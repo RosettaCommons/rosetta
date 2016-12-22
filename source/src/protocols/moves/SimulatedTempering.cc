@@ -40,21 +40,22 @@ namespace moves {
 
 SimulatedTempering::SimulatedTempering(
 	Pose & pose,
-	ScoreFunctionOP const & scorefxn,
+	ScoreFunctionCOP scorefxn,
 	utility::vector1<Real> const & temperatures,
 	utility::vector1<Real> const & weights
 ):
 	temperatures_( temperatures ),
 	weights_( weights ),
 	scorefxn_( scorefxn ),
-	rep_scorefxn_( core::scoring::ScoreFunctionOP( new ScoreFunction ) ),
 	temp_id_( 1 ),
 	cached_score_( ( *scorefxn )( pose ) ),
 	rep_cutoff_( 0 ),
 	force_next_move_reject_( false )
 {
 	runtime_assert( temperatures.size() == weights.size() );
-	rep_scorefxn_->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
+	ScoreFunctionOP rep_scorefxn( new ScoreFunction );
+	rep_scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
+	rep_scorefxn_ = rep_scorefxn; // becomes COP!
 }
 
 
@@ -132,12 +133,12 @@ bool SimulatedTempering::t_jump() {
 }
 
 
-void SimulatedTempering::score_function( ScoreFunctionOP const & scorefxn ) {
+void SimulatedTempering::score_function( ScoreFunctionCOP scorefxn ) {
 	scorefxn_ = scorefxn;
 }
 
 
-ScoreFunctionOP SimulatedTempering::score_function() const {
+ScoreFunctionCOP SimulatedTempering::score_function() const {
 	return scorefxn_;
 }
 

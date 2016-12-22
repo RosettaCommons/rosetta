@@ -29,6 +29,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
@@ -152,8 +153,10 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 		utility::vector1< Size > obligate_pairing_set;
 		obligate_pairing_set.push_back( rna_params_.rna_pairing_list().size() );
 		rna_params_.add_obligate_pairing_set( obligate_pairing_set );
+
 	}
 
+	if ( pose::full_model_info::full_model_info_defined( pose ) ) pose::full_model_info::append_virtual_residue_to_full_model_info( pose );
 
 }
 

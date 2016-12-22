@@ -1283,8 +1283,7 @@ rsym_evector(
 	mvec.dimension( 3, 3 );
 
 	// local
-	double xx,yy,xy,zx,yz; //zz
-	double e1,e2,e3,znorm;
+	double xy,zx,yz; //zz
 
 
 	// first, for sanity only, name some temporary variables
@@ -1300,14 +1299,14 @@ rsym_evector(
 			// note you could compute all three this way if you wanted to,
 			// but you would run into problems with degenerate eigen values.
 
-			xx = m(1,1)-ev(i);
-			yy = m(2,2)-ev(i);
+			double xx = m(1,1)-ev(i);
+			double yy = m(2,2)-ev(i);
 			// I marvel at how simple this is when you know the eigen values.
-			e1 = xy*yz-zx*yy;
-			e2 = xy*zx-yz*xx;
-			e3 = xx*yy-xy*xy;
+			double e1 = xy*yz-zx*yy;
+			double e2 = xy*zx-yz*xx;
+			double e3 = xx*yy-xy*xy;
 
-			znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );
+			double znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );
 
 			mvec(1,i) = e1/znorm;
 			mvec(2,i) = e2/znorm;
@@ -1326,42 +1325,46 @@ rsym_evector(
 
 	} else {
 
-		if ( ev(2) != ev(3) ) {
-			std::cerr << " hey is this the right thing to be doing??? " << std::endl;
+		// if ( ev(2) != ev(3) ) {
+		// 	std::cerr << " hey is this the right thing to be doing??? " << std::endl;
+		// NOTE: this is *not* the right thing to be doing and leads to
+		//  nans and other badness for highly symmetric planar things, so
+		//  better to not rotate at all. -- rhiju, 2016.
 
-			for ( int i = 2; i <= 3; ++i ) {
-				// Okay, since 1 and 2 are degenerate we will use 2 and 3 instead.
+		// 	for ( int i = 2; i <= 3; ++i ) {
+		// 		// Okay, since 1 and 2 are degenerate we will use 2 and 3 instead.
 
-				xx = m(1,1)-ev(i);
-				yy = m(2,2)-ev(i);
-				// I marvel at how simple this is when you know the eigen values.
-				e1 = xy*yz-zx*yy;
-				e2 = xy*zx-yz*xx;
-				e3 = xx*yy-xy*xy;
-				// yes you sharp eyed person, its not quite symmetric here too.
-				//                   life is odd.
+		// 		xx = m(1,1)-ev(i);
+		// 		yy = m(2,2)-ev(i);
+		// 		// I marvel at how simple this is when you know the eigen values.
+		// 		e1 = xy*yz-zx*yy;
+		// 		e2 = xy*zx-yz*xx;
+		// 		e3 = xx*yy-xy*xy;
+		// 		// yes you sharp eyed person, its not quite symmetric here too.
+		// 		//                   life is odd.
 
-				znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );
+		// 		znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );
 
-				mvec(1,i) = e1/znorm;
-				mvec(2,i) = e2/znorm;
-				mvec(3,i) = e3/znorm;
+		// 		mvec(1,i) = e1/znorm;
+		// 		mvec(2,i) = e2/znorm;
+		// 		mvec(3,i) = e3/znorm;
 
-			}
+		// 	}
 
-			// now compute the third eigenvector
-			mvec(1,1) =  mvec(2,2)*mvec(3,3) - mvec(2,3)*mvec(3,2);
-			mvec(2,1) = -mvec(1,2)*mvec(3,3) + mvec(1,3)*mvec(3,2);
-			mvec(3,1) =  mvec(1,2)*mvec(2,3) - mvec(1,3)*mvec(2,2);
+		// 	// now compute the third eigenvector
+		// 	mvec(1,1) =  mvec(2,2)*mvec(3,3) - mvec(2,3)*mvec(3,2);
+		// 	mvec(2,1) = -mvec(1,2)*mvec(3,3) + mvec(1,3)*mvec(3,2);
+		// 	mvec(3,1) =  mvec(1,2)*mvec(2,3) - mvec(1,3)*mvec(2,2);
 
-			// pathologically nervous people would explicitly normalize this vector too.
+		// 	// pathologically nervous people would explicitly normalize this vector too.
 
-			return;
+		// 	return;
 
-		} else {
+		// } else {
 
-			std::cerr << "warning: all eigen values are equal" << std::endl;
-
+		// 	std::cerr << "warning: all eigen values are equal" << std::endl;
+		{
+			std::cout << "rms.cc: warning -- eigenvalues are degenerate -- no rotation will be applied." << std::endl;
 			for ( int i = 1; i <= 3; ++i ) {
 				mvec(1,i) = 0.0;
 				mvec(2,i) = 0.0;

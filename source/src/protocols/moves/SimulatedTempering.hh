@@ -39,7 +39,7 @@ class SimulatedTempering : public utility::pointer::ReferenceCount {
 public:
 	SimulatedTempering(
 		core::pose::Pose & pose,
-		core::scoring::ScoreFunctionOP const & scorefxn,
+		core::scoring::ScoreFunctionCOP scorefxn,
 		utility::vector1<core::Real> const & temperatures,
 		utility::vector1<core::Real> const & weights
 	);
@@ -57,7 +57,7 @@ public:
 	core::Real temperature() const { return temperatures_[temp_id_]; }
 
 	/// @brief Sets the ScoreFunction to  <scorefxn>
-	void score_function( core::scoring::ScoreFunctionOP const & scorefxn );
+	void score_function( core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief Sets cutoff of repusion filter, use 0 to turn it off
 	void set_rep_cutoff( core::Real const setting ) { rep_cutoff_ = setting; }
@@ -66,11 +66,11 @@ public:
 	void force_next_move_reject() { force_next_move_reject_ = true; }
 
 	/// @brief Returns the MonteCarlo ScoreFunction
-	core::scoring::ScoreFunctionOP score_function() const;
+	core::scoring::ScoreFunctionCOP score_function() const;
 
 private:
 	utility::vector1<core::Real> const temperatures_, weights_;
-	core::scoring::ScoreFunctionOP scorefxn_, rep_scorefxn_;
+	core::scoring::ScoreFunctionCOP scorefxn_, rep_scorefxn_;
 	core::Size temp_id_;
 	core::Real cached_score_, rep_cutoff_;
 	bool force_next_move_reject_;

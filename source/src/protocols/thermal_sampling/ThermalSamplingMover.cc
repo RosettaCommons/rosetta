@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farna/thermal_sampling/ThermalSamplingMover.cc
+/// @file protocols/thermal_sampling/ThermalSamplingMover.cc
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
 // Unit headers
-#include <protocols/farna/thermal_sampling/ThermalSamplingMover.hh>
-#include <protocols/farna/thermal_sampling/ThermalSamplingMoverCreator.hh>
+#include <protocols/thermal_sampling/ThermalSamplingMover.hh>
+#include <protocols/thermal_sampling/ThermalSamplingMoverCreator.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -64,8 +64,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/farna/thermal_sampling/util.hh>
-#include <protocols/farna/thermal_sampling/thermal_sampler.hh>
+#include <protocols/thermal_sampling/util.hh>
+#include <protocols/thermal_sampling/thermal_sampler.hh>
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -75,14 +75,14 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.farna.thermal_sampling.ThermalSamplingMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.thermal_sampling.ThermalSamplingMover" );
 
 namespace protocols {
-namespace farna {
 namespace thermal_sampling {
 
 using namespace core::chemical::rna;
@@ -108,16 +108,16 @@ Size find_likely_first_chain_ending( Pose const & pose ) {
 /// @brief Default constructor
 ThermalSamplingMover::ThermalSamplingMover():
 	protocols::moves::Mover( ThermalSamplingMover::mover_name() ),
-	residues_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::sample_residues ]() ),
-	free_rsd_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::free_residues ]() ),
-	loop_rsd_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::loop_residues ]() ),
-	n_cycle_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::n_cycle ] ),
-	dump_pdb_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::dump_pdb ]() ),
-	dump_silent_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::dump_silent ]() ),
-	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_chi ]() ),
-	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_bb ]() ),
-	temps_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::temps ]() ),
-	st_weights_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::st_weights ]() )
+	residues_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::sample_residues ]() ),
+	free_rsd_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::free_residues ]() ),
+	loop_rsd_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::loop_residues ]() ),
+	n_cycle_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::n_cycle ] ),
+	dump_pdb_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::dump_pdb ]() ),
+	dump_silent_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::dump_silent ]() ),
+	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::angle_range_chi ]() ),
+	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::angle_range_bb ]() ),
+	temps_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::temps ]() ),
+	st_weights_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::st_weights ]() )
 {
 	total_sampled_ = residues_.size();
 	// Insert zero weights at the beginning if there is a mismatch.
@@ -153,7 +153,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace basic::options::OptionKeys::rna::farna::thermal_sampling;
+	using namespace basic::options::OptionKeys::thermal_sampling;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -718,7 +718,6 @@ void ThermalSamplingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 
 
 
-} //protocols
-} //farna
 } //thermal_sampling
+} //protocols
 

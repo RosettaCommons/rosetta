@@ -41,7 +41,7 @@
 #include <devel/init.hh>
 
 #include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/farna/thermal_sampling/util.hh>
+#include <protocols/thermal_sampling/util.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -271,7 +271,7 @@ MC_run () {
 	using namespace core::pose;
 	using namespace numeric;
 	using namespace numeric::random;
-	using namespace protocols::farna::thermal_sampling;
+	using namespace protocols::thermal_sampling;
 
 	clock_t const time_start( clock() );
 

@@ -51,9 +51,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/farna/thermal_sampling/ThermalSamplingMover.hh>
-#include <protocols/farna/thermal_sampling/thermal_sampler.hh>
-#include <protocols/farna/thermal_sampling/util.hh>
 
 #include <core/id/TorsionID.hh>
 #include <protocols/stepwise/sampler/MC_OneTorsion.hh>
@@ -85,7 +82,6 @@ using namespace protocols;
 using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
-using namespace protocols::farna::thermal_sampling;
 using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////

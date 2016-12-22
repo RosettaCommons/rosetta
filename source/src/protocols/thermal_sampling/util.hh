@@ -7,18 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/protocols/farna/thermal_sampling/util.cc
+/// @file src/protocols/thermal_sampling/util.hh
 /// @brief
 /// @details
 ///
 /// @author Andy Watkins
 
 
+#ifndef INCLUDED_protocols_thermal_sampling_util_HH
+#define INCLUDED_protocols_thermal_sampling_util_HH
+
 #include <core/types.hh>
 #include <utility/io/ozstream.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 
@@ -27,12 +31,10 @@
 //// C++ headers
 #include <string>
 #include <map>
-#include <cmath>
 #include <utility/vector1.hh>
 
 
 namespace protocols {
-namespace farna {
 namespace thermal_sampling {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,65 +78,65 @@ public:
 	utility::vector1<core::Size> get_hist() const { return hist_; }
 
 private:
-	core::Real const min_, max_, spacing_;
+	core::Real min_, max_, spacing_;
 	core::Size n_elem_;
 	utility::vector1<core::Size> hist_;
 };
 
-// score types to be recorded
-utility::vector1<core::scoring::ScoreType> const & get_scoretypes() {
-	using namespace core::scoring;
-	static utility::vector1< ScoreType > scoretypes;
-	if ( !scoretypes.empty() ) return scoretypes;
+//////////////////////////////////////////////////////////////////////////////
+utility::vector1<core::scoring::ScoreType> const & get_scoretypes();
 
-	// List of score types to be cached
-	scoretypes.push_back( fa_atr );
-	scoretypes.push_back( fa_rep );
-	scoretypes.push_back( fa_intra_rep );
-	scoretypes.push_back( fa_stack );
-	scoretypes.push_back( rna_torsion );
-	scoretypes.push_back( hbond_sc );
-	scoretypes.push_back( lk_nonpolar );
-	scoretypes.push_back( geom_sol_fast );
-	scoretypes.push_back( stack_elec );
-	scoretypes.push_back( fa_elec_rna_phos_phos );
-	return scoretypes;
-}
+core::Size data_dim();
 
 //////////////////////////////////////////////////////////////////////////////
 void update_scores(
 	utility::vector1<float> & scores,
 	core::pose::Pose & pose,
-	core::scoring::ScoreFunctionOP const scorefxn
-) {
-	using namespace core::scoring;
-	scores.clear();
-	scores.push_back( ( *scorefxn )( pose ) );
-	utility::vector1< ScoreType > const & score_types = get_scoretypes();
-	for ( core::Size i = 1; i<= score_types.size(); ++i ) {
-		scores.push_back( scorefxn->score_by_scoretype( pose, score_types[i], false /*weighted*/ ) );
-	}
-}
+	core::scoring::ScoreFunctionCOP scorefxn
+);
 
 //////////////////////////////////////////////////////////////////////////////
 void fill_data(
 	utility::vector1<float> & data,
 	core::Size const count,
 	utility::vector1<float> const & scores
-) {
-	data.push_back( count );
-	data.insert( data.end(), scores.begin(), scores.end() );
-}
+);
+
+core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp );
 
 //////////////////////////////////////////////////////////////////////////////
-// Simple heuristic for gaussian stdev
-core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp ) {
-	// Negative temp is infinite
-	if ( temp < 0 ) return -1;
-	if ( is_bp ) return 5 * temp / n_rsd;
-	return 6 * std::pow( temp / n_rsd, 0.75 );
+template<typename T>
+void vector2disk_in1d(
+	std::string const & out_filename,
+	utility::vector1<T> const & out_vector
+) {
+	utility::io::ozstream out( out_filename.c_str(), std::ios::out | std::ios::binary );
+	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	out.close();
+}
+//////////////////////////////////////////////////////////////////////////////
+template<typename T>
+void vector2disk_in2d(
+	std::string const & out_filename,
+	core::Size const dim1,
+	core::Size const dim2,
+	utility::vector1<T> const & out_vector
+) {
+	//std::cout << "dim1 " << dim1 << " dim2 " << dim2 << " out " << out_vector.size() << std::endl;
+	utility::io::ozstream out( out_filename.c_str(), std::ios::out | std::ios::binary );
+	runtime_assert( dim1 * dim2 == out_vector.size() );
+	out.write( (const char*) &dim1, sizeof(core::Size) );
+	out.write( (const char*) &dim2, sizeof(core::Size) );
+	if ( out_vector.size() == 0 ) {
+		std::cout << "Warning: no data available for the requested condition. Output file may be malformed.\n";
+		// noop
+	} else {
+		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	}
+	out.close();
 }
 
-}
-} //farna
+} //thermal_sampling
 } //protocols
+
+#endif

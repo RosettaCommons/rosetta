@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/swa/FullModelInfo.cc
+/// @file   core/pose/full_model_info/util.cc
 /// @brief  Mapping from a working pose into a bigger pose, for swa monte carlo stuff.
 /// @author Rhiju Das
 
@@ -932,6 +932,51 @@ check_sample_sugar_in_full_model_info( pose::Pose const & pose,
 	return sample_sugar_res.has_value( full_model_info.res_list()[ i ] );
 }
 
+
+
+/////////////////////////////////////////////////////////////////////////////
+void
+append_virtual_residue_to_full_model_info( pose::Pose & pose )
+{
+	using namespace utility;
+
+	if ( !full_model_info_defined( pose ) ) return; // no op
+
+	runtime_assert ( pose.residue( pose.size() ).aa() == core::chemical::aa_vrt ); //make sure VRT is already added
+
+	// just haven't coded these up yet.
+	runtime_assert( const_full_model_info( pose ).other_pose_list().size() == 0 );
+	runtime_assert( const_full_model_info( pose ).submotif_info_list().size() == 0 );
+
+	FullModelParametersCOP full_model_parameters( const_full_model_info( pose ).full_model_parameters() );
+
+	std::string const new_full_sequence( full_model_parameters->full_sequence() + 'X' );
+
+	vector1< int > new_conventional_numbering( full_model_parameters->conventional_numbering() );
+	new_conventional_numbering.push_back( 0 );
+
+	vector1< char > new_conventional_chains( full_model_parameters->conventional_chains() );
+	new_conventional_chains.push_back( ' ' );
+
+	std::map< Size, std::string > new_non_standard_residue_map( full_model_parameters->non_standard_residue_map() );
+	new_non_standard_residue_map[ new_full_sequence.size() ] = "VRT";
+
+	FullModelParametersOP new_full_model_parameters( new FullModelParameters( new_full_sequence ) );
+	new_full_model_parameters->set_conventional_numbering( new_conventional_numbering );
+	new_full_model_parameters->set_conventional_chains( new_conventional_chains );
+	new_full_model_parameters->set_non_standard_residue_map( new_non_standard_residue_map );
+	for ( Size n = 1; n < LAST_TYPE; n++ ) {
+		FullModelParameterType type = static_cast< FullModelParameterType >( n );
+		new_full_model_parameters->set_parameter_as_res_list( type, full_model_parameters->get_res_list( type )  );
+	} // may need to treate WORKING_RES specially.
+
+	FullModelInfoOP new_full_model_info( new FullModelInfo( new_full_model_parameters ) );
+	vector1< Size > new_res_list = const_full_model_info( pose ).res_list();
+	new_res_list.push_back( new_full_sequence.size() );
+	new_full_model_info->set_res_list( new_res_list );
+	set_full_model_info( pose, new_full_model_info );
+
+}
 
 } //full_model_info
 } //pose

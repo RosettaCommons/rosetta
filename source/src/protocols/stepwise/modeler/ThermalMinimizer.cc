@@ -66,8 +66,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/farna/thermal_sampling/util.hh>
-#include <protocols/farna/thermal_sampling/thermal_sampler.hh>
+#include <protocols/thermal_sampling/util.hh>
+#include <protocols/thermal_sampling/thermal_sampler.hh>
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -77,6 +77,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -150,9 +151,9 @@ void set_gaussian_stdevs(
 /// @brief Default constructor
 ThermalMinimizer::ThermalMinimizer():
 	protocols::moves::Mover( ThermalMinimizer::mover_name() ),
-	n_cycle_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::n_cycle ] ),
-	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_chi ]() ),
-	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_bb ]() ),
+	n_cycle_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::n_cycle ] ),
+	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::angle_range_chi ]() ),
+	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::angle_range_bb ]() ),
 	kic_sampling_( true ),
 	output_min_pose_( true )
 {}
@@ -203,7 +204,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	if ( ! mm_ ) { TR.Warning << "No movemap provided! Returning." << std::endl; }
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace basic::options::OptionKeys::rna::farna::thermal_sampling;
+	using namespace basic::options::OptionKeys::thermal_sampling;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;

@@ -141,7 +141,6 @@
 
 // F //////////////////////////////////////////////////////////////////////////
 #include <protocols/farna/ErraserMinimizerMoverCreator.hh>
-#include <protocols/farna/thermal_sampling/ThermalSamplingMoverCreator.hh>
 #include <protocols/farna/RNAIdealizeMoverCreator.hh>
 
 #include <protocols/features/ReportToDBCreator.hh>
@@ -514,6 +513,8 @@
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 
 // T //////////////////////////////////////////////////////////////////////////
+#include <protocols/thermal_sampling/ThermalSamplingMoverCreator.hh>
+
 #include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreTaskMoverCreator.hh>
