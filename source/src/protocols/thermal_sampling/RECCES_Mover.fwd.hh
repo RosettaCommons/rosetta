@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/thermal_sampling/RECCES_Mover.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace thermal_sampling {
-	
-	class RECCES_Mover;
-	typedef utility::pointer::shared_ptr< RECCES_Mover > RECCES_MoverOP;
-	typedef utility::pointer::shared_ptr< RECCES_Mover const > RECCES_MoverCOP;
-	
-} //thermal_sampling 
-} //protocols 
+
+class RECCES_Mover;
+typedef utility::pointer::shared_ptr< RECCES_Mover > RECCES_MoverOP;
+typedef utility::pointer::shared_ptr< RECCES_Mover const > RECCES_MoverCOP;
+
+} //thermal_sampling
+} //protocols
 
 #endif

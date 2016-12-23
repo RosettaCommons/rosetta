@@ -1212,40 +1212,35 @@ Energies::update_neighbor_links(
 				//both residues are ligands
 				//put remaining code in else statement
 				core::Real ligand_ensemble_wt = 0;
-				if (basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ].user()) {
+				if ( basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ].user() ) {
 					ligand_ensemble_wt = basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ]();
 				}
 
-				if (ligand_ensemble_wt != 0)
-				{
-					if ( pose.residue_type(ii).is_ligand() && pose.residue_type(jj).is_ligand())
-					{}
+				if ( ligand_ensemble_wt != 0 ) {
+					if ( pose.residue_type(ii).is_ligand() && pose.residue_type(jj).is_ligand() ) {}
 					// How about we simply make sure the radii sum is positive instead of paying for a sqrt
-							// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
+					// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
 					else if ( ii_intxn_radius + jjradius > 0 ) {
-							if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
-								energy_graph_->add_energy_edge( ii, jj, square_distance );
-							}
-							for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
-								context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
-							}
+						if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
+							energy_graph_->add_energy_edge( ii, jj, square_distance );
 						}
-
+						for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
+							context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
+						}
 					}
 
-				else
-				{
+				} else {
 
 					//How about we simply make sure the radii sum is positive instead of paying for a sqrt
-						if ( ii_intxn_radius + jjradius > 0 ) {
-							if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
-								energy_graph_->add_energy_edge( ii, jj, square_distance );
-							}
-							for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
-								context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
-							}
+					if ( ii_intxn_radius + jjradius > 0 ) {
+						if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
+							energy_graph_->add_energy_edge( ii, jj, square_distance );
+						}
+						for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
+							context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
 						}
 					}
+				}
 			}
 		}
 	}

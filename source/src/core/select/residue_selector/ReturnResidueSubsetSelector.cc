@@ -8,7 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/pack/task/residue_selector/ReturnResidueSubsetSelector.hh
-/// @brief  A simple selector that returns the set subset.  This to enable simplification of code-based interfaces to residue selectors, so that one may accept only selectors, but using this selector, we can set subsets.  This greatly reduces the interface complexity and code-complexity arising from accepting BOTH ResidueSubsets and ResidueSelectors (Which I'm terribly sick of doing at this point).
+/// @brief  A simple selector that returns the set subset.  This to enable simplification of code-based interfaces to residue selectors,
+/// so that one may accept only selectors, but using this selector, we can set subsets.  This greatly reduces the interface complexity
+/// and code-complexity arising from accepting BOTH ResidueSubsets and ResidueSelectors (Which I'm terribly sick of doing at this point).
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Unit headers

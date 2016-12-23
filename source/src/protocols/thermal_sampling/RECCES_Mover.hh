@@ -27,81 +27,81 @@
 namespace protocols {
 namespace thermal_sampling {
 
-	class RECCES_Mover: public protocols::moves::Mover {
+class RECCES_Mover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		RECCES_Mover( utility::vector1< core::Real > const & temps,
-									utility::vector1< core::Real > const & st_weights	);
+	//constructor
+	RECCES_Mover( utility::vector1< core::Real > const & temps,
+		utility::vector1< core::Real > const & st_weights );
 
-		//destructor
-		~RECCES_Mover();
+	//destructor
+	~RECCES_Mover();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual std::string get_name() const{ return "RECCES_Mover"; }
+	virtual std::string get_name() const{ return "RECCES_Mover"; }
 
-		void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ) { scorefxn_ = scorefxn ; }
-		void set_bp_rsd( utility::vector1< core::Size > const & setting ) { bp_rsd_ = setting; }
-		void set_dangling_rsd( utility::vector1< core::Size > const & setting ) { dangling_rsd_ = setting; }
+	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ) { scorefxn_ = scorefxn ; }
+	void set_bp_rsd( utility::vector1< core::Size > const & setting ) { bp_rsd_ = setting; }
+	void set_dangling_rsd( utility::vector1< core::Size > const & setting ) { dangling_rsd_ = setting; }
 
-		void set_dump_pdb( bool const & setting ){ dump_pdb_ = setting; }
-		bool dump_pdb() const { return dump_pdb_; }
+	void set_dump_pdb( bool const & setting ){ dump_pdb_ = setting; }
+	bool dump_pdb() const { return dump_pdb_; }
 
-		void set_n_cycle( core::Size const & setting ){ n_cycle_ = setting; }
-		core::Size n_cycle() const { return n_cycle_; }
+	void set_n_cycle( core::Size const & setting ){ n_cycle_ = setting; }
+	core::Size n_cycle() const { return n_cycle_; }
 
-		void set_n_dump( core::Size const & setting ){ n_dump_ = setting; }
-		core::Size n_dump() const { return n_dump_; }
+	void set_n_dump( core::Size const & setting ){ n_dump_ = setting; }
+	core::Size n_dump() const { return n_dump_; }
 
-		void set_save_scores( bool const & setting ){ save_scores_ = setting; }
-		bool save_scores() const { return save_scores_; }
+	void set_save_scores( bool const & setting ){ save_scores_ = setting; }
+	bool save_scores() const { return save_scores_; }
 
-		void set_a_form_range( core::Real const & setting ){ a_form_range_ = setting; }
-		core::Real a_form_range() const { return a_form_range_; }
+	void set_a_form_range( core::Real const & setting ){ a_form_range_ = setting; }
+	core::Real a_form_range() const { return a_form_range_; }
 
-		void set_out_prefix( std::string const & setting ){ out_prefix_ = setting; }
-		std::string out_prefix() const { return out_prefix_; }
+	void set_out_prefix( std::string const & setting ){ out_prefix_ = setting; }
+	std::string out_prefix() const { return out_prefix_; }
 
-	private:
+private:
 
-		void
-		initialize( utility::vector1< core::Real > const & orig_weights );
+	void
+	initialize( utility::vector1< core::Real > const & orig_weights );
 
-		void
-		initialize_sampler( core::pose::Pose const & pose );
+	void
+	initialize_sampler( core::pose::Pose const & pose );
 
-		void
-		run_sampler( core::pose::Pose & pose );
+	void
+	run_sampler( core::pose::Pose & pose );
 
-		void
-		save_data() const;
+	void
+	save_data() const;
 
-		void
-		set_gaussian_stdev( core::Real const & temperature );
+	void
+	set_gaussian_stdev( core::Real const & temperature );
 
-	private:
+private:
 
-		utility::vector1< core::Real > temps_;
-		utility::vector1< core::Real > weights_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		protocols::stepwise::sampler::rna::RNA_MC_MultiSuiteOP sampler_; // ugh should generalize
+	utility::vector1< core::Real > temps_;
+	utility::vector1< core::Real > weights_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	protocols::stepwise::sampler::rna::RNA_MC_MultiSuiteOP sampler_; // ugh should generalize
 
-		utility::vector1< core::Size > bp_rsd_, dangling_rsd_;
+	utility::vector1< core::Size > bp_rsd_, dangling_rsd_;
 
-		core::Size n_cycle_;
-		core::Size n_dump_;
-		bool dump_pdb_;
-		bool save_scores_;
-		std::string out_prefix_;
-		core::Real a_form_range_;
+	core::Size n_cycle_;
+	core::Size n_dump_;
+	bool dump_pdb_;
+	bool save_scores_;
+	std::string out_prefix_;
+	core::Real a_form_range_;
 
-		utility::vector1<utility::vector1< float > > data_;
-		utility::vector1< Histogram > hist_list_;
-	};
+	utility::vector1<utility::vector1< float > > data_;
+	utility::vector1< Histogram > hist_list_;
+};
 
 } //thermal_sampling
 } //protocols

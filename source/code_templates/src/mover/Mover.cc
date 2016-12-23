@@ -35,7 +35,7 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 /// @brief Default constructor
 --class--::--class--():
-	protocols::moves::Mover( --class--::class_name() )
+	protocols::moves::Mover( --class--::mover_name() )
 {
 
 }
@@ -131,7 +131,7 @@ protocols::moves::MoverOP
 std::string
 --class--Creator::keyname() const
 {
-	return --class--::class_name();
+	return --class--::mover_name();
 }
 
 void --class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

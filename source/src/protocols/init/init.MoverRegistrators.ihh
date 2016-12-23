@@ -99,6 +99,7 @@ static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_Cr
 static MoverRegistrator< cyclic_peptide::PeptideCyclizeMoverCreator > reg_PeptideCyclizeMoverCreator;
 static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;
+static MoverRegistrator< cyclic_peptide::SymmetricCycpepAlignCreator > reg_SymmetricCycpepAlignCreator;
 static MoverRegistrator< cyclic_peptide::ThreefoldLinkerMoverCreator > reg_ThreefoldLinkerMoverCreator;
 static MoverRegistrator< cyclic_peptide::TryDisulfPermutationsCreator > reg_TryDisulfPermutationsCreator;
 static MoverRegistrator< cyclic_peptide::FlipChiralityMoverCreator > reg_FlipChiralityMoverCreator;

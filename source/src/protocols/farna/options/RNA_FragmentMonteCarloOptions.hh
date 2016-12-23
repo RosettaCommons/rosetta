@@ -216,13 +216,13 @@ public:
 
 	void set_output_score_file( std::string const & setting ){ output_score_file_ = setting; }
 	std::string output_score_file() const { return output_score_file_; }
-	
+
 	void set_rmsd_screen( core::Real const setting ){ rmsd_screen_ = setting; }
 	core::Real rmsd_screen() const { return rmsd_screen_; }
-	
+
 	void set_disallow_realign( bool const setting ){ disallow_realign_ = setting; }
 	bool disallow_realign() const { return disallow_realign_; }
-	
+
 	void set_align_pdb( std::string const & setting ){ align_pdb_ = setting; }
 	std::string align_pdb() const { return align_pdb_; }
 
@@ -298,7 +298,7 @@ private:
 	utility::vector1< std::string > chunk_pdb_files_;
 	utility::vector1< std::string > chunk_silent_files_;
 	utility::vector1< core::Size > input_res_;
-	
+
 	bool rmsd_screen_;
 	bool disallow_realign_;
 	std::string align_pdb_;

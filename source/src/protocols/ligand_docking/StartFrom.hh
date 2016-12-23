@@ -68,8 +68,9 @@ public:
 	std::string chain()
 	{
 		std::string chains;
-		for (utility::vector1<std::string>::const_iterator i = chains_.begin(); i != chains_.end(); ++i)
-		    chains += *i;
+		for ( utility::vector1<std::string>::const_iterator i = chains_.begin(); i != chains_.end(); ++i ) {
+			chains += *i;
+		}
 		return chains;
 	}
 
@@ -101,17 +102,17 @@ public:
 
 
 private:
-/// @brief The chain which to move
+	/// @brief The chain which to move
 	utility::vector1<std::string> chains_;
-/// @brief If true, try to center the chain based on the neighbor atom of the first residue
-/// Otherwise, use the all-atom centroid of the chain.
-bool use_nbr_;
+	/// @brief If true, try to center the chain based on the neighbor atom of the first residue
+	/// Otherwise, use the all-atom centroid of the chain.
+	bool use_nbr_;
 
-/// @brief The possible starting positions, indexed by tag (or "default")
-std::map< std::string, utility::vector1<core::Vector> > starting_positions_;
+	/// @brief The possible starting positions, indexed by tag (or "default")
+	std::map< std::string, utility::vector1<core::Vector> > starting_positions_;
 
-/// @brief The possible starting positions, indexed by hash
-std::map< std::string, utility::vector1<core::Vector>  > hash_starting_positions_;
+	/// @brief The possible starting positions, indexed by hash
+	std::map< std::string, utility::vector1<core::Vector>  > hash_starting_positions_;
 };
 
 } //namespace ligand_docking

@@ -77,7 +77,7 @@ public:
 	core::Real ideal_score(utility::vector1<core::conformation::UltraLightResidue> & residues);
 	///@brief return the ideal score of a residue on the grid
 	core::Real ideal_score(core::conformation::UltraLightResidue const & residue);
-	///@brief return the average score of multiple residues on the grid 
+	///@brief return the average score of multiple residues on the grid
 	core::Real total_score(utility::vector1<core::conformation::UltraLightResidue> & residues);
 	///@brief return the total score of a residue on the grid
 	core::Real total_score(core::conformation::UltraLightResidue const & residue);
@@ -93,7 +93,7 @@ public:
 	void update_grids(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude);
 	///@brief recalculate all grids for a pose.  This must be called if the backbone or sidechain conformations change!
 	void update_grids(core::pose::Pose const & pose, core::Vector const & center, bool multi = false);
-//	void reset_grids();
+	// void reset_grids();
 	///@brief initialize all grids and fill with 0s given a center point
 	void initialize_all_grids(core::Vector const & center);
 	/// @brief return the number of grids in the manager
@@ -104,12 +104,12 @@ public:
 	void append_cached_scores(jd2::JobOP job);
 	/// @brief write all grids out using the BRIX format
 	void write_grids(std::string prefix);
-	///@brief check if all atoms in all the ligands are in grid 
+	///@brief check if all atoms in all the ligands are in grid
 	bool is_in_grid(utility::vector1<core::conformation::UltraLightResidue> const & residues);
-    ///@brief check to see if all atoms in the ligand are in the grid
-    bool is_in_grid(core::conformation::UltraLightResidue const & residue);
-    ///@brief check to see if all atoms in the ligand are in the grid
-    bool is_in_grid(core::conformation::Residue const & residue);
+	///@brief check to see if all atoms in the ligand are in the grid
+	bool is_in_grid(core::conformation::UltraLightResidue const & residue);
+	///@brief check to see if all atoms in the ligand are in the grid
+	bool is_in_grid(core::conformation::Residue const & residue);
 
 private:
 

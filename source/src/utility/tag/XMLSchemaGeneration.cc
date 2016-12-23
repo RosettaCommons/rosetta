@@ -2622,7 +2622,7 @@ XMLSchemaAttribute
 optional_name_attribute( std::string const & desc /* = "" */ )
 {
 	if ( desc == "" ) {
-		return XMLSchemaAttribute( "name", xs_string, "The name given to this instance" );
+		return XMLSchemaAttribute( "name", xs_string, "The name given to this instance." );
 	} else {
 		return XMLSchemaAttribute( "name", xs_string, desc );
 	}
@@ -2632,7 +2632,7 @@ XMLSchemaAttribute
 required_name_attribute( std::string const & desc /* = "" */ )
 {
 	if ( desc == "" ) {
-		return XMLSchemaAttribute::required_attribute( "name", xs_string, "The named given to this instance" );
+		return XMLSchemaAttribute::required_attribute( "name", xs_string, "The name given to this instance." );
 	} else {
 		return XMLSchemaAttribute::required_attribute( "name", xs_string, desc );
 	}

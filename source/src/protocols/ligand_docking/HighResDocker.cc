@@ -181,9 +181,9 @@ HighResDocker::parse_my_tag(
 
 MinimizeLigandOPs
 HighResDocker::setup_ligands_to_minimize(
-		core::pose::Pose pose,
-		char chain // =0 This is for dealing with multiple ligand docking
-		){
+	core::pose::Pose pose,
+	char chain // =0 This is for dealing with multiple ligand docking
+){
 	MinimizeLigandOPs minimize_ligands;
 
 	LigandAreas const ligand_areas =
@@ -195,27 +195,26 @@ HighResDocker::setup_ligands_to_minimize(
 
 
 	//if chain is 0, then loop proceeds normally. If chain is given, then minimize ligand only runs for the matching chain.
-	for(; ligand_area_itr != ligand_area_end; ++ligand_area_itr){
-		if (ligand_area_itr->first == chain || chain == 0)
-		{
-		char const & input_chain= ligand_area_itr->first;
-		LigandAreaOP const ligand_area( ligand_area_itr->second );
-		core::Real const & degrees( ligand_area->minimize_ligand_ );
-		if(degrees > 0){
-			MinimizeLigandOP minimize_ligand( new MinimizeLigand(input_chain, degrees) );
-			minimize_ligand->apply(pose);
-			minimize_ligands.push_back(minimize_ligand);
+	for ( ; ligand_area_itr != ligand_area_end; ++ligand_area_itr ) {
+		if ( ligand_area_itr->first == chain || chain == 0 ) {
+			char const & input_chain= ligand_area_itr->first;
+			LigandAreaOP const ligand_area( ligand_area_itr->second );
+			core::Real const & degrees( ligand_area->minimize_ligand_ );
+			if ( degrees > 0 ) {
+				MinimizeLigandOP minimize_ligand( new MinimizeLigand(input_chain, degrees) );
+				minimize_ligand->apply(pose);
+				minimize_ligands.push_back(minimize_ligand);
+			}
 		}
-	}
 	}
 	return minimize_ligands;
 }
 
 TetherLigandOPs
 HighResDocker::tether_ligands(
-		core::pose::Pose & pose,
-		char chain // =0 This is for dealing with multiple ligand docking
-		){
+	core::pose::Pose & pose,
+	char chain // =0 This is for dealing with multiple ligand docking
+){
 	TetherLigandOPs ligand_tethers;
 
 	LigandAreas const ligand_areas =
@@ -225,21 +224,20 @@ HighResDocker::tether_ligands(
 
 	//if chain is 0, then loop proceeds normally. If chain is given, then minimize ligand only runs for the matching chain.
 
-	for(; ligand_area_itr != ligand_area_end; ++ligand_area_itr){
-		if (ligand_area_itr->first == chain || chain == 0)
-		{
+	for ( ; ligand_area_itr != ligand_area_end; ++ligand_area_itr ) {
+		if ( ligand_area_itr->first == chain || chain == 0 ) {
 
-		char const & input_chain= ligand_area_itr->first;
-		LigandAreaOP const ligand_area( ligand_area_itr->second );
-		core::Real const & tether_size( ligand_area->tether_ligand_ );
-		if(tether_size > 0){
-			TetherLigandOP tether_ligand( new TetherLigand(input_chain, tether_size) );
+			char const & input_chain= ligand_area_itr->first;
+			LigandAreaOP const ligand_area( ligand_area_itr->second );
+			core::Real const & tether_size( ligand_area->tether_ligand_ );
+			if ( tether_size > 0 ) {
+				TetherLigandOP tether_ligand( new TetherLigand(input_chain, tether_size) );
 
-			tether_ligand->apply(pose);
-			ligand_tethers.push_back(tether_ligand);
+				tether_ligand->apply(pose);
+				ligand_tethers.push_back(tether_ligand);
+			}
 		}
 	}
-		}
 	return ligand_tethers;
 }
 
@@ -315,31 +313,29 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 
 	core::Size pose_counter = 1;
 
-	for(core::pose::Pose pose : poses)
-	{
+	for ( core::pose::Pose pose : poses ) {
 
-	MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose, qsar_chars[pose_counter]) );
+		MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose, qsar_chars[pose_counter]) );
 
-	TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_chars[pose_counter]);
+		TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_chars[pose_counter]);
 
-	assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
-	core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
+		assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
+		core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
 
-	score_fxn_->score( pose ); // without this neither of the movers below were working
+		score_fxn_->score( pose ); // without this neither of the movers below were working
 
-	// I believe that this may have been related to adding constraints incorrectly at other places in my code.
-	// Rigid body exploration
-	utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
+		// I believe that this may have been related to adding constraints incorrectly at other places in my code.
+		// Rigid body exploration
+		utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
 
 		core::pack::task::PackerTaskOP packer_task( make_packer_task(pose) );// has to be in the loop to be updated after each design cycle (w/resfiles)
 
 		protocols::moves::MoverOP pack_mover;
 
-		if(cycle % repack_every_Nth_ == 1){
+		if ( cycle % repack_every_Nth_ == 1 ) {
 			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
 			pack_mover = protocols::moves::MoverOP( new protocols::simple_moves::PackRotamersMover(score_fxn_, packer_task) );
-		}
-		else{
+		} else {
 			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
 			pack_mover= protocols::moves::MoverOP( new protocols::simple_moves::RotamerTrialsMover(score_fxn_, *packer_task));
 		}
@@ -360,7 +356,7 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 
 	}
 
-	}
+}
 
 void
 HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char qsar_char, core::Size cycle) {
@@ -378,38 +374,37 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 	// Rigid body exploration
 	utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
 
-		core::pack::task::PackerTaskOP packer_task( make_packer_task(pose) );// has to be in the loop to be updated after each design cycle (w/resfiles)
+	core::pack::task::PackerTaskOP packer_task( make_packer_task(pose) );// has to be in the loop to be updated after each design cycle (w/resfiles)
 
-		protocols::moves::MoverOP pack_mover;
+	protocols::moves::MoverOP pack_mover;
 
-		if(cycle % repack_every_Nth_ == 1){
-			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover = protocols::moves::MoverOP( new protocols::simple_moves::PackRotamersMover(score_fxn_, packer_task) );
-		}
-		else{
-			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover = protocols::moves::MoverOP( new protocols::simple_moves::RotamerTrialsMover(score_fxn_, *packer_task) );
-		}
-
-		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
-
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
-		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
-
-		core::Real const score1 = (*score_fxn_)( pose );
-		apply_rigid_body_moves(pose, rigid_body_movers);
-		pack_mover->apply(pose);
-
-		core::Real const score2 = (*score_fxn_)( pose );
-		if(score2 - score1 < 15.0) {
-			min_mover->apply(pose);
-		}
-
-		current_score = (*score_fxn_)( pose );
-		std::cout << "HighResDocker Pose Score For " << qsar_char << " is " << current_score << "\n";
-
+	if ( cycle % repack_every_Nth_ == 1 ) {
+		high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
+		pack_mover = protocols::moves::MoverOP( new protocols::simple_moves::PackRotamersMover(score_fxn_, packer_task) );
+	} else {
+		high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
+		pack_mover = protocols::moves::MoverOP( new protocols::simple_moves::RotamerTrialsMover(score_fxn_, *packer_task) );
 	}
+
+	// Wrap it in something to disable the torsion constraints before packing!
+	pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
+
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
+
+	core::Real const score1 = (*score_fxn_)( pose );
+	apply_rigid_body_moves(pose, rigid_body_movers);
+	pack_mover->apply(pose);
+
+	core::Real const score2 = (*score_fxn_)( pose );
+	if ( score2 - score1 < 15.0 ) {
+		min_mover->apply(pose);
+	}
+
+	current_score = (*score_fxn_)( pose );
+	std::cout << "HighResDocker Pose Score For " << qsar_char << " is " << current_score << "\n";
+
+}
 
 
 core::pack::task::PackerTaskOP

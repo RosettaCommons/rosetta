@@ -650,9 +650,9 @@ rms_fit(
 	FArray1D< double > t( 3 );
 	FArray2D< double > R( 3, 3 );
 	double XPC, YPC, ZPC, XEC, YEC, ZEC;
-//       //COMMON /TRANSFORM/ XPC,YPC,ZPC,XEC,YEC,ZEC,R
+	//       //COMMON /TRANSFORM/ XPC,YPC,ZPC,XEC,YEC,ZEC,R
 
-// align center of mass to origin
+	// align center of mass to origin
 
 	COMAS(xx,ww,npoints,XPC,YPC,ZPC);
 	COMAS(yy,ww,npoints,XEC,YEC,ZEC);
@@ -665,7 +665,7 @@ rms_fit(
 		yy(3,i) += 1.0e-7;
 	}
 
-//       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
+	//       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
 	for ( k = 1; k <= 3; ++k ) {
 		for ( j = 1; j <= 3; ++j ) {
 			temp1 = 0.0;
@@ -678,32 +678,32 @@ rms_fit(
 	det = det3(m_moment); // will get handedness  of frame from determinant
 
 	if ( std::abs(det) <= 1.0E-24 ) {
-//     //  std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
-//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
+		//     //  std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
+		//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
 
 		esq = 0.0;
 		return;
 
 	}
 	handedness = numeric::sign_transfered(det, 1.0);
-//  // weird but documented fortran "feature" of sign(a,b) (but not SIGN) is that if fails if a < 0
+	//  // weird but documented fortran "feature" of sign(a,b) (but not SIGN) is that if fails if a < 0
 
-//  //  multiply cross moments by itself
+	//  //  multiply cross moments by itself
 
 	for ( i = 1; i <= 3; ++i ) {
 		for ( j = i; j <= 3; ++j ) {
 			rr_moment(j,i) = rr_moment(i,j) = // well it is symmetric afterall
-			 m_moment(1,i)*m_moment(1,j) +
-			 m_moment(2,i)*m_moment(2,j) +
-			 m_moment(3,i)*m_moment(3,j);
+				m_moment(1,i)*m_moment(1,j) +
+				m_moment(2,i)*m_moment(2,j) +
+				m_moment(3,i)*m_moment(3,j);
 		}
 	}
 
-//            //  compute eigen values of cross-cross moments
+	//            //  compute eigen values of cross-cross moments
 
 	rsym_eigenval(rr_moment,ev);
 
-//               // reorder eigen values  so that ev(3) is the smallest eigenvalue
+	//               // reorder eigen values  so that ev(3) is the smallest eigenvalue
 
 	if ( ev(2) > ev(3) ) {
 		if ( ev(3) > ev(1) ) {
@@ -723,24 +723,24 @@ rms_fit(
 		}
 	}
 
-//                 // ev(3) is now the smallest eigen value.  the other two are not
-//                 //  sorted.  this is prefered order for rotation matrix
+	//                 // ev(3) is now the smallest eigen value.  the other two are not
+	//                 //  sorted.  this is prefered order for rotation matrix
 
 
 	rsym_rotation(m_moment,rr_moment,ev,R);
 
-//$$$             for ( i = 1; i <= npoints; ++i ) {
-//$$$               for ( j = 1; j <= 3; ++j ) {
-//$$$                 temp1 = 0.0;
-//$$$                for ( k = 1; k <= 3; ++k ) {
-//$$$                  temp1 += R(j,k)*yy(k,i);
-//$$$                }
-//$$$                t(j) = temp1;
-//$$$               }
-//$$$               yy(1,i) = t(1);
-//$$$               yy(2,i) = t(2);
-//$$$               yy(3,i) = t(3);
-//$$$             }
+	//$$$             for ( i = 1; i <= npoints; ++i ) {
+	//$$$               for ( j = 1; j <= 3; ++j ) {
+	//$$$                 temp1 = 0.0;
+	//$$$                for ( k = 1; k <= 3; ++k ) {
+	//$$$                  temp1 += R(j,k)*yy(k,i);
+	//$$$                }
+	//$$$                t(j) = temp1;
+	//$$$               }
+	//$$$               yy(1,i) = t(1);
+	//$$$               yy(2,i) = t(2);
+	//$$$               yy(3,i) = t(3);
+	//$$$             }
 
 	for ( i = 1; i <= npoints; ++i ) {
 		for ( j = 1; j <= 3; ++j ) { // compute rotation
@@ -750,19 +750,19 @@ rms_fit(
 		yy(2,i) = t(2);
 		yy(3,i) = t(3);
 	}
-//   // now we must catch the special case of the rotation with inversion.
-//   // we cannot allow inversion rotations.
-//   // fortunatley, and curiously, the optimal non-inverted rotation matrix
-//   // will have the similar eigen values.
-//   // we just have to make a slight change in how we handle things depending on determinant
+	//   // now we must catch the special case of the rotation with inversion.
+	//   // we cannot allow inversion rotations.
+	//   // fortunatley, and curiously, the optimal non-inverted rotation matrix
+	//   // will have the similar eigen values.
+	//   // we just have to make a slight change in how we handle things depending on determinant
 
 	rms_ctx = std::sqrt(std::abs(ev(1))) + std::sqrt(std::abs(ev(2))) +
-	 handedness*std::sqrt(std::abs(ev(3)));
+		handedness*std::sqrt(std::abs(ev(3)));
 
 	rms_ctx *= temp3;
 
-//   // the abs() are theoretically unneccessary since the eigen values of a real symmetric
-//   // matrix are non-negative.  in practice sometimes small eigen vals end up just negative
+	//   // the abs() are theoretically unneccessary since the eigen values of a real symmetric
+	//   // matrix are non-negative.  in practice sometimes small eigen vals end up just negative
 	rms_sum = 0.0;
 	for ( i = 1; i <= npoints; ++i ) {
 		for ( j = 1; j <= 3; ++j ) {
@@ -771,8 +771,8 @@ rms_fit(
 	}
 	// rms_sum = rms_sum; //   /temp3   (will use natsel instead)
 
-//  // and combine the outer and cross terms into the final calculation.
-//  //  (the abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
+	//  // and combine the outer and cross terms into the final calculation.
+	//  //  (the abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
 
 	esq = std::sqrt( std::abs( rms_sum - ( 2.0 * rms_ctx ) ) / natsel );
 
@@ -1326,43 +1326,43 @@ rsym_evector(
 	} else {
 
 		// if ( ev(2) != ev(3) ) {
-		// 	std::cerr << " hey is this the right thing to be doing??? " << std::endl;
+		//  std::cerr << " hey is this the right thing to be doing??? " << std::endl;
 		// NOTE: this is *not* the right thing to be doing and leads to
 		//  nans and other badness for highly symmetric planar things, so
 		//  better to not rotate at all. -- rhiju, 2016.
 
-		// 	for ( int i = 2; i <= 3; ++i ) {
-		// 		// Okay, since 1 and 2 are degenerate we will use 2 and 3 instead.
+		//  for ( int i = 2; i <= 3; ++i ) {
+		//   // Okay, since 1 and 2 are degenerate we will use 2 and 3 instead.
 
-		// 		xx = m(1,1)-ev(i);
-		// 		yy = m(2,2)-ev(i);
-		// 		// I marvel at how simple this is when you know the eigen values.
-		// 		e1 = xy*yz-zx*yy;
-		// 		e2 = xy*zx-yz*xx;
-		// 		e3 = xx*yy-xy*xy;
-		// 		// yes you sharp eyed person, its not quite symmetric here too.
-		// 		//                   life is odd.
+		//   xx = m(1,1)-ev(i);
+		//   yy = m(2,2)-ev(i);
+		//   // I marvel at how simple this is when you know the eigen values.
+		//   e1 = xy*yz-zx*yy;
+		//   e2 = xy*zx-yz*xx;
+		//   e3 = xx*yy-xy*xy;
+		//   // yes you sharp eyed person, its not quite symmetric here too.
+		//   //                   life is odd.
 
-		// 		znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );
+		//   znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );
 
-		// 		mvec(1,i) = e1/znorm;
-		// 		mvec(2,i) = e2/znorm;
-		// 		mvec(3,i) = e3/znorm;
+		//   mvec(1,i) = e1/znorm;
+		//   mvec(2,i) = e2/znorm;
+		//   mvec(3,i) = e3/znorm;
 
-		// 	}
+		//  }
 
-		// 	// now compute the third eigenvector
-		// 	mvec(1,1) =  mvec(2,2)*mvec(3,3) - mvec(2,3)*mvec(3,2);
-		// 	mvec(2,1) = -mvec(1,2)*mvec(3,3) + mvec(1,3)*mvec(3,2);
-		// 	mvec(3,1) =  mvec(1,2)*mvec(2,3) - mvec(1,3)*mvec(2,2);
+		//  // now compute the third eigenvector
+		//  mvec(1,1) =  mvec(2,2)*mvec(3,3) - mvec(2,3)*mvec(3,2);
+		//  mvec(2,1) = -mvec(1,2)*mvec(3,3) + mvec(1,3)*mvec(3,2);
+		//  mvec(3,1) =  mvec(1,2)*mvec(2,3) - mvec(1,3)*mvec(2,2);
 
-		// 	// pathologically nervous people would explicitly normalize this vector too.
+		//  // pathologically nervous people would explicitly normalize this vector too.
 
-		// 	return;
+		//  return;
 
 		// } else {
 
-		// 	std::cerr << "warning: all eigen values are equal" << std::endl;
+		//  std::cerr << "warning: all eigen values are equal" << std::endl;
 		{
 			std::cout << "rms.cc: warning -- eigenvalues are degenerate -- no rotation will be applied." << std::endl;
 			for ( int i = 1; i <= 3; ++i ) {

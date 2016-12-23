@@ -101,7 +101,7 @@ utility::vector1<core::scoring::ScoreType> const & get_scoretypes() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	core::Size data_dim() {
+core::Size data_dim() {
 	using namespace core::scoring;
 	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
 	return score_types.size() + 2;

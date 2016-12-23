@@ -112,8 +112,8 @@ private:
 	utility::vector1<core::conformation::UltraLightResidue> best_ligands_;
 	utility::vector1<core::conformation::UltraLightResidue> ligand_residues_;
 	utility::vector1<core::conformation::UltraLightResidue> reference_residues_;
-    utility::vector1<core::conformation::UltraLightResidue> last_accepted_ligand_residues_;
-    utility::vector1<core::conformation::UltraLightResidue> last_accepted_reference_residues_;
+	utility::vector1<core::conformation::UltraLightResidue> last_accepted_ligand_residues_;
+	utility::vector1<core::conformation::UltraLightResidue> last_accepted_reference_residues_;
 
 	std::map<core::Size, utility::vector1< core::conformation::ResidueOP > > ligand_conformers_;
 	bool optimize_until_score_is_negative_;

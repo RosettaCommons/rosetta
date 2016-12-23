@@ -30,8 +30,9 @@ UltraLightResidue::UltraLightResidue(ResidueCOP residue)
 	core::Size resnum = residue->seqpos();
 	for ( core::Size atom_index = 1; atom_index <= residue->natoms(); ++atom_index ) {
 		coords_.push_back(residue->xyz(atom_index));
-		if(!residue->type().atom_is_hydrogen(atom_index))
-		{heavy_coords_.push_back(residue->xyz(atom_index));}
+		if ( !residue->type().atom_is_hydrogen(atom_index) ) {
+			heavy_coords_.push_back(residue->xyz(atom_index));
+		}
 		id::AtomID new_atom_id(atom_index,resnum);
 		atom_ids_.push_back(new_atom_id);
 	}
@@ -39,7 +40,7 @@ UltraLightResidue::UltraLightResidue(ResidueCOP residue)
 }
 
 UltraLightResidue::UltraLightResidue(UltraLightResidue const & src) : ReferenceCount(),
-		atom_ids_(src.atom_ids_), coords_(src.coords_),heavy_coords_(src.heavy_coords_),residue_(src.residue_),center_(src.center_)
+	atom_ids_(src.atom_ids_), coords_(src.coords_),heavy_coords_(src.heavy_coords_),residue_(src.residue_),center_(src.center_)
 
 {}
 
@@ -131,8 +132,7 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 	core::Real deviation = 0;
 	//core::Real heavy = 0;
 
-	for(core::Size i=1; i <= coords_.size(); ++i)
-	{
+	for ( core::Size i=1; i <= coords_.size(); ++i ) {
 		core::Real deviation_x = ((coords_[i][0]-reference_coords[i][0]) * (coords_[i][0]-reference_coords[i][0]));
 		core::Real deviation_y = ((coords_[i][1]-reference_coords[i][1]) * (coords_[i][1]-reference_coords[i][1]));
 		core::Real deviation_z = ((coords_[i][2]-reference_coords[i][2]) * (coords_[i][2]-reference_coords[i][2]));
@@ -144,19 +144,19 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 	deviation /= (core::Real)coords_.size();
 	deviation = sqrt(deviation);
 
-	//	std::cout<<"Deviation after conformer change is: " << deviation << std::endl;
+	// std::cout<<"Deviation after conformer change is: " << deviation << std::endl;
 
-	//	for(core::Size i=1; i <= coords_.size(); ++i)
-	//	{
-	//		heavy += ((coords_[i][0]-reference_heavy[i][0]) * (coords_[i][0]-reference_heavy[i][0]));
-	//		heavy += ((coords_[i][1]-reference_heavy[i][1]) * (coords_[i][1]-reference_heavy[i][1]));
-	//		heavy += ((coords_[i][2]-reference_heavy[i][2]) * (coords_[i][2]-reference_heavy[i][2]));
-	//	}
+	// for(core::Size i=1; i <= coords_.size(); ++i)
+	// {
+	//  heavy += ((coords_[i][0]-reference_heavy[i][0]) * (coords_[i][0]-reference_heavy[i][0]));
+	//  heavy += ((coords_[i][1]-reference_heavy[i][1]) * (coords_[i][1]-reference_heavy[i][1]));
+	//  heavy += ((coords_[i][2]-reference_heavy[i][2]) * (coords_[i][2]-reference_heavy[i][2]));
+	// }
 
-	//	heavy /= (core::Real)heavy_coords_.size();
-	//	heavy = sqrt(heavy);
+	// heavy /= (core::Real)heavy_coords_.size();
+	// heavy = sqrt(heavy);
 
-//		std::cout<<"heavy atom Deviation after conformer change is: " << heavy << std::endl;
+	//  std::cout<<"heavy atom Deviation after conformer change is: " << heavy << std::endl;
 
 
 }
@@ -168,10 +168,9 @@ void UltraLightResidue::slide(core::Vector const & translation_vector)
 	for ( auto & coord : coords_ ) {
 		coord = translation_vector+coord;
 	}
-	for(utility::vector1<PointPosition>::iterator it = heavy_coords_.begin(); it != heavy_coords_.end(); ++it)
-		{
-			*it = translation_vector+(*it);
-		}
+	for ( utility::vector1<PointPosition>::iterator it = heavy_coords_.begin(); it != heavy_coords_.end(); ++it ) {
+		*it = translation_vector+(*it);
+	}
 	center_ = numeric::center_of_mass(coords_);
 }
 

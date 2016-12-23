@@ -1,0 +1,53 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="bnv" weights="beta_nov15.wts" symmetric="true" />
+		<ScoreFunction name="bnv_cst" weights="beta_nov15_cst.wts" symmetric="true" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="peptide_selector" resnums="1-20" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+	
+		<DeclareBond name="bond1" res1="20" res2="1" atom1="C" atom2="N" add_termini="false" />
+	
+		<SymmetricCycpepAlign name="align" auto_detect_symmetry="true" angle_threshold="15" trim_to_single_repeat="true" invert="true" />
+		
+		<SetupForSymmetry name="sym" definition="inputs/c4m.symm" />
+
+		<PeptideCyclizeMover name="bond2" residue_selector="peptide_selector" />
+		
+		<FastRelax name="frlx" repeats="3" scorefxn="bnv_cst" >
+			<MoveMap name="frlx_mm1" >
+				<Span begin="1" end="999" bb="true" chi="true" />
+				<Jump number="1" setting="true" />
+				<Jump number="2" setting="true" />
+				<Jump number="3" setting="true" />
+				<Jump number="4" setting="true" />
+				<Jump number="5" setting="true" />
+				<Jump number="6" setting="true" />
+				<Jump number="7" setting="true" />
+				<Jump number="8" setting="true" />
+				<Jump number="9" setting="true" />
+				<Jump number="10" setting="true" />
+				<Jump number="11" setting="true" />
+				<Jump number="12" setting="true" />
+			</MoveMap>
+		</FastRelax>
+		
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bond1" />
+		<Add mover="align" />
+		<Add mover="sym" />
+		<Add mover="bond2" />
+		<Add mover="frlx" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="bnv" />
+
+</ROSETTASCRIPTS>

@@ -43,9 +43,9 @@ public:
 		core::Vector inverse_translation(-1.5,-2.5,-3.0);
 
 		numeric::xyzMatrix<core::Real> test_rotation(
-				numeric::z_rotation_matrix_degrees( 115.0 ) * (
-					numeric::y_rotation_matrix_degrees( 85.0 ) *
-					numeric::x_rotation_matrix_degrees( 5.0 ) ));
+			numeric::z_rotation_matrix_degrees( 115.0 ) * (
+			numeric::y_rotation_matrix_degrees( 85.0 ) *
+			numeric::x_rotation_matrix_degrees( 5.0 ) ));
 
 		//******************Perform a random transformation and then test align to residue to see if alignment works
 
@@ -60,24 +60,23 @@ public:
 		utility::vector1<core::PointPosition > target_coords = original_res.coords_vector();
 		utility::vector1<core::PointPosition > copy_coords = test_res.coords_vector();
 
-		for(core::Size i=1; i <= copy_coords.size(); ++i)
-			{
-					core::Real deviation_x = ((copy_coords[i][0]-target_coords[i][0]) * (copy_coords[i][0]-target_coords[i][0]));
-					core::Real deviation_y = ((copy_coords[i][1]-target_coords[i][1]) * (copy_coords[i][1]-target_coords[i][1]));
-					core::Real deviation_z = ((copy_coords[i][2]-target_coords[i][2]) * (copy_coords[i][2]-target_coords[i][2]));
+		for ( core::Size i=1; i <= copy_coords.size(); ++i ) {
+			core::Real deviation_x = ((copy_coords[i][0]-target_coords[i][0]) * (copy_coords[i][0]-target_coords[i][0]));
+			core::Real deviation_y = ((copy_coords[i][1]-target_coords[i][1]) * (copy_coords[i][1]-target_coords[i][1]));
+			core::Real deviation_z = ((copy_coords[i][2]-target_coords[i][2]) * (copy_coords[i][2]-target_coords[i][2]));
 
-					core::Real total_dev = deviation_x + deviation_y + deviation_z;
-					deviation += total_dev;
-			}
+			core::Real total_dev = deviation_x + deviation_y + deviation_z;
+			deviation += total_dev;
+		}
 
-				deviation /= (core::Real)copy_coords.size();
-				deviation = sqrt(deviation);
+		deviation /= (core::Real)copy_coords.size();
+		deviation = sqrt(deviation);
 
-				TS_ASSERT_LESS_THAN(deviation, 0.001);
+		TS_ASSERT_LESS_THAN(deviation, 0.001);
 
-				deviation=0;
-				target_coords.clear();
-				copy_coords.clear();
+		deviation=0;
+		target_coords.clear();
+		copy_coords.clear();
 
 		//******************************************END Perform a random transformation and then test align to residue to see if alignment works
 

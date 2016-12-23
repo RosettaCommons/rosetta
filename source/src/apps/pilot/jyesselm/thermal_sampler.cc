@@ -384,7 +384,7 @@ thermal_sampler()
 	///// This fixes the error -- but have not tested extensively to make sure it is really ok /////
 	pose::PoseOP ref_pose( new pose::Pose( pose ) );
 
-		// Obtains base pairs and constraints from pose
+	// Obtains base pairs and constraints from pose
 	if ( option[ setup_base_pair_constraints ]() ) {
 		utility::vector1< std::pair< Size, Size > > pairings;
 		protocols::farna::get_base_pairing_list( pose, pairings );

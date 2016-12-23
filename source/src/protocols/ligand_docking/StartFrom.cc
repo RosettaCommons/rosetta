@@ -87,11 +87,11 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
 /// @brief
 StartFrom::StartFrom():
-						//utility::pointer::ReferenceCount(),
-						Mover("StartFrom"),
-						chains_(),
-						use_nbr_(false),
-						starting_positions_(){}
+	//utility::pointer::ReferenceCount(),
+	Mover("StartFrom"),
+	chains_(),
+	use_nbr_(false),
+	starting_positions_(){}
 
 
 StartFrom::StartFrom(StartFrom const & )= default;
@@ -113,11 +113,11 @@ protocols::moves::MoverOP StartFrom::fresh_instance() const {
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 StartFrom::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "StartFrom" ) {
@@ -144,9 +144,9 @@ StartFrom::parse_my_tag(
 			std::string pdb_tag( child_tag->getOption<std::string>("pdb_tag","default") );
 
 			core::Vector v(
-					child_tag->getOption<core::Real>("x"),
-					child_tag->getOption<core::Real>("y"),
-					child_tag->getOption<core::Real>("z")
+				child_tag->getOption<core::Real>("x"),
+				child_tag->getOption<core::Real>("y"),
+				child_tag->getOption<core::Real>("z")
 			);
 			add_coords(v,pdb_tag);
 
@@ -188,9 +188,8 @@ void StartFrom::add_coords_hash(core::Vector const & coords,std::string const & 
 
 void StartFrom::apply(core::pose::Pose & pose){
 
-	for(std::string chain : chains_){
-		if(!core::pose::has_chain(chain,pose))
-		{
+	for ( std::string chain : chains_ ) {
+		if ( !core::pose::has_chain(chain,pose) ) {
 			utility_exit_with_message("StartFrom mover cannot find the chain " +chain+ " in the current pose.");
 		}
 
@@ -225,7 +224,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 		if ( ! starting_positions_.empty() && ! specific_tag_found ) {
 			std::string const job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
 			utility::vector1<std::string> const input_filenames(utility::split(job_tag));
-			for( std::string filename : input_filenames ) {
+			for ( std::string filename : input_filenames ) {
 				position_id = starting_positions_.find(filename);
 				if ( position_id != starting_positions_.end() ) {
 					specific_tag_found = true;
@@ -268,7 +267,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 			move_ligand_to_desired_centroid(chains_, desired_centroid, pose);
 		}
 	}
-	}
+}
 
 
 void StartFrom::parse_startfrom_file(std::string const & filename)
@@ -300,7 +299,7 @@ void StartFrom::parse_startfrom_file(std::string const & filename)
 	}
 
 	]
-	 */
+	*/
 	// Only one of 'file_name' or 'hash' needs to be present (hash will take precident if both are present)
 	// "input_tag" is considered a synonym for "file_name"
 	// If you just have the x/y/z coordinates, they will be added to the default set.

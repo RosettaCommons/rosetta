@@ -1,0 +1,286 @@
+ATOM      1  N   GLY A   1       5.620  -1.502   6.374  1.00  0.00           N  
+ATOM      2  CA  GLY A   1       6.308  -0.806   5.293  1.00  0.00           C  
+ATOM      3  C   GLY A   1       5.340  -0.419   4.183  1.00  0.00           C  
+ATOM      4  O   GLY A   1       5.661   0.404   3.325  1.00  0.00           O  
+ATOM      5  H   GLY A   1       4.967  -0.991   6.951  1.00  0.00           H  
+ATOM      6 1HA  GLY A   1       6.792   0.088   5.687  1.00  0.00           H  
+ATOM      7 2HA  GLY A   1       7.093  -1.446   4.890  1.00  0.00           H  
+ATOM      8  N   GLY A   2       4.154  -1.018   4.203  1.00  0.00           N  
+ATOM      9  CA  GLY A   2       3.139  -0.741   3.194  1.00  0.00           C  
+ATOM     10  C   GLY A   2       2.527   0.640   3.392  1.00  0.00           C  
+ATOM     11  O   GLY A   2       1.951   1.212   2.467  1.00  0.00           O  
+ATOM     12  H   GLY A   2       3.951  -1.681   4.937  1.00  0.00           H  
+ATOM     13 1HA  GLY A   2       3.585  -0.807   2.202  1.00  0.00           H  
+ATOM     14 2HA  GLY A   2       2.358  -1.500   3.246  1.00  0.00           H  
+ATOM     15  N   GLY A   3       2.656   1.170   4.603  1.00  0.00           N  
+ATOM     16  CA  GLY A   3       2.152   2.503   4.913  1.00  0.00           C  
+ATOM     17  C   GLY A   3       3.028   3.582   4.291  1.00  0.00           C  
+ATOM     18  O   GLY A   3       2.729   4.772   4.390  1.00  0.00           O  
+ATOM     19  H   GLY A   3       3.115   0.637   5.327  1.00  0.00           H  
+ATOM     20 1HA  GLY A   3       1.131   2.601   4.544  1.00  0.00           H  
+ATOM     21 2HA  GLY A   3       2.117   2.636   5.994  1.00  0.00           H  
+ATOM     22  N   GLY A   4       4.113   3.161   3.648  1.00  0.00           N  
+ATOM     23  CA  GLY A   4       5.033   4.092   3.008  1.00  0.00           C  
+ATOM     24  C   GLY A   4       4.348   4.859   1.884  1.00  0.00           C  
+ATOM     25  O   GLY A   4       4.758   5.966   1.534  1.00  0.00           O  
+ATOM     26  H   GLY A   4       4.304   2.170   3.603  1.00  0.00           H  
+ATOM     27 1HA  GLY A   4       5.417   4.793   3.749  1.00  0.00           H  
+ATOM     28 2HA  GLY A   4       5.888   3.544   2.611  1.00  0.00           H  
+ATOM     29  N   GLY A   5       3.302   4.263   1.320  1.00  0.00           N  
+ATOM     30  CA  GLY A   5       2.585   4.869   0.205  1.00  0.00           C  
+ATOM     31  C   GLY A   5       1.698   6.014   0.676  1.00  0.00           C  
+ATOM     32  O   GLY A   5       1.161   6.770  -0.134  1.00  0.00           O  
+ATOM     33  H   GLY A   5       2.996   3.368   1.674  1.00  0.00           H  
+ATOM     34 1HA  GLY A   5       3.301   5.237  -0.531  1.00  0.00           H  
+ATOM     35 2HA  GLY A   5       1.976   4.112  -0.290  1.00  0.00           H  
+ATOM     36  N   GLY A   6       1.549   6.138   1.990  1.00  0.00           N  
+ATOM     37  CA  GLY A   6       0.838   7.267   2.578  1.00  0.00           C  
+ATOM     38  C   GLY A   6       1.796   8.201   3.308  1.00  0.00           C  
+ATOM     39  O   GLY A   6       1.373   9.045   4.098  1.00  0.00           O  
+ATOM     40  H   GLY A   6       1.937   5.431   2.598  1.00  0.00           H  
+ATOM     41 1HA  GLY A   6       0.316   7.816   1.794  1.00  0.00           H  
+ATOM     42 2HA  GLY A   6       0.082   6.900   3.272  1.00  0.00           H  
+ATOM     43  N   GLY A   7       3.087   8.044   3.038  1.00  0.00           N  
+ATOM     44  CA  GLY A   7       4.106   8.885   3.655  1.00  0.00           C  
+ATOM     45  C   GLY A   7       4.307   8.521   5.120  1.00  0.00           C  
+ATOM     46  O   GLY A   7       4.852   9.307   5.896  1.00  0.00           O  
+ATOM     47  H   GLY A   7       3.371   7.324   2.389  1.00  0.00           H  
+ATOM     48 1HA  GLY A   7       5.047   8.772   3.116  1.00  0.00           H  
+ATOM     49 2HA  GLY A   7       3.813   9.931   3.573  1.00  0.00           H  
+ATOM     50  N   GLY A   8       3.865   7.325   5.494  1.00  0.00           N  
+ATOM     51  CA  GLY A   8       3.960   6.871   6.876  1.00  0.00           C  
+ATOM     52  C   GLY A   8       2.945   7.582   7.761  1.00  0.00           C  
+ATOM     53  O   GLY A   8       2.951   7.420   8.982  1.00  0.00           O  
+ATOM     54  H   GLY A   8       3.451   6.716   4.803  1.00  0.00           H  
+ATOM     55 1HA  GLY A   8       3.794   5.794   6.917  1.00  0.00           H  
+ATOM     56 2HA  GLY A   8       4.967   7.054   7.250  1.00  0.00           H  
+ATOM     57  N   GLY A   9       2.075   8.370   7.140  1.00  0.00           N  
+ATOM     58  CA  GLY A   9       1.079   9.141   7.874  1.00  0.00           C  
+ATOM     59  C   GLY A   9       1.735  10.235   8.707  1.00  0.00           C  
+ATOM     60  O   GLY A   9       1.131  10.765   9.640  1.00  0.00           O  
+ATOM     61  H   GLY A   9       2.103   8.436   6.132  1.00  0.00           H  
+ATOM     62 1HA  GLY A   9       0.374   9.586   7.173  1.00  0.00           H  
+ATOM     63 2HA  GLY A   9       0.510   8.476   8.524  1.00  0.00           H  
+ATOM     64  N   GLY A  10       2.975  10.569   8.366  1.00  0.00           N  
+ATOM     65  CA  GLY A  10       3.729  11.574   9.105  1.00  0.00           C  
+ATOM     66  C   GLY A  10       4.188  11.035  10.454  1.00  0.00           C  
+ATOM     67  O   GLY A  10       4.637  11.792  11.315  1.00  0.00           O  
+ATOM     68  H   GLY A  10       3.406  10.115   7.573  1.00  0.00           H  
+ATOM     69 1HA  GLY A  10       4.594  11.883   8.520  1.00  0.00           H  
+ATOM     70 2HA  GLY A  10       3.109  12.458   9.254  1.00  0.00           H  
+ATOM     71  N   GLY A  11       4.072   9.724  10.633  1.00  0.00           N  
+ATOM     72  CA  GLY A  11       4.341   9.099  11.922  1.00  0.00           C  
+ATOM     73  C   GLY A  11       3.066   8.542  12.541  1.00  0.00           C  
+ATOM     74  O   GLY A  11       3.116   7.712  13.449  1.00  0.00           O  
+ATOM     75  H   GLY A  11       3.790   9.144   9.855  1.00  0.00           H  
+ATOM     76 1HA  GLY A  11       5.068   8.297  11.793  1.00  0.00           H  
+ATOM     77 2HA  GLY A  11       4.787   9.831  12.595  1.00  0.00           H  
+ATOM     78  N   GLY A  12       1.923   9.004  12.046  1.00  0.00           N  
+ATOM     79  CA  GLY A  12       0.632   8.569  12.565  1.00  0.00           C  
+ATOM     80  C   GLY A  12       0.325   7.136  12.150  1.00  0.00           C  
+ATOM     81  O   GLY A  12      -0.498   6.462  12.769  1.00  0.00           O  
+ATOM     82  H   GLY A  12       1.949   9.673  11.290  1.00  0.00           H  
+ATOM     83 1HA  GLY A  12       0.632   8.645  13.652  1.00  0.00           H  
+ATOM     84 2HA  GLY A  12      -0.150   9.233  12.197  1.00  0.00           H  
+ATOM     85  N   GLY A  13       0.993   6.674  11.098  1.00  0.00           N  
+ATOM     86  CA  GLY A  13       0.811   5.311  10.612  1.00  0.00           C  
+ATOM     87  C   GLY A  13       1.516   4.307  11.514  1.00  0.00           C  
+ATOM     88  O   GLY A  13       1.404   3.096  11.319  1.00  0.00           O  
+ATOM     89  H   GLY A  13       1.644   7.283  10.622  1.00  0.00           H  
+ATOM     90 1HA  GLY A  13      -0.253   5.081  10.566  1.00  0.00           H  
+ATOM     91 2HA  GLY A  13       1.201   5.231   9.598  1.00  0.00           H  
+ATOM     92  N   GLY A  14       2.243   4.815  12.504  1.00  0.00           N  
+ATOM     93  CA  GLY A  14       2.929   3.963  13.467  1.00  0.00           C  
+ATOM     94  C   GLY A  14       1.934   3.209  14.341  1.00  0.00           C  
+ATOM     95  O   GLY A  14       2.277   2.204  14.964  1.00  0.00           O  
+ATOM     96  H   GLY A  14       2.323   5.818  12.590  1.00  0.00           H  
+ATOM     97 1HA  GLY A  14       3.564   3.253  12.938  1.00  0.00           H  
+ATOM     98 2HA  GLY A  14       3.580   4.572  14.093  1.00  0.00           H  
+ATOM     99  N   GLY A  15       0.701   3.701  14.384  1.00  0.00           N  
+ATOM    100  CA  GLY A  15      -0.356   3.052  15.150  1.00  0.00           C  
+ATOM    101  C   GLY A  15      -0.821   1.771  14.471  1.00  0.00           C  
+ATOM    102  O   GLY A  15      -1.536   0.964  15.067  1.00  0.00           O  
+ATOM    103  H   GLY A  15       0.490   4.547  13.873  1.00  0.00           H  
+ATOM    104 1HA  GLY A  15       0.007   2.826  16.152  1.00  0.00           H  
+ATOM    105 2HA  GLY A  15      -1.198   3.736  15.260  1.00  0.00           H  
+ATOM    106  N   GLY A  16      -0.412   1.588  13.220  1.00  0.00           N  
+ATOM    107  CA  GLY A  16      -0.669   0.344  12.503  1.00  0.00           C  
+ATOM    108  C   GLY A  16       0.625  -0.416  12.240  1.00  0.00           C  
+ATOM    109  O   GLY A  16       0.672  -1.303  11.388  1.00  0.00           O  
+ATOM    110  H   GLY A  16       0.089   2.330  12.753  1.00  0.00           H  
+ATOM    111 1HA  GLY A  16      -1.348  -0.277  13.086  1.00  0.00           H  
+ATOM    112 2HA  GLY A  16      -1.164   0.564  11.558  1.00  0.00           H  
+ATOM    113  N   GLY A  17       1.673  -0.064  12.977  1.00  0.00           N  
+ATOM    114  CA  GLY A  17       2.964  -0.726  12.838  1.00  0.00           C  
+ATOM    115  C   GLY A  17       3.644  -0.341  11.531  1.00  0.00           C  
+ATOM    116  O   GLY A  17       4.530  -1.047  11.049  1.00  0.00           O  
+ATOM    117  H   GLY A  17       1.572   0.683  13.650  1.00  0.00           H  
+ATOM    118 1HA  GLY A  17       3.604  -0.456  13.678  1.00  0.00           H  
+ATOM    119 2HA  GLY A  17       2.825  -1.806  12.876  1.00  0.00           H  
+ATOM    120  N   GLY A  18       3.223   0.783  10.960  1.00  0.00           N  
+ATOM    121  CA  GLY A  18       3.780   1.256   9.698  1.00  0.00           C  
+ATOM    122  C   GLY A  18       3.258   0.438   8.524  1.00  0.00           C  
+ATOM    123  O   GLY A  18       3.692   0.620   7.387  1.00  0.00           O  
+ATOM    124  H   GLY A  18       2.499   1.323  11.412  1.00  0.00           H  
+ATOM    125 1HA  GLY A  18       3.522   2.306   9.558  1.00  0.00           H  
+ATOM    126 2HA  GLY A  18       4.867   1.195   9.735  1.00  0.00           H  
+ATOM    127  N   GLY A  19       2.325  -0.464   8.807  1.00  0.00           N  
+ATOM    128  CA  GLY A  19       1.769  -1.340   7.782  1.00  0.00           C  
+ATOM    129  C   GLY A  19       2.813  -2.328   7.277  1.00  0.00           C  
+ATOM    130  O   GLY A  19       2.673  -2.893   6.192  1.00  0.00           O  
+ATOM    131  H   GLY A  19       1.991  -0.546   9.757  1.00  0.00           H  
+ATOM    132 1HA  GLY A  19       0.916  -1.882   8.189  1.00  0.00           H  
+ATOM    133 2HA  GLY A  19       1.401  -0.738   6.951  1.00  0.00           H  
+ATOM    134  N   GLY A  20       3.859  -2.532   8.070  1.00  0.00           N  
+ATOM    135  CA  GLY A  20       4.947  -3.424   7.688  1.00  0.00           C  
+ATOM    136  C   GLY A  20       5.829  -2.791   6.619  1.00  0.00           C  
+ATOM    137  O   GLY A  20       6.682  -3.456   6.030  1.00  0.00           O  
+ATOM    138  H   GLY A  20       3.902  -2.057   8.960  1.00  0.00           H  
+ATOM    139 1HA  GLY A  20       5.547  -3.663   8.565  1.00  0.00           H  
+ATOM    140 2HA  GLY A  20       4.535  -4.362   7.315  1.00  0.00           H  
+TER                                                                             
+CONECT    2    1                                                                
+CONECT    3    2                                                                
+CONECT    4    3                                                                
+CONECT    5    1                                                                
+CONECT    6    2                                                                
+CONECT    7    2                                                                
+CONECT    8    3                                                                
+CONECT    9    8                                                                
+CONECT   10    9                                                                
+CONECT   11   10                                                                
+CONECT   12    8                                                                
+CONECT   13    9                                                                
+CONECT   14    9                                                                
+CONECT   15   10                                                                
+CONECT   16   15                                                                
+CONECT   17   16                                                                
+CONECT   18   17                                                                
+CONECT   19   15                                                                
+CONECT   20   16                                                                
+CONECT   21   16                                                                
+CONECT   22   17                                                                
+CONECT   23   22                                                                
+CONECT   24   23                                                                
+CONECT   25   24                                                                
+CONECT   26   22                                                                
+CONECT   27   23                                                                
+CONECT   28   23                                                                
+CONECT   29   24                                                                
+CONECT   30   29                                                                
+CONECT   31   30                                                                
+CONECT   32   31                                                                
+CONECT   33   29                                                                
+CONECT   34   30                                                                
+CONECT   35   30                                                                
+CONECT   36   31                                                                
+CONECT   37   36                                                                
+CONECT   38   37                                                                
+CONECT   39   38                                                                
+CONECT   40   36                                                                
+CONECT   41   37                                                                
+CONECT   42   37                                                                
+CONECT   43   38                                                                
+CONECT   44   43                                                                
+CONECT   45   44                                                                
+CONECT   46   45                                                                
+CONECT   47   43                                                                
+CONECT   48   44                                                                
+CONECT   49   44                                                                
+CONECT   50   45                                                                
+CONECT   51   50                                                                
+CONECT   52   51                                                                
+CONECT   53   52                                                                
+CONECT   54   50                                                                
+CONECT   55   51                                                                
+CONECT   56   51                                                                
+CONECT   57   52                                                                
+CONECT   58   57                                                                
+CONECT   59   58                                                                
+CONECT   60   59                                                                
+CONECT   61   57                                                                
+CONECT   62   58                                                                
+CONECT   63   58                                                                
+CONECT   64   59                                                                
+CONECT   65   64                                                                
+CONECT   66   65                                                                
+CONECT   67   66                                                                
+CONECT   68   64                                                                
+CONECT   69   65                                                                
+CONECT   70   65                                                                
+CONECT   71   66                                                                
+CONECT   72   71                                                                
+CONECT   73   72                                                                
+CONECT   74   73                                                                
+CONECT   75   71                                                                
+CONECT   76   72                                                                
+CONECT   77   72                                                                
+CONECT   78   73                                                                
+CONECT   79   78                                                                
+CONECT   80   79                                                                
+CONECT   81   80                                                                
+CONECT   82   78                                                                
+CONECT   83   79                                                                
+CONECT   84   79                                                                
+CONECT   85   80                                                                
+CONECT   86   85                                                                
+CONECT   87   86                                                                
+CONECT   88   87                                                                
+CONECT   89   85                                                                
+CONECT   90   86                                                                
+CONECT   91   86                                                                
+CONECT   92   87                                                                
+CONECT   93   92                                                                
+CONECT   94   93                                                                
+CONECT   95   94                                                                
+CONECT   96   92                                                                
+CONECT   97   93                                                                
+CONECT   98   93                                                                
+CONECT   99   94                                                                
+CONECT  100   99                                                                
+CONECT  101  100                                                                
+CONECT  102  101                                                                
+CONECT  103   99                                                                
+CONECT  104  100                                                                
+CONECT  105  100                                                                
+CONECT  106  101                                                                
+CONECT  107  106                                                                
+CONECT  108  107                                                                
+CONECT  109  108                                                                
+CONECT  110  106                                                                
+CONECT  111  107                                                                
+CONECT  112  107                                                                
+CONECT  113  108                                                                
+CONECT  114  113                                                                
+CONECT  115  114                                                                
+CONECT  116  115                                                                
+CONECT  117  113                                                                
+CONECT  118  114                                                                
+CONECT  119  114                                                                
+CONECT  120  115                                                                
+CONECT  121  120                                                                
+CONECT  122  121                                                                
+CONECT  123  122                                                                
+CONECT  124  120                                                                
+CONECT  125  121                                                                
+CONECT  126  121                                                                
+CONECT  127  122                                                                
+CONECT  128  127                                                                
+CONECT  129  128                                                                
+CONECT  130  129                                                                
+CONECT  131  127                                                                
+CONECT  132  128                                                                
+CONECT  133  128                                                                
+CONECT  134  129                                                                
+CONECT  135  134                                                                
+CONECT  136    1  135                                                           
+CONECT  137  136                                                                
+CONECT  138  134                                                                
+CONECT  139  135                                                                
+CONECT  140  135                                                                
+CIS_PEPTIDE_BOND_COUNT 0
+HBOND_COUNT 20
+description 0
+score 16.752
+silent_score 16.752
+

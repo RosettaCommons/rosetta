@@ -180,7 +180,7 @@ public:
 #endif // SERIALIZATION
 
 };
-	
+
 typedef utility::pointer::shared_ptr< CoordinateConstraint > CoordinateConstraintOP;
 typedef utility::pointer::shared_ptr< CoordinateConstraint const > CoordinateConstraintCOP;
 

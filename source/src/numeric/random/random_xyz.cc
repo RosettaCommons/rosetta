@@ -34,12 +34,12 @@ xyzVector<Real> uniform_vector_sphere(numeric::Real radius){ //==1
 	numeric::Real U = 0;
 	numeric::Real V = 0;
 
-	while(U == 0 || U == 1)
-	{
+	while ( U == 0 || U == 1 )
+			{
 		U = numeric::random::uniform();
 	}
-	while(V == 0 || V == 1)
-	{
+	while ( V == 0 || V == 1 )
+			{
 		V = numeric::random::uniform();
 	}
 	numeric::Real theta = 2 * 3.14159265358979 * U;

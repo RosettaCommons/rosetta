@@ -76,7 +76,7 @@ public:
 
 	void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 	std::string silent_file() const { return silent_file_; }
-	
+
 	void
 	initialize_from_command_line();
 

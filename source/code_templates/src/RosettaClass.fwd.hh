@@ -11,13 +11,11 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
-
 #ifndef INCLUDED_--path_underscore--_--class--_fwd_hh
 #define INCLUDED_--path_underscore--_--class--_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
 
 
 // Forward
@@ -28,14 +26,6 @@ class --class--;
 typedef utility::pointer::shared_ptr< --class-- > --class--OP;
 typedef utility::pointer::shared_ptr< --class-- const > --class--COP;
 
-
-
 --end_namespace--
 
-
 #endif //INCLUDED_--path_underscore--_--class--_fwd_hh
-
-
-
-
-

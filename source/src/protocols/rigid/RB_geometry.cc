@@ -86,17 +86,15 @@ core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_poin
 	core::Vector centroid_sum(0);
 	core::Size atom_count=0;
 
-	foreach(core::conformation::ResidueCOP residue_pointer, residue_c_pointers)
-	{
+	foreach ( core::conformation::ResidueCOP residue_pointer, residue_c_pointers ) {
 		atom_count = atom_count + residue_pointer->natoms();
 
-		for(
+		for (
 				core::conformation::Atoms::const_iterator atom = residue_pointer->atom_begin(),
 				end = residue_pointer->atom_end();
 				atom != end;
 				++atom
-		)
-		{
+				) {
 			centroid_sum += atom->xyz();
 		}
 	}
@@ -106,8 +104,8 @@ core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_poin
 
 //Calculate the centroid of a set of chains given a vector of chain ids
 core::Vector centroid_by_chains(
-		core::pose::Pose const & pose,
-		utility::vector1<core::Size> chain_ids
+	core::pose::Pose const & pose,
+	utility::vector1<core::Size> chain_ids
 )
 {
 	return centroid_by_residues(core::pose::get_residues_from_chains(pose, chain_ids));
@@ -115,8 +113,8 @@ core::Vector centroid_by_chains(
 
 //Calculate the centroid of a chain from its id
 core::Vector centroid_by_chain(
-		core::pose::Pose const & pose,
-		core::Size const chain_id
+	core::pose::Pose const & pose,
+	core::Size const chain_id
 )
 {
 	core::conformation::ResidueCOPs residue_pointers = core::pose::get_chain_residues(pose, chain_id);

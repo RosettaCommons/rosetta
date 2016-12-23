@@ -83,6 +83,7 @@
 #include <protocols/cyclic_peptide/PeptideCyclizeMoverCreator.hh>
 #include <protocols/cyclic_peptide/DeclareBondCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
+#include <protocols/cyclic_peptide/SymmetricCycpepAlignCreator.hh>
 #include <protocols/cyclic_peptide/ThreefoldLinkerMoverCreator.hh>
 #include <protocols/cyclic_peptide/TryDisulfPermutationsCreator.hh>
 #include <protocols/cyclic_peptide/FlipChiralityMoverCreator.hh>

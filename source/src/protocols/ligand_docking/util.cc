@@ -50,16 +50,16 @@ void move_ligand_to_desired_centroid(
 /// @brief Move the center of specified multiple chains to the desired_centroid
 void
 move_ligand_to_desired_centroid(
-		utility::vector1<std::string> const & chains,
-		core::Vector const & desired_centroid,
-		core::pose::Pose & pose
+	utility::vector1<std::string> const & chains,
+	core::Vector const & desired_centroid,
+	core::pose::Pose & pose
 ){
 
 	utility::vector1<core::Size> chain_ids;
 	utility::vector1<core::Size> jump_ids;
 
 	//obtain chain IDs and jump IDs from pose
-	foreach(std::string chain, chains){
+	foreach ( std::string chain, chains ) {
 		chain_ids.push_back(core::pose::get_chain_id_from_chain(chain, pose));
 		jump_ids.push_back(core::pose::get_jump_id_from_chain_id(chain_ids.back(), pose));
 	}
@@ -68,24 +68,23 @@ move_ligand_to_desired_centroid(
 	core::Vector const trans_vec = desired_centroid - ligand_centroid;
 	core::Real const trans_len = trans_vec.length();
 
-	if (trans_len > 1e-3) { // otherwise we get NaNs
-			protocols::rigid::RigidBodyTransMover mover(pose, jump_ids[1]);
-			mover.step_size(trans_len);
-			mover.trans_axis(trans_vec);
-			mover.freeze();
-			mover.apply(pose); //moving original chain
+	if ( trans_len > 1e-3 ) { // otherwise we get NaNs
+		protocols::rigid::RigidBodyTransMover mover(pose, jump_ids[1]);
+		mover.step_size(trans_len);
+		mover.trans_axis(trans_vec);
+		mover.freeze();
+		mover.apply(pose); //moving original chain
 
-			//applying same mover to other chains
-			for(
-						core::Size counter = 2;
-						counter <= jump_ids.size();
-						++counter
-				)
-			{
-				mover.rb_jump(jump_ids[counter]);
-				mover.apply(pose);
-			}
+		//applying same mover to other chains
+		for (
+				core::Size counter = 2;
+				counter <= jump_ids.size();
+				++counter
+				) {
+			mover.rb_jump(jump_ids[counter]);
+			mover.apply(pose);
 		}
+	}
 }
 
 /// @brief Move the center of the object(s) downstream of jump_id to the desired_centroid
@@ -109,11 +108,11 @@ move_ligand_to_desired_centroid(
 /// @brief Move the neighbor atom of the specified multiple chains to the desired_position
 void
 move_ligand_neighbor_to_desired_position(
-		utility::vector1<std::string> const & chains,
-		core::Vector const & desired_position,
-		core::pose::Pose & pose
+	utility::vector1<std::string> const & chains,
+	core::Vector const & desired_position,
+	core::pose::Pose & pose
 ){
-	foreach(std::string chain, chains){
+	foreach ( std::string chain, chains ) {
 		move_ligand_neighbor_to_desired_position(chain, desired_position,pose);
 	}
 

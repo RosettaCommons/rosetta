@@ -44,13 +44,13 @@ public:
 		core_init_with_additional_options("-extra_res_fa protocols/ligand_docking/ZNx.params protocols/ligand_docking/7cpa.params");
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
-//		using namespace core::chemical;
-//		utility::vector1< std::string > params_files;
-//		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-//		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-//		if ( !residue_set.has_name("ZNx") ) params_files.push_back("protocols/ligand_docking/ZNx.params");
-//		if ( !residue_set.has_name("CP1") ) params_files.push_back("protocols/ligand_docking/7cpa.params");
-//		residue_set.read_files_for_custom_residue_types(params_files);
+		//  using namespace core::chemical;
+		//  utility::vector1< std::string > params_files;
+		//  ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		//  ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
+		//  if ( !residue_set.has_name("ZNx") ) params_files.push_back("protocols/ligand_docking/ZNx.params");
+		//  if ( !residue_set.has_name("CP1") ) params_files.push_back("protocols/ligand_docking/7cpa.params");
+		//  residue_set.read_files_for_custom_residue_types(params_files);
 	}
 
 	void tearDown() {}
@@ -78,15 +78,15 @@ public:
 		core::Size rejected = 0;
 		core::Size accepted = 0;
 
-		for (core::Size i=0; i <= 500; i++)
-		{
+		for ( core::Size i=0; i <= 500; i++ ) {
 			mover.randomize_ligand(test_ligand, 5, 360);
 			core::Real distance = test_ligand.center().distance(start_center);
 
-			if (distance > 5.0)
-			{rejected++;}
-			else
-			{accepted++;}
+			if ( distance > 5.0 ) {
+				rejected++;
+			} else {
+				accepted++;
+			}
 
 			test_ligand = start_ligand;
 		}
@@ -100,36 +100,35 @@ public:
 
 		mover.setup_conformers(pose, begin);
 
-		for (core::Size i=0; i <= 500; i++)
-		{
+		for ( core::Size i=0; i <= 500; i++ ) {
 			mover.change_conformer(test_ligand);
 			core::Real distance = test_ligand.center().distance(start_center);
 
-			if (distance > 5.0)
-			{rejected++;}
-			else
-			{accepted++;}
+			if ( distance > 5.0 ) {
+				rejected++;
+			} else {
+				accepted++;
+			}
 
 			std::cout << "conformer distance: " << distance << std::endl;
 			deviation = 0;
 
 			utility::vector1<core::PointPosition > target_coords = start_ligand.coords_vector();
-					utility::vector1<core::PointPosition > copy_coords = test_ligand.coords_vector();
+			utility::vector1<core::PointPosition > copy_coords = test_ligand.coords_vector();
 
-					for(core::Size i=1; i <= copy_coords.size(); ++i)
-						{
-								core::Real deviation_x = ((copy_coords[i][0]-target_coords[i][0]) * (copy_coords[i][0]-target_coords[i][0]));
-								core::Real deviation_y = ((copy_coords[i][1]-target_coords[i][1]) * (copy_coords[i][1]-target_coords[i][1]));
-								core::Real deviation_z = ((copy_coords[i][2]-target_coords[i][2]) * (copy_coords[i][2]-target_coords[i][2]));
+			for ( core::Size i=1; i <= copy_coords.size(); ++i ) {
+				core::Real deviation_x = ((copy_coords[i][0]-target_coords[i][0]) * (copy_coords[i][0]-target_coords[i][0]));
+				core::Real deviation_y = ((copy_coords[i][1]-target_coords[i][1]) * (copy_coords[i][1]-target_coords[i][1]));
+				core::Real deviation_z = ((copy_coords[i][2]-target_coords[i][2]) * (copy_coords[i][2]-target_coords[i][2]));
 
-								core::Real total_dev = deviation_x + deviation_y + deviation_z;
-								deviation += total_dev;
-						}
+				core::Real total_dev = deviation_x + deviation_y + deviation_z;
+				deviation += total_dev;
+			}
 
-							deviation /= (core::Real)copy_coords.size();
-							deviation = sqrt(deviation);
+			deviation /= (core::Real)copy_coords.size();
+			deviation = sqrt(deviation);
 
-							std::cout << "RMSD: " << deviation << std::endl;
+			std::cout << "RMSD: " << deviation << std::endl;
 
 			test_ligand = start_ligand;
 		}

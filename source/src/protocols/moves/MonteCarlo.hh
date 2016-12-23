@@ -577,10 +577,10 @@ public:
 	{total_score_of_last_considered_pose_ = score;}
 
 	void set_last_accepted (core::Real score)
-		{last_accepted_score_ = score;}
+	{last_accepted_score_ = score;}
 
 	void set_lowest (core::Real score)
-		{lowest_score_ = score;}
+	{lowest_score_ = score;}
 
 
 	// private methods

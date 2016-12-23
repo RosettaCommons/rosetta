@@ -2477,14 +2477,12 @@ core::conformation::ResidueCOPs
 get_residues_from_chains(core::pose::Pose const & pose, utility::vector1<core::Size> chain_ids)
 {
 	core::conformation::ResidueCOPs chains_residue_pointers;
-	for(core::Size chain_id : chain_ids)
-		{
-			core::conformation::ResidueCOPs chain_residue_pointers = core::pose::get_chain_residues(pose, chain_id);
-			for(core::conformation::ResidueCOP chain_residue_pointer : chain_residue_pointers)
-			{
-				chains_residue_pointers.push_back(chain_residue_pointer);
-			}
+	for ( core::Size chain_id : chain_ids ) {
+		core::conformation::ResidueCOPs chain_residue_pointers = core::pose::get_chain_residues(pose, chain_id);
+		for ( core::conformation::ResidueCOP chain_residue_pointer : chain_residue_pointers ) {
+			chains_residue_pointers.push_back(chain_residue_pointer);
 		}
+	}
 	return chains_residue_pointers;
 }
 /// @brief Is residue number in this chain?
@@ -2655,16 +2653,13 @@ std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const 
 
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
 
-	for(core::Size res_num = 1; res_num <= pose.size(); ++res_num)
-	{
-		if((int)chain_id != pose.chain(res_num))
-		{
+	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
+		if ( (int)chain_id != pose.chain(res_num) ) {
 			continue;
 		}
 
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
-		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
-		{
+		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
 			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,5);

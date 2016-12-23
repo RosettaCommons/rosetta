@@ -59,20 +59,20 @@ namespace ligand_docking {
 //struct HighRes_info{
 //
 //public:
-//	//Basic info
-//	core::Size jump_id;
-//	core::Real exp_data;
+// //Basic info
+// core::Size jump_id;
+// core::Real exp_data;
 //
-//	//Rosetta scores and poses
-//	core::pose::Pose old_pose; //Pose for the chain in Rosetta
-//	core::pose::Pose current_pose; //Pose for the chain in Rosetta
-//	core::pose::Pose lowest_pose; //Pose for the chain in Rosetta
+// //Rosetta scores and poses
+// core::pose::Pose old_pose; //Pose for the chain in Rosetta
+// core::pose::Pose current_pose; //Pose for the chain in Rosetta
+// core::pose::Pose lowest_pose; //Pose for the chain in Rosetta
 //
 //
 //
-//	core::Real current_score; //Score for the chain in Rosetta
-//	core::Real old_score; //Score for the chain in Rosetta
-//	core::Real lowest_score; //Score for the chain in Rosetta
+// core::Real current_score; //Score for the chain in Rosetta
+// core::Real old_score; //Score for the chain in Rosetta
+// core::Real lowest_score; //Score for the chain in Rosetta
 //
 //};
 
@@ -127,7 +127,7 @@ private:
 
 	utility::vector1<std::pair<core::Size, core::Real> > rosetta_current_scores_; // Vector of chain ID/Affinity pairs
 	utility::vector1<std::pair<core::Size, core::Real> > rosetta_lowest_scores_; // Vector of chain ID/Affinity pairs
-	utility::vector1<std::pair<core::Size, core::Real> > rosetta_old_scores_;	// Vector of chain ID/Affinity pairs
+	utility::vector1<std::pair<core::Size, core::Real> > rosetta_old_scores_; // Vector of chain ID/Affinity pairs
 
 
 	utility::vector1<core::pose::Pose> rosetta_current_poses_; // Vector of Poses
@@ -140,7 +140,7 @@ private:
 
 	void prepare_single_ligand_pose(core::pose::Pose pose, core::Size chain_to_keep);
 
-//	void get_ranks_from_file(core::pose::Pose const pose, std::string filename);
+	// void get_ranks_from_file(core::pose::Pose const pose, std::string filename);
 
 	core::Real qsar_correlation();
 };
@@ -148,14 +148,14 @@ private:
 //non-member functions
 
 bool sort_by_second(
-		std::pair<core::Size, core::Real> left_lig,
-		std::pair<core::Size, core::Real> right_lig
-		);
+	std::pair<core::Size, core::Real> left_lig,
+	std::pair<core::Size, core::Real> right_lig
+);
 
 core::Real spearman(
-		utility::vector1<std::pair<core::Size, core::Real> > vector_exp,
-		utility::vector1<std::pair<core::Size, core::Real> > vector_rosetta
-		);
+	utility::vector1<std::pair<core::Size, core::Real> > vector_exp,
+	utility::vector1<std::pair<core::Size, core::Real> > vector_rosetta
+);
 void vector_to_rank(utility::vector1<std::pair<core::Size, core::Real> > & vector);
 
 //void setup_native_residue_favoring(core::pose::Pose & pose, core::pack::task::PackerTaskOP task);
