@@ -107,7 +107,6 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 	use_legacy_setup_ = option[ rna::farna::use_legacy_setup ]();
 
 	cst_gap_ = option[ rna::farna::cst_gap ]();
-
 }
 
 } //options

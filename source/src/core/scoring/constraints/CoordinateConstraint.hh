@@ -30,6 +30,8 @@
 //#include <map>
 
 #include <utility/vector1.hh>
+#include <utility/pointer/owning_ptr.hh>
+
 #include <numeric/xyzVector.hh>
 
 #ifdef    SERIALIZATION
@@ -178,6 +180,9 @@ public:
 #endif // SERIALIZATION
 
 };
+	
+typedef utility::pointer::shared_ptr< CoordinateConstraint > CoordinateConstraintOP;
+typedef utility::pointer::shared_ptr< CoordinateConstraint const > CoordinateConstraintCOP;
 
 }
 }

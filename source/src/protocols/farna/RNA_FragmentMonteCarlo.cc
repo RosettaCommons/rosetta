@@ -34,7 +34,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
+#include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh> //move this to toolbox/
+#include <protocols/stepwise/modeler/util.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -42,8 +45,11 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/import_pose/import_pose.hh>
+
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <numeric/random/random.hh>
@@ -123,6 +129,14 @@ RNA_FragmentMonteCarlo::initialize_parameters() {
 	// parameters for run.
 	jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
 	rounds_ = refine_pose_ ? 1 : options_->rounds();
+	if ( options_->rmsd_screen() > 0 ) {
+		align_pose_ = get_native_pose();
+		if ( options_->align_pdb().size() > 0 ) {
+			using namespace core::chemical;
+			ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+			align_pose_ = stepwise::setup::get_pdb_with_full_model_info( options_->align_pdb(), rsd_set );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +236,8 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	Size max_tries( 1 );
 	if ( options_->filter_lores_base_pairs() || options_->filter_chain_closure() )  max_tries = 10;
 
+	utility::vector1< Size > moving_res_list; // used for alignment
+
 	for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
 
 		time_t pdb_start_time = time(nullptr);
@@ -235,6 +251,9 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		if ( !options_->bps_moves() ) rna_base_pair_handler_->setup_base_pair_constraints( pose, atom_level_domain_map_, options_->suppress_bp_constraint() ); // needs to happen after setting cutpoint variants, etc.
 
 		constraint_set_ = pose.constraint_set()->clone();
+
+		if ( align_pose_ != 0 ) moving_res_list = reroot_pose_before_align_and_return_moving_res( pose );
+
 		rna_chunk_library_->initialize_random_chunks( pose, options_->dump_pdb() ); //actually not random if only one chunk in each region.
 
 		if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
@@ -279,7 +298,6 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 				pose.fold_tree( ft_init );
 				pose.energies().clear();
 				if ( options_->dump_pdb() )  pose.dump_pdb( "random_rnp_orientation.pdb" );
-				//denovo_scorefxn_->show( TR, pose );
 			}
 		}
 
@@ -305,6 +323,10 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 			// Introduce constraints in stages.
 			update_pose_constraints( r, pose );
+			if ( align_pose_ != 0 && !options_->disallow_realign() ) {
+				stepwise::modeler::align::align_pose_and_add_rmsd_constraints( pose, align_pose_, moving_res_list, options_->rmsd_screen() );
+				if ( options_->dump_pdb() ) pose.dump_pdb( "after_align_" + string_of(r) +".pdb" );
+			}
 			monte_carlo_->reset( pose );
 
 			// Finer and finer fragments
@@ -419,9 +441,13 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		break; //Pass all the filters, early exit
 	} // ++ntries <= max_tries
 
-	// Get the full strength constraint back
+	// Get the full strength constraint back. Next few lines repeat code from above -- would be better to stick in a function.
 	update_denovo_scorefxn_weights( rounds_ );
 	update_pose_constraints( rounds_, pose );
+	if ( align_pose_ != 0 && !options_->disallow_realign() ) {
+		stepwise::modeler::align::align_pose_and_add_rmsd_constraints( pose, align_pose_, moving_res_list, options_->rmsd_screen() );
+	}
+
 	if ( options_->verbose() ) {
 		// try clearing energies and then rescoring???
 		//pose.energies().clear();
@@ -463,6 +489,8 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		running_score_output_.close();
 		TR << "Created running score file at: " << options_->output_score_file() << std::endl;
 	}
+
+	pose.constraint_set( constraint_set_ );
 
 	final_score( pose ); // may include rna_chem_map score here.
 
@@ -781,8 +809,7 @@ RNA_FragmentMonteCarlo::update_pose_constraints( Size const r, core::pose::Pose 
 	} else {
 		ConstraintCOPs csts( constraint_set_->get_all_constraints() );
 		ConstraintSetOP cst_set_new( new scoring::constraints::ConstraintSet );
-		for ( Size n = 1; n <= csts.size(); n++ ) {
-			ConstraintCOP const & cst( csts[n] );
+		for ( ConstraintCOP const & cst : csts ) {
 			if ( cst->natoms() == 2 )  { // currently only defined for pairwise distance constraints.
 				Size const i = cst->atom( 1 ).rsd();
 				Size const j = cst->atom( 2 ).rsd();
@@ -958,10 +985,12 @@ RNA_FragmentMonteCarlo::rnp_docking_trial( pose::Pose & pose ) {
 void
 RNA_FragmentMonteCarlo::random_fragment_trial( pose::Pose & pose ) {
 
+	//working_denovo_scorefxn_->show( pose );
 	rna_fragment_mover_->random_fragment_insertion( pose, frag_size_ );
 	if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
 
 	monte_carlo_->boltzmann( pose, "frag" + SS(frag_size_) );
+	//working_denovo_scorefxn_->show( pose );
 
 }
 
@@ -1051,6 +1080,44 @@ RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose 
 		core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
 		//  pose.dump_pdb( "after_align.pdb");
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// returns moving_res_list
+// Andy: it would be better for this to SHARE CODE with stepwise/modeler/util.cc if possible.
+// Andy: it would be better to remove any dependence of RNA_FragmentMonteCarlo on
+//   full_model_info if possible.
+//  -- rhiju
+utility::vector1< Size >
+RNA_FragmentMonteCarlo::reroot_pose_before_align_and_return_moving_res( pose::Pose & pose ) const
+{
+	// find connection point to 'fixed res'
+	Size moving_res_at_connection( 0 ), reference_res( 0 );
+	utility::vector1< Size > moving_res_list = get_moving_res( pose, atom_level_domain_map_ );
+	for ( Size const moving_res : moving_res_list ) {
+		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
+		if ( moving_res_list.has_value( parent_res ) ) continue;
+		moving_res_at_connection = moving_res;
+		reference_res            = parent_res;
+		break;
+	}
+
+	bool const is_jump = pose.fold_tree().jump_nr( reference_res, moving_res_at_connection ) > 0 ;
+	bool switched_moving_and_root_partitions = stepwise::modeler::revise_root_and_moving_res( pose, moving_res_at_connection );
+
+	// revise_root_and_moving_res() handled revision of single residue only... need to translate this
+	// switch to the whole list of residues.
+	if ( switched_moving_and_root_partitions ) {
+		utility::vector1< Size > const moving_res_list_original = moving_res_list;
+		moving_res_list = utility::tools::make_vector1( moving_res_at_connection );
+		if ( ! is_jump ) {
+			for ( Size const moving_res : moving_res_list_original ) {
+				if ( moving_res_list_original.has_value( pose.fold_tree().get_parent_residue( moving_res ) ) ) moving_res_list.push_back( moving_res );
+			}
+		}
+	}
+	return moving_res_list;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,6 @@
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 
 // Package headers
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
@@ -324,6 +323,10 @@ RNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 		denovo_scorefxn_->set_weight( coordinate_constraint, 1.0 ); // now useable in RNA denovo!
 		denovo_scorefxn_->set_weight( base_pair_constraint, 1.0 );
 	}
+	if ( options_->rmsd_screen() > 0.0 && !denovo_scorefxn_->has_nonzero_weight( coordinate_constraint) ) {
+		denovo_scorefxn_->set_weight( coordinate_constraint, 1.0 ); // now useable in RNA denovo!
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

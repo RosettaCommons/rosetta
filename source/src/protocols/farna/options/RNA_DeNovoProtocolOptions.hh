@@ -50,33 +50,33 @@ public:
 	std::string
 	type() const{ return "RNA_DeNovoProtocolOptions";}
 
-	void set_nstruct( core::Size const & setting ){ nstruct_ = setting; }
+	void set_nstruct( core::Size const setting ){ nstruct_ = setting; }
 	core::Size nstruct() const { return nstruct_; }
 
 	void set_lores_scorefxn( std::string const & setting ){ lores_scorefxn_ = setting; }
 	std::string lores_scorefxn() const { return lores_scorefxn_; }
 
-	void set_output_lores_silent_file( bool const & setting ){ output_lores_silent_file_ = setting; }
+	void set_output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
 	bool output_lores_silent_file() const { return output_lores_silent_file_; }
 
-	void set_binary_rna_output( bool const & setting ){ binary_rna_output_ = setting; }
+	void set_binary_rna_output( bool const setting ){ binary_rna_output_ = setting; }
 	bool binary_rna_output() const { return binary_rna_output_; }
 
-	void set_save_times( bool const & setting ){ save_times_ = setting; }
+	void set_save_times( bool const setting ){ save_times_ = setting; }
 	bool save_times() const { return save_times_; }
 
-	void set_use_legacy_setup( bool const & setting ){ use_legacy_setup_ = setting; }
+	void set_use_legacy_setup( bool const setting ){ use_legacy_setup_ = setting; }
 	bool use_legacy_setup() const { return use_legacy_setup_; }
 
-	void set_cst_gap( bool const & setting ){ cst_gap_ = setting; }
+	void set_cst_gap( bool const setting ){ cst_gap_ = setting; }
 	bool cst_gap() const { return cst_gap_; }
 
-	void set_output_filters( bool const & setting ){ output_filters_ = setting; }
+	void set_output_filters( bool const setting ){ output_filters_ = setting; }
 	bool output_filters() const { return output_filters_; }
 
 	void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 	std::string silent_file() const { return silent_file_; }
-
+	
 	void
 	initialize_from_command_line();
 
@@ -92,7 +92,6 @@ private:
 	bool save_times_;
 	bool use_legacy_setup_;
 	bool cst_gap_;
-
 };
 
 } //options

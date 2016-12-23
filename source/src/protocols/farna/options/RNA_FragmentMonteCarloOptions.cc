@@ -197,7 +197,16 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 		set_filter_lores_base_pairs(  false );
 		set_filter_lores_base_pairs_early(  false );
 	}
-
+	
+	// AMW: this doesn't correspond to an actual option. But, this way,
+	// we will only do this song and dance if we have an align_pdb specified.
+	disallow_realign_ = !option[ stepwise::align_pdb ].user();
+	rmsd_screen_ = option[ stepwise::rmsd_screen ]();
+	if ( option[ stepwise::align_pdb ].user() ) {
+		align_pdb_ = option[ stepwise::align_pdb ]();
+	} else {
+		align_pdb_ = "";
+	}
 }
 
 

@@ -201,6 +201,9 @@ private:
 	void
 	final_score( core::pose::Pose & pose );
 
+	utility::vector1< Size >
+	reroot_pose_before_align_and_return_moving_res( core::pose::Pose & pose ) const;
+
 	core::Real
 	get_rmsd( core::pose::Pose const & const_pose ) const;
 
@@ -256,6 +259,8 @@ private:
 
 	std::list< core::Real > all_lores_score_final_;
 	core::scoring::constraints::ConstraintSetOP constraint_set_;
+	core::pose::PoseCOP align_pose_;
+
 	core::pose::PoseOP lores_pose_;
 	bool is_rna_and_protein_;
 	bool do_rnp_docking_;

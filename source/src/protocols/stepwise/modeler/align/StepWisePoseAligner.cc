@@ -564,6 +564,8 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 	pose::Pose const & pose1, pose::Pose const & pose2,
 	bool const do_the_checks /* = true */ ) const {
 
+	// AMW: Note that this leaves open the possibility -- due to aa() comparison
+	// -- that we say two NCNTs are 'the same'
 	using namespace core::id;
 
 	if ( n1 == 0 || n2 == 0 ) return false;
