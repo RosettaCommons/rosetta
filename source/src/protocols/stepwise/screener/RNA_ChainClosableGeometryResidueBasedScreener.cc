@@ -38,12 +38,12 @@ RNA_ChainClosableGeometryResidueBasedScreener::~RNA_ChainClosableGeometryResidue
 
 ///////////////////////////////////////////////////////////////////
 void
-RNA_ChainClosableGeometryResidueBasedScreener::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+RNA_ChainClosableGeometryResidueBasedScreener::get_update( sampler::StepWiseSamplerOP sampler ){
 
 	using namespace sampler;
 	using namespace sampler::rigid_body;
 
-	runtime_assert( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES );
+	runtime_assert( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES );
 	RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 
 	five_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res1_, " O3'" ); // 5' residue

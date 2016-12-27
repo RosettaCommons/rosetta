@@ -34,6 +34,8 @@ using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
 using namespace protocols::stepwise::sampler::screener;
+using namespace protocols::stepwise::sampler;
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_KIC_Sampler" );
 
 namespace protocols {
@@ -46,7 +48,7 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	core::Size const moving_suite,
 	core::Size const chainbreak_suite
 ):
-	StepWiseSamplerBase(),
+	StepWiseSampler(),
 	ref_pose_( ref_pose ),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
@@ -64,7 +66,7 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	random_chain_closed_( true ),
 	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) )
 {
-	StepWiseSamplerBase::set_random( false );
+	StepWiseSampler::set_random( false );
 }
 
 RNA_KIC_Sampler::~RNA_KIC_Sampler() {}
@@ -214,7 +216,7 @@ void RNA_KIC_Sampler::apply( pose::Pose & pose ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 void RNA_KIC_Sampler::set_random( bool const setting ) {
-	StepWiseSamplerBase::set_random( setting );
+	StepWiseSampler::set_random( setting );
 	if ( is_init() ) {
 		bb_rotamer_->set_random( setting );
 		loop_closer_->set_random( setting );

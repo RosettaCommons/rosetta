@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_sampler_protein_ProteinBetaAntiParallelStepWiseSampler_HH
 #define INCLUDED_protocols_sampler_protein_ProteinBetaAntiParallelStepWiseSampler_HH
 
-#include <protocols/stepwise/sampler/JumpStepWiseSampler.hh>
+#include <protocols/stepwise/sampler/jump/JumpStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinBetaAntiParallelStepWiseSampler.fwd.hh>
 
 namespace protocols {
@@ -24,7 +24,7 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-class ProteinBetaAntiParallelStepWiseSampler: public JumpStepWiseSampler {
+class ProteinBetaAntiParallelStepWiseSampler: public jump::JumpStepWiseSampler {
 
 public:
 
@@ -40,8 +40,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "ProteinBetaAntiParallelStepWiseSampler"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return PROTEIN_BETA_ANTIPARALLEL; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::PROTEIN_BETA_ANTIPARALLEL; }
 
 private:
 

@@ -8,24 +8,24 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/stepwise/sampler/StepWiseSamplerSized.hh
-/// @brief Abstract Base Class for StepWiseSampler sampler with finite size.
+/// @brief Abstract Base Class for Sampler sampler with finite size.
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerSized_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerSized_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerSized_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerSized_HH
 
 // Unit headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.fwd.hh>
 
 // Package headers
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 
 namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-class StepWiseSamplerSized: public StepWiseSamplerBase {
+class StepWiseSamplerSized: public sampler::StepWiseSampler {
 
 public:
 	StepWiseSamplerSized();
@@ -56,8 +56,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "StepWiseSamplerSized"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return SIZED; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::SIZED; }
 
 	Size const & id() const { return id_; }
 

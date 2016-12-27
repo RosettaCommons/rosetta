@@ -27,7 +27,7 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-class ProteinFragmentStepWiseSampler: public protocols::stepwise::sampler::StepWiseSamplerSized {
+class ProteinFragmentStepWiseSampler: public StepWiseSamplerSized {
 
 public:
 
@@ -51,8 +51,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "ProteinFragmentStepWiseSampler"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return PROTEIN_FRAGMENT; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::PROTEIN_FRAGMENT; }
 
 private:
 

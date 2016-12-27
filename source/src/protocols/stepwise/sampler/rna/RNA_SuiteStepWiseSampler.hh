@@ -31,7 +31,7 @@ namespace rna {
 
 class RNA_SuiteStepWiseSampler : public StepWiseSamplerSizedAny {
 public:
-	using StepWiseSamplerBase::TorsionList;
+	using StepWiseSampler::TorsionList;
 
 	RNA_SuiteStepWiseSampler(
 		core::Size const rsd_id,
@@ -91,8 +91,8 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const;
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RNA_SUITE; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_SUITE; }
 
 private:
 	TorsionList fast_sample_torsions_from_info(

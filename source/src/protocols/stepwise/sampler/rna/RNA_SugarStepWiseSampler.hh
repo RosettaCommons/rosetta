@@ -49,6 +49,9 @@ public:
 	/// @brief Set the residue id being sampled
 	void set_rsd_id( core::Size const setting ) { rsd_id_ = setting; }
 
+	/// @brief Get the residue id being sampled
+	core::Size const & rsd_id() const { return rsd_id_; }
+
 	/// @brief Get the current pucker state.
 	core::chemical::rna::PuckerState pucker() const {
 		runtime_assert( is_init() );
@@ -71,8 +74,8 @@ public:
 		idealize_coord_ = setting;
 	}
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RNA_SUGAR; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_SUGAR; }
 
 	/// @brief Name of the class
 	virtual std::string get_name() const;

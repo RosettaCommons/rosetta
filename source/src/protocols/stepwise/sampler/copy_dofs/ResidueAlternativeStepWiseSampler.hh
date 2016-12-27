@@ -66,8 +66,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const;
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RESIDUE_ALTERNATIVE; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RESIDUE_ALTERNATIVE; }
 
 	Size representative_seqpos() const { return representative_seqpos_; }
 

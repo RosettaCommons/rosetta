@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_sampler_rna_RNA_StepWiseSamplerSamplerUtil_HH
 #define INCLUDED_protocols_sampler_rna_RNA_StepWiseSamplerSamplerUtil_HH
 
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -27,7 +27,7 @@ namespace stepwise {
 namespace sampler {
 namespace rna {
 
-sampler::StepWiseSamplerBaseOP
+sampler::StepWiseSamplerOP
 setup_sampler( core::pose::Pose const & pose,
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options,
 	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,

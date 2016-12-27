@@ -60,6 +60,17 @@ ProteinMainChainStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////
+using namespace core::id;
+toolbox::SamplerPlusPlusOP
+ProteinMainChainStepWiseSampler::find( TorsionID const & torsion_id ) {
+	for ( auto which_torsion_id : which_torsions_ ) {
+		if ( which_torsion_id == torsion_id ) return std::dynamic_pointer_cast< ProteinMainChainStepWiseSampler >( shared_from_this() );
+	}
+	return 0;
+}
+///////////////////////////////////////////////////////////////////////////
+
 
 } //protein
 } //sampler

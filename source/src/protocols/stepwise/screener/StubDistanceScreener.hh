@@ -51,7 +51,7 @@ public:
 
 	virtual
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler );
 
 private:
 

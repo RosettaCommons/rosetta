@@ -1467,6 +1467,21 @@ add_syn_anti_chi_constraints( core::pose::Pose & pose ) {
 	add_anti_chi_constraints( pose );
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< core::id::TorsionID >
+get_suite_torsion_ids( Size const i )
+{
+	using namespace core::id;
+	using namespace utility::tools;
+	return make_vector1( TorsionID( i    , BB, EPSILON ),
+											 TorsionID( i    , BB, ZETA ),
+											 TorsionID( i + 1, BB, ALPHA ),
+											 TorsionID( i + 1, BB, BETA ),
+											 TorsionID( i + 1, BB, GAMMA ) );
+
+}
+
+
 } //ns rna
 } //ns pose
 } //ns core

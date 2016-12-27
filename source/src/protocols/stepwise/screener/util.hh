@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_screener_StepWiseScreenerUtil_HH
 #define INCLUDED_protocols_stepwise_screener_StepWiseScreenerUtil_HH
 
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {
@@ -24,7 +24,7 @@ namespace stepwise {
 namespace screener {
 
 void
-fast_forward_to_next_residue_pair( sampler::StepWiseSamplerBaseOP sampler,
+fast_forward_to_next_residue_pair( sampler::StepWiseSamplerOP sampler,
 	core::Size const res1,
 	core::Size const res2 );
 

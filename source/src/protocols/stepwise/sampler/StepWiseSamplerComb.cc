@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.StepWiseSamplerComb" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerComb" );
 
 using namespace core;
 
@@ -27,7 +27,7 @@ namespace stepwise {
 namespace sampler {
 ///////////////////////////////////////////////////////////////////////////
 StepWiseSamplerComb::StepWiseSamplerComb():
-	StepWiseSamplerBase(),
+	StepWiseSampler(),
 	is_empty_( false )
 {}
 
@@ -92,7 +92,7 @@ void StepWiseSamplerComb::apply( Pose & pose ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerComb::set_random( bool const setting ) {
-	StepWiseSamplerBase::set_random( setting );
+	StepWiseSampler::set_random( setting );
 	for ( auto const & rotamer : rotamer_list_ ) {
 		rotamer->set_random( setting );
 		runtime_assert( rotamer->random() == setting );
@@ -100,7 +100,7 @@ void StepWiseSamplerComb::set_random( bool const setting ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerComb::show( std::ostream & out, Size const indent ) const {
-	StepWiseSamplerBase::show( out, indent );
+	StepWiseSampler::show( out, indent );
 	// reverse direction so that 'inner loop' is last.
 	for ( Size k = rotamer_list_.size(); k >= 1; k-- ) rotamer_list_[k]->show( out, indent + 1 );
 }

@@ -17,7 +17,7 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/StepWiseScreenerType.hh>
 #include <protocols/stepwise/screener/AnchorSugarScreener.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
 #include <protocols/moves/CompositionMover.hh>
@@ -56,7 +56,7 @@ namespace protocols {
 namespace stepwise {
 
 //Constructor
-StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP sampler,
+StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerOP sampler,
 	utility::vector1< screener::StepWiseScreenerOP > screeners ):
 	sampler_(std::move( sampler )),
 	screeners_( screeners ),
@@ -170,7 +170,7 @@ StepWiseSampleAndScreen::set_ok_to_increment(){
 
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::sampler::rigid_body;
-	if ( sampler_->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+	if ( sampler_->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
 		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler_.get() ) );
 		ok_to_increment_screeners = ( rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() == 1 );
 	}
@@ -206,7 +206,7 @@ StepWiseSampleAndScreen::early_exit_check( Size const n ) {
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::sampler::rigid_body;
 	screener::StepWiseScreenerOP screener = screeners_[ n ];
-	if ( sampler_->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+	if ( sampler_->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
 		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler_.get() ) );
 		TR << "Rigid body ID " << rigid_body_rotamer_with_residue_alternatives.rigid_body_rotamer()->id() << ": ";
 		TR << " ID overall " << rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() << "; ";

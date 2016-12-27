@@ -34,6 +34,25 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @details SimulatedTempering
+///
+///  Carries out Markov Chain Monte Carlo with temperature jumps to mimic replica exchange.
+///
+///  Obeys detailed balance.
+///
+///  For speed, check_boltzmann() does not copy pose back to previous pose, but demands
+///   that external sampler 'back-update' pose (see, e.g., recces::RECCES_Mover) -- note
+///   difference with Rosetta's standard MonteCarlo class!
+///
+///  In use for, e.g., RECCES, developed by Fang-Chieh Chou and Das lab for calculating
+///   folding energetics of small RNA motifs.
+///
+///  See: Chou et al. (2016), PNAS 113:30. http://dx.doi.org/10.1073/pnas.1523335113
+///
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 namespace protocols {
 namespace moves {
 
@@ -59,7 +78,7 @@ SimulatedTempering::SimulatedTempering(
 }
 
 
-bool SimulatedTempering::boltzmann( Pose & pose ) {
+bool SimulatedTempering::check_boltzmann( Pose & pose ) {
 	Real new_score( 0 );
 
 	if ( force_next_move_reject_ ) {

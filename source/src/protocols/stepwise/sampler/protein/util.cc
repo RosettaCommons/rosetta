@@ -22,7 +22,6 @@
 #include <protocols/stepwise/sampler/protein/ProteinBetaAntiParallelStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
-#include <protocols/stepwise/sampler/NoOpStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/file_util.hh>
@@ -80,7 +79,7 @@ namespace sampler {
 namespace protein {
 
 
-sampler::StepWiseSamplerSizedOP
+StepWiseSamplerSizedOP
 get_basic_protein_sampler(
 	core::pose::Pose const & pose,
 	utility::vector1< core::Size > const & moving_res_list,

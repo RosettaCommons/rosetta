@@ -75,12 +75,27 @@ sources = {
         "minimize_util",
         "util",
     ],
-    "protocols/stepwise/sampler": [
+    "protocols/recces": [
+        "RECCES_Mover",
+        "ThermalSamplingMover",
+        "thermal_sampler",
+        "util",
+    ],
+    "protocols/recces/sampler": [
         "MC_Comb",
         "MC_OneTorsion",
-        "NoOpStepWiseSampler",
-        "JumpStepWiseSampler",
-        "StepWiseSamplerAny",
+    ],
+    "protocols/recces/sampler/rna": [
+        "MC_RNA_KIC_Sampler",
+        "MC_RNA_MultiSuite",
+        "MC_RNA_OneJump",
+        "MC_RNA_Sugar",
+        "MC_RNA_Suite",
+    ],
+    "protocols/stepwise": [
+        "StepWiseSampleAndScreen",
+    ],
+    "protocols/stepwise/sampler": [
         "StepWiseSamplerComb",
         "StepWiseSamplerOneTorsion",
         "StepWiseSamplerOneValue",
@@ -99,6 +114,9 @@ sources = {
     "protocols/stepwise/sampler/input_streams": [
         "InputStreamStepWiseSampler",
     ],
+    "protocols/stepwise/sampler/jump": [
+        "JumpStepWiseSampler",
+    ],
     "protocols/stepwise/sampler/protein": [
         "ProteinMainChainStepWiseSampler",
         "ProteinBetaAntiParallelStepWiseSampler",
@@ -115,12 +133,8 @@ sources = {
     "protocols/stepwise/sampler/rna": [
         "RNA_ChiStepWiseSampler",
         "RNA_KIC_Sampler",
-        "RNA_MC_KIC_Sampler",
         "RNA_KinematicCloser",
         "RNA_KinematicCloser_DB",
-        "RNA_MC_MultiSuite",
-        "RNA_MC_Sugar",
-        "RNA_MC_Suite",
         "RNA_NucleosideStepWiseSampler",
         "RNA_SugarStepWiseSampler",
         "RNA_SuiteStepWiseSampler",
@@ -128,9 +142,6 @@ sources = {
     ],
     "protocols/stepwise/sampler/screener": [
         "RNA_TorsionScreener",
-    ],
-    "protocols/stepwise": [
-        "StepWiseSampleAndScreen",
     ],
     "protocols/stepwise/setup/": [
         "FullModelInfoSetupFromCommandLine",
@@ -333,12 +344,6 @@ sources = {
     ],
     "protocols/stepwise/monte_carlo/submotif": [
         "SubMotifLibrary",
-    ],
-    "protocols/thermal_sampling": [
-        "RECCES_Mover",
-        "ThermalSamplingMover",
-        "thermal_sampler",
-        "util",
     ],
 }
 include_path = [

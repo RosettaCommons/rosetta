@@ -225,15 +225,20 @@ sources = {
 		"pepspec_anchor_dock",
 	],
 	"public/pocket": [
-    "pocket_relax",
+	        "pocket_relax",
 		"pocket_suggest_target_residues_by_ddg",
 		"pocket_measure",
 		"make_exemplar",
 	],
+	"public/recces": [
+		"recces",
+	    ],
+	"public/recces/legacy": [
+		"recces_turner",
+	    ],
 	"public/rna_util": [
 		"analyze_base_pairing",
 		"nucleobase_sample_around",
-		"recces_turner",
 		"rna_features",
 		"rna_graft",
 		"rna_helix",

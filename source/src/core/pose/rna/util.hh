@@ -9,7 +9,7 @@
 
 /// @file   core/pose/rna/util.hh
 /// @brief
-/// @author Rhiju
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_pose_rna_util_hh
 #define INCLUDED_core_pose_rna_util_hh
@@ -222,6 +222,9 @@ add_anti_chi_constraints( core::pose::Pose & pose );
 
 void
 add_syn_anti_chi_constraints( core::pose::Pose & pose );
+
+utility::vector1< core::id::TorsionID >
+get_suite_torsion_ids( Size const i );
 
 } //ns rna
 } //ns pose

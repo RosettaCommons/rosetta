@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.StepWiseResiduePairScreener" );
@@ -36,7 +36,7 @@ StepWiseResiduePairScreener::~StepWiseResiduePairScreener()
 
 ////////////////////////////////////////////////////////////////////////////
 void
-StepWiseResiduePairScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+StepWiseResiduePairScreener::fast_forward( sampler::StepWiseSamplerOP sampler ){
 	fast_forward_to_next_residue_pair( sampler, res1_, res2_ ); // in screener util.
 }
 

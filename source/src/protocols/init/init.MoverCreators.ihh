@@ -514,7 +514,7 @@
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 
 // T //////////////////////////////////////////////////////////////////////////
-#include <protocols/thermal_sampling/ThermalSamplingMoverCreator.hh>
+#include <protocols/recces/ThermalSamplingMoverCreator.hh>
 
 #include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>

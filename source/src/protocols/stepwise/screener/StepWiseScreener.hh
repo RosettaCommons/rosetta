@@ -19,14 +19,14 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreenerType.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <protocols/moves/CompositionMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <string>
 
 
 #ifdef WIN32
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/moves/CompositionMover.hh>
 #endif
 
@@ -49,7 +49,7 @@ public:
 
 	virtual
 	void
-	get_update( sampler::StepWiseSamplerBaseOP ){}
+	get_update( sampler::StepWiseSamplerOP ){}
 
 	virtual
 	void
@@ -73,7 +73,7 @@ public:
 
 	virtual
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP ) {}
+	fast_forward( sampler::StepWiseSamplerOP ) {}
 
 	Size const &
 	count() const { return count_; }

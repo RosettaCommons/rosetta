@@ -47,7 +47,7 @@ public:
 
 	virtual
 	void
-	get_update( sampler::StepWiseSamplerBaseOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler );
 
 	virtual
 	std::string

@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/screener/BaseCentroidScreener.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
@@ -82,19 +82,19 @@ BaseCentroidScreener::check_screen(){
 
 ////////////////////////////////////////////////////////////////////////////
 void
-BaseCentroidScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+BaseCentroidScreener::fast_forward( sampler::StepWiseSamplerOP sampler ){
 	using namespace sampler;
 	using namespace sampler::rigid_body;
 
-	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+	if ( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_LIST ) {
 		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
 		rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_euler_gamma();
 		return;
-	} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+	} else if ( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
 		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 		rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_euler_gamma();
 		return;
-	}  else if ( sampler->type() == RIGID_BODY ) {
+	}  else if ( sampler->type() == toolbox::RIGID_BODY ) {
 		RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
 		rigid_body_rotamer.fast_forward_to_next_euler_gamma();
 	}

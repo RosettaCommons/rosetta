@@ -7267,7 +7267,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		), # -full_model:rna
 	), # -full_model
 
-  Option_Group('thermal_sampling',
+  Option_Group('recces',
 		  Option( 'out_prefix', 'String', desc="prefix for the out file", default = 'thermal' ),
 		  Option( 'sample_residues', 'IntegerVector', desc="residues to sample", default=[] ),
       Option( 'free_residues', 'IntegerVector', desc="residues that are 'free,' affects stdev of chi sampler", default=[] ),

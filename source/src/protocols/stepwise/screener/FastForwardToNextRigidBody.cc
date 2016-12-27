@@ -43,13 +43,13 @@ FastForwardToNextRigidBody::~FastForwardToNextRigidBody()
 // kind of sly -- this normally would be in fast_forward(),
 // but calling that requires 'failure' of screen.
 void
-FastForwardToNextRigidBody::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+FastForwardToNextRigidBody::get_update( sampler::StepWiseSamplerOP sampler ){
 	using namespace sampler;
 	using namespace sampler::rigid_body;
-	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+	if ( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_LIST ) {
 		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
 		rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_rigid_body();
-	} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+	} else if ( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
 		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 		rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_rigid_body();
 	}

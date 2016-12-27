@@ -20,7 +20,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/StepWiseSampleAndScreen.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -31,7 +31,7 @@ class StepWiseSampleAndScreen: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP sampler,
+	StepWiseSampleAndScreen( sampler::StepWiseSamplerOP sampler,
 		utility::vector1< screener::StepWiseScreenerOP > screener );
 
 	//destructor
@@ -78,7 +78,7 @@ private:
 
 public:
 
-	sampler::StepWiseSamplerBaseOP sampler_;
+	sampler::StepWiseSamplerOP sampler_;
 	utility::vector1< screener::StepWiseScreenerOP > screeners_;
 	core::Size max_ntries_;
 	core::Size num_random_samples_;

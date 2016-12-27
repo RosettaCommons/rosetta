@@ -45,15 +45,15 @@
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 
 #include <core/id/TorsionID.hh>
-#include <protocols/stepwise/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/sampler/MC_OneTorsion.hh>
 #include <utility/io/ozstream.hh>
 
 // C++ headers

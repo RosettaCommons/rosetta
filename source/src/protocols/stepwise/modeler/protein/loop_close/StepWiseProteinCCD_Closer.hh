@@ -113,8 +113,6 @@ private:
 
 private:
 
-	sampler::StepWiseSamplerSizedOP sampler_;
-
 	loops::loop_closure::ccd::CCDLoopClosureMoverOP ccd_loop_closure_mover_;
 
 	utility::vector1< Size > working_bridge_res_;

@@ -41,7 +41,7 @@
 #include <devel/init.hh>
 
 #include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/thermal_sampling/util.hh>
+#include <protocols/recces/util.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -102,7 +102,7 @@ OPT_KEY( String, nucleobase )
 OPT_KEY( Boolean, twodimensional )
 OPT_KEY( Real, xyz_size )
 
-OPT_KEY( Boolean, recces )
+OPT_KEY( Boolean, recces_mode )
 OPT_KEY( Integer, n_cycle )
 OPT_KEY( Real, a_form_range )
 OPT_KEY( RealVector, temps )
@@ -271,7 +271,7 @@ MC_run () {
 	using namespace core::pose;
 	using namespace numeric;
 	using namespace numeric::random;
-	using namespace protocols::thermal_sampling;
+	using namespace protocols::recces;
 
 	clock_t const time_start( clock() );
 
@@ -390,7 +390,7 @@ MC_run () {
 		//  TR << "RMSD: " << rmsd << " SCORE: " << (*scorefxn)( pose ) << std::endl;
 		if ( rmsd > base_centroid_rmsd_cutoff ) tempering.force_next_move_reject(); // artificial "wall"
 
-		if ( ( tempering.boltzmann( pose ) ) || n == n_cycle_ ) {
+		if ( ( tempering.check_boltzmann( pose ) ) || n == n_cycle_ ) {
 			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
 			++n_accept_total;
 			hist_list[temp_id].add( scores[1], curr_counts );
@@ -486,7 +486,7 @@ void*
 my_main( void* )
 {
 
-	if ( option[ recces ]() ) {
+	if ( option[ recces_mode ]() ) {
 		MC_run();
 	} else {
 		rb_entropy_test();
@@ -511,7 +511,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( xyz_size, "box half-diameter (max in x,y,z)", 1.0 );
 
 		// for monte carlo
-		NEW_OPT( recces, "try RECCES-style sampling of a base pair", false );
+		NEW_OPT( recces_mode, "try RECCES-style sampling of a base pair", false );
 		NEW_OPT( n_cycle, "cycle number for random sampling", 10000 );
 		NEW_OPT( rmsd_cutoff, "base-centroid RMSD cutoff", 2.0 );
 		NEW_OPT( translation_mag, "magnitude of random translation moves", 0.01 );

@@ -55,7 +55,6 @@
 #include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/sampler/NoOpStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/util.hh>
 
 //clustering

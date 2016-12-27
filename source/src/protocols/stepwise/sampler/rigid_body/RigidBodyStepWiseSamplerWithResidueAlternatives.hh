@@ -69,8 +69,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RigidBodyStepWiseSamplerWithResidueAlternatives"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
 
 	void
 	apply_rigid_body_only( core::pose::Pose & pose );

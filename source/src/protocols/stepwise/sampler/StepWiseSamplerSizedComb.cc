@@ -22,12 +22,12 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.StepWiseSamplerSizedComb" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerSizedComb" );
 
 using namespace core;
 
 ///////////////////////////////////////////////////////////////////////////
-// StepWiseSampler Combination is a lot like nesting loops, or like
+// Sampler Combination is a lot like nesting loops, or like
 //  writing numbers in decimal format.
 //
 // Due to a historical choice, however, rotamer samplers that are
@@ -172,7 +172,7 @@ StepWiseSamplerSizedComb::fast_forward( Size const sampler_number ){
 /// @brief Set the random modeler state
 void
 StepWiseSamplerSizedComb::set_random( bool const setting ){
-	StepWiseSamplerBase::set_random( setting );
+	StepWiseSampler::set_random( setting );
 	for ( Size n = 1; n <= rotamer_list_.size(); n++ )  rotamer_list_[ n ]->set_random( setting );
 }
 

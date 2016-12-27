@@ -54,8 +54,8 @@ public:
 	/// @brief Class name
 	std::string get_name() const { return "RNA_KinematicCloser_DB"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RNA_KINEMATIC_CLOSER; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_KINEMATIC_CLOSER; }
 
 	/// @brief Initialization
 	void init();

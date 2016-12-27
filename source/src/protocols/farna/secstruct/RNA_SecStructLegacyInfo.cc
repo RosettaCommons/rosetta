@@ -59,12 +59,19 @@ RNA_SecStructLegacyInfo::RNA_SecStructLegacyInfo( RNA_SecStructLegacyInfo const 
 std::string const &
 get_rna_secstruct_legacy( core::pose::Pose & pose )
 {
-	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
-
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) {
 		set_rna_secstruct_legacy( pose, std::string( pose.size(), 'X' ) );
 	}
 
+	return ( utility::pointer::static_pointer_cast< RNA_SecStructLegacyInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->get_secstruct();
+}
+
+
+/// @details Pose must already contain a core::pose::datacache::CacheableDataType::RNA_SCORING_INFO object or this method will fail.
+std::string const &
+get_rna_secstruct_legacy_from_const_pose( core::pose::Pose const & pose )
+{
+	runtime_assert ( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) );
 	return ( utility::pointer::static_pointer_cast< RNA_SecStructLegacyInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->get_secstruct();
 }
 
@@ -74,8 +81,6 @@ get_rna_secstruct_legacy( core::pose::Pose & pose )
 void
 set_rna_secstruct_legacy(  core::pose::Pose & pose, std::string const & rna_secstruct_legacy_string )
 {
-	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) {
 		( utility::pointer::static_pointer_cast< RNA_SecStructLegacyInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->set_secstruct( rna_secstruct_legacy_string );
 	}

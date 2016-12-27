@@ -12,20 +12,20 @@
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerComb_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerComb_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerComb_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerComb_HH
 
 // Unit headers
 #include <protocols/stepwise/sampler/StepWiseSamplerComb.fwd.hh>
 
 // Package headers
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 
 namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-class StepWiseSamplerComb : public StepWiseSamplerBase {
+class StepWiseSamplerComb : public sampler::StepWiseSampler {
 public:
 	StepWiseSamplerComb();
 
@@ -50,7 +50,7 @@ public:
 	virtual void set_random( bool const setting );
 
 	/// @brief Add one more rotamer sampler to this sampler
-	virtual void add_external_loop_rotamer( StepWiseSamplerBaseOP const & rotamer ) {
+	virtual void add_external_loop_rotamer( sampler::StepWiseSamplerOP const & rotamer ) {
 		rotamer_list_.push_back( rotamer );
 		set_init( false );
 	}
@@ -64,8 +64,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "StepWiseSamplerComb"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return COMB; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::COMB; }
 
 	/// @brief output summary of class
 	virtual
@@ -73,7 +73,7 @@ public:
 
 private:
 	bool is_empty_;
-	utility::vector1<StepWiseSamplerBaseOP> rotamer_list_;
+	utility::vector1<sampler::StepWiseSamplerOP> rotamer_list_;
 };
 
 } //sampler

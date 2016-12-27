@@ -44,7 +44,7 @@ public:
 	type() const = 0;
 
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler );
 
 protected:
 

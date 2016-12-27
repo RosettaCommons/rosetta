@@ -54,7 +54,7 @@ public:
 	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler );
 
 private:
 

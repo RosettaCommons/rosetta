@@ -12,8 +12,8 @@
 /// @author  Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerOneValueComb_fwd_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerOneValueComb_fwd_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerOneValueComb_fwd_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerOneValueComb_fwd_HH
 
 #include <utility/pointer/owning_ptr.hh>
 

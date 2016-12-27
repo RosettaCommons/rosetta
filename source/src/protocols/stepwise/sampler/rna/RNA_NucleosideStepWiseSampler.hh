@@ -65,8 +65,8 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const;
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RNA_NUCLEOSIDE; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_NUCLEOSIDE; }
 
 private:
 	core::Size const rsd_id_;

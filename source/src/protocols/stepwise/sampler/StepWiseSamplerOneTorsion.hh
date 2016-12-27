@@ -12,8 +12,8 @@
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerOneTorsion_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerOneTorsion_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerOneTorsion_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerOneTorsion_HH
 
 // Unit headers
 #include <protocols/stepwise/sampler/StepWiseSamplerOneTorsion.fwd.hh>
@@ -30,7 +30,7 @@ namespace sampler {
 
 class StepWiseSamplerOneTorsion : public StepWiseSamplerOneValue {
 public:
-	using StepWiseSamplerBase::TorsionList;
+	using sampler::StepWiseSampler::TorsionList;
 
 	StepWiseSamplerOneTorsion();
 
@@ -67,8 +67,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const;
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return ONE_TORSION; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::ONE_TORSION; }
 
 private:
 

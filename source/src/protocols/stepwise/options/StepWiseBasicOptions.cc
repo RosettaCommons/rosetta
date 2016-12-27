@@ -22,7 +22,7 @@
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
+#include <basic/options/keys/recces.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -125,10 +125,10 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	} else {
 		minimizer_mode_ = modeler::TRADITIONAL_MINIMIZER;
 	}
-	n_cycles_ = option[ basic::options::OptionKeys::thermal_sampling::n_cycle ]();
-	auto temps = option[ basic::options::OptionKeys::thermal_sampling::temps ]();
+	n_cycles_ = option[ basic::options::OptionKeys::recces::n_cycle ]();
+	auto temps = option[ basic::options::OptionKeys::recces::temps ]();
 	thermal_sampler_temperature_ = ( temps.size() > 0 )  ? temps[ 1 ] : 0.5;
-	thermal_sampler_output_min_pose_ = option[ basic::options::OptionKeys::thermal_sampling::output_min_pose ]();
+	thermal_sampler_output_min_pose_ = option[ basic::options::OptionKeys::recces::output_min_pose ]();
 	sample_pH_ = option[ basic::options::OptionKeys::pH::pH_mode ]();
 }
 

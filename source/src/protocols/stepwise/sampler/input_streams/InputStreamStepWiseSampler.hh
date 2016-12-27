@@ -26,7 +26,7 @@ namespace stepwise {
 namespace sampler {
 namespace input_streams {
 
-class InputStreamStepWiseSampler: public sampler::StepWiseSamplerSized {
+class InputStreamStepWiseSampler: public StepWiseSamplerSized {
 
 public:
 
@@ -59,8 +59,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "InputStreamStepWiseSampler"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return INPUT_STREAM; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::INPUT_STREAM; }
 
 private:
 

@@ -48,7 +48,7 @@ public:
 	type() const { return INTEGRATION_TEST; }
 
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler );
 
 private:
 

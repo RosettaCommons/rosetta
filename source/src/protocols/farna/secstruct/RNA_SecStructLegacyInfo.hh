@@ -86,6 +86,9 @@ public:
 std::string const &
 get_rna_secstruct_legacy( core::pose::Pose & pose );
 
+std::string const &
+get_rna_secstruct_legacy_from_const_pose( core::pose::Pose const & pose );
+
 void
 set_rna_secstruct_legacy( core::pose::Pose & pose, std::string const & rna_secstruct_legacy_string ); //By default, unknown, actually.
 

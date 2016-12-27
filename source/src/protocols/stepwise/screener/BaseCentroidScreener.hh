@@ -56,7 +56,7 @@ public:
 	check_screen();
 
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler );
 
 private:
 

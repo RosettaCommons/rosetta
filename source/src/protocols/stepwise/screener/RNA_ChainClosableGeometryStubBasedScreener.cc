@@ -72,21 +72,21 @@ RNA_ChainClosableGeometryStubBasedScreener::~RNA_ChainClosableGeometryStubBasedS
 
 ///////////////////////////////////////////////////////////////////
 void
-RNA_ChainClosableGeometryStubBasedScreener::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+RNA_ChainClosableGeometryStubBasedScreener::get_update( sampler::StepWiseSamplerOP sampler ){
 
 	using namespace sampler;
 	using namespace sampler::rigid_body;
 
-	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+	if ( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_LIST ) {
 		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_residue_list = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
 		moving_rsd_at_origin_ = rigid_body_rotamer_with_residue_list.get_residue_at_origin();
 		return;
-	} else   if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+	} else   if ( sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
 		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 		moving_rsd_at_origin_ = rigid_body_rotamer_with_residue_alternatives.get_residue_at_origin().clone();
 		return;
 	}
-	runtime_assert ( sampler->type() == RESIDUE_LIST );
+	runtime_assert ( sampler->type() == toolbox::RESIDUE_LIST );
 	ResidueListStepWiseSampler & copy_dofs_rotamer = *( static_cast< ResidueListStepWiseSampler * >( sampler.get() ) );
 	moving_rsd_at_origin_ = copy_dofs_rotamer.get_residue_at_origin();
 }

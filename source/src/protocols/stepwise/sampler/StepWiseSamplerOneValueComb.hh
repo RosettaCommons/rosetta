@@ -12,8 +12,8 @@
 /// @author  Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerOneValueComb_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerOneValueComb_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerOneValueComb_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerOneValueComb_HH
 
 // Unit headers
 #include <protocols/stepwise/sampler/StepWiseSamplerOneValueComb.fwd.hh>
@@ -48,8 +48,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "StepWiseSamplerOneValueComb"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return ONE_VALUE_COMB; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::ONE_VALUE_COMB; }
 
 private:
 

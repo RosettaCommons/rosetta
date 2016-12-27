@@ -21,7 +21,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.StepWiseSamplerSizedAny" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerSizedAny" );
 
 using namespace core;
 

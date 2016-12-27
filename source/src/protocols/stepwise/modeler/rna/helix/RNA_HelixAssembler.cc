@@ -255,7 +255,26 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose ){
 	if ( finish_scorefxn_ ) ( *finish_scorefxn_)( pose );
 }
 
-//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief build pose with correct fold-tree for modeling helix, possibly incl. dangling ends.
+//
+// @details
+//
+// in use by RECCES -- note that dangles are always at 3'-end of seq1, or 5'-end of seq2,
+//  e.g if you specify  -seq1 gu -seq2 aac, you get:
+//
+//      5'-gu-3'
+//         ||
+//      3'-caa-5'
+//
+//   or if you specify  -seq1 gua -seq2 ac, you get:
+//
+//      5'-gua-3'
+//         ||
+//      3'-ca-5'
+//
+// Only used to make initial base pair by rna_helix.cc.
+//
 pose::PoseOP
 RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const & seq2 ){
 	using namespace core::pose;

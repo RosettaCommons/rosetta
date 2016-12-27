@@ -538,7 +538,7 @@ static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
 // T //////////////////////////////////////////////////////////////////////////
-static MoverRegistrator< thermal_sampling::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
+static MoverRegistrator< recces::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 
 static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;

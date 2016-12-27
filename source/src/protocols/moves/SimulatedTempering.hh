@@ -44,8 +44,8 @@ public:
 		utility::vector1<core::Real> const & weights
 	);
 
-	/// @brief Applies the Metropolis Criterion on pose.
-	bool boltzmann( core::pose::Pose & pose );
+	/// @brief Applies the Metropolis Criterion on pose. But does not roll back pose if reject!
+	bool check_boltzmann( core::pose::Pose & pose );
 
 	/// @brief Attempt temperature jumping.
 	bool t_jump();

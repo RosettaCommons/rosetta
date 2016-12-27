@@ -12,8 +12,8 @@
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerSizedAny_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerSizedAny_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerSizedAny_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerSizedAny_HH
 
 // Unit headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedAny.fwd.hh>
@@ -68,8 +68,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "StepWiseSamplerSizedAny"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return SIZED_ANY; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::SIZED_ANY; }
 
 	/// @brief output summary of class
 	virtual

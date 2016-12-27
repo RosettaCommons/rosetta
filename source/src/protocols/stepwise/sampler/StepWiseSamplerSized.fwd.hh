@@ -8,13 +8,13 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/stepwise/sampler/StepWiseSamplerSized.fwd.hh
-/// @brief Abstract Base Class for StepWiseSampler generator with finite size.
+/// @brief Abstract Base Class for Sampler generator with finite size.
 /// @author Fang-Chieh Chou
 
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerSized_fwd_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerSized_fwd_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerSized_fwd_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerSized_fwd_HH
 
 namespace protocols {
 namespace stepwise {

@@ -16,7 +16,7 @@
 #include <protocols/stepwise/screener/RNA_ChainClosureScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 
@@ -70,7 +70,7 @@ RNA_ChainClosureScreener::add_mover( moves::CompositionMoverOP update_mover, mov
 // this is also used in StepWiseResiduePairScreener and in principle this class
 //  could derive from that parent, but we also want SampleApplier functionality...
 void
-RNA_ChainClosureScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+RNA_ChainClosureScreener::fast_forward( sampler::StepWiseSamplerOP sampler ){
 	fast_forward_to_next_residue_pair( sampler,
 		chain_closure_checker_->five_prime_res(),
 		chain_closure_checker_->five_prime_res() + 1); // in screener util.

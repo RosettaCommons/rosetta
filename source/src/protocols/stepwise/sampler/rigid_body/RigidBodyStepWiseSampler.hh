@@ -100,8 +100,8 @@ public:
 
 	core::conformation::Residue const & moving_residue_at_origin() const { return *moving_residue_at_origin_; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RIGID_BODY; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RIGID_BODY; }
 
 	core::Size const & reference_res() const { return reference_res_; }
 	utility::vector1< core::Size > const & moving_partition_res() const { return moving_partition_res_;}

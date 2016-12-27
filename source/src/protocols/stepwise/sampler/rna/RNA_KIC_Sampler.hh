@@ -25,7 +25,7 @@
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.fwd.hh>
 
 // Package headers
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.fwd.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.fwd.hh>
 #include <protocols/stepwise/sampler/rna/RNA_ChiStepWiseSampler.fwd.hh>
@@ -37,7 +37,7 @@ namespace stepwise {
 namespace sampler {
 namespace rna {
 
-class RNA_KIC_Sampler : public StepWiseSamplerBase {
+class RNA_KIC_Sampler : public StepWiseSampler {
 public:
 	RNA_KIC_Sampler(
 		core::pose::PoseOP const & ref_pose,
@@ -74,8 +74,8 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const;
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return RNA_KIC; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_KIC; }
 
 	// Set functions
 	void set_verbose( bool const setting ) {

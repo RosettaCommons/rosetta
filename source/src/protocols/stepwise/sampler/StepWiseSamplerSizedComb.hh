@@ -12,8 +12,8 @@
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_sampler_StepWiseSamplerSizedComb_HH
-#define INCLUDED_protocols_sampler_StepWiseSamplerSizedComb_HH
+#ifndef INCLUDED_stepwise_sampler_StepWiseSamplerSizedComb_HH
+#define INCLUDED_stepwise_sampler_StepWiseSamplerSizedComb_HH
 
 // Unit headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.fwd.hh>
@@ -91,8 +91,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "StepWiseSamplerSizedComb"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return SIZED_COMB; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::SIZED_COMB; }
 
 	/// @brief Set the random modeler state
 	virtual void set_random( bool const setting );

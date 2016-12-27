@@ -16,7 +16,7 @@
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_SuiteStepWiseSampler.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <core/chemical/ResidueType.hh>
@@ -33,6 +33,7 @@ using namespace core;
 using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::stepwise::modeler;
 
+
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -41,7 +42,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////
 // Fang-Chieh Chou nicely refactored the rotamer modeler
 //////////////////////////////////////////////////////////////////
-StepWiseSamplerBaseOP
+sampler::StepWiseSamplerOP
 setup_sampler( pose::Pose const & pose,
 	modeler::options::StepWiseModelerOptionsCOP options,
 	working_parameters::StepWiseWorkingParametersCOP working_parameters,

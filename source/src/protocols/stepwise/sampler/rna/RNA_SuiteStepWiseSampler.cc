@@ -29,6 +29,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_SuiteStepWiseSampler" );
 
 namespace protocols {

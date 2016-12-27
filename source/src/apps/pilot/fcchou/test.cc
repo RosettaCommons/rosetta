@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <devel/init.hh>
-#include <protocols/stepwise/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/sampler/MC_OneTorsion.hh>
 
 // C++ headers
 #include <iostream>

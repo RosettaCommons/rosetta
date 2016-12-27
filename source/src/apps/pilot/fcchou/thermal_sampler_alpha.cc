@@ -45,18 +45,18 @@
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/thermal_sampling/ThermalSamplingMover.hh>
-#include <protocols/thermal_sampling/thermal_sampler.hh>
-#include <protocols/thermal_sampling/util.hh>
+#include <protocols/recces/ThermalSamplingMover.hh>
+#include <protocols/recces/thermal_sampler.hh>
+#include <protocols/recces/util.hh>
 
 #include <core/id/TorsionID.hh>
-#include <protocols/stepwise/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/sampler/MC_OneTorsion.hh>
 #include <utility/io/ozstream.hh>
 
 // C++ headers
@@ -73,7 +73,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
+#include <basic/options/keys/recces.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -89,7 +89,7 @@ using namespace protocols;
 using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
-using namespace protocols::thermal_sampling;
+using namespace protocols::recces;
 using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ thermal_sampler()
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
-	using namespace protocols::thermal_sampling;
+	using namespace protocols::recces;
 
 	ThermalSamplingMoverOP ts( new ThermalSamplingMover );
 	ts->set_dumping_app( true );
@@ -192,25 +192,25 @@ main( int argc, char * argv [] )
 		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( score::weights );
 
-		//option.add_relevant( OptionKeys::thermal_sampling::seq1 );
-		//option.add_relevant( OptionKeys::thermal_sampling::seq2 );
-		option.add_relevant( OptionKeys::thermal_sampling::n_cycle );
-		option.add_relevant( OptionKeys::thermal_sampling::temps );
-		option.add_relevant( OptionKeys::thermal_sampling::st_weights );
-		option.add_relevant( OptionKeys::thermal_sampling::out_prefix );
-		//option.add_relevant( OptionKeys::thermal_sampling::save_terms );
-		//option.add_relevant( OptionKeys::thermal_sampling::save_scores );
-		option.add_relevant( OptionKeys::thermal_sampling::dump_pdb );
-		option.add_relevant( OptionKeys::thermal_sampling::dump_silent );
-		option.add_relevant( OptionKeys::thermal_sampling::sample_residues );
-		option.add_relevant( OptionKeys::thermal_sampling::free_residues );
-		option.add_relevant( OptionKeys::thermal_sampling::angle_range_chi );
-		option.add_relevant( OptionKeys::thermal_sampling::angle_range_bb );
-		option.add_relevant( OptionKeys::thermal_sampling::chi_stdev );
-		option.add_relevant( OptionKeys::thermal_sampling::bb_stdev );
-		option.add_relevant( OptionKeys::thermal_sampling::standard_bb_stdev );
-		option.add_relevant( OptionKeys::thermal_sampling::out_torsions );
-		option.add_relevant( OptionKeys::thermal_sampling::dump_freq );
+		//option.add_relevant( OptionKeys::recces::seq1 );
+		//option.add_relevant( OptionKeys::recces::seq2 );
+		option.add_relevant( OptionKeys::recces::n_cycle );
+		option.add_relevant( OptionKeys::recces::temps );
+		option.add_relevant( OptionKeys::recces::st_weights );
+		option.add_relevant( OptionKeys::recces::out_prefix );
+		//option.add_relevant( OptionKeys::recces::save_terms );
+		//option.add_relevant( OptionKeys::recces::save_scores );
+		option.add_relevant( OptionKeys::recces::dump_pdb );
+		option.add_relevant( OptionKeys::recces::dump_silent );
+		option.add_relevant( OptionKeys::recces::sample_residues );
+		option.add_relevant( OptionKeys::recces::free_residues );
+		option.add_relevant( OptionKeys::recces::angle_range_chi );
+		option.add_relevant( OptionKeys::recces::angle_range_bb );
+		option.add_relevant( OptionKeys::recces::chi_stdev );
+		option.add_relevant( OptionKeys::recces::bb_stdev );
+		option.add_relevant( OptionKeys::recces::standard_bb_stdev );
+		option.add_relevant( OptionKeys::recces::out_torsions );
+		option.add_relevant( OptionKeys::recces::dump_freq );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

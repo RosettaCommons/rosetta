@@ -47,14 +47,14 @@
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 #include <core/id/TorsionID.hh>
-#include <protocols/stepwise/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/sampler/MC_OneTorsion.hh>
 #include <utility/io/ozstream.hh>
 
 // C++ headers
@@ -258,9 +258,9 @@ void vector2disk_in2d(
 }
 //////////////////////////////////////////////////////////////////////////////
 void set_gaussian_stdevs(
-	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
-	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
-	sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,
+	utility::vector1<protocols::recces::sampler::rna::MC_RNA_KIC_SamplerOP> & internal_bb_sampler,
+	utility::vector1<protocols::recces::sampler::MC_OneTorsionOP> & chi_sampler,
+	recces::sampler::rna::MC_RNA_MultiSuite & standard_bb_sampler,
 	moves::SimulatedTempering const & tempering,
 	Size const & total_rsd,
 	Size const & sampled_rsd,
@@ -311,10 +311,10 @@ thermal_sampler()
 
 
 	using namespace protocols::stepwise::setup;
-	using namespace protocols::stepwise::sampler::rna;
+	using namespace protocols::recces::sampler::rna;
 	using namespace protocols::moves;
 	using namespace core::id;
-	using namespace protocols::stepwise::sampler;
+	using namespace protocols::recces::sampler;
 
 	clock_t const time_start( clock() );
 
@@ -405,9 +405,9 @@ thermal_sampler()
 	}
 
 	//Set up the internal move samplers
-	utility::vector1<RNA_MC_KIC_SamplerOP> sampler;
+	utility::vector1<MC_RNA_KIC_SamplerOP> sampler;
 	for ( Size i = 1; i<= residues.size(); ++i ) {
-		RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, residues[i]-1, residues[i]) );
+		MC_RNA_KIC_SamplerOP suite_sampler( new MC_RNA_KIC_Sampler( ref_pose, residues[i]-1, residues[i]) );
 		suite_sampler->init();
 		if ( is_free[i] || ( i > 1 && is_free[i-1] ) ) {
 			suite_sampler->set_angle_range_from_init_torsions( option[angle_range_free_bb]() );
@@ -439,11 +439,11 @@ thermal_sampler()
 
 	//Set up the regular torsion samplers, necessary for free energy comparisons
 	//Don't sample chi torsions here because there is a separate chi sampler
-	RNA_MC_MultiSuite standard_sampler;
+	MC_RNA_MultiSuite standard_sampler;
 	for ( Size i = 1; i <= residues.size(); ++i ) {
 		if ( i == 1 || ( i > 1 && residues[i] != residues[i-1]+1 ) ) {
 			//create samplers for [i]-1 and [i]
-			RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues[i] - 1 ) );
+			MC_RNA_SuiteOP suite_sampler_1( new MC_RNA_Suite( residues[i] - 1 ) );
 			suite_sampler_1->set_init_from_pose( pose );
 			suite_sampler_1->set_sample_bb( true );
 			suite_sampler_1->set_sample_lower_nucleoside( false );
@@ -457,7 +457,7 @@ thermal_sampler()
 			}
 			standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
 		}
-		RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( residues[i] ) );
+		MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( residues[i] ) );
 		suite_sampler->set_init_from_pose( pose );
 		suite_sampler->set_sample_bb( true );
 		suite_sampler->set_sample_lower_nucleoside( false );
@@ -578,7 +578,7 @@ thermal_sampler()
 			++(*chi_sampler[index]);
 			chi_sampler[index]->apply( pose );
 		}
-		if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+		if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
 			stored_pose_ = pose;
 			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
 			hist_list[temp_id].add( scores[1], curr_counts );

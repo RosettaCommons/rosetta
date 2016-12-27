@@ -61,7 +61,7 @@
 #include <protocols/stepwise/screener/VDW_BinScreener.hh>
 #include <protocols/stepwise/StepWiseSampleAndScreen.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerComb.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
@@ -100,6 +100,7 @@ using namespace core;
 using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::stepwise::modeler::rna::rigid_body;
 using namespace protocols::stepwise::sampler::copy_dofs;
+using namespace protocols::stepwise::sampler;
 
 using core::pose::PoseOP;
 
@@ -704,7 +705,7 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-sampler::StepWiseSamplerSizedOP
+StepWiseSamplerSizedOP
 StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & pose ){
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::sampler::protein;
@@ -719,11 +720,11 @@ StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & p
 }
 
 //////////////////////////////////////////////////////////////////////
-sampler::StepWiseSamplerBaseOP
+sampler::StepWiseSamplerOP
 StepWiseConnectionSampler::initialize_rna_bond_sampler( pose::Pose const & pose ){
 	using namespace sampler;
 	if ( moving_res_list_.size() == 0 ) return 0;
-	StepWiseSamplerBaseOP sampler_ = sampler::rna::setup_sampler( pose, options_,
+	sampler::StepWiseSamplerOP sampler_ = sampler::rna::setup_sampler( pose, options_,
 		working_parameters_, false /*build_pose_from_scratch_*/,
 		kic_modeler_, (rna_cutpoints_closed_.size() > 0) );
 	ResidueAlternativeStepWiseSamplerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
@@ -745,7 +746,7 @@ StepWiseConnectionSampler::initialize_full_rigid_body_sampler(){
 	using namespace sampler::copy_dofs;
 
 	ResidueAlternativeStepWiseSamplerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
-	sampler_ = protocols::stepwise::sampler::StepWiseSamplerBaseOP( new RigidBodyStepWiseSamplerWithResidueAlternatives( rsd_alternatives_rotamer, rigid_body_rotamer_ ) );
+	sampler_ = sampler::StepWiseSamplerOP( new RigidBodyStepWiseSamplerWithResidueAlternatives( rsd_alternatives_rotamer, rigid_body_rotamer_ ) );
 	sampler_->set_random( options_->choose_random() );
 	sampler_->init();
 }

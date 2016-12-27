@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
@@ -51,9 +51,9 @@ SampleApplier::~SampleApplier()
 {}
 
 void
-SampleApplier::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+SampleApplier::get_update( sampler::StepWiseSamplerOP sampler ){
 	if ( !apply_residue_alternative_sampler_ &&
-			sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+			sampler->type() == toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
 		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 		rigid_body_rotamer_with_residue_alternatives.apply_rigid_body_only( pose_ );
 		return;

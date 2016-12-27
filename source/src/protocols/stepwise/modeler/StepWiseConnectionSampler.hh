@@ -40,7 +40,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.fwd.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.fwd.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.fwd.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/kinematics/Stub.hh>
@@ -135,13 +135,13 @@ private:
 	sampler::StepWiseSamplerSizedOP
 	initialize_protein_bond_sampler( core::pose::Pose const & pose );
 
-	sampler::StepWiseSamplerBaseOP
+	sampler::StepWiseSamplerOP
 	initialize_rna_bond_sampler( core::pose::Pose const & pose );
 
 	void
 	initialize_full_rigid_body_sampler();
 
-	sampler::StepWiseSamplerBaseOP
+	sampler::StepWiseSamplerOP
 	get_full_bond_sampler();
 
 	sampler::copy_dofs::ResidueAlternativeStepWiseSamplerCombOP
@@ -194,7 +194,7 @@ private:
 	bool protein_connection_; // should be able to deprecate soon
 
 	sampler::rigid_body::RigidBodyStepWiseSamplerOP rigid_body_rotamer_;
-	protocols::stepwise::sampler::StepWiseSamplerBaseOP sampler_;
+	sampler::StepWiseSamplerOP sampler_;
 	utility::vector1< screener::StepWiseScreenerOP > screeners_;
 	screener::TagDefinitionOP tag_definition_;
 

@@ -21,7 +21,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.StepWiseSamplerSized" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerSized" );
 
 using namespace core;
 
@@ -30,10 +30,10 @@ namespace stepwise {
 namespace sampler {
 ///////////////////////////////////////////////////////////////////////////
 StepWiseSamplerSized::StepWiseSamplerSized():
-	StepWiseSamplerBase(),
+	StepWiseSampler(),
 	id_( 0 )
 {
-	StepWiseSamplerBase::set_random( false );
+	StepWiseSampler::set_random( false );
 }
 
 StepWiseSamplerSized::~StepWiseSamplerSized(){}

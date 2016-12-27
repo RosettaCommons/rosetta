@@ -36,7 +36,7 @@ public:
 
 	//constructor
 	StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-		sampler::StepWiseSamplerSizedOP sampler );
+																			sampler::StepWiseSamplerSizedOP sampler );
 
 	//destructor
 	~StepWiseProteinCCD_MultiPoseCloser();

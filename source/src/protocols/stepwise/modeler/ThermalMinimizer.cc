@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farna/thermal_sampling/ThermalMinimizer.cc
+/// @file protocols/farna/recces/ThermalMinimizer.cc
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
@@ -60,14 +60,14 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/thermal_sampling/util.hh>
-#include <protocols/thermal_sampling/thermal_sampler.hh>
+#include <protocols/recces/util.hh>
+#include <protocols/recces/thermal_sampler.hh>
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -77,12 +77,16 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/thermal_sampling.OptionKeys.gen.hh>
+#include <basic/options/keys/recces.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.ThermalMinimizer" );
+
+using namespace protocols::stepwise::sampler::rna;
+using namespace protocols::recces::sampler;
+using namespace protocols::recces::sampler::rna;
 
 using namespace core;
 
@@ -92,8 +96,8 @@ namespace modeler {
 
 
 void set_gaussian_stdevs(
-	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
-	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
+												 utility::vector1<MC_RNA_KIC_SamplerOP> & internal_bb_sampler,
+												 utility::vector1<MC_OneTorsionOP> & chi_sampler,
 	Real const temp,
 	Size const //total_sampled
 ) {
@@ -116,9 +120,9 @@ void set_gaussian_stdevs(
 }
 
 void set_gaussian_stdevs(
-	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
-	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
-	sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,
+	utility::vector1<MC_RNA_KIC_SamplerOP> & internal_bb_sampler,
+	utility::vector1<MC_OneTorsionOP> & chi_sampler,
+	MC_RNA_MultiSuite & standard_bb_sampler,
 	Real const temp,
 	Size const total_sampled
 ) {
@@ -151,9 +155,9 @@ void set_gaussian_stdevs(
 /// @brief Default constructor
 ThermalMinimizer::ThermalMinimizer():
 	protocols::moves::Mover( ThermalMinimizer::mover_name() ),
-	n_cycle_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::n_cycle ] ),
-	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::angle_range_chi ]() ),
-	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::thermal_sampling::angle_range_bb ]() ),
+	n_cycle_( basic::options::option[ basic::options::OptionKeys::recces::n_cycle ] ),
+	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::recces::angle_range_chi ]() ),
+	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::recces::angle_range_bb ]() ),
 	kic_sampling_( true ),
 	output_min_pose_( true )
 {}
@@ -204,7 +208,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	if ( ! mm_ ) { TR.Warning << "No movemap provided! Returning." << std::endl; }
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace basic::options::OptionKeys::thermal_sampling;
+	using namespace basic::options::OptionKeys::recces;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -256,10 +260,10 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	//Setting up the internal move sampler
 	pose::PoseOP ref_pose(new pose::Pose(pose));
 
-	RNA_MC_MultiSuite standard_sampler;
-	utility::vector1<RNA_MC_KIC_SamplerOP> kic_sampler;
+	MC_RNA_MultiSuite standard_sampler;
+	utility::vector1<MC_RNA_KIC_SamplerOP> kic_sampler;
 	utility::vector1<MC_OneTorsionOP> tors_sampler;
-	//utility::vector1<RNA_MC_SugarOP> sugar_sampler;
+	//utility::vector1<MC_RNA_SugarOP> sugar_sampler;
 
 	std::set< Size > sampled_by_kic;
 
@@ -277,10 +281,10 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			//mm_->show();
 			if ( !mm_compatible_with_kic( mm_, seqpos ) ) continue;
 
-			RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, seqpos-1, seqpos, false /*change_ft*/ ) );
+			MC_RNA_KIC_SamplerOP suite_sampler( new MC_RNA_KIC_Sampler( ref_pose, seqpos-1, seqpos, false /*change_ft*/ ) );
 			suite_sampler->init();
 			suite_sampler->set_angle_range_from_init_torsions( angle_range_bb_ );
-			//TR << "Going to attempt to sample " << seqpos << " with a RNA_MC_KIC\tand pose size is " << pose.size() << std::endl;
+			//TR << "Going to attempt to sample " << seqpos << " with a MC_RNA_KIC\tand pose size is " << pose.size() << std::endl;
 			kic_sampler.push_back( suite_sampler );
 			// Keep track of what to skip for suites
 			sampled_by_kic.insert(seqpos-1);
@@ -372,8 +376,8 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			//create samplers for [i]-1 and [i]
 
 			// Can't just have a continue condition because we might want to set up the second sampler
-			//TR << "Going to attempt to sample " << residues_sampled[i] - 1 << " with a RNA_MC_Suite and pose size is " << pose.size() << std::endl;
-			RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues_sampled[i] - 1 ) );
+			//TR << "Going to attempt to sample " << residues_sampled[i] - 1 << " with a MC_RNA_Suite and pose size is " << pose.size() << std::endl;
+			MC_RNA_SuiteOP suite_sampler_1( new MC_RNA_Suite( residues_sampled[i] - 1 ) );
 			suite_sampler_1->set_init_from_pose( pose );
 			suite_sampler_1->set_sample_bb( true );
 			suite_sampler_1->set_sample_lower_nucleoside( false );
@@ -388,8 +392,8 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		if ( residues_sampled[i] == pose.size() ) continue;
 		if ( sampled_by_kic.find( residues_sampled[i] ) != sampled_by_kic.end() ) continue;
 
-		//TR << "Going to attempt to sample " << residues_sampled[i] << " with a RNA_MC_Suite\tand pose size is " << pose.size() << std::endl;
-		RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( residues_sampled[i] ) );
+		//TR << "Going to attempt to sample " << residues_sampled[i] << " with a MC_RNA_Suite\tand pose size is " << pose.size() << std::endl;
+		MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( residues_sampled[i] ) );
 		suite_sampler->set_init_from_pose( pose );
 		suite_sampler->set_sample_bb( true );
 		suite_sampler->set_sample_lower_nucleoside( false );
@@ -402,7 +406,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	//standard_sampler.init();
 
 	//for ( Size i = 1; i <= residues_sampled.size(); ++i ) {
-	//RNA_MC_SugarOP sampler( new RNA_MC_Sugar( residues_sampled[i], 1, 0 /*ANY_PUCKER*/ ) );
+	//MC_RNA_SugarOP sampler( new MC_RNA_Sugar( residues_sampled[i], 1, 0 /*ANY_PUCKER*/ ) );
 	// sugar_sampler.push_back( sampler );
 	// }
 
@@ -439,7 +443,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		// did_move = false;
 		//}
 		++n_sugar;
-		if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+		if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
 		stored_pose_ = pose;
 		if ( n == n_cycle_ ) break;
 		sugar_sampler[index]->update( pose ); // don't think this is necessary
@@ -452,7 +456,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		++standard_sampler;
 		standard_sampler.apply( pose );
 		++n_backbone;
-		if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+		if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
 		stored_pose_ = pose;
 		if ( n == n_cycle_ ) break;
 		boltz = true;
@@ -470,7 +474,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 				did_move = false;
 			}
 			++n_kic;
-			if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+			if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
 				stored_pose_ = pose;
 				if ( n == n_cycle_ ) break;
 				kic_sampler[index]->update( pose ); // don't think this is necessary
@@ -483,7 +487,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			++(*tors_sampler[index]);
 			tors_sampler[index]->apply( pose );
 			++n_onetors;
-			if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+			if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
 				stored_pose_ = pose;
 				if ( n == n_cycle_ ) break;
 				tors_sampler[index]->update();

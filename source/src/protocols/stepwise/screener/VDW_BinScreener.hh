@@ -61,7 +61,7 @@ public:
 	type() const { return VDW_BIN; }
 
 	void
-	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler );
 
 private:
 

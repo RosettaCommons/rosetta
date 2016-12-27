@@ -48,12 +48,12 @@ public:
 
 	virtual
 	void
-	get_update( sampler::StepWiseSamplerBaseOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler );
 
 	// kind of tricky -- put fast_forward above in get_update.
 	//  virtual
 	//  void
-	//  fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	//  fast_forward( sampler::StepWiseSamplerOP sampler );
 
 private:
 

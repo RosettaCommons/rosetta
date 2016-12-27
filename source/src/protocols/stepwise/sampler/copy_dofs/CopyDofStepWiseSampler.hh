@@ -55,8 +55,8 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "CopyDofStepWiseSampler"; }
 
-	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-	virtual StepWiseSamplerType type() const { return COPY_DOF; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::COPY_DOF; }
 
 
 protected:
