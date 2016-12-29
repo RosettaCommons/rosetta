@@ -22,7 +22,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>

@@ -56,7 +56,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>

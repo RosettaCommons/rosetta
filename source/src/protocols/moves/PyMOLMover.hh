@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/moves/PyMolMover.hh
-/// @brief  Send infromation to PyMol. Contain classes PyMolMover, PyMolObserver and helper classes.
+/// @file   protocols/moves/PyMOLMover.hh
+/// @brief  Send infromation to PyMOL. Contain classes PyMOLMover, PyMOLObserver and helper classes.
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_protocols_moves_PyMolMover_hh
-#define INCLUDED_protocols_moves_PyMolMover_hh
+#ifndef INCLUDED_protocols_moves_PyMOLMover_hh
+#define INCLUDED_protocols_moves_PyMOLMover_hh
 
 // unit headers
-#include <protocols/moves/PyMolMover.fwd.hh>
+#include <protocols/moves/PyMOLMover.fwd.hh>
 
 // protocol headers
 #include <protocols/moves/Mover.hh>
@@ -239,7 +239,7 @@ enum X11Colors {
 };
 
 
-/// @brief PyMolMover helper class. Handle low level UDP transactions stuff.
+/// @brief PyMOLMover helper class. Handle low level UDP transactions stuff.
 ///        This is a port of original Python version of UDP socket client written writen for PyRosetta
 class UDPSocketClient
 {
@@ -284,17 +284,17 @@ private:
 
 std::ostream &operator<< (std::ostream & output, UDPSocketClient const & client);
 
-class PyMolMover : public protocols::moves::Mover
+class PyMOLMover : public protocols::moves::Mover
 {
 public:
 	/// @brief ctor
-	PyMolMover(std::string const & address="127.0.0.1", int port=65000);
+	PyMOLMover(std::string const & address="127.0.0.1", int port=65000);
 
 	/// @brief cctor
-	PyMolMover( PyMolMover const & other );
+	PyMOLMover( PyMOLMover const & other );
 
 	/// @brief dtor
-	~PyMolMover() override;
+	~PyMOLMover() override;
 
 	// XRW TEMP  std::string get_name() const override;
 	void apply( Pose & ) override;
@@ -304,7 +304,7 @@ public:
 	/// @brief Actually our mover does not change the Pose object, so we have additional const version...
 	virtual void apply( Pose const & );
 
-	/// @brief Send message for PyMol to print
+	/// @brief Send message for PyMOL to print
 	void print( std::string const & message );
 
 	/// @brief Send specified energy to PyMOL.
@@ -317,7 +317,7 @@ public:
 	///already implemented
 	void send_RAW_Energies( Pose const &, std::string energyType, utility::vector1<int> const & energies );
 
-	/// @brief Send Membrane Planes to PyMol
+	/// @brief Send Membrane Planes to PyMOL
 	/// @details If pose is a membrane pose
 	/// pymol viewer will build CGO planes from points specified
 	//**already implemented
@@ -352,14 +352,14 @@ public:
 
 	/// @brief Flag that specify if PyMOL mover should send current Pose energy on every apply. If name set to empty string (default) then name derived from pdb_info will be used
 	bool update_energy() { return update_energy_; }
-	//**already implemented here  appear in the PyMolMover::PyMolMover constructor in the .cc file
+	//**already implemented here  appear in the PyMOLMover::PyMOLMover constructor in the .cc file
 	void update_energy(bool f) { update_energy_ = f; }
 
 
 	core::scoring::ScoreType energy_type(void) { return energy_type_; }
 	void energy_type(core::scoring::ScoreType t) { energy_type_ = t; }
 
-	/// @brief Set the keep history flag. If set to True - PyMol will keep track of all frames that
+	/// @brief Set the keep history flag. If set to True - PyMOL will keep track of all frames that
 	///        was sent.
 	void keep_history(bool kh) { keep_history_ = kh; }
 
@@ -390,10 +390,10 @@ public:
 
 	///@brief Set the pymol model name
 	void
-	set_PyMol_model_name( std::string name);
+	set_PyMOL_model_name( std::string name);
 
 	std::string
-	get_PyMol_model_name(Pose const & pose) const;
+	get_PyMOL_model_name(Pose const & pose) const;
 
 	std::string
 	get_name() const override;
@@ -434,7 +434,7 @@ private:
 	/// @brief If pose is a membrane pose, send planes
 	bool update_membrane_;
 
-	/// @brief Should PyMol keep history of all models that was sent? - Default is false.
+	/// @brief Should PyMOL keep history of all models that was sent? - Default is false.
 	bool keep_history_;
 
 	/// @brief  Update interval in seconds.
@@ -445,12 +445,12 @@ private:
 
 	/// @brief  Name of model in pymol.
 	std::string pymol_name_;
-};  // class PyMolMover
+};  // class PyMOLMover
 
-// Insertion operator (overloaded so that PyMolMover can be "printed") in PyRosetta).
-std::ostream &operator<< (std::ostream & output, PyMolMover const & mover);
+// Insertion operator (overloaded so that PyMOLMover can be "printed") in PyRosetta).
+std::ostream &operator<< (std::ostream & output, PyMOLMover const & mover);
 
-class PyMolObserver : public core::pose::datacache::CacheableObserver
+class PyMOLObserver : public core::pose::datacache::CacheableObserver
 {
 public:
 	// This is set up to allow multiple settings with bit twiddling
@@ -461,12 +461,12 @@ public:
 		conformation_observer = 4
 	};
 
-	PyMolObserver();
-	PyMolObserver(PyMolObserver const & rval);
-	~PyMolObserver() override;
+	PyMOLObserver();
+	PyMOLObserver(PyMOLObserver const & rval);
+	~PyMOLObserver() override;
 
-	PyMolObserver &
-	operator= (PyMolObserver const &rval);
+	PyMOLObserver &
+	operator= (PyMOLObserver const &rval);
 
 
 	core::pose::datacache::CacheableObserverOP
@@ -500,7 +500,7 @@ public:
 		pymol_.apply( *ev.pose);
 	}
 
-	PyMolMover & pymol() { return pymol_; };
+	PyMOLMover & pymol() { return pymol_; };
 
 	/// Attach observer to the pose object
 	void attach(core::pose::Pose &p);
@@ -522,7 +522,7 @@ protected:
 private:
 
 	ObserverType type_;
-	PyMolMover pymol_;
+	PyMOLMover pymol_;
 
 	utility::signals::Link general_event_link_;
 	utility::signals::Link energy_event_link_;
@@ -530,28 +530,28 @@ private:
 };
 
 // Because C++ is silly about enum conversions
-inline PyMolObserver::ObserverType operator| (PyMolObserver::ObserverType & l, PyMolObserver::ObserverType & r) {
+inline PyMOLObserver::ObserverType operator| (PyMOLObserver::ObserverType & l, PyMOLObserver::ObserverType & r) {
 	// We need to cast to int to avoid infinite loops
-	return static_cast<PyMolObserver::ObserverType>( static_cast<int>(l) | static_cast<int>(r) );
+	return static_cast<PyMOLObserver::ObserverType>( static_cast<int>(l) | static_cast<int>(r) );
 }
 
-/// @brief (Internal) helper function to create a PyMolObserver and add it to the given pose
-/// NOTE: You NEED to adjust the observer type and call attach() on the return - by default a new PyMolObserver isn't attached/observing.
-PyMolObserverOP
+/// @brief (Internal) helper function to create a PyMOLObserver and add it to the given pose
+/// NOTE: You NEED to adjust the observer type and call attach() on the return - by default a new PyMOLObserver isn't attached/observing.
+PyMOLObserverOP
 get_pymol_observer(core::pose::Pose & pose);
 
-/// @brief Helper function that create PyMolObserver Object and add it to the give Pose.
+/// @brief Helper function that create PyMOLObserver Object and add it to the give Pose.
 ///        This is the most likely the only function that you need to call...
-PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history=false, core::Real update_interval=0);
+PyMOLObserverOP AddPyMOLObserver(core::pose::Pose &p, bool keep_history=false, core::Real update_interval=0);
 
-/// @brief Helper function that create PyMolObserver Object and add it to the give Pose energies object so pymol only updates on energy changes.
-PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose & p, bool keep_history=false, core::Real update_interval=0);
+/// @brief Helper function that create PyMOLObserver Object and add it to the give Pose energies object so pymol only updates on energy changes.
+PyMOLObserverOP AddPyMOLObserver_to_energies(core::pose::Pose & p, bool keep_history=false, core::Real update_interval=0);
 
-/// @brief Helper function that create PyMolObserver Object and add it to the give Pose conformation object so pymol only updates on conformation changes.
-PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose & p, bool keep_history = false, core::Real update_interval = 0);
+/// @brief Helper function that create PyMOLObserver Object and add it to the give Pose conformation object so pymol only updates on conformation changes.
+PyMOLObserverOP AddPyMOLObserver_to_conformation(core::pose::Pose & p, bool keep_history = false, core::Real update_interval = 0);
 
 } // moves
 } // protocols
 
 
-#endif // INCLUDED_protocols_moves_PyMolMover_HH
+#endif // INCLUDED_protocols_moves_PyMOLMover_HH

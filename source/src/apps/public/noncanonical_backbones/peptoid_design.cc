@@ -44,7 +44,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -84,7 +84,7 @@
 #include <sstream>
 
 // DEBUG DEBUG
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 
 // Namespaces
@@ -199,7 +199,7 @@ PeptoidDesignMover::apply(
 	moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn, 1.0 ) );
 
 	// DEBUG
-	//moves::PyMolMoverOP pmm( new protocols::moves::PyMolMover() );
+	//moves::PyMOLMoverOP pmm( new protocols::moves::PyMOLMover() );
 	//pmm->keep_history( true );
 
 	/*********************************************************

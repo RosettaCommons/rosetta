@@ -13,7 +13,7 @@
 /// @author Sergey Lyskov
 
 #include <basic/Tracer.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -57,7 +57,7 @@ int main( int argc, char * argv [] )
     //core::import_pose::pose_from_file(pose,"/Users/xlong3/lab_work_data/raw_files/antibody_file/1a6t/1a6t.pdb",core::import_pose::PDB_file);
 
 
-	protocols::moves::AddPyMolObserver( pose );
+	protocols::moves::AddPyMOLObserver( pose );
     /*	
     for(int j=0; j<32; j++) {
             pose.set_phi(70, pose.phi(70) + 1. );
@@ -69,7 +69,7 @@ int main( int argc, char * argv [] )
 	//pose.energies().residue_total_energies(1);
 	//T("Scoring done!") << "---------------------" << std::endl;
 
-	protocols::moves::PyMolMover pymol;
+	protocols::moves::PyMOLMover pymol;
 
 	//pymol.keep_history(true);
 	//pymol.update_interval(.1);

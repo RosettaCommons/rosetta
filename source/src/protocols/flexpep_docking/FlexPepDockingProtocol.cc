@@ -1288,7 +1288,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 
 	kinematics::FoldTree old_foldTree = pose.fold_tree(); // original fold tree should be restored in the end
 
-	// protocols::moves::AddPyMolObserver(pose);
+	// protocols::moves::AddPyMOLObserver(pose);
 	flags_.updateChains(pose); // validate chain boundaries and letters
 	if ( !flags_.valid_anchors() ) {
 		flags_.setDefaultAnchors(pose);

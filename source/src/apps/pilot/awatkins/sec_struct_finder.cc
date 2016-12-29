@@ -46,7 +46,7 @@
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>

@@ -10,7 +10,7 @@ import os; os.chdir('.test.output')
 
 pose = pyrosetta.pose_from_sequence('EVAAAVAT')
 
-pymol = pyrosetta.PyMolMover()
+pymol = pyrosetta.PyMOLMover()
 
 pymol.apply(pose)
 
@@ -44,11 +44,11 @@ mm = pyrosetta.MoveMap()
 #pymol.plot_graph("Line", "white", [0, 1, 2, 3, 4], [0, 2, 4, 6, 8])  DEPRECATED: needed to be ported to C++ version
 #pymol.send_point("Line", "white", 5, 10)  DEPRECATED: needed to be ported to C++ version
 
-observer = rosetta.protocols.moves.AddPyMolObserver(pose)
+observer = rosetta.protocols.moves.AddPyMOLObserver(pose)
 pose.set_psi(3, 10)
 scorefxn(pose)
 
-rosetta.protocols.moves.AddPyMolObserver(pose, keep_history=True)
+rosetta.protocols.moves.AddPyMOLObserver(pose, keep_history=True)
 pose.set_psi(2, 10)
 
 pose.set_psi(4, 10)

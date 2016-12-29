@@ -245,12 +245,12 @@ def sample_docking(pdb_filename, partners,
     jd.native_pose = temp_pose    # for RMSD comparison
 
     # 12. setup a PyMOL_Observer (optional)
-    # the PyMOL_Observer object owns a PyMolMover and monitors pose objects for
+    # the PyMOL_Observer object owns a PyMOLMover and monitors pose objects for
     #    structural changes, when changes are detected the new structure is
     #    sent to PyMOL
     # fortunately, this allows investigation of full protocols since
     #    intermediate changes are displayed, it also eliminates the need to
-    #    manually apply the PyMolMover during a custom protocol
+    #    manually apply the PyMOLMover during a custom protocol
     # unfortunately, this can make the output difficult to interpret (since you
     #    aren't explicitly telling it when to export) and can significantly slow
     #    down protocols since many structures are output (PyMOL can also slow
@@ -258,7 +258,7 @@ def sample_docking(pdb_filename, partners,
     #    generate structures too quickly for PyMOL to read, the
     #    "Buffer clean up" message
     # uncomment the line below to use the PyMOL_Observer
-##    AddPyMolObserver(test_pose, True)
+##    AddPyMOLObserver(test_pose, True)
 
     # 13. perform protein-protein docking
     counter = 0    # for pretty output to PyMOL
@@ -297,7 +297,7 @@ for the protein conformation. PDB files produced from docking will contain
 both docking partners in their predicted conformation. When inspecting these
 PDB files (or the PyMOL_Observer output) be aware that PyMOL can introduce or
 predict bonds that do not exist, particularly for close atoms. This rarely
-occurs when using the PyMolMover.keep_history feature (since PyRosetta will
+occurs when using the PyMOLMover.keep_history feature (since PyRosetta will
 sample some conformation space that has clashes).
 
 The PyMOL_Observer will output a series of structures directly produced by the
@@ -382,7 +382,7 @@ to investigate using PyRosetta.
             commands in 3. would change since docking.py wouldn't be here)
 3. Run the script from the commandline with appropriate arguments:
 
->python docking.py --pdb_filename 3RT3.clean.pdb --partners B_C --jobs 400 --job_output 3RT3_docking_output --translation 3 --rotation 8 --PyMolMover_ip off
+>python docking.py --pdb_filename 3RT3.clean.pdb --partners B_C --jobs 400 --job_output 3RT3_docking_output --translation 3 --rotation 8 --PyMOLMover_ip off
 
         -The partners option, "B_C" is PDB specific, if you change the chain
             IDs in 3RT3, make sure this matches

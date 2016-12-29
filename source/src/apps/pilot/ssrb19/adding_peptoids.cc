@@ -17,7 +17,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <devel/init.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 
 // Utility Headers
@@ -111,7 +111,7 @@ int main(int argc, char ** argv){
 	utility::vector1< std::string > fullname_list; // a vector of non-standard full names
 	
 	// Connecting to PyMOL listener	
-	protocols::moves::AddPyMolObserver( *peptoid_pose, true, 0 );
+	protocols::moves::AddPyMOLObserver( *peptoid_pose, true, 0 );
 	
 	core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 	

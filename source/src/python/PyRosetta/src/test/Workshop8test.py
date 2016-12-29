@@ -34,7 +34,7 @@ for res in (10, 13, 16, 23, 26, 30):
     pose.set_phi(res, 180)
     pose.dump_pdb("loop" + str(res) + ".pdb")
 
-pmm = PyMolMover()
+pmm = PyMOLMover()
 pmm.apply(pose)
 # no longer supported: pmm.send_foldtree(pose)
 # no longer supported: pmm.view_foldtree_diagram(pose, ft)

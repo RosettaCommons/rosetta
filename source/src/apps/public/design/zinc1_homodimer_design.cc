@@ -304,7 +304,7 @@ public:
     //     pose.metric("SymmInterfaceNeighborDefinition", "interface_residues", mv_interface_set);
     //     std::set< Size > const interface_set(mv_interface_set.value());
 
-    //     TR << "Interface min_movemap PyMol selection: sel resi ";
+    //     TR << "Interface min_movemap PyMOL selection: sel resi ";
     //     for (std::set<Size>::const_iterator it = interface_set.begin(); it != interface_set.end(); ++it) {
     //       TR << *it << "+";
     //       sc_move_map_->set_chi( *it, true );

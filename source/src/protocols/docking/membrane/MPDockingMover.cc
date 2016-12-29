@@ -34,7 +34,7 @@
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>

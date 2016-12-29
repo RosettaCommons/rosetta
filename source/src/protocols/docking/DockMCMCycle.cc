@@ -206,7 +206,7 @@ void DockMCMCycle::set_move_map( core::kinematics::MoveMapOP movemap ) { movemap
 void DockMCMCycle::apply( core::pose::Pose & pose )
 {
 	TR.Debug << "in DockMCMCycle.apply" << std::endl;
-	// protocols::moves::PyMolMover pymol;   //JQX: comment out, pymolmover will use the random number, not good for debug
+	// protocols::moves::PyMOLMover pymol;   //JQX: comment out, pymolmover will use the random number, not good for debug
 
 	// only set up on first call to the mover
 	if ( ! dock_mcm_cycle_ ) {

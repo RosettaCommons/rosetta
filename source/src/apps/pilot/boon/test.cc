@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 		/* //Reformatting
 
 		// PyMOL mover
-		protocols::moves::PyMolMover pmm;
+		protocols::moves::PyMOLMover pmm;
 		pmm.update_energy(true);
 		pmm.keep_history(true);
 		std::cout << pmm << std::endl;
@@ -228,11 +228,11 @@ int main(int argc, char *argv[])
 
 
 		/* // create a PyMOL mover
-		protocols::moves::PyMolMover pmm;
+		protocols::moves::PyMOLMover pmm;
 		std::cout << pmm << std::endl;
 
 		// create another PyMOL mover
-		protocols::moves::PyMolMover pmm2;
+		protocols::moves::PyMOLMover pmm2;
 		pmm2.update_energy(true);
 		pmm2.keep_history(true);
 		std::cout << pmm2 << std::endl;*/

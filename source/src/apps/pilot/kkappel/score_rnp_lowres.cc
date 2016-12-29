@@ -54,7 +54,7 @@
 
 #include <devel/init.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>

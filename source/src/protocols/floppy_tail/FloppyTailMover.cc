@@ -62,7 +62,7 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh> //Symmetry
 #include <protocols/simple_moves/symmetry/TaskAwareSymMinMover.hh> //Symmetry
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 //calculators and neighbor detection machinery
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
@@ -722,7 +722,7 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////////////pymol_mover/////////////////////////////////////
 	if ( option[OptionKeys::run::show_simulation_in_pymol].user()
 			&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
-		protocols::moves::AddPyMolObserver(pose,
+		protocols::moves::AddPyMOLObserver(pose,
 			option[OptionKeys::run::keep_pymol_simulation_history](),
 			option[OptionKeys::run::show_simulation_in_pymol].value());
 	}

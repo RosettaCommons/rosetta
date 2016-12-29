@@ -9,7 +9,7 @@
 
 /// @file 		src/apps/pilot/ralford/pymol_viewer_test.cc
 ///
-/// @brief 		Pilot Application for Testing the PyMolViewer Additions
+/// @brief 		Pilot Application for Testing the PyMOLViewer Additions
 /// @details	Add a membrane to the pose and turn on the capability to view the membranes
 ///				in pymol as defined by the normal/center pair defined in the framework. 
 ///

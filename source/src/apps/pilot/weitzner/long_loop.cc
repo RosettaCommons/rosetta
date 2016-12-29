@@ -11,7 +11,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/CCDLoopClosureMover.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -72,8 +72,8 @@ main( int argc, char * argv [] ) {
 
 	TR << "The pose's sequence is: " << pose->sequence() << std::endl;
 
-	// Hey... let's check how its actually looks like... →→→ ☆★PyMol★☆ ←←←
-	protocols::moves::AddPyMolObserver(*pose, true); // Lets ask PyMol to store history...
+	// Hey... let's check how its actually looks like... →→→ ☆★PyMOL★☆ ←←←
+	protocols::moves::AddPyMOLObserver(*pose, true); // Lets ask PyMOL to store history...
 
 	// Eventually this will take a text file as input
 	LoopsOP loops = read_loops_from_text_file();

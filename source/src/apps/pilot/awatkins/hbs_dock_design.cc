@@ -41,7 +41,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -478,7 +478,7 @@ HbsDockDesignMinimizeMover::apply(
 	//kdrew: only turn on pymol observer in debug mode
 	//#ifndef NDEBUG
 	if ( option[ hddm::pymol ].value() ) {
-		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ hddm::keep_history ].value() );
+		protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver(pose, option[ hddm::keep_history ].value() );
 	}
 	//#endif
 

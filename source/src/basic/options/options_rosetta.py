@@ -2881,7 +2881,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
 			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
 			Option( 'thickness', 'Real', desc="Thickness of membrane to visualize", default='15' ),
-			Option( 'plane_radius', 'Real', desc="Radius of membrane planes to draw in PyMol - part of the PyMol viewer plugin" ),
+			Option( 'plane_radius', 'Real', desc="Radius of membrane planes to draw in PyMOL - part of the PyMOL viewer plugin" ),
 		),
 
 		# Scoring options

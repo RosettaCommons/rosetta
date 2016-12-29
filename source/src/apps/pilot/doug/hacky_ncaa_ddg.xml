@@ -30,7 +30,7 @@
   </FILTERS>
 
   <MOVERS>
-    <PyMolMover name=pmm keep_history=1/>
+    <PyMOLMover name=pmm keep_history=1/>
 
     <MinMover name=mm_init scorefxn=mm_std_rep_100 type=dfpmin tolerance=0.0001 bb=1 chi=1 jump=ALL/>
 

@@ -45,7 +45,7 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 // devel headers
 #include <devel/init.hh>
@@ -96,8 +96,8 @@ PeptiodMovieMover::apply( core::pose::Pose & pose )
   using namespace core;
   using namespace protocols;
 
-  //moves::AddPyMolObserver( pose, true );
-  moves::PyMolMoverOP pmm ( new moves::PyMolMover() );
+  //moves::AddPyMOLObserver( pose, true );
+  moves::PyMOLMoverOP pmm ( new moves::PyMOLMover() );
   pmm->keep_history( true );
 
   // create score function

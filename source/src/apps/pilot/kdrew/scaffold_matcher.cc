@@ -50,7 +50,7 @@
 
 // Mover headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -184,7 +184,7 @@ HotspotPlacementMover::apply(
 	setup_pert_foldtree(start_pose);
 
 	if ( option[ scaffold_matcher::pymol ].value() ) {
-		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(start_pose, option[ scaffold_matcher::keep_history ].value() );
+		protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver(start_pose, option[ scaffold_matcher::keep_history ].value() );
 	}
 
 	core::scoring::ScoreFunctionOP place_hs_score_fxn( new core::scoring::ScoreFunction() );

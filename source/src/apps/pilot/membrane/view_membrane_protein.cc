@@ -26,7 +26,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -50,7 +50,7 @@
 
 using namespace protocols::moves;
 
-/// @brief Quick Container Mover: Visualize Membrane Protein Using the PyMol Viewer
+/// @brief Quick Container Mover: Visualize Membrane Protein Using the PyMOL Viewer
 class ViewMembraneProteinMover : public Mover {
 
 public:
@@ -75,7 +75,7 @@ public:
 		add_memb->apply( pose );
 
 		// Send a set of viewable planes to pymol
-		PyMolMoverOP pymol_mover( new PyMolMover() );
+		PyMOLMoverOP pymol_mover( new PyMOLMover() );
 		pymol_mover->apply( pose );
 
 		if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {

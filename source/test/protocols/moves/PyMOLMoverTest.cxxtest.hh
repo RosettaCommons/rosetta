@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  protocols/moves/PyMolMoverTest.cxxtest.hh
-/// @brief  Test some expected behavior of the PyMolMover and PyMolObserver
+/// @file  protocols/moves/PyMOLMoverTest.cxxtest.hh
+/// @brief  Test some expected behavior of the PyMOLMover and PyMOLObserver
 /// @author Kyle Barlow (kb@kylebarlow.com)
-/// @details These unit tests define expected behavior relating to how a PyMolObserver
+/// @details These unit tests define expected behavior relating to how a PyMOLObserver
 ///          is stored inside the Pose's datacache ObserverCache
 
 // Test headers
@@ -29,12 +29,12 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
-static THREAD_LOCAL basic::Tracer TR("PyMolMoverTest");
+static THREAD_LOCAL basic::Tracer TR("PyMOLMoverTest");
 
 
-class PyMolMoverTest : public CxxTest::TestSuite {
+class PyMOLMoverTest : public CxxTest::TestSuite {
 	//Define Variables
 
 public:
@@ -52,9 +52,9 @@ public:
 	void test_pose_clone_has_no_observer(){
 		// Test: A clone of a pose with observer should not clone the observer attached to the original pose
 		//       This is an exception to the normal deep copy process of cloning, because it prevents
-		//       multiple PyMolObservers from being created non-interactively (which would be confusing
-		//       to the end user, as PyMolObservers are often created interactively).
-		protocols::moves::PyMolObserverOP original_observer = protocols::moves::AddPyMolObserver( *original_pose, true, 0 );
+		//       multiple PyMOLObservers from being created non-interactively (which would be confusing
+		//       to the end user, as PyMOLObservers are often created interactively).
+		protocols::moves::PyMOLObserverOP original_observer = protocols::moves::AddPyMOLObserver( *original_pose, true, 0 );
 		TS_ASSERT( original_pose->observer_cache().has( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER ) );
 		core::pose::Pose copy_pose = *original_pose;
 		TS_ASSERT( !copy_pose.observer_cache().has( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER ) );
@@ -62,7 +62,7 @@ public:
 
 	void test_replaced_pose_keeps_observer(){
 		// Test: Copying a pose into original pose should preserve the observer in the original pose
-		protocols::moves::PyMolObserverOP original_observer = protocols::moves::AddPyMolObserver( *original_pose, true, 0 );
+		protocols::moves::PyMOLObserverOP original_observer = protocols::moves::AddPyMOLObserver( *original_pose, true, 0 );
 		TS_ASSERT( original_pose->observer_cache().has( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER ) );
 		core::pose::Pose new_pose = core::pose::Pose();
 		*original_pose = new_pose;
@@ -70,13 +70,13 @@ public:
 	}
 
 	void test_pose_has_observer(){
-		// Test: Adding a PyMolObserver to a Pose results in the Pose having a PyMolObserver
-		protocols::moves::PyMolObserverOP original_observer = protocols::moves::AddPyMolObserver( *original_pose, true, 0 );
+		// Test: Adding a PyMOLObserver to a Pose results in the Pose having a PyMOLObserver
+		protocols::moves::PyMOLObserverOP original_observer = protocols::moves::AddPyMOLObserver( *original_pose, true, 0 );
 		TS_ASSERT( original_pose->observer_cache().has( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER ) );
 	}
 
 	void test_new_pose_has_no_observer(){
-		// Test: A new, fresh, PyMolObserver doesn't start with a PyMolObserver
+		// Test: A new, fresh, PyMOLObserver doesn't start with a PyMOLObserver
 		TS_ASSERT( !original_pose->observer_cache().has( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER ) );
 	}
 

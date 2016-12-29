@@ -28,7 +28,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // Core Headers
@@ -993,7 +993,7 @@ my_main( void* )
 	//viewer
 	if (!option[mc::replica]) protocols::viewer::add_monte_carlo_viewer(*mc, "Gaussian", 600, 600);
 	//pymol viewer
-	//protocols::moves::AddPyMolLink(p, false);
+	//protocols::moves::AddPyMOLLink(p, false);
 
 	TR.flush();
 #ifdef USEMPI

@@ -8,18 +8,18 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/moves/IfMoverIfMoverCreator.hh
-/// @brief This class will create instances of PyMolMover for the MoverFactory
+/// @brief This class will create instances of PyMOLMover for the MoverFactory
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
-#ifndef INCLUDED_protocols_moves_PyMolMoverCreator_hh
-#define INCLUDED_protocols_moves_PyMolMoverCreator_hh
+#ifndef INCLUDED_protocols_moves_PyMOLMoverCreator_hh
+#define INCLUDED_protocols_moves_PyMOLMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace moves {
 
-class PyMolMoverCreator : public protocols::moves::MoverCreator {
+class PyMOLMoverCreator : public protocols::moves::MoverCreator {
 public:
 	// XRW TEMP  MoverOP create_mover() const override;
 	// XRW TEMP  std::string keyname() const override;

@@ -39,7 +39,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -464,7 +464,7 @@ OopDockDesignProtocol::apply(
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	if ( pymol_ ) {
-		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, keep_history_ );
+		protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver(pose, keep_history_ );
 	}
 
 	//pose.dump_pdb("pre_main_loop.pdb");

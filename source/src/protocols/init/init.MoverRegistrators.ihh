@@ -311,7 +311,7 @@ static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
-static MoverRegistrator< moves::PyMolMoverCreator > reg_PyMolMoverCreator;
+static MoverRegistrator< moves::PyMOLMoverCreator > reg_PyMOLMoverCreator;
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 static MoverRegistrator< moves::FilterReportAsPoseExtraScoresMoverCreator > reg_FilterReportAsPoseExtraScoresMoverCreator;
 

@@ -210,7 +210,7 @@
 #include <protocols/moves/IfMoverCreator.hh>
 #include <protocols/moves/MoverContainerCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
-#include <protocols/moves/PyMolMoverCreator.hh>
+#include <protocols/moves/PyMOLMoverCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
 #include <protocols/moves/FilterReportAsPoseExtraScoresMoverCreator.hh>
 #include <protocols/simple_moves/MonteCarloResetCreator.hh>
@@ -974,8 +974,8 @@ public:
 	void test_protocols_moves_IteratedConvergenceMoverCreator_name()
 	{ protocols::moves::IteratedConvergenceMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "IteratedConvergence" ); }
 
-	void test_protocols_moves_PyMolMoverCreator_name()
-	{ protocols::moves::PyMolMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PyMolMover" ); }
+	void test_protocols_moves_PyMOLMoverCreator_name()
+	{ protocols::moves::PyMOLMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PyMOLMover" ); }
 
 	void test_protocols_moves_RampingMoverCreator_name()
 	{ protocols::moves::RampingMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RampingMover" ); }
@@ -2132,8 +2132,8 @@ public:
 	// void test_protocols_moves_IteratedConvergenceMoverCreator()
 	// { protocols::moves::IteratedConvergenceMoverCreator cr; std::cout << "protocols::moves::IteratedConvergenceMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_moves_PyMolMoverCreator()
-	// { protocols::moves::PyMolMoverCreator cr; std::cout << "protocols::moves::PyMolMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_moves_PyMOLMoverCreator()
+	// { protocols::moves::PyMOLMoverCreator cr; std::cout << "protocols::moves::PyMOLMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_moves_RampingMoverCreator()
 	// { protocols::moves::RampingMoverCreator cr; std::cout << "protocols::moves::RampingMoverCreator " << cr.keyname() << std::endl; }

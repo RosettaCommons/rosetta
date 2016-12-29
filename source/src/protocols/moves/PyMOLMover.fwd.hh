@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/moves/PyMolMover.hh
-/// @brief  Send infromation to PyMol
+/// @file   protocols/moves/PyMOLMover.hh
+/// @brief  Send infromation to PyMOL
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_protocols_moves_PyMolMover_fwd_hh
-#define INCLUDED_protocols_moves_PyMolMover_fwd_hh
+#ifndef INCLUDED_protocols_moves_PyMOLMover_fwd_hh
+#define INCLUDED_protocols_moves_PyMOLMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace moves {
 
-class PyMolMover;
-typedef utility::pointer::shared_ptr< PyMolMover > PyMolMoverOP;
-typedef utility::pointer::shared_ptr< PyMolMover const > PyMolMoverCOP;
+class PyMOLMover;
+typedef utility::pointer::shared_ptr< PyMOLMover > PyMOLMoverOP;
+typedef utility::pointer::shared_ptr< PyMOLMover const > PyMOLMoverCOP;
 
-class PyMolObserver;
-typedef utility::pointer::shared_ptr< PyMolObserver > PyMolObserverOP;
-typedef utility::pointer::shared_ptr< PyMolObserver const > PyMolObserverCOP;
+class PyMOLObserver;
+typedef utility::pointer::shared_ptr< PyMOLObserver > PyMOLObserverOP;
+typedef utility::pointer::shared_ptr< PyMOLObserver const > PyMOLObserverCOP;
 
 } // moves
 } // protocols
 
-#endif // INCLUDED_protocols_moves_PyMolMover_FWD_HH
+#endif // INCLUDED_protocols_moves_PyMOLMover_FWD_HH

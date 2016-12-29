@@ -112,8 +112,8 @@ def pose_structure(pose, display_residues = []):
     omegas = [pose.omega(i) for i in range(1, nres + 1)]
 
     # this object is contained in PyRosetta v2.0 and above
-    # create a PyMolMover for exporting structures directly to PyMOL
-    pymover = PyMolMover()
+    # create a PyMOLMover for exporting structures directly to PyMOL
+    pymover = PyMOLMover()
     pymover.apply(pose)    # export the structure to PyMOL (optional)
 
     # 7. output information on the requested residues

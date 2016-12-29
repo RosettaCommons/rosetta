@@ -69,7 +69,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 //sampling

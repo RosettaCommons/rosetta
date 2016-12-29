@@ -87,7 +87,7 @@ def packer_task(pose, PDB_out = False):
     test_pose.assign(pose)
 
     # this object is contained in PyRosetta v2.0 and above
-    pymover = PyMolMover()
+    pymover = PyMOLMover()
 
     # create a standard ScoreFunction
     scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
@@ -125,12 +125,12 @@ def packer_task(pose, PDB_out = False):
 
     scorefxn(pose)    # to prevent verbose output on the next line
     print( '\nPre packing score:', scorefxn(test_pose) )
-    test_pose.pdb_info().name('original')    # for PyMolMover
+    test_pose.pdb_info().name('original')    # for PyMOLMover
     pymover.apply(test_pose)
 
     packmover.apply(test_pose)
     print( 'Post packing score:',  scorefxn(test_pose) )
-    test_pose.pdb_info().name('packed')    # for PyMolMover
+    test_pose.pdb_info().name('packed')    # for PyMOLMover
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('packed.pdb')
@@ -184,7 +184,7 @@ def packer_task(pose, PDB_out = False):
     print( '\nPost-design score:', scorefxn(test_pose) )
     print( 'Post-design sequence: ...' + \
         test_pose.sequence()[center - 5:center + 4] + '...' )
-    test_pose.pdb_info().name( 'designed' )    # for PyMolMover
+    test_pose.pdb_info().name( 'designed' )    # for PyMOLMover
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('designed.pdb')

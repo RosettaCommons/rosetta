@@ -107,7 +107,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilter.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
@@ -579,11 +579,11 @@ void RemodelMover::apply( Pose & pose ) {
 
 		//TR << "After working_model_" << std::endl;
 
-		// test PyMol viewer
+		// test PyMOL viewer
 		/*
 		NOTE:: If pose size changes such as in repeat_mover this can crash remodel
 		if ( option[OptionKeys::run::show_simulation_in_pymol] ) {
-		moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
+		moves::AddPyMOLObserver( pose, false, core::Real( 0.50 ) );
 		}
 		*/
 

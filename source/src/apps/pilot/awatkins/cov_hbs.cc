@@ -66,7 +66,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -185,7 +185,7 @@ CovalentPeptidomimeticDockDesign::apply(
 	Size vdp_resi = 0;
 	Size cys_resi = 0;
 
-	//protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver( pose, true );
+	//protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver( pose, true );
 
 	// Simple minimization first
 	kinematics::MoveMapOP mm( new kinematics::MoveMap() );

@@ -84,7 +84,7 @@ The method sample_single_loop_modeling:
         recovering the original sidechain conformations of the fullatom pose
 13. creates a copy of the pose (centroid) for reference
 14. creates the geometric "temperature" decrement for simulated annealing
-15. creates a PyMolMover for exporting structures to PyMOL
+15. creates a PyMOLMover for exporting structures to PyMOL
 16. creates a (Py)JobDistributor for managing multiple trajectories
 17. performs the loop modeling protocol, for each trajectory:
         a.  reset necessary variables for the new trajectory
@@ -111,7 +111,7 @@ The method sample_single_loop_modeling:
         e.  perform high resolution loop optimization
         f.  output the decoy structure
                 -to a PDB file using the PyJobDistributor
-                -to PyMOL using the PyMolMover
+                -to PyMOL using the PyMOLMover
 
 """
 
@@ -285,8 +285,8 @@ def sample_single_loop_modeling(pdb_filename,
     gamma = pow((final_temp_low/init_temp_low),
         (1.0/(outer_cycles_low*inner_cycles_low)))
 
-    # 15. create a PyMolMover for exporting structures to PyMOL
-    pymov = PyMolMover()
+    # 15. create a PyMOLMover for exporting structures to PyMOL
+    pymov = PyMOLMover()
     # uncomment the line below to load structures into successive states
     #pymov.keep_history(True)
     scorefxn_high(starting_p)    # for exporting the scores
@@ -356,7 +356,7 @@ def sample_single_loop_modeling(pdb_filename,
         ####
 
         # the LoopMover_Refine_CCD makes A LOT of moves, DO NOT expect to
-        #    see useful results if you use the PyMolMover keep_history option, the large
+        #    see useful results if you use the PyMOLMover keep_history option, the large
         #    number of intermediates will slow processing to a halt
 
         # d. convert the best structure (lowest scoring) into fullatom by:
@@ -405,7 +405,7 @@ The CCD method CAN produce physically unrealistic results (rarely). As such,
 individual inspection of the conformation (such viewing in PyMOL) should
 accompany the interpretation of results.
 
-The PyMolMover sends intermediate and final structures for each trajectory to
+The PyMOLMover sends intermediate and final structures for each trajectory to
 PyMOL. The original input structure and the final fullatom structure
 (named <job_output>_(job#)_fa) for each trajectory (colored by per-residue
 score) are displayed for comparison of the loop conformation. For each

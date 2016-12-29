@@ -31,7 +31,7 @@
 
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
+#include <protocols/moves/PyMOLMover.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>

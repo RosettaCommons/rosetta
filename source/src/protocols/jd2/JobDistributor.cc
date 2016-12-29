@@ -41,7 +41,7 @@
 #include <protocols/viewer/viewers.hh>
 #endif
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 // Utility headers
 #include <utility/basic_sys_util.hh>
@@ -750,27 +750,27 @@ void JobDistributor::setup_pymol_observer( core::pose::Pose & pose )
 		//Control what the observer gets attached to
 		if ( option[OptionKeys::run::update_pymol_on_energy_changes_only]() &&
 				option[OptionKeys::run::update_pymol_on_conformation_changes_only]() ) {
-			tr.Warning << "PyMol updates for both only energy and only conformation set to true"
+			tr.Warning << "PyMOL updates for both only energy and only conformation set to true"
 				"Attaching observer as general pose observer instead" << std::endl;
-			moves::AddPyMolObserver(
+			moves::AddPyMOLObserver(
 				pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
 
 		} else if ( option[OptionKeys::run::update_pymol_on_energy_changes_only]() ) {
 
-			moves::AddPyMolObserver_to_energies(
+			moves::AddPyMOLObserver_to_energies(
 				pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
 		} else if ( option[OptionKeys::run::update_pymol_on_conformation_changes_only]() ) {
 
-			moves::AddPyMolObserver_to_conformation(
+			moves::AddPyMOLObserver_to_conformation(
 				pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
 		} else {
-			moves::AddPyMolObserver(
+			moves::AddPyMOLObserver(
 				pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());

@@ -38,7 +38,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -451,7 +451,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	if ( option[ tddm::pymol ].value() ) {
-		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ tddm::keep_history ].value() );
+		protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver(pose, option[ tddm::keep_history ].value() );
 	}
 
 	for ( Size k = 1; k <= Size( option[ tddm::dock_design_loop_num ].value() ); ++k ) {

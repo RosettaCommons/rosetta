@@ -17,7 +17,7 @@
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
@@ -34,7 +34,7 @@ main( int argc, char * argv [] )
 
 		devel::init( argc, argv );
 
-		protocols::moves::PyMolMoverOP pmm( new protocols::moves::PyMolMover() );
+		protocols::moves::PyMOLMoverOP pmm( new protocols::moves::PyMOLMover() );
 		pmm->keep_history( true );
 
 		protocols::jd2::JobDistributor::get_instance()->go( pmm );

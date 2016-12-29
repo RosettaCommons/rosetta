@@ -117,7 +117,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclization.OptionKeys.gen.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 
 //Auto Headers
@@ -284,7 +284,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 	pose.dump_scored_pdb( "starting.pdb", *score_fxn );
 
 	// create pymol mover
-	protocols::moves::PyMolMoverOP pmm( new protocols::moves::PyMolMover() );
+	protocols::moves::PyMOLMoverOP pmm( new protocols::moves::PyMOLMover() );
 	pmm->keep_history( true );
 
 	/*********************************************************************************************************************

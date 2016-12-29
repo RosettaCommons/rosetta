@@ -427,7 +427,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 
 	// //for pymol viewing
 	// if( pymolreport_ ){
-	//  protocols::moves::PyMolObserverOP pymol_ob =  protocols::moves::AddPyMolObserver(pose, false, 0.1);
+	//  protocols::moves::PyMOLObserverOP pymol_ob =  protocols::moves::AddPyMOLObserver(pose, false, 0.1);
 	// }
 
 	TR << "Homodimer Design start."<<std::endl;

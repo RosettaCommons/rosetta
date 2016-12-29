@@ -763,15 +763,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__moves__MoverForPoseList.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__moves__MoverForPoseList.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\moves\PyMolMover.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__moves__PyMolMover.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\moves\PyMOLMover.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__moves__PyMOLMover.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\moves\StructureRestrictor.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__moves__StructureRestrictor.obj</ObjectFileName>
@@ -1864,9 +1864,9 @@
     <ClInclude Include="..\..\..\src\protocols\moves\RampingMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\MoverStatistics.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\TrialMover.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\moves\PyMolMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\moves\PyMOLMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\DsspMover.hh" />
-    <ClInclude Include="..\..\..\src\protocols\moves\PyMolMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\moves\PyMOLMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\VectorPoseMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\MonteCarlo.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\MonteCarlo.tmpl.hh" />
@@ -1875,7 +1875,7 @@
     <ClInclude Include="..\..\..\src\protocols\moves\MonteCarloStatus.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\RepeatMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\MoverForPoseList.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\moves\PyMolMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\moves\PyMOLMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\MoverStatus.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\FilterReporterMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\moves\RepeatMover.fwd.hh" />

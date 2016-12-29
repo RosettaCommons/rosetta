@@ -64,7 +64,7 @@
 
 #include <utility/vector1.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
 
@@ -230,7 +230,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		using namespace basic::options::OptionKeys;
 		if ( option[OptionKeys::run::show_simulation_in_pymol].user()
 				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
-			protocols::moves::AddPyMolObserver(pose,
+			protocols::moves::AddPyMOLObserver(pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
 		}

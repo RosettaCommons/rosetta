@@ -3355,15 +3355,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\moves\PyMolMover.cc"
+				RelativePath="..\..\..\src\protocols\moves\PyMOLMover.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMolMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMolMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3371,8 +3371,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMolMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMolMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3380,8 +3380,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMolMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMolMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3389,21 +3389,21 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMolMover.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMolMover.xdc"
+						ObjectFile="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__moves__PyMOLMover.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\moves\PyMolMover.fwd.hh"
+				RelativePath="..\..\..\src\protocols\moves\PyMOLMover.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\moves\PyMolMover.hh"
+				RelativePath="..\..\..\src\protocols\moves\PyMOLMover.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\moves\PyMolMoverCreator.hh"
+				RelativePath="..\..\..\src\protocols\moves\PyMOLMoverCreator.hh"
 				>
 			</File>
 			<File

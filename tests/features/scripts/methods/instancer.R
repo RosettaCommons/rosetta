@@ -10,7 +10,7 @@
 
 
 #
-# prepare instances to be viewed in PyMol script to look at feature instances
+# prepare instances to be viewed in PyMOL script to look at feature instances
 # The residues_of_interest should be a data.frame with the following columns:
 #   tag, id, chain, resNum, atom
 # See the error message below for more details

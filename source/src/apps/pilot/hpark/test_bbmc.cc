@@ -28,7 +28,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // Core Headers

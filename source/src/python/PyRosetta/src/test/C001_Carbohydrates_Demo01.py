@@ -10,7 +10,7 @@ from pyrosetta import *
 init('-constant_seed -include_sugars')
 import os; os.chdir('.test.output')
 
-pm = PyMolMover()
+pm = PyMOLMover()
 
 
 # Linear Oligosaccharides & IUPAC Sequences

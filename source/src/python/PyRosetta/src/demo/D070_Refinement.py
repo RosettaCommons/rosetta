@@ -55,7 +55,7 @@ The method sample_refinement:
 6.  sets up a ShearMover for small backbone torsion angle perturbations
 7.  sets up a MinMover for backbone torsion minimization
 8.  sets up a PackRotamersMover for sidechain packing
-9.  create a PyMolMover for viewing intermediate output
+9.  create a PyMOLMover for viewing intermediate output
 10. export the original structure, and scores, to PyMOL
 11. sets up a RepeatMover on a TrialMover of a SequenceMover
         -setup the TrialMover
@@ -64,7 +64,7 @@ The method sample_refinement:
                     >ShearMover
                     >MinMover
                     >PackRotamersMover
-                    >PyMolMover
+                    >PyMOLMover
             b.  create a MonteCarlo object for assessing moves
             c.  create the TrialMover (on the SequenceMover)
         -create the RepeatMover (on the TrialMover)
@@ -73,7 +73,7 @@ The method sample_refinement:
 14.  performs the refinement protocol, for each trajectory:
          a. set necessary variables for the new trajectory
              -reload the starting pose
-             -change the pose's PDBInfo.name, for the PyMolMover
+             -change the pose's PDBInfo.name, for the PyMOLMover
              -reset the MonteCarlo object
          b. perform the sampling and assessment using the RepeatMover
          c. output the (lowest scoring) decoy structure
@@ -191,16 +191,16 @@ def sample_refinement(pdb_filename,
     packmover = protocols.simple_moves.PackRotamersMover(scorefxn, to_pack)
 
     #### assess the new structure
-    # 9. create a PyMolMover
-    pymover = PyMolMover()
+    # 9. create a PyMOLMover
+    pymover = PyMOLMover()
     # uncomment the line below to load structures into successive states
     #pymover.keep_history(True)
-    #### the PyMolMover slows down the protocol SIGNIFICANTLY but provides
+    #### the PyMOLMover slows down the protocol SIGNIFICANTLY but provides
     ####    very informative displays
-    #### the keep_history flag (when True) tells the PyMolMover to store new
+    #### the keep_history flag (when True) tells the PyMOLMover to store new
     ####    structures into successive states, for a single trajectory, this
     ####    allows you to see intermediate changes (depending on where the
-    ####    PyMolMover is applied), when using a JobDistributor or otherwise
+    ####    PyMOLMover is applied), when using a JobDistributor or otherwise
     ####    displaying multiple trajectories with a single protocol, the output
     ####    can get confusing to interpret, by changing the pose's PDBInfo.name
     ####    the structure will load into a new PyMOL state
@@ -221,7 +221,7 @@ def sample_refinement(pdb_filename,
     combined_mover.add_mover(shearmover)
     combined_mover.add_mover(minmover)
     combined_mover.add_mover(packmover)
-    #### explore the protocol using the PyMolMover, try viewing structures
+    #### explore the protocol using the PyMOLMover, try viewing structures
     ####    before they are accepted or rejected
     combined_mover.add_mover(pymover)
     #    b. create a MonteCarlo object to define success/failure
@@ -229,7 +229,7 @@ def sample_refinement(pdb_filename,
     # c. create the TrialMover
     trial = TrialMover(combined_mover, mc)
 
-    #### explore the protocol using the PyMolMover, try viewing structures
+    #### explore the protocol using the PyMOLMover, try viewing structures
     ####    after acceptance/rejection, comment-out the lines below
     #original_trial = TrialMover(combined_mover, mc)
     #trial = SequenceMover()
@@ -258,7 +258,7 @@ def sample_refinement(pdb_filename,
         # a. set necessary variables for the new trajectory
         # -reload the starting pose
         pose.assign(starting_pose)
-        # -change the pose's PDBInfo.name, for the PyMolMover
+        # -change the pose's PDBInfo.name, for the PyMOLMover
         counter += 1
         pose.pdb_info().name(job_output + '_' + str(counter))
         # -reset the MonteCarlo object (sets lowest_score to that of p)
@@ -316,7 +316,7 @@ interpretation of results. Score comparison and visual inspection are critical
 when testing out a new protocol. A refinement protocol should lower score
 without altering the protein conformation significantly (typically RMSD<4).
 
-The PyMolMover speeds up investigation by directly loading structures into
+The PyMOLMover speeds up investigation by directly loading structures into
 PyMOL. This allows you to easily view intermediate changes in a protocol. In
 the sample_refinement method, the original structure is exported to PyMOL and
 colored by its per-residue score evaluation. For each trajectory, a series of
@@ -437,7 +437,7 @@ but first want to ensure the PDB file is "Rosetta-friendly" by relaxing it.
     -the number of applications per trajectory, including backbone minimization,
         sidechain packing, and Metropolis assessment, this parameter directly
         affects the amount of sampling
-    -the PyMolMover option is left to its default (127.0.0.1)
+    -the PyMOLMover option is left to its default (127.0.0.1)
     -please consult the literature for more details on how to implement a
         more useful refinement method
 
@@ -496,7 +496,7 @@ is kT).
 
 If you are interested in the changes in individual score terms, you can remove
 these values and write them as you please (see pose_scoring.py) or export them
-to PyMOL for structure coloring. The PyMolMover.send_energy method accepts an
+to PyMOL for structure coloring. The PyMOLMover.send_energy method accepts an
 optional argument specifying which score term to display.
 
 Please try alternate scoring functions or unique selection methods to better

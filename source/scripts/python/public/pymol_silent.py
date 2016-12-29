@@ -20,13 +20,13 @@ Usage:
 
 To use, load the file in Pymol (for frequent use, add command to your .pymolrc file:
 
-PyMol> run rosetta/rosetta_source/src/python/apps/public/pymol_silent.py
+PyMOL> run rosetta/rosetta_source/src/python/apps/public/pymol_silent.py
 
 Once loaded, you can examine and load files from a binary-formatted silent file:
 
-PyMol> silent_tags path/to/file/silentfile.out
+PyMOL> silent_tags path/to/file/silentfile.out
 # List of availible tags printed here
-PyMol> silent_load path/to/file/silentfile.out, [tag1, tag2, ...]
+PyMOL> silent_load path/to/file/silentfile.out, [tag1, tag2, ...]
 
 Omiting the tags will load all the ones in the file.
 
@@ -57,7 +57,7 @@ big-endian/little endian autodetection (about the same as in standard Rosetta).
 In order to avoid a complete re-write of the database parser (and Rosetta's funky atom reoganization logic),
 only a limited number of residue types are fully supported. In particular, arbitrary patches and patch
 combinations are not supported. This script should do a reasonable job of showing *something*, although possibly
-not with the most asthetically pleasing PyMol representation.
+not with the most asthetically pleasing PyMOL representation.
 
 """
 

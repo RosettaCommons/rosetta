@@ -9,7 +9,7 @@
 
 #-out:level 400
 
-#####PyMol #####################
+#####PyMOL #####################
 -show_simulation_in_pymol .2
 -update_pymol_on_energy_changes_only
 #-update_pymol_on_conformation_changes_only

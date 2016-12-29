@@ -24,7 +24,7 @@
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
 #include <protocols/farna/setup/RNA_DeNovoSetup.hh>
 #include <protocols/farna/options/RNA_DeNovoProtocolOptions.hh>
-//#include <protocols/moves/PyMolMover.hh>
+//#include <protocols/moves/PyMOLMover.hh>
 
 // C++ headers
 #include <iostream>
@@ -72,7 +72,7 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_refine_pose_list( rna_de_novo_setup->refine_pose_list() );
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
-	// protocols::moves::AddPyMolObserver( pose, false, 0.01);
+	// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 
 	rna_de_novo_protocol.apply( pose );
 

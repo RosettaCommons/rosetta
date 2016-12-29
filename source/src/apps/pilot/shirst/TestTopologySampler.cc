@@ -57,7 +57,7 @@ Try:
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/PoseMembraneRigidBodyMover.hh>
 #include <protocols/rigid/PoseMembraneRigidBodyMover.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <core/scoring/MembranePotential.hh>
 
 // Project Headers
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 			using namespace basic::options::OptionKeys;
 			if ( option[OptionKeys::run::show_simulation_in_pymol].user()
 					&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
-				protocols::moves::AddPyMolObserver(pose,
+				protocols::moves::AddPyMOLObserver(pose,
 					option[OptionKeys::run::keep_pymol_simulation_history](),
 					option[OptionKeys::run::show_simulation_in_pymol].value());
 			}

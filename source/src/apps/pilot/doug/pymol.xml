@@ -10,7 +10,7 @@
   </FILTERS>
 
   <MOVERS>
-    <PyMolMover name=pmm keep_history=1/>
+    <PyMOLMover name=pmm keep_history=1/>
   </MOVERS>
 
   <APPLY_TO_POSE>

@@ -55,7 +55,7 @@
 // protocols headers
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 // basic headers
 #include <basic/database/open.hh>
@@ -134,7 +134,7 @@ main( int argc, char * argv [] )
 		}
 
 		// pymol mover
-		protocols::moves::PyMolMoverOP pmm( new protocols::moves::PyMolMover() );
+		protocols::moves::PyMOLMoverOP pmm( new protocols::moves::PyMOLMover() );
 		pmm->keep_history( true );
 		pmm->apply( pose );
 

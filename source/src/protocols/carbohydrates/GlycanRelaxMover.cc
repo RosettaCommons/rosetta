@@ -40,7 +40,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/bb_sampler/SugarBBSampler.hh>
@@ -635,12 +635,12 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 
 	init_objects( pose );
 
-	PyMolMover pmm_accepts = PyMolMover();
-	PyMolMover pmm_trials  = PyMolMover();
+	PyMOLMover pmm_accepts = PyMOLMover();
+	PyMOLMover pmm_trials  = PyMOLMover();
 	pmm_accepts.keep_history( true );
 	pmm_trials.keep_history( true );
-	pmm_accepts.set_PyMol_model_name( "accepts_"+ pmm_accepts.get_PyMol_model_name( pose ));
-	pmm_trials.set_PyMol_model_name(  "trials_" + pmm_trials.get_PyMol_model_name( pose ));
+	pmm_accepts.set_PyMOL_model_name( "accepts_"+ pmm_accepts.get_PyMOL_model_name( pose ));
+	pmm_trials.set_PyMOL_model_name(  "trials_" + pmm_trials.get_PyMOL_model_name( pose ));
 
 	TR << "Initialized" << std::endl;
 	utility::vector1< core::Size > bb_residues;

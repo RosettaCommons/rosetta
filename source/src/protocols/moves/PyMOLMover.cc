@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/moves/PyMolMover.cc
-/// @brief  Send infromation to PyMol
+/// @file   protocols/moves/PyMOLMover.cc
+/// @brief  Send infromation to PyMOL
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_protocols_moves_PyMolMover_CC
-#define INCLUDED_protocols_moves_PyMolMover_CC
+#ifndef INCLUDED_protocols_moves_PyMOLMover_CC
+#define INCLUDED_protocols_moves_PyMOLMover_CC
 
 /*
 /// Workaround for:
@@ -29,8 +29,8 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 */
 
 // protocol headers
-#include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/PyMolMoverCreator.hh>
+#include <protocols/moves/PyMOLMover.hh>
+#include <protocols/moves/PyMOLMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -97,7 +97,7 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 namespace protocols {
 namespace moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.PyMolMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.PyMOLMover" );
 
 
 /// We using independent numeric::random::rg() which is not connected to RNG system because we do not want PyMOL to interfere with other Rosetta systems.
@@ -245,11 +245,11 @@ operator<<(std::ostream & output, UDPSocketClient const & client)
 }
 
 /* -------------------------------------------------------------------------------------------------
-PyMolMover Class
+PyMOLMover Class
 ---------------------------------------------------------------------------------------------- */
 
 /// @brief ctor
-PyMolMover::PyMolMover(std::string const & address, int port) :
+PyMOLMover::PyMOLMover(std::string const & address, int port) :
 	link_(address, port),
 	update_energy_(false),
 	energy_type_(core::scoring::total_score),
@@ -261,20 +261,20 @@ PyMolMover::PyMolMover(std::string const & address, int port) :
 {}
 
 /// @brief cctor
-PyMolMover::PyMolMover( PyMolMover const & ) = default;
+PyMOLMover::PyMOLMover( PyMOLMover const & ) = default;
 
-PyMolMover::~PyMolMover() = default;
+PyMOLMover::~PyMOLMover() = default;
 
-// XRW TEMP std::string PyMolMover::get_name() const
+// XRW TEMP std::string PyMOLMover::get_name() const
 // XRW TEMP {
 // XRW TEMP  return "PyMOL_Mover";
 // XRW TEMP }
 
-void PyMolMover::set_PyMol_model_name( std::string name ){
+void PyMOLMover::set_PyMOL_model_name( std::string name ){
 	pymol_name_ = name;
 }
 
-std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
+std::string PyMOLMover::get_PyMOL_model_name(Pose const & pose) const
 {
 	if ( pymol_name_.size() ) {
 		return pymol_name_;
@@ -291,7 +291,7 @@ std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 }
 
 
-bool PyMolMover::is_it_time()
+bool PyMOLMover::is_it_time()
 {
 	// First let's check if enough time have passes since last time we send info...
 	//double t = clock() / CLOCKS_PER_SEC;
@@ -303,14 +303,14 @@ bool PyMolMover::is_it_time()
 }
 
 
-void PyMolMover::apply( Pose const & pose)
+void PyMOLMover::apply( Pose const & pose)
 {
-	TR.Trace << "PyMolMover::apply( Pose const & pose) ..." << std::endl;
+	TR.Trace << "PyMOLMover::apply( Pose const & pose) ..." << std::endl;
 
 	if ( !is_it_time() ) return;
 	TR.Trace << "PyMOL_Mover::apply It is time!" << std::endl;
 
-	std::string name = get_PyMol_model_name(pose);
+	std::string name = get_PyMOL_model_name(pose);
 	TR.Trace << "PyMOL_Mover::apply name:" << name << std::endl;
 
 	// Check if pose is a membrane pose
@@ -342,13 +342,13 @@ void PyMolMover::apply( Pose const & pose)
 	if ( update_energy_ ) send_energy(pose, energy_type_);
 }
 
-void PyMolMover::apply( Pose & pose)
+void PyMOLMover::apply( Pose & pose)
 {
 	Pose const & p(pose);
 	apply(p);
 }
 
-void PyMolMover::print(std::string const & message)
+void PyMOLMover::print(std::string const & message)
 {
 	if ( !is_it_time() ) return;
 
@@ -357,7 +357,7 @@ void PyMolMover::print(std::string const & message)
 	link_.sendMessage(msg);
 }
 
-void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_type)
+void PyMOLMover::send_energy(Pose const &pose, core::scoring::ScoreType score_type)
 {
 #ifndef  __native_client__
 	if ( !is_it_time() ) return;
@@ -398,7 +398,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 		zipper << msg;
 		zipper.zflush_finalize();
 
-		std::string name = get_PyMol_model_name(pose);
+		std::string name = get_PyMOL_model_name(pose);
 		std::string sname = core::scoring::name_from_score_type(score_type);
 
 		std::string message =  std::string("Ene.gzip") + char(keep_history_) \
@@ -414,13 +414,13 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 }
 
 /// Send specified energy to PyMOL.
-void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
+void PyMOLMover::send_energy(Pose const &pose, std::string const & stype)
 {
 	send_energy(pose, core::scoring::ScoreTypeManager::score_type_from_name(stype) );
 }
 
 
-void PyMolMover::label_energy(core::pose::Pose const &input_pose , std::string score_type ="total_score"){
+void PyMOLMover::label_energy(core::pose::Pose const &input_pose , std::string score_type ="total_score"){
 	//Displays <sigs> number of characters for each energy with labels on CA.
 	//&&did not find the equivalent of _get_energies
 	core::scoring::Energies energy=input_pose.energies();
@@ -429,7 +429,7 @@ void PyMolMover::label_energy(core::pose::Pose const &input_pose , std::string s
 }
 
 
-void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)
+void PyMOLMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)
 {
 #ifndef  __native_client__
 	if ( !is_it_time() ) return;
@@ -457,7 +457,7 @@ void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 	zipper << msg;
 	zipper.zflush_finalize();
 
-	std::string name = get_PyMol_model_name(pose);
+	std::string name = get_PyMOL_model_name(pose);
 	std::string sname = energyType;
 
 	std::string message = std::string("Ene.gzip") + char(keep_history_) \
@@ -472,10 +472,10 @@ void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 }
 
 
-/// @brief Send Membrane Planes to PyMol
+/// @brief Send Membrane Planes to PyMOL
 /// @details If pose is a membrane pose
 /// pymol viewer will build CGO planes from points specified
-void PyMolMover::send_membrane_planes( Pose const & pose ) {
+void PyMOLMover::send_membrane_planes( Pose const & pose ) {
 
 #ifndef __native_client__
 
@@ -539,7 +539,7 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	zipper << msg;
 	zipper.zflush_finalize();
 
-	std::string name = get_PyMol_model_name(pose);
+	std::string name = get_PyMOL_model_name(pose);
 	std::string sname = "membrane_planes";
 
 	std::string message =  std::string("Mem.gzip") + char(keep_history_) \
@@ -553,16 +553,16 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 }
 
 
-void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
+void PyMOLMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
 {
 #ifndef  __native_client__
 	utility::vector1<int> energies( pose.size(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.size()
 
 	for ( auto const & color : colors ) {
 		PyAssert( color.first >=1 && color.first <= static_cast<int>(pose.size()),
-			"PyMolMover::send_colors residue index is out of range!");
+			"PyMOLMover::send_colors residue index is out of range!");
 		PyAssert( color.second >= XC_first_color && color.second <= XC_last_color,
-			"PyMolMover::send_colors color index is out of range!");
+			"PyMOLMover::send_colors color index is out of range!");
 
 		energies[ color.first ] = color.second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
 	}
@@ -570,7 +570,7 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 #endif
 }
 
-void PyMolMover::show(std::ostream & output) const
+void PyMOLMover::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output << "Keep history:          " << ( ( keep_history_ ) ? ("True") : ("False") ) << std::endl;
@@ -589,7 +589,7 @@ void PyMolMover::show(std::ostream & output) const
 
 
 void
-PyMolMover::send_any( std::string ptype, core::pose::Pose const & pose, utility::vector1< std::string > data, core::Size  size /* = 6 */ ){
+PyMOLMover::send_any( std::string ptype, core::pose::Pose const & pose, utility::vector1< std::string > data, core::Size  size /* = 6 */ ){
 
 	/// ptype is a tag for the type of data
 	/// pose is the pose in PyMOL (the size what matters)
@@ -623,7 +623,7 @@ PyMolMover::send_any( std::string ptype, core::pose::Pose const & pose, utility:
 		to_send << pdb.str() << dat.str();
 	}
 
-	std::string name = get_PyMol_model_name(pose);
+	std::string name = get_PyMOL_model_name(pose);
 
 
 	//compressing message
@@ -647,7 +647,7 @@ PyMolMover::send_any( std::string ptype, core::pose::Pose const & pose, utility:
 //Sends list of hydrogen bonds and displays them in PyMOL.
 //Makes use of PyMOL's "distance" function
 void
-PyMolMover::send_hbonds( core::pose::Pose const & pose){
+PyMOLMover::send_hbonds( core::pose::Pose const & pose){
 
 	// Check that the energies are updated.
 	if ( !pose.energies().energies_updated() ) {
@@ -714,7 +714,7 @@ PyMolMover::send_hbonds( core::pose::Pose const & pose){
 		zlib_stream::zip_ostream zipper(zmsg, true);
 		zipper << to_send.str();
 		zipper.zflush_finalize();
-		std::string name = get_PyMol_model_name( pose);
+		std::string name = get_PyMOL_model_name( pose);
 		std::string message = std::string("hbd.gzip") \
 			+ char(keep_history_) \
 			+ char(name.size()) \
@@ -755,7 +755,7 @@ structure, and you wish for PyMOL to display the changes.
 */
 
 void
-PyMolMover::send_ss(core::pose::Pose &pose, std::string ss = ""){
+PyMOLMover::send_ss(core::pose::Pose &pose, std::string ss = ""){
 
 	// Get ss.
 	utility::vector1< std::string > ssv;
@@ -784,7 +784,7 @@ PyMolMover::send_ss(core::pose::Pose &pose, std::string ss = ""){
 //Colors polar residues red and nonpolar residues blue.
 
 void
-PyMolMover::send_polars(core::pose::Pose const &pose) {
+PyMOLMover::send_polars(core::pose::Pose const &pose) {
 
 	// Send 1 or 0, if polar or not.
 	utility::vector1< std::string > data;
@@ -802,7 +802,7 @@ PyMolMover::send_polars(core::pose::Pose const &pose) {
 //MoveMap DOF info per residue in pose.
 
 void
-PyMolMover::send_movemap( core::pose::Pose const &pose, core::kinematics::MoveMap const &movemap) {
+PyMOLMover::send_movemap( core::pose::Pose const &pose, core::kinematics::MoveMap const &movemap) {
 
 	//Colors movable regions green and non-movable regions red.
 	utility::vector1< std::string > data;
@@ -833,7 +833,7 @@ PyMOL_Mover.view_foldtree_diagram()
 */
 
 void
-PyMolMover::send_foldtree(core::pose::Pose const &pose, core::kinematics::FoldTree const &foldtree) {
+PyMOLMover::send_foldtree(core::pose::Pose const &pose, core::kinematics::FoldTree const &foldtree) {
 
 	//If not sent, use pose's FoldTree.
 	utility::vector1< std::string > data;
@@ -907,19 +907,19 @@ PyMolMover::send_foldtree(core::pose::Pose const &pose, core::kinematics::FoldTr
 /// End Xiyao's Code
 
 std::ostream &
-operator<<(std::ostream & output, PyMolMover const & mover)
+operator<<(std::ostream & output, PyMOLMover const & mover)
 {
 	mover.show(output);
 	return output;
 }
 
-PyMolObserver::PyMolObserver():
+PyMOLObserver::PyMOLObserver():
 	CacheableObserver(),
 	type_( no_observer ) // We have to set the observer type specifically.
 {
 }
 
-PyMolObserver::PyMolObserver(PyMolObserver const & rval) :
+PyMOLObserver::PyMOLObserver(PyMOLObserver const & rval) :
 	CacheableObserver( rval ),
 	type_( rval.type_ ),
 	pymol_(rval.pymol_)
@@ -927,12 +927,12 @@ PyMolObserver::PyMolObserver(PyMolObserver const & rval) :
 {
 }
 
-PyMolObserver::~PyMolObserver() {
+PyMOLObserver::~PyMOLObserver() {
 	detach_from();
 }
 
-PyMolObserver &
-PyMolObserver::operator= (PyMolObserver const &rval) {
+PyMOLObserver &
+PyMOLObserver::operator= (PyMOLObserver const &rval) {
 	if ( this != &rval ) {
 		core::pose::datacache::CacheableObserver::operator=( rval );
 		type_ = rval.type_;
@@ -943,126 +943,126 @@ PyMolObserver::operator= (PyMolObserver const &rval) {
 }
 
 core::pose::datacache::CacheableObserverOP
-PyMolObserver::clone() {
-	return core::pose::datacache::CacheableObserverOP( new PyMolObserver( *this ) );
+PyMOLObserver::clone() {
+	return core::pose::datacache::CacheableObserverOP( new PyMOLObserver( *this ) );
 }
 
 core::pose::datacache::CacheableObserverOP
-PyMolObserver::create() {
-	return core::pose::datacache::CacheableObserverOP( new PyMolObserver );
+PyMOLObserver::create() {
+	return core::pose::datacache::CacheableObserverOP( new PyMOLObserver );
 }
 
 void
-PyMolObserver::set_type( ObserverType setting ) {
+PyMOLObserver::set_type( ObserverType setting ) {
 	type_ = setting;
 	// We don't have a pose, so wait until we get attached
 }
 
 void
-PyMolObserver::add_type( ObserverType setting ) {
+PyMOLObserver::add_type( ObserverType setting ) {
 	type_ = type_ | setting;
 	// We don't have a pose, so wait until we get attached
 }
 
-void PyMolObserver::attach(core::pose::Pose &p)
+void PyMOLObserver::attach(core::pose::Pose &p)
 {
 	attach_to(p);
 }
 
-void PyMolObserver::detach(core::pose::Pose & /*p*/)
+void PyMOLObserver::detach(core::pose::Pose & /*p*/)
 {
 	detach_from();
 }
 
 bool
-PyMolObserver::is_attached() const {
+PyMOLObserver::is_attached() const {
 	return general_event_link_.valid() || energy_event_link_.valid() || conformation_event_link_.valid();
 }
 
 void
-PyMolObserver::attach_impl(core::pose::Pose & pose) {
+PyMOLObserver::attach_impl(core::pose::Pose & pose) {
 	general_event_link_.invalidate();
 	energy_event_link_.invalidate();
 	conformation_event_link_.invalidate();
 
 	if ( type_ & general_observer ) {
-		general_event_link_ = pose.attach_general_obs( &PyMolObserver::generalEvent, this );
+		general_event_link_ = pose.attach_general_obs( &PyMOLObserver::generalEvent, this );
 	}
 	if ( type_ & energy_observer ) {
-		energy_event_link_ = pose.attach_energy_obs( &PyMolObserver::energyEvent, this );
+		energy_event_link_ = pose.attach_energy_obs( &PyMOLObserver::energyEvent, this );
 	}
 	if ( type_ & conformation_observer ) {
-		conformation_event_link_ = pose.attach_conformation_obs( &PyMolObserver::conformationEvent, this );
+		conformation_event_link_ = pose.attach_conformation_obs( &PyMOLObserver::conformationEvent, this );
 	}
 }
 
 void
-PyMolObserver::detach_impl() {
+PyMOLObserver::detach_impl() {
 	general_event_link_.invalidate();
 	energy_event_link_.invalidate();
 	conformation_event_link_.invalidate();
 }
 
-PyMolObserverOP
+PyMOLObserverOP
 get_pymol_observer(core::pose::Pose & pose) {
 	using namespace core::pose::datacache;
 
 	if ( !pose.observer_cache().has( CacheableObserverType::PYMOL_OBSERVER ) ) {
-		PyMolObserverOP obs( new PyMolObserver );
+		PyMOLObserverOP obs( new PyMOLObserver );
 		pose.observer_cache().set( CacheableObserverType::PYMOL_OBSERVER, obs, /*autoattach*/ false );
 	}
 	CacheableObserverOP obs = pose.observer_cache().get_ptr( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER );
-	return utility::pointer::dynamic_pointer_cast< PyMolObserver >( obs );
+	return utility::pointer::dynamic_pointer_cast< PyMOLObserver >( obs );
 }
 
-PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
+PyMOLObserverOP AddPyMOLObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	PyMolObserverOP o( get_pymol_observer(p) );
+	PyMOLObserverOP o( get_pymol_observer(p) );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
-	o->add_type( PyMolObserver::general_observer );
+	o->add_type( PyMOLObserver::general_observer );
 	o->attach(p);
 	return o;
 }
 
-PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_history, core::Real update_interval)
+PyMOLObserverOP AddPyMOLObserver_to_energies(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	PyMolObserverOP o( get_pymol_observer(p) );
+	PyMOLObserverOP o( get_pymol_observer(p) );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
-	o->add_type( PyMolObserver::energy_observer );
+	o->add_type( PyMOLObserver::energy_observer );
 	o->attach(p);
 	return o;
 }
 
-PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_history, core::Real update_interval)
+PyMOLObserverOP AddPyMOLObserver_to_conformation(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	PyMolObserverOP o( get_pymol_observer(p) );
+	PyMOLObserverOP o( get_pymol_observer(p) );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
-	o->add_type( PyMolObserver::conformation_observer );
+	o->add_type( PyMOLObserver::conformation_observer );
 	o->attach(p);
 	return o;
 }
 
-/// @brief PyMolMoverCreator interface, name of the mover
-// XRW TEMP std::string PyMolMover::mover_name() {
-// XRW TEMP  return "PyMolMover";
+/// @brief PyMOLMoverCreator interface, name of the mover
+// XRW TEMP std::string PyMOLMover::mover_name() {
+// XRW TEMP  return "PyMOLMover";
 // XRW TEMP }
 
-/// @brief PyMolMoverCreator interface, returns a unique key name to be used in xml file
-// XRW TEMP std::string PyMolMoverCreator::keyname() const {
-// XRW TEMP  return PyMolMover::mover_name();
+/// @brief PyMOLMoverCreator interface, returns a unique key name to be used in xml file
+// XRW TEMP std::string PyMOLMoverCreator::keyname() const {
+// XRW TEMP  return PyMOLMover::mover_name();
 // XRW TEMP }
 
-/// @brief PyMolMoverCreator interface, return a new instance
-// XRW TEMP protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PyMolMover() );
+/// @brief PyMOLMoverCreator interface, return a new instance
+// XRW TEMP protocols::moves::MoverOP PyMOLMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PyMOLMover() );
 // XRW TEMP }
 
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
 void
-PyMolMover::parse_my_tag(
+PyMOLMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
@@ -1074,63 +1074,63 @@ PyMolMover::parse_my_tag(
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
-PyMolMover::fresh_instance() const
+PyMOLMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PyMolMover );
+	return protocols::moves::MoverOP( new PyMOLMover );
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
-PyMolMover::clone() const
+PyMOLMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::moves::PyMolMover( *this ) );
+	return protocols::moves::MoverOP( new protocols::moves::PyMOLMover( *this ) );
 }
 
-std::string PyMolMover::get_name() const {
+std::string PyMOLMover::get_name() const {
 	return mover_name();
 }
 
-std::string PyMolMover::mover_name() {
-	return "PyMolMover";
+std::string PyMOLMover::mover_name() {
+	return "PyMOLMover";
 }
 
-void PyMolMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void PyMOLMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"keep_history", xsct_rosetta_bool,
 		"Each call to the mover stores the pose in a new state/frame of "
-		"an object in PyMol rather than overwriting it. Frames can then be "
+		"an object in PyMOL rather than overwriting it. Frames can then be "
 		"played back like a movie to visualize the flow of a protocol.",
 		"0");
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
-		"PyMolMover will send a pose to an instance of the PyMol "
+		"PyMOLMover will send a pose to an instance of the PyMOL "
 		"molecular visualization software running on the local host. "
-		"Each call of the mover overwrites the object in PyMol. "
+		"Each call of the mover overwrites the object in PyMOL. "
 		"It is not a full featured as the version built in to PyRosetta "
 		"but is extremely useful for visualizing the flow of a protocol "
 		"or generating a frames for a movie of a protocol.", attlist );
 }
 
-std::string PyMolMoverCreator::keyname() const {
-	return PyMolMover::mover_name();
+std::string PyMOLMoverCreator::keyname() const {
+	return PyMOLMover::mover_name();
 }
 
 protocols::moves::MoverOP
-PyMolMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PyMolMover );
+PyMOLMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PyMOLMover );
 }
 
-void PyMolMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void PyMOLMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	PyMolMover::provide_xml_schema( xsd );
+	PyMOLMover::provide_xml_schema( xsd );
 }
 
 
 } // moves
 } // protocols
 
-#endif // INCLUDED_protocols_moves_PyMolMover_CC
+#endif // INCLUDED_protocols_moves_PyMOLMover_CC
 

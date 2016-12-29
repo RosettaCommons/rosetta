@@ -27,7 +27,7 @@ from rosetta.core.io.pdb import dump_pdb
 from rosetta.core.id import AtomID
 from rosetta.core.scoring import ScoreFunction
 
-from rosetta.protocols.moves import PyMolMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
+from rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
 from rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
 from rosetta.protocols.loops import get_fa_scorefxn
 

@@ -41,7 +41,7 @@ starting_p.assign( p )
 scorefxn_low  = protocols.loops.get_cen_scorefxn() #  create_score_function( 'cen_std' )
 scorefxn_high = protocols.loops.get_fa_scorefxn()  #  create_score_function_ws_patch( 'standard', 'score12' )
 
-pymol = PyMolMover() # If Pymol server is running, centroid stage will display
+pymol = PyMOLMover() # If Pymol server is running, centroid stage will display
 
 loop_begin = 145
 loop_end = 155

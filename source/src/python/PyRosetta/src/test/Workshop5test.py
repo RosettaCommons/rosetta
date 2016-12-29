@@ -17,7 +17,7 @@ test.assign(start)
 start.pdb_info().name("start")
 test.pdb_info().name("test")
 
-pmm = PyMolMover()
+pmm = PyMOLMover()
 pmm.apply(start)
 pmm.apply(test)
 pmm.keep_history(True)
@@ -66,7 +66,7 @@ min_mover.movemap(mm4060)
 min_mover.score_function(scorefxn)
 
 # Commenting out for now because this lead to seg-fault in debug builds
-# AddPyMolObserver(test2, True)
+# AddPyMOLObserver(test2, True)
 
 min_mover.apply(test2)
 print( min_mover )

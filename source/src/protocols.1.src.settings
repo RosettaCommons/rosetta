@@ -205,7 +205,7 @@ sources = {
 		"mover_schemas",
 		"NullMover",
 		"OutputMovers",
-		"PyMolMover",
+		"PyMOLMover",
 		"RampingMover",
 		"RepeatMover",
 		"ReplicaExchangeMC",

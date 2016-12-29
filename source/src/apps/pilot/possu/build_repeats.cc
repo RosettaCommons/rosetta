@@ -44,7 +44,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 // utility headers
 #include <utility/file/FileName.hh>

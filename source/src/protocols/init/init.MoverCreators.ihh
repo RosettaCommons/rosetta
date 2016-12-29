@@ -296,7 +296,7 @@
 #include <protocols/moves/IfMoverCreator.hh>
 #include <protocols/moves/MoverContainerCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
-#include <protocols/moves/PyMolMoverCreator.hh>
+#include <protocols/moves/PyMOLMoverCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
 #include <protocols/moves/FilterReportAsPoseExtraScoresMoverCreator.hh>
 

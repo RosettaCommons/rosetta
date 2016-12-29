@@ -128,13 +128,13 @@ def movemap(pose, PDB_out = False):
     # apply minimization
     scorefxn(test_pose)    # to prevent verbose output on the next line
 
-    pymover = PyMolMover()
+    pymover = PyMOLMover()
     #### uncomment the line below and "comment-out" the two lines below to
     ####    export the structures into different PyMOL states of the same object
     #pymover.keep_history = True    # enables viewing across states
 
     #### comment-out the line below, changing PDBInfo names tells the
-    ####    PyMolMover to produce new objects
+    ####    PyMOLMover to produce new objects
     test_pose.pdb_info().name('original')
     pymover.apply(test_pose)
     print( '\nPre minimization score:', scorefxn(test_pose) )

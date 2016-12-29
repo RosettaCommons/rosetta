@@ -69,7 +69,7 @@ The method sample_refinement:
         -for defining the Interface
         -for determining "ddG"
 4.  creates an Interface object defining the protein-protein interface
-5.  creates a PyMolMover for exporting structures to PyMOL
+5.  creates a PyMOLMover for exporting structures to PyMOL
 6.  perform scanning by:
         a. looping over the pose residues, if it is an Interface residue, call
             interface_ddG which returns the "interaction energy"
@@ -145,8 +145,8 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
     interface.distance(interface_cutoff)
     interface.calculate(pose)
 
-    # 5. create a PyMolMover for sending output to PyMOL (optional)
-    pymover = PyMolMover()
+    # 5. create a PyMOLMover for sending output to PyMOL (optional)
+    pymover = PyMOLMover()
     pymover.keep_history(True)    # for multiple trajectories
     pymover.apply(pose)
     pymover.send_energy(pose)
@@ -262,7 +262,7 @@ def interface_ddG( pose, mutant_position, mutant_aa, movable_jumps, scorefxn = '
     mutant.pdb_info().name( pose.sequence()[mutant_position -1] +
         str( pose.pdb_info().number(mutant_position)) +
         mutant.sequence()[mutant_position - 1])
-    pymover = PyMolMover()
+    pymover = PyMOLMover()
     scorefxn(mutant)
     pymover.apply(mutant)
     pymover.send_energy(mutant)
@@ -393,7 +393,7 @@ def calc_binding_energy(pose, scorefxn, center, cutoff = 8.0):
     #### create a Mover for performing translation
     #### RigidBodyTransMover is SUPPOSED to translate docking partners of a
     ####    pose based on an axis and magnitude
-    #### test it using the PyMolMover, it does not perform a simple translation
+    #### test it using the PyMOLMover, it does not perform a simple translation
     ####    I also observed a "Hbond Tripped" error when packing after applying
     ####    the Mover, it appears to store inf and NaN values into hbonds
     #transmover = RigidBodyTransMover()
@@ -650,7 +650,7 @@ to investigate using PyRosetta.
             commands in 3. would change since docking.py wouldn't be here)
 3. Run the script from the commandline with appropriate arguments:
 
->python ala_scan.py --pdb_filename=3RT3.clean.pdb --partners=B_C --mutant_aa=A --interface_cutoff=8.0 --trials=20 --trial_output=3RT3_ddG --PyMolMover_ip=off
+>python ala_scan.py --pdb_filename=3RT3.clean.pdb --partners=B_C --mutant_aa=A --interface_cutoff=8.0 --trials=20 --trial_output=3RT3_ddG --PyMOLMover_ip=off
 
         -The partners option, "B_C" is PDB specific, if you change the chain
             IDs in 3RT3, make sure this matches

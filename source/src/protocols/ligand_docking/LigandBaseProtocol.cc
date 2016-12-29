@@ -174,7 +174,7 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 
 	// Tiny weight here (like standard.wts) presumably eliminates the worst intra-ligand clashes...
 	// Weight increased because I was still getting significant overlaps between ligand atoms,
-	// enough to get new "bonds" in PyMol (though no more interpenetrating rings even at 0.004).
+	// enough to get new "bonds" in PyMOL (though no more interpenetrating rings even at 0.004).
 	// However, using 0.04 meant total fa_intra_rep ~ 20 in most structures, which I'm concerned
 	// biased the selection of ligand conformers too much.  Needs more rigorous testing.
 	if ( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts

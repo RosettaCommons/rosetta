@@ -5,7 +5,7 @@
 // libRosetta headers
 #include <protocols/cryst/refinable_lattice.hh>
 
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <utility/graph/Graph.hh>

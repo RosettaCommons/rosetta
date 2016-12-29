@@ -63,7 +63,7 @@ print( emap[fa_atr] )
 print( emap[fa_rep] )
 print( emap[fa_sol] )
 
-pymol = PyMolMover()
+pymol = PyMOLMover()
 ras.pdb_info().name("ras")
 pymol.send_energy(ras)
 pymol.send_energy(ras, "fa_atr")

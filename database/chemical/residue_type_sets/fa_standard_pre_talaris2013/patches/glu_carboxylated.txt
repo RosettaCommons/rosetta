@@ -35,10 +35,10 @@ ADD_BOND  CD2  OE4
 ## Technically, the carboxyl oxygens in most files containing gamma-carboxy-glutamate ("CGU")
 ##   are called OE11/12 for the first carboxyl group and OE21/22 for the second carboxyl group.
 ##   However, earlier testing shows that using the names OE21 and OE22 may result in 
-##   oddies when displaying this residue in certain molecular visualization application such as PyMol
+##   oddies when displaying this residue in certain molecular visualization application such as PyMOL
 ##   (e.g. missing bonds or oxygen showing up as white atoms) due to the second letter not being 
 ##   "O" (for oxygen). [This occurs because dumped pdb structures from Rosetta may exclude the element symbol 
-##   in Column 78-- and as a result, PyMol would treat OE21, etc. as atoms of the non-existent element "Oe,"
+##   in Column 78-- and as a result, PyMOL would treat OE21, etc. as atoms of the non-existent element "Oe,"
 ##   which could cause problems in future processing. This is confirmed by exporting the file.]
 ##
 ##  Hence, OE21/22 are renamed to OE3/4 here. Note that this does have a known negative side-effect:

@@ -271,7 +271,7 @@ void WholeBodyTranslationMover::apply( core::pose::Pose & pose )
 	}
 
 
-	//protocols::moves::AddPyMolObserver(pose, true); // Lets ask PyMol to store history...
+	//protocols::moves::AddPyMOLObserver(pose, true); // Lets ask PyMOL to store history...
 
 	//TR << "Yifan debug: root origin    " << F(8,3,pose.conformation().atom_tree().root()->xyz().x()) << F(8,3,pose.conformation().atom_tree().root()->xyz().y()) << F(8,3,pose.conformation().atom_tree().root()->xyz().z()) << std::endl;
 	//TR << "Yifan debug: new root position" << pose.conformation().atom_tree().root()->xyz() << std::endl;

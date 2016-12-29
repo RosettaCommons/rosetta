@@ -63,7 +63,7 @@ rosetta.pose_from_file(pose_s, "../test/data/test_in_short.pdb")
 scorefxn = rosetta.create_score_function('standard')
 scorefxn(pose)
 
-pymol = rosetta.PyMolMover()
+pymol = rosetta.PyMOLMover()
 
 pymol.apply(pose_s)
 coloring_demo(pose_s)

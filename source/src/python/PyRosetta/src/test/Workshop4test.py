@@ -49,8 +49,8 @@ p = pose_from_sequence("AAAAAAAAAA", "fa_standard")
 for res in range(1, p.total_residue() + 1):
     p.set_omega(res, 180)
 
-# use the PyMolMover to echo this structure to PyMOL
-pmm = PyMolMover()
+# use the PyMOLMover to echo this structure to PyMOL
+pmm = PyMOLMover()
 pmm.apply(p)
 
 # set score function to include Van der Wals and H-bonds only

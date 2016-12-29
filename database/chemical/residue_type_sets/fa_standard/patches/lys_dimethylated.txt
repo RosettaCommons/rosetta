@@ -67,9 +67,9 @@ ADD_BOND  CH2 HH23
 ##   and the second indicating which hydrogen of the methyl group it is.
 ##
 ##   However, earlier testing shows that using these names may result in oddies if this residue 
-##   is further processed by certain molecular visualization applications such as PyMol
+##   is further processed by certain molecular visualization applications such as PyMOL
 ##   due to the second letter not being "H" (for hydrogen). [This occurs because dumped pdb structures 
-##   from Rosetta may exclude the element symbol in Column 78-- and as a result, PyMol would treat HM11, etc.
+##   from Rosetta may exclude the element symbol in Column 78-- and as a result, PyMOL would treat HM11, etc.
 ##   as an atom of the non-existent element "HM," which could cause problems in future processing. 
 ##   This is confirmed by exporting the file.]
 ##

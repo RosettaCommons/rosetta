@@ -33,7 +33,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 
 static THREAD_LOCAL basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer" );
@@ -96,8 +96,8 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 
 	}
 
-	/// PyMol_Mover
-	//moves::PyMolMoverOP pymol = new moves::PyMolMover();
+	/// PyMOL_Mover
+	//moves::PyMOLMoverOP pymol = new moves::PyMOLMover();
 	//pymol->keep_history(true);
 
 	using namespace protocols::simple_moves;

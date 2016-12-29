@@ -394,7 +394,7 @@ sources = {
 		"MoverContainer",
 		"MoversTest",
 		"MoverFactory",
-		"PyMolMoverTest",
+		"PyMOLMoverTest",
 		"ScoreTest",
 		"SmallMover",
 		"ShearMover",

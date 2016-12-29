@@ -61,7 +61,7 @@
 #include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 #include <sstream>
 #include <iostream>

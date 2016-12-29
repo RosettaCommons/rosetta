@@ -437,7 +437,7 @@ def create_package(rosetta_source_path, path):
     package_prefix = path + '/setup'
     if not os.path.isdir(package_prefix): os.makedirs(package_prefix)
 
-    for f in 'self-test.py PyMol-RosettaServer.py'.split(): shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/' + f, path)
+    for f in 'self-test.py PyMOL-RosettaServer.py'.split(): shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/' + f, path)
 
     for d in 'demo test'.split(): distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/' + d, path + '/' + d, update=False)
 

@@ -80,8 +80,8 @@ def pose_scoring(pose, display_residues = []):
 
     """
     # this object is contained in PyRosetta v2.0 and above
-    # create a PyMolMover for exporting structures directly to PyMOL
-    pymover = PyMolMover()
+    # create a PyMOLMover for exporting structures directly to PyMOL
+    pymover = PyMOLMover()
 
     # 1. score the pose using the default full-atom (fa) ScoreFunction
     # a ScoreFunction is essentially a list of weights indicating which

@@ -93,7 +93,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PCA.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/scoring/SS_Killhairpins_Info.hh>
@@ -1695,7 +1695,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		// Can we add the PyMOL mover here?
 		if ( option[OptionKeys::run::show_simulation_in_pymol].user()
 				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
-			protocols::moves::AddPyMolObserver(fold_pose,
+			protocols::moves::AddPyMOLObserver(fold_pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
 		}

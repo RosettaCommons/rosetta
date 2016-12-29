@@ -47,7 +47,7 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 #include <devel/init.hh>
 

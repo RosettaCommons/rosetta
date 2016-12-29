@@ -45,7 +45,7 @@
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
@@ -309,7 +309,7 @@ LDConverterMover::apply(
 
 		//kdrew: only turn on pymol observer in debug mode
 		//#ifndef NDEBUG
-		// protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose);
+		// protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver(pose);
 		//#endif
 
 		//kdrew: minimizer not working after appending/prepending residues, not sure why

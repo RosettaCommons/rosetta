@@ -126,7 +126,7 @@ public:
 	/// Sigma1 represents the distance between the two atoms where the Lennard-Jones energy is 0, i.e. where a collision is just forming/resolving.
 	/// Sigma2 represents the distance between the two atoms where the derivative of the Lennard-Jones energy is 0, i.e. the minimum of the well depth.
 	///
-	/// In rosetta, we mean sigma2 when we talk about radii, but PyMol usually sets the radii to sigma1.
+	/// In rosetta, we mean sigma2 when we talk about radii, but PyMOL usually sets the radii to sigma1.
 	///  If you see two atoms overlapping using the Rosetta radii, they're not necessarily in collision. They are just not
 	///  at their minimum value.
 	///

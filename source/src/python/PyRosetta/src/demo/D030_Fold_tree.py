@@ -153,11 +153,11 @@ def fold_tree(PDB_out = False):
     test_pose.fold_tree(pose_fold_tree)
 
     # this object is contained in PyRosetta v2.0 and above (optional)
-    pymover = PyMolMover()
+    pymover = PyMOLMover()
 
     # 5. change and display the new structures
     # a. export "linearized" structure
-    test_pose.pdb_info().name('linearized')    # for PyMolMover
+    test_pose.pdb_info().name('linearized')    # for PyMOLMover
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('linearized.pdb')
@@ -165,7 +165,7 @@ def fold_tree(PDB_out = False):
 
     # b. make an early change
     test_pose.set_phi(low_jump_point - 10, 50)
-    test_pose.pdb_info().name('pre_jump')    # for PyMolMover
+    test_pose.pdb_info().name('pre_jump')    # for PyMOLMover
     pymover.apply(test_pose)    # all downstream residues move
     if PDB_out:
         test_pose.dump_pdb('pre_jump.pdb')
@@ -173,7 +173,7 @@ def fold_tree(PDB_out = False):
 
     # c. make a change in the first edge created by the jump
     test_pose.set_phi(low_jump_point + 5, 50)
-    test_pose.pdb_info().name('early_in_jump')    # for PyMolMover
+    test_pose.pdb_info().name('early_in_jump')    # for PyMOLMover
     pymover.apply(test_pose)    # residues up to the cutpoint change
     if PDB_out:
         test_pose.dump_pdb('early_in_jump.pdb')
@@ -181,7 +181,7 @@ def fold_tree(PDB_out = False):
 
     # d. make a change in the second edge created by the jump
     test_pose.set_phi(high_jump_point - 5, 50)
-    test_pose.pdb_info().name('late_in_jump')    # for PyMolMover
+    test_pose.pdb_info().name('late_in_jump')    # for PyMOLMover
     pymover.apply(test_pose)    # residues down to the cutpoint change
     if PDB_out:
         test_pose.dump_pdb('late_in_jump.pdb')
@@ -189,7 +189,7 @@ def fold_tree(PDB_out = False):
 
     # e. make a late change
     test_pose.set_phi(high_jump_point + 10, 50)
-    test_pose.pdb_info().name('post_jump')    # for PyMolMover
+    test_pose.pdb_info().name('post_jump')    # for PyMOLMover
     pymover.apply(test_pose)    # all residues downstream move
     if PDB_out:
         test_pose.dump_pdb('post_jump.pdb')
@@ -209,7 +209,7 @@ or another viewer.
     load early_in_jump.pdb
     load late_in_jump.pdb
     load post_jump.pdb
-If the PyMolMover is utilized, the structures are stored in different PyMOL
+If the PyMOLMover is utilized, the structures are stored in different PyMOL
 objects. Cycle through them (starting with the connected straight
 conformation) to observe the effects of a FoldTree.
 The first is simple the "linearized" pose. Due to the logic of the method,
