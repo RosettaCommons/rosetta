@@ -85,7 +85,9 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	fixed_stems_( false ),
 	all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
 	rna_params_file_( "" ),
-	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) )
+	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
+	rmsd_screen_( 0.0 ),
+	disallow_realign_( true )
 {}
 
 //Destructor

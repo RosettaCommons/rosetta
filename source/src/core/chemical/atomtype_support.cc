@@ -290,13 +290,13 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 	// Hydrogens attached to aroCs == Haro
 	// We only look at the deferred atoms, which will be hydrogens attached to carbons, already typed as Hapo.
 	// As it's only the deferred atoms, we don't need to re-check the preserve state.
-	for ( VDs::const_iterator aroit(deferredHs.begin()), aroend(deferredHs.end()); aroit != aroend; ++aroit ) {
+	for ( auto const & aroH : deferredHs ) {
 		OutEdgeIter bonds, bonds_end;
-		for ( boost::tie(bonds, bonds_end) = boost::out_edges(*aroit,graph); bonds != bonds_end; ++bonds ) {
+		for ( boost::tie(bonds, bonds_end) = boost::out_edges(aroH,graph); bonds != bonds_end; ++bonds ) {
 			VD const & tvd( boost::target( *bonds, graph) );
 			Atom const & t( graph[tvd] );
 			if ( t.atom_type_index() && restype.atom_type_set()[ t.atom_type_index() ].atom_type_name() == "aroC" ) {
-				restype.set_atom_type( *aroit, "Haro" );
+				restype.set_atom_type( aroH, "Haro" );
 				break;
 			}
 		}

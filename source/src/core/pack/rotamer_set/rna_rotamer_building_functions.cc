@@ -336,9 +336,9 @@ build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP >
 			for ( Size j = 1; j <= full_torsions.size(); j++ ) {
 				for ( Size k = 1; k <= full_torsions.size(); k++ ) {
 					ResidueOP  new_rsd = rotamers[n]->clone();
-					Size const chi_number_i = rotamers[n]->type().RNA_type().chi_number_pseudoalpha();
-					Size const chi_number_j = rotamers[n]->type().RNA_type().chi_number_pseudobeta();
-					Size const chi_number_k = rotamers[n]->type().RNA_type().chi_number_pseudogamma();
+					Size const chi_number_i = rotamers[n]->type().RNA_info().chi_number_pseudoalpha();
+					Size const chi_number_j = rotamers[n]->type().RNA_info().chi_number_pseudobeta();
+					Size const chi_number_k = rotamers[n]->type().RNA_info().chi_number_pseudogamma();
 					runtime_assert( chi_number_i > 0 );
 					runtime_assert( chi_number_j > 0 );
 					runtime_assert( chi_number_k > 0 );
@@ -380,8 +380,8 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 		for ( Size i = 1; i <= epsilon_torsions.size(); i++ ) {
 			for ( Size j = 1; j <= full_torsions.size(); j++ ) {
 				ResidueOP  new_rsd = rotamers[n]->clone();
-				Size const chi_number_i = rotamers[n]->type().RNA_type().chi_number_pseudoepsilon();
-				Size const chi_number_j = rotamers[n]->type().RNA_type().chi_number_pseudozeta();
+				Size const chi_number_i = rotamers[n]->type().RNA_info().chi_number_pseudoepsilon();
+				Size const chi_number_j = rotamers[n]->type().RNA_info().chi_number_pseudozeta();
 				runtime_assert( chi_number_i > 0 );
 				runtime_assert( chi_number_j > 0 );
 				new_rsd->set_chi( chi_number_i, epsilon_torsions[ i ] );
@@ -444,8 +444,8 @@ build_rna_rotamers(
 		TR << "Going to build rotamers for  3' phosphate at " << resid << "  before: " << new_rotamers.size() << std::endl;
 		build_three_prime_phosphate_rotamers( new_rotamers, pose, rna_task.allow_phosphate_virtualization() );
 		TR << "  after building rotamers: " << new_rotamers.size() << std::endl;
-		TR << " starting pseudo-epsilon: " << new_rotamers[1]->chi( new_rotamers[1]->type().RNA_type().chi_number_pseudoepsilon() ) << std::endl;
-		TR << " starting    pseudo-zeta: " << new_rotamers[1]->chi( new_rotamers[1]->type().RNA_type().chi_number_pseudozeta() ) << std::endl;
+		TR << " starting pseudo-epsilon: " << new_rotamers[1]->chi( new_rotamers[1]->type().RNA_info().chi_number_pseudoepsilon() ) << std::endl;
+		TR << " starting    pseudo-zeta: " << new_rotamers[1]->chi( new_rotamers[1]->type().RNA_info().chi_number_pseudozeta() ) << std::endl;
 	}
 
 	///////////////////////////////////////////////////////////

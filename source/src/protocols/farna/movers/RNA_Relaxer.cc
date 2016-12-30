@@ -101,7 +101,6 @@ RNA_Relaxer::~RNA_Relaxer()
 ///
 void RNA_Relaxer::apply( core::pose::Pose & pose )
 {
-
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace basic::options;
@@ -178,7 +177,6 @@ RNA_Relaxer::find_fragment_by_simple_rmsd_cutoff( pose::Pose & pose )
 	pose::Pose start_pose = pose;
 
 	Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
-
 	for ( Size n = 1; n <= num_find_fragment_tries_ ; n++ ) {
 
 		pose = start_pose;
@@ -188,16 +186,13 @@ RNA_Relaxer::find_fragment_by_simple_rmsd_cutoff( pose::Pose & pose )
 		Real const rmsd_to_start = scoring::all_atom_rmsd( pose, start_pose );
 		TR << "Testing fragment insertion --> Length: " << frag_size << "  rmsd: " << rmsd_to_start << std::endl;
 		if ( rmsd_to_start > rmsd_min_cutoff_ && rmsd_to_start < rmsd_max_cutoff_ ) break;
-
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 {
-
 	using namespace core::scoring;
 
 	pose::Pose start_pose = pose;
@@ -217,7 +212,6 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 		Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
 		rna_fragment_mover_->random_fragment_insertion( pose, frag_size );
 		lores_monte_carlo_->boltzmann( pose, "frag" + SS(frag_size) );
-
 	}
 
 	lores_monte_carlo_->show_counters();
@@ -227,7 +221,6 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 
 	Real const rmsd_to_start = scoring::all_atom_rmsd( pose, start_pose );
 	TR << " LoRes MonteCarlo -->  rmsd: " << rmsd_to_start << std::endl;
-
 }
 
 

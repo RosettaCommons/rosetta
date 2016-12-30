@@ -63,7 +63,7 @@ get_residue_path_distances( ResidueType const & res )
 	return g.all_pairs_shortest_paths();
 }
 
-LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & res){
+LightWeightResidueGraph convert_residuetype_to_light_graph( ResidueType const & res ){
 	//this is a const reference because vertices change when  you copy the graph
 	const  core::chemical::ResidueGraph & full_residue_graph = res.graph(); //get the boost graph structure from residuetype
 
@@ -99,13 +99,11 @@ LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & r
 	debug_assert(boost::num_vertices(lwrg) == full_residue_graph.num_vertices()); //fail if the number of vertex are not the same
 	debug_assert(boost::num_edges(lwrg) == full_residue_graph.num_edges()); //fail if the number of edges are not the same
 
-
 	//boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
 	//boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
 
 	utility::graph::RingDetection<LightWeightResidueGraph> ring_detect(lwrg); //initialize the ring detector. Automatically assigns rings
 	utility::vector1<utility::vector1<lwrg_VD> > rings = ring_detect.GetRings(); //these are the path of the rings
-
 
 	//our light weight graph has been made. Now return it!
 	return lwrg;
@@ -128,31 +126,31 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 
 	for ( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
 		Atom const & atom( graph[*iter] );
-		if ( !preserve || name_counts[ atom.name() ] != 1 ) {
-			//Find the first unoccupied name Xnnn type string.
-			// Skipping values which were multiply represented in the input is deliberate
-			// There's no fair way to choose which one is the "real" one.
-			debug_assert( atom.element_type() );
-			std::string name;
-			core::Size ii(0);
-			do {
-				++ii;
-				name = ObjexxFCL::uppercased( atom.element_type()->get_chemical_symbol() ) + utility::to_string( ii );
-				//Align name, preferring to keep start in the second position
-				if ( name.size() == 2 ) {
-					name = ' ' + name + ' ';
-				} else if ( name.size() == 3 ) {
-					name = ' ' + name;
-				} //Can't be 1, and if it's 4 or greater, leave as is.
-			} while ( name_counts.find( name ) != name_counts.end() );
-			// Assign new value and mark it used.
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Renaming atom from '"<< res.atom(*iter).name() << "' to '" << name << "'" << std::endl;
-			}
-			res.atom(*iter).name( name );
-			res.remap_pdb_atom_names( true ); // We've renamed an atom, so we need to be flexible with PDB loading.
-			name_counts[ name ]++;
+		if ( preserve && name_counts[ atom.name() ] == 1 ) continue;
+		
+		//Find the first unoccupied name Xnnn type string.
+		// Skipping values which were multiply represented in the input is deliberate
+		// There's no fair way to choose which one is the "real" one.
+		debug_assert( atom.element_type() );
+		std::string name;
+		core::Size ii(0);
+		do {
+			++ii;
+			name = ObjexxFCL::uppercased( atom.element_type()->get_chemical_symbol() ) + utility::to_string( ii );
+			//Align name, preferring to keep start in the second position
+			if ( name.size() == 2 ) {
+				name = ' ' + name + ' ';
+			} else if ( name.size() == 3 ) {
+				name = ' ' + name;
+			} //Can't be 1, and if it's 4 or greater, leave as is.
+		} while ( name_counts.find( name ) != name_counts.end() );
+		// Assign new value and mark it used.
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Renaming atom from '"<< res.atom(*iter).name() << "' to '" << name << "'" << std::endl;
 		}
+		res.atom(*iter).name( name );
+		res.remap_pdb_atom_names( true ); // We've renamed an atom, so we need to be flexible with PDB loading.
+		name_counts[ name ]++;
 	}
 }
 

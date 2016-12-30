@@ -125,8 +125,7 @@ RNA_JumpMover::add_new_RNA_jump(
 	BaseEdge e1( ANY_BASE_EDGE ), e2( ANY_BASE_EDGE);
 	BaseDoubletOrientation o( ANY_BASE_DOUBLET_ORIENTATION );
 	bool found_pairing( false );
-	for ( Size n = 1;  n <= rna_pairing_list_.size(); n++ ) {
-		BasePair const & pairing = rna_pairing_list_[n];
+	for ( BasePair const & pairing : rna_pairing_list_ ) {
 		if ( pairing.res1() == jump_pos1 && pairing.res2() == jump_pos2 ) {
 			e1 = pairing.edge1();
 			e2 = pairing.edge2();
@@ -188,7 +187,6 @@ RNA_JumpMover::add_new_RNA_jump(
 		fold_tree.set_jump_atoms( which_jump, atom_name1, atom_name2 );
 		pose.fold_tree( fold_tree );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +201,6 @@ RNA_JumpMover::check_in_chain_connections( Size const & pos1, Size const & pos2 
 
 		if ( res_list1.has_value( pos1 ) && res_list2.has_value( pos2 ) ) return n;
 		if ( res_list1.has_value( pos2 ) && res_list2.has_value( pos1 ) ) return n;
-
 	}
 
 	return 0;

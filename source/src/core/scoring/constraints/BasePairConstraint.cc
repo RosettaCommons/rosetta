@@ -212,8 +212,8 @@ BasePairConstraint::read_def(
 	Real const C1prime_distance_stddev( 1.0 ); //Hmm. Maybe try linear instead?
 	core::scoring::func::FuncOP const C1prime_distance_func( new core::scoring::func::HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
 
-	Size const atom1 = pose.residue_type( res1_ ).RNA_type().c1prime_atom_index();
-	Size const atom2 = pose.residue_type( res2_ ).RNA_type().c1prime_atom_index();
+	Size const atom1 = pose.residue_type( res1_ ).RNA_info().c1prime_atom_index();
+	Size const atom2 = pose.residue_type( res2_ ).RNA_info().c1prime_atom_index();
 	constraints_.emplace_back( new AtomPairConstraint( id::AtomID( atom1, res1_ ), id::AtomID(atom2, res2_ ), C1prime_distance_func, base_pair_constraint ) );
 
 	utility::vector1< std::string > atom_ids1, atom_ids2;

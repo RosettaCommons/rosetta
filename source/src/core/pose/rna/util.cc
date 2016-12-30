@@ -252,8 +252,8 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 	runtime_assert ( current_rsd.is_RNA() );
 	runtime_assert ( next_rsd.is_RNA() );
 
-	Size atom_O3prime = current_rsd.type().RNA_type().o3prime_atom_index();
-	Size atom_P       =    next_rsd.type().RNA_type().p_atom_index();
+	Size atom_O3prime = current_rsd.type().RNA_info().o3prime_atom_index();
+	Size atom_P       =    next_rsd.type().RNA_info().p_atom_index();
 	Real const dist2 =
 		( current_rsd.atom( atom_O3prime ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
 
@@ -349,7 +349,7 @@ prepare_scratch_residue(
 	// reasoning: if we do any artful stuff making these indices refer to other named atoms, it should go through only one point
 	// (i.e. perhaps for a TNA there's an equivalent for one or more of these?)
 	// AMW TODO: shouldn't RNA_Info have members for C3' and C5' as well?
-	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( scratch_rsd->type().RNA_type().c4prime_atom_index() ), scratch_rsd->xyz( " C5'" ) );
+	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( scratch_rsd->type().RNA_info().c4prime_atom_index() ), scratch_rsd->xyz( " C5'" ) );
 
 	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		//Desired location
@@ -358,7 +358,7 @@ prepare_scratch_residue(
 		scratch_rsd->set_xyz( j, v2 );
 	}
 
-	Size const o2prime_index( scratch_rsd->type().RNA_type().o2prime_index() );
+	Size const o2prime_index( scratch_rsd->type().RNA_info().o2prime_index() );
 	scratch_rsd->set_xyz( o2prime_index, scratch_rsd->build_atom_ideal( o2prime_index, pose.conformation() ) );
 }
 
@@ -447,7 +447,7 @@ initialize_atoms_for_which_we_need_new_dofs(
 	// ... perhaps this will be figured out in the Cartesian Fragment class?
 	//
 	ResidueType const & rsd( pose.residue_type( i ) );
-	RNA_Info const & rna_type( rsd.RNA_type() );
+	RNA_Info const & rna_type( rsd.RNA_info() );
 
 	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rna_type.c1prime_atom_index(), i ) ).get_self_ptr() );
 	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rna_type.o2prime_index(), i ) ).get_self_ptr() );
@@ -966,26 +966,10 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
 	using namespace pose::rna;
-
-	bool in_list( false );
-
-	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-
-		BasePair const base_pair2 = base_pair_list[ n ];
-
-		if ( base_pair == base_pair2 ) {
-			in_list = true;
-			break;
-		}
-
-		if ( base_pair.flipped() == base_pair2 ) {
-			in_list = true;
-			break;
-		}
-
-	}
-
-	return in_list;
+	return std::any_of( base_pair_list.begin(), base_pair_list.end(), 
+		[&]( BasePair const & bp2 ) { 
+			return bp2 == base_pair || bp2 == base_pair.flipped(); 
+		} );
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1014,6 +998,10 @@ add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
+
+		// Virtual residues (perhaps added by build_full_model) don't count.
+		if ( rsd_i.type().has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
+		if ( rsd_j.type().has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && base_pair.orientation() == ANTIPARALLEL )  &&
 				core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
@@ -1121,6 +1109,12 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 	if ( N_WC_NATIVE > 0 ) f_natWC = ( N_WC / (1.0 * N_WC_NATIVE) );
 	if ( N_NWC_NATIVE > 0 ) f_natNWC = ( N_NWC / (1.0 * N_NWC_NATIVE) );
 	if ( (N_WC_NATIVE + N_NWC_NATIVE) > 0 ) f_natBP = ( (N_WC+N_NWC) / (1.0 * (N_WC_NATIVE + N_NWC_NATIVE) ));
+
+	// Adding these here helps control for false positives found in the other function
+	// (Which might count as 'recovered' BPs not found in the native model. 
+	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
+	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
+	s.add_string_value( "N_BP",  ObjexxFCL::format::I( 9, N_WC+N_NWC ) );
 
 	// I would personally like to see the native number esp. of NWC because
 	// otherwise the fraction could be deflated by false 0s.

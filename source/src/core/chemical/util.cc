@@ -115,10 +115,9 @@ modify_atom_properties_from_command_line(
 			"<setting1> <set2>:<atom2>:<param2>:<setting2> ...; for example: '-chemical:set_atom_properties "
 			"fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' ");
 
-		for ( core::uint i = 1; i <= mods.size(); ++i ) {
+		for ( string const & mod : mods ) {
 			// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
-			string const & mod( mods[ i ] );
-
+			
 			core::uint const pos1( mod.find( ":" ) );
 			if ( pos1 == string::npos ) utility_exit_with_message( errmsg );
 			string const atomset_tag( mod.substr( 0, pos1 ) );
@@ -342,7 +341,6 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	utility::vector1< std::string > const & atom_names,
 	bool const ignore_atom_named_H /* = false */ )
 {
-
 	using namespace core::chemical;
 	Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
 	for ( Size j=1; j <= rsd_type_list.size(); j++ ) {
@@ -361,8 +359,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 			if ( !found_match ) ++xyz_missing;
 		}
 
-		for ( Size n = 1; n <= atom_names.size(); n++ ) {
-			std::string const & atom_name = atom_names[ n ];
+		for ( std::string const & atom_name : atom_names ) {
 			if ( !rsd_type.has( ObjexxFCL::stripped_whitespace( atom_name ) ) &&
 					!( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
 				++rsd_missing;

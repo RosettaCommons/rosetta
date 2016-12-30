@@ -123,7 +123,7 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP op
 	rna_params_(std::move( params ))
 {
 	if ( rna_params_ == nullptr ) {
-		if ( options_->rna_params_file().size() > 0 ) {
+		if ( !options_->rna_params_file().empty() ) {
 			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
 		} else {
 			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters );
@@ -309,7 +309,6 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 
 	// RNA high-resolution score function.
 	hires_scorefxn_ = get_rna_hires_scorefxn();//->clone();
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +325,6 @@ RNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 	if ( options_->rmsd_screen() > 0.0 && !denovo_scorefxn_->has_nonzero_weight( coordinate_constraint) ) {
 		denovo_scorefxn_->set_weight( coordinate_constraint, 1.0 ); // now useable in RNA denovo!
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,7 +356,6 @@ void
 RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::Pose & pose,
 	std::string const & out_file_tag ) const
 {
-
 	Real const rmsd = rna_fragment_monte_carlo_->get_rmsd_no_superimpose( pose );
 	TR << "All atom rmsd: " << rmsd << " for " << out_file_tag << std::endl;
 	s.add_energy( "rms",  rmsd );
@@ -368,7 +365,6 @@ RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::
 		TR << "All atom rmsd over stems: " << rmsd_stems << " for " << out_file_tag << std::endl;
 		s.add_energy( "rms_stem", rmsd_stems );
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +374,6 @@ RNA_DeNovoProtocol::output_silent_struct(
 	std::string const & silent_file, pose::Pose & pose, std::string const & out_file_tag,
 	bool const score_only /* = false */ ) const
 {
-
 	using namespace core::io::silent;
 	using namespace core::scoring;
 	using namespace core::pose::rna;
@@ -396,7 +391,6 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 	TR << "Outputting to silent file: " << silent_file << std::endl;
 	silent_file_data.write_silent_struct( s, silent_file, score_only );
-
 }
 
 
@@ -421,7 +415,6 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	}
 
 	// Silent file setup?
-	//static SilentFileData silent_file_data;
 	SilentFileData silent_file_data;
 
 	// What is all this rigamarole, making the silent struct data?
@@ -434,7 +427,6 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	if ( options_->use_chem_shift_data() ) add_chem_shift_info( *s, pose);
 
 	output_silent_struct( *s, silent_file_data, silent_file, pose, out_file_tag, score_only );
-
 }
 
 

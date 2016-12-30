@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/sequence/util.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
@@ -175,15 +176,17 @@ core::Real
 full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, utility::vector1 < Size > const & residue_list, std::string const & full_sequence, bool const verbose, bool const ignore_virtual_atom ){
 
 	using namespace ObjexxFCL;
-
-	if ( pose1.sequence() != full_sequence ) {
+	std::string strippable_full_sequence( full_sequence );
+	core::sequence::parse_out_non_standard_residues( strippable_full_sequence );
+	
+	if ( pose1.sequence() != strippable_full_sequence ) {
 		TR << "pose1.sequence() = " << pose1.sequence() << std::endl;
 		TR << "pose2.sequence() = " << pose2.sequence() << std::endl;
 		TR << "full_sequence = " << full_sequence << std::endl;
 		utility_exit_with_message( "pose1.sequence() != full_sequence" );
 	}
 
-	if ( pose2.sequence() != full_sequence ) {
+	if ( pose2.sequence() != strippable_full_sequence ) {
 		TR << "pose1.sequence() = " << pose1.sequence() << std::endl;
 		TR << "pose2.sequence() = " << pose2.sequence() << std::endl;
 		TR << "full_sequence = " << full_sequence << std::endl;

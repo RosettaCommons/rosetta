@@ -268,7 +268,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	n_non_polymeric_residue_connections_ = residue_type.n_non_polymeric_residue_connections_;
 	n_polymeric_residue_connections_ = residue_type.n_polymeric_residue_connections_;
 	force_bb_ = residue_type.force_bb_;
-	rna_residue_type_ = residue_type.rna_residue_type_;
+	rna_info_ = residue_type.rna_info_;
 	// CarbohydrateInfo has a back-pointer to ResidueType and must be reset during finalize
 	carbohydrate_info_ = nullptr; /* NULL */
 	//rings_and_their_edges_=residue_type.rings_and_their_edges_; //Apparently updated below
@@ -3074,7 +3074,7 @@ Derived data updated by this method:
 * Some AtomProperties:
 ** AROMATIC_CARBON_WITH_FREE_VALENCE
 
-* rna_residue_type_  -- Will be reset based on other ResidueType data
+* rna_info_  -- Will be reset based on other ResidueType data
 * carbohydrate_info_ -- Will be reset based on other ResidueType data
 **/
 void
@@ -3404,12 +3404,12 @@ ResidueType::update_derived_data()
 	}
 
 	if ( properties_->has_property( RNA ) ) { //reinitialize and RNA derived data.
-		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
-		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
-		rna_residue_type_ = core::chemical::rna::RNA_InfoOP( new core::chemical::rna::RNA_Info );
+		//Reinitialize rna_info_ object! This also make sure rna_info_ didn't inherit anything from the previous update!
+		//It appears that the rna_info_ is shared across multiple ResidueType object, if the rna_info_ is not reinitialized here!
+		rna_info_ = core::chemical::rna::RNA_InfoOP( new core::chemical::rna::RNA_Info );
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
-		rna_residue_type_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
-		rna_residue_type_->update_derived_rna_data( get_self_weak_ptr() );
+		rna_info_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
+		rna_info_->update_derived_rna_data( get_self_weak_ptr() );
 	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
 		carbohydrate_info_ =
 			carbohydrates::CarbohydrateInfoOP( new carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
@@ -3592,7 +3592,6 @@ ResidueType::atom_index( std::string const & name ) const
 		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
-		// AMW: this really should be the residue's name, so that people trying to debug can see what the issue is
 		utility_exit_with_message("unknown atom_name: " + this->name() + "  " + name );
 	}
 	VD const & vd = graph_iter->second;
@@ -3618,7 +3617,6 @@ ResidueType::atom_index( std::string const & name ) const
 			tr.Error << graph_[ordered_atoms_[index]].name() << " " << &graph_[ordered_atoms_[index]] << std::endl;
 		}
 		tr.Error << "vd memory address: " << &graph_[vd] << std::endl;
-		// AMW: this really should be the residue's name, so that people trying to debug can see what the issue is
 		utility_exit_with_message("unknown atom_name: " + this->name() + "  " + name );
 	}
 
@@ -3645,9 +3643,7 @@ VD ResidueType::atom_vertex(Size const & atomno) const{
 core::Size
 ResidueType::orbital_index( std::string const & name ) const
 {
-
-	auto iter
-		( orbitals_index_.find( name ) );
+	auto iter( orbitals_index_.find( name ) );
 	if ( iter == orbitals_index_.end() ) {
 		utility_exit_with_message("unknown orbital_name: " + name3() + "  " + name );
 	}
@@ -3739,7 +3735,6 @@ ResidueType::set_icoor(
 	ICoorAtomID id( atm, *this );
 	AtomICoor const ic( atm, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
 	set_icoor_private( atm, id, ic, update_xyz );
-
 }
 
 void
@@ -4483,8 +4478,8 @@ ResidueType::is_repulsive( Size const & atomno ) const
 
 ///////////////////////////////////////////////////////////////
 core::chemical::rna::RNA_Info const &
-ResidueType::RNA_type() const{
-	return ( *rna_residue_type_ );
+ResidueType::RNA_info() const{
+	return ( *rna_info_ );
 }
 
 /// @author Labonte <JWLabonte@jhu.edu>
@@ -4728,7 +4723,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( n_non_polymeric_residue_connections_ ) ); // Size
 	arc( CEREAL_NVP( n_polymeric_residue_connections_ ) ); // Size
 	// RNA_ResidueType and CarbohydrateInfo are reset in finalize()
-	// EXEMPT rna_residue_type_ carbohydrate_info_
+	// EXEMPT rna_info_ carbohydrate_info_
 	arc( CEREAL_NVP( atom_base_indices_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( abase2_indices_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( chi_atoms_indices_ ) ); // utility::vector1<AtomIndices>
@@ -4922,7 +4917,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( n_non_polymeric_residue_connections_ ); // Size
 	arc( n_polymeric_residue_connections_ ); // Size
 	// RNA_ResidueType and CarbohydrateInfo are reset in finalize()
-	// EXEMPT rna_residue_type_ carbohydrate_info_
+	// EXEMPT rna_info_ carbohydrate_info_
 	arc( atom_base_indices_ ); // utility::vector1<Size>
 	arc( abase2_indices_ ); // utility::vector1<Size>
 	arc( chi_atoms_indices_ ); // utility::vector1<AtomIndices>

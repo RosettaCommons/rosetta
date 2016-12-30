@@ -169,12 +169,9 @@ void
 StepWiseRNA_PoseSelection::update_pose_list(
 	std::string const & tag,
 	pose::Pose const & current_pose,
-	Real const & current_score ) {
-
-	bool add_pose_to_list = ( current_score < current_score_cutoff_ );
-
-	//The order of evaluation of the two expression in the if statement is important!
-	if ( add_pose_to_list ) {
+	Real const & current_score
+) {
+	if ( current_score < current_score_cutoff_ ) {
 		if ( verbose_ ) {
 			TR.Debug << "tag = " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score = " << current_score;
 		}

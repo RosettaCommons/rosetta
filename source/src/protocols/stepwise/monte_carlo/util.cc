@@ -98,13 +98,14 @@ prepare_silent_struct( std::string const & out_tag,
 	s->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ) );
 
 	bool const eval_base_pairs = basic::options::option[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();
-	if ( eval_base_pairs  ) core::pose::rna::add_number_base_pairs( pose, *s );
 
-	if ( native_pose != 0 ) {
+	if ( native_pose ) {
 		if ( eval_base_pairs ) core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
 		s->add_energy( "rms",      rms );
 		if ( do_rms_fill_calculation ) s->add_energy( "rms_fill", rms_fill );
-		if ( eval_base_pairs ) core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
+	} else {
+		// Only use the garden-variety BP function if we can't look at the native pose as a point of reference.
+		if ( eval_base_pairs  ) core::pose::rna::add_number_base_pairs( pose, *s );
 	}
 
 	return s;

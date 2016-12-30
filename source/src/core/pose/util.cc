@@ -87,6 +87,8 @@
 // C/C++ headers
 #include <cmath>
 #include <iostream>
+#include <algorithm>
+#include <numeric>
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
@@ -197,7 +199,6 @@ bool is_position_conserved_residue(Pose const & pose, core::Size residue) {
 		utility::pointer::static_pointer_cast<PositionConservedResiduesStore const>(
 		cache.get_const_ptr(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES));
 
-
 	return store->is_conserved(residue);
 }
 
@@ -207,8 +208,7 @@ create_subpose(
 	utility::vector1< Size > const & positions,
 	kinematics::FoldTree const & f,
 	Pose & pose
-)
-{
+) {
 	Size const nres( f.nres() );
 	debug_assert( nres == positions.size() );
 
@@ -235,7 +235,6 @@ create_subpose(
 
 	// now set the desired foldtree
 	pose.fold_tree(f);
-
 }
 
 
@@ -292,7 +291,7 @@ pdbslice( core::pose::Pose & new_pose,
 	}
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
-	if ( pdb_info != nullptr ) {
+	if ( pdb_info ) {
 		utility::vector1< Size > new_numbering;
 		utility::vector1< char > new_chains;
 		for ( Size n = 1; n <= slice_res.size(); n++ ) {
@@ -304,18 +303,17 @@ pdbslice( core::pose::Pose & new_pose,
 		new_pdb_info->set_chains( new_chains );
 		new_pose.pdb_info( new_pdb_info );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-pdbslice( core::pose::Pose & pose,
-	utility::vector1< core::Size > const & slice_res ){
-
+pdbslice(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & slice_res
+) {
 	pose::Pose mini_pose;
 	pdbslice( mini_pose, pose, slice_res );
 	pose = mini_pose;
-
 }
 
 
@@ -385,10 +383,8 @@ set_reasonable_fold_tree( pose::Pose & pose )
 {
 	// An empty pose doesn't have jumps through ligands.
 	// (Will encounter a SegFault otherwise)
-	if ( pose.size() == 0 ) {
-		return;
-	}
-
+	if ( pose.size() == 0 ) return;
+	
 	using namespace std;
 	using namespace core::chemical;
 	using namespace core::kinematics;
@@ -495,8 +491,7 @@ partition_pose_by_jump(
 	int const jump_number,
 	pose::Pose & partner1,
 	pose::Pose & partner2
-)
-{
+) {
 	Size const nres( src.size() );
 
 	// split src pose's foldtree
@@ -516,7 +511,6 @@ partition_pose_by_jump(
 	}
 
 	create_subpose( src, partner1_pos_list, f1, partner1 );
-
 	create_subpose( src, partner2_pos_list, f2, partner2 );
 }
 
@@ -527,8 +521,7 @@ partition_pose_by_jump(
 void
 set_ss_from_phipsi(
 	pose::Pose & pose
-)
-{
+) {
 	// ss       :ss = 1 helix, ss = 2 sheet, ss = 3 other
 	const int sstemp_offset=3;
 	utility::vector1 < int > sstemp( sstemp_offset*2 + pose.size() );
@@ -540,13 +533,9 @@ set_ss_from_phipsi(
 	sstemp[sstemp_offset+pose.size()+2] = 3;
 
 	for ( Size i = 1; i <= pose.size(); ++i ) {
-
-		// <murphp>
-		if ( !pose.residue_type(i).is_protein() ) { // make sure we don't inquire about the phi/psi of a non-protein residue
+		if ( !pose.residue_type( i ).is_protein() ) { // make sure we don't inquire about the phi/psi of a non-protein residue
 			sstemp[sstemp_offset+i] = 3;
 		} else {
-			// </murphp>
-
 			if ( pose.phi(i) < -20.0 && pose.psi(i) > -90.0 && pose.psi(i) < -10.0 ) {
 				sstemp[sstemp_offset+i] = 1;
 			} else if ( pose.phi(i) < -20.0 && (pose.psi(i) > 20.0 || pose.psi(i) < -170.0) ) {
@@ -554,7 +543,6 @@ set_ss_from_phipsi(
 			} else {
 				sstemp[sstemp_offset+i] = 3;
 			}
-
 		}
 	}
 
@@ -736,9 +724,8 @@ read_comment_pdb(
 	}
 	std::string line;
 	while ( getline( data, line ) ) {
-		if ( line != "##Begin comments##" ) {
-			continue;
-		}
+		if ( line != "##Begin comments##" ) continue;
+
 		getline( data, line );
 		while ( line != "##End comments##" ) {
 			//TR<<"Testing read comments! :"<<line<<std::endl;
@@ -795,8 +782,7 @@ bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name,
 	core::Real & value
-)
-{
+) {
 	using basic::datacache::CacheableStringFloatMap;
 	using basic::datacache::CacheableStringFloatMapCOP;
 
@@ -811,9 +797,8 @@ bool getPoseExtraScore(
 	debug_assert( data.get() != nullptr );
 
 	auto it = data->map().find( name );
-	if ( it == data->map().end() ) {
-		return false;
-	}
+	if ( it == data->map().end() ) return false;
+
 	value = it->second;
 	return true;
 }
@@ -832,8 +817,7 @@ bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name,
 	std::string & value
-)
-{
+) {
 	using basic::datacache::CacheableStringMap;
 	using basic::datacache::CacheableStringMapCOP;
 
@@ -860,8 +844,7 @@ void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const & name,
 	core::Real value
-)
-{
+) {
 	using basic::datacache::CacheableStringFloatMap;
 	using basic::datacache::CacheableStringFloatMapOP;
 	using basic::datacache::DataCache_CacheableData;
@@ -887,8 +870,7 @@ void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const & name,
 	std::string const & value
-)
-{
+) {
 	using basic::datacache::CacheableStringMap;
 	using basic::datacache::CacheableStringMapOP;
 	using basic::datacache::DataCache_CacheableData;
@@ -898,7 +880,6 @@ void setPoseExtraScore(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA,
 			DataCache_CacheableData::DataOP( new CacheableStringMap() )
-
 		);
 	}
 
@@ -914,8 +895,7 @@ void add_comment(
 	core::pose::Pose & pose,
 	std::string const & key,
 	std::string const & val
-)
-{
+) {
 	using basic::datacache::CacheableStringMap;
 	using basic::datacache::CacheableStringMapOP;
 	using basic::datacache::DataCache_CacheableData;
@@ -941,8 +921,7 @@ void add_score_line_string(
 	core::pose::Pose & pose,
 	std::string const & key,
 	std::string const & val
-)
-{
+) {
 	using basic::datacache::CacheableStringMap;
 	using basic::datacache::CacheableStringMapOP;
 	using basic::datacache::DataCache_CacheableData;
@@ -1007,8 +986,7 @@ void clearPoseExtraScores(
 void clearPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const & name
-)
-{
+) {
 	using basic::datacache::CacheableStringFloatMap;
 	using basic::datacache::CacheableStringFloatMapOP;
 	using basic::datacache::CacheableStringMap;
@@ -1090,8 +1068,7 @@ void delete_comment(
 std::map< std::string, std::string >
 get_all_score_line_strings(
 	core::pose::Pose const & pose
-)
-{
+) {
 	using basic::datacache::CacheableStringMap;
 	using basic::datacache::CacheableStringMapCOP;
 
@@ -1109,8 +1086,7 @@ get_all_score_line_strings(
 std::map< std::string, std::string >
 get_all_comments(
 	core::pose::Pose const & pose
-)
-{
+) {
 	using basic::datacache::CacheableStringMap;
 	using basic::datacache::CacheableStringMapCOP;
 
@@ -1178,8 +1154,8 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose, std::st
 
 	return secstructs;
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<int,char> & chainmap ) {
 	chainmap.clear();
@@ -1236,7 +1212,6 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 					conf2pdb_chain_default_map(pose,conf2pdb);
 					return conf2pdb;
 				}
-
 			}
 		} else { // record doesn't exist yet
 			conf2pdb[ conf ] = pdb;
@@ -1337,12 +1312,12 @@ utility::vector1< bool > compute_unique_chains( Pose & pose ) {
 	// go through vectors of chain sequences to compare them
 	for ( core::Size i = 1; i <= sequences.size(); ++i ) {
 
-		std::string seq1 = sequences[ i ];
+		std::string const & seq1 = sequences[ i ];
 
 		// no double counting
 		for ( core::Size j = i+1; j <= sequences.size(); ++j ) {
 
-			std::string seq2 = sequences[ j ];
+			std::string const & seq2 = sequences[ j ];
 
 			// make sure that the sequences are of same length
 			core::Size num_ident_res( 0 );
@@ -1352,7 +1327,6 @@ utility::vector1< bool > compute_unique_chains( Pose & pose ) {
 
 				// go through sequence, std::string indexing from 0
 				for ( core::Size k = 0; k <= seq1.size(); ++k ) {
-
 					if ( seq1[ k ] == seq2[ k ] ) {
 						++num_ident_res;
 					}
@@ -1499,8 +1473,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 	bool const start_from_existing_numbering,
 	bool const keep_insertion_codes,
 	bool const rotate_chain_ids
-)
-{
+) {
 	using core::Size;
 	using core::pose::PDBInfo;
 	typedef std::map< int, char > Conf2PDB;
@@ -1563,8 +1536,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 	chain_endings.push_back( pose.size() ); // add the last res, which is not in the list
 
 	Size res = 1;
-	for ( utility::vector1< Size >::const_iterator i = chain_endings.begin(), ie = chain_endings.end(); i != ie; ++i ) {
-		Size const chain_end = *i;
+	for ( Size const chain_end : chain_endings ) {
 		int pdb_res = 0; // new chain, so reset pdb_res counter
 		if ( start_from_existing_numbering && pdbinfo.chain( res ) != PDBInfo::empty_record() ) {
 			pdb_res = pdbinfo.number( res ) - 1;
@@ -1633,10 +1605,8 @@ bool is_ideal_pose(
 bool is_ideal_position(
 	core::Size seqpos,
 	core::pose::Pose const & pose
-)
-{
-	return conformation::is_ideal_position(
-		seqpos, pose.conformation() );
+) {
+	return conformation::is_ideal_position( seqpos, pose.conformation() );
 }
 
 /// @brief this function removes all residues from the pose which are not protein residues.
@@ -1927,9 +1897,7 @@ replace_pose_residue_copying_existing_coordinates(
 	pose::Pose & pose,
 	Size const seqpos,
 	core::chemical::ResidueType const & new_rsd_type
-)
-{
-
+) {
 	core::conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 	core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( new_rsd_type ) );
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, pose.conformation() );
@@ -1991,7 +1959,6 @@ add_variant_type_to_residue(
 	chemical::VariantType const variant_type,
 	pose::Pose const & pose )
 {
-
 	if ( old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
 	// the type of the desired variant residue
@@ -2074,8 +2041,7 @@ void
 add_lower_terminus_type_to_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-)
-{
+) {
 	add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
 
@@ -2083,8 +2049,7 @@ void
 add_upper_terminus_type_to_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-)
-{
+) {
 	add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
@@ -2092,8 +2057,7 @@ void
 remove_lower_terminus_type_from_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-)
-{
+) {
 	core::pose::remove_variant_type_from_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
 
@@ -2101,8 +2065,7 @@ void
 remove_upper_terminus_type_from_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-)
-{
+) {
 	core::pose::remove_variant_type_from_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
@@ -2352,9 +2315,8 @@ has_chain(core::Size chain_id, core::pose::Pose const & pose){
 std::set<core::Size>
 get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::Pose const & pose){
 	std::set<core::Size> jump_ids;
-	auto chain_id= chain_ids.begin();
-	for ( ; chain_id != chain_ids.end(); ++chain_id ) {
-		core::Size jump_id= get_jump_id_from_chain_id(*chain_id, pose);
+	for ( Size const chain_id : chain_ids ) {
+		core::Size const jump_id = get_jump_id_from_chain_id( chain_id, pose );
 		jump_ids.insert(jump_id);
 	}
 	return jump_ids;
@@ -2397,7 +2359,6 @@ get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pos
 	debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return get_chain_ids_from_chain(chain_char, pose);
-
 }
 
 utility::vector1<core::Size>
@@ -2413,35 +2374,36 @@ get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 }
 
 utility::vector1<core::Size>
-get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::pose::Pose const & pose){
-	utility::vector1<core::Size> chain_ids;
-	for ( Size i = 1; i <= chains.size(); ++i ) {
-		Size chain_id = get_chain_id_from_chain(chains[ i ], pose);
-		chain_ids.push_back(chain_id);
-	}
+get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::pose::Pose const & pose ) {
+	utility::vector1<core::Size> chain_ids( chains.size() );
+	std::transform( chains.begin(), chains.end(), chain_ids.begin(),
+		[&]( std::string const & chain ) {
+			return get_chain_id_from_chain( chain, pose );
+		} );
 	return chain_ids;
 }
 
 core::Size
-get_jump_id_from_chain(std::string const & chain, core::pose::Pose const & pose){
+get_jump_id_from_chain( std::string const & chain, core::pose::Pose const & pose ) {
 	core::Size chain_id= get_chain_id_from_chain(chain, pose);
 	return get_jump_id_from_chain_id(chain_id, pose);
 }
 
 core::Size
-get_jump_id_from_chain(char const & chain, core::pose::Pose const & pose){
+get_jump_id_from_chain( char const & chain, core::pose::Pose const & pose ) {
 	core::Size chain_id= get_chain_id_from_chain(chain, pose);
 	return get_jump_id_from_chain_id(chain_id, pose);
 }
 
 utility::vector1<core::Size>
-get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
-	utility::vector1<core::Size> jump_ids;
+get_jump_ids_from_chain( char const & chain, core::pose::Pose const & pose ) {
+	// Does the transformation in-place, since both data are Size.
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
-	for ( core::Size const chain_id : chain_ids ) {
-		jump_ids.push_back( get_jump_id_from_chain_id(chain_id, pose));
-	}
-	return jump_ids;
+	std::transform( chain_ids.begin(), chain_ids.end(), chain_ids.begin(),
+		[&]( Size const chain_id ) {
+			return get_jump_id_from_chain_id( chain_id, pose );
+		} );
+	return chain_ids;
 }
 
 utility::vector1<core::Size>
@@ -2485,24 +2447,15 @@ get_residues_from_chains(core::pose::Pose const & pose, utility::vector1<core::S
 	}
 	return chains_residue_pointers;
 }
+
 /// @brief Is residue number in this chain?
 bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string chain ) {
-
-	bool in_chain( false );
-
-	Size chain_of_res = pose.chain( resnum );
-	Size chainid = get_chain_id_from_chain( chain[0], pose );
-
-	if ( chain_of_res == chainid ) {
-		in_chain = true;
-	}
-
-	return in_chain;
+	return Size( pose.chain( resnum ) ) == get_chain_id_from_chain( chain[0], pose );
 }
 
 char
-get_chain_from_chain_id(core::Size const & chain_id, core::pose::Pose const & pose){
-	core::Size first_chaisize= pose.conformation().chain_begin( chain_id );
+get_chain_from_chain_id( core::Size const & chain_id, core::pose::Pose const & pose ) {
+	core::Size first_chaisize = pose.conformation().chain_begin( chain_id );
 	return pose.pdb_info()->chain(first_chaisize);
 }
 
@@ -2648,7 +2601,6 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 
 std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose)
 {
-
 	std::stringstream coord_stream;
 
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
@@ -2709,51 +2661,47 @@ initialize_disulfide_bonds(
 		utility::vector1< std::pair<Size,Size> > disulfides;
 		ds_file.disulfides(disulfides, pose);
 		pose.conformation().fix_disulfides( disulfides );
-	} else {
-		if ( option[ in::detect_disulf ].user() ?
+	} else if ( option[ in::detect_disulf ].user() ?
 				option[ in::detect_disulf ]() : // detect_disulf true
 				pose.is_fullatom() // detect_disulf default but fa pose
-				) {
-
-			//utility::vector1< std::pair< Size, Size > > disulfs;
-			utility::vector1< Size > disulf_one;
-			utility::vector1< Size > disulf_two;
-
-			// Prepare a list of pose-numbered disulfides!
-			for ( auto const & ssbond : sfr.ssbond_map() ) {
-
-				// For now we really hope the vector1 is just a single element!
-				if ( ssbond.second.size() != 1 ) {
-					// We can salvage if it's double-entry: just take the first.
-					// The length isn't actually used anyway, and so it doesn't
-					// affect what conformation is preferred.
-
-					// Are they all the same?
-					std::string id1 = ssbond.second[1].resID2;
-					bool identical = true;
-					for ( Size i = 2; i <= ssbond.second.size(); ++i ) {
-						if ( ssbond.second[ i ].resID2 != id1 ) {
-							identical = false; break;
-						}
-					}
-					if ( !identical ) {
-						TR.Error << "Error: SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
-						utility_exit();
+			) {
+		//utility::vector1< std::pair< Size, Size > > disulfs;
+		utility::vector1< Size > disulf_one;
+		utility::vector1< Size > disulf_two;
+		
+		// Prepare a list of pose-numbered disulfides!
+		for ( auto const & ssbond : sfr.ssbond_map() ) {
+			
+			// For now we really hope the vector1 is just a single element!
+			if ( ssbond.second.size() != 1 ) {
+				// We can salvage if it's double-entry: just take the first.
+				// The length isn't actually used anyway, and so it doesn't
+				// affect what conformation is preferred.
+				
+				// Are they all the same?
+				std::string id1 = ssbond.second[1].resID2;
+				bool identical = true;
+				for ( Size i = 2; i <= ssbond.second.size(); ++i ) {
+					if ( ssbond.second[ i ].resID2 != id1 ) {
+						identical = false; break;
 					}
 				}
-
-				Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID1, ssbond.second[1].resSeq1, ssbond.second[1].iCode1 );
-				Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID2, ssbond.second[1].resSeq2, ssbond.second[1].iCode2 );
-
-				if ( seqpos_one != 0 && seqpos_two != 0 ) {
-					disulf_one.push_back( seqpos_one );
-					disulf_two.push_back( seqpos_two );
+				if ( !identical ) {
+					TR.Error << "Error: SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
+					utility_exit();
 				}
 			}
-
-			//pose.conformation().detect_disulfides( disulfs );
-			pose.conformation().detect_disulfides( disulf_one, disulf_two );
+			
+			Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID1, ssbond.second[1].resSeq1, ssbond.second[1].iCode1 );
+			Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID2, ssbond.second[1].resSeq2, ssbond.second[1].iCode2 );
+			
+			if ( seqpos_one != 0 && seqpos_two != 0 ) {
+				disulf_one.push_back( seqpos_one );
+				disulf_two.push_back( seqpos_two );
+			}
 		}
+		
+		pose.conformation().detect_disulfides( disulf_one, disulf_two );
 	}
 }
 
@@ -2795,79 +2743,60 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 
 core::Size canonical_residue_count(core::pose::Pose const & pose)
 {
-	core::Size count = 0;
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		core::conformation::Residue const & resi(pose.residue(i));
-		if ( resi.aa() <= core::chemical::num_canonical_aas ) {
-			++count;
-		}
-	}
-	return count;
+	return std::count_if( pose.begin(), pose.end(), 
+		[&]( conformation::Residue const & resi ) {
+			return resi.aa() <= core::chemical::num_canonical_aas; 
+		} );
 }
 
 core::Size noncanonical_residue_count(core::pose::Pose const & pose)
 {
-	core::Size count = 0;
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		core::conformation::Residue const & resi(pose.residue(i));
-		if ( resi.aa() > core::chemical::num_canonical_aas ) {
-			++count;
-		}
-	}
-	return count;
+	return std::count_if( pose.begin(), pose.end(), 
+		[&]( conformation::Residue const & resi ) {
+			return resi.aa() > core::chemical::num_canonical_aas; 
+		} );
 }
 
 core::Size canonical_atom_count(core::pose::Pose const & pose)
 {
-	core::Size count = 0;
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		core::conformation::Residue const & resi(pose.residue(i));
-		if ( resi.aa() <= core::chemical::num_canonical_aas ) {
-			count += resi.natoms();
-		}
-	}
-	return count;
+	return std::accumulate( pose.begin(), pose.end(), 0, 
+		[&]( Size const posum, conformation::Residue const & resi ) {
+			if ( resi.aa() <= core::chemical::num_canonical_aas ) {
+				return posum + resi.natoms();
+			}
+			return posum;
+		} );
 }
 
 core::Size noncanonical_atom_count(core::pose::Pose const & pose)
 {
-	core::Size count = 0;
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		core::conformation::Residue const & resi(pose.residue(i));
-		if ( resi.aa() > core::chemical::num_canonical_aas ) {
-			count += resi.natoms();
-		}
-	}
-	return count;
+	return std::accumulate( pose.begin(), pose.end(), 0, 
+		[&]( Size const posum, conformation::Residue const & resi ) {
+			if ( resi.aa() > core::chemical::num_canonical_aas ) {
+				return posum + resi.natoms();
+			}
+			return posum;
+		} );
 }
 
 core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 {
-	core::Size count = 0;
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		core::conformation::Residue const & resi(pose.residue(i));
-		if ( resi.aa() > core::chemical::num_canonical_aas ) {
-			count += resi.nchi();
-		}
-	}
-	return count;
+	return std::accumulate( pose.begin(), pose.end(), 0, 
+		[&]( Size const posum, conformation::Residue const & resi ) {
+			if ( resi.aa() > core::chemical::num_canonical_aas ) {
+				return posum + resi.nchi();
+			}
+			return posum;
+		} );
 }
 
 /// @brief Number of protein residues in the pose
 /// @details No virtuals, membrane residues or embedding residues counted
 Size nres_protein( pose::Pose const & pose ) {
-
-	Size cnt(0);
-
-	// go over pose residues and ask whether is_protein
-	for ( Size i = 1; i <= pose.size(); ++i ) {
-
-		if ( pose.residue(i).is_protein() ) {
-			cnt++;
-		}
-	}
-
-	return cnt;
+	return std::count_if( pose.begin(), pose.end(), 
+		[&]( conformation::Residue const & resi ) {
+			return resi.is_protein();
+		} );
 }// nres_protein
 
 
@@ -2875,8 +2804,7 @@ numeric::xyzVector< Real >
 center_of_mass(
 	pose::Pose const & pose,
 	utility::vector1< bool > const & residues
-)
-{
+) {
 	using namespace numeric;
 	using core::conformation::Residue;
 	assert( pose.size() == residues.size() );
@@ -2902,8 +2830,7 @@ generate_vector_from_bounds(
 	pose::Pose const & pose,
 	int const start,
 	int const stop
-)
-{
+) {
 	utility::vector1< bool > residues( pose.size(), false );
 	assert( (Size) stop <= residues.size() );
 	assert( stop > start && start > 0 );
@@ -2911,6 +2838,7 @@ generate_vector_from_bounds(
 	for ( int i = start; i <= stop; ++i ) { residues[ i ] = true; }
 	return residues;
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 ///
 /// @brief calculates the center of mass of a pose
@@ -2926,8 +2854,7 @@ center_of_mass(
 	pose::Pose const & pose,
 	int const start,
 	int const stop
-)
-{
+) {
 	return center_of_mass( pose, generate_vector_from_bounds( pose, start, stop ) );
 }
 
@@ -2935,8 +2862,7 @@ int
 residue_center_of_mass(
 	pose::Pose const & pose,
 	utility::vector1< bool > residues
-)
-{
+) {
 	assert( pose.size() == residues.size() );
 
 	if ( ! ( residues.has( true ) && pose.size() )  ) {
@@ -2962,8 +2888,7 @@ residue_center_of_mass(
 	pose::Pose const & pose,
 	int const start,
 	int const stop
-)
-{
+) {
 	Vector center = center_of_mass(pose, start, stop );
 	return core::pose::return_nearest_residue( pose, start, stop, center );
 }
@@ -2973,8 +2898,7 @@ return_nearest_residue(
 	pose::Pose const & pose,
 	utility::vector1< bool > const & residues,
 	Vector center
-)
-{
+) {
 	using core::conformation::Residue;
 
 	assert( pose.size() == residues.size() );
@@ -3017,8 +2941,7 @@ return_nearest_residue(
 	int const begin,
 	int const end,
 	Vector center
-)
-{
+) {
 	return return_nearest_residue( pose, generate_vector_from_bounds( pose, begin, end ), center );
 }
 
@@ -3035,7 +2958,8 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 }
 
 /// @brief Create std::map from PDBPoseMap in pose (JKLeman)
-std::map< std::string, core::Size > get_pdb2pose_numbering_as_stdmap ( core::pose::Pose const & pose ) {
+std::map< std::string, core::Size > 
+get_pdb2pose_numbering_as_stdmap( core::pose::Pose const & pose ) {
 
 	using namespace utility;
 
@@ -3043,11 +2967,13 @@ std::map< std::string, core::Size > get_pdb2pose_numbering_as_stdmap ( core::pos
 	std::map< std::string, core::Size > pdb2pose_map;
 
 	// go through protein, get chain, resn, insertion code
+	// AMW: this only makes sense for poses where the protein residues come first
+	// This makes sense for membranes, but not e.g. DNA/RNA/Protein complexes.
 	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// get chain, PDB resnumber, and insertion code for that residue
-		std::string chain = to_string( pose.pdb_info()->chain( i ) );
-		std::string resn = to_string( pose.pdb_info()->number( i ) );
+		std::string const chain = to_string( pose.pdb_info()->chain( i ) );
+		std::string const resn = to_string( pose.pdb_info()->number( i ) );
 		std::string icode = to_string( pose.pdb_info()->icode( i ) );
 
 		// replace empty insertion code with dot (spanfile has dots)
@@ -3112,9 +3038,9 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
-	const core::kinematics::FoldTree & tree(pose.fold_tree());
+	core::kinematics::FoldTree const & tree( pose.fold_tree() );
 	for ( core::Size i = 1; i < pose.size(); ++i ) { // Less than because cutpoints are between i and i+1
-		if ( tree.is_cutpoint(i) ) {
+		if ( tree.is_cutpoint( i ) ) {
 			correctly_add_cutpoint_variants( pose, i, false );
 		}
 	}
@@ -3156,6 +3082,7 @@ void
 get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep const & sfr )
 {
 	using namespace scoring::func;
+	using namespace scoring::constraints;
 
 	/*HarmonicFuncOP amide_harm_func    ( new HarmonicFunc( 1.34, 0.05 ) );
 	HarmonicFuncOP thioester_harm_func( new HarmonicFunc( 1.83, 0.1 ) );
@@ -3165,38 +3092,38 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 
 	for ( auto const & it : sfr.link_map() ) {
-		for ( Size ii = 1; ii <= it.second.size(); ++ii ) {
-			TR << "|"<<it.second[ii].chainID1 << "| |" << it.second[ii].resSeq1 << "|" << std::endl;
-			TR << "|"<<it.second[ii].chainID2 << "| |" << it.second[ii].resSeq2 << "|" << std::endl;
+		for ( auto const & record : it.second ) {
+			TR << "|"<<record.chainID1 << "| |" << record.resSeq1 << "|" << std::endl;
+			TR << "|"<<record.chainID2 << "| |" << record.resSeq2 << "|" << std::endl;
 
-			Size id1 = pose.pdb_info()->pdb2pose( it.second[ii].chainID1, it.second[ii].resSeq1 );
-			Size id2 = pose.pdb_info()->pdb2pose( it.second[ii].chainID2, it.second[ii].resSeq2 );
+			Size id1 = pose.pdb_info()->pdb2pose( record.chainID1, record.resSeq1 );
+			Size id2 = pose.pdb_info()->pdb2pose( record.chainID2, record.resSeq2 );
 			conformation::Residue const & NUC = pose.residue( id1 );
 			conformation::Residue const & ELEC = pose.residue( id2 );
 
-			id::AtomID aidNUC( NUC.atom_index( it.second[ii].name1 ), id1 );
-			id::AtomID aidC( ELEC.atom_index( it.second[ii].name2 ), id2 );
+			id::AtomID aidNUC( NUC.atom_index( record.name1 ), id1 );
+			id::AtomID aidC( ELEC.atom_index( record.name2 ), id2 );
 
-			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it.second[ii].length, 0.05 ) );
+			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( record.length, 0.05 ) );
 
 			scoring::constraints::ConstraintCOP atompair(
 				new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
 			pose.add_constraint( atompair );
-			TR << "Adding harmonic constraint between residue " << id1 << " atom " << it.second[ii].name1;
-			TR << "and residue " << id2 << " atom " << it.second[ii].name2 << " with length " << it.second[ii].length << std::endl;
+			TR << "Adding harmonic constraint between residue " << id1 << " atom " << record.name1;
+			TR << "and residue " << id2 << " atom " << record.name2 << " with length " << record.length << std::endl;
 
 			// Cover cyclization case first
-			if ( it.second[ii].name1 == " N  " && it.second[ii].name2 == " C  " ) {
+			if ( record.name1 == " N  " && record.name2 == " C  " ) {
 
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
 				id::AtomID aidCA2( NUC.atom_index( "CA" ), id1 );
 
-				scoring::constraints::ConstraintCOP ang( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidCA, ang_func ) );
+				ConstraintCOP ang( new AngleConstraint( aidNUC, aidC, aidCA, ang_func ) );
 				pose.add_constraint( ang );
-				scoring::constraints::ConstraintCOP ang2( new scoring::constraints::AngleConstraint( aidCA2, aidNUC, aidC, ang_func ) );
+				ConstraintCOP ang2( new AngleConstraint( aidCA2, aidNUC, aidC, ang_func ) );
 				pose.add_constraint( ang2 );
-				scoring::constraints::ConstraintCOP dih( new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				ConstraintCOP dih( new DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
 
 				// constrain omega unless N terminal residue is PRO or peptoid
@@ -3207,29 +3134,29 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				} else {
 					id::AtomID aidH( NUC.atom_index( "H" ), id1 );
 
-					scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
+					ConstraintCOP omg( new DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
 					pose.add_constraint( omg );
-					scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
+					ConstraintCOP omgH( new DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
 					pose.add_constraint( omgH );
-					scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
+					ConstraintCOP omgimp( new DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
 					pose.add_constraint( omgimp );
 				}
 
 				TR << "Adding harmonic constraints to the angle formed by atoms N, C, O ( 120 ) and ";
 				TR << "the improper torsion N, C, O, CA (180) and the dihedral CA, N, C, CA ( 180 ) " <<std::endl;
 
-			} else if ( it.second[ii].name1 == " C  " && it.second[ii].name2 == " N  " ) {
+			} else if ( record.name1 == " C  " && record.name2 == " N  " ) {
 				// swapped; nuc is actually elec and vice versa
 
 				id::AtomID aidCA2( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( NUC.atom_index( "O" ), id1 );
 				id::AtomID aidCA( NUC.atom_index( "CA" ), id1 );
 
-				scoring::constraints::ConstraintCOP ang( new scoring::constraints::AngleConstraint( aidC, aidNUC, aidCA, ang_func ) );
+				ConstraintCOP ang( new AngleConstraint( aidC, aidNUC, aidCA, ang_func ) );
 				pose.add_constraint( ang );
-				scoring::constraints::ConstraintCOP ang2( new scoring::constraints::AngleConstraint( aidCA2, aidC, aidNUC, ang_func ) );
+				ConstraintCOP ang2( new AngleConstraint( aidCA2, aidC, aidNUC, ang_func ) );
 				pose.add_constraint( ang2 );
-				scoring::constraints::ConstraintCOP dih( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidO, aidCA, dih_func ) );
+				ConstraintCOP dih( new DihedralConstraint( aidC, aidNUC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
 
 				// constrain omega unless N terminal residue is PRO or peptoid
@@ -3240,25 +3167,24 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				} else {
 					id::AtomID aidH( ELEC.atom_index( "H" ), id1 );
 
-					scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidC, aidNUC, aidCA, dih_func ) );
+					ConstraintCOP omg( new DihedralConstraint( aidCA2, aidC, aidNUC, aidCA, dih_func ) );
 					pose.add_constraint( omg );
-					scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidNUC, aidC, aidH, dih_func ) );
+					ConstraintCOP omgH( new DihedralConstraint( aidO, aidNUC, aidC, aidH, dih_func ) );
 					pose.add_constraint( omgH );
-					scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidH, aidCA2, dih_func ) );
+					ConstraintCOP omgimp( new DihedralConstraint( aidNUC, aidC, aidH, aidCA2, dih_func ) );
 					pose.add_constraint( omgimp );
 				}
 			}
 
 			// Now let's add constraints based on residue identities and atom names. For example, let's cover
-			if ( it.second[ii].name2 == " CZ " && it.second[ii].resName2 == "VDP" ) {
+			if ( record.name2 == " CZ " && record.resName2 == "VDP" ) {
 				// thiol-ene conjugation to acryl residue
 				// (don't check name1 because we don't care SG/SD/SG1)
 				// someday we will be fancy and check vs type.get_disulfide_atom_name()
 				id::AtomID aidCB( NUC.atom_index( "CB" ), id2 );
 				id::AtomID aidCE2( ELEC.atom_index( "CE2" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
-				scoring::constraints::ConstraintCOP ang(
-					new scoring::constraints::AngleConstraint( aidCB, aidNUC, aidC, ang90_func ) );
+				ConstraintCOP ang( new AngleConstraint( aidCB, aidNUC, aidC, ang90_func ) );
 				pose.add_constraint( ang );
 				//scoring::constraints::ConstraintCOP dih(
 				//  new scoring::constraints::DihedralConstraint( aidCB, aidNUC, aidC, aidCE2, dih_func ) );
@@ -3267,76 +3193,54 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				TR << "Assuming thiol-ene, adding harmonic constraints to the angle formed by CB, SG, CZ ( 90 )" << std::endl;// and ";
 				//TR << "the dihedral CB, SG, CZ, CE2 ( 180 ) " << std::endl;
 
-			} else if ( it.second[ii].name2 == " C  " ) {
+			} else if ( record.name2 == " C  " ) {
 				// the C-terminal conjugation case:
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
-				scoring::constraints::ConstraintCOP ang(
-					new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+				ConstraintCOP ang( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
 				pose.add_constraint( ang );
-				scoring::constraints::ConstraintCOP dih(
-					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				ConstraintCOP dih( new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( it.second[ii].name2 == " CD " ) {
+			} else if ( record.name2 == " CD " ) {
 				// The sidechain conjugation to glx case
 				id::AtomID aidCA( ELEC.atom_index( "CG" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OE1" ), id2 );
-				scoring::constraints::ConstraintCOP ang(
-					new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+				ConstraintCOP ang( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
 				pose.add_constraint( ang );
-				scoring::constraints::ConstraintCOP dih(
-					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				ConstraintCOP dih( new DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( it.second[ii].name2 == " CG " ) {
+			} else if ( record.name2 == " CG " ) {
 				// The sidechain conjugation to asx case
 				id::AtomID aidCA( ELEC.atom_index( "CB" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OD1" ), id2 );
-				scoring::constraints::ConstraintCOP ang(
-					new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+				ConstraintCOP ang( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
 				pose.add_constraint( ang );
-				scoring::constraints::ConstraintCOP dih(
-					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				ConstraintCOP dih( new DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-				if ( it.second[ii].name1 == " NE " ) {
+				if ( record.name1 == " NE " ) {
 					// ornithine
 					id::AtomID aidH( NUC.atom_index( "1HE" ), id2 );
 					id::AtomID aidCG( NUC.atom_index( "CG" ), id2 );
 
-					/*
+					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
+					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
+					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidC, aidNUC, aidH, aidCG, dih_func ) ) );
+					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
+					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
 
-					id::AtomID aidH( NUC.atom_index( "H" ), id1 );
-
-					scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
-					pose.add_constraint( omg );
-					scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
-					pose.add_constraint( omgH );
-					scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
-					pose.add_constraint( omgimp );
-					*/
-
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCG, dih_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
-
-				} else if ( it.second[ii].name1 == " NZ " ) {
+				} else if ( record.name1 == " NZ " ) {
 					// lysine
 					id::AtomID aidH( NUC.atom_index( "1HZ" ), id2 );
 					id::AtomID aidCD( NUC.atom_index( "CD" ), id2 );
 
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCD, dih_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
+					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
+					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
+					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidC, aidNUC, aidH, aidCD, dih_func ) ) );
+					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
+					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
 
 				}
-
 			}
-
-			//AtomID aidO( list[ ii ].second.id_O_, list[ ii ].second.resnum_ );
-			//AtomID aidCA( list[ ii ].second.id_CA_, list[ ii ].second.resnum_ );
 		}
 	}
 }

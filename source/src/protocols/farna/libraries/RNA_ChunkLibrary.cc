@@ -139,8 +139,8 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 	// just using the first residue to decide this
 	// (in case it's protein))
 	for ( core::Size i =1; i<= pose.total_residue(); ++i ) {
-		if ( pose.residue( i ).is_RNA() ) {
-			coarse_rna_ = pose.residue( i ).is_coarse();
+		if ( pose.residue_type( i ).is_RNA() ) {
+			coarse_rna_ = pose.residue_type( i ).is_coarse();
 			break;
 		}
 	}
@@ -155,12 +155,12 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 
 	utility::vector1< std::string > all_input_files;
 	utility::vector1< bool > is_pdb_file;
-	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
-		all_input_files.push_back( pdb_files[n] );
+	for ( std::string const & pdb_file : pdb_files ) {
+		all_input_files.push_back( pdb_file );
 		is_pdb_file.push_back( true );
 	}
-	for ( Size n = 1; n <= silent_files.size(); n++ ) {
-		all_input_files.push_back( silent_files[n] );
+	for ( std::string const & silent_file : silent_files ) {
+		all_input_files.push_back( silent_file );
 		is_pdb_file.push_back( false );
 	}
 
@@ -207,7 +207,6 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 	}
 
 	figure_out_chunk_coverage();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -255,7 +254,6 @@ RNA_ChunkLibrary::num_moving_chunks() const { return get_indices_of_moving_chunk
 bool
 RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const
 {
-
 	utility::vector1< Size > const indices_of_moving_chunks = get_indices_of_moving_chunks();
 	if ( indices_of_moving_chunks.size() == 0 ) return false;
 
@@ -285,11 +283,9 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 
 	Size i_prev( 0 );
 
-	for ( ResMap::const_iterator
-			it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
-
-		Size const i = it->first; //Index in big pose.
-		Size const i_scratch = it->second; //Index in scratch pose (chunk).
+	for ( auto const & elem : res_map ) {
+		Size const i = elem.first; //Index in big pose.
+		Size const i_scratch = elem.second; //Index in scratch pose (chunk).
 
 		covered_by_chunk_( i ) = true;
 
@@ -323,7 +319,6 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 
 		i_prev = i;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -355,7 +350,6 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 void
 RNA_ChunkLibrary::figure_out_chunk_coverage()
 {
-
 	Size const tot_res( atom_level_domain_map_->atom_id_mapper()->nres() );
 	runtime_assert( covered_by_chunk_.size() == tot_res );
 
@@ -372,7 +366,6 @@ RNA_ChunkLibrary::figure_out_chunk_coverage()
 		}
 	}
 	chunk_coverage_ = Real( 3 * num_chunk_res ) / ( 3 * num_chunk_res +  tot_res );
-
 }
 
 
@@ -381,12 +374,11 @@ RNA_ChunkLibrary::figure_out_chunk_coverage()
 bool
 RNA_ChunkLibrary::check_res_map( ResMap const & res_map, pose::Pose const & scratch_pose, std::string const & sequence ) const{
 
-	for ( ResMap::const_iterator
-			it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
+	for ( auto const & elem : res_map ) {
 
 		// For now, just do bonded atoms...update later to do jumps too.
-		Size const i = it->first; //Index in big pose.
-		Size const i_scratch_pose = it->second; // Index in the little "chunk" or "scratch" pose
+		Size const i = elem.first; //Index in big pose.
+		Size const i_scratch_pose = elem.second; // Index in the little "chunk" or "scratch" pose
 
 		char scratch_nt = scratch_pose.residue( i_scratch_pose ).name1();
 		if ( sequence[ i-1 ] != scratch_nt ) {
@@ -421,7 +413,6 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 	if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(0)+".pdb" );
 
 	Size alignment_domain = get_alignment_domain( pose );
-
 	for ( Size n = 1; n <= num_chunk_sets(); n++ ) {
 
 		ChunkSet const & chunk_set( *chunk_sets_[ n ] );
@@ -442,7 +433,6 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 		}
 		if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////
@@ -467,9 +457,7 @@ RNA_ChunkLibrary::insert_random_protein_chunks( pose::Pose & pose ) const {
 				/*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) {
 			align_to_chunk( pose, chunk_set, chunk_index  );
 		}
-
 	}
-
 }
 
 
@@ -509,13 +497,11 @@ RNA_ChunkLibrary::align_to_chunk( pose::Pose & pose, ChunkSet const & chunk_set,
 
 	id::AtomID_Map< id::AtomID >  alignment_atom_id_map; // weird alternative format needed for superimpose_pose
 	core::pose::initialize_atomid_map( alignment_atom_id_map, pose, id::BOGUS_ATOM_ID );
-	for ( std::map< AtomID, AtomID >::const_iterator
-			it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
-		alignment_atom_id_map.set( it->first, it->second );
+	for ( auto const & elem : atom_id_map ) {
+		alignment_atom_id_map.set( elem.first, elem.second );
 	}
 
 	core::scoring::superimpose_pose( pose, *(chunk_set.mini_pose( chunk_index )), alignment_atom_id_map );
-
 }
 
 
@@ -540,7 +526,6 @@ check_base_pair_step_availability(
 	BasePairStepLibrary const & base_pair_step_library,
 	BasePairStepSequence const & base_pair_step_sequence )
 {
-
 	if ( base_pair_step_library.has_value( base_pair_step_sequence ) ) return true;
 
 	std::string tag( base_pair_step_sequence.tag() );
@@ -568,9 +553,7 @@ RNA_ChunkLibrary::setup_base_pair_step_chunks(
 
 	if ( chunk_sets_.size() > ( ROSETTA_LIBRARY_DOMAIN - 1 ) ) utility_exit_with_message( "hey update AtomLevelDomainMap & RNA_ChunkLibrary to not use magic numbers like 999 and 1000" );
 
-	for ( Size m = 1; m <= base_pair_steps.size(); m++ ) {
-
-		BasePairStep const & base_pair_step = base_pair_steps[ m ];
+	for ( BasePairStep const & base_pair_step : base_pair_steps ) {
 
 		BasePairStepSequence base_pair_step_sequence( pose.sequence(), base_pair_step );
 		if ( !check_base_pair_step_availability( base_pair_step_library, base_pair_step_sequence ) ) continue;
@@ -599,7 +582,6 @@ RNA_ChunkLibrary::setup_base_pair_step_chunks(
 	}
 
 	figure_out_chunk_coverage();
-
 }
 
 

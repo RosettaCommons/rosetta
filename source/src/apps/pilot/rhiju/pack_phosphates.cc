@@ -101,7 +101,7 @@ fix_alpha_for_pack_phosphate( pose::Pose & pose, Size const res ){
 																						pose.xyz( NamedAtomID( " C5'", res ) ) );
 
 	Real const new_alpha = current_alpha + (desired_OP2_torsion - current_OP2_torsion);
-	Size const chi_number_pseudoalpha = pose.residue_type( res ).RNA_type().chi_number_pseudoalpha();
+	Size const chi_number_pseudoalpha = pose.residue_type( res ).RNA_info().chi_number_pseudoalpha();
 	pose.set_chi( chi_number_pseudoalpha /*pseudo-alpha for packable phosphate*/, res,
 								principal_angle_degrees( new_alpha ) );
 
@@ -206,7 +206,7 @@ pack_phosphates()
 		add_variant_type_to_pose_residue( pose, "FIVE_PRIME_PACKABLE_PHOSPHATE", working_sample_res);
 
 		if ( ! pose.residue_type( working_sample_res ).is_RNA() ) continue; // needs RNA_Info
-		RNA_Info const & rna_type = pose.residue_type( working_sample_res ).RNA_type();
+		RNA_Info const & rna_type = pose.residue_type( working_sample_res ).RNA_info();
 		TR << rna_type.chi_number_pseudogamma() << " " << rna_type.chi_number_pseudobeta() << " " << rna_type.chi_number_pseudoalpha() << std::endl;
 		pose.set_chi( rna_type.chi_number_pseudogamma(), working_sample_res, pose.residue(working_sample_res).mainchain_torsion(3) );
 		pose.set_chi( rna_type.chi_number_pseudobeta() , working_sample_res, pose.residue(working_sample_res).mainchain_torsion(2) );
@@ -229,7 +229,7 @@ pack_phosphates()
 		Size const sample_res = three_prime_phosphate_pack_res_list[ n ];
 		Size const working_sample_res = get_res_list_from_full_model_info( pose ).index( sample_res );
 		add_variant_type_to_pose_residue( pose, "THREE_PRIME_PACKABLE_PHOSPHATE", working_sample_res);
-		RNA_Info const & rna_type =  pose.residue_type( working_sample_res ).RNA_type();
+		RNA_Info const & rna_type =  pose.residue_type( working_sample_res ).RNA_info();
 
 		if ( native_pose ){
 			TR << "Copying in conformation from native" << std::endl;

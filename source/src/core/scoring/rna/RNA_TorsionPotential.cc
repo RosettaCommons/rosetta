@@ -248,34 +248,34 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 
 	/////////////////////// new 'packable phosphate' variants /////////////////
 	// These were experimental, but are actually not in use -- no longer supported.
-	chemical::rna::RNA_Info const & rna_type = rsd.type().RNA_type();
-	if ( rna_type.chi_number_pseudoalpha() > 0 ) {
-		Real const pseudoalpha = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
+	chemical::rna::RNA_Info const & rna_info = rsd.type().RNA_info();
+	if ( rna_info.chi_number_pseudoalpha() > 0 ) {
+		Real const pseudoalpha = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudoalpha() ) );
 		Real const pseudoalpha_score = alpha_potential_->func( pseudoalpha );
 		if ( verbose_ ) TR << "Pseudoalpha torsion: " << pseudoalpha << "  score: " << pseudoalpha_score << std::endl;
 		score += pseudoalpha_score;
 	}
-	if ( rna_type.chi_number_pseudobeta() > 0 ) {
-		Real const pseudobeta = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudobeta() ) );
+	if ( rna_info.chi_number_pseudobeta() > 0 ) {
+		Real const pseudobeta = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudobeta() ) );
 		Real const pseudobeta_score = beta_potential_->func( pseudobeta );
 		score += pseudobeta_score;
 		if ( verbose_ ) TR << "Pseudobeta torsion: " << pseudobeta << "  score: " << pseudobeta_score << std::endl;
 	}
-	if ( rna_type.chi_number_pseudogamma() > 0 ) {
-		Real const pseudogamma = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudogamma() ) );
+	if ( rna_info.chi_number_pseudogamma() > 0 ) {
+		Real const pseudogamma = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudogamma() ) );
 		Real const pseudogamma_score = gamma_potential_->func( pseudogamma );
 		score += pseudogamma_score;
 		if ( verbose_ ) TR << "Pseudogamma torsion: " << pseudogamma << "  score: " << pseudogamma_score << std::endl;
 	}
-	if ( rna_type.chi_number_pseudoepsilon() > 0 ) {
-		Real const pseudoepsilon = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoepsilon() ) );
+	if ( rna_info.chi_number_pseudoepsilon() > 0 ) {
+		Real const pseudoepsilon = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudoepsilon() ) );
 		Real const pseudoepsilon_score = ( fade_delta_north_->func( delta ) * epsilon_north_potential_->func( pseudoepsilon ) +
 			fade_delta_south_->func( delta ) * epsilon_south_potential_->func( pseudoepsilon ) );
 		score += pseudoepsilon_score;
 		if ( verbose_ ) TR << "Pseudoepsilon torsion: " << rsd.seqpos() << " -- " << pseudoepsilon << "  score: " << pseudoepsilon_score << std::endl;
 	}
-	if ( rna_type.chi_number_pseudozeta() > 0 ) {
-		Real const pseudozeta = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudozeta() ) );
+	if ( rna_info.chi_number_pseudozeta() > 0 ) {
+		Real const pseudozeta = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudozeta() ) );
 		Real const next_alpha = factor * rna_fitted_torsion_info_->alpha_aform();
 		Real const pseudozeta_score = ( fade_alpha_sc_minus_->func( next_alpha ) * zeta_alpha_sc_minus_potential_->func( pseudozeta ) +
 			fade_alpha_sc_plus_->func( next_alpha )  * zeta_alpha_sc_plus_potential_->func( pseudozeta ) +
@@ -599,27 +599,27 @@ RNA_TorsionPotential::eval_atom_derivative(
 
 		/////////////////////// new 'packable phosphate' variants /////////////////
 		if ( seqpos != current_seqpos ) continue;
-		chemical::rna::RNA_Info const & rna_type = pose.residue( current_seqpos ).type().RNA_type();
-		if ( rna_type.chi_number_pseudoalpha() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudoalpha() ), pose, id, f1, f2 ) ) {
-			Real const pseudoalpha = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
+		chemical::rna::RNA_Info const & rna_info = pose.residue( current_seqpos ).type().RNA_info();
+		if ( rna_info.chi_number_pseudoalpha() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_info.chi_number_pseudoalpha() ), pose, id, f1, f2 ) ) {
+			Real const pseudoalpha = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudoalpha() ) );
 			Real const dE_dtorsion = alpha_potential_->dfunc( pseudoalpha );
 			F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 			F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 		}
-		if ( rna_type.chi_number_pseudobeta() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudobeta() ), pose, id, f1, f2 ) ) {
-			Real const pseudobeta = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudobeta() ) );
+		if ( rna_info.chi_number_pseudobeta() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_info.chi_number_pseudobeta() ), pose, id, f1, f2 ) ) {
+			Real const pseudobeta = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudobeta() ) );
 			Real const dE_dtorsion = beta_potential_->dfunc( pseudobeta );
 			F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 			F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 		}
-		if ( rna_type.chi_number_pseudogamma() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudogamma() ), pose, id, f1, f2 ) ) {
-			Real const pseudogamma = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudogamma() ) );
+		if ( rna_info.chi_number_pseudogamma() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_info.chi_number_pseudogamma() ), pose, id, f1, f2 ) ) {
+			Real const pseudogamma = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudogamma() ) );
 			Real const dE_dtorsion = gamma_potential_->dfunc( pseudogamma );
 			F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 			F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 		}
-		if ( rna_type.chi_number_pseudoepsilon() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudoepsilon() ), pose, id, f1, f2 ) ) {
-			Real const pseudoepsilon = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoepsilon() ) );
+		if ( rna_info.chi_number_pseudoepsilon() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_info.chi_number_pseudoepsilon() ), pose, id, f1, f2 ) ) {
+			Real const pseudoepsilon = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudoepsilon() ) );
 			Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * epsilon_north_potential_->dfunc( pseudoepsilon ) +
 				fade_delta_south_->func( delta ) * epsilon_south_potential_->dfunc( pseudoepsilon ) );
 			F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
@@ -632,8 +632,8 @@ RNA_TorsionPotential::eval_atom_derivative(
 			F2 += radians2degrees * dE_dtorsion_delta * weights[ rna_torsion ] * f2;
 
 		}
-		if ( rna_type.chi_number_pseudozeta() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudozeta() ), pose, id, f1, f2 ) ) {
-			Real const pseudozeta = factor * principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudozeta() ) );
+		if ( rna_info.chi_number_pseudozeta() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_info.chi_number_pseudozeta() ), pose, id, f1, f2 ) ) {
+			Real const pseudozeta = factor * principal_angle_degrees( rsd.chi( rna_info.chi_number_pseudozeta() ) );
 			Real const next_alpha = rna_fitted_torsion_info_->alpha_aform();
 			Real const dE_dtorsion = ( fade_alpha_sc_minus_->func( next_alpha ) * zeta_alpha_sc_minus_potential_->dfunc( pseudozeta ) +
 				fade_alpha_sc_plus_->func( next_alpha )  * zeta_alpha_sc_plus_potential_->dfunc( pseudozeta ) +

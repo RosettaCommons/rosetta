@@ -43,8 +43,7 @@ namespace chemical {
 std::map< std::string, int >
 parse_adduct_string(
 	utility::options::StringVectorOption & add_vec
-)
-{
+) {
 	std::map< std::string, int > add_map;
 	// walk via an index, plucking a second string each time if
 	// it is an integer

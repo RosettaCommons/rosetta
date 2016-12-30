@@ -120,7 +120,6 @@ RNA_FragmentMover::apply(
 void
 RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 {
-
 	// Maybe we don't need to do any updating.
 	if ( frag_size_ == insert_map_frag_size_ ) return;
 
@@ -134,9 +133,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		// This is different from the past. Now we have a atom-resolution
 		// atom_level_domain_map map, so when we do the insertion, we can
 		// avoid changing atom positions that should be fixed.
-		//bool frame_ok = true;
 
-		//  if ( !rna_fragments_->is_fullatom() ){
 		bool frame_ok = false;
 		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
 			Size const n = i + offset - 1;
@@ -145,18 +142,6 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 				break;
 			}
 		}
-
-		//  } else {
-
-		//   frame_ok = true;
-		//   //Old school. Default for full-atom fragments.
-		//   for (Size offset = 1; offset <= frag_size_; offset++ ){
-		//    if ( !atom_level_domain_map_->get( i + offset - 1 ) ) { //sucka!
-		//     frame_ok = false;
-		//     break;
-		//    }
-		//   }
-		//  }
 
 		if ( !frame_ok ) continue;
 
@@ -188,7 +173,6 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 	}
 
 	insert_map_frag_size_ = frag_size_; //up to date!
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -196,8 +180,7 @@ Size
 RNA_FragmentMover::random_fragment_insertion(
 	core::pose::Pose & pose,
 	Size const & frag_size
-)
-{
+) {
 	frag_size_ = frag_size;
 
 	//Size const type = MATCH_YR;

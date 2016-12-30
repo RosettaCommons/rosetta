@@ -271,7 +271,7 @@ core::Real GenPharmacophore::get_RNAring_sasa( core::conformation::Residue const
 		std::cout<<"Residue is not an RNA base. Cannot calculate RNA base SASA."<<std::endl;
 		exit (1);
 	}
-	core::chemical::rna::RNA_Info const & rsd_type = rsd.RNA_type();
+	core::chemical::rna::RNA_Info const & rsd_type = rsd.RNA_info();
 	core::Real curr_ring_sasa = 0;
 	for ( Size rj = 1, rj_end = rsd.nheavyatoms(); rj <= rj_end; ++rj ) {
 		if ( !rsd_type.is_RNA_base_atom(rj) ) continue;
@@ -483,7 +483,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 		for ( int ic = 1, ic_end = temp_protein_rnabase_pose.size(); ic<=ic_end; ++ic ) {
 			core::conformation::Residue const & curr_rsd = temp_protein_rnabase_pose.residue(ic);
 			if ( !curr_rsd.is_RNA() ) continue;
-			core::chemical::rna::RNA_Info const & curr_rsd_type = curr_rsd.RNA_type();
+			core::chemical::rna::RNA_Info const & curr_rsd_type = curr_rsd.RNA_info();
 			core::Real curr_ring_sasa = 0;
 			for ( Size jc = 1, jc_end = curr_rsd.nheavyatoms(); jc <= jc_end; ++jc ) {
 				if ( !curr_rsd_type.is_RNA_base_atom(jc) ) continue;

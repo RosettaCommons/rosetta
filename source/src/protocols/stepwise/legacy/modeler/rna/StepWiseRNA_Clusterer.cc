@@ -482,7 +482,6 @@ StepWiseRNA_Clusterer::two_stage_clustering(){
 
 	//////////////////////////////////////////////////////
 
-
 	input_->reset(); //reset the silentfile stream to the beginning..
 	create_large_cluster_centers_member_list();
 
@@ -501,7 +500,6 @@ StepWiseRNA_Clusterer::two_stage_clustering(){
 
 	input_->reset(); //reset the silentfile stream to the beginning..
 	do_some_clustering();
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -583,8 +581,6 @@ StepWiseRNA_Clusterer::create_large_cluster_centers_member_list(){
 	for ( Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) {
 		TR << "cluster center " << n << " has " << cluster_centers_neighbor_list_[n].size() << " members " << std::endl;
 	}
-
-
 }
 
 
@@ -670,8 +666,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 				utility::vector1< core::Size > const & force_syn_chi_res_list = working_parameters_->working_force_syn_chi_res_list();
 				utility::vector1< core::Size > const & force_anti_chi_res_list = working_parameters_->working_force_anti_chi_res_list();
 
-				for ( Size n = 1; n <= force_north_sugar_list.size(); n++ ) {
-					Size const seq_num = force_north_sugar_list[n];
+				for ( Size const seq_num : force_north_sugar_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -687,8 +682,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size n = 1; n <= force_south_sugar_list.size(); n++ ) {
-					Size const seq_num = force_south_sugar_list[n];
+				for ( Size const seq_num : force_south_sugar_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -704,8 +698,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size n = 1; n <= force_syn_chi_res_list.size(); n++ ) {
-					Size const seq_num = force_syn_chi_res_list[n];
+				for ( Size const seq_num : force_syn_chi_res_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -721,8 +714,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size n = 1; n <= force_anti_chi_res_list.size(); n++ ) {
-					Size const seq_num = force_anti_chi_res_list[n];
+				for ( Size const seq_num : force_anti_chi_res_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -738,8 +730,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size n = 1; n <= working_filter_virtual_res_list.size(); n++ ) {
-					Size const seq_num = working_filter_virtual_res_list[n];
+				for ( Size const seq_num : working_filter_virtual_res_list ) {
 					if ( ! (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 						pass_filter = false;
 						if ( filter_verbose ) TR << "pose = " << tag << " doesn't have virtual_rna_residue variant_type at seq_num = " << seq_num << std::endl;
@@ -748,8 +739,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 
 				if ( min_num_south_sugar_filter_ != 0 ) {
 					Size num_south_sugar = 0;
-					for ( Size n = 1; n <= working_global_sample_res_list.size(); n++ ) {
-						Size const seq_num = working_global_sample_res_list[n];
+					for ( Size const seq_num : working_global_sample_res_list ) {
 						if ( core::pose::rna::get_residue_pucker_state( (*pose_op), seq_num ) == SOUTH ) {
 							num_south_sugar += 1;
 						}
@@ -1082,11 +1072,7 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 		//problem is that bulge residues are excluded?? The weight of the RMSD and member.RMSD might not be the same... Aug 9, 2010
 
 		utility::vector1< Cluster_Member > const & member_list = cluster_centers_neighbor_list_[n];
-
-		for ( Size ii = 1; ii <= member_list.size(); ii++ ) { //lowest socre cluster center member at the beginning of the list.
-
-			Cluster_Member const & member = member_list[ii];
-
+		for ( Cluster_Member const & member : member_list ) { //lowest socre cluster center member at the beginning of the list.
 			if ( ( member.score + 0.001 ) > current_score ) break; //0.001 to account for round off errors.
 
 			if ( ( RMSD - member.RMSD ) <= ( loop_cluster_radius_ + 0.02 ) ) continue;
@@ -1110,7 +1096,6 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 	}
 	//TR << "num_cluster_center_used= " << num_cluster_center_used;
 	TR << "num_fail_triangle_inequality = " << num_fail_triangle_inequality << " out_of = " << silent_struct_output_list_.size() << std::endl;
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1143,13 +1128,11 @@ StepWiseRNA_Clusterer::is_new_cluster_center_with_working_parameters( core::pose
 		pose::Pose const & cluster_center_pose = ( *cluster_center_poseOP );
 		std::string const & cluster_center_tag = tag_output_list_[n];
 
-
 		if ( quick_alignment_ == false ) align_poses( current_pose, tag, cluster_center_pose, cluster_center_tag, alignment_res, align_only_over_base_atoms_ );
 
 		//////////////////////////////////////////////////////////
 
 		bool old_suite_cluster = is_old_individual_suite_cluster( current_pose, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, suite_cluster_radius_ );
-
 
 		Real loop_rmsd = 99.99;
 
@@ -1219,11 +1202,8 @@ StepWiseRNA_Clusterer::output_silent_file( std::string const & silent_file ){
 	using namespace core::io::silent;
 
 	SilentFileData silent_file_data;
-
-	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
-
-		SilentStructOP & s( silent_struct_output_list_[ n ] );
-
+	for ( Size n = 1; n <= silent_struct_output_list_.size(); ++n ) {
+		SilentStructOP & s = silent_struct_output_list_[ n ];
 		if ( rename_tags_ ) {
 			s->add_comment( "PARENT_TAG", s->decoy_tag() );
 
@@ -1322,7 +1302,6 @@ StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file( std::string cons
 		( *native ) = ( *working_parameters_->working_native_pose() ); //Hard copy...
 
 		align_poses( ( *native ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ );
-
 
 		s->add_energy( "NEW_all_rms", rms_at_corresponding_heavy_atoms( pose, *native ) );
 		s->add_energy( "NEW_loop_rmsd", rmsd_over_residue_list( pose, *native, calc_rms_res, full_to_sub, is_prepend_map, false, false ) );
@@ -1454,7 +1433,7 @@ StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file( s
 
 		for ( Size other_pose_ID = 1 ; other_pose_ID  <= silent_struct_output_list_.size(); other_pose_ID ++ ) {
 
-			std::string other_tag = tag_output_list_[ other_pose_ID ];
+			std::string const & other_tag = tag_output_list_[ other_pose_ID ];
 
 			core::pose::PoseOP const other_pose_op = get_poseOP( other_pose_ID );
 			core::pose::Pose other_pose = ( *other_pose_op );
@@ -1494,11 +1473,6 @@ StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file( s
 		}
 
 		float const new_score = start_score - start_shift_score + best_shift_score;
-
-		//setPoseExtraScore(pose, "score", new_score);
-		//setPoseExtraScore(pose, "shift_score", best_shift_score);
-		//setPoseExtraScore(pose, "self_shift_score", start_shift_score);
-		//add_score_line_string(pose, "src_shift_tag", best_shift_tag);
 
 		SilentStructOP new_silent_struct = s->clone(); //Important to create new one since shift_score is being changed!!!
 

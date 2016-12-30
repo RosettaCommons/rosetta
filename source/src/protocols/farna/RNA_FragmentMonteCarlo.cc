@@ -1024,7 +1024,7 @@ RNA_FragmentMonteCarlo::check_score_filter( Real const lores_score, std::list< R
 	// the one pain with lists -- need to iterate through to find the element corresponding to the quantile score.
 	Real all_lores_score_cutoff = all_lores_score.front();
 	Size i( 1 );
-	for ( std::list< Real >::const_iterator iter = all_lores_score.begin(), end = all_lores_score.end(); iter != end; ++iter, i++ ) {
+	for ( auto iter = all_lores_score.begin(), end = all_lores_score.end(); iter != end; ++iter, i++ ) {
 		if ( i == cutoff_index ) all_lores_score_cutoff = *iter;
 	}
 
@@ -1169,18 +1169,18 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 {
 	// special case -- we only care about the loop(s). Pose has already been aligned to fixed residues.
 	// this will be decided in align_and_output_to_silent_file.
-	if ( loop_modeling() ) {
-		std::map< core::id::AtomID, core::id::AtomID > loop_atom_id_map;
-		TR << "In loop modeling mode, since there is a single user-inputted pose" << std::endl;
-		for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator it = atom_id_map.begin(); it != atom_id_map.end(); it++ ) {
-			Size domain( rna_chunk_library_->atom_level_domain_map()->get_domain( it->second ) );
-			if ( domain == 0 || domain == ROSETTA_LIBRARY_DOMAIN ) {
-				loop_atom_id_map[ it->first ] = it->second;
-				// TR << TR.Cyan << "Loop atom: " << atom_id_to_named_atom_id( it->second, pose ) << TR.Reset << std::endl;
-			}
+	if ( ! loop_modeling() ) return;
+
+	std::map< core::id::AtomID, core::id::AtomID > loop_atom_id_map;
+	TR << "In loop modeling mode, since there is a single user-inputted pose" << std::endl;
+	for ( auto const & elem : atom_id_map ) {
+		Size domain( rna_chunk_library_->atom_level_domain_map()->get_domain( elem.second ) );
+		if ( domain == 0 || domain == ROSETTA_LIBRARY_DOMAIN ) {
+			loop_atom_id_map[ elem.first ] = elem.second;
+			// TR << TR.Cyan << "Loop atom: " << atom_id_to_named_atom_id( elem.second, pose ) << TR.Reset << std::endl;
 		}
-		atom_id_map = loop_atom_id_map;
 	}
+	atom_id_map = loop_atom_id_map;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

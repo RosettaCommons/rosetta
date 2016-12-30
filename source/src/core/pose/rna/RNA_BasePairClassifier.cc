@@ -92,7 +92,7 @@ update_edge_hbond_numbers(
 	std::string atom_name = rsd.atom_name( atm );
 	// std::cout << atom_name << std::endl;
 
-	if ( rsd.aa() == na_rad ) {
+	if ( rsd.aa() == na_rad || rsd.type().na_analogue() == na_rad ) {
 
 		if ( atom_name == " N1 "  ||
 				atom_name == " C2 "  ||
@@ -111,7 +111,7 @@ update_edge_hbond_numbers(
 				atom_name == " O3'"  ||
 				atom_name == " O2'"   ) N_S++;
 
-	} else if ( rsd.aa() == na_rcy ) {
+	} else if ( rsd.aa() == na_rcy || rsd.type().na_analogue() == na_rcy ) {
 
 		if ( atom_name == " O2 "  ||
 				atom_name == " N3 "  ||
@@ -128,7 +128,7 @@ update_edge_hbond_numbers(
 				atom_name == " O3'"  ||
 				atom_name == " O2'"   ) N_S++;
 
-	} else if ( rsd.aa() == na_rgu ) {
+	} else if ( rsd.aa() == na_rgu || rsd.type().na_analogue() == na_rgu ) {
 
 		if ( atom_name == " N1 "  ||
 				atom_name == " N2 "  ||
@@ -146,7 +146,7 @@ update_edge_hbond_numbers(
 				atom_name == " C1'"  ||
 				atom_name == " O2'"   ) N_S++;
 
-	} else if ( rsd.aa() == na_ura || rsd.name1() == 't' ) {
+	} else if ( rsd.aa() == na_ura || rsd.name1() == 't' || rsd.type().na_analogue() == na_ura ) {
 
 		if ( atom_name == " O2 "  ||
 				atom_name == " N3 "  ||
@@ -164,7 +164,7 @@ update_edge_hbond_numbers(
 				atom_name == " O2'"   ) N_S++;
 
 	} else {
-		std::cout << "PROBLEM !!!! " << rsd.aa() << std::endl;
+		std::cout << "PROBLEM !!!! " << rsd.type().name() << std::endl;
 		utility_exit_with_message( "Problem with base classification, residue " );
 	}
 }

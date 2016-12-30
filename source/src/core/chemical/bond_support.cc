@@ -109,24 +109,18 @@ void quick_ring_detection( ResidueType & res){
 	//std::map< VD,std::map<VD, bool > >::const_iterator it_start, it_end;
 	//it_start = ring_edges.begin();
 	//it_end = ring_edges.end();
-	for (
-			std::map< VD,std::map<VD, bool > >::const_iterator it = ring_edges.begin();
-			it != ring_edges.end(); ++it
-			) {
-		for (
-				auto second_it = it->second.begin();
-				second_it != it->second.end(); ++second_it
-				) {
-			if ( second_it->second ) {
-				ED bond_edge;
-				bool edge_exists;
-				boost::tie( bond_edge, edge_exists) = boost::edge( it->first, second_it->first, res.graph());
-				if ( edge_exists ) {
-					Bond & bond = res.bond( bond_edge);
-					bond.ringness( BondInRing);
-				} else {
-					utility_exit_with_message("In quick ring detection, cannot find bond for " + res.atom_name( it->first ) + " to " + res.atom_name( second_it->first ) );
-				}
+	for ( auto const & vd_ring_edge_elem : ring_edges ) {
+		for ( auto const & vd_bool_elem : vd_ring_edge_elem.second ) {
+			if ( ! vd_bool_elem.second ) continue;
+			
+			ED bond_edge;
+			bool edge_exists;
+			boost::tie( bond_edge, edge_exists) = boost::edge( vd_ring_edge_elem.first, vd_bool_elem.first, res.graph());
+			if ( edge_exists ) {
+				Bond & bond = res.bond( bond_edge);
+				bond.ringness( BondInRing);
+			} else {
+				utility_exit_with_message("In quick ring detection, cannot find bond for " + res.atom_name( vd_ring_edge_elem.first ) + " to " + res.atom_name( vd_bool_elem.first ) );
 			}
 		}
 	}

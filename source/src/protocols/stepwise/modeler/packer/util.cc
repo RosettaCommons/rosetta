@@ -96,7 +96,7 @@ bool
 check_o2prime_contact( pose::Pose const & pose, Size const i, Size const j ) {
 
 	Real const dist_cutoff2 = ( 4.0 * 4.0 );
-	Vector const & o2prime_xyz = pose.residue( i ).xyz(  pose.residue_type( i ).RNA_type().o2prime_index() );
+	Vector const & o2prime_xyz = pose.residue( i ).xyz(  pose.residue_type( i ).RNA_info().o2prime_index() );
 
 	core::conformation::Residue const & nbr_rsd = pose.residue( j );
 	for ( Size n = 1; n <= nbr_rsd.nheavyatoms(); n++ ) {

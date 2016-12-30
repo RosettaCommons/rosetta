@@ -84,122 +84,6 @@ utility::vector1< std::string > SilentFileData::tags() const {
 	return tag_list;
 } // tags
 
-///////////////////////////////////////////////////////////////
-// although I set up what follows, its kind of embarrassing.
-//  should not be using options system as a kind of 'global variable'
-//  setting. A better idea (suggested by Andrew Leaver-Fay) would
-//  be to have a ResidueTypeSet that is *not* const, but can be
-//  updated after silent file readin, and then used for
-//  fill_pose().
-//
-// If someone carries out the fix, with an example in, say, extract_pdbs.cc,
-//  please update this comment.
-//
-// -- rhiju, 2014.
-//
-bool SilentFileData::setup_include_patches(
-	std::string const & filename
-) const {
-
-	utility::io::izstream data( filename.c_str() );
-	if ( !data.good() ) {
-		utility_exit_with_message(
-			"ERROR: Unable to open silent_input file: '" + filename + "'"
-		);
-	}
-
-	std::string line;
-	getline( data, line ); // sequence line
-	getline( data, line ); // score line
-
-	utility::vector1< std::string > all_res, all_patches;
-	while ( getline(data,line) ) {
-		if ( line.substr(0,19) == "ANNOTATED_SEQUENCE:"  ) {
-			std::istringstream l( line );
-			std::string tag, annotated_seq;
-			l >> tag; //ANNOTATED_SEQUENCE
-			l >> annotated_seq;
-
-			annotated_seq = chemical::fixup_patches( annotated_seq );
-
-			utility::vector1< std::string > fullname_list; // a vector of non-standard full names
-			std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
-			std::string one_letter_sequence;
-			pose::parse_sequence( annotated_seq, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
-			for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
-				Size index = oneletter_to_fullname_index[ seqpos-1 ];
-				if ( index == 0 ) continue; // no patches.
-				std::string const fullname = fullname_list[ index ];
-				utility::vector1< std::string > const cols = utility::string_split( fullname, ':' );
-				if ( !all_res.has_value( cols[1] ) ) all_res.push_back( cols[1] );
-				for ( Size n = 2; n <= cols.size(); n++ ) { // might be better to make all_cols a set.
-					if ( !all_patches.has_value( cols[n] ) ) all_patches.push_back( cols[n] );
-				}
-			}
-		}
-	} // while( getline(data,line) )
-
-	setup_extra_res( all_res );
-	setup_extra_patches( all_patches );
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// might be useful in a util somewhere if other objects want to tell ResidueTypeSet
-// that we need more residues
-void
-SilentFileData::setup_extra_res( utility::vector1< std::string > & all_res ) const {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	std::map< std::string, std::string > extra_res_tag;
-	extra_res_tag[ "ICY" ] = "nucleic/rna_nonnatural/ICY.params";
-	extra_res_tag[ "IGU" ] = "nucleic/rna_nonnatural/IGU.params";
-
-	FileVectorOption & extra_res_fa = option[ OptionKeys::in::file::extra_res_fa ];
-	for ( Size n = 1; n <= all_res.size(); n++ ) {
-		std::string const & patch_name = all_res[n];
-		if ( extra_res_tag.find( patch_name ) != extra_res_tag.end() ) {
-			std::string const & tag = extra_res_tag[ patch_name ];
-			if ( !extra_res_fa.value().has_value( tag ) ) extra_res_fa.push_back( tag );
-		}
-	}
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// might be useful in a util somewhere if other objects want to tell ResidueTypeSet
-// that we need more patches.
-void
-SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patches ) const {
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	// this block may be obviated if we fix the command_line_selector to search for not just cmdline_selector tags
-	//  but also names.
-	std::map< std::string, std::string > cmdline_selector_tag;
-	cmdline_selector_tag[ "Virtual_Protein_SideChain" ] = "VIRTUAL_SIDE_CHAIN";
-	cmdline_selector_tag[ "N_acetylated" ]     = "PEPTIDE_CAP";
-	cmdline_selector_tag[ "C_methylamidated" ] = "PEPTIDE_CAP";
-	cmdline_selector_tag[ "Virtual_Ribose" ] = "VIRTUAL_RIBOSE";
-	cmdline_selector_tag[ "5PrimePhos" ] = "TERMINAL_PHOSPHATE";
-	cmdline_selector_tag[ "3PrimePhos" ] = "TERMINAL_PHOSPHATE";
-	cmdline_selector_tag[ "Virtual_Ribose" ] = "VIRTUAL_RIBOSE";
-	cmdline_selector_tag[ "Virtual_RNA_Residue" ] = "VIRTUAL_RNA_RESIDUE";
-	cmdline_selector_tag[ "Virtual_Phosphate" ] = "VIRTUAL_PHOSPHATE";
-
-	StringVectorOption & patch_selectors = option[ OptionKeys::chemical::patch_selectors ];
-	for ( Size n = 1; n <= all_patches.size(); n++ ) {
-		std::string const & patch_name = all_patches[n];
-		if ( cmdline_selector_tag.find( patch_name ) != cmdline_selector_tag.end() ) {
-			std::string const & tag = cmdline_selector_tag[ patch_name ];
-			if ( !patch_selectors.value().has_value( tag ) ) patch_selectors.push_back( tag );
-		}
-	}
-	tr.Debug << "EXTRA PATCHES " << patch_selectors.value() << std::endl;
-}
-
 
 std::string
 SilentFileData::get_sequence( std::string const & filename )
@@ -736,7 +620,6 @@ SilentFileData::_read_file(
 		}
 	}
 	success = read_stream(data,tags,throw_exception_on_bad_structs,filename);
-	setup_include_patches( filename ); // to tell ResidueTypeSet what patches are in file.
 	return success;
 }
 

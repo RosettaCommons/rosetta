@@ -307,15 +307,11 @@ swa_rna_cluster(){
 	non_empty_silent_files_in.clear();
 
 	/////////////Check for empty silent_files/////////////////
-	for ( Size n = 1; n <= silent_files_in.size(); n++ ) {
-
-		std::string const input_silent_file = silent_files_in[n];
-
+	for ( std::string const & input_silent_file : silent_files_in ) {
 		if ( is_nonempty_input_silent_file( input_silent_file, "empty filtered silent_file since no non-empty sampler silent_file." ) ) {
 			std::cout << "adding input_silent_file " << input_silent_file << " to non_empty_silent_files_in " << std::endl;
 			non_empty_silent_files_in.push_back( input_silent_file );
 		}
-
 	}
 	//////////////////////////////////////////////////
 	std::string const silent_file_out = option[ out::file::silent  ]();
@@ -335,14 +331,14 @@ swa_rna_cluster(){
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	if ( non_empty_silent_files_in.size() == 0 ) {
+	if ( non_empty_silent_files_in.empty() ) {
 		std::cout << "Early Exit: non_empty_silent_files_in.size() == 0, outputting empty clustered outfile " << std::endl;
 		std::ofstream outfile;
 		outfile.open( silent_file_out.c_str() ); //Opening the file with this command removes all prior content..
 		outfile << "empty cluster silent_file since all input_silent_file are empty.";
 		outfile << " input_silent_file:";
-		for ( Size n = 1; n <= silent_files_in.size(); n++ ) {
-			outfile << " " << silent_files_in[n];
+		for ( std::string const & silent_file : silent_files_in ) {
+			outfile << " " << silent_file;
 		}
 		outfile << "\n";
 		outfile.flush();

@@ -215,19 +215,9 @@ public:
 		std::string const & filename
 	) const;
 
-	bool setup_include_patches(
-		std::string const & filename
-	) const;
-
 	/// @brief Function to access the vector of silent structure owning pointers
 	/// ordered as they were in the input file.
 	utility::vector1 <SilentStructOP> structure_list() { return structure_list_; }
-
-	void
-	setup_extra_res( utility::vector1< std::string > & all_res ) const;
-
-	void
-	setup_extra_patches( utility::vector1< std::string > & all_patches ) const;
 
 	std::string
 	get_sequence( std::string const & filename );

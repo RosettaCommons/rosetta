@@ -35,6 +35,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/sequence/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
@@ -128,12 +129,7 @@ build_full_model_test()
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	// setup score function
-	core::scoring::ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ) {
-		scorefxn = get_score_function();
-	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	}
+	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" ); 
 
 	// setup silent_files
 	if ( !option[ in::file::silent ].user() ) {
@@ -169,6 +165,7 @@ build_full_model_test()
 	Pose start_pose, full_model_pose;
 	utility::vector1< PoseOP > other_ops;
 	utility::vector1< PoseOP > pose_clusters;
+	PoseCOP native_pose = stepwise::setup::get_pdb_with_full_model_info( option[ in::file::native ], rsd_set ); //import_pose::pose_from_file( option[ in::file::native ] );
 
 	// clustering stuff..
 	//Real cluster_rmsd = 0.0;
@@ -218,20 +215,24 @@ build_full_model_test()
 
 		nonconst_full_model_info( start_pose ).clear_other_pose_list();
 		other_ops = nonconst_full_model_info( start_pose ).other_pose_list();
-
+		if ( !other_ops.empty() ) {
+			TR << TR.Red << "[WARNING] other_pose_list not empty, full_model_pose may be garbage!!! " << TR.Reset << std::endl;
+		}
+		
 		FullModelInfo const & start_info = const_full_model_info( start_pose );
 		(*scorefxn)(start_pose);
-
+		
 		// build full_model_pose
-		if ( start_pose.total_residue() == start_info.full_sequence().size() ) {
+		// We need to compare to the temp sequence if the full_sequence might have annotations
+		// Not currently true, but let's be safe
+		auto temp_seq = start_info.full_sequence();
+		core::sequence::parse_out_non_standard_residues( temp_seq );
+		if ( start_pose.total_residue() == temp_seq.size() ) {
 			TR << "No missing residues in pose:  " << TR.Cyan << tag << TR.Reset << std::endl;
 		} else {
 			TR << "Building full model for pose: " << TR.Yellow << tag << TR.Reset << std::endl;
 		}
-		if ( other_ops.size() ) {
-			TR << TR.Red << "[WARNING] other_pose_list.size() != 0, full_model_pose may be garbage!!! " << TR.Reset << std::endl;
-		}
-
+		
 		// BUILD IN MISSING RESIDUES
 		stepwise::monte_carlo::build_full_model( start_pose, full_model_pose );
 
@@ -255,9 +256,7 @@ build_full_model_test()
 		TR << "Built Sequence:  " << TR.Green << full_model_pose.sequence() << TR.Reset << std::endl;
 
 		// virtualize built residues
-		for ( Size i = 1; i <= full_model_info.res_list().size(); ++i ) {
-
-			Size const & full_model_res = full_model_info.res_list()[i];
+		for ( Size const full_model_res : full_model_info.res_list() ) {
 			Size other_idx = start_info.get_idx_for_other_pose_with_residue( full_model_res );
 
 			if ( start_info.res_list().has_value( full_model_res ) || other_idx ) {
@@ -276,9 +275,7 @@ build_full_model_test()
 					VariantType const & variant_type = start_rsd->type().properties().get_variant_from_string( variant_types[j] );
 					add_variant_type_to_pose_residue( full_model_pose, variant_type, full_model_res );
 				}
-
 			} else {
-
 				// close cutpoints
 				other_idx = start_info.get_idx_for_other_pose_with_residue( full_model_res + 1 );
 				/*if ( start_info.res_list().has_value( full_model_res + 1 ) || other_idx ) {
@@ -302,7 +299,6 @@ build_full_model_test()
 					} else {
 						TR << "Cutpoint Open at residue " << TR.Magenta << full_model_res << TR.Reset << std::endl;
 					}
-
 				}
 			}
 		}
@@ -310,9 +306,9 @@ build_full_model_test()
 		// update pdb info/ score full_model_pose
 		update_pdb_info_from_full_model_info( full_model_pose );
 
+		(*scorefxn)(full_model_pose);
 		// show scores of start_pose and full_model_pose
 		if ( option[ show_scores ]() ) {
-			(*scorefxn)(full_model_pose);
 			std::cout << "\n Score before building in missing residues:" << std::endl;
 			scorefxn->show( std::cout, start_pose );
 			std::cout << "\n Score after building in missing residues:" << std::endl;
@@ -328,16 +324,12 @@ build_full_model_test()
 		}
 
 		// write out to silent file
-		stepwise::monte_carlo::output_to_silent_file( tag, silent_file_out, full_model_pose );
-
+		stepwise::monte_carlo::output_to_silent_file( tag, silent_file_out, full_model_pose, native_pose );
 	}
-
 
 	if ( pose_clusters.size() > 0 ) {
 		output_pose_list( pose_clusters, silent_file_cluster_out );
 	}
-
-
 }
 
 

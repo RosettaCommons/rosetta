@@ -2142,8 +2142,8 @@ public:
 
 	/// @brief Return the RNA_residueType object. This is RNA specific.
 	core::chemical::rna::RNA_Info const &
-	RNA_type() const{
-		return rsd_type_.RNA_type();
+	RNA_info() const{
+		return rsd_type_.RNA_info();
 	}
 
 	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.

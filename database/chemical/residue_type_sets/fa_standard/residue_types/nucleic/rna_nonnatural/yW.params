@@ -1,7 +1,7 @@
 #unoptimized
 # check charge
 # YYG in PDB, but yW in a lot of nomenclatures
-NAME yW
+NAME YYG
 IO_STRING YYG X
 TYPE POLYMER #residue type
 AA UNP

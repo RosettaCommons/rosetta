@@ -514,8 +514,7 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2prime_positions( pose::Pose & working_p
 		return; //No common/background residues...
 	}
 
-	for ( Size n = 1; n <= common_res_list.size(); n++ ) {
-		Size const full_seq_num = common_res_list[n];
+	for ( Size const full_seq_num : common_res_list ) {
 		Size const working_seq_num = full_to_sub[full_seq_num];
 
 		Size const input_ONE_seq_num = full_to_input_res_map_ONE.find( full_seq_num )->second;
@@ -590,9 +589,7 @@ StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose ){
 	kinematics::FoldTree simple_fold_tree( pose.size() );
 	pose_without_cutpoints.fold_tree( simple_fold_tree ); // permits read out of original torsions across cutpoints. I think.
 
-	for ( Size n = 1; n <= cutpoint_closed_list.size(); n++ ) {
-
-		Size const cutpoint_closed = cutpoint_closed_list[n];
+	for ( Size const cutpoint_closed : cutpoint_closed_list ) {
 		if ( cutpoint_closed == 0 ) continue;
 
 		if ( full_to_sub.find( cutpoint_closed )     != full_to_sub.end() &&
@@ -708,9 +705,7 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 	Distance const DIST_CUTOFF = 8.0;
 	core::scoring::func::FuncOP const repulsion_func( new core::scoring::func::FadeFunc( -2.0 /*min*/, DIST_CUTOFF /*max*/, 1.0 /*fade zone width*/, 100.0 /*penalty*/ ) );
 
-	for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
-
-		Size const k = working_terminal_res[ i ];
+	for ( Size const k : working_terminal_res ) {
 		ResidueType const & rsd1( pose.residue_type( k ) );
 		if ( rsd1.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			TR.Debug << "rsd1.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ), seq_num = " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;

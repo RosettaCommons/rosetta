@@ -303,17 +303,17 @@ FreeDOF_Energy::get_hbond_energy(
 		Real hbE = hbond_.energy() /*raw energy*/ * hbond_.weight() /*env-dep-wt*/ * scorefxn_weight;
 
 		// note double-counting here if hbond is base/base.
-		if ( pose.residue_type( i ).is_RNA() && pose.residue_type( i ).RNA_type().is_RNA_base_atom( hbond_.don_hatm() ) ) {
+		if ( pose.residue_type( i ).is_RNA() && pose.residue_type( i ).RNA_info().is_RNA_base_atom( hbond_.don_hatm() ) ) {
 			base_hbond_energy[ i ] += hbE;
 		}
-		if ( pose.residue_type( j ).is_RNA() && pose.residue_type( j ).RNA_type().is_RNA_base_atom( hbond_.acc_atm() ) ) {
+		if ( pose.residue_type( j ).is_RNA() && pose.residue_type( j ).RNA_info().is_RNA_base_atom( hbond_.acc_atm() ) ) {
 			base_hbond_energy[ j ] += hbE;
 		}
 
-		if ( pose.residue_type( i ).is_RNA() && ( hbond_.don_hatm() == pose.residue_type( i ).RNA_type().ho2prime_index() ) ) {
+		if ( pose.residue_type( i ).is_RNA() && ( hbond_.don_hatm() == pose.residue_type( i ).RNA_info().ho2prime_index() ) ) {
 			sugar_hbond_energy[ i ] += hbE;
 		}
-		if ( pose.residue_type( j ).is_RNA() && ( hbond_.acc_atm() == pose.residue_type( j ).RNA_type().o2prime_index() ) ) {
+		if ( pose.residue_type( j ).is_RNA() && ( hbond_.acc_atm() == pose.residue_type( j ).RNA_info().o2prime_index() ) ) {
 			sugar_hbond_energy[ j ] += hbE;
 		}
 	}

@@ -329,7 +329,8 @@ get_hb_don_chem_type(
 )
 {
 	using namespace chemical;
-	std::string const & aname(don_rsd.atom_name(datm)); // NEVER create a string when a string const & will do
+	std::string const & aname( don_rsd.atom_name( datm ) );
+
 	if ( don_rsd.atom_is_backbone(datm) ) {
 		if ( don_rsd.is_protein() ) {
 			if ( don_rsd.is_lower_terminus() ) {
@@ -346,7 +347,9 @@ get_hb_don_chem_type(
 			return hbdon_GENERIC_BB;
 		}
 	} else {
-		switch(don_rsd.aa()){
+		auto aa = don_rsd.aa();
+		if ( don_rsd.type().na_analogue() != aa_unp ) aa = don_rsd.type().na_analogue();
+		switch( aa ){
 		case aa_none : return hbdon_NONE;
 		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : return hbdon_CXA; break;
 		case aa_his: case aa_dhi: case aa_b3h :
@@ -483,6 +486,10 @@ get_hb_don_chem_type(
 			return hbdon_GENERIC_SC; break;
 		}
 	}
+	// Fallback for modified RNAs
+	if ( don_rsd.is_RNA() ) {
+		return hbdon_GENERIC_SC;
+	}
 	utility_exit_with_message( "ERROR: Unknown Hydrogen Bond donor type for: " + A(don_rsd.name1()) + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.");
 	return hbdon_NONE;
 }
@@ -497,11 +504,17 @@ get_hb_acc_chem_type(
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
 
 	// AMW TODO: these string comparisons are 3.6% of SWA runtime
+	
+	if ( acc_rsd.type().name3() == "BRU" && ( aname == " O2 " || aname == " O4 " ) ) {
+		tr << "acc_rsd n_heavyatom " << acc_rsd.nheavyatoms() << std::endl;
+		tr << "acc_rsd n_backbone_heavyatom " << acc_rsd.last_backbone_atom() << std::endl;
+		tr << "acc_rsd first_sidechain_hydrogen " << acc_rsd.first_sidechain_hydrogen() << std::endl;
+		tr << "acc_rsd aatm " << aatm << std::endl;
+	}
 
 	if ( acc_rsd.atom_is_backbone(aatm) ) {
 		if ( acc_rsd.is_protein() ) {
 			if ( acc_rsd.is_upper_terminus() ) {
-
 				/// WARNING this is set to hbacc_PBA for backwards compatibility!!!!
 				/// but it should be hbacc_CXL because it is actually a carboxyl group
 				return hbacc_PBA;
@@ -517,7 +530,7 @@ get_hb_acc_chem_type(
 				return hbacc_RRI_DNA;
 			}
 		} else if ( acc_rsd.is_RNA() ) {
-			chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_type();
+			chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_info();
 			if ( aatm == rna_type.op2_atom_index() || aatm == rna_type.op1_atom_index() || aname == " O3P" ||
 					aname == "XOP2" || aname == "XOP1" ||
 					aname == "YOP2" || aname == "YOP1" ) {
@@ -527,6 +540,12 @@ get_hb_acc_chem_type(
 				return hbacc_PES_RNA;
 			} else if ( aatm == rna_type.o4prime_atom_index() ) {
 				return hbacc_RRI_RNA;
+			} else if ( aname == " O4 " || aname == " O2 " ) {
+				// AMW: output debugging
+				// tr << "WARNING: Residue " << acc_rsd.name() << " atom " << acc_rsd.atom_name( aatm ) << " is RNA backbone but unknown significance!" << std::endl;
+				// AMW: only current trigger is O2/O4 on BRU (SP2, so...)
+				// These are actually SC atoms.
+				return hbacc_GENERIC_SP2SC;
 			}
 		} else {
 			// generic types; for backwards compatibility; prefer functional group based chem type
@@ -546,7 +565,11 @@ get_hb_acc_chem_type(
 			}
 		}
 	} else {
-		switch(acc_rsd.aa()){
+		// AMW: instead of SWITCH on aa(), make an AA and switch on it or na_analogue
+		auto aa = acc_rsd.aa();
+		if ( acc_rsd.type().na_analogue() != aa_unp ) aa = acc_rsd.type().na_analogue();
+
+		switch( aa ){
 		case aa_none : return hbacc_NONE; break;
 		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : return hbacc_CXA; break;
 		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e : return hbacc_CXL; break;
@@ -681,6 +704,22 @@ get_hb_acc_chem_type(
 				return hbacc_PCA_RNA;
 			} else if ( aname == "XO5'" || aname == "XO3'" || aname == "YO5'" ) {
 				return hbacc_PES_RNA;
+			}
+			// AMW: There are a number of atoms where we do not have a precise acceptor
+			// type in chemically modified nucleotides. Rather than going one by one,
+			// we can take this opportunity to just use these generic types for now.
+			switch(acc_rsd.atom_type(aatm).hybridization()){
+			case SP2_HYBRID :
+				return hbacc_GENERIC_SP2SC; break;
+			case SP3_HYBRID :
+				return hbacc_GENERIC_SP3SC; break;
+			case RING_HYBRID :
+				return hbacc_GENERIC_RINGSC; break;
+			case UNKNOWN_HYBRID :
+				return hbacc_NONE; break;
+			default:
+				// This is actually nuts, but we need some default here
+				return hbacc_GENERIC_SP2SC; break;
 			}
 		}
 	}

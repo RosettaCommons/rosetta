@@ -107,19 +107,15 @@ void RNA_LoopCloser::apply( core::pose::Pose & pose )
 void RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size> const & connections )
 {
 	utility::vector1< Size > const cutpoints_closed = get_cutpoints_closed( pose );
-	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
-
-		Size const & i = cutpoints_closed[ n ];
+	for ( Size const i : cutpoints_closed ) {
 		// do_fast_scan will check if this cutpoint has changed since the
 		//  last movement, or is the chainbreak is already well closed,
 		//  or if the chainbreak is too big to close.
 		if ( fast_scan_ && !passes_fast_scan( pose, i ) )  continue;
 
 		//TR << "Trying to close chain near cutpoint " << i << "-" << i+1 << std::endl;
-
 		apply( pose, connections, i );
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +128,6 @@ RNA_LoopCloser::get_name() const {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
-
 	using namespace core::id;
 
 	utility::vector1< Size > cutpoints_closed;
@@ -162,7 +157,6 @@ RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Real RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size > const & connections, Size const & cutpoint )
 {
-
 	if ( verbose_ ) TR << "Closing loop at: " << cutpoint << std::endl;
 	// TR << "Closing loop at: " << cutpoint << std::endl;
 
@@ -173,7 +167,6 @@ Real RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size > cons
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Real RNA_LoopCloser::apply( core::pose::Pose & pose, Size const & cutpoint )
 {
-
 	if ( verbose_ ) TR << "Closing loop at: " << cutpoint << std::endl;
 	// TR << "Closing loop at: " << cutpoint << std::endl;
 
@@ -187,8 +180,8 @@ Real RNA_LoopCloser::apply( core::pose::Pose & pose, Size const & cutpoint )
 void
 RNA_LoopCloser::apply( core::pose::Pose & pose, utility::vector1< Size > const & cutpoints )
 {
-	for ( Size n = 1; n <= cutpoints.size(); n++ ) {
-		apply( pose, cutpoints[ n ] );
+	for ( Size const cutpoint : cutpoints ) {
+		apply( pose, cutpoint );
 	}
 }
 
@@ -234,7 +227,7 @@ RNA_LoopCloser::check_closure( core::pose::Pose const & pose, core::Size const i
 {
 	if ( ccd_tolerance <= 0.0 ) ccd_tolerance = absolute_ccd_tolerance_;
 
-	runtime_assert( pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  );
+	runtime_assert( pose.residue_type( i ).has_variant_type( chemical::CUTPOINT_LOWER )  );
 	Real const current_dist_err =  get_dist_err( pose, i );
 	// TR << "CURRENT_DIST_ERR  " << current_dist_err << " " << ccd_tolerance << std::endl;
 
@@ -248,8 +241,7 @@ RNA_LoopCloser::check_closure( core::pose::Pose const & pose, Real ccd_tolerance
 	if ( ccd_tolerance <= 0.0 ) ccd_tolerance = absolute_ccd_tolerance_;
 
 	utility::vector1< Size > cutpoints_closed = get_cutpoints_closed( pose );
-	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
-		Size const & i = cutpoints_closed[ n ];
+	for ( Size const i : cutpoints_closed ) {
 		if ( !check_closure( pose, i, ccd_tolerance ) ) return false;
 	}
 
@@ -376,8 +368,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 		// and also biased towards "moveable torsions" (i.e., not beta or epsilon)
 		// Also to do? -- check on beta/epsilon -- could perhaps make use of
 		//   torsion potential as a simple and general screen.
-		for ( Size n = 1; n <= tor_ids.size(); n++ ) {
-			TorsionID const & tor_id( tor_ids[ n ] );
+		for ( TorsionID const & tor_id : tor_ids ) {
 			AtomID id1,id2,id3,id4;
 			pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
 
@@ -424,12 +415,9 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 
 			Real const current_val = pose.torsion( tor_id );
 			pose.set_torsion( tor_id, current_val + twist_torsion );
-
-
 		}
 
 		if ( verbose_ ) std::cout << "Distance error: " << mean_dist_err << std::endl;
-
 	}
 
 	if ( verbose_ ) pose.dump_pdb( "scratch_close.pdb" );
@@ -443,7 +431,6 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	if ( verbose_ ) input_pose.dump_pdb( "pose_close.pdb" );
 
 	return mean_dist_err;
-
 }
 
 

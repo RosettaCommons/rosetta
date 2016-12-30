@@ -23,6 +23,7 @@
 #include <core/chemical/ResidueType.hh>
 
 #include <core/types.hh>
+#include <core/chemical/ResidueType.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -93,7 +94,6 @@ RNA_JumpLibrary::RNA_JumpLibrary( std::string const & filename ):
 void
 RNA_JumpLibrary::read_jumps_from_file() const
 {
-
 	utility::io::izstream data( jump_library_filename_ );
 	tr << "Reading RNA jump library: " << jump_library_filename_ << std::endl;
 
@@ -179,15 +179,16 @@ RNA_JumpLibrary::check_forward_backward(
 	}
 }
 
+using namespace core;
 
-char name1_from_rt( core::chemical::ResidueType const & rt ) {
+char one_letter_from_rt( chemical::ResidueType const & rt ) {
+	if ( rt.aa() == chemical::na_rad || rt.na_analogue() == chemical::na_rad ) return 'a';
+	if ( rt.aa() == chemical::na_rcy || rt.na_analogue() == chemical::na_rcy ) return 'c';
+	if ( rt.aa() == chemical::na_rgu || rt.na_analogue() == chemical::na_rgu ) return 'g';
+	if ( rt.aa() == chemical::na_ura || rt.na_analogue() == chemical::na_ura ) return 'u';
 	if ( rt.name1() == 't' ) return 'u';
-	if ( rt.name1() == 'a' || rt.na_analogue() == core::chemical::na_rad ) return 'a';
-	if ( rt.name1() == 'c' || rt.na_analogue() == core::chemical::na_rcy ) return 'c';
-	if ( rt.name1() == 'g' || rt.na_analogue() == core::chemical::na_rgu ) return 'g';
-	if ( rt.name1() == 'u' || rt.na_analogue() == core::chemical::na_ura ) return 'u';
-
-	return rt.name1();
+	
+	utility_exit_with_message( "Sorry, but " + rt.name() + " is not yet accounted for by RNA_JumpLibrary!" ); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -208,8 +209,8 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 	if ( rna_pairing_template_map_.empty() ) read_jumps_from_file();
 
 	// key for looking up the template geometry:
-	char const aa1 = name1_from_rt( rt1 );
-	char const aa2 = name1_from_rt( rt2 );
+	char const aa1 = one_letter_from_rt( rt1 );
+	char const aa2 = one_letter_from_rt( rt2 );
 
 	BasePairType key( aa1, aa2, edge1, edge2, orientation );
 	Size ntemplates = 0;
@@ -225,7 +226,6 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 		atom_name1 = "XXXX";
 		atom_name2 = "XXXX";
 		return core::kinematics::Jump(); //default garbage jump.
-
 	}
 
 	RNA_PairingTemplateList const & templates( rna_pairing_template_map_.find( key )->second );
@@ -243,7 +243,6 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 		atom_name1 = "XXXX";
 		atom_name2 = "XXXX";
 		return core::kinematics::Jump(); //default garbage jump.
-
 	}
 
 	Size const index( static_cast<Size>( numeric::random::rg().uniform() * ntemplates )  + 1 );
@@ -282,9 +281,7 @@ RNA_JumpLibrary::save_in_jump_library(
 	std::string const & atom_name2,
 	core::kinematics::Jump const & jump1,
 	core::kinematics::Jump const & jump2
-) const
-{
-
+) const {
 	RNA_PairingTemplateOP p( new RNA_PairingTemplate( jump1, jump2,  atom_name1, atom_name2) );
 
 	BaseEdge edge1( get_edge_from_char( edgechar1 ) );
@@ -306,7 +303,6 @@ RNA_JumpLibrary::save_in_jump_library(
 
 				BasePairType base_pair_type( reschar1, reschar2, edge1_temp, edge2_temp, orientation_temp);
 				rna_pairing_template_map_[ base_pair_type ].push_back( p );
-
 			}
 		}
 	}

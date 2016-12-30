@@ -250,11 +250,10 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 
 	std::string const errmsg( "-set_patch_atomic_charge format should be::  -chemical:set_patch_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<patch-name>:<atom1-name>:<new-charge> ... For example: '-chemical:set_atomic_charge fa_standard:PRO:NtermProteinFull:1H:-1' ");
 
-	for ( Size i=1; i<= mods.size(); ++i ) {
+	for ( std::string const & mod : mods ) {
 		///
 		/// mod should look like (for example):  "fa_standard:PRO:NtermProteinFull:1H:-1"
 		///
-		std::string const & mod( mods[i] );
 		utility::vector1<std::string> tokens = utility::string_split( mod, ':');
 		if ( tokens.size() != 5 ) utility_exit_with_message(errmsg);
 

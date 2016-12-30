@@ -101,6 +101,7 @@ public:
 
 	std::string const & full_sequence() const { return full_sequence_;}
 	std::map< Size, std::string > const & non_standard_residue_map() const { return non_standard_residue_map_; }
+	std::map< Size, std::string > & non_standard_residue_map_nonconst() { return non_standard_residue_map_; }
 	std::string full_annotated_sequence() const;
 
 	utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}

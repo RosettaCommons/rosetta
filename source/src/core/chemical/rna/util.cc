@@ -380,7 +380,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	//if(rsd.type().atom_name(rsd.first_sidechain_atom()) !=" O2'") utility_exit_with_message( "rsd.type().atom_name(rsd.first_sidechain_atom()) !=\" O2'\" " );
 	//if(rsd.atom_name( rsd.first_sidechain_atom() )!=" O2'") utility_exit_with_message("rsd.atom_name( rsd.first_sidechain_atom() )!=\" O2'\"");
 
-	if ( rsd.RNA_type().o2prime_index() != rsd.first_sidechain_atom() ) {
+	if ( rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom() ) {
 		utility_exit_with_message( "rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom()" );
 	}
 
@@ -390,7 +390,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 		if ( verbose ) std::cout << "atom " << i  << " " <<  "name = " << rsd.type().atom_name( i ) << " type = " << rsd.atom_type( i ).name()  << " " << rsd.atom_type_index( i ) << " " << rsd.atomic_charge( i );
 
-		if ( rsd.RNA_type().atom_is_virtual( i ) ) {
+		if ( rsd.RNA_info().atom_is_virtual( i ) ) {
 			if ( verbose ) std::cout << "  Virtual type: Ignore! " << std::endl;
 			continue;
 		}
@@ -481,8 +481,8 @@ is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::
 
 	bool is_base_phosphate_atom_pair = false;
 
-	if ( ( rsd_1.RNA_type().atom_is_phosphate( atomno_1 ) && ( rsd_2.RNA_type().is_RNA_base_atom( atomno_2 ) ) ) ) is_base_phosphate_atom_pair = true;
-	if ( ( rsd_2.RNA_type().atom_is_phosphate( atomno_2 ) && ( rsd_1.RNA_type().is_RNA_base_atom( atomno_1 ) ) ) ) is_base_phosphate_atom_pair = true;
+	if ( ( rsd_1.RNA_info().atom_is_phosphate( atomno_1 ) && ( rsd_2.RNA_info().is_RNA_base_atom( atomno_2 ) ) ) ) is_base_phosphate_atom_pair = true;
+	if ( ( rsd_2.RNA_info().atom_is_phosphate( atomno_2 ) && ( rsd_1.RNA_info().is_RNA_base_atom( atomno_1 ) ) ) ) is_base_phosphate_atom_pair = true;
 
 	if ( is_base_phosphate_atom_pair ) { //This Assume that rsd_1 and rsd_2 are the same!!!
 		if ( rsd_1.seqpos() == rsd_2.seqpos() && ( rsd_1.path_distance( atomno_1, atomno_2 ) < 4 ) ) { //consistency check!

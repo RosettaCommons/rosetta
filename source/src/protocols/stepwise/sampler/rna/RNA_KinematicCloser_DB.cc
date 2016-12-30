@@ -231,18 +231,18 @@ RNA_KinematicCloser_DB::figure_out_dof_ids_and_offsets( const Pose & pose ) {
 	/////////////////////////////////////////
 	figure_out_offset(
 		pose.atom_tree().torsion_angle_dof_id(
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().p_atom_index(), moving_suite_ + 1 ),
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().o5prime_atom_index(), moving_suite_ + 1 ),
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c5prime_atom_index(), moving_suite_ + 1 ),
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c4prime_atom_index(), moving_suite_ + 1 ) ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().p_atom_index(), moving_suite_ + 1 ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().o5prime_atom_index(), moving_suite_ + 1 ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().c5prime_atom_index(), moving_suite_ + 1 ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().c4prime_atom_index(), moving_suite_ + 1 ) ),
 		dt_ang_[3 * 1 + 1] , pose);
 
 	figure_out_offset(
 		pose.atom_tree().torsion_angle_dof_id(
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().o5prime_atom_index(), moving_suite_ + 1 ),
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c5prime_atom_index(), moving_suite_ + 1 ),
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c4prime_atom_index(), moving_suite_ + 1 ),
-		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c3prime_atom_index(), moving_suite_ + 1 ) ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().o5prime_atom_index(), moving_suite_ + 1 ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().c5prime_atom_index(), moving_suite_ + 1 ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().c4prime_atom_index(), moving_suite_ + 1 ),
+		AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_info().c3prime_atom_index(), moving_suite_ + 1 ) ),
 		dt_ang_[3 * 1 + 2] , pose);
 
 	/////////////////////////////////////////
@@ -250,15 +250,15 @@ RNA_KinematicCloser_DB::figure_out_dof_ids_and_offsets( const Pose & pose ) {
 	/////////////////////////////////////////
 	figure_out_offset(
 		pose.atom_tree().torsion_angle_dof_id(
-		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c4prime_atom_index(), chainbreak_suite_ ),
-		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c3prime_atom_index(), chainbreak_suite_ ),
-		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().o3prime_atom_index(), chainbreak_suite_ ),
+		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().c4prime_atom_index(), chainbreak_suite_ ),
+		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().c3prime_atom_index(), chainbreak_suite_ ),
+		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().o3prime_atom_index(), chainbreak_suite_ ),
 		AtomID( pose.residue_type( chainbreak_suite_ ).atom_index( "OVL1" ), chainbreak_suite_ ) ),
 		dt_ang_[3 * 2 + 1] , pose);
 	figure_out_offset(
 		pose.atom_tree().torsion_angle_dof_id(
-		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c3prime_atom_index(), chainbreak_suite_ ),
-		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().o3prime_atom_index(), chainbreak_suite_ ),
+		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().c3prime_atom_index(), chainbreak_suite_ ),
+		AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().o3prime_atom_index(), chainbreak_suite_ ),
 		AtomID( pose.residue_type( chainbreak_suite_ ).atom_index( "OVL1" ), chainbreak_suite_ ),
 		AtomID( pose.residue_type( chainbreak_suite_ ).atom_index( "OVL2" ), chainbreak_suite_ ) ),
 		dt_ang_[3 * 2 + 2], pose);
@@ -267,17 +267,17 @@ RNA_KinematicCloser_DB::figure_out_dof_ids_and_offsets( const Pose & pose ) {
 	/////////////////////////////////////////
 	figure_out_offset(
 		pose.atom_tree().torsion_angle_dof_id(
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().p_atom_index(), chainbreak_suite_ + 1 ),
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().o5prime_atom_index(), chainbreak_suite_ + 1 ),
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c5prime_atom_index(), chainbreak_suite_ + 1 ),
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c4prime_atom_index(), chainbreak_suite_ + 1 ) ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().p_atom_index(), chainbreak_suite_ + 1 ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().o5prime_atom_index(), chainbreak_suite_ + 1 ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().c5prime_atom_index(), chainbreak_suite_ + 1 ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().c4prime_atom_index(), chainbreak_suite_ + 1 ) ),
 		dt_ang_[ 3 * 3 + 1 ], pose);
 	figure_out_offset(
 		pose.atom_tree().torsion_angle_dof_id(
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().o5prime_atom_index(), chainbreak_suite_ + 1 ),
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c5prime_atom_index(), chainbreak_suite_ + 1 ),
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c4prime_atom_index(), chainbreak_suite_ + 1 ),
-		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c3prime_atom_index(), chainbreak_suite_ + 1 ) ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().o5prime_atom_index(), chainbreak_suite_ + 1 ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().c5prime_atom_index(), chainbreak_suite_ + 1 ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().c4prime_atom_index(), chainbreak_suite_ + 1 ),
+		AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_info().c3prime_atom_index(), chainbreak_suite_ + 1 ) ),
 		dt_ang_[3 * 3 + 2], pose );
 }
 

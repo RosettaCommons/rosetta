@@ -182,10 +182,10 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	// AMW TODO: indices for this stuff for NCNTs.
 
 	//fast look up!
-	Size const o4prime_index = rsd.RNA_type().o4prime_atom_index();
-	Size const c1prime_index = rsd.RNA_type().c1prime_atom_index();
-	Size const c2prime_index = rsd.RNA_type().c2prime_atom_index();
-	Size const c4prime_index = rsd.RNA_type().c4prime_atom_index();
+	Size const o4prime_index = rsd.RNA_info().o4prime_atom_index();
+	Size const c1prime_index = rsd.RNA_info().c1prime_atom_index();
+	Size const c2prime_index = rsd.RNA_info().c2prime_atom_index();
+	Size const c4prime_index = rsd.RNA_info().c4prime_atom_index();
 
 	id::AtomID const o4prime_id( o4prime_index, i );
 	id::AtomID const c1prime_id( c1prime_index, i );

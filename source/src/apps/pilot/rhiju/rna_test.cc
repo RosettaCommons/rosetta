@@ -3675,7 +3675,7 @@ output_sugar_geometry_parameters(
 	for ( Size i = 1; i <= nres; i++ ) {
 		Residue const & rsd( pose.residue( i ) );
 		if ( ! rsd.type().is_RNA() ) continue; // needs RNA_Info
-		RNA_Info const & rna_type( rsd.type().RNA_type() );
+		RNA_Info const & rna_type( rsd.type().RNA_info() );
 
 		out << rsd.mainchain_torsion( 4 );
 
@@ -3839,7 +3839,7 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		Residue rsd = pose.residue( i );
-		RNA_Info const & rna_type = rsd.type().RNA_type();
+		RNA_Info const & rna_type = rsd.type().RNA_info();
 		kinematics::Stub const input_stub( rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c5prime_atom_index() ) );
 
 		Residue rsd_fixed = fixed_pose.residue( i );
@@ -3902,7 +3902,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		Real const delta = rsd.mainchain_torsion( 4 );
 
 		{
-			Size const j = rsd.type().RNA_type().c2prime_atom_index();
+			Size const j = rsd.type().RNA_info().c2prime_atom_index();
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if ( delta < 100.0 ) {
 				theta  = -0.138 * delta + 89.4;
@@ -3914,7 +3914,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 
 
 		{
-			Size const j = rsd.type().RNA_type().o4prime_atom_index();
+			Size const j = rsd.type().RNA_info().o4prime_atom_index();
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if ( delta < 100.0 ) {
 				theta  =  0.132 * delta + 59.5;
@@ -3941,7 +3941,7 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		core::conformation::Residue const & rsd( pose.residue( i ) );
-		core::chemical::rna::RNA_Info const & rna_type( rsd.type().RNA_type() );
+		core::chemical::rna::RNA_Info const & rna_type( rsd.type().RNA_info() );
 
 		Real const a = (rsd.xyz( rna_type.o4prime_atom_index() ) - rsd.xyz( rna_type.c4prime_atom_index() )).length();
 		Real const b = (rsd.xyz( rna_type.c3prime_atom_index() ) - rsd.xyz( rna_type.c4prime_atom_index() )).length();

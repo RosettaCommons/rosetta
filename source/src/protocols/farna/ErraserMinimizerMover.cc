@@ -10,8 +10,7 @@
 /// @file protocols/farna/ErraserMinimizerMover.cc
 /// @brief
 /// @detailed
-/// @author Rhiju Das, rhiju@stanford.edu
-
+/// @author Andy Watkins, amw579@stanford.edu
 
 #include <protocols/farna/ErraserMinimizerMover.hh>
 #include <protocols/farna/ErraserMinimizerMoverCreator.hh>
@@ -141,6 +140,11 @@ using utility::vector1;
 namespace protocols {
 namespace farna {
 
+// AMW: TODO
+// 1. Setting up NCNT ideal poses for ideal coordinate constraints is expensive 
+// to do at construction. What if we only did it for the NCNTs actually found in
+// the pose (usually 1-2, not hundreds)? Maybe we could cache constraints and/or
+// poses for repeated inputs... Poses for sure.
 
 utility::vector1< core::Size >
 string_to_size_vector( std::string const & sv ) {

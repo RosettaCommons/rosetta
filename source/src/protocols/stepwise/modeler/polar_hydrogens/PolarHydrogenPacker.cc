@@ -206,7 +206,7 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 			// move this to a different function!
 			if ( allow_virtual_o2prime_hydrogens_ ) {
 				if ( !residue.is_RNA() ) continue;
-				if ( residue.type().RNA_type().ho2prime_index() != j  ) continue;
+				if ( residue.type().RNA_info().ho2prime_index() != j  ) continue;
 				//     TR << "2'OH score for residue " << i << " ==> " << best_score << std::endl;
 				if ( best_score > -0.1 /* cutoff */ ) {
 					add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i  );

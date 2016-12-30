@@ -1694,8 +1694,6 @@ setup_atomic_charge_reassignments_from_commandline(
 
 		atomic_charge_reassignments[ atom_name ] = new_atomic_charge;
 	}
-
-
 }
 ////////////////////////////////////////////////////////
 void

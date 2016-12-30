@@ -160,8 +160,7 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 		process_input_file( input_file, pose_list_raw, false /*is_pdb*/ );
 
 		// there appears to be an issue with some of the poses in the database. Oops!
-		for ( Size k = 1; k <= pose_list_raw.size(); k++ ) {
-			core::pose::PoseOP pose = pose_list_raw[ k ];
+		for ( core::pose::PoseOP const & pose : pose_list_raw ) {
 			core::kinematics::FoldTree const & f( pose->fold_tree() );
 			if ( ( f.is_cutpoint( 1 ) ) ||
 					( !f.is_cutpoint( 2 ) ) ||
@@ -174,8 +173,8 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 		}
 
 		utility::vector1< pose::MiniPoseOP > mini_pose_list;
-		for ( Size k = 1; k <= pose_list.size(); k++ ) {
-			mini_pose_list.push_back( pose::MiniPoseOP( new core::pose::MiniPose( *(pose_list[k]) ) ) );
+		for ( auto const & pose : pose_list ) {
+			mini_pose_list.push_back( pose::MiniPoseOP( new core::pose::MiniPose( *pose ) ) );
 		}
 
 		// potential problem -- what if all poses are bad?
@@ -184,12 +183,9 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 		if ( pose_list.size() > 0 ) scratch_poses_[   base_pair_step_sequence ] = pose_list[ 1 ];
 
 	} else {
-
 		mini_pose_lists_[ base_pair_step_sequence ] = utility::vector1< pose::MiniPoseOP >(); // empty
 		scratch_poses_[   base_pair_step_sequence ] = 0;
-
 	}
-
 }
 
 //////////////////////////////////////////////////////////

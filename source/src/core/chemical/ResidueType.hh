@@ -2127,7 +2127,7 @@ public:
 	}
 
 	///////////////////////////////////////////////////////////////
-	core::chemical::rna::RNA_Info const & RNA_type() const;
+	core::chemical::rna::RNA_Info const & RNA_info() const;
 
 	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
 	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
@@ -2689,7 +2689,7 @@ private:
 	utility::vector1<VD> force_bb_;
 
 	/// @brief A container for properties unique to RNA. -- Derived, can be null
-	core::chemical::rna::RNA_InfoOP rna_residue_type_;
+	core::chemical::rna::RNA_InfoOP rna_info_;
 
 	/// @brief A container for residue properties unique to carbohydrates. -- Derived, can be null
 	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;

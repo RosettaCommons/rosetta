@@ -295,6 +295,7 @@ bool RNA_SilentStruct::init_from_lines(
 			//  since we'll eventually need to use RNA (or protein) .params files
 			//  to create the pose, couldn't we look up the residue
 			//  and figure out how many torsions are required?
+			// AMW: this is BREAKING for noncanonical nucleotides; where are their extra CHIs?
 			for ( Size n = 1; n <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ) {
 				line_stream >> torsion_value;
 				temp_mainchain_torsions.push_back( torsion_value  );

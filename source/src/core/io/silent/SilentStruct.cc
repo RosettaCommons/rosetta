@@ -170,19 +170,13 @@ void SilentStruct::extract_writeable_cacheable_data( core::pose::Pose const& pos
 	if ( ! cache.has( CacheableDataType::WRITEABLE_DATA ) ) return;
 
 	using namespace basic::datacache;
-	typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
-	DataMap const& map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA ).map();
-
-	for ( DataMap::const_iterator datamap_it = map.begin(), end = map.end();
-			datamap_it != end; ++datamap_it ) {
-		std::set< WriteableCacheableDataOP > const& dataset = datamap_it->second;
-
-		for ( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin(), set_end = dataset.end();
-				set_it != set_end; ++set_it ) {
+	auto const & map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA ).map();
+	for ( auto const & datamap_elem : map ) {
+		for ( auto const & datum : datamap_elem.second ) {
 			std::stringstream ss;
 
 			ss << "CACHEABLE_DATA ";
-			(*set_it)->write( ss );
+			datum->write( ss );
 
 			add_comment( "CACHEABLE_DATA", ss.str() );
 		};
@@ -215,12 +209,11 @@ void SilentStruct::finish_pose(
 			DataCache_CacheableData::DataOP( new basic::datacache::WriteableCacheableMap() ) );
 	}
 
-	for ( utility::vector1< std::string >::const_iterator comment_it = cache_remarks_.begin();
-			comment_it != cache_remarks_.end(); ++comment_it ) {
+	for ( auto const & comment : cache_remarks_ ) {
 		using namespace basic::datacache;
 		using namespace pose::datacache;
 
-		std::stringstream comment_stream( *comment_it );
+		std::stringstream comment_stream( comment );
 
 		std::string data_type;
 		comment_stream >> data_type;
@@ -231,7 +224,6 @@ void SilentStruct::finish_pose(
 
 		map[ data_type ].insert( data );
 	}
-
 }
 
 bool
@@ -278,7 +270,6 @@ void SilentStruct::read_score_headers( std::string const & line, utility::vector
 
 	container.set_shared_silent_data( energynames       , enames  );
 	container.set_shared_silent_data( simplesequencedata, seqdata );
-
 }
 
 void
@@ -298,11 +289,8 @@ void SilentStruct::print_score_header( std::ostream & out ) const {
 	using utility::vector1;
 
 	using namespace ObjexxFCL::format;
-	typedef vector1< SilentEnergy >::const_iterator iter;
-	for ( iter it = silent_energies_.begin(), end = silent_energies_.end();
-			it != end; ++it
-			) {
-		out << " " << A( it->width(), it->name() );
+	for ( auto const & silent_energy : silent_energies_ ) {
+		out << " " << A( silent_energy.width(), silent_energy.name() );
 	}
 
 	using namespace basic::options;
@@ -329,18 +317,15 @@ SilentStruct::print_scores( std::ostream & out ) const {
 
 	out << scoreline_prefix();
 
-	typedef utility::vector1< SilentEnergy >::const_iterator iter;
-	for ( iter it = silent_energies_.begin(), end = silent_energies_.end();
-			it != end; ++it
-			) {
-		if ( it->string_value() == "" ) {
+	for ( auto const & silent_energy : silent_energies_ ) {
+		if ( silent_energy.string_value() == "" ) {
 			core::Real weight = 1.0;
 			if ( option[ out::file::weight_silent_scores ]() ) { //default true
-				weight = it->weight();
+				weight = silent_energy.weight();
 			}
-			out << " " << F( it->width(), precision(), it->value() * weight );
+			out << " " << F( silent_energy.width(), precision(), silent_energy.value() * weight );
 		} else {
-			out << " " << std::setw( it->width() ) << it->string_value(); //  << " ";
+			out << " " << std::setw( silent_energy.width() ) << silent_energy.string_value(); //  << " ";
 		}
 	}
 
@@ -363,16 +348,12 @@ SilentStruct::print_comments( std::ostream & out ) const {
 	using std::string;
 	string const remark( "REMARK" );
 
-	typedef map< string, string >::const_iterator c_iter;
-	for ( c_iter it = silent_comments_.begin(), end = silent_comments_.end();
-			it != end; ++it
-			) {
-		out << remark << ' ' << it->first << ' ' << it->second << std::endl;
+	for ( auto const & comment : silent_comments_ ) {
+		out << remark << ' ' << comment.first << ' ' << comment.second << std::endl;
 	}
 
-	for ( utility::vector1< std::string >::const_iterator it = cache_remarks_.begin();
-			it != cache_remarks_.end(); ++it ) {
-		out << remark << ' ' << *it << std::endl;
+	for ( auto const & cache_remark : cache_remarks_ ) {
+		out << remark << ' ' << cache_remark << std::endl;
 	}
 
 } // print_comments
@@ -390,30 +371,21 @@ void SilentStruct::sort_silent_scores( ){
 }
 
 bool SilentStruct::has_energy( std::string const & scorename ) const {
-	for ( utility::vector1< SilentEnergy >::const_iterator
-			it = silent_energies_.begin(), end = silent_energies_.end();
-			it != end; ++it
-			) {
-		if ( it->name() == scorename ) {
-			return true;
-		}
-	}
-	return false;
+	return std::any_of( silent_energies_.begin(), silent_energies_.end(), 
+		[&]( SilentEnergy const & s ) { return s.name() == scorename; } );
 }
 
 void
 SilentStruct::add_energy( std::string const & scorename, Real value, Real weight ) {
 	// check if we already have a SilentEnergy with this scorename
 	bool replace( false );
-	typedef utility::vector1< SilentEnergy >::iterator iter;
-	for ( iter it = silent_energies_.begin(), end = silent_energies_.end();
-			it != end; ++it
-			) {
-		if ( it->name() == scorename ) {
-			it->value( value );
-			replace = true;
-		}
-	} // for (silent_energies_)
+	std::for_each( silent_energies_.begin(), silent_energies_.end(),
+		[&]( SilentEnergy & s ) {
+			if ( s.name() == scorename ) {
+				s.value( value );
+				replace = true;
+			}
+		} );
 
 	// add this energy if we haven't added it already
 	if ( !replace ) {
@@ -429,15 +401,13 @@ SilentStruct::add_string_value(
 ) {
 	// check if we already have a SilentEnergy with this scorename
 	bool replace( false );
-	typedef utility::vector1< SilentEnergy >::iterator iter;
-	for ( iter it = silent_energies_.begin(), end = silent_energies_.end();
-			it != end; ++it
-			) {
-		if ( it->name() == scorename ) {
-			it->value( value );
-			replace = true;
-		}
-	} // for (silent_energies_)
+	std::for_each( silent_energies_.begin(), silent_energies_.end(),
+		[&]( SilentEnergy & s ) {
+			if ( s.name() == scorename ) {
+				s.value( value );
+				replace = true;
+			}
+		} );
 
 	// add this energy if we haven't added it already
 	if ( !replace ) {
@@ -448,22 +418,14 @@ SilentStruct::add_string_value(
 } // add_string_value
 
 core::Real SilentStruct::get_energy( std::string const & scorename ) const {
-	if ( has_energy( scorename ) ) {
-		return get_silent_energy( scorename ).value();
-	} else {
-		return 0.0;
-	}
+	return has_energy( scorename ) ? get_silent_energy( scorename ).value() : 0.0;
 }
 
 std::string const & SilentStruct::get_string_value(
 	std::string const & scorename
 ) const {
 	static const std::string empty_string("");
-	if ( has_energy( scorename ) ) {
-		return get_silent_energy( scorename ).string_value();
-	} else {
-		return empty_string;
-	}
+	return has_energy( scorename ) ? get_silent_energy( scorename ).string_value() : empty_string;
 }
 
 
@@ -472,10 +434,8 @@ SilentEnergy const & SilentStruct::get_silent_energy(
 ) const {
 	debug_assert( has_energy( scorename ) );
 	using utility::vector1;
-	for ( vector1< SilentEnergy >::const_iterator it = silent_energies_.begin(),
-			end = silent_energies_.end();
-			it != end; ++it ) {
-		if ( it->name() == scorename ) return *it;
+	for ( auto const & s : silent_energies_ ) {
+		if ( s.name() == scorename ) return s;
 	}
 	return (*silent_energies_.end()); // keep compiler happy
 }
@@ -485,16 +445,13 @@ void SilentStruct::set_valid_energies( utility::vector1< std::string > valid ) {
 	using utility::vector1;
 
 	vector1< SilentEnergy > new_energies;
-	for ( vector1< std::string >::const_iterator it = valid.begin(),
-			end = valid.end();
-			it != end; ++it
-			) {
+	for ( auto const & s : valid ) {
 		SilentEnergy ener;
-		if ( *it == "description" ) continue; // hack!
-		if ( has_energy( *it ) ) {
-			ener = get_silent_energy( *it );
+		if ( s == "description" ) continue; // hack!
+		if ( has_energy( s ) ) {
+			ener = get_silent_energy( s );
 		}
-		ener.name( *it );
+		ener.name( s );
 		new_energies.push_back( ener );
 	}
 	silent_energies( new_energies );
@@ -503,26 +460,18 @@ void SilentStruct::set_valid_energies( utility::vector1< std::string > valid ) {
 ///////////////////////////////////////////////////////////////////////
 void
 SilentStruct::copy_scores( const SilentStruct & src_ss ) {
-	typedef utility::vector1< SilentEnergy >::const_iterator const_iter;
-	typedef utility::vector1< SilentEnergy >::iterator iter;
-
-	for ( const_iter it = src_ss.silent_energies_.begin(),
-			end = src_ss.silent_energies_.end();
-			it != end; ++it
-			) {
+	for ( auto const & elem : src_ss.silent_energies_ ) {
 		bool replace( false );
 
 		//Check if score column already present.
-		for ( iter it2 = silent_energies_.begin(), end = silent_energies_.end();
-				it2 != end; ++it2
-				) {
-			if ( it2->name() == it->name() ) {
-				it2->value( it->value() );
+		for ( auto & elem2 : silent_energies_ ) {
+			if ( elem2.name() == elem.name() ) {
+				elem2.value( elem.value() );
 				replace = true;
 			}
-		} // for it2
+		} 
 
-		if ( !replace ) silent_energies_.push_back( *it );
+		if ( !replace ) silent_energies_.push_back( elem );
 	} // for it
 } // copy_scores
 
@@ -595,14 +544,8 @@ bool SilentStruct::has_comment( std::string const & name ) const {
 }
 
 std::string SilentStruct::get_comment( std::string const & name ) const {
-	std::map< std::string, std::string >::const_iterator entry
-		= silent_comments_.find( name );
-	std::string comment( "" );
-	if ( entry != silent_comments_.end() ) {
-		comment = entry->second;
-	}
-
-	return comment;
+	auto entry = silent_comments_.find( name );
+	return entry == silent_comments_.end() ? "" : entry->second;
 }
 
 void SilentStruct::erase_comment( std::string const & name ) {
@@ -619,23 +562,19 @@ void SilentStruct::parse_energies(
 	utility::vector1< std::string > const & energy_names
 ) {
 	std::string tag;
-	utility::vector1< std::string >::const_iterator energy_iter;
 	Size input_count = 0;
 	Size const energy_names_count( energy_names.size() );
 
 	using namespace ObjexxFCL;
-	for ( energy_iter  = energy_names.begin();
-			energy_iter != energy_names.end();
-			++energy_iter
-			) {
+	for ( auto const & energy_name : energy_names ) {
 		input >> tag;
 		if ( is_float( tag ) ) {
 			Real score_val = static_cast< Real > ( float_of( tag ) );
-			add_energy( *energy_iter, score_val );
-		} else if ( *energy_iter == "description" ) {
+			add_energy( energy_name, score_val );
+		} else if ( energy_name == "description" ) {
 			decoy_tag( tag );
 		} else {
-			add_string_value( *energy_iter, tag );
+			add_string_value( energy_name, tag );
 		}
 		++input_count;
 	} // for ( energy_iter ... )
@@ -651,13 +590,9 @@ void SilentStruct::update_score() {
 	runtime_assert( silent_energies_.begin()->name() == "score" );
 
 	// set the "score" term to its appropriate value
-	typedef utility::vector1< SilentEnergy >::iterator energy_it;
-
 	Real score( 0.0 );
-	for ( energy_it it = silent_energies_.begin(), end = silent_energies_.end();
-			it != end; ++it
-			) {
-		score += it->weight() * it->value();
+	for ( auto const & s : silent_energies_ ) {
+		score += s.weight() * s.value();
 	}
 
 	silent_energies_.begin()->value( score );
@@ -705,16 +640,14 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 
 		using std::map;
 		using std::string;
-		for ( map< string, float >::const_iterator iter = data->map().begin(),
-				end = data->map().end(); iter != end; ++iter
-				) {
+		for ( auto const & elem : data->map() ) {
 			// skip score entry, as it gets confusing
-			if ( iter->first == "score" ) continue;
+			if ( elem.first == "score" ) continue;
 			SilentEnergy new_se(
-				iter->first, iter->second, 1.0,
-				static_cast< int > (iter->first.size() + 3) /* width */
+				elem.first, elem.second, 1.0,
+				static_cast< int > (elem.first.size() + 3) /* width */
 			);
-			tr.Trace << " score energy from pose-cache: " << iter->first << " " << iter->second << std::endl;
+			tr.Trace << " score energy from pose-cache: " << elem.first << " " << elem.second << std::endl;
 			silent_energies_.push_back( new_se );
 		}
 	} //  if ( pose.data().has( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) )
@@ -723,21 +656,16 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 	using std::map;
 	using std::string;
 	map< string, string > comments = core::pose::get_all_comments( pose );
-	for ( map< string, string >::const_iterator it = comments.begin(),
-			end = comments.end(); it != end; ++it
-			) {
-		add_comment( it->first, it->second );
+	for ( auto const & elem : comments ) {
+		add_comment( elem.first, elem.second );
 	}
 
 	// add score_line_strings from Pose
 	map< string, string > score_line_strings(
 		core::pose::get_all_score_line_strings( pose )
 	);
-	for ( map< string, string >::const_iterator it = score_line_strings.begin(),
-			end = score_line_strings.end();
-			it != end; ++it
-			) {
-		add_string_value( it->first, it->second );
+	for ( auto const & elem : score_line_strings ) {
+		add_string_value( elem.first, elem.second );
 	}
 
 } // void energies_from_pose( core::pose::Pose const & pose )
@@ -772,39 +700,35 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 	std::set< string > wanted_scores;
 	if ( option[ in::file::silent_scores_wanted ].user() ) {
 		vector1< string > wanted = option[ in::file::silent_scores_wanted ]();
-		for ( vector1< string >::iterator it = wanted.begin(), end = wanted.end();
-				it != end; ++it
-				) {
-			wanted_scores.insert( *it );
+		for ( auto const & str : wanted ) {
+			wanted_scores.insert( str );
 		}
 	}
 
 	typedef vector1< SilentEnergy > elist;
 	elist es = energies();
-	for ( elist::const_iterator it = es.begin(), end = es.end();
-			it != end; ++it
-			) {
+	for ( auto const & elem : es ) {
 		// only keep this score if we want it.
 		if ( !wanted_scores.empty() && //size() > 0 &&
-				wanted_scores.find(it->name()) == wanted_scores.end()
+				wanted_scores.find(elem.name()) == wanted_scores.end()
 				) continue;
 
 		// logic is:
 		// - if it->name() points to a ScoreType, put the value into the EnergyMap
 		// - otherwise, add the value to the Pose DataCache ARBITRARY_FLOAT_DATA
-		string const proper_name( input_score_prefix + it->name() );
+		string const proper_name( input_score_prefix + elem.name() );
 		if ( ScoreTypeManager::is_score_type( proper_name ) )  {
 			ScoreType sc_type( ScoreTypeManager::score_type_from_name( proper_name ) );
-			emap   [ sc_type ] = it->value();
-			weights[ sc_type ] = it->weight();
-		} else if ( it->string_value() != "" ) {
-			tr.Trace << "add score line string : " << proper_name << " " << it->string_value() << std::endl;
+			emap   [ sc_type ] = elem.value();
+			weights[ sc_type ] = elem.weight();
+		} else if ( elem.string_value() != "" ) {
+			tr.Trace << "add score line string : " << proper_name << " " << elem.string_value() << std::endl;
 			core::pose::add_score_line_string(
-				pose, proper_name, it->string_value()
+				pose, proper_name, elem.string_value()
 			);
 		} else {
-			tr.Trace << "add score : " << proper_name << " " << it->value() << std::endl;
-			data->map()[ proper_name ] = it->value();
+			tr.Trace << "add score : " << proper_name << " " << elem.value() << std::endl;
+			data->map()[ proper_name ] = elem.value();
 		}
 	} // for silent_energies
 
@@ -814,15 +738,13 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 	using std::map;
 	using std::string;
 	map< string, string > comments = get_all_comments();
-	for ( map< string, string >::const_iterator it = comments.begin(),
-			end = comments.end(); it != end; ++it
-			) {
+	for ( auto const & comment : comments ) {
 		// only keep this score if we want it.
 		if ( !wanted_scores.empty() && //size() > 0 &&
-				wanted_scores.find(it->first) == wanted_scores.end()
+				wanted_scores.find(comment.first) == wanted_scores.end()
 				) continue;
-		string const proper_name( input_score_prefix + it->first );
-		core::pose::add_comment( pose, proper_name, it->second );
+		string const proper_name( input_score_prefix + comment.first );
+		core::pose::add_comment( pose, proper_name, comment.second );
 	}
 } // energies_into_pose
 
@@ -830,10 +752,8 @@ EnergyNames SilentStruct::energy_names() const {
 	utility::vector1< SilentEnergy > se = energies();
 
 	utility::vector1< std::string > names;
-	for ( utility::vector1< SilentEnergy >::const_iterator it = se.begin(),
-			end = se.end(); it != end; ++it
-			) {
-		names.push_back( it->name() );
+	for ( auto const & elem : se ) {
+		names.push_back( elem.name() );
 	}
 	EnergyNames enames;
 	enames.energy_names( names );
@@ -845,22 +765,21 @@ void SilentStruct::rename_energies() {
 	using namespace std;
 
 	static map< string, string > scorename_conversions;
+	static map< string, string >::const_iterator end;
 	static bool init( false );
 	if ( !init ) {
 		scorename_conversions["cb"] = "cbeta";
 		scorename_conversions["hs"] = "hs_pair";
 		scorename_conversions["ss"] = "ss_pair";
+		end = scorename_conversions.end();
+		init = true;
 	}
 
 	// iterate over the silent-file energies, convert them when appropriate.
-	map< string, string >::const_iterator conv_it,
-		conv_end( scorename_conversions.end() );
-	for ( utility::vector1< SilentEnergy >::iterator it = silent_energies_.begin(),
-			end = silent_energies_.end(); it != end; ++it
-			) {
-		conv_it = scorename_conversions.find( it->name() );
-		if ( conv_it != conv_end ) {
-			it->name( conv_it->second );
+	for ( auto & s : silent_energies_ ) {
+		auto const conv_it = scorename_conversions.find( s.name() );
+		if ( conv_it != end ) {
+			s.name( conv_it->second );
 		}
 	}
 } // rename_energies
@@ -871,8 +790,7 @@ void SilentStruct::set_tag_from_pose(
 	using namespace core::pose::datacache;
 	std::string tag( "empty_tag" );
 	if ( pose.data().has( CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
-		tag =
-			static_cast< basic::datacache::CacheableString const & >
+		tag = static_cast< basic::datacache::CacheableString const & >
 			( pose.data().get( CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
 	}
 	decoy_tag(tag);
@@ -968,9 +886,8 @@ SilentStruct::print_parent_remarks( std::ostream & out ) const {
 	using std::string;
 	string const remark( "PARENT REMARK" );
 
-	typedef map< string, string >::const_iterator c_iter;
-	for ( c_iter it = parent_remarks_map_.begin(), end = parent_remarks_map_.end(); it != end; ++it ) {
-		out << remark << ' ' << it->first << ' ' << it->second << std::endl;
+	for ( auto const & elem : parent_remarks_map_ ) {
+		out << remark << ' ' << elem.first << ' ' << elem.second << std::endl;
 	}
 }
 
@@ -981,7 +898,7 @@ SilentStruct::get_parent_remark( std::string const & name ) const {
 
 	if ( parent_remarks_map_.count(name)==0 ) utility_exit_with_message( "The key (" + name +") doesn't exist in the parent_remarks_map_!");
 
-	std::map< std::string, std::string >::const_iterator entry= parent_remarks_map_.find( name );
+	auto const entry = parent_remarks_map_.find( name );
 
 	if ( entry == parent_remarks_map_.end() ) {
 		utility_exit_with_message( "entry == parent_remarks_map_.end()  for the the key (" + name +").");
@@ -1189,16 +1106,9 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 
 void
 SilentStruct::print_submotif_info( std::ostream & out ) const {
-	using namespace core::pose::full_model_info;
-	if ( submotif_info_list_.size() == 0 ) return;
-
-	utility::vector1< SubMotifInfoOP >::iterator itr;
-	for ( itr = submotif_info_list_.begin();
-			itr != submotif_info_list_.end();
-			++itr ) {
-		out << *itr << " " << decoy_tag() << std::endl;
+	for ( auto const & submotif_info : submotif_info_list_ ) {
+		out << submotif_info << " " << decoy_tag() << std::endl;
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////

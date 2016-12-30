@@ -498,24 +498,34 @@ operator <<( std::ostream & os, FullModelParameters const & t )
 		runtime_assert( res_lists.size() > 0 );
 
 		bool has_domain_higher_than_one( false );
-		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin(), end = res_lists.end();
-				it != end; ++it ) {
-			if ( it->first > 1 ) has_domain_higher_than_one = true;
+		for ( auto const & res_list : res_lists ) {
+			if ( res_list.first > 1 ) has_domain_higher_than_one = true;
 		}
 
 		std::ostringstream os_local;
-		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin(), end = res_lists.end();
-				it != end; ++it ) {
-			if ( it->first == 0 )         continue; // don't bother with 0.
-			if ( it->second.size() == 0 ) continue;
+		for ( auto const & res_list : res_lists ) {
+			if ( res_list.first == 0 )         continue; // don't bother with 0.
+			if ( res_list.second.size() == 0 ) continue;
 			os_local << ' ';
-			if ( has_domain_higher_than_one ) os_local << it->first << ':'; // give index.
-			os_local << make_tag_with_dashes( it->second, ',' );
+			if ( has_domain_higher_than_one ) os_local << res_list.first << ':'; // give index.
+			os_local << make_tag_with_dashes( res_list.second, ',' );
 		}
 		if ( os_local.str().size() == 0 ) continue;
 		os << "  " << to_string( type ) << os_local.str();
 	}
 
+	// Heavens! We forgot about the non_standard_residue_map!
+	// This is necessary because if only sequence is there, we can't re-parse it
+	// to get the NSRM (and not every code path will ensure that consistency).
+	// Obviously it would be IDEAL for these things to just be fundamental, managed
+	// pose data but at the moment we should be careful to explicitly read them out/in.
+	if ( !t.non_standard_residue_map().empty() ) {
+		os << "  NON_STANDARD_RESIDUE_MAP ";
+		for ( auto const & elem : t.non_standard_residue_map() ) { 
+			os << elem.first << ":" << elem.second << " ";
+		}
+	}
+	
 	// constraints are a special block -- they have atom_names and do not fit with above format.
 	using namespace core::scoring::constraints;
 	if ( t.cst_string_.size() > 0 ) os << "   CONSTRAINTS " << utility::replace_in( t.cst_string_, "\n", "; " );
@@ -553,7 +563,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 		}
 	}
 
-	while ( !is.fail() && tag != "CONSTRAINTS" /*special*/ ) {
+	while ( !is.fail() && tag != "CONSTRAINTS" && tag != "NON_STANDARD_RESIDUE_MAP" /*special*/ ) {
 		FullModelParameterType type = full_model_parameter_type_from_string( tag );
 		utility::vector1< Size > parameter_values_at_res( t.size(), 0 );
 
@@ -572,7 +582,23 @@ operator >>( std::istream & is, FullModelParameters & t )
 		}
 		t.set_parameter( type, parameter_values_at_res );
 	}
-
+	
+	is >> tag;
+	if ( tag == "NON_STANDARD_RESIDUE_MAP" ) {
+		bool ok = true;
+		while ( ok ) {
+			// Read in size : string;
+			is >> tag;
+			utility::vector1< std::string > cols = string_split( tag, ':');
+			runtime_assert( cols.size() == 2 );
+			Size pos = ObjexxFCL::int_of( cols[1] );
+			if ( !pos ) break; // tag may be loaded up with CONSTRAINTS or done entirely
+			t.non_standard_residue_map_nonconst()[ pos ] = cols[2];
+			if ( is.fail() ) break;
+		}
+	}
+	
+	is >> tag;
 	if ( tag == "CONSTRAINTS" ) {
 		getline( is, t.cst_string_ ); // assume rest of line is taken up by constraints.
 		t.cst_string_ = utility::replace_in( t.cst_string_, "; ", "\n"); // convert separator

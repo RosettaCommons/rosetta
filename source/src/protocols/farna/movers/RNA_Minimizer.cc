@@ -222,22 +222,18 @@ RNA_Minimizer::o2prime_trials(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP const & packer_scorefxn_ ) const
 {
-
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	//task->initialize_from_command_line(); //Jan 20, 2012 Testing.
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( !pose.residue(i).is_RNA() ) continue;
+		if ( !pose.residue_type(i).is_RNA() ) continue;
 
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		task->nonconst_residue_task(i).or_include_current( true );
-
 	}
 
 	TR << "Orienting 2' hydroxyls..." << std::endl;
-
 	pack::rotamer_trials( pose, *packer_scorefxn_, task);
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,9 +251,8 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	mm.set_jump( false );
 
 	// torsions
-	for  ( Size i = 1; i <= nres; i++ )  {
-
-		if ( !pose.residue(i).is_RNA() ) continue;
+	for ( Size i = 1; i <= nres; i++ )  {
+		if ( !pose.residue_type(i).is_RNA() ) continue;
 
 		for ( Size j = 1; j <= ( NUM_RNA_MAINCHAIN_TORSIONS + pose.residue(i).type().nchi() ); j++ ) {
 
@@ -271,7 +266,6 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 				continue;
 			}
 			mm.set( rna_torsion_id, true );
-
 		}
 	}
 
@@ -297,7 +291,6 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 	// vary bond geometry
 	if ( options_->vary_bond_geometry() ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_ );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -316,13 +309,11 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 
 	utility::vector1< id::AtomID > atom_ids_to_move;
 
-	for ( Size n = 1; n <= options_->extra_minimize_res().size(); n++ ) {
-
-		Size const i = options_->extra_minimize_res()[n];
+	for ( Size const i : options_->extra_minimize_res() ) {
 		runtime_assert( pose.residue( i ).is_RNA() );
 
 		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
-			if ( pose.residue(i).is_virtual( j ) ) continue;
+			if ( pose.residue_type(i).is_virtual( j ) ) continue;
 			atom_ids_to_move.push_back( id::AtomID( j, i ) );
 		}
 
@@ -335,14 +326,12 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " OP1", i+1 ), pose ) );
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " P  ", i+1 ), pose ) );
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O5'", i+1 ), pose ) );
-
 	}
 
-	for ( Size n = 1; n <= atom_ids_to_move.size(); n++ ) {
-		if ( atom_level_domain_map_->has_domain( atom_ids_to_move[n] ) ) atom_level_domain_map_->set( atom_ids_to_move[n],  true );
+	for ( auto const & atom_id_to_move : atom_ids_to_move ) {
+		if ( atom_level_domain_map_->has_domain( atom_id_to_move ) ) atom_level_domain_map_->set( atom_id_to_move, true );
 	}
 	// We should do a double check that we're not introducing movement that would mess up a domain?
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////

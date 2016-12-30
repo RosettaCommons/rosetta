@@ -47,8 +47,8 @@ ChunkSet::ChunkSet(
 	user_input_( true )
 {
 	// MiniPose is a more compact format than Pose.
-	for ( Size n = 1; n <= pose_list.size(); n++ ) {
-		mini_pose_list_.push_back( core::pose::MiniPoseOP( new core::pose::MiniPose( *(pose_list[n]) ) ) );
+	for ( auto const & pose : pose_list ) {
+		mini_pose_list_.push_back( core::pose::MiniPoseOP( new core::pose::MiniPose( *pose ) ) );
 	}
 	filter_poses_have_same_sequence_and_variants();
 	setup_atom_id_mask_and_mapper( *( pose_list[ 1 ] ) );
@@ -83,7 +83,7 @@ ChunkSet::setup_atom_id_mask( core::pose::Pose const & pose )
 {
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 
-		core::conformation::Residue rsd = pose.residue( i );
+		core::conformation::Residue const & rsd = pose.residue( i );
 		for ( Size j = 1; j <= rsd.natoms(); j++ ) {
 			atom_id_mask_[ core::id::AtomID( j, i ) ] = !rsd.is_virtual( j );
 		}
@@ -111,8 +111,7 @@ ChunkSet::setup_atom_id_mapper_to_vanilla_chunk_pose( core::pose::Pose const & p
 utility::vector1< std::string >
 remove_terminus_variant_types_for_rna( utility::vector1< std::string > const & types, char seq ) {
 	utility::vector1< std::string > types_filtered;
-	for ( core::Size n = 1; n <= types.size(); n++ ) {
-		std::string const & type( types[ n ] );
+	for ( std::string const & type : types ) {
 		if ( core::chemical::rna::rna_nts.find( seq ) != std::string::npos &&
 				( type == "UPPER_TERMINUS_VARIANT" || type == "LOWER_TERMINUS_VARIANT" ) ) continue;
 		types_filtered.push_back( type );
@@ -133,10 +132,11 @@ ChunkSet::filter_poses_have_same_sequence_and_variants()
 	utility::vector1< std::string > fullname_list;
 	std::vector< Size > oneletter_to_fullname_index;
 	std::string one_letter_sequence;
-	parse_sequence( mini_pose_list_[ 1 ]->sequence(), fullname_list, oneletter_to_fullname_index, one_letter_sequence );
-
+	
+	MiniPose const & mini_pose1 = *mini_pose_list_[ 1 ];
+	parse_sequence( mini_pose1.sequence(), fullname_list, oneletter_to_fullname_index, one_letter_sequence );
+	
 	for ( Size n = 2; n <= mini_pose_list_.size(); n++ ) {
-		MiniPose const & mini_pose1 = *mini_pose_list_[ 1 ];
 		MiniPose const & mini_pose2 = *mini_pose_list_[ n ];
 		runtime_assert( mini_pose1.sequence() == mini_pose2.sequence() );
 		for ( Size m = 1; m <= mini_pose1.size(); m++ ) {
@@ -177,10 +177,10 @@ ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & 
 	// check whether this pose contains protein residues, if not, return
 	bool contains_protein = false;
 	// can check the sequence
-	std::string seq = scratch_pose.sequence();
-	for ( core::Size i=1; i<=scratch_pose.size(); ++i ) {
+	std::string const & seq = scratch_pose.sequence();
+	for ( char const c : seq ) {
 		// a little more specific than we want, but ok for now...
-		core::chemical::AA aa = core::chemical::aa_from_oneletter_code( seq[i] );
+		core::chemical::AA aa = core::chemical::aa_from_oneletter_code( c );
 		if ( core::chemical::is_canonical_L_aa( aa ) ) {
 			contains_protein = true;
 			break;
@@ -276,11 +276,9 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 
 	std::map< AtomID, AtomID > atom_id_map_new;
 
-	for ( std::map< AtomID, AtomID >::const_iterator
-			it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
-
-		AtomID const & target_atom_id = it->first;
-		AtomID const & source_atom_id = it->second;
+	for ( auto const & elem : atom_id_map ) {
+		AtomID const & target_atom_id = elem.first;
+		AtomID const & source_atom_id = elem.second;
 
 		std::map< AtomID, bool >::const_iterator it_mask = atom_id_mask_.find( source_atom_id );
 
@@ -314,9 +312,8 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 	std::map< AtomID, Size > atom_id_domain_map;
 	bool found_rosetta_library_domain( false );
 
-	for ( std::map< AtomID, AtomID >::const_iterator it=atom_id_map.begin(),
-			it_end = atom_id_map.end(); it != it_end; ++it ) {
-		AtomID const & target_atom_id = it->first;
+	for ( auto const & elem : atom_id_map ) {
+		AtomID const & target_atom_id = elem.first;
 		Size domain( atom_level_domain_map.get_domain( target_atom_id ) );
 		if ( domain == ROSETTA_LIBRARY_DOMAIN ) {
 			atom_id_domain_map[ target_atom_id ] = 0; // OK to insert here.
@@ -325,9 +322,8 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 			if ( do_rosetta_library_domain_check && domain == 0 ) {
 				/// following is verbiage helpful for debugging. Remove after 2015 if not in use.
 				atom_level_domain_map.show();
-				for ( std::map< AtomID, AtomID >::const_iterator itx=atom_id_map.begin(),
-						itx_end = atom_id_map.end(); itx != itx_end; ++itx ) {
-					TR << TR.Green << atom_id_to_named_atom_id( itx->first, pose ) << " in pose with domain " << atom_level_domain_map.get_domain( itx->first ) << " mapped to " << itx->second << " in chunk " << std::endl;
+				for ( auto const & elem_debug : atom_id_map ) {
+					TR << TR.Green << atom_id_to_named_atom_id( elem_debug.first, pose ) << " in pose with domain " << atom_level_domain_map.get_domain( elem_debug.first ) << " mapped to " << elem_debug.second << " in chunk " << std::endl;
 				}
 
 				TR << "mini pose has sequence: " << mini_pose_list_[1]->sequence() << std::endl;
@@ -362,10 +358,8 @@ ChunkSet::check_fold_tree_OK( core::pose::Pose const & pose ) const
 	// There should be at least the same number of jumps in the big pose
 	//  as there are chains in the scratch_pose.
 	utility::vector1< bool > is_chunk_res( pose.size(), false );
-	for ( ResMap::const_iterator
-			it=res_map_.begin(), it_end = res_map_.end(); it != it_end; ++it ) {
-		Size const i = it->first; //Index in big pose.
-		is_chunk_res[ i ] = true;
+	for ( auto const & elem : res_map_ ) {
+		is_chunk_res[ elem.first ] = true; //Index in big pose.
 	}
 
 	Size const num_jumps_scratch = mini_pose_list_[1]->fold_tree().num_jump(); // number of chains - 1
