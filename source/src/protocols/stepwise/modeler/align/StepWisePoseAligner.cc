@@ -188,6 +188,9 @@ match_up_to_rna_dna( char const nt1, char const nt2 ) {
 	if ( nt1 == 't' && nt2 == 'u' ) return true;
 	if ( nt1 == 'u' && nt2 == 't' ) return true;
 
+	if ( nt1 == 'X' ) return true; // punt for now
+	if ( nt2 == 'X' ) return true; // punt for now
+
 	std::cout << nt1 << " " << nt2 << std::endl;
 	return false;
 }
@@ -572,7 +575,8 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 	runtime_assert ( n1 >= 1 && n1 <= pose1.size() );
 	runtime_assert ( n2 >= 1 && n2 <= pose2.size() );
 	if ( pose1.residue_type( n1 ).aa() != pose2.residue_type( n2 ).aa() &&
-			!core::chemical::rna::rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) ) {
+			!core::chemical::rna::rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) &&
+			 pose1.residue_type( n1 ).na_analogue() != pose2.residue_type( n2 ).na_analogue() ) {
 		TR << "pose1 at n1 " << n1 << " has aa: " << pose1.residue_type( n1 ).aa() << "; vs pose2 at n2 " << n2 << " has aa: " <<  pose2.residue_type( n2 ).aa()  << std::endl;
 		runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
 	}

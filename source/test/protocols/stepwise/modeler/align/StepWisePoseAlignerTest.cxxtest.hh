@@ -85,7 +85,9 @@ public:
 		Pose const & other_pose = *full_model_info.other_pose_list()[ 1 ];
 		TS_ASSERT_EQUALS( other_pose.sequence(),  "FANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPIFANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELTugaggaucaccca" );
 
-		TS_ASSERT_EQUALS( native_pose, align_pose );
+		// no longer assume that native_pose is filled with align_pose as placeholder -- leads to rms &
+		// rms_fill evaluation, confusing. rhiju dec. 2016
+		//		TS_ASSERT_EQUALS( native_pose, align_pose );
 		TS_ASSERT_DIFFERS( align_pose, PoseOP( 0 ) );
 		TS_ASSERT_EQUALS( align_pose->sequence(), "FANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPIFANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELTacugaggaucacccagu" );
 

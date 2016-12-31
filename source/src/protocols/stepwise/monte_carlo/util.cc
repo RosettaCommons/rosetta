@@ -141,6 +141,7 @@ build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose ){
 	options->set_skip_deletions( true );
 	options->set_enumerate( true ); // prevent randomness.
 	options->set_skip_bulge_frequency( 0.2 ); // to avoid getting stuck
+	options->set_filter_complex_cycles( false ); // also to avoid getting stuck.
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
 	master_mover.build_full_model( start_pose, full_model_pose );
 }
