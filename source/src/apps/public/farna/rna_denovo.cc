@@ -71,6 +71,10 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_native_pose( rna_de_novo_setup->native_pose() );
 	rna_de_novo_protocol.set_refine_pose_list( rna_de_novo_setup->refine_pose_list() );
 
+#ifdef GL_GRAPHICS
+	pose.center();
+#endif
+	
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 	// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 

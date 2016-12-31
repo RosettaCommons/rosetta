@@ -114,7 +114,7 @@ figure_out_secstruct( pose::Pose & pose ){
 	return secstruct;
 }
 
-utility::vector1< core::Size > analyze_for_homology( std::string const & in_file, RNA_Fragments const & fragments ) {
+utility::vector1< core::Size > analyze_for_homology( std::string const & in_file, RNA_Fragments const & fragments, std::string const & exclusion_match_type = "MATCH_EXACT" ) {
 	using namespace core::pose;
 	using namespace core::pose::copydofs;
 	using namespace core::scoring;
@@ -126,8 +126,17 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 	using namespace protocols::toolbox;
 	using namespace utility::file;
 
-	// Following could be generalized to fa_standard, after recent unification, but
-	// probably should wait for on-the-fly residue type generation.
+	Size type( MATCH_EXACT );
+	if ( exclusion_match_type == "MATCH_EXACT" ) {
+		type = MATCH_EXACT;
+	} else if ( exclusion_match_type == "MATCH_YR" ) {
+		type = MATCH_YR;
+	} else if ( exclusion_match_type == "MATCH_ALL" ) {
+		type = MATCH_ALL;
+	} else {
+		utility_exit_with_message( "Illegal value provided for option -exclusion_match_type. Must be MATCH_EXACT (default), MATCH_YR, or MATCH_ALL.");
+	}
+	
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	PoseOP pose_op = get_pdb_and_cleanup( in_file, rsd_set );
@@ -147,7 +156,6 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 		//TR << position << " " << secstruct << std::endl;
 		Size const frag_length( secstruct.size());
 		std::string const sequence = pose_input.sequence().substr( position - 1, frag_length ); // uucg loop
-		Size type( MATCH_EXACT );
 
 		// This seems curious. Of course, we could maybe pass `this`, and speed
 		// up our searches. Maybe.
@@ -188,21 +196,20 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 }
 
 RNA_FragmentHomologyExclusion::RNA_FragmentHomologyExclusion( RNA_Fragments const & all_rna_fragments ) {
-
-
 	// AMW: Insert any vall lines explicitly specified from the command line
 	fragment_lines_.insert(
 		option[ OptionKeys::rna::farna::exclude_fragments ]().begin(),
 		option[ OptionKeys::rna::farna::exclude_fragments ]().end() );
 
 	if ( option[ OptionKeys::rna::farna::exclude_native_fragments ].value() ) {
-		auto homologous_lines = analyze_for_homology( option[ OptionKeys::in::file::native ].value(), all_rna_fragments );
+		auto homologous_lines = analyze_for_homology( option[ OptionKeys::in::file::native ].value(), all_rna_fragments,
+			option[ OptionKeys::rna::farna::exclusion_match_type ]() );
 		fragment_lines_.insert( homologous_lines.begin(), homologous_lines.end() );
 	}
 	if ( option[ OptionKeys::rna::farna::exclude_fragment_files ].user() ) {
 		// Add vall lines homologous to the loops from these poses
 		for ( auto const & file : option[ OptionKeys::rna::farna::exclude_fragment_files ]() ) {
-			auto homologous_lines = analyze_for_homology( file, all_rna_fragments );
+			auto homologous_lines = analyze_for_homology( file, all_rna_fragments, option[ OptionKeys::rna::farna::exclusion_match_type ]() );
 			fragment_lines_.insert( homologous_lines.begin(), homologous_lines.end() );
 		}
 	}

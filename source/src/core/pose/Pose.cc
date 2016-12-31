@@ -69,6 +69,7 @@
 
 // C++ headers
 #include <algorithm>
+#include <numeric>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -794,25 +795,9 @@ Pose::size() const
 ///   pose.total_atoms()
 Size
 Pose::total_atoms() const{
-	core::Size atomno(0);
-	for ( core::Size res = 1; res <= size(); res++ ) {
-		for ( core::Size atms = 1; atms <= residue(res).natoms(); atms++ ) {
-			atomno++;
-		}
-	}
-	return atomno;
-}
-
-/// @brief Returns the total number of atoms in the pose conformation
-/// example:
-///   pose.total_atoms()
-Size
-Pose::total_atoms( Size nres ) const{
-	Size atomno(0);
-	for ( Size res = 1; res <= nres; res++ ) {
-		for ( Size atms = 1; atms <= residue(res).natoms(); atms++ ) {
-			atomno++;
-		}
+	Size atomno = 0;
+	for ( Size ii = 1; ii <= size(); ++ii )  {
+		atomno += residue_type( ii ).natoms();
 	}
 	return atomno;
 }
@@ -1501,7 +1486,6 @@ Pose::stub_from_id(
 void
 Pose::center()
 {
-
 	PointPosition cog(0,0,0);
 
 	Size count=0;
@@ -1519,7 +1503,7 @@ Pose::center()
 
 	for ( Size ir = 1; ir <= size(); ir++ ) {
 		for ( Size at = 1; at <= residue( ir ).natoms(); at++ ) {
-			set_xyz(  AtomID( at, ir ),  xyz( AtomID( at, ir )) - cog  );
+			set_xyz(  AtomID( at, ir ),  xyz( AtomID( at, ir )) - cog );
 		}
 	}
 }

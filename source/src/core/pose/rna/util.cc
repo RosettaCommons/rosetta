@@ -1014,7 +1014,6 @@ add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
 	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
 	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
-
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1046,7 +1045,6 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 	for ( BasePair const & native_base_pair : base_pair_list_native ) {
 		Size const i = native_base_pair.res1();
 		Size const j = native_base_pair.res2();
-
 
 		BaseEdge const k = native_base_pair.edge1();
 		BaseEdge const m = native_base_pair.edge2();
@@ -1186,8 +1184,8 @@ get_suite_torsion_info( core::pose::Pose const & pose, Size const i )
 void
 apply_suite_torsion_info( core::pose::Pose & pose,
 	utility::vector1< std::pair< core::id::TorsionID, core::Real > > const & suite_torsion_info ) {
-	for ( Size n = 1; n <= suite_torsion_info.size(); n++ ) {
-		pose.set_torsion( suite_torsion_info[ n ].first, suite_torsion_info[ n ].second );
+	for ( auto const & elem : suite_torsion_info ) {
+		pose.set_torsion( elem.first, elem.second );
 	}
 }
 
@@ -1427,9 +1425,7 @@ void
 add_syn_chi_constraints( core::pose::Pose & pose ) {
 	using namespace core::scoring::func;
 	using namespace core::pose::full_model_info;
-	//TR << "Maybe going to add syn chi constraints" << std::endl;
 	if ( !full_model_info_defined( pose ) ) return;
-	//TR << "Definitely going to add syn chi constraints" << std::endl;
 	// define func
 	utility::vector1< Real > energies( 36, 20.0 ); // spaced at 5, 10, ... 355 degrees. Set penalty to be +20.0
 	// zero out function at permissible vals. (syn should be -120.0 to 0.0 --> 240.0 to 360.0)
@@ -1467,12 +1463,12 @@ get_suite_torsion_ids( Size const i )
 {
 	using namespace core::id;
 	using namespace utility::tools;
-	return make_vector1( TorsionID( i    , BB, EPSILON ),
-											 TorsionID( i    , BB, ZETA ),
-											 TorsionID( i + 1, BB, ALPHA ),
-											 TorsionID( i + 1, BB, BETA ),
-											 TorsionID( i + 1, BB, GAMMA ) );
-
+	return make_vector1(
+		TorsionID( i    , BB, EPSILON ),
+		TorsionID( i    , BB, ZETA ),
+		TorsionID( i + 1, BB, ALPHA ),
+		TorsionID( i + 1, BB, BETA ),
+		TorsionID( i + 1, BB, GAMMA ) );
 }
 
 
