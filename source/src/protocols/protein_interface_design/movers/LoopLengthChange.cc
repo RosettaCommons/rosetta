@@ -67,7 +67,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers
 
 LoopLengthChange::LoopLengthChange() :
 	Mover( LoopLengthChange::mover_name() ),
-	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false)
+	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false)/*, restype_char_('A') (in .hh)*/
 {
 }
 
@@ -127,8 +127,9 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		ResidueTypeCOP residue_type( core::pose::get_restype_for_pose(pose, name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
-		ResidueCOP new_res = ResidueFactory::create_residue( *residue_type );
+		ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
+		runtime_assert(oneletter_code_specifies_aa(restype_char())); //ensure that we aren't about to try this with aa_unk
+		ResidueCOP new_res = ResidueFactory::create_residue( residue_set->name_map( name_from_aa( aa_from_oneletter_code( restype_char() ) ) ) );
 		if ( tail_segment_ ) {
 			/* This will be ugly: For some reason you cannot use .append_polymer_residue_after_seqpos to add residues
 			*        to the very last position. Instead we are here adding n+1 residues to the second last position.  */
@@ -153,7 +154,7 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 
 	}
 	pose.update_residue_neighbors();
-	pose.pdb_info()->obsolete( true );
+	if( pose.pdb_info() ) pose.pdb_info()->obsolete( true );
 }
 
 // XRW TEMP std::string
@@ -170,6 +171,18 @@ LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, p
 
 	runtime_assert( loop_end() > loop_start() );
 	// runtime_assert( loop_end() + delta() >= loop_start() );
+
+	if ( tag->hasOption("restype") ) {
+		restype_char( tag->getOption< char >( "restype" ) );
+		if ( !(core::chemical::oneletter_code_specifies_aa(restype_char())) ) {
+			utility_exit_with_message(std::string("LoopLengthChange restype argument apparently does not specify a canonical residue type (ACDEFGHIKLMNPQRSTVWY), argument was ") + std::string( 1, restype_char()));
+			//manual casting because string literal plus char doesn't work as expected; http://stackoverflow.com/questions/25812411/something-in-c
+		}
+		if ( delta() <= 0 ) {
+			utility_exit_with_message("LoopLengthChange restype argument invalid when delta is less than zero (you are removing residues; do not specify that residue type to add!)");
+
+		}
+	}
 
 	TR<<"LoopLengthChange with loop "<<loop_start()<<"-"<<loop_end()<<" and delta "<<delta()<<std::endl;
 }
@@ -208,6 +221,17 @@ core::Size
 LoopLengthChange::loop_cut() const{
 	return( loop_cut_ );
 }
+
+void
+LoopLengthChange::restype_char( char const restype_char ){
+	restype_char_ = restype_char;
+}
+
+char
+LoopLengthChange::restype_char() const{
+	return( restype_char_ );
+}
+
 void
 LoopLengthChange::delta( int const d ){
 	delta_ = d;
@@ -237,9 +261,10 @@ void LoopLengthChange::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	attlist + XMLSchemaAttribute::required_attribute( "loop_start", xsct_refpose_enabled_residue_number, "Starting residue number for loop, formatted in seqpos or PDB or refpose numbering" )
 		+ XMLSchemaAttribute::required_attribute( "loop_end", xsct_refpose_enabled_residue_number, "Ending residue number for loop, formatted in seqpos or PDB or refpose numbering" )
-		+ XMLSchemaAttribute::required_attribute( "delta", xs_integer, "Number of residues to extend or contract the loop" );
+		+ XMLSchemaAttribute::required_attribute( "delta", xs_integer, "Number of residues to extend or contract the loop" )
+		+ XMLSchemaAttribute("restype", xsct_canonical_res_char, "Only valid if delta is positive. Char of residue type to insert, on [ACDEFGHIKLMNPQRSTVWY] (the canonicals)." );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A Mover for changing the length of a loop; does not close the loop afterwards.", attlist );
 }
 
 std::string LoopLengthChangeCreator::keyname() const {

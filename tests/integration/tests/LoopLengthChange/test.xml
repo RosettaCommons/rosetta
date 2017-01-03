@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+
+	</SCOREFXNS>
+
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+
+	<FILTERS>
+	</FILTERS>
+
+	<MOVERS>
+		<LoopLengthChange name="LoopX1" loop_start="1" loop_end="2" delta="1" restype="Q"/>
+	</MOVERS>
+
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+
+	<PROTOCOLS>
+		<Add mover="LoopX1"/>
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

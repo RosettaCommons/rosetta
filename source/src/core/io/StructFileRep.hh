@@ -137,8 +137,8 @@ struct HELIXInformation {
 // http://www.wwpdb.org/documentation/file-format-content/format23/sect5.html
 /// @author Steven Lewis smlewi@gmail.com
 struct SHEETInformation {
-	core::Size sheetID; //numeric ID (which # helix is this?). if > 999 bad things happen here (output field is only 3 chars)
-	std::string sheet_name; //arbitrary unique ID; copy of sheetID as a string
+	core::Size strand_num = 1; //nominally the strand number within the sheet, but we are recording each STRAND as its own sheet
+	std::string sheetID; //arbitrary unique ID; copy of sheetID as a string
 	core::Size num_strands = 1; //nominally these are SHEET records but we are only doing STRANDs
 	std::string name3_1; //name3 of start residue
 	char chainID1; //chain of start residue
@@ -247,15 +247,15 @@ public:  // Accessors /////////////////////////////////////////////////////////
 
 	// PDB Secondary Structure Section ////////////////////////////////////////
 	/// @brief   Access map for storing HELIX records.
-	/// @details key is 6-character resID of 1st residue in helix, from ResidueInformation::resid().  These records should be essentially correct, unlike the SHEET records.  NOTE that they are NOT read from the PDB by PoseFromStructFileRepConverter, only generated FROM the pose in PoseToStructFileRepConverter.
-	std::map< std::string, HELIXInformation > const & HELIXInformations() const { return HELIXInformations_; }
-	std::map< std::string, HELIXInformation >       & HELIXInformations()       { return HELIXInformations_; }
+	/// @details These records should be essentially correct, unlike the SHEET records.  NOTE that they are NOT read from the PDB by PoseFromStructFileRepConverter, only generated FROM the pose in PoseToStructFileRepConverter.
+	utility::vector1< HELIXInformation > const & HELIXInformations() const { return HELIXInformations_; }
+	utility::vector1< HELIXInformation >       & HELIXInformations()       { return HELIXInformations_; }
 
 	// PDB Secondary Structure Section ////////////////////////////////////////
 	/// @brief   Access map for storing SHEET records.
-	/// @details key is 6-character resID of 1st residue in strand, from ResidueInformation::resid().  These records are cheating on the PDB rules and just storing individual strands as 1-strand sheets.  NOTE that they are NOT read from the PDB by PoseFromStructFileRepConverter, only generated FROM the pose in PoseToStructFileRepConverter.
-	std::map< std::string, SHEETInformation > const & SHEETInformations() const { return SHEETInformations_; }
-	std::map< std::string, SHEETInformation >       & SHEETInformations()       { return SHEETInformations_; }
+	/// @details These records are cheating on the PDB rules and just storing individual strands as 1-strand sheets.  NOTE that they are NOT read from the PDB by PoseFromStructFileRepConverter, only generated FROM the pose in PoseToStructFileRepConverter.
+	utility::vector1< SHEETInformation > const & SHEETInformations() const { return SHEETInformations_; }
+	utility::vector1< SHEETInformation >       & SHEETInformations()       { return SHEETInformations_; }
 
 	// PDB Connectivity Annotation Section ////////////////////////////////////
 	/// @brief   Access map for storing SSBOND records.
@@ -365,8 +365,8 @@ private:
 	std::map< std::string, utility::vector1< std::string > > heterogen_synonyms_;  // key is hetID
 	std::map< std::string, std::string > heterogen_formulae_;  // key is hetID
 	std::map< std::string, std::pair< std::string, std::string > > residue_type_base_names_;  // key is 6-char. resID
-	std::map< std::string, HELIXInformation > HELIXInformations_; // key is 6-char resID from ResidueInformation::resid
-	std::map< std::string, SHEETInformation > SHEETInformations_; // key is 6-char resID from ResidueInformation::resid
+	utility::vector1< HELIXInformation > HELIXInformations_;
+	utility::vector1< SHEETInformation > SHEETInformations_;
 	std::map< std::string, utility::vector1< SSBondInformation > > ssbond_map_;  // key is 6-character resID
 	std::map< std::string, utility::vector1< LinkInformation > > link_map_;  // key is 6-character resID
 	std::map< std::string, CisPeptideInformation > cispep_map_;  // key is 6-character resID

@@ -1,0 +1,31 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+
+	<FILTERS>
+	</FILTERS>
+
+	<MOVERS>
+		<AddConstraintsToCurrentConformationMover name="constrainer1" use_distance_cst="true" bound_width="5.0" max_distance="10000" min_seq_sep="1" />
+		<AddConstraintsToCurrentConformationMover name="constrainer2" use_distance_cst="true" bound_width="0.0" max_distance="10000" min_seq_sep="1" />
+		<AddConstraintsToCurrentConformationMover name="constrainer3" use_distance_cst="false" bound_width="5.0" max_distance="10000" min_seq_sep="1" />
+		<AddConstraintsToCurrentConformationMover name="constrainer4" use_distance_cst="false" bound_width="0.0" max_distance="10000" min_seq_sep="1" />
+	</MOVERS>
+
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+
+	<PROTOCOLS>
+		<Add mover="constrainer1"/>
+		<Add mover="constrainer2"/>
+		<Add mover="constrainer3"/>
+		<Add mover="constrainer4"/>
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

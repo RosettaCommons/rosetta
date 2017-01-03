@@ -157,7 +157,8 @@ enum XMLSchemaCommonType {
 	xsct_minimizer_type,
 	xsct_size_cs_pair,
 	xsct_chain_cslist,
-	xsct_dssp_string
+	xsct_dssp_string,
+	xsct_canonical_res_char
 };
 std::string residue_number_string();
 std::string real_regex_pattern();

@@ -1,0 +1,4 @@
+-parser:protocol test.xml
+-in:file:s obj01.pdb
+-nstruct 1 
+

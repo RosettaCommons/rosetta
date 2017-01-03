@@ -78,7 +78,7 @@ sources = {
 	"contact_map": [
 		"ContactMap",
 	],
-	
+
 	"cyclic_peptide" : [
 		"BetaAlphaDisulfideTests",
 		"BetaAlphaDisulfideTests_betanov15",
@@ -93,7 +93,7 @@ sources = {
 		"OversaturatedHbondAcceptorFilter_betanov16_Tests",
 		"SymmetricCycpepAlignTests",
 	],
-	
+
 	"cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_betanov15",
@@ -128,7 +128,7 @@ sources = {
 	"enzymatic_movers" : [
 		"GlycosyltransferaseMover",
 	],
-	
+
 	"farna" : [
 		"FARNA_OptimizerTest",
 		"RNA_DeNovoProtocolTest",
@@ -433,6 +433,10 @@ sources = {
 		"protein_interface_design",
 	],
 
+	"protein_interface_design/movers" : [
+		"LoopLengthChange",
+	],
+
 	"qsar/scoring_grid" : [
 		"ScoreNormalization",
 		"ScoringGridLoader",
@@ -488,6 +492,7 @@ sources = {
 	],
 
 	"simple_moves" : [
+		"AddConstraintsToCurrentConformationMover",
 		"CopyRotamerMover",
 		"ddG",
 		"DisulfideInsertionMoverTests",

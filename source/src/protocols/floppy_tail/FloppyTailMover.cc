@@ -558,7 +558,6 @@ void FloppyTailMover::low_res( core::pose::Pose & pose ) {
 	clock_t stoptime = clock();
 	TR << "One perturb took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 	TR << "perturb steps complete" << std::endl;
-	starttime = clock();
 
 	// convert back to full atom
 	protocols::simple_moves::ReturnSidechainMover return_sidechains( saved_input_pose );

@@ -950,7 +950,7 @@ ConstraintSet::show(
 		}
 	} // for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii )
 
-	out << "IntraResidueCosntraints: total: " << intra_residue_constraints_.size()  << " showing active..." << std::endl;
+	out << "IntraResidueConstraints: total: " << intra_residue_constraints_.size()  << " showing active..." << std::endl;
 	for ( ResidueConstraints::const_iterator it = intra_residue_constraints_.begin(),
 			eit = intra_residue_constraints_.end(); it != eit; ++it ) {
 		out << "IntraResidueConstraints (" << it->first << ")" << std::endl;
@@ -959,7 +959,7 @@ ConstraintSet::show(
 	}
 
 
-	out << "NonResiduePairCosntraints: total: " << non_residue_pair_constraints_.size() << " showing active..." << std::endl;
+	out << "NonResiduePairConstraints: total: " << non_residue_pair_constraints_.size() << " showing active..." << std::endl;
 	for ( Constraints::const_iterator it = non_residue_pair_constraints_.begin(),
 			eit = non_residue_pair_constraints_.end(); it != eit; ++it ) {
 		(*it)->show( out );

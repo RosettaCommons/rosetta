@@ -52,6 +52,7 @@ public:
 
 
 	bool       & use_distance_cst() { return use_distance_cst_; }
+	bool       & use_bounded_func() { return use_bounded_func_; }
 	bool       & CA_only() { return CA_only_; }
 	bool       & bb_only() { return bb_only_; }
 	bool       & inter_chain() { return inter_chain_; }
@@ -61,6 +62,7 @@ public:
 	core::Real & bound_width() { return bound_width_; }
 	core::Size & min_seq_sep() { return min_seq_sep_; }
 	bool       const & use_distance_cst() const { return use_distance_cst_; }
+	bool       const & use_bounded_func() const { return use_bounded_func_; }
 	bool       const & CA_only() const { return CA_only_; }
 	bool       const & bb_only() const { return bb_only_; }
 	bool       const & inter_chain() const { return inter_chain_; }
@@ -82,7 +84,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-protected:
+private:
 	core::Size
 	find_best_anchor( core::pose::Pose const & pose ) const;
 
@@ -106,6 +108,7 @@ protected:
 
 private:
 	bool use_distance_cst_;
+	bool use_bound_func_;
 	bool CA_only_;
 	bool bb_only_;
 	bool inter_chain_;
@@ -116,7 +119,8 @@ private:
 	core::Size min_seq_sep_;
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
-	core::scoring::func::FuncOP cc_func_;
+
+	bool use_bounded_func_; //Based on the tag, are we using the Bound[ed]Func or the default for the constraint type (HarmonicFunc for CoordinateConstraint, SOGFunc for AtomPairConstraint)
 
 };
 

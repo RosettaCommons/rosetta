@@ -43,9 +43,11 @@ public:
 	void loop_start( core::Size const loop_start );
 	void loop_end( core::Size const loop_end );
 	void loop_cut( core::Size const loop_cut );
+	void restype_char( char const restype_char );
 	core::Size loop_start() const;
 	core::Size loop_end() const;
 	core::Size loop_cut() const;
+	char restype_char() const;
 	void delta( int const d );
 	void tail( bool b );
 	int delta() const;
@@ -65,6 +67,7 @@ private:
 	core::Size loop_start_, loop_end_, loop_cut_;
 	int delta_; // delta_: by how much to change
 	bool tail_segment_; //if the tail
+	char restype_char_ = 'A'; //What residue type should be inserted if delta is positive?  Assuming canonical 20.
 };
 
 

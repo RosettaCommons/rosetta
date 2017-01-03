@@ -80,6 +80,7 @@ std::string name_for_common_type( XMLSchemaCommonType common_type )
 	case xsct_size_cs_pair : return "size_cs_pair";
 	case xsct_chain_cslist : return "chain_cslist";
 	case xsct_dssp_string : return "dssp_string";
+	case xsct_canonical_res_char : return "canonical_res_char";
 	case xsct_none :
 		throw utility::excn::EXCN_Msg_Exception( "Error in requesting name for xsct_none;" );
 		break;
@@ -323,6 +324,10 @@ std::string refpose_enabled_residue_number_cslist_string() {
 	return "(" + refpose_enabled_residue_number_string() + ")(,(" + refpose_enabled_residue_number_string() + "))*";
 }
 
+std::string canonical_res_char_string() {
+	return "[ACDEFGHIKLMNPQRSTVWY]";
+}
+
 void
 activate_common_simple_type(
 	utility::tag::XMLSchemaDefinition & xsd,
@@ -497,6 +502,13 @@ activate_common_simple_type(
 		dssp_string.base_type( xs_string );
 		dssp_string.add_restriction( xsr_pattern, "[ HELITGBSU_]*" );
 		xsd.add_top_level_element( dssp_string );
+	} else if ( common_type == xsct_canonical_res_char ) {
+		XMLSchemaRestriction canonical_res_char;
+		canonical_res_char.name( name_for_common_type( common_type ));
+		canonical_res_char.base_type( xs_string );
+		canonical_res_char.add_restriction( xsr_maxLength, "1" );
+		canonical_res_char.add_restriction( xsr_pattern, canonical_res_char_string());
+		xsd.add_top_level_element( canonical_res_char );
 	}
 	/* else if ( common_type == xsct_zero_or_one ) {
 	XMLSchemaRestriction zero_or_one;

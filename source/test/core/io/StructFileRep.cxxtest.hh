@@ -176,23 +176,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////
 		//pick one sheet and one helix to test specifically; rest we will test with string comparisons
-		//type is std::map< std::string, HELIXInformation >
-		auto const helixmap(pose_to_sfr.sfr()->HELIXInformations());
-		if ( false ) for ( auto it(helixmap.begin()); it != helixmap.end(); ++it ) std::cout << it->first << std::endl;
-		/* helical keys
-		3 A
-		11 A
-		50 A
-		54 A
-		57 A
-		61 A
-		74 A
-		*/
-
+		//type is utility::vector1< HELIXInformation >
+		auto const helixvec(pose_to_sfr.sfr()->HELIXInformations());
 		//helix 2 is 11-16
-		std::string const hID("  11 A");
-		//can't use operator [] on a const map
-		core::io::HELIXInformation const & test_helix(helixmap.at(hID));
+		core::io::HELIXInformation const & test_helix(helixvec[2]);
 		TS_ASSERT_EQUALS(test_helix.helixID, 2);
 		TS_ASSERT_EQUALS(test_helix.helix_name, "  2");
 		TS_ASSERT_EQUALS(test_helix.name3_1, "HIS");
@@ -207,24 +194,13 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(test_helix.comment, "");
 		TS_ASSERT_EQUALS(test_helix.length, 6);
 
-		//type is std::map< std::string, SHEETInformation >
-		auto const sheetmap(pose_to_sfr.sfr()->SHEETInformations());
-		if ( false ) for ( auto it(sheetmap.begin()); it != sheetmap.end(); ++it ) std::cout << it->first << std::endl;
-		/*sheet keys
-		19 A
-		29 A
-		37 A
-		44 A
-		48 A
-		71 A
-		*/
-
+		//type is utility::vector1< SHEETInformation >
+		auto const sheetvec(pose_to_sfr.sfr()->SHEETInformations());
 		//LLHHHHHHLLHHHHHHLLEEEEEELLLLEEEEEEELEEEEEELEEELELHHHLHHLHHHLHHHHHHHHLLEEEHHLL
 		//sheet 4 is 44-46
-		std::string const sID("  44 A");
-		core::io::SHEETInformation const & test_sheet(sheetmap.at(sID));
-		TS_ASSERT_EQUALS(test_sheet.sheetID, 4);
-		TS_ASSERT_EQUALS(test_sheet.sheet_name, "  4");
+		core::io::SHEETInformation const & test_sheet(sheetvec[4]);
+		TS_ASSERT_EQUALS(test_sheet.strand_num, 1);
+		TS_ASSERT_EQUALS(test_sheet.sheetID, "  4");
 		TS_ASSERT_EQUALS(test_sheet.num_strands, 1);
 		TS_ASSERT_EQUALS(test_sheet.name3_1, "GLU");
 		TS_ASSERT_EQUALS(test_sheet.chainID1, 'A');
@@ -258,15 +234,15 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		HELIX    6   6 HIS A   61  HIS A   68  1                                   8
 		HELIX    7   7 HIS A   74  HIS A   75  1                                   2
 		SHEET    1   1 1 GLU A  19  GLU A  24  0
-		SHEET    2   2 1 GLU A  29  GLU A  35  0
-		SHEET    3   3 1 GLU A  37  GLU A  42  0
-		SHEET    4   4 1 GLU A  44  GLU A  46  0
-		SHEET    5   5 1 GLU A  48  GLU A  48  0
-		SHEET    6   6 1 GLU A  71  GLU A  73  0
+		SHEET    1   2 1 GLU A  29  GLU A  35  0
+		SHEET    1   3 1 GLU A  37  GLU A  42  0
+		SHEET    1   4 1 GLU A  44  GLU A  46  0
+		SHEET    1   5 1 GLU A  48  GLU A  48  0
+		SHEET    1   6 1 GLU A  71  GLU A  73  0
 		*/
 
 		std::string const right_answer =
-			"HELIX    1   1 HIS A    3  HIS A    8  1                                   6    \nHELIX    2   2 HIS A   11  HIS A   16  1                                   6    \nHELIX    3   3 HIS A   50  HIS A   52  1                                   3    \nHELIX    4   4 HIS A   54  HIS A   55  1                                   2    \nHELIX    5   5 HIS A   57  HIS A   59  1                                   3    \nHELIX    6   6 HIS A   61  HIS A   68  1                                   8    \nHELIX    7   7 HIS A   74  HIS A   75  1                                   2    \nSHEET    1   1 1 GLU A  19  GLU A  24  0                                        \nSHEET    2   2 1 GLU A  29  GLU A  35  0                                        \nSHEET    3   3 1 GLU A  37  GLU A  42  0                                        \nSHEET    4   4 1 GLU A  44  GLU A  46  0                                        \nSHEET    5   5 1 GLU A  48  GLU A  48  0                                        \nSHEET    6   6 1 GLU A  71  GLU A  73  0                                        \n";
+			"HELIX    1   1 HIS A    3  HIS A    8  1                                   6    \nHELIX    2   2 HIS A   11  HIS A   16  1                                   6    \nHELIX    3   3 HIS A   50  HIS A   52  1                                   3    \nHELIX    4   4 HIS A   54  HIS A   55  1                                   2    \nHELIX    5   5 HIS A   57  HIS A   59  1                                   3    \nHELIX    6   6 HIS A   61  HIS A   68  1                                   8    \nHELIX    7   7 HIS A   74  HIS A   75  1                                   2    \nSHEET    1   1 1 GLU A  19  GLU A  24  0                                        \nSHEET    1   2 1 GLU A  29  GLU A  35  0                                        \nSHEET    1   3 1 GLU A  37  GLU A  42  0                                        \nSHEET    1   4 1 GLU A  44  GLU A  46  0                                        \nSHEET    1   5 1 GLU A  48  GLU A  48  0                                        \nSHEET    1   6 1 GLU A  71  GLU A  73  0                                        \n";
 		std::ostringstream pdb_stream;
 		core::io::pdb::dump_pdb( pose, pdb_stream, options_op);
 		//std::cout << pdb_stream.str() << std::endl;
@@ -281,9 +257,127 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		}
 
 		TS_ASSERT_EQUALS(test_answer, right_answer);
-
 	}
 
-};  // class StructFileRepTests
 
-// Sandbox ////////////////////////////////////////////////////////////////////
+	///@author Steven Lewis smlewi@gmail.com
+	//maybe should be in PoseToStructFileRepConverter.cxxtest.hh
+	//original implementation of this system sorted HELIX and SHEET records in a way that didn't match the ATOM records; this wasn't exposed by the test above.  This function constructs a larger multichain pose to test its improved sorting behavior.
+	void test_generate_secondary_structure_informations_twochains(){
+
+		//pose 1
+		core::pose::Pose pose1;
+		//this string will be both our pose and its secstruct string (ensuring they're the same length...)
+		std::string const pose1_AND_ss = "LLHHHHHHLLHHHHHHLLEEEEEELLLLEEEEEEELEEEEEELEEELELHHHLHHLHHHLHHHHHHHHLLEEEHHLL";
+		core::pose::make_pose_from_sequence(pose1, pose1_AND_ss, "fa_standard");
+
+		core::pose::Pose pose2;
+		std::string const pose2_AND_ss("LLHEEELLLLLLEEEEEELLLLLHHHHLLLLHHHHLLLEEELLEEEELLLEEEELLLEE");
+		core::pose::make_pose_from_sequence(pose2, pose2_AND_ss, "fa_standard");
+
+		//Let's make a fauxmetric fauxhexamer!  We need something big enough to have many chains
+		core::pose::Pose combo_pose = pose1;
+		combo_pose.append_pose_by_jump(pose2, 1);
+		combo_pose.append_pose_by_jump(pose1, 1);
+		combo_pose.append_pose_by_jump(pose2, 1);
+		combo_pose.append_pose_by_jump(pose1, 1);
+		combo_pose.append_pose_by_jump(pose2, 1);
+
+		std::string const combo_pose_SS(pose1_AND_ss + pose2_AND_ss + pose1_AND_ss + pose2_AND_ss + pose1_AND_ss + pose2_AND_ss);
+		TS_ASSERT_EQUALS(combo_pose_SS.size(), combo_pose.size()); //this is really just assert, but why not make it soft?
+		//this is dumb but pose has no string function for this
+		for ( core::Size i(1); i<combo_pose.size(); ++i ) {
+			combo_pose.set_secstruct(i, combo_pose_SS[i-1]);
+		}
+
+		core_init_with_additional_options( "-out:file:output_secondary_structure -out:file:do_not_autoassign_SS");
+		core::io::StructFileRepOptionsOP options_op(new core::io::StructFileRepOptions);
+
+		std::ostringstream pdb_stream;
+		core::io::pdb::dump_pdb( combo_pose, pdb_stream, options_op);
+		//std::cout << pdb_stream.str() << std::endl;
+
+		std::istringstream pdb_result(pdb_stream.str());
+		std::string test_answer("");
+		//convert the first 66 lines of the PDB into our string to compare to
+		for ( core::Size lineNum(1); lineNum <= 66 /*66 SS elements*/; ++lineNum ) {
+			std::string templine;
+			std::getline(pdb_result, templine);
+			test_answer += templine + "\n";
+		}
+
+		//commented oddly to keep whitespace intact
+		/*HELIX    1   1 HIS A    3  HIS A    8  1                                   6    */
+		/*HELIX    2   2 HIS A   11  HIS A   16  1                                   6    */
+		/*HELIX    3   3 HIS A   50  HIS A   52  1                                   3    */
+		/*HELIX    4   4 HIS A   54  HIS A   55  1                                   2    */
+		/*HELIX    5   5 HIS A   57  HIS A   59  1                                   3    */
+		/*HELIX    6   6 HIS A   61  HIS A   68  1                                   8    */
+		/*HELIX    7   7 HIS A   74  HIS A   75  1                                   2    */
+		/*HELIX    8   8 HIS B   80  HIS B   80  1                                   1    */
+		/*HELIX    9   9 HIS B  101  HIS B  104  1                                   4    */
+		/*HELIX   10  10 HIS B  109  HIS B  112  1                                   4    */
+		/*HELIX   11  11 HIS C  139  HIS C  144  1                                   6    */
+		/*HELIX   12  12 HIS C  147  HIS C  152  1                                   6    */
+		/*HELIX   13  13 HIS C  186  HIS C  188  1                                   3    */
+		/*HELIX   14  14 HIS C  190  HIS C  191  1                                   2    */
+		/*HELIX   15  15 HIS C  193  HIS C  195  1                                   3    */
+		/*HELIX   16  16 HIS C  197  HIS C  204  1                                   8    */
+		/*HELIX   17  17 HIS C  210  HIS C  211  1                                   2    */
+		/*HELIX   18  18 HIS D  216  HIS D  216  1                                   1    */
+		/*HELIX   19  19 HIS D  237  HIS D  240  1                                   4    */
+		/*HELIX   20  20 HIS D  245  HIS D  248  1                                   4    */
+		/*HELIX   21  21 HIS E  275  HIS E  280  1                                   6    */
+		/*HELIX   22  22 HIS E  283  HIS E  288  1                                   6    */
+		/*HELIX   23  23 HIS E  322  HIS E  324  1                                   3    */
+		/*HELIX   24  24 HIS E  326  HIS E  327  1                                   2    */
+		/*HELIX   25  25 HIS E  329  HIS E  331  1                                   3    */
+		/*HELIX   26  26 HIS E  333  HIS E  340  1                                   8    */
+		/*HELIX   27  27 HIS E  346  HIS E  347  1                                   2    */
+		/*HELIX   28  28 HIS F  352  HIS F  352  1                                   1    */
+		/*HELIX   29  29 HIS F  373  HIS F  376  1                                   4    */
+		/*HELIX   30  30 HIS F  381  HIS F  384  1                                   4    */
+		/*SHEET    1   1 1 GLU A  19  GLU A  24  0                                        */
+		/*SHEET    1   2 1 GLU A  29  GLU A  35  0                                        */
+		/*SHEET    1   3 1 GLU A  37  GLU A  42  0                                        */
+		/*SHEET    1   4 1 GLU A  44  GLU A  46  0                                        */
+		/*SHEET    1   5 1 GLU A  48  GLU A  48  0                                        */
+		/*SHEET    1   6 1 GLU A  71  GLU A  73  0                                        */
+		/*SHEET    1   7 1 GLU B  81  GLU B  83  0                                        */
+		/*SHEET    1   8 1 GLU B  90  GLU B  95  0                                        */
+		/*SHEET    1   9 1 GLU B 116  GLU B 118  0                                        */
+		/*SHEET    1  10 1 GLU B 121  GLU B 124  0                                        */
+		/*SHEET    1  11 1 GLU B 128  GLU B 131  0                                        */
+		/*SHEET    1  12 1 GLU B 135  GLU B 136  0                                        */
+		/*SHEET    1  13 1 GLU C 155  GLU C 160  0                                        */
+		/*SHEET    1  14 1 GLU C 165  GLU C 171  0                                        */
+		/*SHEET    1  15 1 GLU C 173  GLU C 178  0                                        */
+		/*SHEET    1  16 1 GLU C 180  GLU C 182  0                                        */
+		/*SHEET    1  17 1 GLU C 184  GLU C 184  0                                        */
+		/*SHEET    1  18 1 GLU C 207  GLU C 209  0                                        */
+		/*SHEET    1  19 1 GLU D 217  GLU D 219  0                                        */
+		/*SHEET    1  20 1 GLU D 226  GLU D 231  0                                        */
+		/*SHEET    1  21 1 GLU D 252  GLU D 254  0                                        */
+		/*SHEET    1  22 1 GLU D 257  GLU D 260  0                                        */
+		/*SHEET    1  23 1 GLU D 264  GLU D 267  0                                        */
+		/*SHEET    1  24 1 GLU D 271  GLU D 272  0                                        */
+		/*SHEET    1  25 1 GLU E 291  GLU E 296  0                                        */
+		/*SHEET    1  26 1 GLU E 301  GLU E 307  0                                        */
+		/*SHEET    1  27 1 GLU E 309  GLU E 314  0                                        */
+		/*SHEET    1  28 1 GLU E 316  GLU E 318  0                                        */
+		/*SHEET    1  29 1 GLU E 320  GLU E 320  0                                        */
+		/*SHEET    1  30 1 GLU E 343  GLU E 345  0                                        */
+		/*SHEET    1  31 1 GLU F 353  GLU F 355  0                                        */
+		/*SHEET    1  32 1 GLU F 362  GLU F 367  0                                        */
+		/*SHEET    1  33 1 GLU F 388  GLU F 390  0                                        */
+		/*SHEET    1  34 1 GLU F 393  GLU F 396  0                                        */
+		/*SHEET    1  35 1 GLU F 400  GLU F 403  0                                        */
+		/*SHEET    1  36 1 GLU F 407  GLU F 407  0                                        */
+
+		std::string const right_answer = "HELIX    1   1 HIS A    3  HIS A    8  1                                   6    \nHELIX    2   2 HIS A   11  HIS A   16  1                                   6    \nHELIX    3   3 HIS A   50  HIS A   52  1                                   3    \nHELIX    4   4 HIS A   54  HIS A   55  1                                   2    \nHELIX    5   5 HIS A   57  HIS A   59  1                                   3    \nHELIX    6   6 HIS A   61  HIS A   68  1                                   8    \nHELIX    7   7 HIS A   74  HIS A   75  1                                   2    \nHELIX    8   8 HIS B   80  HIS B   80  1                                   1    \nHELIX    9   9 HIS B  101  HIS B  104  1                                   4    \nHELIX   10  10 HIS B  109  HIS B  112  1                                   4    \nHELIX   11  11 HIS C  139  HIS C  144  1                                   6    \nHELIX   12  12 HIS C  147  HIS C  152  1                                   6    \nHELIX   13  13 HIS C  186  HIS C  188  1                                   3    \nHELIX   14  14 HIS C  190  HIS C  191  1                                   2    \nHELIX   15  15 HIS C  193  HIS C  195  1                                   3    \nHELIX   16  16 HIS C  197  HIS C  204  1                                   8    \nHELIX   17  17 HIS C  210  HIS C  211  1                                   2    \nHELIX   18  18 HIS D  216  HIS D  216  1                                   1    \nHELIX   19  19 HIS D  237  HIS D  240  1                                   4    \nHELIX   20  20 HIS D  245  HIS D  248  1                                   4    \nHELIX   21  21 HIS E  275  HIS E  280  1                                   6    \nHELIX   22  22 HIS E  283  HIS E  288  1                                   6    \nHELIX   23  23 HIS E  322  HIS E  324  1                                   3    \nHELIX   24  24 HIS E  326  HIS E  327  1                                   2    \nHELIX   25  25 HIS E  329  HIS E  331  1                                   3    \nHELIX   26  26 HIS E  333  HIS E  340  1                                   8    \nHELIX   27  27 HIS E  346  HIS E  347  1                                   2    \nHELIX   28  28 HIS F  352  HIS F  352  1                                   1    \nHELIX   29  29 HIS F  373  HIS F  376  1                                   4    \nHELIX   30  30 HIS F  381  HIS F  384  1                                   4    \nSHEET    1   1 1 GLU A  19  GLU A  24  0                                        \nSHEET    1   2 1 GLU A  29  GLU A  35  0                                        \nSHEET    1   3 1 GLU A  37  GLU A  42  0                                        \nSHEET    1   4 1 GLU A  44  GLU A  46  0                                        \nSHEET    1   5 1 GLU A  48  GLU A  48  0                                        \nSHEET    1   6 1 GLU A  71  GLU A  73  0                                        \nSHEET    1   7 1 GLU B  81  GLU B  83  0                                        \nSHEET    1   8 1 GLU B  90  GLU B  95  0                                        \nSHEET    1   9 1 GLU B 116  GLU B 118  0                                        \nSHEET    1  10 1 GLU B 121  GLU B 124  0                                        \nSHEET    1  11 1 GLU B 128  GLU B 131  0                                        \nSHEET    1  12 1 GLU B 135  GLU B 136  0                                        \nSHEET    1  13 1 GLU C 155  GLU C 160  0                                        \nSHEET    1  14 1 GLU C 165  GLU C 171  0                                        \nSHEET    1  15 1 GLU C 173  GLU C 178  0                                        \nSHEET    1  16 1 GLU C 180  GLU C 182  0                                        \nSHEET    1  17 1 GLU C 184  GLU C 184  0                                        \nSHEET    1  18 1 GLU C 207  GLU C 209  0                                        \nSHEET    1  19 1 GLU D 217  GLU D 219  0                                        \nSHEET    1  20 1 GLU D 226  GLU D 231  0                                        \nSHEET    1  21 1 GLU D 252  GLU D 254  0                                        \nSHEET    1  22 1 GLU D 257  GLU D 260  0                                        \nSHEET    1  23 1 GLU D 264  GLU D 267  0                                        \nSHEET    1  24 1 GLU D 271  GLU D 272  0                                        \nSHEET    1  25 1 GLU E 291  GLU E 296  0                                        \nSHEET    1  26 1 GLU E 301  GLU E 307  0                                        \nSHEET    1  27 1 GLU E 309  GLU E 314  0                                        \nSHEET    1  28 1 GLU E 316  GLU E 318  0                                        \nSHEET    1  29 1 GLU E 320  GLU E 320  0                                        \nSHEET    1  30 1 GLU E 343  GLU E 345  0                                        \nSHEET    1  31 1 GLU F 353  GLU F 355  0                                        \nSHEET    1  32 1 GLU F 362  GLU F 367  0                                        \nSHEET    1  33 1 GLU F 388  GLU F 390  0                                        \nSHEET    1  34 1 GLU F 393  GLU F 396  0                                        \nSHEET    1  35 1 GLU F 400  GLU F 403  0                                        \nSHEET    1  36 1 GLU F 407  GLU F 407  0                                        \n";
+
+		TS_ASSERT_EQUALS(test_answer, right_answer);
+
+}
+
+};  // class StructFileRepTests

@@ -87,7 +87,8 @@ AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMov
 	coord_dev_( 1.0 ),
 	bound_width_( 0. ),
 	min_seq_sep_( 8 ),
-	selector_( new core::select::residue_selector::TrueResidueSelector )
+	selector_( new core::select::residue_selector::TrueResidueSelector ),
+	use_bounded_func_( false )
 {}
 
 AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover() = default;
@@ -191,10 +192,19 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 		}
 
 		// add constraints
+		core::scoring::func::FuncOP cc_func; //NULL
+		if ( !use_bounded_func_ ) {
+			cc_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, coord_dev_ ) );
+		} else {
+			cc_func = core::scoring::func::FuncOP( new BoundFunc( 0, bound_width_, coord_dev_, "xyz" ) );
+		}
+		runtime_assert(cc_func);
+
+
 		for ( Size iatom=iatom_start; iatom<=iatom_stop; ++iatom ) {
 			csts.push_back( scoring::constraints::ConstraintCOP( new CoordinateConstraint(
-				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func_ ) ) );
-			TR.Debug << "coordinate constraint generated for residue " << ires << ", atom " << iatom << std::endl;
+				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func ) ) );
+			TR.Debug << "coordinate constraint generated for residue " << ires << ", atom " << iatom << ", using func" << std::endl << *cc_func << std::endl;
 		}
 	} //loop through residues
 	return csts;
@@ -220,7 +230,9 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 		if ( !CA_only_ ) {
 			iatoms[2] = pose.residue_type(ires).nbr_atom();
 		}
-
+		///I think this fails across chains
+		///probably residues on different chains should always have sufficient
+		///sequence separation?? --- SML dec 21 16
 		for ( Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
 			if ( !subset[ jres ] ) continue;
 			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
@@ -238,13 +250,27 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 					Size const &iatom(*iiatom), &jatom(*jjatom);
 					if ( iatom==0 || jatom==0 ) continue;
 
-					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
+					core::Real const dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 					if ( dist > max_distance_ ) continue;
 
-					core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, coord_dev_ ) );
-					core::scoring::func::FuncOP weighted_func( new core::scoring::func::ScalarWeightedFunc( cst_weight_, sog_func ) );
+					core::scoring::func::FuncOP apc_func; //NULL!
+					if ( !use_bounded_func_ ) {
+						core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, coord_dev_ ) );
+						core::scoring::func::FuncOP weighted_func( new core::scoring::func::ScalarWeightedFunc( cst_weight_, sog_func ) );
+						apc_func = weighted_func;
+						TR.Debug << "Using SOG func with AtomPairConstraint: " << *apc_func << std::endl;
+					} else {
+						//establish bound_func limits based on basin around distance
+						core::Real lower_limit( dist - ( 0.5  * bound_width_) );
+						if ( lower_limit < 0 ) lower_limit = 0;
+						core::Real const upper_limit( dist + ( 0.5 * bound_width_ ) );
+						apc_func = core::scoring::func::FuncOP( new BoundFunc( lower_limit, upper_limit, coord_dev_, "xyz" ) );
+						TR.Debug << "Using Bounded func with AtomPairConstraint: " << *apc_func << std::endl;
+					}
+					runtime_assert(apc_func); //make sure that func got populated; should have been forced down one of the two if branches above
+
 					core::scoring::constraints::ConstraintCOP newcst(
-						new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( iatom, ires ), core::id::AtomID( jatom, jres ), weighted_func ) );
+						new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( iatom, ires ), core::id::AtomID( jatom, jres ), apc_func ) );
 					csts.push_back( newcst );
 					TR.Debug << "atom_pair_constraint generated for residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
 				}
@@ -273,8 +299,11 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	bb_only_ = tag->getOption< bool >( "bb_only", bb_only_ );
 	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
 
-	if ( bound_width_ < 1e-3 ) cc_func_ = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, coord_dev_ ) );
-	else cc_func_ = core::scoring::func::FuncOP( new BoundFunc( 0, bound_width_, coord_dev_, "xyz" ) );
+	if ( bound_width_ < 1e-3 ) {
+		use_bounded_func_ = false;
+	} else {
+		use_bounded_func_ = true;
+	}
 
 	if ( tag->hasOption( "task_operations" ) ) {
 		TR.Warning << "WARNING: task_operations only active for proteins" << std::endl;

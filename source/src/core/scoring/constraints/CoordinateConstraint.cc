@@ -338,6 +338,11 @@ CoordinateConstraint::same_type_as_me( Constraint const & other ) const {
 	return dynamic_cast< CoordinateConstraint const * > (&other);
 }
 
+core::scoring::func::Func const &
+CoordinateConstraint::get_func() const {
+	return *func_;
+}
+
 // functions
 Real
 CoordinateConstraint::func( Real const theta ) const

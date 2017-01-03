@@ -1,4 +1,4 @@
--in:file:s 1UBQ.pdb.gz
+-in:file:s 1RD8_clean.pdb.gz
 -mute core.io.database
 
 -out:file:output_secondary_structure true

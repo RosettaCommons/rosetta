@@ -144,11 +144,10 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
-
 	AtomID const &
 	atom( Size const n ) const;
 
-	// UNDEFIUNED, commenting out to fix PyRosetta build  void set_atom( Size const index, AtomID const atom_id );
+	// UNDEFINED, commenting out to fix PyRosetta build  void set_atom( Size const index, AtomID const atom_id );
 
 	virtual Size show_violations(
 		std::ostream& out,
@@ -156,6 +155,11 @@ public:
 		Size verbose_level,
 		Real threshold = 1
 	) const;
+
+
+	/// @brief Returns the func::Func object associated with this Constraint object.
+	virtual
+	core::scoring::func::Func const & get_func() const;
 
 private:
 

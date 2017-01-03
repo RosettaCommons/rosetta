@@ -1324,13 +1324,7 @@ void PoseToStructFileRepConverter::generate_HELIXInformation(
 	//IGNORING comment
 	helix.length = length;
 
-	std::string const key(start_info.resid());
-	//check if this is already in map
-	if ( sfr_->HELIXInformations().count( key ) ) {
-		utility_exit_with_message("when generating HELIXInformation in PoseToStructFileRepConverter, one HELIX has been generated repeatedly (starting at " + key + ")");
-	} else { //good, add to map
-		sfr_->HELIXInformations()[key] = helix;
-	}
+	sfr_->HELIXInformations().push_back(helix);
 
 	return;
 }
@@ -1344,8 +1338,8 @@ void PoseToStructFileRepConverter::generate_SHEETInformation(
 ){
 
 	SHEETInformation sheet;
-	sheet.sheetID = index; // NOTE this means we are defining all strands as isolated sheets
-	sheet.sheet_name = std::string(ObjexxFCL::format::I(3, index)); //3-width string
+	//IGNORING strand_num
+	sheet.sheetID = std::string(ObjexxFCL::format::I(3, index)); //3-width string
 	//IGNORING num_strands
 	sheet.name3_1 = start_info.resName();
 	sheet.chainID1 = start_info.chainID();
@@ -1358,13 +1352,8 @@ void PoseToStructFileRepConverter::generate_SHEETInformation(
 	//IGNORING strandClass
 	//IGNORING the remainder of the record, this is enough to get it to show nicely in pymol and PV
 
-	std::string const key(start_info.resid());
-	//check if this is already in map
-	if ( sfr_->SHEETInformations().count( key ) ) {
-		utility_exit_with_message("when generating SHEETInformation in PoseToStructFileRepConverter, one SHEET has been generated repeatedly (starting at " + key + ")");
-	} else { //good, add to map
-		sfr_->SHEETInformations()[key] = sheet;
-	}
+	sfr_->SHEETInformations().push_back(sheet);
+
 
 	return;
 }
