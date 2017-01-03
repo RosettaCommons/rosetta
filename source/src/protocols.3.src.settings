@@ -440,6 +440,8 @@ sources = {
 		"Interface",
 		"InterfaceInfo",
 		"ResidualDipolarCouplingRigidSegments",
+		"VDW_GridEnergy",
+		"VDW_CachedRepScreenInfo",
 	],
 	"protocols/scoring/methods": [
 		"EnsembleEnergy",

@@ -33,6 +33,7 @@
 #include <protocols/farna/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/util.hh> //move this to toolbox/
@@ -623,7 +624,7 @@ void
 RNA_FragmentMonteCarlo::final_score( core::pose::Pose & pose )
 {
 	core::scoring::ScoreFunctionOP final_scorefxn_plus_slow_terms = final_scorefxn_->clone();
-	if ( scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
+	if ( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
 		final_scorefxn_plus_slow_terms->set_weight( core::scoring::rna_chem_map, 1.0 );
 	}
 	( *final_scorefxn_plus_slow_terms )( pose );
@@ -808,7 +809,7 @@ RNA_FragmentMonteCarlo::update_pose_constraints( Size const r, core::pose::Pose 
 		pose.constraint_set( constraint_set_ );
 	} else {
 		ConstraintCOPs csts( constraint_set_->get_all_constraints() );
-		ConstraintSetOP cst_set_new( new scoring::constraints::ConstraintSet );
+		ConstraintSetOP cst_set_new( new core::scoring::constraints::ConstraintSet );
 		for ( ConstraintCOP const & cst : csts ) {
 			if ( cst->natoms() == 2 )  { // currently only defined for pairwise distance constraints.
 				Size const i = cst->atom( 1 ).rsd();

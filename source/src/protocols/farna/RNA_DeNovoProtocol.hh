@@ -24,9 +24,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>

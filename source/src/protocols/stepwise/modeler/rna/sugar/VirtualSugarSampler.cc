@@ -371,7 +371,10 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
-VirtualSugarSampler::get_sugar_setup_scorefxns( scoring::ScoreFunctionOP & sugar_scorefxn, scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const {
+VirtualSugarSampler::get_sugar_setup_scorefxns( 
+	core::scoring::ScoreFunctionOP & sugar_scorefxn, 
+	core::scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, 
+	core::scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const {
 
 	using namespace core::scoring;
 

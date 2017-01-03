@@ -7,28 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/stepwise/modeler/rna/checker/VDWGridEnergy.fwd.hh
+/// @file   protocols/scoring/VDW_GridEnergy.fwd.hh
 /// @brief  grid_vdw energy method forward declaration
 /// @author Kalli Kappel
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergy_fwd_hh
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergy_fwd_hh
+#ifndef INCLUDED_protocols_scoring_VDW_GridEnergy_fwd_hh
+#define INCLUDED_protocols_scoring_VDW_GridEnergy_fwd_hh
 
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace checker {
+namespace scoring {
 
-class VDWGridEnergy;
+class VDW_GridEnergy;
 
-} //rna
-} //rna
-} //methods
 } //scoring
 } //protocols
 
 
-#endif // INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergy_FWD_HH
+#endif // INCLUDED_protocols_scoring_VDW_GridEnergy_FWD_HH

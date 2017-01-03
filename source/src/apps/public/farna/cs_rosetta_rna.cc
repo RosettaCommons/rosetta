@@ -238,7 +238,7 @@ compute_chem_shift_RMSD(Pose const & pose) {
 
 	(*rna_chem_shift_scorefxn_)(chem_shift_pose);
 	EnergyMap const & energy_map = chem_shift_pose.energies().total_energies();
-	Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
+	Real const rosetta_chem_shift_score= energy_map[ core::scoring::rna_chem_shift ];
 
 	RNA_ChemicalShiftPotential const & rna_cs_potential( ScoringManager::get_instance()->get_RNA_ChemicalShiftPotential() );
 	Size const num_chem_shift_data_points = rna_cs_potential.get_total_exp_chemical_shift_data_points();

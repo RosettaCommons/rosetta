@@ -29,7 +29,7 @@ static EnergyMethodRegistrator< scoring::methods::EnsembleEnergyCreator > Ensemb
 static EnergyMethodRegistrator< scoring::methods::InterchainEnvEnergyCreator > InterchainEnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::InterchainPairEnergyCreator > InterchainPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< protocols::scoring::methods::saxs::PDDFEnergyCreator > PDDFEnergyCreator_registrator;
-static EnergyMethodRegistrator< protocols::stepwise::modeler::rna::checker::VDWGridEnergyCreator > VDWGridEnergyCreator_registrator;
+static EnergyMethodRegistrator< protocols::scoring::VDW_GridEnergyCreator > VDW_GridEnergyCreator_registrator;
 static EnergyMethodRegistrator< protocols::fldsgn::potentials::sspot::NatbiasSecondaryStructureEnergyCreator > NatbiasSecondaryStructureEnergyCreator_registrator;
 
 } //namespace protocols

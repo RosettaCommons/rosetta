@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.cc
+/// @file protocols/scoring/VDW_CachedRepScreenInfo.cc
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
 ///#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 //#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh> ???
@@ -50,11 +50,7 @@ static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_CachedRepSc
 #endif // SERIALIZATION
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace checker {
-
+namespace scoring {
 
 // @brief Constructor
 VDW_CachedRepScreenInfo::VDW_CachedRepScreenInfo() :
@@ -250,11 +246,7 @@ fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose:
 	}
 }
 
-
-} //checker
-} //rna
-} //modeler
-} //stepwise
+} //scoring
 } //protocols
 
 #ifdef    SERIALIZATION
@@ -262,7 +254,7 @@ fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose:
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo::save( Archive & arc ) const {
+protocols::scoring::VDW_CachedRepScreenInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( VDW_rep_screen_info_list_ ) ); // utility::vector1<core::pose::rna::VDW_RepScreenInfo>
 	arc( CEREAL_NVP( VDW_screen_bin_ ) ); // core::pose::rna::VDW_GridCOP
@@ -271,7 +263,7 @@ protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo::save( Archi
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
- protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo::load( Archive & arc ) {
+ protocols::scoring::VDW_CachedRepScreenInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( VDW_rep_screen_info_list_ ); // utility::vector1<core::pose::rna::VDW_RepScreenInfo>
 	std::shared_ptr< core::pose::rna::VDW_Grid > local_VDW_screen_bin;
@@ -279,8 +271,8 @@ void
 	VDW_screen_bin_ = local_VDW_screen_bin; // copy the non-const pointer(s) into the const pointer(s)
 }
 
-SAVE_AND_LOAD_SERIALIZABLE(  protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo );
-CEREAL_REGISTER_TYPE(  protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo )
+SAVE_AND_LOAD_SERIALIZABLE(  protocols::scoring::VDW_CachedRepScreenInfo );
+CEREAL_REGISTER_TYPE(  protocols::scoring::VDW_CachedRepScreenInfo )
 
-CEREAL_REGISTER_DYNAMIC_INIT(  protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo )
+CEREAL_REGISTER_DYNAMIC_INIT(  protocols_scoring_VDW_CachedRepScreenInfo )
 #endif // SERIALIZATION

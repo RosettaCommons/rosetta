@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh
+/// @file protocols/scoring/VDW_CachedRepScreenInfo.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo_HH
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo_HH
+#ifndef INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_HH
+#define INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_HH
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -34,11 +34,7 @@
 #endif // SERIALIZATION
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace checker {
-
+namespace scoring {
 
 class VDW_CachedRepScreenInfo : public basic::datacache::CacheableData {
 
@@ -113,14 +109,11 @@ void
 fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose::Pose * > & pose_pointers );
 
 
-} //checker
-} //rna
-} //modeler
-} //stepwise
+} //scoring
 } //protocols
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_scoring_VDW_CachedRepScreenInfo )
 #endif // SERIALIZATION
 
 

@@ -631,8 +631,8 @@ void
 setup_rna_chainbreak_constraints(
 	pose::Pose & pose
 ) {
-	using namespace scoring::constraints;
-	using namespace scoring::func;
+	using namespace core::scoring::constraints;
+	using namespace core::scoring::func;
 	using namespace chemical;
 	using namespace conformation;
 	using namespace id;
@@ -738,8 +738,8 @@ get_basepair_atoms( pose::Pose & pose,
 void
 setup_rna_base_pair_constraints( pose::Pose & pose ){
 
-	using namespace scoring::constraints;
-	using namespace scoring::func;
+	using namespace core::scoring::constraints;
+	using namespace core::scoring::func;
 	using namespace conformation;
 	using namespace options;
 	using namespace id;
@@ -2599,7 +2599,7 @@ sasa_test()
 
 		id::AtomID_Map< Real > atom_sasa;
 		utility::vector1< Real > rsd_sasa;
-		scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, true );
+		core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, true );
 
 		for ( Size n = 1; n <= pose.size(); n++ ) {
 

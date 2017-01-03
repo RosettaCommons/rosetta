@@ -16,7 +16,7 @@
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh> // for reroot
 #include <protocols/stepwise/modeler/rna/util.hh> // for virtualize_free_rna_moieties
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh> // for fill_vdw_cached_rep_screen_info_from_command_line
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh> // for fill_vdw_cached_rep_screen_info_from_command_line
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -201,7 +201,7 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 	}
 
 	fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
-	protocols::stepwise::modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( *input_poses[1] );
+	protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( *input_poses[1] );
 	return input_poses[1];
 }
 

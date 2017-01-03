@@ -7,31 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh
+/// @file protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo_FWD_HH
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo_FWD_HH
+#ifndef INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_FWD_HH
+#define INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace checker {
+namespace scoring {
 
 class VDW_CachedRepScreenInfo;
 typedef utility::pointer::shared_ptr< VDW_CachedRepScreenInfo > VDW_CachedRepScreenInfoOP;
 typedef utility::pointer::shared_ptr< VDW_CachedRepScreenInfo const > VDW_CachedRepScreenInfoCOP;
 
-} //checker
-} //rna
-} //modeler
-} //stepwise
+} //scoring
 } //protocols
 
 #endif

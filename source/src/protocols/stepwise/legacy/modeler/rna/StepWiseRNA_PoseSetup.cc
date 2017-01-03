@@ -44,7 +44,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/TorsionID.hh>
@@ -1004,7 +1004,7 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 void
 StepWiseRNA_PoseSetup::setup_vdw_cached_rep_screen_info( pose::Pose & pose ) const {
 	//using namespace checker;
-	protocols::stepwise::modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( pose );
+	protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( pose );
 }
 
 

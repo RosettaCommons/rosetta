@@ -30,7 +30,7 @@
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -158,7 +158,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	// Set up the cached vdw rep screen info in the pose
 	// requires further setup later (once user input fragments have been inserted in the pose)
 	if ( options_->filter_vdw() ) {
-		protocols::stepwise::modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( pose );
+		protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( pose );
 		vdw_grid_ = protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP( new protocols::stepwise::modeler::rna::checker::RNA_VDW_BinChecker( pose ) );
 	}
 
@@ -293,7 +293,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 
 	// RNA low-resolution score function.
 	denovo_scorefxn_ = ScoreFunctionFactory::create_score_function( options_->lores_scorefxn() );
-	if ( scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
+	if ( rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
 		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna_chem_map_lores_weight ]() );
 	}
 
@@ -459,13 +459,13 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
 
 	core::scoring::ScoreFunctionOP temp_scorefxn( new ScoreFunction );
 
-	temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
+	temp_scorefxn->set_weight( rna_chem_shift  , 1.00 );
 
 	(*temp_scorefxn)(chem_shift_pose);
 
 	EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();
 
-	Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
+	Real const rosetta_chem_shift_score= energy_map[ rna_chem_shift ];
 
 	//This statement should be very fast except possibly the 1st call.
 	core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const &

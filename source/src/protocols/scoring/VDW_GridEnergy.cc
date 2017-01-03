@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/stepwise/modeler/rna/checker/VDWGridEnergy.cc
-/// @brief  VDWGridEnergy energy method implementation
+/// @file   protocols/scoring/VDW_GridEnergy.cc
+/// @brief  VDW_GridEnergy energy method implementation
 /// @details Aligns the pose to a 3D grid and counts up the clashes
 /// @author Kalli Kappel, kappel@stanford.edu
 
@@ -24,8 +24,8 @@
 // in protocols.3, so VDW_CachedRepScreenInfo would have to move somewhere below that
 
 // Unit headers
-#include <protocols/stepwise/modeler/rna/checker/VDWGridEnergy.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDWGridEnergyCreator.hh>
+#include <protocols/scoring/VDW_GridEnergy.hh>
+#include <protocols/scoring/VDW_GridEnergyCreator.hh>
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
@@ -33,7 +33,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 #include <core/pose/rna/util.hh>
@@ -47,26 +47,22 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDWGridEnergy" );
+static basic::Tracer TR( "protocols.scoring.VDW_GridEnergy" );
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace checker {
+namespace scoring {
 
-
-/// @details This must return a fresh instance of the VDWGridEnergy class,
+/// @details This must return a fresh instance of the VDW_GridEnergy class,
 /// never an instance already in use
 core::scoring::methods::EnergyMethodOP
-VDWGridEnergyCreator::create_energy_method(
+VDW_GridEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new VDWGridEnergy );
+	return core::scoring::methods::EnergyMethodOP( new VDW_GridEnergy );
 }
 
 core::scoring::ScoreTypes
-VDWGridEnergyCreator::score_types_for_method() const {
+VDW_GridEnergyCreator::score_types_for_method() const {
 	core::scoring::ScoreTypes sts;
 	sts.push_back( core::scoring::grid_vdw );
 	return sts;
@@ -74,18 +70,18 @@ VDWGridEnergyCreator::score_types_for_method() const {
 
 
 /// ctor
-VDWGridEnergy::VDWGridEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new VDWGridEnergyCreator ) ),
+VDW_GridEnergy::VDW_GridEnergy() :
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new VDW_GridEnergyCreator ) ),
 	clash_penalty_( 1.0 ) /*Totally made up for now*/
 {}
 
-VDWGridEnergy::~VDWGridEnergy() {}
+VDW_GridEnergy::~VDW_GridEnergy() {}
 
 /// clone
 core::scoring::methods::EnergyMethodOP
-VDWGridEnergy::clone() const
+VDW_GridEnergy::clone() const
 {
-	return core::scoring::methods::EnergyMethodOP( new VDWGridEnergy );
+	return core::scoring::methods::EnergyMethodOP( new VDW_GridEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -95,20 +91,19 @@ VDWGridEnergy::clone() const
 // The whole scoring method is going in finalize to ensure that alignment happens only once per time scoring
 // And to make sure that we're comparing residues from the aligned pose to the grid
 void
-VDWGridEnergy::finalize_total_energy(
+VDW_GridEnergy::finalize_total_energy(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction const &,
 	core::scoring::EnergyMap & emap
 ) const {
 
-	//using namespace protocols::stepwise::modeler::rna::checker;
 	using namespace core::pose::rna;
 
 	// Check that the pose actually has vdw rep screen info, if it doesn't, can't compute this score
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) return;
 
 	// Get the VDW info
-	protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo vdw_info( stepwise::modeler::rna::checker::const_vdw_cached_rep_screen_info_from_pose( pose ) );
+	protocols::scoring::VDW_CachedRepScreenInfo vdw_info( scoring::const_vdw_cached_rep_screen_info_from_pose( pose ) );
 
 	utility::vector1< VDW_RepScreenInfo > vdw_rep_screen_info;
 	vdw_rep_screen_info = vdw_info.VDW_rep_screen_info_list();
@@ -159,23 +154,20 @@ VDWGridEnergy::finalize_total_energy(
 }
 
 
-/// @brief VDWGridEnergy is context independent; indicates that no context graphs are required
+/// @brief VDW_GridEnergy is context independent; indicates that no context graphs are required
 void
-VDWGridEnergy::indicate_required_context_graphs(
+VDW_GridEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /*context_graphs_required*/
 ) const
 {}
 
 core::Size
-VDWGridEnergy::version() const
+VDW_GridEnergy::version() const
 {
 	return 1;
 }
 
 
-} //checker
-} //rna
-} //modeler
-} //stepwise
+} //scoring
 } //protocols
 

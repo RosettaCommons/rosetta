@@ -303,8 +303,6 @@ sources = {
         "RNA_ChainClosureChecker",
         "RNA_BaseCentroidChecker",
         "RNA_VDW_BinChecker",
-        "VDW_CachedRepScreenInfo",
-        "VDWGridEnergy",
     ],
     "protocols/stepwise/modeler/rna/sugar/": [
         "VirtualSugarJustInTimeInstantiator",

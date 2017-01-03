@@ -24,6 +24,6 @@
 #include <protocols/scoring/methods/EnsembleEnergyCreator.hh>
 #include <protocols/scoring/methods/InterchainEnvEnergyCreator.hh>
 #include <protocols/scoring/methods/InterchainPairEnergyCreator.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDWGridEnergyCreator.hh>
+#include <protocols/scoring/VDW_GridEnergyCreator.hh>
 #include <protocols/scoring/methods/saxs/PDDFEnergyCreator.hh>
 #include <protocols/fldsgn/potentials/sspot/NatbiasSecondaryStructureEnergyCreator.hh>

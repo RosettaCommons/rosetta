@@ -34,7 +34,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -844,7 +844,7 @@ slice_out_pose( pose::Pose & pose,
 	sliced_out_full_model_info->clear_other_pose_list();
 	sliced_out_pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, sliced_out_full_model_info );
 	update_pose_objects_from_full_model_info( sliced_out_pose ); // for output pdb or silent file -- residue numbering.
-	protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( sliced_out_pose, pose );
+	protocols::scoring::set_vdw_cached_rep_screen_info_from_pose( sliced_out_pose, pose );
 
 	// remainder piece.
 	utility::vector1< Size > const residues_to_retain = get_other_residues( residues_to_delete, pose.size() );
@@ -856,7 +856,7 @@ slice_out_pose( pose::Pose & pose,
 	full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list ) );
 	full_model_info.update_submotif_info_list();
 	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
-	protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, sliced_out_pose );
+	protocols::scoring::set_vdw_cached_rep_screen_info_from_pose( pose, sliced_out_pose );
 
 }
 
@@ -1314,7 +1314,7 @@ check_scores_from_parts( std::string const & tag,
 void
 switch_focus_to_other_pose( pose::Pose & pose,
 	Size const & focus_pose_idx,
-	scoring::ScoreFunctionCOP scorefxn /* = 0 */ )
+	core::scoring::ScoreFunctionCOP scorefxn /* = 0 */ )
 {
 
 	using namespace core::pose;
@@ -1355,7 +1355,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 	// OK, now shift focus! Hope this works.
 	pose = ( *other_pose ); // makes a copy.
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, new_full_model_info );
-	protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, *other_pose );
+	protocols::scoring::set_vdw_cached_rep_screen_info_from_pose( pose, *other_pose );
 
 	Real const score_after_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
 
@@ -1380,7 +1380,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 switch_focus_among_poses_randomly( pose::Pose & pose,
-	scoring::ScoreFunctionCOP scorefxn /* = 0 */,
+	core::scoring::ScoreFunctionCOP scorefxn /* = 0 */,
 	bool force_switch /* = false */ ) {
 
 	using namespace core::pose;

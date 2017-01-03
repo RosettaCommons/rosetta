@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/protocols/scoring/methods/rna/VDWGridEnergyCreator.hh
-/// @brief  Declaration for the class that connects VDWGridEnergy with the ScoringManager
+/// @file   src/protocols/scoring/methods/rna/VDW_GridEnergyCreator.hh
+/// @brief  Declaration for the class that connects VDW_GridEnergy with the ScoringManager
 /// @author Kalli Kappel
 
-#ifndef INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergyCreator_hh
-#define INCLUDED_protocols_stepwise_modeler_rna_checker_VDWGridEnergyCreator_hh
+#ifndef INCLUDED_protocols_scoring_VDW_GridEnergyCreator_hh
+#define INCLUDED_protocols_scoring_VDW_GridEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -23,15 +23,12 @@
 
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
-namespace rna {
-namespace checker {
+namespace scoring {
 
-class VDWGridEnergyCreator : public core::scoring::methods::EnergyMethodCreator
+class VDW_GridEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new VDWGridEnergy
+	/// @brief Instantiate a new VDW_GridEnergy
 	virtual
 	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
@@ -46,10 +43,7 @@ public:
 
 };
 
-} //rna
-}
-} //methods
 } //scoring
-} //core
+} //protocols
 
 #endif

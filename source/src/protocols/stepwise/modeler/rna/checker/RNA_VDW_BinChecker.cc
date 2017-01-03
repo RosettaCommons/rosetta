@@ -43,7 +43,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 #include <core/pose/rna/util.hh>
 
@@ -127,7 +127,7 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker( core::pose::Pose const & pose ):
 	using namespace basic::options::OptionKeys::stepwise::rna;
 	optimize_memory_usage_ = option[ VDW_rep_optimize_memory_usage ]();
 
-	VDW_screen_bin_ = protocols::stepwise::modeler::rna::checker::const_vdw_cached_rep_screen_info_from_pose( pose ).VDW_screen_bin();
+	VDW_screen_bin_ = protocols::scoring::const_vdw_cached_rep_screen_info_from_pose( pose ).VDW_screen_bin();
 	TR << "Finished setting up the bin checker with a pose." << std::endl;
 }
 
@@ -766,9 +766,9 @@ RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose( utility::vector1< st
 		core::pose::Pose working_pose = const_working_pose; //The working pose won't actually get modified by setup_working_alignment though
 		setup_working_alignment( working_pose );
 		if ( const_working_pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) {
-			protocols::stepwise::modeler::rna::checker::const_vdw_cached_rep_screen_info_from_pose( const_working_pose ).VDW_rep_screen_info_list()[1].align_working_to_vdw_atom_id_map = stored_align_working_atom_id_map_;
+			protocols::scoring::const_vdw_cached_rep_screen_info_from_pose( const_working_pose ).VDW_rep_screen_info_list()[1].align_working_to_vdw_atom_id_map = stored_align_working_atom_id_map_;
 			//Also set the vdw pose to the newly aligned pose
-			protocols::stepwise::modeler::rna::checker::const_vdw_cached_rep_screen_info_from_pose( const_working_pose ).VDW_rep_screen_info_list()[1].VDW_pose = VDW_rep_screen_info_list_[1].VDW_pose;
+			protocols::scoring::const_vdw_cached_rep_screen_info_from_pose( const_working_pose ).VDW_rep_screen_info_list()[1].VDW_pose = VDW_rep_screen_info_list_[1].VDW_pose;
 		}
 	}
 
@@ -819,7 +819,7 @@ RNA_VDW_BinChecker::setup_using_user_input_VDW_pose( utility::vector1< std::stri
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	utility::vector1< core::pose::rna::VDW_RepScreenInfo > & cached_vdw_rep_screen_info_list = protocols::stepwise::modeler::rna::checker::const_vdw_cached_rep_screen_info_from_pose( const_working_pose ).VDW_rep_screen_info_list();
+	utility::vector1< core::pose::rna::VDW_RepScreenInfo > & cached_vdw_rep_screen_info_list = protocols::scoring::const_vdw_cached_rep_screen_info_from_pose( const_working_pose ).VDW_rep_screen_info_list();
 	pose::Pose working_pose = const_working_pose;
 
 	Size import_ID = 0;

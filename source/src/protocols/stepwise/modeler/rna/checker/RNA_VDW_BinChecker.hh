@@ -29,7 +29,7 @@
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
-#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
