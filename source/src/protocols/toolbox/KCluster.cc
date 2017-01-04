@@ -17,6 +17,7 @@
 #include <protocols/loops/Loops.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 //#include <core/io/silent/SilentStructFactory.hh>
 
 #include <basic/Tracer.hh>
@@ -262,7 +263,8 @@ void KClusterData::load_silent_files()
 
 void KClusterData::load_silent_file(string silent_file, Size nfile)
 {
-	io::silent::SilentFileData sfd;
+	io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData sfd( opts );
 	sfd.read_file( silent_file );
 
 	Size extra=sfd.size();
@@ -359,14 +361,15 @@ void KClusterData::save_all_in_one()
 	}
 
 	//save the center
-	io::silent::SilentFileData clusters;
+	io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData clusters( opts );
 	string const silent_outfile(option[out::file::silent]());
 
 	//read from file list
 	Size count=0;
 	for ( Size i=1; i<=nfile_; i++ ) {
 		//sort the struct order
-		io::silent::SilentFileData sfd;
+		io::silent::SilentFileData sfd( opts );
 		sfd.read_file( fnlist[i] );
 
 		for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
@@ -399,13 +402,14 @@ void KClusterData::save_cluster_tree()
 	}
 
 	//save the center
-	io::silent::SilentFileData clusters;
+	core::io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData clusters( opts );
 
 	//read from file list
 	Size count=0;
 	for ( Size i=1; i<=nfile_; i++ ) {
 		//sort the struct order
-		io::silent::SilentFileData sfd;
+		io::silent::SilentFileData sfd( opts );
 		sfd.read_file( fnlist[i] );
 
 		for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {

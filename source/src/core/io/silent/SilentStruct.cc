@@ -89,33 +89,43 @@ template <>
 bool ProteinSilentStruct_Template< core::Real >::is_single_precision() { return false; }
 
 
-SilentStruct::SilentStruct()
-: force_bitflip_(false), strict_column_mode_(false), nres_(0), decoy_tag_(""), sequence_(""), precision_(3), scoreline_prefix_("SCORE: ")
+SilentStruct::SilentStruct( SilentFileOptions const & opts ) :
+	force_bitflip_(false),
+	strict_column_mode_(false),
+	nres_(0),
+	decoy_tag_(""),
+	sequence_(""),
+	precision_(3),
+	scoreline_prefix_("SCORE: "),
+	options_( opts )
 {}
 
 SilentStruct::~SilentStruct() {}
 
-SilentStruct::SilentStruct( SilentStruct const& src ) :
+SilentStruct::SilentStruct( SilentStruct const & src ) :
 	ReferenceCount(),
 	utility::pointer::enable_shared_from_this< SilentStruct >()
 {
 	*this = src;
 }
 
-SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
-	force_bitflip_ = src.force_bitflip_;
-	strict_column_mode_ = src.strict_column_mode_;
-	nres_ = src.nres_;
-	decoy_tag_ = src.decoy_tag_;
-	sequence_ = src.sequence_;
-	silent_comments_ = src.silent_comments_;
-	silent_energies_ = src.silent_energies_;
-	cache_remarks_ = src.cache_remarks_;
-	precision_ = src.precision_;
-	scoreline_prefix_ = src.scoreline_prefix_;
-	residue_numbers_ = src.residue_numbers_;
-	chains_ = src.chains_;
-	full_model_parameters_ = src.full_model_parameters_;
+SilentStruct& SilentStruct::operator= ( SilentStruct const & src ) {
+	if ( this != &src ) {
+		force_bitflip_ = src.force_bitflip_;
+		strict_column_mode_ = src.strict_column_mode_;
+		nres_ = src.nres_;
+		decoy_tag_ = src.decoy_tag_;
+		sequence_ = src.sequence_;
+		silent_comments_ = src.silent_comments_;
+		silent_energies_ = src.silent_energies_;
+		cache_remarks_ = src.cache_remarks_;
+		precision_ = src.precision_;
+		scoreline_prefix_ = src.scoreline_prefix_;
+		residue_numbers_ = src.residue_numbers_;
+		chains_ = src.chains_;
+		full_model_parameters_ = src.full_model_parameters_;
+		options_ = src.options_;
+	}
 	return *this;
 }
 
@@ -192,7 +202,7 @@ void SilentStruct::finish_pose(
 
 	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(pose) ) );
 
-	if ( option[ in::file::keep_input_scores ]() ) {
+	if ( options_.keep_input_scores() ) {
 		tr.Debug << "keep input scores... call energies into pose " << std::endl;
 		energies_into_pose( pose );
 	}
@@ -296,8 +306,8 @@ void SilentStruct::print_score_header( std::ostream & out ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	/// print out a column for the user tag if specified.
-	if ( option[ out::user_tag ].user() ) {
-		std::string const tag = option[ out::user_tag ]();
+	if ( options_.out_user_tag_set() ) {
+		std::string const tag = options_.out_user_tag();
 		int width = std::max( 11, static_cast< int > (tag.size()) );
 		out << ' ' << A( width, "user_tag" );
 	}
@@ -320,7 +330,7 @@ SilentStruct::print_scores( std::ostream & out ) const {
 	for ( auto const & silent_energy : silent_energies_ ) {
 		if ( silent_energy.string_value() == "" ) {
 			core::Real weight = 1.0;
-			if ( option[ out::file::weight_silent_scores ]() ) { //default true
+			if ( options_.out_weight_silent_scores() ) { //default true
 				weight = silent_energy.weight();
 			}
 			out << " " << F( silent_energy.width(), precision(), silent_energy.value() * weight );
@@ -330,8 +340,8 @@ SilentStruct::print_scores( std::ostream & out ) const {
 	}
 
 	/// print out a column for the user tag if specified.
-	if ( option[ out::user_tag ].user() ) {
-		std::string const tag = option[ out::user_tag ]();
+	if ( options_.out_user_tag_set() ) {
+		std::string const tag = options_.out_user_tag();
 		int width = std::min( 11, static_cast< int > (tag.size()) );
 		out << ' ' << A( width, tag );
 	}
@@ -695,11 +705,11 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 	EnergyMap weights;
 	EnergyMap & emap( pose.energies().total_energies() );
 
-	string const input_score_prefix( option[ in::file::silent_score_prefix ]() );
+	string const input_score_prefix( options_.in_silent_score_prefix() );
 
 	std::set< string > wanted_scores;
-	if ( option[ in::file::silent_scores_wanted ].user() ) {
-		vector1< string > wanted = option[ in::file::silent_scores_wanted ]();
+	if ( options_.in_silent_scores_wanted_set() ) {
+		vector1< string > wanted = options_.in_silent_scores_wanted();
 		for ( auto const & str : wanted ) {
 			wanted_scores.insert( str );
 		}
@@ -1181,6 +1191,13 @@ SilentStruct::add_other_struct( SilentStructOP silent_struct ){
 	}
 	other_struct_list_.insert( it, silent_struct );
 }
+
+SilentFileOptions const &
+SilentStruct::options() const
+{
+	return options_;
+}
+
 
 
 } // namespace silent

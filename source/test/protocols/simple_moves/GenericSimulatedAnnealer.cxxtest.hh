@@ -29,6 +29,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -200,7 +201,9 @@ public:
 
 		// best.pdb should contain 2 TRP, as should last.pdb
 		core::pose::Pose test_pose;
-		core::io::silent::SilentFileData sfd;
+
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
 		sfd.read_file( checkpoint_silent_file );
 		std::string const best_tag = annealer.create_tag( "best" );
 		std::string const last_tag = annealer.create_tag( "last" );

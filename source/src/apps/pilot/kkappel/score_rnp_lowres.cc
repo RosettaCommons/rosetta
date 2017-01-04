@@ -37,6 +37,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -110,7 +111,8 @@ void check_structures() {
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 
 	while ( input->has_another_pose() ) {
 
@@ -137,7 +139,7 @@ void check_structures() {
 		std::cout << "Done scoring pose" << std::endl;
 
 		// write it to the silent file
-		BinarySilentStruct s( pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
 	}
 

@@ -20,6 +20,7 @@
 // Package Headers
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -95,7 +96,8 @@ void HedgeArchive::save_pending_decoys( SilentStructs const& decoys, core::Size 
 	std::string const tmp_filename ( ffilename+".tmp" );
 	//handle output myself... so it keeps the order of decoys.
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	//  utility::io::ozstream output( tmp_filename );
 	//  if ( decoys.begin() != decoys.end() ) (*decoys.begin())->print_header( output );
 	for ( auto const & decoy : decoys ) {
@@ -162,7 +164,8 @@ void HedgeArchive::restore_status( std::istream& is ) {
 		//std::string const tmp_filename ( ffilename+".tmp" );
 		if ( utility::file::file_exists( ffilename ) ) {
 			using namespace core::io::silent;
-			SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts;
+			SilentFileData sfd( opts );
 			if ( !sfd.read_file( ffilename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+ffilename ) );
 			for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 				incoming_structures_[ batch_id ].push_back( std::make_pair( select_score( *it ), *it ) );

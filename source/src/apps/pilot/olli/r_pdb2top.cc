@@ -21,6 +21,7 @@
 #include <core/scoring/dssp/StrandPairing.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 
 
@@ -110,7 +111,8 @@ int main( int argc, char** argv ) {
 			utility::io::ozstream file( option[ out::top ] );
 
 			//read silent file for input
-			core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts; // initialized from the command line
+			core::io::silent::SilentFileData sfd(opts);
 			sfd.read_file( *(option [ in::file::silent ]().begin()) );
 
 			// run thru all structures

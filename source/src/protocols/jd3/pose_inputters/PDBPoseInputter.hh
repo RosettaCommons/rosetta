@@ -43,24 +43,26 @@ public:
 	PDBPoseInputter();
 	virtual ~PDBPoseInputter();
 
-	virtual bool job_available_on_command_line() const;
+	bool job_available_on_command_line() const override;
 
 	/// @brief Constructs a list of PoseInputSource objects reading from the
 	/// -s or -l command line flags. This stores the names of the PDBs that
 	/// are to be read in, and it initializes the input tags based on the pdb
 	/// names, stripping the path and the extension from the file name.
-	virtual PoseInputSources pose_input_sources_from_command_line() const;
+	PoseInputSources pose_input_sources_from_command_line() override;
 
-	virtual PoseInputSources pose_input_sources_from_tag( utility::tag::TagCOP ) const;
+	PoseInputSources pose_input_sources_from_tag(
+		utility::options::OptionCollection const & opts,
+		utility::tag::TagCOP tag ) override;
 
 	/// @brief Takes a PoseInputSource object previously initialized in the
 	/// call to initialize_pose_input_sources()
-	virtual
 	core::pose::PoseOP
 	pose_from_input_source(
 		PoseInputSource const &,
-		utility::options::OptionCollection const &
-	) const;
+		utility::options::OptionCollection const &,
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	) override;
 
 	/// @brief returns the name for the element that will be used in a job-definition
 	/// file for a structure originating from a .pdb file: "PDB"

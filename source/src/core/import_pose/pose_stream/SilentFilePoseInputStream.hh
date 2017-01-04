@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <utility/file/FileName.hh>
@@ -42,72 +41,29 @@ class SilentFilePoseInputStream : public PoseInputStream {
 
 	// constructors
 public:
-	SilentFilePoseInputStream()
-	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
-	{
-		//  utility::vector1< FileName > empty;
-		//  filenames(empty);
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-	}
-
-	SilentFilePoseInputStream( utility::vector1< FileName > fns )
-	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
-	{
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-		filenames(fns);
-	}
-
-	SilentFilePoseInputStream( std::string const & fn )
-	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
-	{
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-		utility::vector1< FileName > fns;
-		fns.push_back( fn );
-		filenames(fns);
-	}
-
+	SilentFilePoseInputStream();
+	SilentFilePoseInputStream( utility::vector1< FileName > fns );
+	SilentFilePoseInputStream( std::string const & fn );
 	SilentFilePoseInputStream(
 		utility::vector1< FileName > fns,
 		bool order_by_energy
-	)
-	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
-	{
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-		filenames(fns);
-	}
+	);
 
 	SilentFilePoseInputStream(
 		utility::vector1< FileName > fns,
 		core::Real energy_cut
-	)
-	: renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
-	{
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-		filenames(fns);
-	}
+	);
 
 	SilentFilePoseInputStream(
 		utility::vector1< FileName > fns,
 		utility::vector1< string > input_tags
-	) :
-		renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
-	{
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-		tags(input_tags);
-		filenames(fns);
-	}
+	);
 
 	SilentFilePoseInputStream(
 		utility::vector1< FileName > fns,
 		utility::vector1< string > input_tags,
 		core::Real energy_cut
-	) :
-		renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
-	{
-		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
-		tags(input_tags);
-		filenames(fns);
-	}
+	);
 
 	void
 	set_silent_file_data( core::io::silent::SilentFileDataOP & sfd );

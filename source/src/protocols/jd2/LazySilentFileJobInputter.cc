@@ -18,7 +18,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-
+#include <core/io/silent/SilentFileOptions.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/file/FileName.hh>
@@ -39,7 +39,8 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.LazySilentFileJobInputter" 
 namespace protocols {
 namespace jd2 {
 
-protocols::jd2::LazySilentFileJobInputter::LazySilentFileJobInputter()
+protocols::jd2::LazySilentFileJobInputter::LazySilentFileJobInputter() :
+	sfd_( core::io::silent::SilentFileOptions() )
 {
 	tr.Debug << "instantiating LazySilentFileJobInputter" << std::endl;
 }

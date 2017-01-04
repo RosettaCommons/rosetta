@@ -20,6 +20,7 @@
 // mini headers
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/types.hh>
 
 // Core Headers
@@ -84,8 +85,9 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	vector1<Real> scores;
 	//step1: read in poses and output them to temp file.
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-	SilentStructOP localOutputSS( new core::io::silent::BinarySilentStruct );
-	SilentFileData sfd;
+	SilentFileOptions opts;
+	SilentStructOP localOutputSS( new core::io::silent::BinarySilentStruct(opts) );
+	SilentFileData sfd( opts );
 	string outputFileName = option[out::file::silent]();
 	if ( option[out::silent_gz]() ) {
 		string tmpOutputFileName = outputFileName + ".gz";

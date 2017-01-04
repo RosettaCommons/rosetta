@@ -37,6 +37,7 @@
 #include <utility/exit.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/file/file_sys_util.hh>
@@ -303,7 +304,8 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			if ( option[ OptionKeys::iterative::input_pool ].user() ) {
 				std::string const& decoys( option[ OptionKeys::iterative::input_pool ]() );
 				tr.Info << "reading decoys from " <<  decoys << " into archive " << std::endl;
-				core::io::silent::SilentFileData sfd( decoys, false, false,  option[ OptionKeys::iterative::input_pool_struct_type ]() );
+				core::io::silent::SilentFileOptions opts;
+				core::io::silent::SilentFileData sfd( decoys, false, false,  option[ OptionKeys::iterative::input_pool_struct_type ](), opts );
 				sfd.read_file( decoys );
 				the_archive().init_from_decoy_set( sfd );
 			}
@@ -486,7 +488,8 @@ ArchiveManager::idle() {
 
 void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 	using namespace core::io::silent;
-	SilentFileData sfd;
+	SilentFileOptions opts;
+	SilentFileData sfd( opts );
 	utility::vector1< std::string > tags_in_file;
 
 	//this keeps order as in file... important since we skip already known tags by just keeping their number
@@ -533,7 +536,7 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 		PROF_START( basic::ARCHIVE_EVAL_DECOYS );
 
 		//if alternative decoys present read also these
-		SilentFileData alternative_decoys_sfd;
+		SilentFileData alternative_decoys_sfd( opts );
 		if ( batch.intermediate_structs() ) {
 			alternative_decoys_sfd.read_file( batch.alternative_decoys_out(), tags_to_read );
 		}

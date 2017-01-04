@@ -42,6 +42,7 @@
 #include <core/pose/util.hh>
 #include <numeric/constants.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -482,7 +483,8 @@ SimpleCycpepPredictApplication_MPI::get_native() {
 		TR << "Emperor reading native pose " << natfile << " from disk." << std::endl;
 		core::pose::PoseOP native( new core::pose::Pose );
 		core::import_pose::pose_from_file(*native, natfile, core::import_pose::PDB_file);
-		core::io::silent::SilentStructOP native_ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" ) );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentStructOP native_ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary", opts ) );
 		native_ss->fill_struct(*native, "native");
 
 		emperor_broadcast_silent_struct( native_ss );
@@ -737,7 +739,8 @@ SimpleCycpepPredictApplication_MPI::receive_broadcast_silent_struct_and_build_po
 
 	std::istringstream in_ss( instring );
 	utility::vector1 < std::string > tagvector;
-	core::io::silent::SilentFileData silentfiledata;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData silentfiledata( opts );
 	silentfiledata.read_stream( in_ss, tagvector, true, "suppress_bitflip" );
 	core::pose::PoseOP mypose( new core::pose::Pose );
 	silentfiledata[silentfiledata.tags()[1]]->fill_pose(*mypose);
@@ -756,7 +759,8 @@ SimpleCycpepPredictApplication_MPI::send_silent_structs(
 	utility::vector1 < core::io::silent::SilentStructOP > const &ss_vect,
 	int const target_node
 ) const {
-	core::io::silent::SilentFileData silentfiledata;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData silentfiledata( opts );
 	std::stringbuf sb;
 	std::ostream outstream(&sb);
 
@@ -1147,7 +1151,8 @@ void
 SimpleCycpepPredictApplication_MPI::emperor_broadcast_silent_struct(
 	core::io::silent::SilentStructOP ss
 ) const {
-	core::io::silent::SilentFileData silentfiledata;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData silentfiledata( opts );
 	std::stringbuf sb;
 	std::ostream outstream(&sb);
 

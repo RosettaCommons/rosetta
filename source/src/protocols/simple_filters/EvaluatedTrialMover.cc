@@ -25,6 +25,7 @@
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -86,7 +87,8 @@ EvaluatedTrialMover::apply( pose::Pose& pose ) {
 	mover_->apply( pose );
 
 	PROF_START( basic::TEST3 );
-	SilentStructOP pss( new io::silent::ProteinSilentStruct );
+	core::io::silent::SilentFileOptions opts;
+	SilentStructOP pss( new io::silent::ProteinSilentStruct( opts ) );
 	evaluator_->apply( pose, tag_, *pss );
 	PROF_STOP( basic::TEST3 );
 

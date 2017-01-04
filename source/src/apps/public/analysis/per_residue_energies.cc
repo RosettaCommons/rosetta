@@ -30,6 +30,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
@@ -98,7 +99,8 @@ main( int argc, char* argv [] ) {
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		scorefxn->set_energy_method_options( *emopts );
 
-		SilentFileData sfd;
+		SilentFileOptions opts; // initialized from the command line
+		SilentFileData sfd(opts);
 		core::pose::Pose current_pose;
 		while ( input.has_another_pose() ) {
 			input.fill_pose( current_pose, *rsd_set );
@@ -122,7 +124,7 @@ main( int argc, char* argv [] ) {
 				for ( unsigned ii = 1; ii <= current_pose.size(); ++ii ) {
 					for ( unsigned jj = ii+1; jj <= current_pose.size(); ++jj ) {
 						if ( pair_energies[ii][jj] > 0 ) {
-							SilentStructOP ss( new ScoreFileSilentStruct );
+							SilentStructOP ss( new ScoreFileSilentStruct(opts) );
 							ss->decoy_tag( "residue_" + string_of(ii) + "_" + string_of(jj) );
 							ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
 							ss->add_energy( "score", pair_energies[ii][jj] );
@@ -136,7 +138,7 @@ main( int argc, char* argv [] ) {
 						weights * current_pose.energies().residue_total_energies(jj)
 					);
 
-					SilentStructOP ss( new ScoreFileSilentStruct );
+					SilentStructOP ss( new ScoreFileSilentStruct(opts) );
 					ss->decoy_tag( "residue_" + string_of(jj) );
 					ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
 					ss->add_string_value( "pdb_id", string_of( current_pose.pdb_info()->number(jj) ) + current_pose.pdb_info()->chain(jj) );

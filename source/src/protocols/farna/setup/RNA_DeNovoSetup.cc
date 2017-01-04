@@ -1084,7 +1084,8 @@ std::string
 RNA_DeNovoSetup::get_silent_seq( std::string const & silent_file ) const
 {
 	using namespace core::io::silent;
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 	return silent_file_data.get_sequence( silent_file );
 }
 
@@ -1092,7 +1093,8 @@ std::pair< utility::vector1< int >, utility::vector1< char > >
 RNA_DeNovoSetup::get_silent_resnum( std::string const & silent_file ) const
 {
 	using namespace core::io::silent;
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 	return silent_file_data.get_resnum( silent_file );
 }
 

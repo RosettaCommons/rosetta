@@ -44,15 +44,15 @@
 #include <protocols/jd2/parser/ScoreFunctionLoader.hh>
 #include <protocols/jd2/parser/TaskOperationLoader.hh>
 
-#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/MoverAndPoseJob.hh>
-#include <protocols/jd3/StandardJobQueen.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/standard/StandardJobQueen.hh>
 
 #include <devel/init.hh>
 
@@ -82,7 +82,7 @@ basic::options::BooleanOptionKey const off_rotamer_pack("off_rotamer_pack");
 
 static basic::Tracer TR( "apps.pilot.andrew.fixbb_jd3" );
 
-class FixbbJobQueen : public protocols::jd3::StandardJobQueen
+class FixbbJobQueen : public protocols::jd3::standard::StandardJobQueen
 {
 public:
 	FixbbJobQueen()
@@ -167,6 +167,7 @@ public:
 		TR << "Completing larval job maturation" << std::endl;
 
 		using namespace protocols::jd3;
+		using namespace protocols::jd3::standard;
 		using namespace protocols::moves;
 		using namespace protocols::simple_moves;
 		using namespace utility::tag;

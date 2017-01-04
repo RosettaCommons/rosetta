@@ -285,9 +285,10 @@ sources = {
             	"StandardJobQueen",
 	#	"validate_w_xsd",
 	],
-	#"jd3/pose_inputters" : [
-	#	"PDBPoseInputter",
-	#],
+	"jd3/pose_inputters" : [
+		"PDBPoseInputter",
+		"SilentFilePoseInputter",
+	],
 	"jd3/job_distributors" : [
 		"MPIWorkPoolJobDistributor",
 	],
@@ -737,6 +738,8 @@ testinputfiles = [
 	"hotspot_hashing/3ve0_IJ.pdb",
 	"jd2/parser/test.bbskel",
 	"jd3/example_bad.xml",
+	"jd3/pose_inputters/four_pdbs.list",
+	"jd3/pose_inputters/relaxed_decoys.out",
 	"jobdist/PlainSilentFileJobDistributor_test.out",
 	"jumping/jump_test.pdb",
 	"jumping/gb3_secondary_structure.dat",

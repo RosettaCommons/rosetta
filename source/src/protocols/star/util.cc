@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -37,6 +38,7 @@ namespace star {
 void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_filename) {
 	using core::Size;
 	using core::io::silent::SilentFileData;
+	using core::io::silent::SilentFileOptions;
 	using core::io::silent::SilentStructFactory;
 	using core::io::silent::SilentStructOP;
 	using namespace basic::options;
@@ -48,10 +50,11 @@ void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_f
 
 	static Size num_structures = 0;
 
-	SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
+	SilentFileOptions opts;
+	SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	silent->fill_struct(pose, str(boost::format("model_%d") % ++num_structures));
 
-	SilentFileData sfd;
+	SilentFileData sfd(opts);
 	sfd.write_silent_struct(*silent, silent_filename);
 }
 

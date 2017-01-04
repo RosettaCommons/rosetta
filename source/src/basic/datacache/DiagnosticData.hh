@@ -43,6 +43,12 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace basic {
 namespace datacache {
 
@@ -51,19 +57,34 @@ namespace datacache {
 class DiagnosticData : public CacheableData
 {
 public:
-	DiagnosticData( std::map < std::string, double >  data_in ) : CacheableData(), data_(std::move(data_in)) {}
-	~DiagnosticData() override= default;
-	CacheableDataOP clone() const override { return CacheableDataOP( new DiagnosticData(*this) ); }
-	virtual std::map < std::string, double > const & data() const { return data_; }
+	DiagnosticData( std::map < std::string, double >  data_in );
+	~DiagnosticData() override;
+	CacheableDataOP clone() const override;
+	virtual std::map < std::string, double > const & data() const;
 
-	DiagnosticDataOP shared_from_this() { return utility::pointer::static_pointer_cast<DiagnosticData>( CacheableData::shared_from_this() ); }
+	DiagnosticDataOP shared_from_this();
 
 private:
 	std::map < std::string, double > data_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DiagnosticData();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_DiagnosticData )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_basic_datacache_DiagnosticData_HH */

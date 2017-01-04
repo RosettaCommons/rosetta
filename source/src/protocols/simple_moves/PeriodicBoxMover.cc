@@ -34,6 +34,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/options/option.hh>
@@ -944,7 +945,8 @@ PeriodicBoxMover::apply( Pose & pose ) {
 	//dump_ASU( pose, lattice_jump, "setup2.pdb" );
 
 	sf_ = core::scoring::symmetry::symmetrize_scorefunction( *sf_ );
-	core::io::silent::SilentFileData sfd, sfd2;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts ), sfd2( opts );
 
 	if ( correct_LJtruncation_ ) setup_LJcorrection( pose );
 
@@ -981,7 +983,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 
 			if ( report_scorefile_ != "" ) {
 				core::io::silent::SilentStructOP ss =
-					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts );
 
 				ss->fill_struct( pose );
 				ss->add_energy( "sim_hours", ( currtime - starttime )/3600.0 );
@@ -1007,7 +1009,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 
 			} else if ( report_silent_ != "" ) {
 				core::io::silent::SilentStructOP ss =
-					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 
 				core::pose::Pose pose_asu;
 				core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
@@ -1062,7 +1064,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 
 			if ( report_scorefile_ != "" ) {
 				core::io::silent::SilentStructOP ss =
-					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 
 				ss->fill_struct( pose );
 				ss->add_energy( "sim_hours", ( currtime - starttime )/3600.0 );
@@ -1082,7 +1084,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 		if ( dump_every_>0 && i%dump_every_==0 ) {
 			if ( report_silent_ != "" ) {
 				core::io::silent::SilentStructOP ss =
-					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 
 				ss->fill_struct( pose );
 				ss->add_energy( "sim_hours", ( currtime - starttime )/3600.0 );

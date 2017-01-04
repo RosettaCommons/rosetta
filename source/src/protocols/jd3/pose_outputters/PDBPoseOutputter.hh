@@ -67,6 +67,7 @@ public:
 	void write_output_pose(
 		LarvalJob const & job,
 		utility::options::OptionCollection const & job_options,
+		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 		core::pose::Pose const & pose
 	);
 

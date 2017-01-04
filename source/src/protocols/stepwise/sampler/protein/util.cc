@@ -49,6 +49,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -224,7 +225,8 @@ generate_beta_database_test(){
 	// main loop
 	utility::vector1< utility::file::FileName > in_files = jd2::input_pdb_files_from_command_line();
 
-	SilentFileDataOP silent_file_data( new SilentFileData );
+	SilentFileOptions opts;
+	SilentFileDataOP silent_file_data( new SilentFileData(opts) );
 	std::string const silent_file( option[ out::file::silent ]() );
 
 	Size count( 0 );
@@ -275,7 +277,7 @@ generate_beta_database_test(){
 
 					std::string const tag = "S_"+ObjexxFCL::string_of( count );
 					(*scorefxn)( scratch_pose );
-					BinarySilentStruct s( scratch_pose, tag );
+					BinarySilentStruct s( opts, scratch_pose, tag );
 
 					silent_file_data->write_silent_struct( s, silent_file, false /*write score only*/ );
 					silent_file_data->add_structure( s );

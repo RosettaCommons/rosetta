@@ -18,6 +18,7 @@
 
 #include <protocols/simple_moves/CombinePoseMover.hh>
 
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
@@ -231,9 +232,10 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 
 		// Store
 		if ( store_silents_ ) {
+			core::io::silent::SilentFileOptions opts;
 			io::silent::SilentStructOP new_struct = nonideal_ ?
-				io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-				io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+				io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+				io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 
 			new_struct->fill_struct( newpose );    // make the silent struct from the copy pose
 			// Set donorhistory

@@ -336,7 +336,8 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 	debug_assert ( key() < 40000000 );
 	core::pose::add_score_line_string( pose, "FRAG_ID", string_of(key()));
 
-	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose );
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, opts );
 	ss->fill_struct( pose, tag );
 	sfd.write_silent_struct( *ss, silent_file_name );
 }

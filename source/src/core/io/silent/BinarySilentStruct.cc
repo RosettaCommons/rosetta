@@ -81,11 +81,9 @@ namespace io {
 namespace silent {
 
 /// @brief Constructors.
-BinarySilentStruct::BinarySilentStruct( Size const nres_in )
+BinarySilentStruct::BinarySilentStruct( SilentFileOptions const & opts, Size const nres_in ) :
+	Parent( opts )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	fullatom_    = false;
 	bJumps_use_IntraResStub_ = false;
 	nres  ( nres_in );
@@ -94,10 +92,9 @@ BinarySilentStruct::BinarySilentStruct( Size const nres_in )
 	symminfo_->set_use_symmetry(false);
 }
 
-BinarySilentStruct::BinarySilentStruct()
+BinarySilentStruct::BinarySilentStruct( SilentFileOptions const & opts ) :
+	Parent( opts )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
 	fullatom_    = false;
 	bJumps_use_IntraResStub_ = false;
@@ -109,9 +106,12 @@ BinarySilentStruct::BinarySilentStruct()
 
 
 BinarySilentStruct::BinarySilentStruct(
+	SilentFileOptions const & opts,
 	core::pose::Pose const & pose,
 	std::string tag
-) {
+) :
+	Parent( opts )
+{
 	bJumps_use_IntraResStub_ = false;
 	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 	symminfo_->set_use_symmetry(false);
@@ -257,8 +257,6 @@ bool BinarySilentStruct::init_from_lines(
 	utility::vector1< std::string > const & lines,
 	SilentFileData & container
 ) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
 	utility::vector1< std::string > energy_names_;
 	utility::vector1< std::string >::const_iterator iter = lines.begin();
@@ -539,7 +537,7 @@ bool BinarySilentStruct::init_from_lines(
 	}
 
 	//tr.Debug << "(TEX) FOLD TREE: " << fold_tree();
-	if ( !fullatom_well_defined ) fullatom_ = option[ in::file::fullatom ]();
+	if ( !fullatom_well_defined ) fullatom_ = options().in_fullatom();
 
 	return true;
 } // init_from_lines
@@ -780,8 +778,7 @@ void BinarySilentStruct::print_conformation(
 	//encode6bit(  (unsigned char*)&fullatom_flag, 4, resline );
 	//output << resline << "\n";
 
-	using namespace basic::options;
-	if ( option[ OptionKeys::run::write_failures ].user() && option[ OptionKeys::run::write_failures ] == false  && decoy_tag().substr( 0, 8 ) == "FAILURE_" ) return;
+	if ( options().write_failures_set() && ! options().write_failures() && decoy_tag().substr( 0, 8 ) == "FAILURE_" ) return;
 	// the encoded coordinates
 	for ( Size i = 1; i <= nres(); ++i ) {
 		//fpd  symmetric residues are now trimmed in fill_struct()

@@ -47,10 +47,19 @@ using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.silent.ScoreJumpFileSilentStruct" );
 
+ScoreJumpFileSilentStruct::ScoreJumpFileSilentStruct( SilentFileOptions const & opts ) :
+	SilentStruct( opts )
+{
+	decoy_tag( "empty_tag" );
+}
+
 ScoreJumpFileSilentStruct::ScoreJumpFileSilentStruct(
+	SilentFileOptions const & opts,
 	core::pose::Pose const & pose,
 	std::string tag
-) {
+) :
+	SilentStruct( opts )
+{
 	fill_struct( pose, tag );
 	decoy_tag( tag );
 } // ScoreJumpFileSilentStruct

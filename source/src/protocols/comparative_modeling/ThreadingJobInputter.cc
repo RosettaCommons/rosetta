@@ -33,6 +33,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -123,7 +124,8 @@ ThreadingJobInputter::ThreadingJobInputter() :
 		}
 		input_source_ = protocols::jd2::JobInputterInputSource::PDB_FILE;
 	} else if ( option[ in::file::template_silent ].user() ) { // get template-pdbs from silent-file
-		io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		io::silent::SilentFileData sfd( opts );
 		sfd.read_file( option[ in::file::template_silent ]() );
 		for ( io::silent::SilentFileData::iterator it = sfd.begin(); it != sfd.end(); ++it ) {
 			PoseOP pose( new Pose );

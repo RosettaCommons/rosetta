@@ -60,7 +60,8 @@ class RNA_SilentStruct : public SilentStruct {
 public:
 
 	/// @brief Constructors.
-	RNA_SilentStruct( Size const nres_in )
+	RNA_SilentStruct( SilentFileOptions const & opts, Size const nres_in )
+		: SilentStruct( opts )
 	{
 		nres( nres_in );
 		fullatom_    = true;
@@ -70,7 +71,8 @@ public:
 
 	// RNA_SilentStruct( RNA_SilentStruct const & src );
 
-	RNA_SilentStruct()
+	RNA_SilentStruct( SilentFileOptions const & opts ) :
+		SilentStruct( opts )
 	{
 		nres( 0 );
 		fullatom_    = true;
@@ -79,6 +81,7 @@ public:
 	}
 
 	RNA_SilentStruct(
+		SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag",
 		bool fa = true

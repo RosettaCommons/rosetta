@@ -20,6 +20,7 @@
 
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 #include <core/scoring/rms_util.hh>
@@ -60,10 +61,11 @@ public:
 		core::chemical::ResidueTypeSetCOP rsd_set
 			= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		std::string silent_outfile = "test_save_and_restore.test.silent.out";
 		utility::file::file_delete( silent_outfile );
-		core::import_pose::PDBSilentStruct pss( start_pose, "tag" );
+		core::import_pose::PDBSilentStruct pss( opts, start_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 		// Read the PDBSilentStruct from the silent-file
@@ -91,10 +93,11 @@ public:
 		TS_ASSERT( start_pose.residue( 1 ).type().name() == cydn.name() );
 		TS_ASSERT( start_pose.residue( 2 ).type().name() == cydc.name() );
 
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		std::string silent_outfile = "test.out";
 		utility::file::file_delete( silent_outfile );
-		core::import_pose::PDBSilentStruct pss( start_pose, "test_0001" );
+		core::import_pose::PDBSilentStruct pss( opts, start_pose, "test_0001" );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 
@@ -116,7 +119,7 @@ public:
 		// and then written out before any actions that would have completed termini
 
 		core::chemical::ResidueType const cyd = rsd_set->name_map( "CYS:CtermProteinFull:NtermProteinFull:disulfide" );
-		core::io::silent::SilentFileData sfd2;
+		core::io::silent::SilentFileData sfd2( opts );
 		std::string silent_outfile2 = "core/io/test_CYD.out";
 
 		// Read the PDBSilentStruct from the silent-file

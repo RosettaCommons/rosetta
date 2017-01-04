@@ -28,6 +28,7 @@
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -153,9 +154,10 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 		(*scorefxn)(pose);
 
 		core::pose::set_ss_from_phipsi( pose );
+		core::io::silent::SilentFileOptions opts;
 		core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
-			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		ss->fill_struct( pose, "empty_tag" );
 		ss->add_energy( "censcore", 0 );   // centroidscore of last time this structure was in centroid form
 		ss->add_energy( "extra_score", 0 );   // extra_score is used if a different scoring scheme is used to select structures then to actually repack/relax them
@@ -442,7 +444,8 @@ MPI_LoopHashRefine::limit_library()
 void
 MPI_LoopHashRefine::dump_structures( const SilentStructStore &new_structs, bool score_only ) const {
 	start_timer( TIMING_IO_WRITE  );
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	std::string filename = jobname_ + "." + string_of( mpi_rank() ) + ".out";
 	for ( auto const & new_struct : new_structs ) {
 		// don't add round 0 structures (they have conflicting silent struct headers and

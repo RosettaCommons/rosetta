@@ -58,6 +58,7 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
@@ -667,7 +668,8 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 		if ( *it == CEN ) scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 	}
 	replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 
 	// contacts output
 	utility::io::ozstream contacts_output_all;
@@ -788,7 +790,7 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 					for ( iter = contact_type_cnt.begin(), ctend2 = contact_type_cnt.end(); iter != ctend2; ++iter ) {
 						core::pose::add_score_line_string( pose, contact_name(iter->first), string_of(iter->second) );
 					}
-					core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose );
+					core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, opts );
 					ss->fill_struct( pose, tag.str() );
 					sfd.write_silent_struct( *ss, silent_out_file_name );
 
@@ -2112,7 +2114,8 @@ void FragmentPicker::output_fragments( core::Size const fragment_size, utility::
 	// silent file output
 	if ( option[frags::output_silent]() || option[frags::score_output_silent]() ) {
 		std::string silent_out_file_name = out_file_name + ".out";
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
 			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;

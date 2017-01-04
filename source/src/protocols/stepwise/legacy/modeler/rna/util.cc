@@ -382,7 +382,8 @@ import_pose_from_silent_file( core::pose::Pose & import_pose, std::string const 
 	static const ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance() ->
 		residue_type_set( core::chemical::FA_STANDARD ) );
 
-	core::io::silent::SilentFileData silent_file_data;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData silent_file_data(opts);
 	silent_file_data.read_file( silent_file );
 
 	Size num_matching_tag = 0;

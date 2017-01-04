@@ -13,6 +13,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -357,9 +358,10 @@ HierarchicalLevel::add_new( core::pose::Pose const& pose,
 	add_new( coord, tag, address );
 	if ( write_to_file ) {
 		if ( TR.visible() ) { TR.Debug << "does this file exist? " << lib_full_path(tmp_address) << " " << utility::file::file_exists(lib_full_path( tmp_address )) << std::endl; }
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		sfd.strict_column_mode( true );
-		core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		ss->fill_struct(pose, tag);
 
 		for ( core::Size ii = ( new_level - 1 ); ii <= tmp_address.size(); ii++ ) { //need to add to very last level as well
@@ -393,11 +395,13 @@ HierarchicalLevel::add_new( core::pose::Pose const& pose,
 }
 
 void
-HierarchicalLevel::add_new( core::io::silent::SilentStruct & ss,
+HierarchicalLevel::add_new(
+	core::io::silent::SilentStruct & ss,
 	std::string & tag,
 	utility::vector1< core::Size > & address,
 	bool write_to_file,
-	core::Size new_level ) {
+	core::Size new_level
+) {
 	ObjexxFCL::FArray2D_double coord( ss.get_CA_xyz() );
 	utility::vector1< core::Size > tmp_address = address;
 	if ( new_level == 0 ) {
@@ -411,7 +415,8 @@ HierarchicalLevel::add_new( core::io::silent::SilentStruct & ss,
 	if ( write_to_file ) {
 		//actually requires some book-keeping to keep track of which ones to write
 		for ( core::Size ii = ( new_level - 1 ); ii <= address.size(); ii++ ) {
-			core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentFileData sfd( opts );
 			sfd.strict_column_mode( true );
 			std::string silent_outfile = lib_full_path( tmp_address );
 			utility::file::FileName file( silent_outfile ); //temp fix

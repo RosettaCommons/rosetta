@@ -19,7 +19,7 @@
 #include <core/types.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-//#include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -52,7 +52,8 @@ SilentObserver::SilentObserver( std::string const & name_in, bool fullatom = fal
 	fullatom_( fullatom ),
 	silent_file_name_( name_in + ".out" )
 {
-	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
+	core::io::silent::SilentFileOptions opts;
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData(opts) );
 }
 
 
@@ -86,7 +87,8 @@ SilentObserver::on_energy_change(
 	// std::cout << "frame(" << frame_count_ << ")" << std::endl;
 	//core::io::silent::ProteinSilentStruct pss( *event.pose, "frame" + string_of(frame_count_)  );
 	using namespace core::io::silent;
-	SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct_out();
+	SilentFileOptions opts;
+	SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	ss->fill_struct( *event.pose, "frame" + string_of(frame_count_) );
 
 	sfd_->write_silent_struct( *ss, silent_file_name_ );

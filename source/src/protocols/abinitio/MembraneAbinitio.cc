@@ -35,6 +35,7 @@
 #include <core/scoring/MembranePotential.fwd.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
@@ -1621,12 +1622,13 @@ void MembraneAbinitio::clear_checkpoints() {
 void MembraneAbinitio::output_debug_structure( core::pose::Pose & pose, std::string prefix ) {
 	using namespace core::io::silent;
 	if ( option[ basic::options::OptionKeys::out::file::silent ].user() ) {
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 		std::string silent_file = option[ basic::options::OptionKeys::out::file::silent ]() + "_" + prefix;
 
 		mc().score_function()( pose );
 
-		ProteinSilentStruct pss;
+		ProteinSilentStruct pss( opts );
 		pss.fill_struct( pose, get_current_tag() );
 
 		evaluate_pose( pose, get_current_tag(), pss );

@@ -111,6 +111,7 @@
 #include <basic/database/open.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -122,7 +123,6 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <basic/database/open.hh>
 
 //protocols
@@ -315,15 +315,16 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	//silent file stuff
 	bool write_silent_file = false;
 	std::string silent_file_name="";
-	core::io::silent::SilentFileData out_sfd;
-	core::io::silent::SilentFileData out_sfd_min;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData out_sfd( opts );
+	core::io::silent::SilentFileData out_sfd_min( opts );
 	utility::vector1<std::string> tags_done;
 
 	if ( option[out::file::silent].user() ) {
 		write_silent_file = true;
 		silent_file_name = option[out::file::silent]();
-		out_sfd= core::io::silent::SilentFileData(silent_file_name,false,true,"binary");
-		out_sfd_min= core::io::silent::SilentFileData("min."+silent_file_name,false,true,"binary");
+		out_sfd= core::io::silent::SilentFileData(silent_file_name,false,true,"binary",opts);
+		out_sfd_min= core::io::silent::SilentFileData("min."+silent_file_name,false,true,"binary",opts);
 		struct stat stFileInfo;
 		int file_out_stat = stat(silent_file_name.c_str(),
 			&stFileInfo);
@@ -387,7 +388,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			if ( !write_silent_file ) {
 				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
 			} else {
-				core::io::silent::BinarySilentStruct bss(mc->lowest_score_pose(),"lowest."+curr.str());
+				core::io::silent::BinarySilentStruct bss(opts,mc->lowest_score_pose(),"lowest."+curr.str());
 				out_sfd.write_silent_struct(bss,silent_file_name,false);
 			}
 
@@ -403,7 +404,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 					lowest_score_pose.dump_pdb(output_tag+"."+curr.str()+"_0001.pdb");
 				} else {
 					//std::cout << "C-alpha rmsd from start: " << core::scoring::CA_rmsd(lowest_score_pose,init_pose) << std::endl;
-					core::io::silent::BinarySilentStruct bss(lowest_score_pose,"min_cst.lowest."+curr.str()+"_0001");
+					core::io::silent::BinarySilentStruct bss(opts,lowest_score_pose,"min_cst.lowest."+curr.str()+"_0001");
 					out_sfd_min.write_silent_struct(bss,"min."+silent_file_name,false);
 				}
 			}

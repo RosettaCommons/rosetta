@@ -69,6 +69,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/denovo_design/movers/FastDesign.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -1047,7 +1048,8 @@ SimpleCycpepPredictApplication::run() const {
 		TR << "\t" << pose->energies().total_energy() << "\t" << -1.0*final_hbonds << "\t" << cis_peptide_bonds << std::endl;
 
 		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
-			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts ) );
 			char tag[512];
 			if ( my_rank_ > 0 ) {
 				sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat+already_completed_job_count_) );
@@ -1065,7 +1067,8 @@ SimpleCycpepPredictApplication::run() const {
 			protocols::boinc::Boinc::update_graphics_low_energy( *pose, pose->energies().total_energy() );
 #endif
 			if ( silent_out_ ) {
-				core::io::silent::SilentFileDataOP silent_file (new core::io::silent::SilentFileData );
+				core::io::silent::SilentFileOptions opts;
+				core::io::silent::SilentFileDataOP silent_file (new core::io::silent::SilentFileData( opts ) );
 				silent_file->set_filename( out_filename_ );
 				silent_file->write_silent_struct( *ss, out_filename_ );
 			}

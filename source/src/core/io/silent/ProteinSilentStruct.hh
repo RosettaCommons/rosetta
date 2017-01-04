@@ -45,10 +45,13 @@ class ProteinSilentStruct_Template : public SilentStruct {
 
 public:
 	ProteinSilentStruct_Template(
+		SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag",
 		bool fa = false
-	) : fullatom_( fa )
+	) :
+		Parent( opts ),
+		fullatom_( fa )
 	{
 		bJumps_use_IntraResStub_ = false;
 		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
@@ -57,7 +60,11 @@ public:
 	} // ProteinSilentStruct
 
 	/// @brief Constructors.
-	ProteinSilentStruct_Template( Size const nres_in )
+	ProteinSilentStruct_Template(
+		SilentFileOptions const & opts,
+		Size const nres_in
+	) :
+		Parent( opts )
 	{
 		nres( nres_in );
 		fullatom_  = false;
@@ -69,7 +76,8 @@ public:
 		symminfo_->set_use_symmetry(false);
 	}
 
-	ProteinSilentStruct_Template()
+	ProteinSilentStruct_Template( SilentFileOptions const & opts ) :
+		Parent( opts )
 	{
 		nres( 0 );
 		decoy_tag( "empty_tag" );

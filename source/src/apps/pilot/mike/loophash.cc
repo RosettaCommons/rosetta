@@ -36,6 +36,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -276,7 +277,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		if ( (  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
 				(  option[ OptionKeys::lh::centroid_only ]() ) ) {
 
-			core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts; // initialized from the command line
+			core::io::silent::SilentFileData sfd(opts);
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 			if ( option[ OptionKeys::lh::centroid_only ]() ) {
 				silent_file_ += ".centroid.out" ;
@@ -359,7 +361,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 			core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
 			TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
 			//pose.dump_pdb( "lhb_" + prefix + "_" + utility::to_string( round ) + ".pdb" );
-			core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts; // initialized from the command line
+			core::io::silent::SilentFileData sfd( opts );
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 
@@ -453,7 +456,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 	// 1212 BackboneSegment word
 
 	{
-		core::io::silent::ProteinSilentStruct pss;
+		core::io::silent::SilentFileOptions opts; // initialized from the command line
+		core::io::silent::ProteinSilentStruct pss(opts);
 		pss.fill_struct(tgtpose, "lala" );
 
 		std::ostringstream ss;
@@ -478,7 +482,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 
 
 	{
-		core::io::silent::ProteinSilentStruct pss;
+		core::io::silent::SilentFileOptions opts; // initialized from the command line
+		core::io::silent::ProteinSilentStruct pss(opts);
 		pss.fill_struct(tgtpose, "lala" );
 
 		std::ostringstream ss;
@@ -489,7 +494,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 	}
 
 	{
-		core::io::silent::BinarySilentStruct pss;
+		core::io::silent::SilentFileOptions opts; // initialized from the command line
+		core::io::silent::BinarySilentStruct pss(opts);
 		pss.fill_struct(tgtpose, "lala" );
 
 		std::ostringstream ss;

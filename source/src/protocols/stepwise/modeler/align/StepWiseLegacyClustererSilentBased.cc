@@ -26,6 +26,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
@@ -368,7 +369,8 @@ void
 StepWiseLegacyClustererSilentBased::output_silent_file( std::string const & silent_file ){
 	using namespace core::io::silent;
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data(opts);
 	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 		SilentStructOP s = setup_silent_struct( n );
 		silent_file_data.write_silent_struct( *s, silent_file, false /*write score only*/ );
@@ -380,7 +382,8 @@ core::io::silent::SilentFileDataOP
 StepWiseLegacyClustererSilentBased::silent_file_data(){
 	using namespace core::io::silent;
 
-	SilentFileDataOP silent_file_data( new SilentFileData );
+	SilentFileOptions opts;
+	SilentFileDataOP silent_file_data( new SilentFileData(opts) );
 	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 		silent_file_data->add_structure( silent_struct_output_list_[ n ] );
 	}

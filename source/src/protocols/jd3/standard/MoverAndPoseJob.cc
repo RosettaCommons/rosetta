@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/MoverAndPoseJob.cc
+/// @file   protocols/jd3/standard/MoverAndPoseJob.cc
 /// @brief  The class method definitions for MoverAndPoseJob and PoseJobResult
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit headers
-#include <protocols/jd3/MoverAndPoseJob.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 
 // Project headers
 #include <protocols/moves/Mover.hh>
@@ -33,6 +33,7 @@
 
 namespace protocols {
 namespace jd3 {
+namespace standard {
 
 MoverAndPoseJob::MoverAndPoseJob() {}
 MoverAndPoseJob::~MoverAndPoseJob() = default;
@@ -126,6 +127,7 @@ EnergyJobSummary::energy( core::Real setting )
 	energy_ = setting;
 }
 
+} // namespace standard
 } // namespace jd3
 } // namespace protocols
 
@@ -135,7 +137,7 @@ EnergyJobSummary::energy( core::Real setting )
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::PoseJobResult::save( Archive & arc ) const {
+protocols::jd3::standard::PoseJobResult::save( Archive & arc ) const {
 	arc( cereal::base_class< protocols::jd3::JobResult >( this ) );
 	arc( CEREAL_NVP( pose_ ) ); // core::pose::PoseOP
 }
@@ -143,19 +145,19 @@ protocols::jd3::PoseJobResult::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::PoseJobResult::load( Archive & arc ) {
+protocols::jd3::standard::PoseJobResult::load( Archive & arc ) {
 	arc( cereal::base_class< protocols::jd3::JobResult >( this ) );
 	arc( pose_ ); // core::pose::PoseOP
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::PoseJobResult );
-CEREAL_REGISTER_TYPE( protocols::jd3::PoseJobResult )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::standard::PoseJobResult );
+CEREAL_REGISTER_TYPE( protocols::jd3::standard::PoseJobResult )
 
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::EnergyJobSummary::save( Archive & arc ) const {
+protocols::jd3::standard::EnergyJobSummary::save( Archive & arc ) const {
 	arc( cereal::base_class< protocols::jd3::JobSummary >( this ) );
 	arc( CEREAL_NVP( energy_ ) ); // core::Real
 }
@@ -163,13 +165,13 @@ protocols::jd3::EnergyJobSummary::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::EnergyJobSummary::load( Archive & arc ) {
+protocols::jd3::standard::EnergyJobSummary::load( Archive & arc ) {
 	arc( cereal::base_class< protocols::jd3::JobSummary >( this ) );
 	arc( energy_ ); // core::Real
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::EnergyJobSummary );
-CEREAL_REGISTER_TYPE( protocols::jd3::EnergyJobSummary )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::standard::EnergyJobSummary );
+CEREAL_REGISTER_TYPE( protocols::jd3::standard::EnergyJobSummary )
 
-CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_MoverAndPoseJob )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_standard_MoverAndPoseJob )
 #endif // SERIALIZATION

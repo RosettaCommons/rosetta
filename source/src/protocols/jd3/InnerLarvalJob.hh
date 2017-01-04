@@ -74,13 +74,15 @@ public:
 
 	/// @brief Mutual comparison of this inner job to the other inner job
 	/// so that if either one thinks it's not the same as the other, then
-	/// it returns false.  Invokes the same() function on both this and other
+	/// it returns false.  Invokes the same_type() function on both this and other
 	///
 	/// @details Note: only compare if the pointers to the poses are to the
 	/// same location
+	virtual
 	bool
 	operator == ( InnerLarvalJob const & other ) const;
 
+	virtual
 	bool
 	operator != (InnerLarvalJob const & other ) const;
 

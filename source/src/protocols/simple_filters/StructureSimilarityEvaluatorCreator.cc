@@ -43,7 +43,6 @@
 // due to template function
 #include <core/io/silent/SilentStruct.hh>
 
-
 // option key includes
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>

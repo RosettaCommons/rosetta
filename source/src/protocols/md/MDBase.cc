@@ -26,6 +26,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -71,9 +72,10 @@ MDBase::report_silent( core::pose::Pose &pose,
 	Size timeid = (Size)( cummulative_time()*1000.0 );
 
 	// pose should contain up-to-date score info
-	io::silent::SilentFileData sfd;
+	io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData sfd( opts );
 	io::silent::SilentStructOP ss =
-		io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+		io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 
 	std::stringstream tag;
 	tag << "trj_" << timeid;

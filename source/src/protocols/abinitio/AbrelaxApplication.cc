@@ -134,6 +134,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 #include <core/io/silent/silent.fwd.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -278,6 +279,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @detail c'stor - nothing special
 AbrelaxApplication::AbrelaxApplication() :
+	silent_options_( new core::io::silent::SilentFileOptions ),
 	silent_score_file_( /* NULL */ ),
 	native_pose_( /* NULL */ ),
 	pca_( /* NULL */ ),
@@ -297,6 +299,7 @@ AbrelaxApplication::~AbrelaxApplication() = default;
 /// @details Shallow copy to mimic the pre 9/8/09 compiler-generated version of this
 /// method.  If you add new
 AbrelaxApplication::AbrelaxApplication( AbrelaxApplication const & src ) :
+	silent_options_( new core::io::silent::SilentFileOptions( *src.silent_options_ )),
 	silent_score_file_( src.silent_score_file_ ),
 	native_pose_( src.native_pose_ ),
 	loops_in_( src.loops_in_ ),
@@ -340,7 +343,7 @@ void AbrelaxApplication::setup() {
 			ConstraintCreatorCOP( ConstraintCreatorOP( new constraints_additional::NamedAtomPairConstraintCreator ) ) );
 	}
 
-	silent_score_file_ = core::io::silent::SilentFileDataOP( new io::silent::SilentFileData );
+	silent_score_file_ = core::io::silent::SilentFileDataOP( new io::silent::SilentFileData( *silent_options_ ) );
 	silent_score_file_-> set_filename( std::string( option[ out::sf ]()  ) );
 
 	// read native pose
@@ -662,13 +665,13 @@ void AbrelaxApplication::do_rerun() {
 
 	core::io::silent::SilentFileDataOP outsfd( nullptr );
 	if ( option[ out::file::silent ].user() ) {
-		outsfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
+		outsfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( *silent_options_ ) );
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn( nullptr );
 	if ( option[ in::file::silent ].user() ) {
 		//read silent file for input
-		SilentFileData sfd;
+		SilentFileData sfd( *silent_options_ );
 		sfd.read_file( *(option [ in::file::silent ]().begin()) );
 
 		// run thru all structures
@@ -716,7 +719,7 @@ void AbrelaxApplication::do_rerun() {
 					tag = "F_"+tag.substr(2);
 				}
 
-				SilentStructOP ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+				SilentStructOP ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 				process_decoy( pose, *scorefxn, tag, *ss );
 				// write this to score-file if applicable
 				if ( outsfd ) outsfd->add_structure( ss );
@@ -731,7 +734,7 @@ void AbrelaxApplication::do_rerun() {
 
 	// add native structure to the list
 	if ( native_pose_ ) {
-		SilentStructOP ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		SilentStructOP ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 		add_constraints( *native_pose_ );
 		scorefxn = generate_scorefxn( false /*full_atom*/ );
 		scorefxn->set_weight( core::scoring::linear_chainbreak, 1.0 );
@@ -786,7 +789,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 	loops_in_ = protocols::loops::Loops( true );
 
 	// get input tags
-	SilentFileData sfd;
+	SilentFileData sfd( *silent_options_ );
 	typedef utility::vector1< std::string > TagList;
 	TagList input_tags;
 	//WRONG -- these tags are the ones in file --- while after "read_file" tags might be renamed use .tags() after reading
@@ -875,10 +878,10 @@ void AbrelaxApplication::do_distributed_rerun() {
 		tr.Info << tag << " " << std::endl;
 		if ( option [ OptionKeys::abinitio::debug ] ) {
 			//this functionality is needed for the iterative protocol to have a restart structure with the same tag as the final structure
-			io::silent::SilentFileData outsfd;
+			io::silent::SilentFileData outsfd( *silent_options_ );
 			std::string silent_file = option[ basic::options::OptionKeys::out::file::silent ]() + "_" + "before_loops";
 
-			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 			process_decoy( pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn, jobdist.get_current_output_tag(), *pss );
 			outsfd.write_silent_struct( *pss, silent_file );
 		}
@@ -925,7 +928,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 			output_tag = "F_"+output_tag.substr(2);
 		}
 
-		SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 		process_decoy( pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn, output_tag, *pss );
 		// write this to score-file if applicable
 		if ( silent_score_file_ ) {
@@ -1764,10 +1767,10 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		}
 
 		if ( bRelax_ && option [ OptionKeys::abinitio::debug ] ) {
-			io::silent::SilentFileData outsfd;
+			io::silent::SilentFileData outsfd( *silent_options_ );
 			std::string silent_file = option[ basic::options::OptionKeys::out::file::silent ]() + "_" + "before_relax";
 
-			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 			process_decoy( fold_pose, fold_pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn, jobdist.get_current_output_tag(), *pss );
 			outsfd.write_silent_struct( *pss, silent_file );
 		}
@@ -1881,12 +1884,12 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			}
 
 			// analyze result
-			io::silent::SilentFileData outsfd;
+			io::silent::SilentFileData outsfd( *silent_options_ );
 
 			//make sure that number of columns does not change -- ever
 			outsfd.strict_column_mode( true );
 
-			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 
 			// abinitio produces n_stored structures -- the last one is the same as the final structure n_stored.
 			//   Size n_stored( abinitio_protocol.structure_store().size() );

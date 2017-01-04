@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/io/silent/SilentFileLoader.hh
-/// @brief  Load a silent file from an input stream and a SilentFileOptions object
+/// @brief  Load a silent file from an input stream and a SilentFileRMOption object
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_core_io_silent_SilentLoader_hh

@@ -19,6 +19,7 @@
 
 // Package Headers
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/io/silent/SilentFileOptions.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -38,7 +39,7 @@ public:
 	SilentStructCreator();
 	virtual ~SilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const = 0;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const = 0;
 	virtual std::string keyname() const = 0;
 };
 

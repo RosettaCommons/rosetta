@@ -33,6 +33,7 @@
 #include <core/fragment/util.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -1094,7 +1095,8 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 	while ( results_refine.size() > topNfinal_ ) { results_refine.pop(); }
 
 	// dump the final structres
-	core::io::silent::SilentFileData silent_file_data( silent_, false, false, "binary" ); //true to store argv in silent file
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData silent_file_data( silent_, false, false, "binary", opts ); //true to store argv in silent file
 
 	while ( results_refine.size() > 0 ) {
 		// retrieve data from results_list
@@ -1109,7 +1111,7 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 			}
 
 			std::string silent_fn = base_name+"_"+utility::to_string( results_refine.size()+1 );
-			core::io::silent::BinarySilentStruct silent_stream( *posecopy, silent_fn );
+			core::io::silent::BinarySilentStruct silent_stream( opts, *posecopy, silent_fn );
 			silent_stream.add_energy( "dens_rank", results_refine.size()+1 );
 			silent_stream.add_energy( "dens_score", sol_i.score_ );
 			silent_stream.add_energy( "rms", rms );

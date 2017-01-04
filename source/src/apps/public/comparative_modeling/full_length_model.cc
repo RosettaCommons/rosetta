@@ -34,6 +34,7 @@
 #include <core/import_pose/PDBSilentStruct.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -71,7 +72,8 @@
 
 
 void restore_hack( core::pose::Pose & pose ) {
-	core::import_pose::PDBSilentStruct ss;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::import_pose::PDBSilentStruct ss( opts );
 
 	ss.fill_struct( pose );
 	ss.fill_pose( pose, *(core::chemical::rsd_set_from_cmd_line().lock()) );

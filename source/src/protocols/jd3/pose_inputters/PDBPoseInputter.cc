@@ -58,7 +58,7 @@ bool PDBPoseInputter::job_available_on_command_line() const
 }
 
 PoseInputSources
-PDBPoseInputter::pose_input_sources_from_command_line() const
+PDBPoseInputter::pose_input_sources_from_command_line()
 {
 	utility::vector1< utility::file::FileName > filenames_from_command_line = jd2::input_pdb_files_from_command_line();
 	PoseInputSources input_sources;
@@ -74,7 +74,10 @@ PDBPoseInputter::pose_input_sources_from_command_line() const
 }
 
 PoseInputSources
-PDBPoseInputter::pose_input_sources_from_tag( utility::tag::TagCOP tag ) const
+PDBPoseInputter::pose_input_sources_from_tag(
+	utility::options::OptionCollection const & /*opts*/,
+	utility::tag::TagCOP tag
+)
 {
 	// Note: we claim that "path" is a useful tag, so, let's read it at some point!
 	PoseInputSources input_sources;
@@ -99,6 +102,9 @@ PDBPoseInputter::pose_input_sources_from_tag( utility::tag::TagCOP tag ) const
 		std::string line;
 		while ( getline( list_stream, line ) ) {
 			utility::file::FileName fname( line );
+			if ( tag->hasOption( "path" ) ) {
+				fname.path( tag->getOption< std::string >( "path" ) );
+			}
 			PoseInputSourceOP input_source( new PoseInputSource( keyname() ));
 			input_source->input_tag( fname.base() );
 			input_source->store_string_pair( "filename", fname.name() );
@@ -117,7 +123,11 @@ PDBPoseInputter::pose_input_sources_from_tag( utility::tag::TagCOP tag ) const
 /// be included in the per-job option set, and then passed into this function via an
 /// OptionCollection...
 core::pose::PoseOP
-PDBPoseInputter::pose_from_input_source( PoseInputSource const & input_source, utility::options::OptionCollection const & options ) const
+PDBPoseInputter::pose_from_input_source(
+	PoseInputSource const & input_source,
+	utility::options::OptionCollection const & options,
+	utility::tag::TagCOP /*tag*/ // possibly null-pointing tag pointer
+)
 {
 	assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
 	core::import_pose::ImportPoseOptions import_opts( options );

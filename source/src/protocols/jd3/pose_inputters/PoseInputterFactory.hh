@@ -60,6 +60,7 @@ public:
 
 	typedef std::map< std::string, PoseInputterCreatorOP > PoseInputterMap;
 	typedef std::list< PoseInputterCreatorCOP > CreatorList;
+	typedef utility::vector1< std::pair< PoseInputSourceOP, PoseInputterOP > > PoseInputSourcesAndInputters;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
 
@@ -76,7 +77,8 @@ public:
 	/// options. Note also that this will read all options on the command line, possibly from different
 	/// PoseInputters.  The order in which the PoseInputSources are reported are sorted by alphabetically
 	/// by the keys of the PoseInputters (e.g. "PDB" will precede "Silent").
-	PoseInputSources
+
+	PoseInputSourcesAndInputters
 	pose_inputs_from_command_line() const;
 
 	/// @brief Should the Factory throw an exception or call utility::exit when it encounters the

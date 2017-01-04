@@ -34,6 +34,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -180,7 +181,8 @@ void ThisApplication::pick_frags()
 	using namespace io::silent;
 	using namespace pose;
 	using namespace fragment;
-	SilentFileData sfd;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData sfd(opts);
 	sfd.read_file( *(option[ in::file::silent ]().begin()) );
 	ConstantLengthFragSet frags( option[ OptionKeys::size ] ); //steal good old 9mers
 	for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {

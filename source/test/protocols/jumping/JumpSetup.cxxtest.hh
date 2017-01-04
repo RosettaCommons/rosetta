@@ -37,6 +37,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 // utility headers
@@ -234,8 +235,9 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 	//cleanup
 	utility::file::file_delete( "test.out" );
 
-	SilentFileData sfd_out;
-	ProteinSilentStruct pss;
+	SilentFileOptions opts;
+	SilentFileData sfd_out(opts);
+	ProteinSilentStruct pss(opts);
 	pss.fill_struct( native_pose, "native_structure" );
 	sfd_out.write_silent_struct( pss, "test.out" );
 
@@ -245,7 +247,7 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 
 	// test internal compatibility
 	{
-		SilentFileData sfd;
+		SilentFileData sfd(opts);
 		sfd.read_file( "test.out" );
 
 		for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {

@@ -26,6 +26,7 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/io/silent/SilentFileOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 
 
@@ -89,6 +90,7 @@ private:
 
 	bool do_add_delete_;
 	std::string silent_file_;
+	core::io::silent::SilentFileOptionsOP silent_file_options_;
 	core::io::silent::SilentFileDataOP silent_file_data_;
 
 	utility::vector1< std::string > next_suite_atoms_;

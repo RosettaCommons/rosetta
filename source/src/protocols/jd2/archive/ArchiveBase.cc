@@ -16,6 +16,7 @@
 #include <protocols/jd2/archive/ArchiveManager.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -154,7 +155,8 @@ void ArchiveBase::init_from_decoy_set( core::io::silent::SilentFileData const& s
 	using namespace core::chemical;
 
 	//transform to centroid
-	SilentFileData centroid_sfd;
+	SilentFileOptions opts;
+	SilentFileData centroid_sfd( opts );
 	for ( SilentFileData::const_iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 		std::string tag = it->decoy_tag();
 		pose::Pose pose;
@@ -163,7 +165,7 @@ void ArchiveBase::init_from_decoy_set( core::io::silent::SilentFileData const& s
 		pss->fill_struct( pose, tag );
 		centroid_sfd.add_structure( pss );
 	}
-	SilentFileData alternative_sfd;
+	SilentFileData alternative_sfd( opts );
 	read_structures( centroid_sfd, alternative_sfd, init_batch );
 }
 
@@ -244,7 +246,8 @@ void ArchiveBase::save_decoys( std::string const& dirname, std::string const& na
 	std::string const backup_filename ( dirname + "/"+name+".out.backup" );
 	std::string const tmp_filename ( dirname + "/tmp_"+name+".out" );
 	using namespace core::io::silent;
-	SilentFileData sfd;
+	SilentFileOptions opts;
+	SilentFileData sfd( opts );
 
 	//handle output myself... so it keeps the order of decoys.
 	utility::io::ozstream output( tmp_filename );
@@ -297,7 +300,8 @@ void ArchiveBase::load_decoys( std::string const& filename, SilentStructs& decoy
 	mem_tr << "ArchiveBase::restore_from_file..." << std::endl;
 	decoys.clear();
 	if ( utility::file::file_exists( filename ) ) {
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 		if ( !sfd.read_file( filename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+filename ) );
 		for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 			decoys.push_back( *it );

@@ -59,6 +59,7 @@
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -849,7 +850,8 @@ calc_scores() {
 	}
 
 	// read silent file
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData sfd(opts);
 	sfd.read_file( option[ tors::fragfile ]() );
 
 	// packing stuff
@@ -1147,7 +1149,8 @@ make_fragments() {
 		}
 	}
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData sfd(opts);
 
 	core::Size fragidx=1;
 	for ( int i=1; i<=36; ++i ) {
@@ -1157,7 +1160,7 @@ make_fragments() {
 				core::Size nfrags = fragstore.size();
 
 				for ( int x=1; x<=(int)nfrags; ++x ) {
-					core::io::silent::SilentStructOP ss_out_all( new core::io::silent::BinarySilentStruct );
+					core::io::silent::SilentStructOP ss_out_all( new core::io::silent::BinarySilentStruct(opts) );
 					std::string outfile =
 						"S"+utility::to_string(fragidx++)+"_"
 						+utility::to_string(i)+"_"+utility::to_string(j)+"_"+utility::to_string(a)+"_"

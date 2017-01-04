@@ -12,8 +12,7 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <core/pose/Pose.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+
 #include <basic/Tracer.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/superimpose.hh>
@@ -26,8 +25,11 @@
 
 //SilentFileStuff
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/ProteinSilentStruct.hh>
 
 //option stuff
 #include <basic/options/option.hh>
@@ -494,9 +496,10 @@ core::Size MPIPool_RMSD::evaluate_and_add(
       Pool_RMSD::add( coords, coords.u2(), new_cluster_tag );
 
       PROF_START( basic::WRITE_TO_FILE );
-      core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			core::io::silent::SilentFileOptions opts;
+      core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
       ss->fill_struct( pose, new_cluster_tag );
-      core::io::silent::SilentFileData sfd;
+      core::io::silent::SilentFileData sfd( opts );
       sfd.write_silent_struct( *ss, new_decoys_out_, false );
       PROF_STOP( basic::WRITE_TO_FILE );
 

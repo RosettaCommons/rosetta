@@ -71,10 +71,12 @@ static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
 /////////////////////////////////////////////////////////////////////////
 
 RNA_SilentStruct::RNA_SilentStruct(
+	SilentFileOptions const & opts,
 	core::pose::Pose const & pose,
 	std::string tag,
 	bool fa
 ) :
+	SilentStruct( opts ),
 	fullatom_( fa )
 {
 	fill_struct( pose, tag );

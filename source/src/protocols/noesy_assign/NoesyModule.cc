@@ -55,6 +55,7 @@
 #include <ObjexxFCL/string.functions.hh>
 //Auto Headers
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/noesy_assign/CrossPeakList.impl.hh>
 #include <protocols/noesy_assign/NoesyModule.impl.hh>
 #include <utility/vector1.hh>
@@ -292,7 +293,8 @@ void NoesyModule::assign() {
 	using namespace basic::options;
 	using namespace OptionKeys;
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	std::string file_name("NO_FILE");
 	if ( !option[ noesy::no_decoys ]() ) {
 		if ( option[ noesy::in::decoys ].user() ) {

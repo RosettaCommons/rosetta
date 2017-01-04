@@ -105,6 +105,7 @@
 
 //silent file stuff
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #ifdef USEMPI
 /// MPI
@@ -318,6 +319,7 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 {
 	if ( option[ optE::load_from_silent ].user() ) {
 		/// APL -- refactor this.  Static data is unacceptible here.
+		core::io::silent::SilentFileOptions opts;
 		static std::string prev_path = "";
 		static core::io::silent::SilentFileData * sfd;
 
@@ -330,7 +332,7 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 		if ( prev_path != path ) {
 			prev_path = path;
 			delete sfd;
-			sfd = new core::io::silent::SilentFileData();
+			sfd = new core::io::silent::SilentFileData( opts );
 			sfd->read_file( path + "/" + filename );
 		}
 		if ( ! sfd ) { utility_exit_with_message("Error loading SilentFileData in IterativeOptEDriver"); }
@@ -4088,8 +4090,9 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			utility::vector1< std::string > wt_pdb_names, mut_pdb_names;
 
 			bool read_silent( false );
-			core::io::silent::SilentFileData sfd_wt;
-			core::io::silent::SilentFileData sfd_mut;
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentFileData sfd_wt( opts );
+			core::io::silent::SilentFileData sfd_mut( opts );
 
 			if ( file_extension.compare("list") == 0 ) {
 

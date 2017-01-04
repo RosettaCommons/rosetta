@@ -12,11 +12,11 @@
 /// Mover to a Pose in its run() method.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_MoverAndPoseJob_HH
-#define INCLUDED_protocols_jd3_MoverAndPoseJob_HH
+#ifndef INCLUDED_protocols_jd3_standard_MoverAndPoseJob_HH
+#define INCLUDED_protocols_jd3_standard_MoverAndPoseJob_HH
 
 // Unit headers
-#include <protocols/jd3/MoverAndPoseJob.fwd.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.fwd.hh>
 
 // Package headers
 #include <protocols/jd3/Job.hh>
@@ -37,6 +37,7 @@
 
 namespace protocols {
 namespace jd3 {
+namespace standard {
 
 class MoverAndPoseJob : public Job
 {
@@ -115,12 +116,13 @@ public:
 
 };
 
+} // namespace standard
 } // namespace jd3
 } // namespace protocols
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_MoverAndPoseJob )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_standard_MoverAndPoseJob )
 #endif // SERIALIZATION
 
 
-#endif //INCLUDED_protocols_jd3_Job_HH
+#endif //INCLUDED_protocols_jd3_standard_MoverAndPoseJob_HH

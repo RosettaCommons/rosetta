@@ -19,6 +19,7 @@
 #include <protocols/toolbox/Cluster.hh>
 #include <protocols/toolbox/Cluster.impl.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -103,7 +104,8 @@ void run() {
 	//bool store_energies ( true );  // unused ~Labonte
 
 	DecoySetEvaluation ensemble;
-	SilentFileData sfd;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData sfd( opts );
 	read_structures( sfd, ensemble );
 
 	//initialize wRMSD weights with 1.0 unless we have -rigid:in file active
@@ -111,7 +113,7 @@ void run() {
 	read_input_weights( weights, ensemble.n_atoms() );
 	ensemble.set_weights( weights );
 
-	SilentFileData kept_decoys;
+	SilentFileData kept_decoys( opts );
 	cluster_silent_structs( ensemble, sfd.begin(), sfd.end(), kept_decoys, ClusterOptions( true ) );
 	std::string out_filename=option[ out::file::cluster ]();
 	{ utility::io::ozstream out( out_filename ); } //open and close, to empty the file.

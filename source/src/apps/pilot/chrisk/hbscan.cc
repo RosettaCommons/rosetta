@@ -36,6 +36,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/scoring/types.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -693,7 +694,8 @@ byres_analysis(
 
 
 	//silent-type output
-	io::silent::SilentFileData pose_silent_data;
+	io::silent::SilentFileOptions opts; // initialized from the command line
+	io::silent::SilentFileData pose_silent_data( opts );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// end of setup
@@ -704,7 +706,7 @@ byres_analysis(
 
 	Size nres( pose.size() );
 
-	io::silent::SilentStructOP pose_ss( new io::silent::ScoreFileSilentStruct );
+	io::silent::SilentStructOP pose_ss( new io::silent::ScoreFileSilentStruct(opts) );
 	core::scoring::hbonds::HBondSet hbset;
 	// must score pose to update nbrlist first!
 	scorefxn->score( pose );
@@ -721,11 +723,11 @@ byres_analysis(
 			//if option is set, only check the user defined sequence position
 			if ( option[ hbscan::lig_seqpos ].user() && seqpos != Size( option[ hbscan::lig_seqpos ] ) ) continue;
 
-			io::silent::SilentStructOP res_ss( new io::silent::ScoreFileSilentStruct );
+			io::silent::SilentStructOP res_ss( new io::silent::ScoreFileSilentStruct(opts) );
 			res_ss->decoy_tag( pdbname );
 
 			//print byatom data
-			io::silent::SilentStructOP atom_ss( new io::silent::ScoreFileSilentStruct );
+			io::silent::SilentStructOP atom_ss( new io::silent::ScoreFileSilentStruct(opts) );
 			Residue const rsd( pose.residue( seqpos ) );
 
 			for ( Size iatom = 1; iatom <= rsd.natoms(); ++iatom ) {

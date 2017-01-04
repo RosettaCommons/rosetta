@@ -15,6 +15,7 @@
 
 #include <protocols/jd2/SilentFileJobOutputter.hh> // For CompareTags
 #include <core/io/silent/SilentFileData.hh> // used in read_done_jobs()
+#include <core/io/silent/SilentFileOptions.hh> // used in read_done_jobs()
 #include <utility/file/file_sys_util.hh> // for file_exists()
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -89,7 +90,8 @@ void ScoreOnlyJobOutputter::read_done_jobs() {
 	// Inelegant cut-paste job from SilentFileJobOutputter::job_has_completed()
 
 	if ( utility::file::file_exists( scorefile_name() ) ) {
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		score_file_tags_ = sfd.read_tags_fast( scorefile_name() );
 		for ( std::string & tag : score_file_tags_ ) {
 			/// eliminate the FAILURE_ prefix so that jobs know to start from

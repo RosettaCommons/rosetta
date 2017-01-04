@@ -22,6 +22,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -85,15 +86,16 @@ public:
 		core::pose::symmetry::make_symmetric_pose( ref_pose );
 
 		// Write out the silent-file
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		std::string silent_outfile = "core/io/sym_bin_silentfile_test.out";
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::BinarySilentStruct pss,new_pss;
+		core::io::silent::BinarySilentStruct pss( opts ),new_pss( opts );
 		pss.fill_struct( ref_pose, "ref_pose" );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 		// Read the ProteinSilentStruct from the silent-file
-		core::io::silent::SilentFileData sfe;
+		core::io::silent::SilentFileData sfe( opts );
 		utility::vector1 < std::string > tags;
 		tags.push_back( "ref_pose" );
 		// sfd.read_file( silent_outfile ); // read file w/ non-ideal geometry

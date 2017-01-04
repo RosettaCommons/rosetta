@@ -42,6 +42,7 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragmentIO.hh>
@@ -976,7 +977,8 @@ void IterativeBase::gen_diversity_pool( jd2::archive::Batch& batch, bool ) {
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 
 	//copy pool to '<batch>/pool.in'
-	io::silent::SilentFileData sfd;
+	io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData sfd( opts );
 	for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
 		sfd.add_structure( *it ); //not a copy, only adds OP to sfd
 	}
@@ -1169,7 +1171,8 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 	if ( start_decoys.size() ) {
 		numeric::random::random_permutation( start_decoys, numeric::random::rg() ); //permute to get rid of high fluctuation in acceptance rate
 		batch.set_has_silent_in();
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		for ( SilentStructVector::const_iterator
 				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
 			sfd.add_structure( **it );
@@ -1394,7 +1397,8 @@ void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 
 	if ( start_decoys.size() ) {
 		batch.set_has_silent_in();
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		for ( core::io::silent::SilentStructOPs::const_iterator
 				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
 			sfd.add_structure( **it );
@@ -1431,7 +1435,8 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		if ( !it.decoys_returned() ) continue; //avoid looking for empty files
 		//  it->silent_out();
 		basic::show_time( tr,  "generate safety_hatch: access batch "+it.batch() );
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 		std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
 		Size ct( 0 );
 		tr.Debug << "read and score decoys in " << it.silent_out() << "..." << std::endl;
@@ -1509,7 +1514,8 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 
 	if ( start_decoys.size() ) {
 		batch.set_has_silent_in();
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
 		Size ct( 0 );
 		for ( core::io::silent::SilentStructOPs::const_iterator
 				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {

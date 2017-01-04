@@ -20,6 +20,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -350,9 +351,10 @@ LoopHashSampler::build_structures(
 						transfer_phi_psi( newpose, mynewpose );
 						transfer_jumps( newpose, mynewpose );
 
+						core::io::silent::SilentFileOptions opts;
 						core::io::silent::SilentStructOP new_struct = nonideal_ ?
-							core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-							core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+							core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary",opts) :
+							core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out(opts);
 						new_struct->fill_struct( mynewpose );    // make the silent struct from the copy pose
 						new_struct->energies_from_pose( newpose ); // take energies from the modified pose, not the copy pose
 						new_struct->add_energy( "lh_carms", final_rms );

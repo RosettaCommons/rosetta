@@ -14,6 +14,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -386,11 +387,12 @@ void CanonicalSamplingMover::dump_decoy_or_score(
 
 	//write to silent-struct
 	PROF_START( basic::CANONICALMOVER_WRITE_TO_FILE );
+	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentStructOP ss;
 	if ( score_only && !boinc_mode_ ) {
-		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "score" );
+		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "score", opts );
 	} else {
-		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	}
 
 	using namespace ObjexxFCL;
@@ -436,7 +438,7 @@ void CanonicalSamplingMover::dump_decoy_or_score(
 	if ( i_trial == 0 ) { //first time ?
 		ss->print_header( os );
 	}
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileData sfd( opts );
 	sfd.write_silent_struct(*ss, os, score_only );
 	PROF_STOP( basic::CANONICALMOVER_WRITE_TO_FILE );
 }
@@ -562,7 +564,8 @@ CanonicalSamplingMover::apply(Pose & pose){
 	**  if i_trail == ntrial, then start on the next nstruct or the next decoy in the list            **
 	**                                                                                                **/
 
-	core::io::silent::SilentStructOP existing_ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_in();
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentStructOP existing_ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_in( opts );
 	core::Size i_trial=0; //if not overwritten, starts trajectory from beginning
 	if ( utility::file::file_exists( traj_filename + ".gz" ) ) {
 		tr << "output file exists and is gzipped... moving on to the next one!" << std::endl;
@@ -570,7 +573,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	}
 	if ( utility::file::file_exists( traj_filename )  && utility::file::file_size( traj_filename ) > 0  &&
 			!utility::file::file_exists( traj_filename + ".gz") ) {
-		core::io::silent::SilentFileData existing_output;
+		core::io::silent::SilentFileData existing_output( opts );
 		existing_output.set_filename( traj_filename );
 		existing_output.read_file( traj_filename );
 		utility::vector1< std::string > existing_tags;
@@ -595,7 +598,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 
 	/**********************************CHECKPOINTING ****************************************************/
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileData sfd( opts );
 	sfd.set_filename( traj_filename );
 
 	//test-- add ramp up temperature in order to equilibrate structure?

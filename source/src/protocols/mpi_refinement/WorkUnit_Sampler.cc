@@ -21,6 +21,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -102,8 +103,9 @@ WorkUnit_Sampler::store_to_decoys( core::io::silent::SilentStructCOP start_struc
 	core::pose::Pose const & pose,
 	std::string const & additional_tag ){
 	// exported them into silentstruct
+	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentStructOP ss =
-		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 	ss->fill_struct( pose );
 	ss->add_energy( "samplemethod", start_struct->get_energy("samplemethod") );
 	ss->set_decoy_tag( start_struct->decoy_tag() + additional_tag );

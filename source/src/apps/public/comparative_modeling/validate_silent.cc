@@ -26,6 +26,7 @@
 
 // Project headers
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/sequence/util.hh>
 
@@ -65,7 +66,8 @@ int main(int argc, char* argv[]) {
 
 		cout << "Reference: " << ref_sequence << endl;
 
-		SilentFileData sfd_in, sfd_out;
+		SilentFileOptions opts; // initialized from the command line
+		SilentFileData sfd_in(opts), sfd_out(opts);
 		sfd_in.read_file(input_file);
 
 		size_t num_good = 0, num_failed = 0, num_mismatch = 0;

@@ -35,6 +35,7 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
@@ -237,7 +238,8 @@ main( int argc, char* argv [] ) {
 		ss->gap_open  ( gap_open   );
 		ss->gap_extend( gap_extend );
 
-		SilentFileData sfd;
+		SilentFileOptions opts; // initialized from the command line
+		SilentFileData sfd(opts);
 
 		typedef vector1< string >::const_iterator aln_iter;
 		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
@@ -257,7 +259,7 @@ main( int argc, char* argv [] ) {
 					<< std::endl;
 				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
 
-				SilentStructOP ss_out( new ScoreFileSilentStruct );
+				SilentStructOP ss_out( new ScoreFileSilentStruct(opts) );
 				//bool encountered_error(false);
 				map< string, SequenceOP >::iterator seq_it = seqs.find( template_id );
 				if ( seq_it == seqs.end() ) {

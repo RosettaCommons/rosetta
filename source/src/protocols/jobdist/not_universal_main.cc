@@ -18,6 +18,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
@@ -136,7 +137,8 @@ int not_universal_main(
 
 	Size const n_repeats( option[ run::repeat ]() );
 
-	SilentFileData sfd_out;
+	SilentFileOptions opts;
+	SilentFileData sfd_out( opts );
 	while ( input.has_another_pose() ) {
 		input.fill_pose( current_pose, *rsd_set );
 
@@ -166,7 +168,7 @@ int not_universal_main(
 			// output
 			if ( !option[ out::nooutput ]() ) {
 				core::io::silent::SilentStructOP ss
-					= SilentStructFactory::get_instance()->get_silent_struct_out();
+					= SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 				ss->fill_struct( current_pose );
 
 				// add model quality information if a native was given.

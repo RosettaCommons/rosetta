@@ -31,6 +31,7 @@
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/JobQueen.fwd.hh>
+#include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -55,6 +56,7 @@ namespace job_distributors {
 /// flagging as job as being a bad input
 enum mpi_tags {
 	mpi_work_pool_jd_new_job_request,
+	mpi_work_pool_jd_deallocation_message,
 	mpi_work_pool_jd_new_job_available,
 	mpi_work_pool_jd_job_success,
 	mpi_work_pool_jd_job_failed_w_message,
@@ -166,6 +168,9 @@ private:
 	send_next_job_to_node( int worker_node );
 
 	void
+	send_deallocation_messages_to_node( int worker_node );
+
+	void
 	note_job_no_longer_running( Size job_id );
 
 	void
@@ -211,6 +216,9 @@ private:
 	assign_jobs_to_idling_nodes();
 
 	void
+	store_deallocation_messages( std::list< deallocation::DeallocationMessageOP > const & messages );
+
+	void
 	throw_after_failed_to_retrieve_job_result(
 		int worker_node,
 		Size job_id,
@@ -222,6 +230,9 @@ private:
 
 	void
 	retrieve_job_and_run();
+
+	void
+	retrieve_deallocation_messages_and_new_job_and_run();
 
 	std::pair< LarvalJobOP, utility::vector1< JobResultCOP > >
 	retrieve_job_maturation_data();
@@ -333,6 +344,14 @@ private:
 
 	// indexes 1..mpi_nproc_-1 because node0 does not track itself.
 	utility::vector1< bool > nodes_spun_down_;
+
+	// Node 0 keeps track of which nodes have receieved which deallocation messages
+	// and when all of the remote nodes have received a particular deallocation message,
+	// then that deallocation message is deleted
+	bool first_call_to_determine_job_list_;
+	utility::vector1< std::list< core::Size > > deallocation_messages_for_node_;
+	utility::vector1< std::string > deallocation_messages_;
+	utility::vector1< core::Size > n_remaining_nodes_for_deallocation_message_;
 
 	numeric::DiscreteIntervalEncodingTree< core::Size > job_indices_seen_;
 	numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;

@@ -37,6 +37,7 @@
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -87,7 +88,8 @@ main( int argc, char * argv [] )
 		TR << "The BATCHSIZE: " << batch_size << std::endl;
 		core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 
-		io::silent::SilentFileData sfd;
+		io::silent::SilentFileOptions opts; // initialized from the command line
+		io::silent::SilentFileData sfd( opts );
 		std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 
 		//core::Size struct_count = 0;  // unused ~Labonte
@@ -107,7 +109,7 @@ main( int argc, char * argv [] )
 				core::pose::Pose pose;
 				input.fill_pose( pose, *rsd_set );
 
-				SilentStructOP new_struct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+				SilentStructOP new_struct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 				new_struct->fill_struct( pose );
 				input_structs.push_back( new_struct );
 				count++;

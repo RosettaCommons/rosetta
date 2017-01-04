@@ -18,6 +18,7 @@ namespace protocols {
 
 using namespace protocols::jd3::pose_outputters;
 static PoseOutputterRegistrator< PDBPoseOutputterCreator > reg_PDBPoseOutputterCreator;
+static PoseOutputterRegistrator< SilentFilePoseOutputterCreator > reg_SilentFilePoseOutputterCreator;
 static SecondaryPoseOutputterRegistrator< ScoreFileOutputterCreator > reg_ScoreFileOutputterCreator;
 
 } //namespace protocols

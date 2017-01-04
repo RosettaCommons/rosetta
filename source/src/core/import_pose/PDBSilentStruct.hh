@@ -20,6 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.fwd.hh>
 #include <core/io/StructFileRep.hh>
 
 
@@ -41,11 +42,10 @@ class PDBSilentStruct : public core::io::silent::SilentStruct {
 public:
 
 	/// @brief Constructors.
-	PDBSilentStruct() {
-		decoy_tag( "empty_tag" );
-	}
+	PDBSilentStruct( core::io::silent::SilentFileOptions const & opts );
 
 	PDBSilentStruct(
+		core::io::silent::SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
 	);

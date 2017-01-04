@@ -89,6 +89,7 @@ sources = {
 		"ScoreJumpFileSilentStruct",
 		"SilentFileLoader",
 		"SilentFileOptions",
+		"SilentFileRMOptions",
 		"SilentFileData",
 		"SilentStruct",
 		"SilentStructCreator",

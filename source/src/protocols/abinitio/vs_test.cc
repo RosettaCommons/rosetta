@@ -21,6 +21,7 @@
 #include <core/sequence/Sequence.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
@@ -98,7 +99,8 @@ int run_boinc_debug() {
 	moves::TrialMoverOP smooth_trials( new moves::TrialMover( small_mover, mc ) );
 
 	if ( option[ james::debug ]() ) {
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 
 		using numeric::random::gaussian;
 		for ( core::Size i = 1; i <= iterations; ++i ) {
@@ -116,7 +118,7 @@ int run_boinc_debug() {
 			log << "iteration " << i << std::endl;
 
 			log << "initializing ProteinSilentStruct!" << std::endl;
-			core::io::silent::ProteinSilentStruct pss( fold_pose );
+			core::io::silent::ProteinSilentStruct pss( opts, fold_pose );
 			log << "calling write_silent_struct!" << std::endl;
 			sfd.write_silent_struct( pss, "test.out" );
 		} // for i

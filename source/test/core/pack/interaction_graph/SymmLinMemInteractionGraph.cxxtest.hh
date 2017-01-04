@@ -45,6 +45,7 @@
 #include <core/pack/make_symmetric_task.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 // Test headers
 #include <test/core/init_util.hh>
@@ -571,7 +572,8 @@ public:
 		using namespace core::scoring;
 
 		TS_ASSERT( true );
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		sfd.read_file( "core/pack/interaction_graph/fibril.silent" );
 		std::string tag = sfd.begin()->decoy_tag();
 		Pose pose; sfd.get_structure( tag ).fill_pose( pose );

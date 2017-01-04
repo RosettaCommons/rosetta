@@ -18,6 +18,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -91,7 +92,8 @@ PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name
 		std::string const full_filename = dir_name + "/" + filename ;
 		TR.Debug << TR.Magenta << "Reading in file: " << full_filename << TR.Reset << std::endl;
 
-		SilentFileDataOP silent_file_data( new SilentFileData );
+		SilentFileOptions opts;
+		SilentFileDataOP silent_file_data( new SilentFileData(opts) );
 		silent_file_data->set_verbose( false );
 		silent_file_data->read_file( full_filename );
 		TR.Debug << TR.Magenta << "Number of models: " << silent_file_data->size() << TR.Reset << std::endl;

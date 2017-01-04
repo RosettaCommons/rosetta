@@ -23,7 +23,10 @@
 //project headers
 #include <core/pose/Pose.hh>
 #include <core/io/StructFileRepOptions.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 
 // ObjexxFCL
 #include <ObjexxFCL/string.functions.hh>
@@ -31,7 +34,7 @@
 // basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+//#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -51,7 +54,10 @@ namespace pose_outputters {
 using namespace core::io;
 using namespace core::io::silent;
 
-SilentFilePoseOutputter::SilentFilePoseOutputter() {}
+SilentFilePoseOutputter::SilentFilePoseOutputter() :
+	buffer_limit_( 20 )
+{}
+
 SilentFilePoseOutputter::~SilentFilePoseOutputter() {}
 
 bool
@@ -62,28 +68,11 @@ SilentFilePoseOutputter::outputter_specified_by_command_line()
 
 void
 SilentFilePoseOutputter::determine_job_tag(
-	utility::tag::TagCOP output_tag,
+	utility::tag::TagCOP /*output_tag*/,
 	utility::options::OptionCollection const & /*job_options*/,
 	InnerLarvalJob & job
 ) const {
-	if ( output_tag ) {
-		using namespace utility::tag;
-		runtime_assert( output_tag->hasTag( keyname() ) );
-		TagCOP silent_tag = output_tag->getTag( keyname() );
-		if ( silent_tag->hasOption( "filename" ) ) {
-			utility::file::FileName fname( silent_tag->getOption< std::string >( "filename" ));
-			job.job_tag( fname.base() );
-		} else if ( silent_tag->hasOption( "filename_pattern" )) {
-			// replace the single "$" in the filename_pattern with the input_tag already set for the inner larval job
-			// we know there is only a single dollar sign because the "string_w_one_dollarsign" restriction is
-			// formulated in such a way that forbids multiple dollar signs and requires there to be at least one
-			std::string pattern = silent_tag->getOption< std::string >( "filename_pattern" );
-			std::string job_tag = utility::replace_in( pattern, "$", job.input_tag() );
-			job.job_tag( job_tag );
-		}
-	} else {
-		job.job_tag( job.input_tag() );
-	}
+	job.job_tag( job.input_tag() );
 }
 
 /// @details If this is just being given an InnerLarvalJob, that means that the
@@ -91,25 +80,28 @@ SilentFilePoseOutputter::determine_job_tag(
 /// b/n ILJ and input source. So, let's just use the job_tag. What else can we do?
 std::string
 SilentFilePoseOutputter::outputter_for_job(
-	utility::tag::TagCOP,
-	utility::options::OptionCollection const &,
-	InnerLarvalJob const & ilj
+	utility::tag::TagCOP sf_tag,
+	utility::options::OptionCollection const & opts,
+	InnerLarvalJob const &
 ) const
 {
-	// Hope determine_job_tag has already been called?
-	return ilj.job_tag();
+	if ( sf_tag ) {
+		runtime_assert( sf_tag->hasOption( "filename" ));
+		return sf_tag->getOption< std::string >( "filename" );
+	} else {
+		return opts[ basic::options::OptionKeys::out::file::silent ];
+	}
 }
 
 bool SilentFilePoseOutputter::job_has_already_completed( LarvalJob const & /*job*/ ) const
 {
-	// STUBBED OUT!
 	return false;
 }
 
 
 void SilentFilePoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/ ) const
 {
-	// STUBBED OUT!
+	// This is not a behavior supported by the SilentFilePoseOutputter
 }
 
 std::string
@@ -121,56 +113,40 @@ SilentFilePoseOutputter::class_key() const
 void
 SilentFilePoseOutputter::write_output_pose(
 	LarvalJob const & job,
-	utility::options::OptionCollection const & /*job_options*/,
+	utility::options::OptionCollection const & job_options,
+	utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 	core::pose::Pose const & pose )
 {
-	std::string out_fname = output_silent_name( job );
 
-	//StructFileRepOptionsOP sfr_opts( new StructFileRepOptions( job_options ) );
+	if ( ! opts_ ) {
+		initialize_sf_options( job_options, tag );
+	}
 
-	// What kind of silent struct? Figure out here.
-	// For now, assume binary--it'll never fail.
+	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *opts_ );
+	std::string output_tag = ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
+		+ job.nstruct_suffixed_job_tag();
+	ss->fill_struct( pose, output_tag );
+	buffered_structs_.push_back( ss );
 
-	// Just add pose to buffer!
-	buffered_structs_.push_back( std::make_pair( BinarySilentStructOP( new BinarySilentStruct ), job.job_tag() ) );
-	buffered_structs_[ buffered_structs_.size() ].first->fill_struct( pose, out_fname );
-	//core::io::pdb::dump_pdb( pose, "", true, true, ostream, out_fname, sfr_opts );
+	if ( buffered_structs_.size() >= buffer_limit_ ) {
+		flush();
+	}
+
 }
 
-std::string
-SilentFilePoseOutputter::output_silent_name( LarvalJob const & job ) const
+void SilentFilePoseOutputter::flush()
 {
-	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) ) + job.job_tag() + "_" +
-		ObjexxFCL::lead_zero_string_of( job.nstruct_index(), std::max( 4, int( std::log10( job.nstruct_max() ))) ) +
-		".pdb";
-}
-
-void SilentFilePoseOutputter::flush() {
-
-	using utility::vector1;
-	using utility::file::FileName;
-
-	typedef std::map< std::string, SilentFileData > SFD_MAP;
-	typedef vector1< std::pair< SilentStructOP, FileName > >::iterator iter;
-	SFD_MAP sfds;
-
-	// There'll be an option read that involves disabling writing any structures;
-	// look for that -- in jd2 it set bWriteNoStructures_
-
-	//tr.Debug << "writing " << buffered_structs_.size() << " structs." << std::endl;
-	for ( iter it = buffered_structs_.begin(), end = buffered_structs_.end(); it != end; ++it ) {
-		//tr.Debug << "writing struct " << ss->decoy_tag() << std::endl;
-		//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
-		//SilentStructOP ss = it->first;
-		sfds[ it->second ].add_structure( (*it->first) );
+	if ( ! opts_ ) {
+		debug_assert( buffered_structs_.size() == 0 );
+		return;
 	}
-	for ( SFD_MAP::iterator it = sfds.begin(); it!=sfds.end(); ++it ) {
-		it->second.write_all( it->first );
+
+	core::io::silent::SilentFileData sfd( *opts_ );
+	for ( auto iter : buffered_structs_ ) {
+		sfd.add_structure( *iter );
 	}
-	// very important to clear after writing!
+	sfd.write_all( fname_out_ );
 	buffered_structs_.clear();
-
-	//tr.Debug << "currently have " << saved_structs_.size() << " structs." << std::endl;
 }
 
 std::string
@@ -180,23 +156,17 @@ void
 SilentFilePoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 
-	XMLSchemaRestriction string_w_one_dollarsign;
-	string_w_one_dollarsign.name( "string_w_one_dollarsign" );
-	string_w_one_dollarsign.base_type( xs_string );
-	// this reads "anything but a dollar sign or nothing followed by a dollar sign followed by anything but a dollar sign or nothing
-	string_w_one_dollarsign.add_restriction( xsr_pattern, "[^$]*$[^$]*" );
-	xsd.add_top_level_element( string_w_one_dollarsign );
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "filename", xs_string , "The name of the output silent file that should be written to." )
+		+ XMLSchemaAttribute( "buffer_limit", xsct_non_negative_integer, "The number of Poses that should be held in memory between each write to disk" );
+	core::io::silent::SilentFileOptions::append_attributes_for_tag_parsing( xsd, attributes );
 
-	AttributeList output_silent_attributes;
-	output_silent_attributes
-		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "filename_pattern", "string_w_one_dollarsign" , "XRW TO DO" )
-		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" );
 	XMLSchemaComplexTypeGenerator output_silent;
 	output_silent.element_name( keyname() )
-		.description( "XRW TO DO" )
+		.description( "Controls how Poses are writen to silent files" )
 		.complex_type_naming_func( & PoseOutputterFactory::complex_type_name_for_pose_outputter )
-		.add_attributes( output_silent_attributes )
+		.add_attributes( attributes )
 		.write_complex_type_to_schema( xsd );
 }
 
@@ -208,21 +178,34 @@ SilentFilePoseOutputter::list_options_read(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	StructFileRepOptions::list_options_read( read_options );
-	read_options +
+	core::io::silent::SilentFileOptions::list_read_options( read_options );
+	read_options
 		+ out::silent_gz
-		+ out::file::atom_tree_diff
-		+ out::file::atom_tree_diff_bb
-		+ out::file::atom_tree_diff_sc
-		+ out::file::atom_tree_diff_bl
-		+ out::file::silent
-		+ out::file::silent_struct_type
-		+ out::file::silent_print_all_score_headers
-		+ out::file::raw /*(?)*/
-		+ out::file::weight_silent_scores
-		+ out::file::silent_preserve_H /*(secretly pdb?)*/
-		+ run::no_prof_info_in_silentout;
+		+ out::file::silent;
 }
+
+void
+SilentFilePoseOutputter::initialize_sf_options(
+	utility::options::OptionCollection const & job_options,
+	utility::tag::TagCOP tag // possibly null-pointing tag pointer
+)
+{
+	using namespace core::io::silent;
+	opts_ = SilentFileOptionsOP( new SilentFileOptions( job_options ) );
+	if ( tag ) {
+		opts_->read_from_tag( tag );
+		fname_out_ = tag->getOption< std::string >( "filename" );
+		if ( tag->hasOption( "buffer_limit" ) ) {
+			buffer_limit_ = tag->getOption< core::Size >( "buffer_limit" );
+		}
+	} else {
+		using namespace basic::options::OptionKeys;
+		fname_out_ = job_options[ out::file::silent ]();
+		// buffer limit?
+	}
+
+}
+
 
 PoseOutputterOP SilentFilePoseOutputterCreator::create_outputter() const
 {

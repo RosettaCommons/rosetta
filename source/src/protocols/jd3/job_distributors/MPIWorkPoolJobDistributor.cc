@@ -30,6 +30,7 @@
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/JobResult.hh>
+#include <protocols/jd3/deallocation/DeallocationMessage.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -45,6 +46,7 @@
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
+#include <cereal/types/list.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
 
@@ -60,6 +62,7 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	n_archives_( basic::options::option[ basic::options::OptionKeys::jd3::n_archive_nodes ] ),
 	store_on_node0_( n_archives_ == 0 && ! basic::options::option[ basic::options::OptionKeys::jd3::do_not_archive_on_node0 ]() ),
 	n_results_per_archive_( n_archives_ + 1 ),
+	first_call_to_determine_job_list_( true ),
 	default_retry_limit_( 1 ),
 	complete_( false )
 {
@@ -68,6 +71,7 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 
 	if ( mpi_rank_ == 0 ) {
 		nodes_spun_down_.resize( mpi_nprocs_-1, false );
+		deallocation_messages_for_node_.resize( mpi_nprocs_ );
 	}
 
 }
@@ -134,9 +138,11 @@ MPIWorkPoolJobDistributor::go_master()
 			break;
 		case mpi_work_pool_jd_failed_to_retrieve_job_result :
 			// Fatal error: throw an exception and shut down execution
+			job_queen_->flush();
 			process_failed_to_retrieve_job_result_request( worker_node );
 			break;
 		case mpi_work_pool_jd_error :
+			job_queen_->flush();
 			throw utility::excn::EXCN_Msg_Exception( "Received error from node " +
 				utility::to_string( worker_node ) + ": " + utility::receive_string_from_node( worker_node ) );
 			break;
@@ -174,6 +180,8 @@ MPIWorkPoolJobDistributor::go_master()
 				+ ": " + utility::to_string( message ) + " in final spin-down loop" );
 		}
 	}
+
+	job_queen_->flush();
 
 }
 
@@ -219,6 +227,9 @@ MPIWorkPoolJobDistributor::go_worker()
 		switch ( message ) {
 		case mpi_work_pool_jd_new_job_available :
 			retrieve_job_and_run();
+			break;
+		case mpi_work_pool_jd_deallocation_message :
+			retrieve_deallocation_messages_and_new_job_and_run();
 			break;
 		case mpi_work_pool_jd_spin_down :
 			done = true;
@@ -503,6 +514,10 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 {
 	debug_assert( ! jobs_for_current_digraph_node_.empty() );
 
+	if ( ! deallocation_messages_for_node_[ worker_node ].empty() ) {
+		send_deallocation_messages_to_node( worker_node );
+	}
+
 	// First tell the worker node that we do indeed have a job for them to work on/
 	// The other option is that we are going to tell the worker to spin down.
 	utility::send_integer_to_node( worker_node, mpi_work_pool_jd_new_job_available );
@@ -558,6 +573,19 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	}
 }
 
+void
+MPIWorkPoolJobDistributor::send_deallocation_messages_to_node( int worker_node )
+{
+	for ( core::Size which_message : deallocation_messages_for_node_[ worker_node ] ) {
+		utility::send_integer_to_node( worker_node, mpi_work_pool_jd_deallocation_message );
+		utility::send_string_to_node( worker_node, deallocation_messages_[ which_message ] );
+		core::Size n_remaining = --n_remaining_nodes_for_deallocation_message_[ which_message ];
+		if ( n_remaining == 0 ) {
+			deallocation_messages_[ which_message ] = std::string();
+		}
+	}
+	deallocation_messages_for_node_[ worker_node ].clear();
+}
 
 void
 MPIWorkPoolJobDistributor::note_job_no_longer_running( Size job_id )
@@ -706,6 +734,15 @@ void
 MPIWorkPoolJobDistributor::query_job_queen_for_more_jobs_for_current_node()
 {
 	debug_assert( current_digraph_node_ );
+
+	if ( ! first_call_to_determine_job_list_ ) {
+		std::list< deallocation::DeallocationMessageOP > messages = job_queen_->deallocation_messages();
+		if ( ! messages.empty() ) {
+			store_deallocation_messages( messages );
+		}
+	}
+
+	first_call_to_determine_job_list_ = false;
 
 	int const maximum_jobs_to_hold_in_memory = 1000; // TODO: this becomes an option.
 	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list(
@@ -1024,6 +1061,23 @@ MPIWorkPoolJobDistributor::assign_jobs_to_idling_nodes()
 	}
 }
 
+void
+MPIWorkPoolJobDistributor::store_deallocation_messages( std::list< deallocation::DeallocationMessageOP > const & messages )
+{
+	std::ostringstream oss;
+	{ // scope
+		cereal::BinaryOutputArchive arc( oss );
+		arc( messages );
+	}
+
+	deallocation_messages_.push_back( oss.str() );
+	n_remaining_nodes_for_deallocation_message_.push_back( mpi_nprocs_ - n_archives_ - 1 );
+	for ( core::Size ii = 1+n_archives_; ii < (core::Size) mpi_nprocs_; ++ii ) {
+		deallocation_messages_for_node_[ ii ].push_back( deallocation_messages_.size() );
+	}
+
+}
+
 
 void
 MPIWorkPoolJobDistributor::throw_after_failed_to_retrieve_job_result(
@@ -1123,6 +1177,36 @@ MPIWorkPoolJobDistributor::retrieve_job_and_run()
 		worker_send_fail_w_message_to_master( larval_job, "Unhandled exception!" );
 	}
 }
+
+void
+MPIWorkPoolJobDistributor::retrieve_deallocation_messages_and_new_job_and_run()
+{
+	// ok, we've already received the deallocation message
+	bool more_deallocation_messages_remaining( true );
+	while ( more_deallocation_messages_remaining ) {
+		std::list< deallocation::DeallocationMessageOP > messages;
+		{ // scope
+			std::string srlz_deallocation_msg = utility::receive_string_from_node( 0 );
+			std::istringstream iss( srlz_deallocation_msg );
+			cereal::BinaryInputArchive arc( iss );
+			arc( messages );
+		}
+
+		for ( auto msg : messages ) {
+			job_queen_->process_deallocation_message( msg );
+		}
+
+		core::Size next_mpi_msg = utility::receive_integer_from_node( 0 );
+		if ( next_mpi_msg == mpi_work_pool_jd_new_job_available ) {
+			more_deallocation_messages_remaining = false;
+		} else {
+			debug_assert( next_mpi_msg == mpi_work_pool_jd_deallocation_message );
+		}
+	}
+
+	retrieve_job_and_run();
+}
+
 
 std::pair< LarvalJobOP, utility::vector1< JobResultCOP > >
 MPIWorkPoolJobDistributor::retrieve_job_maturation_data()

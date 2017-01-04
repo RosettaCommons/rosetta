@@ -204,9 +204,8 @@ void RigidBodySilentStruct::fill_pose(
 	if ( pose.size() != one_letter_sequence().length() ) {
 		utility_exit_with_message( "RuntimeAssert failed: nres() == one_letter_sequence().length()" );
 	}
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	if ( option[ in::file::keep_input_scores ]() ) {
+
+	if ( options().keep_input_scores() ) {
 		tr.Debug << "keep input scores... call energies into pose " << std::endl;
 		energies_into_pose( pose );
 	}

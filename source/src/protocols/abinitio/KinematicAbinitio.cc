@@ -29,6 +29,7 @@
 
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/types.hh>
 
@@ -278,7 +279,8 @@ KinematicAbinitio::dump_jump_log( core::pose::Pose& pose, std::string const& fil
 	if ( get_native_pose() ) {
 		pose::Pose native_pose( *get_native_pose() );
 		native_pose.fold_tree( kinematics().sampling_fold_tree() );
-		core::io::silent::ProteinSilentStruct pss;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::ProteinSilentStruct pss(opts);
 		pss.fill_struct( pose, "jump_log" );
 		evaluate_pose( pose, "jump_log", pss );
 
@@ -315,7 +317,8 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 		}
 
 		//retrieve pose
-		io::silent::SilentFileData sfd;
+		io::silent::SilentFileOptions opts;
+		io::silent::SilentFileData sfd(opts);
 		if ( !sfd.read_file( filename ) ) {
 			utility_exit_with_message( "resampling for " + tag + " failed, problem reading silent file " + filename );
 		}

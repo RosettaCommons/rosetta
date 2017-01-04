@@ -44,6 +44,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -114,7 +115,8 @@ main( int argc, char* argv [] ) {
 		scorefxn->set_energy_method_options( *emopts );
 
 		// Initialize silent file data
-		SilentFileData sfd;
+		SilentFileOptions opts; // initialized from the command line
+		SilentFileData sfd( opts );
 		ScoreTypes const scoretypes( scorefxn->get_nonzero_weighted_scoretypes() );
 		EnergyMap weights( scorefxn->weights() );
 
@@ -133,7 +135,7 @@ main( int argc, char* argv [] ) {
 			scorefxn->eval_intrares_energy(pose->residue(ii), *pose, unwt_residue1b);
 			EnergyMap residue1b( unwt_residue1b * weights );
 
-			SilentStructOP ss( new ScoreFileSilentStruct );
+			SilentStructOP ss( new ScoreFileSilentStruct(opts) );
 			ss->decoy_tag( tag + "_" + string_of(ii) + "_onebody" );
 			ss->add_string_value( "pose_id", tag );
 			ss->add_string_value( "resi1", string_of(ii) );
@@ -176,7 +178,7 @@ main( int argc, char* argv [] ) {
 				//Output
 				if ( !output ) { continue; }
 
-				SilentStructOP ss( new ScoreFileSilentStruct );
+				SilentStructOP ss( new ScoreFileSilentStruct(opts) );
 				ss->decoy_tag( tag + "_" + string_of(ii) + "_" + string_of(jj) );
 				ss->add_string_value( "pose_id", tag );
 				ss->add_string_value( "resi1", string_of(ii) );

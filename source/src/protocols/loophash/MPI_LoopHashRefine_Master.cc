@@ -27,6 +27,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -267,9 +268,10 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
-		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	ss->fill_struct( start_pose );
 	ss->copy_scores( *start_struct );
 

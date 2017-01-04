@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/StandardJobQueen.hh
+/// @file   protocols/jd3/standard/StandardJobQueen.hh
 /// @brief  class declaration for StandardJobQueen
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_StandardJobQueen_hh
-#define INCLUDED_protocols_jd3_StandardJobQueen_hh
+#ifndef INCLUDED_protocols_jd3_standard_StandardJobQueen_hh
+#define INCLUDED_protocols_jd3_standard_StandardJobQueen_hh
 
 // unit headers
-#include <protocols/jd3/StandardJobQueen.fwd.hh>
+#include <protocols/jd3/standard/StandardJobQueen.fwd.hh>
 
 // package headers
 #include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/PoseInputSource.fwd.hh>
-#include <protocols/jd3/InnerLarvalJob.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.fwd.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
@@ -50,6 +50,7 @@
 
 namespace protocols {
 namespace jd3 {
+namespace standard {
 
 class PreliminaryLarvalJob
 {
@@ -59,46 +60,47 @@ public:
 	PreliminaryLarvalJob( PreliminaryLarvalJob const & src );
 	PreliminaryLarvalJob & operator = ( PreliminaryLarvalJob const & rhs );
 
-	InnerLarvalJobOP inner_job;
+	StandardInnerLarvalJobOP inner_job;
 	utility::tag::TagCOP job_tag;
 	utility::options::OptionCollectionCOP job_options;
+	pose_inputters::PoseInputterOP pose_inputter;
 };
 
 typedef std::list< PreliminaryLarvalJob > PreliminaryLarvalJobs;
 
-/// @brief A small class to figure out which Poses do not need to be loaded
-/// a second time because they have already been read in. This class mainly
-/// stores the PoseInputSource and the set of options that are used to turn
-/// a file into a Pose. I don't imagine this class sticking around that long;
-/// it is only truely compatible with PDB/mmCIF file reading.
-class InputSourceAndImportPoseOptions
-{
-public:
-	InputSourceAndImportPoseOptions();
-	InputSourceAndImportPoseOptions(
-		PoseInputSource const & input_source,
-		core::import_pose::ImportPoseOptions const & options
-	);
-	InputSourceAndImportPoseOptions( InputSourceAndImportPoseOptions const & );
-
-	virtual ~InputSourceAndImportPoseOptions();
-
-	InputSourceAndImportPoseOptions & operator = ( InputSourceAndImportPoseOptions const & rhs );
-
-	bool operator == ( InputSourceAndImportPoseOptions const & ) const;
-	bool operator <  ( InputSourceAndImportPoseOptions const & ) const;
-
-	PoseInputSource const & input_source() const;
-	void input_source( PoseInputSource const & setting );
-
-	core::import_pose::ImportPoseOptions const & import_pose_options() const;
-	void import_pose_options( core::import_pose::ImportPoseOptions const & setting );
-
-private:
-	PoseInputSourceOP input_source_;
-	core::import_pose::ImportPoseOptionsOP import_pose_options_;
-
-};
+///// @brief A small class to figure out which Poses do not need to be loaded
+///// a second time because they have already been read in. This class mainly
+///// stores the PoseInputSource and the set of options that are used to turn
+///// a file into a Pose. I don't imagine this class sticking around that long;
+///// it is only truely compatible with PDB/mmCIF file reading.
+//class InputSourceAndImportPoseOptions
+//{
+//public:
+//	InputSourceAndImportPoseOptions();
+//	InputSourceAndImportPoseOptions(
+//		PoseInputSource const & input_source,
+//		core::import_pose::ImportPoseOptions const & options
+//	);
+//	InputSourceAndImportPoseOptions( InputSourceAndImportPoseOptions const & );
+//
+//	virtual ~InputSourceAndImportPoseOptions();
+//
+//	InputSourceAndImportPoseOptions & operator = ( InputSourceAndImportPoseOptions const & rhs );
+//
+//	bool operator == ( InputSourceAndImportPoseOptions const & ) const;
+//	bool operator <  ( InputSourceAndImportPoseOptions const & ) const;
+//
+//	PoseInputSource const & input_source() const;
+//	void input_source( PoseInputSource const & setting );
+//
+//	core::import_pose::ImportPoseOptions const & import_pose_options() const;
+//	void import_pose_options( core::import_pose::ImportPoseOptions const & setting );
+//
+//private:
+//	PoseInputSourceOP input_source_;
+//	core::import_pose::ImportPoseOptionsOP import_pose_options_;
+//
+//};
 
 /// @brief The %StandardJobQueen is meant to handle the most common form of Rosetta jobs where
 /// a protocol is applied to a single input structure to generate a single output structure.
@@ -166,6 +168,14 @@ public:
 	void determine_preliminary_job_list_from_xml_file( std::string const & job_def_string );
 
 	void flush() override;
+
+	std::list< deallocation::DeallocationMessageOP >
+	deallocation_messages() override;
+
+	/// @brief A deallocation message first sent to the JobDistributor on this host originating from
+  /// a remote JobQueen
+	void
+	process_deallocation_message( deallocation::DeallocationMessageOP message ) override;
 
 protected:
 
@@ -282,23 +292,23 @@ protected:
 	/// This funciton is non-const so that the derived class can even track which WT sequences it
 	/// has seen so that after the first WT sequence for a particular input structure, it only expands
 	/// out the mutant sequences if many mutants on that input.
-	virtual InnerLarvalJobs refine_preliminary_job( PreliminaryLarvalJob const & prelim_job );
+	virtual StandardInnerLarvalJobs refine_preliminary_job( PreliminaryLarvalJob const & prelim_job );
 
-	/// @brief Expand an InnerLarvalJob into a full set of LarvalJobs, creating nstruct LarvalJob objects
+	/// @brief Expand a StandardInnerLarvalJob into a full set of LarvalJobs, creating nstruct LarvalJob objects
 	/// The base class implementation of this function invokes the create_larval_job factory method so
 	/// that dervied JobQueens can ensure the instantiation of derived LarvalJobs.
-	virtual LarvalJobs expand_job_list( InnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create );
+	virtual LarvalJobs expand_job_list( StandardInnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create );
 
 	/// @brief Factory method for derived classes if they wish to rely on classes derived
-	/// from InnerLarvalJob.  This is invoked by the StandardJobQueen in her determine_job_list
-	/// method just as jobs are prepared. If the base InnerLarvalJob class is desired, then do
+	/// from StandardInnerLarvalJob.  This is invoked by the StandardJobQueen in her determine_job_list
+	/// method just as jobs are prepared. If the base StandardInnerLarvalJob class is desired, then do
 	/// not override this method.
-	virtual InnerLarvalJobOP create_inner_larval_job( core::Size nstruct ) const;
+	virtual StandardInnerLarvalJobOP create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const;
 
 	/// @brief Factory method for derived classes if they wish to rely on classes derived
 	/// from LarvalJob.  This is invoked by the StandardJobQueen in the expand_job_list method.
 	/// If the base LarvalJob class is desired, then do not override this method.
-	virtual LarvalJobOP create_larval_job( InnerLarvalJobOP job, core::Size nstruct_index, core::Size larval_job_index );
+	virtual LarvalJobOP create_larval_job( StandardInnerLarvalJobOP job, core::Size nstruct_index, core::Size larval_job_index );
 
 	/// @brief Factory method for derived classes if they wish to rely on a class besides the
 	/// MoverAndPoseJob, which is returned by the %StandardJobQueen's implementation of this
@@ -316,12 +326,29 @@ protected:
 	) = 0;
 
 	/// @brief The StandardJobQueen cannot readily manage the complexity of organizing
-	/// larval jobs for JobDAG nodes beyond the first node. All job-creation logic beyond
-	/// the first node is the responsibility of the derived JobQueen. The %StandardJobQueen
+	/// larval jobs for JobDAG nodes beyond the preliminary nodes. All job-creation logic beyond
+	/// the first set of nodes is the responsibility of the derived JobQueen. The %StandardJobQueen
 	/// provides a noop implementation of this function.
+	///
+	/// @details For the sake of outputting structures with the properties you want at the
+	/// completion of a multi-stage trajectory, derived job queens with a tree-like job-progression
+	/// (i.e. only one parent job for each child job) should copy the jobdef_tag into
+	/// new InnerLarvalJobs from the parent job. The StandardJobQueen does not track parentage
+	/// so it cannot know that job 873 originated from job 4 when trying to figure out how to output
+	/// the structure for job 873. The derived job queen should also ensure that the "outputter"
+	/// data from the parent job is copied into child job.
 	virtual
 	LarvalJobs
 	next_batch_of_larval_jobs_for_job_node( core::Size job_dag_node_index, core::Size max_njobs );
+
+	/// @brief If the derived class has deallocation messages that it needs to broadcast to
+	/// remote nodes and then to process on those remote nodes, then the %StanardJobQueen will
+	/// pass them along to the derived job queen using this function.
+	virtual
+	void
+	derived_process_deallocation_message(
+		deallocation::DeallocationMessageOP message
+	);
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// The following functions are to be used by derived JobQueens to signal to the
@@ -359,23 +386,23 @@ protected:
 
 	// Of course the job inputter might vary from job to job!
 	pose_inputters::PoseInputterOP
-	pose_inputter_for_job( InnerLarvalJob const & inner_job ) const;
+	pose_inputter_for_job( StandardInnerLarvalJob const & inner_job ) const;
 
 	// Of course the job outputter might vary from job to job!
 	pose_outputters::PoseOutputterOP
-	pose_outputter_for_job( InnerLarvalJob const & innerJob );
+	pose_outputter_for_job( StandardInnerLarvalJob const & innerJob );
 
 	pose_outputters::PoseOutputterOP
-	pose_outputter_for_job( InnerLarvalJob const & innerJob, utility::options::OptionCollection const & job_options );
+	pose_outputter_for_job( StandardInnerLarvalJob const & innerJob, utility::options::OptionCollection const & job_options );
 
 	std::list< pose_outputters::SecondaryPoseOutputterOP >
-	secondary_outputters_for_job( InnerLarvalJob const & innerJob, utility::options::OptionCollection const & job_options );
+	secondary_outputters_for_job( StandardInnerLarvalJob const & innerJob, utility::options::OptionCollection const & job_options );
 
 	core::Size
 	nstruct_for_job( utility::tag::TagCOP job_tag ) const;
 
 	utility::options::OptionCollectionOP
-	options_for_job( InnerLarvalJob const & inner_job ) const;
+	options_for_job( StandardInnerLarvalJob const & inner_job ) const;
 
 	utility::options::OptionCollectionOP
 	options_from_tag( utility::tag::TagCOP job_options_tags ) const;
@@ -408,7 +435,7 @@ private:
 
 	pose_outputters::SecondaryPoseOutputterOP
 	secondary_outputter_for_job(
-		InnerLarvalJob const & inner_job,
+		StandardInnerLarvalJob const & inner_job,
 		utility::options::OptionCollection const & job_options,
 		std::string const & secondary_outputter_type
 	);
@@ -429,12 +456,14 @@ private:
 	// Often, you want to use the same pose outputter for multiple jobs.
 	std::map< std::string, pose_outputters::PoseOutputterOP > pose_outputters_;
 
-	bool job_definition_file_read_;
+	bool required_initialization_performed_;
 	utility::tag::TagCOP job_definition_file_tags_;
 	utility::tag::TagCOP common_block_tags_;
 
 	JobDigraphOP job_graph_;
 
+	// The index of the last larval job that we have created. Incremented within
+	// expand_job_list()
 	Size larval_job_counter_;
 
 	// For the first node in the JobDAG, the %StandardJobQueen will spool out LarvalJobs
@@ -445,7 +474,7 @@ private:
 	// a set of indices into a while loop for LarvalJob construction.
 	bool preliminary_larval_jobs_determined_;
 	utility::vector1< PreliminaryLarvalJob > preliminary_larval_jobs_;
-	InnerLarvalJobs inner_larval_jobs_for_curr_prelim_job_;
+	StandardInnerLarvalJobs inner_larval_jobs_for_curr_prelim_job_;
 	Size curr_inner_larval_job_index_;
 	Size njobs_made_for_curr_inner_larval_job_;
 	utility::vector1< core::Size > preliminary_job_node_inds_;
@@ -477,12 +506,22 @@ private:
 
 	// a temporary solution to the problem of not wanting to load the same pose repeatedly.
 	// only works for PDBs currently -- a more general solution is required.
-	std::map< InputSourceAndImportPoseOptions, core::pose::PoseOP > previously_read_in_poses_;
+	// std::map< InputSourceAndImportPoseOptions, core::pose::PoseOP > previously_read_in_poses_;
+
+	// Count how many input poses we've processed.
+	core::Size input_pose_counter_;
+
+	// The set of Poses that have been read in and are currently being held in memory.
+	std::map< core::Size, core::pose::PoseOP > input_pose_index_map_;
+
+	// For each pose that's still in memory, what is the index of the last job
+	// that will use it as the starting structure?
+	std::map< core::Size, core::Size > last_job_for_input_pose_;
 
 };
 
 
-
+} // namespace standard
 } // namespace jd3
 } // namespace protocols
 

@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/pose/Pose.hh>
@@ -119,13 +120,14 @@ public:
 
 		utility::file::file_delete( silent_outfile );
 
-		core::io::silent::SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 
-		core::io::silent::ProteinSilentStruct pss( *start_pose, "tag", true );
+		ProteinSilentStruct pss( opts, *start_pose, "tag", true );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 		sfd.read_file( silent_outfile );
-		core::io::silent::SilentFileData::iterator iter = sfd.begin();
+		SilentFileData::iterator iter = sfd.begin();
 		TS_ASSERT( iter->decoy_tag() == "tag" );
 		iter->fill_pose( restored_pose, *rsd_set );
 
@@ -153,7 +155,7 @@ public:
 			}
 		}
 
-		core::io::silent::ProteinSilentStruct original( *start_pose, "start", false );
+		ProteinSilentStruct original( opts, *start_pose, "start", false );
 		original.fill_pose( *start_pose, *rsd_set );
 
 		Real rms_to_restored = scoring::CA_rmsd( *start_pose, restored_pose );
@@ -168,17 +170,18 @@ public:
 		// expression of affection for Oliver Lange.
 		using namespace core::io::silent;
 
+		SilentFileOptions opts;
 		std::string const silent_outfile( "test.silent.out" );
 		utility::file::file_delete( silent_outfile );
 
-		SilentStructOP ss1( new ProteinSilentStruct( *start_pose, "ss1", false ) );
-		SilentStructOP ss2( new ProteinSilentStruct( *start_pose, "ss2", false ) );
+		SilentStructOP ss1( new ProteinSilentStruct( opts, *start_pose, "ss1", false ) );
+		SilentStructOP ss2( new ProteinSilentStruct( opts, *start_pose, "ss2", false ) );
 		ss1->add_energy( "energy1",     1.0 );
 		ss1->add_energy( "energy2",     2.0 );
 		ss2->add_energy( "irrelevant", 10.0 );
 		ss2->add_energy( "energy2",     5.0 );
 
-		SilentFileData sfd;
+		SilentFileData sfd( opts );
 		sfd.strict_column_mode( true );
 
 		sfd.write_silent_struct( *ss1, silent_outfile );
@@ -206,8 +209,9 @@ public:
 		utility::file::file_delete( silent_outfile );
 
 		core::pose::Pose restored_pose;
-		SilentStructOP ss1( new ProteinSilentStruct( *start_pose, "ss1", false ) );
-		SilentStructOP ss2( new ProteinSilentStruct( *start_pose, "ss2", false ) );
+		SilentFileOptions opts;
+		SilentStructOP ss1( new ProteinSilentStruct( opts, *start_pose, "ss1", false ) );
+		SilentStructOP ss2( new ProteinSilentStruct( opts, *start_pose, "ss2", false ) );
 
 		// test initialization of arbitrary energies into the pose
 		ss1->clear_energies();
@@ -238,10 +242,11 @@ public:
 		std::string const silent_outfile( "test.silent.out" );
 		utility::file::file_delete( silent_outfile );
 
-		core::io::silent::SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 		core::pose::Pose restored_pose;
-		SilentStructOP ss1( new ProteinSilentStruct( *start_pose, "ss1", false ) );
-		SilentStructOP ss2( new ProteinSilentStruct( *start_pose, "ss2", false ) );
+		SilentStructOP ss1( new ProteinSilentStruct( opts, *start_pose, "ss1", false ) );
+		SilentStructOP ss2( new ProteinSilentStruct( opts, *start_pose, "ss2", false ) );
 
 		utility::file::file_delete( silent_outfile );
 		sfd.write_silent_struct( *ss1, silent_outfile );
@@ -267,11 +272,12 @@ public:
 		Size const nstruct( 20 );
 		std::string const silent_outfile( "test.silent.out" );
 		utility::file::file_delete( silent_outfile );
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
 			std::string const tag( "S" + string_of(ii) );
-			SilentStructOP ss( new ProteinSilentStruct( *start_pose, tag, false ) );
+			SilentStructOP ss( new ProteinSilentStruct( opts, *start_pose, tag, false ) );
 			ss->add_energy( "score", ii );
 			sfd.add_structure( ss );
 		}
@@ -298,11 +304,12 @@ public:
 		Size const nstruct( 20 );
 		std::string const silent_outfile( "test.silent.out" );
 		utility::file::file_delete( silent_outfile );
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
 			std::string const tag( "S" + string_of(ii) );
-			SilentStructOP ss( new ProteinSilentStruct( *start_pose, tag, false ) );
+			SilentStructOP ss( new ProteinSilentStruct( opts, *start_pose, tag, false ) );
 			ss->add_energy( "score", ii );
 			sfd.add_structure( ss );
 		}
@@ -324,14 +331,15 @@ public:
 		using namespace core::pose;
 		using namespace core::io::silent;
 		core::pose::Pose restored_pose;
-		SilentStructOP ss( new ProteinSilentStruct );
+		SilentFileOptions opts;
+		SilentStructOP ss( new ProteinSilentStruct( opts ) );
 
 		ss->add_string_value( "short_key", "tag" );
 		TS_ASSERT( ss->get_comment( "short_key" ) == "" );
 		TS_ASSERT( ss->has_energy( "short_key" ) );
 		TS_ASSERT_DELTA( ss->get_energy( "short_key" ), 0.0, 1e-5 );
 		// add checks for filling Pose here.
-		ss = SilentStructOP( new ProteinSilentStruct( *start_pose, "tag", false ) );
+		ss = SilentStructOP( new ProteinSilentStruct( opts, *start_pose, "tag", false ) );
 
 		ss->add_comment( "comment", "tag" );
 		TS_ASSERT_EQUALS( ss->get_comment( "comment" ), "tag" );
@@ -343,7 +351,8 @@ public:
 		using namespace core::io::silent;
 		Pose pose(*start_pose);
 		add_comment( pose, "comment", "tag" );
-		SilentStructOP ss( new ProteinSilentStruct );
+		SilentFileOptions opts;
+		SilentStructOP ss( new ProteinSilentStruct( opts ) );
 		ss->fill_struct(pose);
 
 		std::string retval;
@@ -363,14 +372,15 @@ public:
 
 		utility::file::file_delete( silent_outfile );
 
-		core::io::silent::SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 
-		core::io::silent::ProteinSilentStruct pss( *centroid_pose_, "tag", true );
+		ProteinSilentStruct pss( opts, *centroid_pose_, "tag", true );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 		TS_ASSERT( !(centroid_pose_->is_fullatom()) );
 		sfd.read_file( silent_outfile );
-		core::io::silent::SilentFileData::iterator iter = sfd.begin();
+		SilentFileData::iterator iter = sfd.begin();
 		TS_ASSERT( iter->decoy_tag() == "tag" );
 		iter->fill_pose( restored_pose );
 
@@ -391,7 +401,7 @@ public:
 			);
 		}
 
-		core::io::silent::ProteinSilentStruct original( *centroid_pose_, "start", false );
+		ProteinSilentStruct original( opts, *centroid_pose_, "start", false );
 		original.fill_pose( *centroid_pose_ );
 
 		Real rms_to_restored = scoring::CA_rmsd( *centroid_pose_, restored_pose );

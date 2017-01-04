@@ -98,6 +98,8 @@
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
+
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -509,7 +511,8 @@ align_pdbs(){
 
 	std::cout << "alignment_RMSD_cutoff = " << alignment_RMSD_cutoff << std::endl;
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 	std::string silent_file = "aligned_to_" + get_tag_from_pdb_filename( static_pdb_tag ) + ".out";
 
 	pose::Pose static_pose;
@@ -551,7 +554,7 @@ align_pdbs(){
 
 		Real const align_rmsd = check_alignment_RMSD_cutoff( static_pose, static_tag_name, moving_pose, get_tag_from_pdb_filename( moving_pdb_tag ), alignment_res_pair_list, align_base_only, alignment_RMSD_cutoff );
 
-		BinarySilentStruct s( moving_pose, output_moving_pdb_tag );
+		BinarySilentStruct s( opts, moving_pose, output_moving_pdb_tag );
 		if ( align_base_only ) {
 			s.add_energy( "align_base_rmsd", align_rmsd );
 		} else {
@@ -1319,7 +1322,8 @@ pdb_to_silent_file(){
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 
 	pose::Pose viewer_pose;
 
@@ -1395,7 +1399,7 @@ pdb_to_silent_file(){
 
 		std::cout << "converting pdb_file: " << pdb_file << " to silent_struct " << tag << std::endl;
 
-		BinarySilentStruct s( pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 
 		if ( option[ list_of_energy ].user() ) {
 			s.add_energy( "score", list_of_pose_energy[n] );

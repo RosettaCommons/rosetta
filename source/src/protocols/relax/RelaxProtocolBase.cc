@@ -59,6 +59,7 @@
 
 //*only for debug structures
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -482,11 +483,12 @@ void RelaxProtocolBase::output_debug_structure( core::pose::Pose & pose, std::st
 			silent_file = output_file_name + silent_file;
 		} else silent_file = "bla"+silent_file;
 
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 		//filename might have been changed -- e.g., to also have an MPI rank in there
 
 		//  ProteinSilentStruct pss;
-		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		pss->fill_struct( pose, get_current_tag() );
 
 		sfd.write_silent_struct( *pss, silent_file, false /* bWriteScoresOnly */ );

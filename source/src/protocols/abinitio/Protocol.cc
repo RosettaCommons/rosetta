@@ -21,6 +21,7 @@
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -99,11 +100,12 @@ protocols::abinitio::Protocol::output_debug_structure( core::pose::Pose & pose, 
 			silent_file = get_current_job()->output_file_name()+silent_file;
 		} else silent_file = silentout_file_name_+silent_file;
 
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd(opts);
 		//filename might have been changed -- e.g., to also have an MPI rank in there
 
 		//  ProteinSilentStruct pss;
-		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out(opts);
 		pss->fill_struct( pose, get_current_tag() );
 
 		evaluate_pose( pose, get_current_tag(), *pss );

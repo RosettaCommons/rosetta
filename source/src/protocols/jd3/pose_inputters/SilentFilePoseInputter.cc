@@ -22,15 +22,20 @@
 ///Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/options/keys/OptionKey.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 ///C++ headers
 #include <string>
@@ -63,166 +68,222 @@ bool SilentFilePoseInputter::job_available_on_command_line() const
 	return option[ in::file::silent ].user();
 }
 
-/*
-/// @brief this function returns the SilentStruct that belongs to the given job
-core::io::silent::SilentStruct const&
-SilentFilePoseInputter::struct_from_job( JobOP job ) {
-	if ( !sfd_.has_tag( job->inner_job()->input_tag() ) ) {
-		utility_exit_with_message(" job with input tag " + job->inner_job()->input_tag() +" can't find his input structure ");
+PoseInputSources SilentFilePoseInputter::pose_input_sources_from_command_line()
+{
+	using namespace core::io::silent;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	initialize_sfd_from_options_and_tag( basic::options::option, utility::tag::TagOP() );
+
+	PoseInputSources input_sources;
+	for ( auto iter : *sfd_ ) {
+		std::string const & tag = iter->decoy_tag();
+		if ( boost::starts_with( tag, "W_" ) && option[ in::file::skip_failed_simulations ] ) {
+			continue;
+		}
+
+		PoseInputSourceOP input_source( new PoseInputSource );
+		input_source->origin( keyname() );
+		input_source->input_tag( tag );
+		std::cout << "Tag: " << tag << std::endl;
+		input_sources.push_back( input_source );
 	}
-	return sfd_.get_structure( job->inner_job()->input_tag() );
+	return input_sources;
 }
-*/
+
+PoseInputSources
+SilentFilePoseInputter::pose_input_sources_from_tag(
+	utility::options::OptionCollection const & opts,
+	utility::tag::TagCOP tag
+)
+{
+	using namespace core::io::silent;
+	using namespace basic::options::OptionKeys;
+
+	initialize_sfd_from_options_and_tag( opts, tag );
+
+	PoseInputSources input_sources;
+	for ( auto iter : *sfd_ ) {
+		std::string const & decoy_tag = iter->decoy_tag();
+		if ( boost::starts_with( decoy_tag, "W_" ) && ( opts[ in::file::skip_failed_simulations]
+				|| tag->getOption< bool >( "skip_failed_simulations", false ) )) {
+			continue;
+		}
+
+		PoseInputSourceOP input_source( new PoseInputSource );
+		input_source->origin( keyname() );
+		input_source->input_tag( decoy_tag );
+		input_sources.push_back( input_source );
+	}
+	return input_sources;
+}
+
 
 /// @details This function will first see if the pose already exists in the Job.
 /// If not, it will read it into the pose reference, and hand a COP cloned from
 /// that pose to the Job. If the pose pre-exists it just copies the COP's pose
 /// into it.
-core::pose::PoseOP SilentFilePoseInputter::pose_from_input_source(
+core::pose::PoseOP
+SilentFilePoseInputter::pose_from_input_source(
 	PoseInputSource const & input_source,
-	utility::options::OptionCollection const & options
-) const {
-	assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
-	assert( input_source.string_string_map().find( "tag" ) != input_source.string_string_map().end() );
+	utility::options::OptionCollection const & options,
+	utility::tag::TagCOP tag // possibly null-pointing tag pointer
+)
+{
+	if ( ! sfd_ ) { initialize_sfd_from_options_and_tag( options, tag ); }
 
-	core::import_pose::ImportPoseOptions import_opts( options );
-	return core::import_pose::pose_from_file(
-		input_source.string_string_map().find( "filename" )->second,
-		import_opts,
-		import_opts.read_fold_tree(),
-		core::import_pose::PDB_file );
-}
-
-/// @details this function determines what jobs exist from -in::file::silent,
-/// -in::file::tags and -in::file::tagfile
-void SilentFilePoseInputter::fill_jobs( JobsContainer & jobs ){
-	tr.Debug << "SilentFilePoseInputter::fill_jobs" << std::endl;
-
-	jobs.clear(); //should already be empty anyway
-
-	using std::string;
-	using utility::file::FileName;
-	using utility::vector1;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	utility::vector1< FileName > const silent_files( option[ in::file::silent ]() );
-
-	for ( vector1< FileName >::const_iterator current_fn_ = silent_files.begin();
-			current_fn_ != silent_files.end(); ++current_fn_
-			) {
-		tr.Debug << "reading " << *current_fn_ << std::endl;
-		if ( option[ in::file::tags ].user() || option[ in::file::tagfile ].user() ) {
-			utility::vector1< string > tags;
-			if ( option[ in::file::tags ].user() ) {
-				tags.append( option[ in::file::tags ]() );
-			}
-			if ( option[ in::file::tagfile ].user() ) {
-				utility::io::izstream tag_file( option[ in::file::tagfile ]() );
-
-				// Add the whitespace separated tag entries to the file
-				std::copy( std::istream_iterator< std::string >( tag_file ), std::istream_iterator< std::string >(),
-					std::back_inserter( tags ) );
-			}
-			sfd_.read_file( *current_fn_, tags );
-		} else {
-			sfd_.read_file( *current_fn_ );
-		}
-	}
-
-	core::Size const nstruct( get_nstruct() );
+	debug_assert( sfd_->has_tag( input_source.input_tag() ));
 
 	using namespace core::io::silent;
-	utility::vector1< InnerJobOP > inner_jobs;
+	SilentStruct const & silent_struct( sfd_->get_structure( input_source.input_tag() ) );
+	core::pose::PoseOP pose( new core::pose::Pose );
+	silent_struct.fill_pose( *pose );
+	return pose;
+}
 
-	//save list of all inner_jobs first... this allows better sampling of jobs in case of unfinished runs:
-	// input1_0001
-	// input2_0001
-	// ...
-	// inputn_0001
-	// input1_0002
-	// input2_0002
-	// ....
-	tr.Debug << "reserve memory for InnerJob List " << sfd_.size() << std::endl;
-	inner_jobs.reserve( sfd_.size() );
-	tr.Debug << "fill list with " << sfd_.size() << " InnerJob Objects" << std::endl;
-	for ( SilentFileData::iterator iter = sfd_.begin(), end = sfd_.end();
-			iter != end; ++iter
-			) {
-		const std::string tag = iter->decoy_tag();
-
-		// Optionally ignore failed simulations. Supporting protocols are not consistent
-		// in their support of this option. Abrelax, for example, writes models from
-		// failed simulations in centroid residue type set, despite the fact that
-		// fullatom was requested. This can lead to issues during clustering, rescoring,
-		// etc.
-		bool failed_simulation = boost::starts_with(tag, "W_");
-		if ( failed_simulation && option[OptionKeys::in::file::skip_failed_simulations]() ) {
-			continue;
-		}
-
-		InnerJobOP ijob( new InnerJob( tag, nstruct ) );
-		inner_jobs.push_back( ijob );
-	}
-
-	//tr.Debug << "reserve list for " << inner_jobs.size() * nstruct << " Job Objects" << std::endl;
-	//jobs.reserve( nstruct * inner_jobs.size() );
-
-	tr.Debug << "fill job list with... " << std::endl;
-	for ( core::Size index = 1; index <= nstruct; ++index ) {
-		for ( utility::vector1< InnerJobOP >::const_iterator ijob = inner_jobs.begin(), end = inner_jobs.end(); ijob != end; ++ijob ) {
-			jobs.push_back( JobOP( new Job( *ijob, index ) ) );
-			tr.Trace << "pushing " << (*ijob)->input_tag() << " nstruct index " << index << std::endl;
-		} // loop over nstruct
-	} // loop over inputs
-} // fill_jobs
+std::string SilentFilePoseInputter::keyname() { return "Silent"; }
 
 /// @brief returns the schema for the PDB element used in a job-definition file
 /// including all options that govern how a PDB is loaded.
-static void SilentFilePoseInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+void
+SilentFilePoseInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attributes;
+	attributes
+		+ Attr::required_attribute( "silent_files", xs_string, "Comma-separated list of silent files to use" )
+		+ Attr( "tags", xs_string, "Comma-separated list of tags specifying the subset of Poses that should be"
+		" processed from the input silent file(s). If neither this attribute, nor the 'tagfile' attribute are used,"
+		" then all Poses in the input silent file(s) are used." )
+		+ Attr( "tagfile", xs_string, "File name whose contents lists a set of whitespace-separated tags"
+		" specifying the subset of Poses that should be processed from the input silent file(s). If neither this"
+		" attribute, nor the 'tags' attribute are used, then all Poses in the input silent file(s) are used." )
+		+ Attr::attribute_w_default( "skip_failed_simulations", xsct_rosetta_bool, "Skip processing of input"
+		" Poses if the tag starts with 'W_'", "false" );
+	core::io::silent::SilentFileOptions::append_attributes_for_tag_parsing( xsd, attributes );
 
+	XMLSchemaComplexTypeGenerator ctgen;
+	ctgen.element_name( keyname() )
+		.description( "Inputter for poses originating from silent files. By default, each Pose in the file will"
+		" be input and will be used by the JobQueen; however, if you use the 'tags' or 'tagfile' attribute, you"
+		" can specify a subset of Poses that will be used instead of the full set." )
+		.complex_type_naming_func( & PoseInputterFactory::complex_type_name_for_pose_inputter )
+		.add_attributes( attributes )
+		.write_complex_type_to_schema( xsd );
 }
 
-static void SilentFilePoseInputter::list_options_read( utility::options::OptionKeyList & read_options ) {
-	using namespace basic::options;
+void
+SilentFilePoseInputter::list_options_read( utility::options::OptionKeyList & read_options )
+{
 	using namespace basic::options::OptionKeys;
 
-	// possibly relevant options:
-	StructFileRepOptions::list_options_read( read_options );
+	core::io::silent::SilentFileOptions::list_read_options( read_options );
 	read_options
-		+ in::file::tags
-		+ in::file::user_tags
 		+ in::file::silent
-		+ basic::options::OptionKeys::in::file::lazy_silent
-		+ basic::options::OptionKeys::in::file::force_silent_bitflip_on_read
-		+ basic::options::OptionKeys::in::file::atom_tree_diff
-		+ basic::options::OptionKeys::in::file::fullatom
-		+ basic::options::OptionKeys::in::file::centroid
-		+ basic::options::OptionKeys::in::file::silent_energy_cut
-		+ basic::options::OptionKeys::in::file::silent_list
-		+ basic::options::OptionKeys::in::file::silent_struct_type
-		+ basic::options::OptionKeys::in::file::silent_read_through_errors
-		+ basic::options::OptionKeys::in::file::silent_score_prefix
-		+ basic::options::OptionKeys::in::file::silent_select_random
-		+ basic::options::OptionKeys::in::file::silent_select_range_start
-		+ basic::options::OptionKeys::in::file::silent_select_range_mul
-		+ basic::options::OptionKeys::in::file::silent_select_range_len
-		+ basic::options::OptionKeys::in::file::skip_failed_simulations
-		+ basic::options::OptionKeys::in::file::silent_scores_wanted
-		+ basic::options::OptionKeys::in::file::template_silent;
+		+ in::file::tags
+		+ in::file::tagfile
+		+ in::file::skip_failed_simulations;
+
 }
 
-//CREATOR SECTION
+void
+SilentFilePoseInputter::initialize_sfd_from_options_and_tag(
+	utility::options::OptionCollection const & options,
+	utility::tag::TagCOP tag
+)
+{
+	using namespace core::io::silent;
+	using namespace basic::options::OptionKeys;
+
+	sf_opts_ = SilentFileOptionsOP( new SilentFileOptions( options ) );
+	if ( tag ) sf_opts_->read_from_tag( tag );
+
+	sfd_ = SilentFileDataOP( new SilentFileData( *sf_opts_ ));
+
+	utility::vector1< utility::file::FileName > silent_files;
+	utility::vector1< std::string > tags_vector;
+	if ( tag ) {
+		std::string files = tag->getOption< std::string >( "silent_files", "" );
+		if ( files == "" ) {
+			throw utility::excn::EXCN_Msg_Exception( "The 'silent_files' attribute must be provided to the SilentFilePoseInputer" );
+		}
+		utility::vector1< std::string > files_vector = utility::string_split( files, ',', std::string() );
+		silent_files.reserve( files_vector.size() );
+		for ( auto const & filename : files_vector ) {
+			silent_files.push_back( utility::file::FileName( filename ) );
+		}
+	} else {
+		silent_files = options[ in::file::silent ]();
+	}
+
+	// Tag subset: the utility::tag::TagCOP takes precedence over anything in the OptionCollection
+	if ( tag && tag->hasOption( "tags" ) ) {
+		std::string tags = tag->getOption< std::string >( "tags", "" );
+		tags_vector = utility::string_split( tags, ',', std::string() );
+	} else {
+		if ( options[ in::file::tags ].user() ) {
+			tags_vector = options[ in::file::tags ];
+		}
+	}
+
+	std::string tagfile_name;
+	if ( tag && tag->hasOption( "tagfile" ) ) {
+		tagfile_name = tag->getOption< std::string >( "tagfile" );
+	} else if ( options[ in::file::tagfile ].user() ) {
+		tagfile_name = options[ in::file::tagfile ]();
+	}
+	if ( tagfile_name != "" ) {
+		utility::io::izstream tag_file( tagfile_name );
+		std::copy( std::istream_iterator< std::string >( tag_file ),
+			std::istream_iterator< std::string >(),
+			std::back_inserter( tags_vector ) );
+	}
+
+	initialize_sfd_from_files_and_tags( silent_files, tags_vector );
+
+}
+
+void
+SilentFilePoseInputter::initialize_sfd_from_files_and_tags(
+	utility::vector1< utility::file::FileName > const & silent_files,
+	utility::vector1< std::string > const & tags
+)
+{
+	for ( auto const & silent_file : silent_files ) {
+		tr.Debug << "reading " << silent_file << std::endl;
+		if ( tags.size() > 0 ) {
+			sfd_->read_file( silent_file, tags );
+		} else {
+			sfd_->read_file( silent_file );
+		}
+	}
+}
+
+protocols::jd3::pose_inputters::PoseInputterOP
+SilentFilePoseInputterCreator::create_inputter() const {
+	return PoseInputterOP( new SilentFilePoseInputter );
+}
+
 std::string
 SilentFilePoseInputterCreator::keyname() const
 {
-	return "SilentFilePoseInputter";
+	return SilentFilePoseInputter::keyname();
 }
 
-protocols::jd3::PoseInputterOP
-SilentFilePoseInputterCreator::create_inputter() const {
-	return protocols::jd3::PoseInputterOP( new SilentFilePoseInputter );
+void SilentFilePoseInputterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SilentFilePoseInputter::provide_xml_schema(xsd);
 }
+
+void SilentFilePoseInputterCreator::list_options_read(
+	utility::options::OptionKeyList & read_options
+) const
+{
+	SilentFilePoseInputter::list_options_read( read_options );
+}
+
 
 } // pose_inputters
 } // jd3

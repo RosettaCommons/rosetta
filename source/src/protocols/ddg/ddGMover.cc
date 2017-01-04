@@ -50,6 +50,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <basic/options/util.hh>
@@ -1050,7 +1051,8 @@ ddGMover::relax_wildtype_structure(
 			TR << "wt_traj is emtpy, not recording trajectories.\n";
 		}
 
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		std::string silentfilename;
 		if ( basic::options::option[out::file::silent].user() ) {
 			silentfilename = basic::options::option[out::file::silent]();
@@ -1164,7 +1166,7 @@ ddGMover::relax_wildtype_structure(
 			} else if ( (restrict_to_nbrhood_ && dmp_pdb_) || output_silent ) {
 				//if you optimize the local neighborhood, automatically dumps out in silent file form
 				//otherwise there'll be too many files!!!
-				core::io::silent::BinarySilentStruct ss(resulting_pose,"repacked_wt_round_" + q.str());
+				core::io::silent::BinarySilentStruct ss(opts, resulting_pose,"repacked_wt_round_" + q.str());
 				sfd.write_silent_struct(ss,silentfilename,false);
 			}
 		}
@@ -1294,7 +1296,8 @@ ddGMover::is_any_pdb_empty(
 			std::cout << "checking for decoys in silent file: " << file_to_check << std::endl;
 			if ( stat(file_to_check.c_str(), &filesize) == 0 ) {
 				std::cout << "silent file " << file_to_check << " exists. checking how many tags exist" << std::endl;
-				core::io::silent::SilentFileData sfd(file_to_check,false,false,"binary");
+				core::io::silent::SilentFileOptions opts;
+				core::io::silent::SilentFileData sfd(file_to_check,false,false,"binary",opts);
 				sfd.read_file(file_to_check);
 				utility::vector1<std::string> tags = sfd.read_tags_fast(file_to_check);
 				if ( /**num tags**/ tags.size() < core::Size(num_iterations_) ) {
@@ -1427,7 +1430,8 @@ ddGMover::apply(core::pose::Pose & pose)
 			record_mutant_trajectories << "beginning logfile" <<std::endl;
 		}
 
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		std::string silentfilename;
 		if ( basic::options::option[out::file::silent].user() ) {
 			silentfilename = basic::options::option[out::file::silent]();
@@ -1503,7 +1507,7 @@ ddGMover::apply(core::pose::Pose & pose)
 					this->mutation_label(pose) + "_" + "round_" + q.str() + ".pdb";
 				resulting_pose.dump_pdb(output_pdb);
 			} else if ( (dmp_pdb_ && restrict_to_nbrhood_) || output_silent ) {
-				core::io::silent::BinarySilentStruct ss(resulting_pose,"mut_" + this->mutation_label(pose) + "_round_" + q.str());
+				core::io::silent::BinarySilentStruct ss(opts,resulting_pose,"mut_" + this->mutation_label(pose) + "_round_" + q.str());
 				sfd.write_silent_struct(ss,silentfilename,false);
 			}
 			mutants_.push_back(resulting_pose);

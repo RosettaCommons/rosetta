@@ -24,14 +24,16 @@
 #include <protocols/jd3/JobResult.fwd.hh>
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
+#include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <list>
 
 namespace protocols {
 namespace jd3 {
@@ -180,6 +182,22 @@ public:
 	/// @brief Send all buffered output to disk -- called by the JobDistributor right before it shuts down
 	/// if it hits an error or catches an exception that it cannot ignore.
 	virtual void flush() = 0;
+
+	/// @brief Are there any deallocation messages that the JobQueen would like to have delivered
+	/// to the JobQueens living on remote hosts? If there are none, the derived JobQueen may return
+	/// an empty list. The JobDistributor guarantees to send the deallocation message to all remote
+	/// hosts. The JobDistributor will ask the JobQueen on the head node for a set of deallocation
+	/// messages after each set of jobs from determine_job_list have been distributed. (i.e., before
+	/// the next call to determine_job_list is made).
+	virtual
+	std::list< deallocation::DeallocationMessageOP >
+	deallocation_messages() = 0;
+
+	/// @brief A deallocation message first sent to the JobDistributor on this host originating from
+  /// a remote JobQueen
+	virtual
+	void
+	process_deallocation_message( deallocation::DeallocationMessageOP message ) = 0;
 
 }; // JobQueen
 

@@ -38,6 +38,11 @@
 #include <ostream>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace basic {
 namespace datacache {
 
@@ -47,7 +52,7 @@ class WriteableCacheableData : public CacheableData {
 
 public:
 
-	~WriteableCacheableData() override = default;
+	~WriteableCacheableData() override;
 
 	virtual
 	void write( std::ostream &out ) const = 0;
@@ -55,12 +60,23 @@ public:
 	virtual
 	std::string datatype() const = 0;
 
-	WriteableCacheableDataOP shared_from_this() { return utility::pointer::static_pointer_cast<WriteableCacheableData>( CacheableData::shared_from_this() ); }
+	WriteableCacheableDataOP shared_from_this();
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_WriteableCacheableData )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_basic_datacache_WriteableCacheableData_HH */

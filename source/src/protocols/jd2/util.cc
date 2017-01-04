@@ -34,6 +34,7 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
 
@@ -184,7 +185,8 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) 
 
 	using core::io::silent::SilentStructFactory;
 	core::io::silent::SilentStructOP ss;
-	ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score");
+	core::io::silent::SilentFileOptions opts;
+	ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score", opts);
 	JobCOP job( get_current_job() );
 	std::string tag( jd->job_outputter()->output_name( job ) );
 	ss->fill_struct( pose_in, tag );
@@ -195,7 +197,7 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) 
 
 	ss->add_string_value("tracer_point", tracer_point );
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileData sfd( opts );
 	if ( !basic::options::option[ basic::options::OptionKeys::out::file::silent_print_all_score_headers ]() ) {
 		ss->print_header( tr_score );
 	}

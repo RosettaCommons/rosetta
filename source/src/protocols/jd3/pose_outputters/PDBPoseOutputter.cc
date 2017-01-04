@@ -56,15 +56,13 @@ PDBPoseOutputter::outputter_specified_by_command_line()
 
 void
 PDBPoseOutputter::determine_job_tag(
-	utility::tag::TagCOP output_tag,
+	utility::tag::TagCOP pdb_tag,
 	utility::options::OptionCollection const & /*job_options*/,
 	InnerLarvalJob & job
 ) const
 {
-	if ( output_tag ) {
+	if ( pdb_tag ) {
 		using namespace utility::tag;
-		runtime_assert( output_tag->hasTag( keyname() ) );
-		TagCOP pdb_tag = output_tag->getTag( keyname() );
 		if ( pdb_tag->hasOption( "filename" ) ) {
 			utility::file::FileName fname( pdb_tag->getOption< std::string >( "filename" ));
 			job.job_tag( fname.base() );
@@ -117,6 +115,7 @@ void
 PDBPoseOutputter::write_output_pose(
 	LarvalJob const & job,
 	utility::options::OptionCollection const & job_options,
+	utility::tag::TagCOP /*tag*/, // possibly null-pointing tag pointer
 	core::pose::Pose const & pose )
 {
 
@@ -135,7 +134,7 @@ PDBPoseOutputter::output_pdb_name( LarvalJob const & job ) const
 		ext = ".pdb.gz";
 	}
 
-	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) ) + job.job_tag() + "_"
+	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
 		+ job.nstruct_suffixed_job_tag()
 		+ ext;
 }

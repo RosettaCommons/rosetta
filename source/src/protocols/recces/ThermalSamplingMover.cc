@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -180,7 +181,8 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data(opts);
 
 	// if trying to compute stem RMSD
 	pose::Pose start_pose;
@@ -502,7 +504,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 		if ( (n % dump_interval) == 0 && dump_silent_ ) {
 			std::stringstream tag;
 			tag << option[out_prefix]() << "_" << n;
-			BinarySilentStruct silent( pose, tag.str() );
+			BinarySilentStruct silent( opts, pose, tag.str() );
 			silent_file_data.write_silent_struct( silent, silent_file, false /*write score only*/ );
 		}
 	}

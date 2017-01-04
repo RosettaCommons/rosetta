@@ -77,6 +77,7 @@
 //#include <core/util/basic.hh>
 //#include <core/io/database/open.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -171,7 +172,8 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 
 	//silent file capabilities
 	bool write_silent_file = false;
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData sfd(opts);
 	std::string silentfilename="";
 	if ( basic::options::option[out::file::silent].user() ) {
 		sfd.set_filename(basic::options::option[out::file::silent]());
@@ -246,7 +248,8 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 		}
 
 		if ( write_silent_file ) {
-			core::io::silent::BinarySilentStruct ss(p,(out_pdb_prefix+"."+output_tag+"_0001.pdb"));
+			core::io::silent::SilentFileOptions opts; // initialized from the command line
+			core::io::silent::BinarySilentStruct ss(opts,p,(out_pdb_prefix+"."+output_tag+"_0001.pdb"));
 			sfd.write_silent_struct(ss,silentfilename,false);
 		} else {
 			p.dump_pdb(output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb");
@@ -343,7 +346,8 @@ main( int argc, char* argv [] )
 		//if outputting silent files as well:
 		if ( basic::options::option[out::file::silent].user() ) {
 			std::string out = basic::options::option[out::file::silent]();
-			SilentFileData out_sfd(out,false,false,"binary");
+			SilentFileOptions opts; // initialized from the command line
+			SilentFileData out_sfd(out,false,false,"binary",opts);
 			if ( utility::file::file_exists(out) ) {
 				out_sfd.read_file(out);
 				tags_done = out_sfd.tags();
@@ -354,7 +358,8 @@ main( int argc, char* argv [] )
 			pose::Pose pose;
 			std::cout << "examining file: " << files[f] << std::endl;
 			if ( read_from_silent ) {
-				SilentFileData in_sfd(files[f],false,false,"binary");
+				SilentFileOptions opts; // initialized from the command line
+				SilentFileData in_sfd(files[f],false,false,"binary",opts);
 				in_sfd.read_file(files[f]);
 				utility::vector1<std::string> tags = in_sfd.tags();
 				for ( unsigned int t=1; t <= tags.size(); t++ ) {

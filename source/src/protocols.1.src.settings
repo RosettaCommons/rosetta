@@ -151,9 +151,11 @@ sources = {
 		"JobResult",
 		"JobSummary",
 		"LarvalJob",
-		"MoverAndPoseJob",
 		"PoseInputSource",
-		"StandardJobQueen",
+	],
+	"protocols/jd3/deallocation": [
+		"DeallocationMessage",
+		"InputPoseDeallocationMessage",
 	],
 	"protocols/jd3/job_distributors": [
 	#	"MPIWorkPartitionJobDistributor",
@@ -164,7 +166,7 @@ sources = {
 		"PoseInputter",
 		"PoseInputterFactory",
 		"PDBPoseInputter",
-	#	"SilentFilePoseInputter",
+		"SilentFilePoseInputter",
 	],
 	"protocols/jd3/pose_outputters": [
 		"PDBPoseOutputter",
@@ -172,7 +174,12 @@ sources = {
 		"PoseOutputterFactory",
 		"ScoreFileOutputter",
 		"SecondaryPoseOutputter",
-	#	"SilentFilePoseOutputter",
+		"SilentFilePoseOutputter",
+	],
+	"protocols/jd3/standard": [
+		"MoverAndPoseJob",
+		"StandardInnerLarvalJob",
+		"StandardJobQueen",
 	],
 	"protocols/jobdist": [
 		"JobDistributors",

@@ -25,6 +25,7 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 // Core Headers
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
@@ -127,16 +128,17 @@ public:
 		std::stringstream origss;
 		origss << read_perm;
 
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
 		for ( core::Size z=1; z<=1; ++z ) {
 			core::io::silent::SilentStructOP silent =
-				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( input_pose );
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( input_pose, opts );
 			silent->fill_struct( input_pose, '_' + boost::lexical_cast< std::string >( z ) );
 			sfd.add_structure( *silent );
 		}
 		sfd.write_all( "test.silent" );
 
-		core::io::silent::SilentFileData sftest;
+		core::io::silent::SilentFileData sftest(opts);
 		sftest.read_file( "test.silent" );
 		typedef utility::vector1< core::io::silent::SilentStructOP > SilentStructOPs;
 		SilentStructOPs read_structures = sftest.structure_list();

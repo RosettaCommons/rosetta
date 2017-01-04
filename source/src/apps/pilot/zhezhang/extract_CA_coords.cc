@@ -14,6 +14,8 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
@@ -101,7 +103,8 @@ void write_for_resnum(int resnum, char /*chainID*/){
 	using namespace basic::options::OptionKeys;
 	using namespace io::silent;
 	// string chainID = "Z";
-	SilentFileData sfd;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData sfd( opts );
 	sfd.read_file( option[ in::file::silent ]()[1] );
 	int ct = 1;
 	utility::io::ozstream out( option[points ]() );
@@ -123,7 +126,8 @@ void run(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace io::silent;
-	SilentFileData sfd;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData sfd( opts );
 	core::pose::Pose pose;
 	core::chemical::ResidueTypeSetCOP rsd_set;
 	int ct = 1;

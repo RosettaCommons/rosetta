@@ -31,6 +31,8 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -205,8 +207,8 @@ core::pose::Pose
 StepWiseMonteCarlo::pose_from_checkpoint_file() const {
 	core::pose::Pose pose;
 	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
-
-	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
+	core::io::silent::SilentFileOptions opts;
+	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
 	debug_assert( utility::file::file_exists( checkpoint_file ) );
 	sfd->read_file( checkpoint_file );
 

@@ -22,6 +22,7 @@
 // package headers
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -108,7 +109,8 @@ void Pool_RMSD::fill_pool( std::string const& silent_file ) {
 	//pool_.clear();
 	clear();
 
-	io::silent::SilentFileData sfd;
+	io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData sfd( opts );
 	try {
 		sfd.read_file( silent_file );
 	} catch( utility::excn::EXCN_BadInput const& excn ) {

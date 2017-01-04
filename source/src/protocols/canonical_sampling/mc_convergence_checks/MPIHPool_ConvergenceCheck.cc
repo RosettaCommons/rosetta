@@ -24,6 +24,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
 #include <protocols/canonical_sampling/mc_convergence_checks/HPool.hh>
@@ -95,8 +96,9 @@ namespace mc_convergence_checks {
 					       core::io::silent::SilentFileData& sfd,
 					       core::Size num_structures_to_write
 					       ) {
+		core::io::silent::SilentFileOptions opts;
     while( num_structures_to_write > 0 ) {
-      core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+      core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
       receive_silent_struct_any_source( sfd, ss, buf_.winning_address_, buf_.new_level_begins_ );
       if( first_time_writing_ ) {
 	first_time_writing_ = false;
@@ -484,8 +486,9 @@ namespace mc_convergence_checks {
 	    }
 	  }
 	  if( tr.visible() ) tr.Debug << std::endl;
-	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
-	  core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
+	  core::io::silent::SilentFileData sfd( opts );
 	  ss->fill_struct( pose, buf_.winning_tag_ );
 	  if( first_time_writing_ ) {
 	    first_time_writing_ = false;
@@ -498,8 +501,9 @@ namespace mc_convergence_checks {
 	  }
 	} else if( pool_rank_ != min_ranking_proc ) {
 	  if( tr.visible() ) tr.Debug << "sending my structure to min-ranking-proc: " << min_ranking_proc << std::endl;
-	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
-	  core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
+	  core::io::silent::SilentFileData sfd( opts );
 	  ss->fill_struct( pose, buf_.winning_tag_ ); //ek debug 7/30/10 uncomment when everything is fixed
 	  send_silent_struct_to_rank( sfd, ss, buf_.winning_address_, buf_.new_level_begins_ , min_ranking_proc );
 	}
@@ -520,13 +524,14 @@ namespace mc_convergence_checks {
       if( static_cast<int>(pool_rank_) == MPI_OUTPUT_RANK ) {
 	//if I am the output rank, receive and write out structures
 	if( tracer_visible_ ) { tr.Debug << "expecting to write out " << num_structures_to_write << " structures" << std::endl; }
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	sfd.strict_column_mode( true );
 	PROF_START( basic::MPIH_WRITE_STRUCT );
 
 	if( i_am_a_winning_rank ) {
 	  //write out my own structure first
-	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	  ss->fill_struct( pose, buf_.winning_tag_ );
 	  if( first_time_writing_ ) {
 	    first_time_writing_ = false;
@@ -541,8 +546,9 @@ namespace mc_convergence_checks {
 	//if I am not the output rank, then send my structures to the output rank
 	PROF_START( basic::MPIH_WRITE_STRUCT );
 	if( i_am_a_winning_rank ) {
-	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
-	  core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+	  core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
+	  core::io::silent::SilentFileData sfd( opts );
 
 	  ss->fill_struct( pose, buf_.winning_tag_ ); //ek debug 7/30/10 uncomment when everything is fixed
 	  send_silent_struct_to_rank( sfd, ss, buf_.winning_address_, buf_.new_level_begins_ );
@@ -1069,7 +1075,8 @@ namespace mc_convergence_checks {
 	  if( !utility::file::file_exists( option[ mc::read_structures_into_pool ]() ) ) {
 	    utility_exit_with_message("you specified a file for option mc::read_structures_into_pool that does not exist! try again!");
 	  } else {
-	    core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts;
+	    core::io::silent::SilentFileData sfd( opts );
 	    sfd.strict_column_mode( true );
 	    core::pose::Pose pose;
 	    bool successfully_read_file = false;

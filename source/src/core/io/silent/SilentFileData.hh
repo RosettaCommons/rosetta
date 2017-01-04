@@ -19,6 +19,7 @@
 #include <core/types.hh>
 
 #include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SharedSilentData.hh>
@@ -62,41 +63,22 @@ private:
 	bool verbose_;
 	core::pose::full_model_info::FullModelParametersOP full_model_parameters_;
 
+	SilentFileOptions options_;
+
 public:
 	///////////////////////////////////////////////////////////////////////////
 	// constructor
 
-	SilentFileData() :
-		filename_(),
-		store_argv_in_file_( false ),
-		strict_column_mode_( false ),
-		record_source_( false ),
-		silent_struct_type_(""), // by default its option controlled.
-		verbose_( true )
-	{}
-
-	SilentFileData( std::string const& filename ) :
-		filename_( filename ),
-		store_argv_in_file_( false ),
-		strict_column_mode_( false ),
-		record_source_( false ),
-		silent_struct_type_(""), // by default its option controlled.
-		verbose_( true )
-	{}
+	SilentFileData( SilentFileOptions const & options );
+	SilentFileData( std::string const& filename, SilentFileOptions const & options );
 
 	SilentFileData(
 		const std::string &filename,
 		bool  store_argv_in_file,
 		bool  strict_column_mode,
-		const std::string & silent_struct_type
-	) :
-		filename_( filename ),
-		store_argv_in_file_( store_argv_in_file ),
-		strict_column_mode_( strict_column_mode ),
-		record_source_( false ),
-		silent_struct_type_( silent_struct_type ),
-		verbose_( true )
-	{}
+		const std::string & silent_struct_type,
+		SilentFileOptions const & options
+	);
 
 	/// @brief Read in the SilentStruct objects contained in the given filename.
 	/// this version will throw an exception if things go wrong (boolean return value is thus always true)
@@ -493,7 +475,6 @@ public:
 		SilentStructOP operator*() const {
 			return it_->second;
 		}
-
 
 	private:
 		Structure_Map::const_iterator it_; // keeps track of my place in a Structure_Map

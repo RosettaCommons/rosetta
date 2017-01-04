@@ -27,6 +27,7 @@
 #include <core/io/raw_data/DecoyFileData.hh>
 #include <core/io/raw_data/ScoreFileData.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -919,8 +920,9 @@ void PlainSilentFileJobDistributor::dump_pose(
 	std::string output_tag = get_output_tag( job, struct_n );
 
 	using namespace core::io::silent;
-	SilentFileDataOP sfd( new core::io::silent::SilentFileData() );
-	SilentStructOP ss = SilentStructFactory::get_instance()->get_instance()->get_silent_struct_out();
+	SilentFileOptions opts;
+	SilentFileDataOP sfd( new core::io::silent::SilentFileData( opts ) );
+	SilentStructOP ss = SilentStructFactory::get_instance()->get_instance()->get_silent_struct_out( opts );
 	ss->fill_struct( pose, output_tag );
 	sfd->write_silent_struct( *ss, silent_file );
 	this->end_critical_section();
@@ -962,7 +964,8 @@ void PlainSilentFileJobDistributor::startup() {
 	std::string const silent_filename = get_output_filename();
 
 	if ( !utility::file::file_exists( silent_filename ) ) return;
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	core::io::silent::Structure_Map::const_iterator iter;
 	used_tags_ = sfd.read_tags_fast( silent_filename );
 	utility::vector1< std::string >::const_iterator i;
@@ -1006,7 +1009,8 @@ void PlainSilentFileJobDistributor::dump_silent(
 
 	// std::string output_tag = get_output_tag( struct_n );
 	// silent_struct.decoy_tag( output_tag );
-	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData() );
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData( opts ) );
 	sfd->write_silent_struct( silent_struct, silent_file );
 	this->end_critical_section();
 }

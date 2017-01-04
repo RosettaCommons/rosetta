@@ -28,6 +28,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <basic/options/option.hh>
@@ -112,7 +113,8 @@ rna_build_helix_test(){
 		silent_file = option[ out::file::silent  ]();
 		output_silent = true;
 	}
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo] ();
 	ResidueTypeSetCOP rsd_set;
@@ -151,7 +153,7 @@ rna_build_helix_test(){
 
 		if ( output_silent ) {
 			std::string const tag( "S_"+ObjexxFCL::lead_zero_string_of(n, 3) );
-			BinarySilentStruct s( pose, tag );
+			BinarySilentStruct s( opts, pose, tag );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
 

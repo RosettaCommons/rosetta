@@ -32,6 +32,7 @@
 #include <utility/file/PathName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <numeric/xyzMatrix.hh>
 
@@ -335,7 +336,8 @@ core::Size HPool_RMSD::evaluate(
 		//save this strcuture into subcluster's silent file
 		std::string filename(protocols::toolbox::file_full_path(best_decoy));
 		utility::file::create_directory_recursive(utility::file::FileName(filename).path());
-		core::io::silent::SilentFileData clusters;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData clusters( opts );
 		TR << "tag:" << best_decoy << " -> " << filename << std::endl;
 		pss.set_decoy_tag(best_decoy);
 		clusters.write_silent_struct(pss,filename);

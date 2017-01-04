@@ -29,6 +29,7 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 
 #include <basic/Tracer.hh>
@@ -51,6 +52,21 @@ static THREAD_LOCAL basic::Tracer tr( "core.io.pose_stream" );
 
 typedef std::string string;
 typedef utility::file::FileName FileName;
+
+LazySilentFilePoseInputStream::LazySilentFilePoseInputStream( utility::vector1< FileName > fns ):
+	filenames_( fns ),
+	current_filename_( filenames_.begin() ),
+	sfd_( core::io::silent::SilentFileOptions() )
+{
+	sfd_.read_file( *current_filename_ );
+	current_struct_   = sfd_.begin();
+}
+
+LazySilentFilePoseInputStream::LazySilentFilePoseInputStream() :
+	sfd_( core::io::silent::SilentFileOptions() )
+{
+	reset();
+}
 
 bool LazySilentFilePoseInputStream::has_another_pose() {
 	bool has_another(true);

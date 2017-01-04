@@ -30,6 +30,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 
 #include <protocols/relax/FastRelax.hh>
@@ -148,7 +149,8 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			// write out the centroid structures if desired
 			if ( (  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
 					(  option[ OptionKeys::lh::centroid_only ]() ) ) {
-				core::io::silent::SilentFileData sfd;
+				core::io::silent::SilentFileOptions opts;
+				core::io::silent::SilentFileData sfd( opts );
 				std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 				silent_file_ += ".centroid.out" ;
 				for ( core::Size h = 0; h < lib_structs.size(); h++ ) {
@@ -202,7 +204,8 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 				}
 			}
 
-			core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentFileData sfd( opts );
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 				if ( h == bestindex ) {

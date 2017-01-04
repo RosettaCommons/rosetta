@@ -32,6 +32,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
@@ -278,10 +279,10 @@ LoopHashDiversifier::apply( Pose & pose )
 				bool passed_i = cenfilter_->apply( rpose );
 				if ( passed_i ) {
 					core::Real score_i = ranking_cenfilter()->report_sm( rpose );
-
+					core::io::silent::SilentFileOptions opts;
 					core::io::silent::SilentStructOP new_struct = ideal_?
-						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :
-						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts ) :
+						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts );
 					new_struct->fill_struct( rpose );
 					cen_scored_structs.emplace_back(-score_i,new_struct );
 				}

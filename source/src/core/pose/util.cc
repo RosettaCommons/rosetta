@@ -49,6 +49,7 @@
 #include <core/io/StructFileRep.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -1699,11 +1700,12 @@ compare_binary_protein_silent_struct(
 	Pose const & lhs,
 	Pose const & rhs
 ) {
-	core::io::silent::BinarySilentStruct lhs_silent_struct(lhs, "" );
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::BinarySilentStruct lhs_silent_struct(opts, lhs, "" );
 	std::stringstream lhs_str;
 	lhs_silent_struct.print_conformation(lhs_str);
 
-	core::io::silent::BinarySilentStruct rhs_silent_struct(rhs, "" );
+	core::io::silent::BinarySilentStruct rhs_silent_struct(opts, rhs, "" );
 	std::stringstream rhs_str;
 	rhs_silent_struct.print_conformation(rhs_str);
 

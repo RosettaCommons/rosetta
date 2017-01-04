@@ -63,6 +63,60 @@ namespace silent {
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.silent.SilentFileData" );
 
+//SilentFileData::SilentFileData() :
+//	SilentFileData( SilentFileOptions() )
+//{}
+
+SilentFileData::SilentFileData( SilentFileOptions const & options ) :
+	filename_(),
+	store_argv_in_file_( false ),
+	strict_column_mode_( false ),
+	record_source_( false ),
+	silent_struct_type_(""), // by default its option controlled.
+	verbose_( true ),
+	options_( options )
+{}
+
+//SilentFileData:: SilentFileData( std::string const& filename ) :
+//	SilentFileData( filename, SilentFileOptions() )
+//{}
+
+SilentFileData::SilentFileData( std::string const& filename, SilentFileOptions const & options ) :
+	filename_( filename ),
+	store_argv_in_file_( false ),
+	strict_column_mode_( false ),
+	record_source_( false ),
+	silent_struct_type_(""), // by default its option controlled.
+	verbose_( true ),
+	options_( options )
+{}
+
+//SilentFileData::SilentFileData(
+//	const std::string &filename,
+//	bool  store_argv_in_file,
+//	bool  strict_column_mode,
+//	const std::string & silent_struct_type
+//) :
+//	SilentFileData( filename, store_argv_in_file, strict_column_mode, silent_struct_type, SilentFileOptions() )
+//{}
+
+SilentFileData::SilentFileData(
+	const std::string &filename,
+	bool  store_argv_in_file,
+	bool  strict_column_mode,
+	const std::string & silent_struct_type,
+	SilentFileOptions const & options
+) :
+	filename_( filename ),
+	store_argv_in_file_( store_argv_in_file ),
+	strict_column_mode_( strict_column_mode ),
+	record_source_( false ),
+	silent_struct_type_( silent_struct_type ),
+	verbose_( true ),
+	options_( options )
+{}
+
+
 SilentFileData::~SilentFileData() {
 	clear_structure_map();
 }
@@ -437,7 +491,8 @@ bool SilentFileData::write_silent_struct(
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		if ( s.energy_names().energy_names() != enames->energy_names() ||
-				option[ out::file::silent_print_all_score_headers ]()
+				//option[ out::file::silent_print_all_score_headers ]()
+				options_.print_all_score_headers()
 				) {
 			s.print_header( out );
 			enames = EnergyNamesOP( new EnergyNames() );
@@ -518,9 +573,11 @@ SilentFileData::read_file(
 
 	bool success = _read_file(
 		filename,
-		!option[ OptionKeys::in::file::silent_read_through_errors ]() /*throw_exception_on_bad_structs*/
+		//!option[ OptionKeys::in::file::silent_read_through_errors ]() /*throw_exception_on_bad_structs*/
+		!options_.read_through_errors()
 	);
-	if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
+	//if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
+	if ( !success && !options_.read_through_errors() ) {
 		throw utility::excn::EXCN_BadInput("no success reading silent file "+filename);
 	}
 	return success;
@@ -542,8 +599,10 @@ SilentFileData::_read_file(
 	utility::vector1< std::string > tags_wanted;
 
 	utility::vector1< std::string > all_tags = read_tags_fast( filename );
-	if ( option[ in::file::silent_select_random ].user() ) {
-		core::Size const n_wanted( option[ in::file::silent_select_random ]() );
+	//if ( option[ in::file::silent_select_random ].user() ) {
+	if ( options_.select_random_set() ) {
+		//core::Size const n_wanted( option[ in::file::silent_select_random ]() );
+		core::Size const n_wanted( options_.select_random() );
 		runtime_assert( n_wanted > 0.0 );
 		runtime_assert( n_wanted <= all_tags.size() );
 
@@ -554,15 +613,19 @@ SilentFileData::_read_file(
 			all_tags.size() << std::endl;
 	}
 
-	if ( option[ in::file::silent_select_range_start ]() >= 0 ) {
+	//if ( option[ in::file::silent_select_range_start ]() >= 0 ) {
+	if ( options_.select_range_start() >= 0 ) {
 
 		// get start index and limit to size of silent file (all_tags.size() ) by wrapping around (rather then by throwing an error)
-		core::Size range_start = ( option[ in::file::silent_select_range_start ]() *
-			option[ in::file::silent_select_range_mul ] ) % all_tags.size();
-		core::Size range_end   = range_start + option[ in::file::silent_select_range_len ]();
+		//core::Size range_start = ( option[ in::file::silent_select_range_start ]() *
+		//	option[ in::file::silent_select_range_mul ] ) % all_tags.size();
+		core::Size range_start = ( options_.select_range_start() * options_.select_range_mul() ) % all_tags.size();
+
+		core::Size range_end   = range_start + options_.select_range_len();
 
 		// setting in::file::silent_select_range_len to -1 means run to the end.
-		if ( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();
+		//if ( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();
+		if ( options_.select_range_len() < 0 ) range_end = all_tags.size();
 
 		// do a range check just in case.
 		range_end = std::min( (int)range_end, (int)all_tags.size() );
@@ -592,9 +655,11 @@ SilentFileData::read_file(
 	bool success = _read_file(
 		filename,
 		tags,
-		!option[ OptionKeys::in::file::silent_read_through_errors ]() /*throw_exception_on_bad_structs*/
+		//!option[ OptionKeys::in::file::silent_read_through_errors ]() /*throw_exception_on_bad_structs*/
+		!options_.read_through_errors()
 	);
-	if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
+	//if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
+	if ( !success && !options_.read_through_errors() ) {
 		throw utility::excn::EXCN_BadInput("no success reading silent file "+filename);
 	}
 	return success;
@@ -889,10 +954,8 @@ SilentStructOP SilentFileData::create_SilentStructOP() {
 	//static SilentStructFactory ssf;
 	SilentStructOP new_ss_op;
 
-	//if( silent_struct_type_ == "" ) new_ss_op = ssf.get_silent_struct_in();
-	//else                           new_ss_op = ssf.get_silent_struct( silent_struct_type_ );
-	if ( silent_struct_type_ == "" ) new_ss_op = SilentStructFactory::get_instance()->get_silent_struct_in();
-	else                           new_ss_op = SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_ );
+	if ( silent_struct_type_ == "" ) new_ss_op = SilentStructFactory::get_instance()->get_silent_struct_in( options_ );
+	else                           new_ss_op = SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_, options_ );
 
 	if ( full_model_parameters_ ) new_ss_op->set_full_model_parameters( full_model_parameters_ );
 

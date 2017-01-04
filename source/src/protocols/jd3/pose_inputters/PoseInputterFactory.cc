@@ -89,10 +89,10 @@ PoseInputterFactory::new_pose_inputter( std::string const & pose_inputter_type )
 	}
 }
 
-PoseInputSources
+PoseInputterFactory::PoseInputSourcesAndInputters
 PoseInputterFactory::pose_inputs_from_command_line() const
 {
-	PoseInputSources input_sources;
+	PoseInputSourcesAndInputters input_sources;
 	for ( PoseInputterMap::const_iterator iter = pose_inputter_creator_map_.begin();
 			iter != pose_inputter_creator_map_.end(); ++iter ) {
 		// TR << pose_inputter_it->first << ", ";
@@ -101,7 +101,7 @@ PoseInputterFactory::pose_inputs_from_command_line() const
 			PoseInputSources iter_sources = inputter->pose_input_sources_from_command_line();
 			input_sources.reserve( input_sources.size() + iter_sources.size() );
 			for ( core::Size ii = 1; ii <= iter_sources.size(); ++ii ) {
-				input_sources.push_back( iter_sources[ ii ] );
+				input_sources.push_back( std::make_pair( iter_sources[ ii ], inputter ) );
 			}
 		}
 	}

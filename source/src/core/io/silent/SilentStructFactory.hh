@@ -16,6 +16,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/io/silent/SilentFileOptions.fwd.hh>
 #include <core/io/silent/SilentStructCreator.fwd.hh>
 
 // Utility headers
@@ -55,15 +56,15 @@ public:
 	show_available_silent_struct_types(
 		std::ostream & out);
 
-	io::silent::SilentStructOP get_silent_struct( std::string const & type_name );
+	SilentStructOP get_silent_struct( std::string const & type_name, SilentFileOptions const & );
 	utility::vector1< std::string > get_ss_names() const;
 
 	SilentStructCreatorCOP
 	get_creator( std::string const & type_name );
 
-	SilentStructOP get_silent_struct_in();
-	SilentStructOP get_silent_struct_out();
-	SilentStructOP get_silent_struct_out( core::pose::Pose const & pose );
+	SilentStructOP get_silent_struct_in( SilentFileOptions const & );
+	SilentStructOP get_silent_struct_out( SilentFileOptions const & );
+	SilentStructOP get_silent_struct_out( core::pose::Pose const & pose, SilentFileOptions const & );
 
 private:
 	typedef std::map< std::string, io::silent::SilentStructCreatorCOP > SilentStructCreatorMap;

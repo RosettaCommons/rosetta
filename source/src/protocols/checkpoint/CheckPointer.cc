@@ -36,6 +36,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -105,8 +106,9 @@ void FileBuffer::dump(){
 
 bool pose_to_binary_silent_file( std::ostream &output, const std::string &tag, const pose::Pose &pose ){
 	using namespace io::silent;
-	SilentFileData outsfd;
-	SilentStructOP pss( new BinarySilentStruct() );
+	SilentFileOptions opts;
+	SilentFileData outsfd( opts );
+	SilentStructOP pss( new BinarySilentStruct( opts ) );
 	pss->fill_struct( pose, tag );
 
 	pss->print_header( output );
@@ -122,7 +124,8 @@ bool pose_from_binary_silent_file( const std::string &filename, const std::strin
 	pose::Pose tmppose;
 	if ( fullatom ) residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	else           residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
-	core::io::silent::SilentFileData sfd("", false, false, "binary" );
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd("", false, false, "binary", opts );
 	if ( !sfd.read_file( filename ) ) return false;
 	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 		if ( iter->decoy_tag() != tag ) continue;
@@ -202,9 +205,10 @@ void CheckPointer::checkpoint(
 
 	std::stringstream bail_structure;
 	std::stringstream bail_structure_header;
-	SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct_out();
+	SilentFileOptions opts;
+	SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	ss->fill_struct( pose,  "W_00000001" );
-	SilentFileDataOP sfd( new SilentFileData() );
+	SilentFileDataOP sfd( new SilentFileData( opts ) );
 
 	// write the structure to the bailout buffer
 	sfd->write_silent_struct( *ss, bail_structure );

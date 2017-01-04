@@ -33,7 +33,7 @@ public:
 	PDBSilentStructCreator();
 	~PDBSilentStructCreator() override;
 
-	core::io::silent::SilentStructOP create_silent_struct() const override;
+	core::io::silent::SilentStructOP create_silent_struct( core::io::silent::SilentFileOptions const & opts ) const override;
 	std::string keyname() const override;
 };
 

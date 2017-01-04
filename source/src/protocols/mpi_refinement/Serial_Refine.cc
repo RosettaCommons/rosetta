@@ -27,6 +27,7 @@
 
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -130,8 +131,9 @@ Serial_Refine::load_structures_from_cmdline_into_library(
 	}
 
 	core::pose::set_ss_from_phipsi( pose_work );
+	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentStructOP ss =
-		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary",opts);
 	ss->fill_struct( pose_work );
 	ss->add_energy( "state", 0 );     // state: 0 init, 1 perturbed, 2 relaxed
 
@@ -304,7 +306,8 @@ Serial_Refine::dump_structures( protocols::wum::SilentStructStore const &new_str
 	bool score_only,
 	std::string prefix ) const
 {
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	std::string filename = prefix + ".out";
 
 	core::Size istr( 0 );

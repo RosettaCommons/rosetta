@@ -20,6 +20,7 @@
 // unit headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentEnergy.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 
@@ -57,7 +58,7 @@ class SilentStruct : public utility::pointer::ReferenceCount, public utility::po
 
 public:
 	//constructor
-	SilentStruct();
+	SilentStruct( SilentFileOptions const & opts );
 
 	// destructor
 	virtual ~SilentStruct();
@@ -100,12 +101,10 @@ public:
 		const core::pose::Pose & pose
 	);
 
-	void
-	precision( core::Size precision );
+	void precision( core::Size precision );
 	core::Size precision() const;
 
-	void
-	scoreline_prefix( std::string const & prefix );
+	void scoreline_prefix( std::string const & prefix );
 	std::string scoreline_prefix() const;
 
 	/// @brief opposite of fill_pose -- superclass provides
@@ -115,7 +114,8 @@ public:
 	/// protein SilentStructs
 	virtual void fill_struct(
 		core::pose::Pose const & pose,
-		std::string tag = "empty_tag" );
+		std::string tag = "empty_tag"
+	);
 
 	/// @brief calls optH if command line requests optH.
 	/// must be called by derived classes.
@@ -358,6 +358,8 @@ public:
 	/// when a binary silent structure is initialized from lines.
 	virtual bool force_bitflip() const { return force_bitflip_; }
 
+	SilentFileOptions const & options() const;
+
 protected:
 
 	/// @ brief helper to detect fullatom input
@@ -409,6 +411,9 @@ private:
 	core::Size precision_;
 	// prefix for the SCORE: lines. Usually "SCORE:"
 	std::string scoreline_prefix_;
+
+	// SilentFileOptions to replace reading from the global options system
+	SilentFileOptions options_;
 }; // class SilentStruct
 
 } // namespace silent

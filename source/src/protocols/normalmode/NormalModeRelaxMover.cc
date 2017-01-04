@@ -47,6 +47,7 @@
 
 // Silent struct
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 
@@ -258,10 +259,11 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 	}
 
 	if ( dump_silent_ ) {
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		for ( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
 			core::io::silent::SilentStructOP ss =
-				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 			std::stringstream tag;
 			tag << "mode_" << i_pose;
 			ss->fill_struct( poses[i_pose], tag.str() );

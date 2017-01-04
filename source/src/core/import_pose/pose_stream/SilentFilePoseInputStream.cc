@@ -30,7 +30,7 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -50,6 +50,74 @@ static THREAD_LOCAL basic::Tracer tr( "core.io.pose_stream" );
 
 typedef std::string string;
 typedef utility::file::FileName FileName;
+using core::io::silent::SilentFileOptions;
+
+SilentFilePoseInputStream::SilentFilePoseInputStream()
+	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+{
+	//  utility::vector1< FileName > empty;
+	//  filenames(empty);
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+}
+
+SilentFilePoseInputStream::SilentFilePoseInputStream( utility::vector1< FileName > fns )
+: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+{
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+	filenames(fns);
+}
+
+SilentFilePoseInputStream::SilentFilePoseInputStream( std::string const & fn )
+: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+{
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+	utility::vector1< FileName > fns;
+	fns.push_back( fn );
+	filenames(fns);
+}
+
+SilentFilePoseInputStream::SilentFilePoseInputStream(
+	utility::vector1< FileName > fns,
+	bool order_by_energy
+)
+: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
+{
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+	filenames(fns);
+}
+
+SilentFilePoseInputStream::SilentFilePoseInputStream(
+	utility::vector1< FileName > fns,
+	core::Real energy_cut
+)
+: renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
+{
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+	filenames(fns);
+}
+
+SilentFilePoseInputStream::SilentFilePoseInputStream(
+	utility::vector1< FileName > fns,
+	utility::vector1< string > input_tags
+) :
+	renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+{
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+	tags(input_tags);
+	filenames(fns);
+}
+
+SilentFilePoseInputStream::SilentFilePoseInputStream(
+	utility::vector1< FileName > fns,
+	utility::vector1< string > input_tags,
+	core::Real energy_cut
+) :
+	renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
+{
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
+	tags(input_tags);
+	filenames(fns);
+}
 
 void SilentFilePoseInputStream::tags( utility::vector1< string > tags ) {
 	tags_ = tags;

@@ -47,12 +47,18 @@ sources = {
 	"basic/datacache": [
 		"BasicDataCache",
 		"CacheableData",
+		"CacheableStringFloatMap",
+		"CacheableString",
+		"CacheableStringMap",
+		"DiagnosticData",
 		"ConstDataMap",
 		"DataMap",
 		"DataMapObj",
 		"HierarchicalDataMap",
+		"WriteableCacheableData",
 		"WriteableCacheableDataCreator",
 		"WriteableCacheableDataFactory",
+		"WriteableCacheableMap",
 	],
 	"basic/gpu": [
 		"GPU",

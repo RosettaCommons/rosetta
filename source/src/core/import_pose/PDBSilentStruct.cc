@@ -69,10 +69,17 @@ using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.silent.PDBSilentStruct" );
 
+PDBSilentStruct::PDBSilentStruct( core::io::silent::SilentFileOptions const & opts ) :
+	core::io::silent::SilentStruct( opts )
+{
+	decoy_tag( "empty_tag" );
+}
+
 PDBSilentStruct::PDBSilentStruct(
+	core::io::silent::SilentFileOptions const & opts,
 	core::pose::Pose const & pose,
 	std::string tag
-) {
+) : SilentStruct( opts ) {
 	fill_struct( pose, tag );
 } // PDBSilentStruct
 

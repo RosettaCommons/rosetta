@@ -22,6 +22,7 @@
 
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -267,7 +268,8 @@ int universal_main(
 		std::string infile  = *input_silent_files.begin();
 
 		// Read the silent structures
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		sfd.read_file( infile );
 
 		// Grab a prefix if it exists
@@ -443,7 +445,7 @@ int universal_main(
 						//} else {
 						// pss = new core::io::silent::ProteinSilentStruct;
 						//}
-						pss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+						pss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 						pss->fill_struct( *the_pose, curr_job_tag );
 						// run PoseEvaluators
 						evaluator->apply( *the_pose, curr_job_tag, *pss );
@@ -455,14 +457,14 @@ int universal_main(
 
 				// output scorefile if specified or not in silent output mode
 				if ( option[ out::file::scorefile ].user() || !silent_output ) {
-					core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
+					core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct( opts ) );
 					ss->fill_struct( *the_pose );
 					// run PoseEvaluators
 					evaluator->apply( *the_pose, curr_job_tag, *ss );
 					if ( user_tag != "" ) ss->add_string_value("user_tag", user_tag  );
 					if ( alignment_id != "" ) ss->add_string_value("alignment_id", alignment_id  );
 
-					core::io::silent::SilentFileData sfd_out;
+					core::io::silent::SilentFileData sfd_out( opts );
 					sfd_out.write_silent_struct( *ss, option[ out::file::scorefile ]() );
 				}
 
@@ -607,15 +609,17 @@ int universal_main(
 				//} else {
 				// pss = new core::io::silent::ProteinSilentStruct;
 				//}
-				pss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+				core::io::silent::SilentFileOptions opts;
+				pss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 				pss->fill_struct( *the_pose, curr_job_tag );
 				jd->dump_silent( curr_nstruct, *pss );
 			}
 			// output scorefile if specified or not in silent output mode
 			if ( option[ out::file::scorefile ].user() || !silent_output ) {
-				core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
+				core::io::silent::SilentFileOptions opts;
+				core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct( opts ) );
 				ss->fill_struct( *the_pose );
-				core::io::silent::SilentFileData sfd_out;
+				core::io::silent::SilentFileData sfd_out( opts );
 				sfd_out.write_silent_struct( *ss, option[ out::file::scorefile ]() );
 			}
 
@@ -851,7 +855,8 @@ int main_plain_pdb_mover(
 		} else {
 			protocols::jobdist::PlainSilentFileJobDistributorOP jd =
 				utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
-			core::io::silent::ProteinSilentStruct pss;
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::ProteinSilentStruct pss( opts );
 			pss.fill_struct( *the_pose, curr_job->output_tag(curr_nstruct) );
 			jd->dump_silent( curr_nstruct, pss );
 		}

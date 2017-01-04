@@ -19,6 +19,7 @@
 #include <protocols/jd3/PoseInputSource.fwd.hh>
 
 //project headers
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -64,15 +65,18 @@ public:
 	std::string const & input_tag() const;
 	StringStringMap const & string_string_map() const;
 	std::string const & origin() const;
+	core::Size pose_id() const;
 
 	void input_tag( std::string const & setting );
 	void store_string_pair( std::string const & key, std::string const & value );
 	void origin( std::string const & setting );
+	void pose_id( core::Size setting );
 
 private:
 	std::string origin_;
 	std::string input_tag_;
 	StringStringMap string_string_map_;
+	core::Size pose_id_;
 
 #ifdef    SERIALIZATION
 public:

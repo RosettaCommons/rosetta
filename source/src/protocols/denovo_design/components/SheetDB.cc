@@ -30,6 +30,7 @@
 #include <utility/graph/graph_util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -345,7 +346,8 @@ SheetDB::load_sheetlist_from_file( core::Size const nstrands, std::string const 
 	}
 	infile.close();
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 
 	// try to read file, if there is an error, return empty list
 	if ( ! sfd.read_file( filename ) ) {

@@ -15,6 +15,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -281,7 +282,8 @@ rna_score_test()
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 
 	FullModelInfoOP my_model;
 	utility::vector1< pose::PoseOP > other_poses;
@@ -361,7 +363,7 @@ rna_score_test()
 
 		// tag
 		std::string tag = tag_from_pose( pose );
-		BinarySilentStruct s( pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 
 		if ( native_exists ) {
 			Real rmsd;

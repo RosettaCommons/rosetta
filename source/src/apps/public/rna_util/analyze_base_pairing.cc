@@ -15,6 +15,8 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -132,12 +134,13 @@ analyze_base_pair_test()
 
 	// Output: write silent file
 	std::string const silent_file = option[ out::file::silent  ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data( opts );
 	while ( input->has_another_pose() ) {
 		Pose pose;
 		input->fill_pose( pose, *rsd_set );
 		std::string tag = core::pose::tag_from_pose( pose );
-		BinarySilentStruct s( pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 		add_number_base_pairs( pose, s );
 		if ( native_pose ) add_number_native_base_pairs( pose, *native_pose, s );
 		// Write score only == true because this is just for analysis

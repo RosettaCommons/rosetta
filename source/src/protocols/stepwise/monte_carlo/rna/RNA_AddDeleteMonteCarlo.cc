@@ -32,6 +32,7 @@
 #include <numeric/xyzVector.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/Tracer.hh>
 
@@ -78,7 +79,8 @@ RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna
 	kT_( 0.5 ),
 	do_add_delete_( true ),
 	silent_file_( "" ),
-	silent_file_data_( core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData ) )
+	silent_file_options_( new core::io::silent::SilentFileOptions ), // initialized from the command line
+	silent_file_data_( new core::io::silent::SilentFileData( *silent_file_options_ ) )
 {
 	initialize_next_suite_atoms(); // used in RMSD calculations.
 }
@@ -168,7 +170,7 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 	for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
 
 	std::string const tag = "S_"+lead_zero_string_of(count,6);
-	BinarySilentStruct s( pose, tag );
+	BinarySilentStruct s( *silent_file_options_, pose, tag );
 
 	Pose const & native_pose = *get_native_pose();
 

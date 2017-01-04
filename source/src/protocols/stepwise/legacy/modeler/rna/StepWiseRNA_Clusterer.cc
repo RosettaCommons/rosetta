@@ -33,6 +33,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
@@ -1201,7 +1202,8 @@ StepWiseRNA_Clusterer::output_silent_file( std::string const & silent_file ){
 
 	using namespace core::io::silent;
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 	for ( Size n = 1; n <= silent_struct_output_list_.size(); ++n ) {
 		SilentStructOP & s = silent_struct_output_list_[ n ];
 		if ( rename_tags_ ) {
@@ -1251,7 +1253,8 @@ StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file( std::string cons
 
 	if ( tag_output_list_.size() != silent_struct_output_list_.size() ) utility_exit_with_message( "pose_output_list_.size() != silent_struct_output_list_!" );
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 
 	utility::vector1 < core::Size > const & calc_rms_res = working_parameters_->calc_rms_res();
 	std::map< core::Size, core::Size > const & full_to_sub = working_parameters_->const_full_to_sub();
@@ -1386,7 +1389,8 @@ StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file( s
 
 	std::string const & full_sequence = working_parameters_->full_sequence();
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 
 	TR << "loop_cluster_radius_ = "  << loop_cluster_radius_  << std::endl;
 	TR << "suite_cluster_radius_ = "  << suite_cluster_radius_ << std::endl;

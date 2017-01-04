@@ -9,7 +9,7 @@
 
 
 /// @file   core/io/silent/SilentFileLoader.hh
-/// @brief  Load a silent file from an input stream and a SilentFileOptions object
+/// @brief  Load a silent file from an input stream and a SilentFileRMOptions object
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
@@ -20,7 +20,7 @@
 // Project Headers
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/SilentFileRMOptions.hh>
 #include <core/pose/Pose.hh>
 
 // Platform Headers
@@ -76,14 +76,14 @@ SilentFileLoader::create_resource(
 	istream & istream
 ) const {
 
-	if ( ! dynamic_cast< SilentFileOptions const * >( &options ) ) {
+	if ( ! dynamic_cast< SilentFileRMOptions const * >( &options ) ) {
 		throw utility::excn::EXCN_Msg_Exception(
-			"SilentFileLoader expected to get a SilentFileOptions object, "
+			"SilentFileLoader expected to get a SilentFileRMOptions object, "
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );
 	}
-	SilentFileOptions const & resource_options(
-		static_cast< SilentFileOptions const & >( options ));
+	SilentFileRMOptions const & resource_options(
+		static_cast< SilentFileRMOptions const & >( options ));
 
 	utility::vector1< std::string > lines;
 	std::string line;
@@ -91,11 +91,9 @@ SilentFileLoader::create_resource(
 		lines.push_back(line);
 	}
 
-	SilentStructOP ss(
-		SilentStructFactory::get_instance()->get_silent_struct(
-		resource_options.get_silent_struct_type()));
+	SilentStructOP ss( SilentStructFactory::get_instance()->get_silent_struct_in( resource_options.opts() ));
 
-	SilentFileData container;
+	SilentFileData container( resource_options.opts() );
 
 	if ( !(ss->init_from_lines(lines, container)) ) {
 		throw utility::excn::EXCN_BadInput( "SilentFileLoader failed to load silent file with locator_id '" + locator_id + "'." );
@@ -119,7 +117,7 @@ SilentFileLoader::create_resource(
 ResourceOptionsOP
 SilentFileLoader::default_options(
 ) const {
-	return ResourceOptionsOP( new SilentFileOptions() );
+	return ResourceOptionsOP( new SilentFileRMOptions() );
 }
 
 } // namespace

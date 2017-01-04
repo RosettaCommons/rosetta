@@ -19,6 +19,7 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
@@ -70,7 +71,8 @@ extract_pdbs_test()
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// configure silent-file data object
-	core::io::silent::SilentFileData silent_file_data;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData silent_file_data( opts );
 	std::string infile  = option[ in::file::silent ][1];
 
 	if ( option[ in::file::silent ].user() ) {

@@ -74,6 +74,7 @@
 
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -733,7 +734,8 @@ void ScoreFragmentSetMover::run() {
 	protocols::electron_density::DensitySymmInfo symminfo( basic::options::option[ symm_type ]() );
 	symminfo.detect_axes( core::scoring::electron_density::getDensityMap() );
 
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData sfd( opts );
 	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
 	}
@@ -1077,7 +1079,8 @@ FragmentAssemblyMover::run( ) {
 
 	// read silent files
 	utility::vector1< core::pose::PoseOP > frags_sel(nres);
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData sfd( opts );
 	utility::vector1<utility::file::FileName> insilent = option[ in::file::silent ]();
 	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
@@ -1195,11 +1198,11 @@ FragmentAssemblyMover::run( ) {
 
 		// write silent file of saved fragments + averaged model
 		std::string outfile = option[ out::file::silent ]()+"_"+ObjexxFCL::right_string_of( rd, 4, '0' )+".silent";
-		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary" ); //true to store argv in silent file
+		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary", opts ); //true to store argv in silent file
 		for ( core::Size i=1; i<=tags_to_fetch.size(); ++i ) {
 			core::Size idx = tag_indices[i];
 
-			core::io::silent::BinarySilentStruct silent_stream( *(frags_sel[idx]), tags_to_fetch[i] );
+			core::io::silent::BinarySilentStruct silent_stream( opts, *(frags_sel[idx]), tags_to_fetch[i] );
 			silent_stream.add_energy( "pos", idx );
 			silent_stream.add_energy( "total_score", score_total );
 			sfd.write_silent_struct( silent_stream, outfile );
@@ -1226,7 +1229,8 @@ SolutionRescoreMover::run() {
 	// energy cut
 	utility::vector1<core::Real> allscores;
 	for ( core::Size n=1; n<=insilent.size(); ++n ) {
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts; // initialized from the command line
+		core::io::silent::SilentFileData sfd( opts );
 		sfd.read_file( insilent[n] );
 
 		// map resids to fragments
@@ -1333,7 +1337,8 @@ ConsensusFragmentMover::run() {
 
 	// energy cut
 	utility::vector1<core::Real> allscores;
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts; // initialized from the command line
+	core::io::silent::SilentFileData sfd( opts );
 	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
 	}

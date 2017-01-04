@@ -52,11 +52,12 @@ class BinarySilentStruct : public SilentStruct {
 public:
 
 	/// @brief Constructors.
-	BinarySilentStruct( Size const nres_in );
+	BinarySilentStruct( SilentFileOptions const & opts, Size const nres_in );
 
-	BinarySilentStruct();
+	BinarySilentStruct( SilentFileOptions const & opts );
 
 	BinarySilentStruct(
+		SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
 	);

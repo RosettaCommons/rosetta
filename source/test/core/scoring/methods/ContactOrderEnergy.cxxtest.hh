@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 //Auto Headers
 #include <core/io/silent/EnergyNames.fwd.hh>
@@ -46,7 +47,7 @@ public:
 
 	Pose pose;
 	ContactOrderEnergy co_energy;
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileDataOP sfd;
 	core::chemical::ResidueTypeSetCOP rsd_set;
 	core::scoring::ScoreFunctionOP scorefxn;
 
@@ -67,7 +68,10 @@ public:
 		core_init_with_additional_options( "-in::file::silent_struct_type protein" );
 
 		// correct answers taken from rosetta++ v19429
-		sfd.read_file( "core/scoring/methods/score3_in.silent_out" );
+		using namespace core::io::silent;
+		SilentFileOptions opts;
+		sfd = SilentFileDataOP( new SilentFileData( opts ) );
+		sfd->read_file( "core/scoring/methods/score3_in.silent_out" );
 		// contact order calculations in rosetta++ used centroids
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		// scorefxn isn't really used, but necessary for call to finalize_total_energy
@@ -89,7 +93,7 @@ public:
 
 		float co, silent_co;
 		EnergyMap emap;
-		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
+		for ( core::io::silent::SilentFileData::iterator iter = sfd->begin(), end = sfd->end(); iter != end; ++iter ) {
 			emap.zero();
 			iter->fill_pose( pose, *rsd_set );
 			silent_co = iter->get_energy( "co" );

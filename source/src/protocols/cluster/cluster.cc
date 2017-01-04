@@ -14,6 +14,7 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -782,16 +783,18 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 
 	using io::silent::SilentStructFactory;
 	using io::silent::SilentStructOP;
+	using io::silent::SilentFileOptions;
 
 	int i,j;
+	SilentFileOptions opts;
 	io::silent::SilentStructOP ss, ss_center;
-	io::silent::SilentFileData sfd, sfd_center;
+	io::silent::SilentFileData sfd( opts ), sfd_center( opts );
 
-	ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+	ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 
 	if ( option[ OptionKeys::cluster::write_centers ].user() ) {
-		ss_center = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		ss_center = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		std::string silent_file_center_ = "centers_" + silent_file_;
 		for ( i=0; i<(int)clusterlist.size(); ++i ) {
 			std::string tag = "center_" + string_of( i );

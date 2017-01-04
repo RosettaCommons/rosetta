@@ -34,7 +34,7 @@ public:
 	ProteinSilentStruct_SinglePrecCreator();
 	virtual ~ProteinSilentStruct_SinglePrecCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 
@@ -46,7 +46,7 @@ public:
 	ProteinSilentStructCreator();
 	virtual ~ProteinSilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 
@@ -58,7 +58,7 @@ public:
 	RNA_SilentStructCreator();
 	virtual ~RNA_SilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 
@@ -70,7 +70,7 @@ public:
 	BinarySilentStructCreator();
 	virtual ~BinarySilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 
@@ -82,7 +82,7 @@ public:
 	ScoreFileSilentStructCreator();
 	virtual ~ScoreFileSilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 
@@ -94,7 +94,7 @@ public:
 	ScoreJumpFileSilentStructCreator();
 	virtual ~ScoreJumpFileSilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 
@@ -106,7 +106,7 @@ public:
 	RigidBodySilentStructCreator();
 	virtual ~RigidBodySilentStructCreator();
 
-	virtual SilentStructOP create_silent_struct() const;
+	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
 	virtual std::string keyname() const;
 };
 

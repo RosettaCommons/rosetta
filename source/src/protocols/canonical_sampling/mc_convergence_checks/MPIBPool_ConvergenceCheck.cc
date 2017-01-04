@@ -13,6 +13,7 @@
 #include <core/pose/Pose.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <basic/Tracer.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
@@ -1003,10 +1004,11 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
       best_decoy = new_tag;
       best_decoy = new_tag;
       PROF_START( basic::WRITE_TO_FILE );
-      core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			core::io::silent::SilentFileOptions opts;
+      core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 
       ss->fill_struct( pose, new_tag );
-      core::io::silent::SilentFileData sfd;
+      core::io::silent::SilentFileData sfd( opts );
       sfd.write_silent_struct( *ss, new_decoys_out_, false );
       PROF_STOP( basic::WRITE_TO_FILE );
     }

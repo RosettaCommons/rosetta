@@ -30,6 +30,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <protocols/loops/Loop.hh>
@@ -500,7 +501,8 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 		{ // Save centorids
-			core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentFileData sfd( opts );
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]() + ".centroid.out" ;
 			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 				core::pose::Pose rpose;
@@ -549,7 +551,8 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		//pose.dump_pdb( "lhb_" + prefix + "_" + utility::to_string( round ) + ".pdb" );
 
 
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
 		std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 		for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 
@@ -845,7 +848,8 @@ LoopHashLibrary::get_all(
 
 					transfer_phi_psi( newpose, mynewpose );
 
-					core::io::silent::SilentStructOP new_struct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+					core::io::silent::SilentFileOptions opts;
+					core::io::silent::SilentStructOP new_struct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out(opts);
 					new_struct->fill_struct( mynewpose );
 					lib_structs.push_back( new_struct );
 				}

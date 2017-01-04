@@ -36,8 +36,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -90,7 +90,8 @@ namespace rna {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_, bool const NAT_rmsd /*= true*/){
-	static core::io::silent::SilentFileData silent_file_data;
+	core::io::silent::SilentFileOptions opts;
+	static core::io::silent::SilentFileData silent_file_data( opts );
 	output_data( silent_file_data, silent_file, tag, write_score_only, pose, native_poseCOP, working_parameters_, NAT_rmsd );
 }
 
@@ -111,7 +112,8 @@ output_data( core::io::silent::SilentFileData& silent_file_data, std::string con
 	Size const moving_base_residue( working_parameters_->actually_moving_res() );
 
 	//  BinarySilentStruct s = get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only );
-	BinarySilentStruct s = BinarySilentStruct( pose, tag );
+	SilentFileOptions opts;
+	BinarySilentStruct s = BinarySilentStruct( opts, pose, tag );
 
 	bool const output_extra_RMSDs = working_parameters_->output_extra_RMSDs();
 
@@ -228,7 +230,8 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 	std::string const debug_tag = tag + "_CONVERSION_DEBUG";
 	const Real RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data(opts);
 
 	static const ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance() ->
 		residue_type_set( core::chemical::FA_STANDARD ) );
@@ -286,8 +289,8 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			}
 		}
 
-		BinarySilentStruct DEBUG_silent_struct( pose, debug_tag );
-		BinarySilentStruct const silent_struct( pose, tag );
+		BinarySilentStruct DEBUG_silent_struct( opts, pose, debug_tag );
+		BinarySilentStruct const silent_struct( opts, pose, tag );
 
 		if ( utility::file::file_exists( debug_silent_file ) ) remove_file( debug_silent_file );
 
@@ -295,7 +298,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 
 		///////////////////////////////////////////////////////////////////////////////
 
-		core::io::silent::SilentFileData import_silent_file_data;
+		core::io::silent::SilentFileData import_silent_file_data(opts);
 		import_silent_file_data.read_file( debug_silent_file );
 		pose::Pose pose_from_silent_file;
 
@@ -333,14 +336,14 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 
 	first_trial_pose_from_silent_file.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + "_pose_from_silent_file.pdb" );
 	first_trial_pose.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".pdb" );
-	BinarySilentStruct ERROR_silent_struct( first_trial_pose, debug_tag );
+	BinarySilentStruct ERROR_silent_struct( opts, first_trial_pose, debug_tag );
 	std::string const ERROR_silent_file = "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".out";
 	silent_file_data.write_silent_struct( ERROR_silent_struct, ERROR_silent_file, false );
 
 	utility_exit_with_message( "Fail to write pose ( " + debug_tag + " ) to silent_file after " + ObjexxFCL::string_of( NUM_trials ) + " trials " );
 
 	////////////This is just to prevent compiler WARNING MESSAGES/////////
-	BinarySilentStruct EMPTY_silent_struct;
+	BinarySilentStruct EMPTY_silent_struct(opts);
 	return EMPTY_silent_struct;
 	//////////////////////////////////////////////////////////////////////
 }
@@ -356,7 +359,8 @@ get_binary_rna_silent_struct_safe_wrapper( pose::Pose const & const_pose, std::s
 	using namespace core::pose;
 
 	if ( write_score_only ) {
-		BinarySilentStruct s( const_pose, tag ); //If write score only, don't have to safe about pose to silent_struct conversion!
+		SilentFileOptions opts;
+		BinarySilentStruct s( opts, const_pose, tag ); //If write score only, don't have to safe about pose to silent_struct conversion!
 		return s;
 	}
 

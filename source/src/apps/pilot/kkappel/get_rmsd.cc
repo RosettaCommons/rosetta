@@ -17,6 +17,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -150,7 +151,8 @@ get_rmsd()
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data( opts );
 
 
 	//if ( native_exists ) ( *scorefxn)( *native_pose );
@@ -276,7 +278,7 @@ get_rmsd()
 		std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
 
 		// write it to the silent file
-		BinarySilentStruct s( pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 		// could also score it here?
 		s.add_energy( "rms", rmsd );
 		s.add_energy( "align_rms", align_rmsd );

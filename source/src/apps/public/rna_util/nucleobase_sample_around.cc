@@ -32,6 +32,7 @@
 #include <core/kinematics/Stub.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pose/util.hh>
@@ -292,7 +293,8 @@ nucleobase_probe_score_test()
 	bool const do_all = !option[ just_xy ]() && !option[ just_yz ]() && !option[ just_z ]() && !option[ just_xz ]();
 
 	using namespace core::io::silent;
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data( opts );
 	utility::io::ozstream out;
 
 	if ( option[ just_z ]() || do_all ) {
@@ -310,7 +312,7 @@ nucleobase_probe_score_test()
 			out << z << ' ' << centroid_dist( pose, option[ sample_another_adenosine ] )  << ' ' << do_scoring( pose, scorefxn, sample_rotations, probe_jump_num ) << std::endl;
 
 			std::string const out_file_tag = "S_"+ObjexxFCL::lead_zero_string_of( 6, count );
-			BinarySilentStruct s( pose, out_file_tag );
+			BinarySilentStruct s( opts, pose, out_file_tag );
 			s.add_energy( "z", z );
 			silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
 		}

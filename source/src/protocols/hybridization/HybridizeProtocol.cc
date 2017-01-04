@@ -53,6 +53,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 
@@ -1514,7 +1515,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			} else {
 				// batch relax
 				// add stucture to queue
-				SilentStructOP new_struct = SilentStructFactory::get_instance()->get_silent_struct("binary");
+				SilentFileOptions opts;
+				SilentStructOP new_struct = SilentStructFactory::get_instance()->get_silent_struct("binary",opts);
 				new_struct->fill_struct( pose );
 				new_struct->energies_from_pose( pose );
 				post_centroid_structs.push_back( new_struct );

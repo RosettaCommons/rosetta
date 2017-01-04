@@ -21,11 +21,16 @@
 //package headers
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
+
+// Project headers
+#include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/io/silent/SilentFileOptions.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+
 #include <utility/file/FileName.fwd.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace jd3 {
@@ -69,6 +74,7 @@ public:
 	void write_output_pose(
 		LarvalJob const & job,
 		utility::options::OptionCollection const & job_options,
+		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 		core::pose::Pose const & pose
 	);
 
@@ -96,11 +102,19 @@ public:
 	static
 	void
 	list_options_read( utility::options::OptionKeyList & read_options );
-	
-	
+
 private:
-	
-	utility::vector1< std::pair< core::io::silent::SilentStructOP, utility::file::FileName > > buffered_structs_;
+	void
+	initialize_sf_options(
+		utility::options::OptionCollection const & job_options,
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	);
+
+private:
+	std::string fname_out_;
+	core::Size buffer_limit_;
+	core::io::silent::SilentFileOptionsOP opts_;
+	utility::vector1< core::io::silent::SilentStructOP > buffered_structs_;
 
 };
 

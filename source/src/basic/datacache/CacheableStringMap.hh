@@ -40,6 +40,11 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace basic {
 namespace datacache {
 
@@ -48,31 +53,36 @@ namespace datacache {
 class CacheableStringMap : public CacheableData
 {
 public:
-	CacheableStringMap() : CacheableData() {}
+	CacheableStringMap();
 
-	~CacheableStringMap() override = default;
+	~CacheableStringMap() override;
 
-	CacheableDataOP clone() const override {
-		return CacheableDataOP( new CacheableStringMap(*this) );
-	}
+	CacheableDataOP clone() const override;
 
-	virtual std::map< std::string, std::string > & map() {
-		return map_;
-	}
+	virtual std::map< std::string, std::string > & map();
 
-	virtual const std::map< std::string, std::string > & map() const {
-		return map_;
-	}
+	virtual const std::map< std::string, std::string > & map() const;
 
-	CacheableStringMapOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableStringMap>( CacheableData::shared_from_this() ); }
+	CacheableStringMapOP shared_from_this();
 
 private:
 
 	std::map< std::string, std::string > map_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_CacheableStringMap )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_basic_datacache_CacheableStringMap_HH */

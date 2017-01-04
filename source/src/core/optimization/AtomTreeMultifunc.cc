@@ -33,6 +33,7 @@
 
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 /// Utility headers
 #include <utility/string_util.hh>
@@ -114,8 +115,9 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 	Real alt_score_vars = score_function_( pose1 );
 	if ( dump_silent ) {
 		std::string outfile = "atomtree_multifunc_error_pose_before" + utility::to_string( count_dumped  ) + ".silent";
-		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary" ); //true to store argv in silent file
-		core::io::silent::BinarySilentStruct silent_stream( pose1, "S_1" );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary", opts ); //true to store argv in silent file
+		core::io::silent::BinarySilentStruct silent_stream( opts, pose1, "S_1" );
 		sfd_out.write_silent_struct( silent_stream, outfile );
 	} else {
 		pose1.dump_pdb( "atomtree_multifunc_error_pose_before" + utility::to_string( count_dumped  ) + ".pdb" );
@@ -123,9 +125,10 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 
 	Real alt_score_vars2 = score_function_( pose2 );
 	if ( dump_silent ) {
+		core::io::silent::SilentFileOptions opts;
 		std::string outfile = "atomtree_multifunc_error_pose_after" + utility::to_string( count_dumped  ) + ".silent";
-		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary" ); //true to store argv in silent file
-		core::io::silent::BinarySilentStruct silent_stream( pose2, "S_1" );
+		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary", opts ); //true to store argv in silent file
+		core::io::silent::BinarySilentStruct silent_stream( opts, pose2, "S_1" );
 		sfd_out.write_silent_struct( silent_stream, outfile );
 
 	} else {

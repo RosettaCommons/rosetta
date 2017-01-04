@@ -59,11 +59,16 @@ public:
 
 	/// @brief Construct a list of PoseInputSource objects from the command line that will
 	/// be used by the JobQueen to construct a list of LarvalJobs.
-	virtual PoseInputSources pose_input_sources_from_command_line() const = 0;
+	virtual PoseInputSources pose_input_sources_from_command_line() = 0;
 
 	/// @brief Construct a list of PoseInputSource objects from a Tag object that will
 	/// be used by the JobQueen to construct a list of LarvalJobs.
-	virtual PoseInputSources pose_input_sources_from_tag( utility::tag::TagCOP ) const = 0;
+	virtual
+	PoseInputSources
+	pose_input_sources_from_tag(
+		utility::options::OptionCollection const & opts,
+		utility::tag::TagCOP
+	) = 0;
 
 	/// @brief Convert a single PoseInputSource into a Pose that will be used to
 	/// initialize a Job.  The PoseInputSource object must have originated from
@@ -72,8 +77,9 @@ public:
 	core::pose::PoseOP
 	pose_from_input_source(
 		PoseInputSource const & input_source,
-		utility::options::OptionCollection const & options
-	) const = 0;
+		utility::options::OptionCollection const & options,
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	) = 0;
 
 
 }; // PoseInputter

@@ -43,6 +43,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -82,15 +83,17 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.medal.MedalMover" );
 
 void on_pose_accept(const core::pose::Pose& pose) {
 	using core::io::silent::SilentFileData;
+	using core::io::silent::SilentFileOptions;
 	using core::io::silent::SilentStructFactory;
 	using core::io::silent::SilentStructOP;
 
 	static int num_accepted = 0;
 
-	SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
+	SilentFileOptions opts;
+	SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	silent->fill_struct(pose, str(boost::format("accepted_pose_%d") % num_accepted++));
 
-	SilentFileData sfd;
+	SilentFileData sfd( opts );
 	sfd.write_silent_struct(*silent, "medal.accepted.out");
 }
 

@@ -19,6 +19,11 @@
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
 #include <protocols/jd3/PoseInputSource.hh>
 
+#include <basic/options/util.hh>
+
+#include <utility/options/keys/OptionKeyList.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/tag/Tag.hh>
 
 template <typename T>
 typename T::mapped_type get(T const& map, typename T::key_type const& key)
@@ -37,16 +42,108 @@ public:
 	void setUp() {
 	}
 
-	void test_read_s_flag() {
+	utility::vector1< std::string >
+	four_pdbs_list_contents() {
+		std::list< std::string > pdbs = { "1abc.pdb", "2def.pdb", "3ghi.pdb", "4jkl.pdb" };
+		utility::vector1< std::string > pdbs_vect( 4 );
+		std::copy( pdbs.begin(), pdbs.end(), pdbs_vect.begin() );
+		return pdbs_vect;
+	}
+
+
+	void test_read_s_flag_one_pdb() {
 		protocols_init_with_additional_options( "-s /home/andrew/1ubq.pdb" );
 		PDBPoseInputter inputter;
-		PoseInputSources sources = inputter.initialize_pose_input_sources();
+		PoseInputSources sources = inputter.pose_input_sources_from_command_line();
 		TS_ASSERT_EQUALS( sources.size(), 1 );
 		if ( sources.size() != 1 ) return;
-		TS_ASSERT_EQUALS( sources[1]->input_kind(), protocols::jd3::pik_pdb_file );
 		TS_ASSERT_EQUALS( sources[1]->input_tag(), std::string("1ubq") );
-		TS_ASSERT_EQUALS( sources[1]->origin(), protocols::jd3::piso_command_line );
+		TS_ASSERT_EQUALS( sources[1]->origin(), "PDB" );
 		TS_ASSERT( sources[1]->string_string_map().find( std::string("filename") ) != sources[1]->string_string_map().end() );
 		TS_ASSERT_EQUALS( get( sources[1]->string_string_map(), std::string("filename")), "/home/andrew/1ubq.pdb" );
 	}
+
+	void test_read_s_flag_three_pdbs() {
+		protocols_init_with_additional_options( "-s /home/andrew/1ubq.pdb /net/scr/1ubi.pdb /www/whatever/1l2y.pdb" );
+		PDBPoseInputter inputter;
+		PoseInputSources sources = inputter.pose_input_sources_from_command_line();
+		TS_ASSERT_EQUALS( sources.size(), 3 );
+		if ( sources.size() != 3 ) return;
+
+		TS_ASSERT_EQUALS( sources[1]->input_tag(), std::string("1ubq") );
+		TS_ASSERT_EQUALS( sources[1]->origin(), "PDB" );
+		TS_ASSERT( sources[1]->string_string_map().find( std::string("filename") ) != sources[1]->string_string_map().end() );
+		TS_ASSERT_EQUALS( get( sources[1]->string_string_map(), std::string("filename")), "/home/andrew/1ubq.pdb" );
+
+		TS_ASSERT_EQUALS( sources[2]->input_tag(), std::string("1ubi") );
+		TS_ASSERT_EQUALS( sources[2]->origin(), "PDB" );
+		TS_ASSERT( sources[2]->string_string_map().find( std::string("filename") ) != sources[2]->string_string_map().end() );
+		TS_ASSERT_EQUALS( get( sources[2]->string_string_map(), std::string("filename")), "/net/scr/1ubi.pdb" );
+
+		TS_ASSERT_EQUALS( sources[3]->input_tag(), std::string("1l2y") );
+		TS_ASSERT_EQUALS( sources[3]->origin(), "PDB" );
+		TS_ASSERT( sources[3]->string_string_map().find( std::string("filename") ) != sources[3]->string_string_map().end() );
+		TS_ASSERT_EQUALS( get( sources[3]->string_string_map(), std::string("filename")), "/www/whatever/1l2y.pdb" );
+	}
+
+	void test_read_l_flag_four_pdbs() {
+		protocols_init_with_additional_options( "-l protocols/jd3/pose_inputters/four_pdbs.list" );
+		PDBPoseInputter inputter;
+		PoseInputSources sources = inputter.pose_input_sources_from_command_line();
+		TS_ASSERT_EQUALS( sources.size(), 4 );
+		if ( sources.size() != 4 ) return;
+
+		utility::vector1< std::string > pdbs = four_pdbs_list_contents();
+		for ( core::Size ii = 1; ii <= sources.size(); ++ii ) {
+			TS_ASSERT_EQUALS( pdbs[ ii ].substr( 0, 4 ), sources[ ii ]->input_tag() );
+			TS_ASSERT_EQUALS( get( sources[ii]->string_string_map(), std::string("filename")), pdbs[ii] );
+		}
+	}
+
+	void test_read_input_sources_from_listfile_attribute_in_tag() {
+		using namespace utility::tag;
+
+		protocols_init_with_additional_options( "" );
+		utility::options::OptionKeyList opts_list;
+		PDBPoseInputter::list_options_read( opts_list );
+		utility::options::OptionCollectionOP opts = basic::options::read_subset_of_global_option_collection( opts_list );
+
+		PDBPoseInputter inputter;
+		TagCOP input_tag = Tag::create( "<PDB listfile=\"protocols/jd3/pose_inputters/four_pdbs.list\"/>" );
+
+		PoseInputSources sources = inputter.pose_input_sources_from_tag( *opts, input_tag );
+
+		TS_ASSERT_EQUALS( sources.size(), 4 );
+		if ( sources.size() != 4 ) return;
+
+		utility::vector1< std::string > pdbs = four_pdbs_list_contents();
+		for ( core::Size ii = 1; ii <= sources.size(); ++ii ) {
+			TS_ASSERT_EQUALS( pdbs[ ii ].substr( 0, 4 ), sources[ ii ]->input_tag() );
+			TS_ASSERT_EQUALS( get( sources[ii]->string_string_map(), std::string("filename")), pdbs[ii] );
+		}
+	}
+
+	void test_read_input_sources_from_listfile_attribute_in_tag_w_path() {
+		using namespace utility::tag;
+
+		protocols_init_with_additional_options( "" );
+		utility::options::OptionKeyList opts_list;
+		PDBPoseInputter::list_options_read( opts_list );
+		utility::options::OptionCollectionOP opts = basic::options::read_subset_of_global_option_collection( opts_list );
+
+		PDBPoseInputter inputter;
+		TagCOP input_tag = Tag::create( "<PDB listfile=\"protocols/jd3/pose_inputters/four_pdbs.list\" path=\"protocols/jd3/pose_inputters\"/>" );
+
+		PoseInputSources sources = inputter.pose_input_sources_from_tag( *opts, input_tag );
+
+		TS_ASSERT_EQUALS( sources.size(), 4 );
+		if ( sources.size() != 4 ) return;
+
+		utility::vector1< std::string > pdbs = four_pdbs_list_contents();
+		for ( core::Size ii = 1; ii <= sources.size(); ++ii ) {
+			TS_ASSERT_EQUALS( pdbs[ ii ].substr( 0, 4 ), sources[ ii ]->input_tag() );
+			TS_ASSERT_EQUALS( get( sources[ii]->string_string_map(), std::string("filename")), "protocols/jd3/pose_inputters/" + pdbs[ii] );
+		}
+	}
+
 };

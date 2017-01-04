@@ -23,6 +23,7 @@
 
 
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -56,6 +57,7 @@ public:
 public:
 
 	DesignSilentStruct(
+		core::io::silent::SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag,
 		bool const add_in,
@@ -63,6 +65,7 @@ public:
 	);
 
 	DesignSilentStruct(
+		core::io::silent::SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag, // = "empty_tag",
 		utility::vector1<core::Size> const & spec_res_in,
@@ -71,6 +74,7 @@ public:
 		bool const onlyadd_in );
 
 	DesignSilentStruct(
+		core::io::silent::SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag, // = "empty_tag",
 		utility::vector1<core::Size> const & spec_res_in,

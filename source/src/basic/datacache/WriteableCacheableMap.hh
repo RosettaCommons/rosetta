@@ -41,6 +41,11 @@
 #include <iosfwd>
 #include <basic/datacache/CacheableData.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace basic {
 namespace datacache {
 
@@ -51,68 +56,52 @@ class WriteableCacheableMap : public CacheableData
 	typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
 
 public:
-	WriteableCacheableMap() : CacheableData() {}
+	WriteableCacheableMap();
 
-	WriteableCacheableMap( WriteableCacheableMap const& )= default;
+	WriteableCacheableMap( WriteableCacheableMap const & );
 
-	~WriteableCacheableMap() override = default;
+	~WriteableCacheableMap() override;
 
-	CacheableDataOP clone() const override {
-		return CacheableDataOP( new WriteableCacheableMap(*this) );
-	}
+	CacheableDataOP clone() const override;
 
-	virtual DataMap & map() {
-		return map_;
-	}
+	virtual DataMap & map();
 
-	virtual const DataMap & map() const {
-		return map_;
-	}
+	virtual const DataMap & map() const;
 
-	virtual void erase( WriteableCacheableDataOP d ) {
-		DataMap::const_iterator it = map_.find( d->datatype() );
-		if ( it != map_.end() ) {
-			map_[ d->datatype() ].erase( d );
-		}
-	}
+	virtual void erase( WriteableCacheableDataOP d );
 
-	virtual DataMap::const_iterator begin() const {
-		return map_.begin();
-	}
+	virtual DataMap::const_iterator begin() const;
 
-	virtual DataMap::const_iterator end() const {
-		return map_.end();
-	}
+	virtual DataMap::const_iterator end() const;
 
-	virtual std::set< WriteableCacheableDataOP >& operator[]( std::string const& str ){
-		return map_[ str ];
-	}
+	virtual std::set< WriteableCacheableDataOP >& operator[] ( std::string const & str );
 
-	virtual DataMap::const_iterator find( std::string const& str ) const {
-		return map_.find( str );
-	}
+	virtual DataMap::const_iterator find( std::string const& str ) const;
 
-	virtual bool has( WriteableCacheableDataOP data ){
-		if ( map_.find( data->datatype() ) != map_.end() ) {
-			return ( map_[ data->datatype() ].find( data ) != map_[ data->datatype() ].end() );
-		}
-		return false;
-	}
+	virtual bool has( WriteableCacheableDataOP data );
 
-	virtual void insert( WriteableCacheableDataOP data ){
-		map_[ data->datatype() ].insert( data );
-	}
+	virtual void insert( WriteableCacheableDataOP data );
 
-	WriteableCacheableMapOP shared_from_this() { return utility::pointer::static_pointer_cast<WriteableCacheableMap>( CacheableData::shared_from_this() ); }
-
+	WriteableCacheableMapOP shared_from_this();
 
 private:
 
 	DataMap map_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_WriteableCacheableMap )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_basic_datacache_WriteableCacheableMap_HH */

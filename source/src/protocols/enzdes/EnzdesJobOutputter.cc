@@ -23,6 +23,7 @@
 //project headers
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentEnergy.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
@@ -62,7 +63,8 @@ EnzdesJobOutputter::EnzdesJobOutputter()
 	}
 
 	if ( !this->write_scorefile() ) return;
-	scorefile_writer_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
+	core::io::silent::SilentFileOptions opts;
+	scorefile_writer_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
 	enz_scofile_ = protocols::enzdes::EnzdesScorefileFilterOP( new protocols::enzdes::EnzdesScorefileFilter() );
 	if ( basic::options::option[ basic::options::OptionKeys::out::overwrite ].user() ) {
 		if ( utility::file::file_exists( scorefile_name().name() ) ) utility::file::file_delete( scorefile_name().name() );
@@ -113,7 +115,8 @@ EnzdesJobOutputter::scorefile(
 	}
 
 	std::string outstruct_name( this->output_name( job ) );
-	core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct( pose, outstruct_name ) );
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct( opts, pose, outstruct_name ) );
 	ss->precision( 2 );
 	ss->scoreline_prefix( "" );
 	ss->silent_energies( silent_Es );

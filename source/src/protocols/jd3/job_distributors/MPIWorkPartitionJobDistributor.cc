@@ -77,7 +77,7 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 	MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
 	rank_ = int_rank;
 	npes_ = int_npes;
-	
+
 #endif
 
 	// AMW: Have to do this per round, I think.
@@ -157,7 +157,7 @@ void
 MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 {
 	set_job_queen( queen );
-	
+
 	// AMW: Right now, this is taken directly from JobDistributor, but
 	// I think I am going to need to change stuff to account for distributing
 	// over nodes.
@@ -167,13 +167,13 @@ MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 		next_job_to_try_assigning_ = job_id_start_;
 		TR << "RANK: " << rank_ << " NUM_PROCS: " << npes_ //<< " NUM_JOBS: " << jobs.size()
 		   << " START_ID: " << job_id_start_ << " END_ID: " << job_id_end_ << std::endl;
-		
+
 		while ( more_jobs_in_current_round() ) {
-			
+
 			// select the next job to run
 			LarvalJobOP larval_job = select_next_job();
 			if ( ! larval_job ) break; // or if we discover there are no jobs to run, then quit
-			
+
 			// ask the job queen to mature the job
 			JobOP mature_job = job_queen().mature_larval_job( larval_job );
 			if ( ! mature_job ) {
@@ -181,7 +181,7 @@ MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 				purge_similar_jobs_which_have_bad_inputs( larval_job );
 				continue;
 			}
-			
+
 			// run the job
 			JobResultOP result;
 			try {
@@ -190,13 +190,13 @@ MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 				process_exception_from_job( larval_job, exception );
 			}
 			process_job_result( larval_job, result );
-			
+
 		}
 		note_round_completed();
-		
+
 	} while ( another_round_remains() );
 
-	
+
 //#ifdef USEMPI
 	//MPI::COMM_WORLD.Barrier();
 	//MPI::Finalize();
@@ -211,7 +211,7 @@ MPIWorkPartitionJobDistributor::select_next_job() {
 		LarvalJobOP next_job = job_queen().determine_job_list()[ next_job_to_try_assigning_ ];
 		++next_job_to_try_assigning_;
 		if ( next_job->bad() ) continue;
-		
+
 		// determine if this job has already been run
 		if ( job_queen().has_job_completed( next_job )) {
 			continue;
@@ -220,7 +220,7 @@ MPIWorkPartitionJobDistributor::select_next_job() {
 		job_queen().mark_job_as_having_begun( next_job );
 		return next_job;
 	}
-	
+
 	// return 0 if there are no jobs left to run
 	return LarvalJobOP( 0 );
 }

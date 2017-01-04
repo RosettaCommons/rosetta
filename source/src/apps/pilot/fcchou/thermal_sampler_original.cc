@@ -15,6 +15,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -336,7 +337,8 @@ thermal_sampler()
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 
 	FullModelInfoOP my_model;
 	utility::vector1< pose::PoseOP > other_poses;
@@ -585,7 +587,7 @@ thermal_sampler()
 		if ( (n % dump_interval) == 0 && option[dump_silent]() ) {
 			std::stringstream tag;
 			tag << option[out_prefix]() << "_" << n;
-			BinarySilentStruct silent( pose, tag.str() );
+			BinarySilentStruct silent( opts, pose, tag.str() );
 			silent_file_data.write_silent_struct( silent, silent_file, false /*write score only*/ );
 		}
 

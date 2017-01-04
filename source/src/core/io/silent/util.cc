@@ -18,6 +18,7 @@
 // mini headers
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/file/gzip_util.hh>
@@ -68,7 +69,8 @@ initialize_tag_is_done( std::string const & silent_file ){
 
 	std::map< std::string, bool > tag_is_done;
 	utility::vector1< std::string > tags_done;
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 
 	if ( utility::file::file_exists( silent_file ) ) {
 		tags_done = silent_file_data.read_tags_fast( silent_file );

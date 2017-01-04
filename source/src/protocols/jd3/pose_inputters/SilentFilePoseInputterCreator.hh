@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/SilentFilePoseInputterCreator.hh
-/// @brief
+/// @file   protocols/jd3/pose_inputters/SilentFilePoseInputterCreator.hh
+/// @brief  Creator class for the SilentFile Pose Inputter
 /// @author Andy Watkins (amw579@stanford.edu)
 
 #ifndef INCLUDED_protocols_jd3_pose_inputters_SilentFilePoseInputterCreator_hh
@@ -22,10 +22,10 @@ namespace pose_inputters {
 
 class SilentFilePoseInputterCreator : public PoseInputterCreator {
 public:
-	virtual PoseInputterOP create_inputter() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
-	virtual void list_options_read( utility::options::OptionKeyList & read_options ) const;
+	PoseInputterOP create_inputter() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	void list_options_read( utility::options::OptionKeyList & read_options ) const override;
 };
 
 } //pose_inputters

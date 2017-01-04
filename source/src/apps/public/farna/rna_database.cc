@@ -17,6 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -457,7 +458,8 @@ write_base_pair_step_to_silent_struct( pose::Pose const & pose,
 	bool const use_sub_directories = true )
 {
 	using namespace core::io::silent;
-	static SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	static SilentFileData silent_file_data(opts); // Ugh, static data
 
 	pose::Pose bps_pose;
 	core::pose::pdbslice( bps_pose, pose, base_pair_res );
@@ -473,7 +475,7 @@ write_base_pair_step_to_silent_struct( pose::Pose const & pose,
 		if ( !utility::file::file_exists( bps_sub_dir ) ) utility::file::create_directory_recursive( bps_sub_dir );
 	}
 	std::string const silent_file = bps_sub_dir + bps_seq + ".out";
-	BinarySilentStruct s( bps_pose, bps_tag );
+	BinarySilentStruct s( opts, bps_pose, bps_tag );
 	silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
 }
 

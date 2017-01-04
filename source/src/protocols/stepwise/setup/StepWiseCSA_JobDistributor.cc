@@ -20,6 +20,7 @@
 #include <protocols/stepwise/modeler/file_util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/util.hh>
 #include <core/scoring/Energies.hh>
@@ -208,7 +209,8 @@ StepWiseCSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 
 			if ( kick_out_idx > 0 ) {
 				runtime_assert( s == 0 ); // s will be filled below.
-				SilentFileDataOP sfd_new( new SilentFileData );
+				SilentFileOptions opts;
+				SilentFileDataOP sfd_new( new SilentFileData(opts) );
 				for ( Size n = 1; n <= struct_list.size(); n++ ) if ( n != kick_out_idx ) sfd_new->add_structure( struct_list[ n ] );
 				sfd_ = sfd_new;
 			}
@@ -234,7 +236,8 @@ StepWiseCSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 void
 StepWiseCSA_JobDistributor::read_in_silent_file(){
 
-	sfd_ = SilentFileDataOP( new SilentFileData );
+	core::io::silent::SilentFileOptions opts;
+	sfd_ = SilentFileDataOP( new SilentFileData(opts) );
 	total_updates_so_far_ = 0;
 	if ( !utility::file::file_exists( silent_file_ ) ) return;
 

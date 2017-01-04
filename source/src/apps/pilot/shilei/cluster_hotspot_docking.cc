@@ -25,6 +25,7 @@
 #include <core/id/AtomID.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
@@ -112,7 +113,8 @@ int main(int argc, char *argv[])
 
 		//read in silent file
 		std::string silentin = option[ in::file::silent ]()[1];
-		SilentFileData sfd,sfd2;
+		SilentFileOptions opts; // initialized from the command line
+		SilentFileData sfd(opts), sfd2(opts);
 		sfd.read_file( silentin );
 
 		//Get access to individual pose in the silent file
@@ -130,7 +132,7 @@ int main(int argc, char *argv[])
 		Real score;
 
 		for ( core::Size ii = 1; ii <= tags.size(); ii++ ) {
-			SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_in();
+			SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_in( opts );
 			ss = sfd[ tags[ ii ] ];
 			//save score column from the silent files
 

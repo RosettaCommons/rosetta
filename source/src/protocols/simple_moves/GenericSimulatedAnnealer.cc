@@ -31,6 +31,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // C/C++ headers
@@ -352,7 +353,8 @@ GenericSimulatedAnnealer::load_checkpoint_file( core::pose::Pose & pose )
 {
 	runtime_assert( checkpoint_file_ != "" );
 	std::string const sf_name = checkpoint_file_ + ".out";
-	core::io::silent::SilentFileData sfd( sf_name, false, false, "binary" );
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( sf_name, false, false, "binary", opts );
 	sfd.read_file( sf_name );
 	std::string const best_tag = create_tag( "best" );
 	if ( sfd.has_tag( best_tag ) ) {
@@ -409,11 +411,12 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 	std::string const sf_name = checkpoint_file_ + ".out~";
 	// save best pose
 	if ( lowest_score_pose() && last_accepted_pose() ) {
-		core::io::silent::SilentFileData sfd;
-		core::io::silent::SilentStructOP best_score = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
+		core::io::silent::SilentStructOP best_score = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary", opts );
 		best_score->fill_struct( *lowest_score_pose() );
 		best_score->set_decoy_tag( create_tag( "best" ) );
-		core::io::silent::SilentStructOP last_accepted = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" );
+		core::io::silent::SilentStructOP last_accepted = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary", opts );
 		last_accepted->fill_struct( *last_accepted_pose() );
 		last_accepted->set_decoy_tag( create_tag( "last" ) );
 		sfd.add_structure_replace_tag_if_necessary( best_score );

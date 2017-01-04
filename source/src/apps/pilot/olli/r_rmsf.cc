@@ -14,6 +14,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
@@ -255,7 +256,8 @@ void run() {
 		protocols::jd2::SilentFileJobInputterOP sfd_inputter ( utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( protocols::jd2::JobDistributor::get_instance()->job_inputter() ) );
 		if ( sfd_inputter ) { //option[ in::file::silent ].user() ) {
 			io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
-			core::io::silent::SilentFileData kept_decoys;
+			core::io::silent::SilentFileOptions opts; // initialized from the command line
+			core::io::silent::SilentFileData kept_decoys( opts );
 			cluster_silent_structs( rmsf_tool->eval_, sfd.begin(), sfd.end(), kept_decoys, ClusterOptions( true ) );
 			kept_decoys.write_all( option[ out::file::cluster ]() );
 		}

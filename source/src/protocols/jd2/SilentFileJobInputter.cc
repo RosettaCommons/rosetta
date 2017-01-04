@@ -20,6 +20,7 @@
 ///Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -43,7 +44,8 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.SilentFileJobInputter" );
 namespace protocols {
 namespace jd2 {
 
-protocols::jd2::SilentFileJobInputter::SilentFileJobInputter()
+protocols::jd2::SilentFileJobInputter::SilentFileJobInputter() :
+	sfd_( core::io::silent::SilentFileOptions() )
 // silent_files_( option[ in::file::silent ]() ) {
 {
 	tr.Debug << "Instantiate SilentFileJobInputter" << std::endl;

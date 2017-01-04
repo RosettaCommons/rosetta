@@ -19,6 +19,7 @@
 #include <protocols/magnesium/minimize_util.hh>
 #include <protocols/magnesium/util.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -238,7 +239,8 @@ MgScanner::output_mg_to_silent_file( std::string const & silent_file ) {
 
 	if ( mg_poses_.size() == 0 ) return;
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 	Size const mg_res = get_unique_mg_res( *mg_poses_[ 1 ] );
 	pose::PoseOP single_mg_pose = get_single_mg_pose();
 
@@ -249,11 +251,11 @@ MgScanner::output_mg_to_silent_file( std::string const & silent_file ) {
 		BinarySilentStructOP s;
 		if ( hydrate_ ) {
 			// output the full pose -- will have Mg and HOH.
-			s = BinarySilentStructOP( new BinarySilentStruct( *mg_poses_[ n ], out_file_tag ) );
+			s = BinarySilentStructOP( new BinarySilentStruct( opts, *mg_poses_[ n ], out_file_tag ) );
 		} else {
 			// since no HOH, use a more compact format with just Mg(2+) outputted.
 			single_mg_pose->set_xyz( AtomID( 1, 1 ), mg_position );
-			s = BinarySilentStructOP( new BinarySilentStruct( *single_mg_pose, out_file_tag ) );
+			s = BinarySilentStructOP( new BinarySilentStruct( opts, *single_mg_pose, out_file_tag ) );
 			s->energies_from_pose( *mg_poses_[ n ] );
 		}
 		s->add_energy( "rms",      distance_to_closest_magnesium( mg_position, *get_native_pose() ) );

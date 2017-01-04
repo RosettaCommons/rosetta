@@ -18,6 +18,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -136,7 +137,8 @@ Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
 	select_result.next();
 
 	Pose pose;
-	core::io::silent::SilentFileData silent_file;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData silent_file( opts );
 	stringstream string_stream(silent_pose);
 	vector1<string> tags = make_vector1("db");
 	silent_file.read_stream(string_stream, tags, true);

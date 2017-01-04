@@ -35,14 +35,14 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 // option key includes
-
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-#include <core/io/silent/SilentFileData.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -114,7 +114,8 @@ main( int argc, char * argv [])
 				if ( utility::file::file_exists( scorefile_name ) ) utility::file::file_delete( scorefile_name );
 			}
 		}
-		core::io::silent::SilentFileDataOP scorefile( new core::io::silent::SilentFileData() );
+		core::io::silent::SilentFileOptions opts; // initialized from the comamnd line
+		core::io::silent::SilentFileDataOP scorefile( new core::io::silent::SilentFileData( opts ) );
 
 		if ( option[OptionKeys::enzdes::cstfile].user() ) {
 			option[OptionKeys::run::preserve_header ].value(true);
@@ -192,6 +193,7 @@ main( int argc, char * argv [])
 					protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP cstio( protocols::enzdes::enzutil::get_enzcst_io( *(poses_to_process[ pose_count ] ) ) );
 					enz_scofile->set_cstio( cstio );
 					core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct(
+						opts,
 						*(poses_to_process[ pose_count ]), outtag ) );
 					ss->precision( 2 );
 					ss->scoreline_prefix( "" );

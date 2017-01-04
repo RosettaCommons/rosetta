@@ -34,6 +34,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
@@ -163,7 +164,8 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 	}
 	for ( Size n = 1; n <= input_silent_files.size(); n++ ) {
 		PoseOP pose( new Pose );
-		SilentFileData silent_file_data;
+		SilentFileOptions opts;
+		SilentFileData silent_file_data(opts);
 		core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
 		silent_file_data.read_file( input_silent_files[n] );
 		silent_file_data.begin()->fill_pose( *pose, *rsd_set_op );

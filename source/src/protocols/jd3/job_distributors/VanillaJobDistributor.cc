@@ -71,6 +71,7 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 	while ( true ) {
 		std::pair< SizeList, bool > job_total_order_pair = topological_sort( *job_dag_ );
 		if ( ! job_total_order_pair.second ) {
+			job_queen_->flush();
 			throw utility::excn::EXCN_Msg_Exception( "JobQueen produced a non-DAG job graph." );
 		}
 		SizeList job_total_order = job_total_order_pair.first;
@@ -91,6 +92,7 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 		}
 	}
 
+	job_queen_->flush();
 }
 
 void

@@ -8,16 +8,16 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 
-/// @file   core/io/silent/SilentFileOptionsCreator.fwd.hh
+/// @file   core/io/silent/SilentFileRMOptionsCreator.fwd.hh
 /// @brief  Creator for options for constructing a pose from a silent file
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_core_io_silent_SilentFileOptionsCreator_hh
-#define INCLUDED_core_io_silent_SilentFileOptionsCreator_hh
+#ifndef INCLUDED_core_io_silent_SilentFileRMOptionsCreator_hh
+#define INCLUDED_core_io_silent_SilentFileRMOptionsCreator_hh
 
 // Unit Headers
 #include <basic/resource_manager/ResourceOptionsCreator.hh>
-#include <core/io/silent/SilentFileOptions.fwd.hh>
+#include <core/io/silent/SilentFileRMOptions.fwd.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -27,12 +27,12 @@ namespace core {
 namespace io {
 namespace silent {
 
-/// @brief creator for the SilentFileOptions class
-class SilentFileOptionsCreator : public basic::resource_manager::ResourceOptionsCreator
+/// @brief creator for the SilentFileRMOptions class
+class SilentFileRMOptionsCreator : public basic::resource_manager::ResourceOptionsCreator
 {
 public:
-	SilentFileOptionsCreator();
-	virtual ~SilentFileOptionsCreator();
+	SilentFileRMOptionsCreator();
+	virtual ~SilentFileRMOptionsCreator();
 
 	virtual basic::resource_manager::ResourceOptionsOP create_options() const;
 	virtual std::string options_type() const;

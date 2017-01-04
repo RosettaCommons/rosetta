@@ -7,24 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/StandardJobQueen.cc
+/// @file   protocols/jd3/standard/StandardJobQueen.cc
 /// @brief  StandardJobQueen class's method definitions
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 //unit headers
-#include <protocols/jd3/StandardJobQueen.hh>
+#include <protocols/jd3/standard/StandardJobQueen.hh>
 
 // package headers
 #include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
-#include <protocols/jd3/MoverAndPoseJob.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
+#include <protocols/jd3/deallocation/DeallocationMessage.hh>
+#include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -57,13 +60,15 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.StandardJobQueen" );
 
 namespace protocols {
 namespace jd3 {
+namespace standard {
 
 PreliminaryLarvalJob::PreliminaryLarvalJob() {}
 PreliminaryLarvalJob::~PreliminaryLarvalJob() = default;
 PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & src ) :
 	inner_job( src.inner_job ),
 	job_tag( src.job_tag ),
-	job_options( src.job_options )
+	job_options( src.job_options ),
+	pose_inputter( src.pose_inputter )
 {}
 
 PreliminaryLarvalJob &
@@ -73,83 +78,27 @@ PreliminaryLarvalJob::operator = ( PreliminaryLarvalJob const & rhs )
 		inner_job = rhs.inner_job;
 		job_tag   = rhs.job_tag;
 		job_options = rhs.job_options;
+		pose_inputter = rhs.pose_inputter;
 	}
 	return *this;
 }
 
 
-InputSourceAndImportPoseOptions::InputSourceAndImportPoseOptions() :
-	input_source_( new PoseInputSource ),
-	import_pose_options_( new core::import_pose::ImportPoseOptions )
-{}
 
-InputSourceAndImportPoseOptions::InputSourceAndImportPoseOptions(
-	PoseInputSource const & input_source,
-	core::import_pose::ImportPoseOptions const & options
-) :
-	input_source_( new PoseInputSource( input_source )),
-	import_pose_options_( new core::import_pose::ImportPoseOptions( options ))
-{}
-
-InputSourceAndImportPoseOptions::InputSourceAndImportPoseOptions( InputSourceAndImportPoseOptions const & src ) :
-	input_source_( src.input_source_ ),
-	import_pose_options_( src.import_pose_options_ )
-{}
-
-InputSourceAndImportPoseOptions::~InputSourceAndImportPoseOptions()
-{}
-
-InputSourceAndImportPoseOptions &
-InputSourceAndImportPoseOptions::operator = ( InputSourceAndImportPoseOptions const & rhs )
+utility::excn::EXCN_Msg_Exception
+bad_inner_job_exception()
 {
-	if ( this != &rhs ) {
-		// shallow copy
-		input_source_ = rhs.input_source_;
-		import_pose_options_ = rhs.import_pose_options_;
-	}
-	return *this;
-}
-
-bool InputSourceAndImportPoseOptions::operator == ( InputSourceAndImportPoseOptions const & rhs ) const
-{
-	if ( input_source_ != rhs.input_source_ && ! (*input_source_ == *rhs.input_source_ ) ) return false;
-	if ( import_pose_options_ != rhs.import_pose_options_ && ! (*import_pose_options_ == *rhs.import_pose_options_ ) ) return false;
-	return true;
-}
-
-bool InputSourceAndImportPoseOptions::operator <  ( InputSourceAndImportPoseOptions const & rhs ) const
-{
-	if ( input_source_ != rhs.input_source_ && *input_source_ <  *rhs.input_source_ ) return true;
-	if ( input_source_ != rhs.input_source_ || *input_source_ == *rhs.input_source_ ) return false;
-
-	if ( import_pose_options_ != rhs.import_pose_options_ && *import_pose_options_ < *rhs.import_pose_options_ ) return true;
-
-	return false;
-}
-
-PoseInputSource const & InputSourceAndImportPoseOptions::input_source() const { return *input_source_; }
-void InputSourceAndImportPoseOptions::input_source( PoseInputSource const & setting ) {
-	input_source_ = PoseInputSourceOP( new PoseInputSource( setting ));
-}
-
-core::import_pose::ImportPoseOptions const & InputSourceAndImportPoseOptions::import_pose_options() const
-{
-	return *import_pose_options_;
-}
-
-void InputSourceAndImportPoseOptions::import_pose_options( core::import_pose::ImportPoseOptions const & setting )
-{
-	using namespace core::import_pose;
-	import_pose_options_ = ImportPoseOptionsOP( new ImportPoseOptions( setting ));
+	return utility::excn::EXCN_Msg_Exception( "The InnerLarvalJob provided to the StandardJobQueen by the DerivedJobQueen must derive from StandardInnerLarvalJob. Cannot proceed." );
 }
 
 
 StandardJobQueen::StandardJobQueen() :
-	job_definition_file_read_( false ),
+	required_initialization_performed_( false ),
 	larval_job_counter_( 0 ),
 	preliminary_larval_jobs_determined_( false ),
 	curr_inner_larval_job_index_( 0 ),
-	njobs_made_for_curr_inner_larval_job_( 0 )
+	njobs_made_for_curr_inner_larval_job_( 0 ),
+	input_pose_counter_( 0 )
 {
 	// begin to populate the per-job options object
 	pose_inputters::PoseInputterFactory::get_instance()->list_options_read( options_ );
@@ -449,19 +398,12 @@ void StandardJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// XSDs.  With these schemas, the %StandardJobQueen validates the input XML files (if present).
 /// The %StandardJobQueen then populates preliminary versions of LarvalJob objects./ If the XSD
 /// includes "command line options" (which may be specified either from the command line or in
-/// the <options> section of the Job XML file), the %StandardJobQueen loads the preliminary
+/// the <options> sections of the Job XML file), the %StandardJobQueen loads the preliminary
 /// LarvalJob objects with the options. These preliminary LarvalJob objects will not have been
 /// nstruct expanded (i.e. if there are 100 nstruct for each of 5 different jobs, then there will
 /// only be 5 preliminary larval jobs created). It then passes the preliminary LarvalJob list and
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
-///
-/// @note This is only a temporary implementation of this function; future versions will
-/// be compatible with the idea that the JobQueen defines not only a job for a single "round"
-/// of work, but that she provides a DAG of work, recognizing nodes in the DAG, and providing
-/// some but possibly not all of the jobs that correspond to a single node in the DAG.
-/// This prototype is aimed solely at getting the XSD interface between the base class
-/// %StandardJobQueen and the derived JobQueen hammerd out.
 LarvalJobs
 StandardJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 {
@@ -472,27 +414,42 @@ StandardJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 		determine_preliminary_job_list();
 	}
 
+	LarvalJobs larval_jobs;
 	if ( job_dag_node_index <= preliminary_larval_jobs_.size() ) {
 
 		// now that the PreliminaryLarvalJobs have been constructed, go ahead
 		// and start delivering LarvalJobs to the JobDistributor.
-		return next_batch_of_larval_jobs_from_prelim( job_dag_node_index, max_njobs );
+		larval_jobs = next_batch_of_larval_jobs_from_prelim( job_dag_node_index, max_njobs );
 	} else {
-		return next_batch_of_larval_jobs_for_job_node( job_dag_node_index, max_njobs );
+		larval_jobs = next_batch_of_larval_jobs_for_job_node( job_dag_node_index, max_njobs );
 	}
 
+	for ( auto job : larval_jobs ) {
+		core::Size pose_id = job->inner_job()->input_source().pose_id();
+		if ( !last_job_for_input_pose_.count( pose_id ) ) {
+			last_job_for_input_pose_[ pose_id ] = job->job_index();
+		} else if ( last_job_for_input_pose_[ pose_id ] < job->job_index() ) {
+			last_job_for_input_pose_[ pose_id ] = job->job_index();
+		}
+	}
+
+	return larval_jobs;
 }
 
 bool
 StandardJobQueen::has_job_completed( protocols::jd3::LarvalJobCOP job )
 {
-	return pose_outputter_for_job( *job->inner_job() )->job_has_already_completed( *job );
+	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
+	return pose_outputter_for_job( *inner_job )->job_has_already_completed( *job );
 }
 
 void
 StandardJobQueen::mark_job_as_having_begun( protocols::jd3::LarvalJobCOP job )
 {
-	return pose_outputter_for_job( *job->inner_job() )->mark_job_as_having_started( *job );
+	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
+	return pose_outputter_for_job( *inner_job )->mark_job_as_having_started( *job );
 }
 
 JobOP
@@ -505,22 +462,19 @@ StandardJobQueen::mature_larval_job(
 	using namespace utility::tag;
 	using namespace basic::datacache;
 
-	// The common_block_tags_ must be loaded prior to the call of complete_larval_job_maturation
-	// and that may not have happened on this JobQueen.
-	if ( ! job_definition_file_read_ ) {
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-		job_definition_file_read_ = true;
-		if ( option[ in::file::job_definition_file ].user() ) {
-			std::string job_def_schema = job_definition_xsd();
-			std::string job_def_string = utility::file_contents( option[ in::file::job_definition_file ] );
-			load_job_definition_file( job_def_string, job_def_schema );
-		}
+	// There are a few pieces of initialization that need to occur on "remote nodes" upon the first
+	// time they are asked to mature larval jobs.
+	// E.g., the common_block_tags_ must be loaded prior to the call of complete_larval_job_maturation
+	// and the PoseInputters require the Input TagCOP that corresponds to the preliminary job node
+	// that this job came from.
+	if ( ! required_initialization_performed_ ) {
+		determine_preliminary_job_list();
 	}
 
-
 	// initialize the options collection for this job.
-	utility::options::OptionCollectionCOP job_options = options_for_job( * larval_job->inner_job() );
+	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( larval_job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
+	utility::options::OptionCollectionCOP job_options = options_for_job( *inner_job );
 
 	return complete_larval_job_maturation( larval_job, job_options, input_results );
 }
@@ -566,15 +520,24 @@ StandardJobQueen::job_results_that_should_be_discarded() {
 void StandardJobQueen::completed_job_result( LarvalJobCOP job, JobResultOP job_result )
 {
 	note_job_result_output( job );
-	pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *job->inner_job() );
+	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
+	pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
 	PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult >( job_result );
 	if ( ! pose_result ) {
 		utility::excn::EXCN_Msg_Exception( "JobResult handed to StandardJobQueen::completed_job_result is not a PoseJobResult or derived from PoseJobResult" );
 	}
-	utility::options::OptionCollectionOP job_options = options_for_job( *job->inner_job() );
-	outputter->write_output_pose( *job, *job_options, *pose_result->pose() );
+	utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
+	utility::tag::TagCOP outputter_tag;
+	if ( job->inner_job()->jobdef_tag() ) {
+		utility::tag::TagCOP tag = job->inner_job()->jobdef_tag();
+		if ( tag->hasTag( "Output" ) ) {
+			outputter_tag = tag->getTag( "Output" )->getTags()[ 0 ];
+		}
+	}
+	outputter->write_output_pose( *job, *job_options, outputter_tag, *pose_result->pose() );
 
-	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *job->inner_job(), *job_options );
+	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
 	for ( std::list< pose_outputters::SecondaryPoseOutputterOP >::const_iterator
 			iter = secondary_outputters.begin(), iter_end = secondary_outputters.end();
 			iter != iter_end; ++iter ) {
@@ -602,6 +565,54 @@ StandardJobQueen::flush()
 	}
 }
 
+std::list< deallocation::DeallocationMessageOP >
+StandardJobQueen::deallocation_messages()
+{
+	// We will operate under the assumption that all of the times a Pose will
+	// be used will be for sequential jobs, and that it is safe when this function
+	// is called to deallocate all of the Poses whose last job index is less than
+	// the number of jobs we have handed out so far - but that it would not be
+	// safe to deallocate the Pose whose last job index is equal to the number of
+	// jobs we've handed out so far because we will perhaps hand out more jobs
+	// that use that Pose in just a moment.
+
+	std::list< deallocation::DeallocationMessageOP > messages;
+	for ( auto it = last_job_for_input_pose_.begin(); it != last_job_for_input_pose_.end(); /*no inc*/ ) {
+
+		if ( it->second < larval_job_counter_ ) {
+			deallocation::DeallocationMessageOP msg( new deallocation::InputPoseDeallocationMessage( it->first ));
+			messages.push_back( msg );
+
+			auto pose_iter = input_pose_index_map_.find( it->first );
+			if ( pose_iter != input_pose_index_map_.end() ) {
+				input_pose_index_map_.erase( pose_iter );
+			}
+			it = last_job_for_input_pose_.erase( it );
+		} else {
+			++it;
+		}
+	}
+	return messages;
+}
+
+void
+StandardJobQueen::process_deallocation_message(
+	deallocation::DeallocationMessageOP message
+)
+{
+	using namespace deallocation;
+	if ( message->deallocation_type() == input_pose_deallocation_msg ) {
+		InputPoseDeallocationMessageOP pose_dealloc_msg =
+			utility::pointer::dynamic_pointer_cast< InputPoseDeallocationMessage > ( message );
+		if ( input_pose_index_map_.count( pose_dealloc_msg->pose_id() ) ) {
+			input_pose_index_map_.erase( pose_dealloc_msg->pose_id() );
+		}
+	} else {
+		// any other type of deallocation message, for now, will have to be
+		// handled by the derived class.
+		derived_process_deallocation_message( message );
+	}
+}
 
 
 /// @details Derived classes may choose to not override this method as a way to indicate that
@@ -631,6 +642,8 @@ StandardJobQueen::determine_preliminary_job_list()
 
 	// only should be called once
 	if ( preliminary_larval_jobs_determined_ ) return;
+	preliminary_larval_jobs_determined_ = true;
+	required_initialization_performed_ = true;
 
 	// Always generate a job definition schema and in the process, validate the schema.
 	// If derived JobQueens have defined an invalid schema, execution must stop.
@@ -639,7 +652,6 @@ StandardJobQueen::determine_preliminary_job_list()
 
 	if ( option[ in::file::job_definition_file ].user() ) {
 		std::string job_def_string = utility::file_contents( option[ in::file::job_definition_file ] );
-		job_definition_file_read_ = true;
 		determine_preliminary_job_list_from_xml_file( job_def_string, job_def_schema );
 	} else {
 		determine_preliminary_job_list_from_command_line();
@@ -733,15 +745,15 @@ StandardJobQueen::output_jobs() const {
 /// @details This base class implementation merely returns a one-element list containing the
 /// input inner_job.  Derived classes have the flexibility to create several preliminary
 /// jobs from this input job
-InnerLarvalJobs
+StandardInnerLarvalJobs
 StandardJobQueen::refine_preliminary_job( PreliminaryLarvalJob const & prelim_job )
 {
-	InnerLarvalJobs one_job( 1, prelim_job.inner_job );
+	StandardInnerLarvalJobs one_job( 1, prelim_job.inner_job );
 	return one_job;
 }
 
 LarvalJobs
-StandardJobQueen::expand_job_list( InnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create )
+StandardJobQueen::expand_job_list( StandardInnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create )
 {
 	core::Size nstruct = inner_job->nstruct_max();
 	LarvalJobs jobs;
@@ -754,10 +766,10 @@ StandardJobQueen::expand_job_list( InnerLarvalJobOP inner_job, core::Size max_la
 	return jobs;
 }
 
-InnerLarvalJobOP
-StandardJobQueen::create_inner_larval_job( core::Size nstruct ) const
+StandardInnerLarvalJobOP
+StandardJobQueen::create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const
 {
-	return InnerLarvalJobOP( new InnerLarvalJob( nstruct ) );
+	return StandardInnerLarvalJobOP( new StandardInnerLarvalJob( nstruct, prelim_job_node ) );
 }
 
 /// @details Factory method instantiates the base-class LarvalJob to start.
@@ -765,7 +777,7 @@ StandardJobQueen::create_inner_larval_job( core::Size nstruct ) const
 /// larval jobs they instantiate.
 LarvalJobOP
 StandardJobQueen::create_larval_job(
-	InnerLarvalJobOP job,
+	StandardInnerLarvalJobOP job,
 	core::Size nstruct_index,
 	core::Size larval_job_index
 )
@@ -784,6 +796,13 @@ StandardJobQueen::next_batch_of_larval_jobs_for_job_node( core::Size, core::Size
 {
 	return LarvalJobs(); // default ctor to give an empty list
 }
+
+void
+StandardJobQueen::derived_process_deallocation_message(
+	deallocation::DeallocationMessageOP
+)
+{}
+
 
 
 void StandardJobQueen::add_options( utility::options::OptionKeyList const & opts )
@@ -809,37 +828,43 @@ StandardJobQueen::common_block_tags() const
 }
 
 core::pose::PoseOP
-StandardJobQueen::pose_for_job( LarvalJobCOP job, utility::options::OptionCollection const & options )
+StandardJobQueen::pose_for_job(
+	LarvalJobCOP job,
+	utility::options::OptionCollection const & options
+)
 {
 	// either read the Pose in using the pose_inputter (and then keep a copy
 	// in the resource manager), or retrieve the Pose from the resource manager
 	// initial version: just read the pose in for each job.
 
-	typedef utility::pointer::shared_ptr< InputSourceAndImportPoseOptions > InputSourceAndImportPoseOptionsOP;
+	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
-	InputSourceAndImportPoseOptionsOP settings_ptr;
-	if ( job->inner_job()->input_source().origin() == "PDB" ) {
-		core::import_pose::ImportPoseOptions import_opts( options );
-		settings_ptr = InputSourceAndImportPoseOptionsOP( new InputSourceAndImportPoseOptions( job->inner_job()->input_source(), import_opts ));
+	PoseInputSource const & input_source = inner_job->input_source();
+	if ( input_pose_index_map_.count( input_source.pose_id() )) {
+		core::pose::PoseOP pose( new core::pose::Pose );
+		// Why does the standard job queen use detached_copy? Because it is important in multithreaded
+		// contexts that no two Poses pointing to that same data end up in two separate threads,
+		// and then try to modify that data at the same time.  It turns out there are places
+		// in Pose where it covertly modifies data in some other Pose and this could lead to
+		// race conditions.
+		pose->detached_copy( *input_pose_index_map_[ input_source.pose_id() ] );
+		return pose;
+	}
 
-		std::map< InputSourceAndImportPoseOptions, core::pose::PoseOP >::const_iterator iter =
-			previously_read_in_poses_.find( *settings_ptr );
-		if ( iter != previously_read_in_poses_.end() ) {
-			core::pose::PoseOP pose( new core::pose::Pose );
-			// Why does the standard job queen use detached_copy? Because it is important in multithreaded
-			// contexts that no two Poses pointing to that same data end up in two separate threads,
-			// and then try to modify that data at the same time.  It turns out there are places
-			// in Pose where it covertly modifies data in some other Pose and this could lead to
-			// race conditions.
-			pose->detached_copy( *iter->second );
-			return pose;
+	utility::tag::TagCOP inputter_tag;
+	if ( inner_job->jobdef_tag() && inner_job->jobdef_tag()->hasTag( "Input" ) ) {
+		utility::tag::TagCOP input_tag = inner_job->jobdef_tag()->getTag( "Input" );
+		if ( input_tag->getTags().size() != 0 ) {
+			inputter_tag = input_tag->getTags()[ 0 ];
 		}
 	}
 
-	core::pose::PoseOP pose = pose_inputter_for_job( *job->inner_job() )->pose_from_input_source( job->inner_job()->input_source(), options );
-	if ( settings_ptr ) {
-		previously_read_in_poses_[ *settings_ptr ] = pose;
-	}
+	core::pose::PoseOP input_pose = pose_inputter_for_job( *inner_job )->pose_from_input_source( input_source, options, inputter_tag );
+	input_pose_index_map_[ input_source.pose_id() ] = input_pose;
+
+	core::pose::PoseOP pose( new core::pose::Pose );
+	pose->detached_copy( *input_pose );
 	return pose;
 }
 
@@ -848,15 +873,22 @@ StandardJobQueen::pose_for_job( LarvalJobCOP job, utility::options::OptionCollec
 
 /// @brief Access the pose inputter
 pose_inputters::PoseInputterOP
-StandardJobQueen::pose_inputter_for_job( InnerLarvalJob const & inner_job ) const
+StandardJobQueen::pose_inputter_for_job( StandardInnerLarvalJob const & inner_job ) const
 {
-	return pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( inner_job.input_source().origin() );
+	// find the preliminary job node for this job, if available
+	// and return the already-created pose inputter
+	if ( inner_job.prelim_job_node() == 0 ) {
+		return pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( inner_job.input_source().origin() );
+	} else {
+		debug_assert( preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter )
+		return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter;
+	}
 }
 
 /// @brief Access the pose outputter for a particular job; perhaps this outputter has already been created, or
 /// perhaps it needs to be created and stored
 pose_outputters::PoseOutputterOP
-StandardJobQueen::pose_outputter_for_job( InnerLarvalJob const & inner_job )
+StandardJobQueen::pose_outputter_for_job( StandardInnerLarvalJob const & inner_job )
 {
 	utility::options::OptionCollectionOP job_options = options_for_job( inner_job );
 	return pose_outputter_for_job( inner_job, *job_options );
@@ -864,7 +896,7 @@ StandardJobQueen::pose_outputter_for_job( InnerLarvalJob const & inner_job )
 
 pose_outputters::PoseOutputterOP
 StandardJobQueen::pose_outputter_for_job(
-	InnerLarvalJob const & inner_job,
+	StandardInnerLarvalJob const & inner_job,
 	utility::options::OptionCollection const & job_options
 )
 {
@@ -896,7 +928,7 @@ StandardJobQueen::pose_outputter_for_job(
 
 std::list< pose_outputters::SecondaryPoseOutputterOP >
 StandardJobQueen::secondary_outputters_for_job(
-	InnerLarvalJob const & inner_job,
+	StandardInnerLarvalJob const & inner_job,
 	utility::options::OptionCollection const & job_options
 )
 {
@@ -959,7 +991,7 @@ StandardJobQueen::nstruct_for_job( utility::tag::TagCOP job_tag ) const
 
 
 utility::options::OptionCollectionOP
-StandardJobQueen::options_for_job( InnerLarvalJob const & inner_job ) const
+StandardJobQueen::options_for_job( StandardInnerLarvalJob const & inner_job ) const
 {
 	using namespace utility::tag;
 
@@ -1037,6 +1069,7 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 	// not present in the tag from the (global) options system.
 	Tag::tags_t const & subtags = job_definition_file_tags_->getTags();
 	preliminary_larval_jobs_.reserve( subtags.size() );
+	core::Size count_prelim_nodes( 0 );
 	for ( auto subtag : subtags ) {
 		if ( subtag->getName() != "Job" ) {
 			debug_assert( subtag->getName() == "Common" );
@@ -1046,14 +1079,14 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		utility::options::OptionCollectionCOP job_options = options_from_tag( subtag );
 
 		// ok -- look at input tag
-		// which for now should be a PDB tag
 		TagCOP input_tag = subtag->getTag( "Input" );
 		debug_assert( input_tag ); // XML schema validation should ensure that there is an "Input" subelement
 		debug_assert( input_tag->getTags().size() == 1 ); // schema validation should ensure there is exactly one subelement
 		TagCOP input_tag_child = input_tag->getTags()[ 0 ];
 		pose_inputters::PoseInputterOP inputter =
 			pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( input_tag_child->getName() );
-		PoseInputSources input_poses = inputter->pose_input_sources_from_tag( input_tag_child );
+		PoseInputSources input_poses = inputter->pose_input_sources_from_tag( *job_options, input_tag_child );
+		for ( auto input_source : input_poses ) { input_source->pose_id( ++input_pose_counter_ ); }
 
 		pose_outputters::PoseOutputterOP outputter;
 		TagCOP output_tag;
@@ -1076,7 +1109,7 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		core::Size nstruct = nstruct_for_job( subtag );
 		for ( PoseInputSources::const_iterator iter = input_poses.begin(); iter != input_poses.end(); ++iter ) {
 			PreliminaryLarvalJob prelim_job;
-			InnerLarvalJobOP inner_job( create_inner_larval_job( nstruct ) );
+			StandardInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
 			inner_job->input_source( *iter );
 			inner_job->jobdef_tag( subtag );
 			inner_job->outputter( outputter->class_key() );
@@ -1084,6 +1117,7 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 			prelim_job.inner_job = inner_job;
 			prelim_job.job_tag = subtag;
 			prelim_job.job_options = job_options;
+			prelim_job.pose_inputter = inputter;
 
 			preliminary_larval_jobs_.push_back( prelim_job );
 		}
@@ -1154,9 +1188,11 @@ void
 StandardJobQueen::determine_preliminary_job_list_from_command_line()
 {
 	using namespace utility::tag;
+	using pose_inputters::PoseInputterFactory;
 
 	// read from the command line a list of all of the input jobs
-	PoseInputSources input_poses = pose_inputters::PoseInputterFactory::get_instance()->pose_inputs_from_command_line();
+	PoseInputterFactory::PoseInputSourcesAndInputters input_poses = PoseInputterFactory::get_instance()->pose_inputs_from_command_line();
+	for ( auto input_source : input_poses ) { input_source.first->pose_id( ++input_pose_counter_ ); }
 
 	pose_outputters::PoseOutputterOP outputter =
 		pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_from_command_line();
@@ -1171,16 +1207,18 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 	// now iterate across the input sources for this job and create
 	// a preliminary job for each
 	preliminary_larval_jobs_.reserve( input_poses.size() );
-	for ( PoseInputSources::const_iterator iter = input_poses.begin(); iter != input_poses.end(); ++iter ) {
+	core::Size count_prelim_nodes( 0 );
+	for ( auto const & input_pose : input_poses ) {
 		PreliminaryLarvalJob prelim_job;
 		Size nstruct = nstruct_for_job( 0 );
-		InnerLarvalJobOP inner_job( create_inner_larval_job( nstruct ) );
-		inner_job->input_source( *iter );
+		StandardInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
+		inner_job->input_source( input_pose.first );
 		inner_job->outputter( outputter->class_key() );
 
 		prelim_job.inner_job = inner_job;
 		prelim_job.job_tag = TagCOP(); // null ptr
 		prelim_job.job_options = job_options;
+		prelim_job.pose_inputter = input_pose.second;
 		preliminary_larval_jobs_.push_back( prelim_job );
 	}
 }
@@ -1209,7 +1247,7 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 			if ( curr_prelim_job.job_tag && curr_prelim_job.job_tag->hasTag( "Output" ) ) {
 				output_tag = curr_prelim_job.job_tag->getTag( "Output" );
 			}
-			for ( InnerLarvalJobOP iijob : inner_larval_jobs_for_curr_prelim_job_ ) {
+			for ( StandardInnerLarvalJobOP iijob : inner_larval_jobs_for_curr_prelim_job_ ) {
 				pose_outputters::PoseOutputterOP ii_outputter = pose_outputter_for_job( *iijob );
 				ii_outputter->determine_job_tag( output_tag, *curr_prelim_job.job_options, *iijob );
 			}
@@ -1226,7 +1264,7 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 
 		if ( curr_inner_larval_job_index_ <= inner_larval_jobs_for_curr_prelim_job_.size() ) {
 			// create LarvalJobs
-			InnerLarvalJobOP curr_inner_larval_job = inner_larval_jobs_for_curr_prelim_job_[ curr_inner_larval_job_index_ ];
+			StandardInnerLarvalJobOP curr_inner_larval_job = inner_larval_jobs_for_curr_prelim_job_[ curr_inner_larval_job_index_ ];
 			core::Size max_to_make = max_njobs;
 
 			if ( max_to_make > curr_inner_larval_job->nstruct_max() - njobs_made_for_curr_inner_larval_job_ ) {
@@ -1264,7 +1302,7 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 /// the requested secondary_outputter_type
 pose_outputters::SecondaryPoseOutputterOP
 StandardJobQueen::secondary_outputter_for_job(
-	InnerLarvalJob const & inner_job,
+	StandardInnerLarvalJob const & inner_job,
 	utility::options::OptionCollection const & job_options,
 	std::string const & secondary_outputter_type
 )
@@ -1305,6 +1343,6 @@ StandardJobQueen::note_job_result_output( LarvalJobCOP job )
 	output_jobs_.insert( job->job_index() );
 }
 
-
+} // namespace standard
 } // namespace jd3
 } // namespace protocols

@@ -19,6 +19,7 @@
 
 // Other project headers or inline function headers
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
@@ -173,7 +174,8 @@ SilentTrajectoryRecorder::restart_simulation(
 	//co
 	//check for correct tags in file
 	tr.Info << "restarting from trajector file " << physical_filename << ". Reading tags now ..." << std::endl;
-	io::silent::SilentFileData sfd( physical_filename );
+	core::io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData sfd( physical_filename, opts );
 	std::ostringstream replica_id_str;
 	replica_id_str << std::setw(3) << std::setfill('0') << jd2::current_replica();
 	std::string tag = jd2::current_output_name()+"_"+replica_id_str.str();

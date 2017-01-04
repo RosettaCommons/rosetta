@@ -24,6 +24,7 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pose/Pose.hh>
@@ -80,10 +81,11 @@ public:
 		double score_threshold = 1e-1;
 		TS_ASSERT( !ref_pose.is_fullatom() );
 		// Read the ProteinSilentStruct from the silent-file
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		std::string const silent_outfile( "core/io/bin_silentfile_centroid.out" ); // read file w/ non-ideal geometry
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
+		core::io::silent::BinarySilentStruct pss( opts, ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 		sfd.read_file(silent_outfile);
@@ -118,8 +120,9 @@ public:
 		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 		std::string const silent_outfile( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::SilentFileData sfd;
-		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
+		core::io::silent::BinarySilentStruct pss( opts, ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
 		// Read the ProteinSilentStruct from the silent-file
 
@@ -175,8 +178,9 @@ public:
 
 		std::string const silent_outfile( "core/io/bin_silentfile_test_inserting_residues.out" );
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::SilentFileData sfd;
-		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
+		core::io::silent::BinarySilentStruct pss( opts, ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
 		// Read the ProteinSilentStruct from the silent-file
 

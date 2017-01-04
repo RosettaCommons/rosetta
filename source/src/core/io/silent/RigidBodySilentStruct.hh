@@ -42,16 +42,20 @@ class RigidBodySilentStruct : public SilentStruct {
 
 public:
 	RigidBodySilentStruct(
+		SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
-	) {
+	) :
+		SilentStruct( opts )
+	{
 		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 		symminfo_->set_use_symmetry(false);
 		fill_struct( pose, tag );
 		write_fold_tree_ = false;
 	} // RigidBodySilentStruct
 
-	RigidBodySilentStruct()
+	RigidBodySilentStruct( SilentFileOptions const & opts ) :
+		SilentStruct( opts )
 	{
 		nres( 0 );
 		decoy_tag( "empty_tag" );

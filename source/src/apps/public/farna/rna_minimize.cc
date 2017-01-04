@@ -17,6 +17,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -144,7 +145,8 @@ rna_fullatom_minimize_test()
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data( opts );
 
 	// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
 	utility::vector1< pose::PoseOP > other_poses;
@@ -231,7 +233,7 @@ rna_fullatom_minimize_test()
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}
 
-		BinarySilentStruct s( pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 
 		if ( native_exists ) {
 			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );

@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -166,7 +167,8 @@ core::Size IterativeFullatom::generate_batch( jd2::archive::Batch& batch, core::
 void IterativeFullatom::gen_resample_core( Batch& batch, bool flex ) {
 	//copy pool as input decoys
 	batch.set_has_silent_in();
-	io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	io::silent::SilentFileData sfd( opts );
 	for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
 		sfd.add_structure( *it ); //only add OP to sfd
 	}

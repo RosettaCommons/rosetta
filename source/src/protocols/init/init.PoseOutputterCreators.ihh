@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/protocols/init/init.JobOutputterCreators.ihh
+/// @file   src/protocols/init/init.PoseOutputterCreators.ihh
 /// @brief  Creator #includes for PoseOutputters for init
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
@@ -15,4 +15,5 @@
 
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputterCreator.hh>
+#include <protocols/jd3/pose_outputters/SilentFilePoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/ScoreFileOutputterCreator.hh>

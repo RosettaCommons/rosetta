@@ -52,6 +52,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 //// C++ headers
 
 // due to template function
@@ -139,7 +140,8 @@ void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::s
 
 void evaluate_pose( core::pose::Pose& pose, PoseEvaluator& eval, std::ostream& os ) {
 	//  ProteinSilentStruct pss;
-	io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+	core::io::silent::SilentFileOptions opts;
+	io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	pss->fill_struct( pose, "eval" );
 	eval.apply( pose, "eval", *pss );
 	os << "\n";

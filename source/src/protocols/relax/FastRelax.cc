@@ -143,6 +143,7 @@ endrepeat
 
 //Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -1227,15 +1228,16 @@ void FastRelax::batch_apply(
 
 		new_relax_decoy.best_score = (*local_scorefxn)(pose);
 		new_relax_decoy.current_score = new_relax_decoy.best_score;
+		SilentFileOptions opts;
 		new_relax_decoy.current_struct = force_nonideal_?
-			SilentStructFactory::get_instance()->get_silent_struct("binary") :
-			SilentStructFactory::get_instance()->get_silent_struct_out();
+			SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+			SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		new_relax_decoy.start_struct =  force_nonideal_?
-			SilentStructFactory::get_instance()->get_silent_struct("binary") :
-			SilentStructFactory::get_instance()->get_silent_struct_out();
+			SilentStructFactory::get_instance()->get_silent_struct("binary", opts ) :
+			SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		new_relax_decoy.best_struct =  force_nonideal_?
-			SilentStructFactory::get_instance()->get_silent_struct("binary") :
-			SilentStructFactory::get_instance()->get_silent_struct_out();
+			SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+			SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		new_relax_decoy.current_struct->fill_struct( pose );
 		new_relax_decoy.start_struct->fill_struct( pose );
 		new_relax_decoy.best_struct->fill_struct( pose );
@@ -1551,9 +1553,10 @@ void FastRelax::batch_apply(
 
 		if ( !relax_decoy.active ) continue;
 
+		core::io::silent::SilentFileOptions opts;
 		SilentStructOP new_struct =  force_nonideal_?
-			SilentStructFactory::get_instance()->get_silent_struct("binary") :
-			SilentStructFactory::get_instance()->get_silent_struct_out();
+			SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+			SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		new_struct->fill_struct( pose );
 		new_struct->copy_scores( *(relax_decoy.start_struct) );
 		new_struct->energies_from_pose( pose );

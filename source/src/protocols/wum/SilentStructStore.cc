@@ -34,6 +34,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -117,9 +118,10 @@ void
 SilentStructStore::add( const core::pose::Pose &pose ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentStructOP ss = option[ lh::bss]() ?
-		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) :
+		core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	ss->fill_struct( pose );
 	add( ss );
 }
@@ -191,7 +193,8 @@ SilentStructStore::read_from_string( const std::string & input )  {
 // @brief read from silent file
 void
 SilentStructStore::read_from_stream( std::istream & input )  {
-	SilentFileData sfd;
+	SilentFileOptions opts;
+	SilentFileData sfd( opts );
 	utility::vector1< std::string > tags_wanted; // empty vector signals "read all" according to author of silent io
 	sfd.read_stream( input, tags_wanted, false  );
 	utility::vector1< std::string> comments = sfd.comment_lines();
@@ -235,7 +238,8 @@ void SilentStructStore::serialize( std::ostream & out ) const {
 		TR.Warning << "WARNING: Empty silent struct store serialized." << std::endl;
 	} else {
 		(*store_.begin())->print_header( out );
-		SilentFileData sfd;
+		SilentFileOptions opts;
+		SilentFileData sfd( opts );
 		for ( auto const & it : store_ ) {
 			runtime_assert( it != nullptr );
 			sfd.write_silent_struct( (*it), out );
@@ -261,7 +265,8 @@ void SilentStructStore::serialize_to_file( const std::string &filename ) const  
 
 
 void SilentStructStore::print( std::ostream & out ) const {
-	SilentFileData sfd;
+	SilentFileOptions opts;
+	SilentFileData sfd( opts );
 	core::Size count=0;
 	out << "----------------------------------------------" << std::endl;
 	for ( auto const & it : store_ ) {

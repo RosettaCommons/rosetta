@@ -40,6 +40,12 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace basic {
 namespace datacache {
 
@@ -48,19 +54,34 @@ namespace datacache {
 class CacheableString : public CacheableData
 {
 public:
-	CacheableString( std::string str ) : CacheableData(), str_(std::move(str)) {}
-	~CacheableString() override= default;
-	CacheableDataOP clone() const override { return CacheableDataOP( new CacheableString(*this) ); }
-	virtual std::string const & str() const { return str_; }
+	CacheableString( std::string str );
+	~CacheableString() override;
+	CacheableDataOP clone() const override;
+	virtual std::string const & str() const;
 
-	CacheableStringOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableString>( CacheableData::shared_from_this() ); }
+	CacheableStringOP shared_from_this();
 
 private:
 	std::string str_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CacheableString();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_CacheableString )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_basic_datacache_CacheableString_HH */

@@ -39,11 +39,10 @@ class ScoreFileSilentStruct : public SilentStruct {
 public:
 
 	/// @brief Constructors.
-	ScoreFileSilentStruct() {
-		decoy_tag( "empty_tag" );
-	}
+	ScoreFileSilentStruct( SilentFileOptions const & opts );
 
 	ScoreFileSilentStruct(
+		SilentFileOptions const & opts,
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
 	);

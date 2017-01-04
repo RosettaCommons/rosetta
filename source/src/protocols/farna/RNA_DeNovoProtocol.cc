@@ -51,6 +51,7 @@
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -415,14 +416,15 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	}
 
 	// Silent file setup?
-	SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 
 	// What is all this rigamarole, making the silent struct data?
 	// Why do I need to supply the damn file name? That seems silly.
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-	SilentStructOP s = ( options_->binary_rna_output() ) ? SilentStructOP( new BinarySilentStruct( pose, out_file_tag ) ) :
-		SilentStructOP( new RNA_SilentStruct(   pose, out_file_tag ) );
+	SilentStructOP s = ( options_->binary_rna_output() ) ? SilentStructOP( new BinarySilentStruct( opts, pose, out_file_tag ) ) :
+		SilentStructOP( new RNA_SilentStruct( opts, pose, out_file_tag ) );
 
 	if ( options_->use_chem_shift_data() ) add_chem_shift_info( *s, pose);
 

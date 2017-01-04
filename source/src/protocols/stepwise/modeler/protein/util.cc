@@ -24,9 +24,6 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/types.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

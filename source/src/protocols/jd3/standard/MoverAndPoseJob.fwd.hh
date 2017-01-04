@@ -7,18 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/MoverAndPoseJob.fwd.hh
+/// @file   protocols/jd3/standard/MoverAndPoseJob.fwd.hh
 /// @brief  The declaration of classes MoverAndPoseJob and PoseJobResult
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_MoverAndPoseJob_FWD_HH
-#define INCLUDED_protocols_jd3_MoverAndPoseJob_FWD_HH
+#ifndef INCLUDED_protocols_jd3_standard_MoverAndPoseJob_FWD_HH
+#define INCLUDED_protocols_jd3_standard_MoverAndPoseJob_FWD_HH
 
 //utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace jd3 {
+namespace standard {
 
 class MoverAndPoseJob;
 class PoseJobResult;
@@ -33,7 +34,8 @@ typedef utility::pointer::shared_ptr< PoseJobResult const > PoseJobResultCOP;
 typedef utility::pointer::shared_ptr< EnergyJobSummary > EnergyJobSummaryOP;
 typedef utility::pointer::shared_ptr< EnergyJobSummary const > EnergyJobSummaryCOP;
 
+} // namespace standard
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_Job_HH
+#endif //INCLUDED_protocols_jd3_standard_MoverAndPoseJob_FWD_HH

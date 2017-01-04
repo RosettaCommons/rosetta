@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -97,7 +97,8 @@ output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 	utility::vector1< Size > const & working_calc_rms_res,
 	bool const overwrite /* = true */ ){
 
-	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData ); // silly
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData( opts ) );
 	if ( overwrite ) remove_silent_file_if_it_exists( silent_file );
 
 	for ( Size n = 1; n <= pose_list.size(); n++ ) {
@@ -114,7 +115,8 @@ output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 void
 output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
 	std::string const & silent_file, std::string const & tag,
-	core::io::silent::SilentFileDataOP sfd_in /* = 0 */ ){
+	core::io::silent::SilentFileDataOP sfd_in /* = 0 */
+){
 
 	utility::vector1< core::Size > calc_rms_res; //blank vector
 	output_silent_struct( pose, native_pose_op, silent_file, tag, sfd_in, calc_rms_res );
@@ -125,12 +127,14 @@ void
 output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
 	std::string const & silent_file, std::string const & tag,
 	core::io::silent::SilentFileDataOP sfd_in,
-	utility::vector1< core::Size > const & calc_rms_res ){
+	utility::vector1< core::Size > const & calc_rms_res
+){
 
 	using namespace core::io::silent;
 	using namespace core::scoring;
 
-	BinarySilentStruct s( pose, tag );
+	SilentFileOptions opts;
+	BinarySilentStruct s( opts, pose, tag );
 
 	if ( native_pose_op != 0 ) {
 
@@ -159,7 +163,7 @@ output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const &
 		if ( !utility::isnan( backbone_rmsd ) ) s.add_energy( "backbone_rms", backbone_rmsd );
 	}
 
-	static const SilentFileData silent_file_data;
+	static const SilentFileData silent_file_data(opts); /// GRRRR Why are you using static data!?
 	if ( silent_file.size() > 0 ) silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 	if ( sfd_in != 0 ) sfd_in->add_structure( s );
 }

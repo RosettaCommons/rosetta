@@ -18,5 +18,6 @@ namespace protocols {
 
 using namespace protocols::jd3::pose_inputters;
 static PoseInputterRegistrator< PDBPoseInputterCreator > reg_PDBPoseInputterCreator;
+static PoseInputterRegistrator< SilentFilePoseInputterCreator > reg_SilentFilePoseInputterCreator;
 
 } //namespace protocols

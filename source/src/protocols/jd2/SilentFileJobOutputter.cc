@@ -23,6 +23,7 @@
 #include <protocols/jd2/util.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/pose/Pose.hh>
 
@@ -67,9 +68,10 @@ void SilentFileJobOutputter::write_all_structs() {
 	using std::pair;
 	using utility::vector1;
 	using utility::file::FileName;
-	using core::io::silent::SilentStructOP;
+	using namespace core::io::silent;
 
-	typedef std::map< std::string, core::io::silent::SilentFileData > SFD_MAP;
+	SilentFileOptions opts;
+	typedef std::map< std::string, SilentFileDataOP > SFD_MAP;
 	SFD_MAP sfds;
 	// Only write structures if the user hasn't disabled it - otherwise it totally breaks
 	// the user's expectation.
@@ -79,10 +81,13 @@ void SilentFileJobOutputter::write_all_structs() {
 			//tr.Debug << "writing struct " << ss->decoy_tag() << std::endl;
 			//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
 			//SilentStructOP ss = it->first;
-			sfds[ saved_struct.second ].add_structure( (*saved_struct.first) );
+			if ( sfds.count( saved_struct.second ) == 0 ) {
+				sfds[ saved_struct.second ] = SilentFileDataOP( new SilentFileData( opts ) );
+			}
+			sfds[ saved_struct.second ]->add_structure( (*saved_struct.first) );
 		}
 		for ( auto & sfd : sfds ) {
-			sfd.second.write_all( sfd.first );
+			sfd.second->write_all( sfd.first );
 		}
 	}
 	// very important to clear after writing!
@@ -148,7 +153,8 @@ void SilentFileJobOutputter::set_defaults() {
 }
 
 void SilentFileJobOutputter::read_done_jobs() {
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 	if ( utility::file::file_exists( silent_file_ ) ) {
 		silent_file_tags_ = sfd.read_tags_fast( silent_file_ );
 		for ( std::string & tag : silent_file_tags_ ) {
@@ -229,16 +235,17 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	std::string const & suffix
 ) {
 	PROF_START( basic::JD2_SILENT_OUTPUTTER );
-	core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentFileData sfd( opts );
 
 	using core::io::silent::SilentStructFactory;
 	core::io::silent::SilentStructOP ss;
 	if ( bWriteScoreOnly ) {
-		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score");
+		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score", opts);
 	} else if ( forced_silent_struct_type_ != "any" ) {
-		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( forced_silent_struct_type_ );
+		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( forced_silent_struct_type_, opts );
 	} else {
-		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose_in );
+		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose_in, opts );
 	}
 
 	std::ostringstream tag;

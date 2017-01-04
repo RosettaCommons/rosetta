@@ -33,6 +33,7 @@
 #include <protocols/jobdist/Jobs.fwd.hh>
 
 #include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/io/silent/SilentFileOptions.fwd.hh>
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 //#include <core/scoring/constraints/ConstraintForest.fwd.hh>
@@ -189,6 +190,7 @@ private:
 	/// -------- you must update the copy constructor ----
 
 	// a score file ( written to in process_decoy )
+	core::io::silent::SilentFileOptionsOP silent_options_;
 	core::io::silent::SilentFileDataOP silent_score_file_;
 
 	// native_pose: steal fragments, compute rmsd, start-structure, sequence

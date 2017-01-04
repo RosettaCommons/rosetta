@@ -50,6 +50,7 @@
 #include <core/types.hh>
 #include <core/pose/util.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <basic/Tracer.hh>
@@ -289,7 +290,8 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 	// tr.Debug << "checkpoint_id: " << checkpoint_id << std::endl;  // "decoys_protAB_0001_3_n"
 	// core::pose::Pose tmp_pose( pose );
 
-	core::io::silent::SilentStructOP pss( new core::io::silent::BinarySilentStruct() );
+	core::io::silent::SilentFileOptions opts;
+	core::io::silent::SilentStructOP pss( new core::io::silent::BinarySilentStruct( opts ) );
 	std::ostringstream tag;
 	tag << jd2::current_output_name();
 	tag << "_" << std::setfill('0') << std::setw(3) << jd2::current_replica();
@@ -352,7 +354,8 @@ MetropolisHastingsMover::get_checkpoints() {
 		tr.Debug << "checkpoint_indics: " << *rit << std::endl;
 
 		if ( tempering_->n_temp_levels() == 1 ) { // FixedTemperatureController
-			core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( 0 )+"_"+ObjexxFCL::string_of( *rit )+".out");
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( 0 )+"_"+ObjexxFCL::string_of( *rit )+".out", opts );
 			if ( utility::file::file_exists( sfd.filename() ) && utility::file::file_size( sfd.filename() ) ) {
 				checkpoint_ids_.push_back( filename_pattern + ObjexxFCL::string_of( *rit ) );
 				checkpoint_count_ = *rit;
@@ -369,7 +372,8 @@ MetropolisHastingsMover::get_checkpoints() {
 			utility::vector1< core::Size > found_levels;
 			// collect all the temp_levels from the file of this checkpoint
 			for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
-				core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( replica )+"_"+ObjexxFCL::string_of( *rit )+".out");
+				core::io::silent::SilentFileOptions opts;
+				core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( replica )+"_"+ObjexxFCL::string_of( *rit )+".out", opts);
 				if ( utility::file::file_exists( sfd.filename() ) ) {
 					sfd.read_file( sfd.filename() );
 					found_levels.push_back( sfd.begin()->get_energy( "temp_level" ));

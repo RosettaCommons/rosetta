@@ -321,7 +321,7 @@ using basic::Warning;
 #include <core/conformation/symmetry/SymmDataLoaderCreator.hh>
 #include <core/conformation/symmetry/SymmDataOptionsCreator.hh>
 #include <core/io/silent/SilentFileLoaderCreator.hh>
-#include <core/io/silent/SilentFileOptionsCreator.hh>
+#include <core/io/silent/SilentFileRMOptionsCreator.hh>
 #include <core/import_pose/PoseFromPDBLoaderCreator.hh>
 #include <core/import_pose/import_pose_options_creator.hh>
 #include <basic/resource_manager/ResourceOptionsRegistrator.hh>
@@ -711,7 +711,7 @@ static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > Residue
 using basic::resource_manager::ResourceOptionsRegistrator;
 static ResourceOptionsRegistrator< core::conformation::symmetry::SymmDataOptionsCreator > SymmDataOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::import_pose::ImportPoseOptionsCreator > ImportPoseOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::io::silent::SilentFileOptionsCreator > SilentFileOptionsCreator_registrator;
+static ResourceOptionsRegistrator< core::io::silent::SilentFileRMOptionsCreator > SilentFileRMOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::scoring::electron_density::ElectronDensityOptionsCreator > ElectronDensityOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::scoring::fiber_diffraction::FiberDiffractionOptionsCreator > FiberDiffractionOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator > ResiudeLoaderOptionsCreator_registrator;

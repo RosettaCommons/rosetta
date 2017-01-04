@@ -31,6 +31,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
@@ -194,9 +195,10 @@ LoopHashMoverWrapper::apply( Pose & pose )
 			core::Real score_i = ranking_cenfilter()->report_sm( rpose );
 			core::util::switch_to_residue_type_set( rpose, core::chemical::FULL_ATOM_t );
 
+			core::io::silent::SilentFileOptions opts;
 			core::io::silent::SilentStructOP new_struct = ideal_?
-				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :
-				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts ) :
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts );
 			new_struct->fill_struct( rpose );
 			cen_scored_structs.emplace_back(-score_i,new_struct );
 		}
@@ -245,9 +247,10 @@ LoopHashMoverWrapper::apply( Pose & pose )
 				// ... and insert
 				if ( passed_i ) {
 					core::Real score_i = ranking_fafilter_->report_sm( rpose );
+					core::io::silent::SilentFileOptions opts;
 					core::io::silent::SilentStructOP new_struct =  ideal_?
-						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :
-						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts ) :
+						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts );
 					new_struct->fill_struct( rpose );
 					fa_scored_structs.emplace_back(-score_i,new_struct );
 				}
@@ -286,7 +289,7 @@ LoopHashMoverWrapper::get_additional_output() {
 	}
 
 	// pop best
-	core::pose::PoseOP pose( new core::pose::Pose() );
+	core::pose::PoseOP pose( new core::pose::Pose());
 	std::pair< core::Real, core::io::silent::SilentStructOP > currbest = all_structs_.back();
 	all_structs_.pop_back();
 	TR << "Returning score = " << -currbest.first << std::endl;

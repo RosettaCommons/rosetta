@@ -46,6 +46,7 @@
 #include <core/pose/util.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.hh>
@@ -457,7 +458,8 @@ export_packer_results(  utility::vector1< std::pair< Real, std::string > > & res
 	out.close();
 
 	using namespace core::io::silent;
-	core::io::silent::SilentFileData silent_file_data;
+	SilentFileOptions opts;
+	SilentFileData silent_file_data( opts );
 
 	std::string silent_file( outfile );
 	Size pos( silent_file.find( ".txt" ) );
@@ -467,7 +469,7 @@ export_packer_results(  utility::vector1< std::pair< Real, std::string > > & res
 		pose::Pose & pose( *pose_list[n] );
 		(*scorefxn)( pose );
 		std::string const tag( "S_"+lead_zero_string_of( n, 4 ) );
-		RNA_SilentStruct s( pose, tag );
+		RNA_SilentStruct s( opts, pose, tag );
 		if ( dump ) pose.dump_pdb( tag+".pdb");
 		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
 	}
@@ -1256,8 +1258,8 @@ process_input_file( std::string const & input_file,
 		pose_list.push_back( pose_op );
 
 	} else { //its a silent file.
-
-		SilentFileData silent_file_data;
+		SilentFileOptions opts;
+		SilentFileData silent_file_data( opts );
 		silent_file_data.read_file( input_file );
 		for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
 				end = silent_file_data.end(); iter != end; ++iter ) {

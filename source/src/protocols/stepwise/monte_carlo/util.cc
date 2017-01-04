@@ -23,6 +23,7 @@
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/util.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -64,7 +65,10 @@ output_to_silent_file( std::string const & out_tag,
 	SilentStructOP s = prepare_silent_struct( out_tag, pose, native_pose, superimpose_over_all_instantiated, do_rms_fill_calculation );
 
 	// output silent file.
-	static SilentFileData const silent_file_data;
+	SilentFileOptions opts;
+	// The use of static data is strictly forbidden. This needs to be fixed.
+	// This code is not threadsafe
+	static SilentFileData const silent_file_data( opts );
 	silent_file_data.write_silent_struct( *s, silent_file, false /*score_only*/ );
 
 }
@@ -94,7 +98,8 @@ prepare_silent_struct( std::string const & out_tag,
 		}
 	}
 
-	SilentStructOP s( new BinarySilentStruct( pose, out_tag ) );
+	SilentFileOptions opts;
+	SilentStructOP s( new BinarySilentStruct( opts, pose, out_tag ) );
 	s->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ) );
 
 	bool const eval_base_pairs = basic::options::option[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();

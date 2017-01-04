@@ -24,6 +24,7 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pose/Pose.hh>
@@ -86,15 +87,16 @@ public:
 		//Write out the poses:
 		std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::SilentFileData sfd;
-		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
+		core::io::silent::BinarySilentStruct pss( opts, ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
-		core::io::silent::BinarySilentStruct pss2( ref_pose_2, "tag2" );
+		core::io::silent::BinarySilentStruct pss2( opts, ref_pose_2, "tag2" );
 		sfd.write_silent_struct( pss2, silent_outfile );
 
 
 		// Read the ProteinSilentStruct from the silent-file
-		core::io::silent::SilentFileData sfd2;
+		core::io::silent::SilentFileData sfd2( opts );
 		sfd2.read_file( silent_outfile );
 		TS_ASSERT( sfd2.size() > 0 );
 		core::io::silent::SilentFileData::iterator iter = sfd2.begin();
@@ -165,15 +167,16 @@ public:
 
 		std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::SilentFileData sfd;
-		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
+		core::io::silent::BinarySilentStruct pss( opts, ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
-		core::io::silent::BinarySilentStruct pss2( ref_pose_2, "tag2" );
+		core::io::silent::BinarySilentStruct pss2( opts, ref_pose_2, "tag2" );
 		sfd.write_silent_struct( pss2, silent_outfile );
 
 
 		// Read the ProteinSilentStruct from the silent-file
-		core::io::silent::SilentFileData sfd2;
+		core::io::silent::SilentFileData sfd2( opts );
 		sfd2.read_file( silent_outfile );
 		TS_ASSERT( sfd2.size() > 0 );
 		core::io::silent::SilentFileData::iterator iter = sfd2.begin();

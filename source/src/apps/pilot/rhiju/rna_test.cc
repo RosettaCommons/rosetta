@@ -78,6 +78,7 @@
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -456,7 +457,8 @@ rna_fullatom_score_test()
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 	std::string const silent_file = option[ out::file::silent  ]();
 
 	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
@@ -483,7 +485,7 @@ rna_fullatom_score_test()
 		(*scorefxn)(pose);
 		scorefxn->show( std::cout, pose );
 
-		RNA_SilentStruct s( pose, pdb_file );
+		RNA_SilentStruct s( opts, pose, pdb_file );
 		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
 
 		//Testing HB env dep...
@@ -925,7 +927,8 @@ rna_fullatom_minimize_silent_test()
 	std::string const outfile = option[ out::file::silent  ]();
 
 	// Silent file setup?
-	SilentFileData silent_file_data_in, silent_file_data_out;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data_in(opts), silent_file_data_out(opts);
 	silent_file_data_in.read_file( infile );
 
 	pose::Pose native_pose;
@@ -972,7 +975,7 @@ rna_fullatom_minimize_silent_test()
 		protocols::farna::movers::RNA_Minimizer rna_minimizer;
 		rna_minimizer.apply( pose );
 
-		RNA_SilentStruct s( pose, out_tag );
+		RNA_SilentStruct s( opts, pose, out_tag );
 
 		Real const rmsd = all_atom_rmsd( native_pose, pose );
 		std::cout << "All atom rmsd: " << rmsd  << std::endl;
@@ -1015,7 +1018,8 @@ rna_o2prime_test()
 
 	std::string const silent_file = option[ out::file::silent  ]();
 	// Silent file setup?
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -1036,7 +1040,7 @@ rna_o2prime_test()
 		scorefxn->show( std::cout, pose );
 
 		{ //output initial structure.
-			RNA_SilentStruct s( pose, pdb_file );
+			RNA_SilentStruct s( opts, pose, pdb_file );
 			std::cout << "Outputting " << pdb_file << " to silent file: " << silent_file << std::endl;
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
@@ -1047,7 +1051,7 @@ rna_o2prime_test()
 		scorefxn->show( std::cout, pose );
 
 		std::string const out_file =  "zzz_"+pdb_file;
-		RNA_SilentStruct s( pose, out_file );
+		RNA_SilentStruct s( opts, pose, out_file );
 		std::cout << "Outputting " << out_file << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 
@@ -1110,7 +1114,8 @@ rna_lores_score_silent_test()
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
 
 	//Need to refactor silent file -- why don't we give it a filename here?
-	SilentFileData silent_file_data_in, silent_file_data_out;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data_in(opts), silent_file_data_out(opts);
 	std::string const infile  = option[ in::file::silent  ][1];
 	std::string const outfile = option[ out::file::silent  ]();
 	silent_file_data_in.read_file( infile );
@@ -1149,7 +1154,7 @@ rna_lores_score_silent_test()
 
 		scorefxn->show( std::cout, pose );
 
-		RNA_SilentStruct s( pose, out_tag );
+		RNA_SilentStruct s( opts, pose, out_tag );
 		if ( use_native ) {
 			Real const rmsd = all_atom_rmsd( native_pose, pose );
 			std::cout << "All atom rmsd: " << rmsd  << std::endl;
@@ -3029,7 +3034,8 @@ dinucleotide_test()
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	scorefxn->set_weight( dihedral_constraint, 1.0 );
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 	std::string const silent_file = option[ out::file::silent  ]();
 
 	// Now cycle through one of the torsions. Score and output.
@@ -3074,7 +3080,7 @@ dinucleotide_test()
 		//   (*scorefxn)(current_pose);
 
 		std::string const tag( "S_"+lead_zero_string_of(count++, 3) );
-		RNA_SilentStruct s( current_pose, tag );
+		RNA_SilentStruct s( opts, current_pose, tag );
 		silent_file_data.write_silent_struct(s, silent_file, false /*write score only*/);
 		dump_pdb( current_pose, tag+".pdb" );
 		dump_pdb( pose, "nomin_"+tag+".pdb" );
@@ -3261,7 +3267,8 @@ build_next_nucleotide_test()
 	scorefxn->set_weight( dihedral_constraint, 1.0 );
 	scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
-	SilentFileData silent_file_data;
+	SilentFileOptions opts; // initialized from the command line
+	SilentFileData silent_file_data(opts);
 	std::string const silent_file = option[ out::file::silent  ]();
 
 	utility::vector1< utility::vector1 <Real > > backbone_rotamers;
@@ -3306,7 +3313,7 @@ build_next_nucleotide_test()
 	(*scorefxn)(current_pose);
 	rmsd = all_atom_rmsd( pose_reference, current_pose );
 	std::string const tag( "S_"+lead_zero_string_of(count, 3) );
-	RNA_SilentStruct s( current_pose, tag );
+	RNA_SilentStruct s( opts, current_pose, tag );
 	s.add_energy( "rms", rmsd );
 	silent_file_data.write_silent_struct(s, silent_file, false /*write score only*/);
 
@@ -3341,7 +3348,7 @@ build_next_nucleotide_test()
 		rmsd = all_atom_rmsd( pose_reference, current_pose );
 
 		std::string const tag( "S_"+lead_zero_string_of(count, 5) );
-		RNA_SilentStruct s( current_pose, tag );
+		RNA_SilentStruct s( opts, current_pose, tag );
 		s.add_energy( "rms", rmsd );
 
 		silent_file_data.write_silent_struct(s, silent_file, false /*write score only*/);

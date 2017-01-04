@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 
 #include <numeric/random/random.hh>
@@ -108,7 +109,8 @@ utility::vector1<pose::Pose> ddGData::read_mut_data()
 			}
 		}
 	} else if ( mut.ext().compare("out") == 0 ) {
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		sfd.set_filename(curr_mut_filename);
 		utility::vector1<std::string> tags = sfd.tags();
 		for ( unsigned int i=1; i <= tags.size(); i++ ) {
@@ -145,7 +147,8 @@ utility::vector1<pose::Pose> ddGData::read_wt_data(){
 			}
 		}
 	} else if ( wt.ext().compare("out") == 0 ) {
-		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
 		sfd.set_filename(curr_wt_filename);
 		utility::vector1<std::string> tags = sfd.tags();
 		for ( unsigned int i=1; i <= tags.size(); i++ ) {
