@@ -17,6 +17,7 @@
 
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -54,7 +55,7 @@ split_segments_longer_than_6mers(
 		else {
 			for ( Size ii = 1; ii <= segment.second.size() - 6; ++ii ) {
 				std::pair< Size, std::string > newseg;
-				newseg.first  = segment.first + ii - 1;
+				newseg.first	= segment.first + ii - 1;
 				newseg.second = segment.second.substr( ii - 1, 6 );
 				new_segments.push_back( newseg );
 			}
@@ -155,7 +156,20 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 		std::string const & secstruct = elem.second;
 		//TR << position << " " << secstruct << std::endl;
 		Size const frag_length( secstruct.size());
-		std::string const sequence = pose_input.sequence().substr( position - 1, frag_length ); // uucg loop
+		std::string sequence = pose_input.sequence().substr( position - 1, frag_length ); // uucg loop
+
+		// Fix up sequence (noncanonicals)
+		for ( Size ii = 0; ii < sequence.size(); ++ii ) {
+			if ( pose_input.residue_type( ii + position ).na_analogue() == chemical::na_rad ) {
+				sequence[ ii ] = 'a';
+			} else if ( pose_input.residue_type( ii + position ).na_analogue() == chemical::na_rcy ) {
+				sequence[ ii ] = 'c';
+			} else if ( pose_input.residue_type( ii + position ).na_analogue() == chemical::na_rgu ) {
+				sequence[ ii ] = 'g';
+			} else if ( pose_input.residue_type( ii + position ).na_analogue() == chemical::na_ura ) {
+				sequence[ ii ] = 'u';
+			}
+		}
 
 		// This seems curious. Of course, we could maybe pass `this`, and speed
 		// up our searches. Maybe.
