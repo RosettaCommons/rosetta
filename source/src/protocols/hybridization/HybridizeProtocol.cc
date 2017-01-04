@@ -1175,6 +1175,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					hetatms.push_back( std::make_pair( ires, pose.size() ) );
 				}
 			}
+			pose.conformation().chains_from_termini();
 		}
 
 		// (2) realign structures per-domain
