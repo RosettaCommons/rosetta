@@ -941,7 +941,7 @@ def get_binext():
     else :
         extras='default'
 
-    binext = extras+"."+platform+compiler+mode
+    binext = extras.replace(',', '')+"."+platform+compiler+mode
     return binext, dict(locals())
 
 def generateIntegrationTestGlobalSubstitutionParameters(host=None):
