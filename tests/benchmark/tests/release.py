@@ -481,7 +481,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             release_name = 'PyRosetta4.{kind}.python{python_version}.{os}'.format(kind=kind, os=platform['os'], python_version=python_version)
             package_dir = working_dir + '/' + release_name
 
-            execute('Creating PyRosetta4 distribution package...', '{build_command_line} --create-package {package_dir}'.format(**vars()), return_='tuple')
+            execute('Creating PyRosetta4 distribution package...', '{build_command_line} --create-package {package_dir}'.format(**vars()))
 
             release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
 

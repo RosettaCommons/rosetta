@@ -11,6 +11,8 @@
 #include <memory>
 #include <vector>
 #include <deque>
+#include <ostream>
+#include <sstream>
 
 #include <self_test.incl.hpp>
 //#include <iostream>
@@ -26,21 +28,28 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
-class Test
-{
-protected:
-	virtual void foo() {}
-	int data;
-};
 
-class Common : public Test
+void foo(std::ostringstream &s)
 {
-public:
-	using Test::foo;
-	using Test::data;
+	s << std::string("hey...");
+}
 
-	void a() {};
-};
+
+// class Test
+// {
+// protected:
+// 	virtual void foo() {}
+// 	int data;
+// };
+
+// class Common : public Test
+// {
+// public:
+// 	using Test::foo;
+// 	using Test::data;
+
+// 	void a() {};
+// };
 
 
 // struct A /// comment 3

@@ -367,7 +367,10 @@ void Context::generate(Config const &config)
 
 				prefix_code += binders[i]->prefix_code();
 
-				if(O_trace) code += trace_line( binders[i]->id() );
+				if(O_trace) {
+					code += trace_line( binders[i]->id() );
+					includes.add_include( O_annotate_includes ? "<iostream> // --trace" : "<iostream>");
+				}
 
 				code += binders[i]->code();
 				binders[i]->add_relevant_includes(includes);

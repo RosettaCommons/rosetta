@@ -28,6 +28,7 @@
 #include <numeric/xyz.functions.hh>
 
 #include <iostream>
+#include <ostream>
 
 namespace numeric {
 
@@ -548,7 +549,7 @@ public:
 
 public:
 	std::ostream &
-	show_stream( std::ostream & stream = std::cout) const
+	show(std::ostream & stream = std::cout) const
 	{
 		// Types
 		using std::setw;
@@ -565,18 +566,11 @@ public:
 		stream << setw( w ) << xy() << ' ' << setw( w ) << yy() << ' ' << setw( w ) << zy() << setw( w ) << py() << std::endl;
 		stream << setw( w ) << xz() << ' ' << setw( w ) << yz() << ' ' << setw( w ) << zz() << setw( w ) << pz() << std::endl;
 
-
 		// Restore previous stream state
 		stream.precision( old_precision );
 		stream.flags( old_flags );
 
 		return stream;
-	}
-
-	void
-	show(std::ostream & stream = std::cout) const
-	{
-		stream << show_stream( stream );
 	}
 
 private:
@@ -666,7 +660,7 @@ public:
 inline std::ostream &
 operator << ( std::ostream & stream, HomogeneousTransform< double > const & ht )
 {
-	return ht.show_stream( stream );
+	return ht.show( stream );
 }
 
 }
