@@ -130,7 +130,7 @@ void RNA_KIC_Sampler::init() {
 
 	////////// Loop Closer //////////
 	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser(
-		ref_pose_, moving_suite_, chainbreak_suite_ ) );
+		*ref_pose_, moving_suite_, chainbreak_suite_ ) );
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi StepWiseSampler //////////

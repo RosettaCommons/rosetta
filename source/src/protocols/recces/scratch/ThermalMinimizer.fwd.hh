@@ -7,24 +7,39 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/recces/sampler/MC_Sampler.fwd.hh
-/// @brief Abstract Base Class for Markov chain rotamer sampler.
-/// @author Fang-Chieh Chou
+/// @file protocols/recces/scratch/ThermalMinimizer.fwd.hh
+/// @brief Use a simulated tempering simulation to refine a pose
+/// @author Andy Watkins (amw579@nyu.edu)
 
+
+#ifndef INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_fwd_hh
+#define INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_fwd_hh
+
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_sampler_MC_Sampler_fwd_HH
-#define INCLUDED_protocols_sampler_MC_Sampler_fwd_HH
 
+
+// Forward
 namespace protocols {
 namespace recces {
-namespace sampler {
+namespace scratch {
 
-class MC_Sampler;
-typedef utility::pointer::shared_ptr< MC_Sampler > MC_SamplerOP;
-typedef utility::pointer::shared_ptr< MC_Sampler const > MC_SamplerCOP;
+class ThermalMinimizer;
 
-} //sampler
+typedef utility::pointer::shared_ptr< ThermalMinimizer > ThermalMinimizerOP;
+typedef utility::pointer::shared_ptr< ThermalMinimizer const > ThermalMinimizerCOP;
+
+
+
+} //scratch
 } //recces
 } //protocols
-#endif
+
+
+#endif //INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_fwd_hh
+
+
+
+
+

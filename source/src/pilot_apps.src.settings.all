@@ -316,7 +316,6 @@ sources = {
 
 	# F ######################################################################
 	"pilot/fcchou" : [
-		"thermal_sampler_original",
 		"thermal_sampler_alpha",
 	],
 	"pilot/firas" : [
@@ -529,9 +528,6 @@ sources = {
 	"pilot/jstev" : [
 		#"collect_features",
  	],
-	"pilot/jyesselm": [
-		"thermal_sampler",
-	],
 
 	# K ######################################################################
     "pilot/kblacklock" : [

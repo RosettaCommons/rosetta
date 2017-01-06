@@ -77,13 +77,23 @@ sources = {
     ],
     "protocols/recces": [
         "RECCES_Mover",
-        "ThermalSamplingMover",
-        "thermal_sampler",
+	"Histogram",
+        "setup_util",
+        "stdev_util",
         "util",
     ],
+    "protocols/recces/options": [
+	"RECCES_Options",
+    ],
+    "protocols/recces/params": [
+	"RECCES_Parameters",
+    ],
     "protocols/recces/sampler": [
+        "MC_Any",
         "MC_Comb",
+        "MC_Loop",
         "MC_OneTorsion",
+        "util",
     ],
     "protocols/recces/sampler/rna": [
         "MC_RNA_KIC_Sampler",
@@ -91,6 +101,11 @@ sources = {
         "MC_RNA_OneJump",
         "MC_RNA_Sugar",
         "MC_RNA_Suite",
+    ],
+    "protocols/recces/scratch": [
+        "ThermalMinimizer",
+        "ThermalSamplingMover",
+        "thermal_sampler",
     ],
     "protocols/stepwise": [
         "StepWiseSampleAndScreen",
@@ -134,7 +149,6 @@ sources = {
         "RNA_ChiStepWiseSampler",
         "RNA_KIC_Sampler",
         "RNA_KinematicCloser",
-        "RNA_KinematicCloser_DB",
         "RNA_NucleosideStepWiseSampler",
         "RNA_SugarStepWiseSampler",
         "RNA_SuiteStepWiseSampler",
@@ -215,7 +229,6 @@ sources = {
         "StepWiseModeler",
         "StepWiseConnectionSampler",
         "StepWiseMinimizer",
-        "ThermalMinimizer",
         "constraint_util",
         "file_util",
         "output_util",

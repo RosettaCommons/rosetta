@@ -50,7 +50,7 @@ public:
 	void operator++();
 
 	/// @brief Update the stored angle to match active angle
-	void update() { stored_angle_ = active_angle_; }
+	void update();
 
 	/// @brief Apply the active torsion to pose
 	void apply( core::pose::Pose & pose );
@@ -62,7 +62,7 @@ public:
 	core::Real active_angle() const { return active_angle_; }
 
 	/// @brief Set the stored angle
-	void set_angle( core::Real const setting ) { stored_angle_ = setting; }
+	void set_angle( core::Real const setting );
 
 	/// @brief Set the angle range
 	void set_angle_range( core::Real const min, core::Real const max ) {
@@ -76,6 +76,8 @@ public:
 		// Hack: If stdev < 0, do uniform_modeler instead
 		set_uniform_modeler( stdev_ < 0 );
 	}
+
+	void set_update_tolerance( core::Real const & setting ) { update_tolerance_ = setting; }
 
 	/// @brief Set the TorsionID of the sampler
 	void set_torsion_id( core::id::TorsionID const & setting ) {
@@ -109,6 +111,7 @@ private:
 	void regularize_angle( core::Real & angle );
 	core::Real stored_angle_, active_angle_, angle_min_, angle_max_, stdev_;
 	core::id::TorsionID torsion_id_;
+	core::Real  update_tolerance_;
 };
 
 } //sampler

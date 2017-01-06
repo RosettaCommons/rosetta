@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/recces/ThermalSamplingMoverCreator.hh
+/// @file protocols/recces/scratch/ThermalSamplingMoverCreator.hh
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
@@ -18,6 +18,7 @@
 
 namespace protocols {
 namespace recces {
+namespace scratch {
 
 class ThermalSamplingMoverCreator : public protocols::moves::MoverCreator {
 
@@ -34,6 +35,7 @@ public:
 
 };
 
+} //scratch
 } //recces
 } //protocols
 

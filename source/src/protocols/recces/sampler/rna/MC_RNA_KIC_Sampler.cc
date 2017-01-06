@@ -21,7 +21,7 @@
 #include <protocols/recces/sampler/rna/MC_RNA_Sugar.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KinematicCloser_DB.hh>
+#include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.hh>
 #include <protocols/stepwise/sampler/rna/RNA_ChiStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_SugarStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/screener/RNA_TorsionScreener.hh>
@@ -53,7 +53,7 @@ namespace sampler {
 namespace rna {
 
 MC_RNA_KIC_Sampler::MC_RNA_KIC_Sampler(
-	core::pose::PoseOP const & ref_pose,
+  core::pose::PoseCOP mc_pose,
 	core::Size const moving_suite,
 	core::Size const chainbreak_suite,
 	bool const change_ft
@@ -61,60 +61,51 @@ MC_RNA_KIC_Sampler::MC_RNA_KIC_Sampler(
 	MC_Sampler(),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
-	init_pucker_( NORTH),
-	pucker_flip_rate_( 0.1 ),
-	base_state_( ANY_CHI ), // ANY_CHI, ANTI, SYN, NO_CHI
-	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
 	max_tries_( 100 ),
 	verbose_( false ),
-	extra_epsilon_( false ),
-	extra_chi_( false ),
-	skip_same_pucker_( false ),
-	idealize_coord_( false ),
-	torsion_screen_( true ),
-	random_chain_closed_( true ),
-	did_close( false ),
-	screener_( RNA_TorsionScreenerOP( new RNA_TorsionScreener ) ),
+	did_close_( false ),
 	cutpoint_handler_(TransientCutpointHandlerOP ( new TransientCutpointHandler( moving_suite, chainbreak_suite, change_ft )))
 {
-	ref_pose_.reset(new core::pose::Pose(*ref_pose));
+	update_pose_ = mc_pose;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void MC_RNA_KIC_Sampler::init() {
 	using namespace core::id;
 
+	if ( is_init() ) return; // do not init more than once!
+
 	/////// Backbone MC Sampler ////////
 
 	TorsionID epsilon_ID( TorsionID( moving_suite_, BB, EPSILON ) );
 	TorsionIDs.push_back( epsilon_ID );
-	bb_samplers_.emplace_back( new MC_OneTorsion( epsilon_ID, ref_pose_->torsion( epsilon_ID) ) );
+	bb_samplers_.emplace_back( new MC_OneTorsion( epsilon_ID, update_pose_->torsion( epsilon_ID) ) );
 
 	TorsionID zeta_ID( TorsionID( moving_suite_, BB, ZETA));
 	TorsionIDs.push_back( zeta_ID );
-	bb_samplers_.emplace_back( new MC_OneTorsion( zeta_ID, ref_pose_->torsion( zeta_ID ) ) );
+	bb_samplers_.emplace_back( new MC_OneTorsion( zeta_ID, update_pose_->torsion( zeta_ID ) ) );
 
 	TorsionID alpha1_ID( TorsionID( moving_suite_ + 1, BB, ALPHA ) );
 	TorsionIDs.push_back( alpha1_ID );
-	bb_samplers_.emplace_back( new MC_OneTorsion( alpha1_ID, ref_pose_->torsion( alpha1_ID ) ) );
+	bb_samplers_.emplace_back( new MC_OneTorsion( alpha1_ID, update_pose_->torsion( alpha1_ID ) ) );
 
 	TorsionID alpha2_ID( TorsionID( chainbreak_suite_ + 1, BB, ALPHA ) );
 	TorsionIDs.push_back( alpha2_ID );
-	bb_samplers_.emplace_back( new MC_OneTorsion( alpha2_ID, ref_pose_->torsion( alpha2_ID ) ) );
+	bb_samplers_.emplace_back( new MC_OneTorsion( alpha2_ID, update_pose_->torsion( alpha2_ID ) ) );
 
 	//Add all the pivot torsions to the list of the torsion IDs so that we have a
 	//full list of the torsions that could be modified by this sampler
 	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, BETA ) );
 	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, GAMMA ) );
-	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, EPSILON ) ); // wait a minute: chainbreak_suite_? rhiju2016
-	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, ZETA ) );    // wait a minute: chainbreak_suite_? rhiju2016
+	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_, BB, EPSILON ) );
+	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_, BB, ZETA ) );
 	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_ + 1, BB, BETA ) );
 	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_ + 1, BB, GAMMA ) );
 
 	// Now find the initial torsions
 	core::Real torsion;
 	for ( Size i = 1; i <= TorsionIDs.size(); ++i ) {
-		torsion = ref_pose_->torsion(TorsionIDs[i]);
+		torsion = update_pose_->torsion(TorsionIDs[i]);
 		initial_torsions_.push_back( torsion );
 		angle_min_.push_back(-180);
 		angle_max_.push_back(180);
@@ -127,32 +118,23 @@ void MC_RNA_KIC_Sampler::init() {
 	}
 
 	////////// Make a stored loop closer /////////
-	stored_loop_closer_ = RNA_KinematicCloser_DBOP( new RNA_KinematicCloser_DB(
-		ref_pose_, moving_suite_, chainbreak_suite_ ) );
+	//	stored_loop_closer_ = RNA_KinematicCloser_DBOP( new RNA_KinematicCloser_DB(
+	//		ref_pose_, moving_suite_, chainbreak_suite_ ) );
+	stored_loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser(	*update_pose_, moving_suite_, chainbreak_suite_ ) );
+	stored_loop_closer_->set_calculate_jacobians( true );
 
 	////////// Loop Closer //////////
-	loop_closer_ = RNA_KinematicCloser_DBOP( new RNA_KinematicCloser_DB(
-		ref_pose_, moving_suite_, chainbreak_suite_ ) );
+	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser( *update_pose_, moving_suite_, chainbreak_suite_ ) );
+	loop_closer_->set_calculate_jacobians( true );
 	loop_closer_->set_verbose( verbose_ );
 
 	set_init( true );
 }
-//////////////////////////////////////////////////////////////////////////
-void MC_RNA_KIC_Sampler::reset( pose::Pose & /*pose*/ ) {
-	runtime_assert( is_init() );
-	// //This resets the driver torsions
-	// for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
-	//  bb_samplers_[i]->reset();
-	//  bb_samplers_[i]->apply( pose );
-	// }
-}
+
 ////////////////////////////////////////////////////////////////////////
-void MC_RNA_KIC_Sampler::operator++() {
-	return;
-}
-////////////////////////////////////////////////////////////////////////
-void MC_RNA_KIC_Sampler::next( const Pose & pose ) {
-	runtime_assert( not_end() );
+void
+MC_RNA_KIC_Sampler::get_next_solutions( pose::Pose const & pose )
+{
 	Pose pose_copy = pose;
 	//Need to update the stored angles in the samplers in case they were changed in a different sampler
 	for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
@@ -164,6 +146,8 @@ void MC_RNA_KIC_Sampler::next( const Pose & pose ) {
 	cutpoint_handler_->put_in_cutpoints( pose_copy );
 	stored_loop_closer_->init(pose_copy, pose);
 	stored_jacobians_ = stored_loop_closer_->get_all_jacobians();
+
+	// Then, find any solutions for pose with perturbed 'driver' torsions.
 	for ( Size i = 1; i <= max_tries_; ++i ) {
 		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
 			++( *bb_samplers_[i]);
@@ -176,32 +160,43 @@ void MC_RNA_KIC_Sampler::next( const Pose & pose ) {
 			continue;
 		}
 		cutpoint_handler_->take_out_cutpoints( pose_copy );
-		did_close =  true ;
+		did_close_ =  true ;
 		return;
 	}
 
 	cutpoint_handler_->take_out_cutpoints( pose_copy );
-	did_close = false ;
+	did_close_ = false ;
 
 	TR.Debug << "Chain not closable after " << max_tries_ << " tries!" << std::endl;
+
 }
-///////////////////////////////////////////////////////////////////////////
-bool MC_RNA_KIC_Sampler::check_closed() const {
-	return did_close;
+////////////////////////////////////////////////////////////////////////
+void
+MC_RNA_KIC_Sampler::choose_solution() {
+	if ( did_close_ ) { // loop closed after bb perturbations in get_next_solutions()
+		current_jacobians_ = loop_closer_->get_all_jacobians();
+		all_jacobians_ = current_jacobians_; // perturbed solutions
+		all_jacobians_.append( stored_jacobians_ ); // closing solutions on stored pose.
+		jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
+		solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
+	} else {
+		all_jacobians_ = stored_jacobians_;
+		jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
+		solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
+	}
+}
+////////////////////////////////////////////////////////////////////////
+void MC_RNA_KIC_Sampler::operator++() {
+	next( *update_pose_ );
+}
+////////////////////////////////////////////////////////////////////////
+void MC_RNA_KIC_Sampler::next( Pose const & pose ) {
+	get_next_solutions( pose );
+	choose_solution();
 }
 ///////////////////////////////////////////////////////////////////////////
 bool MC_RNA_KIC_Sampler::check_moved() const {
-	return did_move;
-}
-///////////////////////////////////////////////////////////////////////////
-bool MC_RNA_KIC_Sampler::not_end() const {
-	//since it's a MC sampler, not enumerative, never ends
-	runtime_assert( is_init() );
-	return true;
-}
-///////////////////////////////////////////////////////////////////////////
-void MC_RNA_KIC_Sampler::apply() {
-	apply( *ref_pose_ );
+	return found_move_;
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_RNA_KIC_Sampler::apply( pose::Pose & pose_in ) {
@@ -209,48 +204,40 @@ void MC_RNA_KIC_Sampler::apply( pose::Pose & pose_in ) {
 	Pose pose = pose_in;
 	cutpoint_handler_->put_in_cutpoints( pose );
 	used_current_solution_ = false;
-	did_move = false;
+	found_move_ = false;
 
-	if ( did_close ) {
-		current_jacobians_ = loop_closer_->get_all_jacobians();
-		all_jacobians_ = current_jacobians_;
-		copy_stored_jacobians_ = stored_jacobians_;
-		all_jacobians_.insert(all_jacobians_.end(),
-			copy_stored_jacobians_.begin(), copy_stored_jacobians_.end());
-		jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
-		solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
+	//// apply solution_ here!
+	if ( did_close_ ) {
 		if ( solution_ <= current_jacobians_.size() ) {
 			for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
 				bb_samplers_[i]->apply( pose );
 			}
 			loop_closer_->apply( pose, solution_ );
 			used_current_solution_ = true;
-			did_move = true;
+			found_move_ = true;
 		} else {
 			Real calculated_jacobian = get_jacobian( pose );
 			stored_loop_closer_->apply( pose, (solution_ - current_jacobians_.size()) );
 			//Check whether this is actually a new pose
 			//This isn't really a good way to check if the pose is the same...change this!!
 			Real picked_jacobian = stored_jacobians_[ solution_ - current_jacobians_.size()];
-			if ( std::abs(calculated_jacobian - picked_jacobian) > 0.0000000001 ) { did_move = true; }
+			if ( std::abs(calculated_jacobian - picked_jacobian) > 0.0000000001 ) { found_move_ = true; }
 			//used_current solution remains false, so don't update stored angles, don't update stored loop closer
 		}
 	} else {
-		all_jacobians_ = stored_jacobians_;
-		jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
-		solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
 		Real calculated_jacobian = get_jacobian( pose );
 		stored_loop_closer_->apply( pose, solution_ );
 		//Check whether this is actually a new pose
 		//This isn't really a good way to check if the pose is the same...change this!!
 		Real picked_jacobian = stored_jacobians_[ solution_ - current_jacobians_.size()];
-		if ( std::abs(calculated_jacobian - picked_jacobian) > 0.0000000001 ) { did_move = true; }
+		if ( std::abs(calculated_jacobian - picked_jacobian) > 0.0000000001 ) { found_move_ = true; }
 		//used_current solution remains false, so don't update stored angles, don't update stored loop closer
 	}
+
 	cutpoint_handler_->take_out_cutpoints( pose );
-	if ( did_move ) {
+	if ( found_move_ ) {
 		if ( !( check_angles_in_range( pose ) ) ) {
-			did_move = false;
+			found_move_ = false;
 			return;
 		}
 	}
@@ -258,8 +245,7 @@ void MC_RNA_KIC_Sampler::apply( pose::Pose & pose_in ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 Real MC_RNA_KIC_Sampler::get_jacobian( pose::Pose & pose ) {
-	jacobian_ = loop_closer_->get_jacobian(pose);
-	return jacobian_;
+	return loop_closer_->get_jacobian(pose);
 }
 ///////////////////////////////////////////////////////////////////////////
 Real MC_RNA_KIC_Sampler::vector_sum( utility::vector1< core::Real > const & vector ) {
@@ -271,10 +257,6 @@ Real MC_RNA_KIC_Sampler::vector_sum( utility::vector1< core::Real > const & vect
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_RNA_KIC_Sampler::update() {
-	return;
-}
-///////////////////////////////////////////////////////////////////////////
-void MC_RNA_KIC_Sampler::update( const Pose & /*pose*/ ) {
 	runtime_assert( is_init() );
 	if ( used_current_solution_ ) {
 		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
@@ -309,20 +291,20 @@ bool MC_RNA_KIC_Sampler::check_angles_in_range( const Pose & pose ) {
 	// (see set_angle_range_from_init_torsions)
 	for ( Size i = bb_samplers_.size() + 1; i <= TorsionIDs.size(); i++ ) {
 		if ( angle_max_[i] - angle_min_[i] >= 360 ) continue;
-		angle_ = pose.torsion( TorsionIDs[i] );
-		while ( angle_ < angle_min_[i] ) angle_ += 360;
-		while ( angle_ >= angle_max_[i] ) angle_ -= 360;
-		if ( angle_ >= angle_min_[i] ) continue;
+		Real angle( pose.torsion( TorsionIDs[i] ) );
+		while ( angle < angle_min_[i] ) angle += 360;
+		while ( angle >= angle_max_[i] ) angle -= 360;
+		if ( angle >= angle_min_[i] ) continue;
 		return false;
 	}
 	return true;
 }
-/////////////////////////////////////////////////////////////////////////
-/// @brief Name of the class
-std::string
-MC_RNA_KIC_Sampler::get_name() const {
-	return "MC_RNA_KIC_Sampler moving_suite:" + utility::to_string(moving_suite_) + " chainbreak_suite:" +
-		utility::to_string(chainbreak_suite_);
+///////////////////////////////////////////////////////////////////////////
+void
+MC_RNA_KIC_Sampler::show( std::ostream & out, Size const indent ) const {
+	for ( Size n = 1; n <= indent; n++ ) out << ' ';
+	out << ( "MC_RNA_KIC_Sampler moving_suite:" + utility::to_string(moving_suite_) + " chainbreak_suite:" +
+					 utility::to_string(chainbreak_suite_) );
 }
 /////////////////////////////////////////////////////////////////////////
 /// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).

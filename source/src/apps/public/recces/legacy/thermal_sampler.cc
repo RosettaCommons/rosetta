@@ -19,44 +19,36 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
+#include <protocols/farna/setup/RNA_DeNovoParameters.hh>
+#include <protocols/farna/util.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
+#include <protocols/recces/RECCES_Mover.hh>
+#include <protocols/recces/options/RECCES_Options.hh>
+#include <protocols/recces/options/RECCES_Options.hh>
+#include <protocols/recces/util.hh>
+#include <protocols/recces/setup_util.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/recces/scratch/ThermalSamplingMover.hh>
-#include <protocols/recces/scratch/thermal_sampler.hh>
-#include <protocols/recces/util.hh>
-
 #include <core/id/TorsionID.hh>
 #include <protocols/recces/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/sampler/MC_Any.hh>
+#include <protocols/recces/sampler/MC_Loop.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
+#include <protocols/recces/sampler/util.hh>
 #include <utility/io/ozstream.hh>
 
 // C++ headers
@@ -64,8 +56,6 @@
 #include <string>
 
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -73,23 +63,24 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/recces.OptionKeys.gen.hh>
+#include <numeric/random/random.hh>
 
 #include <utility/excn/Exceptions.hh>
 
-OPT_KEY( Boolean, recces_turner_mode )
-
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/recces.OptionKeys.gen.hh>
 
 using namespace core::pose;
 using namespace basic::options;
-
 
 using namespace core;
 using namespace protocols;
 using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
-using namespace protocols::recces;
 using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,62 +89,38 @@ thermal_sampler()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::scoring::rna::data;
 	using namespace core::scoring;
-	using namespace core::kinematics;
-	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::pose::full_model_info;
-	using namespace protocols::stepwise::modeler;
-	using namespace protocols::recces::scratch;
+	using namespace protocols::recces;
+	using namespace protocols::recces::options;
 
-	using namespace protocols::stepwise::sampler::rna;
-	using namespace protocols::moves;
-	using namespace core::id;
-	using namespace protocols::stepwise::sampler;
+	RECCES_OptionsOP options( new RECCES_Options );
+	options->set_histogram_max( 100.05 ); // sets default
+	options->initialize_from_command_line();
+	options->set_thermal_sampler_mode( true );
+	options->set_blank_score_terms( true );
+	options->set_skip_last_accept( true );
+	options->set_suppress_sampler_display( true );
+	options->set_prefix_each_output_pdb( true );
+	options->set_show_more_pose_scores( true );
+	options->set_save_scores( true );
+	runtime_assert( !options->legacy_turner_mode() );
 
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
+	PoseOP pose_op( recces_pose_setup( *options ) );
+	Pose & pose = *pose_op;
 
-	FullModelInfoOP my_model;
-
-	// input stream
-	PoseInputStreamOP input;
-	if ( option[ in::file::silent ].user() ) {
-		if ( option[ in::file::tags ].user() ) {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(
-				option[ in::file::silent ](),
-				option[ in::file::tags ]()
-				) );
-		} else {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
-		}
-	} else {
-		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
-	}
-
-	Pose pose;
-	input->fill_pose( pose, *rsd_set );
-
-	utility::vector1< pose::PoseOP > other_poses;
-	if ( !option[ in::file::silent ].user() ) protocols::stepwise::setup::cleanup( pose );
-
-	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ) {
-		protocols::stepwise::setup::fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+	// Obtains base pairs and constraints from pose
+	if ( options->setup_base_pair_constraints() ) {
+		utility::vector1< std::pair< Size, Size > > pairings;
+		protocols::farna::get_base_pairing_list( pose, pairings );
+		protocols::farna::setup_base_pair_constraints( pose, pairings );
 	}
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
-	using namespace protocols::recces;
-
-	ThermalSamplingMoverOP ts( new ThermalSamplingMover );
-	ts->set_dumping_app( true );
-	ts->set_recces_turner_mode( option[ recces_turner_mode ] );
-
-	ts->apply( pose );
+	RECCES_Mover recces_mover( options );
+	recces_mover.set_scorefxn( ( option[ score::weights ].user() ) ? get_score_function() : ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS ) );
+	recces_mover.apply( pose );
 }
-
 
 
 ///////////////////////////////////////////////////////////////
@@ -175,15 +142,8 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-		std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-		NEW_OPT( recces_turner_mode, "run in recces_turner mode for some perverse reason?", "false" );
-
-		utility::vector1< int > null_int_vector;
-		utility::vector1< core::Real > null_real_vector;
-		utility::vector1< Size > blank_size_vector;
-		utility::vector1< std::string > blank_string_vector;
 		option.add_relevant( score::weights );
 		option.add_relevant( in::file::s );
 		option.add_relevant( in::file::silent );
@@ -192,34 +152,30 @@ main( int argc, char * argv [] )
 		option.add_relevant( in::file::input_res );
 		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( score::weights );
-
-		//option.add_relevant( OptionKeys::recces::seq1 );
-		//option.add_relevant( OptionKeys::recces::seq2 );
-		option.add_relevant( OptionKeys::recces::n_cycle );
-		option.add_relevant( OptionKeys::recces::temps );
-		option.add_relevant( OptionKeys::recces::st_weights );
 		option.add_relevant( OptionKeys::recces::out_prefix );
-		//option.add_relevant( OptionKeys::recces::save_terms );
-		//option.add_relevant( OptionKeys::recces::save_scores );
+		option.add_relevant( OptionKeys::recces::n_cycle );
 		option.add_relevant( OptionKeys::recces::dump_pdb );
 		option.add_relevant( OptionKeys::recces::dump_silent );
+		option.add_relevant( OptionKeys::recces::out_torsions );
+		option.add_relevant( OptionKeys::recces::temps );
+		option.add_relevant( OptionKeys::recces::st_weights );
+		option.add_relevant( OptionKeys::recces::dump_freq );
 		option.add_relevant( OptionKeys::recces::thermal_sampling::sample_residues );
 		option.add_relevant( OptionKeys::recces::thermal_sampling::free_residues );
-		option.add_relevant( OptionKeys::recces::thermal_sampling::angle_range_chi );
+		option.add_relevant( OptionKeys::recces::thermal_sampling::loop_residues );
 		option.add_relevant( OptionKeys::recces::thermal_sampling::angle_range_bb );
+		option.add_relevant( OptionKeys::recces::thermal_sampling::angle_range_free_bb );
+		option.add_relevant( OptionKeys::recces::thermal_sampling::angle_range_chi );
+		option.add_relevant( OptionKeys::recces::thermal_sampling::angle_range_free_chi );
 		option.add_relevant( OptionKeys::recces::thermal_sampling::chi_stdev );
 		option.add_relevant( OptionKeys::recces::thermal_sampling::bb_stdev );
 		option.add_relevant( OptionKeys::recces::thermal_sampling::standard_bb_stdev );
-		option.add_relevant( OptionKeys::recces::out_torsions );
-		option.add_relevant( OptionKeys::recces::dump_freq );
+		option.add_relevant( OptionKeys::recces::thermal_sampling::setup_base_pair_constraints );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
 		devel::init(argc, argv);
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

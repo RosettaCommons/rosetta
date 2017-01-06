@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/modeler/ThermalMinimizer.fwd.hh
+/// @file protocols/recces/scratch/ThermalSamplingMover.fwd.hh
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
 
-#ifndef INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_fwd_hh
-#define INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_fwd_hh
+#ifndef INCLUDED_protocols_recces_ThermalSamplingMover_fwd_hh
+#define INCLUDED_protocols_recces_ThermalSamplingMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,22 +22,22 @@
 
 // Forward
 namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace recces {
+namespace scratch {
 
-class ThermalMinimizer;
+class ThermalSamplingMover;
 
-typedef utility::pointer::shared_ptr< ThermalMinimizer > ThermalMinimizerOP;
-typedef utility::pointer::shared_ptr< ThermalMinimizer const > ThermalMinimizerCOP;
+typedef utility::pointer::shared_ptr< ThermalSamplingMover > ThermalSamplingMoverOP;
+typedef utility::pointer::shared_ptr< ThermalSamplingMover const > ThermalSamplingMoverCOP;
 
 
 
+} //scratch
+} //recces
 } //protocols
-} //stepwise
-} //modeler
 
 
-#endif //INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_fwd_hh
+#endif //INCLUDED_protocols_recces_ThermalSamplingMover_fwd_hh
 
 
 

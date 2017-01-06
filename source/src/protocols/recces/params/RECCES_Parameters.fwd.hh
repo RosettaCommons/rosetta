@@ -7,37 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/recces/ThermalSamplingMover.fwd.hh
-/// @brief Use a simulated tempering simulation to refine a pose
-/// @author Andy Watkins (amw579@nyu.edu)
+/// @file protocols/recces/params/RECCES_Parameters.fwd.hh
+/// @brief 
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_recces_ThermalSamplingMover_fwd_hh
-#define INCLUDED_protocols_recces_ThermalSamplingMover_fwd_hh
+#ifndef INCLUDED_protocols_recces_parameters_RECCES_Parameters_FWD_HH
+#define INCLUDED_protocols_recces_parameters_RECCES_Parameters_FWD_HH
 
-// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-
-
-// Forward
 namespace protocols {
 namespace recces {
-
-class ThermalSamplingMover;
-
-typedef utility::pointer::shared_ptr< ThermalSamplingMover > ThermalSamplingMoverOP;
-typedef utility::pointer::shared_ptr< ThermalSamplingMover const > ThermalSamplingMoverCOP;
-
-
-
+namespace params {
+	
+	class RECCES_Parameters;
+	typedef utility::pointer::shared_ptr< RECCES_Parameters > RECCES_ParametersOP;
+	typedef utility::pointer::shared_ptr< RECCES_Parameters const > RECCES_ParametersCOP;
+	
+} //params
 } //recces
 } //protocols
 
-
-#endif //INCLUDED_protocols_recces_ThermalSamplingMover_fwd_hh
-
-
-
-
-
+#endif

@@ -32,6 +32,7 @@
 
 namespace protocols {
 namespace recces {
+namespace scratch {
 
 //////////////////////////////////////////////////////////////////////////////
 utility::vector1<core::Real> get_torsions(
@@ -50,6 +51,7 @@ void set_gaussian_stdevs(
 	utility::vector1<bool> is_free
 );
 
+} //scratch
 } //recces
 } //protocols
 

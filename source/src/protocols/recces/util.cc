@@ -15,14 +15,13 @@
 
 
 #include <core/types.hh>
+#include <core/conformation/Residue.hh>
+#include <core/id/TorsionID.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <utility/io/ozstream.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/Pose.hh>
-
-// Utility headers
-
-// ObjexxFCL headers
+#include <basic/Tracer.hh>
 
 //// C++ headers
 #include <string>
@@ -30,57 +29,15 @@
 #include <cmath>
 #include <utility/vector1.hh>
 
+static basic::Tracer TR( "protocols.recces.util" );
+
+using namespace core;
 
 namespace protocols {
 namespace recces {
 
-//////////////////////////////////////////////////////////////////////////////
-// Histogram class for accumulating samples
-class Histogram {
-public:
-	Histogram( core::Real const min, core::Real const max, core::Real const spacing ):
-		min_( min ),
-		max_( max ),
-		spacing_( spacing )
-	{
-		runtime_assert( max > min );
-		n_elem_ = static_cast<core::Size>( ( max - min ) / spacing ) + 1;
-		for ( core::Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
-	}
-
-	void add( float const value, core::Size const n_items ) {
-		core::Size bin_index;
-		if ( value <= min_ ) {
-			bin_index = 1;
-		} else if ( value >= max_ ) {
-			bin_index = n_elem_;
-		} else {
-			bin_index = static_cast<core::Size>( ( value - min_ ) / spacing_ ) + 1;
-		}
-		hist_[bin_index] += n_items;
-	}
-
-	void clear() {
-		for ( core::Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
-	}
-
-	utility::vector1<core::Real> get_scores() const {
-		utility::vector1<core::Real> scores;
-		for ( core::Size i = 1; i <= n_elem_; ++i ) {
-			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
-		}
-		return scores;
-	}
-
-	utility::vector1<core::Size> get_hist() const { return hist_; }
-
-private:
-	core::Real const min_, max_, spacing_;
-	core::Size n_elem_;
-	utility::vector1<core::Size> hist_;
-};
-
 // score types to be recorded
+// This is so bad, let's fix it -- rhiju, 2016
 utility::vector1<core::scoring::ScoreType> const & get_scoretypes() {
 	using namespace core::scoring;
 	static utility::vector1< ScoreType > scoretypes;
@@ -101,25 +58,43 @@ utility::vector1<core::scoring::ScoreType> const & get_scoretypes() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+core::Size data_dim( utility::vector1< core::scoring::ScoreType > const & score_types ) {
+	return ( score_types.size() + 2 );
+}
+
+////////////////////////////////////////////////////////////////////////////////
 core::Size data_dim() {
 	using namespace core::scoring;
 	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
-	return score_types.size() + 2;
+	return data_dim( score_types );
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void update_scores(
+	utility::vector1<float> & scores,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP scorefxn,
+	utility::vector1< core::scoring::ScoreType > const & score_types
+) {
+	using namespace core::scoring;
+	scores.clear();
+	scores.push_back( ( *scorefxn )( pose ) );
+	for ( core::Size i = 1; i<= score_types.size(); ++i ) {
+		scores.push_back( scorefxn->score_by_scoretype( pose, score_types[i], false /*weighted*/ ) );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void update_scores(
 	utility::vector1<float> & scores,
 	core::pose::Pose & pose,
-	core::scoring::ScoreFunctionCOP scorefxn
-) {
-	using namespace core::scoring;
-	scores.clear();
-	scores.push_back( ( *scorefxn )( pose ) );
-	utility::vector1< ScoreType > const & score_types = get_scoretypes();
-	for ( core::Size i = 1; i<= score_types.size(); ++i ) {
-		scores.push_back( scorefxn->score_by_scoretype( pose, score_types[i], false /*weighted*/ ) );
-	}
+	core::scoring::ScoreFunctionCOP scorefxn )
+{
+	// duh, should be able to read scoretypes from scorefxn -- this
+	// is here to match legacy code and will be replaced.
+	utility::vector1< core::scoring::ScoreType > const & scoretypes( get_scoretypes() );
+	update_scores( scores, pose, scorefxn, scoretypes );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -132,13 +107,32 @@ void fill_data(
 	data.append( scores );
 }
 
+//////////////////////////////////////////////////////////////////
+// @brief used to compute moments of inertia, phase space volume
+void
+print_base_centroid_atoms_for_rb_entropy( core::conformation::Residue const & rsd, std::string filename_xyz  )
+{
+	utility::io::ozstream out_xyz;
+	out_xyz.open( filename_xyz );
+	for ( Size i = rsd.first_sidechain_atom() + 1; i <= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
+		//  TR << rsd.atom_name( i ) << std::endl;
+		if ( rsd.is_virtual( i ) ) continue;
+		out_xyz << rsd.xyz(i).x() << " " << rsd.xyz(i).y() << " " << rsd.xyz(i).z() << std::endl;
+	}
+	out_xyz.close();
+	TR << "Outputted xyz values into " << filename_xyz << std::endl;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
-// Simple heuristic for gaussian stdev
-core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp ) {
-	// Negative temp is infinite
-	if ( temp < 0 ) return -1;
-	if ( is_bp ) return 5 * temp / n_rsd;
-	return 6 * std::pow( temp / n_rsd, 0.75 );
+utility::vector1<core::Real>
+get_torsions(
+	utility::vector1<core::id::TorsionID> const & torsion_ids,
+	core::pose::Pose const & pose
+) {
+	utility::vector1<core::Real> curr_torsions;
+	for ( auto const & torsion_id: torsion_ids ) 	curr_torsions.push_back( pose.torsion( torsion_id )  );
+	return curr_torsions;
 }
 
 } //recces

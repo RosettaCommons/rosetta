@@ -18,11 +18,15 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/recces/RECCES_Mover.fwd.hh>
-#include <protocols/recces/util.hh> // for Histogram
-#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh> // should really make this a generic sampler.
+#include <protocols/recces/options/RECCES_Options.fwd.hh>
+#include <protocols/recces/params/RECCES_Parameters.fwd.hh>
+#include <protocols/recces/Histogram.hh>
+#include <protocols/recces/sampler/MC_Comb.hh>
+#include <protocols/recces/sampler/MC_Loop.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
 
 namespace protocols {
 namespace recces {
@@ -32,8 +36,7 @@ class RECCES_Mover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RECCES_Mover( utility::vector1< core::Real > const & temps,
-		utility::vector1< core::Real > const & st_weights );
+	RECCES_Mover( options::RECCES_OptionsCOP const & options );
 
 	//destructor
 	~RECCES_Mover();
@@ -46,28 +49,12 @@ public:
 
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ) { scorefxn_ = scorefxn ; }
 
-	void set_dump_pdb( bool const & setting ){ dump_pdb_ = setting; }
-	bool dump_pdb() const { return dump_pdb_; }
-
-	void set_n_cycle( core::Size const & setting ){ n_cycle_ = setting; }
-	core::Size n_cycle() const { return n_cycle_; }
-
-	void set_n_dump( core::Size const & setting ){ n_dump_ = setting; }
-	core::Size n_dump() const { return n_dump_; }
-
-	void set_save_scores( bool const & setting ){ save_scores_ = setting; }
-	bool save_scores() const { return save_scores_; }
-
-	void set_a_form_range( core::Real const & setting ){ a_form_range_ = setting; }
-	core::Real a_form_range() const { return a_form_range_; }
-
-	void set_out_prefix( std::string const & setting ){ out_prefix_ = setting; }
-	std::string out_prefix() const { return out_prefix_; }
+	void set_parameters( params::RECCES_ParametersCOP params ) { params_ = params; }
 
 private:
 
 	void
-	initialize( utility::vector1< core::Real > const & orig_weights );
+	initialize();
 
 	void
 	initialize_sampler( core::pose::Pose const & pose );
@@ -76,12 +63,31 @@ private:
 	run_sampler( core::pose::Pose & pose );
 
 	void
-	update_dump_pdb( core::Size const & n,
+	increment_accepts( Size & n_accept_total,
+										 std::map< std::string, Size > & num_accepts,
+										 sampler::MC_LoopCOP loop_sampler ) const;
+
+	void
+	save_history(
+							 core::Size const & curr_counts,
+							 utility::vector1< float > const & scores,
+							 core::Size const & temp_id	);
+
+	void
+	dump_stuff( core::Size const & n,
 		core::pose::Pose const & pose,
 		utility::vector1< core::Real > const & scores,
 		core::pose::Pose & min_pose,
 		core::Real & min_score,
 		core::Size & curr_dump ) const;
+
+
+	void
+	more_dump_stuff( core::pose::Pose const & pose, Size const & n ) const;
+
+	void
+	final_dump_stuff( core::pose::Pose & pose,
+										core::pose::Pose & min_pose ) const;
 
 	void
 	save_data_to_disk() const;
@@ -89,22 +95,27 @@ private:
 	void
 	set_sampler_gaussian_stdev( core::Real const & temperature, core::pose::Pose const & pose );
 
+	void
+	prepare_output_torsion_ids();
+
+	std::string
+	output_pdb_name( std::string const & tag ) const;
+
+	void
+	output_torsions( core::pose::Pose const & pose, core::Size const & curr_counts ) const;
+
 private:
 
-	utility::vector1< core::Real > temps_;
-	utility::vector1< core::Real > weights_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	protocols::recces::sampler::rna::MC_RNA_MultiSuiteOP sampler_; // ugh should generalize
+	options::RECCES_OptionsCOP options_;
+	params::RECCES_ParametersCOP params_;
+	sampler::MC_CombOP sampler_;
 
-	core::Size n_cycle_;
-	core::Size n_dump_;
-	bool dump_pdb_;
-	bool save_scores_;
-	std::string out_prefix_;
-	core::Real a_form_range_;
-
+	utility::vector1< core::Real > weights_;
 	utility::vector1<utility::vector1< float > > data_;
 	utility::vector1< Histogram > hist_list_;
+	utility::vector1< core::id::TorsionID > bb_torsion_ids_, chi_torsion_ids_;
+	mutable std::ofstream bb_tor_out_, chi_tor_out_;
 };
 
 } //recces

@@ -43,7 +43,7 @@ namespace rna {
 class RNA_KinematicCloser: public StepWiseSamplerSized {
 public:
 	RNA_KinematicCloser(
-		core::pose::PoseOP const & ref_pose,
+		core::pose::Pose const & init_pose,
 		core::Size const moving_suite,
 		core::Size const chainbreak_suite
 	);
@@ -58,6 +58,7 @@ public:
 
 	/// @brief Initialization
 	void init();
+	void init( const Pose & pose_current, const Pose & pose_closed, bool use_pose_closed = true );
 
 	using StepWiseSamplerSized::apply;
 
@@ -70,14 +71,23 @@ public:
 	/// @brief Set verbose
 	void set_verbose( bool const setting ) { verbose_ = setting; }
 
+	void set_calculate_jacobians( bool const & setting ){ calculate_jacobians_ = setting; }
+	bool calculate_jacobians() const { return calculate_jacobians_; }
+
+		/// @brief Calculate the jacobian
+	core::Real get_jacobian(Pose & pose) const;
+
+	utility::vector1< core::Real > get_all_jacobians() const { return all_jacobians_; }
+
 private:
 
-	void figure_out_dof_ids_and_offsets();
+	void figure_out_dof_ids_and_offsets( core::pose::Pose const & pose );
 
 	void figure_out_offset( core::id::DOF_ID const & dof_id,
-		core::Real const original_torsion_value );
+													core::Real const original_torsion_value,
+													core::pose::Pose const & pose );
 
-	void fill_chainTORS();
+	void fill_chainTORS( core::pose::Pose const & pose );
 
 	void output_chainTORS() const;
 
@@ -85,18 +95,20 @@ private:
 	RNA_KinematicCloser( const RNA_KinematicCloser & );
 	void operator=( const RNA_KinematicCloser & );
 
-	core::pose::PoseOP ref_pose_;
+	core::pose::Pose const & init_pose_; // must specify
 	core::Size const moving_suite_, chainbreak_suite_;
 	bool verbose_;
 	core::Size nsol_;
 
-	utility::vector1< core::id::NamedAtomID > atom_ids_;
-	utility::vector1< core::Real > offset_save_;
+	utility::vector1< core::id::NamedAtomID > atom_ids_, pivot_ids_;
+	utility::vector1< core::Real > offset_save_, all_jacobians_;
 	utility::vector1< core::id::DOF_ID > dof_ids_;
 
 	utility::vector1< utility::vector1< core::Real > > t_ang_, b_ang_, b_len_;
 	utility::vector1< utility::vector1< core::Real > > atoms_;
 	utility::vector1< core::Real > dt_ang_, db_len_, db_ang_;
+
+	bool calculate_jacobians_;
 };
 
 

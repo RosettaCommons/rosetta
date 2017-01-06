@@ -34,6 +34,9 @@ public:
 
 	MC_RNA_MultiSuite();
 
+	/// @brief Move to next rotamer
+	virtual void operator++();
+
 	/// @brief Set the standard deviation of Gaussian sampler
 	void set_gaussian_stdev( core::Real const setting );
 
@@ -62,19 +65,19 @@ public:
 	void clear_rotamer();
 
 	/// @brief Add one more rotamer sampler to this sampler
-	void add_external_loop_rotamer( MC_RNA_SuiteOP rotamer );
-
-	/// @brief Name of the class
-	std::string get_name() const { return "MC_RNA_MultiSuite"; }
+	void add_rotamer( MC_RNA_SuiteOP rotamer );
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
 	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_MULTI_SUITE; }
 
-private:
-	using MC_Comb::add_external_loop_rotamer;
+	void set_do_no_op_random( bool const & setting ){ do_no_op_random_ = setting; }
 
+private:
+	using MC_Comb::add_rotamer;
 	// same as MC_Comb::samplers_, but cast as MC_RNA_Suite
 	utility::vector1<MC_RNA_SuiteOP> suite_samplers_;
+
+	bool do_no_op_random_; // allows match with some legacy code in thermal_sampler
 };
 
 } //rna

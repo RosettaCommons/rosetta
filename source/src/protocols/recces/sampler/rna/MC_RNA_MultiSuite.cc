@@ -21,6 +21,9 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
+// Numeric Headers
+#include <numeric/random/random.hh>
+
 using namespace core;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_MultiSuite" );
@@ -32,8 +35,16 @@ namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////
 MC_RNA_MultiSuite::MC_RNA_MultiSuite():
-	MC_Comb()
-{}
+	MC_Comb(),
+	do_no_op_random_( false )
+{
+	set_name( "MC_RNA_MultiSuite" );
+}
+///////////////////////////////////////////////////////////////////////////
+void MC_RNA_MultiSuite::operator++() {
+	if ( do_no_op_random_ ) numeric::random::rg().uniform(); // increment
+	MC_Comb::operator++();
+}
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::set_pucker_flip_rate( Real const setting ) {
 	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
@@ -70,11 +81,11 @@ void MC_RNA_MultiSuite::set_angle( pose::Pose const & pose ) {
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
-void  MC_RNA_MultiSuite::add_external_loop_rotamer(
+void  MC_RNA_MultiSuite::add_rotamer(
  MC_RNA_SuiteOP rotamer
 ) {
 	suite_samplers_.push_back( rotamer );
-	MC_Comb::add_external_loop_rotamer( rotamer );
+	MC_Comb::add_rotamer( rotamer );
 }
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::clear_rotamer() {

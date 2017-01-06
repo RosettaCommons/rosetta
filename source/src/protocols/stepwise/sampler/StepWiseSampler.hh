@@ -39,6 +39,9 @@ namespace sampler {
 
 	public:
 
+		/// @brief Check if there are more rotamers available
+		virtual bool not_end() const { return true; }
+
 		/// @brief Check if is random modeler
 		virtual bool random() const { return random_; }
 

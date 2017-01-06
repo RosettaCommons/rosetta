@@ -30,8 +30,8 @@
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file, for RNA
 #include <protocols/farna/movers/RNA_LoopCloser.hh>
-#include <protocols/stepwise/modeler/ThermalMinimizer.hh>
 #include <protocols/magnesium/util.hh>
+#include <protocols/recces/scratch/ThermalMinimizer.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -241,7 +241,7 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 	// AMW: I'm very much NOT sold on a particular temperature here. It's a shame we can't
 	// do proper ST. Importantly, I think it's easy to get too hot here.
 	if ( options_->minimizer_mode() == THERMAL_SAMPLER ) {
-		protocols::stepwise::modeler::ThermalMinimizer tm;
+		protocols::recces::scratch::ThermalMinimizer tm;
 		// Also hands over the movemap so that the samplers can read it.
 		tm.set_scorefxn( minimize_scorefxn_ );
 		tm.set_mm( std::make_shared< kinematics::MoveMap >( mm ) );

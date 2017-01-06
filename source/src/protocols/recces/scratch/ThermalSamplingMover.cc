@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/recces/ThermalSamplingMover.cc
+/// @file protocols/recces/scratch/ThermalSamplingMover.cc
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
 // Unit headers
-#include <protocols/recces/ThermalSamplingMover.hh>
-#include <protocols/recces/ThermalSamplingMoverCreator.hh>
+#include <protocols/recces/scratch/ThermalSamplingMover.hh>
+#include <protocols/recces/scratch/ThermalSamplingMoverCreator.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -61,12 +61,13 @@
 
 #include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
+#include <protocols/recces/util.hh>
+#include <protocols/recces/scratch/thermal_sampler.hh>
+#include <protocols/recces/Histogram.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/recces/util.hh>
-#include <protocols/recces/thermal_sampler.hh>
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -76,15 +77,15 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
-#include <basic/options/keys/recces.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.ThermalSamplingMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.scratch.ThermalSamplingMover" );
 
 namespace protocols {
 namespace recces {
+namespace scratch {
 
 using namespace core::chemical::rna;
 using namespace core;
@@ -109,14 +110,14 @@ Size find_likely_first_chain_ending( Pose const & pose ) {
 /// @brief Default constructor
 ThermalSamplingMover::ThermalSamplingMover():
 	protocols::moves::Mover( ThermalSamplingMover::mover_name() ),
-	residues_( basic::options::option[ basic::options::OptionKeys::recces::sample_residues ]() ),
-	free_rsd_( basic::options::option[ basic::options::OptionKeys::recces::free_residues ]() ),
-	loop_rsd_( basic::options::option[ basic::options::OptionKeys::recces::loop_residues ]() ),
+	residues_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::sample_residues ]() ),
+	free_rsd_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::free_residues ]() ),
+	loop_rsd_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::loop_residues ]() ),
 	n_cycle_( basic::options::option[ basic::options::OptionKeys::recces::n_cycle ] ),
 	dump_pdb_( basic::options::option[ basic::options::OptionKeys::recces::dump_pdb ]() ),
 	dump_silent_( basic::options::option[ basic::options::OptionKeys::recces::dump_silent ]() ),
-	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::recces::angle_range_chi ]() ),
-	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::recces::angle_range_bb ]() ),
+	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::angle_range_chi ]() ),
+	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::angle_range_bb ]() ),
 	temps_( basic::options::option[ basic::options::OptionKeys::recces::temps ]() ),
 	st_weights_( basic::options::option[ basic::options::OptionKeys::recces::st_weights ]() )
 {
@@ -270,7 +271,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				// Since we're trying to preserve classic recces. add another flag if we want (a_form_range)
 				suite_sampler->set_a_form_range( 60.0 );
 				// What was called "sampler" in recces_turner is "standard_sampler" here
-				standard_sampler.add_external_loop_rotamer( suite_sampler );
+				standard_sampler.add_rotamer( suite_sampler );
 			} else {
 				MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i - 1 ) );
 				suite_sampler->set_sample_bb( len1 == pose.size() || i != pose.size() );
@@ -280,7 +281,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				// Since we're trying to preserve classic recces. add another flag if we want (a_form_range)
 				suite_sampler->set_a_form_range( 60.0 );
 				// What was called "sampler" in recces_turner is "standard_sampler" here
-				standard_sampler.add_external_loop_rotamer( suite_sampler );
+				standard_sampler.add_rotamer( suite_sampler );
 			}
 		}
 	} else {
@@ -301,7 +302,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				// if it were, it would be getting added as a sampler in the clause below!
 				//suite_sampler_1->set_angle_range_from_init( is_loop[ i ] ? angle_range_loop_bb_ : angle_range_bb_ );
 				//suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
-				standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
+				standard_sampler.add_rotamer( suite_sampler_1 );
 			}
 
 			// can't do this!
@@ -316,7 +317,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			suite_sampler->set_pucker_flip_rate( 0 );
 			suite_sampler->set_sample_near_a_form( sample_near_a_form );
 			//suite_sampler->set_angle_range_from_init( is_loop[ i ] ? angle_range_loop_bb_ : angle_range_bb_ );
-			standard_sampler.add_external_loop_rotamer( suite_sampler );
+			standard_sampler.add_rotamer( suite_sampler );
 		}
 	}
 	standard_sampler.init();
@@ -461,7 +462,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 					hist_list[temp_id].add( scores[1], curr_counts );
 					update_scores( scores, pose, scorefxn );
 					if ( n == n_cycle_ ) break;
-					sampler[index]->update( pose ); // don't think this is necessary
+					sampler[index]->update(); // don't think this is necessary
 					++n_accept_backbone;
 					chi_sampler[index]->update();
 					++n_accept_chi;
@@ -720,6 +721,7 @@ void ThermalSamplingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 
 
 
+} //scratch
 } //recces
 } //protocols
 

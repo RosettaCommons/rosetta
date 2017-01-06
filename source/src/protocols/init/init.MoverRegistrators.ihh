@@ -390,6 +390,9 @@ static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_Mak
 static MoverRegistrator< rbsegment_relax::OptimizeThreadingMoverCreator > reg_OptimizeThreadingMoverCreator;
 static MoverRegistrator< rbsegment_relax::IdealizeHelicesMoverCreator > reg_IdealizeHelicesMoverCreator;
 
+static MoverRegistrator< recces::scratch::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
+static MoverRegistrator< recces::scratch::ThermalMinimizerCreator > reg_ThermalMinimizerCreator;
+
 static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinateCstMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
@@ -528,8 +531,6 @@ static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > r
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 
-static MoverRegistrator< stepwise::modeler::ThermalMinimizerCreator > reg_ThermalMinimizerCreator;
-
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
 static MoverRegistrator< symmetric_docking::SymFoldandDockMoveRbJumpMoverCreator > SymFoldandDockMoveRbJumpMoverCreator;
 static MoverRegistrator< symmetric_docking::SymFoldandDockSlideTrialMoverCreator > SymFoldandDockSlideTrialMoverCreator;
@@ -538,7 +539,6 @@ static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
 // T //////////////////////////////////////////////////////////////////////////
-static MoverRegistrator< recces::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 
 static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;

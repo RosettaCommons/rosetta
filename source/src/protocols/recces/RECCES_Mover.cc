@@ -14,16 +14,18 @@
 
 
 #include <protocols/recces/RECCES_Mover.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
-#include <protocols/recces/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/options/RECCES_Options.hh>
+#include <protocols/recces/params/RECCES_Parameters.hh>
 #include <protocols/recces/sampler/MC_Comb.hh>
+#include <protocols/recces/sampler/MC_Loop.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_OneJump.hh>
+#include <protocols/recces/sampler/util.hh>
+#include <protocols/recces/stdev_util.hh>
 #include <protocols/recces/util.hh>
-#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
+#include <core/id/TorsionID.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/SimulatedTempering.hh>
@@ -41,16 +43,10 @@ namespace protocols {
 namespace recces {
 
 //Constructor
-RECCES_Mover::RECCES_Mover( utility::vector1< Real > const & temps,
-	utility::vector1< Real > const & st_weights ):
-	temps_( temps ),
-	n_cycle_( 0 ),
-	n_dump_( 0 ),
-	dump_pdb_( false ),
-	save_scores_( false ),
-	a_form_range_( 0.0 )
+RECCES_Mover::RECCES_Mover( options::RECCES_OptionsCOP const & options ):
+	options_( options )
 {
-	initialize( st_weights );
+	initialize();
 }
 
 //Destructor
@@ -63,9 +59,8 @@ RECCES_Mover::apply( core::pose::Pose & pose )
 {
 	using namespace core::scoring;
 
-	if ( scorefxn_ == 0 ) scorefxn_ = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
+
 	initialize_sampler( pose );
-	sampler_->apply( pose );
 
 	run_sampler( pose );
 
@@ -77,207 +72,229 @@ void
 RECCES_Mover::run_sampler( pose::Pose & pose )
 {
 	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace recces::sampler;
 
 	clock_t const time_start( clock() );
 
+	// Are we doing MC_loop?
+	MC_LoopOP loop_sampler = ( sampler_->type() == toolbox::MC_LOOP ) ? MC_LoopOP( std::dynamic_pointer_cast< MC_Loop >( sampler_) ) : 0;
+
+	if ( options_->show_more_pose_scores() ) scorefxn_->show( pose ); // matching legacy output
+	if ( loop_sampler == 0 ) sampler_->apply( pose ); // matching legacy output
+
+	if ( options_->out_torsions() ) prepare_output_torsion_ids();
+
 	// Simulated Tempering setup
-	moves::SimulatedTempering tempering( pose, scorefxn_, temps_, weights_ );
-	// tempering.set_rep_cutoff( 100 );
+	if ( scorefxn_ == 0 ) utility_exit_with_message( "Must set scorefunction." );
+	moves::SimulatedTempering tempering( pose, scorefxn_, options_->temperatures(), weights_ );
 	set_sampler_gaussian_stdev( tempering.temperature(), pose );
 
 	// Setup for data saving for output
 	Size curr_counts( 1 );
 	utility::vector1< float > scores;
-	update_scores( scores, pose, scorefxn_ );
-	utility::vector1< float > const null_arr_;
-	data_ = utility::vector1<utility::vector1< float > >( temps_.size(), null_arr_ );
-
-	// need to fix these magic numbers:
-	Real const min( -100.05 ), max( 800.05 ), spacing( 0.1 );
-	Histogram null_hist( min, max, spacing);
-	hist_list_.clear();
-	for ( Size n = 1; n <= temps_.size(); n++ ) hist_list_.push_back( null_hist );
+	utility::vector1< ScoreType > const score_types = options_->blank_score_terms() ?  vector1< ScoreType>() : get_scoretypes();
+	update_scores( scores, pose, scorefxn_, score_types );
 
 	// Useful counters and variables during the loop
 	Size n_accept_total( 0 ), n_t_jumps_accept( 0 );
 	Size const t_jump_interval( 10 );
-	Size const n_t_jumps( n_cycle_ / t_jump_interval );
+	Size const n_t_jumps( options_->n_cycle() / t_jump_interval );
 	Size temp_id( tempering.temp_id() );
 
-	// Min-score pose
-	Pose min_pose = pose;
+	// Min-score pose. And stored_pose, in use in loop mode to restore pose. Not quick.
+	Pose min_pose( pose ), stored_pose( pose );
 	Real min_score( 99999 );
 
-	std::cout << "Start the main sampling loop." << std::endl;
-	if ( dump_pdb_ ) pose.dump_pdb( "init.pdb" );
+	TR << "Start the main sampling loop." << std::endl;
+	if ( options_->dump_pdb() ) pose.dump_pdb( output_pdb_name( "init" ) );
 
 	Size curr_dump = 1;
 
 	// Main sampling cycle
 	Size pct = 0;
-	for ( Size n = 1; n <= n_cycle_; ++n ) {
+	std::map< std::string, Size > num_accepts, num_tries;
+	for ( Size n = 1; n <= options_->n_cycle(); ++n ) {
 
-		if ( n % ( n_cycle_/100 ) == 0 ) TR << ++pct << "% complete." << std::endl;
+		if ( options_->n_cycle() > 100 && n % ( options_->n_cycle()/100 ) == 0 ) TR << ++pct << "% complete." << std::endl;
 
-		// note that sampler holds information on all moving DOFs, and controls next conformation.
-		++( *sampler_ );
+		//////////////////////////////
+		// Do a move
+		//////////////////////////////
+		++( *sampler_ ); // prepare DOFS for next conformation
 		sampler_->apply( pose );
 
-		// Check metropolis criterion
-		if ( tempering.check_boltzmann( pose ) || n == n_cycle_ ) {
-			// before accepting new pose, save history at this pose so far.
-			if ( save_scores_ ) fill_data( data_[ temp_id ], curr_counts, scores );
-			hist_list_[ temp_id ].add( scores[ 1 ], curr_counts );
-			curr_counts = 1;
+		bool const did_move( sampler_->found_move() || options_->accept_no_op_moves() );
+		if ( loop_sampler != 0 ) num_tries[ loop_sampler->rotamer()->get_name() ]++;
 
+		//////////////////////////////
+		// Check metropolis criterion
+		//////////////////////////////
+		if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == options_->n_cycle() ) {
 			// accept new pose.
-			++n_accept_total;
-			update_scores( scores, pose, scorefxn_ );
-			if ( n == n_cycle_ ) break;
+			save_history( curr_counts, scores, temp_id ); // save hist & data so far, weighted by curr_counts
+			update_scores( scores, pose, scorefxn_, score_types );
+			if ( !options_->skip_last_accept() ) increment_accepts( n_accept_total,  num_accepts, loop_sampler );
+
+			if ( n == options_->n_cycle() ) break;
 
 			// critical: tell sampler that new DOFs have been accepted.
 			sampler_->update();
-			update_dump_pdb( n, pose, scores, min_pose, min_score, curr_dump );
-		} else {
-			++curr_counts;
-		}
-
-		// Check temperature jump.
-		if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
-			++n_t_jumps_accept;
-
-			// before jumping temperature, save history at this pose so far.
-			if ( save_scores_ ) fill_data( data_[ temp_id ], curr_counts, scores );
-			hist_list_[ temp_id ].add( scores[ 1 ], curr_counts );
+			if ( options_->skip_last_accept() ) increment_accepts( n_accept_total,  num_accepts, loop_sampler );
+			if ( options_->out_torsions() ) output_torsions( pose, curr_counts );
+			dump_stuff( n, pose, scores, min_pose, min_score, curr_dump );
 			curr_counts = 1;
 
+			if ( loop_sampler != 0 ) stored_pose = pose; // eventually deprecate this
+		} else {
+			// reject new pose
+			++curr_counts; // pose stayed the same.
+			if ( loop_sampler != 0 && sampler_->found_move() ) pose = stored_pose; // let's eventually replace this with sampler->restore( pose )
+		}
+
+		//////////////////////////
+		// Check temperature jump.
+		//////////////////////////
+		if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
+			++n_t_jumps_accept;
+			save_history( curr_counts, scores, temp_id ); // before jumping temperature, save history at this pose so far.
+			curr_counts = 1;
 			set_sampler_gaussian_stdev( tempering.temperature(), pose);
 			temp_id = tempering.temp_id();
 		}
+
+		more_dump_stuff( pose, n ); // legacy stuff. do we need so much dumping?
 	}
 
-	if ( dump_pdb_ ) {
-		pose.dump_pdb( "end.pdb" );
-		min_pose.dump_pdb( "min.pdb" );
-		scorefxn_->show( min_pose );
-	}
+	final_dump_stuff( pose, min_pose );
 
-	TR << "n_cycles: " << n_cycle_ << std::endl;
-	TR << "Accept rate: " << double( n_accept_total ) / n_cycle_ << std::endl;
+	TR << "n_cycles: " << options_->n_cycle() << std::endl;
+	TR << "Accept rate: " << double( n_accept_total ) / options_->n_cycle() << std::endl;
+	if ( num_accepts.size() > 0 ) {
+		for ( auto const & it : num_accepts ) {
+			std::string const & sampler_name( it.first );
+			TR << " " <<  sampler_name << " accept rate: " << double( num_accepts[ sampler_name ] )/double( num_tries[ sampler_name ] ) << std::endl;
+		}
+	}
 	TR << "T_jump accept rate: " << double( n_t_jumps_accept ) / n_t_jumps << std::endl;
+
 	Real const time_in_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 	TR << "Time in sampler: " <<  time_in_test << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RECCES_Mover::initialize( vector1< Real > const & orig_weights ) {
-	runtime_assert( temps_.size() != 0 );
-	if ( temps_.size() != orig_weights.size() ) weights_.push_back( 0 );
+RECCES_Mover::initialize() {
+	Size const num_temperatures = options_->temperatures().size();
+	runtime_assert( num_temperatures != 0 );
+
+	weights_.clear();
+	utility::vector1< Real > const & orig_weights( options_->st_weights() );
+	if ( num_temperatures != orig_weights.size() ) weights_.push_back( 0 );
 	weights_.append( orig_weights );
-	runtime_assert( temps_.size() == weights_.size() );
+	runtime_assert( num_temperatures == weights_.size() );
+
+	data_ = utility::vector1<utility::vector1< float > >( num_temperatures, utility::vector1< float >() );
+
+	// need to fix these magic numbers:
+	Real const min( options_->histogram_min() ), max( options_->histogram_max() ), spacing( options_->histogram_spacing() );
+	hist_list_ = vector1< Histogram >( num_temperatures, Histogram( min, max, spacing) );
+
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Sampler setup
+//////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::initialize_sampler( pose::Pose const & pose )
 {
+	using namespace protocols::recces::sampler;
 	using namespace protocols::recces::sampler::rna;
 
-	std::string const & rna_secstruct_legacy = farna::secstruct::get_rna_secstruct_legacy_from_const_pose( pose );
+	sampler_ = MC_CombOP( new MC_Comb );
 
-	sampler_ = MC_RNA_MultiSuiteOP( new MC_RNA_MultiSuite );
-	Size total_len( pose.size() );
-	runtime_assert( total_len == rna_secstruct_legacy.size() );
-	Size len1 = std::count( rna_secstruct_legacy.begin(), rna_secstruct_legacy.end(), 'H' ) / 2;
-	for ( Size i = 1; i <= total_len; ++i ) {
-		bool const sample_near_a_form( rna_secstruct_legacy[ i - 1 ] == 'H' );
-		if ( i == 1 || ( i > len1 && i != total_len ) ) {
-			MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i ) );
-			suite_sampler->set_sample_bb( i != 1 );
-			suite_sampler->set_sample_lower_nucleoside( true );
-			suite_sampler->set_sample_upper_nucleoside( false );
-			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			suite_sampler->set_a_form_range( a_form_range_ );
-			sampler_->add_external_loop_rotamer( suite_sampler );
-		} else {
-			MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i - 1 ) );
-			suite_sampler->set_sample_bb( len1 == total_len || i != total_len );
-			suite_sampler->set_sample_lower_nucleoside( false );
-			suite_sampler->set_sample_upper_nucleoside( true );
-			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			suite_sampler->set_a_form_range( a_form_range_ );
-			sampler_->add_external_loop_rotamer( suite_sampler );
-		}
+	if ( options_->legacy_turner_mode() ) {
+		sampler_ = get_recces_turner_sampler( pose, options_->a_form_range(), *params_ );
 	}
 
-	if ( pose.size() == 2 /*  sample_rigid_body_ */ ) {
+	// make sure base pair sampling can be carried out after legacy_turner_mode.
+	if ( ( pose.size() == 2 && pose.fold_tree().is_cutpoint( 1 ) )  || options_->sample_jump() ) {
 		MC_RNA_OneJumpOP jump_sampler( new MC_RNA_OneJump( pose, 1 /*jump*/ ) );
-		jump_sampler->set_translation_mag( 0.01 ); //Real const translation_mag_( option[ translation_mag]() /* 0.01 */);
-		jump_sampler->set_rotation_mag( 1.0 ); // Real const rotation_mag_( option[ rotation_mag ]() /* 1.0 degrees */ );
-		sampler::MC_CombOP sampler_comb( sampler_ );
-		sampler_comb->add_external_loop_rotamer( jump_sampler );
+		jump_sampler->set_translation_mag( options_->base_pair_translation_mag() );
+		jump_sampler->set_rotation_mag( options_->base_pair_rotation_mag() );
+		jump_sampler->set_rmsd_cutoff( options_->base_pair_rmsd_cutoff() );
+		sampler_->add_rotamer( jump_sampler );
+		print_base_centroid_atoms_for_rb_entropy( pose.residue( pose.fold_tree().downstream_jump_residue( 1 ) ), options_->xyz_file() );
+	}
+
+	// sweet: thermal sampler mode instead.
+	if ( sampler_->num_rotamers() == 0 ) {
+		runtime_assert( options_->thermal_sampler_mode() );
+		runtime_assert( options_->sample_residues().size() > 0 ); // the standard signature for thermal_sampler
+		sampler_ = initialize_thermal_sampler( pose, *options_ );
 	}
 
 	sampler_->init();
-	sampler_->show( TR, 0 );
+	if ( !options_->suppress_sampler_display() ) sampler_->show( TR, 0 );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::set_sampler_gaussian_stdev( Real const & temperature, pose::Pose const & pose )
 {
-	using namespace core::id;
-	using namespace core::chemical::rna;
-	using namespace core::pose::rna;
-	using namespace protocols::recces::sampler;
-
-	std::string const & rna_secstruct_legacy = farna::secstruct::get_rna_secstruct_legacy_from_const_pose( pose );
-	Size const n_rsd( pose.total_residue() );
-	Real const bp_stdev(       gaussian_stdev( n_rsd, temperature, true ) );
-	Real const dangling_stdev( gaussian_stdev( n_rsd, temperature, false ) );
-
-	// update gaussian stdev for all chi's.
-	for ( Size i = 1; i <= n_rsd; ++ i ) {
-		Real const stdev = ( rna_secstruct_legacy[ i - 1 ] == 'H' ) ? bp_stdev : dangling_stdev;
-		MC_SamplerOP torsion_sampler = sampler_->find( TorsionID( i, TorsionType::CHI, 1 ) );
-		runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
-		std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
-	}
-
-	// no need to update sugars -- they do not have gaussian ranges.
-
-	// update gaussian stdev for all suites
-	for ( Size i = 1; i < n_rsd; ++ i ) { // watch out: may need to get last residue if we cyclize
-		if ( pose.fold_tree().is_cutpoint( i ) ) continue; // watch out: later generalize to cutpoint_closed
-		Real const stdev = ( rna_secstruct_legacy[ i - 1 ] == 'H' &&
-			rna_secstruct_legacy[ i ] == 'H' )      ? bp_stdev : dangling_stdev;
-		vector1< TorsionID > suite_torsion_ids = get_suite_torsion_ids( i );
-		for ( auto bb_torsion_id : suite_torsion_ids ) {
-			MC_SamplerOP torsion_sampler = sampler_->find( bb_torsion_id );
-			runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
-			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
-		}
+	if ( options_->legacy_turner_mode() ) {
+		set_gaussian_stdevs_legacy_turner( sampler_, temperature, pose, *params_ );
+	} else if ( options_->thermal_sampler_mode() ) {
+		set_gaussian_stdevs_thermal_sampler( sampler_, temperature, pose, *options_ );
 	}
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+/// @details curr_counts is a running count of number of times the pose has been the same.
 void
-RECCES_Mover::update_dump_pdb( Size const & n,
+RECCES_Mover::save_history(
+	 Size const & curr_counts,
+	 vector1< float > const & scores,
+	 Size const & temp_id	)
+{
+	if ( options_->save_scores() ) fill_data( data_[ temp_id ], curr_counts, scores );
+	hist_list_[ temp_id ].add( scores[ 1 ], curr_counts );
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RECCES_Mover::increment_accepts( Size & n_accept_total,
+																 std::map< std::string, Size > & num_accepts,
+																 sampler::MC_LoopCOP loop_sampler ) const
+{
+	++n_accept_total;
+	if ( loop_sampler != 0 ) num_accepts[ loop_sampler->rotamer()->get_name() ]++;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+std::string
+RECCES_Mover::output_pdb_name( std::string const & tag ) const {
+	if ( options_->prefix_each_output_pdb() ) {
+		return ( options_->out_prefix() + "_" + tag + ".pdb" );
+	}
+	return (tag + ".pdb" );
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RECCES_Mover::dump_stuff(
+	Size const & n,
 	pose::Pose const & pose,
 	utility::vector1< Real > const & scores,
 	pose::Pose & min_pose,
 	Real & min_score,
 	Size & curr_dump ) const
 {
-	if ( dump_pdb_ && scores[ 1 ] < min_score ) {
+	if ( options_->dump_pdb() && scores[ 1 ] < min_score ) {
 		min_score = scores[ 1 ];
 		min_pose = pose;
 	}
-	if ( n_dump_ != 0 && n * (n_dump_ + 1) / double(n_cycle_) >= curr_dump ) {
+	if ( options_->n_dump() != 0 &&
+			 n * (options_->n_dump() + 1) / double(options_->n_cycle()) >= curr_dump ) {
 		std::ostringstream oss;
 		oss << "intermediate" << '_' << curr_dump << ".pdb";
 		pose.dump_pdb(oss.str());
@@ -285,31 +302,149 @@ RECCES_Mover::update_dump_pdb( Size const & n,
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RECCES_Mover::more_dump_stuff( pose::Pose const & pose, Size const & n ) const
+{
+	using namespace core::io::silent;
+	Size const & dump_interval( options_->dump_freq() );
+	if ( (n % dump_interval) == 0 && options_->dump_pdb() ) {
+		std::stringstream str;
+		str << options_->out_prefix() << "_" << n << ".pdb";
+		pose.dump_pdb( str.str() );
+	}
+	if ( (n % dump_interval) == 0 && options_->dump_silent() ) {
+		std::stringstream tag;
+		tag << options_->out_prefix() << "_" << n;
+		SilentFileOptions opts;
+		BinarySilentStruct silent( opts, pose, tag.str() );
+		SilentFileData silent_file_data( opts );
+		silent_file_data.write_silent_struct( silent, options_->silent_file(), false /*write score only*/ );
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RECCES_Mover::final_dump_stuff( pose::Pose & pose,
+																pose::Pose & min_pose ) const
+{
+ 	if ( options_->dump_pdb() ) {
+		pose.dump_pdb( output_pdb_name( "end" ) );
+		min_pose.dump_pdb( output_pdb_name( "min" ) );
+		if ( options_->show_more_pose_scores() ) {
+			std::cout << "Score for the end pose" << std::endl;
+			scorefxn_->show( pose );
+		}
+		if ( options_->show_more_pose_scores() ) {
+			std::cout << "Score for the min pose" << std::endl;
+		}
+		scorefxn_->show( min_pose );
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::save_data_to_disk() const
 {
-	for ( Size i = 1; i <= temps_.size(); ++i ) {
-		if ( save_scores_ ) {
+	// this is ridiculous -- need to fix external code to just look at score type names written to a file.
+	utility::vector1< core::scoring::ScoreType > const score_types = options_->blank_score_terms() ? vector1< core::scoring::ScoreType>() : get_scoretypes();
+
+	for ( Size i = 1; i <= options_->temperatures().size(); ++i ) {
+		if ( options_->save_scores() ) {
 			std::ostringstream oss;
-			oss << out_prefix_ << '_' << std::fixed << std::setprecision( 2 )
-				<< temps_[ i ] << ".bin.gz";
-			Size const data_dim2( data_dim() );
+			oss << options_->out_prefix() << '_' << std::fixed << std::setprecision( 2 )
+				<< options_->temperatures()[ i ] << ".bin.gz";
+			Size const data_dim2( data_dim( score_types ) );
 			Size const data_dim1( data_[ i ].size() / data_dim2 );
 			vector2disk_in2d( oss.str(), data_dim1, data_dim2, data_[ i ] );
 		}
 		std::ostringstream oss;
-		oss << out_prefix_ << '_' << std::fixed << std::setprecision( 2 )
-			<< temps_[ i ] << ".hist.gz";
+		oss << options_->out_prefix() << '_' << std::fixed << std::setprecision( 2 )
+			<< options_->temperatures()[ i ] << ".hist.gz";
 		utility::vector1< Size > const & hist( hist_list_[ i ].get_hist() );
 		utility::vector1< Real > const & scores( hist_list_[ i ].get_scores() );
 		vector2disk_in1d( oss.str(), hist );
 
 		std::ostringstream oss1;
-		oss1 << out_prefix_ << "_hist_scores.gz";
+		oss1 << options_->out_prefix() << "_hist_scores.gz";
 		vector2disk_in1d( oss1.str(), scores );
 	}
+
+	if ( bb_tor_out_.is_open() ) bb_tor_out_.close();
+	if ( chi_tor_out_.is_open() ) chi_tor_out_.close();
+
+	// wow super verbose legacy -- these will be huge text files.
+	if ( options_->output_simple_text_files() ) {
+		// Some simple text data files
+		std::stringstream str, str2, str3;
+		str << options_->out_prefix() << "_data.txt";
+		str2 << options_->out_prefix() << "_hist.txt";
+		str3 << options_->out_prefix() << "_scores.txt";
+		std::ofstream datafile ( (str.str()).c_str() );
+		for ( Size i = 1; i <= data_[1].size(); i+=2 ) {
+			datafile << data_[1][i] << "   " << data_[1][i+1] << "\n";
+		}
+		datafile.close();
+		std::ofstream histfile ( (str2.str()).c_str() );
+		utility::vector1<Size> const & hist( hist_list_[1].get_hist() );
+		for ( Size i = 1; i<=hist.size(); i++ ) {
+			histfile<< hist[i] << "\n";
+		}
+		histfile.close();
+		utility::vector1<Real> const & escores( hist_list_[1].get_scores() );
+		std::ofstream scorefile ( (str3.str()).c_str() );
+		for ( Size i = 1; i<=escores.size(); i++ ) {
+			scorefile<< escores[i] << "\n";
+		}
+		scorefile.close();
+	}
+
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RECCES_Mover::prepare_output_torsion_ids()
+{
+	using namespace core::id;
+	using namespace core::chemical::rna;
+	//Make a list of all the backbone torsion IDs that are sampled (This is only complete if all the residues are consecutive)
+	// REPLACE this with sampler.find(), looking over all torsions!
+	utility::vector1< Size > const & residues( options_->sample_residues() );
+	bb_torsion_ids_.clear();
+	bb_torsion_ids_.push_back( TorsionID( residues[1]-1, id::BB, EPSILON ) );
+	bb_torsion_ids_.push_back( TorsionID( residues[1]-1, id::BB, ZETA ) );
+	for ( Size i = 1; i <= residues.size(); ++i ) {
+		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, ALPHA) );
+		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, BETA) );
+		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, GAMMA) );
+		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, EPSILON) );
+		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, ZETA) );
+	}
+	bb_torsion_ids_.push_back( TorsionID( residues.back()+1, id::BB, ALPHA ) );
+	bb_torsion_ids_.push_back( TorsionID( residues.back()+1, id::BB, BETA ) );
+	bb_torsion_ids_.push_back( TorsionID( residues.back()+1, id::BB, GAMMA ) );
+
+	chi_torsion_ids_.clear();
+	for ( Size i = 1; i<= residues.size(); ++i ) {
+		TorsionID chi_ID (TorsionID( residues[i] , id::CHI, 1));
+		chi_torsion_ids_.push_back( chi_ID );
+	}
+
+	std::stringstream name, name2;
+	name << options_->out_prefix() << "_bb_torsions.txt";
+	name2 << options_->out_prefix() << "_chi_torsions.txt";
+	bb_tor_out_.open( (name.str()).c_str() );
+	chi_tor_out_.open( (name2.str()).c_str() );
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RECCES_Mover::output_torsions( core::pose::Pose const & pose, Size const & curr_counts ) const
+{
+	utility::vector1< Real > const bb_torsions = get_torsions(bb_torsion_ids_, pose);
+	utility::vector1< Real > const chi_torsions = get_torsions(chi_torsion_ids_, pose);
+	bb_tor_out_ << curr_counts << "  " << bb_torsions <<"\n";
+	chi_tor_out_ << curr_counts << "  " << chi_torsions <<"\n";
 }
 
 } //recces

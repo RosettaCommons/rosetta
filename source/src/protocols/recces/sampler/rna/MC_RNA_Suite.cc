@@ -120,18 +120,18 @@ void MC_RNA_Suite::init() {
 
 	if ( sample_bb_ ) {
 		for ( Size i = 1; i <= bb_samplers_.size(); ++ i ) {
-			add_external_loop_rotamer( bb_samplers_[i] );
+			add_rotamer( bb_samplers_[i] );
 		}
 	}
 
 	if ( sample_lower_nucleoside_ ) {
-		add_external_loop_rotamer( chi_samplers_[1] );
-		add_external_loop_rotamer( sugar_samplers_[1] );
+		add_rotamer( chi_samplers_[1] );
+		add_rotamer( sugar_samplers_[1] );
 	}
 
 	if ( sample_upper_nucleoside_ ) {
-		add_external_loop_rotamer( chi_samplers_[2] );
-		add_external_loop_rotamer( sugar_samplers_[2] );
+		add_rotamer( chi_samplers_[2] );
+		add_rotamer( sugar_samplers_[2] );
 	}
 
 	MC_Comb::init();

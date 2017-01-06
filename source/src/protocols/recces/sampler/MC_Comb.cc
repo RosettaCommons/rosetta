@@ -29,17 +29,17 @@ namespace sampler {
 ///////////////////////////////////////////////////////////////////////////
 MC_Comb::MC_Comb():
 	MC_Sampler()
-{}
+{
+	set_name( "MC_Comb" );
+}
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::init() {
 	runtime_assert( !rotamer_list_.empty() );
 	for ( auto const & rotamer : rotamer_list_ ) {
 		rotamer->init();
-		if ( !rotamer->not_end() ) {
-			TR << "Got a null rotamer sampler!" << std::endl;
-		}
 	}
 	set_init( true );
+	if ( update_pose_ != 0 ) set_update_pose( update_pose_ ); // in case any rotamers got created by init()
 	reset();
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,6 @@ void MC_Comb::reset() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::operator++() {
-	runtime_assert( not_end() );
 	for ( auto const & rotamer : rotamer_list_ ) ++( *rotamer );
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -64,8 +63,10 @@ void MC_Comb::update() {
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::apply( Pose & pose ) {
 	runtime_assert( is_init() );
+	found_move_ = false;
 	for ( auto const & rotamer : rotamer_list_ ) {
 		rotamer->apply( pose );
+		if ( rotamer->found_move() ) found_move_ = true;
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -73,6 +74,13 @@ void MC_Comb::set_uniform_modeler( bool const setting ) {
 	MC_Sampler::set_uniform_modeler( setting );
 	for ( auto const & rotamer : rotamer_list_ ) {
 		rotamer->set_uniform_modeler( setting );
+	}
+}
+///////////////////////////////////////////////////////////////////////////
+void MC_Comb::set_update_pose( core::pose::PoseCOP setting ) {
+	update_pose_ = setting;
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->set_update_pose( setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

@@ -97,6 +97,13 @@ get_pdb_with_full_model_info( std::string const & input_file,
 // might be better to move these into core (e.g., core::pose::full_model_info ),
 // or into a new protocols/full_model_setup/ directory.
 core::pose::PoseOP
+get_pdb_and_cleanup( std::string const & input_file )
+{
+	using namespace core::chemical;
+	return get_pdb_and_cleanup( input_file, ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+}
+
+core::pose::PoseOP
 get_pdb_and_cleanup( std::string const & input_file,
 	core::chemical::ResidueTypeSetCAP rsd_set )
 {

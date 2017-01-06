@@ -8,21 +8,25 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/protocols/recces/util.hh
-/// @brief
+/// @brief util functions for RECCES and thermal_sampler
 /// @details
 ///
 /// @author Andy Watkins
+/// @author Fang-Chieh Chou
+/// @author Rhiju Das
 
 
 #ifndef INCLUDED_protocols_recces_util_HH
 #define INCLUDED_protocols_recces_util_HH
 
 #include <core/types.hh>
-#include <utility/io/ozstream.hh>
-
+#include <core/conformation/Residue.fwd.hh>
+#include <core/id/TorsionID.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/pose/Pose.fwd.hh>
+
+#include <utility/io/ozstream.hh>
 
 // Utility headers
 
@@ -38,53 +42,9 @@ namespace protocols {
 namespace recces {
 
 //////////////////////////////////////////////////////////////////////////////
-// Histogram class for accumulating samples
-class Histogram {
-public:
-	Histogram( core::Real const min, core::Real const max, core::Real const spacing ):
-		min_( min ),
-		max_( max ),
-		spacing_( spacing )
-	{
-		runtime_assert( max > min );
-		n_elem_ = static_cast<core::Size>( ( max - min ) / spacing ) + 1;
-		for ( core::Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
-	}
-
-	void add( float const value, core::Size const n_items ) {
-		core::Size bin_index;
-		if ( value <= min_ ) {
-			bin_index = 1;
-		} else if ( value >= max_ ) {
-			bin_index = n_elem_;
-		} else {
-			bin_index = static_cast<core::Size>( ( value - min_ ) / spacing_ ) + 1;
-		}
-		hist_[bin_index] += n_items;
-	}
-
-	void clear() {
-		for ( core::Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
-	}
-
-	utility::vector1<core::Real> get_scores() const {
-		utility::vector1<core::Real> scores;
-		for ( core::Size i = 1; i <= n_elem_; ++i ) {
-			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
-		}
-		return scores;
-	}
-
-	utility::vector1<core::Size> get_hist() const { return hist_; }
-
-private:
-	core::Real min_, max_, spacing_;
-	core::Size n_elem_;
-	utility::vector1<core::Size> hist_;
-};
-
-//////////////////////////////////////////////////////////////////////////////
 utility::vector1<core::scoring::ScoreType> const & get_scoretypes();
+
+core::Size data_dim( utility::vector1< core::scoring::ScoreType > const & score_types );
 
 core::Size data_dim();
 
@@ -96,13 +56,19 @@ void update_scores(
 );
 
 //////////////////////////////////////////////////////////////////////////////
+void update_scores(
+	utility::vector1<float> & scores,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP scorefxn,
+	utility::vector1< core::scoring::ScoreType > const & scoretypes
+);
+
+//////////////////////////////////////////////////////////////////////////////
 void fill_data(
 	utility::vector1<float> & data,
 	core::Size const count,
 	utility::vector1<float> const & scores
 );
-
-core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp );
 
 //////////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -111,7 +77,7 @@ void vector2disk_in1d(
 	utility::vector1<T> const & out_vector
 ) {
 	utility::io::ozstream out( out_filename.c_str(), std::ios::out | std::ios::binary );
-	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	if ( out_vector.size() != 0 )	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
 	out.close();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -135,6 +101,17 @@ void vector2disk_in2d(
 	}
 	out.close();
 }
+
+// @brief used to compute moments of inertia, phase space volume
+// exact copy of function print_base_centroid_Atoms in rb_entropy -- delete one of these!!
+void
+print_base_centroid_atoms_for_rb_entropy( core::conformation::Residue const & rsd, std::string filename_xyz  );
+
+/// @brief used to output torsions from pose -- useful for clustering states, etc.
+utility::vector1<core::Real>
+get_torsions(
+		utility::vector1<core::id::TorsionID> const & torsion_ids,
+		core::pose::Pose const & pose	);
 
 } //recces
 } //protocols

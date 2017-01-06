@@ -33,6 +33,9 @@ get_pdb_with_full_model_info( std::string const & input_file,
 	core::chemical::ResidueTypeSetCAP rsd_set );
 
 core::pose::PoseOP
+get_pdb_and_cleanup( std::string const & input_file );
+
+core::pose::PoseOP
 get_pdb_and_cleanup( std::string const & input_file,
 	core::chemical::ResidueTypeSetCAP rsd_set );
 

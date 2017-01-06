@@ -67,9 +67,6 @@ public:
 	/// @brief Move to next rotamer
 	virtual void operator++() = 0;
 
-	/// @brief Check if there are more rotamers available
-	virtual bool not_end() const { return true; }
-
 	/// @brief Apply the current rotamer to pose
 	virtual void apply( core::pose::Pose & ) = 0;
 

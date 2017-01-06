@@ -12,8 +12,8 @@
 /// @author Andy Watkins (amw579@nyu.edu)
 
 // Unit headers
-#include <protocols/stepwise/modeler/ThermalMinimizer.hh>
-#include <protocols/stepwise/modeler/ThermalMinimizerCreator.hh>
+#include <protocols/recces/scratch/ThermalMinimizer.hh>
+#include <protocols/recces/scratch/ThermalMinimizerCreator.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -67,7 +67,7 @@
 #include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 #include <protocols/recces/util.hh>
-#include <protocols/recces/thermal_sampler.hh>
+#include <protocols/recces/scratch/thermal_sampler.hh>
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -82,7 +82,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.ThermalMinimizer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.scratch.ThermalMinimizer" );
 
 using namespace protocols::stepwise::sampler::rna;
 using namespace protocols::recces::sampler;
@@ -91,8 +91,8 @@ using namespace protocols::recces::sampler::rna;
 using namespace core;
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace recces {
+namespace scratch {
 
 
 void set_gaussian_stdevs(
@@ -156,8 +156,8 @@ void set_gaussian_stdevs(
 ThermalMinimizer::ThermalMinimizer():
 	protocols::moves::Mover( ThermalMinimizer::mover_name() ),
 	n_cycle_( basic::options::option[ basic::options::OptionKeys::recces::n_cycle ] ),
-	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::recces::angle_range_chi ]() ),
-	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::recces::angle_range_bb ]() ),
+	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::angle_range_chi ]() ),
+	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::angle_range_bb ]() ),
 	kic_sampling_( true ),
 	output_min_pose_( true )
 {}
@@ -385,7 +385,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			suite_sampler_1->set_pucker_flip_rate( 0 );
 			suite_sampler_1->set_sample_near_a_form( false );
 			suite_sampler_1->set_angle_range_from_init( 60 );
-			standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
+			standard_sampler.add_rotamer( suite_sampler_1 );
 		}
 
 		// can't do this!
@@ -401,7 +401,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		suite_sampler->set_pucker_flip_rate( 0 );
 		suite_sampler->set_sample_near_a_form( false );
 		suite_sampler->set_angle_range_from_init( 60 );
-		standard_sampler.add_external_loop_rotamer( suite_sampler );
+		standard_sampler.add_rotamer( suite_sampler );
 	}
 	//standard_sampler.init();
 
@@ -477,7 +477,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			if ( ( tempering.check_boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
 				stored_pose_ = pose;
 				if ( n == n_cycle_ ) break;
-				kic_sampler[index]->update( pose ); // don't think this is necessary
+				kic_sampler[index]->update(); // don't think this is necessary
 				++n_accept_kic;
 				boltz = true;
 			}
@@ -610,7 +610,7 @@ void ThermalMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 
 
-} //modeler
-} //stepwise
+} //scratch
+} //recces
 } //protocols
 

@@ -83,6 +83,9 @@ public:
 
 };
 
+bool
+has_rna_secstruct_legacy( core::pose::Pose const & pose );
+
 std::string const &
 get_rna_secstruct_legacy( core::pose::Pose & pose );
 

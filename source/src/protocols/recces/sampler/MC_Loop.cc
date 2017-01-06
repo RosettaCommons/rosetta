@@ -7,24 +7,40 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/recces/sampler/MC_Sampler.fwd.hh
-/// @brief Abstract Base Class for Markov chain rotamer sampler.
-/// @author Fang-Chieh Chou
+/// @file protocols/recces/sampler/MC_Loop.cc
+/// @brief
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
 
-#include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_sampler_MC_Sampler_fwd_HH
-#define INCLUDED_protocols_sampler_MC_Sampler_fwd_HH
+#include <protocols/recces/sampler/MC_Loop.hh>
+
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR( "protocols.recces.sampler.MC_Loop" );
 
 namespace protocols {
 namespace recces {
 namespace sampler {
 
-class MC_Sampler;
-typedef utility::pointer::shared_ptr< MC_Sampler > MC_SamplerOP;
-typedef utility::pointer::shared_ptr< MC_Sampler const > MC_SamplerCOP;
+	//Constructor
+	MC_Loop::MC_Loop():
+		MC_Any()
+	{
+		set_name( "MC_Loop" );
+	}
+
+	//Destructor
+	MC_Loop::~MC_Loop()
+	{}
+
+	///////////////////////////////////////////////////////////////////////////
+	void MC_Loop::operator++() {
+		++curr_id_;
+		if ( curr_id_ > rotamer_list_.size() ) curr_id_ = 1;
+		++( *rotamer_list_[ curr_id_ ] );
+	}
 
 } //sampler
 } //recces
 } //protocols
-#endif

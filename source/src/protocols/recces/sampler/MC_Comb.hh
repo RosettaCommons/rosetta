@@ -50,7 +50,7 @@ public:
 	virtual void set_uniform_modeler( bool const setting );
 
 	/// @brief Add one more rotamer sampler to this sampler
-	virtual void add_external_loop_rotamer( MC_SamplerOP const & rotamer ) {
+	virtual void add_rotamer( MC_SamplerOP const & rotamer ) {
 		rotamer_list_.push_back( rotamer );
 		set_init( false );
 	}
@@ -61,9 +61,12 @@ public:
 		set_init( false );
 	}
 
-	/// @brief Name of the class
-	virtual std::string get_name() const { return "MC_Comb"; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_COMB; }
 
+	/// @brief set (optional) update_pose
+	void
+	set_update_pose( core::pose::PoseCOP setting );
 
 	/// @brief output summary of class
 	virtual
@@ -74,7 +77,13 @@ public:
 	MC_SamplerOP
 	find( core::id::TorsionID const & torsion_id );
 
-private:
+	core::Size
+	num_rotamers() const { return rotamer_list_.size(); }
+
+	MC_SamplerOP
+	operator[]( Size const id ) { return rotamer_list_[ id ]; }
+
+protected:
 	utility::vector1<MC_SamplerOP> rotamer_list_;
 };
 

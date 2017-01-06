@@ -22,7 +22,7 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-
+# include <cmath>
 using namespace core;
 static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.MC_OneTorsion" );
 
@@ -40,10 +40,12 @@ MC_OneTorsion::MC_OneTorsion(
 	angle_min_( -180 ),
 	angle_max_( 180 ),
 	stdev_( 10 ),
-	torsion_id_( tor_id )
+	torsion_id_( tor_id ),
+	update_tolerance_( 0.0 )
 {}
 ///////////////////////////////////////////////////////////////////////////
 void MC_OneTorsion::operator++() {
+	found_move_ = true;
 	if ( uniform_modeler() ) {
 		active_angle_ = numeric::random::rg().uniform() * (angle_max_ - angle_min_) + angle_min_;
 		regularize_angle( active_angle_ );
@@ -53,6 +55,7 @@ void MC_OneTorsion::operator++() {
 			regularize_angle( active_angle_ );
 		} else {
 			active_angle_ = stored_angle_;
+			found_move_ = false;
 		}
 	}
 }
@@ -82,6 +85,40 @@ MC_SamplerOP
 MC_OneTorsion::find( core::id::TorsionID const & torsion_id ) {
 	if ( torsion_id_ == torsion_id ) return std::dynamic_pointer_cast< MC_OneTorsion >( shared_from_this() );
 	return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////
+void MC_OneTorsion::set_angle( core::Real const setting ) {
+	stored_angle_ = setting;
+}
+
+///////////////////////////////////////////////////////////////////////////
+void MC_OneTorsion::update() {
+
+	if ( update_pose_ == 0 ) {
+		set_angle( active_angle_ ); return;
+	}
+
+	Real update_angle = update_pose_->torsion( torsion_id_ );
+	regularize_angle( update_angle );
+	if ( update_tolerance_ == 0.0 ) {
+		set_angle( update_angle ); return;
+	}
+
+	// prevent some numerical changes in thermal_sampler chi.
+	if ( std::abs( update_angle - stored_angle_ ) < 1.0e-5 ) {
+		// assume a no op
+		return;
+	} else if ( std::abs( update_angle - active_angle_ ) < 1.0e-5 ) {
+		// this sampler's active_angle was responsible for the update! to prevent numerical issues, use our own active_angle_.
+		set_angle( active_angle_ );
+		return;
+	} else {
+			//	TR << "HEY! " << torsion_id_ << "  update_angle " << update_angle <<
+			// "  stored_angle " << stored_angle_ << "  active_angle_ " << active_angle_ << std::endl;
+		set_angle( update_angle );
+	}
+
 }
 ///////////////////////////////////////////////////////////////////////////
 } //sampler

@@ -50,7 +50,7 @@
 #include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 #include <protocols/recces/util.hh>
-#include <protocols/recces/thermal_sampler.hh>
+#include <protocols/recces/scratch/thermal_sampler.hh>
 
 #include <core/id/TorsionID.hh>
 #include <protocols/recces/sampler/MC_OneTorsion.hh>
@@ -95,6 +95,7 @@ using utility::vector1;
 
 namespace protocols {
 namespace recces {
+namespace scratch {
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -141,6 +142,7 @@ void set_gaussian_stdevs(
 	standard_bb_sampler.set_gaussian_stdev( standard_bb_stdev );
 }
 
+} //scratch
 } //recces
 } //protocols
 

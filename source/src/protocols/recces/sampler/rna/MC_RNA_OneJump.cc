@@ -88,7 +88,11 @@ namespace rna {
 		xyzVector<core::Real> delta_trans = random_translation( translation_mag_, numeric::random::rg() );
 		active_jump_.set_translation( active_jump_.get_translation() +  delta_trans );
 
-		if ( !check_jump_in_range() ) active_jump_ = stored_jump_;
+		found_move_ = true;
+		if ( !check_jump_in_range() ) {
+			active_jump_ = stored_jump_;
+			found_move_ = false;
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -102,7 +106,10 @@ namespace rna {
 	MC_RNA_OneJump::update()
 	{
 		stored_jump_ = active_jump_;
-		//		scratch_pose_->set_jump( 1, stored_jump_ ); // unnecessary (hopefully)
+		if ( update_pose_ != 0 ) {
+			stored_jump_ = update_pose_->jump( jump_num_ );
+			scratch_pose_->set_jump( 1, stored_jump_ );
+		}
 		stored_base_centroid_ = core::chemical::rna::get_rna_base_centroid( scratch_pose_->residue( 2 /*moving_rsd_*/ ) );
 	}
 

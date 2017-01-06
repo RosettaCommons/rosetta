@@ -31,7 +31,7 @@
 #include <protocols/recces/sampler/MC_Comb.fwd.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_Sugar.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.fwd.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KinematicCloser_DB.fwd.hh>
+#include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.fwd.hh>
 #include <protocols/stepwise/sampler/rna/RNA_ChiStepWiseSampler.fwd.hh>
 #include <protocols/stepwise/sampler/screener/RNA_TorsionScreener.fwd.hh>
 #include <core/chemical/rna/util.hh>
@@ -47,110 +47,61 @@ namespace rna {
 class MC_RNA_KIC_Sampler : public MC_Sampler {
 public:
 	MC_RNA_KIC_Sampler(
-		//  core::pose::Pose const & ref_pose,
-		core::pose::PoseOP const & ref_pose,
+		core::pose::PoseCOP mc_pose,
 		core::Size const moving_suite,
 		core::Size const chainbreak_suite,
 		bool const change_ft = true
 	);
 
-	// ~MC_RNA_KIC_Sampler();
+	~MC_RNA_KIC_Sampler()
+	{}
 
 	/// @brief Initialization
 	virtual void init();
 
 	/// @brief Reset to the first (or random if is_random()) rotamer.
 	virtual void reset() {return;}
-	void reset( core::pose::Pose & pose );
 
 	/// @brief Move to next rotamer
 	virtual void operator++();
 
 	/// @brief Update rotamer
-	void update( const core::pose::Pose & pose );
 	virtual void update();
 
-	void next( const core::pose::Pose & pose );
+	void
+	get_next_solutions( core::pose::Pose const & pose );
 
-	/// @brief Was the chain able to close?
-	bool check_closed() const;
+	void
+	choose_solution();
+
+	void next( core::pose::Pose const & pose );
 
 	/// @brief Did the pose move at all?
 	bool check_moved() const;
 
-	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
-
 	/// @brief Apply the current rotamer to pose
 	void apply( core::pose::Pose & pose );
 
-	/// @brief Apply the current rotamer to ref_pose_
-	void apply();
-
-	/// @brief If the chain is closable (random modeler only)
-	bool closable() const { return random_chain_closed_; }
-
 	/// @brief Name of the class
-	std::string get_name() const;
+	virtual
+	std::string get_name() const { return "MC_RNA_KIC_Sampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_KIC; }
-
-	// Set functions
-	void set_verbose( bool const setting ) {
-		set_and_reinit( verbose_, setting );
-	}
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_KIC; }
 
 	/// @brief Set the standard deviation of Gaussian sampler
 	void set_gaussian_stdev( core::Real const setting );
-
-	void set_extra_epsilon( bool const setting ) {
-		set_and_reinit( extra_epsilon_, setting );
-	}
-
-	void set_extra_chi( bool const setting ) {
-		set_and_reinit( extra_chi_, setting );
-	}
-
-	void set_skip_same_pucker( bool const setting ) {
-		set_and_reinit( skip_same_pucker_, setting );
-	}
-
-	void set_idealize_coord( bool const setting ) {
-		set_and_reinit( idealize_coord_, setting );
-	}
-
-	void set_torsion_screen( bool const setting ) {
-		set_and_reinit( torsion_screen_, setting );
-	}
-
-	void set_pucker_state( core::chemical::rna::PuckerState const setting ) {
-		set_and_reinit( init_pucker_, setting );
-		//set_and_reinit( pucker_state_, setting );
-	}
-
-	void set_base_state( core::chemical::rna::ChiState const setting ) {
-		set_and_reinit( base_state_, setting );
-	}
-
-	void set_sample_nucleoside( core::Size const setting ) { sample_nucleoside_ = setting; }
-
-	void set_fast( core::Real const setting ) {
-		if ( setting ) {
-			extra_chi_ = false;
-			extra_epsilon_ = false;
-		}
-	}
 
 	/// @brief Max # of step for trying in random samping
 	void set_max_tries( core::Size const setting ) {
 		set_and_reinit( max_tries_, setting );
 	}
 
-	core::Real get_jacobian( core::pose::Pose & pose );
-
 	void set_angle_range_from_init_torsions( core::Real const range );
-	bool check_angles_in_range( const core::pose::Pose & pose );
+
+	/// @brief output summary of class
+	virtual
+	void show( std::ostream & out, Size const indent = 0 ) const;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
 	virtual
@@ -158,39 +109,29 @@ public:
 	find( core::id::TorsionID const & torsion_id );
 
 private:
+
+	core::Real get_jacobian( core::pose::Pose & pose );
+
+	bool check_angles_in_range( const core::pose::Pose & pose );
+
 	//Disable copy constructor and assignment
 	MC_RNA_KIC_Sampler( const MC_RNA_KIC_Sampler & );
 	void operator=( const MC_RNA_KIC_Sampler & );
 
 	core::Real vector_sum( utility::vector1< core::Real > const & vector );
 
-	core::Real jacobian_, angle_;
-	core::pose::PoseOP ref_pose_;
-	core::pose::Pose stored_pose_;
-	// I think this is what I really want core::pose::Pose const & ref_pose_;
-	// core::pose::PoseOP test_pose;
-	//core::pose::PoseOP const test_pose;
-	core::Size const moving_suite_, chainbreak_suite_;
-	core::chemical::rna::PuckerState init_pucker_;
-	core::Real pucker_flip_rate_;
-	core::Real gaussian_stdev_, sum_;
-	core::chemical::rna::ChiState base_state_;
-	core::Size sample_nucleoside_;
-	core::Size max_tries_;
-	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,
-		idealize_coord_, torsion_screen_, random_chain_closed_, did_close,
-		used_current_solution_, did_move;
+private:
 
-	// StepWiseSamplerSizedCombOP bb_rotamer_;
-	MC_CombOP bb_rotamer_;
-	// MC_Comb bb_rotamer_;
-	stepwise::sampler::rna::RNA_KinematicCloser_DBOP loop_closer_, stored_loop_closer_, copy_loop_closer_;
-	// RNA_ChiStepWiseSamplerOP chi_rotamer_;
-	stepwise::sampler::screener::RNA_TorsionScreenerOP screener_;
-	stepwise::monte_carlo::mover::TransientCutpointHandlerOP cutpoint_handler_, cutpoint_end_loop_;
+	core::pose::Pose stored_pose_;
+
+	core::Size const moving_suite_, chainbreak_suite_;
+	core::Real gaussian_stdev_, sum_;
+	core::Size max_tries_;
+	bool verbose_, did_close_, used_current_solution_;
+
+	stepwise::sampler::rna::RNA_KinematicCloserOP loop_closer_, stored_loop_closer_;
+	stepwise::monte_carlo::mover::TransientCutpointHandlerOP cutpoint_handler_;
 	utility::vector1<MC_OneTorsionOP> bb_samplers_, chi_samplers_;
-	// utility::vector1<MC_OneTorsionOP> chi_rotamer_;
-	// MC_OneTorsionOP chi_rotamer_;
 	MC_CombOP chi_rotamer_;
 	utility::vector1<MC_RNA_SugarOP> sugar_samplers_;
 	utility::vector1< core::Real > stored_jacobians_, current_jacobians_;

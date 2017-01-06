@@ -375,6 +375,9 @@
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 #include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
 
+#include <protocols/recces/scratch/ThermalSamplingMoverCreator.hh>
+#include <protocols/recces/scratch/ThermalMinimizerCreator.hh>
+
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/LocalRelaxCreator.hh>
@@ -506,7 +509,6 @@
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/TaskAwareSymMinMoverCreator.hh>
 
-#include <protocols/stepwise/modeler/ThermalMinimizerCreator.hh>
 
 #include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
@@ -514,7 +516,6 @@
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 
 // T //////////////////////////////////////////////////////////////////////////
-#include <protocols/recces/ThermalSamplingMoverCreator.hh>
 
 #include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/recces/ThermalSamplingMover.hh
+/// @file protocols/recces/scratch/ThermalSamplingMover.hh
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_recces_ThermalSamplingMover_hh
 
 // Unit headers
-#include <protocols/recces/ThermalSamplingMover.fwd.hh>
+#include <protocols/recces/scratch/ThermalSamplingMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -32,6 +32,7 @@
 
 namespace protocols {
 namespace recces {
+namespace scratch {
 
 ///@brief Use a simulated tempering simulation to refine a pose
 class ThermalSamplingMover : public protocols::moves::Mover {
@@ -148,6 +149,7 @@ private: // data
 std::ostream &
 operator<<( std::ostream & os, ThermalSamplingMover const & mover );
 
+} //scratch
 } //recces
 } //protocols
 

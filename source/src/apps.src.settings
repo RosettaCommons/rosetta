@@ -232,9 +232,10 @@ sources = {
 	],
 	"public/recces": [
 		"recces",
-	    ],
+	],
 	"public/recces/legacy": [
 		"recces_turner",
+		"thermal_sampler",
 	    ],
 	"public/rna_util": [
 		"analyze_base_pairing",

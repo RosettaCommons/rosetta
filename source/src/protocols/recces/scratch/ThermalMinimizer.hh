@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/modeler/ThermalMinimizer.hh
+/// @file protocols/recces/scratch/ThermalMinimizer.hh
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 
@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_stepwise_modeler_ThermalMinimizer_hh
 
 // Unit headers
-#include <protocols/stepwise/modeler/ThermalMinimizer.fwd.hh>
+#include <protocols/recces/scratch/ThermalMinimizer.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -32,8 +32,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {
-namespace stepwise {
-namespace modeler {
+namespace recces {
+namespace scratch {
 
 ///@brief Use a simulated tempering simulation to refine a pose
 class ThermalMinimizer : public protocols::moves::Mover {
@@ -140,8 +140,8 @@ private: // data
 std::ostream &
 operator<<( std::ostream & os, ThermalMinimizer const & mover );
 
+} //scratch
+} //recces
 } //protocols
-} //stepwise
-} //modeler
 
 #endif //protocols/stepwise/modeler_ThermalMinimizer_hh
