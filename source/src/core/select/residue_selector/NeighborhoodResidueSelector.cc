@@ -11,6 +11,7 @@
 /// @brief  The NeighborhoodResidueSelector selects residues in a given proximity of set focus residues
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - 10 A neighbor graph, simplification, ResidueSubset as focus, clean up, etc.
+/// @author Gerard Daniel (gerardda@uw.edu) added support for using custom atom names for distance measure as an alternative to using neighbor atom. This should be especially useful when selecting around a ligand.
 
 // Unit headers
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
@@ -141,6 +142,13 @@ NeighborhoodResidueSelector::set_include_focus_in_subset(bool include_focus){
 	include_focus_in_subset_ = include_focus;
 }
 
+/// @brief setter for custom atom names
+/// @details A list of atom names, for each focus residue, the positions of which will be used for measuring distance to find neighbors. Since focus residues will be known only during the apply time, a check to see if the number of given atom names is equal to the number of focus residues. If these are not equal, an error is thrown.
+void
+NeighborhoodResidueSelector::set_atom_names_for_distance_measure( utility::vector1< std::string > const & atom_names ) {
+	atom_names_for_distance_measure_ = atom_names;
+}
+
 void
 NeighborhoodResidueSelector::clear_focus(){
 	focus_str_ = "";
@@ -180,6 +188,11 @@ NeighborhoodResidueSelector::parse_my_tag(
 
 	set_distance( tag->getOption< Real >( "distance", distance_ ) );
 	set_include_focus_in_subset( tag->getOption< bool >( "include_focus_in_subset", include_focus_in_subset_));
+
+	if (tag->hasOption("atom_names_for_distance_measure") ) {
+		set_atom_names_for_distance_measure( utility::string_split( tag->getOption< std::string >( "atom_names_for_distance_measure" ), ',') );
+		TR.Warning << "Will use given atom names instead of residue neighbor atoms. The number of specified atoms should be equal to the number of focus residues else an error will be thrown." << std::endl;
+	}
 
 }
 
@@ -241,16 +254,23 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 		return subset;
 	}
 
-	if ( distance_ > 10.0 ) {
+	if ( distance_ > 10.0 || atom_names_for_distance_measure_.size() ) {
+
+		// if custom atoms are given, check to see whether their count is equal to the count of focus residues
+		if ( atom_names_for_distance_measure_.size() && atom_names_for_distance_measure_.size() != focus_residues.size() ){
+				utility_exit_with_message( "The number of atom names specified is not equal to the number focus residues!" );
+		}
+
 		Real const dst_squared = distance_ * distance_;
 
 		// go through each residue of the pose and check if it's near anything in the focus set
-		for ( Size ii = 1; ii < pose.size() ; ++ii ) {
+		for ( Size ii = 1; ii <= pose.size() ; ++ii ) {
 			if ( subset[ ii ] ) continue;
 			conformation::Residue const & r1( pose.residue( ii ) );
 
+			core::Size i_atom_names = 0;
 			for ( core::Size focus_res : focus_residues ) {
-
+				i_atom_names++;
 				if ( focus_res == ii ) {
 					if ( include_focus_in_subset_ && ! subset[focus_res] ) {
 						subset[focus_res] = true;
@@ -260,7 +280,21 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 				}
 
 				conformation::Residue const & r2( pose.residue( focus_res ) );
-				Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
+
+				// if atom names for focus residues are given, use those instead of neighbor atoms
+				core::Vector focus_residue_atom_xyz;
+				if ( atom_names_for_distance_measure_.size() ){
+					// exits with an error, if atom name is not found in the residue
+					core::Size atom_index = r2.atom_index( atom_names_for_distance_measure_[i_atom_names] );
+					focus_residue_atom_xyz = r2.xyz( atom_index );
+					TR << "Using atom " << atom_names_for_distance_measure_[i_atom_names] << " for residue "
+						 << r2.name3() << " to find neighbors." << std::endl;
+				}
+				else {
+					focus_residue_atom_xyz = r2.xyz( r2.nbr_atom() );
+				}
+
+				Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( focus_residue_atom_xyz ) );
 
 				if ( d_sq <= dst_squared ) {
 					subset[ ii ] = true;
@@ -296,6 +330,7 @@ NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attributes + XMLSchemaAttribute( "selector", xs_string        , "XRW TO DO" )
 		+ XMLSchemaAttribute( "resnums",  xsct_int_cslist     , "XRW TO DO" )
 		+ XMLSchemaAttribute( "distance", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute("atom_names_for_distance_measure", xs_string, "A list of comma separated atom names, for each focus residue, the positions of which will be used for measuring distance to find neighbors." )
 		+ XMLSchemaAttribute::attribute_w_default("include_focus_in_subset", xsct_rosetta_bool, "XRW TO DO", "true");
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
 }

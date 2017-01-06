@@ -12,7 +12,7 @@
 ///  Clears the Passed ResidueSubset.
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - 10 A neighbor graph, simplification, ResidueSubset as focus, clean up, etc.
-
+/// @author Gerard Daniel (gerardda@uw.edu) added support for using custom atom names for distance measure as an alternative to using neighbor atom. This should be especially useful when selecting around a ligand.
 
 #ifndef INCLUDED_core_select_residue_selector_NeighborhoodResidueSelector_HH
 #define INCLUDED_core_select_residue_selector_NeighborhoodResidueSelector_HH
@@ -85,9 +85,13 @@ public:
 	void
 	set_distance( Real distance );
 
-	///@brief Setting to include the fucus in the resulting subset or not. Default is TRUE
+	///@brief Setting to include the focus in the resulting subset or not. Default is TRUE
 	void
 	set_include_focus_in_subset( bool include_focus);
+
+	///@breif Set atom names to be used for selecting instead of using neighbor atoms.
+	void
+	set_atom_names_for_distance_measure( utility::vector1< std::string > const & atom_names );
 
 public:
 
@@ -137,6 +141,9 @@ private:
 	ResidueSelectorCOP focus_selector_;
 
 	bool include_focus_in_subset_;
+
+	// atom names to use in place of neighbor atom of the focus residues
+	utility::vector1< std::string > atom_names_for_distance_measure_;
 
 #ifdef    SERIALIZATION
 public:
