@@ -90,6 +90,7 @@
 //For silent file output:
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -1830,8 +1831,10 @@ int main( int argc, char * argv [] ) {
 				if(option[v_silentoutput]()) {
 					char curstructtag[128];
 					sprintf(curstructtag, "c.%lu.%lu", i, j);
-					io::silent::SilentFileData outsilentfiledata;
-					io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
+					core::io::silent::SilentFileOptions opts;
+					opts.read_from_global_options();
+					io::silent::SilentFileData outsilentfiledata(opts);
+					io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) );
 					outsilentstruct->fill_struct(temppose, curstructtag);
 					if(j==1) {
 						sprintf(outfile, "clusters_firstmember.out");
