@@ -252,7 +252,7 @@ StepWiseProteinCCD_Closer::setup_torsions(){
 //////////////////////////////////////////////////////////////////////////
 utility::vector1< core::Real >
 StepWiseProteinCCD_Closer::grab_main_chain_torsion_set_list( pose::Pose const & pose ){
-	main_chain_torsion_set_.clear();
+	main_chain_torsion_set_.resize( which_torsions_.size() );
 	std::transform( 
 		which_torsions_.begin(), which_torsions_.end(), main_chain_torsion_set_.begin(),
 		[&]( core::id::TorsionID const & torsion ) {

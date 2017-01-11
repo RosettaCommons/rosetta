@@ -1025,7 +1025,6 @@ SilentStruct::fill_other_struct_list( pose::Pose const & pose ){
 	}
 
 	utility::vector1< core::pose::PoseOP > const & other_pose_list = core::pose::full_model_info::const_full_model_info( pose ).other_pose_list();
-	tr << "I feel like I have " << other_pose_list.size() << " other poses!" << std::endl;
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
 		SilentStructOP other_struct =  this->clone();
 		other_struct->scoreline_prefix( "OTHER:" ); // prevents confusion when grepping file for "SCORE:"
