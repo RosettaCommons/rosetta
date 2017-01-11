@@ -378,11 +378,11 @@ core::select::residue_selector::NeighborhoodResidueSelector::load( Archive & arc
 	arc( focus_ ); // std::set<Size>
 	arc( focus_str_ ); // std::string
 	arc( distance_ ); // Real
+	arc( include_focus_in_subset_ ); //bool
 	std::shared_ptr< core::select::residue_selector::ResidueSelector > local_focus_selector;
 	arc( local_focus_selector ); // ResidueSelectorCOP
-	arc( include_focus_in_subset_ ); //bool
 	focus_selector_ = local_focus_selector; // copy the non-const pointer(s) into the const pointer(s)
-	arc( CEREAL_NVP( atom_names_for_distance_measure_ ) ); // utility::vector1< std::string >
+	arc( atom_names_for_distance_measure_ ); // utility::vector1< std::string >
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::NeighborhoodResidueSelector );
