@@ -47,6 +47,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
+using namespace core::chemical;
 
 /// @details This must return a fresh instance of the RNA_LJ_BaseEnergy class,
 /// never an instance already in use
@@ -159,13 +160,19 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 				temp_atr_score, temp_rep_score,
 				dummy_deriv, dummy_deriv );
 
-			fa_atr_score += cp_weight * temp_atr_score;
 			fa_rep_score += cp_weight * temp_rep_score;
+			if ( rsd1.is_repulsive( i ) ) continue;
+			if ( rsd2.is_repulsive( j ) ) continue;
+			fa_atr_score += cp_weight * temp_atr_score;
 		} // j
 	} // i
-
-	emap[ rna_fa_atr_base ] += fa_atr_score;
+	
 	emap[ rna_fa_rep_base ] += fa_rep_score;
+
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
+	emap[ rna_fa_atr_base ] += fa_atr_score;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -244,7 +251,7 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
-
+	
 	// Currently extremely RNA specific.
 	if ( !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
@@ -290,6 +297,12 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 
 			Real dummy( 0.0 ), fa_atr_deriv( 0.0 ), fa_rep_deriv( 0.0 );
 			eval_lj( rsd1.atom( m ), rsd2.atom( n ), d2, dummy, dummy, fa_atr_deriv, fa_rep_deriv );
+			
+			if ( rsd1.has_variant_type( REPLONLY ) ) fa_atr_deriv = 0.0;
+			if ( rsd2.has_variant_type( REPLONLY ) ) fa_atr_deriv = 0.0;
+			
+			if ( rsd1.is_repulsive( m ) ) fa_atr_deriv = 0.0;
+			if ( rsd2.is_repulsive( n ) ) fa_atr_deriv = 0.0;
 
 			Vector const f2_fwd =   -1.0 * cp_weight * d_ij_norm * ( fa_atr_deriv * weights[ rna_fa_atr_base ] +
 				fa_rep_deriv * weights[ rna_fa_rep_base ] );
@@ -312,7 +325,7 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
-
+	
 	Real score( 0.0 );
 
 	// Currently extremely RNA specific.
@@ -349,6 +362,12 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 			Real dummy( 0.0 ), fa_atr( 0.0 ), fa_rep( 0.0 );
 			eval_lj( rsd1.atom( m ), rsd2.atom( n ), d2, fa_atr, fa_rep, dummy, dummy );
 
+			if ( rsd1.has_variant_type( REPLONLY ) ) fa_atr = 0.0;
+			if ( rsd2.has_variant_type( REPLONLY ) ) fa_atr = 0.0;
+			
+			if ( rsd1.is_repulsive( m ) ) fa_atr = 0.0;
+			if ( rsd2.is_repulsive( n ) ) fa_atr = 0.0;
+			
 			// In principle could pass in an emap and weight the components
 			// by the Emap.
 			score += cp_weight * ( fa_atr + fa_rep );

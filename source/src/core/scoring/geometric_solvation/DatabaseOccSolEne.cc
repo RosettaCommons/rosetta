@@ -80,7 +80,6 @@ DatabaseOccSolEne::DatabaseOccSolEne( std::string const & etable_name, Real cons
 ///
 /// @deatails atom type of index i is mapped to atom type of index i (i=1,...,N, where N is the number of atom types)
 void DatabaseOccSolEne::init_to_self_mapping( utility::vector1< Size > & v ) {
-
 	Size const N = v.size();
 	for ( Size i = 1; i <= N; ++i ) {
 		v[i] = i;
@@ -106,9 +105,8 @@ void DatabaseOccSolEne::init_don_mapping(chemical::AtomTypeSet const & atom_set)
 	// check that all donors have pwSHO parameters
 	Size const PROTEIN_TYPE = atom_set.atom_type_index("aroC");
 	for ( Size i = 1; i <= N; ++i ) {
-		if (
-				atom_set[i].is_donor() &&
-				(atom_set[i].atom_type_name() != "Npro") &&
+		if ( atom_set[i].is_donor() &&
+				( atom_set[i].atom_type_name() != "Npro" ) &&
 				( !don_type_has_data_[ i ] ) &&
 				donor_occ_data_[ don_type_mapping_[ i ] ][ PROTEIN_TYPE ][ OccFitParam_amp ] == NO_PARAMETERS_ ) {
 			tr << "ERROR: no pwSHO parameters for donor atom type " << atom_set[i].atom_type_name() << std::endl;
@@ -142,8 +140,7 @@ void DatabaseOccSolEne::init_acc_mapping(chemical::AtomTypeSet const & atom_set)
 	// check that all acceptors have pwSHO parameters
 	Size const PROTEIN_TYPE = atom_set.atom_type_index("aroC");
 	for ( Size i = 1; i <= N; ++i ) {
-		if (
-				atom_set[i].is_acceptor() &&
+		if ( atom_set[ i ].is_acceptor() &&
 				( !acc_type_has_data_[ i ] ) &&
 				acc_occ_data_[ acc_type_mapping_[ i ] ][ PROTEIN_TYPE ][ OccFitParam_amp ] == NO_PARAMETERS_ ) {
 			tr << "ERROR: no pwSHO parameters for acceptor atom type " << atom_set[i].atom_type_name() << std::endl;
@@ -175,29 +172,27 @@ void DatabaseOccSolEne::init_atom_occ_mapping(
 
 	for ( Size i = 1; i <= N; ++i ) {
 
-		if ( !atom_occ_type_has_data[ i ] ) {
-
-			core::Real rad_i = atom_set[i].lj_radius();
-
-			// new atom type is lowest type (that has pwSHO parameters) whose lj radius is closest to that of old
-			// type
-			core::Real min_dist2 = 9999999.0;
-			Size new_type = 0;
-			for ( Size j = 1; j <= N; j++ ) {
-				if ( atom_occ_type_has_data[ j ] ) {
-
-					core::Real rad_j = atom_set[j].lj_radius();
-					core::Real dist2 = (rad_i - rad_j) * (rad_i - rad_j);
-
-					if ( dist2 < min_dist2 ) {
-						min_dist2 = dist2;
-						new_type = j;
-					}
-				}
+		if ( atom_occ_type_has_data[ i ] ) continue;
+		
+		core::Real rad_i = atom_set[i].lj_radius();
+		
+		// new atom type is lowest type (that has pwSHO parameters) whose lj radius is closest to that of old
+		// type
+		core::Real min_dist2 = 9999999.0;
+		Size new_type = 0;
+		for ( Size j = 1; j <= N; j++ ) {
+			if ( !atom_occ_type_has_data[ j ] ) continue;
+			
+			core::Real rad_j = atom_set[j].lj_radius();
+			core::Real dist2 = (rad_i - rad_j) * (rad_i - rad_j);
+			
+			if ( dist2 < min_dist2 ) {
+				min_dist2 = dist2;
+				new_type = j;
 			}
-
-			atom_occ_type_mapping[ i ] = new_type;
 		}
+		
+		atom_occ_type_mapping[ i ] = new_type;
 	}
 
 	// override mapping of certain atom types

@@ -123,8 +123,7 @@ StepWiseClusterer::cluster()
 	utility::vector1< pose::PoseOP > starting_pose_list = pose_list_;
 	pose_list_.clear();
 
-	for ( core::Size n = 1; n <= starting_pose_list.size(); n++ ) {
-		pose::PoseOP pose = starting_pose_list[ n ];
+	for ( pose::PoseOP const & pose : starting_pose_list ) {
 		runtime_assert( pose != NULL );
 		if ( check_screen_and_kick_out_displaced_model( *pose ) ) pose_list_.push_back( pose );
 		sort_pose_list();

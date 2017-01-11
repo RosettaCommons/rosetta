@@ -120,7 +120,7 @@ get_base_pairing_info( pose::Pose const & pose,
 	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
 	for ( auto const & it : scored_base_pair_list ) {
 
-		BasePair const base_pair = it.second;
+		BasePair const & base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -193,7 +193,7 @@ get_base_pairing_list( pose::Pose & pose,
 
 	for ( auto const & it : scored_base_pair_list ) {
 
-		BasePair const base_pair = it.second;
+		BasePair const & base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -216,19 +216,16 @@ get_base_pairing_list( pose::Pose & pose,
 				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() > 3.5 ) continue;
 			}
 
-			base_pair_list0.push_back( std::make_pair( i, j ) );
-
+			base_pair_list0.emplace_back( i, j );
 		}
 	}
 
 
 	base_pair_list0.sort();
 	base_pairing_list.clear();
-	for ( std::list< std::pair<Size,Size > >::const_iterator it = base_pair_list0.begin();
-			it != base_pair_list0.end(); ++it ) {
-		base_pairing_list.push_back( *it );
+	for ( auto const & elem : base_pair_list0 ) {
+		base_pairing_list.push_back( elem );
 	}
-
 }
 
 
@@ -500,7 +497,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 
 	for ( auto const & it : scored_base_pair_list ) {
 
-		BasePair const base_pair = it.second;
+		BasePair const & base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -530,9 +527,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 			forms_noncanonical_base_pair( i ) = true;
 			forms_noncanonical_base_pair( j ) = true;
 		}
-
 	}
-
 
 	struct_type.dimension( nres );
 	for ( Size i = 1; i <= nres; i++ ) {
@@ -567,10 +562,10 @@ setup_base_pair_constraints(
 	Real const C1prime_distance_stddev( 1.0 / suppress_factor ); //Hmm. Maybe try linear instead?
 	core::scoring::func::FuncOP const C1prime_distance_func( new core::scoring::func::HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
 
-	for ( Size n = 1; n <= pairings.size(); n++ ) {
-
-		Size const & i = pairings[n].first;
-		Size const & j = pairings[n].second;
+	for ( auto const & pairing : pairings ) {
+		
+		Size const i = pairing.first;
+		Size const j = pairing.second;
 
 		if ( !pose.residue_type(i).is_RNA() ) continue;
 		if ( !pose.residue_type(j).is_RNA() ) continue;
@@ -613,9 +608,9 @@ setup_base_pair_constraints(
 				coarse_WC_SUG_distance_stddev,
 				coarse_WC_SUG_bonus ) );
 
-			if ( true ) {
-				Size const & atom1 = pose.residue_type(i).atom_index( " S  " );
-				Size const & atom2 = pose.residue_type(j).atom_index( " S  " );
+			{
+				Size const atom1 = pose.residue_type(i).atom_index( " S  " );
+				Size const atom2 = pose.residue_type(j).atom_index( " S  " );
 				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					" S  " << " <--> " <<
@@ -634,9 +629,9 @@ setup_base_pair_constraints(
 				coarse_WC_CEN_distance_stddev,
 				coarse_WC_CEN_bonus ) );
 
-			if ( true ) {
-				Size const & atom1 = pose.residue_type(i).atom_index( " CEN" );
-				Size const & atom2 = pose.residue_type(j).atom_index( " CEN" );
+			{
+				Size const atom1 = pose.residue_type(i).atom_index( " CEN" );
+				Size const atom2 = pose.residue_type(j).atom_index( " CEN" );
 				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					" CEN" << " <--> " <<
@@ -655,8 +650,8 @@ setup_base_pair_constraints(
 				coarse_WC_X_distance_stddev, coarse_WC_X_bonus ) );
 
 			{
-				Size const & atom1 = pose.residue_type(i).atom_index( " X  " );
-				Size const & atom2 = pose.residue_type(j).atom_index( " X  " );
+				Size const atom1 = pose.residue_type(i).atom_index( " X  " );
+				Size const atom2 = pose.residue_type(j).atom_index( " X  " );
 				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					" X  " << " <--> " <<
@@ -678,7 +673,6 @@ setup_base_pair_constraints(
 void
 setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 {
-
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::rna;
 
@@ -702,7 +696,6 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 	static core::scoring::func::FuncOP const S_P_harmonic_func( new core::scoring::func::HarmonicFunc( S_P_distance,
 		S_P_distance_stdev ) );
 
-
 	static Real const S_S_distance_min( 4.5 );
 	static Real const S_S_distance_max( 7.5 );
 	static Real const S_S_distance_fade( 2.0 );
@@ -721,10 +714,10 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 		P_P_distance_fade,
 		P_P_distance_bonus ) );
 
-	Size const & atom_S1 = pose.residue_type( n ).atom_index( " S  " );
-	Size const & atom_P1 = pose.residue_type( n ).atom_index( " P  " );
-	Size const & atom_S2 = pose.residue_type( n+1 ).atom_index( " S  " );
-	Size const & atom_P2 = pose.residue_type( n+1 ).atom_index( " P  " );
+	Size const atom_S1 = pose.residue_type( n ).atom_index( " S  " );
+	Size const atom_P1 = pose.residue_type( n ).atom_index( " P  " );
+	Size const atom_S2 = pose.residue_type( n+1 ).atom_index( " S  " );
+	Size const atom_P2 = pose.residue_type( n+1 ).atom_index( " P  " );
 
 	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 		id::AtomID(atom_S1, n),
@@ -745,13 +738,14 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 		id::AtomID(atom_S1, n),
 		id::AtomID(atom_S2, n+1),
 		S_S_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 std::string const
 convert_based_on_match_type( std::string const & RNA_string, Size const type ){
 
+	// AMW: this can probably be made more concise using a functional approach.
+	
 	std::string RNA_string_local = RNA_string;
 
 	Size const size = RNA_string.length();
@@ -837,7 +831,6 @@ make_extended_coarse_pose( pose::Pose & coarse_pose, std::string const & full_se
 		coarse_pose.set_torsion( TorsionID( n, BB, 1 ), -150.0 );
 		coarse_pose.set_torsion( TorsionID( n, BB, 2 ),  180.0 );
 	}
-
 }
 
 
@@ -868,7 +861,6 @@ make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
 		coarse_pose.set_xyz(  NamedAtomID( " CEN", n ),  base_centroid );
 		coarse_pose.set_xyz(  NamedAtomID( " X  ", n ),  base_centroid + stub.M.col_x() );
 		coarse_pose.set_xyz(  NamedAtomID( " Y  ", n ),  base_centroid + stub.M.col_y() );
-
 	}
 
 	core::kinematics::FoldTree f( pose.fold_tree() );
@@ -876,7 +868,6 @@ make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
 		f.set_jump_atoms( n, " Y  ", " Y  " );
 	}
 	coarse_pose.fold_tree( f );
-
 }
 
 ////////////////////////////////////////////////////////

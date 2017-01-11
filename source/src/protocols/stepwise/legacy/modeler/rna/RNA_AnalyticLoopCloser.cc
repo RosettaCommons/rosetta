@@ -111,22 +111,24 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	order[1] = 1;
 	order[2] = 2;
 	order[3] = 3;
+
+	// Set up your NamedAtomIDs
 	atom_ids_.clear();
-	atom_ids_.emplace_back( NamedAtomID( " C3'", moving_suite_ ) );
-	atom_ids_.emplace_back( NamedAtomID( " O3'", moving_suite_ ) );
-	atom_ids_.emplace_back( NamedAtomID( " P  ", moving_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " O5'", moving_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C5'", moving_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C4'", moving_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C3'", chainbreak_suite_ ) );
-	atom_ids_.emplace_back( NamedAtomID( " O3'", chainbreak_suite_ ) );
-	atom_ids_.emplace_back( NamedAtomID( " P  ", chainbreak_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " O5'", chainbreak_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C5'", chainbreak_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C4'", chainbreak_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C3'", chainbreak_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " O3'", chainbreak_suite_ + 1 ) );
-	atom_ids_.emplace_back( NamedAtomID( " C2'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( " C3'", moving_suite_ );
+	atom_ids_.emplace_back( " O3'", moving_suite_ );
+	atom_ids_.emplace_back( " P  ", moving_suite_ + 1 );
+	atom_ids_.emplace_back( " O5'", moving_suite_ + 1 );
+	atom_ids_.emplace_back( " C5'", moving_suite_ + 1 );
+	atom_ids_.emplace_back( " C4'", moving_suite_ + 1 );
+	atom_ids_.emplace_back( " C3'", chainbreak_suite_ );
+	atom_ids_.emplace_back( " O3'", chainbreak_suite_ );
+	atom_ids_.emplace_back( " P  ", chainbreak_suite_ + 1 );
+	atom_ids_.emplace_back( " O5'", chainbreak_suite_ + 1 );
+	atom_ids_.emplace_back( " C5'", chainbreak_suite_ + 1 );
+	atom_ids_.emplace_back( " C4'", chainbreak_suite_ + 1 );
+	atom_ids_.emplace_back( " C3'", chainbreak_suite_ + 1 );
+	atom_ids_.emplace_back( " O3'", chainbreak_suite_ + 1 );
+	atom_ids_.emplace_back( " C2'", chainbreak_suite_ + 1 );
 
 	for ( Size i = 1; i <= 3; i++ ) {
 		pivots[ i ] = 3 * i + 2;
@@ -138,11 +140,12 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 
 	// These atoms_xyz are the same as computed in fill_chainTORS, but I'm
 	// having some trouble sending them out (can't clear or copy vector1< Vector > ?)
-	utility::vector1< Vector > atoms_xyz;
-
-	for ( Size i = 1; i <= atoms.size(); i++ ) {
-		atoms_xyz.push_back ( Vector ( atoms[i][1], atoms[i][2], atoms[i][3] ) );
-	}
+	utility::vector1< Vector > atoms_xyz( atoms.size() );
+	std::transform( atoms.begin(), atoms.end(),
+		atoms_xyz.begin(),
+		[&]( utility::vector1< Real > const & atom ) {
+			return Vector( atom[1], atom[2], atom[3] );
+		} );
 
 	//////////////////////////////////////////////
 	// Parameter at chainbreak.

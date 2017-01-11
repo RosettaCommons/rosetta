@@ -136,8 +136,9 @@ void
 RNA_SugarCloseEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap  ) const {
-	return residue_energy( rsd, emap );
+	EnergyMap & emap 
+) const {	
+	residue_energy( rsd, emap );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,10 +164,9 @@ void
 RNA_SugarCloseEnergy::setup_sugar_ring_closure_constraints( pose::Pose & pose ) const{
 	rna_sugar_close_constraints_ = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		add_sugar_ring_closure_constraints( pose.residue( i ), *rna_sugar_close_constraints_ );
+	for ( auto const & rsd : pose ) {
+		add_sugar_ring_closure_constraints( rsd, *rna_sugar_close_constraints_ );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

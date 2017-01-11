@@ -127,7 +127,6 @@ RNA_DeNovoPoseInitializer::override_secstruct( core::pose::Pose & pose ){
 void
 RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 {
-
 	if ( rna_params_.virtual_anchor_attachment_points().size() == 0 ) return;
 
 	TR.Debug << "Current last residue is type: " << pose.residue( pose.size() ).name3()  << std::endl;
@@ -157,7 +156,6 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 	}
 
 	if ( pose::full_model_info::full_model_info_defined( pose ) ) pose::full_model_info::append_virtual_residue_to_full_model_info( pose );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -211,7 +209,6 @@ RNA_DeNovoPoseInitializer::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMo
 		if ( !success ) return;
 
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +331,6 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	//   Jumps dominate, or cuts dominate.
 	Size const num_pairings_to_force = std::max( num_obligate_pairing_sets + num_chain_connections,
 		num_cuts_total );
-
 
 	////////////////////////////////////////////////////////////////////////
 	ObjexxFCL::FArray2D <int> jump_points( 2, num_pairings_to_force );

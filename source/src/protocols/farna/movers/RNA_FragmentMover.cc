@@ -23,6 +23,9 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/full_model_info/FullModelParameterType.hh>
 
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
@@ -142,7 +145,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 				break;
 			}
 		}
-
+		
 		if ( !frame_ok ) continue;
 
 		// Must make sure the whole frame is RNA, of course.
@@ -169,7 +172,8 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 		num_insertable_residues_++;
 		insert_map_[ num_insertable_residues_ ] = i;
-
+		
+		//TR << "num_insertable_residues_ " << num_insertable_residues_ << " i " << i << std::endl;
 	}
 
 	insert_map_frag_size_ = frag_size_; //up to date!

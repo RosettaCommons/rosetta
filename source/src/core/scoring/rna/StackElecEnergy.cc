@@ -69,6 +69,8 @@ using namespace ObjexxFCL::format;
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
+using namespace core::chemical;
+
 // C++
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.rna.StackElecEnergy" );
 
@@ -224,6 +226,9 @@ StackElecEnergy::defines_score_for_residue_pair(
 	conformation::Residue const & rsd2,
 	bool res_moving_wrt_eachother
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return false;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return false;
+	
 	if ( rsd1.seqpos() == rsd2.seqpos() ) {
 		return false;
 	}
@@ -329,6 +334,9 @@ StackElecEnergy::residue_pair_energy_ext(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 	Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
 
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
 	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
 
 	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
@@ -352,12 +360,14 @@ StackElecEnergy::residue_pair_energy_ext(
 	for ( auto const & neighb : neighbs ) {
 		Size const m = neighb.atomno1();
 		if ( rsd1.is_virtual( m ) ) continue;
+		if ( rsd1.is_repulsive( m ) ) continue;
 		if ( base_base_only_ && !is_rna_base( rsd1, m ) ) continue;
 		Real const m_charge( rsd1.atomic_charge( m ) );
 		if ( m_charge == 0.0 ) continue;
 
 		Size const n = neighb.atomno2();
 		if ( rsd2.is_virtual( n ) ) continue;
+		if ( rsd2.is_repulsive( n ) ) continue;
 		if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
 		Real const n_charge( rsd2.atomic_charge( n ) );
 		if ( n_charge == 0.0 ) continue;
@@ -402,6 +412,9 @@ StackElecEnergy::residue_pair_energy(
 ) const {
 	using_extended_method_ = false;
 	if ( pose.energies().use_nblist() ) return;
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
 	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
 	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
@@ -429,6 +442,8 @@ StackElecEnergy::residue_pair_energy_one_way(
 	// currently defined only for RNA -- could easily generalize to DNA or proteins,
 	//  as long as we precompute centroid & base-normals for rings.
 	if ( !rsd1.is_RNA() ) return 0.0;
+	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
 
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
@@ -452,6 +467,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 
 		// following contains virtual check.
 		if ( !is_rna_base( rsd1, m ) ) continue;
+		if ( rsd1.is_repulsive( m ) ) continue;
 
 		Real const i_charge( rsd1.atomic_charge( m ) );
 		if ( i_charge == 0.0 ) continue;
@@ -461,6 +477,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 		for ( Size n = 1; n <= rsd2.natoms(); ++n ) {
 
 			if ( rsd2.is_virtual( n ) ) continue;
+			if ( rsd2.is_repulsive( n ) ) continue;
 			if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
 
 			Real const j_charge( rsd2.atomic_charge( n ) );
@@ -515,9 +532,12 @@ StackElecEnergy::eval_atom_derivative(
 	Vector & F2
 ) const {
 	if ( ! pose.energies().use_nblist_auto_update() ) return;
+	
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd1.is_repulsive( m ) ) return;
 
 	if ( rsd1.is_virtual( m ) ) return;
 
@@ -547,6 +567,7 @@ StackElecEnergy::eval_atom_derivative(
 		conformation::Residue const & rsd2( pose.residue( j ) );
 
 		if ( rsd2.is_virtual( n ) ) continue;
+		if ( rsd2.is_repulsive( n ) ) continue;
 
 		Real const j_charge( rsd2.atomic_charge( n ) );
 		if ( j_charge == 0.0 ) continue; /// should prune out such atoms when constructing the neighborlist!
@@ -696,6 +717,7 @@ StackElecEnergy::finalize_total_energy(
 		conformation::Residue const & ires( *resvect[i] );
 		for ( Size ii = 1, ii_end = ires.natoms(); ii <= ii_end; ++ii ) {
 			if ( ires.is_virtual( ii ) ) continue;
+			if ( ires.is_repulsive( ii ) ) continue;
 			bool res1_is_base = is_rna_base( ires, ii );
 			if ( base_base_only_ && !res1_is_base ) continue;
 			Real const m_charge( ires.atomic_charge( ii ) );
@@ -715,6 +737,7 @@ StackElecEnergy::finalize_total_energy(
 
 				conformation::Residue const & jres( *resvect[j] );
 				if ( jres.is_virtual ( jj ) ) continue;
+				if ( jres.is_repulsive( jj ) ) continue;
 				bool res2_is_base = is_rna_base( jres, jj );
 				if ( base_base_only_ && !res2_is_base ) continue;
 				Real const n_charge( jres.atomic_charge( jj ) );

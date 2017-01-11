@@ -571,6 +571,9 @@ operator >>( std::istream & is, FullModelParameters & t )
 		while ( ok )  {
 			// the 'chain' will be any string before a ':'. Could be blank.
 			is >> tag;
+			if ( tag == "NON_STANDARD_RESIDUE_MAP" ) break;
+			TR.Debug << "Found tag " << tag << std::endl;
+
 			utility::vector1< std::string > cols = string_split( tag, ':');
 			runtime_assert( cols.size() == 1 || cols.size() == 2 );
 			Size idx = ( cols.size() == 1 ) ? 1 : ObjexxFCL::int_of( cols[1] );
@@ -583,12 +586,15 @@ operator >>( std::istream & is, FullModelParameters & t )
 		t.set_parameter( type, parameter_values_at_res );
 	}
 	
-	is >> tag;
+	// don't do this -- we just got it. is >> tag;
 	if ( tag == "NON_STANDARD_RESIDUE_MAP" ) {
+		TR.Debug << "Found tag NON_STANDARD_RESIDUE_MAP " << std::endl;
 		bool ok = true;
 		while ( ok ) {
 			// Read in size : string;
 			is >> tag;
+			
+			TR.Debug << "Found tag " << tag << std::endl;
 			utility::vector1< std::string > cols = string_split( tag, ':');
 			runtime_assert( cols.size() == 2 );
 			Size pos = ObjexxFCL::int_of( cols[1] );

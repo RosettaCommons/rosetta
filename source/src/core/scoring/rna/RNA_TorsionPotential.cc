@@ -105,6 +105,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_TorsionPotential", basic::t_info );
 
 using namespace ObjexxFCL::format;
+using namespace core::chemical;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
 using numeric::conversions::radians;
@@ -151,6 +152,8 @@ RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & opti
 Real
 RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & rsd, pose::Pose const & pose )
 {
+	if ( rsd.has_variant_type( REPLONLY ) ) return 0.0;
+	
 	using core::id::TorsionID;
 	using numeric::principal_angle_degrees;
 
@@ -291,7 +294,10 @@ Real
 RNA_TorsionPotential::residue_pair_energy( core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2, pose::Pose const & pose ) const
 {
 	using namespace core::id;
-
+	
+	if ( rsd1.has_variant_type( REPLONLY ) ) return false;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return false;
+	
 	if ( rsd1.seqpos() != ( rsd2.seqpos() - 1 ) ) return 0.0;
 	if ( !rsd1.is_RNA() ) return 0.0;
 	if ( !rsd2.is_RNA() ) return 0.0;
@@ -353,7 +359,8 @@ RNA_TorsionPotential::get_f1_f2( core::id::TorsionID const & torsion_id, pose::P
 	conformation::Conformation const & conformation( pose.conformation() );
 
 	if ( !pose.residue_type( torsion_id.rsd() ).is_RNA() ) return false;
-
+	if ( pose.residue_type( torsion_id.rsd() ).has_variant_type( REPLONLY ) ) return false;
+	
 	// Check that torsion is intraresidue.
 	id::AtomID id1, id2, id3, id4;
 	if  ( conformation.get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 ) ) return false;
@@ -397,6 +404,8 @@ RNA_TorsionPotential::eval_atom_derivative(
 	Vector & F1,
 	Vector & F2
 ) const {
+	if ( pose.residue_type( id.rsd() ).has_variant_type( REPLONLY ) ) return;
+	
 	using numeric::principal_angle_degrees;
 
 	Real const radians2degrees = 1.0 / radians( 1.0 );

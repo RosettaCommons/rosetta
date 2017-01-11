@@ -124,13 +124,10 @@ ContextIndependentGeometricSolEnergy::setup_for_packing(
 	utility::vector1< bool > const & designing_residues
 ) const
 {
-	bool might_be_designing( false );
-	for ( bool const design : designing_residues ) {
-		if ( design ) {
-			might_be_designing = true;
-			break;
-		}
-	}
+	bool might_be_designing = std::any_of( 
+		designing_residues.begin(), designing_residues.end(),
+		[]( bool const b ){ return b; } );
+
 	precalculated_bb_bb_energy_ = 0.0f;
 
 	//if nothing can be designed no reason to precalculate backbone/backbone geom_solv

@@ -33,6 +33,10 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.protein.checke
 
 using namespace core;
 
+// AMW TODO:
+// Refactor this so that we don't do a multiplication every time we check the screen.
+// Instead, change the cutoff values accordingly so they account for unweighted vals.
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

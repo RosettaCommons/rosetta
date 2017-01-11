@@ -27,6 +27,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/id/AtomID.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -39,6 +40,7 @@
 
 
 // C++
+using namespace core::chemical;
 using namespace core::chemical::rna;
 
 namespace core {
@@ -174,7 +176,12 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {
-
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
+	// Skipping repulsive phosphates (REPLS/HREPS atom types)
+	// handled directly by the rna_low_resolution_potential
+	
 	Vector centroid1, centroid2;
 	kinematics::Stub stub1, stub2;
 	get_centroid_information( rsd1, rsd2, pose, centroid1, centroid2, stub1, stub2 );
@@ -238,6 +245,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_pair_pairwise_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
+	
 	ObjexxFCL::FArray3D < Real > const & base_pair_array ( rna_raw_base_base_info_->base_pair_array() );
 	Real score( 0.0 );
 	for ( Size i = 1; i <= NUM_EDGES; i++ ) {
@@ -253,6 +263,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_axis_pairwise_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
+	
 	ObjexxFCL::FArray3D < Real > const & base_axis_array ( rna_raw_base_base_info_->base_axis_array() );
 	Real score( 0.0 );
 	for ( Size i = 1; i <= NUM_EDGES; i++ ) {
@@ -268,6 +281,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stagger_pairwise_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
+	
 	ObjexxFCL::FArray3D < Real > const & base_stagger_array ( rna_raw_base_base_info_->base_stagger_array() );
 	Real score( 0.0 );
 	for ( Size i = 1; i <= NUM_EDGES; i++ ) {
@@ -283,6 +299,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stack_pairwise_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
+	
 	ObjexxFCL::FArray2D < Real > const & stack_array ( rna_raw_base_base_info_->base_stack_array() );
 	return stack_array( rsd1.seqpos(), rsd2.seqpos() );
 }
@@ -293,6 +312,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stack_axis_pairwise_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
+	
 	ObjexxFCL::FArray2D < Real > const & stack_axis_array ( rna_raw_base_base_info_->base_stack_axis_array() );
 	return stack_axis_array( rsd1.seqpos(), rsd2.seqpos() );
 }
@@ -354,6 +376,7 @@ RNA_PairwiseLowResolutionEnergy::eval_atom_derivative(
 	Vector & F1,
 	Vector & F2
 ) const {
+	if ( pose.residue_type( atom_id.rsd() ).has_variant_type( REPLONLY ) ) return;
 	// NOTE -- currently have not put in derivatives for pairwise terms!!!! Would not be too hard actually!
 	Vector f1( 0.0 ), f2( 0.0 );
 

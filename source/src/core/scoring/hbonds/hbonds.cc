@@ -330,10 +330,8 @@ identify_hbonds_1way(
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
+	for ( Size const hatm : don_rsd.Hpos_polar() ) {
+		
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 		if ( datm_is_bb ) {
@@ -344,10 +342,8 @@ identify_hbonds_1way(
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		for ( chemical::AtomIndices::const_iterator
-				anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-				anum != anume; ++anum ) {
-			Size const aatm( *anum );
+		for ( Size const aatm : acc_rsd.accpt_pos() ) {
+
 			if ( acc_rsd.atom_is_backbone(aatm) ) {
 				if ( datm_is_bb ) {
 					if ( exclude_bb ) continue;
@@ -427,10 +423,8 @@ identify_hbonds_1way(
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator
-			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
+	for ( Size const hatm : don_rsd.Hpos_polar() ) {
+
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 		if ( datm_is_bb ) {
@@ -441,10 +435,8 @@ identify_hbonds_1way(
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		for ( chemical::AtomIndices::const_iterator
-				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-				anum != anume; ++anum ) {
-			Size const aatm( *anum );
+		for ( Size const aatm : acc_rsd.accpt_pos() ) {
+
 			if ( acc_rsd.atom_is_backbone(aatm) ) {
 				if ( datm_is_bb ) {
 					if ( exclude_bb ) continue;
@@ -544,10 +536,8 @@ identify_hbonds_1way(
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator
-			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
+	for ( Size const hatm : don_rsd.Hpos_polar() ) {
+
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 
@@ -559,10 +549,8 @@ identify_hbonds_1way(
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		for ( chemical::AtomIndices::const_iterator
-				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-				anum != anume; ++anum ) {
-			Size const aatm( *anum );
+		for ( Size const aatm : acc_rsd.accpt_pos() ) {
+
 			if ( acc_rsd.atom_is_backbone(aatm) ) {
 				if ( datm_is_bb ) {
 					if ( exclude_bb ) continue;
@@ -702,8 +690,7 @@ identify_intra_res_hbonds(
 	// <f1,f2> -- derivative vectors
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
+	for ( Size const hatm : rsd.Hpos_polar() ) {
 		Size const datm(rsd.atom_base(hatm));
 		bool datm_is_bb = rsd.atom_is_backbone(datm);
 		if ( datm_is_bb ) {
@@ -712,9 +699,7 @@ identify_intra_res_hbonds(
 			if ( exclude_sc && exclude_bsc ) continue;
 		}
 
-		for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
-			Size const aatm( *anum );
+		for ( Size const aatm : rsd.accpt_pos() ) {
 			int const base ( rsd.atom_base( aatm ) ); //"base" does not refer to RNA base here!
 			int const base2( rsd.abase2( aatm ) );
 			runtime_assert( base2 > 0 && base != base2 );
@@ -790,10 +775,6 @@ identify_intra_res_hbonds(
 		}
 	}
 }
-
-
-
-
 
 //mjo this should be the only way to assign hbond energies.  If you
 //feel the need to collect the energies from some of the bonds,

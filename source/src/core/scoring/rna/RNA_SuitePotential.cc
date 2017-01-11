@@ -37,6 +37,7 @@
 static basic::Tracer TR( "core.scoring.rna.RNA_SuitePotential", basic::t_info );
 
 using namespace boost::numeric;
+using namespace core::chemical;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -173,6 +174,10 @@ bool RNA_SuitePotential::eval_score(
 	using namespace core::chemical::rna;
 	using namespace core::pose::rna;
 	using namespace core::id;
+
+	if ( rsd1.has_variant_type( REPLONLY ) ) return false;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return false;
+	
 	// Default derivatives to 0
 	score_ = 0;
 	for ( Size i = 1; i <= n_torsions_; ++i ) deriv_[i] = 0;

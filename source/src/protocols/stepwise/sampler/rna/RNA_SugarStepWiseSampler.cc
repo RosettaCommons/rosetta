@@ -116,9 +116,8 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				}
 
 				// If we've already cached all the dofs, we can just loop through them directly without using the copy_dofs() machinery.
-				for ( std::map < id::DOF_ID , Real >::const_iterator
-						it=north_pucker_dof_key_values_.begin(), it_end = north_pucker_dof_key_values_.end(); it != it_end; ++it ) {
-					pose.set_dof( it->first, it->second );
+				for ( auto const & elem : north_pucker_dof_key_values_ ) {
+					pose.set_dof( elem.first, elem.second );
 				}
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
@@ -156,9 +155,8 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				}
 
 				// If we've already cached all the dofs, we can just loop through them directly without using the copy_dofs() machinery.
-				for ( std::map < id::DOF_ID , Real >::const_iterator
-						it=south_pucker_dof_key_values_.begin(), it_end = south_pucker_dof_key_values_.end(); it != it_end; ++it ) {
-					pose.set_dof( it->first, it->second );
+				for ( auto const & elem : south_pucker_dof_key_values_ ) {
+					pose.set_dof( elem.first, elem.second );
 				}
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {

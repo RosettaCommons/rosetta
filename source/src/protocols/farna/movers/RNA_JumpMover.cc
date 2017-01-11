@@ -87,7 +87,6 @@ RNA_JumpMover::random_jump_change( pose::Pose & pose ) const
 		AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 ); // Unused variable causes warning.
 
 		if ( moveable_jump( jump_atom_id1, jump_atom_id2, *atom_level_domain_map_ ) ) break;
-
 	}
 
 	if ( ntries >= MAX_TRIES ) return false;
@@ -104,7 +103,6 @@ RNA_JumpMover::random_jump_change( pose::Pose & pose ) const
 	add_new_RNA_jump( pose, which_jump, success );
 
 	return success;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,8 +288,6 @@ RNA_JumpMover::sample_alternative_chain_connection( pose::Pose & pose, Size cons
 	// TR << "Changing fold_tree ==> " << fold_tree << std::endl;
 
 	if ( success ) pose.fold_tree( fold_tree );
-
-
 }
 
 } //movers

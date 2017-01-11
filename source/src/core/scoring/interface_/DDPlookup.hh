@@ -35,7 +35,7 @@ namespace interface_ {
 
 class DDPlookup : public utility::pointer::ReferenceCount {
 public:
-	DDPlookup(std::string filename);
+	DDPlookup(std::string const & filename);
 
 	core::Real
 	get_potentials(

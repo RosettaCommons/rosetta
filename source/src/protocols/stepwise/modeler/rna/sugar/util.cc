@@ -249,7 +249,7 @@ modeler_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map< core::Size, core::Size >
-get_res_map( SugarModeling const & sugar_modeling ){
+get_res_map( SugarModeling const & sugar_modeling ) {
 
 	std::map< core::Size, core::Size >  res_map;
 	res_map[ sugar_modeling.moving_res    ] = sugar_modeling.moving_res;

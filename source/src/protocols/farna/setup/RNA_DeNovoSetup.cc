@@ -959,14 +959,6 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	}
 
 	rna_params_ = RNA_DeNovoParametersOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
-
-	/*
-	using namespace core::pose::full_model_info;
-	// Set up FullModelInfo (so we can use FullModel
-	FullModelParametersOP full_model_parameters( new FullModelParameters );
-	FullModelInfoOP full_model_info( new FullModelInfo( full_model_parameters ) );
-	set_full_model_info( *pose_, full_model_info );
-	*/
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1001,7 +993,7 @@ RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 	core::chemical::ResidueTypeSetCOP rsd_set_ ) const
 {
 	vector1<pose::PoseOP> refine_pose_list;
-	if ( input_silent_file.size() > 0 ) {
+	if ( !input_silent_file.empty() ) {
 		core::import_pose::pose_stream::SilentFilePoseInputStream input( input_silent_file );
 		input.set_order_by_energy( true );
 		while ( input.has_another_pose() ) {
@@ -1022,8 +1014,7 @@ RNA_DeNovoSetup::working_res_map( vector1< Size > const & vec,
 {
 	if ( working_res.size() == 0 ) return vec;
 	vector1< Size > working_vec;
-	for ( Size i = 1; i <= vec.size(); i++ ) {
-		Size const m = vec[ i ];
+	for ( Size const m : vec ) {
 		if ( leave_out_last_working_residue && m == working_res[ working_res.size() ]  ) continue;
 		if ( working_res.has_value( m ) ) {
 			working_vec.push_back( working_res.index( m ) );
@@ -1119,9 +1110,9 @@ RNA_DeNovoSetup::already_listed_in_obligate_pair( vector1< Size > const & new_pa
 	vector1< Size > const & obligate_pair,
 	vector1< Size > const & obligate_pair_explicit ) const
 {
-	vector1< Size > all_pair;
-	for ( Size n = 1; n <= obligate_pair.size(); n++ ) all_pair.push_back( obligate_pair[ n ] );
-	for ( Size n = 1; n <= obligate_pair_explicit.size(); n++ ) all_pair.push_back( obligate_pair_explicit[ n ] );
+	vector1< Size > all_pair = obligate_pair;
+	//for ( Size n = 1; n <= obligate_pair.size(); n++ ) all_pair.push_back( obligate_pair[ n ] );
+	for ( Size const exp : obligate_pair_explicit ) all_pair.push_back( exp );
 	return already_listed_in_obligate_pair( new_pair, all_pair );
 }
 
@@ -1132,12 +1123,10 @@ RNA_DeNovoSetup::update_working_obligate_pairs_with_stems(
 	vector1< vector1< std::pair< Size, Size > > > const & working_stems,
 	vector1< Size > const & working_input_res ) const
 {
-	for ( Size n = 1; n <= working_stems.size(); n++ ) {
-		vector1< std::pair< Size, Size > > const & working_stem = working_stems[ n ];
-
+	for ( auto const & working_stem : working_stems ) {
 		bool stem_in_input_res( false );
-		for ( Size i = 1; i <= working_stem.size(); i++ ) {
-			std::pair< Size, Size > const & pair = working_stem[ i ];
+		
+		for ( auto const & pair : working_stem ) {
 			if ( working_input_res.has_value( pair.first ) &&
 					working_input_res.has_value( pair.second ) ) {
 				stem_in_input_res = true; break;

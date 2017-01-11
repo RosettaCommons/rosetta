@@ -221,7 +221,7 @@ RNA_VDW_BinChecker::setup_using_working_pose( core::pose::Pose const & const_wor
 
 	Size const reference_res( working_parameters->working_reference_res() ); //the last static_residue that this attached to the moving residues
 
-	numeric::xyzVector< core::Real > const reference_xyz = get_reference_xyz( const_working_pose, reference_res );
+	numeric::xyzVector< core::Real > const & reference_xyz = get_reference_xyz( const_working_pose, reference_res );
 
 	pose::Pose working_pose = const_working_pose; //Feb 20, 2011..just to make sure that the o2prime hydrogens are virtualized. Since this hydrogen can vary during modeler.
 
@@ -336,7 +336,7 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 
 			for ( Size working_at = 1; working_at <= working_rsd.natoms(); working_at++ ) { //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
 
-				std::string const working_atom_name = working_rsd.type().atom_name( working_at );
+				std::string const & working_atom_name = working_rsd.type().atom_name( working_at );
 
 				//TR << "atom=" << working_at  << "|name=" << working_rsd.type().atom_name(working_at) << "|type=" << working_rsd.atom_type(working_at).name();
 				//TR << "|element()=" << working_rsd.atom_type(working_at).element() << "|" << std::endl;
@@ -356,7 +356,7 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 
 				Size const VDW_rep_at = VDW_rep_rsd.atom_index( working_atom_name );
 
-				std::string const VDW_rep_atom_name = VDW_rep_rsd.type().atom_name( VDW_rep_at );
+				std::string const & VDW_rep_atom_name = VDW_rep_rsd.type().atom_name( VDW_rep_at );
 				if ( working_atom_name != VDW_rep_atom_name ) { //Check
 					utility_exit_with_message( "working_atom_name != VDW_rep_atom_name, working_atom_name = " + working_atom_name + " VDW_rep_atom_name = " + VDW_rep_atom_name );
 				}
@@ -1011,8 +1011,7 @@ void
 RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 	utility::vector1< core::Size > const & ignore_res_list,
 	bool const is_prepend,  //associated with ignore_res_list
-	std::ofstream & outfile_act ){
-
+	std::ofstream & outfile_act ) {
 
 	bool output_once = false;
 
@@ -1020,8 +1019,8 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 
 	// if(output_pdb_) pose.dump_pdb( "create_VDW_screen_bin_pose.pdb" );
 
-	utility::vector1< std::pair < Size, std::string > > virtual_atom_list;
-	utility::vector1< std::pair < Size, std::string > > moving_phosphate_atom_list;
+	utility::vector1< std::pair< Size, std::string > > virtual_atom_list;
+	utility::vector1< std::pair< Size, std::string > > moving_phosphate_atom_list;
 
 	occupied_xyz_bins_.clear();
 
@@ -1031,13 +1030,12 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		core::conformation::Residue const & rsd = pose.residue( n );
-
 		if ( ignore_res_list.has_value( n ) ) continue;
 
 		for ( Size at = 1; at <= rsd.natoms(); at++ ) { //include hydrogen atoms.
 
 			if ( rsd.is_virtual( at )  ) {
-				virtual_atom_list.push_back( std::make_pair( n, rsd.type().atom_name( at ) ) );
+				virtual_atom_list.emplace_back( n, rsd.type().atom_name( at ) );
 				continue;
 			}
 
@@ -1052,7 +1050,7 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 				if ( rsd.type().atom_name( at ) == "H5''" ) is_moving_phosphate = true;
 
 				if ( is_moving_phosphate ) {
-					moving_phosphate_atom_list.push_back( std::make_pair( n, rsd.type().atom_name( at ) ) );
+					moving_phosphate_atom_list.emplace_back( n, rsd.type().atom_name( at ) );
 					continue;
 				}
 			}
@@ -1076,8 +1074,8 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 
 			Real const sum_radius = moving_atom_radius + VDW_radius - clash_dist_cutoff - max_binning_error;
 
-			int const max_bin_offset = int( ( sum_radius + atom_bin_size_ )/atom_bin_size_ );
-			int const min_bin_offset = int(  - ( ( sum_radius + atom_bin_size_ )/atom_bin_size_ ) );
+			int const max_bin_offset = int(  ( sum_radius + atom_bin_size_ ) / atom_bin_size_ );
+			int const min_bin_offset = int( -( sum_radius + atom_bin_size_ ) / atom_bin_size_ );
 
 			if ( output_once == false ) {
 				output_once = true;
@@ -1264,13 +1262,13 @@ bool
 RNA_VDW_BinChecker::VDW_rep_screen( core::pose::Pose const & screening_pose, //Warning..this pose coordinate is not update...use here for VIRTUAL atom screening.
 	Size const & moving_res,
 	core::conformation::Residue const & rsd_at_origin,
-	core::kinematics::Stub const & moving_res_base_stub ){
+	core::kinematics::Stub const & moving_res_base_stub ) {
 
 	check_VDW_screen_bin_is_setup();
 
 	core::conformation::Residue const & moving_rsd = screening_pose.residue( moving_res );
 
-	utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
+	utility::vector1< std::pair< id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
 	toolbox::rigid_body::get_atom_coordinates( xyz_list, moving_res, rsd_at_origin, moving_res_base_stub );
 
 	Size num_clash_atom = 0;
@@ -1502,7 +1500,7 @@ RNA_VDW_BinChecker::get_reference_xyz_average( core::pose::Pose const & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_VDW_BinChecker::set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz ){
+RNA_VDW_BinChecker::set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz ) {
 
 	// if ( is_reference_xyz_setup_ == true ) utility_exit_with_message( "is_reference_xyz is already setup!" );
 	if ( is_reference_xyz_setup_ == true ) TR.Debug << "is_reference_xyz is already setup!" << std::endl;

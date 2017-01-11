@@ -61,6 +61,8 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_FullAtomVDW_BasePhos
 //
 //
 // -- rhiju, 2014
+//
+// AMW: Since not in standard use, not bothering to special-case REPLONLY.
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace core::chemical::rna;

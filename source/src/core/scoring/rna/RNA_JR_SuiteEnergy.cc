@@ -30,6 +30,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+using namespace core::chemical;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
 
@@ -86,6 +87,8 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const {
 	using namespace core::id;
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
 	Size const rsdnum1( rsd1.seqpos() ), rsdnum2( rsd2.seqpos() );
 	if ( rsdnum1 + 1 != rsdnum2 ) return;

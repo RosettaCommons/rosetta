@@ -385,20 +385,18 @@ void SilentFileData::renumber_all_decoys() {
 	utility::vector1< SilentStructOP > silent_structs;
 	silent_structs.reserve( structure_map_.size() );
 
-	Structure_Map::iterator map_iter;
-	for ( map_iter = structure_map_.begin(); map_iter != structure_map_.end(); ++map_iter ) {
-		silent_structs.push_back( map_iter->second );
+	for ( auto const & map_elem : structure_map_ ) {
+		silent_structs.push_back( map_elem.second );
 	}
 	clear_structure_map();
 
 	using ObjexxFCL::string_of;
 	int count = 1;
-	utility::vector1< SilentStructOP >::const_iterator ss_iter;
-	for ( ss_iter = silent_structs.begin(); ss_iter != silent_structs.end(); ++ss_iter ) {
-		std::string new_tag = (*ss_iter)->decoy_tag().substr(0,2) + string_of( count );
-		(*ss_iter)->decoy_tag( new_tag );
-		structure_map_[ new_tag ] = *ss_iter;
-		structure_list_.push_back( *ss_iter );
+	for ( auto const & ss : silent_structs ) {
+		std::string new_tag = ss->decoy_tag().substr(0,2) + string_of( count );
+		ss->decoy_tag( new_tag );
+		structure_map_[ new_tag ] = ss;
+		structure_list_.push_back( ss );
 		++count;
 	}
 } // renumber_all_decoys
@@ -795,7 +793,7 @@ SilentFileData::read_stream(
 				// have been read.
 				bool good_tag = false;
 				if ( !all_tags ) {
-					std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
+					auto tag_it = tagset.find(tmp_struct->decoy_tag());
 					if ( tag_it != tagset.end() ) {
 						good_tag = true;
 						tagset.erase(tag_it); //expensive restructering of set -- how about saving a bunch of bools to do this book-keeping.

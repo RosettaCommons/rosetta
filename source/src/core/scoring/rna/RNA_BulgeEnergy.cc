@@ -36,6 +36,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
+using namespace core::chemical;
 
 /// @details This must return a fresh instance of the RNA_BulgeEnergy class,
 /// never an instance already in use
@@ -80,6 +81,7 @@ RNA_BulgeEnergy::is_RNA_bulge( conformation::Residue const & rsd ) const
 	if ( !rsd.is_RNA() ) return false;
 	if ( rsd.has_variant_type( chemical::BULGE ) ) return true;
 	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return true;
+	if ( rsd.has_variant_type( REPLONLY ) ) return false; // I assume this is proper.
 	return false;
 }
 

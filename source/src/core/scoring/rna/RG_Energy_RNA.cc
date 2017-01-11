@@ -36,6 +36,7 @@
 
 // C++
 
+using namespace core::chemical;
 using namespace core::chemical::rna;
 
 namespace core {
@@ -165,6 +166,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	Size const atom_num_i ( atom_id.atomno() );
 
 	conformation::Residue const & rsd( pose.residue( i ) );
+	if ( !rsd.has_variant_type( REPLONLY ) ) return;
 	if ( !rsd.is_RNA() ) return;
 
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );

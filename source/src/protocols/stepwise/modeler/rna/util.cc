@@ -108,7 +108,6 @@ minimize_with_constraints( core::pose::Pose & pose, core::kinematics::MoveMap co
 	core::scoring::constraints::add_coordinate_constraints( pose );
 	minimizer.run( pose, mm, *( scorefxn ), options );
 	pose.constraint_set( save_pose_constraints );
-
 }
 
 ////////////////////////////////////////////////May 04, 2011////////////////////////////////////////////////////
@@ -156,17 +155,17 @@ remove_all_variant_types( pose::Pose & pose ){
 		utility::vector1< std::string > target_variants( pose.residue( seq_num ).type().properties().get_list_of_variants() );
 		runtime_assert ( target_variants.size() == pose.residue( seq_num ).type().properties().get_list_of_variants().size() );
 		Size skip_variant_count = 0;
-		for ( Size i = 1; i <= target_variants.size(); i++ ) {
-			runtime_assert ( pose.residue( seq_num ).type().has_variant_type( target_variants[i] ) );
+		for ( auto const & variant : target_variants ) {
+			runtime_assert ( pose.residue( seq_num ).type().has_variant_type( variant ) );
 			bool skip_this_variant = false;
-			if ( target_variants[i] == "LOWER_TERMINUS_VARIANT" ) skip_this_variant = true;
-			if ( target_variants[i] == "UPPER_TERMINUS_VARIANT" ) skip_this_variant = true;
+			if ( variant == "LOWER_TERMINUS_VARIANT" ) skip_this_variant = true;
+			if ( variant == "UPPER_TERMINUS_VARIANT" ) skip_this_variant = true;
 			if ( skip_this_variant ) {
 				skip_variant_count++;
 				continue;
 			}
 			pose::remove_variant_type_from_pose_residue( pose,
-				core::chemical::ResidueProperties::get_variant_from_string( target_variants[i] ), seq_num );
+				core::chemical::ResidueProperties::get_variant_from_string( variant ), seq_num );
 		}
 		runtime_assert( pose.residue( seq_num ).type().properties().get_list_of_variants().size() == skip_variant_count );
 	}
@@ -497,13 +496,13 @@ output_seq_num_list( std::string const & tag, utility::vector1< core::Size > con
 	sort_seq_num_list( sorted_seq_num_list );
 
 	Size seq_num = 1;
-	for ( Size n = 1; n <= sorted_seq_num_list.size(); n++ ) {
+	for ( Size const num : sorted_seq_num_list ) {
 
-		while ( seq_num < sorted_seq_num_list[n] ) {
+		while ( seq_num < num ) {
 			outstream << format::A( 4, " " );
 			seq_num++;
 		}
-		outstream << format::I( 4, sorted_seq_num_list[n] );
+		outstream << format::I( 4, num );
 		seq_num++;
 	}
 
@@ -1024,18 +1023,16 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 	using namespace ObjexxFCL;
 
 	//Consistency_check
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
-
-		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
+	for ( auto const & rsd : pose ) {
+		if ( !rsd.type().is_RNA() ) continue;
 
 		// these are actually redundant with virtual 2'-OH atom-wise check below.
-		if ( pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-		if ( pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_RIBOSE ) ) continue;
+		if ( rsd.type().has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
+		if ( rsd.type().has_variant_type( chemical::VIRTUAL_RIBOSE ) ) continue;
 
 		// allow for 2'-OH virtualization during packing. Decide during packer task setup, not in here.
-		// if ( pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) continue;
+		// if ( rsd.type().has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) continue;
 
-		core::conformation::Residue const & rsd = pose.residue( seq_num );
 		Size const at = rsd.first_sidechain_atom();
 		runtime_assert ( rsd.type().atom_name( at ) == " O2'" );
 	}

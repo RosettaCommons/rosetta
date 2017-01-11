@@ -113,15 +113,15 @@ void RNA_IdealCoord::apply_coords(
 	utility::vector1< TorsionID > saved_torsion_id;
 	utility::vector1< Real > saved_torsions;
 	if ( keep_backbone_torsion ) {
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  BETA    ) );
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::CHI, 1       ) ); //CHI
-		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::CHI, 4       ) ); //O2H
-		saved_torsion_id.emplace_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
-		saved_torsion_id.emplace_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
+		saved_torsion_id.emplace_back( seqpos,   id::BB,  ALPHA   );
+		saved_torsion_id.emplace_back( seqpos,   id::BB,  BETA    );
+		saved_torsion_id.emplace_back( seqpos,   id::BB,  GAMMA   );
+		saved_torsion_id.emplace_back( seqpos,   id::BB,  EPSILON );
+		saved_torsion_id.emplace_back( seqpos,   id::BB,  ZETA    );
+		saved_torsion_id.emplace_back( seqpos,   id::CHI, 1       ); //CHI
+		saved_torsion_id.emplace_back( seqpos,   id::CHI, 4       ); //O2H
+		saved_torsion_id.emplace_back( seqpos-1, id::BB,  ZETA    );
+		saved_torsion_id.emplace_back( seqpos+1, id::BB,  ALPHA   );
 		for ( auto const & tid : saved_torsion_id ) {
 			bool const is_exists = is_torsion_exists( pose, tid );
 			if ( is_exists ) {

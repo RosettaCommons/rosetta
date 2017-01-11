@@ -208,8 +208,8 @@ CarbonHBondEnergy::path_distance_OK(
 	Size const ii,
 	Size const jj
 ) const {
-	Size const & i( rsd1.seqpos() );
-	Size const & j( rsd2.seqpos() );
+	Size const i( rsd1.seqpos() );
+	Size const j( rsd2.seqpos() );
 	// std::cout << i << " " << j << " " << ii << " " << jj << std::endl;
 	if ( i == j && Size( rsd1.path_distance(ii,jj) ) <= path_dist_cutoff_ ) return false;
 	else if ( rsd1.is_bonded( rsd2 ) ) {
@@ -231,9 +231,7 @@ CarbonHBondEnergy::res_res_carbon_hbond_one_way(
 	Real & bb_sc,
 	Real & sc_sc
 ) const {
-
 	Real res_res_energy( 0.0 ), energy( 0.0 );
-
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
 	for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
@@ -513,16 +511,14 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 
 	if ( !path_distance_OK( don_rsd, acc_rsd, don_atm, acc_atm ) ) return false; // Look more than four atoms away.
 
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 	//No virtual atom seem to reach to point, probably becuase virtual_atom is neither Hpos_apolar nor accpt_atom.
 	//But should still have these checks here just to be safe. [Parin S. (sripakpa@stanford.edu) Jan 11, 2012]
 	if ( acc_rsd.is_virtual( acc_atm ) ) return false;
 	if ( don_rsd.is_virtual( don_atm ) ) return false;
 	if ( don_rsd.is_virtual( don_h_atm) ) return false;
 
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 
 	Vector const & don_h_atm_xyz( don_rsd.atom( don_h_atm ).xyz() );
 	Vector const & don_atm_xyz( don_rsd.atom( don_atm ).xyz() );
@@ -557,7 +553,6 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 				" with energy "<< F(8,3,energy) << " [" << F(8,3,H_A_vector.length()) << " Angstroms; "
 				<< angle_DH_A << " degrees ]" << std::endl;
 		}
-
 
 	} else {
 

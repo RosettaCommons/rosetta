@@ -108,7 +108,6 @@ void RigidBodyStepWiseSampler::init() {
 	add_external_loop_rotamer( x_rotamer );
 
 	StepWiseSamplerOneValueComb::init();
-
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -340,6 +340,7 @@ StepWiseMoveSelector::get_add_or_delete_element( pose::Pose const & pose,
 	utility::vector1< StepWiseMove > swa_moves;
 	if ( choose_random_ ) {
 		if ( numeric::random::rg().uniform() < options_->docking_frequency() ) {
+			TR << "made it" << std::endl;
 			get_docking_add_and_delete_elements( pose, swa_moves ); // docking
 		} else if ( numeric::random::rg().uniform() < options_->from_scratch_frequency() ) {
 			get_from_scratch_add_and_delete_elements( pose, swa_moves );

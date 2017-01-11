@@ -213,7 +213,6 @@ ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & 
 
 	// FOR TESTING
 	//pose.dump_pdb( "pose_after_fix_protein.pdb" );
-
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -222,7 +221,6 @@ ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_po
 	toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	bool do_rosetta_library_domain_check /* = true */ ) const
 {
-
 	using namespace core::pose;
 	using namespace core::id;
 
@@ -234,7 +232,6 @@ ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_po
 
 	core::pose::copydofs::copy_dofs( pose, scratch_pose,
 		atom_id_map, atom_id_domain_map );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

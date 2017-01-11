@@ -263,6 +263,7 @@ sources = {
 	],
 	"public/stepwise/": [
 		"stepwise",
+		"build_full_model",
 		"resample_full_model",
 	],
 	"public/rosetta_scripts": [

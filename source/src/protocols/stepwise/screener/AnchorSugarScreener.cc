@@ -95,14 +95,6 @@ AnchorSugarScreener::check_screen(){
 		// following could be replaced with (pre-instantiated) CopyDofMover -- see below.
 		copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, sugar_screening_pose_, anchor_sugar_modeling_pose );
 
-
-		// DO NOT CHECK IN
-		//   if ( !chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_ ) ) continue;
-
-		// DO NOT CHECK IN.
-		//   if ( atr_rep_checker_with_instantiated_sugar_ &&
-		//      !atr_rep_checker_with_instantiated_sugar_->check_screen( sugar_screening_pose_ ) ) continue;
-
 		// THIS IS THE RIGHT THING TO DO.
 		// This is in here because the anchor sugar models can have slightly shifted bases (not just riboses!) due to a minimization step that
 		// can occur in VirtualRiboseSampler [see the option: do_minimize].

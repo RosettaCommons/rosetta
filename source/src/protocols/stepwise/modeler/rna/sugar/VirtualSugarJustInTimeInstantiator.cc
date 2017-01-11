@@ -131,9 +131,9 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 
 	// definitely need to instantiate & sample sugars if they are about to get involved in chain closure...
 	utility::vector1< Size > cutpoints_closed = figure_out_moving_cutpoints_closed( pose, working_parameters_->working_moving_partition_res() );
-	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
-		check_res.push_back( cutpoints_closed[ n ]     );
-		check_res.push_back( cutpoints_closed[ n ] + 1 );
+	for ( Size const cutpoint_closed : cutpoints_closed ) {
+		check_res.push_back( cutpoint_closed     );
+		check_res.push_back( cutpoint_closed + 1 );
 	}
 
 	if ( options_->allow_rebuild_bulge_mode() && rebuild_bulge_mode_ ) {
@@ -143,8 +143,7 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 	}
 
 	bool success( true );
-	for ( Size n = 1; n <= check_res.size(); n++ ) {
-		Size const i = check_res[ n ];
+	for ( Size const i : check_res ) {
 		success = get_sugar_modeling_set( pose, i );
 		if ( !success ) break;
 	}
@@ -156,7 +155,7 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 VirtualSugarJustInTimeInstantiator::sampled_sugar_index( Size const i ) {
-	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) {
+	for ( Size n = 1; n <= sugar_modeling_sets_.size(); ++n ) {
 		if ( sugar_modeling_sets_[ n ]->moving_res == i ) return n;
 	}
 	return 0;
@@ -334,11 +333,11 @@ VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs_for_ch
 utility::vector1< SugarModelingOP >
 VirtualSugarJustInTimeInstantiator::get_sugar_modeling_sets_for_chainbreak() const {
 	utility::vector1< SugarModelingOP > sets;
-	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) {
-		Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
+	for ( auto const & set : sugar_modeling_sets_ ) {
+		Size const sugar_res = set->moving_res;
 		if ( sugar_res == working_parameters_->working_moving_res()    ) continue;
 		if ( sugar_res == working_parameters_->working_reference_res() ) continue;
-		sets.push_back( sugar_modeling_sets_[ n ] );
+		sets.push_back( set );
 	}
 	return sets;
 }

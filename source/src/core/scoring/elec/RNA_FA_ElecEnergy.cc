@@ -302,21 +302,13 @@ RNA_FA_ElecEnergy::residue_pair_energy_ext(
 	if ( ! rsd1.is_RNA() || ! rsd2.is_RNA() ) { return; }
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	///fpd   env dep
-	/*core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-	hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-	wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-	hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}*/
-
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( rna_elec_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( rna_elec_pair_nblist ) ) );
 	Real dsq, score( 0.0 );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
-	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		score += score_atom_pair( rsd1, rsd2, neighbs[ ii ].atomno1(), neighbs[ ii ].atomno2(), emap, sfxn, neighbs[ ii ].weight(), dsq );
+	for ( auto const & neighb : neighbs ) {
+		score += score_atom_pair( rsd1, rsd2, neighb.atomno1(), neighb.atomno2(), emap, sfxn, neighb.weight(), dsq );
 	}
 	// Nothing done with score, only emap
 }
@@ -405,9 +397,6 @@ RNA_FA_ElecEnergy::score_atom_pair(
 // Sept 5th 2013, implemetnation of an optmized design function only phos-phos interactions are evaluated!
 //////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 void
 RNA_FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
@@ -494,23 +483,19 @@ RNA_FA_ElecEnergy::finalize_total_energy(
 ) const {
 	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
 
-	// Somehow it's true but there's no nblist in there
-	// Try just returning more defensively...
-	//return;
-
 	NeighborList const & nblist
 		( pose.energies().nblist( EnergiesCacheableDataType::RNA_ELEC_NBLIST ) );
 
 	nblist.check_domain_map( pose.energies().domain_map() );
-	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		resvect.push_back( & pose.residue( ii ) );
-	}
+	//utility::vector1< conformation::Residue const * > resvect;
+	//resvect.reserve( pose.total_residue() );
+	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	//	resvect.push_back( & pose.residue( ii ) );
+	//}
 
 	//Real total_score( 0.0 );
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		conformation::Residue const & ires( *resvect[i] );
+	for ( Size i = 1, i_end = pose.size(); i<= i_end; ++i ) {
+		conformation::Residue const & ires = pose.residue( i );
 		for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
 			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
 
@@ -519,28 +504,18 @@ RNA_FA_ElecEnergy::finalize_total_energy(
 			bool const atom1_is_phosphate = is_phosphate_2(ires, ii);
 			debug_assert( atom1_is_base || atom1_is_sugar || atom1_is_phosphate );
 
-			for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-					nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
-				AtomNeighbor const & nbr( *nbr_iter );
-
+			for ( AtomNeighbor const & nbr : nbrs ) {
 				Size const  j( nbr.rsd() );
 				Size const jj( nbr.atomno() );
 
-				conformation::Residue const & jres( *resvect[j] );
-
+				conformation::Residue const & jres = pose.residue( j );
+				
 				bool const atom2_is_base = is_base_2(jres, jj);
 				bool const atom2_is_sugar = is_sugar_2(jres, jj);
 				bool const atom2_is_phosphate = is_phosphate_2(jres, jj);
 				debug_assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
 
-				///fpd   env dep
 				core::Real wt_envdep = 1.0;
-				/*if ( use_env_dep_ ) {
-				hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-				wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-				hbond_set.nbrs(ires.seqpos()), hbond_set.nbrs(jres.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-				}*/
-
 				Real score = nbr.weight() *
 					coulomb().eval_atom_atom_fa_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
 
@@ -557,8 +532,6 @@ RNA_FA_ElecEnergy::finalize_total_energy(
 				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
 					totals[ fa_elec_rna_phos_phos ] += wt_envdep*score;
 				}
-
-				//total_score += wt_envdep*score;
 			}
 		}
 	}
@@ -615,35 +588,27 @@ RNA_FA_ElecEnergy::eval_residue_pair_derivatives(
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( rna_elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
-	///fpd   env dep
-	/*core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-	hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-	wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-	hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}*/
+	for ( auto const & neighb : neighbs ) {
+		Vector const & atom1xyz( rsd1.xyz( neighb.atomno1() ) );
+		Vector const & atom2xyz( rsd2.xyz( neighb.atomno2() ) );
 
-	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		Vector const & atom1xyz( rsd1.xyz( neighbs[ ii ].atomno1() ) );
-		Vector const & atom2xyz( rsd2.xyz( neighbs[ ii ].atomno2() ) );
-
-		Real const at1_charge( rsd1.atomic_charge( neighbs[ ii ].atomno1() ) );
-		Real const at2_charge( rsd2.atomic_charge( neighbs[ ii ].atomno2() ) );
+		Real const at1_charge( rsd1.atomic_charge( neighb.atomno1() ) );
+		Real const at2_charge( rsd2.atomic_charge( neighb.atomno2() ) );
 
 		Vector f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
+		Real const dE_dr_over_r = neighb.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 
 		if ( dE_dr_over_r == 0.0 ) continue;
 
-		bool const atom1_is_base = is_base_2(rsd1, neighbs[ ii ].atomno1());
-		bool const atom1_is_sugar = is_sugar_2(rsd1, neighbs[ ii ].atomno1());
-		bool const atom1_is_phosphate = is_phosphate_2(rsd1, neighbs[ ii ].atomno1());
+		bool const atom1_is_base = is_base_2(rsd1, neighb.atomno1());
+		bool const atom1_is_sugar = is_sugar_2(rsd1, neighb.atomno1());
+		bool const atom1_is_phosphate = is_phosphate_2(rsd1, neighb.atomno1());
 		debug_assert( atom1_is_base || atom1_is_sugar || atom1_is_phosphate );
 
-		bool const atom2_is_base = is_base_2(rsd2, neighbs[ ii ].atomno2());
-		bool const atom2_is_sugar = is_sugar_2(rsd2, neighbs[ ii ].atomno2());
-		bool const atom2_is_phosphate = is_phosphate_2(rsd2, neighbs[ ii ].atomno2());
+		bool const atom2_is_base = is_base_2(rsd2, neighb.atomno2());
+		bool const atom2_is_sugar = is_sugar_2(rsd2, neighb.atomno2());
+		bool const atom2_is_phosphate = is_phosphate_2(rsd2, neighb.atomno2());
 		debug_assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
 
 		Real sfxn_weight = rna_elec_weight( weights, atom1_is_base, atom1_is_sugar, atom1_is_phosphate, atom2_is_base, atom2_is_sugar, atom2_is_phosphate );
@@ -652,10 +617,10 @@ RNA_FA_ElecEnergy::eval_residue_pair_derivatives(
 		Vector f1 = atom1xyz.cross( atom2xyz );
 		f1 *= dE_dr_over_r * sfxn_weight;
 		f2 *= dE_dr_over_r * sfxn_weight;
-		r1_atom_derivs[ neighbs[ ii ].atomno1() ].f1() += f1;
-		r1_atom_derivs[ neighbs[ ii ].atomno1() ].f2() += f2;
-		r2_atom_derivs[ neighbs[ ii ].atomno2() ].f1() -= f1;
-		r2_atom_derivs[ neighbs[ ii ].atomno2() ].f2() -= f2;
+		r1_atom_derivs[ neighb.atomno1() ].f1() += f1;
+		r1_atom_derivs[ neighb.atomno1() ].f2() += f2;
+		r2_atom_derivs[ neighb.atomno2() ].f1() -= f1;
+		r2_atom_derivs[ neighb.atomno2() ].f2() -= f2;
 	}
 }
 
@@ -739,7 +704,6 @@ RNA_FA_ElecEnergy::eval_atom_derivative(
 	// Only use when autoupdating
 	if ( ! pose.energies().use_nblist_auto_update() ) return;
 
-
 	using namespace etable::count_pair;
 
 	// what is my charge?
@@ -760,9 +724,7 @@ RNA_FA_ElecEnergy::eval_atom_derivative(
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::RNA_ELEC_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors(pos1,i) );
 
-	for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
-			it2e=nbrs.end(); it2 != it2e; ++it2 ) {
-		scoring::AtomNeighbor const & nbr( *it2 );
+	for ( scoring::AtomNeighbor const & nbr : nbrs ) {
 		Size const pos2( nbr.rsd() );
 		Size const j( nbr.atomno() );
 

@@ -89,6 +89,7 @@ PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name
 	for ( std::string const & filename : filenames ) {
 		if ( filename.size() < 5 ) continue;
 		if ( filename.substr(  filename.size()-4, 4 ) != ".out" ) continue;
+		
 		std::string const full_filename = dir_name + "/" + filename ;
 		TR.Debug << TR.Magenta << "Reading in file: " << full_filename << TR.Reset << std::endl;
 
@@ -97,8 +98,7 @@ PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name
 		silent_file_data->set_verbose( false );
 		silent_file_data->read_file( full_filename );
 		TR.Debug << TR.Magenta << "Number of models: " << silent_file_data->size() << TR.Reset << std::endl;
-		std::string const sequence = silent_file_data->begin()->one_letter_sequence();
-		library_map_[ sequence ] = silent_file_data;
+		library_map_[ silent_file_data->begin()->one_letter_sequence() ] = silent_file_data;
 	}
 }
 
@@ -113,8 +113,8 @@ bool
 PrecomputedLibraryMover::has_precomputed_move( core::pose::Pose const & pose ) const {
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
-	for ( Size i = 1; i <= res_list.size(); i++ ) {
-		if ( !sample_res.has_value( res_list[ i ] ) ) return false;
+	for ( Size const res : res_list ) {
+		if ( !sample_res.has_value( res ) ) return false;
 	}
 	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) ) return false;

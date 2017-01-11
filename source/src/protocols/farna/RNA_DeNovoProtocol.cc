@@ -457,12 +457,9 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
 
 	runtime_assert( options_->use_chem_shift_data() );
 
-	pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
-
+	pose::Pose chem_shift_pose = const_pose; //HARD COPY SLOW!
 	core::scoring::ScoreFunctionOP temp_scorefxn( new ScoreFunction );
-
 	temp_scorefxn->set_weight( rna_chem_shift  , 1.00 );
-
 	(*temp_scorefxn)(chem_shift_pose);
 
 	EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();

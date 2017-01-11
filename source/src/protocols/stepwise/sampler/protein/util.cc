@@ -180,8 +180,6 @@ do_set_xyz( pose::Pose const & pose, Size const i, pose::Pose & scratch_pose, Si
 	} else if ( pose.residue_type(i).has( " CB " ) ) {
 		scratch_pose.set_xyz( NamedAtomID( "2HA ", i_scratch), stub.global2local( pose.xyz( NamedAtomID( " CB ", i) ) ) );
 	}
-
-
 }
 
 
@@ -190,7 +188,7 @@ do_set_xyz( pose::Pose const & pose, Size const i, pose::Pose & scratch_pose, Si
 ////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 void
-generate_beta_database_test(){
+generate_beta_database_test() {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -324,8 +322,8 @@ generate_beta_database_test(){
 	using namespace protocols::stepwise::modeler;
 	PoseList const & pose_list = stepwise_clusterer.clustered_pose_list();
 
-	for ( PoseList::const_iterator it = pose_list.begin(), end = pose_list.end(); it != end; ++it ) {
-		pose = *(it->second);
+	for ( auto const & elem : pose_list ) {
+		pose = *(elem.second);
 		Stub stub1_forward( pose.xyz( NamedAtomID( " N  ", 1) ),pose.xyz( NamedAtomID( " CA ", 1) ),pose.xyz( NamedAtomID( " C  ", 1) ));
 		Stub stub1_reverse( pose.xyz( NamedAtomID( " C  ", 1) ),pose.xyz( NamedAtomID( " CA ", 1) ),pose.xyz( NamedAtomID( " N  ", 1) ));
 
@@ -336,7 +334,6 @@ generate_beta_database_test(){
 		out << "A N C " <<  Jump( stub1_forward, stub2_reverse ) << std::endl;
 		out << "A C N " <<  Jump( stub1_reverse, stub2_forward ) << std::endl;
 		out << "A C C " <<  Jump( stub1_reverse, stub2_reverse ) << std::endl;
-
 	}
 
 	out.close();

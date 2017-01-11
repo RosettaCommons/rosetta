@@ -187,14 +187,24 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_sc(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose) const
 {
+	if ( acc_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( acc_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 		Size start (1);
+		if ( acc_rsd.is_virtual( acc_atm ) ) continue;
+		if ( acc_rsd.is_repulsive( acc_atm ) ) continue;
+		
 		if ( acc_rsd.atom_is_backbone(acc_atm) ) { start = occ_rsd.first_sidechain_atom(); }
 
 		for ( Size occ_atm = start; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
+			
 			//Important NOTE. I originally had the code in the following function
 			// written out inside this loop -- and packing was faster.
 			// Perhaps something to do with inlining or compiler optimization.
@@ -217,16 +227,26 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_sc(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose) const
 {
+	if ( don_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( don_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
 	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
+		if ( don_rsd.is_virtual( don_h_atm ) ) continue;
+		if ( don_rsd.is_repulsive( don_h_atm ) ) continue;
+		
 		Size start (1);
 
 		if ( don_rsd.atom_is_backbone(don_h_atm) ) { start = occ_rsd.first_sidechain_atom(); }
 
 		for ( Size occ_atm = start; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
+			
 			//Important NOTE. I originally had the code in the following function
 			// written out inside this loop -- and packing was faster.
 			// Perhaps something to do with inlining or compiler optimization.
@@ -265,12 +285,23 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_bb_b
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose) const
 {
+	if ( acc_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( acc_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
+		if ( acc_rsd.is_virtual( acc_atm ) ) continue;
+		if ( acc_rsd.is_repulsive( acc_atm ) ) continue;
+		
 		if ( !acc_rsd.atom_is_backbone(acc_atm) ) continue;
 
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
+		
 			if ( !occ_rsd.atom_is_backbone(occ_atm) ) continue;
 
 			//Important NOTE. I originally had the code in the following function
@@ -296,13 +327,24 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_bb_bb(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose) const
 {
+	if ( don_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( don_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
 	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
+		if ( don_rsd.is_virtual( don_h_atm ) ) continue;
+		if ( don_rsd.is_repulsive( don_h_atm ) ) continue;
+		
 		if ( !don_rsd.atom_is_backbone(don_h_atm) ) continue;
 
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
+		
 			if ( !occ_rsd.atom_is_backbone(occ_atm) ) continue;
 
 			//Important NOTE. I originally had the code in the following function
@@ -329,12 +371,22 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose ) const
 {
+	if ( don_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( don_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
 	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
+		if ( don_rsd.is_virtual( don_h_atm ) ) continue;
+		if ( don_rsd.is_repulsive( don_h_atm ) ) continue;
+		
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
+			
 			//Important NOTE. I originally had the code in the following function
 			// written out inside this loop -- and packing was faster.
 			// Perhaps something to do with inlining or compiler optimization.
@@ -359,11 +411,21 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way(
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose ) const
 {
+	if ( acc_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( acc_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
+		if ( acc_rsd.is_virtual( acc_atm ) ) continue;
+		if ( acc_rsd.is_repulsive( acc_atm ) ) continue;
+		
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
+			
 			//Important NOTE. I originally had the code in the following function
 			// written out inside this loop -- and packing was faster.
 			// Perhaps something to do with inlining or compiler optimization.
@@ -603,6 +665,11 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	HBondDerivs & deriv /* = DUMMY_DERIVS */,
 	HBEvalTuple & hbe /* = HBEvalTuple() */
 ) const {
+	if ( don_rsd.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( don_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
+	
 	//Why do we need to send in the pose and the residue stuff?
 	// Well, the pose has info on backbone H-bonds.
 	// and, during design, the residue type doesn't actually
@@ -615,6 +682,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	if ( occ_rsd.is_virtual( occ_atm ) ) return;
 	if ( occ_rsd.is_repulsive( occ_atm ) ) return;
 	if ( don_rsd.is_virtual( don_h_atm ) ) return;
+	// AMW: comment out if we are ever hit a case where we evaluate this term -- it could happen!
 	runtime_assert( !don_rsd.is_repulsive( don_h_atm ) );
 
 	debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
@@ -734,6 +802,11 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	HBondDerivs & deriv /* = DUMMY_DERIV2D */,
 	HBEvalTuple & hbe /* = HBEvalTuple() */
 ) const {
+	if ( acc_rsd.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( acc_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
+	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
+	
 	//Why do we need to send in the pose and the residue stuff?
 	// Well, the pose has info on backbone H-bonds.
 	// and, during design, the residue type doesn't actually
@@ -901,6 +974,9 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_intra(
 	pose::Pose const & pose,
 	bool const just_RNA /* legacy */ ) const
 {
+	if ( rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return res_solE;
 
@@ -909,7 +985,12 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_intra(
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
 	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
+		if ( don_rsd.is_virtual( don_h_atm ) ) continue;
+		if ( don_rsd.is_repulsive( don_h_atm ) ) continue;
+		
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
 			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm) ) continue;
 
 			get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd, occ_atm, occ_rsd, pose, energy );
@@ -927,7 +1008,9 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_intra(
 	pose::Pose const & pose,
 	bool const just_RNA /* legacy */ ) const
 {
-
+	if ( rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Real res_solE( 0.0 ), energy( 0.0 );
 	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return res_solE;
 
@@ -935,7 +1018,12 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_intra(
 	conformation::Residue const & occ_rsd=rsd;
 
 	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
+		if ( acc_rsd.is_virtual( acc_atm ) ) continue;
+		if ( acc_rsd.is_repulsive( acc_atm ) ) continue;
+		
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+			if ( occ_rsd.is_virtual( occ_atm ) ) continue;
+			if ( occ_rsd.is_repulsive( occ_atm ) ) continue;
 			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm) ) continue;
 
 			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd, occ_atm, occ_rsd, pose, energy);
@@ -957,9 +1045,15 @@ GeometricSolEnergyEvaluator::eval_atom_energy(
 	Real total_energy( 0.0 );
 
 	conformation::Residue const & current_rsd( pose.residue( atom_id.rsd() ) );
+	if ( current_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( current_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	
 	Size const i( atom_id.rsd() );
 	Size const current_atm( atom_id.atomno() );
-
+	
+	if ( current_rsd.is_virtual( current_atm ) ) return 0.0;
+	if ( current_rsd.is_repulsive( current_atm ) ) return 0.0;
+	
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 	for ( utility::graph::Graph::EdgeListConstIter
@@ -972,10 +1066,15 @@ GeometricSolEnergyEvaluator::eval_atom_energy(
 		if ( i == j ) continue;
 
 		conformation::Residue const & other_rsd( pose.residue( j ) );
-
+		if ( other_rsd.has_variant_type( chemical::REPLONLY ) ) continue;
+		if ( other_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
+		
 		// If this atom is a donor, go over heavy atoms in other residue.
 		if ( current_rsd.atom_is_polar_hydrogen( current_atm ) ) {
 			for ( Size m = 1; m <= other_rsd.nheavyatoms(); m++ ) {
+				if ( other_rsd.is_virtual( m ) ) continue;
+				if ( other_rsd.is_repulsive( m ) ) continue;
+				
 				Real energy( 0.0 );
 				get_atom_atom_geometric_solvation_for_donor( current_atm, current_rsd,
 					m, other_rsd, pose, energy );
@@ -986,6 +1085,9 @@ GeometricSolEnergyEvaluator::eval_atom_energy(
 		// If this atom is an acceptor, go over heavy atoms in other residue.
 		if (  current_rsd.heavyatom_is_an_acceptor( atom_id.atomno() ) ) {
 			for ( Size m = 1; m <= other_rsd.nheavyatoms(); m++ ) {
+				if ( other_rsd.is_virtual( m ) ) continue;
+				if ( other_rsd.is_repulsive( m ) ) continue;
+				
 				Real energy( 0.0 );
 				get_atom_atom_geometric_solvation_for_acceptor( current_atm, current_rsd,
 					m, other_rsd, pose, energy );
@@ -1073,6 +1175,8 @@ GeometricSolEnergyEvaluator::eval_intrares_derivatives(
 ) const {
 	if ( just_RNA && !rsd.is_RNA() ) return;
 	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return;
+	if ( rsd.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
 
 	Real energy( 0.0 );
 	hbonds::HBondDerivs deriv;
@@ -1081,8 +1185,12 @@ GeometricSolEnergyEvaluator::eval_intrares_derivatives(
 	Real const weighted_energy = -1.0 * geom_sol_intra_weight;
 
 	for ( Size ii = 1; ii <= rsd.natoms(); ii++ ) {
+		if ( rsd.is_virtual( ii ) ) continue;
+		if ( rsd.is_repulsive( ii ) ) continue;
 		for ( Size jj = (ii+1); jj <= rsd.natoms(); jj++ ) {
-
+			if ( rsd.is_virtual( jj ) ) continue;
+			if ( rsd.is_repulsive( jj ) ) continue;
+			
 			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair( rsd, rsd, ii, jj) ) continue;
 
 			if ( atom_is_heavy( rsd, jj ) ) {
@@ -1119,6 +1227,11 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const {
+	if ( ires.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( ires.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
+	if ( jres.has_variant_type( chemical::REPLONLY ) ) return;
+	if ( jres.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
+
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -1132,6 +1245,11 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 		Size const ii = neighb.atomno1();
 		Size const jj = neighb.atomno2();
 
+		if ( ires.is_virtual( ii ) )  continue;
+		if ( ires.is_repulsive( ii ) )  continue;
+		if ( jres.is_virtual( jj ) )  continue;
+		if ( jres.is_repulsive( jj ) )  continue;
+		
 		if ( atom_is_heavy( jres, jj ) ) {
 			if ( ires.atom_is_polar_hydrogen( ii ) ) {
 				get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy, update_deriv, deriv, hbe_type );
@@ -1163,6 +1281,11 @@ GeometricSolEnergyEvaluator::residue_pair_energy_ext(
 	pose::Pose const & pose
 ) const
 {
+	if ( rsd1.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( rsd1.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+	if ( rsd2.has_variant_type( chemical::REPLONLY ) ) return 0.0;
+	if ( rsd2.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
+
 	Real score( 0.0 );
 	Real energy( 0.0 );
 
@@ -1174,7 +1297,12 @@ GeometricSolEnergyEvaluator::residue_pair_energy_ext(
 	for ( auto const & neighb : neighbs ) {
 		m = neighb.atomno1();
 		n = neighb.atomno2();
-
+		
+		if ( rsd1.is_virtual( m ) )  continue;
+		if ( rsd1.is_repulsive( m ) )  continue;
+		if ( rsd2.is_virtual( n ) )  continue;
+		if ( rsd2.is_repulsive( n ) )  continue;
+		
 		if ( atom_is_heavy( rsd2, n ) ) {
 			if ( rsd1.atom_is_polar_hydrogen( m ) ) {
 				get_atom_atom_geometric_solvation_for_donor( m, rsd1, n, rsd2, pose, energy );
@@ -1287,7 +1415,9 @@ GeometricSolEnergyEvaluator::precalculate_bb_bb_energy_for_design(
 
 	for ( Size i = 1; i <= total_residue; i++ ) {
 		conformation::Residue const & res_i( pose.residue( i ) );
-
+		if ( res_i.has_variant_type( chemical::REPLONLY ) ) continue;
+		if ( res_i.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
+		
 		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
@@ -1296,7 +1426,9 @@ GeometricSolEnergyEvaluator::precalculate_bb_bb_energy_for_design(
 			Size j( (*iter)->get_other_ind( i ) );
 
 			conformation::Residue const & res_j( pose.residue( j ) );
-
+			if ( res_j.has_variant_type( chemical::REPLONLY ) ) continue;
+			if ( res_j.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
+	
 			//only need to do it one way since will sample the reverse when res_i is at j
 			precalculated_bb_bb_energy += geometric_sol_one_way_bb_bb(res_i, res_j, pose);
 		}

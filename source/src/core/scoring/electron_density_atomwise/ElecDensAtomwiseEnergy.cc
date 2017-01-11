@@ -138,10 +138,6 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 		// calebgeniesse: need to figure out a smarter way to decide when to recompute score
 		//                for now, just always recompute
 		get_density_map().is_score_precomputed( pose.annotated_sequence() == pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() );
-		// AMW; I think the above argument is actually fine, certainly for the resampling case
-		// Maybe we should have a flag guarantee_pose_sequence_constant === no renormalization
-		// could possibly be needed
-		// amw ok I did that
 	}
 	//Pre-calculate the normalization factor and the correlation per
 	//atom
@@ -191,8 +187,8 @@ ElecDensAtomwiseEnergy::eval_atom_derivative(
 	Vector & F1,
 	Vector & F2
 ) const {
-	core::Size const &rsd_id = id.rsd();
-	core::Size const &atm_id = id.atomno();
+	core::Size const rsd_id = id.rsd();
+	core::Size const atm_id = id.atomno();
 
 	// derivatives only defined for (non-VRT) heavyatoms
 	if ( pose.residue( rsd_id ).aa() == core::chemical::aa_vrt ) return;

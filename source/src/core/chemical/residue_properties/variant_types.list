@@ -84,6 +84,7 @@ PHOSPHONATE_UPPER_VARIANT  # for terminal amino phosphonic acids
 # NUCLEIC-ACID-SPECIFIC VARIANTS
 VIRTUAL_DNA_PHOSPHATE
 VIRTUAL_PHOSPHATE # in wide use for RNA -- 'default' 5' ending for fragment assembly & stepwise
+REPL_PHOSPHATE # in wide use for RNA to represent steric but 'unstructured' atoms
 VIRTUAL_RIBOSE    # in use for RNA during stepwise assembly
 
 VIRTUAL_BB               # useful for docking nucleobases

@@ -361,7 +361,7 @@ MMTReceiver::receive_new_job()
 
 	StateAndSequencePair job_ssp = std::make_pair( sid.state_index, seqstring );
 	curr_gen_jobs_[ job_ssp ] = job;
-	running_jobs_.emplace_back(std::make_pair( job_ssp, job ) );
+	running_jobs_.emplace_back( job_ssp, job );
 	++curr_njobs_running_;
 
 }

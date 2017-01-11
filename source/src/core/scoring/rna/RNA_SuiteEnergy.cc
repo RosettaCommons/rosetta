@@ -64,6 +64,9 @@
 namespace core {
 namespace scoring {
 namespace rna {
+	
+using namespace core::chemical;
+	
 /// @details This must return a fresh instance,
 /// never an instance already in use
 methods::EnergyMethodOP
@@ -128,6 +131,9 @@ RNA_SuiteEnergy::residue_pair_energy(
 	ScoreFunction const & scorefxn,
 	EnergyMap & emap
 ) const {
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
 	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_->eval_score( rsd1, rsd2, pose ) ) {
 		emap[ rna_suite ]       += rna_suite_potential_->get_score();
 	}
@@ -148,7 +154,9 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	utility::vector1<DerivVectorPair> & r1_atom_derivs,
 	utility::vector1<DerivVectorPair> & r2_atom_derivs
 ) const {
-
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
 	eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[rna_suite], r1_atom_derivs, r2_atom_derivs, rna_suite_potential_ );
 	eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[suiteness_bonus], r1_atom_derivs, r2_atom_derivs, rna_suite_potential_for_suiteness_bonus_ );
 
@@ -164,7 +172,9 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	utility::vector1<DerivVectorPair> & r2_atom_derivs,
 	RNA_SuitePotentialCOP rna_suite_potential
 ) const {
-
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+	
 	using namespace numeric::conversions;
 	using namespace core::chemical::rna;
 	using namespace core::pose::rna;

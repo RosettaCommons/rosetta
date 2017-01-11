@@ -1,0 +1,10 @@
+-in:file:silent swm_rebuild.out 
+-out:file:silent swm_rebuild_full_model_legacy.out 
+-in:file:native kiss_add_PK_dock_NATIVE_1y26_RNA.pdb 
+-out:overwrite true 
+-score:weights stepwise/rna/rna_res_level_energy4.wts 
+-virtualize_built true 
+-rna:evaluate_base_pairs true 
+-allow_complex_loop_graph 
+-minimize_rna false 
+-caleb_legacy true 

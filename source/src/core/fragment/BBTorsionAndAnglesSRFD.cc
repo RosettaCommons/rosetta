@@ -37,12 +37,12 @@ bool BBTorsionAndAnglesSRFD::apply( pose::Pose& pose, Size seqpos ) const {
 
 	// only move forward with changes if prior ops successful
 	if ( success ) {
-		for ( Size i = 1; i <= angles_.size(); ++i ) {
+		for ( auto const & angle : angles_ ) {
 			pose.conformation().set_bond_angle(
-				core::id::AtomID ((angles_[i].first)[0], seqpos),
-				core::id::AtomID ((angles_[i].first)[1], seqpos ),
-				core::id::AtomID ((angles_[i].first)[2], seqpos ),
-				angles_[i].second
+				core::id::AtomID( ( angle.first )[ 0 ], seqpos ),
+				core::id::AtomID( ( angle.first )[ 1 ], seqpos ),
+				core::id::AtomID( ( angle.first )[ 2 ], seqpos ),
+				angle.second
 			);
 		}
 	}
@@ -73,12 +73,12 @@ bool BBTorsionAndAnglesSRFD::apply( kinematics::MoveMap const & movemap, pose::P
 
 	// insert all angles only if all torsions moveable
 	if ( success2 ) {
-		for ( Size i = 1; i <= angles_.size(); ++i ) {
+		for ( auto const & angle : angles_ ) {
 			pose.conformation().set_bond_angle(
-				core::id::AtomID ((angles_[i].first)[0], seqpos),
-				core::id::AtomID ((angles_[i].first)[1], seqpos ),
-				core::id::AtomID ((angles_[i].first)[2], seqpos ),
-				angles_[i].second
+				core::id::AtomID( ( angle.first )[ 0 ], seqpos ),
+				core::id::AtomID( ( angle.first )[ 1 ], seqpos ),
+				core::id::AtomID( ( angle.first )[ 2 ], seqpos ),
+				angle.second
 			);
 		}
 	}
@@ -89,11 +89,11 @@ bool BBTorsionAndAnglesSRFD::steal( pose::Pose const& pose, Size seqpos ) {
 	runtime_assert( angles_.size() > 0 );
 	bool success ( Parent::steal( pose, seqpos ) );
 
-	for ( Size i=1; i<= angles_.size(); ++i ) {
-		angles_[i].second = pose.conformation().bond_angle(
-			core::id::AtomID ((angles_[i].first)[0], seqpos),
-			core::id::AtomID ((angles_[i].first)[1], seqpos),
-			core::id::AtomID ((angles_[i].first)[2], seqpos) );
+	for ( auto & angle : angles_ ) {
+		angle.second = pose.conformation().bond_angle(
+			core::id::AtomID( ( angle.first )[ 0 ], seqpos ),
+			core::id::AtomID( ( angle.first )[ 1 ], seqpos ),
+			core::id::AtomID( ( angle.first )[ 2 ], seqpos ) );
 	}
 	return success; //can something go wrong ?
 }

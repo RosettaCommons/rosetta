@@ -338,14 +338,14 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 
 	// epsilon and zeta before the cutpoint.
 	for ( Size j = 5; j <=6; ++ j ) {
-		tor_ids.push_back( TorsionID( 1 /*cutpoint*/, BB, j ) );
-		input_tor_ids.push_back( TorsionID( cutpoint, BB, j ) );
+		tor_ids.emplace_back( 1 /*cutpoint*/, BB, j );
+		input_tor_ids.emplace_back( cutpoint, BB, j );
 	}
 
 	// alpha, beta, gamma, delta after the cutpoint?
 	for ( Size j = 1; j <=3; ++ j ) {
-		tor_ids.push_back( TorsionID( 2 /*cutpoint_next*/, BB, j ) );
-		input_tor_ids.push_back( TorsionID( cutpoint_next, BB, j ) );
+		tor_ids.emplace_back( 2 /*cutpoint_next*/, BB, j );
+		input_tor_ids.emplace_back( cutpoint_next, BB, j );
 	}
 
 	//Need to make following user-settable.

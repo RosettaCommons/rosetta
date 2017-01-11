@@ -125,6 +125,10 @@ private:
 
 std::ostream &operator<< ( std::ostream &os, RNA_DeNovoProtocol const &mover );
 
+// AMW: for some reason, no OP/COP defined/no fwd header...
+typedef utility::pointer::shared_ptr< RNA_DeNovoProtocol > RNA_DeNovoProtocolOP;
+typedef utility::pointer::shared_ptr< RNA_DeNovoProtocol const > RNA_DeNovoProtocolCOP;
+
 } //farna
 } //protocols
 

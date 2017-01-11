@@ -113,10 +113,8 @@ LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 	total_energy_ = 0.0;
 	check_for_unexpected_cutpoints( pose );
 
-	for ( Size k = 1; k <= loop_cycles_.size(); k++ ) {
-
+	for ( Size k = 1; k <= loop_cycles_.size(); ++k ) {
 		LoopCycle & loop_cycle = loop_cycles_[ k ];
-
 		// check list of loops, and add up total gaussian variance
 		Real total_gaussian_variance( 0.0 );
 		for ( Size n = 1; n <= loop_cycle.size(); n++ ) {
@@ -328,8 +326,7 @@ LoopGraph::record_loop_cycle(
 
 	utility::vector1< Size > const & loops_from_current_domain = loops_from_domain_[ current_domain ];
 	bool found_loop( false );
-	for ( Size k = 1; k <= loops_from_current_domain.size(); k++ ) {
-		Size const & loop_idx = loops_from_current_domain[ k ];
+	for ( Size const loop_idx : loops_from_current_domain ) {
 		Loop const & loop = loops_[ loop_idx ];
 		if ( loop.landing_domain() != next_domain ) continue;
 
@@ -404,8 +401,7 @@ LoopGraph::look_for_cycles_recursively( Size const current_domain,
 
 	utility::vector1< Size > const & loops_from_current_domain = loops_from_domain_[ current_domain ];
 	TR.Debug << " num loops from domain " << current_domain << ": " << loops_from_current_domain.size() << std::endl;
-	for ( Size k = 1; k <= loops_from_current_domain.size(); k++ ) {
-		Size const & loop_idx = loops_from_current_domain[ k ];
+	for ( Size const loop_idx : loops_from_current_domain ) {
 		Loop const & loop = loops_[ loop_idx ];
 		runtime_assert( !loop_visited_[ loop_idx ] );
 		loop_visited_[ loop_idx ] = true;
@@ -582,8 +578,7 @@ LoopGraph::nmissing( pose::Pose const & pose ) const {
 
 	Size nmissing_total( 0 );
 
-	for ( Size k = 1; k <= loops_.size(); k++ ) {
-		Loop const & loop = loops_[ k ];
+	for ( Loop const & loop : loops_ ) {
 		for ( Size q = loop.takeoff_pos() + 1; q < loop.landing_pos(); q++ ) {
 			if ( input_domain_map[ q ] == 0 && working_res.has_value( q ) /*loop residue*/ ) {
 				nmissing_total++;
@@ -618,8 +613,7 @@ LoopGraph::missing_residues( pose::Pose const & pose ) const{
 	utility::vector1< Size > missing_pos;
 	utility::vector1< Size > const & input_domain_map = pose::full_model_info::const_full_model_info( pose ).input_domain_map();
 	utility::vector1< Size > const & working_res = pose::full_model_info::const_full_model_info( pose ).working_res();
-	for ( Size n = 1; n <= loops_.size(); n++ ) {
-		Loop const & loop = loops_[ n ];
+	for ( Loop const & loop : loops_ ) {
 		for ( Size k = loop.takeoff_pos() + 1; k < loop.landing_pos(); k++ ) {
 			if ( input_domain_map[ k ] == 0 && working_res.has_value( k ) ) missing_pos.push_back( k );
 		}
@@ -641,8 +635,7 @@ LoopGraph::missing_residues( pose::Pose const & pose ) const{
 utility::vector1< utility::vector1< Size > >
 LoopGraph::loop_suites( bool include_free_loops /* = true */ ) const {
 	utility::vector1< utility::vector1< Size > > loop_suites;
-	for ( Size n = 1; n <= loops_.size(); n++ ) {
-		Loop const & loop = loops_[ n ];
+	for ( Loop const & loop : loops_ ) {
 		if ( !include_free_loops && ( loop.takeoff_domain() == 0 || loop.landing_domain() == 0 ) ) continue;
 		utility::vector1< Size > loop_suite_set;
 		for ( Size k = loop.takeoff_pos()+1 ; k < loop.landing_pos(); k++ ) loop_suite_set.push_back( k );

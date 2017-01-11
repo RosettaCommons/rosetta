@@ -24,7 +24,7 @@ namespace interface_ {
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.Interface_.DDPlookup" );
 
-DDPlookup::DDPlookup(std::string filename)
+DDPlookup::DDPlookup(std::string const & filename)
 {
 	core::Size const n_bins ( 50 );
 	core::Real const n_max (20.);

@@ -416,7 +416,7 @@ AtomLevelDomainMap::initialize( core::pose::Pose const & pose,
 		// Pose can store some information on separate domains... check inside.
 		// Any domains that are not claimed as fixed_domains will be assigned domain 0 (i.e., free)
 		fixed_domain = get_fixed_domain_from_full_model_info_const( pose );
-		runtime_assert( allow_insert_res.size() == 0 ); // allow_insert_res is a legacy of rna_denovo with params files.
+		runtime_assert( allow_insert_res.empty() ); // allow_insert_res is a legacy of rna_denovo with params files.
 	}
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {

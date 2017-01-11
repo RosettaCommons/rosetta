@@ -94,8 +94,8 @@ PartitionContactScreener::initialize_evaluator( core::scoring::methods::EnergyMe
 bool
 PartitionContactScreener::check_screen(){
 	bool makes_contact( false ), atr_ok( false ), rep_ok( false );
-	for ( Size n = 1; n <= moving_res_list_.size(); n++ ) {
-		check_screen( moving_res_list_[n], atr_ok, rep_ok );
+	for ( Size const res : moving_res_list_ ) {
+		check_screen( res, atr_ok, rep_ok );
 		if ( !rep_ok ) return false;
 		if (  atr_ok ) makes_contact = true;
 	}
@@ -126,14 +126,10 @@ PartitionContactScreener::check_screen( Size const moving_res, bool & atr_ok, bo
 
 	EnergyMap emap;
 	//Distance const contact_dist( 4.0 );
-	for ( Size m = 1; m <= root_partition_res.size(); m++ ) {
-
-		Size const & i = root_partition_res[ m ];
+	for ( Size const i : root_partition_res ) {
 		core::conformation::Residue const & rsd_i = pose_.residue( i );
 
-		for ( Size n = 1; n <= moving_partition_res.size(); n++ ) {
-
-			Size const & j = moving_partition_res[ n ];
+		for ( Size const j : moving_partition_res ) {
 			core::conformation::Residue const & rsd_j = pose_.residue( j );
 
 			CPCrossoverBehavior crossover = CP_CROSSOVER_3;
@@ -148,6 +144,8 @@ PartitionContactScreener::check_screen( Size const moving_res, bool & atr_ok, bo
 	}
 	rep_ok = true;
 
+	// AMW TODO: instead of multiplying by weights then comparing to x
+	// just compare to a precalculated value, x/weight...
 	Real const weighted_atr_score = fa_atr_weight_ * emap[ fa_atr ];
 	Real const weighted_rep_score = fa_rep_weight_ * emap[ fa_rep ];
 	Real const weighted_contact_score = weighted_atr_score + weighted_rep_score;

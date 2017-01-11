@@ -114,7 +114,7 @@ add_covalent_linkage_helper(
 	// replacing the residue, using first three atoms alone for metals.
 	if ( res.is_metal() ) {
 		utility::vector1< std::pair< std::string, std::string > > atom_pairs;
-		for ( core::Size ia=1; ia<=3; ia++ ) atom_pairs.push_back(std::pair<std::string, std::string>( res.atom_name(ia),new_res.atom_name(ia)) );
+		for ( core::Size ia=1; ia<=3; ia++ ) atom_pairs.emplace_back( res.atom_name(ia),new_res.atom_name(ia) );
 		pose.replace_residue( res_pos, new_res, atom_pairs);
 	} else {
 		pose.replace_residue( res_pos, new_res, true);
@@ -135,7 +135,7 @@ add_covalent_linkage_helper(
 /// @brief: Adds an arbitrary covalent linkage between two atoms (resA_At and resB_At) in two residues (at positions resA_pos and resB_pos).
 /// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
 /// stolen from Florian's EnzConstraintParameters.cc in protocols/toolbox/match_enzdes_utils, and was modified to permit deletion of
-/// unnecessary protons.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE LIST, AND IS CURRENTLY NOT THREADSAFE.
+/// unnecessary protons.
 /// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -202,26 +202,26 @@ find_metalbinding_atoms (
 	utility::vector1< id::AtomID > coordinating_atoms;
 
 	// Loop through all metalbinding residues, skipping the metal itself
+	// AMW: does not necessarily avoid ALL metal positions, just the one in question
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		if ( ir == metal_position ) continue;
 		if ( ! pose.residue( ir ).is_metalbinding() ) continue;
 
 		utility::vector1< Size > binding_atom_list;
 		pose.residue( ir ).get_metal_binding_atoms( binding_atom_list );
-		if ( binding_atom_list.size() == 0 ) continue;
 
-		for ( Size ia = 1, iamax = binding_atom_list.size(); ia <= iamax; ia++ ) {
-			numeric::xyzVector< Real > binding_atom_xyz = pose.residue( ir ).xyz( binding_atom_list[ ia ] );
+		for ( Size const binding_atom : binding_atom_list ) {
+			numeric::xyzVector< Real > binding_atom_xyz = pose.residue( ir ).xyz( binding_atom );
 			Real distsq = metal_xyz.distance_squared( binding_atom_xyz );
 			Real metal_rad = pose.residue( metal_position ).atom_type( 1 ).lj_radius();
-			Real lig_rad = pose.residue( ir ).atom_type( binding_atom_list[ ia ] ).lj_radius();
+			Real lig_rad = pose.residue( ir ).atom_type( binding_atom ).lj_radius();
 			Real distcutoffsq = dist_cutoff_multiplier * ( metal_rad + lig_rad )
 				* dist_cutoff_multiplier * ( metal_rad + lig_rad );
 
 			if ( distsq > distcutoffsq ) continue;
 
-			TR.Debug << "Residue " << ir << " atom " << pose.residue( ir ).atom_name( binding_atom_list[ ia ] ) << " binds the residue " << metal_position << " metal." << std::endl;
-			id::AtomID curatom( binding_atom_list[ia], ir);
+			TR.Debug << "Residue " << ir << " atom " << pose.residue( ir ).atom_name( binding_atom ) << " binds the residue " << metal_position << " metal." << std::endl;
+			id::AtomID curatom( binding_atom, ir );
 			coordinating_atoms.push_back( curatom );
 
 		}
@@ -254,8 +254,8 @@ add_covalent_linkages_to_metal (
 		utility_exit_with_message(message);
 	}
 
-	for ( core::Size ir = 1; ir <= liganding_atomids.size(); ++ir ) {
-		add_covalent_linkage( pose, liganding_atomids[ir].rsd(), metal_position, liganding_atomids[ir].atomno(), 1, remove_hydrogens);
+	for ( auto const & liganding_atomid : liganding_atomids ) {
+		add_covalent_linkage( pose, liganding_atomid.rsd(), metal_position, liganding_atomid.atomno(), 1, remove_hydrogens);
 	}
 
 	return;
@@ -280,13 +280,10 @@ auto_setup_all_metal_bonds(
 
 	TR << "Automatically setting covalent bonds between metal ions and metal-binding residues." << std::endl ;
 
-	core::Size nres = pose.size(); //Residue count
-	if ( nres > 0 ) {
-		for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues.
-			if ( pose.residue(ir).is_metal() ) {
-				utility::vector1< core::id::AtomID > metalbinding_atomids = find_metalbinding_atoms( pose, ir, dist_cutoff_multiplier );
-				add_covalent_linkages_to_metal( pose, ir, metalbinding_atomids, remove_hydrogens);
-			}
+	for ( core::Size ir=1; ir<=pose.size(); ++ir ) { //Loop through all residues.
+		if ( pose.residue(ir).is_metal() ) {
+			utility::vector1< core::id::AtomID > metalbinding_atomids = find_metalbinding_atoms( pose, ir, dist_cutoff_multiplier );
+			add_covalent_linkages_to_metal( pose, ir, metalbinding_atomids, remove_hydrogens);
 		}
 	}
 
@@ -320,9 +317,7 @@ auto_setup_all_metal_constraints(
 
 	TR << "Automatically setting up constraints between metal ions and metal-binding residues." << std::endl ;
 
-	Size const nres = pose.size();
-
-	for ( Size ir = 1; ir <= nres; ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		conformation::Residue const & ir_res = pose.residue( ir );
 		if ( ! ir_res.is_metal() ) continue;
 		Size const ir_nconn = ir_res.n_possible_residue_connections();
@@ -409,8 +404,6 @@ auto_setup_all_metal_constraints(
 			}
 		}
 	} //Loop through all residues
-
-	return;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

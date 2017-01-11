@@ -682,22 +682,15 @@ HBondEnergy::hbond_derivs_1way(
 	// <f1,f2> -- derivative vectors
 	HBondDerivs deriv;
 
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
+	for ( Size const hatm : don_rsd.Hpos_polar() ) {
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 
 		Vector const & hatm_xyz( don_rsd.atom(hatm).xyz() );
 		Vector const & datm_xyz( don_rsd.atom(datm).xyz() );
 
-		for ( chemical::AtomIndices::const_iterator
-				anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-				anum != anume; ++anum ) {
-
-			Size const aatm( *anum );
-
+		for ( Size const aatm : acc_rsd.accpt_pos() ) {
+			
 			if ( acc_rsd.atom_is_backbone(aatm) ) {
 				if ( ! datm_is_bb && exclude_bsc ) continue; // if the donor is sc, the acceptor bb, and exclude_b(a)sc(d)
 			} else {

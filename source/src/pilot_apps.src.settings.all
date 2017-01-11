@@ -186,7 +186,6 @@ sources = {
 
 	# C ######################################################################
 	"pilot/calebgeniesse" : [
-		"build_full_model",
     	],
     	"pilot/carbohydrates" : [
     		"glycan_clash_check",

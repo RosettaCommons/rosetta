@@ -38,7 +38,7 @@ namespace elec {
 /// only once.
 CPRepMapTypeOP
 read_cp_tables_from_db(
-	std::string const &filename
+	std::string const & filename
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

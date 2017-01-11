@@ -87,7 +87,7 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 			s1master = conf->Symmetry_Info()->bb_follows(lower_res);
 			s2master = conf->Symmetry_Info()->bb_follows(upper_res);
 		}
-		disulfides.push_back(std::make_pair(s1master,s2master));
+		disulfides.emplace_back( s1master, s2master );
 
 		// special logic if this crosses a symm boundary
 		if ( r1_is_indep != r2_is_indep ) {
@@ -114,7 +114,7 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 		}
 	} else {
 		// nonsymmetric, do nothing
-		disulfides.push_back(std::make_pair(lower_res,upper_res));
+		disulfides.emplace_back( lower_res, upper_res );
 	}
 
 	core::util:: rebuild_disulfide(pose, disulfides, packer_task, packer_score, mm, minimizer_score);
@@ -154,16 +154,14 @@ rebuild_disulfide( core::pose::Pose & pose,
 	// Quick lookup of whether a residue is a disulfide or not
 	vector1<bool> is_disulf(pose.size(), false);
 
-	for ( vector1<pair<Size, Size> >::const_iterator
-			disulf(disulfides.begin()), end_disulf(disulfides.end());
-			disulf != end_disulf; ++disulf ) {
-		is_disulf[disulf->first] = true;
-		is_disulf[disulf->second] = true;
+	for ( auto const & disulf : disulfides ) {
+		is_disulf[disulf.first] = true;
+		is_disulf[disulf.second] = true;
 
 		// Verify precondition
-		if ( ! core::conformation::is_disulfide_bond(pose.conformation(), disulf->first, disulf->second) ) {
-			TR.Error << "Disulfide bond required between " << disulf->first
-				<< " and " << disulf->second << "." << std::endl;
+		if ( ! core::conformation::is_disulfide_bond(pose.conformation(), disulf.first, disulf.second) ) {
+			TR.Error << "Disulfide bond required between " << disulf.first
+				<< " and " << disulf.second << "." << std::endl;
 			utility_exit();
 		}
 	}
@@ -194,14 +192,12 @@ rebuild_disulfide( core::pose::Pose & pose,
 	}
 
 	// Extend rotamers for the disulfide
-	for ( vector1<pair<Size, Size> >::const_iterator
-			disulf(disulfides.begin()), end_disulf(disulfides.end());
-			disulf != end_disulf; ++disulf ) {
-		packer_task->nonconst_residue_task(disulf->first).and_extrachi_cutoff( 0 );
-		packer_task->nonconst_residue_task(disulf->second).and_extrachi_cutoff( 0 );
-		packer_task->nonconst_residue_task(disulf->first).or_ex1_sample_level(
+	for ( auto const & disulf : disulfides ) {
+		packer_task->nonconst_residue_task(disulf.first).and_extrachi_cutoff( 0 );
+		packer_task->nonconst_residue_task(disulf.second).and_extrachi_cutoff( 0 );
+		packer_task->nonconst_residue_task(disulf.first).or_ex1_sample_level(
 			pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
-		packer_task->nonconst_residue_task(disulf->second).or_ex1_sample_level(
+		packer_task->nonconst_residue_task(disulf.second).or_ex1_sample_level(
 			pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 	}
 
@@ -227,7 +223,6 @@ rebuild_disulfide( core::pose::Pose & pose,
 	// update score
 	pose.update_residue_neighbors();
 	(*minimizer_score)( pose );
-
 }
 
 } // util

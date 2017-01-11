@@ -186,9 +186,7 @@ output_copy_dofs( utility::vector1< Residue_info > copy_dofs ){
 	sort_copy_dofs( copy_dofs ); //maybe sure the list is sorted
 
 	Size seq_num = 1;
-	for ( Size n = 1; n <= copy_dofs.size(); n++ ) {
-		Residue_info residue = copy_dofs[n];
-
+	for ( Residue_info const & residue : copy_dofs ) {
 		while ( seq_num < residue.seq_num ) {
 			TR << A( 4, " " );
 			seq_num++;
@@ -246,12 +244,12 @@ contain_residue_at_seq_num( Size seq_num, utility::vector1 < Residue_info > cons
 	return false;
 }
 
-utility::vector1 < utility::vector1 < Residue_info > >
-create_strand_list( utility::vector1 < Residue_info > const & copy_dofs ){
+utility::vector1< utility::vector1< Residue_info > >
+create_strand_list( utility::vector1< Residue_info > const & copy_dofs ){
 
-	utility::vector1 < utility::vector1 < Residue_info > > residue_group_list;
+	utility::vector1< utility::vector1< Residue_info > > residue_group_list;
 
-	utility::vector1 < Residue_info > Sorted_copy_dofs = copy_dofs;
+	utility::vector1< Residue_info > Sorted_copy_dofs = copy_dofs;
 	//Sort by seq_number, lowest sequence number at the top of the vector list.
 	sort_copy_dofs( Sorted_copy_dofs );
 

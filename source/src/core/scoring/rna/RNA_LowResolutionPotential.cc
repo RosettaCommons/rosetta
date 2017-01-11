@@ -1415,6 +1415,9 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 	// Go over sugar and phosphate oxygen atoms
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 
+		// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+		if ( rsd2.has_variant_type( chemical::REPL_PHOSPHATE ) && m <= 3 ) continue;
+		
 		//  std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
 		Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ]; //atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
 
@@ -1528,6 +1531,9 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 			// Go over sugar and phosphate oxygen atoms
 			for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 
+				// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+				if ( rsd2.has_variant_type( chemical::REPL_PHOSPHATE ) && m <= 3 ) continue;
+
 				//  std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ]; //atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
 
@@ -1570,6 +1576,9 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 		Size n = find_backbone_oxygen_atom( atom_num_i );
 
+		// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+		if ( rsd1.has_variant_type( chemical::REPL_PHOSPHATE ) && n <= 3 ) return;
+		
 		Vector const heavy_atom_i( rsd1.xyz( atom_num_i ) );
 
 		if ( n > 0 ) {
@@ -1680,6 +1689,9 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 
 	// Go over sugar and phosphate oxygen atoms!
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
+
+		// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+		if ( rsd2.has_variant_type( chemical::REPL_PHOSPHATE ) && m <= 3 ) continue;
 
 		if ( rna_backbone_backbone_weight_( m ) < 0.001 ) continue;
 
@@ -1815,6 +1827,9 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 			// Go over sugar and phosphate oxygen atoms!
 			for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 
+				// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+				if ( rsd2.has_variant_type( chemical::REPL_PHOSPHATE ) && m <= 3 ) continue;
+
 				if ( rna_backbone_backbone_weight_( m ) < 0.001 ) continue;
 
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
@@ -1844,6 +1859,9 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 		// SECOND WAY, check if this atom is a backbone oxygen atoms, cycle over other 2'-OH's.
 		Size const n = find_backbone_oxygen_atom( atom_num_i );
+		
+		// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+		if ( rsd1.has_variant_type( chemical::REPL_PHOSPHATE ) && n <= 3 ) return;
 
 		if ( n > 0 && rna_backbone_backbone_weight_( n ) >= 0.001 ) {
 

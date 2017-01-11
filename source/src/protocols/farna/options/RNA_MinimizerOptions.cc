@@ -77,7 +77,6 @@ RNA_MinimizerOptions::initialize_from_command_line() {
 	set_minimizer_use_coordinate_constraints( option[ OptionKeys::rna::farna::minimize::minimizer_use_coordinate_constraints ]() );
 	if ( option[ OptionKeys::rna::farna::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
 	set_minimize_bps( option[ OptionKeys::rna::farna::minimize::minimize_bps ]() ) ;
-
 }
 
 } //options

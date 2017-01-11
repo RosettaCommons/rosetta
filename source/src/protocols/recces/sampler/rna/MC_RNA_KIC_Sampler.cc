@@ -95,12 +95,12 @@ void MC_RNA_KIC_Sampler::init() {
 
 	//Add all the pivot torsions to the list of the torsion IDs so that we have a
 	//full list of the torsions that could be modified by this sampler
-	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, BETA ) );
-	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, GAMMA ) );
-	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_, BB, EPSILON ) );
-	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_, BB, ZETA ) );
-	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_ + 1, BB, BETA ) );
-	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_ + 1, BB, GAMMA ) );
+	TorsionIDs.emplace_back( moving_suite_ + 1, BB, BETA );
+	TorsionIDs.emplace_back( moving_suite_ + 1, BB, GAMMA );
+	TorsionIDs.emplace_back( moving_suite_ + 1, BB, EPSILON ); // wait a minute: chainbreak_suite_? rhiju2016
+	TorsionIDs.emplace_back( moving_suite_ + 1, BB, ZETA );    // wait a minute: chainbreak_suite_? rhiju2016
+	TorsionIDs.emplace_back( chainbreak_suite_ + 1, BB, BETA );
+	TorsionIDs.emplace_back( chainbreak_suite_ + 1, BB, GAMMA );
 
 	// Now find the initial torsions
 	core::Real torsion;

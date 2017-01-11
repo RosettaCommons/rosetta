@@ -70,11 +70,6 @@ namespace electron_density_atomwise {
 using namespace core;
 using namespace basic::options;
 
-//#ifndef WIN32
-//const core::Real FLT_MAX = 1e37;
-//#endif
-
-
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );
 
 
@@ -191,7 +186,7 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 	using core::kinematics::RT;
 	symmOps.clear();
 
-	if ( symList.size() == 0 ) { // no symminfo in header, assume P 1
+	if ( symList.empty() ) { // no symminfo in header, assume P 1
 		symmOps.push_back( RT( numeric::xyzMatrix< core::Real >::identity(),
 			numeric::xyzVector< core::Real >( 0.0, 0.0, 0.0 ) ) );
 	}
@@ -1169,7 +1164,7 @@ ElectronDensityAtomwise::atom_gradient( core::pose::Pose const & pose, core::Siz
 }
 
 ///////////////////////////////////////////////////////////////////////////
-ElectronDensityAtomwise &get_density_map() {
+ElectronDensityAtomwise & get_density_map() {
 	static ElectronDensityAtomwise theDensityMap;
 
 	if ( !theDensityMap.isMapLoaded() ) {

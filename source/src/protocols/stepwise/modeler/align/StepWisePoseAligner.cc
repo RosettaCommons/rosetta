@@ -128,8 +128,8 @@ StepWisePoseAligner::superimpose_recursively( pose::Pose & pose,
 	}
 
 	utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
-		superimpose_recursively( *( other_pose_list[ n ] ), rmsd_over_all, natoms_over_all );
+	for ( PoseOP const & other_pose : other_pose_list ) {
+		superimpose_recursively( *other_pose, rmsd_over_all, natoms_over_all );
 	}
 }
 
@@ -255,8 +255,8 @@ StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const 
 
 		bool found_it( false );
 		std::pair< int, char > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain( res_list[ n ] );
-		Size const & resnum( resnum_and_chain.first );
-		Size const & chain( resnum_and_chain.second );
+		Size const resnum( resnum_and_chain.first );
+		Size const chain( resnum_and_chain.second );
 		if ( reference_full_model_parameters.has_conventional_residue( resnum, chain ) ) {
 			Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain );
 			if ( reference_pose_res_list.has_value( reference_resnum ) ) {
@@ -282,8 +282,7 @@ StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ){
 	if ( res_list.size() == 0 ) return; // special case -- blank pose.
 
 	utility::vector1< Size > calc_rms_res;
-	for ( Size i = 1; i <= rmsd_res_in_pose_.size(); i++ ) {
-		Size const & n = rmsd_res_in_pose_[ i ];
+	for ( Size const n : rmsd_res_in_pose_ ) {
 		if ( user_defined_calc_rms_res_.size() > 0 && !user_defined_calc_rms_res_.has_value( n ) ) continue;
 		calc_rms_res.push_back( n );
 	}
@@ -308,8 +307,7 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 
 	calc_rms_atom_id_map.clear();
-	for ( Size k = 1; k <= calc_rms_res.size(); k++ ) {
-		Size const n = calc_rms_res[ k ];
+	for ( Size const n : calc_rms_res ) {
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
 				pose.residue_type( n ).atom_name( q ),
@@ -340,15 +338,14 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 		}
 	}
 
-	for ( Size k = 1; k <= calc_rms_suites.size(); k++ ) {
-		Size const n = calc_rms_suites[ k ];
-		for ( Size q = 1; q <= extra_suite_atoms_upper.size(); q++ ) {
-			add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms_upper[ q ],
+	for ( Size const n : calc_rms_suites ) {
+		for ( auto const & extra_suite_atom_upper : extra_suite_atoms_upper ) {
+			add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_upper,
 				n+1, res_list_in_reference[ n+1 ],
 				pose, *reference_pose_local_ );
 		}
-		for ( Size q = 1; q <= extra_suite_atoms_lower.size(); q++ ) {
-			add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms_lower[ q ],
+		for ( auto const & extra_suite_atom_lower : extra_suite_atoms_lower ) {
+			add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_lower,
 				n, res_list_in_reference[ n ],
 				pose, *reference_pose_local_ );
 		}
@@ -486,10 +483,9 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 	FuncOP constraint_func( new FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol ) );
 	//FuncOP constraint_func = new FadeFunc( -0.7, 1.5, 0.8, -1.0, 0.0)) );
 
-	for ( std::map< id::AtomID, id::AtomID >::const_iterator
-			it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
-		id::AtomID const mapped_atom = it->second;
-		ConstraintOP constraint( new CoordinateConstraint ( it->first, id::AtomID(1, my_anchor),
+	for ( auto const & elem : atom_id_map ) {
+		id::AtomID const mapped_atom = elem.second;
+		ConstraintOP constraint( new CoordinateConstraint ( elem.first, id::AtomID(1, my_anchor),
 			reference_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()),
 			constraint_func ) );
 		cst_set->add_constraint( constraint );

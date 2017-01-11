@@ -1025,6 +1025,7 @@ SilentStruct::fill_other_struct_list( pose::Pose const & pose ){
 	}
 
 	utility::vector1< core::pose::PoseOP > const & other_pose_list = core::pose::full_model_info::const_full_model_info( pose ).other_pose_list();
+	tr << "I feel like I have " << other_pose_list.size() << " other poses!" << std::endl;
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
 		SilentStructOP other_struct =  this->clone();
 		other_struct->scoreline_prefix( "OTHER:" ); // prevents confusion when grepping file for "SCORE:"
@@ -1183,9 +1184,9 @@ SilentStruct::add_other_struct( SilentStructOP silent_struct ){
 	// figure out the right order here.
 	Size const new_idx = ObjexxFCL::int_of( silent_struct->get_all_comments().find( "OTHER_POSE" )->second );
 
-	utility::vector1< SilentStructOP >::iterator it, end;
-	for ( it = other_struct_list_.begin(), end = other_struct_list_.end();
-			it != end; ++it ) {
+	auto it = other_struct_list_.begin();
+	auto const end = other_struct_list_.end();
+	for ( ; it != end; ++it ) {
 		Size const list_idx = ObjexxFCL::int_of( (*it)->get_all_comments().find( "OTHER_POSE" )->second );
 		if ( new_idx < list_idx ) break; // insert here.
 	}

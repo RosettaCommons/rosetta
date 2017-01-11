@@ -98,7 +98,6 @@ BaseCentroidScreener::fast_forward( sampler::StepWiseSamplerOP sampler ){
 		RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
 		rigid_body_rotamer.fast_forward_to_next_euler_gamma();
 	}
-
 }
 
 } //screener

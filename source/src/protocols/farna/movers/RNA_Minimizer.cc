@@ -184,7 +184,6 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	scorefxn_->show( TR, pose );
 
 	TR << "RNA minimizer finished in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
-
 }
 
 

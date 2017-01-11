@@ -590,7 +590,7 @@ full_model_size( pose::Pose & pose ){
 void
 update_pose_domain_map_const( Pose const & pose,
 	Size & pose_domain_number,
-	utility::vector1< Size > & pose_domain_map ){
+	utility::vector1< Size > & pose_domain_map ) {
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	for ( Size k = 1; k <= res_list.size(); k++ ) {
@@ -606,7 +606,7 @@ update_pose_domain_map_const( Pose const & pose,
 void
 update_pose_domain_map( Pose & pose,
 	Size & pose_domain_number,
-	utility::vector1< Size > & pose_domain_map ){
+	utility::vector1< Size > & pose_domain_map ) {
 	make_sure_full_model_info_is_setup( pose );
 	update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
 }
@@ -621,7 +621,7 @@ figure_out_pose_domain_map( pose::Pose & pose ){
 
 /////////////////////////////////////////////////////////
 utility::vector1< Size >
-figure_out_pose_domain_map_const( pose::Pose const & pose ){
+figure_out_pose_domain_map_const( pose::Pose const & pose ) {
 
 	utility::vector1< Size > pose_domain_map( const_full_model_info( pose ).size(), 0 );
 	Size pose_domain_number = 1;

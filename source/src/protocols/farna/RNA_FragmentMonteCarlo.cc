@@ -155,7 +155,9 @@ RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 		rna_chunk_library_ = user_input_rna_chunk_library_->clone();
 	} else {
 		rna_chunk_library_ = RNA_ChunkLibraryOP( new RNA_ChunkLibrary( pose ) );
-		if ( options_->disallow_bps_at_extra_min_res() ) rna_chunk_library_->atom_level_domain_map()->disallow_movement_of_input_res( pose );
+		// AMW: fixed a bad bug here! We should disallow movement of extra_min_res input_res
+		// if bps_moves aren't on, as well!
+		if ( !options_->bps_moves() || options_->disallow_bps_at_extra_min_res() ) rna_chunk_library_->atom_level_domain_map()->disallow_movement_of_input_res( pose );
 	}
 
 	if ( rna_base_pair_handler_ == nullptr ) rna_base_pair_handler_ = RNA_BasePairHandlerOP( new RNA_BasePairHandler( pose ) );
@@ -589,9 +591,8 @@ RNA_FragmentMonteCarlo::setup_rna_protein_docking_mover( pose::Pose const & pose
 		}
 	}
 	rnp_docking_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream ) );
-	//rnp_docking_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag ) );
-
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::setup_rigid_body_mover( pose::Pose const & pose, Size const r ){
@@ -616,7 +617,6 @@ RNA_FragmentMonteCarlo::setup_rigid_body_mover( pose::Pose const & pose, Size co
 	jump_change_frequency_ = 0.5; /* up from default of 0.1*/
 
 	TR << " rot_mag: " << rot_mag << "    trans_mag: " << trans_mag << std::endl;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -699,9 +699,8 @@ RNA_FragmentMonteCarlo::randomize_rigid_body_orientations( pose::Pose & pose ){
 		RigidBodyPerturbMover rigid_body_perturb_mover( i, 0.0 /*rot_mag_in*/, translation_magnitude, partner_upstream );
 		rigid_body_perturb_mover.apply( pose );
 	}
-
-
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::randomize_rnp_rigid_body_orientations( pose::Pose & pose ){
@@ -728,7 +727,6 @@ RNA_FragmentMonteCarlo::randomize_rnp_rigid_body_orientations( pose::Pose & pose
 		Real const translation_magnitude( 20.0 );
 		RigidBodyPerturbMover rigid_body_perturb_mover( i /*jump*/, 0.0 /*rotation*/, translation_magnitude );
 		rigid_body_perturb_mover.apply( pose );
-
 	}
 }
 
@@ -779,7 +777,6 @@ RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
 Size
 RNA_FragmentMonteCarlo::figure_out_constraint_separation_cutoff( Size const r, Size const max_dist )
 {
-
 	//Keep score function coarse for early rounds.
 	Real const suppress  = 5.0 / 3.0 * r / rounds_;
 
@@ -888,7 +885,6 @@ RNA_FragmentMonteCarlo::random_jump_trial( pose::Pose & pose ) {
 	if ( do_close_loops_ )  rna_loop_closer_->apply( pose );
 
 	monte_carlo_->boltzmann( pose, move_type );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -915,7 +911,7 @@ RNA_FragmentMonteCarlo::get_rnp_docking_fold_tree( pose::Pose const & pose ) {
 	bool prev_protein = false;
 	utility::vector1< core::Size > rna_protein_jumps;
 
-	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).is_RNA() && prev_protein ) {
 			rna_protein_jumps.push_back( i );
 		} else if ( pose.residue( i ).is_protein() && prev_RNA ) {
@@ -1007,7 +1003,6 @@ RNA_FragmentMonteCarlo::random_chunk_trial( pose::Pose & pose ) {
 	monte_carlo_->boltzmann( pose, "chunk" );
 
 	return true /*did an insertion*/;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

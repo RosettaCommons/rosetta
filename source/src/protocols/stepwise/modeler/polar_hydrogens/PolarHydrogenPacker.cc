@@ -247,7 +247,7 @@ PolarHydrogenPacker::check_hbond_score( Vector const & H_xyz,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size const moving_res, Size const atomno ){
+PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size const moving_res, Size const atomno ) {
 
 	using namespace core::conformation;
 	Distance contact_distance_cutoff_( 3.5 );
