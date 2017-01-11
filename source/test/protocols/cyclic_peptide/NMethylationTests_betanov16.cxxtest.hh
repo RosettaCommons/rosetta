@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file  protocols/cyclic_peptide/NMethylationTests_betanov16.cxxtest.hh
-/// @brief  Unit tests for working with peptides with N-methylation.
+/// @brief  Unit tests for working with peptides with N-methylation with the beta_nov16 scorefunction.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 

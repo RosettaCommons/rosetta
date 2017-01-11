@@ -1327,10 +1327,10 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 		utility_exit_with_message("bad atom1_wts: "+rsd1.name()+" "+rsd1.atom_name(heavyatom1));
 	}
 
-	Real lk_deriv, lk_score, other_lk_score;  // other_lk score needed for bridging water
+	Real lk_deriv(0.0), lk_score(0.0), other_lk_score(0.0);  // other_lk score needed for bridging water
 
 	if ( slim_etable_ ) {
-		Real other_lk_deriv, inv_dis;
+		Real other_lk_deriv(0.0), inv_dis(0.0);
 		etable_->analytic_lk_energy( rsd1.atom( heavyatom1 ), rsd2.atom( heavyatom2 ), lk_score, other_lk_score );
 		etable_->analytic_lk_derivatives( rsd1.atom( heavyatom1 ), rsd2.atom( heavyatom2 ), lk_deriv, other_lk_deriv, inv_dis );
 	} else {
