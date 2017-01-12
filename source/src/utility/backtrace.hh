@@ -35,6 +35,16 @@
 #define MY__has_include( x ) 1
 #endif
 
+// Shared with utility/exit.hh
+#ifndef NORETURN
+#ifdef __GNUC__
+#  define NORETURN __attribute__ ((noreturn))
+#elif __clang__
+#  define NORETURN __attribute__ ((noreturn))
+#else
+#  define NORETURN
+#endif
+#endif
 
 /// @brief Function for unit testing only -- if an assertion failure is hit, throw an exception
 /// instead of exiting.  Don't let me catch you calling this function from anywhere besides a
@@ -141,7 +151,19 @@ print_backtrace( char const * condition ) {
 	return false; // allows use in debug_assert
 }
 
-#define debug_assert(condition) {assert( ( condition ) || print_backtrace( #condition ) ); }
+/// @brief A version of print_backtrace specifically for debug_assert, which
+/// tells the Clang Static Analyzer that we shouldn't continue on if we hit this point.
+inline bool print_backtrace_NR( char const * condition ) NORETURN;
+
+inline
+bool
+print_backtrace_NR( char const * condition ) {
+	print_backtrace( condition );
+	assert(false);
+	abort(); // To make the compiler happy on release-mode builds
+}
+
+#define debug_assert(condition) {assert( ( condition ) || print_backtrace_NR( #condition ) ); }
 
 #else
 // _WIN32, etc.

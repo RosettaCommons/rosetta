@@ -73,13 +73,15 @@
 
 namespace utility {
 
-
+// Shared with utility/backtrace.hh
+#ifndef NORETURN
 #ifdef __GNUC__
 #  define NORETURN __attribute__ ((noreturn))
 #elif __clang__
 #  define NORETURN __attribute__ ((noreturn))
 #else
 #  define NORETURN
+#endif
 #endif
 
 /// @brief Exit with file + line + message + optional status
