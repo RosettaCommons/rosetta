@@ -425,14 +425,23 @@ AntibodyDatabaseManager::load_cdr_poses(
 		bind_vec_constraint(include_clusters, select_statement, col);
 		bind_vec_constraint(exclude_clusters, select_statement, col);
 
-		bind_vec_constraint(options->include_only_pdbs(), select_statement, col);
-		bind_vec_constraint(options->exclude_pdbs(), select_statement, col);
+		utility::vector1<std::string> include_only_pdbs( options->include_only_pdbs() );
+		utility::vector1<std::string> exclude_pdbs( options->exclude_pdbs() );
 
-		bind_vec_constraint(options->include_only_species(), select_statement, col);
-		bind_vec_constraint(options->exclude_species(), select_statement, col);
+		bind_vec_constraint(include_only_pdbs, select_statement, col);
+		bind_vec_constraint(exclude_pdbs, select_statement, col);
 
-		bind_vec_constraint(options->include_only_germlines(), select_statement, col);
-		bind_vec_constraint(options->exclude_germlines(), select_statement, col);
+		utility::vector1<std::string> include_only_species( options->include_only_species() );
+		utility::vector1<std::string> exclude_species( options->exclude_species() );
+
+		bind_vec_constraint(include_only_species, select_statement, col);
+		bind_vec_constraint(exclude_species, select_statement, col);
+
+		utility::vector1<std::string> include_only_germlines( options->include_only_germlines() );
+		utility::vector1<std::string> exclude_germlines( options->exclude_germlines() );
+
+		bind_vec_constraint(include_only_germlines, select_statement, col);
+		bind_vec_constraint(exclude_germlines, select_statement, col);
 
 		//Get Result + Match to Rosetta structure database.  Create PoseOPs for the CDRSet.
 		cppdb::result pdbid_result(basic::database::safely_read_from_database(select_statement));

@@ -101,7 +101,7 @@ Polynomial_1d::check_invariants() const
 
 }
 
-string
+string const &
 Polynomial_1d::name() const
 {
 	return polynomial_name_;

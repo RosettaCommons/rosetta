@@ -416,9 +416,12 @@ public:
 	validate_xml_against_schema( std::string const & xml );
 
 private:
-	bool schema_has_been_set_;
-	xmlSchemaPtr schema_;
-	xmlSchemaValidCtxtPtr schema_validator_;
+	bool schema_has_been_set_ = false;
+	xmlSchemaPtr schema_ = nullptr;
+	// As I don't currently know whether the context can be safely disposed prior
+	//  to disposing of the schema_ itself, we keep the context aroud until we need to destroy it.
+	xmlSchemaParserCtxtPtr schema_parser_context_ = nullptr;
+	xmlSchemaValidCtxtPtr schema_validator_ = nullptr;
 };
 
 
@@ -445,15 +448,12 @@ XMLValidator::validate_xml_against_schema( std::string const & xml )
 }
 
 
-XMLValidatorImpl::XMLValidatorImpl() :
-	schema_has_been_set_( false ),
-	schema_( nullptr ),
-	schema_validator_( nullptr )
-{}
+XMLValidatorImpl::XMLValidatorImpl() = default;
 
 XMLValidatorImpl::~XMLValidatorImpl()
 {
 	xmlSchemaFree( schema_ );
+	xmlSchemaFreeParserCtxt( schema_parser_context_ );
 	xmlSchemaFreeValidCtxt( schema_validator_ );
 }
 
@@ -481,13 +481,14 @@ XMLValidatorImpl::set_schema(  std::string const & xsd_string )
 		return output;
 	}
 
-	xmlSchemaParserCtxtPtr schema_parser_context = xmlSchemaNewDocParserCtxt( xsd_doc );
+	schema_parser_context_ = xmlSchemaNewDocParserCtxt( xsd_doc );
 	//xmlSchemaSetParserErrors( schema_parser_context, handle_xml_error, handle_xml_warning, &handler );
-	schema_ = xmlSchemaParse( schema_parser_context );
+	schema_ = xmlSchemaParse( schema_parser_context_ );
 
 	if ( ! schema_ ) {
 		xmlFreeDoc( xsd_doc );
-		xmlSchemaFreeParserCtxt( schema_parser_context );
+		xmlSchemaFreeParserCtxt( schema_parser_context_ );
+		schema_parser_context_ = nullptr;
 		output.valid( false );
 
 		std::ostringstream oss;

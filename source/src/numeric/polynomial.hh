@@ -60,7 +60,7 @@ public:
 	void
 	check_invariants() const;
 
-	std::string
+	std::string const &
 	name() const;
 
 	Real
