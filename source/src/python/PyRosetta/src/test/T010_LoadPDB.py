@@ -45,3 +45,8 @@ scorefxn(pose3)
 
 pose_fs = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE")
 pose_fs.delete_polymer_residue(2)  # Testing that attached PDB info have right size...
+
+
+import pyrosetta.toolbox
+
+pyrosetta.toolbox.pose_from_rcsb('1brs')

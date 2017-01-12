@@ -31,10 +31,12 @@ from __future__ import print_function
 
 # Imports.
 import os
-import urllib
 
 import rosetta
 import pyrosetta
+
+from pyrosetta.toolbox.rcsb import load_from_rcsb, pose_from_rcsb, load_fasta_from_rcsb
+
 
 #Author: Evan Baugh.
 #Adding it here, since it has been removed from __init__ for some reason.
@@ -253,75 +255,6 @@ def cleanCRYS(pdb_file, olig = 2):
             print( pdb_file, "is not a " + str(int(olig)) + "-mer." )
     else:
         raise IOError("No such file or directory named " + pdb_file)
-
-
-def load_from_rcsb(pdb_code, pdb_filename = None):
-    """
-    Writes PDB data for RCSB data for <pdb_code> into <pdb_filename>. If not
-    specified, outputs file to <pdb_code>.pdb.
-
-    Example:
-        load_from_rcsb("1YY8")
-    See also:
-        Pose
-        pose_from_file
-        pose_from_rcsb
-        pose_from_sequence
-        cleanATOM
-        cleanCRYS
-    """
-    pdb_code = pdb_code.upper()
-    try:
-        temp = urllib.urlretrieve("http://www.rcsb.org/pdb/files/" +
-                                      pdb_code + ".pdb")[0]
-    except:
-        raise IOError("Cannot access the PDB database, please check your " +
-                      " Internet access.")
-    else:
-        if (os.path.getsize(temp) > 1500):
-            # Arbitrarily 1500... else pdb_code was invalid.
-            with open(temp) as f:
-                pdb_data = f.readlines()
-
-            if not pdb_filename:
-                pdb_filename = pdb_code + ".pdb"
-            if os.path.exists(os.getcwd() + '/' + pdb_filename):
-                print( "The file", pdb_filename, "already exists; this file will be overwritten." )
-            with open(pdb_filename, 'w') as f:
-                f.writelines(pdb_data)
-
-            print( "PDB", pdb_code, "successfully loaded from the RCSB into", pdb_filename + '.' )
-            #if auto_clean:
-            #    cleanATOM(pdb_filename)
-        else:
-            raise IOError("Invalid PDB code")
-        os.remove(temp)  # Remove temp file.
-
-
-def pose_from_rcsb(pdb_code, ATOM = True, CRYS = False):
-    """
-    Returns a pose for RCSB PDB <pdb_code>, also writes this data to
-    <pdb_code>.pdb, and optionally calls cleanATOM and/or cleanCRYS
-
-    example:
-        pose = pose_from_rcsb("1YY8")
-    See also:
-        Pose
-        pose_from_file
-        pose_from_sequence
-        load_from_rcsb
-        cleanATOM
-        cleanCRYS
-    """
-    load_from_rcsb(pdb_code)
-    if ATOM:
-        cleanATOM(pdb_code + ".pdb")
-        pdb_code = pdb_code + ".clean"
-    if CRYS:
-        cleanCRYS(pdb_code + ".pdb")
-        pdb_code = pdb_code + ".mono"
-    pose = rosetta.core.import_pose.pose_from_file(pdb_code + ".pdb")
-    return pose
 
 
 def get_secstruct(pose, output=True, space=8, page=80):

@@ -111,12 +111,33 @@ void Context::add_insertion_operator(clang::FunctionDecl const *F)
 clang::FunctionDecl const * Context::global_insertion_operator(clang::CXXRecordDecl const *C)
 {
 	string op_pointer = "std::ostream & (*)(std::ostream &, const " + (C->isStruct() ? string("struct ") : string("class ") ) + class_qualified_name(C) + " &)";
+
 	//outs() << "Looking for operator: " << op_pointer << "\n";
 
 	auto it = insertion_operators.find(op_pointer);
 	if (it != insertion_operators.end()) return it->second;
 
-	//outs() << "Have not found... it\n";
+	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // if operator<< is template it will have different form: std::ostream & (*)(std::ostream &, const A<type-parameter-0-0> &)
+		op_pointer = "std::ostream & (*)(std::ostream &, const " + standard_name(C->getNameAsString()) + "<";  // Note: we do not use `getQualifiedNameAsString` because if argument is templated it string representation will not have namespaces
+		for(uint i=0; i < t->getTemplateArgs().size(); ++i) op_pointer += "type-parameter-0-" + std::to_string(i) + ", ";
+		op_pointer.pop_back();  op_pointer.back() = '>';
+		fix_boolean_types(op_pointer);
+		op_pointer += " &)";
+
+		// outs() << "Looking for operator: " << op_pointer << "\n";
+
+		auto it = insertion_operators.find(op_pointer);
+		if (it != insertion_operators.end()) return it->second;
+	}
+
+	// outs() << "Have not found... it\n";
+
+	// outs() << "All global insertion operators:\n";
+	// for(auto & f : insertion_operators) {
+	// 	outs() << f.first << " -> " << f.second << "\n";
+	// 	//f.second->dump();
+	// }
+
 	return nullptr;
 }
 

@@ -73,6 +73,8 @@ cl::opt<bool> O_single_file("single-file", cl::desc("Concatenate all binder outp
 
 cl::opt<bool> O_trace("trace", cl::desc("Add tracer output for each binded object (i.e. for debugging)"), cl::init(false), cl::cat(BinderToolCategory));
 
+cl::opt<bool> O_verbose("v", cl::desc("Increase verbosity of output"), cl::init(false), cl::cat(BinderToolCategory));
+
 
 class ClassVisitor : public RecursiveASTVisitor<ClassVisitor>
 {

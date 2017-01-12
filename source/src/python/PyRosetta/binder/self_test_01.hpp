@@ -17,6 +17,8 @@
 #include <self_test.incl.hpp>
 //#include <iostream>
 
+class Global {};
+
 namespace aa {
 
 
@@ -28,10 +30,62 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
-
-void foo(std::ostringstream &s)
+template<typename T>
+class A
 {
-	s << std::string("hey...");
+public:
+	A(T const &t) { v = t; }
+
+	T v;
+};
+
+
+
+
+struct X {};
+
+
+template< typename T >
+std::ostream &
+operator <<( std::ostream & stream, A< T > const & a )
+{
+	stream << "A:" << a.v << std::endl;
+	return stream;
+}
+
+
+template<typename T1, typename T2>
+class AA
+{
+public:
+	AA(T1 const &t1, T2 const &t2) { v1 = t1; v2=t2; }
+
+	T1 v1;
+	T2 v2;
+};
+
+template< typename T1, typename T2 >
+std::ostream &
+	operator <<( std::ostream & stream, AA< T1, T2 > const & a )
+{
+	stream << "AA:" << a.v1 << a.v2 << std::endl;
+	return stream;
+}
+
+
+void foo(A<int> a)
+{
+}
+
+void foo_(AA<int, std::string> a)
+{
+}
+
+
+std::ostream &
+operator <<( std::ostream & stream, X & a )
+{
+	return stream;
 }
 
 

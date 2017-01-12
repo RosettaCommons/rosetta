@@ -12,6 +12,7 @@
 
 #include <util.hpp>
 
+#include <binder.hpp>
 #include <enum.hpp>
 #include <type.hpp>
 #include <class.hpp>
@@ -114,7 +115,12 @@ void update_source_file(std::string const &prefix, std::string const &file_name,
 	std::ifstream f(full_file_name);
 	std::string old_code((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
 
-	if( old_code != code ) std::ofstream(full_file_name) << code;
+	if( old_code != code ) {
+		if( O_verbose ) outs() << "Writing " << full_file_name << "\n";
+		std::ofstream(full_file_name) << code;
+	} else {
+		if( O_verbose ) outs() << "File " << full_file_name << " is up-to-date, skipping...\n";
+	}
 }
 
 

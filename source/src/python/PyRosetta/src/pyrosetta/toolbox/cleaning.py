@@ -59,7 +59,7 @@ def cleanATOM( pdb_file , out_file = '', edit = -4 ):
         print('PDB {} successfully cleaned, non-ATOM lines removed\nclean data written to {}'.format(pdb_file, out_file))
         return True
     else:
-        print('No such file or directory named ' + pdb_file)
+        print('cleanATOM: No such file or directory named ' + pdb_file)
         return False
 
 # if you would prefer a simpler call using grep, it looks something like this
