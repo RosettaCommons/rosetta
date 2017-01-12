@@ -2857,7 +2857,7 @@ init_beta_nov16_correction() {
 		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].value(params);
 	}
 	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].value(2.828);
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].value(2.828);
 	}
 
 
