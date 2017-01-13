@@ -28,6 +28,8 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
+#include <utility/thread/ReadWriteMutex.hh>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
@@ -150,17 +152,25 @@ public:
 	chemical::ResidueType const &
 	residue_type() const;
 
-	/////////////////////////////////////////////////////////////////////////////
-	// STATIC data
 private:
-	/////////////////////////////////////////////////////////////////////////////
 
 	typedef std::map< chemical::ResidueType const *, utility::vector1< WaterBuilders > > WaterBuilderMap;
-	static WaterBuilderMap water_builder_map_;
-
 	typedef std::map< chemical::ResidueType const *, utility::vector1< utility::vector1< Real > > > AtomWeightsMap;
+
+	/////////////////////////////////////////////////////////////////////////////
+	// STATIC data
+	/////////////////////////////////////////////////////////////////////////////
+	static WaterBuilderMap water_builder_map_;
 	static AtomWeightsMap atom_weights_map_;
 
+#ifdef MULTI_THREADED
+
+private:
+	static utility::thread::ReadWriteMutex lkball_db_mutex_;
+
+#endif
+
+private:
 	void
 	initialize_residue_type( chemical::ResidueType const & rsd_type ) const;
 

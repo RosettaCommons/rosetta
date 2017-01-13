@@ -38,6 +38,7 @@ void ReadWriteMutex::release_read_lock()
 	assert( read_counter_ > 0 );
 	--read_counter_;
 	if ( read_counter_ == 0 ) {
+		std::lock_guard< std::recursive_mutex > lock( write_lock_ );
 		not_being_read_.notify_one();
 	}
 }

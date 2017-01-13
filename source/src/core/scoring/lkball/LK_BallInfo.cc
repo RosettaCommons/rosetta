@@ -95,6 +95,11 @@ static Real const optimal_water_distance( 2.65 ); /// note that this number is r
 LKB_ResidueInfo::WaterBuilderMap LKB_ResidueInfo::water_builder_map_;
 LKB_ResidueInfo::AtomWeightsMap LKB_ResidueInfo::atom_weights_map_;
 
+#ifdef MULTI_THREADED
+
+utility::thread::ReadWriteMutex LKB_ResidueInfo::lkball_db_mutex_;
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -412,24 +417,23 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 	using namespace conformation;
 	using namespace chemical;
 
-	//debug_assert( residue_type_has_waters( rsd_type ) );
-
-	TR.Trace << "initialize_residue_type: " << rsd_type.name() << std::endl;
+#if defined MULTI_THREADED
+	utility::thread::WriteLockGuard lock( lkball_db_mutex_ );
+#endif
 
 	bool const sidechain_only = !(basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ]());
 
 	ResidueType const * const address( &rsd_type );
-	debug_assert( ! water_builder_map_.count( address ) );
+	if ( water_builder_map_.find( address ) == water_builder_map_.end() || atom_weights_map_.find( address ) == atom_weights_map_.end() ) {
+		TR.Trace << "initialize_residue_type: " << rsd_type.name() << std::endl;
+		water_builder_map_[ address ] = utility::vector1< WaterBuilders >(); // create entry in map
+		utility::vector1< WaterBuilders > & rsd_water_builders( water_builder_map_[ address ] );
+		setup_water_builders_for_residue_type( rsd_type, sidechain_only, rsd_water_builders );
 
-	water_builder_map_[ address ]; // create entry in map
-	utility::vector1< WaterBuilders > & rsd_water_builders( water_builder_map_.find( address )->second );
-
-	setup_water_builders_for_residue_type( rsd_type, sidechain_only, rsd_water_builders );
-
-	atom_weights_map_[ address ];
-	utility::vector1< utility::vector1< Real > > & atom_wts( atom_weights_map_.find( address )->second );
-
-	setup_atom_weights( rsd_type, rsd_water_builders, atom_wts );
+		atom_weights_map_[ address ] = utility::vector1< utility::vector1< Real > >();
+		utility::vector1< utility::vector1< Real > > & atom_wts( atom_weights_map_.find( address )->second );
+		setup_atom_weights( rsd_type, rsd_water_builders, atom_wts );
+	}
 }
 
 void
@@ -497,7 +501,14 @@ LKB_ResidueInfo::build_waters( Residue const & rsd )
 	// waters_ array has already been dimensioned properly
 	ResidueType const * const address( &( rsd.type() ) );
 
-	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
+	WaterBuilderMap::const_iterator it;
+	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
+#endif
+		it = ( water_builder_map_.find( address ) );
+	}
+
 	if ( it == water_builder_map_.end() ) {
 		utility_exit_with_message("LKB_ResidueInfo::initialize has not been called");
 	}
@@ -525,7 +536,14 @@ LKB_ResidueInfo::get_water_builder( conformation::Residue const & rsd , Size hea
 	// waters_ array has already been dimensioned properly
 	ResidueType const * const address( &( rsd.type() ) );
 
-	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
+	WaterBuilderMap::const_iterator it;
+	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
+#endif
+		it = ( water_builder_map_.find( address ) );
+	}
+
 	if ( it == water_builder_map_.end() ) {
 		utility_exit_with_message("LKB_ResidueInfo::initialize has not been called");
 	}
@@ -556,14 +574,28 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 
 	ResidueType const * const address( &rsd );
 
-	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
-	if ( it == water_builder_map_.end() ) {
-		initialize_residue_type( rsd );
-		it = water_builder_map_.find( address );
+	WaterBuilderMap::const_iterator it_wb;
+	AtomWeightsMap::const_iterator it_aw;
+	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
+#endif
+		it_wb = ( water_builder_map_.find( address ) );
+		it_aw = ( atom_weights_map_.find( address ) );
 	}
 
+	if ( it_wb == water_builder_map_.end() || it_aw == atom_weights_map_.end() ) {
+		initialize_residue_type( rsd );
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
+#endif
+		it_wb = ( water_builder_map_.find( address ) );
+		it_aw = ( atom_weights_map_.find( address ) );
+	}
+
+	// now initialize
 	for ( Size i=1; i<= rsd.nheavyatoms(); ++i ) {
-		WaterBuilders const & water_builders( it->second[ i ] );
+		WaterBuilders const & water_builders( it_wb->second[ i ] );
 		if ( water_builders.empty() ) {
 			waters_[i].clear();
 			dwater_datom1_[i].clear();
@@ -578,8 +610,7 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 		}
 	}
 
-	// get the atom_weights_
-	atom_weights_ = atom_weights_map_.find( address )->second;
+	atom_weights_ = it_aw->second;
 }
 
 LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & src ):
@@ -625,8 +656,14 @@ LKB_ResidueInfo::remove_irrelevant_waters(
 
 	ResidueType const * const address( &rsd_type );
 
-	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
-	runtime_assert( it != water_builder_map_.end() );
+	WaterBuilderMap::const_iterator it;
+	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
+#endif
+		it = ( water_builder_map_.find( address ) );
+		runtime_assert( it != water_builder_map_.end() );
+	}
 
 	WaterBuilders const & water_builders( it->second[ heavyatom ] );
 	runtime_assert( water_builders.size() == waters.size() );
@@ -646,6 +683,10 @@ LKB_ResidueInfo::remove_irrelevant_waters(
 void
 LKB_ResidueInfo::reset_arrays_danger_expert_only()
 {
+#if defined MULTI_THREADED
+	utility::thread::WriteLockGuard lock( lkball_db_mutex_ );
+#endif
+
 	water_builder_map_.clear();
 	atom_weights_map_.clear();
 }
