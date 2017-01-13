@@ -142,14 +142,14 @@ SymmetricCycpepAlign::parse_my_tag(
 {
 	bool auto_detect( tag->getOption<bool>("auto_detect_symmetry", "false") );
 	runtime_assert_string_msg(
-		!auto_detect || ( !tag->hasOption("symmetry_repeats") && !tag->hasOption("mirror_symmetry") ),
+		!(auto_detect && (tag->hasOption("symmetry_repeats") || tag->hasOption("mirror_symmetry") )),
 		"Error in protocols::cyclic_peptide::SymmetricCycpepAlign::parse_my_tag(): If the auto_detect_symmetry=\"true\" option is used, then the \"mirror_symmetry\" and \"symmetry_repeats\" options cannot be used."
 	);
 
 	set_auto_detect_symmetry(auto_detect);
 	set_symmetry(
 		tag->getOption<core::Size>( "symmetry_repeats", symmetry_repeats() ),
-		tag->getOption<core::Size>( "mirror_symmetry", mirror_symmetry() )
+		tag->getOption<bool>( "mirror_symmetry", mirror_symmetry() )
 	);
 	set_angle_threshold( tag->getOption<core::Real>("angle_threshold", angle_threshold() ) );
 	set_trim_info(
