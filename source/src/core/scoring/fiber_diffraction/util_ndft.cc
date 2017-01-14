@@ -14,7 +14,7 @@
 
 #include <core/scoring/fiber_diffraction/util_ndft.hh>
 #include <basic/Tracer.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES

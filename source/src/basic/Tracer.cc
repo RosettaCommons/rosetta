@@ -27,7 +27,7 @@
 #include <platform/types.hh>              // for Size
 #include <string>                         // for allocator, operator==, basi...
 #include <utility/CSI_Sequence.hh>        // for CSI_Sequence, CSI_Black
-#include <utility/basic_sys_util.hh>      // for timestamp
+#include <utility/sys_util.hh>      // for timestamp
 #include <utility/string_util.hh>         // for split, string2int, string_s...
 #include <utility/tools/make_vector.hh>   // for make_vector
 #include <utility/vector1.hh>             // for vector1

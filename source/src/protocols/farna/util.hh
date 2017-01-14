@@ -93,7 +93,8 @@ void
 setup_base_pair_constraints(
 	core::pose::Pose & pose,
 	utility::vector1< std::pair< core::Size, core::Size > > const &  pairings,
-	core::Real const suppress_factor = 1.0 );
+	core::Real const scale_factor = 1.0,
+	bool const use_flat_harmonic = false );
 
 void
 setup_coarse_chainbreak_constraints( core::pose::Pose & pose, core::Size const & n );

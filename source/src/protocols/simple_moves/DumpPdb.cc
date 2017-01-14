@@ -27,7 +27,7 @@
 
 #include <utility/io/ozstream.hh>
 
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

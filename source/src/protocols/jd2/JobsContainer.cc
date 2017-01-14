@@ -30,7 +30,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <numeric/random/random_permutation.hh>
 
 // C++ headers

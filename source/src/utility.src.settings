@@ -11,7 +11,6 @@
 
 sources = {
 	"utility": [
-		"basic_sys_util",
 		"backtrace",
 		"Binary_Util",
 		"CSI_Sequence",
@@ -24,6 +23,7 @@ sources = {
 		#"map_util",
 		"mpi_util",
 		"SimulateMPI",
+		"sys_util",
 		"recent_history_queue",
 		"static_database",
 		"string_util",

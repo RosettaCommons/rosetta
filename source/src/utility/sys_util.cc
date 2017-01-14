@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/basic_sys_util.cc
+/// @file   utility/sys_util.cc
 /// @brief  All system functions in utility that have no other home
 /// @author David Kim (dekim@u.washington.edu)
 /// @todo   Break out platform-specific code.
@@ -15,7 +15,7 @@
 
 
 // Unit headers
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 // C++ headers
 #include <cmath>

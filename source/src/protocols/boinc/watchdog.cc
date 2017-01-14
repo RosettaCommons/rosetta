@@ -25,7 +25,7 @@
 // Utility Headers
 #include <utility/io/ozstream.hh>
 
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 // C++ Headers

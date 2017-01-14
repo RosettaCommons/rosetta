@@ -78,6 +78,10 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_KinematicCloser
 ///  P = pivot torsions
 ///  D = driver torsions
 ///
+/// TODO: Generalize to cyclized cutpoints.
+/// TODO: Test that driver torsions vs. pivot torsions agree in cyclic dinucleotide.
+/// TODO: Check possibly incorrect O3' atom.
+///
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {

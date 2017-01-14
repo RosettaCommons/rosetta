@@ -37,7 +37,7 @@ namespace rna {
 
 		//constructor
 		MC_RNA_OneJump( core::pose::Pose const & pose,
-																		core::Size const & jump_num );
+										core::Size const & jump_num );
 
 		//destructor
 		~MC_RNA_OneJump();
@@ -82,9 +82,6 @@ namespace rna {
 		void set_rotation_mag( core::Real const & setting ) {
 			rotation_mag_ = setting;
 		}
-
-		/// @brief Name of the class
-		std::string get_name() const { return "MC_RNA_OneJump"; }
 
 		/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
 		virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_ONE_JUMP; }

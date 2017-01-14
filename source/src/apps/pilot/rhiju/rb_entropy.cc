@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>

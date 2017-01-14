@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/basic_sys_util.hh
+/// @file   utility/sys_util.hh
 /// @brief  All system functions in utility that have no other home
 /// @author David Kim (dekim@u.washington.edu)
 
 
-#ifndef INCLUDED_utility_basic_sys_util_hh
-#define INCLUDED_utility_basic_sys_util_hh
+#ifndef INCLUDED_utility_sys_util_hh
+#define INCLUDED_utility_sys_util_hh
 
 
 // Package headers
@@ -44,4 +44,4 @@ timestamp_short();
 } // namespace utility
 
 
-#endif // INCLUDED_utility_basic_sys_util_HH
+#endif // INCLUDED_utility_sys_util_HH

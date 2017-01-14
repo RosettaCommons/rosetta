@@ -25,7 +25,7 @@
 #include <core/svn_version.hh>
 #include <core/types.hh>
 #include <basic/options/option.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>

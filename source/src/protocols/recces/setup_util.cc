@@ -28,6 +28,7 @@
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
+#include <protocols/farna/util.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/io/ozstream.hh>
@@ -43,9 +44,13 @@ namespace recces {
 
 
 //////////////////////////////////////////////////////////////////////////////
+/// TODO: Unify -- read pose from file, and then fill_full_model_info_from_command_line().
 PoseOP
 recces_pose_setup( options::RECCES_Options const & options )
 {
+
+	/// TODO -- allow user to still use -seq1, -seq2 input but also allow specification of
+	///         RNA secondary structure *from command line*, and get that stored into full_model_info().
 	if ( options.legacy_turner_mode() ) {
 
 		TR << TR.Green << "Assuming RECCES Turner mode, due to specification of -seq1" << std::endl;
@@ -97,24 +102,18 @@ pose_setup_turner(
 core::pose::PoseOP
 pose_setup_from_file( options::RECCES_Options const & options )
 {
+	using namespace core::chemical::rna;
 
-	// PoseOP pose = stepwise::setup::get_pdb_and_cleanup( options.infile() );
+	PoseOP pose = stepwise::setup::get_pdb_and_cleanup( options.infile() );
 	// // needs to accept command-line input -- need to guess sequence info if fasta not specified!
 	// // also -- force sample_res all on if not specified from command-line. [different from stepwise default behavior]
- 	// stepwise::setup::fill_full_model_info_from_command_line( *pose );
-	// stepwise::modeler::fix_up_residue_type_variants( *pose ); //virtualizes phosphates, etc.
-
-	using namespace core::chemical::rna;
-	// Pose setup
-	PoseOP pose( new Pose );
-	// should be starter base pair (e.g., "cg.pdb") -- only 2 residues!
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
-	import_pose::pose_from_file( *pose, *rsd_set_op, options.infile(), core::import_pose::PDB_file);
+	stepwise::setup::fill_full_model_info_from_command_line( *pose );
+	stepwise::modeler::fix_up_residue_type_variants( *pose ); //virtualizes phosphates, etc.
 
 	TR << "Annotated sequence of pose from " << options.infile() << ": " << pose->annotated_sequence() << std::endl;
 
 	// replace this with fold_tree, full_model_info definition, + cleanup_variants
+	// need block_stack option in FullModelSetupFromCommandLine
 	if ( pose->size() == 2 ) {
 	 	kinematics::FoldTree f( 2 );
 	 	f.new_jump( 1, 2, 1 );
@@ -128,6 +127,13 @@ pose_setup_from_file( options::RECCES_Options const & options )
 	 			pose::add_variant_type_to_pose_residue( *pose, BLOCK_STACK_BELOW, n );
 	 		}
 	 	}
+	}
+
+	// Obtains base pairs and constraints from pose
+	if ( options.setup_base_pair_constraints() ) {
+		utility::vector1< std::pair< Size, Size > > pairings;
+		protocols::farna::get_base_pairing_list( *pose, pairings );
+		protocols::farna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
 	}
 
 	return pose;

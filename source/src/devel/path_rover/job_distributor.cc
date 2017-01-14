@@ -105,7 +105,7 @@
 #include "vdw.h"
 
 //Utility Headers
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/gzip_util.hh>
 #include <utility/io/izstream.hh>

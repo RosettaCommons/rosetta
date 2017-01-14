@@ -27,7 +27,7 @@
 #include <core/pose/util.hh>
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>

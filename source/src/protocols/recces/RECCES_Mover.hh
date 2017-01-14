@@ -57,9 +57,6 @@ private:
 	initialize();
 
 	void
-	initialize_sampler( core::pose::Pose const & pose );
-
-	void
 	run_sampler( core::pose::Pose & pose );
 
 	void

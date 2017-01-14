@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/exit.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 // C++ headers
 #include <string>

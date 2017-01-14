@@ -1434,6 +1434,7 @@ test_merge_and_slice_with_two_helix_test_case(  utility::vector1< core::pose::Po
 
 
 ///////////////////////////////////////////////////////////////////
+/// TODO: generalize to cyclized chainbreaks
 utility::vector1< Size >
 figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm ) {
 
@@ -1547,6 +1548,7 @@ figure_out_moving_cutpoints_closed( pose::Pose const & pose,
 }
 
 //////////////////////////////////////////////////////////////////////////////////
+/// TODO: generalize to cyclized chainbreaks.
 void
 figure_out_moving_chain_breaks( pose::Pose const & pose,
 	utility::vector1< Size > const & moving_partition_res,

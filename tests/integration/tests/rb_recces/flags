@@ -1,0 +1,7 @@
+-n_cycle 900
+-rmsd_cutoff 2.0
+-temps 0.5
+-out_prefix prerun
+-s fiber_CG.pdb
+-score:weights stepwise/rna/turner_no_zeros.wts
+-accept_no_op_moves

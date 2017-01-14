@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/RECCES_Mover.cc
-/// @brief
-/// @detailed
+/// @brief Fast Monte Carlo, using MC_Sampler & simulated tempering.
+/// @detailed Mover used by: recces_turner (Fang-Chieh Chou), thermal_sampler (K. Kappel + others)
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -32,6 +32,18 @@
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.recces.RECCES_Mover" );
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/// TODO: The post-processing of the energies from this Mover are carried out with scripts in
+///        tools/recces/ but its very easy to get tripped up with settings. A big help would be
+///        output to disk a JSON file (e.g., "run_info.json") with:
+///
+///         1. The sequence simulated (e.g., ccc_gg), which is otherwise guessed by the python script.
+///         2. score_types & weights (in output order)
+///         3. Jumps & torsions that are moved (TorsionID's would be acceptable) and the angle_ranges (or rmsd_cutoff for jump)
+///         4. For runs that move base pair jump(s), output of xyz.txt
+///         5. Histogram information: histogram_min, histogram_max, histogram_bin_size
+///
 
 using namespace core;
 using namespace utility;
@@ -57,10 +69,7 @@ RECCES_Mover::~RECCES_Mover()
 void
 RECCES_Mover::apply( core::pose::Pose & pose )
 {
-	using namespace core::scoring;
-
-
-	initialize_sampler( pose );
+	sampler_ = sampler::initialize_sampler( pose, *options_, *params_ );
 
 	run_sampler( pose );
 
@@ -87,6 +96,7 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 
 	// Simulated Tempering setup
 	if ( scorefxn_ == 0 ) utility_exit_with_message( "Must set scorefunction." );
+	if ( options_->setup_base_pair_constraints() ) runtime_assert( scorefxn_->has_nonzero_weight( atom_pair_constraint ) );
 	moves::SimulatedTempering tempering( pose, scorefxn_, options_->temperatures(), weights_ );
 	set_sampler_gaussian_stdev( tempering.temperature(), pose );
 
@@ -190,7 +200,7 @@ RECCES_Mover::initialize() {
 
 	weights_.clear();
 	utility::vector1< Real > const & orig_weights( options_->st_weights() );
-	if ( num_temperatures != orig_weights.size() ) weights_.push_back( 0 );
+	if ( ( num_temperatures != orig_weights.size() ) && ( orig_weights.size() == 0 || orig_weights[1] != 0 ) ) weights_.push_back( 0 );
 	weights_.append( orig_weights );
 	runtime_assert( num_temperatures == weights_.size() );
 
@@ -200,41 +210,6 @@ RECCES_Mover::initialize() {
 	Real const min( options_->histogram_min() ), max( options_->histogram_max() ), spacing( options_->histogram_spacing() );
 	hist_list_ = vector1< Histogram >( num_temperatures, Histogram( min, max, spacing) );
 
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-void
-RECCES_Mover::initialize_sampler( pose::Pose const & pose )
-{
-	using namespace protocols::recces::sampler;
-	using namespace protocols::recces::sampler::rna;
-
-	sampler_ = MC_CombOP( new MC_Comb );
-
-	if ( options_->legacy_turner_mode() ) {
-		sampler_ = get_recces_turner_sampler( pose, options_->a_form_range(), *params_ );
-	}
-
-	// make sure base pair sampling can be carried out after legacy_turner_mode.
-	if ( ( pose.size() == 2 && pose.fold_tree().is_cutpoint( 1 ) )  || options_->sample_jump() ) {
-		MC_RNA_OneJumpOP jump_sampler( new MC_RNA_OneJump( pose, 1 /*jump*/ ) );
-		jump_sampler->set_translation_mag( options_->base_pair_translation_mag() );
-		jump_sampler->set_rotation_mag( options_->base_pair_rotation_mag() );
-		jump_sampler->set_rmsd_cutoff( options_->base_pair_rmsd_cutoff() );
-		sampler_->add_rotamer( jump_sampler );
-		print_base_centroid_atoms_for_rb_entropy( pose.residue( pose.fold_tree().downstream_jump_residue( 1 ) ), options_->xyz_file() );
-	}
-
-	// sweet: thermal sampler mode instead.
-	if ( sampler_->num_rotamers() == 0 ) {
-		runtime_assert( options_->thermal_sampler_mode() );
-		runtime_assert( options_->sample_residues().size() > 0 ); // the standard signature for thermal_sampler
-		sampler_ = initialize_thermal_sampler( pose, *options_ );
-	}
-
-	sampler_->init();
-	if ( !options_->suppress_sampler_display() ) sampler_->show( TR, 0 );
 }
 
 //////////////////////////////////////////////////////////////////////////////

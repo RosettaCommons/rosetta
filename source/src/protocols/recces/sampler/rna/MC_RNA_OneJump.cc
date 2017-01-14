@@ -44,7 +44,6 @@ namespace rna {
 		jump_num_( jump_num ),
 		rmsd_cutoff_( 2.0 )
 	{
-
 		using namespace core::pose;
 		using namespace core::kinematics;
 
@@ -61,6 +60,8 @@ namespace rna {
 		stored_upstream_stub_ = scratch_pose_->conformation().upstream_jump_stub( 1 ); // only 1 jump in 2-residue scratch pose
 		active_jump_ = scratch_pose_->jump( 1 );
 		update();
+
+		set_name( "MC_RNA_OneJump" );
 	}
 
 	//Destructor
@@ -105,11 +106,11 @@ namespace rna {
 	void
 	MC_RNA_OneJump::update()
 	{
-		stored_jump_ = active_jump_;
 		if ( update_pose_ != 0 ) {
-			stored_jump_ = update_pose_->jump( jump_num_ );
-			scratch_pose_->set_jump( 1, stored_jump_ );
+			active_jump_ = update_pose_->jump( jump_num_ );
+			scratch_pose_->set_jump( 1, active_jump_ );
 		}
+		stored_jump_ = active_jump_;
 		stored_base_centroid_ = core::chemical::rna::get_rna_base_centroid( scratch_pose_->residue( 2 /*moving_rsd_*/ ) );
 	}
 

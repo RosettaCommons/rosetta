@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/ErraserMinimizerMover.cc
 /// @brief
-/// @detailed
+/// @detailed TODO: This should *not* be in protocols/farna/ -- rhiju & andy
 /// @author Andy Watkins, amw579@stanford.edu
 
 #include <protocols/farna/ErraserMinimizerMover.hh>
@@ -141,7 +141,7 @@ namespace protocols {
 namespace farna {
 
 // AMW: TODO
-// 1. Setting up NCNT ideal poses for ideal coordinate constraints is expensive 
+// 1. Setting up NCNT ideal poses for ideal coordinate constraints is expensive
 // to do at construction. What if we only did it for the NCNTs actually found in
 // the pose (usually 1-2, not hundreds)? Maybe we could cache constraints and/or
 // poses for repeated inputs... Poses for sure.

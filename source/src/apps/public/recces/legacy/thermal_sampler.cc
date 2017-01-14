@@ -107,14 +107,6 @@ thermal_sampler()
 
 	PoseOP pose_op( recces_pose_setup( *options ) );
 	Pose & pose = *pose_op;
-
-	// Obtains base pairs and constraints from pose
-	if ( options->setup_base_pair_constraints() ) {
-		utility::vector1< std::pair< Size, Size > > pairings;
-		protocols::farna::get_base_pairing_list( pose, pairings );
-		protocols::farna::setup_base_pair_constraints( pose, pairings );
-	}
-
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
 	RECCES_Mover recces_mover( options );

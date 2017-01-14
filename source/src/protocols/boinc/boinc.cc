@@ -27,7 +27,7 @@
 // Project headers
 #include <protocols/boinc/watchdog.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <utility/string_util.hh>
 #include <core/pose/symmetry/util.hh>
 

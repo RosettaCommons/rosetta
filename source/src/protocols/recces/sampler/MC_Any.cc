@@ -46,12 +46,18 @@ namespace sampler {
 	}
 	///////////////////////////////////////////////////////////////////////////
 	void MC_Any::operator++() {
+		if ( num_rotamers() == 0 ) {
+			curr_id_ = 0;	return;
+		}
 		curr_id_ = numeric::random::rg().random_range(1,num_rotamers());
 		++( *rotamer_list_[ curr_id_ ] );
 	}
 	///////////////////////////////////////////////////////////////////////////
 	void MC_Any::apply( Pose & pose ) {
 		runtime_assert( is_init() );
+		if ( curr_id_ == 0 ) {
+			found_move_ = false; return;
+		}
 		rotamer_list_[ curr_id_ ]->apply( pose );
 		found_move_ = rotamer_list_[ curr_id_ ]->found_move();
 	}

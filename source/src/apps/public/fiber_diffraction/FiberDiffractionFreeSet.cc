@@ -50,7 +50,7 @@
 
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 // option key includes
 
 

@@ -37,6 +37,7 @@ namespace protocols {
 namespace recces {
 
 ///////////////////////////////////////////////////////////////////////////////////
+// TODO: Unify with set_gaussian_stdevs_thermal_sampler (see note below)
 void
 set_gaussian_stdevs_legacy_turner( protocols::recces::sampler::MC_CombOP sampler,
 																	 core::Real const & temperature,
@@ -141,7 +142,10 @@ void set_gaussian_stdevs_thermal_sampler(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// replace this eventually using sampler::find()
+// TODO: replace this eventually using sampler::find()
+// TODO: unify with set_gaussian_stdevs_recces_turner, based on whether a residue
+//        is specified as HELIX or DANGLE or FREE or SAMPLE
+//        [all inside pose full_model or in Options]
 void
 set_gaussian_stdevs_thermal_sampler(
     protocols::recces::sampler::MC_SamplerOP sampler,
@@ -177,6 +181,9 @@ set_gaussian_stdevs_thermal_sampler(
 	for ( auto sample_res : options.sample_residues() )	is_free.push_back( options.free_residues().has_value( sample_res ) );
 
 	set_gaussian_stdevs_thermal_sampler( internal_bb_sampler, chi_sampler, standard_bb_sampler, temperature, pose.size(), options.sample_residues().size(), is_free );
+
+	// TODO: at higher temperatures, use larger translation/rotation magnitude for *jump_sampler* if present (as 5th of the 10 cycles in each loop, turned on with -sample_jump)
+
 }
 
 

@@ -27,7 +27,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 
 #include <utility/io/ozstream.hh>

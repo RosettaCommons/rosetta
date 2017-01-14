@@ -73,6 +73,10 @@ using core::kinematics::FoldTree;
 //
 //                                -- rhiju, 2014
 //
+//  TODO: Make a class or mover?
+//  TODO: Move outside protocols/stepwise (since will soon be in use in fragment assembly)
+//  TODO: Set up -cyclize flag (like what it is available for RNA in farna)
+//
 //////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -529,14 +533,21 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( !option[ in::file::fasta ].user() ) {
-		for ( Size n = 1; n <= pose_pointers.size(); n++ ) make_sure_full_model_info_is_setup( *pose_pointers[n] );
-		return;
+	FullModelParametersOP full_model_parameters;
+	vector1< Size > cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
+	if ( option[ in::file::fasta ].user() ) {
+		std::string const fasta_file = option[ in::file::fasta ]()[1];
+		full_model_parameters = get_sequence_information( fasta_file, cutpoint_open_in_full_model );
+	} else {
+		// guess sequence, chain, resnum from pose; not specified in fasta.
+		runtime_assert( pose_pointers.size() > 0 );
+		vector1< Size > dummy;
+ 		full_model_parameters = FullModelParametersOP( new FullModelParameters( *pose_pointers[1], dummy ) );
+		if ( pose_pointers.size() > 1 ) {
+			utility_exit_with_message( "Currently need to specify -fasta if dealing with multiple poses. Would not be hard to fix this, by merging resnum/chain across poses! Ask rhiju." );
+		}
 	}
 
-	std::string const fasta_file = option[ in::file::fasta ]()[1];
-	vector1< Size > cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
-	FullModelParametersOP full_model_parameters = get_sequence_information( fasta_file, cutpoint_open_in_full_model );
 	std::string const & desired_sequence = full_model_parameters->full_sequence();
 
 	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
@@ -902,8 +913,8 @@ setup_jumps( core::pose::Pose const & pose,
 
 			// num_contacts
 			static Distance const CONTACT_DIST_CUTOFF( 4.0 );
-			int num_contacts( 0 );
-			vector1< pair< Size, pair< Size, Size > > > num_contacts_pairwise;
+			int num_contacts( 0 ), boundary_pair_contacts( 0 );
+			vector1< pair< int, pair< Size, Size > > > num_contacts_pairwise;
 			for ( Size m = 1; m <= fixed_res_in_chain_i.size(); m++ ) {
 				core::conformation::Residue rsd_i = pose.residue( fixed_res_in_chain_i[ m ] );
 				for ( Size n = 1; n <= fixed_res_in_chain_j.size(); n++ ) {
@@ -916,14 +927,26 @@ setup_jumps( core::pose::Pose const & pose,
 							}
 						}
 					}
-					num_contacts_pairwise.push_back( make_pair( count, make_pair( fixed_res_in_chain_i[m],
+					// this used to be a bug -- should save -count to *maximize* number of contacts
+					num_contacts_pairwise.push_back( make_pair( -count, make_pair( fixed_res_in_chain_i[m],
 						fixed_res_in_chain_j[n] ) ) );
 					num_contacts += count;
+					if ( m == fixed_res_in_chain_i.size() && n == 1 ) boundary_pair_contacts = count;
 				}
 			}
-			// find residue pair with the most contacts.
-			std::sort( num_contacts_pairwise.begin(), num_contacts_pairwise.end() );
-			if ( num_contacts_pairwise.size() > 0 && num_contacts > 0 ) jump_res_pair = num_contacts_pairwise[ 1 ].second;
+
+			// find residue pair that best represents this chain-to-chain connection
+			if ( boundary_pair_contacts > 0 && ( j == i+1 ) ) {
+				// use the 'boundary pair', which is the default in figure_out_reasonable_rna_fold_tree().
+				// End of first chain, beginning of second chain
+				jump_res_pair = make_pair( fixed_res_in_chain_i[ fixed_res_in_chain_i.size() ], fixed_res_in_chain_j[ 1 ] );
+			} else {
+				// sort based on number of contacts
+				std::sort( num_contacts_pairwise.begin(), num_contacts_pairwise.end() );
+				if ( num_contacts_pairwise.size() > 0 && num_contacts > 0 ) {
+					jump_res_pair = num_contacts_pairwise[ 1 ].second;
+				}
+			}
 
 			// figure out sequence separation
 			Size sequence_separation( max_seq_separation );

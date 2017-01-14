@@ -19,7 +19,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>

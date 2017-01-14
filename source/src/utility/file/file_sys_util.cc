@@ -34,7 +34,7 @@
 #include <utility/file/PathName.hh>
 
 // Project headers
-#include <utility/basic_sys_util.hh> //  for rand_sleep?
+#include <utility/sys_util.hh> //  for rand_sleep?
 #include <utility/exit.hh>
 
 // C++ headers

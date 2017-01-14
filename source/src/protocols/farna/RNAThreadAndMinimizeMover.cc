@@ -10,6 +10,7 @@
 
 /// @file protocols/farna/RNAThreadAndMinimizeMover.cc
 /// @brief Thread a new sequence over a given RNA scaffold and do a little optimization
+/// @details TODO: This should *not* be in protocols/farna/ -- rhiju & andy
 /// @author Andy Watkins (amw579@nyu.edu)
 
 // Unit headers

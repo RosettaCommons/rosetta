@@ -67,6 +67,9 @@ public:
 	MC_SamplerOP
 	find( core::id::TorsionID const & torsion_id ) = 0;
 
+	/// @brief restore pose to state prior to this sampler's apply(). Would enable big speedup in monte carlo by obviating pose copies.
+	void restore( core::pose::Pose & ) { std::cout << "restore is not set up yet!" << std::endl; }
+
 private:
 	bool uniform_modeler_;
 

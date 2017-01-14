@@ -18,7 +18,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 
 #include <iostream>
 #include <iomanip>

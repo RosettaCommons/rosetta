@@ -65,7 +65,7 @@
 #include <utility/excn/Exceptions.hh>
 
 //Utility Headers
-#include <utility/basic_sys_util.hh>
+#include <utility/sys_util.hh>
 #include <utility/py/PyAssert.hh>
 
 #include <core/chemical/AtomType.hh>

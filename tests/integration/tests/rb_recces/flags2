@@ -1,0 +1,12 @@
+-recces
+-n_cycle 900
+-n_intermediate_dump 10
+#-rmsd_cutoff 2.0
+-temps 0.5 0.8 1.0 1.4 1.8 3.0 7.0 30.0
+-st_weights 0 9.082753349153716 11.667681931280605 14.4119630805223 15.567835972828709 16.81789506613387 17.722214032046995 17.99813749667891
+-out_prefix ST
+-save_score_terms
+-s fiber_CG.pdb
+-dump_pdb
+-score:weights stepwise/rna/turner_no_zeros.wts
+-accept_no_op_moves

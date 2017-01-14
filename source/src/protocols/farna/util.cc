@@ -29,6 +29,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -543,24 +544,54 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 
 
 /////////////////////////////////////////////////////////
+/// @details
+///
+///   Adds 2-3 constraints between donor hydrogen and acceptor
+///    across C-G, A-U, or G-U pairs, *and* asks that C1'-C1'
+///    distance be near 10.5 Angstroms (prevents stacking!)
+///
+///   "suppress_factor" reduces strength, in use by FARNA/RNA_DeNovo
+///
+///   use_harmonic is standard 'spring' like function
+///    that can pull in bases from very far away to optimal
+///    distance of 1.9 Angstroms:
+///
+///     H-bond   ( x - 1.9 A )/( 0.25 / scale_factor )^2
+///
+///     C1'-C1'  ( x - 10.5 A )/( 1/0 / scale_factor )^2
+///
+///   If use_flat_harmonic is set to true, functions are zero out to
+///    tolerance of 1.0 A and 2.0 A, and then go up quadratically.
+///    [used in RECCES/free-energy estimation where we want constraint = 0
+///     when base pairs are formed rather than some small number].
+///
 void
 setup_base_pair_constraints(
 	pose::Pose & pose,
 	utility::vector1< std::pair< Size, Size > > const &  pairings,
-	Real const suppress_factor /* = 1.0 */ )
+	Real const scale_factor /* = 1.0 */,
+	bool const use_flat_harmonic /* = false */ )
 {
 
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::rna;
+	using namespace core::scoring::func;
 
-	Real const WC_distance( 1.9 );
-	Real const distance_stddev( 0.25 / suppress_factor ); //Hmm. Maybe try linear instead?
-	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( WC_distance, distance_stddev ) );
+	Distance const WC_distance( 1.9 );
+	Distance const distance_stddev( 0.25 / scale_factor ); //Hmm. Maybe try linear instead?
+	FuncOP distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
 
 	// Need to force base pairing -- not base stacking!
-	Real const C1prime_distance( 10.5 );
-	Real const C1prime_distance_stddev( 1.0 / suppress_factor ); //Hmm. Maybe try linear instead?
-	core::scoring::func::FuncOP const C1prime_distance_func( new core::scoring::func::HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
+	Distance const C1prime_distance( 10.5 );
+	Distance const C1prime_distance_stddev( 1.0 / scale_factor ); //Hmm. Maybe try linear instead?
+	FuncOP C1prime_distance_func( new HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
+
+	if ( use_flat_harmonic ) {
+		Distance const distance_tolerance( 1.0 );
+		distance_func = FuncOP( new FlatHarmonicFunc( WC_distance, distance_stddev, distance_tolerance ) );
+		Distance const C1prime_distance_tolerance( 2.0 );
+		C1prime_distance_func = FuncOP( new FlatHarmonicFunc( C1prime_distance, C1prime_distance_stddev, C1prime_distance_tolerance  ) );
+	}
 
 	for ( auto const & pairing : pairings ) {
 		
@@ -571,6 +602,7 @@ setup_base_pair_constraints(
 		if ( !pose.residue_type(j).is_RNA() ) continue;
 
 		if ( !pose.residue_type(i).is_coarse() ) { //fullatom
+
 			Size const atom1 = pose.residue_type(i).RNA_info().c1prime_atom_index();
 			Size const atom2 = pose.residue_type(j).RNA_info().c1prime_atom_index();
 			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(

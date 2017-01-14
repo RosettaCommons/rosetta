@@ -19,6 +19,7 @@
 #include <protocols/recces/params/RECCES_Parameters.fwd.hh>
 #include <protocols/recces/options/RECCES_Options.fwd.hh>
 #include <protocols/recces/sampler/MC_Comb.fwd.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_OneJump.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
@@ -29,6 +30,11 @@ namespace sampler {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Sampler setup
 protocols::recces::sampler::MC_CombOP
+initialize_sampler( core::pose::Pose const & pose,
+										options::RECCES_Options const & options,
+										params::RECCES_Parameters const & params );
+
+protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler( core::pose::Pose const & pose,
 													 core::Real const & a_form_range,
 													 params::RECCES_Parameters const & params );
@@ -36,6 +42,11 @@ get_recces_turner_sampler( core::pose::Pose const & pose,
 protocols::recces::sampler::MC_CombOP
 initialize_thermal_sampler( core::pose::Pose const & pose,
 														options::RECCES_Options const & options );
+
+protocols::recces::sampler::rna::MC_RNA_OneJumpOP
+initialize_jump_sampler( core::pose::Pose const & pose,
+												 core::Size const & num_jump,
+												 options::RECCES_Options const & options );
 
 } //sampler
 } //recces
