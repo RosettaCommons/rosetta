@@ -21,6 +21,10 @@
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#include <string>
+#endif
+
 namespace protocols {
 namespace denovo_design {
 namespace connection {

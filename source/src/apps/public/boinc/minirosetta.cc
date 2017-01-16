@@ -11,6 +11,7 @@
 /// @brief
 
 #ifdef BOINC
+#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/boinc/boinc_util.hh>
 #include <utility/file/file_sys_util.hh>
@@ -55,11 +56,7 @@
 
 #include <core/types.hh>
 
-//#ifndef BOINC
-//#ifndef WIN32
 #include <devel/init.hh>
-//#endif
-//#endif
 
 #ifdef BOINC
 #include <core/pose/Pose.hh>
@@ -153,19 +150,7 @@ main( int argc, char * argv [] )
 	std::cerr << "Initializing core..." << std::endl;std::cerr.flush();
 #endif
 
-		//#ifndef BOINC
-		//#ifndef WIN32
-		// No devel in BOINC builds
 		devel::init( argc, argv );
-		//#endif
-		//#endif
-
-#ifdef BOINC
-	devel::init( argc, argv );
-#endif
-#ifdef WIN32
-		devel::init( argc, argv );
-#endif
 
 #ifdef BOINC // BOINC STUFF
 
@@ -339,6 +324,9 @@ main( int argc, char * argv [] )
 
 #ifdef BOINC
 #ifdef _WIN32
+
+
+
 
 /*******************************************************
  * Windows: Unix applications begin with main() while Windows applications

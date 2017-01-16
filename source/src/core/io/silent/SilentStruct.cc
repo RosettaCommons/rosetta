@@ -381,7 +381,7 @@ void SilentStruct::sort_silent_scores( ){
 }
 
 bool SilentStruct::has_energy( std::string const & scorename ) const {
-	return std::any_of( silent_energies_.begin(), silent_energies_.end(), 
+	return std::any_of( silent_energies_.begin(), silent_energies_.end(),
 		[&]( SilentEnergy const & s ) { return s.name() == scorename; } );
 }
 
@@ -391,10 +391,10 @@ SilentStruct::add_energy( std::string const & scorename, Real value, Real weight
 	bool replace( false );
 	std::for_each( silent_energies_.begin(), silent_energies_.end(),
 		[&]( SilentEnergy & s ) {
-			if ( s.name() == scorename ) {
-				s.value( value );
-				replace = true;
-			}
+		if ( s.name() == scorename ) {
+		s.value( value );
+		replace = true;
+		}
 		} );
 
 	// add this energy if we haven't added it already
@@ -413,10 +413,10 @@ SilentStruct::add_string_value(
 	bool replace( false );
 	std::for_each( silent_energies_.begin(), silent_energies_.end(),
 		[&]( SilentEnergy & s ) {
-			if ( s.name() == scorename ) {
-				s.value( value );
-				replace = true;
-			}
+		if ( s.name() == scorename ) {
+		s.value( value );
+		replace = true;
+		}
 		} );
 
 	// add this energy if we haven't added it already
@@ -479,7 +479,7 @@ SilentStruct::copy_scores( const SilentStruct & src_ss ) {
 				elem2.value( elem.value() );
 				replace = true;
 			}
-		} 
+		}
 
 		if ( !replace ) silent_energies_.push_back( elem );
 	} // for it

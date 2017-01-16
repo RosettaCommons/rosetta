@@ -572,7 +572,7 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 	runtime_assert ( n2 >= 1 && n2 <= pose2.size() );
 	if ( pose1.residue_type( n1 ).aa() != pose2.residue_type( n2 ).aa() &&
 			!core::chemical::rna::rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) &&
-			 pose1.residue_type( n1 ).na_analogue() != pose2.residue_type( n2 ).na_analogue() ) {
+			pose1.residue_type( n1 ).na_analogue() != pose2.residue_type( n2 ).na_analogue() ) {
 		TR << "pose1 at n1 " << n1 << " has aa: " << pose1.residue_type( n1 ).aa() << "; vs pose2 at n2 " << n2 << " has aa: " <<  pose2.residue_type( n2 ).aa()  << std::endl;
 		runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
 	}

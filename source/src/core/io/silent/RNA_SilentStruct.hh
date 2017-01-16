@@ -61,7 +61,7 @@ public:
 
 	/// @brief Constructors.
 	RNA_SilentStruct( SilentFileOptions const & opts, Size const nres_in )
-		: SilentStruct( opts )
+	: SilentStruct( opts )
 	{
 		nres( nres_in );
 		fullatom_    = true;

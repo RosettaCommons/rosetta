@@ -96,8 +96,8 @@ namespace scratch {
 
 
 void set_gaussian_stdevs(
-												 utility::vector1<MC_RNA_KIC_SamplerOP> & internal_bb_sampler,
-												 utility::vector1<MC_OneTorsionOP> & chi_sampler,
+	utility::vector1<MC_RNA_KIC_SamplerOP> & internal_bb_sampler,
+	utility::vector1<MC_OneTorsionOP> & chi_sampler,
 	Real const temp,
 	Size const //total_sampled
 ) {

@@ -378,6 +378,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT_EQUALS(test_answer, right_answer);
 
-}
+	}
 
 };  // class StructFileRepTests

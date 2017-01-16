@@ -399,11 +399,7 @@ ClearChiRotamers::apply( ResidueType & rsd ) const
 
 
 // AddAtom ///////////////////////////////////////////////////////////////////
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-AddAtomWIN32::AddAtomWIN32(
-#else
 AddAtom::AddAtom(
-#endif
 	std::string const & atom_name_in,
 	std::string const & atom_type_name_in,
 	std::string const & mm_atom_type_name_in,
@@ -416,11 +412,7 @@ AddAtom::AddAtom(
 {}
 
 bool
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-AddAtomWIN32::apply( ResidueType & rsd ) const
-#else
 AddAtom::apply( ResidueType & rsd ) const
-#endif
 {
 	if ( rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "AddAtom::apply failed: " <<
@@ -2030,11 +2022,7 @@ patch_operation_from_patch_file_line(
 			charge = atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) )->second;
 		}
 
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-		return PatchOperationOP( new AddAtomWIN32( atom_name, atom_type_name, mm_atom_type_name, charge ) );
-#else
 		return PatchOperationOP( new AddAtom( atom_name, atom_type_name, mm_atom_type_name, charge ) );
-#endif
 	} else if ( tag == "DELETE_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) return nullptr;

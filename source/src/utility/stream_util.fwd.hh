@@ -33,7 +33,7 @@
 namespace std { // inserting operator for ::std types in to std namespace
 
 /// @brief Output function for std::map object.
-template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
+template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m);
 
 
@@ -46,7 +46,7 @@ template <typename T, typename std::enable_if< utility::has_insertion_operator_s
 std::ostream & operator <<(std::ostream & os, std::set<T> const & s);
 
 // forward declaration to allow output of composite types, like: vector1< std::pair >.
-template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
+template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v);
 
 /// @brief Output function for std::vector object.

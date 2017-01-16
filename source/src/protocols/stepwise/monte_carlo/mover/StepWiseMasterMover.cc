@@ -405,7 +405,7 @@ void
 StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose ) {
 	using namespace options;
 	full_model_pose = start_pose;
-	
+
 	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
 	initialize();
 	add_or_delete_mover_->set_choose_random( false );

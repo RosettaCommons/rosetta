@@ -160,7 +160,7 @@ void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std:
 }
 
 void fixH(core::pose::Pose & pose) {
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(i);
 	}
 }
@@ -173,8 +173,8 @@ cyclize_pose(core::pose::Pose & pose) {
 	using namespace core::scoring::constraints;
 	using namespace chemical;
 	using core::id::AtomID;
-	Size N = pose.size();
-	for ( Size i = 1; i <= N; ++i ) {
+	core::Size N = pose.size();
+	for ( core::Size i = 1; i <= N; ++i ) {
 		if ( pose.residue(i).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 		if ( pose.residue(i).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
 		if ( pose.residue(i).has_variant_type(CUTPOINT_UPPER) ) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_UPPER,i);

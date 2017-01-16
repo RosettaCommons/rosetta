@@ -131,7 +131,7 @@ RNP_LowResStackData::evaluate_rnp_stack_xy_score(
 		rnp_stack_score = 0.0;
 		return;
 	}
-	
+
 	// Only evaluate these score terms between RNA and protein residues
 	if ( !(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() )) ) {
 		rnp_stack_score = 0.0;

@@ -154,7 +154,7 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 
 	}
 	pose.update_residue_neighbors();
-	if( pose.pdb_info() ) pose.pdb_info()->obsolete( true );
+	if ( pose.pdb_info() ) pose.pdb_info()->obsolete( true );
 }
 
 // XRW TEMP std::string

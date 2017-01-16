@@ -24,28 +24,28 @@ namespace protocols {
 namespace recces {
 namespace params {
 
-	//Constructor
-	RECCES_Parameters::RECCES_Parameters( core::pose::Pose const & pose )
-	{
-		using namespace farna::secstruct;
+//Constructor
+RECCES_Parameters::RECCES_Parameters( core::pose::Pose const & pose )
+{
+	using namespace farna::secstruct;
 
-		if ( has_rna_secstruct_legacy( pose ) ) {
-			std::string const & rna_secstruct_legacy( get_rna_secstruct_legacy_from_const_pose( pose ) );
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-				if ( rna_secstruct_legacy[ n - 1 ] == 'H' ) {
-					bp_res_.push_back( n );
-				} else {
-					runtime_assert( rna_secstruct_legacy[ n - 1 ] == 'X' );
-					dangling_res_.push_back( n );
-				}
+	if ( has_rna_secstruct_legacy( pose ) ) {
+		std::string const & rna_secstruct_legacy( get_rna_secstruct_legacy_from_const_pose( pose ) );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			if ( rna_secstruct_legacy[ n - 1 ] == 'H' ) {
+				bp_res_.push_back( n );
+			} else {
+				runtime_assert( rna_secstruct_legacy[ n - 1 ] == 'X' );
+				dangling_res_.push_back( n );
 			}
 		}
-
 	}
 
-	//Destructor
-	RECCES_Parameters::~RECCES_Parameters()
-	{}
+}
+
+//Destructor
+RECCES_Parameters::~RECCES_Parameters()
+{}
 
 } //params
 } //recces

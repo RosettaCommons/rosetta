@@ -23,37 +23,37 @@ namespace protocols {
 namespace recces {
 namespace sampler {
 
-	class MC_Any: public MC_Comb {
+class MC_Any: public MC_Comb {
 
-	public:
+public:
 
-		//constructor
-		MC_Any();
+	//constructor
+	MC_Any();
 
-		//destructor
-		~MC_Any();
+	//destructor
+	~MC_Any();
 
-	public:
+public:
 
-		/// @brief Initialization
-		virtual void init();
+	/// @brief Initialization
+	virtual void init();
 
-		/// @brief Move to next rotamer
-		virtual void operator++();
+	/// @brief Move to next rotamer
+	virtual void operator++();
 
-		/// @brief Apply the current rotamer to pose
-		virtual void apply( core::pose::Pose & pose );
+	/// @brief Apply the current rotamer to pose
+	virtual void apply( core::pose::Pose & pose );
 
-		/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-		virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_ANY; }
+	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_ANY; }
 
-		core::Size curr_id() const { return curr_id_; }
+	core::Size curr_id() const { return curr_id_; }
 
-		MC_SamplerCOP rotamer() const { return rotamer_list_[ curr_id_ ]; }
+	MC_SamplerCOP rotamer() const { return rotamer_list_[ curr_id_ ]; }
 
-	protected:
-		core::Size curr_id_;
-	};
+protected:
+	core::Size curr_id_;
+};
 
 } //sampler
 } //recces

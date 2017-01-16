@@ -64,7 +64,7 @@ namespace silent {
 static THREAD_LOCAL basic::Tracer tr( "core.io.silent.SilentFileData" );
 
 //SilentFileData::SilentFileData() :
-//	SilentFileData( SilentFileOptions() )
+// SilentFileData( SilentFileOptions() )
 //{}
 
 SilentFileData::SilentFileData( SilentFileOptions const & options ) :
@@ -78,7 +78,7 @@ SilentFileData::SilentFileData( SilentFileOptions const & options ) :
 {}
 
 //SilentFileData:: SilentFileData( std::string const& filename ) :
-//	SilentFileData( filename, SilentFileOptions() )
+// SilentFileData( filename, SilentFileOptions() )
 //{}
 
 SilentFileData::SilentFileData( std::string const& filename, SilentFileOptions const & options ) :
@@ -92,12 +92,12 @@ SilentFileData::SilentFileData( std::string const& filename, SilentFileOptions c
 {}
 
 //SilentFileData::SilentFileData(
-//	const std::string &filename,
-//	bool  store_argv_in_file,
-//	bool  strict_column_mode,
-//	const std::string & silent_struct_type
+// const std::string &filename,
+// bool  store_argv_in_file,
+// bool  strict_column_mode,
+// const std::string & silent_struct_type
 //) :
-//	SilentFileData( filename, store_argv_in_file, strict_column_mode, silent_struct_type, SilentFileOptions() )
+// SilentFileData( filename, store_argv_in_file, strict_column_mode, silent_struct_type, SilentFileOptions() )
 //{}
 
 SilentFileData::SilentFileData(
@@ -616,7 +616,7 @@ SilentFileData::_read_file(
 
 		// get start index and limit to size of silent file (all_tags.size() ) by wrapping around (rather then by throwing an error)
 		//core::Size range_start = ( option[ in::file::silent_select_range_start ]() *
-		//	option[ in::file::silent_select_range_mul ] ) % all_tags.size();
+		// option[ in::file::silent_select_range_mul ] ) % all_tags.size();
 		core::Size range_start = ( options_.select_range_start() * options_.select_range_mul() ) % all_tags.size();
 
 		core::Size range_end   = range_start + options_.select_range_len();

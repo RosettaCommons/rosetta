@@ -124,7 +124,7 @@ ContextIndependentGeometricSolEnergy::setup_for_packing(
 	utility::vector1< bool > const & designing_residues
 ) const
 {
-	bool might_be_designing = std::any_of( 
+	bool might_be_designing = std::any_of(
 		designing_residues.begin(), designing_residues.end(),
 		[]( bool const b ){ return b; } );
 

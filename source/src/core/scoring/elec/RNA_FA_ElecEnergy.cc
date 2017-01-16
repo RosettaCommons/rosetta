@@ -490,7 +490,7 @@ RNA_FA_ElecEnergy::finalize_total_energy(
 	//utility::vector1< conformation::Residue const * > resvect;
 	//resvect.reserve( pose.total_residue() );
 	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	//	resvect.push_back( & pose.residue( ii ) );
+	// resvect.push_back( & pose.residue( ii ) );
 	//}
 
 	//Real total_score( 0.0 );
@@ -509,7 +509,7 @@ RNA_FA_ElecEnergy::finalize_total_energy(
 				Size const jj( nbr.atomno() );
 
 				conformation::Residue const & jres = pose.residue( j );
-				
+
 				bool const atom2_is_base = is_base_2(jres, jj);
 				bool const atom2_is_sugar = is_sugar_2(jres, jj);
 				bool const atom2_is_phosphate = is_phosphate_2(jres, jj);

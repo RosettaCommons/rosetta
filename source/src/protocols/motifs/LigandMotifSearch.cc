@@ -69,6 +69,9 @@
 
 #include <utility/vector1.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#endif
 
 namespace protocols {
 namespace motifs {

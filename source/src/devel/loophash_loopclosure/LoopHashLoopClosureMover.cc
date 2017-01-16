@@ -61,7 +61,11 @@
 #include <ctime>
 #include <sstream>
 #include <iostream>
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

@@ -76,7 +76,7 @@ SilentFileRMOptions::SilentFileRMOptions(
 {}
 
 SilentFileOptions const &
-SilentFileRMOptions::	opts() const
+SilentFileRMOptions:: opts() const
 {
 	return *options_;
 }

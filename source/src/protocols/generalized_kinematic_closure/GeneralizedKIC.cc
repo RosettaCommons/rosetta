@@ -13,6 +13,7 @@
 
 // BOINC includes -- keep these first:
 #ifdef BOINC
+#include <utility/io/izstream.hh>
 #include <utility/boinc/boinc_util.hh>
 #include <protocols/boinc/boinc.hh>
 #include "boinc_zip.h"

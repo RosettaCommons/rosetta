@@ -50,7 +50,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodySte
 using namespace protocols::toolbox::rigid_body;
 using namespace core;
 
-typedef  numeric::xyzMatrix< core::Real > Matrix;
 static Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
 
 namespace protocols {
@@ -186,7 +185,7 @@ RigidBodyStepWiseSampler::get_stub( utility::vector1< Size > const & id_list ) {
 	O_frame_centroid.z() = ( rotamer_values[4] );
 	moving_res_stub_.v = ( reference_stub_.M * O_frame_centroid ) + reference_stub_.v;
 
-	Matrix O_frame_rotation;
+	numeric::xyzMatrix< core::Real > O_frame_rotation;
 	EulerAngles euler_angles;
 	euler_angles.set_alpha( rotamer_values[3] );
 	euler_angles.set_z(     rotamer_values[2] );

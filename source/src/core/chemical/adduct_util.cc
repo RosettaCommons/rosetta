@@ -127,12 +127,7 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 		if ( !(*mask_iter) ) continue;
 
 		// Add the adduct and it's information
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-		PatchOperationOP poop1 = new AddAtomWIN32( add_iter->atom_name(), add_iter->atom_type_name(), add_iter->mm_atom_type_name(), add_iter->atom_charge() );
-#else
 		PatchOperationOP poop1( new AddAtom( add_iter->atom_name(), add_iter->atom_type_name(), add_iter->mm_atom_type_name(), add_iter->atom_charge() ) );
-#endif
-
 		temp_patch_case.add_operation( poop1 );
 		PatchOperationOP poop2( new AddBond( add_iter->atom_name(), add_iter->stub_atom1() ) );
 		temp_patch_case.add_operation( poop2 );

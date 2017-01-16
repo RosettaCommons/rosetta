@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/sampler/rna/MC_RNA_OneJump.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,14 +22,14 @@ namespace protocols {
 namespace recces {
 namespace sampler {
 namespace rna {
-	
-	class MC_RNA_OneJump;
-	typedef utility::pointer::shared_ptr< MC_RNA_OneJump > MC_RNA_OneJumpOP;
-	typedef utility::pointer::shared_ptr< MC_RNA_OneJump const > MC_RNA_OneJumpCOP;
-	
-} //rna 
-} //sampler 
-} //recces 
-} //protocols 
+
+class MC_RNA_OneJump;
+typedef utility::pointer::shared_ptr< MC_RNA_OneJump > MC_RNA_OneJumpOP;
+typedef utility::pointer::shared_ptr< MC_RNA_OneJump const > MC_RNA_OneJumpCOP;
+
+} //rna
+} //sampler
+} //recces
+} //protocols
 
 #endif

@@ -82,7 +82,8 @@
 #include "GL/glut.h"
 #endif
 
-#include "txf_util.h"
+//#include "txf_util.h" //Deprecated in latest BOINC.
+#include "ttfont.h"
 
 #ifdef __APPLE__
 #include "boinc_mac_app_icon.hh"
@@ -469,6 +470,7 @@ void boinc_app_key_press(int key, int //lParam           // system-specific key 
 ){
 	using namespace graphics;
 	using namespace protocols::viewer;
+	using namespace protocols::viewer::graphics_states_param;
 	if ( key == 67 || key == 99 ) { //'c' control color
 		current_gs.Color_mode = ColorMode ( current_gs.Color_mode + 1 );
 		if ( current_gs.Color_mode > RESIDUE_CPK_COLOR ) current_gs.Color_mode = RAINBOW_COLOR;
@@ -581,7 +583,8 @@ void app_graphics_init() {
 
 	// Expects a .txf file to exist in run directory
 	// TEXT WILL NOT DISPLAY IF .txf FILE IS MISSING!!
-	txf_load_fonts(".");
+	//txf_load_fonts(".");
+	TTFont::ttf_load_fonts(".");
 }
 
 void
@@ -591,7 +594,8 @@ writeStrokeString( const std::string & text_string, GLfloat *col, const float & 
 	char buf[256];
 	sprintf(buf, "%s", text_string.c_str());
 	// FROM BOINC API fscale bigger is smaller
-	txf_render_string(.1, xpos, ypos, 0, scalefactor, col, 0, buf);
+	//txf_render_string(.1, xpos, ypos, 0, scalefactor, col, 0, buf);
+	TTFont::ttf_render_string(0.03, xpos+0.03, ypos, static_cast<float>(scalefactor), col, buf, 0);
 }
 
 void display_text() {
@@ -1101,7 +1105,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 
 	using namespace graphics;
 	using namespace protocols::viewer;
-
+	using namespace protocols::viewer::graphics_states_param;
 
 	// change view_type randomly
 	if ( randomly_cycle_appearance ) {

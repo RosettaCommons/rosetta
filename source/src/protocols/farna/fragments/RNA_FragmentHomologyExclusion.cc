@@ -55,7 +55,7 @@ split_segments_longer_than_6mers(
 		else {
 			for ( Size ii = 1; ii <= segment.second.size() - 6; ++ii ) {
 				std::pair< Size, std::string > newseg;
-				newseg.first	= segment.first + ii - 1;
+				newseg.first = segment.first + ii - 1;
 				newseg.second = segment.second.substr( ii - 1, 6 );
 				new_segments.push_back( newseg );
 			}
@@ -137,7 +137,7 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 	} else {
 		utility_exit_with_message( "Illegal value provided for option -exclusion_match_type. Must be MATCH_EXACT (default), MATCH_YR, or MATCH_ALL.");
 	}
-	
+
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	PoseOP pose_op = get_pdb_and_cleanup( in_file, rsd_set );

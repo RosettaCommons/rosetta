@@ -10,6 +10,9 @@
 /// @file   devel/domain_assembly/DomainAssemblyMover.cc
 /// @brief
 
+// This has to be included first for the windows VS build
+#include <utility/io/izstream.hh>
+
 // Unit Headers
 #include <devel/domain_assembly/DomainAssemblyMover.hh>
 
@@ -84,7 +87,6 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility Headers
-#include <utility/io/izstream.hh>
 
 // Basic headers
 #include <basic/options/option.hh>

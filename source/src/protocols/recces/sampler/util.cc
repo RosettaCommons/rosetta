@@ -98,8 +98,8 @@ initialize_sampler( pose::Pose const & pose,
 
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler( pose::Pose const & pose,
-													 core::Real const & a_form_range,
-													 params::RECCES_Parameters const & params )
+	core::Real const & a_form_range,
+	params::RECCES_Parameters const & params )
 {
 	MC_RNA_MultiSuiteOP sampler( new MC_RNA_MultiSuite );
 	Size total_len( pose.size() );
@@ -131,7 +131,7 @@ get_recces_turner_sampler( pose::Pose const & pose,
 
 MC_CombOP
 initialize_thermal_sampler( pose::Pose const & pose,
-														options::RECCES_Options const & options )
+	options::RECCES_Options const & options )
 {
 	using namespace sampler;
 	using namespace sampler::rna;
@@ -243,7 +243,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 		} else if ( jump_sampler != 0 && ( n % 5 ) == 0 ) {
 			loop_sampler->add_rotamer( jump_sampler );
 		} else {
-	 		loop_sampler->add_rotamer( chi_sampler );
+			loop_sampler->add_rotamer( chi_sampler );
 		}
 	}
 

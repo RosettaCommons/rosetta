@@ -154,7 +154,7 @@ initialize_native_and_align_pose( PoseOP & native_pose,
 	}
 
 	// really? -- this results in rms and rms_fill calculation even without native -- confusing. rhiju, dec. 2016
-	//	if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
+	// if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
 }
 
 

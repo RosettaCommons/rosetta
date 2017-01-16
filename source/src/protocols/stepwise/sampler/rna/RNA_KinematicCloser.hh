@@ -74,7 +74,7 @@ public:
 	void set_calculate_jacobians( bool const & setting ){ calculate_jacobians_ = setting; }
 	bool calculate_jacobians() const { return calculate_jacobians_; }
 
-		/// @brief Calculate the jacobian
+	/// @brief Calculate the jacobian
 	core::Real get_jacobian(Pose & pose) const;
 
 	utility::vector1< core::Real > get_all_jacobians() const { return all_jacobians_; }
@@ -84,8 +84,8 @@ private:
 	void figure_out_dof_ids_and_offsets( core::pose::Pose const & pose );
 
 	void figure_out_offset( core::id::DOF_ID const & dof_id,
-													core::Real const original_torsion_value,
-													core::pose::Pose const & pose );
+		core::Real const original_torsion_value,
+		core::pose::Pose const & pose );
 
 	void fill_chainTORS( core::pose::Pose const & pose );
 

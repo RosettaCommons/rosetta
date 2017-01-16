@@ -23,36 +23,36 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-	class StepWiseSampler: public toolbox::SamplerPlusPlus {
+class StepWiseSampler: public toolbox::SamplerPlusPlus {
 
-	public:
+public:
 
-		//constructor
-		StepWiseSampler():
-			SamplerPlusPlus(),
-			random_( true )
-		{}
+	//constructor
+	StepWiseSampler():
+		SamplerPlusPlus(),
+		random_( true )
+	{}
 
-		//destructor
-		~StepWiseSampler()
-		{}
+	//destructor
+	~StepWiseSampler()
+	{}
 
-	public:
+public:
 
-		/// @brief Check if there are more rotamers available
-		virtual bool not_end() const { return true; }
+	/// @brief Check if there are more rotamers available
+	virtual bool not_end() const { return true; }
 
-		/// @brief Check if is random modeler
-		virtual bool random() const { return random_; }
+	/// @brief Check if is random modeler
+	virtual bool random() const { return random_; }
 
-		/// @brief Set the random modeler state
-		virtual void set_random( bool const setting ) { random_ = setting; }
+	/// @brief Set the random modeler state
+	virtual void set_random( bool const setting ) { random_ = setting; }
 
-	private:
+private:
 
-		bool random_;
+	bool random_;
 
-	};
+};
 
 } //sampler
 } //stepwise

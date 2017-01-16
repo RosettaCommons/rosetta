@@ -228,9 +228,9 @@ RECCES_Mover::set_sampler_gaussian_stdev( Real const & temperature, pose::Pose c
 /// @details curr_counts is a running count of number of times the pose has been the same.
 void
 RECCES_Mover::save_history(
-	 Size const & curr_counts,
-	 vector1< float > const & scores,
-	 Size const & temp_id	)
+	Size const & curr_counts,
+	vector1< float > const & scores,
+	Size const & temp_id )
 {
 	if ( options_->save_scores() ) fill_data( data_[ temp_id ], curr_counts, scores );
 	hist_list_[ temp_id ].add( scores[ 1 ], curr_counts );
@@ -239,8 +239,8 @@ RECCES_Mover::save_history(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::increment_accepts( Size & n_accept_total,
-																 std::map< std::string, Size > & num_accepts,
-																 sampler::MC_LoopCOP loop_sampler ) const
+	std::map< std::string, Size > & num_accepts,
+	sampler::MC_LoopCOP loop_sampler ) const
 {
 	++n_accept_total;
 	if ( loop_sampler != 0 ) num_accepts[ loop_sampler->rotamer()->get_name() ]++;
@@ -269,7 +269,7 @@ RECCES_Mover::dump_stuff(
 		min_pose = pose;
 	}
 	if ( options_->n_dump() != 0 &&
-			 n * (options_->n_dump() + 1) / double(options_->n_cycle()) >= curr_dump ) {
+			n * (options_->n_dump() + 1) / double(options_->n_cycle()) >= curr_dump ) {
 		std::ostringstream oss;
 		oss << "intermediate" << '_' << curr_dump << ".pdb";
 		pose.dump_pdb(oss.str());
@@ -301,9 +301,9 @@ RECCES_Mover::more_dump_stuff( pose::Pose const & pose, Size const & n ) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::final_dump_stuff( pose::Pose & pose,
-																pose::Pose & min_pose ) const
+	pose::Pose & min_pose ) const
 {
- 	if ( options_->dump_pdb() ) {
+	if ( options_->dump_pdb() ) {
 		pose.dump_pdb( output_pdb_name( "end" ) );
 		min_pose.dump_pdb( output_pdb_name( "min" ) );
 		if ( options_->show_more_pose_scores() ) {

@@ -132,10 +132,10 @@ ChunkSet::filter_poses_have_same_sequence_and_variants()
 	utility::vector1< std::string > fullname_list;
 	std::vector< Size > oneletter_to_fullname_index;
 	std::string one_letter_sequence;
-	
+
 	MiniPose const & mini_pose1 = *mini_pose_list_[ 1 ];
 	parse_sequence( mini_pose1.sequence(), fullname_list, oneletter_to_fullname_index, one_letter_sequence );
-	
+
 	for ( Size n = 2; n <= mini_pose_list_.size(); n++ ) {
 		MiniPose const & mini_pose2 = *mini_pose_list_[ n ];
 		runtime_assert( mini_pose1.sequence() == mini_pose2.sequence() );

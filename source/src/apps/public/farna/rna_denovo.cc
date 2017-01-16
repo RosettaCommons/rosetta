@@ -74,7 +74,7 @@ rna_denovo_test()
 #ifdef GL_GRAPHICS
 	pose.center();
 #endif
-	
+
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 	// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 

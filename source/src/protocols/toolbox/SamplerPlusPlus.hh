@@ -47,7 +47,7 @@
 namespace protocols {
 namespace toolbox {
 
-	class SamplerPlusPlus : public moves::Mover {
+class SamplerPlusPlus : public moves::Mover {
 public:
 	typedef utility::vector1<core::Real> TorsionList;
 

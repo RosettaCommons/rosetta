@@ -23,23 +23,23 @@ namespace protocols {
 namespace recces {
 namespace sampler {
 
-	//Constructor
-	MC_Loop::MC_Loop():
-		MC_Any()
-	{
-		set_name( "MC_Loop" );
-	}
+//Constructor
+MC_Loop::MC_Loop():
+	MC_Any()
+{
+	set_name( "MC_Loop" );
+}
 
-	//Destructor
-	MC_Loop::~MC_Loop()
-	{}
+//Destructor
+MC_Loop::~MC_Loop()
+{}
 
-	///////////////////////////////////////////////////////////////////////////
-	void MC_Loop::operator++() {
-		++curr_id_;
-		if ( curr_id_ > rotamer_list_.size() ) curr_id_ = 1;
-		++( *rotamer_list_[ curr_id_ ] );
-	}
+///////////////////////////////////////////////////////////////////////////
+void MC_Loop::operator++() {
+	++curr_id_;
+	if ( curr_id_ > rotamer_list_.size() ) curr_id_ = 1;
+	++( *rotamer_list_[ curr_id_ ] );
+}
 
 } //sampler
 } //recces

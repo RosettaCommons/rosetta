@@ -19,6 +19,10 @@
 
 #include <ostream>  // for string, ostream, operator<<
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#include <string>
+#endif
+
 namespace utility {
 
 /// @brief Class to hold all Terminal ASCII codes as static data for CSI_Sequence.

@@ -57,7 +57,7 @@ bool maybe_throw_on_next_assertion_failure( char const * condition );
 
 
 // C++ headers
-#if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__) && MY__has_include( <cxxabi.h> )
+#if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__) && MY__has_include( <cxxabi.h> ) && !defined(ANDROID)
 
 #include <execinfo.h>
 #include <cxxabi.h>

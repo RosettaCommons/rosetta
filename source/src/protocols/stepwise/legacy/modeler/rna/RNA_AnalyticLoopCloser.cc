@@ -144,7 +144,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	std::transform( atoms.begin(), atoms.end(),
 		atoms_xyz.begin(),
 		[&]( utility::vector1< Real > const & atom ) {
-			return Vector( atom[1], atom[2], atom[3] );
+		return Vector( atom[1], atom[2], atom[3] );
 		} );
 
 	//////////////////////////////////////////////
@@ -242,15 +242,15 @@ RNA_AnalyticLoopCloser::figure_out_dof_ids_and_offsets ( pose::Pose const & pose
 	id2 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().c3prime_atom_index(), chainbreak_suite_ );
 	id3 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().o3prime_atom_index(), chainbreak_suite_ );
 	id4 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( "OVL1" ),
-				 chainbreak_suite_ );
+		chainbreak_suite_ );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 2 + 1 ], offset_save_ );
 	id1 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().c3prime_atom_index(), chainbreak_suite_ );
 	id2 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_info().o3prime_atom_index(), chainbreak_suite_ );
 	id3 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index( "OVL1" ),
-				  chainbreak_suite_ );
+		chainbreak_suite_ );
 	id4 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( "OVL2" ),
-				 chainbreak_suite_ );
+		chainbreak_suite_ );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 2 + 2 ], offset_save_ );
 	/////////////////////////////////////////

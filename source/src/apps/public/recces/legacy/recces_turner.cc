@@ -54,7 +54,7 @@ MC_run() {
 	using namespace protocols::recces::params;
 	using namespace protocols::recces::options;
 
-		TR << TR.Red << "This app recces_turner will soon be deprecated. Instead use recces executable with flags -seq1, etc." << std::endl;
+	TR << TR.Red << "This app recces_turner will soon be deprecated. Instead use recces executable with flags -seq1, etc." << std::endl;
 
 	RECCES_OptionsOP recces_options( new RECCES_Options );
 	recces_options->initialize_from_command_line();
@@ -88,10 +88,10 @@ main( int argc, char * argv [] )
 	try {
 		option.add_relevant( OptionKeys::recces::temps );
 		option.add_relevant( OptionKeys::recces::st_weights );
-    option.add_relevant( OptionKeys::recces::n_cycle );
+		option.add_relevant( OptionKeys::recces::n_cycle );
 		option.add_relevant( OptionKeys::recces::seq1 );
 		option.add_relevant( OptionKeys::recces::seq2 );
-    option.add_relevant( OptionKeys::recces::dump_pdb );
+		option.add_relevant( OptionKeys::recces::dump_pdb );
 
 		devel::init ( argc, argv );
 		protocols::viewer::viewer_main( my_main );

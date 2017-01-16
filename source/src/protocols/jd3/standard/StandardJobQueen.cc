@@ -841,7 +841,7 @@ StandardJobQueen::pose_for_job(
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
 	PoseInputSource const & input_source = inner_job->input_source();
-	if ( input_pose_index_map_.count( input_source.pose_id() )) {
+	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
 		core::pose::PoseOP pose( new core::pose::Pose );
 		// Why does the standard job queen use detached_copy? Because it is important in multithreaded
 		// contexts that no two Poses pointing to that same data end up in two separate threads,
@@ -881,7 +881,7 @@ StandardJobQueen::pose_inputter_for_job( StandardInnerLarvalJob const & inner_jo
 		return pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( inner_job.input_source().origin() );
 	} else {
 		debug_assert( preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter )
-		return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter;
+			return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter;
 	}
 }
 

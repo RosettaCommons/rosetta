@@ -29,8 +29,8 @@ recces_pose_setup( options::RECCES_Options const & options );
 //////////////////////////////////////////////////////////////////////////////
 core::pose::PoseOP
 pose_setup_turner(
-std::string const & seq1,
-std::string const & seq2);
+	std::string const & seq1,
+	std::string const & seq2);
 
 
 //////////////////////////////////////////////////////////////////////////////

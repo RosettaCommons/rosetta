@@ -136,8 +136,8 @@ void
 RNA_SugarCloseEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap 
-) const {	
+	EnergyMap & emap
+) const {
 	residue_energy( rsd, emap );
 }
 

@@ -331,7 +331,7 @@ identify_hbonds_1way(
 	HBondDerivs derivs;
 
 	for ( Size const hatm : don_rsd.Hpos_polar() ) {
-		
+
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 		if ( datm_is_bb ) {

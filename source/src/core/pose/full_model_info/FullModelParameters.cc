@@ -521,11 +521,11 @@ operator <<( std::ostream & os, FullModelParameters const & t )
 	// pose data but at the moment we should be careful to explicitly read them out/in.
 	if ( !t.non_standard_residue_map().empty() ) {
 		os << "  NON_STANDARD_RESIDUE_MAP ";
-		for ( auto const & elem : t.non_standard_residue_map() ) { 
+		for ( auto const & elem : t.non_standard_residue_map() ) {
 			os << elem.first << ":" << elem.second << " ";
 		}
 	}
-	
+
 	// constraints are a special block -- they have atom_names and do not fit with above format.
 	using namespace core::scoring::constraints;
 	if ( t.cst_string_.size() > 0 ) os << "   CONSTRAINTS " << utility::replace_in( t.cst_string_, "\n", "; " );
@@ -585,7 +585,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 		}
 		t.set_parameter( type, parameter_values_at_res );
 	}
-	
+
 	// don't do this -- we just got it. is >> tag;
 	if ( tag == "NON_STANDARD_RESIDUE_MAP" ) {
 		TR.Debug << "Found tag NON_STANDARD_RESIDUE_MAP " << std::endl;
@@ -593,7 +593,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 		while ( ok ) {
 			// Read in size : string;
 			is >> tag;
-			
+
 			TR.Debug << "Found tag " << tag << std::endl;
 			utility::vector1< std::string > cols = string_split( tag, ':');
 			runtime_assert( cols.size() == 2 );
@@ -603,7 +603,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 			if ( is.fail() ) break;
 		}
 	}
-	
+
 	is >> tag;
 	if ( tag == "CONSTRAINTS" ) {
 		getline( is, t.cst_string_ ); // assume rest of line is taken up by constraints.

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/sampler/MC_Any.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace recces {
 namespace sampler {
-	
-	class MC_Any;
-	typedef utility::pointer::shared_ptr< MC_Any > MC_AnyOP;
-	typedef utility::pointer::shared_ptr< MC_Any const > MC_AnyCOP;
-	
-} //sampler 
-} //recces 
-} //protocols 
+
+class MC_Any;
+typedef utility::pointer::shared_ptr< MC_Any > MC_AnyOP;
+typedef utility::pointer::shared_ptr< MC_Any const > MC_AnyCOP;
+
+} //sampler
+} //recces
+} //protocols
 
 #endif

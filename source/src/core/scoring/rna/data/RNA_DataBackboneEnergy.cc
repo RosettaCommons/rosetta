@@ -160,7 +160,7 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	if ( rsd2.is_virtual_residue() ) return;
 	if ( rsd1.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( chemical::REPLONLY ) ) return;
-	
+
 	//  rna_filtered_base_base_info.set_calculated( false );
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
@@ -235,7 +235,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
-	
+
 	if ( rsd1.is_virtual_residue() ) return;
 	if ( rsd1.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( rsd1.is_repulsive( m ) ) return;
@@ -271,10 +271,10 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		if ( ! rsd2.is_RNA() ) continue;
-		
+
 		if ( rsd2.is_virtual_residue() ) continue;
 		if ( rsd2.has_variant_type( chemical::REPLONLY ) ) continue;
-		
+
 		// This could be faster if split into separate loops.
 		if ( rna_data_backbone_burial( i ) && check_sugar_atom( m ) ) { // other heavy atoms are possible buriers
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
@@ -296,7 +296,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 		if ( rna_data_backbone_exposed( i ) && check_sugar_atom( m ) ) { // other heavy atoms are possible buriers
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				if ( rsd2.is_repulsive( n ) ) continue;
-				
+
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
 				Real const dist = r.length();
@@ -315,7 +315,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				if ( ! check_sugar_atom( n ) ) continue;
 				if ( rsd2.is_repulsive( n ) ) continue;
-				
+
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
 				Real const dist = r.length();
@@ -334,7 +334,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				if ( ! check_sugar_atom( n ) ) continue;
 				if ( rsd2.is_repulsive( n ) ) continue;
-				
+
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
 				Real const dist = r.length();

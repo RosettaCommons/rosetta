@@ -107,7 +107,7 @@ SilentFilePoseInputter::pose_input_sources_from_tag(
 	for ( auto iter : *sfd_ ) {
 		std::string const & decoy_tag = iter->decoy_tag();
 		if ( boost::starts_with( decoy_tag, "W_" ) && ( opts[ in::file::skip_failed_simulations]
-				|| tag->getOption< bool >( "skip_failed_simulations", false ) )) {
+				|| tag->getOption< bool >( "skip_failed_simulations", false ) ) ) {
 			continue;
 		}
 

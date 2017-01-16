@@ -89,7 +89,7 @@ PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name
 	for ( std::string const & filename : filenames ) {
 		if ( filename.size() < 5 ) continue;
 		if ( filename.substr(  filename.size()-4, 4 ) != ".out" ) continue;
-		
+
 		std::string const full_filename = dir_name + "/" + filename ;
 		TR.Debug << TR.Magenta << "Reading in file: " << full_filename << TR.Reset << std::endl;
 

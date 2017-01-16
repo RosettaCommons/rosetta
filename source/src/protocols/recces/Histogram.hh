@@ -27,35 +27,35 @@ namespace protocols {
 namespace recces {
 
 
-	class Histogram: public utility::pointer::ReferenceCount {
+class Histogram: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		Histogram( core::Real const min,
-							 core::Real const max,
-							 core::Real const spacing );
+	//constructor
+	Histogram( core::Real const min,
+		core::Real const max,
+		core::Real const spacing );
 
-		//destructor
-		~Histogram();
+	//destructor
+	~Histogram();
 
-	public:
+public:
 
-		void add( float const value, core::Size const n_items );
+	void add( float const value, core::Size const n_items );
 
-		void clear();
+	void clear();
 
-		utility::vector1<core::Real> get_scores() const;
+	utility::vector1<core::Real> get_scores() const;
 
-		utility::vector1<core::Size> const & get_hist() const { return hist_; }
+	utility::vector1<core::Size> const & get_hist() const { return hist_; }
 
-	private:
+private:
 
-		core::Real min_, max_, spacing_;
-		core::Size n_elem_;
-		utility::vector1<core::Size> hist_;
+	core::Real min_, max_, spacing_;
+	core::Size n_elem_;
+	utility::vector1<core::Size> hist_;
 
-	};
+};
 
 } //recces
 } //protocols

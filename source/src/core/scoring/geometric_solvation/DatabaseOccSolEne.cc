@@ -173,25 +173,25 @@ void DatabaseOccSolEne::init_atom_occ_mapping(
 	for ( Size i = 1; i <= N; ++i ) {
 
 		if ( atom_occ_type_has_data[ i ] ) continue;
-		
+
 		core::Real rad_i = atom_set[i].lj_radius();
-		
+
 		// new atom type is lowest type (that has pwSHO parameters) whose lj radius is closest to that of old
 		// type
 		core::Real min_dist2 = 9999999.0;
 		Size new_type = 0;
 		for ( Size j = 1; j <= N; j++ ) {
 			if ( !atom_occ_type_has_data[ j ] ) continue;
-			
+
 			core::Real rad_j = atom_set[j].lj_radius();
 			core::Real dist2 = (rad_i - rad_j) * (rad_i - rad_j);
-			
+
 			if ( dist2 < min_dist2 ) {
 				min_dist2 = dist2;
 				new_type = j;
 			}
 		}
-		
+
 		atom_occ_type_mapping[ i ] = new_type;
 	}
 

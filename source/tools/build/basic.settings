@@ -148,7 +148,7 @@ settings = {
                     "isystem external/dbio/",
                 ],
                 "cxx" : [
-                    "std=c++11",
+                    "std=c++0x",
                     "ffor-scope",
                     "isystem external/boost_1_55_0/",
                     "isystem external/",
@@ -590,7 +590,7 @@ settings = {
     # Mode adding special instrumentation to check for (sanitize) undefined behavior
     # only supported by gcc ver > 4.9
     #
-    # Note: Set the environment variable "UBSAN_OPTIONS=print_stacktrace=1" to get a backtrace in addition to the error message  
+    # Note: Set the environment variable "UBSAN_OPTIONS=print_stacktrace=1" to get a backtrace in addition to the error message
     "gcc, ubsan" : {
         "appends" : {
             "flags" : {
@@ -1987,7 +1987,7 @@ settings = {
     # Mode adding special instrumentation to check for (sanitize) undefined behavior
     # Implemented in clang ver > 3.3
     #
-    # Note: Set the environment variable "UBSAN_OPTIONS=print_stacktrace=1" to get a backtrace in addition to the error message  
+    # Note: Set the environment variable "UBSAN_OPTIONS=print_stacktrace=1" to get a backtrace in addition to the error message
     "clang, ubsan" : {
         "appends" : {
             "flags" : {
@@ -2142,7 +2142,11 @@ settings = {
 		"boinc_graphics2",
                 "boinc_api",
                 "boinc",
-                "boinc_zip"
+                "boinc_zip",
+		"freetype",
+		"ftgl",
+		"bz2",
+		"png",
 	    ],
             "library_path" : [
                 "#external/boinc/mac_build/build/Deployment",
@@ -2158,32 +2162,39 @@ settings = {
                 "#external/boinc",
                 "#external/boinc/lib",
                 "#external/boinc/zip",
+		"#external/boinc/mac3rdParty/ftgl-2.1.3~rc5/src/",
+		"#external/boinc/mac3rdParty/freetype-2.6.2/include/",
+		"/System/Library/Frameworks/OpenGL.framework/Headers/",
             ],
             "defines" : [
                 "MAC",
 		"BOINC",
                 "BOINC_GRAPHICS",
-                "GL_GRAPHICS"
+                "GL_GRAPHICS",
             ],
             "flags" : {
 		"warn" : [
 		    "Wno-deprecated-declarations",
+		    "Wno-c++11-narrowing",
 		],
                 "link" : [
+		    "stdlib=libc++",
                     "framework GLUT",
                     "framework OpenGL",
-                    "framework Cocoa"
+                    "framework Cocoa",
                 ],
                 "shlink" : [
+		    "stdlib=libc++",
                     "framework GLUT",
                     "framework OpenGL",
-                    "framework Cocoa"
+                    "framework Cocoa",
                 ],
             },
         },
         "removes" : {
             "flags" : {
                 "compile" : [ "pthread" ],
+                "link"   : [ "stdlib=libc++", ],
             },
         },
     },

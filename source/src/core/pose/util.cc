@@ -385,7 +385,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 	// An empty pose doesn't have jumps through ligands.
 	// (Will encounter a SegFault otherwise)
 	if ( pose.size() == 0 ) return;
-	
+
 	using namespace std;
 	using namespace core::chemical;
 	using namespace core::kinematics;
@@ -2380,7 +2380,7 @@ get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::po
 	utility::vector1<core::Size> chain_ids( chains.size() );
 	std::transform( chains.begin(), chains.end(), chain_ids.begin(),
 		[&]( std::string const & chain ) {
-			return get_chain_id_from_chain( chain, pose );
+		return get_chain_id_from_chain( chain, pose );
 		} );
 	return chain_ids;
 }
@@ -2403,7 +2403,7 @@ get_jump_ids_from_chain( char const & chain, core::pose::Pose const & pose ) {
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
 	std::transform( chain_ids.begin(), chain_ids.end(), chain_ids.begin(),
 		[&]( Size const chain_id ) {
-			return get_jump_id_from_chain_id( chain_id, pose );
+		return get_jump_id_from_chain_id( chain_id, pose );
 		} );
 	return chain_ids;
 }
@@ -2664,22 +2664,22 @@ initialize_disulfide_bonds(
 		ds_file.disulfides(disulfides, pose);
 		pose.conformation().fix_disulfides( disulfides );
 	} else if ( option[ in::detect_disulf ].user() ?
-				option[ in::detect_disulf ]() : // detect_disulf true
-				pose.is_fullatom() // detect_disulf default but fa pose
+			option[ in::detect_disulf ]() : // detect_disulf true
+			pose.is_fullatom() // detect_disulf default but fa pose
 			) {
 		//utility::vector1< std::pair< Size, Size > > disulfs;
 		utility::vector1< Size > disulf_one;
 		utility::vector1< Size > disulf_two;
-		
+
 		// Prepare a list of pose-numbered disulfides!
 		for ( auto const & ssbond : sfr.ssbond_map() ) {
-			
+
 			// For now we really hope the vector1 is just a single element!
 			if ( ssbond.second.size() != 1 ) {
 				// We can salvage if it's double-entry: just take the first.
 				// The length isn't actually used anyway, and so it doesn't
 				// affect what conformation is preferred.
-				
+
 				// Are they all the same?
 				std::string id1 = ssbond.second[1].resID2;
 				bool identical = true;
@@ -2693,16 +2693,16 @@ initialize_disulfide_bonds(
 					utility_exit();
 				}
 			}
-			
+
 			Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID1, ssbond.second[1].resSeq1, ssbond.second[1].iCode1 );
 			Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID2, ssbond.second[1].resSeq2, ssbond.second[1].iCode2 );
-			
+
 			if ( seqpos_one != 0 && seqpos_two != 0 ) {
 				disulf_one.push_back( seqpos_one );
 				disulf_two.push_back( seqpos_two );
 			}
 		}
-		
+
 		pose.conformation().detect_disulfides( disulf_one, disulf_two );
 	}
 }
@@ -2745,59 +2745,59 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 
 core::Size canonical_residue_count(core::pose::Pose const & pose)
 {
-	return std::count_if( pose.begin(), pose.end(), 
+	return std::count_if( pose.begin(), pose.end(),
 		[&]( conformation::Residue const & resi ) {
-			return resi.aa() <= core::chemical::num_canonical_aas; 
+		return resi.aa() <= core::chemical::num_canonical_aas;
 		} );
 }
 
 core::Size noncanonical_residue_count(core::pose::Pose const & pose)
 {
-	return std::count_if( pose.begin(), pose.end(), 
+	return std::count_if( pose.begin(), pose.end(),
 		[&]( conformation::Residue const & resi ) {
-			return resi.aa() > core::chemical::num_canonical_aas; 
+		return resi.aa() > core::chemical::num_canonical_aas;
 		} );
 }
 
 core::Size canonical_atom_count(core::pose::Pose const & pose)
 {
-	return std::accumulate( pose.begin(), pose.end(), 0, 
+	return std::accumulate( pose.begin(), pose.end(), 0,
 		[&]( Size const posum, conformation::Residue const & resi ) {
-			if ( resi.aa() <= core::chemical::num_canonical_aas ) {
-				return posum + resi.natoms();
-			}
-			return posum;
+		if ( resi.aa() <= core::chemical::num_canonical_aas ) {
+		return posum + resi.natoms();
+		}
+		return posum;
 		} );
 }
 
 core::Size noncanonical_atom_count(core::pose::Pose const & pose)
 {
-	return std::accumulate( pose.begin(), pose.end(), 0, 
+	return std::accumulate( pose.begin(), pose.end(), 0,
 		[&]( Size const posum, conformation::Residue const & resi ) {
-			if ( resi.aa() > core::chemical::num_canonical_aas ) {
-				return posum + resi.natoms();
-			}
-			return posum;
+		if ( resi.aa() > core::chemical::num_canonical_aas ) {
+		return posum + resi.natoms();
+		}
+		return posum;
 		} );
 }
 
 core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 {
-	return std::accumulate( pose.begin(), pose.end(), 0, 
+	return std::accumulate( pose.begin(), pose.end(), 0,
 		[&]( Size const posum, conformation::Residue const & resi ) {
-			if ( resi.aa() > core::chemical::num_canonical_aas ) {
-				return posum + resi.nchi();
-			}
-			return posum;
+		if ( resi.aa() > core::chemical::num_canonical_aas ) {
+		return posum + resi.nchi();
+		}
+		return posum;
 		} );
 }
 
 /// @brief Number of protein residues in the pose
 /// @details No virtuals, membrane residues or embedding residues counted
 Size nres_protein( pose::Pose const & pose ) {
-	return std::count_if( pose.begin(), pose.end(), 
+	return std::count_if( pose.begin(), pose.end(),
 		[&]( conformation::Residue const & resi ) {
-			return resi.is_protein();
+		return resi.is_protein();
 		} );
 }// nres_protein
 
@@ -2960,7 +2960,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 }
 
 /// @brief Create std::map from PDBPoseMap in pose (JKLeman)
-std::map< std::string, core::Size > 
+std::map< std::string, core::Size >
 get_pdb2pose_numbering_as_stdmap( core::pose::Pose const & pose ) {
 
 	using namespace utility;

@@ -16,7 +16,7 @@
 
 
 // C++ Headers
-#ifdef WIN_PYROSETTA
+#if (defined WIN32) || (defined WIN_PYROSETTA)
 #include <string>
 #else
 #include <iosfwd>

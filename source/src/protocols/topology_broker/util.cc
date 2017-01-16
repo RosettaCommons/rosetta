@@ -51,6 +51,10 @@
 #include <utility/vector1.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef small
+#endif
+
 //Auto Headers
 static THREAD_LOCAL basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 

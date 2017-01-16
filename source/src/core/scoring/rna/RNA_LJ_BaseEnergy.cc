@@ -166,12 +166,12 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 			fa_atr_score += cp_weight * temp_atr_score;
 		} // j
 	} // i
-	
+
 	emap[ rna_fa_rep_base ] += fa_rep_score;
 
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
-	
+
 	emap[ rna_fa_atr_base ] += fa_atr_score;
 }
 
@@ -251,7 +251,7 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
-	
+
 	// Currently extremely RNA specific.
 	if ( !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
@@ -297,10 +297,10 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 
 			Real dummy( 0.0 ), fa_atr_deriv( 0.0 ), fa_rep_deriv( 0.0 );
 			eval_lj( rsd1.atom( m ), rsd2.atom( n ), d2, dummy, dummy, fa_atr_deriv, fa_rep_deriv );
-			
+
 			if ( rsd1.has_variant_type( REPLONLY ) ) fa_atr_deriv = 0.0;
 			if ( rsd2.has_variant_type( REPLONLY ) ) fa_atr_deriv = 0.0;
-			
+
 			if ( rsd1.is_repulsive( m ) ) fa_atr_deriv = 0.0;
 			if ( rsd2.is_repulsive( n ) ) fa_atr_deriv = 0.0;
 
@@ -325,7 +325,7 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
-	
+
 	Real score( 0.0 );
 
 	// Currently extremely RNA specific.
@@ -364,10 +364,10 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 
 			if ( rsd1.has_variant_type( REPLONLY ) ) fa_atr = 0.0;
 			if ( rsd2.has_variant_type( REPLONLY ) ) fa_atr = 0.0;
-			
+
 			if ( rsd1.is_repulsive( m ) ) fa_atr = 0.0;
 			if ( rsd2.is_repulsive( n ) ) fa_atr = 0.0;
-			
+
 			// In principle could pass in an emap and weight the components
 			// by the Emap.
 			score += cp_weight * ( fa_atr + fa_rep );

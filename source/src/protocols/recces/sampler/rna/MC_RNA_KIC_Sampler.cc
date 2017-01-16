@@ -53,7 +53,7 @@ namespace sampler {
 namespace rna {
 
 MC_RNA_KIC_Sampler::MC_RNA_KIC_Sampler(
-  core::pose::PoseCOP mc_pose,
+	core::pose::PoseCOP mc_pose,
 	core::Size const moving_suite,
 	core::Size const chainbreak_suite,
 	bool const change_ft
@@ -302,7 +302,7 @@ void
 MC_RNA_KIC_Sampler::show( std::ostream & out, Size const indent ) const {
 	for ( Size n = 1; n <= indent; n++ ) out << ' ';
 	out << ( "MC_RNA_KIC_Sampler moving_suite:" + utility::to_string(moving_suite_) + " chainbreak_suite:" +
-					 utility::to_string(chainbreak_suite_) );
+		utility::to_string(chainbreak_suite_) );
 }
 /////////////////////////////////////////////////////////////////////////
 /// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
@@ -310,7 +310,7 @@ MC_SamplerOP
 MC_RNA_KIC_Sampler::find( core::id::TorsionID const & torsion_id )
 {
 	if ( get_suite_torsion_ids( moving_suite_ ).has_value( torsion_id ) ||
-			 get_suite_torsion_ids( chainbreak_suite_ ).has_value( torsion_id ) ) {
+			get_suite_torsion_ids( chainbreak_suite_ ).has_value( torsion_id ) ) {
 		return std::dynamic_pointer_cast< MC_Sampler >( shared_from_this() );
 	}
 	return 0;

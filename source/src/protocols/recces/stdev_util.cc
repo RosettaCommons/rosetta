@@ -40,21 +40,21 @@ namespace recces {
 // TODO: Unify with set_gaussian_stdevs_thermal_sampler (see note below)
 void
 set_gaussian_stdevs_legacy_turner( protocols::recces::sampler::MC_CombOP sampler,
-																	 core::Real const & temperature,
-																	 core::pose::Pose const & pose,
-																	 protocols::recces::params::RECCES_Parameters const & params )
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	protocols::recces::params::RECCES_Parameters const & params )
 {
 	using namespace core::id;
 	using namespace core::chemical::rna;
- 	using namespace core::pose::rna;
+	using namespace core::pose::rna;
 	using namespace protocols::recces::sampler;
 
 	Size const n_rsd( pose.total_residue() );
 	Real const bp_stdev(       gaussian_stdev( n_rsd, temperature, true ) );
 	Real const dangling_stdev( gaussian_stdev( n_rsd, temperature, false ) );
 	Real stdev( 0.0 );
-  utility::vector1< Real > const & bp_res( params.bp_res() );
-  utility::vector1< Real > const & dangling_res( params.dangling_res() );
+	utility::vector1< Real > const & bp_res( params.bp_res() );
+	utility::vector1< Real > const & dangling_res( params.dangling_res() );
 
 	runtime_assert( n_rsd == bp_res.size() + dangling_res.size() );
 
@@ -102,13 +102,13 @@ core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool c
 //////////////////////////////////////////////////////////////////////////////
 // replace this eventually using sampler::find()
 void set_gaussian_stdevs_thermal_sampler(
-    protocols::recces::sampler::MC_CombOP internal_bb_sampler,
-		protocols::recces::sampler::MC_CombOP chi_sampler,
-		protocols::recces::sampler::rna::MC_RNA_MultiSuiteOP standard_bb_sampler,
-		Real const & temp,
-		Size const & total_rsd,
-		Size const & sampled_rsd,
-		utility::vector1<bool> const & is_free )
+	protocols::recces::sampler::MC_CombOP internal_bb_sampler,
+	protocols::recces::sampler::MC_CombOP chi_sampler,
+	protocols::recces::sampler::rna::MC_RNA_MultiSuiteOP standard_bb_sampler,
+	Real const & temp,
+	Size const & total_rsd,
+	Size const & sampled_rsd,
+	utility::vector1<bool> const & is_free )
 {
 	using namespace protocols::recces::sampler;
 	using namespace protocols::recces::sampler::rna;
@@ -148,10 +148,10 @@ void set_gaussian_stdevs_thermal_sampler(
 //        [all inside pose full_model or in Options]
 void
 set_gaussian_stdevs_thermal_sampler(
-    protocols::recces::sampler::MC_SamplerOP sampler,
-		core::Real const & temperature,
-		core::pose::Pose const & pose,
-		protocols::recces::options::RECCES_Options const & options )
+	protocols::recces::sampler::MC_SamplerOP sampler,
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	protocols::recces::options::RECCES_Options const & options )
 {
 
 	using namespace protocols::toolbox;
@@ -178,7 +178,7 @@ set_gaussian_stdevs_thermal_sampler(
 	}
 
 	utility::vector1< bool > is_free;
-	for ( auto sample_res : options.sample_residues() )	is_free.push_back( options.free_residues().has_value( sample_res ) );
+	for ( auto sample_res : options.sample_residues() ) is_free.push_back( options.free_residues().has_value( sample_res ) );
 
 	set_gaussian_stdevs_thermal_sampler( internal_bb_sampler, chi_sampler, standard_bb_sampler, temperature, pose.size(), options.sample_residues().size(), is_free );
 

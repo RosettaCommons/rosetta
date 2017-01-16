@@ -448,7 +448,7 @@ RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
 	Size const i = full_model_info.full_to_sub( pos );
 	if ( pose.residue( i ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( pose.residue( i ).has_variant_type( chemical::REPLONLY ) ) return 0.0;
-	
+
 	bool ade_n1_bonded( false );
 	Real binding_energy( 0.0 ), occupancy_density( 0.0 );
 	bool const success = get_features( pose, i, ade_n1_bonded, binding_energy, occupancy_density );

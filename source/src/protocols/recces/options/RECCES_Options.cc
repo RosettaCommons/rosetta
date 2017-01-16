@@ -30,60 +30,60 @@ namespace protocols {
 namespace recces {
 namespace options {
 
-	//Constructor
-	RECCES_Options::RECCES_Options():
-		n_cycle_( 10000 ),
-		n_dump_( 0 ),
-		a_form_range_( 60.0 ),
-		base_pair_rmsd_cutoff_( 0.0 ),
-		base_pair_rotation_mag_( 0.0 ),
-		base_pair_translation_mag_( 0.0 ),
-		legacy_turner_mode_( false ),
-		dump_pdb_( false ),
-		save_scores_( false ),
-		block_stack_( false ),
-		dump_freq_( 500 ),
-		dump_silent_( false ),
-		out_torsions_( false ),
-		setup_base_pair_constraints_( false ),
-		seq1_( "" ),
-		seq2_( "" ),
-		infile_( "" ),
-		out_prefix_( "" ),
-	  xyz_file_( "" ),
-		histogram_min_( -100.05 ),
-		histogram_max_( +800.05 ),
-		histogram_spacing_( 0.1 ),
-		angle_range_bb_( 20.0 ),
-		angle_range_free_bb_( 180.0 ),
-		angle_range_chi_( 20.0 ),
-		angle_range_free_chi_( 180.0 ),
-		chi_stdev_( 20.0 ),
-		bb_stdev_( 1.0 ),
-		standard_bb_stdev_( 1.0 ),
-		thermal_sampler_mode_( false ),
-		blank_score_terms_( false ),
-		skip_last_accept_( false ),
-		suppress_sampler_display_( false ),
-		prefix_each_output_pdb_( false ),
-		show_more_pose_scores_( false ),
-		output_simple_text_files_( false ),
-		accept_no_op_moves_( false ),
-		sample_jump_( false )
-	{}
+//Constructor
+RECCES_Options::RECCES_Options():
+	n_cycle_( 10000 ),
+	n_dump_( 0 ),
+	a_form_range_( 60.0 ),
+	base_pair_rmsd_cutoff_( 0.0 ),
+	base_pair_rotation_mag_( 0.0 ),
+	base_pair_translation_mag_( 0.0 ),
+	legacy_turner_mode_( false ),
+	dump_pdb_( false ),
+	save_scores_( false ),
+	block_stack_( false ),
+	dump_freq_( 500 ),
+	dump_silent_( false ),
+	out_torsions_( false ),
+	setup_base_pair_constraints_( false ),
+	seq1_( "" ),
+	seq2_( "" ),
+	infile_( "" ),
+	out_prefix_( "" ),
+	xyz_file_( "" ),
+	histogram_min_( -100.05 ),
+	histogram_max_( +800.05 ),
+	histogram_spacing_( 0.1 ),
+	angle_range_bb_( 20.0 ),
+	angle_range_free_bb_( 180.0 ),
+	angle_range_chi_( 20.0 ),
+	angle_range_free_chi_( 180.0 ),
+	chi_stdev_( 20.0 ),
+	bb_stdev_( 1.0 ),
+	standard_bb_stdev_( 1.0 ),
+	thermal_sampler_mode_( false ),
+	blank_score_terms_( false ),
+	skip_last_accept_( false ),
+	suppress_sampler_display_( false ),
+	prefix_each_output_pdb_( false ),
+	show_more_pose_scores_( false ),
+	output_simple_text_files_( false ),
+	accept_no_op_moves_( false ),
+	sample_jump_( false )
+{}
 
-	//Destructor
-	RECCES_Options::~RECCES_Options()
-	{}
+//Destructor
+RECCES_Options::~RECCES_Options()
+{}
 
-	/// @brief copy constructor
+/// @brief copy constructor
 RECCES_Options::RECCES_Options( RECCES_Options const & src ) :
 	ResourceOptions( src )
 {
 	*this = src;
 }
 
-	/// @brief clone the options
+/// @brief clone the options
 RECCES_OptionsOP
 RECCES_Options::clone() const
 {
@@ -119,7 +119,7 @@ RECCES_Options::initialize_from_command_line() {
 	}
 
 	if ( option[ in::file::s ].user() &&
-			 option[ in::file::s ]().size() > 0 ) {
+			option[ in::file::s ]().size() > 0 ) {
 		set_infile( option[ in::file::s ]()[ 1 ] );
 		runtime_assert( !legacy_turner_mode() );
 	}

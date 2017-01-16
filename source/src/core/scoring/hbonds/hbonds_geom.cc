@@ -504,7 +504,7 @@ get_hb_acc_chem_type(
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
 
 	// AMW TODO: these string comparisons are 3.6% of SWA runtime
-	
+
 	if ( acc_rsd.type().name3() == "BRU" && ( aname == " O2 " || aname == " O4 " ) ) {
 		tr << "acc_rsd n_heavyatom " << acc_rsd.nheavyatoms() << std::endl;
 		tr << "acc_rsd n_backbone_heavyatom " << acc_rsd.last_backbone_atom() << std::endl;
@@ -717,7 +717,7 @@ get_hb_acc_chem_type(
 				return hbacc_GENERIC_RINGSC; break;
 			case UNKNOWN_HYBRID :
 				return hbacc_NONE; break;
-			default:
+			default :
 				// This is actually nuts, but we need some default here
 				return hbacc_GENERIC_SP2SC; break;
 			}

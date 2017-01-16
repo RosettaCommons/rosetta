@@ -26,6 +26,7 @@
 
 #ifdef WIN32
 #include <core/id/AtomID.hh>
+#include <iostream>
 #endif
 
 namespace protocols {

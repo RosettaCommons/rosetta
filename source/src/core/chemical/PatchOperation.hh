@@ -574,19 +574,11 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief add an atom to ResidueType
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-class AddAtomWIN32 : public PatchOperation {
-#else
 class AddAtom : public PatchOperation {
-#endif
 public:
 
 	/// constructor
-#if defined(WIN32) && !defined(WIN_PYROSETTA)
-	AddAtomWIN32(
-#else
 	AddAtom(
-#endif
 		std::string const & atom_name_in,
 		std::string const & atom_type_name_in,
 		std::string const & mm_atom_type_name_in,

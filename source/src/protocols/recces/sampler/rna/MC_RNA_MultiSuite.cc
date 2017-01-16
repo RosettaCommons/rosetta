@@ -82,7 +82,7 @@ void MC_RNA_MultiSuite::set_angle( pose::Pose const & pose ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::add_rotamer(
- MC_RNA_SuiteOP rotamer
+	MC_RNA_SuiteOP rotamer
 ) {
 	suite_samplers_.push_back( rotamer );
 	MC_Comb::add_rotamer( rotamer );

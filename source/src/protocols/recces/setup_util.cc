@@ -98,7 +98,7 @@ pose_setup_turner(
 }
 
 
-	//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 core::pose::PoseOP
 pose_setup_from_file( options::RECCES_Options const & options )
 {
@@ -115,18 +115,18 @@ pose_setup_from_file( options::RECCES_Options const & options )
 	// replace this with fold_tree, full_model_info definition, + cleanup_variants
 	// need block_stack option in FullModelSetupFromCommandLine
 	if ( pose->size() == 2 ) {
-	 	kinematics::FoldTree f( 2 );
-	 	f.new_jump( 1, 2, 1 );
-	 	f.set_jump_atoms( 1, default_jump_atom(pose->residue_type(1)), default_jump_atom(pose->residue_type(2) )) ;
-	 	pose->fold_tree( f );
-	 	for ( Size n = 1; n <= 2; n++ ) {
-	 		pose::add_variant_type_to_pose_residue( *pose, VIRTUAL_PHOSPHATE, n );
-	 		pose::add_variant_type_to_pose_residue( *pose, VIRTUAL_RIBOSE, n );
-	 		if ( options.block_stack() ) {
-	 			pose::add_variant_type_to_pose_residue( *pose, BLOCK_STACK_ABOVE, n );
-	 			pose::add_variant_type_to_pose_residue( *pose, BLOCK_STACK_BELOW, n );
-	 		}
-	 	}
+		kinematics::FoldTree f( 2 );
+		f.new_jump( 1, 2, 1 );
+		f.set_jump_atoms( 1, default_jump_atom(pose->residue_type(1)), default_jump_atom(pose->residue_type(2) )) ;
+		pose->fold_tree( f );
+		for ( Size n = 1; n <= 2; n++ ) {
+			pose::add_variant_type_to_pose_residue( *pose, VIRTUAL_PHOSPHATE, n );
+			pose::add_variant_type_to_pose_residue( *pose, VIRTUAL_RIBOSE, n );
+			if ( options.block_stack() ) {
+				pose::add_variant_type_to_pose_residue( *pose, BLOCK_STACK_ABOVE, n );
+				pose::add_variant_type_to_pose_residue( *pose, BLOCK_STACK_BELOW, n );
+			}
+		}
 	}
 
 	// Obtains base pairs and constraints from pose

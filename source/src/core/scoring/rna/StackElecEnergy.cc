@@ -228,7 +228,7 @@ StackElecEnergy::defines_score_for_residue_pair(
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return false;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return false;
-	
+
 	if ( rsd1.seqpos() == rsd2.seqpos() ) {
 		return false;
 	}
@@ -336,7 +336,7 @@ StackElecEnergy::residue_pair_energy_ext(
 
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
-	
+
 	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
 
 	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
@@ -414,7 +414,7 @@ StackElecEnergy::residue_pair_energy(
 	if ( pose.energies().use_nblist() ) return;
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
-	
+
 	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
 	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
@@ -532,7 +532,7 @@ StackElecEnergy::eval_atom_derivative(
 	Vector & F2
 ) const {
 	if ( ! pose.energies().use_nblist_auto_update() ) return;
-	
+
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );

@@ -12,6 +12,8 @@
 /// @details
 /// @author Rhiju Das
 
+// Should be first for windows VS build
+#include <utility/io/izstream.hh>
 
 // Rosetta Headers
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>

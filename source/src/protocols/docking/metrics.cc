@@ -45,6 +45,9 @@
 //Auto Headers
 #include <protocols/simple_filters/DdgFilter.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#endif
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingProtocol.metrics" );
 

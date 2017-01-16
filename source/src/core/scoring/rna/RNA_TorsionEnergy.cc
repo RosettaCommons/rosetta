@@ -84,7 +84,7 @@ RNA_TorsionEnergy::residue_pair_energy(
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
-	
+
 	emap[ rna_torsion ] += rna_torsion_potential_->residue_pair_energy( rsd1, rsd2, pose );
 }
 
@@ -95,10 +95,10 @@ RNA_TorsionEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const &,
-	EnergyMap & emap 
+	EnergyMap & emap
 ) const {
 	if ( rsd.has_variant_type( REPLONLY ) ) return;
-	
+
 	emap[ rna_torsion ]    += rna_torsion_potential_->eval_intrares_energy( rsd, pose );
 	emap[ rna_torsion_sc ] += rna_torsion_potential_->intrares_side_chain_score(); // evaluated at same time as above.
 }

@@ -24,6 +24,10 @@
 
 #include <iostream>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#include <algorithm>
+#endif
+
 namespace numeric {
 namespace fourier {
 

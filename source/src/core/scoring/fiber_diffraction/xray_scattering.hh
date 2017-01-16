@@ -20,6 +20,7 @@
 #include <string>
 
 #ifdef WIN32
+#include <algorithm>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #endif

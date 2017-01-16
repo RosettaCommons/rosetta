@@ -178,7 +178,7 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 	using namespace ObjexxFCL;
 	std::string strippable_full_sequence( full_sequence );
 	core::sequence::parse_out_non_standard_residues( strippable_full_sequence );
-	
+
 	if ( pose1.sequence() != strippable_full_sequence ) {
 		TR << "pose1.sequence() = " << pose1.sequence() << std::endl;
 		TR << "pose2.sequence() = " << pose2.sequence() << std::endl;

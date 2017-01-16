@@ -574,13 +574,13 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	if ( nc_res_map.find( res_to_add_in_full_model_numbering_ ) != nc_res_map.end() ) {
 		newrestype3 = nc_res_map.at( res_to_add_in_full_model_numbering_ );
 	}
-	
+
 	TR.Debug << "Going to add a " << newrestype3 << " for " << res_to_add_in_full_model_numbering_ << "." << std::endl;
 	TR.Debug << "Note: NSRM was " << std::endl;
 	for ( auto const & elem : nc_res_map ) {
 		TR.Debug << elem.first << " : " << elem.second << std::endl;
 	}
-	
+
 	// figure out residue type from name3
 	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose();
 

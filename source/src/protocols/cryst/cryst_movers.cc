@@ -403,8 +403,8 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	}
 
 	if ( outfile_.length() > 0 ) {
-		std::ofstream OUT(outfile_.c_str());
-		OUT << gradsum << std::endl;
+		std::ofstream OUTF(outfile_.c_str());
+		OUTF << gradsum << std::endl;
 	}
 	return gradsum;
 }

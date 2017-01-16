@@ -211,7 +211,7 @@ RNA_DMS_LowResolutionPotential::evaluate( core::pose::Pose const & pose,
 		// Skip virtual, repulsive
 		if ( pose.residue( i ).is_virtual_residue() ) return 0.0;
 		if ( pose.residue( i ).has_variant_type( chemical::REPLONLY ) ) return 0.0;
-		
+
 		// no syn-adenosines (some of these are exposed but not DMS-reactive -- chemical understanding
 		// is currently incomplete.
 		if ( pose.chi( i ) < 0.0 ) return 0.0;

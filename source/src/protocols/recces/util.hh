@@ -77,7 +77,7 @@ void vector2disk_in1d(
 	utility::vector1<T> const & out_vector
 ) {
 	utility::io::ozstream out( out_filename.c_str(), std::ios::out | std::ios::binary );
-	if ( out_vector.size() != 0 )	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	if ( out_vector.size() != 0 ) out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
 	out.close();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -110,8 +110,8 @@ print_base_centroid_atoms_for_rb_entropy( core::conformation::Residue const & rs
 /// @brief used to output torsions from pose -- useful for clustering states, etc.
 utility::vector1<core::Real>
 get_torsions(
-		utility::vector1<core::id::TorsionID> const & torsion_ids,
-		core::pose::Pose const & pose	);
+	utility::vector1<core::id::TorsionID> const & torsion_ids,
+	core::pose::Pose const & pose );
 
 } //recces
 } //protocols

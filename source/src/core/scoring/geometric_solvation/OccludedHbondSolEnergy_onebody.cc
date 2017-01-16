@@ -167,7 +167,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
-	
+
 	// loop over all atoms of neighboring residues, INCLUDING SELF
 	core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 	utility::vector1 <core::Size> neighborlist;
@@ -192,7 +192,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
 			if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) continue;
 			if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-			
+
 			for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
 				if ( occ_rsd.is_virtual( occ_atom ) ) continue;
 				if ( occ_rsd.is_repulsive( occ_atom ) ) continue;
@@ -219,11 +219,11 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
 			if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) continue;
 			if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-			
+
 			for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
 				if ( occ_rsd.is_virtual( occ_atom ) ) continue;
 				if ( occ_rsd.is_repulsive( occ_atom ) ) continue;
-				
+
 				get_atom_atom_occ_solvation( acc_atom, base_atom, polar_rsd, occ_atom, occ_rsd, energy );
 				polar_group_energy += energy;
 			}
@@ -246,7 +246,7 @@ OccludedHbondSolEnergy_onebody::res_res_occ_sol_one_way(
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
-	
+
 	// Rhiju importantly notes: for GeometricSolvation he originally had the code in
 	// the following functions written out inside these loop -- and packing was faster.
 	// Perhaps something to do with inlining or compiler optimization.
@@ -265,11 +265,11 @@ OccludedHbondSolEnergy_onebody::res_res_occ_sol_one_way(
 		if ( polar_rsd.is_repulsive( don_h_atom ) ) continue;
 		if ( polar_rsd.is_virtual( don_base_atom ) ) continue;
 		if ( polar_rsd.is_repulsive( don_base_atom ) ) continue;
-		
+
 		for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
 			if ( occ_rsd.is_virtual( occ_atom ) ) continue;
 			if ( occ_rsd.is_repulsive( occ_atom ) ) continue;
-			
+
 			get_atom_atom_occ_solvation( don_h_atom, don_base_atom, polar_rsd, occ_atom, occ_rsd, energy );
 			geo_solE += energy;
 		}
@@ -282,7 +282,7 @@ OccludedHbondSolEnergy_onebody::res_res_occ_sol_one_way(
 		if ( polar_rsd.is_repulsive( acc_atom ) ) continue;
 		if ( polar_rsd.is_virtual( base_atom ) ) continue;
 		if ( polar_rsd.is_repulsive( base_atom ) ) continue;
-		
+
 		for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
 			if ( occ_rsd.is_virtual( occ_atom ) ) continue;
 			if ( occ_rsd.is_repulsive( occ_atom ) ) continue;
@@ -308,14 +308,14 @@ OccludedHbondSolEnergy_onebody::get_atom_atom_occ_solvation(
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
 	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
-	
+
 	// In case of early return, initialize. Note that energy does NOT accumulate, but f1/f2 do.
 	// Also note that f1 and f2 are returned unweighted.
 	energy = 0.;
 
 	// note: after testing, hydrogens need not occlude
 	if ( occ_rsd.atom_is_hydrogen(occ_atom) ) return;
-	
+
 	if ( occ_rsd.is_virtual( occ_atom ) ) return;
 	if ( occ_rsd.is_repulsive( occ_atom ) ) return;
 	if ( polar_rsd.is_virtual( polar_atom ) ) return;

@@ -33,13 +33,6 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
-#ifdef WIN32
-inline double pow(Size x, Size y)
-{
-	return pow( (double)x, y);
-}
-#endif
-
 /// @brief Dummy function, never to be called.  This is only here to ensure that the compiler creates
 /// PolycubicSpline<3> through PolycubicSpline<9> classes.
 void hokey_template_workaround() {

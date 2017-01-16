@@ -232,7 +232,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	// (before I got here, we just 'continue'd for repulsive atoms!)
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
-	
+
 	Real score_aro1( 0.0 ), score_aro2( 0.0 );
 	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, prefactor_, stack_cutoff_, dist_cutoff_ );
 	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, prefactor_, stack_cutoff_, dist_cutoff_ ) ;
@@ -276,7 +276,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
-	
+
 	score_aro = 0.0;
 	Real score( 0.0 );
 	if ( !rsd1.is_RNA() ) return score;
@@ -407,7 +407,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
-	
+
 	if ( base_base_only_ && !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
 	if ( rsd1.is_virtual( m ) ) return;

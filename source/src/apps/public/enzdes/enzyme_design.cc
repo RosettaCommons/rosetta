@@ -191,7 +191,7 @@ main( int argc, char * argv [])
 					protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP cstio( protocols::enzdes::enzutil::get_enzcst_io( *(poses_to_process[ pose_count ] ) ) );
 					enz_scofile->set_cstio( cstio );
 					core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct(
-							opts, *(poses_to_process[ pose_count ]), outtag ) );
+						opts, *(poses_to_process[ pose_count ]), outtag ) );
 					ss->precision( 2 );
 					ss->scoreline_prefix( "" );
 

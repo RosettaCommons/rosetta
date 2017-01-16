@@ -127,7 +127,7 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 	for ( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
 		Atom const & atom( graph[*iter] );
 		if ( preserve && name_counts[ atom.name() ] == 1 ) continue;
-		
+
 		//Find the first unoccupied name Xnnn type string.
 		// Skipping values which were multiply represented in the input is deliberate
 		// There's no fair way to choose which one is the "real" one.

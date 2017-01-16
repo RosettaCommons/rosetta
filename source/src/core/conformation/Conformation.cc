@@ -1946,16 +1946,16 @@ Conformation::set_noncanonical_connection(
 	// a bad seqpos.
 	// A project for another day.
 	//if ( lr_conn_id > residue( res_id_lower ).n_possible_residue_connections() ) {
-	//	TR.Warning << "Oddly, asking residue " << res_id_lower << " " << residue( res_id_lower ).name()
-	//		<< " for its connection " << lr_conn_id << "!" << std::endl;
-	//	return;
+	// TR.Warning << "Oddly, asking residue " << res_id_lower << " " << residue( res_id_lower ).name()
+	//  << " for its connection " << lr_conn_id << "!" << std::endl;
+	// return;
 	//}
 	//if ( ur_conn_id > residue( res_id_upper ).n_possible_residue_connections() ) {
-	//	TR.Warning << "Oddly, asking residue " << res_id_upper << " " << residue( res_id_upper ).name()
-	//		<< " for its connection " << ur_conn_id << "!" << std::endl;
-	//	return;
+	// TR.Warning << "Oddly, asking residue " << res_id_upper << " " << residue( res_id_upper ).name()
+	//  << " for its connection " << ur_conn_id << "!" << std::endl;
+	// return;
 	//}
-	
+
 	residues_[ res_id_lower ]->residue_connection_partner( lr_conn_id, res_id_upper, ur_conn_id );
 	residues_[ res_id_upper ]->residue_connection_partner( ur_conn_id, res_id_lower, lr_conn_id );
 }

@@ -67,6 +67,10 @@
 // C++ Headers
 #include <cstdlib>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef small
+#endif
+
 static basic::Tracer TR( "protocols.membrane.MPQuickRelaxMover" );
 
 namespace protocols {

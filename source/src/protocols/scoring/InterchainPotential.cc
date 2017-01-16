@@ -49,6 +49,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#endif
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

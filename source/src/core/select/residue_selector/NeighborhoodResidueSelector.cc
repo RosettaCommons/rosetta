@@ -189,7 +189,7 @@ NeighborhoodResidueSelector::parse_my_tag(
 	set_distance( tag->getOption< Real >( "distance", distance_ ) );
 	set_include_focus_in_subset( tag->getOption< bool >( "include_focus_in_subset", include_focus_in_subset_));
 
-	if (tag->hasOption("atom_names_for_distance_measure") ) {
+	if ( tag->hasOption("atom_names_for_distance_measure") ) {
 		set_atom_names_for_distance_measure( utility::string_split( tag->getOption< std::string >( "atom_names_for_distance_measure" ), ',') );
 		TR.Warning << "Will use given atom names instead of residue neighbor atoms. The number of specified atoms should be equal to the number of focus residues else an error will be thrown." << std::endl;
 	}
@@ -257,8 +257,8 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 	if ( distance_ > 10.0 || atom_names_for_distance_measure_.size() ) {
 
 		// if custom atoms are given, check to see whether their count is equal to the count of focus residues
-		if ( atom_names_for_distance_measure_.size() && atom_names_for_distance_measure_.size() != focus_residues.size() ){
-				utility_exit_with_message( "The number of atom names specified is not equal to the number focus residues!" );
+		if ( atom_names_for_distance_measure_.size() && atom_names_for_distance_measure_.size() != focus_residues.size() ) {
+			utility_exit_with_message( "The number of atom names specified is not equal to the number focus residues!" );
 		}
 
 		Real const dst_squared = distance_ * distance_;
@@ -283,14 +283,13 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 
 				// if atom names for focus residues are given, use those instead of neighbor atoms
 				core::Vector focus_residue_atom_xyz;
-				if ( atom_names_for_distance_measure_.size() ){
+				if ( atom_names_for_distance_measure_.size() ) {
 					// exits with an error, if atom name is not found in the residue
 					core::Size atom_index = r2.atom_index( atom_names_for_distance_measure_[i_atom_names] );
 					focus_residue_atom_xyz = r2.xyz( atom_index );
 					TR << "Using atom " << atom_names_for_distance_measure_[i_atom_names] << " for residue "
-						 << r2.name3() << " to find neighbors." << std::endl;
-				}
-				else {
+						<< r2.name3() << " to find neighbors." << std::endl;
+				} else {
 					focus_residue_atom_xyz = r2.xyz( r2.nbr_atom() );
 				}
 

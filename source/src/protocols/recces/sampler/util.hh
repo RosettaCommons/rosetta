@@ -36,12 +36,12 @@ initialize_sampler( core::pose::Pose const & pose,
 
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler( core::pose::Pose const & pose,
-													 core::Real const & a_form_range,
-													 params::RECCES_Parameters const & params );
+	core::Real const & a_form_range,
+	params::RECCES_Parameters const & params );
 
 protocols::recces::sampler::MC_CombOP
 initialize_thermal_sampler( core::pose::Pose const & pose,
-														options::RECCES_Options const & options );
+	options::RECCES_Options const & options );
 
 protocols::recces::sampler::rna::MC_RNA_OneJumpOP
 initialize_jump_sampler( core::pose::Pose const & pose,

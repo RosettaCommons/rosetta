@@ -61,14 +61,14 @@ private:
 
 	void
 	increment_accepts( Size & n_accept_total,
-										 std::map< std::string, Size > & num_accepts,
-										 sampler::MC_LoopCOP loop_sampler ) const;
+		std::map< std::string, Size > & num_accepts,
+		sampler::MC_LoopCOP loop_sampler ) const;
 
 	void
 	save_history(
-							 core::Size const & curr_counts,
-							 utility::vector1< float > const & scores,
-							 core::Size const & temp_id	);
+		core::Size const & curr_counts,
+		utility::vector1< float > const & scores,
+		core::Size const & temp_id );
 
 	void
 	dump_stuff( core::Size const & n,
@@ -84,7 +84,7 @@ private:
 
 	void
 	final_dump_stuff( core::pose::Pose & pose,
-										core::pose::Pose & min_pose ) const;
+		core::pose::Pose & min_pose ) const;
 
 	void
 	save_data_to_disk() const;

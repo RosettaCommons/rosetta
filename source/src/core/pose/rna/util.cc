@@ -966,9 +966,9 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
 	using namespace pose::rna;
-	return std::any_of( base_pair_list.begin(), base_pair_list.end(), 
-		[&]( BasePair const & bp2 ) { 
-			return bp2 == base_pair || bp2 == base_pair.flipped(); 
+	return std::any_of( base_pair_list.begin(), base_pair_list.end(),
+		[&]( BasePair const & bp2 ) {
+		return bp2 == base_pair || bp2 == base_pair.flipped();
 		} );
 }
 
@@ -1109,7 +1109,7 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 	if ( (N_WC_NATIVE + N_NWC_NATIVE) > 0 ) f_natBP = ( (N_WC+N_NWC) / (1.0 * (N_WC_NATIVE + N_NWC_NATIVE) ));
 
 	// Adding these here helps control for false positives found in the other function
-	// (Which might count as 'recovered' BPs not found in the native model. 
+	// (Which might count as 'recovered' BPs not found in the native model.
 	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
 	s.add_string_value( "N_BP",  ObjexxFCL::format::I( 9, N_WC+N_NWC ) );

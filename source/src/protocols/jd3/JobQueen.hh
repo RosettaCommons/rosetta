@@ -194,7 +194,7 @@ public:
 	deallocation_messages() = 0;
 
 	/// @brief A deallocation message first sent to the JobDistributor on this host originating from
-  /// a remote JobQueen
+	/// a remote JobQueen
 	virtual
 	void
 	process_deallocation_message( deallocation::DeallocationMessageOP message ) = 0;

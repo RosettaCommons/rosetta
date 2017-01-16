@@ -145,7 +145,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 				break;
 			}
 		}
-		
+
 		if ( !frame_ok ) continue;
 
 		// Must make sure the whole frame is RNA, of course.
@@ -172,7 +172,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 		num_insertable_residues_++;
 		insert_map_[ num_insertable_residues_ ] = i;
-		
+
 		//TR << "num_insertable_residues_ " << num_insertable_residues_ << " i " << i << std::endl;
 	}
 

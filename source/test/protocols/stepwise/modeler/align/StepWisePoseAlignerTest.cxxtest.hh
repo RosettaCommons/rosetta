@@ -87,7 +87,7 @@ public:
 
 		// no longer assume that native_pose is filled with align_pose as placeholder -- leads to rms &
 		// rms_fill evaluation, confusing. rhiju dec. 2016
-		//		TS_ASSERT_EQUALS( native_pose, align_pose );
+		//  TS_ASSERT_EQUALS( native_pose, align_pose );
 		TS_ASSERT_DIFFERS( align_pose, PoseOP( 0 ) );
 		TS_ASSERT_EQUALS( align_pose->sequence(), "FANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPIFANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELTacugaggaucacccagu" );
 

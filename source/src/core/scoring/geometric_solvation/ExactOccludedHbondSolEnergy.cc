@@ -474,7 +474,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
-	
+
 	core::Size polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.);
 
@@ -526,12 +526,12 @@ core::Real ExactOccludedHbondSolEnergy::compute_donor_atom_energy(
 	core::Size polar_resnum,
 	core::Size const polar_atom,
 	pose::Pose const & pose) const {
-	
+
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( polar_rsd.is_virtual( polar_atom ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( polar_atom ) ) return 0.0;
-	
+
 	core::id::AtomID aid(polar_atom, polar_resnum);
 	Size const base = polar_rsd.atom_base(polar_atom);
 
@@ -571,12 +571,12 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_donor_atom_energy(
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( polar_rsd.is_virtual( polar_atom ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( polar_atom ) ) return 0.0;
-	
+
 	Size const base_atom( polar_rsd.atom_base( polar_atom ) );
-	
+
 	if ( polar_rsd.is_virtual( base_atom ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( base_atom ) ) return 0.0;
-	
+
 	HBEvalTuple const curr_hbond_eval_type( get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other );
 
 	core::Real const fully_buried_ene = compute_fully_buried_ene();
@@ -601,7 +601,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_donor_atom_energy(
 			conformation::Residue const & occ_rsd = pose.residue(occ_resnum);
 			if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) continue;
 			if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-			
+
 			if ( exact_occ_pairwise_by_res_ ) {
 				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
@@ -610,7 +610,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_donor_atom_energy(
 				for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
 					if ( occ_rsd.is_virtual( occ_atomno ) ) continue;
 					if ( occ_rsd.is_repulsive( occ_atomno ) ) continue;
-					
+
 					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
 						true, occ_resnum, true, occ_atomno );
@@ -674,7 +674,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_acceptor_atom_energy(
 	core::Size polar_resnum,
 	core::Size const polar_atom,
 	pose::Pose const & pose) const {
-	
+
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( polar_rsd.is_virtual( polar_atom ) ) return 0.0;
@@ -705,7 +705,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_acceptor_atom_energy(
 			conformation::Residue const & occ_rsd = pose.residue(occ_resnum);
 			if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) continue;
 			if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-	
+
 			if ( exact_occ_pairwise_by_res_ ) {
 				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
@@ -742,7 +742,7 @@ Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	if ( polar_rsd.is_repulsive( polar_atom ) ) return 0.0;
 
 	Size const base_atom( polar_rsd.atom_base( polar_atom ) );
-	
+
 	if ( polar_rsd.is_virtual( base_atom ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( base_atom ) ) return 0.0;
 
@@ -786,7 +786,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( polar_rsd.is_virtual( polar_atomno ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( polar_atomno ) ) return 0.0;
-	
+
 	// note: the "restrict_to_single_occluding_residue / atom" options are so that pairwise additivity can be enforced (for parameterization / analysis)
 	core::Size const polar_resnum = (core::Size) polar_rsd.seqpos();
 
@@ -899,7 +899,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 		conformation::Residue const& occ_rsd = pose.residue(occ_resnum);
 		if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) continue;
 		if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-		
+
 		// loop over all occluding atoms in this residue
 		Size atom_startinx = 1;
 		Size atom_lastinx = occ_rsd.natoms();
@@ -918,7 +918,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 		for ( Size occ_atomno = atom_startinx; occ_atomno <= atom_lastinx; ++occ_atomno ) {
 			if ( occ_rsd.is_virtual( occ_atomno ) ) continue;
 			if ( occ_rsd.is_repulsive( occ_atomno ) ) continue;
-			
+
 			bool const occ_atom_is_hydrogen = occ_rsd.atom_is_hydrogen( occ_atomno );
 			if ( occ_atom_is_hydrogen && ! hydrogens_can_occlude ) continue;
 
@@ -1027,7 +1027,7 @@ core::Real ExactOccludedHbondSolEnergy::get_atom_lk_energy(
 	if ( res.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( res.is_virtual( atom_idx ) ) return 0.0;
 	if ( res.is_repulsive( atom_idx ) ) return 0.0;
-	
+
 	core::Size residx = res.seqpos();
 
 	core::scoring::EnergyGraph const & energy_graph( ps.energies().energy_graph() );
@@ -1042,7 +1042,7 @@ core::Real ExactOccludedHbondSolEnergy::get_atom_lk_energy(
 		core::conformation::Residue const& occ_res = ps.residue(nri);
 		if ( occ_res.has_variant_type( chemical::REPLONLY ) ) continue;
 		if ( occ_res.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
-		
+
 		lk_tot += get_atom_lk_energy(atom_idx, res, occ_res);
 	}
 
@@ -1063,15 +1063,15 @@ core::Real ExactOccludedHbondSolEnergy::get_atom_lk_energy(
 	core::Size atom_idx,
 	conformation::Residue const& res,
 	conformation::Residue const& occ_res) const {
-	
+
 	if ( res.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( res.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( res.is_virtual( atom_idx ) ) return 0.0;
 	if ( res.is_repulsive( atom_idx ) ) return 0.0;
-	
+
 	if ( occ_res.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( occ_res.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
-	
+
 	etable::count_pair::CountPairFunctionOP cpfxn =
 		etable::count_pair::CountPairFactory::create_count_pair_function(res, occ_res, etable::count_pair::CP_CROSSOVER_4);
 
@@ -1083,7 +1083,7 @@ core::Real ExactOccludedHbondSolEnergy::get_atom_lk_energy(
 	for ( core::Size j = 1; j <= NHVY; ++j ) {
 		if ( occ_res.is_virtual( j ) ) continue;
 		if ( occ_res.is_repulsive( j ) ) continue;
-		
+
 		core::Real cp_weight = 1.0;
 		Size path_dist( 0 );
 		if ( cpfxn->count( atom_idx, j, cp_weight, path_dist ) ) {

@@ -177,7 +177,7 @@ bool RNA_SuitePotential::eval_score(
 
 	if ( rsd1.has_variant_type( REPLONLY ) ) return false;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return false;
-	
+
 	// Default derivatives to 0
 	score_ = 0;
 	for ( Size i = 1; i <= n_torsions_; ++i ) deriv_[i] = 0;

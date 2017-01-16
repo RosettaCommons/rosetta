@@ -23,6 +23,10 @@
 // C++ Headers
 #include <iosfwd>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#include <string>
+#endif
+
 namespace core {
 namespace conformation {
 namespace membrane {

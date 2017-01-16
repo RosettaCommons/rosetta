@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/params/RECCES_Parameters.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace recces {
 namespace params {
-	
-	class RECCES_Parameters;
-	typedef utility::pointer::shared_ptr< RECCES_Parameters > RECCES_ParametersOP;
-	typedef utility::pointer::shared_ptr< RECCES_Parameters const > RECCES_ParametersCOP;
-	
+
+class RECCES_Parameters;
+typedef utility::pointer::shared_ptr< RECCES_Parameters > RECCES_ParametersOP;
+typedef utility::pointer::shared_ptr< RECCES_Parameters const > RECCES_ParametersCOP;
+
 } //params
 } //recces
 } //protocols

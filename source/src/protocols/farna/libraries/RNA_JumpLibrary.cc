@@ -187,8 +187,8 @@ char one_letter_from_rt( chemical::ResidueType const & rt ) {
 	if ( rt.aa() == chemical::na_rgu || rt.na_analogue() == chemical::na_rgu ) return 'g';
 	if ( rt.aa() == chemical::na_ura || rt.na_analogue() == chemical::na_ura ) return 'u';
 	if ( rt.name1() == 't' ) return 'u';
-	
-	utility_exit_with_message( "Sorry, but " + rt.name() + " is not yet accounted for by RNA_JumpLibrary!" ); 
+
+	utility_exit_with_message( "Sorry, but " + rt.name() + " is not yet accounted for by RNA_JumpLibrary!" );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

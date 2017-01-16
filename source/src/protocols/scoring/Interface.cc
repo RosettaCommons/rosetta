@@ -81,6 +81,10 @@ static THREAD_LOCAL basic::Tracer TR( "core.conformation.Interface" );
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#endif
+
 namespace protocols {
 namespace scoring {
 

@@ -101,14 +101,14 @@ stepwise_monte_carlo()
 	PoseOP native_pose, align_pose;
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
-	
+
 	// If we care about the 'viewability' of the pose, center it -- obviously this
 	// isn't super-useful unless we have a BIG starting pose where residue 1 is
 	// likely far from the COM.
 #ifdef GL_GRAPHICS
 	pose.center();
 #endif
-	
+
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose_op );
 	// temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
 	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );

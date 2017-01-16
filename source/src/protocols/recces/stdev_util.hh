@@ -28,18 +28,18 @@ namespace recces {
 
 void
 set_gaussian_stdevs_legacy_turner( protocols::recces::sampler::MC_CombOP sampler,
-																	 core::Real const & temperature,
-																	 core::pose::Pose const & pose,
-																	 protocols::recces::params::RECCES_Parameters const & params );
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	protocols::recces::params::RECCES_Parameters const & params );
 
 core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp );
 
 void
 set_gaussian_stdevs_thermal_sampler(
-    protocols::recces::sampler::MC_SamplerOP sampler,
-		core::Real const & temperature,
-		core::pose::Pose const & pose,
-		protocols::recces::options::RECCES_Options const & options );
+	protocols::recces::sampler::MC_SamplerOP sampler,
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	protocols::recces::options::RECCES_Options const & options );
 
 } //recces
 } //protocols

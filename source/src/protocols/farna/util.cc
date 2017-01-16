@@ -594,7 +594,7 @@ setup_base_pair_constraints(
 	}
 
 	for ( auto const & pairing : pairings ) {
-		
+
 		Size const i = pairing.first;
 		Size const j = pairing.second;
 
@@ -777,7 +777,7 @@ std::string const
 convert_based_on_match_type( std::string const & RNA_string, Size const type ){
 
 	// AMW: this can probably be made more concise using a functional approach.
-	
+
 	std::string RNA_string_local = RNA_string;
 
 	Size const size = RNA_string.length();

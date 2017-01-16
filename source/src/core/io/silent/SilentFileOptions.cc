@@ -165,30 +165,30 @@ void SilentFileOptions::append_attributes_for_tag_parsing(
 		+ Attr( "out_user_tag", xs_string , "add this tag to structure tags: e.g., a process id" )
 		+ Attr::attribute_w_default( "out_weight_silent_scores", xsct_rosetta_bool , "Weight scores in silent-file output; if false, raw, unweighted scores are output", "true" )
 		+ Attr::attribute_w_default( "in_silent_score_prefix", xs_string , "Prefix that is appended to all scores read in from a silent-file; i.e."
-			" allows you to rename existing scores to avoid name collisions when writing out the structures and their scores later", "" )
+		" allows you to rename existing scores to avoid name collisions when writing out the structures and their scores later", "" )
 		+ Attr::attribute_w_default( "silent_scores_wanted", xs_string, "Comma separated list of the set of score terms to put into the Pose when reading it in", "false" )
 		+ Attr::attribute_w_default( "in_fullatom", xsct_rosetta_bool, "Enable full-atom input of PDB or centroid structures; only used if"
-			" the input silent file is ambiguous, otherwise, the information in the silent file itself is used to determine whether the input structures"
-			" should be read as fullatom or centroid", "false" )
+		" the input silent file is ambiguous, otherwise, the information in the silent file itself is used to determine whether the input structures"
+		" should be read as fullatom or centroid", "false" )
 		+ Attr::attribute_w_default( "write_failures", xsct_rosetta_bool , "write failed structures to output", "true" )
 		+ Attr::attribute_w_default( "in_silent_struct_type", xs_string, "Type of SilentStruct object to use in silent-file input. Only used if"
-			" the input silent struct file does not describe its type in the REMARK lines at the top of the file (most do).", "protein" )
+		" the input silent struct file does not describe its type in the REMARK lines at the top of the file (most do).", "protein" )
 		+ Attr::attribute_w_default( "out_silent_struct_type", xs_string , "Type of SilentStruct object to use in silent-file output. The default"
-			" 'protein' silent struct is only used if the structure is ideal; non-ideal structures are written out using a binary silent file;"
-			" binary silent files are probably best in any case.", "protein" )
+		" 'protein' silent struct is only used if the structure is ideal; non-ideal structures are written out using a binary silent file;"
+		" binary silent files are probably best in any case.", "protein" )
 		+ Attr::attribute_w_default( "read_through_errors", xsct_rosetta_bool , "will ignore decoys with errors and continue reading", "false" )
 		+ Attr::attribute_w_default( "select_random", xs_integer, "Instead of processing all of the structures in the input silent file, select a random"
-			" subset of this number of decoys from every silent-file read; ignored if this value is zero", "0" )
+		" subset of this number of decoys from every silent-file read; ignored if this value is zero", "0" )
 		+ Attr::attribute_w_default( "select_range_start", xs_integer, "When given a postive value, then when jobs are being created based on the input"
-			" silent struct file, instead of processing all of the Poses in the file, the first job will be taken as the nth Pose in the file,"
-			" and then 'select_range_len' poses from there will be run. A negative value means consider the whole set", "-1" )
+		" silent struct file, instead of processing all of the Poses in the file, the first job will be taken as the nth Pose in the file,"
+		" and then 'select_range_len' poses from there will be run. A negative value means consider the whole set", "-1" )
 		+ Attr::attribute_w_default( "select_range_len", xs_integer, "For use with 'select_range_start': this says how large the block should"
-			" be which should be run; a negative value means 'consider all decoys from the start of the"
-			" block to the end'. A value of '1' (the default) means run a single job", "1" )
+		" be which should be run; a negative value means 'consider all decoys from the start of the"
+		" block to the end'. A value of '1' (the default) means run a single job", "1" )
 		+ Attr::attribute_w_default( "select_range_mul", xs_integer, "For use with 'select_range_start': Select a blocksize multiplier. This param"
-			" basically multiplies 'select_range_start' when defining which structure to start on", "1" )
+		" basically multiplies 'select_range_start' when defining which structure to start on", "1" )
 		+ Attr::attribute_w_default( "force_silent_bitflip_on_read", xsct_rosetta_bool, "Force bit-flipping when reading binary silent files."
-			"  This is useful if files are produced on a little-endian system and read on a big-endian system.", "false" )
+		"  This is useful if files are produced on a little-endian system and read on a big-endian system.", "false" )
 		+ Attr::attribute_w_default( "print_all_score_headers", xsct_rosetta_bool, "Print a SCORE header for every SilentStruct in a silent-file", "false" );
 }
 

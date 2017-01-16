@@ -19,7 +19,7 @@
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
-	
+
 class SilentFilePoseInputter;
 typedef utility::pointer::shared_ptr< SilentFilePoseInputter > SilentFilePoseInputterOP;
 typedef utility::pointer::shared_ptr< SilentFilePoseInputter const> SilentFilePoseInputterCOP;

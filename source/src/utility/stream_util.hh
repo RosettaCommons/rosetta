@@ -57,7 +57,7 @@ namespace std { // inserting operator for ::std types in to std namespace
 
 /// @brief Output function for std::pair object.
 template <typename T1, typename T2
-, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type *
+, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v) {
 	os << "(";
@@ -71,7 +71,7 @@ std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v) {
 
 /// @brief Output function for std::map object.
 template <typename T1, typename T2
-, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  and  utility::has_insertion_operator_s<T2>::value >::type *
+, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m) {
 	typedef typename std::map<T1, T2>::const_iterator ConstIterator;

@@ -28,7 +28,7 @@ namespace protocols {
 namespace recces {
 namespace sampler {
 
-	class MC_OneTorsion : public MC_Sampler {
+class MC_OneTorsion : public MC_Sampler {
 public:
 
 	MC_OneTorsion(

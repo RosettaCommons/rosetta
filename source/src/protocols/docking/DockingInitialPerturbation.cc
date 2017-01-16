@@ -78,6 +78,10 @@ using basic::T;
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#endif
+
 using basic::Error;
 using basic::Warning;
 

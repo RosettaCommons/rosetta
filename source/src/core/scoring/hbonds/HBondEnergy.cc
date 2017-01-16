@@ -690,7 +690,7 @@ HBondEnergy::hbond_derivs_1way(
 		Vector const & datm_xyz( don_rsd.atom(datm).xyz() );
 
 		for ( Size const aatm : acc_rsd.accpt_pos() ) {
-			
+
 			if ( acc_rsd.atom_is_backbone(aatm) ) {
 				if ( ! datm_is_bb && exclude_bsc ) continue; // if the donor is sc, the acceptor bb, and exclude_b(a)sc(d)
 			} else {

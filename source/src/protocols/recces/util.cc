@@ -131,7 +131,7 @@ get_torsions(
 	core::pose::Pose const & pose
 ) {
 	utility::vector1<core::Real> curr_torsions;
-	for ( auto const & torsion_id: torsion_ids ) 	curr_torsions.push_back( pose.torsion( torsion_id )  );
+	for ( auto const & torsion_id: torsion_ids )  curr_torsions.push_back( pose.torsion( torsion_id )  );
 	return curr_torsions;
 }
 

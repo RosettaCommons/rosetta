@@ -23,25 +23,25 @@ namespace protocols {
 namespace recces {
 namespace sampler {
 
-	class MC_Loop: public MC_Any {
+class MC_Loop: public MC_Any {
 
-	public:
+public:
 
-		//constructor
-		MC_Loop();
+	//constructor
+	MC_Loop();
 
-		//destructor
-		~MC_Loop();
+	//destructor
+	~MC_Loop();
 
-	public:
+public:
 
-		/// @brief Move to next rotamer
-		virtual void operator++();
+	/// @brief Move to next rotamer
+	virtual void operator++();
 
-		/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-		virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_LOOP; }
+	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
+	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_LOOP; }
 
-	};
+};
 
 } //sampler
 } //recces

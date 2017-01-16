@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/sampler/MC_Loop.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace recces {
 namespace sampler {
-	
-	class MC_Loop;
-	typedef utility::pointer::shared_ptr< MC_Loop > MC_LoopOP;
-	typedef utility::pointer::shared_ptr< MC_Loop const > MC_LoopCOP;
-	
-} //sampler 
-} //recces 
-} //protocols 
+
+class MC_Loop;
+typedef utility::pointer::shared_ptr< MC_Loop > MC_LoopOP;
+typedef utility::pointer::shared_ptr< MC_Loop const > MC_LoopCOP;
+
+} //sampler
+} //recces
+} //protocols
 
 #endif

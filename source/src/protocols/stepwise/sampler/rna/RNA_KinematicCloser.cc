@@ -110,14 +110,14 @@ void RNA_KinematicCloser::init() {
 	// the original init(), e.g., used in ERRASER & stepwise KIC moves,
 	// just made use of init_pose. No separate "pose_closed",
 	init( init_pose_,
-				init_pose_,
-				false /*use_pose_closed*/ );
+		init_pose_,
+		false /*use_pose_closed*/ );
 }
 
 void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT variants, may not be closed as long as pose_closed is provided.  */,
-																pose::Pose const & pose_closed  /* no CUTPOINT variants, definitely closed,
-																																	 in use in detailed_balance mode */,
-																bool use_pose_closed /* = true */ )
+	pose::Pose const & pose_closed  /* no CUTPOINT variants, definitely closed,
+	in use in detailed_balance mode */,
+	bool use_pose_closed /* = true */ )
 {
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
@@ -219,17 +219,17 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 		// Original code took geometry based on OVL atoms...
 		////////////////////////////////////////////////////////////////
 		Real const d_O3prime_nextP = (
-		  pose_current.xyz( NamedAtomID( " O3'", cutpos ) ) -
-		  pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ).length();
+			pose_current.xyz( NamedAtomID( " O3'", cutpos ) ) -
+			pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ).length();
 		db_len_[ 8 ] = d_O3prime_nextP;
 		////////////////////////////////////////////////////////////////
 		Real const theta_C3prime_O3prime_nextP = degrees( angle_radians(
-		  pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
-		  pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
-		  pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
+			pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
+			pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
+			pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
 		db_ang_[ 8 ] = theta_C3prime_O3prime_nextP;
-	  Real const theta_O3prime_nextP_nextO5prime = degrees( angle_radians(
-		  pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
+		Real const theta_O3prime_nextP_nextO5prime = degrees( angle_radians(
+			pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
 			pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ),
 			pose_current.xyz( NamedAtomID( "OVL2", cutpos ) ) ) );
 		db_ang_[ 9 ] = theta_O3prime_nextP_nextO5prime;
@@ -269,10 +269,10 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 	runtime_assert( nsol >= 0 ); //I think nsol should be >= 0
 	nsol_ = static_cast<Size>( nsol ); //Cast int to Size.
 	figure_out_dof_ids_and_offsets( pose_current );
-  set_init( true );
+	set_init( true );
 
-  /// Calculate the Jacobian for each of the solutions ///
-  if ( calculate_jacobians_ ) {
+	/// Calculate the Jacobian for each of the solutions ///
+	if ( calculate_jacobians_ ) {
 		Pose test_pose = pose_current;
 		for ( Size i = 1; i <= nsol_; i++ ) {
 			apply( test_pose, i );
@@ -280,7 +280,7 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 		}
 	}
 
-  reset();
+	reset();
 }
 ////////////////////////////////////////////////////////////////
 void

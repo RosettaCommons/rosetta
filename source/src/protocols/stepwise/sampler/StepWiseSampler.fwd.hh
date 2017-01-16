@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/stepwise/sampler/StepWiseSampler.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace stepwise {
 namespace sampler {
-	
-	class StepWiseSampler;
-	typedef utility::pointer::shared_ptr< StepWiseSampler > StepWiseSamplerOP;
-	typedef utility::pointer::shared_ptr< StepWiseSampler const > StepWiseSamplerCOP;
-	
-} //sampler 
-} //stepwise 
-} //protocols 
+
+class StepWiseSampler;
+typedef utility::pointer::shared_ptr< StepWiseSampler > StepWiseSamplerOP;
+typedef utility::pointer::shared_ptr< StepWiseSampler const > StepWiseSamplerCOP;
+
+} //sampler
+} //stepwise
+} //protocols
 
 #endif

@@ -501,7 +501,7 @@ Residue::update_connections_to_other_residue( Residue const &other_rsd)
 				TR.Warning << "Warning!  While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
 				//utility_exit_with_message( "Let it die" );
 				continue;
-			} 
+			}
 			residue_connection_partner( this_conn_id, other_rsd.seqpos(), ic ); //Set this residue's connection appropriately for the other residue's connection indices.
 		}
 	}

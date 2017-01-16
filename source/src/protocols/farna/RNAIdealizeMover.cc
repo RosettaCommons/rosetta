@@ -143,7 +143,7 @@ RNAIdealizeMover::perturb_pose( pose::Pose & pose ) const
 			pose.conformation().set_xyz(
 				AtomID( jj, ii ),
 				pose.conformation().xyz( AtomID( jj, ii ) )
-				+ xyzVector< Real >(
+				+ xyzVector< core::Real >(
 				random::rg().gaussian() * 0.02,
 				random::rg().gaussian() * 0.02,
 				random::rg().gaussian() * 0.02 ) );

@@ -88,6 +88,11 @@
 // C++ Headers
 #include <cstdlib>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#undef small
+#endif
+
 static basic::Tracer TR( "protocols.membrane.MPFindInterfaceMover" );
 
 namespace protocols {

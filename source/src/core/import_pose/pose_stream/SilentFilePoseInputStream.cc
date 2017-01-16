@@ -53,7 +53,7 @@ typedef utility::file::FileName FileName;
 using core::io::silent::SilentFileOptions;
 
 SilentFilePoseInputStream::SilentFilePoseInputStream()
-	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 {
 	//  utility::vector1< FileName > empty;
 	//  filenames(empty);

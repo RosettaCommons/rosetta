@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/options/RECCES_Options.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace recces {
 namespace options {
-	
-	class RECCES_Options;
-	typedef utility::pointer::shared_ptr< RECCES_Options > RECCES_OptionsOP;
-	typedef utility::pointer::shared_ptr< RECCES_Options const > RECCES_OptionsCOP;
-	
-} //options 
-} //recces 
-} //protocols 
+
+class RECCES_Options;
+typedef utility::pointer::shared_ptr< RECCES_Options > RECCES_OptionsOP;
+typedef utility::pointer::shared_ptr< RECCES_Options const > RECCES_OptionsCOP;
+
+} //options
+} //recces
+} //protocols
 
 #endif

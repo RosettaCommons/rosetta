@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 
 namespace core {

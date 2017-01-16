@@ -541,7 +541,7 @@ public:
 		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
 		TS_ASSERT( msgs2.empty() )
 
-		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+			LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
 		TS_ASSERT_EQUALS( jobs3.size(), 10 );
 		std::list< deallocation::DeallocationMessageOP > msgs3 = djq.deallocation_messages();
 		TS_ASSERT_EQUALS( msgs3.size(), 1 );

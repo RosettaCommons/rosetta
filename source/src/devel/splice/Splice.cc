@@ -2744,7 +2744,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 		core::id::SequenceMappingOP smap( new core::id::SequenceMapping() );
 		for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 			if ( (seqpos >= pose.conformation().chain_begin(chain_num_))
-					and (seqpos <= pose.conformation().chain_end(chain_num_)) ) {
+					&& (seqpos <= pose.conformation().chain_end(chain_num_)) ) {
 				smap->push_back(seqpos - pose.conformation().chain_begin(chain_num_) + 1);
 				//if position is in chain >1 then it should have a sequence profile, the mapping should look like this: 0|0|0|1|2|3|
 				// So the first positions ('0') does not have a seqeuence constraint

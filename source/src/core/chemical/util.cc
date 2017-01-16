@@ -117,7 +117,7 @@ modify_atom_properties_from_command_line(
 
 		for ( string const & mod : mods ) {
 			// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
-			
+
 			core::uint const pos1( mod.find( ":" ) );
 			if ( pos1 == string::npos ) utility_exit_with_message( errmsg );
 			string const atomset_tag( mod.substr( 0, pos1 ) );

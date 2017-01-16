@@ -76,29 +76,29 @@ typedef std::list< PreliminaryLarvalJob > PreliminaryLarvalJobs;
 //class InputSourceAndImportPoseOptions
 //{
 //public:
-//	InputSourceAndImportPoseOptions();
-//	InputSourceAndImportPoseOptions(
-//		PoseInputSource const & input_source,
-//		core::import_pose::ImportPoseOptions const & options
-//	);
-//	InputSourceAndImportPoseOptions( InputSourceAndImportPoseOptions const & );
+// InputSourceAndImportPoseOptions();
+// InputSourceAndImportPoseOptions(
+//  PoseInputSource const & input_source,
+//  core::import_pose::ImportPoseOptions const & options
+// );
+// InputSourceAndImportPoseOptions( InputSourceAndImportPoseOptions const & );
 //
-//	virtual ~InputSourceAndImportPoseOptions();
+// virtual ~InputSourceAndImportPoseOptions();
 //
-//	InputSourceAndImportPoseOptions & operator = ( InputSourceAndImportPoseOptions const & rhs );
+// InputSourceAndImportPoseOptions & operator = ( InputSourceAndImportPoseOptions const & rhs );
 //
-//	bool operator == ( InputSourceAndImportPoseOptions const & ) const;
-//	bool operator <  ( InputSourceAndImportPoseOptions const & ) const;
+// bool operator == ( InputSourceAndImportPoseOptions const & ) const;
+// bool operator <  ( InputSourceAndImportPoseOptions const & ) const;
 //
-//	PoseInputSource const & input_source() const;
-//	void input_source( PoseInputSource const & setting );
+// PoseInputSource const & input_source() const;
+// void input_source( PoseInputSource const & setting );
 //
-//	core::import_pose::ImportPoseOptions const & import_pose_options() const;
-//	void import_pose_options( core::import_pose::ImportPoseOptions const & setting );
+// core::import_pose::ImportPoseOptions const & import_pose_options() const;
+// void import_pose_options( core::import_pose::ImportPoseOptions const & setting );
 //
 //private:
-//	PoseInputSourceOP input_source_;
-//	core::import_pose::ImportPoseOptionsOP import_pose_options_;
+// PoseInputSourceOP input_source_;
+// core::import_pose::ImportPoseOptionsOP import_pose_options_;
 //
 //};
 
@@ -173,7 +173,7 @@ public:
 	deallocation_messages() override;
 
 	/// @brief A deallocation message first sent to the JobDistributor on this host originating from
-  /// a remote JobQueen
+	/// a remote JobQueen
 	void
 	process_deallocation_message( deallocation::DeallocationMessageOP message ) override;
 

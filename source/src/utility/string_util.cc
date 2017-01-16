@@ -32,6 +32,10 @@
 #include <cmath>
 #include <boost/uuid/sha1.hpp>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#include <cctype>
+#endif
+
 namespace utility {
 
 

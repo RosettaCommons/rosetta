@@ -26,30 +26,30 @@ namespace protocols {
 namespace recces {
 namespace params {
 
-	class RECCES_Parameters: public utility::pointer::ReferenceCount {
+class RECCES_Parameters: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RECCES_Parameters( core::pose::Pose const & pose );
+	//constructor
+	RECCES_Parameters( core::pose::Pose const & pose );
 
-		//destructor
-		~RECCES_Parameters();
+	//destructor
+	~RECCES_Parameters();
 
-	public:
+public:
 
-		void set_bp_res( utility::vector1< core::Real > const & setting ){ bp_res_ = setting; }
-		utility::vector1< core::Real > bp_res() const { return bp_res_; }
+	void set_bp_res( utility::vector1< core::Real > const & setting ){ bp_res_ = setting; }
+	utility::vector1< core::Real > bp_res() const { return bp_res_; }
 
-		void set_dangling_res( utility::vector1< core::Real > const & setting ){ dangling_res_ = setting; }
-		utility::vector1< core::Real > dangling_res() const { return dangling_res_; }
+	void set_dangling_res( utility::vector1< core::Real > const & setting ){ dangling_res_ = setting; }
+	utility::vector1< core::Real > dangling_res() const { return dangling_res_; }
 
-	private:
+private:
 
-		utility::vector1< core::Real > bp_res_;
-		utility::vector1< core::Real > dangling_res_;
+	utility::vector1< core::Real > bp_res_;
+	utility::vector1< core::Real > dangling_res_;
 
-	};
+};
 
 } //params
 } //recces

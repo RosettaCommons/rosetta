@@ -22,7 +22,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <core/pack/interaction_graph/RotamerDots.fwd.hh>
+#include <core/pack/interaction_graph/RotamerDots.hh>
 #include <core/types.hh>
 
 #include <basic/MetricValue.fwd.hh>

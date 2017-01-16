@@ -238,7 +238,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 	if ( rsd2.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
 	if ( rsd1.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( chemical::REPLONLY ) ) return;
-	
+
 	Real energy(0); // dummy variable
 	Real const atom_pair_cutoff( occ_hbond_sol_database_.atomic_interaction_cutoff() );
 	Real const atom_pair_cutoff2( atom_pair_cutoff*atom_pair_cutoff );
@@ -251,7 +251,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 		if ( rsd1.is_repulsive( don_base_atom ) ) continue;
 		if ( rsd1.is_virtual( don_h_atom ) ) continue;
 		if ( rsd1.is_repulsive( don_h_atom ) ) continue;
-		
+
 		if ( rsd1.xyz( don_h_atom ).distance_squared( r2_nb_xyz ) > d2cut ) continue;
 		for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
 			if ( rsd2.is_virtual( jj ) ) continue;
@@ -274,7 +274,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 		for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
 			if ( rsd2.is_virtual( jj ) ) continue;
 			if ( rsd2.is_repulsive( jj ) ) continue;
-		
+
 			if ( rsd1.xyz( acc_atom ).distance_squared( rsd2.xyz(jj) ) > atom_pair_cutoff2 ) continue;
 			get_atom_atom_occ_solvation( acc_atom, base_atom, rsd1, jj, rsd2, energy, true, weights[ occ_sol_fitted ],
 				r1_atom_derivs[ base_atom ].f1(), r1_atom_derivs[ base_atom ].f2(),
@@ -308,9 +308,9 @@ OccludedHbondSolEnergy::res_res_occ_sol_one_way(
 	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( occ_rsd.has_variant_type( chemical::REPLONLY ) ) return 0.0;
-	
-	
-	
+
+
+
 	// Rhiju importantly notes: for GeometricSolvation he originally had the code in
 	// the following functions written out inside these loop -- and packing was faster.
 	// Perhaps something to do with inlining or compiler optimization.
@@ -348,7 +348,7 @@ OccludedHbondSolEnergy::res_res_occ_sol_one_way(
 		if ( polar_rsd.is_repulsive( acc_atom ) ) continue;
 		if ( polar_rsd.is_virtual( base_atom ) ) continue;
 		if ( polar_rsd.is_repulsive( base_atom ) ) continue;
-		
+
 		if ( polar_rsd.xyz( acc_atom ).distance_squared( occ_nb_xyz ) > d2cut ) continue;
 		for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
 			get_atom_atom_occ_solvation( acc_atom, base_atom, polar_rsd, occ_atom, occ_rsd, energy );
@@ -388,10 +388,10 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 	if ( occ_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
-	
+
 	// note: after testing, hydrogens need not occlude
 	if ( occ_rsd.atom_is_hydrogen(occ_atom) ) return;
-	
+
 	if ( occ_rsd.is_repulsive(occ_atom) ) return;
 	if ( occ_rsd.is_virtual(occ_atom) ) return;
 	if ( polar_rsd.is_repulsive(polar_atom) ) return;

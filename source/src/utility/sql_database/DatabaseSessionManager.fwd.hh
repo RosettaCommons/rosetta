@@ -30,7 +30,7 @@ class transaction;
 typedef pointer::shared_ptr< transaction > transactionOP;
 typedef pointer::shared_ptr< transaction const > transactionCOP;
 
-class DatabaseConnectionManager;
+class DatabaseSessionManager;
 
 }
 }

@@ -46,7 +46,7 @@ namespace jd2 {
 
 protocols::jd2::SilentFileJobInputter::SilentFileJobInputter() :
 	sfd_( core::io::silent::SilentFileOptions() )
-// silent_files_( option[ in::file::silent ]() ) {
+	// silent_files_( option[ in::file::silent ]() ) {
 {
 	tr.Debug << "Instantiate SilentFileJobInputter" << std::endl;
 }

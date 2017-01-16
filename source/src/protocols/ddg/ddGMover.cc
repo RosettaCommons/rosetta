@@ -1321,7 +1321,7 @@ ddGMover::neighborhood_of_mutations(
 ) const
 {
 	utility::vector1< bool > neighbors( pose.size(), false );
-	Real rad2 = nbr_cutoff_ * nbr_cutoff_;
+	Real nrad2 = nbr_cutoff_ * nbr_cutoff_;
 
 	for ( core::Size  ii = 1; ii <= mutations.size(); ++ii ) {
 		Size iiresid = mutations[ ii ];
@@ -1334,7 +1334,7 @@ ddGMover::neighborhood_of_mutations(
 			// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
 			jj_pos = pose.residue(jj).xyz( pose.residue(jj).nbr_atom() );
 			//if c-beta is within x angstrom, set movemap(i) true
-			if ( ii_pos.distance_squared(jj_pos) <= rad2 ) {
+			if ( ii_pos.distance_squared(jj_pos) <= nrad2 ) {
 				neighbors[ jj ] = true;
 			}
 		}//for all jj

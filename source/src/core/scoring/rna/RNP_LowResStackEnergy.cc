@@ -125,7 +125,7 @@ RNP_LowResStackEnergy::residue_pair_energy(
 {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
-	
+
 	// Only evaluate these score terms between RNA and protein residues
 	if ( !(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() )) ) return;
 

@@ -55,6 +55,9 @@
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+#undef interface
+#endif
 
 namespace protocols {
 namespace dna {

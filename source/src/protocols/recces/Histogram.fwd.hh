@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/recces/Histogram.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace recces {
-	
-	class Histogram;
-	typedef utility::pointer::shared_ptr< Histogram > HistogramOP;
-	typedef utility::pointer::shared_ptr< Histogram const > HistogramCOP;
-	
-} //recces 
-} //protocols 
+
+class Histogram;
+typedef utility::pointer::shared_ptr< Histogram > HistogramOP;
+typedef utility::pointer::shared_ptr< Histogram const > HistogramCOP;
+
+} //recces
+} //protocols
 
 #endif

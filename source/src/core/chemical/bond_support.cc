@@ -112,7 +112,7 @@ void quick_ring_detection( ResidueType & res){
 	for ( auto const & vd_ring_edge_elem : ring_edges ) {
 		for ( auto const & vd_bool_elem : vd_ring_edge_elem.second ) {
 			if ( ! vd_bool_elem.second ) continue;
-			
+
 			ED bond_edge;
 			bool edge_exists;
 			boost::tie( bond_edge, edge_exists) = boost::edge( vd_ring_edge_elem.first, vd_bool_elem.first, res.graph());

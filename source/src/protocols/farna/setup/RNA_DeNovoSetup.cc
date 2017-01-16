@@ -1125,7 +1125,7 @@ RNA_DeNovoSetup::update_working_obligate_pairs_with_stems(
 {
 	for ( auto const & working_stem : working_stems ) {
 		bool stem_in_input_res( false );
-		
+
 		for ( auto const & pair : working_stem ) {
 			if ( working_input_res.has_value( pair.first ) &&
 					working_input_res.has_value( pair.second ) ) {
