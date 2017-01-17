@@ -68,7 +68,7 @@ initialize_sampler( pose::Pose const & pose,
 	// TODO: Instead, make this *the* 'standard_bb' sampler used inside thermal_sampler-style sampler.
 	//       do it in such a way that all tests remain unchanged, i.e. chi_sampler will be unfilled.
 	if ( options.legacy_turner_mode() ) {
-		sampler = get_recces_turner_sampler( pose, options.a_form_range(), params );
+		sampler = get_recces_turner_sampler( pose, options.a_form_range(), options.rna_secstruct(), params );
 	}
 
 	// TODO: deprecate this? Its a legacy of rb_recces, and could be handled separately.
@@ -96,10 +96,69 @@ initialize_sampler( pose::Pose const & pose,
 }
 
 
+////////////////////////////////////////////////////////////////////////
+///  @details pretty satisfactory sampler setup function. Developed
+///       to handle single-nucleotide bulge & other motifs more
+///       complex than helices.
+///
+///  TODO: This remains a little cryptic due to use of MC_RNA_Suite wrapper
+///         which has convenient set_sample_near_a_form functions ...
+///         would be better (and pretty easy) to create more 'atomic' MC_RNA_Sugar,
+///         MC_RNA_Chi, and MC_RNA_SuiteBB functions with set_sample_near_a_form()
+///         function. -- rhiju, jan2017
+///
 protocols::recces::sampler::MC_CombOP
-get_recces_turner_sampler( pose::Pose const & pose,
-	core::Real const & a_form_range,
-	params::RECCES_Parameters const & params )
+get_recces_turner_sampler_from_secstruct( pose::Pose const & pose,
+																					core::Real const & a_form_range,
+																					core::pose::rna::RNA_SecStruct const & rna_secstruct )
+{
+	MC_CombOP sampler( new MC_Comb );
+	Size n_rsd( pose.size() );
+	/// Chi & sugar samplers. Use MC_RNA_Suite due to its useful 'aform_range' helper functions.
+	for ( Size i = 1; i <= n_rsd; ++ i ) {
+		if ( pose.residue( i ).has_variant_type( chemical::VIRTUAL_RIBOSE ) ) continue;
+		MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i ) );
+		suite_sampler->set_sample_bb( false );
+		suite_sampler->set_sample_lower_nucleoside( true ); // sugar and chi of i
+		suite_sampler->set_sample_upper_nucleoside( false );
+		suite_sampler->set_sample_near_a_form( rna_secstruct.in_helix( i ) );
+		suite_sampler->set_a_form_range( a_form_range );
+		sampler->add_rotamer( suite_sampler );
+	}
+
+	/// Suite samplers. Use MC_RNA_Suite due to its useful 'aform_range' helper functions.
+	for ( Size i = 1; i < n_rsd; ++ i ) {
+		if ( pose.fold_tree().is_cutpoint( i ) ) continue;
+		MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i ) );
+		suite_sampler->set_sample_bb( true ); // 5 backbone torsions between i and i+1.
+		suite_sampler->set_sample_lower_nucleoside( false );
+		suite_sampler->set_sample_upper_nucleoside( false );
+		suite_sampler->set_sample_near_a_form( rna_secstruct.in_same_helix( i, i+1 ) );
+		suite_sampler->set_a_form_range( a_form_range );
+		sampler->add_rotamer( suite_sampler );
+	}
+	return sampler;
+}
+
+////////////////////////////////////////////////////////////////////////
+/// @detailed Legacy sampler setup from Fang
+///     + goes through a lot of cryptic book-keeping in order to fit
+///        samplers into "MultiSuite" framework.
+///
+///
+/// TODO: Could unify with get_recces_turner_sampler_from_secstruct() if
+///        we had a silly function that could set up order of chi & bb samplers
+///        to *exactly* match the order created by this legacy order -- and
+///        then check *exact* numerical trajectory with recces_turner integration test.
+///       Use of recces_turner app would trigger that reordering (or perhaps recognition
+///        that sequence is a perfect helix, perhaps with dangle in recces_turner style).
+///       Note that we should also be able to deprecate bp_res and dangle_res --
+///        and actually then deprecate RECCES_Parameters (since those are its only variables).
+///                              -- rhiju, 2016
+protocols::recces::sampler::MC_CombOP
+get_recces_turner_sampler_legacy( pose::Pose const & pose,
+													 core::Real const & a_form_range,
+													 params::RECCES_Parameters const & params )
 {
 	MC_RNA_MultiSuiteOP sampler( new MC_RNA_MultiSuite );
 	Size total_len( pose.size() );
@@ -129,6 +188,23 @@ get_recces_turner_sampler( pose::Pose const & pose,
 	return sampler;
 }
 
+////////////////////////////////////////////////////////////////////////
+protocols::recces::sampler::MC_CombOP
+get_recces_turner_sampler( pose::Pose const & pose,
+													 core::Real const & a_form_range,
+													 core::pose::rna::RNA_SecStruct const & secstruct,
+													 params::RECCES_Parameters const & params )
+{
+	if ( secstruct.blank() ) {
+		// this one is legacy
+		return get_recces_turner_sampler_legacy( pose, a_form_range, params);
+	} else {
+		// user-defined secstruct.
+		return get_recces_turner_sampler_from_secstruct( pose, a_form_range, secstruct );
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
 MC_CombOP
 initialize_thermal_sampler( pose::Pose const & pose,
 	options::RECCES_Options const & options )

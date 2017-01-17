@@ -96,7 +96,7 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 
 	// Simulated Tempering setup
 	if ( scorefxn_ == 0 ) utility_exit_with_message( "Must set scorefunction." );
-	if ( options_->setup_base_pair_constraints() ) runtime_assert( scorefxn_->has_nonzero_weight( atom_pair_constraint ) );
+	if ( options_->setup_base_pair_constraints() ) runtime_assert( scorefxn_->has_nonzero_weight( base_pair_constraint ) );
 	moves::SimulatedTempering tempering( pose, scorefxn_, options_->temperatures(), weights_ );
 	set_sampler_gaussian_stdev( tempering.temperature(), pose );
 
@@ -173,7 +173,7 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 			temp_id = tempering.temp_id();
 		}
 
-		more_dump_stuff( pose, n ); // legacy stuff. do we need so much dumping?
+		more_dump_stuff( pose, n, tempering.temperature() ); // legacy stuff. do we need so much dumping?
 	}
 
 	final_dump_stuff( pose, min_pose );
@@ -216,12 +216,7 @@ RECCES_Mover::initialize() {
 void
 RECCES_Mover::set_sampler_gaussian_stdev( Real const & temperature, pose::Pose const & pose )
 {
-	if ( options_->legacy_turner_mode() ) {
-		set_gaussian_stdevs_legacy_turner( sampler_, temperature, pose, *params_ );
-	} else if ( options_->thermal_sampler_mode() ) {
-		set_gaussian_stdevs_thermal_sampler( sampler_, temperature, pose, *options_ );
-	}
-
+	recces::set_sampler_gaussian_stdev( sampler_, temperature, pose, *options_, *params_ );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,7 +274,9 @@ RECCES_Mover::dump_stuff(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RECCES_Mover::more_dump_stuff( pose::Pose const & pose, Size const & n ) const
+RECCES_Mover::more_dump_stuff( pose::Pose const & pose,
+															 Size const & n,
+															 Real const & current_temperature ) const
 {
 	using namespace core::io::silent;
 	Size const & dump_interval( options_->dump_freq() );
@@ -293,6 +290,7 @@ RECCES_Mover::more_dump_stuff( pose::Pose const & pose, Size const & n ) const
 		tag << options_->out_prefix() << "_" << n;
 		SilentFileOptions opts;
 		BinarySilentStruct silent( opts, pose, tag.str() );
+		silent.add_energy( "temp", current_temperature );
 		SilentFileData silent_file_data( opts );
 		silent_file_data.write_silent_struct( silent, options_->silent_file(), false /*write score only*/ );
 	}

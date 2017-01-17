@@ -21,16 +21,26 @@
 #include <protocols/recces/params/RECCES_Parameters.fwd.hh>
 #include <protocols/recces/sampler/MC_Sampler.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/rna/RNA_SecStruct.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {
 namespace recces {
 
 void
-set_gaussian_stdevs_legacy_turner( protocols::recces::sampler::MC_CombOP sampler,
-	core::Real const & temperature,
-	core::pose::Pose const & pose,
-	protocols::recces::params::RECCES_Parameters const & params );
+set_sampler_gaussian_stdev( protocols::recces::sampler::MC_CombOP sampler,
+														core::Real const & temperature,
+														core::pose::Pose const & pose,
+														protocols::recces::options::RECCES_Options const & options,
+														protocols::recces::params::RECCES_Parameters const & params );
+
+
+void
+set_gaussian_stdevs_recces_turner( protocols::recces::sampler::MC_CombOP sampler,
+																	 core::Real const & temperature,
+																	 core::pose::Pose const & pose,
+																	 core::pose::rna::RNA_SecStruct const & rna_secstruct,
+																	 protocols::recces::params::RECCES_Parameters const & params );
 
 core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp );
 

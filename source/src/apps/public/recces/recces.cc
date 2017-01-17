@@ -28,6 +28,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Exception handling
@@ -79,11 +80,11 @@ main( int argc, char * argv [] )
 	try {
 		option.add_relevant( OptionKeys::recces::temps );
 		option.add_relevant( OptionKeys::recces::st_weights );
-		option.add_relevant( OptionKeys::recces::n_cycle );
-		option.add_relevant( OptionKeys::recces::seq1 );
-		option.add_relevant( OptionKeys::recces::seq2 );
-		option.add_relevant( OptionKeys::recces::dump_pdb );
-
+    option.add_relevant( OptionKeys::recces::n_cycle );
+    option.add_relevant( OptionKeys::recces::seq1 );
+    option.add_relevant( OptionKeys::recces::seq2 );
+    option.add_relevant( OptionKeys::recces::dump_pdb );
+    option.add_relevant( OptionKeys::rna::farna::secstruct );
 
 		devel::init ( argc, argv );
 		protocols::viewer::viewer_main( my_main );

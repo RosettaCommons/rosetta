@@ -21,6 +21,7 @@
 #include <protocols/recces/sampler/MC_Comb.fwd.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_OneJump.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/rna/RNA_SecStruct.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {
@@ -36,8 +37,9 @@ initialize_sampler( core::pose::Pose const & pose,
 
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler( core::pose::Pose const & pose,
-	core::Real const & a_form_range,
-	params::RECCES_Parameters const & params );
+													 core::Real const & a_form_range,
+													 core::pose::rna::RNA_SecStruct const & secstruct,
+													 params::RECCES_Parameters const & params );
 
 protocols::recces::sampler::MC_CombOP
 initialize_thermal_sampler( core::pose::Pose const & pose,

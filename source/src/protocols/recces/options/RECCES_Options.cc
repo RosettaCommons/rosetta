@@ -18,6 +18,7 @@
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -149,6 +150,10 @@ RECCES_Options::initialize_from_command_line() {
 	if ( option[ OptionKeys::recces::thermal_sampling::sample_residues ].user() ) {
 		set_thermal_sampler_mode( true );
 	}
+
+	// quick hack. probably should change namespace
+	rna_secstruct_ = core::pose::rna::RNA_SecStruct( option[ OptionKeys::rna::farna::secstruct ](),
+																									 option[ OptionKeys::rna::farna::secstruct_file ]() );
 }
 
 } //options

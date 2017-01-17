@@ -87,6 +87,8 @@ RNA_SecStruct::RNA_SecStruct( std::string const & secstruct,
 	set_basepairs_from_secstruct();
 
 	check_balanced_secstruct();
+
+	figure_out_stems();
 }
 
 //Destructor
@@ -280,8 +282,8 @@ RNA_SecStruct::check_compatible_with_sequence( std::string const & sequence_in,
 
 ///////////////////////////////////////////////////////////////////
 // @details figures out stems based on base pairs.
-vector1< vector1< std::pair< Size, Size > > >
-RNA_SecStruct::get_all_stems() const
+void
+RNA_SecStruct::figure_out_stems()
 {
 	vector1< vector1< std::pair< Size, Size > > > stems;
 
@@ -324,7 +326,7 @@ RNA_SecStruct::get_all_stems() const
 		}
 	}
 
-	return stems;
+	stems_ = stems;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -352,6 +354,32 @@ RNA_SecStruct::blank() const {
 		if ( secstruct_[ n-1 ] != '.' ) return false;
 	}
 	return true;
+}
+
+////////////////////////////////////////////////////////////////
+bool
+RNA_SecStruct::in_helix( core::Size const & i ) const
+{
+	for ( auto const & pair : base_pairs_ ) {
+		if ( i == pair.first ) return true;
+		if ( i == pair.second ) return true;
+	}
+	return false;
+}
+
+////////////////////////////////////////////////////////////////
+bool
+RNA_SecStruct::in_same_helix( core::Size const & i, core::Size const & j ) const
+{
+	for ( auto const & stem : stems_ ) {
+		bool found_i( false ), found_j( false );
+		for ( auto const & pair: stem ) {
+			if ( i == pair.first || i == pair.second ) found_i = true;
+			if ( j == pair.first || j == pair.second ) found_j = true;
+		}
+		if ( found_i && found_j ) return true;
+	}
+	return false;
 }
 
 } //secstruct

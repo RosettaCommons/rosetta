@@ -19,6 +19,7 @@
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/recces/options/RECCES_Options.fwd.hh>
 #include <core/types.hh>
+#include <core/pose/rna/RNA_SecStruct.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -193,6 +194,9 @@ public:
 	void set_sample_jump( bool const & setting ){ sample_jump_ = setting; }
 	bool sample_jump() const { return sample_jump_; }
 
+	void set_rna_secstruct( core::pose::rna::RNA_SecStruct const & setting ){ rna_secstruct_ = setting; }
+	core::pose::rna::RNA_SecStruct rna_secstruct() const { return rna_secstruct_; }
+
 private:
 
 	core::Size n_cycle_;
@@ -254,6 +258,8 @@ private:
 	bool accept_no_op_moves_;
 	bool sample_jump_;
 
+	// maybe this rna_secstruct should be cached inside the pose, rather than here in options
+	core::pose::rna::RNA_SecStruct rna_secstruct_;
 };
 
 } //options

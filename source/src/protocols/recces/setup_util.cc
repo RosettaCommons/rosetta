@@ -21,6 +21,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_SecStruct.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -49,21 +50,29 @@ PoseOP
 recces_pose_setup( options::RECCES_Options const & options )
 {
 
+	PoseOP pose;
 	/// TODO -- allow user to still use -seq1, -seq2 input but also allow specification of
 	///         RNA secondary structure *from command line*, and get that stored into full_model_info().
 	if ( options.legacy_turner_mode() ) {
 
 		TR << TR.Green << "Assuming RECCES Turner mode, due to specification of -seq1" << std::endl;
 		runtime_assert( options.seq1().size() > 0 );
-		return pose_setup_turner( options.seq1(), options.seq2() );
+		pose = pose_setup_turner( options.seq1(), options.seq2() );
 
 	} else {
 
 		runtime_assert( options.infile().size()  > 0 );
-		PoseOP pose = pose_setup_from_file( options );
-
-		return pose;
+		pose = pose_setup_from_file( options );
 	}
+
+	// Obtains base pairs and constraints from pose
+	if ( options.setup_base_pair_constraints() ) {
+		utility::vector1< std::pair< Size, Size > > pairings( options.rna_secstruct().base_pairs() ); // could be user-specified.
+		if ( pairings.size() == 0 ) protocols::farna::get_base_pairing_list( *pose, pairings ); // infer from pose
+		protocols::farna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
+	}
+
+	return pose;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -127,13 +136,6 @@ pose_setup_from_file( options::RECCES_Options const & options )
 				pose::add_variant_type_to_pose_residue( *pose, BLOCK_STACK_BELOW, n );
 			}
 		}
-	}
-
-	// Obtains base pairs and constraints from pose
-	if ( options.setup_base_pair_constraints() ) {
-		utility::vector1< std::pair< Size, Size > > pairings;
-		protocols::farna::get_base_pairing_list( *pose, pairings );
-		protocols::farna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
 	}
 
 	return pose;

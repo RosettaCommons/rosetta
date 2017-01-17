@@ -453,8 +453,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			n_jumps++;
 		}
 	}
-	vector1< std::pair< Size, Size > > canonical_pairs = flatten( secstruct.get_all_stems() );
-	vector1< std::pair< Size, Size > > general_pairs   = flatten( secstruct_general.get_all_stems() );
+	vector1< std::pair< Size, Size > > canonical_pairs = secstruct.base_pairs();
+	vector1< std::pair< Size, Size > > general_pairs   = secstruct_general.base_pairs();
 	for ( Size n = 1; n <= general_pairs.size(); n++ ) {
 		std::pair< Size, Size > const & p = general_pairs[ n ];
 		if ( !canonical_pairs.has_value( p ) &&
@@ -510,7 +510,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// working stems
 	/////////////////////////
 	vector1< Size > working_cutpoint( working_cutpoint_open ); working_cutpoint.append( working_cutpoint_closed );
-	working_stems = working_secstruct.get_all_stems();
+	working_stems = working_secstruct.stems();
 	vector1< Size > working_input_res = working_res_map( input_res, working_res );
 	if ( options_->fixed_stems() ) {
 		update_working_obligate_pairs_with_stems( working_obligate_pairs, working_stems, working_input_res );
@@ -1138,21 +1138,6 @@ RNA_DeNovoSetup::update_working_obligate_pairs_with_stems(
 		working_obligate_pairs.push_back( base_pair );
 	}
 }
-
-///////////////////////////////////////////////////////////////////
-template< class T >
-vector1< T >
-RNA_DeNovoSetup::flatten( vector1< vector1< T > > const & vec) const
-{
-	vector1< T > new_vec;
-	for ( auto const & vec_inner : vec ) {
-		for ( auto const & elem : vec_inner ) {
-			new_vec.push_back( elem );
-		}
-	}
-	return new_vec;
-}
-
 
 } //setup
 } //farna

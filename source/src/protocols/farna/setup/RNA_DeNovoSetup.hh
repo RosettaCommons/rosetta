@@ -108,10 +108,6 @@ private:
 		utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > const & working_stems,
 		utility::vector1< core::Size > const & working_input_res ) const;
 
-	template< class T >
-	utility::vector1< T >
-	flatten( utility::vector1< utility::vector1< T > > const & vec) const;
-
 private:
 
 	protocols::farna::options::RNA_DeNovoProtocolOptionsOP options_;

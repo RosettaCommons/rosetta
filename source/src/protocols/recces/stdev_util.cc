@@ -24,6 +24,7 @@
 #include <protocols/recces/params/RECCES_Parameters.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/RNA_SecStruct.hh>
 #include <core/pose/rna/util.hh>
 
 #include <basic/Tracer.hh>
@@ -37,12 +38,87 @@ namespace protocols {
 namespace recces {
 
 ///////////////////////////////////////////////////////////////////////////////////
-// TODO: Unify with set_gaussian_stdevs_thermal_sampler (see note below)
+/// TODO: Unify into single function (see notes below on using MC_Sampler::find)
 void
-set_gaussian_stdevs_legacy_turner( protocols::recces::sampler::MC_CombOP sampler,
-	core::Real const & temperature,
-	core::pose::Pose const & pose,
-	protocols::recces::params::RECCES_Parameters const & params )
+set_sampler_gaussian_stdev(
+    protocols::recces::sampler::MC_CombOP sampler,
+		core::Real const & temperature,
+		core::pose::Pose const & pose,
+		protocols::recces::options::RECCES_Options const & options,
+		protocols::recces::params::RECCES_Parameters const & params )
+{
+	if ( options.legacy_turner_mode() ) {
+		set_gaussian_stdevs_recces_turner( sampler, temperature, pose, options.rna_secstruct(), params );
+	} else if ( options.thermal_sampler_mode() ) {
+		set_gaussian_stdevs_thermal_sampler( sampler, temperature, pose, options );
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+void
+set_gaussian_stdevs_recces_turner_from_secstruct(
+    protocols::recces::sampler::MC_CombOP sampler,
+		core::Real const & temperature,
+		core::pose::Pose const & pose,
+		core::pose::rna::RNA_SecStruct const & rna_secstruct )
+{
+	using namespace core::id;
+	using namespace core::chemical::rna;
+ 	using namespace core::pose::rna;
+	using namespace protocols::recces::sampler;
+
+	Size const n_rsd( pose.total_residue() );
+	Real stdev( 0.0 );
+	runtime_assert( n_rsd == rna_secstruct.size() );
+	Real const bp_stdev(       gaussian_stdev( n_rsd, temperature, true ) );
+	Real const dangling_stdev( gaussian_stdev( n_rsd, temperature, false ) );
+
+	////////////////////////////////////////////////
+	// update gaussian stdev for all chi's.
+	////////////////////////////////////////////////
+	for ( Size i = 1; i <= n_rsd; ++ i ) {
+		if ( rna_secstruct.in_helix( i ) )            stdev = bp_stdev;
+		else  stdev = dangling_stdev;
+		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
+		runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
+		std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
+	}
+
+	//////////////////////////////////////////////////////////////////
+	// no need to update sugars -- they do not have gaussian ranges.
+	//////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////
+	// update gaussian stdev for all suites
+	////////////////////////////////////////////////
+	for ( Size i = 1; i < n_rsd; ++ i ) { // watch out: may need to get last residue if we cyclize
+		if ( pose.fold_tree().is_cutpoint( i ) ) continue; // watch out: later generalize to cutpoint_closed
+		if ( rna_secstruct.in_same_helix(i, i+1) )  stdev = bp_stdev;
+		else stdev = dangling_stdev;
+		vector1< TorsionID > suite_torsion_ids = get_suite_torsion_ids( i );
+		for ( auto bb_torsion_id : suite_torsion_ids ) {
+			MC_SamplerOP torsion_sampler = sampler->find( bb_torsion_id );
+			runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
+			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////
+	// TODO: some heuristic for updating jump transl/rotation mags.
+	//////////////////////////////////////////////////////////////////
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+/// @detailed Legacy stdev setting. Important to recognize helix vs. dangle.
+///
+///  TODO: This should be deprecated in favor of set_gaussian_stdevs_recces_turner...
+///        should be a straightforward replacement, but need to check integration tests.
+void
+set_gaussian_stdevs_recces_turner_legacy(
+    protocols::recces::sampler::MC_CombOP sampler,
+		core::Real const & temperature,
+		core::pose::Pose const & pose,
+		protocols::recces::params::RECCES_Parameters const & params )
 {
 	using namespace core::id;
 	using namespace core::chemical::rna;
@@ -87,7 +163,29 @@ set_gaussian_stdevs_legacy_turner( protocols::recces::sampler::MC_CombOP sampler
 			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 		}
 	}
+
+	//////////////////////////////////////////////////////////////////
+	// TODO: some heuristic for updating jump transl/rotation mags.
+	//////////////////////////////////////////////////////////////////
+
 }
+
+///////////////////////////////////////////////////////////////////////////////////
+void
+set_gaussian_stdevs_recces_turner(
+    protocols::recces::sampler::MC_CombOP sampler,
+		core::Real const & temperature,
+		core::pose::Pose const & pose,
+		core::pose::rna::RNA_SecStruct const & rna_secstruct,
+		protocols::recces::params::RECCES_Parameters const & params )
+{
+	if ( rna_secstruct.blank() ) {
+		set_gaussian_stdevs_recces_turner_legacy( sampler, temperature, pose, params );
+	} else {
+		set_gaussian_stdevs_recces_turner_from_secstruct( sampler, temperature, pose, rna_secstruct );
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Simple heuristic for gaussian stdev

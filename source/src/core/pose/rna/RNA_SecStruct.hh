@@ -35,13 +35,16 @@ public:
 		std::string const & secstruct_file = "",
 		std::string const & sequence = "" );
 
+	RNA_SecStruct(){} // everything empty.
+
 	//destructor
 	~RNA_SecStruct();
 
 public:
 
-	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > >
-	get_all_stems() const;
+	utility::vector1< std::pair< core::Size, core::Size > >	base_pairs() const { return base_pairs_; }
+
+	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > >	stems() const { return stems_; }
 
 	void
 	check_compatible_with_sequence( std::string const & sequence_in,
@@ -54,6 +57,12 @@ public:
 	void remove_pair( std::pair<core::Size, core::Size > pair );
 
 	bool blank() const;
+
+	// @brief in any base pair?
+	bool in_helix( core::Size const & i ) const;
+
+	// @brief in same helix -- not necessarily paired though. great for checking helix boundaries.
+	bool in_same_helix( core::Size const & i, core::Size const & j ) const;
 
 private:
 
@@ -72,10 +81,14 @@ private:
 	void
 	read_secstruct_from_file( std::string const & filename );
 
+	void
+	figure_out_stems();
+
 private:
 
 	std::string secstruct_;
 	utility::vector1< std::pair< core::Size, core::Size > > base_pairs_;
+	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > stems_;
 
 	utility::vector1< Size > spacer_positions_;
 

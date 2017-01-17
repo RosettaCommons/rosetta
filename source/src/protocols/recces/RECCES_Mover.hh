@@ -80,7 +80,7 @@ private:
 
 
 	void
-	more_dump_stuff( core::pose::Pose const & pose, Size const & n ) const;
+	more_dump_stuff( core::pose::Pose const & pose, Size const & n, core::Real const & temperature ) const;
 
 	void
 	final_dump_stuff( core::pose::Pose & pose,
