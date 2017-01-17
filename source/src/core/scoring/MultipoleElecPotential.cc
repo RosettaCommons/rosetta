@@ -252,7 +252,7 @@ MultipoleElecPotential::read_in_amoeba_parameters() {
 		//TR << "Atom name " << atomname << " Residue name " << tokens[3];
 		std::string new_key = atomname + tokens[3];
 		for ( Size ivar = 1 ; ivar <= num_variant_qualifiers ; ++ivar ) {
-			new_key = new_key + tokens[4];
+			new_key = new_key + tokens[ ivar + 3 ];
 			//TR << "   " << tokens[ ivar + 3 ];
 		}
 		//TR << " type index is:  " << tokens[ num_tokens ] << std::endl;
@@ -731,7 +731,8 @@ core::Size
 MultipoleElecPotential::amoeba_type_lookup(
 	std::string const & atomname,
 	std::string const & resname,
-	std::string const & variantname
+	std::string const & variantname,
+	std::string const & variantname2
 ) const {
 
 	std::string const not_variant( "NONE" );
@@ -748,6 +749,7 @@ MultipoleElecPotential::amoeba_type_lookup(
 		type = map_it->second;
 	}
 
+	// Check for variants
 	if ( !utility::trimmed_compare( variantname, not_variant ) ) {
 		std::string tmp_key2 = atomname + resname + variantname;
 		tmp_key2.erase( std::remove_if( tmp_key2.begin(), tmp_key2.end(), ::isspace ), tmp_key2.end() );
@@ -758,6 +760,31 @@ MultipoleElecPotential::amoeba_type_lookup(
 		if ( map_it != type_lookup_.end() ) {
 			type = map_it->second;
 		}
+
+    // Try for double variants - test both orderings of variant strings
+    if ( !utility::trimmed_compare( variantname2, not_variant ) ) {
+    	std::string single_key2 = atomname + resname + variantname2;
+    	single_key2.erase( std::remove_if( single_key2.begin(), single_key2.end(), ::isspace ), single_key2.end() );
+    	map_it = type_lookup_.find( single_key2 );
+    	if ( map_it != type_lookup_.end() ) {
+    		type = map_it->second;
+    	}
+
+			std::string double_key1 = atomname + resname + variantname + variantname2;
+			std::string double_key2 = atomname + resname + variantname2 + variantname;
+    	double_key1.erase( std::remove_if( double_key1.begin(), double_key1.end(), ::isspace ), double_key1.end() );
+    	double_key2.erase( std::remove_if( double_key2.begin(), double_key2.end(), ::isspace ), double_key2.end() );
+    	//TR << "Querying key X" << double_key1 << "X" << std::endl;
+    	map_it = type_lookup_.find( double_key1 );
+    	if ( map_it != type_lookup_.end() ) {
+    		type = map_it->second;
+			}
+    	//TR << "Querying key X" << double_key2 << "X" << std::endl;
+    	map_it = type_lookup_.find( double_key2 );
+    	if ( map_it != type_lookup_.end() ) {
+    		type = map_it->second;
+    	}
+    }
 	}
 
 	// Give a holler if nothing has been found
@@ -1171,18 +1198,29 @@ MultipoleElecPotential::assign_residue_amoeba_type(
 
 	// Handle variants
 	std::string variantname( "NONE" );
+	std::string variantname2( "NONE" );
 	if ( parsed_resname.size() == 2 ) {
 		//TR << "Using variant specialization " << parsed_resname[2] << std::endl;
 		variantname = parsed_resname[2];
 	} else if ( parsed_resname.size() > 2 ) {
-		//   TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
+		//   TR << "DOUBLE VARIANT SITUATION!!!" << std::endl;
 		//   TR << "Full resname is " << rsd.name() <<  std::endl;
 		//   TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
 		//   TR << "Using first variant name only!!!" << std::endl;
 		variantname = parsed_resname[2];
+		variantname2 = parsed_resname[3];
 		//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
 		//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
 		//}
+	} else if ( parsed_resname.size() > 3 ) {
+		TR << "TRIPLE  VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
+		TR << "Full resname is " << rsd.name() <<  std::endl;
+		TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
+		TR << "Using first variant name only!!!" << std::endl;
+		variantname = parsed_resname[2];
+		for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
+			TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
+		}
 	}
 
 	for ( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
@@ -1192,7 +1230,7 @@ MultipoleElecPotential::assign_residue_amoeba_type(
 		}
 		//   TR << "Residue " << resname << " Atom " << rsd.atom_name( j )   << std::endl;
 		// Lookup amoeba type
-		core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname ) );
+		core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname, variantname2 ) );
 		//   TR << "Found Amoeba type " << this_type << std::endl;
 		mp.set_type( j, this_type );
 	}
@@ -2334,7 +2372,7 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 
 	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
 		Real const q1( mp1.monopole( atm1 ) );
-		if ( q1 == 0.0 || rsd1.is_virtual( atm1 ) ) continue;
+		if ( rsd1.is_virtual( atm1 ) ) continue;
 		Vector const & p1( mp1.dipole( atm1 ) );
 		Matrix const & quad1( mp1.quadrupole( atm1 ) );
 		Real const rkirk1( mp1.rKirkwood( atm1 ) );
@@ -2346,7 +2384,7 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 
 			Real dist = sqrt( dist2 );
 			Real const q2( mp2.monopole( atm2 ) );
-			if ( q2 == 0.0 || rsd2.is_virtual( atm2 ) ) continue;
+			if ( rsd2.is_virtual( atm2 ) ) continue;
 			Vector const & p2( mp2.dipole( atm2 ) );
 			Matrix const & quad2( mp2.quadrupole( atm2 ) );
 			Real const rkirk2( mp2.rKirkwood( atm2 ) );

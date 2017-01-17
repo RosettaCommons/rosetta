@@ -717,7 +717,8 @@ public:
 	amoeba_type_lookup(
 		std::string const & atomname,
 		std::string const & resname,
-		std::string const & variantname
+		std::string const & variantname,
+		std::string const & variantname2
 	) const;
 
 	/// called prior to scoring, eg

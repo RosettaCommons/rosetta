@@ -105,16 +105,16 @@ biotype   1HB      CYS                    46       9
 biotype   2HB      CYS                    46       9
 biotype    SG      CYS                    47       12
 biotype    HG      CYS                    48       13
-biotype    N       CYD   DISULFIDE                      7       1
-biotype    CA      CYD   DISULFIDE                     44       7
-biotype    C       CYD   DISULFIDE                      9       3
-biotype    H       CYD   DISULFIDE                     10       4
-biotype    O       CYD   DISULFIDE                     11       5
-biotype    HA      CYD   DISULFIDE                     12       6
-biotype    CB      CYD   DISULFIDE                     45       8
-biotype   1HB      CYD   DISULFIDE                     46       9
-biotype   2HB      CYD   DISULFIDE                     46       9
-biotype    SG      CYD   DISULFIDE                     49       12
+biotype    N       CYS   disulfide                      7       1
+biotype    CA      CYS   disulfide                     44       7
+biotype    C       CYS   disulfide                      9       3
+biotype    H       CYS   disulfide                     10       4
+biotype    O       CYS   disulfide                     11       5
+biotype    HA      CYS   disulfide                     12       6
+biotype    CB      CYS   disulfide                     45       8
+biotype   1HB      CYS   disulfide                     46       9
+biotype   2HB      CYS   disulfide                     46       9
+biotype    SG      CYS   disulfide                     49       12
 biotype    N       CYZ   DEPROTONATED                     7       1
 biotype    CA      CYZ   DEPROTONATED                    44       7
 biotype    C       CYZ   DEPROTONATED                     9       3
@@ -524,10 +524,10 @@ biotype    N       CYS   NtermProteinFull             234       41
 biotype   1H       CYS   NtermProteinFull             235       42
 biotype   2H       CYS   NtermProteinFull             235       42
 biotype   3H       CYS   NtermProteinFull             235       42
-biotype    N       CYD   NtermProteinFull DISULFIDE            234       41
-biotype   1H       CYD   NtermProteinFull DISULFIDE            235       42
-biotype   2H       CYD   NtermProteinFull DISULFIDE            235       42
-biotype   3H       CYD   NtermProteinFull DISULFIDE            235       42
+biotype    N       CYS   NtermProteinFull disulfide            234       41
+biotype   1H       CYS   NtermProteinFull disulfide            235       42
+biotype   2H       CYS   NtermProteinFull disulfide            235       42
+biotype   3H       CYS   NtermProteinFull disulfide            235       42
 biotype    N       CYZ   NtermProteinFull DEPROTONATED            234       41
 biotype   1H       CYZ   NtermProteinFull DEPROTONATED            235       42
 biotype   2H       CYZ   NtermProteinFull DEPROTONATED            235       42
@@ -642,9 +642,9 @@ biotype    O       THR    CtermProteinFull                 239       31
 biotype    C       CYS   CtermProteinFull            238       30
 biotype    OXT     CYS   CtermProteinFull            239       31
 biotype    O       CYS   CtermProteinFull            239       31
-biotype    C       CYD   CtermProteinFull DISULFIDE           238       30
-biotype    OXT     CYD   CtermProteinFull DISULFIDE           239       31
-biotype    O       CYD   CtermProteinFull DISULFIDE           239       31
+biotype    C       CYS   CtermProteinFull disulfide           238       30
+biotype    OXT     CYS   CtermProteinFull disulfide           239       31
+biotype    O       CYS   CtermProteinFull disulfide           239       31
 biotype    C       CYZ   CtermProteinFull DEPROTONATED           238       30
 biotype    OXT     CYZ   CtermProteinFull DEPROTONATED           239       31
 biotype    O       CYZ   CtermProteinFull DEPROTONATED           239       31
