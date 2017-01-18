@@ -183,8 +183,8 @@ private:
 	static utility::vector0<TagCOP> const vEmpty_; // need to return this from getTags
 	TagCAP parentTag_;
 
-	/// @brief if true, options will be quoted when the tag is outputted
-	///        if false, options will be left as-is (default)
+	/// @brief if true, options will be quoted when the tag is outputted (default)
+	///        if false, options will be left without quotes
 	bool quote_options_;
 #ifdef    SERIALIZATION
 public:

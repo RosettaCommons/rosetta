@@ -112,7 +112,7 @@ utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
 
 Tag::Tag() :
 	parentTag_(/* NULL */),
-	quote_options_( false )
+	quote_options_( true )
 {}
 
 void Tag::clear() {
@@ -584,7 +584,7 @@ Tag::clone() const {
 /// @brief if true, options will be quoted when the tag is outputted
 ///        if false, options will be left as-is (default)
 /// @param[in] quote_options_val Whether or not option values should be quoted.
-///                              Default=false
+///                              Default=true
 void
 Tag::set_quote_options( bool const quote_options_val ) {
 	quote_options_ = quote_options_val;
