@@ -77,7 +77,7 @@ class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
 
 ###############################################################################
 #
-def rosetta_database_from_env():
+def _rosetta_database_from_env():
     """Read rosetta database directory from environment or standard install locations.
 
     Returns database path if found, else None."""
@@ -123,8 +123,10 @@ def rosetta_database_from_env():
     return None
 
 
-_ROSETTA_DATABASE_PATH_ = None
-def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
+# this variable and function are deprecated becuase they are not used -- JRJ 2017.17.01
+# use instead rosetta.basic.database.full_name("path/to/db/file")
+#_ROSETTA_DATABASE_PATH_ = None
+#def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
 
 # rosetta.init()
 def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, notebook=os.getenv('JPY_PARENT_PID')):
@@ -159,10 +161,12 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, not
     # Attempt to resolve database location from environment if not present, else fallback
     # to rosetta's standard resolution
     if not "-database" in args:
-        database = rosetta_database_from_env()
+        database = _rosetta_database_from_env()
         if database is not None: args.extend(["-database", database])
 
-    _ROSETTA_DATABASE_PATH_ = database
+    # this variable is deprecated becuase it is not used -- JRJ 2017.17.01
+    # use instead rosetta.basic.database.full_name("path/to/db/file")
+    #_ROSETTA_DATABASE_PATH_ = database
 
     v = rosetta.utility.vector1_string()
     v.extend(args)
