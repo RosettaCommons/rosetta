@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="talaris" weights="talaris2014.wts"/>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+  <FILTERS>
+    <SimpleHbondsToAtomFilter name="SHBAO2" res_num="127" n_partners="1" target_atom_name="O2" scorefxn="talaris"/>
+    <SimpleHbondsToAtomFilter name="SHBAO3" res_num="127" n_partners="1" target_atom_name="O3" scorefxn="talaris"/>
+    <SimpleHbondsToAtomFilter name="SHBAO4" res_num="127" n_partners="1" target_atom_name="O4" scorefxn="talaris"/>
+    <SimpleHbondsToAtomFilter name="SHBAO5" res_num="127" n_partners="1" target_atom_name="O5" scorefxn="talaris"/>
+  </FILTERS>
+  <MOVERS>
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add filter_name="SHBAO2"/>
+    <Add filter_name="SHBAO3"/>
+    <Add filter_name="SHBAO4"/>
+    <Add filter_name="SHBAO5"/>
+  </PROTOCOLS>
+  <OUTPUT />
+</ROSETTASCRIPTS>

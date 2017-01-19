@@ -1,0 +1,6 @@
+-s 00001.pdb
+-extra_res_fa HCY.params
+-parser:protocol HCY_test.xml
+-overwrite
+-mute all
+-unmute protocols.simple_filters.SimpleHbondsToAtomFilter

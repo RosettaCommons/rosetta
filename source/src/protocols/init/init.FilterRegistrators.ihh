@@ -164,6 +164,7 @@ static FilterRegistrator< protocols::simple_filters::ScoreCutoffFilterCreator > 
 static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SigmoidFilterCreator > reg_SigmoidFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SimpleHbondsToAtomFilterCreator > reg_SimpleHbondsToAtomFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SymmetricMotifFilterCreator > reg_SymmetricMotifFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SidechainRmsdFilterCreator > reg_SidechainRmsdFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdGScanCreator > reg_DdGScanCreator;
