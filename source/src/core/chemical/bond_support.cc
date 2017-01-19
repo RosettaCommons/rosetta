@@ -168,36 +168,37 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 	using namespace core::chemical;
 	utility::vector1<VDs> found_chis;
 
-	//std::cerr << "Starting autodetermine" << std::endl;
-	//std::cerr << formatted_icoord_tree( restype ) << std::endl;
+	// Step 1) Find all rotatable bonds
 	core::chemical::EIter eiter, eiter_end;
-	for ( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
-		// Check to make sure this edge is rotatable, and orient it along the established atom tree.
+	for( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
 		Bond const & bond( restype.bond( *eiter ) );
 		VD source(boost::source(*eiter,restype.graph()));
 		VD target(boost::target(*eiter,restype.graph()));
+		// Step 1.1) Bonds which aren't single, which are in rings,
+		//     or which are terminal/to hydrogen aren't rotatable.
 		if ( bond.bond_name() != SingleBond || // Should this be bond order instead?
 				bond.ringness() == BondInRing ||
 				restype.atom(source).element_type()->element() == element::H  ||
 				restype.atom(target).element_type()->element() == element::H ||
 				boost::out_degree(source,restype.graph()) == 1 || boost::out_degree(target,restype.graph()) == 1 ) {
-			continue; // Skip non-single bonds, ring bonds, bonds to hydrogen, and bonds to terminal atoms
+			continue;
 		}
-		if ( restype.atom_base(source) == target &&
-				restype.icoor(source).stub_atom1().vertex() != source ) { //Root atom has atom_base as it's child atom - don't swap there.
+		// Step 1.2) Chi bonds need to be oriented along the ICOOR tree. Swap the order if they're reversed.
+		if( restype.atom_base(source) == target &&
+				source != restype.root_atom() ) { // Root atom has atom_base as it's child atom - don't swap there.
 			// Swap target and source such that source is nearer root.
-			VD temp(target);
-			target = source;
-			source = temp;
-		} else if ( restype.atom_base(target) != source ) {
+			std::swap( source, target );
+		} else if ( restype.atom_base(target) != source ){
 			TR << "Found non-tree bond " << restype.atom_name(source) << " --- " << restype.atom_name(target) << std::endl;
 			TR << "\t   Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
 			utility_exit_with_message("Error: Non-ring bond not found in ResidueType atom tree.");
 		}
 
-		// Validity of rotatable bonds also depends on what's attached to them
+		// Step 1.3a) Validity of rotatable bonds also depends on what's attached to them.
+		//    Specifically, the number of heavy atoms and hydrogens
+		//    For efficiency, we also notate selected heavy atoms and hydrogens for later use.
 		core::Size targ_heavy(0), targ_hydro(0);
-		VD first_targ_heavy( boost::graph_traits<ResidueGraph>::null_vertex() );
+		VD selected_targ_heavy( boost::graph_traits<ResidueGraph>::null_vertex() );
 		VD last_targ_hydro( boost::graph_traits<ResidueGraph>::null_vertex() );
 		ResidueGraph::adjacency_iterator aiter, aiter_end;
 		for ( boost::tie(aiter, aiter_end) = boost::adjacent_vertices(target, restype.graph()); aiter != aiter_end; ++aiter ) {
@@ -206,34 +207,55 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 				last_targ_hydro = *aiter;
 			} else {
 				++targ_heavy;
-				if ( (first_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex()) && *aiter != source ) {
-					first_targ_heavy = *aiter;
+				// Residue::set_chi() requires that chi angles have the center and "target" bonds be along the along the atom base graph.
+				// We also don't want to pick the source atom, or the root atom (again, because the atom_base of the root atom is it's child).
+				if( selected_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex() &&
+						restype.atom_base(*aiter) == target &&
+						*aiter != source && *aiter != restype.root_atom() ) {
+					selected_targ_heavy = *aiter;
 				}
 			}
 		}
-		// For rotatable bonds, we want at least one other heavy atom on the target, or we want a single, non carbon hydrogen
+		// Step 1.3b) For rotatable bonds, we want at least one other (not the source) heavy atom on the target, or we want a single, non-carbon-attached hydrogen
 		element::Elements const & target_element( restype.atom(target).element_type()->element() );
 		if ( targ_heavy < 2 && (targ_hydro != 1 || target_element == element::C) ) {
 			continue;
 		}
 
-		// Pick the other two atoms which will make up the chi
+		// Step 2) Pick the other two atoms which will make up the chi
 		VD d, c(source), b(target), a;
-		if ( targ_heavy >= 2 ) {
-			// Should be regular all-heavy atom chi
-			debug_assert( first_targ_heavy != boost::graph_traits<ResidueGraph>::null_vertex() );
-			a = first_targ_heavy;
+		// Step 2.1) Pick the terminal (built/distal) atom for the chi
+		if( targ_heavy >= 2 ) {
+			// Step 2.1a) A regular all-heavy atom chi: use the selected heavy atom.
+			if( selected_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+				TR.Error << "Issues with finding chi angles with the ICOOR graph!" << std::endl;
+				TR.Error << "    Chi bond for " << restype.atom_name( source ) << " -- " << restype.atom_name( target ) << std::endl;
+				utility_exit_with_message("Can't autodetermine chi angles.");
+			}
+			a = selected_targ_heavy;
 		} else {
-			// Proton chi
+			// Step 2.1b) Proton chi
 			debug_assert( targ_hydro == 1 && target_element != element::C );
 			debug_assert( last_targ_hydro != boost::graph_traits<ResidueGraph>::null_vertex() );
 			a = last_targ_hydro;
 		}
-		if ( restype.icoor(source).stub_atom1().vertex() != source ) {
-			// Not a root atom.
+
+		// Step 1.3c) If the terminal bond is co-linear with the central bond
+		//    (e.g. it's a triple bond) the chi isn't rotatable.
+		if( restype.bond( b, a ).order() ==  TripleBondOrder ) {
+			continue;
+		}
+
+		// Step 2.2) Pick the dihedral reference atom.
+		if( source != restype.root_atom() ) {
+			// Step 2.2a) Source isn't the root atom - we can (and should) use the atom_base as reference
+			d = restype.atom_base(source);
+		} else if ( restype.atom_base(source) != target ) {
+			// Step 2.2b) Source is root atom, but the atom_base isn't part of the bond
 			d = restype.atom_base(source);
 		} else {
-			// Source is root atom: Find first connected heavy atom which isn't in the current bond.
+			// Step 2.2b) Source is root atom, and atom_base is part of the bond.
+			// We need to find another heavy atom to base things off of.
 			d = boost::graph_traits<ResidueGraph>::null_vertex();
 			ResidueGraph::adjacency_iterator aiter2, aiter2_end;
 			for ( boost::tie(aiter2, aiter2_end) = boost::adjacent_vertices(source, restype.graph()); aiter2 != aiter2_end; ++aiter2 ) {
@@ -242,10 +264,18 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 					break;
 				}
 			}
-			if ( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+			if( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+				// Can't find a suitable reference atom - this probably isn't a rotatable chi after all.
 				continue;
 			}
 		}
+		// Step 2 + 1i) Chis propagate out from the root, and the distal two bonds follow the ICOOR tree.
+		// Double check for sanity.
+		debug_assert( a != restype.root_atom() );
+		debug_assert( b != restype.root_atom() );
+		debug_assert( restype.atom_base( a ) == b );
+		debug_assert( restype.atom_base( b ) == c );
+		// Step 3) Valid chi bond
 		VDs chi;
 		chi.push_back(d);
 		chi.push_back(c);

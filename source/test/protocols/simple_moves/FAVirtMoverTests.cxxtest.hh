@@ -129,10 +129,10 @@ public:
 
 		core::Real score3 = scorefxn->score(pose_);
 
-		//std::cout << "Score3: " << score3 << std::endl;
+		//TR << "Score3: " << score3 << std::endl;
 
-		//std::cout << "Score1: " << score1 << " Score2: "<< score2 << std::endl;
-		std::cout << "Score1: " << score1 << " Score2: "<< score2 << " Score3: "<< score3 << std::endl;
+		//TR << "Score1: " << score1 << " Score2: "<< score2 << std::endl;
+		TR << "Score1: " << score1 << " Score2: "<< score2 << " Score3: "<< score3 << std::endl;
 
 		TS_ASSERT( score1 != score2 );
 		TS_ASSERT( score3 != score2 );

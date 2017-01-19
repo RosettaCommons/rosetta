@@ -2201,7 +2201,7 @@ private:
 	/// folding the whole atom tree.
 	void
 	apply_transform_downstream(
-		int const atomno,
+		core::Size const atomno,
 		numeric::xyzMatrix< Real > const & R,
 		Vector const & v
 	);

@@ -234,6 +234,8 @@ public:
 
 	Bond & bond(ED const ed);
 	Bond const & bond(ED const ed) const;
+	Bond & bond( VD vd1, VD vd2);
+	Bond const & bond( VD vd1, VD vd2) const;
 	Bond & bond(std::string const & atom1, std::string const & atom2);
 	Bond const & bond(std::string const & atom1, std::string const & atom2) const;
 

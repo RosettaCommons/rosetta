@@ -562,37 +562,46 @@ Orbital const & ResidueType::orbital(std::string const & orbital_name) const{
 	return orbitals_[ orbital_index(orbital_name) ];
 }
 
-Bond & ResidueType::bond(ED const ed){
+Bond &
+ResidueType::bond(ED const ed){
 	return graph_[ ed ];
 }
-Bond const & ResidueType::bond(ED const ed) const{
+Bond const &
+ResidueType::bond(ED const ed) const{
 	return graph_[ ed ];
 }
 
 Bond &
-ResidueType::bond(std::string const & atom1, std::string const & atom2) {
-	VD vd1( atom_vertex( atom1 ) ), vd2( atom_vertex( atom2 ) );
+ResidueType::bond(VD vd1, VD vd2){
 	ED ed;
 	bool found;
 	boost::tie( ed, found ) = boost::edge( vd1, vd2 , graph_ );
 	if ( ! found ) {
-		utility_exit_with_message( "Cannot find bond between " + atom1 + " and " + atom2 + " in residue " + name() );
+		utility_exit_with_message( "Cannot find bond between " + atom_name(vd1) + " and " + atom_name(vd2) + " in residue " + name() );
 	}
 	return graph_[ ed ];
 }
 
 Bond const &
-ResidueType::bond(std::string const & atom1, std::string const & atom2) const {
-	VD vd1( atom_vertex( atom1 ) ), vd2( atom_vertex( atom2 ) );
+ResidueType::bond(VD vd1, VD vd2) const{
 	ED ed;
 	bool found;
 	boost::tie( ed, found ) = boost::edge( vd1, vd2 , graph_ );
 	if ( ! found ) {
-		utility_exit_with_message( "Cannot find bond between " + atom1 + " and " + atom2 + " in residue " + name() );
+		utility_exit_with_message( "Cannot find bond between " + atom_name(vd1) + " and " + atom_name(vd2) + " in residue " + name() );
 	}
 	return graph_[ ed ];
 }
 
+Bond &
+ResidueType::bond(std::string const & atom1, std::string const & atom2) {
+	return bond( atom_vertex( atom1 ), atom_vertex( atom2 ) );
+}
+
+Bond const &
+ResidueType::bond(std::string const & atom1, std::string const & atom2) const {
+	return bond( atom_vertex( atom1 ), atom_vertex( atom2 ) );
+}
 
 // Connections ////////////////////////////////////////////////////////////////
 // Lower
@@ -3457,7 +3466,22 @@ ResidueType::perform_checks()
 {
 	bool checkspass = true;
 	std::stringstream msg;
-	msg << "One or more internal errors have occurred in residue type setup:" << std::endl;
+	msg << "One or more internal errors have occurred in residue type setup for " << name() << " (" << name3() << ", " << name1() << ")"<< std::endl;
+
+	for ( core::Size chino(1); chino <= nchi(); ++chino ) {
+		// These are check which are made in Residue::set_chi
+		AtomIndices const & chi_atms( chi_atoms( chino ) );
+		if ( atom_base( chi_atms[3] ) != chi_atms[2] ) {
+			msg << "In chi #" << chino << ", the base of the third atom (" << atom_name(chi_atms[3]) <<") is " << atom_name(atom_base( chi_atms[3] ));
+			msg << ", rather than the second atom of the chi (" << atom_name(chi_atms[2]) << ")" << std::endl;
+			checkspass=false;
+		}
+		if ( atom_base( chi_atms[4] ) != chi_atms[3]  ) {
+			msg << "In chi #" << chino << ", the base of the fourth atom (" << atom_name(chi_atms[4]) <<") is " << atom_name(atom_base( chi_atms[4] ));
+			msg << ", rather than the third atom of the chi (" << atom_name(chi_atms[3]) << ")" << std::endl;
+			checkspass=false;
+		}
+	}
 
 	if ( is_metal() && (1 > nheavyatoms_ || is_virtual(1) ) ) {
 		msg << "A metal residue type " << name() << " has a non-metal atom as atom 1." << std::endl;

@@ -93,7 +93,7 @@ class XYZTransformTests : public CxxTest::TestSuite {
 		}
 
 		for ( core::Size atom_index = 1; atom_index <= test_coords.size(); ++atom_index ) {
-			std::cout << atom_index << "," << test_coords[atom_index].x() << "," << test_coords[atom_index].y() << "," << test_coords[atom_index].z() << std::endl;
+			//std::cout << atom_index << "," << test_coords[atom_index].x() << "," << test_coords[atom_index].y() << "," << test_coords[atom_index].z() << std::endl;
 			TS_ASSERT_DELTA(correct_values[atom_index],test_coords[atom_index],0.001);
 		}
 

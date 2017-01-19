@@ -185,6 +185,9 @@ private:
 /// different behavior on how ring atom trees are built.
 ///
 /// Note that updating the ICOOR records will also update the atom_base values.
+/// ... Which has the knock-on effect of possibly invalidating the chi values.
+/// The validity of the chis will be checked, and if the new icoord tree has invalidated them,
+/// they will be re-assigned.
 ///
 /// Assumes:
 /// * All bonds and atoms exist in the graph,
@@ -271,6 +274,26 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 		// Note: set_icoor will automatically setup the atom base for us.
 		restype.set_icoor( atomVD, phi, theta, d, parentVD, angleVD, torsionVD );
 	}
+
+	// Check the validity of the chi settings.
+	bool reset_chis( false );
+	for( core::Size chino(1); chino <= restype.nchi(); ++chino ) {
+		// These are the check which are made in Residue::set_chi() - Remember that atomindicies aren't valid yet ...
+		VDs const & chi_vds( restype.chi_atom_vds(chino) );
+		if( restype.atom_base( chi_vds[3] ) != chi_vds[2] ||
+				restype.atom_base( chi_vds[4] ) != chi_vds[3] ) {
+			reset_chis = true;
+		}
+	}
+	if( reset_chis ) {
+		// There's probably a better way to do this non-destructively,
+		// but I don't know how generalizable it would be.
+		TR.Warning << "Resetting the ICOORD invalidated some CHI entries - recomputing." << std::endl;
+		restype.autodetermine_chi_bonds();
+	//} else {
+	//	TR << "Chis should be fine." << std::endl;
+	}
+
 }
 
 /// @brief Utility function for fill_ideal_xyz_from_icoor() -- does this ICoorAtomID have all the dependancies filled?

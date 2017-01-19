@@ -20,6 +20,10 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("numeric.DiscreteIntervalEncodingTree_cxxtest");
+
 typedef numeric::DiscreteIntervalEncodingTree< platform::Size > Diet;
 
 using namespace numeric;
@@ -171,7 +175,7 @@ public:
 			11, 13, 14, 15, 16, 17, 18, 19, 20,	21, 22, 24, 25, 26,
 			27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
 			10, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-		  51, 52, 53, 54, 56, 57, 58, 59, 60,
+			51, 52, 53, 54, 56, 57, 58, 59, 60,
 			12 };
 		for ( auto ii : insert_order ) {
 			diet.insert( ii );
@@ -179,7 +183,7 @@ public:
 
 		Diet::RangeList range_list = diet.ranges();
 		for ( auto range : range_list ) {
-			std::cout << "range: " << range.first << ", " << range.second << std::endl;
+			TR << "range: " << range.first << ", " << range.second << std::endl;
 		}
 
 		TS_ASSERT( diet.member( 12 ) );

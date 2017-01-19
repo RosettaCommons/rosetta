@@ -1886,7 +1886,7 @@ Residue::set_all_chi( utility::vector1< Real > const & chis )
 /// folding the whole atom tree.
 void
 Residue::apply_transform_downstream(
-	int const atomno,
+	core::Size const atomno,
 	numeric::xyzMatrix< Real > const & R,
 	Vector const & v
 )
@@ -1897,12 +1897,10 @@ Residue::apply_transform_downstream(
 
 	// now apply recursively to my downstream nbrs:
 	AtomIndices const & nbrs( rsd_type_.bonded_neighbor( atomno ) );
-	int const my_atom_base( rsd_type_.atom_base( atomno ) );
+	core::Size const my_atom_base( rsd_type_.atom_base( atomno ) );
 	for ( Size i=1; i<= nbrs.size(); ++i ) {
-
-		int const nbr( nbrs[i] );
-		int const nbr_base( rsd_type_.atom_base( nbr ) );
-
+		core::Size const nbr( nbrs[i] );
+		core::Size const nbr_base( rsd_type_.atom_base( nbr ) );
 		if ( nbr_base == atomno ) {
 			if ( my_atom_base != nbr ) {
 				apply_transform_downstream( nbr, R, v );

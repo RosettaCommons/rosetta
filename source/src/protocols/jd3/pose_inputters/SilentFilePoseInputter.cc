@@ -86,7 +86,7 @@ PoseInputSources SilentFilePoseInputter::pose_input_sources_from_command_line()
 		PoseInputSourceOP input_source( new PoseInputSource );
 		input_source->origin( keyname() );
 		input_source->input_tag( tag );
-		std::cout << "Tag: " << tag << std::endl;
+		tr << "Tag: " << tag << std::endl;
 		input_sources.push_back( input_source );
 	}
 	return input_sources;

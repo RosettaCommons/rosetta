@@ -110,7 +110,7 @@ public:
 				accepted++;
 			}
 
-			std::cout << "conformer distance: " << distance << std::endl;
+			TR << "conformer distance: " << distance << std::endl;
 			deviation = 0;
 
 			utility::vector1<core::PointPosition > target_coords = start_ligand.coords_vector();
@@ -128,7 +128,7 @@ public:
 			deviation /= (core::Real)copy_coords.size();
 			deviation = sqrt(deviation);
 
-			std::cout << "RMSD: " << deviation << std::endl;
+			TR << "RMSD: " << deviation << std::endl;
 
 			test_ligand = start_ligand;
 		}

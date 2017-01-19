@@ -214,7 +214,7 @@ namespace protein {
 		Size count( 0 );
 		for ( Size n = 1; n <= in_files.size(); n++ ) {
 
-			std::cout << "-------- " << in_files[n] << "----------" << std::endl;
+			TR << "-------- " << in_files[n] << "----------" << std::endl;
 			import_pose::pose_from_file( pose, *rsd_set, in_files[ n ] , core::import_pose::PDB_file);
 
 			// Look for beta pairings (antiparallel for now)
@@ -324,7 +324,7 @@ namespace protein {
 
 		out.close();
 
-		std::cout << "Put JUMP transforms in " << outfile << std::endl;
+		TR << "Put JUMP transforms in " << outfile << std::endl;
 
 	}
 

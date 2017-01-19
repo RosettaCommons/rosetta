@@ -57,7 +57,7 @@ public:
 	void tearDown() {
 
 	}
-	
+
 	void test_polycubic_spline_4_data_access() {
 
 		using namespace numeric;
@@ -189,7 +189,7 @@ public:
 			0, 1, 4, 3, 0, 0,
 			0, 2, 2, 1, 1, 1
       };
-		
+
 		//the tensor describes layers, rows, columns, source of input
 		utility::fixedsizearray1< Size, 4 > bins;
 		bins[1] = 3;
@@ -197,46 +197,46 @@ public:
 		bins[3] = 6;
 		bins[4] = 6;
 		const MathNTensor< Real, 4 > input_tensor( bins, values);
-		
+
 		utility::fixedsizearray1< BorderFlag, 4 > border;
 		border[1] = e_Natural;
 		border[2] = e_Natural;
 		border[3] = e_Natural;
 		border[4] = e_Periodic;
-		
+
 		//these vectors are used to input the starting points and the
 		//grid width delta of every dimension (x, y, z) into the spline
 		utility::fixedsizearray1< double, 4 > const start( 10 );
 		utility::fixedsizearray1< double, 4 > const delta( 10 );
-		
+
 		utility::fixedsizearray1< bool, 4 > const lin_cont( true );
-		
+
 		//this vector controls the behavior of the spline at the beginning and
 		//end of every dimension, only has impact for BorderFlag FIRSTDER
-		
+
 		//every pair describes the value of the first order derivative at
 		//start and end
 		utility::fixedsizearray1< std::pair< double, double>, 4 > const first_be( std::pair< double, double>( 10, 10) );
-		
-		
+
+
 		// natural means, the second order derivative at beginning and end is 0
 		// this leads to a rather slow changing first order derivative meaning
 		// "nearly linear" behavior of the spline
 		// in z-direction the spline is made periodic
 		PolycubicSpline< 4 > naturalspline;
 		naturalspline.train( border, start, delta, input_tensor, lin_cont, first_be);
-		
+
 		for( double z( 20); z < 60; z += 4)
 		{
 			utility::fixedsizearray1< Real, 4 > vals(10);
 			utility::fixedsizearray1< Real, 4 > valsp60(10);
 			vals[4] = z;
 			valsp60[4] = z + 60;
-			
+
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline.F( valsp60 ), 1e-12 );
 		}
 	}
-	
+
 	void test_polycubic_spline_3_data_access() {
 
 		using namespace numeric;
@@ -283,39 +283,39 @@ public:
 			0, 1, 4, 3, 0, 0,
 			0, 2, 2, 1, 1, 1
       };
-		
+
 		utility::fixedsizearray1< Size, 3 > dims;
-		dims[1] = 5; dims[2] = 6; dims[3] = 6; 
+		dims[1] = 5; dims[2] = 6; dims[3] = 6;
 		//the tensor describes layers, rows, columns, source of input
 		const MathNTensor< Real, 3 > input_tensor( dims, values);
-		
+
 		utility::fixedsizearray1< BorderFlag, 3 > border( e_Natural );
 		border[3] = e_Periodic;
-		
+
 		//these vectors are used to input the starting points and the
 		//grid width delta of every dimension (x, y, z) into the spline
 		utility::fixedsizearray1< double, 3> start( 10 );
 		utility::fixedsizearray1< double, 3> delta( 10 );
 		utility::fixedsizearray1< bool, 3> lin_cont( true );
 		utility::fixedsizearray1< std::pair< double, double>, 3> first_be( std::pair< double, double>( 10, 10) );
-		
+
 		// natural means, the second order derivative at beginning and end is 0
 		// this leads to a rather slow changing first order derivative meaning
 		// "nearly linear" behavior of the spline
 		// in z-direction the spline is made periodic
 		PolycubicSpline< 3 > naturalspline;
 		naturalspline.train( border, start, delta, input_tensor, lin_cont, first_be);
-		
+
 		//the next line generates a class from a trained spline that can give back F(x), dF(x) and FdF(x)
 		//naturalspline.WriteCodeInFile("natural_trained", GetExampleSourceCodePath());
-		
+
 		//std::cout << "To show continuous behavior at the end of a cell" << std::endl;
 		//std::cout << " x        F(x, 10, 10)       F_x(x, 10, 10)" << std::endl;
 		for( double x( 19.9); x < 20.1; x += 0.01)
 		{
 			//std::cout << x << " " << naturalspline.F( x, 10, 10) << " " << naturalspline.dFdx( x, 10, 10) << std::endl;
 		}
-		
+
 		//std::cout << "Behavior at the end of the defined region" << std::endl;
 		for( double x( 49); x < 50.5; x += 0.1)
 		{
@@ -336,19 +336,19 @@ public:
 			valsp60[3] = z+60;
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline.F( valsp60 ), 1e-12 );
 		}
-		
+
 		//this example describes a function f(x, y, z), where (x, y, z) resembles a helix
 		//the spline is periodic in every direction, but this is not shown here
 		PolycubicSpline< 3 > ts;
-		
+
 		//std::cout <<  "Training new purely periodic spline" << std::endl;
-		
+
 		border[ 1 ] = e_Periodic;
 		border[ 2 ] = e_Periodic;
 		border[ 3 ] = e_Periodic;
 
 		ts.train( border, start, delta, input_tensor, lin_cont, first_be);
-		
+
 		//last function example
 		//std::cout <<  "Function values along a helix" << std::endl;
 		//std::cout << "x F( 10+x, 10+10*std::cos( pi / 18 * x), 10+10*std::sin( pi / 18 * x))" << std::endl;
@@ -405,39 +405,39 @@ public:
 			  0,   1,   4,   3,   0,   0,
 			  0,   2,   2,   1,   1,   1
     	};
-		
+
 		//the tensor describes layers, rows, columns, source of input
 		utility::fixedsizearray1< Size, 3 > dims;
 		dims[1] = 5; dims[2] = 6; dims[3] = 6;
 		MathNTensor< Real, 3 > const input_tensor( dims, values);
 		MathTensor< Real > const input_tensor2( 5, 6, 6, values);
-		
+
 		BorderFlag border2[3] = { e_Natural, e_Natural, e_Periodic};
-		
+
 		//these vectors are used to input the starting points and the
 		//grid width delta of every dimension (x, y, z) into the spline
 		const double start2[] = {10, 10, 10};
 		const double delta2[] = {10, 10, 10};
-		
+
 		const bool lin_cont2[3] = { true, true, true};
-		
+
 		const std::pair< double, double> first_be2[3] =
 		{
 			std::pair< double, double>( 10, 10),
 			std::pair< double, double>( 10, 10),
 			std::pair< double, double>( 10, 10)
 		};
-		
+
 		utility::fixedsizearray1< BorderFlag, 3 > border( e_Natural );
 		border[ 3 ] = e_Periodic;
 		utility::fixedsizearray1< double, 3> start( 10 );
 		utility::fixedsizearray1< double, 3> delta( 10 );
 		utility::fixedsizearray1< bool, 3> lin_cont( true );
 		utility::fixedsizearray1< std::pair< double, double>, 3> first_be( std::pair< double, double>( 10, 10) );
-		
-		
-		
-		
+
+
+
+
 		// natural means, the second order derivative at beginning and end is 0
 		// this leads to a rather slow changing first order derivative meaning
 		// "nearly linear" behavior of the spline
@@ -446,7 +446,7 @@ public:
 		TricubicSpline naturalspline2;
 		naturalspline.train( border, start, delta, input_tensor, lin_cont, first_be);
 		naturalspline2.train( border2, start2, delta2, input_tensor2, lin_cont2, first_be2);
-		
+
 		for( double x( 19.9); x < 20.1; x += 0.01)
 		{
 			utility::fixedsizearray1< Real, 3 > vals( 10.0 );
@@ -458,117 +458,117 @@ public:
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline2.dFdy( x, 10, 10 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline2.dFdz( x, 10, 10 ), 1e-12 );
 		}
-		
+
 		for( double x( 49); x < 50.5; x += 0.1)
 		{
 			utility::fixedsizearray1< Real, 3 > vals( 10.0 );
 			vals[1] = x;
-			
-			std::cout << x << " ";
-			std::cout << naturalspline.F( vals ) << " ";
-			std::cout << naturalspline.dFdxi( 1, vals ) << std::endl;
-			
-			std::cout << x << " ";
-			std::cout << naturalspline2.F( x, 10, 10 ) << " ";
-			std::cout << naturalspline2.dFdx( x, 10, 10 ) << std::endl;
-			
+
+			//std::cout << x << " ";
+			//std::cout << naturalspline.F( vals ) << " ";
+			//std::cout << naturalspline.dFdxi( 1, vals ) << std::endl;
+			//
+			//std::cout << x << " ";
+			//std::cout << naturalspline2.F( x, 10, 10 ) << " ";
+			//std::cout << naturalspline2.dFdx( x, 10, 10 ) << std::endl;
+
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline2.F( x, 10, 10 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 1, vals ), naturalspline2.dFdx( x, 10, 10 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline2.dFdy( x, 10, 10 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline2.dFdz( x, 10, 10 ), 1e-12 );
 		}
-		
+
 		for( double x( 49); x < 50.5; x += 0.1)
 		{
 			utility::fixedsizearray1< Real, 3 > vals( 15.0 );
 			vals[1] = x;
-			
-			std::cout << x << " ";
-			std::cout << naturalspline.F( vals ) << " ";
-			std::cout << naturalspline.dFdxi( 1, vals ) << std::endl;
-			
-			std::cout << x << " ";
-			std::cout << naturalspline2.F( x, 15, 15 ) << " ";
-			std::cout << naturalspline2.dFdx( x, 15, 15 ) << std::endl;
-			
+
+			//std::cout << x << " ";
+			//std::cout << naturalspline.F( vals ) << " ";
+			//std::cout << naturalspline.dFdxi( 1, vals ) << std::endl;
+			//
+			//std::cout << x << " ";
+			//std::cout << naturalspline2.F( x, 15, 15 ) << " ";
+			//std::cout << naturalspline2.dFdx( x, 15, 15 ) << std::endl;
+
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline2.F( x, 15, 15 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 1, vals ), naturalspline2.dFdx( x, 15, 15 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline2.dFdy( x, 15, 15 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline2.dFdz( x, 15, 15 ), 1e-12 );
 		}
-		
-		std::cout << "To show periodic behavior in z-direction" << std::endl;
-		std::cout << " z        F(10, 10, z)       F(10, 10, z+60)" << std::endl;
+
+		//std::cout << "To show periodic behavior in z-direction" << std::endl;
+		//std::cout << " z        F(10, 10, z)       F(10, 10, z+60)" << std::endl;
 		for( double z( 20); z < 60; z += 4)
 		{
 			utility::fixedsizearray1< Real, 3 > vals( 10.0 );
 			utility::fixedsizearray1< Real, 3 > valsp60( 10.0 );
 			vals[3] = z;
 			valsp60[3] = z+60;
-			
-			std::cout << z << " ";
-			std::cout << naturalspline.F( vals ) << " ";
-			std::cout <<  naturalspline.F( valsp60 ) << std::endl;
+
+			//std::cout << z << " ";
+			//std::cout << naturalspline.F( vals ) << " ";
+			//std::cout <<  naturalspline.F( valsp60 ) << std::endl;
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline.F( valsp60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 1, vals ), naturalspline.dFdxi( 1, valsp60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline.dFdxi( 2, valsp60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline.dFdxi( 3, valsp60 ), 1e-12 );
-			std::cout << z << " ";
-			std::cout << naturalspline2.F( 10, 10, z) << " ";
-			std::cout <<  naturalspline2.F( 10, 10, z+60) << std::endl;
+			//std::cout << z << " ";
+			//std::cout << naturalspline2.F( 10, 10, z) << " ";
+			//std::cout <<  naturalspline2.F( 10, 10, z+60) << std::endl;
 			TS_ASSERT_DELTA( naturalspline2.F( 10, 10, z), naturalspline2.F( 10, 10, z+60), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline2.dFdx( 10, 10, z ), naturalspline2.dFdx( 10, 10, z+60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline2.dFdy( 10, 10, z ), naturalspline2.dFdy( 10, 10, z+60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline2.dFdz( 10, 10, z ), naturalspline2.dFdz( 10, 10, z+60 ), 1e-12 );
-			
-			
+
+
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline2.F( 10, 10, z+60), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 1, vals ), naturalspline2.dFdx( 10, 10, z+60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline2.dFdy( 10, 10, z+60 ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline2.dFdz( 10, 10, z+60 ), 1e-12 );
 		}
-		
-		std::cout << "space diagonal values: " << std::endl;
+
+		//std::cout << "space diagonal values: " << std::endl;
 		for( double r( -10); r < 100; r += 0.1)
 		{
 			utility::fixedsizearray1< Real, 3 > vals( r );
-			
-			std::cout << r << " ";
-			std::cout << naturalspline.F( vals ) << " ";
-			std::cout << naturalspline2.F( r, r, r) << " ";
-			
+
+			//std::cout << r << " ";
+			//std::cout << naturalspline.F( vals ) << " ";
+			//std::cout << naturalspline2.F( r, r, r) << " ";
+
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline2.F( r, r, r ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 1, vals ), naturalspline2.dFdx( r, r, r ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline2.dFdy( r, r, r ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline2.dFdz( r, r, r ), 1e-12 );
 		}
-		
-		
-		std::cout << "corroborate around 46 20 10" << std::endl;
+
+
+		//std::cout << "corroborate around 46 20 10" << std::endl;
 		for( double z( 9); z < 11; z += 0.1)
 		{
 			utility::fixedsizearray1< Real, 3 > vals( 10.0 );
 			vals[1] = 46;
 			vals[2] = 20;
 			vals[3] = z;
-			
+
 			TS_ASSERT_DELTA( naturalspline.F( vals ), naturalspline2.F( 46, 20, z), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 1, vals ), naturalspline2.dFdx( 46, 20, z ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 2, vals ), naturalspline2.dFdy( 46, 20, z ), 1e-12 );
 			TS_ASSERT_DELTA( naturalspline.dFdxi( 3, vals ), naturalspline2.dFdz( 46, 20, z ), 1e-12 );
 		}
-		
+
 		//this example describes a function f(x, y, z), where (x, y, z) resembles a helix
 		//the spline is periodic in every direction, but this is not shown here
 		PolycubicSpline< 3 > ps;
 		TricubicSpline ts;
-		
+
 		//std::cout <<  "Training new purely periodic spline" << std::endl;
-		
+
 		border[ 1 ] = e_Periodic;
 		border[ 2 ] = e_Periodic;
 		border[ 3 ] = e_Periodic;
-		
+
 		border2[ 0 ] = e_Periodic;
 		border2[ 1 ] = e_Periodic;
 		border2[ 2 ] = e_Periodic;
@@ -576,7 +576,7 @@ public:
 
 		ts.train( border2, start2, delta2, input_tensor2, lin_cont2, first_be2);
 		ps.train( border, start, delta, input_tensor, lin_cont, first_be);
-		
+
 		//last function example
 		//std::cout <<  "Function values along a helix" << std::endl;
 		//std::cout << "x F( 10+x, 10+10*std::cos( pi / 18 * x), 10+10*std::sin( pi / 18 * x))" << std::endl;
@@ -586,7 +586,7 @@ public:
 			vals[1] = 10 + x;
 			vals[2] = 10 + 10 * std::cos( numeric::constants::d::pi / 18 * x);
 			vals[3] = 10 + 10 * std::sin( numeric::constants::d::pi / 18 * x);
-			
+
 			TS_ASSERT_DELTA(  ps.F( vals ), ts.F( 10 + x, 10 + 10 * std::cos( numeric::constants::d::pi / 18 * x), 10 + 10 * std::sin( numeric::constants::d::pi / 18 * x)), 1e-12 );
 			TS_ASSERT_DELTA(  ps.dFdxi( 1, vals ), ts.dFdx( 10 + x, 10 + 10 * std::cos( numeric::constants::d::pi / 18 * x), 10 + 10 * std::sin( numeric::constants::d::pi / 18 * x)), 1e-12 );
 			TS_ASSERT_DELTA(  ps.dFdxi( 2, vals ), ts.dFdy( 10 + x, 10 + 10 * std::cos( numeric::constants::d::pi / 18 * x), 10 + 10 * std::sin( numeric::constants::d::pi / 18 * x)), 1e-12 );

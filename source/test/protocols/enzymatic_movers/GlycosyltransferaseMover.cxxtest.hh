@@ -26,7 +26,9 @@
 
 // Utility header
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+static THREAD_LOCAL basic::Tracer TR("protocols.enzymatic_movers.GlycosyltransferaseMover_cxxtest");
 
 class GlycosyltransferaseMoverTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -47,7 +49,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 	{
 		using namespace core::pose;
 
-		TS_TRACE( "Testing GlycosyltransferaseMover::apply()." );
+		TR << "Testing GlycosyltransferaseMover::apply().";
 
 		Pose peptide;
 		make_pose_from_sequence( peptide, "NASANASA", "fa_standard" );
