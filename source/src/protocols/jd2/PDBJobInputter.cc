@@ -60,7 +60,7 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 
 	if ( !job->inner_job()->get_pose() ) {
 		TR << "filling pose from PDB " << job->input_tag() << std::endl;
-		core::import_pose::pose_from_file( pose, job->input_tag() , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( pose, job->input_tag()); // Let it autodetermine PDB/CIF
 		load_pose_into_job(pose, job);
 	} else {
 		TR << "filling pose from saved copy " << job->input_tag() << std::endl;

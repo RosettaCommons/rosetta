@@ -1,0 +1,1 @@
+../jd2test_mmCIFIO/1ubq.cif

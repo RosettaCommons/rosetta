@@ -1,0 +1,13 @@
+-s 1ubq.cif 1em7.cif 1qwe.cif
+-ignore_unrecognized_res
+-resfile resfile
+
+-ex1 
+-ex2
+-extrachi_cutoff 0
+
+-nstruct 2
+
+-out::mmCIF true
+#this flag controls whether we want Rosetta accessory data (scores, etc) in the cif file or separately
+-out::file::cif_extra_data_separate_file false

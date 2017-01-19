@@ -40,6 +40,7 @@
 #include <core/pack/optimizeH.hh>
 
 #include <core/io/pdb/pdb_reader.hh>
+#include <core/io/pdb/RecordType.hh>
 #include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactor.
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/io/mmcif/cif_reader.hh>
@@ -81,6 +82,21 @@ using namespace ObjexxFCL;
 static THREAD_LOCAL basic::Tracer TR( "core.import_pose.import_pose" );
 
 using utility::vector1;
+
+std::ostream & operator<<( std::ostream & stream, FileType type ) {
+	switch( type ) {
+		case PDB_file:
+			stream << "PDB";
+			break;
+		case CIF_file:
+			stream << "mmCIF";
+			break;
+		default:
+			stream << "UNKNOWN";
+			break;
+	}
+	return stream;
+}
 
 void
 read_all_poses(
@@ -221,24 +237,43 @@ pose::PoseOP pose_from_file(chemical::ResidueTypeSet const & residue_set, std::s
 
 FileType
 determine_file_type( std::string const &contents_of_file) {
+	utility::vector1< std::string > lines( utility::split_by_newlines( contents_of_file ) );
 
-	//See if this is a pdb file
-	//code to determine the type of file
-	utility::vector1< io::pdb::Record> records( io::pdb::create_records_from_pdb_file_contents( contents_of_file ) );
-	for ( core::Size ii=1; ii<= records.size(); ++ii ) {
-		if ( records[ ii ][ "type" ].value != "UNKNOW" ) {
-			return PDB_file;
+	// The mmCIF format has a large number of initial underscores
+	// (We put this test first as the "has ATOM record" test will pass on standard mmCIF files,
+	// as they have a table that begins with "ATOM")
+	core::Size n_initial_under(0);
+	for ( std::string const& line: lines ) {
+		if ( line.size() > 0 && line[0] == '_' ) {
+			++n_initial_under;
 		}
 	}
-	//See if this is a CIF file
-	std::string diagnostics;
-	CifFileOP cifFile( new CifFile );
 
-	CifParserOP cifParser( new CifParser( cifFile.get() ) );
+	if ( n_initial_under > 1 ) {
+		//See if this is a CIF file
+		std::string diagnostics;
+		CifFileOP cifFile( new CifFile );
 
-	cifParser->ParseString( contents_of_file, diagnostics );
-	if ( diagnostics.empty() ) {
-		return CIF_file;
+		CifParserOP cifParser( new CifParser( cifFile.get() ) );
+
+		cifParser->ParseString( contents_of_file, diagnostics );
+		if ( diagnostics.empty() ) {
+			return CIF_file;
+		}
+	}
+
+	// See if this is a pdb file - Do we have proper ATOM/HETATM records?
+	utility::vector1< io::pdb::Record> records( io::pdb::create_records_from_pdb_lines( lines ) );
+	core::Size n_atom_records( 0 );
+	for ( io::pdb::Record const & record: records ) {
+		if ( record.count( "type" ) &&
+				(record.at( "type" ).value == "ATOM  " ||
+				record.at( "type" ).value == "HETATM" )) {
+			++n_atom_records;
+		}
+	}
+	if ( n_atom_records > 0 ) {
+		return PDB_file;
 	}
 
 	return Unknown_file;
@@ -271,6 +306,7 @@ pose_from_file(
 
 	if ( file_type == Unknown_file ) {
 		file_type = determine_file_type( contents_of_file);
+		TR << "File '" << filenames_string << "' automatically determined to be of type " << file_type << std::endl;
 	}
 
 	if ( file_type == Unknown_file ) {

@@ -49,6 +49,7 @@ enum FileType{
 	Unknown_file
 };
 
+std::ostream & operator<<( std::ostream & stream, FileType type );
 
 typedef std::string String;
 

@@ -1,0 +1,12 @@
+-s 1ubq.cif 1em7.cif 1qwe.cif
+-ignore_unrecognized_res
+
+-resfile resfile
+
+-ex1 
+-ex2
+-extrachi_cutoff 0
+
+-nstruct 2
+
+-out::pdb true
