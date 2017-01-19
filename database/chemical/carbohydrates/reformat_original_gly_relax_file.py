@@ -1,5 +1,6 @@
-
 # coding: utf-8
+from __future__ import print_function
+
 
 # In[1]:
 
@@ -18,7 +19,7 @@ for line in PDB_NAMES:
     if not line: continue
     lineSP = line.split()
     if len(lineSP) < 3: continue
-    
+
     code = lineSP[0]
     short_iupac = lineSP[2]
     codes[code] = short_iupac
@@ -35,27 +36,27 @@ for line in ORIGINAL:
     if line[0] == '#': continue
     line = line.strip()
     if not line: continue
-        
-    print line
+
+    print(line)
     lineSP = line.split()
-    
-    
+
+
     res2_name = lineSP[1]
     res2_link = lineSP[2]
-    
+
     res1_name = lineSP[3]
     res1_link = lineSP[4]
-    
+
     if not codes.has_key(res1_name):
         codes[res1_name] = "->?)-Unknown-"+res1_name
     if not codes.has_key(res2_name):
         codes[res2_name] = "->?)-Unknown-"+res2_name
-        
+
     columns = [codes[res1_name].replace('?', res1_link), codes[res2_name].replace('?', res2_link)]
     columns.extend(lineSP[5:])
-    
+
     new_line = "\t".join(columns)
-    print new_line
+    print(new_line)
     NEW.write(new_line+"\n")
 ORIGINAL.close()
 NEW.close()
@@ -72,6 +73,3 @@ x.replace('?', "Happy")
 
 
 # In[ ]:
-
-
-
