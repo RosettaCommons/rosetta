@@ -1,3 +1,6 @@
 -s relaxed_15_input_0098_0001_0001_13_0001_0001_0002.pdb
 -extra_res_fa BTN_1.fa.params
 -parser:protocol BTN_test.xml
+-overwrite
+-mute all
+-unmute protocols.simple_filters.SimpleHbondsToAtomFilter
