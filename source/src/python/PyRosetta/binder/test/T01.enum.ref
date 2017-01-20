@@ -14,7 +14,7 @@
 
 void bind_T01_enum(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	// E1 file:T01.enum.hpp line:17
+	// E1 file:T01.enum.hpp line:16
 	pybind11::enum_<E1>(M(""), "E1", "")
 		.value("E1_V0", E1::E1_V0)
 		.value("E1_V1", E1::E1_V1)
@@ -22,14 +22,14 @@ void bind_T01_enum(std::function< pybind11::module &(std::string const &namespac
 
 ;
 
-	// E2 file:T01.enum.hpp line:19
+	// E2 file:T01.enum.hpp line:18
 	pybind11::enum_<E2>(M(""), "E2", "")
 		.value("E2_V0", E2::E2_V0)
 		.value("E2_V1", E2::E2_V1);
 
 ;
 
-	{ // A file:T01.enum.hpp line:21
+	{ // A file:T01.enum.hpp line:20
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
 		pybind11::handle cl_type = cl;
 

@@ -60,7 +60,7 @@ void bind_T30_include_incl_b_include(std::function< pybind11::module &(std::stri
 
 void bind_T30_include(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	// foo(class bbbb::B<class aaaa::A>) file:T30.include.hpp line:20
+	// foo(class bbbb::B<class aaaa::A>) file:T30.include.hpp line:19
 	M("").def("foo", (void (*)(class bbbb::B<class aaaa::A>)) &foo, "C++: foo(class bbbb::B<class aaaa::A>) --> void", pybind11::arg(""));
 
 }

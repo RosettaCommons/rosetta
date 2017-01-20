@@ -16,13 +16,13 @@
 
 void bind_T20_template(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	// foo() file:T20.template.hpp line:18
+	// foo() file:T20.template.hpp line:17
 	M("").def("foo_int_t", (void (*)()) &foo<int>, "C++: foo() --> void");
 
-	// foo() file:T20.template.hpp line:18
+	// foo() file:T20.template.hpp line:17
 	M("").def("foo_double_t", (void (*)()) &foo<double>, "C++: foo() --> void");
 
-	{ // A file:T20.template.hpp line:25
+	{ // A file:T20.template.hpp line:24
 		pybind11::class_<A<int>, std::shared_ptr<A<int>>> cl(M(""), "A_int_t", "");
 		pybind11::handle cl_type = cl;
 
@@ -30,13 +30,13 @@ void bind_T20_template(std::function< pybind11::module &(std::string const &name
 		cl.def_readwrite("t_value", &A<int>::t_value);
 		cl.def("foo", (void (A<int>::*)(int &)) &A<int>::foo, "C++: A<int>::foo(int &) --> void", pybind11::arg(""));
 	}
-	// fi_instantiated_by_use_in_function(class A<int>) file:T20.template.hpp line:34
+	// fi_instantiated_by_use_in_function(class A<int>) file:T20.template.hpp line:33
 	M("").def("fi_instantiated_by_use_in_function", (void (*)(class A<int>)) &fi_instantiated_by_use_in_function, "C++: fi_instantiated_by_use_in_function(class A<int>) --> void", pybind11::arg(""));
 
-	// fi(class A<int> &) file:T20.template.hpp line:35
+	// fi(class A<int> &) file:T20.template.hpp line:34
 	M("").def("fi", (void (*)(class A<int> &)) &fi, "C++: fi(class A<int> &) --> void", pybind11::arg(""));
 
-	// fi(class A<int> *) file:T20.template.hpp line:36
+	// fi(class A<int> *) file:T20.template.hpp line:35
 	M("").def("fi", (void (*)(class A<int> *)) &fi, "C++: fi(class A<int> *) --> void", pybind11::arg(""));
 
 }

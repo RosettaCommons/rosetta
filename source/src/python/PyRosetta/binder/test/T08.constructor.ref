@@ -22,50 +22,50 @@
 
 void bind_T08_constructor(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // BaseA file:T08.constructor.hpp line:17
+	{ // BaseA file:T08.constructor.hpp line:16
 		pybind11::class_<BaseA, std::shared_ptr<BaseA>> cl(M(""), "BaseA", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def(pybind11::init<>());
 	}
-	{ // DerivedA file:T08.constructor.hpp line:18
+	{ // DerivedA file:T08.constructor.hpp line:17
 		pybind11::class_<DerivedA, std::shared_ptr<DerivedA>, BaseA> cl(M(""), "DerivedA", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def(pybind11::init<>());
 	}
-	{ // BaseB file:T08.constructor.hpp line:21
+	{ // BaseB file:T08.constructor.hpp line:20
 		pybind11::class_<BaseB, std::shared_ptr<BaseB>> cl(M(""), "BaseB", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def(pybind11::init<int>(), pybind11::arg(""));
 
 	}
-	{ // DerivedB file:T08.constructor.hpp line:26
+	{ // DerivedB file:T08.constructor.hpp line:25
 		pybind11::class_<DerivedB, std::shared_ptr<DerivedB>, BaseB> cl(M(""), "DerivedB", "");
 		pybind11::handle cl_type = cl;
 
 	}
-	{ // BaseC file:T08.constructor.hpp line:29
+	{ // BaseC file:T08.constructor.hpp line:28
 		pybind11::class_<BaseC, std::shared_ptr<BaseC>> cl(M(""), "BaseC", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def(pybind11::init<int>(), pybind11::arg(""));
 
 	}
-	{ // DerivedC file:T08.constructor.hpp line:36
+	{ // DerivedC file:T08.constructor.hpp line:35
 		pybind11::class_<DerivedC, std::shared_ptr<DerivedC>, BaseC> cl(M(""), "DerivedC", "");
 		pybind11::handle cl_type = cl;
 
 	}
-	{ // BaseD file:T08.constructor.hpp line:39
+	{ // BaseD file:T08.constructor.hpp line:38
 		pybind11::class_<BaseD, std::shared_ptr<BaseD>> cl(M(""), "BaseD", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def(pybind11::init<int>(), pybind11::arg(""));
 
 	}
-	{ // DerivedD file:T08.constructor.hpp line:45
+	{ // DerivedD file:T08.constructor.hpp line:44
 		pybind11::class_<DerivedD, std::shared_ptr<DerivedD>, BaseD> cl(M(""), "DerivedD", "");
 		pybind11::handle cl_type = cl;
 

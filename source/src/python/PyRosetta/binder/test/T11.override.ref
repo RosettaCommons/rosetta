@@ -101,7 +101,7 @@
 	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
-// Base file:T11.override.hpp line:20
+// Base file:T11.override.hpp line:19
 struct PyCallBack_Base : public Base {
 	using Base::Base;
 
@@ -174,7 +174,7 @@ struct PyCallBack_Base : public Base {
 
 void bind_T11_override(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // Base file:T11.override.hpp line:20
+	{ // Base file:T11.override.hpp line:19
 		pybind11::class_<Base, std::shared_ptr<Base>, PyCallBack_Base> cl(M(""), "Base", "");
 		pybind11::handle cl_type = cl;
 

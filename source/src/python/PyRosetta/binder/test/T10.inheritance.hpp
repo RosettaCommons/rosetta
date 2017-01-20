@@ -23,12 +23,16 @@ protected:
 	int data;
 
 public:
-	using Base::foo_protected;
-	using Base::data;
-
 	void foo() {}
 
 	void maybe() {}
+};
+
+class Derived : public Base
+{
+public:
+	using Base::foo_protected;
+	using Base::data;
 };
 
 

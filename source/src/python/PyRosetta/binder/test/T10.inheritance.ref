@@ -7,8 +7,13 @@
 #include <T10.inheritance.hpp> // B::operator=
 #include <T10.inheritance.hpp> // Base
 #include <T10.inheritance.hpp> // Base::foo
+#include <T10.inheritance.hpp> // Base::foo_protected
 #include <T10.inheritance.hpp> // Base::maybe
+#include <T10.inheritance.hpp> // Base::operator=
 #include <T10.inheritance.hpp> // Delete
+#include <T10.inheritance.hpp> // Delete::operator=
+#include <T10.inheritance.hpp> // Derived
+#include <T10.inheritance.hpp> // Derived::operator=
 #include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
@@ -19,22 +24,90 @@
 	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
+// Base file:T10.inheritance.hpp line:19
+struct PyCallBack_Base : public Base {
+	using Base::Base;
+
+	void foo_protected() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Base *>(this), "foo_protected");
+		if (overload) {
+			auto o = overload.operator()<pybind11::return_value_policy::reference>();
+			if (pybind11::detail::cast_is_temporary_value_reference<void>::value) {
+				static pybind11::detail::overload_caster_t<void> caster;
+				return pybind11::detail::cast_ref<void>(std::move(o), caster);
+			}
+			else return pybind11::detail::cast_safe<void>(std::move(o));
+		}
+		return Base::foo_protected();
+	}
+};
+
+// Derived file:T10.inheritance.hpp line:31
+struct PyCallBack_Derived : public Derived {
+	using Derived::Derived;
+
+	void foo_protected() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Derived *>(this), "foo_protected");
+		if (overload) {
+			auto o = overload.operator()<pybind11::return_value_policy::reference>();
+			if (pybind11::detail::cast_is_temporary_value_reference<void>::value) {
+				static pybind11::detail::overload_caster_t<void> caster;
+				return pybind11::detail::cast_ref<void>(std::move(o), caster);
+			}
+			else return pybind11::detail::cast_safe<void>(std::move(o));
+		}
+		return Base::foo_protected();
+	}
+};
+
+// Delete file:T10.inheritance.hpp line:39
+struct PyCallBack_Delete : public Delete {
+	using Delete::Delete;
+
+	void foo_protected() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Delete *>(this), "foo_protected");
+		if (overload) {
+			auto o = overload.operator()<pybind11::return_value_policy::reference>();
+			if (pybind11::detail::cast_is_temporary_value_reference<void>::value) {
+				static pybind11::detail::overload_caster_t<void> caster;
+				return pybind11::detail::cast_ref<void>(std::move(o), caster);
+			}
+			else return pybind11::detail::cast_safe<void>(std::move(o));
+		}
+		return Base::foo_protected();
+	}
+};
+
 void bind_T10_inheritance(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // Base file:T10.inheritance.hpp line:20
-		pybind11::class_<Base, std::shared_ptr<Base>> cl(M(""), "Base", "");
+	{ // Base file:T10.inheritance.hpp line:19
+		pybind11::class_<Base, std::shared_ptr<Base>, PyCallBack_Base> cl(M(""), "Base", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def(pybind11::init<>());
 		cl.def("foo", (void (Base::*)()) &Base::foo, "C++: Base::foo() --> void");
 		cl.def("maybe", (void (Base::*)()) &Base::maybe, "C++: Base::maybe() --> void");
+		cl.def("assign", (class Base & (Base::*)(const class Base &)) &Base::operator=, "C++: Base::operator=(const class Base &) --> class Base &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
-	{ // Delete file:T10.inheritance.hpp line:30
-		pybind11::class_<Delete, std::shared_ptr<Delete>, Base> cl(M(""), "Delete", "");
+	{ // Derived file:T10.inheritance.hpp line:31
+		pybind11::class_<Derived, std::shared_ptr<Derived>, PyCallBack_Derived, Base> cl(M(""), "Derived", "");
 		pybind11::handle cl_type = cl;
 
+		cl.def(pybind11::init<>());
+		cl.def_readwrite("data", &Derived::data);
+		cl.def("foo_protected", (void (Base::*)()) &Derived::foo_protected, "C++: Base::foo_protected() --> void");
+		cl.def("assign", (class Derived & (Derived::*)(const class Derived &)) &Derived::operator=, "C++: Derived::operator=(const class Derived &) --> class Derived &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
-	{ // A file:T10.inheritance.hpp line:38
+	{ // Delete file:T10.inheritance.hpp line:39
+		pybind11::class_<Delete, std::shared_ptr<Delete>, PyCallBack_Delete, Base> cl(M(""), "Delete", "");
+		pybind11::handle cl_type = cl;
+
+		cl.def("assign", (class Delete & (Delete::*)(const class Delete &)) &Delete::operator=, "C++: Delete::operator=(const class Delete &) --> class Delete &", pybind11::return_value_policy::automatic, pybind11::arg(""));
+	}
+	{ // A file:T10.inheritance.hpp line:47
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
 		pybind11::handle cl_type = cl;
 
@@ -43,7 +116,7 @@ void bind_T10_inheritance(std::function< pybind11::module &(std::string const &n
 
 		cl.def("assign", (class A & (A::*)(const class A &)) &A::operator=, "C++: A::operator=(const class A &) --> class A &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
-	{ // B file:T10.inheritance.hpp line:41
+	{ // B file:T10.inheritance.hpp line:50
 		pybind11::class_<B, std::shared_ptr<B>> cl(M(""), "B", "");
 		pybind11::handle cl_type = cl;
 
