@@ -847,6 +847,9 @@ sources = {
 		"hotspot_stub_constraint_test", # /* Sarel Fleishman,Documentation Location,Demo Location */
 		#"test_revert", # /* Sarel Fleishman,Documentation Location,Demo Location */
 	],
+	"pilot/scheck" : [
+		#"struct_frag",
+	],
 	"pilot/shilei" : [
 		"lowresdock_patchdock_hotspot_cst",
 		"cluster_hotspot_docking",

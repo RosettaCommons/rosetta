@@ -1618,6 +1618,37 @@ void FragmentPicker::parse_command_line() {
 	tr << std::endl;
 }
 
+/// @brief Sets the query surface area
+/// @details Directly sets the query surface area instead of reading it from a file
+void FragmentPicker::set_query_sa(utility::vector1<core::Real> & query_sa) {
+	query_sa_prediction_ = query_sa;
+}
+
+/// @brief Sets the query phi angles
+/// @details Directly sets the query phi angles instead of reading it from a file
+void FragmentPicker::set_query_phi(utility::vector1<core::Real> & query_phi) {
+	query_phi_prediction_ = query_phi;
+}
+
+/// @brief Sets the query psi angles
+/// @details Directly sets the query psi angles isntead of reading it from a file
+void FragmentPicker::set_query_psi(utility::vector1<core::Real> & query_psi) {
+	query_psi_prediction_ = query_psi;
+}
+
+/// @brief Sets the query phi angle confidence
+/// @details Directly sets the query phi angle confidence instead of reading it from a file
+void FragmentPicker::set_query_phi_conf(utility::vector1<core::Real> & query_phi_conf) {
+	query_phi_prediction_conf_ = query_phi_conf;
+}
+
+/// @brief Sets the query psi angle confidence
+/// @details Directly sets the query psi angle confidence instead of reading it form a file
+void FragmentPicker::set_query_psi_conf(utility::vector1<core::Real> & query_psi_conf) {
+	query_psi_prediction_conf_ = query_psi_conf;
+}
+
+
 /// @brief sets the query sequence
 /// @details Well, it is a sequence profile, but the sequence can be extracted from it
 void FragmentPicker::set_query_seq(core::sequence::SequenceProfileOP query_sequence) {

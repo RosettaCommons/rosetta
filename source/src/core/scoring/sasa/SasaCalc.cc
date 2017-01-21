@@ -138,7 +138,7 @@ vector1<Real>
 SasaCalc::get_residue_sasa_bb() const {
 	vector1<Real> sasa_bb;
 	for ( Size i = 1; i <= rsd_sasa_sc_.size(); ++i ) {
-		sasa_bb[i] = rsd_sasa_[i] - rsd_sasa_sc_[i];
+		sasa_bb.push_back(rsd_sasa_[i] - rsd_sasa_sc_[i]);
 	}
 	return sasa_bb;
 }
@@ -147,7 +147,7 @@ vector1<Real>
 SasaCalc::get_residue_hsasa_bb() const {
 	vector1< Real > sasa_bb;
 	for ( Size i = 1; i <= rsd_hsasa_sc_.size(); ++i ) {
-		sasa_bb[i] = rsd_hsasa_[i] - rsd_hsasa_sc_[i];
+		sasa_bb.push_back(rsd_hsasa_[i] - rsd_hsasa_sc_[i]);
 	}
 	return sasa_bb;
 }

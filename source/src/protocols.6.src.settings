@@ -152,6 +152,9 @@ sources = {
 	"protocols/indel": [
 		"IndelOptimizationMover",
 	],
+	"protocols/struct_fragment": [
+		"StructFragmentMover",
+	],
 	"protocols/match": [
 		"BumpGrid",
 		"Hit",
