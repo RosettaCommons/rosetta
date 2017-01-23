@@ -262,19 +262,27 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 
 /// @brief Appends the attributes read by parse_task_operations
 void
-attributes_for_parse_task_operations( utility::tag::AttributeList & attributes )
+attributes_for_parse_task_operations( utility::tag::AttributeList & attributes, std::string const & description )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" );
+	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string,
+		( description == ""  ? "A comma separated list of TaskOperations to use." : description )  );
 }
 
 
 /// @brief Appends the attributes read by parse_task_operations when handed a TaskFactory
 void
-attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes )
+attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes, std::string const & used_for_descr )
 {
+	std::string to_descrip = "A comma separated list of TaskOperations to use";
+	std::string tf_descrip = "A TaskFactory specification to use";
+	if ( ! used_for_descr.empty() ) {
+		to_descrip += " for " + used_for_descr;
+		tf_descrip += " for " + used_for_descr;
+	}
+
 	attributes
-		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" )
-		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string , "XRW TO DO" );
+		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string, to_descrip )
+		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string , tf_descrip );
 }
 
 /////////////////////////////////////////////////////////////
@@ -303,9 +311,9 @@ get_residue_selector( std::string const & selector_name, basic::datacache::DataM
 
 /// @brief Appends the attributes read by parse_residue_selector
 void
-attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes )
+attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes, std::string const & description )
 {
-	return core::select::residue_selector::attributes_for_parse_residue_selector(attributes);
+	return core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attributes, description );
 }
 
 ///////////////////////////////////////////////////////////
@@ -370,12 +378,6 @@ parse_score_function(
 	return parse_score_function(tag, "scorefxn", data, dflt_key);
 }
 
-void
-attributes_for_get_score_function_name( utility::tag::AttributeList & attlist, std::string option_name ){
-	attlist
-		+ utility::tag::XMLSchemaAttribute( option_name, utility::tag::xs_string, "Name of the score function to use here" );
-}
-
 std::string
 get_score_function_name(
 	utility::tag::TagCOP tag,
@@ -392,42 +394,61 @@ get_score_function_name(
 }
 
 ///  Get attributes ( i.e. options ) for movers to build xml schemas
-/// @brief Appends the attributes read by get_score_function_name
 void
 attributes_for_get_score_function_name( utility::tag::AttributeList & attributes )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "scorefxn", utility::tag::xs_string, "commandline" );
+	attributes_for_get_score_function_name_w_description( attributes, "" );
+}
+
+void
+attributes_for_get_score_function_name(
+	utility::tag::AttributeList & attributes,
+	std::string const & option_name )
+{
+	attributes_for_get_score_function_name_w_description( attributes, option_name, "" );
+}
+
+/// @brief Appends the attributes read by get_score_function_name
+void
+attributes_for_get_score_function_name_w_description(
+	utility::tag::AttributeList & attributes,
+	std::string const & description )
+{
+	attributes_for_get_score_function_name_w_description( attributes, "scorefxn", description);
 }
 
 /// @brief Appends the attributes read by get_score_function_name w/ name argument
 void
-attributes_for_get_score_function_name( utility::tag::AttributeList & attributes, std::string const & option_name )
+attributes_for_get_score_function_name_w_description(
+	utility::tag::AttributeList & attributes,
+	std::string const & option_name,
+	std::string const & description )
 {
-	attributes + utility::tag::XMLSchemaAttribute( option_name, utility::tag::xs_string, "commandline" );
+	attributes + utility::tag::XMLSchemaAttribute( option_name, utility::tag::xs_string,
+		( description == "" ? "Name of score function to use" : description ) );
 }
 
 /// @brief Appends the attributes read by parse_score_function
 void
 attributes_for_parse_score_function( utility::tag::AttributeList & attributes )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "scorefxn", utility::tag::xs_string , "XRW TO DO" );
+	attributes_for_parse_score_function_w_description( attributes, "" );
 }
 
 /// @brief Appends the attributes read by parse_score_function w/ name argument
 void
 attributes_for_parse_score_function( utility::tag::AttributeList & attributes, std::string const & sfxn_option_name )
 {
-	attributes + utility::tag::XMLSchemaAttribute( sfxn_option_name, utility::tag::xs_string , "XRW TO DO" );
+	attributes_for_parse_score_function_w_description( attributes, sfxn_option_name, "" );
 }
 
 /// @brief Appends the attributes read by parse_score_function
 void
-attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
+attributes_for_parse_score_function_w_description(
+	utility::tag::AttributeList & attributes,
 	std::string const & description )
 {
-	attributes + utility::tag::XMLSchemaAttribute(
-		"scorefxn", utility::tag::xs_string ,
-		description);
+	attributes_for_parse_score_function_w_description( attributes, "scorefxn", description );
 }
 
 /// @brief Appends the attributes read by parse_score_function w/ name argument
@@ -438,7 +459,7 @@ attributes_for_parse_score_function_w_description( utility::tag::AttributeList &
 {
 	attributes + utility::tag::XMLSchemaAttribute(
 		sfxn_option_name, utility::tag::xs_string ,
-		description);
+		( description == "" ? "Name of score function to use" : description ) );
 }
 
 /// @brief Appends the attributes read by parse_score_function w/ name argument and description.
@@ -450,22 +471,30 @@ attributes_for_parse_score_function_w_description_when_required( utility::tag::A
 	std::string const & description
 ) {
 	attributes + utility::tag::XMLSchemaAttribute::required_attribute(
-		sfxn_option_name, utility::tag::xs_string ,
-		description);
+		sfxn_option_name, utility::tag::xs_string,
+		( description == "" ? "Name of score function to use" : description ) );
 }
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////
 //////////////////// Reference Pose ///////////////////////
 
+void
+attributes_for_saved_reference_pose(
+		utility::tag::AttributeList & attributes,
+		std::string const & attribute_name)
+{
+	attributes_for_saved_reference_pose_w_description( attributes, "", attribute_name );
+}
 
 void
-attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name ){
-	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string , "XRW_TODO" );
+attributes_for_saved_reference_pose_w_description(
+		utility::tag::AttributeList & attributes,
+		std::string const & description,
+		std::string const & attribute_name)
+{
+	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string,
+	( description == "" ? "Name of reference pose to use" : description ) );
 }
 
 core::pose::PoseOP
@@ -485,10 +514,6 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 	} else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
 	return nullptr;
 }
-
-
-
-
 
 
 /////////////////////////////////////////////////////////
@@ -699,14 +724,15 @@ common_movemap_complex_type_def( utility::tag::XMLSchemaComplexTypeGenerator & c
 void
 append_subelement_for_parse_movemap(
 	utility::tag::XMLSchemaDefinition & xsd,
-	utility::tag::XMLSchemaSimpleSubelementList & subelements
+	utility::tag::XMLSchemaSimpleSubelementList & subelements,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexTypeGenerator unnamed_move_map;
 	common_movemap_complex_type_def( unnamed_move_map );
 	unnamed_move_map
-		.description( "XRW TO DO" )
+		.description( description == "" ? "MoveMap specification" : description )
 		.complex_type_naming_func( & unnamed_move_map_ct_namer )
 		.write_complex_type_to_schema( xsd );
 
@@ -717,14 +743,15 @@ append_subelement_for_parse_movemap(
 void
 append_subelement_for_parse_movemap_w_datamap(
 	utility::tag::XMLSchemaDefinition & xsd,
-	utility::tag::XMLSchemaSimpleSubelementList & subelements
+	utility::tag::XMLSchemaSimpleSubelementList & subelements,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexTypeGenerator named_move_map;
 	common_movemap_complex_type_def( named_move_map );
 	named_move_map
-		.description( "XRW TO DO" )
+		.description( description == "" ? "MoveMap specification" : description )
 		.add_optional_name_attribute()
 		.complex_type_naming_func( & optionally_named_move_map_ct_namer )
 		.write_complex_type_to_schema( xsd );
@@ -806,10 +833,7 @@ attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist ){
 		+ XMLSchemaAttribute::required_attribute( "x", xsct_real, "X coordinate for this vector" )
 		+ XMLSchemaAttribute::required_attribute( "y", xsct_real, "Y coordinate for this vector" )
 		+ XMLSchemaAttribute::required_attribute( "z", xsct_real, "Z coordinate for this vector" );
-
 }
-
-
 
 
 /// @brief utility function for parsing xyzVector
@@ -828,12 +852,6 @@ parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
 	return xyz_v;
 
 }
-
-
-
-/// @brief Appends the attributes read by parse_residue_selector
-void
-attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
 
 
 // void

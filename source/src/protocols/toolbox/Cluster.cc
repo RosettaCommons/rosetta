@@ -64,7 +64,7 @@ std::ostream & operator<< (
 	Size ncl( 1 );
 	for ( auto const & it : cl ) {
 		out << "CLUSTER " << RJ(3, ncl++ ) << " " << RJ(4, it.size()) << " ";
-		for ( unsigned long cit : it ) {
+		for ( core::Size cit : it ) {
 			out << RJ( 4, cit ) << " ";
 		}
 	}

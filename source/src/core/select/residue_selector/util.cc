@@ -178,7 +178,7 @@ attributes_for_parse_residue_selector_when_required(
 )
 {
 	using namespace utility::tag;
-	attlist + XMLSchemaAttribute::required_attribute( option_name, xs_string, documentation_string == "XRW TO DO" ? "The name of the already defined ResidueSelector that will be used by this object" : documentation_string );
+	attlist + XMLSchemaAttribute::required_attribute( option_name, xs_string, documentation_string == "" ? "The name of the already defined ResidueSelector that will be used by this object" : documentation_string );
 }
 
 ResidueSelectorCOP

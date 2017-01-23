@@ -306,7 +306,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		}
 
 
-		for ( unsigned long & com_residue : com_residues ) {
+		for ( core::Size & com_residue : com_residues ) {
 
 			// loop over COM and check that these are not termini
 			runtime_assert_msg( !pose.residue(com_residue).is_terminus(), "COM cannot be a terminus!" );

@@ -552,7 +552,7 @@ HBNet::res_is_core( Size const res ) const {
 void
 HBNet::traverse_IG( Real const hb_threshold ){
 	// Start the IG traversal at pre-deterimined starting residues (e.g. ligand or interface residues)
-	for ( unsigned long res1 : start_res_vec_ ) {
+	for ( core::Size res1 : start_res_vec_ ) {
 
 		platform::uint const first_ni = rotamer_sets_->resid_2_moltenres(res1);//returns 0 if res1 not molten (not design/repack-able)
 		if ( first_ni == 0 ) continue;
@@ -718,7 +718,7 @@ HBNet::traverse_native( Pose & pose, Real const hb_threshold )
 	pose.update_residue_neighbors();
 	( *scorefxn_ )( pose ); //score pose so we can get EnergyGraph (EG)
 
-	for ( unsigned long res : start_res_vec_ ) {
+	for ( core::Size res : start_res_vec_ ) {
 		utility::graph::Node * node = pose.energies().energy_graph().get_node( res );
 
 		for ( utility::graph::EdgeListIterator egraph_it = node->edge_list_begin();
@@ -1862,7 +1862,7 @@ HBNet::output_networks( bool finalize )
 					for ( auto j = i; ++j != network_vector_.end(); ) {
 						if ( (*j)->is_native || (*j)->is_extended ) {
 							bool compatible( true );
-							for ( unsigned long & net_id : net_ids ) {
+							for ( core::Size & net_id : net_ids ) {
 								if ( net_clash( *(get_network_by_id(net_id)), **j ) ) {
 									compatible = false;
 									break;
@@ -1875,7 +1875,7 @@ HBNet::output_networks( bool finalize )
 					for ( auto & k : network_vector_ ) {
 						if ( k->is_native || k->is_extended ) {
 							bool compatible( true );
-							for ( unsigned long & net_id : net_ids ) {
+							for ( core::Size & net_id : net_ids ) {
 								if ( net_clash( *(get_network_by_id(net_id)), *k ) ) {
 									compatible = false;
 									break;
@@ -2304,7 +2304,7 @@ HBNet::get_additional_output()
 	output_vector_.pop_back(); // pop_back() deletes/removes last, does not return;
 
 	std::string comment_str( print_headers() + this->print_additional_headers() );
-	for ( unsigned long & net_id : net_ids ) {
+	for ( core::Size & net_id : net_ids ) {
 		//TR << "net_id = " << *net_id << std::endl;
 		runtime_assert( get_network_by_id(net_id) != nullptr );
 		place_rots_on_pose( *out_pose, (get_network_by_id( net_id ))->residues, (get_network_by_id( net_id ))->is_native );
@@ -2960,7 +2960,7 @@ HBNet::run( Pose & pose )
 	auto resvecit = start_res_vec_.begin();
 	for ( ;  resvecit != start_res_vec_.end(); ) {
 		bool in_design_shell = false;
-		for ( unsigned long mrvit : molten_resvec ) {
+		for ( core::Size mrvit : molten_resvec ) {
 			platform::uint resvecit_uint(*resvecit);
 			if ( resvecit_uint == mrvit ) {
 				in_design_shell = true;
@@ -3114,7 +3114,7 @@ HBNet::apply( Pose & pose )
 	output_vector_.pop_back(); // pop_back() removes without returning
 
 	std::string comment_str( print_headers() + this->print_additional_headers() );
-	for ( unsigned long & net_id : net_ids ) {
+	for ( core::Size & net_id : net_ids ) {
 		//TR << "net_id = " << *net_id << std::endl;
 		runtime_assert( get_network_by_id(net_id) != nullptr );
 		place_rots_on_pose( pose, (get_network_by_id( net_id ))->residues, (get_network_by_id( net_id ))->is_native );

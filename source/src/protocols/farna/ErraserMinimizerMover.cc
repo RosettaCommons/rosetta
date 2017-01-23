@@ -1179,7 +1179,7 @@ ErraserMinimizerMover::apply(
 	TR << "Identified " << n_chunk << " chunks" << std::endl;
 	for ( Size ii = 1; ii <= n_chunk; ++ii ) {
 		TR << "[";
-		for ( unsigned long jj : chunks[ii] ) {
+		for ( core::Size jj : chunks[ii] ) {
 			TR << " " << jj;
 		}
 		TR << "]" << std::endl;

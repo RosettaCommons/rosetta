@@ -304,7 +304,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 			}
 		}
 	} else {
-		for ( unsigned long & jump_num : jump_nums_ ) {
+		for ( core::Size & jump_num : jump_nums_ ) {
 			if ( pose.num_jump() < jump_num ) {
 				if ( TR.visible() ) {
 					TR.flush();
@@ -345,7 +345,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 
 	if ( no_init_taskfactory ) {
 		if ( get_start_res_vec().empty() ) {
-			for ( unsigned long & jump_num : jump_nums_ ) {
+			for ( core::Size & jump_num : jump_nums_ ) {
 				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
@@ -430,7 +430,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 		//task_factory_ = new TaskFactory;
 		protocols::toolbox::task_operations::DesignAroundOperationOP desaround = protocols::toolbox::task_operations::DesignAroundOperationOP( new protocols::toolbox::task_operations::DesignAroundOperation() );
 		std::set< core::Size > temp_start_vec( get_start_res_vec() );
-		for ( unsigned long it : temp_start_vec ) {
+		for ( core::Size it : temp_start_vec ) {
 			desaround->include_residue(it);
 		}
 		desaround->repack_shell(12.0);
@@ -441,7 +441,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 	} else {
 		set_task( create_ptask(pose) ); //temp task
 		if ( get_start_res_vec().empty() ) {
-			for ( unsigned long & jump_num : jump_nums_ ) {
+			for ( core::Size & jump_num : jump_nums_ ) {
 				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //within 8 angstroms of Ala nbr residue
@@ -722,7 +722,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 	while ( combo_count <= combos_ && ++next_netit != get_net_vec().end() )
 			{ //number of combinations of multiple networks to try (default = 1)
 		bool compatible( true );
-		for ( unsigned long & net_id : net_ids ) {
+		for ( core::Size & net_id : net_ids ) {
 			runtime_assert( get_network_by_id(net_id) != nullptr );
 			bool branch(false);
 			//            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))

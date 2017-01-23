@@ -87,19 +87,17 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 ///////////////////// Attributes /////////////////////////
 
 /// @brief Appends the 'task_operation' attribute
+/// @details "description" can be used to specify for what the TaskOperations are being used for.
 void
-attributes_for_parse_task_operations( utility::tag::AttributeList & attributes );
+attributes_for_parse_task_operations(
+	utility::tag::AttributeList & attributes,
+	std::string const & description = "" );
 
 /// @brief Appends the 'task_operation' and 'task_factory' attributes.
 void
-attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes );
-
-
-
-
-
-
-
+attributes_for_parse_task_operations_w_factory(
+	utility::tag::AttributeList & attributes,
+	std::string const & used_for_descr = "" );
 
 
 /////////////////////////////////////////////////////////////
@@ -128,11 +126,7 @@ get_residue_selector( std::string const & selector_name, basic::datacache::DataM
 
 /// @brief Appends the attributes read by parse_residue_selector
 void
-attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
-
-
-
-
+attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes, std::string const & description = "" );
 
 
 ///////////////////////////////////////////////////////////
@@ -175,11 +169,27 @@ get_score_function_name(
 
 /// @brief Appends the attributes read by get_score_function_name
 void
-attributes_for_get_score_function_name( utility::tag::AttributeList & attributes );
+attributes_for_get_score_function_name(
+	utility::tag::AttributeList & attributes );
 
 /// @brief Appends the attributes read by get_score_function_name w/ name argument
 void
-attributes_for_get_score_function_name( utility::tag::AttributeList & attributes, std::string const & option_name );
+attributes_for_get_score_function_name(
+	utility::tag::AttributeList & attributes,
+	std::string const & option_name);
+
+/// @brief Appends the attributes read by get_score_function_name
+void
+attributes_for_get_score_function_name_w_description(
+	utility::tag::AttributeList & attributes,
+	std::string const & description );
+
+/// @brief Appends the attributes read by get_score_function_name w/ name argument
+void
+attributes_for_get_score_function_name_w_description(
+	utility::tag::AttributeList & attributes,
+	std::string const & option_name,
+	std::string const & description );
 
 /// @brief Appends the attributes read by parse_score_function
 void
@@ -207,13 +217,8 @@ attributes_for_parse_score_function_w_description( utility::tag::AttributeList &
 void
 attributes_for_parse_score_function_w_description_when_required( utility::tag::AttributeList & attributes,
 	std::string const & sfxn_option_name,
-	std::string const & description
+	std::string const & description = ""
 );
-
-
-
-
-
 
 
 /////////////////////////////////////////////////////////
@@ -247,7 +252,8 @@ parse_movemap(
 void
 append_subelement_for_parse_movemap(
 	utility::tag::XMLSchemaDefinition & xsd,
-	utility::tag::XMLSchemaSimpleSubelementList & subelements
+	utility::tag::XMLSchemaSimpleSubelementList & subelements,
+	std::string const & description = ""
 );
 
 /// @brief Adds a subelement to an input subelement list describing a MoveMap subtag
@@ -255,7 +261,8 @@ append_subelement_for_parse_movemap(
 void
 append_subelement_for_parse_movemap_w_datamap(
 	utility::tag::XMLSchemaDefinition & xsd,
-	utility::tag::XMLSchemaSimpleSubelementList & subelements
+	utility::tag::XMLSchemaSimpleSubelementList & subelements,
+	std::string const & description = ""
 );
 
 
@@ -268,7 +275,6 @@ add_movemaps_to_datamap(
 	core::pose::Pose const & pose,
 	basic::datacache::DataMap & data,
 	bool initialize_mm_as_true = false);
-
 
 
 ///////////////////////////////////////////////////////////
@@ -284,11 +290,16 @@ saved_reference_pose(
 /// in the data map at an arbitrary point during an RS protocol
 /// Will look for tag in in_tag variable
 void
-attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name="reference_name" );
+attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes, std::string const & attribute_name="reference_name" );
 
-
-
-
+/// @brief convenience function to access pointers to poses that will be stored
+/// in the data map at an arbitrary point during an RS protocol
+/// Will look for tag in in_tag variable
+void
+attributes_for_saved_reference_pose_w_description(
+	utility::tag::AttributeList & attributes,
+	std::string const & description,
+	std::string const & attribute_name="reference_name" );
 
 /////////////////////////////////////////////////////////
 //////////////////// Filter ////////////////////////////
@@ -297,16 +308,10 @@ protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & d );
 
 
-
-
-
 /////////////////////////////////////////////////////////
 //////////////////// Mover //////////////////////////////
 protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & d );
-
-
-
 
 
 /////////////////////////////////////////////////////////
@@ -318,12 +323,6 @@ void
 attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 
 
-
-
-
-
-
-
 ///This is kind of a strange place for this, but for library-level reasons it needs to be more accessible than a more logical home with ReportToDB, and cannot live in basic because it needs other functions in this file.  (There is also value in not creating a new file b/c it breaks the fast-compile system XML XSD XRW is using, and it's 6pm on Friday!)
 
 //void
@@ -331,6 +330,5 @@ attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 
 } // RosettaScripts
 } // protocols
-
 
 #endif /*INCLUDED_protocols_RosettaScripts_util_HH*/

@@ -130,7 +130,7 @@ LigandBurial::calculate_ligand_neighbors() {
 
 
 	TR << "These are the neighbor residues: " << std::endl;
-	for(unsigned long it : ligand_neighbors.value()){
+	for(core:Size it : ligand_neighbors.value()){
 		TR << it << "+";
 	}
 	TR << std::endl;
