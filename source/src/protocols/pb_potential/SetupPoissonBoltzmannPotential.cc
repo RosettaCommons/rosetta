@@ -156,10 +156,10 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only );
 	}
 
-	core::Real epsilon;
-	if ( tag->hasOption("epsilon") ) {
-		epsilon = tag->getOption<core::Real>( "epsilon" );
-		basic::options::option[basic::options::OptionKeys::pb_potential::epsilon]( epsilon );
+	core::Real tolerance;
+	if ( tag->hasOption("tolerance") ) {
+		tolerance = tag->getOption<core::Real>( "tolerance" );
+		basic::options::option[basic::options::OptionKeys::pb_potential::tolerance]( tolerance );
 	}
 	//bool calcenergy;
 	if ( tag->hasOption("calcenergy") ) {
@@ -176,11 +176,16 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 	//-------------------------------------------------------------------------
 	ddg_ = protocols::simple_moves::ddGOP( new protocols::simple_moves::ddG() );
 
-	// Must turn this ON to enable caculation of bound/unbound states.
-	// HIGHLY ILLEGAL CONST_CAST TO MODIFY THE INPUT TAG!
+	// Must turn this ON to enable caculation of bound/unbound states. <-- comment from mystery original author
+
+	// HIGHLY ILLEGAL CONST_CAST TO MODIFY THE INPUT TAG!  <-- comment from Angry Leaver-Fay when converting TagPtr to TagCOP
 	// INSTEAD, THIS CODE SHOULD REQUIRE THAT "repack 1" IS SET
 	// IN THE INPUT, AND FAIL IF IT IS NOT SET.
-	( utility::pointer::const_pointer_cast< utility::tag::Tag > (tag) )->setOption<bool>("repack",1);
+
+	// ( utility::pointer::const_pointer_cast< utility::tag::Tag > (tag) )->setOption<bool>("repack",1);
+
+	// SML 12/14/16 this code was apparently attempting to force a "repack" attribute to be read by the underlying ddG mover.  Unfortunately "repack" isn't an attribute of that class's XML.  It is no longer clear whether repack_bound or repack_unbound was meant, but in any case this line of illegal code accomplished nothing.
+
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	if ( scorefxn_name != "" ) {

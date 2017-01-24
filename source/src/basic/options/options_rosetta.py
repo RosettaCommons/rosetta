@@ -6288,7 +6288,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'revamp_near_chain', 'IntegerVector', desc="Scale down PB interactions if near the given chain. Use chain numbers as input." ),
 		Option( 'apbs_path', 'String', desc="Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable"),
 		Option( 'potential_cap', 'Real', desc="Cap for PB potential input", default = '20.0' ),
-		Option( 'epsilon', 'Real', desc="Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.", default='2.0'),
+		Option( 'tolerance', 'Real', desc="Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.", default='1.0'),
 		Option( 'apbs_debug', 'Integer', desc="APBS debug level [0-6]", default="2"),
 		Option( 'calcenergy', 'Boolean', desc="Calculate energy?", default="false"),
 	), # -pb_potential

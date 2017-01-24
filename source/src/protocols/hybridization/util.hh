@@ -59,6 +59,10 @@ void setup_fullatom_constraints(
 	std::string cen_cst_file,
 	std::string fa_cst_file  );
 
+void setup_constraints(
+	core::pose::Pose &pose,
+	std::string & cst_in);
+
 void generate_centroid_constraints(
 	core::pose::Pose &pose,
 	utility::vector1 < core::pose::PoseCOP > templates,

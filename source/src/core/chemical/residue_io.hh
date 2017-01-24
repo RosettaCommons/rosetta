@@ -34,23 +34,29 @@ namespace chemical {
 /// @brief  If polymer, determine a list of main chain atoms by shortest path from LOWER to UPPER.
 AtomIndices define_mainchain_atoms( ResidueTypeOP rsd );
 
-/// @brief virtual constructor for ResidueType objects
-/// Gets needed subsidiary type sets from rsd_type_set
+/// @brief function to convert params files into ResidueType objects (repackages string filename into istream, gets needed subsidiary type sets from rsd_type_set
 ResidueTypeOP
 read_topology_file(
 	std::string const & filename,
 	chemical::ResidueTypeSetCOP rsd_type_set
 );
 
-/// @brief virtual constructor for ResidueType objects
-/// Gets needed subsidiary type sets from rsd_type_set
+/// @brief function to convert params files into ResidueType objects, gets needed subsidiary type sets from rsd_type_set
 ResidueTypeOP
 read_topology_file(
 	utility::io::izstream & istream,
 	chemical::ResidueTypeSetCOP rsd_type_set
 );
 
-/// @brief virtual constructor for ResidueType objects
+/// @brief function to convert params files into ResidueType objects, gets needed subsidiary type sets from rsd_type_set
+ResidueTypeOP
+read_topology_file(
+	std::istream & istream,
+	std::string const & filename, //this may be a fake filename
+	chemical::ResidueTypeSetCOP rsd_type_set
+);
+
+/// @brief function to convert params files into ResidueType objects (repackages string filename into istream)
 ResidueTypeOP
 read_topology_file(
 	std::string const & filename,
@@ -60,9 +66,11 @@ read_topology_file(
 	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types
 );
 
+/// @brief main function to convert params files into ResidueType objects
 ResidueTypeOP
 read_topology_file(
-	utility::io::izstream & istream,
+	std::istream & data,
+	std::string const & filename, //MAY be faux filename if stream is not izstream of file
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
@@ -77,7 +85,7 @@ write_topology_file(
 );
 
 /// @brief Produces a graphviz dot representation of the ResidueType to the given output stream
-/// If header is true (the default) a line with an explanitory message will be printed first.
+/// If header is true (the default) a line with an explanatory message will be printed first.
 void
 write_graphviz(
 	ResidueType const & rsd,

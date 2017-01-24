@@ -167,8 +167,30 @@ read_topology_file(
 	chemical::ResidueTypeSetCOP rsd_type_set
 ) {
 	debug_assert( rsd_type_set );
+
+	core::chemical::ResidueTypeOP const our_res(read_topology_file(
+		istream,
+		istream.filename(),
+		rsd_type_set->atom_type_set(),
+		rsd_type_set->element_set(),
+		rsd_type_set->mm_atom_type_set(),
+		rsd_type_set->orbital_type_set() ));
+
+	istream.close(); //we must close this because the istream interface that carries this variable doesn't have .close(); we can't check is_open() because izstream doesn't have that for some reason.  Previous versions of this code called .close in the workhorse read_topology_file function.
+	return our_res;
+}
+
+ResidueTypeOP
+read_topology_file(
+	std::istream & istream,
+	std::string const & filename,
+	chemical::ResidueTypeSetCOP rsd_type_set
+) {
+	debug_assert( rsd_type_set );
+
 	return read_topology_file(
 		istream,
+		filename, //may be fake; needed for debugging
 		rsd_type_set->atom_type_set(),
 		rsd_type_set->element_set(),
 		rsd_type_set->mm_atom_type_set(),
@@ -195,7 +217,10 @@ read_topology_file(
 	if ( !data.good() ) {
 		utility_exit_with_message("Cannot open file '"+full_filename+"'");
 	}
-	return read_topology_file(data, atom_types, elements, mm_atom_types, orbital_atom_types );
+	core::chemical::ResidueTypeOP const our_res(read_topology_file(data, filename, atom_types, elements, mm_atom_types, orbital_atom_types ));
+
+	data.close(); //we must close this because the istream interface that carries this variable doesn't have .close(); we can't check is_open() because izstream doesn't have that for some reason.  Previous versions of this code called .close in the workhorse read_topology_file function.
+	return our_res;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -577,7 +602,8 @@ read_topology_file(
 /// that enforce this.
 ResidueTypeOP
 read_topology_file(
-	utility::io::izstream & data,
+	std::istream & data,
+	std::string const & filename, //MAY be faux filename if stream is not izstream of file
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
@@ -590,8 +616,6 @@ read_topology_file(
 	using numeric::conversions::degrees;
 
 	using namespace basic;
-
-	std::string filename = data.filename();
 
 	// read the file
 	std::string line;
@@ -615,7 +639,6 @@ read_topology_file(
 			if ( l.fail() ) myname.clear();
 		}
 	}
-	data.close();
 
 	std::map< std::string, std::string > atom_type_reassignments;
 	std::map< std::string, Real > atomic_charge_reassignments;

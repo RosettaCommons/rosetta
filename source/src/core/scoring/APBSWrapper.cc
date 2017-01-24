@@ -310,8 +310,8 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 	ionr[0] = 2; ionr[1] = 2, ionr[2] = 2; ionr[3] = 2;
 	dime[0] = dime[1] = dime[2] = 1;
 
-	double min_r[] = {9999,9999,9999};
-	double max_r[] = {-9999,-9999,-9999};
+	double min_r[] = {10e8,10e8,10e8};
+	double max_r[] = {-10e8,-10e8,-10e8};
 	// Find the min & max coords within the moleculer system to define the grid.
 	for ( Size ires=1; ires<=pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom ) {

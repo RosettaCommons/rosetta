@@ -276,6 +276,11 @@ void RelaxProtocolBase::set_default_coordinate_settings(){
 	}
 	explicit_ramp_constraints_ = option[ OptionKeys::relax::ramp_constraints ].user();
 	ramp_down_constraints_ = option[ OptionKeys::relax::ramp_constraints ]();
+	if ( constrain_coords_ ) {
+		if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
+			ramp_down_constraints_ = true;
+		}
+	}
 	constrain_relax_segments_ = option[ OptionKeys::relax::constrain_relax_segments ].user();
 	limit_aroma_chi2_ = option[ OptionKeys::relax::limit_aroma_chi2 ]();
 }
@@ -394,9 +399,9 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	if ( constrain_coords_ ) {
 		//fpd  Make ramping on by default if one of -constrain_relax_* is specified
 		//fpd  Let it be overridden if '-ramp_constraints false' is specified
-		if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
-			ramp_down_constraints_ = true;
-		}
+		//  if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
+		//   ramp_down_constraints_ = true;
+		//  }
 
 		protocols::relax::AtomCoordinateCstMover coord_cst_mover;
 		if ( constrain_relax_to_native_coords_ ) {

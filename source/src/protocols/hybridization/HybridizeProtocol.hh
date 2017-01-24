@@ -30,6 +30,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <utility/file/FileName.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace hybridization {
@@ -38,6 +39,18 @@ class HybridizeProtocol : public protocols::moves::Mover {
 
 public:
 	HybridizeProtocol();
+
+	HybridizeProtocol(
+		utility::vector1 <core::pose::PoseOP> templates_in,
+		utility::vector1 <core::Real> template_weights_in,
+		core::scoring::ScoreFunctionOP stage1_scorefxn_in,
+		core::scoring::ScoreFunctionOP stage2_scorefxn_in,
+		core::scoring::ScoreFunctionOP fa_scorefxn_in,
+		std::string frag3_fn,
+		std::string frag9_fn,
+		std::string & cen_cst_in,
+		std::string & fa_cst_in
+	);
 
 	void init();
 
@@ -156,8 +169,10 @@ private:
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	core::scoring::ScoreFunctionOP stage2pack_scorefxn_, stage2min_scorefxn_;  // cenrot
 	std::string fa_cst_fn_;
+	std::string fa_cst_in_;
 	std::string disulf_file_;
 	core::Size cartfrag_overlap_;
+
 
 	// more options
 	bool csts_from_frags_;  // generate dihedral constraints from fragments
@@ -197,6 +212,8 @@ private:
 	utility::vector1 < protocols::loops::Loops > template_chunks_;    // template secstruct definitions
 	utility::vector1 < protocols::loops::Loops > template_contigs_;   // template continuous pieces
 	utility::vector1 < utility::vector1<char> > randomize_chains_;  // per-template chain randomization
+
+	std::string cen_cst_in_;
 
 	// strand pairings
 	std::string pairings_file_;

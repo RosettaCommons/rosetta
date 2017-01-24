@@ -124,6 +124,7 @@ void setup_centroid_constraints(
 	}
 }
 
+
 void setup_fullatom_constraints(
 	core::pose::Pose &pose,
 	utility::vector1 < core::pose::PoseCOP > templates,
@@ -149,6 +150,15 @@ void setup_fullatom_constraints(
 		pose.constraint_set( constraint_set );  //reset constraints
 	}
 }
+
+void setup_constraints(
+	core::pose::Pose &pose,
+	std::string & cst_in) {
+	std::istringstream cst_ss(cst_in);
+	ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_ss, ConstraintSetOP( new ConstraintSet ), pose );
+	pose.constraint_set( constraint_set );  //reset constraints
+}
+
 
 void generate_centroid_constraints(
 	core::pose::Pose &pose,

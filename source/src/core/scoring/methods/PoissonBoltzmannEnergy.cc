@@ -146,13 +146,13 @@ PoissonBoltzmannEnergyCreator::score_types_for_method() const {
 PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new PoissonBoltzmannEnergyCreator ) ),
 	fixed_residue_(1),
-	epsilon_(2.0)
+	pose_deviation_tolerance_(1.0)
 	//,
 	//poisson_boltzmann_potential_( new scoring::PoissonBoltzmannPotential )
 
 {
-	if (  basic::options::option[basic::options::OptionKeys::pb_potential::epsilon].user() ) {
-		epsilon_ = basic::options::option[basic::options::OptionKeys::pb_potential::epsilon];
+	if (  basic::options::option[basic::options::OptionKeys::pb_potential::tolerance].user() ) {
+		pose_deviation_tolerance_ = basic::options::option[basic::options::OptionKeys::pb_potential::tolerance];
 	}
 }
 
@@ -231,9 +231,9 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		// re-evaluate only for bound-state.
 		if ( energy_state == emoptions.pb_bound_tag() ) {
 
-			if ( !protein_position_equal_within( pose, *prev_pose, atom_index, epsilon_ ) ) {
+			if ( !protein_position_equal_within( pose, *prev_pose, atom_index, pose_deviation_tolerance_ ) ) {
 				TR << "Atoms (" << atom_index << ") in charged chains moved more than " ;
-				TR << epsilon_ << "A" << std::endl;
+				TR << pose_deviation_tolerance_ << "A" << std::endl;
 				poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 			}
 		}

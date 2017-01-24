@@ -217,6 +217,193 @@ HybridizeProtocol::HybridizeProtocol()
 	init();
 }
 
+
+// creator with data input
+HybridizeProtocol::HybridizeProtocol(
+	utility::vector1 <core::pose::PoseOP> templates_in,
+	utility::vector1 <core::Real> template_weights_in,
+	core::scoring::ScoreFunctionOP stage1_scorefxn_in,
+	core::scoring::ScoreFunctionOP stage2_scorefxn_in,
+	core::scoring::ScoreFunctionOP fa_scorefxn_in,
+	std::string frag3_fn,
+	std::string frag9_fn,
+	std::string & cen_cst_in,
+	std::string & fa_cst_in
+)
+{
+	if ( templates_in.size() != template_weights_in.size() ) {
+		throw utility::excn::EXCN_BadInput("Error! Input templates and weights are in different sizes!");
+	}
+
+	stage1_probability_     = 1.;
+	stage1_increase_cycles_ = 1.;
+
+	stage1_1_cycles_    = 2000;
+	stage1_2_cycles_    = 2000;
+	stage1_3_cycles_    = 2000;
+	stage1_4_cycles_    = 400;
+
+	stage2_temperature_ = 2.;
+
+	add_hetatm_ = false;
+	realign_domains_ = true;
+	realign_domains_stage2_ = true;
+	add_non_init_chunks_ = 0.;
+	frag_weight_aligned_ = 0.;
+	auto_frag_insertion_weight_ = true;
+	max_registry_shift_ = 0;
+	frag_1mer_insertion_weight_ = 0.;
+	small_frag_insertion_weight_ = 0.;
+	big_frag_insertion_weight_ = 0.5;
+	chunk_insertion_weight_ = 1.;
+	hetatm_self_cst_weight_ = 10.;
+	hetatm_prot_cst_weight_ = 0.;
+	cartfrag_overlap_ = 2;
+	seqfrags_only_ = false;
+	skip_long_min_ = true;   //fpd  this is no longer necessary and seems to hurt model accuracy
+	keep_pose_constraint_ = false;   //fpd PLEASE INITIALIZE NEW VARIABLES
+
+	cenrot_ = false;
+
+	csts_from_frags_ = false;  // generate dihedral constraints from fragments
+	max_contig_insertion_ = -1;  // don't insert contigs larger than this size (-1 ==> don't limit)
+	min_after_stage1_ = false;   // tors min after stage1
+	fragprob_stage2_ = 0.3;  // ratio of fragment vs. template moves
+	randfragprob_stage2_ = 0.5; // given a fragmove, how often is it applied to a random position (as opposed to a chainbreak position)
+
+
+	// domain parsing options
+	hcut_ = 0.18;
+	pcut_ = 0.81;
+	length_ = 38;
+
+
+	jump_move_ = false;
+	jump_move_repeat_ = 1;
+
+	stage2_increase_cycles_ = 1.;
+	stage25_increase_cycles_ = 1.;
+	no_global_frame_ = false;
+	linmin_only_ = false;
+
+	// default scorefunctions
+	//    stage2 scorefunctions are initialized in CartesianHybridize
+	//    fa_scorefxn_ = core::scoring::get_score_function();
+	//    core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_ );
+
+
+	//    if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+	//        utility::vector1< std::string > cst_files = option[ OptionKeys::constraints::cst_fa_file ]();
+	//        core::Size choice = core::Size( numeric::random::rg().random_range( 1, cst_files.size() ) );
+	//        fa_cst_fn_ = cst_files[choice];
+	//        TR.Info << "Fullatom Constraint choice: " << fa_cst_fn_ << std::endl;
+	//    }
+
+	batch_relax_ = 1;
+	relax_repeats_ = 5;
+
+	// disulfide file
+	//    if ( option[ in::fix_disulf ].user() ) {
+	//        disulf_file_ = option[ in::fix_disulf ]();
+	//    }
+
+	// read fragments
+	using namespace core::fragment;
+	FragSetOP frags9 = FragmentIO().read_data( frag9_fn );
+	fragments_big_.push_back(frags9);
+
+	FragSetOP frags3 = FragmentIO().read_data( frag3_fn );
+	fragments_small_.push_back(frags3);
+
+	// native
+	//    if ( option[ in::file::native ].user() ) {
+	//        native_ = core::pose::PoseOP( new core::pose::Pose );
+	//        if ( option[in::file::fullatom]() ) {
+	//            core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
+	//        } else {
+	//            core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	//            core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
+	//        }
+	//    } else if ( option[ evaluation::align_rmsd_target ].user() ) {
+	//        native_ = core::pose::PoseOP( new core::pose::Pose );
+	//        utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
+	//        core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
+	//    }
+
+	// strand pairings
+	//    pairings_file_ = option[jumps::pairing_file]();
+	//    if ( option[jumps::sheets].user() ) {
+	//        sheets_ = option[jumps::sheets]();
+	//    } else {
+	//        random_sheets_ = option[jumps::random_sheets]();
+	//    }
+	//    filter_templates_ = option[jumps::filter_templates]();
+
+
+	//if( tag->hasOption( "task_operations" ) ){
+	//FPD   remove this option, it was used as a residue selector and not as options controlling packing
+	//      the 'DetailedControls' tag should replace one part of this, and a separate mover should generate interface constraints
+
+	// force starting template
+	//FPD   removed this option; it is redundant with weights! (set weight to 0 for templates we do not start with)
+
+
+
+	// tons of ab initio options
+	//    if ( tag->hasOption( "add_hetatm" ) ) {
+	//        add_hetatm_ = tag->getOption< bool >( "add_hetatm" );
+	//    }
+	//    if ( tag->hasOption( "hetatm_cst_weight" ) ) {
+	//        hetatm_self_cst_weight_ = tag->getOption< core::Real >( "hetatm_cst_weight" );
+	//    }
+	//    if ( tag->hasOption( "hetatm_to_protein_cst_weight" ) ) {
+	//        hetatm_prot_cst_weight_ = tag->getOption< core::Real >( "hetatm_to_protein_cst_weight" );
+	//    }
+
+	// scorefxns
+	set_stage1_scorefxn(stage1_scorefxn_in);
+	set_stage2_scorefxn(stage2_scorefxn_in);
+	set_fullatom_scorefxn(fa_scorefxn_in);
+
+	//    stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( stage1_scorefxn );
+	//    stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( stage2_scorefxn );
+	//    fa_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( fa_scorefxn );
+
+	//    if ( tag->hasOption( "stage2_min_scorefxn" ) ) {
+	//        std::string const scorefxn_name( tag->getOption<std::string>( "stage2_min_scorefxn" ) );
+	//        stage2min_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
+	//    }
+	//    if ( tag->hasOption( "stage2_pack_scorefxn" ) ) {
+	//        if ( !cenrot_ ) {
+	//            TR << "Warning! Ignoring stage2_pack_scorefxn declaration since cenrot is not set." << std::endl;
+	//        } else {
+	//            std::string const scorefxn_name( tag->getOption<std::string>( "stage2_pack_scorefxn" ) );
+	//            stage2pack_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
+	//        }
+	//    }
+
+	// user constraints
+	//    if ( tag->hasOption( "coord_cst_res" ) ) {
+	//        user_csts_ = core::pose::get_resnum_list_ordered( tag->getOption<std::string>( "coord_cst_res" ), pose );
+	//    }
+
+	// if user constraints are defined, make sure coord_csts are defined in at least one stage
+	//    if ( user_csts_.size() > 0 ) {
+	//        runtime_assert(
+	//                       stage1_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
+	//                       stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
+	//                       fa_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 );
+	//    }
+
+
+	cen_cst_in_ = cen_cst_in;
+	fa_cst_in_ = fa_cst_in;
+	for ( Size i_template = 1; i_template <= templates_in.size(); ++i_template ) {
+		add_template(templates_in[i_template], "NONE", "", template_weights_in[i_template]);
+		// skip validate_template, for now
+	}
+}
+
 // sets default options
 void
 HybridizeProtocol::init() {
@@ -1267,6 +1454,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					template_chunks_, frags_small, frags_big) ) ;
 
 				ft_hybridize->set_constraint_file( cst_fn );
+				ft_hybridize->set_constraint( cen_cst_in_ );
 				ft_hybridize->set_scorefunction( stage1_scorefxn_ );
 
 				// options
@@ -1341,7 +1529,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			if ( !keep_pose_constraint_ ) {
-				setup_centroid_constraints( pose, templates_aln_, template_weights_, cst_fn );
+				if ( ! cen_cst_in_.empty() ) {
+					setup_constraints(pose, cen_cst_in_);
+				} else {
+					setup_centroid_constraints( pose, templates_aln_, template_weights_, cst_fn );
+				}
 			}
 			if ( add_hetatm_ ) {
 				add_non_protein_cst(pose, *templates_aln_[initial_template_index], hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
@@ -1477,7 +1669,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			if ( fa_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 				if ( !keep_pose_constraint_ ) {
-					setup_fullatom_constraints( pose, templates_aln_, template_weights_, cst_fn, fa_cst_fn_ );
+					if ( ! fa_cst_in_.empty() ) {
+						setup_constraints(pose, fa_cst_in_);
+					} else {
+						setup_fullatom_constraints( pose, templates_aln_, template_weights_, cst_fn, fa_cst_fn_ );
+					}
 				} else {
 					pose.constraint_set(save_pose_constraint_set);
 				}

@@ -108,7 +108,6 @@ private:
 
 private:
 	bool use_distance_cst_;
-	bool use_bound_func_;
 	bool CA_only_;
 	bool bb_only_;
 	bool inter_chain_;

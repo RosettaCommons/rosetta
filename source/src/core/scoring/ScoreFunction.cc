@@ -76,6 +76,7 @@
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 #include <utility/vector1.hh>
+#include <istream>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
@@ -245,6 +246,12 @@ void
 ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/*=false*/ )
 {
 	utility::io::izstream data( filename );
+	_add_weights_from_stream(data, patch, filename);
+}
+
+void
+ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false*/, std::string const & filename /*=""*/ )
+{
 	if ( !data.good() ) {
 		if ( ! patch ) { utility_exit_with_message( "Unable to open weights file: "+filename ); }
 		else { utility_exit_with_message( "Unable to open weights-patch file: "+filename ); }
@@ -469,7 +476,6 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 		}
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 void

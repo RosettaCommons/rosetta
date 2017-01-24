@@ -58,6 +58,7 @@
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace hybridization {
@@ -92,6 +93,7 @@ public:
 		utility::vector1< core::Real > &wt9);
 
 	void set_constraint_file(std::string cst_file_in) { cst_file_=cst_file_in; }
+	void set_constraint(std::string & cst_in ) { cst_in_ = cst_in; }
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
 	void set_stage1_1_cycles(core::Size stage1_1_cycles_in) { stage1_1_cycles_=stage1_1_cycles_in; }
 	void set_stage1_2_cycles(core::Size stage1_2_cycles_in) { stage1_2_cycles_=stage1_2_cycles_in; }
@@ -202,6 +204,7 @@ private:
 	core::Size max_registry_shift_;
 	core::Size max_contig_insertion_;
 	std::string cst_file_;
+	std::string cst_in_;
 
 	bool min_at_end_;
 
