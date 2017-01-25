@@ -1,0 +1,16 @@
+-s srl_free_bulgedG_HELIX2.pdb
+-native TRIPLET_srl_free_bulgedG_1q9a_RNA.pdb
+-fasta srl_free_bulgedG.fasta
+-from_scratch_frequency 0.0
+-submotif_frequency 0.0
+-allow_internal_local_moves false
+-allow_split_off false
+-intermolecular_frequency 0.0
+-save_times
+-set_weights rna_torsion 1.0 
+-nstruct 8
+-working_res A:655-658 A:663-665
+-block_stack_above_res A:658
+-block_stack_below_res A:663
+-score:weights stepwise/rna/rna_res_level_energy4.wts
+-cycles 20

@@ -34,5 +34,5 @@ NO_HB_ENV_DEP             # no hydrogen-bond dependence on burial -- nucleic aci
 METHOD_WEIGHTS ref 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0   0 0 0 0    4.14  3.58  2.82  3.76
 RNA_TORSION_POTENTIAL      RNA11_based_new # Fang's latest, derived from Richardson RNA11 set.
 RNA_SYN_G_POTENTIAL_BONUS  -1.5            # RNA11 penalized syn-G too much.
-RNA_SUITENESS_BONUS        test/1z_6n_2[_refit_bonus # helps favor correct conformation for UUCG. Example of torsion corrections.
+RNA_SUITENESS_BONUS        test/1z_6n_2[_bonus # helps favor correct conformation for UUCG. Example of torsion corrections.
 ENLARGE_H_LJ_WDEPTH  # turns on stronger repulsion between hydrogens
