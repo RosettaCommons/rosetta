@@ -163,12 +163,14 @@ sources = {
 		"VanillaJobDistributor",
 	],
 	"protocols/jd3/pose_inputters": [
+		"pose_inputter_schemas",
 		"PoseInputter",
 		"PoseInputterFactory",
 		"PDBPoseInputter",
 		"SilentFilePoseInputter",
 	],
 	"protocols/jd3/pose_outputters": [
+		"pose_outputter_schemas",
 		"PDBPoseOutputter",
 		"PoseOutputter",
 		"PoseOutputterFactory",

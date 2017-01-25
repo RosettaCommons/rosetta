@@ -19,6 +19,7 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
+#include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -115,28 +116,37 @@ void
 PDBPoseOutputter::write_output_pose(
 	LarvalJob const & job,
 	utility::options::OptionCollection const & job_options,
-	utility::tag::TagCOP /*tag*/, // possibly null-pointing tag pointer
+	utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 	core::pose::Pose const & pose )
 {
-
-	std::string out_fname = output_pdb_name( job );
-
+	std::string out_fname = output_pdb_name( job, job_options, tag );
 	core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions( job_options ) );
 	core::io::pdb::dump_pdb( pose, out_fname, sfr_opts );
 }
 
 std::string
-PDBPoseOutputter::output_pdb_name( LarvalJob const & job ) const
+PDBPoseOutputter::output_pdb_name(
+	LarvalJob const & job,
+	utility::options::OptionCollection const & options,
+	utility::tag::TagCOP tag
+) const
 {
-	using namespace basic::options;
-	std::string ext = ".pdb";
-	if ( option[ OptionKeys::out::pdb_gz ] ) {
-		ext = ".pdb.gz";
+	utility::file::FileName fn;
+	if ( tag && tag->getOption< bool >( "pdb_gz", false )) {
+		fn.ext( ".pdb.gz" );
+	} else if ( options[ basic::options::OptionKeys::out::pdb_gz ] ) {
+		fn.ext( ".pdb.gz" );
+	} else {
+		fn.ext( ".pdb" );
 	}
 
-	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
-		+ job.nstruct_suffixed_job_tag()
-		+ ext;
+	fn.base( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
+		+ job.nstruct_suffixed_job_tag() );
+
+	if ( tag && tag->hasOption( "path" ) ) {
+		fn.path( tag->getOption< std::string >( "path" ) );
+	}
+	return fn();
 }
 
 void PDBPoseOutputter::flush() {}
@@ -157,15 +167,25 @@ PDBPoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 
 	AttributeList output_pdb_attributes;
 	output_pdb_attributes
-		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "filename_pattern", "string_w_one_dollarsign" , "XRW TO DO" )
-		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" );
-	XMLSchemaComplexTypeGenerator output_pdb;
-	output_pdb.element_name( keyname() )
-		.description("XRW TO DO")
-		.complex_type_naming_func( & PoseOutputterFactory::complex_type_name_for_pose_outputter )
-		.add_attributes( output_pdb_attributes )
-		.write_complex_type_to_schema( xsd );
+		+ XMLSchemaAttribute( "filename", xs_string , "The name to of the file write the output structure to"
+		" -- only works correctly so long as there is only one input structure, otherwise the output"
+		" structures would pile up on top of each other (the input tags distinguishing them are ignored.)."
+		" Should not include any directory names; use the 'path' attribute instead for that."
+		" Cannot be combined with the 'filename_pattern' attribute, which is typically preferrable to this one." )
+		+ XMLSchemaAttribute( "filename_pattern", "string_w_one_dollarsign",
+		"If you want to name the output pdb files for a job with some permutation on the input tag"
+		" (i.e. the input pdb name) and then something that identifies something particular about"
+		" the job (e.g. '1abc_steal_native_frags_0001.pdb') then use the filename_pattern string. It"
+		" expects a string that has a single dolar sign; the original job tag will be substituted for"
+		" the dolar sign. E.g. '$_steal_native_frags' would produce pdbs named"
+		" '1abc_steal_native_frags_0001.pdb', '1abc_steal_native_frags_0002.pdb', ...,"
+    " '2def_steal_native_frags_0001.pdb', etc. if it were used with input tags '1abc' and '2def'. Cannot be"
+		" combined with the 'filename' attribute." )
+		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" )
+	  + XMLSchemaAttribute::attribute_w_default( "pdb_gz", xsct_rosetta_bool, "Should the output PDB file be written as a .gz?", "false" );
+
+	pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(),
+		"The (typically) default PoseOutputter that writes the structure out as a PDB-formatted file", output_pdb_attributes );
 }
 
 void
@@ -174,6 +194,7 @@ PDBPoseOutputter::list_options_read(
 )
 {
 	core::io::StructFileRepOptions::list_options_read( read_options );
+	read_options + basic::options::OptionKeys::out::pdb_gz;
 }
 
 PoseOutputterOP PDBPoseOutputterCreator::create_outputter() const

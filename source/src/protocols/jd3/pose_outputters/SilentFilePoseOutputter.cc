@@ -19,6 +19,7 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
+#include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -162,12 +163,12 @@ SilentFilePoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute( "buffer_limit", xsct_non_negative_integer, "The number of Poses that should be held in memory between each write to disk" );
 	core::io::silent::SilentFileOptions::append_attributes_for_tag_parsing( xsd, attributes );
 
-	XMLSchemaComplexTypeGenerator output_silent;
-	output_silent.element_name( keyname() )
-		.description( "Controls how Poses are writen to silent files" )
-		.complex_type_naming_func( & PoseOutputterFactory::complex_type_name_for_pose_outputter )
-		.add_attributes( attributes )
-		.write_complex_type_to_schema( xsd );
+
+	pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(),
+		"A PoseOutputter that writes structures out in a rosetta-specific format; a single "
+		" silent file can hold hundreds or thousdands of output structures, lessening the load"
+		" on file systems, and making output management easier.",
+		attributes );
 }
 
 void

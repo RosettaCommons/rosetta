@@ -22,8 +22,11 @@
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
+#include <protocols/jd3/pose_inputters/PoseInputterCreator.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
+#include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.hh>
@@ -44,6 +47,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/vector1.hh>
 
 //basic headers
@@ -93,6 +97,9 @@ bad_inner_job_exception()
 
 
 StandardJobQueen::StandardJobQueen() :
+	use_factory_provided_pose_inputters_( true ),
+	use_factory_provided_pose_outputters_( true ),
+	override_default_outputter_( false ),
 	required_initialization_performed_( false ),
 	larval_job_counter_( 0 ),
 	preliminary_larval_jobs_determined_( false ),
@@ -101,8 +108,9 @@ StandardJobQueen::StandardJobQueen() :
 	input_pose_counter_( 0 )
 {
 	// begin to populate the per-job options object
-	pose_inputters::PoseInputterFactory::get_instance()->list_options_read( options_ );
-	pose_outputters::PoseOutputterFactory::get_instance()->list_options_read( options_ );
+	pose_inputters::PoseInputterFactory::get_instance()->list_options_read( inputter_options_ );
+	pose_outputters::PoseOutputterFactory::get_instance()->list_outputter_options_read( outputter_options_ );
+	pose_outputters::PoseOutputterFactory::get_instance()->list_secondary_outputter_options_read( secondary_outputter_options_ );
 }
 
 StandardJobQueen::~StandardJobQueen() = default;
@@ -177,11 +185,6 @@ value_attribute_type_for_option(
 	return "ERROR";
 }
 
-std::string job_def_group() { return "job_def_jobs"; }
-std::string job_complex_type_name( std::string const & type ) { return "job_def_" + type + "_type"; }
-//std::string job_input_complex_type_name( std::string const & type ) { return "job_def_input_" + type + "_type"; }
-//std::string job_output_complex_type_name( std::string const & type ) { return "job_def_output_" + type + "_type"; }
-
 std::string
 StandardJobQueen::job_definition_xsd() const
 {
@@ -189,9 +192,19 @@ StandardJobQueen::job_definition_xsd() const
 	using namespace utility::options;
 	using namespace basic::options;
 
+	utility::options::OptionKeyList all_options = concatenate_all_options();
+
 	XMLSchemaDefinition xsd;
 
-	pose_inputters::PoseInputterFactory::get_instance()->define_pose_inputter_xml_schema( xsd );
+	if ( use_factory_provided_pose_inputters_ ) {
+		pose_inputters::PoseInputterFactory::get_instance()->define_pose_inputter_xml_schema( xsd );
+	} else {
+		utility::tag::define_xml_schema_group(
+			inputter_creators_,
+			pose_inputters::PoseInputterFactory::pose_inputter_xml_schema_group_name(),
+			& pose_inputters::PoseInputterFactory::complex_type_name_for_pose_inputter,
+			xsd );
+	}
 
 	XMLSchemaSimpleSubelementList input_subelements;
 	input_subelements.add_group_subelement( & pose_inputters::PoseInputterFactory::pose_inputter_xml_schema_group_name );
@@ -199,11 +212,20 @@ StandardJobQueen::job_definition_xsd() const
 	input_ct
 		.element_name( "Input" )
 		.description("XRW TO DO")
-		.complex_type_naming_func( & job_complex_type_name )
+		.complex_type_naming_func( & job_def_complex_type_name )
 		.set_subelements_pick_one( input_subelements )
 		.write_complex_type_to_schema( xsd );
 
-	pose_outputters::PoseOutputterFactory::get_instance()->define_pose_outputter_xml_schema( xsd );
+	if ( use_factory_provided_pose_outputters_ ) {
+		pose_outputters::PoseOutputterFactory::get_instance()->define_pose_outputter_xml_schema( xsd );
+	} else {
+		pose_outputters::PoseOutputterFactory::get_instance()->define_secondary_pose_outputter_xml_schema( xsd );
+		utility::tag::define_xml_schema_group(
+			outputter_creators_,
+			pose_outputters::PoseOutputterFactory::pose_outputter_xml_schema_group_name(),
+			& pose_outputters::PoseOutputterFactory::complex_type_name_for_pose_outputter,
+			xsd );
+	}
 
 	XMLSchemaSimpleSubelementList output_subelements;
 	output_subelements.add_group_subelement( & pose_outputters::PoseOutputterFactory::pose_outputter_xml_schema_group_name );
@@ -211,7 +233,7 @@ StandardJobQueen::job_definition_xsd() const
 	output_ct
 		.element_name( "Output" )
 		.description( "XRW TO DO" )
-		.complex_type_naming_func( & job_complex_type_name )
+		.complex_type_naming_func( & job_def_complex_type_name )
 		.set_subelements_pick_one( output_subelements )
 		.write_complex_type_to_schema( xsd );
 
@@ -221,17 +243,18 @@ StandardJobQueen::job_definition_xsd() const
 	secondary_output_ct
 		.element_name( "SecondaryOutput" )
 		.description( "XRW TO DO" )
-		.complex_type_naming_func( & job_complex_type_name )
+		.complex_type_naming_func( & job_def_complex_type_name )
 		.set_subelements_single_appearance_optional( secondary_output_subelements )
 		.write_complex_type_to_schema( xsd );
 
 	// write out option set -- this should be method-extracted into a place accessible to other job queens
-	if  ( ! options_.empty() ) {
+	if  ( ! all_options.empty() ) {
 		XMLSchemaComplexTypeGenerator option_generator;
 		XMLSchemaSimpleSubelementList option_subelements;
 
 		std::set< utility::keys::VariantKey< utility::options::OptionKey > > already_output_options;
-		for ( auto const & iter : options_ ) {
+
+		for ( auto const & iter : all_options ) {
 			AttributeList attributes;
 			utility::options::OptionKey const & opt_key( iter() );
 
@@ -261,7 +284,7 @@ StandardJobQueen::job_definition_xsd() const
 		}
 		option_generator.element_name( "Options" )
 			.description( "XRW TO DO" )
-			.complex_type_naming_func( & job_complex_type_name )
+			.complex_type_naming_func( & job_def_complex_type_name )
 			.set_subelements_single_appearance_optional( option_subelements )
 			.write_complex_type_to_schema( xsd );
 	}
@@ -270,17 +293,17 @@ StandardJobQueen::job_definition_xsd() const
 
 	// Job <Input> element is required
 	XMLSchemaSimpleSubelementList job_input_subelement;
-	job_input_subelement.add_already_defined_subelement( "Input", & job_complex_type_name );
+	job_input_subelement.add_already_defined_subelement( "Input", & job_def_complex_type_name );
 	job_ct.add_ordered_subelement_set_as_required( job_input_subelement );
 
 	// Job <Output> element is optional
 	XMLSchemaSimpleSubelementList job_output_subelement;
-	job_output_subelement.add_already_defined_subelement( "Output", & job_complex_type_name );
+	job_output_subelement.add_already_defined_subelement( "Output", & job_def_complex_type_name );
 	job_ct.add_ordered_subelement_set_as_optional( job_output_subelement );
 
 	// Job <Options> element is optional
 	XMLSchemaSimpleSubelementList job_options_subelement;
-	job_options_subelement.add_already_defined_subelement( "Options", & job_complex_type_name );
+	job_options_subelement.add_already_defined_subelement( "Options", & job_def_complex_type_name );
 	job_ct.add_ordered_subelement_set_as_optional( job_options_subelement );
 
 	// Ask the derived class for what else belongs in the Job element.
@@ -300,7 +323,7 @@ StandardJobQueen::job_definition_xsd() const
 	job_ct
 		.element_name( "Job" )
 		.description( "XRW TO DO" )
-		.complex_type_naming_func( & job_complex_type_name )
+		.complex_type_naming_func( & job_def_complex_type_name )
 		.add_attribute( XMLSchemaAttribute::attribute_w_default(  "nstruct", xsct_non_negative_integer, "XRW TO DO",  "1"  ))
 		.write_complex_type_to_schema( xsd );
 
@@ -308,7 +331,7 @@ StandardJobQueen::job_definition_xsd() const
 
 	// Common block <Options> subelement
 	XMLSchemaSimpleSubelementList common_block_option_subelement;
-	common_block_option_subelement.add_already_defined_subelement( "Options", & job_complex_type_name );
+	common_block_option_subelement.add_already_defined_subelement( "Options", & job_def_complex_type_name );
 	common_block_ct_gen.add_ordered_subelement_set_as_optional( common_block_option_subelement );
 
 	// Ask the derived class for what else belongs in the Common element.
@@ -328,21 +351,21 @@ StandardJobQueen::job_definition_xsd() const
 	common_block_ct_gen
 		.element_name( "Common" )
 		.description( "XRW TO DO" )
-		.complex_type_naming_func( & job_complex_type_name )
+		.complex_type_naming_func( & job_def_complex_type_name )
 		.write_complex_type_to_schema( xsd );
 
 	XMLSchemaComplexTypeGenerator job_def_file_ct;
 	XMLSchemaSimpleSubelementList job_def_subelements;
-	job_def_subelements.add_already_defined_subelement( "Common", & job_complex_type_name, 0, 1 );
-	job_def_subelements.add_already_defined_subelement( "Job", & job_complex_type_name, 1, xsminmax_unbounded );
+	job_def_subelements.add_already_defined_subelement( "Common", & job_def_complex_type_name, 0, 1 );
+	job_def_subelements.add_already_defined_subelement( "Job", & job_def_complex_type_name, 1, xsminmax_unbounded );
 	job_def_file_ct.element_name( "JobDefinitionFile" )
-		.complex_type_naming_func( & job_complex_type_name )
+		.complex_type_naming_func( & job_def_complex_type_name )
 		.description( "XRW TO DO" )
 		.set_subelements_single_appearance_required_and_ordered( job_def_subelements )
 		.write_complex_type_to_schema( xsd );
 
 	XMLSchemaElement root_element;
-	root_element.name( "JobDefinitionFile" ).type_name( job_complex_type_name( "JobDefinitionFile" ));
+	root_element.name( "JobDefinitionFile" ).type_name( job_def_complex_type_name( "JobDefinitionFile" ));
 	xsd.add_top_level_element( root_element );
 
 	std::string xsd_string = xsd.full_definition();
@@ -615,6 +638,91 @@ StandardJobQueen::process_deallocation_message(
 }
 
 
+std::string
+StandardJobQueen::job_def_complex_type_name( std::string const & type )
+{ return "job_def_" + type + "_type"; }
+
+
+void
+StandardJobQueen::do_not_accept_all_pose_inputters_from_factory()
+{
+	if ( use_factory_provided_pose_inputters_ ) {
+		use_factory_provided_pose_inputters_ = false;
+		inputter_options_.clear();
+	}
+}
+
+void
+StandardJobQueen::allow_pose_inputter( pose_inputters::PoseInputterCreatorOP creator )
+{
+	if ( use_factory_provided_pose_inputters_ ) {
+		use_factory_provided_pose_inputters_ = false;
+		// the user has not told us they want to drop the original set of creators
+		// so interpret this as them wanting to allow the user to provide another
+		// inputter.
+		inputter_creator_list_ = pose_inputters::PoseInputterFactory::get_instance()->pose_inputter_creators();
+		for ( auto creator : inputter_creator_list_ ) {
+			inputter_creators_[ creator->keyname() ] = creator;
+		}
+	}
+	if ( ! inputter_creators_.count( creator->keyname() ) ) {
+		inputter_creator_list_.push_back( creator );
+		inputter_creators_[ creator->keyname() ] = creator;
+		creator->list_options_read( inputter_options_ );
+	}
+}
+
+void
+StandardJobQueen::do_not_accept_all_pose_outputters_from_factory()
+{
+	if ( use_factory_provided_pose_outputters_ ) {
+		use_factory_provided_pose_outputters_ = false;
+		override_default_outputter_ = true;
+		outputter_options_.clear();
+	}
+}
+
+void
+StandardJobQueen::allow_pose_outputter( pose_outputters::PoseOutputterCreatorOP creator )
+{
+	if ( use_factory_provided_pose_outputters_ ) {
+		use_factory_provided_pose_outputters_ = false;
+		// the user has not told us they want to drop the original set of creators
+		// so interpret this as them wanting to allow the user to provide another
+		// outputter in addition to the original set.
+		outputter_creator_list_ = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_creators();
+		for ( auto creator : outputter_creator_list_ ) {
+			outputter_creators_[ creator->keyname() ] = creator;
+		}
+	}
+	if ( ! outputter_creators_.count( creator->keyname() ) ) {
+		outputter_creator_list_.push_back( creator );
+		outputter_creators_[ creator->keyname() ] = creator;
+		creator->list_options_read( outputter_options_ );
+		if ( override_default_outputter_ && ! default_outputter_creator_ ) {
+			default_outputter_creator_ = creator;
+		}
+	}
+}
+
+void
+StandardJobQueen::set_default_outputter( pose_outputters::PoseOutputterCreatorOP creator )
+{
+	override_default_outputter_ = true;
+	default_outputter_creator_ = creator;
+	if ( use_factory_provided_pose_outputters_ ) {
+		// the user has not told us they want to drop the original set of creators
+		// but to provide the desired functionality, the SJQ has to handle outputter
+		// instantiation herself
+		use_factory_provided_pose_outputters_ = false;
+		outputter_creator_list_ = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_creators();
+		for ( auto creator : outputter_creator_list_ ) {
+			outputter_creators_[ creator->keyname() ] = creator;
+		}
+	}
+}
+
+
 /// @details Derived classes may choose to not override this method as a way to indicate that
 /// they have no additional subtags of the <Job> tag they wish to add. This is a no-op
 /// implementation.
@@ -690,25 +798,6 @@ core::Size StandardJobQueen::preliminary_job_node_end_job_index( core::Size node
 {
 	return pjn_job_ind_end_[ node_id ];
 }
-
-/////// @brief Allow the derived job queen to specify a node in the JobDAG as being
-/////// "preliminary" in the sense a) that the %StandardJobQueen is responsible for creating the
-/////// list of larval jobs for this node, and b) there are no nodes that this node depends
-/////// on having completed before it can run.
-////void
-////StandardJobQueen::declare_job_node_to_be_preliminary( core::Size job_node_index )
-////{
-//// if ( job_node_index > job_graph_.num_nodes() ) {
-////  throw utility::excn::EXCN_Msg_Exception( "Could not declare job node " + utility::to_string( job_node_index )
-////   + " as a preliminary job node as the job_graph_ has only " + utility::to_string( job_graph_.num_nodes() ) + "nodes." );
-//// }
-//// if ( job_graph_->get_node()->indegree() != 0 ) {
-////  throw utility::excn::EXCN_Msg_Exception( "Could not declare job node " + utility::to_string( job_node_index )
-////   + " as a preliminary job node as this node has an indegree of " + utility::to_string( job_graph_->get_node()->indegree() )
-////   + " and it must instead have an indegree of 0." );
-//// }
-//// preliminary_job_nodes_.push_back( job_node_index );
-////}
 
 /// @brief Read access to derived JobQueens to the preliminary job list.
 /// This will return an empty list if  determine_preliminary_jobs has not yet
@@ -878,7 +967,13 @@ StandardJobQueen::pose_inputter_for_job( StandardInnerLarvalJob const & inner_jo
 	// find the preliminary job node for this job, if available
 	// and return the already-created pose inputter
 	if ( inner_job.prelim_job_node() == 0 ) {
-		return pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( inner_job.input_source().origin() );
+		if ( use_factory_provided_pose_inputters_ ) {
+			return pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( inner_job.input_source().origin() );
+		} else {
+			runtime_assert( inputter_creators_.count( inner_job.input_source().origin() ) );
+			auto iter = inputter_creators_.find( inner_job.input_source().origin() );
+			return iter->second->create_inputter();
+		}
 	} else {
 		debug_assert( preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter )
 			return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter;
@@ -920,7 +1015,12 @@ StandardJobQueen::pose_outputter_for_job(
 		return iter->second;
 	}
 
-	pose_outputters::PoseOutputterOP outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( inner_job.outputter() );
+	pose_outputters::PoseOutputterOP outputter;
+	if ( use_factory_provided_pose_outputters_ ) {
+		outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( inner_job.outputter() );
+	} else {
+		outputter = outputter_creators_[ inner_job.outputter() ]->create_outputter();
+	}
 	pose_outputter_map_[ std::make_pair( inner_job.outputter(), which_outputter ) ] = outputter;
 	return outputter;
 }
@@ -1018,14 +1118,15 @@ StandardJobQueen::options_from_tag( utility::tag::TagCOP job_options_tag ) const
 	using namespace utility::tag;
 	using namespace utility::options;
 
-	OptionCollectionOP opts = basic::options::read_subset_of_global_option_collection( options_ );
+	utility::options::OptionKeyList all_options = concatenate_all_options();
+	OptionCollectionOP opts = basic::options::read_subset_of_global_option_collection( all_options );
 
 	TagCOP common_options_tag;
 	if ( common_block_tags_ && common_block_tags_->hasTag( "Options" ) ) {
 		common_options_tag = common_block_tags_->getTag( "Options" );
 	}
 
-	for ( auto const & option : options_ ) {
+	for ( auto const & option : all_options ) {
 		utility::options::OptionKey const & opt( option() );
 		OptionTypes opt_type = option_type_from_key( opt );
 
@@ -1062,6 +1163,8 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 	using namespace basic::options::OptionKeys;
 	using namespace utility::tag;
 
+	preliminary_larval_jobs_determined_ = true;
+
 	load_job_definition_file( job_def_string, job_def_schema );
 
 	// now iterate across all tags, and for each Job subtag, create a PreliminaryLarvalJob and load it
@@ -1083,22 +1186,21 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		debug_assert( input_tag ); // XML schema validation should ensure that there is an "Input" subelement
 		debug_assert( input_tag->getTags().size() == 1 ); // schema validation should ensure there is exactly one subelement
 		TagCOP input_tag_child = input_tag->getTags()[ 0 ];
-		pose_inputters::PoseInputterOP inputter =
-			pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( input_tag_child->getName() );
+
+		// Get the right inputter for this Job.
+		pose_inputters::PoseInputterOP inputter;
+		if ( use_factory_provided_pose_inputters_ ) {
+			inputter = pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( input_tag_child->getName() );
+		} else {
+			runtime_assert( inputter_creators_.count( input_tag_child->getName() ) != 0 );
+			inputter = inputter_creators_[ input_tag_child->getName() ]->create_inputter();
+		}
+
 		PoseInputSources input_poses = inputter->pose_input_sources_from_tag( *job_options, input_tag_child );
 		for ( auto input_source : input_poses ) { input_source->pose_id( ++input_pose_counter_ ); }
 
-		pose_outputters::PoseOutputterOP outputter;
-		TagCOP output_tag;
-		if ( subtag->hasTag( "Output" ) ) {
-			output_tag = subtag->getTag( "Output" );
-			debug_assert( output_tag );
-			debug_assert( output_tag->getTags().size() == 1 );
-			TagCOP output_subtag = output_tag->getTags()[ 0 ];
-			outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( output_subtag->getName() );
-		} else {
-			outputter = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_from_command_line();
-		}
+		// Get the right outputter for this job.
+		pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( subtag );
 
 		if ( representative_pose_outputter_map_.count( outputter->class_key() ) == 0 ) {
 			representative_pose_outputter_map_[ outputter->class_key() ] = outputter;
@@ -1188,14 +1290,27 @@ void
 StandardJobQueen::determine_preliminary_job_list_from_command_line()
 {
 	using namespace utility::tag;
-	using pose_inputters::PoseInputterFactory;
+	using namespace pose_inputters;
 
 	// read from the command line a list of all of the input jobs
-	PoseInputterFactory::PoseInputSourcesAndInputters input_poses = PoseInputterFactory::get_instance()->pose_inputs_from_command_line();
+	PoseInputterFactory::PoseInputSourcesAndInputters input_poses;
+	if ( use_factory_provided_pose_inputters_ ) {
+		input_poses = PoseInputterFactory::get_instance()->pose_inputs_from_command_line();
+	} else {
+		for ( auto inputter_creator : inputter_creator_list_ ) {
+			PoseInputterOP inputter = inputter_creator->create_inputter();
+			if ( inputter->job_available_on_command_line() ) {
+				PoseInputSources iter_sources = inputter->pose_input_sources_from_command_line();
+				input_poses.reserve( input_poses.size() + iter_sources.size() );
+				for ( core::Size ii = 1; ii <= iter_sources.size(); ++ii ) {
+					input_poses.push_back( std::make_pair( iter_sources[ ii ], inputter ) );
+				}
+			}
+		}
+	}
 	for ( auto input_source : input_poses ) { input_source.first->pose_id( ++input_pose_counter_ ); }
 
-	pose_outputters::PoseOutputterOP outputter =
-		pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_from_command_line();
+	pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( utility::tag::TagCOP() );
 
 	if ( representative_pose_outputter_map_.count( outputter->class_key() ) == 0 ) {
 		representative_pose_outputter_map_[ outputter->class_key() ] = outputter;
@@ -1341,6 +1456,56 @@ void
 StandardJobQueen::note_job_result_output( LarvalJobCOP job )
 {
 	output_jobs_.insert( job->job_index() );
+}
+
+utility::options::OptionKeyList
+StandardJobQueen::concatenate_all_options() const
+{
+	utility::options::OptionKeyList all_options( options_ );
+	all_options.insert( all_options.end(), inputter_options_.begin(), inputter_options_.end() );
+	all_options.insert( all_options.end(), outputter_options_.begin(), outputter_options_.end() );
+	all_options.insert( all_options.end(), secondary_outputter_options_.begin(), secondary_outputter_options_.end() );
+	return all_options;
+}
+
+pose_outputters::PoseOutputterOP
+StandardJobQueen::get_outputter_from_job_tag( utility::tag::TagCOP tag ) const
+{
+	using utility::tag::TagCOP;
+	pose_outputters::PoseOutputterOP outputter;
+	if ( tag && tag->hasTag( "Output" ) ) {
+		TagCOP output_tag = tag->getTag( "Output" );
+		debug_assert( output_tag );
+		debug_assert( output_tag->getTags().size() == 1 );
+		TagCOP output_subtag = output_tag->getTags()[ 0 ];
+		if ( use_factory_provided_pose_outputters_ ) {
+			outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( output_subtag->getName() );
+		} else {
+			runtime_assert( outputter_creators_.count( output_subtag->getName() ) != 0 );
+			auto iter = outputter_creators_.find( output_subtag->getName() );
+			outputter = iter->second->create_outputter();
+		}
+	} else {
+		if ( use_factory_provided_pose_outputters_ ) {
+			outputter = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_from_command_line();
+		} else {
+			for ( auto outputter_creator : outputter_creator_list_ ) {
+				if ( outputter_creator->outputter_specified_by_command_line() ) {
+					outputter = outputter_creator->create_outputter();
+					break;
+				}
+			}
+			if ( ! outputter ) {
+				if ( override_default_outputter_ ) {
+					outputter = default_outputter_creator_->create_outputter();
+				} else {
+					runtime_assert( outputter_creators_.count( pose_outputters::PDBPoseOutputter::keyname() ) );
+					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::PDBPoseOutputter );
+				}
+			}
+		}
+	}
+	return outputter;
 }
 
 } // namespace standard

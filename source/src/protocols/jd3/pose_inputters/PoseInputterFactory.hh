@@ -97,6 +97,8 @@ public:
 
 	void list_options_read( utility::options::OptionKeyList & read_options ) const;
 
+	CreatorList const & pose_inputter_creators() const;
+
 	static std::string pose_inputter_xml_schema_group_name();
 	static std::string complex_type_name_for_pose_inputter( std::string const & inputter_key );
 

@@ -282,8 +282,10 @@ sources = {
 		"BluePrint",
 	],
 	"jd3" : [
-            	"JobGenealogist",
-            	"StandardJobQueen",
+		"JobGenealogist",
+		"StandardJobQueen",
+		"StandardJobQueenOverrideInputter",
+		"StandardJobQueenOverrideOutputter",
 	#	"validate_w_xsd",
 	],
 	"jd3/pose_inputters" : [

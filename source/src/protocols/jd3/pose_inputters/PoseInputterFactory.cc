@@ -130,6 +130,11 @@ void PoseInputterFactory::list_options_read( utility::options::OptionKeyList & r
 	}
 }
 
+PoseInputterFactory::CreatorList const &
+PoseInputterFactory::pose_inputter_creators() const
+{
+	return creator_list_;
+}
 
 std::string PoseInputterFactory::pose_inputter_xml_schema_group_name()
 {

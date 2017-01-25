@@ -121,9 +121,13 @@ public:
 	/// an xs:group named "secondary_pose_outputter" listing each of the pose-outputter-complex types that may
 	/// be initialized using the %PoseOutputterFactory and to iterate across each of the SecondaryPoseOutputterCreators
 	/// it contains asking them for the XML schema of the SecondaryPoseOutputter they are responsible for creating.
-	void define_secondary_outputter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	void define_secondary_pose_outputter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 
-	void list_options_read( utility::options::OptionKeyList & read_options ) const;
+	void list_outputter_options_read( utility::options::OptionKeyList & read_options ) const;
+	void list_secondary_outputter_options_read( utility::options::OptionKeyList & read_options ) const;
+
+	CreatorList const & pose_outputter_creators() const;
+	SecondaryCreatorList const & secondary_pose_outputter_creators() const;
 
 	static std::string pose_outputter_xml_schema_group_name();
 	static std::string complex_type_name_for_pose_outputter( std::string const & outputter_key );

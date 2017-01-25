@@ -18,6 +18,7 @@
 // Package headers
 #include <protocols/jd3/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
+#include <protocols/jd3/pose_inputters/pose_inputter_schemas.hh>
 
 ///Project headers
 #include <core/pose/Pose.hh>
@@ -164,14 +165,14 @@ SilentFilePoseInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		" Poses if the tag starts with 'W_'", "false" );
 	core::io::silent::SilentFileOptions::append_attributes_for_tag_parsing( xsd, attributes );
 
-	XMLSchemaComplexTypeGenerator ctgen;
-	ctgen.element_name( keyname() )
-		.description( "Inputter for poses originating from silent files. By default, each Pose in the file will"
+	pose_inputter_xsd_type_definition_w_attributes(
+		xsd,
+		keyname(),
+		"Inputter for poses originating from silent files. By default, each Pose in the file will"
 		" be input and will be used by the JobQueen; however, if you use the 'tags' or 'tagfile' attribute, you"
-		" can specify a subset of Poses that will be used instead of the full set." )
-		.complex_type_naming_func( & PoseInputterFactory::complex_type_name_for_pose_inputter )
-		.add_attributes( attributes )
-		.write_complex_type_to_schema( xsd );
+		" can specify a subset of Poses that will be used instead of the full set.",
+		attributes );
+
 }
 
 void

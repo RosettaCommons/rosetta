@@ -23,7 +23,9 @@
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/PoseInputSource.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
 #include <protocols/jd3/standard/StandardInnerLarvalJob.fwd.hh>
 
@@ -67,40 +69,6 @@ public:
 };
 
 typedef std::list< PreliminaryLarvalJob > PreliminaryLarvalJobs;
-
-///// @brief A small class to figure out which Poses do not need to be loaded
-///// a second time because they have already been read in. This class mainly
-///// stores the PoseInputSource and the set of options that are used to turn
-///// a file into a Pose. I don't imagine this class sticking around that long;
-///// it is only truely compatible with PDB/mmCIF file reading.
-//class InputSourceAndImportPoseOptions
-//{
-//public:
-// InputSourceAndImportPoseOptions();
-// InputSourceAndImportPoseOptions(
-//  PoseInputSource const & input_source,
-//  core::import_pose::ImportPoseOptions const & options
-// );
-// InputSourceAndImportPoseOptions( InputSourceAndImportPoseOptions const & );
-//
-// virtual ~InputSourceAndImportPoseOptions();
-//
-// InputSourceAndImportPoseOptions & operator = ( InputSourceAndImportPoseOptions const & rhs );
-//
-// bool operator == ( InputSourceAndImportPoseOptions const & ) const;
-// bool operator <  ( InputSourceAndImportPoseOptions const & ) const;
-//
-// PoseInputSource const & input_source() const;
-// void input_source( PoseInputSource const & setting );
-//
-// core::import_pose::ImportPoseOptions const & import_pose_options() const;
-// void import_pose_options( core::import_pose::ImportPoseOptions const & setting );
-//
-//private:
-// PoseInputSourceOP input_source_;
-// core::import_pose::ImportPoseOptionsOP import_pose_options_;
-//
-//};
 
 /// @brief The %StandardJobQueen is meant to handle the most common form of Rosetta jobs where
 /// a protocol is applied to a single input structure to generate a single output structure.
@@ -177,7 +145,71 @@ public:
 	void
 	process_deallocation_message( deallocation::DeallocationMessageOP message ) override;
 
+	/// @brief Naming function for the complexTypes in the job-definition XSD
+	static
+	std::string
+	job_def_complex_type_name( std::string const & type );
+
+
 protected:
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////// FUNCTIONS FOR OVERRIDING THE SET OF INPUTTERS AND OUTPUTTERS //////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	/// @brief The derived job queen (DJQ) may tell the %StandardJobQueen to only accept a subset of
+	/// PoseInputters. First the DJQ says "do_not_accept_all_pose_inputters_from_factory" and then she
+	/// can call "allow_pose_inputter." This function must only be called the DJQ's constructor.
+	void
+	do_not_accept_all_pose_inputters_from_factory();
+
+	/// @brief If the derived job queen (DJQ) wants to allow a PoseInputter to be used either because
+	/// it is not registered with the PoseInputterFactory, or because she wants to allow only a
+	/// subset of the inputters that are registered with the Factory, then she may indicate that
+	/// to the %StandardJobQueen with this function. If the derived job queen does not want to
+	/// use all of the pose inputters provided by the factory, then she must call
+	/// "do_not_accept_all_pose_inputters_from_factory()" before she calls this function.
+	/// This function must only be called in the DJQ's constructor.
+	void
+	allow_pose_inputter( pose_inputters::PoseInputterCreatorOP creator );
+
+	/// @brief The derived job queen (DJQ) may tell the %StandardJobQueen to only accept a subset of
+	/// PoseOutputters. First the DJQ says "do_not_accept_all_pose_outputters_from_factory" and then
+	/// she can call "allow_pose_outputter." This function must only be called the DJQ's constructor.
+	void
+	do_not_accept_all_pose_outputters_from_factory();
+
+	/// @brief If the derived job queen (DJQ) wants to allow a PoseOutputter to be used either because
+	/// it is not registered with the PoseOutputterFactory, or because she wants to allow only a
+	/// subset of the outputters that are registered with the Factory, then she may indicate that
+	/// to the %StandardJobQueen with this function. If the derived job queen does not want to
+	/// use all of the pose outputters provided by the factory, then she must call
+	/// "do_not_accept_all_pose_outputters_from_factory()" before she calls this function.
+	/// If the DJQ has called the "do_not_accept_all_pose_outputters_from_factory" function, then
+	/// she specifies the default outputter on the first time she calls "allow_pose_outputter."
+	/// This function must only be called in the DJQ's constructor.
+	void
+	allow_pose_outputter( pose_outputters::PoseOutputterCreatorOP creator );
+
+	/// @brief If the derived job queen wants the user to get a particular PoseOutputter by default
+	/// (i.e. when the user hasn't specified which outputter to use in a job definition file and
+	/// in the absence of a command-line flag that says which outputter to use) instead of the
+	/// default PoseOutputter chosen by the PoseOutputterFactory, then the DJQ should call this function.
+	/// If the DJQ has previously called "do_not_accept_all_pose_outputters_from_factory", then
+	/// the first call to "allow_pose_outputter" specified the default outputter, and a separate call
+	/// to this function is not absolutely necessary. This function must only be called in the
+	/// DJQ's constructor.
+	void
+	set_default_outputter( pose_outputters::PoseOutputterCreatorOP creator );
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+protected:
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////// FUNCTIONS FOR CONTROLLING THE STRUCTURE OF THE XML SCHEMA /////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief The derived JobQueen must inform the %StandardJobQueen of any additional tags that
 	/// belong as sub elements of the <Job> tag. The %StandardJobQueen will have already appended
@@ -215,6 +247,16 @@ protected:
 		utility::tag::XMLSchemaComplexTypeGenerator & ct_gen
 	) const;
 
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+protected:
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////// FUNCTIONS FOR CONTROLLING THE STRUCTURE OF THE JOB DAG //////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	/// @brief Allow the derived JobQueen to tell the %StandardJobQueen to initialize the preliminary
 	/// job list; this is perhaps necessary in the context of multi-round protocols when job-definition
 	/// file specifies the JobDAG.
@@ -242,6 +284,7 @@ protected:
 	bool
 	all_jobs_assigned_for_preliminary_job_node( core::Size node_id ) const;
 
+
 	/// @brief The index of the first job for a particular preliminary-job node; this function
 	/// returns zero if no jobs for this node have yet been created
 	core::Size preliminary_job_node_begin_job_index( core::Size node_id ) const;
@@ -250,19 +293,15 @@ protected:
 	/// returns zero if there are some jobs for this node that have not yet been created.
 	core::Size preliminary_job_node_end_job_index( core::Size node_id ) const;
 
-	/////// @brief Allow the derived job queen to specify a node in the JobDAG as being
-	/////// "preliminary" in the sense a) that the %StandardJobQueen is responsible for creating the
-	/////// list of larval jobs for this node, and b) there are no nodes that this node depends
-	/////// on having completed before it can run.
-	////virtual
-	////void
-	////declare_job_node_to_be_preliminary( core::Size job_node_index );
-
 	/// @brief Read access to derived JobQueens to the preliminary job list.
 	/// This will return an empty list if  determine_preliminary_jobs has not yet
 	/// been called.
 	utility::vector1< PreliminaryLarvalJob > const &
 	preliminary_larval_jobs() const;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Read access for which jobs have completed and how; if a job-id is a member
 	/// of this DIET, then it has completed (either in success or failure).
@@ -445,6 +484,11 @@ private:
 	/// this function.
 	void note_job_result_output( LarvalJobCOP job );
 
+	utility::options::OptionKeyList concatenate_all_options() const;
+
+	pose_outputters::PoseOutputterOP
+	get_outputter_from_job_tag( utility::tag::TagCOP tag ) const;
+
 private:
 
 	// ResourceManagerOP resource_manager_;
@@ -452,6 +496,19 @@ private:
 	// The set of options that the %StandardJobQueen reads from the command line
 	// and/or from the job definition XML file.
 	utility::options::OptionKeyList options_;
+	utility::options::OptionKeyList inputter_options_;
+	utility::options::OptionKeyList outputter_options_;
+	utility::options::OptionKeyList secondary_outputter_options_;
+
+	bool use_factory_provided_pose_inputters_;
+	std::map< std::string, pose_inputters::PoseInputterCreatorCOP > inputter_creators_;
+	std::list< pose_inputters::PoseInputterCreatorCOP > inputter_creator_list_;
+
+	bool use_factory_provided_pose_outputters_;
+	std::map< std::string, pose_outputters::PoseOutputterCreatorCOP > outputter_creators_;
+	std::list< pose_outputters::PoseOutputterCreatorCOP > outputter_creator_list_;
+	bool override_default_outputter_;
+	pose_outputters::PoseOutputterCreatorOP default_outputter_creator_;
 
 	// Often, you want to use the same pose outputter for multiple jobs.
 	std::map< std::string, pose_outputters::PoseOutputterOP > pose_outputters_;
