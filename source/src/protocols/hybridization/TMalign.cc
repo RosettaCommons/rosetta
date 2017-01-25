@@ -157,45 +157,45 @@ void  TMalign::NWDP_TM(Size const len1, Size const len2, double const gap_open, 
 	double h, v, d;
 
 	//initialization
-	val[0][0]=0;
+	val_[0][0]=0;
 	for ( Size i=0; i<=len1; ++i ) {
-		val[i][0]=0;
-		path[i][0]=false; //not from diagonal
+		val_[i][0]=0;
+		path_[i][0]=false; //not from diagonal
 	}
 
 	for ( Size j=0; j<=len2; ++j ) {
-		val[0][j]=0;
-		path[0][j]=false; //not from diagonal
+		val_[0][j]=0;
+		path_[0][j]=false; //not from diagonal
 		j2i[j]=-1; //all are not aligned, only use j2i[1:len2]
 	}
 
 	//decide matrix and path
 	for ( Size i=1; i<=len1; ++i )  {
 		for ( Size j=1; j<=len2; ++j ) {
-			d=val[i-1][j-1]+score[i][j]; //diagonal
+			d=val_[i-1][j-1]+score_[i][j]; //diagonal
 
 			//symbol insertion in horizontal (= a gap in vertical)
-			h=val[i-1][j];
-			if ( path[i-1][j] ) { //aligned in last position
+			h=val_[i-1][j];
+			if ( path_[i-1][j] ) { //aligned in last position
 				h += gap_open;
 			}
 
 			//symbol insertion in vertical
-			v=val[i][j-1];
-			if ( path[i][j-1] ) { //aligned in last position
+			v=val_[i][j-1];
+			if ( path_[i][j-1] ) { //aligned in last position
 				v += gap_open;
 			}
 
 
 			if ( d>=h && d>=v ) {
-				path[i][j]=true; //from diagonal
-				val[i][j]=d;
+				path_[i][j]=true; //from diagonal
+				val_[i][j]=d;
 			} else {
-				path[i][j]=false; //from horizontal
+				path_[i][j]=false; //from horizontal
 				if ( v>=h ) {
-					val[i][j]=v;
+					val_[i][j]=v;
 				} else {
-					val[i][j]=h;
+					val_[i][j]=h;
 				}
 			}
 		} //for i
@@ -205,15 +205,15 @@ void  TMalign::NWDP_TM(Size const len1, Size const len2, double const gap_open, 
 	int i=len1;
 	int j=len2;
 	while ( i>0 && j>0 ) {
-		if ( path[i][j] ) { //from diagonal
+		if ( path_[i][j] ) { //from diagonal
 			j2i[j-1]=i-1;
 			i--; j--;
 		} else {
-			h=val[i-1][j];
-			if ( path[i-1][j] ) h +=gap_open;
+			h=val_[i-1][j];
+			if ( path_[i-1][j] ) h +=gap_open;
 
-			v=val[i][j-1];
-			if ( path[i][j-1] ) v +=gap_open;
+			v=val_[i][j-1];
+			if ( path_[i][j-1] ) v +=gap_open;
 
 			if ( v>=h ) j--;
 			else     i--;
@@ -236,15 +236,15 @@ void  TMalign::NWDP_TM(
 	double h, v, d;
 
 	//initialization
-	val[0][0]=0;
+	val_[0][0]=0;
 	for ( i=0; i<=len1; i++ ) {
-		val[i][0]=0;
-		path[i][0]=false; //not from diagonal
+		val_[i][0]=0;
+		path_[i][0]=false; //not from diagonal
 	}
 
 	for ( j=0; j<=len2; j++ ) {
-		val[0][j]=0;
-		path[0][j]=false; //not from diagonal
+		val_[0][j]=0;
+		path_[0][j]=false; //not from diagonal
 		j2i[j]=-1; //all are not aligned, only use j2i[1:len2]
 	}
 	numeric::xyzVector <core::Real> xx;
@@ -256,29 +256,29 @@ void  TMalign::NWDP_TM(
 		for ( j=1; j<=len2; j++ ) {
 			//d=val[i-1][j-1]+score[i][j]; //diagonal
 			dij=dist(xx, y[j-1]);
-			d=val[i-1][j-1] +  1.0/(1+dij/d02);
+			d=val_[i-1][j-1] +  1.0/(1+dij/d02);
 
 			//symbol insertion in horizontal (= a gap in vertical)
-			h=val[i-1][j];
-			if ( path[i-1][j] ) { //aligned in last position
+			h=val_[i-1][j];
+			if ( path_[i-1][j] ) { //aligned in last position
 				h += gap_open;
 			}
 
 			//symbol insertion in vertical
-			v=val[i][j-1];
-			if ( path[i][j-1] ) { //aligned in last position
+			v=val_[i][j-1];
+			if ( path_[i][j-1] ) { //aligned in last position
 				v += gap_open;
 			}
 
 			if ( d>=h && d>=v ) {
-				path[i][j]=true; //from diagonal
-				val[i][j]=d;
+				path_[i][j]=true; //from diagonal
+				val_[i][j]=d;
 			} else {
-				path[i][j]=false; //from horizontal
+				path_[i][j]=false; //from horizontal
 				if ( v>=h ) {
-					val[i][j]=v;
+					val_[i][j]=v;
 				} else {
-					val[i][j]=h;
+					val_[i][j]=h;
 				}
 			}
 		} //for i
@@ -287,15 +287,15 @@ void  TMalign::NWDP_TM(
 	//trace back to extract the alignment
 	i=len1; j=len2;
 	while ( i>0 && j>0 ) {
-		if ( path[i][j] ) { //from diagonal
+		if ( path_[i][j] ) { //from diagonal
 			j2i[j-1]=i-1;
 			i--; j--;
 		} else {
-			h=val[i-1][j];
-			if ( path[i-1][j] ) h +=gap_open;
+			h=val_[i-1][j];
+			if ( path_[i-1][j] ) h +=gap_open;
 
-			v=val[i][j-1];
-			if ( path[i][j-1] ) v +=gap_open;
+			v=val_[i][j-1];
+			if ( path_[i][j-1] ) v +=gap_open;
 
 			if ( v>=h ) j--;
 			else     i--;
@@ -319,15 +319,15 @@ void  TMalign::NWDP_TM(
 	double h, v, d;
 
 	//initialization
-	val[0][0]=0;
+	val_[0][0]=0;
 	for ( i=0; i<=len1; i++ ) {
-		val[i][0]=0;
-		path[i][0]=false; //not from diagonal
+		val_[i][0]=0;
+		path_[i][0]=false; //not from diagonal
 	}
 
 	for ( j=0; j<=len2; j++ ) {
-		val[0][j]=0;
-		path[0][j]=false; //not from diagonal
+		val_[0][j]=0;
+		path_[0][j]=false; //not from diagonal
 		j2i[j]=-1; //all are not aligned, only use j2i[1:len2]
 	}
 
@@ -336,33 +336,33 @@ void  TMalign::NWDP_TM(
 		for ( j=1; j<=len2; j++ ) {
 			//d=val[i-1][j-1]+score[i][j]; //diagonal
 			if ( secx[i-1]==secy[j-1] ) {
-				d=val[i-1][j-1] + 1.0;
+				d=val_[i-1][j-1] + 1.0;
 			} else {
-				d=val[i-1][j-1];
+				d=val_[i-1][j-1];
 			}
 
 			//symbol insertion in horizontal (= a gap in vertical)
-			h=val[i-1][j];
-			if ( path[i-1][j] ) { //aligned in last position
+			h=val_[i-1][j];
+			if ( path_[i-1][j] ) { //aligned in last position
 				h += gap_open;
 			}
 
 			//symbol insertion in vertical
-			v=val[i][j-1];
-			if ( path[i][j-1] ) { //aligned in last position
+			v=val_[i][j-1];
+			if ( path_[i][j-1] ) { //aligned in last position
 				v += gap_open;
 			}
 
 
 			if ( d>=h && d>=v ) {
-				path[i][j]=true; //from diagonal
-				val[i][j]=d;
+				path_[i][j]=true; //from diagonal
+				val_[i][j]=d;
 			} else {
-				path[i][j]=false; //from horizontal
+				path_[i][j]=false; //from horizontal
 				if ( v>=h ) {
-					val[i][j]=v;
+					val_[i][j]=v;
 				} else {
-					val[i][j]=h;
+					val_[i][j]=h;
 				}
 			}
 		} //for i
@@ -371,15 +371,15 @@ void  TMalign::NWDP_TM(
 	//trace back to extract the alignment
 	i=len1; j=len2;
 	while ( i>0 && j>0 ) {
-		if ( path[i][j] ) { //from diagonal
+		if ( path_[i][j] ) { //from diagonal
 			j2i[j-1]=i-1;
 			i--; j--;
 		} else {
-			h=val[i-1][j];
-			if ( path[i-1][j] ) h +=gap_open;
+			h=val_[i-1][j];
+			if ( path_[i-1][j] ) h +=gap_open;
 
-			v=val[i][j-1];
-			if ( path[i][j-1] ) v +=gap_open;
+			v=val_[i][j-1];
+			if ( path_[i][j-1] ) v +=gap_open;
 
 			if ( v>=h ) j--;
 			else     i--;
@@ -772,35 +772,35 @@ bool  TMalign::Kabsch(
 void  TMalign::load_pose_allocate_memory(core::pose::Pose const & pose1, core::pose::Pose const & pose2, std::list <core::Size>  & residue_list1, std::list <core::Size>  & residue_list2)
 {
 	//------get length first------>
-	xlen=residue_list1.size();
-	ylen=residue_list2.size();
-	minlen=std::min(xlen, ylen);
+	xlen_=residue_list1.size();
+	ylen_=residue_list2.size();
+	minlen_=std::min(xlen_, ylen_);
 
 	//------allocate memory for x and y------>
-	xa.resize(xlen);
-	seqx.resize(xlen);
-	secx.resize(xlen);
-	xresno.resize(xlen);
+	xa_.resize(xlen_);
+	seqx_.resize(xlen_);
+	secx_.resize(xlen_);
+	xresno_.resize(xlen_);
 
-	ya.resize(ylen);
-	seqy.resize(ylen);
-	yresno.resize(ylen);
-	secy.resize(ylen);
+	ya_.resize(ylen_);
+	seqy_.resize(ylen_);
+	yresno_.resize(ylen_);
+	secy_.resize(ylen_);
 
 	//------load data------>
-	read_pose(pose1, residue_list1, xa, seqx, xresno);
-	read_pose(pose2, residue_list2, ya, seqy, yresno);
+	read_pose(pose1, residue_list1, xa_, seqx_, xresno_);
+	read_pose(pose2, residue_list2, ya_, seqy_, yresno_);
 
 	//------allocate memory for other temporary varialbes------>
-	r1.resize(minlen);
-	r2.resize(minlen);
-	xtm.resize(minlen);
-	ytm.resize(minlen);
-	xt.resize(xlen);
+	r1_.resize(minlen_);
+	r2_.resize(minlen_);
+	xtm_.resize(minlen_);
+	ytm_.resize(minlen_);
+	xt_.resize(xlen_);
 
-	ResizeArray(score, xlen+1, ylen+1);
-	ResizeArray(path, xlen+1, ylen+1);
-	ResizeArray(val, xlen+1, ylen+1);
+	ResizeArray(score_, xlen_+1, ylen_+1);
+	ResizeArray(path_, xlen_+1, ylen_+1);
+	ResizeArray(val_, xlen_+1, ylen_+1);
 }
 
 //     1, collect those residues with dis<d;
@@ -815,8 +815,8 @@ int  TMalign::score_fun8(
 	int score_sum_method ) {
 	double score_sum=0, di;
 	double d_tmp=d*d;
-	double d02=d0*d0;
-	double score_d8_cut = score_d8*score_d8;
+	double d02=d0_*d0_;
+	double score_d8_cut = score_d8_*score_d8_;
 
 	int i, n_cut, inc=0;
 
@@ -848,7 +848,7 @@ int  TMalign::score_fun8(
 		}
 	}
 
-	*score1=score_sum/Lnorm;
+	*score1=score_sum/Lnorm_;
 	return n_cut;
 }
 
@@ -913,22 +913,22 @@ double  TMalign::TMscore8_search(
 			ka=0;
 			for ( k=0; k<L_frag; k++ ) {
 				int kk=k+i;
-				r1[k]=xtm[kk];
-				r2[k]=ytm[kk];
+				r1_[k]=xtm[kk];
+				r2_[k]=ytm[kk];
 				k_ali[ka]=kk;
 				ka++;
 			}
 
 			//extract rotation matrix based on the fragment
-			Kabsch(r1, r2, L_frag, 1, &rmsd, t, u);
+			Kabsch(r1_, r2_, L_frag, 1, &rmsd, t, u);
 			if ( i_init==0 ) {
 				*Rcomm=sqrt(rmsd/Lali);
 			}
-			do_rotation(xtm, xt, Lali, t, u);
+			do_rotation(xtm, xt_, Lali, t, u);
 
 			//get subsegment of this fragment
-			d=d0_search-1;
-			n_cut=score_fun8(xt, ytm, Lali, d, i_ali, &score, score_sum_method);
+			d=d0_search_-1;
+			n_cut=score_fun8(xt_, ytm, Lali, d, i_ali, &score, score_sum_method);
 			if ( score>score_max ) {
 				score_max=score;
 
@@ -938,21 +938,21 @@ double  TMalign::TMscore8_search(
 			}
 
 			//try to extend the alignment iteratively
-			d=d0_search+1;
+			d=d0_search_+1;
 			for ( int it=0; it<n_it; it++ ) {
 				ka=0;
 				for ( k=0; k<n_cut; k++ ) {
 					m=i_ali[k];
-					r1[k]=xtm[m];
-					r2[k]=ytm[m];
+					r1_[k]=xtm[m];
+					r2_[k]=ytm[m];
 
 					k_ali[ka]=m;
 					ka++;
 				}
 				//extract rotation matrix based on the fragment
-				Kabsch(r1, r2, n_cut, 1, &rmsd, t, u);
-				do_rotation(xtm, xt, Lali, t, u);
-				n_cut=score_fun8(xt, ytm, Lali, d, i_ali, &score, score_sum_method);
+				Kabsch(r1_, r2_, n_cut, 1, &rmsd, t, u);
+				do_rotation(xtm, xt_, Lali, t, u);
+				n_cut=score_fun8(xt_, ytm, Lali, d, i_ali, &score, score_sum_method);
 				if ( score>score_max ) {
 					score_max=score;
 
@@ -1011,14 +1011,14 @@ double  TMalign::detailed_search(
 	for ( i=0; i<y_len; i++ ) {
 		j=invmap0[i];
 		if ( j>=0 ) { //aligned
-			xtm[k] = x[j];
-			ytm[k] = y[i];
+			xtm_[k] = x[j];
+			ytm_[k] = y[i];
 			k++;
 		}
 	}
 
 	//detailed search 40-->1
-	tmscore=TMscore8_search(xtm, ytm, k, t, u, simplify_step, score_sum_method, &rmsd);
+	tmscore=TMscore8_search(xtm_, ytm_, k, t, u, simplify_step, score_sum_method, &rmsd);
 	return tmscore;
 }
 
@@ -1034,32 +1034,32 @@ double  TMalign::get_score_fast(
 	for ( j=0; j<y_len; j++ ) {
 		i=invmap[j];
 		if ( i>=0 ) {
-			r1[k]=x[i];
-			r2[k]=y[j];
-			xtm[k]=x[i];
-			ytm[k]=y[j];
+			r1_[k]=x[i];
+			r2_[k]=y[j];
+			xtm_[k]=x[i];
+			ytm_[k]=y[j];
 
 			k++;
 		} else if ( i!=-1 ) {
 			PrintErrorAndQuit("Wrong map!\n");
 		}
 	}
-	Kabsch(r1, r2, k, 1, &rms, t, u);
+	Kabsch(r1_, r2_, k, 1, &rms, t_, u_);
 
 	//evaluate score
 	double di;
 	const int len=k;
 	std::vector <double> dis(len);
-	double d00=d0_search;
+	double d00=d0_search_;
 	double d002=d00*d00;
-	double d02=d0*d0;
+	double d02=d0_*d0_;
 
 	int n_ali=k;
 	numeric::xyzVector <core::Real> xrot;
 	tmscore=0;
 	for ( k=0; k<n_ali; k++ ) {
-		transform(t, u, xtm[k], xrot);
-		di=dist(xrot, ytm[k]);
+		transform(t_, u_, xtm_[k], xrot);
+		di=dist(xrot, ytm_[k]);
 		dis[k]=di;
 		tmscore += 1/(1+di/d02);
 	}
@@ -1070,8 +1070,8 @@ double  TMalign::get_score_fast(
 		j=0;
 		for ( k=0; k<n_ali; k++ ) {
 			if ( dis[k]<=d002t ) {
-				r1[j]=xtm[k];
-				r2[j]=ytm[k];
+				r1_[j]=xtm_[k];
+				r2_[j]=ytm_[k];
 
 				j++;
 			}
@@ -1086,11 +1086,11 @@ double  TMalign::get_score_fast(
 	}
 
 	if ( n_ali!=j ) {
-		Kabsch(r1, r2, j, 1, &rms, t, u);
+		Kabsch(r1_, r2_, j, 1, &rms, t_, u_);
 		tmscore1=0;
 		for ( k=0; k<n_ali; k++ ) {
-			transform(t, u, xtm[k], xrot);
-			di=dist(xrot, ytm[k]);
+			transform(t_, u_, xtm_[k], xrot);
+			di=dist(xrot, ytm_[k]);
 			dis[k]=di;
 			tmscore1 += 1/(1+di/d02);
 		}
@@ -1102,8 +1102,8 @@ double  TMalign::get_score_fast(
 			j=0;
 			for ( k=0; k<n_ali; k++ ) {
 				if ( dis[k]<=d002t ) {
-					r1[j]=xtm[k];
-					r2[j]=ytm[k];
+					r1_[j]=xtm_[k];
+					r2_[j]=ytm_[k];
 
 					j++;
 				}
@@ -1118,11 +1118,11 @@ double  TMalign::get_score_fast(
 		}
 
 		//evaluate the score
-		Kabsch(r1, r2, j, 1, &rms, t, u);
+		Kabsch(r1_, r2_, j, 1, &rms, t_, u_);
 		tmscore2=0;
 		for ( k=0; k<n_ali; k++ ) {
-			transform(t, u, xtm[k], xrot);
-			di=dist(xrot, ytm[k]);
+			transform(t_, u_, xtm_[k], xrot);
+			di=dist(xrot, ytm_[k]);
 			tmscore2 += 1/(1+di/d02);
 		}
 	} else {
@@ -1349,11 +1349,11 @@ void  TMalign::get_initial_ss(
 	int const x_len, int const y_len,
 	std::vector < int > & y2x ) {
 	//assign secondary structures
-	make_sec(x, x_len, secx);
-	make_sec(y, y_len, secy);
+	make_sec(x, x_len, secx_);
+	make_sec(y, y_len, secy_);
 
 	double gap_open=-1.0;
-	NWDP_TM(secx, secy, x_len, y_len, gap_open, y2x);
+	NWDP_TM(secx_, secy_, x_len, y_len, gap_open, y2x);
 }
 
 
@@ -1374,8 +1374,8 @@ bool  TMalign::get_initial_local(
 	numeric::xyzVector <core::Real> t(0.0,0.0,0.0);
 	numeric::xyzMatrix <core::Real> u(0.0);
 
-	double d01=d0+1.5;
-	if ( d01 < D0_MIN ) d01=D0_MIN;
+	double d01=d0_+1.5;
+	if ( d01 < D0_MIN_ ) d01=D0_MIN_;
 	double d02=d01*d01;
 
 	double GLmax=0;
@@ -1412,11 +1412,11 @@ bool  TMalign::get_initial_local(
 	for ( int i=ns-1; i<m1; i=i+n_frag ) { //index starts from 0, different from FORTRAN
 		for ( int j=ns-1; j<m2; j=j+n_frag ) {
 			for ( int k=0; k<n_frag; k++ ) { //fragment in y
-				r1[k]=x[k+i];
-				r2[k]=y[k+j];
+				r1_[k]=x[k+i];
+				r2_[k]=y[k+j];
 			}
 
-			Kabsch(r1, r2, n_frag, 1, &rmsd, t, u);
+			Kabsch(r1_, r2_, n_frag, 1, &rmsd, t, u);
 			count++;
 
 			double gap_open=0.0;
@@ -1445,8 +1445,8 @@ void  TMalign::score_matrix_rmsd(
 	numeric::xyzVector <core::Real> t;
 	numeric::xyzMatrix <core::Real> u;
 	double rmsd, dij;
-	double d01=d0+1.5;
-	if ( d01 < D0_MIN ) d01=D0_MIN;
+	double d01=d0_+1.5;
+	if ( d01 < D0_MIN_ ) d01=D0_MIN_;
 	double d02=d01*d01;
 
 	numeric::xyzVector <core::Real> xx;
@@ -1454,18 +1454,18 @@ void  TMalign::score_matrix_rmsd(
 	for ( int j=0; j<y_len; j++ ) {
 		i=y2x[j];
 		if ( i>=0 ) {
-			r1[k]=x[i];
-			r2[k]=y[j];
+			r1_[k]=x[i];
+			r2_[k]=y[j];
 			k++;
 		}
 	}
-	Kabsch(r1, r2, k, 1, &rmsd, t, u);
+	Kabsch(r1_, r2_, k, 1, &rmsd, t, u);
 
 	for ( int ii=0; ii<x_len; ii++ ) {
 		transform(t, u, x[ii], xx);
 		for ( int jj=0; jj<y_len; jj++ ) {
 			dij=dist(xx, y[jj]);
-			score[ii+1][jj+1] = 1.0/(1+dij/d02);
+			score_[ii+1][jj+1] = 1.0/(1+dij/d02);
 		}
 	}
 }
@@ -1479,8 +1479,8 @@ void  TMalign::score_matrix_rmsd_sec(
 	numeric::xyzVector <core::Real> t;
 	numeric::xyzMatrix <core::Real> u;
 	double rmsd, dij;
-	double d01=d0+1.5;
-	if ( d01 < D0_MIN ) d01=D0_MIN;
+	double d01=d0_+1.5;
+	if ( d01 < D0_MIN_ ) d01=D0_MIN_;
 	double d02=d01*d01;
 
 	numeric::xyzVector <core::Real> xx;
@@ -1488,22 +1488,22 @@ void  TMalign::score_matrix_rmsd_sec(
 	for ( int j=0; j<y_len; j++ ) {
 		i=y2x[j];
 		if ( i>=0 ) {
-			r1[k]=x[i];
-			r2[k]=y[j];
+			r1_[k]=x[i];
+			r2_[k]=y[j];
 
 			k++;
 		}
 	}
-	Kabsch(r1, r2, k, 1, &rmsd, t, u);
+	Kabsch(r1_, r2_, k, 1, &rmsd, t, u);
 
 	for ( int ii=0; ii<x_len; ii++ ) {
 		transform(t, u, x[ii], xx);
 		for ( int jj=0; jj<y_len; jj++ ) {
 			dij=dist(xx, y[jj]);
-			if ( secx[ii]==secy[jj] ) {
-				score[ii+1][jj+1] = 1.0/(1+dij/d02) + 0.5;
+			if ( secx_[ii]==secy_[jj] ) {
+				score_[ii+1][jj+1] = 1.0/(1+dij/d02) + 0.5;
 			} else {
-				score[ii+1][jj+1] = 1.0/(1+dij/d02);
+				score_[ii+1][jj+1] = 1.0/(1+dij/d02);
 			}
 		}
 	}
@@ -1587,7 +1587,7 @@ void  TMalign::find_max_frag(
 
 		if ( Lfr_max < r_min ) {
 			inc++;
-			double dinc=pow(1.1, (double) inc) * dcu0;
+			double dinc=pow(1.1, (double) inc) * dcu0_;
 			dcu_cut= dinc*dinc;
 		}
 	}//while <;
@@ -1737,7 +1737,7 @@ double  TMalign::DP_iter(
 	int score_sum_method=8, simplify_step=40;
 	tmscore_max=-1;
 
-	double d02=d0*d0;
+	double d02=d0_*d0_;
 	for ( int g=g1; g<g2; g++ ) {
 		for ( iteration=0; iteration<iteration_max; iteration++ ) {
 			NWDP_TM(x, y, x_len, y_len, t, u, d02, gap_open[g], invmap);
@@ -1747,12 +1747,12 @@ double  TMalign::DP_iter(
 				i=invmap[j];
 
 				if ( i>=0 ) { //aligned
-					xtm[k]=x[i];
-					ytm[k]=y[j];
+					xtm_[k]=x[i];
+					ytm_[k]=y[j];
 					k++;
 				}
 			}
-			tmscore=TMscore8_search(xtm, ytm, k, t, u, simplify_step, score_sum_method, &rmsd);
+			tmscore=TMscore8_search(xtm_, ytm_, k, t, u, simplify_step, score_sum_method, &rmsd);
 
 			if ( tmscore>tmscore_max ) {
 				tmscore_max=tmscore;
@@ -1828,12 +1828,12 @@ void  TMalign::alignment2AtomMap(
 	//double seq_id;  // unused ~Labonte
 	int k;
 	double d;
-	do_rotation(xa, xt, xlen, t, u);
+	do_rotation(xa_, xt_, xlen_, t_, u_);
 	//seq_id=0;  // unused ~Labonte
 
 	n_mapped_residues = 0;
 	for ( k=0; k<n_ali8_; k++ ) {
-		d=sqrt(dist(xt[m1_[k]], ya[m2_[k]]));
+		d=sqrt(dist(xt_[m1_[k]], ya_[m2_[k]]));
 		if ( d<d0_out_ ) {
 			auto it1 = residue_list.begin(); advance(it1, m1_[k]);
 			core::Size ires = *it1;
@@ -1857,12 +1857,12 @@ void  TMalign::alignment2strings(
 	int i, j, k;
 	double d;
 
-	int ali_len=xlen+ylen; //maximum length of alignment
+	int ali_len=xlen_+ylen_; //maximum length of alignment
 	seqM.resize(ali_len);
 	seqxA.resize(ali_len);
 	seqyA.resize(ali_len);
 
-	do_rotation(xa, xt, xlen, t, u);
+	do_rotation(xa_, xt_, xlen_, t_, u_);
 
 	seq_id=0;
 	int kk=0, i_old=0, j_old=0;
@@ -1870,7 +1870,7 @@ void  TMalign::alignment2strings(
 	for ( k=0; k<n_ali8_; k++ ) {
 		for ( i=i_old; i<m1_[k]; i++ ) {
 			//align x to gap
-			seqxA[kk]=seqx[i];
+			seqxA[kk]=seqx_[i];
 			seqyA[kk]='-';
 			seqM[kk]=' ';
 			kk++;
@@ -1879,17 +1879,17 @@ void  TMalign::alignment2strings(
 		for ( j=j_old; j<m2_[k]; j++ ) {
 			//align y to gap
 			seqxA[kk]='-';
-			seqyA[kk]=seqy[j];
+			seqyA[kk]=seqy_[j];
 			seqM[kk]=' ';
 			kk++;
 		}
 
-		seqxA[kk]=seqx[m1_[k]];
-		seqyA[kk]=seqy[m2_[k]];
+		seqxA[kk]=seqx_[m1_[k]];
+		seqyA[kk]=seqy_[m2_[k]];
 		if ( seqxA[kk]==seqyA[kk] ) {
 			seq_id++;
 		}
-		d = sqrt(dist(xt[m1_[k]], ya[m2_[k]]));
+		d = sqrt(dist(xt_[m1_[k]], ya_[m2_[k]]));
 		if ( d<d0_out_ ) {
 			seqM[kk]=':';
 		} else {
@@ -1901,17 +1901,17 @@ void  TMalign::alignment2strings(
 	}
 
 	//tail
-	for ( i=i_old; i<xlen; i++ ) {
+	for ( i=i_old; i<xlen_; i++ ) {
 		//align x to gap
-		seqxA[kk]=seqx[i];
+		seqxA[kk]=seqx_[i];
 		seqyA[kk]='-';
 		seqM[kk]=' ';
 		kk++;
 	}
-	for ( j=j_old; j<ylen; j++ ) {
+	for ( j=j_old; j<ylen_; j++ ) {
 		//align y to gap
 		seqxA[kk]='-';
-		seqyA[kk]=seqy[j];
+		seqyA[kk]=seqy_[j];
 		seqM[kk]=' ';
 		kk++;
 	}
@@ -1925,48 +1925,48 @@ void  TMalign::alignment2strings(
 
 void  TMalign::parameter_set4search(int xlen, int ylen) {
 	//parameter initilization for searching: D0_MIN, Lnorm, d0, d0_search, score_d8
-	D0_MIN=0.5;
-	dcu0=4.25;                       //update 3.85-->4.25
-	Lnorm=getmin(xlen, ylen);        //normaliz TMscore by this in searching
-	if ( Lnorm<=19 ) {                  //update 15-->19
-		d0=0.168;                      //update 0.5-->0.168
+	D0_MIN_=0.5;
+	dcu0_=4.25;                       //update 3.85-->4.25
+	Lnorm_=getmin(xlen, ylen);        //normaliz TMscore by this in searching
+	if ( Lnorm_<=19 ) {                  //update 15-->19
+		d0_=0.168;                      //update 0.5-->0.168
 	} else {
-		d0=(1.24*pow((Lnorm*1.0-15), 1.0/3)-1.8);
+		d0_=(1.24*pow((Lnorm_*1.0-15), 1.0/3)-1.8);
 	}
-	D0_MIN=d0+0.8;              //this should be moved to above
-	d0=D0_MIN;                  //update: best for search
+	D0_MIN_=d0_+0.8;              //this should be moved to above
+	d0_=D0_MIN_;                  //update: best for search
 
-	d0_search=d0;
-	if ( d0_search>8 ) d0_search=8;
-	if ( d0_search<4.5 ) d0_search=4.5;
+	d0_search_=d0_;
+	if ( d0_search_>8 ) d0_search_=8;
+	if ( d0_search_<4.5 ) d0_search_=4.5;
 
-	score_d8=1.5*pow(Lnorm*1.0, 0.3)+3.5; //remove pairs with dis>d8 during search & final
+	score_d8_=1.5*pow(Lnorm_*1.0, 0.3)+3.5; //remove pairs with dis>d8 during search & final
 }
 
 void  TMalign::parameter_set4final(double len) {
-	D0_MIN=0.5;
+	D0_MIN_=0.5;
 
-	Lnorm=len;            //normaliz TMscore by this in searching
-	if ( Lnorm<=21 ) {
-		d0=0.5;
+	Lnorm_=len;            //normaliz TMscore by this in searching
+	if ( Lnorm_<=21 ) {
+		d0_=0.5;
 	} else {
-		d0=(1.24*pow((Lnorm*1.0-15), 1.0/3)-1.8);
+		d0_=(1.24*pow((Lnorm_*1.0-15), 1.0/3)-1.8);
 	}
-	if ( d0<D0_MIN ) d0=D0_MIN;
+	if ( d0_<D0_MIN_ ) d0_=D0_MIN_;
 
-	d0_search=d0;
-	if ( d0_search>8 ) d0_search=8;
-	if ( d0_search<4.5 ) d0_search=4.5;
+	d0_search_=d0_;
+	if ( d0_search_>8 ) d0_search_=8;
+	if ( d0_search_<4.5 ) d0_search_=4.5;
 }
 
 
 void  TMalign::parameter_set4scale(int len, double d_s) {
-	d0=d_s;
-	Lnorm=len;            //normaliz TMscore by this in searching
+	d0_=d_s;
+	Lnorm_=len;            //normaliz TMscore by this in searching
 
-	d0_search=d0;
-	if ( d0_search>8 ) d0_search=8;
-	if ( d0_search<4.5 ) d0_search=4.5;
+	d0_search_=d0_;
+	if ( d0_search_>8 ) d0_search_=8;
+	if ( d0_search_<4.5 ) d0_search_=4.5;
 }
 
 
@@ -1977,9 +1977,9 @@ core::Real  TMalign::TMscore(Size length) {
 
 	//normalized by user assigned length
 	parameter_set4final(length);
-	d0A=d0;
+	d0A_=d0_;
 	core::Real rmsd;
-	return TMscore8_search(xtm, ytm, n_ali8_, t, u, simplify_step, score_sum_method, &rmsd);
+	return TMscore8_search(xtm_, ytm_, n_ali8_, t_, u_, simplify_step, score_sum_method, &rmsd);
 }
 
 
@@ -2009,51 +2009,51 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	load_pose_allocate_memory(pose1, pose2, residue_list1, residue_list2);
 
 	// parameter set
-	parameter_set4search(xlen, ylen);         //please set parameters in the function
+	parameter_set4search(xlen_, ylen_);         //please set parameters in the function
 	int simplify_step     = 40;               //for similified search engine
 	int score_sum_method  = 8;                //for scoring method, whether only sum over pairs with dis<score_d8
 
 	int i;
-	std::vector < int > invmap0(ylen+1);
-	std::vector < int > invmap(ylen+1);
+	std::vector < int > invmap0(ylen_+1);
+	std::vector < int > invmap(ylen_+1);
 	double TM, TMmax=-1;
-	for ( i=0; i<ylen; i++ ) {
+	for ( i=0; i<ylen_; i++ ) {
 		invmap0[i]=-1;
 	}
 
 	double ddcc=0.4;
-	if ( Lnorm <= 40 ) ddcc=0.1;   //Lnorm was setted in parameter_set4search
+	if ( Lnorm_ <= 40 ) ddcc=0.1;   //Lnorm was setted in parameter_set4search
 
 	// get initial alignment with gapless threading
-	get_initial(xa, ya, xlen, ylen, invmap0);
+	get_initial(xa_, ya_, xlen_, ylen_, invmap0);
 	//find the max TMscore for this initial alignment with the simplified search_engin
-	TM=detailed_search(xa, ya, xlen, ylen, invmap0, t, u, simplify_step, score_sum_method);
+	TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap0, t_, u_, simplify_step, score_sum_method);
 	if ( TM>TMmax ) {
 		TMmax=TM;
 	}
 	//run dynamic programing iteratively to find the best alignment
-	TM=DP_iter(xa, ya, xlen, ylen, t, u, invmap, 0, 2, 30);
+	TM=DP_iter(xa_, ya_, xlen_, ylen_, t_, u_, invmap, 0, 2, 30);
 	if ( TM>TMmax ) {
 		TMmax=TM;
-		for ( int i=0; i<ylen; i++ ) {
+		for ( int i=0; i<ylen_; i++ ) {
 			invmap0[i]=invmap[i];
 		}
 	}
 
 	// get initial alignment based on secondary structure
-	get_initial_ss(xa, ya, xlen, ylen, invmap);
-	TM=detailed_search(xa, ya, xlen, ylen, invmap, t, u, simplify_step, score_sum_method);
+	get_initial_ss(xa_, ya_, xlen_, ylen_, invmap);
+	TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap, t_, u_, simplify_step, score_sum_method);
 	if ( TM>TMmax ) {
 		TMmax=TM;
-		for ( int i=0; i<ylen; i++ ) {
+		for ( int i=0; i<ylen_; i++ ) {
 			invmap0[i]=invmap[i];
 		}
 	}
 	if ( TM > TMmax*0.2 ) {
-		TM=DP_iter(xa, ya, xlen, ylen, t, u, invmap, 0, 2, 30);
+		TM=DP_iter(xa_, ya_, xlen_, ylen_, t_, u_, invmap, 0, 2, 30);
 		if ( TM>TMmax ) {
 			TMmax=TM;
-			for ( int i=0; i<ylen; i++ ) {
+			for ( int i=0; i<ylen_; i++ ) {
 				invmap0[i]=invmap[i];
 			}
 		}
@@ -2061,19 +2061,19 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 
 	// get initial alignment based on local superposition
 	//    =initial5 in original TM-align
-	if ( get_initial_local(xa, ya, xlen, ylen, invmap) ) {
-		TM=detailed_search(xa, ya, xlen, ylen, invmap, t, u, simplify_step, score_sum_method);
+	if ( get_initial_local(xa_, ya_, xlen_, ylen_, invmap) ) {
+		TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap, t_, u_, simplify_step, score_sum_method);
 		if ( TM>TMmax ) {
 			TMmax=TM;
-			for ( int i=0; i<ylen; i++ ) {
+			for ( int i=0; i<ylen_; i++ ) {
 				invmap0[i]=invmap[i];
 			}
 		}
 		if ( TM > TMmax*ddcc ) {
-			TM=DP_iter(xa, ya, xlen, ylen, t, u, invmap, 0, 2, 2);
+			TM=DP_iter(xa_, ya_, xlen_, ylen_, t_, u_, invmap, 0, 2, 2);
 			if ( TM>TMmax ) {
 				TMmax=TM;
-				for ( int i=0; i<ylen; i++ ) {
+				for ( int i=0; i<ylen_; i++ ) {
 					invmap0[i]=invmap[i];
 				}
 			}
@@ -2085,19 +2085,19 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 
 	// get initial alignment based on previous alignment+secondary structure
 	//    =initial3 in original TM-align
-	get_initial_ssplus(xa, ya, xlen, ylen, invmap0, invmap);
-	TM=detailed_search(xa, ya, xlen, ylen, invmap, t, u, simplify_step, score_sum_method);
+	get_initial_ssplus(xa_, ya_, xlen_, ylen_, invmap0, invmap);
+	TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap, t_, u_, simplify_step, score_sum_method);
 	if ( TM>TMmax ) {
 		TMmax=TM;
-		for ( i=0; i<ylen; i++ ) {
+		for ( i=0; i<ylen_; i++ ) {
 			invmap0[i]=invmap[i];
 		}
 	}
 	if ( TM > TMmax*ddcc ) {
-		TM=DP_iter(xa, ya, xlen, ylen, t, u, invmap, 0, 2, 30);
+		TM=DP_iter(xa_, ya_, xlen_, ylen_, t_, u_, invmap, 0, 2, 30);
 		if ( TM>TMmax ) {
 			TMmax=TM;
-			for ( i=0; i<ylen; i++ ) {
+			for ( i=0; i<ylen_; i++ ) {
 				invmap0[i]=invmap[i];
 			}
 		}
@@ -2105,19 +2105,19 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 
 	// get initial alignment based on fragment gapless threading
 	//     =initial4 in original TM-align
-	get_initial_fgt(xa, ya, xlen, ylen, xresno, yresno, invmap);
-	TM=detailed_search(xa, ya, xlen, ylen, invmap, t, u, simplify_step, score_sum_method);
+	get_initial_fgt(xa_, ya_, xlen_, ylen_, xresno_, yresno_, invmap);
+	TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap, t_, u_, simplify_step, score_sum_method);
 	if ( TM>TMmax ) {
 		TMmax=TM;
-		for ( i=0; i<ylen; i++ ) {
+		for ( i=0; i<ylen_; i++ ) {
 			invmap0[i]=invmap[i];
 		}
 	}
 	if ( TM > TMmax*ddcc ) {
-		TM=DP_iter(xa, ya, xlen, ylen, t, u, invmap, 1, 2, 2);
+		TM=DP_iter(xa_, ya_, xlen_, ylen_, t_, u_, invmap, 1, 2, 2);
 		if ( TM>TMmax ) {
 			TMmax=TM;
-			for ( i=0; i<ylen; i++ ) {
+			for ( i=0; i<ylen_; i++ ) {
 				invmap0[i]=invmap[i];
 			}
 		}
@@ -2126,7 +2126,7 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	//  The alignment will not be changed any more in the following
 	//check if the initial alignment is generated approately
 	bool flag=false;
-	for ( i=0; i<ylen; i++ ) {
+	for ( i=0; i<ylen_; i++ ) {
 		if ( invmap0[i]>=0 ) {
 			flag=true;
 			break;
@@ -2143,27 +2143,27 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	//     extract the best rotation matrix (t, u) for the best alginment
 	simplify_step=1;
 	score_sum_method=8;
-	TM=detailed_search(xa, ya, xlen, ylen, invmap0, t, u, simplify_step, score_sum_method);
+	TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap0, t_, u_, simplify_step, score_sum_method);
 
 	//select pairs with dis<d8 for final TMscore computation and output alignment
 	n_ali8_=0;
 	int k=0;
 	int n_ali=0;
 	double d;
-	m1_.resize(xlen); //alignd index in x
-	m2_.resize(ylen); //alignd index in y
-	do_rotation(xa, xt, xlen, t, u);
+	m1_.resize(xlen_); //alignd index in x
+	m2_.resize(ylen_); //alignd index in y
+	do_rotation(xa_, xt_, xlen_, t_, u_);
 	k=0;
-	for ( int j=0; j<ylen; j++ ) {
+	for ( int j=0; j<ylen_; j++ ) {
 		i=invmap0[j];
 		if ( i>=0 ) { //aligned
 			n_ali++;
-			d=sqrt(dist(xt[i], ya[j]));
-			if ( d <= score_d8 ) {
+			d=sqrt(dist(xt_[i], ya_[j]));
+			if ( d <= score_d8_ ) {
 				m1_[k]=i;
 				m2_[k]=j;
-				xtm[k]=xa[i];
-				ytm[k]=ya[j];
+				xtm_[k]=xa_[i];
+				ytm_[k]=ya_[j];
 				k++;
 			}
 		}
@@ -2180,18 +2180,18 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	numeric::xyzVector <core::Real> t0;
 	numeric::xyzMatrix <core::Real> u0;
 	//double d0_0, TM_0;
-	double Lnorm_0=ylen;
+	double Lnorm_0=ylen_;
 
 	//normalized by length of structure A
 	parameter_set4final(Lnorm_0);
-	d0A=d0;
+	d0A_=d0_;
 	//d0_0=d0A;  // set but never used ~Labonte
 	//TM1=TMscore8_search(xtm, ytm, n_ali8_, t0, u0, simplify_step, score_sum_method, &rmsd);  // unused ~Labonte
 	//TM_0=TM1;  // set but never used ~Labonte
 
 	//normalized by length of structure B
-	parameter_set4final(xlen+0.0);
-	d0B=d0;
+	parameter_set4final(xlen_+0.0);
+	d0B_=d0_;
 	//TM2=TMscore8_search(xtm, ytm, n_ali8_, t, u, simplify_step, score_sum_method, &rmsd);  // unused ~Labonte
 
 	return 0;

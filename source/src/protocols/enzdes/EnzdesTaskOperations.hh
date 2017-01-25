@@ -202,8 +202,9 @@ public:
 
 	static void register_options();
 
-	bool get_weight() const { return lig_packer_weight_;}
-	void set_weight(bool const weight_in) {lig_packer_weight_ = weight_in;}
+	core::Real get_weight() const { return lig_packer_weight_;}
+
+	void set_weight(core::Real const weight_in) {lig_packer_weight_ = weight_in;}
 
 private:
 	/// Reweight protein-ligand interaction by a factor of lig_packer_weight_.

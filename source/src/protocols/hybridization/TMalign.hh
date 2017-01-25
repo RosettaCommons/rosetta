@@ -355,30 +355,40 @@ public:
 
 	int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2, std::list <core::Size> residue_list1, std::list <core::Size> residue_list2);
 
+	// return kabsch Translation vector t
+	// These are here in case you (a la Pyrosetta) want to move other
+	// parts of the Pose that are not protein (ligands)
+	// In order to do this, you would need to apply the
+	// T and U to the xyz coordinates of the ligand atoms
+	// 
+	const numeric::xyzVector <core::Real>& get_t() const {return t_;}
+
+	//return kabsch Rotation matrix u
+	const numeric::xyzMatrix <core::Real>& get_u() const {return u_;}
 
 private:
-	double D0_MIN;
-	double Lnorm;                                           //normalization length
-	double score_d8, d0, d0_search, dcu0;                   //for TMscore search
-	std::vector < std::vector < double > > score;           //Input score table for dynamic programming
-	std::vector < std::vector < bool > >   path;            //for dynamic programming
-	std::vector < std::vector < double > > val;             //for dynamic programming
-	int xlen, ylen, minlen;                                 //length of proteins
-	std::vector < numeric::xyzVector<core::Real> > xa, ya;  //for input vectors xa[0...xlen-1][0..2], ya[0...ylen-1][0..2]
-	std::vector < int >   xresno, yresno;                   //residue numbers, used in fragment gapless threading
-	std::vector < numeric::xyzVector <core::Real> > xtm, ytm;    //for TMscore search engine
-	std::vector < numeric::xyzVector <core::Real> > xt;          //for saving the superposed version of r_1 or xtm
-	std::string   seqx, seqy;                               //for the protein sequence
-	std::vector < int >   secx, secy;                       //for the secondary structure
-	std::vector < numeric::xyzVector <core::Real> > r1, r2;      //for Kabsch rotation
-	numeric::xyzVector <core::Real> t;
-	numeric::xyzMatrix <core::Real> u;                      //Kabsch translation vector and rotation matrix
+	double D0_MIN_;
+	double Lnorm_;                                           //normalization length
+	double score_d8_, d0_, d0_search_, dcu0_;                   //for TMscore search
+	std::vector < std::vector < double > > score_;           //Input score table for dynamic programming
+	std::vector < std::vector < bool > >   path_;            //for dynamic programming
+	std::vector < std::vector < double > > val_;             //for dynamic programming
+	int xlen_, ylen_, minlen_;                                 //length of proteins
+	std::vector < numeric::xyzVector<core::Real> > xa_, ya_;  //for input vectors xa[0...xlen-1][0..2], ya[0...ylen-1][0..2]
+	std::vector < int >   xresno_, yresno_;                   //residue numbers, used in fragment gapless threading
+	std::vector < numeric::xyzVector <core::Real> > xtm_, ytm_;    //for TMscore search engine
+	std::vector < numeric::xyzVector <core::Real> > xt_;          //for saving the superposed version of r_1 or xtm
+	std::string   seqx_, seqy_;                               //for the protein sequence
+	std::vector < int >   secx_, secy_;                       //for the secondary structure
+	std::vector < numeric::xyzVector <core::Real> > r1_, r2_;      //for Kabsch rotation
+	numeric::xyzVector <core::Real> t_;
+	numeric::xyzMatrix <core::Real> u_;                      //Kabsch translation vector and rotation matrix
 
 	int n_ali8_;
 	std::vector < int > m1_, m2_;
 	double d0_out_;
 
-	double d0A, d0B;
+	double d0A_, d0B_;
 
 }; // class TMalign
 

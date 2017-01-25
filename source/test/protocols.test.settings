@@ -123,6 +123,7 @@ sources = {
 		"MatchConstraintFileInfo",
 		"PredockRotCenter",
 		"ResfileAutoRemap",
+            "EnzdesTaskOperations",
 	],
 
 	"enzymatic_movers" : [

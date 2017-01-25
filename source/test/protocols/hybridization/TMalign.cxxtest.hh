@@ -15,6 +15,9 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
+// c++ headers
+#include <cmath>
+
 // initialization headers
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
@@ -28,6 +31,7 @@
 
 //utility
 #include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
 
 // TMalign headers
 #include <protocols/hybridization/TMalign.hh>
@@ -38,7 +42,7 @@ static basic::Tracer TR("test.protocols.hybridization.TMalign");
 
 class hybridization_TMalign_Tests : public CxxTest::TestSuite {
 public:
-	hybridization_TMalign_Tests() {}
+ 	hybridization_TMalign_Tests() {}
 
 	void setUp() {
 
@@ -108,8 +112,27 @@ public:
 		TS_ASSERT( start_ - perturb_ != core::Vector(0,0,0) );  //check perturbation moved the protein
 		TS_ASSERT_DELTA( start_.normalized().dot(end_.normalized()) /* equals 1 when it works */, 1, .05 ); // normalized will equal 1, but just to be sure just guarantee the delta is small
 
-	} //
 
+		// check the getters for the kabsch t and u
+		//		core::Vector(-1,-1,-1) // this is what we perturbed by above
+		numeric::xyzVector< core::Real> testvector(-1,-1,-1);
+		numeric::xyzVector< core::Real> testvector2(-1,-1,-1);
+		TR.Debug << "testvector" << std::endl;
+		TR.Debug << testvector.to_string() << std::endl;
+
+		// should be -1,-1,-1 .. but not actually (use debug and gdb>p tm_align.get_t() ) 
+		// compare with gdb>p testvector
+		TR.Debug << " T vector" << tm_align.get_t().to_string() << std::endl;
+		TR.Debug << testvector.dot( tm_align.get_t() ) << std::endl;;
+
+		TS_ASSERT( std::abs( testvector.dot( tm_align.get_t() ) - 3 ) < 0.05);
+
+		TR.Debug << " U matrix" << std::endl;
+		tm_align.get_u().show(TR); // << std::endl;
+
+	 //
+
+	}
 private:
 	core::pose::Pose query_pose_;
 	core::pose::Pose ref_pose;
