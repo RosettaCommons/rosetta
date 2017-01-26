@@ -162,12 +162,12 @@ BetaSheetArchitect::set_strand_extensions( std::string const & extensions_str )
 {
 	typedef utility::vector1< std::string > Strings;
 	Strings const extensions = csv_to_container< Strings >( extensions_str, ';' );
-	for ( Strings::const_iterator s=extensions.begin(); s!=extensions.end(); ++s ) {
-		Strings const name_length = csv_to_container< Strings >( *s, ',' );
+	for ( std::string const & s : extensions ) {
+		Strings const name_length = csv_to_container< Strings >( s, ',' );
 		if ( name_length.size() != 2 ) {
 			std::stringstream msg;
 			msg << "BetaSheetArchitect::set_strand_extensions(): malformed extensions string ("
-				<< extensions_str << ") -- the extension " << *s << " has " << name_length.size()
+				<< extensions_str << ") -- the extension " << s << " has " << name_length.size()
 				<< " fields, but two are required (name and length)" << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
@@ -578,12 +578,30 @@ BetaSheetArchitect::extension_length( std::string const & strand ) const
 
 /// @brief checks whether the given permutation forms a valid sheet
 void
-BetaSheetArchitect::check_permutation( components::StructureData const & perm ) const
+BetaSheetArchitect::check_permutation( components::StructureData const & perm_noextend ) const
 {
 	using core::select::residue_selector::ResidueSubset;
 	using protocols::denovo_design::components::ResiduePair;
 	using protocols::denovo_design::components::ResiduePairs;
 
+	// add extensions
+	components::StructureData perm = perm_noextend;
+	for ( StrandExtension const & ext : extensions_ ) {
+		std::stringstream ss, abego;
+		ss << 'L';
+		abego << 'X';
+		for ( core::Size i=1; i<=ext.second+perm.segment( ext.first ).elem_length(); ++i ) {
+			ss << 'E';
+			abego << 'B';
+		}
+		ss << 'L';
+		abego << 'X';
+		components::Segment newseg( ext.first, ss.str(), abego.str(), false, false );
+		perm.replace_segment( ext.first, newseg );
+		TR.Debug << "Replacing " << ext.first << " with version extended by " << ext.second << std::endl;
+	}
+
+	TR.Debug << "Extended version: " << perm << std::endl;
 	// check paired resiudes
 	ResidueSubset subset( perm.pose_length(), false );
 	ResiduePairs const residue_pairs = components::SegmentPairing::get_strand_residue_pairs( perm );

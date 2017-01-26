@@ -182,6 +182,7 @@ add_paired_residues(
 	protocols::fldsgn::topology::Strands const & strands = ss_info.strands();
 
 	debug_assert( p.segments().size() == 2 );
+	TR.Debug << "Pairings: " << p << std::endl;
 	std::string const seg1_name = *p.segments().begin();
 	std::string const seg2_name = *p.segments().rbegin();
 	std::string const abego = sd.abego();

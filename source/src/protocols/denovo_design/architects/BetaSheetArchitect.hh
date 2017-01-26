@@ -46,6 +46,7 @@ public:
 	typedef protocols::denovo_design::components::StructureDataOP StructureDataOP;
 	typedef utility::vector1< components::StructureDataCOP > StructureDataCOPs;
 	typedef utility::vector1< StrandArchitectOP > StrandArchitectOPs;
+	typedef std::pair< std::string, core::Size > StrandExtension;
 	typedef std::map< std::string, core::Size > StrandExtensionsMap;
 
 	typedef components::StrandOrientation StrandOrientation;
