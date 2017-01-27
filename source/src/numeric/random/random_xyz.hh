@@ -28,11 +28,23 @@
 namespace numeric {
 namespace random {
 
+/// @brief A random vector chosen uniformly from the ball (volume enclosed within a sphere) of the given radius around the origin.
 numeric::xyzVector<numeric::Real> uniform_vector_sphere(numeric::Real radius = 1);
+
+/// @brief A random vector chosen with spherical symmetry around the origin.
+/// @details Actual distribution is a 3D gaussian with unit variance centered at the origin.
 numeric::xyzVector<numeric::Real> random_vector();
+
+/// @brief A random vector chosen with spherical symmetry around the origin.
+/// @details Actual distribution is a 3D gaussian with unit variance centered at the origin.
 numeric::xyzVector<numeric::Real> random_vector_spherical();
+
+/// @brief A random vector chosen uniformly from within the volume of a unit cube with opposite verticies at (0,0,0) and (1,1,1)
 numeric::xyzVector<numeric::Real> random_vector_unit_cube();
+
+/// @brief A random vector chosens uniformly from the surface of a unit sphere centered on the origin.
 numeric::xyzVector<numeric::Real> random_normal();
+
 numeric::Quaternion<numeric::Real> random_unit_quaternion();
 numeric::xyzMatrix<numeric::Real> random_rotation();
 numeric::xyzTransform<numeric::Real> random_xform();

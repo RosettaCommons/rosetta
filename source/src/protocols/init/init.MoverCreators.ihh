@@ -465,6 +465,7 @@
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
 #include <protocols/simple_moves/PeriodicBoxMoverCreator.hh>
+#include <protocols/simple_moves/PertMinMoverCreator.hh>
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
 #include <protocols/simple_moves/RandomOmegaFlipMoverCreator.hh>
 #include <protocols/simple_moves/RandomTorsionMoverCreator.hh>

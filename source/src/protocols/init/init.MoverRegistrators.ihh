@@ -483,6 +483,7 @@ static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueC
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
+static MoverRegistrator< simple_moves::PertMinMoverCreator > reg_PertMinMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
 static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomOmegaFlipMoverCreator;
 static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;

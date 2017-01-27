@@ -14,6 +14,8 @@
 
 #include <numeric/random/random_xyz.hh>
 
+#include <numeric/constants.hh>
+
 namespace numeric {
 namespace random {
 
@@ -21,7 +23,7 @@ using numeric::Real;
 using namespace numeric;
 using namespace numeric::random;
 
-xyzVector<Real> uniform_vector_sphere(numeric::Real radius){ //==1
+xyzVector<Real> uniform_vector_sphere(numeric::Real radius /* = 1 */) {
 
 	xyzVector<Real> random_point;
 
@@ -42,7 +44,7 @@ xyzVector<Real> uniform_vector_sphere(numeric::Real radius){ //==1
 			{
 		V = numeric::random::uniform();
 	}
-	numeric::Real theta = 2 * 3.14159265358979 * U;
+	numeric::Real theta = 2 * numeric::constants::ld::pi * U;
 	numeric::Real phi = acos(2 * V - 1);
 
 	random_point.x(distance * sin(phi) * cos(theta));
@@ -55,15 +57,22 @@ xyzVector<Real> uniform_vector_sphere(numeric::Real radius){ //==1
 xyzVector<Real> random_vector_spherical(){
 	return xyzVector<Real>(gaussian(),gaussian(),gaussian());
 }
+
 xyzVector<Real> random_vector_unit_cube(){
 	return xyzVector<Real>(uniform(),uniform(),uniform());
 
 }
+
 xyzVector<Real> random_vector(){
 	return random_vector_spherical();
 }
+
 xyzVector<Real> random_normal(){
-	return random_vector_spherical().normalized();
+	xyzVector<Real> val ( random_vector_spherical().normalized_or_zero() );
+	while ( val.is_zero() ) {
+		val = random_vector_spherical().normalized_or_zero();
+	}
+	return val;
 }
 
 // cheaper to use gaussian, or do sines?
@@ -80,6 +89,7 @@ Quaternion<Real> random_unit_quaternion(){
 		sqrt(  u1)*sinu3,
 		sqrt(  u1)*cosu3 );
 }
+
 xyzMatrix<Real> random_rotation(){
 	Quaternion<Real> q = random_unit_quaternion();
 	return xyzMatrix<Real>::cols(
@@ -88,6 +98,7 @@ xyzMatrix<Real> random_rotation(){
 		2.0*q.x()*q.z() - 2.0*q.y()*q.w(),       2.0*q.y()*q.z() + 2.0*q.x()*q.w(), 1.0 - 2.0*q.x()*q.x() - 2.0*q.y()*q.y()
 	);
 }
+
 xyzTransform<Real> random_xform(){
 	return xyzTransform<Real>(random_rotation(),random_vector_spherical());
 }

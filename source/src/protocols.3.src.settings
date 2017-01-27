@@ -691,6 +691,7 @@ sources = {
 		"PDBReloadMover",
 		"PeptideStapleMover",
 		"PeriodicBoxMover",
+		"PertMinMover",
 		"ProlineFixMover",
 		"PSSM2BfactorMover",
         "RandomTorsionMover",
