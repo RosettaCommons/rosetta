@@ -88,7 +88,7 @@ read_biounit(
 ){
 	std::map<int,char> tmpmap;
 	vector1<int> tmpvec;
-	int tmpint;
+	int tmpint(0);
 	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res, debug);
 }
 

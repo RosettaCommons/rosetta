@@ -152,6 +152,7 @@ RamaPrePro::eval_rpp_rama_score(
 	bool const return_derivs
 ) const {
 
+	denergy_dphi = 0; denergy_dpsi = 0; // Needed to fix "may be used uninitialized" compiler errors for calling code.
 	bool const is_d( core::chemical::is_canonical_D_aa(res_aa1) );
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
 
