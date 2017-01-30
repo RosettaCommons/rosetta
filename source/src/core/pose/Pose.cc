@@ -702,6 +702,7 @@ Pose::append_pose_by_jump(
 	std::string const & jump_anchor_atom,
 	std::string const & jump_root_atom)
 {
+	energies_->clear();
 	core::Size old_size = size();
 
 	conformation().insert_conformation_by_jump(
@@ -720,7 +721,8 @@ Pose::append_pose_by_jump(
 			src.pdb_info()->nres(),
 			old_size + 1);
 	}
-
+	
+	
 	//No change to residue mappings in ReferencePose objects.
 }
 
@@ -757,11 +759,13 @@ Pose::delete_residue_slow( Size const seqpos )
 /// reference poses, if present.
 void Pose::delete_residue_range_slow( Size const start, Size const end) {
 	runtime_assert_string_msg( start <= end, "Error in core::pose::Pose::delete_residue_range_slow(): start must be less than or equal to end." );
+	energies_->clear();
 	conformation_->delete_residue_range_slow( start, end );
 	//Update reference poses, if present:
 	for ( core::Size ir=end; ir>=start; --ir ) {
 		decrement_reference_pose_mapping_after_seqpos( ir );
 	}
+	
 	return;
 }
 
@@ -774,6 +778,7 @@ Pose::copy_segment(
 )
 {
 	conformation_->copy_segment( size, src.conformation(), begin, src_begin );
+	
 	// now copy any other data
 }
 
