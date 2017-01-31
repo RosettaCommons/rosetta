@@ -721,8 +721,8 @@ Pose::append_pose_by_jump(
 			src.pdb_info()->nres(),
 			old_size + 1);
 	}
-	
-	
+
+
 	//No change to residue mappings in ReferencePose objects.
 }
 
@@ -765,7 +765,7 @@ void Pose::delete_residue_range_slow( Size const start, Size const end) {
 	for ( core::Size ir=end; ir>=start; --ir ) {
 		decrement_reference_pose_mapping_after_seqpos( ir );
 	}
-	
+
 	return;
 }
 
@@ -778,7 +778,7 @@ Pose::copy_segment(
 )
 {
 	conformation_->copy_segment( size, src.conformation(), begin, src_begin );
-	
+
 	// now copy any other data
 }
 

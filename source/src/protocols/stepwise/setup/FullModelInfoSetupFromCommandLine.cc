@@ -542,7 +542,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		// guess sequence, chain, resnum from pose; not specified in fasta.
 		runtime_assert( pose_pointers.size() > 0 );
 		vector1< Size > dummy;
- 		full_model_parameters = FullModelParametersOP( new FullModelParameters( *pose_pointers[1], dummy ) );
+		full_model_parameters = FullModelParametersOP( new FullModelParameters( *pose_pointers[1], dummy ) );
 		if ( pose_pointers.size() > 1 ) {
 			utility_exit_with_message( "Currently need to specify -fasta if dealing with multiple poses. Would not be hard to fix this, by merging resnum/chain across poses! Ask rhiju." );
 		}

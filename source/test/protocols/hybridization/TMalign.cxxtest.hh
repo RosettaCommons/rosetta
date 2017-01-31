@@ -42,7 +42,7 @@ static basic::Tracer TR("test.protocols.hybridization.TMalign");
 
 class hybridization_TMalign_Tests : public CxxTest::TestSuite {
 public:
- 	hybridization_TMalign_Tests() {}
+	hybridization_TMalign_Tests() {}
 
 	void setUp() {
 
@@ -114,13 +114,13 @@ public:
 
 
 		// check the getters for the kabsch t and u
-		//		core::Vector(-1,-1,-1) // this is what we perturbed by above
+		//  core::Vector(-1,-1,-1) // this is what we perturbed by above
 		numeric::xyzVector< core::Real> testvector(-1,-1,-1);
 		numeric::xyzVector< core::Real> testvector2(-1,-1,-1);
 		TR.Debug << "testvector" << std::endl;
 		TR.Debug << testvector.to_string() << std::endl;
 
-		// should be -1,-1,-1 .. but not actually (use debug and gdb>p tm_align.get_t() ) 
+		// should be -1,-1,-1 .. but not actually (use debug and gdb>p tm_align.get_t() )
 		// compare with gdb>p testvector
 		TR.Debug << " T vector" << tm_align.get_t().to_string() << std::endl;
 		TR.Debug << testvector.dot( tm_align.get_t() ) << std::endl;;
@@ -130,7 +130,7 @@ public:
 		TR.Debug << " U matrix" << std::endl;
 		tm_align.get_u().show(TR); // << std::endl;
 
-	 //
+		//
 
 	}
 private:

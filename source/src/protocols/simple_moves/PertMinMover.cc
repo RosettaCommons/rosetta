@@ -73,7 +73,7 @@ void PertMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
 		"Do a Roberto Chica inspired random atom coordinate perturbation followed by (Cartesian) minimization.",
-	attlist, subelements );
+		attlist, subelements );
 }
 
 void
@@ -102,7 +102,7 @@ PertMinMover::clone() const{
 
 /*
 PertMinMover & PertMinMoveroperator=( PertMinMover const & src){
-	return PertMinMover( src );
+return PertMinMover( src );
 }
 */
 

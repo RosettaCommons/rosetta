@@ -180,25 +180,25 @@ public:
 		return chunks_;
 	}
 
-/// @brief Sets the query surface area
-/// @details Directly sets the query surface area instead of reading it from a file
-void set_query_sa(utility::vector1<core::Real> & query_sa);
+	/// @brief Sets the query surface area
+	/// @details Directly sets the query surface area instead of reading it from a file
+	void set_query_sa(utility::vector1<core::Real> & query_sa);
 
-/// @brief Sets the query phi angles
-/// @details Directly sets the query phi angles instead of reading it from a file
-void set_query_phi(utility::vector1<core::Real> & query_phi);
+	/// @brief Sets the query phi angles
+	/// @details Directly sets the query phi angles instead of reading it from a file
+	void set_query_phi(utility::vector1<core::Real> & query_phi);
 
-/// @brief Sets the query psi angles
-/// @details Directly sets the query psi angles isntead of reading it from a file
-void set_query_psi(utility::vector1<core::Real> & query_psi);
+	/// @brief Sets the query psi angles
+	/// @details Directly sets the query psi angles isntead of reading it from a file
+	void set_query_psi(utility::vector1<core::Real> & query_psi);
 
-/// @brief Sets the query phi angle confidence
-/// @details Directly sets the query phi angle confidence instead of reading it from a file
-void set_query_phi_conf(utility::vector1<core::Real> & query_phi_conf);
+	/// @brief Sets the query phi angle confidence
+	/// @details Directly sets the query phi angle confidence instead of reading it from a file
+	void set_query_phi_conf(utility::vector1<core::Real> & query_phi_conf);
 
-/// @brief Sets the query psi angle confidence
-/// @details Directly sets the query psi angle confidence instead of reading it form a file
-void set_query_psi_conf(utility::vector1<core::Real> & query_psi_conf);
+	/// @brief Sets the query psi angle confidence
+	/// @details Directly sets the query psi angle confidence instead of reading it form a file
+	void set_query_psi_conf(utility::vector1<core::Real> & query_psi_conf);
 
 	// query sequence -----------------
 

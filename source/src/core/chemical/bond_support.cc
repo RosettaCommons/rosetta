@@ -170,7 +170,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 
 	// Step 1) Find all rotatable bonds
 	core::chemical::EIter eiter, eiter_end;
-	for( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
+	for ( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
 		Bond const & bond( restype.bond( *eiter ) );
 		VD source(boost::source(*eiter,restype.graph()));
 		VD target(boost::target(*eiter,restype.graph()));
@@ -184,11 +184,11 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 			continue;
 		}
 		// Step 1.2) Chi bonds need to be oriented along the ICOOR tree. Swap the order if they're reversed.
-		if( restype.atom_base(source) == target &&
+		if ( restype.atom_base(source) == target &&
 				source != restype.root_atom() ) { // Root atom has atom_base as it's child atom - don't swap there.
 			// Swap target and source such that source is nearer root.
 			std::swap( source, target );
-		} else if ( restype.atom_base(target) != source ){
+		} else if ( restype.atom_base(target) != source ) {
 			TR << "Found non-tree bond " << restype.atom_name(source) << " --- " << restype.atom_name(target) << std::endl;
 			TR << "\t   Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
 			utility_exit_with_message("Error: Non-ring bond not found in ResidueType atom tree.");
@@ -209,7 +209,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 				++targ_heavy;
 				// Residue::set_chi() requires that chi angles have the center and "target" bonds be along the along the atom base graph.
 				// We also don't want to pick the source atom, or the root atom (again, because the atom_base of the root atom is it's child).
-				if( selected_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex() &&
+				if ( selected_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex() &&
 						restype.atom_base(*aiter) == target &&
 						*aiter != source && *aiter != restype.root_atom() ) {
 					selected_targ_heavy = *aiter;
@@ -225,9 +225,9 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 		// Step 2) Pick the other two atoms which will make up the chi
 		VD d, c(source), b(target), a;
 		// Step 2.1) Pick the terminal (built/distal) atom for the chi
-		if( targ_heavy >= 2 ) {
+		if ( targ_heavy >= 2 ) {
 			// Step 2.1a) A regular all-heavy atom chi: use the selected heavy atom.
-			if( selected_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+			if ( selected_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex() ) {
 				TR.Error << "Issues with finding chi angles with the ICOOR graph!" << std::endl;
 				TR.Error << "    Chi bond for " << restype.atom_name( source ) << " -- " << restype.atom_name( target ) << std::endl;
 				utility_exit_with_message("Can't autodetermine chi angles.");
@@ -242,12 +242,12 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 
 		// Step 1.3c) If the terminal bond is co-linear with the central bond
 		//    (e.g. it's a triple bond) the chi isn't rotatable.
-		if( restype.bond( b, a ).order() ==  TripleBondOrder ) {
+		if ( restype.bond( b, a ).order() ==  TripleBondOrder ) {
 			continue;
 		}
 
 		// Step 2.2) Pick the dihedral reference atom.
-		if( source != restype.root_atom() ) {
+		if ( source != restype.root_atom() ) {
 			// Step 2.2a) Source isn't the root atom - we can (and should) use the atom_base as reference
 			d = restype.atom_base(source);
 		} else if ( restype.atom_base(source) != target ) {
@@ -264,7 +264,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 					break;
 				}
 			}
-			if( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+			if ( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
 				// Can't find a suitable reference atom - this probably isn't a rotatable chi after all.
 				continue;
 			}

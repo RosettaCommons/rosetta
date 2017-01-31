@@ -34,7 +34,7 @@ MC_Comb::MC_Comb():
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::init() {
-	//	runtime_assert( !rotamer_list_.empty() );
+	// runtime_assert( !rotamer_list_.empty() );
 	for ( auto const & rotamer : rotamer_list_ ) {
 		rotamer->init();
 	}

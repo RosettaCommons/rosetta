@@ -275,8 +275,8 @@ RECCES_Mover::dump_stuff(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::more_dump_stuff( pose::Pose const & pose,
-															 Size const & n,
-															 Real const & current_temperature ) const
+	Size const & n,
+	Real const & current_temperature ) const
 {
 	using namespace core::io::silent;
 	Size const & dump_interval( options_->dump_freq() );

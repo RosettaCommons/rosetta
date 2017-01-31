@@ -287,7 +287,7 @@ public:
 			"  </Input>\n"
 			"  <Output>\n"
 			"   <PDB filename=\"output.pdb\"/>\n"
-      "  </Output>\n"
+			"  </Output>\n"
 			" </Job>\n"
 			"</JobDefinitionFile>\n";
 

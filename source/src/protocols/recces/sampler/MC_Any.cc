@@ -28,39 +28,39 @@ namespace protocols {
 namespace recces {
 namespace sampler {
 
-	///////////////////////////////////////////////////////////////////////////
-	//Constructor
-	MC_Any::MC_Any():
-		MC_Comb()
-	{
-		set_name( "MC_Any" );
+///////////////////////////////////////////////////////////////////////////
+//Constructor
+MC_Any::MC_Any():
+	MC_Comb()
+{
+	set_name( "MC_Any" );
+}
+///////////////////////////////////////////////////////////////////////////
+//Destructor
+MC_Any::~MC_Any()
+{}
+///////////////////////////////////////////////////////////////////////////
+void MC_Any::init() {
+	MC_Comb::init();
+	curr_id_ = 0;
+}
+///////////////////////////////////////////////////////////////////////////
+void MC_Any::operator++() {
+	if ( num_rotamers() == 0 ) {
+		curr_id_ = 0; return;
 	}
-	///////////////////////////////////////////////////////////////////////////
-	//Destructor
-	MC_Any::~MC_Any()
-	{}
-	///////////////////////////////////////////////////////////////////////////
-	void MC_Any::init() {
-		MC_Comb::init();
-		curr_id_ = 0;
+	curr_id_ = numeric::random::rg().random_range(1,num_rotamers());
+	++( *rotamer_list_[ curr_id_ ] );
+}
+///////////////////////////////////////////////////////////////////////////
+void MC_Any::apply( Pose & pose ) {
+	runtime_assert( is_init() );
+	if ( curr_id_ == 0 ) {
+		found_move_ = false; return;
 	}
-	///////////////////////////////////////////////////////////////////////////
-	void MC_Any::operator++() {
-		if ( num_rotamers() == 0 ) {
-			curr_id_ = 0;	return;
-		}
-		curr_id_ = numeric::random::rg().random_range(1,num_rotamers());
-		++( *rotamer_list_[ curr_id_ ] );
-	}
-	///////////////////////////////////////////////////////////////////////////
-	void MC_Any::apply( Pose & pose ) {
-		runtime_assert( is_init() );
-		if ( curr_id_ == 0 ) {
-			found_move_ = false; return;
-		}
-		rotamer_list_[ curr_id_ ]->apply( pose );
-		found_move_ = rotamer_list_[ curr_id_ ]->found_move();
-	}
+	rotamer_list_[ curr_id_ ]->apply( pose );
+	found_move_ = rotamer_list_[ curr_id_ ]->found_move();
+}
 
 } //sampler
 } //recces

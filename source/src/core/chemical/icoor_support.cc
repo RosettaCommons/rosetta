@@ -277,21 +277,21 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 
 	// Check the validity of the chi settings.
 	bool reset_chis( false );
-	for( core::Size chino(1); chino <= restype.nchi(); ++chino ) {
+	for ( core::Size chino(1); chino <= restype.nchi(); ++chino ) {
 		// These are the check which are made in Residue::set_chi() - Remember that atomindicies aren't valid yet ...
 		VDs const & chi_vds( restype.chi_atom_vds(chino) );
-		if( restype.atom_base( chi_vds[3] ) != chi_vds[2] ||
+		if ( restype.atom_base( chi_vds[3] ) != chi_vds[2] ||
 				restype.atom_base( chi_vds[4] ) != chi_vds[3] ) {
 			reset_chis = true;
 		}
 	}
-	if( reset_chis ) {
+	if ( reset_chis ) {
 		// There's probably a better way to do this non-destructively,
 		// but I don't know how generalizable it would be.
 		TR.Warning << "Resetting the ICOORD invalidated some CHI entries - recomputing." << std::endl;
 		restype.autodetermine_chi_bonds();
-	//} else {
-	//	TR << "Chis should be fine." << std::endl;
+		//} else {
+		// TR << "Chis should be fine." << std::endl;
 	}
 
 }

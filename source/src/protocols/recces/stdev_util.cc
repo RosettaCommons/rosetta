@@ -41,11 +41,11 @@ namespace recces {
 /// TODO: Unify into single function (see notes below on using MC_Sampler::find)
 void
 set_sampler_gaussian_stdev(
-    protocols::recces::sampler::MC_CombOP sampler,
-		core::Real const & temperature,
-		core::pose::Pose const & pose,
-		protocols::recces::options::RECCES_Options const & options,
-		protocols::recces::params::RECCES_Parameters const & params )
+	protocols::recces::sampler::MC_CombOP sampler,
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	protocols::recces::options::RECCES_Options const & options,
+	protocols::recces::params::RECCES_Parameters const & params )
 {
 	if ( options.legacy_turner_mode() ) {
 		set_gaussian_stdevs_recces_turner( sampler, temperature, pose, options.rna_secstruct(), params );
@@ -57,14 +57,14 @@ set_sampler_gaussian_stdev(
 ///////////////////////////////////////////////////////////////////////////////////
 void
 set_gaussian_stdevs_recces_turner_from_secstruct(
-    protocols::recces::sampler::MC_CombOP sampler,
-		core::Real const & temperature,
-		core::pose::Pose const & pose,
-		core::pose::rna::RNA_SecStruct const & rna_secstruct )
+	protocols::recces::sampler::MC_CombOP sampler,
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	core::pose::rna::RNA_SecStruct const & rna_secstruct )
 {
 	using namespace core::id;
 	using namespace core::chemical::rna;
- 	using namespace core::pose::rna;
+	using namespace core::pose::rna;
 	using namespace protocols::recces::sampler;
 
 	Size const n_rsd( pose.total_residue() );
@@ -115,10 +115,10 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 ///        should be a straightforward replacement, but need to check integration tests.
 void
 set_gaussian_stdevs_recces_turner_legacy(
-    protocols::recces::sampler::MC_CombOP sampler,
-		core::Real const & temperature,
-		core::pose::Pose const & pose,
-		protocols::recces::params::RECCES_Parameters const & params )
+	protocols::recces::sampler::MC_CombOP sampler,
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	protocols::recces::params::RECCES_Parameters const & params )
 {
 	using namespace core::id;
 	using namespace core::chemical::rna;
@@ -173,11 +173,11 @@ set_gaussian_stdevs_recces_turner_legacy(
 ///////////////////////////////////////////////////////////////////////////////////
 void
 set_gaussian_stdevs_recces_turner(
-    protocols::recces::sampler::MC_CombOP sampler,
-		core::Real const & temperature,
-		core::pose::Pose const & pose,
-		core::pose::rna::RNA_SecStruct const & rna_secstruct,
-		protocols::recces::params::RECCES_Parameters const & params )
+	protocols::recces::sampler::MC_CombOP sampler,
+	core::Real const & temperature,
+	core::pose::Pose const & pose,
+	core::pose::rna::RNA_SecStruct const & rna_secstruct,
+	protocols::recces::params::RECCES_Parameters const & params )
 {
 	if ( rna_secstruct.blank() ) {
 		set_gaussian_stdevs_recces_turner_legacy( sampler, temperature, pose, params );

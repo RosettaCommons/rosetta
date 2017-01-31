@@ -654,7 +654,7 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 		pose.pdb_info()->chain( pose.size(), new_chain );
 		pose.pdb_info()->obsolete(false);
 	}
-	
+
 	return pose.size();
 
 }

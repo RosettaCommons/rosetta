@@ -132,7 +132,7 @@ PDBPoseOutputter::output_pdb_name(
 ) const
 {
 	utility::file::FileName fn;
-	if ( tag && tag->getOption< bool >( "pdb_gz", false )) {
+	if ( tag && tag->getOption< bool >( "pdb_gz", false ) ) {
 		fn.ext( ".pdb.gz" );
 	} else if ( options[ basic::options::OptionKeys::out::pdb_gz ] ) {
 		fn.ext( ".pdb.gz" );
@@ -179,10 +179,10 @@ PDBPoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 		" expects a string that has a single dolar sign; the original job tag will be substituted for"
 		" the dolar sign. E.g. '$_steal_native_frags' would produce pdbs named"
 		" '1abc_steal_native_frags_0001.pdb', '1abc_steal_native_frags_0002.pdb', ...,"
-    " '2def_steal_native_frags_0001.pdb', etc. if it were used with input tags '1abc' and '2def'. Cannot be"
+		" '2def_steal_native_frags_0001.pdb', etc. if it were used with input tags '1abc' and '2def'. Cannot be"
 		" combined with the 'filename' attribute." )
 		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" )
-	  + XMLSchemaAttribute::attribute_w_default( "pdb_gz", xsct_rosetta_bool, "Should the output PDB file be written as a .gz?", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "pdb_gz", xsct_rosetta_bool, "Should the output PDB file be written as a .gz?", "false" );
 
 	pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(),
 		"The (typically) default PoseOutputter that writes the structure out as a PDB-formatted file", output_pdb_attributes );

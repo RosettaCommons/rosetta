@@ -464,7 +464,7 @@ build_full_model_test()
 
 		utility::vector1< PoseOP > other_ops = nonconst_full_model_info( start_pose ).other_pose_list();
 		// I don't think this is necessary (and may be confusin) -- Andy, if you can confirm, please delete the line -- Rhiju
-		//		stepwise::setup::fill_full_model_info_from_command_line( start_pose, other_ops );
+		//  stepwise::setup::fill_full_model_info_from_command_line( start_pose, other_ops );
 
 		std::string const tag = tag_from_pose( start_pose );
 

@@ -761,30 +761,30 @@ MultipoleElecPotential::amoeba_type_lookup(
 			type = map_it->second;
 		}
 
-    // Try for double variants - test both orderings of variant strings
-    if ( !utility::trimmed_compare( variantname2, not_variant ) ) {
-    	std::string single_key2 = atomname + resname + variantname2;
-    	single_key2.erase( std::remove_if( single_key2.begin(), single_key2.end(), ::isspace ), single_key2.end() );
-    	map_it = type_lookup_.find( single_key2 );
-    	if ( map_it != type_lookup_.end() ) {
-    		type = map_it->second;
-    	}
+		// Try for double variants - test both orderings of variant strings
+		if ( !utility::trimmed_compare( variantname2, not_variant ) ) {
+			std::string single_key2 = atomname + resname + variantname2;
+			single_key2.erase( std::remove_if( single_key2.begin(), single_key2.end(), ::isspace ), single_key2.end() );
+			map_it = type_lookup_.find( single_key2 );
+			if ( map_it != type_lookup_.end() ) {
+				type = map_it->second;
+			}
 
 			std::string double_key1 = atomname + resname + variantname + variantname2;
 			std::string double_key2 = atomname + resname + variantname2 + variantname;
-    	double_key1.erase( std::remove_if( double_key1.begin(), double_key1.end(), ::isspace ), double_key1.end() );
-    	double_key2.erase( std::remove_if( double_key2.begin(), double_key2.end(), ::isspace ), double_key2.end() );
-    	//TR << "Querying key X" << double_key1 << "X" << std::endl;
-    	map_it = type_lookup_.find( double_key1 );
-    	if ( map_it != type_lookup_.end() ) {
-    		type = map_it->second;
+			double_key1.erase( std::remove_if( double_key1.begin(), double_key1.end(), ::isspace ), double_key1.end() );
+			double_key2.erase( std::remove_if( double_key2.begin(), double_key2.end(), ::isspace ), double_key2.end() );
+			//TR << "Querying key X" << double_key1 << "X" << std::endl;
+			map_it = type_lookup_.find( double_key1 );
+			if ( map_it != type_lookup_.end() ) {
+				type = map_it->second;
 			}
-    	//TR << "Querying key X" << double_key2 << "X" << std::endl;
-    	map_it = type_lookup_.find( double_key2 );
-    	if ( map_it != type_lookup_.end() ) {
-    		type = map_it->second;
-    	}
-    }
+			//TR << "Querying key X" << double_key2 << "X" << std::endl;
+			map_it = type_lookup_.find( double_key2 );
+			if ( map_it != type_lookup_.end() ) {
+				type = map_it->second;
+			}
+		}
 	}
 
 	// Give a holler if nothing has been found
@@ -1218,7 +1218,7 @@ MultipoleElecPotential::assign_residue_amoeba_type(
 		TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
 		TR << "Using first variant name only!!!" << std::endl;
 		variantname = parsed_resname[2];
-		for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
+		for ( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
 			TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
 		}
 	}

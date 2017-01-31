@@ -57,8 +57,8 @@ namespace sampler {
 ///
 protocols::recces::sampler::MC_CombOP
 initialize_sampler( pose::Pose const & pose,
-										options::RECCES_Options const & options,
-										params::RECCES_Parameters const & params )
+	options::RECCES_Options const & options,
+	params::RECCES_Parameters const & params )
 {
 	using namespace protocols::recces::sampler;
 	using namespace protocols::recces::sampler::rna;
@@ -75,7 +75,7 @@ initialize_sampler( pose::Pose const & pose,
 	// make sure base pair sampling can be carried out after legacy_turner_mode. Again, handle
 	// as one of the samplers inside the thermal_sampler-style MC_Loop sampler.
 	if (  !options.thermal_sampler_mode() &&
-				( ( pose.size() == 2 && pose.fold_tree().is_cutpoint( 1 ) ) || options.sample_jump() ) )  {
+			( ( pose.size() == 2 && pose.fold_tree().is_cutpoint( 1 ) ) || options.sample_jump() ) )  {
 		MC_RNA_OneJumpOP jump_sampler = initialize_jump_sampler( pose, 1, options );
 		sampler->add_rotamer( jump_sampler );
 		print_base_centroid_atoms_for_rb_entropy( pose.residue( pose.fold_tree().downstream_jump_residue( 1 ) ), options.xyz_file() );
@@ -109,8 +109,8 @@ initialize_sampler( pose::Pose const & pose,
 ///
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler_from_secstruct( pose::Pose const & pose,
-																					core::Real const & a_form_range,
-																					core::pose::rna::RNA_SecStruct const & rna_secstruct )
+	core::Real const & a_form_range,
+	core::pose::rna::RNA_SecStruct const & rna_secstruct )
 {
 	MC_CombOP sampler( new MC_Comb );
 	Size n_rsd( pose.size() );
@@ -157,8 +157,8 @@ get_recces_turner_sampler_from_secstruct( pose::Pose const & pose,
 ///                              -- rhiju, 2016
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler_legacy( pose::Pose const & pose,
-													 core::Real const & a_form_range,
-													 params::RECCES_Parameters const & params )
+	core::Real const & a_form_range,
+	params::RECCES_Parameters const & params )
 {
 	MC_RNA_MultiSuiteOP sampler( new MC_RNA_MultiSuite );
 	Size total_len( pose.size() );
@@ -191,9 +191,9 @@ get_recces_turner_sampler_legacy( pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler( pose::Pose const & pose,
-													 core::Real const & a_form_range,
-													 core::pose::rna::RNA_SecStruct const & secstruct,
-													 params::RECCES_Parameters const & params )
+	core::Real const & a_form_range,
+	core::pose::rna::RNA_SecStruct const & secstruct,
+	params::RECCES_Parameters const & params )
 {
 	if ( secstruct.blank() ) {
 		// this one is legacy
@@ -312,10 +312,10 @@ initialize_thermal_sampler( pose::Pose const & pose,
 
 	MC_LoopOP loop_sampler( new MC_Loop );
 	for ( Size n = 1; n <= 10; n++ ) {
-	 	if ( (n % 10) == 0 ) {
-	 		loop_sampler->add_rotamer( standard_bb_sampler );
-	 	} else if ( (n % 2) == 0 ) {
-	 		loop_sampler->add_rotamer( internal_bb_sampler );
+		if ( (n % 10) == 0 ) {
+			loop_sampler->add_rotamer( standard_bb_sampler );
+		} else if ( (n % 2) == 0 ) {
+			loop_sampler->add_rotamer( internal_bb_sampler );
 		} else if ( jump_sampler != 0 && ( n % 5 ) == 0 ) {
 			loop_sampler->add_rotamer( jump_sampler );
 		} else {
@@ -329,8 +329,8 @@ initialize_thermal_sampler( pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////////
 MC_RNA_OneJumpOP
 initialize_jump_sampler( core::pose::Pose const & pose,
-												 core::Size const & num_jump,
-												 options::RECCES_Options const & options )
+	core::Size const & num_jump,
+	options::RECCES_Options const & options )
 {
 
 	MC_RNA_OneJumpOP jump_sampler( new MC_RNA_OneJump( pose, num_jump ) );

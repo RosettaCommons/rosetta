@@ -481,20 +481,20 @@ attributes_for_parse_score_function_w_description_when_required( utility::tag::A
 
 void
 attributes_for_saved_reference_pose(
-		utility::tag::AttributeList & attributes,
-		std::string const & attribute_name)
+	utility::tag::AttributeList & attributes,
+	std::string const & attribute_name)
 {
 	attributes_for_saved_reference_pose_w_description( attributes, "", attribute_name );
 }
 
 void
 attributes_for_saved_reference_pose_w_description(
-		utility::tag::AttributeList & attributes,
-		std::string const & description,
-		std::string const & attribute_name)
+	utility::tag::AttributeList & attributes,
+	std::string const & description,
+	std::string const & attribute_name)
 {
 	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string,
-	( description == "" ? "Name of reference pose to use" : description ) );
+		( description == "" ? "Name of reference pose to use" : description ) );
 }
 
 core::pose::PoseOP

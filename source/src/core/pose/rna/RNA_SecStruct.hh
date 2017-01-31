@@ -42,9 +42,9 @@ public:
 
 public:
 
-	utility::vector1< std::pair< core::Size, core::Size > >	base_pairs() const { return base_pairs_; }
+	utility::vector1< std::pair< core::Size, core::Size > > base_pairs() const { return base_pairs_; }
 
-	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > >	stems() const { return stems_; }
+	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > stems() const { return stems_; }
 
 	void
 	check_compatible_with_sequence( std::string const & sequence_in,

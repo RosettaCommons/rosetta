@@ -360,7 +360,7 @@ public:
 	// parts of the Pose that are not protein (ligands)
 	// In order to do this, you would need to apply the
 	// T and U to the xyz coordinates of the ligand atoms
-	// 
+	//
 	const numeric::xyzVector <core::Real>& get_t() const {return t_;}
 
 	//return kabsch Rotation matrix u

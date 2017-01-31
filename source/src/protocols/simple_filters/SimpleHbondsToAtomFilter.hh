@@ -52,19 +52,19 @@ public:
 	report( std::ostream & os, core::pose::Pose const & pose ) const override;
 
 public:
-    core::Size get_target_residue() const;
-    void set_target_residue( core::Size target_residue );
-    core::Size get_n_partners() const;
-    void set_n_partners( core::Size n_partners );
-    std::string get_target_atom_name() const;
-    void set_target_atom_name( std::string atom_name );
-    core::scoring::ScoreFunctionOP get_scorefxn() const;
-    void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
-    core::Real get_hb_e_cutoff() const;
-    void set_hb_e_cutoff( core::Real hb_e_cutoff );
-    core::Size compute( core::pose::Pose const & pose ) const;
-	
-    std::string
+	core::Size get_target_residue() const;
+	void set_target_residue( core::Size target_residue );
+	core::Size get_n_partners() const;
+	void set_n_partners( core::Size n_partners );
+	std::string get_target_atom_name() const;
+	void set_target_atom_name( std::string atom_name );
+	core::scoring::ScoreFunctionOP get_scorefxn() const;
+	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
+	core::Real get_hb_e_cutoff() const;
+	void set_hb_e_cutoff( core::Real hb_e_cutoff );
+	core::Size compute( core::pose::Pose const & pose ) const;
+
+	std::string
 	name() const override;
 
 	static
@@ -92,11 +92,11 @@ public:
 	clone() const override;
 
 private:
-    std::string target_atom_name_;
-    core::Size target_residue_;
-    core::Size n_partners_;
-    core::scoring::ScoreFunctionOP scorefxn_;
-    core::Real hb_e_cutoff_;
+	std::string target_atom_name_;
+	core::Size target_residue_;
+	core::Size n_partners_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::Real hb_e_cutoff_;
 
 };
 

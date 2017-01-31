@@ -85,15 +85,15 @@ using utility::vector1;
 
 std::ostream & operator<<( std::ostream & stream, FileType type ) {
 	switch( type ) {
-		case PDB_file:
-			stream << "PDB";
-			break;
-		case CIF_file:
-			stream << "mmCIF";
-			break;
-		default:
-			stream << "UNKNOWN";
-			break;
+	case PDB_file :
+		stream << "PDB";
+		break;
+	case CIF_file :
+		stream << "mmCIF";
+		break;
+	default :
+		stream << "UNKNOWN";
+		break;
 	}
 	return stream;
 }
@@ -268,7 +268,7 @@ determine_file_type( std::string const &contents_of_file) {
 	for ( io::pdb::Record const & record: records ) {
 		if ( record.count( "type" ) &&
 				(record.at( "type" ).value == "ATOM  " ||
-				record.at( "type" ).value == "HETATM" )) {
+				record.at( "type" ).value == "HETATM" ) ) {
 			++n_atom_records;
 		}
 	}

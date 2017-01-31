@@ -37,8 +37,8 @@ public:
 
 	void test_ProteinLigandInterfaceUpweighter_gettersetter() {
 		/*
-			yes, this is a tad bit silly....  but then again, before this test the get_weight returned a bool....
-		 */
+		yes, this is a tad bit silly....  but then again, before this test the get_weight returned a bool....
+		*/
 		//Creating ProteinLigandInterfaceUpweighter
 		protocols::enzdes::ProteinLigandInterfaceUpweighter * protliginterf_ = new protocols::enzdes::ProteinLigandInterfaceUpweighter;
 

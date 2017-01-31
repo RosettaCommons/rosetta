@@ -32,14 +32,14 @@ namespace sampler {
 // Sampler setup
 protocols::recces::sampler::MC_CombOP
 initialize_sampler( core::pose::Pose const & pose,
-										options::RECCES_Options const & options,
-										params::RECCES_Parameters const & params );
+	options::RECCES_Options const & options,
+	params::RECCES_Parameters const & params );
 
 protocols::recces::sampler::MC_CombOP
 get_recces_turner_sampler( core::pose::Pose const & pose,
-													 core::Real const & a_form_range,
-													 core::pose::rna::RNA_SecStruct const & secstruct,
-													 params::RECCES_Parameters const & params );
+	core::Real const & a_form_range,
+	core::pose::rna::RNA_SecStruct const & secstruct,
+	params::RECCES_Parameters const & params );
 
 protocols::recces::sampler::MC_CombOP
 initialize_thermal_sampler( core::pose::Pose const & pose,
@@ -47,8 +47,8 @@ initialize_thermal_sampler( core::pose::Pose const & pose,
 
 protocols::recces::sampler::rna::MC_RNA_OneJumpOP
 initialize_jump_sampler( core::pose::Pose const & pose,
-												 core::Size const & num_jump,
-												 options::RECCES_Options const & options );
+	core::Size const & num_jump,
+	options::RECCES_Options const & options );
 
 } //sampler
 } //recces

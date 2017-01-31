@@ -153,7 +153,7 @@ RECCES_Options::initialize_from_command_line() {
 
 	// quick hack. probably should change namespace
 	rna_secstruct_ = core::pose::rna::RNA_SecStruct( option[ OptionKeys::rna::farna::secstruct ](),
-																									 option[ OptionKeys::rna::farna::secstruct_file ]() );
+		option[ OptionKeys::rna::farna::secstruct_file ]() );
 }
 
 } //options
