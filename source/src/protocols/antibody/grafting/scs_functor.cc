@@ -597,6 +597,7 @@ void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
 			// check if pdb is contained in bfactor list... somewhat worrying that list doesn't contain all pdbs
 			if( bfactor_map.find(br->pdb) == bfactor_map.end() ) {
 				TR.Trace << "SCS_BlastFilter_by_template_bfactor: Could not find " << br->pdb << " in outlier list." << std::endl;
+				++p;
 			}
 			else if( bfactor_map.at(br->pdb).at(region.ab_region) ) {
 				TR.Trace << CSI_Red << "SCS_BlastFilter_by_template_bfactor: Filtering " << br->pdb << CSI_Reset << std::endl;

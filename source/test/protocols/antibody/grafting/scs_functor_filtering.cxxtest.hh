@@ -416,6 +416,7 @@ public:
 		// set up two BlastResults, a good one that should pass filtering and a dummy that should fail
 		// this filter is easy to test as it elimnates pdbs belonging to an outlier list in /info/outlier_list
 		// to test get one outlier pdb per region and one good pdb so each region will have 7 passes and a fail?
+        // also, include one PDB ID not in the list, to test if filter ignores these (as it should)
 		utility::vector0<SCS_BlastResultOP> dummy_brs;
 		for (int i=0; i<7; ++i) {
 			SCS_BlastResultOP br(new SCS_BlastResult);
@@ -426,7 +427,10 @@ public:
 		SCS_BlastResultOP good_br(new SCS_BlastResult);
 		good_br->pdb="good";
 
-		// set pdbs
+		SCS_BlastResultOP na_br(new SCS_BlastResult);
+		na_br->pdb="NA";
+
+		// set pdbs; include PDBs not in outlier list
 		dummy_brs[0]->pdb="1hkl"; // h1 outlier
 		dummy_brs[1]->pdb="1dl7"; // h2 outlier, also frh & frl
 		dummy_brs[2]->pdb="1dl7"; // frh outlier, also frl & h2 outlier
@@ -435,6 +439,7 @@ public:
 		dummy_brs[5]->pdb="1nj9"; // l3 outlier
 		dummy_brs[6]->pdb="1dl7"; // frl outlier, also frh & h2 outlier
 		good_br->pdb="1gpo"; // no outliers
+		na_br->pdb="NOTL"; // shouldn't be filtered, not in list
 
 		// store BlastResults in ResultVector;
 		SCS_ResultVector results;
@@ -442,6 +447,7 @@ public:
 			results.push_back(dummy_brs[i]);
 		}
 		results.push_back(good_br);
+		results.push_back(na_br);
 
 		// store ResultVector in SCS_Results
 		SCS_ResultsOP r(new SCS_Results);
@@ -459,13 +465,13 @@ public:
 		scs_filter->apply(as,r);
 
 		// now test, the top result should be "good" whereas "dummy" should have been filtered out (i.e. len(r->x)=0)
-		TS_ASSERT_EQUALS(r->h1.size(),7)
-		TS_ASSERT_EQUALS(r->h2.size(),5)
-		TS_ASSERT_EQUALS(r->frh.size(),5)
-		TS_ASSERT_EQUALS(r->l1.size(),7)
-		TS_ASSERT_EQUALS(r->l2.size(),7)
-		TS_ASSERT_EQUALS(r->l3.size(),7)
-		TS_ASSERT_EQUALS(r->frl.size(),5)
+		TS_ASSERT_EQUALS(r->h1.size(),8)
+		TS_ASSERT_EQUALS(r->h2.size(),6)
+		TS_ASSERT_EQUALS(r->frh.size(),6)
+		TS_ASSERT_EQUALS(r->l1.size(),8)
+		TS_ASSERT_EQUALS(r->l2.size(),8)
+		TS_ASSERT_EQUALS(r->l3.size(),8)
+		TS_ASSERT_EQUALS(r->frl.size(),6)
 
 		// some dummies are ok for other regions, let's see if they remain as well as the good
 		TS_ASSERT_EQUALS(dummy_brs[2]->pdb.compare(r->h1[1]->pdb),0);
@@ -473,6 +479,7 @@ public:
 		TS_ASSERT_EQUALS(dummy_brs[5]->pdb.compare(r->frh[3]->pdb),0);
 		TS_ASSERT_EQUALS(dummy_brs[5]->pdb.compare(r->l1[4]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l2[6]->pdb),0);
+		TS_ASSERT_EQUALS(na_br->pdb.compare(r->l2[7]->pdb),0);
 		TS_ASSERT_EQUALS(dummy_brs[1]->pdb.compare(r->l3[1]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->frl[4]->pdb),0);
 #endif //__ANTIBODY_GRAFTING__
@@ -504,6 +511,9 @@ public:
 		SCS_BlastResultOP good_br(new SCS_BlastResult);
 		good_br->pdb="good";
 
+		SCS_BlastResultOP na_br(new SCS_BlastResult);
+		na_br->pdb="NA";
+
 		// set pdbs
 		dummy_brs[0]->pdb="1a4k"; // h1 outlier
 		dummy_brs[1]->pdb="3skj"; // h2 outlier
@@ -512,6 +522,7 @@ public:
 		dummy_brs[4]->pdb="1ahw"; // l2 & h2 outlier
 		dummy_brs[5]->pdb="1baf"; // l3 outlier
 		good_br->pdb="12e8"; // no outliers
+		na_br->pdb="NOTL"; // should be delete, not in outlier list
 
 		// store BlastResults in ResultVector;
 		SCS_ResultVector results;
@@ -519,6 +530,7 @@ public:
 			results.push_back(dummy_brs[i]);
 		}
 		results.push_back(good_br);
+		results.push_back(na_br);
 
 		// store ResultVector in SCS_Results
 		SCS_ResultsOP r(new SCS_Results);
@@ -534,12 +546,12 @@ public:
 		scs_filter->apply(as,r);
 
 		// now test, the top result should be "good" whereas "dummy" should have been filtered out
-		TS_ASSERT_EQUALS(r->h1.size(),6)
-		TS_ASSERT_EQUALS(r->h2.size(),5)
-		TS_ASSERT_EQUALS(r->h3.size(),6)
-		TS_ASSERT_EQUALS(r->l1.size(),6)
-		TS_ASSERT_EQUALS(r->l2.size(),6)
-		TS_ASSERT_EQUALS(r->l3.size(),6)
+		TS_ASSERT_EQUALS(r->h1.size(),7)
+		TS_ASSERT_EQUALS(r->h2.size(),6)
+		TS_ASSERT_EQUALS(r->h3.size(),7)
+		TS_ASSERT_EQUALS(r->l1.size(),7)
+		TS_ASSERT_EQUALS(r->l2.size(),7)
+		TS_ASSERT_EQUALS(r->l3.size(),7)
 
 		// some dummies are ok for other regions, let's see if they remain as well as the good
 		TS_ASSERT_EQUALS(dummy_brs[1]->pdb.compare(r->h1[0]->pdb),0);
@@ -548,6 +560,7 @@ public:
 		TS_ASSERT_EQUALS(dummy_brs[0]->pdb.compare(r->l1[0]->pdb),0);
 		TS_ASSERT_EQUALS(dummy_brs[5]->pdb.compare(r->l2[4]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l3[5]->pdb),0);
+		TS_ASSERT_EQUALS(na_br->pdb.compare(r->l3[6]->pdb),0);
 #endif //__ANTIBODY_GRAFTING__
 	}
 
