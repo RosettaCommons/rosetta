@@ -121,11 +121,12 @@ Etable::Etable(
 	long_range_damping_length_ ( 0.5 ),
 	epsilon_                   ( 0.0001 ),
 	safe_max_dis2_             ( max_dis2_ - epsilon_ ),
-	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?   // command-line option -- bad form; see note above.
+	hydrogen_interaction_cutoff2_( options.fa_hatr ?
 	std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
 	std::pow(5.0,2) ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 ),
+	fa_hatr_( options.fa_hatr ),
 	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) // command-line option -- bad form; see note above.
 {
 	dimension_etable_arrays();
@@ -213,16 +214,12 @@ Etable::calculate_nblist_distance_thresholds(
 	EtableOptions const & options
 )
 {
-	max_heavy_hydrogen_cutoff_    = option[ score::fa_Hatr ] ? max_dis_ : max_non_hydrogen_lj_radius_ + max_hydrogen_lj_radius_;
-	max_hydrogen_hydrogen_cutoff_ = option[ score::fa_Hatr ] ? max_dis_ : 2 * max_hydrogen_lj_radius_;
-	nblist_dis2_cutoff_XX_        = (options.max_dis+1.5) * (options.max_dis+1.5);
-	nblist_dis2_cutoff_XH_        = (max_heavy_hydrogen_cutoff_+0.5) * (max_heavy_hydrogen_cutoff_+0.5);
-	nblist_dis2_cutoff_HH_        = (max_hydrogen_lj_radius_+0.5) * (max_hydrogen_lj_radius_+0.5);
-
-	//std::cout << "Etable setup: " << max_non_hydrogen_lj_radius_ << " "
-	//<< max_hydrogen_lj_radius_ << " " << max_heavy_hydrogen_cutoff_ << " "
-	//<< max_hydrogen_hydrogen_cutoff_ << std::endl;
-
+	Real const max_tolerated_movement = 0.75;
+	max_heavy_hydrogen_cutoff_    = fa_hatr_ ? max_dis_ : max_non_hydrogen_lj_radius_ + max_hydrogen_lj_radius_;
+	max_hydrogen_hydrogen_cutoff_ = fa_hatr_ ? max_dis_ : 2 * max_hydrogen_lj_radius_;
+	nblist_dis2_cutoff_XX_        = std::pow(options.max_dis + 2*max_tolerated_movement, 2 );
+	nblist_dis2_cutoff_XH_        = std::pow(max_heavy_hydrogen_cutoff_ + 2*max_tolerated_movement, 2 );
+	nblist_dis2_cutoff_HH_        = std::pow(max_hydrogen_lj_radius_+ 2*max_tolerated_movement, 2 );
 }
 
 void
@@ -282,7 +279,7 @@ Etable::calculate_hydrogen_atom_reach()
 		2 * max_hydrogen_lj_radius_ + 2 * MAX_H_HEAVY_DISTANCE,
 		max_hydrogen_lj_radius_ + MAX_H_HEAVY_DISTANCE + max_non_hydrogen_lj_radius_ );
 
-	hydrogen_interaction_cutoff2_ = basic::options::option[ score::fa_Hatr ] ?
+	hydrogen_interaction_cutoff2_ = fa_hatr_ ?
 		std::pow( 2 * MAX_H_HEAVY_DISTANCE + max_dis_, 2 ) : max_lj_rep_for_h * max_lj_rep_for_h;
 }
 
@@ -475,7 +472,7 @@ Etable::make_pairenergy_table()
 					fasol1, fasol2, dfasol, dfasol1 );
 			}
 
-			if ( !option[ score::fa_Hatr ] ) {
+			if ( ! fa_hatr_ ) {
 				zero_hydrogen_and_water_ljatr_one_pair(
 					atype1, atype2,
 					ljrep, ljatr, dljatr,

@@ -844,34 +844,28 @@ BaseEtableEnergy< Derived >::setup_for_minimizing(
 		// setup the atom-atom nblist
 		NeighborListOP nblist;
 
-		if ( pose.energies().use_nblist_auto_update() ) {
-			Real const tolerated_narrow_nblist_motion = option[ run::nblist_autoupdate_narrow ];
-			Real XX, HH, XH;
+		Real XX2(0), HH2(0), XH2(0);
 
-			if ( option[ score::fa_Hatr ]() ) {
-				HH = XH = XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
+		Real const tolerated_narrow_nblist_motion = option[ run::nblist_autoupdate_narrow ];
+		if ( option[ run::nblist_autoupdate_narrow ].user() ) {
+			if ( etable_.fa_hatr() ) {
+				HH2 = XH2 = XX2 = std::pow( etable_.max_dis() + 2 * tolerated_narrow_nblist_motion, 2 );
 			} else {
-				XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
-				XH = etable_.max_non_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-					+ 2 * tolerated_narrow_nblist_motion;
-				HH = etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-					+ 2 * tolerated_narrow_nblist_motion;
+				XX2 = std::pow( etable_.max_dis() + 2 * tolerated_narrow_nblist_motion, 2 );
+				XH2 = std::pow( etable_.max_non_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
+					+ 2 * tolerated_narrow_nblist_motion, 2 );
+				HH2 = std::pow( etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
+					+ 2 * tolerated_narrow_nblist_motion, 2 );
 			}
-
-			nblist = NeighborListOP( new NeighborList(
-				min_map.domain_map(),
-				XX*XX,
-				XH*XH,
-				HH*HH) );
-			nblist->set_auto_update( tolerated_narrow_nblist_motion );
 		} else {
-			/// Use the default parameters
-			nblist = NeighborListOP( new NeighborList(
-				min_map.domain_map(),
-				etable_.nblist_dis2_cutoff_XX(),
-				etable_.nblist_dis2_cutoff_XH(),
-				etable_.nblist_dis2_cutoff_HH()) );
+			XX2 = etable_.nblist_dis2_cutoff_XX();
+			XH2 = etable_.nblist_dis2_cutoff_XH();
+			HH2 = etable_.nblist_dis2_cutoff_HH();
 		}
+
+		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX2, XH2, HH2 ) );
+		nblist->set_auto_update( tolerated_narrow_nblist_motion );
+
 		// this partially becomes the EtableEnergy classes's responsibility
 		nblist->setup( pose, sfxn, static_cast<Derived const&> (*this));
 
@@ -1272,17 +1266,11 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue_pair(
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( min_pair_data_type() ) ));
 	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
 
-	/// STOLEN CODE!
-	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
-	Real const XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
-	Real const XH = etable_.max_non_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-		+ 2 * tolerated_narrow_nblist_motion;
-	Real const HH = etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-		+ 2 * tolerated_narrow_nblist_motion;
+	Real const XX2 = etable_.nblist_dis2_cutoff_XX();
+	Real const XH2 = etable_.nblist_dis2_cutoff_XH();
+	Real const HH2 = etable_.nblist_dis2_cutoff_HH();
 
-	nblist->initialize_from_residues(
-		XX*XX, XH*XH, HH*HH,
-		rsd1, rsd2, count_pair );
+	nblist->initialize_from_residues( XX2, XH2, HH2, rsd1, rsd2, count_pair );
 
 	pair_data.set_data( min_pair_data_type(), nblist );
 
@@ -1776,17 +1764,13 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue(
 		ResidueNblistDataOP nbdata( utility::pointer::static_pointer_cast< core::scoring::ResidueNblistData > ( min_data.get_data( min_single_data_type() ) ));
 		if ( ! nbdata ) nbdata = ResidueNblistDataOP( new ResidueNblistData );
 
-		/// STOLEN CODE!
-		Real const tolerated_narrow_nblist_motion = option[ run::nblist_autoupdate_narrow ];
-		Real const XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
-		Real const XH = etable_.max_non_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-			+ 2 * tolerated_narrow_nblist_motion;
-		Real const HH = etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-			+ 2 * tolerated_narrow_nblist_motion;
+		Real const XX2 = etable_.nblist_dis2_cutoff_XX();
+		Real const XH2 = etable_.nblist_dis2_cutoff_XH();
+		Real const HH2 = etable_.nblist_dis2_cutoff_HH();
+
 
 		count_pair::CountPairFunctionCOP count_pair = get_intrares_countpair( rsd, pose, sfxn );
-		nbdata->initialize(
-			rsd, count_pair, XX*XX, XH*XH, HH*HH );
+		nbdata->initialize( rsd, count_pair, XX2, XH2, HH2 );
 		min_data.set_data( min_single_data_type(), nbdata );
 
 	}

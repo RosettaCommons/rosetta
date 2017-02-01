@@ -61,6 +61,12 @@ public:
 		TS_ASSERT_DIFFERS( rbw3.calculator_id(), rbw2.calculator_id() );
 	}
 
+	// Note: If the default score function, or FastRelax behavior should change, the
+	// hard coded constants (expected_rotamer_scores, rbw2_pnear) are written out to
+	// tracers when you run this test. In the case of the expected rotamer scores,
+	// look for the "RotamerBoltzCalculator: [Initial input pose/This rotamer] has score XXX"
+	// lines; for the rbw2_pnear value, it is output right before the TS_ASSERT_EQUALS
+	// statement.
 	void test_rbw2_vs_rbw() {
 		using namespace protocols::simple_filters;
 		using namespace protocols::toolbox;
@@ -81,10 +87,10 @@ public:
 		core::Real const rbw1_score = rbw.compute( trpcage );
 
 		utility::vector1< core::Real > const expected_rotamer_scores = boost::assign::list_of
-			(-34.1613) (-31.5021) (-26.4186) (-34.1682);
+			(-33.243) (-30.6091) (-25.9444) (-33.2505);
 
 		// initialize scorermspoints object with initial pose score
-		ScoreRmsPoints score_rms( ScoreRmsPoint( -34.1682, 0.0 ) );
+		ScoreRmsPoints score_rms( ScoreRmsPoint( -33.2471, 0.0 ) );
 		// add test scores
 		for ( utility::vector1< core::Real >::const_iterator rs=expected_rotamer_scores.begin(); rs!=expected_rotamer_scores.end(); ++rs ) {
 			score_rms.push_back( ScoreRmsPoint( *rs, 0.0 ) );
@@ -110,7 +116,7 @@ public:
 		rbw2.set_energy_landscape_evaluator( pnear );
 		core::Real const rbw2_pnear = rbw2.report_sm( trpcage );
 		TR << "RBW2 PNear: " << rbw2_pnear << std::endl;
-		TS_ASSERT_DELTA( rbw2_pnear, -0.9799846274, 1e-3 );
+		TS_ASSERT_DELTA( rbw2_pnear, -0.978735, 1e-3 );
 	}
 
 };

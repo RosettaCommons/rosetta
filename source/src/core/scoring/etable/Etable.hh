@@ -364,6 +364,9 @@ public:
 		return atom_set_;
 	}
 
+	/// @brief Do hydrogens provide attractive forces or do they only repell?
+	bool fa_hatr() const { return fa_hatr_; }
+
 	Real
 	hydrogen_interaction_cutoff2() const
 	{
@@ -385,7 +388,7 @@ public:
 		return max_hydrogen_hydrogen_cutoff_;
 	}
 
-	/// @brief The distance cutoff beyond which any pair of heavy-atoms is
+	/// @brief The square distance cutoff beyond which any pair of heavy-atoms is
 	/// guaranteed to have an interaction energy of zero.  This function is
 	/// used by the NeighborList
 	virtual
@@ -395,7 +398,7 @@ public:
 		return nblist_dis2_cutoff_XX_;
 	}
 
-	/// @brief The distance cutoff beyond which a hydrogen/heavy-atom pair is
+	/// @brief The square distance cutoff beyond which a hydrogen/heavy-atom pair is
 	/// guaranteed to have an interaction energy of zero.  This function is used
 	/// by the NeighborList
 	virtual
@@ -405,7 +408,7 @@ public:
 		return nblist_dis2_cutoff_XH_;
 	}
 
-	/// @brief The distance cutoff beyond which any hydrogen/hydrogen pair is guaranteed
+	/// @brief The square distance cutoff beyond which any hydrogen/hydrogen pair is guaranteed
 	/// to have an interaction energy of zero.  This function is used by the NeighborList
 	virtual
 	Real
@@ -737,6 +740,7 @@ private:
 	Real nblist_dis2_cutoff_HH_; // for use by the old-style neighborlist
 	Real max_non_hydrogen_lj_radius_;
 	Real max_hydrogen_lj_radius_;
+	bool fa_hatr_; // do hydrogens provide attractive forces, or are they for repulsion only?
 
 	// these three derived from other data
 	Real lj_switch_sigma2dis_;

@@ -61,7 +61,8 @@ EtableOptions::EtableOptions( utility::options::OptionCollection const & options
 	proline_N_is_lk_nonpolar( false),
 	lj_hbond_OH_donor_dis(3.0),
 	lj_hbond_hdis(1.95),
-	enlarge_h_lj_wdepth(false)
+	enlarge_h_lj_wdepth(false),
+	fa_hatr(false)
 {
 	initialize_from_options( options );
 }
@@ -91,6 +92,7 @@ EtableOptions::operator=( EtableOptions const & src )
 		lj_hbond_OH_donor_dis = src.lj_hbond_OH_donor_dis;
 		lj_hbond_hdis = src.lj_hbond_hdis;
 		enlarge_h_lj_wdepth = src.enlarge_h_lj_wdepth;
+		fa_hatr = src.fa_hatr;
 	}
 	return *this;
 }
@@ -128,7 +130,10 @@ operator < ( EtableOptions const & a, EtableOptions const & b )
 	if      ( a.lj_hbond_hdis < b.lj_hbond_hdis )  { return true;  }
 	else if ( a.lj_hbond_hdis != b.lj_hbond_hdis ) { return false; }
 
-	if      ( a.enlarge_h_lj_wdepth < b.enlarge_h_lj_wdepth ) { return true; }
+	if      ( a.enlarge_h_lj_wdepth < b.enlarge_h_lj_wdepth )  { return true; }
+	else if ( a.enlarge_h_lj_wdepth != b.enlarge_h_lj_wdepth ) { return false; }
+
+	if      ( a.fa_hatr < b.fa_hatr ) { return true; }
 	else return false;
 }
 
@@ -146,7 +151,8 @@ operator==( EtableOptions const & a, EtableOptions const & b )
 		( a.proline_N_is_lk_nonpolar == b.proline_N_is_lk_nonpolar) &&
 		( a.lj_hbond_OH_donor_dis == b.lj_hbond_OH_donor_dis ) &&
 		( a.lj_hbond_hdis == b.lj_hbond_hdis ) &&
-		( a.enlarge_h_lj_wdepth == b.enlarge_h_lj_wdepth ));
+		( a.enlarge_h_lj_wdepth == b.enlarge_h_lj_wdepth ) &&
+		( a.fa_hatr == b.fa_hatr ));
 }
 
 
@@ -170,6 +176,7 @@ EtableOptions::show( std::ostream & out ) const
 	out <<"EtableOptions::lj_hbond_OH_donor_dis: " << lj_hbond_OH_donor_dis << std::endl;
 	out <<"EtableOptions::lj_hbond_hdis: " << lj_hbond_hdis << std::endl;
 	out <<"EtableOptions::enlarge_h_lj_wdepth: " << enlarge_h_lj_wdepth << std::endl;
+	out <<"EtableOptions::fa_hatr: " << ( fa_hatr ? "true" : "false" ) << std::endl;
 }
 
 void
@@ -216,7 +223,7 @@ EtableOptions::initialize_from_options( utility::options::OptionCollection const
 
 	lj_hbond_OH_donor_dis = options[ corrections::score::lj_hbond_OH_donor_dis ];
 	lj_hbond_hdis = options[ corrections::score::lj_hbond_hdis ];
-
+	fa_hatr = options[ score::fa_Hatr ];
 }
 
 void
@@ -229,7 +236,8 @@ EtableOptions::list_options_read( utility::options::OptionKeyList & options_read
 		+ score::analytic_etable_evaluation
 		+ score::fa_max_dis
 		+ score::no_smooth_etables
-		+ score::no_lk_polar_desolvation;
+		+ score::no_lk_polar_desolvation
+		+ score::fa_Hatr;
 }
 
 } // etable
@@ -255,6 +263,7 @@ core::scoring::etable::EtableOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( lj_hbond_OH_donor_dis ) ); // Real
 	arc( CEREAL_NVP( lj_hbond_hdis ) ); // Real
 	arc( CEREAL_NVP( enlarge_h_lj_wdepth ) ); // _Bool
+	arc( CEREAL_NVP( fa_hatr ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -272,6 +281,7 @@ core::scoring::etable::EtableOptions::load( Archive & arc ) {
 	arc( lj_hbond_OH_donor_dis ); // Real
 	arc( lj_hbond_hdis ); // Real
 	arc( enlarge_h_lj_wdepth ); // _Bool
+	arc( fa_hatr ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::EtableOptions );

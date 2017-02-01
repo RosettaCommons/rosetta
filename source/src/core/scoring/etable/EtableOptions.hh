@@ -93,6 +93,7 @@ public:
 	Real lj_hbond_OH_donor_dis;
 	Real lj_hbond_hdis;
 	bool enlarge_h_lj_wdepth;
+	bool fa_hatr;
 
 private:
 
