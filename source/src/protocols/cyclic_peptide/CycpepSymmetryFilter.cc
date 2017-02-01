@@ -280,7 +280,7 @@ CycpepSymmetryFilter::mainchain_torsions_differ(
 		core::Real const val2( nonnegative_principal_angle_degrees ( flip_multiplier * pose.residue(res2).mainchain_torsions()[i] ) );
 
 		core::Real diff( std::abs(val1-val2) );
-		if ( diff > 180.0 ) diff -= 180.0;
+		if ( diff > 180.0 ) diff = 360.0 - diff;
 
 		if ( diff > angle_threshold() ) return true;
 	}

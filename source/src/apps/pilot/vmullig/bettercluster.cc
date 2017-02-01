@@ -35,6 +35,8 @@
 		--Added an option to skip PCA analysis.
 	--Modified 21 Sept 2015:
 	    --Added an option to dump out only the first N clusters.
+	--Modified 30 Jan 2017:
+	    --Added an option to filter out structures that aren't symmetric.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -94,6 +96,8 @@
 #include <core/io/silent/SilentStruct.hh>
 
 #include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
+#include <protocols/cyclic_peptide/DeclareBond.hh>
 
 #define PI 3.1415926535897932384626433832795
 #define CNCa_ANGLE 121.7
@@ -116,6 +120,9 @@ OPT_KEY( IntegerVector, v_ignorechain) //Chains to ignore in the RMSD calculatio
 OPT_KEY( Integer, v_limit_structures_per_cluster) //Structures to output per cluster.
 OPT_KEY( Integer, v_limit_clusters) //Max number of clusters to output
 OPT_KEY( Boolean, v_cyclic) //Is there a peptide bond between the N- and C-termini?  False by default.
+OPT_KEY( Integer, v_cyclic_symmetry) //If provided, structures that don't have the desire symmetry are filtered out.  Set to 2 for c2 or c2/m symmetry, 3 for c3 symmetry, 4 for c4 or c4/m symmetry, etc.  Unused if not specified.  Can only be used with the v_cyclic flag.
+OPT_KEY( Boolean, v_cyclic_symmetry_mirroring) //If true, then cN/m symmetry is used instead of cN.  Unused if not specified.  Can only be used with the v_cyclic and v_cyclic_symmetry flags.
+OPT_KEY( Real, v_cyclic_symmetry_threshold ) //Angle threshold for determining whether a cyclic peptide is symmetric.
 OPT_KEY( Boolean, v_cluster_cyclic_permutations) //Should cyclic permutations be clustered together?  False by default.
 OPT_KEY( Integer, v_cyclic_permutation_offset) //1 by default, meaning that every cyclic permutation is clustered if v_cluster_cyclic_permutations is true.  Values X > 1 mean that cyclic permutations shifted by X residues will be clustered.
 OPT_KEY( Boolean, v_mutate_to_ala) //Mutate the output structure to a chain of alanines?
@@ -143,6 +150,9 @@ void register_options() {
 	NEW_OPT ( v_limit_structures_per_cluster, "Maximum number of structures to output per cluster.  Default no limit (0).", 0);
 	NEW_OPT ( v_limit_clusters, "Maximum number of clusters to output.  Default no limit (0).", 0);
 	NEW_OPT ( v_cyclic, "If true, constraints are added to make a peptide bond between the N- and C-termini.  If false (default), the termini are free.  Default false.", false);
+	NEW_OPT ( v_cyclic_symmetry, "If provided, structures that don't have the desire symmetry are filtered out.  Set to 2 for c2 or c2/m symmetry, 3 for c3 symmetry, 4 for c4 or c4/m symmetry, etc.  Unused if not specified.  Can only be used with the v_cyclic flag.", 0);
+	NEW_OPT ( v_cyclic_symmetry_mirroring, "If true, then cN/m symmetry is used instead of cN.  Unused if not specified.  Can only be used with the v_cyclic and v_cyclic_symmetry flags.", false);
+	NEW_OPT ( v_cyclic_symmetry_threshold, "The angle threshold, in degrees, for determining whether a cyclic peptide is symmetric.  Can only be used with the v_cyclic and v_cyclic_symmetry flags.  Defaults to 10.0 degrees.", 10.0);
 	NEW_OPT ( v_cluster_cyclic_permutations, "If true, all cyclic permutations are tried when comparing two structures for clustering.  Requires \"-v_cyclic true\".  Default false.", false);
 	NEW_OPT ( v_cyclic_permutation_offset, "1 by default, meaning that every cyclic permutation is clustered if v_cluster_cyclic_permutations is true.  Values X > 1 mean that cyclic permutations shifted by X residues will be clustered.", 1);
 	NEW_OPT ( v_mutate_to_ala, "If true, the input structures will be converted to a chain of alanines (L- or D-) before scoring.  Default false.", false);
@@ -1360,7 +1370,10 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		}
 	}
 
-	mypose.conformation().declare_chemical_bond(1, "N", mypose.size(), "C"); //Declare a chemical bond between the N and C termini.
+	//Declare a chemical bond connecting the termini:
+	protocols::cyclic_peptide::DeclareBond decbond;
+	decbond.set( 1, "N", mypose.size(), "C", false );
+	decbond.apply(mypose);
 
 	{//Peptide bond length constraint:
 		FuncOP harmfunc1 ( new HarmonicFunc( 1.3288, 0.02) );
@@ -1536,6 +1549,11 @@ int main( int argc, char * argv [] ) {
 		devel::init(argc, argv);
 		core::scoring::ScoreFunctionOP sfxn;
 		sfxn = core::scoring::get_score_function();
+		
+		core::Size symm_repeats(0);
+		bool mirror_symm(false);
+		core::Real symm_threshold( 10.0 );
+		
 		if(option[v_cst_file].user()) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
 			if(sfxn->get_weight(atom_pair_constraint) < 1.0e-6) sfxn->set_weight(atom_pair_constraint, 1.0);
 			if(sfxn->get_weight(angle_constraint) < 1.0e-6) sfxn->set_weight(angle_constraint, 1.0);
@@ -1627,6 +1645,23 @@ int main( int argc, char * argv [] ) {
 			sfxn->set_weight(dihedral_constraint, 1.0);
 			sfxn->set_weight(angle_constraint, 1.0);
 		}
+		
+		//Checks related to symmetry:
+		if(option[v_cyclic_symmetry].user()) {
+			runtime_assert_string_msg( option[v_cyclic](), "Error!  The \"-v_cyclic_symmetry\" flag requires \"-v_cyclic true\"." );
+			symm_repeats = option[v_cyclic_symmetry]();
+			runtime_assert_string_msg( symm_repeats > 1, "Error!  The \"-v_cyclic_symmetry\" flag requires a setting greater than 1." );
+		}
+		if(option[v_cyclic_symmetry_mirroring].user()) {
+			runtime_assert_string_msg( option[v_cyclic](), "Error!  The \"-v_cyclic_symmetry_mirroring\" flag requires \"-v_cyclic true\"." );
+			runtime_assert_string_msg( option[v_cyclic_symmetry].user() && symm_repeats > 1, "Error!  The \"-v_cyclic_symmetry_mirroring\" flag requires that the \"-v_cyclic_symmetry\" flag is also used." );
+			mirror_symm = option[v_cyclic_symmetry_mirroring]();
+		}
+		if(option[v_cyclic_symmetry_threshold].user()) {
+			runtime_assert_string_msg( option[v_cyclic](), "Error!  The \"-v_cyclic_symmetry_threshold\" flag requires \"-v_cyclic true\"." );
+			runtime_assert_string_msg( option[v_cyclic_symmetry].user() && symm_repeats > 1, "Error!  The \"-v_cyclic_symmetry_threshold\" flag requires that the \"-v_cyclic_symmetry\" flag is also used." );
+			symm_threshold = option[v_cyclic_symmetry_threshold]();
+		}
 
 		//Checks releated to v_cluster_cyclic_permutations:
 		if(option[v_cluster_cyclic_permutations]()) {
@@ -1668,17 +1703,51 @@ int main( int argc, char * argv [] ) {
 		printf("Scoring energies of all input structures.\n"); fflush(stdout);
 		core::pose::Pose firstpose;
 		bool firstpose_hasbeta = false; //Are there beta-amino acids in the first input pose?
+		
+		//Symmetry filter (used only if the v_cyclic_symmetry flag is used):
+		protocols::cyclic_peptide::CycpepSymmetryFilter symmfilter;
+		if( symm_repeats > 1 ) {
+			symmfilter.set_symm_repeats( symm_repeats );
+			symmfilter.set_mirror_symm( mirror_symm );
+			symmfilter.set_angle_threshold( symm_threshold );
+		}
 
 		while( input.has_another_pose() ) { //For every input structure
 			count++;
 
+			core::pose::Pose pose; //Create the pose
+			input.fill_pose( pose ); //Import it
+
+			if(option[v_cyclic]()) {
+				addcyclicconstraints(pose); //If this is a cyclic peptide, add constraints for the terminal peptide bond:
+				if(option[v_cluster_cyclic_permutations]() && clustermode==1 && option[v_CB]()) {
+					for(core::Size ir=1; ir<=pose.size(); ir++) {
+						if(!pose.residue(ir).has("CB")) { //Error if we don't have the same set of atoms on which to cluster in each residue.
+							printf("Error!  When using Cartesian clustering and clustering cyclic permutations, all residues in the input structures must have the same number of atoms to be used in the alignment.  If beta carbons are included, the sequence cannot contain glycine.\nCrashing.\n");
+							fflush(stdout); exit(1);
+						}
+					}
+				}
+			}
+
+			//Filter by symmetry:			
+			if( symm_repeats > 1 ) {
+				if( !symmfilter.apply( pose ) ) {
+					if( mirror_symm ) {
+						printf( "\nStructure is not c%lu/m symmetric.  Skipping.\n", symm_repeats );
+					} else {
+						printf( "\nStructure is not c%lu symmetric.  Skipping.\n", symm_repeats );
+					}
+					count--;
+					continue;
+				}
+			}
+
 			if (count % 100 == 0) {printf("."); fflush(stdout); }
+
 			cluster_assignments.push_back(0); //Initially, every structure is assigned to cluster 0 (unassigned).
 			if(option[v_cluster_cyclic_permutations]()) cluster_offsets.push_back(0); //Initially, we assume that each structure may be aligned without any cyclic permutation, so these are all zero.
 			if(option[v_homooligomer_swap]()) cluster_oligomer_permutations.push_back(1); //Initially, we assume the first permutation of homooligomer subunits for each structure.
-
-			core::pose::Pose pose; //Create the pose
-			input.fill_pose( pose ); //Import it
 
 			if(pose.num_jump() > 0 && clusterby == "bb_dihedral") {
 				printf("Error!  Backbone dihedral clustering is not currently compatible with multi-chain PDB files.  Crashing.\n"); //TODO -- make this compatible!
@@ -1691,18 +1760,6 @@ int main( int argc, char * argv [] ) {
 					if (pose.chain_sequence(i) != chain1seq) {
 						printf("Error!  When using the v_homooligomer_swap option, the lengths and sequences of all chains in the input structures must be identical.  Crashing.\n");
 						fflush(stdout); exit(1);
-					}
-				}
-			}
-
-			if(option[v_cyclic]()) {
-				addcyclicconstraints(pose); //If this is a cyclic peptide, add constraints for the terminal peptide bond:
-				if(option[v_cluster_cyclic_permutations]() && clustermode==1 && option[v_CB]()) {
-					for(core::Size ir=1; ir<=pose.size(); ir++) {
-						if(!pose.residue(ir).has("CB")) { //Error if we don't have the same set of atoms on which to cluster in each residue.
-							printf("Error!  When using Cartesian clustering and clustering cyclic permutations, all residues in the input structures must have the same number of atoms to be used in the alignment.  If beta carbons are included, the sequence cannot contain glycine.\nCrashing.\n");
-							fflush(stdout); exit(1);
-						}
 					}
 				}
 			}

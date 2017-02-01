@@ -994,6 +994,33 @@ SimpleCycpepPredictApplication::run() const {
 			do_final_fastrelax( pose, sfxn_default_cst, 1, false, false, false ); //Do one more round of regular FastRelax if we've done any Cartesian, just to make sure we're in a pro_close minimum.
 		}
 
+		//If we're filtering by symmetry, do so here a final time:
+		if ( required_symmetry_repeats_ > 1 ) {
+			protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter3( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+			symmfilter3->set_symm_repeats( required_symmetry_repeats_ );
+			symmfilter3->set_mirror_symm( required_symmetry_mirroring_ );
+			symmfilter3->set_angle_threshold( required_symmetry_angle_threshold_ );
+			core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
+			std::stringstream pep_indices("");
+			pep_indices << "1-" << sequence_length();
+			iselector->set_index( pep_indices.str() );
+			symmfilter3->set_selector( iselector );
+			if ( !symmfilter3->apply( *pose ) ) {
+				TR << "Final symmetry filter passes.  This peptide has c" << required_symmetry_repeats_ << (required_symmetry_mirroring_ ? "/m " : " " ) << "symmetry." << std::endl;
+			} else {
+				TR << "Final symmetry filter failed.  This peptide lost c" << required_symmetry_repeats_ << (required_symmetry_mirroring_ ? "/m " : " " ) << "symmetry during the final relaxation." << std::endl;
+				if ( irepeat < irepeat_max ) {
+					TR << "Continuing to next job." << std::endl;
+					checkpoint( irepeat, success_count ) ;
+#ifdef BOINC
+					//Increment total jobs and check whether it's time to quit.
+					if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+#endif
+				}
+				continue;
+			}
+		}
+
 		//pose->dump_pdb( "TEMP.pdb" ); //DELETE ME!!!
 
 		//Undo the cyclic permutation in anticipation of re-aligning to the native:
