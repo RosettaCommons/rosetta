@@ -139,7 +139,7 @@ void LoopProtocol::parse_my_tag( // {{{1
 		smatch match;
 
 		if ( regex_match(cycles, match, regex) ) {
-			temp_cycles_ = boost::lexical_cast<Size>(match[1]);
+			temp_cycles_ = boost::lexical_cast<Size>(std::string(match[1]));
 			scale_temp_cycles_ = (match[2] == "x");
 		} else {
 			stringstream message;

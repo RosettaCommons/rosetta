@@ -65,13 +65,13 @@ struct motif2scaffold_data
 	numeric::xyzMatrix< core::Real > RotM;
 	numeric::xyzVector< core::Real > TvecA;
 	numeric::xyzVector< core::Real > TvecB;
-	core::Real RMSD;
-	core::Real motif_fragments_RMSD;
-	core::Size clash_score;
+	core::Real RMSD = 0;
+	core::Real motif_fragments_RMSD = 0;
+	core::Size clash_score = 0;
 	utility::vector1 < utility::vector1< core::Size > > vvr_hotspots;
-	bool b_allow_independent_alignment_per_fragment;
-	bool b_full_motif_bb_alignment;
-	bool b_graft_only_hotspots_by_sidechain_replacement;
+	bool b_allow_independent_alignment_per_fragment = false;
+	bool b_full_motif_bb_alignment = false;
+	bool b_graft_only_hotspots_by_sidechain_replacement = false;
 };
 
 //Function used to sort the motif2scaffold_indexes by > of the scaffold indexes

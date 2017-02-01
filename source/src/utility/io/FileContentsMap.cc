@@ -70,8 +70,9 @@ void FileContentsMap::increment_nread_limit( std::string const & fname )
 	if ( iter == read_limit_.end() ) {
 		read_limit_[ fname ] = 1;
 		read_counts_[ fname ] = 0;
+	} else {
+		++(iter->second);
 	}
-	++(iter->second);
 }
 
 platform::Size
