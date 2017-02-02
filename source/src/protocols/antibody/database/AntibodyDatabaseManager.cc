@@ -393,7 +393,8 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 
 		cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
-		select_statement.bind(1, ab_info_->get_CDR_name(cdr));
+		std::string const & CDR_name( ab_info_->get_CDR_name(cdr) ); // To extend lifetime
+		select_statement.bind(1, CDR_name);
 
 		select_statement.bind(2, options->min_length()); //This SHOULD get compared to int.
 		select_statement.bind(3, options->max_length());
@@ -655,7 +656,8 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 		//TR << "Reading from: " << db_path_ << std::endl;
 
 		cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
-		select_statement.bind(1, ab_info_->get_cluster_name(cluster));
+		std::string cluster_name( ab_info_->get_cluster_name(cluster) ); // Needed to prolong lifetime of string
+		select_statement.bind(1, cluster_name);
 		cppdb::result prob_result(basic::database::safely_read_from_database(select_statement));
 
 
@@ -816,13 +818,15 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 
 
 	cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
+	std::string const & CDR_name( ab_info_->get_CDR_name(cdr) ); // Need to prolog lifetime of string until results are done.
+	std::string const & cluster_name( ab_info_->get_cluster_name(cluster) );
 	select_statement.bind(1, "loopKeyNotInPaper");
-	select_statement.bind(2, ab_info_->get_CDR_name(cdr));
+	select_statement.bind(2, CDR_name);
 
 	if ( load_on_length ) {
 		select_statement.bind(3, length);
 	} else {
-		select_statement.bind(3, ab_info_->get_cluster_name(cluster));
+		select_statement.bind(3, cluster_name);
 	}
 
 
