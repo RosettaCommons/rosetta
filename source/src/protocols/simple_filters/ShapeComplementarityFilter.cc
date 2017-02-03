@@ -511,7 +511,7 @@ void ShapeComplementarityFilter::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute( "residues1" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
 		+ XMLSchemaAttribute( "residues2" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
 		+ XMLSchemaAttribute( "residue_selector1" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." )
-		+ XMLSchemaAttribute( "residues_selector2" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." ) ;
+		+ XMLSchemaAttribute( "residue_selector2" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." ) ;
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates the Lawrence and Coleman shape complementarity using a port of the original Fortran code from CCP4's sc. Symmetry aware. Can be calculated across a jump (default behavior) or the two surfaces can be specified by explicitly providing lists of the residues making up each surface.", attlist );
 }
