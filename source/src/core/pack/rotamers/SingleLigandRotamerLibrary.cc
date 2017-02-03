@@ -152,6 +152,11 @@ SingleLigandRotamerLibrary::init_from_file(
 	TR << "Read in " << atom_positions_.size() << " rotamers from " << filename << " !" << std::endl;
 	data.close();
 
+	// Sanity check, to make sure that we're not trying to load a bum file.
+	if ( atom_positions_.size() == 0 ) {
+		utility_exit_with_message("PDB Rotamers file '" + filename + "' does not contain any usable rotamers!.");
+	}
+
 	// Breaking the ligand into rigid fragments that would supply (putative) pharamacophores
 	// to superimpose on was a nice idea, but it breaks the packer assumption that nbr_atom doesn't move.
 
@@ -311,6 +316,11 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	bool do_expand_proton_chi = ( concrete_residue->n_proton_chi() != 0 );
 	if ( basic::options::option[ basic::options::OptionKeys::packing::ignore_ligand_chi]() == true ) {
 		do_expand_proton_chi = false;
+	}
+
+	//Sanity check to catch the divide by zero case
+	if ( base_rotamers.size() == 0 ) {
+		utility_exit_with_message("ERROR: Rotamer library for '" + concrete_residue->name() + "' should contain rotamers, but does not!");
 	}
 
 	// The maximum number of proton chis expansions per base rotamer
