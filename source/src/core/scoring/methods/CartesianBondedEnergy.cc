@@ -156,6 +156,11 @@ static const Real K_TORSION_IMPROPER=40.0;
 
 IdealParametersDatabaseOP CartesianBondedEnergy::db_=NULL;
 
+#if defined MULTI_THREADED
+utility::thread::ReadWriteMutex CartesianBondedEnergy::params_db_mutex_;
+utility::thread::ReadWriteMutex CartesianBondedEnergy::restype_db_mutex_;
+#endif
+
 
 //////////////////////
 /// EnergyMethod Creator
@@ -359,8 +364,6 @@ IdealParametersDatabase::init(
 	bbdep_bond_params_ = basic::options::option[ basic::options::OptionKeys::corrections::score::bbdep_bond_params ]();
 	bbdep_bond_devs_ = basic::options::option[ basic::options::OptionKeys::corrections::score::bbdep_bond_devs ]();
 
-	//std::cout << "READING CARTESIAN BACKBONE-INDEPENDENT DATABASE." << std::endl; //DELETE ME
-
 	bool const symm_gly( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() );
 
 	read_length_database( libpath+"/default-lengths.txt", symm_gly );
@@ -369,8 +372,6 @@ IdealParametersDatabase::init(
 	read_improper_database( libpath+"/default-improper.txt", symm_gly ); // used to be called "torsion" until July 2016
 
 	if ( !bbdep_bond_params_ ) return;
-
-	//std::cout << "READING CARTESIAN BACKBONE-DEPENDENT DATABASE." << std::endl; //DELETE ME
 
 	// read bb-dep parameters
 	//NOTE this must be read after the bbindep params are read
@@ -949,45 +950,6 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 }
 
 
-//////////////////////
-/// Torsion Database
-// lookup ideal intra-res torsion
-// torsion DB is unique is that it never tries to build from ideal
-/*
-CartBondedParametersCOP
-IdealParametersDatabase::lookup_torsion(
-core::chemical::ResidueType const & restype,
-std::string const & atm1_name,
-std::string const & atm2_name,
-std::string const & atm3_name,
-std::string const & atm4_name
-)
-{
-using namespace core::chemical;
-
-// use 'annotated sequence' to id this restype
-std::string restag = get_restag( restype );
-
-// there is no bb-dep torsion database
-// lookup in bb-indep table
-// this can probably be made way faster
-atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
-boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it = torsions_indep_.find( tuple1 );
-if ( b_it != torsions_indep_.end() ) {
-return b_it->second;
-}
-
-atm_name_quad tuple2( "*", atm1_name,atm2_name,atm3_name,atm4_name );
-b_it = torsions_indep_.find( tuple2 );
-if ( b_it != torsions_indep_.end() ) {
-return b_it->second;
-}
-
-// if we don't find this torsion in the table, it's unconstrained
-return NULL;
-}
-*/
-
 CartBondedParametersCOP
 IdealParametersDatabase::lookup_improper(
 	core::chemical::ResidueType const & restype,
@@ -1093,7 +1055,6 @@ IdealParametersDatabase::lookup_length(
 	int atm1idx,
 	int atm2idx
 ) {
-
 	// use 'annotated sequence' to id this restype
 	std::string restag = get_restag( restype );
 	atm_name_pair tuple( restag, atm1_name,atm2_name);
@@ -1378,15 +1339,26 @@ IdealParametersDatabase::parameters_for_restype(
 	bool prepro
 )
 {
-	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > const & resdatamap = prepro ?
-		prepro_restype_data_ : nonprepro_restype_data_;
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > const * resdatamap;
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter;
 
-	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter = resdatamap.find( & restype );
-	if ( iter == resdatamap.end() ) {
-		create_parameters_for_restype( restype, prepro );
-		std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter2 = resdatamap.find( & restype );
-		debug_assert ( iter2 != resdatamap.end() );
-		return *iter2->second;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( CartesianBondedEnergy::restype_db_mutex_ );
+#endif
+
+		resdatamap = prepro ? &prepro_restype_data_ : &nonprepro_restype_data_;
+		iter = resdatamap->find( & restype );
+	}
+
+	if ( iter == resdatamap->end() ) {
+#if defined MULTI_THREADED
+		utility::thread::WriteLockGuard lock( CartesianBondedEnergy::restype_db_mutex_ );
+#endif
+		if ( resdatamap->find( & restype ) == resdatamap->end() ) {
+			create_parameters_for_restype( restype, prepro );
+		}
+		iter = resdatamap->find( & restype );
 	}
 	return *iter->second;
 }
@@ -1694,8 +1666,14 @@ CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const
 	// initialize databases
 	core::Real cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper;
 	options.get_cartesian_bonded_parameters( cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper );
+
 	if ( !db_ ) {
-		db_ = IdealParametersDatabaseOP( new IdealParametersDatabase(cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper) );
+#if defined MULTI_THREADED
+	utility::thread::WriteLockGuard lock( params_db_mutex_ );
+#endif
+		if (!db_) {
+			db_ = IdealParametersDatabaseOP( new IdealParametersDatabase(cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper) );
+		}
 	}
 }
 
@@ -1746,6 +1724,7 @@ CartesianBondedEnergy::setup_for_scoring(
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 		}
+
 		TR << "Creating new peptide-bonded energy container (" << nres << ")" << std::endl;
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( cart_bonded );
@@ -1848,10 +1827,15 @@ CartesianBondedEnergy::eval_intrares_energy(
 		psi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(2));
 	}
 
-	ResidueCartBondedParameters const & rsdparams = db_->parameters_for_restype( rsd.type(), false );
-
+	ResidueCartBondedParameters const * rsdparams;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		rsdparams = &(db_->parameters_for_restype( rsd.type(), false ));
+	}
 	if ( rsd.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_energy(rsd, rsdparams, phi, psi, pose, emap ); // calls singleres improper
+		eval_singleres_energy(rsd, *rsdparams, phi, psi, pose, emap ); // calls singleres improper
 	}
 }
 
@@ -1887,10 +1871,16 @@ CartesianBondedEnergy::eval_intrares_derivatives(
 		psi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(2));
 	}
 
-	ResidueCartBondedParameters const & rsdparams = db_->parameters_for_restype( rsd.type(), false );
+	ResidueCartBondedParameters const * rsdparams;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		rsdparams = &(db_->parameters_for_restype( rsd.type(), false ));
+	}
 
 	if ( rsd.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_derivatives( rsd, rsdparams, phi, psi, weights, atom_derivs );
+		eval_singleres_derivatives( rsd, *rsdparams, phi, psi, weights, atom_derivs );
 	}
 }
 
@@ -1945,8 +1935,15 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
-	ResidueCartBondedParameters const & res1params = db_->parameters_for_restype( rsd1.type(), preproline );
-	ResidueCartBondedParameters const & res2params = db_->parameters_for_restype( rsd2.type(), false );
+
+	ResidueCartBondedParameters const *res1params, *res2params;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		res1params = &(db_->parameters_for_restype( rsd1.type(), preproline ) );
+		res2params = &(db_->parameters_for_restype( rsd2.type(), false ) );
+	}
 
 	// get phi,psis for bb-dep angles/lengths
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
@@ -1961,7 +1958,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 
 	// get subcomponents
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
+		eval_singleres_derivatives( rsd1, *res1params, phi1, psi1, weights, r1_atom_derivs );
 	}
 
 	// If residue1 and 2 are the same (signal used by the PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
@@ -1974,18 +1971,18 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
 	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
 
-	eval_interresidue_improper_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
+	eval_interresidue_improper_derivatives( rsd1, rsd2, *res1params, *res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_angle_derivs_two_from_rsd1(
-		rsd1, rsd2, res1params, res2params, phi1, psi1,
+		rsd1, rsd2, *res1params, *res2params, phi1, psi1,
 		weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_angle_derivs_two_from_rsd2(
-		rsd1, rsd2, res1params, res2params, phi2, psi2,
+		rsd1, rsd2, *res1params, *res2params, phi2, psi2,
 		weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_bond_length_derivs(
-		rsd1, rsd2, res1params, res2params, phi2, psi2,
+		rsd1, rsd2, *res1params, *res2params, phi2, psi2,
 		weights, r1_atom_derivs, r2_atom_derivs );
 }
 
@@ -2005,7 +2002,12 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	using numeric::constants::d::pi;
 
 	// save some time if we're only doing bb-indep
-	if ( !db_->bbdep_bond_params() ) return 0.0;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		if ( !db_->bbdep_bond_params() ) return 0.0;
+	}
 
 	if ( !tor_id.valid() || tor_id.type()!=id::BB || tor_id.torsion() > 2  || !rsd.is_protein() ) {
 		return 0.0;
@@ -2023,12 +2025,20 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
 	}
 
-	ResidueCartBondedParameters const & resparams  = db_->parameters_for_restype( rsd.type(), preproline );
+	ResidueCartBondedParameters const *resparams;
+	bool bbdepbonds;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		resparams = &(db_->parameters_for_restype( rsd.type(), preproline ) );
+		bbdepbonds = db_->bbdep_bond_devs();
+	}
 
 	core::Real deriv=0.0;
 
 	/// Backbone dependent bond lengths
-	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps = resparams.bbdep_length_parameters();
+	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps = resparams->bbdep_length_parameters();
 	for ( Size ii = 1; ii <= lps.size(); ++ii ) {
 		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
 		CartBondedParameters const & len_params( *lps[ ii ].second );
@@ -2060,7 +2070,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		} else {
 			dscore_dmu = -K * (d - mu);
 		}
-		if ( db_->bbdep_bond_devs() ) {
+		if ( bbdepbonds ) {
 			if ( tor_id.torsion()==1 ) {
 				dK_dtor = len_params.dK_dphi(phi,psi);
 			} else {
@@ -2078,7 +2088,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	}
 
 	/// Backbone-dependent bond angles
-	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps = resparams.bbdep_angle_parameters();
+	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps = resparams->bbdep_angle_parameters();
 	for ( Size ii = 1; ii <= aps.size(); ++ii ) {
 		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
 		CartBondedParameters const & ang_params( *aps[ ii ].second );
@@ -2119,7 +2129,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 			dscore_dmu = -K * (angle - mu);
 		}
 
-		if ( db_->bbdep_bond_devs() ) {
+		if ( bbdepbonds ) {
 			if ( tor_id.torsion()==1 ) {
 				dK_dtor = ang_params.dK_dphi(phi,psi);
 			} else {
@@ -2176,8 +2186,14 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
-	ResidueCartBondedParameters const & rsd1params = db_->parameters_for_restype( rsd1.type(), preproline );
-	ResidueCartBondedParameters const & rsd2params = db_->parameters_for_restype( rsd2.type(), false );
+	ResidueCartBondedParameters const *res1params, *res2params;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		res1params = &(db_->parameters_for_restype( rsd1.type(), preproline ) );
+		res2params = &(db_->parameters_for_restype( rsd2.type(), false ) );
+	}
 
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
 	if ( rsd1.is_protein() ) {
@@ -2191,7 +2207,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	// get one body component (but which has two-body influence based on whether or not rsd2 is a proline)
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
+		eval_singleres_energy(rsd1, *res1params, phi1, psi1, pose, emap ); // calls singleres improper
 	}
 
 	// If residue1 and 2 are the same, stop here to avoid double-counting.
@@ -2200,7 +2216,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
 
 	/// evaluate all the inter-residue energy components
-	eval_residue_pair_energies( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, phi2, psi2, pose, emap );
+	eval_residue_pair_energies( rsd1, rsd2, *res1params, *res2params, phi1, psi1, phi2, psi2, pose, emap );
 }
 
 void
@@ -2246,6 +2262,15 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 	Size const n_rings( rsd.type().n_rings() );
 	if ( n_rings==0 ) return;
 
+	core::Real Ktheta, Kphi;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
+		Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
+	}
+
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
 		core::chemical::rings::RingConformer rc = rsd.ring_conformer( jj, 180.0 );
@@ -2260,7 +2285,6 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 			core::Size atm4 = atms[(ii+1)%atms.size()+1];
 
 			// 1 constrain angle
-			Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
 			Real theta0 = rc.tau_angles[ii]*pi/180.0;
 			Real angle = numeric::angle_radians( rsd.xyz(atm1), rsd.xyz(atm2), rsd.xyz(atm3) );
 			Real const energy_angle = eval_score( angle, Ktheta, theta0 );
@@ -2283,7 +2307,6 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 			emap[ cart_bonded ] += energy_angle; // potential double counting*/
 
 			// 2 constrain torsion
-			Real Kphi =  db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
 			Real phi0 = rc.nu_angles[ii]*pi/180.0;
 			angle = numeric::dihedral_radians(
 				rsd.xyz( atm1 ), rsd.xyz( atm2 ), rsd.xyz( atm3 ), rsd.xyz( atm4 ) );
@@ -2606,8 +2629,16 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
-					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+				CartBondedParametersCOP ang_params;
+				{
+			#if defined MULTI_THREADED
+					utility::thread::ReadLockGuard lock( params_db_mutex_ );
+			#endif
+					ang_params = 
+						db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
+							atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+				}
+
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
 
@@ -2716,8 +2747,17 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 				std::string atm1name=rsd2.atom_name(res2_lower_atomno); boost::trim(atm1name);
 				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
 				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
-				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd2.type(), false,
-					atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+
+				CartBondedParametersCOP ang_params;
+				{
+			#if defined MULTI_THREADED
+					utility::thread::ReadLockGuard lock( params_db_mutex_ );
+			#endif
+					ang_params = 
+						db_->lookup_angle(rsd2.type(), false,
+							atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+				}
+
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
 
@@ -2828,8 +2868,14 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			// again, pre-pro == false, definitions are based on pro as rsd2+1
 			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
 			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
-			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false,
-				atm1name, atm2name, resconn_atomno2, -resconn_id2);
+
+			CartBondedParametersCOP len_params;
+			{
+		#if defined MULTI_THREADED
+				utility::thread::ReadLockGuard lock( params_db_mutex_ );
+		#endif
+				len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
+			}
 
 			if ( len_params->is_null() ) continue;
 			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
@@ -3066,6 +3112,15 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 	Size const n_rings( rsd.type().n_rings() );
 	if ( n_rings==0 ) return;
 
+	core::Real Ktheta, Kphi;
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( params_db_mutex_ );
+#endif
+		Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
+		Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
+	}
+
 	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
@@ -3082,7 +3137,6 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 			core::Size rt4 = atms[(ii+1)%atms.size()+1];
 
 			// 1  angle
-			Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
 			Real theta0 = rc.tau_angles[ii]*pi/180.0;
 
 			Vector f1(0.0), f2(0.0);
@@ -3107,7 +3161,6 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 			r_atom_derivs[ rt3 ].f2() += dE_dtheta * f2;
 
 			// 2  torsion
-			Real Kphi =  db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
 			Real phi0 = rc.nu_angles[ii]*pi/180.0;
 
 			f1 = f2 = Vector(0.0);
@@ -3475,9 +3528,17 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 				std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
-				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr), //D- or L-proline
-					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+				CartBondedParametersCOP ang_params;
+				{
+			#if defined MULTI_THREADED
+					utility::thread::ReadLockGuard lock( params_db_mutex_ );
+			#endif
+					ang_params = 
+						db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
+							atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+				}
+
+
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
 
@@ -3596,8 +3657,16 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 				std::string atm1name=rsd2.atom_name(res2_lower_atomno); boost::trim(atm1name);
 				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
 				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
-				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd2.type(), false,
-					atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+
+				CartBondedParametersCOP ang_params;
+				{
+			#if defined MULTI_THREADED
+					utility::thread::ReadLockGuard lock( params_db_mutex_ );
+			#endif
+					ang_params = 
+						db_->lookup_angle(rsd2.type(), false, atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+				}
+
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
 
@@ -3695,8 +3764,14 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 			// [3] Bonds across connection
 			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
 			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
-			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false,
-				atm1name, atm2name, resconn_atomno2, -resconn_id2);
+
+			CartBondedParametersCOP len_params;
+			{
+		#if defined MULTI_THREADED
+				utility::thread::ReadLockGuard lock( params_db_mutex_ );
+		#endif
+				len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
+			}
 
 			if ( len_params->is_null() ) continue;
 			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);

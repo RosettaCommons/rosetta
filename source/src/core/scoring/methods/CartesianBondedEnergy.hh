@@ -44,6 +44,11 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
+#if defined MULTI_THREADED
+
+#include <utility/thread/ReadWriteMutex.hh>
+
+#endif
 //#include <map>
 
 
@@ -229,17 +234,6 @@ public:
 
 	void init(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
-	/*
-	CartBondedParametersCOP
-	lookup_torsion(
-	core::chemical::ResidueType const & rsd_type,
-	std::string const & atm1_name,
-	std::string const & atm2_name,
-	std::string const & atm3_name,
-	std::string const & atm4_name
-	);
-	*/
-
 	CartBondedParametersCOP
 	lookup_improper(
 		core::chemical::ResidueType const & rsd_type,
@@ -292,7 +286,7 @@ public:
 
 	/// @brief Return a list of all the bond lengths, bond angles, and bond torsions
 	/// for a single residue type.  This list is constructed lazily as required.
-	/// (This may cause thread safety issues!).
+	/// (This may cause thread safety issues!) << fd (1/31) Now mutex protected!
 	ResidueCartBondedParameters const &
 	parameters_for_restype(
 		core::chemical::ResidueType const & restype,
@@ -343,13 +337,6 @@ private:
 		bool const symmetrize_table
 	);
 
-	/// @brief Symmetrize the glycine backbone-dependent table.
-	/// @details Only called if the score::symmetric_gly_tables option is used.  Intended for design
-	/// with glyceine in a mixed D/L context (in which there should be no preference for a left-handed
-	/// conformation over a right).
-	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	void symmetrize_tables( ObjexxFCL::FArray2D<core::Real> &table );
-
 	void
 	create_parameters_for_restype(
 		core::chemical::ResidueType const & restype,
@@ -357,6 +344,14 @@ private:
 	);
 
 private:
+	/// @brief Symmetrize the glycine backbone-dependent table.
+	/// @details Only called if the score::symmetric_gly_tables option is used.  Intended for design
+	/// with glyceine in a mixed D/L context (in which there should be no preference for a left-handed
+	/// conformation over a right).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	//fd : make this private since it should only be called during initialization
+	void symmetrize_tables( ObjexxFCL::FArray2D<core::Real> &table );
+
 
 	// defaults (they should be rarely used as everything should be in the DB now)
 	Real k_length_, k_angle_, k_torsion_, k_torsion_proton_, k_torsion_improper_;
@@ -379,7 +374,6 @@ private:
 	// per residue-type data
 	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > prepro_restype_data_;
 	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > nonprepro_restype_data_;
-
 };
 
 
@@ -389,6 +383,10 @@ private:
 class CartesianBondedEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
+
+	// fd make this a friend since it needs access to the mutex
+	friend ResidueCartBondedParameters const &
+	IdealParametersDatabase::parameters_for_restype( core::chemical::ResidueType const & restype, bool prepro );
 
 public:
 	CartesianBondedEnergy( methods::EnergyMethodOptions const & options );
@@ -808,6 +806,15 @@ private:
 
 	// the ideal parameter database
 	static IdealParametersDatabaseOP db_;
+
+#if defined MULTI_THREADED
+
+	// database lock for parameter sets
+	static utility::thread::ReadWriteMutex params_db_mutex_;
+
+	// database lock for restype sets
+	static utility::thread::ReadWriteMutex restype_db_mutex_;
+#endif
 
 	// option
 	bool linear_bonded_potential_;
