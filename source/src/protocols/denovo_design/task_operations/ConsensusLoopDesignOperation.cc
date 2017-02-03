@@ -140,7 +140,7 @@ ConsensusLoopDesignOperation::parse_tag(
 	if ( selector ) set_residue_selector( *selector );
 
 	set_include_adjacent_residues( tag->getOption< bool >( "include_adjacent_residues", include_adjacent_residues_ ) );
-	enrichment_threshold_ = tag->getOption< core::Real >( "threshold", enrichment_threshold_ );
+	enrichment_threshold_ = tag->getOption< core::Real >( "enrichment_threshold", enrichment_threshold_ );
 	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
 }
 
@@ -168,6 +168,16 @@ ConsensusLoopDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	AttributeList attributes;
 
 	attributes
+        + XMLSchemaAttribute(
+        "use_dssp", xs_string,
+        "If true, DSSP will be used to determine which residues are loops. If "
+        "false, the secondary structure stored in the pose will be used to determine loops. Has "
+        "no effect if the \"secstruct\" option is set.")
+        + XMLSchemaAttribute(
+        "secstruct", xs_string,
+        "Allows the user to force a particular secondary structure onto the pose. If  "
+        "set, use_dssp will be ignored. The length of the secondary structure must match the "
+        "length of the pose.")
 		+ XMLSchemaAttribute(
 		"blueprint", xs_string,
 		"If a blueprint filename is given, the blueprint will be read and its "
