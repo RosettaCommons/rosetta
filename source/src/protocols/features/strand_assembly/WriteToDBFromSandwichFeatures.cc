@@ -142,7 +142,8 @@ prepare_WriteToDB_sandwich(
 		"\tAND (sss.struct_id = sw_sh.struct_id) \n"
 		"\tAND (sss.dssp = 'E') \n"
 		"\tAND (sw_sh.sheet_id = sh.sheet_id) \n"
-		"\tAND (sh.segment_id = sss.segment_id);";
+		"\tAND (sh.segment_id = sss.segment_id) \n"
+		"ORDER BY residue_begin;"; // Attempt to order the elements N->C
 
 
 	/* (for sqlite3 try)
@@ -327,7 +328,8 @@ WriteToDB_long_strand_id_in_each_sw (
 		"\t(strand_edge=\'edge\' \n"
 		"\tOR\tstrand_edge=\'core\') \n"
 		"\tAND sw_can_by_sh_id = ? \n"
-		"\tAND struct_id = ? ;";
+		"\tAND struct_id = ? \n"
+		"ORDER BY residue_begin;"; // To make sure long_strand_id is ordered N->C
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1, sw_can_by_sh_id);
