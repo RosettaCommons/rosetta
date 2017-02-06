@@ -86,7 +86,7 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 		silent_file_ = tag  + ".out";
 	}
 
-	set_output_lores_silent_file( option[ rna::farna::output_lores_silent_file ] );
+	set_output_lores_silent_file( option[ rna::farna::out::output_lores_silent_file ] );
 	set_output_filters(  option[ rna::farna::output_filters ] );
 
 	// note that althrough the following variables are held in the base class RNA_FragmentMonteCarloOptions, they are not initialized from command-line there.
@@ -98,7 +98,7 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 	if ( option[ rna::farna::lores_scorefxn ].user() ) set_lores_scorefxn( option[ rna::farna::lores_scorefxn ] );
 
 	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  ||
-			option[ rna::farna::binary_output ]() ||
+			option[ rna::farna::out::binary_output ]() ||
 			close_loops() ||
 			vary_bond_geometry() ) set_binary_rna_output( true );
 

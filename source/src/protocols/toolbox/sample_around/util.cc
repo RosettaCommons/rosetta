@@ -147,10 +147,7 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	// assuming pose has an RNA at residue 1 -- will rotate just that residue.
 	Size const base_pos( 1 );
 	Residue const & rsd = pose.residue( base_pos );
-
-	Vector centroid = get_rna_base_centroid( rsd, false /*verbose*/ );
-	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
-	kinematics::Stub stub( M, centroid );
+	kinematics::Stub stub( get_rna_base_coordinate_system_stub( rsd ) );
 
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		for ( Size i = 1; i <= pose.residue(n).natoms(); i++ ) {

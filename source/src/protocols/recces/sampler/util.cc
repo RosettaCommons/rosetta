@@ -142,8 +142,46 @@ get_recces_turner_sampler_from_secstruct( pose::Pose const & pose,
 
 ////////////////////////////////////////////////////////////////////////
 /// @detailed Legacy sampler setup from Fang
-///     + goes through a lot of cryptic book-keeping in order to fit
+///
+///     Goes through some cryptic book-keeping in order to fit
 ///        samplers into "MultiSuite" framework.
+///
+///     How MC_RNA_Suite samplers are grouped in some typical use cases:
+///
+///     Single-stranded
+///     ----------------
+///       1       1         2      2        3      3         4
+///  5'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-3'
+///       |                 |               |                |
+///
+///     Helix
+///     ----------------
+///       1*      1*        2*     2*       3*     3*        4*
+///  5'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-3'
+///       |                 |               |                |
+///       |                 |               |                |
+///  3'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-5'
+///       8*      7*        7*     6*       6*     5*        5*
+///
+///        * = use A-form range for sugar/chi or backbone.
+///
+///     3'-dangle
+///     ----------------
+///       1*      1*        2*     2*       3*     3        4          (len1=4)
+///  5'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-3'
+///       |                 |               |                |
+///       |                 |               |
+///  3'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-5'
+///       7*      6*        6*     5*       5*
+///
+///     5'-dangle
+///     ----------------
+///       1*      1*        2*     2*       3*            (len1=3)
+///  5'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-3'
+///       |                 |               |
+///       |                 |               |                |
+///  3'-[Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-[Backbone-Sugar]-5'
+///       7*      6*        6*     5*       5*     4         4
 ///
 ///
 /// TODO: Could unify with get_recces_turner_sampler_from_secstruct() if

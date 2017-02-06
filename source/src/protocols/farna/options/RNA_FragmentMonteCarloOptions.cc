@@ -66,6 +66,8 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	filter_chain_closure_halfway_( true ),
 	staged_constraints_( false ),
 	output_score_frequency_( 0 ),
+	output_jump_res_( 0 ),
+	output_jump_o3p_to_o5p_( false ),
 	filter_vdw_( false ),
 	vdw_rep_screen_include_sidechains_( false ),
 	gradual_constraints_( true ),
@@ -79,6 +81,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	bps_moves_( false ),
 	disallow_bps_at_extra_min_res_( false ),
 	allow_fragment_moves_in_bps_( false ),
+	frag_size_( 0 ),
 	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
 	use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
 	superimpose_over_all_( false ),
@@ -142,10 +145,13 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_bps_moves( option[ rna::farna::bps_moves ] );
 	set_disallow_bps_at_extra_min_res( option[ rna::farna::disallow_bps_at_extra_min_res ] );
 	set_allow_fragment_moves_in_bps( option[ rna::farna::allow_fragment_moves_in_bps ] );
+	set_frag_size( option[ rna::farna::frag_size ]() );
 
-	set_output_score_frequency( option[ rna::farna::output_score_frequency ]() );
-	set_output_score_file( option[ rna::farna::output_score_file ]() );
-	if ( output_score_file_.size() == 0 && output_score_frequency_ != 0 )  {
+	set_output_score_frequency( option[ rna::farna::out::output_score_frequency ]() );
+	set_output_score_file( option[ rna::farna::out::output_score_file ]() );
+	set_output_jump_res( option[ rna::farna::out::output_jump_res ]() );
+	set_output_jump_o3p_to_o5p( option[ rna::farna::out::output_jump_o3p_to_o5p ]() );
+	if ( output_score_file_.size() == 0 && ( output_score_frequency_ != 0 || output_jump_res_.size() > 0 ) )  {
 		output_score_file_ = option[ out::file::silent ]();
 		std::string::size_type pos = output_score_file_.find( ".out", 0 );
 		std::string const new_prefix = ".SCORES.txt";

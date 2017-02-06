@@ -291,9 +291,19 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			input_res.push_back( i );
 		}
 		if ( pdb_seq != actual_seq ) {
-			TR << TR.Red << pdb_seq << std::endl;
-			TR << TR.Red << actual_seq << std::endl;
-			utility_exit_with_message("The sequence in "+pdb+" does not match input sequence!!");
+			TR << TR.Red << "   pdb_seq: " << pdb_seq << std::endl;
+			TR << TR.Red << "target_seq: " << actual_seq << std::endl;
+			for ( Size q = 1; q <= resnum_in_full_model.size(); q++ ) {
+				if ( q > actual_seq.size() ) {
+					TR << "mismatch in length beyond " << q << std::endl;
+					break;
+				}
+				if ( pdb_seq[q-1] != actual_seq[q-1] ) {
+					Size n( resnum_in_full_model[ q ] );
+					TR << "mismatch in sequence: pdb  " << pdb_seq[q-1] << " vs target " << actual_seq[q-1] << " at " << full_model_parameters->full_to_conventional( n ) << std::endl;
+				}
+			}
+			utility_exit_with_message("The sequence in "+pdb+" does not match target sequence!!");
 		}
 		resnum_list.push_back( resnum_in_full_model );
 	}
@@ -480,12 +490,17 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// previously, kept spaces in sequences to mimic user-input with spaces.
 	// don't worry about that anymore -- try to handle above in get_sequence_info.
 	std::string working_sequence = working_res_map( sequence, working_res );
-	RNA_SecStruct working_secstruct         = working_res_map( secstruct, working_res );
+	RNA_SecStruct working_secstruct = working_res_map( secstruct, working_res );
 	RNA_SecStruct working_secstruct_general = working_res_map( secstruct_general, working_res );
 
 	TR << "Sequence:            " << working_sequence << std::endl;
 	TR << "Secstruct:           " << working_secstruct.secstruct() << std::endl;
 	if ( !secstruct_general.blank() ) TR << "Secstruct [general]: " << working_secstruct_general.secstruct() << std::endl;
+
+	// Step 8B [good ol' secstruct_legacy]
+	std::string secstruct_legacy = option[ OptionKeys::rna::farna::secstruct_legacy ]();
+	std::string working_secstruct_legacy = working_res_map( secstruct_legacy, working_res );
+	if ( secstruct_legacy.size() > 0  ) TR << "Secstruct [legacy]: " << working_secstruct_legacy << std::endl;
 
 	////////////////////
 	// Step 9
@@ -843,6 +858,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	rna_params_->set_block_stack_below_res( working_block_stack_below_res );
 	rna_params_->set_virtual_anchor_attachment_points( working_virtual_anchor );
 	rna_params_->set_rna_and_protein( is_rna_and_protein );
+	rna_params_->set_rna_secstruct_legacy( working_secstruct_legacy );
 
 
 	////////////////////
@@ -1028,6 +1044,7 @@ RNA_DeNovoSetup::working_res_map( std::string const & seq_input,
 	vector1< Size > const & working_res,
 	bool const annotations_in_brackets /* = true */ ) const
 {
+	if ( seq_input.size() == 0 ) return "";
 	std::string seq( seq_input );
 	core::sequence::strip_spacers( seq, annotations_in_brackets );
 	if ( working_res.size() == 0 ) return seq;

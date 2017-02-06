@@ -91,6 +91,8 @@ main( int argc, char* argv[] )
 		option.add( usec::sequence_match_sequence, "").def( "GP" );
 		option.add( usec::sequence_match_position, "").def( 2 );
 
+		option.add_relevant( usec::frag_size ); // if user gives -frag_size, by default choose usec::frag_size
+
 		// init
 		devel::init(argc, argv);
 

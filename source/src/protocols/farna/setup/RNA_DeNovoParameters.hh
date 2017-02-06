@@ -84,7 +84,7 @@ public:
 
 	bool is_rna_and_protein() const { return is_rna_and_protein_; }
 
-	void set_rna_secstruct_legacy( std::string const & setting ){ rna_secstruct_legacy_ = setting; }
+	void set_rna_secstruct_legacy( std::string const & setting ){ rna_secstruct_legacy_ = setting; secstruct_defined_ = true; }
 	std::string rna_secstruct_legacy() const { return rna_secstruct_legacy_; }
 
 	void

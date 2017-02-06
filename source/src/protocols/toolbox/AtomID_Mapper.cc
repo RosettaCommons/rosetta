@@ -254,7 +254,9 @@ AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 
 	using namespace core::scoring::methods;
 
-	if ( pose.sequence() != sequence_ ) {
+	if ( pose.sequence() != sequence_ &&
+			 utility::replace_in( sequence_, "t", "X" ) !=
+			 utility::replace_in( pose.sequence(), "t", "X" ) /*horrible hack*/ ) {
 		utility_exit_with_message( "AtomID_Mapper cannot currenty handle changes in sequence, just changes in variants! Your old sequence was " + sequence_ + " and the new sequence is " + pose.sequence() );
 	}
 

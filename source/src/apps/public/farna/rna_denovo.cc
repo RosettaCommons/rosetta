@@ -71,10 +71,6 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_native_pose( rna_de_novo_setup->native_pose() );
 	rna_de_novo_protocol.set_refine_pose_list( rna_de_novo_setup->refine_pose_list() );
 
-#ifdef GL_GRAPHICS
-	pose.center();
-#endif
-
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 	// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 
@@ -124,9 +120,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::jump_change_frequency );
 		option.add_relevant( rna::farna::close_loops );
 		option.add_relevant( rna::farna::close_loops_after_each_move );
-		option.add_relevant( rna::farna::output_lores_silent_file );
 		option.add_relevant( rna::farna::heat );
-		option.add_relevant( rna::farna::dump );
 		option.add_relevant( rna::farna::staged_constraints );
 		// option.add_relevant( rna::farna::jump_library_file );
 		option.add_relevant( rna::farna::params_file );
@@ -145,7 +139,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::allow_bulge  );
 		option.add_relevant( rna::farna::allowed_bulge_res );
 		option.add_relevant( rna::farna::allow_consecutive_bulges );
-		option.add_relevant( rna::farna::binary_output );
 		option.add_relevant( rna::farna::move_first_rigid_body );
 		option.add_relevant( rna::farna::root_at_first_rigid_body );
 		option.add_relevant( rna::farna::suppress_bp_constraint );
@@ -155,6 +148,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::refine_silent_file );
 		option.add_relevant( rna::farna::refine_native );
 		option.add_relevant( rna::farna::bps_moves );
+		option.add_relevant( rna::farna::out::dump );
+		option.add_relevant( rna::farna::out::output_lores_silent_file );
+		option.add_relevant( rna::farna::out::binary_output );
 		option.add_relevant( rna::farna::minimize::minimizer_use_coordinate_constraints );
 		option.add_relevant( rna::farna::minimize::extra_minimize_res );
 		option.add_relevant( rna::farna::minimize::extra_minimize_chi_res );

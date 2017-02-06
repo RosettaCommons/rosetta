@@ -57,7 +57,7 @@ RNA_BasicOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_BasicOptions::initialize_from_command_line() {
-	set_dump_pdb( option[ rna::farna::dump ] ) ;
+	set_dump_pdb( option[ rna::farna::out::dump ] ) ;
 	set_move_first_rigid_body(  option[ rna::farna::move_first_rigid_body ] );
 
 }

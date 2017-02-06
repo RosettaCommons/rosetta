@@ -19,6 +19,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
@@ -118,6 +119,9 @@ get_rna_base_centroid( core::conformation::Residue const & rsd , bool verbose = 
 
 numeric::xyzMatrix< core::Real >
 get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric::xyzVector<core::Real> const & centroid );
+
+core::kinematics::Stub
+get_rna_base_coordinate_system_stub( core::conformation::Residue const & rsd );
 
 bool
 is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2);

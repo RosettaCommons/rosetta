@@ -21,6 +21,7 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
+#include <core/kinematics/Stub.hh>
 
 // Project headers
 #include <numeric/constants.hh>
@@ -469,6 +470,16 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	numeric::xyzMatrix< core::Real > M = numeric::xyzMatrix< core::Real > ::cols( x, y, z );
 	return M;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief wrapper around get_rna_base_centroid & get_rna_base_coordinate_system
+core::kinematics::Stub
+get_rna_base_coordinate_system_stub( core::conformation::Residue const & rsd )
+{
+	Vector const centroid = get_rna_base_centroid( rsd, false /*verbose*/ );
+	numeric::xyzMatrix< Real > const M = get_rna_base_coordinate_system( rsd, centroid );
+	return core::kinematics::Stub( M, centroid );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

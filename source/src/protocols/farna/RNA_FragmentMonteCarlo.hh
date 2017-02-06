@@ -161,6 +161,12 @@ private:
 	update_frag_size( core::Size const r );
 
 	void
+	do_move_trial( core::Size const & i, core::pose::Pose & pose );
+
+	void
+	RNA_move_trial( core::pose::Pose & pose );
+
+	void
 	random_fragment_trial( core::pose::Pose & pose );
 
 	bool
@@ -174,9 +180,6 @@ private:
 
 	core::kinematics::FoldTree
 	get_rnp_docking_fold_tree( core::pose::Pose const & pose );
-
-	void
-	RNA_move_trial( core::pose::Pose & pose );
 
 	void
 	setup_rna_protein_docking_mover( core::pose::Pose const & pose, core::Size const round );
@@ -212,6 +215,9 @@ private:
 	output_score_if_desired( core::Size const & r,
 		core::Size const & i,
 		core::pose::Pose & pose );
+
+	void
+	output_jump_information( core::pose::Pose const & pose );
 
 private:
 

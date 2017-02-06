@@ -43,6 +43,8 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -54,6 +56,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <numeric/random/random.hh>
+#include <numeric/EulerAngles.hh>
 #include <basic/database/open.hh>
 #include <core/scoring/Energies.hh>
 
@@ -348,28 +351,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			// This is it ... do the loop.
 			//////////////////////
 			for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
-				//for debugging linear_chainbreak
-				//show the distance between connected atoms
-				//so we know if there should be a penalty
-				//denovo_scorefxn_->show( TR, pose );
-				//for ( Size num = 259; num <= 276; ++num ) { // for 1zdh test case
-				// Real dist1 = (pose.residue( num ).xyz( " O3'") - pose.residue( num+1 ).xyz(" P  ")).length();
-				// std::cout << "Distance " << num << " " << num+1 << ": " << dist1 << std::endl;
-				//}
-				// Make this generic fragment/jump multimover next?
-				if ( !is_rna_and_protein_ ) { // Just do regular RNA fragment assembly
-					RNA_move_trial( pose );
-				} else {
-					// Do RNA/protein docking (if specified)
-					if ( do_rnp_docking_ &&
-							// default, dock every 10th move (10% docking, 90% RNA move trials)
-							(i % options_->rna_protein_docking_freq() == 0 ) ) {
-						rnp_docking_trial( pose );
-					} else {
-						// regular RNA move
-						RNA_move_trial( pose );
-					}
-				}
+				do_move_trial( i, pose );
 				output_score_if_desired( r, i, pose );
 			}
 
@@ -829,6 +811,11 @@ RNA_FragmentMonteCarlo::update_pose_constraints( Size const r, core::pose::Pose 
 void
 RNA_FragmentMonteCarlo::update_frag_size( Size const r )
 {
+	if ( options_->frag_size() > 0 ) {
+		// user defined over-ride of fragment size.
+		frag_size_ = options_->frag_size();
+		return;
+	}
 	Real const frag_size_old = frag_size_;
 	frag_size_ = 3;
 	if ( r > 1.0 * ( rounds_ / 3.0 ) ) frag_size_ = 2;
@@ -836,13 +823,31 @@ RNA_FragmentMonteCarlo::update_frag_size( Size const r )
 	if ( frag_size_ != frag_size_old ) TR << "Fragment size: " << frag_size_ << std::endl;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+/// @details
+///    Do a move.
+///    Every 10th iteration, try a RNA/protein docking move (K. Kappel)
+///
+void
+RNA_FragmentMonteCarlo::do_move_trial( Size const & i, pose::Pose & pose )
+{
+	// If RNA/protein, do docking every 10th move)
+	if ( do_rnp_docking_ && (i % options_->rna_protein_docking_freq() == 0 ) ) {
+		rnp_docking_trial( pose );
+		return;
+	}
+
+	// regular RNA move (fragment, chunk, or jump)
+	RNA_move_trial( pose );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @details
-/// There are now two kinds of insertions --
+/// There are three kinds of insertions --
 /// (1) fragment insertions for, e.g., contiguous 3-mers
+/// (2) jump changes (tweaking base pairs)
 ///   and
-/// (2) "chunk insertions", which change out whole loops, motifs, or
+/// (3) "chunk insertions", which change out whole loops, motifs, or
 ///     junctions based on previous models stored in silent files
 void
 RNA_FragmentMonteCarlo::RNA_move_trial( pose::Pose & pose ) {
@@ -1181,14 +1186,64 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 
 //////////////////////////////////////////////////////////////////////////////////
 void
-RNA_FragmentMonteCarlo::output_score_if_desired( Size const & r,
+RNA_FragmentMonteCarlo::output_score_if_desired(
+	Size const & r,
 	Size const & i,
 	pose::Pose & pose )
 {
-	if ( options_->output_score_frequency() == 0 ) return;
-	if ( i % options_->output_score_frequency() == 0 ) {
-		running_score_output_ << r << ' ' << i << " " << ( *working_denovo_scorefxn_ )( pose ) << std::endl;
+	if ( options_->output_score_frequency() != 0 &&
+			 i % options_->output_score_frequency() == 0 ) {
+		running_score_output_ << r << ' ' << i << " " << ( *working_denovo_scorefxn_ )( pose );
+		output_jump_information( pose );
+		running_score_output_ << std::endl;
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////
+// @details
+// allows visualization of base-base rigid body transform distributions -- used for
+// defining 'loop_close' energy for RNA, which in turn is important for free energy
+// estimation of RNA motifs with unstructured nucleotides (e.g., extrahelical bulges).
+void
+RNA_FragmentMonteCarlo::output_jump_information( pose::Pose const & pose)
+{
+	using namespace core::kinematics;
+	using namespace core::chemical::rna;
+	using namespace core::conformation;
+
+	if ( options_->output_jump_res().size() == 0 ) return;
+	runtime_assert( options_->output_jump_res().size() == 2 );
+	Stub stub1, stub2;
+	Residue const & rsd1 = pose.residue( options_->output_jump_res()[ 1 ] );
+	Residue const & rsd2 = pose.residue( options_->output_jump_res()[ 2 ] );
+	if ( options_->output_jump_o3p_to_o5p() ) {
+		// takeoff
+		stub1 = Stub( rsd1.xyz( " O3'") /* center */,
+									rsd1.xyz( " O3'") /* a */,
+									rsd1.xyz( " C3'") /* b  [b->a defines x] */,
+									rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
+		stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
+
+		// landing
+		stub2 = Stub( rsd2.xyz( " O5'") /* center */,
+									rsd2.xyz( " C5'") /* a */,
+									rsd2.xyz( " O5'") /* b  [b->a defines x] */,
+									rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
+		stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
+	} else {
+		stub1 = get_rna_base_coordinate_system_stub( rsd1 );
+		stub2 = get_rna_base_coordinate_system_stub( rsd2 );
+	}
+	Jump const j( stub1, stub2 );
+	Vector const & t( j.get_translation() );
+	running_score_output_ << ' ' << t.x();
+	running_score_output_ << ' ' << t.y();
+	running_score_output_ << ' ' << t.z();
+	numeric::EulerAngles< Real > euler( j.get_rotation() ); // assuming ZXZ convention!
+	running_score_output_ << ' ' << euler.phi_degrees();
+	running_score_output_ << ' ' << euler.theta_degrees();
+	running_score_output_ << ' ' << euler.psi_degrees();
 }
 
 //////////////////////////////////////////////////////////////////////////////////

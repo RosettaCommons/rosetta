@@ -164,7 +164,7 @@ RNA_DeNovoPoseInitializer::initialize_secstruct( core::pose::Pose & pose  )
 {
 	std::string rna_secstruct_legacy = rna_params_.rna_secstruct_legacy();
 
-	if ( !rna_params_.secstruct_defined() ) {
+	if ( !rna_params_.secstruct_defined() || rna_secstruct_legacy.size() == 0 ) {
 
 		rna_secstruct_legacy = std::string( pose.size(), 'X' );
 

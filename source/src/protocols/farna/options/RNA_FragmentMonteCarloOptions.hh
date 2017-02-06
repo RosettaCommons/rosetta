@@ -184,6 +184,9 @@ public:
 	void set_allow_fragment_moves_in_bps( bool const & setting ){ allow_fragment_moves_in_bps_ = setting; }
 	bool allow_fragment_moves_in_bps() const { return allow_fragment_moves_in_bps_; }
 
+	void set_frag_size( core::Size const & setting ){ frag_size_ = setting; }
+	core::Size frag_size() const { return frag_size_; }
+
 	void set_jump_library_file( std::string const & setting ){ jump_library_file_ = setting; }
 	std::string jump_library_file() const { return jump_library_file_; }
 
@@ -216,6 +219,12 @@ public:
 
 	void set_output_score_file( std::string const & setting ){ output_score_file_ = setting; }
 	std::string output_score_file() const { return output_score_file_; }
+
+	void set_output_jump_res( utility::vector1< Size > const & output_jump_res ) { output_jump_res_ = output_jump_res; }
+	utility::vector1< Size > const & output_jump_res() const { return output_jump_res_; };
+
+	void set_output_jump_o3p_to_o5p( bool const & setting ){ output_jump_o3p_to_o5p_ = setting; }
+	bool output_jump_o3p_to_o5p() const { return output_jump_o3p_to_o5p_; }
 
 	void set_rmsd_screen( core::Real const setting ){ rmsd_screen_ = setting; }
 	core::Real rmsd_screen() const { return rmsd_screen_; }
@@ -265,6 +274,8 @@ private:
 
 	Size output_score_frequency_;
 	std::string output_score_file_;
+	utility::vector1< core::Size > output_jump_res_;
+	bool output_jump_o3p_to_o5p_;
 
 	utility::vector1< core::Size > allowed_bulge_res_;
 
@@ -285,6 +296,7 @@ private:
 	bool bps_moves_;
 	bool disallow_bps_at_extra_min_res_;
 	bool allow_fragment_moves_in_bps_;
+	Size frag_size_;
 	bool use_chem_shift_data_;
 
 	bool superimpose_over_all_;
