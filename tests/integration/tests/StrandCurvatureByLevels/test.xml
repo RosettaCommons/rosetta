@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+  <FILTERS>
+    <StrandCurvatureByLevels name="scvl" blueprint="%%bp%%" bend_level="1"
+			     min_bend="0.0" max_bend="180.0" twist_level="1"
+			     min_twist="0.0" max_twist="90" StrandID="3" />
+    <StrandCurvatureByLevels name="scvl_twist" blueprint="%%bp%%" bend_level="1"
+                             min_bend="0.0" max_bend="180.0" twist_level="1"
+                             min_twist="0.0" max_twist="90" output_type="twist" StrandID="3"
+			     concavity_direction="true" concavity_reference_residue="last"/>
+    <StrandCurvatureByLevels name="scvl3" blueprint="%%bp%%" bend_level="1"
+                             min_bend="0.0" max_bend="180.0" twist_level="1"
+                             min_twist="0.0" max_twist="90" StrandID="4" />
+  </FILTERS>
+  <PROTOCOLS>
+    <Add filter_name="scvl"/>
+    <Add filter_name="scvl_twist"/>
+    <Add filter_name="scvl3"/>
+  </PROTOCOLS>
+  <OUTPUT />
+</ROSETTASCRIPTS>

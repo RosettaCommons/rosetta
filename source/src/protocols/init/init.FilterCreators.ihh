@@ -44,6 +44,7 @@
 #include <protocols/fldsgn/filters/SecondaryStructureCountFilterCreator.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureHasResidueFilterCreator.hh>
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
+#include <protocols/fldsgn/filters/StrandCurvatureByLevelsCreator.hh>
 
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 #include <protocols/denovo_design/filters/PreProlineFilterCreator.hh>

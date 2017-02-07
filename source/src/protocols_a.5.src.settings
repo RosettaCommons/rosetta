@@ -117,6 +117,7 @@ sources = {
 		"SecondaryStructureCountFilter",
 		"SecondaryStructureHasResidueFilter",
 		"SheetTopologyFilter",
+		"StrandCurvatureByLevels",
 	],
 	"protocols/fldsgn/potentials": [
 		"AACompositionEnergy",

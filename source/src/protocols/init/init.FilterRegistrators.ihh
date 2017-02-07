@@ -60,6 +60,7 @@ static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureFilterCr
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureCountFilterCreator > reg_SecondaryStructureFilterCountCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureHasResidueFilterCreator > reg_SecondaryStructureFilterHasResidueCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
+static FilterRegistrator< protocols::fldsgn::filters::StrandCurvatureByLevelsCreator > reg_StrandCurvatureByLevelsCreator;
 
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::PreProlineFilterCreator > reg_PreProlineFilterCreator;

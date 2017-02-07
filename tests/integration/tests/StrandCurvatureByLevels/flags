@@ -1,0 +1,7 @@
+-s dump__20170205033333.pdb
+-parser:protocol test.xml
+-extra_res_fa HCY.params.fa.params
+-parser:script_vars bp=Mk2.bp
+-mute all
+-overwrite
+-unmute protocols.fldsgn.filters.StrandCurvatureByLevels
