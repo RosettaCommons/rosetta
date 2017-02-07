@@ -1,5 +1,0 @@
--s input1.pdb
--parser:protocol CLD.xml
--overwrite
--mute all
--unmute protocols.denovo_design.task_operations.ConsensusLoopDesignOperation

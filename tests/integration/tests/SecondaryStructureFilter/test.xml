@@ -1,0 +1,9 @@
+<ROSETTASCRIPTS>
+  <FILTERS>
+    <SecondaryStructure name="ss" blueprint="%%bp%%" use_abego="true" threshold="0.95" compute_pose_secstruct_by_dssp="true" confidence="1" treat_L_as_D="true" />
+  </FILTERS>
+  <PROTOCOLS>
+    <Add filter_name="ss"/>
+  </PROTOCOLS>
+  <OUTPUT />
+</ROSETTASCRIPTS>
