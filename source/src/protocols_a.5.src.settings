@@ -107,6 +107,7 @@ sources = {
 	"protocols/fldsgn/filters": [
 		"CoreDunbrackFilter",
 		"FragQualFilter",
+		"HelixBendFilter",
 		"HelixKinkFilter",
 		"HelixPairingFilter",
 		"HSSTripletFilter",

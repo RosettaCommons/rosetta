@@ -34,6 +34,7 @@
 
 #include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>
 #include <protocols/fldsgn/filters/FragQualFilterCreator.hh>
+#include <protocols/fldsgn/filters/HelixBendFilterCreator.hh>
 #include <protocols/fldsgn/filters/HelixKinkFilterCreator.hh>
 #include <protocols/fldsgn/filters/HelixPairingFilterCreator.hh>
 #include <protocols/fldsgn/filters/HSSTripletFilterCreator.hh>

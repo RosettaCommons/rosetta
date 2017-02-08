@@ -1,0 +1,8 @@
+-s dump__20170205033333.pdb
+-parser:protocol test.xml
+-extra_res_fa HCY.params.fa.params
+-parser:script_vars bp=Mk2.bp
+-overwrite
+-out:file:score_only score.sc
+-mute all
+-unmute protocols.fldsgn.filters.HelixBendFilter

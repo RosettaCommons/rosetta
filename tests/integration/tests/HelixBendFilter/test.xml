@@ -1,0 +1,9 @@
+<ROSETTASCRIPTS>
+  <FILTERS>
+    <HelixBendFilter name="hb" threshold="155.0" blueprint="%%bp%%" HelixID="1" confidence="1" />
+  </FILTERS>
+  <PROTOCOLS>
+    <Add filter_name="hb"/>
+  </PROTOCOLS>
+  <OUTPUT />
+</ROSETTASCRIPTS>
