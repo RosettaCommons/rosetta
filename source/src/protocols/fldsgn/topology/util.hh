@@ -61,6 +61,16 @@ check_internal_hbonds(
 	core::pose::Pose const & pose,
 	core::Size const begin,
 	core::Size const end );
+    
+core::Real
+calc_strand_helix_angle(
+    core::pose::Pose const & pose,
+    protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
+    core::Size const strand_id1,
+    core::Size const strand_id2,
+    core::Size const helix_id,
+    std::string const & geom_type
+                        );
 
 } // namespace topology
 } // namespace fldsgn

@@ -1,0 +1,16 @@
+<ROSETTASCRIPTS>
+  <FILTERS>
+    <!--Prevent H2 from pointing downwards-->
+    <StrandHelixGeometryFilter name="H2S6_angle" StrandID1="5" StrandID2="6" HelixID="2" min_dist="-18" max_dist="28" min_ortho_angle="-180" max_ortho_angle="180"
+                 min_plane_angle="-180" max_plane_angle="180" blueprint="%%bp%%" output_type="dist" confidence="1"/>
+
+    <!--Prevent H1 from being too far or too close to sheet-->
+    <StrandHelixGeometryFilter name="H1S4_angle" StrandID1="4" StrandID2="5" HelixID="1" min_dist="-14.5" max_dist="12" min_ortho_angle="-180" max_ortho_angle="180"
+                 min_plane_angle="-180" max_plane_angle="180" blueprint="%%bp%%" output_type="dist" confidence="1"/>
+  </FILTERS>
+  <PROTOCOLS>
+    <Add filter_name="H2S6_angle"/>
+    <Add filter_name="H1S4_angle"/>
+  </PROTOCOLS>
+  <OUTPUT />
+</ROSETTASCRIPTS>
