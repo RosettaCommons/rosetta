@@ -176,6 +176,11 @@ public:
 
 	// XRW TEMP  virtual std::string get_name() const;
 
+public:
+	/// @brief if true, clears symmetry_definition option from pose.
+	void
+	clear_sym_def( bool const clear_sym_def );
+	
 	std::string
 	get_name() const override;
 
@@ -186,7 +191,10 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
+	
+private:
+	/// @brief if true, clears symmetry_definition option from pose.
+	bool clear_sym_def_;
 };
 
 

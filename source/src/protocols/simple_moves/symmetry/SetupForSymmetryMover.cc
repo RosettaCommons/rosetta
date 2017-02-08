@@ -408,7 +408,8 @@ void ExtractAsymmetricUnitMoverCreator::provide_xml_schema( utility::tag::XMLSch
 /////////////////
 
 ExtractAsymmetricPoseMover::ExtractAsymmetricPoseMover()
-: protocols::moves::Mover("ExtractAsymmetricPoseMover") { }
+: protocols::moves::Mover("ExtractAsymmetricPoseMover"),
+	clear_sym_def_( false ) { }
 
 ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover(){}
 
@@ -416,27 +417,41 @@ ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover(){}
 void
 ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 {
-	//using namespace basic::options;
 	// If we are not symmetric do nothing
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
-
+	
+	//if symmetric
+	TR << "Current pose is symmetric. Making the pose asymmetric." << std::endl;
 	core::pose::symmetry::make_asymmetric_pose( pose );
-	//clear the symmetry deffinition option so it doesn't interfere with repack and minimization of
-	//the assymetric pose.
-	//option[OptionKeys::symmetry::symmetry_definition].clear();
+	
+	//clear the symmetry_definition option so it doesn't interfere with repack and minimization of the asymmetric pose.
+	if ( clear_sym_def_ == true ) {
+		TR << "Clearing symmetry_definition." << std::endl;
+		using namespace basic::options;
+		option[OptionKeys::symmetry::symmetry_definition].clear();
+	}
 }
 
 void ExtractAsymmetricPoseMover::parse_my_tag(
-	utility::tag::TagCOP const /*tag*/,
+	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & /*pose*/ ) { }
+	core::pose::Pose const & /*pose*/ )
+	{
+		clear_sym_def( tag->getOption< bool >( "clear_sym_def", clear_sym_def_ ) );
+	}
 
 // XRW TEMP std::string
 // XRW TEMP ExtractAsymmetricPoseMover::get_name() const {
 // XRW TEMP  return ExtractAsymmetricPoseMover::mover_name();
 // XRW TEMP }
+
+void
+ExtractAsymmetricPoseMover::clear_sym_def( bool const clr_sym_def )
+{
+	clear_sym_def_ = clr_sym_def;
+}
 
 std::string ExtractAsymmetricPoseMover::get_name() const {
 	return mover_name();
@@ -449,7 +464,9 @@ std::string ExtractAsymmetricPoseMover::mover_name() {
 void ExtractAsymmetricPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	AttributeList attlist; // XRW TO DO: check
+	AttributeList attlist;
+	// XRW TO DO: check
+	attlist + XMLSchemaAttribute( "clear_sym_def", xsct_rosetta_bool, "If true, the symmetry_definition option key will be cleared." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Similar to ExtractAsymmetricUnit: given a symmetric pose, make a nonsymmetric pose that contains the entire system (all monomers). Can be used to run symmetric and asymmetric moves in the same trajectory.", attlist );
 }
