@@ -403,9 +403,10 @@ def  build_generated_bindings(rosetta_source_path):
 
     # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
 
-    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version} {py_lib} {py_include} ../source'.format(config, prefix=prefix, python_version=_python_version_,
-                                                                                                                                                      py_lib='-DPYTHON_LIBRARY='+Options.python_lib if Options.python_lib else '',
-                                                                                                                                                      py_include='-DPYTHON_INCLUDE_DIR='+Options.python_include_dir if Options.python_include_dir else ''))
+    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version} {py_lib} {py_include} {gcc_install_prefix} ../source'.format(config, prefix=prefix, python_version=_python_version_,
+                                                                                                                                                                           py_lib='-DPYTHON_LIBRARY='+Options.python_lib if Options.python_lib else '',
+                                                                                                                                                                           py_include='-DPYTHON_INCLUDE_DIR='+Options.python_include_dir if Options.python_include_dir else '',
+                                                                                                                                                                           gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''))
 
     execute('Building...', 'cd {prefix} && ninja -j{jobs}'.format(prefix=prefix, jobs=Options.jobs))
 
