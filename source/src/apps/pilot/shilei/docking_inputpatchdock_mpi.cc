@@ -549,7 +549,7 @@ void run_parallel_docking() {
 		while (curr_struct<=nstruct);
 	}//end of worker
 
-  	MPI::Finalize();
+  	MPI_Finalize();
 
 }
 

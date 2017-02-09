@@ -70,8 +70,6 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 	npes_ = option[ OptionKeys::run::nproc ](); //make this same as in "queue"-command in condor script
 	rank_ = option[ OptionKeys::run::proc_id ](); //use this as -jd2:condor_rank $(PROCESS)
 #ifdef USEMPI
-  //npes_ = MPI::COMM_WORLD.Get_size();
-  //rank_ = MPI::COMM_WORLD.Get_rank();
 	int int_npes, int_rank;																	//don't cast pointers - copy it over instead
 	MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
 	MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
@@ -96,13 +94,8 @@ MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor()
 	// called
 	// AMW: this is no longer a singleton, so this code can go here.
 #ifdef USEMPI
-	//MPI::COMM_WORLD.Barrier();
-	//MPI::Finalize();
 	MPI_Barrier( MPI_COMM_WORLD );
-	//if(finalize_MPI_)
-	//{
-		MPI_Finalize();
-	//}
+	MPI_Finalize();
 #endif
 }
 
@@ -196,13 +189,6 @@ MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 
 	} while ( another_round_remains() );
 
-
-//#ifdef USEMPI
-	//MPI::COMM_WORLD.Barrier();
-	//MPI::Finalize();
-//	MPI_Barrier( MPI_COMM_WORLD );
-//	MPI_Finalize();
-//#endif
 }
 
 LarvalJobOP

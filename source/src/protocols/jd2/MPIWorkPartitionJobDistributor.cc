@@ -65,8 +65,11 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 	npes_ = option[ OptionKeys::run::nproc ](); //make this same as in "queue"-command in condor script
 	rank_ = option[ OptionKeys::run::proc_id ](); //use this as -jd2:condor_rank $(PROCESS)
 #ifdef USEMPI
-  npes_ = MPI::COMM_WORLD.Get_size();
-  rank_ = MPI::COMM_WORLD.Get_rank();
+	int int_npes, int_rank;
+  MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
+  MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
+	rank_ = int_rank;
+  npes_ = int_npes;
 #endif
 
 	next_job_to_try_assigning_ = rank_ + 1;
@@ -85,8 +88,8 @@ MPIWorkPartitionJobDistributor::go( protocols::moves::MoverOP mover )
 {
 	go_main( mover );
 #ifdef USEMPI
-	MPI::COMM_WORLD.Barrier();
-	MPI::Finalize();
+	MPI_Barrier( MPI_COMM_WORLD );
+	MPI_Finalize();
 #endif
 }
 

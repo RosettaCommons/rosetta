@@ -442,7 +442,7 @@ void BaseJobDistributor::master_node_distribute_jobs()
 
 	while ( nodes_left_to_spin_down > 0 ) {
 		int node_requesting_job( 0 );
-		int recieve_from_any( MPI::ANY_SOURCE );
+		int recieve_from_any( MPI_ANY_SOURCE );
 		MPI_Recv( & node_requesting_job, 1, MPI_INT, recieve_from_any, tag_, MPI_COMM_WORLD, & stat_ );
 		Size job_index( 0 ); // No job left.
 		MPI_Send( & job_index, 1, MPI_UNSIGNED_LONG, node_requesting_job, tag_, MPI_COMM_WORLD );

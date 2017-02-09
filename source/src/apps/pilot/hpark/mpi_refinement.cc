@@ -176,7 +176,7 @@ public:
 
 				for ( core::Size i = 1; i <= slave_frac.size(); ++i ) slave_frac[i] /= fsum;
 
-				int ncores = mpi_npes(); //MPI::COMM_WORLD.Get_size();
+				int ncores = mpi_npes();
 				core::Size nslave = (core::Size)(ncores) - n_masters - 1;
 
 				core::Real fslave( (core::Real)(mpi_rank())/nslave );
@@ -226,5 +226,3 @@ main( int argc, char * argv [] )
 	}
 	return 0;
 }
-
-

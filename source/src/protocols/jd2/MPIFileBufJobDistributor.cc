@@ -116,8 +116,6 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 
 	// set n_rank_ and rank based on whether we are using MPI or not
 #ifdef USEMPI
-	//n_rank_ = MPI::COMM_WORLD.Get_size();
-	//rank_ = MPI::COMM_WORLD.Get_rank();
 	int int_rank, int_n_rank;                         //don't cast pointers - copy it over instead
   MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
   MPI_Comm_size( MPI_COMM_WORLD, &int_n_rank );

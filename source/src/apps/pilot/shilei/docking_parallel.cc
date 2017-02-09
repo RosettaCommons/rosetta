@@ -504,7 +504,7 @@ void run_parallel_docking() {
 	} //done compute one structures
 	while (curr_struct<=nstruct);
 
-  	MPI::Finalize();
+  	MPI_Finalize();
 
 }
 

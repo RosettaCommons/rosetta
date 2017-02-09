@@ -200,7 +200,8 @@ MPI_Refine_Master::init(){
 
 	// Slave ranks
 #ifdef USEMPI
-	int ncores = MPI::COMM_WORLD.Get_size();
+	int ncores;
+	MPI_Comm_size( MPI_COMM_WORLD, &ncores );
 	TR << "My slave assignment: ";
 	for( int i = 1; i < ncores; ++i ){
 		int n_masters = (int)(option[ OptionKeys::wum::n_masters ]());
@@ -1274,5 +1275,3 @@ MPI_Refine_Master::check_library_expiry_dates(){
 
 } // namespace mpi_refinement
 } // namespace protocols
-
-

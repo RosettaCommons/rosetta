@@ -78,8 +78,6 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 {
 	// set npes and rank based on whether we are using MPI or not
 #ifdef USEMPI
-  //npes_ = MPI::COMM_WORLD.Get_size();
-  //rank_ = MPI::COMM_WORLD.Get_rank();
   int int_npes, int_rank;                                 //don't cast pointers - copy it over instead
   MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
   MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
@@ -101,7 +99,7 @@ void
 MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 {
 #ifdef USEMPI
-	set_sequential_distribution( option[ OptionKeys::jd2::sequential_mpi_job_distribution	].user() ); //Set whether we're sending jobs to slaves in sequence (1,2,3,etc.) or whether slaves request jobs as they become available. 
+	set_sequential_distribution( option[ OptionKeys::jd2::sequential_mpi_job_distribution	].user() ); //Set whether we're sending jobs to slaves in sequence (1,2,3,etc.) or whether slaves request jobs as they become available.
 #endif
 
 	if ( rank_ == 0 ) {
@@ -113,8 +111,6 @@ MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
 #ifdef USEMPI
-	//MPI::COMM_WORLD.Barrier();
-	//MPI::Finalize();
 	MPI_Barrier( MPI_COMM_WORLD );
 	if(finalize_MPI_)
 	{
@@ -154,7 +150,6 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		if(TR.visible()) TR << "Master Node: Received message from " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
-		//switch ( status.MPI::Status::Get_tag() ) {
 		switch ( status.MPI_TAG ) {
 			case NEW_JOB_ID_TAG:  //The slave node has requested a new job id.
 				if(TR.visible()) TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
@@ -231,17 +226,12 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	// Node Spin Down loop
 	while ( n_nodes_left_to_spin_down > 0 ) {
 		if(TR.visible()) TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
-		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
-		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
 		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		if(TR.visible()) TR << "Master Node: Received message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
-		//switch ( status.MPI::Status::Get_tag() ) {
 		switch ( status.MPI_TAG ) {
 			case NEW_JOB_ID_TAG:
-				//TR << "Master Node: Sending spin down signal to node " << status.MPI::Status::Get_source() << std::endl;
-				//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
 				if(TR.visible()) TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
 				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 				n_nodes_left_to_spin_down--;
@@ -378,14 +368,12 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 		core::Size empty_data( 0 );
 		MPI_Status status;
 		current_job_id_ = 0;
-		//MPI::COMM_WORLD.Send( &empty_data, 1, MPI::INT, 0, NEW_JOB_ID_TAG );
-		//MPI::COMM_WORLD.Recv( &current_job_id_, 1, MPI::INT, 0, NEW_JOB_ID_TAG );
 		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 
 		MPI_Recv( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD, &status );
 
 		//If we're using the LargeNstructJobInputter, which limits the number of jobs held in memory at any given time, then we need to ensure that
-		//the slave knows that lower-numbered jobs can be deleted:		
+		//the slave knows that lower-numbered jobs can be deleted:
 		JobsContainer & jobs( get_jobs_nonconst() ); //Must be nonconst to mark jobs as deletable.
 		bool greater_than=false;
 		if(jobs.highest_job_index() < current_job_id_) { //Mark all jobs with lower id values as deletable if we've received a higher job id.  We will definitely not receive a lower job id, I think.
@@ -399,7 +387,7 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 			TR << "Slave Node " << rank_ << ": Received job id " << current_job_id_ << " from master.";
 			if(greater_than) TR << "  This index was higher than the highest index currently loaded in memory.  Purging old jobs.";
 			TR << std::endl;
-		}		
+		}
 	}
 
 	if( sequential_distribution() ) send_go_signal();
@@ -480,7 +468,6 @@ MPIWorkPoolJobDistributor::slave_remove_bad_inputs_from_job_list()
 #ifdef USEMPI
 	runtime_assert( !( rank_ == 0 ) );
 
-	//MPI::COMM_WORLD.Send( &current_job_id_, 1, MPI::INT, 0, BAD_INPUT_TAG );
 	MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, BAD_INPUT_TAG, MPI_COMM_WORLD );
 #endif
 }
