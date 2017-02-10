@@ -865,8 +865,8 @@ Etable::smooth_etables_one_pair(
 	for ( int i = 1; i <= etable_disbins_; ++i ) {
 		dis(i) = sqrt( ( i - 1 ) * 1.0 / bins_per_A2_ );
 	}
-	FArray1D<int> bin_of_dis(100);
-	for ( int i = 1; i <= 100; ++i ) {
+	FArray1D<int> bin_of_dis(etable_disbins_);
+	for ( int i = 1; i <= etable_disbins_; ++i ) {
 		float d = ((float)i)/10.0;
 		bin_of_dis(i) = (int)( d*d * bins_per_A2_ + 1 );
 	}
