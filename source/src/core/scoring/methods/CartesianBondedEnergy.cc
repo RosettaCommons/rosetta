@@ -1669,9 +1669,9 @@ CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const
 
 	if ( !db_ ) {
 #if defined MULTI_THREADED
-	utility::thread::WriteLockGuard lock( params_db_mutex_ );
+		utility::thread::WriteLockGuard lock( params_db_mutex_ );
 #endif
-		if (!db_) {
+		if ( !db_ ) {
 			db_ = IdealParametersDatabaseOP( new IdealParametersDatabase(cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper) );
 		}
 	}
@@ -2631,12 +2631,12 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				// lookup Ktheta and theta0
 				CartBondedParametersCOP ang_params;
 				{
-			#if defined MULTI_THREADED
+#if defined MULTI_THREADED
 					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-			#endif
-					ang_params = 
+#endif
+					ang_params =
 						db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
-							atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+						atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 				}
 
 				if ( ang_params->is_null() ) continue;
@@ -2750,12 +2750,12 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 
 				CartBondedParametersCOP ang_params;
 				{
-			#if defined MULTI_THREADED
+#if defined MULTI_THREADED
 					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-			#endif
-					ang_params = 
+#endif
+					ang_params =
 						db_->lookup_angle(rsd2.type(), false,
-							atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+						atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
 				}
 
 				if ( ang_params->is_null() ) continue;
@@ -2871,9 +2871,9 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 
 			CartBondedParametersCOP len_params;
 			{
-		#if defined MULTI_THREADED
+#if defined MULTI_THREADED
 				utility::thread::ReadLockGuard lock( params_db_mutex_ );
-		#endif
+#endif
 				len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
 			}
 
@@ -3530,12 +3530,12 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 
 				CartBondedParametersCOP ang_params;
 				{
-			#if defined MULTI_THREADED
+#if defined MULTI_THREADED
 					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-			#endif
-					ang_params = 
+#endif
+					ang_params =
 						db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
-							atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+						atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 				}
 
 
@@ -3660,10 +3660,10 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 
 				CartBondedParametersCOP ang_params;
 				{
-			#if defined MULTI_THREADED
+#if defined MULTI_THREADED
 					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-			#endif
-					ang_params = 
+#endif
+					ang_params =
 						db_->lookup_angle(rsd2.type(), false, atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
 				}
 
@@ -3767,9 +3767,9 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 			CartBondedParametersCOP len_params;
 			{
-		#if defined MULTI_THREADED
+#if defined MULTI_THREADED
 				utility::thread::ReadLockGuard lock( params_db_mutex_ );
-		#endif
+#endif
 				len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
 			}
 

@@ -419,11 +419,11 @@ ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 {
 	// If we are not symmetric do nothing
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
-	
+
 	//if symmetric
 	TR << "Current pose is symmetric. Making the pose asymmetric." << std::endl;
 	core::pose::symmetry::make_asymmetric_pose( pose );
-	
+
 	//clear the symmetry_definition option so it doesn't interfere with repack and minimization of the asymmetric pose.
 	if ( clear_sym_def_ == true ) {
 		TR << "Clearing symmetry_definition." << std::endl;
@@ -438,9 +438,9 @@ void ExtractAsymmetricPoseMover::parse_my_tag(
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
-	{
-		clear_sym_def( tag->getOption< bool >( "clear_sym_def", clear_sym_def_ ) );
-	}
+{
+	clear_sym_def( tag->getOption< bool >( "clear_sym_def", clear_sym_def_ ) );
+}
 
 // XRW TEMP std::string
 // XRW TEMP ExtractAsymmetricPoseMover::get_name() const {

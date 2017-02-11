@@ -199,8 +199,8 @@ private:
 	bool use_dssp_;
 
 	core::Real threshold_;
-    
-    bool treat_L_as_D_;
+
+	bool treat_L_as_D_;
 };
 
 } // filters

@@ -38,20 +38,20 @@ public:
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~HelixBendFilter() override;
-    
-    // @brief set secondary structure
-    void
-    secstruct( std::string const & ss );
-    
-    /// @brief minimum angle for filtering
-    void
-    threshold( core::Real const r );
-    
-    /// @brief Strand id number
-    void
-    helix_id( core::Size const r );
 
-    /// @brief returns true if the structure passes the filter, false otherwise
+	// @brief set secondary structure
+	void
+	secstruct( std::string const & ss );
+
+	/// @brief minimum angle for filtering
+	void
+	threshold( core::Real const r );
+
+	/// @brief Strand id number
+	void
+	helix_id( core::Size const r );
+
+	/// @brief returns true if the structure passes the filter, false otherwise
 	bool
 	apply( core::pose::Pose const & pose ) const override;
 
@@ -92,10 +92,10 @@ public:
 	clone() const override;
 
 private:
-    mutable std::string secstruct_ ;
-    core::Real threshold_ ;
-    core::Size helix_id_ ;
-    mutable bool filter_status_;
+	mutable std::string secstruct_ ;
+	core::Real threshold_ ;
+	core::Size helix_id_ ;
+	mutable bool filter_status_;
 };
 
 } //protocols

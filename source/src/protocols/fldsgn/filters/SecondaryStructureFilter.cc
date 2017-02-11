@@ -68,7 +68,7 @@ SecondaryStructureFilter::SecondaryStructureFilter():
 	use_abego_( false ),
 	use_dssp_( false ),
 	threshold_( 1.0 ),
-    treat_L_as_D_(false)
+	treat_L_as_D_(false)
 {}
 
 
@@ -82,7 +82,7 @@ SecondaryStructureFilter::SecondaryStructureFilter( String const & ss ):
 	use_abego_( false ),
 	use_dssp_( false ),
 	threshold_( 1.0 ),
-    treat_L_as_D_(false)
+	treat_L_as_D_(false)
 {}
 
 // @brief set filtered secondary structure
@@ -154,8 +154,8 @@ SecondaryStructureFilter::parse_my_tag(
 		set_blueprint( blueprint );
 		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
 	}
-    
-    treat_L_as_D_ = tag->getOption<bool>( "treat_L_as_D", treat_L_as_D_ );
+
+	treat_L_as_D_ = tag->getOption<bool>( "treat_L_as_D", treat_L_as_D_ );
 
 	if ( filtered_ss_ == "" ) {
 		tr.Warning << "Warning!,  option of topology is empty. SecondaryStructureFilter will attempt to determine it from StructureData information in the pose at runtime" << std::endl;
@@ -327,9 +327,9 @@ SecondaryStructureFilter::compute(
 					<< pose_ss[ i - 1 ] << '/' << sec << " at position " << i << std::endl;
 				continue;
 			}
-        } else if ( treat_L_as_D_ and sec == 'L' ) {
-            tr << "Position "<< i <<" is L, and treat_L_as_D is active: passing SS, but controlling for correct ABEGO." << std::endl;
-        }else {
+		} else if ( treat_L_as_D_ and sec == 'L' ) {
+			tr << "Position "<< i <<" is L, and treat_L_as_D is active: passing SS, but controlling for correct ABEGO." << std::endl;
+		} else {
 			if ( sec != pose_ss[ i - 1 ] ) {
 				tr << "SS filter fail: current/filtered = "
 					<< pose_ss[ i - 1 ] << '/' << sec << " at position " << i << std::endl;
@@ -442,7 +442,7 @@ void SecondaryStructureFilter::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute::attribute_w_default( "use_abego", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute( "compute_pose_secstruct_by_dssp", xsct_rosetta_bool, "XRW TO DO" )
 		+ XMLSchemaAttribute( "threshold", xsct_real, "XRW TO DO" )
-        + XMLSchemaAttribute( "treat_L_as_D", xsct_rosetta_bool, "Let loops be H-bonded in such a way that they may be detected as E or H? ABEGO string still checked." );
+		+ XMLSchemaAttribute( "treat_L_as_D", xsct_rosetta_bool, "Let loops be H-bonded in such a way that they may be detected as E or H? ABEGO string still checked." );
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );

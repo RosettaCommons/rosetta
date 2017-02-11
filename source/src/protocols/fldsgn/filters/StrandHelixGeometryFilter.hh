@@ -38,39 +38,39 @@ public:
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~StrandHelixGeometryFilter() override;
-    
-    /// @brief miniimum angle for filtering
-    void secstruct( std::string const & ss );
-    
-    /// @brief miniimum angle for filtering
-    void filter_min_orthoangle( core::Real const r );
-    
-    /// @brief maximum angle for filtering
-    void filter_max_orthoangle( core::Real const r );
-    
-    /// @brief miniimum angle for filtering
-    void filter_min_planeangle( core::Real const r );
-    
-    /// @brief maximum angle for filtering
-    void filter_max_planeangle( core::Real const r );
-    
-    /// @brief miniimum angle for filtering
-    void filter_min_dist( core::Real const r );
-    
-    /// @brief maximum angle for filtering
-    void filter_max_dist( core::Real const r );
-    
-    /// @brief miniimum angle for filtering
-    void strand_id1( core::Size const r );
-    
-    /// @brief miniimum angle for filtering
-    void strand_id2( core::Size const r );
-    
-    /// @brief maximum angle for filtering
-    void helix_id( core::Size const r );
-    
-    /// @brief set output type
-    void output_type( std::string const & s );
+
+	/// @brief miniimum angle for filtering
+	void secstruct( std::string const & ss );
+
+	/// @brief miniimum angle for filtering
+	void filter_min_orthoangle( core::Real const r );
+
+	/// @brief maximum angle for filtering
+	void filter_max_orthoangle( core::Real const r );
+
+	/// @brief miniimum angle for filtering
+	void filter_min_planeangle( core::Real const r );
+
+	/// @brief maximum angle for filtering
+	void filter_max_planeangle( core::Real const r );
+
+	/// @brief miniimum angle for filtering
+	void filter_min_dist( core::Real const r );
+
+	/// @brief maximum angle for filtering
+	void filter_max_dist( core::Real const r );
+
+	/// @brief miniimum angle for filtering
+	void strand_id1( core::Size const r );
+
+	/// @brief miniimum angle for filtering
+	void strand_id2( core::Size const r );
+
+	/// @brief maximum angle for filtering
+	void helix_id( core::Size const r );
+
+	/// @brief set output type
+	void output_type( std::string const & s );
 
 	/// @brief returns true if the structure passes the filter, false otherwise
 	bool
@@ -113,41 +113,41 @@ public:
 	clone() const override;
 
 private:
-    // @brief if value is empty, dssp will run for ss definition ( default is emptry )
-    mutable std::string secstruct_;
-    
-    /// @brief filtered min angle between helix and sheet
-    core::Real filter_min_orthoangle_;
-    
-    /// @brief filtered max angle between helix and sheet
-    core::Real filter_max_orthoangle_;
-    
-    /// @brief filtered min angle between helix and sheet
-    core::Real filter_min_planeangle_;
-    
-    /// @brief filtered max angle between helix and sheet
-    core::Real filter_max_planeangle_;
-    
-    /// @brief filtered min dist between helix and sheet
-    core::Real filter_min_dist_;
-    
-    /// @brief filtered max dist between helix and sheet
-    core::Real filter_max_dist_;
-    
-    /// @brief strand id
-    core::Size strand_id1_;
-    
-    /// @brief strand id
-    core::Size strand_id2_;
-    
-    /// @brief helix_id
-    core::Size helix_id_;
-    
-    /// @brief output_type
-    std::string output_type_;
-    
-    /// @brief output value, the result of filterring calculation
-    mutable core::Real output_value_;
+	// @brief if value is empty, dssp will run for ss definition ( default is emptry )
+	mutable std::string secstruct_;
+
+	/// @brief filtered min angle between helix and sheet
+	core::Real filter_min_orthoangle_;
+
+	/// @brief filtered max angle between helix and sheet
+	core::Real filter_max_orthoangle_;
+
+	/// @brief filtered min angle between helix and sheet
+	core::Real filter_min_planeangle_;
+
+	/// @brief filtered max angle between helix and sheet
+	core::Real filter_max_planeangle_;
+
+	/// @brief filtered min dist between helix and sheet
+	core::Real filter_min_dist_;
+
+	/// @brief filtered max dist between helix and sheet
+	core::Real filter_max_dist_;
+
+	/// @brief strand id
+	core::Size strand_id1_;
+
+	/// @brief strand id
+	core::Size strand_id2_;
+
+	/// @brief helix_id
+	core::Size helix_id_;
+
+	/// @brief output_type
+	std::string output_type_;
+
+	/// @brief output value, the result of filterring calculation
+	mutable core::Real output_value_;
 
 };
 

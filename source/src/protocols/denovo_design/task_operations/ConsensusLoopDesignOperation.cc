@@ -168,16 +168,16 @@ ConsensusLoopDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	AttributeList attributes;
 
 	attributes
-        + XMLSchemaAttribute(
-        "use_dssp", xs_string,
-        "If true, DSSP will be used to determine which residues are loops. If "
-        "false, the secondary structure stored in the pose will be used to determine loops. Has "
-        "no effect if the \"secstruct\" option is set.")
-        + XMLSchemaAttribute(
-        "secstruct", xs_string,
-        "Allows the user to force a particular secondary structure onto the pose. If  "
-        "set, use_dssp will be ignored. The length of the secondary structure must match the "
-        "length of the pose.")
+		+ XMLSchemaAttribute(
+		"use_dssp", xs_string,
+		"If true, DSSP will be used to determine which residues are loops. If "
+		"false, the secondary structure stored in the pose will be used to determine loops. Has "
+		"no effect if the \"secstruct\" option is set.")
+		+ XMLSchemaAttribute(
+		"secstruct", xs_string,
+		"Allows the user to force a particular secondary structure onto the pose. If  "
+		"set, use_dssp will be ignored. The length of the secondary structure must match the "
+		"length of the pose.")
 		+ XMLSchemaAttribute(
 		"blueprint", xs_string,
 		"If a blueprint filename is given, the blueprint will be read and its "

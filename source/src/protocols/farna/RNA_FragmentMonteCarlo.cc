@@ -1192,7 +1192,7 @@ RNA_FragmentMonteCarlo::output_score_if_desired(
 	pose::Pose & pose )
 {
 	if ( options_->output_score_frequency() != 0 &&
-			 i % options_->output_score_frequency() == 0 ) {
+			i % options_->output_score_frequency() == 0 ) {
 		running_score_output_ << r << ' ' << i << " " << ( *working_denovo_scorefxn_ )( pose );
 		output_jump_information( pose );
 		running_score_output_ << std::endl;
@@ -1220,16 +1220,16 @@ RNA_FragmentMonteCarlo::output_jump_information( pose::Pose const & pose)
 	if ( options_->output_jump_o3p_to_o5p() ) {
 		// takeoff
 		stub1 = Stub( rsd1.xyz( " O3'") /* center */,
-									rsd1.xyz( " O3'") /* a */,
-									rsd1.xyz( " C3'") /* b  [b->a defines x] */,
-									rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
+			rsd1.xyz( " O3'") /* a */,
+			rsd1.xyz( " C3'") /* b  [b->a defines x] */,
+			rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
 		stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
 
 		// landing
 		stub2 = Stub( rsd2.xyz( " O5'") /* center */,
-									rsd2.xyz( " C5'") /* a */,
-									rsd2.xyz( " O5'") /* b  [b->a defines x] */,
-									rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
+			rsd2.xyz( " C5'") /* a */,
+			rsd2.xyz( " O5'") /* b  [b->a defines x] */,
+			rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
 		stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
 	} else {
 		stub1 = get_rna_base_coordinate_system_stub( rsd1 );

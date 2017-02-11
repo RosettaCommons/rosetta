@@ -228,10 +228,10 @@ SCS_ResultVector parse_blastp_output(string const & file_name, string const & qu
 	for(auto fields : lines ) {
 		// Converting text based results filed to SCS_BlastMetric
 		SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
-		
+
 		// Different BLAST version use different headers ... search for header and assign
 		string subject_header("");
-		
+
 		if ( fields.find("subject-id") != fields.end() ) {
 			subject_header = "subject-id";
 		} else if ( fields.find("subject-acc.ver") != fields.end() ) {
@@ -239,7 +239,7 @@ SCS_ResultVector parse_blastp_output(string const & file_name, string const & qu
 		} else {
 			throw _AE_scs_failed_("Could not identify BLAST field (either subject id or subject acc.ver).");
 		}
-		
+
 		r->pdb = fields[subject_header].substr(3,4);  // pdb2adf_chothia.pdb → 2adf
 
 		r->alignment_length = std::stoi( fields.at("alignment-length") );

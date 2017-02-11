@@ -296,96 +296,93 @@ check_internal_hbonds(
 }
 core::Real
 calc_strand_helix_angle(
-                        core::pose::Pose const & pose,
-                        protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
-                        core::Size const strand_id1,
-                        core::Size const strand_id2,
-                        core::Size const helix_id,
-                        //char geom_type="dist"
-                        //const char *geom_type
-                        std::string const & geom_type
-                        )
+	core::pose::Pose const & pose,
+	protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
+	core::Size const strand_id1,
+	core::Size const strand_id2,
+	core::Size const helix_id,
+	//char geom_type="dist"
+	//const char *geom_type
+	std::string const & geom_type
+)
 {
-    using namespace protocols::fldsgn::topology;
-    using core::scoring::dssp::Dssp;
-    using protocols::fldsgn::topology::Helices;
-    using protocols::fldsgn::topology::Strands;
-    using protocols::fldsgn::topology::SS_Info2;
-    using protocols::fldsgn::topology::SS_Info2_OP;
-        
-    protocols::fldsgn::topology::Strands const & strands( ssinfo->strands() );
-    protocols::fldsgn::topology::Helices const & helices( ssinfo->helices() );
-    //numeric::xyzVector<core::Real> st_vec ;
-    //numeric::xyzVector<core::Real> hx_vec ;
-        
-    // Strand positions
-    //core::Size begin_res1( strands[ strand_id1 ]->begin() );
-    //core::Size end_res1( strands[ strand_id1 ]->end() );
-    //core::Size begin_res2( strands[ strand_id2 ]->begin() );
-    //core::Size end_res2( strands[ strand_id2 ]->end() );
-    // Helix positions
-    //core::Size begin_res3( helices[ helix_id ]->begin() );
-    core::Size end_res3( helices[ helix_id ]->end() );
-        
-    // Strand Direction
-    Vector const s1_chalf_mid = ( strands[ strand_id1 ]->mid_pos() + strands[ strand_id1 ]->Cend_pos() ) / 2.0 ;
-    Vector const s1_nhalf_mid = ( strands[ strand_id1 ]->mid_pos() + strands[ strand_id1 ]->Nend_pos() ) / 2.0 ;
-        
-    Vector const v1 = ( s1_chalf_mid - s1_nhalf_mid ).normalized();
-    //Normal vector to the sheet
-    Vector const v2 = ( strands[ strand_id2 ]->mid_pos() -  strands[ strand_id1 ]->mid_pos() ).normalized();
-    Vector const sheet_plane = v1.cross(v2);
-    // Helix Direction
-    Vector hx_ax = pose.residue( end_res3 ).xyz("CA") - helices[ helix_id ]->mid_pos();
-    int sgn;
-    for (core::Size k=1; k <= ( helices[ helix_id ]->length() ); k++){
-        if ( k < helices[ helix_id ]->length()/2 ){
-            sgn=1;
-        }
-        else{
-            sgn=-1;
-        }
-        Vector hxp = pose.residue( end_res3-k ).xyz("CA") - helices[ helix_id ]->mid_pos();
-        hx_ax = hx_ax.normalized() +sgn*hxp.normalized();
-    }
-    // Angles helix and sheet plane
-    core::Real hx_sheet_angle =  numeric::conversions::degrees( angle_of(hx_ax,sheet_plane) )  ;
-    
-    // Set directionality of ortho angle. 1.30.14. Commented out 7.16.14 (with plane_angle is defined, doesnt need further definition.
-    //if (  v1.dot( hx_ax ) < 0 ){
-    //    hx_sheet_angle = -1*hx_sheet_angle;
-    //}
-        
-    //  core::Real hx_s1_angle =  numeric::conversions::degrees( angle_of(hx_ax,v1) ) ;
-        
-    // Projection of helix into sheet plane: Asin(theta) * Bx(AxB) ; B: sheet normal vector, A: helix, theta:hx_sheet_angle
-    Vector const hx_ortho = cross( hx_ax.normalized(), sheet_plane.normalized() ); // orthogonal component
-    Vector const hx_plane = cross( sheet_plane.normalized(), hx_ortho.normalized() ); // projection on plane
-    core::Real hx_s1_angle_plane =  numeric::conversions::degrees( angle_of( hx_plane.normalized(), v1 ) );
-        
-    core::Real ori = cross( v1, hx_plane ).dot( sheet_plane );
-    if( ori < 0 ) hx_s1_angle_plane = -1*hx_s1_angle_plane;
-        
-    // Distance helix and sheet plane
-    Vector hs1 = helices[ helix_id ]->mid_pos() - strands[ strand_id1 ]->mid_pos();
-    core::Real hx_sheet_dist = hs1.length();
-    if (  hs1.dot( sheet_plane ) < 0 ){
-        hx_sheet_dist = -1*hx_sheet_dist;
-    }
-        
-        
-    // Angle: dot product
-    if ( geom_type=="plane_angle" ){
-        return hx_s1_angle_plane;
-    }
-    else if ( geom_type=="ortho_angle" ){
-        return hx_sheet_angle;
-    }
-    else{
-        // Distance helix and sheet plane
-        return hx_sheet_dist ;
-    }
-    //return theta;
+	using namespace protocols::fldsgn::topology;
+	using core::scoring::dssp::Dssp;
+	using protocols::fldsgn::topology::Helices;
+	using protocols::fldsgn::topology::Strands;
+	using protocols::fldsgn::topology::SS_Info2;
+	using protocols::fldsgn::topology::SS_Info2_OP;
+
+	protocols::fldsgn::topology::Strands const & strands( ssinfo->strands() );
+	protocols::fldsgn::topology::Helices const & helices( ssinfo->helices() );
+	//numeric::xyzVector<core::Real> st_vec ;
+	//numeric::xyzVector<core::Real> hx_vec ;
+
+	// Strand positions
+	//core::Size begin_res1( strands[ strand_id1 ]->begin() );
+	//core::Size end_res1( strands[ strand_id1 ]->end() );
+	//core::Size begin_res2( strands[ strand_id2 ]->begin() );
+	//core::Size end_res2( strands[ strand_id2 ]->end() );
+	// Helix positions
+	//core::Size begin_res3( helices[ helix_id ]->begin() );
+	core::Size end_res3( helices[ helix_id ]->end() );
+
+	// Strand Direction
+	Vector const s1_chalf_mid = ( strands[ strand_id1 ]->mid_pos() + strands[ strand_id1 ]->Cend_pos() ) / 2.0 ;
+	Vector const s1_nhalf_mid = ( strands[ strand_id1 ]->mid_pos() + strands[ strand_id1 ]->Nend_pos() ) / 2.0 ;
+
+	Vector const v1 = ( s1_chalf_mid - s1_nhalf_mid ).normalized();
+	//Normal vector to the sheet
+	Vector const v2 = ( strands[ strand_id2 ]->mid_pos() -  strands[ strand_id1 ]->mid_pos() ).normalized();
+	Vector const sheet_plane = v1.cross(v2);
+	// Helix Direction
+	Vector hx_ax = pose.residue( end_res3 ).xyz("CA") - helices[ helix_id ]->mid_pos();
+	int sgn;
+	for ( core::Size k=1; k <= ( helices[ helix_id ]->length() ); k++ ) {
+		if ( k < helices[ helix_id ]->length()/2 ) {
+			sgn=1;
+		} else {
+			sgn=-1;
+		}
+		Vector hxp = pose.residue( end_res3-k ).xyz("CA") - helices[ helix_id ]->mid_pos();
+		hx_ax = hx_ax.normalized() +sgn*hxp.normalized();
+	}
+	// Angles helix and sheet plane
+	core::Real hx_sheet_angle =  numeric::conversions::degrees( angle_of(hx_ax,sheet_plane) )  ;
+
+	// Set directionality of ortho angle. 1.30.14. Commented out 7.16.14 (with plane_angle is defined, doesnt need further definition.
+	//if (  v1.dot( hx_ax ) < 0 ){
+	//    hx_sheet_angle = -1*hx_sheet_angle;
+	//}
+
+	//  core::Real hx_s1_angle =  numeric::conversions::degrees( angle_of(hx_ax,v1) ) ;
+
+	// Projection of helix into sheet plane: Asin(theta) * Bx(AxB) ; B: sheet normal vector, A: helix, theta:hx_sheet_angle
+	Vector const hx_ortho = cross( hx_ax.normalized(), sheet_plane.normalized() ); // orthogonal component
+	Vector const hx_plane = cross( sheet_plane.normalized(), hx_ortho.normalized() ); // projection on plane
+	core::Real hx_s1_angle_plane =  numeric::conversions::degrees( angle_of( hx_plane.normalized(), v1 ) );
+
+	core::Real ori = cross( v1, hx_plane ).dot( sheet_plane );
+	if ( ori < 0 ) hx_s1_angle_plane = -1*hx_s1_angle_plane;
+
+	// Distance helix and sheet plane
+	Vector hs1 = helices[ helix_id ]->mid_pos() - strands[ strand_id1 ]->mid_pos();
+	core::Real hx_sheet_dist = hs1.length();
+	if (  hs1.dot( sheet_plane ) < 0 ) {
+		hx_sheet_dist = -1*hx_sheet_dist;
+	}
+
+
+	// Angle: dot product
+	if ( geom_type=="plane_angle" ) {
+		return hx_s1_angle_plane;
+	} else if ( geom_type=="ortho_angle" ) {
+		return hx_sheet_angle;
+	} else {
+		// Distance helix and sheet plane
+		return hx_sheet_dist ;
+	}
+	//return theta;
 }
 // /// @brief
 // utility::vector1< Size >
