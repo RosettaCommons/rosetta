@@ -9,7 +9,7 @@
 
 /// @file   bridgeObjects.cxxtest.hh
 /// @brief  Unit tests for the bridgeObjects kinematic closure function.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu), Xingjie Pan (xingjiepan@gmail.com)
 
 // Headers {{{1
 
@@ -21,6 +21,7 @@
 #include <numeric/types.hh>
 #include <numeric/kinematic_closure/dixon.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/bridgeObjects_nonredundant.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
 
@@ -135,6 +136,109 @@ public:
 		
 		//TODO!!!
 		TR.flush();
+	}
+
+	/// @brief Test that the nonredundant version of bridgeObjects function yeilds same results as the original one
+	///
+	void test_nonredundant_bridgeObject(){
+		using namespace numeric::kinematic_closure;
+		using numeric::Size;
+		using numeric::Real;
+		
+		TR << "Starting bridgeObjectsTests::test_nonredundant_bridgeObject." << std::endl;
+
+		utility::vector1< Size > pivot_res(3);
+		pivot_res[1] = 2;
+		pivot_res[2] = 5;
+		pivot_res[3] = 7;
+		
+		utility::vector1< Size > pivots(3);
+		utility::vector1< Size > order(3);
+		for(Size i=1; i <= 3; ++i){
+			pivots[i] = pivot_res[i] * 3 - 1;
+			order[i] = i;
+		}
+	
+		// Read atoms from the pose
+
+		utility::vector1< utility::vector1< Real > > atoms;
+		
+		for(numeric::Size ir=1, irmax=peptide_pose_->total_residue(); ir<=irmax; ++ir) {
+			numeric::xyzVector < Real > xyzN( peptide_pose_->xyz( core::id::NamedAtomID("N", ir) ) );
+			numeric::xyzVector < Real > xyzCA( peptide_pose_->xyz( core::id::NamedAtomID("CA", ir) ) );
+			numeric::xyzVector < Real > xyzC( peptide_pose_->xyz( core::id::NamedAtomID("C", ir) ) );
+			utility::vector1 < Real > Nvec(3), CAvec(3), Cvec(3);
+			Nvec[1] = xyzN.x(); Nvec[2] = xyzN.y(); Nvec[3] = xyzN.z();
+			CAvec[1] = xyzCA.x(); CAvec[2] = xyzCA.y(); CAvec[3] = xyzCA.z();
+			Cvec[1] = xyzC.x(); Cvec[2] = xyzC.y(); Cvec[3] = xyzC.z();
+			atoms.push_back( Nvec );
+			atoms.push_back( CAvec );
+			atoms.push_back( Cvec );
+		}
+		
+		// Get internal coordinates
+		
+		utility::vector1< numeric::Real > dt, da, db;
+		utility::vector1<utility::vector1<numeric::Real> > q(3); //Used by numeric::kinematic_closure::chainTORS
+		utility::vector1<numeric::Real> r(3); //Used by numeric::kinematic_closure::chainTORS
+
+		chainTORS( atoms.size(), atoms, dt, da, db, r, q );
+	
+		// Get results from the original function	
+	
+		int nsol1, nsol2;
+		utility::vector1<utility::vector1<Real> > t_ang;
+		utility::vector1<utility::vector1<Real> > b_ang;
+		utility::vector1<utility::vector1<Real> > b_len;
+		
+		bridgeObjects(atoms, dt, da, db, pivots, order, t_ang, b_ang, b_len, nsol1);		
+	
+		// Prepare inputs for bridgeObjects_nonredundant()
+		
+		utility::vector1<utility::vector1<Real> > stub1(3);	
+		utility::vector1<utility::vector1<Real> > stub2(3);
+	  utility::vector1<numeric::Real> torsions_chain1(pivots[2] - pivots[1] - 2);	
+	  utility::vector1<numeric::Real> torsions_chain2(pivots[3] - pivots[2] - 2);	
+	  utility::vector1<numeric::Real> angles(pivots[3] - pivots[1] + 1);	
+	  utility::vector1<numeric::Real> bonds(pivots[3] - pivots[1]);	
+	
+		for(Size i=1; i<=3; ++i){
+			stub1[i] = atoms[pivots[1] - 3 + i];
+			stub2[i] = atoms[pivots[3] - 1 + i];
+		}
+
+		for(Size i=1; i<=torsions_chain1.size(); ++i){
+			torsions_chain1[i] = dt[pivots[1] + i];
+		}
+
+		for(Size i=1; i<=torsions_chain2.size(); ++i){
+			torsions_chain2[i] = dt[pivots[2] + i];
+		}
+
+		for(Size i=1; i<=angles.size(); ++i){
+			angles[i] = da[pivots[1] + i - 1];
+		}
+
+		for(Size i=1; i<=bonds.size(); ++i){
+			bonds[i] = db[pivots[1] + i - 1];
+		}
+
+		utility::vector1<utility::vector1<Real> > pivot_torsions;
+		
+		// Get results from the nonredundant function
+		
+		bridgeObjects_nonredundant(stub1, stub2, torsions_chain1, torsions_chain2, angles, bonds, pivot_torsions, nsol2);
+	
+		TS_ASSERT_EQUALS(nsol1, nsol2);
+
+		for(int i=1; i<=nsol2; ++i){
+			TS_ASSERT_DELTA(t_ang[i][pivots[1] - 1],  pivot_torsions[i][1], 1e-3) ;
+			TS_ASSERT_DELTA(t_ang[i][pivots[1]]    ,  pivot_torsions[i][2], 1e-3) ;
+			TS_ASSERT_DELTA(t_ang[i][pivots[2] - 1],  pivot_torsions[i][3], 1e-3) ;
+			TS_ASSERT_DELTA(t_ang[i][pivots[2]]    ,  pivot_torsions[i][4], 1e-3) ;
+			TS_ASSERT_DELTA(t_ang[i][pivots[3] - 1],  pivot_torsions[i][5], 1e-3) ;
+			TS_ASSERT_DELTA(t_ang[i][pivots[3]]    ,  pivot_torsions[i][6], 1e-3) ;
+		}
 	}
 
 private:

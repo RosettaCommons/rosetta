@@ -52,6 +52,7 @@ static MoverRegistrator< antibody::design::AntibodyDesignProtocolCreator > reg_A
 static MoverRegistrator< antibody::snugdock::SnugDockCreator > reg_SnugDockCreator;
 
 // B //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< backbone_moves::local_backbone_mover::LocalBackboneMoverCreator > reg_LocalBackboneMover;
 static MoverRegistrator< backrub::BackrubMoverCreator > reg_BackrubMoverCreator;
 static MoverRegistrator< backrub::BackrubProtocolCreator > reg_BackrubProtocolCreator;
 static MoverRegistrator< backrub::BackrubSidechainMoverCreator > reg_BackrubSidechainMoverCreator;

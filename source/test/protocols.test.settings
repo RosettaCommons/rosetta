@@ -53,6 +53,11 @@ sources = {
 	"antibody/task_operations":[
 		"AntibodyTaskOps",
 	],
+
+	"backbone_moves/local_backbone_mover":[
+		"LocalBackboneMoverTests",
+	],
+
 	"branch_angle" : [
 		"BranchAngleOptimizer",
 	],
@@ -649,6 +654,7 @@ testinputfiles = [
 	"antibody/task_operations/AddCDRProfileSetsOperation_UTracer2.u",
 	"antibody/task_operations/AddCDRProfileSetsOperation_UTracer3.u",
 	"antibody/task_operations/AddCDRProfileSetsOperation_UTracer4.u",
+	"backbone_moves/local_backbone_mover/1arb.pdb",
 	"branch_angle/BranchAngleOptimizer.u",
 	"branch_angle/branch_angle_1.txt",
 	"branch_angle/branch_angle_2.txt",
