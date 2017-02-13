@@ -24,6 +24,7 @@ sources = {
 		"RigidChunkTest",
 	],
 	"analysis": [
+		"InterfaceDdGMoverTests",
 		"PeptideDeriverFilterTests",
 	],
 	"antibody": [
@@ -59,6 +60,10 @@ sources = {
 
 	"backbone_moves/local_backbone_mover":[
 		"LocalBackboneMoverTests",
+	],
+
+	"backrub" : [
+		"BackrubProtocolTests",
 	],
 
 	"branch_angle" : [

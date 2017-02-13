@@ -53,6 +53,9 @@ public:
 		core::pose::Pose const &
 	) override;
 
+	///@brief Returns a cloned PoseOP of reference_pose_
+	core::pose::PoseOP get_cloned_saved_pose() const;
+
 	static
 	std::string
 	mover_name();

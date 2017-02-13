@@ -52,6 +52,7 @@ public:
 
 
 	bool       & use_distance_cst() { return use_distance_cst_; }
+	bool       & use_harmonic_func() { return use_harmonic_func_; }
 	bool       & use_bounded_func() { return use_bounded_func_; }
 	bool       & CA_only() { return CA_only_; }
 	bool       & bb_only() { return bb_only_; }
@@ -62,6 +63,7 @@ public:
 	core::Real & bound_width() { return bound_width_; }
 	core::Size & min_seq_sep() { return min_seq_sep_; }
 	bool       const & use_distance_cst() const { return use_distance_cst_; }
+	bool       const & use_harmonic_func() const { return use_harmonic_func_; }
 	bool       const & use_bounded_func() const { return use_bounded_func_; }
 	bool       const & CA_only() const { return CA_only_; }
 	bool       const & bb_only() const { return bb_only_; }
@@ -108,6 +110,7 @@ private:
 
 private:
 	bool use_distance_cst_;
+	bool use_harmonic_func_;
 	bool CA_only_;
 	bool bb_only_;
 	bool inter_chain_;

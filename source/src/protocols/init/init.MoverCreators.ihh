@@ -146,6 +146,7 @@
 #include <protocols/farna/ErraserMinimizerMoverCreator.hh>
 #include <protocols/farna/RNAIdealizeMoverCreator.hh>
 
+#include <protocols/features/InterfaceDdGMoverCreator.hh>
 #include <protocols/features/ReportToDBCreator.hh>
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
 

@@ -190,6 +190,11 @@ EtableOptions::parse_my_tag(
 	if ( tag->hasOption( "lj_hbond_hdis" ) ) {
 		lj_hbond_hdis = tag->getOption<core::Real>( "lj_hbond_hdis" );
 	}
+
+	if ( tag->hasOption( "fa_max_dis" ) ) {
+		max_dis = tag->getOption<core::Real>( "fa_max_dis" );
+	}
+
 }
 
 void
@@ -197,8 +202,9 @@ EtableOptions::append_schema_attributes( utility::tag::AttributeList & attribute
 {
 	using namespace utility::tag;
 	attributes
-		+ XMLSchemaAttribute( "lj_hbond_OH_donor_dis", xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "lj_hbond_hdis", xsct_real , "XRW TO DO" );
+		+ XMLSchemaAttribute( "lj_hbond_OH_donor_dis", xsct_real , "Lennard Jones sigma value for O in OH donor groups" )
+		+ XMLSchemaAttribute( "lj_hbond_hdis", xsct_real , "Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures" )
+		+ XMLSchemaAttribute( "fa_max_dis", xsct_real , "Max distance for energy function calculations, in angstroms" );
 }
 
 void

@@ -121,6 +121,13 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
+class UseMultiCoolAnnealerCreator : public TaskOperationCreator {
+public:
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
 class InitializeFromOptionCollectionCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;

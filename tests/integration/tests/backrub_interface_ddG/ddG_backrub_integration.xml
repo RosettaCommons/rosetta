@@ -1,0 +1,114 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="fa_talaris2013" weights="talaris2013"/>
+    <ScoreFunction name="fa_talaris2014" weights="talaris2014"/>
+    <ScoreFunction name="fa_talaris2014_cst" weights="talaris2014">
+      <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+      <Set fa_max_dis="9.0"/>
+    </ScoreFunction>
+  </SCOREFXNS>
+
+  <!-- #### All residues must be set to be NATAA packable at top of resfile ### -->
+  <TASKOPERATIONS>
+    <ReadResfile name="res_mutate" filename="%%mutate_resfile_relpath%%"/>
+  </TASKOPERATIONS>
+
+  <RESIDUE_SELECTORS>
+    <Task name="resselector" fixed="0" packable="0" designable="1" task_operations="res_mutate"/>
+    <Neighborhood name="bubble" selector="resselector" distance="8.0"/>
+    <ResidueName name="isgly" residue_name3="GLY"/>
+    <Not name="notgly" selector="isgly"/>
+    <And name="bubble_notgly" selectors="bubble,notgly"/>
+    <PrimarySequenceNeighborhood name="bubble_notgly_adjacent" selector="bubble_notgly" lower="1" upper="1"/>
+    <StoredResidueSubset name="restore_neighbor_shell" subset_name="neighbor_shell"/>
+    <Not name="everythingelse" selector="restore_neighbor_shell"/>
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+    <OperateOnResidueSubset name="repackonly" selector="restore_neighbor_shell">
+      <RestrictToRepackingRLT/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="norepack" selector="everythingelse">
+      <PreventRepackingRLT/>
+    </OperateOnResidueSubset>
+    <UseMultiCoolAnnealer name="multicool" states="6"/>
+    <ExtraChiCutoff name="extrachizero" extrachi_cutoff="0"/>
+    <InitializeFromCommandline name="commandline_init"/>
+    <RestrictToRepacking name="restrict_to_repacking"/>
+  </TASKOPERATIONS>
+
+  <FILTERS>
+  </FILTERS>
+
+  <MOVERS>
+    <StoreResidueSubset name="neighbor_shell_storer" subset_name="neighbor_shell" residue_selector="bubble_notgly_adjacent" />
+
+    <AddConstraintsToCurrentConformationMover name="addcst" use_distance_cst="1" coord_dev="0.5" min_seq_sep="0" max_distance="9" CA_only="1" bound_width="0.0" cst_weight="0.0"/>
+    <ClearConstraintsMover name="clearcst"/>
+    <!-- Settings changed for faster integration test runtime -->
+    <!-- Better settings: 5000 max_iter, threshold 1.0 -->
+    <MinMover name="minimize" scorefxn="fa_talaris2014_cst" chi="1" bb="1" type="lbfgs_armijo_nonmonotone" tolerance="0.000001" max_iter="20" abs_score_convergence_threshold="50.0"/>
+
+    <PackRotamersMover name="repack" scorefxn="fa_talaris2014" task_operations="commandline_init,repackonly,norepack,multicool"/>
+    <PackRotamersMover name="mutate" scorefxn="fa_talaris2014" task_operations="commandline_init,res_mutate,norepack,multicool"/>
+
+    <ReportToDB name="dbreport" batch_description="interface_ddG" database_name="ddG.db3">
+      <PdbDataFeatures/>
+      <ScoreTypeFeatures/>
+      <ScoreFunctionFeatures scorefxn="fa_talaris2013"/>
+      <StructureScoresFeatures scorefxn="fa_talaris2013"/>
+      <ResidueFeatures/>
+      <ResidueScoresFeatures scorefxn="fa_talaris2013"/>
+      <PoseConformationFeatures/>
+      <ResidueConformationFeatures/>
+      <ProteinResidueConformationFeatures/>
+      <PairFeatures/>
+      <AtomAtomPairFeatures/>
+      <ProteinBondGeometryFeatures/>
+      <ProteinBackboneTorsionAngleFeatures/>
+      <RotamerFeatures/>
+    </ReportToDB>
+
+    <SavePoseMover name="save_wt_bound_pose" restore_pose="0" reference_name="wt_bound_pose"/>
+    <SavePoseMover name="save_backrub_pose" restore_pose="0" reference_name="backrubpdb"/>
+    <SavePoseMover name="restore_backrub_pose" restore_pose="1" reference_name="backrubpdb"/>
+
+    <!-- Trials set lower for integration test; 10,000 is more reasonable -->
+    <BackrubProtocol name="backrub" mc_kt="1.2" ntrials="20" pivot_residue_selector="restore_neighbor_shell" task_operations="restrict_to_repacking,commandline_init,extrachizero" recover_low="0"/>
+
+    <InterfaceDdGMover name="int_ddG_mover" wt_ref_savepose_mover="save_wt_bound_pose" db_reporter="dbreport" scorefxn="fa_talaris2013"/>
+
+    <ScoreMover name="apply_score" scorefxn="fa_talaris2014_cst" verbose="0"/>
+
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover_name="addcst"/>
+    <Add mover_name="apply_score"/> <!-- Necessary to initialize neighbor graph -->
+    <Add mover_name="neighbor_shell_storer"/>
+
+    <Add mover_name="minimize"/>
+    <Add mover_name="clearcst"/>
+
+    <Add mover_name="backrub"/>
+    <Add mover_name="save_backrub_pose"/>
+
+    <Add mover_name="repack"/>
+
+    <Add mover_name="addcst"/>
+    <Add mover_name="minimize"/>
+    <Add mover_name="clearcst"/>
+
+    <Add mover_name="save_wt_bound_pose"/>
+    <Add mover_name="restore_backrub_pose"/>
+
+    <Add mover_name="mutate"/>
+
+    <Add mover_name="addcst"/>
+    <Add mover_name="minimize"/>
+    <Add mover_name="clearcst"/>
+
+    <Add mover_name="int_ddG_mover"/>
+  </PROTOCOLS>
+  <OUTPUT />
+</ROSETTASCRIPTS>

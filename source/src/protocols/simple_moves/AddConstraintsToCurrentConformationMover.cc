@@ -79,6 +79,7 @@ using namespace constraints;
 AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover():
 	protocols::moves::Mover( AddConstraintsToCurrentConformationMover::mover_name() ),
 	use_distance_cst_( false ),
+	use_harmonic_func_( false ),
 	CA_only_( true ),
 	bb_only_( false ),
 	inter_chain_( true ),
@@ -96,6 +97,16 @@ AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMo
 void
 AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 {
+	// Check that boolean logic options make sense
+	runtime_assert( ! ( use_harmonic_func_ && use_bounded_func_ ) );
+	if ( use_harmonic_func_ ) {
+		TR << "Using harmonic function" << std::endl;
+	} else if ( use_bounded_func_ ) {
+		TR << "Using bounded function" << std::endl;
+	} else {
+		TR << "Using SOG function" << std::endl;
+	}
+
 	pose.add_constraints( generate_constraints( pose ) );
 }
 
@@ -193,7 +204,7 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 
 		// add constraints
 		core::scoring::func::FuncOP cc_func; //NULL
-		if ( !use_bounded_func_ ) {
+		if ( !use_bounded_func_ || use_harmonic_func_ ) {
 			cc_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, coord_dev_ ) );
 		} else {
 			cc_func = core::scoring::func::FuncOP( new BoundFunc( 0, bound_width_, coord_dev_, "xyz" ) );
@@ -254,25 +265,34 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 					if ( dist > max_distance_ ) continue;
 
 					core::scoring::func::FuncOP apc_func; //NULL!
-					if ( !use_bounded_func_ ) {
-						core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, coord_dev_ ) );
-						core::scoring::func::FuncOP weighted_func( new core::scoring::func::ScalarWeightedFunc( cst_weight_, sog_func ) );
-						apc_func = weighted_func;
-						TR.Debug << "Using SOG func with AtomPairConstraint: " << *apc_func << std::endl;
-					} else {
+					if ( use_harmonic_func_ ) {
+						apc_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( dist, coord_dev_ ) );
+						TR.Debug << "Using harmonic func with AtomPairConstraint: " << *apc_func << std::endl;
+					} else if ( use_bounded_func_ ) {
 						//establish bound_func limits based on basin around distance
 						core::Real lower_limit( dist - ( 0.5  * bound_width_) );
 						if ( lower_limit < 0 ) lower_limit = 0;
 						core::Real const upper_limit( dist + ( 0.5 * bound_width_ ) );
 						apc_func = core::scoring::func::FuncOP( new BoundFunc( lower_limit, upper_limit, coord_dev_, "xyz" ) );
 						TR.Debug << "Using Bounded func with AtomPairConstraint: " << *apc_func << std::endl;
+					} else {
+						core::scoring::func::FuncOP weighted_func;
+						core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, coord_dev_ ) );
+						apc_func = core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, sog_func ) );
+						TR.Debug << "Using SOG func with AtomPairConstraint: " << *apc_func << std::endl;
 					}
 					runtime_assert(apc_func); //make sure that func got populated; should have been forced down one of the two if branches above
 
 					core::scoring::constraints::ConstraintCOP newcst(
 						new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( iatom, ires ), core::id::AtomID( jatom, jres ), apc_func ) );
 					csts.push_back( newcst );
-					TR.Debug << "atom_pair_constraint generated for residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
+					if ( use_harmonic_func_ ) {
+						TR.Debug << "harmonic atom_pair_constraint generated for residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom  << std::endl;
+					} else if ( use_bounded_func_ ) {
+						TR.Debug << "bounded atom_pair_constraint generated for residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
+					} else {
+						TR.Debug << "SOG atom_pair_constraint generated for residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
+					}
 				}
 			}
 		} // jres loop
@@ -299,7 +319,9 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	bb_only_ = tag->getOption< bool >( "bb_only", bb_only_ );
 	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
 
-	if ( bound_width_ < 1e-3 ) {
+	if ( bound_width_ < 1e-3 && cst_weight_ < 1e-3 ) {
+		use_harmonic_func_ = true;
+	} else if ( bound_width_ < 1e-3 ) {
 		use_bounded_func_ = false;
 	} else {
 		use_bounded_func_ = true;
@@ -390,9 +412,9 @@ void AddConstraintsToCurrentConformationMover::provide_xml_schema( utility::tag:
 		+ XMLSchemaAttribute( "use_distance_cst", xsct_rosetta_bool, "use distance constraints instead of CoordinateConstraints. Probable default false." )
 		+ XMLSchemaAttribute( "max_distance", xsct_real, "do not generate distance constraints beyond this distance.  Only active with use_distance_cst." )
 		+ XMLSchemaAttribute( "coord_dev", xsct_real, "width (sd) for HarmonicFunc or BoundFunc." )
-		+ XMLSchemaAttribute( "bound_width", xsct_real, "BoundFunc zero basin width BoundFunc; also activates use of BoundFunc over HarmonicFunc" )
+		+ XMLSchemaAttribute( "bound_width", xsct_real, "BoundFunc zero basin width BoundFunc; also activates use of BoundFunc (if non-zero)" )
 		+ XMLSchemaAttribute( "min_seq_sep", xsct_non_negative_integer, "Do not generate distance constraints between residues within this sequence separation.  Only active with use_distance_cst." )
-		+ XMLSchemaAttribute( "cst_weight", xsct_real, "use ScalarWeightedFunc to reweight constraints by this" )
+		+ XMLSchemaAttribute( "cst_weight", xsct_real, "use ScalarWeightedFunc to reweight constraints by this; also activates use of HarmonicFunc (if this and bound_width are both zero)" )
 		+ XMLSchemaAttribute( "CA_only", xsct_rosetta_bool, "constrain only CA atoms." )
 		+ XMLSchemaAttribute( "bb_only", xsct_rosetta_bool, "constrain only backbone atoms." )
 		+ XMLSchemaAttribute( "inter_chain", xsct_rosetta_bool, "Generate distance constraints between residues on different chains if true.  (Does not appear to generate ONLY interchain constraints.)  If false, skips constraints that would go between chains.  Only active with use_distance_cst." );

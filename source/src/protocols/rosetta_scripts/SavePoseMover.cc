@@ -87,6 +87,11 @@ SavePoseMover::fresh_instance() const{
 	return protocols::moves::MoverOP( new SavePoseMover );
 }
 
+core::pose::PoseOP
+SavePoseMover::get_cloned_saved_pose() const {
+	return reference_pose_->clone();
+}
+
 std::string SavePoseMover::get_name() const {
 	return mover_name();
 }

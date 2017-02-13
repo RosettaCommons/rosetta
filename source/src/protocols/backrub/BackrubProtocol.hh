@@ -32,6 +32,7 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 //Basic
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -96,9 +97,6 @@ public:
 	void
 	write_database();
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
-
 	protocols::moves::MoverOP
 	clone() const override;
 
@@ -125,6 +123,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+
+	utility::vector1<core::Size>
+	get_pivot_residues() const;
+
+	void
+	set_pivots_from_residue_subset( core::select::residue_selector::ResidueSubset residue_subset );
 
 private:
 
@@ -194,7 +198,14 @@ private:
 	bool initial_pack_;
 	bool trajectory_;
 	bool trajectory_gz_;
+	bool recover_low_;
 	core::Size trajectory_stride_;
+
+	protocols::moves::MoverOP trajectory_apply_mover_;
+
+	///@brief Residue selector to select pivot residues
+	core::select::residue_selector::ResidueSelectorCOP pivots_residue_selector_;
+
 };
 
 

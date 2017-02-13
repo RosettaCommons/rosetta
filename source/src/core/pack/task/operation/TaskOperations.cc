@@ -448,7 +448,6 @@ void RotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute::required_attribute( "resnum", xsct_positive_integer , "Residue number." )
 		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_non_negative_integer , "Chi level 0-3?" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes, "Sample residue chi angles much more finely during packing. Currently hardcoded to use three 1/3 step standard deviation." );
-
 }
 
 TaskOperationOP RotamerExplosionCreator::create_task_operation() const
@@ -505,6 +504,68 @@ void InitializeFromCommandlineCreator::provide_xml_schema( utility::tag::XMLSche
 {
 	InitializeFromCommandline::provide_xml_schema( xsd );
 }
+
+/// BEGIN UseMultiCoolAnnealer
+
+UseMultiCoolAnnealer::~UseMultiCoolAnnealer() {}
+
+UseMultiCoolAnnealer::UseMultiCoolAnnealer()
+: parent(),
+	states_(10)
+{
+}
+
+UseMultiCoolAnnealer::UseMultiCoolAnnealer( core::Size states )
+: parent()
+{
+	set_states( states );
+}
+
+TaskOperationOP UseMultiCoolAnnealer::clone() const
+{
+	return TaskOperationOP( new UseMultiCoolAnnealer( *this ) );
+}
+
+void
+UseMultiCoolAnnealer::apply( pose::Pose const &, PackerTask & task ) const
+{
+	task.or_multi_cool_annealer( true );
+	task.increase_multi_cool_annealer_history_size( states_ );
+}
+
+void
+UseMultiCoolAnnealer::set_states( core::Size states ) { states_ = states; }
+
+void
+UseMultiCoolAnnealer::parse_tag( TagCOP tag, DataMap & )
+{
+	set_states( tag->getOption< core::Size >( "states", 10 ) );
+}
+
+std::string UseMultiCoolAnnealer::keyname() { return "UseMultiCoolAnnealer"; }
+
+void UseMultiCoolAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "states", xsct_non_negative_integer, "Number of states" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
+}
+
+TaskOperationOP UseMultiCoolAnnealerCreator::create_task_operation() const
+{
+	return TaskOperationOP( new UseMultiCoolAnnealer );
+}
+
+std::string UseMultiCoolAnnealerCreator::keyname() const {
+	return UseMultiCoolAnnealer::keyname();
+}
+
+void UseMultiCoolAnnealerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UseMultiCoolAnnealer::provide_xml_schema( xsd );
+}
+
 
 /// BEGIN InitializeFromOptionCollection
 

@@ -1,0 +1,15 @@
+-s 3fod.pdb
+-nstruct 3
+-parser
+ -protocol parser_script.xml
+#
+# Mute some tracers...
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack
+#
+# Since the important output is the feature database and the output log,
+# ignore the job distributor output.
+-out
+ -nooutput

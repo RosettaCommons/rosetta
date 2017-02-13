@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+  </SCOREFXNS>
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+  <MOVERS>
+    <SavePoseMover name="save_wt_pose" restore_pose="0" reference_name="wt_pose"/>
+    <SavePoseMover name="load_mut_pose" restore_pose="1" reference_name="mut_pose" pdb_file="3fod_mutated.pdb"/>
+    <ReportToDB name="mutation_features_reporter" database_name="mutation.db3" batch_description="Test the InterfaceDdGMover, and its associated features reporter.">
+      <ScoreTypeFeatures/>
+      <StructureScoresFeatures scorefxn="commandline"/>
+    </ReportToDB>
+    <ReportToDB name="no_mutation_features_reporter" database_name="no_mutation.db3" batch_description="Test the InterfaceDdGMover, and its associated features reporter.">
+      <ScoreTypeFeatures/>
+      <StructureScoresFeatures scorefxn="commandline"/>
+    </ReportToDB>
+    <InterfaceDdGMover name="int_ddG_mover" wt_ref_savepose_mover="save_wt_pose" chain_num="3" db_reporter="mutation_features_reporter"/>
+    <InterfaceDdGMover name="int_ddG_mover_nomutation" mut_ref_savepose_mover="save_wt_pose" chain_num="3" db_reporter="no_mutation_features_reporter"/>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover_name="save_wt_pose"/>
+    <Add mover_name="int_ddG_mover_nomutation"/>
+    <Add mover_name="load_mut_pose"/>
+    <Add mover_name="int_ddG_mover"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

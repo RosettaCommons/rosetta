@@ -99,6 +99,7 @@ MinMover::MinMover() :
 	movemap_(/* 0 */),
 	scorefxn_(/* 0 */),
 	min_options_(/* 0 */),
+	abs_score_convergence_threshold_(0.0),
 	cartesian_(false),
 	dof_tasks_()
 {
@@ -111,6 +112,7 @@ MinMover::MinMover( std::string const & name ) :
 	movemap_(/* 0 */),
 	scorefxn_(/* 0 */),
 	min_options_(/* 0 */),
+	abs_score_convergence_threshold_(0.0),
 	cartesian_(false),
 	dof_tasks_()
 {
@@ -129,11 +131,13 @@ MinMover::MinMover(
 	bool use_nb_list_in,
 	bool deriv_check_in /* = false */,
 	bool deriv_check_verbose_in /* = false */
-) : Parent("MinMover"),
+) :
+	Parent("MinMover"),
 	movemap_(std::move( movemap_in )),
 	scorefxn_(std::move( scorefxn_in )),
 	min_options_(/* 0 */),
 	threshold_(1000000.0), // TODO: line can be deleted?
+	abs_score_convergence_threshold_(0.0),
 	cartesian_(false),
 	dof_tasks_()
 {
@@ -259,6 +263,23 @@ MinMover::max_iter( Size max_iter_in ) { min_options_->max_iter( max_iter_in ); 
 void
 MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap){
 	PROF_START( basic::MINMOVER_APPLY );
+	inner_run_minimizer( pose, active_movemap );
+	if ( abs_score_convergence_threshold() > 0.0 ) {
+		while ( abs_score_diff_after_minimization() > abs_score_convergence_threshold() ) {
+			// Make sure further minimizations lead to the same answer
+			TR << "running another iteration of minimization. difference is: " << abs_score_diff_after_minimization() << std::endl;
+			inner_run_minimizer( pose, active_movemap );
+		}
+	}
+	PROF_STOP( basic::MINMOVER_APPLY );
+
+	// emit statistics
+	scorefxn_->show(TR.Debug, pose);
+	TR.Debug << std::endl;
+}
+
+void
+MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap ) {
 	if ( !cartesian( ) ) {
 		AtomTreeMinimizer minimizer;
 		if ( !omega_ ) {
@@ -268,18 +289,13 @@ MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap
 				active_movemap.set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
 			}
 		}
-		(*scorefxn_)(pose);
-		minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
+		score_before_minimization_ = (*scorefxn_)(pose);
+		score_after_minimization_ = minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
 	} else {
 		CartesianMinimizer minimizer;
-		(*scorefxn_)(pose);
-		minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
+		score_before_minimization_ = (*scorefxn_)(pose);
+		score_after_minimization_ = minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
 	}
-	PROF_STOP( basic::MINMOVER_APPLY );
-
-	// emit statistics
-	scorefxn_->show(TR.Debug, pose);
-	TR.Debug << std::endl;
 
 }
 
@@ -363,6 +379,7 @@ void MinMover::parse_opts(
 	max_iter( tag->getOption< int >( "max_iter", 200 ) );
 	min_type( tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" ) );
 	tolerance( tag->getOption< core::Real >( "tolerance", 0.01 ) );
+	abs_score_convergence_threshold( tag->getOption< core::Real >( "abs_score_convergence_threshold", 0.0 ) );
 	cartesian( tag->getOption< bool >( "cartesian", false ) );
 
 	//fpd  if cartesian or nonideal default to lbfgs minimization otherwise the runtime is horrible
@@ -476,6 +493,7 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 		"Comma-separated list of jumps to minimize over (be sure this jump exists!). "
 		"If set to \"ALL\", all jumps will be set to minimize. "
 		"If set to \"0\", jumps will be set not to minimize" )
+		+ XMLSchemaAttribute( "abs_score_convergence_threshold", xsct_real , "Keep minimizing until difference before minimization is less than this threshold" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"max_iter",  xsct_non_negative_integer,
 		"maximum number of iterations allowed. This default is also very loose. "
@@ -529,6 +547,13 @@ void MinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.write_complex_type_to_schema( xsd );
 }
 
+Real MinMover::score_diff_after_minimization() const {
+	return score_after_minimization_ - score_before_minimization_;
+}
+
+Real MinMover::abs_score_diff_after_minimization() const {
+	return std::abs( score_diff_after_minimization() );
+}
 
 }  // simple_moves
 }  // protocols

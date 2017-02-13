@@ -55,6 +55,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -111,18 +112,25 @@ BackrubProtocol::BackrubProtocol():
 	packing_operation_(NULL),
 	trajectory_(false),
 	trajectory_gz_(false),
-	trajectory_stride_(100)
+	recover_low_(true),
+	trajectory_stride_(100),
+	trajectory_apply_mover_(nullptr),
+	pivots_residue_selector_(nullptr)
 {
 	read_cmd_line_options();
 }
 
-BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp): Mover(bp),
+BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp):
+	Mover(bp),
 	scorefxn_(bp.scorefxn_),
 	main_task_factory_(bp.main_task_factory_),
 	backrubmover_(bp.backrubmover_),
 	smallmover_(bp.smallmover_),
 	sidechainmover_(bp.sidechainmover_),
-	packrotamersmover_(bp.packrotamersmover_)
+	packrotamersmover_(bp.packrotamersmover_),
+	recover_low_(bp.recover_low_),
+	trajectory_apply_mover_(bp.trajectory_apply_mover_),
+	pivots_residue_selector_(bp.pivots_residue_selector_)
 {
 	this->set_options(
 		bp.pivot_residues_,
@@ -287,13 +295,7 @@ BackrubProtocol::fresh_instance() const {
 	return protocols::moves::MoverOP( new BackrubProtocol );
 }
 
-// XRW TEMP std::string
-// XRW TEMP BackrubProtocol::get_name() const {
-// XRW TEMP  return "BackrubProtocol";
-// XRW TEMP }
-
-void
-BackrubProtocol::set_backrub_mover(BackrubMoverOP backrub_mover){
+void BackrubProtocol::set_backrub_mover(BackrubMoverOP backrub_mover){
 	backrubmover_ = backrub_mover;
 }
 
@@ -359,6 +361,10 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	packrotamersmover_->task_factory(main_task_factory_);
 	packrotamersmover_->score_function(scorefxn_);
 
+	if ( pivots_residue_selector_ ) {
+		set_pivots_from_residue_subset( pivots_residue_selector_->apply( pose ) );
+	}
+
 	if ( pivot_residues_.size() > 0 ) {
 		backrubmover_->set_pivot_residues( pivot_residues_ );
 	}
@@ -377,7 +383,7 @@ BackrubProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap  & data,
 	protocols::filters::Filters_map const & /* filters */,
-	protocols::moves::Movers_map const & /* movers */,
+	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const& pose
 ) {
 
@@ -392,8 +398,19 @@ BackrubProtocol::parse_my_tag(
 		pivot_atoms = utility::string_split( pivot_atoms_string, ',' );
 	}
 
+	if ( tag->hasOption("recover_low") ) {
+		recover_low_ = tag->getOption<bool>("recover_low");
+	}
+
 	if ( tag->hasOption("task_operations") ) {
 		main_task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	}
+
+	// Take any residues set to be at least packable in "pivot_task_operations" and use these as pivots
+	if ( tag->hasOption("pivot_residue_selector") ) {
+		// We hold on to the residue selector until apply time (to run its apply function), as it has not been
+		// initialized at this point and we would need a non-const pose to initialize
+		pivots_residue_selector_ = protocols::rosetta_scripts::get_residue_selector( tag->getOption<std::string>("pivot_residue_selector"), data);
 	}
 
 	core::Real mc_kt = tag->getOption<core::Real>(
@@ -405,6 +422,30 @@ BackrubProtocol::parse_my_tag(
 		"ntrials",
 		basic::options::option[ basic::options::OptionKeys::backrub::ntrials ]()
 	);
+
+
+	if ( tag->hasOption("trajectory_apply_mover") ) {
+		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "trajectory_apply_mover" ), movers );
+		trajectory_apply_mover_ = utility::pointer::dynamic_pointer_cast < protocols::moves::Mover > (mover);
+	}
+
+	core::Size trajectory_stride = tag->getOption<core::Size>(
+		"trajectory_stride",
+		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_stride ]()
+	);
+
+	bool trajectory = tag->getOption<bool>(
+		"trajectory",
+		basic::options::option[ basic::options::OptionKeys::backrub::trajectory ]()
+	);
+
+	bool trajectory_gz = tag->getOption<bool>(
+		"trajectory_gz",
+		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_gz ]()
+	);
+	if ( trajectory_gz ) {
+		trajectory = true;
+	}
 
 	set_options(
 		pivot_residues,
@@ -422,9 +463,9 @@ BackrubProtocol::parse_my_tag(
 		basic::options::option[ basic::options::OptionKeys::backrub::sc_prob_withinrot ](), // sc_prob_withinrot,
 		mc_kt,
 		ntrials,
-		basic::options::option[ basic::options::OptionKeys::backrub::trajectory ](), // trajectory,
-		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_gz ](), // trajectory_gz,
-		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_stride ]() // trajectory_stride
+		trajectory,
+		trajectory_gz,
+		trajectory_stride
 	);
 }
 
@@ -547,6 +588,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 	protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
 	if ( trajectory_ ) {
+		TR << "Will dump a PDB file every " << trajectory_stride_ << " steps" << std::endl;
 		trajectory.file_name(output_tag + "_traj.pdb" + ( trajectory_gz_ ? ".gz" : ""));
 		trajectory.stride( trajectory_stride_ );
 		trajectory.reset(mc);
@@ -554,7 +596,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 	TR << "Running " << ntrials_ << " trials..." << std::endl;
 
-	for ( core::Size i = 1; i <= ntrials_; ++i ) {
+	for ( core::Size i = 1; i <= ntrials_ ; ++i ) {
 
 		std::string move_type;
 
@@ -574,6 +616,12 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 		mc.boltzmann(*pose_copy, move_type);
 
 		if ( trajectory_ ) trajectory.update_after_boltzmann(mc);
+
+		if ( ( trajectory_apply_mover_ != nullptr ) && ( (i % trajectory_stride_) == 0 ) ) {
+			TR << "Applying mover '" << trajectory_apply_mover_->get_name() << "' on step " << i << std::endl;
+			core::pose::PoseOP pose_for_traj_mover( new core::pose::Pose(*pose_copy) );
+			trajectory_apply_mover_->apply( *pose_for_traj_mover );
+		}
 	}
 
 	mc.show_counters();
@@ -596,7 +644,13 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	scorefxn_->show(TR, *pose_copy);
 	TR.flush();
 
-	pose= mc.lowest_score_pose();
+	if ( recover_low_ ) {
+		TR << "Setting pose to be lowest scoring sampled model" << std::endl;
+		pose = mc.lowest_score_pose();
+	} else {
+		TR << "Leaving pose as last sampled model" << std::endl;
+		pose = mc.last_accepted_pose();
+	}
 
 	mc.last_accepted_pose().dump_pdb(output_tag + "_last.pdb");
 	mc.lowest_score_pose().dump_pdb(output_tag + "_low.pdb");
@@ -605,6 +659,24 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 		append_fold_tree_to_file(mc.lowest_score_pose().fold_tree(),  output_tag + "_low.pdb"); // this is the lowest scoring from MC trials
 		append_fold_tree_to_file(mc.last_accepted_pose().fold_tree(), output_tag + "_last.pdb"); // this is the last accepted pose from MC trials
 	}
+}
+
+void
+BackrubProtocol::set_pivots_from_residue_subset(
+	core::select::residue_selector::ResidueSubset residue_subset
+) {
+	// A ResidueSubset is equivalent to: typedef utility::vector1< bool >
+	for ( core::Size i = 1 ; i <= residue_subset.size() ; ++i ) {
+		if ( residue_subset[i] ) {
+			pivot_residues_.push_back( i );
+		}
+	}
+}
+
+utility::vector1<core::Size>
+BackrubProtocol::get_pivot_residues() const
+{
+	return pivot_residues_;
 }
 
 std::string BackrubProtocol::get_name() const {
@@ -634,6 +706,25 @@ void BackrubProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	attlist + XMLSchemaAttribute(
 		"ntrials", xsct_real,
 		"Number of trials to perform");
+	attlist + XMLSchemaAttribute(
+		"trajectory", xsct_rosetta_bool,
+		"Set to true to dump PDBs along the trajectory (how often is controlled by trajectory_stride option)" );
+	attlist + XMLSchemaAttribute(
+		"trajectory_gz", xsct_rosetta_bool,
+		"Set to true to dump gzipped PDBs along the trajectory (how often is controlled by trajectory_stride option)" );
+	attlist + XMLSchemaAttribute(
+		"recover_low", xsct_rosetta_bool,
+		"Set the return Pose to be the lowest scoring structure sampled (if false, will be left as last sampled structure)" );
+	attlist + XMLSchemaAttribute(
+		"pivot_residue_selector", xs_string,
+		"Name of residue selector to use to select pivot residues" );
+	attlist + XMLSchemaAttribute(
+		"trajectory_apply_mover", xs_string,
+		"Name of mover to apply during trajectory. Stride (how often to apply) is affected by trajectory_stride" );
+	attlist + XMLSchemaAttribute(
+		"trajectory_stride", xsct_positive_integer,
+		"How often (in steps) to either dump PDBs or call trajectory_apply_mover"
+	);
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),

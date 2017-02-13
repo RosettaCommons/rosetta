@@ -164,6 +164,7 @@ static MoverRegistrator< enzymatic_movers::GlycosyltransferaseMoverCreator > reg
 static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
 static MoverRegistrator< farna::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
+static MoverRegistrator< features::InterfaceDdGMoverCreator > reg_InterfaceDdGMoverCreator;
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
 static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryReportToDBCreator;
 

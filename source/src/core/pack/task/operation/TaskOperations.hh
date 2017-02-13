@@ -217,6 +217,33 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
+class UseMultiCoolAnnealer : public TaskOperation
+{
+public:
+	typedef TaskOperation parent;
+
+public:
+	UseMultiCoolAnnealer();
+	UseMultiCoolAnnealer( core::Size states );
+	virtual ~UseMultiCoolAnnealer();
+
+	virtual TaskOperationOP clone() const;
+
+	virtual
+	void
+	apply( pose::Pose const &, PackerTask & ) const;
+
+	virtual void parse_tag( TagCOP Tag, DataMap & );
+
+	void set_states( core::Size states );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+private:
+	core::Size states_;
+};
+
 /// @brief retrieves an OptionCollection from the DataMap.
 class InitializeFromOptionCollection : public TaskOperation
 {

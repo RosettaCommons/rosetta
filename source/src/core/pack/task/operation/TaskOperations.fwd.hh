@@ -33,6 +33,7 @@ class ExtraRotamersGeneric;
 class IncludeCurrent;
 class InitializeExtraRotsFromCommandline;
 class InitializeFromCommandline;
+class UseMultiCoolAnnealer;
 class PreserveCBeta;
 class PreventRepacking;
 class ReadResfile;
@@ -55,6 +56,7 @@ typedef utility::pointer::shared_ptr< ExtraRotamersGeneric > ExtraRotamersGeneri
 typedef utility::pointer::shared_ptr< IncludeCurrent > IncludeCurrentOP;
 typedef utility::pointer::shared_ptr< InitializeExtraRotsFromCommandline > InitializeExtraRotsFromCommandlineOP;
 typedef utility::pointer::shared_ptr< InitializeFromCommandline > InitializeFromCommandlineOP;
+typedef utility::pointer::shared_ptr< UseMultiCoolAnnealer > UseMultiCoolAnnealerOP;
 typedef utility::pointer::shared_ptr< PreserveCBeta > PreserveCBetaOP;
 typedef utility::pointer::shared_ptr< PreventRepacking > PreventRepackingOP;
 typedef utility::pointer::shared_ptr< ReadResfile > ReadResfileOP;

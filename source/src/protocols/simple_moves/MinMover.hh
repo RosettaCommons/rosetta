@@ -125,6 +125,9 @@ public:
 	inline void cartesian( bool newval ) { cartesian_ = newval; }
 	inline bool cartesian( ) const { return cartesian_; }
 
+	inline void abs_score_convergence_threshold( Real newval ) { abs_score_convergence_threshold_ = newval; }
+	inline Real abs_score_convergence_threshold( ) const { return abs_score_convergence_threshold_; }
+
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -209,6 +212,8 @@ public:
 	bool deriv_check() const;
 	bool omega() const{ return omega_; }
 	void omega( bool const b ){ omega_ = b; }
+	Real score_diff_after_minimization() const;
+	Real abs_score_diff_after_minimization() const;
 
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinition & xsd );
 	// The above was added so that this could be called in SymMinMover
@@ -222,19 +227,26 @@ protected:
 		core::pose::Pose const & pose,
 		core::kinematics::MoveMap & movemap) const;
 
-	// @brief Do the minimization witht the final movemap setup.
+	/// @brief run the minimizer (cartesian or torsion) based on set options, with the final movemap setup. Will call inner_run_minimizer multiple times if
+	/// abs_score_convergence_threshold is set
 	void
-	minimize(
-		core::pose::Pose & pose,
-		core::kinematics::MoveMap & movemap);
+	minimize( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap );
 
 private:
+	/// @brief actual call to the minimizer, in helper function so it can be
+	/// run multiple times by minimize()
+	void
+	inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap );
+
 	// data
 	core::kinematics::MoveMapOP movemap_;
 	bool omega_; //dflt true ; minimize omega?
 	ScoreFunctionCOP scorefxn_;
 	MinimizerOptionsOP min_options_;
 	Real threshold_;
+	Real abs_score_convergence_threshold_;
+	Real score_before_minimization_;
+	Real score_after_minimization_;
 	bool cartesian_;
 
 	/// @details Until ResidueSubsetOperations are implemented,

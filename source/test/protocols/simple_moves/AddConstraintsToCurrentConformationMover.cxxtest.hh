@@ -108,7 +108,7 @@ public:
 
 	}
 
-	void test_atompair_harmonic() {
+	void test_atompair_scalar_weighted() {
 		protocols::simple_moves::AddConstraintsToCurrentConformationMover actccm;
 		actccm.use_distance_cst() = true;
 		actccm.use_bounded_func() = false;
@@ -122,6 +122,21 @@ public:
 		//TR << std::endl;
 		//cst_shower();
 		multi_test(6, "AtomPair", "SCALARWEIGHTEDFUNC");
+
+	}
+
+
+	void test_atompair_harmonic() {
+		protocols::simple_moves::AddConstraintsToCurrentConformationMover actccm;
+		actccm.use_distance_cst() = true;
+		actccm.use_bounded_func() = false;
+		actccm.use_harmonic_func() = true;
+		actccm.coord_dev() = 1.0;
+		actccm.min_seq_sep() = 1;
+		actccm.max_distance() = 10000; // just something large, we have no idea how far apart the test pose residues are
+
+		actccm.apply(*test_dimer_pose_);
+		multi_test(6, "AtomPair", "HARMONIC");
 
 	}
 
