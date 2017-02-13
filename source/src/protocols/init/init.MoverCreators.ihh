@@ -19,6 +19,7 @@
 
 // A //////////////////////////////////////////////////////////////////////////
 #include <protocols/aa_composition/AddCompositionConstraintMoverCreator.hh>
+#include <protocols/aa_composition/AddHelixSequenceConstraintsMoverCreator.hh>
 #include <protocols/aa_composition/ClearCompositionConstraintsMoverCreator.hh>
 
 #include <protocols/abinitio/DomainAssemblyCreator.hh>

@@ -10,6 +10,9 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"aa_composition" : [
+		"AddHelixSequenceConstraintsMoverTests",
+	],
 	"abinitio" : [
 		"FragmentMover",
 		"GunnCost",
@@ -606,6 +609,7 @@ libraries    = [ "devel",
 ]
 subprojects  = []
 testinputfiles = [
+	"aa_composition/2ND2_state1.pdb",
 	"abinitio/2GB3.pdb",
 	"abinitio/mfr_aa2GB3_03_05.200_v1_3",
 	"abinitio/mfr_aa2GB3_09_05.200_v1_3",

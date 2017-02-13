@@ -12,7 +12,9 @@
 sources = {
 	"protocols/aa_composition": [
 		"AddCompositionConstraintMover",
+		"AddHelixSequenceConstraintsMover",
 		"ClearCompositionConstraintsMover",
+		"util",
 	],
 	"protocols/analysis": [
 		"InterfaceAnalyzerMover",

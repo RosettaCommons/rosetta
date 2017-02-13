@@ -1,0 +1,38 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
+		<ScoreFunction name="tala_comp" weights="talaris2014.wts" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_half" resnums="20-44" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<ReadResfile name="resfile" filename="inputs/resfile.txt" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<AddHelixSequenceConstraints name="addcomps" 
+			residue_selector="select_half" reset="true" min_helix_length="7"
+			add_n_terminal_constraints="true" min_n_terminal_charges="1" n_terminal_residues="2" n_terminal_constraint_strength="20.0"
+			add_c_terminal_constraints="true" min_c_terminal_charges="1" c_terminal_residues="2" c_terminal_constraint_strength="20.0"
+			add_overall_constraints="true" types_to_avoid="GLU ASN SER THR VAL LYS" overall_max_count="1" overall_constraints_strength="50.0"
+			add_alanine_constraints="true" desired_alanine_fraction="0.5" ala_constraint_under_strength="2.0" ala_constraint_over_strength="2.0"
+			add_hydrophobic_constraints="true" desired_min_hydrophobic_fraction="0.3" hydrophobic_constraint_strength="2.0"
+		/>
+		<FastDesign name="fastdes" scorefxn="tala_comp" task_operations="resfile" repeats="2" >
+			<MoveMap name="fastdes_mm" >
+				<Span begin="1" end="999" bb="true" chi="true" />
+			</MoveMap>
+		</FastDesign>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="addcomps" />
+		<Add mover="fastdes" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="tala_comp" />
+</ROSETTASCRIPTS>

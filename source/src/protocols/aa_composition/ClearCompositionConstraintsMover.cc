@@ -137,7 +137,7 @@ void ClearCompositionConstraintsMover::provide_xml_schema( utility::tag::XMLSche
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Clear composition constraints from the pose", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Clears all composition constraints from the pose.  Leaves geometric constraints intact.", attlist );
 }
 
 std::string ClearCompositionConstraintsMoverCreator::keyname() const {

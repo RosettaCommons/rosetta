@@ -1793,6 +1793,7 @@ Pose::remove_constraints(){
 
 void
 Pose::clear_sequence_constraints() {
+	if ( constraint_set_ == nullptr ) return; //Do nothing if no constraint set.
 	constraint_set_->clear_sequence_constraints();
 }
 
