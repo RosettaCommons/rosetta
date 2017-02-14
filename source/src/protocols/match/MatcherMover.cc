@@ -117,6 +117,9 @@ MatcherMover::set_return_single_random_match( bool const single_random )
 void
 MatcherMover::apply( core::pose::Pose & pose )
 {
+	if (!pose.pdb_info()){
+    pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+  }
 	protocols::rosetta_scripts::MultiplePoseMover::apply( pose );
 }
 
