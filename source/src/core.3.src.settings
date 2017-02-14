@@ -836,6 +836,7 @@ sources = {
 		"ResidueSelectorFactory",
 		"ResidueVector",
 		"ReturnResidueSubsetSelector",
+		"ScoreTermValueBasedSelector",
 		"SecondaryStructureSelector",
 		"SymmetricalResidueSelector",
 		"TrueResidueSelector",

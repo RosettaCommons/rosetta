@@ -164,6 +164,13 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
+class ScoreTermValueBasedSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+};
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core

@@ -700,6 +700,7 @@ static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameS
 static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_ResiduePDBInfoHasLabelSelectorCreator;
 static ResidueSelectorRegistrator< SecondaryStructureSelectorCreator > reg_SecondaryStructureSelectorCreator;
 static ResidueSelectorRegistrator< SymmetricalResidueSelectorCreator > reg_SymmetricalResidueSelectorCreator;
+static ResidueSelectorRegistrator< ScoreTermValueBasedSelectorCreator > reg_ScoreTermValueBasedSelectorCreator;
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;
