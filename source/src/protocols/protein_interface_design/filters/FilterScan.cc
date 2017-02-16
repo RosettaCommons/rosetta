@@ -45,6 +45,10 @@
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
+
 #include <set>
 
 //Auto Headers
@@ -279,12 +283,23 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( pose );
 	utility::vector1< core::Size > being_designed;
 	being_designed.clear();
+   
+	core::conformation::symmetry::SymmetryInfoOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+	symm_info = SymmConf.Symmetry_Info();
+	}
+
 
 	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
-		if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
-			being_designed.push_back( resi );
-		}
+    if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
+  		if ( core::pose::symmetry::is_symmetric( pose ) && symm_info && !symm_info->bb_is_independent( resi ) ) continue; // Checks if the residue belongs to the master subunit
+      being_designed.push_back( resi );
+      //TR << "FilterScan will do mutations at " << resi << std::endl;
+    }
 	}
+    //TR << "FilterScan will evaluate substitutions at " << being_designed.size() << " positions." << std::endl;
 	if ( being_designed.empty() ) {
 		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
 		return true;
