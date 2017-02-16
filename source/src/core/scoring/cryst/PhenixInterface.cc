@@ -440,7 +440,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
 
 				// Get the residue type of the desired new residue type.
-				chemical::ResidueTypeSetCOP residue_type_set = rsd_i.type().residue_type_set();
+				chemical::ResidueTypeSetCOP residue_type_set = pose.residue_type_set_for_pose();
 				chemical::ResidueTypeCOP replacement_type( residue_type_set->get_representative_type_name3( rsd_i.type().name3(), variant_types ) );
 				if ( replacement_type ) {
 					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue( *replacement_type, rsd_i, pose.conformation() );
