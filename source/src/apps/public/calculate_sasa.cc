@@ -46,6 +46,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzMatrix.io.hh>
@@ -116,7 +117,6 @@ main( int argc, char * argv [] )
     	calculate_sasa();
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
-    return 0;
-
 }
