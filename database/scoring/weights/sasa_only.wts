@@ -1,0 +1,21 @@
+# The Talaris2014 score function represents a small modification to the
+# Talaris2013 score function: the weights are all scaled upwards so that
+# fa_atr has a weight of 1.0; then the hydrogen bond strengths are decreased
+# by 20%.  This has the effect of keeping the hbond strengths fixed while
+# everything else gets stronger.
+#
+# The benchmarking performed for the O'Meara et al. (2014) hbond paper
+# showed that weakening the hbond weights by 20% improved sequence recovery,
+# rotamer recovery, and decoy discrimination.  This weight set is not
+# (currently) the official gold standard weight set for Rosetta, though its
+# use is encouraged.  It may be activated by using the -talaris2014 flag.
+#
+# Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
+# set in triplicate, and tested on the Ding & Dokholyan 38 set.  The
+# set of reference energies with the highest sequence recovery (39.8%) was
+# chosen.
+#
+
+METHOD_WEIGHTS ref 0.773742 0.443793 -1.63002 -1.96094 0.61937 0.173326 0.388298 1.0806 -0.358574 0.761128 0.249477 -1.19118 -0.250485 -1.51717 -0.32436 0.165383 0.20134 0.979644 1.23413 0.162496
+fa_sasa 1.000
+ref 1

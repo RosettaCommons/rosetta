@@ -434,10 +434,13 @@ MultipoleElecPotential::find_params_and_neighbors(
 	Size const this_type
 ) const {
 	using namespace id;
-	if ( rsd.is_virtual( j ) ) return;
+	//if ( rsd.is_virtual( j ) ) return;
 
 	// I feel dirty doing this, but I really need to know if this
-	// residue is part of the pose or just a rotamer.
+	// residue is part of the pose or just a rotamer. This checks whether
+	// the raw address of this residue is the same as that of the residue
+	// at the corresponding position in the pose.  If not, the residue is
+	// taken to be a rotamer.  This is not an pretty way to hack this.
 	bool const is_a_rotamer( &rsd != &(pose.residue( rsd.seqpos() )) );
 
 	// if( is_a_rotamer ) {
@@ -852,6 +855,7 @@ MultipoleElecPotential::align_residue_multipole_axes(
 			chemical::AtomIndices const my_nbrs( rsd.bonded_neighbor( iat ) );
 			for ( Size inbr = my_nbrs.size() ; inbr >= 1 ; --inbr ) {
 				Size const nbr_index( my_nbrs[ inbr ] );
+				if ( rsd.is_virtual( nbr_index ) ) continue;
 				if ( rsd.atom_is_hydrogen( nbr_index ) ) {
 					id::AtomID nbr_atom( nbr_index, rsd.seqpos() );
 					mp.set_coord_frame_ref( iat, nbr_atom );
@@ -1043,7 +1047,7 @@ MultipoleElecPotential::build_frame_and_rotate(
 	MultipoleElecResidueInfo & mp,
 	core::conformation::Residue const & rsd
 ) const {
-	if ( rsd.is_virtual( orig_atom ) ) return;
+	//if ( rsd.is_virtual( orig_atom ) ) return;
 
 	bool const is_a_rotamer( &rsd != &(pose.residue( rsd.seqpos() )) );
 
@@ -1060,6 +1064,17 @@ MultipoleElecPotential::build_frame_and_rotate(
 	// TR << "atom numbers are  " << atom1 << "  " << atom2 << "  " << atom3 << std::endl;
 	// TR << "res  numbers are  " << res1 << "  " << res2 << "  " << res3 << std::endl;
 
+	MultipoleAxisType const axis_type( mp_param->coord_type() );
+	if( axis_type == none ) {
+		mp.nonconst_monopole( orig_atom ) = mp_param->monopole();
+		mp.nonconst_dipole( orig_atom ) = mp_param->dipole();
+		mp.nonconst_quadrupole( orig_atom ) = mp_param->quadrupole();
+		if ( mp.dipole( orig_atom ) != mp.dipole( orig_atom ) ) {
+			TR << "Bad dipole for the none case" << std::endl;
+		}
+		return;
+	}
+
 	Residue const & r1( is_a_rotamer && ( res1 == rsd.seqpos() ) ? rsd : pose.residue(res1) );
 	Residue const & r2( is_a_rotamer && ( res2 == rsd.seqpos() ) ? rsd : pose.residue(res2) );
 	Residue const & r3( ( is_a_rotamer && ( res3 == rsd.seqpos() ) ) || ( res3 == 0 ) ? rsd : pose.residue(res3) );
@@ -1069,8 +1084,6 @@ MultipoleElecPotential::build_frame_and_rotate(
 	Vector const v2( ( r2.xyz( atom2 ) - rsd.xyz( orig_atom ) ).normalize() );
 	Vector const v3( ( atom3 == 0 ? Vector( 0.0 ) : ( r3.xyz( atom3 ) - rsd.xyz( orig_atom ) ).normalize() ) );
 
-	MultipoleAxisType const axis_type( mp_param->coord_type() );
-
 	//TR << "Axis type is " << axis_type << std::endl;
 
 	Vector vz, vx, vy;
@@ -1079,14 +1092,6 @@ MultipoleElecPotential::build_frame_and_rotate(
 	// is where the coordinate axes are frobbed from the input
 	// atom vectors.
 	switch( axis_type ) {
-	case none :
-		mp.nonconst_monopole( orig_atom ) = mp_param->monopole();
-		mp.nonconst_dipole( orig_atom ) = mp_param->dipole();
-		mp.nonconst_quadrupole( orig_atom ) = mp_param->quadrupole();
-		if ( mp.dipole( orig_atom ) != mp.dipole( orig_atom ) ) {
-			TR << "Bad dipole for the none case" << std::endl;
-		}
-		return;
 	case z_axis_only :
 		vz = v1;
 		vx = Vector( numeric::random::uniform(), numeric::random::uniform(), numeric::random::uniform() );
@@ -1569,6 +1574,7 @@ MultipoleElecPotential::get_polarization_from_fields(
 		Residue const & rsd1( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
 		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+			if ( rsd1.is_virtual( atm1 ) ) continue;
 			TR << "Induced polarization for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.induced_dipole( atm1 ) << " with polarization " << mp1.mp_param( atm1 )->polarity() << std::endl;
 		}
 	}
@@ -1726,7 +1732,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 	// Will need functions that do the following:
 	// 1.  Calculate fields due to fixed multipole and store
 	// 2.  Calculate fields due to induced dipoles and store
-	// 3.  Update all induced dipoles using the some of the previous two
+	// 3.  Update all induced dipoles using the sum of the previous two
 	// 4.  A crude optimization algorithm to converge iteratively
 
 	// Initialization
@@ -2761,7 +2767,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 			for ( Size atomi = 1 ; atomi <= rsd1.natoms() ; ++ atomi ) {
 
-				if ( rsd1.is_virtual( atomi ) ) continue;
+				// if ( rsd1.is_virtual( atomi ) ) continue;
 
 				//    if( !ShouldItCount( rsd1, atomi ) ) continue;
 
@@ -2774,7 +2780,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 				Size const start_atom( same_res ? atomi : 1 );
 				for ( Size atomj=start_atom, atomj_end=rsd2.natoms(); atomj<= atomj_end; ++atomj ) {
 
-					if ( rsd2.is_virtual( atomj ) ) continue;
+					// if ( rsd2.is_virtual( atomj ) ) continue;
 
 					//     if( !ShouldItCount( rsd2, atomj ) ) continue;
 

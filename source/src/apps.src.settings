@@ -45,6 +45,7 @@ sources = {
 	"public": [
 		"AbinitioRelax",
 		"backrub",
+		"calculate_sasa",
 		"combine_silent",
 		"extract_pdbs",
 		"fragment_picker",

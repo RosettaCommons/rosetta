@@ -1,0 +1,2 @@
+-s tripeptide.pdb
+-ignore_unrecognized_res

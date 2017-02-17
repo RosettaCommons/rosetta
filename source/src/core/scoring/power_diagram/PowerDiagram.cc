@@ -610,7 +610,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	for ( std::list< PDvertexOP >::iterator itr1( new_vertices.begin() ) ;
 			itr1 != new_vertices.end() ; ++itr1 ) {
-		for ( std::list< PDvertexOP >::iterator itr2( itr1++ ) ;
+		for ( std::list< PDvertexOP >::iterator itr2( std::next( itr1 ) ) ;
 				itr2 != new_vertices.end() ; ++itr2 ) {
 			utility::vector1< PDsphereOP > shared_atoms;
 			std::set_intersection( (*itr1)->nonconst_generators().begin(), (*itr1)->nonconst_generators().end(),
@@ -781,7 +781,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			//  }
 			//  TR << std::endl;
 
-			for ( std::list< PDvertexOP >::iterator new_itr( itr++ ) ;
+			for ( std::list< PDvertexOP >::iterator new_itr( std::next( itr ) ) ;
 					new_itr != new_infinite_vertices.end() ; ++new_itr ) {
 
 				utility::vector1< PDsphereOP > shared_atoms;
@@ -979,8 +979,8 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 			// of the sphere with the plane of the polygon.
 
 			Vector const v1( (*key_range.first).second->xyz() );
-			Vector const v2( (*( key_range.first++ )).second->xyz() );
-			Vector const v3( (*( (key_range.first++)++ )).second->xyz() );
+			Vector const v2( (*(std::next(key_range.first))).second->xyz() );
+			Vector const v3( (*(std::next(std::next(key_range.first)))).second->xyz() );
 
 			// Get the plane normal
 			Vector const normal( (v2 - v1).cross( v3 - v1 ).normalized() );
@@ -1555,7 +1555,7 @@ get_derivs_from_cycle(
 		Real const perp_fac( -1.0*this_rad/perp_dist_denom );
 
 		PDinterCOP inter_i( (*itr).inter() );
-		PDinterCOP inter_ip1(  ++itr  == cycle.end() ? (*cycle.begin()).inter() : (*( ++itr )).inter() );
+		PDinterCOP inter_ip1( std::next( itr ) == cycle.end() ? (*cycle.begin()).inter() : (*std::next( itr )).inter() );
 
 		Vector const arc_chord( inter_ip1->xyz() - inter_i->xyz() );
 		Vector const chord_cross_r12( arc_chord.cross_product( r12 ) );
@@ -1670,7 +1670,7 @@ get_area_from_cycle(
 
 		// Package all this into an inlined function later
 		PDinterCOP inter_i( (*itr).inter() );
-		PDinterCOP inter_ip1( ++itr == cycle.end() ? (*cycle.begin()).inter() : (*( itr++ )).inter() );
+		PDinterCOP inter_ip1( std::next( itr ) == cycle.end() ? (*cycle.begin()).inter() : (*std::next( itr )).inter() );
 
 		Vector e_i( ( other_atom->xyz() - this_atom->xyz() ).normalized() );
 		Vector e_im1( ( other_atom_m1->xyz() - this_atom->xyz() ).normalized() );
