@@ -1,0 +1,4 @@
+-s 1UBQ.pdb.gz 
+
+-parser:protocol pertmin.xml
+-nstruct 3
