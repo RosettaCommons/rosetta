@@ -1992,6 +1992,42 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+// SetVirtualShadow //////////////////////////////////////////////////////////////
+
+SetVirtualShadow::SetVirtualShadow(
+	std::string const & shadower,
+	std::string const & shadowee
+):
+	shadower_( shadower ),
+	shadowee_( shadowee )
+{}
+
+bool
+SetVirtualShadow::apply( ResidueType & rsd ) const
+{
+	if ( ! rsd.has( shadower_ ) ) {
+		if ( TR_PatchOperations.Debug.visible() ) {
+			TR_PatchOperations.Debug << "SetVirtualShadow::apply failed: " <<
+				rsd.name() << " is missing atom: " << shadower_ << std::endl;
+		}
+		return true;  // failure
+	} else 	if ( ! rsd.has( shadowee_ ) ) {
+		if ( TR_PatchOperations.Debug.visible() ) {
+			TR_PatchOperations.Debug << "SetVirtualShadow::apply failed: " <<
+				rsd.name() << " is missing atom: " << shadowee_ << std::endl;
+		}
+		return true;  // failure
+	} else {
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetVirtualShadow::apply: " <<
+				shadower_ << ' ' << shadowee_ << std::endl;
+		}
+		rsd.set_shadowing_atom( shadower_, shadowee_ );
+	}
+	return false;
+}
+
+
 PatchOperationOP
 patch_operation_from_patch_file_line(
 	std::string const & line,
@@ -2387,6 +2423,12 @@ patch_operation_from_patch_file_line(
 		return PatchOperationOP( new ChiralFlipAtoms );//( atom1, atom2 ) );
 	} else if ( tag == "VIRTUALIZE_ALL" ) {
 		return PatchOperationOP( new VirtualizeAll );//( atom1, atom2 ) );
+	} else if ( tag == "SET_VIRTUAL_SHADOW" ) {
+		runtime_assert( l.good() );
+		std::string shadower, shadowee;
+		l >> shadower >> shadowee;
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		return PatchOperationOP( new SetVirtualShadow( shadower, shadowee ) );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 
@@ -3675,4 +3717,30 @@ SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddAtom );
 CEREAL_REGISTER_TYPE( core::chemical::AddAtom )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_PatchOperation )
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetVirtualShadow::SetVirtualShadow() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetVirtualShadow::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( shadower_ ) ); // std::string
+	arc( CEREAL_NVP( shadowee_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetVirtualShadow::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( shadower_ ); // std::string
+	arc( shadowee_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetVirtualShadow );
+CEREAL_REGISTER_TYPE( core::chemical::SetVirtualShadow )
+
+
 #endif // SERIALIZATION

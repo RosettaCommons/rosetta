@@ -1685,6 +1685,38 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set virtual shadow atoms
+class SetVirtualShadow : public PatchOperation {
+public:
+	/// constructor
+	SetVirtualShadow(
+		std::string const & shadower_,
+		std::string const & shadowee_
+	);
+
+	/// set atom's chemical type
+	bool
+	apply( ResidueType & rsd ) const override;
+
+private:
+	/// atom's name
+	std::string shadower_;
+	/// atom's type name
+	std::string shadowee_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetVirtualShadow();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Virtual constructor, returns 0 if no match
 PatchOperationOP
 patch_operation_from_patch_file_line(
