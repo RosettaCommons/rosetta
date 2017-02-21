@@ -870,8 +870,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 		pose.energies().clear();
 		// check stopping condition
 		bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
-			( stopping_condition() && stopping_condition()->apply( pose ) ) /* CNCNCN debug ||
-			( max_accepted_trials() != 0 && max_accepted_trials() == accept ) */);
+			( stopping_condition() && stopping_condition()->apply( pose ) ) ||
+			( max_accepted_trials() != 0 && max_accepted_trials() == accept ) );
 		if ( stop ) {
 			TR<<"MC stopping condition met at trial "<<i;
 			if ( max_accepted_trials() != 0 && max_accepted_trials() == accept ) {
@@ -986,10 +986,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		//scorefxn_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", sfxn ));
 		scorefxn_ = data.get< ScoreFunction * >( "scorefxns", sfxn )->clone();   //fpd use clone
 		TR << "Score evaluation during MC is done by" << sfxn << ", ";
-		//CNCNCN debug if ( !keep_filters_ ){
-		TR << filter_name << " is ignored." << std::endl;
-		filters_.clear();
-		//} CNCNCN debug
+		if ( !keep_filters_ ){
+            TR << filter_name << " is ignored." << std::endl;
+            filters_.clear();
+		}
 	} else {
 		scorefxn_ = nullptr;
 	}
