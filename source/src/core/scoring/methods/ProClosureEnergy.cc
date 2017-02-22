@@ -72,6 +72,7 @@ ProClosureEnergy::ProClosureEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new ProClosureEnergyCreator ) ),
 	skip_ring_closure_(false),
 	n_nv_dist_sd_( pow(basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ], 2) ), // Totally fictional value.  Everywhere this is used, it's actually the square that's used.  Let's calculate the square once and only once.
+	ca_cav_dist_sd_( pow(basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ], 2) ), // needed for N-terminal prolines
 
 	/// measured from 4745 prolines from 1.25 A and higher resolution protein structures
 	trans_chi4_mean_( 176.3 * numeric::constants::d::degrees_to_radians ),
@@ -81,6 +82,8 @@ ProClosureEnergy::ProClosureEnergy() :
 
 	bbN_( "N" ),
 	scNV_( "NV" ),
+	bbCA_( "CA" ),
+	scCAV_( "CAV" ), // added by N-terminal patch
 	scCD_( "CD" ),
 	bbC_( "C" ),
 	bbO_( "O")
@@ -283,10 +286,22 @@ ProClosureEnergy::eval_intrares_energy(
 	if ( skip_ring_closure() ) return;
 	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
 		if ( rsd.is_virtual_residue() ) return;
-		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
+
+		debug_assert( rsd.has( scNV_ ) );
+		debug_assert( rsd.has( bbN_ ) );
+
+		Distance const dist2_n_nv = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
 
 		//Note that n_nv_dist_sd_ is the SQUARE of the standard deviation
-		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ );
+		emap[ pro_close ] += dist2_n_nv / ( n_nv_dist_sd_ );
+
+
+		// N-terminal proline -- could check varient types but that might be an ever changing list
+		if ( rsd.has( scCAV_ ) && rsd.has( bbCA_ ) ) {
+			Distance const dist2_ca_cav = rsd.xyz( bbCA_ ).distance_squared( rsd.xyz( scCAV_ ) );
+			emap[ pro_close ] += dist2_ca_cav / ( ca_cav_dist_sd_ );
+		}
+
 	}
 }
 
@@ -313,25 +328,48 @@ ProClosureEnergy::eval_intrares_derivatives(
 
 	debug_assert( rsd.has( scNV_ ) );
 	debug_assert( rsd.has( bbN_ ) );
+
 	if ( rsd.is_virtual_residue() ) return;
+
+	Vector f1( 0.0 ), f2( 0.0 );
 
 	Size NV_ind = rsd.atom_index( scNV_ );
 	Size N_ind = rsd.atom_index( bbN_ );
 
 	Vector const & nv_pos( rsd.xyz( NV_ind ));
 	Vector const & n_pos(  rsd.xyz( N_ind ));
-	/// Numeric deriv version to consolidate code.
 
-	Vector f1( 0.0 ), f2( 0.0 );
-	Distance dist( 0.0 );
-	numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist, f1, f2 );
-	Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ ));
+	Distance dist_n_nv( 0.0 );
+	numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist_n_nv, f1, f2 );
+	Real deriv( weights[ pro_close ] * 2 * dist_n_nv / ( n_nv_dist_sd_ ));
 	f1 *= deriv; f2 *= deriv;
 
 	atom_derivs[ NV_ind ].f1() += f1;
 	atom_derivs[ NV_ind ].f2() += f2;
 	atom_derivs[ N_ind  ].f1() -= f1;
 	atom_derivs[ N_ind  ].f2() -= f2;
+
+	// N-terminal proline
+	if ( rsd.has( scCAV_ ) && rsd.has( bbCA_ ) ) {
+		f1 = 0.0; f2 = 0.0;
+
+		Size CAV_ind = rsd.atom_index( scCAV_ );
+		Size CA_ind  = rsd.atom_index( bbCA_ );
+
+		Vector const & cav_pos( rsd.xyz( CAV_ind ));
+		Vector const & ca_pos(  rsd.xyz( CA_ind ));
+
+		Distance dist_ca_cav( 0.0 );
+		numeric::deriv::distance_f1_f2_deriv( cav_pos, ca_pos, dist_ca_cav, f1, f2 );
+		Real deriv( weights[ pro_close ] * 2 * dist_ca_cav / ( ca_cav_dist_sd_ ));
+		f1 *= deriv; f2 *= deriv;
+
+		atom_derivs[ CAV_ind ].f1() += f1;
+		atom_derivs[ CAV_ind ].f2() += f2;
+		atom_derivs[ CA_ind  ].f1() -= f1;
+		atom_derivs[ CA_ind  ].f2() -= f2;
+	}
+
 }
 
 /// @brief ProClosureEnergy Energy is context independent and thus
@@ -422,4 +460,3 @@ ProClosureEnergy::version() const
 } // methods
 } // scoring
 } // core
-

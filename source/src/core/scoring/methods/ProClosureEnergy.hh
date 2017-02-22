@@ -247,6 +247,7 @@ private:
 	/// @brief The SQUARE of the coordinate variation standard deviation.
 	///
 	Real const n_nv_dist_sd_;
+	Real const ca_cav_dist_sd_;
 
 	Real const trans_chi4_mean_;
 	Real const trans_chi4_sd_;
@@ -255,6 +256,8 @@ private:
 
 	std::string const bbN_;
 	std::string const scNV_;
+	std::string const bbCA_;
+	std::string const scCAV_;
 	std::string const scCD_;
 	std::string const bbC_;
 	std::string const bbO_;
