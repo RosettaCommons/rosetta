@@ -153,6 +153,10 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/stl_iterator.h>", "<iterator>"),
 
 		make_pair("<__functional_base>", "<functional>"),
+
+		make_pair("<_wctype.h>", "<cwctype>"),
+		make_pair("<ctype.h>",   "<cctype>"),
+		make_pair("<wchar.h>",   "<cwchar>"),
 	};
 
 	string name = decl->getQualifiedNameAsString();
