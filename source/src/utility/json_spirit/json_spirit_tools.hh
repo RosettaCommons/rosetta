@@ -38,7 +38,11 @@ std::string get_string_or_empty(const mObject& obj, const std::string& name );
 
 double get_real(const mObject& obj, const std::string& name );
 
+double get_real_or_zero(const mObject& obj, const std::string& name );
+
 int get_int(const mObject& obj, const std::string& name );
+
+int get_int_or_zero(const mObject& obj, const std::string& name );
 
 }
 }

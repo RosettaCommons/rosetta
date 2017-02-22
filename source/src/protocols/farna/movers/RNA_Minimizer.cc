@@ -18,6 +18,7 @@
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/stepwise/modeler/rna/util.hh> //Parin Sripakdeevong
 #include <protocols/stepwise/modeler/util.hh> // for figuring out moving chainbreaks
+#include <protocols/stepwise/modeler/output_util.hh> // output movemap
 #include <protocols/farna/util.hh>
 #include <protocols/farna/movers/RNA_LoopCloser.hh>
 #include <protocols/farna/options/RNA_MinimizerOptions.hh>
@@ -90,8 +91,7 @@ RNA_Minimizer::RNA_Minimizer( options::RNA_MinimizerOptionsCOP options /* = 0 */
 	coord_cst_weight_( 1.0 ),
 	perform_minimizer_run_( true ),
 	include_default_linear_chainbreak_( true  ),
-	close_loops_( true ),
-	min_type_( "lbfgs_armijo_nonmonotone" ) //Parin S. Jan 12, 2012
+	close_loops_( true )
 {
 	Mover::type("RNA_Minimizer");
 }
@@ -123,7 +123,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions minimizer_options( min_type_, dummy_tol, use_nblist, options_->deriv_check(), options_->deriv_check() );
+	MinimizerOptions minimizer_options( options_->min_type(), dummy_tol, use_nblist, options_->deriv_check(), options_->deriv_check() );
 	minimizer_options.nblist_auto_update( true );
 
 	/////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ RNA_Minimizer::show(std::ostream & output) const
 		"\nVary bond geometry:       " << (options_->vary_bond_geometry() ? "True" : "False") <<
 		"\nDump pdb:                 " << (options_->dump_pdb() ? "True" : "False") <<
 		"\nMove first rigid body:    " << (options_->move_first_rigid_body() ? "True" : "False") <<
-		"\nMin type:                 " << min_type_ <<
+		"\nMin type:                 " << options_->min_type() <<
 		"\nScore function:           " << scorefxn_->get_name() <<
 		"\nUse coordinate constraints:        " << (options_->minimizer_use_coordinate_constraints() ? "True" : "False")  <<
 		"\nInclude default linear chainbreak: " << (include_default_linear_chainbreak_ ? "True" : "False");

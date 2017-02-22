@@ -918,7 +918,7 @@ ScoreFunction::get_sub_score(
 
 	for ( auto const & ci_lr_2b_method : ci_lr_2b_methods_ ) {
 		LREnergyContainerCOP lrec = pose.energies().long_range_container( ci_lr_2b_method->long_range_type() );
-		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+		if ( !lrec || lrec->empty() ) continue; // only score non-empty energies.
 
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -1048,7 +1048,7 @@ ScoreFunction::get_sub_score(
 	for ( auto const & ci_lr_2b_method : ci_lr_2b_methods_ ) {
 		LREnergyContainerCOP lrec =
 			pose.energies().long_range_container(ci_lr_2b_method->long_range_type());
-		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+		if ( !lrec || lrec->empty() ) continue; // only score non-empty energies.
 
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -1274,7 +1274,7 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 	for ( auto const & ci_lr_2b_method : ci_lr_2b_methods_ ) {
 
 		LREnergyContainerOP lrec = pose.energies().nonconst_long_range_container( ci_lr_2b_method->long_range_type() );
-		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+		if ( !lrec || lrec->empty() ) continue; // only score non-empty energies.
 
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {

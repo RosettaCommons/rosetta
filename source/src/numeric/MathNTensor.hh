@@ -17,6 +17,8 @@
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
 /// *****NOTE**** The MathNTensor class is indexed at 0!
 ///
+/// Check out MathNTensor_io.hh for file i/o functions.
+///
 /// @references
 /// Nils Woetzl
 /// Jens Meiler
@@ -100,7 +102,7 @@ public:
 		n_bins_( )
 	{
 		runtime_assert( n_bins.size() == N );
-		utility::fixedsizearray1< T, N > nbinsarray;
+		utility::fixedsizearray1< Size, N > nbinsarray;
 
 		size_ = 1;
 		for ( Size i = 1; i <= N; ++i ) {
@@ -255,7 +257,7 @@ public:
 		}
 	}
 
-	T const data( Size const index ) {
+	T const & data( Size const index ) const {
 		assert( index < size_ );
 		return data_[ index ];
 	}
@@ -407,6 +409,43 @@ public:
 		return data_[ b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4 ];
 	}
 
+	T const & operator()( Size const b1, Size const b2, Size const b3, Size const b4, Size const b5 ) const
+	{
+		assert( N == 5 );
+		assert( b1 < n_bins(1) );
+		assert( b2 < n_bins(2) );
+		assert( b3 < n_bins(3) );
+		assert( b4 < n_bins(4) );
+		assert( b5 < n_bins(5) );
+		utility::fixedsizearray1< Size, N > position;
+		position[ 1 ] = b1;
+		position[ 2 ] = b2;
+		position[ 3 ] = b3;
+		position[ 4 ] = b4;
+		position[ 5 ] = b5;
+		return (*this)( position );
+	}
+
+
+	T const & operator()( Size const b1, Size const b2, Size const b3, Size const b4, Size const b5, Size const b6 ) const
+	{
+		assert( N == 6 );
+		assert( b1 < n_bins(1) );
+		assert( b2 < n_bins(2) );
+		assert( b3 < n_bins(3) );
+		assert( b4 < n_bins(4) );
+		assert( b5 < n_bins(5) );
+		assert( b6 < n_bins(6) );
+		utility::fixedsizearray1< Size, N > position;
+		position[ 1 ] = b1;
+		position[ 2 ] = b2;
+		position[ 3 ] = b3;
+		position[ 4 ] = b4;
+		position[ 5 ] = b5;
+		position[ 6 ] = b6;
+		return (*this)( position );
+	}
+
 	void
 	operator/= ( Real const divisor ) {
 		for ( Size ii = 0; ii < size_; ++ii ) {
@@ -415,6 +454,8 @@ public:
 	}
 
 	Size size() const { return size_; }
+
+	utility::fixedsizearray1< Size, N > const & n_bins() const { return n_bins_; }
 
 private:
 	utility::fixedsizearray1< Size, N > n_bins_;   // number of each dimension
@@ -427,7 +468,6 @@ private:
 	///
 	T * data_;
 };
-
 
 }//end namespace numeric
 

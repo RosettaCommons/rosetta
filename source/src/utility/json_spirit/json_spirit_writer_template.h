@@ -10,8 +10,8 @@
 # pragma once
 #endif
 
-#include "json_spirit_value.h"
-#include "json_spirit_writer_options.h"
+#include <utility/json_spirit/json_spirit_value.h>
+#include <utility/json_spirit/json_spirit_writer_options.h>
 
 #include <cassert>
 #include <sstream>

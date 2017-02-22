@@ -20,7 +20,6 @@
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 
 

@@ -45,7 +45,7 @@ public:
 
 	Size size() const { return loops_.size(); }
 
-	Size find_index_for_loop_landing_at_domain( Size const & takeoff_domain );
+	Size find_index_for_loop_landing_at_domain( Size const & takeoff_domain ) const;
 
 	friend
 	/// @brief Test IO operator for debug and Python bindings

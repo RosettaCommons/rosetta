@@ -55,6 +55,12 @@ namespace constraints {
 /// wish them to be evaluated as context-independent two-body energies.  (Ideally, ScoreFunction
 /// would detect when atom_ moves relative to xyz_target_, but since ScoreFunction functions on
 /// atoms and not floating coordinate triplets, this is a good workaround.) -- SML
+///
+/// Would be good to have something like StubCoordinateConstraint that allows definition of (x,y,z) of
+///  moving atom to be defined in coordinate system defined by three "stub" atoms. Shows up when
+///  treating the effects of missing loops. Working out a sketch of this as a 'standalone' in
+///  rna::StubCoordinateHack, but should ideally integrate into Constraint machinery.
+///
 class CoordinateConstraint : public Constraint {
 public:
 

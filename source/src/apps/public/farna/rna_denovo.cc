@@ -103,6 +103,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( in::file::input_res );
 		option.add_relevant( out::file::silent );
 		option.add_relevant( out::nstruct );
+		option.add_relevant( out::overwrite );
 		option.add_relevant( score::weights );
 		option.add_relevant( rna::farna::sequence );
 		option.add_relevant( rna::farna::secstruct );

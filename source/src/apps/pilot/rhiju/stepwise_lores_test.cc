@@ -21,7 +21,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/farna/RNA_FragmentMonteCarlo.hh>
 #include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>

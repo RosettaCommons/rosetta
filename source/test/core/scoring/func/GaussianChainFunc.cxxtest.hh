@@ -115,7 +115,7 @@ public:
 
 	void test_GaussianDoubleChainFunc()
 	{
-		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() );
+		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_close::loop_fixed_cost ]() );
 		double_func_test( 0.5, loop_fixed_cost, true /*approximation_should_be_good*/ );
 		double_func_test( 15.0, loop_fixed_cost, false /*approximation_should_be_bad*/ );
 	}
@@ -163,7 +163,7 @@ public:
 
 	void test_GaussianTripleChainFunc()
 	{
-		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() );
+		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_close::loop_fixed_cost ]() );
 		triple_func_test( 0.5, 0.5, loop_fixed_cost, true /*approximation_should_be_good*/ );
 		triple_func_test( 15.0, 0.5, loop_fixed_cost, false /*approximation_should_be_bad*/  );
 		triple_func_test( 15.0, 15.0, loop_fixed_cost, false /*approximation_should_be_bad*/  );
@@ -210,7 +210,7 @@ public:
 	}
 
 	void test_GaussianQuadrupleChainFunc() {
-		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() );
+		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_close::loop_fixed_cost ]() );
 		quadruple_func_test( 0.01, 0.01, 0.01, loop_fixed_cost, true /*approximation_should_be_good*/ );
 		quadruple_func_test( 15.0, 15.0, 15.0, loop_fixed_cost, false /*approximation_should_be_bad*/  );
 	}

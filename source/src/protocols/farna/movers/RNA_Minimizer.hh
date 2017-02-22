@@ -60,8 +60,6 @@ public:
 
 	void set_include_default_linear_chainbreak( bool const setting){ include_default_linear_chainbreak_ = setting; }
 
-	void set_min_type( std::string const & setting){ min_type_ = setting; }
-
 	void
 	set_atom_level_domain_map(toolbox::AtomLevelDomainMapCOP atom_level_domain_map  ) {
 		atom_level_domain_map_input_ = atom_level_domain_map;
@@ -99,7 +97,6 @@ private:
 	bool perform_minimizer_run_;
 	bool include_default_linear_chainbreak_;
 	bool close_loops_;
-	std::string min_type_;
 
 	toolbox::AtomLevelDomainMapCOP atom_level_domain_map_input_;
 	toolbox::AtomLevelDomainMapOP atom_level_domain_map_;

@@ -57,6 +57,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <numeric/random/random.hh>
 #include <numeric/EulerAngles.hh>
+#include <numeric/MathNTensor_io.hh>
 #include <basic/database/open.hh>
 #include <core/scoring/Energies.hh>
 
@@ -64,7 +65,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <utility>
+#include <utility/tools/make_vector.hh>
 
 static basic::Tracer TR( "protocols.farna.RNA_FragmentMonteCarlo" );
 
@@ -76,7 +77,9 @@ using namespace protocols::farna::options;
 using namespace protocols::farna::base_pairs;
 using namespace protocols::farna::setup;
 using namespace protocols::farna::libraries;
-
+using utility::tools::make_vector1;
+using utility::tools::make_vector;
+using utility::vector1;
 
 namespace protocols {
 namespace farna {
@@ -124,6 +127,7 @@ RNA_FragmentMonteCarlo::initialize( pose::Pose & pose ) {
 	initialize_libraries( pose );
 	initialize_movers();
 	initialize_score_functions();
+	initialize_output_score();
 	initialize_parameters();
 }
 
@@ -217,10 +221,6 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 		chem_shift_scorefxn->set_weight( rna_chem_shift, CS_weight );
 		chem_shift_scorefxn_ = chem_shift_scorefxn;
 	}
-	if ( options_->output_score_frequency() > 0 ) {
-		TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
-		running_score_output_.open_append( options_->output_score_file() );
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	Size max_tries( 1 );
 	if ( options_->filter_lores_base_pairs() || options_->filter_chain_closure() )  max_tries = 10;
 
-	utility::vector1< Size > moving_res_list; // used for alignment
+	vector1< Size > moving_res_list; // used for alignment
 
 	for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
 
@@ -277,7 +277,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		// But would require changes to the RNA_VDW_BinChecker object first
 		if ( options_->filter_vdw() ) {
 			TR << "Setting up the VDW grid from the input pose" << std::endl;
-			utility::vector1< std::string > All_VDW_rep_screen_info = basic::options::option[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info];
+			vector1< std::string > All_VDW_rep_screen_info = basic::options::option[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info];
 			vdw_grid_->FARFAR_setup_using_user_input_VDW_pose( All_VDW_rep_screen_info, pose, options_->vdw_rep_screen_include_sidechains() );
 			TR << "Finished setting up the VDW grid from the input pose" << std::endl;
 		}
@@ -470,10 +470,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		);
 	}
 
-	if ( options_->output_score_frequency() > 0 ) {
-		running_score_output_.close();
-		TR << "Created running score file at: " << options_->output_score_file() << std::endl;
-	}
+	if ( options_->output_score_frequency() > 0 ) finish_output_score();
 
 	pose.constraint_set( constraint_set_ );
 
@@ -542,7 +539,7 @@ RNA_FragmentMonteCarlo::setup_rna_protein_docking_mover( pose::Pose const & pose
 	// This doesn't work because there are often jumps within RNA chains, then the whole RNA chain doesn't
 	// dock together as a rigid body...
 	//  But ultimately this may be a better way to go
-	// utility::vector1< Size > rna_protein_jumps;
+	// vector1< Size > rna_protein_jumps;
 	// for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
 	//  TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
 	//  // if the upstream/downstream jump residues are RNA and protein, then we can move this jump
@@ -656,7 +653,7 @@ RNA_FragmentMonteCarlo::randomize_rigid_body_orientations( pose::Pose & pose ){
 	using namespace protocols::farna;
 	using namespace kinematics;
 
-	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
+	vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
 	Size const found_jumps = rigid_body_jumps.size();
 	if ( found_jumps <= 1 )  return; // nothing to rotate/translate relative to another object.
 
@@ -914,7 +911,7 @@ RNA_FragmentMonteCarlo::get_rnp_docking_fold_tree( pose::Pose const & pose ) {
 	kinematics::FoldTree ft;
 	bool prev_RNA = false;
 	bool prev_protein = false;
-	utility::vector1< core::Size > rna_protein_jumps;
+	vector1< core::Size > rna_protein_jumps;
 
 	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).is_RNA() && prev_protein ) {
@@ -1068,7 +1065,7 @@ RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose 
 		Pose const & native_pose = *get_native_pose();
 
 		//realign to native for ease of viewing.
-		utility::vector1< Size > superimpose_res;
+		vector1< Size > superimpose_res;
 		for ( Size n = 1; n <= pose.size(); n++ )  superimpose_res.push_back( n );
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
@@ -1090,12 +1087,12 @@ RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose 
 // Andy: it would be better to remove any dependence of RNA_FragmentMonteCarlo on
 //   full_model_info if possible.
 //  -- rhiju
-utility::vector1< Size >
+vector1< Size >
 RNA_FragmentMonteCarlo::reroot_pose_before_align_and_return_moving_res( pose::Pose & pose ) const
 {
 	// find connection point to 'fixed res'
 	Size moving_res_at_connection( 0 ), reference_res( 0 );
-	utility::vector1< Size > moving_res_list = get_moving_res( pose, atom_level_domain_map_ );
+	vector1< Size > moving_res_list = get_moving_res( pose, atom_level_domain_map_ );
 	for ( Size const moving_res : moving_res_list ) {
 		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( moving_res_list.has_value( parent_res ) ) continue;
@@ -1110,7 +1107,7 @@ RNA_FragmentMonteCarlo::reroot_pose_before_align_and_return_moving_res( pose::Po
 	// revise_root_and_moving_res() handled revision of single residue only... need to translate this
 	// switch to the whole list of residues.
 	if ( switched_moving_and_root_partitions ) {
-		utility::vector1< Size > const moving_res_list_original = moving_res_list;
+		vector1< Size > const moving_res_list_original = moving_res_list;
 		moving_res_list = utility::tools::make_vector1( moving_res_at_connection );
 		if ( ! is_jump ) {
 			for ( Size const moving_res : moving_res_list_original ) {
@@ -1150,7 +1147,7 @@ RNA_FragmentMonteCarlo::get_rmsd_stems_no_superimpose ( core::pose::Pose const &
 	using namespace core::scoring;
 
 	runtime_assert( get_native_pose() != nullptr );
-	utility::vector1< Size > stem_residues( rna_base_pair_handler()->get_stem_residues( pose ) );
+	vector1< Size > stem_residues( rna_base_pair_handler()->get_stem_residues( pose ) );
 	if ( stem_residues.empty() ) return 0.0;
 
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
@@ -1186,6 +1183,36 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 
 //////////////////////////////////////////////////////////////////////////////////
 void
+RNA_FragmentMonteCarlo::initialize_output_score()
+{
+	using namespace numeric;
+	if ( options_->output_score_frequency() > 0 ) {
+		if ( options_->output_score_file() != "none" )  {
+			TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
+			running_score_output_.open_append( options_->output_score_file() );
+		}
+		if ( options_->save_jump_histogram() ) {
+			runtime_assert( options_->output_jump_o3p_to_o5p() );
+			runtime_assert( options_->output_rotation_vector() );
+			Real const & bxs( options_->jump_histogram_boxsize() );
+			Real const & bw ( options_->jump_histogram_binwidth() );
+			Real const & bwr( options_->jump_histogram_binwidth_rotvector() );
+			jump_histogram_min_        = make_vector1( -bxs, -bxs, -bxs, -180.0, -180.0, -180.0 );
+			jump_histogram_max_        = make_vector1( +bxs, +bxs, +bxs, +180.0, +180.0, +180.0 );
+			jump_histogram_bin_width_  = make_vector1(   bw,   bw,   bw,   bwr,    bwr,   bwr );
+			vector1< Size > jump_n_bins;
+			for ( Size n = 1; n <= 6; n++ ) jump_n_bins.push_back( static_cast<Size>( (jump_histogram_max_[n] - jump_histogram_min_[n]) / jump_histogram_bin_width_[n] + 1.0 ) );
+			if ( jump_histogram_ == 0 ) {
+				jump_histogram_ = MathNTensorOP< Size, 6>( new MathNTensor< Size, 6>( jump_n_bins, 0 ) );
+			} else {
+				for ( Size n = 1; n <= 6; n++ ) runtime_assert( jump_histogram_->n_bins( n ) == jump_n_bins[ n ] );
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void
 RNA_FragmentMonteCarlo::output_score_if_desired(
 	Size const & r,
 	Size const & i,
@@ -1199,6 +1226,30 @@ RNA_FragmentMonteCarlo::output_score_if_desired(
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::finish_output_score()
+{
+	if ( running_score_output_.good() ) {
+		running_score_output_.close();
+		TR << "Created running score file at: " << options_->output_score_file() << std::endl;
+	}
+	if ( jump_histogram_ != 0  ) {
+		using namespace utility::json_spirit;
+		std::vector< Value > n_bins;
+		for ( auto const & v : jump_histogram_->n_bins() ) n_bins.push_back( Value(boost::uint64_t(v)) );
+		std::vector< Value > minval, maxval, binwidth;
+		for ( auto const & v : jump_histogram_min_ ) minval.push_back( Value(v) );
+		for ( auto const & v : jump_histogram_max_ ) maxval.push_back( Value(v) );
+		for ( auto const & v : jump_histogram_bin_width_ ) binwidth.push_back( Value(v) );
+		write_tensor_to_file( options_->output_histogram_file(), *jump_histogram_,
+													make_vector( Pair( "n_bins", n_bins ),
+																			 Pair( "type", "uint64" ),
+																			 Pair( "minval",  minval ),
+																			 Pair( "maxval",  maxval ),
+																			 Pair( "binwidth",binwidth ) ) );
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 // @details
@@ -1237,14 +1288,32 @@ RNA_FragmentMonteCarlo::output_jump_information( pose::Pose const & pose)
 	}
 	Jump const j( stub1, stub2 );
 	Vector const & t( j.get_translation() );
-	running_score_output_ << ' ' << t.x();
-	running_score_output_ << ' ' << t.y();
-	running_score_output_ << ' ' << t.z();
-	numeric::EulerAngles< Real > euler( j.get_rotation() ); // assuming ZXZ convention!
-	running_score_output_ << ' ' << euler.phi_degrees();
-	running_score_output_ << ' ' << euler.theta_degrees();
-	running_score_output_ << ' ' << euler.psi_degrees();
+	vector1< Real > outvals( make_vector1( t.x(), t.y(), t.z() ) );
+
+	if ( options_->output_rotation_vector() ) {
+		Vector const rotation_vector( numeric::rotation_axis_angle( j.get_rotation() ) * (180.0 / numeric::constants::r::pi) );
+		// magnitude will be angle in degrees, maximum of 180.
+		outvals.append( make_vector1( rotation_vector.x(), rotation_vector.y(), rotation_vector.z() ) );
+	} else {
+		numeric::EulerAngles< Real > euler( j.get_rotation() ); // assuming ZXZ convention!
+		outvals.append( make_vector1( euler.phi_degrees(), euler.theta_degrees(), euler.psi_degrees() ) );
+	}
+	if ( running_score_output_.good() ) {
+		for ( auto const & outval : outvals ) running_score_output_ << ' ' << outval;
+	}
+
+	if ( options_->save_jump_histogram() ) {
+		vector1< Size > outbins;
+		for ( Size n = 1; n <= 6; n++ ) {
+			// round to *closest* bin  by adding 0.5 before conversion to int.
+			int outbin = static_cast<int>( 0.5 + ( outvals[ n ] - jump_histogram_min_[ n ] ) / jump_histogram_bin_width_[ n ] );
+			outbin = std::min( std::max( 0, outbin ), int(jump_histogram_->n_bins( n )) - 1 ); // zero-indexed
+			outbins.push_back( Size( outbin ) );
+		}
+		(*jump_histogram_)( outbins )++;
+	}
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////
 void

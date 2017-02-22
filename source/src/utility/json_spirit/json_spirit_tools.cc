@@ -90,6 +90,12 @@ double get_real(const mObject& obj, const std::string& name )
 	return 0.0;
 }
 
+double get_real_or_zero(const mObject& obj, const std::string& name )
+{
+	if ( !has_value( obj, name ) ) return 0.0;
+	return get_real( obj, name );
+}
+
 int get_int(const mObject& obj, const std::string& name )
 {
 	mValue value = get_value( obj, name );
@@ -97,6 +103,11 @@ int get_int(const mObject& obj, const std::string& name )
 	return value.get_int();
 }
 
+int get_int_or_zero(const mObject& obj, const std::string& name )
+{
+	if ( !has_value( obj, name ) ) return 0;
+	return get_real( obj, name );
+}
 
 }
 }

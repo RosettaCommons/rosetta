@@ -23,14 +23,15 @@
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
-#include <core/scoring/loop_graph/LoopScoreInfo.hh>
+#include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+#include <numeric/xyz.io.hh>
 
 // C++
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.loop_graph.LoopCloseEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopCloseEnergy" );
 
 namespace core {
 namespace scoring {
@@ -108,7 +109,7 @@ LoopCloseEnergy::finalize_total_energy(
 void
 LoopCloseEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	kinematics::DomainMap const &,
 	ScoreFunction const &,
 	EnergyMap const & weights,
@@ -120,37 +121,24 @@ LoopCloseEnergy::eval_atom_derivative(
 	using namespace conformation;
 	using namespace core::scoring::loop_graph;
 
-	for ( Size n = 1; n <= loop_graph_->num_loops(); n++ ) {
+	Vector f1, f2;
 
-		LoopScoreInfoOP const & loop_score_info = loop_graph_->loop_score_info( n );
+	for ( Size n = 1; n <= loop_graph_->num_current_pose_loops(); n++ ) {
 
-		if ( loop_score_info->takeoff_atom() == atom_id ) {
+		evaluator::LoopClosePotentialEvaluatorCOP loop_score_evaluator = loop_graph_->loop_score_evaluator( n );
 
-			id::AtomID const & loop_landing_atom = loop_score_info->landing_atom();
+		if ( atom_id == loop_score_evaluator->current_pose_takeoff_atom() ) {
+			loop_score_evaluator->get_f1_f2( f1, f2, true /* takeoff */ );
+		  F1 += weights[ loop_close ] * f1;
+			F2 += weights[ loop_close ] * f2;
+		}
 
-			core::scoring::func::FuncOP const & loop_func = loop_score_info->func();
-			Vector const d = pose.xyz( atom_id ) - pose.xyz( loop_landing_atom );
-			Real const x = d.length();
-			Vector f2 = loop_func->dfunc( x ) * d / x;
-			Vector f1 = cross( f2, pose.xyz( atom_id ) );
-
+		if ( atom_id == loop_score_evaluator->current_pose_landing_atom() ) {
+			loop_score_evaluator->get_f1_f2( f1, f2, false /* takeoff */ );
 			F1 += weights[ loop_close ] * f1;
 			F2 += weights[ loop_close ] * f2;
 		}
 
-		if ( loop_score_info->landing_atom() == atom_id ) {
-
-			id::AtomID const & loop_takeoff_atom = loop_score_info->takeoff_atom();
-
-			core::scoring::func::FuncOP const & loop_func = loop_score_info->func();
-			Vector const d = pose.xyz( atom_id ) - pose.xyz( loop_takeoff_atom );
-			Real const x = d.length();
-			Vector f2 = loop_func->dfunc( x ) * d / x;
-			Vector f1 = cross( f2, pose.xyz( atom_id ) );
-
-			F1 += weights[ loop_close ] * f1;
-			F2 += weights[ loop_close ] * f2;
-		}
 	}
 } // eval atom derivative
 

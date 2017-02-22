@@ -61,8 +61,8 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <utility>
 #include <utility/file/file_sys_util.hh>
+#include <numeric/MathNTensor.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -167,6 +167,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	initialize_scorefxn( pose );
 
 	// Some other silent file setup
+	if ( options_->overwrite() ) remove_silent_file_if_it_exists( options_->silent_file() );
 	initialize_lores_silent_file();
 	initialize_tag_is_done();
 
@@ -186,6 +187,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	///////////////////////////////////////////////////////////////////////////
 	Size refine_pose_id( 1 );
 	std::list< core::Real > all_lores_score_final; // used for filtering.
+	numeric::MathNTensorOP< core::Size, 6 > jump_histogram; // accumulating statistics.
 	for ( Size n = 1; n <= options_->nstruct(); n++ ) {
 
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
@@ -212,20 +214,17 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
 		rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
 		rna_fragment_monte_carlo_->set_refine_pose( refine_pose );
-		// tell rna_fragment_monte_carlo_ whether we have both rna and protein residues
-		// we'll need to know this for the high resolution stuff
-		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() );
-		// Set the vdw grid here
-		if ( options_->filter_vdw() ) {
-			rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
-		}
+		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() ); // need to know this for the high resolution stuff
+		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
 		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
+		if ( jump_histogram != 0 ) rna_fragment_monte_carlo_->set_jump_histogram( jump_histogram ); // accumulate stats in histogram.
 
 		rna_fragment_monte_carlo_->apply( pose );
 
-		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated, user for filtering.
+		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated, used for filtering.
 		if ( options_->output_lores_silent_file() ) align_and_output_to_silent_file( *(rna_fragment_monte_carlo_->lores_pose()), lores_silent_file_, out_file_tag );
+		if ( options_->save_jump_histogram() ) jump_histogram = rna_fragment_monte_carlo_->jump_histogram();
 
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if ( options_->dump_pdb() ) dump_pdb( pose,  out_file_name );
@@ -340,15 +339,8 @@ void
 RNA_DeNovoProtocol::initialize_lores_silent_file() {
 
 	if ( !options_->output_lores_silent_file() ) return;
+	lores_silent_file_ = core::io::silent::get_outfile_name_with_tag( options_->silent_file(), "_LORES" );
 
-	static std::string const new_prefix( "_LORES.out" );
-
-	std::string::size_type pos = options_->silent_file().find( ".out", 0 );
-	if ( pos == std::string::npos ) {
-		utility_exit_with_message(  "If you want to output a lores silent file, better use .out suffix ==> " + options_->silent_file() );
-	}
-	lores_silent_file_ = options_->silent_file();
-	lores_silent_file_.replace( pos, new_prefix.length(), new_prefix );
 }
 
 

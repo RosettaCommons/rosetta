@@ -18,6 +18,7 @@
 #include <core/id/AtomID.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -144,7 +145,8 @@ rna_fullatom_minimize_test()
 	RNA_Minimizer rna_minimizer( options );
 
 	// Silent file output setup
-	std::string const silent_file = option[ out::file::silent  ]();
+	std::string const & silent_file = option[ out::file::silent  ]();
+	remove_silent_file_if_it_exists( silent_file );
 	SilentFileOptions opts; // initialized from the command line
 	SilentFileData silent_file_data( opts );
 
@@ -208,10 +210,8 @@ rna_fullatom_minimize_test()
 		}
 		rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
 
-
 		// graphics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-
 
 		// do it
 		pose::Pose pose_init = pose;
@@ -295,6 +295,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::rna::farna::minimize::skip_coord_constraints );
 		option.add_relevant( OptionKeys::rna::farna::minimize::skip_o2prime_trials );
 		option.add_relevant( OptionKeys::rna::farna::minimize::deriv_check );
+		option.add_relevant( OptionKeys::rna::farna::minimize::min_type );
 		option.add_relevant( OptionKeys::constraints::cst_fa_file );
 		option.add_relevant( in::file::minimize_res );
 		option.add_relevant( score::weights );

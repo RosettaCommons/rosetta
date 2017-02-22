@@ -226,6 +226,24 @@ public:
 	void set_output_jump_o3p_to_o5p( bool const & setting ){ output_jump_o3p_to_o5p_ = setting; }
 	bool output_jump_o3p_to_o5p() const { return output_jump_o3p_to_o5p_; }
 
+	void set_save_jump_histogram( bool const & setting ){ save_jump_histogram_ = setting; }
+	bool save_jump_histogram() const { return save_jump_histogram_; }
+
+	void set_output_histogram_file( std::string const & setting ){ output_histogram_file_ = setting; }
+	std::string output_histogram_file() const { return output_histogram_file_; }
+
+	void set_output_rotation_vector( bool const & setting ){ output_rotation_vector_ = setting; }
+	bool output_rotation_vector() const { return output_rotation_vector_; }
+
+	void set_jump_histogram_boxsize( core::Real const & setting ){ jump_histogram_boxsize_ = setting; }
+	core::Real jump_histogram_boxsize() const { return jump_histogram_boxsize_; }
+
+	void set_jump_histogram_binwidth( core::Real const & setting ){ jump_histogram_binwidth_ = setting; }
+	core::Real jump_histogram_binwidth() const { return jump_histogram_binwidth_; }
+
+	void set_jump_histogram_binwidth_rotvector( core::Real const & setting ){ jump_histogram_binwidth_rotvector_ = setting; }
+	core::Real jump_histogram_binwidth_rotvector() const { return jump_histogram_binwidth_rotvector_; }
+
 	void set_rmsd_screen( core::Real const setting ){ rmsd_screen_ = setting; }
 	core::Real rmsd_screen() const { return rmsd_screen_; }
 
@@ -276,6 +294,12 @@ private:
 	std::string output_score_file_;
 	utility::vector1< core::Size > output_jump_res_;
 	bool output_jump_o3p_to_o5p_;
+	bool output_rotation_vector_;
+	bool save_jump_histogram_;
+	std::string output_histogram_file_;
+	core::Real jump_histogram_boxsize_;
+	core::Real jump_histogram_binwidth_;
+	core::Real jump_histogram_binwidth_rotvector_;
 
 	utility::vector1< core::Size > allowed_bulge_res_;
 

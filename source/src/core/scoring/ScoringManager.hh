@@ -95,6 +95,8 @@
 #include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
 
+#include <core/scoring/loop_graph/evaluator/SixDTransRotPotential.fwd.hh>
+
 #if defined(WIN32) || defined(WIN_PYROSETTA)
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh> // WIN32 INCLUDE
@@ -203,15 +205,13 @@ public:
 
 	carbon_hbonds::CarbonHBondPotential const & get_CarbonHBondPotential() const;
 
+	loop_graph::evaluator::SixDTransRotPotential const & get_LoopCloseSixDPotential( std::string const & database_file ) const;
+
 	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
 
 	rna::RNP_LowResPotential const & get_RNP_LowResPotential() const;
 
 	rna::RNP_LowResStackData const & get_RNP_LowResStackData() const;
-
-	// rna::RNA_TorsionPotential const & get_RNA_TorsionPotential() const;
-
-	// rna::RNA_SuitePotential const & get_RNA_SuitePotential( bool const calculate_suiteness_bonus = false ) const;
 
 	rna::chemical_shift::RNA_ChemicalShiftPotential const & get_RNA_ChemicalShiftPotential() const;
 
@@ -365,7 +365,6 @@ private:
 	mutable mm::MMBondLengthLibraryOP mm_bondlength_library_;
 	mutable dna::DNA_EnvPairPotential * dna_env_pair_potential_;
 	mutable dna::DNA_DihedralPotential * dna_dihedral_potential_;
-	//P_AA                     Paa_ppPotential_;
 	mutable dna::DNABFormPotentialOP dnabform_;
 	mutable dna::DNATorsionPotentialOP dna_torsion_potential_;
 	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
@@ -373,12 +372,10 @@ private:
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
 	mutable rna::RNP_LowResPotentialOP rnp_low_res_potential_;
 	mutable rna::RNP_LowResStackDataOP rnp_low_res_stack_data_;
-	// mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
-	// mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
-	// mutable rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotentialOP rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;
+	mutable std::map< std::string, loop_graph::evaluator::SixDTransRotPotentialCOP > loop_close_six_d_potential_;
 	mutable P_AAOP p_aa_;
 	mutable P_AA_ssOP p_aa_ss_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;

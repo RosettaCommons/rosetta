@@ -39,6 +39,7 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	lores_scorefxn_( "farna/rna_lores.wts" ),
 	output_lores_silent_file_( false ),
 	output_filters_( false ),
+	overwrite_( false ),
 	binary_rna_output_( false ),
 	save_times_( false ),
 	use_legacy_setup_( false ),
@@ -88,6 +89,7 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 
 	set_output_lores_silent_file( option[ rna::farna::out::output_lores_silent_file ] );
 	set_output_filters(  option[ rna::farna::output_filters ] );
+ 	set_overwrite(  option[ out::overwrite ] );
 
 	// note that althrough the following variables are held in the base class RNA_FragmentMonteCarloOptions, they are not initialized from command-line there.
 	// they really should only be set up for runs using the rna_denovo exectuable -- so they are set up here.

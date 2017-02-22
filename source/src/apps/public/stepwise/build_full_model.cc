@@ -17,7 +17,6 @@
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 
 #include <protocols/farna/FARNA_Optimizer.hh>
@@ -42,6 +41,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
@@ -147,7 +147,7 @@ BuildFullModel::BuildFullModel() {
 
 	std::string const silent_file_rna_denovo_out = option[ out::file::silent ]() + ".rna_denovo.out";
 	if ( option[ out::overwrite ]() ) {
-		stepwise::modeler::remove_silent_file_if_it_exists( silent_file_rna_denovo_out );
+		core::io::silent::remove_silent_file_if_it_exists( silent_file_rna_denovo_out );
 	}
 	utility::vector1< std::string > chunk_silent_files;
 
@@ -365,7 +365,7 @@ BuildFullModel::fill_and_sample_full_model(
 		refine_pose_list.emplace_back( new Pose( full_model_pose ) );
 		rna_de_novo_protocol_->set_refine_pose_list( refine_pose_list );
 		rna_de_novo_protocol_->apply( full_model_pose );
-		stepwise::modeler::remove_silent_file_if_it_exists( rna_de_novo_protocol_->options()->silent_file() );
+		core::io::silent::remove_silent_file_if_it_exists( rna_de_novo_protocol_->options()->silent_file() );
 	}
 
 	//utility::vector1< Size > const & full_model_cutpoint_open = full_model_info.cutpoint_open_in_full_model();
@@ -437,7 +437,7 @@ build_full_model_test()
 	}
 
 	if ( option[ out::overwrite ]() ) {
-		stepwise::modeler::remove_silent_file_if_it_exists( option[ out::file::silent ]() );
+		core::io::silent::remove_silent_file_if_it_exists( option[ out::file::silent ]() );
 	}
 
 	// setup input stream

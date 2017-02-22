@@ -10,6 +10,7 @@
 /// @file core/io/silent/util.cc
 /// @brief utility functions for silent-file classes.
 /// @author James Thompson
+/// @author Rhiju Das
 
 // C++ Headers
 #include <string>
@@ -103,6 +104,28 @@ figure_out_residue_numbers_from_line( std::istream & line_stream,
 			for ( Size i = 0; i < chainchars.size(); i++ ) chains.push_back( chainchars[i] );
 		} else break;
 		line_stream >> resnum_string;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::string
+get_outfile_name_with_tag( std::string const & silent_file, std::string const & tag )
+{
+	Size pos( silent_file.find( ".out", 0 ) );
+	if ( pos == std::string::npos ) {
+		utility_exit_with_message(  "If you want to output a silent file with tag "+tag+".out, better use .out suffix ==> " + silent_file );
+	}
+	std::string silent_file_with_tag( silent_file );
+	silent_file_with_tag.replace( pos, 4, tag+".out" );
+	return silent_file_with_tag;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+remove_silent_file_if_it_exists( std::string const & silent_file){
+	if ( utility::file::file_exists( silent_file ) ) {
+		tr<< tr.Red << "WARNING: silent_file " << silent_file << " already exists! removing..." << tr.Reset << std::endl;
+		runtime_assert( std::remove( silent_file.c_str() ) == 0 );
 	}
 }
 

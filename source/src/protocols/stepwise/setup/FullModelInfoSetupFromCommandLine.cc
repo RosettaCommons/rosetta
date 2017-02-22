@@ -353,6 +353,7 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 			pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( tag, string_is_ok );
 			if ( !string_is_ok ) continue;
 			for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) {
+				if ( resnum_and_chain.second[n] == ' ' ) continue; // there better be a chain. accept "A:1" but not just "1"
 				resnum.push_back( resnum_and_chain.first[n] );
 				chains.push_back( resnum_and_chain.second[n] );
 			}

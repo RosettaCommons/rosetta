@@ -52,7 +52,6 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/sampler/protein/util.hh>
@@ -62,6 +61,7 @@
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -273,7 +273,7 @@ rebuild_test(){
 	stepwise_options->set_disallow_realign( true );
 	if ( stepwise_options->pack_weights().size() == 0 ) stepwise_options->set_pack_weights( "stepwise/protein/pack_no_hb_env_dep.wts" );
 	if ( stepwise_options->dump() ) pose.dump_pdb( "after_setup.pdb" );
-	remove_silent_file_if_it_exists( option[ out::file::silent] );
+	core::io::silent::remove_silent_file_if_it_exists( option[ out::file::silent] );
 
 	ScoreFunctionOP scorefxn;
 	if ( ! option[ score::weights ].user() ) scorefxn = ScoreFunctionFactory::create_score_function( "score12_no_hb_env_dep.wts"  );

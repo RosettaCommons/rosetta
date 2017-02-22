@@ -19,6 +19,7 @@
 // Package headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
+#include <numeric/MathNTensor.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -155,6 +156,93 @@ bilinearly_interpolated(
 		( ax * by * f21 ) +
 		( ax * ay * f22 );
 }
+
+/// @brief Perform multilinear interpolation over an N-dimensional tensor, with derivatives
+///
+/// @details
+///  Straightforward generalization of bilinear interpolation.
+///  Currently extrapolates linearly when asked for point outside tensor range
+///  TODO: allow periodic; allow different extrapolation behavior (e.g., constant).
+/// @param[in] tensor is the data array, using MathNTensor
+/// @param[in] minval is the tensor's minimum value in each direction.
+/// @param[in] binwidth is the bin width in each direction
+/// @param[out] deriv is the interpolated derivative
+/// @param[in] compute_deriv -- set to false to reduce computation
+///
+/// @author rhiju
+template< typename T, numeric::Size N >
+Real
+multilinear_interpolation( MathNTensor< T, N > const & tensor,
+													 utility::fixedsizearray1< Real, N > const & minval,
+													 utility::fixedsizearray1< Real, N > const & binwidth,
+													 utility::fixedsizearray1< Real, N > const & xs,
+													 utility::fixedsizearray1< Real, N > & deriv,
+													 bool const compute_deriv = true )
+{
+	utility::fixedsizearray1< Size, N > bin;
+	utility::fixedsizearray1< Real, N > a; // fraction of the way between this bin and the next.
+	for ( Size n = 1; n <= N; ++n ) {
+		Real bin_pos( ( xs[n] - minval[n] )/binwidth[n] );
+		// note: tensor is zero-indexed, and we need to define a hypercube whose vertices are defined on the tensor,
+		//   so maximum bin index is (n_bins - 1) - 1.
+		bin[ n ] = std::min( std::max( static_cast<int>( bin_pos ), int( 0 ) ), int( tensor.n_bins(n) ) - 2  );
+		a[ n ] = bin_pos - Real( bin[ n ] );
+	}
+
+	Real val( 0.0 );
+	deriv = 0.0;
+	utility::fixedsizearray1< Size, N > idx_into_tensor;
+	// now need to go through 2^N points and compute contribution to interpolated value.
+	for ( Size i = 0; i < (1 << N); i++ ) {
+		Real frac_contribution( 1.0 );
+		utility::fixedsizearray1< Real, N > frac_contribution_to_deriv( 1.0 );
+		for ( Size n = 1; n <= N; n++ ) {
+			Size offset = ( i >> ( n - 1 ) ) % 2; // 0 or 1, determines this bin or next.
+			idx_into_tensor[ n ] = bin[ n ] + offset;
+			frac_contribution *= ( offset ? a[ n ] : ( 1.0 - a[n] ) );
+			if ( compute_deriv ) {
+				for ( Size m = 1; m <= N; m++ ) {
+					if ( m == n ) {
+						frac_contribution_to_deriv[ m ] *= ( offset ? +1 : -1 );
+					} else {
+						frac_contribution_to_deriv[ m ] *= ( offset ? a[ n ] : ( 1.0 - a[n] ) );
+					}
+				}
+			}
+		}
+		val += frac_contribution * tensor( idx_into_tensor );
+		if ( compute_deriv ) {
+			for ( Size m = 1; m <= N; m++ ) {
+				deriv[ m ] += frac_contribution_to_deriv[ m ] * tensor( idx_into_tensor ) / binwidth[m];
+			}
+		}
+	}
+	return val;
+}
+
+/// @brief Perform multilinear interpolation over an N-dimensional tensor
+///
+/// @details
+///  Straightforward generalization of bilinear interpolation.
+///  Currently extrapolates linearly when asked for point outside tensor range
+///  TODO: allow periodic; allow different extrapolation behavior (e.g., constant).
+///
+/// @param[in] tensor is the data array, using MathNTensor
+/// @param[in] minval is the tensor's minimum value in each direction.
+/// @param[in] binwidth is the bin width in each direction
+///
+/// @author rhiju
+template< typename T, numeric::Size N >
+numeric::Real
+multilinear_interpolation( numeric::MathNTensor< T, N > const & tensor,
+													 utility::fixedsizearray1< numeric::Real, N > const & minval,
+													 utility::fixedsizearray1< numeric::Real, N > const & binwidth,
+													 utility::fixedsizearray1< numeric::Real, N > const & xs )
+{
+	utility::fixedsizearray1< numeric::Real, N > deriv;
+	return multilinear_interpolation( tensor, minval, binwidth, xs, deriv, false /*compute_deriv*/ );
+}
+
 
 /// @brief Perform cubic interpolation over each of N axes, using the
 /// 2^N derivatives at 2^N gridpoints

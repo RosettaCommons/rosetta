@@ -57,6 +57,7 @@
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
+#include <core/scoring/loop_graph/evaluator/SixDTransRotPotential.hh>
 #include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/P_AA.hh>
 #include <core/scoring/P_AA_ss.hh>
@@ -537,6 +538,18 @@ ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 		rna_dms_low_resolution_potential_ = rna::data::RNA_DMS_LowResolutionPotentialOP( new rna::data::RNA_DMS_LowResolutionPotential );
 	}
 	return *rna_dms_low_resolution_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+loop_graph::evaluator::SixDTransRotPotential const &
+ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) const
+{
+	if ( loop_close_six_d_potential_[ database_file ] == nullptr ) {
+		// need to check *externally* that file actually exists in database.
+		TR << "Reading in: " << database_file << std::endl;
+		loop_close_six_d_potential_[ database_file ] = loop_graph::evaluator::SixDTransRotPotentialCOP( new loop_graph::evaluator::SixDTransRotPotential( database_file ) );
+	}
+	return *loop_close_six_d_potential_[ database_file ];
 }
 
 ///////////////////////////////////////////////////////////////////////////////

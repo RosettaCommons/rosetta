@@ -239,10 +239,16 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "big_bin_constraint" ] = big_bin_constraint;
 	name2score_type_[ "constant_constraint" ] = constant_constraint;
 	name2score_type_[ "coordinate_constraint" ] = coordinate_constraint;
+	//	name2score_type_[ "stub_coordinate_constraint" ] = stub_coordinate_constraint;
 	name2score_type_[ "site_constraint" ] = site_constraint;
 	name2score_type_[ "metalhash_constraint" ] = metalhash_constraint;
 	name2score_type_[ "metalbinding_constraint" ] = metalbinding_constraint;
+
+	// deprecate when replaced with 'proper' stub_coordinate_constraint
+	name2score_type_[ "rna_stub_coord_hack" ] = rna_stub_coord_hack;
+
 	name2score_type_[ "bond_geometry"] = bond_geometry;
+	name2score_type_[ "rna_bond_geometry"] = rna_bond_geometry;
 	name2score_type_[ "Hpol_bond_geometry"] = Hpol_bond_geometry;
 
 	name2score_type_[ "rama"    ] = rama;
@@ -439,7 +445,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_jr_suite"] = rna_jr_suite;
 	name2score_type_[ "suiteness_bonus"] = suiteness_bonus;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
-	name2score_type_[ "rna_bond_geometry"] = rna_bond_geometry;
 	name2score_type_[ "rna_fa_atr_base"] = rna_fa_atr_base;
 	name2score_type_[ "rna_fa_rep_base"] = rna_fa_rep_base;
 

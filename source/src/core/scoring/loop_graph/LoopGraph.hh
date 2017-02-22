@@ -18,13 +18,9 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/scoring/loop_graph/LoopGraph.fwd.hh>
-#include <core/scoring/loop_graph/Loop.fwd.hh>
-#ifdef WIN32
 #include <core/scoring/loop_graph/Loop.hh>
 #include <core/scoring/loop_graph/LoopCycle.hh>
-#endif
-#include <core/scoring/loop_graph/LoopCycle.fwd.hh>
-#include <core/scoring/loop_graph/LoopScoreInfo.fwd.hh>
+#include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
@@ -49,9 +45,9 @@ public:
 
 	void update( pose::Pose & pose, bool const verbose = false );
 
-	LoopScoreInfoOP loop_score_info( Size const n ) const;
+	evaluator::LoopClosePotentialEvaluatorCOP loop_score_evaluator( Size const n ) const;
 
-	Size num_loops() const{ return current_pose_loop_score_info_.size(); }
+	Size num_current_pose_loops() const{ return current_pose_loop_score_evaluators_.size(); }
 
 	Real total_energy() const{ return total_energy_; }
 
@@ -83,13 +79,6 @@ public:
 	utility::vector1< LoopCycle > const & loop_cycles() const { return loop_cycles_;}
 
 private:
-
-	void
-	get_loop_atom( Size const & res,
-		core::pose::Pose const & pose,
-		bool const takeoff /* as opposed to landing */,
-		id::AtomID & atom_id,
-		Vector & xyz );
 
 	void
 	figure_out_loop_cycles();
@@ -125,19 +114,18 @@ private:
 
 	utility::vector1< Loop > loops_;
 	utility::vector1< LoopCycle > loop_cycles_;
-	utility::vector1< LoopScoreInfoOP > current_pose_loop_score_info_;
 
 	std::map< Size, utility::vector1< Size > > loops_from_domain_;
 	utility::vector1< bool > loop_visited_;
 	utility::vector1< bool > domain_visited_;
 
-	Real const rna_gaussian_variance_per_residue_;
-	Real const protein_gaussian_variance_per_residue_;
-	Real const loop_fixed_cost_;
-
 	Real total_energy_;
+	Real loop_fixed_cost_;
 	bool error_out_on_complex_cycles_;
 	bool has_just_simple_cycles_;
+	bool use_6D_potential_;
+
+	utility::vector1< evaluator::LoopClosePotentialEvaluatorCOP > current_pose_loop_score_evaluators_;
 
 };
 

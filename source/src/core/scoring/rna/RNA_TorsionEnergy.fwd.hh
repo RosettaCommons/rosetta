@@ -9,7 +9,6 @@
 
 /// @file   core/scoring/methods/OmegaTetherEnergy.fwd.hh
 /// @brief  OmegaTether energy method class forward declaration
-/// @author Phil Bradley
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 

@@ -24,7 +24,6 @@
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh>
@@ -39,6 +38,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -129,7 +129,7 @@ get_basic_protein_sampler(
 		///////////////////////////////////////////////////////////////
 		// Following has not been tested in a while, may not work:
 		backbone_sampler.set_filter_native_big_bins( options->filter_native_big_bins()  );
-		std::string const silent_file_centroid = stepwise::modeler::get_file_name( options->silent_file(), "_centroid" );
+		std::string const silent_file_centroid = core::io::silent::get_outfile_name_with_tag( options->silent_file(), "_centroid" );
 		if ( options->centroid_output() ) backbone_sampler.set_silent_file( silent_file_centroid );
 		if ( options->centroid_screen() ) {
 			backbone_sampler.setup_centroid_screen( options->centroid_score_diff_cut(), options->centroid_weights(),
@@ -310,7 +310,7 @@ generate_beta_database_test() {
 
 	stepwise_clusterer.cluster();
 
-	std::string const silent_file_cluster   = stepwise::modeler::get_file_name( silent_file, "_cluster" );
+	std::string const silent_file_cluster   = core::io::silent::get_outfile_name_with_tag( silent_file, "_cluster" );
 	stepwise_clusterer.output_silent_file( silent_file_cluster );
 
 	/////////////////////////////////////////////////////////////////////

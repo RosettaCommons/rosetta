@@ -37,6 +37,7 @@ RNA_MinimizerOptions::RNA_MinimizerOptions():
 	skip_o2prime_trials_( false ),
 	vary_bond_geometry_( false ),
 	minimizer_use_coordinate_constraints_( false ),
+	min_type_( "lbfgs_armijo_nonmonotone" ), //Parin S. Jan 12, 2012
 	minimize_bps_( false )
 {}
 
@@ -75,6 +76,7 @@ RNA_MinimizerOptions::initialize_from_command_line() {
 	set_extra_minimize_chi_res( option[ OptionKeys::rna::farna::minimize::extra_minimize_chi_res ]() ) ;
 
 	set_minimizer_use_coordinate_constraints( option[ OptionKeys::rna::farna::minimize::minimizer_use_coordinate_constraints ]() );
+	set_min_type( option[ OptionKeys::rna::farna::minimize::min_type ]() );
 	if ( option[ OptionKeys::rna::farna::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
 	set_minimize_bps( option[ OptionKeys::rna::farna::minimize::minimize_bps ]() ) ;
 }

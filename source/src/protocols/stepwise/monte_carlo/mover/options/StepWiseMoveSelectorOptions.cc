@@ -89,7 +89,7 @@ StepWiseMoveSelectorOptions::initialize_from_command_line() {
 	set_vary_loop_length_frequency( option[ OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ]() );
 
 	// hey what about force_unique_moves?
-	filter_complex_cycles_ = !basic::options::option[ basic::options::OptionKeys::score::allow_complex_loop_graph ]();
+	filter_complex_cycles_ = !basic::options::option[ basic::options::OptionKeys::score::loop_close::allow_complex_loop_graph ]();
 	allow_submotif_split_ = option[ OptionKeys::stepwise::monte_carlo::allow_submotif_split ]();
 	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
 }

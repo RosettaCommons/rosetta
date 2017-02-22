@@ -17,7 +17,7 @@
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
+#include <core/io/silent/util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -258,7 +258,7 @@ StepWiseCSA_JobDistributor::write_out_silent_file( std::string const & silent_fi
 	runtime_assert( sfd_ != 0 );
 	runtime_assert( sfd_->structure_list().size() > 0 );
 	runtime_assert( sfd_->structure_list().size() <= csa_bank_size_ );
-	stepwise::modeler::remove_silent_file_if_it_exists( silent_file );
+	core::io::silent::remove_silent_file_if_it_exists( silent_file );
 	runtime_assert( !utility::file::file_exists( silent_file ) );
 	sfd_->clear_shared_silent_data(); // kind of bananas, but otherwise getting header printed out twice and lots of issues.
 	sfd_->write_all( silent_file );

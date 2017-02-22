@@ -67,6 +67,9 @@ public:
 	void set_minimizer_use_coordinate_constraints( bool const & setting ){ minimizer_use_coordinate_constraints_ = setting; }
 	bool minimizer_use_coordinate_constraints() const { return minimizer_use_coordinate_constraints_; }
 
+	void set_min_type( std::string const & setting ){ min_type_ = setting; }
+	std::string min_type() const { return min_type_; }
+
 	void set_minimize_bps( bool const & setting ){ minimize_bps_ = setting; }
 	bool minimize_bps() const { return minimize_bps_; }
 
@@ -90,6 +93,7 @@ private:
 	utility::vector1< core::Size > extra_minimize_chi_res_;
 
 	bool minimizer_use_coordinate_constraints_;
+	std::string min_type_;
 	bool minimize_bps_;
 
 };

@@ -56,7 +56,7 @@ public:
 	/// long-range energy container that it stores in the Energies object
 	virtual methods::LongRangeEnergyType long_range_type() const;
 
-	/// @brief Interface from the LongRangeTwoBodyEnery base class; returns "true" if there's any non-zero
+	/// @brief Interface from the LongRangeTwoBodyEnergy base class; returns "true" if there's any non-zero
 	/// or potentially non-zero interaction between a pair of residues in a pose.
 	virtual
 	bool

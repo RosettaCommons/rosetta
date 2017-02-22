@@ -11,7 +11,7 @@
 #endif
 
 #include <iostream>
-#include "json_spirit_value.h"
+#include <utility/json_spirit/json_spirit_value.h>
 
 namespace utility {
 namespace json_spirit

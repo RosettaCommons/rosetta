@@ -349,6 +349,7 @@ enum ScoreType {
 	coarse_chainbreak_constraint,
 	constant_constraint,
 	coordinate_constraint,
+	// stub_coordinate_constraint, // calc. x,y,z in coordinate system defined by 3 stub atoms (not written yet)
 	angle_constraint,
 	dihedral_constraint,
 	big_bin_constraint,
@@ -356,9 +357,12 @@ enum ScoreType {
 	site_constraint,
 	metalhash_constraint, // Rigid body, metal binding constraints for centroid mode
 	metalbinding_constraint, // constraints set by -auto_setup_metals
-	Hpol_bond_geometry, // deviations from ideal geometry for just polar hydrogens. [PolarHydrogenBondGeometryEnergy.hh]
+	rna_stub_coord_hack, // draft for stub_coordinate_constraint
+
+	// following are similar to cart_bonded
 	bond_geometry,      // deviations from ideal geometry [accessed through constraints framework]
 	rna_bond_geometry,  // deviations from ideal geometry -- rna-backbone specific [accessed through constraints framework]
+	Hpol_bond_geometry, // deviations from ideal geometry for just polar hydrogens. [PolarHydrogenBondGeometryEnergy.hh]
 
 	rama,
 	omega,

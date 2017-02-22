@@ -33,13 +33,13 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/io/ozstream.hh>
+#include <numeric/MathNTensor.fwd.hh>
 
 namespace protocols {
 namespace farna {
@@ -121,6 +121,9 @@ public:
 
 	bool
 	loop_modeling() const;
+
+	numeric::MathNTensorOP< core::Size, 6 > jump_histogram() const{ return jump_histogram_; }
+	void set_jump_histogram( numeric::MathNTensorOP< core::Size, 6 > setting ) { jump_histogram_ = setting; }
 
 private:
 
@@ -212,9 +215,15 @@ private:
 	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
 	void
+	initialize_output_score();
+
+	void
 	output_score_if_desired( core::Size const & r,
 		core::Size const & i,
 		core::pose::Pose & pose );
+
+	void
+	finish_output_score();
 
 	void
 	output_jump_information( core::pose::Pose const & pose );
@@ -271,6 +280,8 @@ private:
 	core::kinematics::FoldTree rnp_docking_ft_;
 
 	utility::io::ozstream running_score_output_;
+	numeric::MathNTensorOP< core::Size, 6 > jump_histogram_;
+  utility::vector1< core::Real > jump_histogram_min_, jump_histogram_max_, jump_histogram_bin_width_;
 
 };
 

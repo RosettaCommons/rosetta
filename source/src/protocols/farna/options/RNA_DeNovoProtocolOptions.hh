@@ -74,6 +74,9 @@ public:
 	void set_output_filters( bool const setting ){ output_filters_ = setting; }
 	bool output_filters() const { return output_filters_; }
 
+	void set_overwrite( bool const setting ){ overwrite_ = setting; }
+	bool overwrite() const { return overwrite_; }
+
 	void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 	std::string silent_file() const { return silent_file_; }
 
@@ -88,6 +91,7 @@ private:
 
 	bool output_lores_silent_file_;
 	bool output_filters_;
+	bool overwrite_;
 	bool binary_rna_output_;
 	bool save_times_;
 	bool use_legacy_setup_;

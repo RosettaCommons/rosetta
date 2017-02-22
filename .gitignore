@@ -26,3 +26,4 @@ database/chemical/components.*
 tests/sfxn_fingerprint/new/
 .idea
 .beaut
+database/scoring/**/potential.bin.gz

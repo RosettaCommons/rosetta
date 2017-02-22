@@ -16,7 +16,7 @@
 //////////////////////////////////
 #include <protocols/stepwise/legacy/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
+#include <core/io/silent/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 
 //////////////////////////////////
@@ -25,6 +25,7 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/util.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -99,7 +100,7 @@ output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 
 	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData( opts ) );
-	if ( overwrite ) remove_silent_file_if_it_exists( silent_file );
+	if ( overwrite ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
 
 	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		Pose & pose = *pose_list[ n ];

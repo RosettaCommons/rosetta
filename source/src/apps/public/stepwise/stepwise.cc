@@ -22,6 +22,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
 #include <core/io/rna/RNA_DataReader.hh> // temporary, for scoring RNA chemical mapping data. Move into core?
+#include <core/io/silent/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
 #include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>
@@ -30,7 +31,6 @@
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 #include <protocols/viewer/viewers.hh>
@@ -134,7 +134,7 @@ stepwise_monte_carlo()
 	if ( ( options->from_scratch_frequency() > 0.0 || const_full_model_info( *pose_op ).other_pose_list().size() > 0 ) && !scorefxn->has_nonzero_weight( other_pose ) ) scorefxn->set_weight( other_pose, 1.0 ); // critical if more than one pose shows up and focus switches...
 
 	std::string const silent_file = option[ out::file::silent ]();
-	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
+	if ( option[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
 	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif() ) ) );
 

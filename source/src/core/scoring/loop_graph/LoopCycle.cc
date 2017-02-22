@@ -40,7 +40,8 @@ LoopCycle::loop( Size const n ) const{
 
 //////////////////////////////////////////////
 Size
-LoopCycle::find_index_for_loop_landing_at_domain( Size const & domain ){
+LoopCycle::find_index_for_loop_landing_at_domain( Size const & domain ) const
+{
 	for ( Size n = 1; n <= loops_.size(); n++ ) {
 		if ( loops_[ n ].landing_domain() == domain ) return n;
 	}

@@ -68,6 +68,11 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	output_score_frequency_( 0 ),
 	output_jump_res_( 0 ),
 	output_jump_o3p_to_o5p_( false ),
+	output_rotation_vector_( false ),
+	save_jump_histogram_( false ),
+	jump_histogram_boxsize_( 0.0 ),
+	jump_histogram_binwidth_( 0.0 ),
+	jump_histogram_binwidth_rotvector_( 0.0 ),
 	filter_vdw_( false ),
 	vdw_rep_screen_include_sidechains_( false ),
 	gradual_constraints_( true ),
@@ -151,12 +156,25 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_output_score_file( option[ rna::farna::out::output_score_file ]() );
 	set_output_jump_res( option[ rna::farna::out::output_jump_res ]() );
 	set_output_jump_o3p_to_o5p( option[ rna::farna::out::output_jump_o3p_to_o5p ]() );
+	set_output_rotation_vector( option[ rna::farna::out::output_rotation_vector ]() );
+	set_save_jump_histogram( option[ rna::farna::out::save_jump_histogram ]() );
+	set_jump_histogram_boxsize( option[ rna::farna::out::jump_histogram_boxsize ]() );
+	set_jump_histogram_binwidth( option[ rna::farna::out::jump_histogram_binwidth ]() );
+	set_jump_histogram_binwidth_rotvector( option[ rna::farna::out::jump_histogram_binwidth_rotvector ]() );
+	set_output_histogram_file( option[ rna::farna::out::output_histogram_file ]() );
 	if ( output_score_file_.size() == 0 && ( output_score_frequency_ != 0 || output_jump_res_.size() > 0 ) )  {
 		output_score_file_ = option[ out::file::silent ]();
 		std::string::size_type pos = output_score_file_.find( ".out", 0 );
 		std::string const new_prefix = ".SCORES.txt";
 		if ( pos == std::string::npos ) utility_exit_with_message(  "If you want to output a running score file, specify -output_score_file" );
 		output_score_file_.replace( pos, new_prefix.length(), new_prefix );
+	}
+	if ( output_histogram_file_.size() == 0 && save_jump_histogram_ ){
+		output_histogram_file_ = option[ out::file::silent ]();
+		std::string::size_type pos = output_histogram_file_.find( ".out", 0 );
+		std::string const new_prefix = ".HISTOGRAM.bin.gz";
+		if ( pos == std::string::npos ) utility_exit_with_message(  "If you want to output a histogram, specify -output_histogram_file" );
+		output_histogram_file_.replace( pos, new_prefix.length(), new_prefix );
 	}
 
 	set_allow_consecutive_bulges( option[ rna::farna::allow_consecutive_bulges ]() ) ;

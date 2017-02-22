@@ -9,7 +9,6 @@
 
 /// @file   core/scoring/rna/RNA_FullAtomStacking.hh
 /// @brief  Statistically derived rotamer pair potential class declaration
-/// @author Phil Bradley
 /// @author Rhiju Das
 
 

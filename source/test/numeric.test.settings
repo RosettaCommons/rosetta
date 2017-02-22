@@ -22,6 +22,7 @@ sources = {
 		"HomogeneousTransform",
 		"interpolate",
 		"MathNTensor",
+		"MathNTensor_io",
 		"MultiDimensionalHistogram",
 		"numeric.functions",
 		"PCA",

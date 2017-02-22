@@ -632,27 +632,38 @@ figure_out_pose_domain_map_const( pose::Pose const & pose ) {
 
 /////////////////////////////////////////////////////////
 core::conformation::Residue const &
-get_residue( Size const seqpos_in_full_model,
+get_residue(
+	Size const seqpos_in_full_model,
 	pose::Pose const & pose,
 	bool & found_residue ){
 
-	FullModelInfo const & full_model_info = const_full_model_info( pose );
-
 	found_residue = false;
 
-	utility::vector1< Size > const & res_list = full_model_info.res_list();
-	if ( res_list.has_value( seqpos_in_full_model ) ) {
+	if ( full_model_info_defined( pose ) ) {
 
-		found_residue = true;
-		return pose.residue( res_list.index( seqpos_in_full_model ) );
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+
+		utility::vector1< Size > const & res_list = full_model_info.res_list();
+		if ( res_list.has_value( seqpos_in_full_model ) ) {
+
+			found_residue = true;
+			return pose.residue( res_list.index( seqpos_in_full_model ) );
+
+		} else {
+
+			utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
+			for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+				core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, *(other_pose_list[ n ]), found_residue );
+				if ( found_residue ) return rsd;
+			}
+
+		}
 
 	} else {
 
-		utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
-		for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
-			core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, *(other_pose_list[ n ]), found_residue );
-			if ( found_residue ) return rsd;
-		}
+		// if we're here, then full_model_info is not defined.
+		found_residue = ( seqpos_in_full_model > 0 ) && ( seqpos_in_full_model <= pose.size() );
+		if ( found_residue ) return pose.residue( seqpos_in_full_model );
 
 	}
 

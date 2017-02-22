@@ -19,7 +19,6 @@
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueType.hh>
@@ -33,6 +32,7 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/util.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -194,7 +194,7 @@ void
 StepWiseMonteCarlo::remove_checkpoint_file() const {
 	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
 
-	stepwise::modeler::remove_silent_file_if_it_exists( checkpoint_file );
+	core::io::silent::remove_silent_file_if_it_exists( checkpoint_file );
 }
 
 bool

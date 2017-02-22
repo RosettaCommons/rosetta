@@ -1367,7 +1367,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 
 	if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 1.0e-3 ) {
 		std::string const msg = "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus );
-		if ( !basic::options::option[ basic::options::OptionKeys::score::allow_complex_loop_graph ]() ) {
+		if ( !basic::options::option[ basic::options::OptionKeys::score::loop_close::allow_complex_loop_graph ]() ) {
 			utility_exit_with_message( msg );
 		}
 		TR << TR.Red << "[WARNING] " << msg << TR.Reset << std::endl;

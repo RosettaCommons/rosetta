@@ -16,7 +16,8 @@
 #include <core/scoring/loop_graph/LoopGraph.hh>
 #include <core/scoring/loop_graph/Loop.hh>
 #include <core/scoring/loop_graph/LoopCycle.hh>
-#include <core/scoring/loop_graph/LoopScoreInfo.hh>
+#include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.hh>
+#include <core/scoring/loop_graph/util.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -42,6 +43,7 @@
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @details
 //
 // For Stepwise modeling, full model has several instantiated poses whose covalent loop interconnections
 //  have not been instantiated. This LoopGraph keeps track of those loops, and any that form cycles
@@ -59,6 +61,9 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 //         ~ ~ = loops that are not created yet.
 //
 //
+// Need to specify loop_fixed_cost, which is the 'typical' restriction volume for the nucleotides at the ends of the loop, in Angstrom^3.
+//   [For the 6D potentials, interpret this loop_fixed_cost as the restricted 6D volume = translational volume x [fraction of SO(3)].
+//
 // Note: models like this are currently a problem:
 //
 //     POSE 1      POSE 2
@@ -72,8 +77,12 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 //
 //  Note that some loops are shared between cycles -- that's the issue.
 //
+//
+//
+//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+using namespace core::scoring::loop_graph::evaluator;
 
 namespace core {
 namespace scoring {
@@ -81,12 +90,11 @@ namespace loop_graph {
 
 //Constructor
 LoopGraph::LoopGraph():
-	rna_gaussian_variance_per_residue_( 5.0 * 5.0 ), // in Angstroms^2
-	protein_gaussian_variance_per_residue_( 3.0 * 3.0 ), // in Angstroms^2
-	loop_fixed_cost_( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() ), // -0.29 default, in Rosetta energy units
 	total_energy_( 0.0 ),
-	error_out_on_complex_cycles_( !basic::options::option[ basic::options::OptionKeys::score::allow_complex_loop_graph ]() ),
-	has_just_simple_cycles_( true )
+	loop_fixed_cost_( basic::options::option[ basic::options::OptionKeys::score::loop_close::loop_fixed_cost ]() ), // -0.29 default, in Rosetta energy units
+	error_out_on_complex_cycles_( !basic::options::option[ basic::options::OptionKeys::score::loop_close::allow_complex_loop_graph ]() ),
+	has_just_simple_cycles_( true ),
+	use_6D_potential_( basic::options::option[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]() )
 {
 }
 
@@ -98,124 +106,28 @@ LoopGraph::~LoopGraph()
 void
 LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 
-	using namespace id;
-	using namespace pose;
-	using namespace pose::full_model_info;
-	using namespace scoring::constraints;
-
-	// can't make this a vector1 of OPs since I don't have OP for input pose.
+	using namespace core::pose::full_model_info;
 	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
 	utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
 
 	update_loops_and_cycles( pose_domain_map, cutpoint_open );
 
-	current_pose_loop_score_info_.clear();
+	current_pose_loop_score_evaluators_.clear();
 	total_energy_ = 0.0;
 	check_for_unexpected_cutpoints( pose );
 
 	for ( Size k = 1; k <= loop_cycles_.size(); ++k ) {
 		LoopCycle & loop_cycle = loop_cycles_[ k ];
-		// check list of loops, and add up total gaussian variance
-		Real total_gaussian_variance( 0.0 );
-		for ( Size n = 1; n <= loop_cycle.size(); n++ ) {
-
-			Loop const & loop = loop_cycle.loop( n );
-			Size const loop_length = ( loop.landing_pos() - loop.takeoff_pos() );
-
-			if ( get_residue( loop.takeoff_pos(), pose ).is_NA() ) {
-				runtime_assert( get_residue( loop.landing_pos(), pose ).is_NA() );
-				total_gaussian_variance += Real( loop_length ) * rna_gaussian_variance_per_residue_;
-			} else if ( get_residue( loop.takeoff_pos(), pose ).is_protein() ) {
-				runtime_assert( get_residue( loop.landing_pos(), pose ).is_protein() );
-				total_gaussian_variance += Real( loop_length ) * protein_gaussian_variance_per_residue_;
-			} else {
-				utility_exit_with_message( "LoopGraph cannot currently assign energies to loop-cycles with non-protein or non-nucleic acid parts" );
-			}
-		}
-
-		// go into each 'domain' and get list of distances. Also figure out if any of the domains are the current pose, and keep track of AtomID info.
-		Size current_pose_idx_in_cycle( 0 );
-		AtomID takeoff_atom_id, landing_atom_id, current_pose_takeoff_atom_id, current_pose_landing_atom_id;
-		Vector takeoff_xyz, landing_xyz;
-		utility::vector1< Real > all_distances, other_distances;
-
-		for ( Size n = 1; n <= loop_cycle.size(); n++ ) {
-			Loop const & takeoff_loop = loop_cycle.loop( n );
-			Size const & takeoff_pos  = takeoff_loop.takeoff_pos();
-			Size const & takeoff_domain = takeoff_loop.takeoff_domain();
-
-			get_loop_atom( takeoff_pos, pose, true /*takeoff*/, takeoff_atom_id, takeoff_xyz );
-
-			// Now need to follow cycle around to find loop that ends on this same domain. There should be only one.
-			Size const landing_loop_idx  = loop_cycle.find_index_for_loop_landing_at_domain( takeoff_domain );
-			Loop const & landing_loop = loop_cycle.loop( landing_loop_idx );
-			Size const & landing_pos  = landing_loop.landing_pos();
-			Size const & landing_domain = landing_loop.landing_domain();
-			runtime_assert( takeoff_domain == landing_domain );
-
-			get_loop_atom( landing_pos, pose, false /*takeoff*/, landing_atom_id, landing_xyz );
-
-			Distance d = ( landing_xyz - takeoff_xyz ).length();
-			all_distances.push_back( d );
-			if ( takeoff_domain == 1 ) {
-				current_pose_takeoff_atom_id = takeoff_atom_id;
-				current_pose_landing_atom_id = landing_atom_id;
-				current_pose_idx_in_cycle = n;
-			}
-		}
-
-		Size main_pose_idx = 1;
-		if ( current_pose_idx_in_cycle > 0 ) main_pose_idx = current_pose_idx_in_cycle;
-
-		// reorder so that current_distance is in the beginning.
-		Real main_distance = all_distances[ main_pose_idx ];
-		for ( Size n = 1; n <= all_distances.size(); n++ ) {
-			if ( n != main_pose_idx ) other_distances.push_back( all_distances[ n ] );
-		}
-
-		// Note loop_fixed_cost_ needs to be my current loop_fixed_cost_ but corrected by 1.5 * k_B_T_ * log( rna_persistence_length2_ )
-		core::scoring::func::FuncOP func( new core::scoring::func::GaussianChainFunc( total_gaussian_variance, loop_fixed_cost_, other_distances ) );
-		Real const loop_closure_energy = func->func( main_distance );
+		LoopClosePotentialEvaluatorCOP potential_evaluator( get_loop_close_potential( pose, loop_cycle, loop_fixed_cost_, use_6D_potential_ ) );
+		Real const & loop_closure_energy = potential_evaluator->loop_closure_energy();
+		if ( verbose ) TR << TR.Blue << "Cycle " << k << " " << loop_cycle << " ==> " << loop_closure_energy << TR.Reset << std::endl;
 		total_energy_ += loop_closure_energy;
-		if ( verbose ) TR << TR.Blue << "Cycle " << k << ": " <<  all_distances << " ==> " << loop_closure_energy << TR.Reset << std::endl;
-
-		if ( current_pose_idx_in_cycle ) {
-			// save information to allow derivative computation.
-			LoopScoreInfoOP loop_score_info( new LoopScoreInfo );
-			loop_score_info->set_takeoff_atom( current_pose_takeoff_atom_id );
-			loop_score_info->set_landing_atom( current_pose_landing_atom_id );
-			loop_score_info->set_func( func );
-			loop_score_info->set_current_distance( main_distance );
-			current_pose_loop_score_info_.push_back( loop_score_info );
+		if ( potential_evaluator->involves_current_pose() ) { // save for derivative calculations
+			current_pose_loop_score_evaluators_.push_back( potential_evaluator );
 		}
-
-	} // loop_cycles
-
-	if ( verbose ) TR << TR.Blue << "Total loop close energy  ==> " << total_energy_ << TR.Reset << std::endl;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-void
-LoopGraph::get_loop_atom( Size const & res,
-	core::pose::Pose const & pose,
-	bool const takeoff /* as opposed to landing */,
-	id::AtomID & atom_id,
-	Vector & xyz ){
-
-	using namespace pose::full_model_info;
-	core::conformation::Residue const & rsd = get_residue( res, pose );
-	std::string atom_name;
-	if ( rsd.is_NA() ) {
-		atom_name = takeoff ? " O3'" : " C5'";
-	} else {
-		runtime_assert( rsd.is_protein() );
-		atom_name = takeoff ? " C  " : " N  ";
 	}
 
-	atom_id = id::AtomID( rsd.atom_index( atom_name ), rsd.seqpos() );
-	xyz = rsd.xyz( atom_name );
-
+	if ( verbose ) TR << TR.Blue << "Total loop close energy  ==> " << total_energy_ << TR.Reset << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -560,9 +472,9 @@ LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose ) const {
 }
 
 /////////////////////////////////////////////
-LoopScoreInfoOP
-LoopGraph::loop_score_info( Size const n ) const {
-	return current_pose_loop_score_info_[ n ];
+LoopClosePotentialEvaluatorCOP
+LoopGraph::loop_score_evaluator( Size const n ) const {
+	return current_pose_loop_score_evaluators_[ n ];
 }
 
 //////////////////////////////////////////////////////////////////
