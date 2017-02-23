@@ -20,6 +20,8 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/conformation/carbohydrates/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 
@@ -31,7 +33,8 @@
 namespace core {
 namespace scoring {
 namespace carbohydrates {
-
+	using namespace core::conformation::carbohydrates;
+	
 // Get the CHI Energy Function linkage type for phi for a particular residue.
 /// @return  CHIEnergyFunctionLinkageType, which corresponds to one of two particular CHI Energy Functions specific to
 /// phi, or LINKAGE_NA if the CHI Energy Function is not applicable to this torsion.
@@ -69,9 +72,17 @@ get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose::Pose con
 
 	if ( rsd.is_carbohydrate() && rsd.seqpos() != 1 ) {
 		// For psi, we need to get information from the previous residue.
-		Residue const & prev_rsd( pose.residue(
-			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+		
+		core::Size prev_rsd_num;
+		if (pose.glycan_tree_set()){
+			prev_rsd_num = pose.glycan_tree_set()->get_parent( rsd_num ) ;
+		} else {
+			prev_rsd_num = find_seqpos_of_saccharides_parent_residue( rsd );
+		}
+		
 		// If this is not a saccharide residue, do nothing.
+		
+		Residue const & prev_rsd( pose.residue( prev_rsd_num ));
 		if ( ! prev_rsd.is_carbohydrate() ) { return LINKAGE_NA; }
 
 		if ( prev_rsd.type().is_cyclic() ) {
@@ -139,14 +150,30 @@ get_omega_preference_for_residue_in_pose( pose::Pose const & pose, core::uint rs
 	//JAB - shouldn't we check parent residue here and make sure its not zero instead of 1?
 	if ( rsd.is_carbohydrate() && rsd.seqpos() != 1 ) {
 		// For omega, we need to get information from the previous residue.
-		Residue const & prev_rsd( pose.residue(
-			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
-
+		
+		core::Size prev_rsd_num;
+		
+		if (pose.glycan_tree_set()){
+			prev_rsd_num = pose.glycan_tree_set()->get_parent( rsd_num );
+		}
+		else {
+			prev_rsd_num = find_seqpos_of_saccharides_parent_residue( rsd );
+		}
+		
+		Residue const & prev_rsd( pose.residue( prev_rsd_num ));
 		// If this is not a saccharide residue, do nothing.
 		if ( ! prev_rsd.is_carbohydrate() ) { return PREFERENCE_NA; }
 
 		// If there is not an exocyclic bond between these two residues, this is not an omega about which we care.
-		if ( ! pose::carbohydrates::has_exocyclic_glycosidic_linkage( rsd, prev_rsd ) ) { return PREFERENCE_NA; }
+		bool has_exocyclic_linkage;
+		if (pose.glycan_tree_set() ){
+			has_exocyclic_linkage = pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage(rsd_num);
+		} else {
+			has_exocyclic_linkage = has_exocyclic_glycosidic_linkage(pose.conformation(), rsd_num );
+		}
+		
+		
+		if ( ! has_exocyclic_linkage ) { return PREFERENCE_NA; }
 
 		// There is only a preference if the parent residue is an aldohexopyranose with an O4.
 		chemical::carbohydrates::CarbohydrateInfoCOP info( prev_rsd.carbohydrate_info() );

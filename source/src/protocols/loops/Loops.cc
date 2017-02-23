@@ -123,6 +123,12 @@ Loops::Loops( utility::vector1< bool > const& selection,
 // destructor
 Loops::~Loops()= default;
 
+LoopsOP
+Loops::clone() const {
+	return LoopsOP( new Loops( *this ));
+}
+
+
 void Loops::init(
 	LoopList const & loops_in,
 	bool const read_loop_file_from_options,

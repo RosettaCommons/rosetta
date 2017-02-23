@@ -61,10 +61,9 @@ KeepRegionMover::KeepRegionMover(KeepRegionMover const & src) :
 	start_(src.start_),
 	end_(src.end_),
 	nter_overhang_(src.nter_overhang_),
-	cter_overhang_(src.cter_overhang_),
-	tag_(src.tag_)
+	cter_overhang_(src.cter_overhang_)
 {
-
+	if ( src.tag_ ) tag_ = tag_->clone();
 }
 
 protocols::moves::MoverOP

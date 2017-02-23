@@ -110,6 +110,47 @@ GeneralAntibodyModeler::set_defaults(){
 
 GeneralAntibodyModeler::~GeneralAntibodyModeler(){}
 
+GeneralAntibodyModeler::GeneralAntibodyModeler( GeneralAntibodyModeler const & src ):
+	utility::pointer::ReferenceCount(),
+	interface_dis_( src.interface_dis_),
+	neighbor_dis_( src.neighbor_dis_),
+	ab_dock_chains_(src.ab_dock_chains_),
+	model_cdrs_( src.model_cdrs_ ),
+	overhangs_( src.overhangs_ ),
+	tf_set_( src.tf_set_),
+	atom_pair_weight_( src.atom_pair_weight_ )
+
+{
+	using namespace protocols::toolbox::task_operations;
+	using namespace core::pack::task::operation;
+	if (src.ab_info_) ab_info_ = src.ab_info_->clone();
+	if (src.scorefxn_) scorefxn_ = src.scorefxn_->clone();
+	if (src.min_scorefxn_) min_scorefxn_ = src.min_scorefxn_->clone();
+	if (src.docking_scorefxn_low_) docking_scorefxn_low_ = src.docking_scorefxn_low_->clone();
+	if (src.docking_scorefxn_high_) docking_scorefxn_high_ = src.docking_scorefxn_high_->clone();
+	
+	if (src.interface_tf_) interface_tf_ = src.interface_tf_->clone();
+	if (src.tf_) tf_ = src.tf_->clone();
+	
+	if (src.loops_operation_){
+		loops_operation_ = RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors( *src.loops_operation_ ));
+	}
+	if (src.cmd_line_operation_) {
+		cmd_line_operation_ = InitializeFromCommandlineOP( new InitializeFromCommandline( *src.cmd_line_operation_ ));
+	}
+	
+	if (src.restrict_design_operation_) {
+		restrict_design_operation_ = RestrictToRepackingOP( new RestrictToRepacking( *src.restrict_design_operation_ ));
+	}
+	
+	
+	
+}
+
+GeneralAntibodyModelerOP
+GeneralAntibodyModeler::clone() const {
+	return GeneralAntibodyModelerOP( new GeneralAntibodyModeler( *this ));
+}
 void
 GeneralAntibodyModeler::read_command_line_options(){
 

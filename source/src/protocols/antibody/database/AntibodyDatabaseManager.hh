@@ -108,7 +108,12 @@ public:
 	AntibodyDatabaseManager(AntibodyInfoCOP ab_info, std::string const database_path);
 
 	virtual ~AntibodyDatabaseManager();
-
+	
+	AntibodyDatabaseManager( AntibodyDatabaseManager const & src );
+	
+	AntibodyDatabaseManagerOP
+	clone() const;
+	
 	/// @brief Set to parse outliers for both sequence and structural data.  Default False.
 	void
 	set_outlier_use(bool use_outliers);

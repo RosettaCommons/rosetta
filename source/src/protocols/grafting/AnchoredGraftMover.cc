@@ -141,15 +141,16 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	stop_at_closure_(src.stop_at_closure_),
 	final_repack_(src.final_repack_),
 	neighbor_dis_(src.neighbor_dis_),
-	tag_(src.tag_),
 	idealize_insert_(src.idealize_insert_)
 {
-	movemap_ = src.movemap_;
-	scaffold_movemap_ = src.scaffold_movemap_;
-	insert_movemap_ = src.insert_movemap_;
-	cen_scorefxn_ = src.cen_scorefxn_;
-	fa_scorefxn_ = src.fa_scorefxn_;
-
+	if (src.movemap_) movemap_ = src.movemap_->clone();
+	if (src.scaffold_movemap_) scaffold_movemap_ = src.scaffold_movemap_->clone();
+	if (src.insert_movemap_) insert_movemap_ = src.insert_movemap_->clone();
+	if (src.cen_scorefxn_) cen_scorefxn_ = src.cen_scorefxn_->clone();
+	if (src.fa_scorefxn_) fa_scorefxn_ = src.fa_scorefxn_->clone();
+	if (src.tag_) tag_ = src.tag_->clone();
+	if (src.tag_) loops_ = src.loops_->clone();
+	
 }
 
 void

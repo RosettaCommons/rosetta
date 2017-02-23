@@ -62,11 +62,10 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(const InsertPoseIntoPoseMover& 
 
 	start_(src.start_),
 	end_(src.end_),
-	copy_pdbinfo_(src.copy_pdbinfo_),
-	src_pose_(src.src_pose_),
-	tag_(src.tag_)
+	copy_pdbinfo_(src.copy_pdbinfo_)
 {
-
+	if ( src.tag_ ) tag_ = tag_->clone();
+	if ( src.src_pose_ ) src_pose_ = src_pose_->clone();
 }
 
 InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover(){}

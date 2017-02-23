@@ -131,6 +131,21 @@ CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
 
 CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() {}
 
+CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser( CDRSeqDesignOptionsParser const & src ):
+	utility::pointer::ReferenceCount(),
+	instructions_path_( src.instructions_path_ ),
+	default_and_user_( src.default_and_user_)
+{
+	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( *src.ab_manager_ ));
+	if ( src.design_enum_manager_ ) design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager( *src.design_enum_manager_ ));
+	if ( src.cdr_options_ ) cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions( *src.cdr_options_ ));
+}
+
+CDRSeqDesignOptionsParserOP
+CDRSeqDesignOptionsParser::clone() const {
+	return CDRSeqDesignOptionsParserOP( new CDRSeqDesignOptionsParser( *this ) );
+}
+
 utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;

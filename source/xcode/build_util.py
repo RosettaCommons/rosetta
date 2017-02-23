@@ -43,8 +43,14 @@ else:
         ]
 
 KNOWN_TESTS = [
-    'interactive',
-    'game',
+    'basic',
+    'apps',
+    'core',
+    'demo',
+    'devel',
+    'numeric',
+    'protocols',
+    'utility',
     ]
 
 TEST_DIR = 'test_area/'
@@ -95,7 +101,9 @@ def list_project_files(path_to_mini, project_name):
 
 def list_test_files(path_to_mini, test_name):
     path_to_test = path_to_mini + 'test/'
+    print(path_to_test)
     settings_file_name = path_to_test + test_name + '.test.settings'
+    print(settings_file_name)
     settings_dict = {}
     execfile(settings_file_name, settings_dict)
 
@@ -230,7 +238,7 @@ def project_main(path_to_mini, argv, project_callback):
         project_callback(project, project_path, project_files)
 
 def test_main(path_to_mini, argv, project_callback = None):
-    if len(argv) < 3:
+    if len(argv) < 2:
         print('usage: %s [test] [action]...' % argv[0])
         print('  known tests:')
         for t in KNOWN_TESTS:
@@ -242,26 +250,23 @@ def test_main(path_to_mini, argv, project_callback = None):
         print('     "clean": remove .cxxtest.cc files and inputs')
         sys.exit(-1)
 
-    test = argv[1]
-    whats = argv[2:]
+    tests = argv[1:]
 
-    if test not in KNOWN_TESTS:
-        print('unknown test: ' + test)
-        sys.exit(-1)
+    #JAB - wtf is whats?
+    #whats = argv[2:]
+    if tests == ['all']:
+        tests = KNOWN_TESTS
 
-    test_path, test_files, test_inputs = list_test_files(path_to_mini, test)
-    for what in whats:
-        if what == 'project':
-            if project_callback != None:
-                project_callback(test, TEST_DIR, test_files)
-        elif what == 'files':
-            update_test_files(path_to_mini, test_path, test_files)
-        elif what == 'inputs':
-            update_test_inputs(path_to_mini, test_path, test_inputs)
-        elif what == 'clean':
-            clean_test(path_to_mini, test_path, test_files, test_inputs)
-        else:
-            print('unknown argument: ' + what)
+
+    for test in tests:
+        print("test "+test)
+        if test not in KNOWN_TESTS:
+
+            print('unknown test: ' + test)
             sys.exit(-1)
+
+        test_path, test_files, test_inputs = list_test_files(path_to_mini, test)
+        project_callback(test, TEST_DIR, test_files)
+
 
 #test_main(sys.argv[1], sys.argv[2:])

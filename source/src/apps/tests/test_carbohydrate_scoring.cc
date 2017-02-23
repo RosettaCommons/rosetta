@@ -18,6 +18,7 @@
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -58,7 +59,7 @@ output_score( Pose & sugar, core::uint res_num, ScoreFunction const & sf, bool s
 	Real const sugar_bb_score( sugar.energies().residue_total_energies( res_num )[ sugar_bb ] );
 
 	if ( ! silently ) {
-		if ( has_exocyclic_glycosidic_linkage( sugar, res_num ) ) {
+		if (  sugar.glycan_tree_set()->has_exocyclic_glycosidic_linkage( res_num ) ) {
 			cout << " Phi/Psi/Omega: " <<
 				sugar.phi( res_num ) << '/' << sugar.psi( res_num ) << '/' << sugar.omega( res_num );
 		} else {
@@ -84,13 +85,13 @@ sample_torsions( Pose & pose, core::uint res_num, ScoreFunction const & sf )
 		cout << "a beta sugar." << endl;
 	}
 	cout << "It is attached to:" << endl;
-	core::uint const parent( find_seqpos_of_saccharides_parent_residue( pose.residue( res_num ) ) );
+	core::uint const parent( pose.glycan_tree_set()->get_parent( res_num ) ) ;
 	cout << "Residue " << parent << ": " << pose.residue( parent ).name() << endl;
 	cout << "Sampling glycosidic bonds for residue " << res_num << "..." << endl;
 
 	Real worst_score( 0.0 ), best_score( 9999.0 );  // arbitrarily large number
 	Angle worst_phi(-999), worst_psi(-999), worst_omega(-999), best_phi(-999), best_psi(-999), best_omega(-999);
-	bool const sample_omega( has_exocyclic_glycosidic_linkage( pose, res_num ) );
+	bool const sample_omega( pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( res_num ) );
 
 	for ( Angle phi( -180.0 ); phi <= 180.0; phi += 15.0 ) {
 		pose.set_phi( res_num, phi );

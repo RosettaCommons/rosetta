@@ -14,7 +14,9 @@
 
 // unit headers
 #include <core/pose/datacache/CacheableObserver.hh>
+#include <core/pose/datacache/ObserverCache.hh>
 
+#include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
 
@@ -58,7 +60,8 @@ CacheableObserver::operator =( CacheableObserver const & rval ) {
 	return *this;
 }
 
-
+	
+	
 /// @brief attach to Pose/Conformation
 ///  Derived classes do not overload this method -- see attach_impl()
 ///  instead.

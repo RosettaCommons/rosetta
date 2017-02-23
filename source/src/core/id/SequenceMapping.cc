@@ -331,6 +331,21 @@ SequenceMapping::operator[]( Size const pos1 ) {
 	return mapping_[ pos1 ];
 }
 
+///@brief Get the corresponding (new) resnum from the old.
+Size
+SequenceMapping::get_corresponding_residue_in_current( Size original_resnum ) const {
+	return mapping_[ original_resnum ];
+}
+
+//utility::vector1< Size >
+//SequenceMapping::get_old_resnums() const {
+//	utility::vector1 < Size > mapped_residues;
+//	for (auto const kv : mapping_){
+//		mapped_residues.push_back(kv.first);
+//	}
+//	return mapped_residues;
+//}
+
 bool SequenceMapping::operator == ( SequenceMapping const & rhs ) const
 {
 	if ( ! same_type_as_me( rhs ) || ! rhs.same_type_as_me( *this ) ) return false;

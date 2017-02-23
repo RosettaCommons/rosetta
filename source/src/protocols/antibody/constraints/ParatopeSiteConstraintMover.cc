@@ -55,6 +55,19 @@ ParatopeSiteConstraintMover::ParatopeSiteConstraintMover(AntibodyInfoCOP ab_info
 
 ParatopeSiteConstraintMover::~ParatopeSiteConstraintMover(){}
 
+ParatopeSiteConstraintMover::ParatopeSiteConstraintMover( ParatopeSiteConstraintMover const & src ):
+	protocols::moves::Mover( src ),
+	cdrs_to_apply_( src.cdrs_to_apply_),
+	paratope_residues_( src.paratope_residues_ ),
+	antigen_chains_( src.antigen_chains_ ),
+	interface_distance_( src.interface_distance_ )
+	
+{
+	if ( src.ab_info_ ) ab_info_ = 	AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.current_func_ ) current_func_ = current_func_->clone();
+}
+
+
 void
 ParatopeSiteConstraintMover::set_defaults() {
 	cdrs_to_apply_.clear();

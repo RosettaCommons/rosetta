@@ -47,10 +47,12 @@ NativeAntibodySeq::NativeAntibodySeq(const core::pose::Pose &pose,
 
 NativeAntibodySeq::NativeAntibodySeq(NativeAntibodySeq const &src):
 	CacheableData(),
-	ab_info_(src.ab_info_),
 	seq_(src.seq_),
 	cdr_seq_(src.cdr_seq_)
-{}
+{
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+
+}
 
 NativeAntibodySeq::~NativeAntibodySeq() {}
 

@@ -191,6 +191,7 @@ sources = {
     		"glycan_clash_check",
     		"glycan_info",
     		"glycan_relax",
+    		"test_glycan_trees",
     	],
 	"pilot/chen" : [
 		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */

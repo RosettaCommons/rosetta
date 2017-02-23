@@ -98,6 +98,29 @@ AntibodyDesignProtocol::AntibodyDesignProtocol() : protocols::moves::Mover(),
 
 AntibodyDesignProtocol::~AntibodyDesignProtocol(){}
 
+AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & src ):
+	protocols::moves::Mover( src ),
+	run_graft_designer_( src.run_graft_designer_ ),
+	run_snugdock_( src.run_snugdock_ ),
+	run_relax_(src.run_relax_),
+	remove_antigen_(src.remove_antigen_),
+	instruction_file_( src.instruction_file_ ),
+	design_override_( src.design_override_ )
+
+{
+	using namespace constraints;
+	
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
+	if ( src.scorefxn_min_ ) scorefxn_min_ = src.scorefxn_min_->clone();
+	
+	if ( src.graft_designer_ ) graft_designer_ = AntibodyDesignMoverOP( new AntibodyDesignMover( *src.graft_designer_ ));
+	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_ ));
+	
+	
+}
+
+
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AntibodyDesignProtocolCreator::create_mover() const {
 // XRW TEMP  return protocols::moves::MoverOP( new AntibodyDesignProtocol );

@@ -29,6 +29,7 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -152,7 +153,7 @@ public:  // Standard Rosetta methods
 		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 			if ( pose.residue( resnum ).is_carbohydrate() ) {
 				std::string attachment_points = get_attachment_point_string( pose, resnum);
-				core::Size parent_res = find_seqpos_of_saccharides_parent_residue( pose.residue( resnum ));
+				core::Size parent_res = pose.glycan_tree_set()->get_parent( resnum );
 				bool bp = pose.residue( resnum ).is_branch_point();
 
 

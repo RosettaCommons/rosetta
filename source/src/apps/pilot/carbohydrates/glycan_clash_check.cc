@@ -174,7 +174,7 @@ public:  // Standard Rosetta methods
 			branch_point_resnums_.push_back(resnum);
 
 			std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > > res_and_tips;
-			res_and_tips = get_carbohydrate_residues_upstream( pose, resnum );
+			res_and_tips = get_carbohydrate_residues_and_tips_of_branch( pose, resnum );
 			branch_residues_[ branches_[ i ] ] = res_and_tips.first; //These are the residue numbers of the branch
 		}
 		TR << "Branch point resnums: "<< utility::to_string( branch_point_resnums_ ) << std::endl;

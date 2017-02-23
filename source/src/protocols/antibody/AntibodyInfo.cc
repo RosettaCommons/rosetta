@@ -141,8 +141,6 @@ AntibodyInfo::AntibodyInfo(const AntibodyInfo& src):
 	is_camelid_(src.is_camelid_),
 	has_antigen_(src.has_antigen_),
 	cdr_pdb_numbered_(src.cdr_pdb_numbered_),
-	vector1_loopsop_having_cdr_(src.vector1_loopsop_having_cdr_),
-	loopsop_having_allcdrs_(src.loopsop_having_allcdrs_),
 	framework_info_ (src.framework_info_),
 	ab_sequence_(src.ab_sequence_),
 	sequence_map_(src.sequence_map_),
@@ -155,14 +153,24 @@ AntibodyInfo::AntibodyInfo(const AntibodyInfo& src):
 	L_chain_(src.L_chain_),
 	H_chain_(src.H_chain_),
 	light_chain_type_(src.light_chain_type_),
-	cdr_cluster_set_(src.cdr_cluster_set_),
 	numbering_info_(src.numbering_info_),
-	current_transform_(src.current_transform_),
-	enum_manager_(src.enum_manager_),
-	cdr_cluster_manager_(src.cdr_cluster_manager_),
-	numbering_parser_(src.numbering_parser_)
+	current_transform_(src.current_transform_)
 {
-
+	using namespace protocols::loops;
+	
+	if ( src.loopsop_having_allcdrs_ ) loopsop_having_allcdrs_ = LoopsOP( new Loops( *src.loopsop_having_allcdrs_ ));
+	if (src.cdr_cluster_set_ ) cdr_cluster_set_ = CDRClusterSetOP(new CDRClusterSet( *src.cdr_cluster_set_ ));
+	
+	if ( src.enum_manager_ ) enum_manager_ = AntibodyEnumManagerOP(new AntibodyEnumManager( *src.enum_manager_));
+	if ( src.cdr_cluster_manager_ ) cdr_cluster_manager_ = CDRClusterEnumManagerOP(new CDRClusterEnumManager( *src.cdr_cluster_manager_));
+	if ( src.numbering_parser_ ) numbering_parser_  = AntibodyNumberingParserOP( new AntibodyNumberingParser( *src.numbering_parser_ ));
+	
+	
+	vector1_loopsop_having_cdr_.clear(); // each Loops contains one CDR
+	for ( LoopsOP l : src.vector1_loopsop_having_cdr_ ){
+		LoopsOP new_loop = LoopsOP( new Loops( *l));
+		vector1_loopsop_having_cdr_.push_back( new_loop );
+	}
 }
 
 AntibodyInfoOP

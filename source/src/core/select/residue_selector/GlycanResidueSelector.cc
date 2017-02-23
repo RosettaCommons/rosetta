@@ -230,10 +230,7 @@ GlycanResidueSelector::apply(
 				resnum = pose.corresponding_residue_in_current( resnum, ref_pose_name_ );
 			}
 
-			std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > > res_and_tips;
-
-			res_and_tips = get_carbohydrate_residues_upstream( pose, resnum );
-			utility::vector1< core::Size > branching_residues = res_and_tips.first;
+			utility::vector1< core::Size > branching_residues = get_carbohydrate_residues_of_branch( pose, resnum );
 
 			if ( include_root_ ) {
 				branching_residues.push_back( resnum );

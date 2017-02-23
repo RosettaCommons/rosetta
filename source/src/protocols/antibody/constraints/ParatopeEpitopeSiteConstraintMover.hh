@@ -48,7 +48,10 @@ public:
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, utility::vector1<CDRNameEnum> paratope_cdrs, utility::vector1<bool> epitope_residues);
 
 	~ParatopeEpitopeSiteConstraintMover();
-
+	
+	ParatopeEpitopeSiteConstraintMover( ParatopeEpitopeSiteConstraintMover const & src );
+	
+	
 	void
 	parse_my_tag(
 		TagCOP tag,
@@ -58,11 +61,17 @@ public:
 		Pose const & pose
 	) override;
 
+
+public:
+
 	void
 	apply(core::pose::Pose & pose) override;
 
 	void
 	remove(core::pose::Pose & pose);
+
+
+public:
 
 	//void
 	//remove(core::pose::Pose & pose, core::Size resnum);

@@ -27,7 +27,7 @@ namespace task_operations {
 
 using namespace core::pack::task::operation;
 using namespace utility::tag;
-using core::kinematics::MoveMapCOP;
+using namespace core::kinematics;
 using core::pose::Pose;
 using core::pack::task::PackerTask;
 
@@ -55,7 +55,11 @@ RestrictToMoveMapChiOperation::init() {
 
 void
 RestrictToMoveMapChiOperation::init_for_equal_operator_and_copy_constructor(RestrictToMoveMapChiOperation & lhs, const RestrictToMoveMapChiOperation& rhs){
-	lhs.movemap_ = rhs.movemap_;
+	if (rhs.movemap_) {
+	
+		lhs.movemap_ = MoveMapOP( new MoveMap( *rhs.movemap_));
+	}
+	
 	lhs.design_ = rhs.design_;
 	lhs.include_neighbors_ = rhs.include_neighbors_;
 	lhs.movemap_set_ = rhs.movemap_set_; //Since I can't assign a COP to null it seems.

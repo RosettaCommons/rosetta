@@ -225,6 +225,7 @@ sources = {
 		"CopyDofsTest",
 	],
 	"pose/carbohydrates" : [
+		"GlycanTreeSetTests",
 		"util",
 	],
 	"pose/rna" : [

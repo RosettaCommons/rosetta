@@ -46,7 +46,7 @@ public:
 	NativeAntibodySeq( NativeAntibodySeq const & src);
 
 	virtual ~NativeAntibodySeq();
-
+	
 	/// @brief Sets the sequence from the PDB into this class and into the pose.
 	void
 	set_sequence(core::pose::Pose const & pose);

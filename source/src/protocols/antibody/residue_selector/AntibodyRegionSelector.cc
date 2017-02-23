@@ -91,14 +91,11 @@ AntibodyRegionSelector::~AntibodyRegionSelector() {}
 
 AntibodyRegionSelector::AntibodyRegionSelector( AntibodyRegionSelector const & src):
 	ResidueSelector(),
-	ab_info_(src.ab_info_),
 	region_(src.region_),
 	numbering_scheme_(src.numbering_scheme_),
 	cdr_definition_(src.cdr_definition_)
-
 {
-
-
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 }
 
 

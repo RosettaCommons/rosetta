@@ -92,6 +92,8 @@ private:
 	void
 	init_for_equal_operator_and_copy_constructor( RestrictToMoveMapChiOperation & lhs, RestrictToMoveMapChiOperation const & rhs);
 
+private:
+
 	core::kinematics::MoveMapCOP movemap_;
 	bool design_;
 	bool include_neighbors_;

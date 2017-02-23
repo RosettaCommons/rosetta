@@ -25,6 +25,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -78,7 +79,11 @@ public:
 	///@brief Set the Movemap
 	void
 	set_movemap(core::kinematics::MoveMapCOP movemap);
-
+	
+	///@brief Set a ResidueSelector for glycan residue selection, instead of the typical movemap.
+	void
+	set_selector(core::select::residue_selector::ResidueSelectorCOP selector);
+	
 	///@brief Set the TaskFactory to control side-chain packing of surrounding amino acids and the OH groups of the glycans.
 	void
 	set_taskfactory(core::pack::task::TaskFactoryCOP tf);
@@ -207,9 +212,9 @@ private:
 	utility::vector1< std::string > parsed_positions_;
 	core::Real pack_distance_;
 	bool cartmin_;
-
-
 	bool tree_based_min_pack_;
+	
+	core::select::residue_selector::ResidueSelectorCOP selector_;  //Residue selector to pass residues to relax.  Currently used for RS only.
 
 };
 

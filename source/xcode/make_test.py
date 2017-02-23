@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 PATH_TO_ROOT = '../../'
 
 import os, string, sys
@@ -18,6 +20,7 @@ def project_callback(test, test_path, test_files):
 			if (file[1]):
 				source_files.append(file[1])
 
+		print dir
 		xcode_files.append(('test/' + dir, header_files))
 		xcode_files.append(('xcode/test_area/' + dir, source_files))
 
@@ -25,12 +28,13 @@ def project_callback(test, test_path, test_files):
 
 	# get keys
 
-	group_key = xcode_util.PROJECT_KEYS[xcode_test][0]
-	sources_key = xcode_util.PROJECT_KEYS[xcode_test][1]
+	group_key = xcode_util.TEST_KEYS[xcode_test][0]
+	sources_key = xcode_util.TEST_KEYS[xcode_test][1]
 
 	# read file
 
-	xcode_filename = 'mini-interactive.xcodeproj/project.pbxproj'
+	#xcode_filename = 'RosettaTests.xcodeproj/project.pbxproj'
+	xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
 	lines = open(xcode_filename, 'r').readlines()
 
 	# find the relevant sections
@@ -84,4 +88,4 @@ def project_callback(test, test_path, test_files):
 	outfile.writelines(source_files_lines)
 	outfile.writelines(e_lines)
 
-build_util.test_main(PATH_TO_ROOT + 'mini/', sys.argv, project_callback)
+build_util.test_main(PATH_TO_ROOT + 'source/', sys.argv, project_callback)

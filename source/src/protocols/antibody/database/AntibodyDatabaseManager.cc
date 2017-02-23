@@ -121,6 +121,24 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, std::s
 
 AntibodyDatabaseManager::~AntibodyDatabaseManager(){}
 
+AntibodyDatabaseManager::AntibodyDatabaseManager( AntibodyDatabaseManager const & src ):
+	db_path_( src.db_path_ ),
+	use_outliers_( src.use_outliers_ ),
+	use_h3_graft_outliers_( src.use_h3_graft_outliers_ ),
+	use_only_H3_kinked_( src.use_only_H3_kinked_ ),
+	use_light_chain_type_( src.use_light_chain_type_ )
+
+{
+	using namespace utility::sql_database;
+	if ( src.db_session_ ) db_session_ = sessionOP( new session( *src.db_session_));
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+}
+
+AntibodyDatabaseManagerOP
+AntibodyDatabaseManager::clone() const {
+	return AntibodyDatabaseManagerOP( new AntibodyDatabaseManager( *this ) );
+}
+
 void
 AntibodyDatabaseManager::start_database_session(std::string const database_path) {
 	db_path_ = database_path;

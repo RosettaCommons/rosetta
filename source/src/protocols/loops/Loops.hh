@@ -62,6 +62,7 @@ public:
 
 
 public:
+
 	bool empty() const;
 	core::Size num_loop() const;
 	const_iterator begin() const;
@@ -87,7 +88,10 @@ public:
 
 	// destructor
 	~Loops() override;
-
+	
+	LoopsOP
+	clone() const;
+	
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
 
 	void read_loops_options();

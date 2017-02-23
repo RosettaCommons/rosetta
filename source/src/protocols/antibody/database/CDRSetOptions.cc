@@ -37,7 +37,7 @@ CDRSetOptions::CDRSetOptions(CDRNameEnum cdr, bool load):
 }
 
 CDRSetOptions::CDRSetOptions(const CDRSetOptions& src):
-	utility::pointer::ReferenceCount(src),
+	utility::pointer::ReferenceCount(),
 	cdr_(src.cdr_),
 	load_(src.load_),
 	only_current_cluster_(src.only_current_cluster_),

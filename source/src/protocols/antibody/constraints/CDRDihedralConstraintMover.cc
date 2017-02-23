@@ -95,7 +95,6 @@ CDRDihedralConstraintMover::~CDRDihedralConstraintMover() {}
 
 CDRDihedralConstraintMover::CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src) :
 	protocols::moves::Mover(src),
-	ab_info_(src.ab_info_),
 	cdr_(src.cdr_),
 	db_base_path_(src.db_base_path_),
 	cdr_is_set_(src.cdr_is_set_),
@@ -111,8 +110,9 @@ CDRDihedralConstraintMover::CDRDihedralConstraintMover(CDRDihedralConstraintMove
 	general_phi_sd_(src.general_phi_sd_),
 	general_psi_sd_(src.general_psi_sd_)
 {
-
+	if (src.ab_info_) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 }
+
 
 void
 CDRDihedralConstraintMover::set_defaults() {

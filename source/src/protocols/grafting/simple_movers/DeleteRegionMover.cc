@@ -62,6 +62,15 @@ DeleteRegionMover::DeleteRegionMover( core::Size const res_start, core::Size con
 
 DeleteRegionMover::~DeleteRegionMover(){}
 
+DeleteRegionMover::DeleteRegionMover( DeleteRegionMover const & src ):
+	protocols::moves::Mover( src ),
+	nter_overhang_( src.nter_overhang_ ),
+	cter_overhang_( src.cter_overhang_ ),
+	rechain_( src.rechain_ )
+{
+	if ( src.selector_ ) selector_ = src.selector_->clone();
+}
+
 // XRW TEMP std::string
 // XRW TEMP DeleteRegionMover::get_name() const {
 // XRW TEMP  return "DeleteRegionMover";

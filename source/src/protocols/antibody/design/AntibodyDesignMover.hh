@@ -81,7 +81,9 @@ public:
 	AntibodyDesignMover();
 
 	AntibodyDesignMover( AntibodyInfoCOP ab_info );
-
+	
+	AntibodyDesignMover( AntibodyDesignMover const & src );
+	
 	virtual ~AntibodyDesignMover();
 
 	/// @brief Reads default CDRGraftInstruction file and creates structs.

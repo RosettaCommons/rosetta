@@ -48,7 +48,7 @@ public:
 	CDRDihedralConstraintMover(AntibodyInfoCOP ab_info, CDRNameEnum cdr);
 
 	CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src);
-
+	
 	virtual~CDRDihedralConstraintMover();
 
 	void
@@ -83,6 +83,7 @@ public:
 	void
 	apply(core::pose::Pose & pose) override;
 
+
 public:
 
 	/// @brief Do not use AntibodyInfo to for cluster - use this cluster instead
@@ -109,6 +110,7 @@ public:
 	void
 	set_use_cluster_for_H3(bool use_cluster_for_H3);
 
+
 public:
 	void
 	set_general_phi_sd(core::Real phi_sd);
@@ -120,6 +122,8 @@ public:
 	/// Override this behavior by setting this option to true.
 	void
 	set_ignore_pose_datacache(bool ignore_pose_datacache);
+	
+	
 public:
 
 	// XRW TEMP  std::string

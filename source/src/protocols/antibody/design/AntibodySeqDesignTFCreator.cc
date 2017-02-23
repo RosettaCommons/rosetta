@@ -76,6 +76,40 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 
 AntibodySeqDesignTFCreator::~AntibodySeqDesignTFCreator() {}
 
+AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreator const & src ):
+	utility::pointer::ReferenceCount(),
+	zero_prob_weight_( src.zero_prob_weight_ ),
+	neighbor_dis_( src.neighbor_dis_ ),
+	prob_cutoff_( src.prob_cutoff_ ),
+	profile_picking_rounds_( src.profile_picking_rounds_  ),
+	stem_size_( src.stem_size_ ),
+	design_proline_( src.design_proline_ ),
+	design_antigen_( src.design_antigen_ ),
+	design_framework_( src.design_framework_ ),
+	design_framework_conservative_( src.design_framework_conservative_ ),
+	design_framework_conserved_res_( src.design_framework_conserved_res_ ),
+	design_h3_stem_(src.design_h3_stem_ ),
+	force_north_paper_db_(src.force_north_paper_db_ ),
+	no_data_cdrs_( src.no_data_cdrs_ ),
+	use_outliers_( src.use_outliers_ )
+	
+	
+{
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	cdr_design_options_.clear();
+	for (CDRSeqDesignOptionsOP opt : src.cdr_design_options_ ){
+		CDRSeqDesignOptionsOP new_opt = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions( *opt ));
+		cdr_design_options_.push_back( new_opt );
+	}
+}
+
+AntibodySeqDesignTFCreatorOP
+AntibodySeqDesignTFCreator::clone() const
+{
+	return AntibodySeqDesignTFCreatorOP( new AntibodySeqDesignTFCreator( *this ));
+}
+
+
 void
 AntibodySeqDesignTFCreator::setup_default_options(){
 	cdr_design_options_.clear();

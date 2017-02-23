@@ -24,7 +24,7 @@ namespace select {
 
 /// @brief Get a vector1 of the indexes corresponding to True or False in the ResidueSubset.
 utility::vector1< core::Size >
-get_residues_from_subset( utility::vector1< bool > subset, bool select = true);
+get_residues_from_subset( utility::vector1< bool > const & subset, bool select = true);
 
 
 /// @brief Get a boolean vector of neighbor residues given some distance < 10A

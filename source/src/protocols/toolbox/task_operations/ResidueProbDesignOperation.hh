@@ -177,6 +177,8 @@ private:
 	utility::vector1<core::Real>
 	get_weights(AAProbabilities & aa_prob_set) const;
 
+private:
+
 	bool aa_exists(core::chemical::AA amino_acid, AAProbabilities const & aa_prob_set) const;
 
 	PerResidueAAProbSet prob_set_;

@@ -24,6 +24,7 @@
 #include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -702,7 +703,12 @@ Pose::append_pose_by_jump(
 	std::string const & jump_anchor_atom,
 	std::string const & jump_root_atom)
 {
+	using namespace pose::carbohydrates;
+	using namespace conformation::carbohydrates;
+	
+
 	energies_->clear();
+
 	core::Size old_size = size();
 
 	conformation().insert_conformation_by_jump(
@@ -721,8 +727,12 @@ Pose::append_pose_by_jump(
 			src.pdb_info()->nres(),
 			old_size + 1);
 	}
+	
+	if (conformation().contains_carbohydrate_residues() && ! glycan_tree_set()){
+		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( conformation()));
+		observer_cache().set( datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
 
-
+	}
 	//No change to residue mappings in ReferencePose objects.
 }
 
@@ -1654,6 +1664,14 @@ Pose::virtual_to_real( core::Size seqpos ){
 	// swap in new (old) residue type
 	core::pose::replace_pose_residue_copying_existing_coordinates(*this,seqpos,*RT);
 }
+
+conformation::carbohydrates::GlycanTreeSetCOP
+Pose::glycan_tree_set() const {
+	return core::pose::carbohydrates::get_glycan_tree_set(*this);
+
+}
+
+
 
 
 /// @details Dumps an mmcif formatted file if the extension on the input file_name_string is .cif

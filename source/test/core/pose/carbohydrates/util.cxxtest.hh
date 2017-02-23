@@ -19,6 +19,8 @@
 
 // Unit header
 #include <core/pose/carbohydrates/util.hh>
+#include <core/conformation/carbohydrates/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 
 // Package headers
 #include <core/conformation/Residue.hh>
@@ -50,6 +52,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	{
 		using namespace core::pose;
 		using namespace core::import_pose;
+		
 
 		core_init_with_additional_options( "-include_sugars" );
 
@@ -70,6 +73,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 		std::string const man9_s( "a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
 		man9_op_ = pose_from_saccharide_sequence( man9_s, "fa_standard", true, false ); //No need to idealize.
+		
 		TR << *man9_op_ << std::endl;
 	}
 
@@ -83,7 +87,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		using namespace std;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR << "Testing find_seqpos_of_saccharides_parent_residue() function." << endl;
 
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( Lex_.residue( 1 ) ), 0 );  // 1st has no parent.
@@ -113,7 +118,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace core::conformation;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR <<  "Testing get_glycosidic_bond_residues() function."  << std::endl;
 
 		string first_residue;
@@ -138,12 +144,12 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	void test_get_linkage_position_of_saccharide_residue()
 	{
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR <<  "Testing get_linkage_position_of_saccharide_residue() function."  << std::endl;
-
-		TS_ASSERT_EQUALS( get_linkage_position_of_saccharide_residue( Lex_, 1 ), 0 );
-		TS_ASSERT_EQUALS( get_linkage_position_of_saccharide_residue( Lex_, 2 ), 4 );
-		TS_ASSERT_EQUALS( get_linkage_position_of_saccharide_residue( Lex_, 3 ), 3 );
+		TS_ASSERT_EQUALS( Lex_.glycan_tree_set()->get_linkage_position(1), 0 );
+		TS_ASSERT_EQUALS( Lex_.glycan_tree_set()->get_linkage_position(2), 4 );
+		TS_ASSERT_EQUALS( Lex_.glycan_tree_set()->get_linkage_position(3), 3 );
 	}
 
 	void test_get_reference_atoms()
@@ -151,7 +157,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::id;
 		using namespace core::chemical::carbohydrates;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR <<  "Testing get_reference_atoms() function."  << std::endl;
 
 		utility::vector1< AtomID > atoms;
@@ -206,7 +213,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace core::id;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR << "Testing functions that query if the given TorsionID is of a glycosidic torsion." << endl;
 
 		TR << " Testing recognition of phi..." << endl;
@@ -450,7 +458,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		using namespace core::id;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
+		
 		TR << "Testing get_downstream_residue_that_this_torsion_moves() function." << std::endl;
 
 		// All main-chain torsions move the next residue in the main chain.
@@ -478,13 +488,16 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		using namespace core::id;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR << "Testing exocyclic linkage detection " << std::endl;
 		//Can be improved to test branches as well.
-		TS_ASSERT( has_exocyclic_glycosidic_linkage( exo_test_, 3 ) );
-		TS_ASSERT( ! has_exocyclic_glycosidic_linkage( exo_test_, 2 ) );
-		TS_ASSERT_THROWS_NOTHING( has_exocyclic_glycosidic_linkage( exo_test_, 1) ); //Make sure we don't crash
-		TS_ASSERT( ! has_exocyclic_glycosidic_linkage( exo_test_, 1) ); //Make sure we get false.
+		TS_ASSERT_THROWS_NOTHING( has_exocyclic_glycosidic_linkage( exo_test_.conformation(), 1) ); //Make sure we don't crash
+		TS_ASSERT( ! has_exocyclic_glycosidic_linkage(exo_test_.conformation(), 1) ); //Make sure we get false.
+		
+		TS_ASSERT( exo_test_.glycan_tree_set()->has_exocyclic_glycosidic_linkage( 3 ) );
+		TS_ASSERT( !  exo_test_.glycan_tree_set()->has_exocyclic_glycosidic_linkage(  2 ) );
+
 	}
 
 	void test_glycan_leafs()
@@ -492,7 +505,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using core::Size;
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR << "MAN9 res: " << man9_op_->size() << std::endl;
 		TS_ASSERT(man9_op_->size() == 11);
 
@@ -525,14 +539,15 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using core::Size;
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		TR << "Testing glycan branch" << std::endl;
 		TS_ASSERT(man9_op_->size() == 11);
 
 		//Test getting all residues and tips from specific positions.
 		std::pair< vector1< Size >, vector1< Size > > res_and_tips;
 
-		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 3);
+		res_and_tips = get_carbohydrate_residues_and_tips_of_branch(man9_op_->conformation(), 3);
 		TR << "Tips up of 3: " << res_and_tips.second << std::endl;
 		TR << "Resn up of 3: " << res_and_tips.first << std::endl;
 		Size tips3[] = {6, 9, 11};
@@ -542,7 +557,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( tips3_v, res_and_tips.second);
 		TS_ASSERT_EQUALS( res3_v, res_and_tips.first);
 
-		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 7);
+		res_and_tips = get_carbohydrate_residues_and_tips_of_branch(man9_op_->conformation(), 7);
 		TR << "Tips up of 7: " << res_and_tips.second << std::endl;
 		TR << "Resn up of 7: " << res_and_tips.first << std::endl;
 		Size tips7[] = {9, 11};
@@ -552,7 +567,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( tips7_v, res_and_tips.second);
 		TS_ASSERT_EQUALS( res7_v, res_and_tips.first);
 
-		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 8);
+		res_and_tips = get_carbohydrate_residues_and_tips_of_branch(man9_op_->conformation(), 8);
 		TR << "Tips up of 8: " << res_and_tips.second << std::endl;
 		TR << "Resn up of 8: " << res_and_tips.first << std::endl;
 		Size tips8[] = {9};
@@ -562,7 +577,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( tips8_v, res_and_tips.second);
 		TS_ASSERT_EQUALS( res8_v, res_and_tips.first);
 
-		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 4);
+		res_and_tips = get_carbohydrate_residues_and_tips_of_branch(man9_op_->conformation(), 4);
 		TR << "Tips up of 4: " << res_and_tips.second << std::endl;
 		TR << "Resn up of 4: " << res_and_tips.first << std::endl;
 		Size tips4[] = {6};
@@ -572,7 +587,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( tips4_v, res_and_tips.second);
 		TS_ASSERT_EQUALS( res4_v, res_and_tips.first);
 
-		res_and_tips = get_carbohydrate_residues_upstream(*man9_op_, 2);
+		res_and_tips = get_carbohydrate_residues_and_tips_of_branch(man9_op_->conformation(), 2);
 		TR << "Tips up of 2: " << res_and_tips.second << std::endl;
 		TR << "Resn up of 2: " << res_and_tips.first << std::endl;
 		Size tips2[] = {6, 9, 11};
@@ -609,7 +624,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using core::Size;
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
-
+		using namespace core::conformation::carbohydrates;
+		
 		man9_op_->dump_pdb("man9_pose.pdb");
 		TR << "testing glycan trimming!" << std::endl;
 		// Test actual trimming of glycan.

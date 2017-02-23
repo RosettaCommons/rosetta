@@ -55,6 +55,14 @@ ConvertVirtualToRealMover::ConvertVirtualToRealMover( core::select::residue_sele
 
 ConvertVirtualToRealMover::~ConvertVirtualToRealMover(){}
 
+ConvertVirtualToRealMover::ConvertVirtualToRealMover( ConvertVirtualToRealMover const & src ):
+	Mover( src )
+{
+	using namespace core::select::residue_selector;
+	if (src.selector_) selector_ = src.selector_->clone();
+}
+
+
 void
 ConvertVirtualToRealMover::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector){
 	selector_ = selector;

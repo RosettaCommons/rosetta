@@ -233,6 +233,78 @@ AntibodyDesignMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new AntibodyDesignMover );
 }
 
+AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
+	protocols::moves::Mover( src ),
+	cdr_set_options_( src.cdr_set_options_ ),
+	cdr_graft_design_options_( src.cdr_graft_design_options_ ),
+	cdr_seq_design_options_( src.cdr_seq_design_options_ ),
+	cdr_set_( src.cdr_set_ ),
+	cluster_based_CDRDBPose_indexes_( src.cluster_based_CDRDBPose_indexes_ ),
+	length_based_CDRDBPose_indexes_( src.length_based_CDRDBPose_indexes_ ),
+	overhang_(src.overhang_),
+	outer_cycles_(src.outer_cycles_),
+	inner_cycles_(src.inner_cycles_),
+	dock_cycles_(src.dock_cycles_),
+	num_top_designs_(src.num_top_designs_),
+	interface_dis_(src.interface_dis_),
+	neighbor_dis_(src.neighbor_dis_),
+	top_scores_(src.top_scores_),
+	total_permutations_(src.total_permutations_),
+	dock_post_graft_(src.dock_post_graft_),
+	rb_min_post_graft_(src.rb_min_post_graft_),
+	paratope_cdrs_(src.paratope_cdrs_),
+	epitope_residues_(src.epitope_residues_),
+	adapt_graft_( src.adapt_graft_ ),
+	enable_adapt_graft_cartesian_( src.enable_adapt_graft_cartesian_ ),
+	benchmark_( src.benchmark_ ),
+	use_light_chain_type_( src.use_light_chain_type_ ),
+	use_epitope_constraints_( src.use_epitope_constraints_),
+	print_tracer_info_( src.print_tracer_info_ ),
+	idealize_graft_cdrs_( src.idealize_graft_cdrs_),
+	add_log_to_pose_( src.add_log_to_pose_),
+	graft_log_( src.graft_log_ ),
+	accept_log_(src.accept_log_ ),
+	outer_kt_(src.outer_kt_),
+	inner_kt_(src.inner_kt_),
+	enable_full_protocol_atom_pair_cst_(src.enable_full_protocol_atom_pair_cst_ ),
+	design_protocol_( src.design_protocol_ ),
+	design_override_(src.design_override_),
+	cdrs_to_design_(src.cdrs_to_design_),
+	instruction_file_(src.instruction_file_),
+	dock_min_dock_(src.dock_min_dock_),
+	stats_cutoff_( src.stats_cutoff_),
+	mutate_framework_for_cluster_(src.mutate_framework_for_cluster_)
+{
+	using namespace protocols::grafting;
+	using namespace protocols::simple_moves;
+	
+	if (src.scorefxn_) scorefxn_ = src.scorefxn_->clone();
+	if (src.scorefxn_min_) scorefxn_min_ = src.scorefxn_min_->clone();
+	if (src.scorefxn_cart_graft_) scorefxn_cart_graft_ = src.scorefxn_cart_graft_->clone();
+	top_designs_.clear();
+	for ( core::pose::PoseOP p : src.top_designs_){
+		
+		core::pose::PoseOP new_p = p->clone();
+		top_designs_.push_back( new_p );
+	}
+	
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.design_enum_manager_ ) design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager( *src.design_enum_manager_ ));
+	if ( src.seq_design_creator_ ) seq_design_creator_ = AntibodySeqDesignTFCreatorOP( new AntibodySeqDesignTFCreator( *src.seq_design_creator_));
+	if ( src.graft_mover_ ) graft_mover_ = CCDEndsGraftMoverOP( new CCDEndsGraftMover( *src.graft_mover_));
+	if ( src.anchored_graft_mover_) anchored_graft_mover_ = AnchoredGraftMoverOP( new AnchoredGraftMover( *src.anchored_graft_mover_));
+	if ( src.framework_mutator_) MutateFrameworkForClusterOP( new MutateFrameworkForCluster( *src.framework_mutator_));
+	if ( src.modeler_) modeler_ = GeneralAntibodyModelerOP( new GeneralAntibodyModeler( *src.modeler_ ));
+	if ( src.cart_min_graft_) cart_min_graft_ = MinMoverOP( new MinMover( *src.cart_min_graft_ ));
+	if ( src.mc_ ) mc_ = src.mc_->clone();
+	if ( src.paratope_epitope_cst_mover_ ) paratope_epitope_cst_mover_ = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover( *src.paratope_epitope_cst_mover_));
+	if ( src.paratope_cst_mover_ ) paratope_cst_mover_ = ParatopeSiteConstraintMoverOP( new ParatopeSiteConstraintMover( *src.paratope_cst_mover_));
+	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_));
+	
+}
+
+
+
 void
 AntibodyDesignMover::parse_my_tag(
 	TagCOP tag,

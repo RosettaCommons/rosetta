@@ -81,7 +81,6 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AntibodyInfoCOP ab_info, 
 
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperation const & src):
 	TaskOperation(src),
-	ab_info_(src.ab_info_),
 	cdrs_(src.cdrs_),
 	limit_only_to_length_(src.limit_only_to_length_),
 	force_north_paper_db_(src.force_north_paper_db_),
@@ -95,7 +94,7 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperatio
 	pre_loaded_data_(src.pre_loaded_data_),
 	numbering_scheme_(src.numbering_scheme_)
 {
-
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 }
 
 TaskOperationOP

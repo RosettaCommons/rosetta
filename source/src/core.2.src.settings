@@ -149,6 +149,12 @@ sources = {
 		"util",
 		"UltraLightResidue"
 	],
+	"core/conformation/carbohydrates": [
+		"GlycanNode",
+		"GlycanTree",
+		"GlycanTreeSet",
+		"util",
+	],
 	"core/conformation/membrane": [
 		"Span",
 		"SpanningTopology",

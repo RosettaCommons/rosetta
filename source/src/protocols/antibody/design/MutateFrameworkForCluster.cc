@@ -73,14 +73,14 @@ MutateFrameworkForCluster::~MutateFrameworkForCluster() {}
 
 MutateFrameworkForCluster::MutateFrameworkForCluster(MutateFrameworkForCluster const & src) :
 	protocols::moves::Mover(src),
-	ab_info_(src.ab_info_),
-	scorefxn_(src.scorefxn_),
 	mutant_info_(src.mutant_info_),
 	cdrs_(src.cdrs_),
 	pack_shell_(src.pack_shell_),
 	keep_current_(src.keep_current_)
 {
-
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.scorefxn_ ) scorefxn_ = scorefxn_->clone();
+	
 }
 
 void

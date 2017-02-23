@@ -111,6 +111,7 @@ sources = {
 		"xyzStripeHashPose",
 	],
 	"core/pose/carbohydrates": [
+		"GlycanTreeSetObserver",
 		"util",
 	],
 	"core/pose/copydofs": [
@@ -823,6 +824,7 @@ sources = {
 		"ChainSelector",
 		"CloseContactResidueSelector",
 		"GlycanResidueSelector",
+		"GlycanPositionSelector",
 		"InterGroupInterfaceByVectorSelector",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",

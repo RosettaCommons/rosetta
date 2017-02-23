@@ -94,7 +94,6 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(RestrictToCDRsAndNeighbors const & src):
 	TaskOperation(src),
-	ab_info_(src.ab_info_),
 	cdrs_(src.cdrs_),
 	neighbor_dis_(src.neighbor_dis_),
 	design_cdrs_(src.design_cdrs_),
@@ -104,7 +103,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(RestrictToCDRsAndNeighbor
 	numbering_scheme_(src.numbering_scheme_),
 	cdr_definition_(src.cdr_definition_)
 {
-
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
 }
 
 TaskOperationOP

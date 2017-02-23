@@ -31,6 +31,7 @@
 #include <core/pose/carbohydrates/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/simple_moves/BBDihedralSamplerMover.hh>
@@ -249,7 +250,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		return;
 	}
 
-	core::Size lower_resnum = find_seqpos_of_saccharides_parent_residue( pose.residue( upper_resnum ) );
+	core::Size lower_resnum = pose.glycan_tree_set()->get_parent( upper_resnum );
 	if ( lower_resnum == 0 ) {
 		TR << "Selected residue has no parent.  Skipping..." << std::endl;
 		set_last_move_status( protocols::moves::MS_FAIL );
@@ -265,7 +266,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		res1_name = res1.carbohydrate_info()->short_name();  // 3-letter code not enough
 
 		//This is due to multiple connecting points possible. This gets the position of linking to the previous residue!
-		core::Size const link_pos = get_linkage_position_of_saccharide_residue( pose, upper_resnum );
+		core::Size const link_pos = pose.glycan_tree_set()->get_linkage_position( upper_resnum );
 
 		res1_name[ 2 ] = '0' + link_pos;  // Set the correct connectivity.
 
@@ -315,7 +316,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		phi_sampler_mover_->apply(pose);
 
 		//Remove this when needed!
-		if ( ! has_exocyclic_glycosidic_linkage( pose, upper_resnum  ) ) {
+		if ( ! pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( upper_resnum ) ){
 			psi_sampler_mover_->apply(pose);
 		} else {
 			TR << upper_resnum << " has glycosidic linkage.  Skipping psi sampling." << std::endl;

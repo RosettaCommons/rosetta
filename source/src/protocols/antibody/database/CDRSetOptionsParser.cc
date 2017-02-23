@@ -59,6 +59,22 @@ CDRSetOptionsParser::CDRSetOptionsParser():
 
 CDRSetOptionsParser::~CDRSetOptionsParser() {}
 
+CDRSetOptionsParser::CDRSetOptionsParser( CDRSetOptionsParser const & src ):
+	instructions_path_(src.instructions_path_),
+	default_and_user_( src.default_and_user_)
+{
+	using namespace clusters;
+	
+	if ( src.cdr_options_) cdr_options_ = CDRSetOptionsOP( new CDRSetOptions( *src.cdr_options_ ));
+	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( * src.ab_manager_ ));
+	if ( src.cluster_manager_) cluster_manager_ = CDRClusterEnumManagerOP( new CDRClusterEnumManager( *src.cluster_manager_ ));
+}
+
+CDRSetOptionsParserOP
+CDRSetOptionsParser::clone() const {
+	return CDRSetOptionsParserOP( new CDRSetOptionsParser( *this ));
+}
+
 utility::vector1<CDRSetOptionsOP>
 CDRSetOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;

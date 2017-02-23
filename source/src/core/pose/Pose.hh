@@ -49,6 +49,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
 
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -65,6 +66,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
+
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <basic/datacache/ConstDataMap.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
@@ -1484,17 +1486,6 @@ public:
 		Vector const & v
 	);
 
-	/// @brief Empty the pose contents
-	///
-	/// example(s):
-	///     pose.clear()
-	/// See also:
-	///     Pose
-	///     Pose.assign
-	///     Pose.empty
-	void
-	clear();
-
 	/// @brief Switch residues to VIRTUAL
 	///
 	///  VIRTUAL residues are the same except not SCORED or DUMPED.
@@ -1517,7 +1508,47 @@ public:
 	///  ResidueType
 	void
 	virtual_to_real( core::Size seqpos );
-
+	
+	/// @brief Get information on any glycan trees within this pose.
+	///  If this is not setup, will return a nullptr due to the const nature of the function.
+	///
+	/// @details The GlycanTreeSet holds information on the connectivity of the glycan residues and if
+	///  they are free or attached to a pose. 
+	///
+	/// example(s):
+	/// 	pose.glycan_tree_set()
+	/// See also:
+	/// 	pose.residue(3).is_carbohydrate()
+	///		pose.residue(3).carbohydrate_info()
+	///
+	conformation::carbohydrates::GlycanTreeSetCOP
+	glycan_tree_set() const;
+	
+	/// @brief Get information on any glycan trees within this pose.
+	///  Add or update the GlycanTree if needed.
+	///
+	/// @details The GlycanTreeSet holds information on the connectivity of the glycan residues and if
+	///  they are free or attached to a pose. 
+	///
+	/// example(s):
+	/// 	pose.glycan_trees()
+	/// See also:
+	/// 	pose.residue(3).is_carbohydrate()
+	///		pose.residue(3).carbohydrate_info()
+	///
+	//GlycanTreeSetCOP
+	//glycan_trees();
+	
+	/// @brief Empty the pose contents
+	///
+	/// example(s):
+	///     pose.clear()
+	/// See also:
+	///     Pose
+	///     Pose.assign
+	///     Pose.empty
+	void
+	clear();
 
 	/// @brief Export pose data to a file, <file_name>, determining which type of file format to write based on the file extension
 	///
@@ -1571,7 +1602,7 @@ public:
 	void
 	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn );
 
-
+	
 
 
 public: // observer attach/detach

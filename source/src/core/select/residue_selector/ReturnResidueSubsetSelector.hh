@@ -69,7 +69,6 @@ public:
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
 	/// to the copy.  All ResidueSelectors must implement this.
-
 	ResidueSelectorOP clone() const override;
 
 public:
@@ -79,9 +78,7 @@ public:
 	set_residue_subset(ResidueSubset const & subset );
 
 	/// @brief "Apply" function.
-	/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
-	/// indicating whether each residue is selected ("true") or not ("false").
-
+	/// @details Return the set subset.
 	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief XML parse.
@@ -105,6 +102,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
+
 	ResidueSubset subset_;
 
 

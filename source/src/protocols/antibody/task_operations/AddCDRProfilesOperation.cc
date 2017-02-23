@@ -117,10 +117,7 @@ AddCDRProfilesOperation::set_defaults(){
 
 AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const & src):
 	TaskOperation(src),
-	ab_info_(src.ab_info_),
 	seq_design_options_(src.seq_design_options_),
-	cons_task_(src.cons_task_),
-	profile_sets_task_(src.profile_sets_task_),
 	picking_rounds_(src.picking_rounds_),
 	keep_task_allowed_aas_(src.keep_task_allowed_aas_),
 	include_native_restype_(src.include_native_restype_),
@@ -137,7 +134,11 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 
 
 {
-
+	using namespace toolbox::task_operations;
+	
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.cons_task_ )  cons_task_ = ConservativeDesignOperationOP( new ConservativeDesignOperation( *src.cons_task_ ));
+	if ( src.profile_sets_task_ ) profile_sets_task_ = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( *src.profile_sets_task_ ));
 }
 
 TaskOperationOP

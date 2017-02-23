@@ -159,6 +159,22 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser():
 
 CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() {}
 
+CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser( CDRGraftDesignOptionsParser const & src ):
+	instructions_path_( src.instructions_path_ ),
+	default_and_user_( src.default_and_user_ )
+
+{
+	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( *src.ab_manager_ ));
+	if (src.cdr_options_ ) cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions( *src.cdr_options_ ));
+	
+}
+
+CDRGraftDesignOptionsParserOP
+CDRGraftDesignOptionsParser::clone() const {
+	return CDRGraftDesignOptionsParserOP( new CDRGraftDesignOptionsParser( *this ));
+}
+
+
 utility::vector1<CDRGraftDesignOptionsOP>
 CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;

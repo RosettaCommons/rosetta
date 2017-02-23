@@ -72,10 +72,9 @@ RandomGlycanFoliageSelector::~RandomGlycanFoliageSelector() {}
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 RandomGlycanFoliageSelector::RandomGlycanFoliageSelector(RandomGlycanFoliageSelector const & src):
 	ResidueSelector( src ),
-	selector_(src.selector_),
 	subset_(src.subset_)
 {
-
+	if (src.selector_) selector_ = src.selector_->clone();
 }
 
 /// @brief Set a subset to select the glycan root and subsequent foliage on.

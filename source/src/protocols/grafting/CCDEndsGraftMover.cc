@@ -92,7 +92,11 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& )= default;
+CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& src ):
+	AnchoredGraftMover( src )
+{
+
+}
 
 CCDEndsGraftMover::~CCDEndsGraftMover() = default;
 

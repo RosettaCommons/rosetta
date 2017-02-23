@@ -17,6 +17,7 @@
 
 // unit headers
 #include <core/pose/datacache/CacheableObserver.fwd.hh>
+#include <core/pose/datacache/CacheableObserverType.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
@@ -35,7 +36,6 @@
 namespace core {
 namespace pose {
 namespace datacache {
-
 
 /// @brief Base class for Pose/Conformation observers that are stored in
 ///  a Pose's DataCache.
@@ -119,8 +119,7 @@ public: // virtual observer interface
 	/// @brief is this observer attached to a Pose/Conformation?
 	virtual
 	bool is_attached() const = 0;
-
-
+	
 protected: // virtual observer interface
 
 

@@ -46,6 +46,18 @@ PROJECT_KEYS = {  #        group                       sources
     'devel'       :      ('3D3A9A1413ECE8330081959A', '3DDF62B913EE13B800401374'),
 }
 
+TEST_KEYS = {  #        group                       sources
+    'basic.test'       :      ('D1FC4A1A13687F50006C102D', 'D1FC49F813687F42006C102D'),
+    'apps.test'        :      ('BEA64D500DB2E11C003495F8', 'BEDC3FB80CA84F63000FAD97'),
+    'core.test'        :      ('BEA64B640DB2E09B003495F8', 'BEDC40E50CA8592F000FAD97'),
+    'demo.test'        :      ('BE8A1AF00CA8367600D67A6F', 'BEDC3F960CA84E43000FAD97'),
+    'devel.test'       :      ('BEA646040DB2DF4E003495F8', 'BEDC400C0CA8522A000FAD97'),
+    'numeric.test'     :      ('D1FC4A1B13687F65006C102D', 'D139B5B113687DEE0030829C'),
+    'protocols.test'   :      ('D1FC4A1C13687F7A006C102D', 'D139B7E413687E0F0030829C'),
+    'utility.test'     :      ('D1FC4A1D13687F7E006C102D', 'D139BA0C13687E180030829C'),
+}
+
+
 def find_line(s, lines, start):
     for ii in range(start, len(lines)):
         if lines[ii].startswith(s):

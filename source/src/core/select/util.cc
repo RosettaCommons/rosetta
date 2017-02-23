@@ -33,7 +33,7 @@ namespace core {
 namespace select {
 
 utility::vector1< Size >
-get_residues_from_subset( utility::vector1< bool > subset, bool select){
+get_residues_from_subset( utility::vector1< bool > const & subset, bool select){
 	utility::vector1< Size > residues;
 	for ( core::Size i = 1; i <= subset.size(); ++i ) {
 		if ( subset[i] == select ) {

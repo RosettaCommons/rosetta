@@ -98,13 +98,12 @@ DisableCDRsOperation::~DisableCDRsOperation() {}
 
 DisableCDRsOperation::DisableCDRsOperation(DisableCDRsOperation const & src):
 	core::pack::task::operation::TaskOperation( src ),
-	ab_info_(src.ab_info_),
 	cdrs_(src.cdrs_),
 	disable_packing_and_design_(src.disable_packing_and_design_),
 	numbering_scheme_(src.numbering_scheme_),
 	cdr_definition_(src.cdr_definition_)
 {
-
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
 }
 
 

@@ -21,9 +21,12 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/carbohydrates/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
+
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -136,7 +139,7 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 
 	gws_string << "--";
 
-	core::uint const parent_seqpos( find_seqpos_of_saccharides_parent_residue( res ) );
+	core::uint const parent_seqpos( pose.glycan_tree_set()->get_parent( seqpos ) );
 	if ( parent_seqpos ) {
 		Residue const & parent( pose.residue( parent_seqpos ) );
 
@@ -269,7 +272,7 @@ chain_gws_string( core::pose::Pose const & pose, core::uint const chain_id )
 		} else if ( false ) {
 			; // TODO: Add code to check for glycosides and output the R group.
 		} else {
-			core::uint const parent_seqpos( find_seqpos_of_saccharides_parent_residue( first_res ) );
+			core::uint const parent_seqpos( pose.glycan_tree_set()->get_parent( begin) );
 			Residue const & parent_res( pose.residue( parent_seqpos ) );
 			if ( parent_res.is_carbohydrate() ) {
 				gws_string << "redEnd";  // perhaps this should be "freeEnd"?
@@ -335,7 +338,7 @@ dump_gws( core::pose::Pose const & pose, std::string const & filename )
 		if ( first_res.is_carbohydrate() ) {
 			// If the first residue of this chain is a carbohydrate, check its parent to ascertain if it has already
 			// been output.
-			core::uint const parent_seqpos( find_seqpos_of_saccharides_parent_residue( first_res ) );
+			core::uint const parent_seqpos( pose.glycan_tree_set()->get_parent( begin ) );
 			if ( parent_seqpos ) {
 				Residue const & parent( pose.residue( parent_seqpos ) );
 				if ( parent.is_carbohydrate() ) {

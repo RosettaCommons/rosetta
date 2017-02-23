@@ -32,7 +32,9 @@ public:
 
 	DeleteRegionMover();
 	DeleteRegionMover( core::Size const res_start, core::Size const res_end );
-
+	
+	DeleteRegionMover( DeleteRegionMover const & src );
+	
 	virtual ~DeleteRegionMover();
 
 	void

@@ -44,7 +44,10 @@ public:
 	GeneralAntibodyModeler(AntibodyInfoOP ab_info);
 	virtual ~GeneralAntibodyModeler();
 
-
+	GeneralAntibodyModeler( GeneralAntibodyModeler const & src );
+	
+	GeneralAntibodyModelerOP
+	clone() const;
 
 
 	/// @brief Set to model CDRs.  Default is all of them false.
@@ -230,6 +233,9 @@ private:
 
 	void
 	setup_task_operations();
+
+
+private:
 
 	AntibodyInfoOP ab_info_;
 	core::scoring::ScoreFunctionOP scorefxn_;

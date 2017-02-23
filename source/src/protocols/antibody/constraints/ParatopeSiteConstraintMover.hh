@@ -40,7 +40,10 @@ public:
 	ParatopeSiteConstraintMover(AntibodyInfoCOP ab_info);
 
 	~ParatopeSiteConstraintMover();
-
+	
+	ParatopeSiteConstraintMover( ParatopeSiteConstraintMover const & src );
+	
+	
 	void
 	parse_my_tag(
 		TagCOP tag,

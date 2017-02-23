@@ -110,7 +110,6 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 /// @brief copy ctor
 GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	Mover(src),
-	piece_(src.piece_),
 	start_(src.start_),
 	end_(src.end_),
 	original_end_(src.original_end_),
@@ -120,14 +119,7 @@ GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	copy_pdbinfo_(src.copy_pdbinfo_)
 
 {
-	/*
-	if (src.piece_){
-	piece_ = new core::pose::Pose(*src.piece_);
-	}
-	else{
-	piece_ = NULL;
-	}
-	*/
+	if (src.piece_) piece_ = piece_->clone();
 }
 
 

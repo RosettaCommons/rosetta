@@ -58,7 +58,22 @@ BBDihedralSamplerMover::BBDihedralSamplerMover( BBDihedralSamplerOP sampler, cor
 
 BBDihedralSamplerMover::~BBDihedralSamplerMover()= default;
 
-BBDihedralSamplerMover::BBDihedralSamplerMover( BBDihedralSamplerMover const & )= default;
+BBDihedralSamplerMover::BBDihedralSamplerMover( BBDihedralSamplerMover const & src ):
+	protocols::moves::Mover( src ),
+	sampler_torsion_types_(src.sampler_torsion_types_),
+	bb_residues_(src.bb_residues_),
+	sampler_movemap_union_(src.sampler_movemap_union_)
+{
+	samplers_.clear();
+	for (auto const & kv : src.samplers_){
+		utility::vector1< BBDihedralSamplerOP > sampler_list;
+		for (BBDihedralSamplerOP sampler : kv.second){
+			BBDihedralSamplerOP new_sampler = sampler->clone();
+			sampler_list.push_back( new_sampler );
+		}
+		samplers_[kv.first] = sampler_list;
+	}
+}
 
 void
 BBDihedralSamplerMover::parse_my_tag(

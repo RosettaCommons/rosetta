@@ -20,6 +20,7 @@
 #include <core/pose/carbohydrates/util.hh>
 
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 
@@ -82,8 +83,10 @@ SugarBBSampler::clone() const {
 core::Real
 SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 {
-	using core::scoring::ScoringManager;
 
+	
+	using core::scoring::ScoringManager;
+	
 	if ( ! pose.residue( resnum ).is_carbohydrate() ) {
 		utility_exit_with_message("Resnum not a carbohydrate residue! "+ utility::to_string( resnum ));
 	}
@@ -164,7 +167,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		new_dihedral = -new_dihedral;
 
 	} else if ( torsion_type_ == psi_dihedral ) {
-		core::conformation::Residue const & prev_rsd( pose.residue( find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+		core::conformation::Residue const & prev_rsd( pose.residue( pose.glycan_tree_set()->get_parent(resnum ) ) );
 
 		// Next, convert the psi to between 0 and 360 (because that's what the function expects).
 		new_dihedral = numeric::nonnegative_principal_angle_degrees( new_dihedral );

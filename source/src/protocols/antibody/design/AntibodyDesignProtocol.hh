@@ -49,8 +49,7 @@ public:
 
 	virtual ~AntibodyDesignProtocol();
 
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
+	AntibodyDesignProtocol( AntibodyDesignProtocol const & src );
 
 	protocols::moves::MoverOP
 	clone() const override;

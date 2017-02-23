@@ -79,6 +79,19 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyI
 
 ParatopeEpitopeSiteConstraintMover::~ParatopeEpitopeSiteConstraintMover(){}
 
+ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover( ParatopeEpitopeSiteConstraintMover const & src ):
+	protocols::moves::Mover( src ),
+	paratope_residues_( src.paratope_residues_ ),
+	epitope_residues_( src.epitope_residues_ ),
+	paratope_cdrs_( src.paratope_cdrs_ ),
+	interface_distance_( src.interface_distance_ )
+
+{
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.current_func_ ) current_func_ = current_func_->clone();
+}
+
+
 void
 ParatopeEpitopeSiteConstraintMover::set_defaults(){
 

@@ -38,7 +38,12 @@ public:
 	CDRSetOptionsParser();
 
 	virtual ~CDRSetOptionsParser();
-
+	
+	CDRSetOptionsParser( CDRSetOptionsParser const & src );
+	
+	CDRSetOptionsParserOP
+	clone() const;
+	
 	CDRSetOptionsOP
 	parse_options(CDRNameEnum cdr, std::string const & filename);
 

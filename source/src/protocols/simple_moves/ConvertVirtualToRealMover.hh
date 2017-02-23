@@ -57,7 +57,7 @@ public:
 	ConvertVirtualToRealMover( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	// copy constructor (not needed unless you need deep copies)
-	//ConvertVirtualToRealMover( ConvertVirtualToRealMover const & src );
+	ConvertVirtualToRealMover( ConvertVirtualToRealMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~ConvertVirtualToRealMover();
