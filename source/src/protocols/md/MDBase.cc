@@ -20,6 +20,7 @@
 
 // Option
 #include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 // Silent store
@@ -54,13 +55,61 @@ MDBase::MDBase() :
 MDBase::~MDBase() = default;
 
 void
-MDBase::report_as_silent( std::string const filename,
-	bool const scoreonly ) {
+MDBase::init()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	TR << "Set reporting at silent " << filename << "." << std::endl;
-	report_as_silent_ = true;
-	silentname_ = filename;
-	trj_score_only_ = scoreonly;
+	dt_ = 0.002;
+
+	// Access to these rather by set_reportstep & set_selectmode
+	//md_report_stepsize_ = option[ md::report ]();
+	//selectmode_ = option[ md::selectmode ]();
+	md_report_stepsize_ = 500; // every 1 ps
+	md_energy_report_stepsize_ = 50; // every 0.1 ps
+	md_rsr_update_stepsize_ = 50; // every 0.1 ps
+	selectmode_ = "final";
+
+	nstep_ = 100;
+	temp0_ = 300.0;
+
+	if ( option[ in::file::md_schfile ].user() ) {
+		scheduled_ = true;
+		parse_schfile( option[ in::file::md_schfile ]() );
+	} else {
+		scheduled_ = false;
+	}
+
+	context_update_step_ = 10000000; // Default: Never update
+
+	// Default
+	ncyc_premin_ = 50;
+	ncyc_postmin_ = 200;
+	report_scorecomp_ = false;
+	uniform_coord_constrained_ = false;
+
+	// Trajectory
+	store_trj_ = false;
+	trj_.resize( 0 );
+	report_as_silent_ = false;
+	silentname_ = "";
+	trj_score_only_ = true;
+
+	// Adaptive restraint
+	rsrfilename_ = "";
+	write_dynamic_rsr_ = false;
+	ref_xyz_.resize( 0 );
+	trj_scratch_.resize( 0 );
+	Kappa_ = 0.1;
+	Gamma_ = 0.0;
+}
+
+void
+MDBase::set_movemap(
+	core::pose::Pose const &,
+	core::kinematics::MoveMapCOP movemap )
+{
+	movemap_ = movemap->clone();
 }
 
 void
@@ -102,6 +151,14 @@ MDBase::set_constraint( core::Real const sdev )
 	if ( (*scorefxn_)[ core::scoring::coordinate_constraint ] == 0.0 ) {
 		scorefxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
 	}
+}
+
+void
+MDBase::resize_natm_variables(){
+	xyz_.resize( n_dof() );
+	vel_.resize( n_dof() );
+	acc_.resize( n_dof() );
+	mass_.resize( n_dof(), 0.0 );
 }
 
 void

@@ -30,6 +30,7 @@
 #include <devel/init.hh>
 
 int main( int argc, char *argv [] ){
+	using namespace core;
   using namespace protocols::md;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -51,8 +52,8 @@ int main( int argc, char *argv [] ){
 	movemap->set( core::id::THETA, true ); movemap->set( core::id::D, true );
 
 	CartesianMD MD( pose, sfxnOP, movemap );
-	MD.use_rattle( true );
-	MD.set_reportstep( 10 );
+	MD.use_rattle( false );
+	MD.set_md_report_stepsize( 10 );
 
 	core::scoring::ScoreFunctionOP obj_sfxnOP 
 		= core::scoring::ScoreFunctionFactory::create_score_function( "score0" );
@@ -63,7 +64,8 @@ int main( int argc, char *argv [] ){
 	MD.set_scorefxn_obj( obj_sfxnOP );
 	MD.set_report_scorecomp( true );
 	MD.set_store_trj( true );
-	MD.report_as_silent( option[ out::file::silent ](), false );
+	MD.set_report_as_silent( true );
+	MD.set_silentname( option[ out::file::silent ]() );
 
 	if( option[ constraints::cst_fa_weight ].user() ){
 		core::Real stdev = std::sqrt( 1.0/option[ constraints::cst_fa_weight ]() );

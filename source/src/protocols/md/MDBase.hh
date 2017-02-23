@@ -26,6 +26,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/optimization/types.hh>
 
 //// C++ headers
 #include <string>
@@ -35,6 +36,8 @@
 
 namespace protocols {
 namespace md {
+
+using namespace core::optimization;
 
 struct MDscheduleData
 {
@@ -48,7 +51,7 @@ class MDBase : public protocols::moves::Mover
 public:
 
 	typedef protocols::moves::Mover parent;
-	typedef utility::vector1<core::Real> Multivec;
+	//typedef utility::vector1<core::Real> Multivec;
 
 	MDBase();
 
@@ -59,9 +62,6 @@ public:
 	void apply( core::pose::Pose & pose ) override = 0;
 	std::string get_name() const override = 0;
 
-	//virtual void initialize_movemap( core::kinematics::MoveMap & movemap ) = 0;
-	// Undefinded commenting out to fix PyRostta build. static void register_options();
-
 	// Default options -------------------------------------
 	void set_defaults(){
 		dt_ = 0.001;
@@ -69,63 +69,146 @@ public:
 
 	// Undefinded commenting out to fix PyRostta build. void set_scorefxn( core::scoring::ScoreFunctionOP score );
 
-	core::scoring::ScoreFunctionOP scorefxn(){ return scorefxn_; }
-
-	core::scoring::ScoreFunctionCOP scorefxn() const { return scorefxn_; }
-
 	virtual
 	void set_movemap(
 		core::pose::Pose const & pose,
-		core::kinematics::MoveMapCOP movemap) = 0;
-
-	virtual
-	core::kinematics::MoveMapOP movemap() const = 0;
+		core::kinematics::MoveMapCOP movemap);
 
 	// Accessors
 	core::Real dt() const { return dt_; }
-	void set_dt( core::Real const value ){ dt_ = value; }
-
 	core::Size n_dof() const { return n_dof_; }
+	core::Size n_dof_temp() const { return n_dof_temp_; }
+	Multivec mass() const { return mass_; }
+	core::Real mass( core::Size iatm ) const { return mass_[iatm]; }
 	core::Real cummulative_time() const { return cummulative_time_; }
-
-	void set_nstep( core::Size const nstep ){ nstep_ = nstep; }
-	void set_temperature( core::Real const temp0 ){ temp0_ = temp0; }
-	void set_reportstep( core::Size const nstep ){ md_report_stepsize_ = nstep; }
-	void set_energy_reportstep( core::Size const nstep ){ md_energy_report_stepsize_ = nstep; }
-	void set_rsr_update_step( core::Size const nstep ){ md_rsr_update_stepsize_ = nstep; }
-
-	void set_scorefxn_obj( core::scoring::ScoreFunctionCOP sfxn ){ scorefxn_obj_ = sfxn->clone(); }
-	void set_selectmode( std::string const selectmode_in ){ selectmode_ = selectmode_in; }
-	void set_context_update_step( core::Size const value ){ context_update_step_ = value; }
-
-	void set_premin( core::Size const value ){ ncyc_premin_ = value; }
-	void set_report_scorecomp( bool const value ){ report_scorecomp_ = value; }
-
-	void parse_schfile( std::string const schfile );
-
 	core::Size nstep() const { return nstep_; }
 	core::Real temp0() const { return temp0_; }
 
+	core::kinematics::MoveMapOP movemap() const { return movemap_; }
+	core::scoring::ScoreFunctionOP scorefxn() const { return scorefxn_; }
+	core::scoring::ScoreFunctionOP scorefxn_obj() const { return scorefxn_obj_; }
+
+	std::string selectmode() const { return selectmode_; }
+	core::pose::Pose pose_minobj() const { return pose_minobj_; }
+	core::Real Emin_obj() const { return Emin_obj_; }
+	core::Real time_minobj() const { return time_minobj_; }
+
+	core::Size md_report_stepsize() const { return md_report_stepsize_; }
+	core::Size md_energy_report_stepsize() const { return md_energy_report_stepsize_; }
+	core::Size md_rsr_update_stepsize() const { return md_rsr_update_stepsize_; }
+	core::pose::Pose pose0() const { return pose0_; }
+	core::Size context_update_step() const { return context_update_step_; }
+
+	core::Size ncyc_premin() const { return ncyc_premin_; }
+	core::Size ncyc_postmin() const { return ncyc_postmin_; }
+	bool scheduled() const { return scheduled_; }
+	utility::vector1< MDscheduleData > mdsch() const { return mdsch_; }
+	MDscheduleData mdsch( core::Size istep ) const { return mdsch_[istep]; }
+	bool uniform_coord_constrained() const { return uniform_coord_constrained_; }
+	core::Real cst_sdev() const { return cst_sdev_; }
+
+	core::Real temperature() const { return temperature_; }
+	core::Real kinetic_energy() const { return kinetic_energy_; }
+	core::Real potential_energy() const { return potential_energy_; }
+	Multivec xyz() const { return xyz_; }
+	Multivec vel() const { return vel_; }
+	Multivec acc() const { return acc_; }
+	core::Real &xyz( core::Size idof ) { return xyz_[idof]; }
+	core::Real &vel( core::Size idof ) { return vel_[idof]; }
+	core::Real &acc( core::Size idof ) { return acc_[idof]; }
+	Multivec const &ref_xyz() const { return ref_xyz_; }
+	Multivec const &prv_eqxyz() const { return prv_eqxyz_; }
+	core::Real Kappa() const { return Kappa_; }
+	core::Real Gamma() const { return Gamma_; }
+
+	bool report_scorecomp() const { return report_scorecomp_; }
+	bool report_as_silent() const { return report_as_silent_; }
+	bool trj_score_only() const { return trj_score_only_; }
+	std::string silentname() const { return silentname_; }
+	bool store_trj() const { return store_trj_; }
+	utility::vector1< Multivec > trj() const { return trj_; }
+	Multivec trj( core::Size itrj ) const { return trj_[itrj]; }
+	utility::vector1< Multivec > trj_scratch() const { return trj_scratch_; }
+	bool write_dynamic_rsr() const { return write_dynamic_rsr_; }
+	std::string rsrfilename() const { return rsrfilename_; }
+
+	// Setters
+	void set_dt( core::Real setting ) { dt_ = setting; }
+	void set_n_dof( core::Size setting ) { n_dof_ = setting; }
+	void set_n_dof_temp( core::Size setting ) { n_dof_temp_ = setting; }
+	void set_mass( core::Size iatm, core::Real setting ) { mass_[iatm] = setting; }
+	void set_cummulative_time( core::Real setting ) { cummulative_time_ = setting; }
+	void set_temp0( core::Real setting ) { temp0_ = setting; }
+	void set_nstep( core::Size setting ) { nstep_ = setting; }
+
+	void set_scorefxn( core::scoring::ScoreFunctionCOP setting ) { scorefxn_ = setting->clone(); }
+	void set_scorefxn_obj( core::scoring::ScoreFunctionCOP setting ) { scorefxn_obj_ = setting->clone(); }
+	void set_scorefxn( core::scoring::ScoreFunction const &setting ) { scorefxn_ = setting.clone(); }
+	void set_scorefxn_obj( core::scoring::ScoreFunction const &setting ) { scorefxn_obj_ = setting.clone(); }
+	//void set_scorefxn( core::scoring::ScoreFunctionOP setting ) { scorefxn_ = setting; }
+	//void set_scorefxn_obj( core::scoring::ScoreFunctionOP setting ) { scorefxn_obj_ = setting; }
+
+	void set_selectmode( std::string setting ) { selectmode_ = setting; }
+	void set_pose_minobj( core::pose::Pose setting ) { pose_minobj_ = setting; }
+	void set_Emin_obj( core::Real setting ) { Emin_obj_ = setting; }
+	void set_time_minobj( core::Real setting ) { time_minobj_ = setting; }
+
+	void set_md_report_stepsize( core::Size setting ) { md_report_stepsize_ = setting; }
+	void set_md_energy_report_stepsize( core::Size setting ) { md_energy_report_stepsize_ = setting; }
+	void set_md_rsr_update_stepsize( core::Size setting ) { md_rsr_update_stepsize_ = setting; }
+	void set_pose0( core::pose::Pose setting ) { pose0_ = setting; }
+	void set_context_update_step( core::Size setting ) { context_update_step_ = setting; }
+
+	void set_ncyc_premin( core::Size setting ) { ncyc_premin_ = setting; }
+	void set_ncyc_postmin( core::Size setting ) { ncyc_postmin_ = setting; }
+	void set_scheduled( bool setting ) { scheduled_ = setting; }
+	void set_mdsch( utility::vector1< MDscheduleData > setting ) { mdsch_ = setting; }
+	void set_uniform_coord_constrained( bool setting ) { uniform_coord_constrained_ = setting; }
+	void set_cst_sdev( core::Real setting ) { cst_sdev_ = setting; }
+
+	void set_temperature( core::Real setting ) { temperature_ = setting; }
+	void set_kinetic_energy( core::Real setting ) { kinetic_energy_ = setting; }
+	void set_potential_energy( core::Real setting ) { potential_energy_ = setting; }
+	void set_xyz( Multivec setting ) { xyz_ = setting; }
+	void set_vel( Multivec setting ) { vel_ = setting; }
+	void set_acc( Multivec setting ) { acc_ = setting; }
+	void set_ref_xyz( Multivec setting ) { ref_xyz_ = setting; }
+	void set_prv_eqxyz( Multivec setting ) { prv_eqxyz_ = setting; }
+	void set_Kappa( core::Real setting ) { Kappa_ = setting; }
+	void set_Gamma( core::Real setting ) { Gamma_ = setting; }
+
+	void set_report_scorecomp( bool setting ) { report_scorecomp_ = setting; }
+	void set_report_as_silent( bool setting ) { report_as_silent_ = setting; }
+	void set_trj_score_only( bool setting ) { trj_score_only_ = setting; }
+	void set_silentname( std::string setting ) { silentname_ = setting; }
+	void set_store_trj( bool setting ) { store_trj_ = setting; }
+	void set_trj( utility::vector1< Multivec > setting ) { trj_ = setting; }
+	void set_trj_scratch( utility::vector1< Multivec > setting ) { trj_scratch_ = setting; }
+	void set_write_dynamic_rsr( bool setting ) { write_dynamic_rsr_ = setting; }
+	void set_rsrfilename( std::string setting ) { rsrfilename_ = setting; }
+
+	// others
+	void init();
+
 	void set_constraint( core::Real const sdev );
 
-	void set_store_trj( bool const value ){ store_trj_ = value; }
-	bool store_trj() const { return store_trj_; }
+	void add_trj( Multivec xyz ) { trj_.push_back( xyz ); }
+	void add_trj_scratch( Multivec xyz ) { trj_scratch_.push_back( xyz ); }
+	void renew_trj_scratch(){ trj_scratch_.resize( 0 ); }
+	void resize_natm_variables();
+
+	void parse_schfile( std::string const schfile );
 
 	void report_silent( core::pose::Pose &pose,
 		core::Real rmsd = -1.0, core::Real gdttm = -1.0, core::Real gdtha = -1.0 );
-	void report_as_silent( std::string const filename,
-		bool const scoreonly );
 
-	void set_Kappa( core::Real const value ){ Kappa_ = value; }
-	void set_Gamma( core::Real const value ){ Gamma_ = value; }
 	void set_write_dynamic_rsr( std::string const filename )
 	{
 		write_dynamic_rsr_ = true;
 		rsrfilename_ = filename;
 	}
 
-protected:
-
+private:
 	// The movemap
 	core::kinematics::MoveMapOP movemap_;
 

@@ -22,6 +22,7 @@
 
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizerMap.hh>
+#include <core/optimization/types.hh>
 
 #ifdef WIN32
 #include <time.h>
@@ -32,6 +33,8 @@
 
 namespace protocols {
 namespace md {
+
+using namespace core::optimization;
 
 class CartesianMD : public protocols::md::MDBase {
 
@@ -51,9 +54,6 @@ public:
 		core::scoring::ScoreFunction const &sfxn,
 		core::kinematics::MoveMap const &movemap );
 
-	void
-	init( );
-
 	//destructor
 	~CartesianMD() override;
 
@@ -64,11 +64,10 @@ public:
 	// XRW TEMP  std::string get_name() const override;
 
 	// From MDbase
-	void set_movemap(
-		core::pose::Pose const &,
-		core::kinematics::MoveMapCOP movemap) override;
-
-	core::kinematics::MoveMapOP movemap() const override { return movemap_; }
+	//void set_movemap(
+	//core::pose::Pose const &,
+	//	core::kinematics::MoveMapCOP movemap) override;
+	//core::kinematics::MoveMapOP movemap() const override { return movemap_; }
 
 	void use_rattle( bool const value );
 

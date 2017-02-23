@@ -348,7 +348,7 @@ WorkUnit_MD::run()
 	core::Size neqstep( 2 );  // first 1ps is for eq and will be removed
 	MD.set_store_trj( true );
 	MD.set_nstep( get_nstruct()*nstep_store );
-	MD.set_reportstep( nstep_store );
+	MD.set_md_report_stepsize( nstep_store );
 	MD.set_temperature( 150.0 );
 
 	// Turn on if no other cst_fa_file provided
