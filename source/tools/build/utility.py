@@ -178,29 +178,36 @@ def install_links(target, source, env):
 def install_links_with_stripped_target(target, source, env):
     """Install via symlink if possible, otherwise via copy.  The
        stripped target removes the second to last part of the
-       extensions. For example:
+       extensions, if it's 'default'
 
-       target: app_name.default.linuxgccrelease
-       stripped_target: app_name.linuxgccrelease
+       For Example:
+           target: app_name.default.linuxgccrelease
+           stripped_target: app_name.linuxgccrelease
     """
     import os
     source = "%s/%s" % (relative_path(source, target), source)
 
     split_target_name = str(target).split(".")
-    stripped_target = ".".join(split_target_name[:-2] + split_target_name[-1:])
+
+    if len(split_target_name) >= 3 and split_target_name[-2] == "default":
+        stripped_target = ".".join(split_target_name[:-2] + split_target_name[-1:])
+    else:
+        stripped_target = None
 
     if os.__dict__.has_key("symlink"):
         try: os.unlink(target)
         except: pass
         os.symlink(source, target)
 
-        try: os.unlink(stripped_target)
-        except: pass
-        os.symlink(source, stripped_target)
+        if stripped_target is not None:
+            try: os.unlink(stripped_target)
+            except: pass
+            os.symlink(source, stripped_target)
     else:
         import shutil
         shutil.copy2(source, target)
-        shutil.copy2(source, stripped_target)
+        if stripped_target is not None:
+            shutil.copy2(source, stripped_target)
 # XXX: Not sure if this works yet.
 #    import stat
 #    status = os.stat(source)

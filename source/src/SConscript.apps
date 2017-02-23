@@ -118,10 +118,12 @@ for entry in actual.sources:
   prog_name = last_list_entry[0:len(last_list_entry)-3]
   target = ""
   target =  prog_name + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
-  stripped_target = prog_name + "." + build.options.os + build.options.cxx + build.options.mode
   exe = env.Program( target, entry )
-  Depends("#bin/" + stripped_target, "#bin/" + target)
   Alias(prog_name, "#bin/" + target)
+  if "".join(build.options.extras) == "default":
+    # Double-barreled name
+    stripped_target = prog_name + "." + build.options.os + build.options.cxx + build.options.mode
+    Depends("#bin/" + stripped_target, "#bin/" + target)
   env["INSTALL"] = utility.install_links_with_stripped_target
   install_bin = env.Install("#bin", exe)
 
