@@ -173,11 +173,11 @@ bilinearly_interpolated(
 template< typename T, numeric::Size N >
 Real
 multilinear_interpolation( MathNTensor< T, N > const & tensor,
-													 utility::fixedsizearray1< Real, N > const & minval,
-													 utility::fixedsizearray1< Real, N > const & binwidth,
-													 utility::fixedsizearray1< Real, N > const & xs,
-													 utility::fixedsizearray1< Real, N > & deriv,
-													 bool const compute_deriv = true )
+	utility::fixedsizearray1< Real, N > const & minval,
+	utility::fixedsizearray1< Real, N > const & binwidth,
+	utility::fixedsizearray1< Real, N > const & xs,
+	utility::fixedsizearray1< Real, N > & deriv,
+	bool const compute_deriv = true )
 {
 	utility::fixedsizearray1< Size, N > bin;
 	utility::fixedsizearray1< Real, N > a; // fraction of the way between this bin and the next.
@@ -235,9 +235,9 @@ multilinear_interpolation( MathNTensor< T, N > const & tensor,
 template< typename T, numeric::Size N >
 numeric::Real
 multilinear_interpolation( numeric::MathNTensor< T, N > const & tensor,
-													 utility::fixedsizearray1< numeric::Real, N > const & minval,
-													 utility::fixedsizearray1< numeric::Real, N > const & binwidth,
-													 utility::fixedsizearray1< numeric::Real, N > const & xs )
+	utility::fixedsizearray1< numeric::Real, N > const & minval,
+	utility::fixedsizearray1< numeric::Real, N > const & binwidth,
+	utility::fixedsizearray1< numeric::Real, N > const & xs )
 {
 	utility::fixedsizearray1< numeric::Real, N > deriv;
 	return multilinear_interpolation( tensor, minval, binwidth, xs, deriv, false /*compute_deriv*/ );

@@ -35,7 +35,7 @@ namespace backbone_moves {
 namespace local_backbone_mover {
 
 GapCloser::GapCloser():
- utility::pointer::ReferenceCount()
+	utility::pointer::ReferenceCount()
 {
 	set_solution_picker(gap_solution_pickers::GapSolutionPickerOP(new gap_solution_pickers::RandomGapSolutionPicker));
 }
@@ -51,19 +51,19 @@ GapCloser::clone() const {
 	return GapCloserOP( new GapCloser( *this ) );
 }
 
-void 
+void
 GapCloser::solve_gaps(FreePeptide &free_peptide){
-	Size pivot1 = free_peptide.pivot1(); 
+	Size pivot1 = free_peptide.pivot1();
 	Size pivot2 = free_peptide.pivot2();
 
 	gap_solved_ = solve_a_gap(free_peptide, pivot1, pivot_torsions1_);
 
-	if(gap_solved_){
+	if ( gap_solved_ ) {
 		gap_solved_ = solve_a_gap(free_peptide, pivot2, pivot_torsions2_);
 	}
 }
-	
-void 
+
+void
 GapCloser::apply_closure(core::pose::Pose &pose, FreePeptide &free_peptide){
 	assert(gap_solved_);
 
@@ -86,36 +86,36 @@ GapCloser::apply_closure(core::pose::Pose &pose, FreePeptide &free_peptide){
 	pose.fold_tree(tmp_ft);
 
 	// Apply the internal coordinates of the free peptide
-	
+
 	free_peptide.apply_to_pose(pose);
 
 	// Pick solutions
-	
+
 	Size sol1, sol2;
 	pick_solutions(sol1, sol2, pose, free_peptide);
 
 	// Apply the torsions at gaps
 
-	pose.set_phi(pivot1 - 1, pivot_torsions1_[sol1][1]);  
-	pose.set_psi(pivot1 - 1, pivot_torsions1_[sol1][2]);  
-	pose.set_phi(pivot1, pivot_torsions1_[sol1][3]);  
-	pose.set_psi(pivot1, pivot_torsions1_[sol1][4]);  
-	pose.set_phi(pivot1 + 1, pivot_torsions1_[sol1][5]);  
-	pose.set_psi(pivot1 + 1, pivot_torsions1_[sol1][6]);  
+	pose.set_phi(pivot1 - 1, pivot_torsions1_[sol1][1]);
+	pose.set_psi(pivot1 - 1, pivot_torsions1_[sol1][2]);
+	pose.set_phi(pivot1, pivot_torsions1_[sol1][3]);
+	pose.set_psi(pivot1, pivot_torsions1_[sol1][4]);
+	pose.set_phi(pivot1 + 1, pivot_torsions1_[sol1][5]);
+	pose.set_psi(pivot1 + 1, pivot_torsions1_[sol1][6]);
 
-	pose.set_phi(pivot2 - 1, pivot_torsions2_[sol2][1]);  
-	pose.set_psi(pivot2 - 1, pivot_torsions2_[sol2][2]);  
-	pose.set_phi(pivot2, pivot_torsions2_[sol2][3]);  
-	pose.set_psi(pivot2, pivot_torsions2_[sol2][4]);  
-	pose.set_phi(pivot2 + 1, pivot_torsions2_[sol2][5]);  
-	pose.set_psi(pivot2 + 1, pivot_torsions2_[sol2][6]);  
+	pose.set_phi(pivot2 - 1, pivot_torsions2_[sol2][1]);
+	pose.set_psi(pivot2 - 1, pivot_torsions2_[sol2][2]);
+	pose.set_phi(pivot2, pivot_torsions2_[sol2][3]);
+	pose.set_psi(pivot2, pivot_torsions2_[sol2][4]);
+	pose.set_phi(pivot2 + 1, pivot_torsions2_[sol2][5]);
+	pose.set_psi(pivot2 + 1, pivot_torsions2_[sol2][6]);
 
 	// Reset the fold tree
-	
+
 	pose.fold_tree(original_ft);
 }
 
-bool 
+bool
 GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Real> > &pivot_torsions){
 
 	using numeric::conversions::degrees;
@@ -131,7 +131,7 @@ GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Re
 	xyz_to_vec1(free_peptide.c_xyz(pivot - 2), stub1[1]);
 	xyz_to_vec1(free_peptide.n_xyz(pivot - 1), stub1[2]);
 	xyz_to_vec1(free_peptide.ca_xyz(pivot - 1), stub1[3]);
-	
+
 	xyz_to_vec1(free_peptide.ca_xyz(pivot + 1), stub2[1]);
 	xyz_to_vec1(free_peptide.c_xyz(pivot + 1), stub2[2]);
 	xyz_to_vec1(free_peptide.n_xyz(pivot + 2), stub2[3]);
@@ -155,12 +155,12 @@ GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Re
 	bonds[6] = free_peptide.n_ca_bond(pivot - 1);
 
 	numeric::kinematic_closure::bridgeObjects_nonredundant(stub1, stub2,
-			torsions_chain1, torsions_chain2, angles, bonds, pivot_torsions, nsol);
+		torsions_chain1, torsions_chain2, angles, bonds, pivot_torsions, nsol);
 
 	return nsol > 0;
 }
 
-void 
+void
 GapCloser::pick_solutions(Size &index1, Size &index2, core::pose::Pose &pose, FreePeptide &free_peptide){
 	index1 = solution_picker_->pick(pose, free_peptide, pivot_torsions1_, free_peptide.pivot1());
 	index2 = solution_picker_->pick(pose, free_peptide, pivot_torsions2_, free_peptide.pivot2());

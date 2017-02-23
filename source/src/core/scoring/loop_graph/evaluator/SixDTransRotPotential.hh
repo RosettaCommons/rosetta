@@ -30,63 +30,63 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-	class SixDTransRotPotential: public utility::pointer::ReferenceCount {
+class SixDTransRotPotential: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		SixDTransRotPotential( std::string const & filename );
+	//constructor
+	SixDTransRotPotential( std::string const & filename );
 
-		SixDTransRotPotential( numeric::MathNTensor< core::Real, 6 > const & tensor,
-													 utility::json_spirit::mObject const & json );
+	SixDTransRotPotential( numeric::MathNTensor< core::Real, 6 > const & tensor,
+		utility::json_spirit::mObject const & json );
 
-		//destructor
-		~SixDTransRotPotential();
+	//destructor
+	~SixDTransRotPotential();
 
-	public:
+public:
 
-		core::Real
-		evaluate( core::kinematics::Jump const & j ) const;
+	core::Real
+	evaluate( core::kinematics::Jump const & j ) const;
 
-		std::pair< Vector, Vector >
-		get_derivative( core::kinematics::Jump const & j ) const;
+	std::pair< Vector, Vector >
+	get_derivative( core::kinematics::Jump const & j ) const;
 
-		core::Real
-		evaluate( Vector const & t, Vector const & rotation_vector,
-							bool const compute_deriv, std::pair< Vector, Vector > & deriv ) const;
+	core::Real
+	evaluate( Vector const & t, Vector const & rotation_vector,
+		bool const compute_deriv, std::pair< Vector, Vector > & deriv ) const;
 
-		void set_enforce_continuity_at_pi( bool const & setting ){ enforce_continuity_at_pi_ = setting; }
-		bool enforce_continuity_at_pi() const { return enforce_continuity_at_pi_; }
+	void set_enforce_continuity_at_pi( bool const & setting ){ enforce_continuity_at_pi_ = setting; }
+	bool enforce_continuity_at_pi() const { return enforce_continuity_at_pi_; }
 
-	private:
+private:
 
-		void
-		initialize_from_json( utility::json_spirit::mObject const & json );
+	void
+	initialize_from_json( utility::json_spirit::mObject const & json );
 
-		void
-		adjust_near_pi( Vector const & rotation_vector,
-										core::Real & value,
-										utility::fixedsizearray1< core::Real, 6 > & outvals,
-										bool const & compute_deriv,
-										utility::fixedsizearray1< core::Real, 6 > & tensor_deriv ) const;
+	void
+	adjust_near_pi( Vector const & rotation_vector,
+		core::Real & value,
+		utility::fixedsizearray1< core::Real, 6 > & outvals,
+		bool const & compute_deriv,
+		utility::fixedsizearray1< core::Real, 6 > & tensor_deriv ) const;
 
-		core::Real
-		evaluate_constraining_potential( Distance const & R ) const;
+	core::Real
+	evaluate_constraining_potential( Distance const & R ) const;
 
-		std::pair< Vector, Vector >
-		evaluate_constraining_potential_derivative( Vector const & t ) const;
+	std::pair< Vector, Vector >
+	evaluate_constraining_potential_derivative( Vector const & t ) const;
 
-	private:
+private:
 
-		numeric::MathNTensor< core::Real, 6 > tensor_;
-		utility::fixedsizearray1< core::Real, 6 > minval_, binwidth_;
-		// bounds past which a super-steep penalty is applied.
-		core::Real Rmax_, Emax_;
+	numeric::MathNTensor< core::Real, 6 > tensor_;
+	utility::fixedsizearray1< core::Real, 6 > minval_, binwidth_;
+	// bounds past which a super-steep penalty is applied.
+	core::Real Rmax_, Emax_;
 
-		bool enforce_continuity_at_pi_;
-		bool const turn_off_rotation_dependence_;
+	bool enforce_continuity_at_pi_;
+	bool const turn_off_rotation_dependence_;
 
-	};
+};
 
 } //evaluator
 } //loop_graph

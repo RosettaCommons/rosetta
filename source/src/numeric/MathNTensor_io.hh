@@ -43,15 +43,15 @@ namespace numeric {
 template< class T, numeric::Size N >
 bool
 write_tensor_to_file_without_json( std::string const & filename,
-																	 MathNTensor< T, N > const & tensor );
+	MathNTensor< T, N > const & tensor );
 
 
 // @brief reads tensor from file. *requires* a .json file with n_bins & type.
 template< class T, numeric::Size N >
 void
 read_tensor_from_file( std::string const & filename_input,
-											 MathNTensor< T, N > & tensor,
-											 utility::json_spirit::mObject & json )
+	MathNTensor< T, N > & tensor,
+	utility::json_spirit::mObject & json )
 {
 	using namespace utility;
 	using namespace utility::json_spirit;
@@ -59,7 +59,7 @@ read_tensor_from_file( std::string const & filename_input,
 	std::string filename( filename_input ), filename_prefix( "" ), binary_file( "" );
 	bool use_binary( true );
 	if ( filename.find( ".txt" ) == filename.size() - 4 ||
-			 filename.find( ".txt.gz" ) == filename.size() - 7 ) {
+			filename.find( ".txt.gz" ) == filename.size() - 7 ) {
 		use_binary = false;
 		filename_prefix = replace_in( replace_in( filename, ".txt.gz", "" ), ".txt", "" );
 		binary_file = replace_in( filename, ".txt", ".bin" );
@@ -70,7 +70,7 @@ read_tensor_from_file( std::string const & filename_input,
 	}
 	if ( use_binary ) {
 		runtime_assert( filename.find( ".bin" ) == filename.size() - 4 ||
-										filename.find( ".bin.gz" ) == filename.size() - 7 );
+			filename.find( ".bin.gz" ) == filename.size() - 7 );
 		filename_prefix = replace_in( replace_in( filename, ".bin.gz", "" ), ".bin", "" );
 	}
 	if ( filename_prefix.size() == 0 ) utility_exit_with_message( "tensor filename must end in .bin, .bin.gz, .txt, or .txt.gz" );
@@ -87,7 +87,7 @@ read_tensor_from_file( std::string const & filename_input,
 	mArray n_bins( get_mArray( json, "n_bins" ) );
 	std::string const & type = get_string_or_empty( json, "type" );
 	if ( ( type == "double" && !std::is_same<T,double>::value ) ||
-			 ( type == "uint64" && !std::is_same<T,uint64_t>::value ) ) {
+			( type == "uint64" && !std::is_same<T,uint64_t>::value ) ) {
 		utility_exit_with_message( filename+ " type in json " +type + " does not match requested tensor type." );
 	}
 	runtime_assert( N == n_bins.size() );
@@ -123,7 +123,7 @@ read_tensor_from_file( std::string const & filename_input,
 template< class T, numeric::Size N >
 void
 read_tensor_from_file( std::string const & filename,
-											 MathNTensor< T, N > & tensor ) {
+	MathNTensor< T, N > & tensor ) {
 	utility::json_spirit::mObject json;
 	read_tensor_from_file( filename, tensor, json );
 }
@@ -132,7 +132,7 @@ read_tensor_from_file( std::string const & filename,
 template< class T, numeric::Size N >
 bool
 write_tensor_to_file_without_json( std::string const & filename,
-																	 MathNTensor< T, N > const & tensor )
+	MathNTensor< T, N > const & tensor )
 {
 	utility::io::ozstream bin_out( filename, std::ios::out | std::ios::binary );
 	if ( !bin_out.good() ) return false;
@@ -145,8 +145,8 @@ write_tensor_to_file_without_json( std::string const & filename,
 template< class T, numeric::Size N >
 bool
 write_tensor_to_file( std::string const & filename,
-											MathNTensor< T, N > const & tensor,
-											utility::json_spirit::Value const & json_input )
+	MathNTensor< T, N > const & tensor,
+	utility::json_spirit::Value const & json_input )
 {
 	using namespace utility;
 	using namespace utility::json_spirit;
@@ -171,7 +171,7 @@ write_tensor_to_file( std::string const & filename,
 template< class T, numeric::Size N >
 bool
 write_tensor_to_file( std::string const & filename,
-											MathNTensor< T, N > const & tensor )
+	MathNTensor< T, N > const & tensor )
 {
 	using namespace utility::json_spirit;
 	using namespace utility::tools;
@@ -179,12 +179,12 @@ write_tensor_to_file( std::string const & filename,
 	for ( auto const & v : tensor.n_bins() ) n_bins.push_back( Value(boost::uint64_t(v)) );
 
 	std::string type;
-	if ( std::is_same<T,double>::value )		type = "double";
-  else if ( std::is_same<T,Size>::value ) type = "uint64";
+	if ( std::is_same<T,double>::value )  type = "double";
+	else if ( std::is_same<T,Size>::value ) type = "uint64";
 	if ( type == "" ) utility_exit_with_message( "Did not have a string to go with the type of tensor, like double or unit64..." );
 
 	return write_tensor_to_file( filename, tensor,
-															 make_vector( Pair( "n_bins", n_bins ), Pair( "type", type ) ));
+		make_vector( Pair( "n_bins", n_bins ), Pair( "type", type ) ));
 }
 
 

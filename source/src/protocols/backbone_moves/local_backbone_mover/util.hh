@@ -31,8 +31,8 @@ namespace local_backbone_mover {
 /// and distance d. Note that phi and theta should be
 /// in radians.
 numeric::xyzVector<Real> xyz_from_internal_coords( numeric::xyzVector<Real> atom1_xyz,
-		numeric::xyzVector<Real> atom2_xyz, numeric::xyzVector<Real> atom3_xyz,
-		Real phi, Real theta, Real d);
+	numeric::xyzVector<Real> atom2_xyz, numeric::xyzVector<Real> atom3_xyz,
+	Real phi, Real theta, Real d);
 
 
 /// @brief covert an xyzVector to a vector of 3 real numbers
@@ -44,5 +44,5 @@ void xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, vector1<Real> &vec1);
 } //local_backbone_mover
 
 
-#endif	//protocols/backbone_moves/local_backbone_mover_util_hh
+#endif //protocols/backbone_moves/local_backbone_mover_util_hh
 

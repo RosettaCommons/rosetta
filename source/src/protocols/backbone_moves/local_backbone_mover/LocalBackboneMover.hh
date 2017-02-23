@@ -99,7 +99,7 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	
+
 	////////////////////////
 	/// Specific Methods ///
 	////////////////////////

@@ -1243,11 +1243,11 @@ RNA_FragmentMonteCarlo::finish_output_score()
 		for ( auto const & v : jump_histogram_max_ ) maxval.push_back( Value(v) );
 		for ( auto const & v : jump_histogram_bin_width_ ) binwidth.push_back( Value(v) );
 		write_tensor_to_file( options_->output_histogram_file(), *jump_histogram_,
-													make_vector( Pair( "n_bins", n_bins ),
-																			 Pair( "type", "uint64" ),
-																			 Pair( "minval",  minval ),
-																			 Pair( "maxval",  maxval ),
-																			 Pair( "binwidth",binwidth ) ) );
+			make_vector( Pair( "n_bins", n_bins ),
+			Pair( "type", "uint64" ),
+			Pair( "minval",  minval ),
+			Pair( "maxval",  maxval ),
+			Pair( "binwidth",binwidth ) ) );
 	}
 }
 

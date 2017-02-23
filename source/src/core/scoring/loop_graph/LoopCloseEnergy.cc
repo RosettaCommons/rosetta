@@ -129,7 +129,7 @@ LoopCloseEnergy::eval_atom_derivative(
 
 		if ( atom_id == loop_score_evaluator->current_pose_takeoff_atom() ) {
 			loop_score_evaluator->get_f1_f2( f1, f2, true /* takeoff */ );
-		  F1 += weights[ loop_close ] * f1;
+			F1 += weights[ loop_close ] * f1;
 			F2 += weights[ loop_close ] * f2;
 		}
 

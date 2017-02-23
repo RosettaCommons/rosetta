@@ -24,16 +24,16 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-	//Constructor
-	LoopClosePotentialEvaluator::LoopClosePotentialEvaluator( core::Real const & loop_fixed_cost ):
-		loop_closure_energy_( 0.0 ),
-		involves_current_pose_( false ),
-		loop_fixed_cost_( loop_fixed_cost )
-	{}
+//Constructor
+LoopClosePotentialEvaluator::LoopClosePotentialEvaluator( core::Real const & loop_fixed_cost ):
+	loop_closure_energy_( 0.0 ),
+	involves_current_pose_( false ),
+	loop_fixed_cost_( loop_fixed_cost )
+{}
 
-	//Destructor
-	LoopClosePotentialEvaluator::~LoopClosePotentialEvaluator()
-	{}
+//Destructor
+LoopClosePotentialEvaluator::~LoopClosePotentialEvaluator()
+{}
 
 } //evaluator
 } //loop_graph

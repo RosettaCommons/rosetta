@@ -30,7 +30,7 @@ namespace local_backbone_mover {
 namespace free_peptide_movers {
 
 LongAxisRotationFreePeptideMover::LongAxisRotationFreePeptideMover(Real radian, bool random):
- FreePeptideMover(), radian_(radian), random_(random) 
+	FreePeptideMover(), radian_(radian), random_(random)
 {
 }
 
@@ -42,10 +42,10 @@ LongAxisRotationFreePeptideMover::apply(FreePeptide &free_peptide){
 	using numeric::rotation_matrix;
 
 	Real rotation_radian = radian_;
-	
-	if(random_){
-		rotation_radian = radian_ * uniform();	
-		if(uniform() > 0.5){
+
+	if ( random_ ) {
+		rotation_radian = radian_ * uniform();
+		if ( uniform() > 0.5 ) {
 			rotation_radian *= -1;
 		}
 	}

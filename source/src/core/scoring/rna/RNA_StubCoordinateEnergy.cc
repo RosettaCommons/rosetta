@@ -140,10 +140,10 @@ RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 RNA_StubCoordinateEnergy::defines_residue_pair_energy(
-														pose::Pose const &,
-														Size res1,
-														Size res2
-														) const
+	pose::Pose const &,
+	Size res1,
+	Size res2
+) const
 {
 	if ( res1 == takeoff_res_ && res2 == landing_res_ ) return true;
 	if ( res1 == landing_res_ && res2 == takeoff_res_ ) return true;
@@ -153,11 +153,11 @@ RNA_StubCoordinateEnergy::defines_residue_pair_energy(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_StubCoordinateEnergy::residue_pair_energy(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap & emap
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const & scorefxn,
+	EnergyMap & emap
 ) const
 {
 	using namespace core::kinematics;
@@ -165,7 +165,7 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	using namespace core::conformation;
 
 	if ( rsd1.seqpos() == landing_res_ &&
-			 rsd2.seqpos() == takeoff_res_ ) {
+			rsd2.seqpos() == takeoff_res_ ) {
 		residue_pair_energy( rsd2, rsd1, pose, scorefxn, emap );
 		return;
 	}
@@ -176,18 +176,18 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	// Code copied from protocols::farna::RNA_FragmentMonteCarlo.cc:
 	// takeoff
 	Stub stub1( rsd1.xyz( " O3'") /* center */,
-							rsd1.xyz( " O3'") /* a */,
-							rsd1.xyz( " C3'") /* b  [b->a defines x] */,
-							rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
+		rsd1.xyz( " O3'") /* a */,
+		rsd1.xyz( " C3'") /* b  [b->a defines x] */,
+		rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
 	stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
 
 	// could easily generalize this function to also compute penalties for having rotation different from target rotation
 	//   using, e.g., a von-Mises function.
 	// landing
 	// stub2 = Stub( rsd2.xyz( " O5'") /* center */,
-	// 							rsd2.xyz( " C5'") /* a */,
-	// 							rsd2.xyz( " O5'") /* b  [b->a defines x] */,
-	// 							rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
+	//        rsd2.xyz( " C5'") /* a */,
+	//        rsd2.xyz( " O5'") /* b  [b->a defines x] */,
+	//        rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
 	// stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
 
 	Vector const & landing_xyz = rsd2.xyz( " O5'" );

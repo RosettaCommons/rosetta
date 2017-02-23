@@ -26,17 +26,17 @@ namespace local_backbone_mover {
 namespace gap_solution_pickers {
 
 RandomGapSolutionPicker::RandomGapSolutionPicker():
- GapSolutionPicker()
+	GapSolutionPicker()
 {
 
 }
 
 RandomGapSolutionPicker::~RandomGapSolutionPicker(){}
-	
-Size 
-RandomGapSolutionPicker::pick(core::pose::Pose &, FreePeptide &, 
-			vector1<vector1<Real> > pivot_torsions, Size){
-	if(0 == pivot_torsions.size()){ return 0; }
+
+Size
+RandomGapSolutionPicker::pick(core::pose::Pose &, FreePeptide &,
+	vector1<vector1<Real> > pivot_torsions, Size){
+	if ( 0 == pivot_torsions.size() ) { return 0; }
 	return std::rand() % pivot_torsions.size() + 1;
 }
 

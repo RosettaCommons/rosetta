@@ -986,9 +986,9 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		//scorefxn_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", sfxn ));
 		scorefxn_ = data.get< ScoreFunction * >( "scorefxns", sfxn )->clone();   //fpd use clone
 		TR << "Score evaluation during MC is done by" << sfxn << ", ";
-		if ( !keep_filters_ ){
-            TR << filter_name << " is ignored." << std::endl;
-            filters_.clear();
+		if ( !keep_filters_ ) {
+			TR << filter_name << " is ignored." << std::endl;
+			filters_.clear();
 		}
 	} else {
 		scorefxn_ = nullptr;

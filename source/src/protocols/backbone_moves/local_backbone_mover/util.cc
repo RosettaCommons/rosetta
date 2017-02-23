@@ -31,11 +31,11 @@ namespace backbone_moves {
 namespace local_backbone_mover {
 
 
-numeric::xyzVector<Real> 
+numeric::xyzVector<Real>
 xyz_from_internal_coords( numeric::xyzVector<Real> atom1_xyz,
-		numeric::xyzVector<Real> atom2_xyz, numeric::xyzVector<Real> atom3_xyz,
-		Real phi, Real theta, Real d){
-		using numeric::constants::d::pi;
+	numeric::xyzVector<Real> atom2_xyz, numeric::xyzVector<Real> atom3_xyz,
+	Real phi, Real theta, Real d){
+	using numeric::constants::d::pi;
 
 	core::kinematics::Stub stub(atom1_xyz, atom2_xyz, atom3_xyz);
 
@@ -44,11 +44,11 @@ xyz_from_internal_coords( numeric::xyzVector<Real> atom1_xyz,
 		* numeric::xyzVector<Real>(d, 0, 0);
 }
 
-void 
+void
 xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, vector1<Real> &vec1){
 	vec1.clear();
 
-	for(Size i=1; i<=3; ++i){
+	for ( Size i=1; i<=3; ++i ) {
 		vec1.push_back(vec_xyz(i));
 	}
 }

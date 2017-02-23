@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 namespace evaluator {
-	
-	class LoopClosePotentialEvaluator;
-	typedef utility::pointer::shared_ptr< LoopClosePotentialEvaluator > LoopClosePotentialEvaluatorOP;
-	typedef utility::pointer::shared_ptr< LoopClosePotentialEvaluator const > LoopClosePotentialEvaluatorCOP;
-	
+
+class LoopClosePotentialEvaluator;
+typedef utility::pointer::shared_ptr< LoopClosePotentialEvaluator > LoopClosePotentialEvaluatorOP;
+typedef utility::pointer::shared_ptr< LoopClosePotentialEvaluator const > LoopClosePotentialEvaluatorCOP;
+
 } //evaluator
 } //loop_graph
 } //scoring

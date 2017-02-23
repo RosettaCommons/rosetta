@@ -26,23 +26,23 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-	void
-	inline
-	get_minval_binwidth( numeric::MathNTensor< double, 6 > const & T,
-											 utility::json_spirit::mObject const & json,
-											 utility::fixedsizearray1< numeric::Real, 6 > & minval,
-											 utility::fixedsizearray1< numeric::Real, 6 > & binwidth)
-	{
-		using namespace utility::json_spirit;
-		mArray json_binwidth( get_mArray( json, "binwidth" ) );
-		mArray json_minval( get_mArray( json, "minval" ) );
-		mArray json_maxval( get_mArray( json, "maxval" ) );
-		for ( numeric::Size i=1; i<=6; ++i ) {
-			runtime_assert( numeric::Size( ( json_maxval[i-1].get_real() - json_minval[i-1].get_real() )/json_binwidth[i-1].get_real() + 1 ) == T.n_bins( i ) );
-			minval[ i ]   = json_minval[i-1].get_real();
-			binwidth[ i ] = json_binwidth[i-1].get_real();
-		}
+void
+inline
+get_minval_binwidth( numeric::MathNTensor< double, 6 > const & T,
+	utility::json_spirit::mObject const & json,
+	utility::fixedsizearray1< numeric::Real, 6 > & minval,
+	utility::fixedsizearray1< numeric::Real, 6 > & binwidth)
+{
+	using namespace utility::json_spirit;
+	mArray json_binwidth( get_mArray( json, "binwidth" ) );
+	mArray json_minval( get_mArray( json, "minval" ) );
+	mArray json_maxval( get_mArray( json, "maxval" ) );
+	for ( numeric::Size i=1; i<=6; ++i ) {
+		runtime_assert( numeric::Size( ( json_maxval[i-1].get_real() - json_minval[i-1].get_real() )/json_binwidth[i-1].get_real() + 1 ) == T.n_bins( i ) );
+		minval[ i ]   = json_minval[i-1].get_real();
+		binwidth[ i ] = json_binwidth[i-1].get_real();
 	}
+}
 
 } //evaluator
 } //loop_graph

@@ -35,38 +35,38 @@ class ScoreTermValueBasedSelector : public core::select::residue_selector::Resid
 
 public:
 
-    /// @brief Constructor.
-    ScoreTermValueBasedSelector();
+	/// @brief Constructor.
+	ScoreTermValueBasedSelector();
 
 	//ScoreTermValueBasedSelector( core::pose::Pose const & pose );
 
-    /// @breif Destructor
-    virtual ~ScoreTermValueBasedSelector();
+	/// @breif Destructor
+	virtual ~ScoreTermValueBasedSelector();
 
-    /// @brief Clone operator.
-    /// @details Creates a copy of the object and return a pointer to the new object.
-    virtual ResidueSelectorOP clone() const;
+	/// @brief Clone operator.
+	/// @details Creates a copy of the object and return a pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
 
-    /// @brief Return a ResidueSubset indicating a selection of Residues from the input Pose.
-    virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	/// @brief Return a ResidueSubset indicating a selection of Residues from the input Pose.
+	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 
-    /// @brief Initialize any data members of this instance from an input tag and a DataMap object
-    virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datacache );
+	/// @brief Initialize any data members of this instance from an input tag and a DataMap object
+	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datacache );
 
-    virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-    static std::string class_name();
+	static std::string class_name();
 
-    /// @brief Define the structure of the XML file for this ResidueSelector
-    static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
+	/// @brief Define the structure of the XML file for this ResidueSelector
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 
 private:
-    core::scoring::ScoreFunctionOP score_fxn_;
-    core::scoring::ScoreType score_type_;
-    ResidueSelectorCOP input_residues_selector_;
-    std::string residue_nums_string_;
-    core::Real lower_threshold_;
-    core::Real upper_threshold_;
+	core::scoring::ScoreFunctionOP score_fxn_;
+	core::scoring::ScoreType score_type_;
+	ResidueSelectorCOP input_residues_selector_;
+	std::string residue_nums_string_;
+	core::Real lower_threshold_;
+	core::Real upper_threshold_;
 
 };
 

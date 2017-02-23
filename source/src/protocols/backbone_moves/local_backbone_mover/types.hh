@@ -16,16 +16,16 @@ namespace protocols {
 namespace backbone_moves {
 namespace local_backbone_mover {
 
-	using utility::vector1;
+using utility::vector1;
 
-	using numeric::xyzVector;
-  using numeric::xyzMatrix; 
+using numeric::xyzVector;
+using numeric::xyzMatrix;
 
-	using core::Size;
-	using core::Real;
+using core::Size;
+using core::Real;
 
 }
 }
 }
 
-#endif 
+#endif

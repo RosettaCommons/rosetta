@@ -34,7 +34,7 @@ namespace local_backbone_mover {
 
 ///@brief GapCloser closes the gaps after moving the free peptide.
 class GapCloser : public utility::pointer::ReferenceCount {
-	
+
 	friend class ::LocalBackboneMoverTests;
 
 public:
@@ -51,7 +51,7 @@ public:
 	void set_solution_picker(gap_solution_pickers::GapSolutionPickerOP solution_picker){
 		solution_picker_ = solution_picker;
 	}
-	
+
 	/// @brief Find solutions for the two gaps
 	void solve_gaps(FreePeptide &free_peptide);
 

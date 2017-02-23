@@ -28,30 +28,30 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	void
-	get_loop_atom( core::Size const & res,
-								 core::pose::Pose const & pose,
-								 id::AtomID & atom_id,
-								 Vector & xyz,
-								 bool const takeoff /* as opposed to landing */ );
+void
+get_loop_atom( core::Size const & res,
+	core::pose::Pose const & pose,
+	id::AtomID & atom_id,
+	Vector & xyz,
+	bool const takeoff /* as opposed to landing */ );
 
-	void
-	get_loop_atom( core::Size const & res,
-								 core::pose::Pose const & pose,
-								 std::string const & atom_name,
-								 id::AtomID & atom_id,
-								 Vector & xyz );
+void
+get_loop_atom( core::Size const & res,
+	core::pose::Pose const & pose,
+	std::string const & atom_name,
+	id::AtomID & atom_id,
+	Vector & xyz );
 
-	evaluator::LoopClosePotentialEvaluatorCOP
-	get_loop_close_potential( pose::Pose const & pose,
-														LoopCycle const & loop_cycle,
-														core::Real const & loop_fixed_cost,
-														bool const use_6D_potential /* = false */ );
+evaluator::LoopClosePotentialEvaluatorCOP
+get_loop_close_potential( pose::Pose const & pose,
+	LoopCycle const & loop_cycle,
+	core::Real const & loop_fixed_cost,
+	bool const use_6D_potential /* = false */ );
 
-	evaluator::LoopClosePotentialEvaluatorCOP
-	get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
-																				core::Real const & loop_fixed_cost,
-																				pose::Pose const & pose );
+evaluator::LoopClosePotentialEvaluatorCOP
+get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
+	core::Real const & loop_fixed_cost,
+	pose::Pose const & pose );
 
 } //loop_graph
 } //scoring

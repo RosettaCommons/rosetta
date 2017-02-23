@@ -35,15 +35,15 @@ ShearFreePeptideMover::ShearFreePeptideMover(Size seqpos, Real torsion_degree, b
 
 ShearFreePeptideMover::~ShearFreePeptideMover(){}
 
-void 
+void
 ShearFreePeptideMover::apply(FreePeptide &free_peptide){
 	using numeric::random::uniform;
 
 	Real torsion_degree = torsion_degree_;
 
-	if(random_){
+	if ( random_ ) {
 		torsion_degree = torsion_degree_ * uniform();
-		if(uniform() > 0.5){
+		if ( uniform() > 0.5 ) {
 			torsion_degree *= -1;
 		}
 	}

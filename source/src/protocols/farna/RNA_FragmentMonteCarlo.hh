@@ -281,7 +281,7 @@ private:
 
 	utility::io::ozstream running_score_output_;
 	numeric::MathNTensorOP< core::Size, 6 > jump_histogram_;
-  utility::vector1< core::Real > jump_histogram_min_, jump_histogram_max_, jump_histogram_bin_width_;
+	utility::vector1< core::Real > jump_histogram_min_, jump_histogram_max_, jump_histogram_bin_width_;
 
 };
 

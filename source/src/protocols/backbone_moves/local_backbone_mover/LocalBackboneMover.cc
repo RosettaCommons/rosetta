@@ -48,9 +48,9 @@ namespace protocols {
 namespace backbone_moves {
 namespace local_backbone_mover {
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 LocalBackboneMover::LocalBackboneMover():
@@ -65,18 +65,18 @@ LocalBackboneMover::LocalBackboneMover():
 LocalBackboneMover::~LocalBackboneMover(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 /// @brief Apply the mover
 void
 LocalBackboneMover::apply( core::pose::Pose& pose){
-	for(Size i=1; i<= max_trial_num_; ++i){
-	
+	for ( Size i=1; i<= max_trial_num_; ++i ) {
+
 		set_free_peptide(pose, pivot1_, pivot2_);
 
 		// Move the free peptide
-		for(free_peptide_movers::FreePeptideMoverOP f_mover : free_peptide_movers_){
+		for ( free_peptide_movers::FreePeptideMoverOP f_mover : free_peptide_movers_ ) {
 			f_mover->apply(*free_peptide_);
 		}
 
@@ -84,7 +84,7 @@ LocalBackboneMover::apply( core::pose::Pose& pose){
 		gap_closer_->solve_gaps(*free_peptide_);
 
 		// Apply changes
-		if(gap_closer_->gap_solved()){
+		if ( gap_closer_->gap_solved() ) {
 			gap_closer_->apply_closure(pose, *free_peptide_);
 			return;
 		}
@@ -100,8 +100,8 @@ LocalBackboneMover::show(std::ostream & output) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Scripts Support ///
-	///////////////////////////////
+/// Rosetta Scripts Support ///
+///////////////////////////////
 
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
@@ -115,7 +115,7 @@ LocalBackboneMover::parse_my_tag(
 	using namespace free_peptide_movers;
 
 	// Set the pivots
-	
+
 	pivot1_ = tag->getOption<Size>("pivot1");
 	pivot2_ = tag->getOption<Size>("pivot2");
 
@@ -124,13 +124,13 @@ LocalBackboneMover::parse_my_tag(
 	clear_free_peptide_movers();
 
 	std::string config = tag->getOption<std::string>("move_type", "translate");
-	if("translate" == config){
+	if ( "translate" == config ) {
 		add_free_peptide_mover(FreePeptideMoverOP( new TranslationFreePeptideMover(0.5) ));
-	}else if("rotate" == config){
+	} else if ( "rotate" == config ) {
 		add_free_peptide_mover(FreePeptideMoverOP( new LongAxisRotationFreePeptideMover(1, true) ));
-	}else if("shear" == config){
+	} else if ( "shear" == config ) {
 		add_free_peptide_mover(FreePeptideMoverOP( new ShearFreePeptideMover(pivot1_ + 1, 120, true) ));
-	}else if("circular_permute" == config){
+	} else if ( "circular_permute" == config ) {
 		add_free_peptide_mover(FreePeptideMoverOP( new CircularPermuteFreePeptideMover(1) ));
 	}
 
@@ -201,14 +201,14 @@ void LocalBackboneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 }
 
 void LocalBackboneMover::set_free_peptide(core::pose::Pose &pose, Size pivot1, Size pivot2){
-	if(pivot1 < 3){
-		utility_exit_with_message("Residue pivot1 - 2 must exist!");	
+	if ( pivot1 < 3 ) {
+		utility_exit_with_message("Residue pivot1 - 2 must exist!");
 	}
-	if(pivot2 > pose.size() - 2){
-		utility_exit_with_message("Residue pivot2 + 2 must exist!");	
+	if ( pivot2 > pose.size() - 2 ) {
+		utility_exit_with_message("Residue pivot2 + 2 must exist!");
 	}
-	if(pivot1 + 3 > pivot2){
-		utility_exit_with_message("Residue there must be at least 2 residues between pivot 1 and pivot2!");	
+	if ( pivot1 + 3 > pivot2 ) {
+		utility_exit_with_message("Residue there must be at least 2 residues between pivot 1 and pivot2!");
 	}
 
 	free_peptide_ = FreePeptideOP(new FreePeptide(pose, pivot1, pivot2));
@@ -216,16 +216,16 @@ void LocalBackboneMover::set_free_peptide(core::pose::Pose &pose, Size pivot1, S
 
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// private methods ///
-	///////////////////////
+/// private methods ///
+///////////////////////
 
 
-	std::ostream &
-	operator<<( std::ostream & os, LocalBackboneMover const & mover )
-	{
-		mover.show(os);
-		return os;
-	}
+std::ostream &
+operator<<( std::ostream & os, LocalBackboneMover const & mover )
+{
+	mover.show(os);
+	return os;
+}
 
 } //protocols
 } //backbone_moves

@@ -35,7 +35,7 @@ public:
 	CircularPermuteFreePeptideMover(Size off_set, bool direction = true);
 
 	virtual ~CircularPermuteFreePeptideMover();
-	
+
 	virtual void apply(FreePeptide &free_peptide);
 
 private:

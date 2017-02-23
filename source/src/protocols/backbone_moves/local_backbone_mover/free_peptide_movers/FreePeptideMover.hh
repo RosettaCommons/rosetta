@@ -32,7 +32,7 @@ namespace local_backbone_mover {
 namespace free_peptide_movers {
 
 ///@brief Base class for free peptide movers.
-class FreePeptideMover : 
+class FreePeptideMover :
 	public utility::pointer::ReferenceCount, protected boost::noncopyable {
 
 public:

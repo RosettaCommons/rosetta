@@ -34,7 +34,7 @@ TranslationFreePeptideMover::TranslationFreePeptideMover(xyzVector <Real> v_tran
 	FreePeptideMover(), random_(false), v_translate_(v_translate)
 {
 }
-	
+
 TranslationFreePeptideMover::TranslationFreePeptideMover(Real max_amplitude):
 	FreePeptideMover(), random_(true), max_amplitude_(max_amplitude)
 {
@@ -47,7 +47,7 @@ TranslationFreePeptideMover::apply(FreePeptide &free_peptide){
 	using numeric::random::uniform;
 	using numeric::random::random_normal;
 
-	if(random_){
+	if ( random_ ) {
 		v_translate_ = max_amplitude_ * uniform() * random_normal();
 	}
 

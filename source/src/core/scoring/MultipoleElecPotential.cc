@@ -1065,7 +1065,7 @@ MultipoleElecPotential::build_frame_and_rotate(
 	// TR << "res  numbers are  " << res1 << "  " << res2 << "  " << res3 << std::endl;
 
 	MultipoleAxisType const axis_type( mp_param->coord_type() );
-	if( axis_type == none ) {
+	if ( axis_type == none ) {
 		mp.nonconst_monopole( orig_atom ) = mp_param->monopole();
 		mp.nonconst_dipole( orig_atom ) = mp_param->dipole();
 		mp.nonconst_quadrupole( orig_atom ) = mp_param->quadrupole();

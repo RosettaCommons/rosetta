@@ -28,44 +28,44 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-	class SixDTransRotPotentialEvaluator: public LoopClosePotentialEvaluator {
+class SixDTransRotPotentialEvaluator: public LoopClosePotentialEvaluator {
 
-	public:
+public:
 
-		//constructor
-		SixDTransRotPotentialEvaluator( Size const & takeoff_pos,
-																		Size const & landing_pos,
-																		pose::Pose const & pose,
-																		core::Real const & loop_fixed_cost,
-																		SixDTransRotPotential const & potential );
+	//constructor
+	SixDTransRotPotentialEvaluator( Size const & takeoff_pos,
+		Size const & landing_pos,
+		pose::Pose const & pose,
+		core::Real const & loop_fixed_cost,
+		SixDTransRotPotential const & potential );
 
-		//destructor
-		~SixDTransRotPotentialEvaluator();
+	//destructor
+	~SixDTransRotPotentialEvaluator();
 
-	public:
+public:
 
-	private:
+private:
 
-		/// @brief evaluate 6D potential for pose, figuring out atom ids for stubs, etc.
-		core::Real
-		evaluate( core::pose::Pose const & pose );
+	/// @brief evaluate 6D potential for pose, figuring out atom ids for stubs, etc.
+	core::Real
+	evaluate( core::pose::Pose const & pose );
 
-		void
-		figure_out_if_loop_involves_current_pose( core::pose::Pose const & pose );
+	void
+	figure_out_if_loop_involves_current_pose( core::pose::Pose const & pose );
 
-		virtual
-		void
-		get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const;
+	virtual
+	void
+	get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const;
 
-	private:
+private:
 
-		core::Size const takeoff_pos_, landing_pos_;
-		core::id::AtomID takeoff_atom_id_, landing_atom_id_;
-		SixDTransRotPotential const & potential_;
-		core::kinematics::Stub stub1_;
-		core::kinematics::Jump j_;
+	core::Size const takeoff_pos_, landing_pos_;
+	core::id::AtomID takeoff_atom_id_, landing_atom_id_;
+	SixDTransRotPotential const & potential_;
+	core::kinematics::Stub stub1_;
+	core::kinematics::Jump j_;
 
-	};
+};
 
 } //evaluator
 } //loop_graph

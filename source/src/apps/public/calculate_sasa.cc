@@ -110,13 +110,13 @@ calculate_sasa()
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	//using namespace core;
-    	devel::init( argc, argv );
+	try {
+		//using namespace core;
+		devel::init( argc, argv );
 
-    	calculate_sasa();
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
+		calculate_sasa();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

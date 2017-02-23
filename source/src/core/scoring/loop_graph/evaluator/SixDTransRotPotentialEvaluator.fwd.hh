@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/scoring/loop_graph/evaluator/SixDTransRotPotentialEvaluator.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 namespace evaluator {
-	
-	class SixDTransRotPotentialEvaluator;
-	typedef utility::pointer::shared_ptr< SixDTransRotPotentialEvaluator > SixDTransRotPotentialEvaluatorOP;
-	typedef utility::pointer::shared_ptr< SixDTransRotPotentialEvaluator const > SixDTransRotPotentialEvaluatorCOP;
-	
+
+class SixDTransRotPotentialEvaluator;
+typedef utility::pointer::shared_ptr< SixDTransRotPotentialEvaluator > SixDTransRotPotentialEvaluatorOP;
+typedef utility::pointer::shared_ptr< SixDTransRotPotentialEvaluator const > SixDTransRotPotentialEvaluatorCOP;
+
 } //evaluator
 } //loop_graph
 } //scoring

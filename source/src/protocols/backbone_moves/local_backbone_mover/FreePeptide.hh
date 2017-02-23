@@ -39,11 +39,11 @@ class Residue : public utility::pointer::ReferenceCount {
 
 public:
 
-	Residue(Size seqpos, 
+	Residue(Size seqpos,
 		Real n_ca_bond, Real ca_c_bond, Real c_n_bond,
 		Real n_ca_c_angle, Real ca_c_n_angle, Real c_n_ca_angle,
 		Real phi, Real psi, Real omega) :
-		seqpos_(seqpos), 
+		seqpos_(seqpos),
 		n_ca_bond_(n_ca_bond), ca_c_bond_(ca_c_bond), c_n_bond_(c_n_bond),
 		n_ca_c_angle_(n_ca_c_angle), ca_c_n_angle_(ca_c_n_angle), c_n_ca_angle_(c_n_ca_angle),
 		phi_(phi), psi_(psi), omega_(omega)
@@ -162,7 +162,7 @@ public:
 private:
 
 	Size seqpos_;
-	
+
 	Real n_ca_bond_;
 	Real ca_c_bond_;
 	Real c_n_bond_;
@@ -226,7 +226,7 @@ public:
 	}
 
 	/// @brief Setter of the n_ca_bond
-  void n_ca_bond(Size seqpos, Real value){
+	void n_ca_bond(Size seqpos, Real value){
 		residues_[res_id(seqpos)].n_ca_bond(value);
 		xyz_updated_ = false;
 	}
@@ -237,7 +237,7 @@ public:
 	}
 
 	/// @brief Setter of the ca_c_bond
-  void ca_c_bond(Size seqpos, Real value){
+	void ca_c_bond(Size seqpos, Real value){
 		residues_[res_id(seqpos)].ca_c_bond(value);
 		xyz_updated_ = false;
 	}
@@ -248,7 +248,7 @@ public:
 	}
 
 	/// @brief Setter of the c_n_bond
-  void c_n_bond(Size seqpos, Real value){
+	void c_n_bond(Size seqpos, Real value){
 		residues_[res_id(seqpos)].c_n_bond(value);
 		xyz_updated_ = false;
 	}
@@ -259,7 +259,7 @@ public:
 	}
 
 	/// @brief Setter of the n_ca_c_angle
-  void n_ca_c_angle(Size seqpos, Real value){
+	void n_ca_c_angle(Size seqpos, Real value){
 		residues_[res_id(seqpos)].n_ca_c_angle(value);
 		xyz_updated_ = false;
 	}
@@ -270,7 +270,7 @@ public:
 	}
 
 	/// @brief Setter of the ca_c_n_angle
-  void ca_c_n_angle(Size seqpos, Real value){
+	void ca_c_n_angle(Size seqpos, Real value){
 		residues_[res_id(seqpos)].ca_c_n_angle(value);
 		xyz_updated_ = false;
 	}
@@ -281,7 +281,7 @@ public:
 	}
 
 	/// @brief Setter of the c_n_ca_angle
-  void c_n_ca_angle(Size seqpos, Real value){
+	void c_n_ca_angle(Size seqpos, Real value){
 		residues_[res_id(seqpos)].c_n_ca_angle(value);
 		xyz_updated_ = false;
 	}
@@ -292,7 +292,7 @@ public:
 	}
 
 	/// @brief Setter of the phi
-  void phi(Size seqpos, Real value){
+	void phi(Size seqpos, Real value){
 		residues_[res_id(seqpos)].phi(value);
 		xyz_updated_ = false;
 	}
@@ -303,7 +303,7 @@ public:
 	}
 
 	/// @brief Setter of the psi
-  void psi(Size seqpos, Real value){
+	void psi(Size seqpos, Real value){
 		residues_[res_id(seqpos)].psi(value);
 		xyz_updated_ = false;
 	}
@@ -314,26 +314,26 @@ public:
 	}
 
 	/// @brief Setter of the omega
-  void omega(Size seqpos, Real value){
+	void omega(Size seqpos, Real value){
 		residues_[res_id(seqpos)].omega(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the xyz coordinates of N
 	xyzVector <Real> n_xyz(Size seqpos){
-		if(!xyz_updated_){ update_xyz_coords(); }
+		if ( !xyz_updated_ ) { update_xyz_coords(); }
 		return residues_[res_id(seqpos)].n_xyz();
 	}
 
 	/// @brief Getter of the xyz coordinates of CA
 	xyzVector <Real> ca_xyz(Size seqpos){
-		if(!xyz_updated_){ update_xyz_coords(); }
+		if ( !xyz_updated_ ) { update_xyz_coords(); }
 		return residues_[res_id(seqpos)].ca_xyz();
 	}
 
 	/// @brief Getter of the xyz coordinates of C
 	xyzVector <Real> c_xyz(Size seqpos){
-		if(!xyz_updated_){ update_xyz_coords(); }
+		if ( !xyz_updated_ ) { update_xyz_coords(); }
 		return residues_[res_id(seqpos)].c_xyz();
 	}
 
@@ -350,7 +350,7 @@ public:
 	void translate(xyzVector <Real> v);
 
 	/// @brief Rotate the free peptide by the rotation matrix M
-	/// @detail The center of rotation is the CA atom of the 
+	/// @detail The center of rotation is the CA atom of the
 	/// first residue of the free peptide
 	void rotate(xyzMatrix <Real> M);
 
@@ -372,8 +372,8 @@ private: // Methods
 	}
 
 private: // Member data
-	
-	Size pivot1_;	
+
+	Size pivot1_;
 	Size pivot2_;
 
 	// Residues from pivot1 - 2 to pivot2 + 2
@@ -387,7 +387,7 @@ private: // Member data
 	vector1 < xyzVector<Real> > old_stubs_;
 	xyzVector<Real> old_stub_centor_of_mass_;
 
-	// Reference coordinates are the coordinates of C atom of the first pivot and N, CA atoms of the first  
+	// Reference coordinates are the coordinates of C atom of the first pivot and N, CA atoms of the first
 	// residue of the free peptide. Translation and rotation of the free peptide are
 	// realized by changing these coordinates.
 	vector1 <core::id::AtomID> reference_atom_ids_;

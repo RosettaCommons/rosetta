@@ -2011,7 +2011,7 @@ SetVirtualShadow::apply( ResidueType & rsd ) const
 				rsd.name() << " is missing atom: " << shadower_ << std::endl;
 		}
 		return true;  // failure
-	} else 	if ( ! rsd.has( shadowee_ ) ) {
+	} else  if ( ! rsd.has( shadowee_ ) ) {
 		if ( TR_PatchOperations.Debug.visible() ) {
 			TR_PatchOperations.Debug << "SetVirtualShadow::apply failed: " <<
 				rsd.name() << " is missing atom: " << shadowee_ << std::endl;

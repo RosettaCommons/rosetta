@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/select/residue_selector/ScoreTermValueBasedSelector.fwd.hh
-/// @brief  
+/// @brief
 /// @author Gerard Daniel (gerardda@uw.edu)
 
 
@@ -22,12 +22,12 @@
 namespace core {
 namespace select {
 namespace residue_selector {
-    
+
 class ScoreTermValueBasedSelector;
 
 typedef utility::pointer::shared_ptr< ScoreTermValueBasedSelector > ScoreTermValueBasedSelectorOP;
 typedef utility::pointer::shared_ptr< ScoreTermValueBasedSelector const > ScoreTermValueBasedSelectorCOP;
-    
+
 } //core
 } //select
 } //residue_selector

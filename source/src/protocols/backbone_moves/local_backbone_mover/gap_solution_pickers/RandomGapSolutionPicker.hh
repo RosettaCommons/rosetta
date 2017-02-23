@@ -36,8 +36,8 @@ public:
 
 	virtual ~RandomGapSolutionPicker();
 
-	virtual Size pick(core::pose::Pose &pose, FreePeptide &free_peptide, 
-			vector1<vector1<Real> > pivot_torsions, Size pivot); 
+	virtual Size pick(core::pose::Pose &pose, FreePeptide &free_peptide,
+		vector1<vector1<Real> > pivot_torsions, Size pivot);
 
 private:
 

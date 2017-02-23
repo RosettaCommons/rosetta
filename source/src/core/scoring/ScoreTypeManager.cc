@@ -239,7 +239,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "big_bin_constraint" ] = big_bin_constraint;
 	name2score_type_[ "constant_constraint" ] = constant_constraint;
 	name2score_type_[ "coordinate_constraint" ] = coordinate_constraint;
-	//	name2score_type_[ "stub_coordinate_constraint" ] = stub_coordinate_constraint;
+	// name2score_type_[ "stub_coordinate_constraint" ] = stub_coordinate_constraint;
 	name2score_type_[ "site_constraint" ] = site_constraint;
 	name2score_type_[ "metalhash_constraint" ] = metalhash_constraint;
 	name2score_type_[ "metalbinding_constraint" ] = metalbinding_constraint;

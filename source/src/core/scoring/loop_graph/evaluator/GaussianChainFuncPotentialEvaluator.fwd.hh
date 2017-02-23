@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/scoring/loop_graph/evaluator/GaussianChainFuncPotentialEvaluator.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 namespace evaluator {
-	
-	class GaussianChainFuncPotentialEvaluator;
-	typedef utility::pointer::shared_ptr< GaussianChainFuncPotentialEvaluator > GaussianChainFuncPotentialEvaluatorOP;
-	typedef utility::pointer::shared_ptr< GaussianChainFuncPotentialEvaluator const > GaussianChainFuncPotentialEvaluatorCOP;
-	
+
+class GaussianChainFuncPotentialEvaluator;
+typedef utility::pointer::shared_ptr< GaussianChainFuncPotentialEvaluator > GaussianChainFuncPotentialEvaluatorOP;
+typedef utility::pointer::shared_ptr< GaussianChainFuncPotentialEvaluator const > GaussianChainFuncPotentialEvaluatorCOP;
+
 } //evaluator
 } //loop_graph
 } //scoring

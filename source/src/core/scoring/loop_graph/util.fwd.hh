@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/scoring/loop_graph/util.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace scoring {
 namespace loop_graph {
-	
-	class util;
-	typedef utility::pointer::shared_ptr< util > utilOP;
-	typedef utility::pointer::shared_ptr< util const > utilCOP;
-	
-} //loop_graph 
-} //scoring 
-} //core 
+
+class util;
+typedef utility::pointer::shared_ptr< util > utilOP;
+typedef utility::pointer::shared_ptr< util const > utilCOP;
+
+} //loop_graph
+} //scoring
+} //core
 
 #endif

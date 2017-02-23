@@ -169,7 +169,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 		if ( pos == std::string::npos ) utility_exit_with_message(  "If you want to output a running score file, specify -output_score_file" );
 		output_score_file_.replace( pos, new_prefix.length(), new_prefix );
 	}
-	if ( output_histogram_file_.size() == 0 && save_jump_histogram_ ){
+	if ( output_histogram_file_.size() == 0 && save_jump_histogram_ ) {
 		output_histogram_file_ = option[ out::file::silent ]();
 		std::string::size_type pos = output_histogram_file_.find( ".out", 0 );
 		std::string const new_prefix = ".HISTOGRAM.bin.gz";

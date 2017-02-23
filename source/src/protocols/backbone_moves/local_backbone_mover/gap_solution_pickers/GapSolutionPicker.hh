@@ -35,13 +35,13 @@ namespace local_backbone_mover {
 namespace gap_solution_pickers {
 
 ///@brief Base class for picking solution for a gap.
-class GapSolutionPicker : 
+class GapSolutionPicker :
 	public utility::pointer::ReferenceCount, protected boost::noncopyable {
 
 public:
 
-	virtual Size pick(core::pose::Pose &pose, FreePeptide &free_peptide, 
-			vector1<vector1<Real> > pivot_torsions, Size pivot) = 0; 
+	virtual Size pick(core::pose::Pose &pose, FreePeptide &free_peptide,
+		vector1<vector1<Real> > pivot_torsions, Size pivot) = 0;
 
 private:
 

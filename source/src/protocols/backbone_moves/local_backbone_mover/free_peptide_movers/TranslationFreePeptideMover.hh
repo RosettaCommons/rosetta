@@ -35,7 +35,7 @@ public:
 	///@brief Translate the free peptide by a given vector
 	TranslationFreePeptideMover(xyzVector <Real> v_translate);
 
-	///@brief Translate the free peptide by generating a random vector 
+	///@brief Translate the free peptide by generating a random vector
 	/// whose amplitude is smaller than a given value
 	TranslationFreePeptideMover(Real max_amplitude);
 

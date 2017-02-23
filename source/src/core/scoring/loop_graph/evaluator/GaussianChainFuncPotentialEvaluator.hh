@@ -26,37 +26,37 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-	class GaussianChainFuncPotentialEvaluator: public LoopClosePotentialEvaluator {
+class GaussianChainFuncPotentialEvaluator: public LoopClosePotentialEvaluator {
 
-	public:
+public:
 
-		//constructor
-		GaussianChainFuncPotentialEvaluator( LoopCycle const & loop_cycle,
-																				 core::Real const & loop_fixed_cost,
-																				 pose::Pose const & pose );
+	//constructor
+	GaussianChainFuncPotentialEvaluator( LoopCycle const & loop_cycle,
+		core::Real const & loop_fixed_cost,
+		pose::Pose const & pose );
 
-		//destructor
-		~GaussianChainFuncPotentialEvaluator();
+	//destructor
+	~GaussianChainFuncPotentialEvaluator();
 
-	public:
+public:
 
-		virtual
-		void
-		get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const;
+	virtual
+	void
+	get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const;
 
-	private:
+private:
 
-		void
-		initialize( LoopCycle const & loop_cycle,
-								core::pose::Pose const & pose );
+	void
+	initialize( LoopCycle const & loop_cycle,
+		core::pose::Pose const & pose );
 
-	private:
+private:
 
-		core::Real const rna_gaussian_variance_per_residue_;
-		core::Real const protein_gaussian_variance_per_residue_;
-		core::scoring::func::FuncOP func_;
+	core::Real const rna_gaussian_variance_per_residue_;
+	core::Real const protein_gaussian_variance_per_residue_;
+	core::scoring::func::FuncOP func_;
 
-	};
+};
 
 } //evaluator
 } //loop_graph
