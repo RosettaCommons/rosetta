@@ -220,9 +220,14 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	struct {
 		string name; char chain; string pdb;
 		AntibodyChainNumbering::NumberingVector cdr_numbering;  // Numbering for framework regions just befor and after CDR
+		core::Size length; // length of CDR to be inserted
 	} G[] {
-		{"h1", 'H', scs.h1->pdb,  an.heavy.cdr1}, {"h2", 'H', scs.h2->pdb,  an.heavy.cdr2}, {"h3", 'H', scs.h3->pdb,  an.heavy.cdr3},
-		{"l1", 'L', scs.l1->pdb,  an.light.cdr1}, {"l2", 'L', scs.l2->pdb,  an.light.cdr2}, {"l3", 'L', scs.l3->pdb,  an.light.cdr3},
+		{"h1", 'H', scs.h1->pdb,  an.heavy.cdr1, A.h1_sequence().size()},
+		{"h2", 'H', scs.h2->pdb,  an.heavy.cdr2, A.h2_sequence().size()},
+		{"h3", 'H', scs.h3->pdb,  an.heavy.cdr3, A.h3_sequence().size()},
+		{"l1", 'L', scs.l1->pdb,  an.light.cdr1, A.l1_sequence().size()},
+		{"l2", 'L', scs.l2->pdb,  an.light.cdr2, A.l2_sequence().size()},
+		{"l3", 'L', scs.l3->pdb,  an.light.cdr3, A.l3_sequence().size()},
 	};
 
 	AntibodyEnumManager enum_manager = AntibodyEnumManager();
@@ -267,9 +272,18 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		}
 		else {
 
-			const core::Size overlap = 2;
-			core::Size insert_flexibility = 2;
-
+			const core::Size overlap = 2; // used for alignment of scaffold/loop
+			core::Size insert_flexibility   = 2; // flexible regions in loop
+			core::Size scaffold_flexibility = 2; // flexible regions in scaffold
+			
+			// test cdr loop length before inserting and update flexibility accordingly
+			if (g.length == 4) {
+				// decrease flexibility in the loop, so there is no overlap
+				insert_flexibility   = 1;
+				// increase flexibility in the scaffold to compensate
+				scaffold_flexibility = 3;
+			}
+			
 			pose_n_cdr_first -= overlap;
 			pose_n_cdr_last += overlap;
 
@@ -309,7 +323,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			//   This is a drastic change, that I don't think is ready to be done now...
 
 			grafter->set_cycles(128);
-			grafter->set_scaffold_flexibility(3, 3);
+			grafter->set_scaffold_flexibility(scaffold_flexibility, scaffold_flexibility);
 			grafter->set_insert_flexibility(insert_flexibility, insert_flexibility);
 			grafter->stop_at_closure( false );
 			grafter->copy_pdbinfo( true );

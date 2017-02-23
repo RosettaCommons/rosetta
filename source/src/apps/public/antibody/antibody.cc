@@ -367,7 +367,7 @@ int main(int argc, char * argv [])
 					TR << "Trying: " << location << std::endl;
 					if( std::ifstream(location+"/antibody_database/list").good() ) grafting_database = location;
 				}
-				if( grafting_database.size() == 0 ) utility_exit_with_message( "Could not guess location of antibody grafting_database, please use antibody::grafting_database option to specify it!");
+				if( grafting_database.size() == 0 ) utility_exit_with_message( "Could not guess location of antibody grafting_database (typically $ROSETTA/tools/antibody), please use -antibody::grafting_database option to specify it!");
 			}
 		}
 		basic::options::option[basic::options::OptionKeys::antibody::grafting_database](grafting_database);
