@@ -1291,6 +1291,21 @@ bool PoseFromSFRBuilder::determine_separate_chemical_entity( char chainID ) cons
 bool PoseFromSFRBuilder::determine_same_chain_prev( Size resid, bool separate_chemical_entity ) const
 {
 	Size res_prev = prev_residue_skipping_merges( resid );
+	bool res_prev_unrecognized = ! residue_was_recognized_[ res_prev ];
+	
+	//Check to see if the unrecognized residue was at an Nterminus and should have started the new chain.
+	if ( res_prev_unrecognized && res_prev != 1){
+		Size res_prev2 = prev_residue_skipping_merges( res_prev );
+		bool res_prev_separate_chemical_entity =determine_separate_chemical_entity( rinfos_[ res_prev].chainID() );
+		
+		bool prev_res_same_chain = (resid != res_prev && rinfos_[ res_prev ].chainID() == rinfos_[ res_prev2 ].chainID() &&
+		rinfos_[ res_prev ].terCount() == rinfos_[ res_prev2 ].terCount() && ! res_prev_separate_chemical_entity );
+		
+		if (! prev_res_same_chain ){
+			return false;
+		}
+	}
+	
 	return resid != res_prev && rinfos_[ resid ].chainID() == rinfos_[ res_prev ].chainID() &&
 		rinfos_[ resid ].terCount() == rinfos_[ res_prev ].terCount() && ! separate_chemical_entity;
 }
