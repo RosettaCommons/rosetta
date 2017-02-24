@@ -397,6 +397,28 @@ AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 	}
 
 	PyAssert((Nter_loop_start_!=Cter_loop_end_), "Start and end of remodeling region the same.  Please check movemap");
+	
+	if ((insertion_length() == 4 ) && (Nter_insert_flexibility() == 2) && (Cter_insert_flexibility() == 2)){
+		TR << "Flexibility of loop too long for the length of the loop. Changing flexibility settings to 1, 1)" << std::endl;
+		set_insert_flexibility(1, 1);
+		setup_movemap_and_regions( pose );
+	}
+	else if ((insertion_length() == 3 ) && (Nter_insert_flexibility() >= 1) && (Cter_insert_flexibility() >= 1)){
+		TR << "Flexibility of loop too long for the length of the loop. Changing flexibility settings to 1, 1)" << std::endl;
+		set_insert_flexibility(1, 1);
+		setup_movemap_and_regions( pose );
+	}
+	else if ((insertion_length() < 3 ) && (Nter_insert_flexibility() >= 1) && (Cter_insert_flexibility() >= 1)){
+		TR << "Flexibility of loop too long for the length of the loop. Changing flexibility settings to 0, 0)" << std::endl;
+		set_insert_flexibility(0, 0);
+		setup_movemap_and_regions( pose );
+	}
+	else if ( insertion_length() == 1 ){
+		TR.Warning << "This probably wont work. If you have an insert of one residue, please use pose functions.  Try at your own risk and debugging." << std::endl;
+		set_insert_flexibility(0, 0);
+		setup_movemap_and_regions( pose );
+	}
+	
 }
 
 void
