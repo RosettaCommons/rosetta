@@ -688,6 +688,7 @@ testinputfiles = [
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
+	"cyclic_peptide/AIB_pose.pdb",
 	"cyclic_peptide/asymm.pdb",
 	"cyclic_peptide/c2_symm.pdb",
 	"cyclic_peptide/c2m_symm.pdb",

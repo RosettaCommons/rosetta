@@ -48,6 +48,20 @@ class AchiralResidueTypeTestHelper {
 
 public:
 
+	void test_import(
+		basic::Tracer &TR,
+		std::string const &filename,
+		core::Size const res_index,
+		std::string const &expected_3letter_code,
+		std::string const &expected_full_name
+	) {
+		core::pose::PoseOP pose( core::import_pose::pose_from_file( filename, false, core::import_pose::PDB_file) );
+		TR << "\nRES" << res_index << "-name3\tRES" << res_index << "-name\tEXP-name3\tEXP-name\n";
+		TR << pose->residue(res_index).name3() << "\t" << pose->residue(res_index).name() << "\t" << expected_3letter_code << "\t" << expected_full_name << std::endl; 
+		TS_ASSERT_EQUALS( pose->residue(res_index).name3(), expected_3letter_code );
+		TS_ASSERT_EQUALS( pose->residue(res_index).name(), expected_full_name );
+	}
+
 	void test_mirror_symmetry(
 		basic::Tracer &TR,
 		std::string const &residue_type_name,

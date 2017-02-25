@@ -43,6 +43,11 @@ public:
 	void tearDown(){
 	}
 
+	void test_import_AIB(){
+		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
+		helper.test_import( TR, "protocols/cyclic_peptide/AIB_pose.pdb", 10, "AIB", "AIB" );
+	}
+
 	void test_mirror_symmetry_AIB(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
 		helper.test_mirror_symmetry( TR, "AIB", false );
