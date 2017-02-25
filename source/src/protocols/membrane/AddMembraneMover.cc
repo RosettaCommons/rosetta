@@ -449,10 +449,10 @@ AddMembraneMover::apply( Pose & pose ) {
 	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
 		mem_info = MembraneInfoOP(
-			new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, topology_ ) );
+			new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, thickness_, steepness_, topology_ ) );
 	} else {
 		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
-		mem_info = MembraneInfoOP( new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, lips, topology_ ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, thickness_, steepness_, lips, topology_ ) );
 	}
 
 	// Step 4: Add membrane info object to the pose conformation
