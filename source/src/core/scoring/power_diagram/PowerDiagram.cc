@@ -46,6 +46,7 @@ namespace core {
 namespace scoring {
 namespace power_diagram {
 
+
 Real power_distance( Vector const & pt, PDsphereOP const & sph )
 {
 	return ( pt.distance_squared( sph->xyz() ) - sph->rad2() );
@@ -70,6 +71,82 @@ PowerDiagram::construct_from_pose(
 
 	Size total_res( pose.size() );
 
+	Real max_radius( 0.0 );
+	Vector min( pose.residue(1).xyz(1) );
+	Vector max( pose.residue(1).xyz(1) );
+
+	for ( Size ires = 1 ; ires <= total_res ; ++ires ) {
+		Size const total_atm( pose.residue( ires ).natoms() );
+		for ( Size iatm = 1 ; iatm <= total_atm ; ++iatm ) {
+			Size const RADIUS_INDEX( pose.residue(1).atom_type_set().extra_parameter_index( "GK_RADIUS" ) );
+			Real const Rwater( 1.4 );
+			Real this_rad = pose.residue(ires).atom_type(iatm).extra_parameter( RADIUS_INDEX ) + Rwater;
+			if( this_rad > max_radius ) max_radius = this_rad;
+			if( pose.residue(ires).xyz(iatm).x() < min.x() ) {
+				min.x() = pose.residue(ires).xyz(iatm).x();
+			}
+			if( pose.residue(ires).xyz(iatm).y() < min.y() ) {
+				min.y() = pose.residue(ires).xyz(iatm).y();
+			}
+			if( pose.residue(ires).xyz(iatm).z() < min.z() ) {
+				min.z() = pose.residue(ires).xyz(iatm).z();
+			}
+			if( pose.residue(ires).xyz(iatm).x() > max.x() ) {
+				max.x() = pose.residue(ires).xyz(iatm).x();
+			}
+			if( pose.residue(ires).xyz(iatm).y() > max.y() ) {
+				max.y() = pose.residue(ires).xyz(iatm).y();
+			}
+			if( pose.residue(ires).xyz(iatm).z() > max.z() ) {
+				max.z() = pose.residue(ires).xyz(iatm).z();
+			}
+		}
+	}
+
+	min -= 3.0*max_radius;
+	max += 3.0*max_radius;
+//	TR << "Max radius " << max_radius << std::endl;
+//	TR << "box min " << min << std::endl;
+//	TR << "box max " << max << std::endl;
+
+	bool const use_virtual_box( true );
+
+	if( use_virtual_box ) {
+		Vector average = 0.5*( max + min );
+
+		// Make the six virtual spheres to confine the power diagram
+		Vector virtual1 = average;
+		virtual1.x() = max.x();
+		Vector virtual2 = average;
+		virtual2.y() = max.y();
+		Vector virtual3 = average;
+		virtual3.z() = max.z();
+		Vector virtual4 = average;
+		virtual4.x() = min.x();
+		Vector virtual5 = average;
+		virtual5.y() = min.y();
+		Vector virtual6 = average;
+		virtual6.z() = min.z();
+		Real dummy_rad = 0.5*max_radius;
+		PDsphereOP vsph1( make_new_sphere( virtual1, dummy_rad ) );
+		PDsphereOP vsph2( make_new_sphere( virtual2, dummy_rad ) );
+		PDsphereOP vsph3( make_new_sphere( virtual3, dummy_rad ) );
+		PDsphereOP vsph4( make_new_sphere( virtual4, dummy_rad ) );
+		PDsphereOP vsph5( make_new_sphere( virtual5, dummy_rad ) );
+		PDsphereOP vsph6( make_new_sphere( virtual6, dummy_rad ) );
+
+		spheres_.push_back( vsph1 );
+		spheres_.push_back( vsph2 );
+		spheres_.push_back( vsph3 );
+		spheres_.push_back( vsph4 );
+		make_initial_power_diagram();
+		add_single_atom_to_power_diagram( vsph5 );
+		spheres_.push_back( vsph5 );
+		add_single_atom_to_power_diagram( vsph6 );
+		spheres_.push_back( vsph6 );
+
+	}
+
 	// Resize lookup info based on pose info
 	sphere_lookup_.resize( total_res );
 	for ( Size ires = 1 ; ires <= total_res ; ++ires ) {
@@ -83,7 +160,7 @@ PowerDiagram::construct_from_pose(
 		Size const total_atm( pose.residue( ires ).natoms() );
 		for ( Size iatm = 1 ; iatm <= total_atm ; ++iatm ) {
 			PDsphereOP new_sph( make_new_sphere( pose, ires, iatm ) );
-			if ( spheres_.size() < 4 ) {
+			if ( spheres_.size() < 4 && !use_virtual_box ) {
 				store_new_sphere( new_sph );
 				// If we have hit four spheres, we can bootstrap the starter power diagram
 				if ( spheres_.size() == 4 ) {
@@ -115,6 +192,11 @@ PowerDiagram::construct_from_pose(
 		//  utility::vector1< utility::vector1< SAnode > > cycles ( get_cycles_from_intersections( intersections, patom ) );
 		(*sph_itr)->cycles() = get_cycles_from_intersections( intersections, patom );
 
+		for ( std::list< PDinterOP >::iterator itr = intersections.begin() ;
+				itr != intersections.end() ; ++itr ) {
+			(*itr)->nonconst_atoms().clear();
+		}
+
 	}
 }
 
@@ -125,6 +207,28 @@ PowerDiagram::clear()
 {
 	// reset vertex count
 	vertex_count_ = 0;
+
+	for( auto itr = spheres_.begin() ; itr != spheres_.end() ; ++itr ) {
+		(*itr)->vertices().clear();
+		for( auto cyc_itr = (*itr)->cycles().begin() ; cyc_itr != (*itr)->cycles().end() ; ++cyc_itr ) {
+			cyc_itr->clear();
+
+		}
+	}
+
+	for( auto itr = sphere_lookup_.begin() ; itr != sphere_lookup_.end() ; ++itr ) {
+		itr->clear();
+	}
+
+	for( auto itr = finite_vertices_.begin() ; itr != finite_vertices_.end() ; ++itr ) {
+		(*itr)->nonconst_partners().clear();
+		(*itr)->nonconst_generators().clear();
+	}
+
+	for( auto itr = infinite_vertices_.begin() ; itr != infinite_vertices_.end() ; ++itr ) {
+		(*itr)->nonconst_partners().clear();
+		(*itr)->nonconst_generators().clear();
+	}
 
 	// Clear the stored vertices
 	spheres_.clear();
@@ -141,14 +245,14 @@ PowerDiagram::extract_sasa_for_atom( Size ires, Size iatm )
 
 	Real surf_area( 0.0 );
 	PDsphereOP patom( sphere_lookup( ires, iatm ) );
-	std::list< PDinterOP > intersections( get_intersections_for_atom( ires, iatm ) );
-	for ( std::list< PDinterOP >::iterator itr = intersections.begin() ;
-			itr != intersections.end() ; ++itr ) {
-		find_common_intersection_atoms( (*itr) );
-	}
-	utility::vector1< utility::vector1< SAnode > > cycles ( get_cycles_from_intersections( intersections, patom ) );
+//	std::list< PDinterOP > intersections( get_intersections_for_atom( ires, iatm ) );
+//	for ( std::list< PDinterOP >::iterator itr = intersections.begin() ;
+//			itr != intersections.end() ; ++itr ) {
+//		find_common_intersection_atoms( (*itr) );
+//	}
+	//utility::vector1< utility::vector1< SAnode > > cycles ( get_cycles_from_intersections( intersections, patom ) );
 
-	surf_area += get_sasa_from_cycles( cycles, patom );
+	surf_area += get_sasa_from_cycles( patom->cycles(), patom );
 
 	return surf_area;
 
@@ -171,6 +275,22 @@ PowerDiagram::make_new_sphere(
 	new_sph->nonconst_atom() = iatm;
 	new_sph->nonconst_xyz() = p.residue(ires).xyz(iatm);
 	new_sph->nonconst_rad() = p.residue(ires).atom_type(iatm).extra_parameter( RADIUS_INDEX ) + Rwater;
+	new_sph->nonconst_rad2() = new_sph->rad()*new_sph->rad();
+
+	return new_sph;
+}
+
+PDsphereOP
+PowerDiagram::make_new_sphere(
+	Vector & pos,
+	Real radius
+)
+{
+	PDsphereOP new_sph( new PDsphere() );
+	new_sph->nonconst_res() = 9999;
+	new_sph->nonconst_atom() = 9999;
+	new_sph->nonconst_xyz() = pos;
+	new_sph->nonconst_rad() = radius;
 	new_sph->nonconst_rad2() = new_sph->rad()*new_sph->rad();
 
 	return new_sph;
@@ -421,61 +541,6 @@ PowerDiagram::add_single_atom_to_power_diagram(
 		/////// DONE NEW METHOD FOR DELETING VERTICES ///////////////
 		/////////////////////////////////////////////////////////////
 
-	} else {
-
-		//  TR << "Start for this atom/sphere" << std::endl;
-		std::list< PDvertexOP >::iterator itr( finite_vertices_.begin() );
-		while ( itr != finite_vertices_.end() ) {
-			//   TR << "Comparing vertex id " << (*itr)->id() << " new power of " << power_distance( (*itr)->xyz(), new_sph ) << " with finite vertex power " << (*itr)->power() << std::endl;
-			if ( power_distance( (*itr)->xyz(), new_sph ) < (*itr)->power() ) {
-				//    TR << "Removed a finite vertex with id " << (*itr)->id() << std::endl;
-				//    TR << "Deleting vertex at " << (*itr)->xyz() << std::endl;
-				//    TR << "compared new power of " << power_distance( (*itr)->xyz(), new_sph ) << " with finite vertex power " << (*itr)->power() << std::endl;
-
-				//    PDvertexOP this_vrt( *itr );
-				//    for( Size i = 1 ; i <= this_vrt->partners().size() ; ++i ) {
-				//     PDvertexOP & partner_vrt( this_vrt->nonconst_partners()[i] );
-				//     Real partner_pd( power_distance( partner_vrt->xyz(), new_sph ) );
-				//     TR << "Has partner at " << partner_vrt->xyz() << " power distance from sphere: " << partner_pd << " with stored power " << partner_vrt->power() << std::endl;
-				//    }
-
-				(*itr)->set_live( false );
-				trash.push_back( *itr );
-				itr = finite_vertices_.erase( itr );
-			} else {
-				++itr;
-			}
-		}
-		//  TR << "Done with this part" << std::endl;
-
-		// Move infinite vertices to be removed to the trash
-
-		itr = infinite_vertices_.begin();
-		while ( itr != infinite_vertices_.end() ) {
-			Real const check_val( ( new_sph->xyz() - (*itr)->generators()[1]->xyz() ).dot( (*itr)->direction() ) );
-			//   TR << "Comparing to infinite vertex plane, check_val is " << check_val << std::endl;
-			if ( check_val > 0.0 ) {
-				//    TR << "Removed an infinite vertex with id " << (*itr)->id() << " at " << (*itr)->xyz() << std::endl;
-				(*itr)->set_live( false );
-				trash.push_back( *itr );
-				itr = infinite_vertices_.erase( itr );
-			} else if ( check_val == 0.0 ) {
-				// The new atom is on the generator plane.  Only remove
-				// the infinite vertex if the lone finite partner vertex
-				// has been tagged for removal.
-				//    TR << "New atom is on generator plane of infinite vertex" << std::endl;
-				utility::vector1< PDvertexOP >::const_iterator fv_itr( (*itr)->partners().begin() );
-				while ( !(*fv_itr)->finite() ) ++fv_itr;
-				if ( find( trash.begin(), trash.end(), (*fv_itr) ) != trash.end() ) {
-					(*itr)->set_live( false );
-					trash.push_back( *itr );
-					itr = infinite_vertices_.erase( itr );
-					//     TR << "Removed an infinite vertex after plane check because finite vertex partner is in trash" << std::endl;
-				}
-			} else {
-				++itr;
-			}
-		}
 	}
 
 	// TR << "Printing finite list" << std::endl;
@@ -597,6 +662,12 @@ PowerDiagram::add_single_atom_to_power_diagram(
 	}
 
 	// Done with the trashed vertices.
+
+	for( auto itr = trash.begin() ; itr != trash.end() ; ++itr ) {
+		(*itr)->nonconst_partners().clear();
+		(*itr)->nonconst_generators().clear();
+	}
+
 	trash.clear();
 
 	//////////////////////////////////////////////////////////////////////////////

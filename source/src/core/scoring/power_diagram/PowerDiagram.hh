@@ -58,6 +58,7 @@ public:
 	PDvertexCOP const & vrt1() const { return v1_; }
 	PDvertexCOP const & vrt2() const { return v2_; }
 	utility::vector1< PDsphereCOP > const & atoms() const { return atoms_; }
+	utility::vector1< PDsphereCOP > & nonconst_atoms() { return atoms_; }
 	void add_atom( PDsphereCOP pa ) { atoms_.push_back( pa ); }
 	bool & circle() { return circle_; }
 
@@ -106,12 +107,13 @@ private:
 class PDsphere : public utility::pointer::ReferenceCount {
 
 public:
-	PDsphere() : res_(1), atom_(1), rad_(0.0), rad2_(0.0)
+	explicit PDsphere() : res_(1), atom_(1), rad_(0.0), rad2_(0.0)
 	{
 		xyz_.clear();
 		cell_vertices_.clear();
 		cycles_.clear();
 	}
+	~PDsphere() { cell_vertices_.clear(); }
 	Size const & res() const { return res_; }
 	Size & nonconst_res() { return res_; }
 	Size const & atom() const { return atom_; }
@@ -201,6 +203,7 @@ public: // construct/destruct
 		PowerDiagram const & // pd
 	)
 	{
+		std::cout << "PD copy constructor called?" << std::endl;
 		spheres_.clear();
 		finite_vertices_.clear();
 		infinite_vertices_.clear();
@@ -234,6 +237,9 @@ public:
 
 	PDsphereOP
 	make_new_sphere( core::pose::Pose & p, Size ires, Size iatm );
+
+	PDsphereOP
+	make_new_sphere( Vector & pos, Real rad );
 
 	void
 	construct_from_pose( core::pose::Pose & p );
