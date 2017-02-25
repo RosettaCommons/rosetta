@@ -47,8 +47,8 @@ namespace carbohydrates {
 class GlycanTreeSet : public utility::pointer::ReferenceCount  {
 
 public:
-	
-	
+
+
 	GlycanTreeSet();
 	//GlycanTreeSet(GlycanTreeSet const & src);
 
@@ -56,83 +56,83 @@ public:
 	GlycanTreeSet( conformation::Conformation const & conf );
 
 	virtual ~GlycanTreeSet();
-	
+
 	GlycanTreeSet( GlycanTreeSet const & src );
-	
+
 	GlycanTreeSetOP
 	clone() const;
 
 public:
-	
-	
+
+
 	bool
 	has_tree( core::Size const glycan_start_position ) const;
-	
+
 	///@brief Get a glycan tree corresponding to a particular starting residue.
 	GlycanTreeCOP
 	get_tree( core::Size const glycan_start_position ) const;
-	
+
 	///@brief Convenience function to the tree of a particular residue
 	GlycanTreeCOP
 	get_tree_containing_residue( core::Size const glycan_residue) const;
-	
-	
+
+
 	///@brief Get a map of the tree start to the glyan tree.
 	std::map< Size, GlycanTreeOP> const &
 	get_tree_map() const;
-	
+
 	///@brief Get a list of all the glycan trees.
 	utility::vector1< GlycanTreeCOP > const
 	get_all_trees() const;
 
 	utility::vector1< Size >
 	get_start_points() const;
-	
+
 	///@brief Setup the glycan trees.  Done by other classes if contained in Pose.
 	/// Unless you know what you are doing, you should not need to use this function.
 	void
 	setup_glycan_trees( conformation::Conformation const & pose);
-	
+
 public:
 
 	///@brief Get the number of glycan trees
 	core::Size
 	n_trees() const;
-	
+
 	///@brief Get the number of glycan trees
 	core::Size
 	get_size() const;
-	
+
 	///@brief Get the number of glycan trees
 	core::Size
 	size() const;
-	
+
 	core::Size
 	get_largest_glycan_tree_length() const;
-	
-public:
-	
-	///////////////////////////////////////////////////////////////////////
-	///  															    ///
-	///        Convenience functions that access stored data.           ///
-	///																    ///
-	///////////////////////////////////////////////////////////////////////
-	
 
-	
+public:
+
+	///////////////////////////////////////////////////////////////////////
+	///                     ///
+	///        Convenience functions that access stored data.           ///
+	///                    ///
+	///////////////////////////////////////////////////////////////////////
+
+
+
 	///@brief Convenience function to get the node of a particular residue
 	GlycanNodeCOP
 	get_node( core::Size const glycan_residue ) const;
-	
+
 	///@brief Convenience function to get the parent residue number from a GlycanNode
 	core::Size
 	get_parent( core::Size const glycan_residue ) const;
-	
+
 	///@brief Convenience function to get the starting position of a particular tree which contains the residue.
 	/// Accessed from a stored GlycanTree class.
 	core::Size
 	get_tree_start_of_glycan_residue( core::Size resnum) const;
-	
+
 	///@brief Convenience function to get the root of a particular tree which contains the residue.
 	/// Accessed from a stored GlycanTree class.
 	core::Size
@@ -142,32 +142,32 @@ public:
 	/// Used for Layer-based glycan sampling.
 	core::Size
 	get_distance_to_root( core::Size const glycan_residue ) const;
-	
+
 	/// @brief Linkage number on the parent residue.
 	/// @details an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
 	/// parent monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies that the residue at <seqpos> is a lower
 	/// terminus or connected to a non-sugar.
 	core::uint
 	get_linkage_position( core::Size const resnum ) const;
-	
+
 	/// @brief Convenience function to get whether the glycosidic linkage between the
 	///  residue and previous residue (parent residue) has an exocyclic
 	///  carbon.
 	bool
 	has_exocyclic_glycosidic_linkage( core::Size resnum ) const;
-	
+
 public:
-	
+
 	///@brief Respond to a length change event.  Do not use this manually.  It is used by the GlcyanTreeObserver.
 	///  The observer is attached to your pose and will respond.
 	void
 	on_length_change( core::conformation::signals::LengthEvent const & event );
-	
+
 private:
 
 	std::map< Size, GlycanTreeOP > glycan_tree_set_; // The actual tree set - Maps first glycan residue to the tree
 	std::map< Size, GlycanTreeOP > glycan_res_to_tree_; //Maps glycan residues to their glycan tree.
-	
+
 };
 
 

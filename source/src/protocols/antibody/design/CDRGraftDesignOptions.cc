@@ -165,8 +165,8 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser( CDRGraftDesignOptionsP
 
 {
 	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( *src.ab_manager_ ));
-	if (src.cdr_options_ ) cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions( *src.cdr_options_ ));
-	
+	if ( src.cdr_options_ ) cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions( *src.cdr_options_ ));
+
 }
 
 CDRGraftDesignOptionsParserOP

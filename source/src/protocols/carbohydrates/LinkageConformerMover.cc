@@ -316,7 +316,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		phi_sampler_mover_->apply(pose);
 
 		//Remove this when needed!
-		if ( ! pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( upper_resnum ) ){
+		if ( ! pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( upper_resnum ) ) {
 			psi_sampler_mover_->apply(pose);
 		} else {
 			TR << upper_resnum << " has glycosidic linkage.  Skipping psi sampling." << std::endl;

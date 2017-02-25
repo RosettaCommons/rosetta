@@ -119,7 +119,7 @@ GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	copy_pdbinfo_(src.copy_pdbinfo_)
 
 {
-	if (src.piece_) piece_ = piece_->clone();
+	if ( src.piece_ ) piece_ = piece_->clone();
 }
 
 

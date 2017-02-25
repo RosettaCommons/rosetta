@@ -109,15 +109,15 @@ AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & s
 
 {
 	using namespace constraints;
-	
+
 	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
 	if ( src.scorefxn_min_ ) scorefxn_min_ = src.scorefxn_min_->clone();
-	
+
 	if ( src.graft_designer_ ) graft_designer_ = AntibodyDesignMoverOP( new AntibodyDesignMover( *src.graft_designer_ ));
 	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_ ));
-	
-	
+
+
 }
 
 

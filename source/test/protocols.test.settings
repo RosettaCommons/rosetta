@@ -93,6 +93,9 @@ sources = {
 	],
 
 	"cyclic_peptide" : [
+		"AchiralResidueTypeTests",
+		"AchiralResidueTypeTests_betanov15",
+		"AchiralResidueTypeTests_betanov16",
 		"BetaAlphaDisulfideTests",
 		"BetaAlphaDisulfideTests_betanov15",
 		"BetaAlphaDisulfideTests_betanov16",
@@ -104,6 +107,7 @@ sources = {
 		"OversaturatedHbondAcceptorFilterTests",
 		"OversaturatedHbondAcceptorFilter_betanov15_Tests",
 		"OversaturatedHbondAcceptorFilter_betanov16_Tests",
+		"RamaMutationSelectorTests",
 		"SymmetricCycpepAlignTests",
 	],
 
@@ -690,6 +694,8 @@ testinputfiles = [
 	"cyclic_peptide/c3_symm_tbmb.pdb",
 	"cyclic_peptide/c4m_bad.pdb",
 	"cyclic_peptide/c4m_symm.pdb",
+	"cyclic_peptide/c4m.symm",
+	"cyclic_peptide/c4m_test_pose.pdb",
 	"cyclic_peptide/dVdPN_A.pdb",
 	"cyclic_peptide/mixed_disulf_test.pdb",
 	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",

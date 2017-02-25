@@ -61,7 +61,7 @@ main( int argc, char * argv [] )
 		using namespace core::io::pdb;
 		using namespace core::conformation;
 		using namespace core::chemical;
-				using namespace core::import_pose;
+		using namespace core::import_pose;
 
 		devel::init( argc, argv );
 		//register_options();
@@ -76,10 +76,10 @@ main( int argc, char * argv [] )
 		pose_from_file(pose_, "/Users/jadolfbr/Documents/Rosetta/main/source/test/core/chemical/carbohydrates/gp120_2glycans_man5.pdb", PDB_file);
 
 		pose_.delete_residue_slow(593);
-		
+
 		GlycanTreeSetCOP tree_set = pose_.glycan_tree_set();
 		utility::vector1< GlycanTreeCOP > const trees =  tree_set->get_all_trees() ;
-		
+
 		std::string const man9_s( "a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
 		man9_op_ = core::pose::pose_from_saccharide_sequence( man9_s, "fa_standard", true, false ); //No need to idealize.
@@ -132,7 +132,7 @@ main( int argc, char * argv [] )
 		delete_carbohydrate_branch( *man9_copy, 1); ///Deletes 9,8,11,10,6,5,4,3, 2
 		//TS_ASSERT_EQUALS(man9_copy->size(), 1);
 		man9_copy->dump_pdb("man9_trim_at_1.pdb");
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

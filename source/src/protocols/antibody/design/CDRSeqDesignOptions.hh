@@ -106,12 +106,12 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  CDRSeqDesignOptionsParser(CDRSeqDesignOptions const & src);
 
 	virtual ~CDRSeqDesignOptionsParser();
-	
+
 	CDRSeqDesignOptionsParser( CDRSeqDesignOptionsParser const & src );
-	
+
 	CDRSeqDesignOptionsParserOP
 	clone() const;
-	
+
 	CDRSeqDesignOptionsOP
 	parse_options(CDRNameEnum cdr, std::string const & filename);
 

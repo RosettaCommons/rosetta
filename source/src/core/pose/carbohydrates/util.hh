@@ -92,7 +92,7 @@ set_dihedrals_from_linkage_conformer_data( Pose & pose,
 	core::chemical::carbohydrates::LinkageConformerData const & conformer,
 	bool idealize = true,
 	bool use_prob_for_sd = false );
-	
+
 
 ///////////////////////////   On-The-Fly Helper Functions    /////////////////////////////////////
 ///
@@ -213,16 +213,16 @@ utility::vector1< core::Size >
 get_carbohydrate_residues_of_branch(
 	Pose const & pose,
 	uint const starting_position);
-	
-	
+
+
 /// @brief Get tips (end residue of linear components of branches) further down the branch from this residue.  starting_position ->
 /// @details Convenience function. Calls get_carbohydrate_residues_and_tips_of_branch
 utility::vector1< core::Size >
 get_carbohydrate_tips_of_branch(
 	Pose const & pose,
 	uint const starting_position);
-	
-	
+
+
 /// @brief Get residues further down the branch from this residue.  starting_position ->
 ///  Returns pair of all_upstream_residues, tips.
 ///  Tips are the ends of linear glycan branches.
@@ -230,9 +230,9 @@ std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > >
 get_carbohydrate_residues_and_tips_of_branch(
 	Pose const & pose,
 	uint const starting_position);
-	
-	
-	
+
+
+
 /// @brief Get the carbohydrate residue connecting the protein branch point.
 /// Returns 0 if branch point is not connected to carbohydrate downstream.
 ///
@@ -252,8 +252,8 @@ get_resnum_from_glycan_position(
 	Pose const & pose,
 	core::Size const first_glycan_resnum,
 	core::Size const glycan_position);
-	
-	
+
+
 ///@brief Get the particular resnum from a glycan position, givin the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
 /// Returns 0 if that glycan_position is not part of the glycan we are interested in or not in pose.
@@ -314,7 +314,7 @@ get_branching_residues(
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
 
-	
+
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
 ///
 ///  Children Residues:  Filled in list of children residues found if not tips.
@@ -332,7 +332,7 @@ fill_upstream_children_res_and_tips(
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
 
-	
+
 
 /// @brief Get all residue numbers in order from the tip to (and not including) stop_at_residue or a branch point.
 ///  All residue numbers are the tip or a linear polymer of glycans.

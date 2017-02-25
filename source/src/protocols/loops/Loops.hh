@@ -88,10 +88,10 @@ public:
 
 	// destructor
 	~Loops() override;
-	
+
 	LoopsOP
 	clone() const;
-	
+
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
 
 	void read_loops_options();

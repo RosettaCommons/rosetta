@@ -757,8 +757,8 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	using namespace pdb;
 	using namespace chemical;
 	using namespace conformation;
-	
-	
+
+
 	//typedef std::map< std::string, double > ResidueTemps;
 
 	// Note: _do not_ access Residue here. You do not need to. Doing so triggers
@@ -836,14 +836,14 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 	// this is where pdb info used to get stored.
 	build_pdb_info_2_temps( pose );
-	
+
 	//Create the GlycanTreeSet if carbohydrates are present.
 	// This requires up-to-data connectivity information and is required to be in the pose if glycan residues are present.
-	if ( pose.conformation().contains_carbohydrate_residues() ){
+	if ( pose.conformation().contains_carbohydrate_residues() ) {
 		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( pose.conformation() ));
 		pose.observer_cache().set( pose::datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
 	}
-	
+
 	// Step 6. Addition of automatic constraints, bfactor repair, and comment reading.
 
 	// Add constraints based on LINK records if desired

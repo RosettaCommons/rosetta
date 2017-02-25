@@ -75,9 +75,9 @@ static THREAD_LOCAL basic::Tracer TR( "core.pose.carbohydrates.util" );
 namespace core {
 namespace pose {
 namespace carbohydrates {
-	using std::map;
-	using namespace conformation::carbohydrates;
-	
+using std::map;
+using namespace conformation::carbohydrates;
+
 // Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
 /// @details   Format for <iupac_sequence>:\n
 /// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
@@ -213,9 +213,9 @@ glycosylate_pose(
 	//TR << "InitialNRES: " << initial_sizes << " NRES: "<< pose.size() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
 		pose.residue( sequence_position ).name3() << sequence_position << endl;
-	
+
 	//Make sure that the new pose has a GlycanTreeSetObserver.
-	if ( ! pose.glycan_tree_set() ){
+	if ( ! pose.glycan_tree_set() ) {
 		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP(new GlycanTreeSetObserver(pose.conformation()));
 		pose.observer_cache().set( datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
 	}
@@ -224,7 +224,7 @@ glycosylate_pose(
 		TR.Debug << "Idealizing glycosidic torsions." << endl;
 		idealize_last_n_glycans_in_pose( pose, n_types );
 	}
-	
+
 }
 
 // Glycosylate the Pose at the given sequence position using an IUPAC sequence.
@@ -299,7 +299,7 @@ glycosylate_pose_by_file(
 			"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
 	}
 }
-	
+
 
 
 // Return pointers to the two residues of the glycosidic bond.
@@ -324,10 +324,9 @@ get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 	// Get the 2nd residue of interest.
 	// (res_n_minus_1 is a misnomer for the lower termini of branches.)
 	ResidueCOP res_n_minus_1;
-	if ( pose.glycan_tree_set() ){
-		 res_n_minus_1 = pose.residue( pose.glycan_tree_set()->get_parent( sequence_position ) ).get_self_ptr();
-	}
-	else {
+	if ( pose.glycan_tree_set() ) {
+		res_n_minus_1 = pose.residue( pose.glycan_tree_set()->get_parent( sequence_position ) ).get_self_ptr();
+	} else {
 		res_n_minus_1 = pose.residue( find_seqpos_of_saccharides_parent_residue( *res_n ) ).get_self_ptr();
 	}
 
@@ -458,23 +457,22 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
 		return ids;
 	}
-	
-	
+
+
 	//if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
 	bool exocylic_linkage;
-	if ( pose.glycan_tree_set() ){
+	if ( pose.glycan_tree_set() ) {
 		exocylic_linkage = pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( residues.first->seqpos() );
-	}
-	else {
+	} else {
 		exocylic_linkage = has_exocyclic_glycosidic_linkage(pose.conformation(), residues.first->seqpos() );
 	}
 
-	if (residues.second->is_carbohydrate() && ( ! exocylic_linkage)){
+	if ( residues.second->is_carbohydrate() && ( ! exocylic_linkage) ) {
 		TR.Debug << "Omega is undefined for residue " << sequence_position <<
 			" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
-	
+
 	ids.resize( 4 );  // A torsion has 4 reference atoms.
 
 	// Set the atom names of the four reference atoms.
@@ -524,13 +522,12 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 	}
 
 	bool exocyclic_linkage;
-	if ( pose.glycan_tree_set() ){
+	if ( pose.glycan_tree_set() ) {
 		exocyclic_linkage = pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( residues.first->seqpos() );
-	}
-	else {
+	} else {
 		exocyclic_linkage = has_exocyclic_glycosidic_linkage(pose.conformation(), residues.first->seqpos() );
 	}
-	
+
 	if ( residues.second->is_carbohydrate() && ( ! exocyclic_linkage ) ) {
 		TR.Debug << "Omega2 is undefined for residue " << sequence_position <<
 			" because the glycosidic linkage is not exocyclic." << endl;
@@ -1113,7 +1110,7 @@ remove_carbohydrate_branch_point_variants( Pose & pose, core::Size const seqpos)
 
 /// @brief find connected atom in neighboring residue
 // pair: <residue number,main chain atom number
-void 
+void
 find_neighbor( Pose &pose, core::Size res_pos, core::Size atom_nr, std::pair<core::Size, core::Size> &neighbor )
 {
 	// TODO: set proper bond length cut offs
@@ -1123,33 +1120,33 @@ find_neighbor( Pose &pose, core::Size res_pos, core::Size atom_nr, std::pair<cor
 		conformation::ResidueOP res( new conformation::Residue( pose.residue( i ) ) );
 		chemical::ResidueTypeOP RT( new chemical::ResidueType( pose.residue_type( i ) ) );
 		// Loop through main chain atoms of potential neighbor residue
-		for ( utility::vector1< core::Size >::const_iterator mc_atom = RT->mainchain_atoms().begin(); mc_atom != RT->mainchain_atoms().end(); ++mc_atom ){
+		for ( utility::vector1< core::Size >::const_iterator mc_atom = RT->mainchain_atoms().begin(); mc_atom != RT->mainchain_atoms().end(); ++mc_atom ) {
 			core::Real distance = pose.residue(res_pos).xyz( atom_nr ).distance(pose.residue( i ).xyz( *mc_atom ));
-			if ( (distance < max_cutoff) | (distance > min_cutoff) ){
+			if ( (distance < max_cutoff) | (distance > min_cutoff) ) {
 				neighbor = std::make_pair(i,*mc_atom);
 			}
 		}
 	}
 	// Apparently no neighbor was found
-	
+
 }
 
 /// @brief Go through pose from non-Rosetta PDB file and infer and properly set up branching
 void
 setup_existing_glycans(Pose &pose)
 {
-	
+
 	//chain_map = chainID, residue number //
 	map< core::Size/*chainID*/,utility::vector1<core::Size>  > chain_map;
-	for ( core::Size res_pos = 1; res_pos <= pose.total_residue(); ++res_pos ){
+	for ( core::Size res_pos = 1; res_pos <= pose.total_residue(); ++res_pos ) {
 		conformation::ResidueOP res( new conformation::Residue( pose.residue( res_pos ) ) );
 		if ( res->is_carbohydrate() ) {
 			//core::Size chain = res->chain();
 			chemical::ResidueTypeOP RT( new chemical::ResidueType( pose.residue_type(res_pos) ) );
-			for ( utility::vector1< Size >::const_iterator atom = RT->mainchain_atoms().begin(); atom != RT->mainchain_atoms().end(); ++atom){
+			for ( utility::vector1< Size >::const_iterator atom = RT->mainchain_atoms().begin(); atom != RT->mainchain_atoms().end(); ++atom ) {
 				// Find the fisrt exocyclic oxigen
 				std::string atom_name = RT->atom_name(*atom);
-				if ( atom_name.find('O') != std::string::npos ){  // is oxigen
+				if ( atom_name.find('O') != std::string::npos ) {  // is oxigen
 					std::pair< core::Size,core::Size  > neighbor = std::make_pair(0,0);
 					find_neighbor(pose,res_pos,*atom,neighbor);
 					if ( neighbor.first == 0 || neighbor.second == 0 ) {
@@ -1163,8 +1160,8 @@ setup_existing_glycans(Pose &pose)
 							chemical::carbohydrates::CarbohydrateInfoManager::branch_variant_type_from_atom_name( atom_name ) );
 						add_variant_type_to_pose_residue( pose, variant, res_pos );
 					}
-						
-				}		
+
+				}
 			}
 		}
 	}
@@ -1172,7 +1169,7 @@ setup_existing_glycans(Pose &pose)
 	info->name( pose.sequence() );  // Use the sequence as the default name.
 	pose.pdb_info( info );
 }
-		
+
 
 
 
@@ -1198,7 +1195,7 @@ get_carbohydrate_residues_of_branch(
 {
 	return get_carbohydrate_residues_and_tips_of_branch(pose, starting_position).first;
 }
-	
+
 
 
 /// @brief Get tips (end residue of linear components of branches) further down the branch from this residue.  starting_position ->
@@ -1210,7 +1207,7 @@ get_carbohydrate_tips_of_branch(
 {
 	return get_carbohydrate_residues_and_tips_of_branch(pose, starting_position).second;
 }
-	
+
 
 
 /// @brief Get residues further down the branch from this residue.  starting_position ->
@@ -1236,7 +1233,7 @@ core::Size
 get_glycan_connecting_protein_branch_point(Pose const & pose, core::Size const protein_branch_point_resnum){
 
 	return conformation::carbohydrates::get_glycan_connecting_protein_branch_point( pose.conformation(), protein_branch_point_resnum );
-	
+
 }
 
 
@@ -1246,35 +1243,34 @@ get_glycan_connecting_protein_branch_point(Pose const & pose, core::Size const p
 core::Size
 get_resnum_from_glycan_position(Pose const & pose, core::Size const glycan_one, core::Size const glycan_position){
 	return conformation::carbohydrates::get_resnum_from_glycan_position( pose.conformation(), glycan_one, glycan_position);
-	
+
 }
 
 core::Size
 get_glycan_position_from_resnum(Pose const & pose, core::Size const glycan_one, core::Size const glycan_residue ){
-	
+
 	return conformation::carbohydrates::get_glycan_position_from_resnum( pose.conformation(), glycan_one, glycan_residue );
-	
+
 }
 
 
 
 select::residue_selector::ResidueSubset
 get_resnums_from_glycan_positions(Pose const & pose, core::Size const glycan_one, utility::vector1< core::Size > const & glycan_positions){
-	
+
 	utility::vector1< bool > subset(pose.total_residue(), false);
-	
+
 	core::Size glycan_length = pose.glycan_tree_set()->get_tree(glycan_one)->get_size();
-	for (core::Size index = 1; index <= glycan_positions.size(); ++index){
-		
+	for ( core::Size index = 1; index <= glycan_positions.size(); ++index ) {
+
 		Size glycan_position = glycan_positions[ index ];
-		if (glycan_position <= glycan_length){
-	
+		if ( glycan_position <= glycan_length ) {
+
 			Size glycan_residue = get_resnum_from_glycan_position(pose, glycan_one, glycan_position);
-			
-			if (glycan_residue <= pose.total_residue()){
+
+			if ( glycan_residue <= pose.total_residue() ) {
 				subset[ glycan_residue ] = true;
-			}
-			else {
+			} else {
 				utility_exit_with_message("Glycan residue not in pose: "+utility::to_string( glycan_residue) + " corresponding to glycan position "+utility::to_string( glycan_position));
 			}
 
@@ -1286,13 +1282,13 @@ get_resnums_from_glycan_positions(Pose const & pose, core::Size const glycan_one
 select::residue_selector::ResidueSubset
 get_resnums_from_glycan_positions(Pose const & pose, utility::vector1< core::Size > const & glycan_positions){
 	select::residue_selector::OrResidueSelector combine_subsets = select::residue_selector::OrResidueSelector();
-	
+
 	utility::vector1< bool > subset(pose.total_residue(), false);
 	utility::vector1< bool > glycan_start_points =  pose.glycan_tree_set()->get_start_points();
-	
-	for (Size i = 1; i <= glycan_start_points.size(); ++i){
-		if (! glycan_start_points[ i ]) continue;
-		
+
+	for ( Size i = 1; i <= glycan_start_points.size(); ++i ) {
+		if ( ! glycan_start_points[ i ] ) continue;
+
 		select::residue_selector::ResidueSubset single_glycan = get_resnums_from_glycan_positions(pose, i, glycan_positions);
 		combine_subsets.apply_or_to_subset(single_glycan, subset);
 	}
@@ -1320,9 +1316,9 @@ delete_carbohydrate_branch( Pose & pose, uint const delete_to )
 		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
 		return;
 	}
-	
+
 	TR << "Delete Carb Branch Starting Points " << pose.glycan_tree_set()->get_start_points() << std::endl;
-	
+
 	std::pair< vector1< Size >, vector1< Size > > resnums_and_tips;
 	resnums_and_tips = get_carbohydrate_residues_and_tips_of_branch( pose, delete_to );
 
@@ -1333,7 +1329,7 @@ delete_carbohydrate_branch( Pose & pose, uint const delete_to )
 	std::string ref_pose_name = "temp_ref_pose" ;
 
 	Size current_delete_to = delete_to;
-	
+
 	while ( tips.size() > 0 ) {
 
 		pose.reference_pose_from_current( ref_pose_name, true );
@@ -1430,7 +1426,7 @@ utility::vector1< core::Size >
 get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue )
 {
 	// This logic can be simplified even further, but this works.
-	
+
 	utility::vector1< Size > resnums;
 
 	//If residue is not carbohydrate, we can't find the parent residue.
@@ -1443,7 +1439,7 @@ get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue )
 	Size res = tip_residue;
 
 	while ( pose.residue( res ).n_current_residue_connections() < 3 ) {
-		
+
 		Size parent = pose.glycan_tree_set()->get_parent( res );
 
 		if ( res != tip_residue ) { resnums.push_back( res ); }

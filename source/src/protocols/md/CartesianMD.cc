@@ -121,7 +121,7 @@ CartesianMD::CartesianMD():
 
 CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	core::scoring::ScoreFunctionCOP sfxn,
- core::kinematics::MoveMapCOP movemap ) :
+	core::kinematics::MoveMapCOP movemap ) :
 	use_rattle_( true )
 {
 	if ( movemap == nullptr ) {
@@ -140,7 +140,7 @@ CartesianMD::CartesianMD( core::pose::Pose const & pose,
 }
 
 CartesianMD::CartesianMD( core::pose::Pose const & pose,
-													core::scoring::ScoreFunction const &sfxn ) :
+	core::scoring::ScoreFunction const &sfxn ) :
 	use_rattle_( true )
 {
 	core::kinematics::MoveMapOP mmloc( new core::kinematics::MoveMap );
@@ -402,7 +402,7 @@ CartesianMD::cst_on_pose_dynamic( core::pose::Pose &pose,
 				core::Size i_dof = (i_atm-1)*3 + i;
 				xyzmix[i-1] = (1.0 - Kappa())*prv_eqxyz[ i_dof ];
 				xyzmix[i-1] += Kappa()*(Gamma()*curr_eqxyz[ i_dof ] +
-															 (1.0-Gamma())*ref_xyz[ i_dof ] );
+					(1.0-Gamma())*ref_xyz[ i_dof ] );
 
 				// update prv_eq crd
 				prv_eqxyz[ i_dof ] = xyzmix[i-1];
@@ -499,7 +499,7 @@ void CartesianMD::apply( core::pose::Pose & pose ) {
 		do_MD( pose, nstep(), temp0(), true );
 
 	} else { // scheduled run
-		
+
 		for ( Size i_step = 1; i_step <= mdsch().size(); ++i_step ) {
 			std::string const runtype( mdsch(i_step).type );
 			if ( runtype.compare("sch") == 0 ) {
@@ -673,7 +673,7 @@ void CartesianMD::VelocityVerlet_Integrator( core::pose::Pose &pose,
 	// Reflect change in coordinates into pose
 	min_map.copy_dofs_to_pose( pose, xyz_loc );
 
-	// Don't need this unless context needs to be updated 
+	// Don't need this unless context needs to be updated
 	if ( update_score ) scorefxn()->score( pose );
 
 	Multivec force;
@@ -721,7 +721,7 @@ void CartesianMD::initialize_velocity( core::Real const &temperature )
 
 		Real scalar = sqrt(2.0*temperature*Boltzmann/mass(i_atm))*numeric::random::rg().gaussian();
 		if ( numeric::random::rg().uniform() > 0.5 ) scalar *= -1.0;
-		
+
 		vel_loc[i_dof] = scalar;
 		//acc(i_dof) = 0.0;
 		//printf("%4d %4d %8.3f %8.3f %8.3f\n",int(i_dof),int(i_atm),scalar,mass(i_atm),vel_loc[i_dof]);
@@ -781,7 +781,7 @@ void CartesianMD::report_MD( core::pose::Pose &pose,
 	TR << std::endl;
 
 	if ( cummulative_time() > 0.1 && // Truncate initial 1ps to remove minimization memory
-			 selectmode().compare("minobj") == 0 && Eobj < Emin_obj() ) {
+			selectmode().compare("minobj") == 0 && Eobj < Emin_obj() ) {
 		set_pose_minobj( pose );
 		set_Emin_obj( scorefxn_obj()->score( pose ) );
 		set_time_minobj(  cummulative_time() );

@@ -339,11 +339,11 @@ SequenceMapping::get_corresponding_residue_in_current( Size original_resnum ) co
 
 //utility::vector1< Size >
 //SequenceMapping::get_old_resnums() const {
-//	utility::vector1 < Size > mapped_residues;
-//	for (auto const kv : mapping_){
-//		mapped_residues.push_back(kv.first);
-//	}
-//	return mapped_residues;
+// utility::vector1 < Size > mapped_residues;
+// for (auto const kv : mapping_){
+//  mapped_residues.push_back(kv.first);
+// }
+// return mapped_residues;
 //}
 
 bool SequenceMapping::operator == ( SequenceMapping const & rhs ) const

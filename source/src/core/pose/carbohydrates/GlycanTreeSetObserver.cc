@@ -30,11 +30,11 @@ namespace core {
 namespace pose {
 namespace carbohydrates {
 
-	
-	using namespace core::conformation::carbohydrates;
-	using namespace core::pose::datacache;
-	using namespace core::conformation::signals;
-	using namespace core::pose::datacache;
+
+using namespace core::conformation::carbohydrates;
+using namespace core::pose::datacache;
+using namespace core::conformation::signals;
+using namespace core::pose::datacache;
 
 
 ///@brief
@@ -53,9 +53,8 @@ get_glycan_tree_set(Pose const & pose){
 	//const access: if cacheable observer hasn't been set, return NULL pointer
 	if ( !pose.observer_cache().has( core::pose::datacache::GLYCAN_TREE_OBSERVER  ) ) {
 		return nullptr;
-	}
-	else {
-		
+	} else {
+
 		//Not sure if this is slow or not and how it can be sped up.
 		CacheableObserverCOP obs = pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::GLYCAN_TREE_OBSERVER );
 		GlycanTreeSetObserverCOP observer = utility::pointer::static_pointer_cast< GlycanTreeSetObserver const >( obs );
@@ -134,7 +133,7 @@ GlycanTreeSetObserver::is_attached() const {
 
 void
 GlycanTreeSetObserver::attach_impl( core::pose::Pose & pose ){
-	
+
 	length_event_link_ = pose.conformation().attach_length_obs( &GlycanTreeSetObserver::on_length_change, this );
 
 }

@@ -287,6 +287,16 @@ RamaPrePro::random_mainchain_torsions(
 	}
 }
 
+/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
+/// @details Also returns true for an N-methyl amino acid or peptoid.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+RamaPrePro::is_N_substituted(
+	core::chemical::ResidueTypeCOP restype
+) const {
+	core::chemical::AA const aa( restype->aa() );
+	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || restype->is_n_methylated() || restype->is_peptoid() );
+}
 
 /// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing
 /// pointers to them in a map of AA enum -> MainchainScoreTableCOP.
@@ -313,17 +323,6 @@ RamaPrePro::read_canonical_rpp_tables( ) {
 		runtime_assert_string_msg( curtable_pp, "Error in core::scoring::RamaPrePro::read_canonical_rpp_tables(): Could not read pre-proline table for " + restype->name() + "." );
 		canonical_prepro_score_tables_[ static_cast< core::chemical::AA >(i) ] = curtable_pp;
 	}
-}
-
-/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
-/// @details Also returns true for an N-methyl amino acid or peptoid.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-RamaPrePro::is_N_substituted(
-	core::chemical::ResidueTypeCOP restype
-) const {
-	core::chemical::AA const aa( restype->aa() );
-	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || restype->is_n_methylated() || restype->is_peptoid() );
 }
 
 } //namespace scoring

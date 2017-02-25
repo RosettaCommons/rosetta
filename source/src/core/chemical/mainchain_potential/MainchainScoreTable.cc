@@ -132,7 +132,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				runtime_assert_string_msg(!dimensions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS\" line after a \"@DIMENSIONS\" line." );
 				runtime_assert_string_msg(!offsets_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS\" line after a \"@OFFSETS\" line." );
 				linestream >> n_mainchain_torsions;
-				check_linestream(linestream, filename);
+				check_linestream(linestream, filename, false);
 				dimensions.resize(n_mainchain_torsions, 36);
 				offsets.resize(n_mainchain_torsions, 0.5);
 				scoring_grid_indices.resize(n_mainchain_torsions, 0);
@@ -143,11 +143,9 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				runtime_assert( n_mainchain_torsions == dimensions.size() ); //Should be guaranteed true.
 				for ( core::Size i=1; i<=n_mainchain_torsions; ++i ) {
 					linestream >> dimensions[i];
-					check_linestream(linestream, filename);
+					check_linestream(linestream, filename, i<n_mainchain_torsions);
 				}
 				initialize_tensors(dimensions);
-				core::Size dummy(0);
-				linestream >> dummy;
 				runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Too many dimensions were specified in a \"@DIMENSIONS\" line." );
 				dimensions_read=true;
 			} else if ( !linehead.compare("@OFFSETS") ) {
@@ -155,10 +153,8 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				runtime_assert( n_mainchain_torsions == offsets.size() ) ;  //Should be guaranteed true.
 				for ( core::Size i=1; i<=n_mainchain_torsions; ++i ) {
 					linestream >> offsets[i];
-					check_linestream(linestream, filename);
+					check_linestream(linestream, filename, i<n_mainchain_torsions);
 				}
-				core::Size dummy(0);
-				linestream >> dummy;
 				runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Too many dimensions were specified in an \"@OFFSETS\" line." );
 				offsets_read=true;
 			}
@@ -187,7 +183,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			runtime_assert( scoring_grid_indices.size() /*The scoring_grid_indices vector is used to specify a position in the tensor*/ == n_mainchain_torsions); //Should be guaranteed true.
 			//Figure out the coordinates:
 			for ( core::Size i=1; i<=n_mainchain_torsions; ++i ) {
-				scoring_grid_indices[i] = static_cast< core::Size >( std::round( scoring_grid_torsion_values[i] / 360.0 * static_cast<core::Real>(dimensions[i] ) - offsets[i] ) /*+ 1*/ ); //Note that MathNTensors are 0-based.
+				scoring_grid_indices[i] = static_cast< core::Size >( std::round( scoring_grid_torsion_values[i] / 360.0 * static_cast<core::Real>(dimensions[i] ) ) /*+ 1*/ ); //Note that MathNTensors are 0-based.
 			}
 
 			numeric::access_Real_MathNTensor( energies_, scoring_grid_indices ) = prob;
@@ -421,9 +417,10 @@ MainchainScoreTable::energies_from_probs(
 void
 MainchainScoreTable::check_linestream(
 	std::istringstream const &linestream,
-	std::string const &filename
+	std::string const &filename,
+	bool const fail_on_eof
 ) const {
-	runtime_assert_string_msg( !linestream.bad() && !linestream.eof(), "Error core::chemical::mainchain_potential::MainchainScoreTable::check_linestream():  Error reading file " + filename + ".  Bad data line encountered.");
+	runtime_assert_string_msg( !linestream.bad() && ( !fail_on_eof || !linestream.eof()), "Error core::chemical::mainchain_potential::MainchainScoreTable::check_linestream():  Error reading file " + filename + ".  Bad data line encountered.");
 }
 
 /// @brief Initialize the energies_ and probabilities_ tensors to 0-containing N-tensors, of the

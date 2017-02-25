@@ -65,9 +65,9 @@ BBDihedralSamplerMover::BBDihedralSamplerMover( BBDihedralSamplerMover const & s
 	sampler_movemap_union_(src.sampler_movemap_union_)
 {
 	samplers_.clear();
-	for (auto const & kv : src.samplers_){
+	for ( auto const & kv : src.samplers_ ) {
 		utility::vector1< BBDihedralSamplerOP > sampler_list;
-		for (BBDihedralSamplerOP sampler : kv.second){
+		for ( BBDihedralSamplerOP sampler : kv.second ) {
 			BBDihedralSamplerOP new_sampler = sampler->clone();
 			sampler_list.push_back( new_sampler );
 		}

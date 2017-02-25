@@ -15,6 +15,7 @@
 // Test headers
 #include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
+#include <test/util/pdb1ubq.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -29,6 +30,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 
 // Protocol Headers
 #include <protocols/cyclic_peptide/FlipChiralityMover.hh>
@@ -138,6 +142,39 @@ public:
 	/// using the pre-proline map.
 	void test_random_phipsi_noncanonical_d_aa_prepro() {
 		do_test("AWPA", true, true);
+	}
+
+	/// @brief Checks that the rama_prepro score term is storing the value that it has calculated in the
+	/// energies object of the pose proprely.
+	void test_correct_score_stored() {
+		core::pose::Pose pose( pdb1ubq5to13_pose() );
+
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::rama_prepro, 1.0 );
+		(sfxn)(pose);
+
+		core::scoring::ScoringManager const &score_man( *(core::scoring::ScoringManager::get_instance()) );
+		core::scoring::RamaPrePro const &rama( score_man.get_RamaPrePro() );
+		utility::vector1< core::Real > gradient; //Unused, but needed below.
+
+		for ( core::Size ir=2, irmax=pose.total_residue(); ir<irmax; ++ir ) {
+			core::Real direct_calc(0.0), direct_calc_2(0.0);
+
+			utility::vector1< core::Real > mainchain_tors(2);
+			mainchain_tors[1] = pose.phi(ir);
+			mainchain_tors[2] = pose.psi(ir);
+			rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type(ir).get_self_ptr(), pose.residue_type(ir+1).get_self_ptr(), mainchain_tors, direct_calc, gradient, false);
+			if ( ir > 2 ) {
+				utility::vector1< core::Real > mainchain_tors2(2);
+				mainchain_tors2[1] = pose.phi(ir-1);
+				mainchain_tors2[2] = pose.psi(ir-1);
+				rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type(ir-1).get_self_ptr(), pose.residue_type(ir).get_self_ptr(), mainchain_tors2, direct_calc_2, gradient, false);
+			}
+
+			// Note that there is a subtlety, here: because the rama_prepro energy is a two-body energy computed between residue i and i+1, the score is the sum of the rama_prepro score for
+			// residue i and residue i-1.
+			TS_ASSERT_DELTA( pose.energies().residue_total_energies(ir)[ core::scoring::rama_prepro ], (direct_calc+direct_calc_2) / 2.0, 0.0001 );
+		}
 	}
 
 

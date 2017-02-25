@@ -153,12 +153,12 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  CDRGraftDesignOptionsParser(CDRGraftDesignOptions const & src);
 
 	virtual ~CDRGraftDesignOptionsParser();
-	
+
 	CDRGraftDesignOptionsParser( CDRGraftDesignOptionsParser const & src );
-	
+
 	CDRGraftDesignOptionsParserOP
 	clone() const;
-	
+
 	CDRGraftDesignOptionsOP
 	parse_options(CDRNameEnum cdr, std::string const & filename);
 

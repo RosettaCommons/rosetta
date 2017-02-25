@@ -1,0 +1,139 @@
+ATOM      1  N   DSE A   1       4.070   5.489  -0.213  1.00  0.00           N  
+ATOM      2  CA  DSE A   1       4.963   5.640  -1.354  1.00  0.00           C  
+ATOM      3  C   DSE A   1       4.851   4.454  -2.303  1.00  0.00           C  
+ATOM      4  O   DSE A   1       5.716   4.242  -3.153  1.00  0.00           O  
+ATOM      5  CB  DSE A   1       4.648   6.924  -2.096  1.00  0.00           C  
+ATOM      6  OG  DSE A   1       3.444   6.812  -2.805  1.00  0.00           O  
+ATOM      7  H   DSE A   1       3.245   6.069  -0.152  1.00  0.00           H  
+ATOM      8  HA  DSE A   1       5.989   5.678  -0.988  1.00  0.00           H  
+ATOM      9 1HB  DSE A   1       5.459   7.154  -2.786  1.00  0.00           H  
+ATOM     10 2HB  DSE A   1       4.579   7.747  -1.386  1.00  0.00           H  
+ATOM     11  HG  DSE A   1       2.747   7.016  -2.178  1.00  0.00           H  
+ATOM     12  N   DTR A   2       3.781   3.681  -2.152  1.00  0.00           N  
+ATOM     13  CA  DTR A   2       3.596   2.465  -2.935  1.00  0.00           C  
+ATOM     14  C   DTR A   2       4.547   1.366  -2.479  1.00  0.00           C  
+ATOM     15  O   DTR A   2       5.207   0.724  -3.296  1.00  0.00           O  
+ATOM     16  CB  DTR A   2       2.152   1.972  -2.824  1.00  0.00           C  
+ATOM     17  CG  DTR A   2       1.935   0.614  -3.420  1.00  0.00           C  
+ATOM     18  CD1 DTR A   2       1.759  -0.554  -2.742  1.00  0.00           C  
+ATOM     19  CD2 DTR A   2       1.871   0.276  -4.826  1.00  0.00           C  
+ATOM     20  CE2 DTR A   2       1.656  -1.103  -4.904  1.00  0.00           C  
+ATOM     21  CE3 DTR A   2       1.978   1.021  -6.007  1.00  0.00           C  
+ATOM     22  NE1 DTR A   2       1.589  -1.592  -3.624  1.00  0.00           N  
+ATOM     23  CZ2 DTR A   2       1.543  -1.760  -6.119  1.00  0.00           C  
+ATOM     24  CZ3 DTR A   2       1.866   0.361  -7.226  1.00  0.00           C  
+ATOM     25  CH2 DTR A   2       1.654  -0.993  -7.279  1.00  0.00           C  
+ATOM     26  H   DTR A   2       3.077   3.942  -1.476  1.00  0.00           H  
+ATOM     27  HA  DTR A   2       3.826   2.694  -3.976  1.00  0.00           H  
+ATOM     28 1HB  DTR A   2       1.488   2.677  -3.326  1.00  0.00           H  
+ATOM     29 2HB  DTR A   2       1.859   1.937  -1.775  1.00  0.00           H  
+ATOM     30  HD1 DTR A   2       1.753  -0.651  -1.658  1.00  0.00           H  
+ATOM     31  HE1 DTR A   2       1.438  -2.559  -3.374  1.00  0.00           H  
+ATOM     32  HE3 DTR A   2       2.149   2.096  -5.971  1.00  0.00           H  
+ATOM     33  HZ2 DTR A   2       1.374  -2.835  -6.183  1.00  0.00           H  
+ATOM     34  HZ3 DTR A   2       1.950   0.949  -8.140  1.00  0.00           H  
+ATOM     35  HH2 DTR A   2       1.571  -1.479  -8.252  1.00  0.00           H  
+ATOM     36  N   ASP A   3       4.612   1.154  -1.169  1.00  0.00           N  
+ATOM     37  CA  ASP A   3       5.483   0.131  -0.602  1.00  0.00           C  
+ATOM     38  C   ASP A   3       4.821  -1.240  -0.644  1.00  0.00           C  
+ATOM     39  O   ASP A   3       3.908  -1.523   0.131  1.00  0.00           O  
+ATOM     40  CB  ASP A   3       5.853   0.482   0.842  1.00  0.00           C  
+ATOM     41  CG  ASP A   3       6.825  -0.512   1.462  1.00  0.00           C  
+ATOM     42  OD1 ASP A   3       6.952  -1.594   0.940  1.00  0.00           O  
+ATOM     43  OD2 ASP A   3       7.431  -0.180   2.452  1.00  0.00           O  
+ATOM     44  H   ASP A   3       4.045   1.716  -0.551  1.00  0.00           H  
+ATOM     45  HA  ASP A   3       6.397   0.087  -1.194  1.00  0.00           H  
+ATOM     46 1HB  ASP A   3       6.302   1.474   0.872  1.00  0.00           H  
+ATOM     47 2HB  ASP A   3       4.949   0.513   1.452  1.00  0.00           H  
+ATOM     48  N   LYS A   4       5.287  -2.088  -1.554  1.00  0.00           N  
+ATOM     49  CA  LYS A   4       4.572  -3.311  -1.899  1.00  0.00           C  
+ATOM     50  C   LYS A   4       4.607  -4.312  -0.751  1.00  0.00           C  
+ATOM     51  O   LYS A   4       3.849  -5.283  -0.738  1.00  0.00           O  
+ATOM     52  CB  LYS A   4       5.163  -3.939  -3.162  1.00  0.00           C  
+ATOM     53  CG  LYS A   4       4.937  -3.130  -4.433  1.00  0.00           C  
+ATOM     54  CD  LYS A   4       5.560  -3.813  -5.641  1.00  0.00           C  
+ATOM     55  CE  LYS A   4       5.328  -3.009  -6.912  1.00  0.00           C  
+ATOM     56  NZ  LYS A   4       5.960  -3.649  -8.098  1.00  0.00           N  
+ATOM     57  H   LYS A   4       6.160  -1.880  -2.018  1.00  0.00           H  
+ATOM     58  HA  LYS A   4       3.532  -3.058  -2.103  1.00  0.00           H  
+ATOM     59 1HB  LYS A   4       6.238  -4.069  -3.036  1.00  0.00           H  
+ATOM     60 2HB  LYS A   4       4.730  -4.928  -3.314  1.00  0.00           H  
+ATOM     61 1HG  LYS A   4       3.866  -3.014  -4.604  1.00  0.00           H  
+ATOM     62 2HG  LYS A   4       5.378  -2.141  -4.317  1.00  0.00           H  
+ATOM     63 1HD  LYS A   4       6.633  -3.925  -5.482  1.00  0.00           H  
+ATOM     64 2HD  LYS A   4       5.123  -4.804  -5.765  1.00  0.00           H  
+ATOM     65 1HE  LYS A   4       4.259  -2.915  -7.093  1.00  0.00           H  
+ATOM     66 2HE  LYS A   4       5.744  -2.009  -6.791  1.00  0.00           H  
+ATOM     67 1HZ  LYS A   4       5.785  -3.086  -8.918  1.00  0.00           H  
+ATOM     68 2HZ  LYS A   4       6.957  -3.724  -7.949  1.00  0.00           H  
+ATOM     69 3HZ  LYS A   4       5.570  -4.570  -8.232  1.00  0.00           H  
+CONECT    1    2    7
+CONECT    2    1    3    5    8
+CONECT    3    2    4   12
+CONECT    4    3
+CONECT    5    2    6    9   10
+CONECT    6    5   11
+CONECT    7    1
+CONECT    8    2
+CONECT    9    5
+CONECT   10    5
+CONECT   11    6
+CONECT   12    3   13   26
+CONECT   13   12   14   16   27
+CONECT   14   13   15   36
+CONECT   15   14
+CONECT   16   13   17   28   29
+CONECT   17   16   18   19
+CONECT   18   17   22   30
+CONECT   19   17   20   21
+CONECT   20   19   22   23
+CONECT   21   19   24   32
+CONECT   22   18   20   31
+CONECT   23   20   25   33
+CONECT   24   21   25   34
+CONECT   25   23   24   35
+CONECT   26   12
+CONECT   27   13
+CONECT   28   16
+CONECT   29   16
+CONECT   30   18
+CONECT   31   22
+CONECT   32   21
+CONECT   33   23
+CONECT   34   24
+CONECT   35   25
+CONECT   36   14   37   44
+CONECT   37   36   38   40   45
+CONECT   38   37   39   48
+CONECT   39   38
+CONECT   40   37   41   46   47
+CONECT   41   40   42   43
+CONECT   42   41
+CONECT   43   41
+CONECT   44   36
+CONECT   45   37
+CONECT   46   40
+CONECT   47   40
+CONECT   48   38   49   57
+CONECT   49   48   50   52   58
+CONECT   50   49   51
+CONECT   51   50
+CONECT   52   49   53   59   60
+CONECT   53   52   54   61   62
+CONECT   54   53   55   63   64
+CONECT   55   54   56   65   66
+CONECT   56   55   67   68   69
+CONECT   57   48
+CONECT   58   49
+CONECT   59   52
+CONECT   60   52
+CONECT   61   53
+CONECT   62   53
+CONECT   63   54
+CONECT   64   54
+CONECT   65   55
+CONECT   66   55
+CONECT   67   56
+CONECT   68   56
+CONECT   69   56
+END

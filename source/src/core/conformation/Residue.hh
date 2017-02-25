@@ -1277,6 +1277,20 @@ public:
 	}
 
 	/// @brief Returns the residue number of a residue connected to this residue
+	/// at this residue's upper_connect.
+	/// @details  This function returns 0 if this residue lacks an upper_connect
+	/// or if it's not connected to anything at its upper_connect.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	Size connected_residue_at_upper() const;
+
+	/// @brief Returns the residue number of a residue connected to this residue
+	/// at this residue's lower_connect.
+	/// @details  This function returns 0 if this residue lacks a lower_connect
+	/// or if it's not connected to anything at its lower_connect.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	Size connected_residue_at_lower() const;
+
+	/// @brief Returns the residue number of a residue connected to this residue
 	/// at this residue's connection resconn_index.
 	/// @details  For example, in a normally-connected pose made of alpha-amino
 	/// acids, calling residue_connection_partner(1) on residue 6 should return

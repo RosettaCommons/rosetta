@@ -53,10 +53,10 @@ GlycanTree::GlycanTree():
 // -> Get all nodes of a glycan tree
 GlycanTree::GlycanTree( conformation::Conformation const & conf, Size const start_pos ):
 	utility::pointer::ReferenceCount()
-	
+
 {
 	setup_glycan_nodes( conf, start_pos );
-    
+
 }// constructor
 
 GlycanTree::GlycanTree( Size const start_pos ):
@@ -73,7 +73,7 @@ GlycanTree::GlycanTree( GlycanTree const & src ):
 	root_(src.root_)
 {
 	tree_.clear();
-	for (auto const & kv : src.tree_){
+	for ( auto const & kv : src.tree_ ) {
 		tree_[kv.first] = GlycanNodeOP( new GlycanNode( *kv.second));
 	}
 
@@ -94,39 +94,38 @@ void
 GlycanTree::setup_glycan_nodes(conformation::Conformation const & conf, Size const start_pos) {
 	tree_.clear();
 	start_pos_ = start_pos;
-	
-	
+
+
 	// Find all residues belonging to the tree starting at start_pos
 	std::pair<utility::vector1< Size >, utility::vector1< Size>> branch_and_tips = get_carbohydrate_residues_and_tips_of_branch(conf, start_pos, true /*include_start_position*/);
-	
+
 	utility::vector1< Size > branch_residues = branch_and_tips.first;
-	
+
 	branch_tips_ = branch_and_tips.second;
-	
+
 	if ( *(branch_residues.begin()) != start_pos ) {
 		std::string curr_pos = utility::Real2string(start_pos,0);
 		std::string msg = "ERROR: Finding tree residues for start position " + curr_pos + " failed!";
 		std::string msg2 = utility::to_string(branch_residues);
-		
+
 		utility_exit_with_message(msg+" "+msg2);
 	}
-    
-	for ( Size pos : branch_residues) {
+
+	for ( Size pos : branch_residues ) {
 		// Create a new GlycanNode instance for this residue
 		// The node will contain info about all direct downstream connections
 		// Add the node to the tree
 		tree_[pos] = GlycanNodeOP( new GlycanNode(conf, start_pos, pos));
 	}
-    
+
 	root_ = find_seqpos_of_saccharides_parent_residue( conf.residue(start_pos) );
 }
 
 bool
 GlycanTree::is_connected() const {
-	if ( root_ == 0 ){
+	if ( root_ == 0 ) {
 		return false;
-	}
-	else {
+	} else {
 		return true;
 	}
 }
@@ -171,86 +170,83 @@ utility::vector1< Size >
 GlycanTree::get_residues() const {
 	utility::vector1< Size > keys;
 
-	for(auto const & kv : tree_) {
-    	keys.push_back(kv.first);
+	for ( auto const & kv : tree_ ) {
+		keys.push_back(kv.first);
 	}
 	return keys;
 }
 
 void
 GlycanTree::update_on_length_change(core::conformation::signals::LengthEvent const & event){
-	
+
 	using namespace core::conformation::signals;
-	
+
 	core::conformation::Conformation const & conf = *event.conformation;
 	core::id::SequenceMapping smap( event );
-	
+
 	// Takes just as long as repopulating.
 	//New GlycanTree that came from adding a new free-standing tree OR
 	// We deleted a branch point, which created two glycans!
-	if (tree_.size() == 0 ){
+	if ( tree_.size() == 0 ) {
 		setup_glycan_nodes(conf, start_pos_);
-	}
-	else {
-		
+	} else {
+
 		std::map< Size, GlycanNodeOP > new_trees;
-		
+
 		//Update root
 		root_ = find_seqpos_of_saccharides_parent_residue( conf.residue(start_pos_) );
-		
+
 		//Update branch residues
 		std::pair<utility::vector1< Size >, utility::vector1< Size>> branch_and_tips = get_carbohydrate_residues_and_tips_of_branch( conf, start_pos_, true );
-		
+
 		utility::vector1< Size > branch_residues = branch_and_tips.first;
 		branch_tips_ = branch_and_tips.second;
-		
+
 		if ( *(branch_residues.begin()) != start_pos_ ) {
 			std::string curr_pos = utility::Real2string(start_pos_,0);
 			std::string msg = "ERROR: Finding tree residues for start position " + curr_pos + " failed!";
 			utility_exit_with_message(msg);
 		}
-		
+
 		//Update numbering and connectivity
-		for (auto & kv : tree_){
+		for ( auto & kv : tree_ ) {
 
 			GlycanNodeOP node = kv.second;
 			Size old_resnum = kv.first;
-			
-		
-			if ( (event.tag == LengthEvent::RESIDUE_PREPEND || event.tag == LengthEvent::RESIDUE_APPEND) && old_resnum == event.residue->seqpos()){
+
+
+			if ( (event.tag == LengthEvent::RESIDUE_PREPEND || event.tag == LengthEvent::RESIDUE_APPEND) && old_resnum == event.residue->seqpos() ) {
 				node->update_connectivity_data( conf );
 				new_trees[ old_resnum ] = node;
-			}
-			else if (event.tag == LengthEvent::RESIDUE_DELETE && old_resnum == event.position){
+			} else if ( event.tag == LengthEvent::RESIDUE_DELETE && old_resnum == event.position ) {
 				continue;
-			}
-			else {
+			} else {
 				Size new_resnum = smap.get_corresponding_residue_in_current(old_resnum);
-				if ( new_resnum != 0 ){
+				if ( new_resnum != 0 ) {
 					node->remap_residue(start_pos_, new_resnum);
 					node->update_connectivity_data( conf );
 				}
 				new_trees[ new_resnum ] = node;
 			}
-			
-			
-			
-			
+
+
+
+
 		}
 		//Add any new nodes from append or prepend residue operations.
-		for (Size node_residue : branch_residues){
-		
+		for ( Size node_residue : branch_residues ) {
+
 			//New residue.
-			if (! new_trees.count( node_residue )){
+			if ( ! new_trees.count( node_residue ) ) {
 				GlycanNodeOP new_tree = GlycanNodeOP( new GlycanNode( conf, start_pos_, node_residue ) );
 				new_trees[node_residue] = new_tree;
-				
+
 			}
-			
+
 		}
 		tree_ = new_trees;
 	}
-	
+
 }
 
 void

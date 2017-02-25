@@ -33,10 +33,10 @@
 #include <vector>
 
 /////////////////
-// This class gathers and stores information on entire glycan trees. Typical glycan trees 
+// This class gathers and stores information on entire glycan trees. Typical glycan trees
 // contain multiple chains but with consective residue numbers. Gathering all the information about
 // connectivity of multiple chains invokes quite a number of functions that do funky things to find out which
-// residue belongs to which glycan tree and where are they connected to the protein. This container is meant for 
+// residue belongs to which glycan tree and where are they connected to the protein. This container is meant for
 // storing this information instead of running all those functions (see carbohydrates/util.cc) repeatedly.
 
 namespace core {
@@ -50,54 +50,54 @@ class GlycanTree : public utility::pointer::ReferenceCount {
 
 public:
 
- 
+
 
 	GlycanTree();
-    //GlycanTree(GlycanTree const & src);
+	//GlycanTree(GlycanTree const & src);
 
 	virtual ~GlycanTree();
-	
+
 	GlycanTree( GlycanTree const & src );
-	
+
 	GlycanTreeOP
 	clone() const;
-	
+
 	// standard constructor
 	GlycanTree( conformation::Conformation const & conf, Size const start_pos);
-	
+
 	// constructor that still needs updating by pose
 	GlycanTree(Size const start_pos);
-	
+
 
 public:
-	
+
 	///@brief Is this tree connected to a [protein] or is it free-standing?
 	bool
 	is_connected() const;
-	
+
 	///@brief Does this Tree have a particular residue?
 	bool
 	has_glycan_residue( core::Size resnum ) const;
-	
+
 	///@brief Get the length of this tree
 	core::Size
 	get_size() const;
-	
+
 	///@brief Get the length of this tree
 	core::Size
 	size() const;
-	
+
 	///@brief Get the first glycan residue number of this tree.
 	/// This is also used to identify the tree.
 	/// This is different than the root!
 	core::Size
 	get_start() const;
-	
+
 	///@brief Get the root of this tree. The connecting residue.
 	/// If it is zero, it means this tree is a free-glycan and not connected!
 	core::Size
 	get_root() const;
-	
+
 public:
 
 	///@brief Get the GlycanNode of a particular glycan residue
@@ -105,41 +105,41 @@ public:
 	///
 	GlycanNodeCOP
 	get_node( core::Size resnum ) const;
-	
+
 public:
 
 	///@brief Get the tips (ending residues) of each foliage end.
 	utility::vector1< core::Size > const &
 	get_tips() const;
-	
+
 	///@brief Get all the residues of this glycan
 	utility::vector1< core::Size >
 	get_residues() const;
-	
+
 public:
 
 	///@brief Populate the glycan nodes of this GlycanTree
 	void
 	setup_glycan_nodes(conformation::Conformation const & conf, core::Size const start_pos);
-	
+
 	///@brief Update the nodes connectivity and the tree root after a length-change event.
 	void
 	update_on_length_change( core::conformation::signals::LengthEvent const & event);
-	
+
 	///@brief Update the starting position if the start has been deleted.
 	void
 	update_start_position( core::Size const start_pos );
-	
-	
+
+
 private:
 	// The glycan tree istself is just a map< 'residue number', GlycanNode instance >
 	std::map< Size, GlycanNodeOP > tree_;
-	
+
 	utility::vector1< Size > branch_tips_;
-	
+
 	core::Size start_pos_;
 	Size root_;
-	
+
 };
 
 

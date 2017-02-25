@@ -1508,37 +1508,37 @@ public:
 	///  ResidueType
 	void
 	virtual_to_real( core::Size seqpos );
-	
+
 	/// @brief Get information on any glycan trees within this pose.
 	///  If this is not setup, will return a nullptr due to the const nature of the function.
 	///
 	/// @details The GlycanTreeSet holds information on the connectivity of the glycan residues and if
-	///  they are free or attached to a pose. 
+	///  they are free or attached to a pose.
 	///
 	/// example(s):
-	/// 	pose.glycan_tree_set()
+	///  pose.glycan_tree_set()
 	/// See also:
-	/// 	pose.residue(3).is_carbohydrate()
-	///		pose.residue(3).carbohydrate_info()
+	///  pose.residue(3).is_carbohydrate()
+	///  pose.residue(3).carbohydrate_info()
 	///
 	conformation::carbohydrates::GlycanTreeSetCOP
 	glycan_tree_set() const;
-	
+
 	/// @brief Get information on any glycan trees within this pose.
 	///  Add or update the GlycanTree if needed.
 	///
 	/// @details The GlycanTreeSet holds information on the connectivity of the glycan residues and if
-	///  they are free or attached to a pose. 
+	///  they are free or attached to a pose.
 	///
 	/// example(s):
-	/// 	pose.glycan_trees()
+	///  pose.glycan_trees()
 	/// See also:
-	/// 	pose.residue(3).is_carbohydrate()
-	///		pose.residue(3).carbohydrate_info()
+	///  pose.residue(3).is_carbohydrate()
+	///  pose.residue(3).carbohydrate_info()
 	///
 	//GlycanTreeSetCOP
 	//glycan_trees();
-	
+
 	/// @brief Empty the pose contents
 	///
 	/// example(s):
@@ -1602,7 +1602,7 @@ public:
 	void
 	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn );
 
-	
+
 
 
 public: // observer attach/detach

@@ -1,0 +1,21 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="bnv" weights="beta_nov15" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<RamaMutationSelector name="aib_positions" target_type="AIB" score_threshold="-0.1" rama_prepro_multiplier="0.8" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<MutateResidue name="mut" new_res="AIB" residue_selector="aib_positions" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="mut" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="bnv" />
+</ROSETTASCRIPTS>

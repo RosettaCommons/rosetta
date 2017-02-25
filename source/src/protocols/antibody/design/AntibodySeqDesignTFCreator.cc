@@ -92,12 +92,12 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreat
 	force_north_paper_db_(src.force_north_paper_db_ ),
 	no_data_cdrs_( src.no_data_cdrs_ ),
 	use_outliers_( src.use_outliers_ )
-	
-	
+
+
 {
 	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
 	cdr_design_options_.clear();
-	for (CDRSeqDesignOptionsOP opt : src.cdr_design_options_ ){
+	for ( CDRSeqDesignOptionsOP opt : src.cdr_design_options_ ) {
 		CDRSeqDesignOptionsOP new_opt = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions( *opt ));
 		cdr_design_options_.push_back( new_opt );
 	}

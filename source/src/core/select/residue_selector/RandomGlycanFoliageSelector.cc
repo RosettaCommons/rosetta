@@ -74,7 +74,7 @@ RandomGlycanFoliageSelector::RandomGlycanFoliageSelector(RandomGlycanFoliageSele
 	ResidueSelector( src ),
 	subset_(src.subset_)
 {
-	if (src.selector_) selector_ = src.selector_->clone();
+	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
 
 /// @brief Set a subset to select the glycan root and subsequent foliage on.

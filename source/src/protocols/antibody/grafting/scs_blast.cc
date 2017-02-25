@@ -315,7 +315,7 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 	for(auto &j : J) {
 
         //TR << "Region " << j.name << ", Sequence " << j.sequence << std::endl;
-        
+
 		std::stringstream sq;  sq << j.sequence.size();
 		string db_suffix = j.name + '.' + sq.str();
 
@@ -400,21 +400,21 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 	for(auto &j : J) {
 		for(auto i = antibody_info_lines.begin(); j.results.size() < N  and  i != antibody_info_lines.end(); ++i) {
 			if( j.name == "orientation" || j.sequence.size() == i->at(j.name).size() ) {
-                
+
                 // double check that region != "none"
                 bool missing_region = false;
-                
+
                 for( auto cdr : {"h1", "h2", "h3", "l1", "l2", "l3"} ) {
                     if ( (i->at(cdr)).compare("none") == 0 ) {
                         // line from antibody.info contains missing region (=="none"), skip
                         missing_region = true;
                     }
                 }
-                
+
                 if (missing_region) continue; // go onto next line in antibody_info_lines
-                
+
 				SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
-                
+
                 r->padded = true;
 
 				r->pdb = i->at("pdb");
@@ -431,14 +431,14 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 				r->l1 = i->at("l1");  r->l2 = i->at("l2");  r->l3 = i->at("l3");  r->frl = i->at("frl");
 
 				j.results.push_back(r);
-            
+
 
 				TR << TR.Red << "Not enought templates for region " << TR.bgRed << TR.Black << j.name << TR.Reset << TR.Red << " was selected... Adding arbitrary template " << TR.bgRed << TR.Black << r->pdb << TR.Reset /*<< " sequence: " << j.sequence << " → " << i->at(j.name)*/ << std::endl;
 			}
 		}
 	}
 }
-    
+
 
 
 void trim_framework(AntibodySequence const &A, AntibodyFramework &heavy_fr, AntibodyFramework &light_fr)

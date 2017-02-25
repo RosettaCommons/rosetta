@@ -63,8 +63,8 @@ namespace carbohydrates {
 core::uint
 find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue ) {
 	debug_assert( residue.is_carbohydrate() );
-	
-	
+
+
 	if ( ! residue.is_lower_terminus() ) {
 		uint const id_of_connection_to_parent(
 			residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
@@ -73,15 +73,15 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 		TR.Debug << "This residue is a lower terminus! Returning 0." << std::endl;
 		return 0;
 	}
-	
-	
+
+
 	//JAB - this fails during pose loading, even though the residue types should be finalized.
 	// Not sure exactly why this would fail.  So, for now, we use the original code.
 	core::Size anomeric_carbon = residue.carbohydrate_info()->anomeric_carbon_index();
 	uint const id_of_connection_to_parent(
-			residue.type().residue_connection_id_for_atom( anomeric_carbon ) );
-	
-	
+		residue.type().residue_connection_id_for_atom( anomeric_carbon ) );
+
+
 	return residue.residue_connection_partner( id_of_connection_to_parent );
 
 }
@@ -317,8 +317,8 @@ get_largest_glycan_tree_size( conformation::Conformation const & conf ){
 
 	utility::vector1< core::Size > tree_sizes;
 	utility::vector1< bool > glycan_start_points = get_glycan_start_points( conf );
-	for (core::Size glycan_start = 1; glycan_start <= glycan_start_points.size(); ++glycan_start){
-		if (glycan_start_points[ glycan_start ]){
+	for ( core::Size glycan_start = 1; glycan_start <= glycan_start_points.size(); ++glycan_start ) {
+		if ( glycan_start_points[ glycan_start ] ) {
 			core::Size glycan_length = get_glycan_tree_size( conf, glycan_start );
 			tree_sizes.push_back( glycan_length );
 		}
@@ -330,7 +330,7 @@ core::Size
 get_distance_to_root( conformation::Conformation const & conf, core::Size const position){
 	core::Size res_distance = 0;
 	core::Size parent = find_seqpos_of_saccharides_parent_residue(conf.residue(position));
-	while ( ( parent != 0 ) && ( conf.residue(parent).is_carbohydrate() ) ){
+	while ( ( parent != 0 ) && ( conf.residue(parent).is_carbohydrate() ) ) {
 		res_distance+=1;
 		parent = find_seqpos_of_saccharides_parent_residue(conf.residue(parent));
 	}
@@ -341,19 +341,18 @@ utility::vector1< bool >
 get_glycan_start_points(conformation::Conformation const & conf){
 
 	utility::vector1< bool > glycan_start_points(conf.size(), false);
-	
-	for (core::Size i = 1; i <= conf.size(); ++i){
-		
+
+	for ( core::Size i = 1; i <= conf.size(); ++i ) {
+
 		//Branch point - definitely a start the glycan
-		if (conf.residue( i ).is_branch_point() && ! conf.residue(i).is_carbohydrate()){
+		if ( conf.residue( i ).is_branch_point() && ! conf.residue(i).is_carbohydrate() ) {
 			Size glycan_plus_one = get_glycan_connecting_protein_branch_point(conf, i);
-			if (glycan_plus_one != 0){
+			if ( glycan_plus_one != 0 ) {
 				glycan_start_points[ glycan_plus_one ] = true;
 			}
-		}
-		//Indicates a glycan that is not part of a protein chain. - SO we make sure the parent residue is 0 to indicate the start point.
-		else if (conf.residue( i ).is_carbohydrate()){
-			if (find_seqpos_of_saccharides_parent_residue( conf.residue(i)) == 0){
+		} else if ( conf.residue( i ).is_carbohydrate() ) {
+			//Indicates a glycan that is not part of a protein chain. - SO we make sure the parent residue is 0 to indicate the start point.
+			if ( find_seqpos_of_saccharides_parent_residue( conf.residue(i)) == 0 ) {
 				glycan_start_points[ i ] = true;
 			}
 		}
@@ -392,12 +391,12 @@ get_carbohydrate_residues_and_tips_of_branch(
 	utility::vector1< Size > tips;
 	utility::vector1< Size > list_of_residues;
 	utility::vector1< Size > children_residues;
-	
-	if ( include_starting_position ){
+
+	if ( include_starting_position ) {
 		list_of_residues.push_back(starting_position);
 	}
-	
-	
+
+
 	if ( ! conf.residue( starting_position ).is_carbohydrate() && ! conf.residue( starting_position ).is_branch_point() ) {
 		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
 		return std::make_pair( list_of_residues, tips);
@@ -424,9 +423,9 @@ core::Size
 get_glycan_connecting_protein_branch_point(conformation::Conformation const & conf, core::Size const protein_branch_point_resnum){
 
 	debug_assert(conf.residue(protein_branch_point_resnum).is_branch_point());
-	
+
 	core::Size parent_residue = protein_branch_point_resnum - 1;
-	
+
 	Size connections = conf.residue( protein_branch_point_resnum ).n_possible_residue_connections();
 	for ( core::Size connection = 1; connection <= connections; ++connection ) {
 
@@ -437,7 +436,7 @@ get_glycan_connecting_protein_branch_point(conformation::Conformation const & co
 		}
 	}
 	return 0;
-	
+
 }
 
 ///@brief Get the particular resnum from a glycan position, givin the protein branch point.
@@ -446,42 +445,39 @@ get_glycan_connecting_protein_branch_point(conformation::Conformation const & co
 core::Size
 get_resnum_from_glycan_position(conformation::Conformation const & conf, core::Size const glycan_one, core::Size const glycan_position){
 	using namespace utility;
-	
-	if (( glycan_position == 1 )| ( glycan_one == 0 )){
+
+	if ( ( glycan_position == 1 )| ( glycan_one == 0 ) ) {
 		return glycan_one;
-	}
-	else{
+	} else {
 		Size glycan_length = get_glycan_tree_size(conf, glycan_one);
-		if (glycan_position <= glycan_length){
+		if ( glycan_position <= glycan_length ) {
 			core::Size glycan_residue  = glycan_one + glycan_position - 1;
 			return glycan_residue;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}
-	
+
 }
 
 core::Size
 get_glycan_position_from_resnum(conformation::Conformation const & conf, core::Size const glycan_one, core::Size const glycan_residue ){
-	
-	if (glycan_one == glycan_residue){
+
+	if ( glycan_one == glycan_residue ) {
 		return 1;
-	}
-	else{
+	} else {
 		Size glycan_length = get_glycan_tree_size(conf, glycan_one);
 		core::Size glycan_position = glycan_residue + 1 - glycan_one;
-		
-		if ( glycan_position > glycan_length ){
+
+		if ( glycan_position > glycan_length ) {
 			return 0;
 		} else {
 			return glycan_position;
 		}
 	}
-	
-	
-	
+
+
+
 }
 
 

@@ -1,0 +1,25 @@
+symmetry_name c4m
+subunits 4
+#recenter
+number_of_interfaces  2
+E = 4*VRT0001 + 4*(VRT0001:VRT0002) + 2*(VRT0001:VRT0003)
+anchor_residue COM
+#virtual_transforms_start consecutive
+#start -1,0,0 0,1,0 0,0,0
+#rot Ry_angle 60
+#virtual_transforms_stop
+virtual_coordinates_start
+xyz VRT0001 1,0,0 0,1,0 0,0,0
+xyzM VRT0002 0,-1,0 1,0,0 0,0,0
+xyz VRT0003 -1,0,0 0,-1,0 0,0,0
+xyzM VRT0004 0,1,0 -1,0,0 0,0,0
+virtual_coordinates_stop
+connect_virtual JUMP1 VRT0001 VRT0002
+connect_virtual JUMP2 VRT0001 VRT0003
+connect_virtual JUMP3 VRT0001 VRT0004
+connect_virtual JUMP4 VRT0001 SUBUNIT
+connect_virtual JUMP5 VRT0002 SUBUNIT
+connect_virtual JUMP6 VRT0003 SUBUNIT
+connect_virtual JUMP7 VRT0004 SUBUNIT
+set_dof JUMP4 x(50) angle_x(0:360) angle_y(0:360) angle_z(0:360)
+set_jump_group JUMPGROUP1 JUMP4 JUMP5 JUMP6 JUMP7

@@ -110,7 +110,7 @@ CDRDihedralConstraintMover::CDRDihedralConstraintMover(CDRDihedralConstraintMove
 	general_phi_sd_(src.general_phi_sd_),
 	general_psi_sd_(src.general_psi_sd_)
 {
-	if (src.ab_info_) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 }
 
 

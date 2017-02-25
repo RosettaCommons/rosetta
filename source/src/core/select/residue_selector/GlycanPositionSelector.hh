@@ -50,7 +50,7 @@ namespace residue_selector {
 ///
 ///  Tips For use
 ///
-///		This Selector works on all glycans of the pose at once.
+///  This Selector works on all glycans of the pose at once.
 ///
 ///     Settings are:
 ///
@@ -73,32 +73,32 @@ public:
 	/// @brief Constructor.
 	GlycanPositionSelector();
 
-    /// @brief Copy Constructor.  Use if you have non-basic private variables (classes, OPs, etc.)
+	/// @brief Copy Constructor.  Use if you have non-basic private variables (classes, OPs, etc.)
 	GlycanPositionSelector(GlycanPositionSelector const & src);
-	
+
 public:
-	
+
 	/// @brief Add a range to the list.
 	void
 	add_range(ResidueRange const & range);
-	
+
 	/// @brief Set the range of glycan positions to select from.
 	void
 	set_range(utility::vector1<ResidueRange> const & ranges);
-	
+
 	/// @brief Set a specific set of positions to select on.
 	void
 	set_positions(utility::vector1< Size > const & positions);
-	
+
 	/// @brief Set the position from which to select all outer foliage from, (and includeing) this position.
 	void
 	set_select_from_residue_position( Size const select_from_residue_position);
-	
+
 	/// @brief Set the position where we will select all glycan residues up to this specific glycan position.
 	void
 	set_select_to_residue_position( Size const select_to_residue_position);
-	
-	
+
+
 public:
 
 
@@ -140,13 +140,13 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	
+
 	// All Mutually exclusive options to choose parts of the glycan.
 	utility::vector1< ResidueRange > ranges_;
 	utility::vector1< Size > positions_;
 	Size from_residue_;
 	Size to_residue_;
-	
+
 };
 
 

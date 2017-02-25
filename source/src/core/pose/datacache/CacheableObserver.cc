@@ -60,8 +60,8 @@ CacheableObserver::operator =( CacheableObserver const & rval ) {
 	return *this;
 }
 
-	
-	
+
+
 /// @brief attach to Pose/Conformation
 ///  Derived classes do not overload this method -- see attach_impl()
 ///  instead.

@@ -62,12 +62,12 @@ public:
 	//AntibodySeqDesignTFCreator(AntibodySeqDesignTFCreator const & src);
 
 	virtual ~AntibodySeqDesignTFCreator();
-	
+
 	AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreator const & src );
-	
+
 	AntibodySeqDesignTFCreatorOP
 	clone () const;
-	
+
 	/// @brief Set design options for single CDR
 	void
 	set_cdr_design_options(CDRNameEnum cdr, CDRSeqDesignOptionsCOP design_options);

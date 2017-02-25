@@ -275,7 +275,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			const core::Size overlap = 2; // used for alignment of scaffold/loop
 			core::Size insert_flexibility   = 2; // flexible regions in loop
 			core::Size scaffold_flexibility = 2; // flexible regions in scaffold
-			
+
 			// test cdr loop length before inserting and update flexibility accordingly
 			if (g.length == 4) {
 				// decrease flexibility in the loop, so there is no overlap
@@ -283,7 +283,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 				// increase flexibility in the scaffold to compensate
 				scaffold_flexibility = 3;
 			}
-			
+
 			pose_n_cdr_first -= overlap;
 			pose_n_cdr_last += overlap;
 

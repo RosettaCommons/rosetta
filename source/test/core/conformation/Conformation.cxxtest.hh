@@ -246,12 +246,12 @@ public:
 		conf.delete_residue_slow( 4 );
 		TS_ASSERT_EQUALS( obs.count, 2 ); // One length and one xyz from setup_atom_tree
 		TS_ASSERT_LESS_THAN( obs.l_last, obs.x_last ); // Length event should fire before xyz event.
-		
+
 		obs.reset();
 
 		conf.delete_residue_range_slow( 3, 5 );
 		TS_ASSERT_EQUALS( obs.count, 2 ); // One length and one xyz from setup_atom_tree
-		
+
 		TS_ASSERT_LESS_THAN( obs.l_last, obs.x_last ); // Length event should fire before xyz event.
 
 		// This is in a different order than adding on purpose.

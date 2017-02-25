@@ -52,8 +52,8 @@ namespace core {
 namespace scoring {
 namespace methods {
 namespace carbohydrates {
-	using namespace core::conformation::carbohydrates;
-	
+using namespace core::conformation::carbohydrates;
+
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
@@ -96,18 +96,18 @@ SugarBackboneEnergy::residue_energy(
 
 	// Get parent residue, CarbohydrateInfo, and exocyclic state for convenience.
 	CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
-	
+
 	bool is_exocyclic_bond;
 	core::Size prev_rsd_num;
-	
-	if (pose.glycan_tree_set()){
+
+	if ( pose.glycan_tree_set() ) {
 		prev_rsd_num =  pose.glycan_tree_set()->get_parent(rsd.seqpos() );
 		is_exocyclic_bond = pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( rsd.seqpos() );
-	}else{
+	} else {
 		prev_rsd_num =  find_seqpos_of_saccharides_parent_residue( rsd );
 		is_exocyclic_bond = has_exocyclic_glycosidic_linkage( pose.conformation(), rsd.seqpos() );
 	}
-	 
+
 	conformation::Residue const & prev_rsd( pose.residue( prev_rsd_num));
 	// Get the angles.
 	// (Convert the psi and omega to between 0 and 360 because that's what the functions expect.)
@@ -238,9 +238,9 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
 		uint const next_rsd( get_downstream_residue_that_this_torsion_moves( pose, torsion_id ) );
 		CarbohydrateInfoCOP next_info( pose.residue( next_rsd ).carbohydrate_info() );
-		
+
 		bool const is_exocyclic_bond( pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( next_rsd ));
-		
+
 		// Psis TO L-Sugars use the mirror image of the score functions, if NOT exocyclic.
 		// Psis FROM L-Sugars use the mirror image of the score functions, IF exocyclic
 		if ( ! is_exocyclic_bond ) {

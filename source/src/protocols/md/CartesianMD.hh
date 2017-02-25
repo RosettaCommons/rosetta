@@ -66,7 +66,7 @@ public:
 	// From MDbase
 	//void set_movemap(
 	//core::pose::Pose const &,
-	//	core::kinematics::MoveMapCOP movemap) override;
+	// core::kinematics::MoveMapCOP movemap) override;
 	//core::kinematics::MoveMapOP movemap() const override { return movemap_; }
 
 	void use_rattle( bool const value );

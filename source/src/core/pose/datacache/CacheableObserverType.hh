@@ -43,21 +43,21 @@ class CacheableObserverType
 {
 public:
 
-	/// @brief enum indexing the data types stored in a Pose's internal DataCache
-	enum CacheableObserverType {
-		// Remember to set the first enum in the list to 1!
-		LENGTH_EVENT_COLLECTOR = 1,
-		SPECIAL_SEGMENTS_OBSERVER,
-		ENZDES_OBSERVER,
-		STRUCTUREDATA_OBSERVER,
-		PYMOL_OBSERVER,
-		GLYCAN_TREE_OBSERVER,
-		// *** IMPORTANT ***
-		// The 'num_cacheable_data_types' below must be the last enum, and must
-		// always be set equal to the (last-1) enum.  If you append a new enum
-		// to the list, remember to change the value below!
-		num_cacheable_data_types = GLYCAN_TREE_OBSERVER
-	};
+/// @brief enum indexing the data types stored in a Pose's internal DataCache
+enum CacheableObserverType {
+// Remember to set the first enum in the list to 1!
+LENGTH_EVENT_COLLECTOR = 1,
+SPECIAL_SEGMENTS_OBSERVER,
+ENZDES_OBSERVER,
+STRUCTUREDATA_OBSERVER,
+PYMOL_OBSERVER,
+GLYCAN_TREE_OBSERVER,
+// *** IMPORTANT ***
+// The 'num_cacheable_data_types' below must be the last enum, and must
+// always be set equal to the (last-1) enum.  If you append a new enum
+// to the list, remember to change the value below!
+num_cacheable_data_types = GLYCAN_TREE_OBSERVER
+};
 
 }; // class CacheableObserverType
 */

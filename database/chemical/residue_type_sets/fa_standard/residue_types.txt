@@ -355,6 +355,9 @@ residue_types/water/HOH.params
 residue_types/cyclosporin/BMT.params
 residue_types/cyclosporin/LMA.params
 
+## Achiral noncanonical amino acid (NCAA) types:
+residue_types/achiral_ncaa/AIB.params
+
 ## L-NCAA Types
 residue_types/l-ncaa/V01.params
 residue_types/l-ncaa/V02.params
@@ -367,7 +370,6 @@ residue_types/l-ncaa/HLU.params
 residue_types/l-ncaa/YPN.params
 residue_types/l-ncaa/HPR.params
 residue_types/l-ncaa/HTY.params
-residue_types/l-ncaa/MAL.params
 residue_types/l-ncaa/MPA.params
 residue_types/l-ncaa/MTP.params
 residue_types/l-ncaa/NLU.params

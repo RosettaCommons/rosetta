@@ -119,7 +119,7 @@ public: // virtual observer interface
 	/// @brief is this observer attached to a Pose/Conformation?
 	virtual
 	bool is_attached() const = 0;
-	
+
 protected: // virtual observer interface
 
 

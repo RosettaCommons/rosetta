@@ -55,11 +55,11 @@ RestrictToMoveMapChiOperation::init() {
 
 void
 RestrictToMoveMapChiOperation::init_for_equal_operator_and_copy_constructor(RestrictToMoveMapChiOperation & lhs, const RestrictToMoveMapChiOperation& rhs){
-	if (rhs.movemap_) {
-	
+	if ( rhs.movemap_ ) {
+
 		lhs.movemap_ = MoveMapOP( new MoveMap( *rhs.movemap_));
 	}
-	
+
 	lhs.design_ = rhs.design_;
 	lhs.include_neighbors_ = rhs.include_neighbors_;
 	lhs.movemap_set_ = rhs.movemap_set_; //Since I can't assign a COP to null it seems.

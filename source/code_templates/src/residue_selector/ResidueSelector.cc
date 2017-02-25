@@ -49,7 +49,7 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 /// @brief Constructor.
 ///
 --class--::--class--():
-	ResidueSelector()
+	core::select::residue_selector::ResidueSelector()
 {
 }
 
@@ -59,15 +59,15 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 //--class--::--class--(--class-- const & src):
-//	ResidueSelector( src )
+//	core::select::residue_selector::ResidueSelector( src )
 //{
 //}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
---class--::ResidueSelectorOP
+core::select::residue_selector::ResidueSelectorOP
 --class--::clone() const {
-	return ResidueSelectorOP( new --class--(*this) );
+	return core::select::residue_selector::ResidueSelectorOP( new --class--(*this) );
 }
 
 /// @brief "Apply" function.
@@ -107,15 +107,15 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & /*xsd*/ 
 	//using namespace utility::tag;
 	//AttributeList attributes;
 	//attributes
-	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "true" )
-	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "true" );
-	//xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "Description of first option here!", "true" )
+	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "Description of second option here!", "true" );
+	//core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Description of residue selector here!", attributes );
 
 }
 
---class--::ResidueSelectorOP
+core::select::residue_selector::ResidueSelectorOP
 --class--Creator::create_residue_selector() const {
-	return --class--::ResidueSelectorOP( new --class-- );
+	return core::select::residue_selector::ResidueSelectorOP( new --class-- );
 }
 
 std::string
@@ -138,7 +138,7 @@ template< class Archive >
 void
 --namespace_2colon--::--class--::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	// You need to add "arc( <datamember_name> );" calls here for each of your data members.
+	// You need to add "arc( CEREAL_NVP( <datamember_name> ) );" calls here for each of your data members.
 }
 
 template< class Archive >

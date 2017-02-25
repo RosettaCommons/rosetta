@@ -21,7 +21,7 @@
 
 class --class--Creator : public  core::select::residue_selector::ResidueSelectorCreator {
 public:
-	ResidueSelectorOP create_residue_selector() const override;
+	core::select::residue_selector::ResidueSelectorOP create_residue_selector() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };

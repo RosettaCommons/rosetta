@@ -705,7 +705,7 @@ Pose::append_pose_by_jump(
 {
 	using namespace pose::carbohydrates;
 	using namespace conformation::carbohydrates;
-	
+
 
 	energies_->clear();
 
@@ -727,8 +727,8 @@ Pose::append_pose_by_jump(
 			src.pdb_info()->nres(),
 			old_size + 1);
 	}
-	
-	if (conformation().contains_carbohydrate_residues() && ! glycan_tree_set()){
+
+	if ( conformation().contains_carbohydrate_residues() && ! glycan_tree_set() ) {
 		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( conformation()));
 		observer_cache().set( datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
 

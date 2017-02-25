@@ -120,7 +120,7 @@ GlycanRelaxMover::parse_my_tag(
 {
 
 	using namespace core::select::residue_selector;
-	
+
 	kt_ = tag->getOption< core::Real >("kt", kt_);
 	rounds_ = tag->getOption< core::Size >("rounds", rounds_);
 
@@ -163,10 +163,10 @@ GlycanRelaxMover::parse_my_tag(
 
 	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
 
-	if (tag->hasOption("residue_selector")){
+	if ( tag->hasOption("residue_selector") ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
 	}
-	
+
 
 	tree_based_min_pack_ = tag->getOption< bool >("tree_based_min_pack", tree_based_min_pack_);
 }
@@ -252,9 +252,9 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	cartmin_( src.cartmin_ ),
 	tree_based_min_pack_( src.tree_based_min_pack_ )
 {
-	if (src.full_movemap_) full_movemap_ = src.full_movemap_->clone();
-	if (src.glycan_movemap_) glycan_movemap_ = src.glycan_movemap_->clone();
-	
+	if ( src.full_movemap_ ) full_movemap_ = src.full_movemap_->clone();
+	if ( src.glycan_movemap_ ) glycan_movemap_ = src.glycan_movemap_->clone();
+
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
 	if ( src.min_mover_ ) min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover( *src.min_mover_));
@@ -263,7 +263,7 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	if ( src.tf_ ) tf_ = src.tf_->clone();
 	if ( src.mc_ ) mc_ = src.mc_->clone();
 	if ( src.packer_ ) packer_ = PackRotamersMoverOP( new PackRotamersMover( * src.packer_));
-	
+
 
 }
 
@@ -445,22 +445,21 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	//Setup Movemaps
 	glycan_movemap_ = MoveMapOP( new MoveMap );
 
-	if (full_movemap_ && selector_){
+	if ( full_movemap_ && selector_ ) {
 		utility_exit_with_message("GlycanRelaxMover: Cannot pass both a movemap and residue selector for glycan residue selection.");
 	}
-	
-	
-	if (selector_){
+
+
+	if ( selector_ ) {
 		MoveMapOP mm = MoveMapOP( new MoveMap);
 		ResidueSubset subset = selector_->apply(pose);
-		for (core::Size resnum = 1; resnum <=subset.size(); ++resnum){
-			if (! subset[ resnum ]) continue;
+		for ( core::Size resnum = 1; resnum <=subset.size(); ++resnum ) {
+			if ( ! subset[ resnum ] ) continue;
 			mm->set_bb( resnum, true);
 			mm->set_chi( resnum, true);
 		}
 		full_movemap_ = mm;
-	}
-	else if (! full_movemap_){
+	} else if ( ! full_movemap_ ) {
 		MoveMapOP mm = MoveMapOP( new MoveMap);
 
 		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
@@ -472,7 +471,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 		}
 		full_movemap_ = mm;
 	}
-	
+
 
 	///////////  Setup Glycan Movemap ////////////////
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {

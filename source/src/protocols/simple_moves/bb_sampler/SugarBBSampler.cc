@@ -84,9 +84,9 @@ core::Real
 SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 {
 
-	
+
 	using core::scoring::ScoringManager;
-	
+
 	if ( ! pose.residue( resnum ).is_carbohydrate() ) {
 		utility_exit_with_message("Resnum not a carbohydrate residue! "+ utility::to_string( resnum ));
 	}

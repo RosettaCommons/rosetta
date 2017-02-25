@@ -126,7 +126,7 @@ private: //Private functions:
 
 	/// @brief Check that the stringstream doesn't have bad or eof status, and throw an error message if it does.
 	///
-	void check_linestream( std::istringstream const &linestream, std::string const &filename ) const;
+	void check_linestream( std::istringstream const &linestream, std::string const &filename, bool const fail_on_eof=true ) const;
 
 	/// @brief Initialize the energies_ and probabilities_ tensors to 0-containing N-tensors, of the
 	/// dimensions given by the dimensions vector.

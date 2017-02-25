@@ -213,10 +213,10 @@ public:
 
 		utility::fixedsizearray1< Size, N > position( 0 );
 		position[ 1 ] = layer;
-		assert( is_valid_position( position ) );
+		runtime_assert( is_valid_position( position ) );
 
 		for ( Size i = 1; i <= N - 1; ++i ) {
-			assert( matrix.n_bins( i ) == n_bins_[ i + 1 ] );
+			runtime_assert( matrix.n_bins( i ) == n_bins_[ i + 1 ] );
 		}
 
 		// The layer offset is how many elements need to be skipped to get to
@@ -258,7 +258,7 @@ public:
 	}
 
 	T const & data( Size const index ) const {
-		assert( index < size_ );
+		runtime_assert( index < size_ );
 		return data_[ index ];
 	}
 
@@ -267,12 +267,12 @@ public:
 	void
 	replace_layer( Size const layer, MathMatrix< T > const & matrix )
 	{
-		assert( N == 3 );
+		runtime_assert( N == 3 );
 		utility::vector1<Size> position( N, 1 );
 		position[ 1 ] = layer;// + 1;
-		assert( is_valid_position( position ) );
+		runtime_assert( is_valid_position( position ) );
 
-		assert( matrix.get_number_rows() == n_bins_[2] && matrix.get_number_cols() == n_bins_[3] );
+		runtime_assert( matrix.get_number_rows() == n_bins_[2] && matrix.get_number_cols() == n_bins_[3] );
 
 		// if we are calling this we know we have 3 dimensions!
 		Size layeroffset = layer * n_bins_[2] * n_bins_[3];
@@ -311,7 +311,7 @@ public:
 	/// fixedsizearray1, vector1, or sequences of values.
 	T &
 	operator() ( utility::fixedsizearray1< Size, N > const & position ) {
-		assert( is_valid_position( position ) );
+		runtime_assert_string_msg( is_valid_position( position ), "Error in numeric::MathNTensor::operator(): Attempting to access an invalid entry in the tensor." );
 		Size index = 0;
 		Size slice = 1;
 		// I want to maintain the same data ordering. Layer seems to be the first index and gets the most stuff multiplied to it
@@ -327,7 +327,7 @@ public:
 	/// @details Const access (assignment prohibited).
 	T const &
 	operator() ( utility::fixedsizearray1< Size, N > const & position ) const {
-		assert( is_valid_position( position ) );
+		runtime_assert_string_msg( is_valid_position( position ), "Error in numeric::MathNTensor::operator(): Attempting to access an invalid entry in the tensor." );
 		Size index = 0;
 		Size slice = 1;
 		// I want to maintain the same data ordering. Layer seems to be the first index and gets the most stuff multiplied to it
@@ -340,8 +340,8 @@ public:
 
 	T &
 	operator() ( utility::vector1< Size > const & position ) {
-		assert( N == position.size() );
-		assert( is_valid_position( position ) );
+		runtime_assert_string_msg( N == position.size(), "Error in numeric::MathNTensor::operator(): Attempting to access a tensor entry using an array of invalid size." );
+		runtime_assert_string_msg( is_valid_position( position ), "Error in numeric::MathNTensor::operator(): Attempting to access an invalid entry in the tensor." );
 		Size index = 0;
 		Size slice = 1;
 		// I want to maintain the same data ordering. Layer seems to be the first index and gets the most stuff multiplied to it
@@ -354,8 +354,8 @@ public:
 
 	T const &
 	operator() ( utility::vector1< Size > const & position ) const {
-		assert( N == position.size() );
-		assert( is_valid_position( position ) );
+		runtime_assert_string_msg( N == position.size(), "Error in numeric::MathNTensor::operator(): Attempting to access a tensor entry using an array of invalid size." );
+		runtime_assert_string_msg( is_valid_position( position ), "Error in numeric::MathNTensor::operator(): Attempting to access an invalid entry in the tensor." );
 		Size index = 0;
 		Size slice = 1;
 		// I want to maintain the same data ordering. Layer seems to be the first index and gets the most stuff multiplied to it
@@ -368,31 +368,31 @@ public:
 
 	T & operator()( Size const b1, Size const b2, Size const b3 )
 	{
-		assert( N == 3 );
-		assert( b1 < n_bins(1) );
-		assert( b2 < n_bins(2) );
-		assert( b3 < n_bins(3) );
+		runtime_assert( N == 3 );
+		runtime_assert( b1 < n_bins(1) );
+		runtime_assert( b2 < n_bins(2) );
+		runtime_assert( b3 < n_bins(3) );
 		//std::cout << "Fetching element " << b1 * n_bins(2) * n_bins(3) + b2 * n_bins(3) + b3 << std::endl;
 		return data_[ b1 * n_bins(2) * n_bins(3) + b2 * n_bins(3) + b3 ];
 	}
 
 	T const & operator()( Size const b1, Size const b2, Size const b3 ) const
 	{
-		assert( N == 3 );
-		assert( b1 < n_bins(1) );
-		assert( b2 < n_bins(2) );
-		assert( b3 < n_bins(3) );
+		runtime_assert( N == 3 );
+		runtime_assert( b1 < n_bins(1) );
+		runtime_assert( b2 < n_bins(2) );
+		runtime_assert( b3 < n_bins(3) );
 		//std::cout << "Fetching element " << b1 * n_bins(2) * n_bins(3) + b2 * n_bins(3) + b3 << std::endl;
 		return data_[ b1 * n_bins(2) * n_bins(3) + b2 * n_bins(3) + b3 ];
 	}
 
 	T & operator()( Size const b1, Size const b2, Size const b3, Size const b4 )
 	{
-		assert( N == 4 );
-		assert( b1 < n_bins(1) );
-		assert( b2 < n_bins(2) );
-		assert( b3 < n_bins(3) );
-		assert( b4 < n_bins(4) );
+		runtime_assert( N == 4 );
+		runtime_assert( b1 < n_bins(1) );
+		runtime_assert( b2 < n_bins(2) );
+		runtime_assert( b3 < n_bins(3) );
+		runtime_assert( b4 < n_bins(4) );
 		//std::cout << "Fetching element " << b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4 << " which is " << data_[ b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4 ] << std::endl;
 
 		return data_[ b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4 ];
@@ -400,11 +400,11 @@ public:
 
 	T const & operator()( Size const b1, Size const b2, Size const b3, Size const b4 ) const
 	{
-		assert( N == 4 );
-		assert( b1 < n_bins(1) );
-		assert( b2 < n_bins(2) );
-		assert( b3 < n_bins(3) );
-		assert( b4 < n_bins(4) );
+		runtime_assert( N == 4 );
+		runtime_assert( b1 < n_bins(1) );
+		runtime_assert( b2 < n_bins(2) );
+		runtime_assert( b3 < n_bins(3) );
+		runtime_assert( b4 < n_bins(4) );
 		//std::cout << "Fetching element " << b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4  << " which is " << data_[ b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4 ] << std::endl;
 		return data_[ b1 * n_bins(2) * n_bins(3) * n_bins(4) + b2 * n_bins(3) * n_bins(4) + b3 * n_bins(4) + b4 ];
 	}

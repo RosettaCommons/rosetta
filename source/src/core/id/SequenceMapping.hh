@@ -72,24 +72,24 @@ public:
 public:
 
 
-	
+
 	///@brief A->B; Get the corresponding (new) resnum (B) from the old (A).
 	Size
 	get_corresponding_residue_in_current( Size original_resnum ) const;
-	
+
 	///@brief A->B; Get a list of the old residues contained in this class (all A residues).
 	//utility::vector1< Size >
 	//get_old_resnums() const;
-	
+
 	// A->B; residue of aligned(new) sequence (B) at target position pos1 (old) B
 	// Use: this[A] = B.
-	
+
 	Size   operator[]( Size const pos1 ) const;
 	Size & operator[]( Size const pos1 );
-	
+
 public:
-	
-	
+
+
 	/// @brief resize
 	void resize( Size const s1, Size const s2 );
 

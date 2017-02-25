@@ -135,7 +135,7 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 
 {
 	using namespace toolbox::task_operations;
-	
+
 	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 	if ( src.cons_task_ )  cons_task_ = ConservativeDesignOperationOP( new ConservativeDesignOperation( *src.cons_task_ ));
 	if ( src.profile_sets_task_ ) profile_sets_task_ = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( *src.profile_sets_task_ ));

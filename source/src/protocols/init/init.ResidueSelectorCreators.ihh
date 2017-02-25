@@ -17,6 +17,8 @@
 #include <protocols/antibody/residue_selector/AntibodyRegionSelectorCreator.hh>
 #include <protocols/antibody/residue_selector/CDRResidueSelectorCreator.hh>
 
+#include <protocols/cyclic_peptide/RamaMutationSelectorCreator.hh>
+
 #include <protocols/denovo_design/residue_selectors/NamedSegmentSelectorCreator.hh>
 #include <protocols/denovo_design/residue_selectors/PairedSheetResidueSelectorCreator.hh>
 

@@ -48,7 +48,7 @@ public:
 	CDRDihedralConstraintMover(AntibodyInfoCOP ab_info, CDRNameEnum cdr);
 
 	CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src);
-	
+
 	virtual~CDRDihedralConstraintMover();
 
 	void
@@ -122,8 +122,8 @@ public:
 	/// Override this behavior by setting this option to true.
 	void
 	set_ignore_pose_datacache(bool ignore_pose_datacache);
-	
-	
+
+
 public:
 
 	// XRW TEMP  std::string

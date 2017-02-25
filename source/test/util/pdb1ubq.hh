@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   test/util/pdb1rpb.hh
-/// @brief  create a 21 residue pose with two disulfides.
+/// @brief  Create a nine-residue pose from a fragment of the ubiquitin structure.
 /// @author Andrew Leaver-Fay
 
 #ifndef INCLUDED_util_pdb1ubq_HH

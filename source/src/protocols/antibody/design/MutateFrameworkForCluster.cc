@@ -80,7 +80,7 @@ MutateFrameworkForCluster::MutateFrameworkForCluster(MutateFrameworkForCluster c
 {
 	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
 	if ( src.scorefxn_ ) scorefxn_ = scorefxn_->clone();
-	
+
 }
 
 void

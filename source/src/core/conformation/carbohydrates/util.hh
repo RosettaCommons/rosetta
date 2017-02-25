@@ -42,7 +42,7 @@ find_seqpos_of_saccharides_mainchain_child( conformation::Residue const & residu
 core::uint
 find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & residue,
 	core::uint linkage_position );
-	
+
 // Use a saccharide residue's connections to find its linkage number on the previous residue.
 /// @return an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
 /// parent monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies that the residue at <seqpos> is a lower
@@ -50,8 +50,8 @@ find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & resid
 core::uint
 get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd,
 	conformation::Residue const & parent_rsd);
-	
-	
+
+
 /// @brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic
 /// carbon.
 bool
@@ -87,8 +87,8 @@ get_branching_residues(
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
-	
-	
+
+
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
 ///
 ///  Children Residues:  Filled in list of children residues found if not tips.
@@ -105,7 +105,7 @@ fill_upstream_children_res_and_tips(
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
-	
+
 ///@brief Get the size of the glycan tree given the first carbohydrate residue in the tree.
 /// On-the-fly calculation
 core::Size
@@ -133,14 +133,14 @@ utility::vector1< core::Size >
 get_carbohydrate_residues_of_branch(
 	conformation::Conformation const & conf,
 	uint const starting_position);
-	
+
 /// @brief Get tips (end residue of linear components of branches) further down the branch from this residue.  starting_position ->
 /// @details Convenience function. Calls get_carbohydrate_residues_and_tips_of_branch
 utility::vector1< core::Size >
 get_carbohydrate_tips_of_branch(
 	conformation::Conformation const & conf,
 	uint const starting_position);
-	
+
 /// @brief Get residues further down the branch from this residue.  starting_position ->
 ///  Returns pair of all_upstream_residues, tips.
 ///  Tips are the ends of linear glycan branches.
@@ -149,7 +149,7 @@ get_carbohydrate_residues_and_tips_of_branch(
 	conformation::Conformation const & conf,
 	uint const starting_position,
 	bool include_starting_position = false);
-	
+
 /// @brief Get the carbohydrate residue connecting the protein branch point.
 /// Returns 0 if branch point is not connected to carbohydrate downstream.
 ///
@@ -157,7 +157,7 @@ core::Size
 get_glycan_connecting_protein_branch_point(
 	conformation::Conformation const & conf,
 	core::Size const protein_branch_point_resnum);
-	
+
 ///@brief Get the particular resnum from a glycan position, givin the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
 /// Returns 0 if that glycan_position is not part of the glycan we are interested in or not in pose.
@@ -167,7 +167,7 @@ get_resnum_from_glycan_position(
 	conformation::Conformation const & conf,
 	core::Size const first_glycan_resnum,
 	core::Size const glycan_position);
-	
+
 ///@brief Get the particular resnum from a glycan position, givin the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
 /// Returns 0 if that glycan_position is not part of the glycan we are interested in or not in pose.
@@ -177,12 +177,12 @@ get_glycan_position_from_resnum(
 	conformation::Conformation const & conf,
 	core::Size const first_glycan_resnum,
 	core::Size const resnum);
-	
-	
+
+
 } //core
 } //conformation
 } //carbohydrates
 
 
-#endif	//core/conformation/carbohydrates_util_hh
+#endif //core/conformation/carbohydrates_util_hh
 

@@ -45,7 +45,7 @@ public:
 	virtual ~GeneralAntibodyModeler();
 
 	GeneralAntibodyModeler( GeneralAntibodyModeler const & src );
-	
+
 	GeneralAntibodyModelerOP
 	clone() const;
 

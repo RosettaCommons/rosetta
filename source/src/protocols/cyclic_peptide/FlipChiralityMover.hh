@@ -67,6 +67,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void set_center (core::Real const &, core::Real const &, core::Real const &);
+	void set_normal (core::Real const &, core::Real const &, core::Real const &);
+
 private:
 	//Private functions:
 	numeric::xyzVector<core::Real> normal_;
@@ -75,8 +78,6 @@ private:
 	bool normal_assigned_;
 	bool center_assigned_;
 
-	void set_center (core::Real, core::Real, core::Real);
-	void set_normal (core::Real,core::Real, core::Real);
 	numeric::xyzVector <core::Real> const calculate_reflect (core::pose::Pose const &, core::Size, core::Size);
 	numeric::xyzVector <core::Real> center_mass (core::select::residue_selector::ResidueSubset, core::pose::Pose const &);
 

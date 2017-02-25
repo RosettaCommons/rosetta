@@ -34,7 +34,7 @@ namespace conformation {
 namespace carbohydrates {
 
 GlycanNode::GlycanNode():
- utility::pointer::ReferenceCount()
+	utility::pointer::ReferenceCount()
 {
 
 }
@@ -78,11 +78,11 @@ GlycanNode::clone() const {
 void
 GlycanNode::setup_info( conformation::Conformation const & conf, Size const tree_start_pos, Size const pos){
 
-	
+
 	//////////////////////////////////
 	// Initialize member variables  //
 	//////////////////////////////////
-	
+
 	node_residue_ = pos;
 	tree_start_residue_ = tree_start_pos;
 	update_connectivity_data(conf);
@@ -101,36 +101,36 @@ void
 GlycanNode::update_connectivity_data(conformation::Conformation const & conf){
 	typedef std::pair< Size, Size > Downstream; // residue number, connection number (index)
 	typedef std::pair<Size,Downstream> Connection; // Connection ID,dowstream connection
-	
-	
+
+
 	conformation::Residue const & this_residue  = conf.residue(node_residue_);
-	
+
 	parent_residue_ = find_seqpos_of_saccharides_parent_residue( this_residue );
-	
+
 	// Find children, if any, and populate connections
 	//chemical::ResidueType const & residue_type = conf.residue_type(node_residue_);
 	Size connections = this_residue.n_possible_residue_connections(); //Want the index to match here.
-	
+
 	children_.clear();
 	for ( core::Size conn = 1; conn <= connections; ++conn ) {
 
 		Size child = conf.residue( node_residue_ ).connected_residue_at_resconn( conn );
 
 		if ( child != 0 && child != parent_residue_ && conf.residue( child ).is_carbohydrate() ) {
-			
+
 			children_.push_back( child );
 
 			Size upstream_conn_id = conn;
 			Size downstream_conn_id = conn;
-			
-			if (this_residue.connect_map(conn).resid() == child ) {
+
+			if ( this_residue.connect_map(conn).resid() == child ) {
 				downstream_conn_id = this_residue.connect_map(conn).connid();
 			}
 			Downstream downstream_conn = std::make_pair(child,downstream_conn_id);
 			Connection child_connection = std::make_pair(upstream_conn_id, downstream_conn);
 			// Store this connction in the downstream_connection member variable
 			downstream_connections_.push_back(child_connection);
-		
+
 		}
 	}
 
@@ -138,14 +138,13 @@ GlycanNode::update_connectivity_data(conformation::Conformation const & conf){
 	distance_to_root_ = carbohydrates::get_distance_to_root( conf, node_residue_ );
 	mainchain_child_ = find_seqpos_of_saccharides_mainchain_child( conf.residue( node_residue_ ) );
 	has_exocyclic_linkage_ = has_exocyclic_glycosidic_linkage(conf, node_residue_ );
-	
-	if (parent_residue_ != 0 ){
+
+	if ( parent_residue_ != 0 ) {
 		linkage_position_ = get_linkage_position_of_saccharide_residue( conf.residue( node_residue_), conf.residue(parent_residue_));
-	}
-	else {
+	} else {
 		linkage_position_ = 0;
 	}
-	
+
 }
 
 Size

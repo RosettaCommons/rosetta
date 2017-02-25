@@ -63,7 +63,7 @@ ConvertRealToVirtualMover::ConvertRealToVirtualMover( ConvertRealToVirtualMover 
 	Mover( src )
 {
 	using namespace core::select::residue_selector;
-	if (src.selector_) selector_ = src.selector_->clone();
+	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
 
 void

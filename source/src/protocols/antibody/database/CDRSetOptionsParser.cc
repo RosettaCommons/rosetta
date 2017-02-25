@@ -64,10 +64,10 @@ CDRSetOptionsParser::CDRSetOptionsParser( CDRSetOptionsParser const & src ):
 	default_and_user_( src.default_and_user_)
 {
 	using namespace clusters;
-	
-	if ( src.cdr_options_) cdr_options_ = CDRSetOptionsOP( new CDRSetOptions( *src.cdr_options_ ));
+
+	if ( src.cdr_options_ ) cdr_options_ = CDRSetOptionsOP( new CDRSetOptions( *src.cdr_options_ ));
 	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( * src.ab_manager_ ));
-	if ( src.cluster_manager_) cluster_manager_ = CDRClusterEnumManagerOP( new CDRClusterEnumManager( *src.cluster_manager_ ));
+	if ( src.cluster_manager_ ) cluster_manager_ = CDRClusterEnumManagerOP( new CDRClusterEnumManager( *src.cluster_manager_ ));
 }
 
 CDRSetOptionsParserOP

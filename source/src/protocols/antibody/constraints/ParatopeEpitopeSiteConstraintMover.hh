@@ -48,10 +48,10 @@ public:
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, utility::vector1<CDRNameEnum> paratope_cdrs, utility::vector1<bool> epitope_residues);
 
 	~ParatopeEpitopeSiteConstraintMover();
-	
+
 	ParatopeEpitopeSiteConstraintMover( ParatopeEpitopeSiteConstraintMover const & src );
-	
-	
+
+
 	void
 	parse_my_tag(
 		TagCOP tag,

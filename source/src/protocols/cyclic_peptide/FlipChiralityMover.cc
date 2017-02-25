@@ -234,7 +234,7 @@ numeric::xyzVector <core::Real> const FlipChiralityMover::calculate_reflect(core
 	return new_coord;
 }
 
-void FlipChiralityMover::set_center( core::Real centerx, core::Real centery,core::Real centerz ){
+void FlipChiralityMover::set_center( core::Real const & centerx, core::Real const & centery,core::Real const & centerz ){
 	center_.x(centerx);
 	center_.y(centery);
 	center_.z(centerz);
@@ -243,7 +243,7 @@ void FlipChiralityMover::set_center( core::Real centerx, core::Real centery,core
 	return;
 }
 
-void FlipChiralityMover::set_normal( core::Real normalx, core::Real normaly,core::Real normalz ){
+void FlipChiralityMover::set_normal( core::Real const & normalx, core::Real const & normaly, core::Real const & normalz ){
 	normal_.x(normalx);
 	normal_.y(normaly);
 	normal_.z(normalz);

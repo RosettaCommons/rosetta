@@ -61,9 +61,9 @@ ParatopeSiteConstraintMover::ParatopeSiteConstraintMover( ParatopeSiteConstraint
 	paratope_residues_( src.paratope_residues_ ),
 	antigen_chains_( src.antigen_chains_ ),
 	interface_distance_( src.interface_distance_ )
-	
+
 {
-	if ( src.ab_info_ ) ab_info_ = 	AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.ab_info_ ) ab_info_ =  AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 	if ( src.current_func_ ) current_func_ = current_func_->clone();
 }
 

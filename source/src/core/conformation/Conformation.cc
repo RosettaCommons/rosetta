@@ -1279,7 +1279,7 @@ Conformation::delete_polymer_residue( Size const seqpos )
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
 	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
-	
+
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, nullptr ), false );
 }
 
@@ -1294,19 +1294,19 @@ Conformation::delete_residue_slow( Size const seqpos )
 {
 	pre_nresidue_change();
 	xyz_obs_hub_.buffer();
-	
+
 	fold_tree_->delete_seqpos( seqpos );
 	residues_delete( seqpos );
 
 
 	//atom_tree_->delete_seqpos( seqpos );
-	
+
 	// setup_atom_tree() can fire an XYZEvent, but we wait until we release the buffer.
 	setup_atom_tree();
-	
+
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, nullptr ), false );
 	unblock_signals(); //Allow any XYZEvent to fire.
-	
+
 	residue_torsions_need_updating_ = true;
 
 	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
@@ -2348,7 +2348,7 @@ Conformation::insert_conformation_by_jump(
 	std::string const & root_atom  // ditto
 )
 {
-	
+
 	// ensure that residue data is OK
 	pre_nresidue_change();
 
@@ -2445,8 +2445,8 @@ Conformation::insert_conformation_by_jump(
 			} // Looping through ParametersSet objects
 		} // if(n_sets) > 0
 	}
-	
-	if (contains_carbohydrate_residues() || conf.contains_carbohydrate_residues() ){
+
+	if ( contains_carbohydrate_residues() || conf.contains_carbohydrate_residues() ) {
 		contains_carbohydrate_residues_ = true;
 	}
 	// not sure if this is necessary, perhaps around the insertion? can't hurt though...
@@ -3257,10 +3257,10 @@ Conformation::insert_polymer_residue(
 
 	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
-	if (new_rsd.type().is_carbohydrate()){
+	if ( new_rsd.type().is_carbohydrate() ) {
 		contains_carbohydrate_residues_ = true;
 	}
-	
+
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
 
@@ -3334,11 +3334,11 @@ Conformation::append_residue(
 
 	residue_torsions_need_updating_ = true;
 	//if ( !residue_torsions_need_updating_ ) update_residue_torsions( seqpos );
-	
-	if (new_rsd.type().is_carbohydrate()){
+
+	if ( new_rsd.type().is_carbohydrate() ) {
 		contains_carbohydrate_residues_ = true;
 	}
-	
+
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, seqpos - 1, 1, &new_rsd ), false );
 } // append_residue
 
@@ -3489,7 +3489,7 @@ Conformation::residues_delete(
 	// recompute the chain_endings_ array from residues_[]->chain()
 	rederive_chain_endings();
 	rederive_chain_ids(); // necessary if we deleted an entire, single-residue chain
-	
+
 	// update arrays
 	secstruct_.erase( secstruct_.begin() + ( seqpos - 1 ) );
 }

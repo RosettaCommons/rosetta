@@ -117,6 +117,10 @@ public:
 		utility::vector1 < core::Real > &torsions
 	) const;
 
+	/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
+	/// @details Also returns true for an N-methyl amino acid or peptoid.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_N_substituted( core::chemical::ResidueTypeCOP restype ) const;
 
 private: //Private methods.
 
@@ -124,11 +128,6 @@ private: //Private methods.
 	/// pointers to them in a map of AA enum -> MainchainScoreTableCOP.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void read_canonical_rpp_tables();
-
-	/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
-	/// @details Also returns true for an N-methyl amino acid or peptoid.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	bool is_N_substituted( core::chemical::ResidueTypeCOP restype ) const;
 
 private: //Private member variables.
 

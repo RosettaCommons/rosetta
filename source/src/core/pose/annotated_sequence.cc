@@ -788,7 +788,7 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 	using namespace pose;
 	using namespace pose::carbohydrates;
 	using namespace conformation::carbohydrates;
-	
+
 	// Get list of carbohydrate ResidueTypes from which to construct the Pose.
 	ResidueTypeCOPs residue_types( residue_types_from_saccharide_sequence( sequence, residue_set ) );
 
@@ -825,9 +825,9 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 	PDBInfoOP info( new PDBInfo( pose ) );
 	info->name( pose.chain_sequence( 1 ) );  // Use the main-chain sequence as the default name.
 	pose.pdb_info( info );
-	
+
 	//Create the GlycanTreeSetObserver if we don't already have it in the pose.
-	if (! pose.glycan_tree_set()){
+	if ( ! pose.glycan_tree_set() ) {
 		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( pose.conformation()));
 		pose.observer_cache().set( datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
 
@@ -838,7 +838,7 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 		Size const n_glycans_added( residue_types.size() );
 		pose::carbohydrates::idealize_last_n_glycans_in_pose( pose, n_glycans_added );
 	}
-	
+
 	tr.Debug << "Created carbohydrate pose with main-chain sequence: " << pose.chain_sequence( 1 ) << endl;
 }
 

@@ -38,7 +38,7 @@ namespace carbohydrates {
 ///@brief
 ///
 ///  Get the GlycanTreeSet from the pose.
-///  
+///
 ///
 ///@details
 ///
@@ -53,35 +53,35 @@ class GlycanTreeSetObserver : public core::pose::datacache::CacheableObserver {
 public:
 
 	GlycanTreeSetObserver();
-	
+
 	///@brief Construct the GlycanTreeSet, but do not attach it to any pose.
 	GlycanTreeSetObserver( conformation::Conformation const & conf );
-	
+
 	///@Brief Construct the GlycanTreeSet and attach this object to the pose.
 	GlycanTreeSetObserver( core::pose::Pose & pose );
-	
+
 	GlycanTreeSetObserver(GlycanTreeSetObserver const & src);
 
 	virtual ~GlycanTreeSetObserver();
-	
+
 	GlycanTreeSetObserverOP
 	clone() const;
-	
+
 public:
-	
+
 	///@brief Get the GlycanTreeSet that is maintained by this Observer.
 	conformation::carbohydrates::GlycanTreeSetCOP
 	get_glycan_tree_set() const;
-	
+
 public:
 
 	//////////////////////////////////////////////////////////////////
-	///  														   ///
+	///                   ///
 	///                Cacheable Observer Functions                ///
-	///															   ///
+	///                  ///
 	//////////////////////////////////////////////////////////////////
-	
-	
+
+
 	virtual
 	core::pose::datacache::CacheableObserverOP
 	clone();
@@ -89,13 +89,13 @@ public:
 	virtual
 	core::pose::datacache::CacheableObserverOP
 	create();
-	
-	
+
+
 public: //observer interface
 
 	virtual
 	bool is_attached() const;
-	
+
 protected: //observer interface
 
 	virtual
@@ -106,12 +106,12 @@ protected: //observer interface
 
 	void
 	on_length_change( core::conformation::signals::LengthEvent const & event );
-	
+
 private:
-	
+
 	utility::signals::Link length_event_link_;
 	conformation::carbohydrates::GlycanTreeSetOP glycan_tree_set_;
-	
+
 };
 
 

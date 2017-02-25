@@ -508,6 +508,28 @@ Residue::update_connections_to_other_residue( Residue const &other_rsd)
 	return;
 }
 
+/// @brief Returns the residue number of a residue connected to this residue
+/// at this residue's upper_connect.
+/// @details  This function returns 0 if this residue lacks an upper_connect
+/// or if it's not connected to anything at its upper_connect.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+Size
+Residue::connected_residue_at_upper() const {
+	if ( !has_upper_connect() ) return 0;
+	return connected_residue_at_resconn( rsd_type_.upper_connect_id() );
+}
+
+/// @brief Returns the residue number of a residue connected to this residue
+/// at this residue's lower_connect.
+/// @details  This function returns 0 if this residue lacks a lower_connect
+/// or if it's not connected to anything at its lower_connect.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+Size
+Residue::connected_residue_at_lower() const {
+	if ( !has_lower_connect() ) return 0;
+	return connected_residue_at_resconn( rsd_type_.lower_connect_id() );
+}
+
 void
 Residue::copy_residue_connections( Residue const & src_rsd )
 {
