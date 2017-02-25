@@ -34,6 +34,18 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -464,3 +476,67 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 } // util
 } // select
 } // core
+
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::util::SelectResiduesByLayer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( pick_core_ ) ); // bool
+	arc( CEREAL_NVP( pick_boundary_ ) ); // bool
+	arc( CEREAL_NVP( pick_surface_ ) ); // bool
+	arc( CEREAL_NVP( cache_selection_ ) ); // bool
+	arc( CEREAL_NVP( pore_radius_ ) ); // core::Real
+	arc( CEREAL_NVP( burial_ ) ); // std::map< char, core::Real >
+	arc( CEREAL_NVP( surface_ ) ); // std::map< char, core::Real >
+	arc( CEREAL_NVP( excluded_aatypes_for_selection_ ) ); // utility::vector1< AA >
+	arc( CEREAL_NVP( restricted_aatypes_for_selection_ ) ); // utility::vector1< AA >
+	arc( CEREAL_NVP( selected_core_residues_ ) ); // utility::vector1< Size >
+	arc( CEREAL_NVP( selected_boundary_residues_ ) ); // utility::vector1< Size >
+	arc( CEREAL_NVP( selected_surface_residues_ ) ); // utility::vector1< Size >
+	arc( CEREAL_NVP( make_rasmol_format_file_ ) ); // bool
+	arc( CEREAL_NVP( use_sidechain_neighbors_ ) ); // bool
+	arc( CEREAL_NVP( is_selection_initialized_ ) ); // bool
+	arc( CEREAL_NVP( rsd_sasa_ ) ); // utility::vector1< Real >
+	arc( CEREAL_NVP( rsd_layer_ ) ); // utility::vector1< String >
+	arc( CEREAL_NVP( dist_midpoint_ ) ); // core::Real
+	arc( CEREAL_NVP( rsd_neighbor_denominator_ ) ); // core::Real
+	arc( CEREAL_NVP( angle_shift_factor_ ) ); // core::Real
+	arc( CEREAL_NVP( angle_exponent_ ) ); // core::Real
+	arc( CEREAL_NVP( dist_exponent_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::util::SelectResiduesByLayer::load( Archive & arc ) {
+	arc( pick_core_ ); // bool
+	arc( pick_boundary_ ); // bool
+	arc( pick_surface_ ); // bool
+	arc( cache_selection_ ); // bool
+	arc( pore_radius_ ); // core::Real
+	arc( burial_ ); // std::map< char, core::Real >
+	arc( surface_ ); // std::map< char, core::Real >
+	arc( excluded_aatypes_for_selection_ ); // utility::vector1< AA >
+	arc( restricted_aatypes_for_selection_ ); // utility::vector1< AA >
+	arc( selected_core_residues_ ); // utility::vector1< Size >
+	arc( selected_boundary_residues_ ); // utility::vector1< Size >
+	arc( selected_surface_residues_ ); // utility::vector1< Size >
+	arc( make_rasmol_format_file_ ); // bool
+	arc( use_sidechain_neighbors_ ); // bool
+	arc( is_selection_initialized_ ); // bool
+	arc( rsd_sasa_ ); // utility::vector1< Real >
+	arc( rsd_layer_ ); // utility::vector1< String >
+	arc( dist_midpoint_ ); // core::Real
+	arc( rsd_neighbor_denominator_ ); // core::Real
+	arc( angle_shift_factor_ ); // core::Real
+	arc( angle_exponent_ ); // core::Real
+	arc( dist_exponent_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::util::SelectResiduesByLayer );
+CEREAL_REGISTER_TYPE( core::select::util::SelectResiduesByLayer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_select_util_SelectResiduesByLayer )
+#endif // SERIALIZATION

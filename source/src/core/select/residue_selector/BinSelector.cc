@@ -33,6 +33,16 @@
 // C++ headers
 #include <utility/assert.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.BinSelector" );
 
 
@@ -275,3 +285,35 @@ BinSelectorCreator::provide_xml_schema(
 } //core
 } //select
 } //residue_selector
+
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::BinSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( initialized_ ) ); // bool
+	arc(  CEREAL_NVP( bin_transition_calculator_ ) ); // core::scoring::bin_transitions::BinTransitionCalculatorOP
+	arc( CEREAL_NVP( select_only_alpha_aas_ ) ); //bool
+	arc( CEREAL_NVP( bin_name_ ) ); //std::string
+	arc( CEREAL_NVP( bin_params_file_name_ ) ); //std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::BinSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( initialized_ ); // bool
+	arc( bin_transition_calculator_ ); // core::scoring::bin_transitions::BinTransitionCalculatorOP
+	arc( select_only_alpha_aas_ ); //bool
+	arc( bin_name_ ); //std::string
+	arc( bin_params_file_name_ ); //std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::BinSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::BinSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_select_residue_selector_BinSelector )
+#endif // SERIALIZATION

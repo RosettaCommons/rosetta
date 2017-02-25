@@ -30,6 +30,17 @@
 // Other Headers
 #include <basic/Tracer.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace bin_transitions {
@@ -1106,3 +1117,87 @@ void BinTransitionData::set_n_bins( core::Size const n_bins_i, core::Size const 
 } //namespace bin_transitions
 }//namespace scoring
 }//namespace core
+
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::bin_transitions::BinTransitionData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( n_mainchain_torsions_i_ ) ); // core::Size
+	arc( CEREAL_NVP( n_mainchain_torsions_iplus1_ ) ); // core::Size
+	arc( CEREAL_NVP( n_bins_i_ ) ); // core::Size
+	arc( CEREAL_NVP( binranges_i_ ) ); // utility::vector1 < utility::vector1 < std::pair< core::Real, core::Real > > >
+	arc( CEREAL_NVP( binnames_i_ ) ); // utility::vector1 <std::string>
+	arc( CEREAL_NVP( n_bins_iplus1_ ) ); // core::Size
+	arc( CEREAL_NVP( binranges_iplus1_ ) ); // utility::vector1 < utility::vector1 < std::pair< core::Real, core::Real > > >
+	arc( CEREAL_NVP( binnames_iplus1_ ) ); // utility::vector1 <std::string>
+	arc( CEREAL_NVP( matrix_initialized_ ) ); // bool
+	arc( CEREAL_NVP( matrix_finalized_ ) ); // bool
+	arc( CEREAL_NVP( probability_matrix_ ) ); // utility::vector1 < utility::vector1 < core::Real > >
+	arc( CEREAL_NVP( properties_i_ ) ); // utility::vector1 < BT_PROPERTIES >
+	arc( CEREAL_NVP( prohibited_properties_i_ ) ); // utility::vector1 < BT_PROPERTIES >
+	arc( CEREAL_NVP( properties_iplus1_ ) ); // utility::vector1 < BT_PROPERTIES >
+	arc( CEREAL_NVP( prohibited_properties_iplus1_ ) ); // utility::vector1 < BT_PROPERTIES >
+	arc( CEREAL_NVP( res_identities_i_ ) ); // utility::vector1 < std::string >
+	arc( CEREAL_NVP( prohibited_res_identities_i_ ) ); // utility::vector1 < std::string >
+	arc( CEREAL_NVP( res_identities_iplus1_ ) ); // utility::vector1 < std::string >
+	arc( CEREAL_NVP( prohibited_res_identities_iplus1_ ) ); // utility::vector1 < std::string >
+	arc( CEREAL_NVP( binsums_i_ ) ); // utility::vector1 < core::Real >
+	arc( CEREAL_NVP( binsums_iplus1_ ) ); // utility::vector1 < core::Real >
+	arc( CEREAL_NVP( total_counts_ ) ); // core::Real
+	arc( CEREAL_NVP( binsums_i_cdf_ ) ); // utility::vector1 <core::Real>
+	arc( CEREAL_NVP( binsums_iplus1_cdf_ ) ); // utility::vector1 <core::Real>
+	arc( CEREAL_NVP( subbin_type_i_ ) ); // BTSB_SUBBIN_TYPE
+	arc( CEREAL_NVP( subbin_type_iplus1_ ) ); // BTSB_SUBBIN_TYPE
+	arc( CEREAL_NVP( subbin_cdf_i_ ) ); // utility::vector1 < utility::vector1 < core::Real >  >
+	arc( CEREAL_NVP( subbin_ranges_i_ ) ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > >
+	arc( CEREAL_NVP( subbin_cdf_iplus1_ ) ); // utility::vector1 < utility::vector1 < core::Real >  >
+	arc( CEREAL_NVP( subbin_ranges_iplus1_ ) ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > 
+	arc( CEREAL_NVP( bin_iplus1_cdf_given_i_ ) ); // utility::vector1 < utility::vector1 < core::Real > >>
+	arc( CEREAL_NVP( bin_i_cdf_given_iplus1_ ) ); // utility::vector1 < utility::vector1 < core::Real > >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::bin_transitions::BinTransitionData::load( Archive & arc ) {
+	arc( n_mainchain_torsions_i_ ); // core::Size
+	arc( n_mainchain_torsions_iplus1_ ); // core::Size
+	arc( n_bins_i_ ); // core::Size
+	arc( binranges_i_ ); // utility::vector1 < utility::vector1 < std::pair< core::Real, core::Real > > >
+	arc( binnames_i_ ); // utility::vector1 <std::string>
+	arc( n_bins_iplus1_ ); // core::Size
+	arc( binranges_iplus1_ ); // utility::vector1 < utility::vector1 < std::pair< core::Real, core::Real > > >
+	arc( binnames_iplus1_ ); // utility::vector1 <std::string>
+	arc( matrix_initialized_ ); // bool
+	arc( matrix_finalized_ ); // bool
+	arc( probability_matrix_ ); // utility::vector1 < utility::vector1 < core::Real > >
+	arc( properties_i_ ); // utility::vector1 < BT_PROPERTIES >
+	arc( prohibited_properties_i_ ); // utility::vector1 < BT_PROPERTIES >
+	arc( properties_iplus1_ ); // utility::vector1 < BT_PROPERTIES >
+	arc( prohibited_properties_iplus1_ ); // utility::vector1 < BT_PROPERTIES >
+	arc( res_identities_i_ ); // utility::vector1 < std::string >
+	arc( prohibited_res_identities_i_ ); // utility::vector1 < std::string >
+	arc( res_identities_iplus1_ ); // utility::vector1 < std::string >
+	arc( prohibited_res_identities_iplus1_ ); // utility::vector1 < std::string >
+	arc( binsums_i_ ); // utility::vector1 < core::Real >
+	arc( binsums_iplus1_ ); // utility::vector1 < core::Real >
+	arc( total_counts_ ); // core::Real
+	arc( binsums_i_cdf_ ); // utility::vector1 <core::Real>
+	arc( binsums_iplus1_cdf_ ); // utility::vector1 <core::Real>
+	arc( subbin_type_i_ ); // BTSB_SUBBIN_TYPE
+	arc( subbin_type_iplus1_ ); // BTSB_SUBBIN_TYPE
+	arc( subbin_cdf_i_ ); // utility::vector1 < utility::vector1 < core::Real >  >
+	arc( subbin_ranges_i_ ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > >
+	arc( subbin_cdf_iplus1_ ); // utility::vector1 < utility::vector1 < core::Real >  >
+	arc( subbin_ranges_iplus1_ ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > 
+	arc( bin_iplus1_cdf_given_i_ ); // utility::vector1 < utility::vector1 < core::Real > >>
+	arc( bin_i_cdf_given_iplus1_ ); // utility::vector1 < utility::vector1 < core::Real > >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::bin_transitions::BinTransitionData );
+CEREAL_REGISTER_TYPE( core::scoring::bin_transitions::BinTransitionData )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_bin_transitions_BinTransitionData )
+#endif // SERIALIZATION

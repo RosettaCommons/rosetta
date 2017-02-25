@@ -31,6 +31,11 @@
 // C++ headers
 #include <set>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace select {
 namespace residue_selector {
@@ -147,12 +152,20 @@ private: //Private variables
 	///
 	std::string bin_params_file_name_;
 
-};
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
+};
 
 } //core
 } //select
 } //residue_selector
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_select_residue_selector_BinSelector )
+#endif // SERIALIZATION
 
 #endif //INCLUDEDcore/select/residue_selector_BinSelector_hh

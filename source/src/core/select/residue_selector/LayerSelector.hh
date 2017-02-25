@@ -32,6 +32,11 @@
 // C++ headers
 #include <set>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace select {
 namespace residue_selector {
@@ -135,11 +140,20 @@ private: // data members
 	/// @details Object created and destroyed with LayerSelector objects.
 	core::select::util::SelectResiduesByLayerOP srbl_;
 
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //namespace residue_selector
 } //namespace select
 } //namespace core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_select_residue_selector_LayerSelector )
+#endif // SERIALIZATION
 
 #endif

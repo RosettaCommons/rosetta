@@ -33,6 +33,16 @@
 // C++ headers
 #include <utility/assert.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.PhiSelector" );
 
 
@@ -185,7 +195,32 @@ PhiSelectorCreator::provide_xml_schema(
 	PhiSelector::provide_xml_schema( xsd );
 }
 
-
 } //core
 } //select
 } //residue_selector
+
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::PhiSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( select_positive_phi_ ) ); // bool
+	arc( CEREAL_NVP( ignore_unconnected_upper_ ) ); // bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::PhiSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( select_positive_phi_ ); // bool
+	arc( ignore_unconnected_upper_ ); // bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::PhiSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::PhiSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_select_residue_selector_PhiSelector )
+#endif // SERIALIZATION

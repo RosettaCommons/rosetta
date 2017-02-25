@@ -32,6 +32,16 @@
 // Other Headers
 #include <basic/Tracer.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace bin_transitions {
@@ -1185,3 +1195,29 @@ std::string BinTransitionCalculator::summarize_stored_data( bool const verbose )
 } //namespace bin_transitions
 }//namespace scoring
 }//namespace core
+
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::bin_transitions::BinTransitionCalculator::save( Archive & arc ) const {
+	arc( CEREAL_NVP( bin_params_loaded_ ) ); // bool
+	arc( CEREAL_NVP( bin_params_file_ ) ); // std::string
+	arc( CEREAL_NVP( bin_transition_data_ ) ); // BinTransitionDataOPs
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::bin_transitions::BinTransitionCalculator::load( Archive & arc ) {
+	arc( bin_params_loaded_ ); // bool
+	arc( bin_params_file_ ); // std::string
+	arc( bin_transition_data_ ); // BinTransitionDataOPs
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::bin_transitions::BinTransitionCalculator );
+CEREAL_REGISTER_TYPE( core::scoring::bin_transitions::BinTransitionCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_bin_transitions_BinTransitionCalculator )
+#endif // SERIALIZATION

@@ -32,6 +32,16 @@
 // C++ headers
 #include <utility/assert.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.LayerSelector" );
 
 namespace core {
@@ -327,3 +337,29 @@ LayerSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::LayerSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( cache_selection_ ) ); // bool
+	arc( CEREAL_NVP( srbl_ ) ); // core::select::util::SelectResiduesByLayerOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::LayerSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( cache_selection_ ); // bool
+	arc( srbl_ ); // core::select::util::SelectResiduesByLayerOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::LayerSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::LayerSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_select_residue_selector_LayerSelector )
+#endif // SERIALIZATION

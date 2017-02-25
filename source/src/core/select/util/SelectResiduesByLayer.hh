@@ -27,6 +27,10 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -249,9 +253,6 @@ protected:
 	/// @brief has the residue selection been computed?
 	bool is_selection_initialized_;
 
-	/// @brief output in rasmol format
-
-
 	/// @brief asa for each residue
 	utility::vector1< Real > rsd_sasa_;
 
@@ -281,11 +282,20 @@ protected:
 	/// and m is the midpoint of the falloff.  The n value sets the sharpness.  Defaults to 1.0.
 	core::Real dist_exponent_;
 
-};
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
+};
 
 } // util
 } // select
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_select_util_SelectResiduesByLayer )
+#endif // SERIALIZATION
 
 #endif

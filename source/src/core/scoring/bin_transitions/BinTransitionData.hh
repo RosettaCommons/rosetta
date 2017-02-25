@@ -30,6 +30,11 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/chemical/AA.hh>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 ///////////////////////////////////////////////////////////////////////
 
 namespace core {
@@ -817,10 +822,20 @@ private: //Private variables:
 	/// @details NOTE that indices are backwards to what's usual, here!
 	utility::vector1 /*bin_i+1*/ < utility::vector1 /*bin_i_cdf*/ < core::Real > > bin_i_cdf_given_iplus1_;
 
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //BinTransitionData class
 
 } //namespace bin_transitions
 }//namespace scoring
 }//namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_bin_transitions_BinTransitionData )
+#endif // SERIALIZATION
 
 #endif //INCLUDED_core_scoring_bin_transitions_BinTransitionData_hh
