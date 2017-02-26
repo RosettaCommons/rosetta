@@ -445,41 +445,61 @@ PowerDiagram::add_single_atom_to_power_diagram(
 		/////////////////////////////////////////////////////////////
 
 		// Find a single vertex to be removed, then go from there
-		// Later optimization - start at end and follow lowest power
-		//  TR << "Finding first vertex from list of " << finite_vertices_.size() << " existing vertices" << std::endl;
+		// Optimization - start at end and follow lowest power
 
-		std::list< PDvertexOP >::iterator itr( finite_vertices_.begin() );
-		Real pd( power_distance( (*itr)->xyz(), new_sph ) );
-		while ( ( itr != finite_vertices_.end() ) && ( pd > (*itr)->power() ) )  {
-			++itr;
-			if ( itr != finite_vertices_.end() ) {
-				pd = ( power_distance( (*itr)->xyz(), new_sph ) );
-			}
+		// Get any finite vertex.
+		PDvertexOP srch_vrt( *finite_vertices_.rbegin() );
+		PDvertexOP next_vrt = nullptr;
+		PDvertexOP delete_vrt = nullptr;
+		Real pd( power_distance( srch_vrt->xyz(), new_sph ) );
+		Real this_dist( pd - srch_vrt->power() );
+
+		while( this_dist > 0.0 && next_vrt != srch_vrt ) {
+			if( next_vrt != nullptr ) srch_vrt = next_vrt;
+			next_vrt = find_next_vertex_with_smallest_dist( srch_vrt, new_sph, this_dist );
+			//TR << "this_dist " << this_dist << " same_check " << (next_vrt == srch_vrt) << " null check " << (next_vrt == nullptr) << std::endl;
 		}
 
-		// This handles if the only vertices to delete are infinite
-		if ( itr == finite_vertices_.end() ) {
-			//TR << "Didn't find any finite vertices to delete - checking infinite vertices" << std::endl;
-			itr = infinite_vertices_.begin();
-			Real check_val( ( new_sph->xyz() - (*itr)->generators()[1]->xyz() ).dot( (*itr)->direction() ) );
-			while ( ( check_val <= 0.0 ) && ( itr != infinite_vertices_.end() ) ) {
-				++itr;
-				if ( itr != infinite_vertices_.end() ) {
+		if( this_dist < 0.0 ) {
+			//TR << "Found finite vertex to delete!" << std::endl;
+			if( next_vrt == nullptr ) {
+				delete_vrt = srch_vrt;
+			} else {
+				delete_vrt = next_vrt;
+			}
+		} else {
+			//TR << "Stalled out at power_distance diff of " << this_dist << std::endl;
+		}
+
+		// If no finite vertices get deleted, try the infinite vertex partners
+		if( this_dist > 0.0 ) {
+
+			auto itr = next_vrt->partners().begin();
+			while( itr != next_vrt->partners().end() && (*itr)->finite() ) ++itr;
+			if( itr != next_vrt->partners().end() ) {
+				Real check_val( ( new_sph->xyz() - (*itr)->generators()[1]->xyz() ).dot( (*itr)->direction() ) );
+				while ( ( check_val <= 0.0 ) && ( itr != next_vrt->partners().end() ) ) {
+					++itr;
+					if ( itr == next_vrt->partners().end() || (*itr)->finite() ) continue;
 					check_val = ( new_sph->xyz() - (*itr)->generators()[1]->xyz() ).dot( (*itr)->direction() );
+				}
+				if( itr != next_vrt->partners().end() ) {
+					delete_vrt = (*itr);
+					//TR << "Found infinite vertex to delete!" << std::endl;
 				}
 			}
 		}
 
-		//  if( itr == finite_vertices_.end() || itr == infinite_vertices_.end() ) {
-		//   TR << "Found nothing to delete - atom doesn't affect power diagram" << std::endl;
-		//  }
+//		if ( delete_vrt == nullptr ) {
+//			TR << "This sphere doesn't contribute!" << std::endl;
+//		}
 
-		//  TR << "Deleting vertices" << std::endl;
-		if ( itr != finite_vertices_.end() && itr != infinite_vertices_.end() ) {
+		if ( delete_vrt != nullptr ) {
 			// Ok, got one.  Now process this one and all its neighbors
 			std::stack< PDvertexOP > delete_me;
-			(*itr)->set_live( false );
-			delete_me.push( *itr );
+//			(*itr)->set_live( false );
+			delete_vrt->set_live( false );
+			delete_me.push( delete_vrt );
 			while ( !delete_me.empty() ) {
 				// Get the next one to deldete
 				PDvertexOP this_vrt( delete_me.top() );
@@ -1970,6 +1990,22 @@ print_vertices( std::list< PDvertexOP > & v )
 	return;
 }
 
+PDvertexOP
+find_next_vertex_with_smallest_dist( PDvertexOP & srch_vrt, PDsphereOP & new_sph, Real & this_dist )
+{
+	PDvertexOP return_vrt = nullptr;
+	for( auto itr = srch_vrt->partners().begin() ; itr != srch_vrt->partners().end() ; ++itr ) {
+		// Only checking finite vertices
+		if( !(*itr)->finite() ) continue;
+		Real check_dist( power_distance( (*itr)->xyz(), new_sph ) - (*itr)->power() );
+		if( check_dist < this_dist ) {
+			this_dist = check_dist;
+			return_vrt = (*itr);
+		}
+	}
+	if( return_vrt == nullptr ) return_vrt = srch_vrt;
+	return return_vrt;
+}
 
 
 } // power_diagram

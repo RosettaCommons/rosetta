@@ -300,7 +300,7 @@ Vector vertex_xyz_from_generators( PDsphereCOP a1, PDsphereCOP a2, PDsphereCOP a
 
 Vector vertex_xyz_from_generators( utility::vector1< PDsphereOP > const & gen );
 
-
+PDvertexOP find_next_vertex_with_smallest_dist( PDvertexOP & srch_vrt, PDsphereOP & new_sph, Real & this_dist );
 
 ///////////////////////////////////////////////////////////////////
 // Start Surface Area Calculation Functions ///////////////////////
