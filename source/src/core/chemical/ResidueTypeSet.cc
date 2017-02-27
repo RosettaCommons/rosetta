@@ -111,8 +111,12 @@ ResidueTypeSet::atom_type_set(AtomTypeSetCOP atom_types) {
 ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
-	ResidueTypeCOP restype( name_mapOP( name_in ) );
-	runtime_assert_string_msg( restype != nullptr, "The residue " + name_in + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
+	std::string name = name_in;
+	if ( name_in == "CYD" ){
+		name = "CYS:disulfide";
+	}
+	ResidueTypeCOP restype( name_mapOP( name ) );
+	runtime_assert_string_msg( restype != nullptr, "The residue " + name + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
 	return *restype;
 }
 
