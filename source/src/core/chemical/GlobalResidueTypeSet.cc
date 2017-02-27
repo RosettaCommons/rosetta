@@ -50,6 +50,7 @@
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/Orbital.hh> /* for copying ResidueType */
 #include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
+#include <core/chemical/residue_support.hh>
 
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
@@ -226,8 +227,18 @@ void GlobalResidueTypeSet::init_restypes_from_commandline() {
 			add_base_residue_type( rsd_type );
 		}
 	} else if ( mode() == CENTROID_t ) {
-		// Add code to load as fa, convert to centroid, then add to the set
-		// See GitHub PR # 1311
+		utility::vector1< ResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
+		for ( ResidueTypeOP const & rsd_type : extra_residues ) {
+			if ( has_name( rsd_type->name() ) ) {
+				TR << "Skipping re-addition of non-params residue type " << rsd_type->name() << " as it already exists from params files." << std::endl;
+				continue;
+			}
+			ResidueTypeOP centroid_type( make_centroid( *rsd_type ) );
+			if ( centroid_type ) {
+				TR << "Adding " << centroid_type->name() << " as converted centroid type. " << std::endl;
+				add_base_residue_type( centroid_type );
+			}
+		}
 	} else {
 		// Add code to load as fa, convert to appropriate type set, then add to the set.
 	}
@@ -830,6 +841,18 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 		molecules.push_back( mmCIF_parser.parse( lines, pdb_id) );
 		core::chemical::ResidueTypeOP new_rsd_type( core::chemical::sdf::convert_to_ResidueType( molecules ) );
 
+		// By default, the ResidueType is being loaded as a Full Atom type - convert to the correct form, if possible.
+		switch( mode() ) {
+			case FULL_ATOM_t:
+				break; // do nothing, already centroid
+			case CENTROID_t:
+				TR.Debug << "Converting PDB component " << new_rsd_type->name() << " to centroid." << std::endl;
+				new_rsd_type = make_centroid( *new_rsd_type ); // Convert to centroid
+				break;
+			default:
+				TR.Warning << "WARNING: attempting to load fullatom PDB component for non-fullatom ResidueType." << std::endl;
+				break; //do nothing
+		}
 		return new_rsd_type;
 	}
 	return ResidueTypeOP( nullptr );

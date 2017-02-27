@@ -1,0 +1,7 @@
+-s "3N0G_trim.pdb XST_cif.pdb"
+-load_PDB_components
+-PDB_components_file XST.cif
+-in:file:centroid
+-out:suffix _components
+-out:pdb
+-score:weights score3

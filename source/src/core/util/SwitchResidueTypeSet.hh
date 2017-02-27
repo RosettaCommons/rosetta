@@ -20,6 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -72,6 +73,7 @@ switch_to_residue_type_set(
 	bool switch_protein_res_only = false,
 	bool keep_energies = false
 );
+
 //////////////
 // Functions primarily for internal use
 // (Mainly to cut down on the giant if-then-else function)
@@ -84,6 +86,13 @@ switch_to_centroid_rot_set(
 	core::chemical::ResidueTypeSet const & rsd_set,
 	bool allow_sloppy_match = false
 );
+
+/// @brief Attempt to generate a *new* residue type of the appropriate mode.
+/// If not possible, return a nullptr.
+core::chemical::ResidueTypeOP
+generate_replacement_restype(
+	core::chemical::ResidueType const & restype,
+	core::chemical::TypeSetMode mode);
 
 /// @brief Rebuild disulfides after a transition to a full atom ResidueTypeSet
 void

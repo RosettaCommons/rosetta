@@ -58,6 +58,7 @@
 #include <ObjexxFCL/format.hh>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/mcgregor_common_subgraphs.hpp>
+#include <boost/graph/graphviz.hpp>
 
 // C++ headers
 #include <fstream>
@@ -427,6 +428,22 @@ private:
 	core::chemical::ResidueGraph const & rsdtype_;
 };
 
+/// @brief Callback class for writing graphviz info
+class GraphvizPropertyWriter {
+public:
+	GraphvizPropertyWriter( AtomInfoGraph const & aigraph ):
+		aigraph_(aigraph)
+	{}
+
+	/// @brief write properties for atoms
+	void operator()(std::ostream & out, AtomInfoGraph::vertex_descriptor const & vd) const {
+		out << "[" << "label=\"" <<  aigraph_[vd].name << "\"]";
+	}
+
+private:
+	AtomInfoGraph const & aigraph_;
+};
+
 /// @brief Attempt to use element identity and connectivity to map atom names from the rinfo object onto the rsd_type object names.
 void
 remap_names_on_geometry( NameBimap & mapping,
@@ -483,11 +500,17 @@ remap_names_on_geometry( NameBimap & mapping,
 
 	core::Real const no_match_found_score( -999999 );
 	core::Real best_score( no_match_found_score );
-	GeometricRenameIsomorphismCallback callback( aigraph, rinfo, rsd_type, mapping, best_score );
-	GeometricRenameVerticiesEquivalent vertices_equivalent( aigraph, rsd_type.graph() );
+	GeometricRenameIsomorphismCallback const callback( aigraph, rinfo, rsd_type, mapping, best_score );
+	GeometricRenameVerticiesEquivalent const vertices_equivalent( aigraph, rsd_type.graph() );
+
+	clock_t const time_start( clock() );
 
 	boost::vf2_subgraph_mono( aigraph, rsd_type.graph(), callback, small_order,
 		boost::vertices_equivalent( vertices_equivalent ) );
+
+	clock_t const vf2_end( clock() );
+
+	TR.Debug << "VF2-style subgraph matching took " << (vf2_end - time_start) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	if ( best_score == no_match_found_score ) {
 		// The McGregor approach takes longer, but picks up additional mapping correspondences.
@@ -496,8 +519,19 @@ remap_names_on_geometry( NameBimap & mapping,
 		// subgraphs to speed things up. This means that we're going to match on just the largest
 		// connected component, rather than multiple disconnected subgraphs.
 		TR.Debug << "Using the McGregor fall-back approach." << std::endl;
+
 		boost::mcgregor_common_subgraphs( aigraph, rsd_type.graph(), true /*only_connected_subgraphs*/,
 			callback, boost::vertices_equivalent( vertices_equivalent ) );
+
+		TR.Debug << "McGregor-style subgraph matching took " << (clock() - vf2_end) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	}
+
+	if ( TR.Debug.visible() && ( best_score == no_match_found_score || mapping.left.size() < boost::num_vertices(aigraph) ) ) {
+		// For debugging purposes: output the interpreted graph if we couldn't match all the atoms.
+		std::stringstream ss; // Go through stringstream to avoid std::endl flushes and tracer name printing.
+		boost::write_graphviz( ss, aigraph, GraphvizPropertyWriter(aigraph) );
+		TR.Debug << "Could not find matches for all the atoms in the input." << std::endl;
+		TR.Debug << "Graphviz-style interpetation of the input residue (save to file and run 'neato -T png < residue.dot > residue.png'):\n" << ss.str() << std::endl;
 	}
 
 	if ( best_score == no_match_found_score ) {

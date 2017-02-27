@@ -3580,6 +3580,8 @@ void
 ResidueType::finalize()
 {
 
+	regenerate_graph_vertex_index( graph_ );
+
 	setup_atom_ordering();
 
 	generate_atom_indices();
@@ -4573,6 +4575,13 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 			atom( i ).show( output );
 		}
 	}
+}
+
+void
+ResidueType::set_atom_type_set( AtomTypeSetCOP setting ) {
+	debug_assert( setting );
+	atom_types_ = setting;
+	mode_ = atom_types_->mode();
 }
 
 //////////////////////////////////////////////////////

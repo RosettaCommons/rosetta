@@ -191,8 +191,10 @@ private: // data
 	IdealBondLengthSets ideal_bond_length_sets_;
 };
 
+/// @details If fail is true, utility_exit if the mode cannot be converted,
+/// if not, return the invalid type.
 TypeSetMode
-type_set_mode_from_string( std::string const & mode );
+type_set_mode_from_string( std::string const & mode, bool fail = true );
 
 std::string
 string_from_type_set_mode( TypeSetMode mode );

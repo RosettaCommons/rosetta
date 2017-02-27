@@ -1,0 +1,4 @@
+-s "3N0G_trim.pdb XST_params.pdb"
+-extra_res_fa XST.params
+-out:suffix _switch
+-parser:protocol switch.xml

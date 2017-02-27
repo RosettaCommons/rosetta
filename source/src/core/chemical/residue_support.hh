@@ -76,6 +76,23 @@ find_nbr_dist( ResidueType const & res, VD & nbr_atom );
 void
 rosetta_recharge_fullatom( ResidueType & res );
 
+/// @brief Make a centroid version of the fullatom ResidueType passed in.
+///
+/// May return a nullptr if the conversion is not possible
+///
+/// @details This uses the same crude heuristics as in molfile_to_params
+/// That is, all heavy atoms and polar hydrogens are transfered over 1:1, and
+/// non-polar hydrogens are deleted.
+///
+/// Of particular note is that it makes no attempt to transfer things over into
+/// "Superatoms"
+///
+/// Current limitation: it cannot convert a ResidueType which has connections.
+///
+/// Assumes:
+///   * Input ResidueType is complete and finalized
+ResidueTypeOP
+make_centroid( ResidueType const & res );
 
 } // chemical
 } // core

@@ -14,24 +14,23 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
 
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ChemicalManager.hh>
 
-#include <basic/Tracer.hh>
-using basic::T;
-using basic::Error;
-using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
+#include <core/kinematics/Jump.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/Tracer.hh>
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -70,7 +69,12 @@ SwitchResidueTypeSetMover::get_residue_type_set() const {
 void
 SwitchResidueTypeSetMover::apply( Pose & pose )
 {
-	core::util::switch_to_residue_type_set( pose, type_set_tag_ );
+	core::chemical::TypeSetMode mode( core::chemical::type_set_mode_from_string( type_set_tag_ ) );
+	if ( mode != core::chemical::INVALID_t ) {
+		core::util::switch_to_residue_type_set( pose, mode );
+	} else {
+		core::util::switch_to_residue_type_set( pose, type_set_tag_ );
+	}
 }
 
 // XRW TEMP std::string

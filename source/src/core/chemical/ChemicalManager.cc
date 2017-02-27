@@ -392,7 +392,7 @@ std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
 std::string const COARSE_RNA( "coarse_rna" );
 
 TypeSetMode
-type_set_mode_from_string( std::string const & mode ) {
+type_set_mode_from_string( std::string const & mode, bool fail /*=true*/ ) {
 	if ( mode == FA_STANDARD ) return FULL_ATOM_t;
 	if ( mode == "full_atom" ) return FULL_ATOM_t;
 	if ( mode == "default" ) return DEFAULT_t;
@@ -400,7 +400,11 @@ type_set_mode_from_string( std::string const & mode ) {
 	if ( mode == CENTROID_ROT ) return CENTROID_ROT_t;
 	if ( mode == HYBRID_FA_STANDARD_CENTROID ) return HYBRID_FA_STANDARD_CENTROID_t;
 	if ( mode == COARSE_RNA ) return COARSE_RNA_t;
-	utility_exit_with_message("String '"+mode+"' not recognized as a TypeSetMode.");
+	if ( fail ) {
+		utility_exit_with_message("String '"+mode+"' not recognized as a TypeSetMode.");
+	} else {
+		return INVALID_t;
+	}
 }
 
 std::string

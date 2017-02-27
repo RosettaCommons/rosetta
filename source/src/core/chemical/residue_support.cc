@@ -19,6 +19,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 // Project Headers
 #include <utility/graph/Graph.hh>
@@ -394,6 +395,98 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 			}
 		}
 	}
+}
+
+/// @brief Make a (new) centroid version of the (fullatom) ResidueType passed in.
+ResidueTypeOP
+make_centroid( ResidueType const & res ) {
+
+	AtomTypeSet const & old_ats( res.atom_type_set() );
+
+	if ( old_ats.mode() == core::chemical::CENTROID_t ) {
+		TR.Warning << "Warning! Residue " << res.name() << " to convert to centroid is already centroid!" << std::endl;
+		return nullptr; // Don't bother - it's an error.
+	} else if ( old_ats.mode() != core::chemical::FULL_ATOM_t ) {
+		TR.Warning << "Warning! Residue " << res.name() << " to convert to centroid is not in full atom mode!" << std::endl;
+	}
+
+	ResidueTypeOP centroid( res.clone() );
+
+	// Atom type translation from molfile_to_params.py
+	// RM: There's been some additions to the centroid atom type set since
+	// those might be a better idea ... or not.
+	std::map< std::string, std::string > type_translation = {
+			{"Hpol","HNbb"},
+			{"Ntrp","Nbb" },
+			{"NH2O","Nbb" },
+			{"Nlys","Nbb" },
+			{"Narg","Nbb" },
+			{"Npro","Nbb" },
+			{"Nhis","OCbb"}, // No, this is not a typo (apparently) - it's an unprotonated hbond acceptor
+			{"OH"  ,"OCbb"},
+			{"ONH2","OCbb"},
+			{"OOC" ,"OCbb"},
+			{"Oaro","OCbb"},
+			{"Hapo",""    }, // Don't translate.
+			{"Haro",""    }, // Don't translate.
+			{"aroC","CAbb"},
+			{"CH1" ,"CAbb"},
+			{"CH2" ,"CAbb"},
+			{"CH3" ,"CAbb"},
+			{"CNH2","CAbb"},
+			{"COO" ,"CAbb"}};
+
+	AtomTypeSetCOP centroid_ats_ptr( ChemicalManager::get_instance()->atom_type_set( core::chemical::CENTROID )  );
+	AtomTypeSet const & centroid_ats( *centroid_ats_ptr );
+	centroid->set_atom_type_set( centroid_ats_ptr );
+
+	utility::vector1< std::string > to_delete; // Don't modify ResidueType while iterating.
+	for ( core::Size ii(1); ii <= centroid->natoms(); ++ii ) {
+		core::Size old_index = res.atom(ii).atom_type_index();
+		std::string const & old_string( old_ats[ old_index ].name() );
+		std::string new_string;
+		if ( type_translation.count(old_string) ) {
+			new_string = type_translation[ old_string ];
+		} else if ( centroid_ats.has_atom( old_string ) ) {
+			// We have a simple as-is translation
+			new_string = old_string;
+		} else {
+			TR.Warning << "WARNING: Atom type '" << old_string << "' on atom '" << res.atom_name(ii)
+					<< "' from residue type '" <<  res.name() <<  "' does not have a centroid mode equivalent: assuming CAbb." << std::endl;
+			// This is how the molfile_to_params.py script does the translation for unrecognized atoms.
+			new_string = "CAbb";
+		}
+
+		if ( new_string.empty() ) {
+			to_delete.push_back( centroid->atom_name( ii ) );
+		} else {
+			debug_assert( centroid_ats.has_atom( new_string ) );
+			// This should reset things properly, as we've set the atom type set to centroid previously.
+			centroid->set_atom_type( centroid->atom_name( ii ), new_string );
+		}
+	}
+
+	// Now delete the defered atoms
+	for ( core::Size jj(1); jj <= to_delete.size(); ++jj) {
+		centroid->delete_atom( to_delete[ jj ] );
+	}
+
+	// We need to update the internal coordinates (to get rid of the missing hydrogens)
+	// The neighbor settings should be fine - they're based on heavy atoms
+	// Rotatable bonds should be fine - we shouldn't have rotatable bonds to apolar hydrogens
+	// TODO: Charges might be a little funky, but I don't think we use them in centroid mode.
+	if ( to_delete.size() ) {
+		// Currently assign_internal_coordinates can't work with polymeric types.
+		if ( res.n_possible_residue_connections() != 0 ) {
+			TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it is polymeric/has connections." << std::endl;
+			return nullptr;
+		}
+
+		centroid->assign_internal_coordinates();
+	}
+
+	centroid->finalize();
+	return centroid;
 }
 
 } // chemical

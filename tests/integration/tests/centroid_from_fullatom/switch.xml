@@ -1,0 +1,25 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+	<ScoreFunction name="score3" weights="score3" />
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <SwitchResidueTypeSetMover name="make_centroid" set="centroid"/>
+        <SwitchResidueTypeSetMover name="make_fullatom" set="fa_standard"/>
+	<ScoreMover name="score_fa" scorefxn="commandline" verbose="false" />
+	<ScoreMover name="score_cen" scorefxn="score3" verbose="false" />
+    </MOVERS>
+    <PROTOCOLS>
+	<Add mover="make_centroid" />
+	<Add mover="score_cen" /> # Should crash if pose is full-atom
+	<Add mover="make_fullatom" />
+	<Add mover="score_fa" /> # Should crash if pose if centroid
+	<Add mover="make_centroid" />
+    </PROTOCOLS>
+    <OUTPUT scorefxn="score3"/>
+</ROSETTASCRIPTS>

@@ -1,0 +1,6 @@
+-s "3N0G_trim.pdb XST_params.pdb"
+-extra_res_mol XST.sdf
+-in:file:centroid
+-out:suffix _sdf
+-out:pdb
+-score:weights score3

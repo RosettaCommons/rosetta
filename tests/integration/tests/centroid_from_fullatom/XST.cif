@@ -1,0 +1,142 @@
+data_XST
+# 
+_chem_comp.id                                    XST 
+_chem_comp.name                                  "DIMETHYLALLYL S-THIOLODIPHOSPHATE" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C5 H14 O6 P2 S" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2003-12-16 
+_chem_comp.pdbx_modified_date                    2011-06-04 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        264.174 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     XST 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        ? 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        1RQI 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+XST O4   O4   O 0 1 N N N 61.175 74.398 43.358 -0.698 -0.490 -4.554 O4   XST 1  
+XST P1   P1   P 0 1 N N N 59.704 74.197 43.133 0.043  -0.037 -3.199 P1   XST 2  
+XST O6   O6   O 0 1 N N N 59.115 74.957 41.973 0.249  1.559  -3.207 O6   XST 3  
+XST O5   O5   O 0 1 N N N 58.907 74.266 44.420 1.362  -0.704 -3.112 O5   XST 4  
+XST O2   O2   O 0 1 N N N 59.564 72.715 42.542 -0.854 -0.456 -1.930 O2   XST 5  
+XST P3   P3   P 0 1 N N S 58.137 71.981 42.385 -0.056 0.023  -0.616 P3   XST 6  
+XST O8   O8   O 0 1 N N N 57.442 72.042 43.717 1.379  -0.702 -0.565 O8   XST 7  
+XST O7   O7   O 0 1 N N N 57.423 72.462 41.158 0.133  1.490  -0.663 O7   XST 8  
+XST S9   S9   S 0 1 N N N 58.664 70.170 42.155 -1.170 -0.489 1.112  S9   XST 9  
+XST C10  C10  C 0 1 N N N 60.143 69.636 41.547 -0.065 0.152  2.400  C10  XST 10 
+XST C11  C11  C 0 1 N N N 60.519 68.919 40.384 -0.678 -0.112 3.777  C11  XST 11 
+XST C12  C12  C 0 1 N N N 60.907 69.193 39.201 0.253  0.429  4.863  C12  XST 12 
+XST C13  C13  C 0 1 N N N 61.111 68.071 38.257 -0.360 0.165  6.239  C13  XST 13 
+XST C14  C14  C 0 1 N N N 61.054 70.619 38.747 1.609  -0.271 4.766  C14  XST 14 
+XST HO4  HO4  H 0 1 N N N 61.546 73.918 44.089 -0.128 -0.221 -5.288 HO4  XST 15 
+XST HO6  HO6  H 0 1 N N N 58.184 74.829 41.830 -0.631 1.954  -3.264 HO6  XST 16 
+XST HO8  HO8  H 0 1 N N N 56.601 71.609 43.624 1.210  -1.654 -0.535 HO8  XST 17 
+XST H101 1H10 H 0 0 N N N 60.765 70.560 41.504 0.069  1.224  2.262  H101 XST 18 
+XST H102 2H10 H 0 0 N N N 60.576 69.037 42.382 0.901  -0.347 2.331  H102 XST 19 
+XST H111 1H11 H 0 0 N N N 61.327 68.248 40.758 -0.813 -1.184 3.915  H111 XST 20 
+XST H112 2H11 H 0 0 N N N 59.638 68.257 40.207 -1.645 0.387  3.845  H112 XST 21 
+XST H12  H12  H 0 1 N N N 61.944 69.562 39.375 0.387  1.502  4.724  H12  XST 22 
+XST H131 1H13 H 0 0 N N N 61.450 68.310 37.222 0.303  0.550  7.013  H131 XST 23 
+XST H132 2H13 H 0 0 N N N 61.815 67.335 38.711 -1.326 0.664  6.308  H132 XST 24 
+XST H133 3H13 H 0 0 N N N 60.176 67.464 38.203 -0.494 -0.907 6.377  H133 XST 25 
+XST H141 1H14 H 0 0 N N N 61.393 70.858 37.712 1.475  -1.344 4.904  H141 XST 26 
+XST H142 2H14 H 0 0 N N N 60.084 71.140 38.923 2.047  -0.083 3.785  H142 XST 27 
+XST H143 3H14 H 0 0 N N N 61.728 71.143 39.463 2.273  0.114  5.540  H143 XST 28 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+XST O4  P1   SING N N 1  
+XST O4  HO4  SING N N 2  
+XST P1  O6   SING N N 3  
+XST P1  O5   DOUB N N 4  
+XST P1  O2   SING N N 5  
+XST O6  HO6  SING N N 6  
+XST O2  P3   SING N N 7  
+XST P3  O8   SING N N 8  
+XST P3  O7   DOUB N N 9  
+XST P3  S9   SING N N 10 
+XST O8  HO8  SING N N 11 
+XST S9  C10  SING N N 12 
+XST C10 C11  SING N N 13 
+XST C10 H101 SING N N 14 
+XST C10 H102 SING N N 15 
+XST C11 C12  SING N N 16 
+XST C11 H111 SING N N 17 
+XST C11 H112 SING N N 18 
+XST C12 C13  SING N N 19 
+XST C12 C14  SING N N 20 
+XST C12 H12  SING N N 21 
+XST C13 H131 SING N N 22 
+XST C13 H132 SING N N 23 
+XST C13 H133 SING N N 24 
+XST C14 H141 SING N N 25 
+XST C14 H142 SING N N 26 
+XST C14 H143 SING N N 27 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+XST SMILES           ACDLabs              10.04 "O=P(OP(=O)(O)O)(O)SCCC(C)C"                                                               
+XST SMILES_CANONICAL CACTVS               3.341 "CC(C)CCS[P@](O)(=O)O[P](O)(O)=O"                                                          
+XST SMILES           CACTVS               3.341 "CC(C)CCS[P](O)(=O)O[P](O)(O)=O"                                                           
+XST SMILES_CANONICAL "OpenEye OEToolkits" 1.5.0 "CC(C)CCS[P@@](=O)(O)OP(=O)(O)O"                                                           
+XST SMILES           "OpenEye OEToolkits" 1.5.0 "CC(C)CCSP(=O)(O)OP(=O)(O)O"                                                               
+XST InChI            InChI                1.03  "InChI=1S/C5H14O6P2S/c1-5(2)3-4-14-13(9,10)11-12(6,7)8/h5H,3-4H2,1-2H3,(H,9,10)(H2,6,7,8)" 
+XST InChIKey         InChI                1.03  UWSFTDFHOGCIEL-UHFFFAOYSA-N                                                                
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+XST "SYSTEMATIC NAME" ACDLabs              10.04 "S-(3-methylbutyl) trihydrogen thiodiphosphate"      
+XST "SYSTEMATIC NAME" "OpenEye OEToolkits" 1.5.0 "3-methylbutylsulfanyl-phosphonooxy-phosphinic acid" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+XST "Create component"  2003-12-16 RCSB 
+XST "Modify descriptor" 2011-06-04 RCSB 
+# 

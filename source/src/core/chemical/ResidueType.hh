@@ -2208,6 +2208,12 @@ public:
 	/// @brief  Generate string representation of ResidueType for debugging purposes.
 	void show( std::ostream & output=std::cout, bool output_atomic_details=false ) const;
 
+	/// @brief Change which atom type set this ResidueType points to
+	/// WARNING - This doesn't actually change (or even touch) any of the atom type indicies
+	/// You NEED to go through and manually reset the types on all atoms.
+	/// Exposed for black-magic use only.
+	void
+	set_atom_type_set( AtomTypeSetCOP setting );
 
 public:
 	////////////////////////////////////////////////////////////////////////////

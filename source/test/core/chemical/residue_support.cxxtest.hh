@@ -28,11 +28,13 @@
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
+#include <core/chemical/residue_io.hh>
 
 #include <core/types.hh>
 
 // Platform Headers
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -397,6 +399,36 @@ public:
 		TS_ASSERT_DELTA( rsd->atom(" N  ").charge(), -0.370 - P_naive_charge/14 + -2.0/14, 1e-4 ); //"Nbb "
 		TS_ASSERT_DELTA( rsd->atom(" CA ").charge(),  0.070 - P_naive_charge/14 + -2.0/14, 1e-4 ); //"CAbb"
 		TS_ASSERT_EQUALS( rsd->atom(" NV ").charge(), 0 ); // VIRT
+	}
+
+	void test_make_centroid() {
+		using namespace core::chemical;
+
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		ResidueTypeSetCOP fa_rts = cm->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP cen_rts = cm->residue_type_set( CENTROID );
+
+		utility::io::izstream paramslist("core/chemical/params/cen_types_list.txt");
+		std::string cenfile, fafile;
+		paramslist >> cenfile >> fafile;
+		while ( paramslist ) {
+			TR << "Comparing converted " << fafile << " with " << cenfile << std::endl;
+
+			core::chemical::ResidueTypeOP fa_rsd = read_topology_file("core/chemical/params/"+fafile, fa_rts );
+			core::chemical::ResidueTypeOP cen_rsd = read_topology_file("core/chemical/params/"+cenfile, cen_rts );
+
+			core::chemical::ResidueTypeOP converted = make_centroid( *fa_rsd );
+
+			TS_ASSERT_EQUALS( converted->atom_type_set().name(), cen_rsd->atom_type_set().name() );
+			TS_ASSERT_EQUALS( converted->natoms(), cen_rsd->natoms() );
+
+			for ( core::Size ii(1); ii <= cen_rsd->natoms(); ++ii ) {
+				core::Size jj( converted->atom_index( cen_rsd->atom_name(ii) ) );
+				TSM_ASSERT_EQUALS( cen_rsd->atom_name(ii), converted->atom_type( jj ).name(), cen_rsd->atom_type( ii ).name() )
+			}
+			paramslist >> cenfile >> fafile;
+		}
+
 	}
 
 };
