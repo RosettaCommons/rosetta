@@ -34,8 +34,6 @@
 namespace protocols {
 namespace md {
 
-using namespace core::optimization;
-
 class CartesianMD : public protocols::md::MDBase {
 
 public:
@@ -71,7 +69,7 @@ public:
 
 	void use_rattle( bool const value );
 
-	Multivec get_current_eqxyz() const;
+	core::optimization::Multivec get_current_eqxyz() const;
 	void update_restraint( core::pose::Pose & pose,
 		core::optimization::CartesianMinimizerMap const &min_map );
 

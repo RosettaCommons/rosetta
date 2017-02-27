@@ -37,8 +37,6 @@
 namespace protocols {
 namespace md {
 
-using namespace core::optimization;
-
 struct MDscheduleData
 {
 	std::string type;
@@ -51,7 +49,6 @@ class MDBase : public protocols::moves::Mover
 public:
 
 	typedef protocols::moves::Mover parent;
-	//typedef utility::vector1<core::Real> Multivec;
 
 	MDBase();
 
@@ -78,7 +75,7 @@ public:
 	core::Real dt() const { return dt_; }
 	core::Size n_dof() const { return n_dof_; }
 	core::Size n_dof_temp() const { return n_dof_temp_; }
-	Multivec mass() const { return mass_; }
+	core::optimization::Multivec mass() const { return mass_; }
 	core::Real mass( core::Size iatm ) const { return mass_[iatm]; }
 	core::Real cummulative_time() const { return cummulative_time_; }
 	core::Size nstep() const { return nstep_; }
@@ -110,14 +107,14 @@ public:
 	core::Real temperature() const { return temperature_; }
 	core::Real kinetic_energy() const { return kinetic_energy_; }
 	core::Real potential_energy() const { return potential_energy_; }
-	Multivec xyz() const { return xyz_; }
-	Multivec vel() const { return vel_; }
-	Multivec acc() const { return acc_; }
+	core::optimization::Multivec xyz() const { return xyz_; }
+	core::optimization::Multivec vel() const { return vel_; }
+	core::optimization::Multivec acc() const { return acc_; }
 	core::Real &xyz( core::Size idof ) { return xyz_[idof]; }
 	core::Real &vel( core::Size idof ) { return vel_[idof]; }
 	core::Real &acc( core::Size idof ) { return acc_[idof]; }
-	Multivec const &ref_xyz() const { return ref_xyz_; }
-	Multivec const &prv_eqxyz() const { return prv_eqxyz_; }
+	core::optimization::Multivec const &ref_xyz() const { return ref_xyz_; }
+	core::optimization::Multivec const &prv_eqxyz() const { return prv_eqxyz_; }
 	core::Real Kappa() const { return Kappa_; }
 	core::Real Gamma() const { return Gamma_; }
 
@@ -126,9 +123,9 @@ public:
 	bool trj_score_only() const { return trj_score_only_; }
 	std::string silentname() const { return silentname_; }
 	bool store_trj() const { return store_trj_; }
-	utility::vector1< Multivec > trj() const { return trj_; }
-	Multivec trj( core::Size itrj ) const { return trj_[itrj]; }
-	utility::vector1< Multivec > trj_scratch() const { return trj_scratch_; }
+	utility::vector1< core::optimization::Multivec > trj() const { return trj_; }
+	core::optimization::Multivec trj( core::Size itrj ) const { return trj_[itrj]; }
+	utility::vector1< core::optimization::Multivec > trj_scratch() const { return trj_scratch_; }
 	bool write_dynamic_rsr() const { return write_dynamic_rsr_; }
 	std::string rsrfilename() const { return rsrfilename_; }
 
@@ -169,11 +166,11 @@ public:
 	void set_temperature( core::Real setting ) { temperature_ = setting; }
 	void set_kinetic_energy( core::Real setting ) { kinetic_energy_ = setting; }
 	void set_potential_energy( core::Real setting ) { potential_energy_ = setting; }
-	void set_xyz( Multivec setting ) { xyz_ = setting; }
-	void set_vel( Multivec setting ) { vel_ = setting; }
-	void set_acc( Multivec setting ) { acc_ = setting; }
-	void set_ref_xyz( Multivec setting ) { ref_xyz_ = setting; }
-	void set_prv_eqxyz( Multivec setting ) { prv_eqxyz_ = setting; }
+	void set_xyz( core::optimization::Multivec setting ) { xyz_ = setting; }
+	void set_vel( core::optimization::Multivec setting ) { vel_ = setting; }
+	void set_acc( core::optimization::Multivec setting ) { acc_ = setting; }
+	void set_ref_xyz( core::optimization::Multivec setting ) { ref_xyz_ = setting; }
+	void set_prv_eqxyz( core::optimization::Multivec setting ) { prv_eqxyz_ = setting; }
 	void set_Kappa( core::Real setting ) { Kappa_ = setting; }
 	void set_Gamma( core::Real setting ) { Gamma_ = setting; }
 
@@ -182,8 +179,8 @@ public:
 	void set_trj_score_only( bool setting ) { trj_score_only_ = setting; }
 	void set_silentname( std::string setting ) { silentname_ = setting; }
 	void set_store_trj( bool setting ) { store_trj_ = setting; }
-	void set_trj( utility::vector1< Multivec > setting ) { trj_ = setting; }
-	void set_trj_scratch( utility::vector1< Multivec > setting ) { trj_scratch_ = setting; }
+	void set_trj( utility::vector1< core::optimization::Multivec > setting ) { trj_ = setting; }
+	void set_trj_scratch( utility::vector1< core::optimization::Multivec > setting ) { trj_scratch_ = setting; }
 	void set_write_dynamic_rsr( bool setting ) { write_dynamic_rsr_ = setting; }
 	void set_rsrfilename( std::string setting ) { rsrfilename_ = setting; }
 
@@ -192,8 +189,8 @@ public:
 
 	void set_constraint( core::Real const sdev );
 
-	void add_trj( Multivec xyz ) { trj_.push_back( xyz ); }
-	void add_trj_scratch( Multivec xyz ) { trj_scratch_.push_back( xyz ); }
+	void add_trj( core::optimization::Multivec xyz ) { trj_.push_back( xyz ); }
+	void add_trj_scratch( core::optimization::Multivec xyz ) { trj_scratch_.push_back( xyz ); }
 	void renew_trj_scratch(){ trj_scratch_.resize( 0 ); }
 	void resize_natm_variables();
 
@@ -226,7 +223,7 @@ private:
 	core::Size n_dof_;
 	core::Size n_dof_temp_;
 	core::Real dt_;
-	Multivec mass_;
+	core::optimization::Multivec mass_;
 	core::Real cummulative_time_;
 	core::Size md_report_stepsize_; // for trajectory
 	core::Size md_energy_report_stepsize_; // for energy
@@ -253,20 +250,20 @@ private:
 	core::Real kinetic_energy_;
 	core::Real potential_energy_;
 
-	Multivec xyz_;
-	Multivec vel_;
-	Multivec acc_;
+	core::optimization::Multivec xyz_;
+	core::optimization::Multivec vel_;
+	core::optimization::Multivec acc_;
 
 	// Trj
 	bool report_as_silent_;
 	bool trj_score_only_;
 	std::string silentname_;
 	bool store_trj_;
-	utility::vector1< Multivec > trj_;
+	utility::vector1< core::optimization::Multivec > trj_;
 
 	// Adaptive restraints
-	utility::vector1< Multivec > trj_scratch_;
-	Multivec ref_xyz_, prv_eqxyz_; // Init xyz, avrg over prv trj_scratch_
+	utility::vector1< core::optimization::Multivec > trj_scratch_;
+	core::optimization::Multivec ref_xyz_, prv_eqxyz_; // Init xyz, avrg over prv trj_scratch_
 	core::Real Kappa_, Gamma_;
 	bool write_dynamic_rsr_;
 	std::string rsrfilename_;
