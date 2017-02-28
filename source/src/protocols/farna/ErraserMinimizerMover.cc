@@ -642,7 +642,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
 
 				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, nbr ) ) continue;
-				Size const & k( nbr.atomno() ) ;
+				Size const k( nbr.atomno() ) ;
 
 				for ( auto const & ang_nbr : nbrs ) {
 					// Don't do anything for protein residues, because we don't have them as ideals.

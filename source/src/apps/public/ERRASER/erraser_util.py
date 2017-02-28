@@ -192,6 +192,46 @@ def get_total_res(pdbname):
                 oldresnum = resnum
 
     return count
+
+def find_nearby_res(input_pdb, input_res, dist_cutoff, reload = True):
+    """
+    Find nearby residues to the input residues by a distance_cutoff.
+    All the residues should be in the same chain with continous numbering starting from 1.
+    """
+    check_path_exist(input_pdb)
+
+    try :
+        coord_all
+        coord_C1
+        if reload:
+            [coord_all, coord_C1] = load_pdb_coord(input_pdb)
+    except :
+        [coord_all, coord_C1] = load_pdb_coord(input_pdb)
+
+    res_list = []
+    for i in input_res:
+        if not i in range(1, len(coord_all) + 1) :
+            error_exit("Input residues outside the range of pdb residues!")
+        for j in range(1, len(coord_all) + 1) :
+            if (j in input_res or j in res_list) : continue
+            dist_C1 = compute_dist( coord_C1[i-1], coord_C1[j-1] )
+            if dist_C1 > dist_cutoff + 8:
+                continue
+            for coord_target_atom in coord_all[i-1] :
+                found_qualifying_atom = False
+                for coord_all_atom in coord_all[j-1] :
+                    dist = compute_dist( coord_target_atom, coord_all_atom)
+                    if dist < dist_cutoff:
+                        res_list.append(j)
+                        found_qualifying_atom = True
+                        break
+                if found_qualifying_atom:
+                    break
+
+    res_list.sort()
+    return res_list
+
+
 ################################################################
 def parse_options( argv, tag, default):
     """

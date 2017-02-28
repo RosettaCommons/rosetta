@@ -104,6 +104,24 @@ public:
 	update_centers( utility::vector1< utility::vector1< Real > > const & centers,
 		utility::vector1< std::string > const & tags );
 
+	RNA_SuiteInfo closest_suite( 
+		utility::vector1< Real > const & suite_dihedrals 
+	) const;
+	
+	RNA_SuiteInfo closest_suite( 
+		Pose const & pose, 
+		Size const res
+	) const;
+	
+	RNA_SuiteInfo closest_by_dist4( 
+		utility::vector1< Real > const & suite_dihedrals 
+	) const;
+	
+	RNA_SuiteInfo closest_by_dist4( 
+		Pose const & pose, 
+		Size const res
+	) const;
+
 	Real const
 		epsilonmin, epsilonmax,
 		delta3min , delta3max,

@@ -39,11 +39,13 @@ public:
 
 	RNAIdealizeMover();
 
-	RNAIdealizeMover( Size const iterations, bool const noise, bool const final_minimize ):
+	RNAIdealizeMover( Size const iterations, bool const noise, bool const final_minimize, core::Real const ang_significance_threshold, bool const handle_suites ):
 		protocols::moves::Mover( RNAIdealizeMover::mover_name() ),
 		iterations_( iterations ),
 		noise_( noise ),
-		final_minimize_( final_minimize )
+		final_minimize_( final_minimize ),
+		ang_significance_threshold_( ang_significance_threshold ),
+		handle_suites_( handle_suites )
 	{}
 
 	// copy constructor (not needed unless you need deep copies)
@@ -104,7 +106,7 @@ public:
 private:
 
 	void perturb_pose( core::pose::Pose & pose ) const;
-	void constrain_to_ideal( core::pose::Pose & pose ) const;
+	void constrain_to_ideal( core::pose::Pose & pose, utility::vector1< core::Size > const & bad_suite_res ) const;
 
 	void
 	add_bond_angle_constraint(
@@ -127,6 +129,8 @@ private:
 	Size iterations_ = 100;
 	bool noise_ = false;
 	bool final_minimize_ = false;
+	core::Real ang_significance_threshold_ = 5;
+	bool handle_suites_ = false;
 };
 
 std::ostream &

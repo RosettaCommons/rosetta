@@ -604,7 +604,7 @@ def rebuild_completed( file ):
     return False
 
 
-def seq_rebuild_new( option ) :
+def seq_rebuild( option ) :
     
     rna_swa_test_exe = rosetta_bin_path("resample_full_model", option.rosetta_bin )
     stdout = sys.stdout
@@ -834,7 +834,7 @@ def seq_rebuild_new( option ) :
 
 
 ##### seq_rebuild start ###############################################
-def seq_rebuild( option ) :
+def seq_rebuild_new( option ) :
 
     stdout = sys.stdout
     stderr = sys.stderr
@@ -876,12 +876,12 @@ def seq_rebuild( option ) :
     else:
         for res in option.rebuild_res_list:
             # A residue has been already processed if its log says DONE!
-            if rebuild_completed("seq_rebuild_temp_%d.out" % res): continue
+            if rebuild_completed("seq_rebuild_temp_%s.out" % res): continue
         
             # If this directory already exists, clear out its contents.
-            if exists( "temp_pdb_res_%d" % res ):
-                remove( "temp_pdb_res_%d" % res )
-                os.mkdir( "temp_pdb_res_%d" % res )
+            if exists( "temp_pdb_res_%s" % res ):
+                remove( "temp_pdb_res_%s" % res )
+                os.mkdir( "temp_pdb_res_%s" % res )
             
             print 'Starting to rebuild residue %s' % res
 
@@ -969,7 +969,7 @@ def SWA_rebuild_erraser( option ):
     #############folder_name###################################
     base_dir=os.getcwd()
 
-    main_folder =          abspath("%s_res_%d" %(basename(option.input_pdb).replace('.','_'), option.rebuild_res) )
+    main_folder =          abspath("%s_res_%s" %(basename(option.input_pdb).replace('.','_'), option.rebuild_res) )
     temp_folder=           abspath("%s/temp_folder/" %(main_folder) )
     sampling_folder=       abspath("%s/sampling/" %(main_folder) )
     cluster_folder=        abspath("%s/cluster/" %(main_folder))
@@ -1010,14 +1010,23 @@ def SWA_rebuild_erraser( option ):
 
         rebuilding_res = []
         rebuilding_res.append( option.rebuild_res )
-        if option.rebuild_res != 1 and (not option.rebuild_res - 1 in option.cutpoint_rs) :
-            rebuilding_res.append( option.rebuild_res - 1 )
-        if option.rebuild_res != get_total_res(native_pdb) and (not option.rebuild_res in option.cutpoint_rs) :
-            rebuilding_res.append( option.rebuild_res + 1 )
+        # If called using the modern API, we need a way
+        # to get overall seqpos, perhaps. 
+        # For now, cover simplest cases: it's just [2:]
+        # if one chain.
+        rs = None
+        if isinstance(option.rebuild_res, str):
+            rs = int(option.rebuild_res[2:])
+        else:
+            rs = option.rebuild_res
+        if rs != 1 and (not rs - 1 in option.cutpoint_rs) :
+            rebuilding_res.append( rs - 1 )
+        if rs != get_total_res(native_pdb) and (not rs in option.cutpoint_rs) :
+            rebuilding_res.append( rs + 1 )
 
         res_sliced_all = pdb_slice_with_patching( native_pdb, native_pdb_final, rebuilding_res ) [0]
 
-        rebuild_res_final = res_sliced_all.index(option.rebuild_res) + 1
+        rebuild_res_final = res_sliced_all.index(rs) + 1
         cutpoint_res_final = [ res_sliced_all.index(cutpoint) + 1 for cutpoint in option.cutpoint_rs if cutpoint in res_sliced_all ] 
 
     total_res = get_total_res(native_pdb_final)

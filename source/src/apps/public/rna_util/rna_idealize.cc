@@ -26,11 +26,14 @@ using namespace protocols::farna;
 OPT_KEY( Integer, iterations )
 OPT_KEY( Boolean, noise )
 OPT_KEY( Boolean, final_minimize )
+OPT_KEY( Real, ang_significance_threshold )
+OPT_KEY( Boolean, handle_suites )
+
 
 void*
 my_main ( void* ) {
 
-	RNAIdealizeMoverOP rim( new RNAIdealizeMover( option[ iterations ].value(), option[ noise ].value(), option[ final_minimize ].value() ) );
+	RNAIdealizeMoverOP rim( new RNAIdealizeMover( option[ iterations ].value(), option[ noise ].value(), option[ final_minimize ].value(), option[ ang_significance_threshold ].value(), option[ handle_suites ].value()  ) );
 
 	protocols::jd2::JobDistributor::get_instance()->go( rim );
 
@@ -45,6 +48,8 @@ main ( int argc, char * argv [] ) {
 		NEW_OPT( iterations, "number of iterations across which to spread idealization", 100 );
 		NEW_OPT( noise, "add noise to the initial coordinates, providing a useful reason to run this more than once", false );
 		NEW_OPT( final_minimize, "do a final, unrestrained minimize", false );
+		NEW_OPT( ang_significance_threshold, "Size of angle deviation to correct (degrees)", 5 );
+		NEW_OPT( handle_suites, "repair suite outliers", false );
 
 		devel::init( argc, argv );
 

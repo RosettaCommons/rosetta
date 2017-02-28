@@ -147,8 +147,7 @@ StepWiseProteinBackboneSampler::define_moving_res( pose::Pose const & pose ) {
 	// expand_loop_takeoff makes protein modeler similar to RNA -- sample psi, omega, *and* phi
 	// at CA-to-CA connections going into and out of moving residues, just like in RNA,
 	// we sample epsilon, zeta, alpha, beta, and gamma in each sugar-to-sugar connection.
-	for ( Size n = 1; n <= moving_residues_input_.size(); n++ ) {
-		Size const & moving_res = moving_residues_input_[ n ];
+	for ( Size const moving_res : moving_residues_input_ ) {
 		Size const takeoff_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( takeoff_res == 0 ) continue;
 		if ( pose.fold_tree().jump_nr( moving_res, takeoff_res ) > 0 ) continue; // jump
@@ -307,6 +306,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_coarse(
 {
 	using namespace core::chemical;
 
+	// AMW TODO this.
 	// Later, can individually dial in cluster centers based on careful
 	// inspection of residue-specific rama plots. For now, this is basically a quick hack.
 	if ( pose.aa( n ) == aa_pro ) {
@@ -661,9 +661,9 @@ StepWiseProteinBackboneSampler::which_torsions()
 {
 	using namespace core::id;
 	utility::vector1< id::TorsionID > which_torsions;
-	for ( Size k = 1; k <= moving_residues_.size(); k++ ) {
+	for ( Size const moving_res : moving_residues_ ) {
 		for ( Size n = 1; n <= 3; n++ ) {
-			which_torsions.push_back( TorsionID( moving_residues_[ k ], BB, n ) );
+			which_torsions.push_back( TorsionID( moving_res, BB, n ) );
 		}
 	}
 	return which_torsions;

@@ -158,6 +158,79 @@ void RNA_SuiteName::init() {
 		make_vector1( 28, 60, 55, 50, 70, 35, 28 ),
 		make_vector1( 28, 60, 55, 50, 70, 35, 28 ) );
 }
+	
+RNA_SuiteInfo
+RNA_SuiteName::closest_suite( Pose const & pose, Size const res ) const {
+	using namespace chemical::rna;
+	if ( is_rna_chainbreak(pose, res - 1) ) return closest_by_dist4( pose, res );
+	utility::vector1 <Real> torsions;
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res - 1 ).mainchain_torsion( DELTA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res - 1 ).mainchain_torsion( ZETA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res ).mainchain_torsion( ALPHA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res ).mainchain_torsion( BETA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res ).mainchain_torsion( GAMMA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+		pose.residue( res ).mainchain_torsion( DELTA ) ) );
+	return closest_suite( torsions );
+}
+	
+RNA_SuiteInfo
+RNA_SuiteName::closest_by_dist4( Pose const & pose, Size const res ) const {
+	using namespace chemical::rna;
+	utility::vector1 <Real> torsions;
+	torsions.push_back( numeric::principal_angle_degrees(
+														 pose.residue( res ).mainchain_torsion( ALPHA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+														 pose.residue( res ).mainchain_torsion( BETA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+														 pose.residue( res ).mainchain_torsion( GAMMA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+														 pose.residue( res ).mainchain_torsion( DELTA ) ) );
+	return closest_by_dist4( torsions );
+}
+	
+RNA_SuiteInfo
+RNA_SuiteName::closest_suite( 
+	utility::vector1< Real > const & res_dihedrals 
+) const {
+	RNA_SuiteInfo closest;
+	Real distance = -1;
+	for ( auto const & suite : all_suites_ ) {
+		Real const this_dist = distance_7d( suite.torsion, res_dihedrals, regular_half_width );
+		if ( distance < 0 || this_dist < distance ) {
+			distance = this_dist;
+			closest = suite;
+		}
+	}
+	TR << "Closest: resid torsions " << res_dihedrals << std::endl;
+	TR << "Closest: suite torsions " << closest.torsion << std::endl;
+	return closest;
+}
+	
+RNA_SuiteInfo
+RNA_SuiteName::closest_by_dist4( 
+	utility::vector1< Real > const & res_dihedrals 
+) const {
+	RNA_SuiteInfo closest;
+	Real distance = -1;
+	for ( auto const & suite : all_suites_ ) {
+		Real const this_dist = distance_4d( suite.torsion, res_dihedrals, regular_half_width );
+		if ( distance < 0 || this_dist < distance ) {
+			distance = this_dist;
+			closest = suite;
+		}
+	}
+	TR << "Closest: resid torsions " << res_dihedrals << std::endl;
+	TR << "Closest: suite torsions " << closest.torsion << std::endl;
+	return closest;
+}
 
 /////////////////////////////////////////////////////////
 // Called by RNA_SuitePotential which uses this RNA_SuiteName
