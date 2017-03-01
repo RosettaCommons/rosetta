@@ -1,0 +1,424 @@
+<ROSETTASCRIPTS>
+	# TP1 design script, written 3 June 2015 by
+	# Vikram K. Mulligan, Ph.D. (vmullig@uw.edu),
+	# Baker laboratory, Institute for Protein Design,
+	# University of Washington.
+	# Script updated on 28 February 2017 to ensure
+	# compatibility with Rosetta 3.8.
+	<SCOREFXNS>
+		# This function defines the various scoring functions that are used in different
+		# parts of this protocol.  All are variants on the default Rosetta talaris2014
+		# scoring function.
+
+		# Rosetta talaris2014 scorefunction with slightly modified reference weights:
+		<ScoreFunction
+			name="tala"
+			weights="xml/talaris2014_modified.wts"
+		>
+		</ScoreFunction>
+
+		# Symmetric version of the above scorefunction (for use with symmetric structures):
+		<ScoreFunction
+			name="tala_symm"
+			weights="xml/talaris2014_modified.wts"
+			symmetric="true"
+		>
+		</ScoreFunction>
+
+		# Modified version of the above scorefunction with the repulsive weight
+		# reduced.  Used for the initial quick round of design.
+		<ScoreFunction
+			name="tala_symm_soft"
+			weights="xml/talaris2014_modified.wts"
+			symmetric="true"
+		>
+			<Reweight scoretype="fa_rep" weight="0.1" />
+		</ScoreFunction>
+
+		# Modified version of the tala_symm scorefunction with atom-pair distance, bond angle,
+		# and dihedral angle constraint score terms turned on.
+		<ScoreFunction
+			name="tala_symm_cst"
+			weights="xml/talaris2014_modified.wts"
+			symmetric="true"
+		>
+			<Reweight scoretype="coordinate_constraint" weight="0.333" />
+			<Reweight scoretype="atom_pair_constraint" weight="0.333" />
+			<Reweight scoretype="angle_constraint" weight="0.333" />
+			<Reweight scoretype="dihedral_constraint" weight="0.333" />
+		</ScoreFunction>
+
+		# The constraints terms alone.  Used for filtering based on linker geometry.
+		<ScoreFunction
+			name="symm_cst_only"
+			weights="empty.wts"
+			symmetric="true"
+		>
+			<Reweight scoretype="coordinate_constraint" weight="0.333" />
+			<Reweight scoretype="atom_pair_constraint" weight="0.333" />
+			<Reweight scoretype="angle_constraint" weight="0.333" />
+			<Reweight scoretype="dihedral_constraint" weight="0.333" />
+		</ScoreFunction>
+
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		# Residue selectors provide rules for defining sets of amino acid positions
+		# in a structure.  They can be used to control many Rosetta algorithms.
+
+		# A residue selector to select buried positions, based on solvent-accessible
+		# surface area:
+		<Layer name="select_core"
+			select_core="true" select_boundary="false" select_surface="false"
+			use_sidechain_neighbors="false" ball_radius="2.0"
+			core_cutoff="30" surface_cutoff="50"
+		/>
+
+		# A residue selector to select semi-buried positions, based on solvent-accessible
+		# surface area:
+		<Layer name="select_boundary"
+			select_core="false" select_boundary="true" select_surface="false"
+			use_sidechain_neighbors="false" ball_radius="2.0"
+			core_cutoff="30" surface_cutoff="50"
+		/>
+
+		# A residue selector to select solvent-exposed positions, based on solvent-accessible
+		# surface area:
+		<Layer name="select_surface"
+			select_core="false" select_boundary="false" select_surface="true"
+			use_sidechain_neighbors="false" ball_radius="2.0"
+			core_cutoff="30" surface_cutoff="50"
+		/>
+
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		# Task operations control the Rosetta packer algorithm, which optimizes side-chain
+		# rotamers given a fixed backbone.  Task operations provide restrictions on the
+		# amino acid identities and rotamer types that will be considered at each position.
+
+		# Only consider rotamers of the amino acid type that is already present at each
+		# position:
+		<RestrictToRepacking name="nodesign" />
+
+		# Do not allow the amino acid identity of the cysteine residues that connect to
+		# the linker to change:
+		<RestrictResiduesToRepacking name="only_repack_linker" residues="21,42,63" />
+
+		# At buried positions selected with the “select_core” residue selector, only allow
+		# hydrophobic amino acids or alanine (FAMILYVW):
+		<ReadResfile name="core_resfile" selector="select_core"
+			filename="xml/core.resfile"
+		/>
+
+		# At boundary positions, only allow proline, tyrosine, small aliphatic amino acids,
+		# or polar uncharged amino acids (ILYVTSNQP):
+		<ReadResfile name="boundary_resfile" selector="select_boundary"
+			filename="xml/boundary.resfile"
+		/>
+
+		# At solvent-exposed positions, only allow polar (charged or uncharged) amino acids
+		# or proline (DERKTSNQP):
+		<ReadResfile name="surface_resfile" selector="select_surface"
+			filename="xml/surface.resfile"
+		/>
+
+	</TASKOPERATIONS>
+	<FILTERS>
+		# Filters allow a trajectory to be aborted if a particular condition is not met.
+
+		# Terminate trajectories in which the initial backbone geometry clashes with itself:
+		<ScoreType name="initial_clash_check" scorefxn="tala_symm"
+			score_type="fa_rep" threshold="100"
+		/>
+
+		# Terminate trajectories in which energy-minimization cannot pull the TBMB
+		# cross-linker into a “closed” state (i.e. in which the initial backbone
+		# geometry is incompatible with presenting the TBMB cross-linker):
+		<ScoreType name="bad_linker_filter" scorefxn="symm_cst_only"
+			score_type="total_score" threshold="40"
+		/>
+
+		# Discard sampled loop conformations that do not resemble 4-residue loops observed
+		# in the Protein Data Bank (used during GenKIC sampling):
+		<FragmentLookupFilter name="faulty_fragments_tolerant"
+			lookup_name="source_fragments_4_mer_tolerant"
+			store_path="backbone_profiler_database_06032014"
+			lookup_mode="first" threshold="0" confidence="1"
+		/>
+
+		
+		# Discard sampled loop conformations that do not resemble 4-residue loops observed
+		# in the Protein Data Bank (used as a final filter):
+		# Note -- was source_fragments_4_mer in original.  I'm
+		# trying to keep files needed for integration test to a
+		# minimum.
+		<FragmentLookupFilter name="faulty_fragments"
+			lookup_name="source_fragments_4_mer_tolerant"
+			store_path="backbone_profiler_database_06032014"
+			lookup_mode="first" threshold="0" confidence="1"
+		/>
+
+	</FILTERS>
+	<MOVERS>
+		# Movers modify a structure (called a “pose” in Rosetta) in some way.  They can add
+		# or remove geometry, move atoms or rotate bonds, add constraints, or otherwise alter
+		# the pose.
+
+		# Generate the initial backbone geometry using the Crick parameterization.
+		# Note that since the “nstruct_mode” option is used, each repeated iteration through
+		# the RosettaScripts protocol will sample a different grid-point in the set of
+		# parameter value combinations to be sampled:
+		<BundleGridSampler name="bgs1" helix_length="20" scorefxn="tala"
+			set_bondlengths="true" set_bondangles="true" set_dihedrals="true"
+			nstruct_mode="true" nstruct_repeats="1" use_degrees="true" max_samples="3"
+			r0="7.25"
+			omega0="-7"
+			delta_omega0="0"
+			delta_omega1="120"
+			delta_t="0"
+			z1_offset_min="-2.2" z1_offset_max="2.0" z1_offset_samples="3"
+		>
+			<Helix />
+		</BundleGridSampler>
+
+		# Add a sidechain-conjugated cysteine type at position 11.  The TBMB linker
+		# will be attached here:
+		<MutateResidue name="makecys" target="11" new_res="CYX" />
+
+		# Add the fragment of the TBMB linker (one-third of the overall geometry) to
+		# the side-chain of the cysteine residue added by the previous mover.
+		<PeptideStubMover name="add_linker" reset="false">
+			<Append resname="TBMBSYMM" anchor_rsd="11"
+				anchor_atom="SG" connecting_atom="CM1"
+			/>
+		</PeptideStubMover>
+
+		# Temporarily add terminal types to the ends of the parametrically-generated
+		# helix.  Rosetta can sometimes do bad things if a chain does not end in
+		# an NH3+ or COO- group.  These termini will be stripped later when the
+		# polypeptide is cyclized.
+		<DeclareBond name="add_termini"
+			res1="1" res2="2" atom1="C" atom2="N" add_termini="true"
+		/>
+
+		# Link the fragments of the TBMB linker together:
+		<DeclareBond name="linkerbond1"
+			res1="21" res2="42" atom1="C2" atom2="C1" add_termini="true"
+		/>
+
+		# Link the fragments of the TBMB linker together:
+		<DeclareBond name="linkerbond2"
+			res1="42" res2="63" atom1="C2" atom2="C1" add_termini="true"
+		/>
+
+		# Link the fragments of the TBMB linker together:
+		<DeclareBond name="linkerbond3"
+			res1="63" res2="21" atom1="C2" atom2="C1" add_termini="true"
+		/>
+
+		# Define a new foldtree.  A foldtree defines the kinematic relationships
+		# between parts of a molecule:
+		<AtomTree name="foldtree1" fold_tree_file="xml/foldtree1.txt" />
+
+		# Set up the C3 symmetry about the Y-axis.  After this mover is applied, Rosetta
+		# continues to think of the structure as C3-symmetric, enforcing symmetry when
+		# design or energy-minimization operations are applied:
+		<SetupForSymmetry name="setup_symm" definition="symmetry/c3_y.symm" />
+
+		# Carry out initial minimization to bring the fragments of the TBMB linker together,
+		# orienting the cysteine side-chains in the process:
+		<FastRelax name="frelax_linker"
+			task_operations="nodesign"
+			min_type="lbfgs_armijo_nonmonotone"
+			scorefxn="tala_symm_cst" repeats="1"
+		>
+			<MoveMap name="frelax_linker_mm" >
+				<Jump number="1" setting="1" />
+				<Jump number="2" setting="1" />
+				<Jump number="3" setting="1" />
+				<Jump number="4" setting="0" />
+				<Jump number="5" setting="0" />
+				<Jump number="6" setting="0" />
+				<Jump number="7" setting="0" />
+				<Jump number="8" setting="0" />
+				<Jump number="9" setting="0" />
+				<Span begin="1" end="999" chi="1" bb="0" />
+			</MoveMap>
+		</FastRelax>
+
+		# Create a peptide bond between the end of one lobe and the start of the next:
+		<DeclareBond name="linkends1"
+			res1="20" res2="22" atom1="C" atom2="N" add_termini="false"
+		/>
+
+		# Create a peptide bond between the end of one lobe and the start of the next:
+		<DeclareBond name="linkends2"
+			res1="41" res2="43" atom1="C" atom2="N" add_termini="false"
+		/>
+
+		# Create a peptide bond between the end of one lobe and the start of the next:
+		<DeclareBond name="linkends3"
+			res1="62" res2="1" atom1="C" atom2="N" add_termini="false"
+		/>
+
+		# Carry out a quick round of sequence design, using a version of the scoring function
+		# with a reduced repulsive term.  This is done for each loop conformation that GenKIC
+		# considers:
+		<SymPackRotamersMover name="quickpack"
+		  scorefxn="tala_symm_soft"
+		  task_operations="core_resfile,boundary_resfile,surface_resfile,only_repack_linker"
+		/>
+
+		# Carry out a quick round of sidechain energy-minimization.  This is done for each
+		# loop conformation that GenKIC considers (holding the backbone fixed):
+		<SymMinMover name="quickmin" scorefxn="tala_symm_cst"
+			bb="false" chi="true" jump="0"
+			type="lbfgs_armijo_nonmonotone" tolerance="0.001"
+		>
+			<MoveMap name="quickmin_mm" >
+				<Span begin="1" end="999" bb="0" chi="1" />
+				<Jump number="1" setting="1" />
+				<Jump number="2" setting="1" />
+				<Jump number="3" setting="1" />
+				<Jump number="4" setting="0" />
+				<Jump number="5" setting="0" />
+				<Jump number="6" setting="0" />
+				<Jump number="7" setting="0" />
+				<Jump number="8" setting="0" />
+				<Jump number="9" setting="0" />
+			</MoveMap>
+		</SymMinMover>
+
+		# The composite protocol applied to every loop conformation that GenKIC considers.
+		# This uses a series of filters and movers that have been defined above.
+		<ParsedProtocol name="quickpackmin" >
+			<Add filter="initial_clash_check" />
+			<Add filter="faulty_fragments_tolerant" />
+			<Add mover="quickpack" />
+			<Add mover="quickmin" />
+		</ParsedProtocol>
+
+		# The Generalized Kinematic Closure (GenKIC) mover, used to sample loop conformations.
+		# For every loop conformation considered, it applies the “quickpackmin” protocol,
+		# defined above, to discard loops with bad geometry and to carry out a rapid round
+		# of sequence design and side-chain energy minimization.
+		<GeneralizedKIC name="genkic1"
+			closure_attempts="100"
+			stop_when_n_solutions_found="1"
+			selector="lowest_energy_selector"
+			selector_scorefunction="tala_symm"
+			pre_selection_mover="quickpackmin"
+		>
+			<AddResidue res_index="17" />
+			<AddResidue res_index="18" />
+			<AddResidue res_index="19" />
+			<AddResidue res_index="20" />
+			<AddResidue res_index="22" />
+			<AddResidue res_index="23" />
+			<SetPivots res1="17" atom1="CA" res2="19" atom2="CA" res3="23" atom3="CA" />
+			<CloseBond res1="20" res2="22" atom1="C" atom2="N"
+				bondlength="1.32" angle1="114" angle2="123" torsion="180"
+			/>
+			<AddPerturber effect="randomize_backbone_by_bins" bin_params_file="ABBA" >
+				<AddResidue index="17" />
+				<AddResidue index="18" />
+				<AddResidue index="19" />
+				<AddResidue index="20" />
+				<AddResidue index="22" />
+				<AddResidue index="23" />
+			</AddPerturber>
+			<AddFilter type="loop_bump_check" />	
+		</GeneralizedKIC>
+		
+		# The computationally-expensive “FastDesign” protocol applied to the best loop
+		# conformation that GenKIC returns.  This first round keeps the backbone fixed while
+		# carrying out multiple rounds of side-chain design and side-chain energy minimization,
+		# gradually ramping the repulsive term in the score function from round to round. 
+		<FastDesign name="fdes1"
+		  task_operations="core_resfile,boundary_resfile,surface_resfile,only_repack_linker"
+		  disable_design="false" min_type="lbfgs_armijo_nonmonotone"
+		  scorefxn="tala_symm_cst" repeats="1"
+		>
+			<MoveMap name="fdes1_mm" >
+				<Jump number="1" setting="1" />
+				<Jump number="2" setting="1" />
+				<Jump number="3" setting="1" />
+				<Jump number="4" setting="0" />
+				<Jump number="5" setting="0" />
+				<Jump number="6" setting="0" />
+				<Jump number="7" setting="0" />
+				<Jump number="8" setting="0" />
+				<Jump number="9" setting="0" />
+				<Span begin="1" end="999" chi="1" bb="0" />
+			</MoveMap>
+		</FastDesign>
+
+		# Add atom-pair distance, bond angle, and dihedral constraints enforcing ideal
+		# peptide bond geometry between the lobes of the polypeptide.
+		<ConstraintSetMover name="constrain_pepbonds"
+			add_constraints="true" cst_file="constraints/pepbonds.cst"
+		/>
+
+		# Add atom-pair distance and dihedral constraints for the TBMB cross-linker:
+		<ConstraintSetMover name="constrain_linker"
+			add_constraints="true" cst_file="constraints/linker.cst"
+		/>
+
+		# The computationally-expensive “FastDesign” protocol applied to the best loop
+		# conformation that GenKIC returns.  This second round allows the backbone to relax
+		# while carrying out multiple rounds of side-chain design and full-structure
+		# energy minimization, gradually ramping the repulsive term in the score function
+		# from round to round.
+		<FastDesign name="fdes2"
+		  task_operations="core_resfile,boundary_resfile,surface_resfile,only_repack_linker"
+		  disable_design="false" min_type="lbfgs_armijo_nonmonotone"
+		  scorefxn="tala_symm_cst" ramp_down_constraints="false" repeats="1"
+		>
+			<MoveMap name="fdes2_mm">
+				<Jump number="1" setting="1" />
+				<Jump number="2" setting="1" />
+				<Jump number="3" setting="1" />
+				<Jump number="4" setting="1" />
+				<Jump number="5" setting="1" />
+				<Jump number="6" setting="1" />
+				<Jump number="7" setting="1" />
+				<Jump number="8" setting="1" />
+				<Jump number="9" setting="1" />
+				<Span begin="1" end="999" chi="1" bb="1" />
+			</MoveMap>
+		</FastDesign>
+	
+	</MOVERS>
+	<PROTOCOLS>
+		# This section specifies the order in which the movers and filters defined above
+		# will be applied.
+
+		<Add mover="bgs1" />
+		<Add mover="makecys" />
+		<Add mover="add_linker" />
+		<Add mover="add_termini" />
+		<Add mover="foldtree1" />
+		<Add mover="setup_symm" />
+		<Add mover="linkerbond1" />
+		<Add mover="linkerbond2" />
+		<Add mover="linkerbond3" />
+		<Add mover="constrain_linker" />
+		<Add mover="frelax_linker" />
+		<Add filter="bad_linker_filter" />
+		<Add mover="linkends1" />
+		<Add mover="linkends2" />
+		<Add mover="linkends3" />
+		<Add mover="genkic1" />
+		<Add mover="fdes1" />
+		<Add mover="constrain_pepbonds" />
+		<Add mover="fdes2" />
+		<Add mover="linkends1" />
+		<Add mover="linkends2" />
+		<Add mover="linkends3" />
+		Add filter="faulty_fragments" />
+
+	</PROTOCOLS>
+
+	# For final output, the resulting structure should be scored with the tala_symm scoring
+	#function, and the score written in the output file:
+	<OUTPUT scorefxn="tala_symm" />
+</ROSETTASCRIPTS>

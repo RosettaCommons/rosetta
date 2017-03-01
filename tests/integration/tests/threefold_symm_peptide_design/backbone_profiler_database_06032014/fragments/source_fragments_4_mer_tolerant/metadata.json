@@ -1,0 +1,15 @@
+{
+    "coordinates_checksum": 4076849637, 
+    "threshold_distance_checksum": 1157471, 
+    "num_entries": 33064, 
+    "fragment_length": 4, 
+    "coordinates_file": "coordinates.dat", 
+    "threshold_distance_file": "threshold_distance.dat", 
+    "fragment_atoms": [
+        "N", 
+        "CA", 
+        "C", 
+        "O"
+    ], 
+    "name": "source_fragments_4_mer_tolerant"
+}

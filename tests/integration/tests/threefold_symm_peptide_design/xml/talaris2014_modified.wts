@@ -1,0 +1,19 @@
+#Modified to upweight methionine (+2.5) alanine (+2.5) and tryptophan (+1) while downweighting proline (-1.5).
+METHOD_WEIGHTS ref 3.273742 0.443793 -1.63002 -1.96094 0.61937 0.173326 0.388298 1.0806 -0.358574 0.761128 3.249477 -1.19118 -1.750485 -1.51717 -0.32436 0.165383 0.20134 0.979644 2.23413 0.162496 
+fa_atr 1
+fa_rep 0.55
+fa_sol 0.9375
+fa_intra_rep 0.005
+fa_elec 0.875
+pro_close 1.25
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_fa13 1.25
+rama 0.25
+omega 0.625
+fa_dun 0.7
+p_aa_pp 0.4
+yhh_planarity 0.625
+ref 1

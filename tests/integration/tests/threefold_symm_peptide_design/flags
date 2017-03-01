@@ -1,0 +1,7 @@
+-in:file:fasta xml/dummy.fasta
+-parser:protocol xml/design.xml
+-write_all_connect_info
+-connect_info_cutoff 0
+-jd2:failed_job_exception false
+-nstruct 3
+-extra_res_fa sidechain_conjugation/CYX.params crosslinker/1.3.5_trisbromomethylbenzene_symm.params
