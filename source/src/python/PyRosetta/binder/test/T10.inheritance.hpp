@@ -26,6 +26,9 @@ public:
 	void foo() {}
 
 	void maybe() {}
+
+	virtual void f_v() {}
+	virtual void f_v_2() {}
 };
 
 class Derived : public Base
@@ -49,5 +52,18 @@ class A : public std::enable_shared_from_this<A>
 
 class B : public std::string
 {};
+
+
+class X : public Base
+{
+public:
+	void f_v() final override {}
+};
+
+class Y final : public X
+{
+public:
+	void f_v_2() override {}
+};
 
 #endif // _INCLUDED_T10_inheritance_hpp_

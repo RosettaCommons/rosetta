@@ -103,6 +103,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("std::reverse_iterator", "<iterator>"),
 		make_pair("std::set",              "<set>"),
 		make_pair("std::vector",           "<vector>"),
+		make_pair("std::basic_ios",        "<ios>"),
 
 		make_pair("__gnu_cxx::__normal_iterator", "<iterator>"),
 
@@ -157,6 +158,14 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<_wctype.h>", "<cwctype>"),
 		make_pair("<ctype.h>",   "<cctype>"),
 		make_pair("<wchar.h>",   "<cwchar>"),
+
+		make_pair("<bits/unique_ptr.h>",      "<memory>"),
+		make_pair("<bits/functional_hash.h>", "<functional>"),
+		make_pair("<bits/unordered_set.h>",   "<unordered_set>"),
+		make_pair("<bits/unordered_map.h>",   "<unordered_map>"),
+
+		//make_pair("<bits/hashtable_policy.h>", could be either unordered_map or unordered_set
+
 	};
 
 	string name = decl->getQualifiedNameAsString();

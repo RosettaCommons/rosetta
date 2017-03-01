@@ -30,63 +30,51 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
-template<typename T>
-class A
-{
-public:
-	A(T const &t) { v = t; }
 
-	T v;
+
+// struct X final
+// {
+// 	virtual void foo() {}
+// };
+
+// struct Y
+// {
+// 	virtual void foo() final {}
+// };
+
+
+
+
+
+
+class Base
+{
+protected:
+	virtual void foo_protected_no() noexcept {}
+	virtual void foo_protected_th() throw() {}
+	int data;
+
+public:
+	void foo() {}
+
+	void maybe() {}
+
+	virtual void f_v() {}
+	virtual void f_v_2() {}
 };
 
 
-
-
-struct X {};
-
-
-template< typename T >
-std::ostream &
-operator <<( std::ostream & stream, A< T > const & a )
-{
-	stream << "A:" << a.v << std::endl;
-	return stream;
-}
-
-
-template<typename T1, typename T2>
-class AA
+class X : public Base
 {
 public:
-	AA(T1 const &t1, T2 const &t2) { v1 = t1; v2=t2; }
-
-	T1 v1;
-	T2 v2;
+	void f_v() final override {}
 };
 
-template< typename T1, typename T2 >
-std::ostream &
-	operator <<( std::ostream & stream, AA< T1, T2 > const & a )
+class Y final : public X
 {
-	stream << "AA:" << a.v1 << a.v2 << std::endl;
-	return stream;
-}
-
-
-void foo(A<int> a)
-{
-}
-
-void foo_(AA<int, std::string> a)
-{
-}
-
-
-std::ostream &
-operator <<( std::ostream & stream, X & a )
-{
-	return stream;
-}
+public:
+	void f_v_2() override {}
+};
 
 
 // class Test

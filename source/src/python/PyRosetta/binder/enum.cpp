@@ -36,6 +36,8 @@ void add_relevant_includes(clang::EnumDecl const *E, IncludeSet &includes, int l
 {
 	if( !includes.add_decl(E, level) ) return;
 	add_relevant_include_for_decl(E, includes);
+
+	add_relevant_include_for_decl(E->getDefinition(), includes);
 }
 
 
