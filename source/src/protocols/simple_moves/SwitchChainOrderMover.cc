@@ -240,7 +240,7 @@ void SwitchChainOrderMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	attlist + XMLSchemaAttribute( "chain_order", xs_string, "Order of final chains" )
 		+ XMLSchemaAttribute( "chain_num", xsct_nnegative_int_cslist, "List of final chain positions, to be correlated to chain_name" )
 		+ XMLSchemaAttribute( "chain_name", xsct_chain_cslist, "List of final chain names, to be correlated to chain_num" )
-		+ XMLSchemaAttribute::attribute_w_default( "invert_chains", xsct_chain_cslist, "List of final chain names, to be correlated to chain_num", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "invert_chains", xsct_rosetta_bool, "If true, apply on the inverse of chain selection (as specified in name or number options)", "false" )
 		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "List of final chain names, to be correlated to chain_num" );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 
