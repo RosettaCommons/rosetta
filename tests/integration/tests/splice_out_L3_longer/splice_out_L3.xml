@@ -18,7 +18,7 @@
 		<ScoreType name="chainbreak_val" scorefxn="score12_chainbreak" score_type="chainbreak" threshold="10"/> this will lead to a reduction of approx 30% of the output from a cutoff of 0.5... But the structures will be nice.
 	</FILTERS>
 	<MOVERS>
-		<Splice name="splice" debug="0" rtmin="0" loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="L3.db" scorefxn="sc12_w_correction" ccd="1"  randomize_cut="1" cut_secondarystruc="0" rms_cutoff="1.0" splice_filter="chainbreak_val" thread_ala="0" template_file="%%source_pdb%%" design_task_operations="init,rtr" design_shell="0" repack_shell="0" design="0" protein_family="antibodies" segment="L3" tail_segment="c" thread_original_sequence="1" CG_const="1"> 
+		<Splice name="splice" debug="0" rtmin="0" loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="L3.db" scorefxn="sc12_w_correction" ccd="1"  randomize_cut="1" cut_secondarystruc="0" rms_cutoff="100" splice_filter="chainbreak_val" thread_ala="0" template_file="%%source_pdb%%" design_task_operations="init,rtr" design_shell="0" repack_shell="0" design="0" protein_family="antibodies" segment="L3" tail_segment="c" thread_original_sequence="1" CG_const="1"> 
 		</Splice>
 	</MOVERS>
 	<APPLY_TO_POSE>

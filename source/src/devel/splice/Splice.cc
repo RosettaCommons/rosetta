@@ -1559,8 +1559,8 @@ void Splice::apply(core::pose::Pose & pose) {
 		/// Now check for peptide bonds that despite chainbreak check is messed up
 		core::Real tolerance = tolerance_; // 0.23 angstrom deviation from mean peptide bond length
 		TR<<"Tolerance is set to: "<<tolerance<<std::endl;
-		bool fail_retry_if_found = false;
-		bool crash_if_found = true;
+		bool fail_retry_if_found = true;
+		bool crash_if_found = false;
 		chainbreak_check( pose , tolerance, fail_retry_if_found , crash_if_found );
 
 
