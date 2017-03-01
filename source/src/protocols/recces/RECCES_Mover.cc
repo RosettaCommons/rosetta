@@ -69,8 +69,6 @@ RECCES_Mover::~RECCES_Mover()
 void
 RECCES_Mover::apply( core::pose::Pose & pose )
 {
-	runtime_assert( params_ );
-	runtime_assert( options_ );
 	sampler_ = sampler::initialize_sampler( pose, *options_, *params_ );
 
 	run_sampler( pose );
@@ -87,8 +85,6 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 	using namespace recces::sampler;
 
 	clock_t const time_start( clock() );
-
-	runtime_assert( options_ );
 
 	// Are we doing MC_loop?
 	MC_LoopOP loop_sampler = ( sampler_->type() == toolbox::MC_LOOP ) ? MC_LoopOP( std::dynamic_pointer_cast< MC_Loop >( sampler_) ) : 0;
@@ -199,8 +195,6 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::initialize() {
-	runtime_assert( options_ );
-
 	Size const num_temperatures = options_->temperatures().size();
 	runtime_assert( num_temperatures != 0 );
 
@@ -222,8 +216,6 @@ RECCES_Mover::initialize() {
 void
 RECCES_Mover::set_sampler_gaussian_stdev( Real const & temperature, pose::Pose const & pose )
 {
-	runtime_assert( params_ );
-	runtime_assert( options_ );
 	recces::set_sampler_gaussian_stdev( sampler_, temperature, pose, *options_, *params_ );
 }
 
@@ -235,8 +227,6 @@ RECCES_Mover::save_history(
 	vector1< float > const & scores,
 	Size const & temp_id )
 {
-	runtime_assert( options_ );
-
 	if ( options_->save_scores() ) fill_data( data_[ temp_id ], curr_counts, scores );
 	hist_list_[ temp_id ].add( scores[ 1 ], curr_counts );
 }
@@ -254,8 +244,6 @@ RECCES_Mover::increment_accepts( Size & n_accept_total,
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
 RECCES_Mover::output_pdb_name( std::string const & tag ) const {
-	runtime_assert( options_ );
-
 	if ( options_->prefix_each_output_pdb() ) {
 		return ( options_->out_prefix() + "_" + tag + ".pdb" );
 	}
@@ -271,8 +259,6 @@ RECCES_Mover::dump_stuff(
 	Real & min_score,
 	Size & curr_dump ) const
 {
-	runtime_assert( options_ );
-
 	if ( options_->dump_pdb() && scores[ 1 ] < min_score ) {
 		min_score = scores[ 1 ];
 		min_pose = pose;
@@ -292,8 +278,6 @@ RECCES_Mover::more_dump_stuff( pose::Pose const & pose,
 	Size const & n,
 	Real const & current_temperature ) const
 {
-	runtime_assert( options_ );
-
 	using namespace core::io::silent;
 	Size const & dump_interval( options_->dump_freq() );
 	if ( (n % dump_interval) == 0 && options_->dump_pdb() ) {
@@ -317,8 +301,6 @@ void
 RECCES_Mover::final_dump_stuff( pose::Pose & pose,
 	pose::Pose & min_pose ) const
 {
-	runtime_assert( options_ );
-
 	if ( options_->dump_pdb() ) {
 		pose.dump_pdb( output_pdb_name( "end" ) );
 		min_pose.dump_pdb( output_pdb_name( "min" ) );
@@ -337,8 +319,6 @@ RECCES_Mover::final_dump_stuff( pose::Pose & pose,
 void
 RECCES_Mover::save_data_to_disk() const
 {
-	runtime_assert( options_ );
-
 	// this is ridiculous -- need to fix external code to just look at score type names written to a file.
 	utility::vector1< core::scoring::ScoreType > const score_types = options_->blank_score_terms() ? vector1< core::scoring::ScoreType>() : get_scoretypes();
 
@@ -400,8 +380,6 @@ RECCES_Mover::prepare_output_torsion_ids()
 {
 	using namespace core::id;
 	using namespace core::chemical::rna;
-
-	runtime_assert( options_ );
 	//Make a list of all the backbone torsion IDs that are sampled (This is only complete if all the residues are consecutive)
 	// REPLACE this with sampler.find(), looking over all torsions!
 	utility::vector1< Size > const & residues( options_->sample_residues() );

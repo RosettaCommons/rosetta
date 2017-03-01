@@ -299,9 +299,7 @@ def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbo
     elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'mpi':                      return run_integration_tests('debug',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
     elif test == 'addsan':                   return run_integration_tests('addsan',  rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'ubsan':
-        os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
-        return run_integration_tests('ubsan',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'ubsan':                    return run_integration_tests('ubsan',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_debug' for line # information
     elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_debug' for line # information
     elif test == 'demos':                    return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')

@@ -871,7 +871,7 @@ apply(
 		bool success=false;
 		int try_count=1000;
 		int insert_pos=-999; //Adding initialization value for quick fix of compiler errors - this might not be the most sensible way of handling this.
-		core::Size i_frag_set=999; //Adding initialization value for quick fix of compiler errors - this might not be the most sensible way of handling this.
+		core::Size i_frag_set;
 
 		while ( !success && --try_count>0 ) {
 			// pick fragment set

@@ -323,12 +323,8 @@ void ArchiveBase::restore_status( std::istream& is ) {
 		runtime_assert( tag == "AH:" );
 		getline( is, line ); //read rest of line
 		std::istringstream line_stream( line );
-		bool value;
-		for ( line_stream >> value; line_stream; line_stream >> value ) {
-			acceptance_history_.push_back( value );
-		}
-		//typedef std::istream_iterator< AcceptHistoryQueue::value_type > istream_iterator;
-		//std::copy(  istream_iterator( line_stream ), istream_iterator(), std::back_inserter( acceptance_history_ ) );
+		typedef std::istream_iterator< AcceptHistoryQueue::value_type > istream_iterator;
+		std::copy(  istream_iterator( line_stream ), istream_iterator(), std::back_inserter( acceptance_history_ ) );
 		is >> tag;
 	}
 	mem_tr << "ArchiveBase::restored_status" << std::endl;
