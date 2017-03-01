@@ -193,26 +193,25 @@ private:
 	simple_moves::MinMoverOP min_mover_;
 	simple_moves::PackRotamersMoverOP packer_;
 
-	core::Size rounds_;
-	core::Real kt_;
+	core::Size rounds_ = 25; // cmdline
+	core::Real kt_ = 2.0; // cmdline
 
 	utility::vector1<std::string> accept_log_;
 
-	bool test_;
-	bool final_min_;
-	bool refine_;
-	bool sugar_bb_start_;
+	bool test_ = false; // cmdline
+	bool final_min_ = true; // cmdline
+	bool refine_ = false; // cmdline
 
-	core::Size total_glycan_residues_;
-	bool pymol_movie_;
+	core::Size total_glycan_residues_ = 0;
+	bool pymol_movie_ = false; // cmdline
 
 	std::string ref_pose_name_;
-	bool use_branches_;
+	bool use_branches_ = false;
 
 	utility::vector1< std::string > parsed_positions_;
-	core::Real pack_distance_;
-	bool cartmin_;
-	bool tree_based_min_pack_;
+	core::Real pack_distance_ = 6.0;
+	bool cartmin_ = false; // cmdline
+	bool tree_based_min_pack_ = true; // cmdline
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;  //Residue selector to pass residues to relax.  Currently used for RS only.
 

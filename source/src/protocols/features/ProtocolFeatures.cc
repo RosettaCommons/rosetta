@@ -125,19 +125,19 @@ ProtocolFeatures::report_features(
 	sessionOP db_session
 ){
 
-	string const command_line( option.get_argv() );
+	string const & command_line( option.get_argv() );
 
 	stringstream option_stream;
 	option_stream << basic::options::option;
-	string const specified_options( option_stream.str() );
+	string const & specified_options( option_stream.str() );
 
-	string const svn_url( minirosetta_svn_url() );
-	string const svn_version( minirosetta_svn_version() );
+	string const & svn_url( minirosetta_svn_url() );
+	string const & svn_version( minirosetta_svn_version() );
 
 	bool using_rosetta_scripts( basic::options::option[ protocol ].active() );
 	string script = "";
 	if ( using_rosetta_scripts ) {
-		string const script_fname( basic::options::option[ protocol ] );
+		string const & script_fname( basic::options::option[ protocol ] );
 		stringstream script_buf;
 		script_buf << utility::io::izstream( script_fname.c_str() ).rdbuf();
 		script = script_buf.str();
