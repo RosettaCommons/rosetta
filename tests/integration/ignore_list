@@ -2,35 +2,35 @@
 ##### Remember that the patterns are regex substrings
 ##### e.g. 'time' will match (and erase) 'runtime error' or 'antimetabolite' 
 [0-9.]+ seconds([^A-Za-z]|$)
-core.init: Rosetta version
-core.init: 'RNG device' seed mode,
-core.init.random: RandomGenerator:init: Normal mode, seed=
+core.init:.*Rosetta version
+core.init:.*'RNG device' seed mode,
+core.init.random:.*RandomGenerator:init: Normal mode, seed=
 Finished.+in [0-9]+ seconds.
-protocols.jd2.JobDistributor: .+ reported success in [0-9]+ seconds
-protocols.jd2.JobDistributor: [0-9]+ jobs considered, [0-9]+ jobs attempted in [0-9]+ seconds
+protocols.jd2.JobDistributor:.*.+ reported success in [0-9]+ seconds
+protocols.jd2.JobDistributor:.*[0-9]+ jobs considered, [0-9]+ jobs attempted in [0-9]+ seconds
 Warning: Unable to locate database file .*Dunbrack[0-9]+.lib.bin
-core.pack.dunbrack.RotamerLibrary: Opening file .* for output.
-core.pack.dunbrack.RotamerLibrary: Moving temporary file to .*Dunbrack[0-9]+.lib.bin
-core.pack.dunbrack.RotamerLibrary: Reading .*
-core.pack.dunbrack.RotamerLibrary: Finished reading Dunbrack Libraries
-core.pack.dunbrack.RotamerLibrary: Memory usage:
-core.pack.dunbrack.RotamerLibrary: ... with [0-9]+ bytes
-core.pack.dunbrack.RotamerLibrary: Total memory on Dunbrack Libraries: [0-9]+ bytes.
-core.pack.dunbrack.RotamerLibrary: dunbrack library is out-dated
-core.pack.dunbrack.RotamerLibrary: cannot find binary dunbrack library under name
-core.pack.dunbrack.RotamerLibrary: Random tempname will be:
-core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected
-core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file
-core.pack.dunbrack.RotamerLibrary: Dunbrack.*library took [0-9.]+ seconds to load from binary
-core.pack.dunbrack.RotamerLibrary: Moving temporary file 
-basic.io.database: Using '.*' as the cached file.
+core.pack.dunbrack.RotamerLibrary:.*Opening file .* for output.
+core.pack.dunbrack.RotamerLibrary:.*Moving temporary file to .*Dunbrack[0-9]+.lib.bin
+core.pack.dunbrack.RotamerLibrary:.*Reading .*
+core.pack.dunbrack.RotamerLibrary:.*Finished reading Dunbrack Libraries
+core.pack.dunbrack.RotamerLibrary:.*Memory usage:
+core.pack.dunbrack.RotamerLibrary:.*... with [0-9]+ bytes
+core.pack.dunbrack.RotamerLibrary:.*Total memory on Dunbrack Libraries: [0-9]+ bytes.
+core.pack.dunbrack.RotamerLibrary:.*dunbrack library is out-dated
+core.pack.dunbrack.RotamerLibrary:.*cannot find binary dunbrack library under name
+core.pack.dunbrack.RotamerLibrary:.*Random tempname will be:
+core.pack.dunbrack.RotamerLibrary:.*Binary rotamer library selected
+core.pack.dunbrack.RotamerLibrary:.*Using Dunbrack library binary file
+core.pack.dunbrack.RotamerLibrary:.*Dunbrack.*library took [0-9.]+ seconds to load from binary
+core.pack.dunbrack.RotamerLibrary:.*Moving temporary file 
+basic.io.database:.*Using '.*' as the cached file.
 Processing time: .+sec
 : TIME_STAMP:[ ]
 TIMING.*took
 Loopstat: .* time[ ]
-protocols.looprelax: Buildtime:
-protocols.looprelax: Refinetime:
-protocols.abinitio: Timeperstep:
+protocols.looprelax:.*Buildtime:
+protocols.looprelax:.*Refinetime:
+protocols.abinitio:.*Timeperstep:
 Found .* alternative states in time:
 LoopMover_Perturb_QuickCCD: Looptime [0-9.]+
 Time in sampler: [0-9.]+

@@ -41,6 +41,7 @@ src/protocols/backbone_moves/local_backbone_mover/types.hh:using core::Size;
 src/protocols/backbone_moves/local_backbone_mover/types.hh:using numeric::xyzMatrix;
 src/protocols/backbone_moves/local_backbone_mover/types.hh:using numeric::xyzVector;
 src/protocols/backbone_moves/local_backbone_mover/types.hh:using utility::vector1;
+src/protocols/backbone_moves/local_backbone_mover/types.hh:using utility::fixedsizearray1;
 src/protocols/features/strand_assembly/StrandAssemblyCommon.hh:using core::id::NamedAtomID;
 src/protocols/features/strand_assembly/StrandAssemblyCommon.hh:using numeric::xyzVector;
 src/protocols/kinematic_closure/types.hh:using core::Real;
