@@ -468,6 +468,16 @@ sources = {
 	"scoring/vdwaals" : [
 		"VDW_Energy",
 	],
+	"select/jump_selector" : [
+		"AndJumpSelector",
+		"InterchainJumpSelector",
+		"JumpIndexSelector",
+		"NotJumpSelector",
+		"OrJumpSelector",
+	],
+	"select/movemap" : [
+		"MoveMapFactory",
+	],
 	"select/residue_selector" : [
 		"AndResidueSelector",
 		"BinSelector",

@@ -27,14 +27,17 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
-//// C++ headers
+// Utility headers
+#include <utility/vector1.hh>
+
+// C++ headers
 #include <string>
 
-#include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace relax {
@@ -61,10 +64,10 @@ public:
 	void set_default_movemap();
 
 	// Public accessors
-	core::kinematics::MoveMapCOP get_movemap() const { return movemap_; }
-	core::kinematics::MoveMapOP get_movemap() { return movemap_; }
-	const core::scoring::ScoreFunctionCOP get_scorefxn() const { return scorefxn_; }
-	core::pack::task::TaskFactoryOP const & get_task_factory() const { return task_factory_; }
+	core::kinematics::MoveMapCOP get_movemap() const;
+	core::kinematics::MoveMapOP get_movemap();
+	const core::scoring::ScoreFunctionCOP get_scorefxn() const;
+	core::pack::task::TaskFactoryOP const & get_task_factory() const;
 
 	bool cartesian() const { return cartesian_; }
 	std::string min_type() const { return min_type_; }
@@ -83,37 +86,34 @@ public:
 	bool minimize_bond_angles() const { return minimize_bond_angles_; }
 
 	// Public mutators
-	void set_movemap( core::kinematics::MoveMapOP movemap ) { movemap_ = movemap; }
-	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { scorefxn_ = scorefxn; }
-	void set_task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+	void set_movemap( core::kinematics::MoveMapOP movemap );
+	void set_movemap_factory( core::select::movemap::MoveMapFactoryOP mm_factory );
+	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
+	void set_task_factory( core::pack::task::TaskFactoryOP task_factory );
 
 	/// @brief Use cartesian (minimization step)
 	/// @details
 	/// Sets to use the lbfgs_armijo_nonmonotone if true or FR default if false
 	/// Recommended to set max_iter to 200.
 	/// Requires scorefunction setup for non-ideal minimization.
-	void cartesian( bool newval ) { cartesian_ = newval; }
-	void min_type( std::string min_type ) { min_type_ = min_type; }
-	void max_iter( Size max_iter ) { max_iter_ = max_iter; }
-	void dry_run( bool setting ) { dry_run_ = setting; }
+	void cartesian( bool newval );
+	void min_type( std::string min_type );
+	void max_iter( Size max_iter );
+	void dry_run( bool setting );
 
-	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) { constrain_relax_to_native_coords_ = constrain_relax_to_native_coords; }
-	void constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords ) { constrain_relax_to_start_coords_ = constrain_relax_to_start_coords; }
-	void constrain_coords( bool constrain_coords ) { constrain_coords_ = constrain_coords; }
-	void coord_constrain_sidechains( bool coord_constrain_sidechains ) {
-		coord_constrain_sidechains_ = coord_constrain_sidechains;
-	}
-	void constrain_relax_segments( bool constrain_relax_segments ) { constrain_relax_segments_ = constrain_relax_segments; }
-	void ramp_down_constraints( bool ramp_down_constraints ) {
-		explicit_ramp_constraints_ = true;
-		ramp_down_constraints_ =  ramp_down_constraints;
-	}
+	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords );
+	void constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords );
+	void constrain_coords( bool constrain_coords );
+	void coord_constrain_sidechains( bool coord_constrain_sidechains );
+	void constrain_relax_segments( bool constrain_relax_segments );
+	void ramp_down_constraints( bool ramp_down_constraints );
 
-	void minimize_bond_lengths( bool minimize_bond_lengths ) { minimize_bond_lengths_ = minimize_bond_lengths; }
-	void minimize_bond_angles( bool minimize_bond_angles ) { minimize_bond_angles_ = minimize_bond_angles; }
+	void minimize_bond_lengths( bool minimize_bond_lengths );
+	void minimize_bond_angles( bool minimize_bond_angles );
 
 protected:
-	core::scoring::ScoreFunctionOP get_scorefxn() { return scorefxn_; }
+
+	core::scoring::ScoreFunctionOP get_scorefxn();
 
 	// Accessors -------------------------------------
 	bool fix_omega() const { return fix_omega_; }
@@ -164,8 +164,10 @@ private:
 
 	bool limit_aroma_chi2_;
 
-	// The movemap
+	// The MoveMap and the MoveMapFactory
+	// Derived relax protocol
 	core::kinematics::MoveMapOP movemap_;
+	core::select::movemap::MoveMapFactoryOP movemap_factory_;
 
 	// Fullatom scoring function used
 	core::scoring::ScoreFunctionOP scorefxn_;

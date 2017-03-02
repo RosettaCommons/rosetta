@@ -23,6 +23,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>

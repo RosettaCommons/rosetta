@@ -271,6 +271,13 @@
 #include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
+#include <core/select/jump_selector/JumpSelectorRegistrator.hh>
+#include <core/select/jump_selector/AndJumpSelectorCreator.hh>
+#include <core/select/jump_selector/OrJumpSelectorCreator.hh>
+#include <core/select/jump_selector/NotJumpSelectorCreator.hh>
+#include <core/select/jump_selector/JumpIndexSelectorCreator.hh>
+#include <core/select/jump_selector/InterchainJumpSelectorCreator.hh>
+
 #endif
 
 #ifndef __native_client__
@@ -703,6 +710,14 @@ static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_R
 static ResidueSelectorRegistrator< SecondaryStructureSelectorCreator > reg_SecondaryStructureSelectorCreator;
 static ResidueSelectorRegistrator< SymmetricalResidueSelectorCreator > reg_SymmetricalResidueSelectorCreator;
 static ResidueSelectorRegistrator< ScoreTermValueBasedSelectorCreator > reg_ScoreTermValueBasedSelectorCreator;
+
+// Jump Selectors
+using namespace core::select::jump_selector;
+static JumpSelectorRegistrator< AndJumpSelectorCreator > reg_AndJumpSelectorCreator;
+static JumpSelectorRegistrator< OrJumpSelectorCreator > reg_OrJumpSelectorCreator;
+static JumpSelectorRegistrator< NotJumpSelectorCreator > reg_NotJumpSelectorCreator;
+static JumpSelectorRegistrator< JumpIndexSelectorCreator > reg_JumpIndexSelectorCreator;
+static JumpSelectorRegistrator< InterchainJumpSelectorCreator > reg_InterchainJumpSelectorCreator;
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;

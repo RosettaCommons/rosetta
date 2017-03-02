@@ -10,6 +10,7 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>

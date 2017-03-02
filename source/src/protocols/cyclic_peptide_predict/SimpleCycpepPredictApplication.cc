@@ -39,6 +39,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/select/residue_selector/PhiSelector.hh>
 #include <core/select/residue_selector/BinSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>

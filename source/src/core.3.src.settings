@@ -817,6 +817,21 @@ sources = {
 	"core/select":[
 		"util",
 	],
+	"core/select/jump_selector": [
+		"AndJumpSelector",
+		"InterchainJumpSelector",
+		"JumpIndexSelector",
+		#"JumpSelectorCreator",
+		"JumpSelector",
+		"JumpSelectorFactory",
+		"NotJumpSelector",
+		"OrJumpSelector",
+		"util",
+	],
+	"core/select/movemap": [
+		"MoveMapFactory",
+		"util",
+	],
 	"core/select/residue_selector": [
 		"AndResidueSelector",
 		"BinSelector",
@@ -885,7 +900,7 @@ sources = {
 		"SequenceProfile",
 		"SimpleScoringScheme",
 		"SSManager",
-        "SWAligner",
+		"SWAligner",
 		"util",
 	],
 

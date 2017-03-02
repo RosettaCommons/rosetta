@@ -15,6 +15,8 @@
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 #include <protocols/jd2/parser/StandardLoaderCreators.hh>
 #include <protocols/jd2/parser/ResidueSelectorLoaderCreator.hh>
+#include <protocols/jd2/parser/MoveMapFactoryLoaderCreator.hh>
+#include <protocols/jd2/parser/JumpSelectorLoaderCreator.hh>
 #include <protocols/loops/loops_definers/LoopsDefinerLoaderCreator.hh>
 #include <protocols/qsar/scoring_grid/ScoringGridLoaderCreator.hh>
 #include <protocols/ligand_docking/LigandDockingLoaderCreators.hh>

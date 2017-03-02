@@ -37,6 +37,9 @@
 #include <core/pose/util.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/movemap/util.hh>
+
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -132,105 +135,119 @@ void RelaxProtocolBase::initialize_movemap(
 {
 	using namespace core::id;
 
-	if ( fix_omega_ ) {
-		for ( Size i=1; i<=pose.size(); ++i ) {
-			movemap.set( TorsionID(i, BB, 3),false );
+	// If the user has provided a MoveMapFactory, then ignore all of the other
+	// behaviors that are set for this instance.
+	if ( movemap_factory_ ) {
+		movemap_factory_->edit_movemap_given_pose( pose, movemap );
+		if ( fix_omega_ || minimize_bond_lengths_ || minimize_bond_angles_ ) {
+			TR.Warning << "Because a MoveMapFactory is set for the RelaxProtocolBase, the" <<
+				" movemap-altering behaviors controlled by [" << ( fix_omega_ ? " fix_omega_" : "" ) <<
+				( minimize_bond_lengths_ ? " minimize_bond_lengths_" : "" ) <<
+				( minimize_bond_angles_ ? " minimize_bond_angles_" : "" ) << "] flag(s), which has (have) been set to true," <<
+				" are being ignored. These behaviors must be set through the MoveMapFactory if you want"
+				" to enable them." << std::endl;
 		}
-	}
+	} else {
 
-	if ( minimize_bond_lengths_ ) {
-		// 0 Default  all bondlengths
-		// 1          backbone only
-		// 2          sidechain only
-		// 3          CA only (Ca-C,Ca-N and Ca-Cb)
-
-		if ( minimize_bondlength_subset_ == 0 ) {
-			movemap.set( core::id::D, true );
-		} else if ( minimize_bondlength_subset_ == 1 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
-				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
-					//if ( jj == 1 ) {
-					// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
-					//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
-					// }
-					//} else {
-					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
-					//}
-				}
-			}
-		} else if ( minimize_bondlength_subset_ == 2 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::conformation::Residue const &res_i = pose.residue(ii);
-				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
-					if ( res_i.atom_is_backbone(jj) ) continue;
-					movemap.set( DOF_ID( AtomID( jj, ii ), core::id::D ), true );
-				}
-			}
-		} else if ( minimize_bondlength_subset_ == 3 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::conformation::Residue const &res_i = pose.residue(ii);
-				if ( res_i.type().has( " C  ") ) {
-					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
-				}
-				if ( res_i.type().has( " CA ") ) {
-					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CA "), ii ), core::id::D ), true );
-				}
-				if ( res_i.type().has( " CB ") ) {
-					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::D ), true );
-				}
+		if ( fix_omega_ ) {
+			for ( Size i=1; i<=pose.size(); ++i ) {
+				movemap.set( TorsionID(i, BB, 3),false );
 			}
 		}
-	}
 
-	if ( minimize_bond_angles_ ) {
+		if ( minimize_bond_lengths_ ) {
+			// 0 Default  all bondlengths
+			// 1          backbone only
+			// 2          sidechain only
+			// 3          CA only (Ca-C,Ca-N and Ca-Cb)
 
-
-		// 0 Default  all bondangles
-		// 1          backbone only
-		// 2          sidechain only
-		// 3          tau only
-		// 4          Ca-Cb only
-		if ( minimize_bondangle_subset_ == 0 ) {
-			movemap.set( core::id::THETA, true );
-		} else if ( minimize_bondangle_subset_ == 1 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
-				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
-					//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
-					// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
-					//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
-					// }
-					//} else {
-					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
-					//}
+			if ( minimize_bondlength_subset_ == 0 ) {
+				movemap.set( core::id::D, true );
+			} else if ( minimize_bondlength_subset_ == 1 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
+					for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
+						//if ( jj == 1 ) {
+						// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+						//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
+						// }
+						//} else {
+						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
+						//}
+					}
 				}
-			}
-		} else if ( minimize_bondangle_subset_ == 2 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::conformation::Residue const &res_i = pose.residue(ii);
-				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
-					if ( res_i.atom_is_backbone(jj) ) continue;
-					movemap.set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );
+			} else if ( minimize_bondlength_subset_ == 2 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::conformation::Residue const &res_i = pose.residue(ii);
+					for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
+						if ( res_i.atom_is_backbone(jj) ) continue;
+						movemap.set( DOF_ID( AtomID( jj, ii ), core::id::D ), true );
+					}
 				}
-			}
-		} else if ( minimize_bondangle_subset_ == 3 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::conformation::Residue const &res_i = pose.residue(ii);
-				if ( res_i.type().has( " C  ") ) {
-					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
-				}
-			}
-		} else if ( minimize_bondangle_subset_ == 4 ) {
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				core::conformation::Residue const &res_i = pose.residue(ii);
-				if ( res_i.type().has( " CB ") ) {
-					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
+			} else if ( minimize_bondlength_subset_ == 3 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::conformation::Residue const &res_i = pose.residue(ii);
+					if ( res_i.type().has( " C  ") ) {
+						movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
+					}
+					if ( res_i.type().has( " CA ") ) {
+						movemap.set( DOF_ID( AtomID( res_i.atom_index(" CA "), ii ), core::id::D ), true );
+					}
+					if ( res_i.type().has( " CB ") ) {
+						movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::D ), true );
+					}
 				}
 			}
 		}
-	}
 
+		if ( minimize_bond_angles_ ) {
+
+
+			// 0 Default  all bondangles
+			// 1          backbone only
+			// 2          sidechain only
+			// 3          tau only
+			// 4          Ca-Cb only
+			if ( minimize_bondangle_subset_ == 0 ) {
+				movemap.set( core::id::THETA, true );
+			} else if ( minimize_bondangle_subset_ == 1 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
+					for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
+						//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
+						// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+						//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
+						// }
+						//} else {
+						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
+						//}
+					}
+				}
+			} else if ( minimize_bondangle_subset_ == 2 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::conformation::Residue const &res_i = pose.residue(ii);
+					for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
+						if ( res_i.atom_is_backbone(jj) ) continue;
+						movemap.set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );
+					}
+				}
+			} else if ( minimize_bondangle_subset_ == 3 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::conformation::Residue const &res_i = pose.residue(ii);
+					if ( res_i.type().has( " C  ") ) {
+						movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
+					}
+				}
+			} else if ( minimize_bondangle_subset_ == 4 ) {
+				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+					core::conformation::Residue const &res_i = pose.residue(ii);
+					if ( res_i.type().has( " CB ") ) {
+						movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
+					}
+				}
+			}
+		}
+	}
 }
 
 void RelaxProtocolBase::set_defaults(){
@@ -312,6 +329,54 @@ void RelaxProtocolBase::set_default_movemap(){
 	}
 }
 
+core::kinematics::MoveMapCOP
+RelaxProtocolBase::get_movemap() const { return movemap_; }
+
+core::kinematics::MoveMapOP
+RelaxProtocolBase::get_movemap() { return movemap_; }
+
+const core::scoring::ScoreFunctionCOP
+RelaxProtocolBase::get_scorefxn() const { return scorefxn_; }
+
+core::pack::task::TaskFactoryOP const &
+RelaxProtocolBase::get_task_factory() const { return task_factory_; }
+
+void RelaxProtocolBase::set_movemap( core::kinematics::MoveMapOP movemap )
+{
+	movemap_ = movemap;
+}
+
+void RelaxProtocolBase::set_movemap_factory( core::select::movemap::MoveMapFactoryOP mm_factory )
+{
+	movemap_factory_ = mm_factory;
+}
+
+void RelaxProtocolBase::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { scorefxn_ = scorefxn; }
+void RelaxProtocolBase::set_task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+
+void RelaxProtocolBase::cartesian( bool newval ) { cartesian_ = newval; }
+void RelaxProtocolBase::min_type( std::string min_type ) { min_type_ = min_type; }
+void RelaxProtocolBase::max_iter( Size max_iter ) { max_iter_ = max_iter; }
+void RelaxProtocolBase::dry_run( bool setting ) { dry_run_ = setting; }
+
+void RelaxProtocolBase::constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) { constrain_relax_to_native_coords_ = constrain_relax_to_native_coords; }
+void RelaxProtocolBase::constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords ) { constrain_relax_to_start_coords_ = constrain_relax_to_start_coords; }
+void RelaxProtocolBase::constrain_coords( bool constrain_coords ) { constrain_coords_ = constrain_coords; }
+void RelaxProtocolBase::coord_constrain_sidechains( bool coord_constrain_sidechains ) {
+	coord_constrain_sidechains_ = coord_constrain_sidechains;
+}
+void RelaxProtocolBase::constrain_relax_segments( bool constrain_relax_segments ) { constrain_relax_segments_ = constrain_relax_segments; }
+void RelaxProtocolBase::ramp_down_constraints( bool ramp_down_constraints ) {
+	explicit_ramp_constraints_ = true;
+	ramp_down_constraints_ =  ramp_down_constraints;
+}
+
+void RelaxProtocolBase::minimize_bond_lengths( bool minimize_bond_lengths ) { minimize_bond_lengths_ = minimize_bond_lengths; }
+void RelaxProtocolBase::minimize_bond_angles( bool minimize_bond_angles ) { minimize_bond_angles_ = minimize_bond_angles; }
+
+
+core::scoring::ScoreFunctionOP RelaxProtocolBase::get_scorefxn() { return scorefxn_; }
+
 void RelaxProtocolBase::register_options()
 {
 	using namespace basic::options;
@@ -385,7 +450,10 @@ void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
 }
 
 
-void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinematics::MoveMap& local_movemap ) {
+void RelaxProtocolBase::set_up_constraints(
+	core::pose::Pose & pose,
+	core::kinematics::MoveMap & local_movemap
+) {
 	using namespace conformation;
 	using namespace core;
 	using namespace basic::options;

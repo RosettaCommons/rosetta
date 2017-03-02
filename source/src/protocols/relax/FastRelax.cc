@@ -154,6 +154,8 @@ endrepeat
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/movemap/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
@@ -364,9 +366,16 @@ FastRelax::parse_my_tag(
 		set_task_factory( tf );
 	}
 
+	core::select::movemap::MoveMapFactoryOP mmf = core::select::movemap::parse_movemap_factory( tag, data );
+	if ( mmf ) {
+		set_movemap_factory( mmf );
+		if ( tag->hasTag( "MoveMap" ) ) {
+			TR.Warning << "Unintended behavior may result from using both a MoveMapFactory and a MoveMap in the " << tag->getOption< std::string >( "name", "(unnamed FastRelaxMover)" ) << " FastRelaxMover; the MoveMapFatory has the potential to overwrite the settings provided by MoveMap" << std::endl;
+		}
+	}
+
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
-
 
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file("");
@@ -539,6 +548,8 @@ void FastRelax::do_md(
 	core::scoring::ScoreFunctionOP local_scorefxn
 ){
 
+	// UM... this looks like a bug to the extent that you are performing a *shallow* copy
+	// of the input movemap.
 	core::kinematics::MoveMapOP local_movemap = movemap_in;
 
 	protocols::md::CartesianMD MD_mover( pose, local_scorefxn, local_movemap );
@@ -1664,6 +1675,29 @@ FastRelax::complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinit
 	attlist + XMLSchemaAttribute(
 		"delete_virtual_residues_after_FastRelax", xsct_rosetta_bool,
 		"Should virtual residues be deleted when the protocol completes?");
+
+	core::select::movemap::attributes_for_parse_movemap_factory_default_attr_name( attlist,
+		"The name of the already-defined MoveMapFactory that will be used to alter the"
+		" default behavior of the MoveMap. By default, all backbone, chi, and jump DOFs"
+		" are allowed to change. A MoveMapFactory can be used to change which of those"
+		" DOFs are actually enabled. Be warned that combining a MoveMapFactory with"
+		" a MoveMap can result in unexpected behavior. The MoveMap provided as a"
+		" subelement of this element will be generated, and then the DOF modifications"
+		" specified in the MoveMapFactory will be applied afterwards. E.g., if the"
+		" MoveMap says to allow bb flexibility for res 1-10, and then the MoveMapFactory"
+		" says to disable all bb flexibility, the MoveMapFactory modification will happen"
+		" second, and this second modification will completely override the MoveMap's"
+		" initial instructions. Pay attention to the precedence rules of the MoveMap. If"
+		" high-level instructions (e.g. 'apply to all') are performed after low-level"
+		" instructions, then the low-level instructions are erased. If low-level instructions"
+		" (e.g. 'apply to a particular residue') are performed after a high-level instructions,"
+		" the low-level instructions override the high-level instructions. E.g., if there are"
+		" 100 residues, then the instruction 'all-all-bb' followed by 'disable-bb-for-residues-10-to-30'"
+		" followed by the instruction 'allow-bb-for-bb-dihedral-number-3-for-residue-15' will mean"
+		" that residues 1-9 will be allowed backbone flexibility, and residues 31-100, too, and"
+		" that only backbone dihedral 3 on residue 15 will have flexibility among the residues from"
+		" 10 to 30. However, if a final instruction 'disallow-all-bb' is given, then no backbone"
+		" dihedrals will be free, not even dihedral 3 on residue 15." );
 
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap(xsd, subelements);

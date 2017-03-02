@@ -119,8 +119,8 @@ attributes_for_parse_residue_selector(
 void
 attributes_for_parse_residue_selector_when_required(
 	utility::tag::AttributeList & attlist,
-	std::string const & option_name /*= "residue_selector"*/,
-	std::string const & documentation_string /*= ""*/
+	std::string const & option_name = "residue_selector",
+	std::string const & documentation_string = ""
 );
 
 /// @brief returns a residue selector given a selector's name and datamap

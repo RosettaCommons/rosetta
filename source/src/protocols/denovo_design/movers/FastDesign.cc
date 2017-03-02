@@ -28,6 +28,7 @@
 //Core Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>

@@ -19,6 +19,8 @@ namespace protocols {
 using namespace jd2::parser;
 static DataLoaderRegistrator< ScoreFunctionLoaderCreator > reg_ScoreFunctionLoaderCreator;
 static DataLoaderRegistrator< TaskOperationLoaderCreator > reg_TaskOperationLoaderCreator;
+static DataLoaderRegistrator< MoveMapFactoryLoaderCreator > reg_MoveMapFactoryLoaderCreator;
+static DataLoaderRegistrator< JumpSelectorLoaderCreator > reg_JumpSelectorLoaderCreator;
 static DataLoaderRegistrator< protocols::qsar::scoring_grid::ScoringGridLoaderCreator > reg_ScoringGridLoaderCreator;
 static DataLoaderRegistrator< MonteCarloLoaderCreator > reg_MonteCarloLoaderCreator;
 static DataLoaderRegistrator< ResidueSelectorLoaderCreator > reg_ResidueSelectorLoaderCreator;
