@@ -24,7 +24,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -153,7 +154,7 @@ private:
 	fill_chainTORS(
 		core::pose::Pose const & pose,
 		utility::vector1< core::id::NamedAtomID> const & atom_ids,
-		utility::vector1<utility::vector1<core::Real> > & atoms,
+		utility::vector1<utility::fixedsizearray1<core::Real,3> > & atoms,
 		utility::vector1<core::Real> & dt_ang,
 		utility::vector1<core::Real> & db_ang,
 		utility::vector1<core::Real> & db_len) const;

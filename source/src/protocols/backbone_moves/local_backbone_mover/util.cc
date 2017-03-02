@@ -22,6 +22,7 @@
 #include <protocols/backbone_moves/local_backbone_mover/util.hh>
 
 #include <basic/Tracer.hh>
+#include <utility/fixedsizearray1.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.util" );
 
@@ -45,11 +46,10 @@ xyz_from_internal_coords( numeric::xyzVector<Real> atom1_xyz,
 }
 
 void
-xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, vector1<Real> &vec1){
-	vec1.clear();
+xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, fixedsizearray1<Real,3> &vec1){
 
 	for ( Size i=1; i<=3; ++i ) {
-		vec1.push_back(vec_xyz(i));
+		vec1[i] = vec_xyz(i);
 	}
 }
 

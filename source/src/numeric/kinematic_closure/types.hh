@@ -16,12 +16,13 @@
 
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 namespace numeric {
 namespace kinematic_closure {
 
 typedef utility::vector1<numeric::Size> IndexList;
-typedef utility::vector1<numeric::Real> Coordinate;
+typedef utility::fixedsizearray1<numeric::Real,3> Coordinate;
 typedef utility::vector1<Coordinate> CoordinateList;
 
 typedef utility::vector1<numeric::Real> ParameterList;

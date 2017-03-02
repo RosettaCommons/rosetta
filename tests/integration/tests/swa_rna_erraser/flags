@@ -9,7 +9,7 @@
 -minimize_and_score_native_pose false
 -finer_sampling_at_chain_closure false
 -rmsd_screen 2.0
--sampler_num_pose_kept 30
+-sampler_num_pose_kept 15
 -PBP_clustering_at_chain_closure true
 -allow_chain_boundary_jump_partner_right_at_fixed_BP true
 -add_virt_root true

@@ -54,6 +54,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 #include <numeric/conversions.hh>
 
 //Auto Headers
@@ -380,14 +381,15 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	core::pose::Pose start_p = pose;
 
 	// inputs to loop closure
-	utility::vector1<utility::vector1<Real> > atoms;
+	utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
 	utility::vector1<Size> pivots (3), order (3);
 	// outputs from loop closure
 	utility::vector1<utility::vector1<Real> > t_ang, b_ang, b_len;
 	int nsol=0;
 	// for eliminating identical solutions
-	utility::vector1<utility::vector1<Real> > Q0 (3);
-	utility::vector1<Real> dt_ang, db_len, db_ang, save_t_ang, save_b_len, save_b_ang, R0 (3);
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > Q0;
+	utility::vector1<Real> dt_ang, db_len, db_ang, save_t_ang, save_b_len, save_b_ang;
+	utility::fixedsizearray1<Real, 3> R0;
 	utility::vector1<conformation::ResidueOP> save_residues;
 
 	//Size middle_offset = middle_res_ - start_res_; // is used to set central pivot atom
@@ -420,7 +422,6 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		// Store the xyz coords for KC from the first 3 atoms of the pre-nterm residue into the first 3 atoms indices
 		// Note: if this is a beta-amino acid, it will store the first 4 atoms.
 		for ( Size j=1, numatoms=count_bb_atoms_in_residue(pose, start_res_), ind=1; j<=numatoms; j++ ) {
-			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (extn.residue(1).xyz( get_bb_atoms_for_residue( extn.residue(1), j ) ).x());
 			atoms[ind][2] = static_cast<Real> (extn.residue(1).xyz( get_bb_atoms_for_residue( extn.residue(1), j ) ).y());
 			atoms[ind][3] = static_cast<Real> (extn.residue(1).xyz( get_bb_atoms_for_residue( extn.residue(1), j ) ).z());
@@ -451,7 +452,6 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		// store the xyz coords for KC from the first 3 atoms of the post-cterm residue into the last 3 atom indices
 		// Note: if this is a beta-amino acid, it will store 4 atoms (N, CA, CM, C) in the last 4 atom indices.
 		for ( Size j=1, numatoms=count_bb_atoms_in_residue(pose, end_res_), ind=atoms.size()-count_bb_atoms_in_residue(pose, end_res_)+1; j<=numatoms; j++ ) {
-			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (extn.residue(2).xyz( get_bb_atoms_for_residue( extn.residue(2), j ) ).x());
 			atoms[ind][2] = static_cast<Real> (extn.residue(2).xyz( get_bb_atoms_for_residue( extn.residue(2), j ) ).y());
 			atoms[ind][3] = static_cast<Real> (extn.residue(2).xyz( get_bb_atoms_for_residue( extn.residue(2), j ) ).z());
@@ -466,7 +466,6 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			i++ ) {
 		conformation::Residue res=pose.residue(i);
 		for ( Size j=1; j<=count_bb_atoms_in_residue(pose, i); j++ ) { // Updated by VKM -- keep N,CA,C by default, though the get_bb_atoms_for_residue function will return whatever atoms should be kept (e.g. N, CA, CM, C for beta-amino acids).  That is, we're no longer making the protein-only assumption.
-			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (res.xyz( get_bb_atoms_for_residue( res, j ) ).x());
 			atoms[ind][2] = static_cast<Real> (res.xyz( get_bb_atoms_for_residue( res, j ) ).y());
 			atoms[ind][3] = static_cast<Real> (res.xyz( get_bb_atoms_for_residue( res, j ) ).z());

@@ -388,7 +388,6 @@ void ClosureProblem::extract_cartesian_coordinates (
 		// third ones will crash the program.
 
 		for ( Size j = 1; j <= 3; j++ ) {
-			atom_xyzs[index].resize(3);
 			atom_xyzs[index][1] = residue.xyz(j).x();
 			atom_xyzs[index][2] = residue.xyz(j).y();
 			atom_xyzs[index][3] = residue.xyz(j).z();
@@ -577,7 +576,6 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 	// order: N, CA, C.
 
 	for ( Size i = 1; i <= 3; i++ ) {
-		atom_xyzs[i].resize(3);
 		atom_xyzs[i][1] = frame_residue->xyz(i).x();
 		atom_xyzs[i][2] = frame_residue->xyz(i).y();
 		atom_xyzs[i][3] = frame_residue->xyz(i).z();
@@ -640,7 +638,6 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 	Size offset = atom_xyzs.size() - 3;
 
 	for ( Size i = 1; i <= 3; i++ ) {
-		atom_xyzs[i + offset].resize(3);
 		atom_xyzs[i + offset][1] = frame_residue->xyz(i).x();
 		atom_xyzs[i + offset][2] = frame_residue->xyz(i).y();
 		atom_xyzs[i + offset][3] = frame_residue->xyz(i).z();

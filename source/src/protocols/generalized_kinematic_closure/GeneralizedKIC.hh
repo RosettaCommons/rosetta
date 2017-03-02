@@ -33,6 +33,7 @@
 
 // Project Headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
@@ -727,7 +728,7 @@ private:
 
 	/// @brief Generate the numeric::kinematic_closure::bridgeObjects data from the atomlist_ object.
 	void generate_bridgeobjects_data_from_atomlist(
-		utility::vector1< utility::vector1< core::Real > > &atoms, //atom xyz
+		utility::vector1< utility::fixedsizearray1< core::Real,3 > > &atoms, //atom xyz
 		utility::vector1< core::Real > &dt, //desired torsions for each atom
 		utility::vector1< core::Real > &da, //desired bond angle for each atom
 		utility::vector1< core::Real > &db, //desired bond length for each atom

@@ -28,7 +28,7 @@ Real dot (Coordinate const &a, Coordinate const &b) { // {{{1
 }
 
 Coordinate cross (Coordinate const &a, Coordinate const &b) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = a[2]*b[3] - a[3]*b[2];
 	result[2] = a[3]*b[1] - a[1]*b[3];
@@ -38,7 +38,7 @@ Coordinate cross (Coordinate const &a, Coordinate const &b) { // {{{1
 }
 
 Coordinate norm (Coordinate const &a) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	Real magnitude = sqrt(
 		a[1]*a[1] + a[2]*a[2] + a[3]*a[3]);
@@ -74,7 +74,7 @@ std::ostream& operator << (std::ostream &out, ParameterMatrix const &xx) { // {{
 }
 
 Coordinate operator + (Coordinate const &a, Coordinate const &b) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = a[1] + b[1];
 	result[2] = a[2] + b[2];
@@ -84,7 +84,7 @@ Coordinate operator + (Coordinate const &a, Coordinate const &b) { // {{{1
 }
 
 Coordinate operator - (Coordinate const &a, Coordinate const &b) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = a[1] - b[1];
 	result[2] = a[2] - b[2];
@@ -94,7 +94,7 @@ Coordinate operator - (Coordinate const &a, Coordinate const &b) { // {{{1
 }
 
 Coordinate operator * (Coordinate const &a, Real const &k) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = a[1] * k;
 	result[2] = a[2] * k;
@@ -104,7 +104,7 @@ Coordinate operator * (Coordinate const &a, Real const &k) { // {{{1
 }
 
 Coordinate operator * (Real const &k, Coordinate const &a) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = k * a[1];
 	result[2] = k * a[2];
@@ -114,7 +114,7 @@ Coordinate operator * (Real const &k, Coordinate const &a) { // {{{1
 }
 
 Coordinate operator / (Coordinate const &a, Real const &k) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = a[1] / k;
 	result[2] = a[2] / k;
@@ -124,7 +124,7 @@ Coordinate operator / (Coordinate const &a, Real const &k) { // {{{1
 }
 
 Coordinate operator / (Real const &k, Coordinate const &a) { // {{{1
-	Coordinate result (3);
+	Coordinate result;
 
 	result[1] = k / a[1];
 	result[2] = k / a[2];

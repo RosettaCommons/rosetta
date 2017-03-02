@@ -53,6 +53,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 
 using namespace core;
@@ -290,7 +291,7 @@ StepWiseProteinKIC_LoopBridger::output_chainTORS( utility::vector1< core::Real >
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
-	utility::vector1<utility::vector1<Real> > & atoms,
+	utility::vector1<utility::fixedsizearray1<Real,3> > & atoms,
 	utility::vector1<Real> & dt_ang,
 	utility::vector1<Real> & db_ang,
 	utility::vector1<Real> & db_len,
@@ -305,7 +306,6 @@ StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
 		if ( verbose_ ) std::cout << "Filling residue " << i << std::endl;
 		conformation::Residue res = pose.residue(i);
 		for ( Size j=1; j<=3; j++ ) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
-			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (res.xyz(j).x());
 			atoms[ind][2] = static_cast<Real> (res.xyz(j).y());
 			atoms[ind][3] = static_cast<Real> (res.xyz(j).z());
@@ -313,9 +313,9 @@ StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
 		}
 	}
 
-	utility::vector1<utility::vector1<Real> > Q0 (3);
-	utility::vector1<Real> R0 (3);
-
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > Q0;
+	utility::fixedsizearray1<Real,3> R0;
+	
 	chainTORS(atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0);
 
 	if ( verbose_ ) output_chainTORS( dt_ang, db_ang, db_len );
@@ -332,7 +332,7 @@ StepWiseProteinKIC_LoopBridger::KIC_loop_close( pose::Pose & pose ){
 	///// kinematic loop close.
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
 	// inputs to loop closure
-	utility::vector1<utility::vector1<Real> > atoms;
+	utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
 	utility::vector1<Size> pivots (3), order (3);
 	// for eliminating identical solutions
 	utility::vector1<Real> dt_ang, db_len, db_ang, save_t_ang, save_b_len, save_b_ang;
@@ -400,7 +400,7 @@ void
 StepWiseProteinKIC_LoopBridger::sample_omega_recursively(
 	pose::Pose & pose,
 	int const offset,
-	utility::vector1<utility::vector1<Real> > & atoms,
+	utility::vector1<utility::fixedsizearray1<Real,3> > & atoms,
 	utility::vector1<Real> & dt_ang,
 	utility::vector1<Real> & db_ang,
 	utility::vector1<Real> & db_len,

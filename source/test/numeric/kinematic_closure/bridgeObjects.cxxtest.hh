@@ -32,6 +32,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 #include <boost/foreach.hpp>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
@@ -75,7 +76,7 @@ public:
 	
 		using namespace numeric::kinematic_closure;
 		
-		utility::vector1< utility::vector1< numeric::Real > > atoms1, atoms2;
+		utility::vector1< utility::fixedsizearray1< numeric::Real,3 > > atoms1, atoms2;
 		atoms1.reserve( peptide_pose_->total_residue() * 3 );
 		atoms2.reserve( peptide_pose_->total_residue() * 3 );
 		
@@ -83,7 +84,7 @@ public:
 			numeric::xyzVector < numeric::Real > xyzN( peptide_pose_->xyz( core::id::NamedAtomID("N", ir) ) );
 			numeric::xyzVector < numeric::Real > xyzCA( peptide_pose_->xyz( core::id::NamedAtomID("CA", ir) ) );
 			numeric::xyzVector < numeric::Real > xyzC( peptide_pose_->xyz( core::id::NamedAtomID("C", ir) ) );
-			utility::vector1 < numeric::Real > Nvec(3), CAvec(3), Cvec(3);
+			utility::fixedsizearray1 < numeric::Real,3 > Nvec, CAvec, Cvec;
 			Nvec[1] = xyzN.x(); Nvec[2] = xyzN.y(); Nvec[3] = xyzN.z();
 			CAvec[1] = xyzCA.x(); CAvec[2] = xyzCA.y(); CAvec[3] = xyzCA.z();
 			Cvec[1] = xyzC.x(); Cvec[2] = xyzC.y(); Cvec[3] = xyzC.z();
@@ -99,10 +100,10 @@ public:
 		
 
 		utility::vector1< numeric::Real > dt1, dt2, da1, da2, db1, db2;
-		utility::vector1<utility::vector1<numeric::Real> > q1(3); //Used by numeric::kinematic_closure::chainTORS
-		utility::vector1<numeric::Real> r1(3); //Used by numeric::kinematic_closure::chainTORS
-		utility::vector1<utility::vector1<numeric::Real> > q2(3); //Used by numeric::kinematic_closure::chainTORS
-		utility::vector1<numeric::Real> r2(3); //Used by numeric::kinematic_closure::chainTORS
+		utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 > q1; //Used by numeric::kinematic_closure::chainTORS
+		utility::fixedsizearray1<numeric::Real,3> r1; //Used by numeric::kinematic_closure::chainTORS
+		utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 > q2; //Used by numeric::kinematic_closure::chainTORS
+		utility::fixedsizearray1<numeric::Real,3> r2; //Used by numeric::kinematic_closure::chainTORS
 		
 		chainTORS( atoms1.size(), atoms1, dt1, da1, db1, r1, q1 );
 		chainTORS( atoms2.size(), atoms2, dt2, da2, db2, r2, q2 );
@@ -161,13 +162,13 @@ public:
 	
 		// Read atoms from the pose
 
-		utility::vector1< utility::vector1< Real > > atoms;
+		utility::vector1< utility::fixedsizearray1< Real,3 > > atoms;
 		
 		for(numeric::Size ir=1, irmax=peptide_pose_->total_residue(); ir<=irmax; ++ir) {
 			numeric::xyzVector < Real > xyzN( peptide_pose_->xyz( core::id::NamedAtomID("N", ir) ) );
 			numeric::xyzVector < Real > xyzCA( peptide_pose_->xyz( core::id::NamedAtomID("CA", ir) ) );
 			numeric::xyzVector < Real > xyzC( peptide_pose_->xyz( core::id::NamedAtomID("C", ir) ) );
-			utility::vector1 < Real > Nvec(3), CAvec(3), Cvec(3);
+			utility::fixedsizearray1< Real,3 > Nvec, CAvec, Cvec;
 			Nvec[1] = xyzN.x(); Nvec[2] = xyzN.y(); Nvec[3] = xyzN.z();
 			CAvec[1] = xyzCA.x(); CAvec[2] = xyzCA.y(); CAvec[3] = xyzCA.z();
 			Cvec[1] = xyzC.x(); Cvec[2] = xyzC.y(); Cvec[3] = xyzC.z();
@@ -179,8 +180,8 @@ public:
 		// Get internal coordinates
 		
 		utility::vector1< numeric::Real > dt, da, db;
-		utility::vector1<utility::vector1<numeric::Real> > q(3); //Used by numeric::kinematic_closure::chainTORS
-		utility::vector1<numeric::Real> r(3); //Used by numeric::kinematic_closure::chainTORS
+		utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 > q; //Used by numeric::kinematic_closure::chainTORS
+		utility::fixedsizearray1<numeric::Real,3> r; //Used by numeric::kinematic_closure::chainTORS
 
 		chainTORS( atoms.size(), atoms, dt, da, db, r, q );
 	
@@ -195,8 +196,8 @@ public:
 	
 		// Prepare inputs for bridgeObjects_nonredundant()
 		
-		utility::vector1<utility::vector1<Real> > stub1(3);	
-		utility::vector1<utility::vector1<Real> > stub2(3);
+		utility::vector1<utility::fixedsizearray1<Real,3> > stub1(3);	
+		utility::vector1<utility::fixedsizearray1<Real,3> > stub2(3);
 	  utility::vector1<numeric::Real> torsions_chain1(pivots[2] - pivots[1] - 2);	
 	  utility::vector1<numeric::Real> torsions_chain2(pivots[3] - pivots[2] - 2);	
 	  utility::vector1<numeric::Real> angles(pivots[3] - pivots[1] + 1);	

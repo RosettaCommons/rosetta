@@ -16,6 +16,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 // STD
 #include <iostream>
@@ -25,8 +26,8 @@ namespace numeric {
 namespace kinematic_closure {
 
 
-void bridgeObjects_nonredundant(const utility::vector1<utility::vector1<Real> >& stub1,
-	const utility::vector1<utility::vector1<Real> >& stub2,
+void bridgeObjects_nonredundant(const utility::vector1<utility::fixedsizearray1<Real,3> >& stub1,
+	const utility::vector1<utility::fixedsizearray1<Real,3> >& stub2,
 	const utility::vector1<numeric::Real> & torsions_chain1, const utility::vector1<numeric::Real> & torsions_chain2,
 	const utility::vector1<numeric::Real> & angles, const utility::vector1<numeric::Real> & bonds,
 	utility::vector1<utility::vector1<Real> >& pivot_torsions,
@@ -45,7 +46,7 @@ void bridgeObjects_nonredundant(const utility::vector1<utility::vector1<Real> >&
 
 	// Create inputs for the bridgeObjects function
 
-	utility::vector1<utility::vector1<numeric::Real> > atoms(len_total + 2);
+	utility::vector1<utility::fixedsizearray1<numeric::Real,3> > atoms(len_total + 2);
 	utility::vector1<numeric::Real> dt(len_total + 2);
 	utility::vector1<numeric::Real> da(len_total + 2);
 	utility::vector1<numeric::Real> db(len_total + 2);

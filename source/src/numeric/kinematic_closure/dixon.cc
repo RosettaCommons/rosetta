@@ -24,6 +24,7 @@
 #include <numeric/kinematic_closure/sturm.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
+#include <utility/fixedsizearray1.hh>
 
 // External headers
 #include <Eigen/Dense>
@@ -58,14 +59,15 @@ typedef linear_algebra::GeneralizedEigenSolver<Matrix16> SolverType;
 // you run the risk of getting really terrible caching performance because
 // these matrices aren't necessarily stored contiguously in memory.
 
-typedef vector1<Real> PseudoVector;
-typedef vector1<PseudoVector> PseudoMatrix;
+// AMW: changing to fixedsizearray1
+typedef utility::fixedsizearray1<Real,3> PseudoVector;
+typedef utility::fixedsizearray1<PseudoVector,3> PseudoMatrix;
 
 /// dixon functions ///
 
 // point_value2 {{{1
 /* C becomes the point value 2 between A and t */
-void point_value2(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
+void point_value2(const utility::fixedsizearray1<Real,3>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
 	for ( unsigned i=1; i<=t.size(); i++ ) {
 		C[i] = A[1]+t[i] * (A[2]+t[i]*A[3]);
@@ -111,7 +113,7 @@ void point_value16(const utility::vector1<Real>& A, const utility::vector1<Real>
 
 // polyProduct2x2 {{{1
 /* C becomes the polyProduct2x2 of A and B */
-void polyProduct2x2(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
+void polyProduct2x2(const utility::fixedsizearray1<Real,3>& A, const utility::fixedsizearray1<Real,3>& B, utility::vector1<Real>& C) {
 	C.resize(PP4x2_VECSIZE);
 	C[5] = A[3]*B[3];
 	C[4] = A[3]*B[2]+A[2]*B[3];
@@ -123,7 +125,7 @@ void polyProduct2x2(const utility::vector1<Real>& A, const utility::vector1<Real
 
 // polyProduct4x2 {{{1
 /* C becomes the polyProduct4x2 of A and B */
-void polyProduct4x2(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
+void polyProduct4x2(const utility::vector1<Real>& A, const utility::fixedsizearray1<Real,3>& B, utility::vector1<Real>& C) {
 	C.resize(7);
 	C[7] = A[5]*B[3];
 	C[6] = A[5]*B[2]+A[4]*B[3];
@@ -402,8 +404,7 @@ void build_dixon_matrices(
 }
 
 // build_sin_and_cos {{{1
-void build_sin_and_cos(
-	PseudoMatrix const & u, PseudoMatrix & sin, PseudoMatrix & cos) {
+void build_sin_and_cos( utility::vector1< PseudoVector > const & u, utility::vector1< PseudoVector > & sin, utility::vector1< PseudoVector >  & cos) {
 
 	// The variable names used here mostly correspond to those used by:
 	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
@@ -415,9 +416,7 @@ void build_sin_and_cos(
 	sin.resize(num_solutions);
 
 	for ( int i = 1; i <= num_solutions; i++ ) {
-		cos[i].resize(3);
-		sin[i].resize(3);
-
+		
 		for ( int j = 1; j <= 3; j++ ) {
 			u_squared = u[i][j] * u[i][j];
 			u_squared_plus_1 = u_squared + 1;
@@ -434,9 +433,9 @@ void dixon_eig( // {{{1
 	PseudoMatrix const & C,
 	PseudoMatrix const & D,
 	vector1<int> const & /*order*/,
-	PseudoMatrix & cos,
-	PseudoMatrix & sin,
-	PseudoMatrix & u,
+	utility::vector1< utility::fixedsizearray1<Real, 3> > & cos,
+	utility::vector1< utility::fixedsizearray1<Real, 3> > & sin,
+	utility::vector1< utility::fixedsizearray1<Real, 3> > & u,
 	int & num_solutions) {
 
 	// The variable names used here mostly correspond to those used by:
@@ -473,7 +472,6 @@ void dixon_eig( // {{{1
 	u.resize(num_solutions);
 
 	for ( int i = 0; i < num_solutions; i++ ) {
-		u[i+1].resize(3);
 
 		if ( std::abs(eigenvectors(0, i)) > 1e-8 ) {
 			u[i+1][1] = eigenvectors(1, i) / eigenvectors(0, i);
@@ -490,14 +488,14 @@ void dixon_eig( // {{{1
 }
 
 void dixon_sturm( // {{{1
-	const utility::vector1<utility::vector1<Real> >& A,
-	const utility::vector1<utility::vector1<Real> >& B,
-	const utility::vector1<utility::vector1<Real> >& C,
-	const utility::vector1<utility::vector1<Real> >& D,
+	const utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& A,
+	const utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& B,
+	const utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& C,
+	const utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& D,
 	const utility::vector1<int>& order,
-	utility::vector1<utility::vector1<Real> >& cos,
-	utility::vector1<utility::vector1<Real> >& sin,
-	utility::vector1<utility::vector1<Real> >& tau, int& nsol) {
+	utility::vector1<utility::fixedsizearray1<Real,3> >& cos,
+	utility::vector1<utility::fixedsizearray1<Real,3> >& sin,
+	utility::vector1<utility::fixedsizearray1<Real,3> >& tau, int& nsol) {
 
 	using utility::vector1;
 	using namespace numeric::kinematic_closure;
@@ -711,7 +709,6 @@ void dixon_sturm( // {{{1
 	nsol=roots.size();
 	tau.resize(nsol);
 	for ( int i=1; i<=nsol; i++ ) {
-		tau[i].resize(3);
 		tau[i][order[3]]=roots[i];  // restoring column-major indexing!
 	}
 
@@ -833,8 +830,6 @@ void dixon_sturm( // {{{1
 	for ( int i=1; i<=nsol; i++ ) {
 		tsq[i].resize(3);
 		tsq1[i].resize(3);
-		cos[i].resize(3);
-		sin[i].resize(3);
 		for ( int j=1; j<=3; j++ ) {
 			tsq[i][j]=(tau[i][j])*(tau[i][j]);
 			tsq1[i][j]=tsq[i][j]+1;
@@ -849,7 +844,8 @@ void dixon_sturm( // {{{1
 
 // test_point_value2 {{{1
 void test_point_value2() {
-	utility::vector1<Real> A(3), t(16), C;
+	utility::vector1<Real> t(16), C;
+	utility::fixedsizearray1< Real, 3 > A;
 	A[1]=0.0;
 	A[2]=-60;
 	A[3]=0.0;
@@ -932,7 +928,8 @@ void test_polyProduct4x4() {
 
 // test_polyProduct4x2 {{{1
 void test_polyProduct4x2() {
-	utility::vector1<Real> A (5), B (3), C;
+	utility::vector1<Real> A (5), C;
+	utility::fixedsizearray1< Real, 3 > B;
 	A[1]=0.0;
 	A[2]=-108950.0;
 	A[3]=0.0;
@@ -949,8 +946,9 @@ void test_polyProduct4x2() {
 
 // test_polyProduct2x2 {{{1
 void test_polyProduct2x2() {
-	utility::vector1<Real> A (3), B (3), C;
-	A[1]=15.999410431075338;
+	utility::fixedsizearray1<Real,3> A, B;
+	utility::vector1< Real > C;
+ 	A[1]=15.999410431075338;
 	A[2]=0.0;
 	A[3]=-8.999904923464781;
 	B[1]=72.015965384650187;

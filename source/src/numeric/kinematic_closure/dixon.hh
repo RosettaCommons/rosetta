@@ -21,6 +21,7 @@
 // Utility headers
 
 #include <utility/vector1.fwd.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 
 namespace numeric {
@@ -40,25 +41,25 @@ int & nsol);
 */
 
 void dixon_eig(
-	const utility::vector1<utility::vector1<numeric::Real> >& A,
-	const utility::vector1<utility::vector1<numeric::Real> >& B,
-	const utility::vector1<utility::vector1<numeric::Real> >& C,
-	const utility::vector1<utility::vector1<numeric::Real> >& D,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& A,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& B,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& C,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& D,
 	const utility::vector1<int>& order,
-	utility::vector1<utility::vector1<numeric::Real> >& cos,
-	utility::vector1<utility::vector1<numeric::Real> >& sin,
-	utility::vector1<utility::vector1<numeric::Real> >& tau,
+	utility::vector1<utility::fixedsizearray1<numeric::Real,3> >& cos,
+	utility::vector1<utility::fixedsizearray1<numeric::Real,3> >& sin,
+	utility::vector1<utility::fixedsizearray1<numeric::Real,3> >& tau,
 	int & nsol);
 
 void dixon_sturm(
-	const utility::vector1<utility::vector1<numeric::Real> >& A,
-	const utility::vector1<utility::vector1<numeric::Real> >& B,
-	const utility::vector1<utility::vector1<numeric::Real> >& C,
-	const utility::vector1<utility::vector1<numeric::Real> >& D,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& A,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& B,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& C,
+	const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& D,
 	const utility::vector1<int>& order,
-	utility::vector1<utility::vector1<numeric::Real> >& cos,
-	utility::vector1<utility::vector1<numeric::Real> >& sin,
-	utility::vector1<utility::vector1<numeric::Real> >& tau,
+	utility::vector1<utility::fixedsizearray1<numeric::Real,3> >& cos,
+	utility::vector1<utility::fixedsizearray1<numeric::Real,3> >& sin,
+	utility::vector1<utility::fixedsizearray1<numeric::Real, 3> >& tau,
 	int & nsol);
 
 

@@ -37,8 +37,8 @@ namespace kinematic_closure {
 /// bonds are the bond lengths from pivot1 to pivot3, which has a length of (pivot3 - pivot1);
 /// pivot_torsions are the solutions of pivot tosions whose dimension is nsol * 6 where nsol is the number
 /// of solutions.
-void bridgeObjects_nonredundant(const utility::vector1<utility::vector1<Real> >& stub1,
-	const utility::vector1<utility::vector1<Real> >& stub2,
+void bridgeObjects_nonredundant(const utility::vector1<utility::fixedsizearray1<Real,3> >& stub1,
+	const utility::vector1<utility::fixedsizearray1<Real,3> >& stub2,
 	const utility::vector1<numeric::Real> & torsions_chain1, const utility::vector1<numeric::Real> & torsions_chain2,
 	const utility::vector1<numeric::Real> & angles, const utility::vector1<numeric::Real> & bonds,
 	utility::vector1<utility::vector1<Real> >& pivot_torsions,

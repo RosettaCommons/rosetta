@@ -16,6 +16,7 @@
 #include <cmath>
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 // Rosetta Headers
 #include <numeric/types.hh>
 //#include <basic/Tracer.hh> // tracer output
@@ -35,8 +36,8 @@ using numeric::Real;
 
 namespace numeric {
 namespace kinematic_closure {
-
-void triangle (const utility::vector1<Real>& vbond, utility::vector1<Real>& calpha, utility::vector1<Real>& salpha) {
+	
+void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsizearray1<Real,3>& calpha, utility::fixedsizearray1<Real,3>& salpha) {
 	Real d11, d12, d13, d22, d23, d33;
 	d11 =   vbond[1]*vbond[1];
 	d22 =   vbond[2]*vbond[2];
@@ -52,21 +53,36 @@ void triangle (const utility::vector1<Real>& vbond, utility::vector1<Real>& calp
 	salpha[3]=std::sqrt(1-calpha[3]*calpha[3]);
 }
 
-void sincos (const utility::vector1<Real>& theta,
+	
+void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsizearray1<Real,4>& calpha, utility::fixedsizearray1<Real,4>& salpha) {
+	Real d11, d12, d13, d22, d23, d33;
+	d11 =   vbond[1]*vbond[1];
+	d22 =   vbond[2]*vbond[2];
+	d33 =   vbond[3]*vbond[3];
+	d12 = 2*vbond[1]*vbond[2];
+	d13 = 2*vbond[1]*vbond[3];
+	d23 = 2*vbond[2]*vbond[3];
+	calpha[1]=(d22-d33-d11)/d13; // exterior angle
+	salpha[1]=std::sqrt(1-calpha[1]*calpha[1]);
+	calpha[2]=(d33-d11-d22)/d12; // exterior angle
+	salpha[2]=std::sqrt(1-calpha[2]*calpha[2]);
+	calpha[3]=(d11-d22-d33)/d23; // exterior angle
+	salpha[3]=std::sqrt(1-calpha[3]*calpha[3]);
+}
+
+	
+void sincos (const utility::fixedsizearray1<Real,3>& theta,
 	const int flag,
-	utility::vector1<Real>& cosine,
-	utility::vector1<Real>& sine)
+	utility::fixedsizearray1<Real, 3>& cosine,
+	utility::fixedsizearray1<Real, 3>& sine)
 {
-	utility::vector1<Real> a, aa, a1;
+	utility::fixedsizearray1<Real, 3> a, aa, a1;
 	if ( flag == 1 ) {
 		for ( int i=1; i<=3; i++ ) {
 			cosine[i]=std::cos(theta[i]);
 			sine[i]=std::sin(theta[i]);
 		}
 	} else {
-		a.resize(3);
-		aa.resize(3);
-		a1.resize(3);
 		for ( int i=1; i<=3; i++ ) {
 			a[i]=std::tan(theta[i]/2);
 			aa[i]=a[i]*a[i];
@@ -77,6 +93,28 @@ void sincos (const utility::vector1<Real>& theta,
 	}
 }
 
+void sincos (const utility::fixedsizearray1<Real,3>& theta,
+	const int flag,
+	utility::fixedsizearray1<Real, 4>& cosine,
+	utility::fixedsizearray1<Real, 4>& sine)
+{
+	utility::fixedsizearray1<Real, 3> a, aa, a1;
+	if ( flag == 1 ) {
+		for ( int i=1; i<=3; i++ ) {
+			cosine[i]=std::cos(theta[i]);
+			sine[i]=std::sin(theta[i]);
+		}
+	} else {
+		for ( int i=1; i<=3; i++ ) {
+			a[i]=std::tan(theta[i]/2);
+			aa[i]=a[i]*a[i];
+			a1[i]=1+aa[i];
+			sine[i]=2*a[i]/a1[i];
+			cosine[i]=(1-aa[i])/a1[i];
+		}
+	}
+}
+	
 /*
 * triaxialCoefficients
 * --------------------
@@ -84,45 +122,25 @@ void sincos (const utility::vector1<Real>& theta,
 */
 
 void triaxialCoefficients(
-	const utility::vector1<Real>& vb,
-	const utility::vector1<Real>& xi,
-	const utility::vector1<Real>& eta,
-	const utility::vector1<Real>& delta,
-	const utility::vector1<Real>& theta,
+	const utility::fixedsizearray1<Real,3>& vb,
+	const utility::fixedsizearray1<Real,3>& xi,
+	const utility::fixedsizearray1<Real,3>& eta,
+	const utility::fixedsizearray1<Real,3>& delta,
+	const utility::fixedsizearray1<Real,3>& theta,
 	const utility::vector1<int>& order,
-	utility::vector1<utility::vector1<Real> >& A,
-	utility::vector1<utility::vector1<Real> >& B,
-	utility::vector1<utility::vector1<Real> >& C,
-	utility::vector1<utility::vector1<Real> >& D,
-	utility::vector1<Real>& cal,
-	utility::vector1<Real>& sal,
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& A,
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& B,
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& C,
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& D,
+	utility::fixedsizearray1<Real,3>& cal,
+	utility::fixedsizearray1<Real,3>& sal,
 	int& f) {
 
-	utility::vector1<Real> ctheta (4), calpha (4), salpha (4), cxi (3), sxi (3), ceta (4), seta (4), cdelta (3), sdelta (3), caceta (4), caseta (4), saceta (4), saseta (4), capeta (4), sapeta (4), cameta (4), sameta (4);
-	utility::vector1<utility::vector1<Real> > L, M, N;
-	utility::vector1<utility::vector1<utility::vector1<Real> > > p (4);
-
-	// allocate p
-	for ( int i=1; i<=4; i++ ) {
-		p[i].resize(3);
-		for ( int j=1; j<=3; j++ ) {
-			p[i][j].resize(3);
-		}
-	}
-
-	// allocate polynomial matrices
-	A.resize(3);
-	B.resize(3);
-	C.resize(3);
-	D.resize(3);
-	for ( int i=1; i<=3; i++ ) {
-		for ( int j=1; j<=3; j++ ) {
-			A[i].resize(3);
-			B[i].resize(3);
-			C[i].resize(3);
-			D[i].resize(3);
-		}
-	}
+	utility::vector1<Real> ctheta (4), caceta (4), caseta (4), saceta (4), saseta (4), capeta (4), sapeta (4), cameta (4), sameta (4);
+	utility::fixedsizearray1<Real, 3> cxi, sxi, cdelta, sdelta;
+	utility::fixedsizearray1<Real, 4> ceta, seta, calpha, salpha;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > L, M, N;
+	utility::vector1<utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > > p (4);
 
 	// if triangle is feasible, compute the polynomial matrices
 	if ( (std::abs(vb[1] - vb[2]) <= vb[3]) && (vb[1] + vb[2] >= vb[3]) ) {
@@ -132,8 +150,6 @@ void triaxialCoefficients(
 			ctheta[i]=std::cos(theta[i]);
 		}
 		triangle(vb, calpha, salpha);
-		cal.resize(3);
-		sal.resize(3);
 		for ( int i=1; i<=3; i++ ) {
 			cal[i]=calpha[i];
 			sal[i]=salpha[i];
@@ -184,14 +200,6 @@ void triaxialCoefficients(
 			}
 		}
 
-		L.resize(3);
-		M.resize(3);
-		N.resize(3);
-		for ( int i=1; i<=3; i++ ) {
-			L[i].resize(3);
-			M[i].resize(3);
-			N[i].resize(3);
-		}
 		for ( int k=1; k<=3; k++ ) {
 			for ( int i=1; i<=3; i++ ) {
 				L[k][i] = p[order[1]][i][k];
@@ -227,8 +235,7 @@ void triaxialCoefficients(
 * -----
 * Output r is cross product of vectors L and r0
 */
-void cross(const utility::vector1<Real>& L, const utility::vector1<Real>& r0, utility::vector1<Real>& r) {
-	r.resize(3);
+void cross(const utility::fixedsizearray1<Real,3>& L, const utility::fixedsizearray1<Real,3>& r0, utility::fixedsizearray1<Real,3>& r) {
 	r[1]=L[2]*r0[3]-L[3]*r0[2];
 	r[2]=L[3]*r0[1]-L[1]*r0[3];
 	r[3]=L[1]*r0[2]-L[2]*r0[1];
@@ -241,16 +248,12 @@ void cross(const utility::vector1<Real>& L, const utility::vector1<Real>& r0, ut
 *                          r2 r1-->r2: positive x axis
 *                          r3 on pos. y side of xy plane
 */
-void frame(const utility::vector1<utility::vector1<Real> >& R, utility::vector1<utility::vector1<Real> >& U) {
+void frame(const utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& R, utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& U) {
 	Real norm1, norm3;
 
 	//  utility::vector1<Real> cross1 (3), cross3 (3), cross11 (3), cross12 (3), cross31 (3), cross32 (3);
-	utility::vector1<Real> dR3R2 (3);
-	U.resize(3);
-	for ( int i=1; i<=3; i++ ) {
-		U[i].resize(3);
-	}
-	for ( int i=1; i<=3; i++ ) {
+	utility::fixedsizearray1<Real,3> dR3R2;
+ 	for ( int i=1; i<=3; i++ ) {
 		U[1][i]=R[2][i]-R[1][i];
 	}
 	norm1=std::sqrt(U[1][1]*U[1][1] + U[1][2]*U[1][2] + U[1][3]*U[1][3]);
@@ -266,11 +269,11 @@ void frame(const utility::vector1<utility::vector1<Real> >& R, utility::vector1<
 	cross(U[3], U[1], U[2]);
 }
 
-Real eucDistance(const utility::vector1<Real>& a, const utility::vector1<Real>& b) {
+Real eucDistance(const utility::fixedsizearray1<Real,3>& a, const utility::fixedsizearray1<Real,3>& b) {
 	return std::sqrt(std::pow(a[1]-b[1],2) + std::pow(a[2]-b[2],2) + std::pow(a[3]-b[3],2));
 }
 
-Real scpn(const utility::vector1<Real>& a, const utility::vector1<Real>& b, const utility::vector1<Real>& c) {
+Real scpn(const utility::fixedsizearray1<Real,3>& a, const utility::fixedsizearray1<Real,3>& b, const utility::fixedsizearray1<Real,3>& c) {
 	Real d=0;
 	for ( int i=1; i<=3; i++ ) {
 		d += (a[i]-b[i]) * (c[i]-b[i]);
@@ -278,19 +281,18 @@ Real scpn(const utility::vector1<Real>& a, const utility::vector1<Real>& b, cons
 	return d;
 }
 
-Real bondangle(const utility::vector1<Real>& a, const utility::vector1<Real>& b, const utility::vector1<Real>& c) {
+Real bondangle(const utility::fixedsizearray1<Real,3>& a, const utility::fixedsizearray1<Real,3>& b, const utility::fixedsizearray1<Real,3>& c) {
 	Real r = scpn(a,b,c) / (eucDistance(a,b) * eucDistance(b,c));
 	Real ang = std::atan2(sqrt(1-r*r), (Real) r) * rad2deg;
 	return ang;
 }
 
-Real torsion(const utility::vector1<Real>& a, const utility::vector1<Real>& b, const utility::vector1<Real>& c, const utility::vector1<Real>& d) {
+Real torsion(const utility::fixedsizearray1<Real,3>& a, const utility::fixedsizearray1<Real,3>& b, const utility::fixedsizearray1<Real,3>& c, const utility::fixedsizearray1<Real,3>& d) {
 	Real chi;
-	utility::vector1<Real> r (3), sc1 (3), sc2 (3), sc3 (3), cs12, cs31;
-	utility::vector1<utility::vector1<Real> > s (3);
-	for ( int i=1; i<=3; i++ ) { // init s
-		s[i].resize(3);
-	}
+	utility::fixedsizearray1<Real,3> r, sc1, sc2, sc3;
+	utility::fixedsizearray1<Real,3> cs12, cs31;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > s;
+ 
 	if ( b==c ) {
 		chi=pidegs;
 	} else {
@@ -326,9 +328,9 @@ Real torsion(const utility::vector1<Real>& a, const utility::vector1<Real>& b, c
 	return chi;
 }
 
-void chainParams(const int& n, const utility::vector1<utility::vector1<Real> >& atoms, Real& vbond, Real& xi, Real& eta, Real& delta, utility::vector1<Real>& R0, utility::vector1<utility::vector1<Real> >& Q) {
+void chainParams(const int& n, const utility::vector1<utility::fixedsizearray1<Real,3> >& atoms, Real& vbond, Real& xi, Real& eta, Real& delta, utility::fixedsizearray1<Real,3>& R0, utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& Q) {
 	//utility::vector1<Real> ac1 (3), ac2 (3), acn (3), acneg1 (3);
-	utility::vector1<utility::vector1<Real> > a1n2 (3);
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > a1n2;
 	// R0.resize(3);
 	// for (int i=1; i<=3; i++) {
 	//   ac1[i] = atoms[i][1];
@@ -367,9 +369,9 @@ void chainXYZ(const int& n,
 	const utility::vector1<Real>& b_ang1,
 	const utility::vector1<Real>& t_ang1,
 	const bool space,
-	const utility::vector1<Real>& R0,
-	const utility::vector1<utility::vector1<Real> >& Q,
-	utility::vector1<utility::vector1<Real> >& atoms
+	const utility::fixedsizearray1<Real,3>& R0,
+	const utility::vector1<utility::fixedsizearray1<Real,3> >& Q,
+	utility::vector1<utility::fixedsizearray1<Real,3> >& atoms
 )
 {
 	Real ca, sa, ct, st; // cos(b_ang[2]), sin(b_ang[2]), cos(t_ang[2]), sin(t_ang[2]),
@@ -377,7 +379,7 @@ void chainXYZ(const int& n,
 	int n1, n2, j1, j2;
 	utility::vector1<Real> b_len, b_ang (n), t_ang (n);//, cos_a (n), cos_t (n), sin_a (n), sin_t (n);
 	utility::vector1<Real> v(3), s(3);
-	utility::vector1<utility::vector1<Real> > U (3); // rotation matrix
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > U; // rotation matrix
 
 	//std::cout << "about to allocate atoms" << std::endl;
 	atoms.resize(n);
@@ -386,7 +388,6 @@ void chainXYZ(const int& n,
 	for ( int i=1; i<=n; i++ ) {
 		t_ang[i] = deg2rad*t_ang1[i];
 		b_ang[i] = deg2rad*b_ang1[i];
-		atoms[i].resize(3);
 	}
 	//std::cout << "atoms allocated." << std::endl;
 	// place the first atom at the origin
@@ -408,9 +409,6 @@ void chainXYZ(const int& n,
 	//printMatrix(atoms);
 
 	// initialize rotation matrix
-	for ( int i=1; i<=3; i++ ) {
-		U[i].resize(3);
-	}
 	U[1][1] =    -ca;
 	U[2][1] =    -sa;
 	U[1][2] =     sa;
@@ -485,7 +483,7 @@ void chainXYZ(const int& n,
 	}
 	//printMatrix(atoms);
 	// check atoms here but still need to implement space and frame
-	if ( space == true ) {
+	if ( space ) {
 		// implement:
 		// for i = 1:n
 		//   atoms(:,i) = R0 + Q*atoms(:,i);
@@ -551,10 +549,10 @@ void chainXYZ(
 	const utility::vector1<Real>& b_len,
 	const utility::vector1<Real>& b_ang,
 	const utility::vector1<Real>& t_ang,
-	utility::vector1<utility::vector1<Real> >& atoms) {
+	utility::vector1<utility::fixedsizearray1<Real,3> >& atoms) {
 
-	utility::vector1<Real> dummy_R0;
-	utility::vector1<utility::vector1<Real> > dummy_Q;
+	utility::fixedsizearray1<Real,3> dummy_R0;
+	utility::vector1<utility::fixedsizearray1<Real,3> > dummy_Q;
 
 	chainXYZ(n, b_len, b_ang, t_ang, false, dummy_R0, dummy_Q, atoms);
 }
@@ -573,11 +571,11 @@ void chainXYZ(
 //
 */
 
-void chainTORS (const int& n, const utility::vector1<utility::vector1<Real> >& atoms, utility::vector1<Real>& t_ang, utility::vector1<Real>& b_ang, utility::vector1<Real>& b_len, utility::vector1<Real>& R0, utility::vector1<utility::vector1<Real> >& Q) {
+void chainTORS (const int& n, const utility::vector1<utility::fixedsizearray1<Real,3> >& atoms, utility::vector1<Real>& t_ang, utility::vector1<Real>& b_ang, utility::vector1<Real>& b_len, utility::fixedsizearray1<Real,3>& R0, utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& Q) {
 	t_ang.resize(n);
 	b_ang.resize(n);
 	b_len.resize(n);
-	utility::vector1<utility::vector1<Real> > framein (3);
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > framein (3);
 	for ( int i=1; i<=3; i++ ) {
 		framein[i]=atoms[i];
 	}
@@ -607,33 +605,30 @@ void chainTORS (const int& n, const utility::vector1<utility::vector1<Real> >& a
 	}
 }
 
-void rotateX(const utility::vector1<utility::vector1<Real> >& R, const Real& c, const Real& s, utility::vector1<utility::vector1<Real> >& Rx) {
+void rotateX(const utility::vector1<utility::fixedsizearray1<Real,3> >& R, const Real& c, const Real& s, utility::vector1<utility::fixedsizearray1<Real,3> >& Rx) {
 	int dim1=R.size();
 	Rx.resize(dim1);
 	for ( int i=1; i<=dim1; i++ ) {
-		Rx[i].resize(R[i].size());
 		Rx[i][1] =    R[i][1];
 		Rx[i][2] =  c*R[i][2]  - s*R[i][3];
 		Rx[i][3] =  s*R[i][2]  + c*R[i][3];
 	}
 }
 
-void rotateY(const utility::vector1<utility::vector1<Real> >& R, const Real& c, const Real& s, utility::vector1<utility::vector1<Real> >& Ry) {
+void rotateY(const utility::vector1<utility::fixedsizearray1<Real,3> >& R, const Real& c, const Real& s, utility::vector1<utility::fixedsizearray1<Real,3> >& Ry) {
 	int dim1=R.size();
 	Ry.resize(dim1);
 	for ( int i=1; i<=dim1; i++ ) {
-		Ry[i].resize(R[i].size());
 		Ry[i][1] =   c*R[i][1]  + s*R[i][3];
 		Ry[i][2] =     R[i][2];
 		Ry[i][3] =  -s*R[i][1]  + c*R[i][3];
 	}
 }
 
-void rotateZ(const utility::vector1<utility::vector1<Real> >& R, const Real& c, const Real& s, utility::vector1<utility::vector1<Real> >& Rz) {
+void rotateZ(const utility::vector1<utility::fixedsizearray1<Real,3> >& R, const Real& c, const Real& s, utility::vector1<utility::fixedsizearray1<Real,3> >& Rz) {
 	int dim1=R.size();
 	Rz.resize(dim1);
 	for ( int i=1; i<=dim1; i++ ) {
-		Rz[i].resize(R[i].size());
 		Rz[i][1] =   c*R[i][1]  - s*R[i][2];
 		Rz[i][2] =   s*R[i][1]  + c*R[i][2];
 		Rz[i][3] =     R[i][3];
@@ -677,7 +672,7 @@ void rotateZ(const utility::vector1<utility::vector1<Real> >& R, const Real& c, 
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-void bridgeObjects (const utility::vector1<utility::vector1<Real> >& atoms,
+void bridgeObjects (const utility::vector1<utility::fixedsizearray1<Real,3> >& atoms,
 	const utility::vector1<Real> & dt,
 	const utility::vector1<Real> & da,
 	const utility::vector1<Real> & db,
@@ -688,17 +683,17 @@ void bridgeObjects (const utility::vector1<utility::vector1<Real> >& atoms,
 	utility::vector1<utility::vector1<Real> >& b_len,
 	int& nsol)
 {
-	utility::vector1<Real> R0 (3) /* for chainXYZ interface */, R1 (3), R2 (3), R3 (3); // origins of triangle pieces
-	utility::vector1<utility::vector1<Real> > Q0; // for chainXYZ interface
-	utility::vector1<utility::vector1<Real> > chain1, chain2, chain3, fchain1, fchain2, fchain3; // 3 triangle pieces
-	utility::vector1<utility::vector1<Real> > chain1a, chain1b, chain2a, chain2b, chain12, chain12rX; // reconstructions of the molecular chain
+	utility::fixedsizearray1<Real,3> R0, R1, R2, R3; // origins of triangle pieces
+	utility::vector1<utility::fixedsizearray1<Real,3> > Q0; // for chainXYZ interface
+	utility::vector1<utility::fixedsizearray1<Real,3> > chain1, chain2, chain3, fchain1, fchain2, fchain3; // 3 triangle pieces
+	utility::vector1<utility::fixedsizearray1<Real,3> > chain1a, chain1b, chain2a, chain2b, chain12, chain12rX; // reconstructions of the molecular chain
 	utility::vector1<Real> t_ang1, b_ang1, b_len1, t_ang2, b_ang2, b_len2; // torsions, angles, lengths of chains 1,2
-	utility::vector1<Real> vbond (3), xi (3), eta (3), delta (3), theta (3); // triaxial parameters for each pivot
-	utility::vector1<Real> cal, sal;
-	utility::vector1<utility::vector1<Real> > frame1, frame2, frame3;
-	utility::vector1<utility::vector1<Real> > A, B, C, D; // dixon matrices
-	utility::vector1<utility::vector1<Real> > cosines, sines, taus;
-	utility::vector1<utility::vector1<utility::vector1<Real> > > loop; // the solutions
+	utility::fixedsizearray1<Real,3> vbond, xi, eta, delta, theta; // triaxial parameters for each pivot
+	utility::fixedsizearray1<Real,3> cal, sal;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > frame1, frame2, frame3;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > A, B, C, D; // dixon matrices
+	utility::vector1<utility::fixedsizearray1<Real,3> > cosines, sines, taus;
+	utility::vector1<utility::vector1<utility::fixedsizearray1<Real,3> > > loop; // the solutions
 	int k1, k2, k3, l1, l2, l3, l3a, l3b, f;
 	int ind;
 	int N=atoms.size(); // number of atoms in chain
@@ -824,14 +819,12 @@ void bridgeObjects (const utility::vector1<utility::vector1<Real> >& atoms,
 		chain12.resize(chain12len);
 		int ind = 1;
 		for ( int k=2; k<=l1; k++ ) {
-			chain12[ind].resize(3);
 			for ( int n=1; n<=3; n++ ) {
 				chain12[ind][n] = chain1b[k][n];
 			}
 			ind++;
 		}
 		for ( int k=2; k<=l2-1; k++ ) {
-			chain12[ind].resize(3);
 			for ( int n=1; n<=3; n++ ) {
 				chain12[ind][n] = chain2b[k][n];
 			}
@@ -848,19 +841,16 @@ void bridgeObjects (const utility::vector1<utility::vector1<Real> >& atoms,
 		// populate the loop table with the cartesian solutions
 		loop[j].resize(N);
 		for ( int k=1; k<=l3b; k++ ) {
-			loop[j][k].resize(3);
-			for ( int kk=1; kk<=3; kk++ ) {
+ 			for ( int kk=1; kk<=3; kk++ ) {
 				loop[j][k][kk] = chain3[l3a+k][kk];
 			}
 		}
 		for ( int k=1; k<= l1 + l2 - 3; k++ ) {
-			loop[j][l3b+k].resize(3);
 			for ( int kk=1; kk<=3; kk++ ) {
 				loop[j][l3b+k][kk] = chain12[k][kk];
 			}
 		}
 		for ( int k=1; k<=l3a; k++ ) {
-			loop[j][l3b+l1+l2-3+k].resize(3);
 			for ( int kk=1; kk<=3; kk++ ) {
 				loop[j][l3b+l1+l2-3+k][kk] = chain3[k][kk];
 			}
@@ -901,7 +891,7 @@ void test_bridgeObjects() {
 	Real b_len0vals[] = {1.5200, 1.5202, 1.5197, 1.5205, 1.5198, 1.5201, 1.5197, 1.5196};
 	Real dtvals[] = {180.0000, 180.0000, -5.3651, 180.0000, 180.0000, 180.0000, 180.0000, -5.0393};
 
-	utility::vector1<utility::vector1<Real> > atoms (N);
+	utility::vector1<utility::fixedsizearray1<Real,3> > atoms (N);
 	// output arguments
 	int nsol;
 	utility::vector1<utility::vector1<Real> > t_ang, b_ang, b_len;
@@ -1049,11 +1039,10 @@ void test_rotateX() {
 	Real cos1 = -0.852235910816473;
 	Real sin1 = -0.523157674429820;
 	Real chain1vals[] = { 0.0, 0.0, 0.0, 0.644662961550365, 1.376520855637543, 0.0, 2.163059129530747, 1.374750785448438, -0.069784983442129, 2.807722091081112, 0.0, 0.0 };
-	utility::vector1<utility::vector1<Real> > chain1 (4), chain1a;
+	utility::vector1<utility::fixedsizearray1<Real,3> > chain1 (4), chain1a;
 	// populate chain1
 	int ind=0;
 	for ( int i=1; i<=4; i++ ) {
-		chain1[i].resize(3);
 		for ( int j=1; j<=3; j++ ) {
 			chain1[i][j]=chain1vals[ind++];
 		}
@@ -1065,17 +1054,17 @@ void test_rotateX() {
 void test_chainTORS () {
 	// inputs
 	int n=8;
-	utility::vector1<utility::vector1<Real> > atoms (n);
+	utility::vector1<utility::fixedsizearray1<Real, 3> > atoms (n);
 	Real atomVals[] = {2.1636, 1.3766, 0, 1.6816, 2.3109, 1.0978, 1.1202, 3.6372, 0.6119, -0.3753, 3.6409, 0.3402, -1.0556, 2.2881, 0.4729, -0.6424, 1.2567, -0.5643, 0.0, 0.0, 0.0, 1.5200, 0.0,  0.0}; // for populating the atoms input
 
 	//outputs
-	utility::vector1<Real> t_ang, b_ang, b_len, R0;
-	utility::vector1<utility::vector1<Real> > Q;
+	utility::vector1<Real> t_ang, b_ang, b_len;
+	utility::fixedsizearray1< Real, 3 > R0;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > Q;
 
 	// allocate and populate the atoms
 	int ind=0;
 	for ( int i=1; i<=n; i++ ) {
-		atoms[i].resize(3);
 		for ( int j=1; j<=3; j++ ) {
 			atoms[i][j]=atomVals[ind++];
 		}
@@ -1108,10 +1097,11 @@ void test_chainTORS () {
 }
 
 void test_chainXYZ() {
-	utility::vector1<utility::vector1<Real> > atoms, Q(3);
+	utility::vector1<utility::fixedsizearray1<Real,3> > atoms, Q;
 	int n = 4;
-	utility::vector1<Real> b_len (n), b_ang(n), t_ang(n), R0 (3);
-
+	utility::vector1<Real> b_len (n), b_ang(n), t_ang(n);
+	utility::fixedsizearray1<Real, 3> R0;
+	
 	// setup bond lengths, bond angles, and torsions
 	for ( int i=1; i<=n; i++ ) {
 		b_len[i]=1.52;
@@ -1125,7 +1115,6 @@ void test_chainXYZ() {
 	// Q is the identity matrix and R0 is the origin
 	for ( int i=1; i<=3; i++ ) {
 		R0[i]=0.0;
-		Q[i].resize(3);
 		for ( int j=1; j<=3; j++ ) {
 			(i==j) ? Q[i][j]=1.0 : Q[i][j]=0.0;
 		}
@@ -1219,11 +1208,11 @@ void test_chainParams() {
 		-0.642082009325601,  1.113981114034975, -0.809755503317661, \
 		0.000939232598462, -0.000706370692062, -0.000808351874906, \
 		-0.481142776727140, -0.111725256657088,  1.436436144807435 };
-	utility::vector1<Real> R0;
-	utility::vector1<utility::vector1<Real> > atoms (4), Q;
+	utility::fixedsizearray1<Real,3> R0;
+	utility::vector1<utility::fixedsizearray1<Real,3> > atoms (4);
+	utility::fixedsizearray1< utility::fixedsizearray1< Real, 3 >,3 > Q;
 	int ind=0;
 	for ( int i=1; i<=4; i++ ) {
-		atoms[i].resize(3);
 		for ( int j=1; j<=3; j++ ) {
 			atoms[i][j]=atomVals[ind++];
 		}
@@ -1247,8 +1236,8 @@ void test_chainParams() {
 }
 
 void test_torsion() {
-	utility::vector1<Real> a (3), b(3), c(3), d(3);
-	a[1]=  0.000939232598461515;
+	utility::fixedsizearray1<Real,3> a,b,c,d;
+ 	a[1]=  0.000939232598461515;
 	a[2]= -0.000706370692062031;
 	a[3]= -0.000808351874906243;
 	b[1]= -0.481142776727140;
@@ -1266,8 +1255,8 @@ void test_torsion() {
 }
 
 void test_bondangle() {
-	utility::vector1<Real> a (3), b (3), c (3);
-	a[1]=  0.000939232598461515;
+	utility::fixedsizearray1<Real,3> a,b,c;
+ 	a[1]=  0.000939232598461515;
 	a[2]= -0.000706370692062031;
 	a[3]= -0.000808351874906243;
 	b[1]= -0.481142776727140;
@@ -1282,8 +1271,8 @@ void test_bondangle() {
 }
 
 void test_scpn() {
-	utility::vector1<Real> a (3), b (3), c (3);
-	a[1]=  0.000939232598461515;
+	utility::fixedsizearray1<Real,3> a,b,c;
+ 	a[1]=  0.000939232598461515;
 	a[2]= -0.000706370692062031;
 	a[3]= -0.000808351874906243;
 	b[1]= -0.481142776727140;
@@ -1298,8 +1287,8 @@ void test_scpn() {
 }
 
 void test_eucDistance() {
-	utility::vector1<Real> a (3), b (3);
-	a[1]= -0.481142776727140;
+	utility::fixedsizearray1<Real,3> a,b;
+ 	a[1]= -0.481142776727140;
 	a[2]= -0.111725256657088;
 	a[3]=  1.436436144807435;
 	b[1]= -0.160000000000000;
@@ -1311,7 +1300,7 @@ void test_eucDistance() {
 }
 
 void test_frame() {
-	utility::vector1<utility::vector1<Real> > R (3), U;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > R, U;
 	Real Rvals[] = { -0.160000000000000,  1.225000000000001, -2.247000000000002, \
 		-0.481142776727140, -0.111725256657088,  1.436436144807435, \
 		-0.642082009325601,  1.113981114034975, -0.809755503317661 };
@@ -1319,7 +1308,6 @@ void test_frame() {
 	// intialize R
 	int ind=0;
 	for ( int i=1; i<=3; i++ ) {
-		R[i].resize(3);
 		for ( int j=1; j<=3; j++ ) {
 			R[i][j]=Rvals[ind++];
 		}
@@ -1329,7 +1317,7 @@ void test_frame() {
 }
 
 void test_cross() {
-	utility::vector1<Real> L (3), r0 (3), r;
+	utility::fixedsizearray1<Real,3> L, r0, r;
 	L[1]=  -0.081681961343163;
 	L[2]=  -0.339993139043773;
 	L[3]=   0.936873909656095;
@@ -1342,16 +1330,16 @@ void test_cross() {
 
 void test_triaxialCoefficients() {
 	// inputs
-	utility::vector1<Real> vb (3), xi (3), eta (3), delta (3), theta (3);
-	utility::vector1<int> order (3);
+	utility::fixedsizearray1<Real,3> vb, xi, eta, delta, theta;
+ 	utility::vector1<int> order (3);
 
 	// outputs
-	utility::vector1<Real> cal, sal;
-	utility::vector1<utility::vector1<Real> > A, B, C, D;
+	utility::fixedsizearray1<Real,3> cal, sal;
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > A, B, C, D;
 	int f;
 
 	// dixon outputs (if testing dixon as well)
-	utility::vector1<utility::vector1<Real> > sines, cosines, tau;
+	utility::vector1<utility::fixedsizearray1<Real,3> > sines, cosines, tau;
 	int nsol;
 
 	// initialize inputs
@@ -1390,7 +1378,7 @@ void test_triaxialCoefficients() {
 }
 
 void test_sincos() {
-	utility::vector1<Real> theta (3), cosine, sine;
+	utility::fixedsizearray1<Real,3> theta, cosine, sine;
 	int flag=2;
 	theta[1]=1.132805948744302;
 	theta[2]=0.567232006898157;
@@ -1400,7 +1388,7 @@ void test_sincos() {
 }
 
 void test_triangle() {
-	utility::vector1<Real> vbond (3), calpha, salpha;
+	utility::fixedsizearray1<Real,3> vbond, calpha, salpha;
 	// initialize vbond
 	vbond[1]=2.807722146231753;
 	vbond[2]=2.563909995271172;

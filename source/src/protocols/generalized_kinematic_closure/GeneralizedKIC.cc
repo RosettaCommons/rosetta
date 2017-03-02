@@ -41,6 +41,7 @@
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
@@ -1587,7 +1588,7 @@ GeneralizedKIC::doKIC(
 		nsol_for_attempt.push_back(0);
 
 		//Translate atomlist_ into the data vectors that the kinematic closure bridgeObjects() function uses:
-		utility::vector1< utility::vector1< core::Real > > atoms; //atom xyz
+		utility::vector1< utility::fixedsizearray1< core::Real,3 > > atoms; //atom xyz
 		utility::vector1< core::Real > dt; //desired torsions for each atom
 		utility::vector1< core::Real > da; //desired bond angle for each atom
 		utility::vector1< core::Real > db; //desired bond length for each atom
@@ -1791,7 +1792,7 @@ void GeneralizedKIC::generate_atomlist(
 
 /// @brief Generate the numeric::kinematic_closure::bridgeObjects data from the atomlist_ object.
 void GeneralizedKIC::generate_bridgeobjects_data_from_atomlist(
-	utility::vector1< utility::vector1< core::Real > > &atoms, //atom xyz
+	utility::vector1< utility::fixedsizearray1< core::Real,3 > > &atoms, //atom xyz
 	utility::vector1< core::Real > &dt, //desired torsions for each atom
 	utility::vector1< core::Real > &da, //desired bond angle for each atom
 	utility::vector1< core::Real > &db, //desired bond length for each atom
@@ -1803,8 +1804,7 @@ void GeneralizedKIC::generate_bridgeobjects_data_from_atomlist(
 	//Create the "atoms" object (list of x,y,z coordinates of atoms):
 	atoms.clear();
 	for ( core::Size i=1; i<=atomcount; ++i ) {
-		utility::vector1 <core::Real> xyz;
-		xyz.resize(3);
+		utility::fixedsizearray1 <core::Real,3> xyz;
 		xyz[1]=atomlist_[i].second[0];
 		xyz[2]=atomlist_[i].second[1];
 		xyz[3]=atomlist_[i].second[2];
@@ -1812,8 +1812,8 @@ void GeneralizedKIC::generate_bridgeobjects_data_from_atomlist(
 	}
 
 	//Calculate dt, da, db:
-	utility::vector1<utility::vector1<core::Real> > q0 (3); //Used by numeric::kinematic_closure::chainTORS
-	utility::vector1<core::Real> r0 (3); //Used by numeric::kinematic_closure::chainTORS
+	utility::fixedsizearray1<utility::fixedsizearray1<core::Real,3>,3 > q0; //Used by numeric::kinematic_closure::chainTORS
+	utility::fixedsizearray1<core::Real,3> r0; //Used by numeric::kinematic_closure::chainTORS
 	chainTORS( atomcount, atoms, dt, da, db, r0, q0 );
 
 	//for(core::Size i=1, imax=atomcount; i<=imax; ++i) TR << "x=" << atoms[i][1] << " y=" << atoms[i][2] << " z=" << atoms[i][3] << " dt=" << dt[i] << " da=" << da[i] << " db=" << db[i] << std::endl; //DELETE ME

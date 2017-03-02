@@ -36,7 +36,7 @@ numeric::xyzVector<Real> xyz_from_internal_coords( numeric::xyzVector<Real> atom
 
 
 /// @brief covert an xyzVector to a vector of 3 real numbers
-void xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, vector1<Real> &vec1);
+void xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, fixedsizearray1<Real,3> &vec1);
 
 
 } //protocols

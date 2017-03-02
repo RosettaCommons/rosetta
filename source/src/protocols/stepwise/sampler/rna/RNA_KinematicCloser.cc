@@ -31,6 +31,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 // Numeric headers
 #include <numeric/angle.functions.hh>
@@ -377,15 +378,15 @@ void
 RNA_KinematicCloser::fill_chainTORS( pose::Pose const & pose ) {
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
-	utility::vector1< utility::vector1< Real > > Q0( 3 );
-	utility::vector1< Real > R0( 3 );
-
+	utility::fixedsizearray1< utility::fixedsizearray1< Real,3 >,3 > Q0;
+	utility::fixedsizearray1< Real,3 > R0;
+	
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
 		Vector atom_xyz( pose.xyz( atom_ids_[i] ) );
-		utility::vector1< Real > atom_xyzs;
-		atom_xyzs.push_back( atom_xyz.x() );
-		atom_xyzs.push_back( atom_xyz.y() );
-		atom_xyzs.push_back( atom_xyz.z() );
+		utility::fixedsizearray1< Real,3 > atom_xyzs;
+		atom_xyzs[ 1 ] = atom_xyz.x();
+		atom_xyzs[ 2 ] = atom_xyz.y();
+		atom_xyzs[ 3 ] = atom_xyz.z();
 		atoms_.push_back ( atom_xyzs );
 	}
 	chainTORS( atoms_.size(), atoms_, dt_ang_, db_ang_, db_len_, R0, Q0 );

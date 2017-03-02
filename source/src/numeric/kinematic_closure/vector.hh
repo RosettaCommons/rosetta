@@ -59,7 +59,6 @@ Coordinate operator / (Real const &k, Coordinate const &a);
 
 template <class T>
 Coordinate& operator << (Coordinate &a, xyzVector<T> const &b) {
-	a.resize(3);
 
 	a[1] = b.x();
 	a[2] = b.y();

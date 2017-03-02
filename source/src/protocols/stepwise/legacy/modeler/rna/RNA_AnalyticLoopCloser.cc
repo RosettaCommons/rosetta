@@ -38,6 +38,7 @@
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -104,7 +105,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	///// kinematic loop close.
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
 	// inputs to loop closure
-	utility::vector1< utility::vector1< Real > > atoms;
+	utility::vector1< utility::fixedsizearray1< Real,3 > > atoms;
 	utility::vector1< Size > pivots ( 3 ), order ( 3 );
 	utility::vector1< Real > dt_ang, db_len, db_ang;
 	// doesn't matter.
@@ -143,7 +144,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	utility::vector1< Vector > atoms_xyz( atoms.size() );
 	std::transform( atoms.begin(), atoms.end(),
 		atoms_xyz.begin(),
-		[&]( utility::vector1< Real > const & atom ) {
+		[&]( utility::fixedsizearray1< Real,3 > const & atom ) {
 		return Vector( atom[1], atom[2], atom[3] );
 		} );
 
@@ -194,7 +195,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	b_ang_.clear();
 	b_len_.clear();
 	nsol_ = 0;
-	bridgeObjects ( atoms, dt_ang, db_ang, db_len, pivots, order, t_ang_, b_ang_, b_len_, nsol_ );
+	bridgeObjects( atoms, dt_ang, db_ang, db_len, pivots, order, t_ang_, b_ang_, b_len_, nsol_ );
 
 	if ( nsol_ == 0 ) return false;
 
@@ -309,7 +310,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 			TR << "   start pose " << std::endl;
 			TR << "---------------------------------- " << std::endl;
 			utility::vector1< Real > dt_ang, db_len, db_ang;
-			utility::vector1< utility::vector1< Real > > atoms;
+			utility::vector1< utility::fixedsizearray1< Real,3 > > atoms;
 			fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 			output_chainTORS ( dt_ang, db_ang, db_len );
 			pose.dump_pdb ( "before_closed.pdb" );
@@ -353,7 +354,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 		if ( verbose_ )  {
 			TR << "pose " << best_sol << ": " << std::endl;
 			utility::vector1< Real > dt_ang, db_len, db_ang;
-			utility::vector1< utility::vector1< Real > > atoms;
+			utility::vector1< utility::fixedsizearray1< Real,3 > > atoms;
 			fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 			output_chainTORS ( dt_ang, db_ang, db_len );
 			pose.dump_pdb ( "closed.pdb" );
@@ -377,9 +378,9 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 				output_chainTORS ( t_ang_[n], b_ang_[n], b_len_[n] );
 				TR << "pose " << n << ": " << std::endl;
 				utility::vector1< Real > dt_ang, db_len, db_ang;
-				utility::vector1< utility::vector1< Real > > atoms;
-				fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
-				output_chainTORS ( dt_ang, db_ang, db_len );
+				utility::vector1< utility::fixedsizearray1< Real,3 > > atoms;
+				fill_chainTORS( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
+				output_chainTORS( dt_ang, db_ang, db_len );
 			}
 		}
 
@@ -492,32 +493,32 @@ void
 RNA_AnalyticLoopCloser::fill_chainTORS (
 	core::pose::Pose const & pose,
 	utility::vector1< id::NamedAtomID > const & atom_ids_,
-	utility::vector1< utility::vector1< Real > > & atoms,
+	utility::vector1< utility::fixedsizearray1< Real, 3 > > & atoms,
 	utility::vector1< Real > & dt_ang,
 	utility::vector1< Real > & db_ang,
 	utility::vector1< Real > & db_len ) const {
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
-	utility::vector1< utility::vector1< Real > > Q0 ( 3 );
-	utility::vector1< Real > R0 ( 3 );
+	utility::fixedsizearray1< utility::fixedsizearray1< Real,3 >,3 > Q0;
+ 	utility::fixedsizearray1< Real,3 > R0;
 	utility::vector1< Vector > atoms_xyz;
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
 		//  TR << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
-		atoms_xyz.push_back ( pose.xyz ( atom_ids_[ i ] ) );
+		atoms_xyz.push_back( pose.xyz ( atom_ids_[ i ] ) );
 	}
 
 	atoms.clear();
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
-		utility::vector1< Real > atom_xyz_vals;
-		atom_xyz_vals.push_back ( atoms_xyz[i].x() );
-		atom_xyz_vals.push_back ( atoms_xyz[i].y() );
-		atom_xyz_vals.push_back ( atoms_xyz[i].z() );
+		utility::fixedsizearray1< Real,3 > atom_xyz_vals;
+		atom_xyz_vals[1] = atoms_xyz[i].x();
+		atom_xyz_vals[2] = atoms_xyz[i].y();
+		atom_xyz_vals[3] = atoms_xyz[i].z();
 		atoms.push_back ( atom_xyz_vals );
 	}
 
-	chainTORS ( atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0 );
+	chainTORS( atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0 );
 }
 
 

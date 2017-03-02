@@ -24,7 +24,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 
 namespace protocols {
@@ -68,7 +69,7 @@ private:
 
 	void
 	fill_chainTORS_info( core::pose::Pose const & pose,
-		utility::vector1<utility::vector1<core::Real> > & atoms,
+		utility::vector1<utility::fixedsizearray1<core::Real,3> > & atoms,
 		utility::vector1<core::Real> & dt_ang,
 		utility::vector1<core::Real> & db_ang,
 		utility::vector1<core::Real> & db_len,
@@ -88,7 +89,7 @@ private:
 	void fix_phi_psi_offsets( core::pose::Pose & pose ) const;
 
 	void
-	sample_omega_recursively( core::pose::Pose & pose, int const offset, utility::vector1<utility::vector1< core::Real> > & atoms, utility::vector1< core::Real> & dt_ang, utility::vector1< core::Real> & db_ang, utility::vector1< core::Real> & db_len, utility::vector1< core::Size > const & pivots, utility::vector1< core::Size > const & order );
+	sample_omega_recursively( core::pose::Pose & pose, int const offset, utility::vector1<utility::fixedsizearray1< core::Real,3> > & atoms, utility::vector1< core::Real> & dt_ang, utility::vector1< core::Real> & db_ang, utility::vector1< core::Real> & db_len, utility::vector1< core::Size > const & pivots, utility::vector1< core::Size > const & order );
 
 	void
 	initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence );

@@ -40,6 +40,7 @@
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -471,7 +472,7 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 	///// kinematic loop close.
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
 	// inputs to loop closure
-	utility::vector1<utility::vector1<Real> > atoms;
+	utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
 	utility::vector1<Size> pivots (3), order (3);
 	utility::vector1<Real> dt_ang, db_len, db_ang;
 
@@ -739,7 +740,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 			std::cout << "   start pose " << std::endl;
 			std::cout << "---------------------------------- " << std::endl;
 			utility::vector1<Real> dt_ang, db_len, db_ang;
-			utility::vector1<utility::vector1<Real> > atoms;
+			utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
 			fill_chainTORS( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 			output_chainTORS( dt_ang, db_ang, db_len );
 			pose.dump_pdb( "before_closed.pdb" );
@@ -782,7 +783,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 		if ( verbose_ )  {
 			std::cout << "pose " << best_sol << ": " << std::endl;
 			utility::vector1<Real> dt_ang, db_len, db_ang;
-			utility::vector1<utility::vector1<Real> > atoms;
+			utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
 			fill_chainTORS( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 			output_chainTORS( dt_ang, db_ang, db_len );
 			pose.dump_pdb( "closed.pdb" );
@@ -809,7 +810,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 				std::cout << "pose " << n << ": " << std::endl;
 
 				utility::vector1<Real> dt_ang, db_len, db_ang;
-				utility::vector1<utility::vector1<Real> > atoms;
+				utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
 				fill_chainTORS( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 				output_chainTORS( dt_ang, db_ang, db_len );
 			}
@@ -913,7 +914,7 @@ void
 CoarseRNA_LoopCloser::fill_chainTORS(
 	core::pose::Pose const & pose,
 	utility::vector1< id::NamedAtomID> const & atom_ids_,
-	utility::vector1<utility::vector1<Real> > & atoms,
+	utility::vector1<utility::fixedsizearray1<Real,3> > & atoms,
 	utility::vector1<Real> & dt_ang,
 	utility::vector1<Real> & db_ang,
 	utility::vector1<Real> & db_len) const {
@@ -921,9 +922,9 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
 
-	utility::vector1<utility::vector1<Real> > Q0 (3);
-	utility::vector1<Real> R0 (3);
-
+	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > Q0;
+ 	utility::fixedsizearray1<Real,3> R0;
+ 
 	utility::vector1< Vector > atoms_xyz;
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
 		//  std::cout << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
@@ -957,10 +958,10 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 	// formatting.
 	atoms.clear();
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
-		utility::vector1< Real > atom_xyz_vals;
-		atom_xyz_vals.push_back( atoms_xyz[i].x() );
-		atom_xyz_vals.push_back( atoms_xyz[i].y() );
-		atom_xyz_vals.push_back( atoms_xyz[i].z() );
+		utility::fixedsizearray1< Real,3 > atom_xyz_vals;
+		atom_xyz_vals[1] = atoms_xyz[i].x();
+		atom_xyz_vals[2] = atoms_xyz[i].y();
+		atom_xyz_vals[3] = atoms_xyz[i].z();
 		atoms.push_back( atom_xyz_vals );
 	}
 

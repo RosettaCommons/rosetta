@@ -26,6 +26,8 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <numeric/xyzVector.hh>
+
 // Protocol headers
 #include <protocols/backbone_moves/local_backbone_mover/types.hh>
 

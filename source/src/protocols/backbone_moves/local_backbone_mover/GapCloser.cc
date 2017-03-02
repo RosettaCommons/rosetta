@@ -25,6 +25,7 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <utility/fixedsizearray1.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.GapCloser" );
@@ -119,9 +120,10 @@ bool
 GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Real> > &pivot_torsions){
 
 	using numeric::conversions::degrees;
-
-	vector1<vector1 <Real> > stub1(3);
-	vector1<vector1 <Real> > stub2(3);
+	using utility::fixedsizearray1;
+	
+	vector1<fixedsizearray1 <Real,3> > stub1(3);
+	vector1<fixedsizearray1 <Real,3> > stub2(3);
 	vector1<Real> torsions_chain1(1);
 	vector1<Real> torsions_chain2(1);
 	vector1<Real> angles(7);

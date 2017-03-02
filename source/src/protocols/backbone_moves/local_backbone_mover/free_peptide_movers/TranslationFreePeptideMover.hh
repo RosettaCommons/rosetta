@@ -22,6 +22,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <numeric/xyzVector.hh>
+
 namespace protocols {
 namespace backbone_moves {
 namespace local_backbone_mover {

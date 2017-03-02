@@ -134,7 +134,9 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 		energies.set_long_range_container ( lr_type, new_dec );
 		get_density_map().is_score_precomputed( false );
 	} else {
-
+		//TR << "Checking to see if the density map is up to date with normalization and unweighted score" << std::endl;
+		//TR << "Comparing pose.annotated_sequence() (" << pose.annotated_sequence() << ") vs.";
+		//TR << " cached (" << pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() << ")." << std::endl;
 		// calebgeniesse: need to figure out a smarter way to decide when to recompute score
 		//                for now, just always recompute
 		get_density_map().is_score_precomputed( pose.annotated_sequence() == pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() );

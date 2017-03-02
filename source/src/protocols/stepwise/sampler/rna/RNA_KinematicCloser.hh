@@ -32,7 +32,8 @@
 #include <core/id/DOF_ID.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -105,7 +106,7 @@ private:
 	utility::vector1< core::id::DOF_ID > dof_ids_;
 
 	utility::vector1< utility::vector1< core::Real > > t_ang_, b_ang_, b_len_;
-	utility::vector1< utility::vector1< core::Real > > atoms_;
+	utility::vector1< utility::fixedsizearray1< core::Real, 3 > > atoms_;
 	utility::vector1< core::Real > dt_ang_, db_len_, db_ang_;
 
 	bool calculate_jacobians_;
