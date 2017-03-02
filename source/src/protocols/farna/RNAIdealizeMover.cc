@@ -471,8 +471,6 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 		ss << "suite_iter_" << ii << ".pdb";
 		pose.dump_scored_pdb( ss.str(), *scorefxn );
 	}
-	
-	
 	scorefxn->set_weight( dihedral_constraint, 0 );
 	
 	

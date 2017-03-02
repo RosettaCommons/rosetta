@@ -210,16 +210,18 @@ def find_nearby_res(input_pdb, input_res, dist_cutoff, reload = True):
 
     res_list = []
     for i in input_res:
-        if not i in range(1, len(coord_all) + 1) :
+        if not i in coord_all.keys(): #range(1, len(coord_all) + 1) :
+            print i
+            print coord_all.keys()
             error_exit("Input residues outside the range of pdb residues!")
-        for j in range(1, len(coord_all) + 1) :
+        for j in coord_all.keys(): #range(1, len(coord_all) + 1) :
             if (j in input_res or j in res_list) : continue
-            dist_C1 = compute_dist( coord_C1[i-1], coord_C1[j-1] )
+            dist_C1 = compute_dist( coord_C1[i], coord_C1[j] )
             if dist_C1 > dist_cutoff + 8:
                 continue
-            for coord_target_atom in coord_all[i-1] :
+            for coord_target_atom in coord_all[i] :
                 found_qualifying_atom = False
-                for coord_all_atom in coord_all[j-1] :
+                for coord_all_atom in coord_all[j] :
                     dist = compute_dist( coord_target_atom, coord_all_atom)
                     if dist < dist_cutoff:
                         res_list.append(j)
@@ -632,10 +634,12 @@ def pdb_slice(input_pdb, out_name, segment) :
     """
     check_path_exist(input_pdb)
 
+    print "in pdb_slice", segment
     kept_res = []
     if type(segment) is list :
         kept_res = segment
     elif type(segment) is str :
+        # AMW: we will want to make this also string-residue-compatible
         for elem in segment.split() :
             if '-' in elem :
                 res_range = elem.split('-')
@@ -649,6 +653,7 @@ def pdb_slice(input_pdb, out_name, segment) :
 
     output = open(out_name, 'w')
     previous_res = -1
+    previous_chn = ""
     old_res = 0
     new_res = 0
     new_atom = 0
@@ -664,10 +669,13 @@ def pdb_slice(input_pdb, out_name, segment) :
     old_kept_res = []
     atomlines = ( line for line in open(input_pdb) if len(line) > 20 and line[0:4] == 'ATOM' ) #generator
     for line in atomlines:
+        current_chn = line[21]
         current_res = int(line[22:26])
-        if current_res != previous_res :
-            old_res += 1
+        if current_res != previous_res or current_chn != previous_chn :
+            #old_res += 1
             previous_res = current_res
+            previous_chn = current_chn
+            old_res = "%s:%d" % (previous_chn, previous_res)
             if old_res in kept_res :
                 old_kept_res.append( current_res )
                 new_res += 1
@@ -696,6 +704,7 @@ def load_pdb_coord(input_pdb) :
     """
     Load in the pdb and return the coordinates for each heavy atom in each residue.
     Also return a list of C1' coordinates
+    AMW: now returns a dict from name (i.e. A:1) to coords.
     """
     check_path_exist(input_pdb)
 
@@ -1035,14 +1044,14 @@ def rosetta2std_pdb (input_pdb, out_name, cryst1_line = "") :
     if cryst1_line != "" :
         output.write("%s\n" % cryst1_line)
     for line in open(input_pdb) :
-		output.write(line)
+        output.write(line)
         #if len(line) > 2 and (line[0:3] == 'END' or line[0:3] == 'TER') :
         #    output.write(line)
         #elif line[0:4] == 'LINK':
         #    output.write(line)
         #elif len(line) > 5 and (line[0:6] == 'HETATM' or line[0:4] == 'ATOM') :
         #    output.write(line)
-		# AMW: principle -- let Rosetta handle naming
+        # AMW: principle -- let Rosetta handle naming
         #elif len(line) > 3 and line[0:4] == 'ATOM' :
         #    new_line = line.replace("*", "'")
         #
@@ -1465,8 +1474,8 @@ def find_chi_angle( input_pdb, res ) :
     """
     Find the chi angle value for given residue of the input pdb.
     """
-
     def coord_from_atm_name( atm_name, atm_coords_list ) :
+        print atm_coords_list
         for i in atm_coords_list :
             if atm_name == i[0] :
                 return i[1]
@@ -1474,8 +1483,14 @@ def find_chi_angle( input_pdb, res ) :
 
     atm_coords_list = []
     is_purine = True
-    atomlines = ( line for line in open(input_pdb) if len(line) > 6 and line[0:4] == 'ATOM' and int( line[22:26] ) == res )
+    print input_pdb
+    with open(input_pdb) as foo:
+        print foo.readlines()
+    #atomlines = ( line for line in open(input_pdb) if len(line) > 6 and line[0:4] == 'ATOM' ) #and int( line[22:26] ) == int(res[2:]) and line[21] == res[0] )
+    atomlines = [ line for line in open(input_pdb) if len(line) > 6 and line[0:4] == 'ATOM' ] #and int( line[22:26] ) == int(res[2:]) and line[21] == res[0] )
     for line in atomlines:
+        print "|%s|" % line[22:26]
+        print "|%s|" % line[21]
         atm_name = line[12:16].replace(' ', '')
         res_name = line[19]
         is_purine = res_name in 'GA'

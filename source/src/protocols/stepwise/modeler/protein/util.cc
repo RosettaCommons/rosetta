@@ -95,7 +95,13 @@ setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
 		AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", base_res2 ), pose_2 ));
 		atom_ID_map.set( atom1, atom2 );
 	}
-
+	
+	// For betas
+	if ( pose_1.residue_type( base_res ).has( " CM " ) ) {
+		AtomID atom1(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " CM ", base_res ), pose_1 ));
+		AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " CM ", base_res2 ), pose_2 ));
+		atom_ID_map.set( atom1, atom2 );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

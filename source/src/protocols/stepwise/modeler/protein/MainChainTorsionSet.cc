@@ -24,7 +24,7 @@
 #include <string>
 
 //Auto Headers
-#include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 
 using core::Real;
@@ -36,31 +36,49 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 
-MainChainTorsionSet::MainChainTorsionSet( core::Real const & phi, core::Real const & psi, core::Real const & omega ):
-	phi_( phi ),
-	psi_( psi ),
-	omega_( omega )
-{}
+MainChainTorsionSet::MainChainTorsionSet( core::Real const phi, core::Real const psi, core::Real const omega )
+{
+	mainchain_dihedral_values_[ 1 ] = phi;
+	mainchain_dihedral_values_[ 2 ] = psi;
+	mainchain_dihedral_values_[ 3 ] = omega;
+}
 
-MainChainTorsionSet::MainChainTorsionSet( core::Real const & phi, core::Real const & psi ):
-	phi_( phi ),
-	psi_( psi ),
-	omega_( 180.0 )
-{}
+MainChainTorsionSet::MainChainTorsionSet( core::Real const phi, core::Real const psi )
+{
+	mainchain_dihedral_values_[ 1 ] = phi;
+	mainchain_dihedral_values_[ 2 ] = psi;
+	mainchain_dihedral_values_[ 3 ] = 180.0;
+}
+	
+MainChainTorsionSet::MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values, core::Real const omega )
+{
+	mainchain_dihedral_values_[ 1 ] = mainchain_dihedral_values[ 1 ];
+	mainchain_dihedral_values_[ 2 ] = mainchain_dihedral_values[ 2 ];
+	mainchain_dihedral_values_[ 3 ] = mainchain_dihedral_values[ 3 ];
+	mainchain_dihedral_values_[ 4 ] = omega;
+}
+	
+MainChainTorsionSet::MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values )
+{
+	mainchain_dihedral_values_[ 1 ] = mainchain_dihedral_values[ 1 ];
+	mainchain_dihedral_values_[ 2 ] = mainchain_dihedral_values[ 2 ];
+	mainchain_dihedral_values_[ 3 ] = mainchain_dihedral_values[ 3 ];
+	mainchain_dihedral_values_[ 4 ] = 180.0;
+}
+
 
 MainChainTorsionSet::~MainChainTorsionSet(){}
 
-core::Real MainChainTorsionSet::phi() const{ return phi_; }
-core::Real MainChainTorsionSet::psi() const{ return psi_; }
-core::Real MainChainTorsionSet::omega() const{ return omega_; }
+// ASSUME alpha
+core::Real MainChainTorsionSet::phi() const{ return mainchain_dihedral_values_[ 1 ]; }
+core::Real MainChainTorsionSet::psi() const{ return mainchain_dihedral_values_[ 2 ]; }
+core::Real MainChainTorsionSet::omega() const{ return mainchain_dihedral_values_[ 3 ]; }
 
 MainChainTorsionSet &
 MainChainTorsionSet::operator=( MainChainTorsionSet const & src )
 {
 	if ( this != & src ) {
-		phi_ =  src.phi();
-		psi_ =  src.psi();
-		omega_ =  src.omega();
+		mainchain_dihedral_values_ =  src.mainchain_dihedral_values();
 	}
 	return (*this );
 }

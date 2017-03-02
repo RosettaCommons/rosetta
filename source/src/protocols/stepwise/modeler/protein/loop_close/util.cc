@@ -114,10 +114,10 @@ enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
 	backbone_sampler.apply( pose );
 
 	TR << "Going to sample this many takeoff psi/phi combinations: " <<
-		backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
+		backbone_sampler.main_chain_torsion_set_lists_real( pose ).size() << std::endl;
 
-	ProteinMainChainStepWiseSamplerOP sampler_for_takeoff_res( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions(),
-		backbone_sampler.main_chain_torsion_set_lists_real(),
+	ProteinMainChainStepWiseSamplerOP sampler_for_takeoff_res( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions( pose ),
+		backbone_sampler.main_chain_torsion_set_lists_real( pose ),
 		false /*choose_random*/ ) );
 	sampler = sampler::StepWiseSamplerSizedOP( new sampler::StepWiseSamplerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/) );
 }

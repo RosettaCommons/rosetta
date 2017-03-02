@@ -139,10 +139,10 @@ get_basic_protein_sampler(
 		// Could also put loose chainbreak closure check here.
 		Pose sampler_pose = pose;
 		backbone_sampler.apply( sampler_pose );
-		sampler = StepWiseSamplerSizedOP( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions(),
-			backbone_sampler.main_chain_torsion_set_lists_real(),
+		sampler = StepWiseSamplerSizedOP( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions( sampler_pose ),
+			backbone_sampler.main_chain_torsion_set_lists_real( sampler_pose ),
 			options->choose_random() ) );
-		TR << "Using ProteinMainChainStepWiseSampler. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
+		TR << "Using ProteinMainChainStepWiseSampler. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real( sampler_pose ).size() << std::endl;
 	} else {
 		sampler = 0; // no op.
 	}

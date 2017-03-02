@@ -85,13 +85,13 @@ private:
 	CCD_loop_close_sample_omega_recursively( core::pose::Pose & pose, int const offset );
 
 	void
-	setup_torsions();
+	setup_torsions( core::pose::Pose const & pose );
 
 	void
 	figure_out_loop( core::pose::Pose const & pose );
 
 	void
-	figure_out_movemap();
+	figure_out_movemap( core::pose::Pose const & pose );
 
 	void
 	save_phi_psi_omega_over_loop_residues( core::pose::Pose const & pose );

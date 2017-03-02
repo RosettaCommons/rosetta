@@ -128,6 +128,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 					atom_level_domain_map->set( NamedAtomID(" O  ", n ), pose, true );
 				}
 			} else { // argh, proteins. This is to match old KIC runs. Perhaps should just deprecate.
+				// AMW TODO: betas?
 				if ( n > 1 && pose.residue_type( n-1 ).is_protein() &&
 						!working_minimize_res.has_value( n-1 ) ) {
 					atom_level_domain_map->set_domain( NamedAtomID(" N  ", n ), pose,

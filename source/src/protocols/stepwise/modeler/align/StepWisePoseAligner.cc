@@ -31,10 +31,11 @@
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <utility/tools/make_vector1.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
+
+#include <unordered_set>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.StepWisePoseAligner" );
 using ObjexxFCL::format::F;
@@ -67,12 +68,13 @@ namespace modeler {
 namespace align {
 
 // these are 'extra' heavy atoms in the n-1 or n+1 residue that can change when residue n moves.
-utility::vector1< std::string > const extra_suite_atoms_upper = make_vector1( " P  ", " OP1", " OP2", " O5'", "XO3'" /*happens in phosphate pack*/ );
-utility::vector1< std::string > const extra_suite_atoms_lower = make_vector1( " O  ", "YP  ","YOP2","YOP1","YO5'" );
+std::unordered_set< std::string > const extra_suite_atoms_upper( { " P  ", " OP1", " OP2", " O5'", "XO3'" /*happens in phosphate pack*/ } );
+std::unordered_set< std::string > const extra_suite_atoms_lower( { " O  ", "YP  ","YOP2","YOP1","YO5'" } );
 
 //Constructor
 StepWisePoseAligner::StepWisePoseAligner( pose::Pose const & reference_pose ):
 	reference_pose_( reference_pose ),
+	reference_pose_local_( reference_pose.get_self_ptr() ),
 	rmsd_( 0.0 ),
 	superimpose_rmsd_( 0.0 ),
 	check_alignment_tolerance_( 1.0e-3 ),
@@ -202,31 +204,35 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-
 	std::string const full_sequence_stripped = core::pose::rna::remove_bracketed( full_sequence );
-
+	std::string const & pose_sequence = pose.sequence();
+	
 	// local working copy, mutated in cases where nucleotides have been designed ('n')
-	if ( reference_pose_local_ == 0 ) reference_pose_local_ = reference_pose_.clone();
 
 	//TR << "     Sequence " << pose.sequence() << std::endl;
 	//TR << "full Sequence " << full_sequence   << std::endl;
 
 	for ( Size n = 1; n <= pose.size(); n++ ) {
-		char const pose_nt = pose.sequence()[ n-1 ];
+		//char const pose_nt = pose.sequence()[ n-1 ];
+		char const pose_nt = pose_sequence[ n - 1 ];
 		if ( res_list_in_reference[n] == 0 ) continue;
 
 		//TR << "Evaluating residue " << n << pose.residue_type(n).name1() << std::endl;
 		//TR << "Compare to " << n - 1 + offset << " due to offset " << offset << ": " << full_sequence[ n - 1 + offset ] << std::endl;
 
 		if ( full_sequence_stripped[ res_list[ n ] - 1 ] == 'n' ) {
-			if ( reference_pose_local_->sequence()[ res_list_in_reference[n] - 1 ] != pose_nt ) {
+			if ( !mod_reference_pose_local_ ) mod_reference_pose_local_ = reference_pose_.clone();
+			runtime_assert( mod_reference_pose_local_ );
+
+			if ( mod_reference_pose_local_->sequence()[ res_list_in_reference[n] - 1 ] != pose_nt ) {
 				// need to generalize to protein... should be trivial.
-				pose::rna::mutate_position( *reference_pose_local_, res_list_in_reference[n], pose_nt );
+				pose::rna::mutate_position( *mod_reference_pose_local_, res_list_in_reference[n], pose_nt );
 			}
+			runtime_assert( match_up_to_rna_dna( mod_reference_pose_local_->sequence()[ res_list_in_reference[n] - 1], pose_nt ) );
 		} else {
 			runtime_assert( full_sequence_stripped[ res_list[ n ] - 1 ] == pose_nt );
+			runtime_assert( match_up_to_rna_dna( reference_pose_local_->sequence()[ res_list_in_reference[n] - 1], pose_nt ) );
 		}
-		runtime_assert( match_up_to_rna_dna( reference_pose_local_->sequence()[ res_list_in_reference[n] - 1], pose_nt ) );
 	}
 }
 
@@ -309,10 +315,18 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 	calc_rms_atom_id_map.clear();
 	for ( Size const n : calc_rms_res ) {
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
-			add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
-				pose.residue_type( n ).atom_name( q ),
-				n, res_list_in_reference[ n ],
-				pose, *reference_pose_local_ );
+			if ( mod_reference_pose_local_ ) {
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
+					pose.residue_type( n ).atom_name( q ),
+					n, res_list_in_reference[ n ],
+					pose, *mod_reference_pose_local_ );
+			}
+			else {
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
+					pose.residue_type( n ).atom_name( q ),
+					n, res_list_in_reference[ n ],
+					pose, *reference_pose_local_ );
+			}
 		}
 	}
 
@@ -339,16 +353,30 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 	}
 
 	for ( Size const n : calc_rms_suites ) {
-		for ( auto const & extra_suite_atom_upper : extra_suite_atoms_upper ) {
-			add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_upper,
-				n+1, res_list_in_reference[ n+1 ],
-				pose, *reference_pose_local_ );
+		if ( mod_reference_pose_local_ ) {
+			for ( auto const & extra_suite_atom_upper : extra_suite_atoms_upper ) {
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_upper,
+					n+1, res_list_in_reference[ n+1 ],
+					pose, *mod_reference_pose_local_ );
+			}
+			for ( auto const & extra_suite_atom_lower : extra_suite_atoms_lower ) {
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_lower,
+					n, res_list_in_reference[ n ],
+					pose, *mod_reference_pose_local_ );
+			}
+		} else {
+			for ( auto const & extra_suite_atom_upper : extra_suite_atoms_upper ) {
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_upper,
+					n+1, res_list_in_reference[ n+1 ],
+					pose, *reference_pose_local_ );
+			}
+			for ( auto const & extra_suite_atom_lower : extra_suite_atoms_lower ) {
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_lower,
+					n, res_list_in_reference[ n ],
+					pose, *reference_pose_local_ );
+			}
 		}
-		for ( auto const & extra_suite_atom_lower : extra_suite_atoms_lower ) {
-			add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_lower,
-				n, res_list_in_reference[ n ],
-				pose, *reference_pose_local_ );
-		}
+
 	}
 	//  output_atom_id_map( calc_rms_atom_id_map, pose, *reference_pose_local_ );
 }
@@ -371,8 +399,8 @@ StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			if ( complete_moving_atom_id_map_.find( AtomID( q, n ) ) != complete_moving_atom_id_map_.end() ) continue;
 			std::string const atom_name = pose.residue_type( n ).atom_name( q );
-			if ( extra_suite_atoms_upper.has_value( atom_name ) ) continue; // never use phosphates to superimpose
-			if ( extra_suite_atoms_lower.has_value( atom_name ) ) continue; // never use carbonyl oxygens to superimpose
+			if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() ) continue; // never use phosphates to superimpose
+			if ( extra_suite_atoms_lower.find( atom_name ) != extra_suite_atoms_lower.end() ) continue; // never use carbonyl oxygens to superimpose
 			if ( sample_sugar && core::chemical::rna::sugar_atoms.has_value( atom_name ) ) continue;
 			add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
 				atom_name,
@@ -527,7 +555,7 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 //     all-heavy-atom for RNA -- no terminal phosphates.
 //     just backbone-atoms for proteins.
 bool
-StepWisePoseAligner::do_checks( std::string const & atom_name, Size const & n, pose::Pose const & pose ) const {
+StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pose::Pose const & pose ) const {
 
 	if ( ! pose.residue_type( n ).has( atom_name ) ) return false;
 	Size const idx = pose.residue_type( n ).atom_index( atom_name );
@@ -539,11 +567,11 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const & n, p
 	}
 
 	// no terminal phosphates... (or more generally connection atoms)
-	if ( extra_suite_atoms_upper.has_value( atom_name ) &&
+	if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() &&
 			!pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) &&
 			( n == 1 || pose.fold_tree().is_cutpoint( n - 1  ) ) ) return false;
 
-	if ( extra_suite_atoms_lower.has_value( atom_name ) &&
+	if ( extra_suite_atoms_lower.find( atom_name ) != extra_suite_atoms_lower.end() &&
 			!pose.residue_type( n ).has_variant_type( "CUTPOINT_LOWER" ) &&
 			( n == pose.size() || pose.fold_tree().is_cutpoint( n ) ) ) return false;
 
@@ -555,21 +583,24 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const & n, p
 
 	return true;
 }
-
+	
 bool
 StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::AtomID> & atom_id_map,
 	std::string const & atom_name,
-	Size const & n1, Size const & n2,
+	Size const n1, Size const n2,
 	pose::Pose const & pose1, pose::Pose const & pose2,
 	bool const do_the_checks /* = true */ ) const {
 
 	// AMW: Note that this leaves open the possibility -- due to aa() comparison
 	// -- that we say two NCNTs are 'the same'
+	// This should never be a problem because we compared sequences earlier, but
+	// be sure of this. (Also, consider the possibility that we are doing design
+	// with NCNTs...)
 	using namespace core::id;
 
 	if ( n1 == 0 || n2 == 0 ) return false;
-	runtime_assert ( n1 >= 1 && n1 <= pose1.size() );
-	runtime_assert ( n2 >= 1 && n2 <= pose2.size() );
+	runtime_assert( n1 >= 1 && n1 <= pose1.size() );
+	runtime_assert( n2 >= 1 && n2 <= pose2.size() );
 	if ( pose1.residue_type( n1 ).aa() != pose2.residue_type( n2 ).aa() &&
 			!core::chemical::rna::rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) &&
 			pose1.residue_type( n1 ).na_analogue() != pose2.residue_type( n2 ).na_analogue() ) {
@@ -584,16 +615,16 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 
 	Size const idx1 = pose1.residue_type( n1 ).atom_index( atom_name );
 	Size const idx2 = pose2.residue_type( n2 ).atom_index( atom_name );
-	atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
+	//atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
+	atom_id_map.emplace( AtomID( idx1, n1 ), AtomID( idx2, n2 ) );
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map ) const {
-	for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin(),
-			end = atom_id_map.end(); it != end; ++it ) {
-		TR << it->first << " mapped to " << it->second << std::endl;
+	for ( auto const & elem : atom_id_map ) {
+		TR << elem.first << " mapped to " << elem.second << std::endl;
 	}
 	TR << std::endl;
 }
@@ -603,11 +634,10 @@ void
 StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map,
 	pose::Pose const & pose1,
 	pose::Pose const & pose2 ) const {
-	for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin(),
-			end = atom_id_map.end(); it != end; ++it ) {
-		TR << it->first << " " << pose1.residue_type( it->first.rsd() ).atom_name( it->first.atomno() ) <<
+	for ( auto const & elem : atom_id_map ) {
+		TR << elem.first << " " << pose1.residue_type( elem.first.rsd() ).atom_name( elem.first.atomno() ) <<
 			" mapped to " <<
-			it->second << " " << pose2.residue_type( it->second.rsd() ).atom_name( it->second.atomno() ) << "  distance: " << ( pose1.xyz( it->first ) - pose2.xyz( it->second) ).length() << std::endl;
+			elem.second << " " << pose2.residue_type( elem.second.rsd() ).atom_name( elem.second.atomno() ) << "  distance: " << ( pose1.xyz( elem.first ) - pose2.xyz( elem.second) ).length() << std::endl;
 	}
 	TR << std::endl;
 }
@@ -647,10 +677,9 @@ bool
 StepWisePoseAligner::check_matching_atom_names( pose::Pose const & pose1, pose::Pose const & pose2,
 	std::map< id::AtomID, id::AtomID > const & atom_id_map,
 	bool const verbose /* = true */ ){
-	for ( std::map< id::AtomID, id::AtomID >::const_iterator
-			it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
-		id::AtomID const & atom_id1 = it->first;
-		id::AtomID const & atom_id2 = it->second;
+	for ( auto const & elem : atom_id_map ) {
+		id::AtomID const & atom_id1 = elem.first;
+		id::AtomID const & atom_id2 = elem.second;
 		std::string const & atom_name1 = pose1.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
 		std::string const & atom_name2 = pose2.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
 		if ( atom_name1 != atom_name2  ) {

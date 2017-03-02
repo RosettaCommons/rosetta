@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
@@ -117,8 +118,8 @@ StepWiseProteinCCD_Closer::apply( core::pose::Pose & pose )
 void
 StepWiseProteinCCD_Closer::init( core::pose::Pose & pose ) {
 	figure_out_loop( pose );
-	figure_out_movemap();
-	setup_torsions();
+	figure_out_movemap( pose );
+	setup_torsions( pose );
 	fix_jump_atoms_at_loop_boundaries( pose );
 	ntries_ = 0;
 }
@@ -196,7 +197,7 @@ StepWiseProteinCCD_Closer::CCD_loop_close_sample_omega_recursively( core::pose::
 // note 'loop' includes takeoff and end points
 // movemap will ensure that we only sample psi of N-terminal takeoff, and phi of C-terminal landing.
 void
-StepWiseProteinCCD_Closer::figure_out_loop( core::pose::Pose const & pose ){
+StepWiseProteinCCD_Closer::figure_out_loop( core::pose::Pose const & pose ) {
 
 	using namespace protocols::loops;
 
@@ -218,30 +219,34 @@ StepWiseProteinCCD_Closer::figure_out_loop( core::pose::Pose const & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinCCD_Closer::figure_out_movemap(){
+StepWiseProteinCCD_Closer::figure_out_movemap( core::pose::Pose const & pose ) {
 	using namespace core::id;
 	mm_->clear();
-	mm_->set( TorsionID( loop_.start(), id::BB, 2 ),  true );
+	for ( Size k = 2; k < pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) {
+		mm_->set( TorsionID( loop_.start(), id::BB, k ),  true );
+	}
 	for ( Size n = loop_.start()+1; n <= loop_.stop()-1; n++ ) {
-		mm_->set( TorsionID( n, id::BB, 1 ),  true );
-		mm_->set( TorsionID( n, id::BB, 2 ),  true );
+		// Set non-omega true 
+		for ( Size k = 1; k < pose.residue( n ).mainchain_torsions().size(); k++ ) {
+			mm_->set( TorsionID( n, id::BB, k ),  true );
+		}
 	}
 	mm_->set( TorsionID( loop_.stop(), id::BB, 1 ),  true );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinCCD_Closer::setup_torsions(){
+StepWiseProteinCCD_Closer::setup_torsions( core::pose::Pose const & pose ) {
 
 	using namespace core::id;
 	which_torsions_.clear();
 
 	//save psi,omega at 'takeoff' residue.
-	for ( Size k = 2; k <= 3; k++ ) which_torsions_.push_back( TorsionID( loop_.start(), BB, k ) );
+	for ( Size k = 2; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.push_back( TorsionID( loop_.start(), BB, k ) );
 
-	//save phi,psi,omega inside loop
+	//save all mc torsions (for alphas, phi,psi,omega) inside loop
 	for ( Size n = loop_.start() + 1; n < loop_.stop(); n++ ) {
-		for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
+		for ( Size k = 1; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 	}
 
 	//save phi at 'landing' residue.

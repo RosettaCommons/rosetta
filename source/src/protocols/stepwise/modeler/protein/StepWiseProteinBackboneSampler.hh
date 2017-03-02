@@ -58,42 +58,42 @@ public:
 	set_silent_file( std::string const & setting );
 
 	void
-	set_rmsd_cutoff( core::Real const & setting );
+	set_rmsd_cutoff( core::Real const setting );
 
 	void
-	set_n_sample( core::Size const & setting );
+	set_n_sample( core::Size const setting );
 
 	void
-	set_nstruct_centroid( core::Size const & setting );
+	set_nstruct_centroid( core::Size const setting );
 
 	void
-	set_filter_native_big_bins( bool const & setting );
+	set_filter_native_big_bins( bool const setting );
 
 	void
-	set_centroid_screen( bool const & setting );
+	set_centroid_screen( bool const setting );
 
 	void
-	set_ghost_loops( bool const & setting );
+	set_ghost_loops( bool const setting );
 
 	void
-	set_apply_vdw_cut( bool const & setting );
+	set_apply_vdw_cut( bool const setting );
 
 	void
 	set_centroid_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
 	void
-	set_centroid_score_diff_cut( core::Real const & setting );
+	set_centroid_score_diff_cut( core::Real const setting );
 
 	utility::vector1< MainChainTorsionSetList > const & main_chain_torsion_set_lists() const;
 
 	utility::vector1< utility::vector1< core::Real > >
-	main_chain_torsion_set_lists_real() const;
+	main_chain_torsion_set_lists_real( core::pose::Pose const & pose ) const;
 
-	utility::vector1< core::id::TorsionID > which_torsions();
+	utility::vector1< core::id::TorsionID > which_torsions( core::pose::Pose const & pose );
 
 
 	void
-	setup_centroid_screen(core::Real const & centroid_score_diff_cut,
+	setup_centroid_screen(core::Real const centroid_score_diff_cut,
 		std::string const & centroid_weights,
 		core::Size const nstruct_centroid,
 		bool const ghost_loops);
@@ -116,7 +116,7 @@ private:
 	define_moving_res( core::pose::Pose const & pose );
 
 	void
-	setup_torsion_sets();
+	setup_torsion_sets( core::pose::Pose const & pose );
 
 	void
 	filter_main_chain_torsion_sets();
@@ -150,48 +150,48 @@ private:
 
 	void
 	get_main_chain_torsion_set_list(
-		core::Size const & n,
+		core::Size const n,
 		core::pose::Pose const & pose,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 	void
 	get_main_chain_torsion_set_list_coarse(
-		core::Size const & n,
+		core::Size const n,
 		core::pose::Pose const & pose,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 	void
-	get_main_chain_torsion_set_list_full( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+	get_main_chain_torsion_set_list_full( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
 	void
-	get_main_chain_torsion_set_list_n_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+	get_main_chain_torsion_set_list_n_terminus( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
 	void
-	get_main_chain_torsion_set_list_c_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+	get_main_chain_torsion_set_list_c_terminus( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
 	void
-	get_main_chain_torsion_set_list_sample_phi_only( core::Size const & n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
+	get_main_chain_torsion_set_list_sample_phi_only( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
 	void
-	get_main_chain_torsion_set_list_sample_psi_only( core::Size const & n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
+	get_main_chain_torsion_set_list_sample_psi_only( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 	void
 	filter_native_BIG_BINS(
-		core::Size const & n,
+		core::Size const n,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 	void
 	filter_based_on_desired_secstruct(
-		char const & secstruct,
+		char const secstruct,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 	void
@@ -216,7 +216,7 @@ private:
 	initialize_is_fixed_res();
 
 	core::Real
-	get_rotamer_angle( core::Size const & i, core::Size const & N_SAMPLE );
+	get_rotamer_angle( core::Size const i, core::Size const N_SAMPLE );
 
 private:
 
@@ -225,6 +225,7 @@ private:
 	utility::vector1< Size > const moving_residues_input_;
 	utility::vector1< Size > moving_residues_;
 	core::Size n_sample_;
+	core::Size n_sample_beta_;
 	core::Real rmsd_cutoff_;
 
 	core::scoring::ScoreFunctionOP centroid_scorefxn_;

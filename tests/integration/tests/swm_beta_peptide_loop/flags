@@ -1,0 +1,13 @@
+-in:file:silent swm_prepack.out
+-fasta mini_1alc.fasta 
+-native mini_1alc.pdb 
+-score:weights stepwise/protein/protein_res_level_energy.wts
+-out:file:silent swm_rebuild.out
+-out:overwrite
+-from_scratch_frequency 0.0
+-allow_split_off false
+-cycles 5
+-nstruct 1
+-allow_virtual_side_chains
+-protein_prepack
+-atr_rep_screen

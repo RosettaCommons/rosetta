@@ -49,6 +49,7 @@
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 using namespace core;
 using core::Real;
@@ -75,6 +76,7 @@ StepWiseProteinBackboneSampler::StepWiseProteinBackboneSampler(  working_paramet
 	working_parameters_( working_parameters ),
 	moving_residues_input_( working_parameters_->working_moving_res_list() ),
 	n_sample_( 18 /* Corresponds to 20 degree bins */ ),
+	n_sample_beta_( 6 /* Corresponds to 60 degree bins, for betas */ ),
 	rmsd_cutoff_( -1.0 ),
 	silent_file_( "" ),
 	filter_native_big_bins_( false ),
@@ -115,7 +117,7 @@ StepWiseProteinBackboneSampler::apply( core::pose::Pose & pose )
 	clock_t const time_start( clock() );
 
 	define_moving_res( pose );
-	setup_torsion_sets();
+	setup_torsion_sets( pose );
 	centroid_scores_.clear();
 
 	// convert to centroid
@@ -164,12 +166,20 @@ StepWiseProteinBackboneSampler::define_moving_res( pose::Pose const & pose ) {
 
 ///////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::setup_torsion_sets(){
+StepWiseProteinBackboneSampler::setup_torsion_sets( core::pose::Pose const & pose ) {
 
-	// AMW TODO: does this... clear an object, put things in it, and clear it again?
 	main_chain_torsion_set_for_moving_residues_.clear();
-	for ( Size n = 1; n <= moving_residues_.size(); n++ )  {
-		main_chain_torsion_set_for_moving_residues_.push_back( MainChainTorsionSet( 0.0, 0.0, 0.0 ) );
+	for ( Size const moving_res : moving_residues_ ) {
+	//	
+	//}Size n = 1; n <= moving_residues_.size(); n++ )  {
+		// Preserve alpha behavior rather than trying to unify.
+		if ( pose.residue_type( moving_res ).is_alpha_aa() ) {
+			main_chain_torsion_set_for_moving_residues_.emplace_back( 0.0, 0.0, 0.0 );
+		} else if ( pose.residue_type( moving_res ).is_beta_aa() ) {
+			// Obviously this will eventually be general!
+			utility::fixedsizearray1< Real, 3 > dihs;
+			main_chain_torsion_set_for_moving_residues_.emplace_back( dihs, 0.0 );
+		}
 	}
 
 	main_chain_torsion_sets_for_moving_residues_.clear();
@@ -191,15 +201,26 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 
 	Size const n = moving_residues_[ which_res ];
 
+	// todo: make a vec of vecs of Real.
 	MainChainTorsionSetList main_chain_torsion_set_list;
 	get_main_chain_torsion_set_list( n, pose, main_chain_torsion_set_list );
 
 	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
 
-		pose.set_phi( n, main_chain_torsion_set.phi() );
-		pose.set_psi( n, main_chain_torsion_set.psi() );
-		pose.set_omega( n, main_chain_torsion_set.omega() );
-
+		if ( pose.residue_type( n ).is_alpha_aa() ) {
+			// For now don't risk changing alpha behavior!
+			pose.set_phi( n, main_chain_torsion_set.phi() );
+			pose.set_psi( n, main_chain_torsion_set.psi() );
+			pose.set_omega( n, main_chain_torsion_set.omega() );
+		} else if ( pose.residue_type( n ).is_beta_aa() ) {
+			// change to loop over MC torsion index for rsd n
+			// Ugh these could be unequal.
+			//for ( Size ii = 1; ii <= pose.residue( n ).mainchain_torsions(); ++ii ) {
+			for ( Size ii = 1; ii <= main_chain_torsion_set.mainchain_dihedral_values().size(); ++ii ) {
+				pose.set_torsion( core::id::TorsionID( n, id::BB, ii ), main_chain_torsion_set.mainchain_dihedral_values()[ ii ] );
+			}
+		} 
+			
 		main_chain_torsion_set_for_moving_residues_[ which_res ] = main_chain_torsion_set;
 
 		if ( which_res == moving_residues_.size() ) {
@@ -219,7 +240,7 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 // This could even be its own class...
 void
 StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
-	Size const & n,
+	Size const n,
 	pose::Pose const & pose,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
@@ -285,6 +306,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 
 	}
 
+	//TR << "Filtering..." << std::endl;
 	if ( filter_native_big_bins_ )  {
 		filter_native_BIG_BINS( n, main_chain_torsion_set_list );
 	} else {
@@ -300,7 +322,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_coarse(
-	Size const & n,
+	Size const n,
 	pose::Pose const & pose,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
@@ -317,143 +339,300 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_coarse(
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, 160.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet(  90.0,  10.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( 100.0, 180.0 ) );
-	} else {
+	} else if ( pose.residue_type( n ).is_alpha_aa() ) {
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, -30.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, 140.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet(  50.0,  50.0 ) );
+	} else if ( pose.residue_type( n ).is_beta_aa() ) {
+		// AMW: since we haven't made the MainChainTorsionSet a thin wrapper to a vector
+		// of reals yet, this acts like setting OMEGA (but will be well interpreted
+		// when applied to betas, once we have the chance) 
+		utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+		dihs[ 1 ] = -140.0;
+		dihs[ 2 ] =   60.0;
+		dihs[ 3 ] = -120.0;
+		main_chain_torsion_set_list.emplace_back( dihs );//-140.0, 60.0, -120.0 ) );
 	}
 }
 
 
 /////////////////////////////////////////////////////////////
 Real
-StepWiseProteinBackboneSampler::get_rotamer_angle( core::Size const & i, core::Size const & N_SAMPLE ){
+StepWiseProteinBackboneSampler::get_rotamer_angle( core::Size const i, core::Size const N_SAMPLE ){
 	return  ( -180.0 + ( 360.0 / N_SAMPLE ) * i + 0.001 );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_full( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_full( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 
-{
+{	
+	//TR << "get_main_chain_torsion_set_list_full rsd " << n << " (" << pose.residue_type( n ).name() << ")" << std::endl;
 	//generic -- a residue in the middle of the loop
-	for ( Size i = 1; i <= n_sample_; i++ ) {
-		for ( Size j = 1; j <= n_sample_; j++ ) {
+	if ( pose.residue_type( n ).is_alpha_aa() ) {
+		for ( Size i = 1; i <= n_sample_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_ );
-			Real const psi = get_rotamer_angle( j, n_sample_ );
-
-			if ( ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  )  > best_energy_cutoff ) {
-				continue;
+			for ( Size j = 1; j <= n_sample_; j++ ) {
+				Real const psi = get_rotamer_angle( j, n_sample_ );
+				
+				if ( ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  )  > best_energy_cutoff ) {
+					continue;
+				}
+				
+				main_chain_torsion_set_list.emplace_back( phi, psi );
 			}
+		}
+	} else if ( pose.residue_type( n ).is_beta_aa() ) {
+		// AMW TODO: eventually, just loop over ALL MAINCHAIN INDICES, unifying these two loops. But, rama care.
+		for ( Size i = 1; i <= n_sample_beta_; i++ ) {
+			Real const phi = get_rotamer_angle( i, n_sample_beta_ );//n_sample_ );
+			for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+				Real const tht = get_rotamer_angle( j, n_sample_beta_ );//n_sample_ );
+				for ( Size k = 1; k <= n_sample_beta_; k++ ) {
+					Real const psi = get_rotamer_angle( k, n_sample_beta_ );//n_sample_ );
 
-			main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, psi ) );
-
+					// Can't apply a rama filter, oy vey!
+					utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+					dihs[ 1 ] = phi;
+					dihs[ 2 ] = tht;
+					dihs[ 3 ] = psi;
+					main_chain_torsion_set_list.emplace_back( dihs );//phi, tht, psi ) );
+				}
+			}
 		}
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_n_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_n_terminus( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 	assert( n == 1);
-	for ( Size j = 1; j <= n_sample_; j++ ) {
-		Real const psi = get_rotamer_angle( j, n_sample_ );
-		Real best_phi = 0.0;
-		Real best_energy = 999999.9999;
-		for ( Size i = 1; i <= n_sample_; i++ ) {
-			Real const phi = get_rotamer_angle( i, n_sample_ );
-			Real temp_rama = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
-			if ( temp_rama  < best_energy ) {
-				best_energy = temp_rama;
-				best_phi = phi;
-			}
-		}
-		if ( best_energy < best_energy_cutoff ) {
-			main_chain_torsion_set_list.push_back( MainChainTorsionSet( best_phi, psi ) );
-		}
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-void
-StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_c_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
-	MainChainTorsionSetList & main_chain_torsion_set_list )
-{
-	for ( Size i = 1; i <= n_sample_; i++ ) {
-		Real const phi = get_rotamer_angle( i, n_sample_ );
-
-		Real best_psi = 0.0;
-		Real best_energy = 999999.9999;
+	if ( pose.residue_type( n ).is_alpha_aa() ) {
 		for ( Size j = 1; j <= n_sample_; j++ ) {
 			Real const psi = get_rotamer_angle( j, n_sample_ );
-			Real temp_rama = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
-			if ( temp_rama  < best_energy ) {
-				best_energy = temp_rama;
-				best_psi = psi;
+			Real best_phi = 0.0;
+			Real best_energy = 999999.9999;
+			for ( Size i = 1; i <= n_sample_; i++ ) {
+				Real const phi = get_rotamer_angle( i, n_sample_ );
+				Real temp_rama = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+				if ( temp_rama  < best_energy ) {
+					best_energy = temp_rama;
+					best_phi = phi;
+				}
+			}
+			if ( best_energy < best_energy_cutoff ) {
+				main_chain_torsion_set_list.emplace_back( best_phi, psi );
 			}
 		}
-		if ( best_energy < best_energy_cutoff ) {
-			main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, best_psi ) );
+	} else if ( pose.residue_type( n ).is_beta_aa() ) {
+		for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+			Real const tht = get_rotamer_angle( j, n_sample_beta_ );
+			for ( Size k = 1; k <= n_sample_beta_; k++ ) {
+				Real const psi = get_rotamer_angle( k, n_sample_beta_ );
+				
+				// AMW TODO: lack of rama can't get best. Just guess.
+				Real best_phi = -120.0;
+				//Real best_energy = 999999.9999;
+				//for ( Size i = 1; i <= n_sample_; i++ ) {
+				//	Real const phi = get_rotamer_angle( i, n_sample_ );
+				//	Real temp_rama = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+				//	if ( temp_rama  < best_energy ) {
+				//		best_energy = temp_rama;
+				//		best_phi = phi;
+				//	}
+				//}
+				//if ( best_energy < best_energy_cutoff ) {
+				utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+				dihs[ 1 ] = best_phi;
+				dihs[ 2 ] = tht;
+				dihs[ 3 ] = psi;
+				main_chain_torsion_set_list.emplace_back( dihs );//best_phi, tht, psi ) );
+				//}
+			}
 		}
 	}
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_phi_only( core::Size const & n,
+StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_c_terminus( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
+	MainChainTorsionSetList & main_chain_torsion_set_list )
+{
+	if ( pose.residue_type( n ).is_alpha_aa() ) {
+		for ( Size i = 1; i <= n_sample_; i++ ) {
+			Real const phi = get_rotamer_angle( i, n_sample_ );
+			
+			Real best_psi = 0.0;
+			Real best_energy = 999999.9999;
+			for ( Size j = 1; j <= n_sample_; j++ ) {
+				Real const psi = get_rotamer_angle( j, n_sample_ );
+				Real temp_rama = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+				if ( temp_rama  < best_energy ) {
+					best_energy = temp_rama;
+					best_psi = psi;
+				}
+			}
+			if ( best_energy < best_energy_cutoff ) {
+				main_chain_torsion_set_list.emplace_back( phi, best_psi );
+			}
+		}
+	} else if ( pose.residue_type( n ).is_beta_aa() ) {
+		for ( Size i = 1; i <= n_sample_beta_; i++ ) {
+			Real const phi = get_rotamer_angle( i, n_sample_beta_ );
+			for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+				Real const tht = get_rotamer_angle( j, n_sample_beta_ );
+				
+				// Without rama can't do this. Guess!
+				Real best_psi = -120.0;
+				//Real best_energy = 999999.9999;
+				//for ( Size j = 1; j <= n_sample_; j++ ) {
+				//	Real const psi = get_rotamer_angle( j, n_sample_ );
+				//	Real temp_rama = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+				//	if ( temp_rama  < best_energy ) {
+				//		best_energy = temp_rama;
+				//		best_psi = psi;
+				//	}
+				//}
+				//if ( best_energy < best_energy_cutoff ) {
+				utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+				dihs[ 1 ] = phi;
+				dihs[ 2 ] = tht;
+				dihs[ 3 ] = best_psi;
+				main_chain_torsion_set_list.emplace_back( dihs );
+				//}
+			}
+		}
+	}
+}
+
+// AMW TODO: have yet to understand the purpose of these functions truly, perhaps there 
+// will never be a need for sample_theta only. But really we should say 
+// 'sample lowermost only'
+	
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_phi_only( core::Size const n,
 	core::pose::Pose const & pose,
 	core::Real const energy_cutoff,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
-	// we are prepending and this is the junction residue. sample phi only!
-	Real best_rama_energy( 99999.999 ), best_phi( 0.0 );
-	Real const psi = pose.psi( n );
-	Real const omega = pose.omega( n );
-	for ( Size i = 1; i <= n_sample_; i++ ) {
-		Real const phi = get_rotamer_angle( i, n_sample_ );
-		Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
-		if ( rama_energy < best_rama_energy || i == 1 ) {
-			best_rama_energy = rama_energy;
-			best_phi = phi;
+	//TR << "get_main_chain_torsion_set_list_sample_phi_only" << std::endl;
+	if ( pose.residue_type( n ).is_alpha_aa() ) {
+		// we are prepending and this is the junction residue. sample phi only!
+		Real best_rama_energy( 99999.999 ), best_phi( 0.0 );
+		Real const psi = pose.psi( n );
+		Real const omega = pose.omega( n );
+		for ( Size i = 1; i <= n_sample_; i++ ) {
+			Real const phi = get_rotamer_angle( i, n_sample_ );
+			Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+			if ( rama_energy < best_rama_energy || i == 1 ) {
+				best_rama_energy = rama_energy;
+				best_phi = phi;
+			}
+			if ( rama_energy  > energy_cutoff )  continue;
+			main_chain_torsion_set_list.emplace_back( phi, psi, omega );
 		}
-		if ( rama_energy  > energy_cutoff )  continue;
-		main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, psi, omega ) );
+		
+		// Make sure to return something at least...
+		if ( main_chain_torsion_set_list.size() == 0 )  main_chain_torsion_set_list.push_back( MainChainTorsionSet( best_phi, psi, omega ) );
+	} else if ( pose.residue_type( n ).is_beta_aa() ) {
+		// we are prepending and this is the junction residue. sample phi only!
+		// AMW can't judge rama.
+		//Real best_rama_energy( 99999.999 ), best_phi( 0.0 );
+		Real const psi = pose.psi( n );
+		Real const tht = pose.theta( n );
+		Real const omega = pose.omega( n );
+		for ( Size i = 1; i <= n_sample_beta_; i++ ) {
+			Real const phi = get_rotamer_angle( i, n_sample_beta_ );
+			//Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+			//if ( rama_energy < best_rama_energy || i == 1 ) {
+			//	best_rama_energy = rama_energy;
+			//	best_phi = phi;
+			//}
+			//if ( rama_energy  > energy_cutoff )  continue;
+			utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+			dihs[ 1 ] = phi;
+			dihs[ 2 ] = tht;
+			dihs[ 3 ] = psi;
+			main_chain_torsion_set_list.emplace_back( dihs, omega );
+		}
+		
+		// Make sure to return something at least...
+		if ( main_chain_torsion_set_list.size() == 0 )  {
+			utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+			dihs[ 1 ] = -140.0;
+			dihs[ 2 ] = tht;
+			dihs[ 3 ] = psi;
+			main_chain_torsion_set_list.emplace_back( dihs, omega );
+		}
 	}
-
-	// Make sure to return something at least...
-	if ( main_chain_torsion_set_list.size() == 0 )  main_chain_torsion_set_list.push_back( MainChainTorsionSet( best_phi, psi, omega ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_psi_only( core::Size const & n,
+StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_psi_only( core::Size const n,
 	core::pose::Pose const & pose,
 	core::Real const energy_cutoff,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
-	//  TR << "JUNCTION RESIDUE --> APPEND " << n << std::endl;
-
-	// we are appending and this is the junction residue. sample psi only!
-	Real best_rama_energy( 99999.999 ), best_psi( 0.0 );
-	Real const phi = pose.phi( n );
-	for ( Size j = 1; j <= n_sample_; j++ ) {
-		Real const psi = get_rotamer_angle( j, n_sample_ );
-		Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
-		if ( rama_energy < best_rama_energy || j == 1 ) {
-			best_rama_energy = rama_energy;
-			best_psi = psi;
+	//TR << "get_main_chain_torsion_set_list_sample_psi_only" << std::endl;
+	if ( pose.residue_type( n ).is_alpha_aa() ) {
+		//  TR << "JUNCTION RESIDUE --> APPEND " << n << std::endl;
+		
+		// we are appending and this is the junction residue. sample psi only!
+		Real best_rama_energy( 99999.999 ), best_psi( 0.0 );
+		Real const phi = pose.phi( n );
+		for ( Size j = 1; j <= n_sample_; j++ ) {
+			Real const psi = get_rotamer_angle( j, n_sample_ );
+			Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+			if ( rama_energy < best_rama_energy || j == 1 ) {
+				best_rama_energy = rama_energy;
+				best_psi = psi;
+			}
+			if ( rama_energy  > energy_cutoff )  continue;
+			main_chain_torsion_set_list.emplace_back( phi, psi );
+			//main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, psi ) );
 		}
-		if ( rama_energy  > energy_cutoff )  continue;
-		main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, psi ) );
+		
+		// Make sure to return something at least...
+		if ( main_chain_torsion_set_list.size() == 0 )  main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, best_psi ) );
+	} else if ( pose.residue_type( n ).is_beta_aa() ) {
+		//  TR << "JUNCTION RESIDUE --> APPEND " << n << std::endl;
+		
+		// we are appending and this is the junction residue. sample psi only!
+		// AMW can't judge rama.
+		//Real best_rama_energy( 99999.999 ), best_psi( 0.0 );
+		Real const phi = pose.phi( n );
+		Real const tht = pose.theta( n );
+		for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+			Real const psi = get_rotamer_angle( j, n_sample_beta_ );
+			//Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
+			//if ( rama_energy < best_rama_energy || j == 1 ) {
+			//	best_rama_energy = rama_energy;
+			//	best_psi = psi;
+			//}
+			//if ( rama_energy  > energy_cutoff )  continue;
+			utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+			dihs[ 1 ] = phi;
+			dihs[ 2 ] = tht;
+			dihs[ 3 ] = psi;
+			main_chain_torsion_set_list.emplace_back( dihs );
+			//main_chain_torsion_set_list.push_back( MainChainTorsionSet( dihs ) );
+		}
+		
+		// Make sure to return something at least...
+		if ( main_chain_torsion_set_list.size() == 0 ) {
+			utility::fixedsizearray1< Real, 3 > dihs;//{ phi, tht, psi };
+			dihs[ 1 ] = phi;
+			dihs[ 2 ] = tht;
+			dihs[ 3 ] = -120.0;
+			main_chain_torsion_set_list.emplace_back( dihs );
+			//main_chain_torsion_set_list.push_back( MainChainTorsionSet( dihs ) );
+		}
 	}
-
-	// Make sure to return something at least...
-	if ( main_chain_torsion_set_list.size() == 0 )  main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, best_psi ) );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -478,7 +657,7 @@ StepWiseProteinBackboneSampler::get_big_bin( Real const phi, Real const psi ) co
 ///////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
-	Size const & n,
+	Size const n,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 	if ( get_native_pose() == 0 ) {
@@ -500,7 +679,7 @@ StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
 //////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::filter_based_on_desired_secstruct(
-	char const & secstruct,
+	char const secstruct,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 
@@ -529,10 +708,13 @@ StepWiseProteinBackboneSampler::filter_big_bin( Size const big_bin,
 			main_chain_torsion_set_list_new.push_back( main_chain_torsion_set );
 		}
 	}
-
-	main_chain_torsion_set_list = main_chain_torsion_set_list_new;
+	
+	// If the list is empty, don't chuck it in!
+	if ( !main_chain_torsion_set_list_new.empty() ) {
+		main_chain_torsion_set_list = main_chain_torsion_set_list_new;
+	}
 }
-
+		
 ///////////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::filter_main_chain_torsion_sets(){
@@ -560,10 +742,22 @@ StepWiseProteinBackboneSampler::sample_cis_omega( MainChainTorsionSetList & main
 	MainChainTorsionSetList main_chain_torsion_set_list_new;
 
 	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
-		Real const phi = main_chain_torsion_set.phi();
-		Real const psi = main_chain_torsion_set.psi();
-		main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( phi, psi, 180.0 ) );
-		main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( phi, psi,   0.0 ) );
+		// AMW: this is a bad criterion -- if you were starting from an alpha
+		// sample that was EXACTLY cis, this would get fooled. But that's unlikely,
+		// right?!
+		if ( main_chain_torsion_set.mainchain_dihedral_values()[ 4 ] == 0.0 ) {
+			Real const phi = main_chain_torsion_set.phi();
+			Real const psi = main_chain_torsion_set.psi();
+			main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( phi, psi, 180.0 ) );
+			main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( phi, psi,   0.0 ) );
+		} else {
+			utility::fixedsizearray1< Real, 3 > new_dihs;
+			new_dihs[ 1 ] = main_chain_torsion_set.mainchain_dihedral_values()[ 1 ];
+			new_dihs[ 2 ] = main_chain_torsion_set.mainchain_dihedral_values()[ 2 ];
+			new_dihs[ 3 ] = main_chain_torsion_set.mainchain_dihedral_values()[ 3 ];
+			main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( new_dihs, 180.0 ) );
+			main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( new_dihs,   0.0 ) );
+		}
 	}
 
 	main_chain_torsion_set_list = main_chain_torsion_set_list_new;
@@ -578,19 +772,22 @@ StepWiseProteinBackboneSampler::set_silent_file( std::string const & silent_file
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_rmsd_cutoff( core::Real const & setting ){
+StepWiseProteinBackboneSampler::set_rmsd_cutoff( core::Real const setting ){
 	rmsd_cutoff_ = setting;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_n_sample( core::Size const & setting ){
+StepWiseProteinBackboneSampler::set_n_sample( core::Size const setting ){
 	n_sample_ = setting;
+	// This is the only way to manipulate n_sample_beta
+	// because it must be always one-third the above.
+	n_sample_beta_ = setting/3; 
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_nstruct_centroid( core::Size const & setting ){
+StepWiseProteinBackboneSampler::set_nstruct_centroid( core::Size const setting ){
 	nstruct_centroid_ = setting;
 }
 
@@ -603,31 +800,31 @@ StepWiseProteinBackboneSampler::set_centroid_scorefxn( core::scoring::ScoreFunct
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_filter_native_big_bins( bool const & setting ){
+StepWiseProteinBackboneSampler::set_filter_native_big_bins( bool const setting ){
 	filter_native_big_bins_ = setting;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_centroid_screen( bool const & setting ){
+StepWiseProteinBackboneSampler::set_centroid_screen( bool const setting ){
 	centroid_screen_ = setting;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_ghost_loops( bool const & setting ){
+StepWiseProteinBackboneSampler::set_ghost_loops( bool const setting ){
 	ghost_loops_ = setting;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_apply_vdw_cut( bool const & setting ){
+StepWiseProteinBackboneSampler::set_apply_vdw_cut( bool const setting ){
 	apply_vdw_cut_ = setting;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_centroid_score_diff_cut( core::Real const & setting ){
+StepWiseProteinBackboneSampler::set_centroid_score_diff_cut( core::Real const setting ){
 	centroid_score_diff_cut_ = setting;
 }
 
@@ -640,15 +837,26 @@ StepWiseProteinBackboneSampler::main_chain_torsion_set_lists() const
 
 //////////////////////////////////////////////////////////////////////////
 utility::vector1< utility::vector1< core::Real > >
-StepWiseProteinBackboneSampler::main_chain_torsion_set_lists_real() const
+StepWiseProteinBackboneSampler::main_chain_torsion_set_lists_real( Pose const & sampler_pose ) const
 {
 	utility::vector1< utility::vector1< core::Real > > output_list;
 	for ( auto const & main_chain_torsion_set_list : main_chain_torsion_sets_for_moving_residues_ ) {
+		
 		utility::vector1< core::Real > output;
+		Size moving_res_index = 1;
 		for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
-			output.push_back( main_chain_torsion_set.phi() );
-			output.push_back( main_chain_torsion_set.psi() );
-			output.push_back( main_chain_torsion_set.omega() );
+			
+			if ( sampler_pose.residue_type( moving_residues_[ moving_res_index++ ] ).is_beta_aa() ) {
+			// AMW: this breaks with alphas, because it tries to interpret it wrong -- because these are
+			// always 4 long...
+				for ( Real const dih : main_chain_torsion_set.mainchain_dihedral_values() )  {
+					output.push_back( dih );
+				}
+			} else {
+				output.push_back( main_chain_torsion_set.phi() );
+				output.push_back( main_chain_torsion_set.psi() );
+				output.push_back( main_chain_torsion_set.omega() );
+			}
 		}
 		output_list.push_back( output );
 	}
@@ -657,12 +865,15 @@ StepWiseProteinBackboneSampler::main_chain_torsion_set_lists_real() const
 
 //////////////////////////////////////////////////////////////////////////
 utility::vector1< id::TorsionID >
-StepWiseProteinBackboneSampler::which_torsions()
+StepWiseProteinBackboneSampler::which_torsions( Pose const & sampler_pose )
 {
 	using namespace core::id;
 	utility::vector1< id::TorsionID > which_torsions;
 	for ( Size const moving_res : moving_residues_ ) {
-		for ( Size n = 1; n <= 3; n++ ) {
+		// Push back as many bb torsions as there are in this residue type
+		// Note: this will get screwed up for terminal types with extra variants, MAYBE.
+		// AMW: we can use mainchain_torsions; I'm dumb.
+		for ( Size n = 1; n <= sampler_pose.residue( moving_res ).mainchain_torsions().size(); ++n ) {
 			which_torsions.push_back( TorsionID( moving_res, BB, n ) );
 		}
 	}
@@ -705,8 +916,8 @@ StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const
 	template_pose.residue( 1 ); // force a refold.
 
 	for ( auto const & elem : ghost_map ) {
-		Size const & res( elem.first );
-		Size const & template_res( elem.second );
+		Size const res( elem.first );
+		Size const template_res( elem.second );
 
 		for ( Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
 			if ( pose.residue_type( res ).atom_name( j ) !=
@@ -730,9 +941,9 @@ StepWiseProteinBackboneSampler::figure_out_fold_tree( ResMap const & ghost_map )
 	Size prev_res( 0 ), total_res( 0 );
 	utility::vector1< Size > cutpoints;
 
-	for ( ResMap::const_iterator it=ghost_map.begin(), end = ghost_map.end(); it != end; ++it ) {
-		Size const & res( it->first );
-		Size const & template_res( it->second );
+	for ( auto const & elem : ghost_map ) {
+		Size const res( elem.first );
+		Size const template_res( elem.second );
 
 		TR << "MAPPING " << res << " --> " << template_res << std::endl;
 
@@ -744,9 +955,9 @@ StepWiseProteinBackboneSampler::figure_out_fold_tree( ResMap const & ghost_map )
 
 	core::kinematics::FoldTree f( total_res );
 
-	for ( Size n = 1; n <= cutpoints.size(); n++ ) {
-		TR << "Adding jump across: " << cutpoints[ n ] << std::endl;
-		f.new_jump( cutpoints[ n ], cutpoints[ n ] +1, cutpoints[ n ] );
+	for ( Size const cut : cutpoints ) {
+		TR << "Adding jump across: " << cut << std::endl;
+		f.new_jump( cut, cut + 1, cut );
 	}
 
 	return f;
@@ -754,7 +965,7 @@ StepWiseProteinBackboneSampler::figure_out_fold_tree( ResMap const & ghost_map )
 
 void
 StepWiseProteinBackboneSampler::setup_centroid_screen(
-	Real const & centroid_score_diff_cut,
+	Real const centroid_score_diff_cut,
 	std::string const & centroid_weights,
 	Size const nstruct_centroid,
 	bool const ghost_loops) {

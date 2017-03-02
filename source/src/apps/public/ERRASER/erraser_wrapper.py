@@ -152,7 +152,7 @@ def erraser( option ):
                 rosetta2phenix_merge_back(regularized_input_pdb, 'FINAL.pdb', option.out_pdb)
                 os.chdir(base_dir)
                 if not option.kept_temp_folder :
-					print "who knows"
+                    print "who knows"
                     #remove(temp_dir)
                 total_time=time.time()-start_time
                 print '\n', "DONE!...Total time taken= %f seconds" %(total_time) , '\n'
@@ -604,7 +604,7 @@ def rebuild_completed( file ):
     return False
 
 
-def seq_rebuild( option ) :
+def seq_rebuild_new( option ) :
     
     rna_swa_test_exe = rosetta_bin_path("resample_full_model", option.rosetta_bin )
     stdout = sys.stdout
@@ -834,7 +834,7 @@ def seq_rebuild( option ) :
 
 
 ##### seq_rebuild start ###############################################
-def seq_rebuild_new( option ) :
+def seq_rebuild( option ) :
 
     stdout = sys.stdout
     stderr = sys.stderr
@@ -1020,14 +1020,14 @@ def SWA_rebuild_erraser( option ):
         else:
             rs = option.rebuild_res
         if rs != 1 and (not rs - 1 in option.cutpoint_rs) :
-            rebuilding_res.append( rs - 1 )
+            rebuilding_res.append( "%s:%d" % ( option.rebuild_res[0], rs - 1 ) )
         if rs != get_total_res(native_pdb) and (not rs in option.cutpoint_rs) :
-            rebuilding_res.append( rs + 1 )
+            rebuilding_res.append( "%s:%d" % ( option.rebuild_res[0], rs + 1 ) )
 
         res_sliced_all = pdb_slice_with_patching( native_pdb, native_pdb_final, rebuilding_res ) [0]
 
-        rebuild_res_final = res_sliced_all.index(rs) + 1
-        cutpoint_res_final = [ res_sliced_all.index(cutpoint) + 1 for cutpoint in option.cutpoint_rs if cutpoint in res_sliced_all ] 
+        rebuild_res_final = "%s:%d" % (option.rebuild_res[0], res_sliced_all.index("%s:%d" % (option.rebuild_res[0], rs) ) + 1)
+        cutpoint_res_final = [ "%s:%d" % (option.rebuild_res[0], res_sliced_all.index(cutpoint) + 1) for cutpoint in option.cutpoint_rs if cutpoint in res_sliced_all ] 
 
     total_res = get_total_res(native_pdb_final)
 
@@ -1168,18 +1168,21 @@ def SWA_rebuild_erraser( option ):
         os.mkdir(sampling_folder)
 
         if option.is_append:
-            print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, rebuild_res_final-1),  '\n'
+            print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, "%s:%d" % (rebuild_res_final[0], int(rebuild_res_final[2])-1)),  '\n'
         else:
-            print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, rebuild_res_final+1),  '\n'
+            print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, "%s:%d" % (rebuild_res_final[0], int(rebuild_res_final[2])+1)),  '\n'
 
         os.chdir( sampling_folder )
 
         specific_cmd = ""
-        specific_cmd += " -sample_res %d " % rebuild_res_final
+        #specific_cmd += " -sample_res %s " % rebuild_res_final
+        specific_cmd += " -sample_res %s " % (rebuild_res_final[2:])
         if option.is_append :
-            specific_cmd += " -cutpoint_closed %d " % rebuild_res_final
+            #specific_cmd += " -cutpoint_closed %s " % rebuild_res_final
+            specific_cmd += " -cutpoint_closed %s " % (rebuild_res_final[2:])
         else :
-            specific_cmd += " -cutpoint_closed %d " % (rebuild_res_final - 1)
+            #specific_cmd += " -cutpoint_closed %s:%d " % (rebuild_res_final[0], int(rebuild_res_final[2])-1)
+            specific_cmd += " -cutpoint_closed %d " % (int(rebuild_res_final[2:])-1)
 
         command = sampling_cmd + ' ' + specific_cmd + ' ' + common_cmd
         if option.verbose: print  '\n', command, '\n'

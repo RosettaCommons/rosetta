@@ -19,7 +19,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+// Need full header for map hash
+#include <core/id/AtomID.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <map>
@@ -125,12 +126,12 @@ private:
 		core::Real const & constraint_x0, core::Real const & constraint_tol ) const;
 
 	bool
-	do_checks( std::string const & atom_name, core::Size const & n, core::pose::Pose const & pose ) const;
+	do_checks( std::string const & atom_name, core::Size const n, core::pose::Pose const & pose ) const;
 
 	bool
 	add_to_atom_id_map_after_checks( std::map< core::id::AtomID, core::id::AtomID> & atom_id_map,
 		std::string const & atom_name,
-		core::Size const & n1, core::Size const & n2,
+		core::Size const n1, core::Size const n2,
 		core::pose::Pose const & pose1, core::pose::Pose const & pose2,
 		bool const do_the_checks = true ) const;
 
@@ -151,7 +152,8 @@ private:
 private:
 
 	core::pose::Pose const & reference_pose_;
-	core::pose::PoseOP reference_pose_local_;
+	core::pose::PoseCOP reference_pose_local_;
+	core::pose::PoseOP mod_reference_pose_local_ = nullptr;
 	utility::vector1< core::Size > root_partition_res_;
 	utility::vector1< core::Size > user_defined_calc_rms_res_;
 

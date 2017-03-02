@@ -19,6 +19,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>
+#include <utility/fixedsizearray1.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {
@@ -29,26 +30,34 @@ namespace protein {
 //////////////////////////////////
 class MainChainTorsionSet: public utility::pointer::ReferenceCount {
 
+	// For now: just alpha or beta.
 
 public:
 
-	MainChainTorsionSet( core::Real const & phi, core::Real const & psi, core::Real const & omega );
+	// These constructors ASSUME alpha context == 3-long
+	MainChainTorsionSet( core::Real const phi, core::Real const psi, core::Real const omega );
+	MainChainTorsionSet( core::Real const phi, core::Real const psi );
 
-	MainChainTorsionSet( core::Real const & phi, core::Real const & psi );
+	// For parallel access, we always assume omega provided separately.
+	MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values, core::Real const omega );
+	MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values );
 
+	
+	utility::fixedsizearray1< core::Real, 4 >
+	mainchain_dihedral_values() const { return mainchain_dihedral_values_; }
+	
 	virtual ~MainChainTorsionSet();
 
 	MainChainTorsionSet &
 	operator=( MainChainTorsionSet const & src );
 
+	// These accessors ASSUME alpha context === 3-long.
 	core::Real phi() const;
 	core::Real psi() const;
 	core::Real omega() const;
 
 private:
-	core::Real phi_;
-	core::Real psi_;
-	core::Real omega_;
+	utility::fixedsizearray1< core::Real, 4 > mainchain_dihedral_values_;
 };
 
 typedef utility::vector1< MainChainTorsionSet > MainChainTorsionSetList ;
