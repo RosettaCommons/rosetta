@@ -32,8 +32,6 @@ public:
 	// ------------------------------------------ //
 	/// @brief test isFloatNumber function
 	void test_isFloatNumber() {
-		TS_ASSERT_EQUALS(true, false);
-
 		double num;
 		unsigned int end_pos;
 		bool res;
