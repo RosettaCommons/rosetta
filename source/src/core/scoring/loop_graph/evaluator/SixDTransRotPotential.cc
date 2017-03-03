@@ -23,12 +23,16 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 static basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotential" );
 
 using namespace utility;
 using namespace utility::tools;
 using namespace utility::json_spirit;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 ///////////////////////////////////////////////////////////////////////////////////
 // @detailed
@@ -79,7 +83,9 @@ namespace evaluator {
 //Constructor
 SixDTransRotPotential::SixDTransRotPotential( std::string const & filename ):
 	enforce_continuity_at_pi_( true ),
-	turn_off_rotation_dependence_( false )
+	turn_off_rotation_dependence_( false ),
+	use_cubic_interp_( option[ score::loop_close::use_cubic_interp ]() ),
+	boundary_( numeric::interpolation::FLAT )
 {
 	mObject json;
 	read_tensor_from_file( filename, tensor_, json );
@@ -87,17 +93,21 @@ SixDTransRotPotential::SixDTransRotPotential( std::string const & filename ):
 }
 
 SixDTransRotPotential::SixDTransRotPotential( numeric::MathNTensor< core::Real, 6 > const & tensor,
-	utility::json_spirit::mObject const & json ):
+																							utility::json_spirit::mObject const & json ):
 	enforce_continuity_at_pi_( true ),
-	turn_off_rotation_dependence_( false )
+	turn_off_rotation_dependence_( false ),
+	use_cubic_interp_( option[ score::loop_close::use_cubic_interp ]() ),
+	boundary_( numeric::interpolation::FLAT )
 {
 	tensor_ = tensor;
 	initialize_from_json( json );
 }
 
+
 //Destructor
 SixDTransRotPotential::~SixDTransRotPotential()
 {}
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 void
@@ -158,16 +168,18 @@ SixDTransRotPotential::evaluate( Vector const & t, Vector const & rotation_vecto
 
 	if ( turn_off_rotation_dependence_ ) zero_out_rotation_components( outvals ); // for checking derivatives.
 
-	Real value = numeric::interpolation::multilinear_interpolation( tensor_, minval_, binwidth_, outvals, tensor_deriv, compute_deriv );
-
+	Real value( 0.0 );
+	if ( use_cubic_interp_ ) {
+		value = numeric::interpolation::polycubic_interpolate_catmull_rom( tensor_, minval_, binwidth_, outvals, boundary_, tensor_deriv, compute_deriv );
+	} else {
+		value = numeric::interpolation::multilinear_interpolation( tensor_, minval_, binwidth_, outvals, tensor_deriv, compute_deriv );
+	}
 	if ( enforce_continuity_at_pi_ ) adjust_near_pi( rotation_vector, value, outvals, compute_deriv, tensor_deriv );
 
 	if ( turn_off_rotation_dependence_ ) zero_out_rotation_components( tensor_deriv ); // for checking derivatives.
 
-	if ( compute_deriv ) {
-		deriv = std::make_pair( Vector( tensor_deriv[1], tensor_deriv[2], tensor_deriv[3] ),
-			Vector( tensor_deriv[4], tensor_deriv[5], tensor_deriv[6] ) );
-	}
+	if ( compute_deriv ) deriv = std::make_pair( Vector( tensor_deriv[1], tensor_deriv[2], tensor_deriv[3] ),
+																							 Vector( tensor_deriv[4], tensor_deriv[5], tensor_deriv[6] ) );
 	return value;
 }
 

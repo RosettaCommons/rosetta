@@ -1,0 +1,12 @@
+-in:file:silent loop01_test.out
+-out:file:silent loop01_minimize.out
+-weights loop_close.wts
+-overwrite
+-skip_coord_constraints
+-skip_o2prime_trials
+#-deriv_check
+-fasta loop.fasta
+-move_first_rigid_body
+-min_type lbfgs
+-use_6D_potential
+-use_cubic_interp true

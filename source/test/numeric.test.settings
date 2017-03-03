@@ -52,6 +52,7 @@ sources = {
 	],
 	"interpolation" : [
 		"Histogram",
+		"polycubic_catmull_rom",
 	],
 	"interpolation/spline" : [
         	"bicubic_interpolation_function",

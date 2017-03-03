@@ -1494,6 +1494,7 @@ Options = Option_Group( '',
 		  Option( 'allow_complex_loop_graph', 'Boolean', desc='LoopGraph hack - allow sharing of loops between cycles', default='false' ),
 		  Option( 'use_6D_potential', 'Boolean', desc='for implicit modeling of RNA loops, use 6D potentials instead of simple 1D Gaussian chain model', default='false' ),
 		  Option( 'force_6D_potential_file', 'String', desc='use this 6D potential for all loop_close instead of database files (for testing only!)', default='' ),
+		  Option( 'use_cubic_interp', 'Boolean', desc='cubic interpolation for 6D potential, instead of polylinear', default='true' ),
  		), #-score:loop_close
 	), # -score
 

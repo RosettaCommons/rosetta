@@ -24,6 +24,7 @@
 #include <utility/vector1.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 #include <numeric/MathNTensor.hh>
+#include <numeric/interpolation/polycubic_catmull_rom.hh>
 
 namespace core {
 namespace scoring {
@@ -85,6 +86,8 @@ private:
 
 	bool enforce_continuity_at_pi_;
 	bool const turn_off_rotation_dependence_;
+	bool const use_cubic_interp_;
+	utility::fixedsizearray1< numeric::interpolation::CatmullRomSplineBoundaryType, 6 > const boundary_;
 
 };
 

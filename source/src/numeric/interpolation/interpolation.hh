@@ -166,13 +166,15 @@ bilinearly_interpolated(
 /// @param[in] tensor is the data array, using MathNTensor
 /// @param[in] minval is the tensor's minimum value in each direction.
 /// @param[in] binwidth is the bin width in each direction
+/// @param[in] xs is the position
 /// @param[out] deriv is the interpolated derivative
 /// @param[in] compute_deriv -- set to false to reduce computation
 ///
 /// @author rhiju
 template< typename T, numeric::Size N >
 Real
-multilinear_interpolation( MathNTensor< T, N > const & tensor,
+multilinear_interpolation(
+  MathNTensor< T, N > const & tensor,
 	utility::fixedsizearray1< Real, N > const & minval,
 	utility::fixedsizearray1< Real, N > const & binwidth,
 	utility::fixedsizearray1< Real, N > const & xs,
@@ -220,8 +222,7 @@ multilinear_interpolation( MathNTensor< T, N > const & tensor,
 	return val;
 }
 
-/// @brief Perform multilinear interpolation over an N-dimensional tensor
-///
+/// @brief Perform multilinear interpolation over an N-dimensional tensor (without derivative computation)
 /// @details
 ///  Straightforward generalization of bilinear interpolation.
 ///  Currently extrapolates linearly when asked for point outside tensor range
@@ -229,10 +230,12 @@ multilinear_interpolation( MathNTensor< T, N > const & tensor,
 ///
 /// @param[in] tensor is the data array, using MathNTensor
 /// @param[in] minval is the tensor's minimum value in each direction.
+/// @param[in] xs is the position at which to evaluate spline
 /// @param[in] binwidth is the bin width in each direction
 ///
 /// @author rhiju
 template< typename T, numeric::Size N >
+inline
 numeric::Real
 multilinear_interpolation( numeric::MathNTensor< T, N > const & tensor,
 	utility::fixedsizearray1< numeric::Real, N > const & minval,
@@ -242,7 +245,6 @@ multilinear_interpolation( numeric::MathNTensor< T, N > const & tensor,
 	utility::fixedsizearray1< numeric::Real, N > deriv;
 	return multilinear_interpolation( tensor, minval, binwidth, xs, deriv, false /*compute_deriv*/ );
 }
-
 
 /// @brief Perform cubic interpolation over each of N axes, using the
 /// 2^N derivatives at 2^N gridpoints
