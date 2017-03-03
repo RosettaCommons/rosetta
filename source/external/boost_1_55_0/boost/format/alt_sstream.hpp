@@ -136,14 +136,17 @@ namespace boost {
             typedef basic_altstringbuf<Ch, Tr, Alloc>   stringbuf_t;
         public:
             typedef Alloc  allocator_type;
+//
+// ROSETTA MODIFICATION: The following contains the patch for Boost bug 11632 : https://svn.boost.org/trac/boost/ticket/11632
+//
             basic_oaltstringstream() 
-                : pbase_type(new stringbuf_t), stream_t(rdbuf()) 
+                : pbase_type(new stringbuf_t), stream_t(pbase_type::member.get())
                 { }
             basic_oaltstringstream(::boost::shared_ptr<stringbuf_t> buf) 
-                : pbase_type(buf), stream_t(rdbuf()) 
+                : pbase_type(buf), stream_t(pbase_type::member.get())
                 { }
             basic_oaltstringstream(stringbuf_t * buf) 
-                : pbase_type(buf, No_Op() ), stream_t(rdbuf()) 
+                : pbase_type(buf, No_Op() ), stream_t(pbase_type::member.get())
                 { }
             stringbuf_t * rdbuf() const 
                 { return pbase_type::member.get(); }

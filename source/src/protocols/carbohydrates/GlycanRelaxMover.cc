@@ -242,7 +242,6 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	test_( src.test_ ),
 	final_min_( src.final_min_ ),
 	refine_( src.refine_ ),
-	sugar_bb_start_( src.sugar_bb_start_ ),
 	total_glycan_residues_( src.total_glycan_residues_ ),
 	pymol_movie_( src.pymol_movie_ ),
 	ref_pose_name_( src.ref_pose_name_ ),
