@@ -97,9 +97,6 @@ void multTransMatrix(const utility::fixedsizearray1<utility::fixedsizearray1<num
 	
 bool vectorsEqual(const utility::vector1<numeric::Real>& A, const utility::vector1<numeric::Real>& B);
 
-// Do not call. By the way, there's a better way to do this but I forget...
-void force_instantiation();
-
 } // end namespace kinematic_closure
 } // end namespace numeric
 
