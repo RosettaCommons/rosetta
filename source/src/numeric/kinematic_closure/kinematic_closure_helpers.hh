@@ -23,6 +23,7 @@
 #include <utility/fixedsizearray1.fwd.hh>
 
 #include <iomanip>
+#include <iostream>
 
 namespace numeric {
 namespace kinematic_closure {

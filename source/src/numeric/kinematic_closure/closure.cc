@@ -749,7 +749,7 @@ void bridge_objects (
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > frame1, frame2, frame3;
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > A, B, C, D; // dixon matrices
 	utility::vector1<utility::fixedsizearray1<Real,3> > cosines, sines, taus;
-	utility::vector1<utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > > loop; // the solutions
+	utility::vector1<utility::vector1<utility::fixedsizearray1<Real,3> > > loop; // the solutions
 	int k1, k2, k3, l1, l2, l3, l3a, l3b;
 	int ind;
 	int N=atoms.size(); // number of atoms in chain
@@ -850,6 +850,7 @@ void bridge_objects (
 	b_ang.resize(nsol);
 	b_len.resize(nsol);
 	for ( int j=1; j<=nsol; j++ ) {
+		loop[j].resize(N);
 		rotateX(fchain1, cosines[j][1], sines[j][1], chain1a);
 		rotateZ(chain1a, cal[1], sal[1], chain1b);
 		for ( unsigned k=1; k<=chain1b.size(); k++ ) {
