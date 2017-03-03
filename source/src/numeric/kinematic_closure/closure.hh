@@ -46,13 +46,13 @@ void bridge_objects (
 	int& nsol);
 
 void chainTORS (
-	const int& n,
+	const int n,
 	const utility::vector1<utility::fixedsizearray1<numeric::Real,3> >& atoms,
 	utility::vector1<numeric::Real>& t_ang,
 	utility::vector1<numeric::Real>& b_ang,
 	utility::vector1<numeric::Real>& b_len,
-	utility::vector1<numeric::Real>& R0,
-	utility::vector1<utility::vector1<numeric::Real> >& Q);
+	utility::fixedsizearray1<numeric::Real,3>& R0,
+	utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real,3>,3 >& Q);
 
 numeric::Real torsion(
 	const utility::fixedsizearray1<numeric::Real,3>& a,

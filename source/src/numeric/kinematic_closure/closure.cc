@@ -584,7 +584,7 @@ void chainXYZ(
 */
 
 void chainTORS (
-	const int& n,
+	const int n,
 	const utility::vector1<utility::fixedsizearray1<Real,3> >& atoms,
 	utility::vector1<Real>& t_ang,
 	utility::vector1<Real>& b_ang,

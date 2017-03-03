@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 namespace numeric {
 namespace kinematic_closure {
