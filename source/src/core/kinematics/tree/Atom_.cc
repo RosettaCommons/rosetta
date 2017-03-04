@@ -306,7 +306,7 @@ Atom_::replace_atom(
 
 	Atoms::iterator iter( std::find( atoms_.begin(), atoms_.end(), old_atom ) );
 	if ( iter == atoms_.end() ) {
-		std::cout << "old_atom not present in atoms list! " <<
+		std::cerr << "old_atom not present in atoms list! " <<
 			atoms_.size() << std::endl;
 		debug_assert( false );
 		utility_exit();

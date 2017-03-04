@@ -608,8 +608,8 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 
 			// Case 6: Doesn't exist ;)
 		} else {
-			TR << "Congratulations - you have reached an edge case for adding the memrbane residue that we haven't thought of yet!" << std::endl;
-			TR << "Contact the developers - exiting for now..." << std::endl;
+			TR.Fatal << "Congratulations - you have reached an edge case for adding the membrane residue that we haven't thought of yet!" << std::endl;
+			TR.Fatal << "Contact the developers - exiting for now..." << std::endl;
 			utility_exit();
 		}
 	}

@@ -1606,7 +1606,7 @@ make_hbBasetoAcc_unitvector(
 		break;
 	default :
 		BAunit = 0.0;
-		tr << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
+		tr.Fatal << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
 		utility_exit();
 	}
 
@@ -1657,7 +1657,7 @@ assign_abase_derivs(
 		acc_atom_derivs[ acc_rsd.abase2( acc_atom )    ].f2() += 0.5 * weighted_energy * abase_deriv.f2(); break;
 	}
 	default :
-		tr << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
+		tr.Fatal << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
 		utility_exit();
 	}
 

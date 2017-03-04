@@ -146,7 +146,7 @@ start_files()
 
 
 	if ( filenames.empty() ) {
-		basic::T("basic.options.util") << "Use either -s or -l to designate one or more start_files" << std::endl;
+		basic::T("basic.options.util").Fatal << "Use either -s or -l to designate one or more start_files" << std::endl;
 		utility_exit();
 	}
 

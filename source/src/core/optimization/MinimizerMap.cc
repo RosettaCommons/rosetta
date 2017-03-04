@@ -139,7 +139,7 @@ MinimizerMap::add_atom(
 	if ( dof_id.valid() ) {
 		DOF_NodeOP n( dof_node_pointer_[ dof_id ] );
 		if ( n == nullptr ) {
-			std::cout << "torsion does not exist in map! torsion= " <<
+			std::cerr << "torsion does not exist in map! torsion= " <<
 				dof_id << std::endl;
 			utility_exit();
 		}

@@ -720,8 +720,8 @@ read_comment_pdb(
 ) {
 	utility::io::izstream data(file_name);
 	if ( !data ) {
-		TR<<"ERROR! PDB SCAFOLD NAME NOT FOUND!!"<<std::endl;
-		utility_exit();
+		TR << "ERROR! PDB FILE '" << file_name << "' NOT FOUND!!!" <<std::endl;
+		utility_exit_with_message("Cannot open PDB file.");
 	}
 	std::string line;
 	while ( getline( data, line ) ) {
@@ -2333,7 +2333,7 @@ get_jump_id_from_chain_id(core::Size const & chain_id,const core::pose::Pose & p
 			return jump_id;
 		}
 	}
-	utility_exit();
+	utility_exit_with_message("Cannot find chain '" + utility::to_string(chain_id) + "' in structure.");
 	return 0;// this will never happen
 }
 
@@ -2690,7 +2690,7 @@ initialize_disulfide_bonds(
 				}
 				if ( !identical ) {
 					TR.Error << "Error: SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
-					utility_exit();
+					utility_exit_with_message("Error with SSBond record.");
 				}
 			}
 

@@ -92,7 +92,7 @@ bool unpack_ubyte( ObjexxFCL::ubyte const & value, core::Size which_bit ) {
 	case 7 :
 		return value & static_cast< ObjexxFCL::ubyte >(0x80);
 	default :
-		utility_exit(); // this should never happen
+		utility_exit_with_message("Data consistency error in unpack_ubyte()"); // this should never happen
 	}
 
 	return false;

@@ -205,10 +205,10 @@ BackrubMover::initialize_simulation(
 	protocols::moves::MonteCarloCOP monte_carlo(metropolis_hastings_mover.monte_carlo());
 
 	if ( monte_carlo->score_function().get_weight(core::scoring::mm_bend) == 0.0 ) {
-		TR << "*** WARNING: Using BackrubMover without mm_bend Score Term ***" << std::endl;
+		TR.Warning << "*** WARNING: Using BackrubMover without mm_bend Score Term ***" << std::endl;
 		if ( require_mm_bend_ ) {
-			TR << "Exit can be prevented by setting require_mm_bend to false" << std::endl;
-			utility_exit();
+			TR.Warning << "Exit can be prevented by setting require_mm_bend to false" << std::endl;
+			utility_exit_with_message("BackrubMover is being used without the mm_bend term.");
 		}
 	}
 

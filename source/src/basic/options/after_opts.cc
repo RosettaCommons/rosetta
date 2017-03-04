@@ -213,7 +213,7 @@ intafteroption(
 )
 {
 	if ( !truefalseoption( str ) ) {
-		std::cout << "intafteroption: missing required arg: " << str << std::endl;
+		std::cerr << "intafteroption: missing required arg: " << str << std::endl;
 		utility_exit();
 	}
 	int val;

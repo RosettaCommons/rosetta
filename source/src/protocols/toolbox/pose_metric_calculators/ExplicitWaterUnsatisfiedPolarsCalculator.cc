@@ -11,9 +11,9 @@
 ///
 /// @brief This Calculator tries to solvate all polar groups by
 /// 				docking explicit TP5 water molecules, then counts
-///					unsatisfied hydrogen bonds using the same criteria in 
+///					unsatisfied hydrogen bonds using the same criteria in
 ///					BuriedUnsatisfiedHydrogenBondCalculator
-///				
+///
 ///
 ///
 ///
@@ -28,7 +28,7 @@
 ///
 ///
 /// @author Chris King - dr.chris.king@gmail.com
-/// 
+///
 ///
 /// @last_modified 4.8.2011
 /////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ namespace pose_metric_calculators {
 
 static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.ExplicitWaterUnsatisfiedPolarsCalculator" );
 
-	///@brief default constructor sets shell_cutoff to 4.0. 
+	///@brief default constructor sets shell_cutoff to 4.0.
 	ExplicitWaterUnsatisfiedPolarsCalculator::ExplicitWaterUnsatisfiedPolarsCalculator( ScoreFunctionOP scorefxn ):
 		scorefxn_( scorefxn ),
 		shell_cutoff_( 4.0 ),
@@ -104,7 +104,7 @@ static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.E
 
 
 void ExplicitWaterUnsatisfiedPolarsCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
-	if ( key == "all_unsat_polars" ) { 
+	if ( key == "all_unsat_polars" ) {
 			basic::check_cast( valptr, &all_unsat_polars_, "all_unsat_polars expects to return a Size" );
 			(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_unsat_polars_ );
 	}else {
@@ -127,16 +127,16 @@ std::string ExplicitWaterUnsatisfiedPolarsCalculator::print( std::string const &
 void
 append_rsd_by_jump_near_atom(
   pose::Pose & pose,
-  Size seqpos, 
+  Size seqpos,
   Size atomno,
   conformation::Residue new_rsd,
   Size new_atomno,
   Real dist_min,
   Real dist_max
-) 
+)
 {
   typedef  numeric::xyzMatrix< Real > Matrix;
-  
+
   Residue rsd( pose.residue( seqpos ) );
   //append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
   pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
@@ -171,8 +171,8 @@ dock_waters_to_atom(
 
   //attempt appending in 20 random orientations
 	Size const max_attempt_per_atom( 20 );
-	Size const max_wat_per_atom( 5 ); 
-	Size n_wat( 0 ); 
+	Size const max_wat_per_atom( 5 );
+	Size n_wat( 0 );
   pose::Pose start_pose( pose );
   protocols::moves::MonteCarloOP mc_create( new protocols::moves::MonteCarlo( pose, *scorefxn, 0.8 ) );
   for( Size i = 1; i <= max_attempt_per_atom; ++i ){
@@ -244,7 +244,7 @@ find_res_unsat_polars(
     Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( atm )
       - rsd.type().number_bonded_hydrogens( atm );
     if( bonded_heavyatoms + n_atom_hbonds[ atm ] < satisfac_cut ){
-      atm_is_unsat[ atm ] = true; 
+      atm_is_unsat[ atm ] = true;
     }
   }
 }
@@ -259,7 +259,7 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
 	for( core::Size seqpos = 1; seqpos <= pose_in.size(); ++seqpos ){
 			//check each residue seperately
 			Pose pose( pose_in );
-			Residue rsd( pose.residue( seqpos ) ); 
+			Residue rsd( pose.residue( seqpos ) );
 
 			//first check for unsat polars in residue
 			//we only need to try solvating unsat atoms
@@ -268,14 +268,14 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
 
 			Real min_dist( 1.5 );
 			ResidueTypeSet const & rsd_set( rsd.residue_type_set() );
-			ResidueOP wat_rsd( ResidueFactory::create_residue( rsd_set.name_map( "TP5" ) ) ); 
+			ResidueOP wat_rsd( ResidueFactory::create_residue( rsd_set.name_map( "TP5" ) ) );
 			//turn off solvation score
-			Real fa_sol_wt( scorefxn->get_weight( fa_sol ) ); 
+			Real fa_sol_wt( scorefxn->get_weight( fa_sol ) );
 			scorefxn->set_weight( fa_sol, 0.0 );
 
 			//do polar hydrogens
 			for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),
-				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {  
+				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 				Size const iatom( *hnum );
 				if( !atm_is_unsat[ iatom ] ) continue;
 				//append water molecule from iatom to water oxygen (atom 1)
@@ -283,10 +283,10 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
 			}
 			//then do acceptors
 			for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(),
-				anume = rsd.accpt_pos().end(); anum != anume; ++anum ){   
+				anume = rsd.accpt_pos().end(); anum != anume; ++anum ){
 				Size const iatom( *anum );
 				if( !atm_is_unsat[ iatom ] ) continue;
-				//append water molecule from iatom to water 
+				//append water molecule from iatom to water
 				dock_waters_to_atom( pose, scorefxn, seqpos, iatom, *wat_rsd, 1, min_dist, shell_cutoff_ );
 			}
 

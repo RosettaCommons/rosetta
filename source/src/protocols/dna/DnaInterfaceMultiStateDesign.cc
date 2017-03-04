@@ -428,7 +428,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		}
 		ResidueTypeCOP target_type( ptask->residue_task( index ).target_type() );
 		if ( ! target_type ) {
-			TR(t_error) << "No target type found for " << pdbtag.str() << '\n'
+			TR.Fatal << "No target type found for " << pdbtag.str() << '\n'
 				<< "(Did the DNA definition string indicate a target nucleotide type?" << std::endl;
 			utility_exit();
 		}
@@ -442,7 +442,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		}
 		ResidueTypeCOP bot_type( ptask->residue_task( pos.bottom() ).target_type() );
 		if ( ! target_type ) {
-			TR(t_error) << "No target type found for " << pdbtag_btm.str() << '\n'
+			TR.Fatal << "No target type found for " << pdbtag_btm.str() << '\n'
 				<< "(Did the DNA definition string indicate a target nucleotide type?" << std::endl;
 			utility_exit();
 		}

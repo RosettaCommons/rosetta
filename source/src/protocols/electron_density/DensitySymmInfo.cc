@@ -64,7 +64,7 @@ DensitySymmInfo::detect_axes( core::scoring::electron_density::ElectronDensity c
 	}
 
 	if ( best_correl < 0.5 ) {
-		TR << "ERROR!  C symmetry not detected in the density." << std::endl;
+		TR.Fatal << "ERROR!  C symmetry not detected in the density." << std::endl;
 		utility_exit();
 	}
 
@@ -97,7 +97,7 @@ DensitySymmInfo::detect_axes( core::scoring::electron_density::ElectronDensity c
 		}
 
 		if ( best_correl < 0.5 ) {
-			TR << "ERROR!  D symmetry not detected in the density." << std::endl;
+			TR.Fatal << "ERROR!  D symmetry not detected in the density." << std::endl;
 			utility_exit();
 		}
 
@@ -114,7 +114,7 @@ DensitySymmInfo::detect_axes( core::scoring::electron_density::ElectronDensity c
 			<< "  autocorrelation=" << best_correl << std::endl;
 
 		if ( error > 1.0 ) {
-			TR << "ERROR!  D symmetry center could not be resolved." << std::endl;
+			TR.Fatal << "ERROR!  D symmetry center could not be resolved." << std::endl;
 			utility_exit();
 		}
 	}

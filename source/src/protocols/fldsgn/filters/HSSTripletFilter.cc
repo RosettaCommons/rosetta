@@ -280,7 +280,7 @@ HSSTripletFilter::compute( Pose const & pose ) const
 		HSSTriplet hss( **it );
 
 		if ( !check_elements( hss, *ss_info ) ) {
-			utility_exit();
+			utility_exit_with_message("Error in HSSTripletFilter: improper secondary structure elements.");
 		}
 
 		hss.calc_geometry( ss_info );

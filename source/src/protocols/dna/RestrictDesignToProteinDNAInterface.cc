@@ -263,11 +263,11 @@ RestrictDesignToProteinDNAInterface::apply(
 				index = pdb_pose_map.find( def->chain, def->pdbpos );
 			}
 			if ( ! pose.residue_type( index ).is_DNA() ) {
-				std::cerr << "ERROR: DNA design def " << *def << " indicates a non-DNA position"
-					<< std::endl; utility_exit();
+				std::cerr << "ERROR: DNA design def " << *def << " indicates a non-DNA position" << std::endl;
+				utility_exit();
 			} else if ( ! dna_chains_->is_top( index ) ) {
-				std::cerr << "ERROR: DNA design def " << *def << " is DNA but is not in the 'top' strand"
-					<< std::endl; utility_exit();
+				std::cerr << "ERROR: DNA design def " << *def << " is DNA but is not in the 'top' strand" << std::endl;
+				utility_exit();
 			}
 			DnaPosition const & pos( (*dna_chains_)[ index ] );
 			runtime_assert( index == pos.top() );
@@ -293,9 +293,10 @@ RestrictDesignToProteinDNAInterface::apply(
 					}
 				}
 				if ( ! toptask.target_type() ) {
-					TR(t_info) << "Error: target type " << def->name3
+					TR.Fatal << "Error: target type " << def->name3
 						<< " does not correspond to an allowed type at position " << pos.top()
-						<< std::endl; utility_exit();
+						<< std::endl;
+					utility_exit();
 				}
 				if ( pos.paired() ) {
 					std::string const comp_name3( dna_comp_name_str( def->name3 ) );
@@ -313,9 +314,10 @@ RestrictDesignToProteinDNAInterface::apply(
 						}
 					}
 					if ( ! bottask.target_type() ) {
-						TR(t_info) << "Error: target type " << comp_name3
+						TR.Fatal << "Error: target type " << comp_name3
 							<< " does not correspond to an allowed type at position " << pos.bottom()
-							<< std::endl; utility_exit();
+							<< std::endl;
+						utility_exit();
 					}
 				}
 			}

@@ -111,7 +111,7 @@ ResidueNetwork::dijkstras( core::Size const resi ) const
 			for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
 				TR.Debug << (*it)->resi << " " << (*it)->distanceFromStart << std::endl;
 			}
-			utility_exit();
+			utility_exit_with_message("In ResidueNetwork, the smallest distance to start is too big.");
 		}
 		std::list< NodeOP > const & adjacentNodes( AdjacentRemainingNodes( smallest ) );
 		TR.Debug << "Nodes adjacent to " << smallest->resi << ": ";

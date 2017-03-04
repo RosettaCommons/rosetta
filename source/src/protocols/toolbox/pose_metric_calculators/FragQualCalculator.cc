@@ -158,7 +158,7 @@ FragQualCalculator::lookup(
 		basic::check_cast( valptr, &coverage_, "ratio of the region where good fragments are included more than XXX% " );
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( coverage_ );
 	} else {
-		TR << "FragQualCalculator cannot compute the requested metric " << key << std::endl;
+		TR.Fatal << "FragQualCalculator cannot compute the requested metric " << key << std::endl;
 		utility_exit();
 	}
 

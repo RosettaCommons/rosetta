@@ -1004,7 +1004,7 @@ void HybridizeProtocol::validate_template(
 				TR.Error << "Sequence mismatch between input fasta and template " << filename
 					<< " at residue " << i_fasta << std::endl;
 				TR.Error << "   Expected: " << fasta_aa << "   Saw: " << templ_aa << std::endl;
-				if ( !align_pdb_info ) utility_exit();
+				if ( !align_pdb_info ) utility_exit_with_message("Issue validating template in HybridizeProtocol.");
 				requires_alignment = true;
 				break;
 			}

@@ -312,7 +312,7 @@ BondedAtom::dof(
 	} else if ( type == D ) {
 		return d_;
 	} else {
-		std::cout << "bad torsion type for Atom: " << type << std::endl;
+		std::cerr << "bad torsion type for Atom: " << type << std::endl;
 		utility_exit();
 	}
 	return 0.0;
@@ -439,7 +439,7 @@ BondedAtom::get_dof_axis_and_end_pos(
 	} else if ( type == D ) {
 		axis = my_stub.M.col(1);
 	} else {
-		std::cout << "Bad torsion type for Atom" << type << std::endl;
+		std::cerr << "Bad torsion type for Atom" << type << std::endl;
 		utility_exit();
 	}
 }
@@ -479,7 +479,7 @@ BondedAtom::keep_dof_fixed(
 		return false;
 
 	} else {
-		std::cout << "BondedAtom::keep_dof_fixed: BAD_TYPE: " <<type <<
+		std::cerr << "BondedAtom::keep_dof_fixed: BAD_TYPE: " <<type <<
 			std::endl;
 		debug_assert( false );
 		utility_exit();

@@ -138,7 +138,7 @@ ReferenceEnergy::residue_energy(
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
 		break;
 	default :
-		utility_exit();
+		utility_exit_with_message("Data consistency error in ReferenceEnergy");
 		break;
 	}
 

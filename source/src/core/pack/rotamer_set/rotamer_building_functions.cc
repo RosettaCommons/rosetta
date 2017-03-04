@@ -935,7 +935,7 @@ build_optimal_water_Os_on_acceptor(
 		step_size = 0.0; // doesnt matter
 		break;
 	default :
-		tt << "Bad hybridization type for acceptor " << hybrid << '\n';
+		tt.Fatal << "Bad hybridization type for acceptor " << hybrid << '\n';
 		utility_exit();
 	}
 

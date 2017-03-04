@@ -136,7 +136,7 @@ NcontactsCalculator::lookup(
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( ss_entrpy_ );
 
 	} else {
-		tr << "NcontactsCalculator cannot compute the requested metric " << key << std::endl;
+		tr.Fatal << "NcontactsCalculator cannot compute the requested metric " << key << std::endl;
 		utility_exit();
 	}
 

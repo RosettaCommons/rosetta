@@ -606,7 +606,7 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 	if ( num_to_remove <= 0 ) return;
 	if ( num_to_remove >= ( int ) size() ) {
-		TR<<"ERROR: Trying to remove "<< num_to_remove<<" stubs from a set containing "<<size()<<" stubs."<<std::endl;
+		TR.Error <<"ERROR: Trying to remove "<< num_to_remove<<" stubs from a set containing "<<size()<<" stubs."<<std::endl;
 		utility_exit();
 	}
 

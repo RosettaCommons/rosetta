@@ -366,7 +366,7 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 
 	if ( tags.empty() ) utility_exit_with_message("AtomTypeSet::read_file: missing NAME line");
 	if ( !default_parameter_names.empty() && default_parameter_names.size() != tags.size() ) {
-		std::cout << "AtomTypeSet:: number of params doesnt match number of defaults " <<
+		std::cerr << "AtomTypeSet:: number of params doesnt match number of defaults " <<
 			default_parameter_names.size() << ' ' << tags.size() << std::endl;
 		utility_exit();
 	}

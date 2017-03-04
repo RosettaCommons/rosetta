@@ -239,7 +239,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 	}
 
 	if ( pose.residue(1).type().atom_type_set().name() != "fa_standard" ) {
-		TR.Warning
+		TR.Fatal
 			<< "Currently AtomAtomPairFeatures only works "
 			<< "for the 'fa_standard' AtomTypeSet. This pose has AtomTypeSet '"
 			<< pose.residue(1).type().atom_type_set().name() << "'.";

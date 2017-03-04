@@ -553,8 +553,8 @@ SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP inp
 		}
 		while( !dunbrack_accept( numeric::random::rg(), *input_residue, previous_chi_angles, new_chi_angles ) );
 		if ( preserve_detailed_balance_ ) {
-			TR << "ERROR: you cannot specify accept_according_to_dunbrack_ and preserve_detailed_balance_ both as true!" << std::endl;
-			TR << "Recommend rerunning with 'random perturb current' frequency set to zero." << std::endl;
+			TR.Error << "ERROR: you cannot specify accept_according_to_dunbrack_ and preserve_detailed_balance_ both as true!" << std::endl;
+			TR.Error << "Recommend rerunning with 'random perturb current' frequency set to zero." << std::endl;
 			utility_exit();
 		}
 	}

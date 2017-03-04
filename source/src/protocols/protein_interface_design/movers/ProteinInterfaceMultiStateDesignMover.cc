@@ -251,7 +251,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 		rtask.restrict_absent_canonical_aas( allowed_aas_in_pos );
 		AA const aa_in_pose( pose.residue( pos ).aa() );
 		if ( !allowed_aas_in_pos[ aa_in_pose ] ) {
-			TR<<"Native identity "<<pose.residue( pos ).name3()<<" at position "<<pos<<" in input pdb is not allowed by bump_test! Increase the bump_cutoff from the current "<<bump_threshold_<<std::endl;
+			TR.Fatal <<"Native identity "<<pose.residue( pos ).name3()<<" at position "<<pos<<" in input pdb is not allowed by bump_test! Increase the bump_cutoff from the current "<<bump_threshold_<<std::endl;
 			utility_exit();
 		}//fi
 	}//foreach pos

@@ -291,7 +291,7 @@ get_y_axis_atoms(
 			a2 = "N3";
 		}
 	} else {
-		std::cout << rsd_type.aa() << " is unknown to me, tovarisch!\n"; // AM
+		std::cerr << rsd_type.aa() << " is unknown to me, tovarisch!\n"; // AM
 		utility_exit();
 	}
 }

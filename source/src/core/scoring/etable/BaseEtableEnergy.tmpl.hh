@@ -1091,7 +1091,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
 			break;
 		default :
-			utility_exit();
+			utility_exit_with_message("Data consistency error in BaseEtableEnergy");
 			break;
 		}
 	} else if ( connection == CP_MULTIPLE_BONDS_OR_PSEUDOBONDS ) {
@@ -1103,7 +1103,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		} else if ( crossover == CP_CROSSOVER_4 ) {
 			cpgen->crossover( 4 );
 		} else {
-			utility_exit();
+			utility_exit_with_message("Data consistency error in BaseEtableEnergy");
 		}
 		cpgen->hard_crossover( false );
 		tcpfxn = cpgen;

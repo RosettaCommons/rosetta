@@ -178,7 +178,7 @@ ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 				map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
 			}
 			if ( !map_loaded ) {
-				TR << "[ ERROR ] Error loading density map named '" << mapfile << "'" << std::endl;
+				TR.Fatal << "[ ERROR ] Error loading density map named '" << mapfile << "'" << std::endl;
 				utility_exit();
 			}
 		}
@@ -362,7 +362,7 @@ void ElectronDensity::mapSphericalSamples (
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "![ ERROR ]  ElectronDensity::mapSHT called but no map is loaded!" << std::endl;
+		TR.Fatal << "![ ERROR ]  ElectronDensity::mapSHT called but no map is loaded!" << std::endl;
 		utility_exit();
 	}
 
@@ -2668,7 +2668,7 @@ void ElectronDensity::dCCdx_cen( int resid,
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::dCCdx_cen called but no map is loaded!\n";
+		TR.Error << "[ ERROR ]  ElectronDensity::dCCdx_cen called but no map is loaded!\n";
 		dCCdX = numeric::xyzVector<core::Real>(0.0,0.0,0.0);
 		utility_exit();
 	}
@@ -2685,7 +2685,7 @@ void ElectronDensity::dCCdx_aacen( int atmid, int resid,
 	numeric::xyzVector<core::Real> &dCCdX ) {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::dCCdx_aacen called but no map is loaded!\n";
+		TR.Error << "[ ERROR ]  ElectronDensity::dCCdx_aacen called but no map is loaded!\n";
 		dCCdX = numeric::xyzVector<core::Real>(0.0,0.0,0.0);
 		utility_exit();
 	}
@@ -3291,8 +3291,8 @@ void ElectronDensity::density_change_trigger() {
 void ElectronDensity::resize( core::Real approxGridSpacing ) {
 	// potentially expand map to cover entire unit cell
 	if ( grid[0] != density.u1() || grid[1] != density.u2() || grid[2] != density.u3() ) {
-		TR << "[ ERROR ] resize() not supported for maps not covering the entire unit cell."<< std::endl;
-		TR << "   " << grid[0] << " != " << density.u1()
+		TR.Error << "[ ERROR ] resize() not supported for maps not covering the entire unit cell."<< std::endl;
+		TR.Error << "   " << grid[0] << " != " << density.u1()
 			<< " || " << grid[1] << " != " << density.u2()
 			<< " || " << grid[2] << " != " << density.u3() << std::endl;
 		utility_exit();

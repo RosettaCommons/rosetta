@@ -56,7 +56,7 @@ CountPairFactory::create_count_pair_function(
 	if ( connection != CP_NO_BONDS ) {
 		switch ( connection ) {
 		case CP_NO_BONDS :
-			utility_exit();
+			utility_exit_with_message("Can't create count pair function for two unbonded residues.");
 			break;
 		case CP_ONE_BOND : {
 			// scope for res1connat, res2connat initializations
@@ -128,7 +128,7 @@ CountPairFactory::create_count_pair_function_and_invoke(
 	if ( connection != CP_NO_BONDS ) {
 		switch ( connection ) {
 		case CP_NO_BONDS :
-			utility_exit();
+			utility_exit_with_message("Can't create count pair function for two unbonded residues.");
 			break;
 		case CP_ONE_BOND : {
 			// scope for res1connat, res2connat initializations

@@ -127,13 +127,13 @@ MakeCanonicalHelix::is_valid( core::pose::Pose& pose ) {
 
 	// Check the starting position
 	if ( helix_start_ < 1 || helix_start_ > pose.size() ) {
-		TR << "Helix start set at " << helix_start_ << " is out of bounds for this pose" << std::endl;
+		TR.Fatal << "Helix start set at " << helix_start_ << " is out of bounds for this pose" << std::endl;
 		utility_exit();
 	}
 
 	// Check the end position
 	if ( helix_end_ > pose.size() || helix_end_ < helix_start_ || helix_end_ < 0 ) {
-		TR << "helix end set at " << helix_end_ << " is out of bounds for this pose" << std::endl;
+		TR.Fatal << "helix end set at " << helix_end_ << " is out of bounds for this pose" << std::endl;
 		utility_exit();
 	}
 }

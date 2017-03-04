@@ -88,10 +88,10 @@ RRComparerRotBins::measure_rotamer_recovery(
 
 
 	if ( res1.aa() != res2.aa() ) {
-		TR << "Cannot measure rotamer recovery because" << endl;
-		TR << "residue 1 has type '" << res1.type().name() << "'" << endl;
-		TR << "residue 2 has type '" << res2.type().name() << "'" << endl;
-		TR << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
+		TR.Fatal << "Cannot measure rotamer recovery because" << endl;
+		TR.Fatal << "residue 1 has type '" << res1.type().name() << "'" << endl;
+		TR.Fatal << "residue 2 has type '" << res2.type().name() << "'" << endl;
+		TR.Fatal << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
 		utility_exit();
 	}
 
@@ -166,10 +166,10 @@ RRComparerChiDiff::measure_rotamer_recovery(
 	using core::pack::dunbrack::subtract_chi_angles;
 
 	if ( res1.aa() != res2.aa() ) {
-		TR << "Cannot measure rotamer recovery because" << endl;
-		TR << "residue 1 has type '" << res1.type().name() << "'" << endl;
-		TR << "residue 2 has type '" << res2.type().name() << "'" << endl;
-		TR << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
+		TR.Fatal << "Cannot measure rotamer recovery because" << endl;
+		TR.Fatal << "residue 1 has type '" << res1.type().name() << "'" << endl;
+		TR.Fatal << "residue 2 has type '" << res2.type().name() << "'" << endl;
+		TR.Fatal << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
 		utility_exit();
 	}
 

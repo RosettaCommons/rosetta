@@ -210,7 +210,7 @@ RestrictAbsentCanonicalAAS::keep_aas( std::string const & keep )
 			//std::cout << "Keeping amino acid " << c << std::endl;
 			canonical_aas_to_keep[ aa_from_oneletter_code( c ) ] = true;
 		} else {
-			TR << "aa letter " << c << " does not not correspond to a canonical AA"<<std::endl;
+			TR.Fatal << "aa letter " << c << " does not not correspond to a canonical AA"<<std::endl;
 			utility_exit();
 		}
 	}
