@@ -358,12 +358,12 @@ bool endswith(std::string const & haystack, std::string const & needle)
 
 void slurp(std::istream & in, std::string & out)
 {
-	std::string line;
-	std::ostringstream os;
-	while ( std::getline(in,line) ) {
-		os << line << std::endl;
+	// Block based approach should be faster than line-by-line approach, when we want all of the file.
+	char block[4096]; // Read items in 4 Kb blocks
+	while( in.read(block, sizeof(block) ) ) {
+		out.append( block, sizeof(block) ); // Success means all of the block was read.
 	}
-	out.append( os.str());
+	out.append( block, in.gcount() ); // Failure means only partial read - gcount() give actual number of characters read.
 }
 
 void trim( std::string & s, const std::string & drop)

@@ -101,7 +101,7 @@ using utility::tag::TagCAP;
 typedef utility::vector0< TagCOP > TagCOPs;
 
 /// @brief Actually read in the XML file.  Called recursively to read in XML files that
-/// this XML file includes.  At the end of this operation, fin contains the contents
+/// this XML file includes.  At the end of this operation, substituted_contents contains the contents
 /// of the XML file, with all xi:includes replaced with the contents of included XML
 /// files.  Files are opened and closed here.
 ///
@@ -110,69 +110,67 @@ typedef utility::vector0< TagCOP > TagCOPs;
 /// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
 /// detected.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 void
 RosettaScriptsParser::read_in_and_recursively_replace_includes(
-	std::string const &filename,
-	std::stringstream &fin,
+	std::string const & filename,
+	std::string & substituted_contents, // "output" variable
 	utility::vector1 < std::string > filenames_encountered
 ) const {
-	using namespace utility::io;
 
 	//Check whether we've already encountered this filename
-	for ( core::Size i=1, imax=filenames_encountered.size(); i<=imax; ++i ) {
-		if ( filenames_encountered[i] == filename ) {
+	for ( std::string const & seen_fn : filenames_encountered ) {
+		if ( seen_fn == filename ) {
 			throw utility::excn::EXCN_BadInput( "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"" + filename + "\"." );
 		}
 	}
 	if ( filenames_encountered.size() != 0 && TR.visible() ) TR << "Including RosettaScripts XML file " << filename << "." << std::endl;
 	filenames_encountered.push_back(filename);
 
-	//Actually read in the file:
-	izstream inputstream;
-	inputstream.open(filename.c_str() );
+	//Actually read in the file
+	utility::io::izstream inputstream( filename );
 	if ( !inputstream.good() ) {
 		utility_exit_with_message("Unable to open RosettaScripts XML file: \"" + filename + "\".");
 	}
-	std::string line;
-	while ( getline( inputstream, line ) ) {
-		fin << line << '\n';
-	}
+	std::string contents;
+	utility::slurp( inputstream, contents );
 	inputstream.close();
 
 	//Find xi:include tags:
 	//Will be an innermost set of <> brackets.
-	std::string finstr;
-	core::Size bracketcount(0);
-	core::Size innerbracketstart(0);
-	core::Size last_chunk_end(0);
-	for ( core::Size i=0, imax=fin.str().length(); i<imax; ++i ) { //Loop through the XML
-		if ( fin.str()[i] == '<' ) {
-			++bracketcount;
-			innerbracketstart=i;
-		} else if ( fin.str()[i] == '>' &&  bracketcount > 0 ) {
-			--bracketcount;
-			if ( has_slash_at_end (fin.str(), i) && !has_double_percent_signs(fin.str(), i) ) {
-				TagCOP tag( utility::tag::Tag::create( fin.str().substr( innerbracketstart, i-innerbracketstart+1 ) ) ); //Parse the current inner tag.
-				if ( tag->getName() == "xi:include" ) {
-					finstr+=fin.str().substr(last_chunk_end, innerbracketstart-1-last_chunk_end)+'\n'; //Copy all of the text up to the start of the bracket.
-					last_chunk_end = i+1;
-					runtime_assert_string_msg( tag->hasOption("href"), "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag must include an \"href=...\" statement." );
-					runtime_assert_string_msg( !tag->hasOption("parse") || tag->getOption<std::string>("parse") == "XML", "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag can ONLY be used to include XML for parsing.  Other parse types are unsupporrted in RosettaScripts." );
-					std::string tempfilename( tag->getOption<std::string>("href") );
-					std::stringstream tempstream;
-					read_in_and_recursively_replace_includes( tempfilename, tempstream, filenames_encountered );  //Recursively call this function to read in included XML.
-					finstr+=tempstream.str();
-				}
-			}
+
+	std::string::const_iterator copy_start( contents.begin() ); // Where to start the next copy from
+	std::string::const_iterator start_bracket( contents.begin() ); // The position of '<', or where to start the search from
+	while( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
+		std::string::const_iterator end_bracket = start_bracket + 1; // Will be the postion of corresponding '>'
+		// Advance to next non-whitespace portion
+		while ( end_bracket != contents.cend() && std::isspace( *end_bracket ) ) { ++end_bracket; }
+		if ( end_bracket == contents.cend() || std::string( end_bracket, end_bracket+10 ) != "xi:include" ) {
+			// This tag is not an "xi:include" tag
+			start_bracket = end_bracket;
+			continue;
 		}
-	}
-	if ( last_chunk_end < fin.str().length() ) {
-		finstr+=fin.str().substr(last_chunk_end, fin.str().length()-last_chunk_end); //Copy all of the rest of the text.
-	}
-	fin.str( finstr );
+		end_bracket = std::find( end_bracket, contents.cend(), '>' );
+		if ( end_bracket == contents.end() ) { break; } // End of file, with unmatched open
 
-	TR.flush();
+		TagCOP tag( utility::tag::Tag::create( std::string( start_bracket, end_bracket+1 ) ) ); //Parse the current inner tag.
+		if ( tag->getName() != "xi:include" ) {
+			// This tag is not an "xi:include" tag, for some reason
+			++start_bracket; // We might have skipped an alternative '<' when searching for the '>', so restart closer to the last place.
+			continue;
+		}
+		runtime_assert_string_msg( tag->hasOption("href"), "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag must include an \"href=...\" statement." );
+		runtime_assert_string_msg( !tag->hasOption("parse") || tag->getOption<std::string>("parse") == "XML", "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag can ONLY be used to include XML for parsing.  Other parse types are unsupporrted in RosettaScripts." );
+		std::string const & subfilename( tag->getOption<std::string>("href") );
 
+		substituted_contents.append( copy_start, start_bracket );
+		read_in_and_recursively_replace_includes( subfilename, substituted_contents, filenames_encountered );  //Recursively call this function to read in included XML.
+		copy_start = end_bracket + 1;
+		start_bracket = end_bracket + 1; // Restart parsing after end of tag.
+	}
+
+	// Copy over the remaining portion of the file contents.
+	substituted_contents.append( copy_start, contents.cend() );
 }
 
 /// @details Uses the Tag interface to the xml reader library in boost to parse
@@ -228,19 +226,17 @@ RosettaScriptsParser::generate_mover_from_pose(
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
 
-	// The input string.  Input files are opened and closed by read_in_and_recursively_replace_includes().
-	// After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
-	std::stringstream fin;
 	// A list of all of the files that have been included, which is checked whenever a
 	// new file is included to prevent circular dependencies.
 	utility::vector1 < std::string > filenames_encountered;
-	read_in_and_recursively_replace_includes( dock_design_filename, fin, filenames_encountered ); //Actually read the input XML, reading in all included XML files as well.  No interpretation is done yet (except for recognizing xi:include).
+	// The input string.  Input files are opened and closed by read_in_and_recursively_replace_includes().
+	// After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
+	// No interpretation is done yet (except for recognizing xi:include).
+	std::string substituted_contents;
+	read_in_and_recursively_replace_includes( dock_design_filename, substituted_contents, filenames_encountered );
+	std::stringstream fin( substituted_contents );
 
-	//fin.open(dock_design_filename.c_str() );
-	//if ( !fin.good() ) {
-	// utility_exit_with_message("Unable to open Rosetta Scripts XML file: '" + dock_design_filename + "'.");
-	//}
-
+	// Do substitution of the script_vars in the stream
 	if ( option[ OptionKeys::parser::script_vars ].user() ) {
 		std::stringstream fin_sub;
 		substitute_variables_in_stream(fin, option[ OptionKeys::parser::script_vars ], fin_sub);

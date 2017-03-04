@@ -29,6 +29,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
 // Numberic headers
@@ -56,11 +57,11 @@ public:
 		TR << "This test ensures that the <xi:include ... /> function can be used to include the same file multiple times, if one so wishes." << std::endl;
 		TR << "Created by Vikram K. Mulligan (vmullig@uw.edu), Baker lab, 6 May 2016." << std::endl;
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		std::stringstream permitted1xml;
 		utility::vector1< std::string > files_read_in;
 		try {
 			TR << "===THIS SHOULD NOT TRIGGER AN EXCEPTION===" << std::endl;
-			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", permitted1xml, files_read_in );
+			std::string substituted_contents;
+			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in );
 		} catch( utility::excn::EXCN_Msg_Exception e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TS_ASSERT(false); //We shouldn't get here.
@@ -74,11 +75,11 @@ public:
 		TR << "This test ensures that the <xi:include ... /> function can't be used for circular inclusion patterns (e.g. A includes B includes C includes A)." << std::endl;
 		TR << "Created by Vikram K. Mulligan (vmullig@uw.edu), Baker lab, 6 May 2016." << std::endl;
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		std::stringstream prohibited1xml;
 		utility::vector1< std::string > files_read_in;
 		try {
 			TR << "===THIS SHOULD TRIGGER AN EXCEPTION===" << std::endl;
-			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", prohibited1xml, files_read_in );
+			std::string substituted_contents;
+			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in );
 		} catch( utility::excn::EXCN_Msg_Exception e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TR << "===THE ABOVE SHOULD HAVE TRIGGERED AN EXCEPTION===" << std::endl;
@@ -97,29 +98,26 @@ public:
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
 
 		//Read in the reference XML (no includes):
-		std::stringstream test1xml;
+		std::string test1xml;
 		utility::io::izstream inputstream;
 		inputstream.open("protocols/rosetta_scripts/test1.xml");
-		std::string line;
-		while ( getline( inputstream, line ) ) {
-			test1xml << line << '\n';
-		}
+		utility::slurp( inputstream, test1xml );
 		inputstream.close();
 
 		//Read in the test XML (with includes):
-		std::stringstream test2xml;
 		utility::vector1< std::string > files_read_in;
+		std::string test2xml;
 		parser.read_in_and_recursively_replace_includes("protocols/rosetta_scripts/test2.xml", test2xml, files_read_in);
 
 		if ( TR.visible() ) {
 			TR << "REFERENCE FILE (no includes):" << std::endl;
-			TR << test1xml.str() << std::endl;
+			TR << test1xml << std::endl;
 			TR << "TEST FILE (with includes):" << std::endl;
-			TR << test2xml.str() << std::endl;
+			TR << test2xml << std::endl;
 		}
 
 		//Are the interpreted files (with includes replaced with the contents of the other file) the same?
-		TS_ASSERT( test1xml.str() == test2xml.str() );
+		TS_ASSERT( test1xml == test2xml );
 
 		TR.flush();
 	}

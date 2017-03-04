@@ -20,6 +20,7 @@
 // Project headers
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/io/izstream.hh>
 #include <core/types.hh>
 
 // C/C++ headers
@@ -251,7 +252,52 @@ class StringUtilTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( v.size(), 2 );
 		TS_ASSERT_EQUALS( v[1], "'quotes will'keep" );
 		TS_ASSERT_EQUALS( v[2], "\"things together" );
+	}
 
+	// An older, simplistic version of slurp
+	void simple_slurp(std::istream & in, std::string & out) {
+		std::string line;
+		std::ostringstream os;
+		while ( std::getline(in,line) ) {
+			os << line << std::endl;
+		}
+		out.append( os.str());
+	}
+
+	void test_slurp() {
+
+		std::string const short_file( "utility/io/simple_input_file.txt" );
+		std::string const long_file( "test/core/pack/1FKB.pdb.gz" ); // greater than the 4 kB block size, .gz too, to test that
+
+		{
+			std::string slurped, slurped_old;
+			// Short file
+			utility::io::izstream fin( short_file );
+			utility::slurp( fin, slurped );
+			fin.close();
+
+			utility::io::izstream fin_old( short_file );
+			simple_slurp( fin_old, slurped_old );
+			fin_old.close();
+
+			TS_ASSERT_EQUALS( slurped.size(), slurped_old.size() );
+			TS_ASSERT_EQUALS( slurped, slurped_old );
+		}
+
+		{
+			std::string slurped, slurped_old;
+			// Short file
+			utility::io::izstream fin( long_file );
+			utility::slurp( fin, slurped );
+			fin.close();
+
+			utility::io::izstream fin_old( long_file );
+			simple_slurp( fin_old, slurped_old );
+			fin_old.close();
+
+			TS_ASSERT_EQUALS( slurped.size(), slurped_old.size() );
+			TS_ASSERT_EQUALS( slurped, slurped_old );
+		}
 
 	}
 };

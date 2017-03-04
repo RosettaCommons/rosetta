@@ -55,7 +55,7 @@ public:
 	~RosettaScriptsParser() override;
 
 	/// @brief Actually read in the XML file.  Called recursively to read in XML files that
-	/// this XML file includes.  At the end of this operation, fin contains the contents
+	/// this XML file includes.  At the end of this operation, substituted_contents contains the contents
 	/// of the XML file, with all xi:includes replaced with the contents of included XML
 	/// files.  Files are opened and closed here.
 	/// @details Note that filenames_encountered is passed by copy rather than by reference
@@ -63,10 +63,11 @@ public:
 	/// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
 	/// detected.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	/// @author Rocco Moretti (rmorettiase@gmail.com)
 	void
 	read_in_and_recursively_replace_includes(
 		std::string const &filename,
-		std::stringstream &fin,
+		std::string & substituted_contents, // Return-by-reference
 		utility::vector1 < std::string > filenames_encountered
 	) const;
 
