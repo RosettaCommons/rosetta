@@ -72,12 +72,8 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 	for ( Size i=start_res_, j=1; i<= end_res_; ++i, ++j ) {
 		bool copy_this_residue( false );
 
-		if ( copy_all_chi_ ) {
+		if ( copy_all_chi_ || allow_chi_copy_[i] ) {
 			copy_this_residue = true;
-		} else {
-			if ( allow_chi_copy_[i] ) {
-				copy_this_residue = true;
-			}
 		}
 
 		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
@@ -89,7 +85,9 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 
 			//ensure that there is no sequence change
 			if ( rsd_type.name3() != saved_rsd_type.name3() ) {
-				utility_exit_with_message("ReturnSidechainMover used with poses of different sequence; aborting");
+				TR.Warning << "WARNING: ReturnSidechainMover: For residue " << i << " current residue of type " << rsd_type.name() << " (" << rsd_type.name3() << ") "
+						<< "does not match the stored residue type of " << saved_rsd_type.name() << " (" << saved_rsd_type.name3() << ") -- skipping sidechain recovery." << std::endl;
+				continue;
 			}
 
 			//we need to check variant types in case there are cutpoints for loop modeling or whatever
