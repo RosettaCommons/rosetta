@@ -19,6 +19,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
@@ -140,7 +141,9 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		bool frame_ok = false;
 		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
 			Size const n = i + offset - 1;
-			if ( atom_level_domain_map_->get( n ) ) { //sucka!
+			if ( atom_level_domain_map_->get( n ) ||
+					 ( n < pose.size() &&  !pose.fold_tree().is_cutpoint( n ) &&
+						 atom_level_domain_map_->get( id::AtomID( 1, n+1 ) ) /*torsions in this residue may move next one*/) ) {
 				frame_ok = true;
 				break;
 			}

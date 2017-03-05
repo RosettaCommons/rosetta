@@ -8,8 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/toolbox/AtomLevelDomainMap.cc
-/// @brief
-/// @details
+/// @brief stores at the atom level information on domains in the pose (kind of like a movemap)
 /// @author Rhiju Das
 
 // Unit Headers
@@ -53,8 +52,9 @@ using core::id::NamedAtomID;
 using core::pose::copydofs::FIXED_DOMAIN;
 
 ///////////////////////////////////////////////////////////////////////////
+/// @details
 //
-// This object stores at the atom level information on domains in the pose,
+// This object stores, at the atom level, information on domains in the pose,
 //  with a code for parts that are definitely moving and parts that are
 //  definitely fixed.
 //

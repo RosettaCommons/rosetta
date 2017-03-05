@@ -93,7 +93,7 @@ SixDTransRotPotential::SixDTransRotPotential( std::string const & filename ):
 }
 
 SixDTransRotPotential::SixDTransRotPotential( numeric::MathNTensor< core::Real, 6 > const & tensor,
-																							utility::json_spirit::mObject const & json ):
+	utility::json_spirit::mObject const & json ):
 	enforce_continuity_at_pi_( true ),
 	turn_off_rotation_dependence_( false ),
 	use_cubic_interp_( option[ score::loop_close::use_cubic_interp ]() ),
@@ -103,11 +103,9 @@ SixDTransRotPotential::SixDTransRotPotential( numeric::MathNTensor< core::Real, 
 	initialize_from_json( json );
 }
 
-
 //Destructor
 SixDTransRotPotential::~SixDTransRotPotential()
 {}
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 void
@@ -178,8 +176,10 @@ SixDTransRotPotential::evaluate( Vector const & t, Vector const & rotation_vecto
 
 	if ( turn_off_rotation_dependence_ ) zero_out_rotation_components( tensor_deriv ); // for checking derivatives.
 
-	if ( compute_deriv ) deriv = std::make_pair( Vector( tensor_deriv[1], tensor_deriv[2], tensor_deriv[3] ),
-																							 Vector( tensor_deriv[4], tensor_deriv[5], tensor_deriv[6] ) );
+	if ( compute_deriv ) {
+		deriv = std::make_pair( Vector( tensor_deriv[1], tensor_deriv[2], tensor_deriv[3] ),
+			Vector( tensor_deriv[4], tensor_deriv[5], tensor_deriv[6] ) );
+	}
 	return value;
 }
 

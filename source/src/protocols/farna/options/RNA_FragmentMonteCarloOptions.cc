@@ -68,6 +68,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	output_score_frequency_( 0 ),
 	output_jump_res_( 0 ),
 	output_jump_o3p_to_o5p_( false ),
+	output_jump_chainbreak_( false ),
 	output_rotation_vector_( false ),
 	save_jump_histogram_( false ),
 	jump_histogram_boxsize_( 0.0 ),
@@ -156,6 +157,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_output_score_file( option[ rna::farna::out::output_score_file ]() );
 	set_output_jump_res( option[ rna::farna::out::output_jump_res ]() );
 	set_output_jump_o3p_to_o5p( option[ rna::farna::out::output_jump_o3p_to_o5p ]() );
+	set_output_jump_chainbreak( option[ rna::farna::out::output_jump_chainbreak ]() );
 	set_output_rotation_vector( option[ rna::farna::out::output_rotation_vector ]() );
 	set_save_jump_histogram( option[ rna::farna::out::save_jump_histogram ]() );
 	set_jump_histogram_boxsize( option[ rna::farna::out::jump_histogram_boxsize ]() );

@@ -226,6 +226,9 @@ public:
 	void set_output_jump_o3p_to_o5p( bool const & setting ){ output_jump_o3p_to_o5p_ = setting; }
 	bool output_jump_o3p_to_o5p() const { return output_jump_o3p_to_o5p_; }
 
+	void set_output_jump_chainbreak( bool const & setting ){ output_jump_chainbreak_ = setting; }
+	bool output_jump_chainbreak() const { return output_jump_chainbreak_; }
+
 	void set_save_jump_histogram( bool const & setting ){ save_jump_histogram_ = setting; }
 	bool save_jump_histogram() const { return save_jump_histogram_; }
 
@@ -294,6 +297,7 @@ private:
 	std::string output_score_file_;
 	utility::vector1< core::Size > output_jump_res_;
 	bool output_jump_o3p_to_o5p_;
+	bool output_jump_chainbreak_;
 	bool output_rotation_vector_;
 	bool save_jump_histogram_;
 	std::string output_histogram_file_;

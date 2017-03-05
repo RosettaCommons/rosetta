@@ -28,7 +28,6 @@
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <utility/file/file_sys_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "core.scoring.loop_graph.util" );
@@ -122,15 +121,15 @@ get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
 	std::string database_file = basic::database::full_name( "scoring/loop_close/6D_potentials/"+tag+"/loop_"+ObjexxFCL::lead_zero_string_of( loop_length, 2 )+"/potential.txt.gz" );
 	if ( option[ score::loop_close::force_6D_potential_file ].user() ) {
 		database_file = option[ score::loop_close::force_6D_potential_file ]();
-		runtime_assert( utility::file::file_exists( database_file ) );
+		runtime_assert( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) != 0 );
 	}
-	if ( !utility::file::file_exists( database_file ) ) return 0;
+	if ( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) == 0 ) return 0;
 
 	return SixDTransRotPotentialEvaluatorCOP( new SixDTransRotPotentialEvaluator(
 		takeoff_pos, landing_pos,
 		pose /* needed to check if takeoff/landing of loop is in current pose */ ,
 		loop_fixed_cost,
-		ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) ) );
+		*( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) ) ) );
 }
 
 

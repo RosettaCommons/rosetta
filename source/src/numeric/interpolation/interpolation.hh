@@ -179,7 +179,7 @@ multilinear_interpolation(
 	utility::fixedsizearray1< Real, N > const & binwidth,
 	utility::fixedsizearray1< Real, N > const & xs,
 	utility::fixedsizearray1< Real, N > & deriv,
-	bool const compute_deriv = true )
+	bool const & compute_deriv = true )
 {
 	utility::fixedsizearray1< Size, N > bin;
 	utility::fixedsizearray1< Real, N > a; // fraction of the way between this bin and the next.

@@ -13,72 +13,35 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <devel/init.hh>
-#include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/farna/setup/RNA_DeNovoParameters.hh>
-#include <protocols/farna/util.hh>
-#include <core/io/rna/RNA_DataReader.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <protocols/recces/RECCES_Mover.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
-#include <protocols/recces/options/RECCES_Options.hh>
+#include <protocols/recces/params/RECCES_Parameters.hh>
 #include <protocols/recces/util.hh>
 #include <protocols/recces/setup_util.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
-#include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <core/id/TorsionID.hh>
-#include <protocols/recces/sampler/MC_OneTorsion.hh>
-#include <protocols/recces/sampler/MC_Any.hh>
-#include <protocols/recces/sampler/MC_Loop.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
-#include <protocols/recces/sampler/util.hh>
-#include <utility/io/ozstream.hh>
-
-// C++ headers
-#include <iostream>
-#include <string>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <numeric/random/random.hh>
-
-#include <utility/excn/Exceptions.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/recces.OptionKeys.gen.hh>
 
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/recces.OptionKeys.gen.hh>
 
 using namespace core::pose;
 using namespace basic::options;
 
 using namespace core;
 using namespace protocols;
-using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
@@ -92,6 +55,7 @@ thermal_sampler()
 	using namespace core::scoring;
 	using namespace protocols::recces;
 	using namespace protocols::recces::options;
+	using namespace protocols::recces::params;
 
 	RECCES_OptionsOP options( new RECCES_Options );
 	options->set_histogram_max( 100.05 ); // sets default
@@ -108,8 +72,10 @@ thermal_sampler()
 	PoseOP pose_op( recces_pose_setup( *options ) );
 	Pose & pose = *pose_op;
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
+	RECCES_ParametersCOP recces_parameters( new RECCES_Parameters( pose ) );
 
 	RECCES_Mover recces_mover( options );
+	recces_mover.set_parameters( recces_parameters );
 	recces_mover.set_scorefxn( ( option[ score::weights ].user() ) ? get_score_function() : ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS ) );
 	recces_mover.apply( pose );
 }
@@ -120,7 +86,6 @@ void*
 my_main( void* )
 {
 	thermal_sampler();
-
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }

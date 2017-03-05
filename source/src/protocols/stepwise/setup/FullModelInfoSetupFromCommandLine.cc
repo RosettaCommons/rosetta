@@ -677,7 +677,12 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_SAMPLE_SUGAR,
 		full_model_parameters->conventional_to_full( option[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
+
+	// Temporary. 'res_list_in_pairs' assumes that different pairs involve different residues, but that's
+	//  not the case, actually. Also, jump_res is not apparently used elsewhere in the code except to
+	//  as a sanity check in ResampleMover.
+	//	full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
+
 	full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
 	full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
 	if ( option[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );

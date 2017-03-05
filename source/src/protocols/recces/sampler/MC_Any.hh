@@ -51,6 +51,10 @@ public:
 
 	MC_SamplerCOP rotamer() const { return rotamer_list_[ curr_id_ ]; }
 
+	/// @brief output summary of class
+	virtual
+	void show( std::ostream & out, Size const indent = 0 ) const;
+
 protected:
 	core::Size curr_id_;
 };

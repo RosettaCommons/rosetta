@@ -371,7 +371,14 @@ public:
 		assert( N == 2 );
 		assert( b1 < n_bins(1) );
 		assert( b2 < n_bins(2) );
-		//std::cout << "Fetching element " << b1 * n_bins(2) * n_bins(3) + b2 * n_bins(3) + b3 << std::endl;
+		return data_[ b1 * n_bins(2) + b2 ];
+	}
+
+	T & operator()( Size const b1, Size const b2 ) const
+	{
+		assert( N == 2 );
+		assert( b1 < n_bins(1) );
+		assert( b2 < n_bins(2) );
 		return data_[ b1 * n_bins(2) + b2 ];
 	}
 

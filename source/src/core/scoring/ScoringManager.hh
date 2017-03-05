@@ -205,7 +205,7 @@ public:
 
 	carbon_hbonds::CarbonHBondPotential const & get_CarbonHBondPotential() const;
 
-	loop_graph::evaluator::SixDTransRotPotential const & get_LoopCloseSixDPotential( std::string const & database_file ) const;
+	loop_graph::evaluator::SixDTransRotPotentialCOP get_LoopCloseSixDPotential( std::string const & database_file ) const;
 
 	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
 

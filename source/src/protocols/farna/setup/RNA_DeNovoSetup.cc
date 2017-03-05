@@ -189,7 +189,17 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		stepwise::setup::get_extra_cutpoints_from_names( sequence.size(), cutpoint_open_in_full_model, non_standard_residue_map );
 		full_model_parameters = FullModelParametersOP( new FullModelParameters( sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) );
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
-		full_model_parameters->set_conventional_chains( vector1< Size >( sequence.size(), 'A' ) );
+		Size chain_num( 1 ), res( 0 );
+		utility::vector1< char > chains; utility::vector1< Size > resnum;
+		for ( Size n = 1; n <= sequence.size(); n++ ){
+			chains.push_back( chr_chains[ (chain_num - 1)  % chr_chains.size() ] );
+			resnum.push_back( ++res );
+			if ( cutpoint_open_in_full_model.has_value( n ) ) {
+				chain_num++; res = 0;
+			}
+		}
+		full_model_parameters->set_conventional_chains( chains );
+		full_model_parameters->set_conventional_numbering( resnum );
 	}
 	std::string const sequence = full_model_parameters->full_sequence();
 
@@ -228,6 +238,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_pair ].resnum_and_chain() );
 	vector1< Size > remove_obligate_pair =
 		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_obligate_pair ].resnum_and_chain() );
+	vector1< Size > output_jump_res =
+		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::out::output_jump_res ].resnum_and_chain() );
 
 	////////////////////
 	// Step 3
@@ -895,6 +907,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	options_->set_input_res( working_input_res );
 	options_->set_extra_minimize_res( working_res_map( extra_minimize_res, working_res ) );
 	options_->set_extra_minimize_chi_res( working_res_map( extra_minimize_chi_res, working_res ) );
+	options_->set_output_jump_res( working_res_map( output_jump_res, working_res ) );
 
 	////////////////////
 	// Step 19

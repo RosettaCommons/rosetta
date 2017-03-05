@@ -41,6 +41,15 @@ void MC_Loop::operator++() {
 	++( *rotamer_list_[ curr_id_ ] );
 }
 
+///////////////////////////////////////////////////////////////////////////
+void MC_Loop::show( std::ostream & out, Size const indent ) const {
+	SamplerPlusPlus::show( out, indent );
+	for ( Size k = 1; k <= rotamer_list_.size(); k++ ) {
+		out << "Cycle " << k << " in loop: " << std::endl;
+		rotamer_list_[k]->show( out, indent + 1 );
+	}
+}
+
 } //sampler
 } //recces
 } //protocols

@@ -342,10 +342,17 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	standard_bb_sampler->set_update_pose( pose_cop );
 	standard_bb_sampler->init();
 
-	MC_RNA_OneJumpOP jump_sampler;
+	MC_AnyOP jump_sampler;
 	if ( options.sample_jump() ) {
-		jump_sampler = initialize_jump_sampler( pose, 1, options );
+		TR << TR.Green << pose.fold_tree() << std::endl;
+		jump_sampler = MC_AnyOP( new MC_Any );
+		for ( Size n = 1; n <= pose.num_jump(); n++ ) {
+			MC_RNA_OneJumpOP one_jump_sampler;
+			one_jump_sampler = initialize_jump_sampler( pose, n, options );
+			jump_sampler->add_rotamer( one_jump_sampler );
+		}
 		jump_sampler->set_name( "Jump" );
+		jump_sampler->set_update_pose( pose_cop );
 	}
 
 	MC_LoopOP loop_sampler( new MC_Loop );

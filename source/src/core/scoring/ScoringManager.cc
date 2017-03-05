@@ -103,6 +103,7 @@
 
 // Utility headers
 #include <utility/string_util.hh>
+#include <utility/file/file_sys_util.hh>
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <utility/vector1.hh>
@@ -541,15 +542,18 @@ ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-loop_graph::evaluator::SixDTransRotPotential const &
+loop_graph::evaluator::SixDTransRotPotentialCOP
 ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) const
 {
 	if ( loop_close_six_d_potential_[ database_file ] == nullptr ) {
-		// need to check *externally* that file actually exists in database.
-		TR << "Reading in: " << database_file << std::endl;
-		loop_close_six_d_potential_[ database_file ] = loop_graph::evaluator::SixDTransRotPotentialCOP( new loop_graph::evaluator::SixDTransRotPotential( database_file ) );
+		if ( utility::file::file_exists(  database_file ) )  {
+			TR << "Reading in: " << database_file << std::endl;
+			loop_close_six_d_potential_[ database_file ] = loop_graph::evaluator::SixDTransRotPotentialCOP( new loop_graph::evaluator::SixDTransRotPotential( database_file ) );
+		} else {
+			loop_close_six_d_potential_[ database_file ] = 0; // save information that database file does not exist.
+		}
 	}
-	return *loop_close_six_d_potential_[ database_file ];
+	return loop_close_six_d_potential_[ database_file ];
 }
 
 ///////////////////////////////////////////////////////////////////////////////

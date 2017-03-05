@@ -41,6 +41,10 @@ public:
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
 	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_LOOP; }
 
+	/// @brief output summary of class
+	virtual
+	void show( std::ostream & out, Size const indent = 0 ) const;
+
 };
 
 } //sampler
