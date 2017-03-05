@@ -132,7 +132,7 @@ HydroxylTorsionPotential::eval_residue_energy(
 
 		if ( it->first != restag ) continue;
 
-		if ( torsion_params_.count( it->first ) <= 1 ) continue;
+		if ( torsion_params_.count( it->first ) == 0 ) continue;
 
 		std::pair< tors_iterator, tors_iterator > range = torsion_params_.equal_range( restag );
 		tors_iterator it2;
@@ -180,7 +180,7 @@ HydroxylTorsionPotential::eval_residue_derivative(
 			it = torsion_params_.equal_range(it->first).second ) {
 
 		if ( it->first != restag ) continue;
-		if ( torsion_params_.count( it->first ) <= 1 ) continue;
+		if ( torsion_params_.count( it->first ) == 0 ) continue;
 
 		tors_iterator it2;
 		std::pair< tors_iterator, tors_iterator > range = torsion_params_.equal_range( restag );
