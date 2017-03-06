@@ -9,7 +9,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../build/finders)
 # this list.
 
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -pipe -w -O3 -s")
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -ffast-math -funroll-loops")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -ffast-math -fno-finite-math-only -funroll-loops")
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -finline-limit=20000")
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror")
 

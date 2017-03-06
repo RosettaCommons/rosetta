@@ -29,7 +29,7 @@ ADD_DEFINITIONS(-DPTR_STD)
 
 SET_SOURCE_FILES_PROPERTIES( ../../src/protocols/cryst/spacegroup.cc PROPERTIES COMPILE_FLAGS -O0 )
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -ffor-scope -std=c++11 -pipe -march=core2 -mtune=generic -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -ffor-scope -std=c++11 -pipe -march=core2 -mtune=generic -O3 -ffast-math -fno-finite-math-only -funroll-loops -finline-functions -finline-limit=20000 -s")
 SET(CMAKE_SHARED_LINKER_FLAGS "-lgomp")
 SET(CMAKE_EXE_LINKER_FLAGS "-lgomp  -L/usr/local/lib")
 include_directories("/usr/local/include")

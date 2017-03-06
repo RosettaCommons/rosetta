@@ -78,6 +78,7 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" )
 	list( APPEND compile
 			-O3
 			-ffast-math
+			-fno-finite-math-only
 			-funroll-loops
 			-finline-functions
 			-finline-limit=20000
@@ -113,6 +114,7 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
 			#-I /usr/local/include
 			-O3
 			-ffast-math
+			-fno-finite-math-only
 			-funroll-loops
 			-finline-functions
 			-finline-limit=20000
@@ -129,16 +131,6 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
 			#-DDISABLE_SQLITE
 	)
 endif()
-
-# "gcc, 4.4, release"
-#if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4.4(.[0-9])*" )
-#	list( REMOVE_ITEM compile
-#			-finline-limit=20000
-#	)
-#	list( APPEND compile
-#			-finline-limit=487
-#	)
-#endif()
 
 ###########################################################################
 # Windows Visual Studio - CL ##############################################
@@ -390,6 +382,7 @@ if( EXTRAS )
 		list( APPEND compile
 				-pipe
 				-ffast-math
+				-fno-finite-math-only
 				-funroll-loops
 				-ftemplate-depth=250
 				-mmacosx-version-min=10.10
