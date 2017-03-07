@@ -31,7 +31,9 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <basic/options/keys/view.OptionKeys.gen.hh>
 #include <protocols/viewer/triangleIterator.hh>
 #endif
 
@@ -52,7 +54,9 @@
 #include <core/chemical/ChemicalManager.hh>  //should not be auto-removed!! needed for graphics!
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <basic/options/keys/view.OptionKeys.gen.hh>
 #endif
 
 // Utility headers
@@ -83,7 +87,7 @@ using namespace protocols::viewer::graphics_states_param;
 
 namespace protocols {
 namespace viewer {
-
+	
 #ifdef GL_GRAPHICS
 // prototypes
 void check_for_new_conformation_viewers();
@@ -104,6 +108,7 @@ pthread_cond_t start_cond = PTHREAD_COND_INITIALIZER;
 #if defined GL_GRAPHICS || defined BOINC_GRAPHICS
 
 namespace graphics {
+	
 int window_size = 30;
 int specialKey = 0;
 bool click;
@@ -151,6 +156,10 @@ core::Real const protein_stickScale( 0.2 );
 core::Real const protein_sphereScale( 0.2 );
 int sphereDisplayList = 0;
 core::Real const BOND_LENGTH_CUTOFF2 = 6.0*6.0;
+
+//Reading of any cmd-line options
+
+
 }
 
 #endif
@@ -833,6 +842,17 @@ Vector get_atom_color(
 			return sidechain_color_rhiju[ residues[r]->name3() ];
 		}
 		break;
+		
+	case SINGLE_GLYCAN:
+		if ( residues[r]->atom_is_backbone(i)) {
+			return Vector( 0.4, 0.0, 0.8 ); // Purple?
+		}
+		else {
+			//return atom_color_by_element( residues[r]->atom_type(i).element());
+			return Vector( .85, .85, .85 ); //Whitish
+			
+		}
+	
 	case GHOST_COLOR :
 		if ( residues[r]->atom_is_hydrogen(i) ) {
 			return Vector( graphics::ghost_color_vect.x()+0.1 , graphics::ghost_color_vect.y()+0.1, graphics::ghost_color_vect.z()+0.1 );
@@ -1915,6 +1935,8 @@ draw_conformation_and_density(
 {
 
 	using namespace graphics;
+	using namespace basic::options;
+	
 	const int total_residue = residues.size();
 
 	//Set background color
@@ -1954,20 +1976,27 @@ draw_conformation_and_density(
 	//glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	//glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat_emission );
 	//glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
-
-
+	
 	if ( total_residue > 0 ) {
 		glPushMatrix();
 		glTranslatef(-center.x(), -center.y(), -center.z());
 
-		utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere;
+		utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere, virtual_residues, glycan_residues;
 		for ( Size n = 1; n <= residues.size(); n++ ) {
 			conformation::ResidueCOP rsd = residues[ n ];
 			if ( rsd->is_protein() ) {
 				residues_protein.push_back( rsd );
-			} else if ( rsd->is_metal() ) {
+			}
+			else if ( rsd->is_metal() ) {
 				residues_sphere.push_back( rsd );
-			} else {
+			}
+			else if ( rsd->is_virtual_residue() ){
+				virtual_residues.push_back( rsd );
+			}
+			else if ( rsd->is_carbohydrate() ){
+				glycan_residues.push_back( rsd );
+			}
+			else {
 				other_residues.push_back( rsd );
 			}
 		}
@@ -1978,7 +2007,22 @@ draw_conformation_and_density(
 			draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
 			draw_sphere( gs, residues_protein, SPHERE_MODE_LIGAND );
 		}
-
+		if ( virtual_residues.size() > 0 && option [OptionKeys::view::show_virtual_residues]() ){
+			///Use Rhijus view of virts (JAB)
+			ColorMode colormode_save = gs.Color_mode;
+			gs.Color_mode = RHIJU_COLOR;
+			display_residues_wireframe( gs, virtual_residues, Vector( 0.0, 0.0, 0.0) );
+			gs.Color_mode = colormode_save;
+		}
+		if ( glycan_residues.size() > 0 ){
+			ColorMode colormode_save = gs.Color_mode;
+			if ( option [OptionKeys::view::single_glycan_color]() ){
+				gs.Color_mode = SINGLE_GLYCAN;
+			}
+			display_residues_wireframe( gs, glycan_residues, Vector( 0.0, 0.0, 0.0) );
+			gs.Color_mode = colormode_save;
+		}
+		
 		if ( other_residues.size() > 0 ) {
 			ColorMode colormode_save = gs.Color_mode;
 			gs.Color_mode = RHIJU_COLOR;
@@ -2010,6 +2054,7 @@ void draw_conformation(
 ) {
 
 	using namespace graphics;
+	using namespace basic::options;
 	//const int total_residue = residues.size();
 
 #ifndef BOINC_GRAPHICS
@@ -2040,14 +2085,22 @@ void draw_conformation(
 	glPushMatrix();
 	glTranslatef(-center.x(), -center.y(), -center.z());
 
-	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere;
+	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere, virtual_residues, glycan_residues;
 	for ( Size n = 1; n <= residues.size(); n++ ) {
 		conformation::ResidueCOP rsd = residues[ n ];
 		if ( rsd->is_protein() ) {
 			residues_protein.push_back( rsd );
-		} else if ( rsd->is_metal() ) {
+		}
+		else if ( rsd->is_metal() ) {
 			residues_sphere.push_back( rsd );
-		} else {
+		}
+		else if ( rsd->is_virtual_residue() ){
+			virtual_residues.push_back( rsd );
+		}
+		else if ( rsd->is_carbohydrate() ){
+			glycan_residues.push_back( rsd );
+		}
+		else {
 			other_residues.push_back( rsd );
 		}
 	}
@@ -2058,7 +2111,23 @@ void draw_conformation(
 		draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
 		draw_sphere( gs, residues_protein, SPHERE_MODE_LIGAND );
 	}
-
+	if ( virtual_residues.size() > 0 && option [OptionKeys::view::show_virtual_residues]() ){
+		///Use Rhijus view of virts (JAB)
+		ColorMode colormode_save = gs.Color_mode;
+		gs.Color_mode = RHIJU_COLOR;
+		display_residues_wireframe( gs, virtual_residues, Vector( 0.0, 0.0, 0.0) );
+		gs.Color_mode = colormode_save;
+	}
+	if ( glycan_residues.size() > 0 ){
+		ColorMode colormode_save = gs.Color_mode;
+		if ( option [OptionKeys::view::single_glycan_color]() ){
+			gs.Color_mode = SINGLE_GLYCAN;
+		}
+		display_residues_wireframe( gs, glycan_residues, Vector( 0.0, 0.0, 0.0) );
+		//draw_backbone( gs, glycan_residues, ss );
+		//draw_sidechains( gs, glycan_residues, 1, glycan_residues.size() );
+		gs.Color_mode = colormode_save;
+	}
 	if ( other_residues.size() > 0 ) {
 		ColorMode colormode_save = gs.Color_mode;
 		gs.Color_mode = RHIJU_COLOR;

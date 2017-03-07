@@ -1233,7 +1233,11 @@ Options = Option_Group( '',
 		Option( 'seed_ensemble_weights_file', 'File', desc='A file specifying weights to use for each input structure.  Two columns.  basename with extension (or relative path or full path), weight'),
 
 	), # jd2
+	Option_Group( 'view',
+		Option( 'show_virtual_residues', 'Boolean', desc='Show virtual residues?', default = 'true'),
+		Option( 'single_glycan_color', 'Boolean', desc="Show glycans as a single color instead of default", default = 'true'),
 
+	), # view
 	# score function settings  -----------------------------------------------------------
 	Option_Group( 'score',
 		Option( 'score_pose_cutpoint_variants', 'Boolean', desc='Include cutpoint variants in the pose during linear chainbreak', default='false'),
