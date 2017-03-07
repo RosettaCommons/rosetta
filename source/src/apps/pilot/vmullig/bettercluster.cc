@@ -46,6 +46,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/id/TorsionID.hh>
 #include <protocols/cluster/cluster.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
