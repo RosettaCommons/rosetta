@@ -118,6 +118,9 @@ sources = {
 	"utility/thread": [
 		"ReadWriteMutex",
 	],
+	"utility/xsd_util": [
+		"util",
+	],
 }
 include_path = [
 ]

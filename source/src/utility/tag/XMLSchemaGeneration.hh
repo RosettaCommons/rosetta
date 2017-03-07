@@ -497,32 +497,6 @@ public:
 
 private:
 
-	/// @brief Go through an XSD XML and generate a human-readable version, recursively.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void generate_human_readable_recursive( xmlNode* rootnode, std::stringstream &description, std::stringstream &tags, std::stringstream &options, Size const level, std::string const &complextype, std::string const &tag_name_to_print  ) const;
-
-	/// @brief Given a node in an XML tree, get the value of an option.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	std::string get_node_option( xmlNode* node, std::string const &optionname ) const;
-
-	/// @brief Given a node in an XML tree representing a tag, get the string that starts the tag.  (e.g. "DeclareBond" in "<DeclareBond .... />").
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	std::string get_tag_name( xmlNode* node ) const;
-
-	/// @brief Given a documentation node in an XML tree, parse out the documentation and print it.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void generate_human_readable_documentation( xmlNode* doc_node, std::stringstream &outstream ) const;
-
-	/// @brief Given a node in an XML tree representing a tag, get all options in that tag, write their descriptions to "options",
-	/// and write their names and types to "tags".
-	/// @details Heads the section in "options" with the tag name.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void output_all_tag_options( xmlNode* node, std::string const &tagname, Size const level, std::stringstream &tags, std::stringstream &options) const;
-
-	/// @brief Given an XSD simple type (e.g. "rosetta_bool"), return a more human-readable type (e.g. "bool").
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	std::string get_type_name( std::string const& xsd_type ) const;
-
 	void validate_new_top_level_element( std::string const & element_name, std::string const & definition );
 
 	std::list< std::string > elements_in_order_;
