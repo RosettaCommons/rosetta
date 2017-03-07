@@ -614,6 +614,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	// make a copy of the energy function too. SInce we're going to be ramping around with weights,
 	// we dont want to modify the existing scorefunction
 	ScoreFunctionOP local_scorefxn( get_scorefxn()->clone() );
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, local_scorefxn ); //If the pose is symmetric but the scorefunction is not, remedy this.
 
 	// Remember the oroiginal weights - we're gonna be changing these during the ramp ups/downs
 	core::scoring::EnergyMap full_weights = local_scorefxn->weights();

@@ -32,6 +32,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 
 //Basic Headers
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -245,7 +246,9 @@ FastDesign::apply( core::pose::Pose & pose )
 	FastRelax::apply( pose );
 
 	// show final scores
-	get_scorefxn()->show( TR, pose );
+	core::scoring::ScoreFunctionOP local_sfxn( get_scorefxn()->clone() );  //May need to be modified for symmetry
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, local_sfxn ); //If the pose is symmetric but the scorefunction is not, remedy this.
+	local_sfxn->show( TR, pose );
 	TR.flush();
 }
 

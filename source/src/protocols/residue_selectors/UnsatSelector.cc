@@ -38,6 +38,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
@@ -51,6 +52,15 @@
 #include <utility/assert.hh>
 #include <iostream>
 #include <string>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.UnsatSelector" );
 
@@ -227,6 +237,8 @@ utility::vector1< utility::vector1 < core::Size > > UnsatSelector::compute(core:
 
 	//The scorefunction to use:
 	core::scoring::ScoreFunctionOP scorefxn( (scorefxn_ ? scorefxn_ : core::scoring::get_score_function()->clone() ) );
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, scorefxn );
+
 	core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()) );
 	energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 	scorefxn->set_energy_method_options(*energy_options);
@@ -331,6 +343,36 @@ UnsatSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(),"selects hbond acceptors or donors that are not satisfied", attributes );
 }
 
-
 } //protocols
 } //residue_selectors
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::residue_selectors::UnsatSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( hbond_energy_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( consider_mainchain_only_ ) ); // bool
+	arc( CEREAL_NVP( acceptors_ ) ); // bool
+	arc( CEREAL_NVP( scorefxn_ ) ); // core::scoring::ScoreFunctionOP
+
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::residue_selectors::UnsatSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( hbond_energy_cutoff_ ); // core::Real
+	arc( consider_mainchain_only_ ); // bool
+	arc( acceptors_ ); // bool
+	arc( scorefxn_ ); // core::scoring::ScoreFunctionOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::residue_selectors::UnsatSelector );
+CEREAL_REGISTER_TYPE( protocols::residue_selectors::UnsatSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_residue_selectors_UnsatSelector )
+#endif // SERIALIZATION

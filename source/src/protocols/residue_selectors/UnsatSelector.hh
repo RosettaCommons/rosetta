@@ -55,6 +55,10 @@
 // C++ headers
 #include <utility/assert.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace protocols {
 namespace residue_selectors {
@@ -146,6 +150,8 @@ private:
 	/// @details Returns the number of atoms receiving more than the allowed number of hydrogen bonds.
 	utility::vector1< utility::vector1 < core::Size > > compute( core::pose::Pose const &pose ) const;
 
+private:
+
 	// ---------- PRIVATE MEMBER VARIABLES ----------
 
 	/// @brief What is the maximum allowed number of instances of an oversaturated
@@ -166,6 +172,11 @@ private:
 	/// @details If no scorefunction is provided, then the default scorefunction is used.
 	core::scoring::ScoreFunctionOP scorefxn_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -173,5 +184,8 @@ private:
 } //protocols
 } //residue_selectors
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_residue_selectors_UnsatSelector )
+#endif // SERIALIZATION
 
 #endif //INCLUDEDcore/select/residue_selector_UnsatSelector_hh
