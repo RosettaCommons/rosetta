@@ -36,7 +36,7 @@ void printVector( const Iterable & V ) {
 	}
 	std::cout << std::endl;
 }
-	
+
 /// @brief prints the matrix
 /// @details This function used to intentionally print the transpose of the
 /// matrix.  The rational was that "we use row-major indexing".  That didn't
@@ -51,7 +51,7 @@ void printMatrix(const MatrixLike & M) {
 		std::cout << std::endl;
 	}
 }
-	
+
 template< class MatrixLike >
 void printTranspose( const MatrixLike & M) {
 	for ( unsigned i=1; i<=M[1].size(); i++ ) {
@@ -65,7 +65,7 @@ void printTranspose( const MatrixLike & M) {
 template< Size rows >
 void multMatrix(const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real, rows >, rows >& A,
 	const utility::vector1<utility::fixedsizearray1<numeric::Real, rows> >& B,
-				utility::vector1<utility::fixedsizearray1<numeric::Real, rows> >& C)
+	utility::vector1<utility::fixedsizearray1<numeric::Real, rows> >& C)
 {
 	Size const cols = B.size();
 	C.resize( cols );
@@ -82,7 +82,7 @@ void multMatrix(const utility::fixedsizearray1<utility::fixedsizearray1<numeric:
 template< Size rows >
 void multTransMatrix(const utility::fixedsizearray1<utility::fixedsizearray1<numeric::Real, rows>, rows >& A,
 	const utility::vector1<utility::fixedsizearray1<numeric::Real, rows> >& B,
-					 utility::vector1<utility::fixedsizearray1<numeric::Real, rows> >& C) {
+	utility::vector1<utility::fixedsizearray1<numeric::Real, rows> >& C) {
 	Size const cols = B.size();
 	C.resize( cols );
 	for ( unsigned i=1; i<=cols; i++ ) {
@@ -94,7 +94,7 @@ void multTransMatrix(const utility::fixedsizearray1<utility::fixedsizearray1<num
 		}
 	}
 }
-	
+
 bool vectorsEqual(const utility::vector1<numeric::Real>& A, const utility::vector1<numeric::Real>& B);
 
 } // end namespace kinematic_closure

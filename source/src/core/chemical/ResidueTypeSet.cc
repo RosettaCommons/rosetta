@@ -112,7 +112,7 @@ ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
 	std::string name = name_in;
-	if ( name_in == "CYD" ){
+	if ( name_in == "CYD" ) {
 		name = "CYS:disulfide";
 	}
 	ResidueTypeCOP restype( name_mapOP( name ) );

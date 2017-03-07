@@ -191,7 +191,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 		Size chain_num( 1 ), res( 0 );
 		utility::vector1< char > chains; utility::vector1< Size > resnum;
-		for ( Size n = 1; n <= sequence.size(); n++ ){
+		for ( Size n = 1; n <= sequence.size(); n++ ) {
 			chains.push_back( chr_chains[ (chain_num - 1)  % chr_chains.size() ] );
 			resnum.push_back( ++res );
 			if ( cutpoint_open_in_full_model.has_value( n ) ) {

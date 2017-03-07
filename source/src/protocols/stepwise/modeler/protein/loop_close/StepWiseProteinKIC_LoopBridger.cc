@@ -315,7 +315,7 @@ StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
 
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > Q0;
 	utility::fixedsizearray1<Real,3> R0;
-	
+
 	chainTORS(atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0);
 
 	if ( verbose_ ) output_chainTORS( dt_ang, db_ang, db_len );

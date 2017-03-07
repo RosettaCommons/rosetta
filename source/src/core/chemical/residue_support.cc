@@ -416,25 +416,25 @@ make_centroid( ResidueType const & res ) {
 	// RM: There's been some additions to the centroid atom type set since
 	// those might be a better idea ... or not.
 	std::map< std::string, std::string > type_translation = {
-			{"Hpol","HNbb"},
-			{"Ntrp","Nbb" },
-			{"NH2O","Nbb" },
-			{"Nlys","Nbb" },
-			{"Narg","Nbb" },
-			{"Npro","Nbb" },
-			{"Nhis","OCbb"}, // No, this is not a typo (apparently) - it's an unprotonated hbond acceptor
-			{"OH"  ,"OCbb"},
-			{"ONH2","OCbb"},
-			{"OOC" ,"OCbb"},
-			{"Oaro","OCbb"},
-			{"Hapo",""    }, // Don't translate.
-			{"Haro",""    }, // Don't translate.
-			{"aroC","CAbb"},
-			{"CH1" ,"CAbb"},
-			{"CH2" ,"CAbb"},
-			{"CH3" ,"CAbb"},
-			{"CNH2","CAbb"},
-			{"COO" ,"CAbb"}};
+		{"Hpol","HNbb"},
+		{"Ntrp","Nbb" },
+		{"NH2O","Nbb" },
+		{"Nlys","Nbb" },
+		{"Narg","Nbb" },
+		{"Npro","Nbb" },
+		{"Nhis","OCbb"}, // No, this is not a typo (apparently) - it's an unprotonated hbond acceptor
+		{"OH"  ,"OCbb"},
+		{"ONH2","OCbb"},
+		{"OOC" ,"OCbb"},
+		{"Oaro","OCbb"},
+		{"Hapo",""    }, // Don't translate.
+		{"Haro",""    }, // Don't translate.
+		{"aroC","CAbb"},
+		{"CH1" ,"CAbb"},
+		{"CH2" ,"CAbb"},
+		{"CH3" ,"CAbb"},
+		{"CNH2","CAbb"},
+		{"COO" ,"CAbb"}};
 
 	AtomTypeSetCOP centroid_ats_ptr( ChemicalManager::get_instance()->atom_type_set( core::chemical::CENTROID )  );
 	AtomTypeSet const & centroid_ats( *centroid_ats_ptr );
@@ -452,7 +452,7 @@ make_centroid( ResidueType const & res ) {
 			new_string = old_string;
 		} else {
 			TR.Warning << "WARNING: Atom type '" << old_string << "' on atom '" << res.atom_name(ii)
-					<< "' from residue type '" <<  res.name() <<  "' does not have a centroid mode equivalent: assuming CAbb." << std::endl;
+				<< "' from residue type '" <<  res.name() <<  "' does not have a centroid mode equivalent: assuming CAbb." << std::endl;
 			// This is how the molfile_to_params.py script does the translation for unrecognized atoms.
 			new_string = "CAbb";
 		}
@@ -467,7 +467,7 @@ make_centroid( ResidueType const & res ) {
 	}
 
 	// Now delete the defered atoms
-	for ( core::Size jj(1); jj <= to_delete.size(); ++jj) {
+	for ( core::Size jj(1); jj <= to_delete.size(); ++jj ) {
 		centroid->delete_atom( to_delete[ jj ] );
 	}
 

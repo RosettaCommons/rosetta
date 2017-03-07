@@ -174,7 +174,7 @@ bilinearly_interpolated(
 template< typename T, numeric::Size N >
 Real
 multilinear_interpolation(
-  MathNTensor< T, N > const & tensor,
+	MathNTensor< T, N > const & tensor,
 	utility::fixedsizearray1< Real, N > const & minval,
 	utility::fixedsizearray1< Real, N > const & binwidth,
 	utility::fixedsizearray1< Real, N > const & xs,

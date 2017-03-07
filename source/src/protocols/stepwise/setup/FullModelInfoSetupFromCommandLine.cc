@@ -681,7 +681,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	// Temporary. 'res_list_in_pairs' assumes that different pairs involve different residues, but that's
 	//  not the case, actually. Also, jump_res is not apparently used elsewhere in the code except to
 	//  as a sanity check in ResampleMover.
-	//	full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
+	// full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
 
 	full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
 	full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );

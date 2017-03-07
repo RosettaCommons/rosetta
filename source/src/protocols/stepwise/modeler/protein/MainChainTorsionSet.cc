@@ -49,7 +49,7 @@ MainChainTorsionSet::MainChainTorsionSet( core::Real const phi, core::Real const
 	mainchain_dihedral_values_[ 2 ] = psi;
 	mainchain_dihedral_values_[ 3 ] = 180.0;
 }
-	
+
 MainChainTorsionSet::MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values, core::Real const omega )
 {
 	mainchain_dihedral_values_[ 1 ] = mainchain_dihedral_values[ 1 ];
@@ -57,7 +57,7 @@ MainChainTorsionSet::MainChainTorsionSet( utility::fixedsizearray1< core::Real, 
 	mainchain_dihedral_values_[ 3 ] = mainchain_dihedral_values[ 3 ];
 	mainchain_dihedral_values_[ 4 ] = omega;
 }
-	
+
 MainChainTorsionSet::MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values )
 {
 	mainchain_dihedral_values_[ 1 ] = mainchain_dihedral_values[ 1 ];

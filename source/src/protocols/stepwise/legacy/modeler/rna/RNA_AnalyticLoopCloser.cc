@@ -500,7 +500,7 @@ RNA_AnalyticLoopCloser::fill_chainTORS (
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
 	utility::fixedsizearray1< utility::fixedsizearray1< Real,3 >,3 > Q0;
- 	utility::fixedsizearray1< Real,3 > R0;
+	utility::fixedsizearray1< Real,3 > R0;
 	utility::vector1< Vector > atoms_xyz;
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {

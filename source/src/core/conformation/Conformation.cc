@@ -3934,7 +3934,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id3.rsd() = seqpos;
 					id4.rsd() = seqpos;
 					if ( torsion + 1 == ntorsions ) /*psi*/ {
-					//if ( torsion == 2 ) /*psi*/ {
+						//if ( torsion == 2 ) /*psi*/ {
 						id3.atomno() = rsd.atom_index( " C  "); // maybe mainchain[ torsion + 1 ]
 						id4.atomno() = rsd.atom_index( " NR ");
 					} else {

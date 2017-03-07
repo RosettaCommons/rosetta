@@ -89,8 +89,8 @@ MembraneInfo::MembraneInfo() :
 MembraneInfo::MembraneInfo(
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
-    core::Real thickness,
-    core::Real steepness,
+	core::Real thickness,
+	core::Real steepness,
 	SpanningTopologyOP topology
 ) :
 	thickness_( thickness ),
@@ -109,8 +109,8 @@ MembraneInfo::MembraneInfo(
 MembraneInfo::MembraneInfo(
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
-    core::Real thickness,
-    core::Real steepness,
+	core::Real thickness,
+	core::Real steepness,
 	LipidAccInfoOP lips,
 	SpanningTopologyOP topology
 ) :

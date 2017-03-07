@@ -121,7 +121,7 @@ GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Re
 
 	using numeric::conversions::degrees;
 	using utility::fixedsizearray1;
-	
+
 	vector1<fixedsizearray1 <Real,3> > stub1(3);
 	vector1<fixedsizearray1 <Real,3> > stub2(3);
 	vector1<Real> torsions_chain1(1);

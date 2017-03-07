@@ -360,7 +360,7 @@ void slurp(std::istream & in, std::string & out)
 {
 	// Block based approach should be faster than line-by-line approach, when we want all of the file.
 	char block[4096]; // Read items in 4 Kb blocks
-	while( in.read(block, sizeof(block) ) ) {
+	while ( in.read(block, sizeof(block) ) ) {
 		out.append( block, sizeof(block) ); // Success means all of the block was read.
 	}
 	out.append( block, in.gcount() ); // Failure means only partial read - gcount() give actual number of characters read.

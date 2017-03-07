@@ -370,7 +370,7 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 			TR << "Calling correction for beta_nov16, " << FastRelax::default_repeats() << " repeats..." << std::endl;
 			filelines.push_back( "repeat "+ObjexxFCL::string_of(FastRelax::default_repeats()));
 
-      filelines.push_back( "reference 0.3     3.1     -2.6     -2.55    4.8     -0.5    0.7      4.5     -1.6     4.0     3.9     -1.7     -2.0     -1.5     -1.0     -2.0    -2.0     4.0     9.0     3.7" );
+			filelines.push_back( "reference 0.3     3.1     -2.6     -2.55    4.8     -0.5    0.7      4.5     -1.6     4.0     3.9     -1.7     -2.0     -1.5     -1.0     -2.0    -2.0     4.0     9.0     3.7" );
 			filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
 			filelines.push_back( "reference 2.2619  4.8148  -1.6204  -1.6058  2.7602  1.0350  1.3406   2.5006  -0.6895  1.9223  2.3633  -0.3009  -4.2787   0.1077   0.0423  -0.4390 -0.7333  3.2371  4.7077  2.3379" );
 			filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );

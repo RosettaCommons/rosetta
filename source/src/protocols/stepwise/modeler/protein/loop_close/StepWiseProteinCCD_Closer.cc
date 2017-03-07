@@ -226,7 +226,7 @@ StepWiseProteinCCD_Closer::figure_out_movemap( core::pose::Pose const & pose ) {
 		mm_->set( TorsionID( loop_.start(), id::BB, k ),  true );
 	}
 	for ( Size n = loop_.start()+1; n <= loop_.stop()-1; n++ ) {
-		// Set non-omega true 
+		// Set non-omega true
 		for ( Size k = 1; k < pose.residue( n ).mainchain_torsions().size(); k++ ) {
 			mm_->set( TorsionID( n, id::BB, k ),  true );
 		}

@@ -54,8 +54,8 @@ void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsize
 	calpha[3]=(d11-d22-d33)/d23; // exterior angle
 	salpha[3]=std::sqrt(1-calpha[3]*calpha[3]);
 }
-	
-	
+
+
 void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsizearray1<Real,4>& calpha, utility::fixedsizearray1<Real,4>& salpha) {
 	Real d11, d12, d13, d22, d23, d33;
 	d11 =   vbond[1]*vbond[1];
@@ -71,8 +71,8 @@ void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsize
 	calpha[3]=(d11-d22-d33)/d23; // exterior angle
 	salpha[3]=std::sqrt(1-calpha[3]*calpha[3]);
 }
-	
-	
+
+
 void sincos (const utility::fixedsizearray1<Real,3>& theta,
 	const int flag,
 	utility::fixedsizearray1<Real, 3>& cosine,
@@ -94,7 +94,7 @@ void sincos (const utility::fixedsizearray1<Real,3>& theta,
 		}
 	}
 }
-	
+
 void sincos (const utility::fixedsizearray1<Real,3>& theta,
 	const int flag,
 	utility::fixedsizearray1<Real, 4>& cosine,
@@ -116,7 +116,7 @@ void sincos (const utility::fixedsizearray1<Real,3>& theta,
 		}
 	}
 }
-	
+
 // triaxialCoefficients {{{1
 /*
 * triaxialCoefficients
@@ -144,7 +144,7 @@ void triaxialCoefficients(
 	utility::fixedsizearray1<Real, 4> ceta, seta, calpha, salpha;
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > L, M, N;
 	utility::vector1<utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > > p (4);
-	
+
 	// if triangle is feasible, compute the polynomial matrices
 	if ( (std::abs(vb[1] - vb[2]) <= vb[3]) && (vb[1] + vb[2] >= vb[3]) ) {
 		feasible_triangle = true; // we have a feasible triangle
@@ -153,7 +153,7 @@ void triaxialCoefficients(
 			ctheta[i]=std::cos(theta[i]);
 		}
 		triangle(vb, calpha, salpha);
-		
+
 		for ( int i=1; i<=3; i++ ) {
 			cal[i]=calpha[i];
 			sal[i]=salpha[i];
@@ -315,7 +315,7 @@ Real torsion(
 
 	utility::fixedsizearray1<Real,3> r, sc1, sc2, sc3, cs12, cs31;
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > s;
- 
+
 	if ( b==c ) {
 		return numeric::constants::r::pi;
 	}
@@ -362,7 +362,7 @@ void chainParams( // {{{1
 
 	//utility::vector1<Real> ac1 (3), ac2 (3), acn (3), acneg1 (3);
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > a1n2;
- 	// R0.resize(3);
+	// R0.resize(3);
 	// for (int i=1; i<=3; i++) {
 	//   ac1[i] = atoms[i][1];
 	//   ac2[i] = atoms[i][2];
@@ -596,7 +596,7 @@ void chainTORS (
 	b_ang.resize(n);
 	b_len.resize(n);
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > framein;
- 	for ( int i=1; i<=3; i++ ) {
+	for ( int i=1; i<=3; i++ ) {
 		framein[i]=atoms[i];
 	}
 	R0=atoms[1];

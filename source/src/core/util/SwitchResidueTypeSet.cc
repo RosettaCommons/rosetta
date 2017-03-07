@@ -398,15 +398,15 @@ generate_replacement_restype(
 	core::chemical::TypeSetMode mode)
 {
 	switch( restype.mode() ) {
-	case core::chemical::FULL_ATOM_t:
+	case core::chemical::FULL_ATOM_t :
 		switch( mode ) {
-		case core::chemical::CENTROID_t:
+		case core::chemical::CENTROID_t :
 			// From FULL_ATOM to CENTROID
 			return core::chemical::make_centroid( restype );
-		default:
-				return nullptr;
+		default :
+			return nullptr;
 		}
-	default:
+	default :
 		return nullptr;
 	}
 }

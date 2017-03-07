@@ -42,10 +42,10 @@ public:
 	MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values, core::Real const omega );
 	MainChainTorsionSet( utility::fixedsizearray1< core::Real, 3 > const & mainchain_dihedral_values );
 
-	
+
 	utility::fixedsizearray1< core::Real, 4 >
 	mainchain_dihedral_values() const { return mainchain_dihedral_values_; }
-	
+
 	virtual ~MainChainTorsionSet();
 
 	MainChainTorsionSet &

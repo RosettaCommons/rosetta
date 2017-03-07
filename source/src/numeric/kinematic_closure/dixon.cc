@@ -416,7 +416,7 @@ void build_sin_and_cos( utility::vector1< PseudoVector > const & u, utility::vec
 	sin.resize(num_solutions);
 
 	for ( int i = 1; i <= num_solutions; i++ ) {
-		
+
 		for ( int j = 1; j <= 3; j++ ) {
 			u_squared = u[i][j] * u[i][j];
 			u_squared_plus_1 = u_squared + 1;
@@ -948,7 +948,7 @@ void test_polyProduct4x2() {
 void test_polyProduct2x2() {
 	utility::fixedsizearray1<Real,3> A, B;
 	utility::vector1< Real > C;
- 	A[1]=15.999410431075338;
+	A[1]=15.999410431075338;
 	A[2]=0.0;
 	A[3]=-8.999904923464781;
 	B[1]=72.015965384650187;

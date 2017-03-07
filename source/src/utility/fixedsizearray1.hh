@@ -363,7 +363,7 @@ public:
 		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
 		return array_[ index - 1 ];
 	}
-	
+
 	bool
 	operator == ( fixedsizearray1< T, S > const & other ) const {
 		bool maybe_equal = true;

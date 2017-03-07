@@ -103,7 +103,7 @@ void MoveMapFactory::add_chi_action(
 	move_map_action action,
 	residue_selector::ResidueSelectorCOP selector
 ) {
-  MMResAction res_action{ action, selector };
+	MMResAction res_action{ action, selector };
 	chi_actions_.push_back( res_action );
 }
 
@@ -398,23 +398,23 @@ void MoveMapFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	xsct.element_name( element_name() )
 		.complex_type_naming_func( & mmf_ct_namer )
 		.description( "A MoveMapFactory can be used to restrict conformational flexibility to a specific set of DOFs taking into account"
-			" the conformation of the input Pose. It will construct a MoveMap, (or edit an existing MoveMap), making a series of modifications"
-			" to it based on the instructions given. First it will make the highest-level modifications given by the attributes"
-			" 'bb', 'chi', 'nu', 'branches', and 'jumps'; it will make these modifications to 'true' (enable) or 'false' (disable) if"
-			" they are given in the Tag, but it will not make a modification if it is not given. (It is worth knowing that a default"
-			" MoveMap says 'nothing is free to move' but that many Movers will use the MoveMapFactory to edit an existing MoveMap they have"
-			" initialized with behaviors such as 'all backbones and sidechain dihedrals are free' so make sure to consult the documentation"
-			" for the MoveMapFactory consumer you intend to use.) After it makes the highest-level modifications, it makes intermediate-level"
-			" modifications specified by the sub-elements in the order they are provided. These are the Backbone, Chi, Nu, Branches, and Jumps"
-			" tags (but the Backbone tag only when the 'bb_tor_index' attribute is absent). For each of these tags, a ResidueSelector is used"
-			" to define a group of residues to operate on, and then those residues selected (i.e. whose values are marked 'true') will be operated on."
-			" The operation performed is specified by the 'enable' attribute of these sub-elements; if this attribute is not given, then"
-			" the operation will be to enable that DOF. Residues that are not selected by the ResidueSelector are not operated on; if your intention"
-			" is to disable flexibility for a set of residues, and these residues are already marked as flexible, it is not good enough to leave them"
-			" out of a selection that enables a different set of residues. You will have to explicitly select those residues and then perform a disabling"
-			" action on them. Finally, the lowest-level operations are performed. For now, this is the particular-backbone-dihedrals enable/disable"
-			" actions for Backbone tag (i.e. when the 'bb_tor_index' attribute is provided). These lowest level operations happen last, but within the set"
-			" of all lowest-level operations, they are performed in the order that they are provided; this is perhaps confusing." )
+		" the conformation of the input Pose. It will construct a MoveMap, (or edit an existing MoveMap), making a series of modifications"
+		" to it based on the instructions given. First it will make the highest-level modifications given by the attributes"
+		" 'bb', 'chi', 'nu', 'branches', and 'jumps'; it will make these modifications to 'true' (enable) or 'false' (disable) if"
+		" they are given in the Tag, but it will not make a modification if it is not given. (It is worth knowing that a default"
+		" MoveMap says 'nothing is free to move' but that many Movers will use the MoveMapFactory to edit an existing MoveMap they have"
+		" initialized with behaviors such as 'all backbones and sidechain dihedrals are free' so make sure to consult the documentation"
+		" for the MoveMapFactory consumer you intend to use.) After it makes the highest-level modifications, it makes intermediate-level"
+		" modifications specified by the sub-elements in the order they are provided. These are the Backbone, Chi, Nu, Branches, and Jumps"
+		" tags (but the Backbone tag only when the 'bb_tor_index' attribute is absent). For each of these tags, a ResidueSelector is used"
+		" to define a group of residues to operate on, and then those residues selected (i.e. whose values are marked 'true') will be operated on."
+		" The operation performed is specified by the 'enable' attribute of these sub-elements; if this attribute is not given, then"
+		" the operation will be to enable that DOF. Residues that are not selected by the ResidueSelector are not operated on; if your intention"
+		" is to disable flexibility for a set of residues, and these residues are already marked as flexible, it is not good enough to leave them"
+		" out of a selection that enables a different set of residues. You will have to explicitly select those residues and then perform a disabling"
+		" action on them. Finally, the lowest-level operations are performed. For now, this is the particular-backbone-dihedrals enable/disable"
+		" actions for Backbone tag (i.e. when the 'bb_tor_index' attribute is provided). These lowest level operations happen last, but within the set"
+		" of all lowest-level operations, they are performed in the order that they are provided; this is perhaps confusing." )
 		.add_optional_name_attribute()
 		.set_subelements_repeatable( subelements )
 		.add_attributes( mmfact_attributes )

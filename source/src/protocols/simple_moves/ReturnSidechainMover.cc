@@ -86,7 +86,7 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 			//ensure that there is no sequence change
 			if ( rsd_type.name3() != saved_rsd_type.name3() ) {
 				TR.Warning << "WARNING: ReturnSidechainMover: For residue " << i << " current residue of type " << rsd_type.name() << " (" << rsd_type.name3() << ") "
-						<< "does not match the stored residue type of " << saved_rsd_type.name() << " (" << saved_rsd_type.name3() << ") -- skipping sidechain recovery." << std::endl;
+					<< "does not match the stored residue type of " << saved_rsd_type.name() << " (" << saved_rsd_type.name3() << ") -- skipping sidechain recovery." << std::endl;
 				continue;
 			}
 

@@ -380,7 +380,7 @@ RNA_KinematicCloser::fill_chainTORS( pose::Pose const & pose ) {
 	using namespace numeric::kinematic_closure;
 	utility::fixedsizearray1< utility::fixedsizearray1< Real,3 >,3 > Q0;
 	utility::fixedsizearray1< Real,3 > R0;
-	
+
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
 		Vector atom_xyz( pose.xyz( atom_ids_[i] ) );
 		utility::fixedsizearray1< Real,3 > atom_xyzs;

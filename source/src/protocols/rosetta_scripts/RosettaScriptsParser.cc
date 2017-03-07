@@ -141,7 +141,7 @@ RosettaScriptsParser::read_in_and_recursively_replace_includes(
 
 	std::string::const_iterator copy_start( contents.begin() ); // Where to start the next copy from
 	std::string::const_iterator start_bracket( contents.begin() ); // The position of '<', or where to start the search from
-	while( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
+	while ( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
 		std::string::const_iterator end_bracket = start_bracket + 1; // Will be the postion of corresponding '>'
 		// Advance to next non-whitespace portion
 		while ( end_bracket != contents.cend() && std::isspace( *end_bracket ) ) { ++end_bracket; }

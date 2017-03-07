@@ -36,7 +36,7 @@ using numeric::Real;
 
 namespace numeric {
 namespace kinematic_closure {
-	
+
 void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsizearray1<Real,3>& calpha, utility::fixedsizearray1<Real,3>& salpha) {
 	Real d11, d12, d13, d22, d23, d33;
 	d11 =   vbond[1]*vbond[1];
@@ -53,7 +53,7 @@ void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsize
 	salpha[3]=std::sqrt(1-calpha[3]*calpha[3]);
 }
 
-	
+
 void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsizearray1<Real,4>& calpha, utility::fixedsizearray1<Real,4>& salpha) {
 	Real d11, d12, d13, d22, d23, d33;
 	d11 =   vbond[1]*vbond[1];
@@ -70,7 +70,7 @@ void triangle (const utility::fixedsizearray1<Real,3>& vbond, utility::fixedsize
 	salpha[3]=std::sqrt(1-calpha[3]*calpha[3]);
 }
 
-	
+
 void sincos (const utility::fixedsizearray1<Real,3>& theta,
 	const int flag,
 	utility::fixedsizearray1<Real, 3>& cosine,
@@ -114,7 +114,7 @@ void sincos (const utility::fixedsizearray1<Real,3>& theta,
 		}
 	}
 }
-	
+
 /*
 * triaxialCoefficients
 * --------------------
@@ -253,7 +253,7 @@ void frame(const utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 >& 
 
 	//  utility::vector1<Real> cross1 (3), cross3 (3), cross11 (3), cross12 (3), cross31 (3), cross32 (3);
 	utility::fixedsizearray1<Real,3> dR3R2;
- 	for ( int i=1; i<=3; i++ ) {
+	for ( int i=1; i<=3; i++ ) {
 		U[1][i]=R[2][i]-R[1][i];
 	}
 	norm1=std::sqrt(U[1][1]*U[1][1] + U[1][2]*U[1][2] + U[1][3]*U[1][3]);
@@ -292,7 +292,7 @@ Real torsion(const utility::fixedsizearray1<Real,3>& a, const utility::fixedsize
 	utility::fixedsizearray1<Real,3> r, sc1, sc2, sc3;
 	utility::fixedsizearray1<Real,3> cs12, cs31;
 	utility::fixedsizearray1<utility::fixedsizearray1<Real,3>,3 > s;
- 
+
 	if ( b==c ) {
 		chi=pidegs;
 	} else {
@@ -841,7 +841,7 @@ void bridgeObjects (const utility::vector1<utility::fixedsizearray1<Real,3> >& a
 		// populate the loop table with the cartesian solutions
 		loop[j].resize(N);
 		for ( int k=1; k<=l3b; k++ ) {
- 			for ( int kk=1; kk<=3; kk++ ) {
+			for ( int kk=1; kk<=3; kk++ ) {
 				loop[j][k][kk] = chain3[l3a+k][kk];
 			}
 		}
@@ -1101,7 +1101,7 @@ void test_chainXYZ() {
 	int n = 4;
 	utility::vector1<Real> b_len (n), b_ang(n), t_ang(n);
 	utility::fixedsizearray1<Real, 3> R0;
-	
+
 	// setup bond lengths, bond angles, and torsions
 	for ( int i=1; i<=n; i++ ) {
 		b_len[i]=1.52;
@@ -1237,7 +1237,7 @@ void test_chainParams() {
 
 void test_torsion() {
 	utility::fixedsizearray1<Real,3> a,b,c,d;
- 	a[1]=  0.000939232598461515;
+	a[1]=  0.000939232598461515;
 	a[2]= -0.000706370692062031;
 	a[3]= -0.000808351874906243;
 	b[1]= -0.481142776727140;
@@ -1256,7 +1256,7 @@ void test_torsion() {
 
 void test_bondangle() {
 	utility::fixedsizearray1<Real,3> a,b,c;
- 	a[1]=  0.000939232598461515;
+	a[1]=  0.000939232598461515;
 	a[2]= -0.000706370692062031;
 	a[3]= -0.000808351874906243;
 	b[1]= -0.481142776727140;
@@ -1272,7 +1272,7 @@ void test_bondangle() {
 
 void test_scpn() {
 	utility::fixedsizearray1<Real,3> a,b,c;
- 	a[1]=  0.000939232598461515;
+	a[1]=  0.000939232598461515;
 	a[2]= -0.000706370692062031;
 	a[3]= -0.000808351874906243;
 	b[1]= -0.481142776727140;
@@ -1288,7 +1288,7 @@ void test_scpn() {
 
 void test_eucDistance() {
 	utility::fixedsizearray1<Real,3> a,b;
- 	a[1]= -0.481142776727140;
+	a[1]= -0.481142776727140;
 	a[2]= -0.111725256657088;
 	a[3]=  1.436436144807435;
 	b[1]= -0.160000000000000;
@@ -1331,7 +1331,7 @@ void test_cross() {
 void test_triaxialCoefficients() {
 	// inputs
 	utility::fixedsizearray1<Real,3> vb, xi, eta, delta, theta;
- 	utility::vector1<int> order (3);
+	utility::vector1<int> order (3);
 
 	// outputs
 	utility::fixedsizearray1<Real,3> cal, sal;

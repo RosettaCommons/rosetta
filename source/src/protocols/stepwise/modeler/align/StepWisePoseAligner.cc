@@ -206,7 +206,7 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 	std::string const full_sequence_stripped = core::pose::rna::remove_bracketed( full_sequence );
 	std::string const & pose_sequence = pose.sequence();
-	
+
 	// local working copy, mutated in cases where nucleotides have been designed ('n')
 
 	//TR << "     Sequence " << pose.sequence() << std::endl;
@@ -320,8 +320,7 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 					pose.residue_type( n ).atom_name( q ),
 					n, res_list_in_reference[ n ],
 					pose, *mod_reference_pose_local_ );
-			}
-			else {
+			} else {
 				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
 					pose.residue_type( n ).atom_name( q ),
 					n, res_list_in_reference[ n ],
@@ -583,7 +582,7 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pos
 
 	return true;
 }
-	
+
 bool
 StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::AtomID> & atom_id_map,
 	std::string const & atom_name,
