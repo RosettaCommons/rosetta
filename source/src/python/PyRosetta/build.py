@@ -442,6 +442,8 @@ def create_package(rosetta_source_path, path):
 
     for d in 'demo test'.split(): distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/' + d, path + '/' + d, update=False)
 
+    distutils.dir_util.copy_tree(rosetta_source_path + '/scripts/PyRosetta/public', path + '/apps', update=False)
+
     distutils.dir_util.copy_tree(rosetta_source_path + '/../database', package_prefix + '/database', update=False)
     distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/package', package_prefix, update=False)
 

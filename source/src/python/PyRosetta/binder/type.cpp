@@ -165,7 +165,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/unordered_map.h>",   "<unordered_map>"),
 
 		//make_pair("<bits/hashtable_policy.h>", could be either unordered_map or unordered_set
-
+		make_pair("<bits/hashtable_policy.h>", "<unordered_map>"),
 	};
 
 	string name = decl->getQualifiedNameAsString();
