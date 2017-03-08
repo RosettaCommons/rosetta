@@ -24,7 +24,7 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 
 // Project Headers
-#include <basic/datacache/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>
@@ -38,11 +38,6 @@
 namespace protocols {
 namespace struct_fragment {
 
-typedef basic::Tracer                                      Tracer;
-typedef core::Real                                         Real;
-typedef core::pose::Pose                                   Pose;
-typedef protocols::frag_picker::FragmentPickerOP        FragmentPickerOP;
-
 class StructFragmentMover : public  protocols::moves::Mover {
 public:
 	/// @brief Empty Constructor
@@ -52,7 +47,7 @@ public:
 	~StructFragmentMover();
 
 	/// @brief Apply Mover
-	void apply( Pose & pose );
+	void apply( core::pose::Pose & pose );
 
 	// Functions necessary for RosettaScripts
 	/// @brief Create clone of this mover
@@ -68,9 +63,9 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+);
 
-	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
 	// getters
@@ -88,7 +83,7 @@ public:
 	core::Size get_n_frags() const { return structPicker_->n_frags_; };
 
 	/// @brief Get the confidence for phi and psi angles
-	Real get_loop_angle_conf() const { return loop_angle_conf_; };
+	core::Real get_loop_angle_conf() const { return loop_angle_conf_; };
 
 	/// @brief Get the size of small fragments
 	core::Size get_small_frag_size() const { return small_frag_size_; };
@@ -133,7 +128,7 @@ public:
 	void set_n_frags( core::Size n_frags ) { structPicker_->n_frags_ = n_frags; };
 
 	/// @brief Set the confidence for phi and psi angles
-	void set_loop_angle_conf( Real loop_angle_conf ) { loop_angle_conf_ = loop_angle_conf; };
+	void set_loop_angle_conf( core::Real loop_angle_conf ) { loop_angle_conf_ = loop_angle_conf; };
 
 	/// @brief Set the size of small fragments
 	void set_small_frag_size( core::Size small_frag_size ) { small_frag_size_ = small_frag_size; };
@@ -171,36 +166,33 @@ public:
 
 
 private:
-	FragmentPickerOP structPicker_;
-	Real loop_angle_conf_;            // confidence of phi and psi angles
-	core::Size small_frag_size_;      // size of small fragments
-	core::Size large_frag_size_;      // size of large fragments
-	std::string small_frag_file_;     // path to small fragment file
-	std::string large_frag_file_;     // path to large fragment file
+	protocols::frag_picker::FragmentPickerOP structPicker_;
+	core::Real loop_angle_conf_;			// confidence of phi and psi angles
+	core::Size small_frag_size_;			// size of small fragments
+	core::Size large_frag_size_;			// size of large fragments
+	std::string small_frag_file_;			// path to small fragment file
+	std::string large_frag_file_;			// path to large fragment file
 	bool output_frag_files_;
 	bool steal_small_frags_;
 	bool steal_large_frags_;
-	std::string frag_weight_file_;    // path to fragment weight file
-	std::string sequence_profile_;    // path to sequence profile
-	std::string vall_file_;           // path to vall file
+	bool changed_frags_;
+	std::string frag_weight_file_;		// path to fragment weight file
+	std::string sequence_profile_;		// path to sequence profile
+	std::string vall_file_;						// path to vall file
+	core::fragment::FragSetOP smallF_;
+	core::fragment::FragSetOP largeF_;
 
 
 	// default values
 
 	/// @brief Default value for the confidence of phi and psi angles
-	inline static Real default_value_for_loop_angle_conf() { return 0.8; };
+	inline static core::Real default_value_for_loop_angle_conf() { return 0.8; };
 
 	/// @brief Default value for the small fragment size
 	inline static core::Size default_value_for_small_frag_size() { return 3; };
 
 	/// @brief Default value for the large fragment size
 	inline static core::Size default_value_for_large_frag_size() { return 9; };
-
-	/// @brief Default path to the small fragment file
-	inline static std::string default_value_for_small_frag_file() { return std::string(); };
-
-	/// @brief Default path to the large fragment file
-	inline static std::string default_value_for_large_frag_file() { return std::string(); };
 
 	/// @brief Default value for outputting fragment files
 	inline static bool default_value_for_output_frag_files() { return false; };
@@ -211,14 +203,8 @@ private:
 	/// @brief Default value for stealing large fragments
 	inline static bool default_value_for_steal_large_frags() { return false; };
 
-	/// @brief Default path to the fragment weight file
-	inline static std::string default_value_for_frag_weight_file() { return std::string(); };
-
-	/// @brief Default path to the sequence profile
-	inline static std::string default_value_for_sequence_profile() { return std::string(); };
-
-	/// @brief Default path to the vall file
-	inline static std::string default_value_for_vall_file() { return std::string(); };
+	/// @brief Default value for empty file
+	inline static std::string default_value_for_empty_file() { return std::string(); };
 
 	/// @brief Default value for fragment candidates per position
 	inline static core::Size default_value_for_n_candidates() { return 1000; };
@@ -230,6 +216,8 @@ private:
 	inline static std::string default_value_for_prefix() { return "structFrag"; };
 
 
+	/// @brief evaluates which process to run
+	core::Size evaluate_job();
 	/// @brief Collect fragments for the specified input structure
 	utility::vector1< core::fragment::FragSetOP > get_fragments( core::pose::Pose const & pose );
 

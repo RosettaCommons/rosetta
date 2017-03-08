@@ -45,10 +45,12 @@ public:
 	virtual ~CstInfoMover();
 
 	void cst_file( std::string const & setting ) { cst_file_ = setting; }
+	void dump_cst_file( std::string const & setting ) { dump_cst_file_ = setting; }
 	void prefix( std::string const & setting ) { prefix_ = setting; }
 	void recursive( bool setting ) { recursive_ = setting; }
 
 	std::string const & cst_file() const { return cst_file_; }
+	std::string const & dump_cst_file() const { return dump_cst_file_; }
 	std::string const & prefix() const { return prefix_; }
 	bool recursive() const { return recursive_; }
 
@@ -104,6 +106,7 @@ public:
 private:
 
 	std::string cst_file_;
+	std::string dump_cst_file_;
 	std::string prefix_;
 	bool recursive_;
 
@@ -117,10 +120,3 @@ std::ostream &operator<< (std::ostream &os, CstInfoMover const &mover);
 
 
 #endif //protocols/simple_moves_CstInfoMover_hh
-
-
-
-
-
-
-

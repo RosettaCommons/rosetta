@@ -25,6 +25,7 @@
 #include <protocols/frag_picker/BestTotalScoreSelector.hh>
 #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
+#include <protocols/frag_picker/BoundedCollector.hh>
 
 // Project Headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -32,6 +33,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
+#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/idealize/IdealizeMover.hh>
@@ -39,6 +41,7 @@
 
 // Utility Headers
 #include <basic/database/open.hh>
+#include <basic/datacache/ConstDataMap.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -59,65 +62,92 @@ namespace cf = core::fragment;
 namespace cp = core::pose;
 namespace pfp = protocols::frag_picker;
 
-Tracer TR("protocols.struct_fragment.StructFragmentMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.struct_fragment.StructFragmentMover");
 
 StructFragmentMover::StructFragmentMover():
   structPicker_( new pfp::FragmentPicker() ),
   loop_angle_conf_( default_value_for_loop_angle_conf() ),  // default confidence for phi/psi angles instead of 1 (which would be correct because we know them from the acutal structure) to allow for more varied search results
   small_frag_size_( default_value_for_small_frag_size() ),
   large_frag_size_( default_value_for_large_frag_size() ),
-  small_frag_file_( default_value_for_small_frag_file() ),
-  large_frag_file_( default_value_for_large_frag_file() ),
+  small_frag_file_( default_value_for_empty_file() ),
+  large_frag_file_( default_value_for_empty_file() ),
   output_frag_files_( default_value_for_output_frag_files() ),
   steal_small_frags_( default_value_for_steal_small_frags() ),
   steal_large_frags_( default_value_for_steal_large_frags() ),
-  frag_weight_file_( default_value_for_frag_weight_file() ),
-  sequence_profile_( default_value_for_sequence_profile() ),
-  vall_file_( default_value_for_vall_file() )
-{structPicker_->n_candidates_ = default_value_for_n_candidates();
-structPicker_->n_frags_ = default_value_for_n_frags();
-structPicker_->prefix_ = default_value_for_prefix(); }
+  changed_frags_( false ),
+  frag_weight_file_( default_value_for_empty_file() ),
+  sequence_profile_( default_value_for_empty_file() ),
+  vall_file_( default_value_for_empty_file() )
+{
+  structPicker_->n_candidates_ = default_value_for_n_candidates();
+  structPicker_->n_frags_      = default_value_for_n_frags();
+  structPicker_->prefix_       = default_value_for_prefix();
+}
 
 StructFragmentMover::~StructFragmentMover()
 {}
 
+core::Size
+StructFragmentMover::evaluate_job() {
+  if (  not ( small_frag_file_.empty() || large_frag_file_.empty() ) ) { // We have defined fragment files (both!)
+    if ( utility::file::file_exists( small_frag_file_ ) && utility::file::file_exists( large_frag_file_ ) ) { // And they exist!
+      return 0; // STATUS 0: Load Fragments From File.
+    }
+    else if ( !vall_file_.empty() && utility::file::file_exists( vall_file_ ) ) { // If they don't exist we are making for them!
+      return 1; // STATUS 1: Create Fragments.
+    }
+    else { // We don't have it and cannot create it
+      if ( steal_small_frags_ && steal_large_frags_ ) { // We can steal if we want to steal all.
+        return 2; // STATUS 2: Only Steal Fragments.
+      }
+      else {
+        throw( utility::excn::EXCN_Msg_Exception( "With the provided data Fragments cannot be created, not readed." ) );
+      }
+    }
+  }
+  return 2;
+}
 
-void StructFragmentMover::apply( Pose & pose ) {
+void StructFragmentMover::apply( cp::Pose & pose ) {
   if ( not pose.empty() ) {
 
-    utility::vector1< cf::FragSetOP > frag_result;
+    TR.Trace << TR.Green << "small fragments pointer address " << smallF_ << " size: " << smallF_->size() << TR.Reset << std::endl;
+    TR.Trace << TR.Green << "large fragments pointer address " << largeF_ << " size: " << largeF_->size() << TR.Reset << std::endl;
 
-    if (  not ( small_frag_file_.empty() || large_frag_file_.empty() ) ) {
-      TR << "Small fragment file " << small_frag_file_ << " and large fragment file " << large_frag_file_ << " are provided." << std::endl;
-      TR << "Reading fragments from provided fragment files." << std::endl;
-      frag_result = read_frag_files( small_frag_file_, large_frag_file_ );
+    if ( smallF_->size() == 0 || largeF_->size() == 0 ) { //  With this we make sure that this is only runned once in the RosettaScripts
+      utility::vector1< cf::FragSetOP > frag_result;
+      core::Size status = evaluate_job();
+
+      if (  status == 0 ) {
+        TR << "Small fragment file " << small_frag_file_ << " and large fragment file " << large_frag_file_ << " are provided." << std::endl;
+        TR << "Reading fragments from provided fragment files." << std::endl;
+        frag_result = read_frag_files( small_frag_file_, large_frag_file_ );
+      }
+      else if ( status == 1 ) {
+        TR << "[Calculating Fragments]" << std::endl;
+        frag_result = get_fragments( pose );
+      }
+
+      frag_result = steal_fragments( pose, frag_result);
+
+      for ( core::Size i = 1; i <= frag_result.size(); ++i ) {
+        if ( frag_result[i]->min_pos() != 1 ) {
+          frag_result[i]->shift_by( 1 - frag_result[i]->min_pos() );
+        }
+      }
+
+      if ( output_frag_files_ && changed_frags_ ) {
+        TR.Debug << "Printing fragment files." << std::endl;
+        cf::FragmentIO().write_data( structPicker_->prefix_ + "." + utility::to_string(structPicker_->n_frags_) + "." + utility::to_string(small_frag_size_) + "mers", *frag_result[1] );
+        cf::FragmentIO().write_data( structPicker_->prefix_ + "." + utility::to_string(structPicker_->n_frags_) + "." + utility::to_string(large_frag_size_) + "mers", *frag_result[2] );
+      }
+
+      smallF_->add( *frag_result[1] );
+      largeF_->add( *frag_result[2] );
     }
-    else {
-      TR << "[Calculating Fragments]" << std::endl;
-      frag_result = get_fragments( pose );
-    }
 
-    frag_result = steal_fragments( pose, frag_result);
-
-    if ( output_frag_files_ ) {
-      TR.Debug << "Printing fragment files." << std::endl;
-      cf::FragmentIO().write_data( structPicker_->prefix_ + "." + utility::to_string(structPicker_->n_frags_) + "." + utility::to_string(small_frag_size_) + "mers", *frag_result[1] );
-      cf::FragmentIO().write_data( structPicker_->prefix_ + "." + utility::to_string(structPicker_->n_frags_) + "." + utility::to_string(large_frag_size_) + "mers", *frag_result[2] );
-    }
-
-    TR.Debug << "Storing small fragments in pose's cache." << std::endl;
-    pose.set_const_data( get_name(), "small", cf::ConstantLengthFragSet( *frag_result[1]) );
-    TR.Debug << "Storing large fragments in pose's cache." << std::endl;
-    pose.set_const_data( get_name(), "large", cf::ConstantLengthFragSet( *frag_result[2]) );
-
-
-    // TR << std::endl << std::endl << "Query Seq: " << structPicker_->get_query_seq_string() << std::endl
-    // << "Query SS: " << structPicker_->get_query_ss_string("original") << std::endl
-    // << "Query SA: " << structPicker_->get_query_sa_prediction() << std::endl
-    // << "Query Phi: " << structPicker_->get_query_phi_prediction() << std::endl
-    // << "Query Psi: " << structPicker_->get_query_psi_prediction() << std::endl
-    // << "Query Conf: " << structPicker_->get_query_phi_prediction_conf() << std::endl;
-
+    TR.Trace << TR.Green << "small fragments pointer address " << smallF_ << " size: " << smallF_->size() << TR.Reset << std::endl;
+    TR.Trace << TR.Green << "large fragments pointer address " << largeF_ << " size: " << largeF_->size() << TR.Reset << std::endl;
   }
   else {
     utility::excn::EXCN_Msg_Exception("Pose was empty.");
@@ -174,6 +204,7 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::get_fragments( cp::Pose c
     result.push_back( mfrag );
     result.push_back( Mfrag );
 
+    changed_frags_ = true;
     return result;
 } // end get_fragments
 
@@ -189,6 +220,7 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::steal_fragments( cp::Pose
       if ( steal_small_frags_ ) fsets[1] = steal_fragments_by_size( ideal_pose, fsets[1], small_frag_size_);
       if ( steal_large_frags_ ) fsets[2] = steal_fragments_by_size( ideal_pose, fsets[2], large_frag_size_);
   }
+  changed_frags_ = true;
   return fsets;
 }
 
@@ -234,15 +266,21 @@ pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, 
      utility::vector1<core::Real> angle_conf( num_res, loop_angle_conf_ );
 
      // set all values needed for fragment picking
+     core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
      if ( !sequence_profile_.empty() ) {
-     	 core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
-       q_prof->read_from_file( sequence_profile_ );
-       q_prof->convert_profile_to_probs(1.0);
-       structPicker_->set_query_seq(q_prof);
+       if ( utility::file::file_exists( sequence_profile_ ) ) {
+         q_prof->read_from_file( sequence_profile_ );
+       }
+       else {
+         throw( utility::excn::EXCN_Msg_Exception( "The provided sequence profile file could not be found!" ) );
+       }
      }
      else {
-       structPicker_->set_query_seq( sequence );
+       q_prof->generate_from_sequence( core::sequence::Sequence( sequence, "sequence" ) );
      }
+    //  q_prof->convert_profile_to_probs(1.0);
+     structPicker_->set_query_profile(q_prof);
+
      structPicker_->add_query_ss( structure, "native" );
      structPicker_->set_query_sa( res_sasa );
      structPicker_->set_query_psi( psi_angles );
@@ -260,7 +298,8 @@ pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, 
       TR << "SecondaryIdentity score added" << std::endl;
       std::string blosum_file = basic::database::full_name( "sequence/substitution_matrix/BLOSUM62" );
       fscore->create_scoring_method( "ProfileScoreSubMatrix", 200, 1.0, 0.0, false, structPicker_, blosum_file );
-      TR << "ProfileScoreSubMatrix score added" << std::endl;
+      // fscore->create_scoring_method( "ProfileScoreL1", 200, 1.0, 0.0, false, structPicker_, "sequence" );
+      // TR << "ProfileScoreSubMatrix score added" << std::endl;
     }
     else {
       if ( utility::file::file_exists( frag_weight_file_ ) ) {
@@ -271,10 +310,7 @@ pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, 
       }
     }
 
-    pfp::FragmentSelectingRuleOP selector( new pfp::BestTotalScoreSelector(
-                                            structPicker_->n_frags_,
-                                            structPicker_->get_score_manager()
-                                           ) );
+    pfp::FragmentSelectingRuleOP selector( new pfp::BestTotalScoreSelector( structPicker_->n_frags_, fscore ) );
     structPicker_->selector_ = selector;
     return structPicker_;
 } // end make_fragment_picker
@@ -381,71 +417,52 @@ StructFragmentMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new StructFragmentMover );
 }
 
-void StructFragmentMover::parse_my_tag(
+void
+StructFragmentMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 
-	small_frag_size_ = tag->getOption< core::Size >( "small_frag_size", default_value_for_small_frag_size() );
+  // -- Attributes with default values -- //
+  small_frag_size_             = tag->getOption< core::Size >( "small_frag_size", default_value_for_small_frag_size() );
+  large_frag_size_             = tag->getOption< core::Size >( "large_frag_size", default_value_for_large_frag_size() );
+  output_frag_files_           = tag->getOption< bool >( "output_frag_files", default_value_for_output_frag_files() );
+  steal_small_frags_           = tag->getOption< bool >( "steal_small_frags", default_value_for_steal_small_frags() );
+  steal_large_frags_           = tag->getOption< bool >( "steal_large_frags", default_value_for_steal_large_frags() );
+  structPicker_->n_candidates_ = tag->getOption< core::Size >( "n_candidates", default_value_for_n_candidates() );
+  structPicker_->n_frags_      = tag->getOption< core::Size >( "n_frags", default_value_for_n_frags() );
+  structPicker_->prefix_       = tag->getOption< std::string >( "prefix", default_value_for_prefix() );
 
-  large_frag_size_ = tag->getOption< core::Size >( "large_frag_size", default_value_for_large_frag_size() );
+  // -- Linked Attributes (depend of one another) -- //
+  small_frag_file_ = tag->getOption< std::string >( "small_frag_file", default_value_for_empty_file() );
+  large_frag_file_ = tag->getOption< std::string >( "large_frag_file", default_value_for_empty_file() );
+  vall_file_       = tag->getOption< std::string >( "vall_file", default_value_for_empty_file() );
 
-  small_frag_file_ = tag->getOption< std::string >( "small_frag_file", default_value_for_small_frag_file() );
-  if ( !small_frag_file_.empty() && !utility::file::file_exists( small_frag_file_ ) ) {
-    throw( utility::excn::EXCN_RosettaScriptsOption( "The provided small fragment file could not be found!" ) );
-  }
-
-  large_frag_file_ = tag->getOption< std::string >( "large_frag_file", default_value_for_large_frag_file() );
-  if ( !large_frag_file_.empty() && !utility::file::file_exists( large_frag_file_ ) ) {
-    throw( utility::excn::EXCN_RosettaScriptsOption( "The provided large fragment file could not be found!" ) );
-  }
-
+  // Link1: small_frag_file & large_frag_file need to be either both specified or none.
   if ( ( small_frag_file_.empty() && not large_frag_file_.empty() ) || ( not small_frag_file_.empty() && large_frag_file_.empty() ) ) {
     throw( utility::excn::EXCN_RosettaScriptsOption( "Please make sure to either provide the small and large fragment files or none of them!" ) );
   }
-
-  output_frag_files_ = tag->getOption< bool >( "output_frag_files", default_value_for_output_frag_files() );
-
-  steal_small_frags_ = tag->getOption< bool >( "steal_small_frags", default_value_for_steal_small_frags() );
-
-  steal_large_frags_ = tag->getOption< bool >( "steal_large_frags", default_value_for_steal_large_frags() );
-
-  frag_weight_file_ = tag->getOption< std::string >( "frag_weight_file", default_value_for_frag_weight_file() );
-  if ( !frag_weight_file_.empty() && !utility::file::file_exists( frag_weight_file_ ) ) {
-    throw( utility::excn::EXCN_RosettaScriptsOption( "The provided fragment weight file could not be found!" ) );
+  // Link2: vall_file is only optional if small_frag_file & large_frag_file are specified, is mandatory otherwise
+  if ( small_frag_file_.empty() && vall_file_.empty() ) {
+    throw( utility::excn::EXCN_RosettaScriptsOption( "To create fragments a vall file needs to be provided: vall_file option" ) );
   }
 
-  sequence_profile_ = tag->getOption< std::string >( "sequence_profile", default_value_for_sequence_profile() );
-  if ( !sequence_profile_.empty() && !utility::file::file_exists( sequence_profile_ ) ) {
-    throw( utility::excn::EXCN_RosettaScriptsOption( "The provided sequence profile file could not be found!" ) );
+  // -- Optional Attributes -- //
+  frag_weight_file_ = tag->getOption< std::string >( "frag_weight_file", default_value_for_empty_file() );
+  sequence_profile_ = tag->getOption< std::string >( "sequence_profile", default_value_for_empty_file() );
+
+  smallF_ = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet );
+  largeF_ = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet );
+  if ( !data.has( "FragSet", "small" ) && !data.has( "FragSet", "large" )) {
+    data.add( "FragSet", "small", smallF_ );
+    data.add( "FragSet", "large", largeF_ );
+    TR.Trace << TR.Green << "small fragments pointer address " << smallF_ << TR.Reset << std::endl;
+    TR.Trace << TR.Green << "large fragments pointer address " << largeF_ << TR.Reset << std::endl;
   }
 
-  if ( tag->hasOption( "vall_file" ) ) {
-    vall_file_ = tag->getOption< std::string >( "vall_file", default_value_for_vall_file() );
-    if ( !utility::file::file_exists( vall_file_ ) ) {
-      throw( utility::excn::EXCN_RosettaScriptsOption( "The provided vall file could not be found!" ) );
-    }
-  }
-  else {
-    if ( small_frag_file_.empty() && large_frag_file_.empty() ) {
-      throw( utility::excn::EXCN_RosettaScriptsOption( "A vall file needs to be provided: vall_file option" ) );
-    }
-  }
-
-  if ( tag->hasOption( "n_candidates" ) ) {
-    structPicker_->n_candidates_ = tag->getOption< core::Size >( "n_candidates", default_value_for_n_candidates() );
-  }
-
-  if ( tag->hasOption( "n_frags" ) ) {
-    structPicker_->n_frags_ = tag->getOption< core::Size >( "n_frags", default_value_for_n_frags() );
-  }
-
-  if ( tag->hasOption( "prefix" ) ) {
-    structPicker_->prefix_ = tag->getOption< std::string >( "prefix", default_value_for_prefix() );
-  }
 }
 
 void StructFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
@@ -453,14 +470,14 @@ void StructFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "small_frag_size", xsct_non_negative_integer, "Set the size of the small fragments", utility::to_string( default_value_for_small_frag_size() ) )
           + XMLSchemaAttribute::attribute_w_default( "large_frag_size", xsct_non_negative_integer, "Set the size of the large fragments", utility::to_string( default_value_for_large_frag_size() ) )
-          + XMLSchemaAttribute::attribute_w_default( "small_frag_file", xs_string, "Path to input small fragment file", default_value_for_small_frag_file() )
-          + XMLSchemaAttribute::attribute_w_default( "large_frag_file", xs_string, "Path to input large fragment file", default_value_for_large_frag_file() )
+          + XMLSchemaAttribute( "small_frag_file", xs_string, "Path to input small fragment file (requires large_frag_file too)" )
+          + XMLSchemaAttribute( "large_frag_file", xs_string, "Path to input large fragment file (requires small_frag_file too)" )
           + XMLSchemaAttribute::attribute_w_default( "output_frag_files", xsct_rosetta_bool, "Write fragment files", utility::to_string( default_value_for_output_frag_files() ) )
           + XMLSchemaAttribute::attribute_w_default( "steal_small_frags", xsct_rosetta_bool, "Steal small fragments", utility::to_string( default_value_for_steal_small_frags() ) )
           + XMLSchemaAttribute::attribute_w_default( "steal_large_frags", xsct_rosetta_bool, "Steal large fragments", utility::to_string( default_value_for_steal_large_frags() ) )
-          + XMLSchemaAttribute::attribute_w_default( "frag_weight_file", xs_string, "Path to input weight file", default_value_for_frag_weight_file() )
-          + XMLSchemaAttribute::attribute_w_default( "sequence_profile", xs_string, "Path to input sequence profile", default_value_for_sequence_profile() )
-          + XMLSchemaAttribute::required_attribute( "vall_file", xs_string, "Path to vall file")
+          + XMLSchemaAttribute( "frag_weight_file", xs_string, "Path to input weight file" )
+          + XMLSchemaAttribute( "sequence_profile", xs_string, "Path to input sequence profile" )
+          + XMLSchemaAttribute( "vall_file", xs_string, "Path to vall file (required when no fragment files are provided)" )
           + XMLSchemaAttribute::attribute_w_default( "n_candidates", xsct_non_negative_integer, "Set the number of candidates", utility::to_string( default_value_for_n_candidates() ) )
           + XMLSchemaAttribute::attribute_w_default( "n_frags", xsct_non_negative_integer, "Set the number of fragments", utility::to_string( default_value_for_n_frags() ) )
           + XMLSchemaAttribute::attribute_w_default( "prefix", xs_string, "Prefix of output files", default_value_for_prefix() );

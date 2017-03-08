@@ -60,6 +60,13 @@ ResidueRange::operator<( ResidueRange const & other ) const
 	return ( start_ < other.start() );
 }
 
+/// @brief String representation of the range
+std::string
+ResidueRange::to_string() const
+{
+	return std::to_string( start_ ) + '-' + std::to_string( stop_ );
+}
+
 /// @brief Constructs an empty vector of ResidueRanges
 ResidueRanges::ResidueRanges():
 	utility::vector1< ResidueRange >()
@@ -106,4 +113,3 @@ ResidueRanges::from_subset( ResidueSubset const & subset )
 } //namespace residue_selector
 } //namespace select
 } //namespace core
-

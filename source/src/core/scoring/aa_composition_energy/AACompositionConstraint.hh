@@ -27,6 +27,7 @@
 
 #include <core/scoring/ScoreType.hh>
 #include <core/id/AtomID.hh>
+#include <core/pose/Pose.hh>
 
 #include <string>
 
@@ -82,6 +83,9 @@ public: //Functions that actually do stuff:
 	/// @details Allows external code to initialize a constriant object without having the
 	/// object read directly from disk.
 	void initialize_from_file_contents( std::string const &filecontents );
+
+	/// @brief Print info on the constraint
+	void show_def (std::ostream &TO, pose::Pose const &pose) const;
 
 private:
 	// Member variables

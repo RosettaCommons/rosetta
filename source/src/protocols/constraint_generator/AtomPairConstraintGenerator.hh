@@ -71,10 +71,19 @@ public:
 	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
 
 	void
+	set_secondary_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
+
+	void
 	set_sd( core::Real const sd );
 
 	void
 	set_ca_only( bool const ca_only );
+
+	void
+	set_use_harmonic_function( bool const use_harmonic );
+
+	void
+	set_unweighted_function( bool const unweighted );
 
 	void
 	set_max_distance( core::Real const max_dist );
@@ -98,13 +107,23 @@ private:
 	core::scoring::constraints::ConstraintCOPs
 	generate_atom_pair_constraints(
 		core::pose::Pose const & pose,
-		core::select::residue_selector::ResidueSubset const & subset ) const;
+		core::select::residue_selector::ResidueSubset const & subset,
+	 	core::select::residue_selector::ResidueSubset const & subset2 ) const;
 
 	core::scoring::constraints::ConstraintCOPs
 	generate_atom_pair_constraints(
 		core::pose::Pose const & pose,
 		core::pose::Pose const & ref_pose,
-		core::select::residue_selector::ResidueSubset const & subset ) const;
+		core::select::residue_selector::ResidueSubset const & subset,
+	 	core::select::residue_selector::ResidueSubset const & subset2 ) const;
+
+	core::scoring::constraints::ConstraintCOPs
+	generate_atom_pair_constraints(
+		core::pose::Pose const & pose,
+		core::pose::Pose const & ref_pose,
+		core::select::residue_selector::ResidueSubset const & subset,
+		core::select::residue_selector::ResidueSubset const & subset2,
+		core::id::SequenceMapping const & seqmap ) const;
 
 	core::scoring::constraints::ConstraintCOPs
 	generate_atom_pair_constraints(
@@ -134,12 +153,15 @@ private:
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP secondary_selector_;
 	core::pose::PoseCOP reference_pose_;
 
 	core::Real sd_;
 	core::Real weight_;
 
 	bool ca_only_;
+	bool use_harmonic_;
+	bool unweighted_;
 
 	core::Real max_distance_;
 	core::Size min_seq_sep_;
@@ -149,4 +171,3 @@ private:
 } //constraint_generator
 
 #endif //INCLUDED_protocols_constraint_generator_AtomPairConstraintGenerator_hh
-

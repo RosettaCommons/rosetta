@@ -23,3 +23,4 @@
 #include <protocols/denovo_design/constraints/FileConstraintGeneratorCreator.hh>
 
 #include <protocols/fldsgn/SheetConstraintGeneratorCreator.hh>
+#include <protocols/fold_from_loops/SegmentedAtomPairConstraintGeneratorCreator.hh>

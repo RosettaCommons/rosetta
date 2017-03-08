@@ -65,6 +65,10 @@ public:
 
 	/// @brief sets number of residues around the given SS elements to select (default=0)
 	void set_overlap( core::Size const overlapval );
+	/// @brief sets the minimal number of consecutive H residues to keep the secondary structure assignation (default=1)
+	void set_minH( core::Size const minHval );
+	/// @brief sets the minimal number of consecutive E residues to keep the secondary structure assignation (default=1)
+	void set_minE( core::Size const minEval );
 	/// @brief sets ss characters to select -- must be set prior to apply()
 	void set_selected_ss( std::string const & selected );
 	/// @brief if true, one-residue terminal "loops" will be included (default=false)
@@ -94,6 +98,10 @@ private:
 	std::string
 	get_secstruct( core::pose::Pose const & pose ) const;
 
+	/// @brief fixes the secondary structure according to the expected minimal length of each secondary structure.
+	/// @param[in] ss string with the secondary structure definition
+	void fix_secstruct_definition( std::string ss ) const;
+
 	void add_overlap(
 		ResidueSubset & matching_ss,
 		pose::Pose const & pose,
@@ -104,6 +112,8 @@ private:
 private:
 	std::string pose_secstruct_;
 	core::Size overlap_;
+	core::Size minH_;
+	core::Size minE_;
 	bool include_terminal_loops_;
 	bool use_dssp_;
 	std::set< char > selected_ss_;

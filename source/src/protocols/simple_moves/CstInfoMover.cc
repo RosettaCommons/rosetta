@@ -39,6 +39,8 @@ namespace simple_moves {
 
 CstInfoMover::CstInfoMover():
 	protocols::moves::Mover( "CstInfoMover" ),
+	cst_file_( std::string() ),
+	dump_cst_file_( std::string() ),
 	prefix_( "CST" ),
 	recursive_( false )
 {}
@@ -48,6 +50,7 @@ CstInfoMover::~CstInfoMover(){}
 CstInfoMover::CstInfoMover( CstInfoMover const & src ):
 	protocols::moves::Mover( src ),
 	cst_file_( src.cst_file_ ),
+	dump_cst_file_( src.dump_cst_file_ ),
 	prefix_( src.prefix_ ),
 	recursive_( src.recursive_ )
 {}
@@ -60,7 +63,8 @@ CstInfoMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-	cst_file( tag->getOption< std::string >( "cst_file", "" ) );
+	cst_file( tag->getOption< std::string >( "cst_file", std::string() ) );
+	dump_cst_file( tag->getOption< std::string >( "dump_cst_file", std::string() ) );
 	prefix( tag->getOption< std::string >( "prefix", "CST" ) );
 	recursive( tag->getOption<bool>( "recursive", false ) );
 }
@@ -113,6 +117,12 @@ CstInfoMover::apply( core::pose::Pose& pose ){
 		all_constraints = get_constraints_from_pose( pose );
 	} else {
 		all_constraints = get_constraints_from_file( cst_file_, pose );
+	}
+
+	if ( !dump_cst_file_.empty() ){
+		ConstraintSetOP cst_set( new ConstraintSet );
+		cst_set->add_constraints( all_constraints );
+		ConstraintIO::get_instance()->write_constraints( dump_cst_file_, *cst_set, pose );
 	}
 
 	TR << "Read " << all_constraints.size() << " constraints. " << std::endl;
@@ -241,6 +251,11 @@ void CstInfoMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"(If a constraint file is used, the order of the constraints will be the "
 		"same as the order of the constraints in the constraint file.)" )
 		+ XMLSchemaAttribute::attribute_w_default(
+		"dump_cst_file", xs_string,
+		"File name to WRITE the constraints into. Constraints are only printed if a file "
+		" name is provided",
+		std::string() )
+		+ XMLSchemaAttribute::attribute_w_default(
 		"prefix", xs_string,
 		"What prefix to give the values. Important if you have more than one CstInfoMover "
 		"(or more than one application), as later values with the same prefix "
@@ -274,5 +289,3 @@ void CstInfoMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 } //protocols
 } //simple_moves
-
-

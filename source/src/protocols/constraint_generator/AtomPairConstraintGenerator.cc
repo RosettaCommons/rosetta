@@ -24,7 +24,9 @@
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/SOGFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers
@@ -33,6 +35,8 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator" );
+
+#include <algorithm>
 
 namespace protocols {
 namespace constraint_generator {
@@ -56,9 +60,14 @@ AtomPairConstraintGenerator::AtomPairConstraintGenerator():
 	sd_( 0.5 ),
 	weight_( 1.0 ),
 	ca_only_( true ),
+	use_harmonic_( false ),
+	unweighted_( false ),
 	max_distance_( 12.0 ),
 	min_seq_sep_( 8 )
 {
+	core::select::residue_selector::ResidueSelectorCOP true_selector( new core::select::residue_selector::TrueResidueSelector );
+	core::select::residue_selector::NotResidueSelector false_selector( true_selector );
+	set_secondary_residue_selector( false_selector );
 }
 
 AtomPairConstraintGenerator::~AtomPairConstraintGenerator() = default;
@@ -83,11 +92,16 @@ AtomPairConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) set_residue_selector( *selector );
 
+	std::string const selector_name = tag->getOption< std::string >( "secondary_selector", "" );
+	if ( !selector_name.empty() ) secondary_selector_ = core::select::residue_selector::get_residue_selector( selector_name, data );
+
 	set_sd( tag->getOption< core::Real >( "sd", sd_ ) );
 	set_weight( tag->getOption< core::Real >( "weight", weight_ ) );
 	set_ca_only( tag->getOption< bool >( "ca_only", ca_only_ ) );
 	set_max_distance( tag->getOption< core::Real >( "max_distance", max_distance_ ) );
 	set_min_seq_sep( tag->getOption< core::Size >( "min_seq_sep", min_seq_sep_ ) );
+	set_use_harmonic_function( tag->getOption< bool >( "use_harmonic", use_harmonic_ ) );
+	set_unweighted_function( tag->getOption< bool >( "unweighted", unweighted_ ) );
 
 	if ( !selector_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "AtomPairConstraintGenerator requires a residue selector, but one is not set.\n" );
@@ -99,13 +113,20 @@ AtomPairConstraintGenerator::apply( core::pose::Pose const & pose ) const
 {
 	debug_assert( selector_ );
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
-	return generate_atom_pair_constraints( pose, subset );
+	core::select::residue_selector::ResidueSubset const secondary_subset = secondary_selector_->apply( pose );
+	return generate_atom_pair_constraints( pose, subset, secondary_subset );
 }
 
 void
 AtomPairConstraintGenerator::set_residue_selector( core::select::residue_selector::ResidueSelector const & selector )
 {
 	selector_ = selector.clone();
+}
+
+void
+AtomPairConstraintGenerator::set_secondary_residue_selector( core::select::residue_selector::ResidueSelector const & selector )
+{
+	secondary_selector_ = selector.clone();
 }
 
 void
@@ -118,6 +139,18 @@ void
 AtomPairConstraintGenerator::set_ca_only( bool const ca_only )
 {
 	ca_only_ = ca_only;
+}
+
+void
+AtomPairConstraintGenerator::set_use_harmonic_function( bool const use_harmonic )
+{
+	use_harmonic_ = use_harmonic;
+}
+
+void
+AtomPairConstraintGenerator::set_unweighted_function( bool const unweighted )
+{
+	unweighted_ = unweighted;
 }
 
 void
@@ -147,12 +180,13 @@ AtomPairConstraintGenerator::set_reference_pose( core::pose::PoseCOP ref_pose )
 core::scoring::constraints::ConstraintCOPs
 AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::pose::Pose const & pose,
-	core::select::residue_selector::ResidueSubset const & subset ) const
+	core::select::residue_selector::ResidueSubset const & subset,
+	core::select::residue_selector::ResidueSubset const & subset2 ) const
 {
 	if ( reference_pose_ ) {
-		return generate_atom_pair_constraints( pose, *reference_pose_, subset );
+		return generate_atom_pair_constraints( pose, *reference_pose_, subset, subset2 );
 	} else {
-		return generate_atom_pair_constraints( pose, pose, subset );
+		return generate_atom_pair_constraints( pose, pose, subset, subset2 );
 	}
 }
 
@@ -160,12 +194,52 @@ core::scoring::constraints::ConstraintCOPs
 AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::pose::Pose const & pose,
 	core::pose::Pose const & ref_pose,
-	core::select::residue_selector::ResidueSubset const & subset ) const
+	core::select::residue_selector::ResidueSubset const & subset,
+	core::select::residue_selector::ResidueSubset const & subset2 ) const
 {
 	core::id::SequenceMapping const seqmap = create_sequence_mapping( pose, ref_pose );
+	if ( std::any_of( std::begin( subset2 ), std::end( subset2 ), []( bool i ) { return i; } ) )
+		return generate_atom_pair_constraints( pose, ref_pose, subset, subset2, seqmap );
 	return generate_atom_pair_constraints( pose, ref_pose, subset, seqmap );
 }
 
+core::scoring::constraints::ConstraintCOPs
+AtomPairConstraintGenerator::generate_atom_pair_constraints(
+	core::pose::Pose const & pose,
+	core::pose::Pose const & ref_pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	core::select::residue_selector::ResidueSubset const & subset2,
+	core::id::SequenceMapping const & seqmap ) const
+{
+	core::scoring::constraints::ConstraintCOPs csts;
+
+	core::Size const nres = compute_nres_in_asymmetric_unit( pose );
+	for ( Size ires=1; ires<=nres; ++ires ) {
+		if ( !subset[ ires ] ) continue;
+		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
+		core::Size const ref_ires = seqmap[ ires ];
+		if ( ref_ires == 0 ) {
+			TR.Debug << "Residue " << ires << " not found in reference pose, skipping" << std::endl;
+			continue;
+		}
+		MappedAtoms const iatoms = atoms_to_constrain( pose.residue( ires ), ref_pose.residue( ref_ires ) );
+
+		for ( Size jres=1; jres<=pose.size(); ++jres ) {
+			if ( !subset2[ jres ] ) continue;
+			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
+			core::Size const ref_jres = seqmap[ jres ];
+			if ( ref_jres == 0 ) {
+				TR.Debug << "Residue " << jres << " not found in reference pose, skipping" << std::endl;
+				continue;
+			}
+
+			MappedAtoms const jatoms = atoms_to_constrain( pose.residue( jres ), ref_pose.residue( ref_jres ) );
+			add_constraints( csts, ires, jres, ref_pose.residue( ref_ires ), ref_pose.residue( ref_jres ), iatoms, jatoms );
+		} // jres loop
+	} // ires loop
+	return csts;
+
+}
 core::scoring::constraints::ConstraintCOPs
 AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::pose::Pose const & pose,
@@ -219,10 +293,24 @@ AtomPairConstraintGenerator::add_constraints(
 
 			core::id::AtomID const pose_atom1( iatom.pose_atom, pose_resid1 );
 			core::id::AtomID const pose_atom2( jatom.pose_atom, pose_resid2 );
-			core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, sd_ ) );
-			core::scoring::func::FuncOP weighted_func = scalar_weighted( sog_func, weight_ );
-			core::scoring::constraints::ConstraintCOP newcst(
-				new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, weighted_func ) );
+
+			core::scoring::func::FuncOP pair_func;
+			if ( !use_harmonic_ ) {  // This is the default behaviour
+				pair_func = core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, sd_ ) );
+			}
+			else {
+				pair_func = core::scoring::func::FuncOP (new core::scoring::func::HarmonicFunc( dist, sd_ ) );
+			}
+
+			core::scoring::constraints::ConstraintCOP newcst;
+			if ( !unweighted_ ) {  // This is the default behaviour
+				core::scoring::func::FuncOP weighted_func = scalar_weighted( pair_func, weight_ );
+				newcst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, weighted_func ) );
+			}
+			else {
+				newcst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, pair_func ) );
+			}
+
 			csts.push_back( newcst );
 			TR.Debug << "atom_pair_constraint generated for residue " << pose_atom1 << " and " << pose_atom2 << ", distance=" << dist << " with weight " << weight_ << std::endl;
 		}
@@ -255,10 +343,14 @@ AtomPairConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute( "sd", xsct_real, "Standard deviation for distance constraint" )
 		+ XMLSchemaAttribute( "weight", xsct_real, "Weight of distance constraint" )
 		+ XMLSchemaAttribute( "ca_only", xsct_rosetta_bool, "Only make constraints between alpha carbons" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_harmonic", xsct_rosetta_bool, "If true, use harmonic function instead of SOG function", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "unweighted", xsct_rosetta_bool, "If true, SCALARWEIGHTEDFUNC is not added to the constraint definition", "false" )
 		+ XMLSchemaAttribute( "max_distance", xsct_real, "Do not add constraints if atoms are farther apart than this" )
 		+ XMLSchemaAttribute( "min_seq_sep", xsct_non_negative_integer, "Minimum sequence separation between constrained residues" );
 
-	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "residue_selector", "Selector specifying residues to be constrained" );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "Selector specifying residues to be constrained. When not provided, all residues are selected" );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "secondary_selector", "With a secondary selector, constraints are generated between the residues of primary selector vs. "
+																																																				"secondary selector. min_seq_seq does not apply here, but max_distance does." );
 	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
 		xsd,
 		class_name(),
@@ -293,4 +385,3 @@ AtomPairConstraintGenerator::atoms_to_constrain(
 
 } //protocols
 } //constraint_generator
-

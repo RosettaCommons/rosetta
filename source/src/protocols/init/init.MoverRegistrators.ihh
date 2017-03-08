@@ -181,6 +181,8 @@ static MoverRegistrator< flexpep_docking::FlexPepDockingProtocolCreator > reg_Fl
 static MoverRegistrator< flxbb::FlxbbDesignCreator > reg_FlxbbDesignCreator;
 static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreator;
 
+static MoverRegistrator< fold_from_loops::ReleaseConstraintFromResidueMoverCreator > reg_ReleaseConstraintFromResidueMoverCreator;
+
 static MoverRegistrator< forge::constraints::InverseRotamersCstGeneratorCreator > reg_InverseRotamersCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InvrotTreeCstGeneratorCreator > reg_InvrotTreeCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::NtoCConstraintGeneratorCreator > reg_NtoCConstraintGeneratorCreator;

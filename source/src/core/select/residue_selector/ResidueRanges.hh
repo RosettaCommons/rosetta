@@ -64,6 +64,10 @@ public:
 	void
 	set_stop( Size const stop_res );
 
+	/// @brief String representation of the range
+	std::string
+	to_string() const;
+
 private:
 	Size start_;
 	Size stop_;
