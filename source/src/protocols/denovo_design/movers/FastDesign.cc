@@ -365,8 +365,11 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 			} else {
 				filelines.push_back( "reference 1.32468 3.25479 -2.14574 -2.72453 1.21829 0.79816 -0.30065 2.30374 -0.71458 1.66147 1.65735 -1.34026 -1.64321 -1.45095 -0.09474 -0.28969 1.15175 2.64269 2.26099 0.58223" );
 			}
-		} else if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ] ) {
+			filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+			filelines.push_back( "accept_to_best"                  );
+			filelines.push_back( "endrepeat "                      );
 
+		} else if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ] ) {
 			TR << "Calling correction for beta_nov16, " << FastRelax::default_repeats() << " repeats..." << std::endl;
 			filelines.push_back( "repeat "+ObjexxFCL::string_of(FastRelax::default_repeats()));
 
@@ -377,11 +380,10 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 			filelines.push_back( "reference 2.2619  4.5648  -1.6204  -1.6158  2.5602  1.1350  1.2406   2.3006  -0.7895  1.7223  2.1633  -0.3009  -4.3787   0.1077   0.0423  -0.4390 -0.7333  3.1371  4.4077  2.1379" );
 			filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
 			filelines.push_back( "reference 2.2619  4.3148  -1.6204  -1.6358  1.9602  1.4350  0.8406   1.8006  -0.8895  1.3223  1.4633  -0.3009  -4.6787  -0.1077  -0.1423  -0.5390 -0.9333  2.7371  3.7077  1.7379" );
+			filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+			filelines.push_back( "accept_to_best"                  );
+			filelines.push_back( "endrepeat "                      );
 		}
-
-		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
 	}
 
 	if ( filelines.size() > 0 ) {
