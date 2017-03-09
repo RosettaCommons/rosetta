@@ -427,9 +427,16 @@ StepWisePoseAligner::do_superimposition( pose::Pose & pose ) {
 
 	if ( superimpose_atom_id_map_.size() > 0 ) {
 		runtime_assert( superimpose_atom_id_map_.size() >= 3 );
-		superimpose_rmsd_ = scoring::superimpose_pose( pose, *reference_pose_local_, superimpose_atom_id_map_ );
-		if ( calc_rms_atom_id_map_.size() > 0 ) {
-			rmsd_ = rms_at_corresponding_atoms_no_super( pose, *reference_pose_local_, calc_rms_atom_id_map_ );
+		if ( mod_reference_pose_local_ ) {
+			superimpose_rmsd_ = scoring::superimpose_pose( pose, *mod_reference_pose_local_, superimpose_atom_id_map_ );
+			if ( calc_rms_atom_id_map_.size() > 0 ) {
+				rmsd_ = rms_at_corresponding_atoms_no_super( pose, *mod_reference_pose_local_, calc_rms_atom_id_map_ );
+			}
+		} else {
+			superimpose_rmsd_ = scoring::superimpose_pose( pose, *reference_pose_local_, superimpose_atom_id_map_ );
+			if ( calc_rms_atom_id_map_.size() > 0 ) {
+				rmsd_ = rms_at_corresponding_atoms_no_super( pose, *reference_pose_local_, calc_rms_atom_id_map_ );
+			}
 		}
 	}
 
