@@ -161,6 +161,18 @@ get_embedded_residue_selector(  utility::tag::TagCOP tag, basic::datacache::Data
 utility::vector1< ResidueSelectorOP >
 get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap );
 
+/// @brief Returns True if all the positions in the ResidueSubset are False
+bool all_false_selection( ResidueSubset const & selection );
+/// @brief Returns True if all the positions in the ResidueSubset are True
+bool all_true_selection( ResidueSubset const & selection );
+/// @brief Returns True if at least one position in the ResidueSubset is False
+bool has_any_false_selection( ResidueSubset const & selection );
+/// @brief Returns True if at least one position in the ResidueSubset is True
+bool has_any_true_selection( ResidueSubset const & selection );
+/// @brief Returns the number of selected residues in the ResidueSubset
+core::Size count_selected( ResidueSubset const & selection );
+/// @brief Returns the Rosetta Numbering corresponding to the selected residues
+utility::vector1< core::Size > selection_positions( ResidueSubset const & selection );
 
 }
 }

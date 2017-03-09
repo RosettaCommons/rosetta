@@ -28,6 +28,8 @@
 
 // C++ headers
 #include <sstream>
+#include <algorithm>
+#include <iterator>
 
 static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.util" );
 
@@ -233,6 +235,43 @@ get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::Data
 	} else {
 		throw utility::excn::EXCN_Msg_Exception( "No selector embedded! " );
 	}
+}
+
+/// @brief Returns True if all the positions in the ResidueSubset are False
+bool all_false_selection( ResidueSubset const & selection )
+{
+	return std::all_of( std::begin( selection ), std::end( selection ), []( bool i ) { return not i; } );;
+}
+/// @brief Returns True if all the positions in the ResidueSubset are True
+bool all_true_selection( ResidueSubset const & selection )
+{
+	return std::all_of( std::begin( selection ), std::end( selection ), []( bool i ) { return i; } );
+}
+/// @brief Returns True if at least one position in the ResidueSubset is False
+bool has_any_false_selection( ResidueSubset const & selection )
+{
+	return std::any_of( std::begin( selection ), std::end( selection ), []( bool i ) { return not i; } );;
+}
+/// @brief Returns True if at least one position in the ResidueSubset is True
+bool has_any_true_selection( ResidueSubset const & selection )
+{
+	return std::any_of( std::begin( selection ), std::end( selection ), []( bool i ) { return i; } );
+}
+/// @brief Returns the number of selected residues in the ResidueSubset
+core::Size count_selected( ResidueSubset const & selection )
+{
+	return std::count_if( std::begin( selection ), std::end( selection ), []( bool i ) { return i; } );
+}
+/// @brief Returns the Rosetta Numbering corresponding to the selected residues
+utility::vector1< core::Size > selection_positions( ResidueSubset const & selection )
+{
+	auto it = std::find_if ( std::begin( selection ), std::end( selection ), []( bool i ) { return i; } );
+	utility::vector1< core::Size > results;
+	while ( it != std::end( selection ) ) {
+		results.push_back( std::distance( std::begin( selection ), it ) + 1 );
+		it = std::find_if( std::next( it ), std::end( selection ), []( bool i ) { return i; } );
+	}
+	return results;
 }
 
 }

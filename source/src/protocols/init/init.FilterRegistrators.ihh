@@ -64,6 +64,8 @@ static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator
 static FilterRegistrator< protocols::fldsgn::filters::StrandCurvatureByLevelsCreator > reg_StrandCurvatureByLevelsCreator;
 static FilterRegistrator< protocols::fldsgn::filters::StrandHelixGeometryFilterCreator > reg_StrandHelixGeometryFilterCreator;
 
+static FilterRegistrator< protocols::fold_from_loops::RmsdFromResidueSelectorFilterCreator > reg_RmsdFromResidueSelectorFilterCreator;
+
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::PreProlineFilterCreator > reg_PreProlineFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;

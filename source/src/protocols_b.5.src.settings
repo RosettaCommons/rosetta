@@ -199,6 +199,7 @@ sources = {
 	"protocols/fold_from_loops": [
 		"SegmentedAtomPairConstraintGenerator",
 		"ReleaseConstraintFromResidueMover",
+		"RmsdFromResidueSelectorFilter",
 	]
 }
 include_path = [
@@ -208,6 +209,7 @@ library_path = [
 libraries = [
 ]
 subprojects = [
+	"protocols_a.4",
 	"protocols_b.4",
 	"protocols_h.4",
 	"protocols_g.4",

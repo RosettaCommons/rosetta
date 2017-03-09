@@ -48,6 +48,8 @@
 #include <protocols/fldsgn/filters/StrandCurvatureByLevelsCreator.hh>
 #include <protocols/fldsgn/filters/StrandHelixGeometryFilterCreator.hh>
 
+#include <protocols/fold_from_loops/RmsdFromResidueSelectorFilterCreator.hh>
+
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 #include <protocols/denovo_design/filters/PreProlineFilterCreator.hh>
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>

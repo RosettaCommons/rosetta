@@ -36,8 +36,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator" );
 
-#include <algorithm>
-
 namespace protocols {
 namespace constraint_generator {
 
@@ -198,7 +196,7 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::select::residue_selector::ResidueSubset const & subset2 ) const
 {
 	core::id::SequenceMapping const seqmap = create_sequence_mapping( pose, ref_pose );
-	if ( std::any_of( std::begin( subset2 ), std::end( subset2 ), []( bool i ) { return i; } ) )
+	if ( core::select::residue_selector::has_any_true_selection( subset2 ) )
 		return generate_atom_pair_constraints( pose, ref_pose, subset, subset2, seqmap );
 	return generate_atom_pair_constraints( pose, ref_pose, subset, seqmap );
 }

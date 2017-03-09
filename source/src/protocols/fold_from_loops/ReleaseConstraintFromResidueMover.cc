@@ -35,8 +35,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <algorithm>
-
 static THREAD_LOCAL basic::Tracer TR( "protocols.fold_from_loops.ReleaseConstraintFromResidueMover" );
 
 namespace protocols {
@@ -86,7 +84,7 @@ void
 ReleaseConstraintFromResidueMover::apply( core::pose::Pose & pose )
 {
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
-	if ( ! std::any_of( std::begin( subset ), std::end( subset ), []( bool i ) { return i; } ) ) return;
+	if ( core::select::residue_selector::all_false_selection( subset ) ) return;
 	core::scoring::constraints::ConstraintCOPs csts = pose.constraint_set()->get_all_constraints();
 	core::scoring::constraints::ConstraintCOPs todel;
 	for ( auto const & constraint : csts )
