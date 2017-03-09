@@ -70,12 +70,12 @@ public:
 	get_resnum() const {
 		return node_residue_;
 	}
-
-	///@brief Get the residue distance from this glycan residue to the root of the glycan.
+	
+	///@brief Get the residue distance from this glycan residue to the start of the glycan.
 	/// Used for Layer-based glycan sampling.
 	core::Size
-	get_distance_to_root() const {
-		return distance_to_root_;
+	get_distance_to_start() const {
+		return distance_to_start_;
 	}
 
 
@@ -168,8 +168,8 @@ private:
 	Size glycan_position_;
 
 	///@brief Residue distance to the glycan root.  Used for Layer-Based Tree sampling.
-	Size distance_to_root_;
-
+	Size distance_to_start_;
+	
 	/// @brief Whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic
 	/// carbon.
 	bool has_exocyclic_linkage_;

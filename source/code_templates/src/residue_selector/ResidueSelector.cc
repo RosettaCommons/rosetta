@@ -134,18 +134,22 @@ void
 --end_namespace--
 
 #ifdef    SERIALIZATION
+
+// See the serialization documentation here.  There is a script you can run.
+//  https://wiki.rosettacommons.org/index.php/SerializationFAQ
+
 template< class Archive >
 void
 --namespace_2colon--::--class--::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	// You need to add "arc( CEREAL_NVP( <datamember_name> ) );" calls here for each of your data members.
+	// You need to add "arc( CEREAL_NVP( datamember_name ) );" calls here for each of your data members.
 }
 
 template< class Archive >
 void
 --namespace_2colon--::--class--::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	// You need to add "arc( <datamember_name> );" calls here for each of your data members.
+	// You need to add "arc( datamember_name );" calls here for each of your data members.
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( --namespace_2colon--::--class-- );

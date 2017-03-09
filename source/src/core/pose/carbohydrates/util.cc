@@ -384,8 +384,8 @@ get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
 	ids[ 4 ] = ref4;
 
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Reference atoms for phi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	if ( TR.Trace.visible() ) {
+		TR.Trace << "Reference atoms for phi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
 	}
 
 	return ids;

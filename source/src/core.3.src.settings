@@ -840,6 +840,7 @@ sources = {
 		"CloseContactResidueSelector",
 		"GlycanResidueSelector",
 		"GlycanPositionSelector",
+		"GlycanLayerSelector",
 		"InterGroupInterfaceByVectorSelector",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",

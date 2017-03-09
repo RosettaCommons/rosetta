@@ -118,7 +118,7 @@ get_largest_glycan_tree_size(conformation::Conformation const & conf);
 ///@brief Get the residue distance from the position to the root/end of the glycan.
 /// On-the-fly calculation
 core::Size
-get_distance_to_root(conformation::Conformation const & conf, core::Size const position);
+get_distance_to_start(conformation::Conformation const & conf, core::Size const position);
 
 ///@brief Get which residues denote starting a glycan.
 ///  These are the first residue of the glycan tree, and the tree can be

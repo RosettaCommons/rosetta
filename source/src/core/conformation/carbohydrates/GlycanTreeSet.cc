@@ -100,6 +100,16 @@ GlycanTreeSet::get_largest_glycan_tree_length() const {
 	return utility::max( tree_sizes );
 }
 
+Size
+GlycanTreeSet::get_largest_glycan_tree_layer() const {
+	utility::vector1< core::Size > layer_sizes;
+	for (auto const & start_tree : glycan_tree_set_ ){
+		for (core::Size const & node_residue : start_tree.second->get_residues() ){
+			layer_sizes.push_back( start_tree.second->get_node( node_residue )->get_distance_to_start() );
+		}
+	}
+	return utility::max( layer_sizes );
+}
 
 bool
 GlycanTreeSet::has_tree(const core::Size glycan_start_position) const {
@@ -151,8 +161,8 @@ GlycanTreeSet::get_parent(const core::Size glycan_residue) const {
 }
 
 core::Size
-GlycanTreeSet::get_distance_to_root(const core::Size glycan_residue ) const {
-	return get_node(glycan_residue)->get_distance_to_root();
+GlycanTreeSet::get_distance_to_start(const core::Size glycan_residue ) const {
+	return get_node(glycan_residue)->get_distance_to_start();
 }
 
 core::uint

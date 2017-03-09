@@ -108,6 +108,16 @@ GlycanResidueSelector::clone() const {
 	);
 }
 
+ResidueSelectorOP
+GlycanResidueSelectorCreator::create_residue_selector() const {
+	return core::select::residue_selector::ResidueSelectorOP(
+		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
+		GlycanResidueSelectorOP( new GlycanResidueSelector )
+		)
+	);
+}
+
+
 /// @brief XML parse.
 /// @details Parse RosettaScripts tags and set up this mover.
 void
@@ -169,15 +179,6 @@ void GlycanResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 
-}
-
-ResidueSelectorOP
-GlycanResidueSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP(
-		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-		GlycanResidueSelectorOP( new GlycanResidueSelector )
-		)
-	);
 }
 
 std::string

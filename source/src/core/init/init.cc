@@ -265,6 +265,7 @@
 // (end for registering TaskOperations, ResLvlTaskOperations, and ResFilters)
 
 // ResidueSelectors
+#include <core/select/residue_selector/GlycanLayerSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
@@ -693,6 +694,7 @@ static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreat
 static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
 static ResidueSelectorRegistrator< GlycanResidueSelectorCreator > reg_GlycanResidueSelectorCreator;
 static ResidueSelectorRegistrator< RandomGlycanFoliageSelectorCreator > reg_RandomGlycanFoliageSelectorCreator;
+static ResidueSelectorRegistrator< GlycanLayerSelectorCreator > reg_GlycanLayerSelectorCreator;
 static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;
 static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
 static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;

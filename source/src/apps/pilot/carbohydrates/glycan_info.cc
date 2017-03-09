@@ -157,7 +157,7 @@ public:  // Standard Rosetta methods
 				bool bp = pose.residue( resnum ).is_branch_point();
 
 
-				std::cout << "Carbohydrate: "<< resnum  << " Parent: " << parent_res << " BP: "<<bp << " CON: "
+				std::cout << "Carbohydrate: "<< resnum  << " Parent: " << parent_res << " BP: "<<bp << " CON: " << " DIS: " << pose.glycan_tree_set()->get_distance_to_start( resnum )
 					<< utility::pad_right( attachment_points, 10) << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
 
 				carbohydrate_residues += 1;

@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/select/residue_selector/ReturnResidueSubsetSelector.hh
-/// @brief  A simple selector that returns the set subset.  This to enable simplification of code-based interfaces to residue selectors, so that one may accept only selectors, but using this selector, we can set subsets.  This greatly reduces the interface complexity and code-complexity arising from accepting BOTH ResidueSubsets and ResidueSelectors (Which I'm terribly sick of doing at this point).
+/// @file   core/select/residue_selector/GlycanLayerSelector.hh
+/// @brief  A selector for choosing glycan residues based on their layer - as measured by the residue distance to the start of the glycan tree.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_core_select_residue_selector_ReturnResidueSubsetSelector_HH
-#define INCLUDED_core_select_residue_selector_ReturnResidueSubsetSelector_HH
+#ifndef INCLUDED_core_select_residue_selector_GlycanLayerSelector_HH
+#define INCLUDED_core_select_residue_selector_GlycanLayerSelector_HH
 
 // Unit headers
-#include <core/select/residue_selector/ReturnResidueSubsetSelector.fwd.hh>
+#include <core/select/residue_selector/GlycanLayerSelector.fwd.hh>
 
 // Package headers
 #include <core/types.hh>
@@ -29,6 +29,7 @@
 
 // C++ headers
 #include <set>
+#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -39,16 +40,9 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-/// @brief
-/// A simple selector that returns the set subset.
-///  This is to enable simplification of code-based interfaces to residue selectors,
-///  so that one may accept only selectors, but using this selector, we can set subsets.
-///
-/// This greatly reduces the c++ interface complexity and
-///  private variable - complexity arising from accepting BOTH ResidueSubsets and ResidueSelectors
-///  (Which I'm terribly sick of doing at this point).
-///
-class ReturnResidueSubsetSelector : public core::select::residue_selector::ResidueSelector {
+/// @brief A selector for choosing glycan residues based on their layer - as measured by the residue distance to the start of the glycan tree.
+///  If no layer is set, will select all glycan residues.
+class GlycanLayerSelector : public core::select::residue_selector::ResidueSelector {
 public:
 	typedef core::select::residue_selector::ResidueSelectorOP ResidueSelectorOP;
 	typedef core::select::residue_selector::ResidueSubset ResidueSubset;
@@ -56,30 +50,44 @@ public:
 public:
 
 	/// @brief Constructor.
-	ReturnResidueSubsetSelector();
-
-	ReturnResidueSubsetSelector( ResidueSubset const & subset );
+	GlycanLayerSelector();
 
 	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-	ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & src);
+	//GlycanLayerSelector(GlycanLayerSelector const & src);
+
+public:
 
 	/// @brief Destructor.
-	~ReturnResidueSubsetSelector() override;
+	~GlycanLayerSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
 	/// to the copy.  All ResidueSelectors must implement this.
+
 	ResidueSelectorOP clone() const override;
 
-public:
-
-	///@brief Set the ResidueSubset, which will be returned at apply-time.
-	void
-	set_residue_subset(ResidueSubset const & subset );
-
 	/// @brief "Apply" function.
-	/// @details Return the set subset.
+	/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
+	/// indicating whether each residue is selected ("true") or not ("false").
+
 	ResidueSubset apply( core::pose::Pose const & pose ) const override;
+
+public:
+	
+	///@brief Set the layer we will be returning.
+	void
+	set_layer( core::Size start, core::Size end);
+	
+	///@brief Set the layer as all residues greater than or equal to this number (such as the end of the tree)
+	void
+	set_layer_as_greater_than_or_equal_to( core::Size start );
+	
+	///@brief Set the layer as all residue less or equal to this number (the beginning of the tree).
+	void
+	set_layer_as_less_than_or_equal_to( core::Size end );
+	
+	
+public:
 
 	/// @brief XML parse.
 	/// @details Parse RosettaScripts tags and set up this mover.
@@ -103,9 +111,14 @@ public:
 
 private:
 
-	ResidueSubset subset_;
-
-
+	core::Size start_ = 0;
+	core::Size end_ = 0;
+	
+	core::Size start_from_as_layer_ = 0;
+	core::Size end_for_layer_ = 0;
+	
+	bool range_set_ = false;
+	
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -120,5 +133,8 @@ public:
 } //select
 } //residue_selector
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_select_residue_selector_GlycanLayerSelector )
+#endif // SERIALIZATION
 
-#endif //INCLUDEDcore/select/residue_selector_ReturnResidueSubsetSelector_hh
+#endif //INCLUDEDcore_select_residue_selector_GlycanLayerSelector_HH

@@ -1,0 +1,19 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<SimpleGlycosylateMover name="add_glycans" positions="8,22,26,54,77,98,107,113,130" glycosylations="man5" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="add_glycans" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

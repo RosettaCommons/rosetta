@@ -1,0 +1,21 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<GlycanTreeRelax name="tree_relax_default" quench_mode="false" rounds="1" layer_size="2" window_size="1"/>
+		<Dssp name="dssp" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="dssp" />
+		<Add mover_name="tree_relax_default" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

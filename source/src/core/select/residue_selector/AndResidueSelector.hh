@@ -61,7 +61,7 @@ public:
 
 	virtual ~AndResidueSelector();
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
@@ -74,18 +74,29 @@ public:
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	//unit-specific
-	/**
-	* @brief adds a ResidueSelector
-	*/
-	void add_residue_selector(ResidueSelectorCOP selector);
+public:
 
-	Size num_selectors() const;
 
-	/**
-	* @brief applies newSubset to existingSubset and thereby modifies the latter
-	*/
-	void apply_and_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const;
+	///@brief adds a ResidueSelector
+	void
+	add_residue_selector(ResidueSelectorCOP selector);
+	
+	///@brief Get the number of contained selectors.
+	Size
+	num_selectors() const;
+	
+	///@brief Clear the contained selectors.
+	void
+	clear();
+	
+public:
+
+	virtual ResidueSubset
+	apply( core::pose::Pose const & pose ) const;
+
+	///@brief applies newSubset to existingSubset and thereby modifies the latter
+	void
+	apply_and_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const;
 
 private: // data members
 

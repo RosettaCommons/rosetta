@@ -283,7 +283,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 
 
 	//TR << "Upper resnum: " << upper_resnum << "  Lower resnum: " << lower_resnum << std::endl;
-	TR << "Sampling " << res2_name << "(?" << res1_name << " linkage " << std::endl;
+	TR.Debug << "Sampling " << res2_name << "(?" << res1_name << " linkage " << std::endl;
 	if ( CarbohydrateInfoManager::pair_has_linkage_statistics( res1_name, res2_name ) ) {
 		utility::vector1< LinkageConformerData > conformers =
 			CarbohydrateInfoManager::linkages_from_pair( res1_name, res2_name );

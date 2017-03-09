@@ -150,6 +150,11 @@ Size AndResidueSelector::num_selectors() const
 }
 
 void
+AndResidueSelector::clear(){
+	selectors_.clear();
+}
+
+void
 AndResidueSelector::apply_and_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const
 {
 	debug_assert( existingSubset.size() == newSubset.size() );

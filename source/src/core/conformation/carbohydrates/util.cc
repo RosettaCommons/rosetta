@@ -327,10 +327,13 @@ get_largest_glycan_tree_size( conformation::Conformation const & conf ){
 }
 
 core::Size
-get_distance_to_root( conformation::Conformation const & conf, core::Size const position){
+get_distance_to_start( conformation::Conformation const & conf, core::Size const position){
 	core::Size res_distance = 0;
 	core::Size parent = find_seqpos_of_saccharides_parent_residue(conf.residue(position));
-	while ( ( parent != 0 ) && ( conf.residue(parent).is_carbohydrate() ) ) {
+	if (parent == 0){
+		return 0;
+	}
+	while ( ( parent != 0 ) && ( conf.residue(parent).is_carbohydrate() ) ){
 		res_distance+=1;
 		parent = find_seqpos_of_saccharides_parent_residue(conf.residue(parent));
 	}

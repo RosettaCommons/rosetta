@@ -1,0 +1,9 @@
+-include_sugars
+-write_pdb_link_records
+-ex1
+-ex2
+-use_input_sc
+-overwrite
+
+#Short for integration test.  Typically, you will want 10-25 (25 being the default).  25 takes about 1 minute/ per (man5) glycan/ per structure.
+-glycan_relax_rounds 3

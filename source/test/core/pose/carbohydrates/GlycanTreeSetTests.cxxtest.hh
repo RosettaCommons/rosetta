@@ -86,7 +86,7 @@ public:
 				TS_ASSERT_EQUALS(tree_set->has_exocyclic_glycosidic_linkage( resnum ), has_exocyclic_glycosidic_linkage( pose.conformation(), resnum ) );
 
 				//Assert correct distance to root.
-				TS_ASSERT_EQUALS(tree_set->get_distance_to_root( resnum ), get_distance_to_root( pose.conformation(), resnum ) );
+				TS_ASSERT_EQUALS(tree_set->get_distance_to_start( resnum ), get_distance_to_start( pose.conformation(), resnum ) );
 
 				//Assert correct mainchain child.
 				TS_ASSERT_EQUALS(tree_set->get_node( resnum )->get_mainchain_child(), find_seqpos_of_saccharides_mainchain_child( pose.residue( resnum )));

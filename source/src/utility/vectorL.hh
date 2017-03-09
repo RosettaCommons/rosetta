@@ -312,8 +312,18 @@ public: // Methods
 		pop_back();
 		return *this;
 	}
-
-
+	
+	/// @brief Remove an element of the vector
+	/// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
+	inline
+	vectorL &
+	pop( T const & t )
+	{
+		erase(std::remove(begin(), end(), t), end());
+		return *this;
+	
+	}
+	
 	/// @brief Shrink the index map to remove unused capacity
 	inline
 	void

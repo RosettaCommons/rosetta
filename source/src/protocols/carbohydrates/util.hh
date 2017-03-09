@@ -15,12 +15,23 @@
 #ifndef INCLUDED_protocols_carbohydrates_util_hh
 #define INCLUDED_protocols_carbohydrates_util_hh
 
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/types.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace carbohydrates {
 
-
-
+///@brief Get a TaskFactory of all residues in the subset and neighboring residues.
+///@details
+///
+/// Operations:
+///  InitializeFromCommandline
+///  ReadResFile? If option given on cmd-line, returns TF up to this.
+///  NeighborhoodResidueSelector/OperateOnResidueSubset
+///  RestrictRepacking/PreventRepacking
+core::pack::task::TaskFactoryOP
+get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & subset, core::Real pack_distance = 6.0, bool read_resfile = true);
 
 
 } //protocols

@@ -184,7 +184,7 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 
 	//Setup the active movemap
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		if ( subset[ i ] ) {
+		if ( subset[ i ] && ! pose.residue( i ).is_virtual_residue() ) {
 			min_residue_n+=1;
 			if ( movemap()->get_bb(i) ) {
 				active_movemap->set_bb(i, true);
@@ -206,7 +206,7 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 	}
 
 	//Minimize
-	TR << "Minimizing " << min_residue_n << " residues " << std::endl;
+	TR.Debug << "Minimizing " << min_residue_n << " residues " << std::endl;
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
 	if ( ! score_function() ) score_function(get_score_function()); // get a default (INITIALIZED!) ScoreFunction

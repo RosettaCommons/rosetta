@@ -178,6 +178,8 @@ class GenerateRosettaTemplates(object):
                             "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorCreators.ihh\n" \
                             "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorRegistrators.ihh\n"
 
+                print "\n See Wiki for How to serialize your Selector: \n" \
+                    "   "+"https://wiki.rosettacommons.org/index.php/SerializationFAQ"
 
             elif self.options.type == "singleton":
                 print "\n Singletons do not need to be registered.  " \

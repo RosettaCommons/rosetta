@@ -62,7 +62,7 @@ GlycanNode::GlycanNode( GlycanNode const & src ):
 	children_( src.children_ ),
 	downstream_connections_( src.downstream_connections_ ),
 	glycan_position_( src.glycan_position_ ),
-	distance_to_root_( src.distance_to_root_ ),
+	distance_to_start_( src.distance_to_start_ ),
 	has_exocyclic_linkage_( src.has_exocyclic_linkage() ),
 	linkage_position_( src.linkage_position_ ),
 	mainchain_child_( src.mainchain_child_ )
@@ -135,7 +135,7 @@ GlycanNode::update_connectivity_data(conformation::Conformation const & conf){
 	}
 
 	glycan_position_ = get_glycan_position_from_resnum( conf, tree_start_residue_, node_residue_ );
-	distance_to_root_ = carbohydrates::get_distance_to_root( conf, node_residue_ );
+	distance_to_start_ = carbohydrates::get_distance_to_start( conf, node_residue_ );
 	mainchain_child_ = find_seqpos_of_saccharides_mainchain_child( conf.residue( node_residue_ ) );
 	has_exocyclic_linkage_ = has_exocyclic_glycosidic_linkage(conf, node_residue_ );
 

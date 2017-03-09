@@ -159,7 +159,7 @@ RandomGlycanFoliageSelector::apply(
 	core::pose::Pose const & pose
 ) const {
 
-	TR << "applying RandomGlycanFoliageSelector" << std::endl;
+	TR.Debug << "applying RandomGlycanFoliageSelector" << std::endl;
 	GlycanResidueSelector glycan_selector = GlycanResidueSelector();
 	glycan_selector.set_include_root( true ); //We want to be able to select the residue and the rest, and we won't really usually have the ASN here.
 

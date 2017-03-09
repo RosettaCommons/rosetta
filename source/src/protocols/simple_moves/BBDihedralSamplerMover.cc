@@ -24,6 +24,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 #include <numeric/random/random.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBDihedralSamplerMover" );
@@ -90,12 +91,6 @@ protocols::moves::MoverOP
 BBDihedralSamplerMover::clone() const{
 	return protocols::moves::MoverOP( new BBDihedralSamplerMover( *this ) );
 }
-
-/*
-BBDihedralSamplerMover & BBDihedralSamplerMoveroperator=( BBDihedralSamplerMover const & src){
-return BBDihedralSamplerMover( src );
-}
-*/
 
 
 moves::MoverOP
@@ -199,7 +194,7 @@ BBDihedralSamplerMover::setup_sampler_movemap_union( core::pose::Pose const & po
 		core::Size resnum = bb_residues_[ i ];
 		sampler_movemap_union_[ resnum ];
 		for ( core::Size x = 1; x <= sampler_torsion_types_.size(); ++x ) {
-			//TR << "Resnum " << resnum << " Torsion " << sampler_torsion_types_[x] << " ON? " << movemap_->get_bb( resnum, sampler_torsion_types_[x]) << std::endl;
+			TR.Trace << "Resnum " << resnum << " Torsion " << sampler_torsion_types_[x] << " ON? " << movemap_->get_bb( resnum, sampler_torsion_types_[x]) << std::endl;
 			if ( movemap_->get_bb( resnum, sampler_torsion_types_[x]) ) {
 				sampler_movemap_union_[ resnum ].push_back( sampler_torsion_types_[x] );
 			}
@@ -219,7 +214,14 @@ BBDihedralSamplerMover::setup_sampler_movemap_union( core::pose::Pose const & po
 void
 BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 	if ( movemap_ && bb_residues_.size() == 0 ) {
+		TR.Debug << "Setting up from movemap " << std::endl;
 		bb_residues_ = get_residues_from_movemap_bb_any_torsion( *movemap_, pose.size() ); //This is done here so we dont have to do this at each apply and waste time.
+		
+		if (bb_residues_.size() == 0){
+			TR.Debug << "No BB residues to model (remember - no data for root!) Returning) " << std::endl;
+			set_last_move_status(protocols::moves::MS_FAIL);
+			return;
+		}
 	}
 
 	if ( samplers_.size() == 0 ) {
@@ -234,7 +236,7 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 		setup_sampler_movemap_union( pose );
 	}
 
-
+	TR.Debug << utility::to_string( bb_residues_ ) << std::endl;
 	core::Size index = numeric::random::rg().random_range( 1, bb_residues_.size() );
 	core::Size resnum = bb_residues_[ index ];
 
@@ -268,8 +270,7 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 
 
 	// Apply the sampler
-
-	TR<< "Optimizing "<< resnum << " with " << sampler->get_name() << " at torsion " << core::Size(sampler->get_torsion_type()) << std::endl;
+	TR.Debug << "Optimizing "<< resnum << " with " << sampler->get_name() << " at torsion " << core::Size(sampler->get_torsion_type()) << std::endl;
 
 
 	try {

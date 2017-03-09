@@ -162,7 +162,7 @@ ConvertRealToVirtualMover::apply( core::pose::Pose & pose )
 	/// Go through the subset list and make VIRT if suset[i]=1
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		if ( !subset[i] ) continue; //Skip residues masked by the ResidueSelector.
-		//TR << "Converting " << i << " to virtual " << std::endl;
+		TR.Debug << "Converting " << i << " to virtual " << std::endl;
 		pose.real_to_virtual( i );
 	}
 }

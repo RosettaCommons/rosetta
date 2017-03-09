@@ -107,7 +107,11 @@ public:
 	/// Default (for now) is dihedral.
 	void
 	use_cartmin( bool use_cartmin );
-
+	
+	///@brief Set refinement mode instead of denovo modeling mode.
+	void
+	set_refine( bool refine );
+	
 public:
 	void
 	show( std::ostream & output=std::cout ) const override;
@@ -169,13 +173,10 @@ private:
 		core::Size round);
 
 	void
-	setup_default_task_factory(utility::vector1< bool > const & glycan_residues );
+	setup_default_task_factory(utility::vector1< bool > const & glycan_residues, core::pose::Pose const & pose );
 
 	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;
-
-	core::pack::task::TaskFactoryOP
-	get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & glycan_positions) const;
 
 private:
 
