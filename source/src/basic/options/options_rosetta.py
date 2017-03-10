@@ -613,11 +613,7 @@ Options = Option_Group( '',
 				desc="Specified hierarchical mute levels for individual channels in following format: -levels all:300 "
 						"core.pose:500.  Numeric values could be substituted with mute level names like: debug, info, "
 						"error etc.  Please note that all:<num> is synonymous to -level:<num>"),
-		Option( 'std_IO_exit_error_code', 'Integer',
-				desc="Specify error code that will be used to exit if std::IO error detected.  This is useful if you "
-						"want to detect situations like: Rosetta output was redirected to a file but the disk got "
-						"full, etc.  Default value is 0 which means that error detection code is turned off.",
-				default="0" ),
+		Option( 'no_color', 'Boolean', desc="Suppress use of tracer color codes, which can appear as '^[[0m' in log files", default="false" ),
 		Option( 'chname', 'Boolean', desc="Add Tracer chanel names to output", default="true" ),
 		Option( 'chtimestamp', 'Boolean', desc="Add timestamp to tracer channel name", default="false" ),
 		Option( 'dry_run', 'Boolean',
@@ -626,6 +622,12 @@ Options = Option_Group( '',
 		Option( 'mpi_tracer_to_file', 'String',
 				desc="MPI ONLY: Redirect all tracer output to this file with '_<mpi_rank>' appened as a suffix",
 				default="tracer.out" ),
+
+		Option( 'std_IO_exit_error_code', 'Integer',
+				desc="Specify error code that will be used to exit if std::IO error detected.  This is useful if you "
+						"want to detect situations like: Rosetta output was redirected to a file but the disk got "
+						"full, etc.  Default value is 0 which means that error detection code is turned off.",
+				default="0" ),
 		Option( 'user_tag', 'String', desc="add this tag to structure tags: e.g., a process id", default=""),
 		Option( 'output_tag', 'String', desc="Prefix output files with this tag, if code checks for it", default=""),
 		Option( 'save_times', 'Boolean', desc="Save modeling time for each model in seconds", default='false' ),

@@ -27,7 +27,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/CSI_Sequence.fwd.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
@@ -397,7 +396,7 @@ get_score_function(
 		//TR << "get_score_function2: weight set " << weight_set << std::endl;
 	}
 
-	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << utility::CSI_Green << weight_set << utility::CSI_Reset << std::endl;
+	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << utility::CSI_Green() << weight_set << utility::CSI_Reset() << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn;
 

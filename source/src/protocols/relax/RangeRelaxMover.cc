@@ -80,7 +80,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <utility/CSI_Sequence.fwd.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -218,7 +217,7 @@ void RangeRelaxMover::apply( Pose & pose ) {
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 
-	TR << "Running RangeRelax protocol with SCOREFUNCTION " << utility::CSI_Green << sfxn_->get_name() << utility::CSI_Reset << std::endl;
+	TR << "Running RangeRelax protocol with SCOREFUNCTION " << utility::CSI_Green() << sfxn_->get_name() << utility::CSI_Reset() << std::endl;
 
 	FoldTree orig_ft = finalize_setup( pose );
 

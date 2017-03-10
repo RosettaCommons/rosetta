@@ -562,8 +562,8 @@ SequenceShiftMover::get_residues_to_rebuild() {
 	std::cerr << "---" << std::endl;
 	for ( core::uint i = 1; i <= offsets_.size(); ++i ) {
 		int off_mag = std::abs(offsets_[i]);
-		if ( off_mag!=offsets_[i] ) std::cerr << "\x1b[31m";
-		else std::cerr << "\x1b[32m";
+		if ( off_mag!=offsets_[i] ) std::cerr << utility::CSI_Red();
+		else std::cerr << utility::CSI_Green();
 		if ( off_mag <=9 ) {
 			std::cerr << off_mag;
 		} else {
@@ -571,7 +571,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		}
 		if ( i%100==0 ) std::cerr << std::endl;
 	}
-	std::cerr << "\x1b[39m";
+	std::cerr << utility::CSI_Default();
 	std::cerr << std::endl;
 
 	for ( core::uint i = 1; i <= ext_residues_to_rebuild.size(); ++i ) {

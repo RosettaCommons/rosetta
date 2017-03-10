@@ -27,10 +27,10 @@ static THREAD_LOCAL basic::Tracer TR( "ColorDemo" );
 
 using namespace utility;
 
-static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue);
-static THREAD_LOCAL basic::Tracer    Green("green",      CSI_Green);
-static THREAD_LOCAL basic::Tracer      Red("red",        CSI_Red);
-static THREAD_LOCAL basic::Tracer VeryBlue("very.blue",  CSI_Blue+CSI_Bold, CSI_Blue);
+static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue());
+static THREAD_LOCAL basic::Tracer    Green("green",      CSI_Green());
+static THREAD_LOCAL basic::Tracer      Red("red",        CSI_Red());
+static THREAD_LOCAL basic::Tracer VeryBlue("very.blue",  CSI_Blue()+CSI_Bold(), CSI_Blue());
 
 
 int main( int argc, char * argv [] )
@@ -63,7 +63,7 @@ int main( int argc, char * argv [] )
 		Red << "Output with default color for Red Tracer...\n" << std::endl;
 
 		VeryBlue << "Output with default color for VeryBlue Tracer..." << std::endl;
-		VeryBlue << CSI_Green << "We" << CSI_Yellow << " can still use " << CSI_Red << "other" << CSI_Bold << " colors in Tracers " << CSI_bgBlue << CSI_Yellow << "with default color set!" << std::endl;
+		VeryBlue << CSI_Green() << "We" << CSI_Yellow() << " can still use " << CSI_Red() << "other" << CSI_Bold() << " colors in Tracers " << CSI_bgBlue() << CSI_Yellow() << "with default color set!" << std::endl;
 		VeryBlue << "..." << std::endl;
 
 		utility_exit_with_message("\nExample of utility_exit_with_message...");

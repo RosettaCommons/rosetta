@@ -51,7 +51,6 @@
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <core/pose/util.hh>
-#include <utility/CSI_Sequence.fwd.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -167,7 +166,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 	// finalize setup
 	finalize_setup( pose );
 
-	TR << "Running MPMutateRelax protocol with SCOREFUNCTION " << utility::CSI_Green << sfxn_->get_name() << utility::CSI_Reset << std::endl;
+	TR << "Running MPMutateRelax protocol with SCOREFUNCTION " << utility::CSI_Green() << sfxn_->get_name() << utility::CSI_Reset() << std::endl;
 
 	// final foldtree
 	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;

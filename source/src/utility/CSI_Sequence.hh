@@ -17,54 +17,72 @@
 
 #include <utility/CSI_Sequence.fwd.hh>
 
-#include <ostream>  // for string, ostream, operator<<
-
-#if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <string>
-#endif
+#include <ostream>  // for ostream, operator<<
+
 
 namespace utility {
 
 /// @brief Class to hold all Terminal ASCII codes as static data for CSI_Sequence.
-///        Note: that on non-tty terminals all codes will initialized as empty to avoid polution of Rosetta logs.
+///        Note: that on non-tty terminals the codes will not print to avoid polution of Rosetta logs.
 class CSI_Sequence
 {
 public:
 	/// @brief constructor
-	CSI_Sequence(std::string sequence);
+	CSI_Sequence(std::string const & sequence = "") : sequence_( sequence ) {}
 
-	operator std::string() const { return sequence_; }
+	// No! No implicit conversion to string : we need the special output overloading.
+	// operator std::string() const { return sequence_; }
+
+	CSI_Sequence operator+ ( CSI_Sequence const & right ) const {
+		return CSI_Sequence( sequence_ + right.sequence_ );
+	}
 
 	/// @brief operator to output our sequence so we can write: std::cout << CSI_SequenceObject
-	friend std::ostream & operator << (std::ostream & os, CSI_Sequence const &sq) { os << sq.sequence_; return os; }
+	friend std::ostream & operator << (std::ostream & os, CSI_Sequence const &sq) {
+		if ( ! CSI_Sequence::suppress_CSI_seq() ) { os << sq.sequence_; }
+		return os;
+	}
+
+	/// @brief If called, suppress all future printing of CSI codes
+	static void suppress_CSI_codes() {
+		suppress_CSI_seq() = true;
+	}
 
 private:
 	std::string sequence_;
+
+	// Should we suppress the use of CSI Sequences?
+	static bool & suppress_CSI_seq();
 };
 
 
-/// @details Constant static string objects to hold various ASCII CSI codes
+/// @details Functions to return CSI_Seqeunce objects.
+///          These are not static constants, due to the static initilization order fiasco.
 ///          Codes below is all Hogwarts-approved magic numbers, so do not modify them.
 ///          For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
-static CSI_Sequence const  CSI_Reset("\x1b[0m"),
-CSI_Bold("\x1b[1m"),
-CSI_Underline("\x1b[4m"),
-CSI_Black("\x1b[30m"),
-CSI_Red("\x1b[31m"),
-CSI_Green("\x1b[32m"),
-CSI_Yellow("\x1b[33m"),
-CSI_Blue("\x1b[34m"),
-CSI_Magenta("\x1b[35m"),
-CSI_Cyan("\x1b[36m"),
-CSI_White("\x1b[37m"),
-CSI_bgBlack("\x1b[40m"),
-CSI_bgRed("\x1b[41m"),
-CSI_bgGreen("\x1b[42m"),
-CSI_bgYellow("\x1b[43m"),
-CSI_bgBlue("\x1b[44m"),
-CSI_bgMagenta("\x1b[45m"),
-CSI_bgCyan("\x1b[46m"),
-CSI_bgWhite("\x1b[47m");
+inline CSI_Sequence CSI_Nothing()   { return CSI_Sequence(""); }
+inline CSI_Sequence CSI_Reset()     { return CSI_Sequence("\x1b[0m"); }
+inline CSI_Sequence CSI_Bold()      { return CSI_Sequence("\x1b[1m"); }
+inline CSI_Sequence CSI_Underline() { return CSI_Sequence("\x1b[4m"); }
+inline CSI_Sequence CSI_Black()     { return CSI_Sequence("\x1b[30m"); }
+inline CSI_Sequence CSI_Red()       { return CSI_Sequence("\x1b[31m"); }
+inline CSI_Sequence CSI_Green()     { return CSI_Sequence("\x1b[32m"); }
+inline CSI_Sequence CSI_Yellow()    { return CSI_Sequence("\x1b[33m"); }
+inline CSI_Sequence CSI_Blue()      { return CSI_Sequence("\x1b[34m"); }
+inline CSI_Sequence CSI_Magenta()   { return CSI_Sequence("\x1b[35m"); }
+inline CSI_Sequence CSI_Cyan()      { return CSI_Sequence("\x1b[36m"); }
+inline CSI_Sequence CSI_White()     { return CSI_Sequence("\x1b[37m"); }
+inline CSI_Sequence CSI_Default()   { return CSI_Sequence("\x1b[39m"); }
+inline CSI_Sequence CSI_bgBlack()   { return CSI_Sequence("\x1b[40m"); }
+inline CSI_Sequence CSI_bgRed()     { return CSI_Sequence("\x1b[41m"); }
+inline CSI_Sequence CSI_bgGreen()   { return CSI_Sequence("\x1b[42m"); }
+inline CSI_Sequence CSI_bgYellow()  { return CSI_Sequence("\x1b[43m"); }
+inline CSI_Sequence CSI_bgBlue()    { return CSI_Sequence("\x1b[44m"); }
+inline CSI_Sequence CSI_bgMagenta() { return CSI_Sequence("\x1b[45m"); }
+inline CSI_Sequence CSI_bgCyan()    { return CSI_Sequence("\x1b[46m"); }
+inline CSI_Sequence CSI_bgWhite()   { return CSI_Sequence("\x1b[47m"); }
+inline CSI_Sequence CSI_bgDefault() { return CSI_Sequence("\x1b[49m"); }
 
 
 } // utility

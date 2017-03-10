@@ -27,15 +27,20 @@
 
 namespace utility {
 
-/// @brief constructor
-CSI_Sequence::CSI_Sequence(std::string sequence)
-{
+bool stdout_is_tty() {
 #ifdef WIN32
-	if ( _isatty(fileno(stdout)) ) sequence_ = sequence;
+	return _isatty(fileno(stdout));
 #else
-	if ( isatty(fileno(stdout)) ) sequence_ = sequence;
+	return isatty(fileno(stdout));
 #endif
 }
 
+// No mutexes, as this is really only going to change during setup
+bool & CSI_Sequence::suppress_CSI_seq() {
+	// This is a deliberately leaked pointer to a heap bool to insure that it lasts until the very end of the program,
+	// as colored text can potentially be output as a result of object destructors during program tear-down.
+	static bool * do_suppression( new bool(!stdout_is_tty()) ); // Initial value, may be reset
+	return *do_suppression;
+}
 
 } // utility

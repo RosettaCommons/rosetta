@@ -127,7 +127,7 @@ string result_sizes(SCS_ResultsOP r, int width)
 
 void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_ResultsOP results) const
 {
-	TR.Debug << "SCS_BlastFilter_by_sequence_length: Results count before filtering  " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_sequence_length: Results count before filtering  " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 	struct {
 		SCS_ResultVector &r;
@@ -147,7 +147,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 			if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_alignment_length::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			if( region.query_sequence.size() != (br->*region.result_sequence).size() ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << ": " << region.query_sequence.size() << "!=" << (br->*region.result_sequence).size() << "..." << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << ": " << region.query_sequence.size() << "!=" << (br->*region.result_sequence).size() << "..." << CSI_Reset() << std::endl;
 				region.r.erase( std::next(p++).base() );
 			}
 			else {
@@ -164,7 +164,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 		uint template_length = (br->pdb == "2x7l") ? 61 : 63;
 
 		if( br->frh.size() != template_length ) {
-			TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset << std::endl;
+			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
 			results->frh.erase( std::next(p++).base() );
 		}
 		else ++p;
@@ -177,13 +177,13 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 		uint template_length = (br->pdb == "3h0t") ? 60 : 58;
 
 		if( br->frl.size() != template_length ) {
-			TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset << std::endl;
+			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
 			results->frl.erase( std::next(p++).base() );
 		}
 		else ++p;
 	}
 
-	TR.Debug << "SCS_BlastFilter_by_sequence_length: Results count after filtering   " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_sequence_length: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 }
 
 
@@ -200,7 +200,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 // //         if Options.verbose and r not in results: print 'Filter alignment_length removing:%s %s_query:%s alignment-length:%s ' % (pdb, k, len(cdr_info[pdb][k]), r['alignment-length'])
 void SCS_BlastFilter_by_alignment_length::apply(AntibodySequence const &/*antibody_sequence*/, SCS_ResultsOP results) const
 {
-	TR.Debug << "SCS_BlastFilter_by_alignment_length: Results count before filtering " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_alignment_length: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 	struct {
 		SCS_ResultVector &r;
@@ -223,13 +223,13 @@ void SCS_BlastFilter_by_alignment_length::apply(AntibodySequence const &/*antibo
 			//TR << "alignment_length: " << br->alignment_length << "   " << region.v * (br->*region.sequence).size() << std::endl;
 
 			if( br->alignment_length < region.v * (br->*region.sequence).size() ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_alignment_length: Filtering " << br->pdb << "..." << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_alignment_length: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
 				region.r.erase( std::next(p++).base() );
 			}
 			else ++p;
 		}
 	}
-	TR.Debug << "SCS_BlastFilter_by_alignment_length: Results count after filtering  " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_alignment_length: Results count after filtering  " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 }
 
 //  def filter_by_template_resolution(k, results, cdr_query, cdr_info):
@@ -254,7 +254,7 @@ void SCS_BlastFilter_by_template_resolution::set_resolution_cutoff(core::Real cu
 
 void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*antibody_sequence*/, SCS_ResultsOP results) const
 {
-	TR.Debug << "SCS_BlastFilter_by_template_resolution: Results count before filtering " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_template_resolution: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 	struct {
 		SCS_ResultVector &r;
@@ -275,7 +275,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 			//TR << "resolution: " << br->resolution << "   " << region.v * (br->*region.sequence).size() << std::endl;
 
 			if( br->resolution > get_resolution_cutoff() ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
 				region.r.erase( std::next(p++).base() );
 			}
 			else ++p;
@@ -288,7 +288,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 		if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_sequence_identity::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
-			TR.Trace << CSI_Red << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset << std::endl;
+			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
 			results->frh.erase( std::next(p++).base() );
 		}
 		else ++p;
@@ -300,7 +300,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 		if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
-			TR.Trace << CSI_Red << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset << std::endl;
+			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset() << std::endl;
 			results->frl.erase( std::next(p++).base() );
 		}
 		else ++p;
@@ -312,13 +312,13 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 		if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
-			TR.Trace << CSI_Red << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset << std::endl;
+			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset() << std::endl;
 			results->orientation.erase( std::next(p++).base() );
 		}
 		else ++p;
 	}
 
-	TR.Debug << "SCS_BlastFilter_by_template_resolution: Results count after filtering  " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_template_resolution: Results count after filtering  " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 }
   //  def filter_by_sequence_homolog(k, results, cdr_query, cdr_info):
   //  """ Template filter for sequence identity
@@ -405,7 +405,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 	core::Real sid_ratio;
 
-  TR.Debug << "SCS_BlastFilter_by_sequence_identity: Results count before filtering " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+  TR.Debug << "SCS_BlastFilter_by_sequence_identity: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
   struct {
     SCS_ResultVector &r;
@@ -428,7 +428,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 			sid_ratio = sid_checker( region.query_sequence, br->*region.result_sequence );
       if( sid_ratio > get_sid_cutoff_cdr() ) {
-        TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset << std::endl;
+        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
         region.r.erase( std::next(p++).base() );
       }
 	  else ++p;
@@ -457,7 +457,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 		sid_ratio = sid_checker( query_frh, br->frh);
     if( sid_ratio > get_sid_cutoff_fr() ) {
-        TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset << std::endl;
+        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
       results->frh.erase( std::next(p++).base() );
     }
 	else ++p;
@@ -470,7 +470,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 		sid_ratio = sid_checker( query_frl, br->frl);
     if( sid_ratio > get_sid_cutoff_fr() ) {
-        TR.Trace << CSI_Red << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset << std::endl;
+        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
       results->frl.erase( std::next(p++).base() );
     }
 	else ++p;
@@ -478,7 +478,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 	// Filter orientation by sequence identity?
 	// How? Cannot reassemble orientation sequence from result.
-  TR.Debug << "SCS_BlastFilter_by_sequence_identity: Results count after filtering   " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+  TR.Debug << "SCS_BlastFilter_by_sequence_identity: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 }
 
@@ -507,7 +507,7 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
                                                  SCS_ResultsOP results) const
 {
 
-  TR.Debug << "SCS_BlastFilter_by_outlier: Results count before filtering " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+  TR.Debug << "SCS_BlastFilter_by_outlier: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
   // Get outlier data from file
   // regions: "FRL", "FRH", "L1", "L2", "L3", "H1", "H2"
@@ -538,14 +538,14 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
 				++p;
 			}
 			else if( outlier_map.at(br->pdb).at(region.ab_region) ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_outlier: Filtering " << br->pdb << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_outlier: Filtering " << br->pdb << CSI_Reset() << std::endl;
 				region.r.erase( std::next(p++).base() );
 			}
 			else ++p;
     }
   }
 
-  TR.Debug << "SCS_BlastFilter_by_outlier: Results count after filtering   " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+  TR.Debug << "SCS_BlastFilter_by_outlier: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 }
 
@@ -570,7 +570,7 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
 void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
                                                  SCS_ResultsOP results) const
 {
-	TR.Debug << "SCS_BlastFilter_by_template_bfactor: Results count before filtering " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_template_bfactor: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 	// Get bfactor data from file
 	// regions: "l1", "l2", "l3", "h1", "h2", "h3"
@@ -600,7 +600,7 @@ void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
 				++p;
 			}
 			else if( bfactor_map.at(br->pdb).at(region.ab_region) ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_template_bfactor: Filtering " << br->pdb << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_bfactor: Filtering " << br->pdb << CSI_Reset() << std::endl;
 				region.r.erase( std::next(p++).base() );
 			}
 			else ++p;
@@ -610,7 +610,7 @@ void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
 		}
 	}
 
-	TR.Debug << "SCS_BlastFilter_by_template_mbfactor: Results count after filtering   " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_template_mbfactor: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 }
 
   //    if Options.verbose: print 'filtering by orientational distance...'
@@ -678,7 +678,7 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 
 	SCS_ResultVector &r = results->orientation;
 
-	TR.Debug << "SCS_BlastFilter_by_OCD: Results count before filtering " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_OCD: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
 	// Get OCD data from file
 	std::map< std::string, std::map<std::string, core::Real> > ocd_map;
@@ -703,12 +703,12 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 			if( !br ) throw _AE_scs_failed_("SCS_BlastFilter_by_OCD::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			if ( ocd_map.at(top_br->pdb).at(br->pdb) < get_ocd_cutoff() ) {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_OCD: Filtering " << br->pdb << " with OCD: " << ocd_map.at(top_br->pdb).at(br->pdb) << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_OCD: Filtering " << br->pdb << " with OCD: " << ocd_map.at(top_br->pdb).at(br->pdb) << CSI_Reset() << std::endl;
 				r.erase( r.begin()+i );
 				--i; //check index position again after removing template
 			}
 			else {
-				TR.Trace << CSI_Red << "SCS_BlastFilter_by_OCD: Not filtering " << br->pdb << " with OCD: " << ocd_map.at(top_br->pdb).at(br->pdb) << CSI_Reset << std::endl;
+				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_OCD: Not filtering " << br->pdb << " with OCD: " << ocd_map.at(top_br->pdb).at(br->pdb) << CSI_Reset() << std::endl;
 			}
 
 			// check to make sure we're not out of templates, break if we are
@@ -723,7 +723,7 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 
 	}
 
-	TR.Debug << "SCS_BlastFilter_by_OCD: Results count after filtering   " << CSI_Red << result_sizes(results) << CSI_Reset << std::endl;
+	TR.Debug << "SCS_BlastFilter_by_OCD: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 }
 
 } // namespace grafting

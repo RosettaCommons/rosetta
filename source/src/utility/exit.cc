@@ -19,6 +19,8 @@
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/backtrace.hh>
+#include <utility/CSI_Sequence.hh>
+
 // C++ headers
 #include <cassert>
 #include <cstdlib>
@@ -124,9 +126,9 @@ exit(
 	std::string failure_message = oss.str();
 	maybe_throw_on_next_assertion_failure( failure_message.c_str() );
 
-	if ( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m\x1b[1m\x1b[31m";  // Reseting the terminal state and setting bold-red color
+	std::cerr << CSI_Reset() << CSI_Red() << CSI_Bold();
 	std::cerr << failure_message << std::flush;
-	if ( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m";
+	std::cerr << CSI_Reset();
 	print_backtrace( message.c_str() );
 	std::cerr.flush();
 

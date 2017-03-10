@@ -23,13 +23,9 @@
 #include <utility/vector1.hh>                     // for vector1
 
 #include <utility/SingletonBase.hh>
+#include <utility/CSI_Sequence.hh>
 #include <utility/thread/backwards_thread_local.hh> // for THREAD_LOCAL
 
-#ifdef WIN32
-#include <utility/CSI_Sequence.hh>
-#else
-#include <utility/CSI_Sequence.fwd.hh>
-#endif
 
 namespace basic {
 
@@ -108,13 +104,13 @@ typedef utility::pointer::shared_ptr< otstream > otstreamOP;
 struct TracerOptions
 {
 	/// @brief system priority level
-	int level;
+	int level = 300;
 
 	/// @brief should channel name be printed during the IO?
-	bool print_channel_name;
+	bool print_channel_name = true;
 
 	/// @brief should a timestamp be added to the channel name?
-	bool timestamp;
+	bool timestamp = false;
 
 	/// @brief list of muted channels
 	utility::vector1<std::string> muted;
@@ -137,8 +133,8 @@ class Tracer :  public otstream
 	/// @brief init Tracer object with given parameters. This is a helper function to be called from various constructors
 	void init(
 		std::string const & channel,
-		std::string const & channel_color,
-		std::string const & channel_name_color,
+		utility::CSI_Sequence const & channel_color,
+		utility::CSI_Sequence const & channel_name_color,
 		TracerPriority priority,
 		bool muted_by_default
 	);
@@ -156,12 +152,12 @@ public:
 	/// @brief Create Tracer object with channel color, channel name color and given channel and priority
 	/// @details
 	///  Ex:
-	///  static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue);
+	///  static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue());
 	///
 	Tracer(
 		std::string const & channel,
-		std::string const & channel_color,
-		std::string const & channel_name_color = "",
+		utility::CSI_Sequence const & channel_color,
+		utility::CSI_Sequence const & channel_name_color = utility::CSI_Nothing(),
 		TracerPriority priority = t_info,
 		bool muted_by_default = false
 	);
@@ -206,17 +202,17 @@ public:
 	std::string const & channel() const { return channel_; }
 
 	///@brief Get the channel color.
-	std::string const &channel_color() { return channel_color_; }
+	utility::CSI_Sequence const &channel_color() { return channel_color_; }
 
 	///@brief Set the channel color.
 	///
 	///@details
 	/// This can be done in a stream like this:
 	///  TR << TR.bgWhite << TR.Black << "Example" << TR.Reset << std::endl;
-	void channel_color(std::string const &color) { channel_color_ = color; }
+	void channel_color(utility::CSI_Sequence const &color) { channel_color_ = color; }
 
-	std::string const &channel_name_color() { return channel_name_color_; }
-	void channel_name_color(std::string const &color) { channel_name_color_ = color; }
+	utility::CSI_Sequence const &channel_name_color() { return channel_name_color_; }
+	void channel_name_color(utility::CSI_Sequence const &color) { channel_name_color_ = color; }
 
 	/// @brief get/set tracer options - global options for Tracer IO.
 	static TracerOptions & tracer_options() { return tracer_options_; }
@@ -337,7 +333,7 @@ private: /// Data members
 	std::string channel_;
 
 	/// @brief default colors for tracer output and tracer channel-name string (ie color of string such as: 'core.pose:')
-	std::string channel_color_, channel_name_color_;
+	utility::CSI_Sequence channel_color_, channel_name_color_;
 
 	/// @brief channel output priority level
 	int priority_;
@@ -353,9 +349,6 @@ private: /// Data members
 
 	/// @brief is channel muted by default?
 	bool muted_by_default_;
-
-	/// @brief is current printing position a begining of the line?
-	bool begining_of_the_line_;
 
 	/// @brief is channel visibility already calculated?
 	bool visibility_calculated_;
@@ -448,15 +441,15 @@ namespace basic {
 template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
 Tracer & operator <<( Tracer & TR, T const & entry ) {
 	std::ostream &t(TR);
-		if( TR.visible() ) { t << entry; }
-		return TR;
+	if( TR.visible() ) { t << entry; }
+	return TR;
 }
 
 template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
 Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
 	std::ostream &t(TR);
-		if( TR.visible() ) { t << entry; }
-		return TR;
+	if( TR.visible() ) { t << entry; }
+	return TR;
 }
 
 } // namespace basic

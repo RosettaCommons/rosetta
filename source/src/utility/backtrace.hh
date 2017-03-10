@@ -142,11 +142,11 @@ print_backtrace( char const * condition ) {
 	void* callstack[callstack_size];
 	int i, frames = backtrace(callstack, callstack_size);
 	char** strs = backtrace_symbols(callstack, frames);
-	std::cerr << utility::CSI_Magenta; // set color of cerr to magenta
+	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
 	for ( i = 0; i < frames; ++i ) {
 		std::cerr << demangle( strs[i] ).c_str() << std::endl;
 	}
-	std::cerr << utility::CSI_Reset; // reset color of cerr
+	std::cerr << utility::CSI_Reset(); // reset color of cerr
 	free(strs);
 	return false; // allows use in debug_assert
 }

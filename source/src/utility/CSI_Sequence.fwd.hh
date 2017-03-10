@@ -18,9 +18,7 @@
 
 namespace utility {
 
-
 class CSI_Sequence;
-
 
 }
 

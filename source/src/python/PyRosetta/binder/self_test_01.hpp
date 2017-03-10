@@ -750,24 +750,6 @@ public:
 // }
 // }
 
-// class CSI_Sequence
-// {
-// public:
-// 	/// @brief constructor
-// 	CSI_Sequence(std::string sequence) {}
-
-// 	operator std::string() const { return sequence_; }
-
-// 	/// @brief operator to output our sequence so we can write: std::cout << CSI_SequenceObject
-// 	//friend std::ostream & operator << (std::ostream & os, CSI_Sequence const &sq) { os << sq.sequence_; return os; }
-
-// 	void foo(int) const {};
-// private:
-// 	std::string sequence_;
-// };
-
-// void foo_csi(char * const argv[]) {}
-
 // class ESFT : public std::enable_shared_from_this<ESFT>
 // {
 // public:
