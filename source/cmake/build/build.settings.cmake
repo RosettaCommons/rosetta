@@ -333,6 +333,7 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 	)
 	list( APPEND defines
 			-DNDEBUG
+			-DBLUEGENECLANG
 			#-DDISABLE_SQLITE
 	)
 endif()

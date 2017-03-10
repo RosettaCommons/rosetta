@@ -621,8 +621,11 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 
 	Size const idx1 = pose1.residue_type( n1 ).atom_index( atom_name );
 	Size const idx2 = pose2.residue_type( n2 ).atom_index( atom_name );
-	//atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
+#ifdef BLUEGENECLANG
+	atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
+#else
 	atom_id_map.emplace( AtomID( idx1, n1 ), AtomID( idx2, n2 ) );
+#endif
 	return true;
 }
 

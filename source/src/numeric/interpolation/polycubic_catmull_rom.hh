@@ -298,8 +298,9 @@ get_patch(
 	}
 
 	// iterate through every point in the 4 x 4 ... 4 F_patch
-	runtime_assert( F_patch.size() == pow( 4, N ) );
-	for ( Size k = 0; k < pow( 4, N); k++ ) {
+	Size const four_to_the_n( static_cast<Size>( pow(4, N) ) );
+	runtime_assert( F_patch.size() == four_to_the_n );
+	for ( Size k = 0; k < four_to_the_n; k++ ) {
 		utility::fixedsizearray1< Size, N > idx_F_patch;
 		Size c( k );
 		// 'decode' which grid point we're at.
@@ -335,7 +336,7 @@ polycubic_interpolate_catmull_rom(
 	// how far are we nudged into central cube, in each dimension 1,2,...N?
 	utility::vector1< T > d( N, 0.0 );
 	// To define spline, we need a 4 x 4 x... 4 grid of points that surround x.
-	utility::vector1< T > F_patch( pow( 4, N ), 0.0 );
+	utility::vector1< T > F_patch( static_cast<Size>( pow( 4, N ) ), 0.0 );
 	get_patch( F_patch, d, F, minval, binwidth, xs, boundary );
 
 	utility::vector1< T >  deriv_vector( N, 0.0 );
