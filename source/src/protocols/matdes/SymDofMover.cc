@@ -713,6 +713,7 @@ void SymDofMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	sampling_mode_enumeration.name( "sampling_mode_choices" );
 	sampling_mode_enumeration.base_type( xs_string );
 	sampling_mode_enumeration.add_restriction( xsr_enumeration, "grid" );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "uniform" );
 	sampling_mode_enumeration.add_restriction( xsr_enumeration, "gaussian" );
 	sampling_mode_enumeration.add_restriction( xsr_enumeration, "single_dock" );
 	xsd.add_top_level_element( sampling_mode_enumeration );
