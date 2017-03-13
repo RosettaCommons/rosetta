@@ -165,6 +165,8 @@
 #include <protocols/flxbb/InterlockAromaCreator.hh>
 
 #include <protocols/fold_from_loops/ReleaseConstraintFromResidueMoverCreator.hh>
+#include <protocols/fold_from_loops/SplitAndMixPoseMoverCreator.hh>
+#include <protocols/fold_from_loops/LabelPoseFromResidueSelectorMoverCreator.hh>
 
 #include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>

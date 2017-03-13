@@ -29,6 +29,7 @@
 #include <core/select/residue_selector/util.hh>
 // #include <core/pose/PDBInfo.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -70,7 +71,8 @@ RmsdFromResidueSelectorFilter::RmsdFromResidueSelectorFilter() :
 	threshold_( default_rmsd_threshold() ),
 	reference_pose_( /* NULL */ ),
 	sensitivity_( 0.001 ),
-	CA_only_ ( default_ca_selection() )
+	CA_only_ ( default_ca_selection() ),
+	gdt_( default_gdt_selection() )
 {
 }
 
@@ -87,47 +89,34 @@ RmsdFromResidueSelectorFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose native = *reference_pose_;
 	core::Real rmsd( 0.0 );
 
+
 	ResidueSubset query_subset = query_select_->apply( pose );
 	ResidueSubset reference_subset = reference_select_->apply( native );
 
-	runtime_assert_msg( count_selected( query_subset ) > 0,
-											"No residues are selected for the query pose" );
-	runtime_assert_msg( count_selected( reference_subset ) > 0,
-											"No residues are selected for the reference pose" );
+	runtime_assert_msg( count_selected( query_subset ) > 0, "No residues are selected for the query pose" );
+	runtime_assert_msg( count_selected( reference_subset ) > 0, "No residues are selected for the reference pose" );
 
 	TR << "Reference selects " << count_selected( reference_subset ) << " residues." << std::endl;
 	TR << "Query selects " << count_selected( query_subset ) << " residues." << std::endl;
-	runtime_assert_msg( count_selected( query_subset ) == count_selected( reference_subset ),
-											"Number of selected residues must be the same in both poses" );
-	if ( CA_only_ ) {
 
-		utility::vector1< core::Size > query_residues = selection_positions( query_subset );
-		utility::vector1< core::Size > reference_residues = selection_positions( reference_subset );
+	grafting::simple_movers::DeleteRegionMover deleter;
+	ResidueSelectorCOP query_not( new NotResidueSelector( query_select_ ) ); // We need to turn it the other way arround.
+	deleter.set_residue_selector( query_not );
+	deleter.apply( copy_pose );
 
-		std::map < core::Size, core::Size > mapping;
+	ResidueSelectorCOP reference_not( new NotResidueSelector( reference_select_ ) ); // We need to turn it the other way arround.
+	deleter.set_residue_selector( reference_not );
+	deleter.apply( native );
 
-		for ( core::Size i=1; i<= query_residues.size(); ++i ) {
-			mapping.insert( std::pair<core::Size, core::Size >( reference_residues[i], query_residues[i] ) );
-		}
-		rmsd = core::scoring::CA_rmsd( native, copy_pose, mapping);
-
+	if ( not gdt_ ) {
+		protocols::simple_filters::SelectRmsdEvaluator evaluator( native, "fromResidueSelector", CA_only_ );
+		rmsd = evaluator.apply( copy_pose );
 	}
 	else {
-		grafting::simple_movers::DeleteRegionMover deleter1;
-		ResidueSelectorCOP query_not( new NotResidueSelector( query_select_ ) ); // We need to turn it the other way arround.
-		deleter1.set_residue_selector( query_not );
-		deleter1.apply( copy_pose );
-
-		grafting::simple_movers::DeleteRegionMover deleter2;
-		ResidueSelectorCOP reference_not( new NotResidueSelector( reference_select_ ) ); // We need to turn it the other way arround.
-		deleter2.set_residue_selector( reference_not );
-		deleter2.apply( native );
-
-		runtime_assert_msg( copy_pose.size() == native.size(), "Number of selected residues must be the same in both poses" );
-
-		rmsd = core::scoring::bb_rmsd( native, copy_pose );
-
+		protocols::simple_filters::SelectGdtEvaluator evaluator( native, "fromResidueSelector" );
+		rmsd = evaluator.apply( copy_pose );
 	}
+
 	if ( rmsd < sensitivity_ ) rmsd = 0;
 
 	return rmsd;
@@ -165,7 +154,7 @@ RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::da
 	/// Call the SavePoseMover, then it can be used from here... or from in:native
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = rosetta_scripts::saved_reference_pose(tag, data_map );
-		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<reference_pose_->size()<<" residues"<<std::endl;
+		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<< " with " << reference_pose_->size() << " residues" << std::endl;
 	} else {
 		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
@@ -175,6 +164,7 @@ RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::da
 
 	threshold( tag->getOption<core::Real>( "threshold", default_rmsd_threshold() ) );
 	CA_only( tag->getOption<bool>( "CA_only", default_ca_selection() ) );
+	GDT( tag->getOption<bool>( "use_gdt", default_gdt_selection() ) );
 
 	reference_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "reference_selector" ), data_map ) );
 	query_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "query_selector" ), data_map ) );
@@ -186,7 +176,8 @@ void RmsdFromResidueSelectorFilter::provide_xml_schema( utility::tag::XMLSchemaD
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "CA_only", xsct_rosetta_bool, "When selected, use only CA RMSD, otherwise backbone RMSD", std::to_string( default_ca_selection() ) )
+		+ XMLSchemaAttribute::attribute_w_default( "CA_only", xsct_rosetta_bool, "When selected, use only CA RMSD", std::to_string( default_ca_selection() ) )
+		+ XMLSchemaAttribute::attribute_w_default( "use_gdt", xsct_rosetta_bool, "When selected, use GDTm algorithm", std::to_string( default_gdt_selection() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold in RMSD above which the filter fails", std::to_string( default_rmsd_threshold() ) );
 	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
 	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "reference_selector", "Selector specifying residues to take into account in the reference pose" );

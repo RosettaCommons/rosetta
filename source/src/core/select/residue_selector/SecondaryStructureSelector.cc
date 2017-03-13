@@ -273,7 +273,7 @@ SecondaryStructureSelector::check_ss( std::string const & ss ) const
 /// @brief fixes the secondary structure according to the expected minimal length of each secondary structure.
 /// @param[in] ss string with the secondary structure definition
 void
-SecondaryStructureSelector::fix_secstruct_definition( std::string ss ) const
+SecondaryStructureSelector::fix_secstruct_definition( std::string & ss ) const
 {
 	if (minH_ == 1 and minE_ == 1) return;
 

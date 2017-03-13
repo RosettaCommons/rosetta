@@ -43,6 +43,7 @@ public:
 	void reference_pose( core::pose::PoseOP ref ) { reference_pose_ = ref; }
 	void threshold( core::Real threshold ) { threshold_ = threshold; }
 	void CA_only( bool pick ) { CA_only_ = pick; }
+	void GDT( bool pick ) { gdt_ = pick; }
 	void reference_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { reference_select_ = select; }
 	void reference_selector( core::select::residue_selector::ResidueSelector const &  select ) { reference_select_ = select.clone(); }
 	void query_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { query_select_ = select; }
@@ -72,6 +73,7 @@ public:
 private:
 	inline static core::Real default_rmsd_threshold() { return 5.0; }
 	inline static bool default_ca_selection() { return true; }
+	inline static bool default_gdt_selection() { return false; }
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP reference_select_;
@@ -80,6 +82,7 @@ private:
 	core::pose::PoseOP reference_pose_;
 	core::Real sensitivity_;
 	bool CA_only_;
+	bool gdt_;
 
 };
 

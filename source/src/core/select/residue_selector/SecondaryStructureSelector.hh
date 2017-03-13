@@ -100,7 +100,7 @@ private:
 
 	/// @brief fixes the secondary structure according to the expected minimal length of each secondary structure.
 	/// @param[in] ss string with the secondary structure definition
-	void fix_secstruct_definition( std::string ss ) const;
+	void fix_secstruct_definition( std::string & ss ) const;
 
 	void add_overlap(
 		ResidueSubset & matching_ss,
