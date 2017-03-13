@@ -4,10 +4,8 @@ cd %(workdir)s
 # Do the tests actually exist?
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
 
-
-#Test Normal script - Layer of 2 and a window of 1.
+#Test Single-residue distance layer building
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
-    -parser:protocol glycan_tree_relax.xml -s eleven_glycans.pdb -out:prefix default_ -run:constant_seed -nodelay \
-    2>&1 | egrep -vf ../../ignore_list > info.log
+    -parser:protocol glycan_tree_relax_build_single.xml -s eleven_glycans.pdb  -out:prefix single_ -run:constant_seed -nodelay \
+    2>&1 | egrep -vf ../../ignore_list > info_build_single.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-

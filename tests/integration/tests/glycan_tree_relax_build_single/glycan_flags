@@ -1,0 +1,6 @@
+-include_sugars
+-write_pdb_link_records
+-ex1
+-ex2
+-use_input_sc
+-overwrite

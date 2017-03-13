@@ -1,3 +1,5 @@
+cd %(workdir)s
+
 # Do the tests actually exist?
 [ -x %(bin)s/glycan_relax.%(binext)s ] || exit 1
 

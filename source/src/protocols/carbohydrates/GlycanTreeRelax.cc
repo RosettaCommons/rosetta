@@ -504,7 +504,15 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 						//ResidueSubset modeling_layer = modeling_layer_selector->apply( pose );
 						
 						TR << "Running GlycanRelax on layer: " << current_start << " " << current_end << std::endl;
-						glycan_relax.set_selector( modeling_layer_selector );
+						
+						//Combine modeling layer with whatver the current_subset is.
+						store_subset->set_residue_subset( starting_subset );
+						and_selector->clear();
+						
+						and_selector->add_residue_selector( store_subset );
+						and_selector->add_residue_selector( modeling_layer_selector );
+						
+						glycan_relax.set_selector( and_selector );
 						glycan_relax.apply( pose );
 						
 						current_end = current_end - layer_size_ + window_size_;
