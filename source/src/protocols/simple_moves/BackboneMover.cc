@@ -709,29 +709,32 @@ ShearMover::setup_list( core::pose::Pose & pose )
 	using namespace id;
 	// Compare code below to that for SmallMover above.
 	for ( core::Size i = 2; i <= pose.size(); ++i ) {
-		// both residue i and residue i-1 must be selected
 		if ( ! subset[ i ] ) { continue; }
-		if ( ! subset[ i - 1 ] ) { continue; }
 
 		conformation::Residue const & rsd( pose.residue( i ) );
-		if ( rsd.is_protein() && movemap()->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
-				movemap()->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/ ) ) {
-			char const ss( pose.secstruct( i ) );
-			if ( angle_max_.count( ss ) ) {
-				Real const mx( angle_max_.find( ss )->second );
-				if ( mx > 0.0 ) {
-					pos_list_.push_back( std::make_pair( i, mx ) );
+		if ( rsd.is_protein() ) {
+			// Both residue i and residue i-1 must be selected.
+			if ( ! subset[ i - 1 ] ) { continue; }
+			
+			// The two twisting bonds must be parallel to make a shearing motion;
+			// If omega is not trans, they cannot be.
+			if ( ! pose.residue( i - 1 ).is_protein() ) { continue; }
+			if ( std::abs( pose.omega( i - 1 ) ) < 165 ) { continue; }  // arbitrarily picking a +-15 degree cut-off
+			
+			if ( movemap()->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
+					movemap()->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/ ) ) {
+				char const ss( pose.secstruct( i ) );
+				if ( angle_max_.count( ss ) ) {
+					Real const mx( angle_max_.find( ss )->second );
+					if ( mx > 0.0 ) {
+						pos_list_.push_back( std::make_pair( i, mx ) );
+					}
 				}
 			}
 
-			// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
-		} else if ( rsd.is_carbohydrate() && movemap()->get( TorsionID( i - 1, BB, 4 ) ) &&
-				movemap()->get( TorsionID( i, BB, 5 ) ) ) {
-			// Carbohydrates are always considered loops for now.
-			Real const mx = angle_max_.find( 'L' )->second;
-			if ( mx > 0.0 ) {
-				pos_list_.push_back( std::make_pair( i, mx ) );
-			}
+		// Rosetta cannot do this yet.
+		} else if ( rsd.is_carbohydrate() ) {
+			continue;
 		}
 	}
 }
