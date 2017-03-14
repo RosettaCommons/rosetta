@@ -297,16 +297,27 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 
 		// identify number of chains
 		core::Size const nchains = pose.conformation().num_chains();
-
+		
+		// list of COM residues (one for each chain)
 		utility::vector1< core::Size > com_residues;
 
 		// calculate com for each chain
 		for ( core::Size i=1; i<=nchains; ++i ) {
-			com_residues.push_back( residue_center_of_mass( pose, pose.conformation().chain_begin(i), pose.conformation().chain_end(i) ) );
+			
+			// select only the non-disordered residues for COM calculation
+			utility::vector1< bool > com_selections(pose.size(), false);
+			
+			// select only ordered regions for COM calculation
+			for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j) {
+				if ( !movemap_->get_bb(j) ) com_selections[j] = true; // in non-flexible region
+			}
+			com_residues.push_back( residue_center_of_mass( pose, com_selections ) );
+			
 		}
 
 
 		for ( core::Size & com_residue : com_residues ) {
+            TR << "COM residue: " << com_residue << std::endl;
 
 			// loop over COM and check that these are not termini
 			runtime_assert_msg( !pose.residue(com_residue).is_terminus(), "COM cannot be a terminus!" );
