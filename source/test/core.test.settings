@@ -421,6 +421,9 @@ sources = {
 		"HBondsForDemos",
 		"polynomial",
 	],
+        "scoring/lkball" : [
+                "LK_BallEnergy"
+        ],
         "scoring/loop_graph" : [
                 "LoopGraphTest"
         ],

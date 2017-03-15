@@ -75,42 +75,36 @@ public:
 
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	LK_BallEnergy( LK_BallEnergy const & src );
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const &,
-		utility::vector1< bool > const & ) const;
+		utility::vector1< bool > const & ) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & rotamer_set
-	) const;
+	) const override;
 
-	virtual
 	void
 	update_residue_for_packing(
 		pose::Pose &,
-		Size resid ) const;
+		Size resid ) const override;
 
-	virtual
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
-	) const;
+	) const override;
 
 	/// helper function for outside use
 	Real
@@ -119,12 +113,14 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2
 	);
+
 	Real
 	calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair(
 		Size const atom1,
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2
 	);
+
 	void
 	calculate_lk_ball_atom_energies(
 		Size const atom1,
@@ -167,7 +163,6 @@ public:
 		Real & atom2_lk_desolvation_by_atom1_deriv
 	);
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -179,10 +174,9 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -190,7 +184,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief  Just used in packing, currently.
@@ -201,7 +195,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	void
@@ -228,14 +222,17 @@ public:
 		EnergyMap & emap
 	) const;
 
-	void
-	setup_for_minimizing_for_residue(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		kinematics::MinimizerMapBase const & min_map,
-		ResSingleMinimizationData & resdata
-	) const;
+	// These are no longer needed because the water coordinates
+	// are going to be cached in the Residue object directly.
+	//void
+	//setup_for_minimizing_for_residue(
+	//	conformation::Residue const & rsd,
+	//	pose::Pose const & pose,
+	//	ScoreFunction const & scorefxn,
+	//	kinematics::MinimizerMapBase const & min_map,
+	//	ResSingleMinimizationData & resdata
+	//) const override;
+
 
 	void
 	setup_for_minimizing_for_residue_pair(
@@ -247,69 +244,78 @@ public:
 		ResSingleMinimizationData const & res1data,
 		ResSingleMinimizationData const & res2data,
 		ResPairMinimizationData & pairdata
-	) const;
+	) const override;
+	//
+	//bool
+	//use_extended_residue_pair_energy_interface() const override;
+	//
+	//void
+	//residue_pair_energy_ext(
+	//	conformation::Residue const & rsd1,
+	//	conformation::Residue const & rsd2,
+	//	ResPairMinimizationData const & pairdata,
+	//	pose::Pose const &,// pose,
+	//	ScoreFunction const &,
+	//	EnergyMap & emap
+	//) const override;
 
 	bool
-	use_extended_residue_pair_energy_interface() const;
-
-	void
-	residue_pair_energy_ext(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResPairMinimizationData const & pairdata,
-		pose::Pose const &,// pose,
-		ScoreFunction const &,
-		EnergyMap & emap
-	) const;
+	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose::Pose const & pose ) const override;
 
-	bool
-	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const;
+	using TwoBodyEnergy::setup_for_scoring_for_residue;
 
 	void
 	setup_for_scoring_for_residue(
 		conformation::Residue const & rsd,
-		pose::Pose const &,// pose,
+		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & resdata
-	) const;
+		basic::datacache::BasicDataCache & residue_data_cache
+	) const override;
+
+	//bool
+	//requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const override;
+
+	//void
+	//setup_for_scoring_for_residue(
+	//	conformation::Residue const & rsd,
+	//	pose::Pose const &,// pose,
+	//	ScoreFunction const & sfxn,
+	//	ResSingleMinimizationData & resdata
+	//) const override;
 
 	bool
-	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const;
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const override;
 
 	void
 	setup_for_derivatives_for_residue(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & min_data
-	) const;
+		ResSingleMinimizationData & min_data,
+		basic::datacache::BasicDataCache & residue_data_cache
+	) const override;
 
-
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -319,15 +325,13 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 
 	Real
@@ -383,7 +387,6 @@ public:
 		bool compute_derivs=true
 	) const;
 
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -392,10 +395,9 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -404,8 +406,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
-
+	) const override;
 
 	void
 	sum_deriv_contributions_for_heavyatom_pair_one_way(
@@ -456,14 +457,12 @@ private:
 
 	lkbtrie::LKBRotamerTrieOP
 	create_rotamer_trie(
-		conformation::RotamerSetBase const & rotset,
-		pose::Pose const & pose
+		conformation::RotamerSetBase const & rotset
 	) const;
 
 	lkbtrie::LKBRotamerTrieOP
 	create_rotamer_trie(
-		conformation::Residue const & res,
-		pose::Pose const & pose
+		conformation::Residue const & res
 	) const;
 
 	trie::TrieCountPairBaseOP
@@ -517,10 +516,10 @@ private:
 
 	// save bridging water positions
 	bool save_bridging_waters_;
-	mutable utility::vector1< ScoredBridgingWater > bridging_waters_;
+	mutable utility::vector1< ScoredBridgingWater > bridging_waters_; ///// WHOA! THIS DOES NOT BELONG HERE!
 
-	virtual
-	core::Size version() const;
+public:
+	core::Size version() const override;
 
 };
 

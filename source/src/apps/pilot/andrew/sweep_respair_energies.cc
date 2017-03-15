@@ -977,7 +977,7 @@ create_mingraph_for_focused_residue_pair(
 
 core::Real
 gradient_magnitude_for_conformation(
-	core::pose::Pose const & pose,
+	core::pose::Pose & pose,
 	core::scoring::ScoreFunction const & sfxn,
 	core::Size res1_index,
 	core::Size res2_index,
@@ -993,8 +993,8 @@ gradient_magnitude_for_conformation(
 	minnode1.setup_for_minimizing( pose.residue( res1_index ), pose, sfxn, *minimizer_map );
 	minnode2.setup_for_minimizing( pose.residue( res2_index ), pose, sfxn, *minimizer_map );
 
-	minnode1.setup_for_derivatives( pose.residue( res1_index ), pose, sfxn );
-	minnode2.setup_for_derivatives( pose.residue( res2_index ), pose, sfxn );
+	minnode1.setup_for_derivatives( pose.residue( res1_index ), pose.residue_data( res1_index ), pose, sfxn );
+	minnode2.setup_for_derivatives( pose.residue( res2_index ), pose.residue_data( res2_index ), pose, sfxn );
 
 	core::scoring::MinimizationEdge & minedge = static_cast< core::scoring::MinimizationEdge & >
 		( *mingraph->find_minimization_edge( res1_index, res2_index ) );

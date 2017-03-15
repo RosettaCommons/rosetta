@@ -355,7 +355,7 @@ OrbitalsScore::residue_pair_energy(
 }
 
 bool
-OrbitalsScore::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const { return true; }
+OrbitalsScore::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const { return true; }
 
 /// @details OH, WOE IS ME!  Const casting an input Residue object? This is an awful thing for a score term to do.
 void
@@ -373,12 +373,14 @@ bool
 OrbitalsScore::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & ) const { return true; }
 
 /// @details OH, WOE IS ME!  Const casting an input Residue object? This is an awful thing for a score term to do.
+/// Now that there is a framework for caching arbitrary data in a Residue, perhaps this code can take advantage of it.
 void
 OrbitalsScore::setup_for_derivatives_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
 	ScoreFunction const &,
-	ResSingleMinimizationData &
+	ResSingleMinimizationData &,
+	basic::datacache::BasicDataCache &
 ) const
 {
 	( const_cast< conformation::Residue * > (&rsd) )->update_orbital_coords();

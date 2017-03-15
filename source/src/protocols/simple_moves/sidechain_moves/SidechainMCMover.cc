@@ -232,7 +232,7 @@ SidechainMCMover::apply(
 
 
 		PROF_START( SIMPLEINTGRAPH );
-		core::Real delta_energy = ig_->consider_substitution( rand_res, new_state );
+		core::Real delta_energy = ig_->consider_substitution( rand_res, new_state, *new_state->nonconst_data_ptr() );
 		PROF_STOP( SIMPLEINTGRAPH );
 
 		if ( DEBUG ) {

@@ -262,7 +262,7 @@ SASAEnergy::setup_for_minimizing_for_residue_pair(
 }
 
 bool
-SASAEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const
+SASAEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
 {
 	return false;
 }
@@ -277,7 +277,10 @@ SASAEnergy::setup_for_scoring_for_residue(
 {
 }
 
-
+// note: you do not need to define this function or setup_for_derivatives_for_residue because
+// the base class already provides both of these no-op implementations; or rather,
+// setup_for_derivatives_for_residue won't be called because the base class "requires...opportunity"
+// returns false.
 bool
 SASAEnergy::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const
 {
@@ -290,7 +293,8 @@ SASAEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & ,
 	pose::Pose const & ,
 	ScoreFunction const & ,
-	ResSingleMinimizationData &
+	ResSingleMinimizationData &,
+	basic::datacache::BasicDataCache &
 ) const
 {
 }

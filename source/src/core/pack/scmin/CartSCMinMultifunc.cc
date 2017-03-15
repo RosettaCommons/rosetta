@@ -74,7 +74,7 @@ CartSCMinMultifunc::operator ()( Multivec const & xs ) const
 	/// 1. setup for scoring -- nodes first
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
 		Size const iiresid = scminmap_.active_residue( ii );
-		g_.get_minimization_node( iiresid )->setup_for_scoring( scminmap_.residue( iiresid ), pose_, sfxn_ );
+		g_.get_minimization_node( iiresid )->setup_for_scoring( scminmap_.residue( iiresid ), scminmap_.residue_data( iiresid ), pose_, sfxn_ );
 	}
 	/// edges second.
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
@@ -141,7 +141,7 @@ CartSCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dx ) const
 	/// 1. setup for derivatives -- nodes first
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
 		Size const iiresid = scminmap_.active_residue( ii );
-		g_.get_minimization_node( iiresid )->setup_for_derivatives( scminmap_.residue( iiresid ), pose_, sfxn_ );
+		g_.get_minimization_node( iiresid )->setup_for_derivatives( scminmap_.residue( iiresid ), scminmap_.residue_data( iiresid ), pose_, sfxn_ );
 	}
 	/// edges second.
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {

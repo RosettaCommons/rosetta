@@ -873,6 +873,42 @@ public:
 		Size const seqpos
 	) const;
 
+	/// @brief Returns the DataCache held by Residue at position <seqpos> (read/write access)
+	/// Note: this method will trigger a refold if either the
+	/// torsions or the coordinates are out-of-date
+	///
+	/// example(s):
+	///     pose.residue_data(4)
+	/// See also:
+	///     Pose
+	///     Pose.residue
+	///     Pose.sequence
+	///     Pose.size
+	///     Residue
+	///     ResidueType
+	basic::datacache::BasicDataCache &
+	residue_data(
+		Size const seqpos
+	);
+
+	/// @brief Returns the DataCache held by Residue at position <seqpos> (read access)
+	/// Note: this method will trigger a refold if either the
+	/// torsions or the coordinates are out-of-date
+	///
+	/// example(s):
+	///     pose.residue_data(4)
+	/// See also:
+	///     Pose
+	///     Pose.residue
+	///     Pose.sequence
+	///     Pose.size
+	///     Residue
+	///     ResidueType
+	basic::datacache::BasicDataCache const &
+	residue_data(
+		Size const seqpos
+	) const;
+
 	/// @brief Returns the ResidueType at position  <seqpos>  (read access)
 	/// Note: this method NOT will trigger a refold if either
 	/// the torsions or the coordinates are out-of-date

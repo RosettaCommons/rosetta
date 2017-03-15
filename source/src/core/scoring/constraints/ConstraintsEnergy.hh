@@ -281,7 +281,7 @@ public:
 	/// @brief Ask for the opportunity to setup for scoring for evaluating 1-body constraints
 	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const;
 
 	/// @brief Allow the component constraints to setup for scoring for a particular residue
 	virtual
@@ -307,7 +307,8 @@ public:
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & min_data
+		ResSingleMinimizationData & min_data,
+		basic::datacache::BasicDataCache & res_data_cache
 	) const;
 
 	void

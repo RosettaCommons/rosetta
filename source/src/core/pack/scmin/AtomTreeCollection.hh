@@ -41,6 +41,9 @@
 //#include <core/pose/Pose.fwd.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -123,6 +126,10 @@ public:
 		debug_assert( residue_uptodate_ );
 		return *active_residue_;
 	}
+
+	/// @brief  Accessor for the active residue's data cache
+	/// asserts residue_uptodate_ -- make sure that update_residue is called first
+	basic::datacache::BasicDataCache & active_residue_data();
 
 	conformation::ResidueCOP active_residue_cop() const;
 

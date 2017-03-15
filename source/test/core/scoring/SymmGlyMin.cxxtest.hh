@@ -124,13 +124,15 @@ public:
 				//Make a third pose, too, and mirror this one:
 				core::pose::PoseOP pose3( pose->clone() );
 				for ( core::Size ir=1, irmax=pose->total_residue(); ir<=irmax; ++ir ) {
-					pose3->conformation().residue_op(ir)->set_mirrored_relative_to_type(true);
+					core::conformation::ResidueOP ires( pose->residue( ir ).clone() );
+					ires->set_mirrored_relative_to_type(true);
 					for ( core::Size ia=1, iamax=pose->residue_type(ir).natoms(); ia<=iamax; ++ia ) {
 						core::id::AtomID const curat( ia, ir );
 						numeric::xyzVector< core::Real > v( pose->xyz(curat) );
 						v.x() *= -1.0;
-						pose3->set_xyz( curat, v );
+						ires->set_xyz( ia, v );
 					}
+					pose3->replace_residue( ir, *ires, false );
 				}
 				pose3->update_residue_neighbors();
 

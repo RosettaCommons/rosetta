@@ -122,23 +122,41 @@ retrieve_lkb_rotamer_set_info( conformation::RotamerSetBase const & set ) {
 		( set.data().get( conformation::RotamerSetCacheableDataType::LK_BALL_ROTAMER_SET_INFO ) );
 }
 
-inline
-LKB_ResidueInfo const &
-retrieve_lkb_residue_info( pose::Pose const & pose, Size const seqpos ) {
-	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
-		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
-	return ( static_cast< LKB_PoseInfo const & >
-		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
+void
+update_cached_lkb_resinfo(
+	conformation::Residue const & rsd,
+	basic::datacache::BasicDataCache & residue_data_cache
+)
+{
+	using conformation::residue_datacache::LK_BALL_INFO;
+	if ( residue_data_cache.has( LK_BALL_INFO ) ) {
+		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( residue_data_cache.get_ptr( LK_BALL_INFO )));
+		LKB_ResidueInfo & info( static_cast< LKB_ResidueInfo & > ( residue_data_cache.get( LK_BALL_INFO )));
+		info.build_waters( rsd ); // update the coordinates for the existing lkb-resinfo object
+	} else {
+		LKB_ResidueInfoOP info( new LKB_ResidueInfo( rsd ) );
+		residue_data_cache.set( LK_BALL_INFO, info );
+	}
 }
 
-inline
-LKB_ResidueInfo &
-retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
-	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
-		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
-	return ( static_cast< LKB_PoseInfo & >
-		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
-}
+
+////inline
+////LKB_ResidueInfo const &
+////retrieve_lkb_residue_info( pose::Pose const & pose, Size const seqpos ) {
+////	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
+////	return ( static_cast< LKB_PoseInfo const & >
+////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
+////}
+
+////inline
+////LKB_ResidueInfo &
+////retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
+////	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
+////	return ( static_cast< LKB_PoseInfo & >
+////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
+////}
 
 
 class LKB_ResPairMinData : public basic::datacache::CacheableData {
@@ -188,71 +206,83 @@ LKB_ResPairMinData::initialize(
 }
 
 
-/////////////////////////////////////// mindata retrieval functions
-inline
-LKB_ResPairMinData &
-retrieve_nonconst_lkb_pairdata(
-	ResPairMinimizationData & pairdata
-)
-{
-	LKB_ResPairMinDataOP lkb_pairdata(0);
-	if ( pairdata.get_data( lkb_respair_data ) ) {
-		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data )));
-		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ));
-	} else {
-		lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
-		pairdata.set_data( lkb_respair_data, lkb_pairdata );
-	}
-	return *lkb_pairdata;
-}
-
-/////////////////////////////////////// mindata retrieval functions
-inline
-LKB_ResPairMinData const &
-retrieve_lkb_pairdata(
-	ResPairMinimizationData const & pairdata
-)
-{
-	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data )));
-	return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
-}
-/////////////////////////////////////// mindata retrieval functions
-inline
-LKB_ResidueInfo &
-retrieve_nonconst_lkb_resdata(
-	ResSingleMinimizationData & resdata
-)
-{
-	LKB_ResidueInfoOP lkb_resdata( 0 );
-	if ( resdata.get_data( lkb_res_data ) ) {
-		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data )));
-		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
-	} else {
-		lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
-		resdata.set_data( lkb_res_data, lkb_resdata );
-	}
-	return *lkb_resdata;
-}
-/////////////////////////////////////// mindata retrieval functions
+/////////////////////////////////////////// mindata retrieval functions
+////inline
+////LKB_ResPairMinData &
+////retrieve_nonconst_lkb_pairdata(
+////	ResPairMinimizationData & pairdata
+////)
+////{
+////	LKB_ResPairMinDataOP lkb_pairdata(0);
+////	if ( pairdata.get_data( lkb_respair_data ) ) {
+////		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data )));
+////		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ));
+////	} else {
+////		lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
+////		pairdata.set_data( lkb_respair_data, lkb_pairdata );
+////	}
+////	return *lkb_pairdata;
+////}
+////
+/////////////////////////////////////////// mindata retrieval functions
+////inline
+////LKB_ResPairMinData const &
+////retrieve_lkb_pairdata(
+////	ResPairMinimizationData const & pairdata
+////)
+////{
+////	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data )));
+////	return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
+////}
+////
+/////////////////////////////////////////// mindata retrieval functions
+////inline
+////LKB_ResidueInfo &
+////retrieve_nonconst_lkb_resdata(
+////	ResSingleMinimizationData & resdata
+////)
+////{
+////	LKB_ResidueInfoOP lkb_resdata( 0 );
+////	if ( resdata.get_data( lkb_res_data ) ) {
+////		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data )));
+////		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
+////	} else {
+////		lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
+////		resdata.set_data( lkb_res_data, lkb_resdata );
+////	}
+////	return *lkb_resdata;
+////}
+////
+/////////////////////////////////////////// mindata retrieval functions
 inline
 LKB_ResidueInfo const &
 retrieve_lkb_resdata(
-	ResSingleMinimizationData const & resdata
+	conformation::Residue const & res
 )
 {
-	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
-	return ( static_cast< LKB_ResidueInfo const & > ( resdata.get_data_ref( lkb_res_data ) ) );
+	using namespace core::conformation::residue_datacache;
+	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( res.data_ptr()->get_const_ptr( LK_BALL_INFO )));
+	return ( static_cast< LKB_ResidueInfo const & > ( res.data_ptr()->get( LK_BALL_INFO ) ) );
 }
-/////////////////////////////////////// mindata retrieval functions
-inline
-LKB_ResidueInfoCOP
-retrieve_lkb_resdata_ptr(
-	ResSingleMinimizationData const & resdata
-)
-{
-	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
-	return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
-}
+
+/////////////////////////////////////////// mindata retrieval functions
+////inline
+////LKB_ResidueInfoCOP
+////retrieve_lkb_resdata_ptr(
+////	ResSingleMinimizationData const & resdata
+////)
+////{
+////	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
+////	return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
+////}
+////
+////inline
+////LKB_ResidueInfo &
+////retrieve_lk_resdata(
+////	basic::datacache::BasicDataCache & residue_data_cache
+////)
+////{
+////}
 
 
 LK_BallEnergy::LK_BallEnergy( methods::EnergyMethodOptions const & options ):
@@ -325,20 +355,20 @@ LK_BallEnergy::LK_BallEnergy( LK_BallEnergy const & src ):
 }
 
 
-void
-compute_and_store_pose_waters(
-	pose::Pose & pose
-)
-{
-	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-	// using namespace core::pack::rotamer_set; // WaterPackingInfo
-	LKB_PoseInfoOP info( new LKB_PoseInfo() );
-	for ( Size i=1; i<= pose.size(); ++i ) {
-		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
-	}
-	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
-	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-}
+////void
+////compute_and_store_pose_waters(
+////	pose::Pose & pose
+////)
+////{
+////	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
+////	// using namespace core::pack::rotamer_set; // WaterPackingInfo
+////	LKB_PoseInfoOP info( new LKB_PoseInfo() );
+////	for ( Size i=1; i<= pose.size(); ++i ) {
+////		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
+////	}
+////	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
+////	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
+////}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,51 +378,66 @@ compute_and_store_pose_waters(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool
-LK_BallEnergy::minimize_in_whole_structure_context( pose::Pose const &pose ) const
+LK_BallEnergy::minimize_in_whole_structure_context( pose::Pose const & /*pose*/ ) const
 {
-	//return false;
-	return pose.energies().use_nblist_auto_update();
+	return false;
+	//return pose.energies().use_nblist_auto_update();
 }
 
 
-void
-LK_BallEnergy::setup_for_minimizing_for_residue(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	ScoreFunction const &, // scorefxn,
-	kinematics::MinimizerMapBase const &, // min_map,
-	ResSingleMinimizationData & resdata
-) const
-{
-	if ( pose.energies().use_nblist_auto_update() ) return;
-
-	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
-	info.initialize( rsd.type() );
-	info.build_waters( rsd );
-}
-
+////void
+////LK_BallEnergy::setup_for_minimizing_for_residue(
+////	conformation::Residue const & rsd,
+////	pose::Pose const & pose,
+////	ScoreFunction const &, // scorefxn,
+////	kinematics::MinimizerMapBase const &, // min_map,
+////	ResSingleMinimizationData & resdata
+////) const
+////{
+////	if ( pose.energies().use_nblist_auto_update() ) return;
+////
+////	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
+////	info.initialize( rsd.type() );
+////	info.build_waters( rsd );
+////}
+////
 void
 LK_BallEnergy::setup_for_minimizing_for_residue_pair(
-	conformation::Residue const &, // rsd1,
-	conformation::Residue const &, // rsd2,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &, //scorefxn,
+	ScoreFunction const & scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
-	ResSingleMinimizationData const & res1data,
-	ResSingleMinimizationData const & res2data,
-	ResPairMinimizationData & pairdata
+	ResSingleMinimizationData const &,// res1data,
+	ResSingleMinimizationData const &,// res2data,
+	ResPairMinimizationData & pair_data
 ) const
 {
-	if ( pose.energies().use_nblist_auto_update() ) return;
+	using namespace etable::count_pair;
 
-	LKB_ResPairMinData & lkb_pairdata( retrieve_nonconst_lkb_pairdata( pairdata ) );
-	lkb_pairdata.initialize( retrieve_lkb_resdata_ptr( res1data ),
-		retrieve_lkb_resdata_ptr( res2data ) );
+	// create the residue-pair neighbor list only if the EtableEnergy will not be creating it
+	bool etable_online = false;
+	EnergyMap const & weights( scorefxn.weights() );
+	if ( weights[ fa_atr ] != 0 || weights[ fa_rep ] != 0 || weights[ fa_sol ] != 0 ) etable_online = true;
+	if ( etable_online && ! pose.energies().use_nblist_auto_update() ) return;
+
+	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+	// update the existing nblist if it's already present in the min_data object
+	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( etab_pair_nblist ) ));
+	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+
+	Real const XX2 = etable_->nblist_dis2_cutoff_XX();
+	Real const XH2 = etable_->nblist_dis2_cutoff_XH();
+	Real const HH2 = etable_->nblist_dis2_cutoff_HH();
+
+	nblist->initialize_from_residues(	XX2, XH2, HH2, rsd1, rsd2, cpfxn );
+
+	pair_data.set_data( etab_pair_nblist, nblist );
 }
 
-
 bool
-LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const
+LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose::Pose const & ) const
 {
 	return true;
 }
@@ -400,21 +445,41 @@ LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose 
 void
 LK_BallEnergy::setup_for_scoring_for_residue(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	ResSingleMinimizationData & resdata
+	pose::Pose const &,
+	ScoreFunction const &,
+	basic::datacache::BasicDataCache & residue_data_cache
 ) const
 {
-	if ( pose.energies().use_nblist_auto_update() ) return;
-
-	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
-	if ( !info.matches_residue_type( rsd.type() ) ) {
-		std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
-			rsd.type().name() << std::endl;
-		info.initialize( rsd.type() );
-	}
-	info.build_waters( rsd ); // already initialized in setup for minimizing for rsd
+	update_cached_lkb_resinfo( rsd, residue_data_cache );
 }
+
+
+////bool
+////LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
+////{
+////	return true;
+////}
+////
+/////// @details The minimization form of this function updates the data stored in the resdata object
+/////// instead of in the rsd object.
+////void
+////LK_BallEnergy::setup_for_scoring_for_residue(
+////	conformation::Residue const & rsd,
+////	pose::Pose const & pose,
+////	ScoreFunction const &, // sfxn,
+////	ResSingleMinimizationData & resdata
+////) const
+////{
+////	if ( pose.energies().use_nblist_auto_update() ) return;
+////
+////	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
+////	if ( !info.matches_residue_type( rsd.type() ) ) {
+////		std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
+////			rsd.type().name() << std::endl;
+////		info.initialize( rsd.type() );
+////	}
+////	info.build_waters( rsd ); // already initialized in setup for minimizing for rsd
+////}
 
 bool
 LK_BallEnergy::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const
@@ -427,20 +492,18 @@ LK_BallEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	ResSingleMinimizationData & min_data
+	ResSingleMinimizationData &,
+	basic::datacache::BasicDataCache & residue_data_cache
 ) const
 {
-	/// just compute water locations
-	setup_for_scoring_for_residue( rsd, pose, sfxn, min_data );
+	// just compute water locations
+	setup_for_scoring_for_residue( rsd, pose, sfxn, residue_data_cache );
 }
 
 
 void
 LK_BallEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const
 {
-	pose.update_residue_neighbors();
-	compute_and_store_pose_waters( pose ); // could check task and do only some
-
 	//fpd trie
 	using namespace trie;
 	using namespace lkbtrie;
@@ -450,7 +513,8 @@ LK_BallEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > co
 		// Do not compute energy for virtual residues.
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
-		LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
+		update_cached_lkb_resinfo( pose.residue( ii ), pose.residue_data( ii ) );
+		LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ) );
 		tries->trie( ii, one_rotamer_trie );
 	}
 	pose.energies().data().set( EnergiesCacheableDataType::LKB_TRIE_COLLECTION, tries );
@@ -463,22 +527,15 @@ LK_BallEnergy::update_residue_for_packing(
 	Size resid
 ) const
 {
-	/// update waters for residue that has changed during packing, eg in rotamer trials
-	/// need to double-check the current logic on this...
-	// retrieve_nonconst_lkb_residue_info( pose, resid ).build_waters( pose.residue( resid ) );
-	LKB_ResidueInfo & info( retrieve_nonconst_lkb_residue_info( pose, resid ) );
-	conformation::Residue const & rsd( pose.residue( resid ) );
-	if ( !info.matches_residue_type( rsd.type() ) ) {
-		std::cout << "LK_BallEnergy::update_residue_for_packing:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
-			rsd.type().name() << std::endl;
-		info.initialize( rsd.type() );
+
+	if ( pose.residue( resid ).aa() != core::chemical::aa_vrt ) {
+		update_cached_lkb_resinfo( pose.residue( resid ), pose.residue_data( resid ) );
 	}
-	info.build_waters( rsd );
 
 	//fpd trie
 	using namespace trie;
 	using namespace lkbtrie;
-	LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ), pose );
+	LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ) );
 
 	// grab non-const & of the cached tries and replace resid's trie with a new one.
 	TrieCollection & trie_collection
@@ -494,8 +551,11 @@ LK_BallEnergy::setup_for_scoring(
 ) const
 {
 	pose.update_residue_neighbors();
-	compute_and_store_pose_waters( pose );
+	//compute_and_store_pose_waters( pose );
 
+	// Mutable data for energy methods is a really bad idea and severely limits
+	// the usability of the energy method. Data should be cached in the Pose or
+	// in Residue objects.
 	if ( save_bridging_waters_ ) {
 		bridging_waters_.clear(  );
 	}
@@ -503,7 +563,7 @@ LK_BallEnergy::setup_for_scoring(
 
 void
 LK_BallEnergy::prepare_rotamers_for_packing(
-	pose::Pose const & pose,
+	pose::Pose const &,
 	conformation::RotamerSetBase & rotamer_set
 ) const
 {
@@ -524,7 +584,7 @@ LK_BallEnergy::prepare_rotamers_for_packing(
 	//fpd trie
 	using namespace trie;
 	using namespace lkbtrie;
-	LKBRotamerTrieOP rottrie = create_rotamer_trie( rotamer_set, pose );
+	LKBRotamerTrieOP rottrie = create_rotamer_trie( rotamer_set );
 	//std::cout << "--------------------------------------------------" << std::endl << " HBROTAMER TRIE: " << set.resid() << std::endl;
 	//rottrie->print();
 	rotamer_set.store_trie( methods::lkball_method, rottrie );
@@ -666,6 +726,9 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 				d_weighted_d2_d_di[idx1] += d2_delta_wt * delta_ij;
 			}
 
+			// Please work to store data such as this in the Pose or in the Residue objects.
+			// Let's figure out how to do that. Mutable data in EnergyMethods, however,
+			// severely limits their usability.
 			if ( save_bridging_waters_ ) {
 				Real score = 0.0, lkbridge_frac = 0.0;
 				if ( d2_delta < overlap_width_A2_ ) lkbridge_frac = d2_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( d2_delta, overlap_width_A2_ );
@@ -795,37 +858,24 @@ void
 LK_BallEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ScoreFunction const &sf,
+	pose::Pose const & /*pose*/,
+	ScoreFunction const & sf,
 	EnergyMap & emap
 ) const
 {
-	/// there might be data stashed in these residues if we came through certain packing routes
-	using conformation::residue_datacache::LK_BALL_INFO;
-	bool rsd1_cached = rsd1.data_ptr() != 0 && rsd1.data_ptr()->has( LK_BALL_INFO );
-	bool rsd2_cached = rsd2.data_ptr() != 0 && rsd2.data_ptr()->has( LK_BALL_INFO );
+	// TEMPORARILY DISABLED if ( pose.energies().use_nblist_auto_update() ) return;
 
-	if ( rsd1_cached && rsd2_cached ) {
-		residue_pair_energy( rsd1,
-			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
-			rsd2,
-			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
-			sf, emap );
-	} else if ( rsd1_cached ) {
-		LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
-		residue_pair_energy( rsd1,
-			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
-			rsd2, info2, sf, emap );
-	} else if ( rsd2_cached ) {
-		LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
-		residue_pair_energy( rsd1, info1, rsd2,
-			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
-			sf, emap );
-	} else {
-		LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
-		LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
-		residue_pair_energy( rsd1, info1, rsd2, info2, sf, emap );
-	}
+	// there might be data stashed in these residues if we came through certain packing routes
+	using conformation::residue_datacache::LK_BALL_INFO;
+	debug_assert( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ) ));
+	debug_assert( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ) ));
+
+	residue_pair_energy( rsd1,
+		*( static_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+		rsd2,
+		*( static_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+		sf, emap );
+
 }
 
 void
@@ -855,27 +905,27 @@ LK_BallEnergy::sidechain_sidechain_energy(
 }
 
 // this guy is used during minimization
-bool
-LK_BallEnergy::use_extended_residue_pair_energy_interface() const
-{
-	return true;
-}
-void
-LK_BallEnergy::residue_pair_energy_ext(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & pairdata,
-	pose::Pose const & pose,
-	ScoreFunction const &sf,
-	EnergyMap & emap
-) const
-{
-	if ( pose.energies().use_nblist_auto_update() ) return;
-
-	LKB_ResPairMinData const & lkb_pairdata( retrieve_lkb_pairdata( pairdata ) );
-
-	residue_pair_energy( rsd1, lkb_pairdata.res1_data(), rsd2, lkb_pairdata.res2_data(), sf, emap );
-}
+////bool
+////LK_BallEnergy::use_extended_residue_pair_energy_interface() const
+////{
+////	return true;
+////}
+////void
+////LK_BallEnergy::residue_pair_energy_ext(
+////	conformation::Residue const & rsd1,
+////	conformation::Residue const & rsd2,
+////	ResPairMinimizationData const & pairdata,
+////	pose::Pose const & pose,
+////	ScoreFunction const &sf,
+////	EnergyMap & emap
+////) const
+////{
+////	if ( pose.energies().use_nblist_auto_update() ) return;
+////
+////	LKB_ResPairMinData const & lkb_pairdata( retrieve_lkb_pairdata( pairdata ) );
+////
+////	residue_pair_energy( rsd1, lkb_pairdata.res1_data(), rsd2, lkb_pairdata.res2_data(), sf, emap );
+////}
 
 
 /// helper function for outsiders
@@ -1291,7 +1341,7 @@ LK_BallEnergy::setup_for_derivatives(
 {
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 	pose.update_residue_neighbors();
-	compute_and_store_pose_waters( pose );
+	//compute_and_store_pose_waters( pose );
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 }
 
@@ -1700,8 +1750,8 @@ void
 LK_BallEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & res1data,
-	ResSingleMinimizationData const & res2data,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
 	ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
 	EnergyMap const & weights,
@@ -1709,15 +1759,15 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r2_at_derivs
 ) const
 {
-	if ( pose.energies().use_nblist_auto_update() ) return;
+	// TEMPORARILY DISABLED WHILE AUTOUPDATE OFFLINE if ( pose.energies().use_nblist_auto_update() ) return;
 
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 	debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
 	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
 	// retrieve some info
-	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( res1data ) );
-	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( res2data ) );
+	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
+	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
 
 	ResiduePairNeighborList const & nblist =
 		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist ));
@@ -1748,11 +1798,13 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 //fpd this function is only called during nblist auto update
 void
 LK_BallEnergy::finalize_total_energy(
-	pose::Pose & pose,
-	ScoreFunction const &sf,
-	EnergyMap & totals
+	pose::Pose & /*pose*/,
+	ScoreFunction const & /*sf*/,
+	EnergyMap & /*totals*/
 ) const
 {
+	return;
+	/*
 	if ( !pose.energies().use_nblist() || !pose.energies().use_nblist_auto_update() ) return;
 
 	EnergyMap tbenergy_map;
@@ -1769,7 +1821,7 @@ LK_BallEnergy::finalize_total_energy(
 
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd1( *resvect[i] );
-		LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
+		LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
 		utility::vector1< Vectors > const & rsd1_waters( rsd1_info.waters() );
 		utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
 
@@ -1790,7 +1842,7 @@ LK_BallEnergy::finalize_total_energy(
 				if ( rsd2.atom_is_hydrogen(jj) ) continue;
 				if ( i == j ) continue;
 
-				LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
+				LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
 				utility::vector1< Vectors > const & rsd2_waters( rsd2_info.waters() );
 				utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
 				utility::vector1< Real > const & atom2_weights( rsd2_atom_wts[jj] );
@@ -1851,6 +1903,7 @@ LK_BallEnergy::finalize_total_energy(
 		}
 	}
 	totals += tbenergy_map;
+	*/
 }
 
 
@@ -1877,7 +1930,7 @@ LK_BallEnergy::eval_atom_derivative(
 
 	bool use_lkbr_uncpl = (weights[core::scoring::lk_ball_bridge_uncpl]!=0);
 
-	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
+	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
 	if ( !rsd1_info.has_waters() ) return;
 	scoring::AtomNeighbors const & nbrs( nblist.atom_neighbors(idresid,atom1) );
 
@@ -1893,7 +1946,7 @@ LK_BallEnergy::eval_atom_derivative(
 			Size const heavyatom2( nbr.atomno() );
 			if ( rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
 
-			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, nbrresid ) );
+			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
 			if ( rsd2_info.waters()[heavyatom2].size() == 0 ) continue;
 
 			Real const d2( rsd1.xyz( atom1 ).distance_squared( rsd2.xyz( heavyatom2 ) ) );
@@ -1934,7 +1987,7 @@ LK_BallEnergy::eval_atom_derivative(
 			if ( nbrresid == idresid ) continue; // no intra
 
 			conformation::Residue const & rsd2( pose.residue(nbrresid) );
-			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, nbrresid ) );
+			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
 
 			Size const heavyatom2( nbr.atomno() );
 			if ( rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
@@ -1986,8 +2039,7 @@ create_rotamer_descriptor(
 
 lkbtrie::LKBRotamerTrieOP
 LK_BallEnergy::create_rotamer_trie(
-	conformation::RotamerSetBase const & rotset,
-	pose::Pose const & /*pose*/
+	conformation::RotamerSetBase const & rotset
 ) const
 {
 	using namespace trie;
@@ -2047,15 +2099,14 @@ LK_BallEnergy::create_rotamer_trie(
 
 lkbtrie::LKBRotamerTrieOP
 LK_BallEnergy::create_rotamer_trie(
-	conformation::Residue const & res,
-	pose::Pose const & pose
+	conformation::Residue const & res
 ) const
 {
 	using namespace trie;
 	using namespace lkbtrie;
 	using namespace etable::etrie;
 
-	LKB_ResidueInfo const & info( retrieve_lkb_residue_info( pose, res.seqpos() ) );
+	LKB_ResidueInfo const & info( retrieve_lkb_resdata( res ) );
 
 	CPDataCorrespondence cpdata_map( create_cpdata_correspondence_for_rotamer( res ) );
 

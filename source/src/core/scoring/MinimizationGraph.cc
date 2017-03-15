@@ -65,15 +65,16 @@ void MinimizationNode::copy_from( parent const * source )
 	active_1benmeths_std_ = mn_source.active_1benmeths_std_;
 	active_1benmeths_ext_ = mn_source.active_1benmeths_ext_;
 	dof_deriv_1benmeths_ = mn_source.dof_deriv_1benmeths_;
-	sfs_req_1benmeths_ = mn_source.sfs_req_1benmeths_;
+	sfs_dm_req_1benmeths_ = mn_source.sfs_dm_req_1benmeths_;
 	sfd_req_1benmeths_ = mn_source.sfd_req_1benmeths_;
 	twobody_enmeths_ = mn_source.twobody_enmeths_;
 	active_intrares2benmeths_ = mn_source.active_intrares2benmeths_;
 	active_intrares2benmeths_std_ = mn_source.active_intrares2benmeths_std_;
 	active_intrares2benmeths_ext_ = mn_source.active_intrares2benmeths_ext_;
 	dof_deriv_2benmeths_ = mn_source.dof_deriv_2benmeths_;
-	sfs_req_2benmeths_ = mn_source.sfs_req_2benmeths_;
+	sfs_dm_req_2benmeths_ = mn_source.sfs_dm_req_2benmeths_;
 	sfd_req_2benmeths_ = mn_source.sfd_req_2benmeths_;
+	sfs_drs_req_enmeths_ = mn_source.sfs_drs_req_enmeths_;
 	weight_ = mn_source.weight_;
 	dweight_ = mn_source.dweight_;
 }
@@ -134,35 +135,44 @@ MinimizationNode::setup_for_minimizing(
 
 void MinimizationNode::setup_for_scoring(
 	Residue const & rsd,
+	basic::datacache::BasicDataCache & residue_data_cache,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn
 ) {
 	/// 1a 1body energy methods
-	for ( auto iter = sfs_req_1benmeths_begin(),
-			iter_end = sfs_req_1benmeths_end(); iter != iter_end; ++iter ) {
+	for ( auto iter = sfs_dm_req_1benmeths_begin(),
+			iter_end = sfs_dm_req_1benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_scoring_for_residue( rsd, pose, sfxn, res_min_data_ );
 	}
+
 	/// 1b 2body intraresidue contributions
-	for ( auto iter = sfs_req_2benmeths_begin(),
-			iter_end = sfs_req_2benmeths_end(); iter != iter_end; ++iter ) {
+	for ( auto iter = sfs_dm_req_2benmeths_begin(),
+			iter_end = sfs_dm_req_2benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_scoring_for_residue( rsd, pose, sfxn, res_min_data_ );
+	}
+
+	// 1c EnergyMethods that require sfs-drs calls
+	for ( auto iter = sfs_drs_req_enmeths_begin(),
+			iter_end = sfs_drs_req_enmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->setup_for_scoring_for_residue( rsd, pose, sfxn, residue_data_cache );
 	}
 }
 
 void MinimizationNode::setup_for_derivatives(
 	Residue const & rsd,
+	basic::datacache::BasicDataCache & residue_data_cache,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn
 ) {
 	/// 1a 1body energy methods
 	for ( auto iter = sfd_req_1benmeths_begin(),
 			iter_end = sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
-		(*iter)->setup_for_derivatives_for_residue( rsd, pose, sfxn, res_min_data_ );
+		(*iter)->setup_for_derivatives_for_residue( rsd, pose, sfxn, res_min_data_, residue_data_cache );
 	}
 	/// 1b 2body intraresidue contributions
 	for ( auto iter = sfd_req_2benmeths_begin(),
 			iter_end = sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
-		(*iter)->setup_for_derivatives_for_residue( rsd, pose, sfxn, res_min_data_ );
+		(*iter)->setup_for_derivatives_for_residue( rsd, pose, sfxn, res_min_data_, residue_data_cache );
 	}
 }
 
@@ -176,15 +186,17 @@ void MinimizationNode::update_active_enmeths_for_residue(
 	active_1benmeths_std_.clear();
 	active_1benmeths_ext_.clear();
 	dof_deriv_1benmeths_.clear();
-	sfs_req_1benmeths_.clear();
+	sfs_dm_req_1benmeths_.clear();
 	sfd_req_1benmeths_.clear();
 
 	active_intrares2benmeths_.clear();
 	active_intrares2benmeths_std_.clear();
 	active_intrares2benmeths_ext_.clear();
 	dof_deriv_2benmeths_.clear();
-	sfs_req_2benmeths_.clear();
+	sfs_dm_req_2benmeths_.clear();
 	sfd_req_2benmeths_.clear();
+
+	sfs_drs_req_enmeths_.clear();
 
 	for ( OneBodyEnergiesIterator iter = onebody_enmeths_.begin(),
 			iter_end = onebody_enmeths_.end(); iter != iter_end; ++iter ) {
@@ -194,19 +206,39 @@ void MinimizationNode::update_active_enmeths_for_residue(
 			iter_end = twobody_enmeths_.end(); iter != iter_end; ++iter ) {
 		classify_twobody_enmeth( *iter, rsd, pose, weights, domain_map_color );
 	}
+
+	for ( auto iter = get_mingraph_owner()->whole_pose_context_enmeths_begin(),
+					iter_end = get_mingraph_owner()->whole_pose_context_enmeths_end();
+				iter != iter_end; ++iter ) {
+		if ( (*iter)->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+			add_sfs_drs_enmeth( *iter );
+		}
+	}
+}
+
+MinimizationGraph const * MinimizationNode::get_mingraph_owner() const
+{
+	return static_cast< MinimizationGraph const * > ( get_owner() );
+}
+
+MinimizationGraph * MinimizationNode::get_mingraph_owner()
+{
+	return static_cast< MinimizationGraph * > ( get_owner() );
 }
 
 void MinimizationNode::add_active_1benmeth_std( OneBodyEnergyCOP enmeth ) { active_1benmeths_.push_back( enmeth ); active_1benmeths_std_.push_back( enmeth );}
 void MinimizationNode::add_active_1benmeth_ext( OneBodyEnergyCOP enmeth ) { active_1benmeths_.push_back( enmeth ); active_1benmeths_ext_.push_back( enmeth ); }
 void MinimizationNode::add_dof_deriv_1benmeth( OneBodyEnergyCOP enmeth ) { dof_deriv_1benmeths_.push_back( enmeth ); }
-void MinimizationNode::add_sfs_1benmeth( OneBodyEnergyCOP enmeth ) { sfs_req_1benmeths_.push_back( enmeth ); }
+void MinimizationNode::add_sfs_dm_1benmeth( OneBodyEnergyCOP enmeth ) { sfs_dm_req_1benmeths_.push_back( enmeth ); }
 void MinimizationNode::add_sfd_1benmeth( OneBodyEnergyCOP enmeth ) { sfd_req_1benmeths_.push_back( enmeth ); }
 
 void MinimizationNode::add_active_2benmeth_std( TwoBodyEnergyCOP enmeth ) { active_intrares2benmeths_.push_back( enmeth ); active_intrares2benmeths_std_.push_back( enmeth );}
 void MinimizationNode::add_active_2benmeth_ext( TwoBodyEnergyCOP enmeth ) { active_intrares2benmeths_.push_back( enmeth ); active_intrares2benmeths_ext_.push_back( enmeth ); }
 void MinimizationNode::add_dof_deriv_2benmeth( TwoBodyEnergyCOP enmeth ) { dof_deriv_2benmeths_.push_back( enmeth ); }
-void MinimizationNode::add_sfs_2benmeth( TwoBodyEnergyCOP enmeth ) { sfs_req_2benmeths_.push_back( enmeth ); }
+void MinimizationNode::add_sfs_dm_2benmeth( TwoBodyEnergyCOP enmeth ) { sfs_dm_req_2benmeths_.push_back( enmeth ); }
 void MinimizationNode::add_sfd_2benmeth( TwoBodyEnergyCOP enmeth ) { sfd_req_2benmeths_.push_back( enmeth ); }
+
+void MinimizationNode::add_sfs_drs_enmeth( EnergyMethodCOP enmeth ) { sfs_drs_req_enmeths_.push_back( enmeth ); }
 
 bool
 MinimizationNode::classify_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue const & rsd, Pose const & pose, int domain_map_color )
@@ -221,8 +253,10 @@ MinimizationNode::classify_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue cons
 			if ( enmeth->defines_dof_derivatives( pose ) ) {
 				add_dof_deriv_1benmeth( enmeth );
 			}
-			if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity( pose ) ) {
-				add_sfs_1benmeth( enmeth );
+			if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose ) ) {
+				add_sfs_dm_1benmeth( enmeth );
+			} else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+				add_sfs_drs_enmeth( enmeth );
 			}
 			if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
 				add_sfd_1benmeth( enmeth );
@@ -245,10 +279,12 @@ bool MinimizationNode::classify_twobody_enmeth(
 )
 {
 	bool added( false );
-	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity( pose ) ) {
+	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose ) ) {
 		/// should we let energy methods setup for scoring for a residue even if they
 		/// don't define an intrares energy for that residue?  Yes.  These
-		add_sfs_2benmeth( enmeth );
+		add_sfs_dm_2benmeth( enmeth );
+	}	else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+		add_sfs_drs_enmeth( enmeth );
 	}
 	if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
 		/// should we let energy methods setup for scoring for a residue even if they
@@ -318,16 +354,14 @@ MinimizationNode::dof_deriv_1benmeths_end() const {
 }
 
 MinimizationNode::OneBodyEnergiesIterator
-MinimizationNode::sfs_req_1benmeths_begin() const {
-	return sfs_req_1benmeths_.begin();
+MinimizationNode::sfs_dm_req_1benmeths_begin() const {
+	return sfs_dm_req_1benmeths_.begin();
 }
 
 MinimizationNode::OneBodyEnergiesIterator
-MinimizationNode::sfs_req_1benmeths_end() const {
-	return sfs_req_1benmeths_.end();
+MinimizationNode::sfs_dm_req_1benmeths_end() const {
+	return sfs_dm_req_1benmeths_.end();
 }
-
-
 
 MinimizationNode::OneBodyEnergiesIterator
 MinimizationNode::sfd_req_1benmeths_begin() const {
@@ -382,14 +416,15 @@ MinimizationNode::dof_deriv_2benmeths_end() const {
 }
 
 MinimizationNode::TwoBodyEnergiesIterator
-MinimizationNode::sfs_req_2benmeths_begin() const {
-	return sfs_req_2benmeths_.begin();
+MinimizationNode::sfs_dm_req_2benmeths_begin() const {
+	return sfs_dm_req_2benmeths_.begin();
 }
 
 MinimizationNode::TwoBodyEnergiesIterator
-MinimizationNode::sfs_req_2benmeths_end() const {
-	return sfs_req_2benmeths_.end();
+MinimizationNode::sfs_dm_req_2benmeths_end() const {
+	return sfs_dm_req_2benmeths_.end();
 }
+
 
 MinimizationNode::TwoBodyEnergiesIterator
 MinimizationNode::sfd_req_2benmeths_begin() const {
@@ -399,6 +434,16 @@ MinimizationNode::sfd_req_2benmeths_begin() const {
 MinimizationNode::TwoBodyEnergiesIterator
 MinimizationNode::sfd_req_2benmeths_end() const {
 	return sfd_req_2benmeths_.end();
+}
+
+MinimizationNode::EnergyMethodsIterator
+MinimizationNode::sfs_drs_req_enmeths_begin() const {
+	return sfs_drs_req_enmeths_.begin();
+}
+
+MinimizationNode::EnergyMethodsIterator
+MinimizationNode::sfs_drs_req_enmeths_end() const {
+	return sfs_drs_req_enmeths_.end();
 }
 
 ///////// Minimization Edge Class /////////////
@@ -725,9 +770,14 @@ Size MinimizationGraph::count_dynamic_memory() const
 	return tot;
 }
 
-void MinimizationGraph::add_whole_pose_context_enmeth( EnergyMethodCOP enmeth )
+void MinimizationGraph::add_whole_pose_context_enmeth( EnergyMethodCOP enmeth, core::pose::Pose const & pose )
 {
 	whole_pose_context_enmeths_.push_back( enmeth );
+	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose )) {
+		for ( core::Size ii = 1; ii <= num_nodes(); ++ii ) {
+			get_minimization_node( ii )->add_sfs_drs_enmeth( enmeth );
+		}
+	}
 }
 
 MinimizationGraph::EnergiesIterator

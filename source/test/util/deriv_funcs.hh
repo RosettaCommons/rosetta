@@ -187,6 +187,10 @@ public:
 				TR_deriv_funcs << "Curr F2: (" << F2[ 0 ] << " " << F2[ 1 ] << " " << F2[ 2 ] << " )" << std::endl;
 			}
 		}
+
+		// turn off nblist
+		pose_->energies().reset_nblist();
+
 	}
 
 	/// Copy and paste the result of this function into a .cxxtest.hh file so that
@@ -249,6 +253,10 @@ public:
 		}
 		// restore the precision before leaving this function
 		TR_deriv_funcs.precision( precision_original );
+
+		// turn off nblist
+		pose_->energies().reset_nblist();
+
 	}
 
 	void validate_start_func_matches_start_score() {
@@ -284,6 +292,9 @@ public:
 			TR_deriv_funcs << "Failed to match start_score and start_func in AtomDerivValidator::validate_start_func_matches_start_score()" << std::endl;
 			TR_deriv_funcs << "Start score: " << start_score << " Start func: " << start_func << std::endl;
 		}
+
+		// turn off nblist
+		pose_->energies().reset_nblist();
 
 	}
 
@@ -390,6 +401,10 @@ public:
 				}
 			}
 		}
+
+		// turn off nblist
+		pose_->energies().reset_nblist();
+
 	}
 
 	/// @brief Setup the minimizer map and ready the pose for minimization.  Return the start score and the start func.
@@ -418,6 +433,7 @@ public:
 		core::Real start_func = (*sfxn_)(*pose_);
 
 		return std::make_pair( start_score, start_func );
+
 	}
 };
 

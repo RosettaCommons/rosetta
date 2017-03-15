@@ -103,6 +103,13 @@ CartSCMinMinimizerMap::residue( Size seqpos ) const
 	return atcs_for_residues_[ seqpos ]->active_residue();
 }
 
+basic::datacache::BasicDataCache &
+CartSCMinMinimizerMap::residue_data( Size seqpos ) const
+{
+	return atcs_for_residues_[ seqpos ]->active_residue_data();
+}
+
+
 kinematics::tree::Atom const &
 CartSCMinMinimizerMap::atom( AtomID const & atid ) const
 {

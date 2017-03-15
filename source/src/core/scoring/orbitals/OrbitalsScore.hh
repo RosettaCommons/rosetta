@@ -122,7 +122,7 @@ public:
 	/// at the beginning of scoring and derivative evaluation.
 	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const;
 
 	/// @brief Update the orbital coordinates before scores are evaluated
 	virtual
@@ -146,7 +146,8 @@ public:
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & min_data
+		ResSingleMinimizationData & min_data,
+		basic::datacache::BasicDataCache &
 	) const;
 
 

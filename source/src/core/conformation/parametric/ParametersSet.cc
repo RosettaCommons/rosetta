@@ -94,7 +94,7 @@ void ParametersSet::update_residue_links( core::conformation::Conformation &new_
 		for ( core::Size j=1; j<=nresidue; ++j ) {
 			core::Size seq_pos=parameters_[i]->residue(j)->seqpos();
 			debug_assert( seq_pos > 0 && seq_pos <= new_conf.size() );
-			parameters_[i]->set_residue(j, new_conf.residue_op(seq_pos));
+			parameters_[i]->set_residue(j, new_conf.residue_cop(seq_pos));
 		}
 	}
 	return;

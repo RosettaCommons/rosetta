@@ -18,12 +18,18 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
 
 
 namespace core {
 namespace scoring {
 namespace methods {
+
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.OneBodyEnergy" );
 
 OneBodyEnergy::OneBodyEnergy(
 	EnergyMethodCreatorOP creator
@@ -67,7 +73,7 @@ OneBodyEnergy::setup_for_minimizing_for_residue(
 ) const {}
 
 bool
-OneBodyEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const
+OneBodyEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
 {
 	return false;
 }
@@ -94,10 +100,19 @@ OneBodyEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const &,
 	pose::Pose const &,
 	ScoreFunction const &,
-	ResSingleMinimizationData &
+	ResSingleMinimizationData &,
+	basic::datacache::BasicDataCache &
 ) const
 {
-	// noop -- this should be an error
+	// noop -- this should be an error since this function could only be called if the
+	// derived class's requires_a_setup_for_derivatives_for_residue_opportunity message
+	// returns true, but the derived class has not implemented this function or has
+	// improperly overriden the base class version.
+	TR << "WARNING: Unimplemented or improperly overridden OneBodyEnergy::setup_for_derivatives_for_residue() for class computing";
+	for ( auto st : score_types() ) {
+		TR << " " << st;
+	}
+	TR << std::endl;
 }
 
 

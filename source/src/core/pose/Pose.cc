@@ -931,6 +931,24 @@ Pose::residue(
 	return conformation_->residue( seqpos );
 }
 
+basic::datacache::BasicDataCache &
+Pose::residue_data(
+	Size const seqpos
+)
+{
+	PyAssert( (seqpos<=size()), "Pose::residue( Size const seqpos ): variable seqpos is out of range!" );
+	return conformation_->residue_data( seqpos );
+}
+
+basic::datacache::BasicDataCache const &
+Pose::residue_data(
+	Size const seqpos
+) const
+{
+	PyAssert( (seqpos<=size()), "Pose::residue( Size const seqpos ): variable seqpos is out of range!" );
+	return conformation_->residue_data( seqpos );
+}
+
 chemical::ResidueType const &
 Pose::residue_type(
 	Size const seqpos

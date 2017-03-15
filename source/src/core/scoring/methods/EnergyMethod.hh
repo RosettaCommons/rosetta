@@ -20,6 +20,7 @@
 
 // Package headers
 #include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -28,12 +29,12 @@
 // Project headers
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
-
 #include <core/id/AtomID.fwd.hh>
+
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -102,6 +103,25 @@ public:
 	virtual
 	void
 	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
+
+	/// @brief Does this EnergyMethod require the opportunity to examine the residue before (regular) scoring begins?  Not
+	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residues that are uninterested
+	/// in doing so. The default implmentation of this function returns false
+	virtual
+	bool
+	requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose::Pose const & pose ) const;
+
+	/// @brief Do any setup work before scoring, caching any slow-to-compute data that will be used during
+	/// energy evaluation inside of the input Residue object's data cache. (The Residue on the whole is given as a
+	/// constant reference, but non-constant access to its data cache is granted.)
+	virtual
+	void
+	setup_for_scoring_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		basic::datacache::BasicDataCache & residue_data_cache
+	) const;
 
 	/// @brief Called at the beginning of atom tree minimization, this method
 	/// allows the derived class the opportunity to initialize pertinent data

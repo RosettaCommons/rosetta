@@ -1183,7 +1183,6 @@ off_rotamer_pack_optimize(
 	sfxn( debug_pose );
 #endif
 
-
 	/// 2.
 	Size const n_sample_rots = rotsets.n_sample_rotamers();
 	utility::vector1< Real > temps = initialize_temperatures_off_rotamer_pack();
@@ -1207,7 +1206,7 @@ off_rotamer_pack_optimize(
 				atc->moltenres_atomtree_collection( ran_moltres),
 				ranrot_on_moltenres );
 
-			Real const neg_deltaE = ig.consider_substitution( ran_res, atc->moltenres_atomtree_collection( ran_moltres ).active_residue_cop() );
+			Real const neg_deltaE = ig.consider_substitution( ran_res, atc->moltenres_atomtree_collection( ran_moltres ).active_residue_cop(), atc->moltenres_atomtree_collection( ran_moltres ).active_residue_data() );
 			Real const deltaE = -1 * neg_deltaE;
 
 #ifdef APL_FULL_DEBUG

@@ -237,9 +237,9 @@ public:
 		}*/
 
 
-		core::conformation::ResidueCOP res12rot4 = rotsets->rotamer_set_for_residue( 12 )->rotamer( 4 );
+		core::conformation::ResidueOP res12rot4 = rotsets->rotamer_set_for_residue( 12 )->nonconst_rotamer( 4 );
 
-		core::Real negdelta = simple_ig->consider_substitution( 12, res12rot4 );
+		core::Real negdelta = simple_ig->consider_substitution( 12, res12rot4, *res12rot4->nonconst_data_ptr() );
 		trpcage->replace_residue( 12, *res12rot4, false );
 		core::Real score_after_res12rot4 = (*sfxn)(*trpcage);
 		//trpcage->dump_pdb( "test_trpcage_2.pdb" );
@@ -279,8 +279,8 @@ public:
 		simple_ig->initialize( oneten );
 
 		for ( core::Size ii(1); ii <= oneten.size(); ++ii ) {
-			ResidueCOP res( ResidueOP( new Residue(oneten.residue(ii)) ) );
-			TS_ASSERT_DELTA( simple_ig->consider_substitution(ii, res), 0, 0.0001);
+			ResidueOP res( new Residue(oneten.residue(ii)) );
+			TS_ASSERT_DELTA( simple_ig->consider_substitution(ii, res, *res->nonconst_data_ptr()), 0, 0.0001);
 			simple_ig->reject_change( ii );
 		}
 	}

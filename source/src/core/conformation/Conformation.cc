@@ -1571,6 +1571,21 @@ Conformation::detect_pseudobonds()
 }
 
 
+void
+Conformation::sever_chemical_bond(
+	Size seqpos1,
+	Size res1_resconn_index,
+	Size seqpos2,
+	Size res2_resconn_index
+)
+{
+	runtime_assert( residue_( seqpos1 ).connected_residue_at_resconn( res1_resconn_index ) == seqpos2 );
+	runtime_assert( residue_( seqpos2 ).connected_residue_at_resconn( res2_resconn_index ) == seqpos1 );
+
+	residue_( seqpos1 ).mark_connect_incomplete( res1_resconn_index );
+	residue_( seqpos2 ).mark_connect_incomplete( res2_resconn_index );
+}
+
 // Declare that a chemical bond exists between two residues
 void
 Conformation::declare_chemical_bond(
@@ -2437,7 +2452,7 @@ Conformation::insert_conformation_by_jump(
 								core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue_cop(ires)->seqpos() );
 								core::Size new_index( old_index + insert_seqpos - 1 );
 								//Replace the owning pointer to the Residue object with one pointing at the corresponding residue in this Conformation object:
-								parameters_set(curset)->parameters(iparams)->set_residue(ires, residue_op(new_index)  );
+								parameters_set(curset)->parameters(iparams)->set_residue(ires, residue_cop(new_index)  );
 							} // Looping through Residue objects
 						} // if(n_res) > 0
 					} // Looping through Parameters objects

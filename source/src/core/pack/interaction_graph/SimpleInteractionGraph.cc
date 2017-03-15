@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/util.hh>
 
 // Basic headers
@@ -112,7 +113,10 @@ SimpleNode::moved() const {
 }
 
 void
-SimpleNode::set_current( conformation::ResidueCOP res){
+SimpleNode::set_current( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
+{
+	setup_for_scoring_for_residue( res, residue_data_cache );
+
 	//TR.Debug << "setting res " << res->seqpos() << " to current: " << std::endl;
 	if ( ! current_residue_ ) {
 		/// This is the first time current_ is being set; calculate backbone centroid and radius
@@ -150,8 +154,10 @@ SimpleNode::set_current( conformation::ResidueCOP res){
 
 
 void
-SimpleNode::set_alternate( conformation::ResidueCOP res)
+SimpleNode::set_alternate( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
 {
+	setup_for_scoring_for_residue( res, residue_data_cache );
+
 	//TR.Debug << "setting res " << res->seqpos() << " to alternate: " << std::endl;
 	if ( alternate_residue_ != 0 && TR.Debug.visible() ) {
 		// output statements like this are very expensive, even when muted!
@@ -174,13 +180,15 @@ SimpleNode::set_alternate( conformation::ResidueCOP res)
 	}
 }
 
-void SimpleNode::set_current_no_E_update( conformation::ResidueCOP res )
+void SimpleNode::set_current_no_E_update( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
 {
+	setup_for_scoring_for_residue( res, residue_data_cache );
 	current_residue_ = res;
 }
 
-void SimpleNode::set_alternate_no_E_update( conformation::ResidueCOP res )
+void SimpleNode::set_alternate_no_E_update( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
 {
+	setup_for_scoring_for_residue( res, residue_data_cache );
 	alternate_residue_ = res;
 	moved_ = true;
 }
@@ -243,6 +251,16 @@ Real
 SimpleNode::alt_sc_radius() const
 {
 	return alt_sc_radius_;
+}
+
+void
+SimpleNode::setup_for_scoring_for_residue( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
+{
+	// call setup for scoring for residue on the energy methods that require it:
+	for ( auto const & method : get_simple_ig_owner()->setup_for_scoring_for_residue_energy_methods() ) {
+		method->setup_for_scoring_for_residue( *res, get_simple_ig_owner()->pose(),
+			get_simple_ig_owner()->scorefunction(), residue_data_cache );
+	}
 }
 
 void
@@ -525,6 +543,13 @@ SimpleInteractionGraph::~SimpleInteractionGraph() {}
 void SimpleInteractionGraph::set_scorefunction( ScoreFunction const & sfxn )
 {
 	sfxn_ = sfxn.clone();
+	if ( pose_ ) {
+		for ( auto const & method : sfxn_->all_methods() ) {
+			if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {
+				sfs_energy_methods_.push_back( method );
+			}
+		}
+	}
 }
 
 //set up all nodes of graph
@@ -532,17 +557,26 @@ void
 SimpleInteractionGraph::initialize( pose::Pose const & pose){
 	TR.Debug << "calling initialize on pose " << std::endl;
 	set_pose_no_initialize( pose );
+
+	for ( auto const & method : sfxn_->all_methods() ) {
+		if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {
+			sfs_energy_methods_.push_back( method );
+		}
+	}
+
 	//Real current_energy = (*sfxn_)(*pose_); //DEBUG
 	runtime_assert( pose_ != 0 );
 	//Graph::delete_everything();//DEBUG
 	if ( num_nodes() != pose.size() ) {
 		set_num_nodes( pose.size() );
 	}
-	for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
-		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
-		runtime_assert( newnode );
-		newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
-	}
+
+	// This already occurrs in the call to set_pose_no_initialize
+	//for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
+	//	SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
+	//	runtime_assert( newnode );
+	//	newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
+	//}
 
 	//neighbors determined through ScoreFunction::are_they_neighbors function
 	for ( Size ii = 1; ii <= pose_->size(); ii++ ) {
@@ -574,10 +608,11 @@ SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 	if ( num_nodes() != pose.size() ) {
 		set_num_nodes( pose.size() );
 	}
-	for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
-		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
+	for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
+		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( ii ));
 		runtime_assert( newnode );
-		newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
+		conformation::ResidueOP ii_res( new conformation::Residue( pose_->residue( ii ) ));
+		newnode->set_current( ii_res, *ii_res->nonconst_data_ptr() );
 	}
 }
 
@@ -597,7 +632,7 @@ SimpleInteractionGraph::reject_change( Size node_id ){
 /// @details Note, this function returns (currE - altE) which represents
 /// the negative of the change in energy for the substition
 Real
-SimpleInteractionGraph::consider_substitution( Size node_id, conformation::ResidueCOP new_state ){
+SimpleInteractionGraph::consider_substitution( Size node_id, conformation::ResidueCOP new_state, basic::datacache::BasicDataCache & residue_data_cache ){
 	Real current_energy = 0.0;
 
 	SimpleNode* thisnode = static_cast< SimpleNode *>(get_node( node_id ));
@@ -610,7 +645,7 @@ SimpleInteractionGraph::consider_substitution( Size node_id, conformation::Resid
 	}
 	current_energy += thisnode->current_one_body_energy();
 
-	thisnode->set_alternate( new_state );
+	thisnode->set_alternate( new_state, residue_data_cache );
 	//iterate over all edges
 	Real alternate_energy = 0.0;
 	for ( EdgeListIterator edge_itr = thisnode->edge_list_begin();

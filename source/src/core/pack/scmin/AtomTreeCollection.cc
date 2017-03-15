@@ -167,6 +167,13 @@ ResidueAtomTreeCollection::active_restype() const
 	return active_residue_->type();
 }
 
+basic::datacache::BasicDataCache &
+ResidueAtomTreeCollection::active_residue_data()
+{
+	debug_assert( residue_uptodate_ );
+	return *active_residue_->nonconst_data_ptr();
+}
+
 conformation::ResidueCOP
 ResidueAtomTreeCollection::active_residue_cop() const
 {

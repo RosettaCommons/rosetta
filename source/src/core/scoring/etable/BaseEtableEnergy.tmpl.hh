@@ -1278,7 +1278,7 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue_pair(
 
 template < class Derived >
 bool
-BaseEtableEnergy< Derived >::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const &  ) const
+BaseEtableEnergy< Derived >::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const &  ) const
 {
 	// if ( pose.energies().use_nblist_auto_update() ) return false;
 
@@ -1296,6 +1296,7 @@ BaseEtableEnergy< Derived >::setup_for_scoring_for_residue(
 	ResSingleMinimizationData & // min_data
 ) const
 {}
+
 /*debug_assert( dynamic_cast< ResidueNblistData * > (min_data.get_data( min_single_data_type() )() ));
 ResidueNblistData & nbdata( static_cast< ResidueNblistData & > ( min_data.get_data_ref( min_single_data_type() ) ));
 nbdata.update( rsd );
@@ -1319,7 +1320,8 @@ BaseEtableEnergy< Derived >::setup_for_derivatives_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	ResSingleMinimizationData & min_data
+	ResSingleMinimizationData & min_data,
+	basic::datacache::BasicDataCache &
 ) const
 {
 	setup_for_scoring_for_residue( rsd, pose, sfxn, min_data );

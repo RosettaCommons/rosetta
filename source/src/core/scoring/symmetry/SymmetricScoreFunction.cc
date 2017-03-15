@@ -438,7 +438,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 			iter_end = eval_derivs_with_pose_enmeths.end();
 			iter != iter_end; ++iter ) {
 		(*iter)->setup_for_minimizing( pose, *this, min_map );
-		g->add_whole_pose_context_enmeth( *iter );
+		g->add_whole_pose_context_enmeth( *iter, pose );
 	}
 
 	//std::cout << "Fixed energies: ";
@@ -726,7 +726,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 	MinimizationGraphOP g  = symm_energies.minimization_graph();
 	for ( Size ii = 1; ii <= symm_info->num_total_residues_without_pseudo(); ++ii ) {
 		if ( symm_info->bb_is_independent( ii ) || g->get_node( ii )->num_edges() != 0 ) {
-			g->get_minimization_node( ii )->setup_for_derivatives( pose.residue(ii), pose, *this );
+			g->get_minimization_node( ii )->setup_for_derivatives( pose.residue(ii), pose.residue_data(ii), pose, *this );
 		}
 	}
 	/// 2. Call setup_for_derivatives on the edges of the scoring graph
@@ -746,7 +746,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 	/// setup for derivatives on that node.
 	for ( Size ii = 1; ii <= symm_info->num_total_residues_without_pseudo(); ++ii ) {
 		if ( dg->get_node( ii )->num_edges() != 0 ) {
-			dg->get_minimization_node( ii )->setup_for_derivatives( pose.residue(ii), pose, *this );
+			dg->get_minimization_node( ii )->setup_for_derivatives( pose.residue(ii), pose.residue_data(ii), pose, *this );
 		}
 	}
 	/// 4. Call setup_for_derivatives on the edges of the derivatives graph

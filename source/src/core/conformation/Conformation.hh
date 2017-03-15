@@ -450,18 +450,38 @@ public:  // Residues
 		return *residues_[ seqpos ];
 	}
 
-	/// @brief Access one of the residues, using OP
-	/// @details Non-const access.
+
+	/// @brief Read access to the datacache array stored inside a Residue object. Also accessible
+	/// to the user by calling residue( seqpos ).data_ptr() directly.
+	///
+	/// @details The purpose of the residue-level data cache is so that scoring terms may store
+	/// coordinate-derived information in a Residue (perhaps a Residue that does not belong to a
+	/// %Conformation) so that it can be used during scoring evaluation.
 	inline
-	ResidueOP
-	residue_op( Size seqpos ) {
-		runtime_assert_string_msg( seqpos >= 1, "Error in core::conformation::Conformation::residue_op(): The sequence position requested was 0.  Pose numbering starts at 1." );
-		runtime_assert_string_msg( seqpos <= size(), "Error in core::conformation::Conformation::residue_op(): The sequence position requested was greater than the number of residues in the pose." );
-		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
-		if ( residue_torsions_need_updating_ )    update_residue_torsions();
-		return residues_[ seqpos ];
+	basic::datacache::BasicDataCache const &
+	residue_data( Size seqpos ) const {
+		return *residue( seqpos ).data_ptr();
 	}
 
+	/// @brief Write access to the datacache array stored inside a Residue object. Although the Conformation
+	/// very deliberately does not grant users write access to the whole of its Residue objects, it will
+	/// grant users access to the Residue objects data cache. So while the coordinates and dihedrals of the
+	/// Residue will not be changable e.g. during the setup-for-scoring phase, data derived from those coordinates
+	/// and dihedrals and which ends up living in the Residue will be changable.
+	///
+	/// @details The purpose of the residue-level data cache is so that scoring terms may store
+	/// coordinate-derived information in a Residue (perhaps a Residue that does not belong to a
+	/// %Conformation) so that it can be used during scoring evaluation. Accessing the residue_data
+	/// will trigger a coordinate (or torsion) update.
+	inline
+	basic::datacache::BasicDataCache &
+	residue_data( Size seqpos ) {
+		runtime_assert_string_msg( seqpos >= 1, "Error in core::conformation::Conformation::residue_data(): The sequence position requested was 0.  Pose numbering starts at 1." );
+		runtime_assert_string_msg( seqpos <= size(), "Error in core::conformation::Conformation::residue_data(): The sequence position requested was greater than the number of residues in the pose." );
+		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
+		if ( residue_torsions_need_updating_ )    update_residue_torsions();
+		return *residue_( seqpos ).nonconst_data_ptr();
+	}
 
 	/// @brief access one of the residues, using COP
 	///
@@ -623,6 +643,17 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	void
 	detect_pseudobonds();
 
+	/// @brief Sever the chemical bond between two residues by stating that the
+	/// connections for those residues are "incomplete" (i.e. in a state where
+	/// these residues are not ready to be scored).
+	virtual
+	void
+	sever_chemical_bond(
+		Size seqpos1,
+		Size res1_resconn_index,
+		Size seqpos2,
+		Size res2_resconn_index
+	);
 
 	/// @brief Declare that a chemical bond exists between two residues
 	///

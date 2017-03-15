@@ -110,6 +110,13 @@ AtomTreeSCMinMinimizerMap::residue( Size seqpos ) const
 	return atcs_for_residues_[ seqpos ]->active_residue();
 }
 
+/// @brief Convenience lookup -- turns over the request to the AtomTreeCollection
+basic::datacache::BasicDataCache &
+AtomTreeSCMinMinimizerMap::residue_data( Size seqpos ) const
+{
+	return atcs_for_residues_[ seqpos ]->active_residue_data();
+}
+
 kinematics::tree::Atom const &
 AtomTreeSCMinMinimizerMap::atom( AtomID const & atid ) const
 {

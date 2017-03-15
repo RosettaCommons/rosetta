@@ -617,6 +617,9 @@ LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & src ):
 	basic::datacache::CacheableData( src ),
 	rsd_type_( src.rsd_type_ ),
 	waters_( src.waters_ ),
+	dwater_datom1_( src.dwater_datom1_ ),
+	dwater_datom2_( src.dwater_datom2_ ),
+	dwater_datom3_( src.dwater_datom3_ ),
 	atom_weights_( src.atom_weights_ ), // added 5/20/13
 	has_waters_( src.has_waters_ )
 {}

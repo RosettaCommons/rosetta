@@ -88,7 +88,7 @@ TwoBodyEnergy::setup_for_minimizing_for_residue_pair(
 
 /// @details Default return-false implementation.
 bool
-TwoBodyEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const &  ) const
+TwoBodyEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const &  ) const
 {
 	return false;
 }
@@ -118,11 +118,16 @@ TwoBodyEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & ,
 	pose::Pose const & ,
 	ScoreFunction const &,
-	ResSingleMinimizationData &
+	ResSingleMinimizationData &,
+	basic::datacache::BasicDataCache &
 ) const
 {
 	// NOOP.
-	TR << "WARNING: Unimplemented TwoBodyEnergy::setup_for_derivatives_for_residue()" << std::endl;
+	TR << "WARNING: Unimplemented TwoBodyEnergy::setup_for_derivatives_for_residue() for class computing";
+	for ( auto st : score_types() ) {
+		TR << " " << st;
+	}
+	TR << std::endl;
 }
 
 /// @details Default return-false implementation.

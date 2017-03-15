@@ -643,7 +643,7 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 }
 
 bool
-FA_ElecEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const
+FA_ElecEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
 {
 	return true;
 }
@@ -669,7 +669,8 @@ FA_ElecEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	ResSingleMinimizationData & min_data
+	ResSingleMinimizationData & min_data,
+	basic::datacache::BasicDataCache &
 ) const
 {
 	setup_for_scoring_for_residue( rsd, pose, sfxn, min_data );

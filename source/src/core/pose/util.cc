@@ -3003,31 +3003,33 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 
 	// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
 	// check simple loop, like  in get_upper_cutpoint_partner_for_lower() in chainbreak_util.hh
-	Residue & lower_rsd( *pose.conformation().residue_op( cutpoint_res ) );
+	Residue const & lower_rsd( pose.conformation().residue( cutpoint_res ) );
 	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
 		if ( lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
 		Size upper( lower_rsd.connected_residue_at_resconn( k ) );
 		if ( upper == 0 ) continue;
-		Residue & upper_rsd( *pose.conformation().residue_op( upper ) ); // upper residue.
+		Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
 		Size const m = lower_rsd.residue_connection_conn_id( k );
 		runtime_assert( upper_rsd.residue_connect_atom_index( m ) == upper_rsd.lower_connect_atom() );
 		runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == cutpoint_res );
-		upper_rsd.mark_connect_incomplete( m );
-		lower_rsd.mark_connect_incomplete( k );
+		//upper_rsd.mark_connect_incomplete( m );
+		//lower_rsd.mark_connect_incomplete( k );
+		pose.conformation().sever_chemical_bond( cutpoint_res, k, upper, m );
 	}
 
 	// and code up analogous loop for lower/upper.
-	Residue & upper_rsd( *pose.conformation().residue_op( next_res ) );
+	Residue const & upper_rsd( pose.conformation().residue( next_res ) );
 	for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
 		if ( upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
 		Size lower( upper_rsd.connected_residue_at_resconn( k ) );
 		if ( lower == 0 ) continue;
-		Residue & lower_rsd( *pose.conformation().residue_op( lower ) ); // lower residue.
+		Residue const & lower_rsd( pose.conformation().residue( lower ) ); // lower residue.
 		Size const m = upper_rsd.residue_connection_conn_id( k );
 		runtime_assert( lower_rsd.residue_connect_atom_index( m ) == lower_rsd.upper_connect_atom() );
 		runtime_assert( lower_rsd.connected_residue_at_resconn( m ) == next_res );
-		lower_rsd.mark_connect_incomplete( m );
-		upper_rsd.mark_connect_incomplete( k );
+		//lower_rsd.mark_connect_incomplete( m );
+		//upper_rsd.mark_connect_incomplete( k );
+		pose.conformation().sever_chemical_bond( next_res, k, lower, m );
 	}
 
 	pose.conformation().declare_chemical_bond(

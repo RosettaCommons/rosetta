@@ -334,7 +334,7 @@ ConstraintsEnergy::eval_intrares_energy_ext(
 }
 
 bool
-ConstraintsEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const
+ConstraintsEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
 {
 	return true;
 }
@@ -367,7 +367,8 @@ ConstraintsEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
 	scoring::ScoreFunction const & sfxn,
-	ResSingleMinimizationData & min_data
+	ResSingleMinimizationData & min_data,
+	basic::datacache::BasicDataCache &
 ) const
 {
 	// basic::ProfileThis doit( basic::CONSTRAINT_SCORE );

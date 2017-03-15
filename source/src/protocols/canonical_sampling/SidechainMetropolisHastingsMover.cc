@@ -170,7 +170,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 		new_state = move->make_move( new_state );
 		set_last_move( move );
 
-		Real delta_energy = ig->consider_substitution( resid, new_state );
+		Real delta_energy = ig->consider_substitution( resid, new_state, *new_state->nonconst_data_ptr() );
 		if ( pass_metropolis( delta_energy, move->last_proposal_density_ratio() ) ) { //ek
 			ig->commit_change( resid );
 			current_energy -= delta_energy;

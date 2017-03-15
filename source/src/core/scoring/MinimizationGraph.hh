@@ -40,6 +40,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -60,6 +63,7 @@ class MinimizationNode : public utility::graph::Node
 {
 public:
 	typedef utility::graph::Node               parent;
+	typedef methods::EnergyMethodCOP  EnergyMethodCOP;
 	typedef methods::OneBodyEnergyCOP OneBodyEnergyCOP;
 	typedef methods::TwoBodyEnergyCOP TwoBodyEnergyCOP;
 
@@ -68,8 +72,13 @@ public:
 
 	typedef utility::vector1< TwoBodyEnergyCOP > TwoBodyEnergies;
 	typedef TwoBodyEnergies::const_iterator      TwoBodyEnergiesIterator;
+
+	typedef utility::vector1< EnergyMethodCOP > EnergyMethods;
+	typedef EnergyMethods::const_iterator       EnergyMethodsIterator;
+
 	typedef conformation::Residue                Residue;
 	typedef pose::Pose                           Pose;
+
 
 public:
 	MinimizationNode( utility::graph::Graph * owner, Size index );
@@ -98,8 +107,8 @@ public:
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
 	);
-	void setup_for_scoring( Residue const & rsd, Pose const & pose, ScoreFunction const & sfxn );
-	void setup_for_derivatives( Residue const & rsd, pose::Pose const & pose, ScoreFunction const & sfxn );
+	void setup_for_scoring( Residue const & rsd, basic::datacache::BasicDataCache & residue_data_cache, Pose const & pose, ScoreFunction const & sfxn );
+	void setup_for_derivatives( Residue const & rsd, basic::datacache::BasicDataCache & residue_data_cache, pose::Pose const & pose, ScoreFunction const & sfxn );
 	void update_active_enmeths_for_residue(
 		Residue const & rsd,
 		pose::Pose const & pose,
@@ -112,19 +121,29 @@ public:
 	Real dweight() const { return dweight_; }
 	void dweight( Real setting ) { dweight_ = setting; }
 
+protected:
+	MinimizationGraph const * get_mingraph_owner() const;
+	MinimizationGraph * get_mingraph_owner();
+
 private:
 	void add_active_1benmeth_std( OneBodyEnergyCOP enmeth );
 	void add_active_1benmeth_ext( OneBodyEnergyCOP enmeth );
 	void add_dof_deriv_1benmeth( OneBodyEnergyCOP enmeth );
-	void add_sfs_1benmeth( OneBodyEnergyCOP enmeth );
+	void add_sfs_dm_1benmeth( OneBodyEnergyCOP enmeth );
 	void add_sfd_1benmeth( OneBodyEnergyCOP enmeth );
 
 	void add_active_2benmeth_std( TwoBodyEnergyCOP enmeth );
 	void add_active_2benmeth_ext( TwoBodyEnergyCOP enmeth );
 	void add_dof_deriv_2benmeth( TwoBodyEnergyCOP enmeth );
-	void add_sfs_2benmeth( TwoBodyEnergyCOP enmeth );
+	void add_sfs_dm_2benmeth( TwoBodyEnergyCOP enmeth );
 	void add_sfd_2benmeth( TwoBodyEnergyCOP enmeth );
 
+public:
+	/// @brief This method is not meant for general use; it's only to be called
+	/// by the MinimizationNode and the MinimizationGraph.
+	void add_sfs_drs_enmeth( EnergyMethodCOP enmeth );
+
+private:
 	bool classify_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue const & rsd, Pose const & pose,int domain_map_color );
 	bool classify_twobody_enmeth(
 		TwoBodyEnergyCOP enmeth,
@@ -143,8 +162,8 @@ public:
 	OneBodyEnergiesIterator active_1benmeths_ext_end() const;
 	OneBodyEnergiesIterator dof_deriv_1benmeths_begin() const;
 	OneBodyEnergiesIterator dof_deriv_1benmeths_end() const;
-	OneBodyEnergiesIterator sfs_req_1benmeths_begin() const;
-	OneBodyEnergiesIterator sfs_req_1benmeths_end() const;
+	OneBodyEnergiesIterator sfs_dm_req_1benmeths_begin() const;
+	OneBodyEnergiesIterator sfs_dm_req_1benmeths_end() const;
 	OneBodyEnergiesIterator sfd_req_1benmeths_begin() const;
 	OneBodyEnergiesIterator sfd_req_1benmeths_end() const;
 
@@ -156,10 +175,13 @@ public:
 	TwoBodyEnergiesIterator active_intrares2benmeths_ext_end() const;
 	TwoBodyEnergiesIterator dof_deriv_2benmeths_begin() const;
 	TwoBodyEnergiesIterator dof_deriv_2benmeths_end() const;
-	TwoBodyEnergiesIterator sfs_req_2benmeths_begin() const;
-	TwoBodyEnergiesIterator sfs_req_2benmeths_end() const;
+	TwoBodyEnergiesIterator sfs_dm_req_2benmeths_begin() const;
+	TwoBodyEnergiesIterator sfs_dm_req_2benmeths_end() const;
 	TwoBodyEnergiesIterator sfd_req_2benmeths_begin() const;
 	TwoBodyEnergiesIterator sfd_req_2benmeths_end() const;
+
+	EnergyMethodsIterator sfs_drs_req_enmeths_begin() const;
+	EnergyMethodsIterator sfs_drs_req_enmeths_end() const;
 
 private:
 
@@ -178,8 +200,8 @@ private:
 	OneBodyEnergies active_1benmeths_ext_;
 	// one-body energy methods that define DOF derivatives
 	OneBodyEnergies dof_deriv_1benmeths_;
-	// one-body energy methods that require a setup-for-scoring (sfs) opportunity
-	OneBodyEnergies sfs_req_1benmeths_;
+	// one-body energy methods that require a setup-for-scoring-during-minimization (sfs_dm) opportunity
+	OneBodyEnergies sfs_dm_req_1benmeths_;
 	// one-body energy methods that require a setup-for-derivatives (sfd) opportunity
 	OneBodyEnergies sfd_req_1benmeths_;
 
@@ -198,10 +220,13 @@ private:
 	TwoBodyEnergies active_intrares2benmeths_ext_;
 	// two-body energy methods that define DOF derivatives
 	TwoBodyEnergies dof_deriv_2benmeths_;
-	// two-body energy methods that require a setup-for-scoring (sfs) opportunity
-	TwoBodyEnergies sfs_req_2benmeths_;
+	// two-body energy methods that require a setup-for-scoring-during-minimization (sfs_dm) opportunity
+	TwoBodyEnergies sfs_dm_req_2benmeths_;
 	// two-body energy methods that require a setup-for-derivatives (sfs) opportunity
 	TwoBodyEnergies sfd_req_2benmeths_;
+
+	// two-body energy methods that require a setup-for-scoring-during-regular-scoring (sfs_drs) opportunity
+	EnergyMethods sfs_drs_req_enmeths_;
 
 	Real weight_,dweight_;
 };
@@ -395,7 +420,7 @@ public:
 
 	void delete_edge( utility::graph::Edge * edge ) override;
 
-	void add_whole_pose_context_enmeth( EnergyMethodCOP enmeth );
+	void add_whole_pose_context_enmeth( EnergyMethodCOP enmeth, core::pose::Pose const & pose );
 	EnergiesIterator whole_pose_context_enmeths_begin() const;
 	EnergiesIterator whole_pose_context_enmeths_end() const;
 

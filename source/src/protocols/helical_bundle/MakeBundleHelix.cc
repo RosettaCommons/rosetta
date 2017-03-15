@@ -292,7 +292,7 @@ void MakeBundleHelix::add_parameter_info_to_pose( core::pose::Pose &pose )
 	output_parameters->reset_residue_list();
 
 	for ( core::Size ir=first_res; ir<=last_res; ++ir ) { //Loop through all of the helix residues.
-		output_parameters->add_residue( pose.conformation().residue_op( ir ) ); //Add owning pointers to the residue objects.
+		output_parameters->add_residue( pose.conformation().residue_cop( ir ) ); //Add owning pointers to the residue objects.
 	}
 
 	//Create a new ParametersSet in the Conformation object:

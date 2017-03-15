@@ -76,6 +76,22 @@ EnergyMethod::update_residue_for_packing(
 void
 EnergyMethod::setup_for_scoring( pose::Pose &, ScoreFunction const & ) const {}
 
+bool
+EnergyMethod::requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose::Pose const & ) const
+{
+	return false;
+}
+
+void
+EnergyMethod::setup_for_scoring_for_residue(
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	basic::datacache::BasicDataCache &
+) const
+{}
+
+
 /// @details default implementation noop
 void
 EnergyMethod::setup_for_minimizing(

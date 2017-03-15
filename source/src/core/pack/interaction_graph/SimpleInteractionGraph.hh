@@ -22,8 +22,12 @@
 #include <core/types.hh>
 #include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -82,20 +86,20 @@ public:
 	/// @brief Set the current residue COP, and follow by computing the energy
 	/// for this residue with its neighbors and storing those computed energies
 	/// on this node's edges as their "current" energies.
-	void set_current( conformation::ResidueCOP res);
+	void set_current( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	/// @brief Set the alternate residue COP and follow by computing the energy
 	/// for this residue with its neighbors and storing those computed energies
 	/// on this node's edges as their "proposed" energies
-	void set_alternate( conformation::ResidueCOP res);
+	void set_alternate( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	/// @brief Passive mode behavior: set the current residue pointer without updating
 	/// the current one body or two body energies.
-	void set_current_no_E_update( conformation::ResidueCOP res );
+	void set_current_no_E_update( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	/// @brief Passive mode behavior: set the current residue pointer without updating
 	/// the alternate one body or proposed two body energies.
-	void set_alternate_no_E_update( conformation::ResidueCOP res );
+	void set_alternate_no_E_update( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	void update_energies_after_passive_change();
 
@@ -125,7 +129,20 @@ public:
 	Real
 	alt_sc_radius() const;
 
+protected:
+
+	inline
+	SimpleInteractionGraph *
+	get_simple_ig_owner();
+
+	inline
+	SimpleInteractionGraph const *
+	get_simple_ig_owner() const;
+
+
 private:
+
+	void setup_for_scoring_for_residue( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	void update_current_one_body_energy();
 
@@ -272,6 +289,12 @@ public:
 		return *sfxn_;
 	}
 
+	std::list< scoring::methods::EnergyMethodCOP > const &
+	setup_for_scoring_for_residue_energy_methods() {
+		return sfs_energy_methods_;
+	}
+
+
 	pose::Pose const &
 	pose() const {
 		return *pose_;
@@ -286,7 +309,7 @@ public:
 	void reject_change( Size node_id );
 
 	//returns delta-energy
-	Real consider_substitution( Size node_id, conformation::ResidueCOP new_state );
+	Real consider_substitution( Size node_id, conformation::ResidueCOP new_state, basic::datacache::BasicDataCache & residue_data_cache );
 
 	Real total_energy();
 
@@ -317,6 +340,7 @@ protected:
 private:
 
 	scoring::ScoreFunctionOP sfxn_;
+	std::list< scoring::methods::EnergyMethodCOP > sfs_energy_methods_;
 	pose::PoseCOP pose_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// Real accumulated_ediff_; //since data stored in energies
@@ -324,6 +348,18 @@ private:
 
 }; //SimpleInteractionGraph
 
+
+inline
+SimpleInteractionGraph *
+SimpleNode::get_simple_ig_owner() {
+	return static_cast< SimpleInteractionGraph * > ( get_owner() );
+}
+
+inline
+SimpleInteractionGraph const *
+SimpleNode::get_simple_ig_owner() const {
+	return static_cast< SimpleInteractionGraph const * > ( get_owner() );
+}
 
 inline
 SimpleInteractionGraph *

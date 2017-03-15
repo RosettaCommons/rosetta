@@ -38,6 +38,9 @@
 //#include <core/pose/Pose.fwd.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -124,6 +127,10 @@ public:
 	virtual
 	conformation::Residue const &
 	residue( Size seqpos ) const = 0;
+
+	virtual
+	basic::datacache::BasicDataCache &
+	residue_data( Size seqpos ) const = 0;
 
 	virtual
 	Size n_dof_nodes() const = 0;

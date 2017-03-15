@@ -124,7 +124,9 @@ public:
 	/// in doing so.
 	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const;
+
+	using EnergyMethod::setup_for_scoring_for_residue;
 
 	/// @brief Do any setup work should the coordinates of this residue, who is still guaranteed to be
 	/// of the same residue type as when setup_for_minimizing_for_residue was called, have changed so dramatically
@@ -153,7 +155,8 @@ public:
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & min_data
+		ResSingleMinimizationData & min_data,
+		basic::datacache::BasicDataCache & res_data_cache
 	) const;
 
 	/// @brief Evaluate the derivative for an atom in a residue in the context of a particular pose,

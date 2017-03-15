@@ -1966,8 +1966,13 @@ ScoreFunction::setup_for_scoring(
 	pose::Pose & pose
 ) const {
 	if ( ! pose.energies().use_nblist() ) {
-		for ( auto const & all_method : all_methods_ ) {
-			all_method->setup_for_scoring( pose, *this );
+		for ( auto const & method : all_methods_ ) {
+			method->setup_for_scoring( pose, *this );
+			if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+				for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+					method->setup_for_scoring_for_residue( pose.residue( ii ), pose, *this, pose.residue_data( ii ) );
+				}
+			}
 		}
 	} else {
 		debug_assert( pose.energies().minimization_graph() );
@@ -1975,7 +1980,7 @@ ScoreFunction::setup_for_scoring(
 
 		/// 1. setup_for_scoring for residue singles
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			mingraph->get_minimization_node( ii )->setup_for_scoring( pose.residue( ii ), pose, *this );
+			mingraph->get_minimization_node( ii )->setup_for_scoring( pose.residue( ii ), pose.residue_data( ii ), pose, *this );
 		}
 
 		/// 2. inter-residue setup for derivatives
@@ -2046,7 +2051,7 @@ ScoreFunction::setup_for_derivatives(
 	/// 1. setup_for_derivatives for residue singles
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		MinimizationNode & iiminnode( * mingraph->get_minimization_node( ii ));
-		iiminnode.setup_for_derivatives( pose.residue(ii), pose, *this );
+		iiminnode.setup_for_derivatives( pose.residue(ii), pose.residue_data( ii ), pose, *this );
 	}
 
 	/// 2. inter-residue setup for derivatives
@@ -2209,7 +2214,7 @@ ScoreFunction::setup_for_minimizing(
 			iter_end = eval_derivs_with_pose_enmeths.end();
 			iter != iter_end; ++iter ) {
 		(*iter)->setup_for_minimizing( pose, *this, min_map );
-		g->add_whole_pose_context_enmeth( *iter );
+		g->add_whole_pose_context_enmeth( *iter, pose );
 	}
 
 

@@ -125,6 +125,10 @@ public:
 	conformation::Residue const &
 	residue( Size seqpos ) const;
 
+	virtual
+	basic::datacache::BasicDataCache &
+	residue_data( Size seqpos ) const;
+
 	optimization::DOF_Node const &
 	dof_node_for_chi( Size resid, Size chiid ) const;
 
