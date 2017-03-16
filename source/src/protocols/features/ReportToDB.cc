@@ -605,7 +605,8 @@ ReportToDB::parse_my_tag(
 		} catch( utility::excn::EXCN_Base const & e ){
 			//TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
 			TR.Error << "Tag with name '" << feature_tag->getName() << "' is invalid" << endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("");
+			TR.Error << " Specific error message: " << e << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption("Invalid FeaturesReporter tag.");
 		}
 
 
