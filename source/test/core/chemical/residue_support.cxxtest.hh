@@ -424,7 +424,7 @@ public:
 
 			for ( core::Size ii(1); ii <= cen_rsd->natoms(); ++ii ) {
 				core::Size jj( converted->atom_index( cen_rsd->atom_name(ii) ) );
-				TSM_ASSERT_EQUALS( cen_rsd->atom_name(ii), converted->atom_type( jj ).name(), cen_rsd->atom_type( ii ).name() )
+				TSM_ASSERT_EQUALS( cen_rsd->atom_name(ii), converted->atom_type( jj ).name(), cen_rsd->atom_type( ii ).name() );
 			}
 			paramslist >> cenfile >> fafile;
 		}

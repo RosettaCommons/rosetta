@@ -166,8 +166,8 @@ void FragmentConstantLengthTest::test_frag_cache() {
 				silly_cache.store(frame, 1, pos);
 			} else {
 				TS_ASSERT( pos>pose_.size()-len+1 );
-			};
-		};
+			}
+		}
 		FragCache< Real > empty_cache("NO_VALUES_HERE");
 		FragCache< Size > another_silly_cache("ULTIMATE_SILLINESS");
 		for ( Size pos = 1; pos <=  pose_.size(); pos++ ) {
@@ -359,7 +359,7 @@ void FragmentConstantLengthTest::test_insertmap() {
 	for ( InsertMap::const_iterator it=insert_map.begin(), eit=insert_map.end(); it!=eit; ++it ) {
 		tr.Info << "active residue " << *it << std::endl;
 		TS_ASSERT_EQUALS( *it, ++pos );
-		TS_ASSERT_EQUALS( insert_size[ *it ], std::min( std::min( 3, 30-pos+1 ) , pos-17 ) )
+		TS_ASSERT_EQUALS( insert_size[ *it ], std::min( std::min( 3, 30-pos+1 ) , pos-17 ) );
 			}
 			TS_ASSERT_EQUALS( pos, 30 ); // that should be the last number
 

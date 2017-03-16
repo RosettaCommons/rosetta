@@ -63,25 +63,25 @@ using namespace basic;
 using namespace utility;
 using namespace protocols;
 
-OPT_1GRP_KEY(String, ab, L1_pose);
-OPT_1GRP_KEY(String, ab, L2_pose);
-OPT_1GRP_KEY(String, ab, L3_pose);
-OPT_1GRP_KEY(String, ab, H1_pose);
-OPT_1GRP_KEY(String, ab, H2_pose);
-OPT_1GRP_KEY(String, ab, H3_pose);
+OPT_1GRP_KEY(String, ab, L1_pose)
+OPT_1GRP_KEY(String, ab, L2_pose)
+OPT_1GRP_KEY(String, ab, L3_pose)
+OPT_1GRP_KEY(String, ab, H1_pose)
+OPT_1GRP_KEY(String, ab, H2_pose)
+OPT_1GRP_KEY(String, ab, H3_pose)
 
-OPT_1GRP_KEY(String, ab, L1_seq);
-OPT_1GRP_KEY(String, ab, L2_seq);
-OPT_1GRP_KEY(String, ab, L3_seq);
-OPT_1GRP_KEY(String, ab, H1_seq);
-OPT_1GRP_KEY(String, ab, H2_seq);
-OPT_1GRP_KEY(String, ab, H3_seq);
+OPT_1GRP_KEY(String, ab, L1_seq)
+OPT_1GRP_KEY(String, ab, L2_seq)
+OPT_1GRP_KEY(String, ab, L3_seq)
+OPT_1GRP_KEY(String, ab, H1_seq)
+OPT_1GRP_KEY(String, ab, H2_seq)
+OPT_1GRP_KEY(String, ab, H3_seq)
 
-OPT_1GRP_KEY(String, ab, DE_pose);
-OPT_1GRP_KEY(String, ab, DE_seq);
+OPT_1GRP_KEY(String, ab, DE_pose)
+OPT_1GRP_KEY(String, ab, DE_seq)
 
-OPT_1GRP_KEY(Boolean, ab, relax_cdrs);
-OPT_1GRP_KEY(Boolean, ab, snugdock);
+OPT_1GRP_KEY(Boolean, ab, relax_cdrs)
+OPT_1GRP_KEY(Boolean, ab, snugdock)
 
 namespace protocols {
 namespace antibody {

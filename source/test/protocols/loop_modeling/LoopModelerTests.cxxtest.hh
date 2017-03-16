@@ -406,7 +406,7 @@ public:
 		TS_ASSERT_DELTA(modeler->centroid_stage_->initial_temp_, 2.6, 1e-5);
 		TS_ASSERT_DELTA(modeler->centroid_stage_->final_temp_, 0.6, 1e-5);
 
-		TS_ASSERT(get_centroid_refiners(modeler).empty())
+		TS_ASSERT(get_centroid_refiners(modeler).empty());
 			}
 
 			void test_fullatom_options() { // {{{1
@@ -434,7 +434,7 @@ public:
 		TS_ASSERT_DELTA(modeler->fullatom_stage_->initial_temp_, 2.4, 1e-5);
 		TS_ASSERT_DELTA(modeler->fullatom_stage_->final_temp_, 0.4, 1e-5);
 
-		TS_ASSERT(get_fullatom_refiners(modeler).empty())
+		TS_ASSERT(get_fullatom_refiners(modeler).empty());
 			}
 
 			void test_temp_cycles_regex() { // {{{1

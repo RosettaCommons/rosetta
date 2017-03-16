@@ -107,9 +107,9 @@ int thread_num() {
 	#endif
 }
 
-// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_cb_mono_nbr_count   );
-// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_bb_tri_nbr_count   );
-// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_bb_tri_nbr_count   );
+// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_cb_mono_nbr_count   )
+// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_bb_tri_nbr_count   )
+// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_bb_tri_nbr_count   )
 OPT_1GRP_KEY( Integer, bpytoi, chi1_increment  )
 OPT_1GRP_KEY( Integer, bpytoi, max_nres        )
 OPT_1GRP_KEY( Integer, bpytoi, max_cys         )

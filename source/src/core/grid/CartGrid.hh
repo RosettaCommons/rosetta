@@ -519,8 +519,8 @@ public:
 
 		std::string point_data = grid_data["data"].get_str();
 
-		debug_assert( sizeof(T)*(npoints_+2)*4 >= point_data.size()*3 ) // 3 bytes of array data for every 4 bytes of string data
-			utility::decode6bit((unsigned char*)zones_,point_data);
+		debug_assert( sizeof(T)*(npoints_+2)*4 >= point_data.size()*3 ); // 3 bytes of array data for every 4 bytes of string data
+		utility::decode6bit((unsigned char*)zones_,point_data);
 
 	}
 

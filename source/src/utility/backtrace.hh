@@ -163,7 +163,8 @@ print_backtrace_NR( char const * condition ) {
 	abort(); // To make the compiler happy on release-mode builds
 }
 
-#define debug_assert(condition) {assert( ( condition ) || print_backtrace_NR( #condition ) ); }
+// When used, this macro must be followed by a semi-colon to be beautified properly.
+#define debug_assert(condition) assert( ( condition ) || print_backtrace_NR( #condition ) )
 
 #else
 // _WIN32, etc.

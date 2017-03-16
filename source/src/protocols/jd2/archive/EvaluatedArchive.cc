@@ -95,7 +95,7 @@ EvaluatedArchive::EvaluatedArchive()
 {
 	runtime_assert( options_registered_ );
 	setup_default_evaluators();
-	OBSOLETE(basic::options::OptionKeys::iterative::evaluate_only_on_slaves)
+	OBSOLETE(basic::options::OptionKeys::iterative::evaluate_only_on_slaves);
 		}
 
 		EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )

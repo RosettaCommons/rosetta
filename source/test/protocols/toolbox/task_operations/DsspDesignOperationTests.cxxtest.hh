@@ -76,7 +76,7 @@ public:
 		DsspDesignOperationOP clone( new DsspDesignOperation( *dssp_design ) );
 
 		TS_ASSERT_EQUALS( dssp_design->blueprint_, clone->blueprint_ );
-		TS_ASSERT_EQUALS( clone->sse_residues_[ "Nterm" ], "Y" )
+		TS_ASSERT_EQUALS( clone->sse_residues_[ "Nterm" ], "Y" );
 			}
 
 			void test_get_restrictions() {
@@ -135,8 +135,8 @@ public:
 		DsspDesignOperationOP loop_nopro( new DsspDesignOperation );
 		loop_nopro->set_restrictions_exclude( "Loop", "P" );
 
-		TS_ASSERT_EQUALS( loop_nopro->sse_residues_[ "Loop" ].find( "P" ), std::string::npos )
-			TS_ASSERT_DIFFERS( loop_nopro->sse_residues_[ "HelixStart" ].find( "P" ), std::string::npos )
+		TS_ASSERT_EQUALS( loop_nopro->sse_residues_[ "Loop" ].find( "P" ), std::string::npos );
+		TS_ASSERT_DIFFERS( loop_nopro->sse_residues_[ "HelixStart" ].find( "P" ), std::string::npos );
 
 			// append allowed residues for all SSEs
 			DsspDesignOperationOP all_st( new DsspDesignOperation );

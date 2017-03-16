@@ -975,8 +975,8 @@ StandardJobQueen::pose_inputter_for_job( StandardInnerLarvalJob const & inner_jo
 			return iter->second->create_inputter();
 		}
 	} else {
-		debug_assert( preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter )
-			return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter;
+		debug_assert( preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter );
+		return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].pose_inputter;
 	}
 }
 

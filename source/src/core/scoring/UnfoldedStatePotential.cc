@@ -154,7 +154,7 @@ UnfoldedStatePotential::raw_unfolded_state_energymap( std::string const & aa_nam
 	// the energies stored in the database file aren't probabilities; don't take the log of them, that doesn't make sense!
 	auto i( unfolded_energy_.find( aa_name3 ) );
 	e = i->second;
-	debug_assert(i->first == aa_name3) // assert that the name3 is in the map, if this fails, you are missing params for that residue type
+	debug_assert(i->first == aa_name3); // assert that the name3 is in the map, if this fails, you are missing params for that residue type
 		}
 
 		void

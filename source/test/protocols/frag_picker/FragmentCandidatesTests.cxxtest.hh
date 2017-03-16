@@ -74,8 +74,8 @@ public:
 		TS_ASSERT( chunks->size() == 458);
 		tr<<"Key of the last chunk: "<<chunks->at(chunks->size())->key()<<std::endl;
 		Real k2 = (Real) chunks->at(chunks->size())->key();
-		TS_ASSERT(k2 / k1 > 0.98)
-			TS_ASSERT(k2 / k1 < 2.02)
+		TS_ASSERT(k2 / k1 > 0.98);
+		TS_ASSERT(k2 / k1 < 2.02);
 			}
 
 			void test_DiversifyCrmsdSelector() {

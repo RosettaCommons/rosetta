@@ -44,7 +44,6 @@ static THREAD_LOCAL basic::Tracer TR( "fpd_bbg" );
 
 OPT_1GRP_KEY(Real, perturb, mutrate)
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 class PerturbStruct : public protocols::moves::Mover {

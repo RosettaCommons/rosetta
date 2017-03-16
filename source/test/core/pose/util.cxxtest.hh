@@ -237,7 +237,7 @@ public: // tests
 		clearPoseExtraScore( pose, key );
 		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == false );
-		TS_ASSERT( val == 0.0 )
+		TS_ASSERT( val == 0.0 );
 			} // test_pose_float_map
 
 

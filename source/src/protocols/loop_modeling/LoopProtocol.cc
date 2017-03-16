@@ -235,7 +235,7 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 	if ( pose.is_fullatom() ) {
 		add_fa_constraints_from_cmdline(pose, *scorefxn);
 	} else {
-		add_constraints_from_cmdline(pose, *scorefxn);\
+		add_constraints_from_cmdline(pose, *scorefxn);
 			}
 
 			monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
