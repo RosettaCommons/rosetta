@@ -84,7 +84,6 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperatio
 	cdrs_(src.cdrs_),
 	limit_only_to_length_(src.limit_only_to_length_),
 	force_north_paper_db_(src.force_north_paper_db_),
-	use_light_chain_type_(src.use_light_chain_type_),
 	use_outliers_(src.use_outliers_),
 	cutoff_(src.cutoff_),
 	picking_rounds_(src.picking_rounds_),
@@ -92,7 +91,8 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperatio
 	include_native_restype_(src.include_native_restype_),
 	sequences_(src.sequences_),
 	pre_loaded_data_(src.pre_loaded_data_),
-	numbering_scheme_(src.numbering_scheme_)
+	numbering_scheme_(src.numbering_scheme_),
+	ignore_light_chain_( src.ignore_light_chain_ )
 {
 	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 }
@@ -110,7 +110,6 @@ AddCDRProfileSetsOperation::set_defaults(){
 	cdrs_.resize(8, true);
 	limit_only_to_length_ = false;
 	force_north_paper_db_ = false;
-	use_light_chain_type_ = option [OptionKeys::antibody::design::use_light_chain_type]();
 	use_outliers_ = false;
 	cutoff_ = 10;
 
@@ -137,7 +136,6 @@ AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache
 
 	limit_only_to_length_ = tag->getOption< bool >("limit_only_to_length", limit_only_to_length_);
 	force_north_paper_db_ = tag->getOption< bool >("force_north_paper_db", force_north_paper_db_);
-	use_light_chain_type_ = tag->getOption< bool >("use_light_chain_type", use_light_chain_type_);
 	use_outliers_ = tag->getOption< bool >("use_outliers", use_outliers_);
 
 	keep_task_allowed_aas_ = tag->getOption< bool>("add_to_current", keep_task_allowed_aas_);
@@ -166,7 +164,6 @@ void AddCDRProfileSetsOperation::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute( "cdrs", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute::attribute_w_default( "limit_only_to_length", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_light_chain_type", xsct_rosetta_bool, "XRW TO DO", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "XRW TO DO", "true" )
@@ -209,10 +206,6 @@ AddCDRProfileSetsOperation::set_force_north_paper_db(bool force_north_db){
 	force_north_paper_db_ = force_north_db;
 }
 
-void
-AddCDRProfileSetsOperation::set_use_light_chain_type(bool use_light_chain_type){
-	use_light_chain_type_ = use_light_chain_type;
-}
 
 void
 AddCDRProfileSetsOperation::set_use_outliers(bool use_outliers) {
@@ -247,7 +240,8 @@ AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
 
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager(ab_info_, force_north_paper_db_);
 	manager.set_outlier_use(use_outliers_);
-	manager.use_light_chain_type(use_light_chain_type_);
+	manager.ignore_light_chain( ignore_light_chain_ );
+	
 	sequences_ = manager.load_cdr_sequences(cdrs_, pose, limit_only_to_length_);
 
 	pre_loaded_data_ = true;
@@ -289,7 +283,8 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 	} else {
 		AntibodyDatabaseManager manager = AntibodyDatabaseManager(local_ab_info, force_north_paper_db_);
 		manager.set_outlier_use(use_outliers_);
-		manager.use_light_chain_type(use_light_chain_type_);
+		manager.ignore_light_chain( ignore_light_chain_ );
+		
 		sequences = manager.load_cdr_sequences(cdrs_, pose, limit_only_to_length_);
 	}
 

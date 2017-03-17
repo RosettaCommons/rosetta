@@ -118,81 +118,39 @@ public:
 	/// @details. Deterministic Protocol only available if GraftDesigning a single CDR.
 	void
 	set_design_protocol( AntibodyDesignProtocolEnum design_protocol);
-
-	/// @brief Set the options which will be used for querying the database
+	
+	
+	/// @brief Set the CDRs which will undergo Sequence-Design
 	void
-	set_cdr_set_options(AntibodyCDRSetOptions cdr_set_options);
-
-	/// @brief Set CDR-specific GraftDesign options
+	set_seq_design_cdrs( utility::vector1< CDRNameEnum > seq_design_cdrs );
+	
+	/// @brief Set the CDRs which will undergo Graft-Design
 	void
-	set_graft_design_options(AntibodyCDRGraftDesignOptions graft_design_options);
-
-	/// @brief Set CDR-specific SeqDesign options
+	set_graft_design_cdrs( utility::vector1< CDRNameEnum > graft_design_cdrs );
+	
+	/// @brief Manually set the CDRs which can be chosen in the outer cycle.
+	/// @details
+	///  These should be on for either Sequence-Design or Graft-Design.
+	///  Normally, the outer cycles are whatever CDRs we are designing, including CDRs which are sequence-design only.
+	///  Use this if you are primarily interested in specific CDRs
+	///   (such as graft-designing H3 and allowing H1 and L3 to sequence design during the inner cycle.
 	void
-	set_seq_design_options(AntibodyCDRSeqDesignOptions seq_design_options);
-
-	/// @brief Will not initialize CDRs from the AntibodyDatabase.  Use if you have your own CDR's you are interested in grafting.
-	/// @details Overhang residues will be used for superposition.  To identify your CDRs, use the functions in AntibodyInfo or the pilot app identify_cdr_clusters
-	/// in pilot/jadolfbr/cluster_utils
-	//void
-	//set_cdr_set(CDRDBPoseSet & cdr_set, core::Size overhang);
-
-	/// @brief Graft and Sequence design these CDRs.  Overrides all options settings.
-	void
-	set_cdr_override(utility::vector1<CDRNameEnum> cdrs_to_design);
-
-	/// @brief Set the instruction file path to load options from instead of setting these via associated options functions
-	/// Or loading via cmd-line option.  Gotta love supporting 3 different Rosetta interfaces.
-	void
-	set_instruction_file(std::string instruction_file);
-
+	set_primary_cdrs( utility::vector1< CDRNameEnum > primary_cdrs );
+	
 public:
-	////////////////////////////////////////////////////////////////////////////
-	// Modeling Settings
-	//
-	//
 
-	void
-	set_scorefunction(core::scoring::ScoreFunctionOP scorefxn);
 
-	void
-	set_scorefunction_min(core::scoring::ScoreFunctionOP min_scorefxn);
-
+	
 	/// @brief Set the number of overall rounds.  Each round will choose a CDR and design it and others based on options
+	///  Default = 25.
 	void
 	set_outer_cycles(core::Size outer_cycles);
 
 	/// @brief Set the number of inner cycles, which optimizes the structure and sequence of the antibody after any graft.
-	/// Essentially min cycles.  Recommend 3 cycles if not doing relax as the mintype.
+	/// Essentially min cycles.
 	void
 	set_inner_cycles(core::Size inner_cycles);
-
-
-	/// @brief Set the algorithm to run a low-resolution docking step after each graft.  Default false.
-	/// @details Uses command-line options for docking.  Lower inner or outer cycles if you are grafting many CDRs.  Still quicker then relax.
-	void
-	set_dock_post_graft(bool dock_post_graft);
-
-	void
-	set_dock_rounds(core::Size dock_rounds);
-
-	/// @brief Set the algorithm to run a final rigid-body minimization of antigen/antibody interface post graft.  Useful if not docking - quicker, but less reliable then full dock.
-	void
-	set_rb_min_post_graft(bool rb_min_post_graft);
-
-
-	/// @brief Sets the protocol to keep a specific number of top designs.  Default is 10
-	void
-	set_keep_top_designs(core::Size top_designs);
-
-	/// @brief Get the top designs found.  You can then use them in other protocols, dump them, etc. They are in order.
-	/// @details - This should be refactored to get_additional_output.
-	utility::vector1< core::pose::PoseOP>
-	get_top_designs(){
-		return top_designs_;
-	};
-
-
+	
 public:
 	////////////////////////////////////////////////////////////////////////////
 	// Paratope and Epitope constraints
@@ -212,6 +170,64 @@ public:
 	/// @brief Setting to use epitope constraints.  Without this false, will not use any set epitope residues.
 	void
 	set_use_epitope_constraints(bool use_epitope_csts);
+	
+	
+public:
+
+
+	/// @brief Set the instruction file path to load options from instead of setting these via associated options functions
+	/// Or loading via cmd-line option.  Gotta love supporting 3 different Rosetta interfaces.
+	void
+	set_instruction_file(std::string instruction_file);
+
+public:
+
+	///// Specific options set here instead of instructions file or explict CDR settings ////////
+	
+	/// @brief Set the options which will be used for querying the database
+	void
+	set_cdr_set_options(AntibodyCDRSetOptions cdr_set_options);
+
+	/// @brief Set CDR-specific GraftDesign options
+	void
+	set_graft_design_options(AntibodyCDRGraftDesignOptions graft_design_options);
+
+	/// @brief Set CDR-specific SeqDesign options
+	void
+	set_seq_design_options(AntibodyCDRSeqDesignOptions seq_design_options);
+	
+	
+public:
+	////////////////////////////////////////////////////////////////////////////
+	// Modeling Settings
+	//
+	//
+
+	void
+	set_scorefunction(core::scoring::ScoreFunctionOP scorefxn);
+
+	void
+	set_scorefunction_min(core::scoring::ScoreFunctionOP min_scorefxn);
+
+	/// @brief Set the algorithm to run a low-resolution docking step after each graft.  Default false.
+	/// @details Uses command-line options for docking.  Lower inner or outer cycles if you are grafting many CDRs.  Still quicker then relax.
+	void
+	set_dock_post_graft(bool dock_post_graft);
+
+	void
+	set_dock_rounds(core::Size dock_rounds);
+
+	/// @brief Sets the protocol to keep a specific number of top designs.  Default is 10
+	void
+	set_keep_top_designs(core::Size top_designs);
+
+	/// @brief Get the top designs found.  You can then use them in other protocols, dump them, etc. They are in order.
+	/// @details - This should be refactored to get_additional_output.
+	utility::vector1< core::pose::PoseOP>
+	get_top_designs(){
+		return top_designs_;
+	};
+
 
 public:
 	void set_interface_dis(core::Real interface_dis);
@@ -305,7 +321,7 @@ private:
 
 	//Runs graft then cartmin on AnchoredGraftMover or CCDEndsGraftMover.  Returns boolean of closure.
 	std::pair<bool, core::Size>
-	run_graft(core::pose::Pose & pose, CDRNameEnum const cdr, CDRDBPose & cdr_pose, protocols::grafting::AnchoredGraftMoverOP grafter);
+	run_graft(core::pose::Pose & pose, core::pose::Pose const & grafting_pose, CDRNameEnum const cdr, clusters::CDRClusterEnum const cluster, protocols::grafting::AnchoredGraftMoverOP grafter);
 
 	/// @brief Run the inner structure/sequence optimization cycle
 	void
@@ -339,13 +355,14 @@ private:
 
 private:
 
-	AntibodyInfoOP ab_info_;
-	AntibodyDesignEnumManagerOP design_enum_manager_;
-
+	AntibodyInfoOP ab_info_ = nullptr;
+	AntibodyDesignEnumManagerOP design_enum_manager_ = nullptr;
+	AntibodyDatabaseManagerOP db_manager_ = nullptr;
+	
 	AntibodyCDRSetOptions cdr_set_options_;
 	AntibodyCDRGraftDesignOptions cdr_graft_design_options_;
 	AntibodyCDRSeqDesignOptions cdr_seq_design_options_;
-	AntibodySeqDesignTFCreatorOP seq_design_creator_;
+	AntibodySeqDesignTFCreatorOP seq_design_creator_ = nullptr;
 
 	std::map< CDRNameEnum, utility::vector1< CDRDBPose > > cdr_set_;
 
@@ -366,20 +383,20 @@ private:
 	protocols::grafting::CCDEndsGraftMoverOP graft_mover_;
 	protocols::grafting::AnchoredGraftMoverOP anchored_graft_mover_;
 
-	MutateFrameworkForClusterOP framework_mutator_;
+	MutateFrameworkForClusterOP framework_mutator_ = nullptr;
 
-	core::scoring::ScoreFunctionOP scorefxn_;
-	core::scoring::ScoreFunctionOP scorefxn_min_;
-	core::scoring::ScoreFunctionOP scorefxn_cart_graft_;
+	core::scoring::ScoreFunctionOP scorefxn_ = nullptr;
+	core::scoring::ScoreFunctionOP scorefxn_min_ = nullptr;
+	core::scoring::ScoreFunctionOP scorefxn_cart_graft_ = nullptr;
 
-	GeneralAntibodyModelerOP modeler_;
-	protocols::simple_moves::MinMoverOP cart_min_graft_;
+	GeneralAntibodyModelerOP modeler_ = nullptr;
+	protocols::simple_moves::MinMoverOP cart_min_graft_ = nullptr;
 
-	protocols::moves::MonteCarloOP mc_;
+	protocols::moves::MonteCarloOP mc_ = nullptr;
 
-	constraints::ParatopeEpitopeSiteConstraintMoverOP paratope_epitope_cst_mover_;
-	constraints::ParatopeSiteConstraintMoverOP paratope_cst_mover_;
-	constraints::CDRDihedralConstraintMoverOP cdr_dihedral_cst_mover_;
+	constraints::ParatopeEpitopeSiteConstraintMoverOP paratope_epitope_cst_mover_ = nullptr;
+	constraints::ParatopeSiteConstraintMoverOP paratope_cst_mover_ = nullptr;
+	constraints::CDRDihedralConstraintMoverOP cdr_dihedral_cst_mover_ = nullptr;
 
 	core::Size overhang_;
 	core::Size outer_cycles_;
@@ -427,15 +444,19 @@ private:
 	bool enable_full_protocol_atom_pair_cst_;
 	AntibodyDesignProtocolEnum design_protocol_;
 
-	utility::vector1<CDRNameEnum> design_override_;
+	utility::vector1<CDRNameEnum> seq_design_override_;
+	utility::vector1<CDRNameEnum> graft_design_override_;
 	utility::vector1<CDRNameEnum> cdrs_to_design_;
-	std::string instruction_file_;
-	bool dock_min_dock_;
+	utility::vector1<CDRNameEnum> primary_cdrs_;
+	
+	std::string instruction_file_ = "NA";
 
 	core::Size stats_cutoff_;
 	bool mutate_framework_for_cluster_;
-
+	
+	std::string mintype_ = "NA";
 };
+
 }
 }
 }

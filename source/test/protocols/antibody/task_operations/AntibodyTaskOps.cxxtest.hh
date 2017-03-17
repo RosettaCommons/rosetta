@@ -258,18 +258,21 @@ public:
 
 		AddCDRProfilesOperationOP default_op = AddCDRProfilesOperationOP(new AddCDRProfilesOperation());
 		default_op->set_force_north_paper_db(true);
-
+		default_op->set_ignore_light_chain(true);
+		
 		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "AddCDRProfilesOperation_UTracer1",  inpath_, first_run_outpath_);
 
 		AddCDRProfilesOperationOP default_ab_info = AddCDRProfilesOperationOP(new AddCDRProfilesOperation(ab_info_));
 		default_ab_info->set_force_north_paper_db(true);
+		default_ab_info->set_ignore_light_chain(true);
 
 		default_ab_info->set_cdrs(cdrs);
 
 		AddCDRProfilesOperationOP default_cdrs = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_, cdrs));
 		default_cdrs->set_force_north_paper_db(true);
+		default_cdrs->set_ignore_light_chain(true);
 
 		task->clear();
 		task->push_back(default_ab_info);
@@ -278,6 +281,7 @@ public:
 		//// Fallback as none
 		AddCDRProfilesOperationOP no_fallback = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		no_fallback->set_force_north_paper_db(true);
+		no_fallback->set_ignore_light_chain(true);
 
 		no_fallback->set_fallback_strategy(design::seq_design_none);
 
@@ -288,6 +292,7 @@ public:
 		/// Force Fallback
 		AddCDRProfilesOperationOP forced_fallback = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		forced_fallback->set_force_north_paper_db(true);
+		forced_fallback->set_ignore_light_chain(true);
 		forced_fallback->set_primary_strategy(seq_design_conservative);
 
 		task->clear();
@@ -297,6 +302,7 @@ public:
 		/// Test Pre-load of data
 		AddCDRProfilesOperationOP pre_loaded_data = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_, cdrs));
 		pre_loaded_data->set_force_north_paper_db(true);
+		pre_loaded_data->set_ignore_light_chain(true);
 		pre_loaded_data->pre_load_data(pose_);
 		task->clear();
 		task->push_back(pre_loaded_data);
@@ -305,6 +311,7 @@ public:
 		// Test Pre-load with profile sets.
 		AddCDRProfilesOperationOP pre_loaded_sets = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		pre_loaded_sets->set_force_north_paper_db(true);
+		pre_loaded_sets->set_ignore_light_chain( true );
 		pre_loaded_sets->set_primary_strategy(seq_design_profile_sets);
 		pre_loaded_sets->pre_load_data(pose_);
 		task->clear();
@@ -314,6 +321,7 @@ public:
 		// Test Pre-load with profile sets and profiles.
 		AddCDRProfilesOperationOP pre_loaded_combined = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		pre_loaded_combined->set_force_north_paper_db(true);
+		pre_loaded_combined->set_ignore_light_chain( true );
 		pre_loaded_combined->set_primary_strategy(seq_design_profile_sets_combined);
 		pre_loaded_combined->pre_load_data(pose_);
 		task->clear();
@@ -333,6 +341,7 @@ public:
 		AddCDRProfileSetsOperationOP default_ab_info = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));
 		default_ab_info->set_cdrs(cdrs);
 		default_ab_info->set_force_north_paper_db( true );
+		default_ab_info->set_ignore_light_chain( true );
 
 		task->clear();
 		task->push_back(default_ab_info);
@@ -341,7 +350,8 @@ public:
 		AddCDRProfileSetsOperationOP default_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation());
 		default_op->set_picking_rounds(5); //Should then sample multiple CDRs
 		default_op->set_force_north_paper_db( true );
-
+		default_op->set_ignore_light_chain( true );
+		
 		task->clear();
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "AddCDRProfileSetsOperation_UTracer1",  inpath_, first_run_outpath_);
@@ -350,13 +360,15 @@ public:
 		pick_op->set_force_north_paper_db( true );
 		pick_op->set_cutoff(10);
 		pick_op->set_picking_rounds( 5 );
-
+		pick_op->set_ignore_light_chain( true );
+		
 		task->clear();
 		task->push_back(pick_op);
 		output_or_test(task, pose_, first_run_, "AddCDRProfileSetsOperation_UTracer3",  inpath_, first_run_outpath_);
 
 		AddCDRProfileSetsOperationOP length_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_, cdrs, true));
 		length_op->set_force_north_paper_db( true );
+		length_op->set_ignore_light_chain( true );
 		length_op->set_include_native_type( false );
 		length_op->set_limit_only_to_length( true );
 		length_op->set_picking_rounds( 5 );

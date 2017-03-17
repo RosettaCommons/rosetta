@@ -31,6 +31,7 @@
 #include <string>
 #include <cmath>
 #include <boost/uuid/sha1.hpp>
+#include <algorithm>
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <cctype>
@@ -92,6 +93,21 @@ std::vector< std::string > split_by_newlines( std::string const & s )
 	}
 	return r;
 }
+
+std::string
+upper( std::string const & s ){
+	std::string new_s = s;
+	std::transform(new_s.begin(), new_s.end(), new_s.begin(), ::toupper);
+	return new_s;
+}
+
+std::string
+lower( std::string const & s ){
+	std::string new_s = s;
+	std::transform(new_s.begin(), new_s.end(), new_s.begin(), ::tolower);
+	return new_s;
+}
+
 
 /// @details Split a string by whitespace, but obey single and double quote marks, like the bash commandline
 utility::vector1< std::string >

@@ -113,6 +113,135 @@ session::force_commit_transaction(){
 	}
 }
 
+void
+session::open_sqlite3_session( bool read_only ){
+
+	stringstream connection_string;
+
+	connection_string << "sqlite3:";
+
+	if ( read_only ) {
+		connection_string << "mode=readonly;";
+	}
+
+	connection_string << "db=" << FileName( get_db_name() ).name();
+
+	if ( is_db_partitioned() ) {
+		connection_string << "_" << get_db_partition();
+	}
+
+	try {
+		open(connection_string.str());
+	} catch (cppdb_error & e){
+		std::stringstream error_msg;
+		error_msg
+			<< "Failed to open sqlite3 database name '" << get_db_name() << "'"
+			<< " with connection string: " << connection_string.str() << std::endl
+			<< "\t" << e.what();
+		utility_exit_with_message(error_msg.str());
+	}
+
+}
+
+void
+session::open_mysql_session(
+	string const & MYSQL_ONLY(host),
+	string const & MYSQL_ONLY(user),
+	string const & MYSQL_ONLY(password),
+	Size MYSQL_ONLY(port))
+
+{
+
+#ifndef USEMYSQL
+	utility_exit_with_message(
+		"If you want to use a mysql database, build with extras=mysql");
+#else
+
+	stringstream connection_string;
+	connection_string
+		<< "mysql:host=" << host << ";"
+		<< "user=" << user << ";"
+		<< "password=" << password << ";"
+		<< "database=" << get_db_name() << ";"
+		<< "port=" << port << ";"
+		<< "opt_reconnect=1";
+
+	platform::Size retry_count = 0;
+	platform::Size max_retry = 10;
+	//Occasionally a connection will fail to an SQL database due to a busy server,
+	//random communications fluke, or something else.  If this happens, try a few more times
+	//before giving up entirely.
+	while(retry_count < max_retry)
+	{
+		retry_count++;
+		try {
+			open(connection_string.str());
+			break;
+		} catch (cppdb_error & e){
+
+			if(retry_count == max_retry)
+			{
+				std::stringstream error_msg;
+				error_msg
+					<< "Failed to open mysql database:"
+					<< "\thost='" << host << "'" << std::endl
+					<< "\tuser='" << user << "'" << std::endl
+					<< "\tpassword='**********'" << std::endl
+					<< "\tport='" << port << "'" << std::endl
+					<< "\tdatabase='" << get_db_name() << "'" << std::endl
+					<< std::endl
+					<< "\t" << e.what();
+				utility_exit_with_message(error_msg.str());
+			}else
+			{
+				sleep(1);
+			}
+		}
+	}
+	
+#endif
+}
+
+void
+session::open_postgres_session(
+	string const & POSTGRES_ONLY(host),
+	string const & POSTGRES_ONLY(user),
+	string const & POSTGRES_ONLY(password),
+	Size POSTGRES_ONLY(port))
+{
+#ifndef USEPOSTGRES
+	utility_exit_with_message(
+		"If you want to use a postgres database, build with extras=postgres");
+#else
+
+	stringstream connection_string;
+	connection_string
+		<< "postgresql:host=" << host << ";"
+		<< "user=" << user << ";"
+		<< "password=" << password << ";"
+		<< "port=" << port << ";"
+		<< "dbname=" << get_db_name();
+
+	try {
+		open(connection_string.str());
+	} catch (cppdb_error & e){
+		std::stringstream error_msg;
+		error_msg
+			<< "Failed to open postgres database:" << endl
+			<< "\thost='" << host << "'" << endl
+			<< "\tuser='" << user << "'" << endl
+			<< "\tpassword='**********'" << endl
+			<< "\tport='" << port << "'" << endl
+			<< "\tdatabase='" << get_db_name() << "'" << endl
+			<< "\tpq_schema='" << get_pq_schema() << "'" << endl
+			<< endl
+			<< "\t" << e.what();
+		utility_exit_with_message(error_msg.str());
+	}
+#endif
+}
+
+
 DatabaseSessionManager::DatabaseSessionManager() = default;
 
 DatabaseSessionManager::~DatabaseSessionManager() = default;
@@ -185,31 +314,8 @@ DatabaseSessionManager::get_session_sqlite3(
 	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
 	s->set_db_partition(db_partition);
-
-	stringstream connection_string;
-
-	connection_string << "sqlite3:";
-
-	if ( readonly ) {
-		connection_string << "mode=readonly;";
-	}
-
-	connection_string << "db=" << FileName(database).name();
-
-	if ( s->is_db_partitioned() ) {
-		connection_string << "_" << s->get_db_partition();
-	}
-
-	try {
-		s->open(connection_string.str());
-	} catch (cppdb_error & e){
-		std::stringstream error_msg;
-		error_msg
-			<< "Failed to open sqlite3 database name '" << database << "'"
-			<< " with connection string: " << connection_string.str() << std::endl
-			<< "\t" << e.what();
-		utility_exit_with_message(error_msg.str());
-	}
+	s->open_sqlite3_session(readonly);
+	
 	return s;
 }
 
@@ -235,49 +341,7 @@ DatabaseSessionManager::get_session_mysql(
 	s->set_transaction_mode(transaction_mode);
 	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
-
-	stringstream connection_string;
-	connection_string
-		<< "mysql:host=" << host << ";"
-		<< "user=" << user << ";"
-		<< "password=" << password << ";"
-		<< "database=" << database << ";"
-		<< "port=" << port << ";"
-		<< "opt_reconnect=1";
-
-	platform::Size retry_count = 0;
-	platform::Size max_retry = 10;
-	//Occasionally a connection will fail to an SQL database due to a busy server,
-	//random communications fluke, or something else.  If this happens, try a few more times
-	//before giving up entirely.
-	while(retry_count < max_retry)
-	{
-		retry_count++;
-		try {
-			s->open(connection_string.str());
-			break;
-		} catch (cppdb_error & e){
-
-			if(retry_count == max_retry)
-			{
-				std::stringstream error_msg;
-				error_msg
-					<< "Failed to open mysql database:"
-					<< "\thost='" << host << "'" << std::endl
-					<< "\tuser='" << user << "'" << std::endl
-					<< "\tpassword='**********'" << std::endl
-					<< "\tport='" << port << "'" << std::endl
-					<< "\tdatabase='" << database << "'" << std::endl
-					<< std::endl
-					<< "\t" << e.what();
-				utility_exit_with_message(error_msg.str());
-			}else
-			{
-				sleep(1);
-			}
-		}
-	}
-
+	s->open_mysql_session( host, user, password, port );
 
 	return s;
 
@@ -308,35 +372,7 @@ DatabaseSessionManager::get_session_postgres(
 	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
 	s->set_pq_schema(pq_schema);
-
-	stringstream connection_string;
-	connection_string
-		<< "postgresql:host=" << host << ";"
-		<< "user=" << user << ";"
-		<< "password=" << password << ";"
-		<< "port=" << port << ";"
-		<< "dbname=" << database;
-
-	try {
-		s->open(connection_string.str());
-	} catch (cppdb_error & e){
-		std::stringstream error_msg;
-		error_msg
-			<< "Failed to open postgres database:" << endl
-			<< "\thost='" << host << "'" << endl
-			<< "\tuser='" << user << "'" << endl
-			<< "\tpassword='**********'" << endl
-			<< "\tport='" << port << "'" << endl
-			<< "\tdatabase='" << database << "'" << endl
-			<< "\tpq_schema='" << pq_schema << "'" << endl
-			<< endl
-			<< "\t" << e.what();
-		utility_exit_with_message(error_msg.str());
-	}
-
-	vector1<string> schema_search_path;
-	schema_search_path.push_back(pq_schema);
-	set_postgres_schema_search_path(s, schema_search_path);
+	s->open_postgres_session( host, user, password, port );
 
 	return s;
 

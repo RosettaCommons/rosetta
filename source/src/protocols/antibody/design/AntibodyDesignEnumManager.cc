@@ -103,12 +103,19 @@ AntibodyDesignEnumManager::setup() {
 
 	min_type_to_enum_["RELAX"] = relax;
 	min_type_to_enum_["CENTROID_RELAX"] = centroid_relax;
+	min_type_to_enum_["CEN_RELAX"] = centroid_relax;
 	min_type_to_enum_["MINIMIZE"] = minimize;
+	min_type_to_enum_["MIN"] = minimize;
 	min_type_to_enum_["MINIMIZE_CARTESIAN"] = minimize_cartesian;
+	min_type_to_enum_["CARTMIN"] = minimize_cartesian;
 	min_type_to_enum_["DUALSPACE"] = dualspace;
+	min_type_to_enum_["DUALSPACKE_RELAX"] = dualspace;
 	min_type_to_enum_["REPACK"] = repack;
+	min_type_to_enum_["PACK"] = repack;
 	min_type_to_enum_["BACKRUB_PROTOCOL"] = backrub_protocol;
+	min_type_to_enum_["BACKRUB"] = backrub_protocol;
 	min_type_to_enum_["NO_MIN"] = no_min;
+	min_type_to_enum_["NONE"] = no_min;
 
 
 }

@@ -111,11 +111,6 @@ public:
 	void
 	set_force_north_paper_db(bool force_north_db);
 
-	/// @brief Use the light chain type if held by AntibodyInfo.
-	/// Default is true.
-	void
-	set_use_light_chain_type(bool use_light_chain_type);
-
 	/// @brief Use cluster outliers as defined using DihedralDistance and RMSD.
 	/// Default false.
 	void
@@ -140,7 +135,13 @@ public:
 	/// Default True.
 	void
 	set_include_native_type(bool use_native);
-
+	
+	void
+	set_ignore_light_chain( bool const ignore_light_chain = false ){
+		ignore_light_chain_ = ignore_light_chain;
+	}
+	
+	
 private:
 	AntibodyInfoCOP ab_info_;
 	utility::vector1<bool> cdrs_;
@@ -148,7 +149,6 @@ private:
 	bool limit_only_to_length_;
 	bool force_north_paper_db_;
 
-	bool use_light_chain_type_;
 	bool use_outliers_;
 
 	core::Size cutoff_;
@@ -163,6 +163,7 @@ private:
 
 	///Needed for default and RS constructor.
 	AntibodyNumberingSchemeEnum numbering_scheme_;
+	bool ignore_light_chain_ = false;
 
 };
 

@@ -181,7 +181,9 @@ private:
 	bool remove_antigen_;
 
 	std::string instruction_file_;
-	utility::vector1<CDRNameEnum> design_override_;
+	utility::vector1<CDRNameEnum> seq_design_override_;
+	utility::vector1<CDRNameEnum> graft_design_override_;
+	utility::vector1<CDRNameEnum> primary_cdrs_;
 
 };
 } //design

@@ -104,8 +104,7 @@ AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & s
 	run_snugdock_( src.run_snugdock_ ),
 	run_relax_(src.run_relax_),
 	remove_antigen_(src.remove_antigen_),
-	instruction_file_( src.instruction_file_ ),
-	design_override_( src.design_override_ )
+	instruction_file_( src.instruction_file_ )
 
 {
 	using namespace constraints;
@@ -186,15 +185,8 @@ AntibodyDesignProtocol::parse_my_tag(
 
 	scorefxn_ = get_ab_design_global_scorefxn(tag, data);
 	scorefxn_min_ = get_ab_design_min_scorefxn(tag, data);
-
-	if ( tag->hasOption("design_cdrs") ) {
-		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("design_cdrs"), ":,'`~+*&|;.");
-		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
-			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
-			design_override_.push_back(cdr_enum);
-		}
-	}
-
+	
+	
 	//A little redundancy
 	if ( tag->hasOption("instruction_file") ) {
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
@@ -204,6 +196,29 @@ AntibodyDesignProtocol::parse_my_tag(
 		instruction_file_ = tag->getOption< std::string >("cdr_instructions_file");
 	}
 
+	if ( tag->hasOption("seq_design_cdrs") ) {
+		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("seq_design_cdrs"), ":,'`~+*&|;.");
+		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
+			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
+			seq_design_override_.push_back(cdr_enum);
+		}
+	}
+
+	if ( tag->hasOption("graft_design_cdrs") ) {
+		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("graft_design_cdrs"), ":,'`~+*&|;.");
+		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
+			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
+			graft_design_override_.push_back(cdr_enum);
+		}
+	}
+	if (tag->hasOption("primary_cdrs") ){
+		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("primary_cdrs"), ":,'`~+*&|;.");
+		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
+			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
+			primary_cdrs_.push_back(cdr_enum);
+		}
+	}
+	
 	run_snugdock_ = tag->getOption<bool>("run_snugdock", run_snugdock_);
 	run_relax_ = tag->getOption<bool>("run_relax", run_relax_);
 	remove_antigen_ = tag->getOption<bool>("remove_antigen", remove_antigen_);
@@ -296,9 +311,15 @@ AntibodyDesignProtocol::setup_design_mover() {
 	graft_designer_->set_scorefunction(scorefxn_);
 	graft_designer_->set_scorefunction_min(scorefxn_min_);
 	graft_designer_->set_instruction_file(instruction_file_);
-
-	if ( design_override_.size() > 0 ) {
-		graft_designer_->set_cdr_override(design_override_);
+	
+	if ( primary_cdrs_.size() > 0 ){
+		graft_designer_->set_primary_cdrs( primary_cdrs_ );
+	}
+	if ( seq_design_override_.size() >0 ){
+		graft_designer_->set_seq_design_cdrs( seq_design_override_ );
+	}
+	if (graft_design_override_.size() > 0 ){
+		graft_designer_->set_graft_design_cdrs( graft_design_override_ );
 	}
 
 }
@@ -508,8 +529,19 @@ void AntibodyDesignProtocol::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	xsd.add_top_level_element(ABcdr_enum);
 
 	attlist + XMLSchemaAttribute(
-		"design_cdrs", "ABcdr_definitions",
-		"CDR regions to be designed");
+		"seq_design_cdrs", xs_string,
+		"CDR regions to be Sequence-Designed");
+
+	attlist + XMLSchemaAttribute(
+		"graft_design_cdrs", xs_string,
+		"CDR regions to be Graft-Designed");
+	
+	attlist + XMLSchemaAttribute(
+		"primary_cdrs", xs_string,
+		"Manually set the CDRs which can be chosen in the outer cycle. \n"
+		"These should be on for either Sequence-Design or Graft-Design. \n"
+		"Normally, the outer cycles are whatever CDRs we are designing, including CDRs which are sequence-design only.  \n"
+		"Use this if you are primarily interested in specific CDRs (such as graft-designing H3 and allowing H1 and L3 to sequence design during the inner cycle.)");
 
 	attlist + XMLSchemaAttribute(
 		"instruction_file", xs_string,

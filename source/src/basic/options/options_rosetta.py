@@ -3722,6 +3722,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------
 		Option_Group( 'design',
+			Option('view', 'Boolean',
+				desc = "Enable viewing of the antibody design run. Must have built using extras=graphics and run with antibody_designer.graphics executable",
+				default = 'false'
+				),
 			Option('base_cdr_instructions', 'String',
 				desc='The Default/Baseline instructions file. Should not need to be changed.',
 				default='/sampling/antibodies/design/default_instructions.txt'
@@ -3742,14 +3746,47 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc='Path to the North paper ab_db path.  Only used if -paper_ab_db option is passed',
 				default='/sampling/antibodies/antibody_database_rosetta_design_north_paper.db'
 				),
-			Option('design_cdrs', 'StringVector',
-				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
-				desc = "Design these CDRs in graft and sequence design steps.  Use to override instructions file"
+
+			###### Basic settings for an easy-to-setup run:
+			Option('seq_design_cdrs', 'StringVector',
+				desc = "Enable these CDRs for Sequence-Design.  (Can be set here or in the instructions file. Overrides any set in instructions file if given)",
+				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3', 'H4', 'L4', 'h1', 'h4'],
 				),
+			Option('graft_design_cdrs', 'StringVector',
+				desc = "Enable these CDRs for Graft-Design.  (Can be set here or in the instructions file. Overrides any set in instructions file if given)",
+				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
+				),
+			Option('primary_cdrs', 'StringVector',
+				desc="Manually set the CDRs which can be chosen in the outer cycle. Normally, we pick any that are sequence-designing.",
+				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3', 'H4', 'L4', 'h1', 'h4'],
+				),
+			Option('mintype', 'String',
+				desc = 'The default mintype for all CDRs.  Individual CDRs may be set via the instructions file',
+				legal = ["min", "cartmin", "relax", "backrub", "pack", "dualspace_relax", "cen_relax", "none"],
+				default='min'
+				),
+			Option('disallow_aa', 'StringVector',
+				desc = 'Disallow certain amino acids while sequence-designing (could still be in the graft-designed sequence, however).  Useful for optimizing without, for example, cysteines and prolines. Applies to all sequence design profiles and residues from any region (cdrs, framework, antigen).  You can control this per-cdr (or only for the CDRs) through the CDR-instruction file. A resfile is also accepted if you wish to limit specific positions directly.',
+				legal = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "H,IS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR", \
+					"A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]
+				),
+
 			Option('top_designs', 'Integer',
 				desc='Number of top designs to keep (ensemble).  These will be written to a PDB and each move onto the next step in the protocol.',
 				default='1'
 				),
+
+			###### Memory management / CDRSet caching ####
+
+			Option('high_mem_mode', 'Boolean',
+				desc = 'If false, we load the CDRSet (CDRs loaded from the database that could be grafted) on-the-fly for a CDR if it has more than 50 graft-design members.  If true, then we cache the CDRSet before the start of the protocol.  Typically, this will really only to come into play when designing all CDRs.  For de-novo design of 5/6 CDRs, without limiting the CDRSet in the instructions file, you will need 3-4 gb per process for this option.',
+				default = 'false'
+				),
+			Option('cdr_set_cache_limit', 'Integer',
+				desc = 'If high_mem_mode is false, this is the limit of CDRSet cacheing we do before we begin load them on-the-fly instead.  If high_mem_mode is true, then we ignore this setting.  If you have extremely low memory per-process, lower this number',
+				default = '300'
+				),
+
 			###### Protocol Steps
 			Option('design_protocol', 'String',
 				desc='Set the main protocol to use.  Note that deterministic is currently only available for the grafting of one CDR.',
@@ -3775,7 +3812,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 			Option('epitope', 'StringVector',
 				desc = "Use these residues as the antigen epitope.  Default is to auto-identify them within the set interface distance at protocol start if epitope constraints are enabled. Currently only used for constraints.  PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A. Note that these site constraints are only used during docking unless -enable_full_protocol_atom_pair_cst is set.", default = []
-  			),
+  				),
 			Option('use_epitope_constraints', 'Boolean',
 				default = 'false',
 				desc = "Enable use of epitope constraints to add SiteConstraints between the epitope and paratope.  Note that paratope constraints are always used.  Note that these site constraints are only used during docking unless -global_atom_pair_cst_scoring is set."
@@ -3795,21 +3832,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 		desc = 'Use the dihedral cst score throughout the protocol, including final scoring of the poses instead of just during minimization step'
                 		),
             		Option('global_atom_pair_cst_scoring', 'Boolean',
-                		default = 'false',
+                		default = 'true',
                 		desc = 'Use the atom pair cst score throughout the protocol, including final scoring of the poses instead of just during docking. Typically, the scoreterm is set to zero for scorefxns other than docking to decrease bias via loop lengths, relax, etc.  It may indeed help to target a particular epitope quicker during monte carlo design if epitope constraints are in use, as well for filtering final models on score towards a particular epitope if docking.'
                 		),
 
 			###### Optimization Step
 			Option('do_dock', 'Boolean',
-				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.  If sequence design is enabled, will design regions/CDRs set during the high-res dock. Recommended to ',
-				default='false'
-				),
-			Option('do_rb_min', 'Boolean',
-				desc='Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump',
-				default='false'
-				),
-			Option('dock_min_dock', 'Boolean',
-				desc='Do Dock -> Min -> Dock instead of Dock->Min where you would otherwise want 2 cycles. Must already be passing do_dock',
+				desc='Run a short lowres + highres docking step in the inner cycles.  (dock/min).  Recommended 2 inner cycles for better coverage. (dock/min/dock/min). Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.  If sequence design is enabled, will design regions/CDRs set during the high-res dock. Recommended to ',
 				default='false'
 				),
 
@@ -3819,7 +3848,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				  If you decrease this number, you will decrease your run time significantly, but your final decoys will be higher energy.  Make sure to increase the total number of output \
 				  structures (nstruct) if you use lower than this number.  Typically about 500 - 1000 nstruct is more than sufficient.  Full DeNovo design will require significantly more rounds \
 				  and nstruct.  If you are docking, runs take about 30 percent longer.',
-				default='100'
+				default='25'
 				),
             		Option('inner_cycle_rounds', 'Integer',
                 		desc='Number of times to run the inner minimization protocol after each graft.  Higher (2-3) rounds recommended for pack/min/backrub mintypes or if including dock in the protocol.',
@@ -3898,12 +3927,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 
 			##### Fine Control
-			Option('use_light_chain_type','Boolean',
-				default='true',
-				desc='Use the light chain type, lambda or kappa IF given via option -antibody:light_chain.  This limits any aspect of the design protocol to use only data and cdrs for the given antibody type.  It (will) also add lambda vs kappa optimization steps such as L4 optimization.  Extremely useful for denovo design as lambda/kappa mixing can result in lower stability and non-expression of designs.  Failed mixed designs would then require manual framework mutations, framework switching, or other optimizations for succes.  Use PyIgClassify (see docs) to identify your framework as lambda or kappa.  Switch this to false or do not pass the -light_chain option to increase sampling with a greater risk of failed designs.'
-				),
       			Option('idealize_graft_cdrs', 'Boolean',
-        			desc='Idealize the CDR before grafting.  May help or hinder.  Still testing.',
+        			desc='Idealize the CDR before grafting.  May help or hinder. ',
         			default = 'false'
         			),
         		Option('add_backrub_pivots', 'StringVector',
@@ -3911,7 +3936,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         			),
         		Option('inner_kt', 'Real',
             			desc = "KT used in the inner min monte carlo after each graft.",
-            			default = '2.0'),
+            			default = '1.0'),
         		Option('outer_kt', 'Real',
             			desc = 'KT used for the outer graft Monte Carlo.  Each graft step will use this value',
             			default = '1.0'),

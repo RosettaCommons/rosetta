@@ -173,7 +173,26 @@ AntibodyEnumManager::setup() {
 	antibody_region_to_string_[antigen_region] = "antigen_region";
 	antibody_region_to_string_[cdr_region] = "cdr_region";
 	antibody_region_to_string_[framework_region] = "framework_region";
+	
+	for (core::Size i = 1; i <= 6; ++i ){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		all_cdrs_.push_back( cdr );
+		all_cdrs_and_proto_.push_back( cdr );
+	}
+	all_cdrs_and_proto_.push_back( h4 );
+	all_cdrs_and_proto_.push_back( l4 );
 
+}
+
+utility::vector1< CDRNameEnum > const &
+AntibodyEnumManager::all_cdrs( bool include_cdr4 /* false */){
+
+	if (include_cdr4 ){
+		return all_cdrs_and_proto_;
+	}
+	else {
+		return all_cdrs_;
+	}
 }
 
 CDRNameEnum

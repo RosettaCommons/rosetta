@@ -123,7 +123,10 @@ public:
 
 	std::string
 	antibody_region_enum_to_string(AntibodyRegionEnum const antibody_region) const;
-
+	
+	utility::vector1< CDRNameEnum > const &
+	all_cdrs( bool include_proto_cdr4  = false);
+	
 private:
 
 
@@ -153,6 +156,10 @@ private:
 
 	utility::vector1< std::string > antibody_region_to_string_;
 	std::map< std::string, AntibodyRegionEnum > antibody_region_to_enum_;
+	
+	utility::vector1< CDRNameEnum > all_cdrs_;
+	utility::vector1< CDRNameEnum > all_cdrs_and_proto_;
+	
 
 };
 }

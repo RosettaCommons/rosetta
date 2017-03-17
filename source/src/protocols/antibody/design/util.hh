@@ -257,7 +257,8 @@ get_cluster_profile_probability_data(
 	utility::vector1< bool > &no_data_cdrs,
 	const core::Size prob_cutoff = 10,
 	const bool use_outliers = false,
-	const bool force_north_db = false);
+	const bool force_north_db = false,
+	const bool ignore_light_chain_ = false);
 
 //@brief Get probability data for a given set of CDRs.  Will fill in the no_data_cdrs;
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
@@ -268,7 +269,8 @@ get_cluster_profile_probability_data(
 	utility::vector1< bool > &no_data_cdrs,
 	const core::Size prob_cutoff = 10,
 	const bool use_outliers = false,
-	const bool force_north_db = false);
+	const bool force_north_db = false,
+	const bool ignore_light_chain_ = false);
 
 /// @brief Transforms a sequence to a mutation set used by the AddCDRProfileSetsOperation.
 /// Assumes that the sequence is the same length as the CDR.  Forces use of North CDR definitions.

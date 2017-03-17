@@ -154,7 +154,9 @@ AntibodyInfo::AntibodyInfo(const AntibodyInfo& src):
 	H_chain_(src.H_chain_),
 	light_chain_type_(src.light_chain_type_),
 	numbering_info_(src.numbering_info_),
-	current_transform_(src.current_transform_)
+	current_transform_(src.current_transform_),
+	all_cdrs_present_(src.all_cdrs_present_),
+	all_cdrs_present_and_proto_( src.all_cdrs_present_and_proto_)
 {
 	using namespace protocols::loops;
 
@@ -207,8 +209,19 @@ void AntibodyInfo::set_default() {
 
 void AntibodyInfo::init(pose::Pose const & pose) {
 
-	if ( is_camelid_ ) total_cdr_loops_ = camelid_last_loop;
-	else            total_cdr_loops_ = num_cdr_loops;
+	if ( is_camelid_ ) {
+		total_cdr_loops_ = camelid_last_loop;
+	}
+	else {
+		total_cdr_loops_ = num_cdr_loops;
+	}
+	for (core::Size i = 1; i <= core::Size(total_cdr_loops_); ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		all_cdrs_present_.push_back( cdr );
+		all_cdrs_present_and_proto_.push_back( cdr );
+	}
+	all_cdrs_present_and_proto_.push_back( l4 );
+	if ( ! is_camelid() ) all_cdrs_present_and_proto_.push_back( h4 );
 
 
 	numbering_parser_ = AntibodyNumberingParserOP( new AntibodyNumberingParser(enum_manager_) );
@@ -781,17 +794,29 @@ AntibodyInfo::check_cdr_quality(const pose::Pose& pose) const {
 CDRNameEnum
 AntibodyInfo::get_total_num_CDRs(bool include_proto_cdr4 /* false */) const{
 	if ( include_proto_cdr4 ) {
-		if ( is_camelid_ ) {
-			return static_cast<CDRNameEnum>(core::Size(total_cdr_loops_) + 1);
-		} else {
-			return static_cast<CDRNameEnum>(core::Size(total_cdr_loops_) + 2);
-		}
+		return all_cdrs_present_and_proto_.back();
 	} else {
 		return total_cdr_loops_;
 	}
 }
 
-bool AntibodyInfo::has_CDR( const CDRNameEnum cdr_name ) const{
+utility::vector1< CDRNameEnum > const &
+AntibodyInfo::get_all_cdrs_present( bool include_proto_cdr4 /* false */ ) const {
+	if (include_proto_cdr4){
+		return all_cdrs_present_and_proto_;
+	}
+	else {
+		return all_cdrs_present_;
+	}
+}
+
+utility::vector1< CDRNameEnum > const &
+AntibodyInfo::get_all_cdrs( bool include_proto_cdr4 ) const {
+	return enum_manager_->all_cdrs( include_proto_cdr4 );
+}
+
+bool
+AntibodyInfo::has_CDR( const CDRNameEnum cdr_name ) const{
 	if ( is_camelid_ ) {
 		if ( cdr_name == l4 ) {
 			return false;

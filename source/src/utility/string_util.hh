@@ -111,6 +111,14 @@ split_whitespace(std::string const & s);
 /// @details Split string by new line symbols, return vector of string.
 std::vector< std::string > split_by_newlines( std::string const & s );
 
+/// @brief Make a string Uppercase
+std::string
+upper( std::string const & s );
+
+/// @breif Make a string Lowercase
+std::string
+lower( std::string const & s );
+
 /// @details Split a string by whitespace, but obey single and double quote marks, like the bash commandline
 utility::vector1< std::string >
 quoted_split(std::string const & s );

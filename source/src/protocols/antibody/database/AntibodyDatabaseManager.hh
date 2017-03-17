@@ -22,7 +22,7 @@
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-
+#include <protocols/features/FeaturesReporter.fwd.hh>
 //Core Headers
 #include <core/pose/Pose.hh>
 
@@ -40,27 +40,47 @@ namespace antibody {
 //Structure for holding loaded CDRs, as well as associated information.
 //Could be its own light class.
 struct CDRDBPose {
-	core::pose::PoseOP pose;
 
+	//Members
+	core::pose::PoseOP pose = nullptr;
+	protocols::features::StructureID struct_id;
+	
+	
 	clusters::CDRClusterEnum cluster;
 	std::string pdb;
 	core::Real distance;
 	core::Real normalized_distance;
 	core::Real resolution;
+	core::Size structure_length;
+	
+	
 	//std::string germline;
 	//std::string species;
 	//core::Real dmap_coord;
 	//species
 
 
-	//Constructor
-	CDRDBPose(core::pose::PoseOP pose, clusters::CDRClusterEnum cluster, std::string pdb, core::Real distance, core::Real normalized_distance, core::Real resolution) :
+	//Constructor with pose.
+	CDRDBPose(core::pose::PoseOP pose, clusters::CDRClusterEnum cluster, std::string pdb, core::Real distance, core::Real normalized_distance, core::Real resolution, core::Size structure_length) :
 		pose(pose),
 		cluster(cluster),
 		pdb(pdb),
 		distance(distance),
 		normalized_distance(normalized_distance),
-		resolution(resolution)
+		resolution(resolution),
+		structure_length( structure_length )
+	{
+	}
+
+	//Constructor without pose.   We then load the PoseOP on the fly to save memory.
+	CDRDBPose(protocols::features::StructureID struct_id, clusters::CDRClusterEnum cluster, std::string pdb, core::Real distance, core::Real normalized_distance, core::Real resolution, core::Size structure_length) :
+		struct_id(struct_id),
+		cluster(cluster),
+		pdb(pdb),
+		distance(distance),
+		normalized_distance(normalized_distance),
+		resolution(resolution),
+		structure_length( structure_length )
 	{
 	}
 
@@ -105,8 +125,6 @@ public:
 
 	AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool force_north_paper_db = false);
 
-	AntibodyDatabaseManager(AntibodyInfoCOP ab_info, std::string const database_path);
-
 	virtual ~AntibodyDatabaseManager();
 
 	AntibodyDatabaseManager( AntibodyDatabaseManager const & src );
@@ -126,7 +144,13 @@ public:
 		AntibodyCDRSetOptions const & options,
 		core::pose::Pose const & pose,
 		core::Size overhang=3);
-
+	
+	///Load a single pose into the db_pose using the given struct_id.  If failure, it is nullptr
+	core::pose::PoseOP
+	load_cdr_pose(
+		CDRDBPose & db_pose
+	);
+	
 	/// @brief Load CDRs from single cdr options.
 	/// @details Will attempt to use Pose Datacache for identification of CDR clusters first.
 	///
@@ -177,16 +201,12 @@ public:
 
 	//std::map< core::Size, AAProbabilities >
 	//load_framework_design_data(AntibodyInfoCOP ab_info, core::pose::Pose const & pose);
-
-	/// @brief Use the light chain type for CDRPoses and CDRSequences if set in AntibodyInfo.
+	
 	void
-	use_light_chain_type(bool use_light_chain_type);
-
-	bool
-	use_light_chain_type() const {
-		return use_light_chain_type_;
+	ignore_light_chain( bool const ignore_light_chain ){
+		ignore_light_chain_ = ignore_light_chain;
 	}
-
+	
 private:
 
 
@@ -197,10 +217,11 @@ private:
 		core::Size const length,
 		clusters::CDRClusterEnum const cluster,
 		bool load_on_length);
-
+	
+	
+	///Create the actual sessionOP.
 	void
-	start_database_session(std::string const database_path);
-
+	create_database_session(std::string const database_path);
 
 	/// @brief  Checks to make sure the instructions make sense before trying to create the statement for the db..
 	void
@@ -243,7 +264,11 @@ private:
 	bool use_outliers_;
 	bool use_h3_graft_outliers_; //H3 does not cluster well, so most of the structures are defined as 'outliers'
 	bool use_only_H3_kinked_;
-	bool use_light_chain_type_;
+	
+	bool high_mem_mode_ = false;
+	core::Size cdr_cache_limit_ = 300;
+	bool ignore_light_chain_ = false;
+	
 };
 
 }

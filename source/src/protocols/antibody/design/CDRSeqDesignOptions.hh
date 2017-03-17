@@ -20,6 +20,8 @@
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignEnumManager.fwd.hh>
 
+#include <core/chemical/AA.hh>
+
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -80,6 +82,16 @@ public:
 	fallback() const;
 
 public:
+	
+	void
+	disallow_aa( utility::vector1< core::chemical::AA > const & disallowed );
+	
+	utility::vector1< core::chemical::AA >
+	disallow_aa() const {
+		return disallow_aa_;
+	}
+	
+public:
 
 	CDRSeqDesignOptionsOP
 	clone() const;
@@ -93,6 +105,8 @@ private:
 
 	SeqDesignStrategyEnum design_strategy_;
 	SeqDesignStrategyEnum fallback_strategy_;
+	utility::vector1< core::chemical::AA > disallow_aa_;
+	
 
 };
 
@@ -134,23 +148,26 @@ private:
 	check_path();
 
 	void
-	check_line_len(utility::vector1<std::string> const & lineSP, core::Size len_check) const;
+	check_line_len( utility::vector1<std::string> const & lineSP, core::Size len_check ) const;
 
 	void
-	parse_cdr_option(std::string const & mode, utility::vector1<std::string> const & lineSP);
+	parse_cdr_option( std::string const & mode, utility::vector1<std::string> const & lineSP );
 
 	void
-	parse_cdr_design_option(std::string const & adjective, utility::vector1< std::string> const & lineSP) ;
+	parse_cdr_design_option( std::string const & adjective, utility::vector1< std::string> const & lineSP ) ;
 
 	void
-	parse_cdr_general_option(utility::vector1<std::string> const & lineSP) ;
+	parse_cdr_general_option( utility::vector1<std::string> const & lineSP ) ;
 
 	void
-	set_cdr_design_primary_option(std::string const & option);
+	set_cdr_design_primary_option( std::string const & option );
 
 	void
-	set_cdr_design_fallback_option(std::string const & option);
-
+	set_cdr_design_fallback_option( std::string const & option );
+	
+	void
+	set_disallow_amino_acids( utility::vector1< std::string > const & lineSP );
+	
 private:
 
 	std::string instructions_path_;

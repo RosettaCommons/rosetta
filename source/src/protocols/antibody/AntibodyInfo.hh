@@ -143,8 +143,16 @@ public:
 
 	/// @brief return num of cdr loops, 3 (nanobody) or 6 (regular antibody)
 	CDRNameEnum
-	get_total_num_CDRs(bool include_proto_cdr4 = false) const;
-
+	get_total_num_CDRs( bool include_proto_cdr4 = false ) const;
+	
+	///@brief Get a vector of all the CDRs in this antibody. Easy to iterate on.
+	utility::vector1< CDRNameEnum > const &
+	get_all_cdrs_present( bool include_proto_cdr4 = false ) const;
+	
+	///@brief Get a vector of all CDRs. Easy to iterate on.
+	utility::vector1< CDRNameEnum > const &
+	get_all_cdrs( bool include_proto_cdr4 = false ) const;
+	
 	/// @brief Does the antibody have this CDR?
 	/// See also:
 	///                   is_camelid())
@@ -634,7 +642,10 @@ private:
 	clusters::CDRClusterEnumManagerOP cdr_cluster_manager_;
 
 	AntibodyNumberingParserOP numbering_parser_;
-
+	
+	utility::vector1< CDRNameEnum > all_cdrs_present_;
+	utility::vector1< CDRNameEnum > all_cdrs_present_and_proto_;
+	
 };
 
 

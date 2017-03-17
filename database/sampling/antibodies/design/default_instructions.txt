@@ -2,7 +2,7 @@
 #Format of this file will be explained in the documentation of the Rosetta Antibody Designer.
 
 #General
-ALL ALLOW
+ALL FIX
 DE FIX
 
 ALL WEIGHTS 1.0
@@ -11,8 +11,15 @@ ALL WEIGHTS 1.0
 ALL CDRSet INCLUDEONLY LENGTH_TYPES 1 2 3
 
 #Minimization - Options: min, relax, ds_relax cartesian, backrub, repack, none
-ALL MinProtocol MINTYPE relax
+ALL MinProtocol MINTYPE min
 
+#Neighbors.  These are conservative values used in benchmarking.  Limit these to speed up runs.
+L1 MinProtocol Min_Neighbors L2 L3
+L2 MinProtocol Min_Neighbors L1
+L3 MinProtocol Min_Neighbors L1 H3
+H1 MinProtocol Min_Neighbors H2 H3
+H2 MinProtocol Min_Neighbors H1
+H3 MinProtocol Min_Neighbors L1 L3
 
 #Length
 ALL CDRSet LENGTH MAX 25
@@ -75,3 +82,7 @@ DE SeqDesign STRATEGY CONSERVATIVE
 
 #### CDRSet Cutoffs #####
 #L1 CDRSet CLUSTER_CUTOFFS Z # Limits the CDRSet to include only CDRs of clusters that have Z or more members.  Used in conjunction with Sequence Design cutoffs to sample clusters where profile data is available or abundant or simply common clusters of a particular species.
+
+#### Disable certain amino acids ####
+#L1 SeqDesign DISALLOWED ARG C S ASN PRO
+

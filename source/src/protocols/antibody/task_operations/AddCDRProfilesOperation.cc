@@ -130,7 +130,8 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 	prob_set_(src.prob_set_),
 	no_profile_data_cdrs_(src.no_profile_data_cdrs_),
 	no_profile_sets_data_cdrs_(src.no_profile_sets_data_cdrs_),
-	numbering_scheme_(src.numbering_scheme_)
+	numbering_scheme_(src.numbering_scheme_),
+	ignore_light_chain_(src.ignore_light_chain_)
 
 
 {
@@ -354,6 +355,7 @@ AddCDRProfilesOperation::pre_load_data(const core::pose::Pose& pose){
 	if ( n_profile_set_cdrs > 0 ) {
 
 		profile_sets_task_ = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));
+		profile_sets_task_->set_ignore_light_chain( ignore_light_chain_ );
 		profile_sets_task_->set_cdrs(profile_set_cdrs);
 		profile_sets_task_->set_force_north_paper_db(force_north_paper_db_);
 		profile_sets_task_->set_use_outliers(use_outliers_);
@@ -372,7 +374,8 @@ AddCDRProfilesOperation::pre_load_data(const core::pose::Pose& pose){
 			no_profile_data_cdrs_,
 			stats_cutoff_,
 			use_outliers_,
-			force_north_paper_db_);
+			force_north_paper_db_,
+			ignore_light_chain_);
 
 	}
 

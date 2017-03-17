@@ -147,6 +147,9 @@ enum AA {
 AA
 aa_from_name( std::string const & name );
 
+AA
+aa_from_one_or_three( std::string const & name );
+
 //////////////////////////////////////////////////////////
 /// @brief Give an enum type, return true if and only if
 /// it is a D-amino acid that is the mirror image of a
@@ -210,6 +213,8 @@ aa_from_oneletter_code( char onelettercode );
 
 bool
 oneletter_code_specifies_aa( char onelettercode );
+
+
 
 /// @brief input operator for AA enum type
 std::istream & operator >>( std::istream & is, AA & aa );

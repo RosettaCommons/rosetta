@@ -30,7 +30,6 @@
 #include <fstream>
 #include <cctype>
 #include <utility/io/izstream.hh>
-
 #include <boost/algorithm/string.hpp>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.CDRGraftDesignOptions");
@@ -90,7 +89,7 @@ CDRGraftDesignOptions::set_defaults(){
 	design_ = true;
 	min_sc_ = true;
 	min_neighbor_sc_ = true;
-	mintype_ = repack;
+	mintype_ = minimize;
 	min_rb_ = false;
 	cdr_weight_ = 1.0;
 }

@@ -86,38 +86,39 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 	utility::pointer::ReferenceCount(),
 	ab_info_(ab_info)
 {
+	using namespace basic::options;
+	
 	//protein_silent_report_ = new protocols::features::ProteinSilentReport();
 	//ab_info_ = ab_info;
 
 	string default_path = basic::database::full_name(basic::options::option[basic::options::OptionKeys::antibody::design::antibody_database](), true);
+	
 	string north_paper_path = basic::database::full_name(basic::options::option[basic::options::OptionKeys::antibody::design::paper_ab_db_path](), true);
-	bool use_north_paper_ab_db = basic::options::option[basic::options::OptionKeys::antibody::design::paper_ab_db]();
-	use_outliers_ = basic::options::option[basic::options::OptionKeys::antibody::design::use_outliers]();
-	use_h3_graft_outliers_ = basic::options::option[basic::options::OptionKeys::antibody::design::use_H3_graft_outliers]();
-	use_only_H3_kinked_ = basic::options::option[ basic::options::OptionKeys::antibody::design::use_only_H3_kinked]();
-	use_light_chain_type_ = option [OptionKeys::antibody::design::use_light_chain_type]();
+	
+	bool use_north_paper_ab_db = option[basic::options::OptionKeys::antibody::design::paper_ab_db]();
+	
+	use_outliers_ = option[OptionKeys::antibody::design::use_outliers]();
+	use_h3_graft_outliers_ = option[OptionKeys::antibody::design::use_H3_graft_outliers]();
+	use_only_H3_kinked_ = option[ OptionKeys::antibody::design::use_only_H3_kinked]();
 
 	if ( use_north_paper_ab_db || force_north_paper_db ) {
-		start_database_session(north_paper_path);
+		create_database_session(north_paper_path);
 	} else if ( utility::file::file_exists(default_path) ) {
-		start_database_session(default_path);
+		create_database_session(default_path);
 
 	} else if ( utility::file::file_exists(north_paper_path) ) {
-		start_database_session(north_paper_path);
+		create_database_session(north_paper_path);
 	} else {
 		utility_exit_with_message("Could not locate antibody database.  Please check paths, use the -paper_ab_db option, or pass the class constructor option to force the use of the paper database.");
 	}
-
+	
+	cdr_cache_limit_ = option[ OptionKeys::antibody::design::cdr_set_cache_limit]();
+	
+	///Close the database session until we are ready to actually read from it.
+	db_session_->close();
 
 }
 
-AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, std::string const database_path):
-	utility::pointer::ReferenceCount(),
-	ab_info_(ab_info)
-{
-	//ab_info_ = ab_info;
-	start_database_session(database_path);
-}
 
 AntibodyDatabaseManager::~AntibodyDatabaseManager(){}
 
@@ -126,7 +127,9 @@ AntibodyDatabaseManager::AntibodyDatabaseManager( AntibodyDatabaseManager const 
 	use_outliers_( src.use_outliers_ ),
 	use_h3_graft_outliers_( src.use_h3_graft_outliers_ ),
 	use_only_H3_kinked_( src.use_only_H3_kinked_ ),
-	use_light_chain_type_( src.use_light_chain_type_ )
+	high_mem_mode_( src.high_mem_mode_),
+	cdr_cache_limit_( src.cdr_cache_limit_),
+	ignore_light_chain_( src.ignore_light_chain_)
 
 {
 	using namespace utility::sql_database;
@@ -140,21 +143,18 @@ AntibodyDatabaseManager::clone() const {
 }
 
 void
-AntibodyDatabaseManager::start_database_session(std::string const database_path) {
+AntibodyDatabaseManager::create_database_session(std::string const database_path) {
 	db_path_ = database_path;
 	db_session_ = basic::database::get_db_session(db_path_);
 	TR << "Reading from: " << db_path_ << std::endl;
 }
+
 
 void
 AntibodyDatabaseManager::set_outlier_use(bool use_outliers) {
 	use_outliers_ = use_outliers;
 }
 
-void
-AntibodyDatabaseManager::use_light_chain_type(bool use_light_chain_type){
-	use_light_chain_type_ = use_light_chain_type;
-}
 
 utility::vector1<core::Size>
 AntibodyDatabaseManager::get_cluster_totals() const {
@@ -191,6 +191,9 @@ AntibodyDatabaseManager::get_ands(std::string name, core::Size n) const {
 
 utility::vector1<core::Size>
 AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
+
+	db_session_->open_sqlite3_session( true /* readonly*/);
+	
 	utility::vector1<core::Size> totals(CDRClusterEnum_total, 0);
 
 	CDRClusterEnumManagerCOP manager = ab_info_->get_cdr_cluster_enum_manager();
@@ -231,11 +234,34 @@ AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
 			utility_exit_with_message("Cluster "+fullcluster+" not present in Enums!!");
 		}
 	}
-
+	
+	db_session_->close();
+	
 	///H3 Outlier change here.
 	return totals;
 
 }
+
+core::pose::PoseOP
+AntibodyDatabaseManager::load_cdr_pose(protocols::antibody::CDRDBPose & db_pose){
+	
+	db_session_->open_sqlite3_session( true /* readonly*/);
+	protocols::features::ProteinSilentReport reporter = protocols::features::ProteinSilentReport();
+	core::pose::PoseOP pose( new core::pose::Pose() );
+	
+	
+	reporter.load_pose( db_session_, db_pose.struct_id, *pose );
+	pose->conformation().detect_disulfides();
+
+	if ( pose->size() !=  db_pose.structure_length) {
+		TR << "Leaving out bad structure:  "<< db_pose.pdb << " num residues in pose do not match cluster cdr length with overhang. " <<std::endl;
+		return nullptr;
+	}
+	
+	db_session_->close();
+	return pose;
+}
+
 
 CDRDBPoseSet
 AntibodyDatabaseManager::load_cdr_poses(
@@ -251,7 +277,23 @@ AntibodyDatabaseManager::load_cdr_poses(
 	utility::vector1<core::Size> totals = this->get_cluster_totals();
 
 	CDRDBPoseSet cdr_set;
-
+	
+	// Make sure we have the light chain set.
+	if (ab_info_->get_light_chain_type_enum() == unknown && ! ab_info_->is_camelid() && ! ignore_light_chain_ ){
+		utility_exit_with_message("Antibody Design requires the identity of the light chain gene. Please set it using the -light_chain option.  PyIgClassify can be used to determine the light chain gene.");
+	}
+	
+	db_session_->open_sqlite3_session( true /* readonly*/);
+	core::Size total_loaded_poses = 0;
+	
+	std::string length_statement_string =
+		"SELECT\n"
+		"\ttotal_residue\n"
+		"FROM\n"
+		"pose_conformations\n"
+		"WHERE\n"
+		"\tstruct_id = ?";
+	
 	for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
 
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -297,7 +339,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 
 		if ( options->include_only_current_cluster() ) {
-
+			
 			TR << ab_info_->get_CDR_name(cdr)<<
 				" Staying native cluster.  Ignoring CENTER, CLUSTER, LENGTH, LENGTH_TYPE, and CLUSTER_CUTOFF settings for this CDR.\n" <<
 				"If PDBID INCLUDEONLY is set, please check that these PDBs have CDRs that match your cluster\n"<<std::endl;
@@ -394,9 +436,9 @@ AntibodyDatabaseManager::load_cdr_poses(
 			base_statement += get_question_mark_string(options->exclude_germlines().size());
 		}
 		//Lambda vs Kappa
-		if ( ab_info_->get_light_chain_type_enum() != unknown && use_light_chain_type_ && (ab_info_->get_light_chain_type_enum() != lambda) ) {
+		if ( ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda) ) {
 			base_statement += " AND (gene = 'heavy' OR gene = '"+ab_info_->get_light_chain_type()+"')";
-		} else if ( ab_info_->get_light_chain_type_enum() == lambda && use_light_chain_type_ ) {
+		} else if ( ab_info_->get_light_chain_type_enum() == lambda ) {
 			base_statement += " AND (gene = 'heavy' OR gene = 'lambda6' OR gene = 'lambda')";
 		}
 		if ( options->include_only_center_clusters() ) {
@@ -532,7 +574,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 		}
 
 		// Print totals and counts of removed structures and clusters.
-		TR << "Total "<<ab_info_->get_CDR_name(cdr) << " poses: " << tags.size() << std::endl;
+		TR << "Total "<<ab_info_->get_CDR_name(cdr) << " in CDRSet: " << tags.size() << std::endl;
 		if ( non_kinked_removed > 0 ) {
 			TR << "Removed "<< non_kinked_removed << " non-kinked H3 structures" << std::endl;
 		}
@@ -575,24 +617,50 @@ AntibodyDatabaseManager::load_cdr_poses(
 				//TR.Debug << "Loading structure: " << tags[k] <<std::endl;
 				StructureID struct_id;
 				uuid_result >> struct_id;
-				core::pose::PoseOP pose( new core::pose::Pose() );
-				reporter.load_pose( db_session_, struct_id, *pose );
-				pose->conformation().detect_disulfides();
-
-				if ( pose->size() != ab_info_->get_cluster_length(clusters[ k ])+ overhang*2 ) {
+				
+				core::Size structure_length = ab_info_->get_cluster_length(clusters[ k ])+ overhang*2;
+				
+				
+				cppdb::statement length_statement(basic::database::safely_prepare_statement( length_statement_string, db_session_ ));
+				length_statement.bind(1, struct_id );
+				cppdb::result length_result(basic::database::safely_read_from_database( length_statement ));
+				
+				if ( !length_result.next() ) {
+					TR << "Unable to locate structure with struct_id '" << struct_id << "' Leaving Out.";
+					continue;
+				}
+				core::Size actual_cdr_length;
+				length_result >> actual_cdr_length;
+				
+				if ( actual_cdr_length !=  structure_length) {
 					TR << "Leaving out bad structure:  "<< tags[k] << " num residues in pose do not match cluster cdr length with overhang. " <<std::endl;
 					continue;
 				}
-				CDRDBPose cdr_pose = CDRDBPose(pose, clusters[ k ], tag, distances[ k ], normalized_distances[ k ], resolutions[ k ]);
-				cdr_set[cdr].push_back(cdr_pose);
+				
+				if (high_mem_mode_ || total_loaded_poses < cdr_cache_limit_ ){
+					
+					core::pose::PoseOP pose( new core::pose::Pose() );
+					reporter.load_pose( db_session_, struct_id, *pose );
+					pose->conformation().detect_disulfides();
+
+					
+					CDRDBPose cdr_pose = CDRDBPose(pose, clusters[ k ], tag, distances[ k ], normalized_distances[ k ], resolutions[ k ], structure_length );
+					cdr_set[cdr].push_back(cdr_pose);
+					total_loaded_poses+=1;
+				
+				}
+				else {
+					CDRDBPose cdr_pose = CDRDBPose( struct_id, clusters[ k ], tag, distances[ k ], normalized_distances[ k ], resolutions[ k ], structure_length );
+						cdr_set[cdr].push_back(cdr_pose);
+				}
 
 			}
 		}
 	}
+	db_session_->close();
+	TR << total_loaded_poses << " Cached " << std::endl;
 	TR << "cdrs loaded from database."<<std::endl;
 	return cdr_set;
-
-	//std::pair<CDRDBPoseSet, CDRClusterMap>
 }
 
 vector1< bool >
@@ -626,7 +694,8 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 	std::map<core::Size,AAProbabilities>& prob_set,
 	const core::Size cutoff)
 {
-
+	
+	db_session_->open_sqlite3_session( true /* readonly*/);
 	utility::vector1< bool > cdrs = c;
 	if ( cdrs.size() == 6 ) {
 		cdrs.push_back(false);
@@ -707,7 +776,8 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 			TR << "Loaded "<< ab_info_->get_cluster_name(cluster) << " with " << total_seq << " datapoints. " << std::endl;
 		}
 	}
-
+	
+	db_session_->close();
 	return cdrs_with_no_data;
 }
 
@@ -717,7 +787,6 @@ AntibodyDatabaseManager::load_cdr_sequences(
 	const core::pose::Pose& pose,
 	bool match_on_length)
 {
-
 	utility::vector1< bool > cdrs = c;
 	if ( cdrs.size() == 6 ) {
 		cdrs.push_back(false);
@@ -784,6 +853,13 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 	bool load_on_length)
 {
 
+	// Make sure we have the light chain set.
+	if (ab_info_->get_light_chain_type_enum() == unknown && ! ab_info_->is_camelid() && ! ignore_light_chain_){
+		utility_exit_with_message("Antibody Design requires the identity of the light chain gene. Please set it using the -light_chain option.  PyIgClassify can be used to determine the light chain gene.");
+	}
+	
+	db_session_->open_sqlite3_session( true /* readonly*/);
+	
 	utility::vector1<CDRDBSequence> sequence_set;
 
 	std::string base_statement =
@@ -826,9 +902,9 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 	}
 
 	//Lambda vs Kappa
-	if ( use_light_chain_type_ && ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda) ) {
+	if ( ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda) ) {
 		base_statement += " AND (gene = 'heavy' OR gene = '"+ab_info_->get_light_chain_type()+"')";
-	} else if ( use_light_chain_type_ && ab_info_->get_light_chain_type_enum() == lambda ) {
+	} else if ( ab_info_->get_light_chain_type_enum() == lambda ) {
 		base_statement += " AND (gene = 'heavy' OR gene = 'lambda6' OR gene = 'lambda')";
 	}
 
@@ -901,6 +977,8 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 	}
 
 	TR << "Total "<<ab_info_->get_CDR_name(cdr) << " CDRDBPoses: " << sequence_set.size() << std::endl;
+	
+	db_session_->close();
 	return sequence_set;
 }
 

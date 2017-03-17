@@ -58,7 +58,7 @@ class AntibodyDatabase: public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init();
+		core_init_with_additional_options("-light_chain lambda");
 		core::import_pose::pose_from_file(pose, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file); //AHO renumbered pose
 		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
 
