@@ -33,7 +33,10 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/rna/StubStubType.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/RT.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
@@ -179,6 +182,9 @@ private:
 	random_jump_trial( core::pose::Pose & pose );
 
 	void
+	setup_rnp_fold_tree( core::pose::Pose & pose );
+
+	void
 	rnp_docking_trial( core::pose::Pose & pose );
 
 	core::kinematics::FoldTree
@@ -224,6 +230,14 @@ private:
 
 	void
 	finish_output_score();
+
+	core::kinematics::RT
+	get_output_jump_RT( core::pose::PoseCOP pose ) const;
+
+	void
+	get_output_jump_stub_stub( core::pose::Pose const & pose,
+		core::kinematics::Stub & stub1,
+		core::kinematics::Stub & stub2 ) const;
 
 	void
 	output_jump_information( core::pose::Pose const & pose );
@@ -282,6 +296,8 @@ private:
 	utility::io::ozstream running_score_output_;
 	numeric::MathNTensorOP< core::Size, 6 > jump_histogram_;
 	utility::vector1< core::Real > jump_histogram_min_, jump_histogram_max_, jump_histogram_bin_width_;
+	core::pose::rna::StubStubType output_stub_stub_type_;
+	core::kinematics::RTOP reference_RT_;
 
 };
 

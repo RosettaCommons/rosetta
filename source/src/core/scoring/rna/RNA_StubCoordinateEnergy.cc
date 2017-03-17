@@ -24,9 +24,13 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/RT.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <basic/options/option.hh>
@@ -40,7 +44,6 @@
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Computes penalty for having an O5' atom far from a target location, as defined by the
 ///                  O3' stub of a previous residue.
@@ -51,6 +54,11 @@
 ///
 ///  TODO: Ideally, would make a clean version that lives in StubCoordinateConstraint and
 ///           handles derivatives. Probably could sub-class from CoordinateConstraint.
+///
+///  TODO: Could also use this framework to align rotations of coordinate frames. See notes below.
+///
+///  TODO: Setup still copies a ton of code from RNA_FragmentMonteCarlo. Could be
+///           unified if we use Constraint above.
 ///
 ///    -- rhiju, 2017
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,12 +93,21 @@ RNA_StubCoordinateEnergyCreator::score_types_for_method() const {
 RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_StubCoordinateEnergyCreator ) )
 {
+	using namespace core::pose::rna;
 	// meant for use with RNA_FragmentMonteCarlo in mode where it simuilates an RNA loop and
 	//  outputs translation & rotation information from a takeoff to a landing residue.
-	runtime_assert( option[ farna::out::output_jump_o3p_to_o5p ]() );
-	runtime_assert( option[ farna::out::output_jump_res ]().size() == 2 );
-	takeoff_res_ = option[ farna::out::output_jump_res ]()[ 1 ];
-	landing_res_ = option[ farna::out::output_jump_res ]()[ 2 ];
+	stub_stub_type_ = BASE_CENTROID;
+	if ( option[ farna::out::output_jump_o3p_to_o5p ]() ) stub_stub_type_ = O3P_TO_O5P;
+	if ( option[ farna::out::output_jump_chainbreak ]() ) stub_stub_type_ = CHAINBREAK;
+	if ( option[ farna::out::output_jump_reference_RT ].user() ){
+		reference_RT_ = kinematics::RTOP( new kinematics::RT );
+		std::stringstream rt_stream( option[ farna::out::output_jump_reference_RT ]() );
+		rt_stream >> *reference_RT_;
+	}
+
+	jump_resnum_and_chain_ = option[ farna::out::output_jump_res ].resnum_and_chain();
+	runtime_assert( jump_resnum_and_chain_.first.size() == 2 );
+	runtime_assert( jump_resnum_and_chain_.second.size() == 2 );
 
 	runtime_assert( option[ farna::out::target_xyz ]().size() == 3 );
 	utility::vector1< Real > const & xyz = option[ farna::out::target_xyz ]();
@@ -134,6 +151,18 @@ RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), rna_stub_coord_hack ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
+
+	using namespace core::pose::full_model_info;
+	if ( full_model_info_defined( pose ) ) {
+		res1_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( jump_resnum_and_chain_.first[1],
+																																												 jump_resnum_and_chain_.second[1] );
+		res2_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( jump_resnum_and_chain_.first[2],
+																																												 jump_resnum_and_chain_.second[2] );
+	} else {
+		res1_ = jump_resnum_and_chain_.first[ 1 ];
+		res2_ = jump_resnum_and_chain_.first[ 2 ];
+	}
+
 }
 
 
@@ -145,8 +174,8 @@ RNA_StubCoordinateEnergy::defines_residue_pair_energy(
 	Size res2
 ) const
 {
-	if ( res1 == takeoff_res_ && res2 == landing_res_ ) return true;
-	if ( res1 == landing_res_ && res2 == takeoff_res_ ) return true;
+	if ( res1 == res1_ && res2 == res2_ ) return true;
+	if ( res1 == res2_ && res2 == res1_ ) return true;
 	return false;
 }
 
@@ -164,33 +193,23 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	using namespace core::chemical::rna;
 	using namespace core::conformation;
 
-	if ( rsd1.seqpos() == landing_res_ &&
-			rsd2.seqpos() == takeoff_res_ ) {
+	if ( rsd1.seqpos() == res2_ &&
+			 rsd2.seqpos() == res1_ ) {
 		residue_pair_energy( rsd2, rsd1, pose, scorefxn, emap );
 		return;
 	}
 
-	if ( rsd1.seqpos() != takeoff_res_ ) return;
-	if ( rsd2.seqpos() != landing_res_ ) return;
+	if ( rsd1.seqpos() != res1_ ) return;
+	if ( rsd2.seqpos() != res2_ ) return;
 
-	// Code copied from protocols::farna::RNA_FragmentMonteCarlo.cc:
-	// takeoff
-	Stub stub1( rsd1.xyz( " O3'") /* center */,
-		rsd1.xyz( " O3'") /* a */,
-		rsd1.xyz( " C3'") /* b  [b->a defines x] */,
-		rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
-	stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
+	Stub stub1, stub2;
+	core::pose::rna::get_stub_stub( rsd1, rsd2, stub1, stub2, stub_stub_type_ );
+
+	if ( reference_RT_ != 0 ) reference_RT_->make_jump( stub1 /*start*/, stub1 /*end*/ );
 
 	// could easily generalize this function to also compute penalties for having rotation different from target rotation
-	//   using, e.g., a von-Mises function.
-	// landing
-	// stub2 = Stub( rsd2.xyz( " O5'") /* center */,
-	//        rsd2.xyz( " C5'") /* a */,
-	//        rsd2.xyz( " O5'") /* b  [b->a defines x] */,
-	//        rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
-	// stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
-
-	Vector const & landing_xyz = rsd2.xyz( " O5'" );
+	//   using, e.g., a von-Mises function -- compute Jump( stub1, stub2 ) and then check out, e.g. axis-angle of rotation.
+	Vector const & landing_xyz = stub2.center();
 	Vector const landing_xyz_in_takeoff_frame = stub1.global2local( landing_xyz );
 	emap[ rna_stub_coord_hack ] += func_->func( landing_xyz_in_takeoff_frame.distance( target_xyz_in_takeoff_frame_ ) );
 

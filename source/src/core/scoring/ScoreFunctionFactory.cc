@@ -245,18 +245,7 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_(
 	using namespace basic::options::OptionKeys;
 
 	/// new mechanism: set multiple weights using string vector option
-	if ( options[ score::set_weights ].user() ) {
-		std::string const errmsg("proper format for -set_weights is a list of paired strings, e.g: '-set_weights fa_atr 0.6 -fa_rep 0.55 -fa_sol 0.9' ");
-		utility::vector1< std::string > const settings( options[ score::set_weights ]() );
-		if ( settings.size()%2 != 0 ) utility_exit_with_message( errmsg );
-		for ( Size i=0; i< settings.size()/2; ++i ) {
-			if ( !ObjexxFCL::is_float( settings[ 2*i+2 ] ) ) utility_exit_with_message( errmsg );
-			ScoreType const t( score_type_from_name( settings[ 2*i + 1] ) );
-			Real const value( ObjexxFCL::float_of( settings[ 2*i + 2 ] ) );
-			TR << "Setting/modifying scorefxn weight from command line: " << t << ' ' << value << std::endl;
-			scorefxn->set_weight( t, value );
-		}
-	}
+	if ( options[ score::set_weights ].user() ) apply_set_weights( scorefxn, options[ score::set_weights ]() );
 
 	if ( options[ abinitio::rg_reweight ].user() ) {
 		scorefxn->set_weight( rg, scorefxn->get_weight( rg ) * options[ abinitio::rg_reweight ]() );
@@ -545,6 +534,20 @@ get_score_functionName(
 	}
 
 	return weight_set + patch_string.str();
+}
+
+void
+apply_set_weights( ScoreFunctionOP scorefxn, utility::vector1< std::string > const & settings )
+{
+	std::string const errmsg("proper format for -set_weights is a list of paired strings, e.g: '-set_weights fa_atr 0.6 -fa_rep 0.55 -fa_sol 0.9' ");
+	if ( settings.size()%2 != 0 ) utility_exit_with_message( errmsg );
+	for ( Size i=0; i< settings.size()/2; ++i ) {
+		if ( !ObjexxFCL::is_float( settings[ 2*i+2 ] ) ) utility_exit_with_message( errmsg );
+		ScoreType const t( score_type_from_name( settings[ 2*i + 1] ) );
+		Real const value( ObjexxFCL::float_of( settings[ 2*i + 2 ] ) );
+		TR << "Setting/modifying scorefxn weight from command line: " << t << ' ' << value << std::endl;
+		scorefxn->set_weight( t, value );
+	}
 }
 
 

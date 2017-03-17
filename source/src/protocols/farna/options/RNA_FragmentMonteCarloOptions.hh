@@ -18,6 +18,7 @@
 
 #include <protocols/farna/options/RNA_MinimizerOptions.hh>
 #include <protocols/farna/options/RNA_FragmentMonteCarloOptions.fwd.hh>
+#include <numeric/xyzVector.hh>
 
 namespace protocols {
 namespace farna {
@@ -136,6 +137,9 @@ public:
 	void set_filter_vdw( bool const setting ){ filter_vdw_ = setting; }
 	bool filter_vdw() const { return filter_vdw_; }
 
+	void set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
+	utility::vector1< std::string > VDW_rep_screen_info() const { return VDW_rep_screen_info_; }
+
 	void set_vdw_rep_screen_include_sidechains( bool const setting ){ vdw_rep_screen_include_sidechains_ = setting; }
 	bool vdw_rep_screen_include_sidechains() const { return vdw_rep_screen_include_sidechains_; }
 
@@ -238,6 +242,12 @@ public:
 	void set_output_rotation_vector( bool const & setting ){ output_rotation_vector_ = setting; }
 	bool output_rotation_vector() const { return output_rotation_vector_; }
 
+	void set_output_jump_target_xyz( core::Vector const & setting ){ output_jump_target_xyz_ = setting; }
+	core::Vector output_jump_target_xyz() const { return output_jump_target_xyz_; }
+
+	void set_output_jump_reference_RT_string( std::string const & setting ){ output_jump_reference_RT_string_ = setting; }
+	std::string output_jump_reference_RT_string() const { return output_jump_reference_RT_string_; }
+
 	void set_jump_histogram_boxsize( core::Real const & setting ){ jump_histogram_boxsize_ = setting; }
 	core::Real jump_histogram_boxsize() const { return jump_histogram_boxsize_; }
 
@@ -299,6 +309,8 @@ private:
 	bool output_jump_o3p_to_o5p_;
 	bool output_jump_chainbreak_;
 	bool output_rotation_vector_;
+	core::Vector output_jump_target_xyz_;
+	std::string output_jump_reference_RT_string_;
 	bool save_jump_histogram_;
 	std::string output_histogram_file_;
 	core::Real jump_histogram_boxsize_;
@@ -308,6 +320,7 @@ private:
 	utility::vector1< core::Size > allowed_bulge_res_;
 
 	bool filter_vdw_;
+	utility::vector1< std::string > VDW_rep_screen_info_;
 	bool vdw_rep_screen_include_sidechains_;
 	bool gradual_constraints_;
 	core::Real grid_vdw_weight_;

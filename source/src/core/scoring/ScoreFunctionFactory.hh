@@ -179,6 +179,9 @@ std::string
 get_score_functionName(
 	bool const is_fullatom = true );
 
+void
+apply_set_weights( ScoreFunctionOP scorefxn, utility::vector1< std::string > const & settings );
+
 } // namespace scoring
 } // namespace core
 

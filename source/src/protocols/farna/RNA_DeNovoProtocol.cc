@@ -293,6 +293,8 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 
 	// RNA low-resolution score function.
 	denovo_scorefxn_ = ScoreFunctionFactory::create_score_function( options_->lores_scorefxn() );
+	apply_set_weights(  denovo_scorefxn_, option[ OptionKeys::rna::farna::set_lores_weights ]() );
+
 	if ( rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
 		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna_chem_map_lores_weight ]() );
 	}

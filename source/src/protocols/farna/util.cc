@@ -1381,6 +1381,15 @@ fill_in_default_jump_atoms( kinematics::FoldTree & f, pose::Pose const & pose )
 	}
 }
 
+///////////////////////////////////////////////////////////////
+void
+fill_in_default_jump_atoms( pose::Pose & pose )
+{
+	core::kinematics::FoldTree f( pose.fold_tree() );
+	fill_in_default_jump_atoms( f, pose );
+	pose.fold_tree( f );
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 get_default_allowed_bulge_res(

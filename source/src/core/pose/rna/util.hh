@@ -16,17 +16,19 @@
 
 #include <core/types.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/id/types.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
-#include <core/pose/rna/BasePair.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
-#include <core/id/types.hh>
-#include <utility/vector1.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
+#include <core/pose/rna/BasePair.fwd.hh>
+#include <core/pose/rna/StubStubType.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace pose {
@@ -225,6 +227,13 @@ add_syn_anti_chi_constraints( core::pose::Pose & pose );
 
 utility::vector1< core::id::TorsionID >
 get_suite_torsion_ids( Size const i );
+
+void
+get_stub_stub( core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	core::kinematics::Stub & stub1,
+	core::kinematics::Stub & stub2,
+	StubStubType const & stub_stub_type );
 
 } //ns rna
 } //ns pose

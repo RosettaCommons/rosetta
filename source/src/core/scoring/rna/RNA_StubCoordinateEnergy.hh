@@ -21,6 +21,10 @@
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/func/Func.fwd.hh>
 
+// Project headers
+#include <core/kinematics/RT.fwd.hh>
+#include <core/pose/rna/StubStubType.fwd.hh>
+
 #include <numeric/xyzVector.hh>
 
 namespace core {
@@ -94,10 +98,12 @@ public:
 
 private:
 
-	Size takeoff_res_, landing_res_;
+	mutable Size res1_, res2_;
+	std::pair< utility::vector1<int>, utility::vector1<char> > jump_resnum_and_chain_;
 	Vector target_xyz_in_takeoff_frame_;
 	scoring::func::FuncOP func_;
-
+	pose::rna::StubStubType stub_stub_type_;
+	kinematics::RTOP reference_RT_;
 };
 
 

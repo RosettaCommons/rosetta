@@ -70,6 +70,8 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	output_jump_o3p_to_o5p_( false ),
 	output_jump_chainbreak_( false ),
 	output_rotation_vector_( false ),
+	output_jump_target_xyz_( 0.0 ),
+	output_jump_reference_RT_string_( "" ),
 	save_jump_histogram_( false ),
 	jump_histogram_boxsize_( 0.0 ),
 	jump_histogram_binwidth_( 0.0 ),
@@ -159,6 +161,14 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_output_jump_o3p_to_o5p( option[ rna::farna::out::output_jump_o3p_to_o5p ]() );
 	set_output_jump_chainbreak( option[ rna::farna::out::output_jump_chainbreak ]() );
 	set_output_rotation_vector( option[ rna::farna::out::output_rotation_vector ]() );
+	if ( option[ rna::farna::out::target_xyz ].user() ) {
+		runtime_assert( option[ rna::farna::out::target_xyz ]().size() == 3 );
+		set_output_jump_target_xyz( core::Vector(
+			option[ rna::farna::out::target_xyz ]()[1],
+			option[ rna::farna::out::target_xyz ]()[2],
+			option[ rna::farna::out::target_xyz ]()[3]) );
+	}
+	set_output_jump_reference_RT_string( option[ rna::farna::out::output_jump_reference_RT ]() );
 	set_save_jump_histogram( option[ rna::farna::out::save_jump_histogram ]() );
 	set_jump_histogram_boxsize( option[ rna::farna::out::jump_histogram_boxsize ]() );
 	set_jump_histogram_binwidth( option[ rna::farna::out::jump_histogram_binwidth ]() );
@@ -184,6 +194,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 
 	if ( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) {
 		set_filter_vdw( true );
+		VDW_rep_screen_info_ = basic::options::option[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info]();
 		set_vdw_rep_screen_include_sidechains( option[ rna::farna::VDW_rep_screen_include_sidechains ]() );
 	}
 	set_gradual_constraints( option[ rna::farna::gradual_constraints ]() );

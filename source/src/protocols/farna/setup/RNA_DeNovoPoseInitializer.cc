@@ -498,6 +498,9 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	bool const random_jumps( true ); // For now this is true... perhaps should also have a more deterministic procedure.
 	if ( random_jumps ) insert_base_pair_jumps( pose, rna_jump_mover, success );
 
+	// argh: some of the jump atoms can get screwy after insert_base_pair_jumps.
+	fill_in_default_jump_atoms( pose );
+
 	if ( !success ) {
 		utility_exit_with_message( "Trouble inserting base pair jumps into pose -- check residues and edges." );
 	}

@@ -1471,6 +1471,58 @@ get_suite_torsion_ids( Size const i )
 		TorsionID( i + 1, BB, GAMMA ) );
 }
 
+void
+get_stub_stub( conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	kinematics::Stub & stub1,
+	kinematics::Stub & stub2,
+	StubStubType const & stub_stub_type )
+{
+	using namespace core::kinematics;
+	typedef numeric::xyzMatrix< Real > Matrix;
+	switch ( stub_stub_type ) {
+	case O3P_TO_O5P :
+		// takeoff
+		stub1 = Stub( rsd1.xyz( " O3'") /* center */,
+			rsd1.xyz( " O3'") /* a */,
+			rsd1.xyz( " C3'") /* b  [b->a defines x] */,
+			rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
+		stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
+
+		// landing
+		stub2 = Stub( rsd2.xyz( " O5'") /* center */,
+			rsd2.xyz( " C5'") /* a */,
+			rsd2.xyz( " O5'") /* b  [b->a defines x] */,
+			rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
+		stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
+		return;
+	case CHAINBREAK :
+		if ( !rsd1.has_variant_type( chemical::CUTPOINT_LOWER ) ) return;
+		if ( !rsd2.has_variant_type( chemical::CUTPOINT_UPPER ) ) return;
+		// takeoff
+		stub1 = Stub(
+			rsd1.xyz( "OVL1" ) /* center */,
+			rsd1.xyz( "OVL2" ) /* a */,
+			rsd1.xyz( "OVL1" ) /* b  [b->a defines x] */,
+			rsd1.xyz( rsd1.mainchain_atoms()[ rsd1.mainchain_atoms().size() ]  ) /* c  [c->b defines y] */ );
+		stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
+
+		// landing
+		stub2 = Stub(
+			rsd2.xyz( rsd2.mainchain_atoms()[ 1 ] ) /* center */,
+			rsd2.xyz( rsd2.mainchain_atoms()[ 2 ] ) /* a */,
+			rsd2.xyz( rsd2.mainchain_atoms()[ 1 ] ) /* b  [b->a defines x] */,
+			rsd2.xyz( "OVU1" ) /* c  [c->b defines y] */ );
+		stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
+		return;
+	case BASE_CENTROID :
+		stub1 = get_rna_base_coordinate_system_stub( rsd1 );
+		stub2 = get_rna_base_coordinate_system_stub( rsd2 );
+		return;
+	default :
+		utility_exit_with_message( "Unrecognized stub_stub_type" );
+	}
+}
 
 } //ns rna
 } //ns pose

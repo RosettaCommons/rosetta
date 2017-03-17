@@ -54,21 +54,23 @@ using namespace basic::options::OptionKeys;
 //  (this equation has v in radians)
 //
 // This integrates to 8 pi^2, where |v| (the magnitude of the rotation) fills out the sphere
-//   from 0 out to pi radians (180 degrees).
-//
-// Currently using polylinear interpolation because it takes a huge amount of memory
-//  to precalculate 6D polycubic spline! (see apps/pilot/rhiju/read_tensor.cc)
+//   from 0 out to pi radians (180 degrees). There are derivations of this
+//   volume element throughout the literature, e.g., R.E. Miles, Biometrika
+//  Vol. 52, No. 3/4 (Dec., 1965), pp. 636-639. The simplest derivation I've come up
+//  with is written out notes posted in github below.
 //
 // Added option to enforce continuity at |v| = 180.0, with v wrapping around to
 //  v - 2 pi v.normalized().
 //
-// TODO: Implement a cheap polycubic spline calculation (e.g., Hermite)
+// Originally used polylinear interpolation because it takes a huge amount of memory
+//  to precalculate 6D polycubic spline; now using 'on-the-fly' Catmull-Rom cubic interpolation by default.
 //
 // More information at:
 //
-// https://github.com/rhiju/loop_close/blob/master/notes/Das_6DPotential_Derivs.pdf
+//  https://github.com/rhiju/loop_close/blob/master/notes/Das_6DPotential_Derivs.pdf
+//  https://github.com/rhiju/loop_close/blob/master/notes/Das_VolumeElementSO3_AxisAngle.pdf
 //
-//  and command-lines are in that repo too. See also,
+// and command-lines are in that repo too. See also,
 //
 //  "Quaternions in molecular modeling", Karney, J Mol. Graph. Mod. 25 (2007) 595-604
 //

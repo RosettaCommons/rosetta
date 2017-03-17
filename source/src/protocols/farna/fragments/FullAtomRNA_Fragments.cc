@@ -369,7 +369,12 @@ FullAtomRNA_Fragments::insert_fragment(
 
 			if ( has_virtual_phosphate && j < 4 ) continue;
 
-			//    if ( position == 1 ) std::cout << "ABOUT TO INSERT: " << position_offset << "      torsion number " << j << std::endl;
+			// do not check in -- andrew leaver-fay will kill me.
+			// static std::set< id::TorsionID > torsions_sampled;
+			// if ( !torsions_sampled.count( rna_torsion_id ) ){
+			//   TR << TR.Cyan << "ABOUT TO INSERT: " << position_offset << "      torsion number " << j << ", i.e., " << rna_torsion_id << std::endl;
+			//   torsions_sampled.insert( rna_torsion_id );
+			// }
 
 			pose.set_torsion( rna_torsion_id,
 				torsion_set.torsions( j, offset ) );
@@ -403,6 +408,13 @@ FullAtomRNA_Fragments::insert_fragment(
 			}
 
 			if ( !change_sugar ) continue;
+
+			// static std::set< Size > sugars_sampled;
+			// if ( !sugars_sampled.count( position_offset ) ){
+			//   TR << TR.Cyan << "ABOUT TO  SUGAR: " << position_offset << std::endl;
+			//   sugars_sampled.insert( position_offset );
+			// }
+
 			pose::rna::apply_non_main_chain_sugar_coords( vecs, pose, reference_pose, position_offset );
 
 		}

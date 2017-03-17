@@ -45,6 +45,7 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -62,9 +63,6 @@
 #include <core/scoring/Energies.hh>
 
 #include <basic/Tracer.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <utility/tools/make_vector.hh>
 
 static basic::Tracer TR( "protocols.farna.RNA_FragmentMonteCarlo" );
@@ -127,8 +125,8 @@ RNA_FragmentMonteCarlo::initialize( pose::Pose & pose ) {
 	initialize_libraries( pose );
 	initialize_movers();
 	initialize_score_functions();
-	initialize_output_score();
 	initialize_parameters();
+	initialize_output_score();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -138,6 +136,7 @@ RNA_FragmentMonteCarlo::initialize_parameters() {
 	jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
 	rounds_ = refine_pose_ ? 1 : options_->rounds();
 	if ( options_->rmsd_screen() > 0 ) {
+		// Ideally should be able to do alignment in general case (even without rmsd_screen), but running into a funny issue with rerooting.
 		align_pose_ = get_native_pose();
 		if ( options_->align_pdb().size() > 0 ) {
 			using namespace core::chemical;
@@ -264,22 +263,14 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 		if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
 
-		if ( options_->close_loops_after_each_move() ) {
-			rna_loop_closer_->apply( pose );
-			do_close_loops_ = true;
-		} else {
-			do_close_loops_ = false;
-		}
+		do_close_loops_ = options_->close_loops_after_each_move();
+		if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
 
-		// Set up the VDW filter here
-		// Could probably set this all up in a way that doesn't require
-		// setting this up every time that this apply function is called
-		// But would require changes to the RNA_VDW_BinChecker object first
+		// Could probably set up VDW filter in a way that doesn't require setup every time that this apply function is called
+		// But would require changes to the RNA_VDW_BinChecker object first.
 		if ( options_->filter_vdw() ) {
-			TR << "Setting up the VDW grid from the input pose" << std::endl;
-			vector1< std::string > All_VDW_rep_screen_info = basic::options::option[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info];
-			vdw_grid_->FARFAR_setup_using_user_input_VDW_pose( All_VDW_rep_screen_info, pose, options_->vdw_rep_screen_include_sidechains() );
-			TR << "Finished setting up the VDW grid from the input pose" << std::endl;
+			vdw_grid_->FARFAR_setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
+				pose, options_->vdw_rep_screen_include_sidechains() );
 		}
 
 		if ( !refine_pose_ ) do_random_moves( pose );
@@ -290,22 +281,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */, false /* keep energies! */ );
 		}
 
-		if ( is_rna_and_protein_ ) {
-			// set up the fold tree for docking
-			rnp_docking_ft_ = get_rnp_docking_fold_tree( pose );
-			if ( !refine_pose_ ) {
-				kinematics::FoldTree ft_init = pose.fold_tree(); // save original fold tree
-				// apply docking fold tree
-				pose.fold_tree( rnp_docking_ft_ );
-				pose.energies().clear(); // clear the energies so that pose is scored correctly next time
-				// randomize the RNA/protein rigid body orientations
-				randomize_rnp_rigid_body_orientations( pose );
-				// get back original fold tree
-				pose.fold_tree( ft_init );
-				pose.energies().clear();
-				if ( options_->dump_pdb() )  pose.dump_pdb( "random_rnp_orientation.pdb" );
-			}
-		}
+		if ( is_rna_and_protein_ ) setup_rnp_fold_tree( pose );
 
 		monte_carlo_->reset( pose );
 
@@ -341,11 +317,8 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			// finer rigid body moves
 			setup_rigid_body_mover( pose, r ); // needs to happen after fold_tree is decided...
 
-			// set up the RNA/protein docking, if specified (default true)
-			if ( is_rna_and_protein_ && options_->rna_protein_docking() ) {
-				// reset the magnitude of the perturbation each round
-				setup_rna_protein_docking_mover( pose, r );
-			}
+			// reset the magnitude of the RNP docking perturbation each round
+			if ( is_rna_and_protein_ && options_->rna_protein_docking() ) setup_rna_protein_docking_mover( pose, r );
 
 			//////////////////////
 			// This is it ... do the loop.
@@ -355,10 +328,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 				output_score_if_desired( r, i, pose );
 			}
 
-			if ( get_native_pose() ) {
-				Real const rmsd = get_rmsd( pose );
-				if ( options_->verbose() ) TR << "All atom rmsd: " << rmsd << std::endl;
-			}
+			if ( get_native_pose() && options_->verbose() ) TR << get_rmsd( pose ) << " is all atom rmsd." << std::endl;
 
 			monte_carlo_->recover_low( pose );
 			if ( options_->verbose() ) monte_carlo_->show_counters();
@@ -513,6 +483,26 @@ RNA_FragmentMonteCarlo::setup_monte_carlo_cycles( core::pose::Pose const & pose 
 
 	if ( options_->verbose() ) TR << "Using " << monte_carlo_cycles_ << " cycles in de novo modeling." << std::endl;
 
+}
+
+////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::setup_rnp_fold_tree( pose::Pose & pose )
+{
+	// set up the fold tree for docking
+	rnp_docking_ft_ = get_rnp_docking_fold_tree( pose );
+	if ( !refine_pose_ ) {
+		kinematics::FoldTree ft_init = pose.fold_tree(); // save original fold tree
+		// apply docking fold tree
+		pose.fold_tree( rnp_docking_ft_ );
+		pose.energies().clear(); // clear the energies so that pose is scored correctly next time
+		// randomize the RNA/protein rigid body orientations
+		randomize_rnp_rigid_body_orientations( pose );
+		// get back original fold tree
+		pose.fold_tree( ft_init );
+		pose.energies().clear();
+		if ( options_->dump_pdb() )  pose.dump_pdb( "random_rnp_orientation.pdb" );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1191,6 +1181,20 @@ RNA_FragmentMonteCarlo::initialize_output_score()
 			TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
 			running_score_output_.open_append( options_->output_score_file() );
 		}
+		if ( options_->output_jump_res().size() > 0 ) {
+			using namespace core::pose::rna;
+			runtime_assert( options_->output_jump_res().size() == 2 );
+			output_stub_stub_type_ = BASE_CENTROID;
+			if ( options_->output_jump_o3p_to_o5p() ) output_stub_stub_type_ = O3P_TO_O5P;
+			if ( options_->output_jump_chainbreak() ) output_stub_stub_type_ = CHAINBREAK;
+			if ( options_->output_jump_reference_RT_string().size() > 0 ) {
+				reference_RT_ = kinematics::RTOP( new kinematics::RT );
+				std::stringstream rt_stream( options_->output_jump_reference_RT_string() );
+				kinematics::RT const align_RT = get_output_jump_RT( align_pose_ );
+				TR << TR.Green << "Trying to read in RT from -output_jump_reference_RT. If this fails, you may want to use the following string, based on -align_pdb or -native: \"" << align_RT << "\" " << std::endl;
+				rt_stream >> *reference_RT_;
+			}
+		}
 		if ( options_->save_jump_histogram() ) {
 			runtime_assert( options_->output_rotation_vector() );
 			Real const & bxs( options_->jump_histogram_boxsize() );
@@ -1241,13 +1245,44 @@ RNA_FragmentMonteCarlo::finish_output_score()
 		for ( auto const & v : jump_histogram_min_ ) minval.push_back( Value(v) );
 		for ( auto const & v : jump_histogram_max_ ) maxval.push_back( Value(v) );
 		for ( auto const & v : jump_histogram_bin_width_ ) binwidth.push_back( Value(v) );
-		write_tensor_to_file( options_->output_histogram_file(), *jump_histogram_,
-			make_vector( Pair( "n_bins", n_bins ),
+		Object json( make_vector( Pair( "n_bins", n_bins ),
 			Pair( "type", "uint64" ),
 			Pair( "minval",  minval ),
 			Pair( "maxval",  maxval ),
 			Pair( "binwidth",binwidth ) ) );
+		if ( denovo_scorefxn_->has_nonzero_weight( core::scoring::rna_stub_coord_hack ) ) { // biasing information
+			json.push_back( Pair( "xyz_bias_weight", denovo_scorefxn_->get_weight( core::scoring::rna_stub_coord_hack ) ) );
+			std::vector< Value > target_xyz( make_vector( Value(options_->output_jump_target_xyz().x()),
+				Value(options_->output_jump_target_xyz().y()),
+				Value(options_->output_jump_target_xyz().z()) ) );
+			json.push_back( Pair( "target_xyz", target_xyz ) );
+		}
+		write_tensor_to_file( options_->output_histogram_file(), *jump_histogram_, json);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+core::kinematics::RT
+RNA_FragmentMonteCarlo::get_output_jump_RT( pose::PoseCOP pose ) const
+{
+	using namespace core::kinematics;
+	if ( pose == 0 ) return RT();
+	Stub stub1, stub2;
+	get_output_jump_stub_stub( *pose, stub1, stub2 );
+	Jump const j( stub1, stub2 );
+	return j.rt();
+}
+//////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::get_output_jump_stub_stub(
+	pose::Pose const & pose,
+	kinematics::Stub & stub1,
+	kinematics::Stub & stub2 ) const
+{
+	using namespace core::conformation;
+	Residue const & rsd1 = pose.residue( options_->output_jump_res()[ 1 ] );
+	Residue const & rsd2 = pose.residue( options_->output_jump_res()[ 2 ] );
+	core::pose::rna::get_stub_stub( rsd1, rsd2, stub1, stub2, output_stub_stub_type_ );
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1263,44 +1298,10 @@ RNA_FragmentMonteCarlo::output_jump_information( pose::Pose const & pose)
 	using namespace core::conformation;
 
 	if ( options_->output_jump_res().size() == 0 ) return;
-	runtime_assert( options_->output_jump_res().size() == 2 );
 	Stub stub1, stub2;
-	Residue const & rsd1 = pose.residue( options_->output_jump_res()[ 1 ] );
-	Residue const & rsd2 = pose.residue( options_->output_jump_res()[ 2 ] );
-	if ( options_->output_jump_o3p_to_o5p() ) {
-		// takeoff
-		stub1 = Stub( rsd1.xyz( " O3'") /* center */,
-			rsd1.xyz( " O3'") /* a */,
-			rsd1.xyz( " C3'") /* b  [b->a defines x] */,
-			rsd1.xyz( " C4'") /* c  [c->b defines y] */ );
-		stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
+	get_output_jump_stub_stub( pose, stub1, stub2 );
+	if ( reference_RT_ != 0 ) reference_RT_->make_jump( stub1 /*start*/, stub1 /*end*/ );
 
-		// landing
-		stub2 = Stub( rsd2.xyz( " O5'") /* center */,
-			rsd2.xyz( " C5'") /* a */,
-			rsd2.xyz( " O5'") /* b  [b->a defines x] */,
-			rsd2.xyz( " C4'") /* c  [c->b defines y] */ );
-		stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
-	} else if ( options_->output_jump_chainbreak() ) {
-		// takeoff
-		stub1 = Stub(
-			rsd1.xyz( "OVL1" ) /* center */,
-			rsd1.xyz( "OVL2" ) /* a */,
-			rsd1.xyz( "OVL1" ) /* b  [b->a defines x] */,
-			rsd1.xyz( rsd1.mainchain_atoms()[ rsd1.mainchain_atoms().size() ]  ) /* c  [c->b defines y] */ );
-		stub1.M = Matrix::cols( stub1.M.col_y(), stub1.M.col_z(), stub1.M.col_x() ); // Prefer to have C3'->O3' (takeoff vector) along z
-
-		// landing
-		stub2 = Stub(
-			rsd2.xyz( rsd2.mainchain_atoms()[ 1 ] ) /* center */,
-			rsd2.xyz( rsd2.mainchain_atoms()[ 2 ] ) /* a */,
-			rsd2.xyz( rsd2.mainchain_atoms()[ 1 ] ) /* b  [b->a defines x] */,
-			rsd2.xyz( "OVU1" ) /* c  [c->b defines y] */ );
-		stub2.M = Matrix::cols( stub2.M.col_y(), stub2.M.col_z(), stub2.M.col_x() ); // Prefer to have O5'->C5' (landing vector) along z
-	} else {
-		stub1 = get_rna_base_coordinate_system_stub( rsd1 );
-		stub2 = get_rna_base_coordinate_system_stub( rsd2 );
-	}
 	Jump const j( stub1, stub2 );
 	Vector const & t( j.get_translation() );
 	vector1< Real > outvals( make_vector1( t.x(), t.y(), t.z() ) );

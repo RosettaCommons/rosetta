@@ -132,6 +132,7 @@ SixDTransRotPotentialEvaluator::figure_out_if_loop_involves_current_pose( pose::
 // See:
 //
 //  https://github.com/rhiju/loop_close/blob/master/notes/Das_6DPotential_Derivs.pdf
+//  https://github.com/rhiju/loop_close/blob/master/notes/Das_6DPotential_F1_F2.pdf
 //  https://github.com/rhiju/loop_close/tree/master/check_rotations
 //
 // and check accompanying repo.
@@ -229,15 +230,15 @@ SixDTransRotPotentialEvaluator::get_f1_f2( Vector & f1, Vector & f2, bool const 
 	f1 += f1_rot_global;
 
 	/////////////////////////////////////////////////////////////////////
-	// For the landing atom, f1, f2 are negative of above. To be honest,
-	//  its less obvious how to derive the equations for the
-	//  translational contributions from just geometric
-	//  considerations. But note that the f1/f2 have to cancel exactly
+	// For the landing atom, f1, f2 are negative of above.
+	// Note that the f1/f2 have to cancel exactly
 	//  from landing atom and takeoff atom, when accumulation of F1 and F2
 	//  down the atom tree passes through, e.g., the takeoff atom and then
 	//  later through the landing atom, to other atoms 'outside' these
 	//  two atoms whose torsions cannot impact the energy via this
 	//  potential.
+	// Easy to check the similarity of downstream vs. upstream explicitly:
+	// https://github.com/rhiju/loop_close/blob/master/notes/Das_6DPotential_F1_F2.pdf
 	/////////////////////////////////////////////////////////////////////
 	if ( !takeoff ) {
 		f1 *= -1.0;

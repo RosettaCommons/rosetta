@@ -185,6 +185,9 @@ moveable_jump( core::Size const jump_pos1,
 void
 fill_in_default_jump_atoms( core::kinematics::FoldTree & f, core::pose::Pose const & pose );
 
+void
+fill_in_default_jump_atoms( core::pose::Pose & pose );
+
 core::Size
 virtualize_bulges( core::pose::Pose & input_pose,
 	utility::vector1< core::Size > const & in_allow_bulge_res_list,

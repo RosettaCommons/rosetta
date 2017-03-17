@@ -105,6 +105,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( out::nstruct );
 		option.add_relevant( out::overwrite );
 		option.add_relevant( score::weights );
+		option.add_relevant( score::set_weights );
 		option.add_relevant( rna::farna::sequence );
 		option.add_relevant( rna::farna::secstruct );
 		option.add_relevant( rna::farna::secstruct_file );
@@ -116,6 +117,7 @@ main( int argc, char * argv [] )
 		// option.add_relevant( rna::farna::simple_relax );
 		// option.add_relevant( rna::farna::ignore_secstruct );
 		option.add_relevant( rna::farna::lores_scorefxn );
+		option.add_relevant( rna::farna::set_lores_weights);
 		option.add_relevant( rna::farna::cycles );
 		option.add_relevant( rna::farna::temperature );
 		option.add_relevant( rna::farna::jump_change_frequency );
