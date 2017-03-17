@@ -2914,7 +2914,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
+	if ( !rsd1.is_protein() || !rsd2.is_protein() || !rsd1.is_polymer_bonded( rsd2 ) ) return;
 
 	// exit if this is not a backbone connection
 	if ( rsd1.is_upper_terminus() || rsd1.residue_connection_partner( rsd1.upper_connect().index() ) != rsd2.seqpos() ) return;
@@ -3038,7 +3038,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 
 	// proline N planarity
 	if ( rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr ) { //D- or L-proline
-		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_improper_params();
+		CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3815,7 +3815,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(res2.aa()) ? -1.0 : 1.0 ;
 
 	// backbone C-N-CA-H
-	if ( !res1.is_protein() || !res2.is_protein() ) return;
+	if ( !res1.is_protein() || !res2.is_protein() || !res1.is_polymer_bonded( res2 ) ) return;
 	Real weight = weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	// backbone Oprev-Cprev-N-H
@@ -3967,7 +3967,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 
 	// proline N planarity
 	if ( res2.aa() == core::chemical::aa_pro || res2.aa() == core::chemical::aa_dpr /*D- or L-proline*/ ) {
-		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_improper_params();
+		CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			core::Size const atm1 = rsd2params.pro_CD_index();
 			core::Size const atm2 = rsd1params.bb_C_index();

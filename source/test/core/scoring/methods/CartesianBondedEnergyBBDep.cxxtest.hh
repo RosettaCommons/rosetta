@@ -131,7 +131,7 @@ public:
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 11 ), trpcage.residue( 12 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.781066409687346, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.982571836938450, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -156,7 +156,7 @@ public:
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 16 ), trpcage.residue( 17 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 9.530047862977048, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 9.708647342445621, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -186,7 +186,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( 32.57324255796428, false );
+		adv.validate_start_func_matches_start_score( 32.76329501132411, false );
 	}
 
 	void test_cartbonded_deriv_check_w_total_flexibility()
