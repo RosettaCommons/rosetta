@@ -54,11 +54,20 @@ void print_relevant_info() {
 	for ( core::Size ii(1); ii <= option[ in::path::database ]().size(); ++ii ) {
 		TR.Error << "\t\t" << option[ in::path::database ](ii).name() << std::endl;
 	}
-	TR.Error << "No binary Dunlib : " << (option[ in::file::no_binary_dunlib ] ? " true " : " false " ) << std::endl;
+	TR.Error << "No binary Dunlib: " << (option[ in::file::no_binary_dunlib ] ? " true " : " false " ) << std::endl;
 	TR.Error << "Dun10: " << (option[ corrections::score::dun10 ] ? " true " : " false " ) << std::endl;
 	TR.Error << "-correct " << (option[ corrections::correct ] ? " true " : " false " ) << std::endl;
+	TR.Error << "-beta " << (option[ corrections::beta ] ? " true " : " false " ) << std::endl;
+	TR.Error << "-beta_nov15 " << (option[ corrections::beta_nov15 ] ? " true " : " false " ) << std::endl;
+	TR.Error << "-shapovalov_lib_fixes_enable " << ( option[ corrections::shapovalov_lib_fixes_enable ] ? " true " : " false " ) << std::endl;
+	TR.Error << "-shap_dun10_enable " << ( option[ corrections::shapovalov_lib::shap_dun10_enable ] ? " true " : " false " ) << std::endl;
+
 	if ( option[ corrections::score::dun10 ] ) {
-		TR.Error << "Dunbrack 2010 directory: " << option[ corrections::score::dun10_dir ].value() << std::endl;
+		if ( option[ corrections::shapovalov_lib_fixes_enable ] && option[ corrections::shapovalov_lib::shap_dun10_enable ] ) {
+			TR.Error << "Shapovalov fixes directory: " << option[ corrections::shapovalov_lib::shap_dun10_dir ].value() << std::endl;
+		} else {
+			TR.Error << "Dunbrack 2010 directory: " << option[ corrections::score::dun10_dir ].value() << std::endl;
+		}
 	} else {
 		TR.Error << "Dunbrack 2002 file: " << option[ corrections::score::dun02_file ].value() << std::endl;
 	}
@@ -137,6 +146,56 @@ public:
 			TR << "Failure validating the Dunbrack2002 -correct binary" << std::endl;
 			print_relevant_info();
 			TS_FAIL("Dunbrack2002 -correct ASCII/binary inconsistency");
+		}
+	}
+};
+
+
+class ValidateBetaNov15BinariesTests : public CxxTest::TestSuite
+{
+public:
+
+	// Shared initialization goes here.
+	void setUp() {
+		core_init_with_additional_options( "-out:levels core.pack.dunbrack:debug -beta_nov15" );
+	}
+
+	// Shared finalization goes here.
+	void tearDown() {
+	}
+
+	void test_beta_nov15_binaries() {
+
+		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
+
+		if ( ! rotamer_library->validate_dunbrack_binary() ) {
+			TR << "Failure validating the Beta Nov15 Dunbrack binary" << std::endl;
+			print_relevant_info();
+			TS_FAIL("Beta Nov15 ASCII/binary inconsistency");
+		}
+	}
+};
+
+class ValidateBetaBinariesTests : public CxxTest::TestSuite
+{
+public:
+
+	// Shared initialization goes here.
+	void setUp() {
+		core_init_with_additional_options( "-out:levels core.pack.dunbrack:debug -beta" );
+	}
+
+	// Shared finalization goes here.
+	void tearDown() {
+	}
+
+	void test_beta_binaries() {
+
+		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
+
+		if ( ! rotamer_library->validate_dunbrack_binary() ) {
+			TR << "Failure validating the Beta Dunbrack binary" << std::endl;
+			TS_FAIL("Beta ASCII/binary inconsistency");
 		}
 	}
 };

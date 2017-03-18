@@ -10,6 +10,20 @@ cd %(workdir)s
 
 dun10status=${PIPESTATUS[0]}
 
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -beta 2>&1 \
+     | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
+     | egrep -vf ../../ignore_list \
+    > beta.log
+
+betastatus=${PIPESTATUS[0]}
+
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -beta_nov15 2>&1 \
+     | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
+     | egrep -vf ../../ignore_list \
+    > betanov15.log
+
+betanov15status=${PIPESTATUS[0]}
+
 %(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -restore_pre_talaris_2013_behavior 2>&1 \
      | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
      | egrep -vf ../../ignore_list \
@@ -25,6 +39,8 @@ dun02status=${PIPESTATUS[0]}
 dun02correctstatus=${PIPESTATUS[0]}
 
 test "${dun10status}" != '0' && exit 1 || true
+test "${betastatus}" != '0' && exit 1 || true
+test "${betanov15status}" != '0' && exit 1 || true
 test "${dun02status}" != '0' && exit 1 || true
 test "${dun02correctstatus}" != '0' && exit 1 || true
 
