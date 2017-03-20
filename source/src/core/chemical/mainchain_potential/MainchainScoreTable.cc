@@ -178,6 +178,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			check_linestream(linestream, filename);
 			linestream >> minusLogProb; //Get -k_B*T*ln(P).
 			runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Extra columns found in a data line in file " + filename + "." );
+			runtime_assert_string_msg( minusLogProb != 0.0 && !linestream.fail() && !linestream.bad(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Could not parse line " + line + " in file " + filename + "." );
 
 			//All the data for the line have been parsed.  Now, it's time to set up the tensors.
 			runtime_assert( scoring_grid_indices.size() /*The scoring_grid_indices vector is used to specify a position in the tensor*/ == n_mainchain_torsions); //Should be guaranteed true.
@@ -299,7 +300,7 @@ MainchainScoreTable::gradient(
 		get_PolycubicSpline_gradient( energies_spline_ND_, coords_in, gradient_out );
 		break;
 	default :
-		utility_exit_with_message( "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the coordinates vector must be less than 9." );
+		utility_exit_with_message( "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The dimensionality of the coordinates vector must be less than 9." );
 	}
 
 }

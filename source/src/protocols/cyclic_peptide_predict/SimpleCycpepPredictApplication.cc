@@ -835,7 +835,7 @@ SimpleCycpepPredictApplication::run() const {
 	sfxn_highhbond->set_weight( core::scoring::hbond_lr_bb, high_hbond_weight_multiplier_ * sfxn_default->get_weight(core::scoring::hbond_lr_bb) ); //Upweight the long-range backbone hbonds
 	sfxn_highhbond->set_weight( core::scoring::hbond_sr_bb, high_hbond_weight_multiplier_ * sfxn_default->get_weight(core::scoring::hbond_sr_bb) ); //Upweight the short-range backbone hbonds
 	//Turn on aa_composition in this scorefunction if we're doing design and .comp files have been provided.
-	if ( sfxn_highhbond->get_weight( core::scoring::aa_composition ) == 0.0 ) { sfxn_highhbond->set_weight( core::scoring::aa_composition, 1.0 ); }
+	if ( sfxn_highhbond->get_weight( core::scoring::aa_composition ) == 0.0 && use_aa_comp_ ) { sfxn_highhbond->set_weight( core::scoring::aa_composition, 1.0 ); }
 	//Create variants of the above two scorefunctions with constraint weights turned on:
 	core::scoring::ScoreFunctionOP sfxn_default_cst( sfxn_default->clone() ); //Will NOT have aa_compostion turned on.
 	core::scoring::ScoreFunctionOP sfxn_highhbond_cst( sfxn_highhbond->clone() ); //Will have aa_composition turned on if we're doing design and .comp files are provided.

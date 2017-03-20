@@ -50,42 +50,62 @@ public:
 
 	void test_mirror_symmetry_AIB(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_mirror_symmetry( TR, "AIB", false );
+		helper.test_mirror_symmetry( TR, "AIB", false, false );
 	}
 
 	void test_mirror_symmetry_AIB_before_proline(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_mirror_symmetry( TR, "AIB", true );
+		helper.test_mirror_symmetry( TR, "AIB", true, false );
 	}
 
 	void test_mirror_symmetry_GLY(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_mirror_symmetry( TR, "GLY", false );
+		helper.test_mirror_symmetry( TR, "GLY", false, false );
 	}
 
 	void test_mirror_symmetry_GLY_before_proline(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_mirror_symmetry( TR, "GLY", true );
+		helper.test_mirror_symmetry( TR, "GLY", true, false );
+	}
+
+	void test_mirror_symmetry_sarcosine(){
+		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
+		helper.test_mirror_symmetry( TR, "GLY", false, true );
+	}
+
+	void test_mirror_symmetry_sarcosine_before_proline(){
+		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
+		helper.test_mirror_symmetry( TR, "GLY", true, true );
 	}
 
 	void test_symmetric_rama_prepro_scoring_AIB(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_symmetric_rama_prepro_scoring( TR, "AIB", false );
+		helper.test_symmetric_rama_prepro_scoring( TR, "AIB", false, false, 0.000001 );
 	}
 
 	void test_symmetric_rama_prepro_scoring_AIB_before_proline(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_symmetric_rama_prepro_scoring( TR, "AIB", true );
+		helper.test_symmetric_rama_prepro_scoring( TR, "AIB", true, false, 0.000001 );
 	}
 
 	void test_symmetric_rama_prepro_scoring_GLY(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_symmetric_rama_prepro_scoring( TR, "GLY", false );
+		helper.test_symmetric_rama_prepro_scoring( TR, "GLY", false, false, 0.000001 );
 	}
 
 	void test_symmetric_rama_prepro_scoring_GLY_before_proline(){
 		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
-		helper.test_symmetric_rama_prepro_scoring( TR, "GLY", true );
+		helper.test_symmetric_rama_prepro_scoring( TR, "GLY", true, false, 0.000001);
+	}
+
+	void test_symmetric_rama_prepro_scoring_sarcosine(){
+		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
+		helper.test_symmetric_rama_prepro_scoring( TR, "GLY", false, true, 0.000001 );
+	}
+
+	void test_symmetric_rama_prepro_scoring_sarcosine_before_proline(){
+		test::protocols::cyclic_peptide::AchiralResidueTypeTestHelper helper;
+		helper.test_symmetric_rama_prepro_scoring( TR, "GLY", true, true, 0.000001 );
 	}
 
 };

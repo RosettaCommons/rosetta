@@ -13,6 +13,8 @@
 #ifndef INCLUDED_protocols_simple_moves_DumpPdb_hh
 #define INCLUDED_protocols_simple_moves_DumpPdb_hh
 
+#include <protocols/simple_moves/DumpPdb.fwd.hh>
+
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -45,6 +47,10 @@ public:
 	void tag_time(bool setting) { addtime_ = setting; }
 	bool tag_time() const { return addtime_; }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	/// @brief Set the filename for writing.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_filename( std::string const &filename_in ) { fname_ = filename_in; };
 
 	std::string
 	get_name() const override;
