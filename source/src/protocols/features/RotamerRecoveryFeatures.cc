@@ -359,7 +359,7 @@ void RotamerRecoveryFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinit
 		"Rotamer recovery comparer");
 
 	attlist + XMLSchemaAttribute(
-		"recovery_threshold", xsct_rosetta_bool,
+		"recovery_threshold", xsct_real,
 		"recovery threshold of the comparer");
 
 	rosetta_scripts::attributes_for_parse_task_operations(attlist);

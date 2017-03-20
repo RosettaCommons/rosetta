@@ -887,10 +887,11 @@ RotamerLibrary::current_binary_format_version_id_02() const
 ///    repaired ( prob <= 1e-6 not prob == 0 ) 1/12/15 Andy Watkins
 /// Version 6: Changed to templating on number of bbs, can't prove that this isn't needed 1/15/15 Andy Watkins
 /// Version 7: Fixed input bug that was definitely having real effects 1/22/15 Andy Watkins
+/// Version 8: Update to beta_nov16 corrected library 3/2017 fpd
 Size
 RotamerLibrary::current_binary_format_version_id_10() const
 {
-	return 7;
+	return 8;
 }
 
 void RotamerLibrary::create_fa_dunbrack_libraries_from_ASCII() {

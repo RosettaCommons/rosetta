@@ -104,6 +104,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 //#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -136,7 +138,7 @@ OPT_1GRP_KEY(String, tors, mode)
 OPT_1GRP_KEY(Real, tors, cluster_radius)
 OPT_1GRP_KEY(String, tors, fragfile)
 OPT_1GRP_KEY(String, tors, scorefile)
-OPT_1GRP_KEY(Boolean, tors, rotmin)
+OPT_1GRP_KEY(Boolean, tors, min)
 OPT_1GRP_KEY(Real, tors, smoothing)
 OPT_1GRP_KEY(Real, tors, cap)
 OPT_1GRP_KEY(Real, tors, scale)
@@ -206,6 +208,58 @@ core::Size getbin(core::Real theta) {
 	return binnum;
 }
 
+//fpd unlike version in rama prepro
+//    shift origin to -180,-180
+void
+read_rama_map_file (
+	std::string const &filename,
+	utility::vector1<  ObjexxFCL::FArray2D< Real > > &data
+) {
+	utility::io::izstream  iunit;
+
+	iunit.open( filename );
+
+	if ( !iunit.good() ) {
+		iunit.close();
+		if ( !basic::database::open( iunit, filename ) ) {
+			std::stringstream err_msg;
+			err_msg << "Unable to open Ramachandran map '" << filename << "'.";
+			utility_exit_with_message(err_msg.str());
+		}
+	}
+
+	char line[256];
+
+	int i; // aa index
+	int j, k; //phi and psi indices
+	char aa[4];
+	std::string aaStr;
+	double phi, psi, prob, minusLogProb;
+
+	// read the file
+	do {
+		iunit.getline( line, 255 );
+
+		if ( iunit.eof() ) break;
+		if ( line[0]=='#' || line[0]=='\n' || line[0]=='\r' ) continue;
+
+		std::sscanf( line, "%3s%lf%lf%lf%lf", aa, &phi, &psi, &prob, &minusLogProb );
+		std::string prevAAStr = aaStr;
+		//std::cout << line << " :: " << aaStr << std::endl;
+		aaStr = std::string(aa);
+		boost::to_upper(aaStr);
+		i = core::chemical::aa_from_name(aaStr);
+
+		// ** here **
+		phi += 180;
+		psi += 180;
+
+		j = static_cast<int>( ceil(phi / 10.0 - 0.5) + 1 );
+		k = static_cast<int>( ceil(psi / 10.0 - 0.5) + 1 );
+
+		data[i](j,k) = prob;
+	} while (true);
+}
 
 bool
 is_semi_rot( core::chemical::AA aa ) {
@@ -240,8 +294,10 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 }
 
 
+template
+<class C>
 void
-dump_table( ObjexxFCL::FArray2D<core::Real> table, std::string filename, std::string tag ) {
+dump_table( ObjexxFCL::FArray2D<C> table, std::string filename, std::string tag ) {
 	std::ofstream outtable( filename.c_str(), std::ofstream::out | std::ofstream::app );
 
 	outtable << tag << " = [ ...\n";
@@ -255,6 +311,297 @@ dump_table( ObjexxFCL::FArray2D<core::Real> table, std::string filename, std::st
 	}
 }
 
+void
+correct_rama() {
+	using namespace core::chemical;
+
+	//params
+	core::Real cap = option[ tors::cap ]();
+	core::Real smoothing = option[ tors::smoothing ]();
+	core::Real scale = 1.0 / option[ tors::scale ]();
+
+	utility::vector1<core::Real> peraa_cap(20,cap);
+	utility::vector1<core::Real> peraa_smoothing(20,smoothing);
+	utility::vector1<core::Real> peraa_scale(20,scale);
+
+	/////
+	// 1 read scorefile, average in each residue bin and apply cap
+	std::ifstream inscore( option[ tors::scorefile ]().c_str(), std::ifstream::in);
+
+	utility::vector1< ScoreFragInfo > currentfrag;
+	std::string currtag;
+	utility::vector1<core::Real> bestscore(20,1e30);
+
+	std::map< int , ObjexxFCL::FArray2D<core::Size> > ramacount;
+	std::map< int , ObjexxFCL::FArray2D<core::Real> > ramaEsum;
+	std::map< int , ObjexxFCL::FArray2D<core::Real> > ramaEmin, ramaEmax;
+	std::map< int , ObjexxFCL::FArray2D<core::Real> > corrRamaScore;
+
+	//////
+	// 1a read everything in
+	ScoreFragInfo fragline;
+	inscore >> currtag;
+	inscore >> fragline.id_  >> fragline.aa_;
+	inscore >> fragline.phibin_ >> fragline.psibin_ >> fragline.weight_ >> fragline.fragscore_;
+	while ( inscore.good() ) {
+		if ( currtag == "R" && ((int)fragline.aa_) <= 20) {
+			currentfrag.push_back( fragline );
+		}
+
+		inscore >> currtag;
+		inscore >> fragline.id_  >> fragline.aa_;
+		inscore >> fragline.phibin_ >> fragline.psibin_ >> fragline.weight_ >> fragline.fragscore_;
+
+		if (fragline.fragscore_>0) fragline.fragscore_=0;
+
+		if ( ((int)fragline.aa_) <= 20 ) {
+			bestscore[(int)fragline.aa_] = std::min( bestscore[(int)fragline.aa_] , fragline.fragscore_ );
+		}
+	}
+	std::cerr << "Read " << currentfrag.size() << " fragments" << std::endl;
+
+	for (int i=1; i<=(int)currentfrag.size(); ++i) {
+		currentfrag[i].fragscore_ -= bestscore[(int)currentfrag[i].aa_];
+		currentfrag[i].fragscore_ = std::min( currentfrag[i].fragscore_, peraa_cap[(int)currentfrag[1].aa_] );
+	}
+
+	/////
+	// 1b aggregate stats
+	for (int i=1; i<=(int)currentfrag.size(); ++i) {
+		//  A: counts (shared across rotamers)
+		if ( ramacount.find(currentfrag[i].aa_ ) == ramacount.end() ) {
+			ramacount[currentfrag[i].aa_].dimension( 36, 36 );
+			ramacount[currentfrag[i].aa_] = 0;
+		}
+		ramacount[currentfrag[i].aa_](currentfrag[i].phibin_, currentfrag[i].psibin_) += currentfrag[i].weight_;
+
+		if ( ramaEsum.find( currentfrag[i].aa_ ) == ramaEsum.end() ) {
+			ramaEsum[currentfrag[i].aa_].dimension( 36, 36 );
+			ramaEsum[currentfrag[i].aa_] = 0.0;
+			ramaEmin[currentfrag[i].aa_].dimension( 36, 36 );
+			ramaEmin[currentfrag[i].aa_] = 100.0;
+			ramaEmax[currentfrag[i].aa_].dimension( 36, 36 );
+			ramaEmax[currentfrag[i].aa_] = -100.0;
+		}
+		ramaEsum[currentfrag[i].aa_](currentfrag[i].phibin_, currentfrag[i].psibin_) += currentfrag[i].weight_ * currentfrag[i].fragscore_;
+
+		ramaEmin[currentfrag[i].aa_](currentfrag[i].phibin_, currentfrag[i].psibin_) =
+			std::min( ramaEmin[currentfrag[i].aa_](currentfrag[i].phibin_, currentfrag[i].psibin_),  currentfrag[i].fragscore_ );
+		ramaEmax[currentfrag[i].aa_](currentfrag[i].phibin_, currentfrag[i].psibin_) =
+			std::max( ramaEmin[currentfrag[i].aa_](currentfrag[i].phibin_, currentfrag[i].psibin_),  currentfrag[i].fragscore_ );
+	}
+
+	/////
+	// 2 normalize, apply convolution
+	utility::vector1< core::Real > probSums(20, 0 );
+	for ( std::map< int ,ObjexxFCL::FArray2D<core::Real> >::iterator it=ramaEsum.begin(); it!=ramaEsum.end(); ++it ) {
+		int aa = it->first;
+		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+		ObjexxFCL::FArray2D<core::Real> &dataMin = ramaEmin[aa];
+		ObjexxFCL::FArray2D<core::Real> &dataMax = ramaEmax[aa];
+
+		for ( int i=1; i<=36; ++i ) {
+			for ( int j=1; j<=36; ++j ) {
+				core::Size count = ramacount[aa](i,j);
+				if ( count > 10 ) {
+					data(i,j) /= count;
+				} else {
+					//fd: if we do not see a rama bin, give it "neutral" energy
+					data(i,j) = peraa_cap[aa] / 2.0; //0.0;
+					dataMin(i,j) = dataMax(i,j) = data(i,j);
+				}
+			}
+		}
+
+		//dump_table ( data, "Ehat_raw.m",
+		//	"E_" + utility::to_string( (core::chemical::AA)aa ) );
+		//dump_table ( dataMin, "Ehat_min.m",
+		//	"Emin_" + utility::to_string( (core::chemical::AA)aa ) );
+		//dump_table ( dataMax, "Ehat_max.m",
+		//	"Emax_" + utility::to_string( (core::chemical::AA)aa ) );
+
+		for ( int i=1; i<=36; ++i ) {
+			for ( int j=1; j<=36; ++j ) {
+				// smooth in probability space
+				data(i,j) = std::exp( -peraa_scale[aa]*data(i,j) );
+
+				// normalize per-AA
+				probSums[aa] += data(i,j);
+			}
+		}
+	}
+	for ( std::map< int,ObjexxFCL::FArray2D<core::Real> >::iterator it=ramaEsum.begin(); it!=ramaEsum.end(); ++it ) {
+		int aa = it->first;
+		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+
+		for ( int i=1; i<=36; ++i ) {
+			for ( int j=1; j<=36; ++j ) {
+				// normalize per-AA
+				data(i,j) /= probSums[aa];
+			}
+		}
+
+		ObjexxFCL::FArray2D< std::complex<core::Real> > Frot;
+		numeric::fourier::fft2(data, Frot);
+
+		ObjexxFCL::FArray2D<core::Real> conv;
+		core::Real convSum=0.0;
+		conv.dimension(36,36); conv=0.0;
+		for ( int i=1; i<=36; ++i ) {
+			for ( int j=1; j<=36; ++j ) {
+				core::Real i_deg = 10.0*(i-1), j_deg = 10.0*(j-1);
+				if ( i_deg>=180.0 ) i_deg -=360.0;
+				if ( j_deg>=180.0 ) j_deg -=360.0;
+				core::Real dist2 = ( i_deg*i_deg + j_deg*j_deg );
+				core::Real x_ij = std::exp( -dist2/(2.0*peraa_smoothing[aa]*peraa_smoothing[aa]) );
+				conv(i,j) = x_ij;
+				convSum += x_ij;
+			}
+		}
+		for ( int i=1; i<=36; ++i ) {
+			for ( int j=1; j<=36; ++j ) {
+				conv(i,j) /= convSum;
+			}
+		}
+		ObjexxFCL::FArray2D< std::complex<core::Real> > Fconv;
+		numeric::fourier::fft2(conv, Fconv);
+
+		for ( int i=1; i<=36; ++i ) {
+			for ( int j=1; j<=36; ++j ) {
+				Frot(i,j) *= std::conj( Fconv(i,j) );
+			}
+		}
+		numeric::fourier::ifft2(Frot, data);
+
+		//dump_table ( data, "Ehat_smooth.m",
+		//	"Ehat_" + utility::to_string( (core::chemical::AA)aa ) );
+	}
+
+	// load rama table
+	std::string ramadir("scoring/score_functions/rama/fd");
+	if (basic::options::option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
+		ramadir = basic::options::option[ basic::options::OptionKeys::corrections::score::rama_pp_map ]();
+	}
+	utility::vector1<  ObjexxFCL::FArray2D< Real > > rama_ref(20);
+	for ( int i=1; i<=20; ++i ) {
+		rama_ref[i].dimension(36,36);
+	}
+	read_rama_map_file(ramadir+"/all.ramaProb", rama_ref);
+
+	for ( int i=1; i<=20; ++i ) {
+		corrRamaScore[i].dimension( 36, 36 );
+		core::Real corrRamaSum = 0.0;
+		for ( int x=1; x<=36; ++x ) {
+			for ( int y=1; y<=36; ++y ) {
+				corrRamaScore[i](x,y) = rama_ref[i](x,y) / ramaEsum[i](x,y);
+				corrRamaSum += corrRamaScore[i](x,y);
+			}
+		}
+		for ( int x=1; x<=36; ++x ) {
+			for ( int y=1; y<=36; ++y ) {
+				corrRamaScore[i](x,y) /= corrRamaSum;
+			}
+		}
+
+		//dump_table ( rama_ref[i], "Erama.m",
+		//	"Erama_" + utility::to_string( (core::chemical::AA)i ) );
+		//dump_table ( corrRamaScore[i], "Erama_hat.m",
+		//	"Erama_hat_" + utility::to_string( (core::chemical::AA)i ) );
+	}
+
+	std::string outfile = "all.ramaProb.CORRECTED";
+	utility::io::ozstream outrama(outfile.c_str() );
+	for ( int i=1; i<=20; ++i ) {
+		std::string aaname = core::chemical::name_from_aa((core::chemical::AA)i);
+		for ( int x=1; x<=36; ++x ) {
+			for ( int y=1; y<=36; ++y ) {
+				outrama << aaname << " "
+					<< (x-1)*10.0-180 << " " << (y-1)*10.0-180 << " "
+					<< corrRamaScore[i](x,y) << " " << -log( corrRamaScore[i](x,y) ) << std::endl;
+			}
+		}
+	}
+}
+
+void
+calc_rama_scores() {
+	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+
+	if ( scorefxn->get_weight( core::scoring::rama ) > 0 ) {
+		TR << "WARNING!!! rama is non-zero in the scorefunction.  Setting it to zero" << std::endl;
+		scorefxn->set_weight( core::scoring::rama , 0.0 );
+	}
+
+	std::ofstream outscore( option[ tors::scorefile ]().c_str(), std::ofstream::out );
+
+	while ( input.has_another_pose() ) {
+		core::pose::Pose pose;
+		input.fill_pose( pose );
+
+		std::string filetag = pose.data().get_const_ptr< basic::datacache::CacheableString >
+			(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG)->str();
+
+		core::scoring::dssp::Dssp dssp(pose);
+		dssp.insert_ss_into_pose(pose);
+
+		// pack pose
+		core::pack::task::PackerTaskOP ptask (core::pack::task::TaskFactory::create_packer_task( pose ));
+		ptask->or_include_current(true);
+		ptask->restrict_to_repacking();
+		core::pack::pack_rotamers( pose, *scorefxn, ptask );
+		(*scorefxn)(pose);
+
+		// optimally minimize
+		if ( option[ tors::min ]() ) {
+			kinematics::MoveMap mm;
+			mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
+			core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
+			core::optimization::CartesianMinimizer minimizer;
+			minimizer.run( pose, mm, *scorefxn, options );
+			(*scorefxn)(pose);
+		}
+
+		core::scoring::EnergyMap weights = pose.energies().weights();
+		typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+		ScoreTypeVec score_types;
+		for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
+			core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+			if ( weights[ii] != 0 ) score_types.push_back(ii);
+		}
+
+		for ( int i=3; i<=((int)pose.total_residue())-2; ++i ) {
+			char ss = pose.secstruct(i);
+			core::Real phi, psi;
+
+			// loop only
+			if ( ss != 'L' ) continue;
+
+			bool have_connected_frag=true;
+			for ( int j=i-2; j<i+2; ++j ) {
+				if ( pose.fold_tree().is_cutpoint(j) || !pose.residue(j).is_protein() ) {
+					have_connected_frag = false;
+				}
+			}
+			if ( !have_connected_frag || !pose.residue(i+2).is_protein() ) continue;
+
+			phi = pose.phi(i);
+			psi = pose.psi(i);
+
+			core::Size phi_bin = getbin(phi);
+			core::Size psi_bin = getbin(psi);
+
+			core::Real score_ii = 0.0;
+			for ( int j=1; j<=(int)score_types.size(); ++j ) {
+				core::Real score_ii_jj = (weights[ score_types[j] ] * pose.energies().residue_total_energies(i)[ score_types[j] ]);
+				score_ii += score_ii_jj;
+			}
+
+			std::string fragtag = filetag+"_"+utility::to_string(i);
+			outscore << "R " << fragtag << " " << (int)pose.residue(i).aa() << " " << phi_bin << " " << psi_bin << " " << 1.0 << " " << score_ii << "\n";
+		}
+	}
+}
 
 void
 correct_dunbrack() {
@@ -390,7 +737,52 @@ correct_dunbrack() {
 	ObjexxFCL::FArray2D< std::complex<core::Real> > Frot;
 
 	/////
-	// rotameric smoothing
+	// 1B: smooth _energies_ in chi space for semirotamers
+	for ( int aa = 1; aa<=20; aa++ ) {
+		if ( !is_semi_rot( (core::chemical::AA)aa) ) continue;
+		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
+			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
+			core::pack::dunbrack::RotamerLibrary::get_instance()->get_library_by_aa( (core::chemical::AA)aa ) );
+		if ( !rotlib ) continue;
+
+		for ( int x=1; x<=36; ++x ) {
+			for ( int y=1; y<=36; ++y ) {
+				utility::fixedsizearray1<core::Real, 5 > bbs;
+				bbs[1] = core::Real((x-19)*10);
+				bbs[2] = core::Real((y-19)*10);
+				utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=rotlib->get_all_rotamer_samples(bbs);
+
+				core::Size nrot = allrots.size();
+				if ( nrot == 0 ) continue;
+
+				for ( Size ii = 1; ii <= nrot; ++ii ) {
+					if ( allrots[ii].rot_well()[allrots[ii].nchi()] != 1 ) continue;  // ugly hack
+					core::Size r1=0, r2=0;
+					if ( allrots[ii].nchi() > 1 ) r1 = allrots[ii].rot_well()[1];
+					if ( allrots[ii].nchi() > 2 ) r2 = allrots[ii].rot_well()[2];
+					core::Size myrotidx = getRotID( r1,r2 );
+
+					std::pair< int, int > rottag(aa,myrotidx);
+					if ( semirotEsum.find( rottag ) == semirotEsum.end() ) continue;
+					utility::vector1< core::Real > newSemirotSum( 36,0.0 );
+					for ( Size jj = 1; jj <=36 ; ++jj ) {
+						for ( Size kk = 1; kk <=36 ; ++kk ) {
+							ObjexxFCL::FArray2D<core::Real> &data = semirotEsum[rottag][(jj+kk-2)%36 + 1];
+							newSemirotSum[jj] += conv(1,kk) * data(x,y);
+						}
+					}
+					for ( Size jj = 1; jj <=36 ; ++jj ) {
+						ObjexxFCL::FArray2D<core::Real> &data = semirotEsum[rottag][jj];
+						data(x,y) = newSemirotSum[jj];
+					}
+				}
+			}
+		}
+	}
+
+
+	/////
+	// rotameric p-p smoothing
 	utility::vector1< ObjexxFCL::FArray2D<core::Real> > probSums(20, ObjexxFCL::FArray2D<core::Real>(36,36) );
 	for ( int i=1; i<=20; ++i ) { probSums[i] = 0.0; };
 	for ( std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it ) {
@@ -439,12 +831,12 @@ correct_dunbrack() {
 		}
 		numeric::fourier::ifft2(Frot, data);
 
-		dump_table ( data, "data_smooth.m",
-			"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+		//dump_table ( data, "data_smooth.m",
+		//	"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
 	}
 
 	/////
-	// semirotameric smoothing
+	// semirotameric p-p smoothing
 	for ( int i=1; i<=20; ++i ) { probSums[i] = 0.0; };
 	for ( std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it ) {
 		std::pair< int, int > rottag = it->first;
@@ -492,11 +884,10 @@ correct_dunbrack() {
 			}
 			numeric::fourier::ifft2(Frot, data);
 
-			dump_table ( data, "data_semirot.m",
-				"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second )+"_"+utility::to_string( k ) );
+			//dump_table ( data, "data_semirot.m",
+			//	"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second )+"_"+utility::to_string( k ) );
 		}
 	}
-
 
 	/////
 	// 3 compute corrected probabilities
@@ -534,17 +925,10 @@ correct_dunbrack() {
 					core::Size myrotidx = getRotID( r1,r2,r3,r4 );
 
 					std::pair< int, int > rottag(aa,myrotidx);
+					if ( rotEsum.find( rottag ) == rotEsum.end() ) continue;
 					ObjexxFCL::FArray2D<core::Real> &data = rotEsum[rottag];
 
-					// smooth Energy space
-					//core::Real newP = allrots[ii].probability() * std::exp( -scale*data(x,y) );
-
-					if ( aa == aa_ser && x==13 && y==14 ) {
-						TR << "SER " << (x-1)*10.0-180.0 << " " << (y-1)*10.0-180.0 << " " << allrots[ii].probability() << " " << data(x,y) << " " << log( data(x,y)) / -scale << std::endl;
-					}
-					// smooth Prob space
 					core::Real newP = allrots[ii].probability() / data(x,y);
-
 
 					data(x,y) = newP;
 					probsum += newP;
@@ -561,11 +945,9 @@ correct_dunbrack() {
 					core::Size myrotidx = getRotID( r1,r2,r3,r4 );
 
 					std::pair< int, int > rottag(aa,myrotidx);
+					if ( rotEsum.find( rottag ) == rotEsum.end() ) continue;
 					ObjexxFCL::FArray2D<core::Real> &data = rotEsum[rottag];
 					data(x,y) /= probsum;
-					if ( aa == aa_ser && x==13 && y==14 ) {
-						TR << "SER " << (x-1)*10.0-180.0 << " " << (y-1)*10.0-180.0 << allrots[ii].probability() << " " << data(x,y) << std::endl;
-					}
 				}
 			}
 		}
@@ -613,6 +995,7 @@ correct_dunbrack() {
 					core::Size myrotidx = getRotID( r1,r2 );
 
 					std::pair< int, int > rottag(aa,myrotidx);
+					if ( semirotEsum.find( rottag ) == semirotEsum.end() ) continue;
 
 					for ( Size jj=1; jj<=36; ++jj ) {
 						ObjexxFCL::FArray2D<core::Real> &data = semirotEsum[rottag][jj];
@@ -621,11 +1004,7 @@ correct_dunbrack() {
 						working_res->set_chi( (int)allrots[ii].nchi(), start + (jj-1.0)*step );
 						core::Real dunE = rotlib->rotamer_energy( *working_res, scratch );
 
-						// smooth Energy space
-						//core::Real newP = std::exp( -dunE ) * std::exp( -scale*data(x,y) );
-
-						// smooth Prob space
-						core::Real newP = std::exp( -dunE ) * data(x,y);
+						core::Real newP = std::exp( -dunE ) / data(x,y);
 
 						data(x,y) = newP;
 						probSum += newP;
@@ -642,6 +1021,7 @@ correct_dunbrack() {
 					core::Size myrotidx = getRotID( r1,r2 );
 
 					std::pair< int, int > rottag(aa,myrotidx);
+					if ( semirotEsum.find( rottag ) == semirotEsum.end() ) continue;
 					for ( Size jj=1; jj<=36; ++jj ) {
 						ObjexxFCL::FArray2D<core::Real> &data = semirotEsum[rottag][jj];
 						data(x,y) /= probSum;
@@ -651,22 +1031,21 @@ correct_dunbrack() {
 		}
 	}
 
-
 	// 4 dump files
-	for ( std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it ) {
-		std::pair< int, int > rottag = it->first;
-		ObjexxFCL::FArray2D<core::Real> &data = it->second;
-		dump_table ( data, "probs.m", "probs_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
-	}
+	//for ( std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it ) {
+	//	std::pair< int, int > rottag = it->first;
+	//	ObjexxFCL::FArray2D<core::Real> &data = it->second;
+	//	dump_table ( data, "probs.m", "probs_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+	//}
 
-	for ( std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it ) {
-		std::pair< int, int > rottag = it->first;
-		for ( Size jj=1; jj<=36; ++jj ) {
-			ObjexxFCL::FArray2D<core::Real> &data = it->second[jj];
-			dump_table ( data, "probssemi.m", "probs_semi_"
-				+ utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) + "_semi" + utility::to_string( jj ) );
-		}
-	}
+	//for ( std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it ) {
+	//	std::pair< int, int > rottag = it->first;
+	//	for ( Size jj=1; jj<=36; ++jj ) {
+	//		ObjexxFCL::FArray2D<core::Real> &data = it->second[jj];
+	//		dump_table ( data, "probssemi.m", "probs_semi_"
+	//			+ utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) + "_semi" + utility::to_string( jj ) );
+	//	}
+	//}
 
 	for ( int aa = 1; aa<=20; aa++ ) {
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
@@ -695,7 +1074,7 @@ correct_dunbrack() {
 
 				//amw
 				utility::fixedsizearray1<core::Real, 5 > bbs;
-				bbs[1] = core::Real( (x-19)*10);
+				bbs[1] = core::Real((x-19)*10);
 				bbs[2] = core::Real((y-19)*10);
 				int phi = (x-19)*10;
 				int psi = (y-19)*10;
@@ -715,6 +1094,7 @@ correct_dunbrack() {
 
 					core::Size myrotidx = getRotID( r1,r2,r3,r4 );
 					std::pair< int, int > rottag(aa,myrotidx);
+					if ( rotEsum.find( rottag ) == rotEsum.end() ) continue;
 					ObjexxFCL::FArray2D<core::Real> &data = rotEsum[rottag];
 					core::Real rotprob = data(xp,yp); // rotameric probability
 
@@ -756,7 +1136,7 @@ correct_dunbrack() {
 		bool semichi_is_2 = true;
 		if ( (core::chemical::AA)aa==aa_gln || (core::chemical::AA)aa==aa_glu ) semichi_is_2=false;
 
-		// # T Phi Psi Count r1 Probabil chi1Val chi1Sig -180 -170 -160 -150 -140 -130 -120 -110 -100 -90 -80 -70 -60 -50 -40 -30 -20 -10 0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170
+		// # T Phi Psi Count r1 Probabil chi1Val chi1Sig -180 ... 170
 		for ( int x=1; x<=37; ++x ) {
 			for ( int y=1; y<=37; ++y ) {
 				int xp=x, yp=y;
@@ -777,7 +1157,7 @@ correct_dunbrack() {
 				if ( nrot == 0 ) continue;
 
 				for ( Size ii = 1; ii <= nrot; ++ii ) {
-					if ( allrots[ii].rot_well()[allrots[ii].nchi()] != 1 ) continue;  // ugly hack (matching calc_scores logic)
+					if ( allrots[ii].rot_well()[allrots[ii].nchi()] != 1 ) continue;  // ugly hack
 
 					// use our own rotamer index since get_all_rotamer_samples changes indices based on phi/psi
 					core::Size r1=0, r2=0;
@@ -787,6 +1167,7 @@ correct_dunbrack() {
 					core::Size myrotidx = getRotID( r1,r2 );
 
 					std::pair< int, int > rottag(aa,myrotidx);
+					if ( semirotEsum.find( rottag ) == semirotEsum.end() ) continue;
 
 					core::Real rotprob=0.0;
 
@@ -828,7 +1209,6 @@ correct_dunbrack() {
 	}
 }
 
-
 void
 calc_scores() {
 	using namespace core::chemical;
@@ -837,7 +1217,7 @@ calc_scores() {
 
 	// zero fa_dun
 	if ( scorefxn->get_weight( core::scoring::fa_dun ) > 0 ) {
-		TR << "WARNING!!! fa_dun is non-zero in the scorefunction.  Setting it to non-zero" << std::endl;
+		TR << "WARNING!!! fa_dun is non-zero in the scorefunction.  Setting it to zero" << std::endl;
 		TR << "If you are sure you want fa_dun on, set the component terms instead: fa_dun_rot, fa_dun_dev, fa_dun_semi" << std::endl;
 		scorefxn->set_weight( core::scoring::fa_dun , 0.0 );
 	}
@@ -845,7 +1225,7 @@ calc_scores() {
 	core::Real fadundev_wt = scorefxn->get_weight( core::scoring::fa_dun_dev );
 	scorefxn->set_weight( core::scoring::fa_dun_dev , 0.0 );
 
-	if ( fadundev_wt == 0 && option[ tors::rotmin ]() ) {
+	if ( fadundev_wt == 0 && option[ tors::min ]() ) {
 		TR << "WARNING!!! fa_dun_dev is zero in the scorefunction but minimization is enabled... are you sure this is what you want?" << std::endl;
 	}
 
@@ -905,7 +1285,7 @@ calc_scores() {
 
 			core::pack::optimizeH( frag, *scorefxn );
 			core::Real score_ii = (*scorefxn)(frag);
-			if ( option[ tors::rotmin ]() ) {
+			if ( option[ tors::min ]() ) {
 				kinematics::MoveMap mm;
 				mm.set_bb  ( false ); mm.set_chi ( false ); mm.set_jump( false );
 				mm.set_chi ( center, true );
@@ -965,7 +1345,7 @@ calc_scores() {
 				core::pack::optimizeH( frag, *scorefxn );
 
 				core::Real score_ii = (*scorefxn)(frag);
-				if ( option[ tors::rotmin ]() ) {
+				if ( option[ tors::min ]() ) {
 					kinematics::MoveMap mm;
 					mm.set_bb  ( false ); mm.set_chi ( false ); mm.set_jump( false );
 					mm.set_chi ( center, true );
@@ -997,7 +1377,6 @@ calc_scores() {
 
 	}
 }
-
 
 void
 make_fragments() {
@@ -1178,7 +1557,6 @@ make_fragments() {
 	}
 }
 
-
 int
 main( int argc, char * argv [] ) {
 	try {
@@ -1186,7 +1564,7 @@ main( int argc, char * argv [] ) {
 		NEW_OPT(tors::fragfile, "name of fragment file", "fragments.out");
 		NEW_OPT(tors::scorefile, "name of fragment file", "scores.out");
 		NEW_OPT(tors::cluster_radius, "Cluster fragments at this radius", 1.0);
-		NEW_OPT(tors::rotmin, "Minimize each rotamer?", false);
+		NEW_OPT(tors::min, "Minimize each rotamer?", false);
 		NEW_OPT(tors::smoothing, "Smoothing (in degrees phi/psi)", 10.0);
 		NEW_OPT(tors::cap, "Cap on energy", 3.0);
 		NEW_OPT(tors::scale, "Scaling factor on corrections", 0.56);
@@ -1204,8 +1582,12 @@ main( int argc, char * argv [] ) {
 			make_fragments();
 		} else if ( mode == "calcscores" ) {
 			calc_scores();
+		} else if ( mode == "calcrama" ) {
+			calc_rama_scores();
 		} else if ( mode == "correctdun" ) {
 			correct_dunbrack();
+		} else if ( mode == "correctrama" ) {
+			correct_rama();
 		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -11,6 +11,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -18,6 +19,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/ResfileReader.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
@@ -31,6 +33,7 @@
 
 #include <devel/init.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <fstream>
 #include <iostream>
@@ -45,6 +48,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -60,6 +64,7 @@
 
 OPT_1GRP_KEY(Integer, ddg, bbnbr)
 OPT_1GRP_KEY(Boolean, ddg, cartesian)
+OPT_1GRP_KEY(Boolean, ddg, fd_mode)
 
 //Auto Headers
 using basic::T;
@@ -102,6 +107,63 @@ find_neighbors(
 		}
 	}
 }
+
+void
+find_neighbors_directional(
+	bools const & neighborin,
+	Pose const & pose,
+	bools & neighbor,
+	Real const K = 8.0
+) {
+	using namespace core;
+	using namespace core::scoring;
+
+	// interface parameters
+	//   if (angle_degrees > K*exp(b*distance_angstrom) we have an interface interaction
+	//   reduce K to increase # detected interface residues
+	//      max dist = (1/b)*ln(180/k)
+	//   at K= 10, maxdist = 10.32
+	//         12             9.67
+	//         14             9.12
+	//         16             8.64
+	core::Real b=0.28;
+
+	core::Size nres = pose.total_residue();
+
+	// make pose polyA
+	Pose pose_working = pose;
+	utility::vector1< Size > protein_residues;
+	for ( Size i=1, i_end = nres; i<= i_end; ++i )
+		if ( pose.residue( i ).is_protein() )
+			protein_residues.push_back( i );
+	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, false );
+
+	neighbor = neighborin;
+
+	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+		if ( ! neighborin[i] ) continue;
+		neighbor[i] = true;
+
+		for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+			conformation::Residue const & rsd1( pose_working.residue( i ) );
+			conformation::Residue const & rsd2( pose_working.residue( j ) );
+
+			if ( i==j ) continue;
+			if ( !rsd1.is_protein() || !rsd2.is_protein() ) continue;
+
+			core::Real dist = (rsd1.atom("CB").xyz() - rsd2.atom("CB").xyz()).length();
+			core::Real angle1 = numeric::angle_degrees(rsd1.atom("CA").xyz(), rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz() ) ;
+			core::Real angle2 = numeric::angle_degrees(rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz(), rsd2.atom("CA").xyz() ) ;
+
+			core::Real angle_tgt = K*exp(b*dist);
+
+			if (angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt) {
+				neighbor[j] = true;
+			}
+		}
+	}
+}
+
 
 /// @brief The input file is a list of mutation blocks.  Usually, this will be a set of point mutations.
 /// where each "block" lists a single mutation.  However, it is possible to specify multiple mutations
@@ -183,28 +245,19 @@ compute_folding_energies(
 
 	bool flexbb = true;
 	bool cartmin = true;
-	bool flexbbpos = true;
 
 	if ( flexbb ) {
 		runtime_assert( cartmin );
 		for ( Size i=1; i<= pose.size(); ++i ) {
 			if ( is_flexible[i] ) {
 				movemap->set_chi( i, true );
-				//TR << "CHI: " << i << std::endl;
-				if ( bbnbrs > 0 ) {
-					for ( Size j=0; j<=bbnbrs; j++ ) {
-						if ( is_mutpos[i] ||
-								( i+j <= pose.size() && is_mutpos[i+j] ) ||
-								( i-j >= 1                    && is_mutpos[i-j] ) ) {
-							movemap->set_bb ( i, true );
-						}
-					}
-				} else if ( flexbbpos ) {
-					if ( is_mutpos[i] ) {
+
+				for ( Size j=0; j<=bbnbrs; j++ ) {
+					if ( is_mutpos[i] ||
+							( i+j <= pose.size() && is_mutpos[i+j] ) ||
+							( i-j >= 1 && is_mutpos[i-j] ) ) {
 						movemap->set_bb ( i, true );
 					}
-				} else {
-					movemap->set_bb ( i, true );
 				}
 			}
 		}
@@ -213,6 +266,7 @@ compute_folding_energies(
 	fastrelax.set_movemap( movemap );
 	fastrelax.apply(pose);
 }
+
 
 int
 main( int argc, char * argv [] )
@@ -225,11 +279,13 @@ main( int argc, char * argv [] )
 	try {
 		NEW_OPT(ddg::bbnbr, "bb neighbor", 0);
 		NEW_OPT(ddg::cartesian, "cartesian", true);
+		NEW_OPT(ddg::fd_mode, "mode", false);
 
 		//init
 		devel::init(argc, argv);
 		Size num_iterations = option[ OptionKeys::ddg::iterations ]();
-		double cutoff = 6.0;
+		bool fd_mode = option[ OptionKeys::ddg::fd_mode ]();
+		double cutoff = fd_mode? 8.0 : 6.0;
 		if ( basic::options::option[ OptionKeys::ddg::opt_radius].user() ) {
 			cutoff = basic::options::option[ OptionKeys::ddg::opt_radius ]();
 		}
@@ -245,8 +301,20 @@ main( int argc, char * argv [] )
 		//TR << (*score_fxn)(pose) << std::endl;
 
 		//interface mode? setting = jump number to use for interface
-		Size const interface_ddg = option[ OptionKeys::ddg::interface_ddg ]();
-		runtime_assert( interface_ddg <= pose.num_jump() );
+		Size interface_ddg = option[ OptionKeys::ddg::interface_ddg ]();
+
+		//fd try to be smart .. look for interchain jump
+		if( interface_ddg > pose.num_jump() ) {
+			for (int i=1; i<=(int)pose.fold_tree().num_jump(); ++i) {
+				kinematics::Edge jump_i = pose.fold_tree().jump_edge( i ) ;
+				if (pose.pdb_info()->chain(jump_i.start()) != pose.pdb_info()->chain(jump_i.stop())) {
+					runtime_assert( interface_ddg > pose.num_jump() );
+					interface_ddg = i;
+				}
+			}
+			TR << "Autosetting interface jump to " << interface_ddg << std::endl;
+		}
+		runtime_assert ( interface_ddg <= pose.num_jump() );
 
 		bools is_mutated( pose.size(), false );   //mutated position
 		bools is_flexible( pose.size(), false );  //repackable
@@ -263,7 +331,11 @@ main( int argc, char * argv [] )
 		//the logic here is:
 		//to be comparable, all the mutations should have the save dof!
 		//so take the union set
-		find_neighbors( is_mutated, pose, is_flexible, cutoff );
+		if (fd_mode) {
+			find_neighbors_directional( is_mutated, pose, is_flexible, cutoff );
+		} else {
+			find_neighbors( is_mutated, pose, is_flexible, cutoff );
+		}
 
 		//output file, mark if rerun
 		std::map< std::string, Size > before_jump_done_list;
@@ -292,13 +364,13 @@ main( int argc, char * argv [] )
 				std::string nrdstr = rd.substr(pos1+5, pos2-5);
 				Size nrd = std::atoi(nrdstr.c_str());
 
-				if ( cat=="BEFORE_JUMP:" ) {
+				if ( cat=="COMPLEX:" ) {
 					if ( before_jump_done_list.count(mut)>0 ) {
 						if ( before_jump_done_list[mut]<nrd ) before_jump_done_list[mut]=nrd;
 					} else {
 						before_jump_done_list[mut]=nrd;
 					}
-				} else if ( cat=="AFTER_JUMP:" ) {
+				} else if ( cat=="OPT_APART:" ) {
 					if ( after_jump_done_list.count(mut) > 0 ) {
 						if ( after_jump_done_list[mut] < nrd ) after_jump_done_list[mut]=nrd;
 					} else {
@@ -307,17 +379,6 @@ main( int argc, char * argv [] )
 				}
 			}
 			ifp.close();
-
-			//debug
-			//std::map<std::string, Size>::iterator p;
-			//std::cout << "before" << std::endl;
-			//for(p = before_jump_done_list.begin(); p!=before_jump_done_list.end(); ++p) {
-			//  std::cout << p->first << "->" << p->second << std::endl;
-			//}
-			//std::cout << "after" << std::endl;
-			//for(p = after_jump_done_list.begin(); p!=after_jump_done_list.end(); ++p) {
-			//  std::cout << p->first << "->" << p->second << std::endl;
-			//}
 
 			//append in previous file
 			ofp.open_append(ofn);
@@ -357,6 +418,7 @@ main( int argc, char * argv [] )
 			Size afj_rd_start(1);
 			if ( before_jump_done_list.count(tag.str())>0 ) bfj_rd_start = before_jump_done_list[tag.str()]+1;
 			if ( after_jump_done_list.count(tag.str())>0 ) afj_rd_start = after_jump_done_list[tag.str()]+1;
+
 			//debug
 			//std::cout << tag.str() << " bfj: " << bfj_rd_start << std::endl;
 			//std::cout << tag.str() << " afj: " << afj_rd_start << std::endl;
@@ -391,18 +453,22 @@ main( int argc, char * argv [] )
 				compute_folding_energies( score_fxn, local_pose, is_flexible, is_mutated, bbnbr );
 
 				//output
-				Real const final_score( (*score_fxn)( local_pose ) );
+				Real final_score( (*score_fxn)( local_pose ) );
 				if ( option[OptionKeys::ddg::dump_pdbs]() ) {
 					std::ostringstream dump_fn;
 					dump_fn << tag.str() << "_bj" << r << ".pdb";
 					local_pose.dump_pdb(dump_fn.str());
 				}
-				ofp << "BEFORE_JUMP: Round"<< r << ": "
-					<< tag.str() << ": "
-					<< F(9,3,final_score) << " "
-					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() )
-					<< std::endl;
-				ofp.flush();
+				ofp << "COMPLEX:   Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+
+				Size rb_jump(interface_ddg);
+				protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
+				separate_partners->step_size(1000.0);
+				separate_partners->apply(local_pose);
+				final_score = (*score_fxn)( local_pose );
+				ofp << "APART:     Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
 			}
 
 			//interface mode, seperate and score
@@ -411,6 +477,7 @@ main( int argc, char * argv [] )
 				protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( work_pose, rb_jump ) );
 				separate_partners->step_size(1000.0);
 				separate_partners->apply(work_pose);
+
 				//repack or not?
 				//seperate partners energy
 				for ( Size r=afj_rd_start; r<=num_iterations; r++ ) {
@@ -424,12 +491,8 @@ main( int argc, char * argv [] )
 						dump_fn << tag.str() << "_aj" << r << ".pdb";
 						local_pose.dump_pdb(dump_fn.str());
 					}
-					ofp << "AFTER_JUMP: Round"<< r << ": "
-						<< tag.str() << ": "
-						<< F(9,3,final_score) << " "
-						<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() )
-						<< std::endl;
-					ofp.flush();
+					ofp << "OPT_APART: Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+						<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
 				}
 			}
 		}

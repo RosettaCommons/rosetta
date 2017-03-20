@@ -2761,7 +2761,7 @@ init_beta_nov16_correction() {
 		params.push_back( "hbacc_CXL:1.10");
 		params.push_back( "hbacc_HXL:1.15");
 		params.push_back( "hbacc_IMD:1.13");
-		params.push_back( "hbacc_IME:1.16");
+		params.push_back( "hbacc_IME:1.17");
 		params.push_back( "hbacc_PBA:1.19");
 		option[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
@@ -2804,13 +2804,13 @@ init_beta_nov16_correction() {
 		option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
 	}
 	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(79.9);
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(79.931);
 	}
 	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.65);
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.648);
 	}
 	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.4415);
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.441546);
 	}
 
 	// lkball
@@ -2818,7 +2818,7 @@ init_beta_nov16_correction() {
 		option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.709);
 	}
 	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.828);
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.811);
 	}
 	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
 		option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
