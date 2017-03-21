@@ -74,7 +74,7 @@ bool check_coords_match(
 vector1<Vec>
 chain_coords(Pose const & pose, char chain, core::Size nres) {
 	vector1<Vec> result;
-	std::map<int,char> conf2chain = core::pose::conf2pdb_chain(pose);
+	std::map<core::Size,char> conf2chain = core::pose::conf2pdb_chain(pose);
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( conf2chain[pose.chain(i)] == chain ) {
 			result.push_back(pose.xyz(AtomID(2,i)));
@@ -85,7 +85,7 @@ chain_coords(Pose const & pose, char chain, core::Size nres) {
 vector1<Vec>
 non_chain_coords(Pose const & pose, char chain, core::Size nres) {
 	vector1<Vec> result;
-	std::map<int,char> conf2chain = core::pose::conf2pdb_chain(pose);
+	std::map<core::Size,char> conf2chain = core::pose::conf2pdb_chain(pose);
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( conf2chain[pose.chain(i)] != chain ) {
 			result.push_back(pose.xyz(AtomID(2,i)));

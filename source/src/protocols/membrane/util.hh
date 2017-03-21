@@ -416,11 +416,11 @@ core::Vector pose_tm_com( core::pose::Pose const & pose );
 
 /// @brief Chain center-of-mass
 /// @details Gets the coordinates of the chain center-of-mass
-core::Vector chain_com( core::pose::Pose const & pose, int chain );
+core::Vector chain_com( core::pose::Pose const & pose, core::Size chain );
 
 /// @brief Chain center-of-mass of TM regions
 /// @details Gets the coordinates of the chain center-of-mass but only the TM regions
-core::Vector chain_tm_com( core::pose::Pose const & pose, int chain );
+core::Vector chain_tm_com( core::pose::Pose const & pose, core::Size chain );
 
 /// @brief Residue closest to pose transmembrane center-of-mass
 /// @details Gets the coordinates of the residue closest to TM span center-of-mass
@@ -431,11 +431,11 @@ core::Size rsd_closest_to_pose_tm_com( core::pose::Pose const & pose );
 
 /// @brief Residue closest to chain center-of-mass
 /// @details Gets the residue number closest to the chain center-of-mass
-core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chain );
+core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, core::Size chain );
 
 /// @brief Residue closest to chain TM center-of-mass
 /// @details Gets the residue number closest to the chain TM center-of-mass
-core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chainid );
+core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, core::Size chainid );
 
 
 //////////////////////

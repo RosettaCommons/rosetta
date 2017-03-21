@@ -210,13 +210,13 @@ get_component_contiguous_foldtree(
 // sheffler
 /// @details get a mapping of chain chars to resi ranges
 std::map<char,std::pair<Size,Size> >
-get_chain2range( Conformation const & src_conf, std::map< int, char > src_conf2pdb_chain ) {
+get_chain2range( Conformation const & src_conf, std::map< core::Size, char > src_conf2pdb_chain ) {
 	// TR << src_conf.num_chains() << endl;
 	// for(Size i = 1; i <= src_conf.num_chains(); ++i){
 	//  TR << "src_conf chain " << i << " " << src_conf.chain_begin(i) << "-" << src_conf.chain_end  (i) << endl;
 	// }
 	// TR << "PDBINFO CHAIN MAP" << endl;
-	// for(map< int, char >::const_iterator i = src_conf2pdb_chain.begin(); i != src_conf2pdb_chain.end(); ++i) {
+	// for(map< core::Size, char >::const_iterator i = src_conf2pdb_chain.begin(); i != src_conf2pdb_chain.end(); ++i) {
 	//  TR << i->first << " " << i->second << endl;
 	// }
 	// TR << "END PDBINFO CHAIN MAP" << endl;
@@ -268,7 +268,7 @@ conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< int, char > src_conf2pdb_chain
+	std::map< core::Size, char > src_conf2pdb_chain
 )
 {
 	if ( symmdata.get_num_components() > 1 ) {
@@ -448,7 +448,7 @@ kinematics::FoldTree
 set_fold_tree_from_symm_data(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< int, char > src_conf2pdb_chain
+	std::map< core::Size, char > src_conf2pdb_chain
 )
 {
 	std::map<char,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);

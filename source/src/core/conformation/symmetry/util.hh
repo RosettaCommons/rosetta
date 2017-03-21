@@ -48,14 +48,14 @@ conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< int, char > conf2pdb_chain = std::map< int, char >()
+	std::map< core::Size, char > conf2pdb_chain = std::map< core::Size, char >()
 );
 
 kinematics::FoldTree
 set_fold_tree_from_symm_data(
 	conformation::Conformation & src_conformation,
 	conformation::symmetry::SymmData & symmdata,
-	std::map< int, char > conf2pdb_chain = std::map< int, char >()
+	std::map< core::Size, char > conf2pdb_chain = std::map< core::Size, char >()
 );
 
 kinematics::FoldTree

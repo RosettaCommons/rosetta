@@ -160,7 +160,7 @@ core::Real SecondaryStructureHasResidueFilter::compute( core::pose::Pose const &
 			ss_seq.clear();
 			ss_len = 0;
 			is_checked.clear();
-			int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
+			core::Size ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
 			//keep iterating until we fall off the end of the helix, accounts for chain endings
 			while ( *iter=='H' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
 				++ss_len;
@@ -185,7 +185,7 @@ core::Real SecondaryStructureHasResidueFilter::compute( core::pose::Pose const &
 			ss_seq.clear();
 			ss_len = 0;
 			is_checked.clear();
-			int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
+			core::Size ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
 			//keep iterating until we fall off the end of the sheet, accounts for chain endings
 			while ( *iter=='E' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
 				++ss_len;
@@ -210,7 +210,7 @@ core::Real SecondaryStructureHasResidueFilter::compute( core::pose::Pose const &
 			ss_seq.clear();
 			ss_len = 0;
 			is_checked.clear();
-			int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
+			core::Size ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
 			//keep iterating until we fall off the end of the loop, accounts for chain endings
 			while ( *iter=='L' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
 				++ss_len;

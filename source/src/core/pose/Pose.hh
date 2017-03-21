@@ -310,33 +310,6 @@ public:
 	kinematics::AtomTree const &
 	atom_tree() const;
 
-	/// @brief Returns the chain number of residue  <seqpos>
-	///
-	/// example(s):
-	///     pose.chain(3)
-	/// See also:
-	///     Pose
-	///     Pose.annotated_sequence
-	/// Pose.chain_sequence
-	///     Pose.fold_tree
-	///     Pose.sequence
-	///     FoldTree
-	int
-	chain( Size const seqpos ) const;
-
-	/// @brief Returns a vector of poses with one element per chain of the original pose
-	utility::vector1< PoseOP >
-	split_by_chain() const;
-
-	/// @brief
-	PoseOP
-	split_by_chain(Size chain_id) const;
-
-	// TODO: Move to util.hh.
-	/// @brief  Updates the pose chain IDs to match the pdb chain IDs.
-	void
-	update_pose_chains_from_pdb_chains();
-
 	/// APL Removing illegal non-const accessors to residues which
 	/// otherwise violate the data-integrity guarantees provided by
 	/// class Conformation.
@@ -734,6 +707,8 @@ public:
 
 	/// @brief Returns the number of jumps in the pose FoldTree
 	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	/// example(s):
 	///     pose.num_jump()
 	/// See also:
@@ -844,7 +819,9 @@ public:
 	std::string
 	annotated_sequence( bool show_all_variants = false ) const;
 
-	/// @brief Returns the sequence for the chain <chain_in>
+	/// @brief Returns the sequence for the chain number <chain_in>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
 	/// Example(s):
 	///     pose.chain_sequence(1)
@@ -1303,6 +1280,95 @@ public:
 	void
 	set_chi( Size const seqpos, Real const setting );
 
+	/////////////////////////////////////////////////////////////////////////////
+	// chains
+
+	/// @brief Returns the total number of (chain ID) chains in the pose
+	///
+	/// INFORMATION ABOUT CHAIN NUMBERS (chain ids), CHAIN LETTERS and JUMP NUMBERS
+	///
+	/// Chain numbers/ids, chain letters and jumps all serve very similar purposes in Rosetta,
+	/// that is, to identify sets of "connected" residue.
+	/// That said, their purpose and meaning are distinct and not directly interchangable.
+	///
+	/// * Chain numbers (or chain ids) are associated with the Pose's Conformation object.
+	/// These are sequentially numbered positive integers that represet consecutively (Pose/Rosetta) numbered
+	/// residues which are chemically connected.
+	/// Not all chemically connected units will have a single chain ID. It's perfectly acceptable to split
+	/// a single consecutive covalent peptide chain across muliple chain IDs.
+	/// Additionally, non-consecutive peptides may be covalently (C->N) connected,
+	/// yet must by necessity have different chain IDs.
+	///
+	/// * Chain letters are associated with the Pose's PDBInfo object.
+	/// These are arbitrary single characters given to each residue. While convention is to maintain the
+	/// same chain letter for a chemically connected entity, that's not always the case.
+	/// One single protein chain (all a single chain ID, all one peptide edge in the FoldTree) can have
+	/// more than one chain letter, and different chemical entities (different chain IDs, connected by different jumps)
+	/// can have the same chain letter. There is also no gurantee about the ordering of chain letters -
+	/// they may not be consecutive nor alphabetically ordered, and may not start or even include 'A'
+	///
+	/// * Jumps and jump numbers are associated with the Pose's FoldTree object
+	/// These specify how movement (e.g. backbone movement) propigates.
+	/// A covalently connected peptide chain may be controlled by multiple jumps -
+	/// not just connected with internal jumps, but different portions or domains of the protein
+	/// may be on completely different branches of the FoldTree, only attached at the root of the FoldTree.
+	/// While a controlling jump for a single residue (except for those at the root) can be assigned,
+	/// is no gurantee that a single jump can be identified which controls all the residues with a given
+	/// chain letter or chain id. (Unless the FoldTree has been specifically arranged for that to be the case.
+	//
+	/// example(s):
+	///     pose.num_chains()
+	/// see also:
+	///     pose
+	///     pose.chain
+	///     pose.annotated_sequence
+	/// pose.chain_sequence
+	///     pose.fold_tree
+	///     pose.sequence
+	///     foldtree
+	core::Size
+	num_chains() const;
+
+	/// @brief Returns the chain number of residue  <seqpos>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
+	/// example(s):
+	///     pose.chain(3)
+	/// see also:
+	///     pose
+	///     pose.num_chains
+	///     pose.annotated_sequence
+	/// pose.chain_sequence
+	///     pose.fold_tree
+	///     pose.sequence
+	///     foldtree
+	core::Size
+	chain( Size const seqpos ) const;
+
+	/// @brief Returns a vector of poses with one element per (chain number) chain of the original pose
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
+	utility::vector1< PoseOP >
+	split_by_chain() const;
+
+	/// @brief Return a new pose with just the residues from the specified (chain number) chain.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
+	PoseOP
+	split_by_chain(Size chain_id) const;
+
+	// TODO: Move to util.hh.
+	/// @brief  Updates the pose chain IDs to match the pdb chain letters.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
+	/// This does not reorder the pose, it just starts a new (chain number) chain each time
+	/// the chain letters change.
+	void
+	update_pose_chains_from_pdb_chains();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// jumps
@@ -1325,6 +1391,8 @@ public:
 	);
 
 	/// @brief Returns the pose FoldTree Jump  <jump_number>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
 	/// example(s):
 	///     pose.jump(1)
@@ -1356,6 +1424,8 @@ public:
 	);
 
 	/// @brief Returns the pose FoldTree Jump  <id>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
 	/// example(s):
 	///     pose.set_jump(R5N)

@@ -328,6 +328,9 @@ public:
 
 	/// @brief Inserts a residue attached only by a jump. precondition is that seqpos-1 is a cutpoint
 	/// @note that anchor_pos is wrt the current numbering system (ie before insertion)
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	insert_residue_by_jump(
 		int const seqpos,
@@ -337,6 +340,9 @@ public:
 	);
 
 	/// @brief Inserts a fold_tree as a subtree
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	insert_fold_tree_by_jump(
 		FoldTree const & subtree,
@@ -353,6 +359,9 @@ public:
 	apply_sequence_mapping( id::SequenceMapping const & old2new );
 
 	/// @brief Adds a new jump edge from  <pos1>  to  <pos2>  with cutpoint  <cutpoint>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	int new_jump( int const jump_pos1, int const jump_pos2, int const cutpoint );
 
 	void
@@ -472,12 +481,21 @@ public:
 	bool check_edges_for_atom_info() const;
 
 	/// @brief the starting residue for this jump
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	int upstream_jump_residue( int const jump_number ) const;
 
 	/// @brief the stopping residue for this jump
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	int downstream_jump_residue( int const jump_number ) const;
 
-	/// partition into two foldtrees by cutting at jump= jump_number
+	/// @brief partition into two foldtrees by cutting at jump= jump_number
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	partition_by_jump(
 		int const jump_number,
@@ -486,14 +504,23 @@ public:
 	) const;
 
 	/// @brief partition the fold tree in two parts if the jump is disconnected.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	partition_by_jump( int const jump_number, ObjexxFCL::FArray1D_bool & partner1 ) const ;
 
 	/// @brief partition the fold tree in two parts if the jump is disconnected.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	utility::vector1< bool >
 	partition_by_jump( Size const jump_nr ) const;
 
 	/// @brief partition the fold tree into n parts based on specified jumps.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	utility::vector1< Size >
 	partition_coloring( utility::vector1< Size > const & jump_numbers ) const;
 
@@ -508,6 +535,9 @@ public:
 	/// WARNING: if you look for all cutpoints by cycling thru jump_numbers you may be dissapointed
 	/// you will get most likely the same cutpoint for several different jump_numbers
 	/// however: the method cutpoint( nr ) will give you the number you are looking for
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	int
 	cutpoint_by_jump( int const jump_number ) const;
 
@@ -540,6 +570,9 @@ public:
 	get_outgoing_edges( int const seqpos ) const;
 
 	/// @brief Return all jump Edges from the FoldTree
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	utility::vector1< Edge >
 	get_jump_edges() const;
 
@@ -548,6 +581,10 @@ public:
 	get_chemical_edges() const;
 
 	/// @brief  Get the number of the jump that builds (connects to) a given residue
+	/// It's an error if the residue isn't built directly by a jump.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	int
 	get_jump_that_builds_residue( int const seqpos ) const;
 
@@ -628,6 +665,8 @@ public:
 
 	/// @brief Returns the number of jumps in the FoldTree
 	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	/// example(s):
 	///     ft.num_jump()
 	/// See also:
@@ -639,9 +678,14 @@ public:
 	inline Size num_jump() const;
 
 	/// @brief starting or stopping residue of a jump edge
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	int jump_point( int const lower_higher, int const jump_number ) const;
 
 	/// @brief Returns true if  <seqpos>  is a starting or stopping residue of a jump edge
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
 	/// example(s):
 	///     ft.is_jump_point()
@@ -707,6 +751,9 @@ public:
 	Edge & jump_edge( int const jump_number );
 
 	/// @brief get the jump_nr connected to jump upstream->downstream, returns 0 if not found
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	inline core::Size jump_nr( core::Size upstream_res, core::Size downstream_res ) const;
 
 

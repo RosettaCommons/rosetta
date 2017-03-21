@@ -233,7 +233,7 @@ void CircularPermutation::apply( Pose & pose )
 		chain_begin = 1;
 		// find final chains
 		for ( Size i=1; i<=pose.size(); i++ ) {
-			if ( pose.residue( i ).is_protein() && static_cast< int >( chain )< pose.chain( i ) ) {
+			if ( pose.residue( i ).is_protein() &&  chain < pose.chain( i ) ) {
 				chain = pose.chain( i );
 			}
 		}

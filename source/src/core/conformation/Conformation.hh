@@ -280,7 +280,10 @@ public:  // General Properties
 
 public:  // Chains
 
-	/// @brief Returns the position number of the last residue in  <chain>
+	/// @brief Returns the position number of the last residue in chain number <chain>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	Size
 	chain_end( Size chain ) const
 	{
@@ -288,42 +291,67 @@ public:  // Chains
 		else return size();
 	}
 
-	/// @brief Returns the position number of the first residue in  <chain>
+	/// @brief Returns the position number of the first residue in chain number <chain>
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	Size
 	chain_begin( Size chain ) const
 	{
+		runtime_assert( chain <= num_chains() );
 		if ( chain == 1 ) return 1;
 		else return chain_endings_[ chain-1 ]+1;
 	}
 
 	/// @brief Returns the number of chains
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	Size
 	num_chains() const
 	{
 		return chain_endings_.size() + 1; // last residue is not counted as chain ending
 	}
 
-	/// @brief Returns the list of chain endings
+	/// @brief Returns the list of (chain number) chain endings
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	utility::vector1< Size > const &
 	chain_endings() const;
 
-	/// @brief Sets the list of chain endings
+	/// @brief Sets the list of (chain number) chain endings
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	chain_endings( utility::vector1< Size > const & endings );
 
-	/// @brief Marks  <seqpos>  as the end of a new chain
+	/// @brief Marks  <seqpos>  as the end of a new (chain number) chain
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	insert_chain_ending( Size seqpos );
 
-	/// @brief Deletes  <seqpos>  from the list of chain endings
+	/// @brief Deletes  <seqpos>  from the list of (chain number) chain endings
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	delete_chain_ending( Size seqpos );
 
-	/// @brief Resets chain data so that the Conformation is marked as a single chain
+	/// @brief Resets chain data so that the Conformation is marked as a single (chain number) chain
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	reset_chain_endings();
 
-	/// @brief Rederive the chains from the termini/polymer status
+	/// @brief Rederive the (chain number) chains from the termini/polymer status
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
 	chains_from_termini();
 

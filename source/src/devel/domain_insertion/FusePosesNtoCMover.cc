@@ -856,7 +856,7 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 			std::cout << "MEEP" << std::endl;
 			new_ft.add_edge( e.start(), cut_seqpos, e.label() );
 			new_ft.add_edge( e.stop(), cut_seqpos + 1, e.label() );
-		} else if ( (e.is_jump() ) && ( pose.chain( e.start() ) == (int) pose_chains[1]) && ( pose.chain( e.stop() ) == (int) pose_chains[2] ) ) {
+		} else if ( (e.is_jump() ) && ( pose.chain( e.start() ) == pose_chains[1]) && ( pose.chain( e.stop() ) == pose_chains[2] ) ) {
 			relevant_jump_found = true;
 			new_ft.add_edge( pose.conformation().chain_begin( pose_chains[1] ), pose.conformation().chain_begin( pose_chains[2] ), e.label() );
 			new_ft.add_edge( pose.conformation().chain_end( pose_chains[1] ), pose.conformation().chain_end( pose_chains[2] ), jump_count );

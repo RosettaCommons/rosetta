@@ -598,7 +598,7 @@ core::Size create_membrane_foldtree_anchor_com( core::pose::Pose & pose ) {
 	}
 
 	// get anchor points for jumps: get all chainids
-	utility::vector1< int > chains = get_chains( pose );
+	utility::vector1< core::Size > chains = get_chains( pose );
 
 	// initialize empty vector for anchor points (i.e. jump rsd positions)
 	utility::vector1< core::Size > anchors;
@@ -679,7 +679,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 	}
 
 	// get anchor points for jumps: get all chainids
-	utility::vector1< int > chains = get_chains( pose );
+	utility::vector1< core::Size > chains = get_chains( pose );
 
 	// initialize empty vector for anchor points (i.e. jump rsd positions)
 	utility::vector1< core::Size > anchors;
@@ -721,7 +721,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner ) {
 
 	// get chains from pose
-	utility::vector1< int > chainids( get_chains( pose ) );
+	utility::vector1< core::Size > chainids( get_chains( pose ) );
 	utility::vector1< core::Size > chain_ends( chain_end_res( pose ) );
 
 	// get chain TM COMs as anchor points
@@ -946,7 +946,7 @@ core::Size create_specific_membrane_foldtree( core::pose::Pose & pose, utility::
 utility::vector1< core::Size > get_anchor_points_for_tmcom( core::pose::Pose & pose ) {
 
 	// get anchor points for jumps: get all chainids
-	utility::vector1< int > chains = get_chains( pose );
+	utility::vector1< core::Size > chains = get_chains( pose );
 
 	// initialize empty vector for anchor points (i.e. jump rsd positions)
 	utility::vector1< core::Size > anchors;
@@ -990,7 +990,7 @@ core::Size setup_foldtree_pose_com( core::pose::Pose & pose ) {
 	}
 
 	// get anchor points for jumps: get all chainids
-	utility::vector1< int > chains = get_chains( pose );
+	utility::vector1< core::Size > chains = get_chains( pose );
 
 	// initialize empty vector for anchor points (i.e. jump rsd positions)
 	utility::vector1< core::Size > anchors;
@@ -1407,7 +1407,7 @@ core::Vector pose_tm_com( core::pose::Pose const & pose ) {
 /// @brief Chain center-of-mass
 /// @details Gets the coordinates of the chain center-of-mass
 core::Vector
-chain_com( core::pose::Pose const & pose, int chainid ) {
+chain_com( core::pose::Pose const & pose, core::Size chainid ) {
 
 	using namespace core::pose;
 
@@ -1426,7 +1426,7 @@ chain_com( core::pose::Pose const & pose, int chainid ) {
 /// @brief Chain center-of-mass of TM regions
 /// @details Gets the coordinates of the chain center-of-mass but only the TM regions
 ///   BE AWARE THAT THE LAST CHAIN FOR MEMBRANE PROTEINS IS THE MEMBRANE RESIDUE!!!
-core::Vector chain_tm_com( core::pose::Pose const & pose, int chain ) {
+core::Vector chain_tm_com( core::pose::Pose const & pose, core::Size chain ) {
 
 	using namespace core::conformation::membrane;
 
@@ -1517,7 +1517,7 @@ core::Size rsd_closest_to_pose_tm_com( core::pose::Pose const & pose ) {
 
 /// @brief Residue closest to chain center-of-mass
 /// @details Gets the residue number closest to the chain center-of-mass
-core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid ) {
+core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, core::Size chainid ) {
 
 	// check that the chain isn't the membrane residue
 	if ( pose.conformation().is_membrane() == true && chainid == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
@@ -1525,8 +1525,8 @@ core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid 
 	}
 
 	// find start and end residue number for chain in question
-	int start( 1 );
-	int end( nres_protein( pose ) );
+	core::Size start( 1 );
+	core::Size end( nres_protein( pose ) );
 
 	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 
@@ -1544,9 +1544,7 @@ core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid 
 	TR << "start: " << start << " end: " << end << std::endl;
 
 	// compute chain COM
-	core::Size rsd_id = static_cast< core::Size >( residue_center_of_mass( pose, start, end ) );
-
-	return rsd_id;
+	return residue_center_of_mass( pose, start, end );
 
 } // residue closest to chain COM
 
@@ -1554,7 +1552,7 @@ core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid 
 
 /// @brief Residue closest to chain TM center-of-mass
 /// @details Gets the residue number closest to the chain TM center-of-mass
-core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chainid ) {
+core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, core::Size chainid ) {
 
 	// check for ligand:
 	// find out the residue number belonging to ligand, the entire chain is ligand
@@ -1568,7 +1566,7 @@ core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chain
 
 	// get membrane residue number and chain for checking
 	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
-	int mem_chain = pose.residue( memrsd ).chain();
+	core::Size mem_chain = pose.residue( memrsd ).chain();
 
 	if ( chainid == mem_chain ) {
 		utility_exit_with_message( "You are trying to get the rsd closest to chain TM COM, but you are looking at the membrane residue. Quitting." );
@@ -1590,7 +1588,7 @@ core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chain
 		core::Real distance = ( ca_pos - com ).length();
 
 		// get chainid and make sure we only pick a residue within that chain
-		int rsd_chainid = pose.residue( i ).chain();
+		core::Size rsd_chainid = pose.residue( i ).chain();
 
 		if ( distance < min_dist && rsd_chainid == chainid ) {
 			min_dist = distance;
@@ -1757,7 +1755,7 @@ void split_topology_by_jump_noshift(
 
 	// find chain of downstream residue number
 	core::Size res_downstream = static_cast< core::Size > ( pose.fold_tree().downstream_jump_residue( jumpnum ) );
-	int chain_downstream = pose.chain( res_downstream );
+	core::Size chain_downstream = pose.chain( res_downstream );
 
 	// go through TMspans
 	for ( core::Size i = 1; i <= topo->nspans(); ++i ) {
@@ -1791,7 +1789,7 @@ split_topology_by_chain_noshift(
 	utility::vector1< SpanningTopologyOP > topos;
 
 	// go through each chain
-	for ( int c = 1; c <= pose.chain( nres_protein( pose ) ); ++c ) {
+	for ( core::Size c = 1; c <= pose.chain( nres_protein( pose ) ); ++c ) {
 
 		// create new topology object
 		SpanningTopologyOP chain_topo( new SpanningTopology() );
@@ -1804,7 +1802,7 @@ split_topology_by_chain_noshift(
 			core::Size end = topo->span( s )->end();
 
 			// get chain
-			int chain = pose.chain( start );
+			core::Size chain = pose.chain( start );
 
 			// if span is part of the chain, add it to chain topology
 			if ( chain == c ) {

@@ -233,7 +233,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::ligand_pr
 {
 	pose.update_residue_neighbors();
 	core::scoring::TenANeighborGraph const & graph(pose.energies().tenA_neighbor_graph());
-	int chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
+	core::Size chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
 	core::Size ligand_start = pose.conformation().chain_begin(chain_id);
 	core::Size ligand_end = pose.conformation().chain_end(chain_id);
 
@@ -272,7 +272,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::protein_p
 {
 	pose.update_residue_neighbors();
 	core::scoring::TenANeighborGraph const & graph(pose.energies().tenA_neighbor_graph());
-	int chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
+	core::Size chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
 	core::Size ligand_start = pose.conformation().chain_begin(chain_id);
 	core::Size ligand_end = pose.conformation().chain_end(chain_id);
 

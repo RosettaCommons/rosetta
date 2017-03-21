@@ -355,13 +355,6 @@ Pose::atom_tree() const
 	return conformation_->atom_tree();
 }
 
-int
-Pose::chain( Size const seqpos ) const
-{
-	PyAssert( (seqpos<=size()), "Pose::chain( Size const seqpos ): variable seqpos is out of range!" );
-	return residue( seqpos ).chain();
-}
-
 /// @details  Note that we do not clone the input conformation -- we just take it directly. This could be unsafe (?)
 ///  but it's more efficient. Maybe we want to switch to cloning... Of course we already hand out nonconst refs to
 ///  our conformation, which is a little unsafe anyhow.
@@ -408,116 +401,6 @@ Pose::set_new_energies_object( scoring::EnergiesOP energies )
 	energies_ = energies->clone();
 	// Set the owner of the new energies object
 	energies_->set_owner( this );
-}
-
-/// @details splits the current pose into several poses containing only a single chain each.
-utility::vector1<PoseOP>
-Pose::split_by_chain() const
-{
-	utility::vector1<PoseOP> singlechain_poses;
-
-	for ( core::Size i = 1; i <= conformation_->num_chains(); i++ ) {
-		singlechain_poses.push_back( split_by_chain(i) );
-	}
-
-	return singlechain_poses;
-}
-
-/// @details Returns a pose containing only the given chain.
-PoseOP
-Pose::split_by_chain(Size const chain_id) const
-{
-
-	core::pose::PoseOP chain_pose( new Pose(*this) );
-	Size chain_begin, chain_end, delete_begin, delete_end;
-
-	chain_begin = chain_pose->conformation().chain_begin( chain_id );
-	chain_end = chain_pose->conformation().chain_end( chain_id );
-
-	// if there is only one chain in the pose do nothing and return a copy of the pose
-	if ( (conformation_->num_chains() == 1) && (chain_id == 1) ) {}
-	// if this is the first chain, delete chain_end to the end of the pose
-	else if ( chain_begin == 1 ) {
-		delete_begin = chain_end + 1;
-		delete_end = chain_pose->size();
-		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-	} else if ( chain_end == chain_pose->size() ) {
-		// if this is the last chain, delete the start of the pose to chain_begin
-		delete_begin = 1;
-		delete_end = chain_begin - 1;
-		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-	} else {
-		// otherwise, make two deletes around the chain of interest
-		delete_begin = 1;
-		delete_end = chain_begin - 1;
-		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-		// just deleted residues --> renumbering pose, so need to reset deletion mask
-		delete_begin = chain_end - chain_begin + 2;
-		delete_end = chain_pose->size();
-		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-	}
-
-	// disulfides
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	if ( option[ in::detect_disulf ].user() ?
-			option[ in::detect_disulf ]() : // detect_disulf true
-			chain_pose->is_fullatom() ) { // detect_disulf default but fa pose
-		chain_pose->conformation().detect_disulfides();
-	}
-
-	// restore broken pdb_info to new pose ~ Labonte
-	if ( chain_pose->pdb_info() != nullptr ) {
-		chain_pose->pdb_info()->obsolete(false);
-	}
-
-	return chain_pose;
-}
-
-
-// TODO: Move to util.cc.
-/// @details  This method updates the pose chain IDs to match the chain IDs
-/// found in pdb_info().  In some applications, it is more intuitive to change
-/// pdb chain ID letters than it is to change pose chain IDs.  This method
-/// adds chain endings between pdb chains and re-derives the pose chain IDs.
-/// Currently, disconnected segments with the same pdb chain ID character are
-/// treated as separate pose chains, e.g., it is possible for pose chains 1,
-/// 3, and 5 to all be chain X.  In the future, I will add a flag to force a
-/// one-to-one correspondence between the two chain designations, e.g., if
-/// residues 6 through 10 are chain B and residues 1 through 5 AND residues 11
-/// through 15 are chain A, then the pose will be reordered to place all res-
-/// idues with the same pdb chain ID into a single pose chain. (This is how it
-/// works when a pose is loaded from a pdb file.)  I personally have needed
-/// use of both functionalities.  I have chosen to create this as a separate
-/// method, rather than a part of a change_pdb_chain_ID_of_range(), to avoid
-/// multiple calls to Conformation.rederive_chain_ids().  Thus, this method
-/// should be called once after all modifications to pdb_info() have been
-/// made. ~ Labonte
-///
-/// See also:
-///  PDBInfo.chain()
-///  PDBInfo.set_resinfo()
-///  Pose.split_by_chain()
-///  Conformation.rederive_chain_IDs()
-///  Conformation.rederive_chain_endings()
-void
-Pose::update_pose_chains_from_pdb_chains()
-{
-	// Declare a vector for storing new (between-residue) chain endings.
-	utility::vector1<Size> new_endings;
-
-	char last_pdb_chain = pdb_info_->chain(1);
-
-	for ( Size i = 1; i <= conformation_->size(); ++i ) {
-		char current_pdb_chain = pdb_info_->chain(i);
-		if ( current_pdb_chain != last_pdb_chain ) {
-			new_endings.push_back(i - 1);
-			last_pdb_chain = current_pdb_chain;
-		}
-
-		// (chain_endings() includes a call to Conformer.rederive_chain_IDs.)
-		conformation_->chain_endings(new_endings);
-	}
 }
 
 
@@ -1391,6 +1274,132 @@ Pose::set_torsion( TorsionID const & id, Real const setting )
 	conformation_->set_torsion( id, setting );
 }
 
+
+/////////////////////////////////////////////////////////////////////////////
+// chains
+
+core::Size
+Pose::num_chains() const
+{
+	return conformation_->num_chains();
+}
+
+core::Size
+Pose::chain( Size const seqpos ) const
+{
+	PyAssert( (seqpos<=size()), "Pose::chain( Size const seqpos ): variable seqpos is out of range!" );
+	return residue( seqpos ).chain();
+}
+
+/// @details splits the current pose into several poses containing only a single chain each.
+utility::vector1<PoseOP>
+Pose::split_by_chain() const
+{
+	utility::vector1<PoseOP> singlechain_poses;
+
+	for ( core::Size i = 1; i <= conformation_->num_chains(); i++ ) {
+		singlechain_poses.push_back( split_by_chain(i) );
+	}
+
+	return singlechain_poses;
+}
+
+/// @details Returns a pose containing only the given chain.
+PoseOP
+Pose::split_by_chain(Size const chain_id) const
+{
+
+	core::pose::PoseOP chain_pose( new Pose(*this) );
+	Size chain_begin, chain_end, delete_begin, delete_end;
+
+	chain_begin = chain_pose->conformation().chain_begin( chain_id );
+	chain_end = chain_pose->conformation().chain_end( chain_id );
+
+	// if there is only one chain in the pose do nothing and return a copy of the pose
+	if ( (conformation_->num_chains() == 1) && (chain_id == 1) ) {}
+	// if this is the first chain, delete chain_end to the end of the pose
+	else if ( chain_begin == 1 ) {
+		delete_begin = chain_end + 1;
+		delete_end = chain_pose->size();
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+	} else if ( chain_end == chain_pose->size() ) {
+		// if this is the last chain, delete the start of the pose to chain_begin
+		delete_begin = 1;
+		delete_end = chain_begin - 1;
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+	} else {
+		// otherwise, make two deletes around the chain of interest
+		delete_begin = 1;
+		delete_end = chain_begin - 1;
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+		// just deleted residues --> renumbering pose, so need to reset deletion mask
+		delete_begin = chain_end - chain_begin + 2;
+		delete_end = chain_pose->size();
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+	}
+
+	// disulfides
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	if ( option[ in::detect_disulf ].user() ?
+			option[ in::detect_disulf ]() : // detect_disulf true
+			chain_pose->is_fullatom() ) { // detect_disulf default but fa pose
+		chain_pose->conformation().detect_disulfides();
+	}
+
+	// restore broken pdb_info to new pose ~ Labonte
+	if ( chain_pose->pdb_info() != nullptr ) {
+		chain_pose->pdb_info()->obsolete(false);
+	}
+
+	return chain_pose;
+}
+
+
+// TODO: Move to util.cc.
+/// @details  This method updates the pose chain IDs to match the chain IDs
+/// found in pdb_info().  In some applications, it is more intuitive to change
+/// pdb chain ID letters than it is to change pose chain IDs.  This method
+/// adds chain endings between pdb chains and re-derives the pose chain IDs.
+/// Currently, disconnected segments with the same pdb chain ID character are
+/// treated as separate pose chains, e.g., it is possible for pose chains 1,
+/// 3, and 5 to all be chain X.  In the future, I will add a flag to force a
+/// one-to-one correspondence between the two chain designations, e.g., if
+/// residues 6 through 10 are chain B and residues 1 through 5 AND residues 11
+/// through 15 are chain A, then the pose will be reordered to place all res-
+/// idues with the same pdb chain ID into a single pose chain. (This is how it
+/// works when a pose is loaded from a pdb file.)  I personally have needed
+/// use of both functionalities.  I have chosen to create this as a separate
+/// method, rather than a part of a change_pdb_chain_ID_of_range(), to avoid
+/// multiple calls to Conformation.rederive_chain_ids().  Thus, this method
+/// should be called once after all modifications to pdb_info() have been
+/// made. ~ Labonte
+///
+/// See also:
+///  PDBInfo.chain()
+///  PDBInfo.set_resinfo()
+///  Pose.split_by_chain()
+///  Conformation.rederive_chain_IDs()
+///  Conformation.rederive_chain_endings()
+void
+Pose::update_pose_chains_from_pdb_chains()
+{
+	// Declare a vector for storing new (between-residue) chain endings.
+	utility::vector1<Size> new_endings;
+
+	char last_pdb_chain = pdb_info_->chain(1);
+
+	for ( Size i = 1; i <= conformation_->size(); ++i ) {
+		char current_pdb_chain = pdb_info_->chain(i);
+		if ( current_pdb_chain != last_pdb_chain ) {
+			new_endings.push_back(i - 1);
+			last_pdb_chain = current_pdb_chain;
+		}
+
+		// (chain_endings() includes a call to Conformer.rederive_chain_IDs.)
+		conformation_->chain_endings(new_endings);
+	}
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // jumps

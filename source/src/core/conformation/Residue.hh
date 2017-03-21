@@ -77,7 +77,8 @@ to a placed residue or rotamer, currently:
 - a vector1 of Atoms, which holds the positions (and also the atom-types for
 fast access during scoring);
 
-- the sequence position and chain, both integers
+- the sequence position and chain number, both integers
+(See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.)
 
 - the backbone, side-chain, and internal ring (if applicable) torsion angles (of course backbone torsions are
 not unique to a rotamer, and the chi angles are derivable from the coordinates,
@@ -1680,6 +1681,9 @@ public:
 
 
 	/// @brief Returns this residue's chain id
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	core::Size
 	chain() const
 	{
@@ -1687,8 +1691,13 @@ public:
 	}
 
 	/// @brief Sets this residue's chain id
+	///
+	/// Don't call directly -- In almost all situations, this should be set by the owning Conformation
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
 	void
-	chain( int const setting )
+	chain( core::Size const setting )
 	{
 		chain_ = setting;
 	}
@@ -2284,6 +2293,7 @@ private:
 	bool mirrored_relative_to_type_;
 
 	/// @brief the chain id number, starting from 1
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	core::Size chain_;
 
 	/// @brief our chi (side chain) torsion angles

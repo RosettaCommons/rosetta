@@ -348,7 +348,7 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 	for ( Size chain1_begin=1; chain1_begin<= nres; ++chain1_begin ) {
 		if ( partner[ chain1_begin ] ) {
 			// found first dna residue
-			int const chain1( start_pose.chain( chain1_begin ) );
+			core::Size const chain1( start_pose.chain( chain1_begin ) );
 
 			for ( Size j=chain1_begin; ( j<= nres && partner[j] && start_pose.chain(j) == chain1 ); ++j ) {
 				Residue const &         rsd( start_pose.residue(            j ) );
