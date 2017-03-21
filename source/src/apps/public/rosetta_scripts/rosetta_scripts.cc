@@ -275,7 +275,7 @@ main( int argc, char * argv [] )
 		}
 	} catch( utility::excn::EXCN_Base& excn ) {
 		basic::Error()
-			<< "ERROR: Exception caught by rosetta_scripts application:"
+			<< "Exception caught by rosetta_scripts application:"
 			<< excn << std::endl;
 		std::exit( 1 );
 	}

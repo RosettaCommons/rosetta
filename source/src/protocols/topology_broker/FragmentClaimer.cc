@@ -128,7 +128,6 @@ FragmentClaimer::~FragmentClaimer() = default;
 
 void FragmentClaimer::get_sequence_region( std::set< Size >& start_region ) const {
 	//TODO: this should probably use local positions rather than absolute positions, but AIN'T NOBODY GOT TIME FOR REFACTORING
-	//runtime_assert( false );
 
 	start_region.clear();
 	tr.Trace << "FragmentClaimer::get_sequence_region" << std::endl;
@@ -164,7 +163,7 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		<< " to offset of " << fragment_offset <<std::endl;
 
 	core::fragment::FragSetOP shifted_fragments = fragments()->clone_shifted( fragment_offset );
-	assert( ( shifted_fragments->max_pos() - shifted_fragments->min_pos() ) ==
+	debug_assert( ( shifted_fragments->max_pos() - shifted_fragments->min_pos() ) ==
 		( fragments()->max_pos() - fragments()->min_pos() ) );
 	set_fragments( shifted_fragments );
 

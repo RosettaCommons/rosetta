@@ -88,7 +88,7 @@ detect_interface_residues(
 
 		for ( Size n=1; n<= pos_list.size(); ++n ) {
 			conformation::Residue const & rsd1( pose.residue( pos_list[n] ) );
-			assert( rsd1.is_DNA() );
+			debug_assert( rsd1.is_DNA() );
 
 			if ( rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz( rsd2.nbr_atom() ) ) <= contact_threshold ) {
 				interface[ j ] = true;
@@ -149,7 +149,7 @@ detect_allatom_interface_residues(
 
 		for ( Size n=1; n<= pos_list.size(); ++n ) {
 			conformation::Residue const & rsd1( pose.residue( pos_list[n] ) );
-			assert( rsd1.is_DNA() );
+			debug_assert( rsd1.is_DNA() );
 
 			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
 				for ( Size jj=1; jj<= rsd2.natoms(); ++jj ) {
@@ -387,7 +387,7 @@ make_base_pair_mutation(
 		AA const aa( r == 1 ? na : dna_base_partner( na ) );
 
 		Residue const & existing_residue( pose.residue( pos ) );
-		assert( existing_residue.is_DNA() );
+		debug_assert( existing_residue.is_DNA() );
 
 		// search for the matching residue type
 		ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
@@ -415,7 +415,7 @@ randomize_motif_sequence(
 
 	for ( Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
 		AA const random_na( AA( first_DNA_aa + static_cast< int >( numeric::random::uniform() * 4 ) ) );
-		assert( random_na >= first_DNA_aa && random_na <= last_DNA_aa );
+		debug_assert( random_na >= first_DNA_aa && random_na <= last_DNA_aa );
 
 		make_base_pair_mutation( pose, i, random_na );
 	}
@@ -454,7 +454,7 @@ check_residue_proximity_to_dna(
 	contact = false;
 
 	Residue const & res( pose.residue( ppos ) );
-	assert( res.is_protein() );
+	debug_assert( res.is_protein() );
 
 	Real shortest_arg_dis2(10000), dis2;
 

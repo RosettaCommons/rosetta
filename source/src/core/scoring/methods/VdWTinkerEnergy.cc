@@ -59,7 +59,7 @@ namespace methods {
 inline
 VdWTinkerResidueInfo const &
 retrieve_vdw_residue_info( pose::Pose const & pose, Size const seqpos ) {
-	assert( seqpos && seqpos <= ( static_cast< VdWTinkerPoseInfo const & >
+	debug_assert( seqpos && seqpos <= ( static_cast< VdWTinkerPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) )).size() );
 	return ( static_cast< VdWTinkerPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ).residue_info( seqpos ) );
@@ -68,7 +68,7 @@ retrieve_vdw_residue_info( pose::Pose const & pose, Size const seqpos ) {
 inline
 VdWTinkerResidueInfo &
 retrieve_nonconst_vdw_residue_info( pose::Pose & pose, Size const seqpos ) {
-	assert( seqpos && seqpos <= ( static_cast< VdWTinkerPoseInfo const & >
+	debug_assert( seqpos && seqpos <= ( static_cast< VdWTinkerPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) )).size() );
 	return ( static_cast< VdWTinkerPoseInfo & >
 		( pose.data().get( pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ).residue_info( seqpos ) );
@@ -130,7 +130,7 @@ retrieve_nonconst_vdw_pairdata(
 ) {
 	VdWTinkerResPairMinDataOP vdw_pairdata(0);
 	if ( pairdata.get_data( vdw_respair_data ) ) {
-		assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) ));
+		debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) ));
 		vdw_pairdata = utility::pointer::static_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) );
 	} else {
 		vdw_pairdata = VdWTinkerResPairMinDataOP( new VdWTinkerResPairMinData );
@@ -144,7 +144,7 @@ VdWTinkerResPairMinData const &
 retrieve_vdw_pairdata(
 	ResPairMinimizationData const & pairdata
 ) {
-	assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData const > ( pairdata.get_data( vdw_respair_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData const > ( pairdata.get_data( vdw_respair_data ) ) );
 	return ( static_cast< VdWTinkerResPairMinData const & > ( pairdata.get_data_ref( vdw_respair_data ) ) );
 
 }
@@ -156,7 +156,7 @@ retrieve_nonconst_vdw_resdata(
 ) {
 	VdWTinkerResidueInfoOP vdw_resdata( 0 );
 	if ( resdata.get_data( vdw_res_data ) ) {
-		assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) ) );
+		debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) ) );
 		vdw_resdata = utility::pointer::static_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) );
 	} else {
 		vdw_resdata = VdWTinkerResidueInfoOP( new VdWTinkerResidueInfo );
@@ -178,7 +178,7 @@ VdWTinkerResidueInfoCOP
 retrieve_vdw_resdata_ptr(
 	ResSingleMinimizationData const & resdata
 ) {
-	assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo const > ( resdata.get_data( vdw_res_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo const > ( resdata.get_data( vdw_res_data ) ) );
 	return ( utility::pointer::static_pointer_cast< VdWTinkerResidueInfo const > ( resdata.get_data( vdw_res_data ) ) );
 }
 

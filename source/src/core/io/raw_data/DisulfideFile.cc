@@ -148,13 +148,13 @@ Size DisulfideFile::resnum_to_rosetta_num(Pose const& pose, ResNum const& resnum
 	//PDB number
 	PDBInfoCOP info( pose.pdb_info() );
 	if ( info == 0 ) {
-		TR.Error << "[ERROR] PDB Number expected from format, but no PDB Info present."
+		TR.Error << "PDB Number expected from format, but no PDB Info present."
 			<< std::endl;
 		utility_exit();
 	}
 	Size n( info->pdb2pose(resnum.chain, resnum.n) );
 	if ( n == 0 ) {
-		TR.Error << "[ERROR] PDB Number " << resnum.n << resnum.chain
+		TR.Error << "PDB Number " << resnum.n << resnum.chain
 			<< " does not correspond to a valid residue." << std::endl;
 		utility_exit();
 	}
@@ -170,7 +170,7 @@ void DisulfideFile::parse_disulf_file() const {
 	utility::io::izstream disulf_stm;
 	disulf_stm.open( filename_ );
 	if ( disulf_stm.fail() ) {
-		TR.Error << "[ERROR] Unable to open disulfide file " << filename_ << "."<< std::endl;
+		TR.Error << "Unable to open disulfide file " << filename_ << "."<< std::endl;
 		utility_exit();
 	}
 
@@ -185,7 +185,7 @@ void DisulfideFile::parse_disulf_file() const {
 			break;
 		}
 		if ( disulf_stm.fail() || disulf_stm.bad() ) {
-			TR.Error << "[ERROR] Error reading disulfide file " << filename_ << "." << std::endl;
+			TR.Error << "Error reading disulfide file " << filename_ << "." << std::endl;
 			utility_exit();
 		}
 		switch( next_char ) {
@@ -200,7 +200,7 @@ void DisulfideFile::parse_disulf_file() const {
 			Size l,u;
 			disulf_stm >> l >> u >> std::ws;
 			if ( disulf_stm.fail() || disulf_stm.bad() ) {
-				TR.Error << "[ERROR] Error reading disulfide file " << filename_ << "." << std::endl;
+				TR.Error << "Error reading disulfide file " << filename_ << "." << std::endl;
 				utility_exit();
 			}
 

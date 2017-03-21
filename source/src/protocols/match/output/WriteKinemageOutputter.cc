@@ -83,7 +83,7 @@ WriteKinemageOutputter::set_coordinate_cacher( UpstreamHitCacherOP cacher )
 void
 WriteKinemageOutputter::set_n_geomcst( Size n_geomcst )
 {
-	assert( dswriters_.size() == 0 ); // only set once!
+	debug_assert( dswriters_.size() == 0 ); // only set once!
 	dswriters_.resize( n_geomcst );
 }
 

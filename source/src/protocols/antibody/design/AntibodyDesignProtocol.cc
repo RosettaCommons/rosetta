@@ -349,7 +349,7 @@ AntibodyDesignProtocol::reorder_poses(utility::vector1<core::pose::PoseOP>& pose
 			}
 		}
 	}
-	assert(sorted_poses.size() == poses.size());
+	debug_assert(sorted_poses.size() == poses.size());
 	poses = sorted_poses;
 }
 

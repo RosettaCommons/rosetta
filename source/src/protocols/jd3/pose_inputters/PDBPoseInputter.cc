@@ -130,7 +130,7 @@ PDBPoseInputter::pose_from_input_source(
 	utility::tag::TagCOP /*tag*/ // possibly null-pointing tag pointer
 )
 {
-	assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
+	debug_assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
 	core::import_pose::ImportPoseOptions import_opts( options );
 	return core::import_pose::pose_from_file(
 		input_source.string_string_map().find( "filename" )->second,

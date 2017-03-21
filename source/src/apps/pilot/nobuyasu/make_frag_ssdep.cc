@@ -147,8 +147,8 @@ main( int argc, char * argv [] )
 
 
 	if( option[ blueprint ].user() && option[ in::file::s ].user() ){
-		TR << "You need to choose either options of -blueprint or -s " << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "You need to choose either options of -blueprint or -s " << std::endl;
+		utility_exit_with_message("Either -blueprint or -s needed.");
 	}
 
 
@@ -172,8 +172,8 @@ main( int argc, char * argv [] )
 		naa = pose.size();
 		ss = pose.secstruct();
 	}else{
-		TR << "You need to choose either options of -blueprint or -s " << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "You need to choose either options of -blueprint or -s " << std::endl;
+		utility_exit_with_message("Either -blueprint or -s needed.");
 	}
 
 	// define the region to pick frag

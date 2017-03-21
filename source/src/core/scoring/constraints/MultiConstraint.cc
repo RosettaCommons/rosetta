@@ -113,7 +113,7 @@ MultiConstraint::read_def(
 			tr.Debug << std::endl;
 		}
 	} else {
-		tr.Error << "ERROR: " << type() << " read_def: no constraints defined! " << ct << " " << size() << std::endl;
+		tr.Error << type() << " read_def: no constraints defined! " << ct << " " << size() << std::endl;
 	}
 }
 

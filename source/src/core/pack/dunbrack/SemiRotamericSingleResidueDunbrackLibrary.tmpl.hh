@@ -1334,7 +1334,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( rotamers::Single
 	}
 
 	// 3a. bbdep_non_rotameric_chi_scores_
-	assert( bbdep_nrchi_nbins_ == other.bbdep_nrchi_nbins_ ); // Assumed the same?
+	debug_assert( bbdep_nrchi_nbins_ == other.bbdep_nrchi_nbins_ ); // Assumed the same?
 	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
 		for ( Size jj = 1; jj <= bbdep_nrchi_nbins_; ++jj ) {
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );

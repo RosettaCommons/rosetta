@@ -477,7 +477,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	// grab residue types from aa string
 	ResidueTypeCOPs r_types = core::pose::residue_types_from_sequence( aa_, residue_type_set(), false );
-	assert( ss_.length() == r_types.size() );
+	debug_assert( ss_.length() == r_types.size() );
 
 	// BEGIN INTERVAL SHIFT: after this point, interval_ will begin to shift due to length
 	// changes in the Pose
@@ -505,7 +505,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// the deletion might get funky.  Any strange geometry should get resolved
 		// upon append/prepend of residues w/ ideal geometry below
 		pose.conformation().delete_residue_range_slow( interval_.left, interval_.right );
-		assert( interval_.left == interval_.right );
+		debug_assert( interval_.left == interval_.right );
 
 	}
 
@@ -527,10 +527,10 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 #else
 		grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
 #endif
-		assert( right_endpoint == interval_.right - 1 );
+		debug_assert( right_endpoint == interval_.right - 1 );
 
 		// set to proper interval
-		assert( ss_.length() == interval_.right - 1);
+		debug_assert( ss_.length() == interval_.right - 1);
 		interval_.left = 1;
 		interval_.right = ss_.length(); // or --interval_.right
 
@@ -552,12 +552,12 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// only grow left; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
 		Size const left_endpoint = grow_left_rtype( pose, interval_.right, r_types.rbegin(), r_types.rend() );
-		assert( left_endpoint == interval_.right - r_types.size() );
+		debug_assert( left_endpoint == interval_.right - r_types.size() );
 
 		// correct endpoints of interval to match the actual rebuilt segment
 		interval_.left = left_endpoint;
 		--interval_.right;
-		assert( interval_.right - interval_.left + 1 == r_types.size() );
+		debug_assert( interval_.right - interval_.left + 1 == r_types.size() );
 
 		// re-add terminus
 		if ( !pose.residue( interval_.left ).is_lower_terminus() ) {
@@ -582,12 +582,12 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// only grow right; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
 		Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
-		assert( right_endpoint == interval_.left + r_types.size() );
+		debug_assert( right_endpoint == interval_.left + r_types.size() );
 
 		// correct endpoints of interval to match the actual rebuilt segment
 		++interval_.left;
 		interval_.right = right_endpoint;
-		assert( interval_.right - interval_.left + 1 == r_types.size() );
+		debug_assert( interval_.right - interval_.left + 1 == r_types.size() );
 
 		// re-add terminus
 		if ( !pose.residue( interval_.right ).is_upper_terminus() ) {
@@ -624,7 +624,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// left where it is, so it can travel as the append/prepend operations
 		// occur.
 		--interval_.left;
-		assert( interval_.left + 1 == interval_.right );
+		debug_assert( interval_.left + 1 == interval_.right );
 
 		// Do any necessary chain corrections before growing residues; need to
 		// merge chains if different.  Here we check the position currently at
@@ -731,7 +731,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// correct endpoints of interval to match the actual rebuilt segment
 		++interval_.left;
 		--interval_.right;
-		assert( interval_.right - interval_.left + 1 == r_types.size() );
+		debug_assert( interval_.right - interval_.left + 1 == r_types.size() );
 	}
 
 	// END INTERVAL SHIFT: after this point, interval_ has stabilized and stores

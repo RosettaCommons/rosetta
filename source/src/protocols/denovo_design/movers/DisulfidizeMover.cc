@@ -743,13 +743,13 @@ DisulfidizeMover::build_and_score_disulfide(
 	core::Size const res1,
 	core::Size const res2 ) const
 {
-	assert( sfxn_disulfonly );
-	assert( sfxn_full );
-	assert( res1 );
-	assert( res2 );
-	assert( res1 <= blank_pose.size() );
-	assert( res2 <= blank_pose.size() );
-	assert( res1 != res2 );
+	debug_assert( sfxn_disulfonly );
+	debug_assert( sfxn_full );
+	debug_assert( res1 );
+	debug_assert( res2 );
+	debug_assert( res1 <= blank_pose.size() );
+	debug_assert( res2 <= blank_pose.size() );
+	debug_assert( res1 != res2 );
 
 	if ( TR.visible() ) TR << "building and scoring " << res1 << " to " << res2 << std::endl;
 	// save existing residues

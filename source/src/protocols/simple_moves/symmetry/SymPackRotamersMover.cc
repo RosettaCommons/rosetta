@@ -116,7 +116,7 @@ SymPackRotamersMover::apply( pose::Pose & pose )
 pose.update_residue_neighbors();
 // guarantee of valid ScoreFunction and PackerTask postponed until now
 
-// else assert( task_is_valid( pose ) );
+// else debug_assert( task_is_valid( pose ) );
 
 // get rotamers, energies
 this->setup( pose );
@@ -170,7 +170,7 @@ SymPackRotamersMover::make_symmetric_task(
 	task::PackerTaskOP task
 )
 {
-	assert( pose::symmetry::is_symmetric( pose ) );
+	debug_assert( pose::symmetry::is_symmetric( pose ) );
 	if ( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) {
 		return make_new_symmetric_PackerTask_by_requested_method(pose,task);
 	} // new machinery

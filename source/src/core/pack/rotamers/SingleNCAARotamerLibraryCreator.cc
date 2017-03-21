@@ -51,9 +51,9 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 
 	RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
 	// If the factory system is sound, these two checks should work.
-	assert( libspec );
+	debug_assert( libspec );
 	NCAARotamerLibrarySpecificationCOP ncaa_libspec = utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >(libspec);
-	assert( ncaa_libspec );
+	debug_assert( ncaa_libspec );
 
 	chemical::AA aan( chemical::aa_unk );
 	// dun02 if rotameric, dun10 densities if semirotameric
@@ -67,7 +67,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 		utility_exit_with_message("Number of chi mismatch in NCAA rotlib loading.");
 	}
 	if ( restype.aa() != aan ) {
-		TR.Warning << "WARNING: AA designation " << restype.aa() << " for NCAA rotamer library will not be obseved." << std::endl;
+		TR.Warning << "AA designation " << restype.aa() << " for NCAA rotamer library will not be obseved." << std::endl;
 	}
 
 	// AMW: Long term, the rotamer library should specify how many torsions

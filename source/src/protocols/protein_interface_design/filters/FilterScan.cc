@@ -301,7 +301,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	}
 	//TR << "FilterScan will evaluate substitutions at " << being_designed.size() << " positions." << std::endl;
 	if ( being_designed.empty() ) {
-		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
+		TR.Warning << "No residues are listed as designable." << std::endl;
 		return true;
 	}
 	std::map< core::Size, std::set< AA > > residue_id_map;

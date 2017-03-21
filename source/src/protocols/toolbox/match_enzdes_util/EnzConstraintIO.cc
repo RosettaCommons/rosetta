@@ -550,7 +550,7 @@ EnzConstraintIO::add_pregenerated_constraints_to_pose(
 
 			if ( cst_find != all_pose_constraints.end() ) {
 				if ( ! cst_pairs_[i]->is_covalent() ) {
-					tr << "WARNING: tried to add an enzdes constraint that's already in the pose. Something's a bit unclean somewhere." << std::endl;
+					tr.Warning << "tried to add an enzdes constraint that's already in the pose. Something's a bit unclean somewhere." << std::endl;
 				} else covalent_kept = true;
 			} else {
 				//std::cerr << "There are a total of " << cur_active_constraints.size() << " constraints in this parameter.\n" << std::endl;
@@ -745,7 +745,7 @@ tr.Info << "favor_native_res: adding a bonus of " << bonus << " for native resid
 
 //safety check first
 if( favor_native_constraints_.size() != 0 ){
-tr.Info << "Warning: when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
+tr.Warning << "when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
 remove_favor_native_constraints( pose );
 
 }
@@ -805,7 +805,7 @@ core::pose::Pose & pose
 )
 {
 if( !( pose.remove_constraints( favor_native_constraints_ ) ) ){
-tr.Info << "Warning: some of the favor native constraints that were previously added to the pose are not there anymore, something's a little unclean somewhere." << std::endl;
+tr.Warning << "some of the favor native constraints that were previously added to the pose are not there anymore, something's a little unclean somewhere." << std::endl;
 }
 favor_native_constraints_.clear();
 }

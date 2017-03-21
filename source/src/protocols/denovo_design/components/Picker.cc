@@ -133,12 +133,12 @@ Picker::get_framelist(
 	core::Size const end_res,
 	core::Size const frag_length )
 {
-	assert( start_res >= 1 );
-	assert( end_res >= 1 );
-	assert( start_res <= complete_ss.size() );
-	assert( end_res <= complete_ss.size() );
-	assert( (!complete_abego.size()) || ( start_res <= complete_abego.size() ) );
-	assert( (!complete_abego.size()) || ( end_res <= complete_abego.size() ) );
+	debug_assert( start_res >= 1 );
+	debug_assert( end_res >= 1 );
+	debug_assert( start_res <= complete_ss.size() );
+	debug_assert( end_res <= complete_ss.size() );
+	debug_assert( (!complete_abego.size()) || ( start_res <= complete_abego.size() ) );
+	debug_assert( (!complete_abego.size()) || ( end_res <= complete_abego.size() ) );
 
 	core::Size const closest_chain_ending = get_closest_chain_ending( chain_endings, complete_ss.size(), end_res );
 
@@ -279,8 +279,8 @@ Picker::fragments_for_permutation_take_X_from_pose(
 
 	for ( SegmentNames::const_iterator c=comp_ids.begin(); c!=comp_ids.end(); ++c ) {
 		Segment residues = perm.segment( *c );
-		assert( residues.stop() >= residues.start() );
-		assert( residues.start() >= 1 );
+		debug_assert( residues.stop() >= residues.start() );
+		debug_assert( residues.start() >= 1 );
 		utility::vector1< std::string > poseabego = core::sequence::ABEGOManager().get_symbols( pose, 1 );
 		utility::vector1< std::string > newabego = abego_vector( perm.abego() );
 		for ( core::Size i=1; i<=newabego.size(); ++i ) {

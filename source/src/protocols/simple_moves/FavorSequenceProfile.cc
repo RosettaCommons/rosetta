@@ -201,7 +201,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		throw utility::excn::EXCN_RosettaScriptsOption("Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
-		TR.Warning << "WARNING In option matrix not used with pssm specification." << std::endl;
+		TR.Warning << "In option matrix not used with pssm specification." << std::endl;
 	}
 	if ( tag->hasOption("chain") ) {
 		chain_ = tag->getOption<core::Size>("chain", 0 );

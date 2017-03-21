@@ -180,7 +180,7 @@ AtomTreeMinimizer::check_setup(pose::Pose const &,
 	}
 
 	if ( nonideal && options.min_type() != "lbfgs_armijo_nonmonotone" ) {
-		TR.Warning << "WARNING: Use of the 'lbfgs_armijo_nonmonotone' minimizer with nonideal minimization is recommended " <<
+		TR.Warning << "Use of the 'lbfgs_armijo_nonmonotone' minimizer with nonideal minimization is recommended " <<
 			"for better runtime performance. (Using '" << options.min_type() << "' minimizer instead.)" << std::endl;
 	}
 }

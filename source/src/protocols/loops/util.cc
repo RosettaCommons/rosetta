@@ -354,7 +354,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	//TR.Info << coordconstraint_segments << std::endl;
 
 	if ( nnonvrt_pose != nnonvrt_cst_target ) {
-		TR.Error << "ERROR coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
+		TR.Error << "coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
 		utility_exit();
 	}
 

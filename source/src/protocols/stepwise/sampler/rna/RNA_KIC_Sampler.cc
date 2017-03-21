@@ -207,7 +207,7 @@ void RNA_KIC_Sampler::apply() {
 void RNA_KIC_Sampler::apply( pose::Pose & pose ) {
 	runtime_assert( is_init() );
 	if ( random() && !random_chain_closed_ ) {
-		TR.Debug << "Warning: Chain was not closable! Not doing anything to pose." << std::endl;
+		TR.Warning << "Chain was not closable! Not doing anything to pose." << std::endl;
 		return;
 	}
 	if ( base_state_ != NO_CHI ) chi_rotamer_->apply( pose );

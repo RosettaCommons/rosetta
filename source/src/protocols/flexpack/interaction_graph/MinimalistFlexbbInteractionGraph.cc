@@ -88,7 +88,7 @@ MinimalistFlexbbNode::project_deltaE_for_substitution(
 	PackerEnergy & prev_energy_for_node
 )
 {
-	assert( get_bb_for_state( current_state() ) == 0 || get_bb_for_state( alternate_state ) == get_bb_for_state( current_state() ));
+	debug_assert( get_bb_for_state( current_state() ) == 0 || get_bb_for_state( alternate_state ) == get_bb_for_state( current_state() ));
 	set_considering_alternate_state();
 	set_alternate_state( alternate_state );
 	set_alternate_state_one_body_energy( one_body_energies()[ alternate_state ]);
@@ -322,7 +322,7 @@ MinimalistFlexbbNode::get_frag_energy_for_curr_bb_state_and_finalize_alt_energy_
 void
 MinimalistFlexbbNode::commit_considered_substitution()
 {
-	assert( alternate_state_is_being_considered() );
+	debug_assert( alternate_state_is_being_considered() );
 
 	copy_alternate_to_current();
 	have_edges_copy_alternate_to_current();
@@ -344,7 +344,7 @@ MinimalistFlexbbNode::acknowledge_neighbors_substitution(
 	//for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 	// true_curr_state_total_energy += curr_state_two_body_energies()[ ii ];
 	//}
-	//assert( std::abs( (true_curr_state_total_energy - curr_state_total_energy())/std::max( PackerEnergy(1.0), std::abs(curr_state_total_energy())) ) < 1e-5 );
+	//debug_assert( std::abs( (true_curr_state_total_energy - curr_state_total_energy())/std::max( PackerEnergy(1.0), std::abs(curr_state_total_energy())) ) < 1e-5 );
 }
 
 
@@ -518,7 +518,7 @@ void MinimalistFlexbbEdge::set_edge_weight( Real weight )
 {
 	/// This should also go and reweight energies already stored on the edges...
 	/// assert that SA hasn't yet begun for now.
-	assert( nodes_cur_state( 0 ) == 0 && nodes_cur_state( 1 ) == 0 );
+	debug_assert( nodes_cur_state( 0 ) == 0 && nodes_cur_state( 1 ) == 0 );
 	/// EdgeBase class protected setter.
 	edge_weight( weight );
 }
@@ -914,7 +914,7 @@ MinimalistFlexbbInteractionGraph::commit_considered_backbone_move(
 	ObjexxFCL::FArray1_int & rotamer_on_node
 )
 {
-	assert( last_considered_backbone_sub_valid() );
+	debug_assert( last_considered_backbone_sub_valid() );
 	//get_minimalistflexbb_node( node_considering_alt_state() )->commit_alt_bb_substitution( rotamer_on_node );
 
 
@@ -969,11 +969,11 @@ MinimalistFlexbbInteractionGraph::create_new_edge( int index1, int index2)
 void
 MinimalistFlexbbInteractionGraph::resolve_uncommitted_substitution()
 {
-	assert( last_considered_substitution_unresolved() );
+	debug_assert( last_considered_substitution_unresolved() );
 	if ( last_considered_substitution_kept_backbone_fixed() ) {
 		get_minimalistflexbb_node( node_considering_alt_state() )->resolve_uncommitted_substitution();
 	} else {
-		assert( last_considered_substitution_moved_the_backbone() );
+		debug_assert( last_considered_substitution_moved_the_backbone() );
 		int moving_flexseg = flexseg_considering_alt_bb();
 		for ( Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
 			int iinode = flexseg_members( moving_flexseg )[ ii ];

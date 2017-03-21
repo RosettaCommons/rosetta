@@ -92,7 +92,7 @@ void qsarMover::apply(core::pose::Pose & pose)
 	core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(begin)) );
 
 	if ( grids_to_use_.size()==0 ) {
-		TR << "WARNING: no grids specified, QSAR scoring function will be empty!!" <<std::endl;
+		TR.Warning << "no grids specified, QSAR scoring function will be empty!!" <<std::endl;
 		return;
 	} else if ( !initialize_ ) {
 		auto grid_iterator(grids_to_use_.begin());

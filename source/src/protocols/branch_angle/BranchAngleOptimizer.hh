@@ -276,7 +276,7 @@ private:
 
 	// don't allow assignment
 	BranchAngleOptimizer const &
-	operator=(BranchAngleOptimizer const & src);
+	operator=(BranchAngleOptimizer const & src) = delete;
 
 	core::scoring::mm::MMBondAngleLibrary const & mm_bondangle_library_;
 	core::scoring::mm::MMBondAngleResidueTypeParamSetOP bond_angle_residue_type_param_set_;

@@ -108,8 +108,8 @@ PointMutationCalculator::PointMutationCalculator(
 
 	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
 		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
-			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
+			utility_exit_with_message("Undefined sample type used in PointMutationCalculator.");
 		}
 	}
 }
@@ -146,8 +146,8 @@ PointMutationCalculator::PointMutationCalculator(
 
 	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
 		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
-			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
+			utility_exit_with_message("Undefined sample type used in PointMutationCalculator.");
 		}
 	}
 }
@@ -380,7 +380,7 @@ PointMutationCalculator::mutate_and_relax(
 	mut_res->push_back( incl_curr_op );
 	TR << "Mutation " << pose.residue( resi ).name1() << "_" << resi;
 	//only use green packer if not symmetric!
-	assert( !core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( !core::pose::symmetry::is_symmetric( pose ) );
 	green_packer->set_task_factory( mut_res );
 	green_packer->apply( pose );
 	TR << "_" << pose.residue( resi ).name1();
@@ -471,12 +471,12 @@ PointMutationCalculator::calc_point_mut_filters(
 			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ) {
 		Size seqpos( seqpos_aa_vals->first );
 		//seqpos_aa_vals->second is a seqpos' vector of aa/vals pairs
-		assert( !seqpos_aa_vals->second.empty() );
+		debug_assert( !seqpos_aa_vals->second.empty() );
 		vector1< pair< AA, Real > > aa_val;
 		for ( auto aa_vals = seqpos_aa_vals->second.begin();
 				aa_vals != seqpos_aa_vals->second.end(); ++aa_vals ) {
 			//aa_vals->second is an aa's vector of vals
-			assert( !aa_vals->second.empty() );
+			debug_assert( !aa_vals->second.empty() );
 			aa_val.push_back( pair< AA, Real >( aa_vals->first, aa_vals->second[ 1 ] ) );
 		}
 		seqpos_aa_val_vec.push_back( pair< Size, vector1< pair< AA, Real > > >( seqpos, aa_val ) );
@@ -522,7 +522,7 @@ PointMutationCalculator::calc_point_mut_filters(
 		}
 	}
 	if ( being_designed.empty() ) {
-		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
+		TR.Warning << "No residues are listed as designable." << std::endl;
 	}
 
 	//GreenPacker stuff, precompute non-designable residues' interaxn graph
@@ -653,7 +653,7 @@ PointMutationCalculator::calc_point_mut_filters(
 
 		//don't store this aa/val if any filter failed
 		if ( !filter_pass ) continue;
-		assert( !vals.empty() );
+		debug_assert( !vals.empty() );
 		//dump pdb? (only if filter passes)
 		if ( dump_pdb() ) {
 			std::stringstream fname;

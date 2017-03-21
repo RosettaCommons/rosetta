@@ -45,8 +45,8 @@ SSManager::index2symbol( Size const & idx )
 	case 3 :
 		return 'E';
 	default :
-		TR << " [ERROR] Unrecognized ss index: " << idx << std::endl;
-		runtime_assert( false );
+		TR.Error << "Unrecognized ss index: " << idx << std::endl;
+		utility_exit_with_message("Unrecognized ss index");
 		return 0;
 	}
 }
@@ -67,8 +67,8 @@ SSManager::symbol2index( char const & symbol )
 	case 'e' :
 		return 3;
 	default :
-		TR << " [ERROR] Unrecognized ss index: " << symbol << std::endl;
-		runtime_assert( false );
+		TR.Error << "Unrecognized ss index: " << symbol << std::endl;
+		utility_exit_with_message("Unrecognized ss index");
 		return 0;
 	}
 }

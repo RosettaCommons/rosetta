@@ -157,8 +157,8 @@ DNA_DihedralPotential::eval_sugar_torsion_score_and_deriv(
 ) const
 {
 	static Real const sdev(basic::options::option[basic::options::OptionKeys::dna::specificity::dna_sugar_torsion_sdev]);
-	assert( pucker<= 9 );
-	assert( tor >=1 && tor<= 4 );
+	debug_assert( pucker<= 9 );
+	debug_assert( tor >=1 && tor<= 4 );
 
 	Size const iname( get_iname1_from_name1( rsd.name1() ) );
 
@@ -181,8 +181,8 @@ DNA_DihedralPotential::get_sugar_torsion_mean_and_sdev(
 {
 	static Real const sdev_(basic::options::option[basic::options::OptionKeys::dna::specificity::dna_sugar_torsion_sdev]);
 
-	assert( pucker<= 9 );
-	assert( tor >=1 && tor<= 4 );
+	debug_assert( pucker<= 9 );
+	debug_assert( tor >=1 && tor<= 4 );
 
 	Size const iname( get_iname1_from_name1( rsd.name1() ) );
 
@@ -211,7 +211,7 @@ DNA_DihedralPotential::eval_harmonic_backbone_torsion_score_and_deriv(
 	runtime_assert( sdev_backbone_torsion.size() == 6 ); // in case from cmdline
 
 	Size const seqpos( rsd.seqpos() );
-	assert( tor <= 6 );
+	debug_assert( tor <= 6 );
 	Real const angle( rsd.mainchain_torsion( tor ) );
 
 	Real mean;
@@ -229,7 +229,7 @@ DNA_DihedralPotential::eval_harmonic_backbone_torsion_score_and_deriv(
 			mean = mean_backbone_torsion_[ tor ][ get_b1b2_bin( epsilon, zeta ) ];
 		}
 	} else {
-		assert( tor == 5 || tor == 6 );
+		debug_assert( tor == 5 || tor == 6 );
 		Real const epsilon( rsd.mainchain_torsion( 5 ) ), zeta( rsd.mainchain_torsion( 6 ) );
 		mean = mean_backbone_torsion_[ tor ][ get_b1b2_bin( epsilon, zeta ) ];
 	}
@@ -288,7 +288,7 @@ filter_torsions_by_iname(
 	vector1< Real > & torsions
 )
 {
-	assert( torsions.size() == torsion_inames.size() );
+	debug_assert( torsions.size() == torsion_inames.size() );
 
 	for ( Size i= torsions.size(); i>= 1; --i ) {
 		if ( torsion_inames[i] != iname ) torsions.erase( torsions.begin() + i-1 );

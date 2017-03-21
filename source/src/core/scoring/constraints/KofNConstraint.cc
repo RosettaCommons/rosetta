@@ -111,7 +111,7 @@ KofNConstraint::KofNConstraint(
 {
 	K_ = K;
 	init_cst_score_types();
-	assert( member_constraints().size() > 0 );
+	debug_assert( member_constraints().size() > 0 );
 }
 
 ///

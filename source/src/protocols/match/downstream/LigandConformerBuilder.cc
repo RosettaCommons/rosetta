@@ -285,7 +285,7 @@ LigandConformerBuilder::require_atom_to_reside_in_active_site(
 ProbeRadius
 LigandConformerBuilder::atom1_radius() const
 {
-	assert( downstream_restype_ );
+	debug_assert( downstream_restype_ );
 	//return ZERO;
 	return radii_123_[ 1 ];
 }
@@ -294,7 +294,7 @@ LigandConformerBuilder::atom1_radius() const
 ProbeRadius
 LigandConformerBuilder::atom2_radius() const
 {
-	assert( downstream_restype_ );
+	debug_assert( downstream_restype_ );
 	return radii_123_[ 2 ];
 }
 
@@ -302,7 +302,7 @@ LigandConformerBuilder::atom2_radius() const
 ProbeRadius
 LigandConformerBuilder::atom3_radius() const
 {
-	assert( downstream_restype_ );
+	debug_assert( downstream_restype_ );
 	return radii_123_[ 3 ];
 }
 
@@ -328,7 +328,7 @@ LigandConformerBuilder::atom3_belongs_in_active_site() const
 LigandConformerBuilder::Real
 LigandConformerBuilder::atom1_atom2_distance() const
 {
-	assert( downstream_restype_ );
+	debug_assert( downstream_restype_ );
 	return lig_conformers_[ 1 ]->atom1_atom2_distance();
 }
 
@@ -336,7 +336,7 @@ LigandConformerBuilder::atom1_atom2_distance() const
 LigandConformerBuilder::Real
 LigandConformerBuilder::atom2_atom3_distance() const
 {
-	assert( downstream_restype_ );
+	debug_assert( downstream_restype_ );
 	return lig_conformers_[ 1 ]->atom2_atom3_distance();
 }
 
@@ -345,7 +345,7 @@ LigandConformerBuilder::atom2_atom3_distance() const
 LigandConformerBuilder::Real
 LigandConformerBuilder::atom1_atom2_atom3_angle() const
 {
-	assert( downstream_restype_ );
+	debug_assert( downstream_restype_ );
 	return lig_conformers_[ 1 ]->atom1_atom2_atom3_angle();
 }
 
@@ -447,8 +447,8 @@ LigandConformerBuilder::initialize_upstream_residue(
 	core::scoring::etable::count_pair::CountPairFunctionCOP count_pair
 )
 {
-	assert( downstream_restype_ );
-	assert( upstream_res );
+	debug_assert( downstream_restype_ );
+	debug_assert( upstream_res );
 
 	upstream_restype_ = upstream_res;
 
@@ -549,10 +549,10 @@ LigandConformerBuilder::build_conformer_group(
 	core::conformation::Residue const & upstream_residue
 ) const
 {
-	assert( downstream_restype_ );
-	assert( upstream_restype_ );
-	assert( bbgrid_set() );
-	assert( (& upstream_residue.type()) == upstream_restype_.get() );
+	debug_assert( downstream_restype_ );
+	debug_assert( upstream_restype_ );
+	debug_assert( bbgrid_set() );
+	debug_assert( (& upstream_residue.type()) == upstream_restype_.get() );
 
 	std::list< Hit > hitlist;
 
@@ -727,7 +727,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 					rms += rot_vector[ ii ]->xyz(jj).distance_squared( ligpose.residue(1).xyz(jj) );
 				}
 				Real rms_this_rot( std::sqrt( rms ) / residue.nheavyatoms() );
-				if ( rms_this_rot >= 0.1 )  TR << "WARNING: Ligand rotamer " << ii << " has idealized RMS of " << rms_this_rot <<". Usually this number is < 0.1. Check whether ligand rotamers have the same bond lengths/bond angles as specified in the ligand .params file."  << std::endl;
+				if ( rms_this_rot >= 0.1 )  TR.Warning << "Ligand rotamer " << ii << " has idealized RMS of " << rms_this_rot <<". Usually this number is < 0.1. Check whether ligand rotamers have the same bond lengths/bond angles as specified in the ligand .params file."  << std::endl;
 
 				lig_conformers_[ ii ]->initialize_from_residue(
 					atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],

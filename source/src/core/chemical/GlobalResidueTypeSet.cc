@@ -850,7 +850,7 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 			new_rsd_type = make_centroid( *new_rsd_type ); // Convert to centroid
 			break;
 		default :
-			TR.Warning << "WARNING: attempting to load fullatom PDB component for non-fullatom ResidueType." << std::endl;
+			TR.Warning << "attempting to load fullatom PDB component for non-fullatom ResidueType." << std::endl;
 			break; //do nothing
 		}
 		return new_rsd_type;

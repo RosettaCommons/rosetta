@@ -695,7 +695,7 @@ core::id::SequenceMapping map_seq1_seq2(
 
 		SequenceAlignment intermediate = sw_align.align( copy1, copy2, ss );
 		if ( intermediate.identities() != intermediate.length() ) {
-			tr.Warning << "Error: potential mismatch between sequence from alignment ";
+			tr.Warning << "potential mismatch between sequence from alignment ";
 			tr.Warning << "and sequence from PDB!" << std::endl;
 			tr.Warning << "alignment: " << std::endl << intermediate
 				<< std::endl;

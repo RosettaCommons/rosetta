@@ -158,7 +158,7 @@ SecondaryStructureFilter::parse_my_tag(
 	treat_L_as_D_ = tag->getOption<bool>( "treat_L_as_D", treat_L_as_D_ );
 
 	if ( filtered_ss_ == "" ) {
-		tr.Warning << "Warning!,  option of topology is empty. SecondaryStructureFilter will attempt to determine it from StructureData information in the pose at runtime" << std::endl;
+		tr.Warning << "option of topology is empty. SecondaryStructureFilter will attempt to determine it from StructureData information in the pose at runtime" << std::endl;
 	} else {
 		tr << filtered_ss_ << " is filtered." << std::endl;
 	}

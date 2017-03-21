@@ -168,7 +168,7 @@ Atom::is_fake() const {
 	if ( element_ ) {
 		return element_->is_fake();
 	} else {
-		TR.Warning << "Warning: Attempted to determine real/fake status of atom without an element: " << name() << std::endl;
+		TR.Warning << "Attempted to determine real/fake status of atom without an element: " << name() << std::endl;
 		return true; // Can't be real if it doesn't have an element.
 	}
 }

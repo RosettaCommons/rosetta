@@ -1432,7 +1432,7 @@ StructureData::add_covalent_bond(
 	if ( localres1 && localres2 ) {
 		add_covalent_bond( seg1, localres1, atom1, seg2, localres2, atom2 );
 	} else {
-		TR << "Warning: connection between residues " << res1 << " and " << res2 << " may be lost since one/both of the residues are present as \"padding\" residues." << std::endl;
+		TR.Warning << "connection between residues " << res1 << " and " << res2 << " may be lost since one/both of the residues are present as \"padding\" residues." << std::endl;
 	}
 }
 

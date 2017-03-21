@@ -495,7 +495,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 				utility::vector1< core::chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 					rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
 				for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-					assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+					debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 					Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 
 					Real const angle = numeric::angle_radians(
@@ -539,7 +539,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 				utility::vector1< core::chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 					rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 				for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-					assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+					debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 					Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
 
 					// lookup Ktheta and theta0

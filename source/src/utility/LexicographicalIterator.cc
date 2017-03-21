@@ -33,7 +33,7 @@ LexicographicalIterator::LexicographicalIterator(
 	dim_sizes_( dim_sizes ),
 	curr_pos_( dim_sizes.size(), 1)
 {
-	assert( dim_sizes.size() != 0 );
+	debug_assert( dim_sizes.size() != 0 );
 	for ( Size ii = 1; ii <= dim_sizes.size(); ++ii ) {
 		assert ( dim_sizes[ ii ] > 0 );
 	}

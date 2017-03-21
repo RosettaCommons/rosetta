@@ -216,7 +216,7 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	}
 
 	if ( movable_jumps_.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 }
@@ -430,7 +430,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	}
 
 	if ( movable_jumps_.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	dir_ = dir_in;
@@ -1446,14 +1446,14 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	}
 
 	if ( trans_jumps.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	rb_jump_ = numeric::random::rg().random_element( trans_jumps );
 	auto jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
 	} else {
 		dof_ = (*jump_iterator).second ;
 		// This is fishy. We should not have different directions for the same jump
@@ -1549,7 +1549,7 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
 	}
 
 	if ( trans_jumps.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	dofs_ = dofs;
@@ -1582,7 +1582,7 @@ void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
 	for ( it = start; it != end; ++it ) {
 		jump_iterator = dofs_.find( *it );
 		if ( jump_iterator == dofs_.end() ) {
-			T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+			T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
 		} else {
 			core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 			RigidBodyDofTransMover dofmover( dof, *it, step_size_ );
@@ -1635,7 +1635,7 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	}
 
 	if ( trans_jumps.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	dofs_ = dofs;
@@ -1670,7 +1670,7 @@ void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
 	else jump_ = rb_jumps_[1];
 	jump_iterator = dofs_.find( jump_ );
 	if ( jump_iterator == dofs_.end() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
 	} else {
 		core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 		RigidBodyDofTransMover dofmover( dof, (*jump_iterator).first, step_size_ );
@@ -1737,14 +1737,14 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	}
 
 	if ( moving_jumps.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	rb_jump_ = numeric::random::rg().random_element( moving_jumps );
 	auto jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
 	} else {
 		core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 		dof_ = dof;
@@ -1829,7 +1829,7 @@ RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	}
 
 	if ( moving_jumps.empty() ) {
-		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	rb_jumps_ = moving_jumps;
@@ -1863,7 +1863,7 @@ void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 	for ( it = start; it != end; ++it ) {
 		jump_iterator = dofs_.find( *it );
 		if ( jump_iterator == dofs_.end() ) {
-			T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+			T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
 		} else {
 			core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 			RigidBodyDofPerturbMover dofmover( *it, dof, rot_mag_, trans_mag_ );

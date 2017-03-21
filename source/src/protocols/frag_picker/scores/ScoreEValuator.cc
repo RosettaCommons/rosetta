@@ -71,8 +71,8 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 	utility::vector1<core::Size> columnsQ;
 	utility::vector1<core::Size> columnsV;
 	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
-		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
-		assert(f->get_first_index_in_vall()
+		debug_assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
+		debug_assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
 		totalScore
 			+= scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()

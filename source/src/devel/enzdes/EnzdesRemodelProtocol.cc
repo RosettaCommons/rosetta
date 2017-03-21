@@ -172,7 +172,7 @@ EnzdesRemodelProtocol::apply(
 		remodel_mover.apply( pose );
 
 		if ( remodel_mover.get_last_move_status() != protocols::moves::MS_SUCCESS ) {
-			tr << "WARNING: remodeling of region " << regcount << " failed." << std::endl;
+			tr.Warning << "remodeling of region " << regcount << " failed." << std::endl;
 		}
 		seq_mapping = remodel_mover.get_seq_mapping();
 	}
@@ -434,12 +434,6 @@ EnzdesRemodelMover::parse_my_tag(
 	Pose const & //pose
 )
 {
-	if ( tag->getName() != "EnzdesRemodelMover" ) {
-		tr << "EnzdesRemodelMover received incompatible Tag " << tag << std::endl;
-		runtime_assert(false);
-		return;
-	}
-
 	if ( tag->hasOption("remodel_secmatch") ) {
 		remodel_secmatch_ = tag->getOption<bool>( "remodel_secmatch", 1 );
 	}

@@ -76,7 +76,7 @@ ResInteractions::read_data( utility::io::izstream & data )
 	while ( !block_end ) {
 
 		if ( data.eof() ) {
-			tr << "Error: end of file reached before RES_CONTACT_END tag was found." << std::endl;
+			tr.Error << "end of file reached before RES_CONTACT_END tag was found." << std::endl;
 			return false;
 		}
 
@@ -268,7 +268,7 @@ CstResInteractions::read_data( utility::io::izstream & data )
 
 		//std::cerr << "reading CstResInp, token[1] is: '" << tokens[1] << "'" << std::endl;
 		if ( data.eof() ) {
-			tr << "Error: end of file reached before CST_TARGET_END tag was found." << std::endl;
+			tr.Error << "end of file reached before CST_TARGET_END tag was found." << std::endl;
 			this->write_data();
 			return false;
 		}
@@ -365,7 +365,7 @@ EnzdesLoopInfo::read_loops_file_block(
 	while ( !loop_end ) {
 
 		if ( data.eof() ) {
-			tr << "Error: end of file reached before LOOP_END tag was found." << std::endl;
+			tr.Error << "end of file reached before LOOP_END tag was found." << std::endl;
 			return false;
 		}
 		linenum++;
@@ -505,9 +505,9 @@ EnzdesLoopInfo::check_data_consistency(
 
 	for ( core::Size i = 1; i <= ss_strings_.size(); ++i ) {
 
-		if ( ss_strings_[i].length() < min_length_ ) tr << "WARNING: secondary structure string " << i << ", " << ss_strings_[i] << ", specified in the enzdes loops file is shorter than min_length for the loop. This overrides the specified min_length." << std::endl;
+		if ( ss_strings_[i].length() < min_length_ ) tr.Warning << "secondary structure string " << i << ", " << ss_strings_[i] << ", specified in the enzdes loops file is shorter than min_length for the loop. This overrides the specified min_length." << std::endl;
 
-		if ( ss_strings_[i].length() > max_length_ ) tr << "WARNING: secondary structure string " << i <<  ", " << ss_strings_[i] << ", specified in the enzdes loops file is longer than max_length for the loop. This overrides the specified max_length." << std::endl;
+		if ( ss_strings_[i].length() > max_length_ ) tr.Warning << "secondary structure string " << i <<  ", " << ss_strings_[i] << ", specified in the enzdes loops file is longer than max_length for the loop. This overrides the specified max_length." << std::endl;
 	}
 
 	return true;
@@ -670,7 +670,7 @@ EnzdesLoopsFile::read_loops_file(
 EnzdesLoopInfoCOP
 EnzdesLoopsFile::loop_info( core::Size l ) const
 {
-	assert( l <= enzloops_.size() );
+	debug_assert( l <= enzloops_.size() );
 
 	return enzloops_[l];
 

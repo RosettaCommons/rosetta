@@ -131,7 +131,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 
 
 	for ( Size ii = 1; ii <= n_chi; ++ii ) {
-		assert( res.chi_atoms( ii ).size() == 4 );
+		debug_assert( res.chi_atoms( ii ).size() == 4 );
 
 		Size const
 			chiat1( res.chi_atoms( ii )[ 1 ] ),

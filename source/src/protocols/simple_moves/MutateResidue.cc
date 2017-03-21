@@ -142,12 +142,12 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num":
 	if ( !tag->hasOption("target") && !tag->hasOption("residue_selector") ) {
-		TR.Error << "Error: you need to define either a target residue using 'target' or a residue selector using 'residue_selector'." << std::endl;
+		TR.Error << "You need to define either a target residue using 'target' or a residue selector using 'residue_selector'." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 
 	if ( tag->hasOption("target") && tag->hasOption("residue_selector") ) {
-		TR.Error << "Error: you can only degine a target residue using 'target' or a residue selector using 'residue_selector' but not both." << std::endl;
+		TR.Error << "You can only degine a target residue using 'target' or a residue selector using 'residue_selector' but not both." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 
@@ -158,7 +158,7 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 
 	//Set the identity of the new residue:
 	if ( !tag->hasOption("new_res") ) {
-		TR.Error << "Error: no 'new_res' parameter specified." << std::endl;
+		TR.Error << "no 'new_res' parameter specified." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 	set_res_name( tag->getOption<string>("new_res") );
@@ -218,7 +218,7 @@ void MutateResidue::make_mutation(core::pose::Pose & pose, core::Size rosetta_ta
 		return;
 	}
 	if ( rosetta_target > pose.size() ) {
-		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
+		TR.Error << "Residue "<< rosetta_target <<" is out of bounds." << std::endl;
 		utility_exit();
 	}
 

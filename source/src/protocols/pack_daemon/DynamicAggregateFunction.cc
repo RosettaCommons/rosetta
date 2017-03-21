@@ -363,7 +363,7 @@ VMaxBy::operator() () const
 {
 	VectorExpression::values vals1 = vec_ex1()->vector_values();
 	VectorExpression::values vals2 = vec_ex2()->vector_values();
-	assert( vals2.size() == vals1.size() );
+	debug_assert( vals2.size() == vals1.size() );
 
 	Size index = utility::arg_max( vals1 );
 	return vals2[ index ];
@@ -381,7 +381,7 @@ VMaxBy::active_variables() const
 {
 	VectorExpression::values vals1 = vec_ex1()->vector_values();
 	utility::vector1< std::list< std::string > > act_vars_vect2 = vec_ex2()->active_variables_vector();
-	assert( vals1.size() == act_vars_vect2.size() );
+	debug_assert( vals1.size() == act_vars_vect2.size() );
 
 	Size index = utility::arg_max( vals1 );
 	return act_vars_vect2[ index ];
@@ -397,7 +397,7 @@ VMinBy::operator() () const
 {
 	VectorExpression::values vals1 = vec_ex1()->vector_values();
 	VectorExpression::values vals2 = vec_ex2()->vector_values();
-	assert( vals1.size() == vals2.size() );
+	debug_assert( vals1.size() == vals2.size() );
 
 	Size index = utility::arg_min( vals1 );
 	return vals2[ index ];
@@ -415,7 +415,7 @@ VMinBy::active_variables() const
 {
 	VectorExpression::values vals1 = vec_ex1()->vector_values();
 	utility::vector1< std::list< std::string > > act_vars_vect2 = vec_ex2()->active_variables_vector();
-	assert( vals1.size() == act_vars_vect2.size() );
+	debug_assert( vals1.size() == act_vars_vect2.size() );
 
 	Size index = utility::arg_min( vals1 );
 	return act_vars_vect2[ index ];
@@ -1253,7 +1253,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 	count_pdbs = 0;
 	for ( std::list< std::string >::const_iterator iter = pdb_names.begin(), iter_end = pdb_names.end(); iter != iter_end; ++iter ) {
 		++count_pdbs;
-		assert( count_pdbs <= pose_energy_variables.size() );
+		debug_assert( count_pdbs <= pose_energy_variables.size() );
 		TR << "  Importing pose from pdb file " << *iter << std::endl;
 		//core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 		std::string pdb_string;

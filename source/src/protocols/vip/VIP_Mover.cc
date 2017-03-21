@@ -326,7 +326,7 @@ void VIP_Mover::skip_relax(){
 	}
 
 	if ( favorable_positions.size() == 0 || favorable_residues.size() == 0 ) { // Avoid segmentation fault
-		TR.Warning << "WARNING: No favorable positions found." << std::endl;
+		TR.Warning << "No favorable positions found." << std::endl;
 		return;
 	}
 	final_pose = initial_pose;

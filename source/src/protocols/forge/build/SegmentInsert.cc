@@ -423,7 +423,7 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	for ( MoveMapTorsionID_Map::const_iterator i = insert_pose_torsion_override_movemap().movemap_torsion_id_begin(), ie = insert_pose_torsion_override_movemap().movemap_torsion_id_end(); i != ie; ++i ) {
 		MoveMapTorsionID shifted_id = i->first;
 		shifted_id.first += ridx_offset;
-		assert( insertion.left <= shifted_id.first && shifted_id.first <= insertion.right );
+		debug_assert( insertion.left <= shifted_id.first && shifted_id.first <= insertion.right );
 		mm.set( shifted_id, i->second );
 	}
 
@@ -431,7 +431,7 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	for ( TorsionID_Map::const_iterator i = insert_pose_torsion_override_movemap().torsion_id_begin(), ie = insert_pose_torsion_override_movemap().torsion_id_end(); i != ie ; ++i ) {
 		TorsionID shifted_id = i->first;
 		shifted_id.rsd() += ridx_offset;
-		assert( insertion.left <= shifted_id.rsd() && shifted_id.rsd() <= insertion.right );
+		debug_assert( insertion.left <= shifted_id.rsd() && shifted_id.rsd() <= insertion.right );
 		mm.set( shifted_id, i->second );
 	}
 
@@ -458,8 +458,8 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 	for ( TorsionTypeMap::const_iterator i = mm.torsion_type_begin(), ie = mm.torsion_type_end(); i != ie; ++i ) {
 
 		if ( i->first != core::id::BB && i->first != core::id::CHI ) {
-			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled TorsionType setting" << std::endl;
-			runtime_assert( false );
+			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled TorsionType setting: " << i->first << std::endl;
+			utility_exit_with_message("unhandled TorsionType setting");
 		}
 	}
 
@@ -467,16 +467,16 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 	for ( MoveMapTorsionID_Map::const_iterator i = mm.movemap_torsion_id_begin(), ie = mm.movemap_torsion_id_end(); i != ie; ++i ) {
 
 		if ( i->first.second != core::id::BB && i->first.second != core::id::CHI ) {
-			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled"
-				<< " MoveMapTorsionID type at residue " << i->first.first << std::endl;
-			runtime_assert( false );
+			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled"
+				<< " MoveMapTorsionID type (" << i->first.second << ") at residue " << i->first.first << std::endl;
+			utility_exit_with_message("unhandled MoveMapTorsionID setting");
 		}
 
 		if ( i->first.first > insert_pose_.size() ) {
-			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with a MoveMapTorsionID"
+			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with a MoveMapTorsionID"
 				<< " setting greater than the total number of residues in the insert pose at residue "
 				<< i->first.first << std::endl;
-			runtime_assert( false );
+			utility_exit_with_message("Can't find resiude");
 		}
 	}
 
@@ -484,16 +484,16 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 	for ( TorsionID_Map::const_iterator i = mm.torsion_id_begin(), ie = mm.torsion_id_end(); i != ie; ++i ) {
 
 		if ( i->first.type() != core::id::BB && i->first.type() != core::id::CHI ) {
-			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled"
-				<< " TorsionID type at residue " << i->first.rsd() << std::endl;
-			runtime_assert( false );
+			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled"
+				<< " TorsionID type (" << i->first.type() << ") at residue " << i->first.rsd() << std::endl;
+			utility_exit_with_message("unhandled TorsionID type");
 		}
 
 		if ( i->first.rsd() > insert_pose_.size() ) {
-			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with a MoveMapTorsionID"
+			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with a MoveMapTorsionID"
 				<< " setting greater than the total number of residues in the insert pose at residue "
 				<< i->first.rsd() << std::endl;
-			runtime_assert( false );
+			utility_exit_with_message("Can't find resiude");
 		}
 	}
 
@@ -629,7 +629,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		performing_n_term_insertion = original_interval().right == 0;
 		performing_c_term_insertion = original_interval().right == pose.size();
 	}
-	assert( !( performing_n_term_insertion && performing_c_term_insertion ) );
+	debug_assert( !( performing_n_term_insertion && performing_c_term_insertion ) );
 
 	// Cache information from original structure.
 	bool left_has_lower_terminus = false;
@@ -833,7 +833,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// connected to the insertion
 	Size before_insert_point = 0;
 	if ( !left_has_lower_terminus ) { // grow towards the right
-		assert( !performing_n_term_insertion );
+		debug_assert( !performing_n_term_insertion );
 
 		if ( !r_types_flanking_left.empty() ) {
 
@@ -851,7 +851,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	Size after_insert_point = 0;
 	if ( !right_has_upper_terminus ) { // grow towards the left
-		assert( !performing_c_term_insertion );
+		debug_assert( !performing_c_term_insertion );
 
 		if ( !r_types_flanking_right.empty() ) {
 
@@ -867,7 +867,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		}
 	}
 
-	assert( !left_has_lower_terminus && !right_has_upper_terminus ? before_insert_point == after_insert_point - 1 : true );
+	debug_assert( !left_has_lower_terminus && !right_has_upper_terminus ? before_insert_point == after_insert_point - 1 : true );
 
 	// Step 2: perform the insertion and perform any growing of any flanking
 	// regions directly connected to the insertion.
@@ -893,7 +893,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	}
 
-	assert( insert_connection_scheme != RANDOM_SIDE );
+	debug_assert( insert_connection_scheme != RANDOM_SIDE );
 
 	// make a copy of the residues for safety
 	ResidueOPs insert_residues;
@@ -929,7 +929,8 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		break;
 	}
 	default :
-		runtime_assert( false ); // should never get here
+		TR.Fatal << "Unhandled connection scheme value: " << insert_connection_scheme << std::endl;
+		utility_exit_with_message("Unhandled connection scheme value");
 	}
 
 	// finalize the interval so that it accurately reflects the new region
@@ -944,9 +945,9 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		--interval_.right;
 	}
 
-	assert( interval_.left < interval_.right ); // check ordering
-	assert( interval_.length() > 0 );
-	assert( interval_.length() == flanking_left_nres() + insert_pose_.size() + flanking_right_nres() );
+	debug_assert( interval_.left < interval_.right ); // check ordering
+	debug_assert( interval_.length() > 0 );
+	debug_assert( interval_.length() == flanking_left_nres() + insert_pose_.size() + flanking_right_nres() );
 
 	// END INTERVAL SHIFT: after this point, interval_ has stabilized and stores
 	// the new endpoints of the rebuilt segment
@@ -957,7 +958,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 		FoldTree new_ft = pose.fold_tree();
 		Size const cutpoint = find_cutpoint( pose, interval_.left, interval_.right );
-		assert( cutpoint > 0 ); // there should be a cutpoint
+		debug_assert( cutpoint > 0 ); // there should be a cutpoint
 
 		switch ( insert_connection_scheme ) {
 		case N : {
@@ -976,13 +977,14 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 			if ( flanking_left_nres() > 0 ) {
 				new_cutpoint = numeric::random::rg().random_range( interval_.left, interval_.left + flanking_left_nres() - 1 );
 			} else {
-				assert( interval_.left > 1 ); // safety, should never happen
+				debug_assert( interval_.left > 1 ); // safety, should never happen
 				new_cutpoint = interval_.left - 1;
 			}
 			break;
 		}
 		default :
-			runtime_assert( false ); // should never get here
+			TR.Fatal << "Unhandled connection scheme value: " << insert_connection_scheme << std::endl;
+			utility_exit_with_message("Unhandled connection scheme value");
 		}
 
 		if ( new_cutpoint != cutpoint ) {
@@ -1110,7 +1112,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 			omega_left_end = omega_left_start + flanking_left_nres();
 		}
 
-		assert( omega_left_start <= omega_left_end );
+		debug_assert( omega_left_start <= omega_left_end );
 	}
 
 	if ( flanking_right_nres() > 0 ) {
@@ -1122,7 +1124,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 			omega_right_end = interval_.right;
 		}
 
-		assert( omega_right_start <= omega_right_end );
+		debug_assert( omega_right_start <= omega_right_end );
 	}
 
 	// Correct all bond angles and lengths at junction between flanking and
@@ -1133,15 +1135,15 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		// always handle 'left_flanking <-> insert' junction residue, this
 		// will never be a cutpoint
 		if ( flanking_left_nres() > 0 ) {
-			assert( omega_left_end > 0 );
-			assert( !pose.fold_tree().is_cutpoint( omega_left_end ) );
+			debug_assert( omega_left_end > 0 );
+			debug_assert( !pose.fold_tree().is_cutpoint( omega_left_end ) );
 			pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_left_end );
 		}
 
 		// handle 'insert <-> right_flanking' junction residue only if not
 		// a cutpoint
 		if ( flanking_right_nres() > 0 ) {
-			assert( omega_right_start > 0 );
+			debug_assert( omega_right_start > 0 );
 			if ( !pose.fold_tree().is_cutpoint( omega_right_start ) ) {
 				pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_right_start );
 			}
@@ -1152,7 +1154,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		// handle 'left_flanking <-> insert' junction residue only if not
 		// a cutpoint
 		if ( flanking_left_nres() > 0 ) {
-			assert( omega_left_end > 0 );
+			debug_assert( omega_left_end > 0 );
 			if ( !pose.fold_tree().is_cutpoint( omega_left_end ) ) {
 				pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_left_end );
 			}
@@ -1161,14 +1163,15 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		// always handle 'insert <-> right_flanking' junction residue, this
 		// will never be a cutpoint
 		if ( flanking_right_nres() > 0 ) {
-			assert( omega_right_start > 0 );
-			assert( !pose.fold_tree().is_cutpoint( omega_right_start ) );
+			debug_assert( omega_right_start > 0 );
+			debug_assert( !pose.fold_tree().is_cutpoint( omega_right_start ) );
 			pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_right_start );
 		}
 
 		break;
 	default :
-		runtime_assert( false ); // should never get here
+		TR.Fatal << "Unhandled connection scheme value: " << insert_connection_scheme << std::endl;
+		utility_exit_with_message("Unhandled connection scheme value");
 	}
 
 	// recover psi @ left-1 and phi @ right+1 to ensure they are set correctly

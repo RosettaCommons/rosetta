@@ -134,17 +134,15 @@ OccludedHbondSolEnergy_onebody::setup_for_packing(
 void
 OccludedHbondSolEnergy_onebody::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
 {
-	tr << "Error - no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
-	debug_assert(false);
-	exit(1);
+	tr.Fatal << "no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
+	utility_exit_with_message("OccludedHbondSolEnergy_onebody::setup_for_derivatives() not yet implemented.");
 }
 
 void
 OccludedHbondSolEnergy_onebody::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
-	tr << "Error - no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
-	debug_assert(false);
-	exit(1);
+	tr.Fatal << "no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
+	utility_exit_with_message("OccludedHbondSolEnergy_onebody::setup_for_minimizing() not yet implemented");
 }
 
 Distance

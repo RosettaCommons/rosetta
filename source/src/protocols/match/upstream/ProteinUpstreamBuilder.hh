@@ -356,7 +356,7 @@ public:
 
 	utility::vector1< Size >
 	n_samples_per_chi() const {
-		assert( ! dry_run_ );
+		debug_assert( ! dry_run_ );
 		return n_samples_per_chi_;
 	}
 
@@ -366,21 +366,21 @@ public:
 
 	utility::vector1< Real > const &
 	chi_samples( Size chi ) const {
-		assert( ! dry_run_ );
+		debug_assert( ! dry_run_ );
 		return chi_samples_[ chi ];
 	}
 
 
 	Real
 	chi_sample( Size chi, Size sample_id ) const {
-		assert( ! dry_run_ );
+		debug_assert( ! dry_run_ );
 		return chi_samples_[ chi ][ sample_id ];
 	}
 
 	HTReal const &
 	frame( Size chi, Size sample_id ) const {
-		assert( ! dry_run_ );
-		assert( chi <= frames_.size() );
+		debug_assert( ! dry_run_ );
+		debug_assert( chi <= frames_.size() );
 		return frames_[ chi ][ sample_id ];
 	}
 

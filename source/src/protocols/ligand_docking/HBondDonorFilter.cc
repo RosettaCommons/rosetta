@@ -42,8 +42,8 @@ static THREAD_LOCAL basic::Tracer hbond_donor_tracer( "protocols.ligand_docking.
 
 bool
 HBondDonorFilter::apply( core::pose::Pose const & pose ) const {
-	assert(chain_.size()==1 );
-	assert(hbond_donor_limit_ >0 );
+	debug_assert(chain_.size()==1 );
+	debug_assert(hbond_donor_limit_ >0 );
 	core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 	core::Size const begin = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
@@ -59,11 +59,6 @@ void
 HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 
-	if ( tag->getName() != "HBondDonor" ) {
-		hbond_donor_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_donor_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("HBondDonor filter needs a 'chain' and an 'hbond_donor_limit' option");
 	}

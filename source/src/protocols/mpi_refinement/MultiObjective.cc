@@ -126,7 +126,7 @@ MultiObjective::set_defaults()
 			objsfxnOPs_.push_back( sfxn_cst );
 
 		} else {
-			TR << "WARNING: Skip unrecognized multi-objective function: " << score_name << std::endl;
+			TR.Warning << "Skip unrecognized multi-objective function: " << score_name << std::endl;
 		}
 	}
 

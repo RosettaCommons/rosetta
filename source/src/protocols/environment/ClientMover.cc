@@ -62,7 +62,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 	// Copy result into protected conformation in in_pose
 	environment::DofUnlock unlock( true_pose.conformation(), passport() );
 
-	assert( sandbox_pose.conformation().fold_tree() == true_pose.conformation().fold_tree() );
+	debug_assert( sandbox_pose.conformation().fold_tree() == true_pose.conformation().fold_tree() );
 
 	for ( Size i = 1; i <= true_pose.size(); ++i ) {
 		try {
@@ -83,7 +83,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 				}
 			}
 		} catch ( environment::EXCN_Env_Security_Exception const& e ){
-			tr.Error << "[ERROR] Unauthorized changes occurred during loop closure by mover '" << this->get_name()
+			tr.Error << "Unauthorized changes occurred during loop closure by mover '" << this->get_name()
 				<< "': (attempt to write to resid " << i << ")." << std::endl;
 			throw;// e;
 		}

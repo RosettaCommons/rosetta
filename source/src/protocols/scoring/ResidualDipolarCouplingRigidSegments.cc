@@ -222,7 +222,7 @@ void ResidualDipolarCouplingRigidSegments::read_RDC_segment_file(std::string con
 	std::ifstream is( filename.c_str() );
 
 	if ( !is.good() ) {
-		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + filename + "'" );
+		utility_exit_with_message( "Error opening RBSeg file '" + filename + "'" );
 	}
 
 	loops::PoseNumberedLoopFileReader reader;

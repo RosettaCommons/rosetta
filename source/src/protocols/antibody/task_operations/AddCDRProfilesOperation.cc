@@ -227,7 +227,7 @@ AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& c) {
 			cdrs.push_back( false );
 		}
 	}
-	assert( cdrs.size() == 8);
+	debug_assert( cdrs.size() == 8);
 
 	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( cdrs[ i ] ) {

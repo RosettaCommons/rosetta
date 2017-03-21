@@ -191,7 +191,7 @@ setup_foldtree(
 	FoldTree f;
 	vector1< bool > partner1( pose.size(), false );
 	if ( partner_chainID == "_" ) {
-		assert( pose.chain( pose.size() ) > 1 );
+		debug_assert( pose.chain( pose.size() ) > 1 );
 
 		Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
 		for ( Size i = partner1.l(); i <= last_res_of_first_chain; ++i ) { partner1[ i ] = true; }
@@ -245,8 +245,8 @@ setup_foldtree(
 	using core::kinematics::Edge;
 	using core::pose::residue_center_of_mass;
 
-	assert( pose.size() );
-	assert( partner1.size() == pose.size() );
+	debug_assert( pose.size() );
+	debug_assert( partner1.size() == pose.size() );
 
 	// compute which residues belong in partner 2
 	vector1< bool > const partner2( partner1.invert() );
@@ -295,7 +295,7 @@ setup_foldtree(
 		}
 	}
 
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 }
 
 } //docking

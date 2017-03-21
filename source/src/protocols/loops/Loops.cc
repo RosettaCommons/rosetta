@@ -95,7 +95,7 @@ Loops::Loops( utility::vector1< bool > const& selection,
 		if ( selection[i] && !prev ) {
 			start = i;
 		} else if ( !selection[i] && prev ) {
-			assert( start != 0 );
+			debug_assert( start != 0 );
 			if ( randomize_cutpoints ) {
 				this->add_loop( protocols::loops::Loop( start, i - 1, numeric::random::rg().random_range( (int) start+1, (int) i-1 ) ) );
 			} else {
@@ -179,7 +179,7 @@ void Loops::center_of_mass(const core::pose::Pose& pose,
 	using core::Size;
 	using core::id::NamedAtomID;
 
-	assert(center);
+	debug_assert(center);
 	center->zero();
 
 	Real count = 0;
@@ -279,7 +279,6 @@ Loops::add_loop( loops::Loop loop, core::Size minimal_gap ) {
 		msg += "begin/end/cut: " + string_of(start) + "/" + string_of(stop) + "/";
 		msg += string_of(cut) + "\n";
 
-		//runtime_assert( false );
 		utility_exit_with_message( msg );
 	}
 }
@@ -376,7 +375,6 @@ Loops::add_overlap_loop( Loop const & loop ) {
 	//      std::cerr << "Loops::add_loop error -- bad loop definition\n"
 	//                << "begin/cut/end: " << loop.start() << "/" << loop.stop() << "/"
 	//                << loop.cut() << std::endl;
-	//      runtime_assert( false );
 	//     utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	//    }
 }
@@ -590,18 +588,18 @@ void Loops::verify_against( core::pose::Pose const & pose ) const {
 
 	for ( auto const & it : *this ) {
 		if ( it.start() <= 0 ) {
-			tr.Error << "ERROR invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": Beginning less than 1" <<  std::endl;
+			tr.Error << "invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": Beginning less than 1" <<  std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
 		if ( it.stop() > nres ) {
-			tr.Error << "ERROR invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": End more than nres(" << nres << ")" << std::endl;
+			tr.Error << "invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": End more than nres(" << nres << ")" << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
 		Size loopbegin_i = std::min(  it.start() , (Size)1 );
 		Size loopend_i = std::max(  it.stop() , nres );
 		Size cutpt_i = it.cut();
 		if ( cutpt_i != 0 && ( cutpt_i > loopend_i || cutpt_i < loopbegin_i ) ) {
-			tr.Error << "ERROR invalid loop " << loopbegin_i << " " << loopend_i << " " << cutpt_i << std::endl;
+			tr.Error << "invalid loop " << loopbegin_i << " " << loopend_i << " " << cutpt_i << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
 	}

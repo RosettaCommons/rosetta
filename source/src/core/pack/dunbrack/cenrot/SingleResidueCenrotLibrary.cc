@@ -147,8 +147,8 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 		all_rots_bb_(phi_bin,psi_bin).push_back(crsd);
 
 		if ( all_rots_bb_(phi_bin,psi_bin).size()!=count ) {
-			TR.Debug << "Warning: index (col-2) in cenrotlib file is wrong!" << std::endl;
-			TR.Debug << "Warning: " << my_name << ": ndx="
+			TR.Warning << "index (col-2) in cenrotlib file is wrong!" << std::endl;
+			TR.Warning << my_name << ": ndx="
 				<< count << " real=" << all_rots_bb_(phi_bin,psi_bin).size()
 				<< " phi=" << phi << " psi=" << psi << std::endl;
 

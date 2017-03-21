@@ -436,11 +436,11 @@ calc_pareto_front_nbrs(
 	vector1< bool > & is_pfront_nbr,
 	vector1< Real > const & nbr_dist
 ){
-	assert( coords.size() == is_pfront.size() );
+	debug_assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
 	Size n( coords.size() );
 	Size d( coords[ 1 ].size() );
-	assert( nbr_dist.size() == d );
+	debug_assert( nbr_dist.size() == d );
 	//for non pfront points
 	for ( Size inp = 1; inp <= n; ++inp ) {
 		//init possible nbr to false
@@ -488,11 +488,11 @@ calc_pareto_front(
 	bool const div,
 	bool const incl_nbrs
 ){
-	assert( coords.size() == is_pfront.size() );
+	debug_assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
 	Size n( coords.size() );
 	Size d( coords[ 1 ].size() );
-	assert( coord_perts.size() == d );
+	debug_assert( coord_perts.size() == d );
 	//randomly offset values by jiggle-factors defined in filter_deltas?
 	if ( div ) {
 		for ( Size i = 1; i <= n; ++i ) {
@@ -603,7 +603,7 @@ GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Po
 		}
 		outtable << std::endl; // Blank line at end to seperate.
 	} else {
-		TR.Warning << "WARNING: Unable to open file " << filename << " for writing GreedyOptMutationMover table output." << std::endl;
+		TR.Warning << "Unable to open file " << filename << " for writing GreedyOptMutationMover table output." << std::endl;
 	}
 	outtable.close();
 }
@@ -759,9 +759,9 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 			}
 
 			//filter new_poses for the pareto opt set
-			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
+			debug_assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 			filter_pareto_opt_poses();
-			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
+			debug_assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 
 			//break out if we've reached our stopping condition
 			if ( stop ) break;
@@ -855,7 +855,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
-					TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
+					TR.Error << "filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
 				}
 				std::string const samp_type( ftag->getOption< std::string >( "sample_type", "low" ));

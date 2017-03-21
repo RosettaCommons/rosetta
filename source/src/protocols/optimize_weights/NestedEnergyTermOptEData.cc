@@ -415,15 +415,15 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 	std::string line;
 	getline( infile, line );
 	Strings words( string_split( line, ' ' ) );
-	assert( words[ 1 ] == "position" );
+	debug_assert( words[ 1 ] == "position" );
 	set_position( from_string( words[ 2 ], Size( 0 ) ) );
-	assert( words[ 3 ] == "nataa" );
+	debug_assert( words[ 3 ] == "nataa" );
 	set_native_aa ( chemical::aa_from_name( words[ 4 ] ) );
-	assert( words[ 5 ] == "neighbor_count" );
+	debug_assert( words[ 5 ] == "neighbor_count" );
 	set_neighbor_count( from_string( words[ 6 ], Size( 0 ) ) );
 
 	// extra logic to handle reading in the unfolded state energies into an EnergyMap
-	assert( words[ 7 ] == "unfolded_energy" );
+	debug_assert( words[ 7 ] == "unfolded_energy" );
 	utility::vector1 < EnergyMap > emap_vector;
 	emap_vector.resize( chemical::num_canonical_aas );
 
@@ -445,7 +445,7 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 
 	getline( infile, line );
 	Strings rotamer_line_words( string_split( line, ' ' ) );
-	assert( rotamer_line_words[ 1 ] == "nrots" );
+	debug_assert( rotamer_line_words[ 1 ] == "nrots" );
 	Size num_rotamers = from_string( rotamer_line_words[ 2 ], Size( 0 ) );
 
 	for ( Size ii = 1; ii <= num_rotamers; ++ii ) {
@@ -473,7 +473,7 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 			ss >> val;
 			energies.push_back( val );
 		}
-		assert( !energies.empty() );
+		debug_assert( !energies.empty() );
 		PNatAAOptERotamerDataOP new_rot_data( new PNatAAOptERotamerData( aa, rotnum, energies, fixed_energies ) );
 		add_rotamer_line_data( new_rot_data );
 	}

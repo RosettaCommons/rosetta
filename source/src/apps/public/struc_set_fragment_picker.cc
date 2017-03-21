@@ -106,7 +106,7 @@ run()
 			bool steal_success = frag->steal( poses[i], pos, pos + frag_length -1 );
 			if ( steal_success && frag->is_valid() ) {
 				bool success = frame->add_fragment( frag );
-				assert( success );
+				debug_assert( success );
 			}
 		}
 	}

@@ -144,13 +144,13 @@ MoveMapBuilder::build(core::pose::Pose const & pose) const{
 
 InterfaceBuilderOP
 MoveMapBuilder::get_sc_interface_builder()const{
-	assert( sc_interface_builder_); // does the pointer point
+	debug_assert( sc_interface_builder_); // does the pointer point
 	return sc_interface_builder_;
 }
 
 InterfaceBuilderOP
 MoveMapBuilder::get_bb_interface_builder()const{
-	assert( bb_interface_builder_); // does the pointer point
+	debug_assert( bb_interface_builder_); // does the pointer point
 	return bb_interface_builder_;
 }
 

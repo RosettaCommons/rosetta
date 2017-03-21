@@ -44,7 +44,7 @@ void
 ChainSplitMover::apply( core::pose::Pose & pose )
 {
 	// there's no point in setting a cutpoint before the first or after the last residue...
-	assert( cutpoint_ > 0 && cutpoint_ < pose.size() );
+	debug_assert( cutpoint_ > 0 && cutpoint_ < pose.size() );
 
 	pose.conformation().insert_chain_ending( cutpoint_ );
 	core::kinematics::FoldTree jump_fold_tree( pose.fold_tree() );

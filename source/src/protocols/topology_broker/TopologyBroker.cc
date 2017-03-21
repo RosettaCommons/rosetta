@@ -240,7 +240,7 @@ moves::MoverOP TopologyBroker::mover(core::pose::Pose const & pose,
 
 	//should this be an exception? --- it seems pretty pathological
 	if ( !random_mover->size() ) {
-		tr.Warning << "[ WARNING ] no mover returned in stage " << stage_id
+		tr.Warning << "no mover returned in stage " << stage_id
 			<< " progress " << progress << std::endl;
 	}
 
@@ -878,7 +878,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	tr.Debug << "initialize dofs..." << std::endl;
 	initialize_dofs( pre_accepted, pose );
 
-	assert(fold_tree_);
+	debug_assert(fold_tree_);
 
 	// if ( tr.Debug.visible() ) pose.dump_pdb( "init_dofs.pdb" );
 	current_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
@@ -948,7 +948,7 @@ bool TopologyBroker::check_chainbreak_variants(
 				&& pose.residue( to_be_closed_cut+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 			tr.Debug << "found chainbreak variant at residues " << to_be_closed_cut << " and " << to_be_closed_cut+1 << std::endl;
 		} else {
-			tr.Warning << "[WARNING] no chainbreak variant found at residues " << to_be_closed_cut << " and " << to_be_closed_cut+1 << std::endl;
+			tr.Warning << "no chainbreak variant found at residues " << to_be_closed_cut << " and " << to_be_closed_cut+1 << std::endl;
 			tr.Warning << jd2::current_output_name() << std::endl;
 			tr.Warning << pose.fold_tree() << std::endl;
 			tr.Warning << pose.annotated_sequence() << std::endl;
@@ -1004,7 +1004,7 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 	//sanity check
 	std::string sequence_new( pose.annotated_sequence() );
 	if ( sequence_old != sequence_new ) {
-		tr.Warning << "[WARNING] switch_to_fullatom changed sequence/variants:\n " <<
+		tr.Warning << "switch_to_fullatom changed sequence/variants:\n " <<
 			" before " << sequence_old << "\n after  " << sequence_new << std::endl;
 	}
 

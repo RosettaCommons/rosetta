@@ -475,7 +475,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	}
 	if ( tag->hasOption("start_selector") ) {
 		if ( tag->hasOption("start_resnums" ) ) {
-			if ( TR.visible() ) TR << "WARNING: cannot use both start_resnums and start_selector options; start_selector will be used" << std::endl;
+			TR.Warning << "cannot use both start_resnums and start_selector options; start_selector will be used" << std::endl;
 			start_res_vec_.clear();
 		}
 		std::string const selector_name ( tag->getOption< std::string >( "start_selector" ) );
@@ -1449,7 +1449,7 @@ HBNet::place_rots_on_pose( pose::Pose & pose, utility::vector1< HBondResStructCO
 			pose.replace_residue( residue->resnum, orig_pose_->residue( residue->resnum ), false );
 		}
 	} else {
-		assert( rotamer_sets_ != nullptr );
+		debug_assert( rotamer_sets_ != nullptr );
 		for ( const auto & residue : residues ) {
 			ResidueCOP copy_rot(rotamer_sets_->rotamer_for_moltenres(rotamer_sets_->resid_2_moltenres((platform::uint)(residue->resnum)),residue->rot_index));
 			pose.replace_residue( residue->resnum, *copy_rot, false );
@@ -2858,8 +2858,8 @@ HBNet::run( Pose & pose )
 
 	//HBNet requires PDInteractionGraph (or DensePDInteractionGraph).  Need to check to make sure NOT using lin_mem_ig
 	if ( ( *task_ ).linmem_ig() && TR.visible() ) {
-		TR << " ERROR: EXITING HBNet: You cannot use linmem_ig with HBNet; Please remove linmem_ig from HBNet task_operations." << std::endl;
-		TR << " You can define a SetIGType task_operations in your XML and add it to the task_operations of other movers in your protocol, just not HBNet." << std::endl;
+		TR.Error << "EXITING HBNet: You cannot use linmem_ig with HBNet; Please remove linmem_ig from HBNet task_operations." << std::endl;
+		TR.Error << "You can define a SetIGType task_operations in your XML and add it to the task_operations of other movers in your protocol, just not HBNet." << std::endl;
 	}
 	runtime_assert(!(( *task_ ).linmem_ig()));
 	runtime_assert( task_is_valid( pose ) );
@@ -2968,7 +2968,7 @@ HBNet::run( Pose & pose )
 			}
 		}
 		if ( !( in_design_shell ) ) {
-			if ( TR.visible() ) TR << " WARNING: residue " << *resvecit << " is not in the IG; I'm removing it from start_resnums .  If you wish to consider this residue, change your design shell task operations" << std::endl;
+			TR.Warning << "residue " << *resvecit << " is not in the IG; I'm removing it from start_resnums .  If you wish to consider this residue, change your design shell task operations" << std::endl;
 			//does NOT return iterator referencing same location after removal like std::vector does!
 			start_res_vec_.erase( resvecit++ );
 		} else {

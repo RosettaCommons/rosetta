@@ -65,6 +65,25 @@ int main( int argc, char * argv [] )
 		VeryBlue << "Output with default color for VeryBlue Tracer..." << std::endl;
 		VeryBlue << CSI_Green() << "We" << CSI_Yellow() << " can still use " << CSI_Red() << "other" << CSI_Bold() << " colors in Tracers " << CSI_bgBlue() << CSI_Yellow() << "with default color set!" << std::endl;
 		VeryBlue << "..." << std::endl;
+		VeryBlue << CSI_Reset() << "After reset on VeryBlue Tracer...\n" << std::endl;
+
+		TR.Warning << "Example of Warning on default tracer" << std::endl;
+		TR.Error   << "Example of Error on default tracer" << std::endl;
+		TR.Fatal   << "Example of Fatal on default tracer" << std::endl;
+
+		VeryBlue.Warning << "Example of Warning on VeryBlue tracer" << std::endl;
+		VeryBlue.Error   << "Example of Error on VeryBlue tracer" << std::endl;
+		VeryBlue.Fatal   << "Example of Fatal on VeryBlue tracer" << std::endl;
+
+		std::string empty_string("");
+
+		//assert( "Plain Assert Example" == empty_string );
+		//try {
+		//	debug_assert( "Debug Assert Example" == empty_string );
+		//} catch ( utility::excn::EXCN_Base const & e ) {}
+		//try {
+		//	runtime_assert( "Runtime Assert Example" == empty_string );
+		//} catch ( utility::excn::EXCN_Base const & e ) {}
 
 		utility_exit_with_message("\nExample of utility_exit_with_message...");
 		return 0;

@@ -437,7 +437,7 @@ void ClusterBase::sort_each_group_by_energy( ) {
 		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			Real score=0.0;
 			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
-				tr.Error << "Warning: no score available for " << std::endl;
+				tr.Error << "no score available for " << std::endl;
 			}
 			cluster_energies.emplace_back( clusterlist[i][j], score );
 		}
@@ -462,7 +462,7 @@ void ClusterBase::remove_highest_energy_member_of_each_group() {
 		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			Real score=0.0;
 			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
-				tr.Error << "Warning: no score available for " << std::endl;
+				tr.Error << "no score available for " << std::endl;
 			}
 
 			cluster_energies.emplace_back( clusterlist[i][j], score );
@@ -487,7 +487,7 @@ void ClusterBase::sort_groups_by_energy() {
 		// This assumes that the first member is already the lowest energy one!
 		int energy_member = 0;
 		if ( !getPoseExtraScore( poselist[ clusterlist[i][energy_member] ], "silent_score", score ) ) {
-			tr.Error << "Warning: no score available for " << std::endl;
+			tr.Error << "no score available for " << std::endl;
 		}
 
 		Real combo_score = (1.0 - population_weight_ ) * score -  population_weight_  * clusterlist[i].group_size() ;  // group size keeps trakc of the size of the clsuter, even with pruning

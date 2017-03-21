@@ -148,7 +148,7 @@ utility::vector1< utility::vector1< Real > > get_rotamer_angle_diffs( Pose & pos
 		if ( trimmed_pose_seq.size() != trimmed_ref_seq.size() ) {
 
 			// replacing Z in the sequence
-			TR << "WARNING: replacing Z in the sequence. Might be a membrane residue or an inserted or unrecognized residue!" << std::endl;
+			TR.Warning << "replacing Z in the sequence. Might be a membrane residue or an inserted or unrecognized residue!" << std::endl;
 
 			std::string replaced_pose_seq = utility::replace_in( trimmed_pose_seq, "Z", "" );
 			std::string replaced_ref_seq = utility::replace_in( trimmed_ref_seq, "Z", "" );
@@ -182,7 +182,7 @@ utility::vector1< utility::vector1< Real > > get_rotamer_angle_diffs( Pose & pos
 		}
 
 		if ( pose.residue( i ).name3() != ref_pose.residue( j ).name3() ) {
-			TR << "WARNING: COMPARING TWO DIFFERENT RESIDUES " << pose.residue( i ).name3() << i << " and " << ref_pose.residue( j ).name3() << j << std::endl;
+			TR.Warning << "COMPARING TWO DIFFERENT RESIDUES " << pose.residue( i ).name3() << i << " and " << ref_pose.residue( j ).name3() << j << std::endl;
 		}
 
 		// get rotamers

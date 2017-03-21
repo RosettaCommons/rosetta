@@ -120,7 +120,7 @@ FibrilModelingClaimer::make_fibril( pose::Pose & pose )
 		}
 		setup_mover->apply( pose );
 	}
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 	// Save the symmetry info
 	// input_pose_ = pose;
 	symminfo_ = core::pose::symmetry::symmetry_info(pose)->clone();

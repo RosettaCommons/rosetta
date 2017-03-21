@@ -114,9 +114,8 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 #ifdef LINK_APBS_LIBS
 	std::ifstream apbsstream( apbs_path.c_str() );
 	if( !apbsstream.good() ){
-		TR << "APBS not found.  Check the path: " << apbs_path << std::endl;
-		TR.flush();
-		runtime_assert(false);
+		TR.Fatal << "APBS not found.  Check the path: " << apbs_path << std::endl;
+		utility_exit_with_message("APBS not found.");
 	}
 	apbsstream.close();
 #endif
@@ -193,8 +192,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 		TR << "Scorefxn weigths: " << scorefxn->serialize_weights() << std::endl;
 		if ( scorefxn->get_weight(core::scoring::PB_elec) == 0. ) {
 			TR.Error << "PB_elec term is required.  Not found in the scorefxn.  Terminating the program..." << std::endl;
-			TR.Error.flush();
-			runtime_assert(false);
+			utility_exit_with_message( "PB_elec term is required." );
 		}
 	}
 	ddg_->parse_my_tag( tag, data_map, filters_map, movers_map, pose );

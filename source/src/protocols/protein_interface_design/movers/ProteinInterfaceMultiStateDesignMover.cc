@@ -562,7 +562,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	TR<<"Compare energy to ground state set to: "<<compare_energy_to_ground_state_<<std::endl;
 	for ( TagCOP const btag : branch_tags ) {
 		if ( unfolded_ || unbound_ ) {
-			TR<<"ERROR: If you specify additional pdb files as states, it is assumed that those would have different energies than the starting pdb. As such, comparison of energies across different states is automatically done by grounding each pdb file to its starting 'best-score design' and comparing energy differences from that state. The energies of unbound and unfolded states then become tricky to interpret. You can use anchor_offset to get much of the effect of these additional states. Or, ask Sarel."<<std::endl;
+			TR.Error << "If you specify additional pdb files as states, it is assumed that those would have different energies than the starting pdb. As such, comparison of energies across different states is automatically done by grounding each pdb file to its starting 'best-score design' and comparing energy differences from that state. The energies of unbound and unfolded states then become tricky to interpret. You can use anchor_offset to get much of the effect of these additional states. Or, ask Sarel."<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 		std::string const fname( btag->getOption< std::string >( "pdb" ) );

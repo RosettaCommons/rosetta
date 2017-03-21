@@ -103,7 +103,7 @@ void read_RBSegment_file(
 	std::ifstream infile( filename.c_str() );
 
 	if ( !infile.good() ) {
-		TR_seg << "[ERROR] Error opening RBSeg file '" << filename << "'" << std::endl;
+		TR_seg.Fatal << "Error opening RBSeg file '" << filename << "'" << std::endl;
 		exit(1);
 	}
 
@@ -125,13 +125,13 @@ void read_RBSegment_file(
 			//// segment (simple)
 			if ( tokens[1] == "SEGMENT" || tokens[1] == "SEG" ) {
 				if ( tokens.size() < 5 ) {
-					TR_seg << "[ERROR] Error parsing line '" << line << "'" << std::endl;
-					exit(1);
+					TR_seg.Fatal << "Error parsing line '" << line << "'" << std::endl;
+					utility_exit();
 				}
 				int id = atoi( tokens[2].c_str() );
 				if ( simple_segments.find( id ) != simple_segments.end() ) {
-					TR_seg << "[ERROR] Segment id " << id << " defined twice in RBSeg file!" << std::endl;
-					exit(1);
+					TR_seg.Fatal << "Segment id " << id << " defined twice in RBSeg file!" << std::endl;
+					utility_exit();
 				}
 				int seg_start=atoi( tokens[3].c_str() ), seg_end = atoi( tokens[4].c_str() );
 				char ss_key = tokens[5][0];
@@ -152,8 +152,8 @@ void read_RBSegment_file(
 				//// lock
 			} else if ( tokens[1] == "LOCKED" ) {
 				if ( tokens.size() < 5 ) {
-					TR_seg << "[ERROR] Error parsing line '" << line << "'" << std::endl;
-					exit(1);
+					TR_seg.Fatal << "Error parsing line '" << line << "'" << std::endl;
+					utility_exit();
 				}
 				utility::vector1< int > thisLock;
 				for ( core::Size i=4; i<=tokens.size(); ++i ) {
@@ -168,8 +168,8 @@ void read_RBSegment_file(
 			} else if ( tokens[1] == "COMPOUND" ) {
 				/*
 				if ( tokens.size() < 5 ) {
-				TR_seg << "[ERROR] Error parsing line '" << line << "'" << std::endl;
-				exit(1);
+				TR_seg << "Error parsing line '" << line << "'" << std::endl;
+				utility_exit();
 				}
 				utility::vector1< int > thisCompound;
 				for (core::Size i=4; i<=tokens.size(); ++i)
@@ -179,17 +179,17 @@ void read_RBSegment_file(
 				compound_mvmt.push_back(
 				std::pair< core::Real, core::Real > ( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ) ) );
 				*/
-				TR_seg.Error << "[ERROR] compund segments unsupported ... ignoring line '" << line << "'" << std::endl;
+				TR_seg.Error << "compund segments unsupported ... ignoring line '" << line << "'" << std::endl;
 			} else if ( tokens[1] == "LOOP" ) {
 				if ( autoGenerateLoops ) {
-					TR_seg.Warning << "[WARNING] LOOP specified in RBSegment file but autoGenerateLoops is true!"
+					TR_seg.Warning << "LOOP specified in RBSegment file but autoGenerateLoops is true!"
 						<< " Ignoring line." << std::endl;
 					continue;
 				}
 
 				if ( tokens.size() < 3 ) {
-					TR_seg << "[ERROR] Error parsing line '" << line << "'" << std::endl;
-					exit(1);
+					TR_seg.Fatal << "Error parsing line '" << line << "'" << std::endl;
+					utility_exit();
 				}
 				core::Size start_res = (core::Size) atoi(tokens[2].c_str());
 				core::Size end_res   = (core::Size) atoi(tokens[3].c_str());
@@ -214,7 +214,7 @@ void read_RBSegment_file(
 
 				loops.push_back( protocols::loops::Loop(start_res, end_res, cutpt, skip_rate, extend_loop) );
 			} else if ( tokens[1][0] != '#' ) {
-				TR_seg << "[WARNING] Skipping line '" << line << "'" << std::endl;
+				TR_seg.Warning << "Skipping line '" << line << "'" << std::endl;
 			}
 		}
 	}
@@ -275,7 +275,7 @@ void read_RBSegment_file(
 		for ( core::Size j=1; j<=locked_segments[i].size(); ++j ) {
 			int id = locked_segments[i][j];
 			if ( simple_segments.find( id ) == simple_segments.end() ) {
-				TR_seg << "[ERROR] Segment id " << id << " undefined or used in multiple locked compound segments" << std::endl;
+				TR_seg.Error << "Segment id " << id << " undefined or used in multiple locked compound segments" << std::endl;
 				exit(1);
 			}
 			thisLockSeg.push_back( simple_segments[ id ] );
@@ -292,7 +292,7 @@ void read_RBSegment_file(
 		for ( core::Size j=1; j<=compound_segments[i].size(); ++j ) {
 			int id = compound_segments[i][j];
 			if ( simple_segments.find( id ) == simple_segments.end() ) {
-				TR_seg << "[ERROR] Segment id " << id << " undefined or used in multiple locked compound segments" << std::endl;
+				TR_seg.Error << "Segment id " << id << " undefined or used in multiple locked compound segments" << std::endl;
 				exit(1);
 			}
 			thisCompoundSeg.push_back( simple_segments[ id ] );
@@ -392,17 +392,17 @@ RBSegment RBSegment::remap( core::id::SequenceMapping const &mapping ) const {
 		if ( mapping[ oldS ] != 0 ) {
 			newS = mapping[ oldS ];
 		} else {
-			TR_seg << "[ ERROR ] mapping(" << segments_[i].start() << ") not found!" << std::endl;
-			exit(1);
+			TR_seg.Fatal << "mapping(" << segments_[i].start() << ") not found!" << std::endl;
+			utility_exit();
 		}
 
 		if ( mapping[ oldE ] != 0 ) {
 			newE = mapping[ oldE ];
 		} else {
-			TR_seg << "[ ERROR ] mapping(" << segments_[i].end() << ") not found!" << std::endl;
-			exit(1);
+			TR_seg.Fatal << "mapping(" << segments_[i].end() << ") not found!" << std::endl;
+			utility_exit();
 		}
-		TR_seg << "[ DEBUG ] remapping(" << oldS << "," << oldE << ") to (" << newS << "," <<  newE << ")" << std::endl;
+		TR_seg.Debug << "[ DEBUG ] remapping(" << oldS << "," << oldE << ") to (" << newS << "," <<  newE << ")" << std::endl;
 
 		remappedSimpleSegs.push_back( RBSegment( newS, newE, segments_[i].type() ) );
 	}
@@ -413,8 +413,8 @@ RBSegment RBSegment::remap( core::id::SequenceMapping const &mapping ) const {
 RBSegment::RBSegment ( utility::vector1 < RBSegment > const &segs_in ) {
 	for ( core::Size i=1; i<=segs_in.size(); ++i ) {
 		if ( !segs_in[i].isSimple() ) {
-			TR_seg << "[ ERROR ]  Error parsing RBSeg file: trying to nest compound segments." << std::endl;
-			exit(1);
+			TR_seg.Fatal << "Error parsing RBSeg file: trying to nest compound segments." << std::endl;
+			utility_exit();
 		} else {
 			segments_.push_back( segs_in[i][1] );
 		}

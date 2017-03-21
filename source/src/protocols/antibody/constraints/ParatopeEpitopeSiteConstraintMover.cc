@@ -266,8 +266,8 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 		epitope_residues_ = protocols::antibody::select_epitope_residues(ab_info_, pose, interface_distance_);
 	}
 
-	assert(paratope_residues_.size() == pose.size());
-	assert(epitope_residues_.size() == pose.size());
+	debug_assert(paratope_residues_.size() == pose.size());
+	debug_assert(epitope_residues_.size() == pose.size());
 
 	TR << "added constraints "<<std::endl;
 	//pose.constraint_set()->show(TR);
@@ -307,7 +307,7 @@ ParatopeEpitopeSiteConstraintMover::remove(core::pose::Pose & pose){
 	vector1<ConstraintOP> csts_to_be_removed;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
-		assert(paratope_residues_[i] != true && epitope_residues_[i] != true);
+		debug_assert(paratope_residues_[i] != true && epitope_residues_[i] != true);
 
 		if ( paratope_residues_[i] ) {
 			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues_);

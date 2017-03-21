@@ -265,8 +265,8 @@ HSSTripletFilter::compute( Pose const & pose ) const
 	// get HSSTriplets to filter
 	HSSTriplets const hss3s = get_hss3s( pose );
 	if ( output_id_ > hss3s.size() ) {
-		TR.Error << "[ERROR] The value of output_id is more than the number of input hsstriplets " << std::endl;
-		runtime_assert( false );
+		TR.Error << "The value of output_id is more than the number of input hsstriplets " << std::endl;
+		utility_exit_with_message("The value of output_id is more than the number of input hsstriplets");
 	}
 
 	// set SS_Info
@@ -346,8 +346,8 @@ HSSTripletFilter::parse_my_tag(
 
 		if ( hss3set_ ) {
 			if ( output_id_ > hss3set_->hss_triplets().size() ) {
-				TR << "[ERROR] The value of output_id is more than the number of input hsstriplets " << std::endl;
-				runtime_assert( false );
+				TR.Error << "The value of output_id is more than the number of input hsstriplets " << std::endl;
+				utility_exit_with_message( "The value of output_id is more than the number of input hsstriplets " );
 			}
 
 			TR << "HSSTriplet " << *hss3set_->hss_triplets()[output_id_] << ", "

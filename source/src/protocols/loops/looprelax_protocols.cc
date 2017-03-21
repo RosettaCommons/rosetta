@@ -358,8 +358,8 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 				barcst_extend_begin, barcst_extend_end );
 			rmsd_acceptable = acceptable_rmsd_change( stage_pose, pose  );
 
-			if ( ! rmsd_acceptable ) { nclosurefail++; TR.Info << "WARNING: Loop Built, rms not acceptable - trying again" << std::endl; }
-			if (   is_chain_break  ) { nrmsfail++;     TR.Info << "WARNING: Chain_break_remains - tryign again" << std::endl; }
+			if ( ! rmsd_acceptable ) { nclosurefail++; TR.Warning << "Loop Built, rms not acceptable - trying again" << std::endl; }
+			if (   is_chain_break  ) { nrmsfail++;     TR.Warning << "Chain_break_remains - tryign again" << std::endl; }
 
 			final_loop_begin = loop_begin;
 			final_loop_end   = loop_end;

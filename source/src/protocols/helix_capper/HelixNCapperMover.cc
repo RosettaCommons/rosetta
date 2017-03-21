@@ -139,7 +139,7 @@ void HelixNCapperMover::get_Ncap_scores() {
 
 	// retrieve cached energies object
 	Energies const & energies( pose_copy.energies() );
-	assert(energies.energies_updated());
+	debug_assert(energies.energies_updated());
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 

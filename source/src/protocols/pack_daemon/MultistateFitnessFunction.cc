@@ -135,12 +135,12 @@ TopEntitySet::update_entity_history(
 			++n_tied_for_worst_;
 		} else {
 			// b. Not a tie -- maybe we can remove some of the entities that are tied for worst
-			assert( n_tied_for_worst_ <= top_entities_.size() );
+			debug_assert( n_tied_for_worst_ <= top_entities_.size() );
 			if ( top_entities_.size() + 1 - n_tied_for_worst_ >= desired_entity_history_size_ ) {
 				// start popping entities from the heap
 				ASSERT_ONLY( core::Real const old_worst_fitness = top_entities_.front().first->fitness(););
 				for ( Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
-					assert( top_entities_.front().first->fitness() == old_worst_fitness );
+					debug_assert( top_entities_.front().first->fitness() == old_worst_fitness );
 					removed_entities.push_back( top_entities_.front().first );
 					std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 					top_entities_.pop_back();

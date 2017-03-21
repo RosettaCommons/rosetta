@@ -198,7 +198,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
 	grid_manager->initialize_all_grids(center);
 	grid_manager->update_grids(pose,center, true);
-	assert(grid_manager != 0); //something has gone hopelessly wrong if this triggers
+	debug_assert(grid_manager != 0); //something has gone hopelessly wrong if this triggers
 
 	//Setting up ligands and ligand center
 	utility::vector1<core::conformation::ResidueOP> single_conformers;
@@ -547,7 +547,7 @@ void TransformEnsemble::translate_ligand(utility::vector1<core::conformation::Ul
 void TransformEnsemble::transform_ligand(utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, utility::vector1<core::conformation::UltraLightResidue> & reference_residues)
 {
 	if ( transform_info_.angle ==0 && transform_info_.move_distance == 0 ) {
-		transform_tracer <<"WARNING: angle and distance are both 0.  Transform will do nothing" <<std::endl;
+		transform_tracer.Warning <<"angle and distance are both 0.  Transform will do nothing" <<std::endl;
 		return;
 	}
 
@@ -582,7 +582,7 @@ void TransformEnsemble::change_conformer(core::conformation::UltraLightResidue &
 
 	core::Size index_to_select;
 
-	assert(ligand_conformers_[resid].size());
+	debug_assert(ligand_conformers_[resid].size());
 	index_to_select = numeric::random::random_range(1,ligand_conformers_[resid].size());
 	transform_tracer <<"Conformer is number: " << index_to_select << std::endl;
 	core::conformation::UltraLightResidue new_residue(ligand_conformers_[resid][index_to_select]);

@@ -137,12 +137,12 @@ void OptimizeProteinEmbeddingMover::apply( Pose & pose ) {
 	using namespace protocols::membrane::geometry;
 
 	TR << "Start OptimizeProteinEmbeddingMover, transforming into membrane" << std::endl;
-	TR << "WARNING: the membrane information in the MEM residue is lost!!!" << std::endl;
+	TR.Warning << "the membrane information in the MEM residue is lost!!!" << std::endl;
 
 	// if pose not a membrane protein, add membrane
 	if ( ! pose.conformation().is_membrane() ) {
 
-		TR << "WARNING: You are calling the OptimizeProteinEmbeddingMover on a non-membrane pose. Creating a membrane protein from the pose..." << std::endl;
+		TR.Warning << "You are calling the OptimizeProteinEmbeddingMover on a non-membrane pose. Creating a membrane protein from the pose..." << std::endl;
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
 		addmem->apply( pose );
 	}

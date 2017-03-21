@@ -206,7 +206,7 @@ MetapatchEnumeration::generate_derived_types(
 			ResidueType const & rt = rts->name_map( full_name );
 
 			if ( rt.name() != full_name ) {
-				TR << "ERROR: name mismatch " << rt.name() << " " << full_name << std::endl;
+				TR.Error << "name mismatch " << rt.name() << " " << full_name << std::endl;
 				continue;
 			}
 			newly_viable_types.push_back( full_name );

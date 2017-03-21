@@ -67,7 +67,7 @@ bool ExtendedPoseMover::valid() const {
 
 void ExtendedPoseMover::apply(core::pose::Pose& pose) {
 	// Ensure that this instance is in a valid state
-	assert(valid());
+	debug_assert(valid());
 	pose.clear();
 
 	protocols::loops::Loops loops;

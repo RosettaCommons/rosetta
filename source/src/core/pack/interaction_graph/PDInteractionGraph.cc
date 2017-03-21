@@ -18,6 +18,9 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
+#include <utility/assert.hh>
+#include <basic/Tracer.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1A.hh>
@@ -27,7 +30,6 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
-#include <utility/assert.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -38,6 +40,8 @@
 namespace core {
 namespace pack {
 namespace interaction_graph {
+
+static THREAD_LOCAL basic::Tracer TR("core.pack.interaction_graph.PDInteractionGraph");
 
 //----------------------------------------------------------------------------//
 //-------- Sparse Pairwise Decomposable Interaction Graph Node Class ---------//
@@ -2117,8 +2121,8 @@ int get_other_index(const EdgeBase* edge_base, const int index) {
 	} else if ( index == edge_base->get_second_node_ind() ) {
 		return edge_base->get_first_node_ind();
 	} else {
-		debug_assert( false );
-		utility_exit_with_message("et_other_index(const EdgeBase* edge_base, const int index)  failed");
+		TR.Fatal << "Got an index of " << index << " expected either " << edge_base->get_first_node_ind() << " or " << edge_base->get_second_node_ind() << std::endl;
+		utility_exit_with_message("get_other_index(const EdgeBase* edge_base, const int index)  failed");
 		return -1;
 	}
 } // get_other_index

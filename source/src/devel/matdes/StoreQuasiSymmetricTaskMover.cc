@@ -249,7 +249,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 				TR.Debug << "RotamerLinks ALREADY set for residue " << ir << " from a previous quasi residue." << std::endl;
 			} else {
 				//this should catch design residues that for some reason are not being linked to something
-				TR << "WARNING: This residue: " << ir << " has NOT been assigned to anything. Something is WRONG." << std::endl;
+				TR.Warning << "This residue: " << ir << " has NOT been assigned to anything. Something is WRONG." << std::endl;
 			}
 
 		} else {

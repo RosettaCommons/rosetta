@@ -448,8 +448,8 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 				order_strands.push_back( s );
 				ibarrel = false;
 			} else if ( spairset_.neighbor_strands( s ).size() > 2 ) {
-				TR.Error << "Error, num of neighbor strands > 2 " << std::endl;
-				runtime_assert( false );
+				TR.Error << "num of neighbor strands > 2. Actual value: " << spairset_.neighbor_strands( s ).size() << std::endl;
+				utility_exit_with_message("More than 2 neighbor strands.");
 			}
 		}
 

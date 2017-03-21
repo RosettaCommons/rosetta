@@ -373,11 +373,11 @@ SheetTopologyFilter::parse_my_tag(
 	} //
 
 	if ( filtered_sheet_topology_ == "" ) {
-		tr.Warning << "Warning!,  option of topology is empty -- it will be computed from StructureData at runtime" << std::endl;
+		tr.Warning << "option of topology is empty -- it will be computed from StructureData at runtime" << std::endl;
 	} else {
 		tr << filtered_sheet_topology_ << " is filtred " << std::endl;
 		if ( ignore_register_shift_ ) {
-			tr.Warning << "WARNING: ignore_register_shift_ option will be superceded by information from blueprint or topology string." << std::endl;
+			tr.Warning << "ignore_register_shift_ option will be superceded by information from blueprint or topology string." << std::endl;
 		}
 	}
 

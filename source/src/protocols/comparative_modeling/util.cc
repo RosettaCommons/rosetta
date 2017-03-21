@@ -128,7 +128,7 @@ core::id::SequenceMapping get_qt_mapping_general(
 	SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
 
 	if ( intermediate.identities() != intermediate.length() ) {
-		tr.Warning << "Error: potential mismatch between sequence from alignment ";
+		tr.Warning << "potential mismatch between sequence from alignment ";
 		tr.Warning << " and sequence from PDB!" << std::endl;
 		tr.Warning << "alignment: " << std::endl << intermediate
 			<< std::endl;
@@ -170,7 +170,7 @@ void bounded_loops_from_alignment(
 	using core::id::SequenceMapping;
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
-	assert(unaligned_regions);
+	debug_assert(unaligned_regions);
 
 	const Size query_idx = 1;
 	const Size templ_idx = 2;
@@ -476,13 +476,13 @@ void steal_ligands(
 
 	// add some runtime asserts here!
 	if ( !anchor_atom_dest.valid() ) {
-		tr.Error << "Error: can't place ligands. "
+		tr.Error << "Can't place ligands. "
 			<< "Destination anchor atom is not valid!" << anchor_atom_dest
 			<< std::endl;
 		return;
 	}
 	if ( !anchor_atom_source.valid() ) {
-		tr.Error << "Error: can't place ligands. "
+		tr.Error << "Can't place ligands. "
 			<< "Source anchor atom is not valid! (" << anchor_atom_source << ")"
 			<< std::endl;
 

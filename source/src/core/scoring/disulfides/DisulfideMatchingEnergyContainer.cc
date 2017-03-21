@@ -614,7 +614,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 				}
 			}
 			if ( other_res_ii == 0 ) {
-				TR.Error << "ERROR: Could not find disulfide partner for residue " << ii << std::endl;
+				TR.Error << "Could not find disulfide partner for residue " << ii << std::endl;
 				utility_exit();
 			}
 			debug_assert( other_res_ii > ii );

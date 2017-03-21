@@ -108,9 +108,9 @@ private:
 	void configure( core::pose::Pose const& in_p,
 		utility::vector1< bool > const selection );
 
-	void templ_target( std::map< core::Size, core::Size > const& in ){ assert( templ_target_.empty() ); templ_target_ = in; }
+	void templ_target( std::map< core::Size, core::Size > const& in ){ debug_assert( templ_target_.empty() ); templ_target_ = in; }
 
-	void sim_origin( std::map< core::Size, core::Size > const& in ){ assert( sim_origin_.empty() ); sim_origin_ = in; }
+	void sim_origin( std::map< core::Size, core::Size > const& in ){ debug_assert( sim_origin_.empty() ); sim_origin_ = in; }
 
 
 	EnvClaims claims_;

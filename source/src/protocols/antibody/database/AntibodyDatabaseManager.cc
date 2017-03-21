@@ -703,7 +703,7 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 	}
 
 
-	assert(cdrs.size() == 8);
+	debug_assert(cdrs.size() == 8);
 	vector1<bool> cdrs_with_no_data(8, false);
 
 	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ) {

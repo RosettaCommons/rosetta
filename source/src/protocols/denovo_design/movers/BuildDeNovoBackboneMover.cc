@@ -315,7 +315,7 @@ BuildDeNovoBackboneMover::build_in_phases(
 		} catch ( EXCN_NothingToFold const & e ) {
 			e.show( TR );
 			TR.flush();
-			TR.Warning << "WARNING: not folding anything!" << std::endl;
+			TR.Warning << "not folding anything!" << std::endl;
 		} catch ( EXCN_FilterFailed const & e ) {
 			e.show( TR );
 			TR.flush();

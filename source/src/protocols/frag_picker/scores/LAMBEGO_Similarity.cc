@@ -75,8 +75,8 @@ bool LAMBEGO_Similarity::cached_score(
 
 	core::Real total_score = 0;
 	for ( core::Size i = 1; i <= f->get_length(); ++i ) {
-		assert( f->get_first_index_in_query() + i - 1 <= scores_.size()    );
-		assert( f->get_first_index_in_vall() + i - 1 <= scores_[1].size() );
+		debug_assert( f->get_first_index_in_query() + i - 1 <= scores_.size()    );
+		debug_assert( f->get_first_index_in_vall() + i - 1 <= scores_[1].size() );
 		total_score += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 	}
 	//std::cout << "total_score = " << total_score << std::endl;

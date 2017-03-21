@@ -1065,8 +1065,8 @@ IterativeOptEDriver::load_pssm_data(
 				sum += pssm_prob_dist[ ii ];
 			}
 			if ( std::abs( sum - 1 ) > 0.001 ) {
-				TR << "Warning: pssm probability distribution does not sum to 1.0: " << sum << std::endl;
-				TR << "Problem on line " << linenum << " of " << pssm_file_name << std::endl;
+				TR.Warning << "pssm probability distribution does not sum to 1.0: " << sum << std::endl;
+				TR.Warning << "Problem on line " << linenum << " of " << pssm_file_name << std::endl;
 			}
 			pssm_data.push_back( std::make_pair( aa, pssm_prob_dist ));
 		}
@@ -2414,7 +2414,7 @@ IterativeOptEDriver::score_position_data()
 				TR << "Reading weight: " << st << " " << weight << std::endl;
 				weight_set[ st ] = weight;
 			} else {
-				TR << "Warning:: ignoring tag " << tag << " from " << option[ optE::rescore::weights ]()() << std::endl;
+				TR.Warning << "ignoring tag " << tag << " from " << option[ optE::rescore::weights ]()() << std::endl;
 			}
 
 		}
@@ -3622,8 +3622,8 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			}
 		} else {
 			if ( option[ optE::optimize_pssm ]() ) {
-				TR << "Warning: " << pdb_name << ".fasta.probs is shorter than PDB file!\n";
-				TR << "Falling back on PNatAAOptEPositionData for residue " << resi << std::endl;
+				TR.Warning << pdb_name << ".fasta.probs is shorter than PDB file!\n";
+				TR.Warning << "Falling back on PNatAAOptEPositionData for residue " << resi << std::endl;
 			}
 
 			// Create a position data object of the type that has special processing for unfolded state energy calculations.
@@ -4109,7 +4109,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 				read_silent=true;
 				sfd_wt.set_filename(wts()); //for now assume binary
 				if ( !sfd_wt.read_file(wts()) ) {
-					std::cout << "[ERROR ERROR ERROR] did not read in silent file properly! " << wts() << std::endl;
+					TR.Error << "did not read in silent file properly! " << wts() << std::endl;
 				}
 				wt_pdb_names = sfd_wt.tags();
 			} else {
@@ -4140,7 +4140,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 				read_silent=true;
 				sfd_mut.set_filename(muts());
 				if ( !sfd_mut.read_file(muts()) ) {
-					std::cout << "[ERROR ERROR ERROR] did not read in silent file properly! " << muts() << std::endl;
+					TR.Error << "did not read in silent file properly! " << muts() << std::endl;
 				}
 				mut_pdb_names = sfd_mut.tags();
 				if ( no_tag_yet_assigned ) {
@@ -5295,9 +5295,9 @@ load_component_weights(
 			++line_number;
 		}
 		if ( line_number == 1 ) {
-			TR << "WARNING: read no lines from component weight file: " << option[ optE::component_weights ]() << std::endl;
+			TR.Warning << "read no lines from component weight file: " << option[ optE::component_weights ]() << std::endl;
 		} else if ( nread == 0 ) {
-			TR << "WARNING: only blank lines found in component weight file: " << option[ optE::component_weights ]() << std::endl;
+			TR.Warning << "only blank lines found in component weight file: " << option[ optE::component_weights ]() << std::endl;
 		}
 	}
 }

@@ -77,14 +77,14 @@ SampleStrategyData::set_strategy( ChiStrategy setting )
 void
 SampleStrategyData::set_sample_level( ExtraRotSample setting )
 {
-	assert( strategy_ == rotameric_chi_mimic_EX_flags );
+	debug_assert( strategy_ == rotameric_chi_mimic_EX_flags );
 	sample_level_ = setting;
 }
 
 void
 SampleStrategyData::set_step_size( Real setting )
 {
-	assert(
+	debug_assert(
 		strategy_ == rotameric_chi_step_by_value ||
 		strategy_ == rotameric_chi_step_wi_sd_range );
 
@@ -93,7 +93,7 @@ SampleStrategyData::set_step_size( Real setting )
 
 void
 SampleStrategyData::set_sd_range(  Real setting ) {
-	assert(
+	debug_assert(
 		strategy_ == rotameric_chi_step_wi_sd_range ||
 		strategy_ == rotameric_chi_partition_sd_range );
 	sd_range_ = setting;
@@ -102,14 +102,14 @@ SampleStrategyData::set_sd_range(  Real setting ) {
 void
 SampleStrategyData::set_n_samples_wi_sd_range( Size setting )
 {
-	assert( strategy_ == rotameric_chi_partition_sd_range );
+	debug_assert( strategy_ == rotameric_chi_partition_sd_range );
 	n_samples_wi_sd_range_ = setting;
 }
 
 void
 SampleStrategyData::set_nrchi_prob_minimum_for_extra_samples( Real setting )
 {
-	assert(
+	debug_assert(
 		strategy_ == follow_EX_flags ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary );
@@ -118,7 +118,7 @@ SampleStrategyData::set_nrchi_prob_minimum_for_extra_samples( Real setting )
 
 void
 SampleStrategyData::set_n_samples_per_side_of_nrchi_bin( Size setting ) {
-	assert(
+	debug_assert(
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary );
 	n_samples_per_side_of_nrchi_bin_ = setting;
@@ -130,7 +130,7 @@ SampleStrategyData::strategy() const { return strategy_; }
 SampleStrategyData::ExtraRotSample
 SampleStrategyData::sample_level() const
 {
-	assert( strategy_ == rotameric_chi_mimic_EX_flags );
+	debug_assert( strategy_ == rotameric_chi_mimic_EX_flags );
 	return sample_level_;
 }
 
@@ -138,7 +138,7 @@ SampleStrategyData::sample_level() const
 SampleStrategyData::Real
 SampleStrategyData::step_size() const
 {
-	assert(
+	debug_assert(
 		strategy_ == rotameric_chi_step_by_value ||
 		strategy_ == rotameric_chi_step_wi_sd_range );
 	return step_size_;
@@ -147,7 +147,7 @@ SampleStrategyData::step_size() const
 SampleStrategyData::Real
 SampleStrategyData::sd_range() const
 {
-	assert(
+	debug_assert(
 		strategy_ == rotameric_chi_step_wi_sd_range ||
 		strategy_ == rotameric_chi_partition_sd_range );
 	return sd_range_;
@@ -156,14 +156,14 @@ SampleStrategyData::sd_range() const
 SampleStrategyData::Size
 SampleStrategyData::n_samples_wi_sd_range() const
 {
-	assert( strategy_ == rotameric_chi_partition_sd_range );
+	debug_assert( strategy_ == rotameric_chi_partition_sd_range );
 	return n_samples_wi_sd_range_;
 }
 
 SampleStrategyData::Real
 SampleStrategyData::nrchi_prob_minimum_for_extra_samples() const
 {
-	assert(
+	debug_assert(
 		strategy_ == follow_EX_flags ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary );
@@ -173,7 +173,7 @@ SampleStrategyData::nrchi_prob_minimum_for_extra_samples() const
 SampleStrategyData::Size
 SampleStrategyData::n_samples_per_side_of_nrchi_bin() const
 {
-	assert(
+	debug_assert(
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary );
 	return n_samples_per_side_of_nrchi_bin_;
@@ -623,7 +623,7 @@ FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
 void
 FullChiSampleSet::create_hts_for_chi( Size chi )
 {
-	assert( ! dry_run_ );
+	debug_assert( ! dry_run_ );
 	Size const nsamples = chi_samples_[ chi ].size();
 	runtime_assert( nsamples == n_samples_per_chi_[ chi ] );
 	frames_[ chi ].resize( nsamples );
@@ -780,7 +780,7 @@ ProteinUpstreamBuilder::build(
 
 				Size n_chi_needing_update = ii_nchi;
 				while ( ! lex.at_end() ) {
-					assert( ( n_chi_needing_update >= 1 || ii_nchi == 0 ) && n_chi_needing_update <= ii_nchi );
+					debug_assert( ( n_chi_needing_update >= 1 || ii_nchi == 0 ) && n_chi_needing_update <= ii_nchi );
 					/// Some rotamer placements may be skipped because they either collide with the
 					/// background, or they would produce downstream geometries that are too distant
 					/// from any of the hits generated in previous stages (and therefore would be
@@ -906,7 +906,7 @@ ProteinUpstreamBuilder::build(
 		//TR << "Finished building residue type: " << rescoords.type().name() << std::endl;
 	} //ii loop over build sets
 
-	assert( dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point ) );
+	debug_assert( dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point ) );
 	ProteinBackboneBuildPoint const & bb( static_cast< ProteinBackboneBuildPoint const & >
 		( build_point ) );
 
@@ -941,8 +941,8 @@ ProteinUpstreamBuilder::recover_hits(
 	UpstreamResidueProcessor & processor
 ) const
 {
-	// assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.id() );
-	assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.index() );
+	// debug_assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.id() );
+	debug_assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.index() );
 	//Hit hit = *hit_iter;
 	//std::cout << "ProteinUpstreamBuilder::recover hit " << hit.first()[ 1 ] << " " << hit.first()[ 2 ] << std::endl;
 	/// 1. Figure out which amino acid it is that we're inserting.

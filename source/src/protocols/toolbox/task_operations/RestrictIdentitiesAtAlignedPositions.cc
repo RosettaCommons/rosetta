@@ -100,7 +100,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 	for ( core::Size const resid : res_ids_ ) {
 		core::Size const nearest_to_res = find_nearest_res( pose, *source_pose_, resid, chain() );
 		if ( nearest_to_res == 0 ) {
-			TR<<"WARNING: could not find a residue near to "<<resid<<std::endl;
+			TR.Warning << "could not find a residue near to "<<resid<<std::endl;
 			continue;
 		}//fi
 		RestrictAbsentCanonicalAASRLTOP racaas1( new RestrictAbsentCanonicalAASRLT ); /// used to determine the single residue identity taken from the source pose

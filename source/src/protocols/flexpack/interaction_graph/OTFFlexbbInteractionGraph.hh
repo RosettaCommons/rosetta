@@ -326,10 +326,10 @@ protected:
 	}
 
 	OTFFlexbbEdge const * cast_otfflexbb_edge( EdgeBase const * edge ) const
-	{ assert( mine( edge ) ); return static_cast< OTFFlexbbEdge const * > ( edge ); }
+	{ debug_assert( mine( edge ) ); return static_cast< OTFFlexbbEdge const * > ( edge ); }
 
 	OTFFlexbbEdge * cast_otfflexbb_edge( EdgeBase * edge )
-	{ assert( mine( edge ) ); return static_cast< OTFFlexbbEdge * > ( edge ); }
+	{ debug_assert( mine( edge ) ); return static_cast< OTFFlexbbEdge * > ( edge ); }
 
 
 private:

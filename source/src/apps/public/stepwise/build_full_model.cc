@@ -488,7 +488,7 @@ build_full_model_test()
 			nonconst_full_model_info( start_pose ).clear_other_pose_list();
 			other_ops = nonconst_full_model_info( start_pose ).other_pose_list();
 			if ( !other_ops.empty() ) {
-				TR << TR.Red << "[WARNING] other_pose_list not empty, full_model_pose may be garbage!!! " << TR.Reset << std::endl;
+				TR.Warning << TR.Red << "other_pose_list not empty, full_model_pose may be garbage!!! " << TR.Reset << std::endl;
 			}
 		}
 

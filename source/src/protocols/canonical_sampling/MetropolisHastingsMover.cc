@@ -636,7 +636,7 @@ MetropolisHastingsMover::set_last_move(
 
 ThermodynamicMover const&
 MetropolisHastingsMover::last_move() const {
-	assert( last_move_ );
+	debug_assert( last_move_ );
 	return *last_move_;
 }
 

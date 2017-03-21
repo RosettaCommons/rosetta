@@ -354,12 +354,12 @@ private:
 	static basic::ProfTag const id2proftag_[];
 
 	std::string const& id2string( StageID id ) {
-		assert( id < LAST_STAGE );
+		debug_assert( id < LAST_STAGE );
 		return id2string_[ id ];
 	}
 
 	basic::ProfTag id2proftag( StageID id ) {
-		assert( id < LAST_STAGE );
+		debug_assert( id < LAST_STAGE );
 		return id2proftag_[ id ];
 	}
 };

@@ -1373,8 +1373,8 @@ void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & kn
 
 		//jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
 		//these are useful asserts though, it's worth thinking about how to make them valid again...
-		//assert( std::abs( pro->phi - lig->phi ) < 0.001 );
-		//assert( std::abs( pro->psi - lig->psi ) < 0.001 );
+		//debug_assert( std::abs( pro->phi - lig->phi ) < 0.001 );
+		//debug_assert( std::abs( pro->psi - lig->psi ) < 0.001 );
 
 		if ( ( pro->rho > 0.001 ) && ( lig->rho < 0.001 ) ) continue;
 		triplet_trim_data.push_back(*pro);
@@ -2027,9 +2027,9 @@ core::Real PlaidFingerprint::fp_compare( FingerprintBase & fp, core::Real const 
 
 		// jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
 		// these are useful asserts though, it's worth thinking about how to make them valid again...
-		// assert( std::abs( pi->phi - li->phi ) < 0.001 );
-		// assert( std::abs( pi->psi - li->psi ) < 0.001 );
-		assert( pi->ori == li->ori );
+		// debug_assert( std::abs( pi->phi - li->phi ) < 0.001 );
+		// debug_assert( std::abs( pi->psi - li->psi ) < 0.001 );
+		debug_assert( pi->ori == li->ori );
 
 		if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
 			continue;
@@ -2083,15 +2083,15 @@ void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const 
 		std::cout<<"Error, fingerprint derivatives have not been computed" << std::endl;
 		exit(1);
 	}
-	assert( derivs_of_ray_distances_.size() == fp.triplet_fingerprint_data().size() );
+	debug_assert( derivs_of_ray_distances_.size() == fp.triplet_fingerprint_data().size() );
 
 	core::Real Total_score = 0;
 	core::Real Differentiable_score = 0;
 	core::Size num_rays = 0;
 	auto di = derivs_of_ray_distances_.begin();
 	for ( auto pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); (pi != fp.triplet_fingerprint_data().end()) && (li != triplet_fingerprint_data_.end()) && (di != derivs_of_ray_distances_.end()); ++pi, ++li, ++di ) {
-		assert( std::abs( pi->phi - li->phi ) < 0.001 );
-		assert( std::abs( pi->psi - li->psi ) < 0.001 );
+		debug_assert( std::abs( pi->phi - li->phi ) < 0.001 );
+		debug_assert( std::abs( pi->psi - li->psi ) < 0.001 );
 
 		if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
 			continue;

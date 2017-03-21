@@ -90,7 +90,7 @@ void AbscriptStageMover::update_max_seq_sep( core::pose::Pose& pose, core::Real 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	assert( progress >= 0.0 && progress <= 1.0 );
+	debug_assert( progress >= 0.0 && progress <= 1.0 );
 
 	if ( option[ jumps::ramp_chainbreaks ] ) {
 		core::Real const increase_factor = option[ jumps::increase_chainbreak ];
@@ -116,7 +116,7 @@ void AbscriptStageMover::update_max_seq_sep( core::pose::Pose& pose, core::Real 
 		1.0 );
 
 	core::Size max_ft_dist = constraints_->largest_possible_sequence_sep( pose );
-	assert( max_ft_dist <= pose.size() );
+	debug_assert( max_ft_dist <= pose.size() );
 
 	tr.Debug << "using factor " << new_seq_sep_factor << " with max ft dist " << max_ft_dist << std::endl;
 	core::Size seqsep = new_seq_sep_factor * max_ft_dist;

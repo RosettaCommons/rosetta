@@ -173,8 +173,8 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 	} else if ( type_ == "total" ) {
 		value = frustration;
 	} else {
-		tr << "improper type specification " << type_ << std::endl;
-		runtime_assert( false );
+		tr.Fatal << "improper type specification " << type_ << std::endl;
+		utility_exit_with_message("Improper type specification.");
 	}
 
 	return value;
@@ -213,8 +213,8 @@ CoreDunbrackFilter::parse_my_tag(
 	else if ( type_ == "num_frustrated_residue" ) {}
 	else if ( type_ == "total" ) {}
 	else {
-		tr << "invalid type specification, slect from average, num_frustrated_residue, or total" << std::endl;
-		runtime_assert( false );
+		tr.Fatal << "invalid type specification, slect from average, num_frustrated_residue, or total" << std::endl;
+		utility_exit_with_message("Invalid type specification.");
 	}
 
 }

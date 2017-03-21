@@ -130,7 +130,7 @@ ChunkTrialMover::get_alignment_from_template(
 
 void ChunkTrialMover::pick_random_template()
 {
-	assert(template_poses_.size() != 0);
+	debug_assert(template_poses_.size() != 0);
 	set_template(0);
 	int ntrials=100;
 	while ( !template_number() && --ntrials>0 ) {

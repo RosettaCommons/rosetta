@@ -87,7 +87,7 @@ void SecondarySimilarity::do_caching(VallChunkOP chunk) {
 
 void SecondarySimilarity::do_caching_simple(VallChunkOP chunk) {
 
-	assert(query_ss_);
+	debug_assert(query_ss_);
 	utility::vector1<core::Size> chunk_ss_id( chunk->size() );
 	for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 		char s(chunk->at(j)->ss());

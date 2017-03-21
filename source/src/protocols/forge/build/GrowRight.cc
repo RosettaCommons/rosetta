@@ -64,7 +64,7 @@ GrowRight::GrowRight(
 		aa_ = String( ss_.length(), 'A' );
 	}
 
-	assert( ss_.length() == core::pose::annotated_to_oneletter_sequence( aa_ ).length() );
+	debug_assert( ss_.length() == core::pose::annotated_to_oneletter_sequence( aa_ ).length() );
 }
 
 
@@ -236,14 +236,14 @@ void GrowRight::modify_impl( Pose & pose ) {
 
 	// grab residue types from aa string
 	ResidueTypeCOPs r_types = core::pose::residue_types_from_sequence( aa_, residue_type_set(), false );
-	assert( r_types.size() == ss_.length() );
+	debug_assert( r_types.size() == ss_.length() );
 
 	// BEGIN POS SHIFT: after this point, pos_ will begin to shift due to length
 	// changes in the Pose
 
 	// grow extension
 	Size right_endpoint = grow_right_rtype( pose, pos_, r_types.begin(), r_types.end() );
-	assert( right_endpoint == pos_ + ss_.length() );
+	debug_assert( right_endpoint == pos_ + ss_.length() );
 
 	// END POS SHIFT: after this point, pos_ has stabilized
 

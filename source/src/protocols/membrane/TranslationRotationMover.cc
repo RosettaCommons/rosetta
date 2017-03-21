@@ -198,7 +198,7 @@ TranslationMover::apply( core::pose::Pose & pose ) {
 	// checking input
 	core::Vector zero( 0, 0, 0 );
 	if ( translation_vector_ == zero ) {
-		TR << "WARNING: Old and new centers are identical. Skipping rotation!" << std::endl;
+		TR.Warning << "Old and new centers are identical. Skipping rotation!" << std::endl;
 	} else {
 
 		TR << "Translating the pose" << std::endl;
@@ -403,7 +403,7 @@ RotationMover::apply( Pose & pose ) {
 	core::Vector diff = new_normal_ - old_normal_;
 	core::Vector zero( 0, 0, 0 );
 	if ( diff == zero ) {
-		TR << "WARNING: Old and new normal are identical. Skipping rotation!" << std::endl;
+		TR.Warning << "Old and new normal are identical. Skipping rotation!" << std::endl;
 	} else {
 		TR << "Rotating the pose..." << std::endl;
 

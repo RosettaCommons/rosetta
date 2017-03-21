@@ -50,7 +50,7 @@ WriteableCacheableDataFactory::new_data_instance( std::string const & data_type,
 	WriteableCacheableDataMap::const_iterator iter( data_creator_map_.find( data_type ) );
 
 	if ( iter == data_creator_map_.end() ) {
-		tr.Error << "[ERROR] " << data_type << " was not registered with WritableCacheableDataFactory, and cannot be initialized." << std::endl
+		tr.Error << data_type << " was not registered with WritableCacheableDataFactory, and cannot be initialized." << std::endl
 			<< "This is probably a result of not being included by protocols/init.WriteableCacheableDataCreators.ihh and "
 			<< "protocols/init.WriteableCacheableDataRegistrators.ihh." << std::endl
 			<< "Available WriteableCacheableData types: ";

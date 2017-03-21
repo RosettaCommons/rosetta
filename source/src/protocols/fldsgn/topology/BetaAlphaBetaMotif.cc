@@ -204,8 +204,8 @@ BetaAlphaBetaMotif::calc_helix_cycle( SS_Info2_COP const ssinfo )
 	using protocols::fldsgn::topology::Strand;
 
 	if ( ! geometry_is_initialized_ ) {
-		TR << "Geometry have to be initialized before calculating helix cycle. ";
-		runtime_assert( false );
+		TR.Fatal << "Geometry have to be initialized before calculating helix cycle. ";
+		utility_exit_with_message("Geometry uninitialized for BetaAlphaBetaMotif");
 	}
 
 	// get helix

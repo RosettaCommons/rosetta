@@ -196,16 +196,16 @@ SimulateMPI::simulate_mpi() {
 
 void
 SimulateMPI::set_mpi_rank(int value) {
-	assert(simulation_);
-	assert(0 <= value);
-	assert(value < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= value);
+	debug_assert(value < mpi_nprocs());
 	rank_ = value;
 }
 
 
 int
 SimulateMPI::mpi_rank() {
-	assert(simulation_);
+	debug_assert(simulation_);
 	return rank_;
 }
 
@@ -225,9 +225,9 @@ std::string
 SimulateMPI::receive_string_from_node(
 	int source
 ) {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_string );
 	return msg->string_msg();
@@ -238,9 +238,9 @@ SimulateMPI::send_string_to_node(
 	int destination,
 	std::string const & message
 ) {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -254,9 +254,9 @@ char
 SimulateMPI::receive_char_from_node(
 	int source
 ) {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_char );
 	return msg->char_msg();
@@ -267,9 +267,9 @@ SimulateMPI::send_char_to_node(
 	int destination,
 	char message
 ) {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -283,9 +283,9 @@ int
 SimulateMPI::receive_integer_from_node(
 	int source
 ) {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_integer );
 	return msg->integer_msg();
@@ -296,9 +296,9 @@ SimulateMPI::send_integer_to_node(
 	int destination,
 	int message
 ) {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -310,9 +310,9 @@ SimulateMPI::send_integer_to_node(
 platform::Size
 SimulateMPI::receive_size_from_node(int source)
 {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_size );
 	return msg->size_msg();
@@ -324,9 +324,9 @@ SimulateMPI::send_size_to_node(
 	int destination,
 	platform::Size message)
 {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -339,9 +339,9 @@ vector1< int >
 SimulateMPI::receive_integers_from_node(
 	int source
 ) {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_integers );
 	return msg->integers_msg();
@@ -352,9 +352,9 @@ SimulateMPI::send_integers_to_node(
 	int destination,
 	vector1< int > const & message
 ) {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -368,9 +368,9 @@ double
 SimulateMPI::receive_double_from_node(
 	int source
 ) {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_double );
 	return msg->double_msg();
@@ -381,9 +381,9 @@ SimulateMPI::send_double_to_node(
 	int destination,
 	double message
 ) {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -395,9 +395,9 @@ SimulateMPI::send_double_to_node(
 vector1< platform::Size >
 SimulateMPI::receive_sizes_from_node(int source)
 {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_sizes );
 	return msg->sizes_msg();
@@ -409,9 +409,9 @@ SimulateMPI::send_sizes_to_node(
 	vector1< platform::Size > const & message
 )
 {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
@@ -425,9 +425,9 @@ vector1< double >
 SimulateMPI::receive_doubles_from_node(
 	int source
 ) {
-	assert(simulation_);
-	assert(0 <= source);
-	assert(source < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= source);
+	debug_assert(source < mpi_nprocs());
 
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_doubles );
 	return msg->doubles_msg();
@@ -438,9 +438,9 @@ SimulateMPI::send_doubles_to_node(
 	int destination,
 	vector1< double > const & message
 ) {
-	assert(simulation_);
-	assert(0 <= destination);
-	assert(destination < mpi_nprocs());
+	debug_assert(simulation_);
+	debug_assert(0 <= destination);
+	debug_assert(destination < mpi_nprocs());
 
 	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );

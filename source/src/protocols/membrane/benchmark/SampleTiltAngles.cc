@@ -266,9 +266,9 @@ SampleTiltAngles::write_score_to_outfiles(
 	ref3_out << "TiltAngle Score" << std::endl;
 
 	// Check that angles and score lists are of equal length
-	assert( angles.size() == ref1_scores.size() );
-	assert( angles.size() == ref2_scores.size() );
-	assert( angles.size() == ref3_scores.size() );
+	debug_assert( angles.size() == ref1_scores.size() );
+	debug_assert( angles.size() == ref2_scores.size() );
+	debug_assert( angles.size() == ref3_scores.size() );
 
 	for ( core::Size i = 1; i <= angles.size(); ++i ) {
 		ref1_out << angles[i] << " " << ref1_scores[i] << std::endl;

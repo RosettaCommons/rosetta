@@ -79,7 +79,6 @@ void MetalloClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// What we want to do is create a jump from the zinc to the anchor chain, and build the appropriate fragments including
 	// the jump itself? This is done with old "jump interval" code that is nasty nasty.
 	// Also, much of this code is broken/stupid, because we're in the process of refactoring.
-	//runtime_assert( false );
 
 	//Find claim of anchor chain
 	claims::SequenceClaim my_claim = broker().resolve_sequence_label( label() );

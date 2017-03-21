@@ -81,14 +81,6 @@ TrajectoryRecorder::~TrajectoryRecorder() = default;
 
 TrajectoryRecorder::TrajectoryRecorder( TrajectoryRecorder const & ) = default;
 
-TrajectoryRecorder&
-TrajectoryRecorder::operator=( TrajectoryRecorder const & /* other */ )
-{
-	// assignment not allowed
-	runtime_assert(false);
-	return *this;
-}
-
 std::string
 TrajectoryRecorder::get_name() const
 {

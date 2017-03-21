@@ -205,7 +205,7 @@ void FlexbbSimAnnealer::run()
 
 		if ( nn > 1 && get_temperature() > last_temperature ) {
 			/// short circuit -- do not return to high temperature.
-			//assert( outeriterations > 0 ); // don't wrap to 4 billion
+			//debug_assert( outeriterations > 0 ); // don't wrap to 4 billion
 			//nn = outeriterations - 1; // force quence next round
 			//continue;
 			set_temperature( 0.5 ); // don't return to high temperatures /// ? maybe?
@@ -461,7 +461,7 @@ FlexbbSimAnnealer::pass_metropolis_multiple_nodes_changing(
 	Size num_changing_nodes
 ) const
 {
-	assert( num_changing_nodes > 0 );
+	debug_assert( num_changing_nodes > 0 );
 	if ( get_temperature() > 0.5 ) {
 		return pass_metropolis( previous_fragmentE / num_changing_nodes , deltaE / ( num_changing_nodes > 4 ? 4 : num_changing_nodes)  );
 	} else {

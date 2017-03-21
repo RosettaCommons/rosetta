@@ -891,7 +891,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				if ( (stop-start+1) < 4 ) {
 					// This kind of thing can come up at chain terminii, and should not cause a fatal error.
 					//for(Size k = 1; k <= nres; ++k) std::cerr << k << ' ' << mobile_bb[k] << std::endl;
-					TR.Warning << "WARNING: for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between " << start << " and " << stop << " is too short." << std::endl;
+					TR.Warning << "for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between " << start << " and " << stop << " is too short." << std::endl;
 					//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 					// But it will probably break the cutpoint logic below, so we have to skip this group of residues.
 					continue;

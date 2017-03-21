@@ -271,7 +271,7 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 				"In protocols::helical_bundle::BackboneGridSampler::apply() function: The nstruct_mode option was used, but invalid values were obtained for the current job index or the total number of jobs.");
 		}
 		if ( totaljobs < total_samples*nstruct_repeats() && TR.Warning.visible() ) {
-			TR.Warning << "Warning!  The BackboneGridSampler mover is in nstruct mode, meaning that one set of mainchain torsion values will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of mainchain torsion values will be missed!" << std::endl ;
+			TR.Warning << "The BackboneGridSampler mover is in nstruct mode, meaning that one set of mainchain torsion values will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of mainchain torsion values will be missed!" << std::endl ;
 		}
 		//The current job might be greater than the total number of samples, in which case we should wrap around:
 		loopstart = ( ( (curjob-1) % total_samples) + 1 ) / nstruct_repeats();

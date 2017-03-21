@@ -136,7 +136,7 @@ TempWeightedMetropolisHastingsMover::random_mover() //const
 		current_weighted_sampler_.clear();
 		Weights::const_iterator weight_it=overall_weights_.begin();
 		Interpolators::const_iterator interp_it=weight_controllers_.begin(); // interp_it is a pointer point to InterpolatorOP, so by *interp_it you get the real OP
-		assert( overall_weights_.size() == weight_controllers_.size() );
+		debug_assert( overall_weights_.size() == weight_controllers_.size() );
 		TR.Debug << "For temp_level " << temp_level <<" the temp_weighted weights and overall weights are: " << std::endl;
 		for ( ; interp_it != weight_controllers_.end(); ++weight_it, ++interp_it ) {
 			current_weighted_sampler_.add_weight( (*interp_it)->get_value( temp_level )*(*weight_it) );

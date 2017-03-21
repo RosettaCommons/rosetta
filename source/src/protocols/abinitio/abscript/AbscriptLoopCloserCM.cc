@@ -169,8 +169,8 @@ bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::
 
 void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
-	assert( passport() );
-	assert( final_ft_ );
+	debug_assert( passport() );
+	debug_assert( final_ft_ );
 
 	//Produce unprotected pose
 	core::pose::Pose pose( in_pose );
@@ -221,7 +221,7 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 		this->set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 	}
 	if ( warn ) {
-		tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn
+		tr.Warning << "AbscriptLoopMoverCM ignoring " << warn
 			<< " values that differ between idealized and unidealized poses. Use '-out:levels protocols.abinitio.abscript.AbscriptLoopCloserCM:debug' to see more info." << std::endl;
 	}
 }
@@ -354,7 +354,7 @@ void AbscriptLoopCloserCM::passport_updated() {
 void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const& broker ) {
 	//set the target fold tree for the closer.
 	final_ft_ = broker.closer_ft;
-	assert( final_ft_ );
+	debug_assert( final_ft_ );
 }
 
 // XRW TEMP std::string AbscriptLoopCloserCM::get_name() const {

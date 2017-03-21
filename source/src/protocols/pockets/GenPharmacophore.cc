@@ -562,7 +562,7 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 	scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	(*scorefxn)(prot_rna_complex_pose);
 
-	assert( prot_rna_complex_pose.energies().residue_neighbors_updated() );
+	debug_assert( prot_rna_complex_pose.energies().residue_neighbors_updated() );
 	core::scoring::EnergyGraph const & energy_graph( prot_rna_complex_pose.energies().energy_graph() );
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( prot_rna_complex_pose.energies().tenA_neighbor_graph() );
 	core::scoring::hbonds::HBondDatabaseCOP hb_database = core::scoring::hbonds::HBondDatabase::get_database(core::scoring::hbonds::HBondOptions().params_database_tag());

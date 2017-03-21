@@ -96,7 +96,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 	}
 
 	if ( res1.aa() > num_canonical_aas ) {
-		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
+		TR.Warning << "trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
 		return false;
 	}
 
@@ -174,7 +174,7 @@ RRComparerChiDiff::measure_rotamer_recovery(
 	}
 
 	if ( res1.aa() > num_canonical_aas ) {
-		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
+		TR.Warning << "trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
 		return false;
 	}
 

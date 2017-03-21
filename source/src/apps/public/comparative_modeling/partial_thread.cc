@@ -134,7 +134,7 @@ main( int argc, char* argv [] ) {
 
 				map< string, Pose >::iterator pose_it = poses.find( template_id );
 				if ( pose_it == poses.end() ) {
-					tr.Error << "WARNING: can't find pose (id = " << template_id << ")" << std::endl;
+					tr.Error << "can't find pose (id = " << template_id << ")" << std::endl;
 				} else {
 					tr << *it << std::endl;
 					tr << "id " << it->sequence(2)->id() << " => " << template_id

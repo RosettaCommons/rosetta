@@ -674,7 +674,7 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 		core::Size const after_apply_design_mover( pose.constraint_set()->get_all_constraints().size() );
 		TR.Debug<<"before applying design mover "<<before_apply_design_mover<<" constraints. After: "<<after_apply_design_mover<<std::endl;
 		if ( before_apply_design_mover != after_apply_design_mover ) {
-			TR<<"ERROR: This design mover changed the number of constraints on the pose. Before: "<< before_apply_design_mover<<" after: "<<after_apply_design_mover<<". This behaviour is unsupported."<<std::endl;
+			TR.Error << "This design mover changed the number of constraints on the pose. Before: "<< before_apply_design_mover<<" after: "<<after_apply_design_mover<<". This behaviour is unsupported."<<std::endl;
 			runtime_assert( before_apply_design_mover != after_apply_design_mover );
 		}
 		TR<<"removing coordinate constraints" << std::endl;
@@ -769,7 +769,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 
 	if ( tag->hasOption( "task_operations" ) ) {
 		if ( task_factory() ) {
-			TR<<"*****WARNING: ERASING existing task_factory, b/c of specifications for new task operations in " << std::endl<<tag<<std::endl;
+			TR.Warning << "ERASING existing task_factory, b/c of specifications for new task operations in " << std::endl<<tag<<std::endl;
 		}
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}

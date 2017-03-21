@@ -583,13 +583,13 @@ main( int argc, char * argv [] ) {
 #endif
 
 					if ( !scaffold_res.has("CA") ) {
-						TR << "Warning: position " << scaffold_res.seqpos() << " is missing CA atom. skipping this position." << std::endl;
+						TR.Warning << "position " << scaffold_res.seqpos() << " is missing CA atom. skipping this position." << std::endl;
 						continue;
 					}
 
 					// skip residues that don't have a cbeta atom, unless it's a glycine. for glycines, use the 2HA atom position
 					if ( scaffold_res.name3() != "GLY" && !scaffold_res.has( "CB" ) ) {
-						TR << "Warning: position " << scaffold_res.seqpos() << " is missing CB atom, and is not a glycine. skipping this position." << std::endl;
+						TR.Warning << "position " << scaffold_res.seqpos() << " is missing CB atom, and is not a glycine. skipping this position." << std::endl;
 						continue;
 					}
 

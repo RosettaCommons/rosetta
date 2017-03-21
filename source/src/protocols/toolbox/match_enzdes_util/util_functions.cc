@@ -249,8 +249,8 @@ get_first_protein_residue( core::pose::Pose const & pose )
 		}
 	}
 
-	tr << "No non-ligand residues were detected!!" << std::endl;
-	runtime_assert( false );
+	tr.Fatal << "No non-ligand residues were detected!!" << std::endl;
+	utility_exit_with_message("No non-ligand residues were detected in pose.");
 	return 0;
 }
 
@@ -269,8 +269,8 @@ get_last_protein_residue( core::pose::Pose const & pose )
 		}
 	}
 
-	tr << "No non-ligand residues were detected!!" << std::endl;
-	runtime_assert( false );
+	tr.Fatal << "No non-ligand residues were detected!!" << std::endl;
+	utility_exit_with_message("No non-ligand residues were detected in pose.");
 	return 0;
 }
 

@@ -652,7 +652,7 @@ void HelicalGaussianMover::getCoordinateTransformation(
 {
 	// if the segment is not simple (i.e. contains >1 continuous segment) output error msg
 	if ( !segment_.isSimple() ) {
-		TR << "[ ERROR ] HelicalGaussianMover::getCoordinateTransformationy() called on compound segment!" << std::endl;
+		TR.Error << "HelicalGaussianMover::getCoordinateTransformationy() called on compound segment!" << std::endl;
 		exit(1);
 	}
 
@@ -666,7 +666,7 @@ void HelicalGaussianMover::getCoordinateTransformation(
 	int nres =  endRes - startRes + 1;
 
 	if ( nres < 4 ) {
-		TR << "[WARNING]  Helical axis of helices less than four residues is not correctly computed" << std::endl;
+		TR.Warning << "Helical axis of helices less than four residues is not correctly computed" << std::endl;
 		rotationCenter = getCoM( pose );
 
 		coordinateTransform.clear();
@@ -743,7 +743,7 @@ void StrandTwistingMover::getCoordinateTransformation(
 {
 	// if the segment is not simple (i.e. contains >1 continuous segment) output error msg
 	if ( !segment_.isSimple() ) {
-		TR << "[ ERROR ] HelicalGaussianMover::getCoordinateTransformationy() called on compound segment!" << std::endl;
+		TR.Error << "HelicalGaussianMover::getCoordinateTransformationy() called on compound segment!" << std::endl;
 		exit(1);
 	}
 
@@ -754,7 +754,7 @@ void StrandTwistingMover::getCoordinateTransformation(
 	int nres =  endRes - startRes + 1;
 
 	if ( nres < 3 ) {
-		TR << "[WARNING]  Strand axis of less than three residues is not correctly computed" << std::endl;
+		TR.Warning << "Strand axis of less than three residues is not correctly computed" << std::endl;
 		rotationCenter = getCoM( pose );
 
 		coordinateTransform.clear();

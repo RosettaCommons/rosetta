@@ -214,7 +214,7 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 		++jobs_returned_;
 		break;
 	default :
-		tr.Error << "[ERROR] from " << slave_rank << " tag: "  << msg_tag << " " << slave_job_id << std::endl;
+		tr.Error << "Unknown tag from " << slave_rank << " tag: "  << msg_tag << " " << slave_job_id << std::endl;
 		utility_exit_with_message(" unknown tag "+ ObjexxFCL::string_of( msg_tag ) +" in master_loop of MPIFileBufJobDistributor ");
 		return false;
 	}
@@ -515,7 +515,7 @@ MPIFileBufJobDistributor::job_failed(
 	bool will_retry
 )
 {
-	assert( rank_ >= min_client_rank_ );
+	debug_assert( rank_ >= min_client_rank_ );
 	if ( ! will_retry ) {
 		// tell the master node that this job has failed and will not be
 		// re-attempted

@@ -70,7 +70,7 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 	force_north_paper_db_(force_north_paper_db)
 
 {
-	assert( design_options.size() == 8 );
+	debug_assert( design_options.size() == 8 );
 
 	setup_default_options();
 	read_command_line_options();
@@ -272,7 +272,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	utility::vector1<bool> const & neighbor_cdr_min)
 {
 
-	assert( neighbor_cdr_min.size() == 8 );
+	debug_assert( neighbor_cdr_min.size() == 8 );
 
 	//Design CDR of interest, including neighbor CDRs, framework, +/or antigen.
 

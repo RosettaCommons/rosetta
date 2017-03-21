@@ -860,7 +860,7 @@ void PocketGrid::recenter(core::Real const & xc, core::Real const & yc, core::Re
 
 void PocketGrid::recenter( core::conformation::Residue const & central_rsd ){
 
-	assert( central_rsd.is_protein() );
+	debug_assert( central_rsd.is_protein() );
 	core::Vector center;
 	center(1)=0.0;
 	center(2)=0.0;
@@ -917,7 +917,7 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueCOP > const &
 		local_center(3)=0.0;
 		core::Size local_count=0;
 
-		assert( central_rsd->is_protein() );
+		debug_assert( central_rsd->is_protein() );
 		int rcount=0;
 		for ( Size i = 1, i_end = central_rsd->nheavyatoms(); i <= i_end; ++i ) {
 			//if (central_rsd->atom(i).type()<18||central_rsd->atom(i).type()>21){

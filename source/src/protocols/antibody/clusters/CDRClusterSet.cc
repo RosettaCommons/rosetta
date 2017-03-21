@@ -158,7 +158,7 @@ BasicCDRClusterSet::set_cluster( CDRNameEnum cdr, CDRClusterCOP cluster ){
 
 void
 BasicCDRClusterSet::set_clusters( utility::vector1<CDRClusterOP> const clusters ){
-	assert( clusters.size() == 6 );
+	debug_assert( clusters.size() == 6 );
 	clusters_.clear();
 	clusters_.resize(6, NULL);
 	for ( core::Size i = 1; i <= clusters.size(); ++i ) {

@@ -940,7 +940,7 @@ HBondFeatures::insert_hbond_row(
 			++donRank;
 		}
 	}
-	assert(found_don_partner);
+	debug_assert(found_don_partner);
 
 	ASSERT_ONLY( bool found_acc_partner(false); )
 		vector1< HBondCOP > acc_partners(
@@ -958,7 +958,7 @@ HBondFeatures::insert_hbond_row(
 			++accRank;
 		}
 	}
-	assert(found_acc_partner);
+	debug_assert(found_acc_partner);
 
 	Size const don_id( site_ids(hbond.don_res(), hbond.don_hatm()) );
 	Size const acc_id( site_ids(hbond.acc_res(), hbond.acc_atm()) );

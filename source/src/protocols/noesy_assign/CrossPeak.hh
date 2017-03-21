@@ -33,6 +33,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/string_util.hh>
 
 //// C++ headers
 #include <string>
@@ -114,8 +115,8 @@ public:
 	}
 
 	virtual bool has_label( core::Size ) const { return false; }
-	virtual Spin& label( core::Size ) { runtime_assert( false ); return proton1_; }
-	virtual Spin const& label( core::Size ) const { runtime_assert( false ); return proton2_; }
+	virtual Spin& label( core::Size ) { utility_exit_with_message("CrossPeak::label() is unimplemented"); return proton1_; }
+	virtual Spin const& label( core::Size ) const { utility_exit_with_message("CrossPeak::label() is unimplemented"); return proton2_; }
 
 	Spin const& proton( core::Size i ) const { return i>=2 ? proton2_ : proton1_ ; }
 	Spin& proton( core::Size i ) { return i>=2 ? proton2_ : proton1_ ; }
@@ -139,7 +140,7 @@ public:
 		} else if ( i==4 ) {
 			return info2_->fold_label_resonance();
 		};
-		runtime_assert( false );
+		utility_exit_with_message( "Cannot pick folder for value "+ utility::to_string(i) );
 		return UNFOLDED_; //to make compiler happy
 	}
 
@@ -157,7 +158,7 @@ public:
 		} else if ( i==4 ) {
 			return info2_->fold_label_resonance()( freq );
 		};
-		runtime_assert( false ); //should never get here...
+		utility_exit_with_message( "Cannot pick fold_resonance for dim "+ utility::to_string(i) );
 		return 0.0; //to make compiler happy
 	}
 	//  virtual void read_from_stream( std::istream& );
@@ -291,7 +292,7 @@ public:
 		} else if ( d == 4 ) {
 			return info1_->label_tolerance();
 		}
-		runtime_assert( false );
+		utility_exit_with_message( "Cannot pick tolerance for value "+ utility::to_string(d) );
 		return 0.0;
 	}
 

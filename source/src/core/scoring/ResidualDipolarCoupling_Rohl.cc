@@ -125,7 +125,7 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 		Real weight; Size res1;
 		line_stream >> res1 >> weight;
 		if ( line_stream.fail() ) {
-			tr.Error << "[Error] reading rdc-weight-file " << filename << std::endl;
+			tr.Error << "reading rdc-weight-file " << filename << std::endl;
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-weight-file "+filename));
 		}
 		for ( auto & All_RDC_line : All_RDC_lines ) {

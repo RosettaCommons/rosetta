@@ -299,7 +299,7 @@ get_residue_selector( basic::datacache::DataMap const & data, std::string const 
 		error_msg << e.msg();
 		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 	}
-	assert( selector );
+	debug_assert( selector );
 	return selector;
 }
 
@@ -308,10 +308,10 @@ abego_str( utility::vector1< std::string > const & abego )
 {
 	std::string ab = "";
 	for ( auto a=abego.begin(), enda=abego.end(); a!=enda; ++a ) {
-		assert( a->size() == 1 );
+		debug_assert( a->size() == 1 );
 		ab += *a;
 	}
-	assert( ab.size() == abego.size() );
+	debug_assert( ab.size() == abego.size() );
 	return ab;
 }
 
@@ -324,7 +324,7 @@ abego_vector( std::string const & ab )
 		res_abego += c;
 		abego.push_back( res_abego );
 	}
-	assert( abego.size() == ab.size() );
+	debug_assert( abego.size() == ab.size() );
 	return abego;
 }
 
@@ -461,7 +461,7 @@ int find_jump_rec(
 /// @brief inserts the peptide edges to accomodate the new jump edge given
 void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Edge const & jedge )
 {
-	assert( jedge.label() > 0 );
+	debug_assert( jedge.label() > 0 );
 	int pos1 = jedge.start();
 	int pos2 = jedge.stop();
 	utility::vector1< core::kinematics::Edge > new_edges;
@@ -552,15 +552,15 @@ extract_int( core::Real & num, core::Size const m, core::Size const n )
 	if ( n == m ) {
 		return m;
 	}
-	assert( n > m );
+	debug_assert( n > m );
 	TR.Debug << "num: " << num << " m: " << m << " n: " << n << std::endl;
 	core::Size const len( n-m+1 );
 	num *= len;
 	int const val( static_cast< int >(num) );
 	num -= val;
 	TR.Debug << "num: " << num << " len: " << len << " val: " << val << std::endl;
-	assert( val >= 0 );
-	assert( val < static_cast< int >(n) );
+	debug_assert( val >= 0 );
+	debug_assert( val < static_cast< int >(n) );
 	return val + m;
 }
 

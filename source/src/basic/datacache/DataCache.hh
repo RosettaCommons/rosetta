@@ -220,7 +220,7 @@ public: // accessors
 	Data &
 	get( std::size_t slot )
 	{
-		assert( data_[ slot ] );
+		debug_assert( data_[ slot ] );
 		return *( data_[ slot ] );
 	}
 
@@ -241,7 +241,7 @@ public: // accessors
 	DataCOP
 	get_const_ptr( std::size_t slot ) const
 	{
-		assert( data_[ slot ] );
+		debug_assert( data_[ slot ] );
 		return data_[ slot ];
 	}
 
@@ -262,7 +262,7 @@ public: // accessors
 	DataOP
 	get_ptr( std::size_t slot )
 	{
-		assert( data_[ slot ] );
+		debug_assert( data_[ slot ] );
 		return data_[ slot ];
 	}
 
@@ -283,7 +283,7 @@ public: // accessors
 	Data const *
 	get_raw_const_ptr( std::size_t slot ) const
 	{
-		assert( data_[ slot ] );
+		debug_assert( data_[ slot ] );
 		return data_[ slot ].get();
 	}
 
@@ -304,7 +304,7 @@ public: // accessors
 	Data *
 	get_raw_ptr( std::size_t slot )
 	{
-		assert( data_[ slot ] );
+		debug_assert( data_[ slot ] );
 		return data_[ slot ].get();
 	}
 

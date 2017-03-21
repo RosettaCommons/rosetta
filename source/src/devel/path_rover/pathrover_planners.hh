@@ -114,7 +114,7 @@ namespace pathways {
     void operator++(int)  // postfix i.e. iterator++
     {
       //      std::cout << "Linear_planner_iterator::postfix++" << std::endl;
-      assert(!is_end());
+      debug_assert(!is_end());
       _step_num++;
       // add up step_delta to _v_cur
       std::transform(
@@ -131,7 +131,7 @@ namespace pathways {
 
     void operator--(int)  // postfix i.e. iterator++
     {
-      assert(!is_begin());
+      debug_assert(!is_begin());
       _step_num--;
       // add up step_delta to _v_cur
       std::transform(

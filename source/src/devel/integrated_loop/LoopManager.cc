@@ -116,7 +116,7 @@ void LoopManager::ReorderLoops()
 		if ( ! inserted ) new_loop_list.push_back( *it );
 	}
 
-	assert( LoopList_.size() == new_loop_list.size() );
+	debug_assert( LoopList_.size() == new_loop_list.size() );
 	LoopList_ = new_loop_list;
 
 	return;

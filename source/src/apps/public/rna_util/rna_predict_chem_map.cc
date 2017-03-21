@@ -106,7 +106,7 @@ get_max_and_intervals( std::set< Real > const & DMS_values,
 
 	// This set comes from the DMS potential, but it's useful to
 	// be able to index into it shared with logL.
-	assert( DMS_values.size() == logL_values.size() );
+	debug_assert( DMS_values.size() == logL_values.size() );
 	utility::vector1< Real > DMS_vector( DMS_values.begin(), DMS_values.end() );
 
 	DMS_maxL = 0.0;
@@ -146,7 +146,7 @@ get_max_and_intervals( std::set< Real > const & DMS_values,
 // %
 // if ~exist( 'values', 'var' ); values = [1:length(p)]; end;
 // if ~exist( 'confidence_level', 'var' ) confidence_level = 0.95; end;
-// assert( length(p) == length( values ) );
+// debug_assert( length(p) == length( values ) );
 
 // p = p/sum(p);
 

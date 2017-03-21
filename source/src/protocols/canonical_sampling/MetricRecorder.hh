@@ -55,7 +55,7 @@ public: // Creation
 
 	/// @brief Assignment operator.
 	MetricRecorder&
-	operator=( MetricRecorder const & );
+	operator=( MetricRecorder const & ) = delete;
 
 public: // Methods
 

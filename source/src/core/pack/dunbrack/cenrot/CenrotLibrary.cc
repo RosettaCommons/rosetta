@@ -71,11 +71,11 @@ CenrotLibrary::add_cenrot_residue_library(
 )
 {
 	if ( aa > chemical::num_canonical_aas ) {
-		TR.Error << "ERROR: Cannot add centroid Dunbrack rotamer library of type " << aa << " not a canonical amino acid." << std::endl;
+		TR.Error << "Cannot add centroid Dunbrack rotamer library of type " << aa << " not a canonical amino acid." << std::endl;
 		utility_exit_with_message("Cannot add a non-canonical centroid Dunbrack library.");
 	}
 	if ( cenrot_libraries_[ aa ] != 0 ) {
-		TR.Error << "ERROR: Cannot add cenroid Dunbrack rotamer library of type " << aa << ": library already loaded." << std::endl;
+		TR.Error << "Cannot add cenroid Dunbrack rotamer library of type " << aa << ": library already loaded." << std::endl;
 		utility_exit_with_message("Can't add centroid rsd library twice");
 	}
 	cenrot_libraries_[ aa ] = rot_lib;
@@ -87,7 +87,7 @@ CenrotLibrary::get_cenrot_library_by_aa( chemical::AA const & aa ) const
 	if ( (Size) aa <= cenrot_libraries_.size() ) {
 		return cenrot_libraries_[ aa ];
 	}
-	TR.Error << "ERROR: Cannot get centroid Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
+	TR.Error << "Cannot get centroid Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
 	utility_exit_with_message("Cannot get non-canonical centroid Dunbrack library.");
 	return 0;
 }

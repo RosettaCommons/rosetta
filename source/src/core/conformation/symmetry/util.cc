@@ -429,7 +429,7 @@ setup_symmetric_conformation(
 	// Now, we need to update the residue identities of symmetric conformations (to ensure that ALA becomes DALA in mirrored subunits, for example):
 	if ( has_mirror_operations ) {
 		conformation::symmetry::MirrorSymmetricConformationOP mirror_conf( utility::pointer::dynamic_pointer_cast< conformation::symmetry::MirrorSymmetricConformation >( symm_conf ) );
-		assert( mirror_conf );
+		debug_assert( mirror_conf );
 		mirror_conf->update_residue_identities();
 	}
 

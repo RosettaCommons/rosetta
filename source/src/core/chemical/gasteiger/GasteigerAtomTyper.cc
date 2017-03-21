@@ -392,7 +392,7 @@ void PossibleAtomTypesForAtom::SetToType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 			m_AtomTypesByDecreasingStability.begin(),
 			m_AtomTypesByDecreasingStability.end(),
 			ATOM_TYPE) == m_AtomTypesByDecreasingStability.end() ) {
-		TR.Warning << "WARNING: Tried to limit atom type to " + ATOM_TYPE->get_name()
+		TR.Warning << "Tried to limit atom type to " + ATOM_TYPE->get_name()
 			+ " but could not find it " << std::endl;
 		TR.Warning << "Possible types are: ";
 		for ( std::list< GasteigerAtomTypeDataCOP >::iterator itr(m_AtomTypesByDecreasingStability.begin()),
@@ -1109,7 +1109,7 @@ void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, bool ke
 	GasteigerAtomTypeSetCOP typeset( restype.gasteiger_atom_typeset() );
 	if ( ! typeset ) {
 		typeset = core::chemical::ChemicalManager::get_instance()->gasteiger_atom_type_set();
-		assert( typeset );
+		debug_assert( typeset );
 		restype.set_gasteiger_typeset( typeset );
 	}
 	assign_gasteiger_atom_types( restype, typeset, keep_existing, allow_unknown );
@@ -1202,7 +1202,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 	// This will turn what is typed separately as an amine (N_Te2TeTeTe) atom into an amide (N_TrTrTrPi2).
 	if ( restype.is_polymer() && restype.lower_connect_id() != 0 ) {
 		VD lower_connect_vd = restype.lower_connect().vertex();
-		assert( lower_connect_vd != ResidueType::null_vertex );
+		debug_assert( lower_connect_vd != ResidueType::null_vertex );
 		if ( restype.atom( lower_connect_vd ).gasteiger_atom_type()->get_name() == "N_Te2TeTeTe" ) {
 			restype.atom( lower_connect_vd ).gasteiger_atom_type( gasteiger_atom_type_set->atom_type("N_TrTrTrPi2") );
 		}

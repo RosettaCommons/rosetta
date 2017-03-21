@@ -144,7 +144,7 @@ core::Real
 AlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size const resi ) const
 {
 	if ( !const_pose.residue( resi ).is_protein() ) {
-		TR<<"WARNING: Non-protein residue "<< resi<<" was requested for ala-scan. Returning 0"<<std::endl;
+		TR.Warning << "Non-protein residue "<< resi<<" was requested for ala-scan. Returning 0"<<std::endl;
 		return 0.0;
 	}
 	core::Size const rb_jump( jump_ );
@@ -241,7 +241,7 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 {
 	core::pose::Pose pose( const_pose );
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	core::conformation::symmetry::SymmetricConformation & symm_conf (
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
 

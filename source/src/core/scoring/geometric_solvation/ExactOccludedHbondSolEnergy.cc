@@ -278,10 +278,9 @@ WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval
 	// Check that we have weights for this Hbond type
 	all_water_weights_iterator curr_water_weights_iter = all_water_weights_.find( hbond_eval_type );
 	if ( curr_water_weights_iter == all_water_weights_.end( ) ) {
-		TR << "Could not look up map element" << std::endl;
-		TR << "get_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
-		debug_assert(false);
-		exit(1);
+		TR.Fatal << "Could not look up map element" << std::endl;
+		TR.Fatal << "get_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
+		utility_exit_with_message("Can find water weight grid for hbond_eval_type.");
 	}
 	return curr_water_weights_iter->second;
 }
@@ -293,10 +292,9 @@ WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_
 	// Check that we have weights for this Hbond type
 	sum_water_weights_iterator curr_sum_water_weights_iter = sum_all_water_weights_.find( hbond_eval_type );
 	if ( curr_sum_water_weights_iter == sum_all_water_weights_.end( ) ) {
-		TR << "Could not look up map element" << std::endl;
-		TR << "get_sum_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
-		debug_assert(false);
-		exit(1);
+		TR.Fatal << "Could not look up map element" << std::endl;
+		TR.Fatal << "get_sum_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
+		utility_exit_with_message("Can find water weight grid for hbond_eval_type.");
 	}
 	return curr_sum_water_weights_iter->second;
 }
@@ -451,18 +449,16 @@ ExactOccludedHbondSolEnergy::setup_for_packing(
 void
 ExactOccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
 {
-	TR << "Error - cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
-	debug_assert(false);
-	exit(1);
+	TR.Fatal << "cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
+	utility_exit_with_message("ExactOccludedHbondSolEnergy::setup_for_derivatives() not yet implemented.");
 }
 
 
 void
 ExactOccludedHbondSolEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
-	TR << "Error - cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
-	debug_assert(false);
-	exit(1);
+	TR.Fatal << "cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
+	utility_exit_with_message("ExactOccludedHbondSolEnergy::setup_for_minimizing() not yet implemented.");
 }
 
 
@@ -753,7 +749,8 @@ Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	} else if ( polar_rsd.atom_type( polar_atom).is_acceptor() ) {
 		curr_hbond_eval_type = HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 	} else {
-		debug_assert( false ); // Not a donor or an acceptor, don't know what to do.
+		TR.Fatal << "Expected atom " << polar_rsd.atom_name( base_atom ) << " (" << base_atom << ") of residue " << polar_rsd.seqpos() << " to be either donor or acceptor. " << std::endl;
+		utility_exit_with_message("Atom is neither a donor nor an acceptor.");
 	}
 
 	Real const fully_buried_ene = compute_fully_buried_ene();

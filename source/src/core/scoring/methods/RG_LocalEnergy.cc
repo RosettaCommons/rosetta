@@ -81,8 +81,8 @@ RG_LocalEnergy::RG_LocalEnergy():
 	if ( firstRes_ == lastRes_ ) {
 		utility_exit_with_message("<first_res> should not equal <last_res> when using rg_local");
 	}
-	assert(firstRes_ > 0);
-	assert(lastRes_ > 0);
+	debug_assert(firstRes_ > 0);
+	debug_assert(lastRes_ > 0);
 }
 
 

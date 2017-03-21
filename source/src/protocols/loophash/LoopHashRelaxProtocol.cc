@@ -101,7 +101,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
 	core::Size skim_size = 2;
 
-	if ( !library_ ) std::cout << std::string( "FATAL ERROR: Libary not loaded ") ;
+	if ( !library_ ) TR.Fatal << "Libary not loaded";
 
 	//core::Real mpi_metropolis_temp_ = option[ lh::mpi_metropolis_temp ]();
 

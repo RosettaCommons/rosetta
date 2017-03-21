@@ -72,8 +72,8 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 	// The new version of this function takes a bunch of code that was previously distributed in a bunch of places like RNA_Util.cc and util.cc, and consolidates it here. This has the additional advantage that the runtime has been dramatically reduced through pre-caching of the DOFs for ideal puckers.
 	runtime_assert( is_init() );
 	PuckerState pucker_state = pucker_states_[i];
-	assert( pucker_state <= 2 );
-	assert( pose.residue_type( rsd_id_ ).is_RNA() );
+	debug_assert( pucker_state <= 2 );
+	debug_assert( pose.residue_type( rsd_id_ ).is_RNA() );
 
 	static const RNA_IdealCoord ideal_coord;
 	static const RNA_FittedTorsionInfo torsion_info;

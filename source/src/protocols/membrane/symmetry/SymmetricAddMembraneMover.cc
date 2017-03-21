@@ -253,8 +253,8 @@ SymmetricAddMembraneMover::init_from_cmd() {
 	}
 
 	if ( get_spanfile().size() == 0 && option[ OptionKeys::mp::setup::spans_from_structure ].user() ) {
-		TR << "WARNING: Spanfile not given, topology will be created from PDB!" << std::endl;
-		TR << "WARNING: Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
+		TR.Warning << "Spanfile not given, topology will be created from PDB!" << std::endl;
+		TR.Warning << "Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
 		spanfile( "from_structure" );
 	}
 
@@ -336,7 +336,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	// Check that the pose is still symmetric and the foldtree is still valid
 	// These are very rigorous checks, leaving them here until this is better tested
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	return pose.size();
 }

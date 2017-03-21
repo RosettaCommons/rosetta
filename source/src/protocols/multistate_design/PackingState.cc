@@ -66,7 +66,7 @@ PackingState::create_packer_data(
 {
 	ptask_p_ = ptask;
 	rotamersets_p_ = core::pack::rotamer_set::RotamerSetsOP( new RotamerSets() );
-	assert( scorefxn && ptask_p_ && rotamersets_p_ );
+	debug_assert( scorefxn && ptask_p_ && rotamersets_p_ );
 
 	AnnealableGraphBaseOP ig;
 	pack_rotamers_setup( nonconst_pose(), *scorefxn, ptask_p_, rotamersets_p_, ig );
@@ -80,7 +80,7 @@ PackingState::create_packer_data(
 void
 PackingState::share_packer_data_from( PackingState & other )
 {
-	assert( other.ptask() && other.rotamersets() && other.ig() );
+	debug_assert( other.ptask() && other.rotamersets() && other.ig() );
 	ptask_p_ = other.ptask();
 	rotamersets_p_ = other.rotamersets();
 	ig_p_ = other.ig();
@@ -89,7 +89,7 @@ PackingState::share_packer_data_from( PackingState & other )
 void
 PackingState::run_packer( utility::vector0<int> const & rot_to_pack )
 {
-	assert( ptask_p_ && rotamersets_p_ && ig_p_ );
+	debug_assert( ptask_p_ && rotamersets_p_ && ig_p_ );
 	pack_rotamers_run( nonconst_pose(), ptask_p_, rotamersets_p_, ig_p_, rot_to_pack );
 }
 

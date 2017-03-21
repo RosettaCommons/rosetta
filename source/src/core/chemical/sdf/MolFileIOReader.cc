@@ -44,7 +44,7 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string
 
 	utility::io::izstream file( filename );
 	if ( ! file ) {
-		TR << "Error: cannot open file " << filename << std::endl;
+		TR.Error << "cannot open file " << filename << std::endl;
 		utility_exit_with_message( "Error opening " + filename );
 	}
 	if ( type == "" ) {
@@ -71,26 +71,26 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string
 			}
 			if ( M_END_line || dollars_line ) {
 				if ( ATOM_line || BOND_line || Tripos_line ) {
-					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming SDF." << std::endl;
+					TR.Warning << "Ambiguous filetype for loading " << filename << ", assuming SDF." << std::endl;
 				}
 				type = "sdf";
 			} else if ( Tripos_line ) {
 				if ( ATOM_line || BOND_line || M_END_line || dollars_line ) {
-					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming mol2." << std::endl;
+					TR.Warning << "Ambiguous filetype for loading " << filename << ", assuming mol2." << std::endl;
 				}
 				type = "mol2";
 			} else if ( ATOM_line && BOND_line ) {
 				if ( Tripos_line || M_END_line || dollars_line ) {
-					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming Rosetta params." << std::endl;
+					TR.Warning << "Ambiguous filetype for loading " << filename << ", assuming Rosetta params." << std::endl;
 				}
 				type = "params";
 			} else if ( ATOM_line && ! BOND_line ) {
 				if ( Tripos_line || M_END_line || dollars_line ) {
-					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming PDB." << std::endl;
+					TR.Warning << "Ambiguous filetype for loading " << filename << ", assuming PDB." << std::endl;
 				}
 				type = "pdb";
 			} else {
-				TR.Error << "ERROR: Unable to autodetermine filetype of molecule file " << filename << std::endl;
+				TR.Error << "Unable to autodetermine filetype of molecule file " << filename << std::endl;
 				utility_exit_with_message( "Can't determine filetype for file " + filename );
 			}
 		} // if/else extension recognized
@@ -116,7 +116,7 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istrea
 	}
 
 	if ( ! molecules.size() ) {
-		TR.Error << "Error: Stream contained no recognized molecules!" << std::endl;
+		TR.Error << "Stream contained no recognized molecules!" << std::endl;
 	}
 	return molecules;
 }

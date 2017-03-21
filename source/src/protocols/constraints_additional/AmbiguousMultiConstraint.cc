@@ -169,7 +169,7 @@ AmbiguousMultiConstraint::fill_f1_f2(
 
 	runtime_assert( active_constraints_.size() == num_active_constraints_ );
 	for ( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(); cst_it != active_constraints_.end(); ++cst_it ) {
-		assert( *cst_it ) ;
+		debug_assert( *cst_it ) ;
 		(*cst_it)->fill_f1_f2(atom, xyz, F1, F2, weights);
 	}
 }

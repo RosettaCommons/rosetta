@@ -114,7 +114,7 @@ choose_random_base_pair( pose::Pose const & pose )
 	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( partner[i] > i ) bps.push_back( i );
 	}
-	assert( bps.size() );
+	debug_assert( bps.size() );
 	return bps[ static_cast< int >( numeric::random::rg().uniform() * bps.size() ) + 1 ];
 }
 
@@ -131,7 +131,7 @@ choose_random_base_step_jump( pose::Pose const & pose )
 			bs.push_back( i );
 		}
 	}
-	assert( bs.size() );
+	debug_assert( bs.size() );
 	return bs[ static_cast< int >( numeric::random::rg().uniform() * bs.size() ) + 1 ];
 }
 
@@ -155,7 +155,7 @@ add_dna_base_jumps_to_fold_tree(
 	using namespace kinematics;
 
 	Size const nres( pose.size() );
-	assert( f.nres() == nres );
+	debug_assert( f.nres() == nres );
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
@@ -166,16 +166,16 @@ add_dna_base_jumps_to_fold_tree(
 		Residue const & rsd( pose.residue(i) );
 		if ( !dna_begin && rsd.is_DNA() ) dna_begin = i;
 		if ( rsd.is_DNA() ) {
-			assert( partner[i] );
+			debug_assert( partner[i] );
 			if ( i == nres || !pose.residue(i+1).is_DNA() ) { // last dna pos
 				dna_end = i;
 				break;
 			} else {
-				assert( !f.is_cutpoint(i) );
+				debug_assert( !f.is_cutpoint(i) );
 			}
 		}
 	}
-	assert( dna_begin && dna_end );
+	debug_assert( dna_begin && dna_end );
 
 	Size npairs( dna_end - dna_begin + 1 );
 	if ( npairs%2 != 0 ) utility_exit_with_message( "bad pose-- unpaired dna?" );
@@ -412,7 +412,7 @@ delete_unpaired_bases( pose::Pose & pose )
 			// first look backward
 			Size j(i);
 			while ( !f.is_cutpoint(j-1) ) {
-				assert( delete_me[j] );
+				debug_assert( delete_me[j] );
 				--j;
 				if ( !delete_me[j] ) break;
 			}
@@ -420,7 +420,7 @@ delete_unpaired_bases( pose::Pose & pose )
 				// now try forward
 				j = i;
 				while ( !f.is_cutpoint(j) ) {
-					assert( delete_me[j] );
+					debug_assert( delete_me[j] );
 					++j;
 					if ( !delete_me[j] ) break;
 				}
@@ -428,7 +428,7 @@ delete_unpaired_bases( pose::Pose & pose )
 			if ( delete_me[j] ) {
 				utility_exit_with_message( "remove unpaired bases: bad strand!" );
 			}
-			assert( !delete_me[j] );
+			debug_assert( !delete_me[j] );
 			tt << "sliding deleted jumppoint from " << i << " to " << j << std::endl;
 			closest[i] = j;
 		}
@@ -449,7 +449,7 @@ delete_unpaired_bases( pose::Pose & pose )
 			cuts(i) = f.cutpoint(i);
 		}
 		ASSERT_ONLY(bool valid_tree = new_f.tree_from_jumps_and_cuts( nres, num_jump, jumps, cuts );)
-			assert( valid_tree );
+			debug_assert( valid_tree );
 	}
 	pose.fold_tree( new_f );
 

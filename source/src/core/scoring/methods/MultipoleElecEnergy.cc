@@ -60,7 +60,7 @@ namespace methods {
 inline
 MultipoleElecResidueInfo const &
 retrieve_mp_residue_info( pose::Pose const & pose, Size const seqpos ) {
-	assert( seqpos && seqpos <= ( static_cast< MultipoleElecPoseInfo const & >
+	debug_assert( seqpos && seqpos <= ( static_cast< MultipoleElecPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) )).size() );
 	return ( static_cast< MultipoleElecPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ).residue_info( seqpos ) );
@@ -69,7 +69,7 @@ retrieve_mp_residue_info( pose::Pose const & pose, Size const seqpos ) {
 inline
 MultipoleElecResidueInfo &
 retrieve_nonconst_mp_residue_info( pose::Pose & pose, Size const seqpos ) {
-	assert( seqpos && seqpos <= ( static_cast< MultipoleElecPoseInfo const & >
+	debug_assert( seqpos && seqpos <= ( static_cast< MultipoleElecPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) )).size() );
 	return ( static_cast< MultipoleElecPoseInfo & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ).residue_info( seqpos ) );
@@ -133,7 +133,7 @@ retrieve_nonconst_mp_pairdata(
 {
 	MultipoleElecResPairMinDataOP mp_pairdata(0);
 	if ( pairdata.get_data( mp_respair_data ) ) {
-		assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) ));
+		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) ));
 		mp_pairdata = utility::pointer::static_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) );
 	} else {
 		mp_pairdata = MultipoleElecResPairMinDataOP( new MultipoleElecResPairMinData );
@@ -148,7 +148,7 @@ retrieve_mp_pairdata(
 	ResPairMinimizationData const & pairdata
 )
 {
-	assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData const > ( pairdata.get_data( mp_respair_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData const > ( pairdata.get_data( mp_respair_data ) ) );
 	return ( static_cast< MultipoleElecResPairMinData const & > ( pairdata.get_data_ref( mp_respair_data ) ) );
 }
 
@@ -160,7 +160,7 @@ retrieve_nonconst_mp_resdata(
 {
 	MultipoleElecResidueInfoOP mp_resdata( 0 );
 	if ( resdata.get_data( mp_res_data ) ) {
-		assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) ) );
+		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) ) );
 		mp_resdata = utility::pointer::static_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) );
 	} else {
 		mp_resdata = MultipoleElecResidueInfoOP( new MultipoleElecResidueInfo );
@@ -184,7 +184,7 @@ retrieve_mp_resdata_ptr(
 	ResSingleMinimizationData const & resdata
 )
 {
-	assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo const > ( resdata.get_data( mp_res_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo const > ( resdata.get_data( mp_res_data ) ) );
 	return ( utility::pointer::static_pointer_cast< MultipoleElecResidueInfo const > ( resdata.get_data( mp_res_data ) ) );
 }
 

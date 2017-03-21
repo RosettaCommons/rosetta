@@ -531,7 +531,7 @@ core::Real Zscore_to_library( core::Real const score,
 	core::Real const minval
 ) {
 	core::Real Zscore = ( score - mean ) / stdev;
-	assert( minval < maxval );
+	debug_assert( minval < maxval );
 
 	if ( Zscore > maxval ) Zscore = maxval;
 	if ( Zscore < minval ) Zscore = minval;

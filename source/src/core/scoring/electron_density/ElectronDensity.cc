@@ -156,7 +156,7 @@ ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 		// load map from disk
 		TR << "Loading Density Map" << std::endl;
 		if ( !basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() && filename.length()==0 ) {
-			TR.Warning << "[ Warning ] No density map specified" << std::endl;
+			TR.Warning << "No density map specified" << std::endl;
 		} else {
 			bool map_loaded=false;
 			std::string mapfile;
@@ -178,7 +178,7 @@ ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 				map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
 			}
 			if ( !map_loaded ) {
-				TR.Fatal << "[ ERROR ] Error loading density map named '" << mapfile << "'" << std::endl;
+				TR.Fatal << "Error loading density map named '" << mapfile << "'" << std::endl;
 				utility_exit();
 			}
 		}
@@ -362,7 +362,7 @@ void ElectronDensity::mapSphericalSamples (
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR.Fatal << "![ ERROR ]  ElectronDensity::mapSHT called but no map is loaded!" << std::endl;
+		TR.Fatal << "ElectronDensity::mapSHT called but no map is loaded!" << std::endl;
 		utility_exit();
 	}
 
@@ -463,7 +463,7 @@ core::Real ElectronDensity::matchCentroidPose(
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::matchCentroidPose called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::matchCentroidPose called but no map is loaded!\n";
 		return 0.0;
 	}
 
@@ -675,7 +675,7 @@ core::Real ElectronDensity::matchPose(
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::matchPose called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::matchPose called but no map is loaded!\n";
 		return 0.0;
 	}
 
@@ -1812,7 +1812,7 @@ void ElectronDensity::compute_symm_rotations(
 				for ( int j=1; j<=nchildren; ++j ) {
 					int downstream = edges_i[j].stop();
 					if ( downstream <= vrtStart ) {
-						TR.Error << "[ Error ] VRT (" << resid << ") contains multiple jumps to subunits!  Exiting." << std::endl;
+						TR.Error << "VRT (" << resid << ") contains multiple jumps to subunits!  Exiting." << std::endl;
 						utility_exit();
 					}
 					allChildrenMapped &= vrts_mapped[ downstream-vrtStart ];
@@ -1882,7 +1882,7 @@ core::Real ElectronDensity::matchRes(
 ) {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::matchRes called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::matchRes called but no map is loaded!\n";
 		return 0.0;
 	}
 
@@ -2267,7 +2267,7 @@ ElectronDensity::matchResFast(
 ) {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::matchResFast called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::matchResFast called but no map is loaded!\n";
 		return 0.0;
 	}
 
@@ -2327,7 +2327,7 @@ ElectronDensity::matchPointFast(
 ) {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::matchPointFast called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::matchPointFast called but no map is loaded!\n";
 		return 0.0;
 	}
 
@@ -2354,7 +2354,7 @@ ElectronDensity::dCCdx_PointFast(
 ) {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::matchResFast called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::matchResFast called but no map is loaded!\n";
 		return;
 	}
 
@@ -2388,7 +2388,7 @@ void ElectronDensity::dCCdx_fastRes(
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR.Error << "[ ERROR ]  ElectronDensity::dCCdx_fastRes called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::dCCdx_fastRes called but no map is loaded!\n";
 		return;
 	}
 
@@ -2438,7 +2438,7 @@ ElectronDensity::dCCdB_fastRes(
 {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::dCCdB_fast called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::dCCdB_fast called but no map is loaded!\n";
 		return 0;
 	}
 
@@ -2642,7 +2642,7 @@ void ElectronDensity::dCCdx_res(
 {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "[ ERROR ]  ElectronDensity::dCCdx_res called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::dCCdx_res called but no map is loaded!\n";
 		dCCdX = numeric::xyzVector<core::Real>(0.0,0.0,0.0);
 		exit(1);
 	}
@@ -2668,7 +2668,7 @@ void ElectronDensity::dCCdx_cen( int resid,
 
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR.Error << "[ ERROR ]  ElectronDensity::dCCdx_cen called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::dCCdx_cen called but no map is loaded!\n";
 		dCCdX = numeric::xyzVector<core::Real>(0.0,0.0,0.0);
 		utility_exit();
 	}
@@ -2685,7 +2685,7 @@ void ElectronDensity::dCCdx_aacen( int atmid, int resid,
 	numeric::xyzVector<core::Real> &dCCdX ) {
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR.Error << "[ ERROR ]  ElectronDensity::dCCdx_aacen called but no map is loaded!\n";
+		TR.Error << "ElectronDensity::dCCdx_aacen called but no map is loaded!\n";
 		dCCdX = numeric::xyzVector<core::Real>(0.0,0.0,0.0);
 		utility_exit();
 	}
@@ -2738,7 +2738,7 @@ ElectronDensity::readMRCandResize(
 	bool swap=false;
 
 	if ( !mapin ) {
-		TR << "[ ERROR ]  Error opening MRC map " << mapfile << ".  Not loading map." << std::endl;
+		TR << "Error opening MRC map " << mapfile << ".  Not loading map." << std::endl;
 		return false;
 	}
 
@@ -2749,14 +2749,14 @@ ElectronDensity::readMRCandResize(
 			|| !mapin.read(reinterpret_cast <char*> (&cellDimensions[0]), 3*sizeof(float))
 			|| !mapin.read(reinterpret_cast <char*> (&cellAngles[0]), 3*sizeof(float))
 			|| !mapin.read(reinterpret_cast <char*> (crs2xyz), 3*sizeof(int)) )  {
-		TR << "[ ERROR ]   Improperly formatted line in MRC map.  Not loading map." << std::endl;
+		TR.Error << "Improperly formatted line in MRC map.  Not loading map." << std::endl;
 		return false;
 	}
 
 	// Check the number of bytes used for storing symmetry operators
 	mapin.seekg(92, std::ios::beg);
 	if ( !mapin.read(reinterpret_cast <char*> (&symBytes), 1*sizeof(int)) ) {
-		TR << "[ ERROR ]   Failed reading symmetry bytes record.  Not loading map." << "\n";
+		TR.Error << "Failed reading symmetry bytes record.  Not loading map." << "\n";
 		return false;
 	}
 
@@ -2765,7 +2765,7 @@ ElectronDensity::readMRCandResize(
 	float altorigin[3];
 	mapin.seekg(196, std::ios::beg);
 	if ( !mapin.read(reinterpret_cast <char*> (altorigin), 3*sizeof(float)) ) {
-		TR << "[ ERROR ]   Improperly formatted line in MRC map.  Not loading map." << std::endl;
+		TR.Error << "Improperly formatted line in MRC map.  Not loading map." << std::endl;
 		return false;
 	}
 
@@ -2773,14 +2773,14 @@ ElectronDensity::readMRCandResize(
 	mapin.seekg(208, std::ios::beg);
 	mapString[3] = '\0';
 	if ( !mapin.read(mapString, 3) || (std::string(mapString) != "MAP") ) {
-		TR << "[ ERROR ]  'MAP' string missing, not a valid MRC map.  Not loading map." << std::endl;
+		TR.Error << "'MAP' string missing, not a valid MRC map.  Not loading map." << std::endl;
 		return false;
 	}
 	// Check the file endianness
 	if ( mode != 2 ) {
 		swap4_aligned(&mode, 1);
 		if ( mode != 2 ) {
-			TR << "[ ERROR ]   Non-real (32-bit float) data types are unsupported.  Not loading map." << std::endl;
+			TR.Error << "Non-real (32-bit float) data types are unsupported.  Not loading map." << std::endl;
 			return false;
 		} else {
 			swap = true; // enable byte swapping
@@ -2820,19 +2820,19 @@ ElectronDensity::readMRCandResize(
 	if ( dataOffset != static_cast<unsigned long long>(1024 + symBytes) ) {
 		if ( dataOffset == static_cast<unsigned long long>(1024) ) {
 			// Bogus symmetry record information
-			TR.Warning << "[ WARNING ] File contains bogus symmetry record.  Continuing." << std::endl;
+			TR.Warning << "File contains bogus symmetry record.  Continuing." << std::endl;
 			symBytes = 0;
 		} else if ( dataOffset < static_cast<unsigned long long>(1024) ) {
-			TR.Error << "[ ERROR ] File appears truncated and doesn't match header.  Not loading map." << std::endl;
+			TR.Error << "File appears truncated and doesn't match header.  Not loading map." << std::endl;
 			return false;
 		} else if ( (dataOffset > static_cast<unsigned long long>(1024)) && (dataOffset < (1024*1024)) ) {
 			// Fix for loading SPIDER files which are larger than usual
 			// In this specific case, we must absolutely trust the symBytes record
 			dataOffset = 1024 + symBytes;
-			TR.Warning << "[ WARNING ]  File is larger than expected and doesn't match header.  Reading anyway." <<
+			TR.Warning << "File is larger than expected and doesn't match header.  Reading anyway." <<
 				std::endl;
 		} else {
-			TR.Error << "[ ERROR ] File is MUCH larger than expected and doesn't match header.  Not loading map." <<
+			TR.Error << "File is MUCH larger than expected and doesn't match header.  Not loading map." <<
 				std::endl;
 			TR.Error << dataOffset  << std::endl;
 			return false;
@@ -2859,21 +2859,21 @@ ElectronDensity::readMRCandResize(
 	// check extent and grid interval counts
 	if ( grid[0] == 0 && extent[0] > 0 ) {
 		grid[0] = extent[0] - 1;
-		TR << "[ WARNING ] Fixed X interval count.  Continuing." << std::endl;
+		TR.Warning << "Fixed X interval count.  Continuing." << std::endl;
 	}
 	if ( grid[1] == 0 && extent[1] > 0 ) {
 		grid[1] = extent[1] - 1;
-		TR << "[ WARNING ]  Fixed Y interval count.  Continuing." << std::endl;
+		TR.Warning << "Fixed Y interval count.  Continuing." << std::endl;
 	}
 	if ( grid[2] == 0 && extent[2] > 0 ) {
 		grid[2] = extent[2] - 1;
-		TR << "[ WARNING ]  Fixed Z interval count.  Continuing." << std::endl;
+		TR.Warning << "Fixed Z interval count.  Continuing." << std::endl;
 	}
 
 	// Mapping between CCP4 column, row, section and Cartesian x, y, z.
 	if ( crs2xyz[0] == 0 && crs2xyz[1] == 0 && crs2xyz[2] == 0 ) {
-		TR << "[ WARNING ]  All crs2xyz records are zero." << std::endl;
-		TR << "[ WARNING ]  Setting crs2xyz to 1, 2, 3 and continuing." << std::endl;
+		TR.Warning << "All crs2xyz records are zero." << std::endl;
+		TR.Warning << "Setting crs2xyz to 1, 2, 3 and continuing." << std::endl;
 		crs2xyz[0] = 1; crs2xyz[1] = 2; crs2xyz[2] = 3;
 	}
 
@@ -2898,17 +2898,17 @@ ElectronDensity::readMRCandResize(
 			// Read an entire row of data from the file, then write it into the
 			// datablock with the correct slice ordering.
 			if ( mapin.eof() ) {
-				TR << "[ ERROR ] Unexpected end-of-file. Not loading map." << std::endl;
+				TR.Error << "Unexpected end-of-file. Not loading map." << std::endl;
 				delete [] rowdata;
 				return false;
 			}
 			if ( mapin.fail() ) {
-				TR << "[ ERROR ] Problem reading the file. Not loading map." << std::endl;
+				TR.Error << "Problem reading the file. Not loading map." << std::endl;
 				delete [] rowdata;
 				return false;
 			}
 			if ( !mapin.read( reinterpret_cast< char* >(rowdata), sizeof(float)*extent[0]) ) {
-				TR << "[ ERROR ] Error reading data row. Not loading map." << std::endl;
+				TR << "Error reading data row. Not loading map." << std::endl;
 				delete [] rowdata;
 				return false;
 			}
@@ -3099,7 +3099,7 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 		std::string line = symList[i];
 		utility::vector1< std::string > rows = utility::string_split(line, ',');
 		if ( rows.size() != 3 ) {
-			TR.Error << "[ ERROR ] invalid symmop in map file" << std::endl;
+			TR.Error << "invalid symmop in map file" << std::endl;
 			TR.Error << line << std::endl;
 			TR.Error << "Setting symmetry to P1 and continuing!" << line << std::endl;
 
@@ -3141,7 +3141,7 @@ bool ElectronDensity::writeMRC(std::string mapfilename) {
 	int symBytes = 0;
 
 	if ( !outx ) {
-		TR.Error << "[ ERROR ]  Error opening MRC map for writing." << std::endl;
+		TR.Error << "Error opening MRC map for writing." << std::endl;
 		return false;
 	}
 
@@ -3291,7 +3291,7 @@ void ElectronDensity::density_change_trigger() {
 void ElectronDensity::resize( core::Real approxGridSpacing ) {
 	// potentially expand map to cover entire unit cell
 	if ( grid[0] != density.u1() || grid[1] != density.u2() || grid[2] != density.u3() ) {
-		TR.Error << "[ ERROR ] resize() not supported for maps not covering the entire unit cell."<< std::endl;
+		TR.Error << "resize() not supported for maps not covering the entire unit cell."<< std::endl;
 		TR.Error << "   " << grid[0] << " != " << density.u1()
 			<< " || " << grid[1] << " != " << density.u2()
 			<< " || " << grid[2] << " != " << density.u3() << std::endl;
@@ -3414,7 +3414,7 @@ void ElectronDensity::computeCrystParams() {
 		0.0, 0.0   , cellDimensions[2] * sb * sqrt(1.0 - square((cb*cg - ca)/(sb*sg))) );
 	core::Real D = this->f2c.det();
 	if ( D == 0 ) {
-		TR << "[ WARNING ] Invalid crystal cell dimensions." << std::endl;
+		TR.Warning << "Invalid crystal cell dimensions." << std::endl;
 		return;
 	}
 	// c2f is inverse of f2c

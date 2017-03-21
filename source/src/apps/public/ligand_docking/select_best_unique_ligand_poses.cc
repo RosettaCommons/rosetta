@@ -202,7 +202,7 @@ main( int argc, char * argv [] ) {
 			//Backwards compatability options munging
 			std::string first_silent( *(option[ in::file::silent ]().begin()) );
 			if ( core::import_pose::atom_tree_diffs::file_is_atom_tree_diff( first_silent ) ) {
-				TR.Warning << "WARNING: File " << first_silent << " looks to be AtomTypeDiff - reinterpreting -in:file:silent as -in:file:atom_tree_diff." << std::endl;
+				TR.Warning << "File " << first_silent << " looks to be AtomTypeDiff - reinterpreting -in:file:silent as -in:file:atom_tree_diff." << std::endl;
 				TR.Warning << "         Explicitly set -in:file:silent_struct_type to override." << std::endl;
 				option[ in::file::atom_tree_diff ]( option[ in::file::silent ] );
 				option[ in::file::silent ].deactivate();
@@ -210,18 +210,18 @@ main( int argc, char * argv [] ) {
 		}
 		if ( option[ out::file::silent ].user() && ! option[ out::file::atom_tree_diff ].user() && ! option[ out::file::silent_struct_type ].user() ) {
 			//Backwards compatability options munging
-			TR.Warning << "WARNING: For backward compatibility, by default select_best_unique_ligand_poses will output Atom Tree Diff format files to -out:file:silent" << std::endl;
+			TR.Warning << "For backward compatibility, by default select_best_unique_ligand_poses will output Atom Tree Diff format files to -out:file:silent" << std::endl;
 			TR.Warning << "         To output regular format silent file format, explicitly set -out:file:silent_struct_type" << std::endl;
 			option[ out::file::atom_tree_diff ].value( option[ out::file::silent ] );
 			option[ out::file::silent ].deactivate();
 		}
 		//Save users from themselves
 		if ( option[ in::file::keep_input_scores ] == false ) {
-			TR.Warning << "WARNING: The program uses input scores, but -in:file:keep_input_scores is false. Resetting." << std::endl;
+			TR.Warning << "The program uses input scores, but -in:file:keep_input_scores is false. Resetting." << std::endl;
 			option[in::file::keep_input_scores]( true );
 		}
 		if ( option[ out::nstruct ] != 1 ) {
-			TR.Warning << "WARNING: -out::nstruct other than one doesn't make sense. Resetting." << std::endl;
+			TR.Warning << "-out::nstruct other than one doesn't make sense. Resetting." << std::endl;
 			option[out::nstruct]( 1 );
 		}
 		//Since nstruct is 1 ...

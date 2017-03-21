@@ -84,7 +84,7 @@ void WorkUnitBase::raw_data_load( const unsigned char * raw_data_ptr, unsigned i
 	TR.Debug << "Extracting data information " << std::endl;
 	// make sure the last byte of the data block is a 0 ( it should be a 0 terminated string)
 	if ( raw_data_ptr[size-1] != 0 ) {
-		TR.Error << "ERROR: cannot load data - terminal zero not found!" << std::endl;
+		TR.Error << "cannot load data - terminal zero not found!" << std::endl;
 		serial_data() = "";
 		return;
 	}
@@ -256,7 +256,7 @@ WorkUnit_MoverWrapper::run(){
 	// first figure what mover we should be using
 	SilentStructStore result_store;
 	if ( decoys().size() == 0 ) {
-		TR.Error << "ERROR: WU did not contain any decoys!" << std::endl;
+		TR.Error << "WU did not contain any decoys!" << std::endl;
 	} else {
 		TR.Debug << "Applying the mover .. " << std::endl;
 		for ( SilentStructStore::const_iterator it = decoys().begin() ; it != decoys().end(); ++it ) {

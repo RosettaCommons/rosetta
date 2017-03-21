@@ -397,13 +397,13 @@ get_pdb_numbering_from_single_string( std::string const & pdb_residue){
 
 	vector1<std::string> res_str = utility::string_split(pdb_residue, ':');
 	if ( res_str.size()== 1 ) {
-		assert(res_str[1].length() >= 2);
+		debug_assert(res_str[1].length() >= 2);
 		number.icode = ' ';
 		number.chain = res_str[1][res_str[1].length() - 1];
 		std::stringstream(res_str[1].substr(0, res_str[1].length() - 1)) >> number.resnum;
 	} else if ( res_str.size() == 2 ) {
-		assert(res_str[1].length() >= 2);
-		assert(res_str[2].length() == 1);
+		debug_assert(res_str[1].length() >= 2);
+		debug_assert(res_str[2].length() == 1);
 
 		if ( res_str[2][0] == '~' ) {
 			TR << "Found blank Icode as we should "<< std::endl;
@@ -547,7 +547,7 @@ add_loops_from_bool_vector(loops::Loops & loops, utility::vector1< bool > residu
 
 std::pair<bool, core::Size>
 check_cb(core::pose::Pose const & pose, utility::vector1<bool> const & residues){
-	assert(residues.size() == pose.size());
+	debug_assert(residues.size() == pose.size());
 
 	std::pair<bool, core::Size> cb = std::make_pair(false, 0);
 	for ( core::Size i = 1; i <= residues.size(); ++i ) {

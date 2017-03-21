@@ -233,7 +233,7 @@ RestrictToInterfaceVectorOperation::upper_chain( core::Size upper_chain){
 	upper_chains_.clear();
 	upper_chains_.push_back(upper_chain);
 	jump_active_ = false;
-	assert(upper_chains_.size() == 1);
+	debug_assert(upper_chains_.size() == 1);
 	//make_name();
 }
 
@@ -248,7 +248,7 @@ RestrictToInterfaceVectorOperation::lower_chain( core::Size lower_chain){
 	lower_chains_.clear();
 	lower_chains_.push_back(lower_chain);
 	jump_active_ = false;
-	assert(lower_chains_.size() == 1);
+	debug_assert(lower_chains_.size() == 1);
 	//make_name();
 }
 
@@ -320,7 +320,7 @@ RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 			TR <<  "Adding jump: " << this_jump << ", ";
 		}
 		TR << std::endl;
-		assert( jump_vector.size() > 0 );
+		debug_assert( jump_vector.size() > 0 );
 		//now set jumps for parent class and locally
 		set_movable_jumps( jump_vector );
 		jump_active_ = true;

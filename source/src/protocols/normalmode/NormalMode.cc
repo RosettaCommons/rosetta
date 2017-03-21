@@ -210,7 +210,7 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 		Size const ires = torsions_using_[i];
 		//std::cout << "i/ires " << i << " " << ires << std::endl;
 		conformation::Residue const &rsd( pose.residue( ires ) );
-		assert( rsd.type().is_protein() );
+		debug_assert( rsd.type().is_protein() );
 
 		for ( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ) {
 			std::string const atmname( rsd.atom_name( iatm ) );

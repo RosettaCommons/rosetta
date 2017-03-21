@@ -92,11 +92,11 @@ StoreCompoundTaskMover::CompoundPackableTask( core::pose::Pose const & pose, cor
 				value = it->first->being_packed( resi );
 				if ( it->second == NOT ) value = !value;
 				if ( it->second == ORNOT ) {
-					TR << "WARNING: StoreCompoundTaskMover treating operator ORNOT as NOT" << std::endl;
+					TR.Warning << "StoreCompoundTaskMover treating operator ORNOT as NOT" << std::endl;
 					value = !value;
 				}
 				if ( it->second == ANDNOT ) {
-					TR << "WARNING: StoreCompoundTaskMover treating operator ANDNOT as NOT" << std::endl;
+					TR.Warning << "StoreCompoundTaskMover treating operator ANDNOT as NOT" << std::endl;
 					value = !value;
 				}
 			} else {
@@ -109,7 +109,7 @@ StoreCompoundTaskMover::CompoundPackableTask( core::pose::Pose const & pose, cor
 				case ( NOR ) : value = !( value || it->first->being_packed( resi ) ); break;
 				case (NAND ) : value = !( value && it->first->being_packed( resi ) ); break;
 				case (NOT ) :
-					TR << "WARNING: StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
+					TR.Warning << "StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
 					value = value && !it->first->being_packed( resi );
 					break;
 				}
@@ -155,11 +155,11 @@ StoreCompoundTaskMover::CompoundDesignableTask( core::pose::Pose const & pose, c
 				value = it->first->being_designed( resi );
 				if ( it->second == NOT ) value = !value;
 				if ( it->second == ORNOT ) {
-					TR << "WARNING: StoreCompoundTaskMover treating operator ORNOT as NOT" << std::endl;
+					TR.Warning << "StoreCompoundTaskMover treating operator ORNOT as NOT" << std::endl;
 					value = !value;
 				}
 				if ( it->second == ANDNOT ) {
-					TR << "WARNING: StoreCompoundTaskMover treating operator ANDNOT as NOT" << std::endl;
+					TR.Warning << "StoreCompoundTaskMover treating operator ANDNOT as NOT" << std::endl;
 					value = !value;
 				}
 			} else {
@@ -172,7 +172,7 @@ StoreCompoundTaskMover::CompoundDesignableTask( core::pose::Pose const & pose, c
 				case ( NOR ) : value = !( value || it->first->being_designed( resi ) ); break;
 				case (NAND ) : value = !( value && it->first->being_designed( resi ) ); break;
 				case (NOT ) :
-					TR << "WARNING: StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
+					TR.Warning << "StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
 					value = value && !it->first->being_designed( resi );
 					break;
 				}

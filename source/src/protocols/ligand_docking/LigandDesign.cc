@@ -121,11 +121,6 @@ LigandDesign::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "LigandDesign" ) {
-		ligand_design_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( tag->hasOption("option_file") ) {
 		option_file_ = tag->getOption<std::string>("option_file");
 	}
@@ -201,13 +196,13 @@ find_unconnected_residues(
 void
 LigandDesign::apply( core::pose::Pose & pose )
 {
-	assert(!fragments_.empty());
+	debug_assert(!fragments_.empty());
 	using namespace basic::options::OptionKeys;
 	using basic::options::option;
 	core::Size ligand_residue_id= pose.size();
-	ASSERT_ONLY(core::conformation::Residue const & ligand= pose.residue(ligand_residue_id);)
-		assert(ligand.is_ligand());
-	assert( ligand.n_possible_residue_connections() > 0);
+	ASSERT_ONLY(core::conformation::Residue const & ligand= pose.residue(ligand_residue_id););
+	debug_assert(ligand.is_ligand());
+	debug_assert( ligand.n_possible_residue_connections() > 0);
 	core::Size const & chain_id= pose.chain(ligand_residue_id);
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size end = pose.conformation().chain_end(chain_id);

@@ -234,7 +234,7 @@ Scheduler::read_cmd( std::string const & cmdfile,
 				add_fresh_param( roundtype );
 
 			} else {
-				TR << "Warning: unknown roundtype " << roundtype << " pass." << std::endl;
+				TR.Warning << "unknown roundtype " << roundtype << " pass." << std::endl;
 			}
 			continue;
 

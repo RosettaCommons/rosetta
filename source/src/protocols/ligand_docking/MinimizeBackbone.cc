@@ -137,43 +137,43 @@ MinimizeBackbone::parse_my_tag(
 /// setting up backbone_minimization foldtree
 void
 MinimizeBackbone::apply( core::pose::Pose & pose ){
-	assert(pose.fold_tree().check_edges_for_atom_info());
-	assert(interface_builder_);// make sure the pointer points
+	debug_assert(pose.fold_tree().check_edges_for_atom_info());
+	debug_assert(interface_builder_);// make sure the pointer points
 	ligand_options::Interface interface= interface_builder_->build(pose);
 	restrict_to_protein_residues(interface, pose);
 	minimize_backbone_tracer.Debug << "interface for fold_tree: "<< interface << std::endl;
-	assert(pose.fold_tree().check_edges_for_atom_info());
+	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 	reorder_foldtree_around_mobile_regions(interface, pose);
 	restrain_protein_Calphas(interface, pose);
-	assert(pose.fold_tree().check_edges_for_atom_info());
+	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 }
 
 void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
 	ligand_options::Interface const & interface,
 	core::pose::Pose & pose
 ) {
-	assert(pose.fold_tree().check_edges_for_atom_info());
+	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 	core::kinematics::FoldTree const & fold_tree_copy = pose.fold_tree();
-	assert(fold_tree_copy.check_edges_for_atom_info());
+	debug_assert(fold_tree_copy.check_edges_for_atom_info());
 	minimize_backbone_tracer.Debug << "Initial foldtree " << fold_tree_copy << std::endl;
 	core::kinematics::FoldTreeOP better_ligand_jumps = create_fold_tree_with_ligand_jumps_from_attach_pts(fold_tree_copy, interface, pose);
-	assert(better_ligand_jumps->check_edges_for_atom_info());
+	debug_assert(better_ligand_jumps->check_edges_for_atom_info());
 	minimize_backbone_tracer.Debug << "foldtree with ligand jumps from attach pts" << *better_ligand_jumps << std::endl;
 	core::kinematics::FoldTreeOP with_cutpoints = create_fold_tree_with_cutpoints(better_ligand_jumps, interface, pose);
 	minimize_backbone_tracer.Debug  << "foldtree with cutpoints" << *with_cutpoints << std::endl;
-	assert(with_cutpoints->check_edges_for_atom_info());
+	debug_assert(with_cutpoints->check_edges_for_atom_info());
 	with_cutpoints->delete_extra_vertices();
-	assert(with_cutpoints->check_edges_for_atom_info());
+	debug_assert(with_cutpoints->check_edges_for_atom_info());
 	minimize_backbone_tracer.Debug << "foldtree with less vertices" << *with_cutpoints << std::endl;
-	assert(with_cutpoints->check_edges_for_atom_info());
+	debug_assert(with_cutpoints->check_edges_for_atom_info());
 	reorder_with_first_non_mobile_as_root(with_cutpoints, interface, pose);
 	minimize_backbone_tracer.Debug << "Final loops foldtree " << *with_cutpoints << std::endl;
 	if ( !with_cutpoints->check_fold_tree() ) {
 		utility_exit_with_message("Invalid fold tree after trying to set up for minimization!");
 	}
-	assert(with_cutpoints->check_edges_for_atom_info());
+	debug_assert(with_cutpoints->check_edges_for_atom_info());
 	pose.fold_tree(*with_cutpoints);
-	assert(pose.fold_tree().check_edges_for_atom_info());
+	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 }
 
 void reorder_with_first_non_mobile_as_root(
@@ -258,8 +258,8 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 		minimize_backbone_tracer.Debug << "edge.start,edge.stop:"<< edge.start() << ','<< edge.stop() << std::endl;
 		runtime_assert( stop >= start );
 		if ( (stop - start + 1) < 4 ) {
-			minimize_backbone_tracer.Debug
-				<< "WARNING: for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between "
+			minimize_backbone_tracer.Warning
+				<< "for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between "
 				<< start << " and " << stop << " is too short.  This should never happen after extending the interface"
 				<< std::endl;
 			continue;
@@ -368,7 +368,7 @@ void MinimizeBackbone::restrain_protein_Calpha(
 	char const & ligand_chain= interface[residue_id].chain;
 	std::map<char, LigandAreaOP> const & ligand_areas= interface_builder_->get_ligand_areas();
 	auto found= ligand_areas.find(ligand_chain);
-	assert( found != ligand_areas.end() );// this shouldn't be possible
+	debug_assert( found != ligand_areas.end() );// this shouldn't be possible
 	LigandAreaOP const ligand_area= found->second;
 	core::id::AtomID const atom_ID(residue.atom_index("CA"), residue_id);
 	core::scoring::func::FuncOP const harmonic_function( new core::scoring::func::HarmonicFunc(0, ligand_area->Calpha_restraints_) );

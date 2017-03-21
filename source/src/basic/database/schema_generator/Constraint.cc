@@ -92,7 +92,7 @@ GreaterThanConstraint::print(
 ) const {
 	stringstream constraint;
 
-	assert(columns_.size() == 1);
+	debug_assert(columns_.size() == 1);
 
 	constraint << "CONSTRAINT " << columns_[1].name() << "_greater_than CHECK ";
 	constraint << "(" << columns_[1].name() << " >= " << value_ << ")";

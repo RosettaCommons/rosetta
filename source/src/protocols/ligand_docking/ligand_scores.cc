@@ -362,8 +362,8 @@ append_ligand_RMSD(
 	core::pose::Pose const & after,
 	std::string const & prefix
 ){
-	assert(before.num_jump() >= jump_id);
-	assert(after.num_jump() >= jump_id);
+	debug_assert(before.num_jump() >= jump_id);
+	debug_assert(after.num_jump() >= jump_id);
 
 	core::Size chain_id= core::pose::get_chain_id_from_jump_id(jump_id, before);
 	core::Size const begin = before.conformation().chain_begin(chain_id);

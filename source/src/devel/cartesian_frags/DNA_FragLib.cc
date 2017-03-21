@@ -185,7 +185,7 @@ setup_suite_pose(
 //     if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {
 //      ++nstep;
 //      if ( rsd1.xyz("O3*").distance( rsd2.xyz("P") ) > 2.0 ) {
-//       td << "WARNING: long bond in frag input file: " << files[n] << ' ' << i << ' ' <<
+//       td.Warning << "long bond in frag input file: " << files[n] << ' ' << i << ' ' <<
 //        rsd1.xyz("O3*").distance( rsd2.xyz("P") ) << std::endl;
 //      }
 //     }

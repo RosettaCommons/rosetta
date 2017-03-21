@@ -76,14 +76,6 @@ BranchAngleOptimizer::BranchAngleOptimizer( BranchAngleOptimizer const & ) = def
 
 BranchAngleOptimizer::~BranchAngleOptimizer() = default;
 
-BranchAngleOptimizer const &
-BranchAngleOptimizer::operator=(BranchAngleOptimizer const & /*src*/)
-{
-	runtime_assert(false);
-
-	return *this;
-}
-
 core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 BranchAngleOptimizer::bond_angle_residue_type_param_set()
 {
@@ -168,7 +160,7 @@ BranchAngleOptimizer::optimize_angles(
 		if ( !(branch_atom1->input_stub_atom1() == center_atom && branch_atom1->input_stub_atom2() == main_atom1 &&
 				branch_atom1->input_stub_atom3() == main_atom2) ) {
 
-			TR.Warning << "Warning: Branching atom (" << branch_atomid1 << ") for segment" << main_atomid1 << center_atomid
+			TR.Warning << "Branching atom (" << branch_atomid1 << ") for segment" << main_atomid1 << center_atomid
 				<< main_atomid2 << "does not use segment atoms for input stub, ignoring" << std::endl;
 			return 0;
 		}
@@ -229,7 +221,7 @@ BranchAngleOptimizer::optimize_angles(
 		if ( !(branch_atom1->input_stub_atom1() == center_atom && branch_atom1->input_stub_atom2() == main_atom1 &&
 				branch_atom2->input_stub_atom1() == center_atom && branch_atom2->input_stub_atom2() == main_atom1) ) {
 
-			TR.Warning << "Warning: Branching atoms (" << branch_atomid1 << branch_atomid2 << ") for segment" << main_atomid1
+			TR.Warning << "Branching atoms (" << branch_atomid1 << branch_atomid2 << ") for segment" << main_atomid1
 				<< center_atomid << main_atomid2 << "do not use segment atoms for input stub, ignoring" << std::endl;
 			return 0;
 		}
@@ -274,7 +266,7 @@ BranchAngleOptimizer::optimize_angles(
 			// needs a const compatible next_child method
 			//runtime_assert(!center_atom->next_child(branch_atom1));
 		} else {
-			TR.Warning << "Warning: Branching atoms (" << branch_atomid1 << branch_atomid2 << ") for segment" << main_atomid1
+			TR.Warning << "Branching atoms (" << branch_atomid1 << branch_atomid2 << ") for segment" << main_atomid1
 				<< center_atomid << main_atomid2 << "do not have main atom 2 as their direct descendent, ignoring"
 				<< std::endl;
 			return 0;
@@ -285,7 +277,7 @@ BranchAngleOptimizer::optimize_angles(
 
 	} else {
 
-		TR << "Warning: Segment" << main_atomid1 << center_atomid << main_atomid2
+		TR.Warning << "Segment" << main_atomid1 << center_atomid << main_atomid2
 			<< "does not have 1 or 2 branching atoms, ignoring" << std::endl;
 	}
 
@@ -392,7 +384,7 @@ BranchAngleOptimizer::overall_params(
 
 	} else {
 
-		TR << "Warning: Segment" << main_atomid1 << center_atomid << main_atomid2
+		TR.Warning << "Segment" << main_atomid1 << center_atomid << main_atomid2
 			<< "does not have 1 or 2 branching atoms, ignoring" << std::endl;
 	}
 

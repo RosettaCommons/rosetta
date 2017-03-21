@@ -49,9 +49,9 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 
 	RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
 	// If the factory system is sound, these two checks should work.
-	assert( libspec );
+	debug_assert( libspec );
 	PeptoidRotamerLibrarySpecificationCOP peptoid_libspec = utility::pointer::dynamic_pointer_cast< PeptoidRotamerLibrarySpecification const >(libspec);
-	assert( peptoid_libspec );
+	debug_assert( peptoid_libspec );
 
 	// Some basic error checking against restype
 	Size pose_n_rotlib_chi( restype.nchi() - restype.n_proton_chi() );
@@ -151,7 +151,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		break;
 	}
 	default :
-		TR.Error << "ERROR: too many chi angles desired for peptoid library: " << n_rotlib_chi << std::endl;
+		TR.Error << "too many chi angles desired for peptoid library: " << n_rotlib_chi << std::endl;
 		utility_exit_with_message( "ERROR: too many chi angles desired for peptoid library." );
 		break;
 	}

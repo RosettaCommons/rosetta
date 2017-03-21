@@ -44,9 +44,9 @@ MMTMinPackingJob::~MMTMinPackingJob() = default;
 
 void MMTMinPackingJob::setup()
 {
-	assert( has_pose() );
-	assert( has_sfxn() );
-	assert( has_task() );
+	debug_assert( has_pose() );
+	debug_assert( has_sfxn() );
+	debug_assert( has_task() );
 
 	core::pack::min_pack_setup(
 		pose(), sfxn(), task(), cartesian_, nonideal_,

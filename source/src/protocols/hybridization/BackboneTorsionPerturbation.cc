@@ -368,7 +368,7 @@ BackboneTorsionPerturbation::parse_my_tag(
 	//String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
 	//Movers_map::const_iterator  find_mover ( movers.find( user_defined_mover_name_ ));
 	//if( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
-	// TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
+	// TR.Error << "mover not found in map: \n" << tag << std::endl;
 	// runtime_assert( find_mover != movers.end() );
 	//}
 

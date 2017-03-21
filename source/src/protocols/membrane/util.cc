@@ -1612,7 +1612,7 @@ void check_vector( core::Vector const vector ) {
 
 	// warn if vector is origin
 	if ( vector.to_string() == "(0, 0, 0)" ) {
-		TR << "WARNING: your vector is (0, 0, 0)!" << std::endl;
+		TR.Warning << "your vector is (0, 0, 0)!" << std::endl;
 	}
 
 	// Fail if vector is out of range

@@ -86,10 +86,10 @@ optimize_H_and_notify(
 			if ( chidev > 0.1 && !chi_atom_was_missing ) {
 				using namespace ObjexxFCL::format;
 				if ( old_rsd.type().is_proton_chi( chino ) ) {
-					TR << "[ OPT-H WARNING ] proton chi angle change: chidev= " << F(9,3,chidev) << " chino= " << I(2,chino) <<
+					TR.Warning << "OPT-H: proton chi angle change: chidev= " << F(9,3,chidev) << " chino= " << I(2,chino) <<
 						" position: " << I(4,i) << ' ' << old_rsd.name() << ' ' << new_rsd.name() << std::endl;
 				} else {
-					TR << "[ OPT-H WARNING ] heavyatom chi angle change: chidev= " << F(9,3,chidev) << " chino= " <<
+					TR.Warning << "OPT-H: heavyatom chi angle change: chidev= " << F(9,3,chidev) << " chino= " <<
 						I(2,chino) << " position: " << I(4,i) << ' ' << old_rsd.name() << ' ' << new_rsd.name() << std::endl;
 				}
 			}

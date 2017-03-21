@@ -76,9 +76,9 @@ NormalModeMultifunc::NormalModeMultifunc(
 	deriv_check_result_( /* 0 */ )
 {
 	// NormalMode should be TorsionalNormalMode
-	assert( NM_.torsion() );
+	debug_assert( NM_.torsion() );
 	// NormalMode should be solved prior to the minimization
-	assert( NM_.ntor() > 0 );
+	debug_assert( NM_.ntor() > 0 );
 
 	k_dampen_ = basic::options::option[
 		basic::options::OptionKeys::optimization::scale_normalmode_dampen ]();

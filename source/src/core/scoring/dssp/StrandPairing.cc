@@ -203,8 +203,8 @@ void StrandPairingSet::add_pairing( Size res1, Size res2, bool antiparallel, Siz
 		if ( it->extend(res1,res2,antiparallel,pleating) ) {
 			addnew = false;
 			if ( !it->range_check() ) {
-				tr.Error << "[ERROR] just inconsistently added " << res1 << "-" << res2 << " to pairing " << *it << std::endl;
-				runtime_assert( false );
+				tr.Error << "just inconsistently added " << res1 << "-" << res2 << " to pairing " << *it << std::endl;
+				utility_exit_with_message("Inconsistent strand pairing set encountered.");
 			}
 			break;
 		}
@@ -958,9 +958,9 @@ Size StrandPairing::operator<( StrandPairing const& other) const {
 		} else if ( begin1_ >= other.end1_ ) {
 			return false;
 		} else {
-			std::cout << "DSSP error: strange strand pairing\n";
-			std::cout << begin1_ << ' ' << end1_ << ' ' << begin2_ << ' ' << end2_ <<' ' << std::endl;
-			std::cout << other.begin1_ << ' ' << other.end1_ << ' ' << other.begin2_ << ' ' << other.end2_ <<' ' << std::endl;
+			tr.Error << "DSSP error: strange strand pairing\n";
+			tr.Error << begin1_ << ' ' << end1_ << ' ' << begin2_ << ' ' << end2_ <<' ' << std::endl;
+			tr.Error << other.begin1_ << ' ' << other.end1_ << ' ' << other.begin2_ << ' ' << other.end2_ <<' ' << std::endl;
 			return begin1_ < other.begin1_;
 		}
 	} else {

@@ -114,7 +114,7 @@ public:
 class Permute {
 public:
 	Permute(Triple x) {
-		assert(x.a >= x.b && x.b >= x.c && x.c >= 0);
+		debug_assert(x.a >= x.b && x.b >= x.c && x.c >= 0);
 		m_arr.push_back(x);
 		size_t n = 1;
 		// Do the sign changes

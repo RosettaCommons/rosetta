@@ -187,7 +187,7 @@ PoseResidueTypeSet::metapatch( std::string const & name ) const {
 void
 PoseResidueTypeSet::atom_type_set(AtomTypeSetCOP atom_types) {
 	if ( atom_type_set() ) {
-		TR.Warning << "Warning: Resetting atom type set." << std::endl;
+		TR.Warning << "Resetting atom type set." << std::endl;
 	}
 	ResidueTypeSet::atom_type_set( atom_types );
 }
@@ -195,7 +195,7 @@ PoseResidueTypeSet::atom_type_set(AtomTypeSetCOP atom_types) {
 void
 PoseResidueTypeSet::element_set(ElementSetCOP elements) {
 	if ( element_set() ) {
-		TR.Warning << "Warning: Resetting element type set." << std::endl;
+		TR.Warning << "Resetting element type set." << std::endl;
 	}
 	ResidueTypeSet::element_set( elements );
 }
@@ -203,7 +203,7 @@ PoseResidueTypeSet::element_set(ElementSetCOP elements) {
 void
 PoseResidueTypeSet::mm_atom_type_set(MMAtomTypeSetCOP mm_atom_types) {
 	if ( mm_atom_type_set() ) {
-		TR.Warning << "Warning: Resetting MM atom type set." << std::endl;
+		TR.Warning << "Resetting MM atom type set." << std::endl;
 	}
 	ResidueTypeSet::mm_atom_type_set( mm_atom_types );
 }
@@ -211,7 +211,7 @@ PoseResidueTypeSet::mm_atom_type_set(MMAtomTypeSetCOP mm_atom_types) {
 void
 PoseResidueTypeSet::orbital_type_set(orbitals::OrbitalTypeSetCOP orbital_types) {
 	if ( orbital_type_set() ) {
-		TR.Warning << "Warning: Resetting orbital type set." << std::endl;
+		TR.Warning << "Resetting orbital type set." << std::endl;
 	}
 	ResidueTypeSet::orbital_type_set( orbital_types );
 }

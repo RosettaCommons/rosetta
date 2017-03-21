@@ -194,7 +194,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 		// subsequently add sufficiently many jumps such that all numbers are the same.
 		success &= add_rigidity_jumps( rigid_core, current_kinematics );
 		if ( !success ) {
-			tr.Warning << "[WARNING] was not able to fix rigid regions with jumps...retry" << std::endl;
+			tr.Warning << "was not able to fix rigid regions with jumps...retry" << std::endl;
 			return nullptr;
 		}
 	}
@@ -340,7 +340,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 			// we want the root in the most "fixed" position, and then fix the coord-cst atoms to this root
 			success = new_fold_tree.reorder( rigid_jumps.begin()->start_ ); //or try multiple residues?
 			if ( !success ) {
-				tr.Warning << "[WARNING] failed to reorder fold-tree() ... retry"<<std::endl;
+				tr.Warning << "failed to reorder fold-tree() ... retry"<<std::endl;
 				return success;
 			}
 		}

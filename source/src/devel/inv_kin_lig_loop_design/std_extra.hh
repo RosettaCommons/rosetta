@@ -19,6 +19,7 @@
 #include <vector>
 #include <map>
 #include <utility/assert.hh>
+#include <utility/exit.hh>
 
 namespace devel {
 
@@ -28,8 +29,8 @@ template< class K, class V >
 V const& find_or_throw( std::map<K,V> const& m, K const& k ) {
 	typename std::map<K,V>::const_iterator i = m.find(k);
 	if ( i == m.end() ) {
-		std::cout << "find_or_throw - couldn't find " << k << std::endl;
-		assert( false );
+		std::cerr << "find_or_throw - couldn't find " << k << std::endl;
+		utility_exit_with_message( "Can't find value" );
 	}
 	return i->second;
 }

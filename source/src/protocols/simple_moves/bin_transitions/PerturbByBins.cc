@@ -135,7 +135,7 @@ void PerturbByBins::apply( core::pose::Pose & pose ) {
 		bin_transition_calculator_->random_mainchain_torsions_using_adjacent_bins( pose.conformation(), res_index, must_switch_bins(), mainchain_torsions) ; //pose.conformation() and res_index are const inputs; mainchain_torsions is the output.
 
 		{ //Scope to set the mainchain torsions:
-			assert(mainchain_torsions.size()==pose.residue(res_index).mainchain_torsions().size()); //Should be true at this point.
+			debug_assert(mainchain_torsions.size()==pose.residue(res_index).mainchain_torsions().size()); //Should be true at this point.
 			for ( core::Size j=1, jmax=mainchain_torsions.size(); j<=jmax; ++j ) { //Set mainchain torsions
 				pose.set_torsion( core::id::TorsionID( res_index, core::id::BB, j ) , mainchain_torsions[j] );
 			}
@@ -222,7 +222,7 @@ void PerturbByBins::set_repeats( core::Size const repeats_in ) {
 	if ( repeats_in == 0 ) {
 		repeats_=1;
 		if ( TR.Warning.visible() ) {
-			TR.Warning << "Warning!  The number of repeats was set to 0.  Setting to 1." << std::endl;
+			TR.Warning << "The number of repeats was set to 0.  Setting to 1." << std::endl;
 			TR.Warning.flush();
 		}
 	} else {

@@ -509,20 +509,20 @@ Conformation::reset_residue_type_set_for_conf( core::chemical::PoseResidueTypeSe
 	if ( mode == INVALID_t ) {
 		mode = new_set->mode();
 	} else if ( mode != new_set->mode() ) {
-		TR.Warning << "WARNING: When resetting the Conformation's ResidueTypeSet, the ResidueTypeSet mode of " << new_set->mode() << " does not match the stated mode of " << mode << std::endl;
+		TR.Warning << "When resetting the Conformation's ResidueTypeSet, the ResidueTypeSet mode of " << new_set->mode() << " does not match the stated mode of " << mode << std::endl;
 	}
 	ResidueTypeSetCOP current_rts( residue_type_set_for_conf( mode ) ); // Remember this could be a GlobalRTS
 	if ( new_set->atom_type_set() != current_rts->atom_type_set() ) {
-		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different AtomTypeSets." << std::endl;
+		TR.Warning << "When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different AtomTypeSets." << std::endl;
 	}
 	if ( new_set->element_set() != current_rts->element_set() ) {
-		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different ElementSets." << std::endl;
+		TR.Warning << "When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different ElementSets." << std::endl;
 	}
 	if ( new_set->mm_atom_type_set() != current_rts->mm_atom_type_set() ) {
-		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different MMAtomTypeSets." << std::endl;
+		TR.Warning << "When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different MMAtomTypeSets." << std::endl;
 	}
 	if ( new_set->orbital_type_set() != current_rts->orbital_type_set() ) {
-		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different OrbitalTypeSets." << std::endl;
+		TR.Warning << "When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different OrbitalTypeSets." << std::endl;
 	}
 	// Other sanity checks here?
 
@@ -536,7 +536,7 @@ Conformation::reset_residue_type_set_for_conf( core::chemical::PoseResidueTypeSe
 core::chemical::TypeSetMode
 Conformation::residue_typeset_mode( bool majority /*=true*/ ) const {
 	if ( empty() ) {
-		TR.Warning << "WARNING: Attempted to determine the residue type set of an empty pose." << std::endl;
+		TR.Warning << "Attempted to determine the residue type set of an empty pose." << std::endl;
 		return core::chemical::MIXED_t; // Because an empty pose is compatible with all of them.
 	}
 
@@ -1723,7 +1723,7 @@ Conformation::fill_missing_atoms(
 			if ( missing[ id ] ) {
 				// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
 				if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j) ) {
-					TR.Warning << "[ WARNING ] missing heavyatom: " << rsd.atom_name(j) <<
+					TR.Warning << "missing heavyatom: " << rsd.atom_name(j) <<
 						" on residue " << rsd.name() << ' ' << i << std::endl;
 				}
 				atm_missing[j] = true;
@@ -1764,7 +1764,7 @@ Conformation::fill_missing_atoms(
 					kinematics::Stub const stub( xyz1, xyz2, xyz3 );
 					set_xyz( id, stub.spherical( rsd.icoor(j).phi(), rsd.icoor(j).theta(), rsd.icoor(j).d() ) );
 					if ( ! rsd.is_virtual(j) ) { // Metal ions rely on this -- don't warn for virtuals
-						TR.Warning << "[ WARNING ] Rebuilding missing atom (" << rsd.atom_name( j ) <<
+						TR.Warning << "Rebuilding missing atom (" << rsd.atom_name( j ) <<
 							") from residue " << rsd.name() << " " << i << " from faked coordinates, due to too few atoms being present." <<
 							"\nThis probably means that this residue should be further optimized..." << std::endl;
 					}
@@ -1794,7 +1794,7 @@ Conformation::fill_missing_atoms(
 							new_stub_atom3( rsd_tree.atom( id ).input_stub_atom3_id() );
 
 						if ( !missing[ new_stub_atom1 ] && !missing[ new_stub_atom2 ] && !missing[ new_stub_atom3 ] ) {
-							TR.Warning << "[ WARNING ] Building missing atom (" << rsd.atom_name( j ) <<
+							TR.Warning << "Building missing atom (" << rsd.atom_name( j ) <<
 								") at root of residue tree, using stubs: " <<
 								rsd.atom_name( new_stub_atom1.atomno() ) << ' ' <<
 								rsd.atom_name( new_stub_atom2.atomno() ) << ' ' <<
@@ -1994,11 +1994,11 @@ Conformation::fix_disulfides( utility::vector1< std::pair< Size, Size > > const 
 
 		// Check that the residues exist
 		if ( l_index > size() ) {
-			TR.Error << "[ERROR] Residue " << l_index << " is out of range." << std::endl;
+			TR.Error << "Residue " << l_index << " is out of range." << std::endl;
 			utility_exit();
 		}
 		if ( u_index > size() ) {
-			TR.Error << "[ERROR] Residue " << u_index << " is out of range." << std::endl;
+			TR.Error << "Residue " << u_index << " is out of range." << std::endl;
 			utility_exit();
 		}
 
@@ -2130,7 +2130,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 		Residue const & ii_res( residue( ii_resid ) );
 		Size ii_sg_atomno(0);
 		if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-			TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
+			TR.Error << "Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 			utility_exit();
 		} else {
 			ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
@@ -2160,8 +2160,8 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 		bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
 			&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
 
-		if ( !success_at_ii )   TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
-		if ( !success_at_best_neighbor ) TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
+		if ( !success_at_ii )   TR.Error << "unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
+		if ( !success_at_best_neighbor ) TR.Error << "unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
 
 		ii_name_start = residues_[ ii_resid ]->type().name();
 		bn_name_start = residues_[ best_neighbor ]->type().name();
@@ -2183,7 +2183,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 			Residue const & jj_res = residue( jj_resid );
 			Size jj_sg_atomno(0);
 			if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-				TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
+				TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 				utility_exit();
 			} else {
 				jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
@@ -2212,7 +2212,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 		//Determine which atom makes the disulfide bond
 		Size ii_sg_atomno(0);
 		if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-			TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
+			TR.Error << "Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 			utility_exit();
 		} else {
 			ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
@@ -2240,7 +2240,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 
 			Size jj_sg_atomno(0);
 			if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-				TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
+				TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 				utility_exit();
 			} else {
 				jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
@@ -2266,7 +2266,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 				TR << "Reverting out-of-date disulfide to thiol type at resid " << ii_resid << std::endl;
 
 				bool const successful_revert = conformation::change_cys_state( ii_resid, "CYS", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-				if ( !successful_revert ) TR.Error << "ERROR: unable to revert disulfide to thiol type at resid " << ii_resid << std::endl;
+				if ( !successful_revert ) TR.Error << "unable to revert disulfide to thiol type at resid " << ii_resid << std::endl;
 			}
 
 			// mark cys as processed
@@ -2300,8 +2300,8 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
 				&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
 
-			if ( !success_at_ii )   TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
-			if ( !success_at_best_neighbor ) TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
+			if ( !success_at_ii )   TR.Error << "unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
+			if ( !success_at_best_neighbor ) TR.Error << "unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
 
 			ii_name_start = residues_[ ii_resid ]->type().name();
 			bn_name_start = residues_[ best_neighbor ]->type().name();
@@ -2323,7 +2323,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 				Residue const & jj_res = residue( jj_resid );
 				Size jj_sg_atomno(0);
 				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
+					TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 					utility_exit();
 				} else {
 					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );

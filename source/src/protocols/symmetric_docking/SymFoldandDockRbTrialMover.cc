@@ -110,7 +110,7 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 
 	using namespace core::conformation::symmetry;
 	using namespace basic::options;
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 

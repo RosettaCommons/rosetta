@@ -77,7 +77,7 @@ FlexPepDockingPoseMetrics::calc_frac_native_contacts(
 	core::Size subsetOfPredictedContacts = 0;
 
 	if ( flags_->pep_fold_only ) {
-		TR << "WARNING: calc_frac_native_contacts() should have not been invoked when -pep_fold_only flag (= no receptor) is active";
+		TR.Warning << "calc_frac_native_contacts() should have not been invoked when -pep_fold_only flag (= no receptor) is active";
 		return 0.0;
 	}
 	//iterate over the peptide
@@ -135,7 +135,7 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 
 	core::Size const nres1 = pose1.size();
 	ASSERT_ONLY(core::Size const nres2 = pose2.size();)
-		assert( nres1 == nres2 );
+		debug_assert( nres1 == nres2 );
 
 	ngood = 0;
 	core::Size natoms_total( 0 );
@@ -152,7 +152,7 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 		if ( predicate == &is_ligand_heavyatom ||
 				predicate == &is_polymer_heavyatom ||
 				predicate == &is_heavyatom ) {
-			assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
+			debug_assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 		} else if ( natoms_res > pose2.residue(i).natoms() ) {
 			natoms_res = pose2.residue(i).natoms();
 		}
@@ -179,7 +179,7 @@ FlexPepDockingPoseMetrics::best_Kmer_rms
 	core::Size k) const
 {
 	using namespace core;
-	assert(pose1.size() == pose2.size());
+	debug_assert(pose1.size() == pose2.size());
 	// NOTE: purposely an inefficient but simpler construction...
 	// It would be more efficient to calc the RMS of each position separately
 	// and make the calculation incrementaly, but why bother (Barak)
@@ -223,7 +223,7 @@ FlexPepDockingPoseMetrics::calc_phipsi_RMSD
 {
 	using namespace core;
 	using namespace basic;
-	assert(pose1.size() == pose2.size());
+	debug_assert(pose1.size() == pose2.size());
 	Size nres = pose1.size();
 	Real sumSqr = 0.0; // MSD = sum square deviation
 	Size n = 0;

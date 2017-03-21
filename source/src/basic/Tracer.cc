@@ -270,7 +270,7 @@ Tracer::~Tracer()
 		if ( !v[i]->is_flushed() ) {
 			//v[i]->flush();
 			(*v[i]) << std::endl;
-			(*v[i]) << "WARNING: Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicit call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
+			(*v[i]) << "[ WARNING ] Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicit call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
 		}
 	}
 #endif
@@ -539,7 +539,22 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 		sout << utility::timestamp() << " ";
 	}
 
-	sout << this->Reset << channel_color_;
+	sout << this->Reset;
+
+	// If the priority levels warrant it, add additional labeling.
+	// Note that the stylings here are somewhat arbitrary.
+	// (More important priorities get lower numbers.)
+	if ( priority_ <=  t_warning ) { // Quick short-circuit for most output.
+		if ( priority_ <= t_fatal ) {
+			sout << this->Red << this->Bold << "[ FATAL ]" << this->Reset << ' ';
+		} else if ( priority_ <= t_error ) {
+			sout << this->Red << this->Bold << "[ ERROR ]" << this->Reset << ' ';
+		} else if ( priority_ <= t_warning ) {
+			sout << this->Bold << "[ WARNING ]" << this->Reset << ' ';
+		}
+	}
+
+	sout << channel_color_;
 
 	sout << str;
 }

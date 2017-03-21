@@ -193,7 +193,7 @@ bool NonlocalFrags::recover_checkpoint( std::string const & tag, pose::Pose& pos
 void NonlocalFrags::write_checkpoint( std::string const & tag, std::string const & data ) {
 	std::ofstream checkpoint( checkpointfile_.c_str(), std::ios_base::app );
 	if ( !checkpoint.good() ) {
-		TR.Debug << "Warning: cannot open checkpoint file for writing!" << std::endl;
+		TR.Warning << "cannot open checkpoint file for writing!" << std::endl;
 		return;
 	}
 	// check data
@@ -209,7 +209,7 @@ void NonlocalFrags::write_checkpoint( std::string const & tag, std::string const
 		line_stream >> pdbinfonumberj >> chainj >> pdbinfonumberk >> chaink >>
 			contact_cnt >> sub_pose_score >> relaxed_rmsd >> relaxed_score >> relaxed_ddg_score;
 		if ( line_stream.fail() ) {
-			TR.Debug << "Warning: cannot parse checkpoint data!" << std::endl;
+			TR.Warning << "cannot parse checkpoint data!" << std::endl;
 			return;
 		}
 		checkpoint << tag << " " << data << std::endl;
@@ -425,7 +425,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 						kinematics::FoldTree tree(total_len);
 						int jump_id = tree.new_jump( midpoint, frag_len+midpoint, frag_len );
 						tree.set_jump_atoms(jump_id, "CA", "CA");
-						assert(tree.check_fold_tree());
+						debug_assert(tree.check_fold_tree());
 						//   Create the sub pose
 						pose::Pose sub_pose;
 						utility::vector1<core::Size> positions;

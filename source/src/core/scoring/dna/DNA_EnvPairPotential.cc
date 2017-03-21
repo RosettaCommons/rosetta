@@ -95,7 +95,7 @@ Real
 DNA_EnvPairPotential::residue_pair_score( AA const & na, AA const & aa, Real const dis2 ) const
 {
 	using namespace chemical;
-	assert( aa <= num_canonical_aas && na >= first_DNA_aa && na <= last_DNA_aa );
+	debug_assert( aa <= num_canonical_aas && na >= first_DNA_aa && na <= last_DNA_aa );
 
 	return pair_stats_[ get_pair_disbin( dis2 ) ][ na - first_DNA_aa + 1 ][ aa ];
 }
@@ -104,7 +104,7 @@ Real
 DNA_EnvPairPotential::residue_env_score( AA const & aa, Size const nbr_count ) const
 {
 	using namespace chemical;
-	assert( aa <= num_canonical_aas );
+	debug_assert( aa <= num_canonical_aas );
 
 	return env_stats_[ get_env_nbr_bin( nbr_count ) ][ aa ];
 }
@@ -137,7 +137,7 @@ DNA_EnvPairPotential::load_score_tables()
 
 		if ( tag == "MAX_PAIR_DIS" ) {
 			l >> tmp;
-			assert( std::abs( tmp * tmp - nbr_dis2_threshold_ ) < 1e-3 );
+			debug_assert( std::abs( tmp * tmp - nbr_dis2_threshold_ ) < 1e-3 );
 
 		} else if ( tag == "N_PAIR_DISBINS" ) {
 			l >> n_pair_disbins_;

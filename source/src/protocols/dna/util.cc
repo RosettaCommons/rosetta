@@ -160,8 +160,8 @@ argrot_dna_dis2(
 		if ( (*rotamer)->aa() != aa_arg ) {
 			// for packer safety, RotamerSet will add in a native rotamer if it didn't actually build any rotamers
 			if ( rotset->num_rotamers() == 1 ) continue;
-			TR << "warning non-arg rotamer " << (*rotamer)->aa() << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "warning non-arg rotamer " << (*rotamer)->aa() << std::endl;
+			utility_exit_with_message("Non-Arg rotamer found in argrot_dna_dis2()");
 		}
 
 		auto prot_begin( (*rotamer)->sidechainAtoms_begin() ),
@@ -510,7 +510,8 @@ std::string seq_pdb_str(
 	for ( auto pos( seq.begin() ); pos != seq.end(); ++pos ) {
 		Size const index( pos->first );
 		if ( index < 1 || index > pose.size() ) {
-			assert(false);
+			TR.Warning << "Index out of range in seq_pdb_str(): " << index << std::endl;
+			debug_assert(false);
 			continue;
 		}
 		if ( pos != seq.begin() ) os << ",";
@@ -640,7 +641,7 @@ write_checkpoint( pose::Pose & pose, Size iter )
 	if ( !out ) {
 		std::cerr << "trouble opening file " << checkpointname
 			<< " for writing... skipping checkpoint" << std::endl;
-		runtime_assert( false ); // die here in debug mode
+		utility_exit_with_message("Cannot open checkpoint file");
 		return;
 	}
 
@@ -1089,7 +1090,7 @@ set_base_segment_chainbreak_constraints(
 	core::scoring::func::FuncOP const  P_angle_func( new core::scoring::func::HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
 	core::scoring::func::FuncOP const OP2_angle_func( new core::scoring::func::HarmonicFunc( radians(  OP2_angle ), radians( angle_stddev_degrees ) ) );
 
-	assert( start_base <= end_base );
+	debug_assert( start_base <= end_base );
 
 	// First the start base
 	if ( !pose.residue_type( start_base ).is_lower_terminus() ) {

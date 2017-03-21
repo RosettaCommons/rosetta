@@ -225,7 +225,7 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 	TRDEBUG << "Adding loophash WUs if necessary .. " << std::endl;
 	if ( outbound().size() < outbound_wu_buffer_size_ ) {
 		if ( library_central().size() == 0 ) {
-			TR.Error << "FATAL ERROR:  library_central_ is empty! " << std::endl;
+			TR.Fatal << "In MPI_LoopHashRefine_Master:  library_central_ is empty! " << std::endl;
 			utility_exit_with_message( "FATAL ERROR:  library_central_ is empty! " );
 		}
 		// pick a random structure from the library
@@ -241,9 +241,9 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 				TRDEBUG << "Already done: " << it << "  " << it->get_energy("lhcount") << std::endl;
 			}
 		}
-		TR << "WARNING: " << finished_structures << "  " << library_central().size() << std::endl;
+		TR.Warning << finished_structures << "  " << library_central().size() << std::endl;
 		if ( finished_structures >= library_central().size() ) {
-			TR << "WARNING: The starting structs exhausted!" << std::endl;
+			TR.Warning << "The starting structs exhausted!" << std::endl;
 		}
 	}
 

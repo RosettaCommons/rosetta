@@ -196,7 +196,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 {
 	core::scoring::MembraneTopologyOP membrane_topology = get_membrane_topology(pose);
 
-	assert(membrane_topology);
+	debug_assert(membrane_topology);
 	tmhelix_ = membrane_topology->tmhelix();
 	core::Size nspan = tmhelix_;
 	core::Size num_cut_loops = nspan;
@@ -214,8 +214,8 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 	}
 
 	//exit if nspan is not more than njumps and if # of cuttable loops != # jumps
-	assert(nspan>=njumps_);
-	assert(njumps_==num_cut_loops);
+	debug_assert(nspan>=njumps_);
+	debug_assert(njumps_==num_cut_loops);
 
 	//put all residues in spans in a one-dimensional array that is nres long, and 0=not in span, 1-3=is in span
 	ObjexxFCL::FArray1D_int span(nres_,0);
@@ -294,8 +294,8 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 			loop_end(span_index) += 1;
 		}
 
-		assert(loop_begin(span_index) != 0);
-		assert(loop_end(span_index) != 0);
+		debug_assert(loop_begin(span_index) != 0);
+		debug_assert(loop_end(span_index) != 0);
 
 		//put a cut at a random number in this loop
 		core::Size random_number = numeric::random::rg().random_range(loop_begin(span_index),loop_end(span_index));
@@ -329,8 +329,8 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		}
 	}//for span_index
 
-	assert(core::Size(nres_)==pose.size());
-	assert(pose.fold_tree().root()==nres_);
+	debug_assert(core::Size(nres_)==pose.size());
+	debug_assert(pose.fold_tree().root()==nres_);
 
 	//make the last cut the last residue before the root residue
 	cuts_(ncuts) = nres_-1;

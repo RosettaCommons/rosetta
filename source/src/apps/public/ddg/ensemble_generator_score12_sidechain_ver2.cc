@@ -332,7 +332,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		if ( file_out_stat == 0 ) { //file already exists
 			out_sfd.read_file(silent_file_name);
 			//read everything back in and store
-			//std::cout << "[WARNING]: changing the name of your output silent file from " << silent_file_name << " to " << silent_file_name << ".new" << std::endl;
+			//TR.Warning << "changing the name of your output silent file from " << silent_file_name << " to " << silent_file_name << ".new" << std::endl;
 			//silent_file_name += ".new";
 			out_sfd.set_filename(silent_file_name);
 			tags_done = out_sfd.tags();

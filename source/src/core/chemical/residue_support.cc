@@ -404,10 +404,10 @@ make_centroid( ResidueType const & res ) {
 	AtomTypeSet const & old_ats( res.atom_type_set() );
 
 	if ( old_ats.mode() == core::chemical::CENTROID_t ) {
-		TR.Warning << "Warning! Residue " << res.name() << " to convert to centroid is already centroid!" << std::endl;
+		TR.Warning << "Residue " << res.name() << " to convert to centroid is already centroid!" << std::endl;
 		return nullptr; // Don't bother - it's an error.
 	} else if ( old_ats.mode() != core::chemical::FULL_ATOM_t ) {
-		TR.Warning << "Warning! Residue " << res.name() << " to convert to centroid is not in full atom mode!" << std::endl;
+		TR.Warning << "Residue " << res.name() << " to convert to centroid is not in full atom mode!" << std::endl;
 	}
 
 	ResidueTypeOP centroid( res.clone() );
@@ -451,7 +451,7 @@ make_centroid( ResidueType const & res ) {
 			// We have a simple as-is translation
 			new_string = old_string;
 		} else {
-			TR.Warning << "WARNING: Atom type '" << old_string << "' on atom '" << res.atom_name(ii)
+			TR.Warning << "Atom type '" << old_string << "' on atom '" << res.atom_name(ii)
 				<< "' from residue type '" <<  res.name() <<  "' does not have a centroid mode equivalent: assuming CAbb." << std::endl;
 			// This is how the molfile_to_params.py script does the translation for unrecognized atoms.
 			new_string = "CAbb";

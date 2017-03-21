@@ -1287,7 +1287,7 @@ AntibodyInfo::get_CDR_loops(pose::Pose const & pose, core::Size overhang) const 
 
 loops::LoopsOP
 AntibodyInfo::get_CDR_loops(const pose::Pose& pose, const vector1<bool> & cdrs, core::Size overhang) const{
-	assert(cdrs.size() <= CDRNameEnum_proto_total);
+	debug_assert(cdrs.size() <= CDRNameEnum_proto_total);
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 	for ( Size i = 1; i <= cdrs.size(); ++i ) {
@@ -1368,7 +1368,7 @@ AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose, bool attempt_set_from_
 void
 AntibodyInfo::setup_CDR_clusters(const pose::Pose& pose, utility::vector1<bool> const & cdrs, bool attempt_set_from_pose ){
 
-	assert( cdrs.size() <= CDRNameEnum_proto_total );
+	debug_assert( cdrs.size() <= CDRNameEnum_proto_total );
 
 	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[ i ] ) {

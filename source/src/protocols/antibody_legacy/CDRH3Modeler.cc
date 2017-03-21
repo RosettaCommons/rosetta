@@ -483,7 +483,7 @@ void read_H3_cter_fragment(
 
 	// Check to see if file exists
 	if ( !H3_ter_library_stream ) {
-		TR << "[Error]: Could not open H3 base library file: "
+		TR.Error << "Could not open H3 base library file: "
 			<< H3_ter_library_filename << std::endl
 			<< "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
 		std::exit( EXIT_FAILURE );

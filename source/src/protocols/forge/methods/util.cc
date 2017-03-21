@@ -96,10 +96,10 @@ union_interval(
 {
 	using core::Size;
 
-	assert( left <= right );
-	assert( root <= uf.n_nodes() );
-	assert( left <= uf.n_nodes() );
-	assert( right <= uf.n_nodes() );
+	debug_assert( left <= right );
+	debug_assert( root <= uf.n_nodes() );
+	debug_assert( left <= uf.n_nodes() );
+	debug_assert( right <= uf.n_nodes() );
 
 	for ( Size i = left; i <= right; ++i ) {
 		uf.ds_union( root, i );
@@ -403,8 +403,8 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 	}
 
 	if ( ! have_read_start_token ) {
-		T("core.pack.task.ResfileReader") << "RESFILE WARNING: reached the end of resfile without finding a 'start' token." << std::endl;
-		T("core.pack.task.ResfileReader") << "RESFILE WARNING: No residue-specific behavior specified in resfile" << std::endl;
+		T("core.pack.task.ResfileReader").Warning << "reached the end of resfile without finding a 'start' token." << std::endl;
+		T("core.pack.task.ResfileReader").Warning << "No residue-specific behavior specified in resfile" << std::endl;
 	}
 
 	return non_default_lines;

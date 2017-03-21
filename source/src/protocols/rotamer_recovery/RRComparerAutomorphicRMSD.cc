@@ -91,7 +91,7 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 
 	// TODO: Can this restriction be relaxed? What about using 'is_polymer()'?
 	if ( res1.aa() > num_canonical_aas ) {
-		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
+		TR.Warning << "trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
 		score = -1; recovered = false; return false;
 	}
 

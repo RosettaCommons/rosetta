@@ -93,14 +93,8 @@ public:
 		return right() == DofClaim::EXCLUSIVE;
 	}
 
-	//make things compile... for now
-	/*core::Size offset() const {
-	runtime_assert( false );
-	return 0;
-	}*/
-
 	core::Size last_residue() const {
-		runtime_assert( false );
+		utility_exit_with_message("DofClaim::last_residue() is currently unimplemented.");
 		return 0;
 	}
 	//virtual std::string to_string() const = 0;

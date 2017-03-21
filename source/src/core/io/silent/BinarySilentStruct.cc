@@ -203,7 +203,7 @@ void BinarySilentStruct::add_chain_ending( Size const seqpos ) {
 		nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
 	}
 	if ( seqpos < 1 || seqpos >= nres_pose ) {
-		tr.Fatal << "ERROR: add_chain_ending() invalid chain ending " << seqpos << std::endl;
+		tr.Fatal << "add_chain_ending() invalid chain ending " << seqpos << std::endl;
 		utility_exit();
 	}
 
@@ -244,7 +244,7 @@ void BinarySilentStruct::chain_endings( utility::vector1< Size > const & endings
 	}
 	for ( utility::vector1< Size >::const_iterator i = endings.begin(), ie = endings.end(); i != ie; ++i ) {
 		if ( (*i) < 1 || (*i) > nres_pose ) {  //fpd if symmetric, chainendings may be > nres (in asu)
-			tr.Fatal << "ERROR: chain_endings() invalid chain ending " << (*i) << std::endl;
+			tr.Fatal << "chain_endings() invalid chain ending " << (*i) << std::endl;
 			utility_exit();
 		}
 	}
@@ -403,7 +403,7 @@ bool BinarySilentStruct::init_from_lines(
 				line_stream >> nr;
 				if ( nr != fold_tree().num_jump() ) {
 					tr.Warning
-						<< "WARNING: corrupted silent file read line JUMP X -- X should match number of jumps in FOLD_TREE " << std::endl;
+						<< "corrupted silent file read line JUMP X -- X should match number of jumps in FOLD_TREE " << std::endl;
 				}
 				for ( Size i = 1; i<= nr; i++ ) {
 					kinematics::Jump jump;
@@ -438,12 +438,12 @@ bool BinarySilentStruct::init_from_lines(
 			line_stream >> tag;
 
 			if ( tag.length() < 1 ) {
-				tr.Warning << "WARNING:  read blank line in decoy tag " << decoy_tag()
+				tr.Warning << "read blank line in decoy tag " << decoy_tag()
 					<< std::endl;
 				continue;
 			}
 			if ( static_cast< core::Size > (currpos) > secstruct_.size() ) {
-				tr.Error << "ERROR: trying to index off the end of the secstruct array"
+				tr.Error << "trying to index off the end of the secstruct array"
 					<< ", idx is " << currpos << " secstruct_.size() is " << secstruct_.size()
 					<< std::endl;
 				return false;
@@ -517,9 +517,9 @@ bool BinarySilentStruct::init_from_lines(
 
 
 	if ( atm_coords_.size() != nres() ) {
-		tr << "ERROR: didn't find coordinates for all sequence positions of "
+		tr.Error << "didn't find coordinates for all sequence positions of "
 			<< decoy_tag() << std::endl;
-		tr << "       expected " << nres()
+		tr.Error << "       expected " << nres()
 			<< ", found " << currpos-1 << std::endl;
 		return false; //no success
 	}
@@ -623,10 +623,10 @@ void BinarySilentStruct::fill_pose (
 			if ( (natoms_pose + 3) == natoms_struct && rsd.has_variant_type( chemical::N_ACETYLATION ) ) fixup = true;
 
 			if ( !fixup )  {
-				tr.Warning  << tr.Red << "[ WARNING ] "
+				tr.Warning  << tr.Red
 					<< "Number of atoms in pose and silent file disagree! "
 					<< "Attempting to continue ..." << std::endl
-					<< "[ WARNING ]    (in residue " << pose.residue(seqpos).name() << " at " << seqpos
+					<< "   (in residue " << pose.residue(seqpos).name() << " at " << seqpos
 					<< "  natoms_pose=" << natoms_pose
 					<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
 					<< natoms_struct << ")" << tr.Reset << std::endl;

@@ -82,8 +82,8 @@ FlexbbNode::print() const {
 /// @details Requires that num_aa_types_ is set first; num_aa_types_ is currently set in the node's ctor.
 void
 FlexbbNode::set_num_distinct_backbones( int nbbconfs ) {
-	assert( nbbconfs > 0 ); // cannot have fewer than 1 backbone conformation.
-	assert( num_aa_types_ != 0 );
+	debug_assert( nbbconfs > 0 ); // cannot have fewer than 1 backbone conformation.
+	debug_assert( num_aa_types_ != 0 );
 	num_bb_ = nbbconfs;
 	num_states_for_bb_.resize( nbbconfs, 0 );
 	state_offsets_for_bb_.resize( nbbconfs, 0 );
@@ -100,8 +100,8 @@ FlexbbNode::set_num_distinct_backbones( int nbbconfs ) {
 void
 FlexbbNode::set_num_states_per_backbone( utility::vector1< int > const & num_states_for_bb )
 {
-	assert( num_states_for_bb_.size() == num_states_for_bb.size() );
-	assert( num_states_for_bb_.size() == state_offsets_for_bb_.size() );
+	debug_assert( num_states_for_bb_.size() == num_states_for_bb.size() );
+	debug_assert( num_states_for_bb_.size() == state_offsets_for_bb_.size() );
 
 	num_states_for_bb_ = num_states_for_bb;
 	state_offsets_for_bb_[ 1 ] = 0;
@@ -168,7 +168,7 @@ FlexbbNode::set_closest_states_on_other_bbs( ObjexxFCL::FArray2D_int const & clo
 			if ( state_info_[ ii ].get_bb() != jj  && closest_state_on_alt_bb_( jj, ii ) == 0 ) {
 				TR << "Note state " << ii << " on FlexbbNode " << get_node_index() <<
 					" has no close alternate state on backbone " << jj << std::endl;
-				assert( state_info_[ closest_state_on_alt_bb_( jj, ii ) ].get_bb() == jj );
+				debug_assert( state_info_[ closest_state_on_alt_bb_( jj, ii ) ].get_bb() == jj );
 			}
 			if ( closest_state_on_alt_bb_( jj, ii ) > get_num_states() ) {
 				std::cerr << "ALT STATE ON CLOSEST BB OUT OF RANGE: " << ii << " " << jj << " " << closest_state_on_alt_bb_( jj, ii ) << std::endl;
@@ -185,7 +185,7 @@ FlexbbNode::set_amino_acid_types( utility::vector1< int > const & aatypes )
 	int state_index_for_aa = 1;
 	int last_aa = -1;
 	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
-		assert( aatypes[ ii ] > 0 );
+		debug_assert( aatypes[ ii ] > 0 );
 		if ( aatypes[ ii ] != last_aa ) {
 			int temp_last_aa = last_aa;
 			last_aa = aatypes[ ii ];
@@ -217,7 +217,7 @@ FlexbbNode::getNumStatesPerAAPerBB( int bb )
 void
 FlexbbNode::add_to_one_body_energies( FArray1< PackerEnergy > & energies )
 {
-	assert( energies.size() == one_body_energies_.size() );
+	debug_assert( energies.size() == one_body_energies_.size() );
 	for ( Size ii = 1; ii <= one_body_energies_.size(); ++ii ) {
 		// if ( get_node_index() == 17 ) { std::cout << "FlexbbNode::add_to_one_body_energies " << ii << " " << energies( ii ) << " " << one_body_energies_[ ii ] << " " << one_body_energies_[ ii ] + energies( ii )  << std::endl; }
 		one_body_energies_[ ii ] += energies( ii );
@@ -303,7 +303,7 @@ FlexbbNode::inform_edges_of_alt_state_before_bbjump()
 /// by the node who was initially contacted
 //bool
 //FlexbbNode::bb_move_actually_kept_original_bb() const {
-// assert( node_contacted_by_graph_about_bb_move_ );
+// debug_assert( node_contacted_by_graph_about_bb_move_ );
 // return resolved_considered_bb_move_;
 //}
 
@@ -423,7 +423,7 @@ FlexbbNode::inform_incident_edges_about_partial_state_assignment()
 
 void FlexbbNode::copy_alternate_to_current()
 {
-	assert( alternate_state_is_being_considered_ );
+	debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	current_state_info_ = alternate_state_info_;
@@ -490,7 +490,7 @@ FlexbbEdge::set_alt_state(
 	alt_e_up_to_date_ = false;
 	int node_changed = which_node( node_index );
 
-	assert( nodes_part_of_same_flexseg_ || ( nodes_cur_state_[ !node_changed ] == nodes_alt_state_[ !node_changed ] ));
+	debug_assert( nodes_part_of_same_flexseg_ || ( nodes_cur_state_[ !node_changed ] == nodes_alt_state_[ !node_changed ] ));
 
 	nodes_alt_state_[ node_changed ] = alternate_state;
 	nodes_alt_info_[  node_changed ] = alt_state_info;
@@ -552,7 +552,7 @@ FlexbbEdge::count_dynamic_memory() const
 void
 FlexbbEdge::copy_alternate_to_current()
 {
-	assert( alt_e_up_to_date_ );
+	debug_assert( alt_e_up_to_date_ );
 
 	nodes_cur_state_[ 0 ] = nodes_alt_state_[ 0 ];
 	nodes_cur_state_[ 1 ] = nodes_alt_state_[ 1 ];
@@ -603,7 +603,7 @@ FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase con
 	using namespace core::conformation;
 	using namespace core;
 
-	assert( dynamic_cast< FlexbbRotamerSets const * > ( & rot_sets ) );
+	debug_assert( dynamic_cast< FlexbbRotamerSets const * > ( & rot_sets ) );
 	rotamer_set::FlexbbRotamerSets const & flex_sets( static_cast< rotamer_set::FlexbbRotamerSets const & > ( rot_sets ) );
 
 	/// Set Graph data:
@@ -715,7 +715,7 @@ FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase con
 						Size const mm_rotid = kk_rotamers_matching_ll[ mm ];
 						ResidueCOP mmrotop = kk_flexset->rotamer( mm_rotid );
 						Residue const & mmrot( *mmrotop );
-						assert( llrot.name() == mmrot.name() );
+						debug_assert( llrot.name() == mmrot.name() );
 
 						Real mm_rms( 0.0 );
 						for ( Size nn = 1; nn <= llrot.natoms(); ++nn ) {
@@ -772,7 +772,7 @@ FlexbbInteractionGraph::nodes_from_same_flexseg( int node1, int node2 ) const
 //void
 //FlexbbInteractionGraph::set_representitive_node_for_flexseg( int flexseg, int node_index)
 //{
-// assert( flexseg_representative_[ flexseg ] == 0 );
+// debug_assert( flexseg_representative_[ flexseg ] == 0 );
 // flexseg_representative_[ flexseg ] = node_index;
 //}
 

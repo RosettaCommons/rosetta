@@ -1054,7 +1054,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 			Residue const & ii_res( residue( ii_resid ) );
 			Size ii_sg_atomno(0);
 			if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-				TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
+				TR.Error << "Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 				utility_exit();
 			} else {
 				ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
@@ -1084,8 +1084,8 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
 				&& residue( best_neighbor ).has_variant_type( chemical::DISULFIDE );
 
-			if ( !success_at_ii )   TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
-			if ( !success_at_best_neighbor ) TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
+			if ( !success_at_ii )   TR.Error << "unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
+			if ( !success_at_best_neighbor ) TR.Error << "unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
 
 			ii_name_start = residue( ii_resid ).type().name();
 			bn_name_start = residue( best_neighbor ).type().name();
@@ -1106,7 +1106,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 				Residue const & jj_res = residue( jj_resid );
 				Size jj_sg_atomno(0);
 				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
+					TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 					utility_exit();
 				} else {
 					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
@@ -1139,7 +1139,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 			//Determine which atom makes the disulfide bond
 			Size ii_sg_atomno(0);
 			if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-				TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
+				TR.Error << "Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 				utility_exit();
 			} else {
 				ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
@@ -1168,7 +1168,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 
 				Size jj_sg_atomno(0);
 				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
+					TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 					utility_exit();
 				} else {
 					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
@@ -1192,7 +1192,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 
 					bool const successful_revert = conformation::change_cys_state( ii_resid, "CYS", *this ) && !residue(ii_resid).has_variant_type( chemical::DISULFIDE );
 					if ( !successful_revert ) {
-						TR.Error << "ERROR: unable to revert disulfide to thiol type for removal of disulfide at resid " << ii_resid << std::endl;
+						TR.Error << "unable to revert disulfide to thiol type for removal of disulfide at resid " << ii_resid << std::endl;
 					}
 				}
 
@@ -1227,11 +1227,11 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 					&& const_residue_( best_neighbor ).has_variant_type( chemical::DISULFIDE );
 
 				if ( !success_at_ii ) {
-					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << ii_resid << std::endl;
+					TR.Error << "unable to create residue type CYD for disulfide at resid " << ii_resid << std::endl;
 				}
 
 				if ( !success_at_best_neighbor ) {
-					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
+					TR.Error << "unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
 				}
 
 				ii_name_start = const_residue_( ii_resid ).type().name();
@@ -1254,7 +1254,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 					Residue const & jj_res = residue( jj_resid );
 					Size jj_sg_atomno(0);
 					if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-						TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
+						TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 						utility_exit();
 					} else {
 						jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );

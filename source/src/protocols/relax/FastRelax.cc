@@ -573,7 +573,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	TR.Debug   << "================== FastRelax: " << script_.size() << " ===============================" << std::endl;
 	if ( pose.size() == 0 ) {
-		TR.Warning << "WARNING: Pose has no residues. Doing a FastRelax would be pointless. Skipping." << std::endl;
+		TR.Warning << "Pose has no residues. Doing a FastRelax would be pointless. Skipping." << std::endl;
 		return;
 	}
 
@@ -1439,7 +1439,7 @@ void FastRelax::batch_apply(
 			}
 
 			if ( energies.size() < 1 ) {
-				TR.Debug << "ERROR: Cannot shave off structures - there are not enough left" << std::endl;
+				TR.Error << "Cannot shave off structures - there are not enough left" << std::endl;
 				continue;
 			}
 

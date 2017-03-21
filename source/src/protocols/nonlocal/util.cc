@@ -69,8 +69,8 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 	using protocols::loops::Loop;
 	using utility::vector1;
 
-	assert(chunks);
-	assert(threshold > 0);
+	debug_assert(chunks);
+	debug_assert(threshold > 0);
 
 	vector1<Size> violated_residues;
 	violated_residues.push_back(1);
@@ -127,8 +127,8 @@ void limit_chunk_size(core::Size min_chunk_sz,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	assert(regions);
-	assert(min_chunk_sz <= max_chunk_sz);
+	debug_assert(regions);
+	debug_assert(min_chunk_sz <= max_chunk_sz);
 
 	protocols::loops::LoopsOP output( new protocols::loops::Loops() );
 	for ( auto i = regions->begin(); i != regions->end(); ++i ) {
@@ -149,7 +149,7 @@ void decompose(core::Size min_chunk_sz,
 	using core::Size;
 	using protocols::loops::Loop;
 	using utility::vector1;
-	assert(pieces);
+	debug_assert(pieces);
 
 	// Base case
 	if ( loop.length() <= max_chunk_sz ) {
@@ -196,8 +196,8 @@ void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& ali
 	using namespace basic::options::OptionKeys;
 	using core::Size;
 
-	assert(aligned_regions);
-	assert(unaligned_regions);
+	debug_assert(aligned_regions);
+	debug_assert(unaligned_regions);
 
 	Size pose_space_num_residues = 0;
 	for ( Size ii = 1; ii <= alignment.length(); ++ii ) {
@@ -234,7 +234,7 @@ core::Real get_per_residue_score(
 	core::pose::Pose const & pose
 ) {
 	using namespace core::scoring;
-	assert( rsd_idx <= pose.size() );
+	debug_assert( rsd_idx <= pose.size() );
 	EnergyMap const & rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
 	return rsd_energies[ scoretype ];
 }

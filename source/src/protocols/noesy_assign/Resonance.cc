@@ -142,7 +142,7 @@ void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=
 
 void Resonance::add_connected_resonance( ResonanceAP ptr_ap ) {
 	ResonanceOP ptr( ptr_ap );
-	assert( ptr );
+	debug_assert( ptr );
 	connected_resonance_ids_.push_back( ptr->label() );
 	connected_resonance_ptrs_.push_back( ptr );
 }

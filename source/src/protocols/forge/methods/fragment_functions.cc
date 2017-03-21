@@ -49,7 +49,7 @@ smallmer_from_largemer(
 	using namespace core;
 	using namespace core::fragment;
 
-	assert( smallmer_size > 0 );
+	debug_assert( smallmer_size > 0 );
 
 	ConstantLengthFragSetOP small( new ConstantLengthFragSet( smallmer_size ) );
 

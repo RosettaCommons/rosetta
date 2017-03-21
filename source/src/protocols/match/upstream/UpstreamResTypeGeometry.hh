@@ -141,7 +141,7 @@ public:
 	/// not part of the backbone (it must be controlled by a chi angle).
 	Vector const &
 	point_for_nonchitip_atom( Size atom ) {
-		assert( atom_controlled_by_any_chi( atom ) && !atom_is_chitip( atom ) );
+		debug_assert( atom_controlled_by_any_chi( atom ) && !atom_is_chitip( atom ) );
 		return points_for_nonchitip_atoms_[ controlling_chi_for_atom_[ atom ] ]
 			[ which_point_for_atom_[ atom ] ];
 	}

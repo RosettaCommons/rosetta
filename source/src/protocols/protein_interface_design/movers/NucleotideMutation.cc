@@ -164,7 +164,7 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 		}
 	}
 	if ( being_designed.empty() ) {
-		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
+		TR.Warning << "No residues are listed as designable." << std::endl;
 		return;
 	}
 

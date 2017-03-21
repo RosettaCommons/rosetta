@@ -519,7 +519,7 @@ reroot( pose::Pose & pose,
 		Size const i = root_partition_res_ordered[ n ];
 		if ( preferred_root_res.has_value( res_list[ root_partition_res_ordered[ n ] ] ) ) {
 			if ( !pose.fold_tree().possible_root( i ) ) {
-				TR << "Warning: " << res_list[ root_partition_res_ordered[ n ] ] << " specified as root res but not at a pose terminal. Cannot be used." << std::endl;
+				TR.Warning << res_list[ root_partition_res_ordered[ n ] ] << " specified as root res but not at a pose terminal. Cannot be used." << std::endl;
 				continue;
 			}
 			new_root = i; break;
@@ -1370,7 +1370,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 		if ( !basic::options::option[ basic::options::OptionKeys::score::loop_close::allow_complex_loop_graph ]() ) {
 			utility_exit_with_message( msg );
 		}
-		TR << TR.Red << "[WARNING] " << msg << TR.Reset << std::endl;
+		TR.Warning << TR.Red << msg << TR.Reset << std::endl;
 	}
 
 

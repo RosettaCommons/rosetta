@@ -77,6 +77,7 @@ DimerPairing::is_parallel( Real const phi, Real const theta )
 			return false;
 		}
 	}
+	// Should never get here
 	runtime_assert( false );
 } // is_parallel
 

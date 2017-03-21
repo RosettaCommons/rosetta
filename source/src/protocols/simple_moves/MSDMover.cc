@@ -110,7 +110,7 @@ MSDMover::apply( core::pose::Pose & pose ) {
 	design_mover_->apply( pose );
 
 	if ( pose.energies().weights()[core::scoring::res_type_constraint] == 0 ) {
-		TR.Warning << "Warning: res type constraint is set at zero. You need to reweight it for multistate design to work properly" << std::endl;
+		TR.Warning << "res type constraint is set at zero. You need to reweight it for multistate design to work properly" << std::endl;
 	}
 	// Remove constraints from pose
 	pose.remove_constraints( constraints, true );

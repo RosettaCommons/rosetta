@@ -227,7 +227,7 @@ SilentStructStore::get_pose( core::Size index,  core::pose::Pose &pose ) const {
 
 // @brief GEt a random structure
 SilentStructCOP SilentStructStore::get_struct_random() const{
-	if ( store_.size() == 0 ) runtime_assert(false);
+	runtime_assert( store_.size() > 0 );
 	core::Size choice=core::Size( numeric::random::rg().random_range(0,(store_.size()-1)));
 	runtime_assert( choice < store_.size() );
 	return store_[ choice ];
@@ -235,7 +235,7 @@ SilentStructCOP SilentStructStore::get_struct_random() const{
 
 void SilentStructStore::serialize( std::ostream & out ) const {
 	if ( store_.size() == 0 ) {
-		TR.Warning << "WARNING: Empty silent struct store serialized." << std::endl;
+		TR.Warning << "Empty silent struct store serialized." << std::endl;
 	} else {
 		(*store_.begin())->print_header( out );
 		SilentFileOptions opts;

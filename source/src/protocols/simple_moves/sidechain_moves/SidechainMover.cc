@@ -355,14 +355,14 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > most_probable_rotamers;
 		Size itr_i = 1;
 		core::Real const probability_threshold = 0.01;
-		assert( rotamer_sample_data.size() > 0 );
+		debug_assert( rotamer_sample_data.size() > 0 );
 		if ( sample_rotwells_unif_  ){ //uniformly samples rotamer wells
 		while((itr_i <= rotamer_sample_data.size())  &&
 		(rotamer_sample_data[ itr_i ].probability() > probability_threshold)){
 		most_probable_rotamers.push_back( rotamer_sample_data[ itr_i ] );
 		itr_i++;
 		}
-		assert( most_probable_rotamers.size() > 0 );
+		debug_assert( most_probable_rotamers.size() > 0 );
 		rotamer_sample_data = most_probable_rotamers; //replace all rots with ones that pass a certain threshold (1%)
 		}*/
 
@@ -553,7 +553,7 @@ SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP inp
 		}
 		while( !dunbrack_accept( numeric::random::rg(), *input_residue, previous_chi_angles, new_chi_angles ) );
 		if ( preserve_detailed_balance_ ) {
-			TR.Error << "ERROR: you cannot specify accept_according_to_dunbrack_ and preserve_detailed_balance_ both as true!" << std::endl;
+			TR.Error << "You cannot specify accept_according_to_dunbrack_ and preserve_detailed_balance_ both as true!" << std::endl;
 			TR.Error << "Recommend rerunning with 'random perturb current' frequency set to zero." << std::endl;
 			utility_exit();
 		}

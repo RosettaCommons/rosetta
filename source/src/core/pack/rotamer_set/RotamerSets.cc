@@ -262,7 +262,7 @@ RotamerSets::build_rotamers(
 			//with coordinate constraints, which addes virtual residues that have no equivalents
 			//set
 			if ( copies.size() == 0 ) {
-				TR << "WARNING: residue " << moltenres_2_resid_[ii] << " has no equivalent residues set!" << std::endl;
+				TR.Warning << "residue " << moltenres_2_resid_[ii] << " has no equivalent residues set!" << std::endl;
 				smallest_res = moltenres_2_resid_[ii];
 			}
 

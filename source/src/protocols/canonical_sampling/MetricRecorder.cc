@@ -102,14 +102,6 @@ MetricRecorder::MetricRecorder(
 	last_flush_(other.last_flush_)
 {}
 
-MetricRecorder&
-MetricRecorder::operator=( MetricRecorder const & /* other */ )
-{
-	// assignment not allowed
-	runtime_assert(false);
-	return * this;
-}
-
 protocols::moves::MoverOP
 MetricRecorder::clone() const
 {

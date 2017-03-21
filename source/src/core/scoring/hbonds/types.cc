@@ -766,7 +766,7 @@ get_hbe_acc_hybrid( HBEvalType const & hbe )
 	case hbe_GENERIC_RINGSCSC_SR : return RING_HYBRID; break;
 	case hbe_GENERIC_RINGSCSC_LR : return RING_HYBRID; break;
 	case hbe_UNKNOWN :
-		TR.Warning << "WARNING: Attempted to find hybrid status of Unknown HBEvalType" << std::endl;
+		TR.Warning << "Attempted to find hybrid status of Unknown HBEvalType" << std::endl;
 		return UNKNOWN_HYBRID; break;
 	}
 	return UNKNOWN_HYBRID;
@@ -1026,7 +1026,7 @@ hbe_is_BB_type( HBEvalType hbe )
 	case hbe_GENERIC_RINGSCSC_SR : return false; break;
 	case hbe_GENERIC_RINGSCSC_LR : return false; break;
 	case hbe_UNKNOWN :
-		TR.Error << "ERROR: Attempted to find backbone status of Unknown HBEvalType" << std::endl;
+		TR.Error << "Attempted to find backbone status of Unknown HBEvalType" << std::endl;
 		break;
 	}
 	utility_exit_with_message("Unhandled HBEvalType");
@@ -1268,7 +1268,7 @@ get_hbond_weight_type( HBEvalType const & hbe_type )
 	case hbe_GENERIC_RINGSCSC_SR : return hbw_SC; break;
 	case hbe_GENERIC_RINGSCSC_LR : return hbw_SC; break;
 	case hbe_UNKNOWN :
-		TR.Error << "ERROR: Attempted to find weight type Unknown HBEvalType" << std::endl;
+		TR.Error << "Attempted to find weight type Unknown HBEvalType" << std::endl;
 		break;
 	}
 	utility_exit_with_message("Unhandled HBEvalType");

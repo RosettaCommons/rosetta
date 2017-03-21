@@ -88,7 +88,7 @@ void Mover::insertFragment(const int seqpos_a, const int seqpos_b, const int fra
 	// Get random res_num,res
 	//const int seqpos = seqpos_a + random() % (seqpos_b - seqpos_a + 1 - frag_len + 1);// * ( res_num_b - frag_len - res_num_a);
 	const int seqpos = numeric::random::random_range(seqpos_a,seqpos_b);
-	assert( seqpos_a <= seqpos && seqpos <= seqpos_b );
+	debug_assert( seqpos_a <= seqpos && seqpos <= seqpos_b );
 
 	// Get random entry
 	Fragment::FileCOP frag_file( getFragmentFile(seqpos,frag_len) );
@@ -141,9 +141,9 @@ void Mover::smallMoves(const int seqpos_a, const int seqpos_b, const double sigm
 //     //const vector<Rotamer> getRotamers(const Pdb::ResType& res_type, const double phi, const double psi, const int nb) const;
 
 //     const Residue* r = getTube()->getResidue(Pdb::ResID(chain_id,res_num));
-//     assert( r != 0 );
+//     debug_assert( r != 0 );
 //     const Peptide* p = r->get<Peptide>();
-//     assert( p != 0 );
+//     debug_assert( p != 0 );
 
 //     if( mvRot.find(r) == mvRot.end() ) {
 //       Kin::Packer packer;
@@ -174,7 +174,7 @@ void Mover::randomRotamer(const int seqpos) const {
 
 	core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dun_rotlib =
 		utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const >( rotamer_library );
-	//assert( dun_rotlib ); // WHOA! Where's the guarantee here?
+	//debug_assert( dun_rotlib ); // WHOA! Where's the guarantee here?
 	if ( ! dun_rotlib ) return; // Is this right? maybe we would want random rotamers for ligands?
 
 	dun_rotlib->assign_random_rotamer_with_bias(
@@ -225,11 +225,11 @@ Fragment::FileCOP Mover::getFragmentFile(int seqpos, const int len) const {
 			cout << "Mover::getFragmentFile - getting frag file '" << ss << "' for " << seqpos << endl;
 			frag_file = Librarian::getFragmentFile(ss);
 		} else {
-			cout << "Mover::getFragmentFile - support for fragments of length " << len << " is not yet coded" << endl;
-			assert( false );
+			cerr << "Mover::getFragmentFile - support for fragments of length " << len << " is not yet coded" << endl;
+			utility_exit_with_message("Fragment length not supported");
 		}
 
-		assert( frag_file != nullptr );
+		debug_assert( frag_file != nullptr );
 		mFragmentFiles[make_pair(seqpos,len)] = frag_file;
 		return frag_file;
 	} else { // i

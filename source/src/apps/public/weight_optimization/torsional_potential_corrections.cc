@@ -1501,7 +1501,7 @@ make_fragments() {
 				center = 3;
 			}
 
-			assert( center != 0 );
+			debug_assert( center != 0 );
 
 			mutate_to_ala( *frag, center);
 			phi = frag->phi(center);

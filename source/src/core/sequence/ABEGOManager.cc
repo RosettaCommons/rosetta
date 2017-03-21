@@ -163,8 +163,8 @@ ABEGOManager::torsion2index( Real const phi, Real const psi, Real const omega, S
 	case 4 :
 		return torsion2index_level4( phi, psi, omega );
 	default :
-		TR << " [ERROR] Unrecognized level  " << level << std::endl;
-		runtime_assert( false );
+		TR.Error << "Unrecognized level  " << level << std::endl;
+		utility_exit_with_message("Unrecognized torsion level");
 		return 0;
 	}
 }
@@ -352,8 +352,8 @@ ABEGOManager::index2symbol( Size const & idx )
 	case 13 :
 		return 'X';
 	default :
-		TR << " [ERROR] Unrecognized abego index: " << idx << std::endl;
-		runtime_assert( false );
+		TR.Error << "Unrecognized abego index: " << idx << std::endl;
+		utility_exit_with_message("Unrecognized abego");
 		return 0;
 	}
 }
@@ -404,8 +404,8 @@ ABEGOManager::symbol2index( char const & symbol )
 	case 'x' :
 		return 13;
 	default :
-		TR << " [ERROR] Unrecognized abego index: " << symbol << std::endl;
-		runtime_assert( false );
+		TR.Error << "Unrecognized abego index: " << symbol << std::endl;
+		utility_exit_with_message("Unrecognized abego");
 		return 0;
 	}
 }

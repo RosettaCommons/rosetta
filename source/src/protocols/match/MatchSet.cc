@@ -49,32 +49,32 @@ HitHasher::set_bounding_box(
 	BoundingBox const & bb
 )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	bb_ = bb;
 }
 
 void
 HitHasher::set_uniform_xyz_bin_width( Real bin_width )
 {
-	assert( ! initialized_ );
-	assert( bin_width > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width > 0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
 }
 
 void
 HitHasher::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
-	assert( ! initialized_ );
-	assert( bin_width_degrees > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width_degrees > 0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
 }
 
 void
 HitHasher::set_xyz_bin_widths( Vector const & bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( bin_widths( ii ) > 0 );
+		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 	}
 
@@ -83,9 +83,9 @@ HitHasher::set_xyz_bin_widths( Vector const & bin_widths )
 void
 HitHasher::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( euler_bin_widths( ii ) > 0 );
+		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 	}
 }
@@ -93,14 +93,14 @@ HitHasher::set_euler_bin_widths( Vector const & euler_bin_widths )
 void
 HitHasher::set_nhits_per_match( Size num_geometric_constraints )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	n_geometric_constraints_per_match_ = num_geometric_constraints;
 }
 
 void
 HitHasher::initialize()
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 
 	initialized_ = true;
 
@@ -248,32 +248,32 @@ HitNeighborFinder::set_bounding_box(
 	BoundingBox const & bb
 )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	bb_ = bb;
 }
 
 void
 HitNeighborFinder::set_uniform_xyz_bin_width( Real bin_width )
 {
-	assert( ! initialized_ );
-	assert( bin_width > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width > 0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
 }
 
 void
 HitNeighborFinder::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
-	assert( ! initialized_ );
-	assert( bin_width_degrees > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width_degrees > 0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
 }
 
 void
 HitNeighborFinder::set_xyz_bin_widths( Vector const & bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( bin_widths( ii ) > 0 );
+		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 	}
 
@@ -282,17 +282,17 @@ HitNeighborFinder::set_xyz_bin_widths( Vector const & bin_widths )
 void
 HitNeighborFinder::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( euler_bin_widths( ii ) > 0 );
+		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 	}
 }
 
 void HitNeighborFinder::add_hits( std::list< Hit > const & hitlist )
 {
-	assert( all_hits_.empty() );
-	assert( initialized_ );
+	debug_assert( all_hits_.empty() );
+	debug_assert( initialized_ );
 
 	Size count_hits = 0;
 	for ( auto const & iter : hitlist ) {
@@ -309,7 +309,7 @@ void HitNeighborFinder::add_hits( HitPtrList const & /*hitptrlist*/ )
 void
 HitNeighborFinder::initialize()
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 
 	initialized_ = true;
 
@@ -468,7 +468,7 @@ HitNeighborFinder::connected_components() const
 	for ( auto const & all_hit : all_hits_ ) {
 		Size iterrep = ds.ds_find( all_hit.first );
 		Size setid = ds_representatives_to_setnos[ iterrep ];
-		assert( setid != 0 );
+		debug_assert( setid != 0 );
 		hit_ccs[ setid ].push_back( all_hit.second );
 	}
 	return hit_ccs;
@@ -634,40 +634,40 @@ MatchCounter::set_bounding_box(
 	BoundingBox const & bb
 )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	bb_ = bb;
 }
 
 void
 MatchCounter::set_n_geometric_constraints( Size ngeomcsts )
 {
-	assert( ! initialized_ );
-	assert( n_geom_csts_ == 0 ); // this function should only be called once
+	debug_assert( ! initialized_ );
+	debug_assert( n_geom_csts_ == 0 ); // this function should only be called once
 	n_geom_csts_ = ngeomcsts;
 }
 
 void
 MatchCounter::set_uniform_xyz_bin_width( Real bin_width )
 {
-	assert( ! initialized_ );
-	assert( bin_width > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width > 0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
 }
 
 void
 MatchCounter::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
-	assert( ! initialized_ );
-	assert( bin_width_degrees > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width_degrees > 0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
 }
 
 void
 MatchCounter::set_xyz_bin_widths( Vector const & bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( bin_widths( ii ) > 0 );
+		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 	}
 
@@ -676,16 +676,16 @@ MatchCounter::set_xyz_bin_widths( Vector const & bin_widths )
 void
 MatchCounter::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( euler_bin_widths( ii ) > 0 );
+		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 	}
 }
 
 void MatchCounter::add_hits( Size geomcst_id, std::list< Hit > const & hitlist )
 {
-	assert( initialized_ );
+	debug_assert( initialized_ );
 
 	for ( auto const & iter : hitlist ) {
 		boost::uint64_t bin_index = binner_->bin_index( iter.second() );
@@ -703,7 +703,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit > const & hitlist )
 
 void MatchCounter::add_hits( Size geomcst_id, std::list< Hit const * > const & hitlist )
 {
-	assert( initialized_ );
+	debug_assert( initialized_ );
 
 	for ( auto iter : hitlist ) {
 		boost::uint64_t bin_index = binner_->bin_index( iter->second() );
@@ -723,7 +723,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit const * > const & h
 void
 MatchCounter::initialize()
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 
 	initialized_ = true;
 
@@ -744,7 +744,7 @@ MatchCounter::initialize()
 MatchCounter::Size
 MatchCounter::count_n_matches() const
 {
-	assert( initialized_ );
+	debug_assert( initialized_ );
 	Size const two_billion = 2000000000;
 	Real const ln2e9 = 21.4; // e^21.4 ~ 2 billion
 
@@ -942,7 +942,7 @@ advance_euler_angles(
 		if ( new_euler_angles[ 3 ] < 0 ) {
 			new_euler_angles[ 3 ] *= -1.0; // wrap the angle back to positive values
 		} else { // new_euler_angles[ 3 ] > 180
-			assert( new_euler_angles[ 3 ] < 360 );
+			debug_assert( new_euler_angles[ 3 ] < 360 );
 			new_euler_angles[ 3 ] = 360 - new_euler_angles[ 3 ]; // 182 wraps to 178...
 		}
 		/// wrap phi/psi

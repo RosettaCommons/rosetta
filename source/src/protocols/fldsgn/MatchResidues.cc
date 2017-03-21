@@ -205,7 +205,7 @@ MatchResidues::parse_my_tag(
 			Size mod_pos_start= 0;
 			Size mod_pos_end = 0;
 			if ( pairs_tag->hasOption("segment") ) {
-				assert( blueprint != "");
+				debug_assert( blueprint != "");
 				boost::tuple< Size, Size> range = ss_seg[ pairs_tag->getOption< std::string >("segment") ];
 				mod_pos_start = boost::get<0>(range);
 				mod_pos_end = boost::get<1>(range);

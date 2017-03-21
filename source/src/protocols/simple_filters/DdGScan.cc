@@ -229,7 +229,7 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 	if ( task_factory_ != nullptr ) {
 		task = task_factory_->create_task_and_apply_taskoperations( pose );
 	} else {
-		TR << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
+		TR.Warning << "You have not provided any TaskOperations. A default will be used." << std::endl;
 	}
 
 	// Calculate wt ddG score of binding (by using special case of residue "0", handled by function called)

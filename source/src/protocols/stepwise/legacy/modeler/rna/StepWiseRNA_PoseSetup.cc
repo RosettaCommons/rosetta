@@ -677,7 +677,7 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 	using namespace core::chemical::rna;
 
 	ConstraintSetOP cst_set( pose.constraint_set()->clone() );
-	assert( cst_set );
+	debug_assert( cst_set );
 
 	utility::vector1< core::Size > const & working_terminal_res = working_parameters_->working_terminal_res();
 
@@ -822,9 +822,9 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 					"residue doesn't either PROTONATED_N1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
 			}
 		} else if ( pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
-			print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
-			TR.Debug << "ERROR: seq_num = " << seq_num << std::endl;
-			TR.Debug << "ERROR: start_pose.residue( n ).aa() = " << name_from_aa( pose.residue_type( seq_num ).aa() ) << std::endl;
+			print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Error );
+			TR.Error << "seq_num = " << seq_num << std::endl;
+			TR.Error << "start_pose.residue( n ).aa() = " << name_from_aa( pose.residue_type( seq_num ).aa() ) << std::endl;
 			utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == false but pose.residue( seq_num ).has_variant_type( \"PROTONATED_N1_ADENOSINE\" ) ) == false" );
 		}
 	}

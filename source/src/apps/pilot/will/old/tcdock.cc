@@ -973,7 +973,7 @@ struct TCDock {
 		core::pose::initialize_atomid_map(cmp2wtmap_,cmp2olig_, 0.0);
 		core::pose::initialize_atomid_map(clashmap1_,cmp1olig_,-1.0);
 		core::pose::initialize_atomid_map(clashmap2_,cmp2olig_,-1.0);
-		cout << "WARNING: skip O atoms!!!!" << endl;
+		TR.Warning << "skip O atoms!!!!" << endl;
 		for(Size i12 = 0; i12 < 2; ++i12){
 			Pose const & ptmp( i12?cmp1olig_:cmp2olig_ );
 			for(Size i = 1; i <= ptmp.size(); ++i) {
@@ -2159,7 +2159,7 @@ int main (int argc, char *argv[]) {
 		cerr << "WILL TODO: fix dcmp1/dcmp2 sign issue with T33" << endl;
 	}
 	if(arch->dihedral()){
-		TR << "WARNING: doing dihedral, disabling fast_stage_one!" << endl;
+		TR.Warning << "doing dihedral, disabling fast_stage_one!" << endl;
 		option[tcdock::fast_stage_one](false);
 	}
 	if( "P6_32"==archname && option[tcdock::intra]()>0 && ( option[tcdock::intra1]()>0 || option[tcdock::intra2]()>0 ) ){

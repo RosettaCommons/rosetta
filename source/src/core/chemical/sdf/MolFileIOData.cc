@@ -236,7 +236,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	// Now that atom names are assigned, update the return-by-reference mapping
 	for ( std::map< AtomIndex, mioAD >::const_iterator itr(index_atom_map_.begin()), itr_end(index_atom_map_.end()); itr != itr_end; ++itr ) {
-		assert( restype_from_mio.find( itr->second ) != restype_from_mio.end() );
+		debug_assert( restype_from_mio.find( itr->second ) != restype_from_mio.end() );
 		index_name_map[ itr->first ] = restype->atom_name( restype_from_mio[ itr->second ] );
 	}
 
@@ -253,7 +253,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	if ( nbr_atom == ResidueType::null_vertex || restype->nbr_radius() == 0 ) {
 		if ( restype->nbr_radius() != 0 ) {
 			// As a radius without a start point is rather pointless.
-			TR.Warning << "Warning: neighbor radius specified without neighbor atom specification - ignoring." << std::endl;
+			TR.Warning << "neighbor radius specified without neighbor atom specification - ignoring." << std::endl;
 		}
 		restype->nbr_radius( find_nbr_dist( *restype, nbr_atom ) );
 		restype->nbr_atom( nbr_atom );
@@ -390,7 +390,7 @@ void MolFileIOMolecule::set_from_extra_data(ResidueType & restype, std::map< mio
 				case 4 :
 					break; // Don't change anything
 				default :
-					TR.Warning << "Warning: Atom name '" << name << "' for atom " << ii << " on " << this->name() << " is longer than 4 charachters." << std::endl;
+					TR.Warning << "Atom name '" << name << "' for atom " << ii << " on " << this->name() << " is longer than 4 charachters." << std::endl;
 					break;
 				}
 				restype.atom( restype_from_mio[ index_atom_map_[ii] ] ).name( name );

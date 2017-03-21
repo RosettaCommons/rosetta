@@ -330,7 +330,7 @@ my_main( void* )
 		core::Real sc_prob = option[ backrub::sc_prob ];
 		if ( sc_prob && sidechainmover.packed_residues().size() == 0 ) {
 			sc_prob = 0;
-			TR << "Warning: No side chains to move. Not using SidechainMover." << std::endl;
+			TR.Warning << "No side chains to move. Not using SidechainMover." << std::endl;
 		}
 
 		TR << "Score After Branch Angle Optimization/Side Chain Idealization:" << std::endl;

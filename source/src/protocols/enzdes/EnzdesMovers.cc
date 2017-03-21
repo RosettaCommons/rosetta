@@ -128,10 +128,10 @@ EnzdesConstraintReporter::add_constrained_atoms_from_multiconstraint(
 	for ( core::scoring::constraints::ConstraintCOPs::const_iterator
 			MC_it=multi_constraint_members.begin(), end = multi_constraint_members.end(); MC_it != end; ++MC_it ) {
 		if ( ((*MC_it)->type()) == "AtomPair" ) {
-			assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
+			debug_assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
 			add_constrained_atoms_from_atom_pair_constraint( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
 		} else if ( ((*MC_it)->type()) == "MultiConstraint" || ((*MC_it)->type()) == "AmbiguousConstraint" ) {
-			assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::MultiConstraint const > ((*MC_it)) );
+			debug_assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::MultiConstraint const > ((*MC_it)) );
 			add_constrained_atoms_from_multiconstraint( (utility::pointer::dynamic_pointer_cast <core::scoring::constraints::MultiConstraint const > ((*MC_it))) );
 		} // else, ignore this constraint
 	}
@@ -256,7 +256,7 @@ core::Vector
 PredesignPerturbMover::find_geometric_center_for_constrained_lig_atoms(
 	core::pose::Pose const &pose)
 {
-	assert( constraint_reporter_.constrained_lig_atoms().size() != 0 );
+	debug_assert( constraint_reporter_.constrained_lig_atoms().size() != 0 );
 
 	core::Vector geometric_center( 0.0 );
 	for ( core::Size it : constraint_reporter_.constrained_lig_atoms() ) {

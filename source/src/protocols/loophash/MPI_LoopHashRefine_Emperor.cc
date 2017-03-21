@@ -140,7 +140,7 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 				TR << "Done." << std::endl;
 			}
 		} else {
-			TR.Error << "ERROR: Unknown workunit received. " << std::endl;
+			TR.Error << "Unknown workunit received. " << std::endl;
 		}
 
 	}

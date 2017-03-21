@@ -101,7 +101,7 @@ NCAARotamerLibrarySpecification::library_name() {
 std::string
 NCAARotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const & restype ) const {
 	std::ostringstream ss;
-	assert( ncaa_rotlib_path_.size() );
+	debug_assert( ncaa_rotlib_path_.size() );
 	ss << ncaa_rotlib_path_;
 	ss << "%" << restype.mainchain_atoms().size();
 	ss << "%" << int(semirotameric_ncaa_rotlib_);

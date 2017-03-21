@@ -149,7 +149,7 @@ void KClusterElement::assign_type_data(Size ndx_data, Size ndx_cluster, Real d)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	assert(edit_mode);
+	debug_assert(edit_mode);
 	//assign type
 	type_list_[ndx_data] = ndx_cluster;
 	//save distance
@@ -322,7 +322,7 @@ void KClusterData::load_silent_file(string silent_file, Size nfile)
 	//}
 
 	ndata_ += extra;
-	assert(ndata_ == dataset_.n_decoys());
+	debug_assert(ndata_ == dataset_.n_decoys());
 	nfile_++;
 }
 
@@ -385,7 +385,7 @@ void KClusterData::save_all_in_one()
 			}
 		}
 	}
-	assert(count==ndata_);
+	debug_assert(count==ndata_);
 }
 
 void KClusterData::save_cluster_tree()
@@ -439,7 +439,7 @@ void KClusterData::save_cluster_tree()
 			}
 		}
 	}
-	assert(count==ndata_);
+	debug_assert(count==ndata_);
 }
 
 void
@@ -536,7 +536,7 @@ void KMedoid::init(KClusterElementOP c, Size first)
 
 	if ( cur_ncluster_ == 0 ) {
 		cur_ncluster_ = min(n_cluster_, nd);
-		assert(cur_ncluster_ > 0);
+		debug_assert(cur_ncluster_ > 0);
 		//randomly choose n center
 		TR << "Empty cluster, randomly choose center" << endl;
 		for ( Size i=1; i<=cur_ncluster_; i++ ) {
@@ -701,7 +701,7 @@ void KMedoid::update(KClusterElementOP c, KClusterData& d)
 
 		//TR << "final: "<< nearest << endl;
 		//re set the center
-		assert(nearest>0);
+		debug_assert(nearest>0);
 		c->set_cluster(i,nearest);
 	}
 }
@@ -738,7 +738,7 @@ void GreedyKCenter::init(KClusterElementOP c, Size first)
 {
 	//random select a center
 	TR << "Initializing ..." << endl;
-	assert(c->get_cur_ncluster()==0);//only begin from an empty clusters
+	debug_assert(c->get_cur_ncluster()==0);//only begin from an empty clusters
 	Size center;
 	if ( first>0 ) {
 		center = first;
@@ -791,7 +791,8 @@ Real GreedyKCenter::assign(KClusterElementOP c, KClusterData& d)
 void GreedyKCenter::update(KClusterElementOP c, KClusterData&)
 {
 	if ( c->get_cur_ncluster()==n_cluster_ ) {
-		assert(false);
+		TR.Warning << "Issue in GreedyKCenter::update() -- adding pseudocluster" << std::endl;
+		debug_assert(false);
 		//add a psesudo cluster center, which will be remove later
 		c->add_new_cluster(0);
 		return;

@@ -760,7 +760,7 @@ void BinTransitionCalculator::biased_mainchain_torsions(
 
 	BinTransitionDataCOP thisres_data( bin_transition_data_[data_index] ); //Pointer to the transition probability data for this residue.
 	core::Size const ntors( (iplus1 ? thisres_data->n_mainchain_torsions_iplus1() : thisres_data->n_mainchain_torsions_i()) ); //Number of mainchain torsions.
-	assert(ntors>0); //Should already be guaranteed.
+	debug_assert(ntors>0); //Should already be guaranteed.
 
 	//Initialize mainchain torsions vector:
 	mainchain_torsions.clear();
@@ -775,7 +775,7 @@ void BinTransitionCalculator::biased_mainchain_torsions(
 		if ( start > end ) end +=360.0; //If this is a wrap-around bin, we'll pick numbers that go past 180, then re-adjust so that the result is between -180 and 180.
 		mainchain_torsions[i] = start + ( end-start )*numeric::random::rg().uniform(); //Pick a random angle within this sub-bin
 		if ( mainchain_torsions[i] > 180.0 ) mainchain_torsions[i] -= 360.0; //Bring it back to the -180, 180 range.
-		assert(mainchain_torsions[i] <= 180.0 && mainchain_torsions[i] >= -180.0); //Should be true.
+		debug_assert(mainchain_torsions[i] <= 180.0 && mainchain_torsions[i] >= -180.0); //Should be true.
 	}
 
 	return;
@@ -800,7 +800,7 @@ void BinTransitionCalculator::uniform_mainchain_torsions(
 
 	BinTransitionDataCOP thisres_data( bin_transition_data_[data_index] ); //Pointer to the transition probability data for this residue.
 	core::Size const ntors( (iplus1 ? thisres_data->n_mainchain_torsions_iplus1() : thisres_data->n_mainchain_torsions_i()) ); //Number of mainchain torsions.
-	assert(ntors>0); //Should already be guaranteed.
+	debug_assert(ntors>0); //Should already be guaranteed.
 
 	//Initialize mainchain torsions vector:
 	mainchain_torsions.clear();
@@ -810,10 +810,10 @@ void BinTransitionCalculator::uniform_mainchain_torsions(
 		core::Real range_start = (iplus1 ? thisres_data->bin_boundaries_iplus1(bin_index,i).first : thisres_data->bin_boundaries_i(bin_index,i).first );
 		core::Real range_end = (iplus1 ? thisres_data->bin_boundaries_iplus1(bin_index,i).second : thisres_data->bin_boundaries_i(bin_index,i).second );
 		if ( range_start > range_end ) range_end+=360.0; //For wrap-around bins, we'll pick something in the trans-180 range, then wrap it back.
-		assert( range_start < range_end ); //Should be true, now.
+		debug_assert( range_start < range_end ); //Should be true, now.
 		mainchain_torsions[i]=numeric::random::rg().uniform()*( range_end-range_start )+range_start; //Pick a random number in the range
 		if ( mainchain_torsions[i] > 180.0 ) mainchain_torsions[i]-=360.0; //Bring it back into the -180, 180 range.
-		assert(mainchain_torsions[i] <= 180.0 && mainchain_torsions[i] >= -180.0); //Should be true.
+		debug_assert(mainchain_torsions[i] <= 180.0 && mainchain_torsions[i] >= -180.0); //Should be true.
 	}
 
 	return;

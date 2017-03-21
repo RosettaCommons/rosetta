@@ -306,10 +306,8 @@ Atom_::replace_atom(
 
 	Atoms::iterator iter( std::find( atoms_.begin(), atoms_.end(), old_atom ) );
 	if ( iter == atoms_.end() ) {
-		std::cerr << "old_atom not present in atoms list! " <<
-			atoms_.size() << std::endl;
-		debug_assert( false );
-		utility_exit();
+		TR.Fatal << "old_atom not present in atoms list! " << atoms_.size() << std::endl;
+		utility_exit_with_message("'Replacing' an atom which doesn't currently exist.");
 	}
 	new_atom->parent( get_self_weak_ptr() ); // Note: you cannot give "this" to the child atom, or the reference-count data will be lost with boost::weak_ptr
 	iter = atoms_.insert( iter, new_atom );

@@ -109,7 +109,7 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 	//      for dock_pert, also need to get the normal perturbation
 	// In the future this is specified in the symmetry definition file
 	//////////////////////////////////
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -182,7 +182,7 @@ void SymDockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -244,7 +244,7 @@ void FaSymDockingSlideTogether::apply( core::pose::Pose & pose )
 {
 	using namespace core::scoring;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -334,7 +334,7 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 	using namespace core::scoring;
 	using namespace moves;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -420,7 +420,7 @@ void SymmetrySlider::slide_away( core::pose::Pose & pose )
 			TR.Debug << "Sliding away..." << std::endl;
 			// No point is sliding if we are already very_far_away
 			if ( very_far_away( pose ) ) break;
-			assert( core::pose::symmetry::is_symmetric( pose ));
+			debug_assert( core::pose::symmetry::is_symmetric( pose ));
 			SymmetricConformation & symm_conf (
 				dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -564,7 +564,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 {
 	using namespace moves;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -585,7 +585,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 			select_jump();
 			dof_iterator = dofs.find(SymmetrySlider::get_current_jump() );
 			core::conformation::symmetry::SymDof dof ( (*dof_iterator).second );
-			assert( dof_iterator != dofs.end() );
+			debug_assert( dof_iterator != dofs.end() );
 
 			// slide along the current jump
 			rigid::RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );

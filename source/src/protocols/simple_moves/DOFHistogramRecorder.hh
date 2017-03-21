@@ -79,8 +79,8 @@ public: // Creation
 	~DOFHistogramRecorder();
 
 
-	/// @brief Copy constructor
-	DOFHistogramRecorder( DOFHistogramRecorder const & );
+	/// @brief Copy constructor - not allowed
+	DOFHistogramRecorder( DOFHistogramRecorder const & ) = delete;
 
 
 private: // Creation
@@ -89,9 +89,9 @@ private: // Creation
 public: // Methods: assignment
 
 
-	/// @brief operator=
+	/// @brief operator= - not allowed
 	DOFHistogramRecorder&
-	operator=( DOFHistogramRecorder const & );
+	operator=( DOFHistogramRecorder const & ) = delete;
 
 
 public: // Methods: comparison

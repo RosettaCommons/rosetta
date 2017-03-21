@@ -46,7 +46,7 @@ public:
 private:
 	/// @brief Assignment not allowed.
 	PDBTrajectoryRecorder&
-	operator=( PDBTrajectoryRecorder const & );
+	operator=( PDBTrajectoryRecorder const & ) = delete;
 
 public:
 

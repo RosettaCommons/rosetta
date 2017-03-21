@@ -37,7 +37,7 @@ void open(ifstream& fin, const string& filename ) { // need to gzip stuff before
 	fin . close();
 	fin.clear();
 	fin.open( filename.c_str() );
-	assert( fin );
+	debug_assert( fin );
 }
 
 }
@@ -143,9 +143,7 @@ const Entry& File::getEntry(const int len) const {
 
 	auto i = mEntries.find(len);
 
-	if ( i == mEntries.end() ) {
-		assert( false );
-	}
+	debug_assert( i != mEntries.end() );
 
 	const vector<Entry>& vEntries = i->second;
 	return vEntries[ numeric::random::random_range(0,vEntries.size()-1) ];
@@ -234,7 +232,7 @@ const File File::getFile(const int frag_len) const {
 
 void File::convertEntries(const int from, const int to) {
 
-	assert( to < from );
+	debug_assert( to < from );
 
 	auto i = mEntries.find(from);
 
@@ -250,15 +248,15 @@ void File::convertEntries(const int from, const int to) {
 	//FORVC(k,Entry,vEntries_from) {
 	for ( auto const & entry_from : vEntries_from ) {
 
-		assert( static_cast<int>(entry_from.vResEntries.size()) == from );
+		debug_assert( static_cast<int>(entry_from.vResEntries.size()) == from );
 
 		for ( int i = 0; i < (from - to); i += to ) {
 			Entry entry_to;
 			for ( int j = 0; j < to; ++j ) {
-				assert( i+j < static_cast<int>(entry_from.vResEntries.size()) );
+				debug_assert( i+j < static_cast<int>(entry_from.vResEntries.size()) );
 				entry_to.vResEntries.push_back( entry_from.vResEntries[i+j] );
 			} // j
-			assert( static_cast<int>(entry_to.vResEntries.size()) == to );
+			debug_assert( static_cast<int>(entry_to.vResEntries.size()) == to );
 			vEntries_to.push_back(entry_to);
 		} // i
 
@@ -317,7 +315,6 @@ Fragment::FileOP Librarian::frag_file_sheet;
 Fragment::FileOP Librarian::frag_file_helix;
 
 string Librarian::get( const string& s) {
-	//assert( false );
 
 	return "sampling/ss_fragfiles/" + s + ".fragfile";
 
@@ -396,14 +393,14 @@ Fragment::FileCOP Librarian::getFragmentFile(const string& ss0) {
 
 		} // i
 
-		assert( fragfile != nullptr );
+		debug_assert( fragfile != nullptr );
 
 		mFragfiles_ss[ss0] = fragfile; // !!! NB: this is only going into the map for key ss0 (the original ss)
 		iter = mFragfiles_ss.find(ss0);
 
 	}
 
-	assert( iter != mFragfiles_ss.end() );
+	debug_assert( iter != mFragfiles_ss.end() );
 
 	return iter->second;
 

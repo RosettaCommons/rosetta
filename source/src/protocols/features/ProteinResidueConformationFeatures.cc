@@ -365,7 +365,7 @@ ProteinResidueConformationFeatures::load_conformation(
 ){
 
 	if ( !basic::database::table_exists(db_session, "protein_residue_conformation") ) {
-		TR << "WARNING: protein_residue_conformation table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		TR.Warning << "protein_residue_conformation table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
 

@@ -610,8 +610,8 @@ VarSolDRotamerDots::overlap_atoms(
 	utility::vector1< utility::vector1< ObjexxFCL::ubyte > > & at_other_coverage
 ) const
 {
-	assert( atom_coverage_[ at_this ].size() == at_this_coverage.size() );
-	assert( other.atom_coverage_[ at_other ].size() == at_other_coverage.size() );
+	debug_assert( atom_coverage_[ at_this ].size() == at_this_coverage.size() );
+	debug_assert( other.atom_coverage_[ at_other ].size() == at_other_coverage.size() );
 	Real distance;
 	Size closest_dot1, closest_dot2;
 	if ( ! get_atom_overlap_masks( other, at_this, at_other, distance, closest_dot1, closest_dot2 ) ) return false;

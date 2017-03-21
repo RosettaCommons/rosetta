@@ -260,7 +260,7 @@ void FlxbbDesign::initialize_filter( Size const filter_trial, String const & fil
 			filter_during_design_ = FilterStructsOP( new FilterStructs_Packstat( filter_trial ) );
 		} else {
 			TR.Error << filter_type << " does not exists as filter name " << std::endl;
-			runtime_assert( false );
+			utility_exit_with_message("Filter type can't be handled by FlxbbDesign.");
 		}
 	}
 }

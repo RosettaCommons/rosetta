@@ -40,9 +40,9 @@ SingleLigandRotamerLibraryCreator::create( core::chemical::ResidueType const & r
 
 	RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
 	// If the factory system is sound, these two checks should work.
-	assert( libspec );
+	debug_assert( libspec );
 	PDBRotamerLibrarySpecificationCOP pdb_libspec = utility::pointer::dynamic_pointer_cast< PDBRotamerLibrarySpecification const >(libspec);
-	assert( pdb_libspec );
+	debug_assert( pdb_libspec );
 
 	std::string const & rotamers_file(pdb_libspec->pdb_rotamers_file());
 
@@ -50,7 +50,7 @@ SingleLigandRotamerLibraryCreator::create( core::chemical::ResidueType const & r
 		utility_exit_with_message("Can't load PDB rotamers from an empty filename.");
 	}
 	if ( !restype.is_ligand() ) { // Historical tracer output
-		TR.Debug << "Warning: using PDB_ROTAMERS for non-ligand ResidueType!" << std::endl;
+		TR.Warning << "using PDB_ROTAMERS for non-ligand ResidueType!" << std::endl;
 	}
 	TR.Debug << "Initializing conformer library for " << rotamers_file << std::endl;
 	SingleLigandRotamerLibraryOP pdb_rotamers( new SingleLigandRotamerLibrary() );

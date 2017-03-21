@@ -200,7 +200,7 @@ ActiveSiteGrid::set_bin_width( Real width )
 Bool3DGrid const &
 ActiveSiteGrid::grid() const
 {
-	assert( ! reset_grid_bb_ );
+	debug_assert( ! reset_grid_bb_ );
 	return *grid_;
 }
 

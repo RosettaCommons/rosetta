@@ -180,7 +180,7 @@ public:
 	JumpSample
 	clean_jumps( JumpSample const& js ) const override
 	{
-		hh_tr.Error << "ERROR: JumpSetup::clean_jumps() not implemented" << std::endl;
+		hh_tr.Error << "JumpSetup::clean_jumps() not implemented" << std::endl;
 		return js;
 	}
 

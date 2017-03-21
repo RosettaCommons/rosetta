@@ -108,11 +108,11 @@ OneBodyEnergy::setup_for_derivatives_for_residue(
 	// derived class's requires_a_setup_for_derivatives_for_residue_opportunity message
 	// returns true, but the derived class has not implemented this function or has
 	// improperly overriden the base class version.
-	TR << "WARNING: Unimplemented or improperly overridden OneBodyEnergy::setup_for_derivatives_for_residue() for class computing";
+	TR.Warning << "Unimplemented or improperly overridden OneBodyEnergy::setup_for_derivatives_for_residue() for class computing";
 	for ( auto st : score_types() ) {
-		TR << " " << st;
+		TR.Warning << " " << st;
 	}
-	TR << std::endl;
+	TR.Warning << std::endl;
 }
 
 

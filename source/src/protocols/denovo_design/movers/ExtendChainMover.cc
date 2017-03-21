@@ -339,7 +339,7 @@ seg2,
 0 );
 
 if ( !motif.length() ) {
-TR << "Warning: length of motif given to ExtendChainMover is 0.  Doing nothing." << std::endl;
+TR.Warning << "length of motif given to ExtendChainMover is 0.  Doing nothing." << std::endl;
 return;
 }
 

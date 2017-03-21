@@ -610,7 +610,7 @@ struct PoseWrap : public ReferenceCount {
 		//////// add variants
 		if( floating_scs_.size() > 1 ) {
 			// utility_exit_with_message("only support one floating sc at the moment");
-			TR << "WARNING: morethan one floating SC may be trouble!!!" << std::endl;
+			TR.Warning << "morethan one floating SC may be trouble!!!" << std::endl;
 		}
 		for(Size i = 1; i <= user_cuts_.size(); ++i) {
 			// if not a floating SC and not a terminus, put cut points
@@ -1283,7 +1283,7 @@ struct PoseWrap : public ReferenceCount {
 	bool switch_to_fa() {
 		TR << "switch to fa" << std::endl;
 		if(pose.is_fullatom()) {
-			TR << "WARNING: switch to FA when already in fa!" << std::endl;
+			TR.Warning << "switch to FA when already in fa!" << std::endl;
 		} else {
 
 			if(debug) pose.dump_pdb("before_switch_to_fa.pdb");
@@ -1392,7 +1392,7 @@ struct PoseWrap : public ReferenceCount {
 	}
 	void switch_to_cen() {
 		if(!pose.is_fullatom()) {
-			TR << "WARNING: tried to switch to CEN when already in CEN! doing nothing. " << std::endl;
+			TR.Warning << "tried to switch to CEN when already in CEN! doing nothing. " << std::endl;
 			return;
 		}
 		core::pose::Pose const fa( pose );
@@ -1434,7 +1434,7 @@ struct PoseWrap : public ReferenceCount {
 						// TR << "switch_to_cen: setting coords for res " << attach << " atom " << aname << std::endl;
 						pose.set_xyz(core::id::AtomID(i,attach),fa.residue(attach).xyz(aname));
 					} else {
-						TR << "WARNING: switch_to_cen: res " << attach << " missing " << aname << std::endl;
+						TR.Warning << "switch_to_cen: res " << attach << " missing " << aname << std::endl;
 						missing[core::id::AtomID(i,attach)] = true;
 						anymissing = true;
 					}
@@ -1458,7 +1458,7 @@ struct PoseWrap : public ReferenceCount {
 
 	Size get_closest_res_for_sc_attach(Size float_rsd) {
 		if(attached_scattach_res_.size()) {
-			TR << "WARNING: get_closest_res_for_sc_attach called after floating res attached" << std::endl;
+			TR.Warning << "get_closest_res_for_sc_attach called after floating res attached" << std::endl;
 			return 0;
 		}
 		using namespace core::scoring::constraints;

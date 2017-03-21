@@ -116,7 +116,7 @@ main( int argc, char* argv[] )
 		core::pose::Pose match;
 		core::import_pose::pose_from_file( match, basic::options::option[local::match_pdb].value() , core::import_pose::PDB_file);
 		core::Size const matchlength = match.size();
-		assert(matchlength == /*MatchPosition*/metal); //5
+		debug_assert(matchlength == /*MatchPosition*/metal); //5
 		//basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value(false);
 
 		//debugging
@@ -253,7 +253,7 @@ main( int argc, char* argv[] )
 
 		/////////////////////////////////ensure proper tautomer for all histidines////////////////////////
 		core::Size const metal_site_size(metal_site.size());
-		assert( metal_site_size == matchlength);
+		debug_assert( metal_site_size == matchlength);
 		for ( core::Size i(1); i <= metal_site_size; ++i ) {
 			core::conformation::Residue const old_rsd(combined.residue(metal_site[i]));
 			if ( combined.residue_type(metal_site[i]).aa() != core::chemical::aa_his ) continue; //matters for HIS/HIS_D

@@ -75,7 +75,7 @@ void qsarOptFunc::set_initial_values(core::optimization::Multivec const & initia
 
 core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) const
 {
-	assert(vars.size() == grid_indices_.size());
+	debug_assert(vars.size() == grid_indices_.size());
 
 	numeric::RocCurve roc_curve;
 

@@ -715,7 +715,7 @@ ddGMover::get_wt_min_score_components(){
 			min_score = total_scores[i];
 		}
 	}
-	assert(min_index != -1);
+	debug_assert(min_index != -1);
 	//std::cout << "min_index is " << min_index << " and corresponds to an energy " << min_score  << std::endl;
 	//return score components of min energy structure
 	for ( int i = wt_components_.l1(); i <= wt_components_.u1(); i++ ) {
@@ -731,7 +731,7 @@ ddGMover::get_wt_averaged_score_components(){
 	if ( !interface_ddg_ ) {
 		average_score_components(wt_components_,wt_averaged_score_components);
 	} else {
-		assert((wt_components_.u1()-wt_components_.l1())== (wt_unbound_components_.u1()-wt_unbound_components_.l1()) &&
+		debug_assert((wt_components_.u1()-wt_components_.l1())== (wt_unbound_components_.u1()-wt_unbound_components_.l1()) &&
 			(wt_components_.u2()-wt_components_.l2()) == (wt_unbound_components_.u2()-wt_unbound_components_.l2()));
 		ObjexxFCL::FArray2D<double> dG_bound_unbound((wt_components_.u1()-wt_components_.l1()+1),
 			(wt_components_.u2()-wt_components_.l2()+1),-999.99);
@@ -769,7 +769,7 @@ ddGMover::get_mutant_min_score_components(){
 			min_score = total_scores[i];
 		}
 	}
-	assert(min_index != -1);
+	debug_assert(min_index != -1);
 	//std::cout << "MUT min_index is " << min_index << " and corresponds to an energy " << min_score  << std::endl;
 	//return score components of min energy structure
 	for ( int i = mutant_components_.l1(); i <= mutant_components_.u1(); i++ ) {
@@ -785,7 +785,7 @@ ddGMover::get_mutant_averaged_score_components(){
 	if ( !interface_ddg_ ) {
 		average_score_components(mutant_components_, mutant_averaged_score_components);
 	} else {
-		assert(
+		debug_assert(
 			(mutant_components_.u1()-mutant_components_.l1()) == (mutant_unbound_components_.u1()-mutant_unbound_components_.l1()) &&
 			(mutant_components_.u2()-mutant_components_.l2()) == (mutant_unbound_components_.u2()-mutant_unbound_components_.l2()));
 		ObjexxFCL::FArray2D<double> dG_bound_unbound(
@@ -815,7 +815,7 @@ ddGMover::get_delta_energy_components()
 		mut = this->get_mutant_min_score_components();
 	}
 	utility::vector1<double> delta_energy;
-	assert(wt.size() == mut.size());
+	debug_assert(wt.size() == mut.size());
 	for ( unsigned int i=1; i<=wt.size(); i++ ) {
 		delta_energy.push_back(mut[i]-wt[i]);
 	}
@@ -1079,8 +1079,8 @@ ddGMover::relax_wildtype_structure(
 		//find all neighbors within 8 angstrom
 		if ( restrict_to_nbrhood_ ) {
 			if ( mutations.size() == 0 ) {
-				TR << "FATAL ERROR no mutations specified, which are needed to determine neighbors" << std::endl;
-				exit(1);
+				TR.Fatal << "No mutations specified, which are needed to determine neighbors" << std::endl;
+				utility_exit_with_message("No mutations specified!");
 			}
 
 			utility::vector1< bool > neighborhood = neighborhood_of_mutations( pose, mutations );
@@ -1148,7 +1148,7 @@ ddGMover::relax_wildtype_structure(
 				store_energies(wt_components_, (*scorefxn_), resulting_pose,i,num_iterations_);
 				//end store components
 			} else if ( interface_ddg_ ) {
-				assert(resulting_pose.chain(resulting_pose.size())-pose.chain(1) !=0);
+				debug_assert(resulting_pose.chain(resulting_pose.size())-pose.chain(1) !=0);
 				//dGinterface = Gbound-Gunbound
 				//double debug_bound_score = (*scorefxn_)(temporary_pose);
 				store_energies(wt_components_, (*scorefxn_), resulting_pose,i,num_iterations_);
@@ -1473,7 +1473,7 @@ ddGMover::apply(core::pose::Pose & pose)
 			if ( !interface_ddg_ && !min_cst_ ) {
 				store_energies(mutant_components_, (*scorefxn_),resulting_pose, i,num_iterations_);
 			} else if ( interface_ddg_ ) {
-				assert(pose.chain(pose.size())-pose.chain(1) !=0);
+				debug_assert(pose.chain(pose.size())-pose.chain(1) !=0);
 				//dGinterface = Gbound-Gunbound
 				//double debug_bound = (*scorefxn_)(resulting_pose);
 				store_energies(mutant_components_, (*scorefxn_), resulting_pose,i,num_iterations_);

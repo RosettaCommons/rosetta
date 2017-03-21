@@ -113,13 +113,13 @@ public:
 
 	/// @brief Get a structure with a certain index
 	core::io::silent::SilentStructCOP get_struct( core::Size index ) const {
-		if ( index >= store_.size() ) runtime_assert( false );
+		runtime_assert( index < store_.size() );
 		return (core::io::silent::SilentStructCOP) store_[ index ];
 	}
 
 	/// @brief Get a structure with a certain index
 	core::io::silent::SilentStructOP& get_struct( core::Size index )  {
-		if ( index >= store_.size() ) runtime_assert( false );
+		runtime_assert( index < store_.size() );
 		return store_[ index ];
 	}
 

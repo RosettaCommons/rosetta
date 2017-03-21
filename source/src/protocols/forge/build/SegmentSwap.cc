@@ -282,9 +282,9 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	// all coordinates intact, though the bond lengths/angles adjacent to
 	// the deletion might get funky.
 	pose.conformation().delete_residue_range_slow( interval_.left, interval_.right );
-	assert( interval_.left == interval_.right );
+	debug_assert( interval_.left == interval_.right );
 
-	assert( interval_.left > 1 ); // conformation does not appear to handle certain modifications at 1
+	debug_assert( interval_.left > 1 ); // conformation does not appear to handle certain modifications at 1
 
 	// set temporary fold tree with cut introduced so we can insert residues
 	// by jump
@@ -304,8 +304,8 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 		++append_pos;
 	}
 
-	assert( append_pos == interval_.right );
-	assert( append_pos == interval_.left + swap_in_.size() + 1 );
+	debug_assert( append_pos == interval_.right );
+	debug_assert( append_pos == interval_.left + swap_in_.size() + 1 );
 
 	// correct interval_;
 	++interval_.left;
@@ -314,7 +314,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	// END INTERVAL SHIFT: after this point, interval_ has stabilized and stores
 	// the new endpoints of the rebuilt segment
 
-	assert( ( interval_.right - interval_.left + 1 ) == swap_in_.size() );
+	debug_assert( ( interval_.right - interval_.left + 1 ) == swap_in_.size() );
 
 	// construct fold tree
 	FoldTree new_ft = replace( old_ft, original_interval().left, original_interval().right,

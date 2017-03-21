@@ -97,13 +97,13 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	// bail if (ir,jr) crosses a cut
 	for ( Size i=1; i<=cuts_in.size(); ++i ) {
 		if ( cuts_in[i]<=jr && cuts_in[i]>=ir ) {
-			TR.Error << "ERROR -- residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
+			TR.Error << "residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
 			return false;
 		}
 		//fpd insertions one position after the cut seem not to work ...
 		//fpd perhaps if the foldtree for the local segment were reversed this might be ok
 		if ( cuts_in[i]==ir-1 ) {
-			TR.Error << "ERROR -- startres immediately follows cut    IR: " << ir << "  CUT: " << cuts_in[i] << std::endl;
+			TR.Error << "startres immediately follows cut    IR: " << ir << "  CUT: " << cuts_in[i] << std::endl;
 			return false;
 		}
 	}
@@ -159,7 +159,7 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	if ( ir == 1 ) theroot = pose.size();
 	if ( orig_pose.residue_type( orig_pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) theroot = orig_pose.fold_tree().root();  //fpd
 	if ( f.reorder(theroot) == false ) {
-		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
+		TR.Error << "During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
 		return false; // continuing leads to a segfault - instead ignore this loop !
 	}
 
@@ -213,13 +213,13 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	// bail if (ir,jr) crosses a cut
 	for ( Size i=1; i<=cuts_in.size(); ++i ) {
 		if ( cuts_in[i]<=jr && cuts_in[i]>=ir ) {
-			TR.Error << "ERROR -- residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
+			TR.Error << "residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
 			return false;
 		}
 		//fpd insertions one position after the cut seem not to work ...
 		//fpd perhaps if the foldtree for the local segment were reversed this might be ok
 		if ( cuts_in[i]==ir-1 ) {
-			TR.Error << "ERROR -- startres immediately follows cut    IR: " << ir << "  CUT: " << cuts_in[i] << std::endl;
+			TR.Error << "startres immediately follows cut    IR: " << ir << "  CUT: " << cuts_in[i] << std::endl;
 			return false;
 		}
 	}
@@ -275,7 +275,7 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	if ( ir == 1 ) theroot = pose.size();
 	if ( newroot>0 ) theroot = newroot;  //fpd
 	if ( f.reorder(theroot) == false ) {
-		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
+		TR.Error << "During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
 		return false; // continuing leads to a segfault - instead ignore this loop !
 	}
 

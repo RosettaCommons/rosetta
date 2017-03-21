@@ -337,7 +337,7 @@ public:
 	virtual unsigned int count_dynamic_memory() const;
 
 	PackerEnergy cur_energy() const { return cur_energy_; }
-	PackerEnergy alt_energy() const { assert( alt_e_up_to_date_ ); return alt_energy_; }
+	PackerEnergy alt_energy() const { debug_assert( alt_e_up_to_date_ ); return alt_energy_; }
 
 
 protected:
@@ -361,7 +361,7 @@ protected:
 	inline
 	int
 	num_bb( int node ) {
-		assert( node == 0 || node == 1 );
+		debug_assert( node == 0 || node == 1 );
 		return nodes_num_bb_[ node ];
 	}
 
@@ -383,10 +383,10 @@ protected:
 		nodes_considering_bb_move_ = status;
 	}
 
-	int nodes_cur_state( int node ) const { assert( node == 0 || node == 1 ); return nodes_cur_state_[ node ]; }
-	FlexbbSparseMatrixIndex const & nodes_cur_info( int node ) const    { assert( node == 0 || node == 1 ); return  nodes_cur_info_[ node ]; }
-	int nodes_alt_state( int node ) const { assert( node == 0 || node == 1 ); return  nodes_alt_state_[ node ]; }
-	FlexbbSparseMatrixIndex const & nodes_alt_info( int node ) const    { assert( node == 0 || node == 1 ); return  nodes_alt_info_[ node ]; }
+	int nodes_cur_state( int node ) const { debug_assert( node == 0 || node == 1 ); return nodes_cur_state_[ node ]; }
+	FlexbbSparseMatrixIndex const & nodes_cur_info( int node ) const    { debug_assert( node == 0 || node == 1 ); return  nodes_cur_info_[ node ]; }
+	int nodes_alt_state( int node ) const { debug_assert( node == 0 || node == 1 ); return  nodes_alt_state_[ node ]; }
+	FlexbbSparseMatrixIndex const & nodes_alt_info( int node ) const    { debug_assert( node == 0 || node == 1 ); return  nodes_alt_info_[ node ]; }
 	bool alt_e_up_to_date() const { return alt_e_up_to_date_; }
 
 
@@ -448,7 +448,7 @@ private:
 	void set_total_num_backbones( int num_backbones );
 
 public:
-	int  get_num_aa_types() const { assert( num_aa_types_ != 0 ); return num_aa_types_; }
+	int  get_num_aa_types() const { debug_assert( num_aa_types_ != 0 ); return num_aa_types_; }
 	//void set_representitive_node_for_flexseg( int flexseg, int node_index);
 	//int  get_flexseg_representative( int flexseg ) const { return flexseg_representative_[ flexseg ]; }
 	utility::vector1< Size > const &
@@ -548,10 +548,10 @@ protected:
 	}
 
 	FlexbbEdge const * cast_flexbb_edge( EdgeBase const * edge ) const
-	{ assert( mine( edge ) ); return static_cast< FlexbbEdge const * > ( edge ); }
+	{ debug_assert( mine( edge ) ); return static_cast< FlexbbEdge const * > ( edge ); }
 
 	FlexbbEdge * cast_flexbb_edge( EdgeBase * edge )
-	{ assert( mine( edge ) ); return static_cast< FlexbbEdge * > ( edge ); }
+	{ debug_assert( mine( edge ) ); return static_cast< FlexbbEdge * > ( edge ); }
 
 
 protected:
@@ -579,11 +579,11 @@ protected:
 
 	/// @brief Only allowed to ask for the node considering an alternate
 	/// state during a fixed-backbone substitution
-	int node_considering_alt_state() const { assert( node_considering_alt_state_ != 0 ); return node_considering_alt_state_; }
+	int node_considering_alt_state() const { debug_assert( node_considering_alt_state_ != 0 ); return node_considering_alt_state_; }
 
 	/// @brief Only allowed to ask for the flexible segment considering an alternate
 	/// backbone conformation during a backbone-moving substitution
-	int flexseg_considering_alt_bb() const { assert( flexseg_considering_alt_bb_ != 0 ); return flexseg_considering_alt_bb_; }
+	int flexseg_considering_alt_bb() const { debug_assert( flexseg_considering_alt_bb_ != 0 ); return flexseg_considering_alt_bb_; }
 
 	bool last_considered_backbone_sub_valid() const { return last_considered_backbone_sub_valid_; }
 

@@ -529,7 +529,7 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 	// Now, let's create a zinc residue and attach it by a jump to m1.res1 on all four chains?
 	devel::znhash::ZnCoordinationScorerOP zn_score = init_zn_->zn_score();
 
-	assert( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->has_name( "ZNX" ));
+	debug_assert( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->has_name( "ZNX" ));
 
 	core::chemical::ResidueType const & znx_restype =
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
@@ -877,7 +877,7 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 	// ok -- look at residues in the vacinity of the 1st znx residue
 	for ( Size ii = 1; ii <= 4; ++ii ) {
 		Size znxind = ii < 3 ? nres_asu : nsubunits*nres_asu;
-		assert( copy_pose.residue(znxind).name() == "ZNX" );
+		debug_assert( copy_pose.residue(znxind).name() == "ZNX" );
 
 
 		std::string vname( std::string("V") + std::string(1, char( ii + '1' - 1 )));
@@ -935,7 +935,7 @@ FindZnCoordinatingResidues::closest_distance_to_desired_vrt(
 {
 	core::Real closest_d2(-1); core::Size ind = 0;
 	for ( core::Size ii = 1; ii <= coord_atnames.size(); ++ii ) {
-		assert( nbr.has( coord_atnames[ii] ));
+		debug_assert( nbr.has( coord_atnames[ii] ));
 		core::Size iiind = nbr.atom_index( coord_atnames[ii] );
 		core::Vector iipos = nbr.xyz(iiind);
 		core::Real d2zn = iipos.distance_squared( zncoord );

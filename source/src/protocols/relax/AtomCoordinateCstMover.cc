@@ -165,7 +165,7 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 
 	// Warn about not having a virtual root (but go ahead with constraints).
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-		TR.Warning << "WARNING: Adding coordinate constraints to a pose without a virtual root - results may not be as expected." << std::endl;
+		TR.Warning << "Adding coordinate constraints to a pose without a virtual root - results may not be as expected." << std::endl;
 	}
 
 	core::select::residue_selector::ResidueSubset const constrain_residues = compute_residue_subset( pose );
@@ -175,7 +175,7 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 		if ( !constrain_residues[i] ) continue;
 		core::Size const j = seq_map[i];
 		if ( j == 0 ) continue;
-		assert( j <= constraint_target_pose->size() ); // Should be, if map was set up properly.
+		debug_assert( j <= constraint_target_pose->size() ); // Should be, if map was set up properly.
 
 		core::conformation::Residue const & pose_i_rsd( pose.residue(i) );
 		core::conformation::Residue const & targ_j_rsd( constraint_target_pose->residue(j) );
@@ -188,7 +188,7 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 			use_atom_names = pose_i_rsd.name() != targ_j_rsd.name(); // Don't bother with lookup if they're the same residue type.
 		}
 		if ( !use_atom_names && last_atom != last_targ_atom ) {
-			TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (cst_sidechain_?"heavy":"backbone") << " atoms: ref. "
+			TR.Warning << "Coordinate constraint reference residue has different number of " << (cst_sidechain_?"heavy":"backbone") << " atoms: ref. "
 				<< targ_j_rsd.name() << " (res " << j << ") versus  " << pose_i_rsd.name() << " (res " << i << "). - skipping." << std::endl;
 			continue;
 		}

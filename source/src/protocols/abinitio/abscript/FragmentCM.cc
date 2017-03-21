@@ -255,10 +255,10 @@ void FragmentCM::yield_cut_bias( bool setting ){
 
 void FragmentCM::passport_updated() {
 	if ( mover()==NULL ) {
-		tr.Warning << "[WARNING] error in " << get_name() << " mover is null or not cofigured " << std::endl;
+		tr.Warning << "error in " << get_name() << " mover is null or not cofigured " << std::endl;
 		return;
 	}
-	assert( mover() );
+	debug_assert( mover() );
 	if ( has_passport() ) {
 		mover()->set_movemap( passport()->render_movemap() );
 	} else {

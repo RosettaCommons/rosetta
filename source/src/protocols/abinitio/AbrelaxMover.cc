@@ -291,7 +291,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	//make sure all chainbreak variants are activated:
 	if ( !topology_broker()->check_chainbreak_variants( pose ) ) {
-		tr.Warning << "[WARNING] some chainbreaks in " << jd2::current_output_name()
+		tr.Warning << "some chainbreaks in " << jd2::current_output_name()
 			<< " were not penalized at end of " << sampling_protocol()->type()
 			<< std::endl;
 		topology_broker()->add_chainbreak_variants( pose );

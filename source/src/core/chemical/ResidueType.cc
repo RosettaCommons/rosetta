@@ -1042,8 +1042,8 @@ ResidueType::add_atom(Atom const & atom, AtomICoor const & icoor){
 	VD v = graph_.add_vertex(atom);
 	std::string atom_name( atom.name());
 	if ( atom_name.size() ) {
-		assert(atom_name_to_vd_.find(atom_name) == atom_name_to_vd_.end());
-		assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
+		debug_assert(atom_name_to_vd_.find(atom_name) == atom_name_to_vd_.end());
+		debug_assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
 		atom_name_to_vd_[ atom_name ] = v;
 		atom_name_to_vd_[ strip_whitespace( atom_name ) ] = v;
 	}
@@ -1052,7 +1052,7 @@ ResidueType::add_atom(Atom const & atom, AtomICoor const & icoor){
 
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
 	// eg, in the atom/resconn map
-	assert( atom_2_residue_connection_map_.size() == ordered_atoms_.size()-1 );
+	debug_assert( atom_2_residue_connection_map_.size() == ordered_atoms_.size()-1 );
 
 	atom_2_residue_connection_map_.resize( ordered_atoms_.size() );
 	bonded_neighbor_.resize(ordered_atoms_.size());
@@ -1160,7 +1160,7 @@ ResidueType::set_atom_type( VD atom, std::string const & atom_type_name )
 		a.element_type( ( *elements_ )[ element_index ] );
 		mass_ += a.element_type()->weight();
 	} else {
-		tr.Warning << "WARNING Elements set undefined." << std::endl;
+		tr.Warning << "Elements set undefined." << std::endl;
 	}
 
 	// Set/update the atom's properties.
@@ -1244,7 +1244,7 @@ ResidueType::atom_vertex( std::string const & name) const{
 		tr.Error << "atom name : '" << name << "' not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
-		debug_assert(false);
+		utility_exit_with_message("Atom name not found in ResidueType.");
 	}
 
 	return atom_name_to_vd_iter->second;
@@ -1866,7 +1866,7 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 	}
 	utility::vector1< Real > extra_samples;
 	if ( num_H_confs > max_proton_chi_samples ) {
-		tr.Warning << "Warning: Number of base proton chi samples (" << num_H_confs << ") for " << name() << " exceeds requested number of samples" << std::endl;
+		tr.Warning << "Number of base proton chi samples (" << num_H_confs << ") for " << name() << " exceeds requested number of samples" << std::endl;
 	} else if ( 3* num_H_confs > max_proton_chi_samples ) {
 		tr << "Skipping extra samples for proton chis on " << name() << "; would give " << num_H_confs << " conformers." << std::endl;
 	} else {
@@ -2734,7 +2734,7 @@ void
 ResidueType::add_actcoord_atom( std::string const & atom )
 {
 	if ( ! is_protein() ) {
-		tr.Warning << "WARNING: ACT_COORD_ATOM specified for non-protein residue type '" << name() << "' . This doesn't make much sense." << std::endl;
+		tr.Warning << "ACT_COORD_ATOM specified for non-protein residue type '" << name() << "' . This doesn't make much sense." << std::endl;
 	}
 	finalized_ = false;
 	tr.Trace << "adding act coord atom: " << name_ << ' ' << atom << std::endl;

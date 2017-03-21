@@ -688,7 +688,7 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 	for (core::Size j=0; j < get_n_orientational_templates(); ++j) { // we want to prune templates within x OCD of the top N
 
 		if ( j+1 == r.size() ) {
-			TR << TR.Red << "SCS_BlastFilter_by_OCD: Warning: there may not be enough distinct light_heavy orientations! Some may be used repeatedly!" << std::endl;
+			TR.Warning << TR.Red << "SCS_BlastFilter_by_OCD: there may not be enough distinct light_heavy orientations! Some may be used repeatedly!" << std::endl;
 			break;
 		}
 
@@ -715,7 +715,7 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 			// this gets trigged once number of results is equal to number of templates
 			if ( i==r.size() ) {
 				if ( i+1>=get_n_orientational_templates() ) break; // in the case we do have enough
-				TR << TR.Red << "SCS_BlastFilter_by_OCD: Warning: there may not be enough distinct light_heavy orientations! Some may be used repeatedly!" << std::endl;
+				TR.Warning << TR.Red << "SCS_BlastFilter_by_OCD: there may not be enough distinct light_heavy orientations! Some may be used repeatedly!" << std::endl;
 				break;
 			}
 

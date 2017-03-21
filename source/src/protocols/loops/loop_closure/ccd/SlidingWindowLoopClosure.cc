@@ -439,7 +439,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 			return;
 		}
 	} // loop_size
-	tr.Warning << "WARNING: no good loop found !" << std::endl;
+	tr.Warning << "no good loop found !" << std::endl;
 	throw( loops::EXCN_Loop_not_closed() );
 } //apply
 
@@ -623,10 +623,7 @@ void
 SlidingWindowLoopClosure::fragments( core::fragment::FragSetCOP frags ) {
 	ss_info_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *frags ) );
 	fragset_ = frags;
-	if ( loop_.start() != 0 &&
-			fragset_->max_pos() <= loop_.start() + std::min( loop_.size(), max_loop_size_ ) ) {
-		assert(false);
-	}
+	debug_assert( loop_.start() == 0 || fragset_->max_pos() > (loop_.start() + std::min( loop_.size(), max_loop_size_ )) );
 }
 
 void

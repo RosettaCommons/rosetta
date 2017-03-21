@@ -80,7 +80,7 @@ main( int argc, char * argv [] )
 
 		// Giving an AtomTreeDiff input file to ligand_dock is uncommon enough that it isn't worth special casing
 		if ( option[ in::file::silent ].active() ) {
-			TR.Warning << "WARNING: Current version of ligand_dock expects regular silent file with -in:file:silent" << std::endl;
+			TR.Warning << "Current version of ligand_dock expects regular silent file with -in:file:silent" << std::endl;
 			TR.Warning << "         Use -in:file:atom_tree_diff for inputting Atom Tree Diff format files" << std::endl;
 		}
 
@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 
 		// Backward compatibility options munging.
 		if ( option[ out::file::silent ].user() && ! option[ out::file::silent_struct_type ].user() ) {
-			TR.Warning << "WARNING: For backward compatibility, by default ligand_dock will output Atom Tree Diff format files to -out:file:silent" << std::endl;
+			TR.Warning << "For backward compatibility, by default ligand_dock will output Atom Tree Diff format files to -out:file:silent" << std::endl;
 			TR.Warning << "         To output regular format silent file format, explicitly set -out:file:silent_struct_type" << std::endl;
 			option[ out::file::atom_tree_diff ].value( option[ out::file::silent ] );
 			option[ out::file::silent ].deactivate();

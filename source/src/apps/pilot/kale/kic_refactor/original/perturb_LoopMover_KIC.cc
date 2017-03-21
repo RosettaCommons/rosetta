@@ -173,7 +173,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	static int cur_struct=0; // for movie output
 	// Dont allow loops < 3 residues.
 	if( (loop.stop() - loop.start() < 2 )){
-		tr().Error << "[WARNING] KinematicMover cannot handle loops smaller than 3 residues. Doing nothing. " << std::endl;
+		tr().Error << "KinematicMover cannot handle loops smaller than 3 residues. Doing nothing. " << std::endl;
 		return loop_mover::CriticalFailure;
 	}
 
@@ -186,7 +186,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	using namespace basic::options;
 
 	//bool const verbose( true );
-	bool const local_debug( false ); 
+	bool const local_debug( false );
 	bool const local_movie( false );
 
 	core::pose::Pose native_pose;
@@ -268,15 +268,15 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	*/
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
 	protocols::simple_moves::MinMoverOP min_mover;
-	MoveMapOP mm_one_loop_OP = new core::kinematics::MoveMap( mm_one_loop ); // it appears we need a move map OP to do this... 
+	MoveMapOP mm_one_loop_OP = new core::kinematics::MoveMap( mm_one_loop ); // it appears we need a move map OP to do this...
 
 	const std::string min_type = "linmin";
-	core::Real dummy_tol( 0.001 ); // linmin sets tol internally -- MinMover doesn't accept const input... 
+	core::Real dummy_tol( 0.001 ); // linmin sets tol internally -- MinMover doesn't accept const input...
 	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
 		min_mover = new simple_moves::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
-		//min_mover = new simple_moves::symmetry::SymMinMover(); 
+		//min_mover = new simple_moves::symmetry::SymMinMover();
 	} else {
 		min_mover = new protocols::simple_moves::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
 		//min_mover = new protocols::simple_moves::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
@@ -290,7 +290,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	min_mover->deriv_check( deriv_check );
 	 */
 	min_mover->cartesian( use_cartmin );
-	
+
 
 	// show temps
 	tr() << "remodel init temp: " << init_temp << std::endl;
@@ -298,73 +298,73 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	// perform the initial perturbation
 	// setup the kinematic mover
-	
+
 	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
-	
+
 	//tr() << "kinematic mover generated, now setting up perturber... " << std::endl;
-	
+
 	// AS: select from different perturbers implemented for NGK
 	// torsion-restricted sampling
 	if ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) {
 		std::string torsion_bins = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
-		
+
 		// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
 		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() )
 			torsion_bins = torsion_features_string( native_pose ); // does this work at this point in the code? The loop needs to be set up!
-		
+
 		// check if the user-provided string has the correct length
 		runtime_assert(torsion_bins.size() == loop_end - loop_begin + 1); // this is where torsion-restricted sampling with multiple loops currently fails -- however, proper access to the torsion bins in the perturber would also be implemented
-		
+
 		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); // to make the code cleaner this should really be a generic function, even though some classes may not use it
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup)
-		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP 
+		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP
 		perturber =
         new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ] ) { // TabooSampling (std rama)
 		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( &myKinematicMover );
-		
-		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); 
+
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // rama2b
-		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
+		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
 		perturber =
         new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else { // default behavior [for now] -- std KIC
-		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP 
+		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP
 		perturber =
 		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	}
-	
+
 	//tr() << "perturber set!" << std::endl;
-	
+
 	myKinematicMover.set_vary_bondangles( true );
 	//myKinematicMover.set_vary_bondangles( false );  // trying without varying angles
-	
+
 	myKinematicMover.set_sample_nonpivot_torsions( option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
 	myKinematicMover.set_rama_check( true );
-	
+
 	myKinematicMover.set_loop_begin_and_end( loop_begin, loop_end ); // AS -- for restricted torsion bin sampling, the mover needs to know about the start of the defined loop, not just the segment that is sampled in a given move
-	
-	
+
+
 	// for Taboo Sampling we need to update the sequence here every time, in case it changes (e.g. when modeling multiple loops)
 	// this setup would also allow us to combine taboo sampling with other types of sampling, e.g. to increase diversity after several rounds of standard/random KIC sampling
 	utility::vector1< core::chemical::AA > loop_sequence;
 	loop_sequence.resize(0); // make sure it is empty
-	for (core::Size cur_res = loop_begin; cur_res <= loop_end; cur_res++) { 
-		loop_sequence.push_back(pose.aa(cur_res)); 
+	for (core::Size cur_res = loop_begin; cur_res <= loop_end; cur_res++) {
+		loop_sequence.push_back(pose.aa(cur_res));
 	}
 	myKinematicMover.update_sequence( loop_sequence ); // should only have an effect on the TabooSamplingKinematicPerturber
-	
-	
-	
+
+
+
 	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 	kic_start = loop_begin;
 	kic_end = loop_end;
@@ -374,7 +374,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	<< kic_end << std::endl;
 	myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 	myKinematicMover.set_temperature(temperature);
-	
+
 	std::string torsion_features = torsion_features_string( pose );
 	tr() << "loop rmsd before initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) /* << " -- torsion bins: " << torsion_features */ << std::endl;
 
@@ -394,36 +394,36 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				set_last_move_status(protocols::moves::MS_SUCCESS);
 				tr() << "initial kinematic perturbation complete" << std::endl;
 				myKinematicMover.set_idealize_loop_first( false ); // now the loop is idealized
-				
+
 				// AS Jan 4, 2013: adding option to leave centroid mode directly after successful initial closure
 				if ( option[ OptionKeys::loops::kic_leave_centroid_after_initial_closure ]() ) {
 					return loop_mover::Success;
 				}
-				
+
 				break;
 			}
 			nits++;
 		}
-		if ( !option[ OptionKeys::loops::kic_bump_overlap_factor ].user() ) { 
+		if ( !option[ OptionKeys::loops::kic_bump_overlap_factor ].user() ) {
 			//RAP: restore bump_overlap_factor to original value
 			myKinematicMover.set_bump_overlap_factor(previous_bump_overlap_factor);//RAP
 		}
 		if (!myKinematicMover.last_move_succeeded()) {
-			tr().Error << "[WARNING] Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
+			tr().Error << "Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
 			return loop_mover::CriticalFailure;
 		}
 		( *scorefxn() )(pose);
 		//minimizer->run( pose, mm_one_loop, *scorefxn(), options );
-		
+
 		if ( local_debug ) // AS
 			tr() << " minimization next " << std::endl;
-		
+
 		min_mover->score_function( *scorefxn() ); // at the moment this doesn't change, but if we ever implemented ramp it would
 		min_mover->apply( pose ); // the other options were already registered in setup
-		
-		
+
+
 		tr() << "loop rmsd after initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 
 	}
@@ -436,7 +436,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			v_perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 			v_perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
 			myKinematicMover.set_perturber( v_perturber );
-			
+
 		}
 	}
 
@@ -518,11 +518,11 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				}
 				( *scorefxn() )(pose);
 				//minimizer->run( pose, mm_one_loop, *scorefxn(), options );
-				
+
 				if ( local_debug ) // AS
 					tr() << " minimization next " << std::endl;
 
-				
+
 				min_mover->score_function( *scorefxn() );
 				min_mover->apply( pose ); // the other options were already registered in setup
 
@@ -543,14 +543,14 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				}
 				//mc.show_scores();
 			}else{
-				tr().Error << "[WARNING] Failed to build loop with kinematic Mover after " << nits << " trials: " << loop << std::endl;
+				tr().Error << "Failed to build loop with kinematic Mover after " << nits << " trials: " << loop << std::endl;
 				// return to original fold tree
 				//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
 				return loop_mover::Failure;
 			}
 		} // inner_cycles
 	} // outer_cycles
-	
+
 	if ( recover_low_ ) {
 		pose = mc.lowest_score_pose();
 	}

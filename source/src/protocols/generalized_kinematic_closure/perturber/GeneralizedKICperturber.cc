@@ -407,11 +407,11 @@ void GeneralizedKICperturber::apply_set_dihedral (
 		if ( inputvalues_real.size()>=dihedrallist.size() ) {
 			separate_values = true;
 			if ( inputvalues_real.size()>dihedrallist.size() ) {
-				if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values for set_dihedral pertruber effect exceeds the number of torsions to be" << str1 << ".  Using only the first " << dihedrallist.size() << " values." << std::endl;
+				if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_dihedral pertruber effect exceeds the number of torsions to be" << str1 << ".  Using only the first " << dihedrallist.size() << " values." << std::endl;
 			}
 		} else if ( inputvalues_real.size()!=1 ) {
 			separate_values = false;
-			if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values does not match the number of dihedral angles specified.  All angles will be" << str1 << str2 << " the first value." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of dihedral angles specified.  All angles will be" << str1 << str2 << " the first value." << std::endl;
 		} else { //inputvalues_real.size()==1 and dihedrallist.size() > 1
 			if ( TR.Debug.visible() ) TR.Debug << str3 << "all specified dihedral angles" << str4 << inputvalues_real[1] << "." << std::endl;
 		}
@@ -567,7 +567,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 		//Check for alpha amino acids:
 		if ( !original_pose.residue(residues[ir]).type().is_alpha_aa() ) {
 			if ( TR.Warning.visible() ) {
-				TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
+				TR.Warning << "Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
 				TR.Warning.flush();
 			}
 			continue;
@@ -619,7 +619,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 						torsions[ia-1]=angleval;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but its " << angname[j] << " dihedral angle was not part of the chain of atoms to be closed." << std::endl;  TR.Warning.flush();
+							TR.Warning << "Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but its " << angname[j] << " dihedral angle was not part of the chain of atoms to be closed." << std::endl;  TR.Warning.flush();
 						}
 					}
 					break;
@@ -655,11 +655,11 @@ void GeneralizedKICperturber::apply_set_bondangle (
 	if ( inputvalues_real.size()>=bondanglelist.size() ) {
 		separate_values = true;
 		if ( inputvalues_real.size()>bondanglelist.size() ) {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values for set_bondangle pertruber effect exceeds the number of bond angles to be set.  Using only the first " << bondanglelist.size() << " values." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_bondangle pertruber effect exceeds the number of bond angles to be set.  Using only the first " << bondanglelist.size() << " values." << std::endl;
 		}
 	} else if ( inputvalues_real.size()!=1 ) {
 		separate_values = false;
-		if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values does not match the number of bond angles specified.  All angles will be set to the first value." << std::endl;
+		if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of bond angles specified.  All angles will be set to the first value." << std::endl;
 	} else { //inputvalues_real.size()==1 and bondanglelist.size() > 1
 		if ( TR.Debug.visible() ) TR.Debug << "Setting all specified bond angles to " << inputvalues_real[1] << "." << std::endl;
 	}
@@ -726,11 +726,11 @@ void GeneralizedKICperturber::apply_set_bondlength (
 	if ( inputvalues_real.size()>=bondlengthlist.size() ) {
 		separate_values = true;
 		if ( inputvalues_real.size()>bondlengthlist.size() ) {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values for set_bondlength pertruber effect exceeds the number of bond lengths to be set.  Using only the first " << bondlengthlist.size() << " values." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_bondlength pertruber effect exceeds the number of bond lengths to be set.  Using only the first " << bondlengthlist.size() << " values." << std::endl;
 		}
 	} else if ( inputvalues_real.size()!=1 ) {
 		separate_values = false;
-		if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values does not match the number of bond lengths specified.  All lengths will be set to the first value." << std::endl;
+		if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of bond lengths specified.  All lengths will be set to the first value." << std::endl;
 	} else { //inputvalues_real.size()==1 and bondlengthlist.size() > 1
 		if ( TR.Debug.visible() ) TR.Debug << "Setting all specified bond lengths to " << inputvalues_real[1] << "." << std::endl;
 	}
@@ -878,7 +878,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		//Check for alpha amino acids:
 		if ( !original_pose.residue(residues[ir]).type().is_alpha_aa() ) {
 			if ( TR.Warning.visible() ) {
-				TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
+				TR.Warning << "Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
 				TR.Warning.flush();
 			}
 			continue;
@@ -1419,7 +1419,7 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 	if ( inputvalues_real_.size()>0 ) {
 		cis_prob=inputvalues_real_[1];
 		if ( inputvalues_real_.size()>1 ) {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  Multiple input values were passed to a sample_cis_peptide_bond perturber.  The first value is being used as the probability of a cis peptide bond." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Multiple input values were passed to a sample_cis_peptide_bond perturber.  The first value is being used as the probability of a cis peptide bond." << std::endl;
 		}
 	}
 
@@ -1447,11 +1447,11 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 					torsions[omegaindex]=0.0; //Set to a cis peptide bond.
 				}
 			} else { //Else if omega wasn't found:
-				if ( TR.Warning.visible() ) TR.Warning<<"Warning!  No omega angle was found for residue " << residues[ir] << " in the chain of atoms to close by GeneralizedKIC." << std::endl;
+				if ( TR.Warning.visible() ) TR.Warning<<"No omega angle was found for residue " << residues[ir] << " in the chain of atoms to close by GeneralizedKIC." << std::endl;
 			}
 
 		} else { //If this is neither an alpha- nor a beta-amino acid.
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  Residue " << residues[ir] << " was passed to a sample_cis_peptide_bond perturber, but this residue is neither an alpha- nor a beta-amino acid.  Skipping." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Residue " << residues[ir] << " was passed to a sample_cis_peptide_bond perturber, but this residue is neither an alpha- nor a beta-amino acid.  Skipping." << std::endl;
 		}
 	}
 

@@ -1532,11 +1532,11 @@ loop_rmsd(
 	for ( auto const & loop : loops ) {
 		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
 			if ( i > pose1.size() ) {
-				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose1 size " << pose1.total_residue() << std::endl;
+				tt.Warning <<  "Pose1: Loop residue " << i << "exceeds pose1 size " << pose1.total_residue() << std::endl;
 				continue;
 			}
 			if ( i > pose2.size() ) {
-				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose2 size " << pose2.size() << std::endl;
+				tt.Warning <<  "Pose1: Loop residue " << i << "exceeds pose2 size " << pose2.size() << std::endl;
 				continue;
 			}
 			Size start = 1;
@@ -1548,11 +1548,11 @@ loop_rmsd(
 			for ( Size j = start; j <= end; ++j ) {
 				atom_count++;
 				if ( j >  pose1.residue(i).atoms().size()  ) {
-					tt.Warning <<  "[Warning]: Pose1: Atom " << j << " missing from residue " << i << std::endl;
+					tt.Warning <<  "Pose1: Atom " << j << " missing from residue " << i << std::endl;
 					continue;
 				}
 				if ( j > pose2.residue(i).atoms().size()  ) {
-					tt.Warning <<  "[Warning]: Pose2: Atom " << j << " missing from residue " << i << std::endl;
+					tt.Warning <<  "Pose2: Atom " << j << " missing from residue " << i << std::endl;
 					continue;
 				}
 				rms += pose1.residue(i).xyz(j).distance_squared( pose2.residue(i).xyz(j) );

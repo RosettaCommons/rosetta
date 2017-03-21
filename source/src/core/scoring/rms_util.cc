@@ -606,7 +606,7 @@ CA_or_equiv_rmsd(
 	PredicateOP pred( new ResRangePredicate( start, calc_end, PredicateCOP( new IsMainAtomPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_or_equiv_rmsd, residue range " << start << " to " << end
+	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "In CA_or_equiv_rmsd, residue range " << start << " to " << end
 		<< " requested but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -640,7 +640,7 @@ CA_rmsd(
 	PredicateOP pred( new ResRangePredicate( start, calc_end, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_rmsd, residue range " << start << " to " << end
+	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "In CA_rmsd, residue range " << start << " to " << end
 		<< " requested but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -793,7 +793,7 @@ CA_or_equiv_rmsd(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsMainAtomPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_rmsd " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_rmsd " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -824,7 +824,7 @@ CA_rmsd(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_rmsd " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_rmsd " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -927,7 +927,7 @@ CA_maxsub(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_maxsub " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_maxsub " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -986,7 +986,7 @@ CA_gdtmm(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_gdtmm " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_gdtmm " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -1106,7 +1106,7 @@ CA_gdttm(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_gdtmm " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_gdtmm " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 

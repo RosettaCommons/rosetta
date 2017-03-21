@@ -177,7 +177,7 @@ void HybridizeFoldtreeDynamic::make_complete_chunks(
 	core::Size n_residues
 )
 {
-	assert(cut_positions.size() == core_chunks_.size() - 1);
+	debug_assert(cut_positions.size() == core_chunks_.size() - 1);
 
 	chunks_ = core_chunks_;
 	for ( core::Size i=1; i<=chunks_.num_loop(); ++i ) {
@@ -294,7 +294,7 @@ void HybridizeFoldtreeDynamic::initialize(
 	utility::vector1 < core::Size > cut_positions = decide_cuts(pose, num_protein_residues_);
 	make_complete_chunks(cut_positions, num_protein_residues_);
 
-	assert(chunks_.num_loop());
+	debug_assert(chunks_.num_loop());
 
 	// Add a virtual residue at the center of mass (updates the fold tree)
 	if ( !symm_info ) {  // pose is asymm
@@ -329,7 +329,7 @@ void HybridizeFoldtreeDynamic::get_pair_core_chunks(
 		}
 		if ( idx ) pair_chunks_tmp.push_back(idx);
 	}
-	assert( pair_chunks_tmp.size() == pair_chunks_pairs_tmp.size() );
+	debug_assert( pair_chunks_tmp.size() == pair_chunks_pairs_tmp.size() );
 	pair_chunks = pair_chunks_tmp;
 	pair_chunks_pairs = pair_chunks_pairs_tmp;
 } // strand pairings
@@ -398,7 +398,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	using protocols::loops::Loops;
 	using utility::vector1;
 
-	assert(chunks_.num_loop());
+	debug_assert(chunks_.num_loop());
 
 	bool use_symm = core::pose::symmetry::is_symmetric(pose);
 
@@ -495,7 +495,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			core::Size j_index = 0;
 			get_core_chunk_index_from_position( strand_pairs_[i].first, i_index );
 			get_core_chunk_index_from_position( strand_pairs_[i].second, j_index );
-			assert( i_index && j_index );
+			debug_assert( i_index && j_index );
 			core::Size paircnt = 0;
 			if ( !rooted_chunk_indices.count(i_index) && !rooted_chunk_indices_.count(i_index) ) {
 				floating_pair_chunks.insert(i_index);
@@ -505,7 +505,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 				floating_pair_chunks.insert(j_index);
 				paircnt++;
 			}
-			assert( paircnt == 0 || paircnt == 2 );
+			debug_assert( paircnt == 0 || paircnt == 2 );
 		}
 
 		// first check if adjacent chunks are from the original rooted chunks and if they are add them to the rooted branch
@@ -568,7 +568,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		}
 
 		// hopefully all chunks are covered now
-		assert( chunks_.size() == rooted_chunk_indices.size() + rooted_chunk_indices_.size() );
+		debug_assert( chunks_.size() == rooted_chunk_indices.size() + rooted_chunk_indices_.size() );
 	} // strand pairings
 
 
@@ -704,7 +704,7 @@ void HybridizeFoldtreeDynamic::add_overlapping_pair_chunks(
 			//core::Size root = start_pair_chunks[i].first;
 			utility::vector1<core::Size>this_pair_chunks = start_pair_chunks[i].second;
 			utility::vector1<std::pair<core::Size, core::Size> >this_pair_chunks_pairs = start_pair_chunks_pairs[i].second;
-			assert( this_pair_chunks.size() == this_pair_chunks_pairs.size() );
+			debug_assert( this_pair_chunks.size() == this_pair_chunks_pairs.size() );
 			for ( core::Size j=1; j<=this_pair_chunks.size(); ++j ) {
 				if ( rooted_chunk_indices_.count(this_pair_chunks[j]) ) {
 					//TR.Debug << "WARNING! Strand pairings between two template chunks overlap. Chunk " << index << " and " << this_pair_chunks[j] << ". Geometry may be funky!" << std::endl;

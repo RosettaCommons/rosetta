@@ -113,12 +113,12 @@ OriginalBackboneBuildPoint::initialize_from_residue(
 	input_conformation_ = core::conformation::ResidueOP( new core::conformation::Residue( res ) );
 
 
-	assert(   res.has( "N" ));
-	assert(  res.has( "CA" ));
-	assert(   res.has( "C" ));
-	assert(   res.has( "O" ));
+	debug_assert(   res.has( "N" ));
+	debug_assert(  res.has( "CA" ));
+	debug_assert(   res.has( "C" ));
+	debug_assert(   res.has( "O" ));
 
-	assert( res.is_protein() );
+	debug_assert( res.is_protein() );
 	phi(    res.mainchain_torsion( 1 ));
 	psi(    res.mainchain_torsion( 2 ));
 	N_pos(  res.xyz( "N" ));

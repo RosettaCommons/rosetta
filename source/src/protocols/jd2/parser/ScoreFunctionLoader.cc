@@ -157,25 +157,25 @@ void ScoreFunctionLoader::load_data(
 						if ( scale_sc_dens_byres[i].empty() ) continue; // Ignore empty entries (e.g. if user has two consecutive delimiters.)
 						utility::vector1< std::string > tag = utility::string_split( scale_sc_dens_byres[i] , ':');
 						if ( tag.size() != 2 ) {
-							TR.Error << "Error: cannot parse '" << scale_sc_dens_byres[i] << "' as scale_sc_dens_byres entry. ";
+							TR.Error << "cannot parse '" << scale_sc_dens_byres[i] << "' as scale_sc_dens_byres entry. ";
 							TR.Error << "Format of scale_sc_dens_byres is a comma or space separated list of one letter codes each followed by a number." << std::endl;
 							utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
 						}
 						if ( tag[1].size() != 1 ) {
-							TR.Error << "Error: entry '" << tag[1] << "' in scale_sc_dens_byres is not a proper one-letter aa code." << std::endl;
+							TR.Error << " entry '" << tag[1] << "' in scale_sc_dens_byres is not a proper one-letter aa code." << std::endl;
 							TR.Error << "Format of scale_sc_dens_byres is a comma or space separated list of one letter codes each followed by a number." << std::endl;
 							utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
 						}
 						core::chemical::AA aa_i = core::chemical::aa_from_oneletter_code( tag[1][0] ); // aa_unk on error
 						core::Real value = utility::string2Real( tag[2] );
 						if ( utility::is_undefined( value ) ) {
-							TR.Error << "Error: Unable to interpret '" << tag[2] << "' as a real number value." << std::endl;
+							TR.Error << "Unable to interpret '" << tag[2] << "' as a real number value." << std::endl;
 							utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
 						}
 						if ( aa_i<=core::chemical::num_canonical_aas ) {
 							emoptions.set_density_sc_scale_byres( aa_i, value );
 						} else {
-							TR.Warning << "Warning: skipping scale_sc_dens_byres entry '" << tag[1] << "' (" << aa_i <<") as it's not a canonical amino acid." << std::endl;
+							TR.Warning << "skipping scale_sc_dens_byres entry '" << tag[1] << "' (" << aa_i <<") as it's not a canonical amino acid." << std::endl;
 						}
 					}
 					TR << "User defined per-residue sidechain density reweighing: " << std::endl;

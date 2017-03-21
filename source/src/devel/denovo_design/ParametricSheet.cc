@@ -185,22 +185,22 @@ core::Size ParametricSheet::num_strands() const { return strand_data_.size(); }
 
 core::Size ParametricSheet::register_shift( core::Size const strand ) const
 {
-	assert( strand );
-	assert( strand <= strand_data_.size() );
+	debug_assert( strand );
+	debug_assert( strand <= strand_data_.size() );
 	return strand_data_[ strand ].register_shift;
 }
 
 core::Size ParametricSheet::strand_len( core::Size const strand ) const
 {
-	assert( strand );
-	assert( strand <= strand_data_.size() );
+	debug_assert( strand );
+	debug_assert( strand <= strand_data_.size() );
 	return strand_data_[ strand ].length;
 }
 
 std::string const & ParametricSheet::orientation( core::Size const strand ) const
 {
-	assert( strand );
-	assert( strand <= strand_data_.size() );
+	debug_assert( strand );
+	debug_assert( strand <= strand_data_.size() );
 	return strand_data_[ strand ].orientation;
 }
 
@@ -208,8 +208,8 @@ core::Size ParametricSheet::ca_coords_size() const { return ca_coords_.size(); }
 
 core::Size ParametricSheet::ca_coords_size( core::Size const strand ) const
 {
-	assert( strand );
-	assert( strand <= ca_coords_.size() );
+	debug_assert( strand );
+	debug_assert( strand <= ca_coords_.size() );
 	return ca_coords_[ strand ].size();
 }
 

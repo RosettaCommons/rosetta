@@ -478,7 +478,7 @@ void PoseFromSFRBuilder::pass_3_verify_sufficient_backbone_atoms()
 				}
 			}
 			if ( !mainchain_core_present ) {
-				TR.Warning << "[ WARNING ] skipping pdb residue b/c it's missing too many mainchain atoms: " <<
+				TR.Warning << "skipping pdb residue b/c it's missing too many mainchain atoms: " <<
 					rinfos_[ ii ].resid() << ' ' << rosetta_residue_name3s_[ ii ] << ' ' << iirestype.name() << std::endl;
 				for ( Size jj=1; jj<= nbb; ++jj ) {
 					std::string const & name(iirestype.atom_name(iimainchain[jj]));
@@ -573,7 +573,7 @@ void PoseFromSFRBuilder::pass_5_note_discarded_atoms()
 			--discarded_atoms;
 		}
 		if ( discarded_atoms > 0 ) {
-			TR.Warning << "[ WARNING ] discarding " << discarded_atoms
+			TR.Warning << "discarding " << discarded_atoms
 				<< " atoms at position " << ii << " in file " << sfr_.filename()
 				<< ". Best match rsd_type:  " << residue_types_[ ii ]->name() << std::endl;
 		}
@@ -678,7 +678,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 					ii_rsd->atom( ii_rsd->lower_connect_atom() ).xyz() ).length();
 
 				if ( bondlength > 3.0 ) {
-					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
+					TR.Warning << "missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *ii_rsd, old_nres );
 
 					if ( pose.residue_type(old_nres).is_protein() ) {
@@ -953,7 +953,7 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 				if ( ( iter->first )[ 0 ] == 'H' || ( ( iter->first )[ 0 ] == ' ' && ( iter->first )[ 1 ] == 'H' ) ) {
 					// Don't warn for missing temperatures on hydrogens.
 				} else {
-					TR << "[ WARNING ] can't find pose atom for file-residue " << ii << " atom " << iter->first << " (trying to store temperature in PDBInfo)" << std::endl;
+					TR.Warning << "can't find pose atom for file-residue " << ii << " atom " << iter->first << " (trying to store temperature in PDBInfo)" << std::endl;
 				}
 			}
 		}
@@ -1336,7 +1336,7 @@ bool PoseFromSFRBuilder::determine_check_Ctermini_for_this_chain( char chainID )
 /// are in residue_types_[ seqpos ]
 void PoseFromSFRBuilder::fill_name_map( Size seqpos )
 {
-	assert( residue_types_[ seqpos ] );
+	debug_assert( residue_types_[ seqpos ] );
 
 	NameBimap & name_map( remapped_atom_names_[ seqpos ] );
 	core::io::ResidueInformation const & rinfo( rinfos_[ seqpos ] );

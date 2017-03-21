@@ -447,8 +447,8 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1<
 		}
 		runtime_assert( s1_pair_start > 0 && s2_pair_start > 0 );
 		if ( ! elongate( s1_pair_start, s2_pair_start, 0, 0 ) ) {
-			TR << "elongation failed ! " << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "elongation failed ! " << std::endl;
+			utility_exit_with_message("Elongation failed!");
 		}
 
 		++s1_pair_start;
@@ -861,7 +861,8 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 			spop->add_pair( iaa+1, jaa+1, dp.orient(), rgstr );
 
 		} else {
-			runtime_assert( false );
+			TR.Fatal << "Cannot understand DimerPairing orient value of '" << dp.orient() << "'" << std::endl;
+			utility_exit_with_message("Invalide DimerPairings orient value.");
 		}
 
 	}  // for ( DimerPairings )

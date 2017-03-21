@@ -324,12 +324,11 @@ AtomPairConstraint::read_def(
 	atom2_ = named_atom_id_to_atom_id( id::NamedAtomID( name2, res2 ), pose );
 
 	if ( atom1_.atomno() == 0 || atom2_.atomno() == 0 ) {
-		tr.Warning << "Error reading atoms: read in atom names("
+		tr.Fatal << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "), "
 			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
 		data.setstate( std::ios_base::failbit );
-		runtime_assert( false );
-		return;
+		utility_exit_with_message("Error reading atoms");
 	}
 
 	func_ = func_factory.new_func( func_type );

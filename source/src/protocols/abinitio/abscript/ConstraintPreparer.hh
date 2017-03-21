@@ -79,7 +79,7 @@ public:
 	moves::MoverOP clone() const override { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
 
 	//prepares use the prepare method instead of apply
-	void apply( core::pose::Pose& ) override { assert(false); };
+	void apply( core::pose::Pose& ) override { utility_exit_with_message("ConstraintPreparer::apply() should never be called!"); };
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

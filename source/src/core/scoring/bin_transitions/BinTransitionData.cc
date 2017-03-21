@@ -1064,7 +1064,7 @@ std::string BinTransitionData::summarize_data( bool const verbose ) const
 /// @details This also initializes the probability matrix (to all zeros), the binnames vectors
 /// (to vectors of empty strings), and the binranges vectors (to all zeros).
 void BinTransitionData::set_n_bins( core::Size const n_bins_i, core::Size const n_bins_iplus1 ) {
-	if ( matrix_initialized() && TR.Warning.visible() ) TR.Warning << "Warning: re-initializing probability matrix in BinTransitionData object!" << std::endl;
+	if ( matrix_initialized() && TR.Warning.visible() ) TR.Warning << "re-initializing probability matrix in BinTransitionData object!" << std::endl;
 
 	runtime_assert_string_msg( n_mainchain_torsions_i_ > 0 && n_mainchain_torsions_iplus1_ > 0,
 		"In core::scoring::bin_transitions::BinTransitionData::set_n_bins(): the number of mainchain torsions for residues i and i+1 must be set before calling this function." );
@@ -1153,7 +1153,7 @@ core::scoring::bin_transitions::BinTransitionData::save( Archive & arc ) const {
 	arc( CEREAL_NVP( subbin_cdf_i_ ) ); // utility::vector1 < utility::vector1 < core::Real >  >
 	arc( CEREAL_NVP( subbin_ranges_i_ ) ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > >
 	arc( CEREAL_NVP( subbin_cdf_iplus1_ ) ); // utility::vector1 < utility::vector1 < core::Real >  >
-	arc( CEREAL_NVP( subbin_ranges_iplus1_ ) ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > 
+	arc( CEREAL_NVP( subbin_ranges_iplus1_ ) ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > >
 	arc( CEREAL_NVP( bin_iplus1_cdf_given_i_ ) ); // utility::vector1 < utility::vector1 < core::Real > >>
 	arc( CEREAL_NVP( bin_i_cdf_given_iplus1_ ) ); // utility::vector1 < utility::vector1 < core::Real > >
 }
@@ -1191,7 +1191,7 @@ core::scoring::bin_transitions::BinTransitionData::load( Archive & arc ) {
 	arc( subbin_cdf_i_ ); // utility::vector1 < utility::vector1 < core::Real >  >
 	arc( subbin_ranges_i_ ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > >
 	arc( subbin_cdf_iplus1_ ); // utility::vector1 < utility::vector1 < core::Real >  >
-	arc( subbin_ranges_iplus1_ ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > > 
+	arc( subbin_ranges_iplus1_ ); // utility::vector1 < utility::vector1 < utility::vector1 < std::pair < core::Real, core::Real> > >
 	arc( bin_iplus1_cdf_given_i_ ); // utility::vector1 < utility::vector1 < core::Real > >>
 	arc( bin_i_cdf_given_iplus1_ ); // utility::vector1 < utility::vector1 < core::Real > >
 }

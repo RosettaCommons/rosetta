@@ -42,7 +42,7 @@ static THREAD_LOCAL basic::Tracer atom_tracer( "protocols.ligand_docking.ChainEx
 
 bool
 ChainExistsFilter::apply( core::pose::Pose const & pose ) const {
-	assert(chain_.size()==1 );
+	debug_assert(chain_.size()==1 );
 	utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain_, pose);
 
 	if ( chain_ids.empty() ) return false;
@@ -54,11 +54,6 @@ void
 ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 
-	if ( tag->getName() != "ChainExists" ) {
-		atom_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( ! tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("ChainExists filter needs a 'chain' option");
 	}

@@ -619,7 +619,7 @@ SpanningTopology::create_from_structure(
 	// split spanfiles from the spanfile_from_pdb application
 	TR.Debug << "Are spans predicted?" << std::endl;
 	if ( num_spans == 0 ) {
-		TR << "WARNING: No spans calculated from structure for chain " << chainID[1] << std::endl;
+		TR.Warning << "No spans calculated from structure for chain " << chainID[1] << std::endl;
 	}
 
 	// check created object for validity

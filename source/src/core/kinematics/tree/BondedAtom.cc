@@ -31,6 +31,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iostream>
@@ -49,6 +50,8 @@
 namespace core {
 namespace kinematics {
 namespace tree {
+
+static THREAD_LOCAL basic::Tracer TR("core.kinematics.tree.BondedAtom");
 
 /// @details Invokes Atom_ dfs function before, optionally recursing to younger siblings
 /// should those younger siblings be effected by a DOF change on this node (e.g. phi_ change).
@@ -479,10 +482,8 @@ BondedAtom::keep_dof_fixed(
 		return false;
 
 	} else {
-		std::cerr << "BondedAtom::keep_dof_fixed: BAD_TYPE: " <<type <<
-			std::endl;
-		debug_assert( false );
-		utility_exit();
+		TR.Fatal << "BondedAtom::keep_dof_fixed: BAD_TYPE: " << type << std::endl;
+		utility_exit_with_message("Bad DOF type");
 	}
 	return false;
 }

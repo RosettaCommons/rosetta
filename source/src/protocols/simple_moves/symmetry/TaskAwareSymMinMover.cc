@@ -143,7 +143,7 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 	if ( factory_ != 0 ) {
 		task = factory_->create_task_and_apply_taskoperations( pose );
 	} else {
-		TR.Warning << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
+		TR.Warning << "You have not provided any TaskOperations. A default will be used." << std::endl;
 	}
 	for ( core::Size i = 1; i <= nres_monomer; i++ ) {
 		if ( designable_only_ ) {

@@ -108,7 +108,7 @@ rotamer_from_chi(
 	SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
 	if ( rotlib ) {
 		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ));
-		assert( dunlib );
+		debug_assert( dunlib );
 		dunlib->get_rotamer_from_chi( rsd.chi(), rot );
 	} else { rot.resize( 0 ); }
 }
@@ -125,7 +125,7 @@ rotamer_from_chi(
 	SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd_type );
 	if ( rotlib ) {
 		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ));
-		assert( dunlib );
+		debug_assert( dunlib );
 		dunlib->get_rotamer_from_chi( chi, rot );
 	} else { rot.resize( 0 ); }
 }
@@ -438,11 +438,11 @@ RotamerLibrary::add_residue_library(
 )
 {
 	if ( aa > chemical::num_canonical_aas ) {
-		TR.Error << "ERROR: Cannot add fullatom Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
+		TR.Error << "Cannot add fullatom Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
 		utility_exit_with_message("Cannot add a non-canonical fullatom Dunbrack library.");
 	}
 	if ( aa_libraries_[ aa ] != 0 ) {
-		TR.Error << "ERROR: Cannot add fullatom Dunbrack rotamer library of type " << aa << ": library already loaded." << std::endl;
+		TR.Error << "Cannot add fullatom Dunbrack rotamer library of type " << aa << ": library already loaded." << std::endl;
 		utility_exit_with_message("Can't add rsd library twice");
 	}
 	aa_libraries_[ aa ] = rot_lib;
@@ -454,7 +454,7 @@ RotamerLibrary::get_library_by_aa( chemical::AA const & aa ) const
 	if ( (Size) aa <= aa_libraries_.size() ) {
 		return aa_libraries_[ aa ];
 	}
-	TR.Error << "ERROR: Cannot get fullatom Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
+	TR.Error << "Cannot get fullatom Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
 	utility_exit_with_message("Cannot get non-canonical fullatom Dunbrack library.");
 	return SingleResidueRotamerLibraryCOP();
 }
@@ -2234,7 +2234,7 @@ bool
 RotamerLibrary::validate_dunbrack_binary() {
 
 #if defined MULTI_THREADED
-	TR.Error << "ERROR: RotamerLibrary::validate_dunbrack_binary() is HIGHLY un-threadsafe. Don't call it from a multithreaded context. " << std::endl;
+	TR.Error << "RotamerLibrary::validate_dunbrack_binary() is HIGHLY un-threadsafe. Don't call it from a multithreaded context. " << std::endl;
 	return true; // Just return success
 #endif
 
@@ -2269,10 +2269,10 @@ RotamerLibrary::validate_dunbrack_binary() {
 			// Both null? We're fine.
 			TR << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in both ASCII and binary." << std::endl;
 		} else if ( aa_libraries_copy[ii] == 0 ) {
-			TR.Error << "[ ERROR ] Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in binary, but present in ASCII." << std::endl;
+			TR.Error << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in binary, but present in ASCII." << std::endl;
 			valid = false;
 		} else if ( aa_libraries_[ii] == 0 ) {
-			TR.Error << "[ ERROR ] Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in ASCII, but present in binary." << std::endl;
+			TR.Error << "Rotamer library for " << core::chemical::name_from_aa( core::chemical::AA( ii ) ) << " NULL in ASCII, but present in binary." << std::endl;
 			valid = false;
 		} else if ( *(aa_libraries_[ii]) == *(aa_libraries_copy[ii]) ) { // ASCII first (as reference), binary second
 			// Match. Good!

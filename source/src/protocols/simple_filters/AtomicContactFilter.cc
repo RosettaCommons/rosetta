@@ -74,7 +74,7 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 	using namespace core::conformation;
 
 	if ( !get_resid() ) {
-		TR.Error<<"ERROR: residue2 has not been defined"<<std::endl;
+		TR.Error << "residue2 has not been defined"<<std::endl;
 		runtime_assert( get_resid() );
 	}
 	core::Real nearest_distance( 10000 );

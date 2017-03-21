@@ -173,7 +173,7 @@ void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 		//  if( nmer_ref_energies_.count( sequence ) ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
 		//    + ref_fname + " has double entry for sequence " + sequence );
 		if ( nmer_ref_energies_.count( sequence ) ) {
-			TR << "[WARNING]: NMer ref energy database file "
+			TR.Warning << "NMer ref energy database file "
 				+ ref_fname + " has double entry for sequence " + sequence + " Summing with prev value..." << std::endl ;
 			nmer_ref_energies_[ sequence ] += energy;
 		} else nmer_ref_energies_[ sequence ] = energy;

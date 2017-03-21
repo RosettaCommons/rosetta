@@ -23,8 +23,12 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/Tracer.hh>
+
 namespace protocols {
 namespace simple_moves {
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AddJobPairData" );
 
 // XRW TEMP std::string AddJobPairDataCreator::keyname() const
 // XRW TEMP {
@@ -66,7 +70,8 @@ void AddJobPairData::apply( Pose & pose)
 			current_job->add_string_real_pair(string_key_,real_value_);
 		} else {
 			//This really shouldn't happen
-			assert(false);
+			TR.Fatal << "No ligand found, and value_type is '" << value_type_ << "' for AddJobPairData" << std::endl;
+			utility_exit_with_message("AddJobPairData needs either a ligand or a valid value type.");
 		}
 	} else {
 		//Fundamental assumption being made that ligand is 1 residue.
@@ -82,7 +87,8 @@ void AddJobPairData::apply( Pose & pose)
 			current_job->add_string_real_pair(string_key_,value);
 		} else {
 			//This really shouldn't happen
-			assert(false);
+			TR.Fatal << "value_type is '" << value_type_ << "' for AddJobPairData" << std::endl;
+			utility_exit_with_message("AddJobPairData needs a valid value type.");
 		}
 	}
 }
@@ -131,6 +137,7 @@ void AddJobPairData::parse_my_tag(
 	} else if ( value_type_string == "real" ) {
 		value_type_ = real_value;
 	} else {
+		TR.Fatal << "Value type of '" << value_type_string << "' not supported in AddJobPairData." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' option 'value_type' can only be 'string' or 'real'");
 	}
 
@@ -142,7 +149,8 @@ void AddJobPairData::parse_my_tag(
 			real_value_ = tag->getOption<core::Real>("value");
 		} else {
 			// If this happens all the error checking code above is wrong
-			assert(false);
+			TR.Fatal << "Can't handle value type of '" << value_type_ << "'" << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' option 'value_type' can only be 'string' or 'real'");
 		}
 	}
 }

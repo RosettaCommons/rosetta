@@ -868,7 +868,7 @@ std::string const & XMLSchemaElement::element_name() const {
 }
 
 void XMLSchemaElement::write_definition( int indentation, std::ostream & os ) const {
-	assert( name_ != "" );
+	debug_assert( name_ != "" );
 	if ( category_ == xs_element_is_abstract ) {
 		indent_w_spaces( indentation, os );
 		os << "<xs:element name=\"" << name_ << "\" abstract=\"true\"/>\n";
@@ -1889,7 +1889,7 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 		case ss_optional :
 			{
 
-			assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_optional
+			debug_assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_optional
 			XMLSchemaSimpleSubelementList::ElementSummary elem1 = *elements.begin();
 			if ( elem1.min_or_max_occurs_set ) {
 				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " was initilized with "
@@ -1910,7 +1910,7 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 			break;
 		case ss_required :
 			{
-			assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_required
+			debug_assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_required
 			XMLSchemaSimpleSubelementList::ElementSummary elem1 = *elements.begin();
 			if ( elem1.min_or_max_occurs_set ) {
 				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " was initilized with "
@@ -2360,7 +2360,7 @@ XMLSchemaRepeatableCTNode::set_group_subelement(
 XMLSchemaRepeatableCTNode &
 XMLSchemaRepeatableCTNode::set_kids_naming_func( DerivedNameFunction const & naming_func )
 {
-	//assert( element_.element_name == "unspecified" || element_.element_type == "simple" );
+	//debug_assert( element_.element_name == "unspecified" || element_.element_type == "simple" );
 	kids_ct_naming_func_ = naming_func;
 	return *this;
 }
@@ -2375,7 +2375,7 @@ XMLSchemaRepeatableCTNode::set_root_node_naming_func( DerivedNameFunction const 
 XMLSchemaRepeatableCTNode &
 XMLSchemaRepeatableCTNode::add_child( XMLSchemaRepeatableCTNodeOP child_element )
 {
-	//assert( element_.element_name == "unspecified" || element_.element_type == "simple" );
+	//debug_assert( element_.element_name == "unspecified" || element_.element_type == "simple" );
 	children_.push_back( child_element );
 	child_element->parent_ = get_self_weak_ptr();
 	return *this;
@@ -2406,7 +2406,7 @@ XMLSchemaRepeatableCTNode::recursively_write_ct_to_schema( XMLSchemaDefinition &
 
 	// if there are any grand children, then the mangling function for kid nodes
 	// needs to be set.
-	assert( ! any_have_children || ! kids_ct_naming_func_.empty() );
+	debug_assert( ! any_have_children || ! kids_ct_naming_func_.empty() );
 
 
 	// OK: create simple subelement list w/ all children where each child is an
@@ -2414,7 +2414,7 @@ XMLSchemaRepeatableCTNode::recursively_write_ct_to_schema( XMLSchemaDefinition &
 	if ( any_have_children ) my_subelements.complex_type_naming_func( kids_ct_naming_func_ );
 
 	XMLSchemaRepeatableCTNodeOP parent = parent_.lock();
-	assert( parent || ! my_naming_func_.empty() );
+	debug_assert( parent || ! my_naming_func_.empty() );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( element_.element_name )

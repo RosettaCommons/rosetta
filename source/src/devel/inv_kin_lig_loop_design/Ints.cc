@@ -121,7 +121,7 @@ void Ints::fromString(const string& s) {
 
 			break;
 		default :
-			assert( false );
+			utility_exit_with_message("Bad state value in Ints::fromString()");
 		} // state
 
 	} // k
@@ -137,7 +137,7 @@ void Ints::fromString(const string& s) {
 		p.second.clear();
 		break;
 	default :
-		assert( false );
+		utility_exit_with_message("Bad state value in Ints::fromString()");
 	} // state
 
 } // Ints::fromString

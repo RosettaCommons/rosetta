@@ -270,7 +270,7 @@ public:
 	std::string const& get_pdb_path(std::string type) const
 	{
 		t_map_str2str::const_iterator iter = pdbs.find(type);
-		assert(iter != pdbs.end());
+		debug_assert(iter != pdbs.end());
 		return iter->second;
 	}
 };

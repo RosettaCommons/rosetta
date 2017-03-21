@@ -188,7 +188,7 @@ HDmakerMover::bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::sc
 	for ( Size j = 1; j <= pose.size(); ++j ) {
 		core::conformation::Residue const & res( pose.residue(j) );
 		core::chemical::AtomIndices bb_ai( res.mainchain_atoms() );
-		//assert( bb_ai.size() == 4 );
+		//debug_assert( bb_ai.size() == 4 );
 		core::Size chain_num( res.chain() );
 		for ( Size jj = 1; jj <= bb_ai.size(); ++jj ) {
 			if ( chain_num == 1 ) {

@@ -335,8 +335,8 @@ SetSecStructEnergies::parse_my_tag(
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
 	if ( sfxn == "" ) {
-		TR << "[ERROR] No input of scorefxn !"  << std::endl;
-		runtime_assert( false );
+		TR.Error << "No input of scorefxn !"  << std::endl;
+		utility_exit_with_message("No input of scorefxn !");
 	}
 
 	add_symmetry_ = tag->getOption< bool >( "add_symmetry", add_symmetry_ );

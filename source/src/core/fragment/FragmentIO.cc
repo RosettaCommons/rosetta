@@ -151,12 +151,12 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 
 		SingleResidueFragDataOP new_srfd = frag_factory_.frag_type( tag );
 		if ( !new_srfd ) {
-			tr.Error << "ERROR: tag " << tag << " not known by frag_factory" << std::endl;
+			tr.Error << "tag " << tag << " not known by frag_factory" << std::endl;
 			break;
 		}
 		line_stream >> *new_srfd;
 		if ( line_stream.fail() ) {
-			tr.Error << "ERROR: reading of " << tag << " failed in line: " << next_line << std::endl;
+			tr.Error << "reading of " << tag << " failed in line: " << next_line << std::endl;
 			data.setstate( std::ios_base::failbit );
 			break;
 		}
@@ -184,7 +184,7 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 		data.clear( std::ios_base::eofbit );
 	}
 	if ( current_fragment ) {
-		tr.Error << "ERROR: read incomplete fragment at line" << next_line << std::endl;
+		tr.Error << "read incomplete fragment at line" << next_line << std::endl;
 		data.setstate( std::ios_base::failbit );
 	}
 }

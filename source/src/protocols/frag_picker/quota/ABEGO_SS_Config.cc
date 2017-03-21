@@ -86,7 +86,7 @@ ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(fi
 	trABEGO_SS_Config.Debug << "Loded data from "<<source_file_name_<<
 		" columns: "<<n_columns()<<" rows: " <<n_rows()<<std::endl;
 
-	assert( pool_defs_.size() == pool_names_.size() ); // the number of pool names doesn't mach pool definitions
+	debug_assert( pool_defs_.size() == pool_names_.size() ); // the number of pool names doesn't mach pool definitions
 }
 
 core::Real ABEGO_SS_Config::highest_probability(core::Size pos) {

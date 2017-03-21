@@ -132,7 +132,7 @@ MPI_WorkUnitManager::process_incoming_msgs( bool MPI_ONLY( wait_until_message ) 
 			// if we're here that means we got a work request - deal with that
 			// sanity check - this should absolutely be true here
 			if(  status.MPI_TAG != WUM_MPI_REQUEST_WU ){
-				TR.Error << "ERROR: status.MPI_TAG != WUM_MPI_REQUEST_WU" << std::endl;
+				TR.Error << "status.MPI_TAG != WUM_MPI_REQUEST_WU" << std::endl;
 				break;
 			}
 		  TR.Trace << "Someone requested work!" << std::endl;
@@ -259,7 +259,7 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 	start_timer( TIMING_CPU );
 
 	if( raw_data_ptr[size_of_raw_data-1] != 0){
-		TR.Error << "  ERROR: cannot load data - terminal zero not found!" << std::endl;
+		TR.Error << "cannot load data - terminal zero not found!" << std::endl;
 		return;
 	}
 

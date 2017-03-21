@@ -1727,7 +1727,7 @@ void FragmentPicker::set_up_ss_abego_quota() {
 			set_candidates_collector(frag_sizes_[f],collector, j);
 		}
 		core::Size middle = frag_sizes_[f] / 2 + 1;
-		assert( size_of_query() == q_config.size() ); // Test if the abego-ss table has the same size as the query sequence
+		debug_assert( size_of_query() == q_config.size() ); // Test if the abego-ss table has the same size as the query sequence
 		for ( core::Size j=1; j<=size_of_query()-frag_sizes_[f]+1; j++ ) {
 			tr.Debug<<"Creating "<<q_config.n_columns()<<" quota pools at pos "<<j<<std::endl;
 			for ( core::Size i=1; i<=q_config.n_columns(); i++ ) {

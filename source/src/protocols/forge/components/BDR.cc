@@ -416,7 +416,7 @@ bool BDR::design_refine(
 		if ( !di->second.empty() ) {
 			String const aa = core::pose::annotated_to_oneletter_sequence( di->second );
 
-			assert( original2modified_interval_endpoints.find( di->first.left ) != original2modified_interval_endpoints.end() );
+			debug_assert( original2modified_interval_endpoints.find( di->first.left ) != original2modified_interval_endpoints.end() );
 
 			if ( aa.find( SegmentInsert::insertion_char() ) != String::npos ) { // SegmentInsert style
 				process_insert_design_string( di->first, aa, original2modified_interval_endpoints, design_tf );

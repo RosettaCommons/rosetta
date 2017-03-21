@@ -528,7 +528,7 @@ HBondDatabase::initialize_HBEval()
 			buf >> cosBAH2_fade_name;
 			cosBAH2_fade = HBFadeInterval_from_name(cosBAH2_fade_name);
 			if ( cosBAH2_fade_lookup_[hbe_type] ) {
-				assert(cosBAH2_fade_lookup_[hbe_type] == cosBAH2_fade);
+				debug_assert(cosBAH2_fade_lookup_[hbe_type] == cosBAH2_fade);
 			} else {
 				cosBAH2_fade_lookup_[hbe_type] = cosBAH2_fade;
 			}
@@ -600,7 +600,7 @@ HBondDatabase::initialize_HBEval()
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a long-range cosAHD or AHD polynomial (i.e. geometric_dimension == hbgd_cosAHD or hbgd_AHD), but instead, found " + cosBAH2_poly_name + " of geometric dimension " + utility::to_string(cosBAH2_poly->geometric_dimension()) );
 			}
 			if ( cosBAH2_poly_lookup_[hbe_type] ) {
-				assert(cosBAH2_poly_lookup_[hbe_type] == cosBAH2_poly);
+				debug_assert(cosBAH2_poly_lookup_[hbe_type] == cosBAH2_poly);
 			} else {
 				cosBAH2_poly_lookup_[hbe_type] = cosBAH2_poly;
 			}

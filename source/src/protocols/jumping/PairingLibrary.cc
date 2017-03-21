@@ -452,7 +452,7 @@ PairingLibrary::get_random_tmh_jump(int const orientation,
 	int const pos2
 ) const
 {
-	assert( pairings_.size() > 0 );
+	debug_assert( pairings_.size() > 0 );
 
 	// key for looking up the template geometry:
 	std::pair<int,int> generic_key (orientation,0);
@@ -486,7 +486,7 @@ PairingLibrary::set_tmh_jump(core::pose::Pose pose,
 	int const pos2
 ) const
 {
-	assert( pairings_.size() > 0 );
+	debug_assert( pairings_.size() > 0 );
 
 	// key for looking up the template geometry:
 	std::pair<int,int> generic_key (orientation,0);

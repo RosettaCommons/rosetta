@@ -152,7 +152,7 @@ FastDensEnergy::setup_for_scoring(
 	}
 
 	if ( ! pose_is_setup_for_density_scoring( pose ) ) {
-		TR.Warning << "Warning! Fold tree is not set properly for density scoring!" << std::endl;
+		TR.Warning << "Fold tree is not set properly for density scoring!" << std::endl;
 		return;
 	}
 

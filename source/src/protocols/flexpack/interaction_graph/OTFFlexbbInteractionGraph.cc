@@ -194,11 +194,11 @@ OTFFlexbbEdge::compute_samebbconf_alternate_state_energy_first_node()
 	FlexbbSparseMatrixIndex const & altinfo0( nodes_alt_info(0));
 	FlexbbSparseMatrixIndex const & altinfo1( nodes_alt_info(1));
 
-	assert( nodes_cur_state(1) == nodes_alt_state(1) );
-	assert( nodes_cur_state(1) == get_flexbb_node(1)->current_state() );
-	assert( altinfo0.get_bb() == nodes_cur_info(0).get_bb() || nodes_cur_info(0).get_bb() == 0 );
-	assert( nodes_alt_state(0) == get_flexbb_node(0)->alternate_state() );
-	assert( !nodes_part_of_same_flexseg() || altinfo0.get_bb() == altinfo1.get_bb() || nodes_cur_state(0) == 0 || nodes_alt_state(1) == 0 );
+	debug_assert( nodes_cur_state(1) == nodes_alt_state(1) );
+	debug_assert( nodes_cur_state(1) == get_flexbb_node(1)->current_state() );
+	debug_assert( altinfo0.get_bb() == nodes_cur_info(0).get_bb() || nodes_cur_info(0).get_bb() == 0 );
+	debug_assert( nodes_alt_state(0) == get_flexbb_node(0)->alternate_state() );
+	debug_assert( !nodes_part_of_same_flexseg() || altinfo0.get_bb() == altinfo1.get_bb() || nodes_cur_state(0) == 0 || nodes_alt_state(1) == 0 );
 
 
 	if ( nodes_cur_state(1) == 0 || nodes_alt_state( 0 ) == 0 ) {
@@ -287,11 +287,11 @@ OTFFlexbbEdge::compute_samebbconf_alternate_state_energy_second_node()
 	FlexbbSparseMatrixIndex const & altinfo0( nodes_alt_info(0));
 	FlexbbSparseMatrixIndex const & altinfo1( nodes_alt_info(1));
 
-	assert( nodes_cur_state(0) == nodes_alt_state(0) );
-	assert( nodes_cur_state(0) == get_flexbb_node(0)->current_state() );
-	assert( altinfo1.get_bb() == nodes_cur_info(1).get_bb() || nodes_cur_info(1).get_bb() == 0 );
-	assert( nodes_alt_state(1) == get_flexbb_node(1)->alternate_state() );
-	assert( !nodes_part_of_same_flexseg() || altinfo0.get_bb() == altinfo1.get_bb() || nodes_cur_state(0) == 0 || nodes_alt_state(1) == 0 );
+	debug_assert( nodes_cur_state(0) == nodes_alt_state(0) );
+	debug_assert( nodes_cur_state(0) == get_flexbb_node(0)->current_state() );
+	debug_assert( altinfo1.get_bb() == nodes_cur_info(1).get_bb() || nodes_cur_info(1).get_bb() == 0 );
+	debug_assert( nodes_alt_state(1) == get_flexbb_node(1)->alternate_state() );
+	debug_assert( !nodes_part_of_same_flexseg() || altinfo0.get_bb() == altinfo1.get_bb() || nodes_cur_state(0) == 0 || nodes_alt_state(1) == 0 );
 
 	if ( nodes_cur_state(0) == 0 || nodes_alt_state(1) == 0 ) {
 		set_alt_energy( 0.0 );
@@ -379,8 +379,8 @@ OTFFlexbbEdge::compute_altbbconf_alternate_state_energy()
 	FlexbbSparseMatrixIndex const & altinfo0( nodes_alt_info(0));
 	FlexbbSparseMatrixIndex const & altinfo1( nodes_alt_info(1));
 
-	assert( nodes_alt_state(0) == get_flexbb_node(0)->alternate_state() );
-	assert( nodes_alt_state(1) == get_flexbb_node(1)->alternate_state() );
+	debug_assert( nodes_alt_state(0) == get_flexbb_node(0)->alternate_state() );
+	debug_assert( nodes_alt_state(1) == get_flexbb_node(1)->alternate_state() );
 
 
 	if ( nodes_alt_state( 0 ) == 0 || nodes_alt_state( 1 ) == 0 ) {
@@ -672,7 +672,7 @@ OTFFlexbbInteractionGraph::initialize(
 {
 	parent::initialize( rot_sets );
 
-	assert( get_num_nodes() == (int) rot_sets.nmoltenres() );
+	debug_assert( get_num_nodes() == (int) rot_sets.nmoltenres() );
 
 	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		int ii_rotoffset = rot_sets.nrotamer_offset_for_moltenres( ii );
@@ -739,7 +739,7 @@ OTFFlexbbInteractionGraph::count_dynamic_memory() const
 void
 OTFFlexbbInteractionGraph::set_pose( Pose const & pose )
 {
-	assert( get_num_edges() == 0 );
+	debug_assert( get_num_edges() == 0 );
 	pose_ = PoseOP( new Pose( pose ) );
 
 #ifdef DEBUG_OTF_FLEXBB_ENERGIES
@@ -755,12 +755,12 @@ OTFFlexbbInteractionGraph::set_pose( Pose const & pose )
 void
 OTFFlexbbInteractionGraph::set_scorefxn( ScoreFunction const & sfxn )
 {
-	assert( get_num_edges() == 0 );
+	debug_assert( get_num_edges() == 0 );
 	sfxn_ = sfxn.clone();
 
 #ifdef DEBUG_OTF_FLEXBB_ENERGIES
 	using namespace core::scoring;
-	assert( pose_ ); // context pose must be set before the score function.
+	debug_assert( pose_ ); // context pose must be set before the score function.
 
 	(*sfxn_)( *pose_ );
 
@@ -785,14 +785,14 @@ OTFFlexbbInteractionGraph::set_scorefxn( ScoreFunction const & sfxn )
 OTFFlexbbInteractionGraph::PoseCOP
 OTFFlexbbInteractionGraph::get_pose() const
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	return pose_;
 }
 
 OTFFlexbbInteractionGraph::ScoreFunctionCOP
 OTFFlexbbInteractionGraph::get_scorefxn() const
 {
-	assert( sfxn_ );
+	debug_assert( sfxn_ );
 	return sfxn_;
 }
 
@@ -1008,7 +1008,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 		static int count_bad( 0 );
 		alternate_pose_->dump_pdb( "BadPredDeltaE_" + utility::to_string( ++count_bad ) + "_alternate.pdb" );
 		current_pose_->dump_pdb( "BadPredDeltaE_" + utility::to_string( count_bad ) + "_current.pdb" );
-		assert( ! require_match ||  any_vertex_state_unassigned() || ! ( significant && large) );
+		debug_assert( ! require_match ||  any_vertex_state_unassigned() || ! ( significant && large) );
 		utility_exit_with_message( "Bad predicted deltaE" );
 	} else {
 		++n_correct_since_last_problem;

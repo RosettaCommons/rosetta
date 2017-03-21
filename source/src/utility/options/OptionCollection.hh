@@ -1466,13 +1466,10 @@ public: // Indexers
 		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION :
-			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
-			runtime_assert( false ); // Shouldn't get here
-			return *booleans_.begin(); // Keep compiler happy
+		case UNKNOWN_OPTION : // Joined with default case
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
-			runtime_assert( false ); // Shouldn't get here
+			utility_exit_with_message("Cannot handle option key type."); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
 		}
 
@@ -1535,12 +1532,10 @@ public: // Indexers
 		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION :
-			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
-			runtime_assert( false ); // Shouldn't get here
-			return *booleans_.begin(); // Keep compiler happy
+		case UNKNOWN_OPTION : //Joined with default case
 		default :
-			runtime_assert( false ); // Shouldn't get here
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			utility_exit_with_message("Cannot handle key type."); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
 		}
 		option->check_restricted_access(true);
@@ -2004,13 +1999,10 @@ public: // Indexers
 		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION :
-			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
-			runtime_assert( false ); // Shouldn't get here
-			return *booleans_.begin(); // Keep compiler happy
+		case UNKNOWN_OPTION : //Joined with default case
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
-			runtime_assert( false ); // Shouldn't get here
+			utility_exit_with_message("Cannot handle key type."); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
 		}
 
@@ -2073,12 +2065,10 @@ public: // Indexers
 		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION :
-			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
-			runtime_assert( false ); // Shouldn't get here
-			return *booleans_.begin(); // Keep compiler happy
+		case UNKNOWN_OPTION : //Joined with default case
 		default :
-			runtime_assert( false ); // Shouldn't get here
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			utility_exit_with_message("Cannot handle key type."); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
 		}
 		option->check_restricted_access(check_restricted_access);

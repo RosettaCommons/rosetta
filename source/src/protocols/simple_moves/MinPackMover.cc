@@ -195,11 +195,6 @@ MinPackMover::parse_my_tag(
 	Pose const & pose
 )
 {
-	if ( tag->getName() != "MinPackMover" ) {
-		TR(t_warning) << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	parse_score_function( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
 

@@ -98,10 +98,10 @@ CalculatorFilter::add_constant( std::string name, core::Real value ) {
 
 core::Real
 CalculatorFilter::compute(core::pose::Pose const & pose) const {
-	assert(calc_);
+	debug_assert(calc_);
 	std::map< std::string, core::Real > vars(values_);
 	for ( auto iter(filters_.begin()); iter != filters_.end(); ++iter ) {
-		assert(iter->second);
+		debug_assert(iter->second);
 		vars[ iter->first ] = (iter->second)->report_sm( pose );
 	}
 	numeric::Real value(999999);

@@ -192,7 +192,7 @@ get_sugar_pucker(
 
 	/// hack to 0->9
 	pucker.second += 4;
-	assert( pucker.second >= 0 && pucker.second <= 9 );
+	debug_assert( pucker.second >= 0 && pucker.second <= 9 );
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 void

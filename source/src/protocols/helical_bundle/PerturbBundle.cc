@@ -292,7 +292,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_r0()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set r0 perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The r0_perturbation_type option was specified, but without an r0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The r0_perturbation_type option was specified, but without an r0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 
@@ -310,7 +310,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_omega0()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set omega0 perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The omega0_perturbation_type option was specified, but without an omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The omega0_perturbation_type option was specified, but without an omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 
@@ -328,7 +328,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_delta_omega0()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set delta_omega0 perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The delta_omega0_perturbation_type option was specified, but without an delta_omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The delta_omega0_perturbation_type option was specified, but without an delta_omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 
@@ -346,7 +346,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_delta_omega1()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set delta_omega1 perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The delta_omega1_perturbation_type option was specified, but without an delta_omega1_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The delta_omega1_perturbation_type option was specified, but without an delta_omega1_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 
@@ -364,7 +364,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_delta_t()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set delta_t perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The delta_t_perturbation_type option was specified, but without an delta_t_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The delta_t_perturbation_type option was specified, but without an delta_t_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 	if ( tag->hasOption("z1_offset_perturbation") ) {
@@ -381,7 +381,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_z1_offset()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set z1_offset perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The z1_offset_perturbation_type option was specified, but without an z1_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The z1_offset_perturbation_type option was specified, but without an z1_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 	if ( tag->hasOption("z0_offset_perturbation") ) {
@@ -398,7 +398,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_z0_offset()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set z0_offset perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The z0_offset_perturbation_type option was specified, but without an z0_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The z0_offset_perturbation_type option was specified, but without an z0_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 	if ( tag->hasOption("epsilon_perturbation") ) {
@@ -415,7 +415,7 @@ PerturbBundle::parse_my_tag(
 			else if ( perttype=="uniform" ) default_epsilon()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Set epsilon perturbation type to " << perttype << "." << std::endl;
 		} else {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The epsilon_perturbation_type option was specified, but without an epsilon_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "The epsilon_perturbation_type option was specified, but without an epsilon_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
 
@@ -455,7 +455,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set r0 perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The r0_perturbation_type option was specified for helix " << helix_index << ", but without an r0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The r0_perturbation_type option was specified for helix " << helix_index << ", but without an r0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}
@@ -499,7 +499,7 @@ PerturbBundle::parse_my_tag(
 							if ( TR.visible() ) TR << "Set omega0 perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 						} else {
 							if ( TR.Warning.visible() ) {
-								TR.Warning << "Warning!  The omega0_perturbation_type option was specified for helix " << helix_index << ", but without an omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+								TR.Warning << "The omega0_perturbation_type option was specified for helix " << helix_index << ", but without an omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 							}
 						}
 					}
@@ -530,7 +530,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set delta_omega0 perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The delta_omega0_perturbation_type option was specified for helix " << helix_index << ", but without an delta_omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The delta_omega0_perturbation_type option was specified for helix " << helix_index << ", but without an delta_omega0_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}
@@ -560,7 +560,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set delta_omega1 perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The delta_omega1_perturbation_type option was specified for helix " << helix_index << ", but without an delta_omega1_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The delta_omega1_perturbation_type option was specified for helix " << helix_index << ", but without an delta_omega1_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}
@@ -590,7 +590,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set delta_t perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The delta_t_perturbation_type option was specified for helix " << helix_index << ", but without an delta_t_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The delta_t_perturbation_type option was specified for helix " << helix_index << ", but without an delta_t_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}
@@ -620,7 +620,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set z1_offset perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The z1_offset_perturbation_type option was specified for helix " << helix_index << ", but without an z1_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The z1_offset_perturbation_type option was specified for helix " << helix_index << ", but without an z1_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}
@@ -650,7 +650,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set z0_offset perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The z0_offset_perturbation_type option was specified for helix " << helix_index << ", but without an z0_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The z0_offset_perturbation_type option was specified for helix " << helix_index << ", but without an z0_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}
@@ -680,7 +680,7 @@ PerturbBundle::parse_my_tag(
 						if ( TR.visible() ) TR << "Set epsilon perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
 					} else {
 						if ( TR.Warning.visible() ) {
-							TR.Warning << "Warning!  The epsilon_perturbation_type option was specified for helix " << helix_index << ", but without an epsilon_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+							TR.Warning << "The epsilon_perturbation_type option was specified for helix " << helix_index << ", but without an epsilon_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 						}
 					}
 				}

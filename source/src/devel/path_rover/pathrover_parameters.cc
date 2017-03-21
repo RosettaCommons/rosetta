@@ -106,7 +106,7 @@ Params_handler::Params_handler(std::string fname)
 			line_stream >> type;
 			std::istringstream line_stream_noupper(line); // reprocess line "PDB TYPE <pdb_path>"
 			line_stream_noupper >> tmp >> tmp >> pdb_path;
-			assert((type == "SRC" || type == "TRG" || type == "TRG_PARTIAL" ));
+			debug_assert((type == "SRC" || type == "TRG" || type == "TRG_PARTIAL" ));
 			this->pdbs[type] = pdb_path;
             if (type == "TRG_PARTIAL") partial_target_available = true;
             if (type == "TRG") full_target_available = true;
@@ -121,14 +121,14 @@ Params_handler::Params_handler(std::string fname)
 		else if (tag == "ALGORITHM"){
 			// "ALGORITHM <algo_name>"
 			line_stream >> this->algo_name;
-			assert((algo_name == "SINGLE_TREE") ||
+			debug_assert((algo_name == "SINGLE_TREE") ||
 					(algo_name == "BI_TREE") ||
 					(algo_name == "RRT_PARTIAL_TARGET_INFO"));
 		}
 		else if (tag == "ENERGY_FUNC" ){
 			// "ENERGY_FUNC <func_name>" // TODO: separate FA from Centroid function? several choices?
 			line_stream >> this->energy_func_name;
-			assert(energy_func_name == "SCORE12" ||
+			debug_assert(energy_func_name == "SCORE12" ||
 					energy_func_name == "SCORE12_PATHWAYS" ||
 					energy_func_name == "SCORE4" ||
 					energy_func_name == "SCORE_PATHWAY_CENTROID" ||
@@ -209,7 +209,7 @@ Params_handler::Params_handler(std::string fname)
 		else if(tag == "FULL_ATOM"){
 			std::string fa_string;
 			line_stream >> fa_string;
-			assert(fa_string == "TRUE" || fa_string == "T" || fa_string == "1" ||
+			debug_assert(fa_string == "TRUE" || fa_string == "T" || fa_string == "1" ||
 					fa_string == "FALSE" || fa_string == "F" || fa_string == "0" );
 			this->full_atom = (fa_string == "TRUE" || fa_string == "T" || fa_string == "1");
 			std::cout << "*** Full-Atom mode: " << full_atom << std::endl;

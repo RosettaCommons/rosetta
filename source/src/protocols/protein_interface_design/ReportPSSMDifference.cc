@@ -59,7 +59,7 @@ protocols::protein_interface_design::ReportPSSMDifferences::load_pssm_data(
 			sum += pssm_prob_dist[ ii ];
 		}
 		if ( std::abs( sum - 1 ) > 0.001 ) {
-			TR << "Warning: pssm probability distribution does not sum to 1.0: " << sum << std::endl;
+			TR.Warning << "pssm probability distribution does not sum to 1.0: " << sum << std::endl;
 			TR << "Problem on line " << linenum << " of " << pssm_file_name << std::endl;
 		}
 		pssm_data_.push_back( std::make_pair( aa, pssm_prob_dist ));
@@ -90,7 +90,7 @@ protocols::protein_interface_design::ReportPSSMDifferences::calculate(
 			if ( pssm_data_[i].first == restype ) {
 				pssm += pssm_data_[i].second[ restype ];
 			} else {
-				TR << "Warning: No pssm data found. Falling back on Sequence comparison." << std::endl;
+				TR.Warning << "No pssm data found. Falling back on Sequence comparison." << std::endl;
 				if ( pose1.residue(i).aa() ==  pose2.residue(i).aa() ) {
 					pssm += 1.;
 				}

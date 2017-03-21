@@ -103,7 +103,7 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 			TR.Debug << "found disulfide residue " << i << ", preventing repack at this position" << std::endl;
 			task.nonconst_residue_task( i ).prevent_repacking();
 		} else {
-			TR.Warning << "WARNING: residue " << i << " marked as disulfide but has no partner, allowing repack at this position" << std::endl;
+			TR.Warning << "residue " << i << " marked as disulfide but has no partner, allowing repack at this position" << std::endl;
 		}
 
 	} // foreach residue

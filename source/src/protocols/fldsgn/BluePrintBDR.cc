@@ -655,8 +655,8 @@ BluePrintBDR::parse_my_tag(
 {
 	String const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if ( blueprint == "" ) {
-		TR << "No input of blueprint file ! " << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "No input of blueprint file ! " << std::endl;
+		utility_exit_with_message("Missing blueprint file.");
 	}
 	set_blueprint( blueprint );
 
@@ -704,7 +704,7 @@ BluePrintBDR::parse_my_tag(
 		if ( mover_names[i] == "" ) continue;
 		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], movers );
 		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
-		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
+		debug_assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
 		protocols::forge::remodel::RemodelConstraintGeneratorOP rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
 		rcgs_.push_back( rcg );
 		TR << "Added RCG " << mover_names[i] << std::endl;

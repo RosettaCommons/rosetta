@@ -133,13 +133,13 @@ RNA_VDW_Energy::residue_pair_energy(
 		if ( rsd1.is_protein() ) {
 			bool is_centroid = rsd1.type().mode() == core::chemical::CENTROID_t;
 			if ( !is_centroid && !use_actual_centroid ) {
-				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
+				//tr.Warning << "rnp vdw energy not computed b/c protein is not centroid" << std::endl;
 				return;
 			}
 		} else {
 			bool is_centroid = rsd2.type().mode() == core::chemical::CENTROID_t;
 			if ( !is_centroid && !use_actual_centroid ) {
-				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
+				//tr.Warning << "rnp vdw energy not computed b/c protein is not centroid" << std::endl;
 				return;
 			}
 		}

@@ -269,7 +269,7 @@ core::Size load_loops_from_file(
 
 		} else {
 			// error message
-			TR.Error << "ERROR: too few columns in line of ufv_loops file: " << line << std::endl;
+			TR.Error << "too few columns in line of ufv_loops file: " << line << std::endl;
 			std::exit( 1 );
 		}
 	}

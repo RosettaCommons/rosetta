@@ -962,11 +962,11 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	auto  find_mover ( movers.find( user_defined_mover_name_ ));
 	auto find_filter( filters.find( filter_name ));
 	if ( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
-		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
+		TR.Error << "mover not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
 	if ( find_filter == filters.end() ) {
-		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
+		TR.Error << "filter not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
 	if ( user_defined_mover_name_ != "" ) {
@@ -1020,7 +1020,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 				String const filter_name( ftag->getOption< String >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
-					TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
+					TR.Error << "filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
 				}
 				Real const temp( ftag->getOption< Real >( "temperature", 1 ) );
@@ -1029,10 +1029,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 				bool const rank( ftag->getOption< bool >( "rank", false ) );
 				if ( rank ) {
 					if ( rank_by_filter_ != 1 ) {
-						TR.Warning << "WARNING Multiple filters set to rank! Using most recent (currently "<< filter_name << ")." << std::endl;
+						TR.Warning << "Multiple filters set to rank! Using most recent (currently "<< filter_name << ")." << std::endl;
 					}
 					if ( boltz_rank_ ) {
-						TR.Warning << "WARNING Setting of rank on sub-filter "<< filter_name << " will be ignored as parent is set to Boltzmann rank all." << std::endl;
+						TR.Warning << "Setting of rank on sub-filter "<< filter_name << " will be ignored as parent is set to Boltzmann rank all." << std::endl;
 					}
 				}
 				add_filter( find_filt->second, adap, temp, samp_type, rank );

@@ -126,7 +126,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	}
 
 	CreatorMap::const_iterator entry(creator_map_.find( type ) );
-	assert( entry != creator_map_.end() );
+	debug_assert( entry != creator_map_.end() );
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
 
 	// Some creators (e.g. Dunbrack for Gly/Ala) will return empty residue library pointers
@@ -161,7 +161,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	}
 	std::string type( type_for_residuetype( restype ) );
 	CreatorMap::const_iterator entry(creator_map_.find( type ) );
-	assert( entry != creator_map_.end() );
+	debug_assert( entry != creator_map_.end() );
 	return entry->second->create( restype, residue );
 }
 

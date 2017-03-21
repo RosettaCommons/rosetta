@@ -535,7 +535,7 @@ remap_names_on_geometry( NameBimap & mapping,
 	}
 
 	if ( best_score == no_match_found_score ) {
-		TR.Error << "ERROR: Difficulties mapping atom names from geometry for " << rinfo.resName() << " " << rinfo.chainID() << rinfo.resSeq()
+		TR.Error << "Difficulties mapping atom names from geometry for " << rinfo.resName() << " " << rinfo.chainID() << rinfo.resSeq()
 			<< rinfo.iCode() << " onto " << rsd_type.name() << std::endl;
 		utility_exit_with_message("Can't find good mapping between input residue and residue type.");
 	}

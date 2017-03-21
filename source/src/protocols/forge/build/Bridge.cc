@@ -63,7 +63,7 @@ Bridge::Bridge(
 		aa_ = String( ss_.length(), 'A' );
 	}
 
-	assert( ss_.length() == core::pose::annotated_to_oneletter_sequence( aa_ ).length() );
+	debug_assert( ss_.length() == core::pose::annotated_to_oneletter_sequence( aa_ ).length() );
 }
 
 
@@ -90,7 +90,7 @@ Bridge::Bridge(
 		aa_ = String( ss_.length(), 'A' );
 	}
 
-	assert( ss_.length() == core::pose::annotated_to_oneletter_sequence( aa_ ).length() );
+	debug_assert( ss_.length() == core::pose::annotated_to_oneletter_sequence( aa_ ).length() );
 }
 
 

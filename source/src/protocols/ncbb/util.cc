@@ -410,7 +410,7 @@ setup_pert_foldtree(
 	// set pose foldtree to foldtree we just created
 	f.reorder(1);
 	f.check_fold_tree();
-	assert( f.check_fold_tree() );
+	debug_assert( f.check_fold_tree() );
 
 	std::cout << "AFTER: " << f << std::endl;
 

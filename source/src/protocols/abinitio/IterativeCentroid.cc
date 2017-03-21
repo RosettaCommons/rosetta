@@ -124,7 +124,7 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 	//   try { //read structures
 	//    sfd._read_file( it->first, it->second, true /*throw exceptions */ );
 	//    if ( sfd.size() > it->second.size() ) {
-	//     tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
+	//     tr.Warning << "multiple decoys with same tag detected in file " << it->first << std::endl;
 	//    }
 	//    //copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
 	//    for ( core::io::silent::SilentFileData::iterator sit = sfd.begin(); sit != sfd.end(); ++sit ) {
@@ -135,7 +135,7 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 	//    }
 	//    ct_read += sfd.size();
 	//   } catch ( utility::excn::EXCN_IO& excn ) { //ERROR
-	//    tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
+	//    tr.Warning << "Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
 	//    excn.show( tr.Warning );
 	//    tr.Warning << std::endl;
 	//    tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
@@ -147,7 +147,7 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 	//  tr.Debug << "structures from pool" << ct_in << " structure retrieved from " << alternative_decoy_file << "-files "
 	//       << ct_read << " start structs: " << output_decoys.size() << std::endl;
 	//  if ( output_decoys.size() != primary_decoys.size() ) {
-	//   tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
+	//   tr.Warning << "why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
 	//  }
 }
 
@@ -229,7 +229,7 @@ void IterativeCentroid::add_structure_at_position (
 				++it1;
 				++it2;
 			}
-			runtime_assert( false );
+			utility_exit_with_message("Inconsistency in silent structure lists.");
 		}
 		++it1;
 		++it2;

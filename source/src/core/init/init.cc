@@ -878,7 +878,7 @@ void check_deprecated_flags(){
 	if ( error_messages.size() > 0 ) {
 		utility::vector1<std::string>::const_iterator error_it;
 		for ( error_it = error_messages.begin(); error_it != error_messages.end(); ++error_it ) {
-			TR.Fatal << "ERROR: You have specified one or more deprecated flags:" <<std::endl;
+			TR.Fatal << "You have specified one or more deprecated flags:" <<std::endl;
 			TR.Fatal << *error_it <<std::endl;
 		}
 		std::exit(1);
@@ -980,7 +980,7 @@ init_random_number_generators(){
 			HCRYPTPROV hCryptProv = 0;
 
 			if ( !CryptAcquireContext( &hCryptProv, key_container_name.str().c_str(), NULL, PROV_RSA_AES, CRYPT_NEWKEYSET ) ) {
-				TR.Fatal << "FATAL: CryptAcquireContext unable to acquire cryptographic provider!" << std::endl;
+				TR.Fatal << "CryptAcquireContext unable to acquire cryptographic provider!" << std::endl;
 				TR.Fatal << std::hex << GetLastError() << std::endl;
 				std::exit( 1 );
 			}
@@ -988,7 +988,7 @@ init_random_number_generators(){
 			// grab the random number seed from CryptGenRandom
 			BYTE pbData[ 4 ];
 			if ( !CryptGenRandom( hCryptProv, 4, pbData ) ) {
-				TR.Fatal << "FATAL: Unable to obtain random number seed using CryptGenRandom!" << std::endl;
+				TR.Fatal << "Unable to obtain random number seed using CryptGenRandom!" << std::endl;
 				TR.Fatal << std::hex << GetLastError() << std::endl;
 				std::exit( 1 );
 			}
@@ -998,14 +998,14 @@ init_random_number_generators(){
 
 			// release cryptographic provider handle
 			if ( !CryptReleaseContext( hCryptProv, 0 ) ) {
-				TR.Fatal << "FATAL: CryptReleaseContext failed to release cryptographic provider!" << std::endl;
+				TR.Fatal << "CryptReleaseContext failed to release cryptographic provider!" << std::endl;
 				TR.Fatal << std::hex << GetLastError() << std::endl;
 				std::exit( 1 );
 			}
 
 			// delete key container
 			if ( !CryptAcquireContext( &hCryptProv, key_container_name.str().c_str(), NULL, PROV_RSA_AES, CRYPT_DELETEKEYSET ) ) {
-				TR.Fatal << "FATAL: CryptAcquireContext failed to delete key container!" << std::endl;
+				TR.Fatal << "CryptAcquireContext failed to delete key container!" << std::endl;
 				TR.Fatal << std::hex << GetLastError() << std::endl;
 				std::exit( 1 );
 			}

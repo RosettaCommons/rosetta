@@ -500,7 +500,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	//input_pose->dump_pdb(input_jobs[jobnum]->output_tag(0) + "_postidealizesc.pdb");
 	if ( sc_prob_ && sidechainmover_->packed_residues().size() == 0 ) {
 		sc_prob_ = 0;
-		TR << "Warning: No side chains to move. Not using SidechainMover." << std::endl;
+		TR.Warning << "No side chains to move. Not using SidechainMover." << std::endl;
 	}
 
 	TR << "Score After Branch Angle Optimization/Side Chain Idealization:" << std::endl;

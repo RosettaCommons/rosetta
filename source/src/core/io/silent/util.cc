@@ -124,7 +124,7 @@ get_outfile_name_with_tag( std::string const & silent_file, std::string const & 
 void
 remove_silent_file_if_it_exists( std::string const & silent_file){
 	if ( utility::file::file_exists( silent_file ) ) {
-		tr<< tr.Red << "WARNING: silent_file " << silent_file << " already exists! removing..." << tr.Reset << std::endl;
+		tr.Warning << tr.Red << "silent_file " << silent_file << " already exists! removing..." << tr.Reset << std::endl;
 		runtime_assert( std::remove( silent_file.c_str() ) == 0 );
 	}
 }

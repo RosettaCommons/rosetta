@@ -490,7 +490,7 @@ get_pdb_code_from_pose_tag( core::pose::Pose const & pose ){
 	}
 
 	if ( pdb_matches.size() > 1 ) {
-		tr << "WARNING WARNING: in tag " << outtag << ", more than 1 pdbcode like pattern has been identified. assuming the first one (" << pdb_matches[1] << ") is the correct one." << std::endl;
+		tr.Warning << "in tag " << outtag << ", more than 1 pdbcode like pattern has been identified. assuming the first one (" << pdb_matches[1] << ") is the correct one." << std::endl;
 	}
 
 	return pdb_matches[1];

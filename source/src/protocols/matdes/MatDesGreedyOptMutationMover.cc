@@ -479,11 +479,11 @@ calc_pareto_front_nbrs(
 	vector1< bool > & is_pfront_nbr,
 	vector1< Real > const & nbr_dist
 ){
-	assert( coords.size() == is_pfront.size() );
+	debug_assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
 	Size n( coords.size() );
 	Size d( coords[ 1 ].size() );
-	assert( nbr_dist.size() == d );
+	debug_assert( nbr_dist.size() == d );
 	//for non pfront points
 	for ( Size inp = 1; inp <= n; ++inp ) {
 		//init possible nbr to false
@@ -531,11 +531,11 @@ calc_pareto_front(
 	bool const div,
 	bool const incl_nbrs
 ){
-	assert( coords.size() == is_pfront.size() );
+	debug_assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
 	Size n( coords.size() );
 	Size d( coords[ 1 ].size() );
-	assert( coord_perts.size() == d );
+	debug_assert( coord_perts.size() == d );
 	//randomly offset values by jiggle-factors defined in filter_deltas?
 	if ( div ) {
 		for ( Size i = 1; i <= n; ++i ) {
@@ -646,7 +646,7 @@ MatDesGreedyOptMutationMover::dump_scoring_table( std::string filename, core::po
 		}
 		outtable << std::endl; // Blank line at end to seperate.
 	} else {
-		TR.Warning << "WARNING: Unable to open file " << filename << " for writing MatDesGreedyOptMutationMover table output." << std::endl;
+		TR.Warning << "Unable to open file " << filename << " for writing MatDesGreedyOptMutationMover table output." << std::endl;
 	}
 	outtable.close();
 }
@@ -686,8 +686,8 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 		//get the point mut values
 		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_vals_vec_ );
 		if ( seqpos_aa_vals_vec_.size() < 1 ) {
-			TR.Warning << "WARNING: No acceptable mutations found. All possible mutations failed at least one filter!" << std::endl;
-			TR.Warning << "WARNING: Exiting MatDesGreedyOptMutationMover early." << std::endl;
+			TR.Warning << "No acceptable mutations found. All possible mutations failed at least one filter!" << std::endl;
+			TR.Warning << "Exiting MatDesGreedyOptMutationMover early." << std::endl;
 			TR.flush();
 			return;
 		}
@@ -748,9 +748,9 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 		// 2) Optionally reset baselines for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the new apply pose). Doesn't make sense if more than one pose.
 		//Else if stop_before_condition() is set to true, then store a copy of the current pfront_poses_ in case any of the subsequent pareto opt mutations trigger the stop condition.
 		if ( filters_.size() == 1 ) {
-			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
+			debug_assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 			filter_pareto_opt_poses();
-			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
+			debug_assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 			prev_pfront_poses = pfront_poses_;
 			//First mutation accepted. Update tasks and delta_filter_baselines.
 			if ( force_natro_ ) {
@@ -819,9 +819,9 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 				}
 			}
 			//filter new_poses for the pareto opt set. Note: During greedy opt this will simply compare the new poses that passed the filter to the previous single best pose, and then set pfront_poses_ to be whichever pose is best.
-			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
+			debug_assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 			filter_pareto_opt_poses();
-			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
+			debug_assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 
 			bool stop( false );
 			for ( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ) {
@@ -971,7 +971,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
-					TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
+					TR.Error << "filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
 				}
 				std::string const samp_type( ftag->getOption< std::string >( "sample_type", "low" ));

@@ -233,7 +233,7 @@ void ThreadingMover::apply(
 		}
 
 		if ( t_resi > template_pose_.size() ) {
-			tr.Error << "Error: don't have residue " << t_resi
+			tr.Error << "Don't have residue " << t_resi
 				<< " in template_pose!" << std::endl;
 
 			tr.Error << "template_pose.size() == "

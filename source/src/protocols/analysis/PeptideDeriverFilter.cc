@@ -518,13 +518,13 @@ void PeptideDeriverFilter::parse_options() {
 	utility::vector1<char> restrict_receptors_to_chains;
 
 	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]() ) {
-		assert(chain_string.size() == 1);
+		debug_assert(chain_string.size() == 1);
 		restrict_receptors_to_chains.push_back(chain_string[0]);
 	}
 
 	utility::vector1<char> restrict_partners_to_chains;
 	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]() ) {
-		assert(chain_string.size() == 1);
+		debug_assert(chain_string.size() == 1);
 		restrict_partners_to_chains.push_back(chain_string[0]);
 	}
 

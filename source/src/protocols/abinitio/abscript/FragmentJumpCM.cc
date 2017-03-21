@@ -130,7 +130,7 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 
 		set_topology( ss_info_file, pairing_file, n_sheets, bRandomSheets );
 	} else if ( !tag->getOption< bool >( "restart_only", false ) ) {
-		tr.Error << "[ERROR] Parsing problem in FragmentJumpCM: "
+		tr.Error << "Parsing problem in FragmentJumpCM: "
 			<< " option set not compatible. Valid sets are 'topol_file' "
 			<< " or 'ss_info', 'pairing_file', and 'n_sheets'." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( "FragmentJumpCM incompatible options." );
@@ -173,7 +173,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 
 		for ( WriteableCacheableDataOP data_ptr : data_set ) {
 			JumpSampleDataOP jumpdata_ptr = utility::pointer::dynamic_pointer_cast< protocols::abinitio::abscript::JumpSampleData > ( data_ptr );
-			assert( jumpdata_ptr );
+			debug_assert( jumpdata_ptr );
 
 			if ( jumpdata_ptr->moverkey() == moverkey() ) {
 				tr.Debug << "Found JumpSampleOP in cache with key '" << moverkey() << "'" << std::endl;
@@ -200,7 +200,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 		// called for each to fold tree get random jumps from top file.
 		jump_sample = calculate_jump_sample();
 	} catch ( ... ) {
-		tr.Error << "[ERROR] " << get_name() << " failed to generate a jump sample from fragments. "
+		tr.Error << get_name() << " failed to generate a jump sample from fragments. "
 			<< "Were you expecting JumpSampleData in the input file? No fitting data was found."
 			<< std::endl;
 		throw;
@@ -271,7 +271,7 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 	core::Size const& n_sheets,
 	bool bRandomSheets ) {
 	if ( mover() ) {
-		tr.Warning << "[WARNING] internal ClassicFragmentMover overwritten during FragmentJumpCM::process_topology_file call." << std::endl;
+		tr.Warning << "internal ClassicFragmentMover overwritten during FragmentJumpCM::process_topology_file call." << std::endl;
 	}
 
 	jumping::SheetBuilder::SheetTopology sheets;
@@ -308,7 +308,7 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 
 	if ( mover() ) {
-		tr.Warning << "[WARNING] internal ClassicFragmentMover overwritten during FragmentJumpCM::process_topology_file call."
+		tr.Warning << "internal ClassicFragmentMover overwritten during FragmentJumpCM::process_topology_file call."
 			<< std::endl;
 	}
 
@@ -367,7 +367,7 @@ jumping::JumpSample FragmentJumpCM::calculate_jump_sample() const {
 	jumping::JumpSample jump_sample;
 
 	if ( !jump_def_ ) {
-		tr.Error << "[ERROR]" << get_name() << " tried to make jumps but couldn't because no "
+		tr.Error << get_name() << " tried to make jumps but couldn't because no "
 			<< "(appropriate) JumpSampleData was cached in the pose and no topology information was "
 			<< "provided through parse_my_tag." << std::endl;
 		throw utility::excn::EXCN_BadInput( "FragmentJumpCM requires, but did not have, a JumpSample." );

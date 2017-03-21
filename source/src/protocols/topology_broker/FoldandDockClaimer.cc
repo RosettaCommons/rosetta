@@ -119,7 +119,7 @@ void FoldandDockClaimer::initialize_dofs(
 	setup_mover->slide_into_contact(true);
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
 		setup_mover->apply( pose ); // calls SymDockingInitialPerturbation
-		assert( core::pose::symmetry::is_symmetric( pose ) );
+		debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 		// Save the pose into input pose
 		input_pose_ = pose;
 	} else {

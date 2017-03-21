@@ -120,7 +120,7 @@ BluePrint::sequence() const
 char
 BluePrint::sequence( core::Size seqpos ) const
 {
-	assert( seqpos >= 1 );
+	debug_assert( seqpos >= 1 );
 	return resname_[ seqpos ];
 }
 
@@ -151,7 +151,7 @@ BluePrint::abego( core::Size seqpos ) const
 char
 BluePrint::secstruct( core::Size seqpos ) const
 {
-	assert( seqpos >= 1 && seqpos <= buildtype_.size() );
+	debug_assert( seqpos >= 1 && seqpos <= buildtype_.size() );
 	return sstype_[ seqpos ];
 }
 
@@ -160,7 +160,7 @@ BluePrint::secstruct( core::Size seqpos ) const
 BluePrint::Size
 BluePrint::resnum( core::Size seqpos ) const
 {
-	assert( seqpos >= 1 && seqpos <= buildtype_.size() );
+	debug_assert( seqpos >= 1 && seqpos <= buildtype_.size() );
 	return resnum_[ seqpos ];
 }
 
@@ -184,7 +184,7 @@ BluePrint::resnum_map( Size resnum_pose ) const
 char
 BluePrint::buildtype( core::Size seqpos ) const
 {
-	assert( seqpos >= 1 && seqpos <= buildtype_.size() );
+	debug_assert( seqpos >= 1 && seqpos <= buildtype_.size() );
 	return buildtype_[ seqpos ];
 }
 
@@ -203,7 +203,7 @@ BluePrint::extra( core::Size seqpos ) const
 BluePrint::String
 BluePrint::insertion( core::Size i ) const
 {
-	assert( i <= insertion_.size() && i > 0 );
+	debug_assert( i <= insertion_.size() && i > 0 );
 	return insertion_[ i ];
 }
 
@@ -367,9 +367,9 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 		}// tokens.size() == 2 || tokens.size() == 3
 	} // while ( getline )
 
-	assert( resname_.size() == sstype_.size() );
+	debug_assert( resname_.size() == sstype_.size() );
 	total_residue_ = sstype_.size();
-	assert( total_residue_ > 0 );
+	debug_assert( total_residue_ > 0 );
 
 	total_residue_wolig_ = 0;
 	for ( Size ii=1; ii<=total_residue(); ii++ ) {

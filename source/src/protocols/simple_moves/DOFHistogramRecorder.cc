@@ -23,6 +23,8 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
 
+#include <basic/Tracer.hh>
+
 // External library headers
 
 // C++ headers
@@ -44,25 +46,13 @@
 namespace protocols {
 namespace simple_moves {
 
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DOFHistogramRecorder" );
+
 DOFHistogramRecorder::DOFHistogramRecorder() :
 	num_bins_(10)
 {}
 
 DOFHistogramRecorder::~DOFHistogramRecorder() = default;
-
-DOFHistogramRecorder::DOFHistogramRecorder( DOFHistogramRecorder const & /* other */ )
-{
-	// copy constructor not allowed
-	runtime_assert(false);
-}
-
-DOFHistogramRecorder&
-DOFHistogramRecorder::operator=( DOFHistogramRecorder const & /* other */ )
-{
-	// assignment not allowed
-	runtime_assert(false);
-	return * this;
-}
 
 void
 DOFHistogramRecorder::insert_dofs_by_residue(
@@ -218,7 +208,8 @@ uniform_dof_distribution(
 
 	} else {
 		// nothing else supported yet
-		runtime_assert(false);
+		TR.Fatal << "DOF Type " << dof_type << " not currently supported in uniform_dof_distribution() " << std::endl;
+		utility_exit_with_message("Unsupported DOF type.");
 	}
 
 	return frequencies;

@@ -55,7 +55,7 @@ SequenceNumberResolver::offset( std::string const& label ) const {
 
 	if ( p != offset_map_.end() ) { return p->second; }
 	else if ( label == "" ) {
-		tr.Warning << "Warning: Attempting to resolve a sequence number with an empty claim label - assuming zero offset." << std::endl;
+		tr.Warning << "Attempting to resolve a sequence number with an empty claim label - assuming zero offset." << std::endl;
 		return 0;
 	} else {
 		throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"

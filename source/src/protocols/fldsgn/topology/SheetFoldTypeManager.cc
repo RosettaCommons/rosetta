@@ -106,7 +106,7 @@ SheetFoldTypeManager::setup_foldtype_names()
 
 	name2foldtype_[ "UNKNOWN" ] = UNKNOWN;
 
-	assert( name2foldtype_.size() == n_fold_types );
+	debug_assert( name2foldtype_.size() == n_fold_types );
 
 	foldtype2name_.resize( n_fold_types );
 
@@ -204,7 +204,7 @@ SheetFoldTypeManager::setup_foldtype_strand_pairings()
 
 	spairs2foldtype_[ "UNKNOWN" ] = UNKNOWN;
 
-	assert( spairs2foldtype_.size() == n_fold_types );
+	debug_assert( spairs2foldtype_.size() == n_fold_types );
 
 	foldtype2spairs_.resize( n_fold_types );
 

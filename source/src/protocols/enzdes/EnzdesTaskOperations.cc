@@ -377,7 +377,7 @@ void DetectProteinLigandInterface::apply(
 			if ( cut2 < cut1 ) { cut2 = cut1; }
 			if ( cut3 < cut2 ) { cut3 = cut2; }
 			if ( cut4 < cut3 ) { cut4 = cut3; }
-			tr.Warning << "WARNING: detect design interface cutpoints should be in ascending order. Was " << cut1_ << " " << cut2_ << " " << cut3_ << " " << cut4_ << "; Reset to " << cut1 << " " << cut2 << " " << cut3 << " " << cut4 << std::endl;
+			tr.Warning << "detect design interface cutpoints should be in ascending order. Was " << cut1_ << " " << cut2_ << " " << cut3_ << " " << cut4_ << "; Reset to " << cut1 << " " << cut2 << " " << cut3 << " " << cut4 << std::endl;
 		}
 		if ( !design_ ) {
 			cut1 = 0.0;

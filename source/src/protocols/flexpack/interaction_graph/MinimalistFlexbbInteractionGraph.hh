@@ -409,12 +409,12 @@ MinimalistFlexbbInteractionGraph::find_minimalist_flexbb_edge( int node1, int no
 inline
 MinimalistFlexbbEdge const *
 MinimalistFlexbbInteractionGraph::cast_minimalist_flexbb_edge( EdgeBase const * edge ) const
-{ assert( mine( edge ) ); return static_cast< MinimalistFlexbbEdge const * > ( edge ); }
+{ debug_assert( mine( edge ) ); return static_cast< MinimalistFlexbbEdge const * > ( edge ); }
 
 inline
 MinimalistFlexbbEdge *
 MinimalistFlexbbInteractionGraph::cast_minimalist_flexbb_edge( EdgeBase * edge )
-{ assert( mine( edge ) ); return static_cast< MinimalistFlexbbEdge * > ( edge ); }
+{ debug_assert( mine( edge ) ); return static_cast< MinimalistFlexbbEdge * > ( edge ); }
 
 
 }

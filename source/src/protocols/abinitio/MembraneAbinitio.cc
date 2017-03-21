@@ -154,7 +154,7 @@ MembraneAbinitio::MembraneAbinitio(
 	BaseClass::type( "MembraneAbintio" );
 
 	// std::cerr << "MembraneAbinitio::constructor has stubbed out...(fatal) see code file";
-	// assert( 0 ); //---> needs more implementation to use this constructor: e.g. read out movemap from FragmentMover...
+	// debug_assert( 0 ); //---> needs more implementation to use this constructor: e.g. read out movemap from FragmentMover...
 	movemap_ = brute_move_large->movemap();
 	//  set_defaults( pose ); in constructor virtual functions are not called
 }
@@ -539,24 +539,24 @@ void MembraneAbinitio::update_moves() {
 //@detail create instances of TrialMover for our FragmentMover objects
 void MembraneAbinitio::set_trials() {
 	// setup loop1
-	assert( brute_move_large_ );
+	debug_assert( brute_move_large_ );
 	trial_large_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_large_, mc_ ) );
 	// trial_large_->keep_stats_type( false );
 	//trial_large_->keep_stats_type( moves::all_stats );
 
-	assert( brute_move_small_ );
+	debug_assert( brute_move_small_ );
 	trial_small_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_, mc_ ) );
 	//trial_small_->set_keep_stats( false );
 	// trial_small_->keep_stats_type( false );
 	//trial_small_->keep_stats_type( moves::all_stats );
 
-	assert( brute_move_small_top25_ );
+	debug_assert( brute_move_small_top25_ );
 	trial_small_top25_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_top25_, mc_ ) );
 	//trial_small_top25_ ->set_keep_stats( false );
 	//trial_small_top25_ ->keep_stats_type( false );
 	//trial_small_top25_ ->keep_stats_type( moves::all_stats );
 
-	assert( smooth_move_small_ );
+	debug_assert( smooth_move_small_ );
 	smooth_trial_small_ = moves::TrialMoverOP( new moves::TrialMover( smooth_move_small_, mc_ ) );
 	// smooth_trial_small_->set_keep_stats( false );
 	//smooth_trial_small_->keep_stats_type( false );
@@ -1065,7 +1065,7 @@ private:
 
 public:
 	bool operator() ( const core::pose::Pose & pose ) override {
-		assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
+		debug_assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
 		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {
 				return false;
@@ -1164,7 +1164,7 @@ int MembraneAbinitio::do_stage1_cycles( pose::Pose &pose ) {
 		}
 	}
 
-	tr.Info << "Warning: extended chain may still remain after " << stage1_cycles() << " cycles!" << std::endl;
+	tr.Warning << "extended chain may still remain after " << stage1_cycles() << " cycles!" << std::endl;
 	mc().reset( pose ); // make sure that we keep the final structure
 	return j;
 }

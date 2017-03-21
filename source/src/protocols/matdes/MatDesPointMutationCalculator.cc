@@ -128,8 +128,8 @@ MatDesPointMutationCalculator::MatDesPointMutationCalculator(
 
 	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
 		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
-			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
+			utility_exit_with_message("Sample type not recognized.");
 		}
 	}
 }
@@ -174,8 +174,8 @@ MatDesPointMutationCalculator::MatDesPointMutationCalculator(
 
 	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
 		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
-			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
+			utility_exit_with_message("Sample type not recognized.");
 		}
 	}
 }
@@ -367,7 +367,7 @@ get_nstruct(){
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
-  if ( option[ run::shuffle ]() ) { 
+  if ( option[ run::shuffle ]() ) {
     return option[ out::shuffle_nstruct ]();
   } else {
     return option[ out::nstruct ]();
@@ -501,7 +501,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 	mut_res->push_back( incl_curr_op );
 	TR << "Mutation " << pose.residue( resi ).name1() << "_" << resi;
 	//only use green packer if not symmetric!
-	assert( !core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( !core::pose::symmetry::is_symmetric( pose ) );
 	green_packer->set_task_factory( mut_res );
 	green_packer->apply( pose );
 	TR << "_" << pose.residue( resi ).name1();
@@ -622,12 +622,12 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ) {
 		Size seqpos( seqpos_aa_vals->first );
 		//seqpos_aa_vals->second is a seqpos' vector of aa/vals pairs
-		assert( !seqpos_aa_vals->second.empty() );
+		debug_assert( !seqpos_aa_vals->second.empty() );
 		vector1< pair< AA, Real > > aa_val;
 		for ( auto aa_vals = seqpos_aa_vals->second.begin();
 				aa_vals != seqpos_aa_vals->second.end(); ++aa_vals ) {
 			//aa_vals->second is an aa's vector of vals
-			assert( !aa_vals->second.empty() );
+			debug_assert( !aa_vals->second.empty() );
 			aa_val.push_back( pair< AA, Real >( aa_vals->first, aa_vals->second[ 1 ] ) );
 		}
 		seqpos_aa_val_vec.push_back( pair< Size, vector1< pair< AA, Real > > >( seqpos, aa_val ) );
@@ -678,7 +678,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		}
 	}
 	if ( being_designed.empty() ) {
-		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
+		TR.Warning << "No residues are listed as designable." << std::endl;
 	}
 
 	//GreenPacker stuff, precompute non-designable residues' interaxn graph
@@ -807,7 +807,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 
 		//don't store this aa/val if any filter failed
 		if ( !filter_pass ) continue;
-		assert( !vals.empty() );
+		debug_assert( !vals.empty() );
 		//dump pdb? (only if filter passes)
 		if ( dump_pdb() ) {
 			std::stringstream fname;
@@ -830,7 +830,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 				utility::send_integer_to_node( mpi_rank_low, seqpos_aa_vals_vec[ iseq ].first );	//send int
 				utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
 				utility::send_integer_to_node( mpi_rank_low, aa_pairs.size() );	//send int
-				for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){ 
+				for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){
 					utility::send_char_to_node( mpi_rank_low, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
 					//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first
 					//		<< ": " << aa_pairs[ iaa ].second[ 1 ] << " to Proc 0" << std::endl;
@@ -873,7 +873,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 					utility::send_integer_to_node( iproc, seqpos_aa_vals_vec[ iseq ].first );	//send int
 					utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
 					utility::send_integer_to_node( iproc, aa_pairs.size() );	//send int
-					for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){ 
+					for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){
 						utility::send_char_to_node( iproc, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
 						//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first << std::endl;
 						for( Size ival = 1; ival <= ( filters() ).size(); ++ival ){

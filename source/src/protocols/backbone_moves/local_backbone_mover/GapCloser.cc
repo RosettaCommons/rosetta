@@ -66,7 +66,7 @@ GapCloser::solve_gaps(FreePeptide &free_peptide){
 
 void
 GapCloser::apply_closure(core::pose::Pose &pose, FreePeptide &free_peptide){
-	assert(gap_solved_);
+	debug_assert(gap_solved_);
 
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;

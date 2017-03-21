@@ -162,11 +162,6 @@ TaskAwareMinMover::parse_my_tag(
 	Pose const & pose
 )
 {
-	if ( tag->getName() != "TaskAwareMinMover" ) {
-		TR << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( tag->hasOption("chi") ) chi_ = tag->getOption<bool>("chi");
 	if ( tag->hasOption("bb") ) bb_ = tag->getOption<bool>("bb");
 	if ( tag->hasOption( "jump" ) ) {

@@ -355,7 +355,7 @@ void SurfaceDockingProtocol::split_protein_surface_poses (core::pose::Pose const
 	//split the pose into separate chains
 	utility::vector1< pose::PoseOP > singlechain_poses;
 	singlechain_poses = pose.split_by_chain();
-	assert( valid_surface_pose( pose ));
+	debug_assert( valid_surface_pose( pose ));
 	singlechain_poses[ 2 ]->set_new_energies_object( scoring::EnergiesOP( new core::scoring::Energies ) ); // replace the SurfaceEnergies object
 	surface = *singlechain_poses[ 1 ];
 	protein = *singlechain_poses[ 2 ];

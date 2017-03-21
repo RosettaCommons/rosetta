@@ -89,10 +89,10 @@ BB_Pos::take_coordinates_from_pose( Pose const & pose )
 	for ( Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_protein() ) {
-			assert( N_index_[ i ]  );
-			assert( CA_index_[ i ] );
-			assert( C_index_[ i ]  );
-			assert( O_index_[ i ]  );
+			debug_assert( N_index_[ i ]  );
+			debug_assert( CA_index_[ i ] );
+			debug_assert( C_index_[ i ]  );
+			debug_assert( O_index_[ i ]  );
 
 			N_ [i] = rsd.xyz( N_index_[ i ]  );
 			CA_[i] = rsd.xyz( CA_index_[ i ] );

@@ -139,7 +139,7 @@ void TorsionClaim::insert_dof_element( core::conformation::Conformation const & 
 	using namespace core::id;
 
 	TorsionID const t_id( seqpos, type, torsion_number );
-	assert( t_id.valid() );
+	debug_assert( t_id.valid() );
 
 	DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
 	if ( d_id.valid() ) {
@@ -178,7 +178,7 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
 			for ( Size i = 1; i <= conf.residue( seqpos ).n_nus(); ++i ) {
 				insert_dof_element( conf, elements, seqpos, NU, i );
 			}
-			tr.Warning << "[WARNING] Nu angles for " << seqpos << " are being claimed. Is this what you want? You can investigate in " << __FILE__ << ":" << __LINE__ << std::endl;
+			tr.Warning << "Nu angles for " << seqpos << " are being claimed. Is this what you want? You can investigate in " << __FILE__ << ":" << __LINE__ << std::endl;
 		}
 	}
 }

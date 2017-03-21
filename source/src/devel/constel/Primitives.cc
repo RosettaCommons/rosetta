@@ -377,7 +377,7 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 	using core::scoring::hbonds::identify_hbonds_1way;
 	using core::conformation::Residue;
 
-	assert( ps.energies().residue_neighbors_updated() );
+	debug_assert( ps.energies().residue_neighbors_updated() );
 
 	Size const pim = cnl[im];
 

@@ -744,7 +744,7 @@ GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
 	if ( mover_name != "" ) {
 		auto find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
-			TR.Error << "Error! Mover not found in map: " << mover_name << std::endl;
+			TR.Error << "Mover not found in map: " << mover_name << std::endl;
 		}
 		runtime_assert( find_mover != movers.end() );
 		periodic_mover_ = find_mover->second;

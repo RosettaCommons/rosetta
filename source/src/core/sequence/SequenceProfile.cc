@@ -103,7 +103,7 @@ void SequenceProfile::read_from_checkpoint(
 		for ( core::Size ii=1+offset; ii <= header.size(); ++ii ) {
 			if ( header[ii].size() != 1 ) { break; } // Not a single letter code
 			if ( core::chemical::oneletter_code_from_aa(order[ii-offset]) != header[ii][0] ) {
-				tr.Warning << "WARNING: Potential badly formatted sequence profile file '" << std::string(fn) << "'. " <<
+				tr.Warning << "Potential badly formatted sequence profile file '" << std::string(fn) << "'. " <<
 					"Columns should be in ACDEFGHIKLMNPQRSTVWY order. " <<
 					"Saw '" << header[ii] << "' as column header at position " << utility::to_string(ii) << ". " <<
 					"Expected '" << core::chemical::oneletter_code_from_aa(order[ii-offset]) << "'." << std::endl;
@@ -138,7 +138,7 @@ void SequenceProfile::read_from_checkpoint(
 		}
 
 		if ( index != order.size() + 1 ) {
-			tr.Warning << "WARNING: Potentially incomplete profile row in '" << std::string(fn) << "'. " << std::endl;
+			tr.Warning << "Potentially incomplete profile row in '" << std::string(fn) << "'. " << std::endl;
 		}
 		aa_seq += aa;
 		new_prof.push_back( prof_row );

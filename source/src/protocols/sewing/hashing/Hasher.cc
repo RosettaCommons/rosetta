@@ -729,15 +729,15 @@ Hasher::read_from_disk(std::string filename) {
 	while ( getline( file, line ) ) {
 
 		utility::vector1<std::string> tokens = utility::string_split(line);
-		assert(tokens.size() > 0);
+		debug_assert(tokens.size() > 0);
 
 		if ( tokens[1]=="KEY" ) {
-			assert(tokens.size() == 4);
+			debug_assert(tokens.size() == 4);
 			key[1]=utility::string2int(tokens[2]);
 			key[2]=utility::string2int(tokens[3]);
 			key[3]=utility::string2int(tokens[4]);
 		} else if ( tokens[1]=="VALUE" ) {
-			assert(tokens.size() == 6);
+			debug_assert(tokens.size() == 6);
 			value.model_id = utility::string2int(tokens[2]);
 			value.basis_resnum = utility::string2int(tokens[3]);
 			value.segment_id = utility::string2int(tokens[4]);

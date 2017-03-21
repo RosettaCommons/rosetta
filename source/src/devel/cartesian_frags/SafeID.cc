@@ -90,7 +90,7 @@ stub_id_from_torsion_stub_id(
 		if ( id.dir == Backward ) {
 			return StubID( atom2, atom3, atom4 );
 		} else {
-			assert( id.dir == Forward );
+			debug_assert( id.dir == Forward );
 			return StubID( atom3, atom2, atom1 );
 		}
 	} else if ( id.id.type() == BB ) {

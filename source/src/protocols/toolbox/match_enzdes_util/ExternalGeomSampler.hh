@@ -220,7 +220,7 @@ public:
 
 	HTReal const &
 	transform( ExternalTransform id, Size which_state ) const {
-		assert( transforms_uptodate_ );
+		debug_assert( transforms_uptodate_ );
 		return transforms_[ id ][ which_state ];
 	}
 

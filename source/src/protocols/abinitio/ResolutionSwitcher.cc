@@ -181,7 +181,7 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 		if ( map_cst_from_centroid_to_fa_ ) {
 			//&& basic::options::option[ basic::options::OptionKeys::chemical::patch_selectors ].user()
 			//  && basic::options::option[ basic::options::OptionKeys::chemical::patch_selectors ]()[ 1 ] == "CENTROID_HA" ) {
-			//  tr.Warning << "[ WARNING ] ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected... HA has other atom-number... " << std::endl
+			//  tr.Warning << "ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected... HA has other atom-number... " << std::endl
 			//        << "clean way would be to make the constraint set independent of numbers as in Templates.cc " << std::endl;
 			//  utility_exit_with_message("[ WARNING ] ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected.");
 			pose.constraint_set( init_pose().constraint_set()->remapped_clone( init_pose(), pose ) );

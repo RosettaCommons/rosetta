@@ -54,9 +54,9 @@ VoxelSetIterator::VoxelSetIterator(
 	curr_bin_( /* 0 */ ),
 	curr_pos_( 0 )
 {
-	assert( point_[ 4 ] >= 0 && point_[ 4 ] <  360 );
-	assert( point_[ 5 ] >= 0 && point_[ 5 ] <  360 );
-	assert( point_[ 6 ] >= 0 && point_[ 6 ] <= 180 );
+	debug_assert( point_[ 4 ] >= 0 && point_[ 4 ] <  360 );
+	debug_assert( point_[ 5 ] >= 0 && point_[ 5 ] <  360 );
+	debug_assert( point_[ 6 ] >= 0 && point_[ 6 ] <= 180 );
 
 	/// OK.  So we're going to enumerate all 64 voxels that this point will hash into.
 	/// This is made slightly tricky by three facts:
@@ -70,8 +70,8 @@ VoxelSetIterator::VoxelSetIterator(
 		if ( basebin_[ ii ] >= n_xyz_bins_[ ii ] ) return;
 	}
 	for ( Size ii = 4, ii_minus3 = 1; ii <= 6; ++ii, ++ii_minus3 ) {
-		assert( point_[ ii ] >= 0 && point_[ ii ] <= 360 );
-		assert( ii != 6 || point_[ ii ] <= 180 ); /// theta must range between 0 and 180.
+		debug_assert( point_[ ii ] >= 0 && point_[ ii ] <= 360 );
+		debug_assert( ii != 6 || point_[ ii ] <= 180 ); /// theta must range between 0 and 180.
 		basebin_[ ii ]     = static_cast< Size > ( point_[ ii ] / euler_bin_widths_[ ii_minus3 ] );
 		basehalfbin_[ ii ] = static_cast< Size > ( point_[ ii ] / euler_bin_halfwidths_[ ii_minus3 ] ) - 2 * basebin_[ ii ];
 
@@ -139,14 +139,14 @@ bool VoxelSetIterator::at_end() const
 
 void VoxelSetIterator::get_bin_and_pos( Size6 & bin, Size & pos ) const
 {
-	assert( ! at_end() );
+	debug_assert( ! at_end() );
 	bin = curr_bin_;
 	pos = curr_pos_;
 }
 
 void VoxelSetIterator::calc_bin_and_pos()
 {
-	assert( ! at_end() );
+	debug_assert( ! at_end() );
 	curr_pos_ = 1; /// curr pos ranges from 1 and 64.  The math below will add between 0 and 63 to curr_pos_.
 
 	for ( Size ii = 1; ii <= 3; ++ii ) {
@@ -189,7 +189,7 @@ void VoxelSetIterator::calc_bin_and_pos()
 			if ( iter64_[ ii ] == 2 && basehalfbin_[ ii ] == 1 ) {
 				// Wrap at > 360 -- only applies to phi and psi, but we've gotten to this point knowing
 				// that the above condition does not apply to theta, so no need for an ii==4 || ii==5 check.
-				assert( ii != 6 || curr_bin_[ ii ] + 1 != n_euler_bins_[ ii_minus3 ]  );
+				debug_assert( ii != 6 || curr_bin_[ ii ] + 1 != n_euler_bins_[ ii_minus3 ]  );
 				curr_bin_[ ii ] = ( curr_bin_[ ii ] + 1 == n_euler_bins_[ ii_minus3 ] ? 0 : curr_bin_[ ii ] + 1 );
 			} else if ( basehalfbin_[ ii ] == 1 || iter64_[ ii ] == 2 ) {
 				curr_pos_ += ii == 4 ? 4 : ( ii == 5 ? 2 : 1 );

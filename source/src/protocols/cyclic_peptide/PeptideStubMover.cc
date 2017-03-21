@@ -333,7 +333,7 @@ void PeptideStubMover::rebuild_atoms(
 	core::pose::Pose &pose,
 	core::Size const residue_index
 ) const {
-	assert(residue_index <= pose.size() && residue_index > 0);
+	debug_assert(residue_index <= pose.size() && residue_index > 0);
 
 	core::Size const nresconn = pose.residue(residue_index).n_possible_residue_connections();
 	if ( nresconn>0 ) {

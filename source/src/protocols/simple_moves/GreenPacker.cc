@@ -161,7 +161,7 @@ MinimalRotamer::record_chi( core::conformation::Residue const & res )
 {
 	chi_.resize( res.type().nchi() );
 	for ( Size ii = 1; ii <= chi_.size(); ++ii ) {
-		assert( chi_matches_coords( res, ii ));
+		debug_assert( chi_matches_coords( res, ii ));
 		chi_[ ii ] = res.chi( ii );
 	}
 }
@@ -215,7 +215,7 @@ bool
 MinimalRotamer::chi_matches_coords( core::conformation::Residue const & res, Size chi_index ) const
 {
 	core::chemical::AtomIndices const & chi_atoms( res.type().chi_atoms( chi_index ) );
-	assert( chi_atoms.size() == 4 );
+	debug_assert( chi_atoms.size() == 4 );
 	Real const actual_chi = numeric::dihedral_degrees(
 		res.xyz( chi_atoms[ 1 ] ),
 		res.xyz( chi_atoms[ 2 ] ),
@@ -251,8 +251,8 @@ MinimalRotamer::same( MinimalRotamer const & other ) const
 bool
 MinimalRotamer::same_chi( MinimalRotamer const & other ) const
 {
-	assert( ideal_geometry_ && other.ideal_geometry_ );
-	assert( chi_.size() == other.chi_.size() );
+	debug_assert( ideal_geometry_ && other.ideal_geometry_ );
+	debug_assert( chi_.size() == other.chi_.size() );
 	for ( Size ii = 1; ii <= chi_.size(); ++ii ) {
 		if ( std::abs( basic::periodic_range( chi_[ ii ] - other.chi_[ ii ], 180 ) ) > 1e-8 ) {
 			//TR << "same chi failed: " << residue_type_.name() << " " << other.residue_type_.name() << " " << ii << " " << chi_[ ii ] << " " << other.chi_[ ii ] << " " << basic::periodic_range( chi_[ ii ] - other.chi_[ ii ], 180 ) << std::endl;
@@ -267,8 +267,8 @@ MinimalRotamer::same_chi( MinimalRotamer const & other ) const
 bool
 MinimalRotamer::same_nonideal_geometry( MinimalRotamer const & other ) const
 {
-	assert( !ideal_geometry_ && !other.ideal_geometry_ );
-	assert( internal_geometry_.size() == other.internal_geometry_.size() );
+	debug_assert( !ideal_geometry_ && !other.ideal_geometry_ );
+	debug_assert( internal_geometry_.size() == other.internal_geometry_.size() );
 	for ( Size ii = 1; ii <= internal_geometry_.size(); ++ii ) {
 		if ( std::abs(  internal_geometry_[ ii ][ d ] - other.internal_geometry_[ ii ][ d ] ) > 1e-8 ) {
 			//TR << "same nonideal geometry d failed: " << residue_type_.name() << " " << other.residue_type_.name() << " " << ii << " " << internal_geometry_[ ii ][ d ] << " " << other.internal_geometry_[ ii ][ d ]  << " " << internal_geometry_[ ii ][ d ] - other.internal_geometry_[ ii ][ d ] << std::endl;
@@ -858,7 +858,7 @@ GreenPacker::add_precomputed_energies(
 			Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
 			if ( jj_moltenres_curr == 0 ) continue;
 
-			assert( dynamic_cast< PrecomputedPairEnergiesEdge const * > ( & edge ) );
+			debug_assert( dynamic_cast< PrecomputedPairEnergiesEdge const * > ( & edge ) );
 
 			PrecomputedPairEnergiesEdge const & precomp_edge(
 				static_cast< PrecomputedPairEnergiesEdge const & > ( edge ) );
@@ -987,10 +987,10 @@ GreenPacker::compute_absent_srci_energies_for_residue_pair(
 	using namespace core::scoring;
 
 	Size const lower_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( lower_res );
-	assert( lower_res_moltenresid );
+	debug_assert( lower_res_moltenresid );
 
 	Size const upper_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( upper_res );
-	assert( upper_res_moltenresid );
+	debug_assert( upper_res_moltenresid );
 
 	Size const lower_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( lower_res_moltenresid );
 	Size const lower_res_nnew_rots = curr_rotamers_without_correspondence_[ lower_res ].size();
@@ -1050,10 +1050,10 @@ GreenPacker::compute_absent_lrci_energies_for_residue_pair(
 	using namespace core::scoring;
 
 	Size const lower_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( lower_res );
-	assert( lower_res_moltenresid );
+	debug_assert( lower_res_moltenresid );
 
 	Size const upper_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( upper_res );
-	assert( upper_res_moltenresid );
+	debug_assert( upper_res_moltenresid );
 
 	Size const lower_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( lower_res_moltenresid );
 	Size const lower_res_nnew_rots = curr_rotamers_without_correspondence_[ lower_res ].size();
@@ -1140,7 +1140,7 @@ void GreenPacker::store_reference_pose_geometry( Pose & pose )
 
 void GreenPacker::compare_input_pose_geometry_to_reference( Pose & pose )
 {
-	assert( pose.size() == orig_bb_tors_.size());
+	debug_assert( pose.size() == orig_bb_tors_.size());
 	for ( Size ii = 1; ii <= orig_bb_tors_.size(); ++ii ) {
 		for ( Size jj = 1; jj <= orig_bb_tors_[ ii ].size(); ++jj ) {
 			if ( std::abs( basic::periodic_range(

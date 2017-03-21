@@ -574,9 +574,9 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 	VdWTinkerResidueInfo const & vdw1( vdw_info.residue_info( resi ) );
 	VdWTinkerResidueInfo const & vdw2( vdw_info.residue_info( resj ) );
 
-	assert( pose.energies().use_nblist() );
-	assert( r1_at_derivs.size() >= rsd1.natoms() );
-	assert( r2_at_derivs.size() >= rsd2.natoms() );
+	debug_assert( pose.energies().use_nblist() );
+	debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
 	CountPairFunctionOP cpfxn( nullptr );
 	if ( same_res ) {

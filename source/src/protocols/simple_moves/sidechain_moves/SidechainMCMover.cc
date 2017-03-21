@@ -246,7 +246,7 @@ SidechainMCMover::apply(
 			core::Real s2 = sfxn_->score(dummy);
 
 			if ( (s1 - s2) - delta_energy > 0.05 ) {
-				TR.Debug << "WARNING: ENERGIES DON'T MATCH UP! " << s1 << " " << s2 << " " << (s1 - s2) << " " << delta_energy << std::endl;
+				TR.Warning << "ENERGIES DON'T MATCH UP! " << s1 << " " << s2 << " " << (s1 - s2) << " " << delta_energy << std::endl;
 				dummy.dump_pdb("dummy.pdb");
 				temp.dump_pdb("temp.pdb");
 				//exit(1);

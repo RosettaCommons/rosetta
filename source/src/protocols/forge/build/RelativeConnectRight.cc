@@ -87,7 +87,7 @@ BuildInstructionOP RelativeConnectRight::clone() const {
 void RelativeConnectRight::modify_impl( Pose & pose_left ) {
 	// modify 'left_position' to refer to proper jump takeoff wrt RelativeSequencePosition
 	// function object
-	assert( n_dependencies() == 1 );
+	debug_assert( n_dependencies() == 1 );
 	left_position( (*rp_)( *dependencies().begin() ) );
 
 	// do the actual work

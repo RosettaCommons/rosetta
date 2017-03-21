@@ -247,14 +247,14 @@ RotData::show( std::ostream & out ) const {
 	}
 	out << std::endl;
 
-	assert( inp_chi_.size() == num_chi_ );
-	assert( min_chi_.size() == num_chi_ );
-	assert( lib_chi_val_.size() == num_chi_ );
-	assert( std_dev_.size() == num_chi_ );
+	debug_assert( inp_chi_.size() == num_chi_ );
+	debug_assert( min_chi_.size() == num_chi_ );
+	debug_assert( lib_chi_val_.size() == num_chi_ );
+	debug_assert( std_dev_.size() == num_chi_ );
 	for ( core::Size ii(1); ii <= num_chi_; ++ii ) {
 		out << "chi " << ii << " " << inp_chi_[ii] << " " << min_chi_[ii] << " " << lib_chi_val_[ii] << " " << std_dev_[ii] << std::endl;
 	}
-	assert( cen_dst_.size() == num_clusters_ );
+	debug_assert( cen_dst_.size() == num_clusters_ );
 	out << "cen_dist";
 	for ( core::Size jj(1); jj <= cen_dst_.size(); ++jj ) {
 		out << " " << cen_dst_[jj];

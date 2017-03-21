@@ -1312,7 +1312,7 @@ mutate_random_residue(
 )
 {
 	//pick rand seqpos
-	assert( is_mutable.size() == pose.size() );
+	debug_assert( is_mutable.size() == pose.size() );
 	bool mutate( false );
 	Size seqpos( 0 );
 	while ( !mutate ) {

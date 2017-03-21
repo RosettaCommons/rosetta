@@ -107,8 +107,8 @@ unsigned SheetTranslate::jump_containing_sheet(const protocols::loops::Loops& ch
 
 void SheetTranslate::decompose_structure(unsigned num_residues, protocols::loops::Loops* chunks) const {
 	using protocols::loops::Loop;
-	assert(chunks);
-	assert(num_residues > 0);
+	debug_assert(chunks);
+	debug_assert(num_residues > 0);
 
 	const unsigned start = get_sheet().start();
 	const unsigned stop = get_sheet().stop();

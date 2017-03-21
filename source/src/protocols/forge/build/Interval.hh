@@ -53,7 +53,7 @@ struct Interval {
 		left( l ),
 		right( r )
 	{
-		assert( left <= right );
+		debug_assert( left <= right );
 	}
 
 

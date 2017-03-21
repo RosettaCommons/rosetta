@@ -50,7 +50,7 @@ SequenceOP SequenceFactory::seq_from_file(
 	if ( utility::file::file_exists(fn) ) {
 		seq->read_from_file(fn);
 	} else {
-		tr.Error << "Error: file " << fn << " doesn't exist!" << std::endl;
+		tr.Error << "file " << fn << " doesn't exist!" << std::endl;
 	}
 	return seq;
 }

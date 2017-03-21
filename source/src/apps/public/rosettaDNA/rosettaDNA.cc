@@ -40,9 +40,9 @@ public:
 	DummyMover() : Mover( "DummyMover" ) {}
 	virtual ~DummyMover(){}
 	virtual void apply( Pose & ) {
-		TR << "DummyMover::apply() should never have been called!"
+		TR.Fatal << "DummyMover::apply() should never have been called!"
 			<< " (JobDistributor/Parser should have replaced DummyMover.)" << std::endl;
-		runtime_assert(false); // will enable a backtrace in gdb
+		utility_exit_with_message("Unimplemented method called.");
 	}
 	virtual std::string get_name() const { return "DummyMover"; }
 };

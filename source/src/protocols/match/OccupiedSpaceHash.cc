@@ -41,15 +41,15 @@ OccupiedSpaceHash::set_bounding_box(
 	BoundingBox const & bb
 )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	bb_ = bb;
 }
 
 void
 OccupiedSpaceHash::set_uniform_xyz_bin_width( Real bin_width )
 {
-	assert( ! initialized_ );
-	assert( bin_width > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width > 0 );
 	Real half_witdh = 0.5 * bin_width;
 	for ( Size ii = 1; ii <= 3; ++ii ) {
 		xyz_bin_widths_[ ii ] = bin_width;
@@ -60,8 +60,8 @@ OccupiedSpaceHash::set_uniform_xyz_bin_width( Real bin_width )
 void
 OccupiedSpaceHash::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
-	assert( ! initialized_ );
-	assert( bin_width_degrees > 0 );
+	debug_assert( ! initialized_ );
+	debug_assert( bin_width_degrees > 0 );
 	Real half_width = 0.5 * bin_width_degrees;
 	for ( Size ii = 1; ii <= 3; ++ii ) {
 		euler_bin_widths_[ ii ] = bin_width_degrees;
@@ -72,9 +72,9 @@ OccupiedSpaceHash::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 void
 OccupiedSpaceHash::set_xyz_bin_widths( Vector const & bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( bin_widths( ii ) > 0 );
+		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 		xyz_bin_halfwidths_[ ii ] = 0.5 * bin_widths( ii );
 	}
@@ -84,9 +84,9 @@ OccupiedSpaceHash::set_xyz_bin_widths( Vector const & bin_widths )
 void
 OccupiedSpaceHash::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		assert( euler_bin_widths( ii ) > 0 );
+		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 		euler_bin_halfwidths_[ ii ] = 0.5 * euler_bin_widths( ii );
 	}
@@ -100,7 +100,7 @@ OccupiedSpaceHash::set_euler_bin_widths( Vector const & euler_bin_widths )
 void
 OccupiedSpaceHash::initialize()
 {
-	assert( ! initialized_ );
+	debug_assert( ! initialized_ );
 
 	initialized_ = true;
 
@@ -134,7 +134,7 @@ OccupiedSpaceHash::initialize()
 void
 OccupiedSpaceHash::insert_hit_geometry( Real6 const & geom )
 {
-	assert( initialized_ );
+	debug_assert( initialized_ );
 
 	if ( revision_id_ == 1 ) { ++revision_id_; } /// round 1 is over.
 
@@ -200,7 +200,7 @@ OccupiedSpaceHash::previous_round_geometry_still_matchable( Real6 const & geom )
 void
 OccupiedSpaceHash::note_hit_geometry( Real6 const & geom )
 {
-	assert( initialized_ );
+	debug_assert( initialized_ );
 	Vector point( Vector( geom[ 1 ], geom[ 2 ], geom[ 3 ] ));
 	if ( ! bb_.contains( point ) ) return;
 
@@ -232,7 +232,7 @@ OccupiedSpaceHash::match_possible_for_hit_geometry( Real6 const & geom ) const
 {
 	using namespace utility;
 
-	assert( initialized_ );
+	debug_assert( initialized_ );
 	Vector point( Vector( geom[ 1 ], geom[ 2 ], geom[ 3 ] ));
 	if ( ! bb_.contains( point ) ) return false;
 
@@ -280,7 +280,7 @@ OccupiedSpaceHash::match_possible_for_hit_geometry( Real6 const & geom ) const
 void
 OccupiedSpaceHash::drop_unsatisfied_voxels()
 {
-	assert( initialized_ );
+	debug_assert( initialized_ );
 	//threeD_projection_->clear();
 
 	for ( ActiveVoxelSet::iterator
@@ -330,7 +330,7 @@ OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 	threeD_projection_->or_by_box_liberal( BoundingBox( lower_bound, upper_bound ) );
 	*/
 	Vector point( Vector( geom[ 1 ], geom[ 2 ], geom[ 3 ] ));
-	assert( bb_.contains( point ));
+	debug_assert( bb_.contains( point ));
 
 	Vector local = point - bb_.lower();
 	Vector lower = bb_.lower();
@@ -365,7 +365,7 @@ OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 /// from right to left.
 boost::uint64_t
 OccupiedSpaceHash::bitmask_for_position( Size pos ) const {
-	assert( pos > 0 && pos <= 64 );
+	debug_assert( pos > 0 && pos <= 64 );
 
 	switch ( pos ) {
 	case  1 : return 0x01;

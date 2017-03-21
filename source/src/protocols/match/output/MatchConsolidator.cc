@@ -241,7 +241,7 @@ BestMatchesCollection::BestMatchesCollection(
 void
 BestMatchesCollection::add_match( match const & m, Real score )
 {
-	assert( ! dspos1_mode_ );
+	debug_assert( ! dspos1_mode_ );
 	Size new_pos = index_for_new_match( score );
 	if ( new_pos != 0 ) {
 		best_matches_[ new_pos ] = m;
@@ -251,7 +251,7 @@ BestMatchesCollection::add_match( match const & m, Real score )
 void
 BestMatchesCollection::add_match_dspos1( match_dspos1 const & m, Real score )
 {
-	assert( dspos1_mode_ );
+	debug_assert( dspos1_mode_ );
 	Size new_pos = index_for_new_match( score );
 	if ( new_pos != 0 ) {
 		best_match_dspos1s_[ new_pos ] = m;
@@ -267,16 +267,16 @@ BestMatchesCollection::n_kept_matches() const
 match const &
 BestMatchesCollection::kept_match( Size which_match ) const
 {
-	assert( ! dspos1_mode_ );
-	assert( (int) which_match <= scores_heap_.size() );
+	debug_assert( ! dspos1_mode_ );
+	debug_assert( (int) which_match <= scores_heap_.size() );
 	return best_matches_[ which_match ];
 }
 
 match_dspos1 const &
 BestMatchesCollection::kept_match_dspos1( Size which_match ) const
 {
-	assert( ! dspos1_mode_ );
-	assert( (int) which_match <= scores_heap_.size() );
+	debug_assert( ! dspos1_mode_ );
+	debug_assert( (int) which_match <= scores_heap_.size() );
 	return best_match_dspos1s_[ which_match ];
 }
 
@@ -289,16 +289,16 @@ BestMatchesCollection::index_for_new_match( Real score )
 		int new_pos( scores_heap_.size() + 1 );
 		bool err;
 		scores_heap_.heap_insert( new_pos, negscore, err );
-		assert( ! err );
+		debug_assert( ! err );
 		return new_pos;
 	} else {
 		if ( scores_heap_.heap_head() < negscore ) {
 			int old_pos; float oldscore; bool err;
 			scores_heap_.heap_extract( old_pos, oldscore, err );
-			assert( ! err );
-			assert( negscore > oldscore );
+			debug_assert( ! err );
+			debug_assert( negscore > oldscore );
 			scores_heap_.heap_insert( old_pos, negscore, err );
-			assert( ! err );
+			debug_assert( ! err );
 			return old_pos; // overwrite this position
 		} // else return 0 .. moved below to appease the compiler
 	}

@@ -152,8 +152,7 @@ PB::solve_pb(
 
 	if ( result == 0 ) {
 		TR.Error << "APBS failed!  Terminating the program..." << std::endl;
-		TR.flush();
-		runtime_assert(false);
+		utility_exit_with_message( "APBS failed!" );
 	}
 
 	TR.Debug << "Solved PB. Loading potential..." << std::endl;
@@ -269,8 +268,7 @@ PB::solve_pb( core::pose::Pose const & pose,
 	std::ifstream dxstream(dx_filename_.c_str());
 	if ( ! dxstream.good() ) {
 		TR << "APBS failed to generate the result file.  Terminating the program." << std::endl;
-		TR.flush();
-		runtime_assert(false);
+		utility_exit_with_message("APBS failed to generate the result file.");
 	}
 	dxstream.close();
 

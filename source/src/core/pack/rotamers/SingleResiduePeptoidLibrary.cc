@@ -576,7 +576,6 @@ Size SingleResiduePeptoidLibrary::memory_usage_dynamic() const
 void
 SingleResiduePeptoidLibrary::hokey_template_workaround()
 {
-	debug_assert( false );
 	utility_exit_with_message(
 		"ERROR: SingleResiduePeptoidLibrary::hokey_template_workaround should never be called!");
 

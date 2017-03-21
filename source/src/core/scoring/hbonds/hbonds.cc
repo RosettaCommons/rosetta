@@ -500,9 +500,9 @@ identify_hbonds_1way(
 			case hbw_SC :
 				emap[hbond_sc] += hbE; break;
 			default :
-				tr << "Warning: energy from unexpected HB type ignored "
+				tr.Fatal << "energy from unexpected HB type "
 					<< hbe_type.eval_type() << std::endl;
-				runtime_assert(false);
+				utility_exit_with_message("Unexpected HB type encountered.");
 				break;
 			}
 			/////////
@@ -617,9 +617,9 @@ identify_hbonds_1way(
 			case hbw_SC :
 				emap[hbond_sc] += hbE; break;
 			default :
-				tr << "Warning: energy from unexpected HB type ignored "
+				tr.Fatal << "energy from unexpected HB type "
 					<< hbe_type.eval_type() << std::endl;
-				runtime_assert(false);
+				utility_exit_with_message("Unexpected HB type encountered.");
 				break;
 			}
 			/////////
@@ -794,7 +794,7 @@ get_hbond_energies(
 		HBond const & hbond_(hbond_set.hbond(i));
 		HBEvalType const hbe_type = hbond_.eval_type();
 		if ( hbe_type == hbe_UNKNOWN ) {
-			tr.Error << "ERROR: Unknown HBEvalType for " << hbond_.eval_tuple() << std::endl;
+			tr.Error << "Unknown HBEvalType for " << hbond_.eval_tuple() << std::endl;
 			utility_exit_with_message("Can't get energy for hbond interactions.");
 		}
 
@@ -817,9 +817,9 @@ get_hbond_energies(
 		case hbw_SC :
 			emap[hbond_sc] += hbE; break;
 		default :
-			tr << "Warning: energy from unexpected HB type ignored "
+			tr.Fatal << "energy from unexpected HB type "
 				<< hbond << std::endl;
-			runtime_assert(false);
+			utility_exit_with_message("Unexpected HB type encountered.");
 			break;
 		}
 	}
@@ -861,8 +861,8 @@ hb_eval_type_weight(
 		case hbw_SC :
 			weight += weights[hbond_sc]; break;
 		default :
-			tr << "Warning: Unexpected HBondWeightType " << get_hbond_weight_type(hbe_type) << std::endl;
-			runtime_assert(false);
+			tr.Fatal << "Unexpected HBondWeightType " << get_hbond_weight_type(hbe_type) << std::endl;
+			utility_exit_with_message("Unexpected HB type encountered.");
 			break;
 		}
 	}
@@ -996,7 +996,7 @@ identify_hbonds_1way_membrane(
 	HBondSet & hbond_set,
 	pose::Pose const & pose
 ){
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	HBondDerivs derivs;
 
@@ -1042,7 +1042,7 @@ identify_hbonds_1way_membrane(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+			debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
 				hbe_type, datm_xyz, hatm_xyz,
@@ -1083,7 +1083,7 @@ identify_hbonds_1way_membrane(
 	pose::Pose const & pose
 )
 {
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	HBondDerivs derivs;
 
@@ -1129,7 +1129,7 @@ identify_hbonds_1way_membrane(
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-			assert( base2 > 0 && base != base2 );
+			debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, options,
 				hbe_type, datm_xyz, hatm_xyz,
@@ -1168,9 +1168,9 @@ identify_hbonds_1way_membrane(
 			case hbw_SC :
 				emap[hbond_sc] += hbE; break;
 			default :
-				tr << "Warning: energy from unexpected HB type ignored "
+				tr.Warning << "energy from unexpected HB type "
 					<< hbe_type.eval_type() << std::endl;
-				runtime_assert(false);
+				utility_exit_with_message("Unexpected HB type encountered.");
 				break;
 			}
 			/////////

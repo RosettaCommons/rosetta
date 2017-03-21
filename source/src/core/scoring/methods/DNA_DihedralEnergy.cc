@@ -134,9 +134,9 @@ DNA_DihedralEnergy::residue_energy(
 	//    " use_extended_residue_energy_interface: "<< this->use_extended_residue_energy_interface() <<
 	//    " defines_dof_derivatives: " << this->defines_dof_derivatives( pose ) << std::endl;
 
-	assert( this->defines_score_for_residue( rsd ) );
-	assert( !this->use_extended_residue_energy_interface() );
-	assert( this->defines_dof_derivatives( pose ) );
+	debug_assert( this->defines_score_for_residue( rsd ) );
+	debug_assert( !this->use_extended_residue_energy_interface() );
+	debug_assert( this->defines_dof_derivatives( pose ) );
 
 	Real bb_score( 0.0 );
 	for ( Size tor=1; tor<= 6; ++tor ) {
@@ -161,7 +161,7 @@ DNA_DihedralEnergy::residue_energy(
 	{ /// score the sugar deviation, this only goes into emap[ dna_dihedral_sugar ]
 		utility::vector1< Real > torsions;
 		scoring::dna::get_sugar_torsions( rsd, torsions );
-		assert( torsions[1] == rsd.mainchain_torsion(4) ); // first one is delta
+		debug_assert( torsions[1] == rsd.mainchain_torsion(4) ); // first one is delta
 		for ( Size tor=1; tor<= 4; ++tor ) {
 			Real score, dscore_dtor;
 			potential_.eval_sugar_torsion_score_and_deriv( torsions[ tor ], tor, rsd, pucker_index, score, dscore_dtor );
@@ -213,7 +213,7 @@ DNA_DihedralEnergy::eval_dof_derivative(
 				dscore_dtor );
 			deriv = ( /*weights[ dna_dihedral ] + */ weights[ dna_dihedral_chi ] ) * dscore_dtor;
 		} else {
-			assert( ( is_bb && tor == 4 ) || ( is_chi && ( tor >= 2 && tor <= 4 ) ) );
+			debug_assert( ( is_bb && tor == 4 ) || ( is_chi && ( tor >= 2 && tor <= 4 ) ) );
 			Size const sugar_tor( is_bb ? 1 : tor );
 			utility::vector1< Real > torsions;
 			scoring::dna::get_sugar_torsions( rsd, torsions );

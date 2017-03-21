@@ -65,7 +65,7 @@ LigandConformer::~LigandConformer() {}
 LigandConformer::Real
 LigandConformer::atom1_atom2_distance() const
 {
-	assert( ligand_restype_ );
+	debug_assert( ligand_restype_ );
 	return d12_;
 }
 
@@ -73,7 +73,7 @@ LigandConformer::atom1_atom2_distance() const
 LigandConformer::Real
 LigandConformer::atom2_atom3_distance() const
 {
-	assert( ligand_restype_ );
+	debug_assert( ligand_restype_ );
 	return d23_;
 }
 
@@ -82,7 +82,7 @@ LigandConformer::atom2_atom3_distance() const
 LigandConformer::Real
 LigandConformer::atom1_atom2_atom3_angle() const
 {
-	assert( ligand_restype_ );
+	debug_assert( ligand_restype_ );
 	return ang123_;
 }
 
@@ -90,7 +90,7 @@ LigandConformer::atom1_atom2_atom3_angle() const
 LigandConformer::Real
 LigandConformer::oatom1_oatom2_distance() const
 {
-	assert( ligand_restype_ );
+	debug_assert( ligand_restype_ );
 	return points_in_D3_frame_[ orientation_atoms_[ 1 ] ].distance(
 		points_in_D3_frame_[ orientation_atoms_[ 2 ] ] );
 }
@@ -98,7 +98,7 @@ LigandConformer::oatom1_oatom2_distance() const
 LigandConformer::Real
 LigandConformer::oatom2_oatom3_distance() const
 {
-	assert( ligand_restype_ );
+	debug_assert( ligand_restype_ );
 	return points_in_D3_frame_[ orientation_atoms_[ 2 ] ].distance(
 		points_in_D3_frame_[ orientation_atoms_[ 3 ] ] );
 }
@@ -106,7 +106,7 @@ LigandConformer::oatom2_oatom3_distance() const
 LigandConformer::Real
 LigandConformer::oatom1_oatom2_oatom3_angle() const
 {
-	assert( ligand_restype_ );
+	debug_assert( ligand_restype_ );
 	return numeric::constants::d::radians_to_degrees *
 		numeric::angle_radians(
 		points_in_D3_frame_[ orientation_atoms_[ 1 ] ],
@@ -135,7 +135,7 @@ LigandConformer::coordinates_from_orientation(
 	HTReal global_frame = frame_from_global_orientation( orientation );
 	for ( Size ii = 1; ii <= atom_indices.size(); ++ii ) {
 		//std::cout << "atom_indices[ ii ].atomno() " << ii << " " << atom_indices[ ii ].atomno() << std::endl;
-		assert( atom_indices[ ii ].rsd() == 1 );
+		debug_assert( atom_indices[ ii ].rsd() == 1 );
 		atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
 		//std::cout << "x: "  << atom_coords[ ii ][0] << " y: " << atom_coords[ ii ][1] << " z: "<< atom_coords[ ii ][2] << std::endl;
 	}

@@ -187,7 +187,7 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 		return( total_sasa );
 	} else if ( !hydrophobic_ && !polar_ ) {
 		// Per residue Sasa
-		assert( taskfactory_ );
+		debug_assert( taskfactory_ );
 		core::Real sasa( 0.0 );
 		core::pack::task::PackerTaskOP task( taskfactory_->create_task_and_apply_taskoperations(pose) );
 		MetricValue< utility::vector1< core::Real > > residue_sasa;

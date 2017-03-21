@@ -78,11 +78,11 @@ FragmentReader::parse_tag( TagCOP const & tag )
 	read_type_ = tag->getOption< String >( "type", "" );
 	if ( read_type_.empty() ) {
 		TR.Error << "No type option. " << std::endl;
-		runtime_assert( false );
+		utility_exit_with_message("No type option given");
 	}
 	if ( read_type_ != "pdb" && read_type_ != "silent" && read_type_ != "vall" && read_type_ != "fragfile" ) {
 		TR.Error << "Read type " << read_type_ << " is not registered " << std::endl;
-		runtime_assert( false );
+		utility_exit_with_message("Read type not registered.");
 	}
 
 	filename_  = tag->getOption< String >( "filename", "" );
@@ -139,8 +139,6 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		if ( begin_ == 0 ) {
 			TR << "Since option begin is emptry, Fragment is defined from the first residue. " << std::endl;
 			begin_ = 1;
-			//TR.Error << "Option begin has to be defined. !!" << std::endl;
-			//runtime_assert( false );
 		}
 		if ( end_ != 0 ) {
 			runtime_assert( end_ == begin_ + ss_.length() - 1 );
@@ -280,8 +278,8 @@ FragmentReader::apply( FragSetOP & fragset )
 				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}
 		} else {
-			TR << "[ ERROR ] FragmentIO returned not proper fragset. See the code." << std::endl;
-			runtime_assert( false );
+			TR.Error << "FragmentIO returned not proper fragset. See the code." << std::endl;
+			utility_exit_with_message("Error getting fragset.");
 		}
 		fragset->add( frames );
 

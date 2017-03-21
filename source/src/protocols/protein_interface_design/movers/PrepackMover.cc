@@ -233,7 +233,7 @@ PrepackMover::min_bb() const{
 
 core::kinematics::MoveMapOP
 PrepackMover::mm() const{
-	if ( !min_bb() ) TR<<"Warning: movemap requested but min_bb is set to false. This is probably wrong!"<<std::endl;
+	if ( !min_bb() ) TR.Warning << "movemap requested but min_bb is set to false. This is probably wrong!"<<std::endl;
 	return mm_;
 }
 

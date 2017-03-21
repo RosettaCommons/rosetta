@@ -182,7 +182,7 @@ core::Size GeneralizedKICselector::apply (
 
 	TR << "Choosing GeneralizedKIC solution." << std::endl;
 	if ( total_solutions < 1 && !low_memory_mode ) {
-		TR.Warning << "Warning!  No solutions passed to GeneralizedKICselector::apply.  The loop pose could not be updated!  No solution chosen!" << std::endl;
+		TR.Warning << "No solutions passed to GeneralizedKICselector::apply.  The loop pose could not be updated!  No solution chosen!" << std::endl;
 	}
 
 	//Indices that specify where the solution will be found:
@@ -213,7 +213,7 @@ core::Size GeneralizedKICselector::apply (
 		);
 		break;
 	default :
-		TR.Warning << "Warning!  No selector specified for GeneralizedKICselector::apply.  The loop pose could not be selected!  No solution chosen!" << std::endl;
+		TR.Warning << "No selector specified for GeneralizedKICselector::apply.  The loop pose could not be selected!  No solution chosen!" << std::endl;
 		return 0;
 	}
 

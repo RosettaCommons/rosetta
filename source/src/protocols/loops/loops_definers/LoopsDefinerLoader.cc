@@ -64,7 +64,7 @@ void LoopsDefinerLoader::load_data(
 		}
 		string const & name( subtag->getOption<string>("name") );
 		if ( data.has( "loops_definers", name ) ) {
-			TR.Error << "Error LoopsDefiner of name \"" << name
+			TR.Error << "LoopsDefiner of name \"" << name
 				<< "\" (with type " << type << ") already exists. \n" << subtag << endl;
 			utility_exit_with_message("Duplicate definition of LoopsDefiner with name " + name);
 		}

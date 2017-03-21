@@ -334,7 +334,7 @@ void
 ThreefoldLinkerMover::set_scorefxn(
 	core::scoring::ScoreFunctionCOP sfxn_in
 ) {
-	runtime_assert_string_msg( sfxn_in, "Error in Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_scorefxn(): A null pointer was passed to this function." );
+	runtime_assert_string_msg( sfxn_in, "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_scorefxn(): A null pointer was passed to this function." );
 	sfxn_ = sfxn_in;
 }
 

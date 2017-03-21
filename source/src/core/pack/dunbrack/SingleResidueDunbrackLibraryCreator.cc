@@ -39,16 +39,16 @@ SingleResidueDunbrackLibraryCreator::create( core::chemical::ResidueType const &
 	using namespace core::chemical::rotamers;
 	RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
 	// If the factory system is sound, these two checks should work.
-	assert( libspec );
+	debug_assert( libspec );
 	DunbrackRotamerLibrarySpecificationCOP dun_libspec = utility::pointer::dynamic_pointer_cast< DunbrackRotamerLibrarySpecification const >(libspec);
-	assert( dun_libspec );
+	debug_assert( dun_libspec );
 
 	core::chemical::AA aa( dun_libspec->get_aa() );
 	// TODO: Split D_aas into their own Rotamer library set (wrapper of l-aas)
 	if ( core::chemical::is_canonical_D_aa( aa ) ) {
 		aa = core::chemical::get_L_equivalent( aa );
 	}
-	assert( aa <= core::chemical::num_canonical_aas );
+	debug_assert( aa <= core::chemical::num_canonical_aas );
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP lib( core::pack::dunbrack::RotamerLibrary::get_instance()->get_library_by_aa(aa) );
 	return lib;
 }

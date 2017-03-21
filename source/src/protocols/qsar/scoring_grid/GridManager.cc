@@ -369,7 +369,7 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 	bool grid_directory_active = basic::options::option[basic::options::OptionKeys::qsar::grid_dir].user();
 
 	if ( !grid_directory_active ) {
-		GridManagerTracer << "WARNING: option -qsar:grid_dir is not set.  Use this flag to specify a directory to store scoring grids.  This will save you a huge amount of time" <<std::endl;
+		GridManagerTracer.Warning << "option -qsar:grid_dir is not set.  Use this flag to specify a directory to store scoring grids.  This will save you a huge amount of time" <<std::endl;
 	} else if ( !utility::file::file_exists(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()) ) {
 		utility_exit_with_message(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()+" does not exist. specify a valid path with -qsar:grid_dir");
 	}

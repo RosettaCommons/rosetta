@@ -148,7 +148,7 @@ ZnHash::ZnHash() :
 /// @brief must be called before build_hash is called
 void ZnHash::set_uniform_bin_width( Real width )
 {
-	assert( ! hash_has_been_built_ );
+	debug_assert( ! hash_has_been_built_ );
 	grid_size_ = width;
 	inv_grid_size_ = 1 / grid_size_;
 }
@@ -156,7 +156,7 @@ void ZnHash::set_uniform_bin_width( Real width )
 /// @brief First, add all zinc coordinates to the hash, then invoke build_hash.
 void ZnHash::add_zn_coordinate( ZnCoord const & zn )
 {
-	assert( ! hash_has_been_built_ );
+	debug_assert( ! hash_has_been_built_ );
 	zn_coords_.push_back( zn );
 }
 
@@ -209,7 +209,7 @@ void ZnHash::build_hash()
 
 boost::uint64_t ZnHash::bin_for_point( Vector const & query_point ) const
 {
-	assert( bb_.contains( query_point ) );
+	debug_assert( bb_.contains( query_point ) );
 	Vector shifted = query_point - bb_.lower();
 	boost::uint64_t sum(0);
 	for ( Size ii = 1; ii <= 3; ++ii ) {
@@ -395,14 +395,14 @@ void ZnCoordinationScorer::add_match_from_file(
 	std::string const & match_file_name
 )
 {
-	assert( matchcst_file_name_ != "" );
+	debug_assert( matchcst_file_name_ != "" );
 
 	// Load the match pdb.
 	// Place the ZN virtual atoms.
 	// Transform their coordinates to the local coordinates in the reference frame
 	// Save details about this match: file name.
 
-	assert( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->has_name( "ZNX" ));
+	debug_assert( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->has_name( "ZNX" ));
 
 
 	/*core::chemical::ResidueType const & znx_restype =
@@ -455,7 +455,7 @@ void ZnCoordinationScorer::add_match_from_file(
 
 		for ( core::Size ii = 1; ii <= reporter.constrained_nonligand_atoms().size(); ++ii ) {
 			core::id::AtomID iiatid = reporter.constrained_nonligand_atoms()[ ii ];
-			assert( iiatid.rsd() == 1 || iiatid.rsd() == 2 );
+			debug_assert( iiatid.rsd() == 1 || iiatid.rsd() == 2 );
 			//std::cout << "Constraint to ligand #" << ii << " Res " <<
 			// iiatid.rsd() << " atom " <<
 			// match_pose.residue( iiatid.rsd() ).atom_name( iiatid.atomno() ) <<
@@ -680,7 +680,7 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 	result.second.first = 0;
 	result.second.second = false;
 
-	assert( hash_ );
+	debug_assert( hash_ );
 
 	HTReal chAframe( res1.xyz( asymm_atids_[1].atomno() ), res1.xyz( asymm_atids_[2].atomno() ), res1.xyz( asymm_atids_[3].atomno() ) );
 	HTReal chBframe( res2.xyz( focused_clone_atids_[1].atomno() ), res2.xyz( focused_clone_atids_[2].atomno() ), res2.xyz( focused_clone_atids_[3].atomno() ) );
@@ -778,8 +778,8 @@ ZnCoordinationScorer::clash_score(
 	core::conformation::Residue const & r1m2 = match2.res1conf();
 	core::conformation::Residue const & r2m2 = match2.res2conf();
 
-	assert( symmclone_coords_res1.size() >= r1m2.natoms() );
-	assert( symmclone_coords_res2.size() >= r2m2.natoms() );
+	debug_assert( symmclone_coords_res1.size() >= r1m2.natoms() );
+	debug_assert( symmclone_coords_res2.size() >= r2m2.natoms() );
 
 
 	/*for ( Size ii = 1; ii <= r1m1.natoms(); ++ii ) {
@@ -891,8 +891,8 @@ ZnCoordinationScorer::insert_match_onto_pose(
 	for ( Size ii = 1; ii <= 2; ++ii ) {
 		core::conformation::Residue const & matchres = ii == 1 ? match.res1conf() : match.res2conf();
 		core::conformation::Residue const & dstres = p.residue( destresids[ ii ] );
-		assert( restypeset->mode() == dstres.type().mode() );
-		assert( restypeset->mode() == matchres.type().mode() );
+		debug_assert( restypeset->mode() == dstres.type().mode() );
+		debug_assert( restypeset->mode() == matchres.type().mode() );
 
 		// find the appropriate residue type for this position
 		core::chemical::ResidueTypeCOP newrestype( matchres.type().get_self_ptr() );
@@ -972,7 +972,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		}
 		// make sure we got everything -- probably shouldn't be an assert, but an actual if
 		for ( Size jj = 1; jj <= newcoords_calculated.size(); ++jj ) {
-			assert( newres->atom_is_backbone(jj) || newcoords_calculated[ jj ] == 1 );
+			debug_assert( newres->atom_is_backbone(jj) || newcoords_calculated[ jj ] == 1 );
 		}
 
 		// now insert this residue into the pose
@@ -1030,7 +1030,7 @@ ZnCoordinationScorer::original_frame_coordinate_for_match(
 void
 ZnCoordinationScorer::reset_reach()
 {
-	assert( ! hash_ ); // must be called before finalize gets called if you're going to call it.
+	debug_assert( ! hash_ ); // must be called before finalize gets called if you're going to call it.
 	reach_ = std::max( znreach_, orbital_dist_ * 2 + orbital_reach_ );
 	reach2_ = reach_ * reach_;
 }
@@ -1039,7 +1039,7 @@ ZnCoordinationScorer::reset_reach()
 void
 ZnCoordinationScorer::reset_znx_orbital_coords()
 {
-	assert( zn_matches_.size() == 0 ); // no matches should have been added yet.
+	debug_assert( zn_matches_.size() == 0 ); // no matches should have been added yet.
 	// Scale the coordinates so that the virtual atoms are unit length from the center
 	for ( core::Size ii = 1; ii <= znx_ideal_coords_.size(); ++ii ) {
 		Real d = znx_ideal_coords_[ii].length();
@@ -1057,7 +1057,7 @@ ZnCoordinationConstraint::ZnCoordinationConstraint( ZnCoordinationScorerCOP zn_s
 	core::scoring::constraints::Constraint( core::scoring::metalhash_constraint ),
 	zn_score_(std::move( zn_score ))
 {
-	assert( zn_score_ ); // do not create this with a null pointer
+	debug_assert( zn_score_ ); // do not create this with a null pointer
 }
 
 ZnCoordinationConstraint::~ZnCoordinationConstraint() = default;
@@ -1094,7 +1094,7 @@ ZnCoordinationConstraint::natoms() const {
 core::id::AtomID const &
 ZnCoordinationConstraint::atom( Size const index ) const
 {
-	assert( index <= natoms() );
+	debug_assert( index <= natoms() );
 	if ( index <= 3 ) {
 		return zn_score_->asymm_atids()[ index ];
 	} else if ( index <= 6 ) {

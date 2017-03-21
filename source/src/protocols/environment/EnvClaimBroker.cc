@@ -128,7 +128,7 @@ void update_pdb_info(
 void safe_set_conf( core::pose::Pose& pose, core::conformation::ConformationOP conf ){
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) {
 		basic::datacache::WriteableCacheableMapOP data_map = utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
-		assert( data_map );
+		debug_assert( data_map );
 		pose.set_new_conformation( conf );
 		pose.data().set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA, data_map );
 	} else {
@@ -180,7 +180,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 		pair.first->broking_finished( result() );
 	}
 
-	assert( utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 }
 
 EnvClaimBroker::~EnvClaimBroker() = default;
@@ -201,7 +201,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 	process_elements( r_elems, fts, new_vrts );
 	result_.new_vrts = new_vrts;
 
-	assert( fts.nres() == conf.size() + result().new_vrts.size() );
+	debug_assert( fts.nres() == conf.size() + result().new_vrts.size() );
 
 	//set up bogus attachments for new VRTs
 	result_.closer_ft = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( conf.fold_tree() ) );
@@ -300,7 +300,7 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 				datamap->find( "AutoCutData" )->second ) {
 			AutoCutDataOP auto_cut_data = utility::pointer::dynamic_pointer_cast< protocols::environment::AutoCutData > ( data );
 
-			assert( auto_cut_data );
+			debug_assert( auto_cut_data );
 
 			if ( auto_cut_data->hash() == hash ) {
 				tr.Debug << "  Found appropriate hash-valued AutoCutData. Repeating cut choices." << std::endl;
@@ -412,7 +412,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
 			try {
 				Size const cut = fts.insert_cut( masked_bias );
-				assert( masked_bias[cut] != 0 );
+				debug_assert( masked_bias[cut] != 0 );
 				tr.Debug << "  Inserted automatic cut at " << cut << std::endl;
 				result_.auto_cuts.insert( cut );
 				made_cut = true;
@@ -503,7 +503,7 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
 		conf.append_residue_by_jump( *rsd, conf.size() );
 
 		// This residue label should resolve to the VRT just added.
-		assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
+		debug_assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
 	}
 }
 
@@ -590,10 +590,10 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 		tr.Trace << "    considering: " << element.id << " from " << owner->get_name();
 
 		if ( !element.id.valid() ) {
-			tr.Error << "[ERROR] During " << style << " the DOF element with id " << element.id
+			tr.Error << "During " << style << " the DOF element with id " << element.id
 				<< " was produced by the mover '" << owner->get_name()
 				<< ", which is not a valid DOF_ID object." << std::endl;
-			assert( element.id.valid() );
+			debug_assert( element.id.valid() );
 		}
 
 		std::pair< ControlStrength, ClientMoverOP > prev_str = std::make_pair( DOES_NOT_CONTROL, ClientMoverOP( nullptr ) );
@@ -604,7 +604,7 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 
 		if ( prev_str.first == EXCLUSIVE ) {
 			if ( strength >= MUST_CONTROL && ( owner != prev_str.second ) ) {
-				assert( prev_str.second );
+				debug_assert( prev_str.second );
 				std::ostringstream ss;
 				ss << "While broking for " << style << ", there were conflicting claim strengths on DoF "
 					<< element.type << " " << element.id << ": "
@@ -864,7 +864,7 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 	using namespace core::chemical;
 	using namespace core::conformation;
 
-	assert( conf.fold_tree().is_cutpoint( (int) rsd_num_lower ) );
+	debug_assert( conf.fold_tree().is_cutpoint( (int) rsd_num_lower ) );
 
 	Residue const & rsd_lower( conf.residue( rsd_num_lower ) );
 	Residue const & rsd_upper( conf.residue( rsd_num_lower + 1 ) );

@@ -363,13 +363,13 @@ private: // Methods
 
 	/// @brief Translate the seqpos to the id within the free peptide
 	Size res_id(Size seqpos){
-		assert(seqpos > pivot1_ - 3 && seqpos < pivot2_ + 3);
+		debug_assert(seqpos > pivot1_ - 3 && seqpos < pivot2_ + 3);
 		return seqpos - pivot1_ + 3;
 	}
 
 	/// @brief Translate the id of a residue within the free peptide to its seqpos
 	Size seqpos(Size res_id){
-		assert(res_id < pivot2_ - pivot1_ + 6);
+		debug_assert(res_id < pivot2_ - pivot1_ + 6);
 		return res_id + pivot1_ - 3;
 	}
 

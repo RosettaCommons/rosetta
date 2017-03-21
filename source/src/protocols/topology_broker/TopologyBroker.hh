@@ -137,7 +137,7 @@ public:
 
 	/// @brief Returns the ith topology claimer if it exists.
 	const TopologyClaimerOP & claimer(core::Size i) const {
-		assert(i >= 1 && i <= claimers_.size());
+		debug_assert(i >= 1 && i <= claimers_.size());
 		return claimers_[i];
 	}
 

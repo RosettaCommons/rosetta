@@ -98,8 +98,8 @@ CountPairFactory::create_count_pair_function(
 	} else if ( crossover == CP_CROSSOVER_34 && ( res1.polymeric_sequence_distance( res2 ) == 2 ) ) {
 		Size midway( res1.seqpos() > res2.seqpos() ? res2.seqpos() + 1 : res1.seqpos() + 1 );
 		// scope for res1connat, res2connat initializations
-		assert( res1.connections_to_residue( midway ).size() == 1 );
-		assert( res2.connections_to_residue( midway ).size() == 1 );
+		debug_assert( res1.connections_to_residue( midway ).size() == 1 );
+		debug_assert( res2.connections_to_residue( midway ).size() == 1 );
 
 		Size res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
 		Size res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();
@@ -166,8 +166,8 @@ CountPairFactory::create_count_pair_function_and_invoke(
 	} else if ( crossover == CP_CROSSOVER_34 && ( res1.polymeric_sequence_distance( res2 ) == 2 ) ) {
 		Size midway( res1.seqpos() > res2.seqpos() ? res2.seqpos() + 1 : res1.seqpos() + 1 );
 		// scope for res1connat, res2connat initializations
-		assert( res1.connections_to_residue( midway ).size() == 1 );
-		assert( res2.connections_to_residue( midway ).size() == 1 );
+		debug_assert( res1.connections_to_residue( midway ).size() == 1 );
+		debug_assert( res2.connections_to_residue( midway ).size() == 1 );
 
 		Size res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
 		Size res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();

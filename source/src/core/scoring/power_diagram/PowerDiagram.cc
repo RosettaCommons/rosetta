@@ -596,7 +596,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 				gen_itr != (*trash_itr)->nonconst_generators().end() ; ++gen_itr ) {
 			Size check_val( (*gen_itr)->vertices().size() );
 			(*gen_itr)->vertices().remove( *trash_itr );
-			assert( (*gen_itr)->vertices().size() == (check_val - 1)   );
+			debug_assert( (*gen_itr)->vertices().size() == (check_val - 1)   );
 			//   TR << "Atom res " << (*gen_itr)->res() << " atom " << (*gen_itr)->atom() << " lost a vertex" << std::endl;
 		}
 
@@ -648,7 +648,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 				//    TR << "Deleted vertex generator residue " << (*debug_itr)->res() << " atom " << (*debug_itr)->atom() << std::endl;
 			}
 
-			assert( new_vrt->nonconst_generators().size() == 3 );
+			debug_assert( new_vrt->nonconst_generators().size() == 3 );
 			//   TR << "Set intersection found " << new_vrt->nonconst_generators().size() << " in common " << std::endl;
 
 			// Add in new atom
@@ -664,14 +664,14 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			// Stitch up the connections on this edge
 			new_vrt->nonconst_partners().push_back( *part_itr );
 			// The trashed vertex is replaced by the new one in the surviving vertex
-			assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
+			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
 				trash_vrt ) != (*part_itr)->nonconst_partners().end() );
-			assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
+			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
 				new_vrt ) == (*part_itr)->nonconst_partners().end() );
 			std::replace( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(), trash_vrt, new_vrt );
-			assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
+			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
 				new_vrt ) != (*part_itr)->nonconst_partners().end() );
-			assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
+			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
 				trash_vrt ) == (*part_itr)->nonconst_partners().end() );
 
 			// Move the new vertex to a temporary list - it still needs the
@@ -746,7 +746,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 				for ( Size igen( 1 ) ; igen <= 4 ; igen++ ) {
 					if ( igen != omit ) only_three.push_back( (*itr)->nonconst_generators()[ igen ] );
 				}
-				assert( only_three.size() == 3 );
+				debug_assert( only_three.size() == 3 );
 				// Check this set of three against each of the current partners
 				bool build_infinite_vertex( true );
 				for ( utility::vector1< PDvertexOP >::iterator part_itr = (*itr)->nonconst_partners().begin() ;
@@ -794,7 +794,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 				}
 			}
 		}
-		assert( (*itr)->partners().size() == 4 );
+		debug_assert( (*itr)->partners().size() == 4 );
 	}
 
 	// At this point the new finite vertices are complete, and can be added
@@ -833,7 +833,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 		while ( (*itr)->partners().size() != 4 ) {
 
-			assert( (*itr)->partners().size() <= 4 );
+			debug_assert( (*itr)->partners().size() <= 4 );
 
 			for ( std::list< PDvertexOP >::iterator new_itr( new_infinite_vertices.begin() ) ;
 					new_itr != new_infinite_vertices.end() ; ++new_itr ) {
@@ -861,7 +861,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			itr != new_infinite_vertices.end() ; ++itr ) {
 		while ( (*itr)->partners().size() != 4 ) {
 
-			assert( (*itr)->partners().size() <= 4 );
+			debug_assert( (*itr)->partners().size() <= 4 );
 
 			//   TR << "New vertex id " << (*itr)->id() << " currently has " << (*itr)->partners().size() << " partners" << std::endl;
 
@@ -910,10 +910,10 @@ PowerDiagram::add_single_atom_to_power_diagram(
 					Real const gen_power( power_distance( (*ec_itr)->xyz(), (*atm_itr) ) );
 					TR << "Comparing other power " << gen_power << " with vertex power " << ec_power << std::endl;
 					if( gen_power < ec_power ) {
-						TR << "ERROR:  Calculating power between finite vertex id " << (*ec_itr)->id() << " and other atom less than generators!" << std::endl;
-						TR << "Calculated power " << gen_power << " less than generator power " << ec_power << std::endl;
+						TR.Error << "Calculating power between finite vertex id " << (*ec_itr)->id() << " and other atom less than generators!" << std::endl;
+						TR.Error << "Calculated power " << gen_power << " less than generator power " << ec_power << std::endl;
 					}
-					assert( gen_power > ec_power );
+					debug_assert( gen_power > ec_power );
 				}
 			}
 
@@ -928,9 +928,9 @@ PowerDiagram::add_single_atom_to_power_diagram(
 					Real const dir_dot( ( (*atm_itr)->xyz() - (*ec_itr)->generators()[1]->xyz() ).dot( (*ec_itr)->direction() ) );
 					TR << "Comparing other dir dot product " << dir_dot << std::endl;
 					if( dir_dot > 0.0 ) {
-						TR << "ERROR:  Calculating plane normal dot of infinite vertex id " << (*ec_itr)->id() << " with atom res " << (*atm_itr)->res() << " and atom " << (*atm_itr)->atom() << " on forbidden side!" << std::endl;
+						TR.Error << "Calculating plane normal dot of infinite vertex id " << (*ec_itr)->id() << " with atom res " << (*atm_itr)->res() << " and atom " << (*atm_itr)->atom() << " on forbidden side!" << std::endl;
 					}
-					assert( dir_dot < 0.0 );
+					debug_assert( dir_dot < 0.0 );
 				}
 			}
 
@@ -940,34 +940,34 @@ PowerDiagram::add_single_atom_to_power_diagram(
 	for( std::list< PDvertexOP >::iterator ec_itr( finite_vertices_.begin() ) ;
 					ec_itr != finite_vertices_.end() ; ++ec_itr ) {
 			if( (*ec_itr)->generators().size() != 4 ) {
-				TR << "ERROR:  finite vertex id " << (*ec_itr)->id() << " has wrong number of generators: " << (*ec_itr)->generators().size() << " - should be 4 " << std::endl;
+				TR.Error << "finite vertex id " << (*ec_itr)->id() << " has wrong number of generators: " << (*ec_itr)->generators().size() << " - should be 4 " << std::endl;
 			}
-			assert( (*ec_itr)->generators().size() == 4 );
+			debug_assert( (*ec_itr)->generators().size() == 4 );
 	}
 
 	for( std::list< PDvertexOP >::iterator ec_itr( infinite_vertices_.begin() ) ;
 					ec_itr != infinite_vertices_.end() ; ++ec_itr ) {
 			if( (*ec_itr)->generators().size() != 3 ) {
-				TR << "ERROR:  infinite vertex id " << (*ec_itr)->id() << " has wrong number of generators: " << (*ec_itr)->generators().size() << " - should be 3 " << std::endl;
+				TR.Error << "infinite vertex id " << (*ec_itr)->id() << " has wrong number of generators: " << (*ec_itr)->generators().size() << " - should be 3 " << std::endl;
 			}
-			assert( (*ec_itr)->generators().size() == 3 );
+			debug_assert( (*ec_itr)->generators().size() == 3 );
 	}
 
 
 	for( std::list< PDvertexOP >::iterator ec_itr( finite_vertices_.begin() ) ;
 					ec_itr != finite_vertices_.end() ; ++ec_itr ) {
 			if( (*ec_itr)->partners().size() != 4 ) {
-				TR << "ERROR:  finite vertex id " << (*ec_itr)->id() << " has wrong number of partners: " << (*ec_itr)->partners().size() << " - should be 4 " << std::endl;
+				TR.Error << "finite vertex id " << (*ec_itr)->id() << " has wrong number of partners: " << (*ec_itr)->partners().size() << " - should be 4 " << std::endl;
 			}
-			assert( (*ec_itr)->partners().size() == 4 );
+			debug_assert( (*ec_itr)->partners().size() == 4 );
 	}
 
 	for( std::list< PDvertexOP >::iterator ec_itr( infinite_vertices_.begin() ) ;
 					ec_itr != infinite_vertices_.end() ; ++ec_itr ) {
 			if( (*ec_itr)->partners().size() != 4 ) {
-				TR << "ERROR:  infinite vertex id " << (*ec_itr)->id() << " has wrong number of partners: " << (*ec_itr)->partners().size() << " - should be 4 " << std::endl;
+				TR.Error << "infinite vertex id " << (*ec_itr)->id() << " has wrong number of partners: " << (*ec_itr)->partners().size() << " - should be 4 " << std::endl;
 			}
-			assert( (*ec_itr)->partners().size() == 4 );
+			debug_assert( (*ec_itr)->partners().size() == 4 );
 	}
 #endif
 }

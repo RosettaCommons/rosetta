@@ -194,7 +194,7 @@ superimpose_pose_on_subset_bb(
 			ref_ids.emplace_back( ref_pose.residue(i).atom_index("O"), i );
 		}
 	}
-	assert( ids.size()== ref_ids.size());
+	debug_assert( ids.size()== ref_ids.size());
 
 	for ( core::Size i=1; i<=ids.size(); ++i ) {
 		atom_map.set( ids[i], ref_ids[i] );

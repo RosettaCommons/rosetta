@@ -130,7 +130,7 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 			set_client( moves::MoverFactory::get_instance()->newMover( subtag, datamap, filters, mover_map, pose ) );
 
 			if ( subtag->hasOption( "name" ) ) {
-				tr.Warning << "[WARNING] Mover " << subtag->getOption< std::string >( "name" ) << " will not be availiable to"
+				tr.Warning << "Mover " << subtag->getOption< std::string >( "name" ) << " will not be availiable to"
 					<< " reference by name. It will exist only within " << this->get_name() << std::endl;
 			}
 		}

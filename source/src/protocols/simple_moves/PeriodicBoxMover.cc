@@ -229,7 +229,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 			else if ( elt=="P" ) wt = 30.974;
 			else if ( elt=="S" ) wt = 32.060;
 			else {
-				TR << "ERROR: " << elt << std::endl;
+				TR.Error << elt << std::endl;
 			}
 
 			com += wt*pose.residue(i).xyz(j);
@@ -537,7 +537,7 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 			else if ( elt=="P" ) wt = 30.974;
 			else if ( elt=="S" ) wt = 32.060;
 			else wt = 0.0;
-			// TR << "ERROR: " << elt << std::endl;
+			// TR.Error << elt << std::endl;
 			density += wt;
 		}
 	}

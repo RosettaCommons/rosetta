@@ -286,7 +286,7 @@ public:
 	/// @brief Returns the minor helix r1 value for the atom with the index value, in Angstroms.
 	/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
 	inline core::Real r1( core::Size const index ) const {
-		assert( index<=r1_.size() && index>0 );
+		debug_assert( index<=r1_.size() && index>0 );
 		return r1_[index];
 	}
 
@@ -308,7 +308,7 @@ public:
 	/// @brief Returns the minor helix angular offset around the minor helix axis, defined on a per-atom basis, in radians, for the atom with the index value.
 	/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
 	inline core::Real delta_omega1( core::Size const index ) const {
-		assert( index<=delta_omega1_.size() && index>0 );
+		debug_assert( index<=delta_omega1_.size() && index>0 );
 		return delta_omega1_[index];
 	}
 
@@ -318,7 +318,7 @@ public:
 	/// @brief Returns the minor helix offset along the minor helix axis, defined on a per-atom basis, in Angstroms, for the atom with the index value.
 	/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
 	inline core::Real delta_z1( core::Size const index ) const {
-		assert( index<=delta_z1_.size() && index>0 );
+		debug_assert( index<=delta_z1_.size() && index>0 );
 		return delta_z1_[index];
 	}
 

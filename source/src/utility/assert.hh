@@ -27,13 +27,13 @@
 #ifndef NDEBUG // Debug version
 #define ASSERT_ONLY(x) x
 #else
-	#define ASSERT_ONLY(x)
+#define ASSERT_ONLY(x)
 #endif
 
 #ifndef USEMPI
 #define MPI_ONLY(x)
 #else
-  #define MPI_ONLY(x) x
+#define MPI_ONLY(x) x
 #endif
 
 namespace utility {

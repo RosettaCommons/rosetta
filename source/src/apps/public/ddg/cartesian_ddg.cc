@@ -189,7 +189,7 @@ read_in_mutations(
 		int total;
 		std::string total_keyword;
 		inputstream >> total_keyword;
-		assert(total_keyword.compare("total") == 0);
+		debug_assert(total_keyword.compare("total") == 0);
 
 		inputstream >> total; //keep for cross-checking
 		while ( !inputstream.eof() && total>0 ) {
@@ -320,8 +320,7 @@ main( int argc, char * argv [] )
 		bools is_flexible( pose.size(), false );  //repackable
 
 		if ( !option[ OptionKeys::ddg::mut_file ].user() ) {
-			//quit!
-			runtime_assert(false);
+				utility_exit_with_message("Option -ddg::mut_file must be set.");
 		}
 		TR.Debug << "reading in mutfile" << std::endl;
 		std::string filename = option[OptionKeys::ddg::mut_file]();

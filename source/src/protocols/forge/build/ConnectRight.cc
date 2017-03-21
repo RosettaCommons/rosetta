@@ -201,9 +201,9 @@ void ConnectRight::extract_rt(
 {
 	using core::id::StubID;
 
-	assert( jump_start_residue != jump_stop_residue );
-	assert( jump_start_residue <= pose.size() );
-	assert( jump_stop_residue <= pose.size() );
+	debug_assert( jump_start_residue != jump_stop_residue );
+	debug_assert( jump_start_residue <= pose.size() );
+	debug_assert( jump_stop_residue <= pose.size() );
 
 	StubID  left_stub_id( core::pose::named_stub_id_to_stub_id(  left_named_stub_id( jump_start_residue ), pose ) );
 	StubID right_stub_id( core::pose::named_stub_id_to_stub_id( right_named_stub_id( jump_stop_residue  ), pose ) );
@@ -247,7 +247,7 @@ void ConnectRight::on_residue_prepend( LengthEvent const & event ) {
 
 /// @brief update indexing on residue delete
 void ConnectRight::on_residue_delete( LengthEvent const & event ) {
-	assert( event.position != left_position_ );
+	debug_assert( event.position != left_position_ );
 	if ( event.position < left_position_ ) {
 		//--left_position_;
 		if ( int(left_position_) + event.length_change < int(event.position) ) left_position_ = event.position;
@@ -380,7 +380,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 		pose_left.pdb_info()->copy( *pose_right_.pdb_info(), 1, pose_right_.size(), original_left_nres + 1 );
 	}
 
-	assert( pose_left.size() == original_left_nres + pose_right_.size() );
+	debug_assert( pose_left.size() == original_left_nres + pose_right_.size() );
 
 	// END POSE MODIFY: after this point pose_left is static
 
@@ -418,8 +418,8 @@ void ConnectRight::init() {
 	right_stub_atoms_.push_back( "CA" );
 	right_stub_atoms_.push_back( "C" );
 
-	assert( left_stub_atoms_.size() == 4 );
-	assert( right_stub_atoms_.size() == 4 );
+	debug_assert( left_stub_atoms_.size() == 4 );
+	debug_assert( right_stub_atoms_.size() == 4 );
 }
 
 

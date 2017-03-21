@@ -287,7 +287,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 		<< "good loops: " << fast_loop_count+good_loop_count << " ( " << min_fast_loops_ << " ) " <<  std::endl;
 
 	if ( !best_fragment_.is_valid() || ( good_loop_count < min_good_loops_ && (fast_loop_count + good_loop_count) < min_fast_loops_ ) ) {
-		tr.Warning << "WARNING: no good loop found! There were " << good_loop_count << " good loops (" << min_good_loops_ << " are required) and there were " << fast_loop_count << " fast loops ( fast loops + good loops must be at least " << min_fast_loops_ << ")." << std::endl;
+		tr.Warning << "no good loop found! There were " << good_loop_count << " good loops (" << min_good_loops_ << " are required) and there were " << fast_loop_count << " fast loops ( fast loops + good loops must be at least " << min_fast_loops_ << ")." << std::endl;
 		throw( EXCN_Loop_not_closed(utility::to_string(loop_)) );
 	}
 } //sample_loops

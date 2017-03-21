@@ -437,7 +437,7 @@ void MatcherTask::filter_upstream_residue_collisions( bool setting )
 
 void MatcherTask::filter_upstream_collisions_by_score( bool setting )
 {
-	assert( filter_upstream_residue_collisions_ ); // must set filter_upstream_residue_collisions_ first!
+	debug_assert( filter_upstream_residue_collisions_ ); // must set filter_upstream_residue_collisions_ first!
 	filter_upstream_collisions_by_score_ = setting;
 }
 
@@ -954,7 +954,7 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 	} else {
 		if ( !upstream_pose_ ) utility_exit_with_message( "Grid boundary defintion file must be specified with the -match::grid_boundary <filename> flag, or the upstram_pose_ must be set in the MatcherTask." );
 
-		TR << "WARNING WARNING WARNING: no grid file specified for option -grid_boundary. The bounding grid will be generated from the dimensions of the pose. This is experimental at the moment." << std::endl;
+		TR.Warning << "no grid file specified for option -grid_boundary. The bounding grid will be generated from the dimensions of the pose. This is experimental at the moment." << std::endl;
 
 		Real lowx(upstream_pose_->residue(1).xyz(1).x());
 		Real lowy(upstream_pose_->residue(1).xyz(1).y());

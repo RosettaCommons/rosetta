@@ -427,7 +427,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
-	assert(energies.energies_updated());
+	debug_assert(energies.energies_updated());
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 	EnergyMap emap;
@@ -573,7 +573,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 						resNum2 = resNum;
 					}
 
-					assert(rni->energy_computed());
+					debug_assert(rni->energy_computed());
 					emap.zero();
 					rni->retrieve_energy( emap );
 
@@ -629,7 +629,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 						resNum2 = resNum;
 					}
 
-					assert(rni->energy_computed());
+					debug_assert(rni->energy_computed());
 					emap.zero();
 					rni->retrieve_energy( emap );
 

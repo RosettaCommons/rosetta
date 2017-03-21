@@ -193,7 +193,7 @@ RestrictToCDRsAndNeighbors::set_cdrs(const utility::vector1<bool>& cdrs) {
 		}
 	}
 
-	assert(cdrs_.size() == 8);
+	debug_assert(cdrs_.size() == 8);
 }
 
 void

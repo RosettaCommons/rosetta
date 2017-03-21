@@ -241,7 +241,7 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	}
 	// AMW: cppcheck notes that if this can be zero, then we divide by zero by it in the next line
 	if ( !resi_count ) {
-		TR<<"Warning: No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
+		TR.Warning << "No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
 	}
 	core::Real const rate( 1.0 - (core::Real) mutation_count / resi_count );
 	TR<<"Your design mover mutated "<<mutation_count<<" positions out of "<<resi_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;

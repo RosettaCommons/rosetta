@@ -69,8 +69,8 @@ void SecondaryStructure::compute_fractions( core::fragment::FragSet const& frags
 	//make sure, that the fragments that are used start with position 1 (local position)
 	if ( frags.global_offset() != 0 ) {
 		// JRP This is super lame, and should be pretty easy to fix adjusting everything by frags.global_offset()
-		tr.Error << "[ERROR] SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
-		runtime_assert( false );
+		tr.Error << "SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
+		utility_exit_with_message("SecondaryStructure needs local coordinates.");
 	}
 
 	Size frag_nres = frags.max_pos();

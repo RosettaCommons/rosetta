@@ -194,14 +194,14 @@ bool FlexPepDockingFlags::is_ligand_present( core::pose::Pose const& pose ) cons
 			return false;
 		}
 	}
-	std::cout << "ERROR: chain bounds invalid" << std::endl;
+	TR.Error << "chain bounds invalid" << std::endl;
 	exit(-1);
 }
 
 std::string FlexPepDockingFlags::receptor_chain() const
 {
 	if ( valid_chain_info() && !pep_fold_only ) return receptor_chain_;
-	std::cout << "ERROR: receptor chain invalid" << std::endl;
+	TR.Error << "receptor chain invalid" << std::endl;
 	exit(-1);
 }
 
@@ -209,14 +209,14 @@ std::string FlexPepDockingFlags::receptor_chain() const
 char FlexPepDockingFlags::peptide_chain() const
 {
 	if ( valid_chain_info() ) return peptide_chain_;
-	std::cout << "ERROR: peptide chain invalid" << std::endl;
+	TR.Error << "peptide chain invalid" << std::endl;
 	exit(-1);
 }
 
 int FlexPepDockingFlags::receptor_first_res() const
 {
 	if ( valid_chain_info() && !pep_fold_only ) return receptor_first_res_;
-	std::cout << "ERROR: chain bounds invalid: receptor_first " << std::endl;
+	TR.Error << "chain bounds invalid: receptor_first " << std::endl;
 	exit(-1);
 }
 
@@ -226,7 +226,7 @@ int FlexPepDockingFlags::receptor_last_res() const
 	if ( valid_chain_info() && !pep_fold_only ) {
 		return receptor_first_res_ + receptor_nres_ - 1;
 	}
-	std::cout << "ERROR: chain bounds invalid: receptor_last " << std::endl;
+	TR.Error << "chain bounds invalid: receptor_last " << std::endl;
 	exit(-1);
 }
 
@@ -235,7 +235,7 @@ int FlexPepDockingFlags::receptor_nres() const
 {
 	if ( valid_chain_info() ) return receptor_nres_;
 	if ( pep_fold_only ) return 0;
-	std::cout << "ERROR: chain bounds invalid: receptor_nres " << std::endl;
+	TR.Error << "chain bounds invalid: receptor_nres " << std::endl;
 	exit(-1);
 }
 
@@ -243,7 +243,7 @@ int FlexPepDockingFlags::receptor_nres() const
 int FlexPepDockingFlags::peptide_first_res() const
 {
 	if ( valid_chain_info() ) return peptide_first_res_;
-	std::cout << "ERROR: chain bounds invalid: pep_first " << std::endl;
+	TR.Error << "chain bounds invalid: pep_first " << std::endl;
 	exit(-1);
 }
 
@@ -253,7 +253,7 @@ int FlexPepDockingFlags::peptide_last_res() const
 	if ( valid_chain_info() ) {
 		return peptide_first_res_ + peptide_nres_ - 1;
 	}
-	std::cout << "ERROR: chain bounds invalid: pep_last " << std::endl;
+	TR.Error << "chain bounds invalid: pep_last " << std::endl;
 	exit(-1);
 }
 
@@ -261,7 +261,7 @@ int FlexPepDockingFlags::peptide_last_res() const
 int FlexPepDockingFlags::peptide_nres() const
 {
 	if ( valid_chain_info() ) return peptide_nres_;
-	std::cout << "ERROR: chain bounds invalid: pep_nres " << std::endl;
+	TR.Error << "chain bounds invalid: pep_nres " << std::endl;
 	exit(-1);
 }
 
@@ -269,7 +269,7 @@ int FlexPepDockingFlags::peptide_nres() const
 std::string FlexPepDockingFlags::ref_start_struct() const
 {
 	if ( valid_ref_start_struct() ) return ref_start_struct_;
-	std::cout << "ERROR: ref start structure not specified" << std::endl;
+	TR.Error << "ref start structure not specified" << std::endl;
 	exit(-1);
 }
 

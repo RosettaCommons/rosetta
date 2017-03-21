@@ -49,7 +49,7 @@ void add_loop(
 )
 {
 	if ( seg_begin >= seg_end || pose.chain( seg_begin ) != pose.chain( seg_end ) ) {
-		TR(t_info) << "WARNING: skipping segment with illegal beginning/ending: ";
+		TR.Warning << "skipping segment with illegal beginning/ending: ";
 		if ( pose.pdb_info() ) {
 			pose::PDBInfo const & pdb( *pose.pdb_info() );
 			TR(t_info) << pdb.chain(seg_begin) << "." << pdb.number(seg_begin) << "."
@@ -98,7 +98,7 @@ void loops_around_residues(
 )
 {
 	if ( residue_indices.empty() ) {
-		TR(t_info) << "WARNING: no residues provided--can not define any loops" << std::endl;
+		TR.Warning << "no residues provided--can not define any loops" << std::endl;
 		return;
 	}
 	// loops should be empty, in order to guarantee no overlap

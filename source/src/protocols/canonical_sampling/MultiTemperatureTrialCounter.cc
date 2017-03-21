@@ -59,7 +59,7 @@ void MultiTemperatureTrialCounter::show() const {
 /////////////////////////////////////////////////////////////////////////////
 void
 MultiTemperatureTrialCounter::show( std::ostream& os ) const {
-	assert( tempering_ );
+	debug_assert( tempering_ );
 	_write_to_stream( os, "" );
 }
 
@@ -71,7 +71,7 @@ MultiTemperatureTrialCounter::write_to_file( std::string const& file, std::strin
 
 void
 MultiTemperatureTrialCounter::_write_to_stream( std::ostream& os, std::string const& tag ) const {
-	assert( tempering_ );
+	debug_assert( tempering_ );
 	os << "Stats for job: " << tag << std::endl;
 	for ( Size i=1; i<=counters_.size(); ++i ) {
 		std::ostringstream line_header;
@@ -81,18 +81,18 @@ MultiTemperatureTrialCounter::_write_to_stream( std::ostream& os, std::string co
 }
 
 void MultiTemperatureTrialCounter::count_trial( std::string const& tag ) {
-	assert( tempering_ );
-	assert( tempering_->n_temp_levels() == counters_.size() );
+	debug_assert( tempering_ );
+	debug_assert( tempering_->n_temp_levels() == counters_.size() );
 	counters_[ tempering_->temperature_level() ].count_trial( tag );
 }
 
 void MultiTemperatureTrialCounter::count_accepted( std::string const& tag ) {
-	assert( tempering_ );
+	debug_assert( tempering_ );
 	counters_[ tempering_->temperature_level() ].count_accepted( tag );
 }
 
 void MultiTemperatureTrialCounter::count_energy_drop( std::string const& tag, Real delta ) {
-	assert( tempering_ );
+	debug_assert( tempering_ );
 	counters_[ tempering_->temperature_level() ].count_energy_drop( tag, delta );
 }
 

@@ -151,7 +151,7 @@ ExtractSmallest( std::list< NodeOP > & nodes )
 std::list< NodeOP >
 AdjacentRemainingNodes( std::list< NodeOP > const &, NodeOP node )
 {
-	assert( ! node->in_list );
+	debug_assert( ! node->in_list );
 	std::list< NodeOP > adjacentNodes;
 	for ( std::list< NodeOP >::const_iterator cur_neighbor = node->neighbors.begin();
 			cur_neighbor != node->neighbors.end();

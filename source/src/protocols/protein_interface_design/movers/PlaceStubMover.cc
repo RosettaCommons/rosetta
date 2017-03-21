@@ -493,7 +493,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 		core::Size const after_apply_stub_minimize_mover( pose.constraint_set()->get_all_constraints().size() );
 		TR_debug<<"before applying stub minimization mover "<<before_apply_stub_minimize_mover<<" constraints. After: "<<after_apply_stub_minimize_mover<<std::endl;
 		if ( before_apply_stub_minimize_mover != after_apply_stub_minimize_mover ) {
-			TR<<" ***ERROR: stub minimization has changed the number of constraints on the pose. Before: "<< before_apply_stub_minimize_mover<<" after: "<<after_apply_stub_minimize_mover<<". This behaviour is unsupported."<<std::endl;
+			TR.Error << "stub minimization has changed the number of constraints on the pose. Before: "<< before_apply_stub_minimize_mover<<" after: "<<after_apply_stub_minimize_mover<<". This behaviour is unsupported."<<std::endl;
 			runtime_assert( before_apply_stub_minimize_mover != after_apply_stub_minimize_mover );
 		}
 	} else { //stub!=NULL
@@ -773,7 +773,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						no_repack.push_back( it->first );
 					}
 					//place_stub should have inserted the stub into placed_stubs
-					assert( std::find(no_repack.begin(), no_repack.end(), res) != no_repack.end() );
+					debug_assert( std::find(no_repack.begin(), no_repack.end(), res) != no_repack.end() );
 
 					std::sort( no_repack.begin(), no_repack.end() );
 					utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
@@ -904,7 +904,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						core::Size const after_apply_design_mover( pose.constraint_set()->get_all_constraints().size() );
 						TR_debug<<"before applying design mover "<<before_apply_design_mover<<" constraints. After: "<<after_apply_design_mover<<std::endl;
 						if ( before_apply_design_mover != after_apply_design_mover ) {
-							TR<<"ERROR: This design mover changed the number of constraints on the pose. Before: "<< before_apply_design_mover<<" after: "<<after_apply_design_mover<<". This behaviour is unsupported."<<std::endl;
+							TR.Error << "This design mover changed the number of constraints on the pose. Before: "<< before_apply_design_mover<<" after: "<<after_apply_design_mover<<". This behaviour is unsupported."<<std::endl;
 							runtime_assert( before_apply_design_mover != after_apply_design_mover );
 						}
 						//      TR<<"removing coordinate constraints\n";
@@ -1106,7 +1106,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 
 	if ( tag->hasOption( "task_operations" ) ) {
 		if ( task_factory() ) {
-			TR<<"*****WARNING: ERASING existing task_factory, b/c of specifications for new task operations in\n"<<tag<<std::endl;
+			TR.Warning << "ERASING existing task_factory, b/c of specifications for new task operations in\n"<<tag<<std::endl;
 		}
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}

@@ -106,8 +106,8 @@ inline
 BasePartner const &
 retrieve_base_partner_from_pose_inline( pose::Pose const & pose )
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::BASE_PARTNER ) );
-	assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER ))));
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::BASE_PARTNER ) );
+	debug_assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER ))));
 	return ( static_cast< BasePartner const &>(    pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER )));
 }
 

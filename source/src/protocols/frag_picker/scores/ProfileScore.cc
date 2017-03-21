@@ -61,10 +61,10 @@ void ProfileScore::do_caching(VallChunkOP chunk) {
 	cached_scores_id_ = tmp;
 	core::Size size_q = query_profile_->length();
 	core::sequence::SequenceProfileOP chunk_profile = chunk->get_profile();
-	assert( chunk_profile->length() !=0 );
+	debug_assert( chunk_profile->length() !=0 );
 	trProfScore.Debug << "caching profile score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
-	assert( chunk->size() == chunk_profile->length() );
+	debug_assert( chunk->size() == chunk_profile->length() );
 	for ( core::Size i = 1; i <= size_q; ++i ) {
 		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 			scores_[i][j] = profile_scoring_->score(query_profile_,
@@ -85,8 +85,8 @@ bool ProfileScore::cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_
 
 	core::Real totalScore = 0;
 	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
-		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
-		assert(f->get_first_index_in_vall()
+		debug_assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
+		debug_assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
 		totalScore
 			+= scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()

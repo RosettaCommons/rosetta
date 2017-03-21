@@ -144,7 +144,7 @@ void MPIBPool_RMSD::initialize(){
   if ( rank_ == master_node_ ) {
     pool_size_ = Pool_RMSD::size();
     Pool_RMSD::clear();
-    assert( Pool_RMSD::size() == 0 );
+    debug_assert( Pool_RMSD::size() == 0 );
   } else {
     pool_size_ = Pool_RMSD::size();
   }
@@ -229,7 +229,7 @@ void MPIBPool_RMSD::broadcast_newest_coords( int num_to_send ){
 
   if ( rank_ == master_node_ ) {
 
-    assert( (int)(new_structures_) >= num_to_send );
+    debug_assert( (int)(new_structures_) >= num_to_send );
     //core::Size current_size = new_structures_;
     if( tracer_visible_ ) {
       tr.Debug << "broadcasting " << num_to_send << " structures " << std::endl;
@@ -495,7 +495,7 @@ void MPIBPool_RMSD::farray_to_array( FArray2D<double> const& farray_xyz, double 
   /**
 void MPIBPool_RMSD::array_to_farray( FArray2D<double>& farray_xyz, double xyz[] ){
 
-  assert( transfer_buf_.nresidues_ > 0 );
+  debug_assert( transfer_buf_.nresidues_ > 0 );
   //farray_xyz.redimension( 3, nresidues_, 0.0 );
   tr.Debug << "converting array to farray dimensions: " << farray_xyz.u1() << " " << farray_xyz.u2() << " " << std::endl;
   int index = 0;
@@ -571,7 +571,7 @@ void MPIBPool_RMSD::finalize(){
     MPI_Bcast( &new_size, 1, MPI_INT, pool_master_node_, MPI_COMM_POOL );
     PROF_STOP( basic::MPI_MASTER_BCAST_NEW_COMM_SIZE );
 
-    assert( new_size < static_cast<int>(pool_npes_) );
+    debug_assert( new_size < static_cast<int>(pool_npes_) );
     if( tracer_visible_ ){
       tr.Debug << "new size is " << new_size << " current size: " << pool_npes_ << std::endl;
     }
@@ -937,16 +937,16 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
   tr << "size of pool is " << Pool_RMSD::size() << std::endl;
   PROF_STOP( basic::MPI_POOL_SLAVE_THINKS );
   //bool use_broadcasting = true;
-  assert(transition_threshold == transition_threshold_);
+  debug_assert(transition_threshold == transition_threshold_);
   if( transfer_buf_.nresidues_ == 0 ){
     transfer_buf_.nresidues_ = pose.size();
   }else{
-    assert( transfer_buf_.nresidues_ == pose.size() );
+    debug_assert( transfer_buf_.nresidues_ == pose.size() );
   }
   if( tracer_visible_ ){
     tr.Debug << "this node is rank " << rank_ << " pool-rank is " << pool_rank_ << " master node is rank " << master_node_ << " and total size is " << npes_ << " pool-size is " << pool_npes_ << std::endl;
   }
-  assert(pool_rank_ > pool_master_node_ && pool_rank_ < pool_npes_);
+  debug_assert(pool_rank_ > pool_master_node_ && pool_rank_ < pool_npes_);
   //tr.Debug << "node is rank " << rank_ << " out of " << npes_ << std::endl;
   core::Size best_index;
   best_index = Pool_RMSD::evaluate( pose, best_decoy, best_rmsd );

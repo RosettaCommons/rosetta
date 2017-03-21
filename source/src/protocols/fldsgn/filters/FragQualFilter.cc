@@ -124,8 +124,8 @@ FragQualFilter::parse_my_tag(
 	// set filtered type
 	filtered_type_ = tag->getOption<String>( "type", "num_goodfrag" );
 	if ( filtered_type_ != "num_goodfrag" && filtered_type_ != "coverage" ) {
-		tr << "Filter type, " << filtered_type_ <<  " is not defined." << std::endl;
-		runtime_assert( false );
+		tr.Fatal << "Filter type, " << filtered_type_ <<  " is not defined." << std::endl;
+		utility_exit_with_message("Filter type not defined.");
 	}
 
 	// set threshold

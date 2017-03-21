@@ -293,7 +293,7 @@ RestrictDesignToProteinDNAInterface::apply(
 					}
 				}
 				if ( ! toptask.target_type() ) {
-					TR.Fatal << "Error: target type " << def->name3
+					TR.Fatal << "target type " << def->name3
 						<< " does not correspond to an allowed type at position " << pos.top()
 						<< std::endl;
 					utility_exit();
@@ -314,7 +314,7 @@ RestrictDesignToProteinDNAInterface::apply(
 						}
 					}
 					if ( ! bottask.target_type() ) {
-						TR.Fatal << "Error: target type " << comp_name3
+						TR.Fatal << "target type " << comp_name3
 							<< " does not correspond to an allowed type at position " << pos.bottom()
 							<< std::endl;
 						utility_exit();

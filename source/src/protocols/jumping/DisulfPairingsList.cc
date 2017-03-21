@@ -84,7 +84,7 @@ void read_disulf_pairing_list( std::istream& disulf_pairing_stream, DisulfPairin
 		//std::string o, pleat;
 		line_stream >> a >> b >> c >> d;
 		if ( line_stream.fail() ) {
-			std::cout << "[ERROR] unable to parse " << line << std::endl;
+			tr.Error << "unable to parse " << line << std::endl;
 			continue;
 		}
 

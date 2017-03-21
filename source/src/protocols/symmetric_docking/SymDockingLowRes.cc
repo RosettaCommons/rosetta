@@ -146,7 +146,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 	using namespace moves;
 	using namespace conformation::symmetry;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 

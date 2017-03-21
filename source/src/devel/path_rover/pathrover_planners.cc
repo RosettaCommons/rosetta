@@ -19,7 +19,7 @@ double Linear_planner_iterator::diff_angle(double from, double to) const
 void Linear_planner_iterator::calc_step_vector(double max_step_size)
 {
 	using namespace std;
-	assert(max_step_size > 0);
+	debug_assert(max_step_size > 0);
 	// calculate difference vector between from and to
 	double max_diff = 0;
 	_v_step_delta.clear(); _v_step_delta.resize(_v_from.size());

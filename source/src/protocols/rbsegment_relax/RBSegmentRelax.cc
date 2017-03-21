@@ -303,13 +303,13 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 			/////////////////////
 			//  error?
 		} else {
-			TS << "[ ERROR ] Unknown segment type\n";
+			TS.Error << "Unknown segment type" << std::endl;;
 			exit(1);
 		}
 	}
 
 	if ( nmovers == 0 ) {
-		TS << "[ ERROR ] RBSegmentRelax::apply() caled with no segments or movers defined!\n";
+		TS.Error << "RBSegmentRelax::apply() caled with no segments or movers defined!" << std::endl;
 		return;
 	}
 

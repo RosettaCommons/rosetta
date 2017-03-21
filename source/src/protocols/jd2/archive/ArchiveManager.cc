@@ -363,7 +363,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			if ( flag ) {
 #ifdef USEMPI
 				int merrno = MPI_Recv( &buf, 6, MPI_INT, jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &status );
-				if ( merrno != MPI_SUCCESS ) tr.Error << "ERROR: MPI_Recv error " << std::endl;
+				if ( merrno != MPI_SUCCESS ) tr.Error << "MPI_Recv error " << std::endl;
 #endif
 				//    basic::show_time( tr,  "manager main msg-loop: received message..." );
 			} else { //nothing received
@@ -440,7 +440,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			} //switch
 		} catch ( utility::excn::EXCN_Base &excn ) {
 			basic::show_time( tr,  "Exception in main msg-loop !" );
-			tr.Error << "[ERROR] " << excn.msg() << std::endl;
+			tr.Error << excn.msg() << std::endl;
 			tr.Error << "spinning down" << std::endl;
 			save_archive();
 			//this usually doesn't work the jobs always run to completion ... let's hard exit for now.
@@ -515,7 +515,7 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 			sfd.read_file( batch.silent_out(), tags_to_read );
 		} catch ( utility::excn::EXCN_Base& excn ) { //or should we be more specific ?
 			if ( final ) throw; //rethrow if it is the final version of the file...
-			tr.Error << "[ignored ERROR] " << excn.msg() << std::endl;
+			tr.Error << "ignored ERROR: " << excn.msg() << std::endl;
 			tr.Error << "this is not the final version of " << batch.silent_out() << "\n... maybe some data is still held in a cache of the filesystem..."
 				<< " let's see if it works better the next time we have to read" << std::endl;
 			//or sleep( 5 ) and retry as above ?
@@ -736,8 +736,8 @@ ArchiveManager::read_existing_batches() {
 			tr.Debug << new_batch << std::endl;
 		} catch ( EXCN_Archive& excn ) {
 			//last started batch must have problems... ignore it
-			tr.Warning << "[ WARNING ] "+new_batch.batch()+" is errorneous: " + excn.msg() << std::endl;
-			tr.Warning << "[ WARNING ] ignoring this batch..." << std::endl;
+			tr.Warning << new_batch.batch()+" is errorneous: " + excn.msg() << std::endl;
+			tr.Warning << "ignoring this batch..." << std::endl;
 			//fill batch list if exception state has left us without it
 			if ( batches_.size() < id ) batches_.push_back( Batch( id ) );
 			batches_.back().mark_as_invalid();
@@ -805,7 +805,7 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 			tr.Debug << "load options from file" << std::endl;
 			batch_opts.load_options_from_file_exception( new_batch.flag_file() );
 		} catch ( utility::excn::EXCN_Msg_Exception &excn ) {
-			tr.Error << "[ERROR] problems with flags in " << new_batch.flag_file() << " aborting... " << std::endl;
+			tr.Error << "problems with flags in " << new_batch.flag_file() << " aborting... " << std::endl;
 			// excn.show( tr.Error );
 			batches_.pop_back();
 			throw ( EXCN_Archive( new_batch.flag_file() + " contains errors: " + excn.msg() ) );

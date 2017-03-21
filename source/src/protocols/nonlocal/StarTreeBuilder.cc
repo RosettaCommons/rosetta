@@ -60,8 +60,8 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	using protocols::loops::Loops;
 	using utility::vector1;
 
-	assert(pose);
-	assert(chunks.num_loop());
+	debug_assert(pose);
+	debug_assert(chunks.num_loop());
 
 	// Number of residues before addition of virtual residue
 	Size num_residues = pose->size();
@@ -129,7 +129,7 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model, const std::s
 	using core::Real;
 	using core::Size;
 	using core::pose::Pose;
-	assert(model);
+	debug_assert(model);
 
 	if ( !option[OptionKeys::in::file::native].user() ) {
 		return;
@@ -151,7 +151,7 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model, const std::s
 }
 
 void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
-	assert(pose);
+	debug_assert(pose);
 	if ( virtual_res_ == -1 ) {
 		return;
 	} else {

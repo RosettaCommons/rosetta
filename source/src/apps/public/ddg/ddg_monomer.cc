@@ -153,7 +153,7 @@ read_in_mutations(
 		// total keyword
 		int total; std::string total_keyword;
 		inputstream >> total_keyword;
-		assert(total_keyword.compare("total") == 0);
+		debug_assert(total_keyword.compare("total") == 0);
 		inputstream >> total; //keep for cross-checking
 
 		// rest of file

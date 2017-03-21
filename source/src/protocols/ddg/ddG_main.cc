@@ -112,7 +112,7 @@ read_in_mutations(utility::vector1<mutations> & res_to_mut, std::string filename
 	if ( inputstream.is_open() ) {
 		int total; std::string total_keyword;
 		inputstream >> total_keyword;
-		assert(total_keyword.compare("total") == 0);
+		debug_assert(total_keyword.compare("total") == 0);
 
 		inputstream >> total; //keep for cross-checking
 		while ( !inputstream.eof() ) {
@@ -123,7 +123,7 @@ read_in_mutations(utility::vector1<mutations> & res_to_mut, std::string filename
 				char wt; int resnum; char mut;
 				inputstream >> wt >> resnum >> mut;
 				TR << "wt is " << wt << " resnum is " << resnum << " and mut is " << mut << std::endl;
-				assert(pose.residue(resnum).name1() == wt);
+				debug_assert(pose.residue(resnum).name1() == wt);
 				core::chemical::AA mutation= core::chemical::aa_from_oneletter_code(mut);
 				current_mutation[resnum]=mutation;
 				num_mutations--; total--;

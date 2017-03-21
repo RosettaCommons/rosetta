@@ -58,7 +58,7 @@ bool triangleIterator::hasNext() const {
 // to contain the vertix positions, normals, and velocities, respectively
 // for the next triangle. The precondition is hasNext() is true.
 void triangleIterator::next(xyzVector_float vertices[3], xyzVector_float normals[3]) {
-	assert(hasNext());
+	debug_assert(hasNext());
 
 	for ( int v = 0 ; v < 3 ; v++ ) {
 		vertices[v] = vertQueue.back();
@@ -78,7 +78,7 @@ void triangleIterator::aquireNextQueue() {
 	const FArray3D_float & density(*(this->densityPtr));
 
 	// This function should only be called to fill up the queue.
-	assert(vertQueue.size() == 0);
+	debug_assert(vertQueue.size() == 0);
 
 	// We always start at (x, y, z) + (0, 0, 1)
 	// so that we don't process the same triangle twice.

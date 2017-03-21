@@ -223,7 +223,7 @@ GoapEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )  const
 			bool result = calculate_dipoles( pose, rsd, goaptype, iatm, xn1, xd1 );
 			if ( !result ) {
 				eval_res_[ires] = false;
-				TR.Debug << "Warning: Skipping " << rsd.seqpos() << " due to dipole setup failure for atom " << iatm << std::endl;
+				TR.Warning << "Skipping " << rsd.seqpos() << " due to dipole setup failure for atom " << iatm << std::endl;
 				break;
 			}
 

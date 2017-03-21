@@ -662,7 +662,7 @@ core::kinematics::FoldTree RangeRelaxMover::finalize_setup( Pose & pose ) {
 
 	// fill native if still empty
 	if ( native_ == nullptr ) {
-		TR << "WARNING: Setting native to input structure because either no native given or you chose the option -relax:constrain_relax_to_start_coords!" << std::endl;
+		TR.Warning << "Setting native to input structure because either no native given or you chose the option -relax:constrain_relax_to_start_coords!" << std::endl;
 		native_ = pose.clone();
 	}
 

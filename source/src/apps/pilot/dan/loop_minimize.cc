@@ -283,7 +283,7 @@ my_main( void* )
 
  	if (! loops.read_file( option[ OptionKeys::loops::loop_file ]().name() ) ) {
 
-		basic::Error() << "ERROR -- loop_minimize.cc: can not retrieve loops info" << std::endl
+		basic::Error() << "loop_minimize.cc: can not retrieve loops info" << std::endl
 		<< "exit ......" << std::endl;
  		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
  	}

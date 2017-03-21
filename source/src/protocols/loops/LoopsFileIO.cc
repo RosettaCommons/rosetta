@@ -278,7 +278,7 @@ GuardedLoopsFromFile::resolve_loop_indices_once( core::pose::Pose const & pose )
 LoopsCOP
 GuardedLoopsFromFile::loops() const
 {
-	assert( !in_charge_ || pose_has_resolved_loop_indices_ );
+	debug_assert( !in_charge_ || pose_has_resolved_loop_indices_ );
 	return loops_;
 }
 
@@ -287,7 +287,7 @@ GuardedLoopsFromFile::loops() const
 LoopsOP
 GuardedLoopsFromFile::loops()
 {
-	assert( !in_charge_ || pose_has_resolved_loop_indices_ );
+	debug_assert( !in_charge_ || pose_has_resolved_loop_indices_ );
 	return loops_;
 }
 
@@ -306,7 +306,7 @@ GuardedLoopsFromFile::loops( Loops const & setting )
 void
 GuardedLoopsFromFile::set_loops_pointer( LoopsOP setting )
 {
-	assert( !in_charge_ );
+	debug_assert( !in_charge_ );
 	pose_has_resolved_loop_indices_ = true; // the assumption is that the user has resolved the indices themselves.
 	rely_on_loopfile_indices_ = false; // the user has indicated the Loops data should be used and not the LoopsFileData
 	loops_ = setting;
@@ -317,7 +317,7 @@ GuardedLoopsFromFile::set_loops_pointer( LoopsOP setting )
 void
 GuardedLoopsFromFile::loops( LoopsFileData const & setting )
 {
-	assert( in_charge_ ); // if not in_charge, then this data will never be used.
+	debug_assert( in_charge_ ); // if not in_charge, then this data will never be used.
 	pose_has_resolved_loop_indices_ = false;
 	rely_on_loopfile_indices_ = true;
 	loops_file_data_ = setting;
@@ -457,7 +457,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 				}
 				if ( tokens.size() > 5 ) {
 					if ( tokens[6] == "X" ) {
-						tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
+						tr.Error << "Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 						extend_loop = true;
 						if ( errcount > 0 ) errcount--;
 						else {
@@ -475,7 +475,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 				loops.push_back( current_loop );
 			} else if ( tokens[1][0] != '#' ) {
 				if ( tokens.size() >= 2 ) {
-					tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
+					tr.Error << "Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
 
 					if ( errcount>0 ) {
 						errcount--;
@@ -496,7 +496,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 					}
 					if ( tokens.size() > 4 ) {
 						if ( tokens[5] == "X" ) {
-							tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
+							tr.Error << "Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 							extend_loop = true;
 						} else {
 							int extended_token = atoi(tokens[5].c_str());
@@ -510,7 +510,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 					loops.push_back( current_loop );
 
 				} else {
-					tr.Warning << "[WARNING] Skipping line '" << line << "'" << std::endl;
+					tr.Warning << "Skipping line '" << line << "'" << std::endl;
 				}
 			}
 		}

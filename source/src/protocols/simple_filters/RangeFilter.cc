@@ -99,7 +99,7 @@ RangeFilter::parse_my_tag(
 
 	lower_bound_ = tag->getOption<Real>( "lower_bound");
 	upper_bound_ = tag->getOption<Real>( "upper_bound");
-	assert(lower_bound_ < upper_bound_);
+	debug_assert(lower_bound_ < upper_bound_);
 }
 
 // XRW TEMP filters::FilterOP

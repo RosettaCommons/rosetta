@@ -97,7 +97,7 @@ AddHydrogens::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	assert( tag->getName() != "AddHydrogens");
+	debug_assert( tag->getName() != "AddHydrogens");
 	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'AddHydrogens' requires 'chain' tag");
 	chain_ = tag->getOption<std::string>("chain");
 }

@@ -104,7 +104,7 @@ SheetDB::set_sheetlist_as_is(
 		m1 = sheet_db_.find( nstrands );
 	}
 
-	assert( m1 != sheet_db_.end() );
+	debug_assert( m1 != sheet_db_.end() );
 	MapByOrientations & omap = m1->second;
 	MapByOrientations::iterator m2 = omap.find( orientations );
 	if ( m2 == omap.end() ) {
@@ -113,7 +113,7 @@ SheetDB::set_sheetlist_as_is(
 		m2 = omap.find( orientations );
 	}
 
-	assert( m2 != omap.end() );
+	debug_assert( m2 != omap.end() );
 	MapByLengths & lmap = m2->second;
 	lmap[lengths] = list;
 
@@ -124,7 +124,7 @@ bool
 pose_matches_description( core::pose::Pose const & pose, std::string const & in_lengths_shifts )
 {
 	std::pair< utility::vector1< core::Size >, utility::vector1< int > > strands = parse_lengths( in_lengths_shifts );
-	assert( strands.first.size() == strands.second.size() );
+	debug_assert( strands.first.size() == strands.second.size() );
 	bool matches = true;
 	if ( strands.first.size() != pose.conformation().num_chains() ) {
 		matches = false;
@@ -184,7 +184,7 @@ SheetDB::add_sheet(
 	std::string const & in_lengths_shifts,
 	bool const check_descriptor_against_pose = true )
 {
-	assert( in_pose );
+	debug_assert( in_pose );
 
 	//TODO: check pose vs. descriptors
 	std::string matching_orient_str = in_orientations;
@@ -196,11 +196,10 @@ SheetDB::add_sheet(
 		}
 		if ( !pose_matches_description( *in_pose, matching_len_str ) ) {
 			in_pose->dump_pdb( "bad_description.pdb" );
-			TR << " ADD Sheet FAILED DUE TO BAD description: " << in_lengths_shifts << std::endl;
-			assert( false );
-			runtime_assert( false );
+			TR.Fatal << " ADD Sheet FAILED DUE TO BAD description: " << in_lengths_shifts << std::endl;
+			utility_exit_with_message("Bad description in SheetDB");
 		}
-		assert( pose_matches_description( *in_pose, matching_len_str ) );
+		debug_assert( pose_matches_description( *in_pose, matching_len_str ) );
 	}
 
 	// make canonical and add only canonical variant to DB
@@ -224,7 +223,7 @@ SheetDB::add_sheet(
 		sheet_db_[nstrands] = newmap;
 		m1 = sheet_db_.find( nstrands );
 	}
-	assert( m1 != sheet_db_.end() );
+	debug_assert( m1 != sheet_db_.end() );
 	MapByOrientations & omap = m1->second;
 	MapByOrientations::iterator m2 = omap.find( orientations );
 	if ( m2 == omap.end() ) {
@@ -232,7 +231,7 @@ SheetDB::add_sheet(
 		omap[orientations] = newmap;
 		m2 = omap.find( orientations );
 	}
-	assert( m2 != omap.end() );
+	debug_assert( m2 != omap.end() );
 
 	MapByLengths & lmap = m2->second;
 	MapByLengths::iterator m3 = lmap.find( lengths_shifts );
@@ -241,7 +240,7 @@ SheetDB::add_sheet(
 		lmap[lengths_shifts] = newlist;
 		m3 = lmap.find( lengths_shifts );
 	}
-	assert( m3 != lmap.end() );
+	debug_assert( m3 != lmap.end() );
 
 	m3->second.push_back( pose );
 	TR << "Added to DB: N=" << nstrands << " orientations=" << orientations << " lengths=" << lengths_shifts << std::endl;
@@ -310,13 +309,13 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & orientations
 	if ( it1 == sheet_db_.end() ) {
 		return SheetList();
 	}
-	assert( it1 != sheet_db_.end() );
+	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations const & omap = it1->second;
 	MapByOrientations::const_iterator it2 = omap.find( orientations );
 	if ( it2 == omap.end() ) {
 		return SheetList();
 	}
-	assert( it2 != omap.end() );
+	debug_assert( it2 != omap.end() );
 	MapByLengths const & lmap = it2->second;
 	SheetList retval;
 	for ( MapByLengths::const_iterator it3 = lmap.begin(); it3 != lmap.end(); ++it3 ) {
@@ -402,7 +401,7 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 			return SheetList();
 		}
 	}
-	assert( it1 != sheet_db_.end() );
+	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations & omap = it1->second;
 	MapByOrientations::iterator it2 = omap.find( in_orientations );
 	if ( it2 == omap.end() ) {
@@ -413,7 +412,7 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 			return SheetList();
 		}
 	}
-	assert( it2 != omap.end() );
+	debug_assert( it2 != omap.end() );
 	MapByLengths & lmap = it2->second;
 	MapByLengths::iterator it3 = lmap.find( in_strandinfo );
 	if ( it3 == lmap.end() ) {
@@ -423,7 +422,7 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 			return SheetList();
 		}
 	}
-	assert( has_data( nstrands, in_orientations, in_strandinfo  ) );
+	debug_assert( has_data( nstrands, in_orientations, in_strandinfo  ) );
 	return sheet_list_const( nstrands, in_orientations, in_strandinfo );
 }
 
@@ -435,19 +434,19 @@ SheetDB::sheet_list_const( core::Size const nstrands, std::string const & in_ori
 	if ( it1 == sheet_db_.end() ) {
 		return SheetList();
 	}
-	assert( it1 != sheet_db_.end() );
+	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations const & omap = it1->second;
 	MapByOrientations::const_iterator it2 = omap.find( in_orientations );
 	if ( it2 == omap.end() ) {
 		return SheetList();
 	}
-	assert( it2 != omap.end() );
+	debug_assert( it2 != omap.end() );
 	MapByLengths const & lmap = it2->second;
 	MapByLengths::const_iterator it3 = lmap.find( in_strandinfo );
 	if ( it3 == lmap.end() ) {
 		return SheetList();
 	}
-	assert( it3 != lmap.end() );
+	debug_assert( it3 != lmap.end() );
 	return it3->second;
 }
 
@@ -461,13 +460,13 @@ SheetDB::lengths_shifts( core::Size const nstrands, std::string const & orientat
 		return retval;
 	}
 
-	assert( it1 != sheet_db_.end() );
+	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations::const_iterator it2 = it1->second.find( orientations );
 	if ( it2 == it1->second.end() ) {
 		return retval;
 	}
 
-	assert( it2 != it1->second.end() );
+	debug_assert( it2 != it1->second.end() );
 	MapByLengths::const_iterator it3_end = it2->second.end();
 	for ( MapByLengths::const_iterator it3 = it2->second.begin(); it3 != it3_end; ++it3 ) {
 		retval.push_back( it3->first );
@@ -484,7 +483,7 @@ SheetDB::orientations( core::Size const nstrands ) const
 	if ( it1 == sheet_db_.end() ) {
 		return retval;
 	}
-	assert( it1 != sheet_db_.end() );
+	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations::const_iterator it2_end = it1->second.end();
 	for ( MapByOrientations::const_iterator it2 = it1->second.begin(); it2 != it2_end; ++it2 ) {
 		retval.push_back( it2->first );
@@ -544,17 +543,17 @@ graph_from_strandpairings(
 		if ( strand_to_node.find(spairs[i]->s1()) == strand_to_node.end() ) {
 			core::Size const nodeidx = strand_to_node.size()+1;
 			strand_to_node[spairs[i]->s1()] = nodeidx;
-			assert( node_to_strand.find(nodeidx) == node_to_strand.end() );
+			debug_assert( node_to_strand.find(nodeidx) == node_to_strand.end() );
 			node_to_strand[nodeidx] = spairs[i]->s1();
 		}
 		if ( strand_to_node.find(spairs[i]->s2()) == strand_to_node.end() ) {
 			core::Size const nodeidx = strand_to_node.size()+1;
 			strand_to_node[spairs[i]->s2()] = nodeidx;
-			assert( node_to_strand.find(nodeidx) == node_to_strand.end() );
+			debug_assert( node_to_strand.find(nodeidx) == node_to_strand.end() );
 			node_to_strand[nodeidx] = spairs[i]->s2();
 		}
-		assert( strand_to_node.find(spairs[i]->s1()) != strand_to_node.end() );
-		assert( strand_to_node.find(spairs[i]->s2()) != strand_to_node.end() );
+		debug_assert( strand_to_node.find(spairs[i]->s1()) != strand_to_node.end() );
+		debug_assert( strand_to_node.find(spairs[i]->s2()) != strand_to_node.end() );
 		if ( spairs[i]->rgstr_shift() != 99 ) {
 			g_edges.push_back( std::pair< core::Size, core::Size >( strand_to_node[spairs[i]->s1()], strand_to_node[spairs[i]->s2()] ) );
 		}
@@ -577,15 +576,15 @@ add_to_pose(
 	core::Size s_start,
 	core::Size s_stop )
 {
-	assert( newpose );
+	debug_assert( newpose );
 	if ( s_start > s_stop ) {
 		core::Size const tmp = s_stop;
 		s_stop = s_start;
 		s_start = tmp;
 	}
-	assert( s_start <= s_stop );
+	debug_assert( s_start <= s_stop );
 	core::Size const len = s_stop - s_start + 1;
-	assert( len > 0 );
+	debug_assert( len > 0 );
 	core::Size start = s_start;
 	if ( ( start > 1 ) && // not off end of pose
 			( pose.chain(start) == pose.chain(start-1) ) // same chain
@@ -604,7 +603,7 @@ add_to_pose(
 		TR.Error << "pose segment being copied has a jump... skipping it." << std::endl;
 		return -1;
 	}
-	assert( tmppose.fold_tree().num_jump() == 0 );
+	debug_assert( tmppose.fold_tree().num_jump() == 0 );
 	core::kinematics::FoldTree ft = tmppose.fold_tree();
 	ft.reorder( tmppose.size() );
 	tmppose.fold_tree( ft );
@@ -615,7 +614,7 @@ add_to_pose(
 		core::chemical::ResidueType const restype =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA");
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue( restype );
-		assert( new_rsd );
+		debug_assert( new_rsd );
 		if ( tmppose.residue(1).is_lower_terminus() ) {
 			core::pose::remove_lower_terminus_type_from_pose_residue( tmppose, 1 );
 		}
@@ -637,7 +636,7 @@ add_to_pose(
 		core::chemical::ResidueType const restype =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA");
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue( restype );
-		assert( new_rsd );
+		debug_assert( new_rsd );
 		if ( tmppose.residue(tmppose.size()).is_upper_terminus() ) {
 			core::pose::remove_upper_terminus_type_from_pose_residue( tmppose, tmppose.size() );
 		}
@@ -687,7 +686,7 @@ extract_sheets_from_strandlist(
 		TR.Debug << "Added pose with ss=" << pose->secstruct() << std::endl;
 		poses.push_back( pose );
 	}
-	assert( poses.size() + nstrands - 1 == strands.size() );
+	debug_assert( poses.size() + nstrands - 1 == strands.size() );
 	return poses;
 }
 
@@ -720,7 +719,7 @@ reorder_chains( core::pose::Pose & pose )
 			start_strand = i;
 		}
 	}
-	assert( start_strand );
+	debug_assert( start_strand );
 	std::set< core::Size > visited;
 	std::stack< core::Size > nodes;
 	utility::vector1< core::Size > neworder;
@@ -742,8 +741,8 @@ reorder_chains( core::pose::Pose & pose )
 	if ( visited.size() != nstrands ) {
 		return core::pose::PoseOP();
 	}
-	assert( visited.size() == nstrands );
-	assert( neworder.size() == nstrands );
+	debug_assert( visited.size() == nstrands );
+	debug_assert( neworder.size() == nstrands );
 
 	utility::vector1< core::pose::PoseOP > strands = pose.split_by_chain();
 	core::pose::PoseOP newpose;
@@ -758,8 +757,8 @@ reorder_chains( core::pose::Pose & pose )
 				1 );
 		}
 	}
-	assert( newpose->size() == pose.size() );
-	assert( newpose->conformation().num_chains() == pose.conformation().num_chains() );
+	debug_assert( newpose->size() == pose.size() );
+	debug_assert( newpose->conformation().num_chains() == pose.conformation().num_chains() );
 	return newpose;
 }
 
@@ -802,7 +801,7 @@ extract_sheets_from_pose(
 				break;
 			}
 			utility::graph::Node const * n = g.get_node(nodenum);
-			assert( n );
+			debug_assert( n );
 			for ( utility::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
 				core::Size const othernode = (*e)->get_other_ind(nodenum);
 				nodes.push(othernode);
@@ -883,7 +882,7 @@ make_lengths_str(
 	core::Size prev_start = 0;
 	core::Size prev_stop = 0;
 
-	assert( pose.conformation().num_chains() == orients.size() );
+	debug_assert( pose.conformation().num_chains() == orients.size() );
 	for ( core::Size c=1; c<=pose.conformation().num_chains(); ++c ) {
 		core::Size start = 0;
 		core::Size stop = 0;
@@ -904,14 +903,14 @@ make_lengths_str(
 			return "";
 		}
 		TR << "Chain start=" << pose.conformation().chain_begin(c) << " end=" << pose.conformation().chain_end(c) << " start=" << start << " stop=" << stop << " paired=" << paired << std::endl;
-		assert( start );
-		assert( stop );
+		debug_assert( start );
+		debug_assert( stop );
 		int shift = 0;
 		if ( c == 1 ) {
 			shift = 0;
 		} else {
-			assert( prev_start );
-			assert( prev_stop );
+			debug_assert( prev_start );
+			debug_assert( prev_stop );
 			// find a residue paired to the previous strand
 			core::Size prev_res = prev_start;
 			int offset = 0;
@@ -924,11 +923,11 @@ make_lengths_str(
 					}
 					++offset;
 				}
-				assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
+				debug_assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
 				if ( offset > 0 ) {
 					shift = offset;
 				} else {
-					assert( prev_res == prev_start );
+					debug_assert( prev_res == prev_start );
 					int paired_with_prev = spairs.strand_pairing( c-1, c )->residue_pair(prev_res);
 					shift = static_cast<int>(start) - paired_with_prev;
 				}
@@ -940,11 +939,11 @@ make_lengths_str(
 					}
 					++offset;
 				}
-				assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
+				debug_assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
 				if ( offset > 0 ) {
 					shift = offset;
 				} else {
-					assert( prev_res == prev_stop );
+					debug_assert( prev_res == prev_stop );
 					int paired_with_prev = spairs.strand_pairing( c-1, c )->residue_pair(prev_res);
 					shift = static_cast<int>(start) - paired_with_prev;
 				}
@@ -957,11 +956,11 @@ make_lengths_str(
 					}
 					++offset;
 				}
-				assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
+				debug_assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
 				if ( offset > 0 ) {
 					shift = offset;
 				} else {
-					assert( prev_res == prev_start );
+					debug_assert( prev_res == prev_start );
 					int paired_with_prev = spairs.strand_pairing( c-1, c )->residue_pair(prev_res);
 					shift = paired_with_prev - static_cast<int>(stop);
 				}
@@ -973,11 +972,11 @@ make_lengths_str(
 					}
 					++offset;
 				}
-				assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
+				debug_assert( spairs.strand_pairing( c-1, c )->has_paired_residue(prev_res) );
 				if ( offset > 0 ) {
 					shift = offset;
 				} else {
-					assert( prev_res == prev_stop );
+					debug_assert( prev_res == prev_stop );
 					int paired_with_prev = spairs.strand_pairing( c-1, c )->residue_pair(prev_res);
 					shift = static_cast<int>(stop) - paired_with_prev;
 				}
@@ -1010,7 +1009,7 @@ prune_unpaired_residues( core::pose::Pose & pose )
 	for ( core::Size c=1; c<=pose.conformation().num_chains(); ++c ) {
 		if ( prevchain_start >= pose.conformation().chain_begin(c) ) {
 			TR.Error << " chain " << c << " starts at res " << pose.conformation().chain_begin(c) << " but previous chain began at res " << prevchain_start << std::endl;
-			assert( pose.conformation().chain_begin(c) > prevchain_start );
+			debug_assert( pose.conformation().chain_begin(c) > prevchain_start );
 			runtime_assert( pose.conformation().chain_begin(c) > prevchain_start );
 		}
 		prevchain_start = pose.conformation().chain_begin(c);
@@ -1041,7 +1040,7 @@ prune_unpaired_residues( core::pose::Pose & pose )
 		}
 
 		// check to make sure paired residues are contiguous
-		assert( start <= stop );
+		debug_assert( start <= stop );
 		bool broken = false;
 		for ( core::Size i=start; i<=stop; ++i ) {
 			if ( !paired[i] ) {
@@ -1114,7 +1113,7 @@ SheetDB::add_sheets_from_spairs(
 				if ( ( or_len.first == "" ) || ( sheets_n_strands[s]->empty() ) ) {
 					continue;
 				}
-				assert( nstrands == num_strands( *(sheets_n_strands[s]) ) );
+				debug_assert( nstrands == num_strands( *(sheets_n_strands[s]) ) );
 				add_sheet( sheets_n_strands[s], nstrands, or_len.first, or_len.second );
 				++added_count;
 			}
@@ -1136,7 +1135,7 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 {
 	// gets a vector of three strings, which refer to orientations, lengths, and shifts
 	std::string const ss = pose.secstruct();
-	assert( ss.size() && ( ss[0] != ' ' ) );
+	debug_assert( ss.size() && ( ss[0] != ' ' ) );
 	protocols::fldsgn::topology::SS_Info2_OP sheet_ss_info =
 		protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, ss ) );
 	protocols::fldsgn::topology::StrandPairingSet pairs = protocols::fldsgn::topology::calc_strand_pairing_set( pose, sheet_ss_info );
@@ -1146,7 +1145,7 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 	core::Size const strand_count = num_strands( pose );
 	TR << "Nstrands = " << strand_count << std::endl;
 	TR << "PairSet  = " << pairs << std::endl;
-	assert( strand_count > 1 );
+	debug_assert( strand_count > 1 );
 	std::map< core::Size, std::string > orientations_str;
 	utility::vector1< bool > orientations( strand_count, true );
 	utility::vector1< core::Size > lengths( strand_count, 0 );
@@ -1164,22 +1163,22 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 		core::Size const len2 = sheet_ss_info->strand(s2)->length();
 		int const shift = (*p)->rgstr_shift();
 		TR << "s1=" << s1 << " s2=" << s2 << " len1=" << len1 << " len2=" << len2 << " orient=" << orient << " shift=" << shift << std::endl;
-		assert( (*p)->begin1() < (*p)->end1() );
-		assert( s1 > 0 );
-		assert( s2 > 0 );
-		assert( s1 <= strand_count );
-		assert( s2 <= strand_count );
-		assert( parsed.find(s1) != parsed.end() );
+		debug_assert( (*p)->begin1() < (*p)->end1() );
+		debug_assert( s1 > 0 );
+		debug_assert( s2 > 0 );
+		debug_assert( s1 <= strand_count );
+		debug_assert( s2 <= strand_count );
+		debug_assert( parsed.find(s1) != parsed.end() );
 
 		// set lengths
-		assert( lengths[s1] == len1 );
-		assert( !lengths[s2] );
+		debug_assert( lengths[s1] == len1 );
+		debug_assert( !lengths[s2] );
 		TR << "Setting lengths for " << s2 << " to " << len2 << std::endl;
 		lengths[s2] = len2;
 
 		// set register shift
-		assert( shifts[s1] != NOT_SET );
-		assert( shifts[s2] == NOT_SET );
+		debug_assert( shifts[s1] != NOT_SET );
+		debug_assert( shifts[s2] == NOT_SET );
 		shifts[s2] = shift;
 
 		// set orientations
@@ -1205,7 +1204,7 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 			orient_str += '0';
 		}
 	}
-	assert( shifts.size() == lengths.size() );
+	debug_assert( shifts.size() == lengths.size() );
 
 	std::string len_str;
 	for ( core::Size i=1; i<=lengths.size(); ++i ) {
@@ -1228,14 +1227,14 @@ std::string reverse_orientations( std::string const & orient )
 			} else if ( orient[i-1] == '1' ) {
 				retval += '0';
 			} else {
-				TR << "Something other than 0 or 1 found in orientations string :" << orient << std::endl;
-				assert( false );
+				TR.Fatal << "Something other than 0 or 1 found in orientations string :" << orient << std::endl;
+				utility_exit_with_message("Bad orient string found.");
 			}
 		} else {
 			retval += orient[i-1];
 		}
 	}
-	assert( retval.size() == orient.size() );
+	debug_assert( retval.size() == orient.size() );
 	return retval;
 }
 
@@ -1249,11 +1248,11 @@ parse_orientations( std::string const & orientations )
 		} else if ( orientations[i] == '1' ) {
 			retval.push_back( true );
 		} else {
-			TR << "Something other than 0 or 1 found in orientations string :" << orientations << std::endl;
-			assert( false );
+			TR.Fatal << "Something other than 0 or 1 found in orientations string :" << orientations << std::endl;
+			utility_exit_with_message("Bad orient string found.");
 		}
 	}
-	assert( orientations.size() == retval.size() );
+	debug_assert( orientations.size() == retval.size() );
 	return retval;
 }
 
@@ -1264,12 +1263,12 @@ parse_lengths( std::string const & lengths )
 	utility::vector1< std::string > strands = utility::string_split( lengths, ',' );
 	for ( core::Size i=1; i<=strands.size(); ++i ) {
 		utility::vector1< std::string > info = utility::string_split( strands[i], ':' );
-		assert( info.size() == 2 );
+		debug_assert( info.size() == 2 );
 		retval.first.push_back( boost::lexical_cast< core::Size >( info[1] ) );
 		retval.second.push_back( boost::lexical_cast< int >( info[2] ) );
 	}
-	assert( retval.first.size() == retval.second.size() );
-	assert( retval.first.size() == strands.size() );
+	debug_assert( retval.first.size() == retval.second.size() );
+	debug_assert( retval.first.size() == strands.size() );
 	return retval;
 }
 
@@ -1277,8 +1276,8 @@ std::string reverse_lengths( std::string const & orientations, std::string const
 {
 	utility::vector1< bool > orients = parse_orientations( orientations );
 	std::pair< utility::vector1< core::Size >, utility::vector1< int > > lens = parse_lengths( lengths );
-	assert( orients.size() == lens.first.size() );
-	assert( orients.size() == lens.second.size() );
+	debug_assert( orients.size() == lens.first.size() );
+	debug_assert( orients.size() == lens.second.size() );
 	utility::vector1< core::Size > rlengths;
 	utility::vector1< int > rshifts;
 	bool flip = !orients[orients.size()];
@@ -1314,7 +1313,8 @@ canonicalize( std::string const & orientations, std::string const & lengths )
 	} else if ( retval.second == rev_lengths ) {
 		retval.first = rev_orientations;
 	} else {
-		assert( false );
+		TR.Fatal << "Issue canonicalizing: value of " << retval.second << " matches neither the forward value of " << lengths << " or the reverse of " << rev_lengths << std::endl;
+		utility_exit_with_message("Can't canonicalize");
 	}
 	return retval;
 }
@@ -1345,8 +1345,8 @@ reverse_chains( core::pose::Pose const & pose )
 				1 );
 		}
 	}
-	assert( newpose->size() == pose.size() );
-	assert( newpose->conformation().num_chains() == pose.conformation().num_chains() );
+	debug_assert( newpose->size() == pose.size() );
+	debug_assert( newpose->conformation().num_chains() == pose.conformation().num_chains() );
 	return newpose;
 }
 

@@ -186,8 +186,8 @@ RamaCheckBase::total_net_change_in_rama_score_over_range(
 {
 	using core::Real;
 
-	assert( first_res < last_res );
-	assert( last_res <= pose.size() );
+	debug_assert( first_res < last_res );
+	debug_assert( last_res <= pose.size() );
 
 	Real total_change_in_rama_score( 0.0 );
 
@@ -220,7 +220,7 @@ RamaCheckBase::average_change_in_rama_score_over_range(
 {
 	using core::Real;
 
-	assert( first_res < last_res );
+	debug_assert( first_res < last_res );
 	Real length( last_res - first_res + 1 );
 
 	return total_net_change_in_rama_score_over_range( pose, first_res, last_res ) / length;

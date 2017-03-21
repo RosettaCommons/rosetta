@@ -231,7 +231,7 @@ make_base_step_move(
 
 	pose::Pose const start_pose( pose_inout );
 	pose::Pose pose( pose_inout ); // our local pose
-	assert( pose.fold_tree().jump_exists( seqpos, seqpos+1 ) );
+	debug_assert( pose.fold_tree().jump_exists( seqpos, seqpos+1 ) );
 
 	// test the use of rsd-rsd distances to gauge the impact of a fragment insertion
 	conformation::PointGraphOP pg( setup_dme_point_graph( pose, 10.0 ) );

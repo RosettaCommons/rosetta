@@ -693,7 +693,7 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 			++it;
 		}
 		if ( it == eit ) {
-			tr.Error << "ERROR: no frame with size " << size << " was found at position " <<  pos << std::endl;
+			tr.Error << "no frame with size " << size << " was found at position " <<  pos << std::endl;
 		} else {
 			tr.Info << "frame with " << (*it)->nr_frags() << " found" << std::endl;
 			if ( (*it)->nr_frags() >= frag_nr ) {
@@ -701,7 +701,7 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 				new_frame->add_fragment( (*it)->fragment_ptr( frag_nr ));
 				new_frags->add( new_frame );
 			} else {
-				tr.Error << "ERROR: not enough fragments in frame " << (**it) << std::endl;
+				tr.Error << "not enough fragments in frame " << (**it) << std::endl;
 			}
 		}
 	}

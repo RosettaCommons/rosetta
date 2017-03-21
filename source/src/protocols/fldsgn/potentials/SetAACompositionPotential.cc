@@ -192,8 +192,8 @@ SetAACompositionPotential::parse_my_tag(
 
 	std::string const file( tag->getOption<String>( "file", "" ) );
 	if ( file == "" ) {
-		TR << "No input of file ! " << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "No input of file ! " << std::endl;
+		utility_exit_with_message( "No input of file ! " );
 	}
 	set_parameters( file );
 
@@ -203,8 +203,8 @@ SetAACompositionPotential::parse_my_tag(
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
 	sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 	if ( sfxn == "" ) {
-		TR << "No input of sfxn ! " << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "No input of sfxn ! " << std::endl;
+		utility_exit_with_message( "No input of sfxn ! " );
 	}
 
 }

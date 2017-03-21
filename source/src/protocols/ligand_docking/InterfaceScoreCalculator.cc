@@ -140,7 +140,7 @@ InterfaceScoreCalculator::parse_my_tag(
 	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
 	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
-	assert(score_fxn_);
+	debug_assert(score_fxn_);
 
 	if ( tag->hasOption("native") ) {
 		std::string const & native_str= tag->getOption<std::string>("native");
@@ -182,7 +182,7 @@ void InterfaceScoreCalculator::add_scores_to_job(
 	protocols::jd2::JobOP job
 ) const
 {
-	assert(score_fxn_);
+	debug_assert(score_fxn_);
 	using namespace core::scoring;
 
 	core::Real const tot_score = score_fxn_->score( pose );
@@ -222,7 +222,7 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 {
 	for ( std::string const & chain : chains_ ) {
 		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
-		assert( core::pose::has_chain(chain, after));
+		debug_assert( core::pose::has_chain(chain, after));
 		if ( native_ ) {
 			if ( !core::pose::has_chain(chain, *native_) ) {
 				utility_exit_with_message("The native pose passed to InterfaceScoreCalculator does not have chain " +chain);

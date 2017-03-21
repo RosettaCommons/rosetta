@@ -257,7 +257,7 @@ void SetTorsion::apply( Pose & pose ) {
 						if ( angle_[iset] == "rama_biased" ) {
 							Real phi(0), psi(0);
 							if ( custom_rama_map_[iset] == "" ) {
-								assert(pose.residue(resnum).aa()!=core::chemical::aa_unk);
+								debug_assert(pose.residue(resnum).aa()!=core::chemical::aa_unk);
 								rama.random_phipsi_from_rama( pose.residue_type(resnum).aa(), phi, psi); //TODO -- use backbone_aa
 							} else { // custom_ramna_map_[iset] != ""
 								rama.draw_random_phi_psi_from_extra_cdf( rama.get_ramatable_type_by_name(custom_rama_map_[iset]) , phi, psi);

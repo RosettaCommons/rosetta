@@ -546,7 +546,7 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 		FrameList frames;
 
 		if ( pos > (fragset->max_pos()-len+1) ) {
-			std::cout << "WARNING: NO FRAGS FOR POSITION " << pos << std::endl;
+			tr.Warning << "NO FRAGS FOR POSITION " << pos << std::endl;
 			continue;
 		}
 

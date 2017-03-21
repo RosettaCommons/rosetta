@@ -167,7 +167,7 @@ loops::Loops read_rigid_core( std::string const& file){
 	std::ifstream infile( file.c_str() );
 
 	if ( !infile.good() ) {
-		tr.Error << "[ERROR] Error opening RBSeg file '" << file << "'" << std::endl;
+		tr.Error << "Error opening RBSeg file '" << file << "'" << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( "[ERROR] Error opening RBSeg file '" + file + "'" );
 	}
 
@@ -263,7 +263,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 		// I don't like this automatic defaulting to anything, but unfortunately some legacy applications
 		// require this behavior. Lamesauce.
 
-		tr.Warning << "[WARNING] RigidChunkCM named " << tag->getOption< std::string >( "name", "UNK" )
+		tr.Warning << "RigidChunkCM named " << tag->getOption< std::string >( "name", "UNK" )
 			<< " defaulted to ALL residues." << std::endl;
 	}
 }
@@ -361,7 +361,7 @@ void RigidChunkCM::configure(
 	{ // Error checking and warnings.
 		for ( core::Size i = templ_pos; i <= templ_selection.size(); ++i ) {
 			if ( templ_selection[i] ) {
-				tr.Warning << "[WARNING] " << this->get_name() << " reports that "
+				tr.Warning << this->get_name() << " reports that "
 					<< std::count( templ_selection.begin() + i - 1, templ_selection.end(), true )
 					<< " residues beginning at " << templ().residue( i ).name3() << i
 					<< "in the template do not fit in the selection given. "
@@ -371,7 +371,7 @@ void RigidChunkCM::configure(
 		}
 		for ( core::Size i = sim_pos; i <= sim_selection.size(); ++i ) {
 			if ( sim_selection[i] ) {
-				tr.Warning << "[WARNING] " << this->get_name() << " reports that "
+				tr.Warning << this->get_name() << " reports that "
 					<< std::count( sim_selection.begin() + i - 1, sim_selection.end(), true )
 					<< " residues beginning at " << in_p.residue( i ).name3() << i
 					<< " in the template do not fit in the selection given. "
@@ -675,8 +675,8 @@ void RigidChunkCM::initialize( Pose& pose ){
 				ProtectedConformation const& conf = static_cast< ProtectedConformation const& >( pose.conformation() );
 				pose.replace_residue( sim_pos, *conf.match_variants( sim_pos, templ_res ) , false );
 
-				assert( reference.residue( sim_pos ).is_lower_terminus() == pose.residue( sim_pos ).is_lower_terminus() );
-				assert( reference.residue( sim_pos ).is_upper_terminus() == pose.residue( sim_pos ).is_upper_terminus() );
+				debug_assert( reference.residue( sim_pos ).is_lower_terminus() == pose.residue( sim_pos ).is_lower_terminus() );
+				debug_assert( reference.residue( sim_pos ).is_upper_terminus() == pose.residue( sim_pos ).is_upper_terminus() );
 
 			} catch ( EXCN_Env_Security_Exception& e ) {
 				std::ostringstream ss;
@@ -847,12 +847,12 @@ void RigidChunkCM::templ_selector(
 }
 
 core::select::residue_selector::ResidueSelectorCOP RigidChunkCM::sim_selector() const {
-	assert( sim_selector_ );
+	debug_assert( sim_selector_ );
 	return sim_selector_;
 }
 
 core::select::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selector() const {
-	assert( templ_selector_ );
+	debug_assert( templ_selector_ );
 	return templ_selector_;
 }
 

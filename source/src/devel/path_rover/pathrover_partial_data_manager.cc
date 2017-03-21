@@ -431,9 +431,9 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
 	}
 
 	if (_angle_flag){ // degrees
-		assert( _LMS_indices_A.size() == _LMS_indices_B.size() );
+		debug_assert( _LMS_indices_A.size() == _LMS_indices_B.size() );
 		for(unsigned int i = 0; i < _LMS_indices_A.size(); i++){
-			//assert( _LMS_indices_A[i].size() == _LMS_indices_B[i].size() );
+			//debug_assert( _LMS_indices_A[i].size() == _LMS_indices_B[i].size() );
 			std::vector<Vec3d> pa1 = extract_points_from_pose_to_Vec3d(p,_LMS_indices_A[i]);
 			std::vector<Vec3d> pa2 = extract_points_from_pose_to_Vec3d(p,_LMS_indices_B[i]);
 			Line l1 = Line().line_fitting(pa1);
@@ -449,9 +449,9 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
 		}
 	}
 	if (_centroid_flag){
-		assert(_centroid_indices_A.size() == _centroid_indices_B.size() );
+		debug_assert(_centroid_indices_A.size() == _centroid_indices_B.size() );
 		for(unsigned int i = 0; i < _centroid_indices_A.size(); i++){
-			//assert( _centroid_indices_A[i].size() == _centroid_indices_B[i].size() );
+			//debug_assert( _centroid_indices_A[i].size() == _centroid_indices_B[i].size() );
 			std::vector<Vec3d> pa1 = extract_points_from_pose_to_Vec3d(p,_centroid_indices_A[i]);
 			std::vector<Vec3d> pa2 = extract_points_from_pose_to_Vec3d(p,_centroid_indices_B[i]);
 			Vec3d cen1 = compute_center_mass(pa1);
@@ -465,9 +465,9 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
 	}
 
 	if (_dist_line_flag){ // ok
-		assert(_dist_line_indices_A.size() == _dist_line_indices_B.size() );
+		debug_assert(_dist_line_indices_A.size() == _dist_line_indices_B.size() );
 		for(unsigned int i = 0; i < _dist_line_indices_A.size(); i++){
-			//assert( _dist_line_indices_A[i].size() == _dist_line_indices_B[i].size() );
+			//debug_assert( _dist_line_indices_A[i].size() == _dist_line_indices_B[i].size() );
 			std::vector<Vec3d> pa1 = extract_points_from_pose_to_Vec3d(p,_dist_line_indices_A[i]);
 			std::vector<Vec3d> pa2 = extract_points_from_pose_to_Vec3d(p,_dist_line_indices_B[i]);
 			Line l1 = Line().line_fitting(pa1);
@@ -479,10 +479,10 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
 		}
 	}
 	if (_match){ // unique case where we compare 2 diff poses
-		assert( _source_indices.size() == _partial_data_indices.size() );
+		debug_assert( _source_indices.size() == _partial_data_indices.size() );
 		for(unsigned int i = 0; i < _source_indices.size(); i++){
 		  //std::cout<<"match "<<i<<std::endl;
-			assert( _source_indices[i].size() == _partial_data_indices[i].size() );
+			debug_assert( _source_indices[i].size() == _partial_data_indices[i].size() );
 		    FArray2D_double source = extract_points_from_pose(p,_source_indices[i]);
 		    FArray2D_double target = extract_points_from_pose(_owner->get_trg_partial_data_pose(),_partial_data_indices[i]);
 		    //measure += svd_CA_match(source,_target[i],_source_indices[i].size())*weight_match;
@@ -499,7 +499,7 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
 	}
 
     if (_match_rmsd){
-		assert( _source_rmsd_indices.size() == _partial_data_rmsd_indices.size() );
+		debug_assert( _source_rmsd_indices.size() == _partial_data_rmsd_indices.size() );
 		double match_rmsd_measure = rmsd_CA_match(p);
 		measure += match_rmsd_measure * weight_match;
 		std::cout << "Match RMSD: " << match_rmsd_measure << " weight " << weight_match << std::endl;
@@ -583,7 +583,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
     std::cout<<"Extract:\n";
    }
 	for (unsigned int i = 0; i < index_list.size(); i++ )
-	{   assert( index_list[i] < p.size() );
+	{   debug_assert( index_list[i] < p.size() );
 	    static int const atom_index_protein ( 2 ); // CA
 		   pa.push_back(Vec3d(Epos(1,atom_index_protein,index_list[i]),
 			              Epos(2,atom_index_protein,index_list[i]),
@@ -605,7 +605,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
 
 	  for (unsigned int i = 0; i < index_list.size(); i++ )
 	  {
-		  assert( index_list[i] < p.size() );
+		  debug_assert( index_list[i] < p.size() );
 	      for (int k = 1; k <= 3; k++) {
 		     static int const atom_index_protein ( 2 ); // CA
 		     pa(k,i+1) = Epos( k, atom_index_protein, index_list[i]);
@@ -719,7 +719,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
 	pdbres.chain = pdb_info.res_chain(i);
 	pdbres.res_id = pdb_info.pdb_res_num(i);
 	pdbres.insert_letter = ' ';//pdb_info.pdb_insert_let(i);
-	assert(map_pdbres_to_pose.find(pdbres) == map_pdbres_to_pose.end());
+	debug_assert(map_pdbres_to_pose.find(pdbres) == map_pdbres_to_pose.end());
 	map_pdbres_to_pose[pdbres] = i;
       }
   }
@@ -728,7 +728,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
   {
     t_map_pdbres_to_pose::const_iterator find_iter
       = map_pdbres_to_pose.find(pdbres_id);
-    assert(find_iter != map_pdbres_to_pose.end());
+    debug_assert(find_iter != map_pdbres_to_pose.end());
     if(find_iter == map_pdbres_to_pose.end())
       return -1; // not found
     return find_iter->second;
@@ -1019,7 +1019,7 @@ void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_rec
              unsigned int start_res_t = match_rmsd_recs[i].from_t;
 	     unsigned int end_res_t = match_rmsd_recs[i].to_t;
 	     Pdbres_id pdbres;
-             assert(std::abs(start_res_s - end_res_s) == std::abs(start_res_t - end_res_t));
+             debug_assert(std::abs(start_res_s - end_res_s) == std::abs(start_res_t - end_res_t));
 
 	     for(j=start_res_s; j <= end_res_s;j++){
 	       pdbres.chain = chain_s;

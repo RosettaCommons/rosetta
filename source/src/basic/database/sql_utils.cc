@@ -695,8 +695,8 @@ set_cache_size(
 		statement stmt(safely_prepare_statement(stmt_ss.str(), db_session));
 		safely_write_to_database(stmt);
 	} else {
-		TR
-			<< "WARNING: Attempting to set database cache size "
+		TR.Warning
+			<< "Attempting to set database cache size "
 			<< "for a database type for which this is currently not supported: "
 			<< "'" << name_from_database_mode(db_session->get_db_mode()) << "'." << std::endl;
 	}
@@ -779,15 +779,15 @@ parse_database_connection(
 	switch(transaction_mode){
 	case(utility::sql_database::TransactionMode::none) :
 		if ( tag->hasOption("chunk_size") ) {
-			TR << "WARNING: You must specify 'transaction_mode=chunk' ";
-			TR << "to use the 'chunk size' tag." << endl;
+			TR.Warning << "You must specify 'transaction_mode=chunk' ";
+			TR.Warning << "to use the 'chunk size' tag." << endl;
 		}
 		chunk_size=0;
 		break;
 	case(utility::sql_database::TransactionMode::standard) :
 		if ( tag->hasOption("chunk_size") ) {
-			TR << "WARNING: You must specify 'transaction_mode=chunk' ";
-			TR << "to use the 'chunk size' tag." << endl;
+			TR.Warning << "You must specify 'transaction_mode=chunk' ";
+			TR.Warning << "to use the 'chunk size' tag." << endl;
 		}
 		chunk_size=0;
 		break;
@@ -836,8 +836,8 @@ parse_database_connection(
 
 	// Parse pq_schema
 	if ( tag->hasOption("database_pq_schema") && (database_mode != utility::sql_database::DatabaseMode::postgres) ) {
-		TR << "WARNING: You must specify 'database_mode=postgres' ";
-		TR << "to use the 'database_pq_schema' tag." << endl;
+		TR.Warning << "You must specify 'database_mode=postgres' ";
+		TR.Warning << "to use the 'database_pq_schema' tag." << endl;
 	}
 
 	std::string database_pq_schema;
@@ -851,44 +851,44 @@ parse_database_connection(
 	// Check for invalid tags
 	if ( database_mode != utility::sql_database::DatabaseMode::sqlite3 ) {
 		if ( tag->hasOption("database_separate_db_per_mpi_process") ) {
-			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-			TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
+			TR.Warning << "You must specify 'database_mode=sqlite3' ";
+			TR.Warning << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
 		}
 
 		if ( tag->hasOption("database_partition") ) {
-			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-			TR << "to use the 'database_partition' tag." << endl;
+			TR.Warning << "You must specify 'database_mode=sqlite3' ";
+			TR.Warning << "to use the 'database_partition' tag." << endl;
 		}
 
 		if ( tag->hasOption("database_read_only") ) {
-			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-			TR << "to use the 'database_read_only tag." << endl;
+			TR.Warning << "You must specify 'database_mode=sqlite3' ";
+			TR.Warning << "to use the 'database_read_only tag." << endl;
 		}
 	}
 
 	if ( database_mode == utility::sql_database::DatabaseMode::sqlite3 ) {
 		if ( tag->hasOption("database_separate_db_per_mpi_process") && tag->hasOption("database_partition") ) {
-			TR << "WARNING: 'database_separate_db_per_mpi_process' and 'database_partition' tags are mutually exclusive, using 'database_separate_db_per_mpi_process'." << endl;
+			TR.Warning << "'database_separate_db_per_mpi_process' and 'database_partition' tags are mutually exclusive, using 'database_separate_db_per_mpi_process'." << endl;
 		}
 
 		if ( tag->hasOption("database_host") ) {
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
+			TR.Warning << "You must specify either 'database_mode=mysql' ";
+			TR.Warning << "or database_mode=postgres' to use the 'database_host' tag." << endl;
 		}
 
 		if ( tag->hasOption("database_user") ) {
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_user' tag." << endl;
+			TR.Warning << "You must specify either 'database_mode=mysql' ";
+			TR.Warning << "or database_mode=postgres' to use the 'database_user' tag." << endl;
 		}
 
 		if ( tag->hasOption("database_password") ) {
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_password' tag." << endl;
+			TR.Warning << "You must specify either 'database_mode=mysql' ";
+			TR.Warning << "or database_mode=postgres' to use the 'database_password' tag." << endl;
 		}
 
 		if ( tag->hasOption("database_port") ) {
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
+			TR.Warning << "You must specify either 'database_mode=mysql' ";
+			TR.Warning << "or database_mode=postgres' to use the 'database_port' tag." << endl;
 		}
 	}
 

@@ -56,7 +56,7 @@ DofUnlock::~DofUnlock(){
 				<< " and environment id " << pass_out->env_id() << " when it expected a passport from "
 				<< pass_->mover() << " and environment id " << pass_->env_id() << "."
 				<< "Something has gone horribly wrong, probably a result of strange pose- or conformation-copying behavior." << std::endl;
-			tr.Error << "[ERROR]" << ss.str() << std::endl;
+			tr.Error << ss.str() << std::endl;
 			// This has to be a utility_exit_with_message(), as throwing directly results in compiler errors
 			// *Destructors shouldn't throw*
 			utility_exit_with_message( ss.str() );

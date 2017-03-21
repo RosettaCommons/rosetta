@@ -102,7 +102,7 @@ SecondaryMatchProtocol::apply(
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ) {
 		bool lig_switch = exchange_ligands_in_pose( start_pose, true, reduced_scofx_ );
 		if ( !lig_switch ) {
-			tr << "Warning: could not perform the requested ligand switch, aborting protocol... " << std::endl;
+			tr.Warning << "could not perform the requested ligand switch, aborting protocol... " << std::endl;
 			return;
 		}
 	}

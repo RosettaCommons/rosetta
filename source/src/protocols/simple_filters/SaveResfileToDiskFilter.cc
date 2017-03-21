@@ -135,7 +135,7 @@ utility::vector1< core::Size > SaveResfileToDiskFilter::select_residues( Pose co
 		}
 	}
 	if ( selected_residues.empty() ) {
-		TR.Warning << "WARNING: No residues were selected by your TaskOperations." << std::endl;
+		TR.Warning << "No residues were selected by your TaskOperations." << std::endl;
 	}
 
 	return selected_residues;

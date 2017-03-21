@@ -2836,7 +2836,7 @@ loop_rebuilding_test()
 
  	if (! loops.read_file( option[ OptionKeys::loops::loop_file ]().name() ) ) {
 
-		basic::Error() << "ERROR -- loops_main: can not retrieve loops info\n"
+		basic::Error() << "loops_main: can not retrieve loops info\n"
 											<< "exit ......\n";
  		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
  	}

@@ -55,7 +55,7 @@ core::Real get_residue_weight_by_ss(
 	} else if ( ss == 'L' ) {
 		rsd_wt = option[ abinitio::rsd_wt_loop   ]();
 	} else {
-		tr.Error << "Error: don't recognize secondary structure character '" <<  ss << "' " << std::endl;
+		tr.Error << "don't recognize secondary structure character '" <<  ss << "' " << std::endl;
 		rsd_wt = option[ abinitio::rsd_wt_loop   ]();
 	}
 	return rsd_wt;

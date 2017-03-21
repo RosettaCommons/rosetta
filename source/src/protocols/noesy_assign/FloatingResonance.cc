@@ -65,7 +65,8 @@ core::Size FloatingResonance::float_label( core::Size ifloat ) const {
 	for ( auto it = partner_ids_.begin(); it!=partner_ids_.end(); ++it, --ifloat ) {
 		if ( ifloat==1 ) return *it;
 	}
-	runtime_assert( false ); //only get's here if ifloat is out of range ( 1...ambiguity() )
+	tr.Fatal << "Cannot find float_label for value " << ifloat << std::endl;
+	utility_exit_with_message("Cannot obtain float label.");
 	return 99999999;
 }
 

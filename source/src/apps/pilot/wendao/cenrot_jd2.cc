@@ -1037,7 +1037,7 @@ public:
 
 			//make sure cart_bonded is turned on
 			if ( scorefxn_min_->get_weight(core::scoring::cart_bonded)==0 ) {
-				TR << "Warning: cart_bonded is turned on automatically to 0.1" << std::endl;
+				TR.Warning << "cart_bonded is turned on automatically to 0.1" << std::endl;
 				scorefxn_min_->set_weight( core::scoring::cart_bonded, 0.1 );
 			}
 

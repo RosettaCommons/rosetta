@@ -69,7 +69,7 @@ public:
   void
   apply( core::pose::Pose & match ){
 
-    assert(match.size() == 3); // Two ligands plus zinc
+    debug_assert(match.size() == 3); // Two ligands plus zinc
 
     core::pose::Pose scaffold;
     core::import_pose::pose_from_file( scaffold, basic::options::option[scaffold_pdb].value() , core::import_pose::PDB_file);

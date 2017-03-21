@@ -53,7 +53,7 @@ RRT_node::~RRT_node()
     if(rmsd_info1 && rmsd_info2)
       // caching is on
       {
-	assert(rmsd_info1->_points.size() == rmsd_info2->_points.size());
+	debug_assert(rmsd_info1->_points.size() == rmsd_info2->_points.size());
 	int n = rmsd_info1->_points.size();
 	n_res = int(n / 3); // 3D
 	for(int i=0 ; i < n; i++)
@@ -69,7 +69,7 @@ RRT_node::~RRT_node()
                                                     // by get_pose()
       pose_ns::Pose* pose2 = node2->produce_pose();
       n_res = pose1->size();
-      assert(n_res == pose2->size());
+      debug_assert(n_res == pose2->size());
       const FArray3D_float & Epos1( pose1->Eposition() ); // set of backbone coordinates
       const FArray3D_float & Epos2( pose2->Eposition() );
       // compute sum-square of all coordinates of all residues
@@ -92,7 +92,7 @@ double Dofs_vector_L2_norm_functor::operator()(RRT_node const* node1, RRT_node c
   using namespace std;
   std::vector<double> const& v1 = node1->get_dofs_vector();
   std::vector<double> const& v2 = node2->get_dofs_vector();
-  assert(v1.size() = v2.size());
+  debug_assert(v1.size() = v2.size());
   double sum_sqr_dev = 0.0;
   for(unsigned int i = 0; i < v1.size();i++)
     {

@@ -107,7 +107,7 @@ core::Real const DEFAULT_TEMP = 2.0;
 
 StageID& increment_stageid( StageID& id ) {
 	id = static_cast< StageID >( static_cast<int>( id ) + 1 );
-	assert( !( id > END ) );
+	debug_assert( !( id > END ) );
 	return id;
 }
 
@@ -163,7 +163,7 @@ core::scoring::ScoreFunctionOP setup_score( std::string const& scorename,
 
 	scorefn->set_weight( core::scoring::atom_pair_constraint, option[ OptionKeys::constraints::cst_weight ] );
 
-	assert( scorefn );
+	debug_assert( scorefn );
 	return scorefn;
 }
 
@@ -463,7 +463,7 @@ AbscriptMover::parse_my_tag(
 
 	if ( tag->hasOption( "std_frags" ) ) {
 		// The die for unread tags will cause a crash, but we want to elaborate a bit on why.
-		tr.Error << "[ERROR] The AbscriptMover tag 'std_frags' is deprecated. Use 'Fragments' instead. For example:\n"
+		tr.Error << "The AbscriptMover tag 'std_frags' is deprecated. Use 'Fragments' instead. For example:\n"
 			<< "                 <Fragments small_frags='frag3.txt' large_frags='frag9.txt' selector='ChainA' />"
 			<< std::endl;
 	}
@@ -475,7 +475,7 @@ AbscriptMover::parse_my_tag(
 			add_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ]() ),
 				tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ]() ) );
 		} else {
-			tr.Warning << "[WARNING] " << this->get_name() << " being defined without any fragments." << std::endl;
+			tr.Warning << this->get_name() << " being defined without any fragments." << std::endl;
 		}
 	}
 }
@@ -577,7 +577,7 @@ std::map< core::Size, core::Size > AbscriptMover::calculate_iterations( core::po
 
 	//Stage1 has FT-dependent seqsep ramping ---------------------------------------
 	core::kinematics::ShortestPathInFoldTree shortestpath( pose.fold_tree() );
-	assert( shortestpath.max_dist() <= pose.size() );
+	debug_assert( shortestpath.max_dist() <= pose.size() );
 
 	core::Size end_seqsep = (core::Size)(stage_movers_[ I ]->seq_sep_intercept() * shortestpath.max_dist());
 	core::Size begin_seqsep = std::min( end_seqsep, Size(3) );

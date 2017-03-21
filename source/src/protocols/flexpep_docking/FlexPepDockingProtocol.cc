@@ -1283,7 +1283,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	// if no native provided, use pose as pseudo-native reference
 	if ( get_native_pose().get() == nullptr ) {
 		set_native_pose( PoseCOP( PoseOP( new pose::Pose(pose) ) ) ); // TODO: debug this - will it work for PoseCOP;
-		TR.Warning << "WARNING: No native supplied by used - using starting structure as reference for statistics" << std::endl;
+		TR.Warning << "No native supplied by used - using starting structure as reference for statistics" << std::endl;
 	}
 
 	kinematics::FoldTree old_foldTree = pose.fold_tree(); // original fold tree should be restored in the end
@@ -1512,7 +1512,7 @@ FlexPepDockingProtocol::addLowResStatistics
 	using protocols::jd2::JobDistributor;
 
 	if ( !get_native_pose() ) {
-		TR.Warning << "WARNING: missing '-native' flag, skipping statistics on RMSD to native" << std::endl;
+		TR.Warning << "missing '-native' flag, skipping statistics on RMSD to native" << std::endl;
 		return;
 	}
 
@@ -1608,7 +1608,7 @@ FlexPepDockingProtocol::storeJobStatistics
 
 	// Comparisons to native metrics:
 	if ( !get_native_pose() ) {
-		TR.Warning << "WARNING: missing '-native' flag, skipping statistics on RMSD to native" << std::endl;
+		TR.Warning << "missing '-native' flag, skipping statistics on RMSD to native" << std::endl;
 		return;
 	}
 	// calculate and store the rms of the starting structure to the native

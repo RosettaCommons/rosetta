@@ -211,7 +211,7 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 	utility::vector1< std::string > const & alignment_res_string_list = alignment_res_string_list_;
 
 	if ( alignment_res_string_list.size() == 0 ) {
-		TR.Debug << "WARNING: alignment_res_string_list.size() == 0. EARLY RETURN AN EMPTY LIST" << std::endl;
+		TR << "alignment_res_string_list.size() == 0. EARLY RETURN AN EMPTY LIST" << std::endl;
 		return working_best_alignment;
 	}
 
@@ -480,7 +480,7 @@ StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( Size const seq_nu
 	}
 
 	//Error, if reach this point of the function
-	TR.Error << "Error: figure_out_is_residue_prepend, residue seq_num: " << seq_num << std::endl;
+	TR.Error << "figure_out_is_residue_prepend, residue seq_num: " << seq_num << std::endl;
 	TR.Error << "Cannot attach residue by either prepending and appending!" << std::endl;
 	exit ( 0 );
 

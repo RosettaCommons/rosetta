@@ -435,9 +435,9 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 		}
 	}
 
-	assert( which_scratch_res_is_cut_ > 0 );
-	assert( scratch_res_.size() >= 3 );
-	assert( pivot_res_.size() == 3 );
+	debug_assert( which_scratch_res_is_cut_ > 0 );
+	debug_assert( scratch_res_.size() >= 3 );
+	debug_assert( pivot_res_.size() == 3 );
 
 	if ( verbose_ ) {
 		std::cout << "SCRATCH RES: ";
@@ -643,7 +643,7 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 
 	DOF_ID dof_id1,dof_id2;
 
-	assert( pivot_res_.size() == 3 );
+	debug_assert( pivot_res_.size() == 3 );
 
 	AtomID id1, id2, id3, id4;
 	for ( Size i = 1; i <= 3; i++ ) {
@@ -654,7 +654,7 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 		id1 = named_atom_id_to_atom_id( NamedAtomID( " P  ", pivot-1 ), pose );
 		id2 = named_atom_id_to_atom_id( NamedAtomID( " S  ", pivot-1 ), pose );
 		if ( pose.fold_tree().is_cutpoint( pivot - 1 ) ) {
-			assert( pose.residue_type( pivot-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ); //this better be the case!!!
+			debug_assert( pose.residue_type( pivot-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ); //this better be the case!!!
 			id3 = named_atom_id_to_atom_id( NamedAtomID( "OVL1", pivot-1 ), pose );
 			id4 = named_atom_id_to_atom_id( NamedAtomID( "OVL2", pivot-1 ), pose );
 		} else {
@@ -669,7 +669,7 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		if ( pose.fold_tree().is_cutpoint( pivot - 1 ) ) {
-			assert( pose.residue_type( pivot ).has_variant_type( chemical::CUTPOINT_UPPER ) ); //this better be the case!!!
+			debug_assert( pose.residue_type( pivot ).has_variant_type( chemical::CUTPOINT_UPPER ) ); //this better be the case!!!
 			id1 = named_atom_id_to_atom_id( NamedAtomID( "OVU1", pivot ), pose );
 		} else {
 			id1 = named_atom_id_to_atom_id( NamedAtomID( " S  ", pivot-1 ), pose );
@@ -725,7 +725,7 @@ CoarseRNA_LoopCloser::figure_out_offset(
 void
 CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
-	assert( t_ang_.size() == Size( nsol_ ) );
+	debug_assert( t_ang_.size() == Size( nsol_ ) );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Finally, ready to check out the solutions
@@ -791,7 +791,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
 	} else if ( choose_best_solution_ ) {
 
-		assert( scorefxn_ != nullptr );
+		debug_assert( scorefxn_ != nullptr );
 
 		Real best_score( 0.0 );
 		Size best_sol( 0 );
@@ -820,7 +820,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
 	} else {
 
-		assert( choose_random_solution_ );
+		debug_assert( choose_random_solution_ );
 		Size const n = static_cast<int>( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution( pose, n );
 

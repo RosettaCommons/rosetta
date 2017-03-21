@@ -67,8 +67,8 @@ istream& operator>>(istream& in, ResID& res_id ) {
 
 	size_t p0 = s.find(':');
 	//size_t p1 = s.find(':',p0+1);
-	assert( p0 == 1 );
-	assert( s.size() >= 2 );
+	debug_assert( p0 == 1 );
+	debug_assert( s.size() >= 2 );
 
 
 	res_id.chain_id = s[0]; // NB: this will never be " "
@@ -94,7 +94,7 @@ resids_type ResID::get_resids( core::pose::Pose& pose ) {
 	resids_type rval;
 
 	size_t n = pose.size();
-	assert( n == pose.pdb_info()->nres() );
+	debug_assert( n == pose.pdb_info()->nres() );
 
 	for ( size_t i = 1; i <= n; ++i ) {
 		ResID const res_id( pose.pdb_info()->chain(i), pose.pdb_info()->number(i));

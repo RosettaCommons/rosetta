@@ -77,7 +77,7 @@ public:
 
 	// the Abscript mover does not make any claims, and should never be given
 	// initialization rights
-	void initialize( Pose& ) override { runtime_assert( false ); }
+	void initialize( Pose& ) override { utility_exit_with_message("AbscriptMover::initialize() should never be called!"); }
 
 	void
 	parse_my_tag( utility::tag::TagCOP tag,

@@ -172,12 +172,12 @@ MatchGrafter::ensure_proper_his_tautomers(
 {
 	/////////////////////////////////ensure proper tautomer for all histidines////////////////////////
 
-	assert( combined.residue( metalsite_seqpos[1] ).is_ligand() );
+	debug_assert( combined.residue( metalsite_seqpos[1] ).is_ligand() );
 
 
 	for ( core::Size i(2) /*metal is 1*/; i <= metalsite_seqpos.size(); ++i ) {
 
-		assert( combined.residue( metalsite_seqpos[i] ).is_protein() );
+		debug_assert( combined.residue( metalsite_seqpos[i] ).is_protein() );
 
 		core::conformation::Residue const old_rsd(combined.residue(metalsite_seqpos[i]));
 

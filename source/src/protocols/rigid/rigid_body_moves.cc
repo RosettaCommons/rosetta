@@ -54,7 +54,7 @@ gaussian_jump_move(
 	}
 
 	if ( moving_jumps.empty() ) {
-		T("protocols.rigid.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		T("protocols.rigid.rigid_body").Warning << "no movable jumps!" << std::endl;
 		return 0;
 	}
 

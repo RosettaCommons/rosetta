@@ -89,7 +89,7 @@ CopyRotamerMover::apply(
 			if ( i <= pose.residue_type(target_res_index_).nchi() ) {
 				pose.set_chi( i, target_res_index_, pose.chi( i, template_res_index_ ) );
 			} else {
-				TR.Warning << "Warning: skipping chi " << i << ", which is not present in target residue." << std::endl;
+				TR.Warning << "skipping chi " << i << ", which is not present in target residue." << std::endl;
 			}
 		}
 	}

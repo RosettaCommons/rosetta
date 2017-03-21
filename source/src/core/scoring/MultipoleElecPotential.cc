@@ -955,7 +955,7 @@ MultipoleElecPotential::align_residue_multipole_axes(
 	}
 
 	for ( Size iat = 1 ; iat <= rsd.natoms() ; ++iat ) {
-		// assert( mp.coord_frame_ref( iat ) != 0 );
+		// debug_assert( mp.coord_frame_ref( iat ) != 0 );
 		if ( mp.coord_frame_ref( iat ).atomno() == 0 ) {
 			//   TR << "Whoops - no suitable neighbors for " << rsd.name() << " atom " << rsd.atom_name( iat ) << std::endl;
 		}
@@ -2752,7 +2752,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 			MultipoleElecResidueInfo const & mp1( multipole_info.residue_info( resi ) );
 			MultipoleElecResidueInfo const & mp2( multipole_info.residue_info( resj ) );
 
-			assert( pose.energies().use_nblist() );
+			debug_assert( pose.energies().use_nblist() );
 
 			bool const same_res( resi == resj );
 

@@ -53,7 +53,7 @@ SDFParser::parse(std::istream & filein, core::Size n_entries /*=0*/ ) {
 			break;
 		}
 		if ( versionline.size() < 39 ) {
-			TR.Warning << "Warning: SDF header line too short for: '" << name << "'" << std::endl;
+			TR.Warning << "SDF header line too short for: '" << name << "'" << std::endl;
 			eat_until_delimiter( filein );
 			continue;
 		}

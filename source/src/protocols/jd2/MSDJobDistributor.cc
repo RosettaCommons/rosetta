@@ -150,7 +150,7 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 		}
 
 		if ( retry_counter >= ntrials ) {
-			TR.Error << "Error: failures exceeded limit of " << ntrials << std::endl;
+			TR.Error << "Failures exceeded limit of " << ntrials << std::endl;
 		}
 
 		++current_nstruct_;

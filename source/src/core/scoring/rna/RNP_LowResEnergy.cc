@@ -143,7 +143,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 		bool const is_rsd_protein( pose.residue(rsd).is_protein() );
 		bool is_centroid = pose.residue_type(rsd).mode() == core::chemical::CENTROID_t;
 		if ( is_rsd_protein && !is_centroid && !use_actual_centroid ) {
-			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
+			//TR.Warning << "rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
 		}
 		if ( pose.residue(rsd).is_RNA() ) {
@@ -246,13 +246,13 @@ RNP_LowResEnergy::residue_pair_energy(
 	if ( rsd1.is_protein() ) {
 		bool is_centroid = rsd1.type().mode() == core::chemical::CENTROID_t;
 		if ( !is_centroid && !use_actual_centroid ) {
-			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
+			//TR.Warning << "rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
 		}
 	} else { // rsd2 is protein
 		bool is_centroid = rsd2.type().mode() == core::chemical::CENTROID_t;
 		if ( !is_centroid && !use_actual_centroid ) {
-			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
+			//TR.Warning << "rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
 		}
 	}

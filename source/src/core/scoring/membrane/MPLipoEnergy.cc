@@ -117,7 +117,7 @@ MPLipoEnergy::finalize_total_energy(
 	CenListInfo const & cenlist = mpdata_.get_cenlist_from_pose( pose );
 
 	// Determine total number of tmhs from membrane pose
-	TR << "WARNING: MPLipoEnergy: Using the number of spans instead of the number of inserted helices!!!" << std::endl;
+	TR.Warning << "MPLipoEnergy: Using the number of spans instead of the number of inserted helices!!!" << std::endl;
 	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->nspans();
 
 	// Initialize MP Lips Score

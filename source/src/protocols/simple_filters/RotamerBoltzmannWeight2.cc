@@ -416,7 +416,7 @@ IdManager< T >::register_new_id()
 		}
 		++test_id;
 	}
-	runtime_assert( false );
+	utility_exit_with_message("Cannot register a new id!");
 	return *(used_ids_.end());
 }
 

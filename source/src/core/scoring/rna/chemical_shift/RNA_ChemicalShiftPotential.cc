@@ -365,9 +365,9 @@ get_rosetta_hatom_name( std::string const & input_atom_name, std::string const &
 	}
 
 	if ( num_matching_atom_name != 1 ) {
-		std::cout << "ERROR: num_matching_atom_name = " << num_matching_atom_name << std::endl;
-		std::cout << "ERROR: input_atom_name = " << input_atom_name << std::endl;
-		std::cout << "ERROR: rosetta_atom_name = " << rosetta_atom_name << std::endl;
+		TR.Error << "num_matching_atom_name = " << num_matching_atom_name << std::endl;
+		TR.Error << "input_atom_name = " << input_atom_name << std::endl;
+		TR.Error << "rosetta_atom_name = " << rosetta_atom_name << std::endl;
 		utility_exit_with_message( "num_matching_atom_name != 1 for input_atom_name ( " + input_atom_name + " ) | text_line ( " + text_line + " )" );
 	}
 
@@ -451,11 +451,11 @@ filter_chem_shift_data_list( utility::vector1 < ChemicalShiftData > const & flat
 	if ( filtered_CS_data_list.size() > 0 ) {
 
 		if ( filtered_CS_data_list.size() != proton_entry.size() ) {
-			std::cout << "ERROR: filtered_CS_data_list.size() > 0 at seq_num = " << seq_num << " proton_entry: ";
+			TR.Error << "filtered_CS_data_list.size() > 0 at seq_num = " << seq_num << " proton_entry: ";
 			for ( Size jj = 1; jj <= proton_entry.size(); jj++ ) {
-				std::cout << "# " << jj << " :" << proton_entry[jj] <<std::endl;
+				TR.Error << "# " << jj << " :" << proton_entry[jj] <<std::endl;
 			}
-			std::cout << "ERROR: filtered_CS_data_list: " << std::endl;
+			TR.Error << "filtered_CS_data_list: " << std::endl;
 			for ( Size jj = 1; jj <= filtered_CS_data_list.size(); jj++ ) {
 				print_chemical_shift_data( "#" + ObjexxFCL::lead_zero_string_of(jj, 3) + " :", filtered_CS_data_list[jj], true );
 			}
@@ -820,15 +820,15 @@ Real
 RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftData const & CS_data, pose::Pose const & pose ) const
 {
 	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() ) ) {
-		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
-		std::cout << "ERROR: pose.size() = " << pose.size() << std::endl;
+		TR.Error << "CS_data.seq_num = " << CS_data.seq_num << std::endl;
+		TR.Error << "pose.size() = " << pose.size() << std::endl;
 		utility_exit_with_message( "( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() )" );
 	}
 
 	if ( CS_data.res_aa != pose.residue( CS_data.seq_num ).aa() ) {
-		std::cout << "ERROR: CS_data.res_aa = " << CS_data.res_aa << std::endl;
-		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
-		std::cout << "ERROR: pose.residue( CS_data.seq_num ).aa() = " << pose.residue( CS_data.seq_num ).aa() << std::endl;
+		TR.Error << "CS_data.res_aa = " << CS_data.res_aa << std::endl;
+		TR.Error << "CS_data.seq_num = " << CS_data.seq_num << std::endl;
+		TR.Error << "pose.residue( CS_data.seq_num ).aa() = " << pose.residue( CS_data.seq_num ).aa() << std::endl;
 		utility_exit_with_message( "chem_shift_data.res_aa != pose1.residue( CS_data.seq_num ).aa()" );
 	}
 
@@ -865,15 +865,15 @@ Real
 RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData const & CS_data, pose::Pose const & pose) const
 {
 	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() ) ) {
-		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
-		std::cout << "ERROR: pose.size() = " << pose.size() << std::endl;
+		TR.Error << "CS_data.seq_num = " << CS_data.seq_num << std::endl;
+		TR.Error << "pose.size() = " << pose.size() << std::endl;
 		utility_exit_with_message( "( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() )" );
 	}
 
 	if ( CS_data.res_aa != pose.residue( CS_data.seq_num ).aa() ) {
-		std::cout << "ERROR: CS_data.res_aa = " << CS_data.res_aa << std::endl;
-		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
-		std::cout << "ERROR: pose.residue( CS_data.seq_num ).aa() = " << pose.residue( CS_data.seq_num ).aa() << std::endl;
+		TR.Error << "CS_data.res_aa = " << CS_data.res_aa << std::endl;
+		TR.Error << "CS_data.seq_num = " << CS_data.seq_num << std::endl;
+		TR.Error << "pose.residue( CS_data.seq_num ).aa() = " << pose.residue( CS_data.seq_num ).aa() << std::endl;
 		utility_exit_with_message( "chem_shift_data.res_aa != pose1.residue( CS_data.seq_num ).aa()" );
 	}
 
@@ -1043,7 +1043,7 @@ RNA_ChemicalShiftPotential::get_best_exp_to_calc_chem_shift_mapping( utility::ve
 		do_include_CS_data.push_back( true );
 		actual_exp_chem_shift_entry.push_back( EXP_chem_shift_data_entry[1].exp_shift );
 	} else {
-		std::cout << "ERROR: EXP_chem_shift_data_entry.size() = " << EXP_chem_shift_data_entry.size() << std::endl;
+		TR.Error << "EXP_chem_shift_data_entry.size() = " << EXP_chem_shift_data_entry.size() << std::endl;
 		utility_exit_with_message( "EXP_chem_shift_data_entry.size() != 1 and EXP_chem_shift_data_entry.size() != 2" );
 	}
 }
@@ -1170,7 +1170,7 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(
 
 		if ( CS_data.res_aa != pose.residue( CS_data.seq_num ).aa() ) {
 			print_chemical_shift_data( "ERROR CS_data:", CS_data, true );
-			std::cout << "ERROR: pose.residue( CS_data.seq_num ).aa() = " << pose.residue( CS_data.seq_num ).aa() << std::endl;
+			TR.Error << "pose.residue( CS_data.seq_num ).aa() = " << pose.residue( CS_data.seq_num ).aa() << std::endl;
 			utility_exit_with_message( "CS_data.res_aa != pose1.residue( CS_data.seq_num ).aa()" );
 		}
 

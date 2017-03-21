@@ -607,8 +607,9 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 
 	// stolen from SecondaryStructure.cc
 	if ( frags->global_offset() != 0 ) {
-		TR.Error << "[ERROR] SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
-		runtime_assert( false );
+		TR.Error << "SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
+		TR.Error << "   value of global offset of fragments: " << frags->global_offset() << std::endl;
+		utility_exit_with_message("SecondaryStructure computations not in local coordinates!");
 	}
 
 	// 1 - collect fragment statistics

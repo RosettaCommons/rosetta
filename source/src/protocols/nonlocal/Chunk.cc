@@ -95,7 +95,7 @@ Chunk& Chunk::operator=(const Chunk& other) {
 // -- Accessors -- //
 
 Size Chunk::choose() const {
-	assert(valid());
+	debug_assert(valid());
 	while ( 1 ) {
 		Size insert_pos = static_cast<Size>(sampler_->sample());
 

@@ -176,8 +176,8 @@ void Matcher::add_upstream_restype_for_constraint(
 )
 {
 	// ASSUMPTION: matching from protein sidechain
-	// assert( restype->aa() <= core::chemical::num_canonical_aas );
-	assert( build_set_id_for_restype_[ cst_id ].find( restype->name() ) == build_set_id_for_restype_[ cst_id ].end() );
+	// debug_assert( restype->aa() <= core::chemical::num_canonical_aas );
+	debug_assert( build_set_id_for_restype_[ cst_id ].find( restype->name() ) == build_set_id_for_restype_[ cst_id ].end() );
 
 	if ( ! upstream_builders_[ cst_id ] ) {
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder( new upstream::ProteinUpstreamBuilder );
@@ -240,10 +240,10 @@ Matcher::set_fa_dun_cutoff_for_constraint(
 	core::Real fa_dun_cutoff
 )
 {
-	assert( build_set_id_for_restype_[ cst_id ].find( restype->name() )
+	debug_assert( build_set_id_for_restype_[ cst_id ].find( restype->name() )
 		!= build_set_id_for_restype_[ cst_id ].end() );
 
-	assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ) );
+	debug_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ) );
 
 	upstream::ProteinUpstreamBuilderOP prot_sc_builder( utility::pointer::dynamic_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] ));
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( restype );
@@ -754,7 +754,7 @@ void Matcher::initialize_from_file(
 							for ( Size mm = 1; mm <= upres[ jj ]->n_proton_chi(); ++mm ) {
 								Size mmchi = upres[ jj ]->proton_chi_2_chi( mm );
 								if ( chi_sample_data_in_file[ mmchi ] ) {
-									TR << "  WARNING:: Already encountered chi sampling strategy for proton chi " << mmchi << " and will NOT ignore this proton chi" << std::endl;
+									TR.Warning << "Already encountered chi sampling strategy for proton chi " << mmchi << " and will NOT ignore this proton chi" << std::endl;
 								} else {
 									set_sample_startegy_for_constraint( ii, upres[ jj ], mmchi, nosamps );
 									TR << "  ALGORITHM_INFO:: match -- Ignoring proton chi for " << upres[ jj ]->name() << " chi # " << mmchi << std::endl;
@@ -806,14 +806,14 @@ void Matcher::initialize_from_file(
 							Size which_chi;
 							llstream >> which_chi;
 							if ( which_chi > upres[ jj ]->nchi() ) {
-								TR <<  "WARNING: Ignoring rotamer sampling strategy data for chi # "
+								TR.Warning <<  "Ignoring rotamer sampling strategy data for chi # "
 									<< which_chi
 									<< " for residue type " << upres[ jj ]->name() << " because it only has " << upres[ jj ]->nchi() << " chi angles." <<  std::endl;
 								continue;
 							}
 							if ( chi_sample_data_in_file[ which_chi ] ) {
-								TR << "  WARNING:: Repeat chi info for chi " << which_chi << " is being ignored!" << std::endl;
-								TR << "  WARNING:: Ignoring: '" << llstr << "'" << std::endl;
+								TR.Warning << "Repeat chi info for chi " << which_chi << " is being ignored!" << std::endl;
+								TR.Warning << "Ignoring: '" << llstr << "'" << std::endl;
 								continue;
 							}
 							chi_sample_data_in_file[ which_chi ] = true;
@@ -1419,7 +1419,7 @@ bool Matcher::generate_hits() {
 /// constraint.
 void Matcher::prepare_for_hit_generation_for_constraint( Size cst_id )
 {
-	assert( pose_build_resids_.size() == all_build_points_.size() ); // this function assumes the entries in these two vectors correspond to each other
+	debug_assert( pose_build_resids_.size() == all_build_points_.size() ); // this function assumes the entries in these two vectors correspond to each other
 
 	if ( same_build_resids_for_all_csts_ ) {
 		per_constraint_build_points_[ cst_id ].reserve( all_build_points_.size() );
@@ -1531,13 +1531,13 @@ Matcher::initialize_scaffold_build_points()
 	runtime_assert( upstream_pose_.get() );
 	if ( same_build_resids_for_all_csts_ ) {
 		if ( pose_build_resids_.size() == 0 ) {
-			TR << "WARNING: No build points were set in the matcher, could not initialize scaffold build points." << std::endl;
+			TR.Warning << "No build points were set in the matcher, could not initialize scaffold build points." << std::endl;
 			return false;
 		}
 	} else {
 		for ( core::Size i =1; i <= per_cst_build_resids_.size(); ++i ) {
 			if ( per_cst_build_resids_[i].size() == 0 ) {
-				TR << "WARNING: No build points for geomcst " << i << " were set in the matcher, could not initialize scaffold build points." << std::endl;
+				TR.Warning << "No build points for geomcst " << i << " were set in the matcher, could not initialize scaffold build points." << std::endl;
 				return false;
 			}
 		}
@@ -2395,7 +2395,7 @@ Matcher::predict_n_matches_for_hit_subsets(
 	Size accuracy_threshold
 ) const
 {
-	assert( ! neighbor_hits[ 1 ].empty() );
+	debug_assert( ! neighbor_hits[ 1 ].empty() );
 
 	/// 1. First approximation: just add the log of the number of hits in all bins.
 	/// If this is less than the log of the accuracy threshold, then don't bother computing a more accurate estimate.

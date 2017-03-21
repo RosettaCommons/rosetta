@@ -133,7 +133,7 @@ RotamerTrialsMinMover::task( core::pose::Pose const & pose ) const
 {
 	//if we have a factory, generate and return a new task
 	if ( factory_ ) return factory_->create_task_and_apply_taskoperations( pose );
-	//else assert( task_is_valid( pose ) );
+	//else debug_assert( task_is_valid( pose ) );
 
 	//else return the unsafe one
 	return task_->clone();
@@ -149,7 +149,7 @@ RotamerTrialsMinMover::parse_my_tag(
 	Pose const &
 )
 {
-	assert( tag->getName() == "RotamerTrialsMinMover" );
+	debug_assert( tag->getName() == "RotamerTrialsMinMover" );
 
 	core::scoring::ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
 	if ( new_score_function == nullptr ) {

@@ -179,7 +179,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 
 		// do sth more than just scoring
 		if ( option[ score_app::linmin ]() || option[ in::file::repair_sidechains ]() ) {
-			assert( sfxn );
+			debug_assert( sfxn );
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			if ( option[ in::file::repair_sidechains ]() ) {
 				protocols::simple_moves::ProlineFixMoverOP pfm( new protocols::simple_moves::ProlineFixMover );

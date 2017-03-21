@@ -148,8 +148,8 @@ SelectResiduesByLayer::SelectResiduesByLayer( String const &pick ) : utility::po
 		} else if ( layer == "boundary" ) {
 			pick_boundary_ = true;
 		} else {
-			TR << "Error!, wrong specification of layer_mode " << layer << std::endl;
-			runtime_assert( false );
+			TR.Fatal << "Error!, wrong specification of layer_mode " << layer << std::endl;
+			utility_exit_with_message("Layer mode specification not understood.");
 		}
 	} // utility::vector1
 }

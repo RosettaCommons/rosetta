@@ -97,9 +97,9 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////make fold tree for fullatom pose////////////////////////////////////////////////
 	//this code assumes the pose is set up fixed partner1 - metal - mobile partner2, with only the three chains
 	//this assumption is duplicated in the private generate_factory() function so be sure to generalize it in both places
-	assert(pose.conformation().num_chains() == 3);
-	assert(pose.conformation().chain_end(2) == metal_res && pose.conformation().chain_begin(2) == metal_res );
-	assert(fixed_res < ligand_res);
+	debug_assert(pose.conformation().num_chains() == 3);
+	debug_assert(pose.conformation().chain_end(2) == metal_res && pose.conformation().chain_begin(2) == metal_res );
+	debug_assert(fixed_res < ligand_res);
 	TR << "fixed_res: " << fixed_res << "  ligand_res: " << ligand_res << std::endl;
 	using core::kinematics::Edge;
 	core::kinematics::FoldTree main_tree(pose.size());

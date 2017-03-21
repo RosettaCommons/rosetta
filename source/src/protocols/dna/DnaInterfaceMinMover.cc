@@ -169,11 +169,6 @@ DnaInterfaceMinMover::parse_my_tag(
 	core::pose::Pose const &
 )
 {
-	if ( tag->getName() != "DnaInterfaceMinMover" ) {
-		TR(t_warning) << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const key( tag->getOption<std::string>("scorefxn") );
 		if ( datamap.has( "scorefxns", key ) ) {

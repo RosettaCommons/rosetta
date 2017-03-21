@@ -81,8 +81,8 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	assert(alignment);
-	assert(num_residues > 0);
+	debug_assert(alignment);
+	debug_assert(num_residues > 0);
 
 	SequenceMapping mapping = alignment->sequence_mapping(1, 2);
 	vector1<int> unaligned_res;
@@ -157,8 +157,8 @@ void Extender::extend_unaligned(Pose* pose) {
 
 int Extender::choose_cutpoint(int start, int stop) const {
 	using numeric::random::WeightedReservoirSampler;
-	assert(start > 0);
-	assert(start <= stop);
+	debug_assert(start > 0);
+	debug_assert(start <= stop);
 
 	if ( !pred_ss_ ) {
 		return numeric::random::random_range(start, stop);

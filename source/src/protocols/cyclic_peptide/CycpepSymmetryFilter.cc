@@ -127,7 +127,7 @@ CycpepSymmetryFilter::apply( core::pose::Pose const &pose ) const
 	runtime_assert_string_msg( is_cyclic_peptide( pose, reslist ), "Error in protocols::cyclic_peptide::CycpepSymmetryFilter::apply(): The pose or selected residues do NOT represent a cyclic peptide." ); //Check that these residues represent a cyclic peptide.
 
 	if ( reslist.size() % symm_repeats() != 0 ) {
-		TR.Warning << "Warning!  The CycpepSymmetryFilter was applied with c"
+		TR.Warning << "The CycpepSymmetryFilter was applied with c"
 			<< symm_repeats() << ( mirror_symm() ? "/m " : " ") << "symmetry to a " << (selector() ? "selection" : "pose" )
 			<< " with " << reslist.size() << " residues.  The number of residues is not an integer multiple of the symmetry repeats.  Pose MUST be asymmetric.  Returning FALSE."
 			<< std::endl;

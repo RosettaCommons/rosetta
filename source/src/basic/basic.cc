@@ -15,7 +15,7 @@
 // Rosetta Headers
 #include <basic/basic.hh>
 #include <ObjexxFCL/Fmath.hh>    // for mod
-#include <cassert>               // for assert
+#include <utility/assert.hh>       // for assert
 #include <cmath>                 // for fabs, sqrt
 
 // Numeric headers
@@ -206,7 +206,7 @@ angle_in_range( double & ang )
 		return;
 	}
 	ang += double(180.0);
-	assert( ang <= double(180.0) && ang > double(-180.0));
+	debug_assert( ang <= double(180.0) && ang > double(-180.0));
 }
 
 

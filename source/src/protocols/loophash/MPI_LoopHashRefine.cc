@@ -463,7 +463,7 @@ MPI_LoopHashRefine::dump_structures( const SilentStructStore &new_structs, bool 
 void
 MPI_LoopHashRefine::send_random_library_struct( core::Size dest_rank, core::Size newssid ) const {
 	if ( library_central_.size() == 0 ) {
-		TR.Error << "ERROR: Havce no structure to send" << std::endl;
+		TR.Error << "Have no structure to send" << std::endl;
 		return;
 	}
 

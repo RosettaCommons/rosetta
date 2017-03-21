@@ -235,7 +235,7 @@ ReportEffectivePKA::parse_my_tag(
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", datamap, "talaris2013" )->clone();
 	if ( tag->hasOption( "task_operations" ) ) {
-		TR << "WARNING: task_operations only active for proteins" << std::endl;
+		TR.Warning << "task_operations only active for proteins" << std::endl;
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	}
 }

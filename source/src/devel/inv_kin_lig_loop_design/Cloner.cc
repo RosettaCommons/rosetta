@@ -239,14 +239,12 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 			//   ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
 			//   ft.add_edge( hi_res->seqpos() - segments[k].nres_post, hi_res->seqpos()+1, core::kinetic::Edge::PEPTIDE );
 
-			//assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
+			//debug_assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
 
 			cout << "InvKinLigLoopDesign::Cloner::break is between: " << lo - 1 + segment.nres_pre << " " << hi + 1 - segment.nres_post << endl;
 			cout << "InvKinLigLoopDesign::Cloner::jump is between " << lo - 1 << " " << hi + 1 << endl;
 
 		} else if ( segment.type == Segment::ANCHORED_LOOP ) {
-			//assert( false );
-
 			// will want the atom info at this point....
 
 			int lo = find_or_throw(clones,lo_res)->seqpos();
@@ -290,7 +288,7 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 			//   ft.add_edge( lo-1, hi+1, n_jump++ );
 			//   //   ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
 			//   //   ft.add_edge( hi_res->seqpos() - segments[k].nres_post, hi_res->seqpos()+1, core::kinetic::Edge::PEPTIDE );
-			//   //assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
+			//   //debug_assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
 
 			cout << "InvKinLigLoopDesign::Cloner::jump between " << from << " " << to << endl;
 			cout << "InvKinLigLoopDesign::Cloner::edge between " << lo << " " << from << endl;
@@ -298,7 +296,7 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 			cout << "InvKinLigLoopDesign::Cloner::jump between " << lo-1 << " " << hi + 1 << endl;
 
 		} else if ( segment.type == Segment::LIGAND ) {
-			assert( segment.lo_res == segment.hi_res );
+			debug_assert( segment.lo_res == segment.hi_res );
 			ft.add_edge( 1, find_or_throw(clones,lo_res)->seqpos(), n_jump++ );
 		}
 
@@ -342,7 +340,7 @@ utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< cor
 	utility::vector1< core::chemical::ResidueTypeCOP > rval;
 	for ( auto aa : aas ) {
 		core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aa );
-		assert( res_type != nullptr );
+		debug_assert( res_type != nullptr );
 		rval.push_back( res_type );
 	}
 	return rval;
@@ -381,7 +379,7 @@ void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::ch
 Segment get_segment_from_indel( Segment const& indel ) {
 	Segment rval;
 
-	assert( indel.aas.size() != 0 );
+	debug_assert( indel.aas.size() != 0 );
 
 	rval.pose = core::pose::PoseOP( new core::pose::Pose );
 
@@ -437,9 +435,9 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 				do {
 					//cout << "skipping " << r->seqpos() << endl;
 					//++iter;
-					//assert( iter != pose0->res_end() );
+					//debug_assert( iter != pose0->res_end() );
 					++ii;
-					assert( ii <= pose0->size() );
+					debug_assert( ii <= pose0->size() );
 
 					r_prev = r;
 					r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
@@ -545,7 +543,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 		if ( segments[k].type == Segment::ANCHORED_LOOP ) {
 			int lo = begin;
 			int hi = begin + size - 1;
-			assert( lo != 1 && hi != static_cast<int>(rval->size()) );
+			debug_assert( lo != 1 && hi != static_cast<int>(rval->size()) );
 
 			//cout << "set_cutpoints: Adding cutpoints between " << lo-1 << "," << lo << " and " << hi << "," << hi+1 << endl;
 
@@ -686,7 +684,7 @@ void set_secstruct( core::pose::Pose& pose, int const a, int const b, const stri
 			n_pre  = n / 2;
 			n_post = n - n_pre;
 		} else {
-			assert( false );
+			utility_exit_with_message("Internal consistency error in set_secstruct");
 		}
 
 		//Residue* r;
@@ -745,7 +743,7 @@ void Cloner::setInitialConfig() {
 			} else if ( segment.tag->hasTag("hbond") ) {
 				jm.set_random_hbond_jump( *pose1, Loop(segment, clones) );
 			} else {
-				assert( false );
+				utility_exit_with_message("Tag has neither 'template' nor 'hbond'.");
 			}
 
 		}

@@ -1041,7 +1041,7 @@ public:
 	energy_comparison( Pose & native, Pose & pose ) {
 
 		TR << "Comparing energies of native and designed" << std::endl;
-		assert(native.size() == pose.size());
+		debug_assert(native.size() == pose.size());
 
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;

@@ -612,26 +612,26 @@ void TorsionSweepingKinematicPerturber::set_nonpivot_res_to_sweep( utility::vect
 
 void TorsionSweepingKinematicPerturber::set_nonpivot_bb_torsion_id( utility::vector1< Size > const & bbtorids )
 {
-	assert( nonpivot_res_to_sweep_.size() == bbtorids.size() );
+	debug_assert( nonpivot_res_to_sweep_.size() == bbtorids.size() );
 	sweep_torsion_ids_ = bbtorids;
 }
 
 void TorsionSweepingKinematicPerturber::set_sweep_start_angle( utility::vector1< core::Real > const & angles_in_degrees )
 {
-	assert( nonpivot_res_to_sweep_.size() == angles_in_degrees.size() );
+	debug_assert( nonpivot_res_to_sweep_.size() == angles_in_degrees.size() );
 	sweep_nonpivot_torsion_starts_ = angles_in_degrees;
 }
 
 void TorsionSweepingKinematicPerturber::set_sweep_step_size( utility::vector1< core::Real > const & angle_steps_in_degrees )
 {
-	assert( nonpivot_res_to_sweep_.size() == angle_steps_in_degrees.size() );
+	debug_assert( nonpivot_res_to_sweep_.size() == angle_steps_in_degrees.size() );
 	sweep_step_sizes_ = angle_steps_in_degrees;
 }
 
 /// @details Initializes the LexicographicalIterator
 void TorsionSweepingKinematicPerturber::set_sweep_nsteps( utility::vector1< core::Size > const & nsteps )
 {
-	assert( nonpivot_res_to_sweep_.size() == nsteps.size() );
+	debug_assert( nonpivot_res_to_sweep_.size() == nsteps.size() );
 	sweep_iterator_.set_dimension_sizes( nsteps );
 }
 

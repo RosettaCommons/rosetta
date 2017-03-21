@@ -68,9 +68,8 @@ bool JumpManager::is_allowable_jump_atom( core::pose::Pose& pose, int seqpos, in
 	} else if ( pose.residue(seqpos).is_ligand() ) {
 		return true;
 	} else {
-		cout << "WARNING - JumpManager::is_allowable_jump_atom - no rules for non-protein, non-ligand allowable jump atoms" << endl;
-		assert( false );
-		return false;
+		cerr << "WARNING - JumpManager::is_allowable_jump_atom - no rules for non-protein, non-ligand allowable jump atoms" << endl;
+		utility_exit_with_message("Non-protein, non-ligand jump atom.");
 	}
 
 }
@@ -89,18 +88,18 @@ string JumpManager::get_jump_atom_for_hbond( core::pose::Pose& pose, int seqpos,
 		rval = hbond_atom;
 	} else if ( is_allowable_jump_atom(pose,seqpos,abase1 ) ) {
 		cout << "get_jump_atom_for_hbond = " << seqpos << " " << hbond_atom << "=>" << abase1 << endl;
-		assert( abase1 != 0 );
+		debug_assert( abase1 != 0 );
 		rval = abase1;
 	} else if ( is_allowable_jump_atom(pose,seqpos,abase2 ) ) {
 		cout << "get_jump_atom_for_hbond = " << seqpos << " " << hbond_atom << "=>" << abase2 << endl;
-		assert( abase2 != 0 );
+		debug_assert( abase2 != 0 );
 		rval = abase2;
 	} else {
-		cout << "WARNING none of these are allowable jump atoms: " << seqpos << "." << hbond_atom << "," << abase1 << "," << abase2 << endl;
-		assert( false );
+		cerr << "WARNING none of these are allowable jump atoms: " << seqpos << "." << hbond_atom << "," << abase1 << "," << abase2 << endl;
+		utility_exit_with_message("No allowable jumps found.");
 	}
 
-	assert( rval != -1 );
+	debug_assert( rval != -1 );
 	return pose.residue(seqpos).atom_name(rval);
 
 }
@@ -134,7 +133,7 @@ namespace {
 
 core::kinematics::Stub get_stub( core::pose::Pose& pose, int seqpos, int atom ) {
 
-	assert( atom != 0 );
+	debug_assert( atom != 0 );
 
 	core::conformation::Residue const& r = pose.residue(seqpos);
 
@@ -153,8 +152,8 @@ core::kinematics::Stub get_stub( core::pose::Pose& pose, int seqpos, int atom ) 
 
 	cout << "getting stub for " << seqpos << " " << atom << " " << abase1 << " " << abase2 << " " << r.atom_name(atom) << " " << r.atom_name(abase1) << " " << r.atom_name(abase2) << endl;
 
-	assert( abase1 != 0 );
-	assert( abase2 != 0 );
+	debug_assert( abase1 != 0 );
+	debug_assert( abase2 != 0 );
 
 	return core::kinematics::Stub( r.atom(atom).xyz(),
 		r.atom(atom).xyz(),
@@ -235,7 +234,7 @@ void JumpManager::set_random_hbond_jump(core::pose::Pose& pose, Loop const& loop
 		sh = get_stub(pose,to,hbond_to_atom),
 		st = pose.conformation().downstream_jump_stub( loop.jumpno );
 
-	assert( loop.tag->hasTag("hbond") );
+	debug_assert( loop.tag->hasTag("hbond") );
 
 	core::kinematics::RT qfa(sf,sa);
 	//qfa.from_stubs(sf,sa);
@@ -323,8 +322,8 @@ pose.set_jump( loop.jumpno, jump );
 */
 core::kinematics::RT JumpManager::get_template_rt( TagCOP tag_segment ) {
 
-	assert( tag_segment->getName() == "anchored_loop" );
-	assert( tag_segment->hasTag("template") );
+	debug_assert( tag_segment->getName() == "anchored_loop" );
+	debug_assert( tag_segment->hasTag("template") );
 
 	TagCOP tag_template = tag_segment->getTag("template");
 
@@ -367,7 +366,7 @@ core::kinematics::RT JumpManager::get_template_rt( TagCOP tag_segment ) {
 
 void JumpManager::set_template_jump( core::pose::Pose& pose, Loop const& loop ) {
 
-	assert( loop.tag->hasTag("template") );
+	debug_assert( loop.tag->hasTag("template") );
 
 	//     core::kinematics::Jump JumpManager::get_random_hbond_jump(core::pose::Pose& pose, int jumpno,
 	//             int seqpos_from, int hbond_atom_from, int jump_atom_from,

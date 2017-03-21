@@ -704,11 +704,11 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	jump_starts[ANCHOR_TARGET] = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max
 	jump_stops[ ANCHOR_TARGET] = anchormid > anchor_jump_end ? anchormid : anchor_jump_end; //min
 	cuts[ANCHOR_TARGET]        = chain1end;
-	assert(anchormid != anchor_jump_end);
+	debug_assert(anchormid != anchor_jump_end);
 
 	//  jumps(1, ANCHOR_TARGET) = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max
 	//  jumps(2, ANCHOR_TARGET) = anchormid > anchor_jump_end ? anchormid : anchor_jump_end; //min
-	//  assert(anchormid != anchor_jump_end);
+	//  debug_assert(anchormid != anchor_jump_end);
 	//  cuts(ANCHOR_TARGET) = chain1end;
 
 	int jump_num = ANCHOR_TARGET; //this reserves earlier jump numbers for the anchor
@@ -736,7 +736,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	}//over all loops
 
 	//convert the vectors into FArrays
-	assert(cuts.size() == num_jumps);
+	debug_assert(cuts.size() == num_jumps);
 	ObjexxFCL::FArray2D<int> Fjumps(2, num_jumps);
 	ObjexxFCL::FArray1D<int> Fcuts(num_jumps);
 	for ( core::Size i(1); i<=num_jumps; ++i ) {

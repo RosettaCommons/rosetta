@@ -157,7 +157,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 	} else if ( tag == "MIN_LOOP_SIZE" ) {
 		is >> min_loop_size_;
 	} else if ( tag == "KEEP_FLEXIBLE" ) {
-		runtime_assert( false );
+		utility_exit_with_message("Tag KEEP_FLEXIBLE not currently supported in RigidChunkClaimer.");
 		//right now not supported
 		// have problems with JumpClaims being reissued ...
 		// in this line: current_jumps_.push_back( foreign_claim.clone() ); //o
@@ -302,7 +302,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 }
 
 bool RigidChunkClaimer::accept_declined_claim( claims::DofClaim const& was_declined ) {
-	tr.Warning << "[WARNING] RigidChunkClaimer couldn't get " << was_declined << std::endl;
+	tr.Warning << "RigidChunkClaimer couldn't get " << was_declined << std::endl;
 	return false; // no tolerance here --- don't accept any of these
 }
 
@@ -468,7 +468,7 @@ void RigidChunkClaimer::adjust_relax_movemap(  core::kinematics::MoveMap& mm ) c
 void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& /* init_claims*/, claims::DofClaims& /*failed_init_claims*/ ) {
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 	//also take care of fullatom vs centroid...
-	// tr.Warning << "[WARNING] *** use input structure of RigidChunkClaimer --- NEEDS TO BE IDEALIZED !!! *** \n";
+	// tr.Warning << "*** use input structure of RigidChunkClaimer --- NEEDS TO BE IDEALIZED !!! *** \n";
 	// to do this without idealized :
 
 	// get rigid-body reorientation for first residue... this must be applied to all residues in the chunk,

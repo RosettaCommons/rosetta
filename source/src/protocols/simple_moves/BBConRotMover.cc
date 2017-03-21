@@ -124,7 +124,7 @@ bool BBConRotMover::make_move(Pose &pose)
 		pivot_range_randomly(pose, left, resnum_);
 		return false;
 	}
-	assert(resnum_-left == n_pert_res_-1);
+	debug_assert(resnum_-left == n_pert_res_-1);
 
 	Size nres(pose.size());
 	xyzVector oldv(pose.residue(nres).atom("CA").xyz());

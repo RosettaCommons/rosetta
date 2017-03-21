@@ -183,8 +183,8 @@ StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose )
 	using namespace core::chemical;
 
 	Size const & middle_bridge_res = working_bridge_res_[ 2 ];
-	assert( working_bridge_res_[ 1 ] = middle_bridge_res - 1 );
-	assert( working_bridge_res_[ 3 ] = middle_bridge_res + 1 );
+	debug_assert( working_bridge_res_[ 1 ] = middle_bridge_res - 1 );
+	debug_assert( working_bridge_res_[ 3 ] = middle_bridge_res + 1 );
 
 	// consistency checks.
 	if ( middle_bridge_res == 0 ) {

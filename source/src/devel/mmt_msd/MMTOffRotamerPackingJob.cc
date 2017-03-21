@@ -39,9 +39,9 @@ MMTOffRotamerPackingJob::~MMTOffRotamerPackingJob() = default;
 
 void MMTOffRotamerPackingJob::setup()
 {
-	assert( has_pose() );
-	assert( has_sfxn() );
-	assert( has_task() );
+	debug_assert( has_pose() );
+	debug_assert( has_sfxn() );
+	debug_assert( has_task() );
 
 	core::pack::off_rotamer_pack_setup( pose(), sfxn(), task(), rotsets_, atc_, ig_ );
 

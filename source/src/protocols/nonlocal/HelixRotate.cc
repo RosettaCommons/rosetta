@@ -101,7 +101,7 @@ void avg_ca_position(
 	const protocols::loops::Loop& region,
 	numeric::xyzVector<double>* point
 ) {
-	assert(point);
+	debug_assert(point);
 
 	point->zero();
 	for ( unsigned i = region.start(); i <= region.stop(); ++i ) {
@@ -120,8 +120,8 @@ void HelixRotate::get_rotation_parameters(
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
 	using protocols::loops::Loop;
-	assert(axis);
-	assert(point);
+	debug_assert(axis);
+	debug_assert(point);
 
 	// Define the point of rotation to be the average of the midpoint +/- 1 residue
 	avg_ca_position(pose, Loop(helix_.midpoint() - 1, helix_.midpoint() + 1), point);
@@ -150,8 +150,8 @@ unsigned HelixRotate::jump_containing_helix(const protocols::loops::Loops& chunk
 
 void HelixRotate::decompose_structure(unsigned num_residues, protocols::loops::Loops* chunks) const {
 	using protocols::loops::Loop;
-	assert(chunks);
-	assert(num_residues > 0);
+	debug_assert(chunks);
+	debug_assert(num_residues > 0);
 
 	const unsigned start = get_helix().start();
 	const unsigned stop = get_helix().stop();

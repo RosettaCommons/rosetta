@@ -894,7 +894,7 @@ apply(
 		}// pick and insert_pos and apply_frame (with the best density_score fragment saved)
 
 		if ( insert_pos == -999 ) {
-			TR.Error << "[ ERROR ] Cannot find insert position!" << std::endl;
+			TR.Error << "Cannot find insert position!" << std::endl;
 		}
 
 		// restricted movemap

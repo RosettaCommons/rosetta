@@ -1238,17 +1238,17 @@ void RemodelMover::apply( Pose & pose ) {
 				TR << "aggressively refine" << std::endl;
 				if ( option[OptionKeys::remodel::use_pose_relax] ) {
 					if ( !design_refine_seq_relax( *(*it), designMover ) ) {
-						TR << "WARNING: DESIGN REFINE SEQ RELAX FAILED!! (one should never see this)" << std::endl;
+						TR.Warning << "DESIGN REFINE SEQ RELAX FAILED!! (one should never see this)" << std::endl;
 						continue;
 					}
 				} else if ( option[OptionKeys::remodel::use_cart_relax] ) {
 					if ( !design_refine_cart_relax(*(*it), designMover) ) {
-						TR << "WARNING: CARTESIAN MIN FAILED!! (one should never see this)" << std::endl;
+						TR.Warning << "CARTESIAN MIN FAILED!! (one should never see this)" << std::endl;
 						continue;
 					}
 				} else {
 					if ( ! design_refine(*(*it), designMover) ) {
-						TR << "WARNING: DESIGN REFINE FAILED TO CLOSE STRUCTURE!!" << std::endl;
+						TR.Warning << "DESIGN REFINE FAILED TO CLOSE STRUCTURE!!" << std::endl;
 						continue;
 					}
 				}
@@ -1275,7 +1275,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 			if ( option[OptionKeys::remodel::run_confirmation]() ) {
 				if ( !confirm_sequence(*(*it)) ) {
-					TR << "WARNING: STRUCTURE DID NOT PASS KIC CONFIRMATION!!" << std::endl;
+					TR.Warning << "STRUCTURE DID NOT PASS KIC CONFIRMATION!!" << std::endl;
 					continue;
 				}
 			}

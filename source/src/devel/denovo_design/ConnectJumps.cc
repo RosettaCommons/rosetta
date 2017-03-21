@@ -77,9 +77,9 @@ ConnectJumps::clone() const
 
 void ConnectJumps::apply( core::pose::Pose & pose )
 {
-	TR << "*****************************************************************************" << std::endl;
-	TR << "WARNING: ConnectJumps is deprecated. Please use BridgeChains instead." << std::endl;
-	TR << "*****************************************************************************" << std::endl;
+	TR.Warning << "*****************************************************************************" << std::endl;
+	TR.Warning << "WARNING: ConnectJumps is deprecated. Please use BridgeChains instead." << std::endl;
+	TR.Warning << "*****************************************************************************" << std::endl;
 	protocols::denovo_design::movers::BridgeChainsMover::apply( pose );
 }
 

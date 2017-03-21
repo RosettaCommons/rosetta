@@ -554,10 +554,10 @@ struct ConstraintConfig {
 					}
 					if(r.size()!=s.size()) utility_exit_with_message("SEQUENCE size mismatch: "+op2+" vs. "+tmp);
 					for(Size i = 1; i <= r.size(); ++i) {
-						if((int)r[i]==option[OptionKeys::hub_position]()) { TR << "WARNING: cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; }
+						if((int)r[i]==option[OptionKeys::hub_position]()) { TR.Warning << "cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; }
 						if(r[i] > nres || r[i] < 1) {
 							if(r[i]==ERROR_UINT)
-								TR << "WARNING: ignoring SEQUENCE "+op2+" "+tmp << ", out of monomer range!" << std::endl;
+								TR.Warning << "ignoring SEQUENCE "+op2+" "+tmp << ", out of monomer range!" << std::endl;
 							else
 								utility_exit_with_message("AAs can only be specified in primary subunit "+str(r[i])+" > "+str(nres)+", "+op2+" "+tmp);
 						}
@@ -776,7 +776,7 @@ struct ConstraintConfig {
 			for(Size a1 = 6; a1 <= p.residue(i->dres1).nheavyatoms(); ++a1) {
 				string aname1 = p.residue(i->dres1).atom_name(a1);
 				if(!t.residue(i->tres1).has(aname1)) {
-					TR << "WARNING: sidechain cst mismatch des:"<<p.residue(i->dres1)<<" vs tplt:"<<t.residue(i->tres1)<<" atom " << aname1 << ", probably residue identity is not same at template!" << std::endl;
+					TR.Warning << "sidechain cst mismatch des:"<<p.residue(i->dres1)<<" vs tplt:"<<t.residue(i->tres1)<<" atom " << aname1 << ", probably residue identity is not same at template!" << std::endl;
 					// for(Size ia = 1; ia <= t.residue(i->tres1).nheavyatoms(); ++ia)
 					// 	TR << t.residue(i->tres1).atom_name(ia) << endl;
 					// utility_exit_with_message("can't find atom "+aname1+" in template residue "+
@@ -785,7 +785,7 @@ struct ConstraintConfig {
 				for(Size a2 = 6; a2 <= p.residue(i->dres2).nheavyatoms(); ++a2) {
 					string aname2 = p.residue(i->dres2).atom_name(a2);
 					if(!t.residue(i->tres2).has(aname2)){
-					TR << "WARNING: sidechain cst mismatch des:"<<p.residue(i->dres1)<<" vs tplt:"<<t.residue(i->tres1)<<" atom " << aname1 << " " << aname2 << ", probably residue identity is not same at template!" << std::endl;
+					TR.Warning << "sidechain cst mismatch des:"<<p.residue(i->dres1)<<" vs tplt:"<<t.residue(i->tres1)<<" atom " << aname1 << " " << aname2 << ", probably residue identity is not same at template!" << std::endl;
 						// utility_exit_with_message("can't find atom "+aname2+" in template residue "+str(i->tres2));
 					}
 					Real d = t.residue(i->tres1).xyz(aname1).distance( t.residue(i->tres2).xyz(aname2) );
@@ -1167,7 +1167,7 @@ struct HubDenovo {
 	Real stupid_ddg(Pose const & pose_in) {
 
 		if(cfg.nsub==cfg.nhub){
-			TR << "WARNING: stupid_ddg is not for single hub_ things (nhub==nsub), returning 0." << endl;
+			TR.Warning << "stupid_ddg is not for single hub_ things (nhub==nsub), returning 0." << endl;
 			return 0;
 			utility_exit_with_message("stupid_ddg is not for single hubs");
 		}

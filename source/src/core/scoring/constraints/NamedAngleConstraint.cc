@@ -180,7 +180,7 @@ NamedAngleConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunct
 		atom2( id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() ));
 		atom3( id::AtomID( xyz.residue( named_atom3_.rsd() ).atom_index( named_atom3_.atom() ), named_atom3_.rsd() ));
 		if ( !atom1().valid() || !atom2().valid() || !atom3().valid() ) {
-			TR.Warning << "[WARNING] can't find atom for constraint"; show_def_nopose( TR.Warning );
+			TR.Warning << "can't find atom for constraint"; show_def_nopose( TR.Warning );
 			TR.Warning << std::endl;
 		}
 		if ( !atom1().valid() ) {

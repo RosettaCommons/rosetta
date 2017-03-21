@@ -69,11 +69,6 @@ PackRotamersMoverLazy::parse_my_tag(
 	Pose const & pose
 )
 {
-	if ( tag->getName() != "PackRotamersMoverLazy" ) {
-		TR(t_warning) << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( tag->hasOption("nloop") ) {
 		nloop(tag->getOption<Size>("nloop",1));
 		runtime_assert( nloop() > 0 );

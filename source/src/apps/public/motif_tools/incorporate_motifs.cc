@@ -134,7 +134,7 @@ read_in_flexible_regions( protocols::loops::LoopsOP & flex_regions, core::pose::
 		flex_regions->add_loop( pose.pdb_info()->pdb2pose( flex_chain, start_pos ), pose.pdb_info()->pdb2pose( flex_chain, end_pos ) );
 		regions_file.close();
 	} else {
-		TR << "Error:  no specified value for motif_flexible_loop_file!" << std::endl;
+		TR.Error << "no specified value for motif_flexible_loop_file!" << std::endl;
 	}
 
 	return;

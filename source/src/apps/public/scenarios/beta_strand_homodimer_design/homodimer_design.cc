@@ -269,7 +269,7 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 		TR << "favor_native_res: adding a bonus of " << bonus << " for native residues to pose." << std::endl;
 		//   //safety check first
 		//   if( favor_native_constraints.size() != 0 ){
-		//    TR << "Warning: when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
+		//    TR.Warning << "when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
 		//   favor_native_constraints.clear();
 		//   }
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {

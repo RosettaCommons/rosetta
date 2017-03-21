@@ -97,7 +97,7 @@ void FragInsertAndAlignMover::initialize_rb_fragments(
 	// TO DO: COMPOUND SEGMENT SUPPORT(??)
 	for ( int i =  1; i <= (int)rbsegs.size(); ++i ) {
 		if ( rbsegs[i].isCompound() ) {
-			TR.Warning << "[ WARNING ]  FragInsertAndAlignMover::initialize_rb_fragments() undefined for compound segments! continuing..." << std::endl;
+			TR.Warning << "FragInsertAndAlignMover::initialize_rb_fragments() undefined for compound segments! continuing..." << std::endl;
 			continue;
 		}
 
@@ -123,7 +123,7 @@ void FragInsertAndAlignMover::initialize_rb_fragments(
 
 void FragInsertAndAlignMover::apply( core::pose::Pose & pose ) {
 	if ( frames_.size() == 0 ) {
-		TR.Warning << "[ WARNING ]  FragInsertAndAlignMover::apply()called with no frames defined! continuing..." << std::endl;
+		TR.Warning << "FragInsertAndAlignMover::apply()called with no frames defined! continuing..." << std::endl;
 		return;
 	}
 

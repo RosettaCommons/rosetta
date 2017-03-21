@@ -362,13 +362,13 @@ public:
 
 	value_type &
 	operator [] ( Size index ) {
-		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
+		debug_assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
 		return array_[ index ];
 	}
 
 	value_type const &
 	operator [] ( Size index ) const  {
-		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
+		debug_assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
 		return array_[ index ];
 	}
 

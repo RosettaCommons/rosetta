@@ -1910,7 +1910,7 @@ void GeneralizedKIC::apply_perturbations(
 ) const {
 	core::Size const nperturbers = perturberlist_.size();
 	if ( nperturbers==0 ) {
-		TR.Warning << "Warning!  No perturbers specified for GeneralizedKIC mover." << std::endl;
+		TR.Warning << "No perturbers specified for GeneralizedKIC mover." << std::endl;
 		return;
 	}
 
@@ -1950,14 +1950,14 @@ void GeneralizedKIC::filter_solutions(
 	TR.Debug << "Applying filters to GeneralizedKIC solutions." << std::endl;  TR.Debug.flush();
 
 	//Double-check that the value of nsol matches the size of the torsions, bondangles, and bondlenghts arrays (skipped in release mode, I think):
-	assert( torsions.size()==static_cast<core::Size>(nsol));
-	assert( bondangles.size()==static_cast<core::Size>(nsol));
-	assert( bondlengths.size()==static_cast<core::Size>(nsol));
+	debug_assert( torsions.size()==static_cast<core::Size>(nsol));
+	debug_assert( bondangles.size()==static_cast<core::Size>(nsol));
+	debug_assert( bondlengths.size()==static_cast<core::Size>(nsol));
 
 	if ( nsol==0 ) return;
 	core::Size const nfilters = filterlist_.size(); //Number of filters
 	if ( nfilters == 0 ) {
-		TR.Warning << "Warning!  No filters specified for GeneralizedKIC mover." << std::endl;  TR.Warning.flush();
+		TR.Warning << "No filters specified for GeneralizedKIC mover." << std::endl;  TR.Warning.flush();
 		return;
 	}
 
@@ -2098,7 +2098,7 @@ GeneralizedKIC::set_final_solution(
 		TR << "Re-applying pre-selection mover to solution." << std::endl;
 		pre_selection_mover_->apply( pose );
 		if ( pre_selection_mover_->get_last_move_status() != protocols::moves::MS_SUCCESS && TR.Warning.visible() ) {
-			TR.Warning << "Warning: in re-applying the preselection mover, the mover failed.  Setting GeneralizedKIC mover status to failure." << std::endl;
+			TR.Warning << "in re-applying the preselection mover, the mover failed.  Setting GeneralizedKIC mover status to failure." << std::endl;
 			TR.Warning.flush();
 		}
 		return pre_selection_mover_->get_last_move_status();

@@ -166,7 +166,7 @@ RestrictToNeighborhoodOperation::get_calculator() const {
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 
-	assert( dynamic_cast< NeighborhoodByDistanceCalculator const * > (CalculatorFactory::Instance().retrieve_calculator(calculator_name_).get()));
+	debug_assert( dynamic_cast< NeighborhoodByDistanceCalculator const * > (CalculatorFactory::Instance().retrieve_calculator(calculator_name_).get()));
 
 	NeighborhoodByDistanceCalculatorCOP calculator(
 		utility::pointer::static_pointer_cast< protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator const > ( CalculatorFactory::Instance().retrieve_calculator(calculator_name_) ));

@@ -72,9 +72,9 @@ SingleFragmentMover::SingleFragmentMover(const core::fragment::FragSetOP& fragme
 void SingleFragmentMover::initialize(const core::fragment::FragSetOP& fragments,
 	const core::kinematics::MoveMapOP& movable,
 	const PolicyOP& policy) {
-	assert(fragments);
-	assert(movable);
-	assert(policy);
+	debug_assert(fragments);
+	debug_assert(movable);
+	debug_assert(policy);
 
 	// Initialize member variables
 	fragments_ = fragments;
@@ -92,9 +92,9 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 	using core::kinematics::FoldTree;
 
 	// ensure that preconditions on the input have been met
-	assert(pose.size() > 0);
-	assert(pose.fold_tree().check_fold_tree());
-	assert(valid());
+	debug_assert(pose.size() > 0);
+	debug_assert(pose.fold_tree().check_fold_tree());
+	debug_assert(valid());
 
 	// determine whether the pose is in fullatom mode. if so, warn the user and
 	// convert it to centroid mode automatically.
@@ -238,7 +238,7 @@ const Chunk* SingleFragmentMover::random_chunk() const {
 	using core::Size;
 	using utility::vector1;
 
-	assert(chunks_.size() > 0);
+	debug_assert(chunks_.size() > 0);
 	vector1<Real> fitnesses(probs_);
 
 	// convert to a CDF
@@ -260,7 +260,7 @@ const Chunk* SingleFragmentMover::random_chunk() const {
 }
 
 bool SingleFragmentMover::to_centroid(core::pose::Pose* pose) const {
-	assert(pose);
+	debug_assert(pose);
 	if ( pose->is_fullatom() ) {
 		TR.Warning << "Input pose is full atom (centroid required)" << std::endl;
 		TR.Warning << "Performing implicit conversion..." << std::endl;

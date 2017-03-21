@@ -66,7 +66,7 @@ Bool3DGrid::create_grid_for_sphere( Vector const & center, Real radius ) const
 	Vector local_center = center - bb_.lower();
 	Vector low_corner = local_center - radius;
 
-	assert( low_corner.x() >= 0.0 && low_corner.y() >= 0.0 && low_corner.z() >= 0.0 );
+	debug_assert( low_corner.x() >= 0.0 && low_corner.y() >= 0.0 && low_corner.z() >= 0.0 );
 
 	Bin3D halfgrid_of_lowcorner;
 	halfgrid_of_lowcorner[ 1 ] = static_cast< Size > ( low_corner.x() / ( 2 * bin_width_ ) );
@@ -272,7 +272,7 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 							} else if ( ! y_in_range ) {
 								dim_out_of_range = 2;
 							} else { //if ( ! z_in_range ) {
-								assert( ! z_in_range );
+								debug_assert( ! z_in_range );
 								dim_out_of_range = 3;
 							}
 
@@ -501,7 +501,7 @@ void Bool3DGrid::set_value_for_bin( Bin3D const & bin, bool setting )
 
 void Bool3DGrid::or_with( Bool3DGrid const & other )
 {
-	assert( bin_width_ == other.bin_width_ );
+	debug_assert( bin_width_ == other.bin_width_ );
 
 	/// 1. Compute the bin overlap
 	Vector overlap_low(
@@ -521,13 +521,13 @@ void Bool3DGrid::or_with( Bool3DGrid const & other )
 
 	/// Assert that the two grids are compatible: that the region of overlap perfectly
 	/// contains all the voxels inside of it (no voxels spill out).
-	assert( std::abs( (overlap_low.x() - bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - bb_.lower().x()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.y() - bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - bb_.lower().y()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.z() - bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - bb_.lower().z()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.x() - bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - bb_.lower().x()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.y() - bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - bb_.lower().y()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.z() - bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - bb_.lower().z()) / bin_width_ )) < 1e-6 );
 
-	assert( std::abs( (overlap_low.x() - other.bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - other.bb_.lower().x()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.y() - other.bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - other.bb_.lower().y()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.z() - other.bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - other.bb_.lower().z()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.x() - other.bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - other.bb_.lower().x()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.y() - other.bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - other.bb_.lower().y()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.z() - other.bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - other.bb_.lower().z()) / bin_width_ )) < 1e-6 );
 
 	/// Iterate over the grid indices of this and other in the overlapping region.
 	Bin3D n_overlap;
@@ -573,7 +573,7 @@ void Bool3DGrid::or_with( Bool3DGrid const & other )
 
 void Bool3DGrid::and_with( Bool3DGrid const & other )
 {
-	assert( bin_width_ == other.bin_width_ );
+	debug_assert( bin_width_ == other.bin_width_ );
 
 	/// 1. Compute the bin overlap
 	Vector overlap_low(
@@ -593,13 +593,13 @@ void Bool3DGrid::and_with( Bool3DGrid const & other )
 
 	/// Assert that the two grids are compatible: that the region of overlap perfectly
 	/// contains all the voxels inside of it (no voxels spill out).
-	assert( std::abs( (overlap_low.x() - bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - bb_.lower().x()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.y() - bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - bb_.lower().y()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.z() - bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - bb_.lower().z()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.x() - bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - bb_.lower().x()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.y() - bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - bb_.lower().y()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.z() - bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - bb_.lower().z()) / bin_width_ )) < 1e-6 );
 
-	assert( std::abs( (overlap_low.x() - other.bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - other.bb_.lower().x()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.y() - other.bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - other.bb_.lower().y()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.z() - other.bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - other.bb_.lower().z()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.x() - other.bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - other.bb_.lower().x()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.y() - other.bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - other.bb_.lower().y()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.z() - other.bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - other.bb_.lower().z()) / bin_width_ )) < 1e-6 );
 
 	/// Iterate over the grid indices of this and other in the overlapping region.
 	Bin3D n_overlap;
@@ -647,7 +647,7 @@ void Bool3DGrid::and_with( Bool3DGrid const & other )
 /// @details Set all the values in this grid to "false" that are true in the other grid.
 void Bool3DGrid::subtract( Bool3DGrid const & other )
 {
-	assert( bin_width_ == other.bin_width_ );
+	debug_assert( bin_width_ == other.bin_width_ );
 
 	/// 1. Compute the bin overlap
 	Vector overlap_low(
@@ -667,13 +667,13 @@ void Bool3DGrid::subtract( Bool3DGrid const & other )
 
 	/// Assert that the two grids are compatible: that the region of overlap perfectly
 	/// contains all the voxels inside of it (no voxels spill out).
-	assert( std::abs( (overlap_low.x() - bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - bb_.lower().x()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.y() - bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - bb_.lower().y()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.z() - bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - bb_.lower().z()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.x() - bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - bb_.lower().x()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.y() - bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - bb_.lower().y()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.z() - bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - bb_.lower().z()) / bin_width_ )) < 1e-6 );
 
-	assert( std::abs( (overlap_low.x() - other.bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - other.bb_.lower().x()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.y() - other.bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - other.bb_.lower().y()) / bin_width_ )) < 1e-6 );
-	assert( std::abs( (overlap_low.z() - other.bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - other.bb_.lower().z()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.x() - other.bb_.lower().x()) - bin_width_ * static_cast< int > ((overlap_low.x() - other.bb_.lower().x()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.y() - other.bb_.lower().y()) - bin_width_ * static_cast< int > ((overlap_low.y() - other.bb_.lower().y()) / bin_width_ )) < 1e-6 );
+	debug_assert( std::abs( (overlap_low.z() - other.bb_.lower().z()) - bin_width_ * static_cast< int > ((overlap_low.z() - other.bb_.lower().z()) / bin_width_ )) < 1e-6 );
 
 	/// Iterate over the grid indices of this and other in the overlapping region.
 	Bin3D n_overlap;
@@ -779,7 +779,7 @@ Bool3DGrid::index_and_mask_for_bin( Bin3D const & bin ) const
 Bool3DGrid::Bin3D
 Bool3DGrid::bin_for_point( Vector const & point ) const
 {
-	assert( bb_.contains( point ) );
+	debug_assert( bb_.contains( point ) );
 	Vector local = point - bb_.lower();
 	Bin3D bin;
 	bin[ 1 ] = static_cast< Size > ( local.x() / bin_width_ );
@@ -856,9 +856,9 @@ Bool3DGrid::reset_grid() {
 unsigned char
 Bool3DGrid::mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 {
-	assert( xmod2 == 0 || xmod2 == 1 );
-	assert( ymod2 == 0 || ymod2 == 1 );
-	assert( zmod2 == 0 || zmod2 == 1 );
+	debug_assert( xmod2 == 0 || xmod2 == 1 );
+	debug_assert( ymod2 == 0 || ymod2 == 1 );
+	debug_assert( zmod2 == 0 || zmod2 == 1 );
 
 	Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
 	switch ( offset ) {
@@ -878,9 +878,9 @@ Bool3DGrid::mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 unsigned char
 Bool3DGrid::negmask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 {
-	assert( xmod2 == 0 || xmod2 == 1 );
-	assert( ymod2 == 0 || ymod2 == 1 );
-	assert( zmod2 == 0 || zmod2 == 1 );
+	debug_assert( xmod2 == 0 || xmod2 == 1 );
+	debug_assert( ymod2 == 0 || ymod2 == 1 );
+	debug_assert( zmod2 == 0 || zmod2 == 1 );
 
 	Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
 	switch ( offset ) {
@@ -901,9 +901,9 @@ Bool3DGrid::negmask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 Bool3DGrid::Size
 Bool3DGrid::byte_index_from_doublebin( Bin3D const & doublebin ) const {
 
-	assert( doublebin[ 1 ] < halfdimsizes_[ 1 ] );
-	assert( doublebin[ 2 ] < halfdimsizes_[ 2 ] );
-	assert( doublebin[ 3 ] < halfdimsizes_[ 3 ] );
+	debug_assert( doublebin[ 1 ] < halfdimsizes_[ 1 ] );
+	debug_assert( doublebin[ 2 ] < halfdimsizes_[ 2 ] );
+	debug_assert( doublebin[ 3 ] < halfdimsizes_[ 3 ] );
 
 	Size index =
 		supervoxel_dimprods_[ 1 ] * ( doublebin[ 1 ] / n_doublebins_per_supervoxel ) +

@@ -287,7 +287,7 @@ bool RNA_SilentStruct::init_from_lines(
 
 			line_stream >> tag;
 			if ( !is_int( tag ) ) {
-				tr.Error << "ERROR:  !is_int( " << tag << " ) from line (" << *iter << ")\n";
+				tr.Error << "!is_int( " << tag << " ) from line (" << *iter << ")\n";
 			}
 			runtime_assert( is_int( tag ) ); // this tag should represent the sequence position within the silent-file
 			seqpos = int_of( tag );

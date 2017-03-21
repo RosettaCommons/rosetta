@@ -335,7 +335,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	}
 
 	if ( prot_res_without_profile_information_exist ) {
-		if ( ignore_pose_profile_length_mismatch_ ) tr<< tr.bgRed << "WARNING WARNING: the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking."<<tr.Reset<<std::endl;
+		if ( ignore_pose_profile_length_mismatch_ ) tr.Warning << tr.bgRed << "the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking."<<tr.Reset<<std::endl;
 
 		else utility_exit_with_message("The passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct.");
 	}
@@ -601,7 +601,7 @@ RestrictConservedLowDdgOperation::position_untouchable(
 	//phospho-ser etc. so let's spit out a warning and just apply the conservation_cutoff_
 	if ( posddg_it == position_ddGs_.end() ) {
 
-		tr << "Warning: no ddG information read for sequence position " << seqpos << ". This could either mean that the ddG predictions input file is incomplete or that the original PDB had a disulfide cys or other modified residue at this position. Decision whether residue is untouchable will be made based on sequence conservation alone." << std::endl;
+		tr.Warning << "no ddG information read for sequence position " << seqpos << ". This could either mean that the ddG predictions input file is incomplete or that the original PDB had a disulfide cys or other modified residue at this position. Decision whether residue is untouchable will be made based on sequence conservation alone." << std::endl;
 		if ( (seqprof()->profile())[ seqpos ][ seqprof_wt ] > conservation_cutoff_ ) return true;
 		else return false;
 	}

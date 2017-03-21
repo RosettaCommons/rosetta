@@ -732,7 +732,7 @@ JobDistributor::get_job_time_estimate() const {
 			time_sum += (*jobs_)[ii]->elapsed_time();
 			++number_completed;
 		} else if ( !jobs_->has_job(ii) && tr.Warning.visible() ) {
-			tr.Warning << "Warning!  Job time estimation is not guaranteed to work properly if a JobInputter is used that prunes old jobs to save memory!" << std::endl;
+			tr.Warning << "Job time estimation is not guaranteed to work properly if a JobInputter is used that prunes old jobs to save memory!" << std::endl;
 			tr.Warning.flush();
 		}
 	}
@@ -945,7 +945,7 @@ void JobDistributor::set_batch_id(core::Size setting)
 		batch_underflow();
 	}
 	if ( current_batch_id_ > batches_.size() ) {
-		tr.Error << "[ERROR] illegeal attempt to set batch_id to " << setting
+		tr.Error << "Illegal attempt to set batch_id to " << setting
 			<< " where we have only " << batches_.size() << " batches"
 			<< std::endl;
 		utility_exit_with_message("wrong batch_id");

@@ -427,7 +427,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 		core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS_VARIANT, archive_pose.size());
 
 
-		assert( pose.size() == (2* remodel_data_.sequence.length()));
+		debug_assert( pose.size() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
 		//update the new lengthened pose with pose angles.
@@ -601,7 +601,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		// to the working pose
 		if ( new_secondary_structure_override_.length() != pose.size() ) {
 		// fail fast
-		TR.Error << "ERROR: new secondary structure override string not equal in length to newly modified Pose."
+		TR.Error << "New secondary structure override string not equal in length to newly modified Pose."
 		<< " Expected " << pose.size() << " but found " << new_secondary_structure_override_.length()
 		<< ".  Programmer mistake!" << std::endl;
 		runtime_assert( false );
@@ -621,7 +621,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		// to the working pose
 		//  if ( new_sequence_override_.length() != pose.size() ) {
 		//   // fail fast
-		//   TR.Error << "ERROR: new sequence override string not equal in length to newly modified Pose."
+		//   TR.Error << "New sequence override string not equal in length to newly modified Pose."
 		//    << " Expected " << pose.size() << " but found " << new_sequence_override_.length()
 		//    << ".  Programmer mistake!" << std::endl;
 		//   runtime_assert( false );

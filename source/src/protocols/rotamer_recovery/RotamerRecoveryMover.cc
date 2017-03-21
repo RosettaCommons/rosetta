@@ -226,7 +226,7 @@ RotamerRecoveryMover::parse_my_tag(
 	score_function( parse_score_function( tag, datamap ) );
 
 	if ( rotamer_recovery_ ) {
-		TR << "WARNING: Attempting to redefine rotamer_recovery_ object from Parser Script" << endl;
+		TR.Warning << "Attempting to redefine rotamer_recovery_ object from Parser Script" << endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 

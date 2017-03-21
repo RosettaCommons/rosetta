@@ -113,7 +113,7 @@ SecondaryStructureHasResidueFilter::n_req_res_in_seq(
 	std::string const & seq,
 	utility::vector0< bool > const & is_checked
 ) const {
-	assert( seq.size() == is_checked.size() );
+	debug_assert( seq.size() == is_checked.size() );
 	if ( seq.size() == 0 || req_residue_str_.size() == 0 ) return 0;
 	core::Size rescount = 0;
 	//strings are indexed from 0, derpface!

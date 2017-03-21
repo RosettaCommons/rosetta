@@ -321,7 +321,7 @@ core::Real PDDFEnergy::compute_L1(utility::vector1<core::Real> const & pddf_scor
 
 	core::Real chi = -1.0;
 	core::Real sum = 0;
-	assert( pddf_scored.size() == pddf_reference.size() );
+	debug_assert( pddf_scored.size() == pddf_reference.size() );
 	for ( core::Size i=1; i<=pddf_scored.size(); ++i ) {
 		sum += pddf_reference[i] / pddf_scored[i];
 	}
@@ -344,7 +344,7 @@ core::Real PDDFEnergy::compute_L1(utility::vector1<core::Real> const & pddf_scor
 core::Real PDDFEnergy::compute_chi(utility::vector1<core::Real> const & pddf_scored, utility::vector1<core::Real> const & pddf_reference) const {
 
 	core::Real chi = 0;
-	assert( pddf_scored.size() == pddf_reference.size() );
+	debug_assert( pddf_scored.size() == pddf_reference.size() );
 	core::Real lambda = 1.0;
 	if ( if_fit_area_ ) {
 		core::Real sum_scored = 0;

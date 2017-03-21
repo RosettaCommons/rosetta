@@ -194,8 +194,8 @@ void configure_rmc(MoverOP mover, ScoreFunctionOP score, Size num_cycles, Real t
 }
 
 void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned>& interior_cuts, Pose & pose) const {
-	assert(aligned.num_loop() >= 2);
-	assert(interior_cuts.size() == (aligned.num_loop() - 1));
+	debug_assert(aligned.num_loop() >= 2);
+	debug_assert(interior_cuts.size() == (aligned.num_loop() - 1));
 
 	const Size num_residues = pose.size();
 	const Size vres = num_residues + 1;

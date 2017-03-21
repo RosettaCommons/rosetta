@@ -105,13 +105,13 @@ DetectSymmetry::apply(Pose & pose) {
 	xyzMatrix x_rot = numeric::x_rotation_matrix_degrees( -1 * angle_y1 );
 	pose.apply_transform_Rx_plus_v(x_rot, xyzVector(0,0,0));
 	cm_chain_A = core::pose::center_of_mass(pose, 1, seq1.size());
-	assert( cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
+	debug_assert( cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
 	// second step: rotate around z to align the center of mass of chain A to the y-axis
 	core::Real angle_y2 = angle_with_y_axis_proj_z( cm_chain_A );
 	xyzMatrix z_rot = numeric::z_rotation_matrix_degrees( -1 * angle_y2 );
 	pose.apply_transform_Rx_plus_v(z_rot, xyzVector(0,0,0));
 	cm_chain_A = core::pose::center_of_mass(pose, 1, seq1.size());
-	assert( cm_chain_A[0] > -1*plane_tolerance_ && cm_chain_A[0] < plane_tolerance_ && cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
+	debug_assert( cm_chain_A[0] > -1*plane_tolerance_ && cm_chain_A[0] < plane_tolerance_ && cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
 
 	//check that the com of all subunits is in the xy-plane
 	for ( Size i = 0; i < symmetric_type; i++ ) {
@@ -129,7 +129,7 @@ DetectSymmetry::apply(Pose & pose) {
 		xyzMatrix rot1 = numeric::y_rotation_matrix_degrees(  -1 * angle_z_axis );
 		pose.apply_transform_Rx_plus_v(rot1, xyzVector(0,0,0));
 		vm = ( pose.residue( 1 ).xyz("CA") + pose.residue( seq1.size() + 1 ).xyz("CA") ) / 2;
-		assert(vm[0] > -0.001 && vm[0] < 0.001 && vm[1] > -0.001 && vm[1] < 0.001 );
+		debug_assert(vm[0] > -0.001 && vm[0] < 0.001 && vm[1] > -0.001 && vm[1] < 0.001 );
 		for ( Size i = 1, j = seq1.size()+1; i <= seq1.size(); i++,j++ ) {
 			xyzVector v = ( pose.residue( i ).xyz("CA") + pose.residue( j ).xyz("CA") )/ 2;
 			runtime_assert_string_msg(v[0] < 0.001 && v[0] > -0.001 && v[1] < 0.001 && v[1] > -0.001, "rotation axis not properly aligned!");

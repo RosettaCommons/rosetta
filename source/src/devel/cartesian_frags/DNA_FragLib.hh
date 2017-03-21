@@ -49,14 +49,14 @@ public:
 	utility::vector1< CartesianFragment > const &
 	base_pairs( std::string const & bp ) const
 	{
-		assert( base_pairs_.count(bp) );
+		debug_assert( base_pairs_.count(bp) );
 		return base_pairs_.find( bp )->second;
 	}
 
 	utility::vector1< CartesianFragment > const &
 	base_steps( std::string const & bp ) const
 	{
-		assert( base_steps_.count(bp) );
+		debug_assert( base_steps_.count(bp) );
 		return base_steps_.find( bp )->second;
 	}
 

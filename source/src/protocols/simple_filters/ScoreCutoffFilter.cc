@@ -87,7 +87,7 @@ ScoreCutoffFilter::add_score_type( core::scoring::ScoreType scotype )
 			if ( (score_types_.size() > 1) || ( score_types_[1] != total_score ) ) {
 
 				score_types_.clear();
-				tr << "WARNING: setting score_type to total score even though other score types have previously been set. these will be erased." << std::endl;
+				tr.Warning << "setting score_type to total score even though other score types have previously been set. these will be erased." << std::endl;
 			}
 		}
 	} else {
@@ -121,7 +121,7 @@ ScoreCutoffFilter::get_score( core::pose::Pose const & pose ) const {
 	using namespace core::scoring;
 	EnergyMap emap;
 
-	assert( score_types_.size() > 0 );
+	debug_assert( score_types_.size() > 0 );
 
 	if ( positions_.size() == 0 ) { //means we're interested in pose totals
 

@@ -330,7 +330,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			return silent_struct;
 
 		} else {
-			TR << "WARNING: Problem with writing pose ( " << debug_tag << " ) to silent_file [Attempt #" << trial_num << "]" << std::endl;
+			TR.Warning << "Problem with writing pose ( " << debug_tag << " ) to silent_file [Attempt #" << trial_num << "]" << std::endl;
 		}
 	}
 

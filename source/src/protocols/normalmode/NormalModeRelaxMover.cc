@@ -294,8 +294,8 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 	Real scalesum( 0.0 );
 	for ( Size i = 1; i <= mode_scales.size(); ++i ) {
 		// Assert if values are valid
-		assert( mode_scales[i] > 0.0 );
-		assert( mode_using[i] <= NM().nmode() );
+		debug_assert( mode_scales[i] > 0.0 );
+		debug_assert( mode_using[i] <= NM().nmode() );
 
 		scalesum += mode_scales[i]*mode_scales[i];
 	}
@@ -431,7 +431,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 	} else if ( relaxmode_.compare("extrapolate") == 0 ) {
 		pose = expose;
 	} else {
-		TR << "Warning: unknown relaxmode " << relaxmode_ << ", doing nothing!" << std::endl;
+		TR.Warning << "unknown relaxmode " << relaxmode_ << ", doing nothing!" << std::endl;
 	}
 
 	// Measure RMSD to target

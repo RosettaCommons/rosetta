@@ -112,7 +112,7 @@ void RigidBodyMotionMover::compute_bias(unsigned i, const core::pose::Pose& pose
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
 	using protocols::loops::Loop;
-	assert(bias);
+	debug_assert(bias);
 
 	bool has_prev = i > 1;
 	bool has_next = i < chunks_.size();
@@ -177,23 +177,23 @@ const core::kinematics::FoldTree& RigidBodyMotionMover::fold_tree() const {
 }
 
 void RigidBodyMotionMover::set_magnitude_rotation(double mag_rot) {
-	assert(mag_rot >= 0);
+	debug_assert(mag_rot >= 0);
 	mag_rot_ = mag_rot;
 }
 
 void RigidBodyMotionMover::set_magnitude_translation(double mag_trans) {
-	assert(mag_trans >= 0);
+	debug_assert(mag_trans >= 0);
 	mag_trans_ = mag_trans;
 }
 
 void RigidBodyMotionMover::set_chainbreak_bias(double cb_bias) {
-	assert(cb_bias >= 0);
-	assert(cb_bias <= 1);
+	debug_assert(cb_bias >= 0);
+	debug_assert(cb_bias <= 1);
 	cb_bias_ = cb_bias;
 }
 
 void RigidBodyMotionMover::set_fold_tree(const core::kinematics::FoldTree& tree) {
-	assert(tree.check_fold_tree());
+	debug_assert(tree.check_fold_tree());
 	tree_ = tree;
 	update_chunks();
 }

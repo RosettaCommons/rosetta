@@ -261,14 +261,14 @@ void protocols::abinitio::IterativeBase::register_options() {
 
 #define OBSOLETE(key)              \
 	if ( option[ key ].user() ) {									\
-		tr.Warning << "WARNING: Option "<< #key<< " is deprecated!" << std::endl; \
+		tr.Warning << "Option "<< #key<< " is deprecated!" << std::endl; \
 	}
 
 void warn_obsolete_flags() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// if ( option[ iterative::copy_pool_for_convergence_check ].user() ) {
-	//  tr.Warning << "WARNING: Option -iterative::copy_pool_for_convergence_check is deprecated!"  << std::endl;
+	//  tr.Warning << "Option -iterative::copy_pool_for_convergence_check is deprecated!"  << std::endl;
 	// }
 	OBSOLETE(iterative::copy_pool_for_convergence_check);
 	OBSOLETE(iterative::fix_core);
@@ -845,7 +845,8 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 	} else if ( get_weight("prefa_clean_score3") > 0.001 ) {
 		var_score = score_variation("prefa_clean_score3");
 	} else {
-		runtime_assert(false); //should find either score or prefa_clean_score3
+		tr.Fatal << "Neither 'score' nor 'prefa_clean_score3' has a weight greater than 0.001" << std::endl;
+		utility_exit_with_message("Must have either score or prefa_clean_score3.");
 	}
 
 	typedef std::map< scoring::ScoreType, std::string > ScoreTypeMap;
@@ -1147,12 +1148,12 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 	//   try { //read structures
 	//    sfd._read_file( it->first, it->second, true /*throw exceptions */ );
 	//    if ( sfd.size() != it->second.size() ) {
-	//     tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
+	//     tr.Warning << "multiple decoys with same tag detected in file " << it->first << std::endl;
 	//    }
 	//    copy( sfd.begin(), sfd.end(), std::back_inserter( start_decoys ) );
 	//    ct_read += sfd.size();
 	//   } catch ( utility::excn::EXCN_IO& excn ) { //ERROR
-	//    tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
+	//    tr.Warning << "Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
 	//    excn.show( tr.Warning );
 	//    tr.Warning << std::endl;
 	//    tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
@@ -1164,7 +1165,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 	//  tr.Debug << "structures from pool" << ct_in << " structure retrieved from stage2-files "
 	//       << ct_read << " start structs: " << start_decoys.size() << std::endl;
 	//  if ( start_decoys.size() != decoys().size() ) {
-	//   tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
+	//   tr.Warning << "why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
 	//  }
 
 	///write flags and broker-file
@@ -1194,7 +1195,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 		flags << "-out:no_nstruct_label" << std::endl;
 		flags << "-out:suffix " << "_b" << std::setfill('0') << std::setw(4) << batch.id() << std::endl;
 	} else {
-		tr.Warning << "[WARNING] no stage2 decoys found ! " << std::endl;
+		tr.Warning << "no stage2 decoys found ! " << std::endl;
 	}
 
 	//compute nstruct such that we get the usual amount of total structures
@@ -2007,7 +2008,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 		loops::PoseNumberedLoopFileReader reader;
 		reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, name()+"STATUS file", false /*no strict checking */ );
-		tr.Warning << "WARNING: found obsolete tag SCORE_CORE in status file" << std::endl;
+		tr.Warning << "found obsolete tag SCORE_CORE in status file" << std::endl;
 	}
 
 	if ( basic::options::option[ iterative::never_update_noesy_filter_cst ]() ) {
@@ -2154,7 +2155,7 @@ IterativeBase::test_broker_settings( Batch const& batch ) {
 		tr.Debug << std::endl;
 	} catch ( utility::excn::EXCN_Exception &excn ) {  // clean up options and rethrow
 		utility_exit_with_message( "[ERROR] problems with broker setup in "+batch.all_broker_files()+" aborting... ");
-		tr.Error << "[ERROR] problems with broker setup in " << batch.all_broker_files() << " aborting... " << std::endl;
+		tr.Error << "problems with broker setup in " << batch.all_broker_files() << " aborting... " << std::endl;
 		// excn.show( tr.Error );
 		option = vanilla_options;
 		throw ( EXCN_Archive( batch.all_broker_files() + " contains errors: " + excn.msg() ) );

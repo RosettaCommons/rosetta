@@ -165,7 +165,7 @@ public:
 	/// @brief clean the subcluster's list, open edit mode
 	void clear()
 	{
-		assert(!edit_mode);
+		debug_assert(!edit_mode);
 		for ( core::Size i=1, e=subclusters_.size(); i<=e; i++ ) {
 			subclusters_[i]->clear_data();
 		}
@@ -177,7 +177,7 @@ public:
 	/// @brief check the list, close edit mode
 	void check()
 	{
-		assert(edit_mode);
+		debug_assert(edit_mode);
 		edit_mode=false;
 	}
 

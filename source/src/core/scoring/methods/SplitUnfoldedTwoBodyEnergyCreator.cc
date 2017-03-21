@@ -33,7 +33,7 @@ methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(
 {
 	if ( options.has_method_weights( split_unfolded_two_body ) ) {
 		utility::vector1<Real> const & v = options.method_weights( split_unfolded_two_body );
-		assert( v.size() == scoring::n_score_types );
+		debug_assert( v.size() == scoring::n_score_types );
 		EnergyMap e;
 		for ( Size ii = 1; ii < scoring::n_score_types; ++ii ) {
 			e[(ScoreType)ii]=v[ii];

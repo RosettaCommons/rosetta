@@ -74,7 +74,7 @@ void protocols::jd2::archive::EvaluatedArchive::register_options() {
 
 #define OBSOLETE(key)              \
 	if ( basic::options::option[ key ].user() ) {													\
-		tr.Warning << "WARNING: Option "<< #key<< " is deprecated!" << std::endl; \
+		tr.Warning << "Option "<< #key<< " is deprecated!" << std::endl; \
 	}
 
 namespace protocols {

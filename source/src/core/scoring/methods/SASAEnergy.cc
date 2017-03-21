@@ -118,9 +118,8 @@ SASAEnergy::setup_for_packing(
 {
 
 	// This should utterly fail.  This score term is not for packing.
-	TR << "Fatal error:  You cannot pack with fa_sasa." << std::endl;
-	std::exit(1);
-
+	TR.Fatal << "You cannot pack with fa_sasa." << std::endl;
+	utility_exit_with_message("Attempted to pack with fa_sasa.");
 }
 
 void
@@ -130,9 +129,8 @@ SASAEnergy::prepare_rotamers_for_packing(
 ) const
 {
 	// This should utterly fail.  This score term is not for packing.
-	TR << "Fatal error:  You cannot pack with fa_sasa." << std::endl;
-	std::exit(1);
-
+	TR.Fatal << "You cannot pack with fa_sasa." << std::endl;
+	utility_exit_with_message("Attempted to pack with fa_sasa.");
 }
 
 

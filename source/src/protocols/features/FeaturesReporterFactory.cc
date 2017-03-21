@@ -108,7 +108,7 @@ FeaturesReporterFactory::get_features_reporter(
 	Movers_map const & movers,
 	Pose const & pose
 ) {
-	//assert(tag->getName() == "feature");
+	//debug_assert(tag->getName() == "feature");
 
 	string type_name = tag->getName();
 	/*

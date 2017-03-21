@@ -187,11 +187,11 @@ CompoundFilter::compute( Pose const & pose ) const
 			value = it->first->apply( pose );
 			if ( it->second == NOT ) value = !value;
 			if ( it->second == ORNOT ) {
-				TR << "WARNING: CompoundFilter treating operator ORNOT as NOT" << std::endl;
+				TR.Warning << "CompoundFilter treating operator ORNOT as NOT" << std::endl;
 				value = !value;
 			}
 			if ( it->second == ANDNOT ) {
-				TR << "WARNING: CompoundFilter treating operator ANDNOT as NOT" << std::endl;
+				TR.Warning << "CompoundFilter treating operator ANDNOT as NOT" << std::endl;
 				value = !value;
 			}
 		} else {
@@ -204,7 +204,7 @@ CompoundFilter::compute( Pose const & pose ) const
 			case ( NOR ) : value = !( value || it->first->apply( pose ) ); break;
 			case (NAND ) : value = !( value && it->first->apply( pose ) ); break;
 			case (NOT ) :
-				TR << "WARNING: CompoundFilter treating operator NOT as ANDNOT" << std::endl;
+				TR.Warning << "CompoundFilter treating operator NOT as ANDNOT" << std::endl;
 				value = value && !it->first->apply( pose );
 				break;
 			}
@@ -438,7 +438,7 @@ CombinedFilter::parse_my_tag(
 		if ( filter_found ) {
 			filter = find_filter->second->clone();
 		} else {
-			TR.Warning<<"***WARNING WARNING! Filter " << filter_name << " defined for CombinedValue not found in filter_list!!!! ***"<<std::endl;
+			TR.Warning<<"***Filter " << filter_name << " defined for CombinedValue not found in filter_list!!!! ***"<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("Filter "+filter_name+" not found in filter list.");
 		}
 		add_filter( filter, weight, false /*filter was already cloned*/ );
@@ -506,11 +506,11 @@ MoveBeforeFilter::parse_my_tag(
 	auto find_filter( filters.find( filter_name ));
 
 	if ( find_mover == movers.end() ) {
-		TR.Error << "ERROR !! mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
+		TR.Error << "Mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
 	if ( find_filter == filters.end() ) {
-		TR.Error << "ERROR !! filter '"<<filter_name<<"' not found in map: \n" << tag << std::endl;
+		TR.Error << "Filter '"<<filter_name<<"' not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
 	submover_ = find_mover->second;
@@ -596,13 +596,13 @@ IfThenFilter::report_sm( core::pose::Pose const & pose ) const
 core::Real
 IfThenFilter::compute( core::pose::Pose const & pose ) const
 {
-	assert( iffilters_.size() == thenfilters_.size() );
-	assert( iffilters_.size() == values_.size() );
-	assert( iffilters_.size() == weights_.size() );
-	assert( iffilters_.size() == invert_.size() );
+	debug_assert( iffilters_.size() == thenfilters_.size() );
+	debug_assert( iffilters_.size() == values_.size() );
+	debug_assert( iffilters_.size() == weights_.size() );
+	debug_assert( iffilters_.size() == invert_.size() );
 
 	for ( core::Size ii(1); ii<= iffilters_.size(); ++ii ) {
-		assert( iffilters_[ii] );
+		debug_assert( iffilters_[ii] );
 		if ( invert_[ii] ^ iffilters_[ii]->apply( pose ) ) { // XOR: if invert_ is true, true becomes false and false becomes true
 			if ( thenfilters_[ii] ) {
 				return weights_[ii] * thenfilters_[ii]->report_sm( pose );
@@ -612,7 +612,7 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 		}
 	}
 	if ( iffilters_.size() == 0 ) {
-		TR.Warning << "WARNING: No conditional filters specified for IfThenFilter. Using else values only." << std::endl;
+		TR.Warning << "No conditional filters specified for IfThenFilter. Using else values only." << std::endl;
 	}
 	if ( elsefilter_ ) {
 		return elseweight_ * elsefilter_->report_sm( pose );
@@ -633,8 +633,8 @@ IfThenFilter::parse_my_tag(
 	threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
 	set_lower_threshold( tag->getOption<bool>( "lower_threshold", false ) );
 	if ( tag->hasOption( "lower_threshold" ) && ! tag->hasOption( "threshold" ) ) {
-		TR.Warning << "WARNING: In IfThenFilter, lower_threshold set without setting threshold." << std::endl;
-		TR.Warning << "WARNING: Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
+		TR.Warning << "In IfThenFilter, lower_threshold set without setting threshold." << std::endl;
+		TR.Warning << "Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
 	}
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 	for ( TagCOP tag_ptr : sub_tags ) {

@@ -162,7 +162,7 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	}
 
 	TR << "Closest Residue: " << closest_rsd_ << " Ligand Seqpos: " << ligand_seqpos_ << std::endl;
-	TR << "WARNING: MAKE SURE YOUR LIGAND CHAIN IS DIFFERENT FROM ANY PROTEIN CHAINS!" << std::endl;
+	TR.Warning << "MAKE SURE YOUR LIGAND CHAIN IS DIFFERENT FROM ANY PROTEIN CHAINS!" << std::endl;
 
 	// Check the closest rsd and ligand seqpos parameters are valid
 	// Note - default constructor parameters will make at least one of these statements

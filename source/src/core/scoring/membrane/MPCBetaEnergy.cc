@@ -168,7 +168,7 @@ MPCbetaEnergy::compute_mpcbeta_score(
 	Real const interp2 = fcen6-interp1;
 	Real const interp4 = fcen12-interp3;
 
-	TR.Debug << "WARNING: MPCBetaEnergy does not currently depend on the number of inserted helices!!!" << std::endl;
+	TR.Debug << "MPCBetaEnergy does not currently depend on the number of inserted helices!!!" << std::endl;
 
 	// Evaluate score for 6A radius from num tmhs
 	if ( num_tmh <= 2 ) {

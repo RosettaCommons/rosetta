@@ -107,7 +107,7 @@ void MedalMover::compute_per_residue_probabilities(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace std;
-	assert(probs);
+	debug_assert(probs);
 
 	// Override automatic sampling probability computation
 	if ( option[OptionKeys::rigid::sampling_prob].user() ) {
@@ -142,7 +142,7 @@ void MedalMover::decompose_structure(const core::pose::Pose& pose,
 	protocols::loops::LoopsOP & chunks) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	assert(chunks);
+	debug_assert(chunks);
 
 	bool loops_file_specified = option[OptionKeys::nonlocal::chunks].user();
 	if ( !loops_file_specified ) {
@@ -251,7 +251,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
 	using core::util::ChainbreakUtil;
 	using protocols::comparative_modeling::LoopRelaxMover;
 	using protocols::loops::LoopsOP;
-	assert(pose);
+	debug_assert(pose);
 
 	if ( !option[OptionKeys::rigid::close_loops]() || !ChainbreakUtil::has_chainbreak(*pose) ) {
 		return;

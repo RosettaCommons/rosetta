@@ -280,7 +280,7 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 		}
 
 		//This does not need to be fast code, so we can check every time.
-		assert(resnum == i);
+		debug_assert(resnum == i);
 
 	}
 	TR << "Renumbering complete." << std::endl;

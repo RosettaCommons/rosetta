@@ -318,7 +318,7 @@ ResidueOP rm_variant(
 
 	core::chemical::ResidueType const& new_type( rsd_set.get_residue_type_with_variant_removed( new_rsd->type(), variant ) );
 	new_rsd = ResidueOP( ResidueFactory::create_residue( new_type, *new_rsd, conf ) ) ;
-	tr.Warning << "[WARNING] to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "
+	tr.Warning << "to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "
 		<< new_rsd->name3() << new_rsd->seqpos() << " variant "
 		<< new_rsd->type().properties().get_string_from_variant( variant )
 		<< " was removed." << std::endl;
@@ -341,7 +341,7 @@ ResidueOP add_variant(
 
 	core::chemical::ResidueType const& new_type( rsd_set.get_residue_type_with_variant_added( new_rsd->type(), variant ) );
 	new_rsd = ResidueOP( ResidueFactory::create_residue( new_type, *new_rsd, conf ) ) ;
-	tr.Warning << "[WARNING] to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "
+	tr.Warning << "to replace " << old_rsd.name3() << old_rsd.seqpos() << " with "
 		<< new_rsd->name3() << new_rsd->seqpos() << " variant "
 		<< new_rsd->type().properties().get_string_from_variant(variant)
 		<< " was added." << std::endl;
@@ -545,7 +545,7 @@ void ProtectedConformation::insert_fragment( core::id::StubID const & /* instub_
 	FragXYZ const & /* frag_xyz */ )
 {
 	// TODO: implement
-	runtime_assert( false );
+	utility_exit_with_message("ProtectedConformation::insert_fragment() is unimplemented!");
 }
 
 

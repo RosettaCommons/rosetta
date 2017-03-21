@@ -40,9 +40,9 @@ StoredRotamerLibraryCreator::create( core::chemical::ResidueType const & restype
 
 	RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
 	// If the factory system is sound, these two checks should work.
-	assert( libspec );
+	debug_assert( libspec );
 	StoredRotamerLibrarySpecificationCOP stored_libspec = utility::pointer::dynamic_pointer_cast< StoredRotamerLibrarySpecification const >(libspec);
-	assert( stored_libspec );
+	debug_assert( stored_libspec );
 
 	SingleLigandRotamerLibraryOP rotamer_lib( new SingleLigandRotamerLibrary() );
 	rotamer_lib->init_from_vector( stored_libspec->coordinates() );

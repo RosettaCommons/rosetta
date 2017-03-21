@@ -896,7 +896,7 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 			// now handle any missing fields
 			if ( !jump_clone_wts_set ) {
 				if ( warned ) {
-					TR << "Warning: Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
+					TR.Warning << "Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
 					//AMW: cppcheck correctly flags this line as being unreachable
 					// every time around the loop warned starts as false and can never reach places where it is made true
 					//warned = true;
@@ -933,7 +933,7 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 			// warn on anything else
 			if ( !nnamed_jumps_set || !jnum2dofname_set || !dofname2jnum_set ) {
 				if ( warned ) {
-					TR << "Warning: Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
+					TR.Warning << "Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
 					//warned = true;
 				}
 

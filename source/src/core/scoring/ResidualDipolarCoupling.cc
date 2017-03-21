@@ -232,7 +232,7 @@ void ResidualDipolarCoupling::read_RDC_file() {
 			Size res1;
 			line_stream >> res1 >> weight;
 			if ( line_stream.fail() ) {
-				tr.Error << "[Error] reading rdc-weight-file " << filename
+				tr.Error << "reading rdc-weight-file " << filename
 					<< std::endl;
 				throw(utility::excn::EXCN_BadInput(" invalid line " + line
 					+ " in rdc-weight-file " + filename));

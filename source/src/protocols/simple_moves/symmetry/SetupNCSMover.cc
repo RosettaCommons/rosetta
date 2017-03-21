@@ -173,7 +173,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	using namespace core::id;
 	using namespace core::scoring::constraints;
 
-	assert( src_.size() == tgt_.size() );
+	debug_assert( src_.size() == tgt_.size() );
 
 	// store NCS data in pose datacache
 	NCSResMappingOP ncs;
@@ -261,7 +261,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 
 	//symmetrize ONLY sequence (eg. N- and C-term)
 	if ( symmetric_sequence_ ) {
-		assert( srcE_.size() == tgtE_.size() );
+		debug_assert( srcE_.size() == tgtE_.size() );
 
 		// map residue ranges -> resid pairs (using PDBinfo if necessary)
 		for ( Size i=1; i<=srcE_.size(); ++i ) {
@@ -287,7 +287,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 
 	//calculate distance pairing constraints
 	if ( distance_pair_ ) {
-		assert( srcD_.size() == tgtD_.size() );
+		debug_assert( srcD_.size() == tgtD_.size() );
 
 		core::Real test1=srcD_.size();
 		core::Real test2=tgtD_.size();

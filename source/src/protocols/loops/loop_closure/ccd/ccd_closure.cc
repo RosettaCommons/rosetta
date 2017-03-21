@@ -114,7 +114,7 @@ get_overlap_pos(
 	bool const local_debug( false/*true*/ );
 
 	Size const n_mainchain_atoms( coords[cutpoint].size() );
-	assert( n_mainchain_atoms >= 3 ); // only true for proteins. what if you want to close a sugar loop?
+	debug_assert( n_mainchain_atoms >= 3 ); // only true for proteins. what if you want to close a sugar loop?
 
 	// These  magic numbers are correct for proteins -- what should they be for sugars?
 	// pack the coords, torsions, and angles
@@ -167,25 +167,20 @@ get_overlap_pos(
 	// confirm that the bond length, angle, and torsions are satisfied
 	if ( local_debug ) {
 		using basic::subtract_radian_angles;
-		ASSERT_ONLY( Real const dihedral1
-			( dihedral_radians( atoms[1], atoms[2], atoms[3], M.col(1) ) );)
-			ASSERT_ONLY(Real const dihedral2
-			( dihedral_radians( atoms[2], atoms[3], M.col(1), M.col(2) ) );)
-			ASSERT_ONLY(Real const dihedral3
-			( dihedral_radians( atoms[3], M.col(1), M.col(2), M.col(3) ) );)
+		ASSERT_ONLY( Real const dihedral1( dihedral_radians( atoms[1], atoms[2], atoms[3], M.col(1) ) ););
+		ASSERT_ONLY(Real const dihedral2( dihedral_radians( atoms[2], atoms[3], M.col(1), M.col(2) ) ););
+		ASSERT_ONLY(Real const dihedral3( dihedral_radians( atoms[3], M.col(1), M.col(2), M.col(3) ) ););
 
-			ASSERT_ONLY(Real const angle1( std::acos( dot( ( atoms[3] - atoms[2] ).normalized(),
-			( M.col(1) - atoms[3] ).normalized() ) ) );)
-			ASSERT_ONLY(Real const angle2( std::acos( dot( ( M.col(2) - M.col(1) ).normalized(),
-			( M.col(1) - atoms[3] ).normalized() ) ) );)
-			ASSERT_ONLY(Real const length( atoms[3].distance( M.col(1) ) );)
+		ASSERT_ONLY(Real const angle1( std::acos( dot( ( atoms[3] - atoms[2] ).normalized(), ( M.col(1) - atoms[3] ).normalized() ) ) ););
+		ASSERT_ONLY(Real const angle2( std::acos( dot( ( M.col(2) - M.col(1) ).normalized(), ( M.col(1) - atoms[3] ).normalized() ) ) ););
+		ASSERT_ONLY(Real const length( atoms[3].distance( M.col(1) ) ););
 
-			assert( std::abs( subtract_radian_angles( dihedral1, dihedrals[1] ) ) < 1e-3 );
-		assert( std::abs( subtract_radian_angles( dihedral2, dihedrals[2] ) ) < 1e-3 );
-		assert( std::abs( subtract_radian_angles( dihedral3, dihedrals[3] ) ) < 1e-3 );
-		assert( std::abs( subtract_radian_angles( angle1, angles[1] ) ) < 1e-3 );
-		assert( std::abs( subtract_radian_angles( angle2, angles[2] ) ) < 1e-3 );
-		assert( std::abs( length - bond_length ) < 1e-3 );
+		debug_assert( std::abs( subtract_radian_angles( dihedral1, dihedrals[1] ) ) < 1e-3 );
+		debug_assert( std::abs( subtract_radian_angles( dihedral2, dihedrals[2] ) ) < 1e-3 );
+		debug_assert( std::abs( subtract_radian_angles( dihedral3, dihedrals[3] ) ) < 1e-3 );
+		debug_assert( std::abs( subtract_radian_angles( angle1, angles[1] ) ) < 1e-3 );
+		debug_assert( std::abs( subtract_radian_angles( angle2, angles[2] ) ) < 1e-3 );
+		debug_assert( std::abs( length - bond_length ) < 1e-3 );
 	}
 
 	// restore proper chain order for M if folding backward

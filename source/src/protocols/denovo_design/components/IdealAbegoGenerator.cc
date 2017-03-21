@@ -195,7 +195,7 @@ IdealAbegoGenerator::generate(
 		}
 	} else {
 		// by default, throw 'X' abegos
-		TR << "Warning: using idealized_abego, but secondary structure combination we are connecting (" << abego1 << " --> " << abego2 << " is not AA, AB, BA, or BB. Loop will be all LX" << std::endl;
+		TR.Warning << "using idealized_abego, but secondary structure combination we are connecting (" << abego1 << " --> " << abego2 << " is not AA, AB, BA, or BB. Loop will be all LX" << std::endl;
 		for ( LengthSet::const_iterator l=lenset.begin(); l!=lenset.end(); ++l ) {
 			std::string const secstruct( *l, 'L' );
 			std::string const abego( *l, 'X' );

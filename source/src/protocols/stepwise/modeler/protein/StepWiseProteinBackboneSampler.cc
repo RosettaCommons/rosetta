@@ -409,7 +409,7 @@ void
 StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_n_terminus( core::Size const n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
-	assert( n == 1);
+	debug_assert( n == 1);
 	if ( pose.residue_type( n ).is_alpha_aa() ) {
 		for ( Size j = 1; j <= n_sample_; j++ ) {
 			Real const psi = get_rotamer_angle( j, n_sample_ );

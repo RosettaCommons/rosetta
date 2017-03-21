@@ -360,7 +360,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			// check to make sure the design type (i.e. PIKAA, NATRO, NATAA) is one of the recognized packer tokens
 			line.design_type = split_info[3];
 			if ( !resfile_command_map[ line.design_type ] ) {
-				TR_REMODEL << "WARNING: unknown packer token: " << line.design_type << std::endl;
+				TR_REMODEL.Warning << "unknown packer token: " << line.design_type << std::endl;
 			}
 
 			//debug

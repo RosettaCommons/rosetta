@@ -87,7 +87,7 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 )
 {
 	// Size const seqnum = (Size) rotamer_set.resid();
-	// assert( seqnum <= ptask.total_residue() );
+	// debug_assert( seqnum <= ptask.total_residue() );
 	// core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
 	// for(Size i = 1; i <= poses_.size(); ++i) {
 	//  core::pose::Pose const & ubr_pose = *(poses_[i]);
@@ -116,7 +116,7 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 	using namespace core::pose::symmetry ;
 	using namespace core::scoring::motif  ;
 	Size const seqnum = (Size) rotamer_set.resid();
-	assert( seqnum <= ptask.total_residue() );
+	debug_assert( seqnum <= ptask.total_residue() );
 	core::conformation::symmetry::SymmetryInfoCOP syminfo = 0 ;
 	if ( is_symmetric(pose) ) syminfo = symmetry_info(pose) ;
 	int count = 0 ;

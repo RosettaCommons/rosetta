@@ -598,7 +598,7 @@ void calc_dipscore(
 )
 {
 
-	assert( Azz != 0 );
+	debug_assert( Azz != 0 );
 
 	core::Real score( 0.0 );
 

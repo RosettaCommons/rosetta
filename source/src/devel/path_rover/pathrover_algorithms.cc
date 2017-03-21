@@ -374,7 +374,7 @@ RRT_node* Single_tree_RRT::generate_random_conformation()
 		cout << "*** Single_tree_RRT::generate_random_conformation() - start ***" << endl;
 	// building new pose based on root template: // TODO: can do it much more efficiently - work directly with vector and sample on it
 	Pose* p_new_pose = _conf_DAG.get_active_root()->produce_pose();
-	assert(p_new_pose);
+	debug_assert(p_new_pose);
 	DOFs_manager& dofs_manager = _owner->get_dofs_manager();
 	dofs_manager.apply_uniform_sample_all(*p_new_pose);
 	float score = p_new_pose->score(_score_weight_map);
@@ -681,7 +681,7 @@ void Single_tree_RRT::grow_DAG()
 	using namespace std;
 	bool local_debug = true;
 	if(local_debug) cout << "*** Single_tree_RRT::grow_DAG() - start ***" << endl;
-	//assert(_owner);
+	//debug_assert(_owner);
 	//RRT_node* n=NULL;//,*neighbour;
 	int num_added_nodes;
 	int num_conseq_fails =0,num_generated_nodes=1;
@@ -767,8 +767,8 @@ int Single_tree_RRT::meet_goal_criterions(RRT_node* n){
 int Single_tree_RRT::findPath(RRT_node* ancestor, RRT_node* descendant, std::vector<RRT_node* >& path){
 	using namespace std;
 	int local_debug = 1;
-	assert(ancestor);
-	assert(descendant);
+	debug_assert(ancestor);
+	debug_assert(descendant);
 	path.clear();
 	int ancestor_tree = ancestor->get_orig_src_root_id();
 
@@ -817,8 +817,8 @@ int Single_tree_RRT::findPath(RRT_node* ancestor, RRT_node* descendant, std::vec
 //     if(debug_depth % 5000 == 0)
 //       cout << "findPath() RECURSION - depth = " << debug_depth;
 //     debug_depth++;
-//     assert(from);
-//     assert(to);
+//     debug_assert(from);
+//     debug_assert(to);
 //     path.clear();
 //     if(from == to){
 //       cout << "findPath() - FOUND******* depth=" << debug_depth << endl;
@@ -830,7 +830,7 @@ int Single_tree_RRT::findPath(RRT_node* ancestor, RRT_node* descendant, std::vec
 //     for(unsigned i = 0; i < children.size(); i++){
 //       if(!children[i]){
 // 	cout << "findPath() NULL child!!! i = " << i << ", num_children = " << children.size() << endl;
-// 	assert(children[i]);
+// 	debug_assert(children[i]);
 //       }
 //       if (findPath(children[i], to, path)){
 // 	cout << "findPath() - going back, depth = " << debug_depth << endl;
@@ -1095,7 +1095,7 @@ biRRT::dump_pathways(
 			{
 				path.push_back(rev_path[j]);
 			}
-			assert(*(--path.end()) == root_T);
+			debug_assert(*(--path.end()) == root_T);
 			if (local_debug >= 2)
 			{
 				std::cout<<"Reverse-path size = " << rev_path.size()<<std::endl;
@@ -1138,7 +1138,7 @@ void biRRT::grow_DAG(std::vector<RRT_node*>& connecting_nodes)
 	bool local_debug = true;
 	if(local_debug)
 		cout << "biRRT::grow_DAG() - start" << endl;
-	assert(_owner);
+	debug_assert(_owner);
 	RRT_node* n = NULL;//,*neighbour;
 	int num_added_nodes;
 	int num_conseq_fails = 0,
@@ -1236,7 +1236,7 @@ void biRRT::find_nearest_nodes_between_trees(
 		i_node++)
 		{
 			n = generated_nodes_from_all_trees[curr_tree][i_node];
-			assert(n);
+			debug_assert(n);
 			// compare n against all trees (except for its own tree)
 			for( unsigned i_tree=0;
 			i_tree < num_trees;
@@ -1459,7 +1459,7 @@ void biRRT::try_to_connect_trees(
 //       {
 // 	// go over all the new generated nodes for each tree
 // 	n = generated_nodes_from_all_trees[curr_tree][i_node];
-// 	assert(n);
+// 	debug_assert(n);
 // 	// this node is now regarded as the random node that
 // 	// we want to move towards it
 // 	for(i_trees=0; i_trees < generated_nodes_from_all_trees.size();

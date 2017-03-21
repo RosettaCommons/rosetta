@@ -41,8 +41,8 @@ namespace nonlocal {
 PolicyOP PolicyFactory::get_policy(const std::string& policy_name,
 	core::fragment::FragSetCOP fragments,
 	core::Size num_fragments) {
-	assert(fragments);
-	assert(num_fragments > 0);
+	debug_assert(fragments);
+	debug_assert(num_fragments > 0);
 
 	std::string type(policy_name);
 	boost::to_lower(type);

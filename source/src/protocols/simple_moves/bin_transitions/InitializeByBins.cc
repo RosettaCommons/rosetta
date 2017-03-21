@@ -129,12 +129,12 @@ void InitializeByBins::apply( core::pose::Pose & pose ) {
 	bin_transition_calculator_->random_mainchain_torsions_from_bins( pose.conformation(), res_indices, mainchain_torsions) ; //pose.conformation() and loop_indices() are const inputs; mainchain_torsions is the output.
 
 	//A thing that should be true at this point:
-	assert(mainchain_torsions.size() == endres-startres+1);
+	debug_assert(mainchain_torsions.size() == endres-startres+1);
 
 	{ //Scope to set the mainchain torsions:
 		core::Size i=1; //mainchain_torsions index
 		for ( core::Size ir=startres; ir<=endres; ++ir ) {
-			assert(mainchain_torsions[i].size()==pose.residue(ir).mainchain_torsions().size()); //Should be true at this point.
+			debug_assert(mainchain_torsions[i].size()==pose.residue(ir).mainchain_torsions().size()); //Should be true at this point.
 			for ( core::Size j=1, jmax=mainchain_torsions[i].size(); j<=jmax; ++j ) { //Set mainchain torsions
 				pose.set_torsion( core::id::TorsionID( ir, core::id::BB, j ) , mainchain_torsions[i][j] );
 			}

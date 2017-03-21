@@ -311,7 +311,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 	basic::Tracer TR( "protocols.looprelax" );
 
-	TR.Warning << "Warning! The LoopRelaxMover is no longer maintained. Please use the LoopModeler mover as replacement." << std::endl;
+	TR.Warning << "The LoopRelaxMover is no longer maintained. Please use the LoopModeler mover as replacement." << std::endl;
 
 	TR << "==== Loop protocol: ================================================="
 		<< std::endl;
@@ -1435,7 +1435,7 @@ void LoopRelaxMover::resolve_loopfile_indices( core::pose::Pose const & pose )
 /// given to the LoopRelax object (through a call to apply() or resolve_loopfile_indices)
 /// before the get_loops() function may be called.
 void LoopRelaxMover::loops( protocols::loops::LoopsOP const val ) {
-	//there is an assertion assert( !in_charge_ ) in set_loops_pointer()
+	//there is an assertion debug_assert( !in_charge_ ) in set_loops_pointer()
 	// as the guraded_loops_ is made with in_charge_ = true in the Constructor
 	// and this function is called in parse_my_tags to set the loops, the assertion
 	// seems to be wrong, or the use of this class is wrong.

@@ -667,8 +667,8 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 		tr.Debug << "span_index:  " << span_index << " loop_begin:  " << loop_begin(span_index) << " loop_end: "
 			<< loop_end(span_index) << std::endl;
 
-		assert(loop_begin(span_index) != 0);
-		assert(loop_end(span_index) != 0);
+		debug_assert(loop_begin(span_index) != 0);
+		debug_assert(loop_end(span_index) != 0);
 
 		//loophash stuff
 		start = loop_begin(span_index);

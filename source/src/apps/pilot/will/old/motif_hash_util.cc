@@ -950,7 +950,7 @@ void harvest_motifs(){
 		std::string fname = fnames[ifile];
 		std::string const tag = tag_from_pdb_fname(fname);
 		if(""==tag){
-			TR.Error << "WARNING: skipping non-pdb fname: " << fname << endl;
+			TR.Error << "skipping non-pdb fname: " << fname << endl;
 			continue;
 		}
 

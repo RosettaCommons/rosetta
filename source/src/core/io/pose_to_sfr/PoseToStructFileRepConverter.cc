@@ -1087,7 +1087,7 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 		basic::datacache::CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		assert( data.get() != NULL );
+		debug_assert( data.get() != NULL );
 
 		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
 				it != end;
@@ -1102,7 +1102,7 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 		basic::datacache::CacheableStringFloatMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		assert( data.get() != NULL );
+		debug_assert( data.get() != NULL );
 
 		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
 				it != end;

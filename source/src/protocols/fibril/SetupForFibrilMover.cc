@@ -47,7 +47,7 @@ SetupForFibrilMover::apply( core::pose::Pose & pose )
 	// If we are alredy symmetric do nothing
 	if ( core::pose::symmetry::is_symmetric( pose ) ) return;
 	protocols::fibril::make_symmetric_fibril( pose );
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 }
 
 std::string

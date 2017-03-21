@@ -64,7 +64,7 @@ core::Size Interface::find_start_of_next_interface_region(
 	core::Size start_from,
 	core::Size const chain_end
 )const{
-	assert( (*this)[start_from].type == InterfaceInfo::non_interface);
+	debug_assert( (*this)[start_from].type == InterfaceInfo::non_interface);
 
 	for ( ++start_from; start_from <= chain_end; ++start_from ) {
 		if ( (*this)[start_from].type != InterfaceInfo::non_interface ) {
@@ -78,7 +78,7 @@ core::Size Interface::find_stop_of_this_interface_region(
 	core::Size start_from,
 	core::Size const chain_end
 )const{
-	assert( (*this)[start_from].type != InterfaceInfo::non_interface );
+	debug_assert( (*this)[start_from].type != InterfaceInfo::non_interface );
 	for ( ++start_from ; start_from<= chain_end; ++start_from ) {
 		if ( (*this)[start_from].type == InterfaceInfo::non_interface ) {
 			return start_from-1;

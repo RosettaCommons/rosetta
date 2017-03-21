@@ -87,7 +87,7 @@ NamedSegmentSelector::apply( core::pose::Pose const & pose ) const
 	if ( factory.has_cached_data( pose ) ) {
 		sd = factory.get_from_const_pose( pose );
 	} else {
-		TR << "[WARNING]: NamedSegmentSelector::apply()  No StructureData was found in the pose datacache. "
+		TR.Warning << "NamedSegmentSelector::apply()  No StructureData was found in the pose datacache. "
 			<< class_name() << " is creating a new StructureData object based on the pose, which will be discarded"
 			<< " after computation because the pose is const..." << std::endl;
 		sd = factory.create_from_pose( pose );

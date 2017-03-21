@@ -161,7 +161,7 @@ public:
 
 	/// @brief returns a pointer to a scoring manager
 	scores::FragmentScoreManagerOP get_score_manager(core::Size index=1) {
-		assert(index <= scores_.size());
+		debug_assert(index <= scores_.size());
 		return scores_[index];
 	}
 
@@ -292,7 +292,7 @@ public:
 
 	// other stuff -----------------
 	inline core::Size size_of_query() {
-		assert(query_seq_as_string_.length() == query_profile_->length());
+		debug_assert(query_seq_as_string_.length() == query_profile_->length());
 		return query_seq_as_string_.length();
 	}
 

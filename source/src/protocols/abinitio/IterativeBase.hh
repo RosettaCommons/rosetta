@@ -221,7 +221,8 @@ protected:
 		if ( i == 2 ) { return core2_; };
 		if ( i == 3 ) { return core3_; };
 		if ( i == 4 ) { return core4_; };
-		runtime_assert( false );
+		std::cerr << "Cannot handle a value of " << i << " in IterativeBase::core(). Must be 1-4." << std::endl;
+		utility_exit_with_message("Improper value passed to IterativeBase::core().");
 		return core2_; //happy compiler
 	}
 

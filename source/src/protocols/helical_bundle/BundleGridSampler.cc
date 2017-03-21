@@ -321,7 +321,7 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 				"In protocols::helical_bundle::BundleGridSampler::apply() function: The nstruct_mode option was used, but invalid values were obtained for the current job index or the total number of jobs.");
 		}
 		if ( totaljobs < total_samples*nstruct_repeats() && TR.Warning.visible() ) {
-			TR.Warning << "Warning!  The BundleGridSampler mover is in nstruct mode, meaning that one set of Crick parameters will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of Crick parameters will be missed!" << std::endl ;
+			TR.Warning << "The BundleGridSampler mover is in nstruct mode, meaning that one set of Crick parameters will be sampled per job.  However, the total number of jobs is less than the total number of samples!  Certain sets of Crick parameters will be missed!" << std::endl ;
 		}
 		//The current job might be greater than the total number of samples, in which case we should wrap around:
 		loopstart = ( ( (curjob-1) % total_samples) + 1 ) / nstruct_repeats();
@@ -1456,14 +1456,14 @@ core::Size BundleGridSampler::calculate_total_samples() const {
 
 	//Loop through all helices that are defined for r0 sampling:
 	//(Note that all helices are defined.)
-	assert( r0_.size()==helixcount );
-	assert( omega0_.size()==helixcount );
-	assert( delta_omega0_.size()==helixcount );
-	assert( delta_omega1_.size()==helixcount );
-	assert( delta_t_.size()==helixcount );
-	assert( z1_offset_.size()==helixcount );
-	assert( z0_offset_.size()==helixcount );
-	assert( epsilon_.size()==helixcount );
+	debug_assert( r0_.size()==helixcount );
+	debug_assert( omega0_.size()==helixcount );
+	debug_assert( delta_omega0_.size()==helixcount );
+	debug_assert( delta_omega1_.size()==helixcount );
+	debug_assert( delta_t_.size()==helixcount );
+	debug_assert( z1_offset_.size()==helixcount );
+	debug_assert( z0_offset_.size()==helixcount );
+	debug_assert( epsilon_.size()==helixcount );
 	for ( core::Size i=1, imax=helixcount; i<=imax; ++i ) {
 		if ( r0(i)->is_perturbable() && !r0(i)->use_defaults() && r0(i)->other_helix()==0 && r0(i)->samples()!=0  ) total_samples *= r0(i)->samples();
 		else if ( r0(i)->use_defaults() && default_r0()->is_perturbable() && default_r0()->samples()!=0 ) total_samples *= default_r0()->samples();

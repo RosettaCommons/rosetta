@@ -168,7 +168,7 @@ ParatopeSiteConstraintMover::remove(core::pose::Pose& pose, bool reset_paratope_
 	using namespace core::scoring::constraints;
 
 	if ( ! reset_paratope_residues ) {
-		assert(paratope_residues_.size() == pose.size());
+		debug_assert(paratope_residues_.size() == pose.size());
 	} else {
 		this->setup_paratope_residues_from_cdrs(pose);
 	}
@@ -237,7 +237,7 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 		current_func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc(0, 1, interface_distance_) );
 	}
 
-	assert(paratope_residues_.size() == pose.size());
+	debug_assert(paratope_residues_.size() == pose.size());
 
 	//Ready to go!
 	ConstraintCOPs current_csts = pose.constraint_set()->get_all_constraints();

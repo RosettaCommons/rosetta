@@ -137,7 +137,7 @@ FinalMinimizer::parse_my_tag(
 void
 FinalMinimizer::apply( core::pose::Pose & pose ){
 	(*score_fxn_)(pose); // Debug Line, Remove Later...
-	assert(movemap_builder_);
+	debug_assert(movemap_builder_);
 
 	if ( movemap_builder_->minimize_backbone() ) {
 		core::kinematics::FoldTree fold_tree_copy;

@@ -50,7 +50,7 @@ using namespace core;
 // and call out to a function in core/scoring/dna/base_geometry.hh
 DNABase::DNABase( conformation::Residue const & rsd )
 {
-	assert( rsd.is_DNA() );
+	debug_assert( rsd.is_DNA() );
 
 	alpha_ = rsd.mainchain_torsion(1);
 	beta_ = basic::unsigned_periodic_range( rsd.mainchain_torsion(2), 360.0 );
@@ -81,8 +81,8 @@ DNABasepair::DNABasepair( utility::vector1< core::Real > const & values ) :
 // and call out to a function in core/scoring/dna/base_geometry.hh
 DNABasepair::DNABasepair( conformation::Residue const & rsd1, conformation::Residue const & rsd2 )
 {
-	assert( rsd1.is_DNA() );
-	assert( rsd2.is_DNA() );
+	debug_assert( rsd1.is_DNA() );
+	debug_assert( rsd2.is_DNA() );
 
 	utility::vector1< core::Real > values( 6 );
 
@@ -107,10 +107,10 @@ DNABasestep::DNABasestep( utility::vector1< core::Real > const & values ) :
 DNABasestep::DNABasestep( conformation::Residue const & rsd1, conformation::Residue const & rsd2,
 	conformation::Residue const & rsd1_next, conformation::Residue const & rsd2_prev )
 {
-	assert( rsd1.is_DNA() );
-	assert( rsd2.is_DNA() );
-	assert( rsd1_next.is_DNA() );
-	assert( rsd2_prev.is_DNA() );
+	debug_assert( rsd1.is_DNA() );
+	debug_assert( rsd2.is_DNA() );
+	debug_assert( rsd1_next.is_DNA() );
+	debug_assert( rsd2_prev.is_DNA() );
 
 	utility::vector1< Real > values( 6, 0.0 );
 
@@ -135,7 +135,7 @@ DNABase const &
 DNAParameters::base( core::Size resid ) const
 {
 	auto find_itr( bases_.find( resid ) );
-	assert( find_itr != bases_.end() );
+	debug_assert( find_itr != bases_.end() );
 
 	return find_itr->second;
 }
@@ -145,7 +145,7 @@ DNABasepair const &
 DNAParameters::basepair( core::Size resid ) const
 {
 	auto find_itr( basepairs_.find( resid ) );
-	assert( find_itr != basepairs_.end() );
+	debug_assert( find_itr != basepairs_.end() );
 
 	return find_itr->second;
 }
@@ -156,7 +156,7 @@ DNABasestep const &
 DNAParameters::basestep( core::Size resid ) const
 {
 	auto find_itr( basesteps_.find( resid ) );
-	assert( find_itr != basesteps_.end() );
+	debug_assert( find_itr != basesteps_.end() );
 
 	return find_itr->second;
 }

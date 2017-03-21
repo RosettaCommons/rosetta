@@ -931,7 +931,7 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 	FoldTree f;
 	f.add_edge( 1, pose.size() , Edge::PEPTIDE );
 	if ( f.reorder(1) == false ) {
-		TR.Error << "ERROR During resetting reordering of fold tree - am ignoring this LOOP ! Cannot continue " << std::endl;
+		TR.Error << "During resetting reordering of fold tree - am ignoring this LOOP ! Cannot continue " << std::endl;
 		return; // continuing leads to a segfault - instead ignore this loop !
 	}
 	pose.fold_tree( f );
@@ -1119,7 +1119,7 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 	FoldTree f;
 	f.add_edge( 1, pose.size() , Edge::PEPTIDE );
 	if ( f.reorder(1) == false ) {
-		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! I am done. " << std::endl;
+		TR.Error << "During reordering of fold tree - am ignoring this LOOP ! I am done. " << std::endl;
 		return; // continuing leads to a segfault - instead ignore this loop !
 	}
 	pose.fold_tree( f );

@@ -378,7 +378,7 @@ void Template::_read_constraints( std::string const& cst_file ) const {
 			AtomPairConstraintOP valued_cst = utility::pointer::const_pointer_cast< AtomPairConstraint >(ptr2);
 			cstset_.push_back( core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( valued_cst, *pose_ ) ) );
 		} else {
-			tr.Warning << "WARNING: constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;
+			tr.Warning << "constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;
 		}
 	}
 }

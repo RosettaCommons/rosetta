@@ -63,12 +63,6 @@ CompleteConnectionsFilter::apply( core::pose::Pose const & pose ) const {
 void
 CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-
-	if ( tag->getName() != "CompleteConnections" ) {
-		complete_connections_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( ! tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("CompleteConnections filter needs a 'chain' option");
 	}

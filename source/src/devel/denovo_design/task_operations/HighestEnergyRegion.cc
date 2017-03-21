@@ -466,8 +466,8 @@ DesignRandomRegionOperation::get_residues_to_design( core::pose::Pose const & po
 	// randomize by swapping the element at each position with a random element from later in the vector
 	for ( core::Size i=1; i<=residues_to_design.size(); ++i ) {
 		core::Size const target( numeric::random::random_range( i, residues_to_design.size() ) );
-		assert( target <= residues_to_design.size() );
-		assert( target >= 1 );
+		debug_assert( target <= residues_to_design.size() );
+		debug_assert( target >= 1 );
 		core::Size const target_value( residues_to_design[ target ] );
 		residues_to_design[ target ] = residues_to_design[ i ];
 		residues_to_design[ i ] = target_value;

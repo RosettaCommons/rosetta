@@ -86,14 +86,14 @@ FiberDiffraction& getFiberDiffractionData_legacy(core::Real c, core::Real res_cu
 			TR << "Loading fiber diffraction layer lines" << std::endl;
 			bool fiber_data_loaded = theFiberDiffractionData.loadFiberDiffractionData( layer_lines, c, res_cutoff_high, res_cutoff_low );
 			if ( !fiber_data_loaded ) {
-				TR.Error << "[ ERROR ] Error loading layer_lines named: '" << layer_lines  << "'" << std::endl;
+				TR.Error << "Error loading layer_lines named: '" << layer_lines  << "'" << std::endl;
 				exit(1);
 			}
 
 			//Initiallizing Bessel orders
 			bessel_initialized = theFiberDiffractionData.setupBesselOrder();
 			if ( !bessel_initialized ) {
-				TR.Error << "[ ERROR ] Error initializing bessel orders. '"<< std::endl;
+				TR.Error << "Error initializing bessel orders. '"<< std::endl;
 				exit(1);
 			}
 
@@ -171,7 +171,7 @@ bool FiberDiffraction::loadFiberDiffractionData(
 	original_layer_lines_R.resize(80);
 
 	if ( !input ) {
-		TR << "[ ERROR ]  Error opening layer lines " << layer_lines << std::endl;
+		TR.Error << "Error opening layer lines " << layer_lines << std::endl;
 		return false;
 	}
 

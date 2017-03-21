@@ -175,7 +175,7 @@ GeomSampleInfo::read_data( std::istringstream & line_stream )
 
 		num_steps_ = 0;
 
-		tr << "WARNING: tolerance for constraint " << tag_ << " specified to be 0, yet num_steps specified to be non-0. Ignoring input and setting num_steps to 0." << std::endl;
+		tr.Warning << "tolerance for constraint " << tag_ << " specified to be 0, yet num_steps specified to be non-0. Ignoring input and setting num_steps to 0." << std::endl;
 	}
 
 	return true;
@@ -442,7 +442,7 @@ MatchConstraintFileInfo::process_data()
 		}
 
 		if ( map_it->second->atom_inds_for_restype_begin() == map_it->second->atom_inds_for_restype_end() ) {
-			tr.Warning << "WARNING: No appropriate atoms found for entry " << map_it->first << " in constraint " << index_ << std::endl;
+			tr.Warning << "No appropriate atoms found for entry " << map_it->first << " in constraint " << index_ << std::endl;
 		}
 	} //loop over all Enz_cst_template-res
 
@@ -628,7 +628,7 @@ MatchConstraintFileInfo::process_algorithm_info(
 	}
 
 	if ( algorithm_inputs_.find( tag ) != algorithm_inputs_.end() ) {
-		tr << "Error: tag " << tag << " was found twice in the same cstfile block." << std::endl;
+		tr.Error << "tag " << tag << " was found twice in the same cstfile block." << std::endl;
 		return false;
 	}
 
@@ -643,7 +643,7 @@ MatchConstraintFileInfo::process_algorithm_info(
 		if ( utility::trimmed_compare( line, "ALGORITHM_INFO::END") ) {
 			if ( alg_strings.size() != 0 ) {
 				algorithm_inputs_.insert( std::pair< std::string, utility::vector1< std::string > >( tag, alg_strings ) );
-			} else tr << "WARNING: ALGORITHM_INFO block for " << tag << " seemed to contain no information." << std::endl;
+			} else tr.Warning << "ALGORITHM_INFO block for " << tag << " seemed to contain no information." << std::endl;
 			return true;
 		}
 		utility::vector1< std::string > comment_split = utility::string_split( line, '#' );
@@ -686,7 +686,7 @@ MatchConstraintFileInfo::create_exgs() const
 
 	if ( tags_undefined_gsi.size() != 0 ) {
 
-		tr << "WARNING: could not create external geom sampler from file input because not all 6 necessary degrees of freedom are specified.\n The following DOFs are missing specifications: ";
+		tr.Warning << "could not create external geom sampler from file input because not all 6 necessary degrees of freedom are specified.\n The following DOFs are missing specifications: ";
 
 		for ( core::Size i = 1; i <= tags_undefined_gsi.size(); ++i ) {
 			tr << tags_undefined_gsi[i] << ", ";

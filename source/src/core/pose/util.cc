@@ -609,7 +609,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 
 	// return if the pose is empty (otherwise will segfault)
 	if ( nres == 0 ) {
-		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
+		TR.Warning << "addVirtualResAsRoot() called with empty pose!" << std::endl;
 		return;
 	}
 
@@ -705,7 +705,7 @@ void addVirtualResAsRoot( core::pose::Pose & pose ) {
 	int nres = pose.size();
 	// return if the pose is empty (otherwise will segfault)
 	if ( nres == 0 ) {
-		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
+		TR.Warning << "addVirtualResAsRoot() called with empty pose!" << std::endl;
 		return;
 	}
 	numeric::xyzVector< core::Real > massSum = get_center_of_mass( pose );
@@ -773,7 +773,7 @@ hasPoseExtraScore(
 	CacheableStringFloatMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	assert( data.get() != nullptr );
+	debug_assert( data.get() != nullptr );
 
 	return (  data->map().find( name ) != data->map().end() );
 }
@@ -1182,7 +1182,7 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 	Conf2PDB conf2pdb;
 
 	if ( !pose.pdb_info().get() ) {
-		TR.Warning << "WARNING: conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ..." << std::endl;
+		TR.Warning << "conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ..." << std::endl;
 		conf2pdb_chain_default_map(pose,conf2pdb);
 		return conf2pdb;
 	}
@@ -1207,7 +1207,7 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 				} else {
 					// something is inconsistent
 					//fd: tone this message down a bit
-					TR.Warning << "WARNING: conf2pdb_chain(): chain mapping inconsistent, returning default map p 1=A, 2=B, ... " << std::endl;
+					TR.Warning << "conf2pdb_chain(): chain mapping inconsistent, returning default map p 1=A, 2=B, ... " << std::endl;
 					TR.Warning << "existing " << c2p->first << " -> " << c2p->second << "  |  ";
 					TR.Warning << "new " << conf << " -> " << pdb << std::endl;
 					conf2pdb_chain_default_map(pose,conf2pdb);
@@ -1480,7 +1480,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 	typedef std::map< int, char > Conf2PDB;
 
 	if ( !pose.pdb_info().get() ) {
-		TR.Warning << "WARNING: renumber_pdbinfo_based_on_conf_chains(): no PDBInfo, returning" << std::endl;
+		TR.Warning << "renumber_pdbinfo_based_on_conf_chains(): no PDBInfo, returning" << std::endl;
 		return false;
 	}
 
@@ -1488,7 +1488,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 	if ( fix_chains ) {
 		if ( conf2pdb.empty() ) { // something is wrong with chain consistency
-			TR.Warning << "WARNING: renumber_pdbinfo_based_on_conf_chains(): Request to fix PDBInfo chains, but ";
+			TR.Warning << "renumber_pdbinfo_based_on_conf_chains(): Request to fix PDBInfo chains, but ";
 			TR.Warning << "chain mapping is inconsistent, so that step will be skipped." << std::endl;
 			fix_chains = false;
 		} else { // Try to fill in any empty record characters.
@@ -1742,7 +1742,7 @@ named_atom_id_to_atom_id(
 			if ( rt.has( named_atom_id.atom() ) ) {
 				return AtomID( rt.atom_index( named_atom_id.atom() ), named_atom_id.rsd() );
 			} else {
-				// tr.Error << "Error: can't find atom " << named_atom_id.atom() << " in residue "
+				// tr.Error << "can't find atom " << named_atom_id.atom() << " in residue "
 				//   << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
 				//  tr.Error << "atom names are: " << std::endl;
 				//rt.show_all_atom_names( tr.Error );
@@ -1750,7 +1750,7 @@ named_atom_id_to_atom_id(
 				return id::BOGUS_ATOM_ID;
 			}
 		} else {
-			// tr.Error << "Error: can't find residue " << named_atom_id.rsd()
+			// tr.Error << "can't find residue " << named_atom_id.rsd()
 			//  << " in pose (pose.size() = ) "
 			//  << pose.size() << std::endl;
 			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
@@ -2227,7 +2227,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 					dof_mask[ id ] = mm_setting;
 				}
 			} else {
-				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
+				TR.Warning << "Unable to find atom_tree atom for this " <<
 					"Rosetta chi angle: residue " << i << " CHI " << j << std::endl;
 			}
 		} // j=1, n_chi_torsions
@@ -2242,7 +2242,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 			if ( id.valid() ) {
 				dof_mask[ id ] = mm_setting;
 			} else {
-				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
+				TR.Warning << "Unable to find atom_tree atom for this " <<
 					"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
 			}
 		} // j=1, n_nu_torsions
@@ -2261,7 +2261,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 			if ( id.valid() ) {
 				dof_mask[ id ] = mm_setting;
 			} else {
-				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
+				TR.Warning << "Unable to find atom_tree atom for this " <<
 					"Rosetta branch connection angle: residue " << i << " BRANCH " << j << std::endl;
 			}
 		} // j=1, n_branch_torsions
@@ -2689,7 +2689,7 @@ initialize_disulfide_bonds(
 					}
 				}
 				if ( !identical ) {
-					TR.Error << "Error: SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
+					TR.Error << "SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
 					utility_exit_with_message("Error with SSBond record.");
 				}
 			}
@@ -2809,7 +2809,7 @@ center_of_mass(
 ) {
 	using namespace numeric;
 	using core::conformation::Residue;
-	assert( pose.size() == residues.size() );
+	debug_assert( pose.size() == residues.size() );
 
 	utility::vector1< xyzVector< Real > > coords;
 
@@ -2834,8 +2834,8 @@ generate_vector_from_bounds(
 	int const stop
 ) {
 	utility::vector1< bool > residues( pose.size(), false );
-	assert( (Size) stop <= residues.size() );
-	assert( stop > start && start > 0 );
+	debug_assert( (Size) stop <= residues.size() );
+	debug_assert( stop > start && start > 0 );
 
 	for ( int i = start; i <= stop; ++i ) { residues[ i ] = true; }
 	return residues;
@@ -2865,7 +2865,7 @@ residue_center_of_mass(
 	pose::Pose const & pose,
 	utility::vector1< bool > residues
 ) {
-	assert( pose.size() == residues.size() );
+	debug_assert( pose.size() == residues.size() );
 
 	if ( ! ( residues.has( true ) && pose.size() )  ) {
 		utility_exit_with_message( "Cannot compute center of mass of zero residues!" );
@@ -2903,7 +2903,7 @@ return_nearest_residue(
 ) {
 	using core::conformation::Residue;
 
-	assert( pose.size() == residues.size() );
+	debug_assert( pose.size() == residues.size() );
 
 	if ( ! ( residues.has( true ) && pose.size() )  ) {
 		utility_exit_with_message( "Cannot find nearest residue in empty selection!" );

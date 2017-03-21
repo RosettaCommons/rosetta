@@ -165,7 +165,7 @@ public:
 		core::Real oversample = 5.0
 	) const {
 		core::Size const frag_size( templ.size() );
-		assert( frag_size == pref_seq.length() );
+		debug_assert( frag_size == pref_seq.length() );
 
 		// reset heaps
 		core::Size const my_size( size() );
@@ -259,7 +259,7 @@ public:
 			float score;// heaps use float!!!
 
 			protocols::frags::heap_extract( heap, coheap, vall_pos, score, err);  // ?? out-of-date
-			assert( !err );
+			debug_assert( !err );
 
 			if ( score == 0 ) ++exact_matches;
 
@@ -294,7 +294,7 @@ public:
 			float score;// heaps use float!!!
 
 			protocols::frags::heap_extract( rmsheap, rmscoheap, vall_pos, score, err);  // ?? out-of-date
-			assert( !err );
+			debug_assert( !err );
 
 			if ( nn == nfrags ) worst_score = -score;
 			else if ( nn == 1 ) best_score = -score;

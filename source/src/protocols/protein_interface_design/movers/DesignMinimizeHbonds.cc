@@ -304,7 +304,7 @@ DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	runtime_assert( target_residues_.size() );
 
 	if ( target_residues_.size() == 0 ) {
-		TR<<"WARNING WARNING: no target residue defined for hbond design minimize"<<std::endl;
+		TR.Warning << "no target residue defined for hbond design minimize"<<std::endl;
 	}
 }
 

@@ -234,7 +234,7 @@ SchemePlaceMotifsMover::parse_my_tag(
 		motif_sets_.push_back(mset);
 	}
 	if ( motif_sets_.size()==0 ) {
-		TR << "WARNING: no motif sets in XML " << tag_name_ << ", will use all from cli" << std::endl;
+		TR.Warning << "no motif sets in XML " << tag_name_ << ", will use all from cli" << std::endl;
 		// utility_exit_with_message("MotifResiduesOperation: no motif sets specified, use motif_sets='foo,bar,baz'!");
 	}
 

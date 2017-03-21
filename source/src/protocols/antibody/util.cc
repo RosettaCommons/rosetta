@@ -139,7 +139,7 @@ get_cdr_loops(
 	utility::vector1<bool> const & cdrs,
 	core::Size stem_size /* 0 */ ) {
 
-	assert( cdrs.size() <= CDRNameEnum_proto_total );
+	debug_assert( cdrs.size() <= CDRNameEnum_proto_total );
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
 	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[ i ] ) {

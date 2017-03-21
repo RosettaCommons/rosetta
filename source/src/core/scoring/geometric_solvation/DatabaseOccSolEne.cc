@@ -109,7 +109,7 @@ void DatabaseOccSolEne::init_don_mapping(chemical::AtomTypeSet const & atom_set)
 				( atom_set[i].atom_type_name() != "Npro" ) &&
 				( !don_type_has_data_[ i ] ) &&
 				donor_occ_data_[ don_type_mapping_[ i ] ][ PROTEIN_TYPE ][ OccFitParam_amp ] == NO_PARAMETERS_ ) {
-			tr << "ERROR: no pwSHO parameters for donor atom type " << atom_set[i].atom_type_name() << std::endl;
+			tr.Error << "no pwSHO parameters for donor atom type " << atom_set[i].atom_type_name() << std::endl;
 			exit( 0 );
 		}
 	}
@@ -143,7 +143,7 @@ void DatabaseOccSolEne::init_acc_mapping(chemical::AtomTypeSet const & atom_set)
 		if ( atom_set[ i ].is_acceptor() &&
 				( !acc_type_has_data_[ i ] ) &&
 				acc_occ_data_[ acc_type_mapping_[ i ] ][ PROTEIN_TYPE ][ OccFitParam_amp ] == NO_PARAMETERS_ ) {
-			tr << "ERROR: no pwSHO parameters for acceptor atom type " << atom_set[i].atom_type_name() << std::endl;
+			tr.Error << "no pwSHO parameters for acceptor atom type " << atom_set[i].atom_type_name() << std::endl;
 			exit( 0 );
 		}
 	}

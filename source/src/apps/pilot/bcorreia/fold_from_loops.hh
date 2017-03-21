@@ -49,8 +49,7 @@ void write_checkpoint( Size iter )
 	if ( !out ) {
 		std::cerr << "trouble opening file " << checkpointname
 		          << " for writing... skipping checkpoint" << std::endl;
-		runtime_assert( false ); // die here in debug mode
-		return;
+		utility_exit_with_message("Cannot open checkpoint file."):
 	}
 
 	// here iter should refer to the last complete iteration

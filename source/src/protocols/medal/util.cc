@@ -43,7 +43,7 @@ typedef utility::vector1<double> Probabilities;
 
 /// @brief Lower sampling probability near termini
 void end_bias_probabilities(const unsigned num_residues, Probabilities* p) {
-	assert(p);
+	debug_assert(p);
 
 	// Penalize 10% lowest, highest residues
 	const unsigned offset_left = static_cast<unsigned>(std::ceil(0.1 * num_residues));
@@ -60,7 +60,7 @@ void end_bias_probabilities(const unsigned num_residues, Probabilities* p) {
 void alignment_probabilities(const unsigned num_residues,
 	const core::sequence::SequenceAlignment& alignment,
 	Probabilities* p) {
-	assert(p);
+	debug_assert(p);
 
 	p->clear();
 	core::id::SequenceMapping mapping = alignment.sequence_mapping(1, 2);
@@ -75,7 +75,7 @@ void alignment_probabilities(const unsigned num_residues,
 void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p) {
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
-	assert(p);
+	debug_assert(p);
 
 	p->clear();
 	for ( auto const & chunk : chunks ) {
@@ -87,7 +87,7 @@ void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p
 }
 
 void cutpoint_probabilities(const unsigned num_residues, const core::kinematics::FoldTree& tree, Probabilities* p) {
-	assert(p);
+	debug_assert(p);
 
 	// List of cutpoints sorted by position
 	std::set<unsigned> cutpoints;
@@ -123,8 +123,8 @@ void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
 }
 
 void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* s) {
-	assert(s);
-	assert(loops);
+	debug_assert(s);
+	debug_assert(loops);
 
 	s->clear();
 
@@ -136,7 +136,7 @@ void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* 
 }
 
 void to_centroid(core::pose::Pose* pose) {
-	assert(pose);
+	debug_assert(pose);
 	if ( !pose->is_centroid() ) {
 		core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID_t);
 	}

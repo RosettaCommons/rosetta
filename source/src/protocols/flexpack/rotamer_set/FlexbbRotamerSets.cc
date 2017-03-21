@@ -147,7 +147,7 @@ FlexbbRotamerSets::set_frames(
 			moltenres_2_flexseg_[ count_moltenres ] = 0; //will be filled with the correct values later
 		} else resid_2_moltenres_[ ii ] = 0;
 	}
-	assert( count_moltenres == nmoltenres_ );
+	debug_assert( count_moltenres == nmoltenres_ );
 
 	//for( utility::vector1< core::fragment::FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ){
 	for ( core::Size frame_count = 1; frame_count <= num_frames; ++frame_count ) {
@@ -539,7 +539,7 @@ FlexbbRotamerSets::update_offset_data()
 		nrotoffset_for_moltenres_bbconf_[ ii ].resize( conformations_for_flexible_segments_[ ii ].size() );
 		bbconf_for_rotamer_of_moltenres_[ ii ].clear();
 
-		assert( nrots_for_moltenres_bbconf_[ ii ].size() == rotamers_[ ii ].size() );
+		debug_assert( nrots_for_moltenres_bbconf_[ ii ].size() == rotamers_[ ii ].size() );
 
 		for ( core::Size jj = 1; jj <= rotamers_[ ii ].size(); ++jj ) {
 
@@ -600,7 +600,7 @@ FlexbbRotamerSets::precompute_energies(
 
 		compute_one_body_energies_for_otf_ig( pose, sfxn, flexpack_neighbor_graph, otfig );
 	} else {
-		assert( dynamic_cast< PrecomputedFlexbbInteractionGraph * > ( &flexbb_ig ) );
+		debug_assert( dynamic_cast< PrecomputedFlexbbInteractionGraph * > ( &flexbb_ig ) );
 		PrecomputedFlexbbInteractionGraph & precomp_ig =
 			static_cast< PrecomputedFlexbbInteractionGraph & > ( flexbb_ig );
 
@@ -727,7 +727,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 
 				core::Size const jj = resid_2_moltenres_[ jj_resid ];
 				if ( ii > jj ) continue; // compute against upper, moltenres neighbors only
-				assert( jj != 0 );
+				debug_assert( jj != 0 );
 
 				if ( ! flexbb_ig.get_edge_exists( ii, jj ) ) {
 					flexbb_ig.add_edge( ii, jj );

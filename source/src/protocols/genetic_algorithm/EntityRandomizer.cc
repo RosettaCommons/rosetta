@@ -138,7 +138,7 @@ void
 PositionSpecificRandomizer::mutate( Entity & entity )
 {
 	EntityElements traits( entity.traits() );
-	assert( traits.size() == choices_.size() );
+	debug_assert( traits.size() == choices_.size() );
 	utility::vector1< EntityElements >::const_iterator choice_it( choices_.begin() );
 	for ( auto
 			it( traits.begin() ), end( traits.end() ); it != end;

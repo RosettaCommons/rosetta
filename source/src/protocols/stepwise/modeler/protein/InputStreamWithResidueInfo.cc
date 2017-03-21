@@ -161,7 +161,7 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 			utility::vector1< std::string > const pdb_tags_from_disk( option[ in::file::s ]() );
 			for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) pdb_tags.push_back( pdb_tags_from_disk[ n ] );
 		}
-		assert( pdb_tags.size() > 0 );
+		debug_assert( pdb_tags.size() > 0 );
 		initialize_input_streams_with_residue_info( input_streams,
 			pdb_tags, silent_files_in,
 			option[ in::file::input_res ](), option[ input_res2 ]() );

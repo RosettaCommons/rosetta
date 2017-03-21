@@ -297,7 +297,7 @@ MembranePotential::MembranePotential():
 					std::istringstream l(line);
 					Size ii,jj;
 					l >> tag >> ii >> jj >> aa;
-					assert( Size(aa) == k );
+					debug_assert( Size(aa) == k );
 					for ( Size n=1; n<=max_aa; ++n ) {
 						l >> mem_pair_log_(i,j,aa,n);
 					}
@@ -1143,7 +1143,7 @@ MembranePotential::termini_penalty(pose::Pose const & pose, Vector const & norma
 MembraneEmbed const &
 MembraneEmbed_from_pose( pose::Pose const & pose )
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
 	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 }
 

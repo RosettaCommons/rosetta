@@ -433,9 +433,9 @@ void APCluster::restore_best_exemplars()
 // Helper functions for IO
 // I'm not too worried about efficiency as files should be block-buffered by the OS by default.
 template<typename T> inline void write1(FILE /*const*/ * f, T t)
-{ if ( fwrite(&t, sizeof(T), 1, f) != 1 ) { assert(false); } }
+{ if ( fwrite(&t, sizeof(T), 1, f) != 1 ) { debug_assert(false); } }
 template<typename T> inline void read1(FILE /*const*/ * f, T & t)
-{ if ( fread(&t, sizeof(T), 1, f) != 1 ) { assert(false); } }
+{ if ( fread(&t, sizeof(T), 1, f) != 1 ) { debug_assert(false); } }
 
 
 bool APCluster::save_binary(std::string const & filename) const

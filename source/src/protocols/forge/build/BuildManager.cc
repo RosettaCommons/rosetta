@@ -298,7 +298,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 			// number of instructions remaining in the current loop is equal to the
 			// number of instructions remaining in the prior loop, there is a problem.
 			if ( instructions_remaining == instructions_remaining_prior_loop ) {
-				TR.Fatal << "FATAL: Infinite loop will occur -- check the topology of the dependency graph and make sure there are no cycles." << std::endl;
+				TR.Fatal << "Infinite loop will occur -- check the topology of the dependency graph and make sure there are no cycles." << std::endl;
 				utility_exit();
 			}
 

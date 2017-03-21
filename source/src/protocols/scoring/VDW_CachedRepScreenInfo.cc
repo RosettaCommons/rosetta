@@ -169,7 +169,7 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_command_line() const
 VDW_CachedRepScreenInfo const &
 const_vdw_cached_rep_screen_info_from_pose( core::pose::Pose const & pose )
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) );
 	return *( utility::pointer::static_pointer_cast< VDW_CachedRepScreenInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) );
 }
 
@@ -183,7 +183,7 @@ nonconst_vdw_cached_rep_screen_info_from_pose( core::pose::Pose & pose )
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) {
 		pose.data().set( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO, VDW_CachedRepScreenInfoOP( new VDW_CachedRepScreenInfo() ) );
 	}
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) );
 	return *( utility::pointer::static_pointer_cast< VDW_CachedRepScreenInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) );
 }
 

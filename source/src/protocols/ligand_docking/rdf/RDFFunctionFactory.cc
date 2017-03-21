@@ -101,7 +101,7 @@ RDFFunctionFactory::get_rdf_function(
 	basic::datacache::DataMap & data
 )
 {
-	/*assert(tag->getName() == "RDF");
+	/*debug_assert(tag->getName() == "RDF");
 
 	string type_name;
 	if ( !tag->hasOption("name") ) {

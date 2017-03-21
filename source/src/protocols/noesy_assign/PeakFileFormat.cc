@@ -250,7 +250,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			line_stream >> format;
 			std::string expected_format = "xeasy" + utility::to_string( dim ) + "D";
 			if ( format != expected_format ) {
-				tr.Warning << "[WARNING] Format inconsistent: " << expected_format << " found in file: " << format << std::endl;
+				tr.Warning << "Format inconsistent: " << expected_format << " found in file: " << format << std::endl;
 			}
 		} else if ( tag == "#INAME" ) {
 			Size index;

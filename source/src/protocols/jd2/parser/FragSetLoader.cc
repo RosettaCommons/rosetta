@@ -73,8 +73,8 @@ void FragSetLoader::load_data(
 			frag_readers_map[ name ] = frop;
 		}
 	} else {
-		TR << "No tag of FRAGMENTS" << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "No tag of FRAGMENTS" << std::endl;
+		utility_exit_with_message("FRAGMENTS tag is missing for FragSetLoader");
 	}
 
 	for ( TagCOP subtag : tag->getTags() ) {
@@ -103,8 +103,8 @@ void FragSetLoader::load_data(
 				FragmentReaderOP frop ( frag_readers_map[ fname ] );
 				frop->apply( fragset );
 			} else {
-				TR << "frag_name " << fname << " does not exist." << std::endl;
-				runtime_assert( false );
+				TR.Fatal << "frag_name " << fname << " does not exist." << std::endl;
+				utility_exit_with_message("Fragment of given name is not present.");
 			}
 		}
 		runtime_assert( fragset->nr_frames() != 0 );

@@ -89,9 +89,9 @@ CartesianFragment::get_seqpos_for_fragment_insertion( int const frag_seqpos, Com
 
 	int const component_index( 1 + ( ( frag_seqpos + BIG_OFFSET_/2 ) / BIG_OFFSET_ ) );
 	int const component_local_seqpos( frag_seqpos - ( component_index - 1 ) * BIG_OFFSET_ );
-	assert( component_index >= 1 && component_index <= int(ncomponents_) );
+	debug_assert( component_index >= 1 && component_index <= int(ncomponents_) );
 	int const new_conf_seqpos( component_local_seqpos + offsets[ component_index ] );
-	assert( new_conf_seqpos - get_seqpos_offset_for_new_component( offsets[ component_index ], component_index ) ==
+	debug_assert( new_conf_seqpos - get_seqpos_offset_for_new_component( offsets[ component_index ], component_index ) ==
 		frag_seqpos );
 	return new_conf_seqpos;
 }
@@ -109,11 +109,11 @@ CartesianFragment::get_seqpos_offset_for_torsion_stub(
 {
 	id::BondID const bond( torsion_bond( id, conf ) );
 	if ( seqpos_offset_map[ bond.atom1 ] != 0 ) {
-		assert( seqpos_offset_map[ bond.atom2 ] == 0 );
+		debug_assert( seqpos_offset_map[ bond.atom2 ] == 0 );
 		return seqpos_offset_map[ bond.atom1 ];
 	} else {
-		assert( seqpos_offset_map[ bond.atom2 ] != 0 );
-		assert( seqpos_offset_map[ bond.atom1 ] == 0 );
+		debug_assert( seqpos_offset_map[ bond.atom2 ] != 0 );
+		debug_assert( seqpos_offset_map[ bond.atom1 ] == 0 );
 		return seqpos_offset_map[ bond.atom2 ];
 	}
 }
@@ -133,7 +133,7 @@ CartesianFragment::insert( Conformation & conf, Size const offset ) const
 void
 CartesianFragment::insert( Conformation & conf, ComponentOffsets const & offsets ) const
 {
-	assert( offsets.size() == ncomponents_ );
+	debug_assert( offsets.size() == ncomponents_ );
 
 	kinematics::AtomTree::FragXYZ frag_xyz;
 	kinematics::AtomTree::FragRT frag_rt;
@@ -219,7 +219,7 @@ CartesianFragment::add_stub_atoms(
 	SafeAtomID const bond_atom2( bond.atom2, conf, seqpos_offset ); // is stub_atom2 of torsion_stub
 
 	if ( has_atom( bond_atom1 ) ) {
-		assert( !has_atom( bond_atom2 ) );
+		debug_assert( !has_atom( bond_atom2 ) );
 
 		// need to add stub_atoms 2 and 3
 		SafeAtomID const atom1( bond_atom1 );
@@ -234,8 +234,8 @@ CartesianFragment::add_stub_atoms(
 		links_[ atom2_index ].push_back( atom3_index );
 
 	} else {
-		assert(  has_atom( bond_atom2 ) );
-		assert( !has_atom( bond_atom1 ) );
+		debug_assert(  has_atom( bond_atom2 ) );
+		debug_assert( !has_atom( bond_atom1 ) );
 
 		// only need to add stub_atom 1
 		SafeAtomID const atom2( bond_atom2 );
@@ -342,8 +342,8 @@ CartesianFragment::add_frag_atom(
 	using namespace conformation;
 	using namespace chemical;
 
-	assert( !added[ id ] );
-	assert( seqpos_offset_map[ id ] != 0 );
+	debug_assert( !added[ id ] );
+	debug_assert( seqpos_offset_map[ id ] != 0 );
 
 	// now mark this id as added
 	added[ id ] = true;
@@ -366,7 +366,7 @@ CartesianFragment::add_frag_atom(
 		if ( new_bonds[i].has( id ) ) {
 			AtomID const & other_id( new_bonds[i].other_atom( id ) );
 			if ( added[ other_id ] ) continue;
-			assert( !skip_bond( id, other_id, cuts ) ); // that would be weird
+			debug_assert( !skip_bond( id, other_id, cuts ) ); // that would be weird
 			seqpos_offset_map[ other_id ] = get_seqpos_offset_for_new_component( other_id.rsd(), i+1 /* the new component */);
 			links_[ my_atom_index ].push_back( add_frag_atom( other_id, seqpos_offset_map,
 				instub, conf, cuts, new_bonds, added ) );
@@ -509,7 +509,7 @@ void
 CartesianFragment::setup_atom_tree()
 {
 	if ( tree_.size() == 1 ) return;
-	assert( tree_.size() == 0 );
+	debug_assert( tree_.size() == 0 );
 
 	kinematics::AtomPointer2D atom_pointer( 1 );
 	atom_pointer[1].resize( natoms() );
@@ -525,7 +525,7 @@ CartesianFragment::setup_atom_tree()
 
 	tree_.replace_tree( atom_pointer );
 
-	assert( tree_.size() == 1 );
+	debug_assert( tree_.size() == 1 );
 }
 
 } // namespace cartesian_frags

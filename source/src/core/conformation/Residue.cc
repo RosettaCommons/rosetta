@@ -498,7 +498,7 @@ Residue::update_connections_to_other_residue( Residue const &other_rsd)
 			//TR << "this_res=" << seqpos() << "other_res=" << other_rsd.seqpos() << " this_conn_id=" << this_conn_id << std::endl; //DELETE ME
 			//runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
 			if ( connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos() ) {
-				TR.Warning << "Warning!  While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
+				TR.Warning << "While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
 				//utility_exit_with_message( "Let it die" );
 				continue;
 			}
@@ -587,11 +587,10 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 							src_rsd.connect_map( ii ).resid(),
 							src_rsd.connect_map( ii ).connid() );
 						if ( this_connid != ii ) {
-							TR.Debug << "WARNING: Residue connection id changed when creating a new residue at seqpos " << seqpos() <<
-								std::endl;
-							TR.Debug << "WARNING: ResConnID info stored on the connected residue (residue " << src_rsd.connect_map( ii ).resid();
-							TR.Debug << ") is now out of date!" << std::endl;
-							TR.Debug << "Connection atom name (in src): " << src_rsd.atom_name( ii_connatom ) << std::endl;
+							TR.Warning << "Residue connection id changed when creating a new residue at seqpos " << seqpos() << std::endl;
+							TR.Warning << "ResConnID info stored on the connected residue (residue " << src_rsd.connect_map( ii ).resid();
+							TR.Warning << ") is now out of date!" << std::endl;
+							TR.Warning << "Connection atom name (in src): " << src_rsd.atom_name( ii_connatom ) << std::endl;
 						}
 					}
 				} else {
@@ -1208,7 +1207,7 @@ Residue::fill_missing_atoms(
 						// (e.g. like non-termini variants at the beginning/end of the pose)
 						// NOTE: This used to check for residues next to chainbreaks too, but I (RM) removed that logic,
 						// because it made dodgy assumptions about the ordering of residues w/r/t chainbreaks
-						TR.Warning << "[ WARNING ] missing an atom: " << seqpos_ << " " << atom_name(i) << " that depends on a nonexistent polymer connection! "
+						TR.Warning << "missing an atom: " << seqpos_ << " " << atom_name(i) << " that depends on a nonexistent polymer connection! "
 							<< std::endl <<  " --> generating it using idealized coordinates." << std::endl;
 						set_xyz( i, ic.build(*this));
 					} else {
@@ -1264,7 +1263,7 @@ Residue::fill_missing_atoms(
 			if ( desperation >= 3 ) {
 				// Did our best to build the atoms - simply can't.
 				if ( fail ) {
-					TR.Error << "[ ERROR ] Cannot build coordinates for residue " << name() << " at position " << seqpos() << ": missing too many atoms." << std::endl;
+					TR.Error << "Cannot build coordinates for residue " << name() << " at position " << seqpos() << ": missing too many atoms." << std::endl;
 					type().show_all_atom_names(TR.Debug);
 					TR.Debug << "Internal coordinate tree:" << std::endl;
 					core::chemical::pretty_print_atomicoor( TR.Debug, type().icoor(type().atom_index(type().root_atom())), type());
@@ -1372,7 +1371,7 @@ Residue::inter_residue_connection_partner(
 
 	Size const partner_seqpos( residue_connection_partner( connid ) );
 	if ( partner_seqpos < 1 || partner_seqpos > conformation.size() ) {
-		TR.Warning << "WARNING Residue::inter_residue_connection_partner: Invalid residue connection, returning BOGUS ID: this_rsd= " << name() <<
+		TR.Warning << "Residue::inter_residue_connection_partner: Invalid residue connection, returning BOGUS ID: this_rsd= " << name() <<
 			' ' << seqpos() << " connid= " << connid << " partner_seqpos= " << partner_seqpos << std::endl;
 		return id::BOGUS_ATOM_ID;
 	}

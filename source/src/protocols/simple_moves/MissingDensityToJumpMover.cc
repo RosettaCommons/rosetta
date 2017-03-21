@@ -65,7 +65,7 @@ MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {
 			Residue const &next_rsd(pose.residue(i+1));
 			core::Real bondlength = ( current_rsd.atom( current_rsd.upper_connect_atom() ).xyz() - next_rsd.atom( next_rsd.lower_connect_atom() ).xyz() ).length();
 			if ( bondlength > 2.5 ) {
-				TR << "[ WARNING ] missing density found at residue " << i << std::endl;
+				TR.Warning << "missing density found at residue " << i << std::endl;
 				core::kinematics::FoldTree update_tree(pose.fold_tree());
 				update_tree.new_jump(i,i+1,i);
 				pose.fold_tree(update_tree);

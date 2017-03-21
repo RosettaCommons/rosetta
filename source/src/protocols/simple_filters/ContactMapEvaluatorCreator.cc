@@ -88,7 +88,7 @@ void ContactMapEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 		}
 
 		if ( !native_pose ) {
-			tr.Error << "Error: -evaluation::contact_map must be specified with a native!\n";
+			tr.Error << "-evaluation::contact_map must be specified with a native!\n";
 		} else {
 			core::Real max_dist(12);
 			core::Size min_seqsep(5);

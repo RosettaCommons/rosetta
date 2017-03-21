@@ -172,7 +172,7 @@ std::cout << "CENTROID mode" << std::endl;
 		false, /* skip_missing, // = false */
 		false  /* allow_missing // = false */
 	);
-	assert(is_ok);
+	debug_assert(is_ok);
 	// read target
 	if(_params_h.full_target_available)
 	{
@@ -186,7 +186,7 @@ std::cout << "CENTROID mode" << std::endl;
 			false, /* skip_missing, // = false */
 			false  /* allow_missing // = false */
 		);
-		assert(is_ok);
+		debug_assert(is_ok);
 		_trg_pose.dump_pdb("./output/test1.pdb");
 	}
 	else
@@ -204,7 +204,7 @@ std::cout << "CENTROID mode" << std::endl;
 			false, /* skip_missing, // = false */
 			false  /* allow_missing // = false */
 		);
-		assert(is_ok);
+		debug_assert(is_ok);
 	}
 
 	Pdb_info& pdb_info = _src_pose.pdb_info();
@@ -253,14 +253,14 @@ std::cout << "CENTROID mode" << std::endl;
 	// set first residue of symmetry units (src & clones)
 	if(symm_p.active && symm_p.symm_type == "INTERNAL_ONLY")
 	{
-		assert(chain_boundaries_map.find(symm_p.from_pdb_chain) != chain_boundaries_map.end()); // valid chain
-		assert(chain_boundaries_map[ symm_p.from_pdb_chain ].valid);
+		debug_assert(chain_boundaries_map.find(symm_p.from_pdb_chain) != chain_boundaries_map.end()); // valid chain
+		debug_assert(chain_boundaries_map[ symm_p.from_pdb_chain ].valid);
 		src_unit_first_res = chain_boundaries_map[ symm_p.from_pdb_chain ].first;
 		src_unit_last_res = chain_boundaries_map[ symm_p.from_pdb_chain ].last;
 		for(std::set<char>::const_iterator it = clones_pdb_chains.begin(), it = clones_pdb_chains.end(); it != end; ++it )
 		{
-			assert(chain_boundaries_map.find(*it) != chain_boundaries_map.end()); // valid chain
-			assert(chain_boundaries_map[ *it ].valid);
+			debug_assert(chain_boundaries_map.find(*it) != chain_boundaries_map.end()); // valid chain
+			debug_assert(chain_boundaries_map[ *it ].valid);
 			clones_first_res_list.push_back(chain_boundaries_map[*it].first);
 		}
 	}
@@ -276,7 +276,7 @@ std::cout << "CENTROID mode" << std::endl;
 			_dofs_manager.set_residue_dofs(it->pdb_res, it->std_dev, it->uni_dev);
 		else{
 			std::cout << "Pathways::initialize_from_params(): Bad DOF_type '" << it->s_dof_type << "'" << std::endl;
-			assert(false);
+			debug_assert(false);
 		}
 	} // for
 	}
@@ -302,7 +302,7 @@ std::cout << "CENTROID mode" << std::endl;
 		  }
 	      else{
 		std::cout << "Pathways::initialize_from_params(): Bad DOF_type '" << it->s_dof_type << "'" << std::endl;
-		assert(false);
+		debug_assert(false);
 	      }
 	    }
 	}
@@ -316,7 +316,7 @@ std::cout << "CENTROID mode" << std::endl;
   Int_set vertices, cuts;
   // insert root of fold-tree:
   int root_pose_res = _dofs_manager.pdbres_to_poseres(param_h.fold_root_res.pdbres);
-  assert(root_pose_res != -1);
+  debug_assert(root_pose_res != -1);
   vertices.insert(root_pose_res);
   // add cuts for chain boundaries
   {
@@ -331,7 +331,7 @@ std::cout << "CENTROID mode" << std::endl;
     for(std::set<Pdbres_param>::const_iterator it = param_h.cuts.begin(), end = param_h.cuts.end(); it != end; ++it )
       {
 	int cut_pose_res = _dofs_manager.pdbres_to_poseres(it->pdbres);
-	assert(cut_pose_res != -1);
+	debug_assert(cut_pose_res != -1);
 	cuts.insert(cut_pose_res);
 	if(local_debug)
 	  std::cout << "adding params file cut: pose_res #" << cut_pose_res << " ; pdbres: " << it->pdbres << std::endl;
@@ -351,7 +351,7 @@ std::cout << "CENTROID mode" << std::endl;
       {
 	int from_pose_res = _dofs_manager.pdbres_to_poseres(it->from_pdbres);
 	int to_pose_res = _dofs_manager.pdbres_to_poseres(it->to_pdbres);
-	assert(from_pose_res != -1 && to_pose_res != -1);
+	debug_assert(from_pose_res != -1 && to_pose_res != -1);
 	vertices.insert(from_pose_res);
 	vertices.insert(to_pose_res);
 	if(local_debug)
@@ -364,7 +364,7 @@ std::cout << "CENTROID mode" << std::endl;
     {
       Int_set::const_iterator it_v;
       for(it_v = ++vertices.lower_bound(src_unit_first_res); // this is first iter s.t. *it >= src_unit_first_res
-	  *it_v <= src_unit_last_res ; ++it_v ) 
+	  *it_v <= src_unit_last_res ; ++it_v )
 	{
 	  if(local_debug)
 	    std::cout << "duplicating " << *it_v << std::endl;
@@ -452,7 +452,7 @@ std::cout << "CENTROID mode" << std::endl;
   ft.reorder(root_pose_res);
   if(local_debug)
     std::cout << "Foldtree after reorder(" << root_pose_res << "): " << ft << std::endl;
-  assert(ft.check_fold_tree());
+  debug_assert(ft.check_fold_tree());
   // finally set fold tree
   _src_pose.set_fold_tree(ft);
   if(_params_h.algo_name == "BI_TREE")

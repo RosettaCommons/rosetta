@@ -95,7 +95,7 @@ closest_larger_peptide_vertex(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	assert( k > 0 );
+	debug_assert( k > 0 );
 
 	std::vector< Size > peptide_vertices;
 
@@ -141,7 +141,7 @@ closest_smaller_peptide_vertex(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	assert( k > 0 );
+	debug_assert( k > 0 );
 
 	std::vector< Size > peptide_vertices;
 
@@ -555,7 +555,7 @@ fold_tree_from_pose(
 					Size const cr = res.connected_residue_at_resconn( c );
 					Residue const & cres = pose.residue( cr );
 
-					assert( static_cast< Size >( res.chain() ) == i );
+					debug_assert( static_cast< Size >( res.chain() ) == i );
 
 					if ( r < cr && res.chain() == cres.chain() ) {
 
@@ -671,7 +671,7 @@ fold_tree_from_pose(
 						// do nothing
 						break;
 					default :
-						TR.Fatal << "FATAL: fold_tree_from_pose() : vertices.size() not in [1, 3]" << std::endl;
+						TR.Fatal << "fold_tree_from_pose() : vertices.size() not in [1, 3]" << std::endl;
 						utility_exit_with_message( "should not be here" );
 						break;
 					}
@@ -695,12 +695,12 @@ fold_tree_from_pose(
 		}
 	}
 
-	assert( uf.n_disjoint_sets() == 1 ); // everything should now be connected
+	debug_assert( uf.n_disjoint_sets() == 1 ); // everything should now be connected
 
 	// finalize
 	bool const success = ft.reorder( ft_root );
 	if ( !success ) {
-		TR.Fatal << "FATAL: fold_tree_from_pose(): " << ft << std::endl;
+		TR.Fatal << "Cannot reorder foldtree in fold_tree_from_pose(): " << ft << std::endl;
 		utility_exit_with_message( "bad fold tree topology" );
 	}
 
@@ -784,8 +784,8 @@ merge(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	assert( left_position <= left_tree.nres() );
-	assert( right_position <= right_tree.nres() );
+	debug_assert( left_position <= left_tree.nres() );
+	debug_assert( right_position <= right_tree.nres() );
 
 	FoldTree new_ft = left_tree;
 
@@ -812,7 +812,7 @@ merge(
 			static_cast< FoldTree const & >( new_ft ).end(),
 			Edge::PEPTIDE
 		);
-		assert( f != static_cast< FoldTree const & >( new_ft ).end() ); // paranoia
+		debug_assert( f != static_cast< FoldTree const & >( new_ft ).end() ); // paranoia
 
 		Edge const base = *f;
 		new_ft.delete_edge( base );
@@ -828,7 +828,7 @@ merge(
 			static_cast< FoldTree const & >( new_ft ).end(),
 			Edge::PEPTIDE
 		);
-		assert( f != static_cast< FoldTree const & >( new_ft ).end() ); // paranoia
+		debug_assert( f != static_cast< FoldTree const & >( new_ft ).end() ); // paranoia
 
 		Edge const base = *f;
 		new_ft.delete_edge( base );
@@ -886,8 +886,8 @@ replace(
 	typedef utility::vector1< Size > NodeList;
 	typedef std::map< Size, NodeList > Root2Nodes;
 
-	assert( replace_begin <= replace_end );
-	assert( original_tree.root() < replace_begin || original_tree.root() > replace_end );
+	debug_assert( replace_begin <= replace_end );
+	debug_assert( original_tree.root() < replace_begin || original_tree.root() > replace_end );
 
 	Size const replace_length = replace_end - replace_begin + 1;
 	Size const final_nres = original_tree.nres() - replace_length + replacement_tree.nres();
@@ -963,7 +963,7 @@ replace(
 		}
 	}
 
-	assert( tracking_ft.size() <= 2 );
+	debug_assert( tracking_ft.size() <= 2 );
 
 	TR.Debug << "new_ft after jump: " << new_ft << std::endl;
 
@@ -1110,7 +1110,7 @@ replace(
 		}
 	}
 
-	assert( uf.n_disjoint_sets() == 1 );
+	debug_assert( uf.n_disjoint_sets() == 1 );
 
 	TR.Debug << "new_ft after disconnected: " << new_ft << std::endl;
 

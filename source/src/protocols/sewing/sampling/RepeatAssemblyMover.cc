@@ -143,7 +143,7 @@ RepeatAssemblyMover::dfs_cycle_finder(
 
 	//Go through all other nodes in the model
 	std::set<core::Size> model_nodes = graph_->get_node_indices_from_model_id(reference_node->model().model_id_);
-	assert( model_nodes.find( reference_node->get_node_index() ) != model_nodes.end() );
+	debug_assert( model_nodes.find( reference_node->get_node_index() ) != model_nodes.end() );
 	model_nodes.erase(model_nodes.find(reference_node->get_node_index()));
 
 	std::set<core::Size>::const_iterator it = model_nodes.begin();

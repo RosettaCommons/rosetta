@@ -1038,7 +1038,7 @@ MakeRotLibMover::print_dunbrack02_rotlib( core::Real omg, utility::vector1< core
 	using namespace utility;
 
 	// sanity check
-	assert( final_rotamers_.size() >= 1 && centroids_.size() >= 1 && final_rotamers_.size() == centroids_.size() );
+	debug_assert( final_rotamers_.size() >= 1 && centroids_.size() >= 1 && final_rotamers_.size() == centroids_.size() );
 
 	// get nchi and num rots
 	Size nchi( final_rotamers_[ 1 ].get_num_chi() );
@@ -1185,7 +1185,7 @@ MakeRotLibMover::print_dunbrack10_rotlib( core::Real omg, utility::vector1< core
 	using namespace utility;
 
 	// sanity check
-	assert( final_rotamers_.size() >= 1 && centroids_.size() >= 1 && final_rotamers_.size() == centroids_.size() );
+	debug_assert( final_rotamers_.size() >= 1 && centroids_.size() >= 1 && final_rotamers_.size() == centroids_.size() );
 
 	// get nchi and num rots
 	// ASSUMES ONLY ONE CONTINUOUS ANGLE

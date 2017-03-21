@@ -64,7 +64,7 @@ CartesianMinimizer::run(
 		utility_exit_with_message( "Scorefunction not set up for nonideal/Cartesian scoring" );
 	}
 	if ( options.min_type() != "lbfgs_armijo_nonmonotone" && options.min_type() != "lbfgs_armijo" && options.min_type() != "linmin" ) {
-		TR.Warning << "WARNING: Use of the 'lbfgs_armijo_nonmonotone' minimizer with Cartesian minimization is recommended " <<
+		TR.Warning << "Use of the 'lbfgs_armijo_nonmonotone' minimizer with Cartesian minimization is recommended " <<
 			"for better runtime performance. (Using '" << options.min_type() << "' minimizer instead.)" << std::endl;
 	}
 

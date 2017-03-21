@@ -280,7 +280,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 
 		//safety check first
 		if ( favor_native_constraints_.size() != 0 ) {
-			tr.Info << "Warning: when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
+			tr.Warning << "when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
 			remove_favor_native_constraints( pose );
 
 		}
@@ -339,7 +339,7 @@ EnzdesCacheableObserver::remove_favor_native_constraints(
 )
 {
 	if ( !( pose.remove_constraints( favor_native_constraints_ ) ) ) {
-		tr.Info << "Warning: some of the favor native constraints that were previously added to the pose are not there anymore, something's a little unclean somewhere." << std::endl;
+		tr.Warning << "some of the favor native constraints that were previously added to the pose are not there anymore, something's a little unclean somewhere." << std::endl;
 	}
 	favor_native_constraints_.clear();
 }

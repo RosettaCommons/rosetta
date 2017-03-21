@@ -37,7 +37,7 @@ UniformPolicy::UniformPolicy(core::fragment::FragSetCOP fragments)
 
 core::Size UniformPolicy::choose(const core::fragment::Frame& frame,
 	const core::pose::Pose&) {
-	assert(frame.nr_frags() > 0);
+	debug_assert(frame.nr_frags() > 0);
 	return numeric::random::rg().random_range(1, frame.nr_frags());
 }
 

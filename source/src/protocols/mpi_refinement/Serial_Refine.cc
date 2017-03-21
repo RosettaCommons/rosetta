@@ -324,7 +324,7 @@ Serial_Refine::get_average_structure( SilentStructStore &decoys,
 	bool const minimize
 ) const
 {
-	assert( decoys.size() > 0 );
+	debug_assert( decoys.size() > 0 );
 
 	// averager: construct via SilentStructStore
 	pose::Pose pose;

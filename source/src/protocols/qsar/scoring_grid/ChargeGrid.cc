@@ -280,8 +280,8 @@ core::Real ChargeGrid::charge_charge_electrostatic(core::pose::Pose const & /*po
 	core::Real s_p(nominal_depth(atom_p.neighbor_count));
 	core::Real s_q(nominal_depth(atom_q.neighbor_count));
 
-	assert(s_p >= 0);
-	assert(s_q >= 0);
+	debug_assert(s_p >= 0);
+	debug_assert(s_q >= 0);
 
 	core::Real direct_term =  ((atom_q.charge)/(4*boost::math::constants::pi<core::Real>()*epsilon_0_*distance) *zeta_);
 	core::Real indirect_term = (1.0/distance) + (indirect_numerator_ / std::sqrt(distance*distance + 4*s_p*s_q));

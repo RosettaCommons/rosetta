@@ -48,7 +48,7 @@ public:
 
 	/// @brief The AA for which we're building the Rotamer library.
 	AA get_aa() const {
-		assert( aa_ != aa_unk );
+		debug_assert( aa_ != aa_unk );
 		return aa_;
 	}
 

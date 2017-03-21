@@ -628,7 +628,7 @@ MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
 	core::Real const kT )
 {
 	if ( library_central_.size() == 0 ) {
-		TR.Error << "ERROR: Have no structure to send" << std::endl;
+		TR.Error << "Have no structure to send" << std::endl;
 		return;
 	}
 
@@ -730,7 +730,7 @@ MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
 void
 MPI_Refinement::send_random_library_structs( core::Size dest_rank, core::Size nsend ){
 	if ( library_central_.size() == 0 ) {
-		TR.Error << "ERROR: Have no structure to send" << std::endl;
+		TR.Error << "Have no structure to send" << std::endl;
 		return;
 	}
 
@@ -770,7 +770,7 @@ MPI_Refinement::send_random_library_structs( core::Size dest_rank, core::Size ns
 void
 MPI_Refinement::send_random_library_struct( core::Size dest_rank, core::Size newssid ) const {
 	if ( library_central_.size() == 0 ) {
-		TR.Error << "ERROR: Have no structure to send" << std::endl;
+		TR.Error << "Have no structure to send" << std::endl;
 		return;
 	}
 

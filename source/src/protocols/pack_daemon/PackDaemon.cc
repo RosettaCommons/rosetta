@@ -989,8 +989,8 @@ void DaemonSet::process_state_energy_evaluations_for_entity()
 	std::clock_t stoptime = clock();
 #endif
 
-	assert( ndaemons() == entity_energies.first.size() );
-	assert( n_npd_properties_ == entity_energies.second.size() );
+	debug_assert( ndaemons() == entity_energies.first.size() );
+	debug_assert( n_npd_properties_ == entity_energies.second.size() );
 
 	int n_daemons( ndaemons() );
 	utility::send_integer_to_node( 0, n_daemons );

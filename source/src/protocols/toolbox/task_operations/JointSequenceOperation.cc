@@ -129,7 +129,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 			if ( pose.pdb_info() ) {
 				name = pose.pdb_info()->name();
 			}
-			TR.Warning << "WARNING: considered sequence " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
+			TR.Warning << "considered sequence " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
 		}
 	}
 

@@ -112,7 +112,7 @@ void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size con
 	TR.Debug << "Setting Chunk Insertion from residue " << seqpos_aligned_start_ << " to " << seqpos_stop_ << " for jump " << jump_number_ << std::endl;
 
 	// make sure it is continuous, may not be necessary if the function gets expanded to handle more than 1 chunk
-	assert(downstream_residues.size() == (seqpos_stop_ - seqpos_start_ + 1));
+	debug_assert(downstream_residues.size() == (seqpos_stop_ - seqpos_start_ + 1));
 }
 
 bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,

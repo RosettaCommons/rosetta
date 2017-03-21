@@ -172,12 +172,12 @@ void Transform::apply(core::pose::Pose & pose)
 {
 	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
 
-	assert(transform_info_.chain.size() == 1);
+	debug_assert(transform_info_.chain.size() == 1);
 	transform_info_.chain_id = core::pose::get_chain_id_from_chain(transform_info_.chain, pose);
 	transform_info_.jump_id = core::pose::get_jump_id_from_chain_id(transform_info_.chain_id, pose);
 	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, transform_info_.jump_id));
-	assert(grid_manager != nullptr); //something has gone hopelessly wrong if this triggers
+	debug_assert(grid_manager != nullptr); //something has gone hopelessly wrong if this triggers
 
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
@@ -379,7 +379,7 @@ void Transform::randomize_ligand(core::conformation::UltraLightResidue & residue
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
 	if ( transform_info_.angle ==0 && transform_info_.move_distance == 0 ) {
-		transform_tracer <<"WARNING: angle and distance are both 0.  Transform will do nothing" <<std::endl;
+		transform_tracer.Warning << "angle and distance are both 0.  Transform will do nothing" <<std::endl;
 		return;
 	}
 
@@ -423,7 +423,7 @@ void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
 
 void Transform::change_conformer(core::conformation::UltraLightResidue & residue)
 {
-	assert(ligand_conformers_.size());
+	debug_assert(ligand_conformers_.size());
 	core::Size index_to_select = numeric::random::rg().random_range(1,ligand_conformers_.size());
 	core::conformation::UltraLightResidue new_residue(ligand_conformers_[index_to_select]);
 	new_residue.align_to_residue(residue);
@@ -446,7 +446,7 @@ void Transform::dump_conformer(core::conformation::UltraLightResidue & residue, 
 
 bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const
 {
-	assert(start.natoms() == current.natoms());
+	debug_assert(start.natoms() == current.natoms());
 
 	core::Real total_distance =0.0;
 	for ( core::Size atomno = 1; atomno <= start.natoms(); ++atomno ) {

@@ -95,7 +95,7 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 		Job::StringStringPairs string_pairs =job->get_string_string_pairs();
 
 		auto group_name_it(string_pairs.find("input_group_name"));
-		assert(group_name_it != string_pairs.end()); //You shouldn't be able to get this far without a properly set group name
+		debug_assert(group_name_it != string_pairs.end()); //You shouldn't be able to get this far without a properly set group name
 		std::string group_name(group_name_it->second);
 		utility::vector1< std::string > temp_out_names= utility::split( base_name );
 		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );

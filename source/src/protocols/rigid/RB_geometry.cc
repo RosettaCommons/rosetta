@@ -180,11 +180,11 @@ centroids_by_jump(
 	// AMW: oh, I see: what if there are zero atoms in all? Take an empty pose (somehow) or a pose with two zero-atom residues (somehow) or...
 	// so I will make a clear modification
 	if ( upstream_atoms > 0 ) upstream_ctrd /= upstream_atoms;
-	else TR << "critical error: upstream_atoms was zero; could not divide!" << std::endl;
+	else TR.Error << "critical error: upstream_atoms was zero; could not divide!" << std::endl;
 	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
 	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
 	if ( downstream_atoms > 0 ) downstream_ctrd /= downstream_atoms;
-	else TR << "critical error: downstream_atoms was zero; could not divide!" << std::endl;
+	else TR.Error << "critical error: downstream_atoms was zero; could not divide!" << std::endl;
 	//TR << "Upstream:   " << upstream_atoms << " atoms, " << upstream_ctrd << std::endl;
 	//TR << "Downstream: " << downstream_atoms << " atoms, " << downstream_ctrd << std::endl;
 }

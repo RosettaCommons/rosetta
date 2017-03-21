@@ -246,7 +246,7 @@ public:
   // score(), otherwise might lead to unexpected results
   float get_score() const
     {
-      assert(_is_score_valid);
+      debug_assert(_is_score_valid);
       return _score; //_pose.get_0D_score(core::pose::SCORE);
       // TODO: add return value for invalid / non-updated score
     }
@@ -265,7 +265,7 @@ public:
   	// add a child to the children list, and define this node as the parent of "child"
 	// (NOTE: private = this can be used only internally or by friend classes, such as the DAG)
 	void add_child(RRT_node* child){
-		assert(child);
+		debug_assert(child);
 		child->_parents.push_back(this);
 		// if this is the first parent of child, update _orig_src_root_id
 		if(child->_parents.size() == 1){
@@ -328,7 +328,7 @@ public:
 
    void set_active(int id)
      {
-       assert(id < (int)_roots.size());
+       debug_assert(id < (int)_roots.size());
        _active_root = id;
      }
 
@@ -345,7 +345,7 @@ public:
    bool set_next_active()
      {
        _active_root++;
-       assert(_active_root <= (int)_roots.size());
+       debug_assert(_active_root <= (int)_roots.size());
        if (_active_root == (int)_roots.size())
 	 {
 	   _active_root =0;
@@ -357,12 +357,12 @@ public:
      }
 
    RRT_node* get_active_root() const{
-     assert(_active_root < (int)_roots.size());
+     debug_assert(_active_root < (int)_roots.size());
      return _roots[_active_root];
    }
 
    std::vector<RRT_node*>&  get_active_nodes(){
-     assert(_active_root < (int)_roots.size());
+     debug_assert(_active_root < (int)_roots.size());
      return _nodes[_active_root];
    }
 
@@ -383,7 +383,7 @@ public:
    // get size of tree rooted at root_id...
    int get_tree_size(int root_id)
      {
-       assert(root_id < _roots.size());
+       debug_assert(root_id < _roots.size());
        return _nodes[root_id].size();
      }
 
@@ -415,13 +415,13 @@ public:
    // returns the set of all nodes whose src_root_id == root_id
    std::vector< RRT_node * >& get_root_nodes(int root_id)
      {
-       assert(root_id < (int)_roots.size());
+       debug_assert(root_id < (int)_roots.size());
        return _nodes[root_id];
      }
 
    // see also get_root_id
    RRT_node* get_root_by_id(int id){
-     assert(id < (int)_roots.size());
+     debug_assert(id < (int)_roots.size());
      return _roots[id];
    }
 
@@ -459,7 +459,7 @@ public:
 	   root_id = n->get_orig_src_root_id();
 	 }
        // track n in its root children list
-       assert(root_id < (int)_roots.size());
+       debug_assert(root_id < (int)_roots.size());
        if(!n->_is_added){
            _nodes[root_id].push_back(n);
        }

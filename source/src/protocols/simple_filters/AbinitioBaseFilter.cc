@@ -72,7 +72,7 @@ AbinitioBaseFilter::get_protein_sstype( core::pose::Pose const & pose ) const {
 	utility::vector1< char > secstructs = read_psipred_ss2_file( pose );
 
 	if ( secstructs.size() == 0 ) {
-		tr.Error << "Warning: Needs psipred_ss2 to run filters" << std::endl;
+		tr.Error << "Needs psipred_ss2 to run filters" << std::endl;
 		//  disable_all_filters_ = true;
 		return "fail";
 	}

@@ -312,8 +312,7 @@ ResfileContents::parse_body_line(
 		}
 
 	} else {
-		// unrecongized id type
-		runtime_assert(false);
+		utility_exit_with_message("Unrecognized id type");
 	}
 
 	if ( !found_commands ) {

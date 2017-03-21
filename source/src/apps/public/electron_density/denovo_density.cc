@@ -1152,7 +1152,7 @@ FragmentAssemblyMover::run( ) {
 					picked++;
 					fragpicker -= frag_scores[picked];
 				}
-				assert( fragpicker < 0 );
+				debug_assert( fragpicker < 0 );
 				assigned_frags[select_pos] = frag_cands[picked];
 			}
 			core::Real score_total = score( false );

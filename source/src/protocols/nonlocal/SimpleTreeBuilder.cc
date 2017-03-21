@@ -24,7 +24,7 @@ namespace protocols {
 namespace nonlocal {
 
 void SimpleTreeBuilder::set_up(const protocols::loops::Loops&, core::pose::Pose* pose) {
-	assert(pose);
+	debug_assert(pose);
 	core::kinematics::FoldTree simple_tree(pose->size());
 	pose->fold_tree(simple_tree);
 }

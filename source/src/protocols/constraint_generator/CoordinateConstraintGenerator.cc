@@ -338,7 +338,7 @@ CoordinateConstraintGenerator::prepare_constraint_target_pose(
 
 	// Warn about not having a virtual root (but go ahead with constraints).
 	if ( !has_virtual_root ) {
-		TR.Warning << "WARNING: Adding coordinate constraints to a pose without a virtual root - results may not be as expected." << std::endl;
+		TR.Warning << "Adding coordinate constraints to a pose without a virtual root - results may not be as expected." << std::endl;
 	}
 
 	return constraint_target_pose;

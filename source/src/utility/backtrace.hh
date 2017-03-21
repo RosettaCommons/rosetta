@@ -131,18 +131,14 @@ demangle( std::string trace ) {
 
 inline
 bool
-print_backtrace( char const * condition ) {
-
-	// instead of printing a backtrace and letting the assert() function exectue,
-	// (and halt the program) throw an exception.  Look, don't rely on this
-	// functionality in anything besides your unit tests.
-	maybe_throw_on_next_assertion_failure( condition );
+print_backtrace( char const * /*unused*/ ) {
 
 	size_t const callstack_size = 128;
 	void* callstack[callstack_size];
 	int i, frames = backtrace(callstack, callstack_size);
 	char** strs = backtrace_symbols(callstack, frames);
 	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
+	std::cerr << "BACKTRACE:\n";
 	for ( i = 0; i < frames; ++i ) {
 		std::cerr << demangle( strs[i] ).c_str() << std::endl;
 	}
@@ -151,35 +147,30 @@ print_backtrace( char const * condition ) {
 	return false; // allows use in debug_assert
 }
 
-/// @brief A version of print_backtrace specifically for debug_assert, which
-/// tells the Clang Static Analyzer that we shouldn't continue on if we hit this point.
-inline bool print_backtrace_NR( char const * condition ) NORETURN;
-
-inline
-bool
-print_backtrace_NR( char const * condition ) {
-	print_backtrace( condition );
-	assert(false);
-	abort(); // To make the compiler happy on release-mode builds
-}
-
-// When used, this macro must be followed by a semi-colon to be beautified properly.
-#define debug_assert(condition) assert( ( condition ) || print_backtrace_NR( #condition ) )
-
 #else
 // _WIN32, etc.
 #include <assert.h>
 
 inline
-void
-print_backtrace( char const * /*unnamed*/ ){
+bool
+print_backtrace( char const * /*unused*/ ) {
 	// no op
 	// if someone cares, should be possible to code up a backtrace for Windows!
 	// function signature needs to match windows and *nix builds.
+	return false; // allows use in debug_assert
 }
 
-#define debug_assert(condition) {assert( condition || maybe_throw_on_next_assertion_failure( #condition ) ); }
-
 #endif
+
+#ifdef __clang_analyzer__
+/// @details NORETURN to tell the Clang Static Analyzer that we don't continue on if we hit this point.
+bool handle_assert_failure( char const * condition, std::string const & file, int const line ) NORETURN;
+#else
+bool handle_assert_failure( char const * condition, std::string const & file, int const line );
+#endif
+
+// When used, this macro must be followed by a semi-colon to be beautified properly.
+#define debug_assert(condition) assert( ( condition ) || handle_assert_failure( #condition, __FILE__, __LINE__ ) )
+
 
 #endif // INCLUDED_utility_backtrace_HH

@@ -410,15 +410,15 @@ RDAT::fill_sequences_if_empty() {
 
 				if  ( mut_num.size() == 0 ) {
 					if ( start_seq != "WT" ) {
-						TR.Warning <<  "WARNING! Could not find mutation position in mutation annotation: "+tag << std::endl;
+						TR.Warning << "Could not find mutation position in mutation annotation: "+tag << std::endl;
 					}
 					continue;
 				}
 				if  ( start_seq.size() == 0 ) {
-					TR.Warning << "WARNING! Could not find starting nucleotide in mutation annotation: "+tag << std::endl;
+					TR.Warning << "Could not find starting nucleotide in mutation annotation: "+tag << std::endl;
 				}
 				if  ( mut_seq.size() == 0 ) {
-					TR.Warning << "WARNING! Could not find mutation nucleotide in mutation annotation: "+tag << std::endl;
+					TR.Warning << "Could not find mutation nucleotide in mutation annotation: "+tag << std::endl;
 				}
 
 				std::vector< int > mut_res = ObjexxFCL::ints_of( utility::replace_in( mut_num, ":", "-" ) );
@@ -426,7 +426,7 @@ RDAT::fill_sequences_if_empty() {
 				for ( Size k = 1; k <= mut_res.size(); k++ ) {
 					mut_res_shifted.push_back( mut_res[k-1] - offset_ );
 					if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
-						TR.Warning << "WARNING! Mismatch between mutation nucleotides (mutation annotation) vs. (sequence)\n"+tag << std::endl;
+						TR.Warning << "Mismatch between mutation nucleotides (mutation annotation) vs. (sequence)\n"+tag << std::endl;
 						mut_res_shifted[k] = mut_res[ k - 1 ];
 						if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
 							TR.Warning << "OK, specified mutpos without taking into account offset..." << std::endl;
@@ -595,12 +595,12 @@ RDAT::check_sequence_seqpos( std::string const & sequence_seqpos ) const {
 		char const c1 = s1[ i-1 ];
 		Size const m = seqpos_[ i ] - offset_;
 		if ( m < 1 || m > sequence_.size() ) {
-			TR.Warning <<  "Warning: seqpos is not inside sequence, given offset" << std::endl;
+			TR.Warning << "seqpos is not inside sequence, given offset" << std::endl;
 			return false;
 		}
 		char const c2 = s2[ m-1 ];
 		if ( c1 != 'x' && c2 != 'x' && c1 != 'n' && c2 != 'n' && c1 != c2 ) {
-			TR.Warning << "Warning: mismatch between SEQPOS nucleotide and SEQUENCE nucleotide\n" << std::endl;
+			TR.Warning << "mismatch between SEQPOS nucleotide and SEQUENCE nucleotide\n" << std::endl;
 			return false;
 		}
 	}
@@ -613,56 +613,56 @@ bool
 RDAT::check_rdat() const {
 
 	if ( name_.size() == 0 ) {
-		TR.Warning <<  "\nWARNING! Must give a name!\n" << std::endl;
+		TR.Warning << "Must give a name!\n" << std::endl;
 		return false;
 	}
 
 	if ( sequence_.size() == 0 ) {
-		TR.Warning <<  "\nWARNING! Must supply sequence!" << std::endl;
+		TR.Warning << "Must supply sequence!" << std::endl;
 		return false;
 	}
 
 	if ( sequence_.find( 'T' ) != std::string::npos ) {
-		TR.Warning << "\nWARNING! Warning: you have a T instead of a U in the sequence!!\n" << std::endl;
+		TR.Warning << "you have a T instead of a U in the sequence!!\n" << std::endl;
 		return false;
 	}
 
 	if ( seqpos_[1] - offset_ < 1 ) {
-		TR.Warning << "\nWARNING! Offset/seqpos does not look right -- at least one index is too low for sequence\n" << std::endl;
+		TR.Warning << "Offset/seqpos does not look right -- at least one index is too low for sequence\n" << std::endl;
 		return false;
 	}
 
 	if ( seqpos_[ seqpos_.size() ] - offset_ > static_cast<int>( sequence_.size() ) ) {
-		TR.Warning << "\nWARNING! Offset/seqpos does not look right -- at least one index is too high for sequence\n" << std::endl;
+		TR.Warning << "Offset/seqpos does not look right -- at least one index is too high for sequence\n" << std::endl;
 		return false;
 	}
 
 	for ( Size n = 1; n <= reactivity_.size(); n++ ) {
 		if ( reactivity_[n].size() != seqpos_.size() ) {
-			TR.Warning << "\nWARNING! Number of bands in reactivity does not match length of seqpos\n" << std::endl;
+			TR.Warning << "Number of bands in reactivity does not match length of seqpos\n" << std::endl;
 			return false;
 		}
 	}
 
 	if ( data_annotations_.size() > 0 && data_annotations_.size() != reactivity_.size() ) {
-		TR.Warning << "\nWARNING! Number of bands in data_annotations does not match number of lanes in reactivity\n" << std::endl;
+		TR.Warning << "Number of bands in data_annotations does not match number of lanes in reactivity\n" << std::endl;
 		return false;
 	}
 
 	if ( xsel_.size() > 0 ) {
 		if ( reactivity_[1].size() != xsel_.size() ) {
-			TR.Warning << "\nWARNING! Number of bands in xsel does not match number of bands in reactivity\n" << std::endl;
+			TR.Warning << "Number of bands in xsel does not match number of bands in reactivity\n" << std::endl;
 			return false;
 		}
 	}
 
 	if ( xsel_refine_.size() > 0 ) {
 		if ( reactivity_.size() != xsel_refine_.size() ) {
-			TR.Warning << "\nWARNING! Number of lanes in xsel_refine does not match number of lanes in reactivity \n" << std::endl;
+			TR.Warning << "Number of lanes in xsel_refine does not match number of lanes in reactivity \n" << std::endl;
 			return false;
 		}
 		if ( reactivity_[1].size() != xsel_refine_.size() ) {
-			TR.Warning << "\nWARNING! Number of bands in xsel_refine  does not match number of bands in reactivity \n" << std::endl;
+			TR.Warning << "Number of bands in xsel_refine  does not match number of bands in reactivity \n" << std::endl;
 		}
 	}
 
@@ -683,7 +683,7 @@ RDAT::check_annotations( utility::vector1< Annotation > const & annotations ) co
 
 	for ( Size j = 1; j <= annotations.size(); j++ ) {
 		if ( !check_annotation( annotations[j] ) ) {
-			TR.Warning << "WARNING! Unrecognized annotation: "+annotations[j].first << std::endl;
+			TR.Warning << "Unrecognized annotation: "+annotations[j].first << std::endl;
 			return false;
 		}
 	}

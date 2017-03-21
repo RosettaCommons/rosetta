@@ -452,7 +452,7 @@ public:
 	MultipoleElecResidueInfo const &
 	placeholder_info( Size const seqpos ) const
 	{
-		assert( placeholder_info_[ seqpos ] );
+		debug_assert( placeholder_info_[ seqpos ] );
 		return *placeholder_info_[ seqpos ];
 	}
 
@@ -460,7 +460,7 @@ public:
 	Residue const &
 	placeholder_residue( Size const seqpos ) const
 	{
-		assert( placeholder_residue_[ seqpos ] );
+		debug_assert( placeholder_residue_[ seqpos ] );
 		return *placeholder_residue_[ seqpos ];
 	}
 

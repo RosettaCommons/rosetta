@@ -1053,7 +1053,7 @@ Size MPInterfaceStatistics::get_number_pi_stacking( Pose & pose ) {
 	core::pose::metrics::PoseMetricCalculatorOP pi_pi_calculator ( new protocols::toolbox::pose_metric_calculators::PiPiCalculator() );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "pi_pi", pi_pi_calculator );
 
-	TR << "WARNING: PLEASE CHECK THE NUMBER OF YOUR Pi-stacking INTERACTIONS VISUALLY TO CONFIRM!" << std::endl;
+	TR.Warning << "PLEASE CHECK THE NUMBER OF YOUR Pi-stacking INTERACTIONS VISUALLY TO CONFIRM!" << std::endl;
 
 	return utility::string2Size( pose.print_metric( "pi_pi", "pi_pi" ) );
 }

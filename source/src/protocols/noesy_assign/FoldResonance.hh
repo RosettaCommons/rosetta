@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <cassert>
+#include <utility/assert.hh>
 
 // C++ headers
 #include <string>
@@ -62,7 +62,7 @@ public:
 		//e return std::fmod( freq-start_, window_ ) + start_;   //modulus does not necessarily work right with negative values
 		while ( is_folded_down( freq ) ) { freq+=window_; }
 		while ( is_folded_up( freq ) ) { freq-=window_; }
-		assert( !is_folded( freq ) );
+		debug_assert( !is_folded( freq ) );
 		return freq;
 	}
 

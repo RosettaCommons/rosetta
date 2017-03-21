@@ -166,7 +166,7 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	// around the membrane default values - this is much easier code-wise and
 	// mathematically
 	TR << "Start OptimizeMembranePositionMover, transforming into membrane" << std::endl;
-	TR << "WARNING: the membrane information in the MEM residue is lost!!!" << std::endl;
+	TR.Warning << "the membrane information in the MEM residue is lost!!!" << std::endl;
 	core::Vector center( 0, 0, 0 );
 	core::Vector normal( 0, 0, 1 );
 	TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );

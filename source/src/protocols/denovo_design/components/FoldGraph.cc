@@ -184,7 +184,7 @@ FoldGraph::segment( core::Size const nodeidx ) const
 	std::map< core::Size, std::string >::const_iterator it = node2seg_.find(nodeidx);
 	if ( it == node2seg_.end() ) {
 		TR.Error << "Node idx " << nodeidx << " not found in map: " << seg2node_ << std::endl;
-		assert( it != node2seg_.end() );
+		debug_assert( it != node2seg_.end() );
 	}
 	return it->second;
 }
@@ -470,8 +470,8 @@ FoldGraph::fold_tree_rec(
 			ft.add_edge( e );
 			fold_tree_rec( ft, visited, node_stack, otherseg, e.stop(), direction, true );
 		} else {
-			TR << "Something is wrong. THere are probably two segments that overlap in residue numbering. Nterm=" << resis.lower() << " Cterm=" << resis.upper() << " safe=" << resis.safe() << " otherNterm=" << other_resis.lower() << " otherCterm=" << other_resis.upper() << " safe=" << other_resis.safe() << std::endl;
-			debug_assert( false );
+			TR.Fatal << "Something is wrong. THere are probably two segments that overlap in residue numbering. Nterm=" << resis.lower() << " Cterm=" << resis.upper() << " safe=" << resis.safe() << " otherNterm=" << other_resis.lower() << " otherCterm=" << other_resis.upper() << " safe=" << other_resis.safe() << std::endl;
+			utility_exit_with_message("Likely residue overlap in FoldGraph.");
 		}
 	}
 }
@@ -653,7 +653,7 @@ FoldGraph::add_combined_solutions( utility::vector1< Solution > & solutions ) co
 				core::Size overlap_count = 0;
 				for ( NodeSet::const_iterator n = solution[j].begin(), end=solution[j].end(); n != end; ++n ) {
 					utility::graph::Node const * nptr = gpeptide_.get_node(*n);
-					assert( nptr );
+					debug_assert( nptr );
 					for ( utility::graph::Graph::EdgeListConstIter e=nptr->const_edge_list_begin(); e != nptr->const_edge_list_end(); ++e ) {
 						core::Size const othernode = (*e)->get_other_ind(*n);
 						if ( solution[i].find( othernode ) != solution[i].end() ) {
@@ -671,7 +671,7 @@ FoldGraph::add_combined_solutions( utility::vector1< Solution > & solutions ) co
 						}
 						new_solution.push_back( solution[ii] );
 					}
-					assert( new_solution.size() + 1 == solution.size() );
+					debug_assert( new_solution.size() + 1 == solution.size() );
 					new_solutions.push_back( new_solution );
 				}
 			}

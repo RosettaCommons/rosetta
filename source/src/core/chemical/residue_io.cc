@@ -139,7 +139,7 @@ define_mainchain_atoms( ResidueTypeOP rsd )
 			}
 			mainchain.push_back( upper_connect );
 		} else {
-			tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, " <<
+			tr.Warning << "Residue " << rsd->name() << " claims it's a polymer, " <<
 				"but it doesn't have the appropriate UPPER and LOWER connection points specified.  " <<
 				"Set MAINCHAIN_ATOMS in the topology file to remove this warning." << std::endl;
 		}
@@ -1152,7 +1152,7 @@ read_topology_file(
 		} else if ( tag == "ATOM" || tag == "ICOOR_INTERNAL" ) {
 			; // ATOM lines handled above, ICOOR_INTERNAL lines handled below
 		} else {
-			tr.Warning << "WARNING: Ignoring line starting with '" << tag << "' when parsing topology file." << std::endl;
+			tr.Warning << "Ignoring line starting with '" << tag << "' when parsing topology file." << std::endl;
 		}
 
 	} // i=1,nlines
@@ -1306,7 +1306,7 @@ read_topology_file(
 		// on your RTS this will happen.
 		if ( rsd->is_protein() && !rsd->is_achiral_backbone() && !rsd->is_l_aa() && !rsd->is_d_aa() ) {
 
-			tr.Warning << "Warning: protein residue " << rsd->name3() << " is not explicitly listed"
+			tr.Warning << "protein residue " << rsd->name3() << " is not explicitly listed"
 				<< " as either L or D in its params file." << std::endl;
 			tr.Warning << "To avoid seeing this warning in the future, add \"L_AA\", \"D_AA\", "
 				<< "or \"ACHIRAL_BACKBONE\" to the \"PROPERTIES\" line of the params file." << std::endl;

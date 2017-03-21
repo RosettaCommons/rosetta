@@ -84,7 +84,7 @@ main( int argc, char * argv [] ) {
 
 		// warning for using PDB lists
 		if ( option[ OptionKeys::in::file::l ].user() ) {
-			TR << "WARNING: When using lists, only provide PDBs of the same protein (for instance from multiple models) which have an identical span file! Only a single spanfile is allowed!" << std::endl;
+			TR.Warning << "When using lists, only provide PDBs of the same protein (for instance from multiple models) which have an identical span file! Only a single spanfile is allowed!" << std::endl;
 		}
 
 		// if optimizing membrane position

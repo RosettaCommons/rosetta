@@ -109,13 +109,13 @@ RigidBodyRandomTMHMover::apply(core::pose::Pose& pose)
 	}
 
 	//assert if claimer_pose doesn't point to anything at this point
-	assert(claimer_pose);
+	debug_assert(claimer_pose);
 
 	//Get the claimer_pose's CoM for this helix.  This is the position to which we want to move to if we need to
 	core::Size claimer_pose_current_span_CoM = claimer_pose->fold_tree().jump_edge(random_jump_num).stop();
 
 	//The current pose and the claimer pose CoM for this helix should be the same!
-	assert(claimer_pose_current_span_CoM == current_span_CoM);
+	debug_assert(claimer_pose_current_span_CoM == current_span_CoM);
 
 	//How far away are we now from the original starting position?
 	original_centroid = claimer_pose->residue(claimer_pose_current_span_CoM).xyz("CA");

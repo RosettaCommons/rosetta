@@ -181,7 +181,7 @@ CavityVolumeFilter::compute( core::pose::Pose const & pose ) const
 		return total_volume.value();
 	}
 
-	assert( selector_ );
+	debug_assert( selector_ );
 	core::select::residue_selector::ResidueSubset const & subset = selector_->apply( pose );
 
 	basic::MetricValue< utility::vector1< core::scoring::packstat::CavityBallCluster > > clustermetric;

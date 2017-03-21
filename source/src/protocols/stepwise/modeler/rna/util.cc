@@ -1275,7 +1275,7 @@ check_for_messed_up_structure( core::pose::Pose const & pose, std::string const 
 		//   TR.Debug << " tag= " << tag << " seq_num= " << seq_num << " delta= " << delta << " chi= " << chi << " nu_2= " << nu_2 << " nu_1= " << nu_1 << std::endl;
 
 		if ( ( delta >  - 0.001 && delta < 0.001 ) || ( nu_2 >  - 0.001 && nu_2 < 0.001 ) || ( nu_1 >  - 0.001 && nu_1 < 0.001 ) ) { //observation is that messed up structure will have delta value of zero
-			TR.Debug << "Warning: " << tag << " is probably a messed up pose, will be ignored" << std::endl;
+			TR.Warning << tag << " is probably a messed up pose, will be ignored" << std::endl;
 			TR.Debug << " seq_num = " << seq_num << " delta = " << delta << " chi = " << chi << " nu_2 = " << nu_2 << " nu_1 = " << nu_1 << std::endl;
 			if ( ( rsd.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) ||
 					( rsd.has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) ) { //Implement on Oct 28,2010
@@ -1659,7 +1659,7 @@ add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
 	get_possible_O3prime_C5prime_distance_range( gap_size, min_dist, max_dist );
 
 	ConstraintSetOP cst_set( pose.constraint_set()->clone() );
-	assert( cst_set ); //if ( !cst_set ) cst_set = new ConstraintSet();
+	debug_assert( cst_set ); //if ( !cst_set ) cst_set = new ConstraintSet();
 
 	Distance fade_zone( 2.0 );
 	Real const well_depth( -10.0 ), well_offset( +10.0 );
@@ -1704,7 +1704,7 @@ add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_re
 	Real const angle_stddev_degrees_O3( 5.73 ); //did I made a mistake with the variable naming or is that a actual error? May 25, 2011.
 
 	ConstraintSetOP cst_set( pose.constraint_set()->clone() );
-	assert( cst_set ); //if ( !cst_set ) cst_set = new ConstraintSet();
+	debug_assert( cst_set ); //if ( !cst_set ) cst_set = new ConstraintSet();
 
 	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( O3_P_distance, distance_stddev ) );
 	core::scoring::func::FuncOP const O3_angle_func( new core::scoring::func::HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees_P ) ) ); //did I made a mistake with the variable naming or is that a actual error? May 25, 2011.

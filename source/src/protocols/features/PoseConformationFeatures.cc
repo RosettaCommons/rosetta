@@ -376,7 +376,7 @@ PoseConformationFeatures::load_sequence(
 ){
 
 	if ( !basic::database::table_exists(db_session, "pose_conformations") ) {
-		TR << "WARNING: pose_conformations table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		TR.Warning << "pose_conformations table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return true; // Assume structure is ideal
 	}
 
@@ -449,7 +449,7 @@ PoseConformationFeatures::load_fold_tree(
 ){
 
 	if ( !basic::database::table_exists(db_session, "fold_trees") ) {
-		TR << "WARNING: fold_trees table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		TR.Warning << "fold_trees table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
 
@@ -494,7 +494,7 @@ PoseConformationFeatures::load_jumps(
 	Pose & pose
 ){
 	if ( !basic::database::table_exists(db_session, "jumps") ) {
-		TR << "WARNING: jumps table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		TR.Warning << "jumps table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
 
@@ -545,7 +545,7 @@ PoseConformationFeatures::load_chain_endings(
 ){
 
 	if ( !basic::database::table_exists(db_session, "chain_endings") ) {
-		TR << "WARNING: chain_endings table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		TR.Warning << "chain_endings table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
 

@@ -115,8 +115,8 @@ void MpiFileBuffer::garbage_collection() {
 				close_file( channel );
 				mem_tr << "closed_channel" << std::endl;
 			} else {
-				runtime_assert( false ); //shouldn't happen anymore
-				tr.Debug << "channel " << to_erase->first << " has open slaves again ... not closed, remove from closing list" << std::endl;
+				tr.Fatal << "channel " << to_erase->first << " has open slaves again ... not closed, remove from closing list" << std::endl;
+				utility_exit_with_message( "Channel has open slaves." ); //shouldn't happen anymore
 				//    garbage_collector_.erase( to_erase );
 			}
 		}

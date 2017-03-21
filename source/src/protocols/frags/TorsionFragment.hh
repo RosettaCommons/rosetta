@@ -209,7 +209,7 @@ public:
 	void
 	erase( Size const index )
 	{
-		assert( index >= 1 && index <= size() );
+		debug_assert( index >= 1 && index <= size() );
 		fragments_.erase( fragments_.begin() + (index-1) );
 	}
 

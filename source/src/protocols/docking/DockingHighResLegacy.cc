@@ -505,7 +505,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 			interface_repack_and_move_loops->add_mover( get_docking_ft );
 
 		} else {
-			TR << "[ ERROR ] Unknown flexible_bb_docking type: " << flex_bb_docking_type << std::endl;
+			TR.Error << "Unknown flexible_bb_docking type: " << flex_bb_docking_type << std::endl;
 			exit(1);
 		}
 

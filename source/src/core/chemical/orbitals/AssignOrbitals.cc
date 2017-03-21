@@ -110,7 +110,7 @@ void AssignOrbitals::assign_orbitals( )
 					core::Real phi(0.0);
 
 					if ( distance <1e-2 ) {
-						TR << "WARNING: extremely small distance=" << distance << " for " <<
+						TR.Warning << "extremely small distance=" << distance << " for " <<
 							p_orbital_element_name << " ,using 0.0 for theta and phi."<<
 							" If you were not expecting this warning, something is very wrong" <<std::endl;
 					} else {
@@ -159,7 +159,7 @@ void AssignOrbitals::assign_orbitals( )
 			//very crappy hack. This whole code sucks. WTF? Needs to be rewritten!
 			// This will skip C#N among other things, it will do it silently, this should bother you
 			if ( atmtype.name() == "Nhis" && AObondedatoms_.size() < 2 ) {
-				TR <<"WARNING: residue " << restype_->name() << " has an Nhis typed atom with < 2 bonds.  It is probably a C#N or something similar for which Rosetta has no reasonable atomtype.  This atom is not being assigned orbitals." <<std::endl;
+				TR.Warning << "residue " << restype_->name() << " has an Nhis typed atom with < 2 bonds.  It is probably a C#N or something similar for which Rosetta has no reasonable atomtype.  This atom is not being assigned orbitals." <<std::endl;
 			} else if ( atmtype.name() == "Nhis" && AObondedatoms_.size() > 1 ) {
 				core::Size atm_index2(AObondedatoms_[2]);//atom index of the only bonded neighbor.
 				//get the atom indices of the bonded neighbors of atm_index2.
@@ -210,7 +210,7 @@ void AssignOrbitals::assign_orbitals( )
 
 					restype_->set_orbital_icoor_id( orbital_element_name,phi,theta,AOdist_,stub1,stub2,stub3);
 				} else {
-					TR <<"WARNING: residue " << restype_->name() << " has an Nhis typed atom that is the central N in an azide. It is not being assigned orbitals." <<std::endl;
+					TR.Warning << "residue " << restype_->name() << " has an Nhis typed atom that is the central N in an azide. It is not being assigned orbitals." <<std::endl;
 				}
 
 
@@ -359,7 +359,7 @@ void AssignOrbitals::assign_only_pi_orbitals_to_atom(/*OrbInfo const & orbital_i
 		}
 	}
 	if ( !set_atm_index3 ) {
-		TR << "Warning: Unable to assign orbitals properly for atom of type " <<atmtype.name() << " On residue " << restype_->name() << " Orbital assignment for this atom is skipped" <<std::endl;
+		TR.Warning << "Unable to assign orbitals properly for atom of type " <<atmtype.name() << " On residue " << restype_->name() << " Orbital assignment for this atom is skipped" <<std::endl;
 		return;
 	}
 
@@ -527,7 +527,7 @@ void AssignOrbitals::calculate_orbital_icoor(
 	core::Real phi(0.0);
 
 	if ( distance <1e-2 ) {
-		TR << "WARNING: extremely small distance=" << distance << " for " <<
+		TR.Warning << "extremely small distance=" << distance << " for " <<
 			orbital_element_name << " ,using 0.0 for theta and phi."<<
 			" If you were not expecting this warning, something is very wrong" <<std::endl;
 	} else {

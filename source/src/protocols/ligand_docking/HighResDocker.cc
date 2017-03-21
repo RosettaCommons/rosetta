@@ -252,13 +252,13 @@ HighResDocker::remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs liga
 }
 void
 HighResDocker::apply(core::pose::Pose & pose) {
-	assert(num_cycles_ > 0);
+	debug_assert(num_cycles_ > 0);
 
 	MinimizeLigandOPs minimized_ligands( setup_ligands_to_minimize(pose) );
 
 	TetherLigandOPs ligand_tethers= tether_ligands(pose);
 
-	assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
+	debug_assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
 	core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
 
 	protocols::moves::MonteCarloOP monteCarlo( new protocols::moves::MonteCarlo(pose, *score_fxn_, 2.0) );/* temperature, from RosettaLigand paper */
@@ -309,7 +309,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 void
 HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<char> qsar_chars, core::Size cycle) {
-	assert(num_cycles_ > 0);
+	debug_assert(num_cycles_ > 0);
 
 	core::Size pose_counter = 1;
 
@@ -319,7 +319,7 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 
 		TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_chars[pose_counter]);
 
-		assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
+		debug_assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
 		core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
 
 		score_fxn_->score( pose ); // without this neither of the movers below were working
@@ -365,7 +365,7 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 
 	TetherLigandOPs ligand_tethers= tether_ligands(pose, qsar_char);
 
-	assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
+	debug_assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
 	core::kinematics::MoveMapOP movemap( movemap_builder_->build(pose) );
 
 	score_fxn_->score( pose ); // without this neither of the movers below were working
@@ -491,7 +491,7 @@ HighResDocker::enable_ligand_rotamer_packing(
 	core::chemical::ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_residue.name3() ).get_all_possible_residue_types(); // a vector1
 
 
-	assert(allowed_types.size() > 0);
+	debug_assert(allowed_types.size() > 0);
 	/// TODO consider removing this so resfiles can specify ligand mutations to allow
 	if ( allowed_types.size() == 1 ) {
 		pack_task->nonconst_residue_task( ligand_residue_id ).restrict_to_repacking();

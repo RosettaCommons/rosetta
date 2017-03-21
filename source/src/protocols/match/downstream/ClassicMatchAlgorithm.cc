@@ -62,7 +62,7 @@ ClassicMatchAlgorithm::clone() const {
 void
 ClassicMatchAlgorithm::set_build_round1_hits_twice()
 {
-	assert( geom_cst_id() == 1 );
+	debug_assert( geom_cst_id() == 1 );
 	build_round1_hits_twice_ = true;
 }
 
@@ -117,7 +117,7 @@ ClassicMatchAlgorithm::build_and_discard_first_round_hits_at_all_positions(
 	Matcher & matcher
 )
 {
-	assert( geom_cst_id() == 1 );
+	debug_assert( geom_cst_id() == 1 );
 
 	utility::vector1< upstream::ScaffoldBuildPointCOP > const & launch_points
 		( matcher.per_constraint_build_points( geom_cst_id() ) );

@@ -33,9 +33,12 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace qsar {
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.RenderGridsToKinemage" );
 
 // XRW TEMP std::string RenderGridsToKinemageCreator::keyname() const
 // XRW TEMP {
@@ -188,7 +191,8 @@ void RenderGridsToKinemage::setup_colors()
 	} else if ( color_mode_ == 3 ) {
 		setup_three_color_scheme();
 	} else {
-		assert(false); //This should never happen
+		TR.Fatal << "Improper value of color mode found: " << color_mode_ << std::endl;
+		utility_exit_with_message("Improper color mode in RenderGridsToKinemage."); //This should never happen
 	}
 
 }

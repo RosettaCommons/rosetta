@@ -94,7 +94,7 @@ PeptoidRotamerLibrarySpecification::library_name() {
 std::string
 PeptoidRotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const &) const {
 	std::ostringstream ss;
-	assert( peptoid_rotlib_path_.size() );
+	debug_assert( peptoid_rotlib_path_.size() );
 	ss << peptoid_rotlib_path_;
 	for ( core::Size ii(1); ii <= peptoid_rotlib_n_bins_per_rot_.size(); ++ii ) {
 		ss << "|" << peptoid_rotlib_n_bins_per_rot_[ii];

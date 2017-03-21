@@ -80,9 +80,9 @@ namespace ssrbrelax {
 		int seg_end( one_segment_rb.seg_end() );
 		int anchor_pos( one_segment_rb.anchor_pos() );
 
-		assert( seg_begin < seg_end );
-		assert( anchor_pos - 1 != total_residue - anchor_pos );//unlikely
-		assert( anchor_pos < seg_begin || anchor_pos > seg_end );
+		debug_assert( seg_begin < seg_end );
+		debug_assert( anchor_pos - 1 != total_residue - anchor_pos );//unlikely
+		debug_assert( anchor_pos < seg_begin || anchor_pos > seg_end );
 
 		//Is the anchor position close to n or c terminus.That will determine how the fold tree is set up
 		//    bool const close_to_n ( ( anchor_pos - 1 < total_residue - anchor_pos ) ? true : false );
@@ -233,7 +233,7 @@ namespace ssrbrelax {
 					 )
 	{
 
-		assert( seg_begin < seg_end );
+		debug_assert( seg_begin < seg_end );
 		bool segment_deleted( false );
 
 		for ( iterator it=rb_list.begin(), it_end=rb_list.end(); it!=it_end; ++it ){
@@ -267,7 +267,7 @@ namespace ssrbrelax {
 
 	{
 		int size = num_rb();
-		assert( size > 0 );
+		debug_assert( size > 0 );
 		int index = 0;
 		int const end = int ( numeric::random::uniform()*size );
 		iterator it = rb_list.begin();
@@ -389,7 +389,7 @@ namespace ssrbrelax {
 
 		using namespace conformation;
 
-		assert( this->num_rb() == 1 );
+		debug_assert( this->num_rb() == 1 );
 		//The X-axis has to be chosen in a secondary structure dependent way
 		//If the anchor_pos_res is in a strand, the X-axis is the vector
 		// passing through i-1 and i+1 C-alphas
@@ -428,12 +428,12 @@ namespace ssrbrelax {
 
 	{
 		using namespace conformation;
-		assert( this->num_rb() == 1 );
+		debug_assert( this->num_rb() == 1 );
 
 		//The Z-axis is chosen as a vector connecting CAs anchor_pos and flex_jump_pos
 		int const anchor_pos( this->anchor_res() );
 		int const flex_jump_pos( get_flex_jump_pos( this->seg_start(), this->seg_stop() ) );
-		assert( flex_jump_pos != 0 );
+		debug_assert( flex_jump_pos != 0 );
 
 		Residue const & rsd_anchor( pose.residue( anchor_pos ) );
 		Residue const & rsd_flex_jump( pose.residue( flex_jump_pos ) );
@@ -447,7 +447,7 @@ namespace ssrbrelax {
 																	core::pose::Pose & pose
 																	)
 	{
-		assert( this->num_rb() == 1 );
+		debug_assert( this->num_rb() == 1 );
 
 		//The Y-axis is orthogonal X and Z axes
 		numeric::xyzVector < Real > Z_axis;
@@ -464,7 +464,7 @@ Vector const RbSegments::alt_X_axis(
 {
 	using namespace conformation;
 
-	assert( this->num_rb() == 1 );
+	debug_assert( this->num_rb() == 1 );
 	//The X-axis is assigned as the helix axis vector. This is approximated as the vector
 	//connecting i - 3 and i + 3 residues. Where i is the flex_jump_pos
 	//The Z-axis is set as the line connecting the anchor_pos and flex_jump_pos
@@ -501,7 +501,7 @@ Vector const RbSegments::alt_X_axis(
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		}
 	}
-	assert( pose.secstruct( flex_jump_pos ) == 'E' );
+	debug_assert( pose.secstruct( flex_jump_pos ) == 'E' );
 	//Now define X-axis for strand
 	if( pose.secstruct( flex_jump_pos - 1 ) != 'E' && pose.secstruct( flex_jump_pos + 1 ) != 'E' ) {
 		Error() << "This is a very short strand. You are better off modeling this as loop " << "\n";
@@ -518,7 +518,7 @@ Vector const RbSegments::alt_Y_axis(
 	core::pose::Pose & pose
 )
 {
-	assert( this->num_rb() == 1 );
+	debug_assert( this->num_rb() == 1 );
 	//The Y-axis is orthogonal to X and Z axes
 	numeric::xyzVector < Real > Y_axis( cross( this->alt_X_axis( pose ),
 																			this->alt_Z_axis( pose ) ) );
@@ -532,7 +532,7 @@ Vector const RbSegments::alt_Z_axis(
 )
 {
 	using namespace conformation;
-	assert( this->num_rb() );
+	debug_assert( this->num_rb() );
 
 	//The Z-axis is chosen as the vector connecting CAs of anchor_pos and flex_jump_pos
 	int const anchor_pos( this-> anchor_res() );

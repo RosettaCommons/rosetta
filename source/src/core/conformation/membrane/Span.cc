@@ -157,11 +157,11 @@ bool Span::is_valid() const {
 
 	// short span
 	if ( length <= 5 ) {
-		TR << "WARNING: SHORT SPAN: SPAN IS ONLY " << length << " RESIDUES LONG!!!" << std::endl;
+		TR.Warning << "SHORT SPAN: SPAN IS ONLY " << length << " RESIDUES LONG!!!" << std::endl;
 	}
 
 	if ( length >= 30 ) {
-		TR << "WARNING: LONG SPAN: SPAN IS " << length << " RESIDUES LONG!!!" << std::endl;
+		TR.Warning << "LONG SPAN: SPAN IS " << length << " RESIDUES LONG!!!" << std::endl;
 	}
 
 	valid = true;

@@ -71,14 +71,6 @@ PDBTrajectoryRecorder::PDBTrajectoryRecorder(
 	PDBTrajectoryRecorder const & other
 ) : protocols::canonical_sampling::TrajectoryRecorder( other ) {}
 
-PDBTrajectoryRecorder&
-PDBTrajectoryRecorder::operator=( PDBTrajectoryRecorder const & /* other */ )
-{
-	// assignment not allowed
-	runtime_assert(false);
-	return *this;
-}
-
 protocols::moves::MoverOP
 PDBTrajectoryRecorder::clone() const
 {

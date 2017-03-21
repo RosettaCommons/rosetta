@@ -57,7 +57,7 @@ private:
 
 	/// @brief Assignment not allowed.
 	TrajectoryRecorder&
-	operator=( TrajectoryRecorder const & );
+	operator=( TrajectoryRecorder const & ) = delete;
 
 public:
 

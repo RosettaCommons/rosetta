@@ -203,7 +203,7 @@ SimpleHbondsToAtomFilter::compute( core::pose::Pose const & pose) const
 	// Now get the H childs of the target heavy atom and find Hbonds to them.
 	TR << "Now looking for Hbonds to H atoms attached to heavy atom."<<std::endl;
 	core::kinematics::AtomTree atmtree( p.conformation().atom_tree() );
-	assert( atmtree.has( atom_id ));
+	debug_assert( atmtree.has( atom_id ));
 	core::kinematics::tree::AtomCOP my_heavyatm( atmtree.atom( atom_id ).get_self_ptr() );
 	for ( core::Size i=0; i<my_heavyatm->n_nonjump_children(); ++i ) {
 		core::kinematics::tree::AtomCOP child( my_heavyatm->child(i));

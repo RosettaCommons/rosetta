@@ -132,8 +132,8 @@ RawStruct::print_conformation( std::ostream& out ) const {
 }
 
 Real RawStruct::get_debug_rmsd() {
-	basic::T("core.io.silent.RawStruct")
-		<< "Warning: calling get_debug_rmsd() method of RawStruct!";
+	basic::T("core.io.silent.RawStruct").Warning
+		<< "calling get_debug_rmsd() method of RawStruct!";
 	return 0;
 }
 

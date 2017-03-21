@@ -628,7 +628,7 @@ bool JumpSpecificAbrelax::close_loops( pose::Pose &pose, scoring::ScoreFunctionO
 
 		if ( option[ loop::debug_loop_closure ]() ) pose.dump_pdb(tag+"_post_closure.pdb");
 
-		if ( !success ) tr.Warning << "WARNING: no success in close_loops()" << std::endl;
+		if ( !success ) tr.Warning << "no success in close_loops()" << std::endl;
 		if ( success ) abrelax_checkpoints_.checkpoint( pose, tag, "close_loops");
 	}
 	return success;

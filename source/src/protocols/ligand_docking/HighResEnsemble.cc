@@ -285,7 +285,7 @@ void HighResEnsemble::prepare_single_ligand_pose(core::pose::Pose pose, core::Si
 
 void
 HighResEnsemble::apply(core::pose::Pose & pose) {
-	assert(num_cycles_ > 0);
+	debug_assert(num_cycles_ > 0);
 
 	rosetta_old_poses_.clear();
 	rosetta_old_scores_.clear();

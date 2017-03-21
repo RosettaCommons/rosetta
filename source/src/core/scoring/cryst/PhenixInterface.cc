@@ -425,7 +425,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				if (pose.residue_type(i).atom_type(j).is_virtual()) continue;
 
 				if (ignore_cys_hg && pose.residue(i).atom_name(j) == " HG ") {
-					TR.Debug << "Warning: Correcting disulfide at residue " << i << std::endl;
+					TR.Warning << "Correcting disulfide at residue " << i << std::endl;
 					continue;
 				}
 
@@ -433,7 +433,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 			}
 
 			if (add_cys_hg) { // disulfide accross symm interface
-				TR.Debug << "Warning: Correcting disulfide at residue " << i << std::endl;
+				TR.Warning << "Correcting disulfide at residue " << i << std::endl;
 
 				// convert CYS->CYD
 				utility::vector1< std::string > variant_types = rsd_i.type().properties().get_list_of_variants();
@@ -580,8 +580,8 @@ void PhenixInterface::stealBfactorsFromFile(
 		core::Size residALT_ros = pose.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
 
 		if (resid_ros != residALT_ros) {
-			TR << "FATAL ERROR!" << resid_ros << " != " << residALT_ros << std::endl;
-			TR << "reading line: " << atmLine << std::endl;
+			TR.Fatal << "ResID mismatch: " << resid_ros << " != " << residALT_ros << std::endl;
+			TR.Fatal << "reading line: " << atmLine << std::endl;
 			utility_exit_with_message( "aborting!" );
 		}
 
@@ -884,7 +884,7 @@ void PhenixInterface::initialize_target_evaluator(
 	//   check that the crystal refinement flag is specified
 	//   if not, don't die but warn the user
 	if (!basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ].user())
-		TR << "[WARNING] The flag -cryst::cryst_refine should be given for crystal refinement!  Continuing..." << std::endl;
+		TR.Warning << "The flag -cryst::cryst_refine should be given for crystal refinement!  Continuing..." << std::endl;
 
 	// obvious error check 3
 	//    make sure mtzfile is specified

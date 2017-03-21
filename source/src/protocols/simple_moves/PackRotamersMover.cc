@@ -221,12 +221,6 @@ PackRotamersMover::parse_my_tag(
 	Pose const & pose
 )
 {
-	//fpd (commenting out below) classes derived from PackRotamers may call this function
-	//if ( tag->getName() != "PackRotamersMover" ) {
-	// TR(t_warning) << " received incompatible Tag " << tag << std::endl;
-	// assert(false);
-	// return;
-	//}
 	if ( tag->hasOption("nloop") ) {
 		nloop_ = tag->getOption<Size>("nloop",1);
 		runtime_assert( nloop_ > 0 );

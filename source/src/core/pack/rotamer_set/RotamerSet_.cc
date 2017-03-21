@@ -102,8 +102,8 @@ RotamerSet_::build_rotamers(
 	}
 
 	if ( num_rotamers() == 0 ) {
-		tt << "[ WARNING ]  including current in order to get at least 1 rotamer !!!!!! " << resid() << ' ' <<
-			pose.residue( resid() ).name() << '\n';
+		tt.Warning << "including current in order to get at least 1 rotamer !!!!!! " << resid() << ' ' <<
+			pose.residue( resid() ).name() << std::endl;
 		id_for_current_rotamer_ = num_rotamers();
 		prepare_for_new_residue_type( pose.residue_type( resid() ));
 		ResidueOP rot = pose.residue( resid() ).create_rotamer();
@@ -117,7 +117,6 @@ RotamerSet_::build_rotamers(
 		(*rotsetop_iter)->alter_rotamer_set( pose, scorefxn, the_task, packer_neighbor_graph, *this );
 	}
 
-	tt.flush();
 	// tt << "Built " << num_rotamers() << " rotamers for residue " << resid() << " " << pose.residue(resid()).name() << std::endl;
 	// tt << *this << std::endl;
 }

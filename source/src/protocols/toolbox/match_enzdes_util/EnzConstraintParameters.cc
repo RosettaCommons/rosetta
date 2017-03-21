@@ -303,7 +303,7 @@ EnzConstraintParameters::convert_GeomSampleInfo_to_FuncOP(
 		}
 
 		if ( x_sd > 0.0 ) {
-			tr.Info << "WARNING: Constraint specified for tag " << gsi->tag() << " requests a periodic function. Standard-Deviation/tolerance is meaningless in this case. The tolerance value of " << gsi->tolerance() << " that you specified will be ignored!" << std::endl;
+			tr.Warning << "Constraint specified for tag " << gsi->tag() << " requests a periodic function. Standard-Deviation/tolerance is meaningless in this case. The tolerance value of " << gsi->tolerance() << " that you specified will be ignored!" << std::endl;
 		}
 
 		to_return = core::scoring::func::FuncOP( new core::scoring::func::CharmmPeriodicFunc(x0, gsi->force_const(), twopi/period_rad) );
@@ -498,7 +498,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 	empty_ = all_constraints_empty;
 
 	if ( all_constraints_empty ) {
-		tr.Info << "Warning: no constraints were added for constraint block " << cst_block_ << "." << std::endl;
+		tr.Warning << "no constraints were added for constraint block " << cst_block_ << "." << std::endl;
 	} else {
 		tr.Info << "for block " << cst_block_ << ", " << number_constraints_added << " newly generated constraints were added " << std::endl;
 	}

@@ -48,8 +48,8 @@ public:
 		VallChunkOP chunk, core::Size fragmentLength) :
 		chunk_(std::move(chunk)) {
 
-		assert(queryPosition>0);
-		assert(inChunkPosition>0);
+		debug_assert(queryPosition>0);
+		debug_assert(inChunkPosition>0);
 		queryResidueIndex_ = queryPosition;
 		vallResidueIndex_ = inChunkPosition;
 		fragmentLength_ = fragmentLength;

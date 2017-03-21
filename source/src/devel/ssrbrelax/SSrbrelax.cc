@@ -247,7 +247,7 @@ namespace ssrbrelax {
 		using namespace optimization;
 		using namespace conformation;
 
-		assert( dof > 0 && dof <= 6 );
+		debug_assert( dof > 0 && dof <= 6 );
 
 		int const cycles1( 2 ); //arbirary now
 		int const cycles2( 4 ); //arbitrary as well
@@ -385,7 +385,7 @@ namespace ssrbrelax {
 		using namespace basic::options;
 		utility::vector1<int> frag_sizes( option[ OptionKeys::SSrbrelax::frag_sizes ] );
 		FileVectorOption frag_files( option[OptionKeys::SSrbrelax::frag_files] );
-		assert( frag_sizes.size() == frag_files.size() );
+		debug_assert( frag_sizes.size() == frag_files.size() );
 
 		std::map< Size, bool > frag_libs_init;
 		for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
@@ -402,7 +402,7 @@ namespace ssrbrelax {
 						it_end = frag_libs_init.rend(); it != it_end; ++it ) {
 			Size const frag_size( it->first );
 			bool const frag_lib_init( it->second );
-			assert( frag_size < prev_size );
+			debug_assert( frag_size < prev_size );
 			if ( (!frag_lib_init) && prev_lib_op ) {
 				std::cout << "set up " << frag_size << "-mer library from " << prev_size << "-mer library" << std::endl;
 				protocols::frags::TorsionFragmentLibraryOP current_lib_op( frag_libs.find(frag_size)->second );

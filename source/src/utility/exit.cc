@@ -99,7 +99,7 @@ EXCN_utility_exit::EXCN_utility_exit( std::string const& msg, std::string const&
 {}
 
 void EXCN_utility_exit::show( std::ostream& os ) const {
-	os << "\n\n[ERROR] EXCN_utility_exit has been thrown from: "
+	os << "\n\n[ ERROR ] EXCN_utility_exit has been thrown from: "
 		<< file_ << " line: " << line_ << "\n";
 	if ( ! msg_.empty() ) os << "ERROR: " << msg_ << "\n\n";
 }

@@ -382,7 +382,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace core::conformation::symmetry;
 	using namespace protocols::toolbox::task_operations;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -423,10 +423,10 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 		// This does not work for symmetry yet. Anyone is free to implement it...
 		if ( ( flex_bb_docking_type == "ccd" ) || ( flex_bb_docking_type == "kic" ) ||  ( flex_bb_docking_type == "backrub" ) ) {
-			TR << "[ ERROR ] flexible_bb_docking is not implemented for symmetric docking yet..." << std::endl;
+			TR.Error << "flexible_bb_docking is not implemented for symmetric docking yet..." << std::endl;
 			exit(1);
 		} else {
-			TR << "[ ERROR ] Unknown flexible_bb_docking type: " << flex_bb_docking_type << std::endl;
+			TR.Error << "Unknown flexible_bb_docking type: " << flex_bb_docking_type << std::endl;
 			exit(1);
 		}
 
@@ -535,7 +535,7 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	using namespace core::pack::task::operation;
 	using namespace core::conformation::symmetry;
 
-	assert( core::pose::symmetry::is_symmetric( pose ));
+	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 

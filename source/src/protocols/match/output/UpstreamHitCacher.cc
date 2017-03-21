@@ -125,10 +125,10 @@ UpstreamHitCacher::process_hit(
 void
 UpstreamHitCacher::resize_arrays()
 {
-	assert( index_for_rotamer_.size() == n_geometric_constraints_ );
-	assert( scafrot_pair_for_conf_.size() == n_geometric_constraints_ );
-	assert( upstream_confs_.size() == n_geometric_constraints_ );
-	assert( queue_head_.size() == n_geometric_constraints_ );
+	debug_assert( index_for_rotamer_.size() == n_geometric_constraints_ );
+	debug_assert( scafrot_pair_for_conf_.size() == n_geometric_constraints_ );
+	debug_assert( upstream_confs_.size() == n_geometric_constraints_ );
+	debug_assert( queue_head_.size() == n_geometric_constraints_ );
 
 	std::fill( queue_head_.begin(), queue_head_.end(), 0 );
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {

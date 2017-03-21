@@ -589,7 +589,7 @@ SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & r
 	}
 
 	/// 2. rotno_2_packed_rotno_
-	assert( n_possible_rots_ == other.n_possible_rots_ ); // This doesn't vary?
+	debug_assert( n_possible_rots_ == other.n_possible_rots_ ); // This doesn't vary?
 	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) {
 		if ( rotno_2_packed_rotno_[ ii ] != other.rotno_2_packed_rotno_[ ii ] ) {
 			TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
@@ -612,7 +612,7 @@ SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & r
 	}
 
 	/// 4. packed_rotno_2_rotwell_
-	assert( n_rotameric_chi_ == other.n_rotameric_chi_ );
+	debug_assert( n_rotameric_chi_ == other.n_rotameric_chi_ );
 	if ( n_packed_rots_ == other.n_packed_rots_ ) {
 		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
 			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
@@ -709,7 +709,6 @@ Size SingleResidueDunbrackLibrary::memory_usage_dynamic() const
 void
 SingleResidueDunbrackLibrary::hokey_template_workaround()
 {
-	debug_assert( false );
 	utility_exit_with_message(
 		"ERROR: SingleResidueDunbrackLibrary::hokey_template_workaround should never be called!");
 

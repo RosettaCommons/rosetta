@@ -50,7 +50,7 @@ typedef utility::vector1<double> Probabilities;
 
 BiasedFragmentMover::BiasedFragmentMover(const PolicyOP& policy, const Probabilities& pdf)
 : policy_(policy), pdf_(pdf) {
-	assert(policy);
+	debug_assert(policy);
 	fragments_ = policy->fragments();
 	initialize_library();
 	initialize_probabilities();

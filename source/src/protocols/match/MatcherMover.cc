@@ -136,7 +136,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 			basic::options::option[ basic::options::OptionKeys::match::lig_name ] ) );
 	}
 
-	if ( !ligres_->type().is_ligand() ) tr.Error << "WARNING: downstream residue " << ligres_->type().name3() << " set in the matcher mover does not seem to be a ligand residue, matcher will likely not behave properly." << std::endl;
+	if ( !ligres_->type().is_ligand() ) tr.Error << "downstream residue " << ligres_->type().name3() << " set in the matcher mover does not seem to be a ligand residue, matcher will likely not behave properly." << std::endl;
 
 	ligpose.append_residue_by_jump( *ligres_, 1 );
 

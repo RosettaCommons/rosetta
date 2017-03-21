@@ -213,7 +213,7 @@ rna_design_test()
 					task->nonconst_residue_task( ii ).allow_noncanonical_aa(name);
 				}
 			}
-			assert( task->design_residue(ii) );
+			debug_assert( task->design_residue(ii) );
 		}
 	}
 

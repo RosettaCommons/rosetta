@@ -177,7 +177,7 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 			} else if ( score1 >= dssp_hbond_threshold && score2 >= dssp_hbond_threshold ) {
 				ires_HB = false;
 			} else {
-				TR << "WARNING: " << ires << ", " << jres << " is making strange hbond. " << std::endl;
+				TR.Warning << ires << ", " << jres << " is making strange hbond. " << std::endl;
 				continue;
 			}
 

@@ -170,11 +170,11 @@ EmbeddingDef::from_span(
 	// the reason this is not an exception is that we need this functionality
 	// when transforming a protein into the membrane
 	if ( pos1.z() < 0 && pos2.z() < 0 ) {
-		TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
-		TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
+		TR.Warning << "If your starting PDB is already translated into the " << std::endl;
+		TR.Warning << "membrane, then your TMspan does not span the membrane!" << std::endl;
 	} else if ( pos1.z() > 0 && pos2.z() > 0 ) {
-		TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
-		TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
+		TR.Warning << "If your starting PDB is already translated into the " << std::endl;
+		TR.Warning << "membrane, then your TMspan does not span the membrane!" << std::endl;
 	}
 
 	// compute center
@@ -205,11 +205,11 @@ EmbeddingDef::from_span_positive_z( core::pose::Pose const & pose, core::Size st
 	// the reason this is not an exception is that we need this functionality
 	// when transforming a protein into the membrane
 	if ( pos1.z() < 0 && pos2.z() < 0 ) {
-		TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
-		TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
+		TR.Warning << "If your starting PDB is already translated into the " << std::endl;
+		TR.Warning << "membrane, then your TMspan does not span the membrane!" << std::endl;
 	} else if ( pos1.z() > 0 && pos2.z() > 0 ) {
-		TR << "WARNING: If your starting PDB is already translated into the " << std::endl;
-		TR << "membrane, then your TMspan does not span the membrane!" << std::endl;
+		TR.Warning << "If your starting PDB is already translated into the " << std::endl;
+		TR.Warning << "membrane, then your TMspan does not span the membrane!" << std::endl;
 	}
 
 	// compute center

@@ -121,11 +121,11 @@ IteratedConvergenceMover::parse_my_tag(
 	auto find_filter( filters.find( filter_name ));
 
 	if ( find_mover == movers.end() ) {
-		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
+		TR.Error << "mover not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
 	if ( find_filter == filters.end() ) {
-		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
+		TR.Error << "filter not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
 	submover(find_mover->second);

@@ -63,7 +63,7 @@ SymmetricFragmentMover::apply_fragment(
 		if ( frame.is_continuous() ) {
 			frame.fragment( frag_num ).apply( movemap, pose, new_start, new_start + frame.length() - 1 );
 		} else {
-			tr.Warning << "WARNING: symmetric mover did not copy fragment move for non-continous fragment, only applied on monomer" << std::endl;
+			tr.Warning << "symmetric mover did not copy fragment move for non-continous fragment, only applied on monomer" << std::endl;
 		}
 	}
 	return success;

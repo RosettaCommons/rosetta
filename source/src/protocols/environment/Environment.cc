@@ -127,7 +127,7 @@ core::pose::Pose Environment::start( core::pose::Pose const & in_pose ){
 
 	core::pose::Pose broker_result = this->broker( in_pose );
 
-	assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( broker_result.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
+	debug_assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( broker_result.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 
 	return broker_result;
 }
@@ -135,7 +135,7 @@ core::pose::Pose Environment::start( core::pose::Pose const & in_pose ){
 core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 	ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< ProtectedConformation const >( pose.conformation_ptr() );
 	if ( !conf ) {
-		tr.Error << "[ERROR] Environment::end recieved a pose that contains an unprotcted Conformation."
+		tr.Error << "Environment::end recieved a pose that contains an unprotcted Conformation."
 			<< std::endl;
 		throw utility::excn::EXCN_BadInput( "Nonprotected pose came in to Environment::end" );
 	}
@@ -146,7 +146,7 @@ core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 	if ( new_pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) {
 
 		if ( ! broker_->result().pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) {
-			tr.Warning << "[WARNING] The brokered pose contained WriteableCacheable data in the Pose DataCache, but this "
+			tr.Warning << "The brokered pose contained WriteableCacheable data in the Pose DataCache, but this "
 				<< "data is no longer present in the DataCache at environment closing. This is probably "
 				<< "because a call was made to pose::set_new_conformation somewhere (anywhere), which clears the "
 				<< "cache. Certain features of one or more of the ClientMovers registered to the Environment '"
@@ -303,7 +303,7 @@ core::pose::Pose Environment::broker( core::pose::Pose const & in_pose ){
 	std::map< ClientMoverOP, core::environment::DofPassportOP > mover_passports;
 
 	for ( ClientMoverOP mover : registered_movers_ ) {
-		assert( mover_passports.find( mover ) == mover_passports.end() );
+		debug_assert( mover_passports.find( mover ) == mover_passports.end() );
 		mover_passports[ mover ] = Parent::issue_passport( mover->get_name() );
 		assign_passport( mover, mover_passports[ mover ] );
 	}
@@ -344,7 +344,7 @@ bool Environment::is_registered( ClientMoverOP mover ) const {
 EnvironmentCAP Environment::superenv() const{
 	if ( ! Parent::superenv().expired() ) {
 		EnvironmentCOP env = utility::pointer::dynamic_pointer_cast< Environment const >( Parent::superenv().lock() );
-		assert( env != nullptr );
+		debug_assert( env != nullptr );
 		return EnvironmentCAP( env );
 	} else {
 		return EnvironmentCAP();

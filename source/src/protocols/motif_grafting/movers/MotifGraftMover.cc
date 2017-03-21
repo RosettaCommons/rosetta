@@ -159,7 +159,7 @@ void MotifGraftMover::apply(core::pose::Pose & pose)
 
 	if ( !motif_match_results_.empty() ) {
 		// Error
-		TR.Warning << "Warning. Received new input pose with matches remaining." << std::endl;
+		TR.Warning << "Received new input pose with matches remaining." << std::endl;
 	}
 
 	motif_match_results_ = generate_scaffold_matches(pose, gp_p_motif_, gp_p_contextStructure_);

@@ -132,7 +132,7 @@ BundleReporterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	if ( tag->hasOption( "threshold" ) ) {
 		if ( filter_behaviour() != brf_filter_by_energy && TR.Warning.visible() ) {
 			if ( TR.visible() ) TR.flush();
-			TR.Warning << "Warning!  A \"threshold\" option was specified in the setup for the BundleReporterFilter, but this will be ignored because the filter behaviour was not set to \"FILTER\"." << std::endl;
+			TR.Warning << "A \"threshold\" option was specified in the setup for the BundleReporterFilter, but this will be ignored because the filter behaviour was not set to \"FILTER\"." << std::endl;
 			TR.Warning.flush();
 		}
 	}
@@ -146,7 +146,7 @@ BundleReporterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	set_report_sequence( tag->getOption<bool>("report_sequence", false) );
 	if ( tag->hasOption( "use_three_letter_code" ) && !report_sequence() && TR.Warning.visible() ) {
 		if ( TR.visible() ) TR.flush();
-		TR.Warning << "Warning!  The \"use_three_letter_code\" option was specified, but it will be ignored since \"report_sequence\" is set to false." << std::endl;
+		TR.Warning << "The \"use_three_letter_code\" option was specified, but it will be ignored since \"report_sequence\" is set to false." << std::endl;
 		TR.Warning.flush();
 	}
 	set_use_threeletter( tag->getOption<bool>("use_three_letter_code", false) );

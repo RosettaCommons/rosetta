@@ -1076,7 +1076,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		if ( option[OptionKeys::remodel::staged_sampling::starting_pdb].user() ) {
 			set_starting_pdb(pose);
 		}
-		assert(!((option[OptionKeys::remodel::staged_sampling::starting_pdb].user()) && (option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices]()))); // starting pdb not compatible with ideal helices
+		debug_assert(!((option[OptionKeys::remodel::staged_sampling::starting_pdb].user()) && (option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices]()))); // starting pdb not compatible with ideal helices
 
 
 		//setup score functions and movemap and where to sample--------------
@@ -1222,7 +1222,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		Real const final_boost_closure_cbreak_weight = 5.0;
 		Real const boost_closure_cbreak_increment = ( final_boost_closure_cbreak_weight - final_standard_cbreak_weight ) / boost_closure_cycles();
 
-		assert( final_boost_closure_cbreak_weight >= final_standard_cbreak_weight );
+		debug_assert( final_boost_closure_cbreak_weight >= final_standard_cbreak_weight );
 
 		sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 
@@ -1709,7 +1709,7 @@ void RemodelLoopMover::set_segment_stage(
 
 		// fragment movers
 		FragmentMoverOPs frag_movers = create_fragment_movers( movemap );
-		assert( !frag_movers.empty() );
+		debug_assert( !frag_movers.empty() );
 
 		// parameters
 		//Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
@@ -1969,7 +1969,7 @@ void RemodelLoopMover::loophash_stage(
 
 		// fragment movers
 		FragmentMoverOPs frag_movers = create_fragment_movers( movemap );
-		assert( !frag_movers.empty() );
+		debug_assert( !frag_movers.empty() );
 
 		// parameters
 		//Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
@@ -2352,7 +2352,7 @@ void RemodelLoopMover::abinitio_stage(
 	// }
 
 	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,smoothMoves,sfxOP,fragScoreThreshold);
-	assert( !frag_movers.empty() );
+	debug_assert( !frag_movers.empty() );
 
 	// set appropriate topology
 	//will need to change the foldtree when doing things with symmetry. For now I'm keeping the original foldtree
@@ -2717,7 +2717,7 @@ void RemodelLoopMover::simultaneous_stage(
 
 	// Create fragment movers for each loop for each fragment set.  We want to allow an equal probability of movement per-loop, rather than per-residue.
 	FragmentMoverOPs frag_movers = create_per_loop_fragment_movers( loops_to_model );
-	assert( !frag_movers.empty() );
+	debug_assert( !frag_movers.empty() );
 
 	// set appropriate topology
 	if ( keep_input_foldtree_ ) {}
@@ -2983,7 +2983,7 @@ void RemodelLoopMover::independent_stage(
 
 		// fragment movers
 		FragmentMoverOPs frag_movers = create_fragment_movers( movemap );
-		assert( !frag_movers.empty() );
+		debug_assert( !frag_movers.empty() );
 
 		// parameters
 		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
@@ -3555,7 +3555,7 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 							tmp_frame->add_fragment((*frame_i)->fragment_ptr(ii));
 						}
 					}
-					assert(frag_ct != 0);//0 frags at this position. You have chosen a bad abego definition.
+					debug_assert(frag_ct != 0);//0 frags at this position. You have chosen a bad abego definition.
 					tmp_frags->add(tmp_frame);
 				}
 			}
@@ -3703,7 +3703,7 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 	using namespace OptionKeys::remodel;
 	using core::Size;
 	PoseOP inputPose = core::import_pose::pose_from_file(option[OptionKeys::remodel::staged_sampling::starting_pdb], core::import_pose::PDB_file);
-	assert(inputPose->size() == pose.size());
+	debug_assert(inputPose->size() == pose.size());
 	for ( Size ii=2; ii<pose.size(); ++ii ) {
 		pose.set_phi(ii,inputPose->phi(ii));
 		pose.set_psi(ii,inputPose->psi(ii));

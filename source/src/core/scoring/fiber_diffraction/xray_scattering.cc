@@ -82,7 +82,7 @@ OneGaussianScattering get_A( std::string elt ) {
 
 	if ( elt_db.find( elt ) == elt_db.end() ) {
 		// default to C
-		TR.Warning << "[ WARNING ] Unknown atom " << elt << std::endl;
+		TR.Warning << "Unknown atom " << elt << std::endl;
 		return elt_db["C"];
 	} else {
 		return elt_db[ elt ];
@@ -110,7 +110,7 @@ KromerMann get_km( std::string elt ) {
 
 	if ( elt_db.find( elt ) == elt_db.end() ) {
 		// default to C
-		TR.Warning << "[ WARNING ] Unknown atom " << elt << std::endl;
+		TR.Warning << "Unknown atom " << elt << std::endl;
 		return elt_db["C"];
 	} else {
 		return elt_db[ elt ];

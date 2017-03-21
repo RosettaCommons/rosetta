@@ -180,8 +180,6 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		// Register the empty cache holder if not done so yet.
 		PoissonBoltzmannEnergy::PBLifetimeCacheOP new_cache( new PoissonBoltzmannEnergy::PBLifetimeCache() );
 		pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, new_cache );
-
-		//runtime_assert(false);
 	}
 	PBLifetimeCacheOP cached_data =
 		static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache >(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));

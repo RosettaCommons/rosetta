@@ -78,8 +78,8 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 
 	utility::vector1<core::Real> res_scores; // needed if output res scores or pdb
 	if( raw_stats ) { // stupid duplicate code....
-	assert( pd.spheres.size() > 0 );
-	assert( pd.centers.size() > 0 );
+	debug_assert( pd.spheres.size() > 0 );
+	debug_assert( pd.centers.size() > 0 );
 
 	SasaOptions opts;
 	opts.surrounding_sasa_smoothing_window = 1+2*oversample;

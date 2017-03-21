@@ -273,7 +273,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 		}
 
 	} else {
-		TR << "Warning: -partners is not specified and prepack partially cannot check compatibility of ensembles. EnsembleDock may fail." << std::endl;
+		TR.Warning << "-partners is not specified and prepack partially cannot check compatibility of ensembles. EnsembleDock may fail." << std::endl;
 	}
 
 	// loop over all member pairs and compare sequences

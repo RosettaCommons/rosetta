@@ -1642,7 +1642,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 		res_end2 = sym_info->num_independent_residues();
 		if ( multicomponent ) {
 			if ( sym_dof_names(pose1).size() != 2 ) {
-				cout << "WARNING: more than two symdofname, you better know what you're doing..." << endl;
+				TR.Warning << "more than two symdofname, you better know what you're doing..." << endl;
 			}
 			// for(std::string const & s : sym_dof_names(pose1)) cout << s << endl;
 			intra_subs1 = get_jump_name_to_subunits(pose1,sym_dof_names(pose1)[1]);
@@ -2104,11 +2104,11 @@ ostream & operator<<(ostream & out, XformScoreSringMap const & x){
 void fill_xform_score_from_file(XformScoreOP & xs,string const & datfile, Real const & wt=1.0){
 	// else utility_exit_with_message("already populated: "+ datfile);
 	if ( !XformScore::read_binary(xs,datfile,false,wt) ) {
-		TR << "WARNING: fail to read: " << datfile << endl;
+		TR.Warning << "fail to read: " << datfile << endl;
 		if ( utility::file::file_exists(datfile) ) {
-			TR<<"file exists, error rading"<<endl;
+			TR.Warning << "file exists, error rading"<<endl;
 		} else {
-			TR<<"file does not exist " << datfile << endl;
+			TR.Warning << "file does not exist " << datfile << endl;
 		}
 		xs = NULL;
 	}

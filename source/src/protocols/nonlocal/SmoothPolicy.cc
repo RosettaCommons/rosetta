@@ -34,7 +34,7 @@ typedef utility::vector1<core::Real> ScoreList;
 
 /// @brief Convenience method for retrieving the single highest-weighted sample
 core::Size make_selection(numeric::random::WeightedReservoirSampler<core::Size>* sampler) {
-	assert(sampler);
+	debug_assert(sampler);
 	utility::vector1<core::Size> results;
 	sampler->samples(&results);
 	return results[1];
@@ -47,7 +47,7 @@ core::Size SmoothPolicy::choose(const core::fragment::Frame& frame,
 	const core::pose::Pose& pose) {
 	using core::Size;
 	using numeric::random::WeightedReservoirSampler;
-	assert(frame.nr_frags() > 0);
+	debug_assert(frame.nr_frags() > 0);
 
 	ScoreList scores;
 	scorer_.score(frame, pose, scores);

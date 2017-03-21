@@ -295,7 +295,7 @@ std::ostream& operator<< ( std::ostream& out, PairingStatistics const& ps ) {
 		for ( auto isp = ps.topology( it->second ).begin(),
 				eisp = ps.topology( it->second ).end(); isp != eisp; ++isp ) {
 			if ( !isp->range_check() ) {
-				tr.Error << "[ERROR] skip inconsistent pairing... " << *isp << std::endl;
+				tr.Error << "skip inconsistent pairing... " << *isp << std::endl;
 				continue;
 			}
 			out << "\nPAIRSTAT_ENTRY: ";
@@ -312,7 +312,7 @@ std::ostream& operator<< ( std::ostream& out, PairingStatistics const& ps ) {
 
 void PairingStatEntry::show( std::ostream& out ) const {
 	if ( !strand_pairing_.range_check() ) {
-		tr.Error << "[ERROR] skip inconsistent pairing... " << strand_pairing_ << std::endl;
+		tr.Error << "skip inconsistent pairing... " << strand_pairing_ << std::endl;
 		return;
 	}
 	out << "PAIRSTAT_ENTRY: " << F(5,2,weight() ) << " " << frequency() << " " <<strand_pairing_ << " ";
@@ -389,7 +389,7 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 			is >> entry_tag >> weight >> ntag >> pairing;
 			if ( is.fail() ) return is;
 			if ( !pairing.range_check() ) {
-				tr.Error << "[ERROR] read inconsistent pairing in " << tag << " " << model_weight << " " << model_ID << std::endl;
+				tr.Error << "read inconsistent pairing in " << tag << " " << model_weight << " " << model_ID << std::endl;
 				tr.Error << "offending pairing " << pairing << std::endl;
 				is.setstate( std::ios_base::failbit );
 				return is;

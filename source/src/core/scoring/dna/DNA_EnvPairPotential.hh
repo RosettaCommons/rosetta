@@ -97,7 +97,7 @@ inline
 Size
 DNA_EnvPairPotential::get_pair_disbin( Real const dis2 ) const
 {
-	assert( dis2 <= nbr_dis2_threshold_ );
+	debug_assert( dis2 <= nbr_dis2_threshold_ );
 	for ( Size bin= n_pair_disbins_; bin >= 2; --bin ) {
 		if ( pair_bin_lower_bounds_[ bin ] < dis2 ) return bin;
 	}

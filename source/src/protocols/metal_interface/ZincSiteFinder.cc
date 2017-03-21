@@ -79,7 +79,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 	//if the zinc residue position was given in the constructor...
 	if ( zinc_res_ > 0 && zinc_res_ <= pose_length ) {
 		std::string name3 = pose.residue(zinc_res_).name3();
-		assert( name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "ZNX" || name3 == "HIZ");
+		debug_assert( name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "ZNX" || name3 == "HIZ");
 		msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 		index++;
 		zinc = pose.residue(zinc_res_).atom(1).xyz();

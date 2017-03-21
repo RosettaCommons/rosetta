@@ -300,7 +300,7 @@ SymmetricCycpepAlign::do_auto_detection_of_symmetry(
 	}
 
 	if ( !found ) {
-		TR.Warning << "Warning: The SymmetricCycpepAlign mover attempted to auto-detect the symmetry of the peptide, but the peptide was not at all symmetric!" << std::endl;
+		TR.Warning << "The SymmetricCycpepAlign mover attempted to auto-detect the symmetry of the peptide, but the peptide was not at all symmetric!" << std::endl;
 	} else {
 		symmrepeats = symfilt.symm_repeats();
 		mirrorsymm = symfilt.mirror_symm();
@@ -327,7 +327,7 @@ SymmetricCycpepAlign::do_symmetry_checks(
 	core::select::residue_selector::ResidueSelectorCOP selector( select_protein_residues( pose ) );
 
 	if ( protrescount % symmrepeats != 0 ) {
-		TR.Warning << "Warning: The number of residues in the peptide is incompatible with " + symmtype.str() + " symmetry." << std::endl;
+		TR.Warning << "The number of residues in the peptide is incompatible with " + symmtype.str() + " symmetry." << std::endl;
 		return false;
 	}
 	CycpepSymmetryFilter symfilt;
@@ -336,7 +336,7 @@ SymmetricCycpepAlign::do_symmetry_checks(
 	symfilt.set_symm_repeats( symmrepeats );
 	symfilt.set_mirror_symm( mirrorsymm );
 	if ( !symfilt.apply(pose) ) {
-		TR.Warning << "Warning: The peptide does not have " + symmtype.str() + " symmetry." << std::endl;
+		TR.Warning << "The peptide does not have " + symmtype.str() + " symmetry." << std::endl;
 		return false;
 	}
 

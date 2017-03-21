@@ -122,7 +122,7 @@ void
 DOFs_manager::set_phi_dof
 (char chain, int pdbres, double std_dev, double max_uni_dev)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   Pdbres_id pdbres_id (chain, pdbres);
   set_phi_dof(pdbres_id, std_dev, max_uni_dev);
 }
@@ -134,11 +134,11 @@ void DOFs_manager::set_phi_dof
 {
   using namespace core::kinematics;
   using namespace core::id;
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   int poseres_id = pdbres_to_poseres(pdbres_id);
   std::cout << "Set_phi_dof: [Poseres id = " << poseres_id << "], for residue "
 	    << pdbres_id.chain << pdbres_id.res_id << std::endl;
-  assert(poseres_id != -1);
+  debug_assert(poseres_id != -1);
   DOF_info dof_info(poseres_id, std_dev, max_uni_dev);
   if(this->_free_phi_list.find(dof_info) != this->_free_phi_list.end())
     return;
@@ -151,7 +151,7 @@ void DOFs_manager::set_phi_dof
 void DOFs_manager::set_psi_dof
 	(char chain, int pdbres, double std_dev, double max_uni_dev)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   Pdbres_id pdbres_id (chain, pdbres);
   set_psi_dof(pdbres_id, std_dev, max_uni_dev);
 }
@@ -162,9 +162,9 @@ void DOFs_manager::set_psi_dof
 	(Pdbres_id pdbres_id, double std_dev, double max_uni_dev)
 {
   using namespace core::id;
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   int poseres_id = pdbres_to_poseres(pdbres_id);
-  assert(poseres_id != -1);
+  debug_assert(poseres_id != -1);
   DOF_info dof_info(poseres_id, std_dev, max_uni_dev);
   if(this->_free_psi_list.find(dof_info) != this->_free_psi_list.end())
     return;
@@ -177,7 +177,7 @@ void DOFs_manager::set_psi_dof
 void DOFs_manager::set_residue_dofs
 	(char chain, int pdbres, double std_dev, double max_uni_dev) // both phi and psi, = 2 DOFs
 {
-	assert(_is_initialized);
+	debug_assert(_is_initialized);
 	Pdbres_id pdbres_id (chain, pdbres);
 	set_residue_dofs(pdbres_id, std_dev, max_uni_dev);
 }
@@ -186,7 +186,7 @@ void DOFs_manager::set_residue_dofs
 void DOFs_manager::set_residue_dofs
 	(Pdbres_id pdbres_id, double std_dev, double max_uni_dev) // both phi and psi, = 2 DOFs
 {
-	assert(_is_initialized);
+	debug_assert(_is_initialized);
 	set_phi_dof(pdbres_id, std_dev, max_uni_dev);
 	set_psi_dof(pdbres_id, std_dev, max_uni_dev);
 }
@@ -198,7 +198,7 @@ void DOFs_manager::apply_uniform_sample_all(core::pose::Pose& pose) // apply uni
 {
   using namespace std;
   bool local_debug = false;//true;
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   // iteratoe over phi dofs:
   for(const auto & iter : _free_phi_list)
     {
@@ -227,7 +227,7 @@ void DOFs_manager::apply_uniform_sample_all(core::pose::Pose& pose) // apply uni
 // TODO: very naive implementation, imporvement requires switching from set data struct to vector or map
 void DOFs_manager::apply_uniform_sample_random_DOF(core::pose::Pose& pose)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   std::set<DOF_info>::const_iterator iter;
   // choose DOF randomly
   unsigned int dof_index = int(this->_n_free_dofs * numeric::random::uniform()) + 1;
@@ -257,7 +257,7 @@ void DOFs_manager::apply_uniform_sample_random_DOF(core::pose::Pose& pose)
 // (i.e. Norm(current value, var)
 void DOFs_manager::apply_gaussian_sample_all(core::pose::Pose& pose)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   // iteratoe over phi dofs:
   for (const auto & iter : _free_phi_list) {
     double new_val = numeric::nonnegative_principal_angle_degrees(
@@ -277,7 +277,7 @@ void DOFs_manager::apply_gaussian_sample_all(core::pose::Pose& pose)
 // (i.e. Norm(current value, var)
 void DOFs_manager::apply_gaussian_sample_random_DOF(core::pose::Pose& pose)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   std::set<DOF_info>::const_iterator iter;
   // choose DOF randomly
   unsigned int dof_index = int(this->_n_free_dofs * numeric::random::uniform()) + 1;
@@ -311,7 +311,7 @@ void DOFs_manager::apply_gaussian_sample_random_DOF(core::pose::Pose& pose)
 std::vector<double> const
 DOFs_manager::get_dofs_values_vector(core::pose::Pose const& pose) const
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   std::vector<double> return_vector(this->_n_free_dofs);
   int k = 0;
   std::set<DOF_info>::const_iterator iter, end;
@@ -332,7 +332,7 @@ DOFs_manager::get_dofs_values_vector(core::pose::Pose const& pose) const
 void
 DOFs_manager::apply_dofs_values_vector(core::pose::Pose& pose, std::vector<double> const& values_vector)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   int k = 0;
   std::set<DOF_info>::const_iterator iter, end;
   // iterate over phi dofs:
@@ -348,7 +348,7 @@ DOFs_manager::apply_dofs_values_vector(core::pose::Pose& pose, std::vector<doubl
 // i.e. chain, res_id and insertion letter
 int DOFs_manager::pdbres_to_poseres(char chain, int pdb_res, char insert_letter)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   // look up in map
   Pdbres_id pdbres_id(chain, pdb_res, insert_letter);
   return pdbres_to_poseres(pdbres_id);
@@ -367,7 +367,7 @@ int DOFs_manager::pdbres_to_poseres(char chain, int pdb_res, char insert_letter)
 // Implementation details: use map
 int DOFs_manager::pdbres_to_poseres(Pdbres_id pdbres_id)
 {
-  assert(_is_initialized);
+  debug_assert(_is_initialized);
   _template_pose->pdb_info()->pdb2pose
     (pdbres_id.chain, pdbres_id.res_id, pdbres_id.insert_letter);
   t_map_pdbres_to_pose::const_iterator find_iter
@@ -394,7 +394,7 @@ void DOFs_manager::build_pdbres_to_pose_mapping()
       pdbres.chain = pdb_info->chain(i);
       pdbres.res_id = pdb_info->number(i);
       pdbres.insert_letter = pdb_info->icode(i);
-      assert(_map_pdbres_to_pose.find(pdbres) == _map_pdbres_to_pose.end()); // TODO: can we assume no too pdb_ids are identical?
+      debug_assert(_map_pdbres_to_pose.find(pdbres) == _map_pdbres_to_pose.end()); // TODO: can we assume no too pdb_ids are identical?
       _map_pdbres_to_pose[pdbres] = i;
     }
 }

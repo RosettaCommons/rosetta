@@ -347,7 +347,7 @@ HotspotStubSetOP HotspotStubSet::cluster( ) {
 					TR.Debug << lowE_index << " " << stub->bonus_value() << " " << score << " " << best_score << std::endl;
 				}
 			}
-			assert( lowE_index != 0 );
+			debug_assert( lowE_index != 0 );
 			lowE_members.push_back( lowE_index );
 		}
 
@@ -533,7 +533,7 @@ HotspotStubSet::remove_stub( HotspotStubCOP stub ){
 			return( true );
 		}
 	}
-	TR.Warning<<"WARNING: Stub "<<stub<<" not found in remove stub"<<std::endl;
+	TR.Warning<<"Stub "<<stub<<" not found in remove stub"<<std::endl;
 	return( false );
 }
 
@@ -606,7 +606,7 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 	if ( num_to_remove <= 0 ) return;
 	if ( num_to_remove >= ( int ) size() ) {
-		TR.Error <<"ERROR: Trying to remove "<< num_to_remove<<" stubs from a set containing "<<size()<<" stubs."<<std::endl;
+		TR.Error << "Trying to remove "<< num_to_remove<<" stubs from a set containing "<<size()<<" stubs."<<std::endl;
 		utility_exit();
 	}
 

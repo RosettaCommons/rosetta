@@ -411,13 +411,13 @@ void CCDLoopClosureMover::init_options()
 
 	if ( option[ OptionKeys::loops::ccd::max_torsion_delta_per_move ].user() ) {
 		utility::vector1< Angle > const opt = option[ OptionKeys::loops::ccd::max_torsion_delta_per_move ]();
-		assert( opt.size() == 3 ); // this should be taken care of by the option system
+		debug_assert( opt.size() == 3 ); // this should be taken care of by the option system
 		max_per_move_torsion_delta_per_residue( opt[ 1 ], opt[ 2 ], opt[ 3 ] );
 	}
 
 	if ( option[ OptionKeys::loops::ccd::max_torsion_delta ].user() ) {
 		utility::vector1< Angle > const opt = option[ OptionKeys::loops::ccd::max_torsion_delta ]();
-		assert( opt.size() == 3 ); // this should be taken care of by the option system
+		debug_assert( opt.size() == 3 ); // this should be taken care of by the option system
 		max_total_torsion_delta_per_residue( opt[ 1 ], opt[ 2 ], opt[ 3 ] );
 	}
 
@@ -664,7 +664,7 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 			// If adding alpha to the previous total_torsion_delta pushes us past 180 degrees from the starting
 			// torsion angle, then it won't work, so check for that case.
 			// (Note that if max_total_torsion_delta_ > 180 degrees, we won't ever get here.)
-			assert( alpha + max_total_torsion_delta < 180 );
+			debug_assert( alpha + max_total_torsion_delta < 180 );
 			if ( alpha > 0 ) {
 				alpha -= ( total_torsion_delta - max_total_torsion_delta + 0.01 );
 			} else {

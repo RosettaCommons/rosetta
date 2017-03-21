@@ -101,7 +101,8 @@ extern std::ostream& operator<<( std::ostream& os, ClaimStrength::PrioSubtype co
 	} else if ( ir == ClaimStrength::EXCLUSIVE ) {
 		os << "EXCLUSIVE";
 	} else {
-		assert( false );
+		os << "UNKNOWN_CLAIM_STRENGTH";
+		debug_assert( false ); // in debug mode only.
 	}
 	return os;
 }

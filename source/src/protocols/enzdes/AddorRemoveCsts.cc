@@ -90,7 +90,7 @@ AddOrRemoveMatchCsts::apply( core::pose::Pose & pose )
 	std::string cstfile( cstfile_ != "" ? cstfile_ : option_cstfile_ );
 	//safety check for this function being called without a cstfile having been specified
 	if ( (cstfile == "") && (cstfile_map_.size() == 0) ) {
-		tr.Warning << "Warning: apply function of enzdes constraints mover called even though no cstfile has been specified on the commandline, in the tag, or programmatically. This function will have no effect." << std::endl;
+		tr.Warning << "apply function of enzdes constraints mover called even though no cstfile has been specified on the commandline, in the tag, or programmatically. This function will have no effect." << std::endl;
 		return;
 	}
 
@@ -117,7 +117,7 @@ AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 {
 	cstfile_ = tag->getOption<std::string>( "cstfile", "" );
 	if ( (cstfile_ == "") && ( option_cstfile_ == "" ) ) {
-		tr.Warning << "WARNING: No name for the enzdes .cst file was specified in either the options, the xml tag, or programatically. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
+		tr.Warning << "No name for the enzdes .cst file was specified in either the options, the xml tag, or programatically. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
 	}
 
 	std::string cst_instruction = tag->getOption<std::string>( "cst_instruction", "void" );
@@ -149,7 +149,7 @@ AddOrRemoveMatchCsts::get_const_EnzConstraintIO_for_cstfile( std::string cstfile
 	}
 	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP>::const_iterator enzio_it = cstfile_map_.find( cstfile );
 	if ( enzio_it == cstfile_map_.end() ) {
-		tr.Warning << "WARNING: trying to get an EnzConstraintIOOP object for cstfile " << cstfile << " that hasn't been instantiated yet. Returning NULL pointer." << std::endl;
+		tr.Warning << "trying to get an EnzConstraintIOOP object for cstfile " << cstfile << " that hasn't been instantiated yet. Returning NULL pointer." << std::endl;
 		return nullptr;
 	}
 	return enzio_it->second;

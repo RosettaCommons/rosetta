@@ -376,7 +376,7 @@ MPI_Refine_Master::process_round(){
 
 		protocols::wum::SilentStructStore clustered;
 		if ( library_central().size() < ncluster ) {
-			TR << "Warning: library smaller than cluster size requested; returning whole library without clustering" << std::endl;
+			TR.Warning << "library smaller than cluster size requested; returning whole library without clustering" << std::endl;
 			clustered = library_central();
 		} else {
 			protocols::mpi_refinement::Clusterer clusterer;
@@ -637,7 +637,7 @@ MPI_Refine_Master::process_outbound_wus(){
 				TR.Debug << "Wait for new structures!" << std::endl;
 				return;
 			} else {
-				TR.Error << "FATAL ERROR:  library_ref_ is empty! " << std::endl;
+				TR.Fatal << "In MPI_Refine_Master:  library_ref_ is empty! " << std::endl;
 				utility_exit_with_message( "FATAL ERROR:  library_central_ is empty! " );
 			}
 		}
@@ -1016,7 +1016,7 @@ MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
 	} else if ( pick_strategy.compare( "sort" ) == 0 ) {
 		pick_strategy_no = 2;
 	} else {
-		TR << "Warning: unknown picking strategy: " << pick_strategy << ", set as random" << std::endl;
+		TR.Warning << "unknown picking strategy: " << pick_strategy << ", set as random" << std::endl;
 	}
 
 	resultfeedback->set_options( objfunction );
@@ -1119,7 +1119,7 @@ MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	assert( decoys.size() > 0 );
+	debug_assert( decoys.size() > 0 );
 
 	// averager: construct via SilentStructStore
 	pose::Pose pose;

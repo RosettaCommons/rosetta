@@ -226,7 +226,7 @@ best_bbcst_residues( core::pose::Pose const & pose, core::Size const chain, core
 		// only use it if the cst actually evaluates
 		if ( all_residues[i].first < 0 ) best_residues.push_back( all_residues[i].second );
 	}
-	assert( best_residues.size() <= n_return );
+	debug_assert( best_residues.size() <= n_return );
 	return best_residues;
 }
 

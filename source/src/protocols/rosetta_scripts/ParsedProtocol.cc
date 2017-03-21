@@ -152,7 +152,7 @@ ParsedProtocol::apply( Pose & pose )
 		} else if ( mode_ =="single_random" ) {
 			random_single_protocol(pose);
 		} else {
-			TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
+			TR.Warning << "mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
 		}
 
 		if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) { // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
@@ -335,7 +335,7 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 		mover_to_add = find_mover->second;
 	} else if ( tag_ptr->getName() != "Add" ) {
 		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
-		assert( new_mover );
+		debug_assert( new_mover );
 
 		if ( tag_ptr->hasOption("name") ) {
 			TR.Warning << "The mover named '" << tag_ptr->getOption<std::string>( "name" )

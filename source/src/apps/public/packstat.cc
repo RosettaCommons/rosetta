@@ -145,8 +145,8 @@ void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const 
 	//TRps << "writting stupid pdb to "+OUT_TAG+".pdb" << std::endl;
 	ostringstream out;
 	// if( pdb.atoms().size() != spheres.size() ) { // hydrogens!
-	//  TRps << "WARNING: output_packstat_pdb: size of pdb.atoms() != size of spheres" << std::endl;
-	//  TRps << "         spheres: " << spheres.size() << ", pdb.atoms(): " << pdb.atoms().size() << std::endl;
+	//  TRps.Warning << "output_packstat_pdb: size of pdb.atoms() != size of spheres" << std::endl;
+	//  TRps.Warning << "spheres: " << spheres.size() << ", pdb.atoms(): " << pdb.atoms().size() << std::endl;
 	// }
 	int prev_resnum = -12345;
 	int resnum = 0;
@@ -164,7 +164,7 @@ void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const 
 		res_atom_count++;
 		core::Real bfac = 1.0;
 		if ( resnum > (int)res_scores.size() ) {
-			TRps << "ERROR: more residues than res scores " << resnum << " " << res_scores.size() << std::endl;
+			TRps.Error << "more residues than res scores " << resnum << " " << res_scores.size() << std::endl;
 		} else {
 			bfac = res_scores[resnum];
 		}
@@ -276,8 +276,8 @@ void output_packstat( std::string fname ) {
 
 	if ( raw_stats ) { // stupid duplicate code....
 
-		assert( pd.spheres.size() > 0 );
-		assert( pd.centers.size() > 0 );
+		debug_assert( pd.spheres.size() > 0 );
+		debug_assert( pd.centers.size() > 0 );
 
 		SasaOptions opts;
 		opts.surrounding_sasa_smoothing_window = 1+2*oversample;

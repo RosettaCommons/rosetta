@@ -221,7 +221,7 @@ void DisulfideMover::apply( Pose & pose ) {
 			task_, scorefxn_repack_, mm, scorefxn_minimize_);
 
 		std::string name = trial_pose->residue(disulf->first).name();
-		assert(name == "CYS:disulfide");
+		debug_assert(name == "CYS:disulfide");
 
 		// Is this pose better than the previous best pose?
 		if ( !best_pose ||

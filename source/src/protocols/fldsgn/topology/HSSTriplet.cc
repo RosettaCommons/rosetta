@@ -344,8 +344,8 @@ HSSTripletSet::push_back( HSSTripletOP const hsop )
 	TripletID const hs_id( *hsop );
 	TripletMap::iterator triplet = helix2hss_.find( hs_id );
 	if ( triplet != helix2hss_.end() ) {
-		TR <<  "Triplet "  <<  hs_id << " is already defined in HSSTriplet.  It will not be added to the set" << std::endl;
-		assert( false );
+		TR.Warning <<  "Triplet "  <<  hs_id << " is already defined in HSSTriplet.  It will not be added to the set" << std::endl;
+		debug_assert( false );
 		return;
 	}
 

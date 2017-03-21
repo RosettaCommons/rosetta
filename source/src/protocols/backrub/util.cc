@@ -120,7 +120,7 @@ positions_incompatible_with_task(
 {
 	utility::vector1<core::Size> incompatible_positions;
 
-	assert(pose.size() == packertask.total_residue());
+	debug_assert(pose.size() == packertask.total_residue());
 
 	// iterate over all residues to see if they're compatible
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {

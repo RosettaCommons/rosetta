@@ -131,7 +131,7 @@ NamedAtomPairConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFu
 		atom1( id::AtomID( xyz.residue( named_atom1_.rsd() ).atom_index( named_atom1_.atom() ), named_atom1_.rsd() ));
 		atom2( id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() ));
 		if ( !atom1().valid() || !atom2().valid() ) {
-			tr.Warning << "[WARNING] can't find atom for constraint"; show_def_nopose( tr.Warning );
+			tr.Warning << "can't find atom for constraint"; show_def_nopose( tr.Warning );
 			tr.Warning << std::endl;
 		}
 		if ( !atom1().valid() ) {

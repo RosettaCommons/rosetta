@@ -154,7 +154,7 @@ FoldabilityFilter::parse_my_tag(
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
-		assert( selector_ );
+		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
 	} else {
 		segments_.clear();
@@ -423,7 +423,7 @@ FoldabilityFilter::create_fragment_insertion_mover(
 	core::fragment::FragSetOP frag3 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, chain_endings, start, end, 3 );
 
 	protocols::forge::remodel::RemodelLoopMoverOP remodel( new protocols::forge::remodel::RemodelLoopMover( loops ) );
-	assert( remodel );
+	debug_assert( remodel );
 	remodel->add_fragments( frag9 );
 	remodel->add_fragments( frag3 );
 

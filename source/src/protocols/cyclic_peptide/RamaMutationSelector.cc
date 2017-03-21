@@ -104,11 +104,11 @@ RamaMutationSelector::apply(
 
 	for ( core::Size ir(1); ir<=nres; ++ir ) { //Loop through all residues in the pose.
 		if ( !pose.residue(ir).is_polymer() ) {
-			TR.Warning << "Warning: residue " << ir << " is not polymeric!  Skipping and not selecting." << std::endl;
+			TR.Warning << "residue " << ir << " is not polymeric!  Skipping and not selecting." << std::endl;
 			continue; //Skip non-polymeric residues.
 		}
 		if ( is_terminus(pose.residue(ir)) ) {
-			TR.Warning << "Warning: residue " << ir << " is a terminus!  Skipping and not selecting." << std::endl;
+			TR.Warning << "residue " << ir << " is a terminus!  Skipping and not selecting." << std::endl;
 			continue; //Skip terminal residues.
 		}
 
@@ -118,7 +118,7 @@ RamaMutationSelector::apply(
 			finder.residue_base_name( target_type() ).variants( pose.residue_type(ir).variant_type_enums(), pose.residue_type(ir).custom_variant_types() );
 			restype = finder.get_representative_type();
 			if ( restype == nullptr ) {
-				TR.Warning << "WARNING!  No representative type found for " << target_type() << " equivalent to " << pose.residue(ir).name() << "." << std::endl;
+				TR.Warning << "No representative type found for " << target_type() << " equivalent to " << pose.residue(ir).name() << "." << std::endl;
 				continue; //No sensible type.
 			}
 		}

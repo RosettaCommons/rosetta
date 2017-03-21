@@ -247,7 +247,7 @@ void Translate::uniform_translate_ligand(
 		}
 		return;
 	} else {
-		translate_tracer << "WARNING: cannot find placement for this ligand.  Keeping original position. Use the force option to force translation"<< std::endl;
+		translate_tracer.Warning << "cannot find placement for this ligand.  Keeping original position. Use the force option to force translation"<< std::endl;
 	}
 
 }
@@ -290,7 +290,7 @@ void Translate::gaussian_translate_ligand(
 		pose= best_pose;
 		return;
 	} else {
-		translate_tracer << "WARNING: cannot find placement for this ligand.  Keeping original position. Use the force option to force translation"<< std::endl;
+		translate_tracer.Warning << "cannot find placement for this ligand.  Keeping original position. Use the force option to force translation"<< std::endl;
 	}
 }
 

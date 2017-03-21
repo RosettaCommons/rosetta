@@ -121,7 +121,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( JobsContainer & jobs ){
 				utility_exit_with_message("Input AtomTreeDiff file does not have tag "+tag);
 			}
 			auto tag_score_iter(atd_tsm.find(tag));
-			assert( tag_score_iter != atd_tsm.end() ); // Shouldn't happen - we've checked it was present
+			debug_assert( tag_score_iter != atd_tsm.end() ); // Shouldn't happen - we've checked it was present
 			tags[tag] = tag_score_iter->second;
 		}
 	} else {
@@ -137,7 +137,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( JobsContainer & jobs ){
 		InnerJobOP ijob( new InnerJob( tag_score.first, nstruct ) );
 
 		//second entry in tag_score is index to entry in ScoresPairList
-		assert( tag_score.first == all_scores[tag_score.second].first );
+		debug_assert( tag_score.first == all_scores[tag_score.second].first );
 		core::import_pose::atom_tree_diffs::Scores scores= all_scores[tag_score.second].second;
 
 		for ( core::Size j=1; j<=nstruct; ++j ) {

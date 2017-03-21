@@ -1058,7 +1058,7 @@ make_base_pair_mutation(
 		AA const aa( r == 1 ? na : protocols::dna::dna_base_partner( na ) );
 
 		Residue const & existing_residue( pose.residue( pos ) );
-		assert( existing_residue.is_DNA() );
+		debug_assert( existing_residue.is_DNA() );
 
 		// search for the matching residue type
 		ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa, existing_residue.type().variant_types() ) );

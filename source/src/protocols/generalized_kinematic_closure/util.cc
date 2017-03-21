@@ -186,7 +186,7 @@ void copy_loop_pose_to_original (
 			core::Size const natom = loop_pose.residue( loop_index ).natoms();
 			for ( core::Size ia=1; ia<=natom; ++ia ) { //Loop through all atoms in the current residue.
 				std::string const curatom = loop_pose.residue(loop_index).atom_name(ia);
-				assert( original_pose.residue(original_pose_index).has( curatom ) ); //It shouldn't be possible for the original pose to lack this atom, but let's check in any case
+				debug_assert( original_pose.residue(original_pose_index).has( curatom ) ); //It shouldn't be possible for the original pose to lack this atom, but let's check in any case
 				original_pose.set_xyz(core::id::NamedAtomID( curatom, original_pose_index ), loop_pose.residue(loop_index).xyz(ia)); //Copy the xyz coordinates of each atom.
 			}
 		}

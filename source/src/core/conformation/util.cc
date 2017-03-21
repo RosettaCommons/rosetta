@@ -1823,7 +1823,7 @@ bool change_cys_state(
 
 	// make sure we're working on a disulfide-forming type.
 	if ( ( ! res.type().is_sidechain_thiol() ) && ( ! res.type().is_disulfide_bonded() ) ) {
-		if ( TR.Warning.visible() ) TR.Warning << "WARNING: change_cys_state() was called on non-cys-like residue " << index << ", skipping!" << std::endl;
+		if ( TR.Warning.visible() ) TR.Warning << "change_cys_state() was called on non-cys-like residue " << index << ", skipping!" << std::endl;
 		return false;
 	}
 
@@ -1860,7 +1860,7 @@ bool change_cys_state(
 
 
 	// If we are here then a residue type match wasn't found; issue error message.
-	if ( TR.Error.visible() ) TR.Error << "ERROR: Couldn't find a " << (removing ? "disulfide-free" : "disulfide-bonded")  << " equivalent for residue " << res.name3() << index << "." <<std::endl;
+	if ( TR.Error.visible() ) TR.Error << "Couldn't find a " << (removing ? "disulfide-free" : "disulfide-bonded")  << " equivalent for residue " << res.name3() << index << "." <<std::endl;
 
 	return false;
 }
@@ -1876,7 +1876,7 @@ atom_id_to_named_atom_id(
 		atom_name = rsd.atom_name( atom_id.atomno() );
 		rsd_id = atom_id.rsd();
 	} else {
-		if ( TR.Error.visible() ) TR.Error << "[ ERROR ] Can't resolve atom_id " << atom_id << std::endl;
+		if ( TR.Error.visible() ) TR.Error << "Can't resolve atom_id " << atom_id << std::endl;
 		rsd_id = 0;
 		atom_name ="";
 	}
@@ -1955,7 +1955,7 @@ core::Size get_disulf_partner (
 		}
 	}
 	if ( other_res == 0 ) {
-		if ( TR.Error.visible() ) TR.Error << "Error: Residue " << res_index << " was disulfide bonded but had no partner" << std::endl;
+		if ( TR.Error.visible() ) TR.Error << "Residue " << res_index << " was disulfide bonded but had no partner" << std::endl;
 		utility_exit();
 	}
 	return other_res;
@@ -2008,7 +2008,7 @@ form_disulfide(
 			}
 		}
 		if ( other_res == 0 ) {
-			if ( TR.Error.visible() ) TR.Error << "Error: Residue " << lower_res << " was disulfide bonded but had no partner" << std::endl;
+			if ( TR.Error.visible() ) TR.Error << "Residue " << lower_res << " was disulfide bonded but had no partner" << std::endl;
 			utility_exit();
 		}
 
@@ -2039,7 +2039,7 @@ form_disulfide(
 				}
 			}
 			if ( other_res == 0 ) {
-				if ( TR.Error.visible() ) TR.Error << "Error: Residue " << upper_res << " was disulfide bonded but had no partner" << std::endl;
+				if ( TR.Error.visible() ) TR.Error << "Residue " << upper_res << " was disulfide bonded but had no partner" << std::endl;
 				utility_exit();
 			}
 
@@ -2211,7 +2211,7 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 		}
 		Size connect_atom( 0);
 		if ( res.type().get_disulfide_atom_name() == "NONE" ) {
-			if ( TR.Warning.visible() ) TR.Warning << "Warning: unable to establish which atom to use for the disulfide to residue " << i << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "unable to establish which atom to use for the disulfide to residue " << i << std::endl;
 			continue;
 		} else {
 			connect_atom = res.atom_index( res.type().get_disulfide_atom_name() ) ;
@@ -2226,7 +2226,7 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 			}
 		}
 		if ( other_res == 0 ) {
-			TR.Error << "Error: Residue " << i << " was disulfide bonded but had no partner" << std::endl;
+			TR.Error << "Residue " << i << " was disulfide bonded but had no partner" << std::endl;
 			utility_exit();
 		}
 

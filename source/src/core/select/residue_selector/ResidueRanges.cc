@@ -101,7 +101,7 @@ ResidueRanges::from_subset( ResidueSubset const & subset )
 			start_interval = 0;
 		} else {
 			// We should never be here!
-			debug_assert( false );
+			utility_exit_with_message("Data consistency error in ResidueRanges::from_subset()");
 		}
 	}
 	if ( start_interval != 0 ) {

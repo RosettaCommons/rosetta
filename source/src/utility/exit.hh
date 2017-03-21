@@ -60,11 +60,11 @@
 #define utility_exit_with_message_status(m,s) utility::exit( __FILE__, __LINE__, m, s )
 
 /// @brief Assert that the condition holds. Evaluated for both debug and release builds
-#define runtime_assert(_Expression) if ( !(_Expression) ) utility::exit(__FILE__, __LINE__, #_Expression)
+#define runtime_assert(_Expression) if ( !(_Expression) ) utility::exit(__FILE__, __LINE__, "Assertion `" #_Expression "` failed.")
 
 /// @brief Assert that the condition holds. Evaluated for both debug and release builds
 #define runtime_assert_msg(_Expression, msg) \
-	if ( !(_Expression) ) utility::exit(__FILE__, __LINE__, #_Expression " MSG:" msg )
+	if ( !(_Expression) ) utility::exit(__FILE__, __LINE__, "Assertion `" #_Expression "` failed. MSG:" msg )
 
 /// @brief Assert that the condition holds. Evaluated for both debug and release builds
 // Does the same thing as runtime_assert_msg but allows C++ strings to be used for the message.

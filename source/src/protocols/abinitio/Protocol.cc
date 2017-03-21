@@ -118,7 +118,7 @@ protocols::abinitio::Protocol::apply( core::pose::Pose& ) {
 	reset_status();
 	// structure_store().clear(); // keep this to avoid memory leaks
 	// if (! bInitialized_ ) {
-	//   tr.Warning << "WARNING: ClassicAbinitio::apply is called without previous call to init(). Will self-initialize now... this overrides any"
+	//   tr.Warning << "ClassicAbinitio::apply is called without previous call to init(). Will self-initialize now... this overrides any"
 	//         << " custom settings if they existed... ;" << std::endl; // could call init at
 	//   init( pose );
 	//  }

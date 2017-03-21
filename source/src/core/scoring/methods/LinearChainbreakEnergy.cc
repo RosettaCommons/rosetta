@@ -148,7 +148,7 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 		lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb ] ).xyz() );  // C
 
 	if ( distance( lower_stub, manual_lower_stub ) > 0.01 ) {
-		tr.Warning << "WARNING: mismatch between manual computed and atom-tree stub: "
+		tr.Warning << "mismatch between manual computed and atom-tree stub: "
 			<< lower_stub << " " << manual_lower_stub << std::endl;
 	}
 

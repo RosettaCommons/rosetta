@@ -471,7 +471,7 @@ MirrorSymmetricConformation::recalculate_transforms( ) {
 			// if this is too inefficient we can store this in symminfo
 			if ( ncomps!=1 ) {
 				for ( ires=substart; ires<=substop && Symmetry_Info()->get_component(ires) != comptag; ++ires ) ;
-				assert(Symmetry_Info()->get_component(ires) == comptag);
+				debug_assert(Symmetry_Info()->get_component(ires) == comptag);
 			}
 
 			if ( res_is_mirrored_[ires] ) {

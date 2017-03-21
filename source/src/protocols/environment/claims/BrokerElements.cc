@@ -36,7 +36,7 @@ std::string const CutBiasElement::type = "CutBiasElement";
 std::string const DOFElement::type     = "DOFElement";
 
 std::ostream& operator<<( std::ostream& os, ControlStrength const& cstr ) {
-	assert( cstr >= DOES_NOT_CONTROL && cstr <= EXCLUSIVE );
+	debug_assert( cstr >= DOES_NOT_CONTROL && cstr <= EXCLUSIVE );
 	if ( cstr == DOES_NOT_CONTROL ) {
 		os << "DOES_NOT_CONTROL";
 	} else if ( cstr == CAN_CONTROL ) {

@@ -978,7 +978,7 @@ EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const 
 		if ( tokens[1] == "req" ) {
 			if ( tokens.size() < 5 ) utility_exit_with_message("Could not initialize filter params from line '" + line + "' because it was too short. Check your file format.");
 			if ( tokens[3] != "value" ) {
-				TR << "Warning: instruction '" << tokens[3] << "' in filter requirements file could not be understand, line will be ignored." << std::endl;
+				TR.Warning << "instruction '" << tokens[3] << "' in filter requirements file could not be understand, line will be ignored." << std::endl;
 				continue;
 			}
 

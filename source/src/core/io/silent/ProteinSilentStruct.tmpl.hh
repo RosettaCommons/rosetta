@@ -125,7 +125,7 @@ ProteinSilentStruct_Template<T>::fill_struct(
 	if ( !core::pose::is_ideal_pose(pose) ) {
 		// Barak 07/09 - non-ideal poses are currently not supported for PSS
 		// nor will they ever be!
-		pss_tr.Error << "ERROR: trying to use a 'protein' type silent file for a non-ideal pose" << std::endl;
+		pss_tr.Error << "trying to use a 'protein' type silent file for a non-ideal pose" << std::endl;
 		pss_tr.Error << "consider using the '-out:file:silent_struct_type binary' flag" << std::endl;
 		//   utility_exit();
 	}
@@ -286,7 +286,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 				line_stream >> tag; //JUMP
 				line_stream >> nr;
 				if ( nr != fold_tree().num_jump() ) {
-					pss_tr.Warning << "WARNING: corrupted silent file read line JUMP X -- X ";
+					pss_tr.Warning << "corrupted silent file read line JUMP X -- X ";
 					pss_tr.Warning << "should match number of jumps in FOLD_TREE " << std::endl;
 				}
 				for ( Size i = 1; i<= nr; i++ ) {
@@ -315,7 +315,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 
 			line_stream >> tag;
 			if ( !is_int( tag ) ) {
-				pss_tr.Error << "ERROR:  !is_int( " << tag << " ) from line (" << *iter << ")" << std::endl;
+				pss_tr.Error << "!is_int( " << tag << " ) from line (" << *iter << ")" << std::endl;
 				pss_tr.Error << "Are you trying to read a binary silent file ? Use -in:file:silent_struct_type binary " << std::endl;
 				success = false;
 				return success;
@@ -323,7 +323,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 			//debug_assert( is_int( tag ) ); // this tag should represent the sequence position within the silent-file
 			seqpos = int_of( tag );
 			if ( seqpos <= 0 || seqpos > nres() ) {
-				pss_tr.Error << "ERROR: incorrect sequence number " << seqpos << " (nres = "
+				pss_tr.Error << "incorrect sequence number " << seqpos << " (nres = "
 					<< nres() << " ) from line (" << *iter << ")\n";
 				success = false;
 				return success;
@@ -380,7 +380,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 		= find( read_flag.begin(), read_flag.end(), false );
 
 	if ( bad_pos != read_flag.end() ) {
-		pss_tr.Error << "ERROR: did not find coordinates for all sequence positions for "
+		pss_tr.Error << "did not find coordinates for all sequence positions for "
 			<< decoy_tag() << std::endl;
 		core::Size idx = 1;
 		for ( utility::vector1< bool >::iterator it = read_flag.begin(), end = read_flag.end();
@@ -692,7 +692,7 @@ template <class T>
 void ProteinSilentStruct_Template<T>::chain_endings( utility::vector1< Size > const & endings ) {
 	for ( utility::vector1< Size >::const_iterator i = endings.begin(), ie = endings.end(); i != ie; ++i ) {
 		if ( (*i) < 1 || (*i) > nres() ) {
-			pss_tr.Fatal << "ERROR: chain_endings() invalid chain ending " << (*i) << std::endl;
+			pss_tr.Fatal << "chain_endings() invalid chain ending " << (*i) << std::endl;
 			utility_exit();
 		}
 	}
@@ -704,7 +704,7 @@ void ProteinSilentStruct_Template<T>::chain_endings( utility::vector1< Size > co
 template <class T>
 void ProteinSilentStruct_Template<T>::add_chain_ending( Size const seqpos ) {
 	if ( seqpos < 1 || seqpos >= nres() ) {
-		pss_tr.Fatal << "ERROR: add_chain_ending() invalid chain ending " << seqpos << std::endl;
+		pss_tr.Fatal << "add_chain_ending() invalid chain ending " << seqpos << std::endl;
 		utility_exit();
 	}
 
@@ -727,7 +727,7 @@ Real ProteinSilentStruct_Template<T>::chi( Size const seqpos, Size const chi_num
 	// super-safe check to make sure that we don't return a memory access
 	// violation on platforms like Windows in release mode.
 	if ( chi_num > n_chi(seqpos) ) {
-		pss_tr.Error << "Error: attempting to access chi that doesn't exist!"
+		pss_tr.Error << "attempting to access chi that doesn't exist!"
 			<< "(chi = " << chi_num << " seqpos = " << seqpos << ")"
 			<< std::endl;;
 		return 0.0;

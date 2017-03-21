@@ -85,7 +85,7 @@ read_native_residue_file(
 	bool save_chis = false;
 	while ( getline( file, line ) ) {
 		utility::vector1<std::string> tokens = utility::string_split(line);
-		assert(tokens.size() > 0);
+		debug_assert(tokens.size() > 0);
 
 		if ( tokens[1]=="RESNUM" ) {
 			if ( cur_resnum != 0 ) {

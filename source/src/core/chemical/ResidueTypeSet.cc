@@ -93,9 +93,9 @@ ResidueTypeSet::~ResidueTypeSet() = default;
 void
 ResidueTypeSet::atom_type_set(AtomTypeSetCOP atom_types) {
 	if ( ! atom_types ) {
-		TR.Warning << "WARNING: Setting a ResidueTypeSet's AtomTypeSet to a null pointer!" << std::endl;
+		TR.Warning << "Setting a ResidueTypeSet's AtomTypeSet to a null pointer!" << std::endl;
 	} else if ( mode() != INVALID_t && atom_types->mode() != mode() ) {
-		TR.Warning << "WARNING: Using an AtomTypeSet of mode " << atom_types->mode()
+		TR.Warning << "Using an AtomTypeSet of mode " << atom_types->mode()
 			<< " with a ResidueTypeSet of mode " << mode() << std::endl;
 	} else if ( mode() == INVALID_t ) {
 		mode_ = atom_types->mode();
@@ -349,7 +349,7 @@ ResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type )
 {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
-		TR.Warning << "WARNING: ResidueType " << new_type->name() << " of mode " << new_type->mode()
+		TR.Warning << "ResidueType " << new_type->name() << " of mode " << new_type->mode()
 			<< " is being added to a ResidueTypeSet of mode " << mode() << std::endl;
 		// But we're doing it anyway (though we probably shouldn't).
 	}
@@ -383,7 +383,7 @@ ResidueTypeSet::add_unpatchable_residue_type( ResidueTypeOP new_type )
 {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
-		TR.Warning << "WARNING: ResidueType " << new_type->name() << " of mode " << new_type->mode()
+		TR.Warning << "ResidueType " << new_type->name() << " of mode " << new_type->mode()
 			<< " is being added to a ResidueTypeSet of mode " << mode() << std::endl;
 		// But we're doing it anyway (though we probably shouldn't).
 	}

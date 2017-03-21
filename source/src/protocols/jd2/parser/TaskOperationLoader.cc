@@ -53,7 +53,7 @@ void TaskOperationLoader::load_data(
 		}
 		std::string const & name( subtag->getOption<std::string>("name") );
 		if ( data.has( "task_operations", name ) ) {
-			TR.Error << "Error TaskOperation of name \"" << name
+			TR.Error << "TaskOperation of name \"" << name
 				<< "\" (with type " << type << ") already exists. \n" << subtag << std::endl;
 			utility_exit_with_message("Duplicate definition of TaskOperation with name " + name);
 		}

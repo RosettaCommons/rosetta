@@ -68,7 +68,7 @@ EnvMover::~EnvMover() = default;
 
 void EnvMover::apply( Pose& pose ) {
 	if ( movers_->size() == 0 ) {
-		tr.Warning << "[WARNING] The environment " << env_->name()
+		tr.Warning << "The environment " << env_->name()
 			<< " is being run without any registrant movers." << std::endl;
 	}
 
@@ -87,7 +87,7 @@ void EnvMover::apply( Pose& pose ) {
 	try {
 		ppose = env->start( pose );
 	} catch( ... ) {
-		tr.Error << "[ERROR] Error during broking in environment '" << get_name() << "'. " << std::endl;
+		tr.Error << "Error during broking in environment '" << get_name() << "'. " << std::endl;
 		throw;
 	}
 
@@ -152,7 +152,7 @@ moves::MoverOP find_mover( utility::tag::TagCOP tag,
 	moves::Movers_map::const_iterator mv_it = movers.find( mover_name );
 
 	if ( mv_it != movers.end() ) {
-		assert( mv_it->second );
+		debug_assert( mv_it->second );
 		return mv_it->second;
 	} else {
 		std::string err = "The mover " + mover_name + " could not be found. Check your spelling in the xml script.";

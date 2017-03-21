@@ -401,7 +401,7 @@ void JSON_RPC::load_new_set_of_virtual_files( const mArray &json_user_files , bo
 			throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing ");
 		}
 		if ( !has_value( flag, "contents" ) ) {
-			TR.Error << "Warning: Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl;
+			TR.Error << "Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl;
 		}
 
 		std::string filename = get_string( flag, "filename" );

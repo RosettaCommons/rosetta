@@ -200,7 +200,7 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 			mc->score_function( *scorefxn_ );
 
 		} else {
-			assert( std::abs( ramping_weight_factor - 1.0 ) < 1e-3 );
+			debug_assert( std::abs( ramping_weight_factor - 1.0 ) < 1e-3 );
 		}
 
 		pack_trial->apply( pose );

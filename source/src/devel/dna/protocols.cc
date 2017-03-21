@@ -199,7 +199,7 @@ packing_specificity_test_fast(
 	{
 		for ( Size ii=1; ii<= motif_positions.size(); ++ii ) {
 			Size const i( motif_positions[ii] );
-			assert( start_pose.residue(i).is_DNA() && partner[i] );
+			debug_assert( start_pose.residue(i).is_DNA() && partner[i] );
 			pos_list.push_back( i );
 			pos_list.push_back( partner[ i ] );
 			nat_seq += start_pose.residue(i).name1();
@@ -295,7 +295,7 @@ packing_specificity_test_fast(
 			WatsonCrickResidueMatcher m;
 			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
-					assert( m( pose.residue(i), pose.residue(partner[i])));
+					debug_assert( m( pose.residue(i), pose.residue(partner[i])));
 				}
 			}
 		}
@@ -404,7 +404,7 @@ packing_specificity_test(
 	std::string nat_seq;
 	{
 		for ( Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
-			assert( start_pose.residue(i).is_DNA() && partner[i] );
+			debug_assert( start_pose.residue(i).is_DNA() && partner[i] );
 			pos_list.push_back( i );
 			pos_list.push_back( partner[ i ] );
 			nat_seq += start_pose.residue(i).name1();
@@ -442,7 +442,7 @@ packing_specificity_test(
 		for ( Size ii = 1; ii <= nres; ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
-				assert( task->pack_residue(ii) );
+				debug_assert( task->pack_residue(ii) );
 			} else {
 				task->nonconst_residue_task( ii ).prevent_repacking();
 			}
@@ -500,7 +500,7 @@ packing_specificity_test(
 			ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa ) );
 
 			Residue const & existing_residue( pose.residue( seqpos ) );
-			assert( existing_residue.is_DNA() );
+			debug_assert( existing_residue.is_DNA() );
 
 			ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue, pose.conformation() );
 			rsd->set_chi( 1, existing_residue.chi(1) );
@@ -530,16 +530,16 @@ packing_specificity_test(
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 				//     task->nonconst_residue_task( ii ).or_ex1aro_sample_level ( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 				//     task->nonconst_residue_task( ii ).or_ex2aro_sample_level ( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
-				assert( task->pack_residue(ii) );
+				debug_assert( task->pack_residue(ii) );
 			} else {
 				if ( repack_DNA ) {
 					task->nonconst_residue_task( ii ).restrict_to_repacking();
 				} else {
 					task->nonconst_residue_task( ii ).prevent_repacking();
 				}
-				// assert( !task->pack_residue(ii) );
+				// debug_assert( !task->pack_residue(ii) );
 			}
-			assert( !task->design_residue(ii) );
+			debug_assert( !task->design_residue(ii) );
 		}
 		// dont include current
 		task->or_include_current( false );
@@ -563,7 +563,7 @@ packing_specificity_test(
 			WatsonCrickResidueMatcher m;
 			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
-					assert( m( pose.residue(i), pose.residue(partner[i])));
+					debug_assert( m( pose.residue(i), pose.residue(partner[i])));
 				}
 			}
 		}

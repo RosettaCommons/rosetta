@@ -470,7 +470,7 @@ SingleLigandRotamerLibrary::fill_missing_atoms( utility::vector1< bool > missing
 			for ( Size j=1; j<= 3; ++j ) {
 				Size stubno( ic.stub_atom(j).atomno() );
 				if ( missing[ stubno ] ) {
-					TR.Error << "[ ERROR ] Missing atom " << stubno << " (" << rsd->atom_name(stubno) << ") when trying to place atom " <<
+					TR.Error << "Missing atom " << stubno << " (" << rsd->atom_name(stubno) << ") when trying to place atom " <<
 						i << " (" << rsd->atom_name(i) << ") in " << rsd->name() << std::endl;
 					utility_exit_with_message("Cannot build missing atoms in ligand rotamer library");
 				}

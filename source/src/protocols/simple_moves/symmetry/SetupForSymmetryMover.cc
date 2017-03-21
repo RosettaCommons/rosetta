@@ -217,7 +217,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 		make_symmetric_pose( pose );
 	}
 
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	//fpd  explicitly update disulfide lr energy container
 	if ( pose.is_fullatom() ) {

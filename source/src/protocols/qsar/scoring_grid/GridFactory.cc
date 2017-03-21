@@ -113,7 +113,7 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 	}
 
 	//deserialize object into new grid and return
-	assert(new_grid);
+	debug_assert(new_grid);
 	new_grid->deserialize(data);
 	return new_grid;
 }

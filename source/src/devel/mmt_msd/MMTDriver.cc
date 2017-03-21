@@ -192,14 +192,14 @@ OneGenerationJobInfo::pop_job()
 
 void OneGenerationJobInfo::push_outstanding( JobID const & job )
 {
-	assert( work_outstanding_.find( job ) == work_outstanding_.end() );
+	debug_assert( work_outstanding_.find( job ) == work_outstanding_.end() );
 	work_outstanding_.insert( job );
 }
 
 void OneGenerationJobInfo::remove_outstanding( JobID const & job )
 {
 	auto iter = work_outstanding_.find( job );
-	assert( iter != work_outstanding_.end() );
+	debug_assert( iter != work_outstanding_.end() );
 	work_outstanding_.erase( iter );
 	job_completed_[ job.first ][ job.second ] = true;
 }
@@ -469,7 +469,7 @@ MMTDriver::optimize_generation()
 
 		if ( mess == requesting_new_job ) {
 			if ( ! this_gen_work_->unassigned_jobs_remain() ) {
-				assert( nodes_still_working.find( communicating_node ) != nodes_still_working.end() );
+				debug_assert( nodes_still_working.find( communicating_node ) != nodes_still_working.end() );
 				utility::send_integer_to_node( communicating_node, generation_complete );
 				nodes_still_working.erase( communicating_node );
 			} else {
@@ -481,7 +481,7 @@ MMTDriver::optimize_generation()
 
 	}
 
-	assert( ! this_gen_work_->unassigned_jobs_remain() && ! this_gen_work_->unfinished_jobs_outstanding() );
+	debug_assert( ! this_gen_work_->unassigned_jobs_remain() && ! this_gen_work_->unfinished_jobs_outstanding() );
 
 	core::Real running_time;
 #ifdef MULTI_THREADED
@@ -584,7 +584,7 @@ MMTDriver::receive_completed_job(
 	TR << "Job completed message from " << communicating_node << "; job " << state_index << " " << seq_index << " took: " << running_time << " and produced an energy of " << final_energy << std::endl;
 
 	PackingJobRecord & job_record = this_gen_results_[ seq_index ]->job_record( state_index );
-	assert( job_record.node_run_on() == communicating_node );
+	debug_assert( job_record.node_run_on() == communicating_node );
 
 	job_record.energy( final_energy );
 	job_record.running_time( running_time );
@@ -647,7 +647,7 @@ MMTDriver::instruct_receivers_to_drop_old_job_data_for_entity(
 	std::string sequence = sequence_from_entity( *entity );
 
 	auto iter = top_jobs_archive_.find(sequence );
-	assert( iter != top_jobs_archive_.end() );
+	debug_assert( iter != top_jobs_archive_.end() );
 	JobsForSequence const & jobs_for_seq =  *iter->second;
 	for ( core::Size ii = 1; ii <= daf_->num_states(); ++ii ) {
 		core::Size ii_node = jobs_for_seq.job_record( ii ).node_run_on();

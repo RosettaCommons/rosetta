@@ -91,7 +91,7 @@ void GridInitMover::apply(core::pose::Pose & pose)
 {
 	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
 
-	assert(chain_.size() == 1);
+	debug_assert(chain_.size() == 1);
 
 
 	core::Size const chain_id = core::pose::get_chain_id_from_chain(chain_, pose);

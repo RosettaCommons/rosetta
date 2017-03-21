@@ -466,11 +466,11 @@ CyclizationMover::setup_scorefunction()
 		score_fxn_->set_weight( angle_constraint, 1 );
 		score_fxn_->set_weight( dihedral_constraint, 10 );
 	} else if ( score_fxn_->get_weight( atom_pair_constraint ) == 0 ) {
-		TR << "WARNING: atom_pair_constraint weight set to zero. Cyclization constraints will not work properly." << std::endl;
+		TR.Warning << "atom_pair_constraint weight set to zero. Cyclization constraints will not work properly." << std::endl;
 	} else if ( score_fxn_->get_weight( angle_constraint ) == 0 ) {
-		TR << "WARNING: angle_constraint weight set to zero. Cyclization constraints will not work properly" << std::endl;
+		TR.Warning << "angle_constraint weight set to zero. Cyclization constraints will not work properly" << std::endl;
 	} else if ( score_fxn_->get_weight( dihedral_constraint ) == 0 ) {
-		TR << "WARNING: dihedral_constraint weight set to zero. Cyclization constraints will not work properly" << std::endl;
+		TR.Warning << "dihedral_constraint weight set to zero. Cyclization constraints will not work properly" << std::endl;
 	}
 }
 

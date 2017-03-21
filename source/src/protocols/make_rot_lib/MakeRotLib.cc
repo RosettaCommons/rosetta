@@ -341,7 +341,7 @@ init_rotamers_centroids
 			// get chi range(s)
 			Size chi_num(0); int temp_lower, temp_upper, temp_increment;
 			l >> chi_num >> temp_lower >> temp_upper >> temp_increment;
-			assert( chi_num <= nchi );
+			debug_assert( chi_num <= nchi );
 			chi_lower[chi_num] = temp_lower;
 			chi_upper[chi_num] = temp_upper;
 			chi_increment[chi_num] = temp_increment;
@@ -785,7 +785,7 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 	using namespace std;
 
 	// sanity check
-	assert( final_rotamers.size() >= 1 && centroids.size() >= 1 && final_rotamers.size() == centroids.size() );
+	debug_assert( final_rotamers.size() >= 1 && centroids.size() >= 1 && final_rotamers.size() == centroids.size() );
 
 	// get nchi and num rots
 	Size nchi( final_rotamers[1].get_num_chi() );

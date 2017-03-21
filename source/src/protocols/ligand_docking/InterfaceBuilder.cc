@@ -160,7 +160,7 @@ bool InterfaceBuilder::is_interface_residue(
 	core::Vector const potential_interface_vector= potential_interface_residue.xyz(potential_interface_neighbor_atom_id);
 
 	auto found= ligand_areas_.find(chain);
-	assert(found != ligand_areas_.end());
+	debug_assert(found != ligand_areas_.end());
 	LigandAreaOP const ligand_area = found->second;
 
 	double cutoff = ligand_area->add_nbr_radius_ ?

@@ -67,7 +67,7 @@ FilterReportAsPoseExtraScoresMover::parse_my_tag(
 	std::string const filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );
 	auto find_filter( filters.find( filter_name ) );
 	if ( find_filter == filters.end() ) {
-		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
+		TR.Error << "filter not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
 	set_filter(find_filter->second/*->clone()*/); // I haven't a clue if this is safe or if it should be a clone operation!

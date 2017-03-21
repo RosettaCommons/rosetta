@@ -84,7 +84,7 @@ void DumpPdb::apply( core::pose::Pose & pose ) {
 	std::string name( fname_ );
 	if ( addtime_ ) {
 #ifdef USEMPI
-		name += "_" + utility::to_string(utility::mpi_rank()); 
+		name += "_" + utility::to_string(utility::mpi_rank());
 #endif
 		name += "_" + utility::timestamp_short() + ".pdb";
 		TR << "Dumping PDB " << name << std::endl;
@@ -114,9 +114,8 @@ DumpPdb::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, proto
 	}
 
 	tag_time( tag->getOption<bool>( "tag_time", false ) );
-	TR<<"dump pdb\n";
-	TR<<"WARNING: DEFINED DUMP_PDB MOVER. THIS IS USUALLY ONLY GOOD FOR DEBUGGING.\n";
-	TR<<"with filename "<<fname_<<std::endl;
+	TR.Warning << "DEFINED DUMP_PDB MOVER. THIS IS USUALLY ONLY GOOD FOR DEBUGGING." << std::endl;
+	TR << "dump_pdb mover with filename "<<fname_<<std::endl;
 }
 
 // XRW TEMP std::string

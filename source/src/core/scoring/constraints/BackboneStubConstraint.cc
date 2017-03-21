@@ -168,7 +168,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// store info about the target residue
 	debug_assert( target_pose.residue(target_seqpos).is_protein() );
 	if ( (target_pose.residue(target_seqpos).aa() == chemical::aa_gly ) ) {
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 
@@ -191,7 +191,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 
 	debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 
@@ -247,7 +247,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// store info about the target residue
 	debug_assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 
@@ -263,7 +263,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 
 	debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 	sidechain_atom_id_ = AtomID( rsd.atom_index(sidechain_atom_name), seqpos_ );
@@ -306,7 +306,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// store info about the target residue
 	debug_assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 
@@ -323,7 +323,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 
 	debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 	sidechain_atom_id_ = AtomID( rsd.atom_index("CB"), seqpos_ );
@@ -444,7 +444,7 @@ BackboneStubConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const 
 	core::Vector curr_ref_location = xyz_func(fixed_atom_id_);
 	core::Real ref_dist = curr_ref_location.distance_squared( fixed_reference_point_ );
 	if ( ref_dist > 1E-8 ) {
-		tr.Error << "ERROR - BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" << std::endl;
+		tr.Error << "BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" << std::endl;
 		tr.Error << "Reference location was " << fixed_reference_point_.x() << ", " << fixed_reference_point_.y() << ", " << fixed_reference_point_.z() << ", now it's " << curr_ref_location.x() << ", " << curr_ref_location.y() << ", " << curr_ref_location.z() << std::endl;
 		utility_exit_with_message( "ERROR - BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" );
 	}
@@ -468,7 +468,7 @@ BackboneStubConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const 
 		curr_rsd = *(ala_copy); // gly => ala
 		}
 		else { */
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 		//  }
 	}
@@ -538,7 +538,7 @@ BackboneStubConstraint::fill_f1_f2(
 		curr_rsd = *ala_copy; // gly => ala
 		}
 		else { */
-		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 		//  }
 	}

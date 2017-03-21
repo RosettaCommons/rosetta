@@ -241,7 +241,7 @@ void QuatSet::Print(std::ostream& s, bool euler, size_t prec ) const {
 
 void Quaternion::Normalize() {
 	numeric::Real t = w*w + x*x + y*y + z*z;
-	assert(t > 0);
+	debug_assert(t > 0);
 	t = 1.0/std::sqrt(t);
 	w *= t;    x *= t;    y *= t;    z *= t;
 	return;
@@ -291,7 +291,7 @@ numeric::xyzVector<numeric::Real> Quaternion::euler() const {
 		Times(Quaternion(cos(c/2), 0, 0, sin(c/2)))); // c about z
 	// and check that q is parallel to *this.
 	numeric::Real t = std::abs(q.w * w + q.x * x + q.y * y + q.z * z);
-	assert(t > 1 - 16 * numeric_limits<numeric::Real>::epsilon());
+	debug_assert(t > 1 - 16 * numeric_limits<numeric::Real>::epsilon());
 #endif
 	return numeric::xyzVector<numeric::Real>(a,b,c);
 }
@@ -312,15 +312,15 @@ void Quaternion::PrintEuler(ostream& s) const {
 }
 
 QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): name_(name) {
-	assert(in.good());
+	debug_assert(in.good());
 	string line;
 	while ( in.peek() == '#' ) {
 		getline(in, line);
 		// cout << line << endl;
 	}
-	assert(in.good());
+	debug_assert(in.good());
 	getline(in, line);
-	assert(line == "format grid");
+	debug_assert(line == "format grid");
 	in >> delta >> sigma >> ntot >> ncell >> nent >> maxrad_ >> coverage;
 	// cout << ntot << " " << fixed
 	// << setprecision(3) << maxrad_ << " "
@@ -330,10 +330,10 @@ QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): nam
 		long k, l, m;
 		size_t mult;
 		numeric::Real r, w;
-		assert(in.good());
+		debug_assert(in.good());
 		in >> k >> l >> m >> w >> r >> mult;
 		Permute p(Triple(k, l, m));
-		assert(mult == p.Number());
+		debug_assert(mult == p.Number());
 		for ( size_t i = 0; i < mult; ++i ) {
 			Triple t = p.Member(i);
 			s.Add(Quaternion(1.0,
@@ -344,18 +344,18 @@ QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): nam
 		}
 		ncell1 += mult;
 	}
-	assert(in.good());
-	assert(ncell1 == ncell);
+	debug_assert(in.good());
+	debug_assert(ncell1 == ncell);
 	{
 		size_t nc = s.Number();
-		assert(nc == ncell);
+		debug_assert(nc == ncell);
 		for ( size_t n = 1; n < 24; ++n ) {
 			Quaternion q(CubeSyms[n][0], CubeSyms[n][1], CubeSyms[n][2], CubeSyms[n][3] );
 			for ( size_t i = 0; i < nc; ++i ) {
 				s.Add(q.Times(s.Orientation(i)), s.Weight(i));
 			}
 		}
-		assert(s.Number() == ntot);
+		debug_assert(s.Number() == ntot);
 	}
 }
 
@@ -367,7 +367,7 @@ std::ostream & operator<<(std::ostream & out, QuaternionGrid const & q){
 
 void QuaternionGrid::print() const {
 
-	assert(s.Number() == ntot);
+	debug_assert(s.Number() == ntot);
 	// s.Print(cout, false, 7);
 	for ( long i = 1; i <= num_samples(); ++i ) {
 		quaternion(i).Print(cout);

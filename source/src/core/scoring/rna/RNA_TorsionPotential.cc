@@ -303,7 +303,7 @@ RNA_TorsionPotential::residue_pair_energy( core::conformation::Residue const & r
 	if ( !rsd2.is_RNA() ) return 0.0;
 
 	if ( ( rsd1.is_l_rna() && rsd2.is_d_rna() ) || ( rsd1.is_d_rna() && rsd2.is_l_rna() ) ) {
-		TR.Warning << "WARNING: Asked to evaluate the torsional potential between"
+		TR.Warning << "Asked to evaluate the torsional potential between"
 			<< " consecutively bonded L and D RNA residues." << std::endl;
 		TR.Warning << "This feature is not yet supported, so we are returning"
 			<< " zero for these two residues." << std::endl;

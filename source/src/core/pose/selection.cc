@@ -205,7 +205,7 @@ get_resnum_list(
 ){
 	vector1< Size > resnums;
 	if ( ! tag_ptr->hasOption( tag ) ) {
-		TR.Fatal <<"Error: No "<<tag<<" option was found in tag "<<tag_ptr<<std::endl;
+		TR.Fatal <<"No "<<tag<<" option was found in tag "<<tag_ptr<<std::endl;
 		utility_exit_with_message("Error when parsing a residue number list.");
 		return resnums;
 	}

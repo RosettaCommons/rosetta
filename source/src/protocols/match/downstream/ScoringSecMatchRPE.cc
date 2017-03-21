@@ -195,7 +195,7 @@ ScoringSecMatchRPE::ScoringSecMatchRPE(
 			}
 		}
 		if ( noCutOff ) {
-			TR << "ERROR: There is no specific weight for the following scoretype " << *cut_it << std::endl;
+			TR.Error << "There is no specific weight for the following scoretype " << *cut_it << std::endl;
 			exit(1);
 		}
 	}

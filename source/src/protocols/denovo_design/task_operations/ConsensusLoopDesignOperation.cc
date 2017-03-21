@@ -361,7 +361,7 @@ ConsensusLoopDesignOperation::disallow_aas(
 		utility::vector1< bool > aa_bitmap;
 		if ( remaining_aas.empty() ) {
 			AAs const next_best_aas = compute_best_allowed_aas( aa_freqs, task.residue_task( pose_resid ) );
-			TR.Warning << "WARNING: ConsensusLoopDesign would disallow all amino acids at position "
+			TR.Warning << "ConsensusLoopDesign would disallow all amino acids at position "
 				<< pose_resid << ". Allowing the best two currently-allowed amino acids (" << next_best_aas
 				<< ") even though their frequency scores are below the user-specified threshold of "
 				<< enrichment_threshold_ << std::endl;

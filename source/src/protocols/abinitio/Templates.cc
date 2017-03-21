@@ -176,7 +176,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 			}
 			if ( target_sequence_.size() ) {
 				if ( target_sequence_ != theTemplate->query_sequence() ) {
-					tr.Warning << "[WARNING] the query sequence " << theTemplate->query_sequence() << " is different than previous " << std::endl;
+					tr.Warning << "the query sequence " << theTemplate->query_sequence() << " is different than previous " << std::endl;
 				}
 			} else target_sequence_ = theTemplate->query_sequence();
 			templates_.insert( TemplateMap::value_type( name, theTemplate ) );

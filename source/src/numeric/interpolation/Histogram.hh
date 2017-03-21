@@ -152,7 +152,7 @@ protected:
 				continue;
 			case EOF : //error or end of file
 				if ( ! db_file.good() && ! db_file.eof() ) { // error
-					cerr << __FILE__ << ":" << __LINE__ << " [ERROR] "
+					cerr << __FILE__ << ":" << __LINE__ << " [ ERROR ] "
 						<< "IO Error" << endl;
 				}
 				db_file.ignore(); //Make progress to avoid hanging

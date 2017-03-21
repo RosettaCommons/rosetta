@@ -651,7 +651,7 @@ void WrapperOptEMultifunc::init(
 				std::string iiname = "ref" + utility::to_string( ii - free_score_list_.size() );
 				//std::cout << "Adding reference energy dof: " << ii << " " << iiname << std::endl;
 				// Assumption: the reference energy should not alrady be in the dof list
-				assert( dof_variables_.find( iiname ) == dof_variables_.end() );
+				debug_assert( dof_variables_.find( iiname ) == dof_variables_.end() );
 				OptEVariableExpressionOP varexp( new OptEVariableExpression( iiname ) );
 				dof_variables_[ iiname ] = varexp;
 				optE_dof_expressions_[ ii ] = varexp;

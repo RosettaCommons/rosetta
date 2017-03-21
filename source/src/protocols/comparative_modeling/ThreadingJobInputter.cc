@@ -305,7 +305,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 			}
 		} else { // report error if template pdb not found
 			//utility_exit_with_message( "ERROR: no template_pdb provided for alignment " +  alignment_id );
-			tr.Error << "Warning: no template pdb provided for alignment " << alignment_id << std::endl;
+			tr.Error << "no template pdb provided for alignment " << alignment_id << std::endl;
 		}
 	} // for alignments
 } // fill_jobs

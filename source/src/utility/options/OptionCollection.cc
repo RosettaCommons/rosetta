@@ -908,7 +908,7 @@ void OptionCollection::show_unused_options(std::ostream & stream) const {
 		std::sort(sv.begin(), sv.end());
 
 		// '\n' instead of std::endl so that the options won't get prefixed if stream is a tracer.
-		stream << "WARNING: The following options have been set, but have not yet been used:\n";
+		stream << "The following options have been set, but have not yet been used:\n";
 		for ( auto & i : sv ) {
 			stream << "\t" << i << '\n';
 		}

@@ -464,7 +464,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		// limit to dna design positions
 		DnaPosition const & pos( itr->second );
 		Size const index( pos.top() );
-		assert( index == itr->first );
+		debug_assert( index == itr->first );
 		if ( !ptask->has_behavior("TARGET",index) ) continue;
 		if ( pose.pdb_info() ) {
 			TR(t_info) << pose.pdb_info()->number( index ) << "/"

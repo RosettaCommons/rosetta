@@ -343,7 +343,7 @@ get_hb_don_chem_type(
 				return hbdon_PBA;
 			}
 		} else {
-			//tr << "WARNING: Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_BB.";
+			//tr.Warning << "Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_BB.";
 			return hbdon_GENERIC_BB;
 		}
 	} else {
@@ -482,7 +482,7 @@ get_hb_don_chem_type(
 		case aa_vrt:
 		case aa_unp:
 		case aa_unk :
-			//tr << "WARNING: Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.";
+			//tr.Warning << "Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.";
 			return hbdon_GENERIC_SC; break;
 		}
 	}
@@ -542,7 +542,7 @@ get_hb_acc_chem_type(
 				return hbacc_RRI_RNA;
 			} else if ( aname == " O4 " || aname == " O2 " ) {
 				// AMW: output debugging
-				// tr << "WARNING: Residue " << acc_rsd.name() << " atom " << acc_rsd.atom_name( aatm ) << " is RNA backbone but unknown significance!" << std::endl;
+				// tr.Warning << "Residue " << acc_rsd.name() << " atom " << acc_rsd.atom_name( aatm ) << " is RNA backbone but unknown significance!" << std::endl;
 				// AMW: only current trigger is O2/O4 on BRU (SP2, so...)
 				// These are actually SC atoms.
 				return hbacc_GENERIC_SP2SC;
@@ -551,16 +551,16 @@ get_hb_acc_chem_type(
 			// generic types; for backwards compatibility; prefer functional group based chem type
 			switch (acc_rsd.atom_type(aatm).hybridization()){
 			case SP2_HYBRID :
-				//    tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP2BB.";
+				//    tri.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP2BB.";
 				return hbacc_GENERIC_SP2BB; break;
 			case SP3_HYBRID :
-				//tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP3BB.";
+				//tr.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP3BB.";
 				return hbacc_GENERIC_SP3BB; break;
 			case RING_HYBRID :
-				//tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
+				//tr.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
 				return hbacc_GENERIC_RINGBB; break;
 			case UNKNOWN_HYBRID :
-				//tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
+				//tr.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
 				return hbacc_NONE; break;
 			}
 		}
@@ -869,7 +869,7 @@ hbond_compute_energy(
 {
 	HBEvalType hbe = hbt.eval_type();
 	if ( hbe == hbe_UNKNOWN ) {
-		tr.Error << "ERROR: Unknown HBEvalType for: " << hbt << std::endl;
+		tr.Error << "Unknown HBEvalType for: " << hbt << std::endl;
 		utility_exit_with_message("Can't get energy for hbond interaction.");
 	}
 
@@ -880,7 +880,7 @@ hbond_compute_energy(
 	// These should throw an exection if fail_on_bad_hbond is true
 	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 || std::abs(xH2) > 1.0 ) {
 		if ( true ) {
-			tr << "WARNING:: invalid angle value in hbond_compute_energy:"
+			tr.Warning << "invalid angle value in hbond_compute_energy:"
 				<< " xH = " << ObjexxFCL::format::SS( xH ) << " xD = " << ObjexxFCL::format::SS( xD )
 				<< " xH2 = " << ObjexxFCL::format::SS( xH2 ) << std::endl;
 		}
@@ -1510,8 +1510,8 @@ hb_energy_deriv(
 	if ( HDdis2 < 0.64 || HDdis2 > 1.5625 ) { // .8 to 1.25A
 		if ( true ) {
 			// this warning was runlevel dependent
-			if ( tr.visible() ) {
-				tr.Debug << "Warning: hb_energy_deriv has H(" << Hxyz(1) << ","
+			if ( tr.Debug.visible() ) {
+				tr.Debug << "hb_energy_deriv has H(" << Hxyz(1) << ","
 					<< Hxyz(2)<< "," << Hxyz(3) << ") D(" << Dxyz(1) << "," << Dxyz(2)
 					<< "," << Dxyz(3) << ")  distance out of range " << std::sqrt( HDdis2 ) << std::endl;
 			}
@@ -1532,7 +1532,7 @@ hb_energy_deriv(
 	Vector PBxyz;
 	HBEvalType eval_type( hbt.eval_type() );
 	if ( eval_type == hbe_UNKNOWN ) {
-		tr.Error << "ERROR: Unknown HBEvalType for " << hbt << std::endl;
+		tr.Error << "Unknown HBEvalType for " << hbt << std::endl;
 		utility_exit_with_message("Cannot compute derivative for hbond interaction");
 	}
 	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );

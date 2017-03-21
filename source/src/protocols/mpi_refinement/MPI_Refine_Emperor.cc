@@ -249,7 +249,7 @@ MPI_Refine_Emperor::process_inbound_wus(){
 			masters_done_[imaster] = true;
 
 		} else {
-			TR.Error << "ERROR: Unknown workunit received. " << std::endl;
+			TR.Error << "Unknown workunit received. " << std::endl;
 		}
 
 	}

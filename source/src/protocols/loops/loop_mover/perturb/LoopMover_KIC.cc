@@ -176,7 +176,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	static int cur_struct=0; // for movie output
 	// Dont allow loops < 3 residues.
 	if ( (loop.stop() - loop.start() < 2 ) ) {
-		tr().Error << "[WARNING] KinematicMover cannot handle loops smaller than 3 residues. Doing nothing. " << std::endl;
+		tr().Error << "KinematicMover cannot handle loops smaller than 3 residues. Doing nothing. " << std::endl;
 		return loop_mover::CriticalFailure;
 	}
 
@@ -431,7 +431,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			myKinematicMover.set_bump_overlap_factor(previous_bump_overlap_factor);//RAP
 		}
 		if ( !myKinematicMover.last_move_succeeded() ) {
-			tr().Error << "[WARNING] Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
+			tr().Error << "Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
 			return loop_mover::CriticalFailure;
@@ -567,7 +567,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				}
 				//mc.show_scores();
 			} else {
-				tr().Error << "[WARNING] Failed to build loop with kinematic Mover after " << nits << " trials: " << loop << std::endl;
+				tr().Error << "Failed to build loop with kinematic Mover after " << nits << " trials: " << loop << std::endl;
 				// return to original fold tree
 				//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
 				return loop_mover::Failure;

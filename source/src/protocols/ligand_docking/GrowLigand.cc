@@ -131,11 +131,6 @@ GrowLigand::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "GrowLigand" ) {
-		grow_ligand_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( tag->hasOption("chain") ) {
 		chain_ = tag->getOption<std::string>("chain");
 	} else {
@@ -146,8 +141,8 @@ GrowLigand::parse_my_tag(
 void
 GrowLigand::apply( core::pose::Pose & pose )
 {
-	assert(!fragments_.empty());
-	assert(chain_.size() == 1);
+	debug_assert(!fragments_.empty());
+	debug_assert(chain_.size() == 1);
 
 	utility::vector1<core::Size> unconnected_residues;
 	{

@@ -292,8 +292,8 @@ HelixPairingFilter::compute( Pose const & pose ) const
 	} else if ( output_type_ == "align" ) {
 		value = hpairset.helix_pairing( output_id_ )->align_angle();
 	} else {
-		TR << "Invalid type for output_type, choose either dist or cross or align. " << std::endl;
-		runtime_assert( false );
+		TR.Fatal << "Invalid type for output_type, choose either dist or cross or align. " << std::endl;
+		utility_exit_with_message("Invalid type for output_type, choose either dist or cross or align.");
 	}
 
 	return value;
@@ -334,8 +334,8 @@ HelixPairingFilter::parse_my_tag(
 	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
 	/*
 	if ( hpairset_->helix_pairings().empty() ) {
-	TR.Error << "Error!, Option of helix_pairings is empty." << std::endl;
-	runtime_assert( false );
+	TR.Error << "Option of helix_pairings is empty." << std::endl;
+	utility_exit_with_message("Option of helix_pairings is empty.");
 	}
 	*/
 

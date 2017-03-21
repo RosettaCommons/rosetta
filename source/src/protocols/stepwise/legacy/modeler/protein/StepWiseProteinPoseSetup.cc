@@ -309,7 +309,7 @@ StepWiseProteinPoseSetup::figure_out_working_sequence_and_mapping(){
 	}
 
 	// For now, need to have at least one chain defined in the input!
-	assert( start_chain > 0 );
+	debug_assert( start_chain > 0 );
 	chain_boundaries.push_back( std::make_pair( start_chain, end_chain ) );
 	//  TR.Debug << "FOUND CHAIN " << start_chain << " " << end_chain << std::endl;
 	//  check_moving_res_in_chain( start_chain, end_chain, chain_boundaries.size(), which_chain_has_moving_res );
@@ -571,7 +571,7 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 
 	Size const nres( pose.size() );
 	core::kinematics::FoldTree f( nres );
-	assert( cuts_.size() == jump_partners_.size() );
+	debug_assert( cuts_.size() == jump_partners_.size() );
 	Size const num_cuts( cuts_.size() );
 
 	ObjexxFCL::FArray2D< int > jump_point( 2, num_cuts, 0 );
@@ -715,7 +715,7 @@ StepWiseProteinPoseSetup::save_phi_psi_offsets(
 	utility::vector1< core::Size > const & input_res,
 	utility::vector1< core::Size > const & slice_res ){
 
-	assert( slice_res.size() == input_res.size() );
+	debug_assert( slice_res.size() == input_res.size() );
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 
 	for ( Size n = 1; n <= input_res.size(); n++ ) {
@@ -918,7 +918,7 @@ StepWiseProteinPoseSetup::reroot_fold_tree( pose::Pose & pose ){
 		". Moving_res is in  partition " << partition_definition( moving_res ) <<
 		".  New root residue " << root_res << std::endl;
 
-	assert( root_res > 0 );
+	debug_assert( root_res > 0 );
 	core::kinematics::FoldTree f = pose.fold_tree();
 	bool reorder_went_OK = f.reorder( root_res );
 	runtime_assert( reorder_went_OK );
@@ -1013,7 +1013,7 @@ StepWiseProteinPoseSetup::figure_out_gap_size_and_first_chain_break_res(){
 	}
 
 	if ( found_moving_gap > 1 ) {
-		TR.Debug <<  "WARNING: Had trouble figure out which gap might be the one to close! Try to renumber input poses sequentially." << std::endl;
+		TR.Warning <<  "Had trouble figure out which gap might be the one to close! Try to renumber input poses sequentially." << std::endl;
 	}
 }
 
@@ -1147,7 +1147,7 @@ StepWiseProteinPoseSetup::get_working_pose( pose::Pose const & pose, pose::Pose 
 		}
 	}
 
-	assert( working_pose.sequence() == working_parameters_->working_sequence() );
+	debug_assert( working_pose.sequence() == working_parameters_->working_sequence() );
 
 	// RNA thing.
 	core::pose::rna::make_phosphate_nomenclature_matches_mini( working_pose );
@@ -1425,7 +1425,7 @@ StepWiseProteinPoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) 
 	using namespace core::chemical::rna;
 
 	ConstraintSetOP cst_set( pose.constraint_set()->clone() );
-	assert( cst_set );
+	debug_assert( cst_set );
 
 	utility::vector1< core::Size > const & working_terminal_res = working_parameters_->working_terminal_res();
 

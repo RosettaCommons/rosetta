@@ -85,8 +85,8 @@ linear_chainbreak(
 	if ( pose.fold_tree().num_cutpoint() == 0 ) {
 		return 0;
 	}
-	assert( pos > 0 );
-	assert( pos < pose.size() );
+	debug_assert( pos > 0 );
+	debug_assert( pos < pose.size() );
 
 	EnergyMap emap;
 	ScoreFunction fx; // dummy, needed for function call
@@ -205,8 +205,8 @@ overlap_chainbreak(
 	using core::scoring::ScoreType;
 	using core::scoring::methods::LinearChainbreakEnergy;
 
-	assert( pos > 0 );
-	assert( pos < pose.size() );
+	debug_assert( pos > 0 );
+	debug_assert( pos < pose.size() );
 
 	EnergyMap emap;
 	ScoreFunction fx; // dummy, needed for function call
@@ -284,8 +284,8 @@ quadratic_chainbreak(
 	using core::scoring::ScoreType;
 	using core::scoring::methods::ChainbreakEnergy;
 
-	assert( pos > 0 );
-	assert( pos < pose.size() );
+	debug_assert( pos > 0 );
+	debug_assert( pos < pose.size() );
 
 	EnergyMap emap;
 	ScoreFunction fx; // dummy, needed for function call

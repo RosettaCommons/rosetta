@@ -60,8 +60,8 @@ public:
 	///    the last one depends on the size of a pose i.e. the size of the current chunk
 	/// @param atom_id the residue order number, the first is 1
 	inline bool has_atom(core::Size residue_id, core::Size atom_id) {
-		assert(residue_id<=atom_flags_.size());
-		assert(atom_id<=atom_flags_[residue_id].size());
+		debug_assert(residue_id<=atom_flags_.size());
+		debug_assert(atom_id<=atom_flags_[residue_id].size());
 		return atom_flags_[residue_id][atom_id];
 	}
 
@@ -71,8 +71,8 @@ public:
 	/// @param atom_id the residue order number, the first is 1
 	inline numeric::xyzVector<core::Real> get_atom_coordinates(core::Size residue_id,
 		core::Size atom_id) {
-		assert(residue_id<=chunk_atoms_xyz_.size());
-		assert(atom_id<=chunk_atoms_xyz_[residue_id].size());
+		debug_assert(residue_id<=chunk_atoms_xyz_.size());
+		debug_assert(atom_id<=chunk_atoms_xyz_[residue_id].size());
 		return chunk_atoms_xyz_[residue_id][atom_id];
 	}
 

@@ -145,7 +145,7 @@ numeric::xyzVector< core::Real > com_calc( core::pose::Pose const& pose,
 		}
 	}
 
-	assert( coords.size() > 0 );
+	debug_assert( coords.size() > 0 );
 
 	return center_of_mass( coords );
 }
@@ -168,14 +168,14 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 			<< "This probably isn't what you meant, check your selectors and input pose." << std::endl;
 		throw utility::excn::EXCN_BadInput( ss.str() );
 	}
-	assert( (Size) mobile_residues_.index( false ) <= pose.size() );
+	debug_assert( (Size) mobile_residues_.index( false ) <= pose.size() );
 
 	RT::Vector test_point = pose.residue( mobile_residues_.index( false ) ).xyz( 1 );
 
 	// TODO: throw an excpetion here instead of using an assert
 	// Make sure only virutal residues are being used as tracking residues
-	assert( pose.residue( tracking_residue_id ).name() == "VRT" );
-	assert( pose.fold_tree().root() != (int)tracking_residue_id );
+	debug_assert( pose.residue( tracking_residue_id ).name() == "VRT" );
+	debug_assert( pose.fold_tree().root() != (int)tracking_residue_id );
 
 	// By definition, the virtual residue we are placing must be the downstream partner in exactly one jump.
 	// We refer to this jump as the "positioning_jump".
@@ -187,7 +187,7 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 
 	for ( int i = 1; i <= (int)pose.fold_tree().num_jump(); ++i ) {
 		if ( pose.fold_tree().downstream_jump_residue( i ) == (int)tracking_residue_id ) {
-			assert( positioning_jump_id == 0 );
+			debug_assert( positioning_jump_id == 0 );
 			positioning_jump_id = i;
 		} else if ( pose.fold_tree().upstream_jump_residue( i ) == (int)tracking_residue_id ) {
 			positioned_jump_ids.push_back( i );
@@ -196,7 +196,7 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 
 	// TODO: throw an excpetion instead of using an assert
 	// Make sure the tracking residue's jump was detected properly, then make the jump number const
-	assert( positioning_jump_id != 0 );
+	debug_assert( positioning_jump_id != 0 );
 
 	// Get the stubs from the jump that is responsible for positioning the tracking residue and set the center of the
 	// tracking residue's stub to the new location.
@@ -214,20 +214,16 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 			pose.set_jump( *it, Jump( RT( tracking_res_stub, pose.conformation().downstream_jump_stub( *it ) ) ) );
 		} else {
 			core::Size non_vrt_residue = pose.fold_tree().downstream_jump_residue( *it );
-			if ( mobile_residues_.size() >= non_vrt_residue &&
-					mobile_residues_[ non_vrt_residue ] == true ) {
-				// In this case, it's not ok. We MUST adjust the jump if it builds
-				assert( false );
-			}
+			debug_assert( mobile_residues_.size() < non_vrt_residue || mobile_residues_[ non_vrt_residue ] != true );
 		}
 	}
 
 	// TODO: throw an excpetion here instead of using an assert
 	// Update the position of the tracking residue and ensure that it ends up where we want it
 	pose.set_jump( positioning_jump_id, Jump( RT( upstream_postioning_stub, tracking_res_stub ) ) );
-	assert( pose.residue( tracking_residue_id ).xyz( "ORIG" ).distance_squared( new_position ) < 1e-10 );
+	debug_assert( pose.residue( tracking_residue_id ).xyz( "ORIG" ).distance_squared( new_position ) < 1e-10 );
 
-	assert( pose.residue( mobile_residues_.index( false ) ).xyz( 1 ).distance_squared( test_point ) < 1e-10 );
+	debug_assert( pose.residue( mobile_residues_.index( false ) ).xyz( 1 ).distance_squared( test_point ) < 1e-10 );
 }
 
 void CoMTrackerCM::update_com( core::pose::Pose& pose ) const {
@@ -295,7 +291,7 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 		ss << "The mobile_selector for '" << this->get_name() << "' made an empty selection. This is not allowed.";
 		throw utility::excn::EXCN_BadInput( ss.str() );
 	}
-	assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
+	debug_assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
 
 	moves::MoverOP this_ptr = get_self_ptr();
 	claims::VirtResClaimOP vclaim( new claims::VirtResClaim( utility::pointer::static_pointer_cast< ClientMover >(this_ptr),

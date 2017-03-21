@@ -1118,12 +1118,12 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		}
 	} else {
 		if ( resTypeBeforeLoop=='E' ) {
-			TR << "WARNING:: Not extending 1 side of sheet and only eating in 1 residue" <<std::endl;
+			TR.Warning << "Not extending 1 side of sheet and only eating in 1 residue" <<std::endl;
 			resAdjustmentStartHigh_=0;
 			resAdjustmentStartLow_=resAdjustmentStopLow_sheet_;
 		}
 		if ( resTypeAfterLoop=='E' ) {
-			TR << "WARNING: Not extending 1 side of sheet and only eating in 1 residue" << std::endl;
+			TR.Warning << "Not extending 1 side of sheet and only eating in 1 residue" << std::endl;
 			resAdjustmentStopHigh_=0;
 			resAdjustmentStopLow_=resAdjustmentStopHigh_sheet_;
 		}

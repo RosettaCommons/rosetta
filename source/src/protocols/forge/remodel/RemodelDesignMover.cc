@@ -123,7 +123,7 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 	TR << "]" << std::endl;
 
 	if ( und_pos.empty() ) {
-		TR << "Warning: union_of_intervals_containing_undefined_positions() returned empty set. NeighborhoodByDistanceCalculator could return undefined results." << std::endl;
+		TR.Warning << "union_of_intervals_containing_undefined_positions() returned empty set. NeighborhoodByDistanceCalculator could return undefined results." << std::endl;
 	}
 
 	CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( und_pos ) ) );

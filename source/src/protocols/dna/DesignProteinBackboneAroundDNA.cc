@@ -166,9 +166,9 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 		if ( ptask->being_designed( pos ) ) design_positions.push_back( pos );
 	}
 	if ( design_positions.empty() ) {
-		TR << "WARNING: no designable positions" << std::endl;
+		TR.Warning << "no designable positions" << std::endl;
 		if ( packing_positions.empty() ) {
-			TR << "WARNING: no packable positions either" << std::endl;
+			TR.Warning << "no packable positions either" << std::endl;
 		} else {
 			TR << "using packable positions instead of designable positions "
 				<< "to define movable backbone regions" << std::endl;
@@ -201,7 +201,7 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 
 	loops::loops_around_residues( *loops_to_move, pose, design_positions, gapspan_, spread_ );
 	if ( loops_to_move->size() == 0 ) {
-		TR << "WARNING: no loop regions were defined, aborting backbone design" << std::endl;
+		TR.Warning << "no loop regions were defined, aborting backbone design" << std::endl;
 		return;
 	}
 	set_loop_info( pose, *loops_to_move );

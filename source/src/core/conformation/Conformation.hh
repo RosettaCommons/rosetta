@@ -1310,8 +1310,8 @@ private:
 	Residue &
 	residue_( Size seqpos )
 	{
-		assert( seqpos >=1 );
-		assert( seqpos <= size() );
+		debug_assert( seqpos >=1 );
+		debug_assert( seqpos <= size() );
 		return *residues_[ seqpos ];
 	}
 

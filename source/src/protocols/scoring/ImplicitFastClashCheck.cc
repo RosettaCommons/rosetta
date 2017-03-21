@@ -96,7 +96,7 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	bbl_ -= 10 * std::numeric_limits< Real >::epsilon();
 	bbu += 10 * std::numeric_limits< Real >::epsilon();
 	Real const side( neighbor_cutoff );
-	assert( side > Real( 0 ) );
+	debug_assert( side > Real( 0 ) );
 	side_inv_ = ( Real( 1 ) / side );
 	cube_dim_ = CubeDim( // Cube dimensions
 		Size( std::ceil( ( bbu.x() - bbl_.x() ) * side_inv_ ) ),             // Test that ceil values == Size values
@@ -113,9 +113,9 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 			Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1,
 			Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1
 		);
-		assert( cube_key.x() <= cube_dim_.x() );
-		assert( cube_key.y() <= cube_dim_.y() );
-		assert( cube_key.z() <= cube_dim_.z() );
+		debug_assert( cube_key.x() <= cube_dim_.x() );
+		debug_assert( cube_key.y() <= cube_dim_.y() );
+		debug_assert( cube_key.z() <= cube_dim_.z() );
 		Size i_index = cubes_.index( cube_key.x(), cube_key.y(), cube_key.z() );
 		cubes_[ i_index ].push_back( i );
 	}

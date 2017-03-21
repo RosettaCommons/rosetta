@@ -46,7 +46,7 @@ PDB::domain_action(
 ) const
 
 {
-	assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	std::string const & pdb_path = tokens[ ++which_token ];
 	core::pose::Pose temp_pose;
 	std::cout << "Reading in PDB file " << pdb_path << std::endl;
@@ -62,7 +62,7 @@ NTermLinker::domain_action(
 	DomainInfo & domain
 ) const
 {
-	assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	std::string linker = tokens[ ++which_token ];
 	domain.set_Nterm_linker( linker );
 	++which_token;
@@ -75,7 +75,7 @@ CTermLinker::domain_action(
 	DomainInfo & domain
 ) const
 {
-	assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	std::string linker = tokens[ ++which_token ];
 	domain.set_Cterm_linker( linker );
 	++which_token;
@@ -88,7 +88,7 @@ NTrim::domain_action(
 	DomainInfo & domain
 ) const
 {
-	assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	std::string trim = tokens[ ++which_token ];
 	Size ntrim = atoi(trim.c_str());
 	domain.set_trim_nterm( ntrim);
@@ -102,7 +102,7 @@ CTrim::domain_action(
 	DomainInfo & domain
 ) const
 {
-	assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	std::string trim = tokens[ ++which_token ];
 	Size ctrim = atoi(trim.c_str());
 	domain.set_trim_cterm( ctrim );

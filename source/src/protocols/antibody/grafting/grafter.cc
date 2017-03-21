@@ -158,9 +158,9 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 			}
 		}
 		if( numbering.size() ) {
-			TR << TR.Red << "WARNING: Was not able to adjust all residue in chain: " << j.chain << "!!!" << TR.Reset << std::endl;
-			TR << TR.Red << "Leftovers numbering: " << numbering  << "  AA: " << j.trimmed_sequence << TR.Reset << std::endl;
-			TR << TR.Red << TR.Underline << "Original numbering was:" << TR.Reset << ' ' << j.numbering << std::endl;
+			TR.Warning << TR.Red << "Was not able to adjust all residue in chain: " << j.chain << "!!!" << TR.Reset << std::endl;
+			TR.Warning << TR.Red << "Leftovers numbering: " << numbering  << "  AA: " << j.trimmed_sequence << TR.Reset << std::endl;
+			TR.Warning << TR.Red << TR.Underline << "Original numbering was:" << TR.Reset << ' ' << j.numbering << std::endl;
 		}
 
 		TR << "Sequence after:  " << TR.Bold << j.color << j.pose->sequence() << TR.Reset << std::endl;

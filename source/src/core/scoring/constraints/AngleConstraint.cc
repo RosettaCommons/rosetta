@@ -249,7 +249,7 @@ AngleConstraint::angle(
 		return numeric::arccos( dot( u1,u2 ) / ( n1 * n2 ) );
 	}
 	TR.Error << "AngleConstraint::score: warning: 0-length bonds!" << std::endl;
-	runtime_assert( false ); //die but hopfully get stack trace
+	utility_exit_with_message( "0-length bonds in AngleConstraint" );
 	return 0.0;
 }
 

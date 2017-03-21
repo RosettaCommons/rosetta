@@ -231,7 +231,7 @@ interface_rmsd(
 			}
 		}
 	}
-	assert( p1_coords.size() == p2_coords.size() );
+	debug_assert( p1_coords.size() == p2_coords.size() );
 
 	int const natoms = p1_coords.size();
 	ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );

@@ -1043,8 +1043,8 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	for ( char typechar : typestring ) {
 		ResidueTypeCOP aa_type( rts->get_representative_type_aa( aa_from_oneletter_code( typechar ) ) );
 		if ( ! aa_type ) {
-			TR(t_warning) << "no ResidueType found in ResidueTypeSet for " << typechar << std::endl;
-			runtime_assert(false);
+			TR.Fatal << "no ResidueType found in ResidueTypeSet for " << typechar << std::endl;
+			utility_exit_with_message("Can't find ResidueType.");
 		}
 		allowed_type_caps.push_back( aa_type );
 	}
@@ -1088,7 +1088,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	utility::io::ozstream outfile( outfilename.c_str(), std::ios::app );
 	if ( !outfile ) {
 		std::cerr << "trouble opening file " << outfilename << " for writing" << std::endl;
-		assert( false ); // die here in debug mode
+		debug_assert( false ); // die here in debug mode
 		return;
 	}
 
@@ -1171,14 +1171,13 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 			// maybe this should be a ResidueLevelTask method, and maybe the ResidueLevelTask should clear
 			// its allowed_residue_types if !being_packed
 			if ( !rtask.being_packed() ) {
-				TR << "packing was disabled at " << pose.pdb_info()->chain(*index) << "."
+				TR.Fatal << "packing was disabled at " << pose.pdb_info()->chain(*index) << "."
 					<< pose.pdb_info()->number(*index) << std::endl;
-				runtime_assert(false);
+				utility_exit_with_message("Packing was disabled!");
 			}
 			if ( std::find( art.begin(), art.end(), *scan_type ) == art.end() ) {
 				TR << (*scan_type)->name() << " not allowed at " << pose.pdb_info()->chain(*index) << "."
 					<< pose.pdb_info()->number(*index) << std::endl;
-				//runtime_assert(false);
 				continue;
 			}
 			// set scan type at this residue

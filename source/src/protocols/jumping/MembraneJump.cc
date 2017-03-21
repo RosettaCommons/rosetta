@@ -143,7 +143,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 		++tries;
 	}
 	if ( selected_pairings_.size()<njumps ) {
-		std::cout << "WARNING: Only picked " << selected_pairings_.size() << " given number was " << njumps << " only allow one jump between any two TMHs " << std::endl;
+		tr.Warning << "Only picked " << selected_pairings_.size() << " given number was " << njumps << " only allow one jump between any two TMHs " << std::endl;
 	}
 	FArray2D_int jumps(2,selected_pairings_.size());
 	for ( Size i=1; i<=selected_pairings_.size(); ++i ) {

@@ -275,7 +275,7 @@ void merge_csts_to_scorefunction( core::Real const weight, core::scoring::ScoreF
 	if ( scorefxn_.has_zero_weight( atom_pair_constraint  ) ) scorefxn_.set_weight( atom_pair_constraint , weight );
 	else {
 		tr.Warning
-			<< "WARNING: merge_csts_to_scorefunction not overwriting atom_pair_constraint weight with file weight "
+			<< "merge_csts_to_scorefunction not overwriting atom_pair_constraint weight with file weight "
 			<< weight
 			<< ", instead leaving untouched pre-existing scorefunction weight "
 			<< scorefxn_.get_weight(atom_pair_constraint) << std::endl;
@@ -284,7 +284,7 @@ void merge_csts_to_scorefunction( core::Real const weight, core::scoring::ScoreF
 	if ( scorefxn_.has_zero_weight( angle_constraint      ) ) scorefxn_.set_weight( angle_constraint     , weight );
 	else {
 		tr.Warning
-			<< "WARNING: merge_csts_to_scorefunction not overwriting angle_constraint weight with file weight "
+			<< "merge_csts_to_scorefunction not overwriting angle_constraint weight with file weight "
 			<< weight
 			<< ", instead leaving untouched pre-existing scorefunction weight "
 			<< scorefxn_.get_weight(angle_constraint) << std::endl;
@@ -293,7 +293,7 @@ void merge_csts_to_scorefunction( core::Real const weight, core::scoring::ScoreF
 	if ( scorefxn_.has_zero_weight( dihedral_constraint   ) ) scorefxn_.set_weight( dihedral_constraint  , weight );
 	else {
 		tr.Warning
-			<< "WARNING: merge_csts_to_scorefunction not overwriting dihedral_constraint weight with file weight "
+			<< "merge_csts_to_scorefunction not overwriting dihedral_constraint weight with file weight "
 			<< weight
 			<< ", instead leaving untouched pre-existing scorefunction weight "
 			<< scorefxn_.get_weight(dihedral_constraint) << std::endl;
@@ -302,7 +302,7 @@ void merge_csts_to_scorefunction( core::Real const weight, core::scoring::ScoreF
 	if ( scorefxn_.has_zero_weight( coordinate_constraint ) ) scorefxn_.set_weight( coordinate_constraint, weight );
 	else {
 		tr.Warning
-			<< "WARNING: merge_csts_to_scorefunction not overwriting coordinate_constraint weight with file weight "
+			<< "merge_csts_to_scorefunction not overwriting coordinate_constraint weight with file weight "
 			<< weight
 			<< ", instead leaving untouched pre-existing scorefunction weight "
 			<< scorefxn_.get_weight(coordinate_constraint) << std::endl;

@@ -328,7 +328,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "task_operations" ) ) {
-		TR.Warning << "WARNING: task_operations only active for proteins" << std::endl;
+		TR.Warning << "task_operations only active for proteins" << std::endl;
 		parse_task_operations( tag, datamap, filters, movers, pose );
 	}
 

@@ -177,7 +177,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 		try {
 			new_cst = constraints_->remapped_clone( constraint_ref_pose_, pose );
 		} catch( core::id::EXCN_AtomNotFound& excn ) {
-			tr.Error << "[ERROR] failed attempt to add constraints to the "
+			tr.Error << "failed attempt to add constraints to the "
 				<< (fullatom ? "fullatom" : "centroid") << " pose" << std::endl;
 			tr.Error << excn << std::endl;
 			if ( tr.Debug.visible() ) {

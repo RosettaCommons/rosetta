@@ -616,7 +616,7 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 
 	Real trans_magnitude = 1000;
 
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
@@ -649,7 +649,7 @@ SymDockProtocol::calc_rms( core::pose::Pose & pose ){
 	using namespace core::conformation::symmetry;
 	using namespace basic::options;
 
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 	SymmetricConformation & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );

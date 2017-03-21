@@ -762,7 +762,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 	core::Size num_match_groups( match_groups_ushits().size() );
 	if ( num_match_groups > 1 ) {
 		core::Size mgroup( numeric::random::random_range( 1, num_match_groups ) );
-		TR << "WARNING: Matcher produced " << num_match_groups << " unique match groups, randomly picked " << mgroup << " to be inserted into the pose." << std::endl;
+		TR.Warning << "Matcher produced " << num_match_groups << " unique match groups, randomly picked " << mgroup << " to be inserted into the pose." << std::endl;
 		insert_match_into_pose( pose, mgroup );
 	} else if ( num_match_groups == 1 ) insert_match_into_pose( pose, 1 );
 	else {

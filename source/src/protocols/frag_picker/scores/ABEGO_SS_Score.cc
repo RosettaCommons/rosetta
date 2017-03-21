@@ -87,12 +87,11 @@ void ABEGO_SS_Score::do_caching(VallChunkOP chunk) {
 				if_found = true;
 				break;
 			}
-			continue;
 		}
 		if ( !if_found ) {
 			trABEGO_SS_Score.Warning << "Can't find a feature label for the following combination of ss,abego: "
 				<<s<<","<<maps_[1]->abego_char(bin)<<std::endl;
-			assert(false);
+			debug_assert(false);
 		}
 	}
 	for ( core::Size i = 1; i <= query_len_; ++i ) {
@@ -114,8 +113,8 @@ bool ABEGO_SS_Score::cached_score(FragmentCandidateOP f,
 
 	core::Real totalScore = 0;
 	for ( core::Size i = 1; i <= f->get_length(); ++i ) {
-		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
-		assert(f->get_first_index_in_vall() + i - 1<= scores_[1].size());
+		debug_assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
+		debug_assert(f->get_first_index_in_vall() + i - 1<= scores_[1].size());
 		totalScore += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 	}
 

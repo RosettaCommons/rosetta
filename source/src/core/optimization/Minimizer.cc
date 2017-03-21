@@ -190,7 +190,7 @@ Real JJH_Minimizer::run(
 		//   descent_direction = _get_direction();
 	}
 
-	TR.Warning << "WARNING: Minimization has exceeded " << max_iter << "iterations but has not converged!" << std::endl;
+	TR.Warning << "Minimization has exceeded " << max_iter << "iterations but has not converged!" << std::endl;
 	return current_value;
 }
 
@@ -250,7 +250,7 @@ Minimizer::dfpmin(
 		// Christophe added the following to allow premature end of minimization
 		// I probably need to do the same with line_min
 		if ( func_.abort_min(P) ) {
-			TR.Warning << "WARNING: ABORTING MINIMIZATION TRIGGERED BY abort_min" << std::endl;
+			TR.Warning << "ABORTING MINIMIZATION TRIGGERED BY abort_min" << std::endl;
 			return;
 		}
 		// End Christophe modifications
@@ -313,7 +313,7 @@ Minimizer::dfpmin(
 	}
 
 	if ( !options_.silent() ) {
-		TR.Warning << "WARNING: DFPMIN MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+		TR.Warning << "DFPMIN MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 	}
 
 	//  std::cout << "Called line minimization " << line_min->_num_linemin_calls << std::endl;
@@ -555,7 +555,7 @@ Minimizer::dfpmin_armijo(
 	} // for ITER
 
 	if ( !options_.silent() ) {
-		TR.Warning << "WARNING: DFPMIN (Armijo) MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+		TR.Warning << "DFPMIN (Armijo) MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 	}
 
 	// std::cout << "Called line minimization " << line_min->_num_linemin_calls << std::endl;
@@ -896,7 +896,7 @@ Minimizer::lbfgs(
 	}
 
 	if ( !options_.silent() ) {
-		TR.Warning << "WARNING: LBFGS MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+		TR.Warning << "LBFGS MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 	}
 
 	return;
@@ -959,7 +959,7 @@ Minimizer::linmin_iterated(
 	}
 
 	if ( ITER == ITMAX ) {
-		TR.Warning << "Warning: maximum number of minimization iterations (" << ITMAX << ") was reached.  Function likely not converged." << std::endl;
+		TR.Warning << "maximum number of minimization iterations (" << ITMAX << ") was reached.  Function likely not converged." << std::endl;
 		TR.Warning.flush();
 	}
 

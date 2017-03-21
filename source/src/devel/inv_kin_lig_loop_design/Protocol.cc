@@ -277,7 +277,7 @@ void Protocol::phase_lores() {
 				pose->energies().show_totals( cout ); cout << endl;
 
 			} else {
-				assert( false );
+				utility_exit_with_message("Loop to value is zero -- cannot phase low res.");
 			}
 
 			atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.01,true,false,false) );
@@ -382,7 +382,7 @@ void Protocol::phase_hires() {
 							" tdelta=" << ccd_loop_closure_mover.torsion_delta() <<
 							" rdelta=" << ccd_loop_closure_mover.rama_delta() << endl;
 					} else {
-						assert( false );
+						utility_exit_with_message("Loop to is zero -- cannot phase high res.");
 					}
 
 					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",1,true,false,false) );
@@ -474,7 +474,7 @@ void Protocol::phase_hires() {
 						pose->fold_tree( orig_ft );
 
 					} else {
-						assert( false );
+						utility_exit_with_message("Loop to is zero -- cannot phase high res.");
 					}
 
 					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",1,true,false,false) );

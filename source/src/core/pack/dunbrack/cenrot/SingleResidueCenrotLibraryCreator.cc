@@ -41,12 +41,12 @@ SingleResidueCenrotLibraryCreator::create( core::chemical::ResidueType const & r
 	using namespace core::chemical::rotamers;
 	RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
 	// If the factory system is sound, these two checks should work.
-	assert( libspec );
+	debug_assert( libspec );
 	CenrotRotamerLibrarySpecificationCOP cenrot_libspec = utility::pointer::dynamic_pointer_cast< CenrotRotamerLibrarySpecification const >(libspec);
-	assert( cenrot_libspec );
+	debug_assert( cenrot_libspec );
 
 	core::chemical::AA aa( cenrot_libspec->get_aa() );
-	assert( aa <= core::chemical::num_canonical_aas );
+	debug_assert( aa <= core::chemical::num_canonical_aas );
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP lib( core::pack::dunbrack::cenrot::CenrotLibrary::get_instance()->get_cenrot_library_by_aa(aa) );
 	return lib;
 }

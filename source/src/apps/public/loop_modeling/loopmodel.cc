@@ -47,7 +47,7 @@ main( int argc, char * argv [] )
 		// Old versions of loopmodel used -loops:input_pdb for PDB input.
 		// Catch people using old versions of command lines and tell them to update.
 		if ( basic::options::option[ basic::options::OptionKeys::loops::input_pdb ].user() ) {
-			TR.Error << "ERROR: loopmodel no longer uses the -loops:input_pdb flag -- consult recent documentation for the updated flags to use." << std::endl;
+			TR.Error << "loopmodel no longer uses the -loops:input_pdb flag -- consult recent documentation for the updated flags to use." << std::endl;
 			utility_exit_with_message("Incorrect flag passed: -loops:input_pdb");
 		}
 

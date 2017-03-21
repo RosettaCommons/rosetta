@@ -128,7 +128,7 @@ AtomDistanceSecMatchRPE::evaluate_residues(
 ) const
 {
 
-	assert( at_inds().size() == 2 );
+	debug_assert( at_inds().size() == 2 );
 
 	core::Real distance_squared( candidate_res.xyz( at_inds()[1].second ).distance_squared( target_res.xyz( at_inds()[2].second ) ) );
 
@@ -162,8 +162,8 @@ AtomDistanceSecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom
 	Size target_atom_id
 ) const
 {
-	assert( at_inds().size() == 2 );
-	assert( at_inds()[ 2 ].first == 2 ); // second atom is to the target residue
+	debug_assert( at_inds().size() == 2 );
+	debug_assert( at_inds()[ 2 ].first == 2 ); // second atom is to the target residue
 
 	return at_inds()[ 2 ].second == target_atom_id;
 }
@@ -209,7 +209,7 @@ AtomAngleSecMatchRPE::evaluate_residues(
 	core::conformation::Residue const & target_res
 ) const
 {
-	assert( at_inds().size() == 3 );
+	debug_assert( at_inds().size() == 3 );
 
 	//first figure out which of the residues the atoms belong to
 	core::PointPosition p1( at_inds()[1].first == 1 ? candidate_res.xyz( at_inds()[1].second ) : target_res.xyz( at_inds()[1].second ) );
@@ -276,7 +276,7 @@ AtomDihedralSecMatchRPE::evaluate_residues(
 	core::conformation::Residue const & target_res
 ) const
 {
-	assert( at_inds().size() == 4 );
+	debug_assert( at_inds().size() == 4 );
 
 	//first figure out which of the residues the atoms belong to
 	core::PointPosition p1( at_inds()[1].first == 1 ? candidate_res.xyz( at_inds()[1].second ) : target_res.xyz( at_inds()[1].second ) );

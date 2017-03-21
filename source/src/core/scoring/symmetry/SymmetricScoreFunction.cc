@@ -845,7 +845,7 @@ SymmetricScoreFunction::intersubunit_hbond_energy(
 			// dont care about these
 			break;
 		default :
-			TR.Warning << "Warning: energy from unexpected HB type ignored " << hbond.eval_type() << std::endl;
+			TR.Warning << "energy from unexpected HB type ignored " << hbond.eval_type() << std::endl;
 			break;
 		}
 		Real factor (0.0);

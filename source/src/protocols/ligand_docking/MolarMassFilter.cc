@@ -42,8 +42,8 @@ static THREAD_LOCAL basic::Tracer atom_tracer( "protocols.ligand_docking.MolarMa
 
 bool
 MolarMassFilter::apply( core::pose::Pose const & pose ) const {
-	assert(chain_.size()==1 );
-	assert(mass_limit_ >0 );
+	debug_assert(chain_.size()==1 );
+	debug_assert(mass_limit_ >0 );
 	core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
@@ -61,19 +61,11 @@ MolarMassFilter::apply( core::pose::Pose const & pose ) const {
 void
 MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-
-	if ( tag->getName() != "MolarMass" ) {
-		atom_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("MolarMass filter needs a 'chain' and an 'mass_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	mass_limit_ = tag->getOption<core::Size>("mass_limit");
-
-
 }
 
 // XRW TEMP protocols::filters::FilterOP

@@ -182,7 +182,7 @@ CstInfoMover::get_constraints_from_file( std::string const & filename, core::pos
 		if ( cst_op ) {
 			all_constraints.push_back( cst_op );
 		} else if ( ! data.eof() ) {
-			TR.Error << "ERROR Unable to read constraint " << all_constraints.size() + 1 << " from file " << filename << std::endl;
+			TR.Error << "Unable to read constraint " << all_constraints.size() + 1 << " from file " << filename << std::endl;
 			utility_exit_with_message( "In CstInfoMover, unable to read cst." );
 		}
 	}

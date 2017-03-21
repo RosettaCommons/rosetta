@@ -514,8 +514,8 @@ AddMembraneMover::init_from_cmd() {
 	}
 
 	if ( spanfile_.size() == 0 && option[ OptionKeys::mp::setup::spans_from_structure ].user() ) {
-		TR << "WARNING: Spanfile not given, topology will be created from PDB!" << std::endl;
-		TR << "WARNING: Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
+		TR.Warning << "Spanfile not given, topology will be created from PDB!" << std::endl;
+		TR.Warning << "Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
 		spanfile_ = "from_structure";
 	}
 
@@ -534,13 +534,13 @@ AddMembraneMover::init_from_cmd() {
 
 	// Read in membrane thickness parameter
 	if ( option[ OptionKeys::mp::thickness ].user() ) {
-		TR << "Warning: About to set a new membrane thickness not currently optimized for the scoring function" << std::endl;
+		TR.Warning << "About to set a new membrane thickness not currently optimized for the scoring function" << std::endl;
 		thickness_ = option[ OptionKeys::mp::thickness ]();
 	}
 
 	// Read in transition steepness parameter
 	if ( option[ OptionKeys::mp::steepness ].user() ) {
-		TR << "Warning: About to set a new membrane steepness not currently optimized for the scoring function" << std::endl;
+		TR.Warning << "About to set a new membrane steepness not currently optimized for the scoring function" << std::endl;
 		steepness_ = option[ OptionKeys::mp::steepness ]();
 	}
 

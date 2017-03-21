@@ -528,7 +528,7 @@ interpolate_polylinear_by_value(
 	double & val,
 	utility::fixedsizearray1< double, N > & dval_dbb
 ) {
-	assert( N != 0 );
+	debug_assert( N != 0 );
 
 	if ( angles ) {
 		val = 0;

@@ -170,7 +170,7 @@ RestrictRegion::parse_my_tag(
 	if ( tag->hasOption( "scorefxn" ) ) {
 		scorefxn_ = data.get_ptr< core::scoring::ScoreFunction >( "scorefxns",
 			tag->getOption< std::string >( "scorefxn" ) )->clone();
-		assert( scorefxn_ );
+		debug_assert( scorefxn_ );
 	}
 	bool tmpOpSet = false;
 	std::string type( type_ );

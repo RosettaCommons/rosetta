@@ -999,7 +999,7 @@ void FoldTreeHybridize::filter_templates(std::set< core::Size > const & template
 }
 
 protocols::simple_moves::ClassicFragmentMoverOP FoldTreeHybridize::get_pairings_jump_mover() {
-	assert( jump_frags_ );
+	debug_assert( jump_frags_ );
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true );
 	movemap->set_jump( true );

@@ -375,7 +375,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		interface_jump_ = newjump;
 	} else if ( pose.conformation().num_chains() > 2 ) {
 		//if multi chains with wrong constructor, work but print a warning
-		TR << "WARNING: more than 2 chains present w/o using the explicit constructor!  Values might be over the wrong jump." << std::endl;
+		TR.Warning << "more than 2 chains present w/o using the explicit constructor!  Values might be over the wrong jump." << std::endl;
 	} else if ( pose.conformation().num_chains() < 2 ) {
 		utility_exit_with_message_status( "InterfaceAnalyzerMover: pose has only one chain, aborting analysis \n", 1 );
 		//remaining code works for actual interfaces

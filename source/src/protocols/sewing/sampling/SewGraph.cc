@@ -376,7 +376,7 @@ SewGraph::create_new_edge( Size index1, Size index2 )
 
 void SewGraph::delete_edge( utility::graph::Edge * edge )
 {
-	assert( dynamic_cast< HashEdge* > (edge) );
+	debug_assert( dynamic_cast< HashEdge* > (edge) );
 	hash_edge_pool_->destroy( static_cast< HashEdge* > (edge) );
 }
 
@@ -485,12 +485,12 @@ SewGraph::generate_binary_score_file(
 	std::string line;
 	while ( getline( file, line ) ) {
 		utility::vector1<std::string> tokens = utility::string_split(line);
-		assert(tokens.size() >= 7);
+		debug_assert(tokens.size() >= 7);
 
 		if ( n_segs_per_edge == 0 ) {
 			n_segs_per_edge = (boost::int32_t)((tokens.size() - 5)/2);
 		} else {
-			assert(n_segs_per_edge == (tokens.size() - 5)/2);
+			debug_assert(n_segs_per_edge == (tokens.size() - 5)/2);
 		}
 
 		score_node node1;
@@ -829,7 +829,7 @@ scores_to_alignments(
 // while( getline( file, line ) ) {
 //
 //  utility::vector1<std::string> tokens = utility::string_split(line);
-//  assert(tokens.size() > 0);
+//  debug_assert(tokens.size() > 0);
 //  //runtime_assert(tokens.size() == 5);
 //  Basis b1(utility::string2int(tokens[1]), utility::string2int(tokens[2]));
 //  Basis b2(utility::string2int(tokens[3]), utility::string2int(tokens[4]));

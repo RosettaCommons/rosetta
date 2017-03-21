@@ -1195,7 +1195,7 @@ EnzdesFlexBBProtocol::hack_assemble_next_loop_combination(
 )
 {
 
-	assert( flex_regions_.size() == fragment_counters_.size() );
+	debug_assert( flex_regions_.size() == fragment_counters_.size() );
 
 	//std::cerr << "MEEP calling hack_assemble_next_loop_combination ";
 
@@ -1388,7 +1388,7 @@ EnzdesFlexibleRegion::enz_loop_info() const
 		utility_exit_with_message("no enzdes loops file was read, but the info therein requested." );
 	}
 
-	assert( index_ <= loop_file->num_loops() );
+	debug_assert( index_ <= loop_file->num_loops() );
 
 	return loop_file->loop_info( index_ );
 

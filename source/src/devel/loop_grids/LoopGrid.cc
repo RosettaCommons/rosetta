@@ -43,7 +43,7 @@ LoopGrid::LoopGrid( Pose const &pose, Loop const &loop ) :
 	pose_(pose),
 	loop_(loop)
 {
-	assert(!loop.is_terminal(pose));//not a tail
+	debug_assert(!loop.is_terminal(pose));//not a tail
 
 	Vector center1 = pose.residue(loop.start()-1).atom("CA").xyz();
 	Vector center2 = pose.residue(loop.stop()+1).atom("CA").xyz();
@@ -262,7 +262,7 @@ bool LoopGrid::occupied( Bin3D const & bin ) const
 bool LoopGrid::occupied( Pose const &pose ) const
 {
 	//makesure the same backbone
-	assert( pose.size() == pose_.size() );
+	debug_assert( pose.size() == pose_.size() );
 	bool in_grid(true);
 	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
 		Size nr = loop_.start() + i;
@@ -279,8 +279,8 @@ bool LoopGrid::occupied( Pose const &pose, Size start ) const
 {
 	//the pose is only a part of the whole protein (loop)
 	//start in the first residue's number in the old one
-	assert( start <= loop_.start()+1 );
-	assert( pose.size() >= loop_.stop()-start );
+	debug_assert( start <= loop_.start()+1 );
+	debug_assert( pose.size() >= loop_.stop()-start );
 
 	bool in_grid(true);
 	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
@@ -297,9 +297,9 @@ bool LoopGrid::occupied( Pose const &pose, Size start, Size stop ) const
 {
 	//the pose is only a part of the loop
 	//start and stop is the old res number
-	assert( start >= loop_.start()+1 );
-	assert( stop <= loop_.stop()-1 );
-	assert( pose.size() == stop-start+1 );
+	debug_assert( start >= loop_.start()+1 );
+	debug_assert( stop <= loop_.stop()-1 );
+	debug_assert( pose.size() == stop-start+1 );
 
 	bool in_grid(true);
 	for ( Size n=start; n<=stop; n++ ) {
@@ -315,8 +315,8 @@ bool LoopGrid::occupied( Pose const &pose, Size start, Size stop ) const
 
 bool LoopGrid::occupied( Residue const &res, Size nres ) const
 {
-	assert( nres >= loop_.start()+1 );
-	assert( nres <= loop_.stop()-1 );
+	debug_assert( nres >= loop_.start()+1 );
+	debug_assert( nres <= loop_.stop()-1 );
 	return grids_[nres-loop_.start()]->occupied(res.atom("CA").xyz());
 }
 

@@ -494,7 +494,7 @@ ConstraintIO::read_constraints_new(
 			++count_constraints;
 			cset->add_constraint( cst_op );
 		} else if ( ! data.eof() ) { // not end of line
-			tr.Error << "ERROR: reading constraints from file" << std::endl;
+			tr.Error << "reading constraints from file" << std::endl;
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
 			if ( option[ OptionKeys::constraints::exit_on_bad_read ]() ) {
@@ -525,16 +525,16 @@ ConstraintIO::read_individual_constraint_new(
 		//  try {
 		cst_op->read_def( data, pose, func_factory );
 		// } catch ( utility::excn::EXCN_Exception &excn  ) {
-		//    tr.Error << "ERROR: reading of " + tag + " failed.\n" << excn << std::endl;
+		//    tr.Error << "reading of " + tag + " failed.\n" << excn << std::endl;
 		//    cst_op = NULL;
 		//}
 		if ( !data.good() && !data.eof() ) {
-			error_msg += "ERROR: reading of " + tag + " failed.\n";
+			error_msg += "reading of " + tag + " failed.\n";
 			tr.Error << error_msg << std::endl;
 			cst_op = NULL;
 		}
 	} else {
-		error_msg += "ERROR: constraint type " + tag + " not known.\n";
+		error_msg += "constraint type " + tag + " not known.\n";
 		tr.Error << error_msg << std::endl;
 		cst_op = NULL;
 	}
@@ -546,7 +546,7 @@ ConstraintIO::read_individual_constraint_new(
 			// hard exits can be rather annoying... after waiting for 24h in the queue of a cluster.
 			//changed back to 'true' -- found several 'silent' cases where I wish
 			// there had been a hard exit-- rhiju
-			utility_exit_with_message( error_msg );
+			utility_exit_with_message( "[ ERROR ]" + error_msg );
 		}
 	}
 	return cst_op;

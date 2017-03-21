@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.dssp" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.dssp" );
 
 namespace core {
 namespace scoring {
@@ -80,7 +80,7 @@ void read_pairing_list( std::string pairing_file, PairingsList& pairings)
 {
 	utility::io::izstream pairing_stream( pairing_file );
 	if ( !pairing_stream ) {
-		tr.Fatal << "can't open pairings file!!!" << pairing_file << std::endl;
+		TR.Fatal << "can't open pairings file!!!" << pairing_file << std::endl;
 		pairing_stream.close();
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
@@ -97,7 +97,7 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 		std::string o, pleat;
 		line_stream >> a >> b >> o >> pleat;
 		if ( line_stream.fail() || o.size() != 1 ) {
-			std::cout << "[ERROR] unable to parse " << line << std::endl;
+			TR.Error << "unable to parse " << line << std::endl;
 			continue;
 		}
 
@@ -120,7 +120,7 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 			d = 0;
 		} else {
 			d = 3;  // avoids [-Wuninitialized] warning ~Labonte
-			std::cout << "bad pleating: " << pleat << std::endl;
+			TR.Warning << "bad pleating: " << pleat << std::endl;
 		}
 
 		if ( ( a < 1 || b < 1 ) || ( a == b ) || ( c != 1 && c != 2 && c != 0 ) ||

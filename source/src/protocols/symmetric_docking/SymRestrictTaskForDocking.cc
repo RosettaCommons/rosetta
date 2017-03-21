@@ -63,7 +63,7 @@ SymRestrictTaskForDocking::apply(
 {
 	task.initialize_from_command_line().restrict_to_repacking().or_include_current( include_current_ );
 
-	assert( scorefxn_ != nullptr );
+	debug_assert( scorefxn_ != nullptr );
 	// (existing comment) /// why is this still necessary???
 	// (*scorefxn_)(pose);
 	// scorefxn_->accumulate_residue_total_energies( pose );

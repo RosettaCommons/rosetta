@@ -42,8 +42,8 @@ static THREAD_LOCAL basic::Tracer atom_tracer( "protocols.ligand_docking.AtOOomC
 
 bool
 AtomCountFilter::apply( core::pose::Pose const & pose ) const {
-	assert(chain_.size()==1 );
-	assert(atom_limit_ >0 );
+	debug_assert(chain_.size()==1 );
+	debug_assert(atom_limit_ >0 );
 	core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
@@ -58,12 +58,6 @@ AtomCountFilter::apply( core::pose::Pose const & pose ) const {
 void
 AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-
-	if ( tag->getName() != "AtomCount" ) {
-		atom_tracer << " received incompatible Tag " << tag << std::endl;
-		assert(false);
-		return;
-	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("atom_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("AtomCount filter needs a 'chain' and an 'atom_limit' option");
 	}

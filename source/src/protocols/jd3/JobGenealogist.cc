@@ -40,7 +40,7 @@ JobGenealogist & JobGenealogist::operator = ( JobGenealogist const & ) = default
 
 void JobGenealogist::set_num_nodes( Size num_nodes )
 {
-	assert( num_nodes_ <= num_nodes );
+	debug_assert( num_nodes_ <= num_nodes );
 	if ( num_nodes_ == num_nodes ) return;
 
 	num_nodes_ = num_nodes;
@@ -91,8 +91,8 @@ void JobGenealogist::add_node()
 
 void JobGenealogist::set_target_num_jobs_for_node( Size node_id, Size num_jobs )
 {
-	assert( 0 < node_id && node_id <= num_nodes_ );
-	assert( target_njobs_for_node_[ node_id ] == 0 );
+	debug_assert( 0 < node_id && node_id <= num_nodes_ );
+	debug_assert( target_njobs_for_node_[ node_id ] == 0 );
 	target_njobs_for_node_[ node_id ] = num_jobs;
 	target_jobid_ranges_for_node_[ node_id ] = size_pair( committed_job_range_max_ + 1, committed_job_range_max_ + num_jobs );
 	job_lookup_jobid_start_.push_back( committed_job_range_max_ + 1 );
@@ -188,8 +188,8 @@ void JobGenealogist::append_parents_and_n_replicate_jobs_for_node(
 
 void JobGenealogist::set_actual_njobs_for_node( Size node_id, Size num_jobs )
 {
-	assert( actual_jobid_ranges_for_node_[ node_id ].first  == 0 );
-	assert( actual_jobid_ranges_for_node_[ node_id ].second == 0 );
+	debug_assert( actual_jobid_ranges_for_node_[ node_id ].first  == 0 );
+	debug_assert( actual_jobid_ranges_for_node_[ node_id ].second == 0 );
 	actual_njobs_for_node_[ node_id ] = num_jobs;
 	Size first = target_jobid_ranges_for_node_[ node_id ].first;
 	actual_jobid_ranges_for_node_[ node_id ] = size_pair( first, first+num_jobs-1 );
@@ -296,7 +296,7 @@ JobGenealogist::get_parent_for_job( Size job_id ) const
 JobGenealogist::Sizes const &
 JobGenealogist::get_parents_for_job( Size job_id ) const
 {
-	assert( job_has_any_parents( job_id ) );
+	debug_assert( job_has_any_parents( job_id ) );
 	Size node_id = node_for_jobid( job_id );
 	return get_parents_for_job_for_node( job_id, node_id );
 }
@@ -422,8 +422,8 @@ JobGenealogist::node_for_jobid( Size job_id ) const
 {
 	Size const ind = utility::binary_search_ranges( job_lookup_jobid_start_, job_id );
 	Size const node_index = job_lookup_node_index_[ ind ];
-	assert( target_jobid_ranges_for_node_[ node_index ].first  <= job_id );
-	assert( target_jobid_ranges_for_node_[ node_index ].second >= job_id );
+	debug_assert( target_jobid_ranges_for_node_[ node_index ].first  <= job_id );
+	debug_assert( target_jobid_ranges_for_node_[ node_index ].second >= job_id );
 	return node_index;
 }
 
@@ -445,7 +445,7 @@ JobGenealogist::node_and_replicate_id_for_jobid( Size job_id ) const
 core::Size
 JobGenealogist::replicate_id_for_jobid_from_node( Size job_id, Size node_index ) const
 {
-	assert( job_is_from_node( job_id, node_index ) );
+	debug_assert( job_is_from_node( job_id, node_index ) );
 	if ( parent_job_groups_for_node_[ node_index ].size() != 0 ) {
 		Size const pjg_ind = pjg_ind_for_job_from_node( job_id, node_index );
 		return job_id - start_job_index_for_pjg_for_node_[ node_index ][ pjg_ind ] + 1;
@@ -457,7 +457,7 @@ JobGenealogist::replicate_id_for_jobid_from_node( Size job_id, Size node_index )
 core::Size
 JobGenealogist::pjg_ind_for_job_from_node( Size job_id, Size node_id ) const
 {
-	assert( parent_job_groups_for_node_[ node_id ].size() != 0 );
+	debug_assert( parent_job_groups_for_node_[ node_id ].size() != 0 );
 	Sizes const & start_job_indices( start_job_index_for_pjg_for_node_[ node_id ] );
 	return utility::binary_search_ranges( start_job_indices, job_id );
 }

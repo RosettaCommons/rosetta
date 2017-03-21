@@ -244,7 +244,7 @@ public:
 		// (This means the root needs to be pre-loaded into the treeatom_map
 		assert( restype_.has( u ) );
 		if( u != root_ ) {
-			TR.Error << "ERROR: For ResidueType " << restype_.name() << ", atoms "
+			TR.Error << "For ResidueType " << restype_.name() << ", atoms "
 					<< restype_.atom_name( root_ ) << " and " << restype_.atom_name( u )
 					<< " are not connected via bonds." << std::endl;
 			utility_exit_with_message( "Cannot reroot a disconnected ResidueType: ");
@@ -367,7 +367,7 @@ private:
 void
 reroot_restype( core::chemical::ResidueType & restype, core::chemical::VD root) {
 	if( restype.natoms() < 3 ) {
-		TR.Warning << "Warning: Cannot re-root residue type with less than three atoms." << std::endl;
+		TR.Warning << "Cannot re-root residue type with less than three atoms." << std::endl;
 		return;
 	}
 	VdTreeatomMap treeatom_map;

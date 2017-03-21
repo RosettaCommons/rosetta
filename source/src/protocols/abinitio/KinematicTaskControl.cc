@@ -96,7 +96,7 @@ void KinematicTaskControl::apply( pose::Pose &pose ) {
 
 	set_current_tag( sampling_protocol_->get_current_tag() );
 
-	if ( !success ) tr.Warning << "[WARNING] no success in sampler... could be the loop-closing " << std::endl;
+	if ( !success ) tr.Warning << "no success in sampler... could be the loop-closing " << std::endl;
 	// apply res_switch to get back to a full-atom pose ( copies side-chains in unmoved regions )
 	if ( tr.Debug.visible() ) output_debug_structure( pose, "before resolution switch ");
 

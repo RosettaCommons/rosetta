@@ -154,7 +154,7 @@ void ElectronDensityAtomwise::computeCrystParams() {
 	core::Real D = f2c.det();
 
 	if ( D == 0 ) {
-		TR << "[ WARNING ] Invalid crystal cell dimensions." << std::endl;
+		TR.Warning << "Invalid crystal cell dimensions." << std::endl;
 		return;
 	}
 
@@ -195,7 +195,7 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 		utility::vector1< std::string > rows = utility::string_split( line, ',' );
 
 		if ( rows.size() != 3 ) {
-			TR.Error << "[ ERROR ] invalid symmop in map file" << std::endl;
+			TR.Error << "invalid symmop in map file" << std::endl;
 			TR.Error << line << std::endl;
 			TR.Error << "Setting symmetry to P1 and continuing!" << line << std::endl;
 			// should we throw an exception here????  nah, just set symm to P1 and continue
@@ -310,8 +310,8 @@ void ElectronDensityAtomwise::expandToUnitCell() {
 void ElectronDensityAtomwise::resize( core::Real approxGridSpacing ) {
 	// potentially expand map to cover entire unit cell
 	if ( grid[0] != density.u1() || grid[1] != density.u2() || grid[2] != density.u3() ) {
-		TR << "[ ERROR ] resize() not supported for maps not covering the entire unit cell." << std::endl;
-		TR << "   " << grid[0] << " != " << density.u1()
+		TR.Error << "resize() not supported for maps not covering the entire unit cell." << std::endl;
+		TR.Error << "   " << grid[0] << " != " << density.u1()
 			<< " || " << grid[1] << " != " << density.u2()
 			<< " || " << grid[2] << " != " << density.u3() << std::endl;
 		exit( 1 );
@@ -432,7 +432,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	bool swap = false;
 
 	if ( !mapin ) {
-		TR << "[ ERROR ]  Error opening MRC map " << map_file << ".  Not loading map." << std::endl;
+		TR.Error << "Error opening MRC map " << map_file << ".  Not loading map." << std::endl;
 		utility_exit_with_message( "Fail to load the density map." );
 	}
 
@@ -443,7 +443,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 			|| !mapin.read ( reinterpret_cast <char*> ( &cell_dimensions[0] ), 3 * sizeof( float ) )
 			|| !mapin.read ( reinterpret_cast <char*> ( &cell_angles[0] ), 3 * sizeof( float ) )
 			|| !mapin.read ( reinterpret_cast <char*> ( crs2xyz ), 3 * sizeof( int ) ) )  {
-		TR << "[ ERROR ]   Improperly formatted line in MRC map.  Not loading map." << std::endl;
+		TR.Error << "Improperly formatted line in MRC map.  Not loading map." << std::endl;
 		utility_exit_with_message( "Fail to load the density map." );
 	}
 
@@ -451,7 +451,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	mapin.seekg( 92, std::ios::beg );
 
 	if ( !mapin.read( reinterpret_cast <char*>( &symBytes ), 1 * sizeof( int ) ) ) {
-		TR << "[ ERROR ]   Failed reading symmetry bytes record.  Not loading map." << "\n";
+		TR.Error << "Failed reading symmetry bytes record.  Not loading map." << "\n";
 		utility_exit_with_message( "Fail to load the density map." );
 	}
 
@@ -461,7 +461,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	mapin.seekg( 196, std::ios::beg );
 
 	if ( !mapin.read( reinterpret_cast <char*>( altorigin ), 3 * sizeof( float ) ) ) {
-		TR << "[ ERROR ]   Improperly formatted line in MRC map.  Not loading map." << std::endl;
+		TR.Error << "Improperly formatted line in MRC map.  Not loading map." << std::endl;
 		utility_exit_with_message( "Fail to load the density map." );
 	}
 
@@ -470,7 +470,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	mapString[3] = '\0';
 
 	if ( !mapin.read( mapString, 3 ) || ( std::string( mapString ) != "MAP" ) ) {
-		TR << "[ ERROR ]  'MAP' string missing, not a valid MRC map.  Not loading map." << std::endl;
+		TR.Error << "'MAP' string missing, not a valid MRC map.  Not loading map." << std::endl;
 		utility_exit_with_message( "Fail to load the density map." );
 	}
 
@@ -479,7 +479,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 		swap4_aligned( &mode, 1 );
 
 		if ( mode != 2 ) {
-			TR << "[ ERROR ]   Non-real (32-bit float) data types are unsupported.  Not loading map." << std::endl;
+			TR.Error << "Non-real (32-bit float) data types are unsupported.  Not loading map." << std::endl;
 			utility_exit_with_message( "Fail to load the density map." );
 		} else {
 			swap = true; // enable byte swapping
@@ -517,18 +517,18 @@ ElectronDensityAtomwise::readMRCandResize() {
 	if ( dataOffset != ( CCP4HDSIZE + symBytes ) ) {
 		if ( dataOffset == CCP4HDSIZE ) {
 			// Bogus symmetry record information
-			TR << "[ WARNING ] File contains bogus symmetry record.  Continuing." << std::endl;
+			TR.Warning << "File contains bogus symmetry record.  Continuing." << std::endl;
 			symBytes = 0;
 		} else if ( dataOffset < CCP4HDSIZE ) {
-			TR << "[ ERROR ] File appears truncated and doesn't match header.  Not loading map." << std::endl;
+			TR.Error << "File appears truncated and doesn't match header.  Not loading map." << std::endl;
 			utility_exit_with_message( "Fail to load the density map." );
 		} else if ( ( dataOffset > CCP4HDSIZE ) && ( dataOffset < ( 1024 * 1024 ) ) ) {
 			// Fix for loading SPIDER files which are larger than usual
 			// In this specific case, we must absolutely trust the symBytes record
 			dataOffset = CCP4HDSIZE + symBytes;
-			TR << "[ WARNING ]  File is larger than expected and doesn't match header.  Reading anyway." << std::endl;
+			TR.Warning << "File is larger than expected and doesn't match header.  Reading anyway." << std::endl;
 		} else {
-			TR << "[ ERROR ] File is MUCH larger than expected and doesn't match header.  Not loading map." << std::endl;
+			TR.Error << "File is MUCH larger than expected and doesn't match header.  Not loading map." << std::endl;
 			utility_exit_with_message( "Fail to load the density map." );
 		}
 	}
@@ -556,23 +556,23 @@ ElectronDensityAtomwise::readMRCandResize() {
 	// check extent and grid interval counts
 	if ( grid[0] == 0 && extent[0] > 0 ) {
 		grid[0] = extent[0] - 1;
-		TR << "[ WARNING ] Fixed X interval count.  Continuing." << std::endl;
+		TR.Warning << "Fixed X interval count.  Continuing." << std::endl;
 	}
 
 	if ( grid[1] == 0 && extent[1] > 0 ) {
 		grid[1] = extent[1] - 1;
-		TR << "[ WARNING ]  Fixed Y interval count.  Continuing." << std::endl;
+		TR.Warning << "Fixed Y interval count.  Continuing." << std::endl;
 	}
 
 	if ( grid[2] == 0 && extent[2] > 0 ) {
 		grid[2] = extent[2] - 1;
-		TR << "[ WARNING ]  Fixed Z interval count.  Continuing." << std::endl;
+		TR.Warning << "Fixed Z interval count.  Continuing." << std::endl;
 	}
 
 	// Mapping between CCP4 column, row, section and Cartesian x, y, z.
 	if ( crs2xyz[0] == 0 && crs2xyz[1] == 0 && crs2xyz[2] == 0 ) {
-		TR << "[ WARNING ]  All crs2xyz records are zero." << std::endl;
-		TR << "[ WARNING ]  Setting crs2xyz to 1, 2, 3 and continuing." << std::endl;
+		TR.Warning << "All crs2xyz records are zero." << std::endl;
+		TR.Warning << "Setting crs2xyz to 1, 2, 3 and continuing." << std::endl;
 		crs2xyz[0] = 1;
 		crs2xyz[1] = 2;
 		crs2xyz[2] = 3;
@@ -600,17 +600,17 @@ ElectronDensityAtomwise::readMRCandResize() {
 			// Read an entire row of data from the file, then write it into the
 			// datablock with the correct slice ordering.
 			if ( mapin.eof() ) {
-				TR << "[ ERROR ] Unexpected end-of-file. Not loading map." << std::endl;
+				TR.Error << "Unexpected end-of-file. Not loading map." << std::endl;
 				utility_exit_with_message( "Fail to load the density map." );
 			}
 
 			if ( mapin.fail() ) {
-				TR << "[ ERROR ] Problem reading the file. Not loading map." << std::endl;
+				TR.Error << "Problem reading the file. Not loading map." << std::endl;
 				utility_exit_with_message( "Fail to load the density map." );
 			}
 
 			if ( !mapin.read( reinterpret_cast< char* >( rowdata ), sizeof( float ) *extent[0] ) ) {
-				TR << "[ ERROR ] Error reading data row. Not loading map." << std::endl;
+				TR.Error << "Error reading data row. Not loading map." << std::endl;
 				utility_exit_with_message( "Fail to load the density map." );
 			}
 
@@ -753,7 +753,7 @@ ElectronDensityAtomwise::get_atom_weight( std::string const & elt ) {
 	if ( elt == "X" ) return 0; // centroid
 
 	// default to C
-	TR.Warning << "[ WARNING ] Unknown atom " << elt << std::endl;
+	TR.Warning << "Unknown atom " << elt << std::endl;
 	return 6;
 }
 //////////////////////////////////////////////////////////////////

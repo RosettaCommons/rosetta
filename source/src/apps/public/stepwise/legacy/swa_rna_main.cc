@@ -324,9 +324,9 @@ swa_rna_cluster(){
 	//  The job will be re-queued and re-run with the same jobId.
 
 	if ( utility::file::file_exists( silent_file_out ) ) {
-		std::cout << "WARNING: silent_file_out " << silent_file_out << " already exist! removing..." << std::endl;
+		TR.Warning << "silent_file_out " << silent_file_out << " already exist! removing..." << std::endl;
 		int remove_file_return_value = std::remove( silent_file_out.c_str() );
-		std::cout << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << silent_file_out << " )" << std::endl;
+		TR.Warning << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << silent_file_out << " )" << std::endl;
 		runtime_assert( remove_file_return_value == 0 );
 	}
 
@@ -494,9 +494,9 @@ filter_combine_long_loop()
 	utility::vector1< std::string > const silent_files_in = option[ in::file::silent ]();
 	std::string const output_filename = option[ OptionKeys::stepwise::rna::filter_output_filename ]();
 	if ( utility::file::file_exists( output_filename ) ) { //Feb 08, 2012
-		std::cout << "WARNING: output_filename " << output_filename << " already exists! removing..." << std::endl;
+		TR.Warning << "output_filename " << output_filename << " already exists! removing..." << std::endl;
 		int remove_file_return_value = std::remove( output_filename.c_str() );
-		std::cout << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << output_filename << " )" << std::endl;
+		TR.Warning << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << output_filename << " )" << std::endl;
 		runtime_assert ( remove_file_return_value == 0 );
 	}
 

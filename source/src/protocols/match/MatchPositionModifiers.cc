@@ -143,7 +143,7 @@ SecondaryStructureMPM::modified_match_positions(
 					}
 				}
 			} else { //helix_nterm motif
-				tr << "WARNING: SecondaryStructureMPM doesn't know how to interpret motif '" << ss_motifs_[ motif ] << "'." << std::endl;
+				tr.Warning << "SecondaryStructureMPM doesn't know how to interpret motif '" << ss_motifs_[ motif ] << "'." << std::endl;
 			}
 		}//for( core::Size motif = 1; motif <= ss_motifs_.size(); ++motif)
 		if ( position_passes ) {
@@ -283,7 +283,7 @@ BfactorMPM::modified_match_positions(
 	utility::vector1< core::Real > bfactors( this->get_ca_bfactors( match_pose ) );
 
 	if ( all_bfactors_zero_ ) {
-		tr << "Warning: all bfactors in the pose were 0, meaning they were probably wiped. BfactorMPM will not modify match positions." << std::endl;
+		tr.Warning << "all bfactors in the pose were 0, meaning they were probably wiped. BfactorMPM will not modify match positions." << std::endl;
 		to_return = original_positions;
 		return to_return;
 	}

@@ -98,7 +98,7 @@ bool DownJumpSRFD::apply( pose::Pose& pose, Size ipos, Frame const& frame ) cons
 	//check if there is a jump!
 	bool has_jump ( pose.fold_tree().is_jump_point( upstream_resnr ) && pose.fold_tree().is_jump_point( downstream_resnr ) );
 	if ( !has_jump ) {
-		tr.Warning << "WARNING: DownJump-Frag could not be applied to current pose... need to have a jump at "
+		tr.Warning << "DownJump-Frag could not be applied to current pose... need to have a jump at "
 			<< upstream_resnr << " " << downstream_resnr << std::endl;
 		return false;
 	}

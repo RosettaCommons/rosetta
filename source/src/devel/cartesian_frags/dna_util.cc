@@ -82,7 +82,7 @@ optimize_suite(
 	Real const coordinate_constraint_weight( 1.0 );
 	Real const        dof_constraint_weight( 0.1 );
 
-	assert( pose.size() == 4 );
+	debug_assert( pose.size() == 4 );
 
 	RT const & rt( frag.rt(1) );
 
@@ -111,9 +111,9 @@ optimize_suite(
 	for ( Size i=1; i<=2; ++i ) my_atoms.push_back( AtomID( 1, i+1 ) );
 	for ( Size i=1; i<=3; ++i ) my_atoms.push_back( AtomID( i, 4   ) );
 	//// sanity checks
-	assert( frag.xyz( frag_atoms[3] ).length()    < 1e-3 ); // 1st atom should be at origin
+	debug_assert( frag.xyz( frag_atoms[3] ).length()    < 1e-3 ); // 1st atom should be at origin
 	// last atom should be at rt translation (outgoing stub origin)
-	assert( frag.xyz( frag_atoms[6] ).distance(rt.get_translation()) < 1e-3 );
+	debug_assert( frag.xyz( frag_atoms[6] ).distance(rt.get_translation()) < 1e-3 );
 	//// copy frag coords to pose:
 	for ( Size i=1; i<= my_atoms.size(); ++i ) pose.set_xyz( my_atoms[i], frag.xyz( frag_atoms[ i ] ) );
 	pose::Pose start_pose;
@@ -185,7 +185,7 @@ optimize_suite(
 	}
 
 	for ( Size i=1; i<= my_atoms.size(); ++i ) {
-		assert( pose.xyz( my_atoms[i] ).distance( frag.xyz( frag_atoms[i] ) ) < 1e-2 );
+		debug_assert( pose.xyz( my_atoms[i] ).distance( frag.xyz( frag_atoms[i] ) ) < 1e-2 );
 	}
 
 }
@@ -224,7 +224,7 @@ find_sugar_and_suite_frags(
 		vector1< Size > best_index( 2, 0 );
 		vector1< Real > best_dev( 2, 999.9 );
 
-		assert( lib.forward_suites.size() == lib.backward_suites.size() );
+		debug_assert( lib.forward_suites.size() == lib.backward_suites.size() );
 		for ( Size jj=1; jj<= lib.forward_suites.size(); ++jj ) {
 			for ( int r=1; r<=2; ++r ) {
 				if ( ( upper_terminus && r == 1 ) || ( lower_terminus && r == 2 ) ) continue;

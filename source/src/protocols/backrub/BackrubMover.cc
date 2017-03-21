@@ -205,7 +205,7 @@ BackrubMover::initialize_simulation(
 	protocols::moves::MonteCarloCOP monte_carlo(metropolis_hastings_mover.monte_carlo());
 
 	if ( monte_carlo->score_function().get_weight(core::scoring::mm_bend) == 0.0 ) {
-		TR.Warning << "*** WARNING: Using BackrubMover without mm_bend Score Term ***" << std::endl;
+		TR.Warning << "*** Using BackrubMover without mm_bend Score Term ***" << std::endl;
 		if ( require_mm_bend_ ) {
 			TR.Warning << "Exit can be prevented by setting require_mm_bend to false" << std::endl;
 			utility_exit_with_message("BackrubMover is being used without the mm_bend term.");
@@ -349,7 +349,7 @@ BackrubMover::add_segment(
 	if ( tdist < 0 ) {
 		tdist = tree_distance(end_atom, start_atom);
 		if ( tdist >= 2 ) {
-			//TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
+			//TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid
 			//           << " ordered wrong, reversing" << std::endl;
 			kinematics::tree::AtomCOP const temp_atom(start_atom);
 			id::AtomID const temp_atomid(start_atomid);
@@ -362,21 +362,21 @@ BackrubMover::add_segment(
 
 	// if no ancestry is still detected, the segment is invalid
 	if ( tdist < 0 ) {
-		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid << " invalid, ignoring"
+		TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid << " invalid, ignoring"
 			<< std::endl;
 		return 0;
 	}
 
 	// if the tree distance is too short, the segment is invalid
 	if ( tdist < 2 ) {
-		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid << " too short, ignoring"
+		TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid << " too short, ignoring"
 			<< std::endl;
 		return 0;
 	}
 
 	// check for duplicates
 	if ( Size segid = segment_id(start_atomid, end_atomid) ) {
-		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid << " already exists, ignoring"
+		TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid << " already exists, ignoring"
 			<< std::endl;
 		return segid;
 	}
@@ -385,7 +385,7 @@ BackrubMover::add_segment(
 	//   << start_atom->stub_atom3_id() << std::endl;
 
 	if ( !(start_atom->stub_atom1() && start_atom->stub_atom2() && start_atom->stub_atom3()) ) {
-		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
+		TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid
 			<< " has incomplete start stub, ignoring" << std::endl;
 		return 0;
 	}
@@ -402,7 +402,7 @@ BackrubMover::add_segment(
 
 	// This catches a rare case that we can't currently handle
 	if ( start_atom->stub_atom2()->id() == start_atomid1 ) {
-		//TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
+		//TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid
 		//      << " has incompatible stub, ignoring" << std::endl;
 		return 0;
 	}
@@ -1140,8 +1140,8 @@ BackrubMover::rotate_segment(
 
 	if (end_atom_distsq > 1e-4 || end_atom1_distsq > 1e-4 || end_atom2_distsq > 1e-4) {
 
-	TR << "ERROR: " << start_atom->atom_id() << "\t" << end_atom->atom_id() << std::endl;
-	TR << end_atom_distsq << "\t" << end_atom1_distsq << "\t" << end_atom2_distsq << std::endl;
+	TR.Error << start_atom->atom_id() << "\t" << end_atom->atom_id() << std::endl;
+	TR.Error << end_atom_distsq << "\t" << end_atom1_distsq << "\t" << end_atom2_distsq << std::endl;
 	//runtime_assert(false);
 	}
 	*/
@@ -1479,7 +1479,7 @@ backrub_rotation_constants(
 			} else if ( alpha > alpha_min ) {
 				min_intervals.set(-pi, pi);
 			} else {
-				//std::cout << "Error: No tau angles meet minimum alpha bond angle" << std::endl;
+				//TR.Error << "No tau angles meet minimum alpha bond angle" << std::endl;
 			}
 
 			/*
@@ -1519,7 +1519,7 @@ backrub_rotation_constants(
 			} else if ( alpha < alpha_max ) {
 				max_intervals.set(-pi, pi);
 			} else {
-				//std::cout << "Error: No tau angles meet maximum alpha bond angle" << std::endl;
+				//TR.Error << "No tau angles meet maximum alpha bond angle" << std::endl;
 			}
 
 			/*

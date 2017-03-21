@@ -158,7 +158,7 @@ Rotate::parse_my_tag(
 				rotate_info_.tag_along_chains.push_back(chain_id);
 				rotate_info_.tag_along_jumps.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
 				core::Size const chain_begin (pose.conformation().chain_begin(chain_id));
-				assert( chain_begin == pose.conformation().chain_end(chain_id));
+				debug_assert( chain_begin == pose.conformation().chain_end(chain_id));
 				rotate_info_.tag_along_residues.push_back( chain_begin );
 			}
 		}
@@ -218,7 +218,7 @@ void Rotate::rotate_ligand(
 		for ( core::Size i=1; i <= rotate_info_.tag_along_residues.size(); ++i ) {
 			// I cannot figure out what this assert is testing for; it seems to be comparing a ResidueOP to a Size.
 			// In any case, it is causing a comparison warning, so I am commenting it out. ~Labonte
-			//assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
+			//debug_assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
 			core::Size residue_id = rotate_info_.tag_along_residues[i];
 			core::conformation::ResidueCOP residue = ligands[jump_choice].tag_along_residues[i];
 			pose.replace_residue(residue_id, *residue, false /*orient backbone*/);// assume rotamers are oriented?
@@ -293,7 +293,7 @@ Ligand_info Rotate::create_random_rotation(
 
 	for ( core::Size const chain_id : rotate_info_.tag_along_chains ) {
 		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, chain_id);
-		assert(tag_along_residues.size() == 1);
+		debug_assert(tag_along_residues.size() == 1);
 		ligand_info.tag_along_residues.push_back(tag_along_residues[1]);
 	}
 	return ligand_info;
@@ -395,7 +395,7 @@ bool check_RMSD(
 	core::Size const heavy_atom_number,
 	utility::vector1< Ligand_info> const & ligands
 ){
-	assert(heavy_atom_number > 0);
+	debug_assert(heavy_atom_number > 0);
 
 	// This next parameter is a wild heuristic guesses that seem OK for the Meiler x-dock set.
 	core::Real const diverse_rms = 0.65 * std::sqrt((double) heavy_atom_number);

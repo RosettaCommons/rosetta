@@ -293,7 +293,7 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 
 	// check whether protein is in membrane
 	if ( ! protein_in_membrane( pose ) ) {
-		TR << "WARNING: YOUR PROTEIN DOES NOT SPAN THE MEMBRANE! EITHER YOU KNOW WHAT YOU ARE DOING OR YOUR PROTEIN IS NOT TRANSFORMED INTO MEMBRANE COORDINATES!!!" << std::endl;
+		TR.Warning << "YOUR PROTEIN DOES NOT SPAN THE MEMBRANE! EITHER YOU KNOW WHAT YOU ARE DOING OR YOUR PROTEIN IS NOT TRANSFORMED INTO MEMBRANE COORDINATES!!!" << std::endl;
 		//  utility_exit_with_message( "Your protein is not transformed into membrane coordinates! Cannot compute lipid accessibility. Quitting." );
 	}
 

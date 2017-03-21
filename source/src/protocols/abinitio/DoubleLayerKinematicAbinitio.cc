@@ -146,7 +146,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 	if ( rigid_core.size() ) {
 		success &= add_rigidity_jumps( rigid_core, current_kinematics );
 		if ( !success ) {
-			tr.Warning << "[WARNING] was not able to fix rigid regions with jumps...retry" << std::endl;
+			tr.Warning << "was not able to fix rigid regions with jumps...retry" << std::endl;
 			return nullptr;
 		}
 	}

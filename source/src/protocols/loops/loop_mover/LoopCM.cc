@@ -142,7 +142,7 @@ void LoopCM::build_mover( LoopsOP loops ) {
 		}
 	}
 
-	assert( mover_ );
+	debug_assert( mover_ );
 }
 
 bool ang_delta( core::Real const& a, core::Real const& b ){

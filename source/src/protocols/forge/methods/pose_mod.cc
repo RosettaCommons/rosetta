@@ -221,7 +221,7 @@ restore_residues(
 {
 	using core::Size;
 
-	assert( archive_pose.size() == pose.size() );
+	debug_assert( archive_pose.size() == pose.size() );
 
 	std::map< Size, Size > old2new;
 	for ( Size i = 1, ie = archive_pose.size(); i <= ie; ++i ) {

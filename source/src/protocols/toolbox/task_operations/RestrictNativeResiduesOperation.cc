@@ -205,7 +205,7 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 	}
 
 	if ( designable_resis == 0 ) {
-		TR<<"Warning: No designable residues identified in pose."<<std::endl;
+		TR.Warning << "No designable residues identified in pose."<<std::endl;
 	} else {
 		TR<<designable_resis<<" non-native, designable residues found in pose"<<std::endl;
 	}

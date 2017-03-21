@@ -339,7 +339,7 @@ std::string fmt_real ( platform::Real num, platform::Size pad_left_n, std::size_
 // to output parameter <y>, which must be non-NULL. The result is
 // undefined if the input string is malformed.
 void string2uint(const std::string& x, unsigned int* y) {
-	assert(y != NULL);
+	debug_assert(y != NULL);
 	std::stringstream ss(x);
 	ss >> *y;
 }

@@ -128,8 +128,8 @@ bool ProfileScoreDistWeight::cached_score(FragmentCandidateOP f, FragmentScoreMa
 
 	core::Real totalScore = 0.0;//f->get_length() * 20.0;
 	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
-		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
-		assert(f->get_first_index_in_vall()
+		debug_assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
+		debug_assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
 		totalScore += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 		//std::cout << "TOTALSCORE " << totalScore << " " << scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1] << " " <<  f->get_first_index_in_query() + i - 1 << " " << f->get_first_index_in_vall() + i - 1 << std::endl;

@@ -60,7 +60,7 @@ void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims cons
 		}
 	}
 	if ( my_claims.size() ) {
-		tr.Warning << "[WARNING]" << type() << "did not initialize dofs as requested" << std::endl;
+		tr.Warning << type() << "did not initialize dofs as requested" << std::endl;
 	}
 	std::copy( my_claims.begin(), my_claims.end(), std::back_inserter( failed_to_init ) );
 }
@@ -68,7 +68,7 @@ void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims cons
 /*void TopologyClaimer::initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init ) {
 runtime_assert( init_claim->owner()==this );
 failed_to_init.push_back( init_claim );
-tr.Warning << "[WARNING]" << type() << "did not initialize residues as requested for claim..." << *init_claim << std::endl;
+tr.Warning << type() << "did not initialize residues as requested for claim..." << *init_claim << std::endl;
 }*/
 
 void TopologyClaimer::add_mover(
@@ -129,7 +129,7 @@ bool TopologyClaimer::read_tag( std::string tag, std::istream& is ) {
 
 	std::string arg;
 	is >> arg;
-	tr.Error << "[ERROR]: The tag '" << tag << "' with argument '" << arg << "' was not recognized." << std::endl;
+	tr.Error << "The tag '" << tag << "' with argument '" << arg << "' was not recognized." << std::endl;
 	return false;
 }
 

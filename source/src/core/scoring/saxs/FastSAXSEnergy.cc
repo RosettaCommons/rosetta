@@ -527,7 +527,7 @@ void load_fastsax_spectrum(
 		// load map from disk
 		TR << "Loading SAXS spectrum" << std::endl;
 		if ( !basic::options::option[ basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) {
-			TR.Warning << "[ ERROR ] No SAXS spectrum specified!" << std::endl;
+			TR.Error << "No SAXS spectrum specified!" << std::endl;
 			exit(1);
 		} else {
 			std::string file_name = basic::options::option[ basic::options::OptionKeys::score::saxs::ref_spectrum ]();
@@ -574,7 +574,7 @@ void load_form_factors(
 
 			int q_bucket = (int)std::floor(q_in[i-1]/0.015);
 			if ( q_bucket >= 50 ) {
-				TR << "[ WARNING ] Input data extends to higher resolution than stored structure factors (1.33A)" << std::endl;
+				TR.Warning << "Input data extends to higher resolution than stored structure factors (1.33A)" << std::endl;
 				TR << "            Results may be inaccurate!" << std::endl;
 
 				for ( int j=1; j<=21; ++j ) {

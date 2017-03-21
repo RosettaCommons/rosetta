@@ -184,9 +184,9 @@ SASAPotential::eval_residue_pair_derivatives(
 	Size res2( rsd2.seqpos() );
 	bool const same_res( res1 == res2 );
 
-	// assert( pose.energies().use_nblist() );
-	assert( r1_at_derivs.size() >= rsd1.natoms() );
-	assert( r2_at_derivs.size() >= rsd2.natoms() );
+	// debug_assert( pose.energies().use_nblist() );
+	debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
 	// Real SASA_check( 0.0 );
 

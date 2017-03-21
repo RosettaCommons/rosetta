@@ -441,7 +441,7 @@ bool
 SingleResidueRotamerLibrary::operator ==( SingleResidueRotamerLibrary const & ) const {
 	// If you're comparing arbitrary SingleResidueRotamerLibrary, chances are they aren't equal.
 	// (Override your subclass if this doesn't work for you.)
-	TR.Warning << "[ WARNING ] Program is trying to compare two arbitrary SingleResidueRotamerLibraries - this is probably a bug." << std::endl;
+	TR.Warning << "Program is trying to compare two arbitrary SingleResidueRotamerLibraries - this is probably a bug." << std::endl;
 	return false;
 }
 

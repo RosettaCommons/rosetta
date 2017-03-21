@@ -905,7 +905,7 @@ Assembly::to_pose(
 				new_residue->set_all_chi(sew_res.chi_angles_);
 			}
 			//   else if(segments_[seg_i].model_id_ != 0 && residue_type_set == core::chemical::FA_STANDARD) {
-			//    TR.Warning << "WARNING: No Chi angles found for model with non-zero model_id: " << segments_[seg_i].model_id_ << " " << sew_res.resnum_ << " " << sew_res.residue_type_ << std::endl;
+			//    TR.Warning << "No Chi angles found for model with non-zero model_id: " << segments_[seg_i].model_id_ << " " << sew_res.resnum_ << " " << sew_res.residue_type_ << std::endl;
 			//   }
 
 			//Fix backbone oxygens and hydrogens

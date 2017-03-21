@@ -61,7 +61,7 @@ SymmetricRMSMover::apply( core::pose::Pose & pose )
 		score_map = ( static_cast< DiagnosticData const &>( pose.data().get( core::pose::datacache::CacheableDataType::SCORE_MAP ))).data() ;
 	}
 
-	assert( core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );

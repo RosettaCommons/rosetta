@@ -267,7 +267,7 @@ public: // mutators
 	///  Stub docs for more details.
 	inline
 	void left_stub_atoms( AtomNameList const & atoms ) {
-		assert( atoms.size() == 4 );
+		debug_assert( atoms.size() == 4 );
 		left_stub_atoms_ = atoms;
 	}
 
@@ -279,7 +279,7 @@ public: // mutators
 	///  Stub docs for more details.
 	inline
 	void right_stub_atoms( AtomNameList const & atoms ) {
-		assert( atoms.size() == 4 );
+		debug_assert( atoms.size() == 4 );
 		right_stub_atoms_ = atoms;
 	}
 

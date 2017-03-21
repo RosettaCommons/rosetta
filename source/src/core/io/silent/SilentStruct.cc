@@ -512,7 +512,7 @@ void SilentStruct::comment_from_line( std::string const & line, bool const inclu
 	line_stream >> remark_tag;
 	line_stream >> key;
 	if ( line_stream.fail() ) {
-		tr.Error << "[ERROR] reading comment key from line: " << line << std::endl;
+		tr.Error << "reading comment key from line: " << line << std::endl;
 		return;
 	}
 
@@ -524,7 +524,7 @@ void SilentStruct::comment_from_line( std::string const & line, bool const inclu
 
 	line_stream >> val;
 	if ( !has_silent_type && line_stream.fail() ) {
-		tr.Error << "[ERROR] reading comment from line: " << line << std::endl;
+		tr.Error << "reading comment from line: " << line << std::endl;
 		return;
 	}
 
@@ -600,7 +600,7 @@ void SilentStruct::parse_energies(
 	}
 
 	if ( energy_names_count != input_count ) {
-		tr.Warning << "Warning: I have " << energy_names_count
+		tr.Warning << "I have " << energy_names_count
 			<< " energy names but I have " << input_count
 			<< " energy values." << std::endl;
 	}

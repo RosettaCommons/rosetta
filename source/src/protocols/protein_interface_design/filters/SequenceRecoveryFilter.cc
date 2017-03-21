@@ -223,7 +223,7 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 		}
 	}
 	if ( !designable_count ) {
-		TR<<"Warning: No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
+		TR.Warning << "No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
 		if ( !packable_count ) {
 			utility_exit_with_message("No designable or packable residues identified in pose. Are you sure you have set the correct task operations?" );
 		}

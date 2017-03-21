@@ -1997,7 +1997,7 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 
 	// Support deprecated option
 	if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {
-		tr.Error << "WARNING: Using DEPRECATED OPTION fastrelax ! " << std::endl;
+		tr.Error << "Using DEPRECATED OPTION fastrelax ! " << std::endl;
 		option[ basic::options::OptionKeys::abinitio::relax ].def( true );
 		option[ basic::options::OptionKeys::relax::fast ].def( true );
 	}
