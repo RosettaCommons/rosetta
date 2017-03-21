@@ -578,7 +578,8 @@ void SilentStruct::parse_energies(
 	using namespace ObjexxFCL;
 	for ( auto const & energy_name : energy_names ) {
 		input >> tag;
-		if ( is_float( tag ) ) {
+		if ( input.fail() || input.bad() ) break;
+		if ( is_float( tag ) && energy_name.compare("description") /*energy name is not "description"*/ ) {
 			Real score_val = static_cast< Real > ( float_of( tag ) );
 			add_energy( energy_name, score_val );
 		} else if ( energy_name == "description" ) {
@@ -588,6 +589,15 @@ void SilentStruct::parse_energies(
 		}
 		++input_count;
 	} // for ( energy_iter ... )
+
+	if ( !input.eof() ) {
+		while ( input.good() && !input.eof() ) {
+			input >> tag;
+			++input_count;
+		}
+		decoy_tag(tag);
+		tr.Warning << "Warning: there were additional columns in the \"SCORE:\" line.  Using the last column (\"" << tag << "\") as the decoy tag." << std::endl;
+	}
 
 	if ( energy_names_count != input_count ) {
 		tr.Warning << "Warning: I have " << energy_names_count

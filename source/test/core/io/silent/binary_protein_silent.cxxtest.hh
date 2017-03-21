@@ -10,6 +10,7 @@
 /// @file   core/io/silent/protein_silent.cxxtest.hh
 /// @brief  test suite for protein silent-file format
 /// @author James Thompson
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added test for badly-formatted silent files of a sort commonly produced by Rosetta.
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -153,8 +154,63 @@ public:
 
 	}
 
+	/// @brief Test whether badly-formatted silent files can be read.
+	/// @details The silent file read machinery was recently made more robust to corrupted silent files of the
+	/// sort commonly produced by Rosetta for inscrutable reasons.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_read_badly_formatted_silent_file() {
+		TR << "Starting test_read_badly_formatted_silent_file." << std::endl;
+		TR << "Author: Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)." << std::endl;
+		TR << "Failure of this test would indicate that there's a problem reading silent files that have been written by Rosetta with common write issues, like duplicated header information or extra data columns in score lines." << std::endl;
+
+		core::pose::Pose good_pose, questionable_pose;
+		core::chemical::ResidueTypeSetCOP rsd( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
+		sfd.read_file( "core/io/silent/cyclic_peptide_binary_silent.silent" );
+		TS_ASSERT( sfd.size() > 0 );
+		TS_ASSERT( sfd.begin()->decoy_tag() == "result_proc0042_34330");
+		sfd.begin()->fill_pose( good_pose, *rsd );
+
+		core::io::silent::SilentFileData sfd2(opts);
+		sfd2.read_file( "core/io/silent/cyclic_peptide_binary_silent_duplicated_header.silent" );
+		TS_ASSERT( sfd2.size() > 0 );
+		TS_ASSERT( sfd2.begin()->decoy_tag() == "result_proc0042_34330");
+		sfd2.begin()->fill_pose( questionable_pose, *rsd );
+
+		TS_ASSERT_EQUALS( good_pose.size(), 18 );
+		TS_ASSERT_EQUALS( good_pose.size(), questionable_pose.size() );
+
+		//std::string const tag1( core::pose::tag_from_pose(good_pose) );
+		//std::string const tag2( core::pose::tag_from_pose(questionable_pose) );
+		//TR << "TAG1: " << tag1 << "\tTAG2: " << tag2 << "\n";
+		//TS_ASSERT( tag1 == tag2 );
+		//TS_ASSERT( tag1 == "result_proc0042_34330" );
+		//TS_ASSERT( tag2 == "result_proc0042_34330" );
+
+		TR << "\nPHI1\tPHI2\tPSI1\tPSI2\tOMEGA1\tOMEGA2\n";
+		for ( core::Size i=1; i<=18; ++i ) {
+			TR << good_pose.phi(i) << "\t" << questionable_pose.phi(i) << "\t";
+			TR << good_pose.psi(i) << "\t" << questionable_pose.psi(i) << "\t";
+			TR << good_pose.omega(i) << "\t" << questionable_pose.omega(i) << "\n";
+			TS_ASSERT_DELTA( good_pose.phi( i ), questionable_pose.phi( i ), 0.001 );
+			TS_ASSERT_DELTA( good_pose.psi( i ), questionable_pose.psi( i ), 0.001 );
+			TS_ASSERT_DELTA( good_pose.omega( i ), questionable_pose.omega( i ), 0.001 );
+		}
+		TR << "\n";
+
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014" ) );
+		core::Real const score1( (*scorefxn)(good_pose) );
+		core::Real const score2( (*scorefxn)(questionable_pose) );
+		TR << "SCORE1\tSCORE2\n" << score1 << "\t" << score2 << "\n";
+		TS_ASSERT_DELTA( score1, score2, 0.001 );
+		TR << std::endl; TR.flush();
+	}
+
 	/// @brief Test whether poses that have had their lenghts modified in Rosetta can
 	/// be written and read properly.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void test_save_and_restore_inserting_residues()
 	{
 		TR << "Starting test_save_and_restore_inserting_residues." << std::endl;

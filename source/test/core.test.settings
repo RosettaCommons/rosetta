@@ -811,6 +811,8 @@ testinputfiles = [
 	"io/pdb/test.params",
 	"io/pose_from_sfr/ace_from_1VDN.pdb",
 	"io/pose_from_sfr/acetylated_and_methylated_alanine.pdb",
+	"io/silent/cyclic_peptide_binary_silent.silent",
+	"io/silent/cyclic_peptide_binary_silent_duplicated_header.silent",
 	"kinematics/test.pdb",
 	"optimization/test_in.pdb",
 	"optimization/symmetry/fibril.symm",

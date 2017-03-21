@@ -486,8 +486,6 @@ bool SilentFileData::write_silent_struct(
 		// check to make sure the scores in this silent-struct are the same as the
 		// last one that I printed. If not, re-print the header! Also, if the
 		// user says to print a SCORE header for each decoy, print that header.
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
 		if ( s.energy_names().energy_names() != enames->energy_names() ||
 				//option[ out::file::silent_print_all_score_headers ]()
 				options_.print_all_score_headers()
@@ -566,9 +564,6 @@ SilentFileData::read_file(
 	std::string const & filename
 ) {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	bool success = _read_file(
 		filename,
 		//!option[ OptionKeys::in::file::silent_read_through_errors ]() /*throw_exception_on_bad_structs*/
@@ -590,8 +585,6 @@ SilentFileData::_read_file(
 
 	using std::string;
 	using utility::vector1;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
 	//empty tag-vector to signal read ALL
 	utility::vector1< std::string > tags_wanted;
@@ -647,8 +640,6 @@ SilentFileData::read_file(
 	std::string const & filename,
 	utility::vector1< std::string > const & tags
 ) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
 	bool success = _read_file(
 		filename,
@@ -693,14 +684,11 @@ SilentFileData::read_stream(
 	utility::vector1< std::string > const & tags,
 	bool throw_exception_on_bad_structs, /*default false*/
 	std::string filename /** for error reporting and suppressing bitflip**/
-){
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+) {
 
 	// put the tags on a set to avoid repetition and fast search
 	std::set<std::string> tagset(tags.begin(), tags.end());
-	std::string sequence_line, score_line, line;
+	std::string sequence_line, score_type_line, line;
 	bool success = false;
 	// read SEQUENCE line:
 	std::getline( data, sequence_line );
@@ -713,37 +701,20 @@ SilentFileData::read_stream(
 	check_if_rna_from_sequence_line( sequence_line );
 
 	// read header SCORE line
-	getline( data, score_line );
-	if ( score_line.substr(0,7) != "SCORE: " ) {
+	getline( data, score_type_line );
+	if ( !line_starts_with_score( score_type_line ) || !is_score_type_line( score_type_line ) ) {
 		tr.Error << "bad format in second line of silent file " << filename << " (function read_stream):" << std::endl;
-		tr.Error << score_line << std::endl;
+		tr.Error << score_type_line << std::endl;
 		return success;
 	}
 
-	// read potential REMARK line
+
 	getline( data, line );
 
-	//////////////////////////////
-	// Checking for remarks...
-	// NOTE THAT THIS IS COMPLETELY TERRIBLE -- THESE TAGS SHOULD BE UNIFIED
-	// WITH THE PRINT_HEADER() REMARKS THAT ARE IN THE INDIVIDUAL SILENT STRUCTS, ETC.
-	// Probably should all be handled by the SilentStructFactory, but I don't have
-	// time to refactor this now -- rhiju, Dec. 2009.
-
-	// fixed a bug when reading silent-files with lines like this:
-	// SCORE: score template description
-	// SCORE: -2.00 1ERNA.pdb S_000000001
-	read_silent_struct_type_from_remark( line, true /* header */);
-	read_full_model_parameters_from_remark( line, true /* header */ );
-
-	SilentStructOP tmp_struct = create_SilentStructOP();
-	if ( filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user() ) {
-		tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
-	}
-
 	utility::vector1< std::string > mylines; // used for initialization of particular Silent-Structs
-	mylines.push_back( sequence_line );
-	mylines.push_back( score_line    );
+	std::map < SilentFileHeaderLine, std::string > header_lines; //Used for initialization of particular Silent-Structs from header lines.  These persist from silent structure to silent structure.
+	header_lines[ SFHEADER_SEQUENCE_LINE ] = sequence_line;
+	header_lines[ SFHEADER_SCORE_TYPE_LINE ] = score_type_line;
 
 	if ( verbose_ ) {
 		if ( !tagset.empty()/*size()*/ ) {
@@ -756,102 +727,155 @@ SilentFileData::read_stream(
 
 	// start looping over the structures
 	bool line_ok( true );
+	bool reading_header( true ); //True if we're reading header lines, false if we're reading data lines.
+	bool premature_stop( false ); // True if we were reading header lines when we reached the end of a file.
+
+	//tr.Debug << "Entering loop..." << std::endl; //DELETE ME
+
 	while ( line_ok ) {
+		//tr.Debug << line << std::endl; //DELETE ME
+
 		if ( line.substr(0,1) == "#" ) {
 			tr.Info << "Read a comment line from " << filename << std::endl;
 			tr.Info << line << std::endl;
 			comment_lines_.push_back( line );
 			getline(data,line);
 			line_ok = data.good();
+			if ( !line_ok ) { premature_stop = true; break; }
 			continue;
 		}
-		//is the next decoy coming up ? then stop collecting lines and initialize the silent-struct from the read lines
-		if ( line.substr(0,10) == "SEQUENCE: " && mylines.size() == 2 && mylines[ 1 ].substr(0,10) == "SEQUENCE: " ) {
-			//we have just read the two SEQUENCE: and SCORE: header lines and a new header starts... ignore this
-			mylines.clear();
-		}
-		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " || line.substr(0,7) == "OTHER: " ) && mylines.size() > 3 ) {
 
-			bool init_good = tmp_struct->init_from_lines( mylines, *this );
+		if ( reading_header ) {
+			//tr.Debug << "Trying to read a header line..." << std::endl; //DELETE ME
 
-			if ( !init_good && throw_exception_on_bad_structs ) {
-				throw utility::excn::EXCN_BadInput(
-					"failure to read decoy "+tmp_struct->decoy_tag()+
-					" from silent-file " + filename
-				);
+			if ( line_starts_with_score( line ) ) { //This is a score type or score line:
+				header_lines[ is_score_type_line(line) ? SFHEADER_SCORE_TYPE_LINE : SFHEADER_SCORE_LINE ] = line;
+				getline(data,line);
+				line_ok = data.good();
+				if ( !line_ok ) { premature_stop = true; break; }
+				continue;
+			} else if ( line_starts_with_sequence( line ) ) {
+				header_lines[ SFHEADER_SEQUENCE_LINE ] = line;
+				getline(data,line);
+				line_ok = data.good();
+				if ( !line_ok ) { premature_stop = true; break; }
+				continue;
+			} else if ( line_starts_with_remark( line ) ) {
+				read_silent_struct_type_from_remark( line, true /* header */);
+				read_full_model_parameters_from_remark( line, true /* header */ );
+				mylines.push_back(line);
+				getline(data,line);
+				line_ok = data.good();
+				if ( !line_ok ) { premature_stop = true; break; }
+				continue;
+			} else if (
+					line_starts_with_other(line) ||
+					line_starts_with_other_header_string(line)
+					) {
+				mylines.push_back(line);
+				getline(data,line);
+				line_ok = data.good();
+				if ( !line_ok ) { premature_stop = true; break; }
+				continue;
+			} else {
+				if ( !data.good() || data.eof() ) { premature_stop = true; break; }
+				reading_header=false;
 			}
+		}
 
-			if ( init_good ) {
-				//tr.Debug << "candidate structure " << tmp_struct->decoy_tag()
-				// << std::endl;
-				PROF_START( basic::SILENT_READ_TAG_TEST );
+		if ( !reading_header ) {
+			// If we're not reading header lines...
+			//tr.Debug << "Trying to read a non-header line..." << std::endl; //DELETE ME
 
-				// Look for the tag in the tagset, if it is present set
-				// add the structure and remove the tag from the tagset.
-				// if afer removal of the tag tagset becames empty break
-				// because that means that all the structures that we want
-				// have been read.
-				bool good_tag = false;
-				if ( !all_tags ) {
-					auto tag_it = tagset.find(tmp_struct->decoy_tag());
-					if ( tag_it != tagset.end() ) {
-						good_tag = true;
-						tagset.erase(tag_it); //expensive restructering of set -- how about saving a bunch of bools to do this book-keeping.
-					}
-				}
-				bool add_struct( init_good && ( all_tags || good_tag ));
-				PROF_STOP( basic::SILENT_READ_TAG_TEST );
+			if ( line_starts_with_score( line ) || line_starts_with_sequence( line ) || line_starts_with_other( line ) || line_starts_with_remark( line ) || line_starts_with_other_header_string( line ) ) {
+				//If another header has started after we've been reading data lines, then we're done reading data lines for the current silent struct, and it's time to
+				//parse what we've read.
 
-				if ( record_source_ ) tmp_struct->add_comment("SOURCE",filename);
+				reading_header = true;
+				lines_from_header_line_collection( header_lines, mylines ); //Copy the header lines to the lines collection.
 
-				if ( add_struct ) {
-					add_structure( tmp_struct );
-					// check if there are any tags left in the tagset, if not break
-					// since there is no need to read the rest of the file.
-				}
-
-				tmp_struct = create_SilentStructOP();
-				if ( filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user() ) {
+				SilentStructOP tmp_struct( create_SilentStructOP() );
+				if ( options_.force_silent_bitflip_on_read() && filename != "suppress_bitflip" ) {
 					tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
 				}
-			}
 
-			mylines.clear();
-			mylines.reserve( tmp_struct->sequence().size() + 10 ); //+10 since there are at least the SCORE lines extra, maybe some REMARK lines
-		}
+				bool init_good = tmp_struct->init_from_lines( mylines, *this );
 
-		if ( read_silent_struct_type_from_remark( line ) ) {
-			tmp_struct = create_SilentStructOP();
-			if ( filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user() ) {
-				tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
-			}
-		}
+				if ( !init_good && throw_exception_on_bad_structs ) {
+					throw utility::excn::EXCN_BadInput(
+						"failure to read decoy "+tmp_struct->decoy_tag()+
+						" from silent-file " + filename
+					);
+				}
 
-		mylines.push_back( line );
+				if ( init_good ) {
+					//tr.Debug << "candidate structure " << tmp_struct->decoy_tag()
+					// << std::endl;
+					PROF_START( basic::SILENT_READ_TAG_TEST );
 
-		getline(data,line);
-		line_ok = data.good();
-		/// in no case interrupt loop here, because then mylines will have incomplete silent-struct causing
-		/// seqfault in the "init_from_lines" for last decoy
-		/* CAUSES SEGFAULT  OL 12/10/11
-		if(!all_tags && tagset.empty())
-		break;  */
+					// Look for the tag in the tagset, if it is present set
+					// add the structure and remove the tag from the tagset.
+					// if afer removal of the tag tagset becames empty break
+					// because that means that all the structures that we want
+					// have been read.
+					bool good_tag = false;
+					if ( !all_tags ) {
+						auto tag_it = tagset.find(tmp_struct->decoy_tag());
+						if ( tag_it != tagset.end() ) {
+							good_tag = true;
+							tagset.erase(tag_it); //expensive restructering of set -- how about saving a bunch of bools to do this book-keeping.
+						}
+					}
+					bool add_struct( init_good && ( all_tags || good_tag ));
+					PROF_STOP( basic::SILENT_READ_TAG_TEST );
+
+					if ( record_source_ ) tmp_struct->add_comment("SOURCE",filename);
+
+					if ( add_struct ) {
+						add_structure( tmp_struct );
+						// check if there are any tags left in the tagset, if not break
+						// since there is no need to read the rest of the file.
+					}
+				}
+
+				mylines.clear();
+				mylines.reserve( 10 ); //+10 since there are at least the SCORE lines extra, maybe some REMARK lines
+				premature_stop = true; // Temporarily consider this to be a premature stop, since we've read a header line.  This is switched back in a few lines.
+			} //if line starts with "SCORE:", "SEQUENCE:", or "OTHER:"
+
+			mylines.push_back( line );
+
+			getline(data,line);
+			line_ok = data.good();
+			if ( line_ok ) premature_stop = false;
+
+		} //if we're not reading the header
+
+		// If the loop is interrupted prematurely, we must set premature_stop = true to avoid segfault.
+
 	} // while( getline(data,line) )
 
 	// don't forget to initialize last structure!
-	bool init_good = tmp_struct->init_from_lines( mylines, *this );
-	if ( !init_good && throw_exception_on_bad_structs ) throw utility::excn::EXCN_BadInput( "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
+	if ( !premature_stop ) {
+		lines_from_header_line_collection( header_lines, mylines ); //Copy the header lines to the lines collection.
+		SilentStructOP tmp_struct( create_SilentStructOP() );
+		if ( options_.force_silent_bitflip_on_read() && filename != "suppress_bitflip" ) {
+			tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
+		}
+		bool init_good = tmp_struct->init_from_lines( mylines, *this );
+		if ( !init_good && throw_exception_on_bad_structs ) throw utility::excn::EXCN_BadInput( "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
 
-	bool good_tag = false;
-	std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
-	if ( tag_it != tagset.end() ) {
-		good_tag = true;
-	}
+		bool good_tag = false;
+		std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
+		if ( tag_it != tagset.end() ) {
+			good_tag = true;
+		}
 
-	bool add_struct( init_good && ( all_tags || good_tag ));
+		bool add_struct( init_good && ( all_tags || good_tag ));
 
-	if ( add_struct ) {
-		add_structure( tmp_struct );
+		if ( add_struct ) {
+			add_structure( tmp_struct );
+		}
 	}
 
 	if ( verbose_ ) {
@@ -874,9 +898,6 @@ SilentFileData::read_silent_struct_type_from_remark(
 	std::string const& line,
 	bool const header
 ) {
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
 	bool changed( false );
 
@@ -926,7 +947,7 @@ SilentFileData::read_full_model_parameters_from_remark(
 }
 
 /// @brief This is somewhat redundant if the silent file has a "REMARK RNA" line, but some older silent files didn't do that.
-bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ){
+bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ) {
 	std::istringstream l( line );
 	std::string dummy, sequence;
 	l >> dummy;
@@ -944,6 +965,110 @@ bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ){
 
 	return false;
 }
+
+/// @brief Are the first six characters of a line "SCORE:"?
+/// @details Both score type lines and score lines start with "SCORE:".
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+SilentFileData::line_starts_with_score(
+	std::string const &line
+) const {
+	return line.substr(0,6) == "SCORE:";
+}
+
+/// @brief Are the first nine characters of a line "SEQUENCE:"?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+SilentFileData::line_starts_with_sequence(
+	std::string const &line
+) const {
+	return line.substr(0,9) == "SEQUENCE:";
+}
+
+/// @brief Are the first six characters of a line "OTHER:"?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+SilentFileData::line_starts_with_other(
+	std::string const &line
+) const {
+	return line.substr(0,6) == "OTHER:";
+}
+
+/// @brief Are the first six characters of a line "REMARK "?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+SilentFileData::line_starts_with_remark(
+	std::string const &line
+) const {
+	return line.substr(0,7) == "REMARK ";
+}
+
+/// @brief Does a line start with another header string?
+/// @details Includes strings like "ANNOTATED_SEQUENCE", "FOLD_TREE", etc.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+SilentFileData::line_starts_with_other_header_string(
+	std::string const &line
+) const {
+	return (
+		line.substr(0,10) == "FOLD_TREE " ||
+		line.substr(0,2) == "RT" ||
+		line.substr(0,24) == "NONCANONICAL_CONNECTION:" ||
+		line.substr(0,19) == "ANNOTATED_SEQUENCE:" ||
+		line.substr(0,4) == "JUMP" ||
+		line.substr(0,13) == "SYMMETRY_INFO" ||
+		line.substr(0,13) == "CHAIN_ENDINGS" ||
+		line.substr(0,7) == "RES_NUM" ||
+		line.substr(0,11) == "SEGMENT_IDS" ||
+		line.substr(0,13) == "SUBMOTIF_INFO"
+	);
+}
+
+
+/// @brief Is a line (that is assumed to start with "SCORE:") a score type line or a score line?
+/// @details Considered a score type line if and only if the second whitespace-separated chunk is "score" or "total_score"; otherwise, considered a score line.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+SilentFileData::is_score_type_line(
+	std::string const &line
+) const {
+	std::istringstream linestream( line );
+	std::string buffer;
+	linestream >> buffer;
+	if ( !linestream.good() || linestream.eof() ) return false;
+	linestream >> buffer;
+	if ( linestream.bad() || linestream.fail() ) return false;
+	return buffer == "score" || buffer == "total_score" ;
+}
+
+/// @brief Given a list of non-header lines read from a silent file and a map of certain types of single-occurance header lines to
+/// strings, copy the single-occurance header lines to the top of the list of lines.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+SilentFileData::lines_from_header_line_collection(
+	std::map< SilentFileHeaderLine, std::string> const & header_lines,
+	utility::vector1< std::string> & all_lines
+) const {
+	runtime_assert_string_msg( header_lines.count( SFHEADER_SEQUENCE_LINE ), "Error in core::io::silent::SilentFileData::lines_from_header_line_collection(): The silent structure must have a \"SEQUENCE:\" line." );
+	runtime_assert_string_msg( header_lines.count( SFHEADER_SCORE_TYPE_LINE ), "Error in core::io::silent::SilentFileData::lines_from_header_line_collection(): The silent structure must have a \"SCORE:\" line listing score types." );
+	//runtime_assert_string_msg( header_lines.count( SFHEADER_SCORE_LINE ), "Error in core::io::silent::SilentFileData::lines_from_header_line_collection(): The silent structure must have a \"SCORE:\" line listing scores." );
+
+	//Must be inserted in reverse order (each to the start of the list):
+	if ( header_lines.count( SFHEADER_SCORE_LINE ) ) all_lines.insert( all_lines.begin(), header_lines.at(SFHEADER_SCORE_LINE) );
+	all_lines.insert( all_lines.begin(), header_lines.at(SFHEADER_SCORE_TYPE_LINE) );
+	all_lines.insert( all_lines.begin(), header_lines.at(SFHEADER_SEQUENCE_LINE) );
+
+	/*if(tr.Debug.visible()) {
+	tr.Debug << "\n";
+	for(core::Size i=1, imax=all_lines.size(); i<=imax; ++i) {
+	tr.Debug << all_lines[i] << "\n";
+	}
+	tr.Debug << std::endl;
+	tr.Debug.flush();
+	}*/
+
+}
+
 
 /// @brief creates a SilentStructOP using command-line options. Just a wrapper
 /// around SilentStructFactory::get_instance()->get_silent_struct_in().

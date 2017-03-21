@@ -11,6 +11,7 @@
 ///
 /// @brief silent input file reader for mini
 /// @author James Thompson
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- cleaned up file read, and made it more robust to common file corruptions.
 
 #ifndef INCLUDED_core_io_silent_SilentFileData_hh
 #define INCLUDED_core_io_silent_SilentFileData_hh
@@ -33,10 +34,18 @@
 
 #include <utility/vector1.hh>
 
-
 namespace core {
 namespace io {
 namespace silent {
+
+/// @brief Enum for the types of lines that a silent file can have in its header section.
+/// @details Some silent file types (e.g. BinarySilentFiles) are initialized from their header data.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+enum SilentFileHeaderLine {
+	SFHEADER_SEQUENCE_LINE = 1, //One-letter sequence line (e.g. "SEQUENCE: GGGGGGGGGGGGGGGGGG")
+	SFHEADER_SCORE_TYPE_LINE, //Score types line (e.g. "SCORE:     score     fa_atr     fa_rep     fa_sol    fa_intra_rep    fa_intra_sol_xover4 ...")
+	SFHEADER_SCORE_LINE //Score lines (e.g. "SCORE: 43.354 -18.139 1.457 21.413 0.001 0.000...")
+};
 
 /// @brief Abstract base class for classes that read and write different types of
 /// silent-files. Silent-files can contain SilentStruct objects which are expected,
@@ -368,6 +377,38 @@ private:
 	bool read_full_model_parameters_from_remark( std::string const& line, bool const header = false );
 
 	bool check_if_rna_from_sequence_line( std::string const& sequence_line );
+
+	/// @brief Are the first six characters of a line "SCORE:"?
+	/// @details Both score type lines and score lines start with "SCORE:".
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool line_starts_with_score( std::string const &line ) const;
+
+	/// @brief Are the first nine characters of a line "SEQUENCE:"?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool line_starts_with_sequence( std::string const &line ) const;
+
+	/// @brief Are the first six characters of a line "OTHER:"?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool line_starts_with_other( std::string const &line ) const;
+
+	/// @brief Are the first six characters of a line "REMARK "?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool line_starts_with_remark( std::string const &line ) const;
+
+	/// @brief Does a line start with another header string?
+	/// @details Includes strings like "ANNOTATED_SEQUENCE", "FOLD_TREE", etc.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool line_starts_with_other_header_string( std::string const &line ) const;
+
+	/// @brief Is a line (that is assumed to start with "SCORE:") a score type line or a score line?
+	/// @details Considered a score type line if and only if the second whitespace-separated chunk is "score" or "total_score"; otherwise, considered a score line.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_score_type_line( std::string const &line ) const;
+
+	/// @brief Given a list of non-header lines read from a silent file and a map of certain types of single-occurance header lines to
+	/// strings, copy the single-occurance header lines to the top of the list of lines.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void lines_from_header_line_collection( std::map< SilentFileHeaderLine, std::string> const & header_lines, utility::vector1< std::string> & all_lines ) const;
 
 public:
 	/// @brief Iterator class for SilentFileData container.

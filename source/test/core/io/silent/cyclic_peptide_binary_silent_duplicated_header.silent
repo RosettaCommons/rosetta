@@ -1,0 +1,27 @@
+SEQUENCE: GGGGGGGGGGGGGGGGGG
+SCORE:     score     fa_atr     fa_rep     fa_sol    fa_intra_rep    fa_intra_sol_xover4    lk_ball_wtd    fa_elec    pro_close    hbond_sr_bb    hbond_lr_bb    hbond_bb_sc    hbond_sc    dslf_fa13      omega     fa_dun    p_aa_pp    yhh_planarity        ref    rama_prepro        HBOND_COUNT    CIS_PEPTIDE_BOND_COUNT           description
+REMARK BINARY SILENTFILE
+SEQUENCE: GGGGGGGGGGGGGGGGGG
+SCORE:     score     fa_atr     fa_rep     fa_sol    fa_intra_rep    fa_intra_sol_xover4    lk_ball_wtd    fa_elec    pro_close    hbond_sr_bb    hbond_lr_bb    hbond_bb_sc    hbond_sc    dslf_fa13      omega     fa_dun    p_aa_pp    yhh_planarity        ref    rama_prepro        HBOND_COUNT    CIS_PEPTIDE_BOND_COUNT           description
+REMARK BINARY SILENTFILE
+SCORE:    43.354    -18.139      1.457     21.413           0.001                  0.000         -1.348      2.384        0.000         -2.958         -1.472          0.000       0.000        0.000      1.629      0.000    -20.896            0.000     14.367         46.915 1.0          3.000                     0.000 result_proc0042_34330
+ANNOTATED_SEQUENCE: GGGGGGGGGGGGGGGGGG result_proc0042_34330
+NONCANONICAL_CONNECTION: 18  C   1  N  
+LGPSKBh2PQBEVJqKwSfZIBFiaCBEbe3Hw0BoCBNJPjA0dQ0HwhV6ABdnwv/DZFFEwUILLB5jGdAkE6zLwYE9KBlFnTAUn54FwlvtIBtE49BUjFnFw result_proc0042_34330
+LGGS/AFSk5Akol/JwmwN0A1uYdAUotQKwJKtsAhTeVBEL2nIwrlGwAlFOACU98eFwo3PBBd4BfBUBjbLwQg4xAt6UfA0BEXMwmFizAN4K2+D10mJw result_proc0042_34330
+LHteiARBzUBE8PWJwkp5UAdYiDCU8P3HwuT3TAlcGxCU8ZAJwGJShAZh1/CElHXKwBdNgAZLhwA0b56KwvtTFAx0koBkB5IIwREsYApaJEC0e+mDw result_proc0042_34330
+L64ZCAJqSHDE6NZIwGtd//YJtzDEgOOJw3yOHAR2MJEE0TGGwOpHNAZncbEEEeOHwYNXt/MmB5CkC5pGw0GxIABwX5DktWDLwDNzb/opt5Dk4drJw result_proc0042_34330
+LFq+GA5ysBEUUEIBwfpJMAlqPPEUzUH5vXGpw/UlpaEUFe0xvLsP7+8VOaEEI185vLtGDABnbkDU6qfAwBhJTAVzgFEkAiIrvDwJYApy/aEkB/c7v result_proc0042_34330
+LDlA1/A81kEEoTtwPag5A/g3LuEkyM55PxZfT+qfe+Ek/MdrP7rS3+EvSMFUcc9nvcONJAVyJmEEJVS3P4FFO+WMjhEkUBM8PlegW/kU31EkgrnAQ result_proc0042_34330
+LANxw/mgx8EUkCbpPMuHFAHMaKF0nmSxvAOiOAXCr9EkQF69vLLDfAfNmDF0LPMBwB/r//O7vxEU6831P+A+RATBzRFEZck9uCWU2/2uTXFEwLf3v result_proc0042_34330
+LRq7DALTJsE0CBYAwvp4LAra3dEUKViEwtb/FAjEDmEE7qCJwgzrBAbwC5EUwGaJwGhAs/e3noEk+QD9v27OFAj36NEkd08DwinNdATAdcE0Q/MEw result_proc0042_34330
+Ll70FA3ZmXEUEb/KwnxzAAPjZdEELrvNwIIbD/mg8bEE4vROwHgng+MtdcEUq+aMwnGRJAD/MIEU8bjKwHvXJATZ0SE082GPw3jXGATuntEkr8IOw result_proc0042_34330
+LnqmQ+21HaEkmVaQwUC0m/MQaZE0hnzQwXAN3/QalvEkGVLRwyv0OAtvyzE0J7HRwZI1Z/SONZEkR7HRwem35/oM7SEkOk+PwEflq/Q7nOEUL5pRw result_proc0042_34330
+L2goT/kYu9EETXjRwPmgl/EP8SFERUCSwyfxt/I7uSF0+YiTwovEw/gPvBFkg8JUwSJbL+C/q5E05GgRwgJrv+0DNeF0jpzRwJJBBAZrdYFEJ1gRw result_proc0042_34330
+L/6Ny/Q6tlFUZnHUwhHx0/gZ7nFkhXkVwGu/MAdcEbFUSpIWwyK7eA9ZNcFkNWoVw0z3z/oV9yFkTtiTwqgyN/AkhiF0pIBWwPRl4/Maw4FU880Vw result_proc0042_34330
+LkeoIApT1OFUM9LXw9IrYAlovAFkxjxXwiFbTAlDVpEEAhgXwqq/ZAl/KbEUQSIYwkGpz/YZTPFkUvlXw2lhZAN4iDF0CKbYwgULkANNjEFkyHXXw result_proc0042_34330
+LZsiHAJVWlE0f0bWw2haAAR3wPE052GWwb23RARtRDEkTrYVw2AZiANbjIE01DfVwTvVDAt5lxEk8H1Vww0Wk/MBnQEkyueVwy7z3/wTaHE0OXBXw result_proc0042_34330
+L1/aLApqYlD0hJqUwgziaA9iZKD0H87TwGvieAhZZbDEz+hSwIomaAJGdAEUD0PSwdVR3/0bseDU9smUwVUVUAtJ3pCEja4Twf9ykABW+ID0ODfUw result_proc0042_34330
+LSeMjAZEl/CUe2pRwqCxlAR9DMD01USQwPVexA1h8YDkoGKQwABc0AZe8wD0omgOwsYbkAJ1/gCUoS8Rw3oqgAZKqmDUWL+PwwqDkAJZixCUjUOPw result_proc0042_34330
+LInG4AhD3IDEVRERw+ozBBNPGQDk+//QwGUfEBRKVwCkZyDQwtVzBBN1+XCU6auOw21F1AdaK3CEes0RwLihDBN0KND0k1/RwcClCBREpwD0qMqQw result_proc0042_34330
+LwazJBVouwC0DxCQwVh3MBhqrRC03kiOwCd3KBV7LPC0zrqLwny3JBN67vCEEHZKwhWxLBJZHHD0yJlQwjEkMBBymkBUPpePwhMFRBdBnaCUYjjOw result_proc0042_34330
