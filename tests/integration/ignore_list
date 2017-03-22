@@ -25,7 +25,7 @@ core.pack.dunbrack.RotamerLibrary:.*Dunbrack.*library took [0-9.]+ seconds to lo
 core.pack.dunbrack.RotamerLibrary:.*Moving temporary file 
 basic.io.database:.*Using '.*' as the cached file.
 Processing time: .+sec
-: TIME_STAMP:[ ]
+TIME_STAMP
 TIMING.*took
 Loopstat: .* time[ ]
 protocols.looprelax:.*Buildtime:
