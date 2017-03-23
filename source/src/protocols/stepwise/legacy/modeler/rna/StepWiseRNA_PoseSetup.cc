@@ -21,7 +21,7 @@
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/util.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
@@ -146,7 +146,6 @@ void
 StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::farna;
 
 	if ( verbose_ ) output_title_text( "Enter StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
 
@@ -440,7 +439,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		TR.Debug << pose.fold_tree() << std::endl;
 	}
 
-	protocols::farna::assert_phosphate_nomenclature_matches_mini( pose ); //Just to be safe, Jun 11, 2010
+	protocols::rna::assert_phosphate_nomenclature_matches_mini( pose ); //Just to be safe, Jun 11, 2010
 	correctly_copy_HO2prime_positions( pose, start_pose_list );
 }
 

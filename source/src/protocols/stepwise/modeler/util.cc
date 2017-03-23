@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file StepWiseRNAResidueSampler
-/// @brief Not particularly fancy, just minimizes a list of poses.
+/// @file stepwise/modeler/util
+/// @brief Utility functions specific for stepwise modeler
 /// @details
 /// @author Rhiju Das
 
@@ -18,7 +18,7 @@
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -1268,7 +1268,7 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 	fix_up_residue_type_variants( pose_to_fix );
 	update_constraint_set_from_full_model_info( pose_to_fix ); //atom numbers may have shifted around with variant changes.
 	core::scoring::rna::clear_rna_scoring_info( pose_to_fix );
-	protocols::farna::secstruct::clear_rna_secstruct_legacy_info( pose_to_fix );
+	protocols::rna::denovo::secstruct_legacy::clear_rna_secstruct_legacy_info( pose_to_fix );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

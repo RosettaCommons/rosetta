@@ -144,8 +144,8 @@
 #include <protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh>
 
 // F //////////////////////////////////////////////////////////////////////////
-#include <protocols/farna/ErraserMinimizerMoverCreator.hh>
-#include <protocols/farna/RNAIdealizeMoverCreator.hh>
+#include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
+#include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
 
 #include <protocols/features/InterfaceDdGMoverCreator.hh>
 #include <protocols/features/ReportToDBCreator.hh>

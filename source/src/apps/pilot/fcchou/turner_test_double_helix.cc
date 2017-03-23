@@ -1127,7 +1127,7 @@ main( int argc, char * argv [] )
 
 	NEW_OPT(out_scores_prefix, "", "");
 	NEW_OPT(save_torsions, "", "");
-	NEW_OPT(force_field, "score_file", "stepwise/stepwise/rna/farna/rna_hires_fang");
+	NEW_OPT(force_field, "score_file", "stepwise/stepwise/rna/rna/denovo/rna_hires_fang");
 	NEW_OPT( seq, "sequence to model", "" );
 	NEW_OPT( out_pdb, "output pdb name", "test.pdb" );
 	NEW_OPT( out_unfold, "name of output for unfolded states", "unfold.out" );

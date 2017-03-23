@@ -1,3 +1,4 @@
+
 # -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
 #
 # Project settings for rosetta sources
@@ -128,7 +129,6 @@ sources = {
 		"pmut_scan_parallel",
 		"sequence_recovery",
 		"beta_peptide_modeling",
-		"rna_design",
 		"supercharge",
 		"zinc_heterodimer_design",
 		#"zinc1_homodimer_setup", #protein interface with one zinc
@@ -149,14 +149,32 @@ sources = {
 		"CstfileToTheozymePDB",
 		"enzyme_design",
 	],
-	"public/farna": [
+	"public/rna": [
+		"rna_denovo",
+		"rna_design",
+	],
+	"public/rna/erraser": [
+		"erraser_minimizer",
+	],
+	"public/rna/thread": [
+		"rna_thread",
+		"rna_thread_and_minimize",
+	],
+	"public/rna/util": [
+		"analyze_base_pairing",
+		"cs_rosetta_rna",
 		"rna_cluster",
 		"rna_database",
-		"rna_denovo",
 		"rna_extract",
+		"rna_features",
+		"rna_graft",
+		"rna_helix",
+		"rna_idealize",
+		"rna_predict_chem_map",
+		"rna_suitename",
 		"rna_minimize",
 		"rna_score",
-		"cs_rosetta_rna"
+		"nucleobase_sample_around",
 	],
 	"public/fiber_diffraction": [
 		"FiberDiffractionFreeSet",
@@ -238,19 +256,6 @@ sources = {
 		"recces_turner",
 		"thermal_sampler",
 	    ],
-	"public/rna_util": [
-		"analyze_base_pairing",
-		"nucleobase_sample_around",
-		"rna_features",
-		"rna_graft",
-		"rna_helix",
-		"rna_idealize",
-		"rna_predict_chem_map",
-		"rna_suitename",
-		"rna_thread",
-		"rna_thread_and_minimize",
-		"erraser_minimizer",
-	],
 	"public/sewing": [
 		"sewing_hasher",
 	],

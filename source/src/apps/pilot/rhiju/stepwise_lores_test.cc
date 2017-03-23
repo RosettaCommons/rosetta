@@ -22,15 +22,15 @@
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/farna/RNA_FragmentMonteCarlo.hh>
-#include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>
-#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/farna/libraries/RNA_JumpLibrary.hh>
-#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
-#include <protocols/farna/libraries/BasePairStepLibrary.hh>
+#include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
+#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
+#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/libraries/RNA_JumpLibrary.hh>
+#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/rna/denovo/libraries/BasePairStepLibrary.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <basic/database/open.hh>
 
 #include <protocols/viewer/viewers.hh>
@@ -65,8 +65,8 @@ stepwise_lores_test()
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::setup;
-	using namespace protocols::farna;
-	using namespace protocols::farna::options;
+	using namespace protocols::rna::denovo;
+	using namespace protocols::rna::denovo::options;
 	using namespace utility::file;
 
 	// Following is 'standard' setup from stepwise.cc
@@ -84,7 +84,7 @@ stepwise_lores_test()
 	options->initialize_from_command_line();
 	RNA_FragmentMonteCarlo rna_fragment_monte_carlo( options );
 	rna_fragment_monte_carlo.set_native_pose( native_pose );
-	rna_fragment_monte_carlo.set_denovo_scorefxn( ScoreFunctionFactory::create_score_function( "farna/rna_lores.wts" ) );
+	rna_fragment_monte_carlo.set_denovo_scorefxn( ScoreFunctionFactory::create_score_function( "rna/denovo/rna_lores.wts" ) );
 	rna_fragment_monte_carlo.set_hires_scorefxn( get_rna_hires_scorefxn() );
 	rna_fragment_monte_carlo.set_refine_pose( true ); // no heating, etc.
 	rna_fragment_monte_carlo.apply( pose );

@@ -23,17 +23,15 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/util.hh>
 #include <protocols/toolbox/rigid_body/util.hh>
-#include <core/chemical/rna/util.hh>
 
-#include <protocols/farna/util.hh>
 //////////////////////////////////
-
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>

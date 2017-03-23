@@ -124,8 +124,8 @@
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
-#include <protocols/farna/ErraserMinimizerMoverCreator.hh>
-#include <protocols/farna/RNAIdealizeMoverCreator.hh>
+#include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
+#include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
 #include <protocols/features/ReportToDBCreator.hh>
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
@@ -717,10 +717,10 @@ public:
 	{ protocols::enzdes::UpdateEnzdesHeaderMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "UpdateEnzdesHeader" ); }
 
 	void test_protocols_farna_ErraserMinimizerMoverCreator_name()
-	{ protocols::farna::ErraserMinimizerMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ErraserMinimizerMover" ); }
+	{ protocols::rna::movers::ErraserMinimizerMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ErraserMinimizerMover" ); }
 
 	void test_protocols_farna_RNAIdealizeMoverCreator_name()
-	{ protocols::farna::RNAIdealizeMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RNAIdealizeMover" ); }
+	{ protocols::rna::movers::RNAIdealizeMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RNAIdealizeMover" ); }
 
 	void test_protocols_features_ReportToDBCreator_name()
 	{ protocols::features::ReportToDBCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ReportToDB" ); }
@@ -1875,10 +1875,10 @@ public:
 	// { protocols::enzdes::UpdateEnzdesHeaderMoverCreator cr; std::cout << "protocols::enzdes::UpdateEnzdesHeaderMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_farna_ErraserMinimizerMoverCreator()
-	// { protocols::farna::ErraserMinimizerMoverCreator cr; std::cout << "protocols::farna::ErraserMinimizerMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::rna::movers::ErraserMinimizerMoverCreator cr; std::cout << "protocols::rna::movers::ErraserMinimizerMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_farna_RNAIdealizeMoverCreator()
-	// { protocols::farna::RNAIdealizeMoverCreator cr; std::cout << "protocols::farna::RNAIdealizeMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::rna::movers::RNAIdealizeMoverCreator cr; std::cout << "protocols::rna::movers::RNAIdealizeMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_features_ReportToDBCreator()
 	// { protocols::features::ReportToDBCreator cr; std::cout << "protocols::features::ReportToDBCreator " << cr.keyname() << std::endl; }

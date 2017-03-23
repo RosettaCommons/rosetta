@@ -22,11 +22,11 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>
-#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/farna/fragments/FragmentLibrary.hh>
-#include <protocols/farna/fragments/TorsionSet.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
+#include <protocols/rna/denovo/fragments/FragmentLibrary.hh>
+#include <protocols/rna/denovo/fragments/TorsionSet.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -119,7 +119,7 @@ figure_out_secstruct( pose::Pose & pose ){
 	char secstruct1( 'X' );
 	for ( Size i=1; i <= pose.size() ; ++i ) {
 		TR << i << std::endl;
-		protocols::farna::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
+		protocols::rna::denovo::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
 		secstruct += secstruct1;
 	}
 
@@ -137,8 +137,8 @@ homolog_finder()
 	using namespace core::scoring;
 	using namespace core::chemical;
 	using namespace core::id;
-	using namespace protocols::farna::options;
-	using namespace protocols::farna::fragments;
+	using namespace protocols::rna::denovo::options;
+	using namespace protocols::rna::denovo::fragments;
 	using namespace protocols::stepwise::setup;
 	using namespace protocols::toolbox;
 	using namespace utility::file;

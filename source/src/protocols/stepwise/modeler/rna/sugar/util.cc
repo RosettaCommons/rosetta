@@ -71,7 +71,6 @@ minimize_all_sampled_floating_bases(
 	using namespace core::scoring;
 	using namespace core::pose;
 	using namespace core::io::silent;
-	// using namespace protocols::farna;
 	using namespace core::id;
 	using namespace ObjexxFCL;
 

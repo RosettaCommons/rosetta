@@ -25,7 +25,7 @@
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -164,7 +164,7 @@ block_stack_test()
 	pose.set_xyz( NamedAtomID( "RPB2", 8),
 								get_repl_xyz( pose, 8, make_vector1( " C4 ", " N3 ", " C2 ", " N1 ", " C6 ", " C5 "  ) ) );
 
-	protocols::farna::print_internal_coords( pose );
+	protocols::rna::denovo::print_internal_coords( pose );
 	pose.dump_pdb( "test2.pdb" );
 
 

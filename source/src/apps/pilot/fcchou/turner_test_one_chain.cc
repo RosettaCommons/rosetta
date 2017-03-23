@@ -60,7 +60,7 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/stepwise/sampling/util.hh>
-#include <protocols/farna/RNA_SuiteAssign.hh>
+#include <protocols/rna/denovo/RNA_SuiteAssign.hh>
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sampling/rna/util.hh>
 #include <devel/init.hh>
@@ -1303,8 +1303,8 @@ one_chain_torsion_cluster(){
 	Size n_id (0), curr_id(99999), pre_id(99999), curr_index(0);
 	//////////////////////////////
 	//Initialize suite test
-	protocols::farna::RNA_suite_list const suite_list;
-	utility::vector1 <protocols::farna::suite_info> const & all_suites = suite_list.full_list();
+	protocols::rna::denovo::RNA_suite_list const suite_list;
+	utility::vector1 <protocols::rna::denovo::suite_info> const & all_suites = suite_list.full_list();
 	utility::vector1 <std::string> suite_names;
 	utility::vector1 <Size> suite_counts;
 	for (Size i = 1; i <= all_suites.size(); ++i) {
@@ -1431,7 +1431,7 @@ one_chain_torsion_cluster(){
 			++n_accpet;
 
 			//Calculate suite
-			std::pair< std::string, std::pair <Size, Real> > suite = protocols::farna::suite_assign(pose, 2);
+			std::pair< std::string, std::pair <Size, Real> > suite = protocols::rna::denovo::suite_assign(pose, 2);
 			suite_index = suite.second.first;
 			if (suite_index == 0) suite_index = suite_names.size();
 			++suite_counts[suite_index];
@@ -1558,7 +1558,7 @@ torsion2decoy () {
 	nucleoside_torsion.push_back(torsion[6]);
 	apply_nucleoside_torsion(nucleoside_torsion, pose, 1);
 	apply_suite_torsion( suite_torsion, pose, 1 );
-	std::pair< std::string, std::pair <Size, Real> > suite = protocols::farna::suite_assign(pose, 2);
+	std::pair< std::string, std::pair <Size, Real> > suite = protocols::rna::denovo::suite_assign(pose, 2);
 	std::cout << suite.first << ' ' << suite.second.second << std::endl;
 	pose.dump_pdb("decoy.pdb");
 }
@@ -1628,7 +1628,7 @@ main( int argc, char * argv [] ) {
 	utility::vector1< Real > blank_size_vector_real;
 
 	NEW_OPT(out_scores_prefix, "output the scores", "");
-	NEW_OPT(force_field, "score_file", "farna/rna_hires_07232011_with_intra_base_phosphate");
+	NEW_OPT(force_field, "score_file", "rna/denovo/rna_hires_07232011_with_intra_base_phosphate");
 	NEW_OPT( seq, "sequence to model", "" );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "");
 	NEW_OPT( score_cutoff, "Cutoff in energy score", 99999.99 );

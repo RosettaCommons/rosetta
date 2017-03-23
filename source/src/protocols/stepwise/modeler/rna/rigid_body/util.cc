@@ -20,7 +20,7 @@
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/util.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/toolbox/rigid_body/util.hh>

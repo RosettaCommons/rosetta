@@ -97,20 +97,20 @@ RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 	// meant for use with RNA_FragmentMonteCarlo in mode where it simuilates an RNA loop and
 	//  outputs translation & rotation information from a takeoff to a landing residue.
 	stub_stub_type_ = BASE_CENTROID;
-	if ( option[ farna::out::output_jump_o3p_to_o5p ]() ) stub_stub_type_ = O3P_TO_O5P;
-	if ( option[ farna::out::output_jump_chainbreak ]() ) stub_stub_type_ = CHAINBREAK;
-	if ( option[ farna::out::output_jump_reference_RT ].user() ){
+	if ( option[ denovo::out::output_jump_o3p_to_o5p ]() ) stub_stub_type_ = O3P_TO_O5P;
+	if ( option[ denovo::out::output_jump_chainbreak ]() ) stub_stub_type_ = CHAINBREAK;
+	if ( option[ denovo::out::output_jump_reference_RT ].user() ){
 		reference_RT_ = kinematics::RTOP( new kinematics::RT );
-		std::stringstream rt_stream( option[ farna::out::output_jump_reference_RT ]() );
+		std::stringstream rt_stream( option[ denovo::out::output_jump_reference_RT ]() );
 		rt_stream >> *reference_RT_;
 	}
 
-	jump_resnum_and_chain_ = option[ farna::out::output_jump_res ].resnum_and_chain();
+	jump_resnum_and_chain_ = option[ denovo::out::output_jump_res ].resnum_and_chain();
 	runtime_assert( jump_resnum_and_chain_.first.size() == 2 );
 	runtime_assert( jump_resnum_and_chain_.second.size() == 2 );
 
-	runtime_assert( option[ farna::out::target_xyz ]().size() == 3 );
-	utility::vector1< Real > const & xyz = option[ farna::out::target_xyz ]();
+	runtime_assert( option[ denovo::out::target_xyz ]().size() == 3 );
+	utility::vector1< Real > const & xyz = option[ denovo::out::target_xyz ]();
 	target_xyz_in_takeoff_frame_ = Vector( xyz[1], xyz[2], xyz[3] );
 
 	// Following defines: ( target_xyz - xyz )**2   [note: no 1/2]

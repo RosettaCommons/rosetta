@@ -37,9 +37,6 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-// RNA stuff
-#include <protocols/farna/util.hh>
-
 #include <utility/exit.hh>
 #include <string>
 

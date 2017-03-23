@@ -12,7 +12,7 @@
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/farna/fragments/RNA_FragmentsClasses.fwd.hh>
+#include <protocols/rna/denovo/fragments/RNA_FragmentsClasses.fwd.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -70,7 +70,7 @@ void
 optimize_linkers_rna_fullatom_mode(
 	core::kinematics::MoveMapOP & mm,
 	core::pose::Pose & full_pose,
-	protocols::farna::fragments::RNA_FragmentsOP & all_rna_fragments
+	protocols::rna::denovo::fragments::RNA_FragmentsOP & all_rna_fragments
 );
 
 /// @brief a helper function for the domain assembly protocol. Selects

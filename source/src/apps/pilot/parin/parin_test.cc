@@ -94,8 +94,8 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_BasePairClassifier.hh>
+#include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/denovo/RNA_BasePairClassifier.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
@@ -103,8 +103,8 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_LoopCloser.fwd.hh>
+#include <protocols/rna/denovo/RNA_LoopCloser.hh>
+#include <protocols/rna/denovo/RNA_LoopCloser.fwd.hh>
 
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 
@@ -297,7 +297,7 @@ align_pdbs_function(pose::Pose const static_pose,
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
@@ -565,7 +565,7 @@ hermann_phase_two_minimize(){
   using namespace core::scoring;
 	using namespace protocols::stepwise::sampling::rna;
 	using namespace core::optimization;
-	//using namespace protocols::farna;
+	//using namespace protocols::rna::denovo;
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
@@ -575,7 +575,7 @@ hermann_phase_two_minimize(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-	protocols::farna::RNA_LoopCloser rna_loop_closer;
+	protocols::rna::denovo::RNA_LoopCloser rna_loop_closer;
 
 	bool const biox_submit=option[ USER_BIOX_SUBMIT ]();
 
@@ -1004,7 +1004,7 @@ hermann_phase_two_minimize(){
 
 		}
 
-		protocols::farna::assert_phosphate_nomenclature_matches_mini(full_pose);
+		protocols::rna::denovo::assert_phosphate_nomenclature_matches_mini(full_pose);
 
 		if(full_pose.size()!=total_res){
 			utility_exit_with_message( "full_pose.size()(" + string_of(full_pose.size())+")!=total_res("+string_of(total_res)+")" );
@@ -1713,7 +1713,7 @@ extract_clash_list(){
 	using namespace core::optimization;
 	using namespace core::io::silent;
 	using namespace protocols::stepwise::sampling::rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace scoring::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
@@ -1839,7 +1839,7 @@ extract_hydrogen_bonds_statistic(){
 	using namespace core::optimization;
 	using namespace core::io::silent;
 	using namespace protocols::stepwise::sampling::rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace scoring::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
@@ -2120,7 +2120,7 @@ test_function(){
 
 	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
-	protocols::farna::make_phosphate_nomenclature_matches_mini( pose);
+	protocols::rna::denovo::make_phosphate_nomenclature_matches_mini( pose);
 
 
 	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", 18 );
@@ -2144,7 +2144,7 @@ silent_struct_slice(){
 	using namespace ObjexxFCL;
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 
 	// First read in any information on pdb read in from silent files.
 	// Assume one to one correspondence between number of tags and number of silent_file
@@ -2207,7 +2207,7 @@ get_pose_energy_breakdown(){
 
 		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
-		protocols::farna::make_phosphate_nomenclature_matches_mini( pose);
+		protocols::rna::denovo::make_phosphate_nomenclature_matches_mini( pose);
 
 	}else if( (option[ in::file::silent ].user()) && (option[ in::file::tags ].user() ) ){
 		std::string const silent_file=option[ in::file::silent]()[1];
@@ -3368,10 +3368,10 @@ rna_idealize_test() {
 		pose::Pose pose;
 		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
-		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
+		protocols::rna::denovo::make_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
 
-		if (!close_chainbreaks) protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+		if (!close_chainbreaks) protocols::rna::denovo::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose const start_pose( pose );
 

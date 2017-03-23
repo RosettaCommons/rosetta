@@ -112,7 +112,7 @@ void check_structures() {
 	sfxn_coarse = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std.wts" );
 	// what about scoring with rna_lores?
 	core::scoring::ScoreFunctionOP sfxn_rna;
-	sfxn_rna = core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_lores.wts" );
+	sfxn_rna = core::scoring::ScoreFunctionFactory::create_score_function( "rna/denovo/rna_lores.wts" );
 
 	std::cout << "trying to score with rna_lores" << std::endl;
 

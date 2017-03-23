@@ -43,7 +43,7 @@
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -140,8 +140,8 @@ erraser_monte_carlo()
 
 	pose::Pose pose;
 	import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ][1] , core::import_pose::PDB_file);
-	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
-	protocols::farna::virtualize_5prime_phosphates( pose );
+	protocols::rna::denovo::figure_out_reasonable_rna_fold_tree( pose );
+	protocols::rna::denovo::virtualize_5prime_phosphates( pose );
 	setup_design_res( pose );
 
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );

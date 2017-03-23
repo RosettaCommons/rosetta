@@ -59,7 +59,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 
 int main(int argc, char *argv[])
 {
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		//std::cout << "It has " << test_pose.size() << " total residues." << std::endl;
 		/*chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		pose_from_file(test_pose, *rsd_set, "/home/boon/data/test_rna.pdb", core::import_pose::PDB_file);
-		protocols::farna::make_phosphate_nomenclature_matches_mini( test_pose );
+		protocols::rna::denovo::make_phosphate_nomenclature_matches_mini( test_pose );
 		// setup a packer task
 		pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ) );
 		task->initialize_from_command_line().or_include_current( true );
@@ -95,9 +95,9 @@ int main(int argc, char *argv[])
 		task->nonconst_residue_task(ii).allow_aa( na_rcy );
 		assert( task->design_residue(ii) );
 		}
-		// create a farna/rna_lores scorefxn
+		// create a rna/denovo/rna_lores scorefxn
 		scoring::ScoreFunction scorefxn;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( "farna/rna_lores" );
+		scorefxn = scoring::ScoreFunctionFactory::create_score_function( "rna/denovo/rna_lores" );
 		Size const nloop = 3;
 		utility::vector1< Real > score_list;
 		utility::vector1< std::string > seq_list;

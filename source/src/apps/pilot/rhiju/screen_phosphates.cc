@@ -33,8 +33,8 @@
 #include <core/pose/full_model_info/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh>
@@ -148,7 +148,7 @@ screen_phosphates()
 
 	TR << "WITH SCREEN PHOS " << ( *scorefxn )( pose ) << std::endl;
 	// scorefxn->show( pose );
-	// protocols::farna::print_hbonds( pose );
+	// protocols::rna::denovo::print_hbonds( pose );
 	pose.dump_pdb( "SCREEN_POSE.pdb" );
 
 }

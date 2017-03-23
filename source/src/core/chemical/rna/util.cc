@@ -367,7 +367,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() ) {
-		if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ) {
+		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return Vector( 0.0, 0.0, 0.0 );
 		} else { //if not option
 			utility_exit_with_message( "non - RNA residue inside get_rna_base_centroid" );
@@ -419,7 +419,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Unify the version in StepWiseRNA_Utill.cc and RNA_CentroidInfo.cc on June 25, 2011
+//Unify the version in StepWiseRNA_Util.cc and RNA_CentroidInfo.cc on June 25, 2011
 numeric::xyzMatrix< core::Real >
 get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ){
 
@@ -427,7 +427,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() ) {
-		if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ) {
+		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
 		} else { //if not option
 			utility_exit_with_message( "non - RNA residue inside get_rna_base_coordinate_system, abort" );

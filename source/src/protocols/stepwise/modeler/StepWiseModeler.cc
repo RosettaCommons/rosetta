@@ -33,7 +33,7 @@
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/farna/FARNA_Optimizer.hh>
+#include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -216,7 +216,7 @@ StepWiseModeler::do_stepwise_lores( core::pose::Pose & pose )
 	pose_list_ = make_vector1( pose.clone() );
 
 	// following takes place of 'minimizer', i.e. global optimization in response to an add/move/delete
-	protocols::farna::FARNA_Optimizer optimizer( pose_list_, scorefxn_, 100 /* cycles */ );
+	protocols::rna::movers::RNA_DeNovoOptimizer optimizer( pose_list_, scorefxn_, 100 /* cycles */ );
 	optimizer.apply( pose );
 }
 

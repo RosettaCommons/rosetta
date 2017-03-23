@@ -1,4 +1,4 @@
 -in:file:silent ./../../data/rna.out
 -in:file:silent_struct_type binary
 -out:nooutput
--score:weights farna/rna_lores.wts
+-score:weights rna/denovo/rna_lores.wts

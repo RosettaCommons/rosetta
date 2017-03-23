@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farna/recces/ThermalMinimizer.cc
+/// @file protocols/rna/denovo/recces/ThermalMinimizer.cc
 /// @brief Use a simulated tempering simulation to refine a pose
 /// @author Andy Watkins (amw579@nyu.edu)
 

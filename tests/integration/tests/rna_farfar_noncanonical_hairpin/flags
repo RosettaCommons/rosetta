@@ -5,4 +5,4 @@
 -include_neighbor_base_stacks  
 -minimize_rna true
 -nstruct 1
--score:weights farna/rna_hires.wts
+-score:weights rna/denovo/rna_hires.wts

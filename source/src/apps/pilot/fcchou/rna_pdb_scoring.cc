@@ -137,7 +137,7 @@ int
 main ( int argc, char * argv [] ) {
   try {
 		using namespace basic::options;
-		NEW_OPT ( force_field_file, "score_file", "stepwise/stepwise/rna/farna/rna_hires_elec_dens" );
+		NEW_OPT ( force_field_file, "score_file", "stepwise/stepwise/rna/rna/denovo/rna_hires_elec_dens" );
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////

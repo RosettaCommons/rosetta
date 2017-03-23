@@ -1221,7 +1221,7 @@ get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
 	conformation::Residue const & rsd( pose.residue(res_num)  );
 
 	//SML PHENIX conference cleanup
-	if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ) {
+	if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 		if ( !rsd.is_RNA() ) return 0.0;
 	} else {
 		if ( rsd.is_RNA()==false ) utility_exit_with_message("rsd.is_RNA()==false!");

@@ -19,7 +19,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
@@ -101,7 +101,7 @@ rna_helix_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace chemical::rna;
 
 	Size const nres = pose.size();

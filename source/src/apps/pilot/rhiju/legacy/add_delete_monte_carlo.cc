@@ -82,8 +82,8 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueSampler.hh>
@@ -296,7 +296,7 @@ swa_rna_sample()
 	// Scorefunction -- choose a default. Put into its own setup function?
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
-	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/farna/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
+	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna/denovo/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
 
 	if ( !scorefxn->has_nonzero_weight( unfolded ) ) { 	// must have unfolded term!
 		std::cout << "Putting 'unfolded' term into scorefunction! Use -unfolded_weight to reduce weight or turn off." << std::endl;

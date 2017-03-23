@@ -2,5 +2,5 @@
 -out:nstruct 3
 -ex1:level 4
 -dump
--score:weights farna/rna_hires.wts
+-score:weights rna/denovo/rna_hires.wts
 -mute core.io.database

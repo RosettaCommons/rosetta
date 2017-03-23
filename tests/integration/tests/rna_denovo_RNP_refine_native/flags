@@ -6,5 +6,5 @@
 -minimize_rna true
 -s MS2_protein.pdb
 -ignore_zero_occupancy false
--rna:farna:refine_native true 
+-rna:denovo:refine_native true 
 -native center_0_r10_complex.pdb

@@ -29,7 +29,7 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file, for RNA
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/magnesium/util.hh>
 #include <protocols/recces/scratch/ThermalMinimizer.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
@@ -270,7 +270,7 @@ StepWiseMinimizer::close_chainbreaks( pose::Pose & pose, kinematics::MoveMap & m
 	utility::vector1< Size > const moving_chainbreaks = figure_out_moving_cutpoints_closed_from_moving_res( pose, working_moving_res_ ); // would be better to use moving_res.
 	if ( moving_chainbreaks.size() == 0 ) return;
 
-	farna::movers::RNA_LoopCloser rna_loop_closer;
+	protocols::rna::movers::RNA_LoopCloser rna_loop_closer;
 	rna_loop_closer.apply( pose, rna::just_rna( moving_chainbreaks, pose ) ); // only handles RNA chainbreaks for now...
 
 	utility::vector1< Size > const protein_cutpoints_closed = protein::just_protein( moving_chainbreaks, pose );

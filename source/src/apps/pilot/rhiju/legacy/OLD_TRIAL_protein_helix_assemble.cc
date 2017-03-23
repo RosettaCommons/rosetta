@@ -59,14 +59,14 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.fwd.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
-#include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
-#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.fwd.hh>
+#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/movers/RNA_HelixAssembler.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -248,7 +248,7 @@ protein_helix_test(){
   using namespace core::pose;
   using namespace core::kinematics;
   using namespace core::io::silent;
-  using namespace protocols::farna;
+  using namespace protocols::rna::denovo;
 
   // What is the sequence?
   std::string full_sequence;

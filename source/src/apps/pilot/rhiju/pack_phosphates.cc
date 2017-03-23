@@ -30,8 +30,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/rotamer_trials.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
@@ -192,7 +192,7 @@ pack_phosphates()
 	Pose pose_copy = pose;
 
 	TR << "CONTROL " << std::endl;
-	protocols::farna::print_hbonds( pose_copy );
+	protocols::rna::denovo::print_hbonds( pose_copy );
 
 	TR << "FIVE_PRIME_PHOSPHATE_PACK_RES_LIST: " << five_prime_phosphate_pack_res_list << std::endl;
 	TR << "THREE_PRIME_PHOSPHATE_PACK_RES_LIST: " << three_prime_phosphate_pack_res_list << std::endl;
@@ -246,11 +246,11 @@ pack_phosphates()
 
 	TR << "WITH PACK PHOS " << std::endl;
 	scorefxn->show( pose );
-	protocols::farna::print_hbonds( pose );
+	protocols::rna::denovo::print_hbonds( pose );
 
 	if ( false ){
 		// do minimizing
-		protocols::farna::RNA_Minimizer rna_minimizer;
+		protocols::rna::denovo::RNA_Minimizer rna_minimizer;
 		rna_minimizer.deriv_check( option[ OptionKeys::rna::deriv_check ]() );
 		rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::skip_coord_constraints]() );
 		rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::skip_o2prime_trials] );
@@ -277,7 +277,7 @@ pack_phosphates()
 
 	TR << "AFTER PACK " << std::endl;
 	scorefxn->show( pose );
-	protocols::farna::print_hbonds( pose );
+	protocols::rna::denovo::print_hbonds( pose );
 
 	pose.dump_pdb( "PACK_POSE.pdb" );
 
@@ -289,7 +289,7 @@ get_icoor(){
   using namespace core::scoring;
   using namespace core::chemical;
   using namespace core::kinematics;
-  using namespace protocols::farna;
+  using namespace protocols::rna::denovo;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Pose pose;

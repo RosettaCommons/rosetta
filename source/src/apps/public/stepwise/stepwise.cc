@@ -92,7 +92,7 @@ stepwise_monte_carlo()
 
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
-	else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::farna::minimize_rna ]() ) {
+	else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::denovo::minimize_rna ]() ) {
 		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
 	} else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.

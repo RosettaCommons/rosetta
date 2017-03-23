@@ -17,9 +17,9 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/farna/libraries/RNA_JumpLibrary.hh>
-#include <protocols/farna/libraries/RNA_LibraryManager.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/libraries/RNA_JumpLibrary.hh>
+#include <protocols/rna/denovo/libraries/RNA_LibraryManager.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
@@ -140,8 +140,8 @@ SubMotifLibrary::save_pose_as_submotif( pose::PoseOP pose, std::string const & t
 void
 SubMotifLibrary::initialize_from_jump_library()
 {
-	using namespace protocols::farna;
-	using namespace protocols::farna::libraries;
+	using namespace protocols::rna::denovo;
+	using namespace protocols::rna::denovo::libraries;
 	RNA_JumpLibraryCOP rna_jump_library( RNA_LibraryManager::get_instance()->rna_jump_library_cop() );
 	for ( Size i = 0; i <= 3; i++ ) {
 		for ( Size j = 0; j <= 3; j++ ) {

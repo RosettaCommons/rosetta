@@ -1114,7 +1114,7 @@ main( int argc, char * argv [] )
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< Real > blank_size_vector_real;
 
-	NEW_OPT( force_field, "score_file", "stepwise/stepwise/rna/farna/rna_hires_fang");
+	NEW_OPT( force_field, "score_file", "stepwise/stepwise/rna/rna/denovo/rna_hires_fang");
 	NEW_OPT( seq1, "sequence 1 to model, 3' to 5' ", "" );
 	NEW_OPT( seq2, "sequence 2 to model, 3' to 5' ", "" );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "two_bp");

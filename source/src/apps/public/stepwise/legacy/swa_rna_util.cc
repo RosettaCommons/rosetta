@@ -80,16 +80,16 @@
 #include <numeric/conversions.hh>
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/farna/movers/RNA_Minimizer.hh>
-#include <protocols/farna/options/RNA_MinimizerOptions.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
+#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/legacy/modeler/rna/util.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.fwd.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
 
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
@@ -455,7 +455,7 @@ align_pdbs(){
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCOP rsd_set;
@@ -577,7 +577,7 @@ calculate_pairwise_RMSD(){
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace ObjexxFCL;
 
@@ -734,7 +734,7 @@ o2prime_packer(){
 	using namespace core::chemical;
 	// using namespace core::conformation;
 	// using namespace core::pose;
-	// using namespace protocols::farna;
+	// using namespace protocols::rna::denovo;
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::id;
 
@@ -797,7 +797,7 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const & res_n
 	// using namespace core::optimization;
 	// using namespace core::io::silent;
 	//
-	// using namespace protocols::farna;
+	// using namespace protocols::rna::denovo;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -832,7 +832,7 @@ mutate_residues_wrapper()
 	using namespace core::optimization;
 	using namespace core::io::silent;
 	using namespace core::id;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );

@@ -53,7 +53,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 #include <core/conformation/Conformation.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
@@ -137,7 +137,6 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	using namespace core::pose;
 	using namespace core::io::silent;
 	using namespace core::optimization;
-	using namespace protocols::farna;
 	using namespace protocols::stepwise;
 
 	//Real const bulge_weight = scorefxn_->get_weight( num_stacks );
@@ -359,9 +358,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 	using namespace core::chemical::rna;
 	using namespace core::pose;
 	using namespace core::io::silent;
-	using namespace protocols::farna;
 	using namespace core::optimization;
-
 
 	Size const gap_size( working_parameters_->gap_size() ); /* If this is zero or one, need to screen or closable chain break */
 

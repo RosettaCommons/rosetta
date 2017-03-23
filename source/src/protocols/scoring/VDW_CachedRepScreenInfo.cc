@@ -18,7 +18,7 @@
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 //#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh> ???
-///#include <protocols/farna/util.hh>
+///#include <protocols/rna/denovo/util.hh>
 #include <core/pose/rna/util.hh>
 
 #include <core/pose/Pose.hh>

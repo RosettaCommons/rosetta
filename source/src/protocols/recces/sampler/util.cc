@@ -24,7 +24,7 @@
 #include <protocols/recces/params/RECCES_Parameters.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
 #include <protocols/recces/util.hh>
-#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
+#include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>

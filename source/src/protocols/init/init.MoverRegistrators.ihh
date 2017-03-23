@@ -160,8 +160,8 @@ static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzd
 static MoverRegistrator< enzymatic_movers::GlycosyltransferaseMoverCreator > reg_GlycosyltransferaseMoverCreator;
 
 // F //////////////////////////////////////////////////////////////////////////
-static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
-static MoverRegistrator< farna::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
+static MoverRegistrator< rna::movers::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
+static MoverRegistrator< rna::movers::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
 static MoverRegistrator< features::InterfaceDdGMoverCreator > reg_InterfaceDdGMoverCreator;
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;

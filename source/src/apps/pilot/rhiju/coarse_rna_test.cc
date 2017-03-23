@@ -71,11 +71,11 @@
 
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/coarse_rna/MultipleDomainMover.hh>
-#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
 #include <core/io/rna/RNA_DataReader.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
-#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/denovo/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh>
@@ -192,7 +192,7 @@ coarse_frag_test(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "coarse_rna" );
 	Pose pose;
-	protocols::farna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
+	protocols::rna::denovo::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
 
 	// visualize it.
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -392,10 +392,10 @@ icoor_test(){
 	// Figure out icoor
 	std::string full_sequence = "acguacguacgu";
 	make_pose_from_sequence( pose, full_sequence, *rsd_set );
-	protocols::farna::make_coarse_pose( pose, coarse_pose );
+	protocols::rna::denovo::make_coarse_pose( pose, coarse_pose );
 	coarse_pose.dump_pdb( "extended.pdb" );
 
-	protocols::farna::make_extended_coarse_pose( coarse_pose, pose.sequence() );
+	protocols::rna::denovo::make_extended_coarse_pose( coarse_pose, pose.sequence() );
 	coarse_pose.dump_pdb( "coarse_extended.pdb" );
 }
 
@@ -407,7 +407,7 @@ convert_to_coarse_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -418,7 +418,7 @@ convert_to_coarse_test(){
 	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	figure_out_reasonable_rna_fold_tree( pose );
 
-	protocols::farna::make_coarse_pose( pose, coarse_pose );
+	protocols::rna::denovo::make_coarse_pose( pose, coarse_pose );
 	std::cout << "--------------------" << std::endl;
 	std::cout << "Check out coarse.pdb" << std::endl;
 	std::cout << "--------------------" << std::endl;
@@ -451,8 +451,8 @@ output_minipose_coords_test(){
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
-	protocols::farna::figure_out_secstruct( pose );
-	std::string secstruct( protocols::farna::get_rna_secstruct( pose ) );
+	protocols::rna::denovo::figure_out_secstruct( pose );
+	std::string secstruct( protocols::rna::denovo::get_rna_secstruct( pose ) );
 
 	utility::io::ozstream out1( "coarse_coords.txt" );
 
@@ -494,7 +494,7 @@ pdbstats_test(){
 	utility::vector1< PuckerState > pucker_states;
 	for ( Size n = 1; n <= pose.size(); n++ ) pucker_states.push_back( Get_residue_pucker_state( pose, n ) );
 
-	protocols::farna::make_coarse_pose( pose, coarse_pose );
+	protocols::rna::denovo::make_coarse_pose( pose, coarse_pose );
 	coarse_pose.dump_pdb( "coarse.pdb" );
 
 	// How about some pdb_stats?
@@ -586,9 +586,9 @@ create_bp_jump_database_test( ){
 void
 general_initialize( 	pose::Pose & pose,
 											pose::PoseOP & native_pose,
-											protocols::farna::RNA_DeNovoPoseInitializerOP & rna_structure_parameters_,
+											protocols::rna::denovo::RNA_DeNovoPoseInitializerOP & rna_structure_parameters_,
 											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
-											protocols::farna::RNA_ChunkLibraryOP & rna_chunk_library_,
+											protocols::rna::denovo::RNA_ChunkLibraryOP & rna_chunk_library_,
 											protocols::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
 ){
 
@@ -599,7 +599,7 @@ general_initialize( 	pose::Pose & pose,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace core::pose;
 
 	///////////////////////////////////////////////////////////////////////////
@@ -608,7 +608,7 @@ general_initialize( 	pose::Pose & pose,
 	// read in desired sequence.
 	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
 
-	protocols::farna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
+	protocols::rna::denovo::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
 	pose.dump_pdb( "extended.pdb" );
 
 	// native?
@@ -632,9 +632,9 @@ general_initialize( 	pose::Pose & pose,
 
 	utility::vector1< Size > input_res_( option[ input_res ]() );
 	if( input_res_.size() > 0 ) {
-		rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
+		rna_chunk_library_ = new protocols::rna::denovo::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
 	} else {
-		rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
+		rna_chunk_library_ = new protocols::rna::denovo::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
 	}
 
 	rna_structure_parameters_->set_atom_level_domain_map( rna_chunk_library_->atom_level_domain_map() );
@@ -672,7 +672,7 @@ coarse_rb_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace protocols::moves;
 	using namespace protocols::toolbox;
 	using namespace core::pose;
@@ -884,7 +884,7 @@ pdb_little_motif_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace core::pose;
 
 	// native?
@@ -894,7 +894,7 @@ pdb_little_motif_test(){
 	std::string infile  = option[ in::file::s ][1];
 	import_pose::pose_from_file( pose, *rsd_set_coarse, infile , core::import_pose::PDB_file);
 
-	protocols::farna::make_coarse_pose( pose, coarse_pose );
+	protocols::rna::denovo::make_coarse_pose( pose, coarse_pose );
 
 	std::map< Size, Size > partner;
 	figure_out_base_pair_partner( pose, partner );
@@ -1083,7 +1083,7 @@ tar_motif_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace core::pose;
 
 	pose::Pose pose;
@@ -1173,7 +1173,7 @@ mismatch_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace core::pose;
 
 	pose::Pose pose;
@@ -1258,7 +1258,7 @@ modeler_map_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::farna;
+	using namespace protocols::rna::denovo;
 	using namespace protocols::toolbox;
 	using namespace core::pose;
 
@@ -1497,7 +1497,7 @@ coarse_to_full_test( ){
 	make_pose_from_sequence( pose_scratch, pose_coarse.sequence(), *rsd_set_full );
 	pose_scratch.dump_pdb( "scratch_full.pdb" );
 
-	protocols::farna::make_coarse_pose( pose_scratch, pose_scratch_coarsened );
+	protocols::rna::denovo::make_coarse_pose( pose_scratch, pose_scratch_coarsened );
 	pose_scratch.dump_pdb( "scratch_coarse.pdb" );
 
 	Pose pose = pose_scratch;
@@ -1548,7 +1548,7 @@ coarse_rna_denovo_test(){
 
 	// create extended coarse grained pose.
 	pose::Pose pose;
-	protocols::farna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
+	protocols::rna::denovo::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
 
 	// native?
 	pose::PoseOP native_pose;

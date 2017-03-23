@@ -94,7 +94,7 @@
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -571,7 +571,7 @@ setup_pose_setup_class(protocols::stepwise::sampling::rna::working_parameters::S
 		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
-		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose);
+		protocols::rna::denovo::make_phosphate_nomenclature_matches_mini( *native_pose);
 	}
 
 

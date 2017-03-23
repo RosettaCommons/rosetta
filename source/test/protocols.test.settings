@@ -147,8 +147,8 @@ sources = {
 		"GlycosyltransferaseMover",
 	],
 
-	"farna" : [
-		"FARNA_OptimizerTest",
+	"rna" : [
+		"RNA_DeNovoOptimizerTest",
 		"RNA_DeNovoProtocolTest",
 	],
 
@@ -742,10 +742,10 @@ testinputfiles = [
 	"enzdes/mcfi_test.cst",
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
-	"farna/farna_rebuild.fasta",
-	"farna/farna_rebuild.params",
-	"farna/bps_test.params",
-	"farna/srl_fixed_START1_1q9a_RNA.pdb",
+	"rna/farna_rebuild.fasta",
+	"rna/farna_rebuild.params",
+	"rna/bps_test.params",
+	"rna/srl_fixed_START1_1q9a_RNA.pdb",
 	"features/2J88.pdb",
 	"features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
 	"fldsgn/filters/ss_filter_test.pdb",

@@ -23,9 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
 #include <string>
-//#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-//#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <basic/Tracer.hh>
@@ -53,7 +51,6 @@ print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, cor
 	using namespace core::id;
 	using namespace core::chemical;
 	using namespace core::conformation;
-	//  using namespace protocols::farna;
 
 	id::TorsionID torsion_id;
 	Real torsion_angle;

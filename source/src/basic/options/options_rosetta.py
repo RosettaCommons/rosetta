@@ -6859,13 +6859,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	Option_Group( 'rna',
 		Option( 'corrected_geo', 'Boolean', desc="Use PHENIX-based RNA sugar close energy and params files", default='true'),
-		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
     Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
     Option( 'data_file', 'String', desc="RDAT or legacy-format file with RNA chemical mapping data",default='' ),
     Option( 'cut_at_rna_chainbreak', 'Boolean', desc="If O3' to P distance is > 2.5 Angstroms, assume cutpoint.",default='false' ),
 		Option( 'evaluate_base_pairs', 'Boolean', desc="In final scoring, compute number of Watson-Crick, non-Watson-Crick pairs; compare to native if available." ),
-
-		Option_Group( 'farna',
+		Option_Group( 'denovo',
 		   Option( 'cycles', 'Integer', desc= "Default number of Monte Carlo cycles",default='0' ), # now default is set based on the number of moving residues
 		   Option( 'rna_protein_docking_freq', 'Integer', desc= "RNA/protein docking frequency",default='10' ),
 			 Option( 'rounds', 'Integer', desc= "Number of rounds to split cycles into during fragment assembly", default='10' ),
@@ -6962,19 +6960,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			    Option( 'jump_histogram_boxsize', 'Real', desc= "Boxsize (max +/-x,y,z), Angstroms", default='40.0' ),
 			    Option( 'jump_histogram_binwidth', 'Real', desc= "Bin-width for x,y,z,, Angstroms", default='4.0' ),
 			    Option( 'jump_histogram_binwidth_rotvector', 'Real', desc= "Bin-width for rotation vector (degrees)", default='36.0' ),
-			 ),
+			 ), # -rna:denovo:out
 		   Option_Group('db',
           Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),
           Option( 'bps_database', 'Boolean', desc='Generate a database of base pair steps extracted from a big RNA file', default='false' ),
-				), # -rna:farna:database
-			Option_Group('erraser', # HEY THIS SHOULD NOT BE IN FARNA.
-				Option('constrain_P', 'Boolean', desc='constrain phosphate', default='false' ),
-				Option('fixed_res', 'IntegerVector', desc='optional: residues to be held fixed in minimizer', default=[] ),
-				Option('ready_set_only', 'Boolean', desc='load in and output directly for reformatting the pdb', default='false' ),
-				Option('skip_minimize', 'Boolean', desc='output the pdb without minimization', default='false' ),
-				Option('attempt_pyrimidine_flip', 'Boolean', desc='try to flip pyrimidine by 180 degrees and pick the better energy conformer', default='false' ),
-			), #-rna:farna:erraser
-
+			 ), # -rna:denovo:db
 		   Option_Group('minimize',
           Option( 'minimize_rounds', 'Integer', desc='The number of rounds of minimization.', default = '2' ),
           Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
@@ -6985,8 +6975,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'minimize_bps', 'Boolean', desc= "Minimize base pair steps (from Rosetta library)",default= 'true' ),
           Option( 'extra_minimize_res', 'ResidueChainVector', desc= "Extra residues during minimize step",default=[]  ),
           Option( 'extra_minimize_chi_res', 'ResidueChainVector', desc= "Extra side-chain chis to move during minimize step",default=[]  ),
-		 		), # -rna:farna:minimize
-		), # -rna:farna
+		 	 ), # -rna:denovo:minimize
+		), # -rna:denovo
+		Option_Group('erraser',
+		    Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
+				Option('constrain_P', 'Boolean', desc='constrain phosphate', default='false' ),
+				Option('fixed_res', 'IntegerVector', desc='optional: residues to be held fixed in minimizer', default=[] ),
+				Option('ready_set_only', 'Boolean', desc='load in and output directly for reformatting the pdb', default='false' ),
+				Option('skip_minimize', 'Boolean', desc='output the pdb without minimization', default='false' ),
+				Option('attempt_pyrimidine_flip', 'Boolean', desc='try to flip pyrimidine by 180 degrees and pick the better energy conformer', default='false' ),
+		), #-rna:erraser
 	), # -rna
 
 	Option_Group('rotamerdump',

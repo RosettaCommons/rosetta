@@ -21,7 +21,6 @@
 #include <protocols/stepwise/legacy/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 
-#include <protocols/farna/util.hh>
 //////////////////////////////////
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh> // AMW added

@@ -20,8 +20,6 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
-
-#include <protocols/farna/util.hh>
 //////////////////////////////////
 
 #include <core/types.hh>

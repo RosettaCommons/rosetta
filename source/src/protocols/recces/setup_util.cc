@@ -26,10 +26,10 @@
 #include <core/pose/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
+#include <protocols/rna/movers/RNA_HelixAssembler.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
+#include <protocols/rna/util.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/io/ozstream.hh>
@@ -68,8 +68,8 @@ recces_pose_setup( options::RECCES_Options const & options )
 	// Obtains base pairs and constraints from pose
 	if ( options.setup_base_pair_constraints() ) {
 		utility::vector1< std::pair< Size, Size > > pairings( options.rna_secstruct().base_pairs() ); // could be user-specified.
-		if ( pairings.size() == 0 ) protocols::farna::get_base_pairing_list( *pose, pairings ); // infer from pose
-		protocols::farna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
+		if ( pairings.size() == 0 ) protocols::rna::get_base_pairing_list( *pose, pairings ); // infer from pose
+		protocols::rna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
 	}
 
 	return pose;
@@ -83,9 +83,9 @@ pose_setup_turner(
 {
 	using namespace core::chemical;
 	using namespace core::pose::rna;
-	using namespace protocols::farna::secstruct;
+	using namespace protocols::rna::denovo::secstruct_legacy;
 
-	protocols::stepwise::modeler::rna::helix::RNA_HelixAssembler assembler;
+	protocols::rna::movers::RNA_HelixAssembler assembler;
 	assembler.use_phenix_geo( true );
 	PoseOP pose( assembler.build_init_pose( seq1, seq2 ) );
 	virtualize_5prime_phosphates( *pose );

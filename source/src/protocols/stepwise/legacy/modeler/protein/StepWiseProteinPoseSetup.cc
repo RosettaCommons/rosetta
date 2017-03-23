@@ -54,7 +54,6 @@
 #include <core/kinematics/FoldTree.hh>
 
 // RNA stuff
-#include <protocols/farna/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 
@@ -785,7 +784,6 @@ StepWiseProteinPoseSetup::initialize_pose_from_streams( pose::Pose & pose )
 		if ( dump_ ) pose.dump_pdb( "after_copy_dofs"+ObjexxFCL::string_of(i)+".pdb" );
 		if ( dump_ ) import_pose.dump_pdb( "import"+ObjexxFCL::string_of(i)+".pdb" );
 	}
-	//  protocols::farna::print_internal_coords( pose );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1159,7 +1157,6 @@ void
 StepWiseProteinPoseSetup::setup_working_native_pose(){
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::farna;
 
 	if ( get_native_pose() == 0 ) return;
 

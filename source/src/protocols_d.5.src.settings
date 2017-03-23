@@ -10,59 +10,65 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-    "protocols/coarse_rna": [
+    "protocols/rna/": [
+	"util",
+    ],
+    "protocols/rna/denovo": [
+        "RNA_DeNovoProtocol",
+        "RNA_FragmentMonteCarlo",
+        "util",
+    ],
+    "protocols/rna/denovo/coarse": [
         #"CoarseRNA_DeNovoProtocol", # deprecated?
         "CoarseRNA_Fragments",
         "CoarseRNA_LoopCloser",
         "MultipleDomainMover", #deprecated?
     ],
-    "protocols/farna": [
-        "FARNA_Optimizer",
-        "RNA_DeNovoProtocol",
-        "ErraserMinimizerMover",
-        "RNAIdealizeMover",
-        "RNAThreadAndMinimizeMover",
-        "RNA_FragmentMonteCarlo",
-        "util",
-    ],
-    "protocols/farna/base_pairs": [
+    "protocols/rna/denovo/base_pairs": [
         "BasePairStep",
         "RNA_BasePairHandler",
     ],
-    "protocols/farna/fragments": [
+    "protocols/rna/denovo/fragments": [
         "FragmentLibrary",
         "FullAtomRNA_Fragments",
-		"RNA_FragmentHomologyExclusion",
+	"RNA_FragmentHomologyExclusion",
         "RNA_Fragments",
-		"TorsionSet",
+	"TorsionSet",
     ],
-    "protocols/farna/libraries": [
+    "protocols/rna/denovo/libraries": [
         "BasePairStepLibrary",
         "ChunkSet",
         "RNA_ChunkLibrary",
         "RNA_JumpLibrary",
         "RNA_LibraryManager",
     ],
-    "protocols/farna/movers": [
+    "protocols/rna/denovo/movers": [
         "RNA_FragmentMover",
         "RNA_JumpMover",
-        "RNA_LoopCloser",
         "RNA_Minimizer",
         "RNA_Relaxer",
     ],
-    "protocols/farna/options": [
+    "protocols/rna/denovo/options": [
         "RNA_BasicOptions",
         "RNA_DeNovoProtocolOptions",
         "RNA_FragmentMonteCarloOptions",
         "RNA_MinimizerOptions",
     ],
-    "protocols/farna/secstruct": [
+    "protocols/rna/denovo/secstruct_legacy": [
         "RNA_SecStructLegacyInfo",
     ],
-    "protocols/farna/setup": [
+    "protocols/rna/denovo/setup": [
         "RNA_DeNovoSetup",
         "RNA_DeNovoPoseInitializer",
         "RNA_DeNovoParameters",
+    ],
+    "protocols/rna/movers": [
+        "ErraserMinimizerMover",
+        "RNA_HelixAssembler",
+        "RNA_LoopCloser",
+        "RNAThreadAndMinimizeMover",
+        "RNAIdealizeMover",
+        "RNA_DeNovoOptimizer",
     ],
     "protocols/magnesium": [
         "MgOrbitalFrameFinder",
@@ -293,9 +299,6 @@ sources = {
         "BulgeApplyMover",
         "BulgeUnApplyMover",
         "util",
-    ],
-    "protocols/stepwise/modeler/rna/helix": [
-        "RNA_HelixAssembler",
     ],
     "protocols/stepwise/modeler/rna/o2prime/": [
         "O2PrimePacker",

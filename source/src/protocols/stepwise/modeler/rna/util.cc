@@ -23,7 +23,6 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <protocols/farna/util.hh>
 #include <protocols/toolbox/rigid_body/util.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
@@ -1556,7 +1555,6 @@ bool
 mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const mutation_frequency /* = 0.5 */ ){
 
 	using namespace core::pose::full_model_info;
-	using namespace protocols::farna;
 
 	// first need to slice up native_pose to match residues in actual pose.
 	// define atoms over which to compute RMSD, using rmsd_res.

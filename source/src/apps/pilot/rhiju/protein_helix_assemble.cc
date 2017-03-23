@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -141,9 +141,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 //RNA stuff.
-//#include <protocols/farna/fragments/RNA_FragmentsClasses.hh>
-//#include <protocols/farna/RNA_DeNovoProtocol.hh>
-//#include <protocols/farna/setup/RNA_DeNovoPoseInitializer.hh>
+//#include <protocols/rna/denovo/fragments/RNA_FragmentsClasses.hh>
+//#include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
+//#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>
@@ -206,7 +206,7 @@ build_helix_test(){
   using namespace core::id;
   using namespace core::scoring;
   using namespace core::kinematics;
-  using namespace protocols::farna;
+  using namespace protocols::rna::denovo;
 
   ResidueTypeSetCAP rsd_set;
   rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );

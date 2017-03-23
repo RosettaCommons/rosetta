@@ -23,7 +23,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/farna/RNA_SuiteAssign.hh>
+#include <protocols/rna/denovo/RNA_SuiteAssign.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -38,8 +38,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
-#include <protocols/farna/RNA_IdealCoord.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/denovo/RNA_IdealCoord.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/sampling/rna/util.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -106,7 +106,7 @@ void
 apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > const & torsion_set )
 {
 	using namespace id;
-	static protocols::farna::RNA_IdealCoord const ideal_coord_rna;
+	static protocols::rna::denovo::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.size();
 	Size moving_suite;
 
@@ -179,13 +179,13 @@ lariat_modeling ()
 	if ( option[ in::file::native ].user() ) {
 		pdb_name = option[in::file::native]();
 		import_pose::pose_from_file ( pose, *rsd_set, pdb_name );
-		protocols::farna::make_phosphate_nomenclature_matches_mini(pose);
+		protocols::rna::denovo::make_phosphate_nomenclature_matches_mini(pose);
 	} else {
 		utility_exit_with_message("User must specify -native option!");
 	}
 
 	//Setup score function.
-	std::string score_weight_file = "farna/rna_hires";
+	std::string score_weight_file = "rna/denovo/rna_hires";
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
@@ -193,7 +193,7 @@ lariat_modeling ()
 	core::scoring::ScoreFunctionOP scorefxn =
 			ScoreFunctionFactory::create_score_function ( score_weight_file );
 
-	protocols::farna::RNA_IdealCoord const ideal_coord_rna;
+	protocols::rna::denovo::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.size();
 	for (Size i = total_res - 2; i <= total_res; ++i) {
 		ideal_coord_rna.apply( pose, i );

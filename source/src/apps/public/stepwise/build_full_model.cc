@@ -19,10 +19,10 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 
-#include <protocols/farna/FARNA_Optimizer.hh>
-#include <protocols/farna/RNA_DeNovoProtocol.hh>
-#include <protocols/farna/options/RNA_DeNovoProtocolOptions.hh>
-#include <protocols/farna/util.hh>
+#include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
+#include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
+#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
+#include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 
 
@@ -76,8 +76,8 @@ using namespace core;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace protocols::farna::options;
-using namespace protocols::farna::setup;
+using namespace protocols::rna::denovo::options;
+using namespace protocols::rna::denovo::setup;
 using namespace core::scoring;
 using namespace core::chemical;
 using namespace core::conformation;
@@ -86,7 +86,7 @@ using namespace core::import_pose::pose_stream;
 using namespace core::pose;
 using namespace core::pose::rna;
 using namespace core::pose::full_model_info;
-using namespace protocols::farna;
+using namespace protocols::rna::denovo;
 
 OPT_KEY( Boolean, virtualize_built )
 OPT_KEY( Boolean, show_scores )
@@ -137,7 +137,7 @@ public:
 	);
 
 private:
-	protocols::farna::RNA_DeNovoProtocolOP rna_de_novo_protocol_ = nullptr;
+	protocols::rna::denovo::RNA_DeNovoProtocolOP rna_de_novo_protocol_ = nullptr;
 	core::pose::PoseCOP native_pose_ = nullptr;
 };
 
@@ -161,7 +161,7 @@ BuildFullModel::BuildFullModel() {
 		rna_denovo_opts->set_monte_carlo_cycles( 500 );
 		rna_denovo_opts->set_user_defined_cycles( true );
 	}
-	rna_de_novo_protocol_ = protocols::farna::RNA_DeNovoProtocolOP( new protocols::farna::RNA_DeNovoProtocol( rna_denovo_opts ) );
+	rna_de_novo_protocol_ = protocols::rna::denovo::RNA_DeNovoProtocolOP( new protocols::rna::denovo::RNA_DeNovoProtocol( rna_denovo_opts ) );
 
 	// 2. Setup native pose
 	if ( option[ in::file::native ].user() ) {
@@ -353,7 +353,7 @@ BuildFullModel::fill_and_sample_full_model(
 			sfxn->set_weight( rna_vdw, 1.0 );
 			sfxn->set_weight( linear_chainbreak, 1.0 );
 
-			protocols::farna::FARNA_Optimizer farna_opt( pose_list, sfxn, 5000 );
+			protocols::rna::movers::RNA_DeNovoOptimizer farna_opt( pose_list, sfxn, 5000 );
 			farna_opt.apply( full_model_pose );
 		}
 	}

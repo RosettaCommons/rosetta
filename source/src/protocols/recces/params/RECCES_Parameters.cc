@@ -14,7 +14,7 @@
 
 
 #include <protocols/recces/params/RECCES_Parameters.hh>
-#include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
+#include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
@@ -27,7 +27,7 @@ namespace params {
 //Constructor
 RECCES_Parameters::RECCES_Parameters( core::pose::Pose const & pose )
 {
-	using namespace farna::secstruct;
+	using namespace rna::denovo::secstruct_legacy;
 
 	if ( has_rna_secstruct_legacy( pose ) ) {
 		std::string const & rna_secstruct_legacy( get_rna_secstruct_legacy_from_const_pose( pose ) );

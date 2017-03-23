@@ -314,9 +314,9 @@ std::string const SOFT_REP_DESIGN_WTS( "soft_rep_design" );
 std::string const DNA_INT_WTS( "dna_no_gb" );
 std::string const DNA_INT_WTS_GB( "dna" );
 std::string const MM_STD_WTS( "mm_std" );
-std::string const RNA_LORES_WTS( "farna/rna_lores" );
-std::string const RNA_HIRES_WTS( "farna/rna_hires" );
-std::string const RNA_LORES_PLUS_HIRES_WTS( "farna/rna_lores_plus_hires" );
+std::string const RNA_LORES_WTS( "rna/denovo/rna_lores" );
+std::string const RNA_HIRES_WTS( "rna/denovo/rna_hires" );
+std::string const RNA_LORES_PLUS_HIRES_WTS( "rna/denovo/rna_lores_plus_hires" );
 std::string const MEMB_HIGHRES_WTS( "membrane_highres" ); //pba
 
 std::string const SCORE12_PATCH( "score12" );

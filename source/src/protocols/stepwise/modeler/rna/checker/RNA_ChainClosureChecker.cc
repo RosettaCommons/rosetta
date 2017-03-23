@@ -14,7 +14,7 @@
 
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -96,7 +96,7 @@ RNA_ChainClosureChecker::copy_CCD_torsions_general( pose::Pose & pose, Size cons
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
 RNA_ChainClosureChecker::check_loop_closed( pose::Pose const & pose ){
-	static protocols::farna::movers::RNA_LoopCloser rna_loop_closer;
+	static protocols::rna::movers::RNA_LoopCloser rna_loop_closer;
 	return ( rna_loop_closer.check_closure( pose, five_prime_res_ ) );
 }
 
@@ -108,7 +108,7 @@ RNA_ChainClosureChecker::chain_break_screening_general( pose::Pose & chain_break
 
 	using namespace core::scoring;
 
-	static protocols::farna::movers::RNA_LoopCloser rna_loop_closer;
+	static protocols::rna::movers::RNA_LoopCloser rna_loop_closer;
 	runtime_assert( chain_break_screening_pose.residue( five_prime_res ).has_variant_type( chemical::CUTPOINT_LOWER ) );
 	runtime_assert( chain_break_screening_pose.residue( five_prime_res + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 

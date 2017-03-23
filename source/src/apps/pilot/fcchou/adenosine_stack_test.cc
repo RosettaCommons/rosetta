@@ -176,7 +176,7 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "rna/denovo/rna_hires" );
 	//scorefxn->set_weight( fa_elec, 1.0 );
 
 	(*scorefxn)( pose );
