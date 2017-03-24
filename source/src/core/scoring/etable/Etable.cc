@@ -219,7 +219,7 @@ Etable::calculate_nblist_distance_thresholds(
 	max_hydrogen_hydrogen_cutoff_ = fa_hatr_ ? max_dis_ : 2 * max_hydrogen_lj_radius_;
 	nblist_dis2_cutoff_XX_        = std::pow(options.max_dis + 2*max_tolerated_movement, 2 );
 	nblist_dis2_cutoff_XH_        = std::pow(max_heavy_hydrogen_cutoff_ + 2*max_tolerated_movement, 2 );
-	nblist_dis2_cutoff_HH_        = std::pow(max_hydrogen_lj_radius_+ 2*max_tolerated_movement, 2 );
+	nblist_dis2_cutoff_HH_        = std::pow(max_hydrogen_hydrogen_cutoff_+ 2*max_tolerated_movement, 2 );
 }
 
 void

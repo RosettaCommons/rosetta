@@ -87,10 +87,10 @@ public:
 		core::Real const rbw1_score = rbw.compute( trpcage );
 
 		utility::vector1< core::Real > const expected_rotamer_scores = boost::assign::list_of
-			(-33.243) (-30.6091) (-25.9444) (-33.2505);
+			(-34.1831) (-31.5252) (-26.3541) (-34.1909);
 
 		// initialize scorermspoints object with initial pose score
-		ScoreRmsPoints score_rms( ScoreRmsPoint( -33.2471, 0.0 ) );
+		ScoreRmsPoints score_rms( ScoreRmsPoint( -34.1909, 0.0 ) );
 		// add test scores
 		for ( utility::vector1< core::Real >::const_iterator rs=expected_rotamer_scores.begin(); rs!=expected_rotamer_scores.end(); ++rs ) {
 			score_rms.push_back( ScoreRmsPoint( *rs, 0.0 ) );
@@ -116,7 +116,7 @@ public:
 		rbw2.set_energy_landscape_evaluator( pnear );
 		core::Real const rbw2_pnear = rbw2.report_sm( trpcage );
 		TR << "RBW2 PNear: " << rbw2_pnear << std::endl;
-		TS_ASSERT_DELTA( rbw2_pnear, -0.978735, 1e-3 );
+		TS_ASSERT_DELTA( rbw2_pnear, -0.979965, 1e-3 );
 	}
 
 };
