@@ -66,6 +66,8 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
 
     return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
 
+
+
 def parse_clangSA_exclusions( exclusion_list, verbose ):
     exclusions = {}
 
@@ -220,7 +222,77 @@ def run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driv
 
     return results
 
+
+
+def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    ''' Check if branch diff against master is beutified
+    '''
+    jobs = config['cpu_count']
+
+    execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
+
+    state, results, output = _S_script_failed_, {}, ''
+    res, o = execute('Reading the source code, trying to see a beauty in it...', 'cd {}/source && python ../../tools/python_cc_reader/test_all_files_already_beautiful.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
+
+    if res:
+        state, output = _S_failed_, 'Some of the source code looks ugly!!! Script test_all_files_already_beautiful.py output:\n' + o
+    else:
+        state = _S_passed_
+
+    return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
+
+
+
+def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    ''' Find out to which branch current commit belong and try to beautify it
+    '''
+    jobs = config['cpu_count']
+
+    state, results, output = _S_script_failed_, {}, ''
+
+    res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null || git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
+    if res:
+        state, output = _S_failed_, 'Working directory is not clean! `git status`:\n{}\nThis might be because you trying to beautify pull-request..., please try too schedule `beautify` test for branch or SHA1...\n'.format( execute('Checking if there is local changes in main...', 'cd {} && git status'.format(rosetta_dir), return_='output') )
+
+    else:
+        o = execute('Getting list of branches where HEAD is present...', 'cd {} && git branch -r --contains HEAD'.format(rosetta_dir), return_='output')
+        branches = []
+        for line in o.split('\n'):
+            br = line.split()[0]
+            if br.startswith('origin/'):
+                br = br[len('origin/'):]
+                if br != 'HEAD': branches.append(br)
+
+        if len(branches) != 1:
+            state, output = _S_failed_, 'Could not figure out which branch to beautify, current commit belong to following branches (expecting exactly one branch): {}\nAborting...\n'.format(o)
+
+        else:
+            branch = branches[0]
+            output += 'Beautifying branch: {}\n'.format(branch)
+
+            execute('Checking out branch...', 'cd {} && git checkout {} && git pull'.format(rosetta_dir, branch) )
+
+            res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
+            if res:
+                state, output = _S_failed_, 'Beautification script failed with output: {}\nAborting...\n'.format(o)
+
+            else:
+                res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null || git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
+
+                if res: execute('Committing and pushing changes...', "cd {} && git commit -m 'beautifying' && git push".format(rosetta_dir, branch) )
+                else: output += '\nBeautification script finished: no beautification required for branch {}!\n'.format(branch)
+
+                state =_S_passed_
+
+
+
+    return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
+
+
+
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test == 'serialization': return run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if   test == 'serialization':  return run_serialization_test (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'clang_analysis': return run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'beautification': return run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'beautify':       return run_beautify_test      (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Build script does not support TestSuite-like run!')
