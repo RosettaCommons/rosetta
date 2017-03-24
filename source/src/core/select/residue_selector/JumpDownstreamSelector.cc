@@ -79,7 +79,7 @@ JumpDownstreamSelector::apply( core::pose::Pose const & pose ) const
 	ObjexxFCL::FArray1D_bool upstream( pose.size() );
 	pose.fold_tree().partition_by_jump( jump_, upstream );
 
-	for ( core::Size ii = 1; ii < upstream.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= upstream.size(); ++ii ) {
 		subset[ ii ] = !upstream( ii );
 	}
 	return subset;
