@@ -273,9 +273,9 @@ prepends the main chain atoms which shifts the backbone torsion
 numbering and people wont be able to use the pose.set_phi/psi()
 functions. -- Doug
 ###########################################
-BEGIN_CASE ### MAL
+BEGIN_CASE ### AIB
 BEGIN_SELECTOR
-NAME3 MAL
+NAME3 AIB
 END_SELECTOR
 
 ADD_ATOM  CP   CObb   C     0.62

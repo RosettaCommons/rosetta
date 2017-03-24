@@ -192,7 +192,7 @@ END_CASE
 
 #############################################################################################
 ## glycine case
-## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-MAL-NME dipeptide
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-AIB-NME dipeptide
 #############################################################################################
 BEGIN_CASE
 BEGIN_SELECTOR
@@ -277,11 +277,11 @@ END_CASE
 
 #############################################################################################
 ## methyl-alanine case
-## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-MAL-NME dipeptide
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-AIB-NME dipeptide
 #############################################################################################
 BEGIN_CASE
 BEGIN_SELECTOR
-NAME3 MAL
+NAME3 AIB
 END_SELECTOR
 
 ADD_ATOM  CO  CObb   C     0.62
