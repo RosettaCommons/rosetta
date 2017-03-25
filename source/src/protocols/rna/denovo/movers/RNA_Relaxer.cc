@@ -80,7 +80,7 @@ namespace movers {
 //  that aren't too perturbing, followed by minimization
 // So we need a fragment mover and a minimizer.
 
-RNA_Relaxer::RNA_Relaxer( RNA_FragmentMoverOP & rna_fragment_mover, RNA_MinimizerOP & rna_minimizer ):
+RNA_Relaxer::RNA_Relaxer( RNA_FragmentMoverOP rna_fragment_mover, RNA_MinimizerOP rna_minimizer ):
 	Mover(),
 	rna_fragment_mover_( rna_fragment_mover ),
 	rna_minimizer_( rna_minimizer ),

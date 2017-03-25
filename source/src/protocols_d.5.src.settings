@@ -43,6 +43,7 @@ sources = {
         "RNA_LibraryManager",
     ],
     "protocols/rna/denovo/movers": [
+        "RNA_DeNovoMasterMover",
         "RNA_FragmentMover",
         "RNA_JumpMover",
         "RNA_Minimizer",
@@ -53,6 +54,9 @@ sources = {
         "RNA_DeNovoProtocolOptions",
         "RNA_FragmentMonteCarloOptions",
         "RNA_MinimizerOptions",
+    ],
+    "protocols/rna/denovo/output": [
+        "RNA_FragmentMonteCarloOutputter",
     ],
     "protocols/rna/denovo/secstruct_legacy": [
         "RNA_SecStructLegacyInfo",

@@ -46,7 +46,7 @@ class RNA_Relaxer: public protocols::moves::Mover {
 public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_Relaxer( RNA_FragmentMoverOP & rna_fragment_mover, RNA_MinimizerOP & rna_minimizer );
+	RNA_Relaxer( RNA_FragmentMoverOP rna_fragment_mover, RNA_MinimizerOP rna_minimizer );
 
 	~RNA_Relaxer();
 

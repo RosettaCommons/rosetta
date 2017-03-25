@@ -167,7 +167,7 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 					( !f.is_cutpoint( 2 ) ) ||
 					( base_pair_step_sequence.num_bulge() == 0 && f.is_cutpoint( 3 ) ) ||
 					( base_pair_step_sequence.num_bulge() >  0 && !f.is_cutpoint( 3 ) ) ) {
-				TR.Warning << TR.Red << "screwed up fold tree " << pose->fold_tree() << " for base pair step sequence " << base_pair_step_sequence.tag() << " in pose " << tag_from_pose( *pose ) << " in input_file " << input_file << std::endl;
+				TR << TR.Red << "Warning: screwed up fold tree " << pose->fold_tree() << " for base pair step sequence " << base_pair_step_sequence.tag() << " in pose " << tag_from_pose( *pose ) << " in input_file " << input_file << std::endl;
 				continue;
 			}
 			pose_list.push_back( pose );

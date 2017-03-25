@@ -184,10 +184,10 @@ RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool 
 		if ( !force_canonical && !pair_is_ambiguous ) continue;
 
 		if ( partner.find( i ) != partner.end() )  {
-			TR.Warning << "in base pair steps, already found a partner for " << i << " which is " << partner[ i ] << ", so not including additional pairing to " << j << std::endl;
+			TR << "Warning: in base pair steps, already found a partner for " << i << " which is " << partner[ i ] << ", so not including additional pairing to " << j << std::endl;
 		}
 		if ( partner.find( j ) != partner.end() )  {
-			TR.Warning << "in base pair steps, already found a partner for " << j << " which is " << partner[ j ] << ", so not including additional pairing to " << i << std::endl;
+			TR << "Warning: in base pair steps, already found a partner for " << j << " which is " << partner[ j ] << ", so not including additional pairing to " << i << std::endl;
 		}
 
 		partner[ i ] = j;
