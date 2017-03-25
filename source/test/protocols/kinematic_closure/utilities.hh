@@ -10,7 +10,8 @@
 #ifndef INCLUDED_test_protocols_kinematic_closure_utilities_HH
 #define INCLUDED_test_protocols_kinematic_closure_utilities_HH
 
-// Headers {{{1
+// Headers
+#include <cxxtest/TestSuite.h>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -25,7 +26,6 @@
 #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
 // C++ headers
@@ -33,9 +33,10 @@
 #include <iostream>
 #include <sstream>
 
-// Global names {{{1
-using namespace std;
-using namespace core;
+// Global names
+
+using std::string;
+using std::stringstream;
 
 using core::pose::Pose;
 using core::pose::PoseOP;
@@ -47,8 +48,6 @@ using protocols::kinematic_closure::SolutionList;
 using protocols::kinematic_closure::IndexList;
 using protocols::kinematic_closure::ParameterList;
 
-#define foreach BOOST_FOREACH
-// }}}1
 
 // Utility functions
 void pose_from_sequence(string const sequence, Pose &pose) { // {{{1
@@ -56,7 +55,7 @@ void pose_from_sequence(string const sequence, Pose &pose) { // {{{1
 }
 
 PoseOP pose_from_sequence(string const sequence) { // {{{1
-	PoseOP pose = new Pose();
+	PoseOP pose( new Pose() );
 	pose_from_sequence(sequence, *pose);
 	return pose;
 }
@@ -72,7 +71,7 @@ void write_pdb(PoseCOP pose, string path) { // {{{1
 void write_pdbs(Pose const &pose, SolutionList solutions, string prefix) { // {{{1
 	string directory = "../../test/protocols/kinematic_closure/";
 
-	foreach (ClosureSolutionCOP solution, solutions) {
+	for ( ClosureSolutionCOP solution: solutions ) {
 		Pose solution_pose(pose);
 		solution->apply(solution_pose);
 
@@ -86,7 +85,7 @@ void write_pdbs(Pose const &pose, SolutionList solutions, string prefix) { // {{
 
 // Utility assertions
 void TS_ASSERT_INDICES( // {{{1
-		IndexList &indices, Size x, Size y, Size z) {
+	IndexList &indices, core::Size x, core::Size y, core::Size z) {
 
 	TS_ASSERT_EQUALS (indices[1], x);
 	TS_ASSERT_EQUALS (indices[2], y);
@@ -94,20 +93,20 @@ void TS_ASSERT_INDICES( // {{{1
 }
 
 void TS_ASSERT_VECTOR_EQUALS( // {{{1
-		PointPosition expected,
-		PointPosition observed,
-		Real precision) {
+	core::PointPosition expected,
+	core::PointPosition observed,
+	core::Real precision) {
 
-	Real distance_between_vectors = expected.distance(observed);
+	core::Real distance_between_vectors = expected.distance(observed);
 	TS_ASSERT_LESS_THAN(distance_between_vectors, precision);
 }
 
 void TS_ASSERT_VECTOR_DIFFERS( // {{{1
-		PointPosition expected,
-		PointPosition observed,
-		Real precision) {
+	core::PointPosition expected,
+	core::PointPosition observed,
+	core::Real precision) {
 
-	Real distance_between_vectors = expected.distance(observed);
+	core::Real distance_between_vectors = expected.distance(observed);
 	TS_ASSERT_LESS_THAN(precision, distance_between_vectors);
 }
 // }}}1

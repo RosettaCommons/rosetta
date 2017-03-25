@@ -18,58 +18,40 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <protocols/kinematic_closure/types.hh>
-#include <protocols/kinematic_closure/utilities.hh>
-#include <protocols/kinematic_closure/ClosureProblem.hh>
-#include <protocols/kinematic_closure/ClosureSolution.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/id/AtomID.hh>
-
-// Utility headers
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
-using namespace core;
-using core::kinematics::FoldTree;
-
 void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1
-		FoldTree const & tree, int start, int stop, bool jump=false) {
+	core::kinematics::FoldTree const & tree, int start, int stop, bool jump=false) {
 
-	FoldTree::const_iterator it, it_end;
-
-	for (it = tree.begin(), it_end = tree.end(); it != it_end; ++it) {
-		bool start_matches = (it->start() == start);
-		bool stop_matches = (it->stop() == stop);
-		bool jump_matches = (it->is_jump() == jump);
+	for ( core::kinematics::Edge const & edge : tree ) {
+		bool start_matches = (edge.start() == start);
+		bool stop_matches = (edge.stop() == stop);
+		bool jump_matches = (edge.is_jump() == jump);
 
 		// If all these conditions are met, the edge was found and the test passes.
-		if (start_matches and stop_matches and jump_matches) return;
+		if ( start_matches and stop_matches and jump_matches ) return;
 	}
 
 	// If no matching edge was found, the test fails.
-	if (jump) cout << "No jump '";
-	else      cout << "No edge '";
-	cout << setw(4) << setfill('0') << start;
-	cout << "--";
-	cout << setw(4) << setfill('0') << stop;
-	cout << "' in the given fold tree:" << endl << endl;
-	tree.show(cout);
+	if ( jump ) std::cout << "No jump '";
+	else      std::cout << "No edge '";
+	std::cout << std::setw(4) << std::setfill('0') << start;
+	std::cout << "--";
+	std::cout << std::setw(4) << std::setfill('0') << stop;
+	std::cout << "' in the given fold tree:" << std::endl << std::endl;
+	tree.show(std::cout);
 	TS_FAIL("No match found");
 }
 
 void TS_ASSERT_FOLD_TREE_HAS_JUMP( // {{{1
-		FoldTree const & tree, int start, int stop) {
+	core::kinematics::FoldTree const & tree, int start, int stop) {
 
 	TS_ASSERT_FOLD_TREE_HAS_EDGE(tree, start, stop, true);
 }

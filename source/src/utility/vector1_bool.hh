@@ -181,6 +181,29 @@ public: // Creation
 	{}
 
 
+	/// @brief C++11 Move constructor
+	inline
+	vector1( vector1 && v ) :
+		super( v )
+	{}
+
+
+	/// @brief C++11 vectorL move constructor
+	inline
+	explicit
+	vector1( super && v ) :
+		super( v )
+	{}
+
+	// We don't fiddle around much with allocators, so I don't bother to do the allocator move constructor specifications
+
+	/// @brief C++11 initializer list constructor
+	inline
+	vector1( std::initializer_list<bool> init, const A& alloc = A() ) :
+		super( init, alloc )
+	{}
+
+
 	/// @brief Destructor
 	inline
 	virtual

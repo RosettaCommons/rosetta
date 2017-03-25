@@ -861,12 +861,20 @@ public:
 	cutpoints() const;
 
 	/// @brief equal to operator
+	/// @details  Checks that edges are in the same order and are equal
+	/// That is, the order of the edges in the edge list is important to equality here
 	friend
 	bool
 	operator==( FoldTree const & a, FoldTree const & b );
 
 	/// @brief Not equal to operator
 	friend bool operator!=( FoldTree const & a, FoldTree const & b );
+
+	/// @brief Check if the two FoldTrees build in a similar fashion
+	/// That is, if their roots are the same and if all edges correspond to each other
+	/// -- Does not necessarily check that the order of the edges are the same.
+	bool
+	is_equivalent( FoldTree const & b ) const;
 
 	/// @brief  Slide a polymer cutpoint from one location to another
 	void

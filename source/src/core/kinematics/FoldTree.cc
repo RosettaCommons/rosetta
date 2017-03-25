@@ -66,8 +66,6 @@ FoldTree::~FoldTree() {}
 // modifications by add_edge, delete_edge, reorder, etc, etc
 // are indicated by setting new_topology and/or new_order to true
 
-///////////////////////////////////////////////////////////////////////////////
-/// @details  Checks that edges are in the same order and are equal
 bool
 operator==(
 	FoldTree const & a,
@@ -86,6 +84,30 @@ operator==(
 
 bool operator!=(const FoldTree& a, const FoldTree& b) {
 	return !(a == b);
+}
+
+bool
+FoldTree::is_equivalent(
+	FoldTree const & b
+) const {
+	if ( this->root() != b.root() ) { return false; }
+	if ( this->edge_list_.size() != b.edge_list_.size() ) { return false; }
+
+	// make copy, as we're modifying them with sorting
+	EdgeList mine( this->edge_list_ );
+	EdgeList theirs( b.edge_list_ );
+
+	// Edge has operator < defined, so we can sort properly.
+	std::sort( mine.begin(), mine.end() );
+	std::sort( theirs.begin(), theirs.end() );
+
+	for ( core::Size ii(0); ii < mine.size(); ++ii ) {
+		if ( mine[ii] != theirs[ii] ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /// @details Computes a fixed-length, hash-based identifier for this FoldTree,
@@ -2575,23 +2597,32 @@ FoldTree::check_fold_tree() const
 	if ( int( seen.size1() ) != nres_ ) seen.dimension( nres_ );
 
 	seen = false;
-	auto it ( edge_list_.begin() );
-	seen( it->start() ) = true;
-	for ( auto it_end = edge_list_.end(); it != it_end; ++it ) {
-		int const start( it->start() );
-		int const stop ( it->stop() );
-		if ( ! seen( start ) || ( start != stop && seen( stop ) ) ) {
-			TR.Error << "bad fold tree at edge " << start << "--" << stop << " !" << std::endl << *this << std::endl;
+	seen( root() ) = true; // Root is first to build
+	for ( Edge const & edge: edge_list_ ) {
+		int const start( edge.start() );
+		int const stop ( edge.stop() );
+		if ( ! seen( start ) ) {
+			TR.Error << "Bad fold tree at edge " << edge << std::endl;
+			TR.Error << "Start residue " << start << " not built yet. " << std::endl;
+			TR.Error << *this << std::endl;
 			return false;
 		}
 		if ( start == stop ) continue;
-		if ( !it->is_polymer() ) {
+		if ( seen( stop ) ) {
+			TR.Error << "Bad fold tree at edge " << edge << std::endl;
+			TR.Error << "Stop residue " << stop << " has already been built. " << std::endl;
+			TR.Error << *this << std::endl;
+			return false;
+		}
+		if ( ! edge.is_polymer() ) {
 			seen( stop ) = true;
 		} else {
 			int const dir( start < stop ? 1 : -1 );
 			for ( int i=start + dir; i!= stop + dir; i+= dir ) {
 				if ( seen( i ) ) {
-					TR.Error << "bad fold tree2!" << std::endl << *this << std::endl;
+					TR.Error << "Bad fold tree at edge " << edge << std::endl;
+					TR.Error << "Residue " << i << " is in a polymeric edge, but has already been built from another edge." << std::endl;
+					TR.Error << *this << std::endl;
 					return false;
 				}
 				// for debugging purposes, do not uncomment unless you want it to
@@ -2603,7 +2634,9 @@ FoldTree::check_fold_tree() const
 	}
 	for ( int i=1; i<= nres_; ++i ) {
 		if ( !seen(i) ) {
-			TR.Error << "bad fold tree3!" << std::endl << *this << std::endl;
+			TR.Error << "Bad fold tree!" << std::endl;
+			TR.Error << "Residue " << i << " is not built by any edge." << std::endl;
+			TR.Error << *this << std::endl;
 			return false;
 		}
 	}

@@ -93,172 +93,214 @@ pick_loopy_cutpoint(
 	}
 	return cutpoint;
 }
-///////////////////////////////////////////////////////////////////////////////
-/// helper function for setup_backrub_atom_tree
-tree::AtomOP
-setup_cloned_atom(
-	tree::AtomCOP, // old_atom,
-	utility::vector1< id::AtomID > const & // exclude
-)
-{
-	utility_exit_with_message("needs to be refactored to meet new tree-building guidelines");
-	tree::AtomOP new_atom( new tree::BondedAtom() );
-	/*
-	new_atom->parent(0);
-	new_atom->id ( old_atom->id () );
-	new_atom->xyz( old_atom->xyz() );
-	// add old_atom's (non-exclude-) children
-	for ( Size i=0; i< Size(old_atom->n_children()); ++i ) { // 0-indexing AAARRGGHHH!!!
-	AtomID const & child_id( old_atom->child(i)->id() );
-	if ( std::find( exclude.begin(), exclude.end(), child_id ) == exclude.end() ) {
-	new_atom->append_atom( old_atom->child(i)->clone(0) ); // recursively copies child's children
+
+core::Size
+jump_which_partitions( FoldTree const & fold_tree, utility::vector1< bool > residues ) {
+
+	if ( residues.size() != fold_tree.nres() ) {
+		utility_exit_with_message("Vector passed to jump_which_partitions() must be the same length as the FoldTree.");
 	}
+
+	for ( core::Size jj(1); jj <= fold_tree.num_jump(); ++jj ) {
+		bool valid_jump( true );
+
+		utility::vector1< bool > partition( fold_tree.partition_by_jump(jj) );
+		debug_assert( residues.size() == partition.size() );
+
+		bool parity( residues[ 1 ] == partition[ 1 ] ); // Are we looking for all same ( true ) or different ( false ) values?
+
+		for ( core::Size ii(2); ii <= partition.size(); ++ii ) {
+			bool match( residues[ ii ] == partition[ ii ] );
+			if ( parity != match ) {
+				valid_jump = false;
+				break;
+			}
+		}
+
+		if ( valid_jump ) {
+			return jj; // The assumption there's only one such jump is a good one.
+		}
 	}
-	*/
-	return new_atom;
+
+	return 0;
 }
-///////////////////////////////////////////////////////////////////////////////
-/// in principal, this should be the inverse of the build_tree function at the beginning
-///
-// void
-// fold_tree_from_atom_tree(
-//  conformation::ResidueCAPs const & residues
-//  AtomTree const & atom_tree,
-//  FoldTree & fold_tree
-// )
-// {
-//  /// get all inter-residue connections
-//  utility::vector1< Edge
-tree::AtomOP
-setup_backrub_atom_tree(
-	utility::vector1< AtomID >, // mainchain, // make our own local copy
-	AtomID const &, // downstream_id, // mainchain child of last mainchain atom
-	AtomPointer2D const &, // old_atom_pointer,
-	utility::vector1< std::pair< Size, Size > > const &, // edges,
-	Size const //first_new_pseudo_residue
-)
-{
-	// In the interest of making the gameguys' deadline for refactoring atomtree I'm not thinking about this right now.
-	utility_exit_with_message("This code needs to be refactored to use AtomOPs" );
-	/*
-	using utility::vector1;
-	Vector const pseudo_offset( 0,0,0 );
-	//  Vector const pseudo_offset( 0.25, 0.25, 0.25 );
-	// constraints on the edge list (note that edges are ordered, ie i,j means edge *from* i *to* j (i-->j)
+
+FoldTree
+get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< bool >  residues ) {
+
+	// Is there a better way of doing this with a recursive algorithm?
+
+	debug_assert( fold_tree.nres() == residues.size() );
+
+	FoldTree new_fold_tree( fold_tree.nres() );
+	new_fold_tree.clear();
+
+	int original_root( fold_tree.root() ); // The root of the original fold_tree
+	int other_root(0); // The root for the other side
+
+	bool root_color( residues[ original_root ] );
+	core::Size dividing_jump(0); // The jump which connects the two sets
+
+	utility::vector1< bool > jumps_transfered( fold_tree.num_jump(), false ); // Which jumps have been transfered - we'll have at least this many jumps
+
+	// First transfer all of the consistent jumps ( or the first in/out jump )
+	for ( core::Size jj(1); jj <= fold_tree.num_jump(); ++jj ) {
+		Edge const & edge( fold_tree.jump_edge(jj) );
+		if ( residues[ edge.start() ] == residues[ edge.stop() ] ) { // On same side of the set
+			TR << "Transfering over " << edge << std::endl;
+			new_fold_tree.add_edge( edge );
+			jumps_transfered[ jj ] = true;
+		} else if ( edge.start() == original_root && dividing_jump == 0 ) {
+			// This is a jump starting at the original and going across the divide (the lowest numbered such.)
+			TR << "Transfering over as dividing jump " << edge << std::endl;
+			debug_assert( residues[ edge.stop() ] != root_color );
+			new_fold_tree.add_edge( edge );
+			jumps_transfered[ jj ] = true;
+			other_root = edge.stop();
+			dividing_jump = jj;
+		} else {
+			// Defer the rest to a second pass
+			TR << "Defering Jump processing " << edge << std::endl;
+			TR << "    " << edge.start() << "  " << original_root << " " << dividing_jump << std::endl;
+		}
+	}
+
+	TR << "other root: " << other_root << " dividing jump: " << dividing_jump << std::endl;
+
+	// Okay, now we can transfer the inconsistent jumps
 	//
-	// -- 1,nbb is the first edge
-	//
-	// -- for each (i,j) after the first there exists an earlier edge (x,i) (ie, have to have seen first index already)
-	//
-	// -- no crossing: no pairs (i,j) and (k,l) with i<k<j<l
-	//
-	// -- for each edge (a,b), a must be downstream of all edges that contain (a,b)
-	//    ie if (i,j) contains (a,b) (meaning that the interval [min(i,j),max(i,j)] contains the corresponding ab interval
-	//    then there must be a path of edges leading from j to a (j,p1) (p1,p2) (p2,p3) .... (pN,a)
-	//    so eg we cant have 1,10 10,7 7,4 1,4 (violated by (1,4) edge: no path from 10 --> 1 and [1,10] contains [1,4])
-	//
-	// -- no edges (i,j) with |i-j|<=1
-	//
-	Size const nbb( mainchain.size() );
-	mainchain.push_back( downstream_id ); // so that we dont clone this guy
-	debug_assert( edges[1].first == 1 && edges[1].second == nbb );
-	/// we're going to add pseudo residues, one for each edge in the edges vector
-	Size n(0);
-	// book-keeping
-	// map from each mainchain_atom to the (possibly empty) list of pseudo-residues
-	vector1< vector1< Size > > mainchain_to_pseudo( nbb );
-	vector1< bool > seen( nbb, false );
-	vector1< Atom* > mainchain_atom_pointer( nbb, 0 );
-	vector1< Atom* > pseudo_atom_pointer( edges.size(), 0 );
-	// create the root of the tree
-	AtomOP root( setup_cloned_atom( old_atom_pointer[ mainchain[1] ], mainchain ) );
-	mainchain_atom_pointer[ 1 ] = root;
-	seen[ 1 ] = true;
-	while ( n < edges.size() ) {
-	++n;
-	std::pair< Size, Size > const & edge( edges[n] );
-	Size const a( edge.first );
-	Size const b( edge.second );
-	debug_assert( seen[a] );
-	// what should our anchor atom be?
-	// look at all pseudo rsds associated to a
-	AtomOP anchor_atom;
-	Size anchor(0);
-	vector1< Size > const & pseudo_a( mainchain_to_pseudo[a] );
-	for ( Size i=1; i<= pseudo_a.size(); ++i ) {
-	Size const nn( pseudo_a[i] );
-	debug_assert( edges[nn].second == a );
-	if ( ( edges[nn].first < b && b < a ) || ( edges[nn].first > b && b > a ) ) {
-	anchor = nn; // dont break -- want the smallest segment containing a,b
+	// Note: The way we handle inconsistent jumps is not necessarily ideal, as an in1->out1->in2->out2->in3
+	// style jump pattern will re-root in3 on in1 rather than in2 ... but handling that properly is
+	// more complexity than I'm interested in doing at the moment.
+	for ( core::Size jj(1); jj <= fold_tree.num_jump(); ++jj ) {
+		TR << "Looking at jump " << jj << " again " << jumps_transfered[ jj ] << std::endl;
+		if ( jumps_transfered[ jj ] == true ) { continue; }
+		Edge const & edge( fold_tree.jump_edge(jj) );
+		debug_assert( residues[ edge.start() ] != residues[ edge.stop() ] ); // Should have dealt with all the consistent ones
+		TR << "Processing deferred Jump " << edge << std::endl;
+		if ( residues[ edge.stop() ] == root_color ) {
+			TR << "Rehoming jump to root " << edge << std::endl;
+			new_fold_tree.add_edge( original_root, edge.stop(), jj );
+			jumps_transfered[ jj ] = true;
+		} else {
+			if ( other_root == 0 ) {
+				// We didn't transfer a jump that's from the root - we can just re-use the current one.
+				TR << "Taking different jump to make new non-root root " << edge << std::endl;
+				new_fold_tree.add_edge( edge );
+				jumps_transfered[ jj ] = true;
+				other_root = edge.stop();
+				dividing_jump = jj;
+			} else {
+				TR << "Rehoming jump to non-root root " << edge << std::endl;
+				new_fold_tree.add_edge( other_root, edge.stop(), jj );
+				jumps_transfered[ jj ] = true;
+			}
+		}
 	}
+
+	TR << "other root: " << other_root << " dividing jump: " << dividing_jump << std::endl;
+
+	debug_assert( std::all_of(jumps_transfered.begin(), jumps_transfered.end(), [](bool b) { return b; }) ); // All true?
+
+	core::Size max_jump( jumps_transfered.size() );
+
+	// Now transfer all non-jump edges
+	for ( Edge const & edge: fold_tree ) {
+		if ( edge.label() > 0 ) {
+			// Jump edge -- we should have already handled this.
+			continue;
+		} else if ( edge.label() == Edge::CHEMICAL ) {
+			// TODO: I (RM) don't know enough about how to sensibly re-do a Chemical edge across the interface
+			// So for now, if we encounter this die. (We can handle consistent chemical edges, though.)
+			if ( residues[ edge.start() ] != residues[ edge.stop() ] ) {
+				// Handle this sanely, at some point.
+				utility_exit_with_message("Error: cannot currently reorganize a FoldTree in a way that splits a chemical edge!");
+			} else {
+				// Consistent chemical edge - just copy over.
+				TR << "Transfering over chemical edge" << edge << std::endl;
+				new_fold_tree.add_edge( edge );
+			}
+		} else if ( edge.label() == Edge::PEPTIDE ) {
+			// Ideal case - the entire peptide is all the same side;
+			bool consistent = true;
+			for ( core::Size ii( std::min( edge.start(), edge.stop() ) ), ii_end( std::max( edge.start(), edge.stop() ) );
+					ii <= ii_end; ++ii ) {
+				if ( residues[ ii ] !=  residues[ edge.start() ] ) {
+					consistent = false;
+					break;
+				}
+			}
+			if ( consistent ) {
+				// consistent edge - just copy over.
+				TR << "Transfering over peptide edge " << edge << std::endl;
+				new_fold_tree.add_edge( edge );
+			} else {
+				// Have to make new edges
+				int dir = ( edge.start() <= edge.stop() ) ? 1 : -1;
+				int new_edge_start( edge.start() );
+				int off_edge_end( 0 );
+				// We've already built the start with the jump here. Figure out the rest of the items
+				for ( int ii( edge.start() + dir ); ii != (edge.stop() + dir); ii += dir ) {
+					if ( residues[ ii ] == residues[ ii - dir ] ) { // Same side as previous residue
+						if ( ii == edge.stop() && ii != new_edge_start ) {
+							// One last peptide edge
+							TR << "Making new peptide edge " << edge << std::endl;
+							new_fold_tree.add_edge( new_edge_start, ii, Edge::PEPTIDE );
+						}
+						continue;
+					}
+					// Transition. Need to make an edge so far, and then a jump to the new residue
+					int new_edge_end( ii - dir );
+					if ( new_edge_end != new_edge_start  ) { // Don't make peptide edge for single residue
+						TR << "Making new peptide edge " << edge << std::endl;
+						new_fold_tree.add_edge( new_edge_start, new_edge_end, Edge::PEPTIDE );
+					}
+					// Make jump to the current residue
+					if ( off_edge_end != 0 ) {
+						TR << "Making new mid-peptide jump " << edge << std::endl;
+						new_fold_tree.add_edge( off_edge_end, ii, ++max_jump );
+					} else {
+						// First off-edge of peptide-edge
+						if ( residues[ ii ] == root_color ) {
+							TR << "Making new mid-peptide jump to root " << edge << std::endl;
+							new_fold_tree.add_edge( original_root, ii, ++max_jump );
+						} else {
+							// Have to catch the possibility that there were no direct jumps to the non-root color
+							if ( other_root == 0 ) {
+								TR << "Making new mid-peptide jump as dividing jump " << edge << std::endl;
+								new_fold_tree.add_edge( original_root, ii, ++max_jump );
+								other_root = ii;
+								dividing_jump = max_jump;
+							} else {
+								TR << "Making new mid-peptide jump to non-root root " << edge << std::endl;
+								new_fold_tree.add_edge( other_root, ii, ++max_jump );
+							}
+						}
+					}
+					new_edge_start = ii;
+					off_edge_end = new_edge_end;
+				}
+			}
+			// TODO: XXX
+		} else {
+			utility_exit_with_message( "Don't know how to handle edge of type " + utility::to_string( edge.label() ) );
+		}
 	}
-	if ( anchor ) {
-	anchor_atom = pseudo_atom_pointer[ anchor ];
-	} else {
-	// connect to the authentic a
-	anchor_atom = mainchain_atom_pointer[ a ];
-	}
-	// has b been seen before?
-	AtomCOP old_b_atom( old_atom_pointer[ mainchain[b] ] );
-	if ( !seen[ b ] ) {
-	seen[b] = true;
-	// add b and b's non-mainchain children
-	Atom* b_atom( setup_cloned_atom( old_b_atom, mainchain ) );
-	anchor_atom->insert_atom( b_atom ); // NOTE: insert atom
-	mainchain_atom_pointer[ b ] = b_atom;
-	}
-	// add a new pseudo rsd at b's position
-	mainchain_to_pseudo[ b ].push_back( n );
-	Size const pseudo_b_seqpos( first_new_pseudo_residue + n - 1 );
-	AtomID const pseudo_b_id( AtomID( 1, pseudo_b_seqpos ) );
-	// delete the old one
-	Atom* old_pseudo_b_atom( old_atom_pointer[ pseudo_b_id ] );
-	old_pseudo_b_atom->parent()->delete_atom( old_pseudo_b_atom );
-	delete old_pseudo_b_atom;
-	// create a new one
-	Atom* pseudo_b_atom( new BondedAtom() );
-	pseudo_b_atom->id( pseudo_b_id );
-	pseudo_b_atom->xyz( old_b_atom->xyz() + pseudo_offset );
-	anchor_atom->append_atom( pseudo_b_atom );
-	pseudo_atom_pointer[ n ] = pseudo_b_atom;
-	std::cout << "new pseudo! " << n << ' ' << a << ' ' << b << ' ' << mainchain[a] << ' ' << mainchain[b] << ' ' <<
-	pseudo_b_seqpos << ' ' << old_b_atom->id() << ' ' <<
-	old_b_atom->xyz()[0] << ' ' <<
-	old_b_atom->xyz()[1] << ' ' <<
-	old_b_atom->xyz()[2] << std::endl;
-	// check if this edge is terminal, if so add all intervening mainchain atoms and their children
-	{
-	bool terminal( true );
-	for ( Size n2=n+1; n2<= edges.size(); ++n2 ) {
-	if ( ( edges[n2].first == b ) &&
-	( a < b && edges[n2].second < b || a > b && edges[n2].second > b ) ) {
-	terminal = false;
-	}
-	}
-	if ( terminal ) {
-	int const dir( b<a ? 1 : -1 );
-	AtomOP parent_atom( pseudo_b_atom );
-	for ( int c=b+dir; c != (int)a; c += dir ) {
-	debug_assert( !seen[c] );
-	// add c and c's non-mainchain children
-	AtomCOP old_c_atom( old_atom_pointer[ mainchain[c] ] );
-	Atom* c_atom( setup_cloned_atom( old_c_atom, mainchain ) );
-	parent_atom->insert_atom( c_atom ); // at front of list since this is mainchain. may have already added kids
-	mainchain_atom_pointer[ c ] = c_atom;
-	seen[c] = true;
-	parent_atom = c_atom;
-	} // walk from b->a adding the mainchain atoms and their children to the tree
-	} // if terminal
-	} // scope
-	} // loop over edges, add one pseudo rsd for each edge
-	// confirm that all mainchain atoms have been seen
-	for ( Size i=1; i<= nbb; ++i ) {
-	debug_assert( seen[i] );
-	}
-	return root;
-	*/
-	return nullptr;
+
+	TR << "other root: " << other_root << " dividing jump: " << dividing_jump << std::endl;
+
+	debug_assert( dividing_jump != 0 );
+
+	// We should have all the edges transfered over now: check the new FoldTree for sanity and return.
+	new_fold_tree.reorder( original_root ); // Reorder does some sanity checks/fixes
+	runtime_assert( new_fold_tree.connected() );
+	runtime_assert( new_fold_tree.check_fold_tree() );
+
+	TR << "Converted a FoldTree with " << fold_tree.size() << " edges (" << fold_tree.num_jump() << " jumps) into one with "
+		<< new_fold_tree.size() << " edges (" << new_fold_tree.num_jump() << " jumps) where jump " << dividing_jump << " splits the tree as desired." << std::endl;
+	return new_fold_tree;
 }
+
 
 /// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
 void

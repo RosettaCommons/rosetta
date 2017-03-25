@@ -54,14 +54,20 @@ pick_loopy_cutpoint(
 	ObjexxFCL::FArray1D_float const & cut_bias_sum
 );
 
-tree::AtomOP
-setup_backrub_atom_tree(
-	utility::vector1< id::AtomID > mainchain, // make our own local copy
-	id::AtomID const & downstream_id, // mainchain child of last mainchain atom
-	AtomPointer2D const & old_atom_pointer,
-	utility::vector1< std::pair< Size, Size > > const & edges,
-	Size const first_new_pseudo_residue
-);
+/// @brief Return the jump which separates the residues in the passed residue selection from all the ones which are not.
+/// If no such jump exists (e.g. there's a mixture of included/excluded residues on both sides of every jump)
+/// then return zero.
+/// Note that upstream/downstream is not specified - you can check this later.
+core::Size
+jump_which_partitions( FoldTree const & fold_tree, utility::vector1< bool > residues );
+
+/// @brief Return a new FoldTree where a single jump separates the residues in the passed set from those
+/// not in the passed set.
+///
+/// The current root residue is preserved. If you want the passed residue set on a particular side of the jump,
+/// you can always call FoldTree::reorder() to re-root the FoldTree on the appropriate side.
+FoldTree
+get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< bool > residues );
 
 /// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
 void

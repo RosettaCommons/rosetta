@@ -184,6 +184,28 @@ public: // Creation
 		super( beg, end, alloc )
 	{}
 
+	/// @brief C++11 Move constructor
+	inline
+	vectorL( vectorL && v ) :
+		super( v )
+	{}
+
+
+	/// @brief C++11 std::vector move constructor
+	inline
+	explicit
+	vectorL( super && v ) :
+		super( v )
+	{}
+
+	// We don't fiddle around much with allocators, so I don't bother to do the allocator move constructor specifications
+
+	/// @brief C++11 initializer list constructor
+	inline
+	vectorL( std::initializer_list<bool> init, const A& alloc = A() ) :
+		super( init, alloc )
+	{}
+
 
 	/// @brief Destructor
 	inline

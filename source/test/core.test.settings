@@ -149,6 +149,7 @@ sources = {
 		"AtomTree",
 		"FoldTree",
 		"MoveMap",
+		"util",
 	],
 	"membrane" : [
 		"hull",
