@@ -1,0 +1,18 @@
+-in:file:silent loop01_test.out
+-out:file:silent loop01_minimize.out
+-weights loop_close.wts
+#-set_weights fa_atr 1.0 fa_rep 1.0
+-overwrite
+-skip_coord_constraints
+-skip_o2prime_trials
+# turned off deriv_check here as output is super verbose.
+#-deriv_check
+-fasta loop.fasta
+-move_first_rigid_body
+#-in:file:minimize_res 1 2
+-min_type lbfgs
+-use_6D_potential
+-use_cubic_interp true
+
+# fun hack -- this potential has tight minima.
+#-force_6D_potential_file loop00_potential.bin.gz

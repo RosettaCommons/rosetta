@@ -1,0 +1,19 @@
+-temperature 1.0
+-close_loops false
+-minimize_rna false
+-no_filters
+-nstruct 10
+-rna:denovo:rounds 1
+-cycles 10000
+-output_jump_o3p_to_o5p
+-output_rotation_vector
+-output_score_frequency 10
+-output_score_file none
+-lores_scorefxn none.wts
+-save_jump_histogram
+-jump_histogram_boxsize 20.000000
+-jump_histogram_binwidth 2.000000
+-sequence gag
+-output_jump_res 1 3
+-secstruct_legacy HLH
+-output_histogram_file HISTOGRAM.bin.gz
