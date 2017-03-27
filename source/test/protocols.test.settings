@@ -86,6 +86,7 @@ sources = {
 		"CoordinateConstraintGenerator",
 		"ConstraintGeneratorFactory",
 		"HydrogenBondConstraintGenerator",
+                "ResidueTypeConstraintGenerator",
 	],
 
 	"contact_map": [

@@ -25,6 +25,7 @@ sources = {
 		"DistanceConstraintGenerator",
 		"HydrogenBondConstraintGenerator",
 		"RemoveConstraints",
+	        "ResidueTypeConstraintGenerator",
 		"TerminiConstraintGenerator",
 		"util",
 	],

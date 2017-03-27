@@ -194,6 +194,19 @@ ResidueTypeConstraint::fill_f1_f2(
 	// so we just "add zero" to F1 and F2.
 }
 
+core::Real
+ResidueTypeConstraint::get_favor_native_bonus() const{
+	return favor_native_bonus_;
+}
+
+std::string
+ResidueTypeConstraint::get_rsd_type_name3() const{
+	return rsd_type_name3_;
+}
+
+
+
+
 } // namespace constraints
 } // namespace scoring
 } // namespace core

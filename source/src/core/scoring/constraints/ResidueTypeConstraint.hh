@@ -123,6 +123,13 @@ public:
 
 	virtual ConstraintOP
 	clone() const;
+
+	core::Real
+	get_favor_native_bonus() const;
+
+	std::string
+	get_rsd_type_name3() const;
+
 private:
 	Size seqpos_;
 	std::string AAname;
