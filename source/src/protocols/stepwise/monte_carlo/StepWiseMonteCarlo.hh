@@ -86,6 +86,9 @@ public:
 
 	core::pose::Pose
 	pose_from_checkpoint_file() const;
+	
+	void
+	set_out_file_prefix( std::string const & setting ) { out_file_prefix_ = setting; }
 
 private:
 
@@ -104,6 +107,8 @@ private:
 	display_progress( core::pose::Pose & pose, core::Size const cycle_num );
 
 	core::Real show_scores( core::pose::Pose & pose, std::string const & tag );
+
+	std::string checkpoint_file_name() const;
 
 	void
 	anneal_missing( protocols::moves::MonteCarloOP monte_carlo );
@@ -124,6 +129,7 @@ private:
 	// for movies
 	std::string model_tag_;
 	std::string out_path_;
+	std::string out_file_prefix_;
 	std::string movie_file_trial_;
 	std::string movie_file_accepted_;
 

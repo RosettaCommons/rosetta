@@ -88,6 +88,7 @@ StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
 	runtime_assert( start_pose_ != 0 ); // initialized.
 	pose = *start_pose_;
 	stepwise_monte_carlo_->set_model_tag( out_tag_ );
+	stepwise_monte_carlo_->set_out_file_prefix( silent_file_ );
 
 	// Maybe here is where we check for a possibly checkpointed file for structure out_tag_
 

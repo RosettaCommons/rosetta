@@ -205,6 +205,10 @@ public:
 
 	Size checkpointing_frequency() const { return checkpointing_frequency_; }
 	void set_checkpointing_frequency( Size const setting ) { checkpointing_frequency_ = setting; }
+	
+	bool continue_until_none_missing() const { return continue_until_none_missing_; }
+	void set_continue_until_none_missing( bool const setting ){ continue_until_none_missing_ = setting; }
+
 
 private:
 
@@ -251,6 +255,7 @@ private:
 	bool use_first_jump_for_submotif_;
 	bool checkpoint_;
 	core::Size checkpointing_frequency_;
+	bool continue_until_none_missing_;
 
 };
 

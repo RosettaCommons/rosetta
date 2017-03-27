@@ -78,7 +78,8 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	minimize_after_delete_( true ),
 	use_first_jump_for_submotif_( false ),
 	checkpoint_( false ),
-	checkpointing_frequency_( 0 )
+	checkpointing_frequency_( 0 ),
+	continue_until_none_missing_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
@@ -157,6 +158,7 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	use_first_jump_for_submotif_ = option[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
 	checkpoint_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]() != 0;
 	checkpointing_frequency_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]();
+	continue_until_none_missing_ = option[ OptionKeys::stepwise::monte_carlo::continue_until_none_missing ]();
 
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );

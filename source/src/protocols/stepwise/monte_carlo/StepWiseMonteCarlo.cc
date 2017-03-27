@@ -75,6 +75,7 @@ StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn
 	missing_weight_( 0.0 ), // can change during run.
 	model_tag_( "" ),
 	out_path_( "" ),
+	out_file_prefix_( "" ),
 	movie_file_trial_( "" ),
 	movie_file_accepted_( "" ),
 	start_time_( clock() )
@@ -84,6 +85,12 @@ StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn
 //Destructor
 StepWiseMonteCarlo::~StepWiseMonteCarlo()
 {}
+
+/// @brief Helper that contains the formula for naming checkpoint files.
+std::string
+StepWiseMonteCarlo::checkpoint_file_name() const {
+	return out_path_ /*+ "checkpoint/"*/ + out_file_prefix_ + ".checkpoint.out";
+}
 
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -136,7 +143,15 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	////////////////
 	// Main loop
 	////////////////
-	while ( k < Size( options_->cycles() ) ) {
+	
+	// If options_->continue_until_none_missing() is true, also require there to be
+	// zero missing at end. Caveat: if there are bulge_res, we should account for 
+	// them appropriately (it's kind of a legacy option, but it still matters)
+	Size n_missing = pose.energies().total_energies()[ missing_res ]/ pose.energies().weights()[ missing_res ];
+	Size n_bulge = core::pose::full_model_info::const_full_model_info( pose ).rna_bulge_res().size();
+	bool none_missing_or_incomplete_okay = ( !options_->continue_until_none_missing() || n_missing == n_bulge );
+
+	while ( k < Size( options_->cycles() ) && none_missing_or_incomplete_okay ) {
 
 		if ( success ) before_move_score = display_progress( pose, k+1 );
 
@@ -182,7 +197,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 // AMW: no need to have k in there because we only want latest
 void
 StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, Size const k ) const {
-	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	std::string const checkpoint_file = checkpoint_file_name();
 	// I don't think we'll need this. In theory we could store a bunch of checkpoints and restore only the one with biggest frame.
 	Pose pose_copy = pose;
 	setPoseExtraScore(pose_copy, "frame", k);
@@ -192,21 +207,21 @@ StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, Size const 
 // AMW: no need to have k in there because we only want latest
 void
 StepWiseMonteCarlo::remove_checkpoint_file() const {
-	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	std::string const checkpoint_file = checkpoint_file_name();
 
 	core::io::silent::remove_silent_file_if_it_exists( checkpoint_file );
 }
 
 bool
 StepWiseMonteCarlo::checkpoint_file_exists() const {
-	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	std::string const checkpoint_file = checkpoint_file_name();
 	return utility::file::file_exists( checkpoint_file );
 }
 
 core::pose::Pose
 StepWiseMonteCarlo::pose_from_checkpoint_file() const {
 	core::pose::Pose pose;
-	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	std::string const checkpoint_file = checkpoint_file_name();
 	core::io::silent::SilentFileOptions opts;
 	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
 	debug_assert( utility::file::file_exists( checkpoint_file ) );
