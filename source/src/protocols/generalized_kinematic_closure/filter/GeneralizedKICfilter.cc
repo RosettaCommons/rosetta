@@ -659,15 +659,15 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 #endif
 
 	bool const inbin (bin_transition_calculator_->is_in_bin( pose.residue(curres), bin_ ));
-	if ( TR.visible() ) {
-		if ( inbin ) TR << "The backbone_bin filter reports that residue " << resnum() << " is in bin " << bin_ << ".  Passing." << std::endl;
+	if ( TR.Debug.visible() ) {
+		if ( inbin ) TR.Debug << "The backbone_bin filter reports that residue " << resnum() << " is in bin " << bin_ << ".  Passing." << std::endl;
 		else  {
-			TR << "The backbone_bin filter reports that residue " << resnum() << " is not in bin " << bin_ << ".  Failing and rejecting solution." << std::endl;
+			TR.Debug << "The backbone_bin filter reports that residue " << resnum() << " is not in bin " << bin_ << ".  Failing and rejecting solution." << std::endl;
 			for ( core::Size j=1, jmax=pose.residue(curres).mainchain_torsions().size(); j<=jmax; ++j ) {
-				TR << "\tMainchain torsion " << j << ":\t" << pose.residue(curres).mainchain_torsion(j) << std::endl;
+				TR.Debug << "\tMainchain torsion " << j << ":\t" << pose.residue(curres).mainchain_torsion(j) << std::endl;
 			}
 		}
-		TR.flush();
+		TR.Debug.flush();
 	}
 	return inbin;
 } //apply_backbone_bin
