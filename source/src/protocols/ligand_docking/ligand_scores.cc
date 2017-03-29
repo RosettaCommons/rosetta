@@ -7,10 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_docking/MultiResidueLigandDock.cc
+/// @file
 ///
 /// @brief
-/// @Gordon Lemmon
+/// @author Gordon Lemmon
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #include <protocols/ligand_docking/ligand_scores.hh>
 #include <core/pose/util.hh>
@@ -22,10 +23,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 
-//#include <protocols/qsar/qsarTypeManager.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-
-#include <protocols/jd2/Job.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
@@ -36,6 +34,9 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/PDBInfo.hh>
+
+#include <core/select/residue_selector/ChainSelector.hh>
+#include <core/kinematics/util.hh>
 
 #include <core/types.hh>
 #include <core/scoring/ScoreType.hh>
@@ -52,138 +53,85 @@
 namespace protocols {
 namespace ligand_docking {
 
+static THREAD_LOCAL basic::Tracer TR("protocols.ligand_docking.ligand_scores");
+
 using namespace ObjexxFCL;
 
-/// @brief append interface_delta scores
-void
-append_interface_deltas(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & after,
-	const core::scoring::ScoreFunctionOP scorefxn,
-	std::string const & prefix
-){
-	core::pose::PoseOP after_copy( new core::pose::Pose( after ) );
-
-	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
-
-	// A very hacky way of guessing whether the components are touching:
-	// if pushed together by 1A, does fa_rep change at all?
-	// (The docking rb_* score terms aren't implemented as of this writing.)
-	core::Real const together_score = (*scorefxn)( *after_copy );
-	core::scoring::EnergyMap const together_energies = after_copy->energies().total_energies();
-	core::Real const initial_fa_rep = after_copy->energies().total_energies()[ core::scoring::fa_rep ];
-	protocols::rigid::RigidBodyTransMover trans_mover( *after_copy, jump_id );
-	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move together
-	trans_mover.step_size(1);
-	trans_mover.apply( *after_copy );
-	(*scorefxn)( *after_copy );
-	core::Real const push_together_fa_rep = after_copy->energies().total_energies()[ core::scoring::fa_rep ];
-	bool const are_touching = (std::abs(initial_fa_rep - push_together_fa_rep) > 1e-4);
-
-	{
-		std::ostringstream touching;
-		touching << "ligand_is_touching_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(touching.str(), are_touching);
-		} else {
-			job->add_string_real_pair(prefix + "_" + touching.str(), are_touching);
-		}
-	}
-
-	// Now pull apart by 500 A to determine the reference E for calculating interface E.
-	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move apart
-	trans_mover.step_size(500); // make sure they're fully separated!
-	trans_mover.apply( *after_copy );
-	core::Real const separated_score = (*scorefxn)( *after_copy );
-	core::scoring::EnergyMap const separated_energies = after_copy->energies().total_energies();
-
-	{
-		std::ostringstream delta;
-		delta<< "interface_delta_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(delta.str(), together_score - separated_score);
-		} else {
-			job->add_string_real_pair(prefix + "_" + delta.str(), together_score - separated_score);
-		}
-	}
-
-	// Interface delta, broken down by component
-	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
-
-		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
-		core::Real component_score= scorefxn->get_weight(ii) * (together_energies[ii] - separated_energies[ii]);
-		{
-			std::ostringstream if_score;
-			if_score<< "if_"<< ligand_chain<< '_' << name_from_score_type(ii);
-			if ( prefix == "" ) {
-				job->add_string_real_pair(if_score.str(), component_score);
-			} else {
-				job->add_string_real_pair(prefix + "_" + if_score.str(), component_score);
-			}
-
-		}
-	}
-}
-
-void
-append_interface_deltas(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
+std::map< std::string, core::Real >
+get_interface_deltas(
+	char chain,
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
 	std::string const & prefix,
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
-)
-{
+) {
+	std::map< std::string, core::Real > retval;
+
 	core::pose::PoseOP after_copy( new core::pose::Pose( after ) );
 
-	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
-	core::Size chain_id = core::pose::get_chain_id_from_jump_id(jump_id, after);
-	core::conformation::ResidueCOPs residues(core::pose::get_chain_residues(after, chain_id));
+	core::select::residue_selector::ChainSelector chain_select( chain );
+	utility::vector1< bool > chain_residues( chain_select.apply( *after_copy ) );
+
+	core::Size jump_id( core::kinematics::jump_which_partitions( after_copy->fold_tree(), chain_residues ) );
+
+	if ( jump_id == 0 ) {
+		TR.Warning << "In get_interface_deltas(), passed pose is not set up for proper docking of chain " << chain << " reorganizing to make it so." << std::endl;
+		core::kinematics::FoldTree new_fold_tree( core::kinematics::get_foldtree_which_partitions( after_copy->fold_tree(), chain_residues ) );
+		after_copy->fold_tree( new_fold_tree );
+		jump_id = core::kinematics::jump_which_partitions( after_copy->fold_tree(), chain_residues );
+		debug_assert( jump_id != 0 );
+	}
+
+	core::conformation::ResidueCOPs residues;
+	if ( normalization_function ) {
+		for ( core::Size ii(1); ii <= chain_residues.size(); ++ii ) {
+			residues.push_back( after_copy->residue( ii ).get_self_ptr() );
+		}
+	}
 
 	// A very hacky way of guessing whether the components are touching:
 	// if pushed together by 1A, does fa_rep change at all?
-	// (The docking rb_* score terms aren't implemented as of this writing.)
-	core::Real const together_score = (*normalization_function)((*scorefxn)( *after_copy ),residues);
-	core::scoring::EnergyMap const together_energies = after_copy->energies().total_energies();
-	core::Real const initial_fa_rep = (*normalization_function)(after_copy->energies().total_energies()[ core::scoring::fa_rep ],residues);
+	core::Real together_score = (*scorefxn)( *after_copy );
+	core::scoring::EnergyMap together_energies = after_copy->energies().total_energies(); // Make a copy
+	core::Real initial_fa_rep = after_copy->energies().total_energies()[ core::scoring::fa_rep ];
+	if ( normalization_function ) {
+		together_score = (*normalization_function)( together_score, residues );
+		initial_fa_rep = (*normalization_function)( initial_fa_rep, residues );
+	}
 	protocols::rigid::RigidBodyTransMover trans_mover( *after_copy, jump_id );
 	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move together
 	trans_mover.step_size(1);
 	trans_mover.apply( *after_copy );
 	(*scorefxn)( *after_copy );
-	core::Real const push_together_fa_rep = (*normalization_function)(after_copy->energies().total_energies()[ core::scoring::fa_rep ],residues);
+	core::Real push_together_fa_rep = after_copy->energies().total_energies()[ core::scoring::fa_rep ];
+	if ( normalization_function ) {
+		push_together_fa_rep = (*normalization_function)( push_together_fa_rep, residues );
+	}
 	bool const are_touching = (std::abs(initial_fa_rep - push_together_fa_rep) > 1e-4);
 
-	{
-		std::ostringstream touching;
-		touching << "ligand_is_touching_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(touching.str(), are_touching);
-		} else {
-			job->add_string_real_pair(prefix + "_" + touching.str(), are_touching);
-		}
+	std::string touching_label( "ligand_is_touching_" );
+	touching_label += chain;
+	if ( prefix != "" ) {
+		touching_label = prefix + "_" + touching_label;
 	}
+	retval[ touching_label ] = are_touching;
 
 	// Now pull apart by 500 A to determine the reference E for calculating interface E.
 	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move apart
 	trans_mover.step_size(500); // make sure they're fully separated!
 	trans_mover.apply( *after_copy );
-	core::Real const separated_score = (*normalization_function)((*scorefxn)( *after_copy ),residues);
-	core::scoring::EnergyMap const separated_energies = after_copy->energies().total_energies();
-
-	{
-		std::ostringstream delta;
-		delta<< "interface_delta_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(delta.str(), together_score - separated_score);
-		} else {
-			job->add_string_real_pair(prefix + "_" + delta.str(), together_score - separated_score);
-		}
-
+	core::Real separated_score = (*scorefxn)( *after_copy );
+	if ( normalization_function ) {
+		separated_score = (*normalization_function)( separated_score, residues );
 	}
+	core::scoring::EnergyMap const & separated_energies = after_copy->energies().total_energies(); // reference is fine
+
+	std::string delta_label( "interface_delta_" );
+	delta_label += chain;
+	if ( prefix != "" ) {
+		delta_label = prefix + "_" + delta_label;
+	}
+	retval[ delta_label ] = together_score - separated_score;
 
 	// Interface delta, broken down by component
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
@@ -191,285 +139,320 @@ append_interface_deltas(
 
 		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
 
-		core::Real component_score= (*normalization_function)(scorefxn->get_weight(ii) * (together_energies[ii] - separated_energies[ii]),residues);
-		{
-			std::ostringstream if_score;
-			if_score<< "if_"<< ligand_chain<< '_' << name_from_score_type(ii);
-			if ( prefix == "" ) {
-				job->add_string_real_pair(if_score.str(), component_score);
-			} else {
-				job->add_string_real_pair(prefix + "_" + if_score.str(), component_score);
-			}
+		core::Real component_score = scorefxn->get_weight(ii) * (together_energies[ii] - separated_energies[ii]);
+		if ( normalization_function ) {
+			component_score = (*normalization_function)( component_score, residues );
 		}
+		std::string component_label( "if_" );
+		component_label += chain;
+		component_label += '_';
+		component_label += name_from_score_type(ii);
+		if ( prefix != "" ) {
+			component_label = prefix + "_" + component_label;
+		}
+		retval[ component_label ] = component_score;
 	}
+
+	return retval;
 }
 
-/// @brief Another interesting metric -- how far does the ligand centroid move?
-/// @brief Large values indicate we're outside of the intended binding site.
-void
-append_ligand_travel(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
+std::map< std::string, core::Real >
+get_ligand_travel(
+	char chain,
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
 	std::string const & prefix
-){
-	core::Vector const before_vector= protocols::geometry::downstream_centroid_by_jump(before, jump_id);
-	core::Vector const after_vector= protocols::geometry::downstream_centroid_by_jump(after, jump_id);
+) {
 
-	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
-	{
-		std::ostringstream centroid;
-		centroid<< "ligand_centroid_travel_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(centroid.str(), before_vector.distance(after_vector));
-		} else {
-			job->add_string_real_pair(prefix + "_" + centroid.str(), before_vector.distance(after_vector));
-		}
+	utility::vector1< core::Size > test_resi( core::pose::get_resnums_for_chain( test_pose, chain ) );
+	utility::vector1< core::Size > ref_resi( core::pose::get_resnums_for_chain( ref_pose, chain ) );
+
+	if ( test_resi.empty() ) {
+		utility_exit_with_message( "In get_ligand_travel: test pose does not have a chain " + utility::to_string( chain ) );
 	}
+	if ( ref_resi.empty() ) {
+		utility_exit_with_message( "In get_ligand_travel: reference pose does not have a chain " + utility::to_string( chain ) );
+	}
+
+	core::Vector test_center( core::pose::all_atom_center( test_pose, test_resi ) );
+	core::Vector ref_center( core::pose::all_atom_center( ref_pose, ref_resi ) );
+
+	std::string label("ligand_centroid_travel_");
+	label += chain;
+	if ( prefix != "" ) {
+		label = prefix + "_" + label;
+	}
+
+	std::map< std::string, core::Real > retval;
+	retval[ label ] = ref_center.distance( test_center );
+	return retval;
 }
 
-void append_ligand_grid_scores(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & after,
-	std::string const & prefix
-)
-{
-	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
-
-	if ( grid_manager->size()==0 ) {
-		ligand_scores_tracer << "skipping 'append ligand grid scores'. No grids used." << std::endl;
-		return;
-	}
-
-	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(after,jump_id));
-	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(after,center);
-	core::Size const chain_id = core::pose::get_chain_id_from_jump_id(jump_id,after);
-	core::Real total_score = grid_manager->total_score(after,chain_id);
-	char const ligand_chain=core::pose::get_chain_from_jump_id(jump_id,after);
-
-	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
-	for ( auto const & grid_score : grid_scores ) {
-		std::ostringstream score_label;
-		score_label << grid_score.first << "_grid_" <<ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(score_label.str(),grid_score.second);
-		} else {
-			job->add_string_real_pair(prefix + "_" + score_label.str(),grid_score.second);
-		}
-
-	}
-
-	std::ostringstream score_label;
-	score_label << "total_score_" <<ligand_chain;
-	if ( prefix == "" ) {
-		job->add_string_real_pair(score_label.str(),total_score);
-	} else {
-		job->add_string_real_pair(prefix + "_" + score_label.str(),total_score);
-	}
-}
-
-void append_ligand_grid_scores(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & after,
+std::map< std::string, core::Real >
+get_ligand_grid_scores(
+	char chain,
+	core::pose::Pose const & test_pose,
 	std::string const & prefix,
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
-)
-{
+) {
+	utility::vector1< core::Size > test_resi( core::pose::get_resnums_for_chain( test_pose, chain ) );
+
+	if ( test_resi.empty() ) {
+		utility_exit_with_message( "In get_ligand_grid_scores: test pose does not have a chain " + utility::to_string( chain ) );
+	}
+
+	return get_ligand_grid_scores( test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
+}
+
+std::map< std::string, core::Real >
+get_ligand_grid_scores(
+	core::Size jump_id,
+	core::pose::Pose const & test_pose,
+	std::string const & prefix,
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+) {
+
+	if ( jump_id == 0 || jump_id > test_pose.num_jump() ) {
+		utility_exit_with_message( "In get_ligand_grid_scores: test pose does not have jump_id " + utility::to_string( jump_id ) );
+	}
+
+	utility::vector1< core::Size > test_resi( core::kinematics::residues_downstream_of_jump( test_pose.fold_tree(), jump_id ) );
+
+	char const chain =core::pose::get_chain_from_jump_id( jump_id, test_pose );
+
+	return get_ligand_grid_scores( test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
+}
+
+std::map< std::string, core::Real >
+get_ligand_grid_scores(
+	utility::vector1< core::Size > const & test_resi,
+	std::string const & chain_label,
+	core::pose::Pose const & test_pose,
+	std::string const & prefix,
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+) {
+
+	std::map< std::string, core::Real > retval;
+
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 
 	if ( grid_manager->size()==0 ) {
-		ligand_scores_tracer << "skipping 'append ligand grid scores'. No grids used.";
-		return;
+		TR << "skipping 'append ligand grid scores'. No grids used." << std::endl;
+		return retval;
 	}
 
-	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(after,jump_id));
-	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(after,center);
-	core::Size const chain_id = core::pose::get_chain_id_from_jump_id(jump_id,after);
-	core::conformation::ResidueCOPs residues(core::pose::get_chain_residues(after, chain_id));
-	core::Real total_score = (*normalization_function)(grid_manager->total_score(after,chain_id),residues);
-	char const ligand_chain=core::pose::get_chain_from_jump_id(jump_id,after);
+	core::Vector center( core::pose::all_atom_center( test_pose, test_resi ) );
 
-	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
-	for ( auto const & grid_score : grid_scores ) {
-		std::ostringstream score_label;
-		score_label << grid_score.first << "_grid_" <<ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(score_label.str(),(*normalization_function)(grid_score.second,residues));
-		} else {
-			job->add_string_real_pair(prefix + "_" + score_label.str(),(*normalization_function)(grid_score.second,residues));
+	grid_manager->initialize_all_grids(center);
+	grid_manager->update_grids(test_pose,center);
+
+	core::conformation::ResidueCOPs residues;
+	if ( normalization_function ) {
+		for ( core::Size resi: test_resi ) {
+			residues.push_back( test_pose.residue( resi ).get_self_ptr() );
 		}
 	}
 
-	std::ostringstream score_label;
-	score_label << "total_score_" <<ligand_chain;
-	if ( prefix == "" ) {
-		job->add_string_real_pair(score_label.str(),total_score);
-	} else {
-		job->add_string_real_pair(prefix + "_" + score_label.str(),total_score);
+	core::Real total_score( grid_manager->total_score( test_pose, test_resi ) );
+	if ( normalization_function ) {
+		// Note that the GridManager::total_score() function already normalizes, if the normalization function was set in the GridManager
+		total_score = (*normalization_function)( total_score, residues );
 	}
 
+	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
+	for ( auto const & grid_score : grid_scores ) {
+		core::Real component_score( grid_score.second );
+		if (  normalization_function ) {
+			component_score = (*normalization_function)( component_score, residues );
+		}
+
+		std::string label(grid_score.first);
+		label += "_grid_" + chain_label;
+		if ( prefix != "" ) {
+			label = prefix + "_" + label;
+		}
+
+		retval[ label ] = component_score;
+	}
+
+	std::string total_label("total_score_" + chain_label);
+	if ( prefix != "" ) {
+		total_label = prefix + "_" + total_label;
+	}
+
+	retval[ total_label ] = total_score;
+
+	return retval;
 }
+
 
 /// @brief Calculate radius of gyration for downstream non-H atoms
 /// @brief Ligands tend to bind in outstretched conformations...
-void
-append_radius_of_gyration(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
+std::map< std::string, core::Real >
+get_radius_of_gyration(
+	char chain,
+	core::pose::Pose const & test_pose,
 	std::string const & prefix
-){
+) {
+
+	utility::vector1< core::Size > test_resi( core::pose::get_resnums_for_chain( test_pose, chain ) );
+
+	if ( test_resi.empty() ) {
+		utility_exit_with_message( "In get_radius_of_gyration: test pose does not have a chain " + utility::to_string( chain ) );
+	}
+
+	core::Vector test_center( core::pose::all_atom_center( test_pose, test_resi ) );
 
 	core::Real lig_rg = 0;
 	int lig_rg_natoms = 0;
-	core::Vector const before_vector= protocols::geometry::downstream_centroid_by_jump(before, jump_id);
-	FArray1D_bool is_upstream ( before.size(), false );
-	before.fold_tree().partition_by_jump( jump_id, is_upstream );
-	for ( core::Size i = 1, i_end = before.size(); i <= i_end; ++i ) {
-		if ( is_upstream(i) ) continue; // only downstream residues
-		core::conformation::Residue const & rsd = before.residue(i);
-		for ( core::Size j = 1, j_end = rsd.nheavyatoms(); j <= j_end; ++j ) {
-			lig_rg += before_vector.distance_squared( rsd.xyz(j) );
+	for ( core::Size resi: test_resi ) {
+		core::conformation::Residue const & rsd( test_pose.residue(resi) );
+		for ( core::Size jj = 1, jj_end = rsd.nheavyatoms(); jj <= jj_end; ++jj ) {
+			lig_rg += test_center.distance_squared( rsd.xyz(jj) );
 			lig_rg_natoms += 1;
 		}
 	}
 	lig_rg = std::sqrt( lig_rg / lig_rg_natoms );
 
-	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, before);
-	{
-		std::ostringstream centroid;
-		centroid<< "ligand_radius_of_gyration_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(centroid.str(), lig_rg);
-		} else {
-			job->add_string_real_pair(prefix + "_" + centroid.str(), lig_rg);
-		}
+	std::string label("ligand_radius_of_gyration_");
+	label += chain;
+	if ( prefix != "" ) {
+		label = prefix + "_" + label;
 	}
 
-
+	std::map< std::string, core::Real > retval;
+	retval[ label ] = lig_rg;
+	return retval;
 }
 
-void
-append_ligand_RMSD(
-	core::Size const jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
-	std::string const & prefix
-){
-	debug_assert(before.num_jump() >= jump_id);
-	debug_assert(after.num_jump() >= jump_id);
 
-	core::Size chain_id= core::pose::get_chain_id_from_jump_id(jump_id, before);
-	core::Size const begin = before.conformation().chain_begin(chain_id);
-	core::Size const end = before.conformation().chain_end(chain_id);
-
-	if ( end-begin > 0 ) {
-		append_multi_residue_ligand_RMSD(jump_id, job, before, after,prefix);
-	} else {
-		append_automorphic_rmsd(begin, job, before, after,prefix);
-	}
-}
-
-void
-append_multi_residue_ligand_RMSD(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
-	std::string const & prefix
-){
-	core::pose::Pose before_ligand;
-	core::pose::Pose after_ligand;
-	{ ///TODO make this section a function
-		core::Size const before_first_residue = before.fold_tree().downstream_jump_residue(jump_id);
-		core::Size const after_first_residue = after.fold_tree().downstream_jump_residue(jump_id);
-		core::Size const before_chain= before.chain(before_first_residue);
-		core::Size const after_chain= before.chain(after_first_residue);
-		core::pose::Pose before_copy(before);
-		core::pose::PoseOP after_copy( new core::pose::Pose(after) );
-		before_copy.remove_constraints();/// TODO fix split_by_chain to avoid this
-		after_copy->remove_constraints();/// TODO fix split_by_chain to avoid this
-		before_ligand= *before_copy.split_by_chain(before_chain);
-		after_ligand= *after_copy->split_by_chain(after_chain);
-	}
-
-	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
-	{
-		core::Real ligand_rms_no_super= core::scoring::rmsd_no_super(
-			before_ligand,
-			after_ligand,
-			core::scoring::is_ligand_heavyatom
-		);
-		std::ostringstream rms_no_super;
-		rms_no_super<< "ligand_rms_no_super_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(rms_no_super.str(), ligand_rms_no_super);
-		} else {
-			job->add_string_real_pair(prefix + "_" + rms_no_super.str(), ligand_rms_no_super);
-		}
-	}
-	{
-		core::Real ligand_rms_with_super= core::scoring::rmsd_with_super(
-			before_ligand,
-			after_ligand,
-			core::scoring::is_ligand_heavyatom
-		);
-		std::ostringstream rms_with_super;
-		rms_with_super<< "ligand_rms_with_super_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(rms_with_super.str(), ligand_rms_with_super);
-		} else {
-			job->add_string_real_pair(prefix + "_" + rms_with_super.str(), ligand_rms_with_super);
-		}
-	}
-}
-
-void
-append_automorphic_rmsd(
-	core::Size ligand_residue_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
+std::map< std::string, core::Real >
+get_ligand_RMSDs(
+	char chain,
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
 	std::string const & prefix
 ){
 
-	char const ligand_chain= before.pdb_info()->chain(ligand_residue_id);
+	utility::vector1<core::Size> ref_resi( core::pose::get_resnums_for_chain( ref_pose, chain ) );
+	utility::vector1<core::Size> test_resi( core::pose::get_resnums_for_chain( test_pose, chain ) );
+
+	if ( test_resi.empty() ) {
+		utility_exit_with_message( std::string("get_ligand_RMSD: Cannot find chain ") + chain + " in test pose.");
+	}
+	if ( ref_resi.empty() ) {
+		utility_exit_with_message( std::string("get_ligand_RMSD: Cannot find chain ") + chain + " in reference pose.");
+	}
+
+	if ( test_resi.size() != ref_resi.size() ) {
+		TR.Error << "In get_ligand_RMSD: test and reference poses have a different number of residues for chain " << chain << std::endl;
+		TR.Error << "  test pose has " << test_resi.size() << " residues to the reference pose's " << ref_resi.size() << std::endl;
+		utility_exit_with_message("Cannot compute ligand RMSD - different number of residues in the two structures.");
+	}
+
+	if ( test_resi.size() != 1 || ref_resi.size() != 1 ) {
+		TR.Debug << "get_ligand_RMSDs: Chain " << chain << " has multiple (" << test_resi.size() << ") residues in each pose. Using multi-residue version of RMSD calculation." << std::endl;
+		return get_multi_residue_ligand_RMSDs( test_pose, ref_pose, test_resi, ref_resi, chain, prefix );
+	}
+
+	return get_automorphic_RMSDs( test_pose, ref_pose, test_resi[1], ref_resi[1], prefix );
+}
+
+std::map< std::string, core::Real >
+get_automorphic_RMSDs(
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	core::Size test_residue_id,
+	core::Size ref_residue_id,
+	std::string const & prefix
+){
+
+	std::map< std::string, core::Real > retval;
+
+	char const ligand_chain = test_pose.pdb_info()->chain(test_residue_id);
 	{
-		core::Real ligand_rms_no_super= core::scoring::automorphic_rmsd(
-			before.residue(ligand_residue_id),
-			after.residue(ligand_residue_id),
+		core::Real ligand_rms_no_super = core::scoring::automorphic_rmsd(
+			ref_pose.residue(ref_residue_id),
+			test_pose.residue(test_residue_id),
 			false /*don't superimpose*/
 		);
 
-		std::ostringstream rms_no_super;
-		rms_no_super<< "ligand_rms_no_super_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(rms_no_super.str(), ligand_rms_no_super);
-		} else {
-			job->add_string_real_pair(prefix + "_" + rms_no_super.str(), ligand_rms_no_super);
+		std::string no_super_label("ligand_rms_no_super_");
+		no_super_label += ligand_chain;
+		if ( prefix != "" ) {
+			no_super_label = prefix + "_" + no_super_label;
 		}
+
+		retval[ no_super_label ] = ligand_rms_no_super;
 	}
 	{
-		core::Real ligand_rms_with_super= core::scoring::automorphic_rmsd(
-			before.residue(ligand_residue_id),
-			after.residue(ligand_residue_id),
+		core::Real ligand_rms_with_super = core::scoring::automorphic_rmsd(
+			ref_pose.residue(ref_residue_id),
+			test_pose.residue(test_residue_id),
 			true /*superimpose*/
 		);
-		std::ostringstream rms_with_super;
-		rms_with_super<< "ligand_rms_with_super_"<< ligand_chain;
-		if ( prefix == "" ) {
-			job->add_string_real_pair(rms_with_super.str(), ligand_rms_with_super);
-		} else {
-			job->add_string_real_pair(prefix + "_" + rms_with_super.str(), ligand_rms_with_super);
+
+		std::string with_super_label("ligand_rms_with_super_");
+		with_super_label += ligand_chain;
+		if ( prefix != "" ) {
+			with_super_label = prefix + "_" + with_super_label;
 		}
+
+		retval[ with_super_label ] = ligand_rms_with_super;
 	}
 
+	return retval;
+}
+
+std::map< std::string, core::Real >
+get_multi_residue_ligand_RMSDs(
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	utility::vector1< core::Size > const & test_residue_ids,
+	utility::vector1< core::Size > const & ref_residue_ids,
+	char chain,
+	std::string const & prefix
+) {
+	debug_assert( test_residue_ids.size() == ref_residue_ids.size() );
+
+	std::map< std::string, core::Real > retval;
+
+	{
+		core::Real ligand_rms_no_super= core::scoring::rmsd_no_super(
+			test_pose,
+			ref_pose,
+			test_residue_ids,
+			ref_residue_ids,
+			core::scoring::is_ligand_heavyatom
+		);
+
+		std::string no_super_label("ligand_rms_no_super_");
+		no_super_label += chain;
+		if ( prefix != "" ) {
+			no_super_label = prefix + "_" + no_super_label;
+		}
+
+		retval[ no_super_label ] = ligand_rms_no_super;
+	}
+	{
+		core::Real ligand_rms_with_super= core::scoring::rmsd_with_super(
+			test_pose,
+			ref_pose,
+			test_residue_ids,
+			ref_residue_ids,
+			core::scoring::is_ligand_heavyatom
+		);
+
+		std::string with_super_label("ligand_rms_with_super_");
+		with_super_label += chain;
+		if ( prefix != "" ) {
+			with_super_label = prefix + "_" + with_super_label;
+		}
+
+		retval[ with_super_label ] = ligand_rms_with_super;
+	}
+
+	return retval;
 }
 
 } // namespace ligand_docking

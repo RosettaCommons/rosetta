@@ -202,6 +202,8 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 void remove_virtual_residues(core::pose::Pose & pose);
 
 /// @brief Get center of mass of a pose.
+///
+/// This computes an equally-weighted, all-(non-virtual)-heavy atom center.
 numeric::xyzVector< core::Real >
 get_center_of_mass( core::pose::Pose const & pose );
 
@@ -884,17 +886,34 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose);
 /// @details No virtuals, membrane residues or embedding residues counted
 core::Size nres_protein( core::pose::Pose const & pose );
 
+/// @brief Get the center of the indicated residues
+///
+/// WARNING: Despite the name, this function only calculates with a single coordinate per residue
+/// (the Calpha/neighbor atom)
 numeric::xyzVector< core::Real>
 center_of_mass(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & residues
 );
 
+/// @brief Get the center of the indicated residues
+///
+/// WARNING: Despite the name, this function only calculates with a single coordinate per residue
+/// (the Calpha/neighbor atom)
 numeric::xyzVector< core::Real>
 center_of_mass(
 	core::pose::Pose const & pose,
 	int const start,
 	int const stop
+);
+
+/// @brief Get the center of the indicated residues
+///
+/// This computes an equally-weighted, all-atom (including virtuals and hydrogens) center
+core::Vector
+all_atom_center(
+	core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & residues
 );
 
 int

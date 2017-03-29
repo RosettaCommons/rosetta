@@ -45,6 +45,7 @@
 
 // option key includes
 
+#include <basic/options/option.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>

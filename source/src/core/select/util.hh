@@ -22,10 +22,14 @@
 namespace core {
 namespace select {
 
-/// @brief Get a vector1 of the indexes corresponding to True or False in the ResidueSubset.
+/// @brief Get a vector1 of the indexes which are the same value as 'select' in the ResidueSubset.
 utility::vector1< core::Size >
 get_residues_from_subset( utility::vector1< bool > const & subset, bool select = true);
 
+/// @brief Get a vector1 of true/false (a ResidueSubset) from a list of residue numbers.
+/// @details If invert is true, residues *not* in the selection are true in the returned vector.
+utility::vector1< bool >
+get_subset_from_residues( utility::vector1< core::Size > const & selection, core::Size total_nres, bool invert = false);
 
 /// @brief Get a boolean vector of neighbor residues given some distance < 10A
 ///

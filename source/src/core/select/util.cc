@@ -43,6 +43,19 @@ get_residues_from_subset( utility::vector1< bool > const & subset, bool select){
 	return residues;
 }
 
+utility::vector1< bool >
+get_subset_from_residues( utility::vector1< core::Size > const & residues, core::Size total_nres, bool invert) {
+	// If invert is false, we default to false and re-set residues in the passed vector to not-false (true).
+	// If invert is true, we default to true and re-set residues in the passed vectorr to not-true (false).
+	utility::vector1< bool > subset( total_nres, invert );
+
+	for ( core::Size resnum: residues ) {
+		debug_assert( resnum != 0 && resnum <= total_nres );
+		subset[ resnum ] = !invert; // We set it to the opposite of the default.
+	}
+
+	return subset;
+}
 
 
 utility::vector1< bool >

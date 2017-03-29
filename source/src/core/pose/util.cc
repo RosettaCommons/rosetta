@@ -2372,7 +2372,7 @@ get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::
 
 core::Size
 get_jump_id_from_chain_id( core::Size const & chain_id, const core::pose::Pose & pose ){
-	if ( ! has_chain( chain_id, pose ) ){
+	if ( ! has_chain( chain_id, pose ) ) {
 		utility_exit_with_message( "Pose does not have a chain " + utility::to_string(chain_id) );
 	}
 	std::set<core::Size> chain_ids{ chain_id }; // initializaiton list with one element
@@ -2932,6 +2932,26 @@ center_of_mass(
 	int const stop
 ) {
 	return center_of_mass( pose, generate_vector_from_bounds( pose, start, stop ) );
+}
+
+core::Vector
+all_atom_center(
+	core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & residues
+) {
+
+	utility::vector1< core::Vector > coords;
+
+	for ( Size ii(1); ii <= residues.size(); ++ii ) {
+		core::conformation::Residue const & rsd( pose.residue( residues[ii] ) );
+		for ( Size jj(1); jj <= rsd.natoms(); ++ jj ) {
+			coords.push_back( rsd.xyz( jj ) );
+		}
+	}
+
+	if ( ! coords.size() ) { utility_exit_with_message( "Cannot compute center of mass for no atoms!" ); }
+
+	return numeric::center_of_mass( coords );
 }
 
 int

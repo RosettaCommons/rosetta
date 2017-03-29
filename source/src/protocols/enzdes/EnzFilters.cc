@@ -41,6 +41,7 @@
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>

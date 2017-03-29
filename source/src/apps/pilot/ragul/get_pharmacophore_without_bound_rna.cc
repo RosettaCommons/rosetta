@@ -34,6 +34,7 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/rna/RNA_Info.hh>

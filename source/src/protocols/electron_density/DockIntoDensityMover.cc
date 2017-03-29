@@ -24,6 +24,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/AA.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragmentIO.hh>

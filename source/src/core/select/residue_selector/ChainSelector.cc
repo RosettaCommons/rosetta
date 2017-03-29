@@ -59,7 +59,8 @@ ChainSelector::ChainSelector( ChainSelector const &src) :
 	chain_strings_( src.chain_strings_ )
 {}
 
-ChainSelector::ChainSelector( std::string chains ) : chain_strings_( utility::string_split( chains, ',' ) ) {}
+ChainSelector::ChainSelector( std::string const & chains ) : chain_strings_( utility::string_split( chains, ',' ) ) {}
+ChainSelector::ChainSelector( char chain ) : chain_strings_( 1, std::string( 1, chain ) ) {}
 ChainSelector::~ChainSelector() {}
 
 /// @brief Clone operator.

@@ -38,6 +38,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/map_util.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -51,24 +52,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer InterfaceScoreCalculator_tracer( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator", basic::t_debug );
-
-// XRW TEMP std::string
-// XRW TEMP InterfaceScoreCalculatorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InterfaceScoreCalculator::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InterfaceScoreCalculatorCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InterfaceScoreCalculator );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP InterfaceScoreCalculator::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InterfaceScoreCalculator";
-// XRW TEMP }
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator" );
 
 /// @brief
 InterfaceScoreCalculator::InterfaceScoreCalculator():
@@ -101,10 +85,6 @@ protocols::moves::MoverOP InterfaceScoreCalculator::clone() const {
 protocols::moves::MoverOP InterfaceScoreCalculator::fresh_instance() const {
 	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
 }
-
-// XRW TEMP std::string InterfaceScoreCalculator::get_name() const{
-// XRW TEMP  return "InterfaceScoreCalculator";
-// XRW TEMP }
 
 void InterfaceScoreCalculator::chains(std::vector<std::string> const & chains)
 {
@@ -166,6 +146,8 @@ InterfaceScoreCalculator::parse_my_tag(
 }
 
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
+
+	// This is less than ideal, but at the least it should gracefully degrade if we're not under JD2
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	protocols::jd2::Job::StringStringPairs string_string_pairs(job->get_string_string_pairs());
 	if ( string_string_pairs.find("native_path") != string_string_pairs.end() ) {
@@ -173,15 +155,28 @@ void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_file(*native_,native_string, core::import_pose::PDB_file);
 	}
-	add_scores_to_job(pose, job);
-	append_ligand_docking_scores(pose, job);
+
+	// get_scores() is really only useful if prefix_ is not empty,
+	// as the output machinery will typically overwrite the un-prefixed scoreterm labels.
+	StringRealMap allscores( get_scores( pose ) );
+
+	utility::map_merge( allscores, get_ligand_docking_scores( pose ) );
+
+	// For now, keep current behavior of appending things into the Job.
+	// Ideally, these would be attached to the Pose extra scores, rather than the Job.
+	for ( auto const & entry: allscores ) {
+		job->add_string_real_pair( entry.first, entry.second );
+	}
+
 }
 
-void InterfaceScoreCalculator::add_scores_to_job(
-	core::pose::Pose & pose,
-	protocols::jd2::JobOP job
+InterfaceScoreCalculator::StringRealMap
+InterfaceScoreCalculator::get_scores(
+	core::pose::Pose & pose
 ) const
 {
+	StringRealMap retval;
+
 	debug_assert(score_fxn_);
 	using namespace core::scoring;
 
@@ -196,81 +191,81 @@ void InterfaceScoreCalculator::add_scores_to_job(
 	}
 
 	for ( ScoreType const & score_type : score_types ) {
-		std::string const score_term = name_from_score_type(score_type);
 		core::Real const weight = score_fxn_->get_weight(score_type);
-		if ( prefix_ == "" ) {
-			job->add_string_real_pair(score_term,  weight * pose.energies().total_energies()[ score_type ]);
-		} else {
-			job->add_string_real_pair(prefix_+ "_" + score_term,  weight * pose.energies().total_energies()[ score_type ]);
+
+		std::string term_label( name_from_score_type(score_type) );
+		if ( prefix_ != "" ) {
+			term_label = prefix_ + "_" + term_label;
 		}
-	}
-	if ( prefix_ == "" ) {
-		job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
-	} else {
-		job->add_string_real_pair(prefix_+"_"+name_from_score_type(core::scoring::total_score), tot_score);
+		retval[ term_label ] = weight * pose.energies().total_energies()[ score_type ];
 	}
 
+	std::string term_label( name_from_score_type(core::scoring::total_score) );
+	if ( prefix_ != "" ) {
+		term_label = prefix_ + "_" + term_label;
+	}
+	retval[ term_label ] = tot_score;
+
+	return retval;
 }
 
-
 /// @brief For multiple ligands, append ligand docking scores for each ligand
-void
-InterfaceScoreCalculator::append_ligand_docking_scores(
-	core::pose::Pose const & after,
-	protocols::jd2::JobOP job
+InterfaceScoreCalculator::StringRealMap
+InterfaceScoreCalculator::get_ligand_docking_scores(
+	core::pose::Pose const & after
 ) const
 {
+	StringRealMap retval;
+
 	for ( std::string const & chain : chains_ ) {
-		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
-		debug_assert( core::pose::has_chain(chain, after));
+		debug_assert( chain.size() == 1 );
+		TR.Debug << "Calculating ligand docking scores for chain: " << chain << std::endl;
+		debug_assert( core::pose::has_chain(chain, after) );
 		if ( native_ ) {
 			if ( !core::pose::has_chain(chain, *native_) ) {
-				utility_exit_with_message("The native pose passed to InterfaceScoreCalculator does not have chain " +chain);
+				utility_exit_with_message("The native pose passed to InterfaceScoreCalculator does not have chain " + utility::to_string(chain) );
 			}
 		}
 
-		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, after);
-		for ( core::Size const jump_id : jump_ids ) {
-			if ( normalization_function_ ) {
-				append_interface_deltas(jump_id,job,after,score_fxn_,prefix_,normalization_function_);
-			} else {
-				append_interface_deltas(jump_id, job, after, score_fxn_,prefix_);
-			}
-			append_ligand_docking_scores(jump_id, after, job);
-		}
+		utility::map_merge( retval, get_interface_deltas( chain[0], after, score_fxn_, prefix_, normalization_function_ ) );
+		utility::map_merge( retval, get_ligand_docking_scores( chain[0], after ) );
 	}
+
+	return retval;
 }
 
 /// @brief Scores to be output that aren't normal scorefunction terms.
-void
-InterfaceScoreCalculator::append_ligand_docking_scores(
-	core::Size jump_id,
-	core::pose::Pose const & after,
-	protocols::jd2::JobOP job
+InterfaceScoreCalculator::StringRealMap
+InterfaceScoreCalculator::get_ligand_docking_scores(
+	char chain,
+	core::pose::Pose const & after
 ) const {
-	if ( jump_id == 0 || jump_id > after.num_jump() ) {
-		utility_exit_with_message("The pose does not have jump number " + utility::to_string( jump_id ) );
+
+	StringRealMap retval;
+
+	if ( ! core::pose::has_chain( chain, after ) ) {
+		utility_exit_with_message("The pose does not have chain " + utility::to_string( chain ) );
 	}
 
 	if ( native_ ) {
-		if ( jump_id > native_->num_jump() ) {
-			utility_exit_with_message("The native pose does not have jump number " + utility::to_string( jump_id ) );
+		if ( ! core::pose::has_chain( chain, *native_ ) ) {
+			utility_exit_with_message("The native pose does not have chain " + utility::to_string( chain ) );
 		}
 
-		append_ligand_travel(jump_id, job, *native_, after,prefix_);
-		append_radius_of_gyration(jump_id, job, *native_,prefix_);
-		append_ligand_RMSD(jump_id, job, *native_, after,prefix_);
+		utility::map_merge( retval, get_ligand_travel( chain, after, *native_, prefix_ ) );
+		utility::map_merge( retval, get_radius_of_gyration( chain, after, prefix_ ) );
+		utility::map_merge( retval, get_ligand_RMSDs(chain, after, *native_, prefix_ ) );
 	}
 
 	if ( compute_grid_scores_ ) {
+		protocols::qsar::scoring_grid::ScoreNormalizationOP norm_func( nullptr );
 		if ( normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled() ) {
-			append_ligand_grid_scores(jump_id,job,after,prefix_,normalization_function_);
-		} else {
-			append_ligand_grid_scores(jump_id,job,after,prefix_);
+			norm_func = normalization_function_;
 		}
+		utility::map_merge( retval, get_ligand_grid_scores( chain, after, prefix_, norm_func ) );
 	}
 
-
+	return retval;
 }
 
 std::string InterfaceScoreCalculator::get_name() const {

@@ -272,23 +272,26 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 	}
 }
 
-
 core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size const chain_id)
+{
+	utility::vector1< core::Size > residues_in_chain( core::pose::get_resnums_for_chain_id( pose, chain_id ) );
+	return total_score( pose, residues_in_chain );
+}
+
+core::Real GridManager::total_score(core::pose::Pose const & pose, utility::vector1< core::Size > const & residues)
 {
 	score_map_.clear();
 	core::Real total_score = 0.0;
 	const core::Real max_score = 9999.0;
-
-	core::conformation::ResidueCOPs residue_vector = core::pose::get_chain_residues(pose,chain_id);
 
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		core::Real component_score = 0;
 		GridBaseOP current_grid(map_iterator->second);
 		core::Real weight(grid_weights_[map_iterator->first]);
-		for ( core::Size residue_count = 1; residue_count <= residue_vector.size(); ++residue_count ) {
-			core::conformation::ResidueCOP residue(residue_vector[residue_count]);
-			core::Real current_score(current_grid->score(*residue,max_score,qsar_map_));
+		for ( core::Size resi : residues ) {
+			core::conformation::Residue const & residue( pose.residue( resi ) );
+			core::Real current_score(current_grid->score(residue,max_score,qsar_map_));
 			component_score += current_score;
 		}
 		total_score += component_score*weight;
@@ -297,14 +300,17 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 	}
 
 	if ( norm_function_ ) {
-		core::Real normalized_score = (*norm_function_)(total_score,residue_vector);
+		core::conformation::ResidueCOPs residue_cops;
+		for ( core::Size resi : residues ) {
+			residue_cops.push_back( pose.residue( resi ).get_self_ptr() );
+		}
+		core::Real normalized_score = (*norm_function_)(total_score,residue_cops);
 		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
 		return normalized_score;
 	} else {
 		return total_score;
 	}
 }
-
 
 std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const & /*pose*/, core::conformation::Residue const & residue, core::Size atomindex )
 {

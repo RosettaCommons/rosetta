@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>

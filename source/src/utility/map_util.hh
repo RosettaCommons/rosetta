@@ -10,6 +10,7 @@
 /// @file utility/map_util.hh
 /// @brief Utility functions for std::maps
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #ifndef INCLUDED_utility_util_hh
 #define INCLUDED_utility_util_hh
@@ -18,15 +19,25 @@
 
 namespace utility {
 
+// Pointless - use `std::map::count()` instead.
+// /// @brief Does the map have the key?
+// // Pointless
+// template < class T >
+// bool
+// has_key(std::map< T, T > const & a_map, T const & key);
 
-/// @brief Does the map have the key?
-template < class T >
-bool
-has_key(std::map< T, T > const & a_map, T const & key);
-
+/// @brief Append the second map to the first
+/// For one-liner convenience (esp. for map return values.)
+///
+/// In C++17 this is std::map::merge(), but until then ...
+template < class K, class V >
+void
+map_merge( std::map< K, V > & destination_map, std::map< K, V > const & source_map ) {
+	destination_map.insert( source_map.begin(), source_map.end() );
+}
 
 } //utility
 
 
-#endif	//utility_util_hh
+#endif //utility_util_hh
 

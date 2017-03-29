@@ -47,10 +47,14 @@ public:
 
 	/// @brief Copy constructor
 	///
-	ChainSelector( ChainSelector const &src);
+	ChainSelector( ChainSelector const & src);
 
 	// takes a comma-separated list of chains (e.g. "A,B")
-	ChainSelector( std::string chains );
+	ChainSelector( std::string const & chains );
+
+	// takes a single chain
+	ChainSelector( char chain );
+
 	virtual ~ChainSelector();
 
 	/// @brief Clone operator.

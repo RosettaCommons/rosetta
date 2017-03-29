@@ -302,6 +302,44 @@ get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< boo
 }
 
 
+/// @brief Return a list of residue numbers which are on the upstream side of the jump.
+utility::vector1< core::Size >
+residues_upstream_of_jump( FoldTree const & fold_tree, core::Size jump_id ) {
+
+	utility::vector1< core::Size > reslist;
+
+	utility::vector1< bool > partition( fold_tree.partition_by_jump( jump_id ) );
+
+	bool upstream_color( partition[ fold_tree.upstream_jump_residue( jump_id ) ] );
+
+	for ( core::Size ii(1); ii <= partition.size(); ++ii ) {
+		if ( partition[ ii ] == upstream_color ) {
+			reslist.push_back( ii );
+		}
+	}
+
+	return reslist;
+}
+
+/// @brief Return a list of residue numbers which are on the downstream side of the jump.
+utility::vector1< core::Size >
+residues_downstream_of_jump( FoldTree const & fold_tree, core::Size jump_id ) {
+
+	utility::vector1< core::Size > reslist;
+
+	utility::vector1< bool > partition( fold_tree.partition_by_jump( jump_id ) );
+
+	bool downstream_color( partition[ fold_tree.downstream_jump_residue( jump_id ) ] );
+
+	for ( core::Size ii(1); ii <= partition.size(); ++ii ) {
+		if ( partition[ ii ] == downstream_color ) {
+			reslist.push_back( ii );
+		}
+	}
+
+	return reslist;
+}
+
 /// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
 void
 simple_visualize_fold_tree( FoldTree const & fold_tree, std::ostream& out ) {

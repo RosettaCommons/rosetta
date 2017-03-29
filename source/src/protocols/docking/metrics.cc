@@ -35,6 +35,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <protocols/membrane/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>

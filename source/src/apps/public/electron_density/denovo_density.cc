@@ -22,6 +22,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
 

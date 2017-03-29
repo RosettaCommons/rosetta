@@ -7,10 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_docking/LigandDockProtocol.hh
+/// @file
 ///
 /// @brief
 /// @author Gordon Lemmon
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_protocols_ligand_docking_ligand_scores_hh
@@ -18,100 +19,96 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <basic/Tracer.hh>
 
 #include <core/types.hh>
-#include <protocols/jd2/Job.fwd.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <map>
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer ligand_scores_tracer( "protocols.ligand_docking.ligand_scores", basic::t_debug );
-
-/// @brief append interface_delta scores
-void
-append_interface_deltas(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
+std::map< std::string, core::Real >
+get_interface_deltas(
+	char chain,
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
-	std::string const & prefix
+	std::string const & prefix = "",
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
 );
 
+/// @brief Another interesting metric -- how far does the ligand centroid move?
+/// Large values indicate we're outside of the intended binding site.
+std::map< std::string, core::Real >
+get_ligand_travel(
+	char chain,
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	std::string const & prefix = ""
+);
 
-void
-append_interface_deltas(
+std::map< std::string, core::Real >
+get_ligand_grid_scores(
 	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & after,
-	const core::scoring::ScoreFunctionOP scorefxn,
+	core::pose::Pose const & test_pose,
+	std::string const & prefix = "",
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
+);
+
+std::map< std::string, core::Real >
+get_ligand_grid_scores(
+	char chain,
+	core::pose::Pose const & test_pose,
+	std::string const & prefix = "",
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
+);
+
+std::map< std::string, core::Real >
+get_ligand_grid_scores(
+	utility::vector1< core::Size > const & residues,
+	std::string const & chain_label,
+	core::pose::Pose const & test_pose,
 	std::string const & prefix,
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 );
 
-void
-append_ligand_travel(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
+/// @brief Calculate radius of gyration for downstream non-H atoms
+/// @brief Ligands tend to bind in outstretched conformations...
+std::map< std::string, core::Real >
+get_radius_of_gyration(
+	char chain,
+	core::pose::Pose const & test_pose,
 	std::string const & prefix
 );
 
-void
-append_ligand_grid_scores(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & after,
-	std::string const & prefix
+std::map< std::string, core::Real >
+get_ligand_RMSDs(
+	char chain,
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	std::string const & prefix = ""
 );
 
-void
-append_ligand_grid_scores(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & after,
-	std::string const & prefix,
-	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+std::map< std::string, core::Real >
+get_automorphic_RMSDs(
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	core::Size test_residue_id,
+	core::Size ref_residue_id,
+	std::string const & prefix = ""
 );
 
-void
-append_radius_of_gyration(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	std::string const & prefix
+std::map< std::string, core::Real >
+get_multi_residue_ligand_RMSDs(
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	utility::vector1< core::Size > const & test_residue_ids,
+	utility::vector1< core::Size > const & ref_residue_ids,
+	char chain = 'X',
+	std::string const & prefix = ""
 );
 
-void
-append_ligand_RMSD(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
-	std::string const & prefix
-);
-
-void
-append_multi_residue_ligand_RMSD(
-	core::Size jump_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
-	std::string const & prefix
-);
-
-void
-append_automorphic_rmsd(
-	core::Size ligand_residue_id,
-	protocols::jd2::JobOP job,
-	core::pose::Pose const & before,
-	core::pose::Pose const & after,
-	std::string const & prefix
-);
 
 } // namespace ligand_docking
 } // namespace protocols

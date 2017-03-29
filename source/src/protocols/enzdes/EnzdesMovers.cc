@@ -35,6 +35,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

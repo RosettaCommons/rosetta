@@ -85,6 +85,8 @@ public:
 	core::Real total_score(core::conformation::Residue const & residue);
 	/// @brief return the total score of a chain on the grid
 	core::Real total_score(core::pose::Pose const & pose, core::Size const chain_id);
+	/// @brief return the total score for a set of residues on the grid
+	core::Real total_score(core::pose::Pose const & pose, utility::vector1< core::Size > const & residues);
 	/// @brief get a map of scoring terms and scores for each term given a residue and atom number
 	std::map<std::string,core::Real> atom_score(core::pose::Pose const & pose, core::conformation::Residue const & residue, core::Size atomindex );
 	/// @brief recalculate all grids for a pose.  This must be called if the backbone or sidechain conformations change!

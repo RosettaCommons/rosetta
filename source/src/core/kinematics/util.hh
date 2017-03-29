@@ -69,6 +69,14 @@ jump_which_partitions( FoldTree const & fold_tree, utility::vector1< bool > resi
 FoldTree
 get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< bool > residues );
 
+/// @brief Return a list of residue numbers which are on the upstream side of the jump.
+utility::vector1< core::Size >
+residues_upstream_of_jump( FoldTree const & fold_tree, core::Size jump_id );
+
+/// @brief Return a list of residue numbers which are on the downstream side of the jump.
+utility::vector1< core::Size >
+residues_downstream_of_jump( FoldTree const & fold_tree, core::Size jump_id );
+
 /// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
 void
 simple_visualize_fold_tree( FoldTree const & fold_tree, std::ostream& out );

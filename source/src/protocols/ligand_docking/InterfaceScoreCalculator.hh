@@ -24,7 +24,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Project Headers
-#include <protocols/jd2/Job.fwd.hh>
+//#include <protocols/jd2/Job.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 
@@ -40,6 +40,9 @@ namespace ligand_docking {
 class InterfaceScoreCalculator : public protocols::moves::Mover
 {
 public:
+
+	typedef std::map< std::string, core::Real > StringRealMap;
+
 	InterfaceScoreCalculator();
 	~InterfaceScoreCalculator() override;
 	InterfaceScoreCalculator(InterfaceScoreCalculator const & that);
@@ -73,6 +76,23 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+private:
+
+	StringRealMap
+	get_scores(
+		core::pose::Pose & pose
+	) const;
+
+	StringRealMap
+	get_ligand_docking_scores(
+		core::pose::Pose const & after
+	) const;
+
+	StringRealMap
+	get_ligand_docking_scores(
+		char chain,
+		core::pose::Pose const & after
+	) const;
 
 private:
 	utility::vector1<std::string> chains_;
@@ -81,25 +101,6 @@ private:
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function_;
 	bool compute_grid_scores_;
 	std::string prefix_;
-
-	void
-	add_scores_to_job(
-		core::pose::Pose & pose,
-		protocols::jd2::JobOP job
-	) const;
-
-	void
-	append_ligand_docking_scores(
-		core::pose::Pose const & after,
-		protocols::jd2::JobOP job
-	) const;
-
-	void
-	append_ligand_docking_scores(
-		core::Size jump_id,
-		core::pose::Pose const & after,
-		protocols::jd2::JobOP job
-	) const;
 
 };
 

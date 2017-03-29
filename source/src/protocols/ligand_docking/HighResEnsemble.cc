@@ -402,38 +402,29 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("spearman", correlation_after);
 
 	for ( core::Size i=1; i<=rosetta_lowest_poses_.size(); ++i ) {
-		core::Size nstruct = protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
-		// std::string input_tag = job->input_tag();
-		std::stringstream ss;
-		std::stringstream chain_ss;
-		std::string tag;
-		std::string name_of_chain;
+
 		char chain = rosetta_chars_[i];
-		core::Size jump = core::pose::get_jump_id_from_chain(chain, rosetta_lowest_poses_[i]);
+		std::string name_of_chain( utility::to_string( chain ) );
 
-		chain_ss << chain;
-		chain_ss >> name_of_chain;
+		// core::Size jump = core::pose::get_jump_id_from_chain(chain, rosetta_lowest_poses_[i]);
 
-		//  ss << input_tag;
-		//  ss << "_";
-		ss << chain;
-		ss << "_";
-		ss << nstruct;
-		ss << ".pdb";
-		ss >> tag;
+		core::Size nstruct = protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
+		std::string tag( name_of_chain + "_" + utility::to_string(nstruct) + ".pdb" );
 
 		//output individual poses
 		rosetta_lowest_poses_[i].dump_scored_pdb(tag, *final_score_fxn_);
-
 
 		if ( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ]() ) {
 			utility::file::gzip( tag, true );
 		}
 
 		//Add interface delta scores, hopefully to overall pose output
-		append_interface_deltas(jump,job,rosetta_lowest_poses_[i],final_score_fxn_,"");
+		std::map< std::string, core::Real > ligand_scores( get_interface_deltas( chain, rosetta_lowest_poses_[i], final_score_fxn_, "" ) );
+		ligand_scores[ name_of_chain ] = rosetta_lowest_scores_[i].second;
 
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair(name_of_chain, rosetta_lowest_scores_[i].second);
+		for ( auto const & entry : ligand_scores ) {
+			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( entry.first, entry.second );
+		}
 	}
 
 	std::map<std::string, core::Real> job_outputs = protocols::jd2::JobDistributor::get_instance()->current_job()->get_string_real_pairs();

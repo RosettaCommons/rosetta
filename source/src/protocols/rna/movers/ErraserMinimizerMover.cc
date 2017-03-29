@@ -83,6 +83,7 @@
 #include <core/scoring/constraints/util.hh>
 
 //////////////////////////////////////////////////
+#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>

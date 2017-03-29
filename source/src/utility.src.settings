@@ -20,7 +20,6 @@ sources = {
 		"inline_file_provider",
 		"integer_mapping",
 		"LexicographicalIterator",
-		#"map_util",
 		"mpi_util",
 		"SimulateMPI",
 		"sys_util",

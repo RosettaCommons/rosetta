@@ -48,6 +48,7 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+#include <utility/map_util.hh>
 #include <vector>
 
 #include <ObjexxFCL/format.hh>
@@ -456,18 +457,23 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		pose = best_pose;
 
 		transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
-		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Grid_score", best_score);
 
 		protocols::jd2::JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
+		job->add_string_real_pair("Grid_score", best_score);
+
 		// grid_manager->reset_grids();
 		// grid_manager->update_grids(pose,center, true);
 
+		std::map< std::string, core::Real > grid_scores;
 		for ( core::Size i=1; i<=transform_info_.jump_ids.size(); ++i ) {
 			core::Size jump = transform_info_.jump_ids[i];
 
 			//Add ligand grid scores, hopefully to overall pose output
-			append_ligand_grid_scores(jump,job,pose,"");
+			utility::map_merge( grid_scores, get_ligand_grid_scores( jump, pose, "" ) );
+		}
 
+		for ( auto const & entry : grid_scores ) {
+			job->add_string_real_pair( entry.first, entry.second );
 		}
 
 	}

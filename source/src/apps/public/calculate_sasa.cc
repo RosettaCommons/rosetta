@@ -40,6 +40,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
+#include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/basic.hh>
 #include <basic/database/open.hh>

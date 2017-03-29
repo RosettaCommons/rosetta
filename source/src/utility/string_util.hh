@@ -56,6 +56,14 @@ to_string (const T & t)
 	return ss.str();
 }
 
+// Template specialization, so that char is handled correctly.
+template <>
+inline std::string
+to_string< char > (const char & t)
+{
+	return std::string( 1, t );
+}
+
 template <class T>
 inline T const
 from_string (std::string const & s, T )
