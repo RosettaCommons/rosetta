@@ -190,6 +190,7 @@ sources = {
 	],
 	"public/internal": [
 		"validate_database",
+		"generate_database_cache",
 	],
 	"public/ligand_docking": [
 		"extract_atomtree_diffs",

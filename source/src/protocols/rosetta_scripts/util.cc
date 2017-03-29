@@ -335,7 +335,7 @@ parse_score_function(
 	}
 
 	try{
-		core::init::check_score_function_sanity(scorefxn_key, false);
+		core::init::check_score_function_sanity(basic::options::option, scorefxn_key, false);
 	} catch(utility::excn::EXCN_BadInput & e){
 		stringstream err_msg;
 		err_msg

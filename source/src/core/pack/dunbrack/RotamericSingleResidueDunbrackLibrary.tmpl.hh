@@ -134,9 +134,13 @@ namespace dunbrack {
 template < Size T, Size N >
 RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLibrary(
 	AA const aa_in,
-	bool dun02
+	bool dun02,
+	bool use_bicubic,
+	bool dun_entropy_correction,
+	core::Real prob_buried, // 0.98
+	core::Real prob_nonburied // 0.95
 ) :
-parent( aa_in, T, dun02 )
+parent( aa_in, T, dun02, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied )
 {
 	// This is horrible but temporarily necessarily until we figure out how to distribute full beta rotlibs
 	// Betas automatically (if 3 BB) have phipsi binrange of 30
@@ -203,7 +207,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+		if ( use_bicubic() ) {
 			dE_dbb_dev[ bbi ] = d_multiplier * scratch.dchidevpen_dbb()[ bbi ];
 			dE_dbb_rot[ bbi ] = d_multiplier * scratch.dneglnrotprob_dbb()[ bbi ];
 		} else {
@@ -212,7 +216,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 		}
 
 		// Correction for entropy
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		if ( dun_entropy_correction() ) {
 			dE_dbb_rot[ bbi ] += d_multiplier * scratch.dentropy_dbb()[ bbi ];
 		}
 
@@ -313,7 +317,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	for ( Size ii = 1; ii <= T; ++ii ) chidevpensum += chidevpen[ ii ];
 
 
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+	if ( use_bicubic() ) {
 		scratch.fa_dun_rot() = scratch.negln_rotprob();
 		scratch.fa_dun_dev() = chidevpensum;
 	} else {
@@ -322,7 +326,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	}
 
 	// Corrections for Shannon Entropy
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+	if ( dun_entropy_correction() ) {
 		scratch.fa_dun_rot() += scratch.entropy();
 	}
 
@@ -670,7 +674,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 
 	for ( Size i = 1; i <= N; ++i ) scratch.drotprob_dbb()[ i ] = scratch_drotprob_dbb[ i ];
 
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+	if ( use_bicubic() ) {
 
 		utility::fixedsizearray1< Real, N > binw( PHIPSI_BINRANGE );
 		utility::fixedsizearray1< Real, N > scratch_dneglnrotprob_dbb;
@@ -683,7 +687,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	}
 
 	// Entropy correction
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+	if ( dun_entropy_correction() ) {
 		// populate S_n_derivs
 		utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > S_n_derivs;
 		for ( Size i = 1; i <= ( 1 << N ); ++i ) {
@@ -1568,7 +1572,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 	}
 
 	/// Entropy setup once reading is finished
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+	if ( dun_entropy_correction() ) {
 		setup_entropy_correction();
 	}
 }
@@ -1904,7 +1908,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 
 				initialize_bicubic_splines();
 				/// Entropy setup once reading is finished
-				if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+				if ( dun_entropy_correction() ) {
 					setup_entropy_correction();
 				}
 
@@ -2032,7 +2036,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 
 	initialize_bicubic_splines();
 	/// Entropy setup once reading is finished
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+	if ( dun_entropy_correction() ) {
 		setup_entropy_correction();
 	}
 

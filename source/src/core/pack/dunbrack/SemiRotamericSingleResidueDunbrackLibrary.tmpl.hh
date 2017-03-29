@@ -177,18 +177,24 @@ template < Size T, Size N >
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::SemiRotamericSingleResidueDunbrackLibrary(
 	chemical::AA const aa_in,
 	bool const backbone_independent_scoring,   // true uses less memory
-	bool const backbone_independent_rotamer_sampling // true uses less memory
+	bool const backbone_independent_rotamer_sampling, // true uses less memory
+	bool use_shapovalov,
+	bool use_bicubic,
+	bool dun_entropy_correction,
+	core::Real prob_buried,
+	core::Real prob_nonburied
 ) :
-parent( aa_in, false /*dun02*/ ), // false, since the semi rotameric library is new in 2008
-bbind_nrchi_scoring_( backbone_independent_scoring ),
-bbind_nrchi_sampling_( backbone_independent_rotamer_sampling ),
-nrchi_periodicity_( 0.0 ),
-nrchi_lower_angle_( 0.0 ),
-bbdep_nrchi_nbins_( 0 ),
-bbdep_nrchi_binsize_( 0 ),
-bbind_nrchi_nbins_( 0 ),
-bbind_nrchi_binsize_( 0 ),
-n_nrchi_sample_bins_( 0 )
+	parent( aa_in, false /*dun02*/, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ), // dun02 false, since the semi rotameric library is new in 2008
+	bbind_nrchi_scoring_( backbone_independent_scoring ),
+	bbind_nrchi_sampling_( backbone_independent_rotamer_sampling ),
+	use_shapovalov_( use_shapovalov ),
+	nrchi_periodicity_( 0.0 ),
+	nrchi_lower_angle_( 0.0 ),
+	bbdep_nrchi_nbins_( 0 ),
+	bbdep_nrchi_binsize_( 0 ),
+	bbind_nrchi_nbins_( 0 ),
+	bbind_nrchi_binsize_( 0 ),
+	n_nrchi_sample_bins_( 0 )
 {}
 
 template < Size T, Size N >
@@ -242,7 +248,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 	}
 
 	// Corrections for Shanon Entropy
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+	if ( SingleResidueDunbrackLibrary::dun_entropy_correction() ) {
 		nrchi_score += scratch.entropy();
 	}
 
@@ -280,7 +286,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 		dE_dbb_dev[ bbi ] = d_multiplier * scratch.dchidevpen_dbb()[ bbi ];
 
 		// Correction for entropy
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		if ( SingleResidueDunbrackLibrary::dun_entropy_correction() ) {
 			dE_dbb[ bbi ]    += d_multiplier * scratch.dentropy_dbb()[ bbi ];
 			dE_dbb_semi[ bbi ] += d_multiplier * scratch.dentropy_dbb()[ bbi ];
 		}
@@ -1617,8 +1623,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 		in_rotameric >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];
 		in_rotameric >> prob;
 		//MaximCode
-		if ( basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				&& basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
+		if ( use_shapovalov_ ) {
 			in_rotameric >> minusLogProbability;
 		}
 		in_rotameric >> mean[ 1 ] >> mean[ 2 ] >> mean[ 3 ] >> mean[ 4 ];
@@ -1760,8 +1765,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		for ( Size ii = 1; ii <= T; ++ii )                  in_continmin >> rotwell[ ii ];
 		in_continmin >> base_prob;
 		//MaximCode
-		if ( basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				&& basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
+		if ( use_shapovalov_ ) {
 			in_continmin >> minusLogProbability;
 		}
 		for ( Size ii = 1; ii <= T; ++ii )                  in_continmin >> chimean[ ii ];

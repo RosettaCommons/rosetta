@@ -15,62 +15,64 @@
 #ifndef INCLUDED_core_init_score_function_corrections_hh
 #define INCLUDED_core_init_score_function_corrections_hh
 
+#include <utility/options/OptionCollection.hh>
 #include <string>
 
 namespace core {
 namespace init {
 
 /// @brief Reset a set of flags to their pre-talaris behavior
-void revert_to_pre_talaris_2013_defaults();
+void revert_to_pre_talaris_2013_defaults( utility::options::OptionCollection & options );
 
 /// @brief Initialize the "revert to before Talaris2013" mistake
-void init_revert_to_pre_talaris_2013_mistake();
+void init_revert_to_pre_talaris_2013_mistake( utility::options::OptionCollection & options );
 
 /// @brief Initialize the hbond Sp2 correction
 /// Deprecated as Talaris2013 becomes default.
-void init_hbond_sp2_correction();
+void init_hbond_sp2_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the FACTS correction
-void init_facts_correction();
+void init_facts_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -correct correction
-void init_correct_correction();
+void init_correct_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -shapovalov_lib_fixes_enable correction
-void init_shapovalov_lib_fixes_enable_correction();
+void init_shapovalov_lib_fixes_enable_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the _most recent_ beta score function (-beta)
-void init_beta_correction();
+void init_beta_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -beta_july15 score function
-void init_beta_july15_correction();
+void init_beta_july15_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -beta_nov15 score function
-void init_beta_nov15_correction();
+void init_beta_nov15_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -beta_nov16 score function
-void init_beta_nov16_correction();
+void init_beta_nov16_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the crystal refinement correction
-void init_crystal_refinement_correction();
+void init_crystal_refinement_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize nonideal bond geometry correction
-void init_nonideal_correction();
+void init_nonideal_correction( utility::options::OptionCollection & options );
 
 /// @brief restore the the score function to the Score12prime version
-void init_restore_score12prime();
+void init_restore_score12prime( utility::options::OptionCollection & options );
 
 /// @brief Initialize the latest and greatest score function parameters
-void init_score_function_corrections();
+void init_score_function_corrections( utility::options::OptionCollection & options );
 
 /// @brief Check if a score function is requested with incompatible option flags
 void check_score_function_sanity(
+	utility::options::OptionCollection const & options,
 	std::string const & scorefxn_key,
 	bool warn_only=false);
 
 /// @brief  Apply some DNA-specific mods that are still in testing phase; only if -corrections::newdna present
 void
-init_dna_correction();
+init_dna_correction( utility::options::OptionCollection & options );
 
 
 } // namespace

@@ -64,14 +64,16 @@ public:
 	SingleResidueDunbrackLibrary(
 		AA const aa,
 		Size const n_rotameric_chi,
-		bool dun02
+		bool dun02,
+		bool use_bicubic,
+		bool dun_entropy_correction,
+		core::Real prob_buried, // 0.98
+		core::Real prob_nonburied // 0.95
 	);
 
 	virtual ~SingleResidueDunbrackLibrary();
 
 public:
-
-	void read_options();
 
 	virtual void write_to_binary( utility::io::ozstream & out ) const;
 	virtual void read_from_binary( utility::io::izstream & in );
@@ -177,6 +179,12 @@ public:
 protected:
 	/// Read access for the derived class
 	bool dun02() const { return dun02_; }
+
+	/// Read access for the derived class
+	bool use_bicubic() const { return use_bicubic_; }
+
+	/// Read access for the derived class
+	bool dun_entropy_correction() const { return dun_entropy_correction_; }
 
 	/// Worker functions available to the derived classes
 
@@ -382,8 +390,14 @@ private:
 
 
 private:
-	/// data
+	////////////////////////
+	// Options settings
 	bool const dun02_; // Are we using the 2002 definitions for rotamer wells?
+	bool use_bicubic_; // Are we using a bicubic interpolation?
+	bool dun_entropy_correction_; // Are we applying the entropy correction?
+
+	/////////////
+	/// data
 	AA const aa_;
 	Size const n_rotameric_chi_;
 	utility::vector1< Size > n_chi_bins_;

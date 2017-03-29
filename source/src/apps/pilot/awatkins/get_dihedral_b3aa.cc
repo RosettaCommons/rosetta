@@ -64,6 +64,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclization.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
 // numeric headers
@@ -213,11 +214,17 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		// this comes almost directally from RotmerLibrary.cc::create_rotameric_dunlib()
 		SingleResidueDunbrackLibraryOP dunbrack_rotlib;
 		chemical::AA aan( rsd_type.aa() );
+		bool dun02( true );
+
+		bool use_bicubic = basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ]();
+		bool entropy_correction = basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ]();
+		core::Real prob_buried = basic::options::option[ basic::options::OptionKeys::packing::dunbrack_prob_buried ]();
+		core::Real prob_nonburied = basic::options::option[ basic::options::OptionKeys::packing::dunbrack_prob_nonburied ]();
 
 		switch ( n_rotlib_chi ) {
 		case 1 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >(aan, true);
+				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r1->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r1->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r1);
@@ -225,7 +232,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		}
 		case 2 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r2 =
-				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >(aan, true);
+				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >(aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r2->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r2->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r2);
@@ -233,7 +240,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		}
 		case 3 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r3 =
-				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >(aan, true);
+				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >(aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r3->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r3->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r3);
@@ -241,7 +248,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		}
 		case 4 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r4 =
-				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >(aan, true);
+				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >(aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r4->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r4->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r4);

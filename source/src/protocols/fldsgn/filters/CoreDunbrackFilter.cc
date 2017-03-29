@@ -148,7 +148,7 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 
 				Real fa_dun = ( copy_pose.energies().residue_total_energies( i ) )[ core::scoring::fa_dun ];
 				if ( fa_dun > fa_dun_danger_ ) {
-					tr << "CAUTION high dubrack score " << i << " " << name_from_aa( pose.aa( i ) ) << " " << rsd_sasa[ i ] << " "
+					tr << "CAUTION high dunbrack score " << i << " " << name_from_aa( pose.aa( i ) ) << " " << rsd_sasa[ i ] << " "
 						<< fa_dun << std::endl;
 					num_frustrated_residue ++;
 				}

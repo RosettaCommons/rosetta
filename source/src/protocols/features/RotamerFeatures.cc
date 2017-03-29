@@ -186,31 +186,14 @@ RotamerFeatures::report_features(
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace core::pack::dunbrack;
 
 	string library_name;
-	vector1< AA > rotameric_amino_acids;
-	vector1< Size > rotameric_n_chi;
-	vector1< Size > rotameric_n_bb;
 
-	vector1< AA > sraa;
-	vector1< Size > srnchi;
-	vector1< Size > srnbb;
-	vector1< bool > scind;
-	vector1< bool > sampind;
-	vector1< bool > sym;
-	vector1< Real > astr;
-
-	if ( option[ corrections::score::dun10 ] ) {
-		library_name = "dun10";
-		RotamerLibrary::initialize_dun10_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
-			sraa, srnchi, srnbb, scind, sampind, sym, astr );
-
-	} else {
-		library_name = "dun02";
-		RotamerLibrary::initialize_dun02_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb);
-	}
+	DunbrackAAParameterSet dps( option[ corrections::score::dun10 ] ? // Get value from actual RotamerLibrary?
+			DunbrackAAParameterSet::get_dun10_aa_parameters() :
+			DunbrackAAParameterSet::get_dun02_aa_parameters()
+	);
 
 	string insert_sql(
 		"INSERT INTO residue_rotamers ("
@@ -269,20 +252,20 @@ RotamerFeatures::report_features(
 		bool semi_rotameric(true);
 		Size nchi = 0;
 		Size n_bb = 0;
-		for ( Size ii=1; ii <= rotameric_amino_acids.size(); ++ii ) {
-			if ( rotameric_amino_acids[ii] == residue.aa() ) {
+		for ( Size ii=1; ii <= dps.rotameric_amino_acids.size(); ++ii ) {
+			if ( dps.rotameric_amino_acids[ii] == residue.aa() ) {
 				semi_rotameric = false;
-				nchi = rotameric_n_chi[ ii ];
-				n_bb = rotameric_n_bb[ ii ];
+				nchi = dps.rotameric_n_chi[ ii ];
+				n_bb = dps.rotameric_n_bb[ ii ];
 				break;
 			}
 		}
 
 		if ( semi_rotameric ) {
-			for ( Size ii=1; ii <= sraa.size(); ++ii ) {
-				if ( sraa[ii] == residue.aa() ) {
-					nchi = srnchi[ii];
-					n_bb = srnbb[ ii ];
+			for ( Size ii=1; ii <= dps.sraa.size(); ++ii ) {
+				if ( dps.sraa[ii] == residue.aa() ) {
+					nchi = dps.srnchi[ii];
+					n_bb = dps.srnbb[ ii ];
 					break;
 				}
 			}

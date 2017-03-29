@@ -17,7 +17,6 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
@@ -98,241 +97,241 @@ pre_talaris_2013_behavior_settings const restore_sc12_settings;
 static THREAD_LOCAL basic::Tracer TR( "core.init.score_function_corrections" );
 
 void
-init_revert_to_pre_talaris_2013_mistake() {
-	if ( option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
-		revert_to_pre_talaris_2013_defaults();
+init_revert_to_pre_talaris_2013_mistake( utility::options::OptionCollection & options ) {
+	if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		revert_to_pre_talaris_2013_defaults( options );
 	}
 }
 
-void revert_to_pre_talaris_2013_defaults() {
-	if ( ! option[ mistakes::chemical::pre_talaris2013_geometries ].user() ) {
-		option[ mistakes::chemical::pre_talaris2013_geometries ].default_value( restore_sc12_settings.pre_talaris2013_geometries );
+void revert_to_pre_talaris_2013_defaults( utility::options::OptionCollection & options ) {
+	if ( ! options[ mistakes::chemical::pre_talaris2013_geometries ].user() ) {
+		options[ mistakes::chemical::pre_talaris2013_geometries ].default_value( restore_sc12_settings.pre_talaris2013_geometries );
 	}
-	if ( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
-		option[ corrections::score::hb_sp2_chipen ].default_value( restore_sc12_settings.hb_sp2_chipen );
+	if ( ! options[ corrections::score::hb_sp2_chipen ].user() ) {
+		options[ corrections::score::hb_sp2_chipen ].default_value( restore_sc12_settings.hb_sp2_chipen );
 	}
-	if ( ! option[ corrections::score::hb_fade_energy ].user() ) {
-		option[ corrections::score::hb_fade_energy ].default_value( restore_sc12_settings.hb_fade_energy );
+	if ( ! options[ corrections::score::hb_fade_energy ].user() ) {
+		options[ corrections::score::hb_fade_energy ].default_value( restore_sc12_settings.hb_fade_energy );
 	}
-	if ( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
-		option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].default_value( restore_sc12_settings.hbond_measure_sp3acc_BAH_from_hvy );
+	if ( ! options[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
+		options[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].default_value( restore_sc12_settings.hbond_measure_sp3acc_BAH_from_hvy );
 	}
-	if ( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
-		option[ corrections::score::lj_hbond_hdis ].default_value( restore_sc12_settings.lj_hbond_hdis );
+	if ( ! options[ corrections::score::lj_hbond_hdis ].user() ) {
+		options[ corrections::score::lj_hbond_hdis ].default_value( restore_sc12_settings.lj_hbond_hdis );
 	}
-	if ( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
-		option[ corrections::score::lj_hbond_OH_donor_dis ].default_value( restore_sc12_settings.lj_hbond_OH_donor_dis );
+	if ( ! options[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
+		options[ corrections::score::lj_hbond_OH_donor_dis ].default_value( restore_sc12_settings.lj_hbond_OH_donor_dis );
 	}
-	if ( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
-		option[ corrections::score::hb_sp2_outer_width ].default_value( restore_sc12_settings.hb_sp2_outer_width );
+	if ( ! options[ corrections::score::hb_sp2_outer_width ].user() ) {
+		options[ corrections::score::hb_sp2_outer_width ].default_value( restore_sc12_settings.hb_sp2_outer_width );
 	}
-	if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
-		option[ corrections::chemical::expand_st_chi2sampling ].default_value( restore_sc12_settings.expand_st_chi2sampling );
+	if ( ! options[ corrections::chemical::expand_st_chi2sampling ].user() ) {
+		options[ corrections::chemical::expand_st_chi2sampling ].default_value( restore_sc12_settings.expand_st_chi2sampling );
 	}
-	if ( ! option[ score::weights ].user() ) {
-		option[ score::weights ].default_value( restore_sc12_settings.score_weights );
+	if ( ! options[ score::weights ].user() ) {
+		options[ score::weights ].default_value( restore_sc12_settings.score_weights );
 		/// Don't set the score12 weights patch if the user has provided a value for either score::weights or score::patch
-		if ( ! option[ score::patch ].user() ) {
+		if ( ! options[ score::patch ].user() ) {
 			utility::vector1< std::string > default_score_patch(1);
 			default_score_patch[1] = restore_sc12_settings.score_patch;
-			option[ score::patch ].default_value( default_score_patch );
+			options[ score::patch ].default_value( default_score_patch );
 		}
 	}
-	if ( ! option[ score::analytic_etable_evaluation ].user() ) {
-		option[ score::analytic_etable_evaluation ].default_value( restore_sc12_settings.analytic_etable_evaluation );
+	if ( ! options[ score::analytic_etable_evaluation ].user() ) {
+		options[ score::analytic_etable_evaluation ].default_value( restore_sc12_settings.analytic_etable_evaluation );
 	}
-	if ( ! option[ score::hbond_params ].user() ) {
-		option[ score::hbond_params ].default_value( restore_sc12_settings.hbond_params );
+	if ( ! options[ score::hbond_params ].user() ) {
+		options[ score::hbond_params ].default_value( restore_sc12_settings.hbond_params );
 	}
-	if ( ! option[ score::smooth_fa_elec ].user() ) {
-		option[ score::smooth_fa_elec ].default_value( restore_sc12_settings.smooth_fa_elec );
+	if ( ! options[ score::smooth_fa_elec ].user() ) {
+		options[ score::smooth_fa_elec ].default_value( restore_sc12_settings.smooth_fa_elec );
 	}
-	if ( ! option[ score::elec_min_dis ].user() ) {
-		option[ score::elec_min_dis ].default_value( restore_sc12_settings.elec_min_dis );
+	if ( ! options[ score::elec_min_dis ].user() ) {
+		options[ score::elec_min_dis ].default_value( restore_sc12_settings.elec_min_dis );
 	}
-	if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back("fa_standard:ONH2:LK_DGFREE:-10.0000");
 		params.push_back("fa_standard:NH2O:LK_DGFREE:-10.0000");
 		params.push_back("fa_standard:Narg:LK_DGFREE:-11.0000");
 		params.push_back("fa_standard:OH:LK_DGFREE:-6.7700" );
-		option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	}
 
-	if ( ! option[ corrections::score::dun10 ].user() ) {
-		option[corrections::score::dun10].default_value( restore_sc12_settings.dun10 );
+	if ( ! options[ corrections::score::dun10 ].user() ) {
+		options[corrections::score::dun10].default_value( restore_sc12_settings.dun10 );
 	}
 
-	if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
-		option[corrections::score::use_bicubic_interpolation].default_value( restore_sc12_settings.use_bicubic_interpolation );
+	if ( ! options[ corrections::score::use_bicubic_interpolation ].user() ) {
+		options[corrections::score::use_bicubic_interpolation].default_value( restore_sc12_settings.use_bicubic_interpolation );
 	}
-	if ( ! option[ qsar::weights ].user() ) {
-		option[ qsar::weights ].default_value( restore_sc12_settings.score_weights );
+	if ( ! options[ qsar::weights ].user() ) {
+		options[ qsar::weights ].default_value( restore_sc12_settings.score_weights );
 	}
-	if ( ! option[ ddg::min_cst_weights ].user() ) {
-		option[ ddg::min_cst_weights ].default_value( restore_sc12_settings.score_weights );
+	if ( ! options[ ddg::min_cst_weights ].user() ) {
+		options[ ddg::min_cst_weights ].default_value( restore_sc12_settings.score_weights );
 	}
-	if ( ! option[ score::pack_weights ].user() ) {
-		option[ score::pack_weights ].default_value( restore_sc12_settings.score_weights );
+	if ( ! options[ score::pack_weights ].user() ) {
+		options[ score::pack_weights ].default_value( restore_sc12_settings.score_weights );
 	}
 }
 
 
 void
-init_hbond_sp2_correction() {
-	if ( option[ corrections::hbond_sp2_correction ] ) {
+init_hbond_sp2_correction( utility::options::OptionCollection & options ) {
+	if ( options[ corrections::hbond_sp2_correction ] ) {
 		TR.Warning << "The -hbond_sp2_correction is deprecated.  The default talaris2013 score function should be relied upon instead." << std::endl;
 
 
 		// Note, the weight sets that go with the hbond_sp2_correction
 		// flag are handled in core/scoring/ScorefunctionFactory.hh
 
-		if ( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
-			option[ corrections::score::hb_sp2_chipen ].value( true );
+		if ( ! options[ corrections::score::hb_sp2_chipen ].user() ) {
+			options[ corrections::score::hb_sp2_chipen ].value( true );
 		}
 
-		if ( ! option[ corrections::score::hb_sp2_BAH180_rise ].user() ) {
-			option[ corrections::score::hb_sp2_BAH180_rise ].value( 0.75 );
+		if ( ! options[ corrections::score::hb_sp2_BAH180_rise ].user() ) {
+			options[ corrections::score::hb_sp2_BAH180_rise ].value( 0.75 );
 		}
 
-		if ( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
-			option[ corrections::score::hb_sp2_outer_width ].value( 0.357 );
+		if ( ! options[ corrections::score::hb_sp2_outer_width ].user() ) {
+			options[ corrections::score::hb_sp2_outer_width ].value( 0.357 );
 		}
 
-		if ( ! option[ corrections::score::hb_fade_energy ].user() ) {
-			option[ corrections::score::hb_fade_energy ].value( true );
+		if ( ! options[ corrections::score::hb_fade_energy ].user() ) {
+			options[ corrections::score::hb_fade_energy ].value( true );
 		}
 
-		if ( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
-			option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( true );
+		if ( ! options[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
+			options[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( true );
 		}
 
-		if ( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
-			option[ corrections::score::lj_hbond_hdis ].value( 1.75 );
+		if ( ! options[ corrections::score::lj_hbond_hdis ].user() ) {
+			options[ corrections::score::lj_hbond_hdis ].value( 1.75 );
 		}
 
-		if ( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
-			option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
+		if ( ! options[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
+			options[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
 		}
 
-		if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
-			option[ corrections::chemical::expand_st_chi2sampling ].value( true );
+		if ( ! options[ corrections::chemical::expand_st_chi2sampling ].user() ) {
+			options[ corrections::chemical::expand_st_chi2sampling ].value( true );
 		}
 
-		if ( ! option[ score::hbond_params ].user() ) {
-			option[ score::hbond_params ].value( "sp2_elec_params" );
+		if ( ! options[ score::hbond_params ].user() ) {
+			options[ score::hbond_params ].value( "sp2_elec_params" );
 		}
 
-		if ( ! option[ score::smooth_fa_elec ].user() ) {
-			option[ score::smooth_fa_elec ].value( true );
+		if ( ! options[ score::smooth_fa_elec ].user() ) {
+			options[ score::smooth_fa_elec ].value( true );
 		}
 
-		if ( ! option[ score::elec_min_dis ].user() ) {
-			option[ score::elec_min_dis ].value( 1.6 );
+		if ( ! options[ score::elec_min_dis ].user() ) {
+			options[ score::elec_min_dis ].value( 1.6 );
 		}
 
-		if ( ! option[ score::elec_r_option ].user() ) {
-			option[ score::elec_r_option ].value( false );
+		if ( ! options[ score::elec_r_option ].user() ) {
+			options[ score::elec_r_option ].value( false );
 		}
 
-		if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() || option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() || options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			std::cout << "overriding sc12 changes to the LK_DGFREEs" << std::endl;
 			utility::vector1< std::string > params;
 			params.push_back("fa_standard:ONH2:LK_DGFREE:-5.85");
 			params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8");
 			params.push_back("fa_standard:Narg:LK_DGFREE:-10.0");
 			params.push_back("fa_standard:OH:LK_DGFREE:-6.70" );
-			option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+			options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 		}
 
-		if ( ! option[ corrections::score::dun10 ].user() ) {
-			option[corrections::score::dun10].value( true );
+		if ( ! options[ corrections::score::dun10 ].user() ) {
+			options[corrections::score::dun10].value( true );
 		}
 
-		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
-			option[corrections::score::use_bicubic_interpolation].value( true );
+		if ( ! options[ corrections::score::use_bicubic_interpolation ].user() ) {
+			options[corrections::score::use_bicubic_interpolation].value( true );
 		}
 
-		if ( ! option[ score::weights ].user() ) {
-			option[ score::weights ].value( "sp2_correction" );
+		if ( ! options[ score::weights ].user() ) {
+			options[ score::weights ].value( "sp2_correction" );
 		}
 
-		if ( option[corrections::correct] ) {
+		if ( options[corrections::correct] ) {
 			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:correct flag.");
 		}
 
-		if ( option[ corrections::facts_default ] ) {
+		if ( options[ corrections::facts_default ] ) {
 			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:facts_default flag.");
 		}
 	}
 }
 
 void
-init_facts_correction() {
+init_facts_correction( utility::options::OptionCollection & options ) {
 	// corrections specific for FACTS: this has to precede -correct
-	if ( option[corrections::facts_default] ) {
+	if ( options[corrections::facts_default] ) {
 		// Call all the corrections from -correct
-		option[corrections::correct].value(true);
+		options[corrections::correct].value(true);
 
 		/// Below are FACTS specific flags
 		// Hbond LJ parameters
-		if ( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
-			option[corrections::score::lj_hbond_hdis].value(2.3);
+		if ( ! options[ corrections::score::lj_hbond_hdis ].user() ) {
+			options[corrections::score::lj_hbond_hdis].value(2.3);
 		}
 
-		if ( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
-			option[corrections::score::lj_hbond_OH_donor_dis].value(3.4);
+		if ( ! options[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
+			options[corrections::score::lj_hbond_OH_donor_dis].value(3.4);
 		}
 
 		// FACTS options - these are not fully optimized, can be changed in the future
-		if ( ! option[score::facts_GBpair_cut].user() ) {
-			option[score::facts_GBpair_cut].value(10.0);
+		if ( ! options[score::facts_GBpair_cut].user() ) {
+			options[score::facts_GBpair_cut].value(10.0);
 		}
 
-		if ( ! option[score::facts_dshift].user() ) {
+		if ( ! options[score::facts_dshift].user() ) {
 			utility::vector1< Real > params;
 			params.push_back( 0.0 );
 			params.push_back( 1.5 );
 			params.push_back( 1.5 );
 			params.push_back( 1.5 );
-			option[score::facts_dshift].value( params );
+			options[score::facts_dshift].value( params );
 		}
 
-		if ( ! option[score::facts_die].user() ) {
-			option[score::facts_die].value(1.0);
+		if ( ! options[score::facts_die].user() ) {
+			options[score::facts_die].value(1.0);
 		}
 
-		if ( ! option[score::facts_kappa].user() ) {
-			option[score::facts_kappa].value(12.0);
+		if ( ! options[score::facts_kappa].user() ) {
+			options[score::facts_kappa].value(12.0);
 		}
 
-		if ( ! option[score::facts_plane_to_self].user() ) {
-			option[score::facts_plane_to_self].value(true);
+		if ( ! options[score::facts_plane_to_self].user() ) {
+			options[score::facts_plane_to_self].value(true);
 		}
 
-		if ( ! option[score::facts_asp_patch].user() ) {
-			option[score::facts_asp_patch].value(3);
+		if ( ! options[score::facts_asp_patch].user() ) {
+			options[score::facts_asp_patch].value(3);
 		}
 
 		// Below are default for sp2correction which are FACTS defaults too
-		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
-			option[corrections::score::use_bicubic_interpolation].value(true);
+		if ( ! options[ corrections::score::use_bicubic_interpolation ].user() ) {
+			options[corrections::score::use_bicubic_interpolation].value(true);
 		}
 
-		if ( ! option[score::hbond_params].user() ) {
-			option[score::hbond_params ].value( "sp2_params" );
+		if ( ! options[score::hbond_params].user() ) {
+			options[score::hbond_params ].value( "sp2_params" );
 		}
 
-		if ( ! option[corrections::score::hb_sp2_chipen].user() ) {
-			option[corrections::score::hb_sp2_chipen].value(true);
+		if ( ! options[corrections::score::hb_sp2_chipen].user() ) {
+			options[corrections::score::hb_sp2_chipen].value(true);
 		}
 
-		if ( ! option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].user() ) {
-			option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].value(true);
+		if ( ! options[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].user() ) {
+			options[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].value(true);
 		}
 
-		if ( ! option[ corrections::score::hb_fade_energy ].user() ) {
-			option[ corrections::score::hb_fade_energy ].value( true );
+		if ( ! options[ corrections::score::hb_fade_energy ].user() ) {
+			options[ corrections::score::hb_fade_energy ].value( true );
 		}
 
 	} // end facts_default
@@ -340,137 +339,137 @@ init_facts_correction() {
 
 //MaximCode:
 void
-init_correct_correction() {
+init_correct_correction( utility::options::OptionCollection & options ) {
 
 	// set default corrections
-	if ( option[corrections::correct] ) {
+	if ( options[corrections::correct] ) {
 
 		/// Legacy warning
-		if ( ! option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		if ( ! options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			TR.Warning << "-correct does not behave the way it did before talaris2013 became default; consider adding the -restore_pre_talaris_2013_behavior flag" << std::endl;
 		}
 
 		// Pair energy
-		if ( ! option[ corrections::score::no_his_his_pairE ].user() ) {
-			option[corrections::score::no_his_his_pairE].value( true );
+		if ( ! options[ corrections::score::no_his_his_pairE ].user() ) {
+			options[corrections::score::no_his_his_pairE].value( true );
 		}
 
 		// p_aa_pp
-		if ( ! option[ corrections::score::p_aa_pp ].user() ) {
-			option[corrections::score::p_aa_pp].value( "scoring/score_functions/P_AA_pp/P_AA_pp_08.2009" );
+		if ( ! options[ corrections::score::p_aa_pp ].user() ) {
+			options[corrections::score::p_aa_pp].value( "scoring/score_functions/P_AA_pp/P_AA_pp_08.2009" );
 		}
-		if ( ! option[ corrections::score::p_aa_pp_nogridshift ].user() ) {
-			option[corrections::score::p_aa_pp_nogridshift].value( true );
+		if ( ! options[ corrections::score::p_aa_pp_nogridshift ].user() ) {
+			options[corrections::score::p_aa_pp_nogridshift].value( true );
 		}
 
 		//Ramachandran
-		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
-			option[corrections::score::rama_not_squared].value( true );
+		if ( ! options[ corrections::score::rama_not_squared ].user() ) {
+			options[corrections::score::rama_not_squared].value( true );
 		}
-		if ( ! option[ corrections::score::rama_map ].user() ) {
-			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
+		if ( ! options[ corrections::score::rama_map ].user() ) {
+			options[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
 
 		//rotamer library
-		if ( ! option[ corrections::score::dun02_file ].user() ) {
-			option[corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
+		if ( ! options[ corrections::score::dun02_file ].user() ) {
+			options[corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
 		}
 
 		//icoor
-		if ( ! option[ corrections::chemical::icoor_05_2009 ].user() ) {
-			option[corrections::chemical::icoor_05_2009].value( true );
+		if ( ! options[ corrections::chemical::icoor_05_2009 ].user() ) {
+			options[corrections::chemical::icoor_05_2009].value( true );
 		}
-		if ( ! option[ score::hbond_params ].user() ) {
-			option[score::hbond_params].value( "correct_params" );
-		}
-
-		if ( ! option[ corrections::score::ch_o_bond_potential ].user() ) {
-			option[ corrections::score::ch_o_bond_potential ].value("scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat");
+		if ( ! options[ score::hbond_params ].user() ) {
+			options[score::hbond_params].value( "correct_params" );
 		}
 
-		if ( ! option[ score::weights ].user() ) {
-			option[ score::weights ].value( "score12_w_corrections" );
+		if ( ! options[ corrections::score::ch_o_bond_potential ].user() ) {
+			options[ corrections::score::ch_o_bond_potential ].value("scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat");
+		}
+
+		if ( ! options[ score::weights ].user() ) {
+			options[ score::weights ].value( "score12_w_corrections" );
 		}
 	}
 }
 
 //MaximCode:
 void
-init_shapovalov_lib_fixes_enable_correction()
+init_shapovalov_lib_fixes_enable_correction( utility::options::OptionCollection & options )
 {
 	// set default corrections
-	if ( option[corrections::shapovalov_lib_fixes_enable] ) {
-		if ( option[corrections::shapovalov_lib::shap_dun10_enable] ) {
-			if ( ! option[ corrections::shapovalov_lib::shap_dun10_dir ].user() ) {
-				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_dun10_smooth_level ];
+	if ( options[corrections::shapovalov_lib_fixes_enable] ) {
+		if ( options[corrections::shapovalov_lib::shap_dun10_enable] ) {
+			if ( ! options[ corrections::shapovalov_lib::shap_dun10_dir ].user() ) {
+				std::string _smoothingRequsted = options[ corrections::shapovalov_lib::shap_dun10_smooth_level ];
 				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_0-0-0");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_0-0-0");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
 				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_2-2-2");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("2");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_2-2-2");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("2");
 				} else if ( _smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("low_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
 				} else if ( _smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("average_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_10-10-10");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("4");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_10-10-10");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("4");
 				} else if ( _smoothingRequsted.compare("5")==0 || _smoothingRequsted.compare("higher_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_20-20-20");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("5");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_20-20-20");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("5");
 				} else if ( _smoothingRequsted.compare("6")==0 || _smoothingRequsted.compare("highest_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_25-25-25");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("6");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_25-25-25");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("6");
 				} else {
-					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
-					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
+					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
+					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
 				}
 			} else {
-				option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("overriden");
+				options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("overriden");
 			}
 		}
 
 
-		if ( option[corrections::shapovalov_lib::shap_rama_enable] ) {
-			if ( ! option[ corrections::shapovalov_lib::shap_rama_map ].user() ) {
-				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_rama_smooth_level ];
+		if ( options[corrections::shapovalov_lib::shap_rama_enable] ) {
+			if ( ! options[ corrections::shapovalov_lib::shap_rama_map ].user() ) {
+				std::string _smoothingRequsted = options[ corrections::shapovalov_lib::shap_rama_smooth_level ];
 				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb");
-					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("1");
+					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb");
+					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("1");
 				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa50/all.ramaProb");
-					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("2");
+					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa50/all.ramaProb");
+					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("2");
 				} else if ( _smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("higher_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa37.5/all.ramaProb");
-					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("3");
+					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa37.5/all.ramaProb");
+					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("3");
 				} else if ( _smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("highest_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
-					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
+					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
+					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
 				} else {
-					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
-					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
+					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
+					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
 				}
 			} else {
-				option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("overriden");
+				options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("overriden");
 			}
 		}
 
 
-		if ( option[corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
-			if ( ! option[ corrections::shapovalov_lib::shap_p_aa_pp ].user() ) {
-				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
+		if ( options[corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
+			if ( ! options[ corrections::shapovalov_lib::shap_p_aa_pp ].user() ) {
+				std::string _smoothingRequsted = options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
 				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("low_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop");
-					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
+					options[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop");
+					options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
 				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("high_smooth")==0 ) {
-					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
-					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
+					options[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
+					options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
 				} else {
-					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
-					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
+					options[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
+					options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
 				}
 			} else {
-				option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("overriden");
+				options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("overriden");
 			}
 		}
 
@@ -480,79 +479,79 @@ init_shapovalov_lib_fixes_enable_correction()
 
 
 void
-init_crystal_refinement_correction() {
+init_crystal_refinement_correction( utility::options::OptionCollection & options ) {
 	//fpd  crystal-refinement specific changes
-	if ( option[cryst::crystal_refine] ) {
+	if ( options[cryst::crystal_refine] ) {
 		// use -correct rama fixes
-		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
-			option[corrections::score::rama_not_squared].value( true );
+		if ( ! options[ corrections::score::rama_not_squared ].user() ) {
+			options[corrections::score::rama_not_squared].value( true );
 		}
-		if ( ! option[ corrections::score::rama_map ].user() ) {
-			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
+		if ( ! options[ corrections::score::rama_map ].user() ) {
+			options[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
 
 		// read pdbs properly
-		if ( ! option[ in::missing_density_to_jump ].user() ) {
-			option[in::missing_density_to_jump].value( true );
+		if ( ! options[ in::missing_density_to_jump ].user() ) {
+			options[in::missing_density_to_jump].value( true );
 		}
-		if ( ! option[ in::preserve_crystinfo ].user() ) {
-			option[in::preserve_crystinfo].value( true );
+		if ( ! options[ in::preserve_crystinfo ].user() ) {
+			options[in::preserve_crystinfo].value( true );
 		}
 
 		// hacky way of letting centroid structures be scored against crystal data
-		if ( ! option[ out::file::no_output_cen ].user() ) {
-			option[out::file::no_output_cen].value( true );
+		if ( ! options[ out::file::no_output_cen ].user() ) {
+			options[out::file::no_output_cen].value( true );
 		}
 
 		// internal coordinate minimization change: don't dampen RB movement
-		if ( ! option[ optimization::scale_rb ].user() ) {
-			option[optimization::scale_rb].value( 1.0 );
+		if ( ! options[ optimization::scale_rb ].user() ) {
+			options[optimization::scale_rb].value( 1.0 );
 		}
 	}
 
 	// another nonspecific one
-	if ( option[edensity::score_symm_complex]() ) {
-		option[optimization::old_sym_min].value( true );
+	if ( options[edensity::score_symm_complex]() ) {
+		options[optimization::old_sym_min].value( true );
 	}
 }
 
 void
-init_beta_correction() {
+init_beta_correction( utility::options::OptionCollection & options ) {
 	// -beta activates most recent
-	if ( option[corrections::beta]() ) {
-		option[ corrections::beta_nov16 ].value(true);
+	if ( options[corrections::beta]() ) {
+		options[ corrections::beta_nov16 ].value(true);
 	}
-	if ( option[corrections::beta_cart]() ) {
-		option[ corrections::beta_nov16_cart ].value(true);
+	if ( options[corrections::beta_cart]() ) {
+		options[ corrections::beta_nov16_cart ].value(true);
 	}
-	if ( option[corrections::beta_patch]() ) {
+	if ( options[corrections::beta_patch]() ) {
 		utility_exit_with_message("-beta_patch no longer supported!  Use '-beta' (nov16) or '-beta_nov15_patch'");
 	}
-	if ( option[corrections::beta_nov15_patch]() ) {
-		if ( !option[corrections::beta_nov15]() ) {
+	if ( options[corrections::beta_nov15_patch]() ) {
+		if ( !options[corrections::beta_nov15]() ) {
 			utility_exit_with_message("-beta_nov15_patch _must_ be used with '-beta_nov15'");
 		}
 	}
 
 	// if multiple flags specified use the most recent
-	if ( option[corrections::beta_nov16]() || option[corrections::beta_nov16_cart]() ) {
+	if ( options[corrections::beta_nov16]() || options[corrections::beta_nov16_cart]() ) {
 		// incompatible
-		if ( option[corrections::score::rama_prepro_steep]() ) {
+		if ( options[corrections::score::rama_prepro_steep]() ) {
 			utility_exit_with_message("-rama_prepro_steep is incompatible with -beta_nov16.  Use beta_nov15 or remove this flag");
 		}
-		init_beta_nov16_correction();
-	} if ( option[corrections::beta_nov15]() || option[corrections::beta_nov15_cart]() ) {
-		init_beta_nov15_correction();
-	} else if ( option[corrections::beta_july15]() || option[corrections::beta_july15_cart]() ) {
-		init_beta_july15_correction();
+		init_beta_nov16_correction( options );
+	} if ( options[corrections::beta_nov15]() || options[corrections::beta_nov15_cart]() ) {
+		init_beta_nov15_correction( options );
+	} else if ( options[corrections::beta_july15]() || options[corrections::beta_july15_cart]() ) {
+		init_beta_july15_correction( options );
 	}
 }
 
 
 void
-init_beta_july15_correction() {
+init_beta_july15_correction( utility::options::OptionCollection & options ) {
 	// atom clone
-	if ( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:CH1:CH0" );
 		params.push_back( "fa_standard:CH1:CH0R" );
@@ -565,13 +564,13 @@ init_beta_july15_correction() {
 		params.push_back( "fa_standard:ONH2:ONHQ" );
 		params.push_back( "fa_standard:OOC:OOCE" );
 		params.push_back( "fa_standard:S:SH1" );
-		option[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
+		options[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom reassign
-	if ( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:ARG:CZ:CH0R" );
 		params.push_back( "fa_standard:ARG:NE:NtrR" );
@@ -593,13 +592,13 @@ init_beta_july15_correction() {
 		params.push_back( "fa_standard:TYR:CG:CH0" );
 		params.push_back( "fa_standard:TYR:CZ:CH0" );
 		params.push_back( "fa_standard:TYR:OH:OHY" );
-		option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
+		options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom properties
-	if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:aroC:LJ_RADIUS:1.99917604399492");
 		params.push_back( "fa_standard:aroC:LJ_WDEPTH:0.119406055088945");
@@ -733,13 +732,13 @@ init_beta_july15_correction() {
 		params.push_back( "fa_standard:SH1:LJ_WDEPTH:0.433201484520429");
 		params.push_back( "fa_standard:SH1:LK_DGFREE:3.84568907122574");
 		params.push_back( "fa_standard:SH1:LK_VOLUME:23.240");
-		option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// hbonds
-	if ( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "hbacc_AHX:0.94");
 		params.push_back( "hbacc_CXA:1.08");
@@ -748,11 +747,11 @@ init_beta_july15_correction() {
 		params.push_back( "hbacc_IMD:1.05");
 		params.push_back( "hbacc_IME:0.94");
 		params.push_back( "hbacc_PBA:0.94");
-		option[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
+		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
 	}
-	if ( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "hbdon_AHX:0.92");
 		params.push_back( "hbdon_AMO:1.01");
@@ -764,36 +763,36 @@ init_beta_july15_correction() {
 		params.push_back( "hbdon_IME:1.31");
 		params.push_back( "hbdon_IND:1.14");
 		params.push_back( "hbdon_PBA:1.26");
-		option[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
+		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// unmodifypot
-	if ( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
-		option[ basic::options::OptionKeys::score::unmodifypot ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+		options[ basic::options::OptionKeys::score::unmodifypot ].value(true);
 	}
 
 	// sigmoidal dielectric
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(137.0);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(137.0);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(9.75);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(9.75);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.44);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.44);
 	}
 
 	// weights file
-	if ( ! option[ score::weights ].user() ) {
-		if ( option[corrections::beta_july15_cart]() || option[optimization::nonideal]() ) {
-			option[ score::weights ].value( "beta_july15_cart.wts" );
+	if ( ! options[ score::weights ].user() ) {
+		if ( options[corrections::beta_july15_cart]() || options[optimization::nonideal]() ) {
+			options[ score::weights ].value( "beta_july15_cart.wts" );
 		} else {
-			option[ score::weights ].value( "beta_july15.wts" );
+			options[ score::weights ].value( "beta_july15.wts" );
 		}
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
@@ -801,21 +800,21 @@ init_beta_july15_correction() {
 }
 
 void
-init_beta_nov15_correction() {
+init_beta_nov15_correction( utility::options::OptionCollection & options ) {
 	// atom clone
-	if ( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:CH1:CH0" );
 		params.push_back( "fa_standard:Hpol:HS" );
 		params.push_back( "fa_standard:Ntrp:NtrR" );
 		params.push_back( "fa_standard:S:SH1" );
-		option[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
+		options[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom reassign
-	if ( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:ARG:NE:NtrR" );
 		params.push_back( "fa_standard:CYS:HG:HS" );
@@ -828,13 +827,13 @@ init_beta_nov15_correction() {
 		params.push_back( "fa_standard:TRP:CG:CH0" );
 		params.push_back( "fa_standard:TYR:CG:CH0" );
 		params.push_back( "fa_standard:TYR:CZ:CH0" );
-		option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
+		options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom properties
-	if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:aroC:LJ_RADIUS:2.01644141886894" );
 		params.push_back( "fa_standard:aroC:LJ_WDEPTH:0.0687751895736266" );
@@ -941,13 +940,13 @@ init_beta_nov15_correction() {
 		params.push_back( "fa_standard:SH1:LJ_WDEPTH:0.455970487944057" );
 		params.push_back( "fa_standard:SH1:LK_DGFREE:3.29164334466414" );
 		params.push_back( "fa_standard:SH1:LK_VOLUME:23.240" );
-		option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atomic charge
-	if ( ! option[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:ALA:1HB:0.0964166565538089" );
 		params.push_back( "fa_standard:ALA:2HB:0.0964166565538089" );
@@ -1670,13 +1669,13 @@ init_beta_nov15_correction() {
 		params.push_back( "fa_standard:DVA:HB:0.0964166565538089" );
 		params.push_back( "fa_standard:DVA:N:-0.604625484517759" );
 		params.push_back( "fa_standard:DVA:O:-0.688487076960265" );
-		option[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -set_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// patch charges
-	if ( ! option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:ALA:CtermProteinFull:C:0.215733145869844" );
 		params.push_back( "fa_standard:ALA:CtermProteinFull:O:-0.607866572934922" );
@@ -1729,13 +1728,13 @@ init_beta_nov15_correction() {
 		params.push_back( "fa_standard:DPR:NtermDPRteinFull:CG:-0.114597858161997" );
 		params.push_back( "fa_standard:DPR:NtermDPRteinFull:HA:0.0967978909413394" );
 		params.push_back( "fa_standard:DPR:NtermDPRteinFull:N:-0.0284736640828602" );
-		option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -set_patch_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// hbonds
-	if ( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "hbacc_AHX:1.18");
 		params.push_back( "hbacc_CXA:1.24");
@@ -1744,11 +1743,11 @@ init_beta_nov15_correction() {
 		params.push_back( "hbacc_IMD:1.13");
 		params.push_back( "hbacc_IME:1.16");
 		params.push_back( "hbacc_PBA:1.08");
-		option[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
+		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
 	}
-	if ( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "hbdon_AHX:1.03");
 		params.push_back( "hbdon_AMO:1.11");
@@ -1760,80 +1759,80 @@ init_beta_nov15_correction() {
 		params.push_back( "hbdon_IME:1.42");
 		params.push_back( "hbdon_IND:1.25");
 		params.push_back( "hbdon_PBA:1.41");
-		option[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
+		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov15 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// unmodifypot
-	if ( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
-		option[ basic::options::OptionKeys::score::unmodifypot ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+		options[ basic::options::OptionKeys::score::unmodifypot ].value(true);
 	}
 
 	// attractive hydrogens
-	if ( ! option[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
-		option[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
+		options[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
 	}
 
 	// sigmoidal dielectric
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(80.0);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(80.0);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.0);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.0);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.4);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.4);
 	}
 
 	// lkball
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.9);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.9);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
 	}
 
 	// roland's new smoothed p_aa_pp and fa_dun libraries
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(true);
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(true);
 	}
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
 	}
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
 	}
 
 	// bbdep omega
-	if ( ! option[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
-		option[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(true);
+	if ( ! options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(true);
 	}
 
 	// updated fa_elec countpair logic
-	if ( ! option[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(true);
 	}
 
 	// updated cartbonded parameters
-	if ( ! option[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
-		option[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
+	if ( ! options[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
+		options[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
 	}
 
 	// weights file
-	if ( ! option[ score::weights ].user() ) {
-		if ( option[ corrections::beta_nov15_patch ]() ) {
-			option[ score::weights ].value( "beta_nov15_patch.wts" );
-		} else if ( option[corrections::beta_nov15_cart]() || option[optimization::nonideal]() ) {
-			option[ score::weights ].value( "beta_nov15_cart.wts" );
+	if ( ! options[ score::weights ].user() ) {
+		if ( options[ corrections::beta_nov15_patch ]() ) {
+			options[ score::weights ].value( "beta_nov15_patch.wts" );
+		} else if ( options[corrections::beta_nov15_cart]() || options[optimization::nonideal]() ) {
+			options[ score::weights ].value( "beta_nov15_cart.wts" );
 		} else {
-			option[ score::weights ].value( "beta_nov15.wts" );
+			options[ score::weights ].value( "beta_nov15.wts" );
 		}
 
 	} else {
@@ -1841,37 +1840,37 @@ init_beta_nov15_correction() {
 	}
 
 	// protocol option but it should be default ...
-	if ( !option[optimization::default_max_cycles]() ) {
-		option[ optimization::default_max_cycles ].value( 200 );
+	if ( !options[optimization::default_max_cycles]() ) {
+		options[ optimization::default_max_cycles ].value( 200 );
 	}
 
 	// apply patch (optional)
-	if ( option[ corrections::beta_nov15_patch ]() ) {
-		if ( !option[ corrections::score::rama_prepro_steep ].user() ) {
-			option[ corrections::score::rama_prepro_steep ].value( true );
+	if ( options[ corrections::beta_nov15_patch ]() ) {
+		if ( !options[ corrections::score::rama_prepro_steep ].user() ) {
+			options[ corrections::score::rama_prepro_steep ].value( true );
 		}
-		if ( !option[ score::eval_intrares_elec_ST_only ].user() ) {
-			option[ score::eval_intrares_elec_ST_only ].value( true );
+		if ( !options[ score::eval_intrares_elec_ST_only ].user() ) {
+			options[ score::eval_intrares_elec_ST_only ].value( true );
 		}
 	}
 }
 
 void
-init_beta_nov16_correction() {
+init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 	// atom clone
-	if ( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:CH1:CH0" );
 		params.push_back( "fa_standard:Hpol:HS" );
 		params.push_back( "fa_standard:Ntrp:NtrR" );
 		params.push_back( "fa_standard:S:SH1" );
-		option[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
+		options[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom reassign
-	if ( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:ARG:NE:NtrR" );
 		params.push_back( "fa_standard:CYS:HG:HS" );
@@ -1884,13 +1883,13 @@ init_beta_nov16_correction() {
 		params.push_back( "fa_standard:TRP:CG:CH0" );
 		params.push_back( "fa_standard:TYR:CG:CH0" );
 		params.push_back( "fa_standard:TYR:CZ:CH0" );
-		option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
+		options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom properties
-	if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back("fa_standard:aroC:LJ_RADIUS:2.01644");
 		params.push_back("fa_standard:aroC:LJ_WDEPTH:0.06877");
@@ -1997,13 +1996,13 @@ init_beta_nov16_correction() {
 		params.push_back("fa_standard:SH1:LJ_WDEPTH:0.45597");
 		params.push_back("fa_standard:SH1:LK_DGFREE:2.07945");
 		params.push_back("fa_standard:SH1:LK_VOLUME:23.240");
-		option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atomic charge
-	if ( ! option[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back("fa_standard:ALA:1HB:0.12155");
 		params.push_back("fa_standard:ALA:2HB:0.12155");
@@ -2688,13 +2687,13 @@ init_beta_nov16_correction() {
 		params.push_back("fa_standard:DVA:HB:0.12155");
 		params.push_back("fa_standard:DVA:N:-0.77049");
 		params.push_back("fa_standard:DVA:O:-0.76511");
-		option[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -set_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// patch charges
-	if ( ! option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "fa_standard:ALA:CtermProteinFull:C:0.215733145869844" );
 		params.push_back("fa_standard:ALA:CtermProteinFull:C:0.35448");
@@ -2748,13 +2747,13 @@ init_beta_nov16_correction() {
 		params.push_back("fa_standard:DPR:NtermProteinFull:CG:-0.06516");
 		params.push_back("fa_standard:DPR:NtermProteinFull:HA:0.09167");
 		params.push_back("fa_standard:DPR:NtermProteinFull:N:-0.00127");
-		option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].value(params);
+		options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -set_patch_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// hbonds
-	if ( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "hbacc_AHX:1.15");
 		params.push_back( "hbacc_CXA:1.21");
@@ -2763,11 +2762,11 @@ init_beta_nov16_correction() {
 		params.push_back( "hbacc_IMD:1.13");
 		params.push_back( "hbacc_IME:1.17");
 		params.push_back( "hbacc_PBA:1.19");
-		option[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
+		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
 	}
-	if ( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back( "hbdon_AHX:1.00");
 		params.push_back( "hbdon_AMO:1.17");
@@ -2779,57 +2778,57 @@ init_beta_nov16_correction() {
 		params.push_back( "hbdon_IME:1.42");
 		params.push_back( "hbdon_IND:1.15");
 		params.push_back( "hbdon_PBA:1.45");
-		option[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
+		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// unmodifypot
-	if ( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
-		option[ basic::options::OptionKeys::score::unmodifypot ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+		options[ basic::options::OptionKeys::score::unmodifypot ].value(true);
 	}
 
 	// attractive hydrogens
-	if ( ! option[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
-		option[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
+		options[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
 	}
 
 	// new sp3 acceptor
-	if ( ! option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ].user() ) {
-		option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::hbond_new_sp3_acc ].user() ) {
+		options[ basic::options::OptionKeys::score::hbond_new_sp3_acc ].value(true);
 	}
 
 	// sigmoidal dielectric
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(79.931);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(79.931);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.648);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.648);
 	}
-	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.441546);
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.441546);
 	}
 
 	// lkball
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.709);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.709);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.811);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.811);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].value(1.0);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].value(1.0);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user() ) {
 		utility::vector1< core::Real > params;
 		params.push_back(2.828);
 		params.push_back(134.5);
@@ -2837,9 +2836,9 @@ init_beta_nov16_correction() {
 		params.push_back(2.828);
 		params.push_back(134.5);
 		params.push_back(180.0);
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].value(params);
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].value(params);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].user() ) {
 		utility::vector1< core::Real > params;
 		params.push_back(2.828);
 		params.push_back(109.3);
@@ -2847,111 +2846,111 @@ init_beta_nov16_correction() {
 		params.push_back(2.828);
 		params.push_back(109.3);
 		params.push_back(240.0);
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].value(params);
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].value(params);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].user() ) {
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].user() ) {
 		utility::vector1< core::Real > params;
 		params.push_back(2.828);
 		params.push_back(180);
 		params.push_back(0);
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].value(params);
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].value(params);
 	}
-	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user() ) {
-		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].value(2.828);
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].value(2.828);
 	}
 
 
 	// roland's new smoothed p_aa_pp and fa_dun libraries
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(true);
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(true);
 	}
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].value(false);
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].value(false);
 	}
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
 	}
-	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
-		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
 	}
 
 	// corrected torsions
-	if ( ! option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
-		option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd_beta_nov2016/");
+	if ( ! options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd_beta_nov2016/");
 	}
-	if ( ! option[ basic::options::OptionKeys::corrections::score::dun10_dir ].user() ) {
-		option[ basic::options::OptionKeys::corrections::score::dun10_dir ].value("rotamer/beta_nov2016");
+	if ( ! options[ basic::options::OptionKeys::corrections::score::dun10_dir ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::dun10_dir ].value("rotamer/beta_nov2016");
 	}
 
 
 	// bbdep omega
-	if ( ! option[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
-		option[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(true);
+	if ( ! options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(true);
 	}
 
 	// updated fa_elec countpair logic
-	if ( ! option[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
-		option[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(true);
+	if ( ! options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(true);
 	}
 
 	// updated cartbonded parameters
-	if ( ! option[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
-		option[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
+	if ( ! options[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
+		options[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
 	}
 
 	// weights file
-	if ( ! option[ score::weights ].user() ) {
-		if ( option[corrections::beta_nov16_cart]() || option[optimization::nonideal]() ) {
-			option[ score::weights ].value( "beta_nov16_cart.wts" );
+	if ( ! options[ score::weights ].user() ) {
+		if ( options[corrections::beta_nov16_cart]() || options[optimization::nonideal]() ) {
+			options[ score::weights ].value( "beta_nov16_cart.wts" );
 		} else {
-			option[ score::weights ].value( "beta_nov16.wts" );
+			options[ score::weights ].value( "beta_nov16.wts" );
 		}
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
 	}
 
 	// protocol option but it should be default ...
-	if ( !option[optimization::default_max_cycles]() ) {
-		option[ optimization::default_max_cycles ].value( 200 );
+	if ( !options[optimization::default_max_cycles]() ) {
+		options[ optimization::default_max_cycles ].value( 200 );
 	}
 }
 
 void
-init_nonideal_correction() {
+init_nonideal_correction( utility::options::OptionCollection & options ) {
 	//PTC set up for flexible bond geometries
-	if ( option[optimization::nonideal] ) {
+	if ( options[optimization::nonideal] ) {
 		// add jumps to missing densities so cart_bonded_length behaves correctly
-		if ( ! option[ in::missing_density_to_jump ].user() ) {
-			option[ in::missing_density_to_jump ].value( true );
+		if ( ! options[ in::missing_density_to_jump ].user() ) {
+			options[ in::missing_density_to_jump ].value( true );
 		}
 
 		// use dualspace relax protocol - start with internal coordinate, finish with Cartesian
-		if ( ! option[ relax::dualspace ].user() ) {
-			option[ relax::dualspace ].value( true );
+		if ( ! options[ relax::dualspace ].user() ) {
+			options[ relax::dualspace ].value( true );
 		}
 
 		// use flexible bond angles during internal coordinate stage of dualspace relax
-		if ( ! option[ relax::minimize_bond_angles ].user() ) {
-			option[ relax::minimize_bond_angles ].value( true );
+		if ( ! options[ relax::minimize_bond_angles ].user() ) {
+			options[ relax::minimize_bond_angles ].value( true );
 		}
 
 		// limit default_max_cycles
-		if ( ! option[ optimization::default_max_cycles ].user() ) {
-			option[ optimization::default_max_cycles ].value( 200 );
+		if ( ! options[ optimization::default_max_cycles ].user() ) {
+			options[ optimization::default_max_cycles ].value( 200 );
 		}
 
 		// enable for rtmin/minpack - use nonideal unless nonideal option is defined or cartesian is specified as true
-		if ( (! option[ optimization::scmin_nonideal ].user()) || option[ optimization::scmin_cartesian ] ) {
-			option[ optimization::scmin_nonideal ].value( true );
+		if ( (! options[ optimization::scmin_nonideal ].user()) || options[ optimization::scmin_cartesian ] ) {
+			options[ optimization::scmin_nonideal ].value( true );
 		}
 
 		// talaris2013_cart.wts - enables cart_bonded, disables pro_close, new reference weights
-		if ( ! option[ score::weights ].user() ) {
-			option[ score::weights ].value( "talaris2013_cart.wts" );
+		if ( ! options[ score::weights ].user() ) {
+			options[ score::weights ].value( "talaris2013_cart.wts" );
 		} else {
 			scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 			if ( !sfxn->ready_for_nonideal_scoring() ) {
-				TR.Warning << "option[ optimization::nonideal ] - scorefunction not set up for nonideal/Cartesian scoring (safe to ignore this warning if setting weights via RosettaScripts)" << std::endl;
+				TR.Warning << "options[ optimization::nonideal ] - scorefunction not set up for nonideal/Cartesian scoring (safe to ignore this warning if setting weights via RosettaScripts)" << std::endl;
 			}
 		}
 	}
@@ -2959,71 +2958,72 @@ init_nonideal_correction() {
 
 //void
 //revert_hbond_sp2_correction_to_score12() {
-// if( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
-//  option[ corrections::score::hb_sp2_chipen ].value( false );
+// if( ! options[ corrections::score::hb_sp2_chipen ].user() ) {
+//  options[ corrections::score::hb_sp2_chipen ].value( false );
 // }
 //
-// if( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
-//  option[ corrections::score::hb_sp2_outer_width ].value( 0.33333 );
+// if( ! options[ corrections::score::hb_sp2_outer_width ].user() ) {
+//  options[ corrections::score::hb_sp2_outer_width ].value( 0.33333 );
 // }
 //
-// if( ! option[ corrections::score::hb_fade_energy ].user() ) {
-//  option[ corrections::score::hb_fade_energy ].value( false );
+// if( ! options[ corrections::score::hb_fade_energy ].user() ) {
+//  options[ corrections::score::hb_fade_energy ].value( false );
 // }
 //
-// if( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
-//  option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( false );
+// if( ! options[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
+//  options[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( false );
 // }
 //
-// if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
-//  option[ corrections::chemical::expand_st_chi2sampling ].value( false );
+// if ( ! options[ corrections::chemical::expand_st_chi2sampling ].user() ) {
+//  options[ corrections::chemical::expand_st_chi2sampling ].value( false );
 // }
 //
-// if( ! option[ score::hbond_params ].user() ) {
-//  option[ score::hbond_params ].value( "score12_params" );
+// if( ! options[ score::hbond_params ].user() ) {
+//  options[ score::hbond_params ].value( "score12_params" );
 // }
 //
-// if( ! option[ score::smooth_fa_elec ].user() ) {
-//  option[ score::smooth_fa_elec ].value( false );
+// if( ! options[ score::smooth_fa_elec ].user() ) {
+//  options[ score::smooth_fa_elec ].value( false );
 // }
 //
-// if( ! option[ score::elec_min_dis ].user() ) {
-//  option[ score::elec_min_dis ].value( 1.5 );
+// if( ! options[ score::elec_min_dis ].user() ) {
+//  options[ score::elec_min_dis ].value( 1.5 );
 // }
 //
 //}
 
 
 void
-init_restore_score12prime() {
-	if ( option[ corrections::score::score12prime ] ) {
-		revert_to_pre_talaris_2013_defaults();
-		option[ score::weights ].value( "score12prime.wts" );
-		option[ score::patch ].value( "" );
+init_restore_score12prime( utility::options::OptionCollection & options ) {
+	if ( options[ corrections::score::score12prime ] ) {
+		revert_to_pre_talaris_2013_defaults( options );
+		options[ score::weights ].value( "score12prime.wts" );
+		options[ score::patch ].value( "" );
 	}
 }
 
 //MaximCode:
 void
-init_score_function_corrections(){
-	init_revert_to_pre_talaris_2013_mistake();
-	init_hbond_sp2_correction();
-	init_facts_correction();
-	init_correct_correction();
-	init_crystal_refinement_correction();
-	init_beta_correction();
-	init_nonideal_correction(); // keep after beta
-	init_shapovalov_lib_fixes_enable_correction(); // keep after beta
-	init_dna_correction();
+init_score_function_corrections( utility::options::OptionCollection & options ){
+	init_revert_to_pre_talaris_2013_mistake( options );
+	init_hbond_sp2_correction( options );
+	init_facts_correction( options );
+	init_correct_correction( options );
+	init_crystal_refinement_correction( options );
+	init_beta_correction( options );
+	init_nonideal_correction( options ); // keep after beta
+	init_shapovalov_lib_fixes_enable_correction( options ); // keep after beta
+	init_dna_correction( options );
 }
 
 void
 check_score_function_sanity(
+	utility::options::OptionCollection const & options,
 	std::string const & scorefxn_key,
 	bool only_warn
 ) {
 	if ( scorefxn_key == "score12" ) {
-		if ( ! option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		if ( ! options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			TR.Error
 				<< "**********************************************" << std::endl
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
@@ -3038,7 +3038,7 @@ check_score_function_sanity(
 			}
 		}
 	} else if ( scorefxn_key == "talaris2013" ) {
-		if ( option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			TR.Error
 				<< "**********************************************" << std::endl
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
@@ -3057,7 +3057,7 @@ check_score_function_sanity(
 }
 
 void
-init_dna_correction()
+init_dna_correction( utility::options::OptionCollection & options )
 {
 
 	utility::vector1< std::string > dna_residue_types;
@@ -3066,7 +3066,7 @@ init_dna_correction()
 	dna_residue_types.push_back("GUA");
 	dna_residue_types.push_back("THY");
 
-	if ( option[ corrections::newdna ] ) {
+	if ( options[ corrections::newdna ] ) {
 
 		{ // cloning atomtypes
 			utility::vector1< std::string > mods;
@@ -3078,17 +3078,17 @@ init_dna_correction()
 			mods.push_back( "fa_standard:Phos:Pdna" ); // Phos in phosphate backbone
 			mods.push_back( "fa_standard:OCbb:OBdd" ); // carbonyl oxygens in the bases
 
-			if ( basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+			if ( options[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
 				/// add these at the end so they take precedence
 				utility::vector1< std::string > const user_mods
-					( basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ]() );
+					( options[ basic::options::OptionKeys::chemical::clone_atom_types ]() );
 				for ( Size i=1; i<= user_mods.size(); ++i ) {
 					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
 						mods.push_back( user_mods[i] );
 					}
 				}
 			}
-			basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ].value( mods );
+			options[ basic::options::OptionKeys::chemical::clone_atom_types ].value( mods );
 
 		}
 
@@ -3097,17 +3097,17 @@ init_dna_correction()
 			mods.push_back( "fa_standard:Pdna:LK_DGFREE:-4.1" ); // from way back, Jim H., based on S
 			mods.push_back( "fa_standard:Pdna:LK_VOLUME:14.7" ); // -- ditto --
 
-			if ( basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+			if ( options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 				/// add these at the end so they take precedence
 				utility::vector1< std::string > const user_mods
-					( basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ]() );
+					( options[ basic::options::OptionKeys::chemical::set_atom_properties ]() );
 				for ( Size i=1; i<= user_mods.size(); ++i ) {
 					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
 						mods.push_back( user_mods[i] );
 					}
 				}
 			}
-			basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ].value( mods );
+			options[ basic::options::OptionKeys::chemical::set_atom_properties ].value( mods );
 		}
 
 
@@ -3133,17 +3133,17 @@ init_dna_correction()
 			mods.push_back( "fa_standard:THY:O2:OBdd" );
 			mods.push_back( "fa_standard:THY:O4:OBdd" );
 
-			if ( basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+			if ( options[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
 				/// add these at the end so they take precedence
 				utility::vector1< std::string > const user_mods
-					( basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ]() );
+					( options[ basic::options::OptionKeys::chemical::reassign_atom_types ]() );
 				for ( Size i=1; i<= user_mods.size(); ++i ) {
 					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
 						mods.push_back( user_mods[i] );
 					}
 				}
 			}
-			basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value( mods );
+			options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value( mods );
 		}
 
 		{ // reassigning icoor values
@@ -3165,17 +3165,17 @@ init_dna_correction()
 			}
 
 
-			if ( basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ].user() ) {
+			if ( options[ basic::options::OptionKeys::chemical::reassign_icoor ].user() ) {
 				/// add these at the end so they take precedence
 				utility::vector1< std::string > const user_mods
-					( basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ]() );
+					( options[ basic::options::OptionKeys::chemical::reassign_icoor ]() );
 				for ( Size i=1; i<= user_mods.size(); ++i ) {
 					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
 						mods.push_back( user_mods[i] );
 					}
 				}
 			}
-			basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ].value( mods );
+			options[ basic::options::OptionKeys::chemical::reassign_icoor ].value( mods );
 		}
 
 

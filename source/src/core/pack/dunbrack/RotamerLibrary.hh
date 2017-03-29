@@ -38,12 +38,11 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/io/izstream.fwd.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 
 // Numeric headers
-#include <numeric/random/random.fwd.hh>
 
 // C++ headers
 #include <map>
@@ -96,6 +95,38 @@ subtract_chi_angles(
 	int chino
 );
 
+
+/// @brief A small structure to hold overview parameters about the Dunbrack Libraries
+struct DunbrackAAParameterSet {
+public:
+	utility::vector1< chemical::AA > rotameric_amino_acids;
+	utility::vector1< Size > rotameric_n_chi;
+	utility::vector1< Size > rotameric_n_bb;
+
+	/// AA code for entry i
+	utility::vector1< chemical::AA > sraa;
+	/// Number of rotameric chi for entry i; the index of the non-rotameric chi is +1 of the value stored.
+	utility::vector1< Size > srnchi;
+	/// N bb
+	utility::vector1< Size > srnbb;
+	/// Decision: SCore the nonrotameric chi in a backbone INDependent manner?
+	utility::vector1< bool > scind;
+	/// Decision: SAMPle the nonrotameric chi in a backbone INDependent manner?
+	utility::vector1< bool > sampind;
+	/// Is there symmetry about the rotameric chi?  If so, periodicity is 180 degrees, else, 360.
+	/// Furthermore, if it's symmetric, then the bbdep sampling is at 5 degree intervals and
+	/// the bbind is at 0.5 degree intervals; otherwise, bbdep is at 10 degrees, and bbind is at 1.
+	utility::vector1< bool > sym;
+	/// At what starting angle does the chi data come from?
+	utility::vector1< Real > astr;
+
+public:
+
+	static DunbrackAAParameterSet get_dun10_aa_parameters();
+
+	static DunbrackAAParameterSet get_dun02_aa_parameters();
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief A class to manage the Dunbrack Rotamer Libraries
 /// @details This class no longer manages arbitrary rotamer libraries.
@@ -112,6 +143,15 @@ public:
 	typedef chemical::ResidueType ResidueType;
 
 public:
+
+	/// @brief Make a new RotamerLibrary based on the option collection
+	/// @details The addtion of this constructor means that RotamerLibrary
+	/// is no longer a true singleton. That said, the anticipated usage of
+	/// RotamerLibrary is to use the single version initialized from the
+	/// default global option collection, which is provided by RotamerLibrary::get_instance()
+	/// The options-dependent constructor is provided for advanced usage only.
+	RotamerLibrary( utility::options::OptionCollection const & options );
+
 	virtual ~RotamerLibrary();
 
 	Real
@@ -289,32 +329,11 @@ private:
 
 	SingleResidueDunbrackLibraryOP
 	create_srdl(
-		chemical::AA aa_in
+		chemical::AA aa_in,
+		DunbrackAAParameterSet const & ps
 	) const;
 
 public:
-	static
-	void
-	initialize_dun10_aa_parameters(
-		utility::vector1< chemical::AA > & rotameric_amino_acids,
-		utility::vector1< Size > & rotameric_n_chi,
-		utility::vector1< Size > & rotameric_n_bb,
-		utility::vector1< chemical::AA > & sraa,
-		utility::vector1< Size > & srnchi,
-		utility::vector1< Size > & srnbb,
-		utility::vector1< bool > & scind,
-		utility::vector1< bool > & sampind,
-		utility::vector1< bool > & sym,
-		utility::vector1< Real > & astr
-	);
-
-	static
-	void
-	initialize_dun02_aa_parameters(
-		utility::vector1< chemical::AA > & rotameric_amino_acids,
-		utility::vector1< Size > & rotameric_n_chi,
-		utility::vector1< Size > & rotameric_n_bb
-	);
 
 	static
 	void
@@ -329,17 +348,45 @@ private:
 	write_to_binary( utility::io::ozstream & out ) const;
 
 	/// @brief Initialize the RotamerLibrary from the stored binary
-	/// @details Invoked through create_singleron_instance()
+	/// @details Invoked through constructor.
 	/// Not threadsafe in itself. Do not call directly.
 	void
 	read_from_binary( utility::io::izstream & in );
 
 
 	RotamerLibrary();
+
+	void
+	initialize_from_options( utility::options::OptionCollection const & options );
+
 	RotamerLibrary( RotamerLibrary const & ); // unimplemented
 	RotamerLibrary const & operator = ( RotamerLibrary const & ); // unimplemented
 
 private:
+
+	//////////////////////////
+	// Initialization options
+
+	bool no_binary_dunlib_;
+	bool dont_rewrite_dunbrack_database_;
+
+	bool use_bicubic_;
+	bool entropy_correction_;
+	core::Real prob_buried_;
+	core::Real prob_nonburied_;
+
+	std::string dun02_file_;
+
+	bool dun10_;
+	std::string dun10_dir_;
+
+	bool shapovalov_lib_fixes_enable_;
+	bool shap_dun10_enable_;
+	std::string shap_dun10_dir_;
+	std::string shap_dun10_smooth_level_;
+
+	/////////////////////////////
+	// Data members
 
 	// NOTE: If you make the data in this singleton mutable,
 	// you will need to add a ReadWriteMutex to make it threadsafe.

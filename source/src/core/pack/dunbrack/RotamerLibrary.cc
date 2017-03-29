@@ -34,9 +34,10 @@
 // Basic headers
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
@@ -369,7 +370,39 @@ void rotamer_from_chi_02(Real4 const & chi, chemical::AA const res, Size nchi,
 RotamerLibrary::RotamerLibrary():
 	aa_libraries_( chemical::num_canonical_aas ) // Resize with default (empty OP) constructor
 {
+	this->initialize_from_options( basic::options::option );
 	this->create_fa_dunbrack_libraries();
+}
+
+RotamerLibrary::RotamerLibrary( utility::options::OptionCollection const & options ) :
+	aa_libraries_( chemical::num_canonical_aas ) // Resize with default (empty OP) constructor
+{
+	this->initialize_from_options( options );
+	this->create_fa_dunbrack_libraries();
+}
+
+void
+RotamerLibrary::initialize_from_options( utility::options::OptionCollection const & options ) {
+	using namespace basic::options::OptionKeys;
+
+	no_binary_dunlib_ = options[ in::file::no_binary_dunlib ]();
+	dont_rewrite_dunbrack_database_ = options[ out::file::dont_rewrite_dunbrack_database ]();
+
+	use_bicubic_ = options[ corrections::score::use_bicubic_interpolation ]();
+	entropy_correction_ = options[ corrections::score::dun_entropy_correction ]();
+	prob_buried_ = options[ packing::dunbrack_prob_buried ]();
+	prob_nonburied_ = options[ packing::dunbrack_prob_nonburied ]();
+
+	dun02_file_ = options[ corrections::score::dun02_file ]();
+
+	dun10_ = options[ corrections::score::dun10 ]();
+	dun10_dir_ = options[ corrections::score::dun10_dir ]();
+
+	shapovalov_lib_fixes_enable_ = options[ corrections::shapovalov_lib_fixes_enable ]();
+	shap_dun10_enable_ = options[ corrections::shapovalov_lib::shap_dun10_enable ]();
+	shap_dun10_dir_ = options[ corrections::shapovalov_lib::shap_dun10_dir ]();
+	shap_dun10_smooth_level_ = options[ corrections::shapovalov_lib::shap_dun10_smooth_level ]();
+
 }
 
 RotamerLibrary::~RotamerLibrary() {
@@ -473,7 +506,7 @@ RotamerLibrary::get_library_by_aa( chemical::AA const & aa ) const
 void
 RotamerLibrary::create_fa_dunbrack_libraries() {
 	//MaximCode
-	if ( basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] ) {
+	if ( shapovalov_lib_fixes_enable_ ) {
 		TR << "shapovalov_lib_fixes_enable option is true." << std::endl;
 	} else {
 		//MaximCode
@@ -496,7 +529,7 @@ RotamerLibrary::decide_read_from_binary() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[in::file::no_binary_dunlib] ) {
+	if ( no_binary_dunlib_ ) {
 		return false;
 	}
 
@@ -506,11 +539,8 @@ RotamerLibrary::decide_read_from_binary() const {
 	}
 
 	//MaximCode
-	if (
-			option[ corrections::shapovalov_lib_fixes_enable ] &&
-			option[ corrections::shapovalov_lib::shap_dun10_enable ]
-			) {
-		std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_dun10_smooth_level ];
+	if ( shapovalov_lib_fixes_enable_ && shap_dun10_enable_ ) {
+		std::string _smoothingRequsted = shap_dun10_smooth_level_;
 		std::string _smoothingAsKeyword = "undefined";
 
 		if ( _smoothingRequsted.compare("1")==0 ) {
@@ -530,7 +560,7 @@ RotamerLibrary::decide_read_from_binary() const {
 		}
 		TR << "shapovalov_lib::shap_dun10_smooth_level of " << _smoothingRequsted << "( aka " << _smoothingAsKeyword << " )" << " got activated." << std::endl;
 	}
-	if ( option[ corrections::shapovalov_lib_fixes_enable ] ) {
+	if ( shapovalov_lib_fixes_enable_ ) {
 		TR << "Binary rotamer library selected: " << binary_filename << std::endl;
 	}
 
@@ -550,7 +580,7 @@ RotamerLibrary::decide_read_from_binary() const {
 	}
 
 	/// Look for specific objections for the 02 or 08 libraries (if any exist!)
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		if ( !decide_read_from_binary_10() ) {
 			return false;
 		}
@@ -586,7 +616,7 @@ bool RotamerLibrary::binary_is_up_to_date(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		return binary_is_up_to_date_10(binlib);
 	} else {
 		return binary_is_up_to_date_02(binlib);
@@ -627,25 +657,11 @@ bool RotamerLibrary::binary_is_up_to_date_10(
 	boost::int32_t nsemirotameric(0);
 	binlib.read((char*) &nsemirotameric, sizeof(boost::int32_t));
 
-	utility::vector1< chemical::AA > rotameric_amino_acids;
-	utility::vector1< Size > rotameric_n_chi;
-	utility::vector1< Size > rotameric_n_bb;
-
-	utility::vector1< chemical::AA > sraa;
-	utility::vector1< Size > srnchi;
-	utility::vector1< Size > srnbb;
-	utility::vector1< bool > scind;
-	utility::vector1< bool > sampind;
-	utility::vector1< bool > sym;
-	utility::vector1< Real > astr;
-
-	initialize_dun10_aa_parameters(
-		rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
-		sraa, srnchi, srnbb, scind, sampind, sym, astr );
+	DunbrackAAParameterSet dps( DunbrackAAParameterSet::get_dun10_aa_parameters() );
 
 	/// 2.
-	if ( static_cast< Size > (nrotameric) != rotameric_amino_acids.size() ) return false;
-	if ( static_cast< Size > (nsemirotameric) != sraa.size() ) return false;
+	if ( static_cast< Size > (nrotameric) != dps.rotameric_amino_acids.size() ) return false;
+	if ( static_cast< Size > (nsemirotameric) != dps.sraa.size() ) return false;
 
 	boost::int32_t * rotaa_bin   = new boost::int32_t[ nrotameric ];
 	boost::int32_t * rot_nchi_bin= new boost::int32_t[ nrotameric ];
@@ -668,27 +684,27 @@ bool RotamerLibrary::binary_is_up_to_date_10(
 	binlib.read( (char*) astr_bin, nsemirotameric * sizeof( Real  ));
 
 	bool good( true );
-	for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
-		if ( rotaa_bin[ ii - 1 ] != static_cast< boost::int32_t > ( rotameric_amino_acids[ ii ] ) ) good = false;
-		if ( rot_nchi_bin[ ii - 1 ] != static_cast< boost::int32_t > ( rotameric_n_chi[ ii ] ) ) good = false;
+	for ( Size ii = 1; ii <= dps.rotameric_amino_acids.size(); ++ii ) {
+		if ( rotaa_bin[ ii - 1 ] != static_cast< boost::int32_t > ( dps.rotameric_amino_acids[ ii ] ) ) good = false;
+		if ( rot_nchi_bin[ ii - 1 ] != static_cast< boost::int32_t > ( dps.rotameric_n_chi[ ii ] ) ) good = false;
 	}
-	for ( Size ii = 1; ii <= sraa.size(); ++ii ) {
-		if ( sraa_bin[ii - 1] != static_cast<boost::int32_t>(sraa[ii]) ) {
+	for ( Size ii = 1; ii <= dps.sraa.size(); ++ii ) {
+		if ( sraa_bin[ii - 1] != static_cast<boost::int32_t>(dps.sraa[ii]) ) {
 			good = false;
 		}
-		if ( srnchi_bin[ii - 1] != static_cast<boost::int32_t>(srnchi[ii]) ) {
+		if ( srnchi_bin[ii - 1] != static_cast<boost::int32_t>(dps.srnchi[ii]) ) {
 			good = false;
 		}
-		if ( scind_bin[ii - 1] != static_cast<boost::int32_t>(scind[ii]) ) {
+		if ( scind_bin[ii - 1] != static_cast<boost::int32_t>(dps.scind[ii]) ) {
 			good = false;
 		}
-		if ( sampind_bin[ii - 1] != static_cast<boost::int32_t>(sampind[ii]) ) {
+		if ( sampind_bin[ii - 1] != static_cast<boost::int32_t>(dps.sampind[ii]) ) {
 			good = false;
 		}
-		if ( sym_bin[ii - 1] != static_cast<boost::int32_t>(sym[ii]) ) {
+		if ( sym_bin[ii - 1] != static_cast<boost::int32_t>(dps.sym[ii]) ) {
 			good = false;
 		}
-		if ( astr_bin[ii - 1] != astr[ii] ) {
+		if ( astr_bin[ii - 1] != dps.astr[ii] ) {
 			good = false;
 		}
 	}
@@ -714,10 +730,10 @@ bool RotamerLibrary::decide_write_binary() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[in::file::no_binary_dunlib] ) {
+	if ( no_binary_dunlib_ ) {
 		return false;
 	}
-	if ( option[out::file::dont_rewrite_dunbrack_database] ) {
+	if ( dont_rewrite_dunbrack_database_ ) {
 		return false;
 	}
 
@@ -744,7 +760,7 @@ bool RotamerLibrary::decide_write_binary() const {
 	/// if we get this far, then the binary file either doesn't exist or isn't up-to-date.
 
 	/// check if there are any objections to writing the library
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		if ( !decide_write_binary_10() ) {
 			return false;
 		}
@@ -772,18 +788,17 @@ bool RotamerLibrary::decide_write_binary_10() const {
 std::string RotamerLibrary::get_library_name_02() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	return basic::database::full_name(option[corrections::score::dun02_file]);
+	return basic::database::full_name( dun02_file_ );
 }
 
 std::string RotamerLibrary::get_library_name_10() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	std::string dirname;
-	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-		dirname = basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir];
+	if ( ! shapovalov_lib_fixes_enable_ || ! shap_dun10_enable_ ) {
+		dirname = dun10_dir_;
 	} else {
-		dirname = basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir];
+		dirname = shap_dun10_dir_;
 	}
 	// The dun10 directory can be a non-database directory
 	if ( utility::file::file_exists( dirname ) && utility::file::is_directory( dirname ) ) {
@@ -798,7 +813,7 @@ std::string RotamerLibrary::get_binary_name() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		return get_binary_name_10();
 	} else {
 		return get_binary_name_02();
@@ -809,18 +824,17 @@ std::string RotamerLibrary::get_binary_name_02(bool for_writing /*=false*/ ) con
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// Keep the binaries for multiple dun02 libraries seperate.
-	return basic::database::full_cache_name( option[corrections::score::dun02_file] + ".Dunbrack02.lib.bin",
+	return basic::database::full_cache_name( dun02_file_ + ".Dunbrack02.lib.bin",
 		get_library_name_02(),
 		for_writing );
 }
 
 std::string RotamerLibrary::get_binary_name_10(bool for_writing /*=false*/ ) const {
 	std::string dirname;
-	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-		dirname = basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir];
+	if ( ! shapovalov_lib_fixes_enable_ || ! shap_dun10_enable_ ) {
+		dirname = dun10_dir_;
 	} else {
-		dirname = basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir];
+		dirname = shap_dun10_dir_;
 	}
 
 	return basic::database::full_cache_name( dirname + "/Dunbrack10.lib.bin",
@@ -898,7 +912,7 @@ void RotamerLibrary::create_fa_dunbrack_libraries_from_ASCII() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		return create_fa_dunbrack_libraries_10_from_ASCII();
 	} else {
 		return create_fa_dunbrack_libraries_02_from_ASCII();
@@ -909,7 +923,7 @@ void RotamerLibrary::create_fa_dunbrack_libraries_from_binary() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		return create_fa_dunbrack_libraries_10_from_binary();
 	} else {
 		return create_fa_dunbrack_libraries_02_from_binary();
@@ -924,6 +938,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_02_from_ASCII()
 	////////////////////////////////////////////
 	//// DATA FOR THE ROTAMERIC AMINO ACIDS
 	////////////////////////////////////////////
+
 	utility::vector1< Size > nchi_for_aa( num_canonical_aas, 0 );
 	utility::vector1< Size > nbb_for_aa( num_canonical_aas, 0 );
 	Size nrot_aas;
@@ -1042,48 +1057,15 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 	// Note: No Backbone-Independent NRCHI representation in '10 library
 	// std::string const bbind_probs   = ".Probabilities.lib";
 
-	////////////////////////////////////////////
-	//// DATA FOR THE ROTAMERIC AMINO ACIDS
-	////////////////////////////////////////////
-	utility::vector1< chemical::AA > rotameric_amino_acids;
-	utility::vector1< Size > rotameric_n_chi;
-	utility::vector1< Size > rotameric_n_bb;
+	DunbrackAAParameterSet dps( DunbrackAAParameterSet::get_dun10_aa_parameters() );
+
 	utility::vector1< Size > memory_use_rotameric;
+	utility::vector1< Size > memory_use_semirotameric;
 
-	////////////////////////////////////////////
-	//// DATA FOR THE SEMI-ROTAMERIC AMINO ACIDS
-	////////////////////////////////////////////
-
-	/// AA code for entry i
-	utility::vector1<chemical::AA> sraa;
-	/// Number of rotameric chi for entry i; the index of the non-rotameric chi is +1 of the value stored.
-	utility::vector1< Size > srnchi;
-	/// N bb
-	utility::vector1< Size > srnbb;
-	/// Decision: SCore the nonrotameric chi in a backbone INDependent manner?
-	utility::vector1<bool> scind;
-	/// Decision: SAMPle the nonrotameric chi in a backbone INDependent manner?
-	utility::vector1<bool> sampind;
-	/// Is there symmetry about the rotameric chi?  If so, periodicity is 180 degrees, else, 360.
-	/// Furthermore, if it's symmetric, then the bbdep sampling is at 5 degree intervals and
-	/// the bbind is at 0.5 degree intervals; otherwise, bbdep is at 10 degrees, and bbind is at 1.
-	utility::vector1<bool> sym;
-	/// At what starting angle does the chi data come from?
-	utility::vector1<Real> astr;
-
-	utility::vector1<Size> memory_use_semirotameric;
-
-	/// Initialize the data.
-
-	initialize_dun10_aa_parameters(
-		rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
-		sraa, srnchi, srnbb, scind, sampind, sym, astr
-	); // use the same parameters as dun08 used to.
-
-	for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
+	for ( Size ii = 1; ii <= dps.rotameric_amino_acids.size(); ++ii ) {
 		std::string next_aa_in_library;
 
-		chemical::AA ii_aa(rotameric_amino_acids[ii]);
+		chemical::AA ii_aa(dps.rotameric_amino_acids[ii]);
 		std::string ii_lc_3lc(chemical::name_from_aa(ii_aa));
 		std::transform(ii_lc_3lc.begin(), ii_lc_3lc.end(), ii_lc_3lc.begin(),
 			tolower);
@@ -1097,7 +1079,7 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 		TR << "Reading " << library_name << std::endl;
 
 		SingleResidueDunbrackLibraryOP newlib = create_rotameric_dunlib(
-			ii_aa, rotameric_n_chi[ ii ], rotameric_n_bb[ ii ], lib, false, next_aa_in_library, false );
+			ii_aa, dps.rotameric_n_chi[ ii ], dps.rotameric_n_bb[ ii ], lib, false, next_aa_in_library, false );
 		if ( next_aa_in_library != "" ) {
 			std::cerr << "ERROR: Inappropriate read from dun10 input while reading " << ii_aa
 				<< ": \"" << next_aa_in_library << "\"" << std::endl;
@@ -1109,12 +1091,12 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 		add_residue_library( ii_aa, newlib );
 	}
 
-	for ( Size ii = 1; ii <= sraa.size(); ++ii ) {
-		chemical::AA ii_aa(sraa[ii]);
+	for ( Size ii = 1; ii <= dps.sraa.size(); ++ii ) {
+		chemical::AA ii_aa(dps.sraa[ii]);
 		std::string ii_lc_3lc(chemical::name_from_aa(ii_aa));
 		std::transform(ii_lc_3lc.begin(), ii_lc_3lc.end(), ii_lc_3lc.begin(),
 			tolower);
-		Size const nrchi = srnchi[ii] + 1;
+		Size const nrchi = dps.srnchi[ii] + 1;
 
 		std::string reg_lib_name = dun10_dir + ii_lc_3lc + regular_lib_suffix;
 		std::string conmin_name = dun10_dir + ii_lc_3lc + bbdep_contmin;
@@ -1147,9 +1129,9 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 		//TR << "Reading " << probs_name << std::endl;
 
 		SingleResidueDunbrackLibraryOP newlib = create_semi_rotameric_dunlib(
-			ii_aa, srnchi[ ii ], srnbb[ ii ],
-			scind[ ii ], sampind[ ii ],
-			sym[ ii ], astr[ ii ],
+			ii_aa, dps.srnchi[ ii ], dps.srnbb[ ii ],
+			dps.scind[ ii ], dps.sampind[ ii ],
+			dps.sym[ ii ], dps.astr[ ii ],
 			defs, lib, contmin );
 
 		memory_use_semirotameric.push_back(newlib->memory_usage_in_bytes());
@@ -1167,13 +1149,13 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 	Size total(0);
 	for ( Size ii = 1; ii <= memory_use_rotameric.size(); ++ii ) {
 		total += memory_use_rotameric[ii];
-		TR << chemical::name_from_aa(rotameric_amino_acids[ii]) << " with "
+		TR << chemical::name_from_aa(dps.rotameric_amino_acids[ii]) << " with "
 			<< memory_use_rotameric[ii] << " bytes" << std::endl;
 	}
 
 	for ( Size ii = 1; ii <= memory_use_semirotameric.size(); ++ii ) {
 		total += memory_use_semirotameric[ii];
-		TR << chemical::name_from_aa(sraa[ii]) << " with "
+		TR << chemical::name_from_aa(dps.sraa[ii]) << " with "
 			<< memory_use_semirotameric[ii] << " bytes" << std::endl;
 	}
 	TR << "Total memory on Dunbrack Libraries: " << total << " bytes."
@@ -1242,7 +1224,7 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[corrections::score::dun10] ) {
+	if ( dun10_ ) {
 		return write_binary_fa_dunbrack_libraries_10();
 	} else {
 		return write_binary_fa_dunbrack_libraries_02();
@@ -1310,25 +1292,11 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const {
 		boost::int32_t version(current_binary_format_version_id_10());
 		binlib.write((char*) &version, sizeof(boost::int32_t));
 
-		utility::vector1< chemical::AA > rotameric_amino_acids;
-		utility::vector1< Size > rotameric_n_chi;
-		utility::vector1< Size > rotameric_n_bb;
-
-		utility::vector1< chemical::AA > sraa;
-		utility::vector1< Size > srnchi;
-		utility::vector1< Size > srnbb;
-		utility::vector1< bool > scind;
-		utility::vector1< bool > sampind;
-		utility::vector1< bool > sym;
-		utility::vector1< Real > astr;
-
-		initialize_dun10_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
-			sraa, srnchi, srnbb, scind, sampind, sym, astr );
+		DunbrackAAParameterSet dps( DunbrackAAParameterSet::get_dun10_aa_parameters() );
 
 		boost::int32_t nrotameric(
-			static_cast<boost::int32_t>(rotameric_amino_acids.size()));
-		boost::int32_t nsemirotameric(static_cast<boost::int32_t>(sraa.size()));
+			static_cast<boost::int32_t>(dps.rotameric_amino_acids.size()));
+		boost::int32_t nsemirotameric(static_cast<boost::int32_t>(dps.sraa.size()));
 
 		binlib.write((char*) &nrotameric, sizeof(boost::int32_t));
 		binlib.write((char*) &nsemirotameric, sizeof(boost::int32_t));
@@ -1344,17 +1312,17 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const {
 		boost::int32_t * sym_bin  = new boost::int32_t[ nsemirotameric ];
 		Real * astr_bin = new Real[ nsemirotameric ];
 
-		for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
-			rotaa_bin[ ii - 1 ] = static_cast< boost::int32_t > ( rotameric_amino_acids[ ii ] );
-			rot_nchi_bin[ ii - 1 ] = static_cast< boost::int32_t > ( rotameric_n_chi[ ii ] );
+		for ( Size ii = 1; ii <= dps.rotameric_amino_acids.size(); ++ii ) {
+			rotaa_bin[ ii - 1 ] = static_cast< boost::int32_t > ( dps.rotameric_amino_acids[ ii ] );
+			rot_nchi_bin[ ii - 1 ] = static_cast< boost::int32_t > ( dps.rotameric_n_chi[ ii ] );
 		}
-		for ( Size ii = 1; ii <= sraa.size(); ++ii ) {
-			sraa_bin[ ii - 1 ] = static_cast< boost::int32_t > ( sraa[ ii ] );
-			srnchi_bin[ ii - 1 ]  = static_cast< boost::int32_t > ( srnchi[ ii ] );
-			scind_bin[ ii - 1 ]   = static_cast< boost::int32_t > ( scind[ ii ] );
-			sampind_bin[ ii - 1 ] = static_cast< boost::int32_t > ( sampind[ ii ] );
-			sym_bin[ ii - 1 ]  = static_cast< boost::int32_t > ( sym[ ii ] );
-			astr_bin[ ii - 1 ]  =  astr[ ii ];
+		for ( Size ii = 1; ii <= dps.sraa.size(); ++ii ) {
+			sraa_bin[ ii - 1 ] = static_cast< boost::int32_t > ( dps.sraa[ ii ] );
+			srnchi_bin[ ii - 1 ]  = static_cast< boost::int32_t > ( dps.srnchi[ ii ] );
+			scind_bin[ ii - 1 ]   = static_cast< boost::int32_t > ( dps.scind[ ii ] );
+			sampind_bin[ ii - 1 ] = static_cast< boost::int32_t > ( dps.sampind[ ii ] );
+			sym_bin[ ii - 1 ]  = static_cast< boost::int32_t > ( dps.sym[ ii ] );
+			astr_bin[ ii - 1 ]  =  dps.astr[ ii ];
 		}
 
 		binlib.write((char*) rotaa_bin, nrotameric * sizeof(boost::int32_t));
@@ -1428,35 +1396,35 @@ RotamerLibrary::create_rotameric_dunlib(
 		switch ( n_bb ) {
 		case 1 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 2 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 3 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 4 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 5 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
@@ -1470,35 +1438,35 @@ RotamerLibrary::create_rotameric_dunlib(
 		switch ( n_bb ) {
 		case 1 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, ONE > * r2 =
-				new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r2->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 		case 2 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, TWO > * r2 =
-				new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r2->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 		case 3 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r2 =
-				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r2->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 		case 4 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r2 =
-				new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r2->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 		case 5 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
@@ -1512,35 +1480,35 @@ RotamerLibrary::create_rotameric_dunlib(
 		switch ( n_bb ) {
 		case 1 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, ONE > * r3 =
-				new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r3->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r3);
 			break;
 		}
 		case 2 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, TWO > * r3 =
-				new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r3->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r3);
 			break;
 		}
 		case 3 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r3 =
-				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r3->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r3);
 			break;
 		}
 		case 4 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, FOUR > * r3 =
-				new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r3->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r3);
 			break;
 		}
 		case 5 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, FIVE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
@@ -1554,35 +1522,35 @@ RotamerLibrary::create_rotameric_dunlib(
 		switch ( n_bb ) {
 		case 1 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, ONE > * r4 =
-				new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r4);
 			break;
 		}
 		case 2 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, TWO > * r4 =
-				new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r4);
 			break;
 		}
 		case 3 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r4 =
-				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r4);
 			break;
 		}
 		case 4 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, FOUR > * r4 =
-				new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r4);
 			break;
 		}
 		case 5 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, FIVE > * r1 =
-				new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( aa, dun02 );
+				new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
@@ -1624,23 +1592,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 1 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		default :
@@ -1651,23 +1619,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 2 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_  ) );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		default :
@@ -1678,23 +1646,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 3 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		default :
@@ -1705,23 +1673,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 4 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( aa, dun02 ) );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( aa, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ ) );
 			break;
 		}
 		default :
@@ -1755,13 +1723,14 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 ) const
 {
 	SingleResidueDunbrackLibraryOP rotlib;
+	bool use_shapovalov( shapovalov_lib_fixes_enable_ && shap_dun10_enable_ );
 	// scope the case statements
 	switch ( nchi ) {
 	case 1 : {
 		switch ( nbb ) {
 		case 1 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1769,7 +1738,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 2 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1777,7 +1746,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 3 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1785,7 +1754,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 4 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1793,7 +1762,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 5 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1808,7 +1777,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		switch ( nbb ) {
 		case 1 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1816,7 +1785,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 2 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1824,7 +1793,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 3 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1832,7 +1801,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 4 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1840,7 +1809,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		case 5 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
@@ -1894,40 +1863,41 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 ) const
 {
 	SingleResidueDunbrackLibraryOP rotlib;
+	bool use_shapovalov( shapovalov_lib_fixes_enable_ && shap_dun10_enable_ );
 	switch ( nchi ) {
 	case 1 : {
 		switch ( nbb ) {
 		case 1 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 2 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 3 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 4 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 5 : {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
@@ -1941,35 +1911,35 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		switch ( nbb ) {
 		case 1 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 2 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 3 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 4 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 5 : {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
-				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
+				new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling, use_shapovalov, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
 			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
@@ -1992,52 +1962,25 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 
 /// @details Build and initialize some of the data in an SRDL in preparation for
 /// binary file input -- that is, the SRDL does not have "read_from_file(s)" called
-/// before it is returned to the calling function.  ATM not threadsafe.
+/// before it is returned to the calling function.
 SingleResidueDunbrackLibraryOP RotamerLibrary::create_srdl(
-	chemical::AA aa_in) const {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	static bool initialized(false);
-
-	static utility::vector1< chemical::AA > rotameric_amino_acids;
-	static utility::vector1< Size > rotameric_n_chi;
-	static utility::vector1< Size > rotameric_n_bb;
-
-	static utility::vector1< chemical::AA > sraa;
-	static utility::vector1< Size > srnchi;
-	static utility::vector1< Size > srnbb;
-	static utility::vector1< bool > scind;
-	static utility::vector1< bool > sampind;
-	static utility::vector1< bool > sym;
-	static utility::vector1< Real > astr;
-
-	if ( !initialized ) {
-		/// put a mutex here...
-		if ( option[ corrections::score::dun10 ] ) {
-			initialize_dun10_aa_parameters(
-				rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
-				sraa, srnchi, srnbb, scind, sampind, sym, astr );
-		} else {
-			initialize_dun02_aa_parameters(
-				rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb );
-		}
-		initialized = true;
-	}
+	chemical::AA aa_in,
+	DunbrackAAParameterSet const & dps
+) const {
 
 	Size find_rot_aa = 1;
-	while ( find_rot_aa <= rotameric_amino_acids.size() ) {
-		if ( rotameric_amino_acids[ find_rot_aa ] == aa_in ) {
-			return create_rotameric_dunlib( aa_in, rotameric_n_chi[ find_rot_aa ], rotameric_n_bb[ find_rot_aa ], ! (option[ corrections::score::dun10 ] )  );
+	while ( find_rot_aa <= dps.rotameric_amino_acids.size() ) {
+		if ( dps.rotameric_amino_acids[ find_rot_aa ] == aa_in ) {
+			return create_rotameric_dunlib( aa_in, dps.rotameric_n_chi[ find_rot_aa ], dps.rotameric_n_bb[ find_rot_aa ], ! ( dun10_ )  );
 		}
 		++find_rot_aa;
 	}
 
 	Size find_semirot_aa = 1;
-	while ( find_semirot_aa <= sraa.size() ) {
-		if ( sraa[find_semirot_aa] == aa_in ) {
+	while ( find_semirot_aa <= dps.sraa.size() ) {
+		if ( dps.sraa[find_semirot_aa] == aa_in ) {
 			Size i = find_semirot_aa;
-			return create_semi_rotameric_dunlib( aa_in, srnchi[i], srnbb[i], scind[i], sampind[i], sym[i], astr[i] );
+			return create_semi_rotameric_dunlib( aa_in, dps.srnchi[i], dps.srnbb[i], dps.scind[i], dps.sampind[i], dps.sym[i], dps.astr[i] );
 		}
 		++find_semirot_aa;
 	}
@@ -2047,84 +1990,76 @@ SingleResidueDunbrackLibraryOP RotamerLibrary::create_srdl(
 
 /// @details Hard code this data in a single place; adjust the booleans for the backbone
 /// independent
-void
-RotamerLibrary::initialize_dun10_aa_parameters(
-	utility::vector1< chemical::AA > & rotameric_amino_acids,
-	utility::vector1< Size > & rotameric_n_chi,
-	utility::vector1< Size > & rotameric_n_bb,
-	utility::vector1< chemical::AA > & sraa,
-	utility::vector1< Size > & srnchi,
-	utility::vector1< Size > & srnbb,
-	utility::vector1< bool > & scind,
-	utility::vector1< bool > & sampind,
-	utility::vector1< bool > & sym,
-	utility::vector1< Real > & astr
-)
+DunbrackAAParameterSet
+DunbrackAAParameterSet::get_dun10_aa_parameters()
 {
+	DunbrackAAParameterSet dps; // paramset to return
+
 	using namespace chemical;
 
 	/// Rotameric specifics
-	rotameric_amino_acids.reserve( 10 );   rotameric_n_chi.reserve( 10 );  rotameric_n_bb.reserve( 10 );
-	rotameric_amino_acids.push_back( aa_cys );   rotameric_n_chi.push_back( 1 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_ile );   rotameric_n_chi.push_back( 2 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_lys );   rotameric_n_chi.push_back( 4 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_leu );   rotameric_n_chi.push_back( 2 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_met );   rotameric_n_chi.push_back( 3 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_pro );   rotameric_n_chi.push_back( 3 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_arg );   rotameric_n_chi.push_back( 4 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_ser );   rotameric_n_chi.push_back( 1 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_thr );   rotameric_n_chi.push_back( 1 ); rotameric_n_bb.push_back( 2 );
-	rotameric_amino_acids.push_back( aa_val );   rotameric_n_chi.push_back( 1 ); rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.reserve( 10 );   dps.rotameric_n_chi.reserve( 10 );  dps.rotameric_n_bb.reserve( 10 );
+	dps.rotameric_amino_acids.push_back( aa_cys );   dps.rotameric_n_chi.push_back( 1 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_ile );   dps.rotameric_n_chi.push_back( 2 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_lys );   dps.rotameric_n_chi.push_back( 4 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_leu );   dps.rotameric_n_chi.push_back( 2 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_met );   dps.rotameric_n_chi.push_back( 3 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_pro );   dps.rotameric_n_chi.push_back( 3 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_arg );   dps.rotameric_n_chi.push_back( 4 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_ser );   dps.rotameric_n_chi.push_back( 1 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_thr );   dps.rotameric_n_chi.push_back( 1 ); dps.rotameric_n_bb.push_back( 2 );
+	dps.rotameric_amino_acids.push_back( aa_val );   dps.rotameric_n_chi.push_back( 1 ); dps.rotameric_n_bb.push_back( 2 );
 
 
 	/// Semi rotameric specifics
 	Size const n_semi_rotameric_aas = 8;
-	sraa.resize( n_semi_rotameric_aas );
-	srnchi.resize( n_semi_rotameric_aas );
-	srnbb.resize( n_semi_rotameric_aas );
-	scind.resize( n_semi_rotameric_aas );
-	sampind.resize( n_semi_rotameric_aas );
-	sym.resize( n_semi_rotameric_aas );
-	astr.resize( n_semi_rotameric_aas );
+	dps.sraa.resize( n_semi_rotameric_aas );
+	dps.srnchi.resize( n_semi_rotameric_aas );
+	dps.srnbb.resize( n_semi_rotameric_aas );
+	dps.scind.resize( n_semi_rotameric_aas );
+	dps.sampind.resize( n_semi_rotameric_aas );
+	dps.sym.resize( n_semi_rotameric_aas );
+	dps.astr.resize( n_semi_rotameric_aas );
 
 
 	Size i = 0;
-	sraa[++i] = aa_asp; srnchi[i] = 1; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=1; astr[i] =  -90;
-	sraa[++i] = aa_glu; srnchi[i] = 2; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=1; astr[i] =  -90;
-	sraa[++i] = aa_phe; srnchi[i] = 1; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=1; astr[i] =  -30;
-	sraa[++i] = aa_his; srnchi[i] = 1; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=0; astr[i] = -180;
-	sraa[++i] = aa_asn; srnchi[i] = 1; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=0; astr[i] = -180;
-	sraa[++i] = aa_gln; srnchi[i] = 2; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=0; astr[i] = -180;
-	sraa[++i] = aa_trp; srnchi[i] = 1; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=0; astr[i] = -180;
-	sraa[++i] = aa_tyr; srnchi[i] = 1; srnbb[i] = 2; scind[i] = 0; sampind[i] = 0; sym[i]=1; astr[i] =  -30;
+	dps.sraa[++i] = aa_asp; dps.srnchi[i] = 1; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=1; dps.astr[i] =  -90;
+	dps.sraa[++i] = aa_glu; dps.srnchi[i] = 2; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=1; dps.astr[i] =  -90;
+	dps.sraa[++i] = aa_phe; dps.srnchi[i] = 1; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=1; dps.astr[i] =  -30;
+	dps.sraa[++i] = aa_his; dps.srnchi[i] = 1; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=0; dps.astr[i] = -180;
+	dps.sraa[++i] = aa_asn; dps.srnchi[i] = 1; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=0; dps.astr[i] = -180;
+	dps.sraa[++i] = aa_gln; dps.srnchi[i] = 2; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=0; dps.astr[i] = -180;
+	dps.sraa[++i] = aa_trp; dps.srnchi[i] = 1; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=0; dps.astr[i] = -180;
+	dps.sraa[++i] = aa_tyr; dps.srnchi[i] = 1; dps.srnbb[i] = 2; dps.scind[i] = 0; dps.sampind[i] = 0; dps.sym[i]=1; dps.astr[i] =  -30;
 
+	return dps;
 }
 
-void
-RotamerLibrary::initialize_dun02_aa_parameters(
-	utility::vector1< chemical::AA > & rotameric_amino_acids,
-	utility::vector1< Size > & rotameric_n_chi,
-	utility::vector1< Size > & rotameric_n_bb
-)
+DunbrackAAParameterSet
+DunbrackAAParameterSet::get_dun02_aa_parameters()
 {
+	DunbrackAAParameterSet dps; // paramset to return
+
 	using namespace chemical;
 
 	utility::vector1< Size > nchi_for_aa;
 	utility::vector1< Size > nbb_for_aa;
 	Size n_rotameric_aas;
-	initialize_dun02_aa_parameters( nchi_for_aa, nbb_for_aa, n_rotameric_aas );
-	rotameric_amino_acids.resize( 0 ); rotameric_amino_acids.reserve( n_rotameric_aas );
-	rotameric_n_chi.resize( 0 );    rotameric_n_chi.reserve( n_rotameric_aas );
-	rotameric_n_bb.resize( 0 );     rotameric_n_bb.reserve( n_rotameric_aas );
+	RotamerLibrary::initialize_dun02_aa_parameters( nchi_for_aa, nbb_for_aa, n_rotameric_aas );
+
+	dps.rotameric_amino_acids.reserve( n_rotameric_aas );
+	dps.rotameric_n_chi.reserve( n_rotameric_aas );
+	dps.rotameric_n_bb.reserve( n_rotameric_aas );
 
 	for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 		if ( nchi_for_aa[ ii ] != 0 ) {
-			rotameric_amino_acids.push_back( AA(ii) );
-			rotameric_n_chi.push_back( nchi_for_aa[ ii ] );
-			rotameric_n_bb.push_back( nbb_for_aa[ ii ] );
+			dps.rotameric_amino_acids.push_back( AA(ii) );
+			dps.rotameric_n_chi.push_back( nchi_for_aa[ ii ] );
+			dps.rotameric_n_bb.push_back( nbb_for_aa[ ii ] );
 		}
 	}
 
+	return dps;
 }
 
 void
@@ -2206,6 +2141,8 @@ void RotamerLibrary::read_from_binary(utility::io::izstream & in) {
 
 	using namespace boost;
 
+	DunbrackAAParameterSet dps( dun10_ ? DunbrackAAParameterSet::get_dun10_aa_parameters() : DunbrackAAParameterSet::get_dun02_aa_parameters() );
+
 	/// 1. How many libraries?
 	boost::int32_t nlibraries(0);
 	in.read((char*) &nlibraries, sizeof(boost::int32_t));
@@ -2219,7 +2156,7 @@ void RotamerLibrary::read_from_binary(utility::io::izstream & in) {
 		//TR << "amw reading binlib for " << which_aa << std::endl;
 
 		/// 3. Read the data associated with that amino acid.
-		SingleResidueDunbrackLibraryOP single_lib = create_srdl( which_aa );
+		SingleResidueDunbrackLibraryOP single_lib = create_srdl( which_aa, dps );
 		if ( !single_lib ) {
 			utility_exit_with_message( "Error reading single residue rotamer library for " + name_from_aa( which_aa ) );
 		}

@@ -67,23 +67,28 @@ core::Real const SingleResidueDunbrackLibrary::COEF_DELTA( 1e-6 );
 SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	AA const aa,
 	Size const n_rotameric_chi,
-	bool dun02
+	bool dun02,
+	bool use_bicubic,
+	bool dun_entropy_correction,
+	core::Real prob_buried,
+	core::Real prob_nonburied
 ) :
 	dun02_( dun02 ),
+	use_bicubic_( use_bicubic ),
+	dun_entropy_correction_( dun_entropy_correction ),
 	aa_( aa ),
 	n_rotameric_chi_( n_rotameric_chi ),
 	n_chi_bins_( n_rotameric_chi, 0 ),
 	n_chi_products_( n_rotameric_chi, 1),
 	n_packed_rots_( 0 ),
 	n_possible_rots_( 0 ),
-	prob_to_accumulate_buried_(0.98),
-	prob_to_accumulate_nonburied_(0.95),
+	prob_to_accumulate_buried_( prob_buried ),
+	prob_to_accumulate_nonburied_( prob_nonburied ),
 	packed_rotno_conversion_data_current_( false )
 {
 	// this builds on the hard coded hack bellow
 	// since NCAAs are aa_unk we cannot hard code the information
 	// alternativly it is added to the residue type paramater files
-	read_options();
 	if ( aa_ != chemical::aa_unk ) {
 		n_rotameric_bins_for_aa( aa_, n_chi_bins_, dun02 );
 		for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
@@ -117,18 +122,6 @@ SingleResidueDunbrackLibrary::set_n_chi_bins( utility::vector1< Size > const & n
 }
 
 SingleResidueDunbrackLibrary::~SingleResidueDunbrackLibrary() {}
-
-void
-SingleResidueDunbrackLibrary::read_options()
-{
-	using namespace basic::options;
-	if ( option[ OptionKeys::packing::dunbrack_prob_buried ].user() ) {
-		prob_to_accumulate_buried( option[ OptionKeys::packing::dunbrack_prob_buried ]() );
-	}
-	if ( option[ OptionKeys::packing::dunbrack_prob_nonburied ].user() ) {
-		prob_to_accumulate_nonburied( option[ OptionKeys::packing::dunbrack_prob_nonburied ]() );
-	}
-}
 
 /// @details the number of wells defined for the 08 library; includes
 /// the number of wells for the semi-rotameric chi (arbitrarily chosen).
@@ -715,8 +708,8 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	// Don't look at this #define--read the comment below it.
 
 	#define INIT( CHI, BB ) \
-RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, false ); \
-SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, true, true ); \
+RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, false, true, true, 1.0, 1.0 ); \
+SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, true, true, false, true, true, 1.0, 1.0 ); \
 PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \
 rsrdl_ ## CHI ## _ ## BB.nchi(); \
 srsrdl_ ## CHI ## _ ## BB.nchi(); \

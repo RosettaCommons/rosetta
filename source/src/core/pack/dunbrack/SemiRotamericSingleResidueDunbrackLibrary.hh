@@ -214,7 +214,12 @@ public:
 	SemiRotamericSingleResidueDunbrackLibrary(
 		chemical::AA const aa_in,
 		bool const backbone_independent_scoring,         // true uses less memory
-		bool const backbone_independent_rotamer_sampling // true uses less memory
+		bool const backbone_independent_rotamer_sampling, // true uses less memory
+		bool use_shapovalov,
+		bool use_bicubic,
+		bool dun_entropy_correction,
+		core::Real prob_buried,
+		core::Real prob_nonburied
 	);
 
 	virtual ~SemiRotamericSingleResidueDunbrackLibrary() throw();
@@ -529,6 +534,7 @@ private:
 
 	bool const bbind_nrchi_scoring_;  // Score non-rotameric chi independently of the backbone?
 	bool const bbind_nrchi_sampling_; // Sample non-rotameric chi independently of the backbone?
+	bool const use_shapovalov_; // Use Maxim Shapovalov's corrections
 
 	Real nrchi_periodicity_; // 360 w/o symmetry; 180 w/.
 	Real nrchi_lower_angle_; // Starting angle for both bbdep and bbind nrchi data

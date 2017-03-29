@@ -1208,7 +1208,7 @@ void init(int argc, char * argv [])
 		init_complex_options();
 
 		//Initialize the latest and greatest score function parameters
-		init_score_function_corrections();
+		init_score_function_corrections( basic::options::option );
 
 		//Choose to output source version control information?
 		init_source_revision();
