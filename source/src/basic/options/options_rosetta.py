@@ -7594,6 +7594,20 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #			Option( 'align_file', 'String'),
 	), # phil
 
+	## Options for my pilot apps: ralford
+	Option_Group( 'ralford',
+        Option_Group( 'dump_rotamers',
+            Option( 'rsd_index', 'Integer', default='1',
+                   desc="Dump all of the rotamers for the amino acid at a user-specified position" ),
+		    Option( 'rotamer_info_prefix', 'String', default='output',
+					desc="Prefix for output rotamer information file" ),
+			Option( 'write_rotamers_to_pdbs', 'Boolean', default='false',
+					desc="Write all of the rotamer poses to pdb files" ),
+			Option( 'all_positions', 'Boolean', default='false',
+					desc="Option to dump all rotamers at all positions - use with caution"),
+        ), #dump_rotamers
+	), # ralford
+
 	##options for Robert
 	#Option_Group('Robert',
 	#  Option( 'score', 'Boolean', default='true'),

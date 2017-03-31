@@ -1,0 +1,4 @@
+-in:file:s inputs/GGQGG_linear.pdb
+-ralford:dump_rotamers:rsd_index 3
+-ralford:dump_rotamers:write_rotamers_to_pdbs false 
+-ralford:dump_rotamers:rotamer_info_prefix integration

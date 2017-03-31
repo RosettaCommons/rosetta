@@ -677,6 +677,7 @@ sources = {
 		"DisulfideInsertionMover",
 		"DisulfideInsertionMoverCreator",
 		"DumpPdb",
+		"DumpSingleResidueRotamers",
 		"EvolutionaryDynamicsMover",
 		"ExtendedPoseMover",
 		"ExtendedPoseMoverCreator",

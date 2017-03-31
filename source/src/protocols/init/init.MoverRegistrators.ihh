@@ -459,6 +459,7 @@ static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainM
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_DisulfideInsertionMoverCreator;
+static MoverRegistrator< simple_moves::DumpSingleResidueRotamersCreator > reg_DumpSingleResidueRotamersCreator;  
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::EvolutionaryDynamicsMoverCreator > reg_EvolutionaryDynamicsMoverCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;

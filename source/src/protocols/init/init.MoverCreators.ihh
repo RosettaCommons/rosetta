@@ -448,6 +448,7 @@
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
+#include <protocols/simple_moves/DumpSingleResidueRotamersCreator.hh> 
 #include <protocols/simple_moves/DumpPdbCreator.hh>
 #include <protocols/simple_moves/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
