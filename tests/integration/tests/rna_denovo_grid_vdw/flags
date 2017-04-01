@@ -13,3 +13,4 @@
 -VDW_rep_screen_include_sidechains true 
 -output_res_num  B:1-13 
 -ignore_zero_occupancy false 
+-superimpose_over_all false

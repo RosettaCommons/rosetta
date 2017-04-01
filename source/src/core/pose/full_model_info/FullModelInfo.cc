@@ -215,6 +215,10 @@ FullModelInfo::rna_bulge_res() const {
 	return full_model_parameters_->get_res_list( RNA_BULGE );
 }
 utility::vector1< Size > const &
+FullModelInfo::alignment_anchor_res() const {
+	return full_model_parameters_->get_res_list( ALIGNMENT_ANCHOR_RES );
+}
+utility::vector1< Size > const &
 FullModelInfo::rna_sample_sugar_res() const {
 	return full_model_parameters_->get_res_list( RNA_SAMPLE_SUGAR );
 }

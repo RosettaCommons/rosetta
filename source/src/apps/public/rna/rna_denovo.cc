@@ -58,7 +58,11 @@ using utility::vector1;
 void
 rna_denovo_test()
 {
-
+	using namespace basic::options;
+	if ( option[ OptionKeys::stepwise::superimpose_over_all ].user() ) {
+		std::cout << "The use of -superimpose_over_all is deprecated. The behavior in question now defaults to TRUE and is turned off by providing a particular residue that is part of an anchoring input domain as -alignment_anchor_res." << std::endl;
+	}
+	
 	using namespace core::pose;
 	using namespace protocols::rna::denovo;
 

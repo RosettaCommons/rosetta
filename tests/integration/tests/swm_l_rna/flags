@@ -13,3 +13,4 @@
 # should probably instead inherit chain & residue numbering from 3d2v
 -cut_at_rna_chainbreak
 
+-superimpose_over_all false

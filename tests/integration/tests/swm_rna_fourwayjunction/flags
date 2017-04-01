@@ -9,6 +9,6 @@
 -native fourway_reference.pdb 
 -out:file:silent swm_fourwayjunction.out
 -out:overwrite
-
+-superimpose_over_all false
 
  

@@ -8,3 +8,4 @@
 -ignore_zero_occupancy false
 -rna:denovo:refine_native true 
 -native center_0_r10_complex.pdb
+-superimpose_over_all false

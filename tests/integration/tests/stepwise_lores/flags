@@ -1,6 +1,5 @@
 -s srp_domainIV_HELIX1.pdb srp_domainIV_HELIX2.pdb
 -fasta srp_domainIV.fasta
--superimpose_over_all
 -nstruct 1
 -intermolecular_frequency 0.0
 -native srp_domainIV_native_1lnt_RNA.pdb

@@ -11,3 +11,4 @@
 -allow_virtual_side_chains
 -protein_prepack
 -atr_rep_screen
+-superimpose_over_all false

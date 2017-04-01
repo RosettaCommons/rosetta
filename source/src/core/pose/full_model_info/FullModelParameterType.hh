@@ -67,6 +67,7 @@ enum FullModelParameterType {
 	WORKING,        // Everything that might be modeled [SAMPLE + FIXED_DOMAIN]
 	// next-section: RNA-specific. Eventually expand.
 	RNA_BULGE, // nucleotides that should not be instantiated.
+	ALIGNMENT_ANCHOR_RES, // residue(s) that are part of the fixed domain to use for alignment
 	RNA_SAMPLE_SUGAR, // residues that might be in fixed domains but allow sugar to move.
 	RNA_SYN_CHI,
 	RNA_ANTI_CHI,

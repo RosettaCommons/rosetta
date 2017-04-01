@@ -11,3 +11,4 @@
 
 # should probably instead inherit chain & residue numbering from 2R8S, which will make cutpoint placement obvious:
 -cut_at_rna_chainbreak
+-superimpose_over_all false

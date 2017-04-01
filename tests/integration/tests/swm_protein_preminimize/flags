@@ -11,3 +11,4 @@
 -protein_prepack
 -atr_rep_screen
 -rmsd_screen 1.0
+-superimpose_over_all false

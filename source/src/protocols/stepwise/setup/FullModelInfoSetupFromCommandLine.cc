@@ -589,6 +589,8 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		full_model_parameters->conventional_to_full( option[ full_model::extra_min_jump_res ].resnum_and_chain() );
 	vector1< Size > const virtual_sugar_res        =
 		full_model_parameters->conventional_to_full( option[ full_model::virtual_sugar_res ].resnum_and_chain() );
+	vector1< Size > const alignment_anchor_res     =
+		full_model_parameters->conventional_to_full( option[ OptionKeys::stepwise::alignment_anchor_res ].resnum_and_chain() );
 	update_jump_res( jump_res, extra_minimize_jump_res );
 
 	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
@@ -675,6 +677,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_ABOVE, block_stack_above_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_BELOW, block_stack_below_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
+	full_model_parameters->set_parameter_as_res_list( ALIGNMENT_ANCHOR_RES,  alignment_anchor_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_SAMPLE_SUGAR,
 		full_model_parameters->conventional_to_full( option[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
 

@@ -13,3 +13,4 @@
 -block_stack_below_res A:663
 -score:weights stepwise/rna/rna_res_level_energy4.wts
 -cycles 20
+-superimpose_over_all false

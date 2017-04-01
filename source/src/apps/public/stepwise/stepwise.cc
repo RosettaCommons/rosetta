@@ -236,6 +236,10 @@ main( int argc, char * argv [] )
 
 		devel::init(argc, argv);
 
+		if ( option[ OptionKeys::stepwise::superimpose_over_all ].user() ) {
+			std::cout << "The use of -superimpose_over_all is deprecated. The behavior in question now defaults to TRUE and is turned off by providing a particular residue that is part of an anchoring input domain as -alignment_anchor_res." << std::endl;
+		}
+		
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

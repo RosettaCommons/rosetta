@@ -6,3 +6,4 @@
 -minimize_rna true
 -nstruct 1
 -score:weights rna/denovo/rna_hires.wts
+-superimpose_over_all false

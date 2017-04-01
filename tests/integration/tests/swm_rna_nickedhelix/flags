@@ -10,3 +10,4 @@
 -native twoparthelix_reference.pdb
 -out:file:silent swm_rebuild.out
 -out:overwrite
+-superimpose_over_all false

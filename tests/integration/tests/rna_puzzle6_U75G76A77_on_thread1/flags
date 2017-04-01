@@ -16,3 +16,4 @@
 -minimize_rna true
 -nstruct 1
 -cycles 500
+-superimpose_over_all false
