@@ -188,7 +188,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	///////////////////////////////////////////////////////////////////////////
 	Size refine_pose_id( 1 );
 	std::list< core::Real > all_lores_score_final; // used for filtering.
-	numeric::MathNTensorOP< core::Size, 6 > jump_histogram; // accumulating statistics.
+	output::RNA_FragmentMonteCarloOutputterOP outputter;
 	for ( Size n = 1; n <= options_->nstruct(); n++ ) {
 
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
@@ -219,13 +219,13 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
 		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
-		if ( jump_histogram != 0 ) rna_fragment_monte_carlo_->set_jump_histogram( jump_histogram ); // accumulate stats in histogram.
+		if ( outputter != 0 ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
 
 		rna_fragment_monte_carlo_->apply( pose );
 
 		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated, used for filtering.
 		if ( options_->output_lores_silent_file() ) align_and_output_to_silent_file( *(rna_fragment_monte_carlo_->lores_pose()), lores_silent_file_, out_file_tag );
-		if ( options_->save_jump_histogram() ) jump_histogram = rna_fragment_monte_carlo_->jump_histogram();
+		outputter = rna_fragment_monte_carlo_->outputter();
 
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if ( options_->dump_pdb() ) dump_pdb( pose,  out_file_name );

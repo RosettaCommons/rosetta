@@ -37,7 +37,6 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/format.hh>
-#include <numeric/MathNTensor.fwd.hh>
 
 namespace protocols {
 namespace rna {
@@ -118,8 +117,8 @@ public:
 	bool
 	loop_modeling() const;
 
-	numeric::MathNTensorOP< core::Size, 6 > jump_histogram() const{ return outputter_->jump_histogram(); }
-	void set_jump_histogram( numeric::MathNTensorOP< core::Size, 6 > setting ) { outputter_->set_jump_histogram( setting ); }
+	void set_outputter( output::RNA_FragmentMonteCarloOutputterOP const & setting ){ outputter_ = setting; }
+	output::RNA_FragmentMonteCarloOutputterOP outputter() const { return outputter_; }
 
 private:
 
