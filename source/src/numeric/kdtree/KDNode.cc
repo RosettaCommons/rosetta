@@ -23,6 +23,8 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <iostream>
+
 namespace numeric {
 namespace kdtree {
 

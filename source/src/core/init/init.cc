@@ -762,15 +762,9 @@ init_mpi(int, char **) {}
 
 void
 init_options(int argc, char * argv []) {
-#ifdef BOINC
-	std::cerr << "Initializing options.... ok " << std::endl;std::cerr.flush();
-#endif
 
 	// initialize options
 	initialize().load( argc, argv, false /* no "free" cmd line args (just discarded anyway) */ );
-#ifdef BOINC
-	std::cerr << "Loaded options.... ok " << std::endl;std::cerr.flush();
-#endif
 
 }
 
@@ -782,9 +776,6 @@ void
 init_complex_options()
 {
 	process();
-#ifdef BOINC
-	std::cerr << "Processed options.... ok " << std::endl; std::cerr.flush();
-#endif
 
 	// Set option system global
 	OptionCollection::set_show_accessed_options_flag( option[ out::show_accessed_options ].value() );
@@ -1046,9 +1037,6 @@ init_random_number_generators(){
 	real_seed, numeric::random::_RND_ConstantSeed_,
 	option[ run::rng ]  );
 	*/
-#ifdef BOINC
-	std::cerr << "Initializing random generators... ok " << std::endl; std::cerr.flush();
-#endif
 	init_random_generators(real_seed, option[ run::rng ]);
 
 	// seed default random generator, this will hopefully expose all code that use
@@ -1230,10 +1218,6 @@ void init(int argc, char * argv [])
 
 		//Locate rosetta_database
 		locate_rosetta_database();
-
-#ifdef BOINC
-    std::cerr << "Initialization complete. " << std::endl;
-#endif
 
 		//Profiling measures execution performance
 		init_profiling();

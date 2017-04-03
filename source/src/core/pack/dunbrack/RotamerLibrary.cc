@@ -740,7 +740,9 @@ bool RotamerLibrary::decide_write_binary() const {
 	/// place other objections here, e.g. if we're running from a (genuine) database or on BOINC
 
 #ifdef BOINC
+#ifndef ANDROID // to reduce computing time on restarts, lets create the binary which is safe w/ android
 	return false;
+#endif
 #endif
 
 #if (defined WIN32) && (!defined PYROSETTA) // binary file handling doesnt appear to work properly on windows 64 bit machines.

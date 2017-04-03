@@ -150,6 +150,7 @@ print_backtrace( char const * /*unused*/ ) {
 #else
 // _WIN32, etc.
 #include <assert.h>
+#include <string>
 
 inline
 bool

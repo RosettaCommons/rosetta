@@ -372,6 +372,14 @@ bool endswith(std::string const & haystack, std::string const & needle)
 	else return ( haystack.compare(haystack.size()-needle.size(),needle.size(),needle) == 0 );
 }
 
+#ifdef ANDROID  // the block method causes a bad_alloc exception for some unkown reason with NDK gnustl
+void slurp(std::istream & in, std::string & out)
+{
+	std::stringstream sstr;
+	sstr << in.rdbuf() << std::flush;
+	out = sstr.str();
+}
+#else
 void slurp(std::istream & in, std::string & out)
 {
 	// Block based approach should be faster than line-by-line approach, when we want all of the file.
@@ -381,6 +389,7 @@ void slurp(std::istream & in, std::string & out)
 	}
 	out.append( block, in.gcount() ); // Failure means only partial read - gcount() give actual number of characters read.
 }
+#endif
 
 void trim( std::string & s, const std::string & drop)
 {

@@ -20,7 +20,9 @@
 // for boinc builds - dek
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
+#ifndef ANDROID // do not use watchdog thread for ANDROID
 #include <protocols/boinc/watchdog.hh>
+#endif
 #endif
 
 // Unit Headers
@@ -193,12 +195,14 @@ void CheckPointer::checkpoint(
 
 	if ( pose.size() <= 0 ) return;
 
+#ifdef BOINC
+#ifndef ANDROID
+
 	/////////////
 	// set global bailout structure - this is used by the watchdog to abort when the watchdog time
 	// has been  global_bailout = new pose::Pose( pose );
 
 
-#ifdef BOINC
 	boinc_begin_critical_section();
 
 	using namespace core::io::silent;
@@ -231,8 +235,8 @@ void CheckPointer::checkpoint(
 #endif
 
 	boinc_end_critical_section();
-#endif
-
+#endif // ANDROID
+#endif // BOINC
 
 	////// Create Checkpoint in buffer.
 
@@ -413,10 +417,6 @@ bool CheckPointer::recover_checkpoint(
 	}
 	checkpoint_ids_.push_back( checkpoint_id );
 	TR << " SUCCESS" << std::endl;
-
-#ifdef BOINC
-	std::cerr << "Continuing computation from checkpoint: " << checkpoint_id << " ... success! " << std::endl;
-#endif
 
 	count_checkpoint_recoveries_ += 1;
 

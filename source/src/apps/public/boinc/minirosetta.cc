@@ -106,49 +106,33 @@ main( int argc, char * argv [] )
 
 #ifdef BOINC // BOINC STUFF
 
-	// initialize boinc
-	using namespace protocols::boinc;
-	Boinc boinc_wu = Boinc::instance();
-	boinc_wu.initialize_worker(); //The shared memory gets created here.
+		// do not modify argv, it's not safe and can cause weird errors on Android
 
-	// make sure -use_filters flag is not ambiguous
-	for (int i=0; i<argc; ++i) {
-		if (!strcmp(argv[i], "-use_filters")) {
-			std::cerr << "Fixing ambiguous flag " << argv[i];
-			char tmpstr[] = "-abinitio::use_filters";
-			argv[i] = tmpstr;
-			std::cerr << " to " << argv[i] << std::endl;
+		// initialize boinc
+		using namespace protocols::boinc;
+		Boinc boinc_wu = Boinc::instance();
+		boinc_wu.initialize_worker(); //The shared memory gets created here.
+
+		// lets not keep writing this to stderr after restarts to conserve IO/data.
+		// stderr.txt exists as a file link even before the BOINC client runs the app so use a tmp file.
+		if (!utility::file::file_exists("rosetta_tmp.txt")) {
+			// print command to stderr
+			std::cerr << "command:";
+			for ( int i=0; i< argc; ++i ) {
+				std::cerr << ' ' <<  argv[i];
+			}
+			std::cerr  << std::endl; std::cerr.flush();
+			utility::io::ozstream data( "rosetta_tmp.txt" );
 		}
-	}
-	// print command to stderr
-	std::cerr << "command:";
-	for ( int i=0; i< argc; ++i ) {
-		std::cerr << ' ' <<  argv[i];
-	}
-	std::cerr  << std::endl;
-
 #endif
 
 		// has to be called before devel::init. Which is really stupid.
-#ifdef BOINC // BOINC STUFF
-	std::cerr << "Registering options.. " << std::endl;std::cerr.flush();
-#endif
 		protocols::abinitio::AbrelaxApplication::register_options();
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_options();
 		protocols::abinitio::IterativeAbrelax::register_options();
 		protocols::jd2::archive::ArchiveManager::register_options();
-		//protocols::canonical_sampling::register_options();
 		protocols::canonical_sampling::CanonicalSamplingMover::register_options();
-
-
-#ifdef BOINC // BOINC STUFF
-	std::cerr << "Initializing broker options ..." << std::endl;std::cerr.flush();
-#endif
 		protocols::abinitio::register_options_broker();
-		// options, random initialization
-#ifdef BOINC // BOINC STUFF
-	std::cerr << "Initializing core..." << std::endl;std::cerr.flush();
-#endif
 
 		devel::init( argc, argv );
 
@@ -156,7 +140,6 @@ main( int argc, char * argv [] )
 
 #ifdef BOINC_GRAPHICS
 	// read the work unit description file if one exists
-	std::cerr << "Setting WU description ..." << std::endl;std::cerr.flush();
 	Boinc::set_wu_desc();
 	Boinc::set_randomly_cycle_appearance( option[run::protocol]() != "simple_cycpep_predict" );  // Set whether the app should randomly cycle the graphics
 #endif
@@ -165,18 +148,17 @@ main( int argc, char * argv [] )
 	if (option[ in::file::zip ].user()) {
 		std::string resolvedfile = option[ in::file::zip ]();
 		bool is_database = false;
+		bool skip_extraction = false;
 		if (resolvedfile == "minirosetta_database.zip") {
 			is_database = true;
+			if (utility::file::file_exists( "minirosetta_database.zip.is_extracted" )) skip_extraction = true;
 		}
-		if (is_database && utility::file::file_exists( "minirosetta_database.zip.is_extracted" )) {
-			std::cerr << "Using previously extracted minirosetta_database." << std::endl;std::cerr.flush();
-		} else {
+		if (!skip_extraction) {
 			utility::boinc::resolve_filename( resolvedfile );
 			if (!utility::file::file_exists( resolvedfile )) {
 				utility_exit_with_message("in::file::zip "+
 					option[ in::file::zip ]()+" does not exist!");
 			} else {
-				std::cerr << "Unpacking zip data: " << resolvedfile << std::endl;std::cerr.flush();
 				boinc_zip(UNZIP_IT, resolvedfile, "./");
 				if (is_database) {
 					utility::io::ozstream data( "minirosetta_database.zip.is_extracted" );
@@ -187,7 +169,6 @@ main( int argc, char * argv [] )
 
 	// unzip an archive of files specific to a given BOINC workunit.
 	if ( option[ in::file::boinc_wu_zip ].user() ) {
-		std::cerr << "Unpacking WU data ..." << std::endl; std::cerr.flush();
 		vector1< string > files = option[ in::file::boinc_wu_zip ]();
 		for( vector1< string >::const_iterator it = files.begin(), end = files.end(); it != end; ++it ) {
 			std::string resolvedfile = *it;
@@ -197,25 +178,20 @@ main( int argc, char * argv [] )
 					*it + " does not exist!"
 				);
 			} else {
-				std::cerr << "Unpacking data: " << resolvedfile << std::endl;std::cerr.flush();
 				boinc_zip(UNZIP_IT, resolvedfile, "./");
 			}
 		}
 	}
 
 	// override database option and set to current directory
-	std::cerr << "Setting database description ..." << std::endl;std::cerr.flush();
-
 	option[in::path::database].value("minirosetta_database");
 
-	std::cerr << "Setting up checkpointing ..." << std::endl;std::cerr.flush();
 #endif
 		if ( option[ run::checkpoint ] || option[ run::checkpoint_interval ].user() ) {
 			protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
 		}
 
 #ifdef BOINC_GRAPHICS
-		std::cerr << "Setting up graphics native ..." << std::endl;std::cerr.flush();
 		// set native for graphics
 		if ( option[ in::file::native ].user() ) {
 			core::pose::PoseOP native_pose_( new core::pose::Pose );
@@ -295,12 +271,11 @@ main( int argc, char * argv [] )
 #ifdef BOINC
 
 	// gzip the output silent files.
-	std::cerr << "reached end of minirosetta::main()" << std::endl;
 	core::io::silent::gzip();
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
-	protocols::boinc::Boinc::worker_finish_summary( protocols::boinc::Boinc::decoy_count() + 2 , protocols::boinc::Boinc::decoy_count() + 2 , 2 );
+	protocols::boinc::Boinc::worker_finish_summary( protocols::boinc::Boinc::decoy_count(), protocols::boinc::Boinc::decoy_count(), 1 );
 	protocols::boinc::Boinc::worker_shutdown(); // Does not return.
 	utility_exit_with_message( "reached end of minirosetta::main() after worker_shutdown(); " );
 #endif

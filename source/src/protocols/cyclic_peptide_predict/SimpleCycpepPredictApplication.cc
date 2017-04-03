@@ -914,10 +914,18 @@ SimpleCycpepPredictApplication::run() const {
 	core::Size curstruct(0);
 	initialize_checkpointing( curstruct, success_count );
 
+#ifdef BOINC
+	//Max attempts before exiting without success
+	// This is used to hopefully prevent finishing without a model due to filtering logic.
+	// Avoid setting this too high which may cause jobs to run too long for BOINC users depending on the filtering
+	// rate of success.
+	core::Size const max_attempts(20);
+#endif
+
 	//EVERYTHING ABOVE THIS POINT IS DONE ONCE PER PROGRAM EXECUTION.
 	++curstruct;
 	for ( core::Size irepeat=curstruct, irepeat_max=nstruct_; irepeat<=irepeat_max; ++irepeat ) { //Loop nstruct times
-#ifdef BOINC
+#ifdef BOINC_GRAPHICS
 		{ //Increment the model count for BOINC.
 			protocols::boinc::BoincSharedMemory* shmem = protocols::boinc::Boinc::get_shmem();
 			shmem->model_count = shmem->model_count + 1;
@@ -974,7 +982,7 @@ SimpleCycpepPredictApplication::run() const {
 				checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
 #ifdef BOINC
 				//Increment total jobs and check whether it's time to quit.
-				if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+				if ((success_count || irepeat > max_attempts) && protocols::boinc::Boinc::worker_is_finished( success_count )) break;
 #endif
 			} else {
 				TR << std::endl;
@@ -1015,7 +1023,7 @@ SimpleCycpepPredictApplication::run() const {
 					checkpoint( irepeat, success_count ) ;
 #ifdef BOINC
 					//Increment total jobs and check whether it's time to quit.
-					if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+					if ((success_count || irepeat > max_attempts) && protocols::boinc::Boinc::worker_is_finished( success_count )) break;
 #endif
 				}
 				continue;
@@ -1044,7 +1052,7 @@ SimpleCycpepPredictApplication::run() const {
 			checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
 #ifdef BOINC
 			//Increment total jobs and check whether it's time to quit.
-			if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+			if ((success_count || irepeat > max_attempts) && protocols::boinc::Boinc::worker_is_finished( success_count )) break;
 #endif
 			continue;
 		}
@@ -1057,7 +1065,7 @@ SimpleCycpepPredictApplication::run() const {
 			checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
 #ifdef BOINC
 			//Increment total jobs and check whether it's time to quit.
-			if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+			if ((success_count || irepeat > max_attempts) && protocols::boinc::Boinc::worker_is_finished( success_count )) break;
 #endif
 			continue;
 		}
@@ -1117,7 +1125,7 @@ SimpleCycpepPredictApplication::run() const {
 
 #ifdef BOINC
 		//Increment total jobs and check whether it's time to quit.
-		if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+		if (protocols::boinc::Boinc::worker_is_finished( success_count )) break;
 #endif
 	} //Looping through nstruct
 
@@ -2455,7 +2463,7 @@ SimpleCycpepPredictApplication::checkpoint(
 
 	store_random_seed_info();
 
-#ifdef BOINC_GRAPHICS
+#ifdef BOINC
 	protocols::boinc::Boinc::update_pct_complete();
 #endif
 

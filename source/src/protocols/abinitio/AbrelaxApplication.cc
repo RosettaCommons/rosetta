@@ -221,9 +221,6 @@ void protocols::abinitio::AbrelaxApplication::register_options() {
 	// here we should have
 	// ClassicRelax::register_options();
 	// FastRelax::register_options(); etc.
-#ifdef BOINC
-	std::cerr << "Registered extra options." << std::endl; std::cerr.flush();
-#endif
 }
 
 namespace protocols {
@@ -1689,10 +1686,6 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			run_time->reset(); //reset clock of TimeEvaluator
 		}
 
-#ifdef BOINC
-		std::cerr << "Starting work on structure: " << curr_job->output_tag(curr_nstruct) << std::endl;
-#endif
-
 		// retrieve starting pose
 		pose::Pose fold_pose ( init_pose );
 		// Can we add the PyMOL mover here?
@@ -2041,14 +2034,7 @@ void AbrelaxApplication::run() {
 	// setup pose and abinitio
 	ProtocolOP prot_ptr;
 	pose::Pose init_pose;
-#ifdef BOINC
-	std::cerr << "Setting up folding (abrelax) ..." << std::endl;
-#endif
 	setup_fold( init_pose, prot_ptr ); //init_pose may or may not be fullatom (depending on flag option[ in:file:fullatom] )
-
-#ifdef BOINC
-	std::cerr << "Beginning folding (abrelax) ... " << std::endl;
-#endif
 	fold( init_pose, prot_ptr );
 	return;
 }

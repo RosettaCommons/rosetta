@@ -21,6 +21,10 @@
 // Platform headers
 #include <platform/types.hh>
 
+#ifdef ANDROID // include STL functions missing in the Android NDK
+#include <platform/missing_stl.hh>
+#endif
+
 // C++ headers
 #include <cstddef>
 #include <limits>

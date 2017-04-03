@@ -25,7 +25,9 @@
 
 #ifdef BOINC
 // Project headers
+#ifndef ANDROID
 #include <protocols/boinc/watchdog.hh>
+#endif
 #include <utility/io/ozstream.hh>
 #include <utility/sys_util.hh>
 #include <utility/string_util.hh>
@@ -88,9 +90,7 @@ Boinc::initialize_worker( void )
 		BOINC_DIAG_TRACETOSTDERR
 	);
 
-	cerr << utility::timestamp() << " :: BOINC:: Initializing ... ok." << std::endl;
 	if ( boinc_init() ) exit( EXIT_FAILURE ); // BOINC API call
-	cerr << utility::timestamp() << " :: BOINC :: boinc_init()" << endl;
 
 	// allow upload of stdout.txt
 	char filename[256];
@@ -106,27 +106,18 @@ Boinc::initialize_worker( void )
 	//
 	// http://boinc.berkeley.edu/trac/wiki/GraphicsApi
 	// create shared memory segment
-	cerr << "BOINC:: Setting up shared resources ... ok." << std::endl;
-
 	create_shared_memory();
 
-	cerr << "BOINC:: Setting up semaphores ... ok." << std::endl;
 	// create samaphore for data synchronization
 	create_semaphore();
 
-	cerr << "BOINC:: Updating status ... ok." << std::endl;
-
 	// updated status info
 	update_status_shmem();
-
-	cerr << "BOINC:: Registering timer callback... ok." << std::endl;
 
 	boinc_register_timer_callback(update_status_shmem);
 #endif
 
 	worker_initialized_ = true;
-
-	cerr << "BOINC:: Worker initialized successfully. " << std::endl;
 }
 
 
@@ -175,7 +166,6 @@ See http://boinc.berkeley.edu/trac/wiki/BasicApi
 	parse_int(app_init_data.project_preferences, "<cpu_run_time>", cpu_run_timetmp);
 	if (cpu_run_timetmp > 0 && cpu_run_timetmp != project_pref_max_cpu_run_time_) {
 		project_pref_max_cpu_run_time_ = cpu_run_timetmp;
-		std::cerr << "# cpu_run_time_pref: " << project_pref_max_cpu_run_time_ << std::endl;std::cerr.flush();
 	}
 }
 
@@ -284,7 +274,6 @@ bool Boinc::worker_is_finished( const int & total_nstruct ){
 }
 
 void Boinc::worker_startup() {
-	std::cerr << "BOINC:: Worker startup. " << std::endl;
 	using namespace basic::options;
 	if (!worker_initialized_)
 		utility_exit_with_message( "Must initialize Boinc before calling startup." );
@@ -333,8 +322,9 @@ job will end (see Boinc::is_finished()).
 	}
 
 	worker_running_ = true;
+#ifndef ANDROID
 	watchdog::watchdog_start();
-
+#endif
 }
 
 void Boinc::worker_shutdown() {
@@ -352,9 +342,9 @@ void Boinc::worker_shutdown() {
 	// do not edit this because it is parsed from stderr by the
 	// RALPH@home sub batch page to report memory usage
 	std::cerr << "BOINC :: WS_max " << working_set_size_max_val_ << std::endl;
-
+#ifndef ANDROID
 	watchdog::watchdog_finish();
-	std::cerr << "BOINC :: BOINC support services shutting down cleanly ..." << std::endl;
+#endif
 	boinc_finish(0); // BOINC API call. Does not return.
 }
 
@@ -363,8 +353,10 @@ void Boinc::worker_finish_summary( const int & num_decoys, const int & attempted
 	using namespace ObjexxFCL::format;
 	// job distributor iterates decoy count before ending so decrement it for the
 	// actual count
-	int decoy_cnt = (num_decoys > 0) ? num_decoys-1 : num_decoys;
-	int attempt_cnt = (attempted_decoys > 0) ? attempted_decoys-1 : attempted_decoys;
+	int decoy_cnt = num_decoys;
+	if (decoy_cnt < 1) decoy_cnt = 1;
+	int attempt_cnt = attempted_decoys;
+	if (attempt_cnt < 1) attempt_cnt = 1;
 	double cputime = 0.0;
 	boinc_wu_cpu_time(cputime); // get wu cpu run time
 	// prevent invalid cpu times (validator doesnt accept things that took less then 1200 seconds ):

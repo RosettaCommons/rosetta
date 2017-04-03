@@ -24,7 +24,7 @@
 // C++ Headers
 #include <map>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 #include <core/id/AtomID.hh>
 #include <iostream>
 #endif

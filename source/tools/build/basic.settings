@@ -700,7 +700,7 @@ settings = {
             "include_path"  : [
                 "#external",
                 "#external/dbio",
-                "/usr/include/GL"
+                #"/usr/include/GL"
             ],
             "libraries" : [
                 "boinc_graphics2",
@@ -710,14 +710,15 @@ settings = {
                 "#external/boinc/lib",
                 "#external/boinc/zip",
             ],
-            "defines"  : [ "BOINC_GRAPHICS" ],
+            #"defines"  : [ "BOINC_GRAPHICS" ],
             "flags" : {
                 "warn" : [
                     "Wno-unused-variable",
                     "Wno-unused-parameter",
+                    "Wno-parentheses",
 		    #"Wno-unused-but-set-variable",
                 ],
-                "link" : [ "Wl,-Bdynamic -lglut -lGL -lGLU -Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"  ],
+                #"link" : [ "Wl,-Bdynamic -lglut -lGL -lGLU -Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"  ],
             },
         },
     },
@@ -1091,49 +1092,53 @@ settings = {
         },
     },
 
+    # the android toolchain should be built into the external directory
     "gcc, android_arm" : {
         "appends" : {
-            "include_path" : [ "#external/androidarm-tc/arm-linux-androideabi/include", ],
             "library_path"    : [ "#external/androidarm-tc/arm-linux-androideabi/lib",
                                 "#external/androidarm-tc/sysroot/usr/lib", ],
+	    "defines"   : [ "ANDROID", ],
             "flags" : {
                 "cc"        : [
-                                "Wall", "O3",
-                                "-sysroot=#external/androidarm-tc/sysroot",
-                                "DANDROID",
-                                 "mthumb", "frtti", "fno-strict-aliasing",
+                                "Wall", "O3", "Wno-error=array-bounds",
+                                "frtti", "fno-strict-aliasing",
+                                "fexceptions",
                               ],
                 "cxx"        : [
-                                  "Wall","O3",
-                                  "-sysroot=#external/androidarm-tc/sysroot",
-                                  "DANDROID",
-                                  "mthumb", "frtti", "fno-strict-aliasing",
+                                  "Wall","O3", "Wno-error=array-bounds",
+                                  "frtti", "fno-strict-aliasing",
+                                  "fexceptions",
                                ],
-                "link" : [
-                    "Wl,-Bdynamic -lz -Wl,-Bstatic",
-                ],
+                "compile"    : [
+                               "fPIE", "pie", '-sysroot=' + os.path.join( os.getcwd(), '../../external/androidarm-tc/sysroot' ),
+                               "march=armv7-a", "mfloat-abi=softfp", "mfpu=vfpv3-d16",
+                               ],
+                "link"       : [ "fPIE", "pie", "march=armv7-a -Wl,--fix-cortex-a8", ],
 
             },
-            "libraries"  : [ "stdc++", "supc++" ],
+            "libraries"  : [ "z", "stdc++", ],
         },
         "overrides" : {
-            "cc"            : "#external/androidarm-tc/bin/arm-linux-androideabi-gcc",
-            "cxx"           : "#external/androidarm-tc/bin/arm-linux-androideabi-g++",
-            "link"            : "#external/androidarm-tc/bin/arm-linux-androideabi-ld",
+            "cc"            : os.path.join( os.getcwd(),'../../external/androidarm-tc/bin/arm-linux-androideabi-gcc'),
+            "cxx"           : os.path.join( os.getcwd(),'../../external/androidarm-tc/bin/arm-linux-androideabi-g++'),
+            "link"            : os.path.join( os.getcwd(),'../../external/androidarm-tc/bin/arm-linux-androideabi-ld'),
         },
         "removes" : {
+           "defines"  : [ "BOINC_GRAPHICS", ],
            "flags" : {
                 "warn" : [ "pedantic" ],
                 "compile" : [
+                    "march=core2",
+                    "mtune=generic",
                     "malign-double",
                     "march=pentium4",
                     "march=athlon",
                     "mtune=itanium2"
                 ],
+                "link" : [ "static" ],
            },
-           "defines"  : [ "BOINC_GRAPHICS", ],
-           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "#external/include", "#external" ],
-           "library_path"  : [ "/lib", "/usr/lib", "/usr/local/lib","#external/lib", "#external", ],
+           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "isystem external/include", "isystem external" ],
+           "library_path"  : [ "/lib", "/usr/lib", "/usr/local/lib","isystem external/lib", "isystem external", ],
         },
     },
 

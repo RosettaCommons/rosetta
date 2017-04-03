@@ -273,9 +273,9 @@ void BaseJobDistributor::shutdown()
 #ifdef BOINC
 	bool shuffle_mode = basic::options::option[ basic::options::OptionKeys::run::shuffle ].user() ;
 	if( shuffle_mode ){
-		protocols::boinc::Boinc::worker_finish_summary( curr_jobid_, curr_jobid_, curr_jobid_ );
+		protocols::boinc::Boinc::worker_finish_summary( curr_jobid_-1, curr_jobid_-1, jobs_.size() );
 	}else{
-		protocols::boinc::Boinc::worker_finish_summary( current_nstruct_, current_nstruct_, jobs_.size() );
+		protocols::boinc::Boinc::worker_finish_summary( current_nstruct_-1, current_nstruct_-1, jobs_.size() );
 	}
 	protocols::boinc::Boinc::worker_shutdown(); // Does not return.
 #endif

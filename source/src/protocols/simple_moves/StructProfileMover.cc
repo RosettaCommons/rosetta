@@ -337,7 +337,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 	for ( Size ii=1; ii<= res_per_pos.size(); ++ii ) {
 		vector1<Real> pos_profile_score;
 		Size ssType = ss_type_convert(pose.secstruct(ii));
-		Size burialType = round(cenList[ii]);
+		Size burialType = std::round(cenList[ii]);
 		if ( burialType>10 ) { //max for centype 6 was set to 10 atoms with 6ang because of low counts.
 			burialType=10;
 		}

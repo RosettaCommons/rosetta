@@ -15,11 +15,7 @@
 // Unit header
 #include <protocols/boinc/watchdog.hh>
 
-#include <iostream>
-
-
 #ifdef BOINC
-#include <protocols/boinc/boinc.hh>
 #include <core/io/silent/util.hh>
 
 // Utility Headers
@@ -146,14 +142,14 @@ get_the_hell_out(std::string )
 
 	std::string const fullname = option[ out::file::silent ]();
 
-	unsigned int decoy_estimate =  std::max(1,protocols::boinc::Boinc::decoy_count()) + 1;
+	unsigned int decoy_estimate =  std::max(1,protocols::boinc::Boinc::decoy_count());
 	// if structures were built, just bail quietly and return those structures.
 	if( utility::file::file_exists( fullname )  ){
 		std::cerr << "InternalDecoyCount: " << protocols::boinc::Boinc::decoy_count()  << std::endl;
 
 		// Count ?
 		// print a fake message to satisfy validator
-		protocols::boinc::Boinc::worker_finish_summary( decoy_estimate, decoy_estimate , 2  );
+		protocols::boinc::Boinc::worker_finish_summary( decoy_estimate, decoy_estimate , 1  );
 
 		core::io::silent::gzip();
 		boinc_finish(0); // process terminates right here, nothing else needed.
@@ -176,7 +172,7 @@ get_the_hell_out(std::string )
 		if (infile.good()) {
 			infile.close();
 			// print a fake message to satisfy validator
-			protocols::boinc::Boinc::worker_finish_summary( decoy_estimate, decoy_estimate , 2  );
+			protocols::boinc::Boinc::worker_finish_summary( decoy_estimate, decoy_estimate , 1  );
 			boinc_finish(0); // process terminates right here, nothing else needed.
 		}else{
 			std::cerr << "Stream information inconsistent." << std::endl;
@@ -243,7 +239,7 @@ get_the_hell_out(std::string )
 	core::io::silent::gzip();
 
 	boinc_end_critical_section();
-	protocols::boinc::Boinc::worker_finish_summary( protocols::boinc::Boinc::decoy_count() + 2 , protocols::boinc::Boinc::decoy_count() + 2 , 2  );
+	protocols::boinc::Boinc::worker_finish_summary( protocols::boinc::Boinc::decoy_count(), protocols::boinc::Boinc::decoy_count(), 1 );
 	boinc_finish(0); // process terminates right here, nothing else needed.
 
 	return;

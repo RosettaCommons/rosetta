@@ -98,17 +98,8 @@ BOINCJobDistributor::go( protocols::moves::MoverOP mover )
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
 #ifdef BOINC
-//	JobsContainer const & jobs( get_jobs() );
-//	JobOutputterOP outputter = job_outputter();
-
-	// Count completed jobs:
-//	core::Size count=0;
-//	for( core::Size i = 1; i <= jobs.size(); i ++ ){
-//		if( outputter->job_has_completed( jobs[ i ] ) ) count ++;
-//	}
 	checkpoint_clear();
-//	protocols::boinc::Boinc::worker_finish_summary( count + 1, count + 1, jobs.size() );
-	protocols::boinc::Boinc::worker_finish_summary( total_completed_nstruct_ + 1, total_completed_nstruct_ + 1, jobs.size() );
+	protocols::boinc::Boinc::worker_finish_summary( total_completed_nstruct_, total_completed_nstruct_, jobs.size() );
 	protocols::boinc::Boinc::worker_shutdown(); // Does not return.
 #endif
 }
@@ -163,10 +154,7 @@ core::Size
 BOINCJobDistributor::get_new_job_id()
 {
 #ifdef BOINC
-	//if( next_random_job() > 0 ){
-		//if (protocols::boinc::Boinc::worker_is_finished( next_random_job() - 1 )) return 0; // we're done no matter what nstruct syays
 	if (protocols::boinc::Boinc::worker_is_finished( total_completed_nstruct_ )) return 0; // we're done no matter what nstruct syays
-	//}
 #endif
 	return ShuffleFileSystemJobDistributor::get_new_job_id();
 }

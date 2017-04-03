@@ -89,7 +89,7 @@ AtomProperties::show( std::ostream & output ) const
 	output << "   Properties:";
 	utility::vector1< string > const & properties( get_list_of_properties() );
 	Size const n_properties( properties.size() );
-	for ( uint i( 1 ); i <= n_properties; ++i ) {
+	for ( platform::uint i( 1 ); i <= n_properties; ++i ) {
 		output << ' ' << properties[ i ];
 	}
 	output << endl;

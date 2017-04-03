@@ -16,6 +16,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/CSI_Sequence.hh>
 
+#include <iostream>
 
 static bool throw_the_next_time_an_assertion_failure_is_hit( false );
 

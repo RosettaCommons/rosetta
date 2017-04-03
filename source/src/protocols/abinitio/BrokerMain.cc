@@ -190,12 +190,6 @@ void register_options_broker() {
 
 	option.add_relevant(chunk::pdb2);
 	option.add_relevant(chunk::loop2);
-
-
-#ifdef BOINC
-	std::cerr << "Registered extra options." << std::endl;
-	std::cerr.flush();
-#endif
 }
 
 void common_setup() {

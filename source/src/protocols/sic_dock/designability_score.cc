@@ -157,7 +157,7 @@ XfoxmScore::score(
 	char val = a[index];
 	//
 	// std::cout << (int)val << "'" << val << "'"<< std::endl;
-	return val == -127 ? 0.0 : min(10.0,exp(((float)val)/12.0-2.5));
+	return val == -127.0 ? 0.0 : min(10.0,exp(((float)val)/12.0-2.5));
 	// return val == -127 ? -15.0 : ((float)val)/12.0;
 }
 
