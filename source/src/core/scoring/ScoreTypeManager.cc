@@ -394,6 +394,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_base_backbone"] = rna_base_backbone;
 	name2score_type_[ "rna_backbone_backbone"] = rna_backbone_backbone;
 	name2score_type_[ "rna_repulsive"] = rna_repulsive;
+	name2score_type_[ "rna_motif"] = rna_motif;
 
 	name2score_type_[ "rna_base_pair"] = rna_base_pair;
 	name2score_type_[ "rna_base_axis"] = rna_base_axis;

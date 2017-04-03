@@ -17,12 +17,12 @@
 #include <core/scoring/rna/RNA_PairwiseLowResolutionEnergyCreator.hh>
 
 // Package headers
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -32,6 +32,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/rna/RNA_Motif.hh>
 
 #include <utility/vector1.hh>
 
@@ -74,6 +75,7 @@ RNA_PairwiseLowResolutionEnergyCreator::score_types_for_method() const {
 	sts.push_back( rna_backbone_backbone );
 	sts.push_back( rna_repulsive );
 	sts.push_back( rna_data_base );
+	sts.push_back( rna_motif );
 	return sts;
 }
 
@@ -336,10 +338,13 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 	// Get Pose cached pairwise "raw" base-base info. This was
 	// updated above.
 	if ( sfxn.has_nonzero_weight( rna_base_pair ) ||
-			sfxn.has_nonzero_weight( rna_base_axis ) ||
-			sfxn.has_nonzero_weight( rna_base_stagger ) ||
-			sfxn.has_nonzero_weight( rna_base_stack ) ||
-			sfxn.has_nonzero_weight( rna_base_stack_axis ) ) {
+			 sfxn.has_nonzero_weight( rna_base_axis ) ||
+			 sfxn.has_nonzero_weight( rna_base_stagger ) ||
+			 sfxn.has_nonzero_weight( rna_base_stack ) ||
+			 sfxn.has_nonzero_weight( rna_base_stack_axis ) ||
+			 sfxn.has_nonzero_weight( rna_data_base ) ||
+			 sfxn.has_nonzero_weight( rna_motif )
+			 ) {
 
 		// Create Pose cached non-pairwise, "filtered" base-base info.
 		// This forces each base edge to have only one pairing partner.
@@ -355,9 +360,14 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 		totals[ rna_base_stack ]       = rna_filtered_base_base_info.get_total_base_stack_score();
 		totals[ rna_base_stack_axis ]  = rna_filtered_base_base_info.get_total_base_stack_axis_score();
 
-		//  rna_filtered_base_base_info.set_calculated( false );
-		rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
-		totals[ rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
+		if ( sfxn.has_nonzero_weight( rna_data_base ) ) {
+			rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
+			totals[ rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
+		}
+
+		if ( sfxn.has_nonzero_weight( rna_motif ) ) {
+			totals[ rna_motif ] += get_rna_motif_score( pose, rna_low_resolution_potential_, rna_filtered_base_base_info );
+		}
 	}
 
 	// rna_low_resolution_potential_.finalize( pose );

@@ -295,6 +295,7 @@ enum ScoreType {
 	//RNA stuff
 	//Low resolution
 	rna_rg,  // Radius of gyration for RNA
+	rna_motif, // A-minors, kink-turns, etc.
 
 	//  FACTS solvation model
 	facts_elec,

@@ -36,7 +36,20 @@ public:
 
 	BaseStack();
 
+	BaseStack( core::Size const & res1, core::Size const & res2,
+						 core::chemical::rna::BaseDoubletOrientation const & orientation,
+						 core::chemical::rna::BaseStackWhichSide const & which_side	 ):
+		res1_( res1 ),
+		res2_( res2 ),
+		orientation_( orientation ),
+		which_side_( which_side )
+	{
+	};
+
 	~BaseStack(){};
+
+	BaseStack
+	flipped() const;
 
 	friend
 	bool operator < ( BaseStack const & lhs, BaseStack const & rhs );
@@ -74,6 +87,7 @@ public:
 
 typedef std::pair< Real, BaseStack > EnergyBaseStack;
 typedef std::list < EnergyBaseStack > EnergyBaseStackList;
+typedef utility::vector1 < BaseStack > RNA_BaseStackList;
 
 } //rna
 } //pose

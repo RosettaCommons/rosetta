@@ -121,6 +121,9 @@ public:
 	pose::rna::EnergyBasePairList const scored_base_pair_list() const{ return scored_base_pair_list_; }
 	pose::rna::EnergyBaseStackList const scored_base_stack_list() const{ return scored_base_stack_list_; }
 
+	pose::rna::RNA_BasePairList base_pair_list() const;
+	pose::rna::RNA_BaseStackList base_stack_list() const;
+
 	Real get_data_score( rna::data::RNA_DataInfo const & rna_data_info ) const;
 
 private:

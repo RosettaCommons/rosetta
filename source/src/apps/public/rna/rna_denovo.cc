@@ -114,6 +114,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( basic::options::OptionKeys::rna::denovo::secstruct );
 		option.add_relevant( basic::options::OptionKeys::rna::denovo::secstruct_file );
 		option.add_relevant( basic::options::OptionKeys::rna::denovo::minimize_rna );
+		option.add_relevant( basic::options::OptionKeys::rna::denovo::rounds );
 		option.add_relevant( basic::options::OptionKeys::rna::denovo::fixed_stems );
 		option.add_relevant( basic::options::OptionKeys::rna::denovo::obligate_pair );
 		option.add_relevant( basic::options::OptionKeys::rna::denovo::obligate_pair_explicit );

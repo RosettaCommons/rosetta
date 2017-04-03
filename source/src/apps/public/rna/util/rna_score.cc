@@ -35,7 +35,6 @@
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>

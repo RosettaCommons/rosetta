@@ -162,7 +162,8 @@ sources = {
 		"BaseStack",
 		"RNA_BasePairClassifier",
 		"RNA_IdealCoord",
-		"RNA_SecStruct",
+	        #"RNA_Motif", # all in a .hh file for now.
+	        "RNA_SecStruct",
 		"RNA_SuiteName",
 		"leontis_westhof_util",
 		"util",

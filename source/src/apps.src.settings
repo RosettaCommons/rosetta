@@ -173,6 +173,7 @@ sources = {
 		"rna_predict_chem_map",
 		"rna_suitename",
 		"rna_minimize",
+                "rna_motif",
 		"rna_score",
 		"nucleobase_sample_around",
 	],

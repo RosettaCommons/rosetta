@@ -41,6 +41,27 @@ BaseStack::BaseStack():
 {
 }
 
+BaseStack
+BaseStack::flipped() const
+{
+	BaseStackWhichSide flipped_which_side( ANY_BASE_STACK_SIDE );
+	if ( which_side_ == ABOVE ){
+		if ( orientation_ == ANTIPARALLEL ) {
+			flipped_which_side = ABOVE;
+		} else if ( orientation_ == PARALLEL ) {
+			flipped_which_side = BELOW;
+		}
+	} else if ( which_side_ == BELOW ) {
+		if ( orientation_ == ANTIPARALLEL ) {
+			flipped_which_side = BELOW;
+		} else if ( orientation_ == PARALLEL ) {
+			flipped_which_side = ABOVE;
+		}
+	}
+	return BaseStack( res2_, res1_, orientation_,
+										flipped_which_side );
+}
+
 ///////////////////////////////////////////////////////////////////
 bool
 operator < ( BaseStack const & lhs, BaseStack const & rhs ){

@@ -1393,19 +1393,6 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 
 	if ( std::abs( static_cast< int > ( i - j ) ) < 2 ) return 0.0;
 
-	// rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	// rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	//debug_assert( rna_centroid_info.calculated() ); //This needs to all be calculated earlier, dude.
-
-	// utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
-	//  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
-	// Vector const & centroid_i( base_centroids[i] );
-	// kinematics::Stub const & stub_i( base_stubs[i] );
-	Matrix const & M_i( stub_i.M );
-	Vector const & x_i = M_i.col_x();
-	Vector const & y_i = M_i.col_y();
-	Vector const & z_i = M_i.col_z();
-
 	Real total_score( 0.0 );
 
 	//For speed, a cached set of atom numbers that go with RNA_backbone_oxygen_atoms_ (which is a bunch of strings)
@@ -1414,59 +1401,88 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 
 	// Go over sugar and phosphate oxygen atoms
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
-
-		// Skip OP1, OP2, O5' for REPL_PHOSPHATE
-		if ( rsd2.has_variant_type( chemical::REPL_PHOSPHATE ) && m <= 3 ) continue;
-
-		//  std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
-		Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ]; //atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
-
-		Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
-
-		Vector const d_ij = heavy_atom_j - centroid_i;
-
-		Real const dist_ij = d_ij.length();
-
-		if ( dist_ij < base_backbone_distance_cutoff_ ) {
-
-			Real const dist_x = dot_product( d_ij, x_i );
-			Real const dist_y = dot_product( d_ij, y_i );
-			Real const dist_z = dot_product( d_ij, z_i );
-
-			Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y );
-
-			if ( std::abs( dist_z ) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
-			if ( rho > base_backbone_rho_cutoff_ ) continue; // Look for atoms in the base plane
-
-			//sanity check...
-			//make sure we're in H-bonding distance of some base atom.
-			Real atom_cutoff_weight( 1.0 );
-			if ( !check_for_base_neighbor( rsd1, heavy_atom_j, atom_cutoff_weight ) ) continue;
-
-			Real const score_contribution =
-				atom_cutoff_weight * get_rna_base_backbone_xy( dist_x, dist_y, dist_z, rsd1, m );
-
-			total_score += score_contribution;
-
-			if ( rna_verbose_ ) {
-				tr <<
-					"BASE - BACKBONE " <<
-					rsd1.name3() <<
-					I( 3, i ) << " " <<
-					rsd2.atom_name( atom_num_j )  <<  " " <<
-					I( 3, j ) << " " <<
-					" [" << F( 4, 2, rho ) << ", " << F( 4, 2, dist_z ) << "]:  " <<
-					F( 6, 2, score_contribution ) <<
-					std::endl;
-			}
-
-		}
-
+		Real const score_contribution = get_base_backbone( rsd1, rsd2, centroid_i, stub_i, m );
+		total_score += score_contribution;
 	}
-
 	return total_score;
 }
 
+// @details public function to help annotate U-turns etc.
+Real
+RNA_LowResolutionPotential::get_base_backbone(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */	) const
+{
+	using namespace core::chemical::rna;
+	Vector const centroid_i = get_rna_base_centroid( rsd1 );
+	kinematics::Stub const stub_i( get_rna_base_coordinate_system_stub( rsd1 ) );
+	return get_base_backbone( rsd1, rsd2, centroid_i, stub_i, m );
+}
+
+// @details helper function that encodes how to get base/phosphate, base/sugar  bonuses.
+Real
+RNA_LowResolutionPotential::get_base_backbone(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	Vector const & centroid_i,
+	kinematics::Stub const & stub_i,
+	Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */	) const
+{
+
+	Matrix const & M_i( stub_i.M );
+	Vector const & x_i = M_i.col_x();
+	Vector const & y_i = M_i.col_y();
+	Vector const & z_i = M_i.col_z();
+
+	// Skip OP1, OP2, O5' for REPL_PHOSPHATE
+	if ( rsd2.has_variant_type( chemical::REPL_PHOSPHATE ) && m <= 3 ) return 0.0;
+
+	//  std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
+	Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ]; //atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
+
+	Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
+
+	Vector const d_ij = heavy_atom_j - centroid_i;
+
+	Real const dist_ij = d_ij.length();
+
+	if ( dist_ij < base_backbone_distance_cutoff_ ) {
+
+		Real const dist_x = dot_product( d_ij, x_i );
+		Real const dist_y = dot_product( d_ij, y_i );
+		Real const dist_z = dot_product( d_ij, z_i );
+
+		Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y );
+
+		if ( std::abs( dist_z ) > base_backbone_z_cutoff_ ) return 0.0; // Look for atoms in the base plane
+		if ( rho > base_backbone_rho_cutoff_ ) return 0.0; // Look for atoms in the base plane
+
+		//sanity check...
+		//make sure we're in H-bonding distance of some base atom.
+		Real atom_cutoff_weight( 1.0 );
+		if ( !check_for_base_neighbor( rsd1, heavy_atom_j, atom_cutoff_weight ) ) return 0.0;
+
+		Real const score_contribution =
+			atom_cutoff_weight * get_rna_base_backbone_xy( dist_x, dist_y, dist_z, rsd1, m );
+
+		if ( rna_verbose_ ) {
+			tr <<
+				"BASE - BACKBONE " <<
+				rsd1.name3() <<
+				I( 3, rsd1.seqpos() ) << " " <<
+				rsd2.atom_name( atom_num_j )  <<  " " <<
+				I( 3, rsd2.seqpos() ) << " " <<
+				" [" << F( 4, 2, rho ) << ", " << F( 4, 2, dist_z ) << "]:  " <<
+				F( 6, 2, score_contribution ) <<
+					std::endl;
+		}
+
+		return score_contribution;
+	}
+
+	return 0.0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Lot of code copying here -- should minirosetta++ derivative calculation be refactored?

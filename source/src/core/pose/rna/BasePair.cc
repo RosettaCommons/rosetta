@@ -125,7 +125,8 @@ bool operator == ( BasePair const & lhs, BasePair const & rhs )
 ///////////////////////////////////////////////////////////////////
 std::ostream &
 operator << ( std::ostream & out, BasePair const & s ){
-	out << s.res1_ << " " << s.res2_ << " " << s.edge1_ << " " << s.edge2_ << " " << s.orientation_;
+	out << s.res1_ << " " << s.res2_ << " " <<
+		get_full_edge_from_num( s.edge1_ )  << " " << get_full_edge_from_num( s.edge2_ ) << " " << get_full_orientation_from_num( s.orientation_ );
 	return out;
 }
 

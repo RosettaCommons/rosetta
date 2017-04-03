@@ -2128,8 +2128,28 @@ Residue::in_list(
 	core::Size const val,
 	utility::vector1< core::Size > const &vect
 ) const {
-	for ( core::Size i=1, imax=vect.size(); i<=imax; ++i ) { if ( vect[i] == val ) return true; }
-	return false;
+	// following copies code from utility -- rhiju, 2017.
+	// for ( core::Size i=1, imax=vect.size(); i<=imax; ++i ) { if ( vect[i] == val ) return true; }
+	// return false;
+	return vect.has_value( val );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @author rhiju
+std::string
+Residue::annotated_name( bool const show_all_variants /* = true */ ) const
+{
+	using namespace core::chemical;
+	std::string seq;
+	char c = name1();
+	seq += c;
+	if (
+			( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != name() )
+			&& ( show_all_variants || name().substr(0,3) != "CYD")
+			) {
+		seq = seq + '[' + name() + ']';
+	}
+	return seq;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

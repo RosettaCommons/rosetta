@@ -2020,6 +2020,11 @@ public:
 		return rsd_type_.name1();
 	}
 
+	/// @brief Returns this residue's 1-letter representation, including
+	///        details in square brackets. E.g., H[HIS_D]
+	std::string
+	annotated_name( bool const show_all_variants = true ) const;
+
 	/// @brief Returns this residue's AA type, if any
 	/// Used for knowledge-based scores, dunbrack, etc. could be "aa_unk"
 	/// AA is enumeration
@@ -2036,6 +2041,13 @@ public:
 	backbone_aa() const
 	{
 		return rsd_type_.backbone_aa();
+	}
+
+	/// @brief Returns the nucleic acid type to be used for fragment sampling.
+	chemical::AA const &
+	na_analogue() const
+	{
+		return rsd_type_.na_analogue();
 	}
 
 	/// @brief Returns the internal coordinates of this residue's atom with index number  <atm>

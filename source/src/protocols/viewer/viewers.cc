@@ -87,7 +87,7 @@ using namespace protocols::viewer::graphics_states_param;
 
 namespace protocols {
 namespace viewer {
-	
+
 #ifdef GL_GRAPHICS
 // prototypes
 void check_for_new_conformation_viewers();
@@ -108,7 +108,7 @@ pthread_cond_t start_cond = PTHREAD_COND_INITIALIZER;
 #if defined GL_GRAPHICS || defined BOINC_GRAPHICS
 
 namespace graphics {
-	
+
 int window_size = 30;
 int specialKey = 0;
 bool click;
@@ -673,20 +673,29 @@ residue_color_by_group( core::conformation::Residue const & res, int total_resid
 	return color;
 }
 
+void
+mute_color( float & red, float & blue, float & green )
+{
+	float saturation = sqrt(red*red + green*green + blue*blue);
+	float muting = 0.7;
+	red = muting*red/saturation;
+	green = muting*green/saturation;
+	blue = muting*blue/saturation;
+}
+
+Vector
+whiten_color( Vector const & vec ) {
+	return ( 0.5*vec + 0.5*Vector(1.0,1.0,1.0) );
+}
+
 // from rosetta++ protein_graphics.cc
-void rainbow_color( float frac , float & red, float & green, float & blue , bool mute_color ) {
+void rainbow_color( float frac , float & red, float & green, float & blue , bool mute ) {
 	//float muting = .7;
 	float my_color = frac;
 	red = my_color;
 	blue = 1.0 - my_color ;
 	green = (my_color < .5) ? 2.0*my_color : 2.0-2.0*my_color;
-	if ( mute_color ) {
-		float saturation = sqrt(red*red + green*green + blue*blue);
-		float muting = .7;
-		red = muting*red/saturation;
-		green = muting*green/saturation;
-		blue = muting*blue/saturation;
-	}
+	if ( mute ) mute_color( red, green, blue );
 }
 // chu enable color by chain
 void chain_color( int const chain, float & red, float & green, float & blue ) {
@@ -734,51 +743,43 @@ void get_residue_color( float i, float & red, float & green, float & blue, bool 
 }
 
 // from rosetta++ protein_graphics.cc
-std::map<std::string, Vector>  get_sidechain_color_rhiju() {
+std::map<core::chemical::AA, Vector>
+get_sidechain_color_rhiju()
+{
+	using namespace core::chemical;
 
-	std::map<std::string, Vector> sidechain_color_rhiju;
+	std::map <AA, Vector> sidechain_color_rhiju;
 
-	sidechain_color_rhiju[ "ALA" ] = Vector( 0.3, 0.3, 0.3); //gray
-	sidechain_color_rhiju[ "CYS" ] = Vector( 0.7, 0.7, 0.0); //yellow:
-	sidechain_color_rhiju[ "ASP" ] = Vector( 0.7, 0.0, 0.0); //red
-	sidechain_color_rhiju[ "GLU" ] = Vector( 0.7, 0.0, 0.0); //red
-	sidechain_color_rhiju[ "PHE" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "GLY" ] = Vector( 0.7, 0.5, 0.0); //orange; this shouldn't happen from sidechain.
-	sidechain_color_rhiju[ "HIS" ] = Vector( 0.0, 0.0, 0.7); //blue
-	sidechain_color_rhiju[ "ILE" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "LYS" ] = Vector( 0.0, 0.0, 0.7); //blue
-	sidechain_color_rhiju[ "LEU" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "MET" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "ASN" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "PRO" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "GLN" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "ARG" ] = Vector( 0.0, 0.0, 0.7); //blue
-	sidechain_color_rhiju[ "SER" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "THR" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "VAL" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "TRP" ] = Vector( 0.3, 0.3, 0.3);
-	sidechain_color_rhiju[ "TYR" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "SEP" ] = Vector( 0.5, 0.5, 0.0); //orange
-	sidechain_color_rhiju[ "GUA" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
-	sidechain_color_rhiju[ "ADE" ] = Vector( 0.5, 0.5, 0.0); //yellow
-	sidechain_color_rhiju[ "CYT" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "THY" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
-	sidechain_color_rhiju[ "RGU" ] = Vector( 0.5, 0.0, 0.0); //red [used to be blue, now matching EteRNA]
-	sidechain_color_rhiju[ "RAD" ] = Vector( 0.5, 0.5, 0.0); //yellow
-	sidechain_color_rhiju[ "RCY" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "URA" ] = Vector( 0.0, 0.0, 0.5); //blue  [now matching EteRNA]
-	sidechain_color_rhiju[ "  G" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
-	sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
-	sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
-	sidechain_color_rhiju[ " DG" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
-	sidechain_color_rhiju[ " DA" ] = Vector( 0.5, 0.5, 0.0); //yellow
-	sidechain_color_rhiju[ " DC" ] = Vector( 0.0, 0.5, 0.0); //green
-	sidechain_color_rhiju[ " DU" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
-	sidechain_color_rhiju[ " DT" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
-	sidechain_color_rhiju[ "5MU" ] = Vector( 0.0, 0.0, 0.5); //blue
-	sidechain_color_rhiju[ " MG" ] = Vector( 0.0, 1.0, 0.0); //bright green
-	sidechain_color_rhiju[ "HOH" ] = Vector( 1.0, 0.0, 0.0); //bright green
+	sidechain_color_rhiju[ aa_ala ] = Vector( 0.3, 0.3, 0.3); //gray
+	sidechain_color_rhiju[ aa_cys ] = Vector( 0.7, 0.7, 0.0); //yellow:
+	sidechain_color_rhiju[ aa_asp ] = Vector( 0.7, 0.0, 0.0); //red
+	sidechain_color_rhiju[ aa_glu ] = Vector( 0.7, 0.0, 0.0); //red
+	sidechain_color_rhiju[ aa_phe ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_gly ] = Vector( 0.7, 0.5, 0.0); //orange; this shouldn't happen from sidechain.
+	sidechain_color_rhiju[ aa_his ] = Vector( 0.0, 0.0, 0.7); //blue
+	sidechain_color_rhiju[ aa_ile ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_lys ] = Vector( 0.0, 0.0, 0.7); //blue
+	sidechain_color_rhiju[ aa_leu ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_met ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_asn ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ aa_pro ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_gln ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ aa_arg ] = Vector( 0.0, 0.0, 0.7); //blue
+	sidechain_color_rhiju[ aa_ser ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ aa_thr ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ aa_val ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_trp ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ aa_tyr ] = Vector( 0.0, 0.5, 0.0); //green
+	//	sidechain_color_rhiju[ aa_sep ] = Vector( 0.5, 0.5, 0.0); //orange
+	sidechain_color_rhiju[ na_gua ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
+	sidechain_color_rhiju[ na_ade ] = Vector( 0.5, 0.5, 0.0); //yellow
+	sidechain_color_rhiju[ na_cyt ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ na_thy ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+	sidechain_color_rhiju[ na_rgu ] = Vector( 0.5, 0.0, 0.0); //red [used to be blue, now matching EteRNA]
+	sidechain_color_rhiju[ na_rad ] = Vector( 0.5, 0.5, 0.0); //yellow
+	sidechain_color_rhiju[ na_rcy ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ na_ura ] = Vector( 0.0, 0.0, 0.5); //blue  [now matching EteRNA]
+	sidechain_color_rhiju[ aa_h2o ] = Vector( 1.0, 0.0, 0.0); //bright green
 
 	return sidechain_color_rhiju;
 }
@@ -791,7 +792,7 @@ Vector get_atom_color(
 	int const & i ) {
 
 	float red,green,blue;
-	static std::map<std::string, Vector> sidechain_color_rhiju = get_sidechain_color_rhiju();
+	static std::map<core::chemical::AA, Vector> sidechain_color_rhiju = get_sidechain_color_rhiju();
 
 	switch ( gs.Color_mode ) {
 
@@ -803,8 +804,10 @@ Vector get_atom_color(
 		return Vector(red, green, blue);
 
 	case RESIDUE_COLOR :
-		if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
-			return sidechain_color_rhiju[residues[r]->name3()];
+		if ( sidechain_color_rhiju.find(residues[r]->aa()) != sidechain_color_rhiju.end() ) {
+			return sidechain_color_rhiju[residues[r]->aa()];
+		} else if ( sidechain_color_rhiju.find(residues[r]->na_analogue()) != sidechain_color_rhiju.end() ) {
+			return whiten_color( sidechain_color_rhiju[residues[r]->na_analogue()] );
 		}
 		return Vector( 1.0, 0.5, 0.0); //orange
 
@@ -823,8 +826,10 @@ Vector get_atom_color(
 		if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 			return atom_color_by_element( residues[r]->atom_type(i).element());
 		}
-		if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
-			return sidechain_color_rhiju[residues[r]->name3()];
+		if ( sidechain_color_rhiju.find(residues[r]->aa()) != sidechain_color_rhiju.end() ) {
+			return sidechain_color_rhiju[residues[r]->aa()];
+		} else if ( sidechain_color_rhiju.find(residues[r]->na_analogue()) != sidechain_color_rhiju.end() ) {
+			return whiten_color( sidechain_color_rhiju[residues[r]->na_analogue()] );
 		}
 		return Vector( 1.0, 1.0, 1.0);
 
@@ -838,11 +843,13 @@ Vector get_atom_color(
 		} else if ( residues[r]->atom_is_backbone(i)  ) {
 			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, false /*mute_color*/);
 			return Vector(red, green, blue);
-		} else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
-			return sidechain_color_rhiju[ residues[r]->name3() ];
+		} else if ( sidechain_color_rhiju.find(residues[r]->aa()) != sidechain_color_rhiju.end() ) {
+			return sidechain_color_rhiju[residues[r]->aa()];
+		} else if ( sidechain_color_rhiju.find(residues[r]->na_analogue()) != sidechain_color_rhiju.end() ) {
+			return whiten_color( sidechain_color_rhiju[residues[r]->na_analogue()] );
 		}
 		break;
-		
+
 	case SINGLE_GLYCAN:
 		if ( residues[r]->atom_is_backbone(i)) {
 			return Vector( 0.4, 0.0, 0.8 ); // Purple?
@@ -850,9 +857,9 @@ Vector get_atom_color(
 		else {
 			//return atom_color_by_element( residues[r]->atom_type(i).element());
 			return Vector( .85, .85, .85 ); //Whitish
-			
+
 		}
-	
+
 	case GHOST_COLOR :
 		if ( residues[r]->atom_is_hydrogen(i) ) {
 			return Vector( graphics::ghost_color_vect.x()+0.1 , graphics::ghost_color_vect.y()+0.1, graphics::ghost_color_vect.z()+0.1 );
@@ -1936,7 +1943,7 @@ draw_conformation_and_density(
 
 	using namespace graphics;
 	using namespace basic::options;
-	
+
 	const int total_residue = residues.size();
 
 	//Set background color
@@ -1976,7 +1983,7 @@ draw_conformation_and_density(
 	//glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	//glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat_emission );
 	//glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
-	
+
 	if ( total_residue > 0 ) {
 		glPushMatrix();
 		glTranslatef(-center.x(), -center.y(), -center.z());
@@ -2022,7 +2029,7 @@ draw_conformation_and_density(
 			display_residues_wireframe( gs, glycan_residues, Vector( 0.0, 0.0, 0.0) );
 			gs.Color_mode = colormode_save;
 		}
-		
+
 		if ( other_residues.size() > 0 ) {
 			ColorMode colormode_save = gs.Color_mode;
 			gs.Color_mode = RHIJU_COLOR;

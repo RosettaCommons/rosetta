@@ -434,7 +434,8 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 		}
 	} //if not RNA
 
-	Size res_type = rsd.aa();
+	AA res_type = rsd.aa();
+	if ( res_type == aa_unk || res_type == aa_unp )	res_type = rsd.type().na_analogue();
 
 	Vector x, y, z;
 
@@ -453,7 +454,9 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 		std::string H_atom;
 		if ( res_type == na_rad || res_type == na_rgu ) H_atom = "N7" ;
 		if ( !rsd.has( H_atom ) && rsd.name3() == "7DA" ) H_atom = "C7";
-		if ( res_type == na_rcy || res_type == na_ura ) H_atom = "C5";
+		if ( res_type == na_rcy || res_type == na_ura )	H_atom = "C5";
+		if ( res_type == na_ura && rsd.name3() == "PSU" ) H_atom = "N1"; // pseudoU is flipped
+
 		WC_coord = rsd.xyz( WC_atom );
 		H_coord = rsd.xyz( H_atom );
 	}

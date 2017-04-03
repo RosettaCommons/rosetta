@@ -351,6 +351,22 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 	return rna_data_score;
 }
 
+pose::rna::RNA_BasePairList
+RNA_FilteredBaseBaseInfo::base_pair_list() const
+{
+	pose::rna::RNA_BasePairList base_pair_list;
+	for ( auto const & scored_base_pair : scored_base_pair_list() ) base_pair_list.push_back( scored_base_pair.second );
+	return base_pair_list;
+}
+
+pose::rna::RNA_BaseStackList
+RNA_FilteredBaseBaseInfo::base_stack_list() const
+{
+	pose::rna::RNA_BaseStackList base_stack_list;
+	for ( auto const & scored_base_stack : scored_base_stack_list() ) base_stack_list.push_back( scored_base_stack.second );
+	return base_stack_list;
+}
+
 } //rna
 } //scoring
 } //core
