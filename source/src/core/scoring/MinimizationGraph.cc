@@ -121,15 +121,16 @@ MinimizationNode::setup_for_minimizing(
 	Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	kinematics::MinimizerMapBase const & min_map
+	kinematics::MinimizerMapBase const & min_map,
+	basic::datacache::BasicDataCache & res_data_cache
 ) {
 	for ( auto iter = active_1benmeths_begin(),
 			iter_end = active_1benmeths_end(); iter != iter_end; ++iter ) {
-		(*iter)->setup_for_minimizing_for_residue( rsd, pose, sfxn, min_map, res_min_data_ );
+		(*iter)->setup_for_minimizing_for_residue( rsd, pose, sfxn, min_map, res_data_cache, res_min_data_ );
 	}
 	for ( TwoBodyEnergiesIterator iter = twobody_enmeths_.begin(),
 			iter_end = twobody_enmeths_.end(); iter != iter_end; ++iter ) {
-		(*iter)->setup_for_minimizing_for_residue( rsd, pose, sfxn, min_map, res_min_data_ );
+		(*iter)->setup_for_minimizing_for_residue( rsd, pose, sfxn, min_map, res_data_cache, res_min_data_ );
 	}
 }
 

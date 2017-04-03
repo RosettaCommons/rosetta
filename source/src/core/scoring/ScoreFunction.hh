@@ -51,6 +51,9 @@
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
@@ -474,6 +477,7 @@ public:
 	setup_for_minimizing_for_node(
 		MinimizationNode & min_node,
 		conformation::Residue const & rsd,
+		basic::datacache::BasicDataCache & res_data_cache,
 		kinematics::MinimizerMapBase const & min_map,
 		pose::Pose & pose, // context
 		bool accumulate_fixed_energies,
@@ -484,6 +488,7 @@ public:
 	reinitialize_minnode_for_residue(
 		MinimizationNode & min_node,
 		conformation::Residue const & rsd,
+		basic::datacache::BasicDataCache & res_data_cache,
 		kinematics::MinimizerMapBase const & min_map,
 		pose::Pose & pose // context
 	) const;

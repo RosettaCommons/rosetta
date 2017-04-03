@@ -122,10 +122,12 @@ public:
 		scorefxn->setup_for_minimizing_for_node(
 			* g.get_minimization_node( 7 ),
 			collection->residue_atomtree_collection( 7 ).active_residue(),
+			collection->residue_atomtree_collection( 7 ).active_residue_data(),
 			scminmap, pose, false, emap );
 		g.get_minimization_node( 7 )->setup_for_minimizing(
 			collection->residue_atomtree_collection( 7 ).active_residue(),
-			pose, *scorefxn, scminmap );
+			pose, *scorefxn, scminmap,
+			collection->residue_atomtree_collection( 7 ).active_residue_data() );
 		scminmap.set_natoms_for_residue( 7, collection->residue_atomtree_collection( 7 ).active_residue().natoms()  );
 		for ( Graph::EdgeListIter
 				eiter = g.get_node( 7 )->edge_list_begin(),
@@ -134,6 +136,7 @@ public:
 			Size other_ind = (*eiter)->get_other_ind( 7 );
 			scorefxn->setup_for_minimizing_for_node(
 				* g.get_minimization_node( other_ind ), * bgres[ other_ind ],
+				pose.residue_data( other_ind ),
 				scminmap, pose, false, emap );
 			MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( **eiter );
 			if ( other_ind < 7 ) {

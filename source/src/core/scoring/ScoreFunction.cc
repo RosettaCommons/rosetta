@@ -2119,7 +2119,7 @@ ScoreFunction::setup_for_minimizing(
 
 	kinematics::DomainMap const & domain_map = min_map.domain_map();
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		setup_for_minimizing_for_node( * g->get_minimization_node( ii ), pose.residue( ii ),
+		setup_for_minimizing_for_node( * g->get_minimization_node( ii ), pose.residue( ii ), pose.residue_data( ii ),
 			min_map, pose, true, fixed_energies );
 	}
 
@@ -2239,6 +2239,7 @@ void
 ScoreFunction::setup_for_minimizing_for_node(
 	MinimizationNode & min_node,
 	conformation::Residue const & rsd,
+	basic::datacache::BasicDataCache & res_data_cache,
 	kinematics::MinimizerMapBase const & min_map,
 	pose::Pose & pose, // context
 	bool accumulate_fixed_energies,
@@ -2282,18 +2283,19 @@ ScoreFunction::setup_for_minimizing_for_node(
 			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), lr_2b_method->score_types() );
 		}
 	}
-	min_node.setup_for_minimizing( rsd, pose, *this, min_map );
+	min_node.setup_for_minimizing( rsd, pose, *this, min_map, res_data_cache );
 }
 
 void
 ScoreFunction::reinitialize_minnode_for_residue(
 	MinimizationNode & min_node,
 	conformation::Residue const & rsd,
+	basic::datacache::BasicDataCache & res_data_cache,
 	kinematics::MinimizerMapBase const & min_map,
 	pose::Pose & pose // context
 ) const {
 	min_node.update_active_enmeths_for_residue( rsd, pose, weights_, min_map.domain_map()( rsd.seqpos() ) );
-	min_node.setup_for_minimizing( rsd, pose, *this, min_map );
+	min_node.setup_for_minimizing( rsd, pose, *this, min_map, res_data_cache );
 }
 
 

@@ -147,7 +147,7 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	scoring::EnergyMap dummy;
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		sfxn.setup_for_minimizing_for_node( * mingraph->get_minimization_node( ii ),
-			pose.residue( ii ), min_map, pose, false, dummy );
+			pose.residue( ii ), pose.residue_data( ii ), min_map, pose, false, dummy );
 	}
 
 	for ( utility::graph::Graph::EdgeListIter

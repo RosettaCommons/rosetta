@@ -84,6 +84,7 @@ void reinitialize_mingraph_neighborhood_for_residue(
 	utility::vector1< conformation::ResidueCOP > const & bgres,
 	pack::scmin::SCMinMinimizerMap const & scminmap,
 	conformation::Residue const & rsd,
+	basic::datacache::BasicDataCache & res_data_cache,
 	scoring::MinimizationGraph & mingraph
 );
 
@@ -155,6 +156,7 @@ RTMin::rtmin(
 	numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
 	utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
+	utility::vector1< conformation::ResidueOP >  non_const_bgres( pose.size() );
 	utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, scfxn, input_task );
 	scoring::MinimizationGraph mingraph( pose.size() );
 
@@ -194,12 +196,14 @@ RTMin::rtmin(
 			if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres ) ) {
 				inactive_neighbors.push_back( jjres );
 				residue_is_inactive_neighbor[ jjres ] = true;
-				bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
+				non_const_bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
+				bgres[ jjres ] = non_const_bgres[ jjres ];
 				scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 				/// Do setup_for_minimizing for background nodes once and leave them alone for
 				/// the rest of the trajectory
 				scfxn.setup_for_minimizing_for_node(
-					* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
+					* mingraph.get_minimization_node( jjres ), *bgres[ jjres ],
+					*non_const_bgres[ jjres ]->nonconst_data_ptr(),
 					*scminmap, pose, false, emap_dummy );
 			}
 			if ( ! input_task->being_packed( jjres ) || iires < jjres ) {
@@ -236,12 +240,14 @@ RTMin::rtmin(
 				if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres ) ) {
 					inactive_neighbors.push_back( jjres );
 					residue_is_inactive_neighbor[ jjres ] = true;
-					bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
+					non_const_bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
+					bgres[ jjres ] = non_const_bgres[ jjres ];
 					scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 					// Do setup_for_minimizing for background nodes once and leave them alone for
 					// the rest of the trajectory
 					scfxn.setup_for_minimizing_for_node(
-						* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
+						* mingraph.get_minimization_node( jjres ), *bgres[ jjres ],
+						*non_const_bgres[ jjres ]->nonconst_data_ptr(),
 						*scminmap, pose, false, emap_dummy );
 				}
 				if ( ! input_task->being_packed( jjres ) || iires < jjres ) {
@@ -297,10 +303,12 @@ RTMin::rtmin(
 				// we have not ever done setup for scoring for this residue
 				scfxn.setup_for_minimizing_for_node(
 					* mingraph.get_minimization_node( iiresid ), iirsd,
+					ii_atc->residue_atomtree_collection( iiresid ).active_residue_data(),
 					*scminmap, pose, false, emap_dummy );
 			} else {
 				scfxn.reinitialize_minnode_for_residue(
 					* mingraph.get_minimization_node( iiresid ), iirsd,
+					ii_atc->residue_atomtree_collection( iiresid ).active_residue_data(),
 					*scminmap, pose );
 			}
 			for ( utility::graph::Node::EdgeListIter
@@ -310,12 +318,14 @@ RTMin::rtmin(
 
 				Size jjresid = (*eiter)->get_other_ind( iiresid );
 				if ( ! bgres[ jjresid ] ) {
-					/// we have an active residue which we have not yet visited in the rtmin traversal
-					bgres[ jjresid ] = ResidueOP( new Residue( pose.residue( jjresid ) ) );
+					// we have an active residue which we have not yet visited in the rtmin traversal
+					non_const_bgres[ jjresid ] = ResidueOP( new Residue( pose.residue( jjresid ) ) );
+					bgres[ jjresid ] = non_const_bgres[ jjresid ];
 					scfxn.setup_for_minimizing_for_node(
 						* mingraph.get_minimization_node( jjresid ),
-						* bgres[ jjresid ],
-						*scminmap, pose, false, emap_dummy );
+						* non_const_bgres[ jjresid ],
+						* non_const_bgres[ jjresid ]->nonconst_data_ptr(),
+						* scminmap, pose, false, emap_dummy );
 					scminmap->set_natoms_for_residue( jjresid, bgres[ jjresid ]->natoms() );
 				}
 				Residue const & jjrsd( * bgres[ jjresid ] );
@@ -406,7 +416,7 @@ RTMin::rtmin(
 			//chi = iirotset->rotamer( jj )->chi();
 			scminmap->starting_dofs( chi );
 
-			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, scminmap->residue( iiresid ), mingraph );
+			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, scminmap->residue( iiresid ), scminmap->residue_data( iiresid ), mingraph );
 
 #ifdef APL_FULL_DEBUG
 			pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
@@ -429,7 +439,7 @@ RTMin::rtmin(
 			//Real const end_func =
 			minimizer.run( chi );
 			/// Note: our neighborlist may have gone out-of-date.  Update now to make sure the best rotamer is placed in the pose
-			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, scminmap->residue( iiresid ), mingraph );
+			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, scminmap->residue( iiresid ), scminmap->residue_data( iiresid ), mingraph );
 			Real const end_score = (*scmin_multifunc)( chi );
 			//for ( Size kk = 1; kk <= chi.size(); ++kk ) {
 			// std::cout << "chi " << kk << " " << chi[ kk ] << " vs "
@@ -468,7 +478,8 @@ RTMin::rtmin(
 
 		}
 		ii_atc->residue_atomtree_collection( iiresid ).update_from_momento( momento );
-		bgres[ iiresid ] = ResidueOP( new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() ) );
+		non_const_bgres[ iiresid ] = ResidueOP( new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() ) );
+		bgres[ iiresid ] = non_const_bgres[ iiresid ];
 
 		/// NOW, we must call setup_for_scoring_for_residue for this residue we've just replaced, and
 		/// for the edges adjacent to this residue and to other non-background residues so that the guarantee
@@ -477,7 +488,7 @@ RTMin::rtmin(
 
 		//scfxn.reinitialize_minnode_for_residue( * mingraph.get_minimization_node( iiresid ),
 		// *bgres[ iiresid ], scminmap, pose );
-		reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, *bgres[ iiresid ], mingraph );
+		reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, *bgres[ iiresid ], *non_const_bgres[ iiresid ]->nonconst_data_ptr(), mingraph );
 
 		/*for ( utility::graph::Graph::EdgeListIter
 		edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
@@ -656,6 +667,7 @@ void reinitialize_mingraph_neighborhood_for_residue(
 	utility::vector1< conformation::ResidueCOP > const & bgres,
 	pack::scmin::SCMinMinimizerMap const & scminmap,
 	conformation::Residue const & rsd,
+	basic::datacache::BasicDataCache & res_data_cache,
 	scoring::MinimizationGraph & mingraph
 )
 {
@@ -666,7 +678,7 @@ void reinitialize_mingraph_neighborhood_for_residue(
 	/// Setup the minimization graph for this new restype
 	scorefxn.reinitialize_minnode_for_residue(
 		* mingraph.get_minimization_node( resid ),
-		rsd, scminmap, pose );
+		rsd, res_data_cache, scminmap, pose );
 	/// Now, iterate across all the edges and set them up
 	for ( utility::graph::Node::EdgeListIter
 			eiter = mingraph.get_node( resid )->edge_list_begin(),

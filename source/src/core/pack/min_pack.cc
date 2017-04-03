@@ -139,7 +139,7 @@ create_minimization_graph(
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( task.being_packed( ii ) || mingraph->get_node( ii )->num_edges() != 0 ) {
 			sfxn.setup_for_minimizing_for_node(
-				* mingraph->get_minimization_node( ii ), pose.residue( ii ),
+				* mingraph->get_minimization_node( ii ), pose.residue( ii ), pose.residue_data( ii ),
 				sc_min_map, pose, false, dummy );
 		}
 	}
@@ -193,7 +193,6 @@ create_minimization_graph(
 	return mingraph;
 }
 
-
 utility::vector1< conformation::ResidueCOP >
 setup_bgres_cops(
 	pose::Pose const & pose,
@@ -202,7 +201,9 @@ setup_bgres_cops(
 {
 	utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( ! task.being_packed( ii ) ) bgres[ ii ] = pose.residue( ii ).clone();
+		if ( ! task.being_packed( ii ) ) {
+			bgres[ ii ] = pose.residue( ii ).clone();
+		}
 	}
 	return bgres;
 }
@@ -342,7 +343,7 @@ get_residue_current_energy(
 	scminmap.setup( atc );
 
 	/// 3.
-	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
+	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), ratc.active_residue_data(), mingraph );
 
 	/// 4.
 	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
@@ -434,7 +435,7 @@ get_total_energy_for_state(
 	for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
 		Size iiresid = rotsets.moltenres_2_resid( ii );
 		scmin::ResidueAtomTreeCollection & iiratc = atc->residue_atomtree_collection( iiresid );
-		reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, iiratc.active_residue(), mingraph );
+		reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, iiratc.active_residue(), iiratc.active_residue_data(), mingraph );
 	}
 
 	/// 4.
@@ -505,7 +506,7 @@ minimize_alt_rotamer(
 	scminmap.setup( atc );
 
 	/// 3.
-	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
+	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), ratc.active_residue_data(), mingraph );
 
 	/// 4.
 	//scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
@@ -519,7 +520,7 @@ minimize_alt_rotamer(
 	minimizer.run( chi );
 
 	/// 6.
-	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
+	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), ratc.active_residue_data(), mingraph );
 	Real final_energy_for_residue = (*scmin_func)( chi );
 
 	/// 7.
@@ -857,9 +858,9 @@ min_pack_optimize(
 			Size const jj_rotamer_state_on_moltenres = rotsets->rotid_on_moltenresidue( jj_ranrotamer );
 
 #ifdef APL_FULL_DEBUG
-			conformation::ResidueCOP before_sub_rotamer( 0 );
+			conformation::ResidueOP before_sub_rotamer( 0 );
 			if ( bgres[ jj_resid ] ) {
-				before_sub_rotamer = new conformation::Residue( *bgres[ jj_resid ] );
+				before_sub_rotamer( new conformation::Residue( *bgres[ jj_resid ] ));
 			}
 			if ( ! curr_state.any_unassigned() ) {
 				for ( Size kk = 1; kk <= rotsets->nmoltenres(); ++kk ) {
@@ -967,8 +968,8 @@ min_pack_optimize(
 				atc->moltenres_atomtree_collection( jj_moltenres_id ).
 					update_from_momento( curr_state.momento_for_moltenres( jj_moltenres_id ) );
 				bgres[ jj_resid ] = atc->moltenres_atomtree_collection( jj_moltenres_id ).active_residue_cop();
-
-				reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, *scminmap, *bgres[ jj_resid ], *mingraph );
+				reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, *scminmap,*bgres[ jj_resid ],
+					atc->moltenres_atomtree_collection( jj_moltenres_id ).active_residue_data(), *mingraph );
 
 #ifdef APL_FULL_DEBUG
 				debug_pose.replace_residue( jj_resid, *bgres[ jj_resid ], false );

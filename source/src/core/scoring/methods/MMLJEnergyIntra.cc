@@ -93,6 +93,7 @@ MMLJEnergyIntra::setup_for_minimizing_for_residue(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & /*minmap*/,
+	basic::datacache::BasicDataCache &,
 	ResSingleMinimizationData & res_data_cache
 ) const {
 

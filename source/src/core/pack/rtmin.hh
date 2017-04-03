@@ -28,6 +28,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationGraph.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
 // utility headers
 #include <utility/vector1.fwd.hh>
 
@@ -76,6 +79,7 @@ reinitialize_mingraph_neighborhood_for_residue(
 	utility::vector1< conformation::ResidueCOP > const & bgres,
 	pack::scmin::SCMinMinimizerMap const & scminmap,
 	conformation::Residue const & rsd,
+	basic::datacache::BasicDataCache & res_data_cache,
 	scoring::MinimizationGraph & mingraph
 );
 

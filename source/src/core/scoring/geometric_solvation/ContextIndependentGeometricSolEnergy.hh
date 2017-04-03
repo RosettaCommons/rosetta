@@ -160,6 +160,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		kinematics::MinimizerMapBase const &,
+		basic::datacache::BasicDataCache &,
 		ResSingleMinimizationData & res_data_cache
 	) const;
 

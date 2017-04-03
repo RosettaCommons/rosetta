@@ -381,6 +381,7 @@ MultipoleElecEnergy::setup_for_minimizing_for_residue(
 	pose::Pose const & pose, // pose,
 	ScoreFunction const &, // scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
+	basic::datacache::BasicDataCache &,
 	ResSingleMinimizationData & resdata
 ) const
 {

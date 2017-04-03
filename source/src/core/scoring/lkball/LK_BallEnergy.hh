@@ -222,16 +222,15 @@ public:
 		EnergyMap & emap
 	) const;
 
-	// These are no longer needed because the water coordinates
-	// are going to be cached in the Residue object directly.
-	//void
-	//setup_for_minimizing_for_residue(
-	//	conformation::Residue const & rsd,
-	//	pose::Pose const & pose,
-	//	ScoreFunction const & scorefxn,
-	//	kinematics::MinimizerMapBase const & min_map,
-	//	ResSingleMinimizationData & resdata
-	//) const override;
+	void
+	setup_for_minimizing_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & scorefxn,
+		kinematics::MinimizerMapBase const & min_map,
+		basic::datacache::BasicDataCache & res_data_cache,
+		ResSingleMinimizationData & resdata
+	) const override;
 
 
 	void

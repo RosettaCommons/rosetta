@@ -1753,6 +1753,7 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue(
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const &,
+	basic::datacache::BasicDataCache &,
 	ResSingleMinimizationData & min_data
 ) const
 {

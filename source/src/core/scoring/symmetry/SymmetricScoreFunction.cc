@@ -264,10 +264,10 @@ SymmetricScoreFunction::setup_for_minimizing(
 			ii > symm_info.num_total_residues_without_pseudo() );
 
 		setup_for_minimizing_for_node( * g->get_minimization_node( ii ), pose.residue( ii ),
-			min_map, pose, accumulate_fixed_energies, fixed_energies );
+			pose.residue_data( ii ), min_map, pose, accumulate_fixed_energies, fixed_energies );
 		g->get_minimization_node( ii )->weight( symm_info.score_multiply_factor() );
 		setup_for_minimizing_for_node( * dg->get_minimization_node( ii ), pose.residue( ii ),
-			min_map, pose, false, fixed_energies ); // only accumulate once
+			pose.residue_data( ii ), min_map, pose, false, fixed_energies ); // only accumulate once
 	}
 	g->copy_connectivity(  pose.energies().energy_graph() );
 	dg->copy_connectivity( pose.energies().energy_graph() );

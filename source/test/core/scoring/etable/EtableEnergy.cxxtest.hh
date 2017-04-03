@@ -170,8 +170,8 @@ public:
 		EnergyMap emap2;
 		ResSingleMinimizationData r4dat, r5dat;
 		ResPairMinimizationData min_data;
-		etab_energy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn, minmap, r4dat );
-		etab_energy.setup_for_minimizing_for_residue( pose.residue( 5 ), pose, sfxn, minmap, r5dat );
+		etab_energy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn, minmap, pose.residue_data( 4 ), r4dat );
+		etab_energy.setup_for_minimizing_for_residue( pose.residue( 5 ), pose, sfxn, minmap, pose.residue_data( 5 ), r5dat );
 		etab_energy.setup_for_minimizing_for_residue_pair( pose.residue( 4 ), pose.residue( 5 ), pose, sfxn,  minmap, r4dat, r5dat, min_data );
 		etab_energy.residue_pair_energy_ext( pose.residue( 4 ), pose.residue( 5 ), min_data, pose, sfxn, emap2 );
 
@@ -200,7 +200,7 @@ public:
 		optimization::MinimizerMap minmap;
 		EnergyMap emap2;
 		ResSingleMinimizationData min_data;
-		etab_energy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn,  minmap, min_data );
+		etab_energy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn,  minmap, pose.residue_data( 4 ), min_data );
 		etab_energy.eval_intrares_energy_ext( pose.residue( 4 ), min_data, pose, sfxn, emap2 );
 
 		TS_ASSERT_DELTA( emap[ fa_intra_atr ], emap2[ fa_intra_atr ], 1e-12 );
@@ -229,7 +229,7 @@ public:
 		optimization::MinimizerMap minmap;
 		EnergyMap emap2;
 		ResSingleMinimizationData min_data;
-		etab_energy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn,  minmap, min_data );
+		etab_energy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn,  minmap, pose.residue_data( 4 ), min_data );
 		etab_energy.eval_intrares_energy_ext( pose.residue( 4 ), min_data, pose, sfxn, emap2 );
 
 		TS_ASSERT_DELTA( emap[ fa_intra_atr ], emap2[ fa_intra_atr ], 1e-12 );

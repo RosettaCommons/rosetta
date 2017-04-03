@@ -385,22 +385,19 @@ LK_BallEnergy::minimize_in_whole_structure_context( pose::Pose const & /*pose*/ 
 }
 
 
-////void
-////LK_BallEnergy::setup_for_minimizing_for_residue(
-////	conformation::Residue const & rsd,
-////	pose::Pose const & pose,
-////	ScoreFunction const &, // scorefxn,
-////	kinematics::MinimizerMapBase const &, // min_map,
-////	ResSingleMinimizationData & resdata
-////) const
-////{
-////	if ( pose.energies().use_nblist_auto_update() ) return;
-////
-////	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
-////	info.initialize( rsd.type() );
-////	info.build_waters( rsd );
-////}
-////
+void
+LK_BallEnergy::setup_for_minimizing_for_residue(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const & scorefxn,
+	kinematics::MinimizerMapBase const &,
+	basic::datacache::BasicDataCache & res_data_cache,
+	ResSingleMinimizationData &
+) const
+{
+	setup_for_scoring_for_residue( rsd, pose, scorefxn, res_data_cache );
+}
+
 void
 LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,

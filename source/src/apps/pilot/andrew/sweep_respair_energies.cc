@@ -962,9 +962,11 @@ create_mingraph_for_focused_residue_pair(
 
 	sfxn.setup_for_minimizing_for_node(
 		* mingraph->get_minimization_node( res1_index ), pose.residue( res1_index ),
+		pose.residue_data( res1_index ),
 		* minimizer_map, pose, false, dummy );
 	sfxn.setup_for_minimizing_for_node(
 		* mingraph->get_minimization_node( res2_index ), pose.residue( res2_index ),
+		pose.residue_data( res2_index ),
 		* minimizer_map, pose, false, dummy );
 
 	sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
@@ -990,8 +992,8 @@ gradient_magnitude_for_conformation(
 	core::scoring::MinimizationNode & minnode1( * mingraph->get_minimization_node( res1_index ) );
 	core::scoring::MinimizationNode & minnode2( * mingraph->get_minimization_node( res2_index ) );
 
-	minnode1.setup_for_minimizing( pose.residue( res1_index ), pose, sfxn, *minimizer_map );
-	minnode2.setup_for_minimizing( pose.residue( res2_index ), pose, sfxn, *minimizer_map );
+	minnode1.setup_for_minimizing( pose.residue( res1_index ), pose, sfxn, *minimizer_map, pose.residue_data( res1_index ) );
+	minnode2.setup_for_minimizing( pose.residue( res2_index ), pose, sfxn, *minimizer_map, pose.residue_data( res2_index ) );
 
 	minnode1.setup_for_derivatives( pose.residue( res1_index ), pose.residue_data( res1_index ), pose, sfxn );
 	minnode2.setup_for_derivatives( pose.residue( res2_index ), pose.residue_data( res2_index ), pose, sfxn );

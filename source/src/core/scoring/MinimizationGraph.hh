@@ -105,7 +105,8 @@ public:
 		Residue const & rsd,
 		Pose const & pose,
 		ScoreFunction const & sfxn,
-		kinematics::MinimizerMapBase const & min_map
+		kinematics::MinimizerMapBase const & min_map,
+		basic::datacache::BasicDataCache & res_data_cache
 	);
 	void setup_for_scoring( Residue const & rsd, basic::datacache::BasicDataCache & residue_data_cache, Pose const & pose, ScoreFunction const & sfxn );
 	void setup_for_derivatives( Residue const & rsd, basic::datacache::BasicDataCache & residue_data_cache, pose::Pose const & pose, ScoreFunction const & sfxn );

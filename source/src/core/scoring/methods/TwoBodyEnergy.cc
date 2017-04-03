@@ -257,6 +257,7 @@ TwoBodyEnergy::setup_for_minimizing_for_residue(
 	pose::Pose const &,
 	ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
+	basic::datacache::BasicDataCache &,
 	ResSingleMinimizationData &
 ) const
 {}

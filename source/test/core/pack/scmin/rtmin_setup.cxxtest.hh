@@ -689,6 +689,7 @@ public:
 		utility::vector1< conformation::ResidueCOP > const & bgres,
 		pack::scmin::SCMinMinimizerMap const & scminmap,
 		conformation::Residue const & rsd,
+		basic::datacache::BasicDataCache & rsd_datacache,
 		scoring::MinimizationGraph & mingraph
 	)
 	{
@@ -699,7 +700,7 @@ public:
 		/// Setup the minimization graph for this new restype
 		scorefxn->reinitialize_minnode_for_residue(
 			* mingraph.get_minimization_node( resid ),
-			rsd, scminmap, pose );
+			rsd, rsd_datacache, scminmap, pose );
 		/// Now, iterate across all the edges and set them up
 		for ( utility::graph::Node::EdgeListIter
 				eiter = mingraph.get_node( resid )->edge_list_begin(),
