@@ -65,7 +65,7 @@ TMscore::~TMscore()= default;
 void
 TMscore::set_default()
 {
-	d0_ = std::pow( 1.24*(nseq_-15), (1.0/3.0)-1.8 );
+	d0_ = 1.24*std::pow((nseq_-15), (1.0/3.0)) - 1.8;
 	if ( d0_<0.5 ) d0_ = 0.5;
 
 	d0_search_ = d0_;
