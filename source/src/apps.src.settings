@@ -74,6 +74,7 @@ sources = {
 		"residue_energy_breakdown",
 		"score",
 		"score_jd2",
+		"shobuns",
 	],
 	"public/antibody": [
 		"antibody",

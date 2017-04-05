@@ -10,7 +10,7 @@
 /// @brief computes, using the SHO solvation model, the buried unsatisfied atoms
 ///  among a target set of polar atoms
 ///
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli (ndrbzz@gmail.com)
 ///
 /// The program accepts only the following combinations of program-specific flags:
 ///
@@ -59,7 +59,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-static basic::Tracer TR( "apps.pilot.shobuns.main" );
+static basic::Tracer TR( "apps.public.analysis.shobuns.main" );
 
 using basic::options::option;
 

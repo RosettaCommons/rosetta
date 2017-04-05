@@ -129,7 +129,6 @@ sources = {
 		"list_cnl_ngbs",
 		"nrg_res_set",
 		"sel_hbonds",
-		"shobuns",
 	],
 	"pilot/bcorreia" : [
 		#"iterative_design", # /* Correia,Documentation Location,Demo Location */
