@@ -1840,18 +1840,102 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 	// The canonical residues go from root out, but for ligands
 	// there doesn't look to be any ordering guarantee.
 	utility::vector1<VDs> found_chis( core::chemical::find_chi_bonds( *this ) );
-
 	utility::vector1< core::Size > proton_chis; // Not the member varaible as set_proton_chi modifies that.
-	for ( utility::vector1<VDs>::const_iterator iter( found_chis.begin() ); iter != found_chis.end(); ++iter ) {
-		VDs const & chi( *iter );
-		debug_assert( chi.size() == 4 );
-		add_chi( chi[1], chi[2], chi[3], chi[4] );
-		if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
-			// proton chi
-			proton_chis.push_back( nchi() );
-		}
-	} // for all found chis
 
+	if ( is_protein() ) {
+		
+		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
+		// Note that this algorithm to get down to the 'real' chis is pretty
+		// gross, but when N is < 10 most reasonable big-Os are fine, right?
+		
+		// Step 1. Get chi1 (it's the one with N as first or fourth)
+		// Other criterion -- atom 3 can't be C (it'll find N CA C O)
+		for ( VDs const & chi : found_chis ) {
+			tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+			if ( atom_name( chi[ 1 ] ) == "N" && atom_name( chi[ 3 ] ) != "C" ) {
+				true_chis.push_back( chi );
+				
+				// Third atom of chi1 is first sidechain atom.
+				for ( Size ii = 1; ii < atom_index( atom_name( chi[ 3 ] ) ); ++ii ) {
+					set_backbone_heavyatom( atom_name( ii ) );
+				}
+				break;
+			}
+			
+			
+			// In prior versions of this code, this was necessary because we 
+			// hadn't re-rooted on N in assign_internal_coordinates (generally
+			// called before this function).
+			// Now that we've properly re-rooted on N, this probably won't happen.
+			/*if ( atom_name( chi[ 4 ] ) == "N" && atom_name( chi[ 2 ] ) != "C" ) {
+				VDs reversed_chi;
+				reversed_chi.push_back( chi[ 4 ] );
+				reversed_chi.push_back( chi[ 3 ] );
+				reversed_chi.push_back( chi[ 2 ] );
+				reversed_chi.push_back( chi[ 1 ] );
+				true_chis.push_back( reversed_chi );
+			}*/
+		}
+		
+		// Step 2. Get remainder of chis by asking each one to start with the
+		// second atom of the prior chi[s]. Note that this will potentially 
+		// confuse branches, but branched sidechains with lots of chis are treated
+		// poorly by essentially any chi system.
+		std::string target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
+		while ( true ) { 
+			
+			// this extra loop is to future-proof a bit against branching: multiple
+			// chis per pass may start with the target_first_atom and therefore
+			// we don't want to update it right away.
+			
+			std::string candidate_new_atom = target_first_atom;
+			for ( VDs const & chi : found_chis ) {
+				tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+				if ( atom_name( chi[ 1 ] ) == target_first_atom ) {
+					true_chis.push_back( chi );
+					candidate_new_atom = atom_name( chi[ 2 ] );
+				}
+				
+				// Now that we've properly re-rooted on N, this probably won't happen.
+				/*if ( atom_name( chi[ 4 ] ) == target_first_atom ) {
+					VDs reversed_chi;
+					reversed_chi.push_back( chi[ 4 ] );
+					reversed_chi.push_back( chi[ 3 ] );
+					reversed_chi.push_back( chi[ 2 ] );
+					reversed_chi.push_back( chi[ 1 ] );
+					candidate_new_atom = atom_name( reversed_chi[ 2 ] );
+					true_chis.push_back( reversed_chi );
+				}*/
+			}
+			if ( candidate_new_atom == target_first_atom ) break;
+			
+			// This may have to become a vector -- where we accumulated many
+			// candidate_new_atom -- later.
+			target_first_atom = candidate_new_atom;
+		}
+		
+		for ( VDs const & chi : true_chis ) {
+			tr << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+			debug_assert( chi.size() == 4 );
+			add_chi( chi[1], chi[2], chi[3], chi[4] );
+			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
+				// proton chi
+				proton_chis.push_back( nchi() );
+			}
+		} // for all found chis
+	} else {
+		// ligand logic: far simpler.
+		
+		for ( VDs const & chi : found_chis ) {
+			debug_assert( chi.size() == 4 );
+			add_chi( chi[1], chi[2], chi[3], chi[4] );
+			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
+				// proton chi
+				proton_chis.push_back( nchi() );
+			}
+		} // for all found chis
+	}
+	
 	if ( max_proton_chi_samples == 0 ) {
 		return;
 	}
