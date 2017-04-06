@@ -254,8 +254,6 @@ static MoverRegistrator< ligand_docking::WriteLigandMolFileCreator > reg_WriteLi
 static MoverRegistrator< loop_build::LoopmodelWrapperCreator > reg_LoopmodelWrapperCreator;
 static MoverRegistrator< loop_build::LoopMover_SlidingWindowCreator > reg_LoopMover_SlidingWindowCreator;
 
-static MoverRegistrator< loop_grower::FragmentExtensionCreator > reg_FragmentExtensionCreator;
-
 static MoverRegistrator< loop_modeling::LoopModelerCreator > reg_LoopModelerCreator;
 static MoverRegistrator< loop_modeling::LoopProtocolCreator > reg_LoopProtocolCreator;
 static MoverRegistrator< loop_modeling::LoopBuilderCreator > reg_LoopBuilderCreator;

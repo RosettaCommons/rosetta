@@ -2319,64 +2319,6 @@ ElectronDensity::matchResFast(
 	return score;
 }
 
-//Match a single atom into the density using the Fast score function
-core::Real
-ElectronDensity::matchAtomFast(
-	int resid,
-	Size atomid,
-	core::conformation::Residue const &rsd,
-	core::pose::Pose const &pose,
-	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
-	bool ignoreBs /*=false*/
-) {
-	// make sure map is loaded
-	if (!isLoaded) {
-		TR << "[ ERROR ]  ElectronDensity::matchAtomFast called but no map is loaded!\n";
-		return 0.0;
-	}
-
-	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
-		setup_fastscoring_first_time(pose);
-
-	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
-
-	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
-	bool remapSymm = remap_symm_;
-
-	// symm
-	if (isSymm && !symmInfo->bb_is_independent(resid) && !remapSymm) return 0.0; // only score monomer
-
-	core::Real score = 0;
-	numeric::xyzVector< core::Real > fracX, idxX;
-  chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
-  std::string elt_i = atom_type_set[ rsd.atom_type_index( atomid ) ].element();
-	OneGaussianScattering sig_j = get_A( elt_i );
-	core::Real B = pose.pdb_info() ? pose.pdb_info()->temperature( rsd.seqpos(), atomid ) : effectiveB;
-	core::Real k = sig_j.k( B );
-
-	if (ignoreBs) k = 4*M_PI*M_PI/effectiveB;
-
-	core::Real kbin = 1;
-	if (nkbins_>1)
-		kbin = (k - kmin_)/kstep_ + 1;
-	if (kbin<1) kbin=1;
-	if (kbin>nkbins_) kbin=nkbins_;
-
-	fracX = c2f*rsd.atom(atomid).xyz();
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
-	idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
-		                                       fracX[1]*fastgrid[1] - fastorigin[1] + 1,
-		                                       fracX[2]*fastgrid[2] - fastorigin[2] + 1);
-	core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
-	core::Real W = sig_j.a(  ) / 6.0;
-	score += W*score_i;
-	
-	return score;
-}
-
 /////////////////////////////////////
 /// Match an atom to the density map.  Use the fast version of the scoring function and default atom type
 core::Real

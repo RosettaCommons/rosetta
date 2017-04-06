@@ -237,8 +237,6 @@
 #include <protocols/loop_build/LoopmodelWrapperCreator.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
 
-#include <protocols/loop_grower/FragmentExtensionCreator.hh>
-
 #include <protocols/loop_modeling/LoopModelerCreator.hh>
 #include <protocols/loop_modeling/LoopProtocolCreator.hh>
 #include <protocols/loop_modeling/LoopBuilderCreator.hh>

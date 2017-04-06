@@ -94,13 +94,6 @@ sources = {
 		"LoopBuildMover",
 		"LoopmodelWrapper",
 	],
-    "protocols/loop_grower": [
-		"LoopGrower",
-		"FragmentExtension",
-		"SheetSampler",
-        "DensSkeleton",
-        "util",
-    ],
 	"protocols/noesy_assign": [
                 "CovalentCompliance",
 		"CrossPeak",
