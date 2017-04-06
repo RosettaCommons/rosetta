@@ -535,6 +535,15 @@ store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
 	SSBondInformation ssbond;
 	vector1< SSBondInformation > ssbonds;
 
+	// If an SSBOND defines a connection across crystal cells, there is no way that we can handle this.
+	// Ignore such lines.
+	// (1555 is equivalent to a translation matrix of [0,0,0].)
+	if ( ( ( ssbond_record[ "sym1" ].value != "  1555" ) && ( ssbond_record[ "sym1" ].value != "      " ) ) ||
+			( ( ssbond_record[ "sym2" ].value != "  1555" ) && ( ssbond_record[ "sym2" ].value != "      " ) ) ) {
+		TR.Debug << "Throwing out SSBOND across crystal cells." << endl;
+		return;
+	}
+
 	// Extract values from SSBOND ssbond_record fields.
 	ssbond.resName1 = ssbond_record[ "resName1" ].value;
 	ssbond.chainID1 = ssbond_record[ "chainID1" ].value[ 0 ];
@@ -576,6 +585,15 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 
 	LinkInformation link;
 	vector1< LinkInformation > links;
+
+	// If a LINK defines a connection across crystal cells, there is no way that we can handle this.
+	// Ignore such lines.
+	// (1555 is equivalent to a translation matrix of [0,0,0].)
+	if ( ( ( link_record[ "sym1" ].value != "  1555" ) && ( link_record[ "sym1" ].value != "      " ) ) ||
+			( ( link_record[ "sym2" ].value != "  1555" ) && ( link_record[ "sym2" ].value != "      " ) ) ) {
+		TR.Debug << "Throwing out LINK across crystal cells." << endl;
+		return;
+	}
 
 	// Extract values from LINK link_record fields.
 	link.name1 = link_record[ "name1" ].value;  // 1st atom name
