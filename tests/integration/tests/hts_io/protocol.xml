@@ -21,7 +21,7 @@
 		<MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
 	</MOVEMAP_BUILDERS>
 	
-	<SCORINGGRIDS ligand_chain="X" width="15">
+	<SCORINGGRIDS ligand_chain="X" width="25">
 		<VdwGrid grid_name="vdw" weight="1.0"/>
 		<HbaGrid grid_name="hba" weight="50"/>
 		<HbdGrid grid_name="hbd" weight="50"/>

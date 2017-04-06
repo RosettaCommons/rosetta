@@ -41,7 +41,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 			<Coordinates x="-1.731" y="32.589" z="-5.039"/>
 		</StartFrom>
 		<SlideTogether name="slide_together" chains="X"/>
-		<Transform name="transform" chain="X" box_size="5.0" move_distance="1.0" angle="45" cycles="5000" temperature="100"/>
+		<Transform name="transform" chain="X" box_size="5.0" move_distance="0.2" angle="45" cycles="5000" temperature="100"/>
 		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep" native="inputs/7cpa_7cpa_native.pdb"/>
 	compound movers
 		<ParsedProtocol name="low_res_dock">
