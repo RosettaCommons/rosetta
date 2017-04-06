@@ -165,8 +165,8 @@ update_edge_hbond_numbers(
 
 	} else {
 		utility_exit_with_message( "Problem with base classification, residue " + rsd.type().name() +
-															 " with base analogue " + name_from_aa(rsd.type().na_analogue()) +
-															 " and atom_name " + atom_name );
+			" with base analogue " + name_from_aa(rsd.type().na_analogue()) +
+			" and atom_name " + atom_name );
 	}
 }
 
@@ -487,7 +487,7 @@ bases_are_coplanar(
 	Vector const & z_j = M_j.col_z();
 	Real const cos_theta = dot_product( z_i, z_j );
 
-	//	if ( i == 54  && j == 58 )  std::cout << "DIST_Z COS_THETA " << i << " " << pose.residue(i).name() << " -- " << j << " " << pose.residue(j).name() << ": dist_z " <<  dist_z << " cos_theta " << cos_theta << std::endl;
+	// if ( i == 54  && j == 58 )  std::cout << "DIST_Z COS_THETA " << i << " " << pose.residue(i).name() << " -- " << j << " " << pose.residue(j).name() << ": dist_z " <<  dist_z << " cos_theta " << cos_theta << std::endl;
 
 	static Real const rna_basepair_stagger_cutoff_( 2.8 );
 	static Real const COS_THETA_CUTOFF( 0.6 );
@@ -555,7 +555,7 @@ classify_base_pairs(
 
 			Size const num_hbonds = bases_form_a_hydrogen_bond( hbond_set, pose, i, j );
 			if ( num_hbonds == 0  ) continue;
-			//			if ( i == 54 &&  j == 58 )  TR << TR.Magenta << pose.residue(i).name() << " " << pose.residue(j).name() << " " << num_hbonds << " " << bases_are_coplanar( pose, i, j ) << " " << bases_are_coplanar( pose, j, i ) << std::endl;
+			//   if ( i == 54 &&  j == 58 )  TR << TR.Magenta << pose.residue(i).name() << " " << pose.residue(j).name() << " " << num_hbonds << " " << bases_are_coplanar( pose, i, j ) << " " << bases_are_coplanar( pose, j, i ) << std::endl;
 			if ( ! bases_are_coplanar( pose, i, j ) || ! bases_are_coplanar( pose, j, i ) ) continue;
 
 			BaseEdge edge_classification_i( ANY_BASE_EDGE ), edge_classification_j( ANY_BASE_EDGE );

@@ -127,7 +127,7 @@ AACompositionConstraint::show_def (std::ostream &TO, pose::Pose const &pose) con
 	runtime_assert( aa_comp_setup_ );
 	select::residue_selector::ResidueRangesOP ranges( new select::residue_selector::ResidueRanges );
 	ranges->from_subset( selector_->apply( pose ) );
-	for (auto const & range : *ranges) {
+	for ( auto const & range : *ranges ) {
 		TO << "AAComposition Residue " << range.start() << " Residue " << range.stop() << std::endl;
 		TO << aa_comp_setup_->report() << std::endl;
 	}

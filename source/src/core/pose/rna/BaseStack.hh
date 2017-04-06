@@ -37,8 +37,8 @@ public:
 	BaseStack();
 
 	BaseStack( core::Size const & res1, core::Size const & res2,
-						 core::chemical::rna::BaseDoubletOrientation const & orientation,
-						 core::chemical::rna::BaseStackWhichSide const & which_side	 ):
+		core::chemical::rna::BaseDoubletOrientation const & orientation,
+		core::chemical::rna::BaseStackWhichSide const & which_side  ):
 		res1_( res1 ),
 		res2_( res2 ),
 		orientation_( orientation ),

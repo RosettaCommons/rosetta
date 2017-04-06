@@ -503,26 +503,26 @@ bool ResPairMotif::filter(RPM_FilterStats *s) const {
 	// do this once per run... shouldn't slow things down
 	static bool io_check = true;
 	Real const & CSIZE(MOTIF_HASH_CART_SIZE);
-	if(io_check) {
-	if ( o[f::motif_type].user() ) {
-		if (
-				"SC_SC"!=o[f::motif_type]() &&
-				"SC_BB"!=o[f::motif_type]() &&
-				"SC_PH"!=o[f::motif_type]() &&
-				"SC_PO"!=o[f::motif_type]() &&
-				"BB_BB"!=o[f::motif_type]() &&
-				"BB_PH"!=o[f::motif_type]() &&
-				"BB_PO"!=o[f::motif_type]() &&
-				"PH_PO"!=o[f::motif_type]() && true
-				) utility_exit_with_message("unknown motif_type request "+o[f::motif_type]()+" allowed types: SC_SC SC_BB SC_PH SC_PO BB_BB BB_PH BB_PO PH_PO");
-		// disable this 'autocorrect' for now
-		// // put in canonical order so only one check required
-		// if( o[f::motif_type]()!="SB" ) o[f::motif_type]("BS");
-		// if( o[f::motif_type]()!="PB" ) o[f::motif_type]("BP");
-		// if( o[f::motif_type]()!="PS" ) o[f::motif_type]("SP");
-	}
-	if ( o[f::pdb].user() && ( o[f::pdb]().size() < 4 ||  o[f::pdb]().size() > 5 ) ) utility_exit_with_message("bad pdb code "+o[f::pdb]()); // FIXME
-	io_check = false;
+	if ( io_check ) {
+		if ( o[f::motif_type].user() ) {
+			if (
+					"SC_SC"!=o[f::motif_type]() &&
+					"SC_BB"!=o[f::motif_type]() &&
+					"SC_PH"!=o[f::motif_type]() &&
+					"SC_PO"!=o[f::motif_type]() &&
+					"BB_BB"!=o[f::motif_type]() &&
+					"BB_PH"!=o[f::motif_type]() &&
+					"BB_PO"!=o[f::motif_type]() &&
+					"PH_PO"!=o[f::motif_type]() && true
+					) utility_exit_with_message("unknown motif_type request "+o[f::motif_type]()+" allowed types: SC_SC SC_BB SC_PH SC_PO BB_BB BB_PH BB_PO PH_PO");
+			// disable this 'autocorrect' for now
+			// // put in canonical order so only one check required
+			// if( o[f::motif_type]()!="SB" ) o[f::motif_type]("BS");
+			// if( o[f::motif_type]()!="PB" ) o[f::motif_type]("BP");
+			// if( o[f::motif_type]()!="PS" ) o[f::motif_type]("SP");
+		}
+		if ( o[f::pdb].user() && ( o[f::pdb]().size() < 4 ||  o[f::pdb]().size() > 5 ) ) utility_exit_with_message("bad pdb code "+o[f::pdb]()); // FIXME
+		io_check = false;
 	}
 	if ( o[f::motif_type].user() ) {
 		switch(type()){

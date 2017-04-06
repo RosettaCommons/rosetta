@@ -198,7 +198,7 @@ session::open_mysql_session(
 			}
 		}
 	}
-	
+
 #endif
 }
 
@@ -315,7 +315,7 @@ DatabaseSessionManager::get_session_sqlite3(
 	s->set_db_name(database);
 	s->set_db_partition(db_partition);
 	s->open_sqlite3_session(readonly);
-	
+
 	return s;
 }
 

@@ -460,9 +460,9 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 	if ( user_defined_calc_rms_res_.size() > 0 ) {
 		for ( Size n = 1; n <= user_defined_calc_rms_res_.size(); n++ )  domain_map[ user_defined_calc_rms_res_[n] ] = 0;
 	}
-	
+
 	Size d_primary = 0;
-	
+
 	// True, top-priority choice for primary domain is the domain encompassing
 	// -alignment_anchor_res (if provided, in which case superimpose_over_all_instantiated
 	// must become false)
@@ -475,7 +475,7 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 		// should stay fixed.
 		d_primary = domain_map[ pose.fold_tree().root() ];
 	}
-	
+
 	if ( d_primary > 0 ) {
 		if ( root_partition_res_.size() > 0 ) runtime_assert( root_partition_res_.has_value( pose.fold_tree().root() ) );
 	} else {

@@ -1412,7 +1412,7 @@ Real
 RNA_LowResolutionPotential::get_base_backbone(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */	) const
+	Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */ ) const
 {
 	using namespace core::chemical::rna;
 	Vector const centroid_i = get_rna_base_centroid( rsd1 );
@@ -1427,7 +1427,7 @@ RNA_LowResolutionPotential::get_base_backbone(
 	conformation::Residue const & rsd2,
 	Vector const & centroid_i,
 	kinematics::Stub const & stub_i,
-	Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */	) const
+	Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */ ) const
 {
 
 	Matrix const & M_i( stub_i.M );
@@ -1475,7 +1475,7 @@ RNA_LowResolutionPotential::get_base_backbone(
 				I( 3, rsd2.seqpos() ) << " " <<
 				" [" << F( 4, 2, rho ) << ", " << F( 4, 2, dist_z ) << "]:  " <<
 				F( 6, 2, score_contribution ) <<
-					std::endl;
+				std::endl;
 		}
 
 		return score_contribution;

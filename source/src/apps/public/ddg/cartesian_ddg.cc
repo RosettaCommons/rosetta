@@ -133,9 +133,11 @@ find_neighbors_directional(
 	// make pose polyA
 	Pose pose_working = pose;
 	utility::vector1< Size > protein_residues;
-	for ( Size i=1, i_end = nres; i<= i_end; ++i )
-		if ( pose.residue( i ).is_protein() )
+	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
+		}
+	}
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, false );
 
 	neighbor = neighborin;
@@ -157,7 +159,7 @@ find_neighbors_directional(
 
 			core::Real angle_tgt = K*exp(b*dist);
 
-			if (angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt) {
+			if ( angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt ) {
 				neighbor[j] = true;
 			}
 		}
@@ -304,10 +306,10 @@ main( int argc, char * argv [] )
 		Size interface_ddg = option[ OptionKeys::ddg::interface_ddg ]();
 
 		//fd try to be smart .. look for interchain jump
-		if( interface_ddg > pose.num_jump() ) {
-			for (int i=1; i<=(int)pose.fold_tree().num_jump(); ++i) {
+		if ( interface_ddg > pose.num_jump() ) {
+			for ( int i=1; i<=(int)pose.fold_tree().num_jump(); ++i ) {
 				kinematics::Edge jump_i = pose.fold_tree().jump_edge( i ) ;
-				if (pose.pdb_info()->chain(jump_i.start()) != pose.pdb_info()->chain(jump_i.stop())) {
+				if ( pose.pdb_info()->chain(jump_i.start()) != pose.pdb_info()->chain(jump_i.stop()) ) {
 					runtime_assert( interface_ddg > pose.num_jump() );
 					interface_ddg = i;
 				}
@@ -320,7 +322,7 @@ main( int argc, char * argv [] )
 		bools is_flexible( pose.size(), false );  //repackable
 
 		if ( !option[ OptionKeys::ddg::mut_file ].user() ) {
-				utility_exit_with_message("Option -ddg::mut_file must be set.");
+			utility_exit_with_message("Option -ddg::mut_file must be set.");
 		}
 		TR.Debug << "reading in mutfile" << std::endl;
 		std::string filename = option[OptionKeys::ddg::mut_file]();
@@ -330,7 +332,7 @@ main( int argc, char * argv [] )
 		//the logic here is:
 		//to be comparable, all the mutations should have the save dof!
 		//so take the union set
-		if (fd_mode) {
+		if ( fd_mode ) {
 			find_neighbors_directional( is_mutated, pose, is_flexible, cutoff );
 		} else {
 			find_neighbors( is_mutated, pose, is_flexible, cutoff );

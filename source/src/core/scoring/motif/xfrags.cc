@@ -136,11 +136,11 @@ using core::pose::xyzStripeHashPoseCAP;
 /************************************************ helpers ***********************************************/
 
 static utility::fixedsizearray1<Real,6> get_bins(Real c, Real a) {
-utility::fixedsizearray1<Real,6> bins(c);
-bins[4] = a;
-bins[5] = a;
-bins[6] = a;
-return bins;
+	utility::fixedsizearray1<Real,6> bins(c);
+	bins[4] = a;
+	bins[5] = a;
+	bins[6] = a;
+	return bins;
 }
 
 static inline Real uint16_to_real(uint16_t const & val, Real const & lb, Real const & ub){

@@ -48,8 +48,7 @@ int main(int argc, char* argv[])
 
 		if ( option [ OptionKeys::antibody::design::view ]() ) {
 			protocols::viewer::viewer_main( my_main );
-		}
-		else {
+		} else {
 			protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
 		}
 

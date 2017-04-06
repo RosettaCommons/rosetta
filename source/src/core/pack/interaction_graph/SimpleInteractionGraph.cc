@@ -573,9 +573,9 @@ SimpleInteractionGraph::initialize( pose::Pose const & pose){
 
 	// This already occurrs in the call to set_pose_no_initialize
 	//for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
-	//	SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
-	//	runtime_assert( newnode );
-	//	newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
+	// SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
+	// runtime_assert( newnode );
+	// newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
 	//}
 
 	//neighbors determined through ScoreFunction::are_they_neighbors function

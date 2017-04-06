@@ -148,15 +148,15 @@ private:
 
 	void
 	update_rna_denovo_master_mover( core::Size const & r,
-																	core::pose::Pose const & pose );
+		core::pose::Pose const & pose );
 
 	core::Size
 	update_frag_size( core::Size const & r ) const;
 
 	void
 	get_rigid_body_move_mags( core::Size const & r,
-														core::Real & rot_mag,
-														core::Real & trans_mag ) const;
+		core::Real & rot_mag,
+		core::Real & trans_mag ) const;
 
 	bool
 	check_score_filter( core::Real const lores_score_, std::list< core::Real > & all_lores_score_ );

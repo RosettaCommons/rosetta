@@ -94,91 +94,91 @@ OPT_1GRP_KEY(Real,score_hotspot_cst,hotspot_score_weight)
 OPT_1GRP_KEY(RealVector,score_hotspot_cst,hotspot_distcb_weight)
 
 class run_score_hotspot : public protocols::moves::Mover {
-	public:
+public:
 	run_score_hotspot() { }
 
-		void apply( pose::Pose & pose) {
+	void apply( pose::Pose & pose) {
 
 		Pose archive_pose=pose;
 
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "pose" );
+		protocols::viewer::add_conformation_viewer( pose.conformation(), "pose" );
 
-	core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("interchain_cen") );
-	core::scoring::ScoreFunctionOP scorefxn_emp( ScoreFunctionFactory::create_score_function("empty") );
-	core::scoring::ScoreFunctionOP scorefxn_cen( ScoreFunctionFactory::create_score_function("interchain_cen") );
-	//core::scoring::ScoreFunctionOP scorefxn12( get_score_function() );
+		core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("interchain_cen") );
+		core::scoring::ScoreFunctionOP scorefxn_emp( ScoreFunctionFactory::create_score_function("empty") );
+		core::scoring::ScoreFunctionOP scorefxn_cen( ScoreFunctionFactory::create_score_function("interchain_cen") );
+		//core::scoring::ScoreFunctionOP scorefxn12( get_score_function() );
 
-	//(*scorefxn)(pose);
-	//TR << "Patchdock Rosetta score is: " << pose.energies().total_energy() << std::endl;
+		//(*scorefxn)(pose);
+		//TR << "Patchdock Rosetta score is: " << pose.energies().total_energy() << std::endl;
 
-	//scorefxn->reset();
-	//(*scorefxn)(pose);
-	//TR << "Pre-stub score is: " << pose.energies().total_energy() << std::endl;
+		//scorefxn->reset();
+		//(*scorefxn)(pose);
+		//TR << "Pre-stub score is: " << pose.energies().total_energy() << std::endl;
 
-	//read hotspot_name
-	Size num_hotspot_name=0;
-	num_hotspot_name=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size();
+		//read hotspot_name
+		Size num_hotspot_name=0;
+		num_hotspot_name=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size();
 
-	//print out input information
-	/*
-	for (Size i=1; i <= num_hotspot_name; i++) {
-	TR << "hotspot_names["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i] << std::endl;
-	TR << "hotspot_distcb_weight["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight]()[i] << std::endl;
+		//print out input information
+		/*
+		for (Size i=1; i <= num_hotspot_name; i++) {
+		TR << "hotspot_names["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i] << std::endl;
+		TR << "hotspot_distcb_weight["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight]()[i] << std::endl;
+		}
+		*/
+
+		// Assign a fixed residue (for the constraints)
+		//core::Size fixed_res(1);  // unused ~Labonte
+		core::Size const chain_to_redesign = 2;
+		//if ( chain_to_redesign == 1 ) fixed_res = pose.size();  // unused ~Labonte
+		//core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
+		core::Real const worst_allowed_stub_bonus(-1.);
+		bool const apply_self_energies(false);
+		core::Real const bump_cutoff(10.);
+		bool const apply_ambiguous_constraints(true);
+
+		//core::Real hotspot_distcb_weight=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight];
+		core::Real hotspot_score_weight=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_score_weight];
+
+		//read file and assign constraint to pose
+		for ( Size i=1; i <= num_hotspot_name; i++ ) {
+			//std::string hotspot_namei="hotspot_name"+ObjexxFCL::string_of(i);
+			std::string const hotspot_name= basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i];
+			//   TR << "Reading and generate cst from: " << hotspot_name << std::endl;
+			protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
+			hotspot_stub_setOP->read_data( hotspot_name );
+			hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
+				basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight][i],
+				worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
+			//hotspot_stub_setOP->clear();
+		}
+
+		//convert to centroid (Can only do it after setting hotspot since it uses the packer task)
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+		scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight );
+		scorefxn_emp->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight );
+
+		(*scorefxn_cen)(pose);
+		core::Real CenScore= pose.energies().total_energies().dot( scorefxn_cen->weights() );
+
+		//switch back to FA_STANDARD
+		protocols::forge::methods::restore_residues( archive_pose, pose );
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+
+		//scorefxn12->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight );
+		//(*scorefxn12)(pose);
+		(*scorefxn_emp)(pose);
+		//core::Real CstScore= pose.energies().total_energies().dot( scorefxn_emp->weights() );  // unused ~Labonte
+
+		protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+		job->add_string_real_pair("Centroid_score", CenScore);
+		//protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag()
+
+	}//end of apply
+
+	virtual std::string get_name() const {
+		return "run_score_hotspot";
 	}
-	*/
-
-	// Assign a fixed residue (for the constraints)
-	//core::Size fixed_res(1);  // unused ~Labonte
-	core::Size const chain_to_redesign = 2;
-	//if ( chain_to_redesign == 1 ) fixed_res = pose.size();  // unused ~Labonte
-	//core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
-	core::Real const worst_allowed_stub_bonus(-1.);
-	bool const apply_self_energies(false);
-	core::Real const bump_cutoff(10.);
-	bool const apply_ambiguous_constraints(true);
-
-	//core::Real hotspot_distcb_weight=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight];
-	core::Real hotspot_score_weight=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_score_weight];
-
-	//read file and assign constraint to pose
-	for ( Size i=1; i <= num_hotspot_name; i++ ) {
-		//std::string hotspot_namei="hotspot_name"+ObjexxFCL::string_of(i);
-		std::string const hotspot_name= basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i];
-		//   TR << "Reading and generate cst from: " << hotspot_name << std::endl;
-		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
-		hotspot_stub_setOP->read_data( hotspot_name );
-		hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
-			basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight][i],
-			worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
-		//hotspot_stub_setOP->clear();
-	}
-
-	//convert to centroid (Can only do it after setting hotspot since it uses the packer task)
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
-	scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight );
-	scorefxn_emp->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight );
-
-	(*scorefxn_cen)(pose);
-	core::Real CenScore= pose.energies().total_energies().dot( scorefxn_cen->weights() );
-
-	//switch back to FA_STANDARD
-	protocols::forge::methods::restore_residues( archive_pose, pose );
-	core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
-
-	//scorefxn12->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight );
-	//(*scorefxn12)(pose);
-	(*scorefxn_emp)(pose);
-	//core::Real CstScore= pose.energies().total_energies().dot( scorefxn_emp->weights() );  // unused ~Labonte
-
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	job->add_string_real_pair("Centroid_score", CenScore);
-	//protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag()
-
-}//end of apply
-
-virtual std::string get_name() const {
-	return "run_score_hotspot";
-}
 
 };//end of run_score_hotspot
 

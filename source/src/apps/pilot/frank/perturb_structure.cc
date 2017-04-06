@@ -47,73 +47,73 @@ OPT_1GRP_KEY(Real, perturb, mutrate)
 ///////////////////////////////////////////////////////////////////////////////
 
 class PerturbStruct : public protocols::moves::Mover {
-	private:
+private:
 	core::Real mutrate_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 
-	public:
+public:
 	PerturbStruct() {
 		using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options::OptionKeys;
 
-	mutrate_ = option[perturb::mutrate];
-	scorefxn_ = core::scoring::get_score_function();
-}
-
-virtual std::string get_name() const { return "PerturbStruct";}
-
-//////
-void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
-	utility::vector1< core::Size > positions;
-	for ( core::Size i=1; i<=pose.size(); ++i ) {
-		core::chemical::ResidueType const & cur_restype = pose.residue_type( i );
-		if ( !cur_restype.is_protein() ) continue;
-		if ( cur_restype.aa() == core::chemical::aa_cys && cur_restype.has_variant_type( core::chemical::DISULFIDE ) ) continue;
-		positions.push_back(i);
+		mutrate_ = option[perturb::mutrate];
+		scorefxn_ = core::scoring::get_score_function();
 	}
-	numeric::random::random_permutation(positions, numeric::random::rg());
 
-	for ( core::Size i=1; i<=std::min(nmut,pose.size()); ++i ) {
-		core::Size res_to_mut = positions[i];
+	virtual std::string get_name() const { return "PerturbStruct";}
 
-		//
-		core::chemical::AA to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
-		while ( to_mutate == pose.residue(res_to_mut).aa() ) {
-			to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
+	//////
+	void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
+		utility::vector1< core::Size > positions;
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
+			core::chemical::ResidueType const & cur_restype = pose.residue_type( i );
+			if ( !cur_restype.is_protein() ) continue;
+			if ( cur_restype.aa() == core::chemical::aa_cys && cur_restype.has_variant_type( core::chemical::DISULFIDE ) ) continue;
+			positions.push_back(i);
 		}
+		numeric::random::random_permutation(positions, numeric::random::rg());
 
-		// random AA
-		core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type(res_to_mut).mode() ) );
-		core::chemical::ResidueTypeCOP rtype = rsd_set->get_representative_type_aa(to_mutate);
-		core::conformation::Residue replace_res( *rtype, true );
+		for ( core::Size i=1; i<=std::min(nmut,pose.size()); ++i ) {
+			core::Size res_to_mut = positions[i];
 
-		pose.replace_residue( res_to_mut, replace_res, true);
-	}
-}
+			//
+			core::chemical::AA to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
+			while ( to_mutate == pose.residue(res_to_mut).aa() ) {
+				to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
+			}
 
-//////
-void revert_muations( core::pose::Pose & pose, core::pose::Pose const & ref ) {
-	for ( core::Size i=1; i<=pose.size(); ++i ) {
-		if ( pose.residue(i).aa() != ref.residue(i).aa() ) {
-			pose.replace_residue( i, ref.residue(i), true);
+			// random AA
+			core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type(res_to_mut).mode() ) );
+			core::chemical::ResidueTypeCOP rtype = rsd_set->get_representative_type_aa(to_mutate);
+			core::conformation::Residue replace_res( *rtype, true );
+
+			pose.replace_residue( res_to_mut, replace_res, true);
 		}
 	}
-}
+
+	//////
+	void revert_muations( core::pose::Pose & pose, core::pose::Pose const & ref ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
+			if ( pose.residue(i).aa() != ref.residue(i).aa() ) {
+				pose.replace_residue( i, ref.residue(i), true);
+			}
+		}
+	}
 
 
-void apply( core::pose::Pose & pose ) {
-	core::pose::Pose ref_pose(pose);
+	void apply( core::pose::Pose & pose ) {
+		core::pose::Pose ref_pose(pose);
 
-	// random mutations
-	core::Size nmut = (core::Size) std::floor( mutrate_ * pose.size() + 0.5 );
+		// random mutations
+		core::Size nmut = (core::Size) std::floor( mutrate_ * pose.size() + 0.5 );
 
-	protocols::relax::RelaxProtocolBaseOP fa_rlx( protocols::relax::generate_relax_from_cmd() );
+		protocols::relax::RelaxProtocolBaseOP fa_rlx( protocols::relax::generate_relax_from_cmd() );
 
-	do_mutate( pose, nmut );
-	fa_rlx->apply( pose );
-	revert_muations( pose, ref_pose );
-	fa_rlx->apply( pose );
-}
+		do_mutate( pose, nmut );
+		fa_rlx->apply( pose );
+		revert_muations( pose, ref_pose );
+		fa_rlx->apply( pose );
+	}
 
 };
 

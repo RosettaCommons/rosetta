@@ -292,7 +292,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	}
 
 	if ( options_->verbose() ) {
-		working_denovo_scorefxn_->show( TR, pose );	TR << std::endl;
+		working_denovo_scorefxn_->show( TR, pose ); TR << std::endl;
 	}
 	final_scorefxn_ = working_denovo_scorefxn_;
 
@@ -331,7 +331,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 }
 
-	////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::initialize_parameters() {
 	// parameters for run.
@@ -389,8 +389,8 @@ RNA_FragmentMonteCarlo::initialize_movers() {
 
 	// MasterMover handles fragments, jumps, chunks, docking
 	rna_denovo_master_mover_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_, atom_level_domain_map_,
-																																								 rna_base_pair_handler_, rna_loop_closer_,
-																																								 rna_chunk_library_ ) );
+		rna_base_pair_handler_, rna_loop_closer_,
+		rna_chunk_library_ ) );
 
 
 	if ( options_->relax_structure() || options_->minimize_structure() ) {
@@ -425,7 +425,7 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 /// @brief moves should get finer as simulation progresses through rounds
 void
 RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( Size const & r /*round number*/,
-																												pose::Pose const & pose )
+	pose::Pose const & pose )
 {
 	// Finer and finer fragments
 	Real const frag_size_old = rna_denovo_master_mover_->frag_size();
@@ -452,7 +452,7 @@ Size
 RNA_FragmentMonteCarlo::update_frag_size( Size const & r ) const
 {
 	// user defined over-ride of fragment size.
-	if ( options_->frag_size() > 0 ) 	return options_->frag_size();
+	if ( options_->frag_size() > 0 )  return options_->frag_size();
 	Size frag_size = 3;
 	if ( r > 1.0 * ( rounds_ / 3.0 ) ) frag_size = 2;
 	if ( r > 2.0 * ( rounds_ / 3.0 ) ) frag_size = 1;
@@ -461,8 +461,8 @@ RNA_FragmentMonteCarlo::update_frag_size( Size const & r ) const
 
 void
 RNA_FragmentMonteCarlo::get_rigid_body_move_mags( Size const & r,
-																									Real & rot_mag,
-																									Real & trans_mag ) const
+	Real & rot_mag,
+	Real & trans_mag ) const
 {
 	//Keep moves coarse for early rounds. For the last 1/4 of modeling, plateau to the finest moves.
 	Real suppress ( 3.0 / 4.0 * r / rounds_ );

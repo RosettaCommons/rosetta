@@ -107,11 +107,11 @@ public:
 	/// Default (for now) is dihedral.
 	void
 	use_cartmin( bool use_cartmin );
-	
+
 	///@brief Set refinement mode instead of denovo modeling mode.
 	void
 	set_refine( bool refine );
-	
+
 public:
 	void
 	show( std::ostream & output=std::cout ) const override;

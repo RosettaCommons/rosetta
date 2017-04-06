@@ -111,8 +111,7 @@ RmsdFromResidueSelectorFilter::compute( core::pose::Pose const & pose ) const
 	if ( not gdt_ ) {
 		protocols::simple_filters::SelectRmsdEvaluator evaluator( native, "fromResidueSelector", CA_only_ );
 		rmsd = evaluator.apply( copy_pose );
-	}
-	else {
+	} else {
 		protocols::simple_filters::SelectGdtEvaluator evaluator( native, "fromResidueSelector" );
 		rmsd = evaluator.apply( copy_pose );
 	}

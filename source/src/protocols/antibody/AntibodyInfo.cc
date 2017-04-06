@@ -211,11 +211,10 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 
 	if ( is_camelid_ ) {
 		total_cdr_loops_ = camelid_last_loop;
-	}
-	else {
+	} else {
 		total_cdr_loops_ = num_cdr_loops;
 	}
-	for (core::Size i = 1; i <= core::Size(total_cdr_loops_); ++i){
+	for ( core::Size i = 1; i <= core::Size(total_cdr_loops_); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		all_cdrs_present_.push_back( cdr );
 		all_cdrs_present_and_proto_.push_back( cdr );
@@ -802,10 +801,9 @@ AntibodyInfo::get_total_num_CDRs(bool include_proto_cdr4 /* false */) const{
 
 utility::vector1< CDRNameEnum > const &
 AntibodyInfo::get_all_cdrs_present( bool include_proto_cdr4 /* false */ ) const {
-	if (include_proto_cdr4){
+	if ( include_proto_cdr4 ) {
 		return all_cdrs_present_and_proto_;
-	}
-	else {
+	} else {
 		return all_cdrs_present_;
 	}
 }

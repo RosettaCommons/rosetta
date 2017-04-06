@@ -241,7 +241,7 @@ AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager(ab_info_, force_north_paper_db_);
 	manager.set_outlier_use(use_outliers_);
 	manager.ignore_light_chain( ignore_light_chain_ );
-	
+
 	sequences_ = manager.load_cdr_sequences(cdrs_, pose, limit_only_to_length_);
 
 	pre_loaded_data_ = true;
@@ -284,7 +284,7 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 		AntibodyDatabaseManager manager = AntibodyDatabaseManager(local_ab_info, force_north_paper_db_);
 		manager.set_outlier_use(use_outliers_);
 		manager.ignore_light_chain( ignore_light_chain_ );
-		
+
 		sequences = manager.load_cdr_sequences(cdrs_, pose, limit_only_to_length_);
 	}
 

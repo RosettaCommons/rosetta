@@ -236,38 +236,38 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 		add_fa_constraints_from_cmdline(pose, *scorefxn);
 	} else {
 		add_constraints_from_cmdline(pose, *scorefxn);
-			}
-
-			monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
-			pose, *scorefxn, initial_temp_) );
-
-		// Use the rama2b scoring term instead of the rama term
-
-		original_repulsive_weight_ = scorefxn->get_weight(fa_rep);
-		original_rama_weight_ = 0;
-		original_rama2b_weight_ = standard_sfxn->get_weight(rama);
-
-		// Describe the protocol to the user.
-
-		vector1<string> algorithm_names;
-		movers_->get_children_names(algorithm_names);
-		refiners_->get_children_names(algorithm_names);
-
-		TR << "sfxn_cycles:    " << get_sfxn_cycles() << endl;
-		TR << "temp_cycles:    " << get_temp_cycles() << endl;
-		TR << "mover_cycles:   " << get_mover_cycles() << endl;
-		TR << "ramp_sfxn_rep:  " << ramp_sfxn_rep_ << endl;
-		TR << "ramp_sfxn_rama: " << ramp_sfxn_rama_ << endl;
-		TR << "ramp_temp:      " << ramp_temp_ << endl;
-		TR << "initial_temp:   " << initial_temp_ << endl;
-		TR << "final_temp:     " << final_temp_ << endl;
-		for ( string const & name : algorithm_names ) {
-			TR << "loop_movers:    " << name << endl;
-		}
 	}
 
-	void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
-		using core::scoring::fa_rep;
+	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
+		pose, *scorefxn, initial_temp_) );
+
+	// Use the rama2b scoring term instead of the rama term
+
+	original_repulsive_weight_ = scorefxn->get_weight(fa_rep);
+	original_rama_weight_ = 0;
+	original_rama2b_weight_ = standard_sfxn->get_weight(rama);
+
+	// Describe the protocol to the user.
+
+	vector1<string> algorithm_names;
+	movers_->get_children_names(algorithm_names);
+	refiners_->get_children_names(algorithm_names);
+
+	TR << "sfxn_cycles:    " << get_sfxn_cycles() << endl;
+	TR << "temp_cycles:    " << get_temp_cycles() << endl;
+	TR << "mover_cycles:   " << get_mover_cycles() << endl;
+	TR << "ramp_sfxn_rep:  " << ramp_sfxn_rep_ << endl;
+	TR << "ramp_sfxn_rama: " << ramp_sfxn_rama_ << endl;
+	TR << "ramp_temp:      " << ramp_temp_ << endl;
+	TR << "initial_temp:   " << initial_temp_ << endl;
+	TR << "final_temp:     " << final_temp_ << endl;
+	for ( string const & name : algorithm_names ) {
+		TR << "loop_movers:    " << name << endl;
+	}
+}
+
+void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
+	using core::scoring::fa_rep;
 	using core::scoring::rama;
 	using core::scoring::rama2b;
 	using core::scoring::chainbreak;

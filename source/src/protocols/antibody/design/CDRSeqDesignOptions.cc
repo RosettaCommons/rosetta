@@ -314,10 +314,10 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const & name, vec
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		set_cdr_design_fallback_option(option);
-	} else if ( name=="DISALLOWED_AA" || name=="DISALLOWED" || name == "DISALLOWED"){
+	} else if ( name=="DISALLOWED_AA" || name=="DISALLOWED" || name == "DISALLOWED" ) {
 		debug_assert( lineSP.size() > 2 ); //Should actually set something!
 		set_disallow_amino_acids( lineSP );
-		
+
 	} else {
 		utility_exit_with_message("Could not parse ab design instruction.  Unknown option: "+name);
 	}
@@ -351,9 +351,9 @@ CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(std::string const & op
 
 void
 CDRSeqDesignOptionsParser::set_disallow_amino_acids(const utility::vector1<std::string> & lineSP ){
-	
+
 	utility::vector1< core::chemical::AA > aminos;
-	for ( core::Size i = 3; i <= lineSP.size(); ++i ){
+	for ( core::Size i = 3; i <= lineSP.size(); ++i ) {
 		std::string setting = lineSP[ i ];
 		core::chemical::AA amino = core::chemical::aa_from_one_or_three( setting );
 		aminos.push_back( amino );

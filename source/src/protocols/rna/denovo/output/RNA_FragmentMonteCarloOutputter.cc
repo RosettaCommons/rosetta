@@ -49,65 +49,65 @@ namespace rna {
 namespace denovo {
 namespace output {
 
-	//Constructor
-	RNA_FragmentMonteCarloOutputter::RNA_FragmentMonteCarloOutputter( RNA_FragmentMonteCarloOptionsCOP options,
-																																		core::pose::PoseCOP align_pose ):
-		options_( options )
-	{
-		initialize( align_pose );
-	}
+//Constructor
+RNA_FragmentMonteCarloOutputter::RNA_FragmentMonteCarloOutputter( RNA_FragmentMonteCarloOptionsCOP options,
+	core::pose::PoseCOP align_pose ):
+	options_( options )
+{
+	initialize( align_pose );
+}
 
-	//Destructor
-	RNA_FragmentMonteCarloOutputter::~RNA_FragmentMonteCarloOutputter()
-	{}
+//Destructor
+RNA_FragmentMonteCarloOutputter::~RNA_FragmentMonteCarloOutputter()
+{}
 
-	void
-	RNA_FragmentMonteCarloOutputter::apply( core::pose::Pose & )
-	{
-		// no op. Maybe this should not be a mover.
-	}
+void
+RNA_FragmentMonteCarloOutputter::apply( core::pose::Pose & )
+{
+	// no op. Maybe this should not be a mover.
+}
 
-	void
-	RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
+void
+RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
 
-		using namespace numeric;
-		if ( options_->output_score_frequency() > 0 ) {
-			if ( options_->output_score_file() != "none" )  {
-				TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
-				running_score_output_.open_append( options_->output_score_file() );
-			}
-			if ( options_->output_jump_res().size() > 0 ) {
-				using namespace core::pose::rna;
-				runtime_assert( options_->output_jump_res().size() == 2 );
-				output_stub_stub_type_ = BASE_CENTROID;
-				if ( options_->output_jump_o3p_to_o5p() ) output_stub_stub_type_ = O3P_TO_O5P;
-				if ( options_->output_jump_chainbreak() ) output_stub_stub_type_ = CHAINBREAK;
-				if ( options_->output_jump_reference_RT_string().size() > 0 ) {
-					reference_RT_ = kinematics::RTOP( new kinematics::RT );
+	using namespace numeric;
+	if ( options_->output_score_frequency() > 0 ) {
+		if ( options_->output_score_file() != "none" )  {
+			TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
+			running_score_output_.open_append( options_->output_score_file() );
+		}
+		if ( options_->output_jump_res().size() > 0 ) {
+			using namespace core::pose::rna;
+			runtime_assert( options_->output_jump_res().size() == 2 );
+			output_stub_stub_type_ = BASE_CENTROID;
+			if ( options_->output_jump_o3p_to_o5p() ) output_stub_stub_type_ = O3P_TO_O5P;
+			if ( options_->output_jump_chainbreak() ) output_stub_stub_type_ = CHAINBREAK;
+			if ( options_->output_jump_reference_RT_string().size() > 0 ) {
+				reference_RT_ = kinematics::RTOP( new kinematics::RT );
 				std::stringstream rt_stream( options_->output_jump_reference_RT_string() );
 				kinematics::RT const align_RT = get_output_jump_RT( align_pose );
 				TR << TR.Green << "Trying to read in RT from -output_jump_reference_RT. If this fails, you may want to use the following string, based on -align_pdb or -native: \"" << align_RT << "\" " << std::endl;
 				rt_stream >> *reference_RT_;
-				}
 			}
-			if ( options_->save_jump_histogram() ) {
-				runtime_assert( options_->output_rotation_vector() );
-				Real const & bxs( options_->jump_histogram_boxsize() );
-				Real const & bw ( options_->jump_histogram_binwidth() );
-				Real const & bwr( options_->jump_histogram_binwidth_rotvector() );
-				jump_histogram_min_        = make_vector1( -bxs, -bxs, -bxs, -180.0, -180.0, -180.0 );
-				jump_histogram_max_        = make_vector1( +bxs, +bxs, +bxs, +180.0, +180.0, +180.0 );
-				jump_histogram_bin_width_  = make_vector1(   bw,   bw,   bw,   bwr,    bwr,   bwr );
-				vector1< Size > jump_n_bins;
-				for ( Size n = 1; n <= 6; n++ ) jump_n_bins.push_back( static_cast<Size>( (jump_histogram_max_[n] - jump_histogram_min_[n]) / jump_histogram_bin_width_[n] + 1.0 ) );
-				if ( jump_histogram_ == 0 ) {
-					jump_histogram_ = MathNTensorOP< Size, 6>( new MathNTensor< Size, 6>( jump_n_bins, 0 ) );
-				} else {
-					for ( Size n = 1; n <= 6; n++ ) runtime_assert( jump_histogram_->n_bins( n ) == jump_n_bins[ n ] );
-				}
+		}
+		if ( options_->save_jump_histogram() ) {
+			runtime_assert( options_->output_rotation_vector() );
+			Real const & bxs( options_->jump_histogram_boxsize() );
+			Real const & bw ( options_->jump_histogram_binwidth() );
+			Real const & bwr( options_->jump_histogram_binwidth_rotvector() );
+			jump_histogram_min_        = make_vector1( -bxs, -bxs, -bxs, -180.0, -180.0, -180.0 );
+			jump_histogram_max_        = make_vector1( +bxs, +bxs, +bxs, +180.0, +180.0, +180.0 );
+			jump_histogram_bin_width_  = make_vector1(   bw,   bw,   bw,   bwr,    bwr,   bwr );
+			vector1< Size > jump_n_bins;
+			for ( Size n = 1; n <= 6; n++ ) jump_n_bins.push_back( static_cast<Size>( (jump_histogram_max_[n] - jump_histogram_min_[n]) / jump_histogram_bin_width_[n] + 1.0 ) );
+			if ( jump_histogram_ == 0 ) {
+				jump_histogram_ = MathNTensorOP< Size, 6>( new MathNTensor< Size, 6>( jump_n_bins, 0 ) );
+			} else {
+				for ( Size n = 1; n <= 6; n++ ) runtime_assert( jump_histogram_->n_bins( n ) == jump_n_bins[ n ] );
 			}
 		}
 	}
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ RNA_FragmentMonteCarloOutputter::get_output_jump_RT( pose::PoseCOP pose ) const
 	return j.rt();
 }
 
-	//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarloOutputter::get_output_jump_stub_stub(
 	pose::Pose const & pose,
@@ -204,7 +204,7 @@ RNA_FragmentMonteCarloOutputter::finalize( core::scoring::ScoreFunctionCOP denov
 
 	if ( options_->output_score_frequency() == 0 ) return;
 
-		if ( running_score_output_.good() ) {
+	if ( running_score_output_.good() ) {
 		running_score_output_.close();
 		TR << "Created running score file at: " << options_->output_score_file() << std::endl;
 	}

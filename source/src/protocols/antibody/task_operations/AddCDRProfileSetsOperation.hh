@@ -135,13 +135,13 @@ public:
 	/// Default True.
 	void
 	set_include_native_type(bool use_native);
-	
+
 	void
 	set_ignore_light_chain( bool const ignore_light_chain = false ){
 		ignore_light_chain_ = ignore_light_chain;
 	}
-	
-	
+
+
 private:
 	AntibodyInfoCOP ab_info_;
 	utility::vector1<bool> cdrs_;

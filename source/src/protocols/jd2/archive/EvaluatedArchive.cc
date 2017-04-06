@@ -96,15 +96,15 @@ EvaluatedArchive::EvaluatedArchive()
 	runtime_assert( options_registered_ );
 	setup_default_evaluators();
 	OBSOLETE(basic::options::OptionKeys::iterative::evaluate_only_on_slaves);
-		}
+}
 
-		EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
-		: ArchiveBase( ptr ),
-			scorefxn_( /* NULL */ ),
-			scores_are_clean_( true ),
-			b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
-			{
-			runtime_assert( options_registered_ );
+EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
+: ArchiveBase( ptr ),
+	scorefxn_( /* NULL */ ),
+	scores_are_clean_( true ),
+	b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
+{
+	runtime_assert( options_registered_ );
 	setup_default_evaluators();
 }
 

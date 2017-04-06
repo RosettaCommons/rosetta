@@ -36,105 +36,105 @@ namespace rna {
 namespace denovo {
 namespace movers {
 
-	class RNA_DeNovoMasterMover: public protocols::moves::Mover {
+class RNA_DeNovoMasterMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOptionsCOP options,
-													 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-													 base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
-													 protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
-													 libraries::RNA_ChunkLibraryOP rna_chunk_library  );
+	//constructor
+	RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOptionsCOP options,
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
+		protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
+		libraries::RNA_ChunkLibraryOP rna_chunk_library  );
 
-		//destructor
-		~RNA_DeNovoMasterMover();
+	//destructor
+	~RNA_DeNovoMasterMover();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual std::string get_name() const{ return "RNA_DeNovoMasterMover"; }
+	virtual std::string get_name() const{ return "RNA_DeNovoMasterMover"; }
 
-		void
-		apply( core::pose::Pose & pose,
-					 core::Size const & cycle_number );
+	void
+	apply( core::pose::Pose & pose,
+		core::Size const & cycle_number );
 
-		void
-		setup_rnp_fold_tree( core::pose::Pose & pose, bool const & refine_pose );
+	void
+	setup_rnp_fold_tree( core::pose::Pose & pose, bool const & refine_pose );
 
-		void
-		setup_rigid_body_mover( core::pose::Pose const & pose,
-														core::Real const & rot_mag,
-														core::Real const & trans_mag );
+	void
+	setup_rigid_body_mover( core::pose::Pose const & pose,
+		core::Real const & rot_mag,
+		core::Real const & trans_mag );
 
-		void
-		setup_rna_protein_docking_mover( core::pose::Pose const & pose,
-																		 core::Real const & rot_mag,
-																		 core::Real const & trans_mag );
+	void
+	setup_rna_protein_docking_mover( core::pose::Pose const & pose,
+		core::Real const & rot_mag,
+		core::Real const & trans_mag );
 
-		movers::RNA_FragmentMoverOP rna_fragment_mover(){ return rna_fragment_mover_; }
-		movers::RNA_JumpMoverOP rna_jump_mover(){ return rna_jump_mover_; }
+	movers::RNA_FragmentMoverOP rna_fragment_mover(){ return rna_fragment_mover_; }
+	movers::RNA_JumpMoverOP rna_jump_mover(){ return rna_jump_mover_; }
 
-		void
-		do_random_moves( core::pose::Pose & pose, Size const & monte_carlo_cycles );
+	void
+	do_random_moves( core::pose::Pose & pose, Size const & monte_carlo_cycles );
 
-		void set_close_loops( bool const & setting ){ close_loops_ = setting; }
-		bool close_loops() const { return close_loops_; }
+	void set_close_loops( bool const & setting ){ close_loops_ = setting; }
+	bool close_loops() const { return close_loops_; }
 
-		void set_frag_size( core::Size const & setting ){ frag_size_ = setting; }
-		core::Size frag_size() const { return frag_size_; }
+	void set_frag_size( core::Size const & setting ){ frag_size_ = setting; }
+	core::Size frag_size() const { return frag_size_; }
 
-		std::string move_type() const { return move_type_; }
-		bool success() const { return ( move_type_.size() > 0 ); }
+	std::string move_type() const { return move_type_; }
+	bool success() const { return ( move_type_.size() > 0 ); }
 
-	private:
+private:
 
-		void
-		do_move_trial( core::Size const & i, core::pose::Pose & pose );
+	void
+	do_move_trial( core::Size const & i, core::pose::Pose & pose );
 
-		void
-		RNA_move_trial( core::pose::Pose & pose );
+	void
+	RNA_move_trial( core::pose::Pose & pose );
 
-		void
-		random_jump_trial( core::pose::Pose & pose );
+	void
+	random_jump_trial( core::pose::Pose & pose );
 
-		void
-		rnp_docking_trial( core::pose::Pose & pose );
+	void
+	rnp_docking_trial( core::pose::Pose & pose );
 
-		void
-		random_fragment_trial( core::pose::Pose & pose );
+	void
+	random_fragment_trial( core::pose::Pose & pose );
 
-		bool
-		random_chunk_trial( core::pose::Pose & pose );
+	bool
+	random_chunk_trial( core::pose::Pose & pose );
 
-		void
-		randomize_rigid_body_orientations( core::pose::Pose & pose );
+	void
+	randomize_rigid_body_orientations( core::pose::Pose & pose );
 
-		void
-		randomize_rnp_rigid_body_orientations( core::pose::Pose & pose );
+	void
+	randomize_rnp_rigid_body_orientations( core::pose::Pose & pose );
 
-		core::kinematics::FoldTree
-		get_rnp_docking_fold_tree( core::pose::Pose const & pose );
+	core::kinematics::FoldTree
+	get_rnp_docking_fold_tree( core::pose::Pose const & pose );
 
-	private:
+private:
 
-		options::RNA_FragmentMonteCarloOptionsCOP options_;
+	options::RNA_FragmentMonteCarloOptionsCOP options_;
 
-		core::Size frag_size_;
-		core::Real jump_change_frequency_;
-		bool close_loops_;
-		bool do_rnp_docking_;
-		std::string move_type_;
+	core::Size frag_size_;
+	core::Real jump_change_frequency_;
+	bool close_loops_;
+	bool do_rnp_docking_;
+	std::string move_type_;
 
-		movers::RNA_FragmentMoverOP rna_fragment_mover_;
-		movers::RNA_JumpMoverOP rna_jump_mover_;
-		libraries::RNA_ChunkLibraryOP rna_chunk_library_;
-		protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
-		protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_, rnp_docking_mover_;
-		core::kinematics::FoldTree rnp_docking_ft_;
+	movers::RNA_FragmentMoverOP rna_fragment_mover_;
+	movers::RNA_JumpMoverOP rna_jump_mover_;
+	libraries::RNA_ChunkLibraryOP rna_chunk_library_;
+	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
+	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_, rnp_docking_mover_;
+	core::kinematics::FoldTree rnp_docking_ft_;
 
-	};
+};
 
 } //movers
 } //denovo

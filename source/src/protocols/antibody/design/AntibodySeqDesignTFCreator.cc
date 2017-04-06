@@ -235,16 +235,16 @@ core::pack::task::TaskFactoryOP
 AntibodySeqDesignTFCreator::generate_tf_seq_design( const core::pose::Pose & pose, bool disable_non_designing_cdrs /* False */){
 
 	TaskFactoryOP tf( new TaskFactory() );
-	
+
 	//Setup Basic TaskOP
 	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
-	
+
 	//Enable extra-limiting through a read-resfile.  Note that this CANNOT turn things back on (packing/design/aa), but it
 	/// will enable you to limit what you want, especially in combination with basic design.
 	/// Requested.
 	ReadResfileOP read_resfile = ReadResfileOP( new ReadResfile() );
 	tf->push_back( read_resfile );
-	
+
 	add_extra_restrict_operations(tf, pose);
 
 	AddCDRProfilesOperationOP profile_strategy_task = this->generate_task_op_cdr_profiles(pose);
@@ -300,8 +300,8 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	/// Requested.
 	ReadResfileOP read_resfile = ReadResfileOP( new ReadResfile() );
 	tf->push_back( read_resfile );
-	
-	
+
+
 	//Limit packing and design to only CDRs we are minimizing.
 	RestrictToLoopsAndNeighborsOP restrict_to_min_cdrs = this->generate_task_op_cdr_design(pose, neighbor_cdr_min, true);
 	tf->push_back(restrict_to_min_cdrs);
@@ -326,7 +326,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	AddCDRProfilesOperationOP profile_strategy_task = this->generate_task_op_cdr_profiles(pose);
 	tf->push_back( profile_strategy_task );
 
-	if ( design_framework_conservative_ && design_framework_) {
+	if ( design_framework_conservative_ && design_framework_ ) {
 		ConservativeDesignOperationOP cons_task = get_framework_conservative_op(pose);
 		tf->push_back(cons_task);
 	}
@@ -423,56 +423,55 @@ AntibodySeqDesignTFCreator::disable_proline_design(core::pack::task::TaskFactory
 void
 AntibodySeqDesignTFCreator::disable_disallowed_aa(core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose) const {
 	using namespace core::pack::task::operation;
-	
+
 	utility::vector1< core::chemical::AA > all_restrict;
 	utility::vector1< core::chemical::AA > local_restrict;
-	
+
 	utility::vector1<bool> allowed_aminos(20, true);
-	if ( option [ OptionKeys::antibody::design::disallow_aa].user()){
+	if ( option [ OptionKeys::antibody::design::disallow_aa].user() ) {
 		utility::vector1< std::string > settings = option[ OptionKeys::antibody::design::disallow_aa ]();
-		for ( std::string const & s : settings ){
+		for ( std::string const & s : settings ) {
 			core::chemical::AA amino = core::chemical::aa_from_one_or_three( s );
 			TR << "Disallowing " << core::chemical::name_from_aa( amino ) << std::endl;
 			allowed_aminos[ amino ] = false;
 		}
-		
+
 		RestrictAbsentCanonicalAASOP restrict_aas = RestrictAbsentCanonicalAASOP( new RestrictAbsentCanonicalAAS() );
 		restrict_aas->keep_aas( allowed_aminos );
 		return;
 	}
-	
+
 	//Must double check that this will not RE-enable amino acids, and only restrict them!!!
-	
-	for ( CDRNameEnum const & cdr : ab_info_->get_all_cdrs_present( true /* include_cdr4 */) ){
+
+	for ( CDRNameEnum const & cdr : ab_info_->get_all_cdrs_present( true /* include_cdr4 */) ) {
 		utility::vector1< core::chemical::AA > cdr_restrict = cdr_design_options_[ core::Size( cdr ) ]->disallow_aa();
 		allowed_aminos.resize(20, true);
-		if ( cdr_restrict.size() > 0 ){
+		if ( cdr_restrict.size() > 0 ) {
 			utility::vector1< core::Size > residues_to_restrict;
-			for ( core::chemical::AA restrict_amino : cdr_restrict ){
+			for ( core::chemical::AA restrict_amino : cdr_restrict ) {
 				TR << "Disallowing " << core::chemical::name_from_aa( restrict_amino ) << "for CDR " << ab_info_->get_CDR_name( cdr ) << std::endl;
 				allowed_aminos[ restrict_amino ] = false;
 			}
-			for (core::Size i = ab_info_->get_CDR_start( cdr , pose ); i <= ab_info_->get_CDR_end(cdr, pose ); ++i ){
+			for ( core::Size i = ab_info_->get_CDR_start( cdr , pose ); i <= ab_info_->get_CDR_end(cdr, pose ); ++i ) {
 				residues_to_restrict.push_back( i );
-				
+
 			}
-			
+
 			RestrictAbsentCanonicalAASRLTOP restrict_rlt = RestrictAbsentCanonicalAASRLTOP( new RestrictAbsentCanonicalAASRLT );
 			restrict_rlt->aas_to_keep( allowed_aminos );
-			
+
 			OperateOnCertainResiduesOP restrict_task = OperateOnCertainResiduesOP( new OperateOnCertainResidues());
 			restrict_task->residue_indices( residues_to_restrict );
 			restrict_task->op( restrict_rlt );
 			tf->push_back( restrict_task );
-			
-		}
-		else {
+
+		} else {
 			continue;
 		}
 
 	}
 }
-	
+
 
 
 
@@ -569,8 +568,8 @@ AntibodySeqDesignTFCreator::add_extra_restrict_operations(core::pack::task::Task
 	if ( !design_proline_ ) {
 		disable_proline_design( tf, pose );
 	}
-	
-	
+
+
 	disable_disallowed_aa(tf, pose );
 
 }

@@ -201,8 +201,8 @@ setup_base_pair_constraints(
 // @details copies code from get_base_pairing_info [?]. Should be in core/pose/rna/util? Shouldn't have to score?
 void
 get_base_pairing_list(
-    pose::Pose & pose,
-		utility::vector1< std::pair<Size, Size> > & base_pairing_list )
+	pose::Pose & pose,
+	utility::vector1< std::pair<Size, Size> > & base_pairing_list )
 {
 
 	using namespace core::scoring;

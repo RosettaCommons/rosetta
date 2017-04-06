@@ -86,7 +86,7 @@ public:
 
 	core::pose::Pose
 	pose_from_checkpoint_file() const;
-	
+
 	void
 	set_out_file_prefix( std::string const & setting ) { out_file_prefix_ = setting; }
 

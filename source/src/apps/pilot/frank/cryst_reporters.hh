@@ -188,7 +188,7 @@ reconstruct_lattice_pose_info(
 			}
 			if ( jumpno==0 ) {
 				TS.Fatal << imon << " " << offset << " " << nres_monomer << std::endl;
-                                utility_exit_with_message("Bad jump number.");
+				utility_exit_with_message("Bad jump number.");
 			}
 			monomer_jumps.push_back( jumpno );
 			monomer_anchor_virtuals.push_back( f.upstream_jump_residue( jumpno ) );

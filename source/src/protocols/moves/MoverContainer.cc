@@ -67,7 +67,7 @@ void MoverContainer::add_mover( MoverOP mover_in , Real weight_in ) // do we nee
 {
 	movers_.push_back(mover_in);
 	weight_.push_back(weight_in);
-	if (TR.Debug.visible()){
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "Adding " << mover_in->get_name() << " at " << weight_in << std::endl;
 	}
 }

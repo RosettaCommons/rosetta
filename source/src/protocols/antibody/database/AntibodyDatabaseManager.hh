@@ -44,16 +44,16 @@ struct CDRDBPose {
 	//Members
 	core::pose::PoseOP pose = nullptr;
 	protocols::features::StructureID struct_id;
-	
-	
+
+
 	clusters::CDRClusterEnum cluster;
 	std::string pdb;
 	core::Real distance;
 	core::Real normalized_distance;
 	core::Real resolution;
 	core::Size structure_length;
-	
-	
+
+
 	//std::string germline;
 	//std::string species;
 	//core::Real dmap_coord;
@@ -144,13 +144,13 @@ public:
 		AntibodyCDRSetOptions const & options,
 		core::pose::Pose const & pose,
 		core::Size overhang=3);
-	
+
 	///Load a single pose into the db_pose using the given struct_id.  If failure, it is nullptr
 	core::pose::PoseOP
 	load_cdr_pose(
 		CDRDBPose & db_pose
 	);
-	
+
 	/// @brief Load CDRs from single cdr options.
 	/// @details Will attempt to use Pose Datacache for identification of CDR clusters first.
 	///
@@ -201,12 +201,12 @@ public:
 
 	//std::map< core::Size, AAProbabilities >
 	//load_framework_design_data(AntibodyInfoCOP ab_info, core::pose::Pose const & pose);
-	
+
 	void
 	ignore_light_chain( bool const ignore_light_chain ){
 		ignore_light_chain_ = ignore_light_chain;
 	}
-	
+
 private:
 
 
@@ -217,8 +217,8 @@ private:
 		core::Size const length,
 		clusters::CDRClusterEnum const cluster,
 		bool load_on_length);
-	
-	
+
+
 	///Create the actual sessionOP.
 	void
 	create_database_session(std::string const database_path);
@@ -264,11 +264,11 @@ private:
 	bool use_outliers_;
 	bool use_h3_graft_outliers_; //H3 does not cluster well, so most of the structures are defined as 'outliers'
 	bool use_only_H3_kinked_;
-	
+
 	bool high_mem_mode_ = false;
 	core::Size cdr_cache_limit_ = 300;
 	bool ignore_light_chain_ = false;
-	
+
 };
 
 }

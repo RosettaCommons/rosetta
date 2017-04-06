@@ -924,9 +924,9 @@ HBondFeatures::insert_hbond_row(
 ){
 	ASSERT_ONLY( bool found_don_partner( false ); )
 
-		//Zero if unique
-		//i in 1 through n if ith lowest energy hbond made with this site
-		Size donRank=0, accRank=0;
+	//Zero if unique
+	//i in 1 through n if ith lowest energy hbond made with this site
+	Size donRank=0, accRank=0;
 	vector1< HBondCOP > don_partners(
 		site_partners(hbond.don_res(), hbond.don_hatm()));
 	if ( don_partners.size() > 1 ) {
@@ -935,7 +935,7 @@ HBondFeatures::insert_hbond_row(
 	for ( HBondCOP candidate_hbond : don_partners ) {
 		if ( hbond == *candidate_hbond ) {
 			ASSERT_ONLY( found_don_partner = true; )
-				break;
+			break;
 		} else {
 			++donRank;
 		}
@@ -943,7 +943,7 @@ HBondFeatures::insert_hbond_row(
 	debug_assert(found_don_partner);
 
 	ASSERT_ONLY( bool found_acc_partner(false); )
-		vector1< HBondCOP > acc_partners(
+	vector1< HBondCOP > acc_partners(
 		site_partners(hbond.acc_res(), hbond.acc_atm()));
 
 	if ( acc_partners.size() > 1 ) {
@@ -953,7 +953,7 @@ HBondFeatures::insert_hbond_row(
 	for ( HBondCOP candidate_hbond : acc_partners ) {
 		if ( hbond == *candidate_hbond ) {
 			ASSERT_ONLY( found_acc_partner = true; )
-				break;
+			break;
 		} else {
 			++accRank;
 		}

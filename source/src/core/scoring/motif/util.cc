@@ -151,13 +151,13 @@ using core::pose::motif::get_backbone_reference_frame_atomids_with_downstream;
 using core::chemical::aa_gly;
 
 void xform_pose( core::pose::Pose & pose, Xform const & s, Size sres=1, Size eres=0 ) {
-if ( eres==0 ) eres = pose.size();
-for ( Size ir = sres; ir <= eres; ++ir ) {
-	for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
-		core::id::AtomID const aid(core::id::AtomID(ia,ir));
-		pose.set_xyz( aid, s*pose.xyz(aid) );
+	if ( eres==0 ) eres = pose.size();
+	for ( Size ir = sres; ir <= eres; ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
+			core::id::AtomID const aid(core::id::AtomID(ia,ir));
+			pose.set_xyz( aid, s*pose.xyz(aid) );
+		}
 	}
-}
 }
 Mat random_rotation(){ // from quaternion
 	Real a = uniform() * 2.0 - 1.0; Real b = uniform() * 2.0 - 1.0;

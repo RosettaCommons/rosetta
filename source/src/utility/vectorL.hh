@@ -223,7 +223,7 @@ public: // Creation
 
 	/// @brief C++11 initializer list constructor
 	inline
-	vectorL( std::initializer_list<T> init,	const A& alloc = A() ) :
+	vectorL( std::initializer_list<T> init, const A& alloc = A() ) :
 		super( init, alloc )
 	{}
 
@@ -334,7 +334,7 @@ public: // Methods
 		pop_back();
 		return *this;
 	}
-	
+
 	/// @brief Remove an element of the vector
 	/// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
 	inline
@@ -343,9 +343,9 @@ public: // Methods
 	{
 		erase(std::remove(begin(), end(), t), end());
 		return *this;
-	
+
 	}
-	
+
 	/// @brief Shrink the index map to remove unused capacity
 	inline
 	void

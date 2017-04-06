@@ -770,7 +770,7 @@ get_sidechain_color_rhiju()
 	sidechain_color_rhiju[ aa_val ] = Vector( 0.3, 0.3, 0.3);
 	sidechain_color_rhiju[ aa_trp ] = Vector( 0.3, 0.3, 0.3);
 	sidechain_color_rhiju[ aa_tyr ] = Vector( 0.0, 0.5, 0.0); //green
-	//	sidechain_color_rhiju[ aa_sep ] = Vector( 0.5, 0.5, 0.0); //orange
+	// sidechain_color_rhiju[ aa_sep ] = Vector( 0.5, 0.5, 0.0); //orange
 	sidechain_color_rhiju[ na_gua ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
 	sidechain_color_rhiju[ na_ade ] = Vector( 0.5, 0.5, 0.0); //yellow
 	sidechain_color_rhiju[ na_cyt ] = Vector( 0.0, 0.5, 0.0); //green
@@ -850,11 +850,10 @@ Vector get_atom_color(
 		}
 		break;
 
-	case SINGLE_GLYCAN:
-		if ( residues[r]->atom_is_backbone(i)) {
+	case SINGLE_GLYCAN :
+		if ( residues[r]->atom_is_backbone(i) ) {
 			return Vector( 0.4, 0.0, 0.8 ); // Purple?
-		}
-		else {
+		} else {
 			//return atom_color_by_element( residues[r]->atom_type(i).element());
 			return Vector( .85, .85, .85 ); //Whitish
 
@@ -1993,17 +1992,13 @@ draw_conformation_and_density(
 			conformation::ResidueCOP rsd = residues[ n ];
 			if ( rsd->is_protein() ) {
 				residues_protein.push_back( rsd );
-			}
-			else if ( rsd->is_metal() ) {
+			} else if ( rsd->is_metal() ) {
 				residues_sphere.push_back( rsd );
-			}
-			else if ( rsd->is_virtual_residue() ){
+			} else if ( rsd->is_virtual_residue() ) {
 				virtual_residues.push_back( rsd );
-			}
-			else if ( rsd->is_carbohydrate() ){
+			} else if ( rsd->is_carbohydrate() ) {
 				glycan_residues.push_back( rsd );
-			}
-			else {
+			} else {
 				other_residues.push_back( rsd );
 			}
 		}
@@ -2014,16 +2009,16 @@ draw_conformation_and_density(
 			draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
 			draw_sphere( gs, residues_protein, SPHERE_MODE_LIGAND );
 		}
-		if ( virtual_residues.size() > 0 && option [OptionKeys::view::show_virtual_residues]() ){
+		if ( virtual_residues.size() > 0 && option [OptionKeys::view::show_virtual_residues]() ) {
 			///Use Rhijus view of virts (JAB)
 			ColorMode colormode_save = gs.Color_mode;
 			gs.Color_mode = RHIJU_COLOR;
 			display_residues_wireframe( gs, virtual_residues, Vector( 0.0, 0.0, 0.0) );
 			gs.Color_mode = colormode_save;
 		}
-		if ( glycan_residues.size() > 0 ){
+		if ( glycan_residues.size() > 0 ) {
 			ColorMode colormode_save = gs.Color_mode;
-			if ( option [OptionKeys::view::single_glycan_color]() ){
+			if ( option [OptionKeys::view::single_glycan_color]() ) {
 				gs.Color_mode = SINGLE_GLYCAN;
 			}
 			display_residues_wireframe( gs, glycan_residues, Vector( 0.0, 0.0, 0.0) );
@@ -2097,17 +2092,13 @@ void draw_conformation(
 		conformation::ResidueCOP rsd = residues[ n ];
 		if ( rsd->is_protein() ) {
 			residues_protein.push_back( rsd );
-		}
-		else if ( rsd->is_metal() ) {
+		} else if ( rsd->is_metal() ) {
 			residues_sphere.push_back( rsd );
-		}
-		else if ( rsd->is_virtual_residue() ){
+		} else if ( rsd->is_virtual_residue() ) {
 			virtual_residues.push_back( rsd );
-		}
-		else if ( rsd->is_carbohydrate() ){
+		} else if ( rsd->is_carbohydrate() ) {
 			glycan_residues.push_back( rsd );
-		}
-		else {
+		} else {
 			other_residues.push_back( rsd );
 		}
 	}
@@ -2118,16 +2109,16 @@ void draw_conformation(
 		draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
 		draw_sphere( gs, residues_protein, SPHERE_MODE_LIGAND );
 	}
-	if ( virtual_residues.size() > 0 && option [OptionKeys::view::show_virtual_residues]() ){
+	if ( virtual_residues.size() > 0 && option [OptionKeys::view::show_virtual_residues]() ) {
 		///Use Rhijus view of virts (JAB)
 		ColorMode colormode_save = gs.Color_mode;
 		gs.Color_mode = RHIJU_COLOR;
 		display_residues_wireframe( gs, virtual_residues, Vector( 0.0, 0.0, 0.0) );
 		gs.Color_mode = colormode_save;
 	}
-	if ( glycan_residues.size() > 0 ){
+	if ( glycan_residues.size() > 0 ) {
 		ColorMode colormode_save = gs.Color_mode;
-		if ( option [OptionKeys::view::single_glycan_color]() ){
+		if ( option [OptionKeys::view::single_glycan_color]() ) {
 			gs.Color_mode = SINGLE_GLYCAN;
 		}
 		display_residues_wireframe( gs, glycan_residues, Vector( 0.0, 0.0, 0.0) );

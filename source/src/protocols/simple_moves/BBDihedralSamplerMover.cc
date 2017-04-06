@@ -216,8 +216,8 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 	if ( movemap_ && bb_residues_.size() == 0 ) {
 		TR.Debug << "Setting up from movemap " << std::endl;
 		bb_residues_ = get_residues_from_movemap_bb_any_torsion( *movemap_, pose.size() ); //This is done here so we dont have to do this at each apply and waste time.
-		
-		if (bb_residues_.size() == 0){
+
+		if ( bb_residues_.size() == 0 ) {
 			TR.Debug << "No BB residues to model (remember - no data for root!) Returning) " << std::endl;
 			set_last_move_status(protocols::moves::MS_FAIL);
 			return;

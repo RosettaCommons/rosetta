@@ -73,20 +73,20 @@ public:
 	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
 public:
-	
+
 	///@brief Set the layer we will be returning.
 	void
 	set_layer( core::Size start, core::Size end);
-	
+
 	///@brief Set the layer as all residues greater than or equal to this number (such as the end of the tree)
 	void
 	set_layer_as_greater_than_or_equal_to( core::Size start );
-	
+
 	///@brief Set the layer as all residue less or equal to this number (the beginning of the tree).
 	void
 	set_layer_as_less_than_or_equal_to( core::Size end );
-	
-	
+
+
 public:
 
 	/// @brief XML parse.
@@ -113,12 +113,12 @@ private:
 
 	core::Size start_ = 0;
 	core::Size end_ = 0;
-	
+
 	core::Size start_from_as_layer_ = 0;
 	core::Size end_for_layer_ = 0;
-	
+
 	bool range_set_ = false;
-	
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

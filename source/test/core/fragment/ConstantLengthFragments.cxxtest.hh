@@ -360,58 +360,58 @@ void FragmentConstantLengthTest::test_insertmap() {
 		tr.Info << "active residue " << *it << std::endl;
 		TS_ASSERT_EQUALS( *it, ++pos );
 		TS_ASSERT_EQUALS( insert_size[ *it ], std::min( std::min( 3, 30-pos+1 ) , pos-17 ) );
-			}
-			TS_ASSERT_EQUALS( pos, 30 ); // that should be the last number
+	}
+	TS_ASSERT_EQUALS( pos, 30 ); // that should be the last number
 
-		//let's check that it doesn't find anything if we have less than 3 residues
-		{
-			movemap.set_bb( false );
-			movemap.set_bb( 20, true ); //2mer
-			movemap.set_bb( 21, true );
+	//let's check that it doesn't find anything if we have less than 3 residues
+	{
+		movemap.set_bb( false );
+		movemap.set_bb( 20, true ); //2mer
+		movemap.set_bb( 21, true );
 
-			movemap.set_bb( 30, true ); //1mer
+		movemap.set_bb( 30, true ); //1mer
 
-			InsertMap insert_map; InsertSize insert_size;
-			fragset.generate_insert_map( movemap, insert_map, insert_size );
-			TS_ASSERT_EQUALS( insert_map.size(), 7 );
-			TS_ASSERT_EQUALS( insert_size[ 20 ], 2 );
-			TS_ASSERT_EQUALS( insert_size[ 21 ], 1 );
-			TS_ASSERT_EQUALS( insert_size[ 30 ], 1 );
-			TS_ASSERT_EQUALS( insert_size[ 14 ], 0 );
-			TS_ASSERT_EQUALS( insert_size[ 19 ], 2 );
-		}
-
-		//let's check that it doesn't find anything if we have less than 3 residues
-		{
-			movemap.set_bb( false );
-			movemap.set_bb( 20, true ); //3mer
-			movemap.set_bb( 21, true );
-			movemap.set_bb( 22, true );
-
-			movemap.set_bb( 30, true ); //3mer
-			movemap.set_bb( 31, true ); //
-			movemap.set_bb( 32, true ); //
-
-			InsertMap insert_map; InsertSize insert_size;
-			fragset.generate_insert_map( movemap, insert_map, insert_size );
-
-			tr.Info << "==============================================" << std::endl;
-			for ( InsertMap::const_iterator it=insert_map.begin(), eit=insert_map.end(); it!=eit; ++it ) {
-				tr.Info << "active residue " << *it << std::endl;
-			}
-
-			TS_ASSERT_EQUALS( insert_map.size(), 10 );
-			if ( insert_map.size() == 6 ) {
-				TS_ASSERT_EQUALS( insert_map[ 1 ], 18 );
-				TS_ASSERT_EQUALS( insert_map[ 6 ], 28 );
-			}
-		}
-
+		InsertMap insert_map; InsertSize insert_size;
+		fragset.generate_insert_map( movemap, insert_map, insert_size );
+		TS_ASSERT_EQUALS( insert_map.size(), 7 );
+		TS_ASSERT_EQUALS( insert_size[ 20 ], 2 );
+		TS_ASSERT_EQUALS( insert_size[ 21 ], 1 );
+		TS_ASSERT_EQUALS( insert_size[ 30 ], 1 );
+		TS_ASSERT_EQUALS( insert_size[ 14 ], 0 );
+		TS_ASSERT_EQUALS( insert_size[ 19 ], 2 );
 	}
 
+	//let's check that it doesn't find anything if we have less than 3 residues
+	{
+		movemap.set_bb( false );
+		movemap.set_bb( 20, true ); //3mer
+		movemap.set_bb( 21, true );
+		movemap.set_bb( 22, true );
 
-	void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet const& fragsetNmer ) {
-		using namespace conformation;
+		movemap.set_bb( 30, true ); //3mer
+		movemap.set_bb( 31, true ); //
+		movemap.set_bb( 32, true ); //
+
+		InsertMap insert_map; InsertSize insert_size;
+		fragset.generate_insert_map( movemap, insert_map, insert_size );
+
+		tr.Info << "==============================================" << std::endl;
+		for ( InsertMap::const_iterator it=insert_map.begin(), eit=insert_map.end(); it!=eit; ++it ) {
+			tr.Info << "active residue " << *it << std::endl;
+		}
+
+		TS_ASSERT_EQUALS( insert_map.size(), 10 );
+		if ( insert_map.size() == 6 ) {
+			TS_ASSERT_EQUALS( insert_map[ 1 ], 18 );
+			TS_ASSERT_EQUALS( insert_map[ 6 ], 28 );
+		}
+	}
+
+}
+
+
+void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet const& fragsetNmer ) {
+	using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
 	using namespace pose;

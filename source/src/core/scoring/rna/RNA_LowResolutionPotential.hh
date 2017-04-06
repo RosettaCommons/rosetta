@@ -96,9 +96,9 @@ public:
 
 	Real
 	get_base_backbone(
-    conformation::Residue const & rsd1,
+		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */	) const;
+		Size const & m /* index in num_RNA_backbone_oxygen_atoms_ */ ) const;
 
 	Real
 	rna_backbone_backbone_pair_energy(
@@ -218,7 +218,7 @@ private:
 
 	Real
 	get_base_backbone(
-	  conformation::Residue const & rsd1,
+		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		Vector const & centroid_i,
 		kinematics::Stub const & stub_i,

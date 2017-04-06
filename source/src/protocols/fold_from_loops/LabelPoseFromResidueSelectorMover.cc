@@ -109,8 +109,7 @@ LabelPoseFromResidueSelectorMover::apply( core::pose::Pose & pose )
 		if ( subset[i] ) {
 			if ( not reverse_ ) {
 				pose.pdb_info()->add_reslabel(i, label_ );
-			}
-			else {
+			} else {
 				if ( pose.pdb_info()->res_haslabel(i, label_ ) ) {
 					utility::vector1< std::string> labels = pose.pdb_info()->get_reslabels( i );
 					pose.pdb_info()->clear_reslabel( i );

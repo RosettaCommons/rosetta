@@ -1704,7 +1704,7 @@ AtomTree::get_frag_descendant_local_xyz(
 	bool const frag_child( atom->parent() && frag_xyz.count( atom->parent()->atom_id() ) );
 	ASSERT_ONLY(bool const frag_gchild
 		( atom->parent() && atom->parent()->parent() && frag_xyz.count( atom->parent()->parent()->atom_id() ) );)
-		debug_assert( frag_child || frag_gchild );
+	debug_assert( frag_child || frag_gchild );
 
 	AtomID id1( atom->input_stub_atom1_id() );
 	AtomID id2( atom->input_stub_atom2_id() );

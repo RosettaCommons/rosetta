@@ -193,7 +193,7 @@ void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
-	
+
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
@@ -343,20 +343,20 @@ GlycanRelaxMover::setup_default_task_factory(utility::vector1< bool > const & gl
 		NeighborhoodResidueSelectorOP neighbor_selector = NeighborhoodResidueSelectorOP( new NeighborhoodResidueSelector(select_random_foliage, pack_distance_, true /* include focus */));
 
 		OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, neighbor_selector, true /* flip */));
-		
-		
+
+
 		//Prevent repacking of virtual residues.  Not sure if they are actually repacked, so we make sure they are not here.
 		ResidueSubset virtual_residues( pose.total_residue(), false);
-		for (core::Size i = 1; i <= pose.size(); ++i ){
-			if (pose.residue( i ).is_virtual_residue() ){
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			if ( pose.residue( i ).is_virtual_residue() ) {
 				virtual_residues[ i ] = true;
 			}
 		}
-		
+
 		ReturnResidueSubsetSelectorOP store_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
 		store_subset->set_residue_subset( virtual_residues );
 		OperateOnResidueSubsetOP operate_on_virt_subset = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, store_subset ));
-		
+
 		tf->push_back( subset_op );
 		tf->push_back( RestrictToRepackingOP( new RestrictToRepacking()));
 
@@ -441,13 +441,13 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	//Setup Movemaps
 	glycan_movemap_ = MoveMapOP( new MoveMap );
-	
-	if (selector_){
+
+	if ( selector_ ) {
 		MoveMapOP mm = MoveMapOP( new MoveMap);
 		ResidueSubset subset = selector_->apply(pose);
-		for (core::Size resnum = 1; resnum <=subset.size(); ++resnum){
-			if (! subset[ resnum ]) continue;
-			
+		for ( core::Size resnum = 1; resnum <=subset.size(); ++resnum ) {
+			if ( ! subset[ resnum ] ) continue;
+
 			TR.Debug << "Modeling " << resnum << std::endl;
 			mm->set_bb( resnum, true);
 			mm->set_chi( resnum, true);
@@ -536,10 +536,10 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	core::Size max_glycan_dihedrals = 2;
 	core::Size sugar_bb_modeling_residues = 0;
-	
+
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		bool sugar_bb_modeling  = true;
-		
+
 		//Turn off if not carbohydrates or if N terminal carbohydrate not attached to anything.
 		if ( ! glycan_movemap_->get_bb( i ) ) {
 
@@ -557,7 +557,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 		if ( n_dihedrals > max_glycan_dihedrals ) {
 			max_glycan_dihedrals = n_dihedrals;
 		}
-	
+
 		//Turn on only dihedrals for which these residues actually have
 
 
@@ -573,11 +573,11 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 		for ( core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ) {
 
 			glycan_dih_movemap->set_bb( i, torsion_id, true );
-			
-			if ( sugar_bb_modeling ){
+
+			if ( sugar_bb_modeling ) {
 				sugar_bb_movemap->set_bb(i, torsion_id, true);
 			}
-	
+
 			//For now, we are not randomizing the Glycan-ASN linkage as we don't have a lot of data to get it back.
 			if ( ! refine_ && parent_res != 0 ) {
 				random_sampler->set_torsion_type( static_cast< core::id::MainchainTorsionType >( torsion_id ) );
@@ -586,14 +586,14 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 			}
 
 		}
-		if (sugar_bb_modeling){
+		if ( sugar_bb_modeling ) {
 			sugar_bb_modeling_residues += 1;
 		}
-		
+
 	}
 
 	TR << "Modeling " << total_glycan_residues_ << " glycan residues" << std::endl;
-	
+
 	//sugar_bb_movemap->show(std::cout);
 
 	//pose.dump_pdb("post_random.pdb");
@@ -634,23 +634,22 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	} else {
 		sugar_bb_sampler_weight = .40;
 	}
-	
+
 	//If we are doing layer 1 that has no sugar bb data, we add an offset so that the linkage conformer mover
 	// does not dominate.  This will be better when we derive sugarbb data from the PDB and make the conformers better.
 	core::Real sugar_bb_offset = 0;
-	
+
 	TR << "Modeling " << sugar_bb_modeling_residues << " glycan residues with SugarBB Data " << std::endl;
-	if (sugar_bb_modeling_residues != 0){
+	if ( sugar_bb_modeling_residues != 0 ) {
 		TR.Debug << " Adding sugar bb mover. " << std::endl;
 		weighted_random_mover_->add_mover(sugar_sampler_mover, sugar_bb_sampler_weight);
-	}
-	else {
+	} else {
 		TR << "Increasing SmallMover weights as there is no data for SugarBB sampler to use..." << std::endl;
 		sugar_bb_offset = .30;
 	}
 
-	
-	
+
+
 	weighted_random_mover_->add_mover(linkage_mover_, .20);
 
 	core::Real min_pack_weight;
@@ -747,8 +746,8 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 	bool accepted = false;
 	mc_->set_last_accepted_pose(pose);
 	for ( core::Size round = 1; round <= total_rounds; ++round ) {
-		
-		if ( round % 10 == 0){
+
+		if ( round % 10 == 0 ) {
 			TR << "Round: "<< round << std::endl;
 		}
 		weighted_random_mover_->apply(pose);

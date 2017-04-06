@@ -57,27 +57,27 @@ using namespace core::scoring::rna;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::map< RNA_MotifType, std::string > motif_color =
-	{ {U_TURN, "lightblue"},
-		{UA_HANDLE, "marine" },
-		{T_LOOP, "tv_blue" },
-		{INTERCALATED_T_LOOP, "deepblue" },
-		{LOOP_E_SUBMOTIF, "salmon" },
-		{BULGED_G, "red" },
-		{GNRA_TETRALOOP, "ruby"},  // GNRA is already pretty favorable.
-		{STRICT_WC_STACKED_PAIR, "gray20"},
-		{WC_STACKED_PAIR, "gray50"},
-		{A_MINOR, "gold"},
-		{PLATFORM, "sand"},
-		{TL_RECEPTOR, "limon"},
-		{TETRALOOP_TL_RECEPTOR, "orange"}
-	};
+{ {U_TURN, "lightblue"},
+{UA_HANDLE, "marine" },
+{T_LOOP, "tv_blue" },
+{INTERCALATED_T_LOOP, "deepblue" },
+{LOOP_E_SUBMOTIF, "salmon" },
+{BULGED_G, "red" },
+{GNRA_TETRALOOP, "ruby"},  // GNRA is already pretty favorable.
+{STRICT_WC_STACKED_PAIR, "gray20"},
+{WC_STACKED_PAIR, "gray50"},
+{A_MINOR, "gold"},
+{PLATFORM, "sand"},
+{TL_RECEPTOR, "limon"},
+{TETRALOOP_TL_RECEPTOR, "orange"}
+};
 
 // @brief super-simple helper function for PyMOL commands.
 // @details for speed, could also define PyMOL boolean property and then color things at end based on property.
 void
 output_motifs_to_pymol( std::ostream & out,
-												pose::Pose const & pose,
-												RNA_Motifs const & rna_motifs ) {
+	pose::Pose const & pose,
+	RNA_Motifs const & rna_motifs ) {
 	std::string tag( tag_from_pose( pose ) );
 	tag = replace_in( tag, ".pdb", "" );
 	for ( auto const & motif : rna_motifs ) {
@@ -126,7 +126,7 @@ rna_motif_test()
 		(*denovo_scorefxn)( pose );
 		std::cout << tag_from_pose( pose ) << std::endl;
 		RNA_Motifs const rna_motifs = get_rna_motifs( pose, potential,
-																									rna_scoring_info_from_pose( pose ).rna_filtered_base_base_info() );
+			rna_scoring_info_from_pose( pose ).rna_filtered_base_base_info() );
 		output_rna_motifs( pose, rna_motifs );
 		std::cout << std::endl;
 		output_motifs_to_pymol( pymol_out, pose, rna_motifs );

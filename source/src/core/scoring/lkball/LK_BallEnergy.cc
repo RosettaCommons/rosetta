@@ -143,19 +143,19 @@ update_cached_lkb_resinfo(
 ////inline
 ////LKB_ResidueInfo const &
 ////retrieve_lkb_residue_info( pose::Pose const & pose, Size const seqpos ) {
-////	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
-////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
-////	return ( static_cast< LKB_PoseInfo const & >
-////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
+//// debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+////  ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
+//// return ( static_cast< LKB_PoseInfo const & >
+////  ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
 ////}
 
 ////inline
 ////LKB_ResidueInfo &
 ////retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
-////	debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
-////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
-////	return ( static_cast< LKB_PoseInfo & >
-////		( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
+//// debug_assert( seqpos && seqpos <= ( static_cast< LKB_PoseInfo const & >
+////  ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )).size() );
+//// return ( static_cast< LKB_PoseInfo & >
+////  ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
 ////}
 
 
@@ -210,47 +210,47 @@ LKB_ResPairMinData::initialize(
 ////inline
 ////LKB_ResPairMinData &
 ////retrieve_nonconst_lkb_pairdata(
-////	ResPairMinimizationData & pairdata
+//// ResPairMinimizationData & pairdata
 ////)
 ////{
-////	LKB_ResPairMinDataOP lkb_pairdata(0);
-////	if ( pairdata.get_data( lkb_respair_data ) ) {
-////		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data )));
-////		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ));
-////	} else {
-////		lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
-////		pairdata.set_data( lkb_respair_data, lkb_pairdata );
-////	}
-////	return *lkb_pairdata;
+//// LKB_ResPairMinDataOP lkb_pairdata(0);
+//// if ( pairdata.get_data( lkb_respair_data ) ) {
+////  debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data )));
+////  lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ));
+//// } else {
+////  lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
+////  pairdata.set_data( lkb_respair_data, lkb_pairdata );
+//// }
+//// return *lkb_pairdata;
 ////}
 ////
 /////////////////////////////////////////// mindata retrieval functions
 ////inline
 ////LKB_ResPairMinData const &
 ////retrieve_lkb_pairdata(
-////	ResPairMinimizationData const & pairdata
+//// ResPairMinimizationData const & pairdata
 ////)
 ////{
-////	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data )));
-////	return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
+//// debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data )));
+//// return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
 ////}
 ////
 /////////////////////////////////////////// mindata retrieval functions
 ////inline
 ////LKB_ResidueInfo &
 ////retrieve_nonconst_lkb_resdata(
-////	ResSingleMinimizationData & resdata
+//// ResSingleMinimizationData & resdata
 ////)
 ////{
-////	LKB_ResidueInfoOP lkb_resdata( 0 );
-////	if ( resdata.get_data( lkb_res_data ) ) {
-////		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data )));
-////		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
-////	} else {
-////		lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
-////		resdata.set_data( lkb_res_data, lkb_resdata );
-////	}
-////	return *lkb_resdata;
+//// LKB_ResidueInfoOP lkb_resdata( 0 );
+//// if ( resdata.get_data( lkb_res_data ) ) {
+////  debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data )));
+////  lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
+//// } else {
+////  lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
+////  resdata.set_data( lkb_res_data, lkb_resdata );
+//// }
+//// return *lkb_resdata;
 ////}
 ////
 /////////////////////////////////////////// mindata retrieval functions
@@ -269,17 +269,17 @@ retrieve_lkb_resdata(
 ////inline
 ////LKB_ResidueInfoCOP
 ////retrieve_lkb_resdata_ptr(
-////	ResSingleMinimizationData const & resdata
+//// ResSingleMinimizationData const & resdata
 ////)
 ////{
-////	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
-////	return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
+//// debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
+//// return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 ////}
 ////
 ////inline
 ////LKB_ResidueInfo &
 ////retrieve_lk_resdata(
-////	basic::datacache::BasicDataCache & residue_data_cache
+//// basic::datacache::BasicDataCache & residue_data_cache
 ////)
 ////{
 ////}
@@ -357,17 +357,17 @@ LK_BallEnergy::LK_BallEnergy( LK_BallEnergy const & src ):
 
 ////void
 ////compute_and_store_pose_waters(
-////	pose::Pose & pose
+//// pose::Pose & pose
 ////)
 ////{
-////	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-////	// using namespace core::pack::rotamer_set; // WaterPackingInfo
-////	LKB_PoseInfoOP info( new LKB_PoseInfo() );
-////	for ( Size i=1; i<= pose.size(); ++i ) {
-////		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
-////	}
-////	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
-////	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
+//// //std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
+//// // using namespace core::pack::rotamer_set; // WaterPackingInfo
+//// LKB_PoseInfoOP info( new LKB_PoseInfo() );
+//// for ( Size i=1; i<= pose.size(); ++i ) {
+////  info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
+//// }
+//// pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
+//// //std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 ////}
 
 
@@ -428,7 +428,7 @@ LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	Real const XH2 = etable_->nblist_dis2_cutoff_XH();
 	Real const HH2 = etable_->nblist_dis2_cutoff_HH();
 
-	nblist->initialize_from_residues(	XX2, XH2, HH2, rsd1, rsd2, cpfxn );
+	nblist->initialize_from_residues( XX2, XH2, HH2, rsd1, rsd2, cpfxn );
 
 	pair_data.set_data( etab_pair_nblist, nblist );
 }
@@ -454,28 +454,28 @@ LK_BallEnergy::setup_for_scoring_for_residue(
 ////bool
 ////LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
 ////{
-////	return true;
+//// return true;
 ////}
 ////
 /////// @details The minimization form of this function updates the data stored in the resdata object
 /////// instead of in the rsd object.
 ////void
 ////LK_BallEnergy::setup_for_scoring_for_residue(
-////	conformation::Residue const & rsd,
-////	pose::Pose const & pose,
-////	ScoreFunction const &, // sfxn,
-////	ResSingleMinimizationData & resdata
+//// conformation::Residue const & rsd,
+//// pose::Pose const & pose,
+//// ScoreFunction const &, // sfxn,
+//// ResSingleMinimizationData & resdata
 ////) const
 ////{
-////	if ( pose.energies().use_nblist_auto_update() ) return;
+//// if ( pose.energies().use_nblist_auto_update() ) return;
 ////
-////	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
-////	if ( !info.matches_residue_type( rsd.type() ) ) {
-////		std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
-////			rsd.type().name() << std::endl;
-////		info.initialize( rsd.type() );
-////	}
-////	info.build_waters( rsd ); // already initialized in setup for minimizing for rsd
+//// LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
+//// if ( !info.matches_residue_type( rsd.type() ) ) {
+////  std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
+////   rsd.type().name() << std::endl;
+////  info.initialize( rsd.type() );
+//// }
+//// info.build_waters( rsd ); // already initialized in setup for minimizing for rsd
 ////}
 
 bool
@@ -905,23 +905,23 @@ LK_BallEnergy::sidechain_sidechain_energy(
 ////bool
 ////LK_BallEnergy::use_extended_residue_pair_energy_interface() const
 ////{
-////	return true;
+//// return true;
 ////}
 ////void
 ////LK_BallEnergy::residue_pair_energy_ext(
-////	conformation::Residue const & rsd1,
-////	conformation::Residue const & rsd2,
-////	ResPairMinimizationData const & pairdata,
-////	pose::Pose const & pose,
-////	ScoreFunction const &sf,
-////	EnergyMap & emap
+//// conformation::Residue const & rsd1,
+//// conformation::Residue const & rsd2,
+//// ResPairMinimizationData const & pairdata,
+//// pose::Pose const & pose,
+//// ScoreFunction const &sf,
+//// EnergyMap & emap
 ////) const
 ////{
-////	if ( pose.energies().use_nblist_auto_update() ) return;
+//// if ( pose.energies().use_nblist_auto_update() ) return;
 ////
-////	LKB_ResPairMinData const & lkb_pairdata( retrieve_lkb_pairdata( pairdata ) );
+//// LKB_ResPairMinData const & lkb_pairdata( retrieve_lkb_pairdata( pairdata ) );
 ////
-////	residue_pair_energy( rsd1, lkb_pairdata.res1_data(), rsd2, lkb_pairdata.res2_data(), sf, emap );
+//// residue_pair_energy( rsd1, lkb_pairdata.res1_data(), rsd2, lkb_pairdata.res2_data(), sf, emap );
 ////}
 
 
@@ -1813,91 +1813,91 @@ LK_BallEnergy::finalize_total_energy(
 	utility::vector1< conformation::Residue const * > resvect;
 	resvect.reserve( pose.size() );
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		resvect.push_back( & pose.residue( ii ) );
+	resvect.push_back( & pose.residue( ii ) );
 	}
 
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
-		conformation::Residue const & rsd1( *resvect[i] );
-		LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
-		utility::vector1< Vectors > const & rsd1_waters( rsd1_info.waters() );
-		utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
+	conformation::Residue const & rsd1( *resvect[i] );
+	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
+	utility::vector1< Vectors > const & rsd1_waters( rsd1_info.waters() );
+	utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
 
-		for ( Size ii=1, ii_end=rsd1.nheavyatoms(); ii<= ii_end; ++ii ) {
-			Vectors const & atom1_waters( rsd1_waters[ ii ] );
-			Vector const & atom1_xyz( rsd1.xyz( ii ) );
-			Size const atom1_type_index( rsd1.atom( ii ).type() );
-			utility::vector1< Real > const & atom1_weights( rsd1_atom_wts[ii] );
+	for ( Size ii=1, ii_end=rsd1.nheavyatoms(); ii<= ii_end; ++ii ) {
+	Vectors const & atom1_waters( rsd1_waters[ ii ] );
+	Vector const & atom1_xyz( rsd1.xyz( ii ) );
+	Size const atom1_type_index( rsd1.atom( ii ).type() );
+	utility::vector1< Real > const & atom1_weights( rsd1_atom_wts[ii] );
 
-			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
-			for ( AtomNeighbors::const_iterator nbr=nbrs.begin(),
-					nbr_end=nbrs.end(); nbr!= nbr_end; ++nbr ) {
-				Size const  j( nbr->rsd() );
-				Size const jj( nbr->atomno() );
+	AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
+	for ( AtomNeighbors::const_iterator nbr=nbrs.begin(),
+	nbr_end=nbrs.end(); nbr!= nbr_end; ++nbr ) {
+	Size const  j( nbr->rsd() );
+	Size const jj( nbr->atomno() );
 
-				conformation::Residue const & rsd2( *resvect[j] );
+	conformation::Residue const & rsd2( *resvect[j] );
 
-				if ( rsd2.atom_is_hydrogen(jj) ) continue;
-				if ( i == j ) continue;
+	if ( rsd2.atom_is_hydrogen(jj) ) continue;
+	if ( i == j ) continue;
 
-				LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
-				utility::vector1< Vectors > const & rsd2_waters( rsd2_info.waters() );
-				utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
-				utility::vector1< Real > const & atom2_weights( rsd2_atom_wts[jj] );
+	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
+	utility::vector1< Vectors > const & rsd2_waters( rsd2_info.waters() );
+	utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
+	utility::vector1< Real > const & atom2_weights( rsd2_atom_wts[jj] );
 
-				Vectors const & atom2_waters( rsd2_waters[ jj ] );
-				Vector const & atom2_xyz( rsd2.xyz( jj ) );
+	Vectors const & atom2_waters( rsd2_waters[ jj ] );
+	Vector const & atom2_xyz( rsd2.xyz( jj ) );
 
-				if ( atom1_waters.empty() && atom2_waters.empty() ) continue;
+	if ( atom1_waters.empty() && atom2_waters.empty() ) continue;
 
-				Real const cp_weight( nbr->weight_func()*nbr->weight() );  // fpd is this correct (same CP as etable)
+	Real const cp_weight( nbr->weight_func()*nbr->weight() );  // fpd is this correct (same CP as etable)
 
-				Real const d2( atom1_xyz.distance_squared( atom2_xyz ) );
+	Real const d2( atom1_xyz.distance_squared( atom2_xyz ) );
 
-				Real lk_desolvation_of_atom1_by_atom2, lk_desolvation_of_atom2_by_atom1;
-				Size const atom2_type_index( rsd2.atom( jj ).type() );
-				if ( slim_etable_ ) {
-					etable_->analytic_lk_energy( rsd1.atom( ii ), rsd2.atom( jj ), lk_desolvation_of_atom1_by_atom2,
-						lk_desolvation_of_atom2_by_atom1 );
-					lk_desolvation_of_atom1_by_atom2 *= cp_weight;
-					lk_desolvation_of_atom2_by_atom1 *= cp_weight;
+	Real lk_desolvation_of_atom1_by_atom2, lk_desolvation_of_atom2_by_atom1;
+	Size const atom2_type_index( rsd2.atom( jj ).type() );
+	if ( slim_etable_ ) {
+	etable_->analytic_lk_energy( rsd1.atom( ii ), rsd2.atom( jj ), lk_desolvation_of_atom1_by_atom2,
+	lk_desolvation_of_atom2_by_atom1 );
+	lk_desolvation_of_atom1_by_atom2 *= cp_weight;
+	lk_desolvation_of_atom2_by_atom1 *= cp_weight;
 
-				} else {
-					// setup for solvation Etable lookups
-					Real const d2_bin = d2 * etable_bins_per_A2_;
-					int disbin = static_cast< int >( d2_bin ) + 1;
-					Real frac = d2_bin - ( disbin - 1 );
-					int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+	} else {
+	// setup for solvation Etable lookups
+	Real const d2_bin = d2 * etable_bins_per_A2_;
+	int disbin = static_cast< int >( d2_bin ) + 1;
+	Real frac = d2_bin - ( disbin - 1 );
+	int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
 
-					lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
-					lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
-				}
+	lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
+	lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
+	}
 
-				if ( atom1_waters.size() > 0 ) {
-					accumulate_single_atom_contributions( ii, atom1_type_index, atom1_waters, atom1_weights,
-						rsd1, atom2_type_index, atom2_xyz,
-						lk_desolvation_of_atom1_by_atom2, tbenergy_map );
-				}
+	if ( atom1_waters.size() > 0 ) {
+	accumulate_single_atom_contributions( ii, atom1_type_index, atom1_waters, atom1_weights,
+	rsd1, atom2_type_index, atom2_xyz,
+	lk_desolvation_of_atom1_by_atom2, tbenergy_map );
+	}
 
-				if ( atom2_waters.size() > 0 ) {
-					accumulate_single_atom_contributions( jj, atom2_type_index, atom2_waters, atom2_weights,
-						rsd2, atom1_type_index, atom1_xyz,
-						lk_desolvation_of_atom2_by_atom1, tbenergy_map );
-				}
+	if ( atom2_waters.size() > 0 ) {
+	accumulate_single_atom_contributions( jj, atom2_type_index, atom2_waters, atom2_weights,
+	rsd2, atom1_type_index, atom1_xyz,
+	lk_desolvation_of_atom2_by_atom1, tbenergy_map );
+	}
 
-				if ( sf.get_weight( core::scoring::lk_ball_bridge ) != 0 || sf.get_weight( core::scoring::lk_ball_bridge_uncpl) != 0 ) {
-					Real lk_desolvation_sum = lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1;
-					Real lkbr_wt = sf.get_weight( core::scoring::lk_ball_bridge );
-					Real lkbr_uncpl_wt = sf.get_weight( core::scoring::lk_ball_bridge_uncpl );
-					Real lkbridge_frac = get_lkbr_fractional_contribution(
-						atom1_xyz, atom2_xyz,
-						atom1_waters, atom2_waters,
-						lk_desolvation_sum,
-						lkbr_wt, lkbr_uncpl_wt );
-					tbenergy_map[ lk_ball_bridge ] += (lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1) * lkbridge_frac;
-					tbenergy_map[ lk_ball_bridge_uncpl ] += lkbridge_frac;
-				}
-			}
-		}
+	if ( sf.get_weight( core::scoring::lk_ball_bridge ) != 0 || sf.get_weight( core::scoring::lk_ball_bridge_uncpl) != 0 ) {
+	Real lk_desolvation_sum = lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1;
+	Real lkbr_wt = sf.get_weight( core::scoring::lk_ball_bridge );
+	Real lkbr_uncpl_wt = sf.get_weight( core::scoring::lk_ball_bridge_uncpl );
+	Real lkbridge_frac = get_lkbr_fractional_contribution(
+	atom1_xyz, atom2_xyz,
+	atom1_waters, atom2_waters,
+	lk_desolvation_sum,
+	lkbr_wt, lkbr_uncpl_wt );
+	tbenergy_map[ lk_ball_bridge ] += (lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1) * lkbridge_frac;
+	tbenergy_map[ lk_ball_bridge_uncpl ] += lkbridge_frac;
+	}
+	}
+	}
 	}
 	totals += tbenergy_map;
 	*/

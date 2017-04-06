@@ -715,7 +715,7 @@ get_cdr_set_options(std::string filename){
 	if ( filename.empty() || filename == "NA" ) {
 		return get_cdr_set_options();
 	}
-	
+
 	TR <<" Should be reading from: " << filename << std::endl;
 	CDRSetOptionsParser parser = CDRSetOptionsParser();
 	AntibodyCDRSetOptions options_settings;
@@ -748,7 +748,7 @@ get_graft_design_options(){
 AntibodyCDRGraftDesignOptions
 get_graft_design_options(std::string filename){
 
-	if ( filename.empty() || filename == "NA") {
+	if ( filename.empty() || filename == "NA" ) {
 		return get_graft_design_options();
 	}
 	CDRGraftDesignOptionsParser parser = CDRGraftDesignOptionsParser();
@@ -780,7 +780,7 @@ get_seq_design_options(){
 AntibodyCDRSeqDesignOptions
 get_seq_design_options(std::string filename){
 
-	if ( filename.empty() || filename == "NA") {
+	if ( filename.empty() || filename == "NA" ) {
 		return get_seq_design_options();
 	}
 	CDRSeqDesignOptionsParser parser = CDRSeqDesignOptionsParser();
@@ -831,7 +831,7 @@ get_cluster_profile_probability_data(
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager( ab_info, force_north_db );
 	manager.set_outlier_use(use_outliers);
 	manager.ignore_light_chain( ignore_light_chain);
-	
+
 	std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set;
 	no_data_cdrs = manager.load_cdr_design_data( seq_design_options, pose, prob_set, prob_cutoff );
 

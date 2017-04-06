@@ -267,9 +267,9 @@ SegmentedAtomPairConstraintGenerator::provide_xml_schema( utility::tag::XMLSchem
 	outernode->set_element_w_attributes( "Outer", outerlist, "Describes the pair constraint properties between residues in different selection segments" );
 
 	XMLSchemaRepeatableCTNodeOP root_node(new XMLSchemaRepeatableCTNode);
-  root_node->set_element_w_attributes( class_name(), attlist, "Generates different atom pair constraints between residues in the same contiguous segment and between segments." );
-  root_node->set_root_node_naming_func( & protocols::constraint_generator::ConstraintGeneratorFactory::complex_type_name_for_constraint_generator );
-  root_node->set_kids_naming_func( & add_sub_ct_name );
+	root_node->set_element_w_attributes( class_name(), attlist, "Generates different atom pair constraints between residues in the same contiguous segment and between segments." );
+	root_node->set_root_node_naming_func( & protocols::constraint_generator::ConstraintGeneratorFactory::complex_type_name_for_constraint_generator );
+	root_node->set_kids_naming_func( & add_sub_ct_name );
 	root_node->add_child( innernode );
 	root_node->add_child( outernode );
 	root_node->recursively_write_ct_to_schema( xsd );

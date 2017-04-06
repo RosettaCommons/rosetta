@@ -22,9 +22,9 @@ namespace fold_from_loops {
 /// @brief RosettaScripts factory for NubInitio.
 class SplitAndMixPoseMoverCreator : public protocols::moves::MoverCreator {
 public:
-    moves::MoverOP create_mover() const override;
-    std::string keyname() const override;
-    void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

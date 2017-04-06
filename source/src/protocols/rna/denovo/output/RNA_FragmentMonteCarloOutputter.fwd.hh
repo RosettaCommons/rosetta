@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,14 +22,14 @@ namespace protocols {
 namespace rna {
 namespace denovo {
 namespace output {
-	
-	class RNA_FragmentMonteCarloOutputter;
-	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOutputter > RNA_FragmentMonteCarloOutputterOP;
-	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOutputter const > RNA_FragmentMonteCarloOutputterCOP;
-	
-} //output 
-} //denovo 
-} //rna 
-} //protocols 
+
+class RNA_FragmentMonteCarloOutputter;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOutputter > RNA_FragmentMonteCarloOutputterOP;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOutputter const > RNA_FragmentMonteCarloOutputterCOP;
+
+} //output
+} //denovo
+} //rna
+} //protocols
 
 #endif

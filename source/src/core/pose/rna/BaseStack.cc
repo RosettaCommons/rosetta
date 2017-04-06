@@ -45,7 +45,7 @@ BaseStack
 BaseStack::flipped() const
 {
 	BaseStackWhichSide flipped_which_side( ANY_BASE_STACK_SIDE );
-	if ( which_side_ == ABOVE ){
+	if ( which_side_ == ABOVE ) {
 		if ( orientation_ == ANTIPARALLEL ) {
 			flipped_which_side = ABOVE;
 		} else if ( orientation_ == PARALLEL ) {
@@ -59,7 +59,7 @@ BaseStack::flipped() const
 		}
 	}
 	return BaseStack( res2_, res1_, orientation_,
-										flipped_which_side );
+		flipped_which_side );
 }
 
 ///////////////////////////////////////////////////////////////////

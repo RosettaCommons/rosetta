@@ -59,8 +59,8 @@ OPT_1GRP_KEY(StringVector, mm_params, central_atoms_to_score)
 int
 main
 (
-int argc,
-char * argv []
+	int argc,
+	char * argv []
 )
 {
 	try {

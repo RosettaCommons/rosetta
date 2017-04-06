@@ -76,11 +76,11 @@ public:
 		Real k2 = (Real) chunks->at(chunks->size())->key();
 		TS_ASSERT(k2 / k1 > 0.98);
 		TS_ASSERT(k2 / k1 < 2.02);
-			}
+	}
 
-			void test_DiversifyCrmsdSelector() {
+	void test_DiversifyCrmsdSelector() {
 
-			utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_in;
+		utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_in;
 		utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_out;
 		scores::FragmentScoreMapOP empty_score_map( new scores::FragmentScoreMap(0) );
 		for ( Size i=1; i<=in_frags_.size(); i++ ) {

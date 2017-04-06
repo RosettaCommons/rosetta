@@ -164,10 +164,10 @@ public:
 
 	void
 	disable_proline_design(core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose) const;
-	
+
 	void
 	disable_disallowed_aa( core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose ) const;
-	
+
 	/// @brief Create a TaskOp for profile-based design of CDRs according to SeqDesign options.
 	//toolbox::task_operations::ResidueProbDesignOperationOP
 	//generate_task_op_cdr_profile(core::pose::Pose const & pose);

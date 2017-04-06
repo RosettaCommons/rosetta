@@ -116,13 +116,13 @@ public:
 	///such as protocol and batch ids.
 	void
 	force_commit_transaction();
-	
+
 public:
-	
+
 	///@brief Convenience function to open an sqlite3 session.
 	void
 	open_sqlite3_session( bool read_only = false );
-	
+
 	///@brief Convenience function to open a mysql session
 	void
 	open_mysql_session(
@@ -130,7 +130,7 @@ public:
 		std::string const & user,
 		std::string const & password,
 		platform::Size port);
-	
+
 	///@brief Convenience function to open a postgres session
 	void
 	open_postgres_session(
@@ -138,7 +138,7 @@ public:
 		std::string const & user,
 		std::string const & password,
 		platform::Size port);
-	
+
 private:
 	DatabaseMode::e db_mode_;
 	std::string db_name_;

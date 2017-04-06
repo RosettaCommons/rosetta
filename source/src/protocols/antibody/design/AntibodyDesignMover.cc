@@ -226,14 +226,14 @@ AntibodyDesignMover::read_command_line_options(){
 			graft_design_override_.push_back(cdr_enum);
 		}
 	}
-	if ( option [OptionKeys::antibody::design::primary_cdrs].user() ){
+	if ( option [OptionKeys::antibody::design::primary_cdrs].user() ) {
 		utility::vector1<std::string> cdrs = option [OptionKeys::antibody::design::primary_cdrs]();
 		for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 			CDRNameEnum cdr_enum = manager.cdr_name_string_to_enum(cdrs[i]);
 			primary_cdrs_.push_back(cdr_enum);
 		}
 	}
-	if ( option[ OptionKeys::antibody::design::mintype].user() ){
+	if ( option[ OptionKeys::antibody::design::mintype].user() ) {
 		mintype_ = option [OptionKeys::antibody::design::mintype]();
 	}
 }
@@ -315,7 +315,7 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	if ( src.paratope_epitope_cst_mover_ ) paratope_epitope_cst_mover_ = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover( *src.paratope_epitope_cst_mover_));
 	if ( src.paratope_cst_mover_ ) paratope_cst_mover_ = ParatopeSiteConstraintMoverOP( new ParatopeSiteConstraintMover( *src.paratope_cst_mover_));
 	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_));
-	if (src.db_manager_ ) db_manager_ = AntibodyDatabaseManagerOP( new AntibodyDatabaseManager( *src.db_manager_ ));
+	if ( src.db_manager_ ) db_manager_ = AntibodyDatabaseManagerOP( new AntibodyDatabaseManager( *src.db_manager_ ));
 
 }
 
@@ -350,17 +350,17 @@ AntibodyDesignMover::parse_my_tag(
 			graft_design_override_.push_back(cdr_enum);
 		}
 	}
-	if (tag->hasOption("primary_cdrs") ){
+	if ( tag->hasOption("primary_cdrs") ) {
 		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("primary_cdrs"), ":,'`~+*&|;.");
 		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
 			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
 			primary_cdrs_.push_back(cdr_enum);
 		}
 	}
-	if ( tag->hasOption("mintype") ){
+	if ( tag->hasOption("mintype") ) {
 		mintype_ = tag->getOption< std::string >("mintype", mintype_);
 	}
-	
+
 	//A little redundancy
 	if ( tag->hasOption("instruction_file") ) {
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
@@ -370,8 +370,8 @@ AntibodyDesignMover::parse_my_tag(
 		instruction_file_ = tag->getOption< std::string >("cdr_instructions_file");
 	}
 
-	
-	if (tag->hasOption( "design_protocol")){
+
+	if ( tag->hasOption( "design_protocol") ) {
 		design_protocol_ = design_enum_manager_->design_protocol_string_to_enum(tag->getOption< std::string >("design_protocol"));
 	}
 
@@ -575,7 +575,7 @@ AntibodyDesignMover::setup_options_classes(){
 		}
 		for ( core::Size i = 1; i <= graft_design_override_.size(); ++i ) {
 			CDRNameEnum cdr_enum = graft_design_override_[ i ];
-			if (cdr_enum == l4 || cdr_enum == h4){
+			if ( cdr_enum == l4 || cdr_enum == h4 ) {
 				utility_exit_with_message( "Currently, we cannot graft-design CDR4!");
 			}
 
@@ -584,14 +584,14 @@ AntibodyDesignMover::setup_options_classes(){
 
 		}
 	}
-	
-	if (mintype_ != "NA"){
+
+	if ( mintype_ != "NA" ) {
 		MinTypeEnum mintype = design_enum_manager_->min_type_string_to_enum(mintype_);
 		for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 			cdr_graft_design_options_[i]->mintype( mintype );
 		}
 	}
-	
+
 	//Disable CDRs that are not present (aka camelid design)
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
@@ -767,19 +767,17 @@ AntibodyDesignMover::finalize_setup(Pose & pose){
 	cdrs_to_design_.clear();
 
 	////////// Setup Which CDRs we are grafting ////////////////////////////////
-	if (primary_cdrs_.size() != 0 ){
+	if ( primary_cdrs_.size() != 0 ) {
 		cdrs_to_design_.clear();
-		for ( CDRNameEnum cdr : primary_cdrs_ ){
-			if ( ! cdr_graft_design_options_[cdr]->design()  && ! cdr_seq_design_options_[ cdr ]->design() ){
+		for ( CDRNameEnum cdr : primary_cdrs_ ) {
+			if ( ! cdr_graft_design_options_[cdr]->design()  && ! cdr_seq_design_options_[ cdr ]->design() ) {
 				std::string primary = ab_info_->get_CDR_name(cdr);
 				utility_exit_with_message(" The Primary CDR " + primary + " must be either sequence and/or graft designed.  Please check your settings.");
-			}
-			else {
+			} else {
 				cdrs_to_design_.push_back( cdr );
 			}
 		}
-	}
-	else {
+	} else {
 		for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			if ( cdr_graft_design_options_[cdr]->design()  || cdr_seq_design_options_[ cdr ]->design() ) {
@@ -846,13 +844,13 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 
 		if ( cdr_graft_design_options_[ cdr ]->design() ) {
 
-	
+
 			CDRDBPose & cdr_pose = cdr_set_[cdr][index];
-			
-			
+
+
 
 			TR << "Grafting CDR from cluster " << ab_info_->get_cluster_name(cdr_pose.cluster) << " fragment "<< cdr_pose.pdb << std::endl;
-			
+
 			utility::to_string(index)+"_"+ab_info_->get_cluster_name(cdr_pose.cluster)+"_"+cdr_pose.pdb;
 			core::Size start = ab_info_->get_CDR_start(cdr, pose)-1;
 			core::Size end = ab_info_->get_CDR_end(cdr, pose)+1;
@@ -860,21 +858,20 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 			anchored_graft_mover_->set_insert_region(start, end);
 			Pose temp_pose = pose;
 			std::pair<bool, core::Size> cb;
-		
-			
+
+
 			///Pass cached pose or on-the-fly pose.  I don't want to store the on-the-fly pose anywhere, so this is why its like this.
-			if ( cdr_pose.pose == nullptr ){
+			if ( cdr_pose.pose == nullptr ) {
 				core::pose::PoseOP grafting_pose = db_manager_->load_cdr_pose( cdr_pose );
 				cb = run_graft(temp_pose, *grafting_pose, cdr, cdr_pose.cluster, graft_mover_);
-				
+
 				if ( cb.first && adapt_graft_ ) {
 					TR << "Graft not closed. Adapting graft closure" << std::endl;
 					Pose temp_pose = pose;
 					cb = run_graft(temp_pose, *grafting_pose, cdr, cdr_pose.cluster, anchored_graft_mover_);
 				}
-				
-			}
-			else {
+
+			} else {
 				cb = run_graft(temp_pose, *cdr_pose.pose, cdr, cdr_pose.cluster, graft_mover_);
 				if ( cb.first && adapt_graft_ ) {
 					TR << "Graft not closed. Adapting graft closure" << std::endl;
@@ -882,7 +879,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 					cb = run_graft(temp_pose, *cdr_pose.pose, cdr, cdr_pose.cluster, anchored_graft_mover_);
 				}
 			}
-			
+
 
 			if ( ! cb.first ) {
 				pose = temp_pose;
@@ -979,7 +976,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 		setup_paratope_epitope_constraints(pose);
 
 		///Graphics.
-		
+
 #ifdef GL_GRAPHICS
 		moves::DsspMover dssp = moves::DsspMover();
 		dssp.apply(pose);
@@ -1000,44 +997,44 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 		TR << "Cycle complete" << std::endl;
 		return true;
 	}
-	catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-		excn.show( TR );
-		TR << "caught exception.  skipping graft. printing structures." << std::endl;
+catch ( utility::excn::EXCN_Base& excn ) {
+	std::cerr << "Exception : " << std::endl;
+	excn.show( std::cerr );
+	excn.show( TR );
+	TR << "caught exception.  skipping graft. printing structures." << std::endl;
 
-		//Attempt output of structures for debugging.
-		using namespace protocols::jd2;
+	//Attempt output of structures for debugging.
+	using namespace protocols::jd2;
 
-		TR << pose << std::endl;
-		TR << pose.fold_tree() << std::endl;
-		JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
+	TR << pose << std::endl;
+	TR << pose.fold_tree() << std::endl;
+	JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
 
-		//std::string graft_id = utility::to_string(index)+"_"+ab_info_->get_cluster_name(cdr_pose.cluster)+"_"+cdr_pose.pdb;
-		//std::string cdr_prefix = "excn_cdr_out_"+graft_id;
-		//std::string original_prefix = "excn_start_out_"+graft_id;
-		std::string grafted_prefix = "excn_grafted_out_"+graft_id;
-		TR << grafted_prefix << std::endl;
+	//std::string graft_id = utility::to_string(index)+"_"+ab_info_->get_cluster_name(cdr_pose.cluster)+"_"+cdr_pose.pdb;
+	//std::string cdr_prefix = "excn_cdr_out_"+graft_id;
+	//std::string original_prefix = "excn_start_out_"+graft_id;
+	std::string grafted_prefix = "excn_grafted_out_"+graft_id;
+	TR << grafted_prefix << std::endl;
 
-		//JobDistributor::get_instance()->job_outputter()->other_pose(job, *cdr_pose.pose, cdr_prefix);
-		//JobDistributor::get_instance()->job_outputter()->other_pose(job, original_pose, original_prefix);
-		JobDistributor::get_instance()->job_outputter()->other_pose(job, pose, grafted_prefix);
+	//JobDistributor::get_instance()->job_outputter()->other_pose(job, *cdr_pose.pose, cdr_prefix);
+	//JobDistributor::get_instance()->job_outputter()->other_pose(job, original_pose, original_prefix);
+	JobDistributor::get_instance()->job_outputter()->other_pose(job, pose, grafted_prefix);
 
-		pose = original_pose;
-		return false;
-	}
+	pose = original_pose;
+	return false;
+}
 }
 
 
 std::pair<bool, core::Size>
 AntibodyDesignMover::run_graft(core::pose::Pose& pose, core::pose::Pose const & grafting_pose, CDRNameEnum const cdr, CDRClusterEnum const cluster, AnchoredGraftMoverOP grafter){
-	
-	
+
+
 	core::Size nter_flex = grafter->get_nterm_insert_flexibility();
 	core::Size cter_flex = grafter->get_cterm_insert_flexibility();
 
 	grafter->set_piece(grafting_pose, overhang_, overhang_);
-	
+
 	if ( grafting_pose.size() - overhang_ - overhang_ <= 4 ) {
 		grafter->set_insert_flexibility(1, 1);
 	}
@@ -1142,7 +1139,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 		//2 Repacks
 		modeler_->repack_cdrs(pose, options->min_neighbor_sc());
 		mc.boltzmann(pose);
-		
+
 		modeler_->repack_cdrs(pose, options->min_neighbor_sc());
 		mc.boltzmann(pose);
 	} else if ( options->mintype() == relax ) {
@@ -1159,12 +1156,12 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 		mc.boltzmann(pose);
 		modeler_->minimize_cdrs(pose, true /*minimize_sc*/, options->min_neighbor_sc() /*default-true*/, options->min_rb());
 		mc.boltzmann(pose);
-		
+
 		modeler_->repack_cdrs(pose, options->min_neighbor_sc());
 		mc.boltzmann(pose);
 		modeler_->minimize_cdrs(pose, true /*minimize_sc*/, options->min_neighbor_sc() /*default-true*/, options->min_rb());
 		mc.boltzmann(pose);
-		
+
 	} else if ( options->mintype() == minimize_cartesian ) {
 
 		modeler_->repack_cdrs(pose, options->min_neighbor_sc());
@@ -1176,7 +1173,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 		mc.boltzmann(pose);
 		modeler_->minimize_cdrs(pose, true, options->min_neighbor_sc(), options->min_rb(), true /*cartesian*/);
 		mc.boltzmann(pose);
-		
+
 	} else if ( options->mintype() == backrub_protocol ) {
 		modeler_->backrub_cdrs(pose, true, options->min_neighbor_sc());
 		modeler_->repack_cdrs(pose, options->min_neighbor_sc());
@@ -1448,9 +1445,9 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	setup_modeler();
 
 	finalize_setup(pose);
-	
+
 	show(std::cout);
-	
+
 	///Graphics.
 #ifdef GL_GRAPHICS
 	moves::DsspMover dssp = moves::DsspMover();
@@ -1668,19 +1665,19 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attlist + XMLSchemaAttribute(
 		"graft_design_cdrs", xs_string,
 		"CDR regions to be Graft-Designed");
-	
+
 	attlist + XMLSchemaAttribute(
 		"primary_cdrs", xs_string,
 		"Manually set the CDRs which can be chosen in the outer cycle. \n"
 		"These should be on for either Sequence-Design or Graft-Design. \n"
 		"Normally, the outer cycles are whatever CDRs we are designing, including CDRs which are sequence-design only.  \n"
 		"Use this if you are primarily interested in specific CDRs (such as graft-designing H3 and allowing H1 and L3 to sequence design during the inner cycle.)");
-	
+
 	attlist + XMLSchemaAttribute(
 		"mintype", xs_string,
 		"Set the mintype for all designign CDRs.  Can be set individually in the CDR instructions file. \n"
 		" Understood Options: legal = [min, cartmin, relax, backrub, pack, dualspace_relax, cen_relax, none]");
-	
+
 	attlist + XMLSchemaAttribute(
 		"instruction_file", xs_string,
 		"Path to the CDR instruction file (see application documentation for format)");

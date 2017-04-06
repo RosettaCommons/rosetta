@@ -259,7 +259,7 @@ public:
 		AddCDRProfilesOperationOP default_op = AddCDRProfilesOperationOP(new AddCDRProfilesOperation());
 		default_op->set_force_north_paper_db(true);
 		default_op->set_ignore_light_chain(true);
-		
+
 		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "AddCDRProfilesOperation_UTracer1",  inpath_, first_run_outpath_);
@@ -351,7 +351,7 @@ public:
 		default_op->set_picking_rounds(5); //Should then sample multiple CDRs
 		default_op->set_force_north_paper_db( true );
 		default_op->set_ignore_light_chain( true );
-		
+
 		task->clear();
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "AddCDRProfileSetsOperation_UTracer1",  inpath_, first_run_outpath_);
@@ -361,7 +361,7 @@ public:
 		pick_op->set_cutoff(10);
 		pick_op->set_picking_rounds( 5 );
 		pick_op->set_ignore_light_chain( true );
-		
+
 		task->clear();
 		task->push_back(pick_op);
 		output_or_test(task, pose_, first_run_, "AddCDRProfileSetsOperation_UTracer3",  inpath_, first_run_outpath_);

@@ -22,13 +22,13 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-	class RNA_Motif;
-	typedef utility::pointer::shared_ptr< RNA_Motif > RNA_MotifOP;
-	typedef utility::pointer::shared_ptr< RNA_Motif const > RNA_MotifCOP;
+class RNA_Motif;
+typedef utility::pointer::shared_ptr< RNA_Motif > RNA_MotifOP;
+typedef utility::pointer::shared_ptr< RNA_Motif const > RNA_MotifCOP;
 
-	class RNA_Motifs;
-	typedef utility::pointer::shared_ptr< RNA_Motifs > RNA_MotifsOP;
-	typedef utility::pointer::shared_ptr< RNA_Motifs const > RNA_MotifsCOP;
+class RNA_Motifs;
+typedef utility::pointer::shared_ptr< RNA_Motifs > RNA_MotifsOP;
+typedef utility::pointer::shared_ptr< RNA_Motifs const > RNA_MotifsCOP;
 
 } //rna
 } //scoring

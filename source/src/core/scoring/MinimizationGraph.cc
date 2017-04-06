@@ -209,8 +209,8 @@ void MinimizationNode::update_active_enmeths_for_residue(
 	}
 
 	for ( auto iter = get_mingraph_owner()->whole_pose_context_enmeths_begin(),
-					iter_end = get_mingraph_owner()->whole_pose_context_enmeths_end();
-				iter != iter_end; ++iter ) {
+			iter_end = get_mingraph_owner()->whole_pose_context_enmeths_end();
+			iter != iter_end; ++iter ) {
 		if ( (*iter)->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
 			add_sfs_drs_enmeth( *iter );
 		}
@@ -284,7 +284,7 @@ bool MinimizationNode::classify_twobody_enmeth(
 		/// should we let energy methods setup for scoring for a residue even if they
 		/// don't define an intrares energy for that residue?  Yes.  These
 		add_sfs_dm_2benmeth( enmeth );
-	}	else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+	} else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
 		add_sfs_drs_enmeth( enmeth );
 	}
 	if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
@@ -774,7 +774,7 @@ Size MinimizationGraph::count_dynamic_memory() const
 void MinimizationGraph::add_whole_pose_context_enmeth( EnergyMethodCOP enmeth, core::pose::Pose const & pose )
 {
 	whole_pose_context_enmeths_.push_back( enmeth );
-	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose )) {
+	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
 		for ( core::Size ii = 1; ii <= num_nodes(); ++ii ) {
 			get_minimization_node( ii )->add_sfs_drs_enmeth( enmeth );
 		}

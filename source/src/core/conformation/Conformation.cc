@@ -354,7 +354,7 @@ Conformation::debug_residue_torsions( bool verbose ) const
 					std::abs( subtract_degree_angles(rsd_dihedral,
 					atom_tree_torsion(tor_id))));)
 
-					debug_assert( dev < 1e-3 );
+				debug_assert( dev < 1e-3 );
 
 				if ( verbose ) {
 					int width = 14;
@@ -848,7 +848,7 @@ Conformation::insert_residue_by_jump(
 {
 	pre_nresidue_change();
 	ASSERT_ONLY(Size const old_size( size() );) //, new_size( old_size+1 );
-		debug_assert( old_size );
+	debug_assert( old_size );
 	runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays

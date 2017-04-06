@@ -274,13 +274,11 @@ aa_from_name( std::string const & name )
 
 AA
 aa_from_one_or_three( std::string const & name ){
-	if (name.size() == 1 ){
+	if ( name.size() == 1 ) {
 		return aa_from_oneletter_code( name.at(0) );
-	}
-	else if (name.size() == 3 ){
+	} else if ( name.size() == 3 ) {
 		return aa_from_name( name );
-	}
-	else {
+	} else {
 		utility_exit_with_message(" String does not specify a 3 or 1 letter amino acid code. :"+name+":");
 	}
 }

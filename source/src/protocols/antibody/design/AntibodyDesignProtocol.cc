@@ -185,8 +185,8 @@ AntibodyDesignProtocol::parse_my_tag(
 
 	scorefxn_ = get_ab_design_global_scorefxn(tag, data);
 	scorefxn_min_ = get_ab_design_min_scorefxn(tag, data);
-	
-	
+
+
 	//A little redundancy
 	if ( tag->hasOption("instruction_file") ) {
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
@@ -211,14 +211,14 @@ AntibodyDesignProtocol::parse_my_tag(
 			graft_design_override_.push_back(cdr_enum);
 		}
 	}
-	if (tag->hasOption("primary_cdrs") ){
+	if ( tag->hasOption("primary_cdrs") ) {
 		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("primary_cdrs"), ":,'`~+*&|;.");
 		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
 			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
 			primary_cdrs_.push_back(cdr_enum);
 		}
 	}
-	
+
 	run_snugdock_ = tag->getOption<bool>("run_snugdock", run_snugdock_);
 	run_relax_ = tag->getOption<bool>("run_relax", run_relax_);
 	remove_antigen_ = tag->getOption<bool>("remove_antigen", remove_antigen_);
@@ -311,14 +311,14 @@ AntibodyDesignProtocol::setup_design_mover() {
 	graft_designer_->set_scorefunction(scorefxn_);
 	graft_designer_->set_scorefunction_min(scorefxn_min_);
 	graft_designer_->set_instruction_file(instruction_file_);
-	
-	if ( primary_cdrs_.size() > 0 ){
+
+	if ( primary_cdrs_.size() > 0 ) {
 		graft_designer_->set_primary_cdrs( primary_cdrs_ );
 	}
-	if ( seq_design_override_.size() >0 ){
+	if ( seq_design_override_.size() >0 ) {
 		graft_designer_->set_seq_design_cdrs( seq_design_override_ );
 	}
-	if (graft_design_override_.size() > 0 ){
+	if ( graft_design_override_.size() > 0 ) {
 		graft_designer_->set_graft_design_cdrs( graft_design_override_ );
 	}
 
@@ -535,7 +535,7 @@ void AntibodyDesignProtocol::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute(
 		"graft_design_cdrs", xs_string,
 		"CDR regions to be Graft-Designed");
-	
+
 	attlist + XMLSchemaAttribute(
 		"primary_cdrs", xs_string,
 		"Manually set the CDRs which can be chosen in the outer cycle. \n"

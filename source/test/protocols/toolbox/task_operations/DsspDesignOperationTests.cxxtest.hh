@@ -77,10 +77,10 @@ public:
 
 		TS_ASSERT_EQUALS( dssp_design->blueprint_, clone->blueprint_ );
 		TS_ASSERT_EQUALS( clone->sse_residues_[ "Nterm" ], "Y" );
-			}
+	}
 
-			void test_get_restrictions() {
-			DsspDesignOperationOP dssp_design( new DsspDesignOperation );
+	void test_get_restrictions() {
+		DsspDesignOperationOP dssp_design( new DsspDesignOperation );
 		utility::vector1< bool > helixcap_res = dssp_design->get_restrictions( "HelixCapping" );
 
 		TS_ASSERT( helixcap_res.size() == 20 );
@@ -138,8 +138,8 @@ public:
 		TS_ASSERT_EQUALS( loop_nopro->sse_residues_[ "Loop" ].find( "P" ), std::string::npos );
 		TS_ASSERT_DIFFERS( loop_nopro->sse_residues_[ "HelixStart" ].find( "P" ), std::string::npos );
 
-			// append allowed residues for all SSEs
-			DsspDesignOperationOP all_st( new DsspDesignOperation );
+		// append allowed residues for all SSEs
+		DsspDesignOperationOP all_st( new DsspDesignOperation );
 		all_st->set_restrictions_exclude( "all", "ST" );
 
 		for ( SecStructResidues::iterator it = all_st->sse_residues_.begin(); it != all_st->sse_residues_.end(); it++ ) {

@@ -1708,7 +1708,7 @@ Residue::set_d( int const chino, Real const setting ) {
 	apply_transform_downstream( chi_atoms[baseatom+1], R, v );
 
 	ASSERT_ONLY(Real const new_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );)
-		debug_assert( std::abs( new_d - setting ) < 1e-2 );
+	debug_assert( std::abs( new_d - setting ) < 1e-2 );
 
 	update_actcoord();//ek added 4/28/10
 }
@@ -1745,7 +1745,7 @@ Residue::set_theta( int const chino, Real const setting ) {
 
 	ASSERT_ONLY(Real const new_th(numeric::angle_degrees(
 		atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
-		debug_assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
+	debug_assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
 
 	update_actcoord();
 }
@@ -1827,7 +1827,7 @@ Residue::set_all_ring_nu( Size first, Size last, utility::vector1< Real > const 
 			atom( nu_atoms[2] ).xyz(),
 			atom( nu_atoms[3] ).xyz(),
 			atom( nu_atoms[4] ).xyz() ) );)
-			debug_assert( std::abs( basic::subtract_degree_angles( new_nu, nus[ nuno ] ) ) <
+		debug_assert( std::abs( basic::subtract_degree_angles( new_nu, nus[ nuno ] ) ) <
 			1e-2 );
 
 		update_actcoord();//ek added 4/28/10
@@ -1879,7 +1879,7 @@ Residue::set_chi( int const chino, Real const setting )
 		atom( chi_atoms[2] ).xyz(),
 		atom( chi_atoms[3] ).xyz(),
 		atom( chi_atoms[4] ).xyz() ) );)
-		debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
+	debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
 		1e-2 );
 
 	update_actcoord();//ek added 4/28/10

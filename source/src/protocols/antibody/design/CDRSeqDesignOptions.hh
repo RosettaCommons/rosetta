@@ -82,15 +82,15 @@ public:
 	fallback() const;
 
 public:
-	
+
 	void
 	disallow_aa( utility::vector1< core::chemical::AA > const & disallowed );
-	
+
 	utility::vector1< core::chemical::AA >
 	disallow_aa() const {
 		return disallow_aa_;
 	}
-	
+
 public:
 
 	CDRSeqDesignOptionsOP
@@ -106,7 +106,7 @@ private:
 	SeqDesignStrategyEnum design_strategy_;
 	SeqDesignStrategyEnum fallback_strategy_;
 	utility::vector1< core::chemical::AA > disallow_aa_;
-	
+
 
 };
 
@@ -164,10 +164,10 @@ private:
 
 	void
 	set_cdr_design_fallback_option( std::string const & option );
-	
+
 	void
 	set_disallow_amino_acids( utility::vector1< std::string > const & lineSP );
-	
+
 private:
 
 	std::string instructions_path_;

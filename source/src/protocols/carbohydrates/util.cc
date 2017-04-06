@@ -24,9 +24,9 @@
 
 namespace protocols {
 namespace carbohydrates {
-	using namespace core::pack::task;
-	using namespace basic::options;
-	
+using namespace core::pack::task;
+using namespace basic::options;
+
 core::pack::task::TaskFactoryOP
 get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & glycan_positions, core::Real pack_distance, bool read_resfile) {
 

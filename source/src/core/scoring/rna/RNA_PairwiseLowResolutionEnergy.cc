@@ -338,13 +338,13 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 	// Get Pose cached pairwise "raw" base-base info. This was
 	// updated above.
 	if ( sfxn.has_nonzero_weight( rna_base_pair ) ||
-			 sfxn.has_nonzero_weight( rna_base_axis ) ||
-			 sfxn.has_nonzero_weight( rna_base_stagger ) ||
-			 sfxn.has_nonzero_weight( rna_base_stack ) ||
-			 sfxn.has_nonzero_weight( rna_base_stack_axis ) ||
-			 sfxn.has_nonzero_weight( rna_data_base ) ||
-			 sfxn.has_nonzero_weight( rna_motif )
-			 ) {
+			sfxn.has_nonzero_weight( rna_base_axis ) ||
+			sfxn.has_nonzero_weight( rna_base_stagger ) ||
+			sfxn.has_nonzero_weight( rna_base_stack ) ||
+			sfxn.has_nonzero_weight( rna_base_stack_axis ) ||
+			sfxn.has_nonzero_weight( rna_data_base ) ||
+			sfxn.has_nonzero_weight( rna_motif )
+			) {
 
 		// Create Pose cached non-pairwise, "filtered" base-base info.
 		// This forces each base edge to have only one pairing partner.

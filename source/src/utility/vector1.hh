@@ -210,7 +210,7 @@ public: // Creation
 
 	/// @brief C++11 initializer list constructor
 	inline
-	vector1( std::initializer_list<T> init,	const A& alloc = A() ) :
+	vector1( std::initializer_list<T> init, const A& alloc = A() ) :
 		super( init, alloc )
 	{}
 

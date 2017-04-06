@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/rna/denovo/movers/RNA_DeNovoMasterMover.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,14 +22,14 @@ namespace protocols {
 namespace rna {
 namespace denovo {
 namespace movers {
-	
-	class RNA_DeNovoMasterMover;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoMasterMover > RNA_DeNovoMasterMoverOP;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoMasterMover const > RNA_DeNovoMasterMoverCOP;
-	
-} //movers 
-} //denovo 
-} //rna 
-} //protocols 
+
+class RNA_DeNovoMasterMover;
+typedef utility::pointer::shared_ptr< RNA_DeNovoMasterMover > RNA_DeNovoMasterMoverOP;
+typedef utility::pointer::shared_ptr< RNA_DeNovoMasterMover const > RNA_DeNovoMasterMoverCOP;
+
+} //movers
+} //denovo
+} //rna
+} //protocols
 
 #endif

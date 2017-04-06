@@ -103,8 +103,8 @@ GlycanTreeSet::get_largest_glycan_tree_length() const {
 Size
 GlycanTreeSet::get_largest_glycan_tree_layer() const {
 	utility::vector1< core::Size > layer_sizes;
-	for (auto const & start_tree : glycan_tree_set_ ){
-		for (core::Size const & node_residue : start_tree.second->get_residues() ){
+	for ( auto const & start_tree : glycan_tree_set_ ) {
+		for ( core::Size const & node_residue : start_tree.second->get_residues() ) {
 			layer_sizes.push_back( start_tree.second->get_node( node_residue )->get_distance_to_start() );
 		}
 	}

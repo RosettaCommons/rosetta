@@ -407,10 +407,10 @@ public:
 		TS_ASSERT_DELTA(modeler->centroid_stage_->final_temp_, 0.6, 1e-5);
 
 		TS_ASSERT(get_centroid_refiners(modeler).empty());
-			}
+	}
 
-			void test_fullatom_options() { // {{{1
-			string tag =
+	void test_fullatom_options() { // {{{1
+		string tag =
 			"<LoopModeler>"
 			"  <Fullatom"
 			"    sfxn_cycles=28 temp_cycles=55 mover_cycles=18"
@@ -435,10 +435,10 @@ public:
 		TS_ASSERT_DELTA(modeler->fullatom_stage_->final_temp_, 0.4, 1e-5);
 
 		TS_ASSERT(get_fullatom_refiners(modeler).empty());
-			}
+	}
 
-			void test_temp_cycles_regex() { // {{{1
-			string tag; LoopModelerOP modeler;
+	void test_temp_cycles_regex() { // {{{1
+		string tag; LoopModelerOP modeler;
 
 		// Case 1: Number of cycles explicitly given.
 

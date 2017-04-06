@@ -109,10 +109,10 @@ public:
 
 	core::Size
 	get_largest_glycan_tree_length() const;
-	
+
 	core::Size
 	get_largest_glycan_tree_layer() const;
-	
+
 public:
 
 	///////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ public:
 	/// Used for Layer-based glycan sampling.
 	core::Size
 	get_distance_to_start( core::Size const glycan_residue ) const;
-	
+
 	/// @brief Linkage number on the parent residue.
 	/// @details an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
 	/// parent monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies that the residue at <seqpos> is a lower

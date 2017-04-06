@@ -217,9 +217,9 @@ void DumpSingleResidueRotamers::provide_xml_schema( utility::tag::XMLSchemaDefin
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute( "rsd_index", xsct_non_negative_integer, "Position at which to enumerate rotamers") +
-						XMLSchemaAttribute( "prefix", xs_string, "Prefix for output rotamer info file and pdbs when specified" ) +
-						XMLSchemaAttribute( "write_rotamers_to_pdbs", xsct_rosetta_bool, "Should we write the rotamers out to individual PDB files?" ) +
-						XMLSchemaAttribute( "all_positions", xsct_rosetta_bool, "Dump rotamers at all pdb positions" );
+		XMLSchemaAttribute( "prefix", xs_string, "Prefix for output rotamer info file and pdbs when specified" ) +
+		XMLSchemaAttribute( "write_rotamers_to_pdbs", xsct_rosetta_bool, "Should we write the rotamers out to individual PDB files?" ) +
+		XMLSchemaAttribute( "all_positions", xsct_rosetta_bool, "Dump rotamers at all pdb positions" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Dump all of the rotamers for a given amino acid type at the rsd_index position into individual PDB files", attlist );
 
 }

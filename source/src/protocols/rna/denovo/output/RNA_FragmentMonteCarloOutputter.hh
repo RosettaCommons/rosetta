@@ -31,63 +31,63 @@ namespace rna {
 namespace denovo {
 namespace output {
 
-	class RNA_FragmentMonteCarloOutputter: public protocols::moves::Mover {
+class RNA_FragmentMonteCarloOutputter: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		RNA_FragmentMonteCarloOutputter(  options::RNA_FragmentMonteCarloOptionsCOP options,
-																			core::pose::PoseCOP align_pose );
+	//constructor
+	RNA_FragmentMonteCarloOutputter(  options::RNA_FragmentMonteCarloOptionsCOP options,
+		core::pose::PoseCOP align_pose );
 
-		//destructor
-		~RNA_FragmentMonteCarloOutputter();
+	//destructor
+	~RNA_FragmentMonteCarloOutputter();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual std::string get_name() const{ return "RNA_FragmentMonteCarloOutputter"; }
+	virtual std::string get_name() const{ return "RNA_FragmentMonteCarloOutputter"; }
 
-		void
-		output_running_info(
-			core::Size const & r,
-		  core::Size const & i,
-		  core::pose::Pose & pose,
-			core::scoring::ScoreFunctionCOP working_denovo_scorefxn );
+	void
+	output_running_info(
+		core::Size const & r,
+		core::Size const & i,
+		core::pose::Pose & pose,
+		core::scoring::ScoreFunctionCOP working_denovo_scorefxn );
 
-		void
-		finalize( core::scoring::ScoreFunctionCOP denovo_scorefxn );
+	void
+	finalize( core::scoring::ScoreFunctionCOP denovo_scorefxn );
 
-		numeric::MathNTensorOP< core::Size, 6 > jump_histogram() const{ return jump_histogram_; }
-		void set_jump_histogram( numeric::MathNTensorOP< core::Size, 6 > setting ) { jump_histogram_ = setting; }
+	numeric::MathNTensorOP< core::Size, 6 > jump_histogram() const{ return jump_histogram_; }
+	void set_jump_histogram( numeric::MathNTensorOP< core::Size, 6 > setting ) { jump_histogram_ = setting; }
 
-	private:
+private:
 
-		void initialize( core::pose::PoseCOP align_pose );
+	void initialize( core::pose::PoseCOP align_pose );
 
-		core::kinematics::RT
-		get_output_jump_RT( core::pose::PoseCOP pose ) const;
+	core::kinematics::RT
+	get_output_jump_RT( core::pose::PoseCOP pose ) const;
 
-		void
-		get_output_jump_stub_stub( core::pose::Pose const & pose,
-															 core::kinematics::Stub & stub1,
-															 core::kinematics::Stub & stub2 ) const;
+	void
+	get_output_jump_stub_stub( core::pose::Pose const & pose,
+		core::kinematics::Stub & stub1,
+		core::kinematics::Stub & stub2 ) const;
 
-		void
-		output_jump_information( core::pose::Pose const & pose );
+	void
+	output_jump_information( core::pose::Pose const & pose );
 
-	private:
+private:
 
-		options::RNA_FragmentMonteCarloOptionsCOP options_;
+	options::RNA_FragmentMonteCarloOptionsCOP options_;
 
-		utility::io::ozstream running_score_output_;
-		numeric::MathNTensorOP< core::Size, 6 > jump_histogram_;
-		utility::vector1< core::Real > jump_histogram_min_, jump_histogram_max_, jump_histogram_bin_width_;
-		core::pose::rna::StubStubType output_stub_stub_type_;
-		core::kinematics::RTOP reference_RT_;
+	utility::io::ozstream running_score_output_;
+	numeric::MathNTensorOP< core::Size, 6 > jump_histogram_;
+	utility::vector1< core::Real > jump_histogram_min_, jump_histogram_max_, jump_histogram_bin_width_;
+	core::pose::rna::StubStubType output_stub_stub_type_;
+	core::kinematics::RTOP reference_RT_;
 
 
-	};
+};
 
 } //output
 } //denovo

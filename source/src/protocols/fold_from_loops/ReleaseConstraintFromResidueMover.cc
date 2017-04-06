@@ -87,10 +87,9 @@ ReleaseConstraintFromResidueMover::apply( core::pose::Pose & pose )
 	if ( core::select::residue_selector::all_false_selection( subset ) ) return;
 	core::scoring::constraints::ConstraintCOPs csts = pose.constraint_set()->get_all_constraints();
 	core::scoring::constraints::ConstraintCOPs todel;
-	for ( auto const & constraint : csts )
-	{
+	for ( auto const & constraint : csts ) {
 		utility::vector1< core::Size > residues = constraint->residues();
-		for (auto const & res : residues ) {
+		for ( auto const & res : residues ) {
 			if ( subset[res] ) {
 				todel.push_back( constraint );
 				break;

@@ -63,7 +63,7 @@ GlycanLayerSelector::~GlycanLayerSelector() {}
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 //GlycanLayerSelector::GlycanLayerSelector(GlycanLayerSelector const & src):
-//	ResidueSelector( src )
+// ResidueSelector( src )
 //{
 //}
 
@@ -85,17 +85,15 @@ void
 GlycanLayerSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & )
-	
+
 {
-	if ( tag->hasOption("start") && tag->hasOption("end")){
+	if ( tag->hasOption("start") && tag->hasOption("end") ) {
 		range_set_ = true;
 		start_ = tag->getOption< core::Size >("start", start_);
 		end_ = tag->getOption< core::Size >("end", end_);
-	}
-	else if (tag->hasOption( "start ") || tag->hasOption( "end" )){
+	} else if ( tag->hasOption( "start ") || tag->hasOption( "end" ) ) {
 		utility_exit_with_message("For range selection, start and end must be set!");
-	}
-	else {
+	} else {
 		start_from_as_layer_ = tag->getOption< core::Size >("layer_as_greater_than_or_equal_to", start_from_as_layer_);
 		end_for_layer_ = tag->getOption< core::Size >("layer_as_less_than_or_equal_to", end_for_layer_);
 		range_set_ = false;
@@ -132,7 +130,7 @@ void GlycanLayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		+ XMLSchemaAttribute(  "layer_as_less_than_or_equal_to", xsct_non_negative_integer ,
 		"Set the layer as all residue less or equal to this number (the beginning of the tree)" );
 
-		xsd_type_definition_w_attributes( xsd, class_name(),
+	xsd_type_definition_w_attributes( xsd, class_name(),
 		"A selector for choosing glycan residues based on their layer - as measured by the residue distance to the start of the glycan tree."
 		"If no layer is set, will select all glycan residues.", attributes );
 
@@ -173,29 +171,27 @@ GlycanLayerSelector::ResidueSubset
 GlycanLayerSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-	
+
 	debug_assert( start_ <= end_);
 	utility::vector1< bool > layer_subsets(pose.total_residue(), false );
-	
-	for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ){
-		if ( pose.residue_type( resnum ).is_carbohydrate() ){
+
+	for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+		if ( pose.residue_type( resnum ).is_carbohydrate() ) {
 			core::Size layer = pose.glycan_tree_set()->get_distance_to_start( resnum );
-			
-			if ( range_set_ ){
-				
-				if (layer >= start_ && layer <= end_){
+
+			if ( range_set_ ) {
+
+				if ( layer >= start_ && layer <= end_ ) {
 					TR.Debug << "Adding " << resnum << " at layer " << layer << std::endl;
 					layer_subsets[ resnum ] = true;
 				}
-			}
-			else if (end_for_layer_ != 0 ) {
-				if ( layer <= end_for_layer_ ){
+			} else if ( end_for_layer_ != 0 ) {
+				if ( layer <= end_for_layer_ ) {
 					TR.Debug << "2-Adding " << resnum << " at layer " << layer << std::endl;
 					layer_subsets[ resnum ] = true;
 				}
-			}
-			else {
-				if ( layer >= start_from_as_layer_ ){
+			} else {
+				if ( layer >= start_from_as_layer_ ) {
 					TR.Debug << "3-Adding " << resnum << " at layer " << layer << std::endl;
 					layer_subsets[ resnum ] = true;
 				}

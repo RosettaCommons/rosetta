@@ -43,9 +43,9 @@ OPT_1GRP_KEY( Integer, rtminfail, residue_of_interest )
 
 bool
 is_nat_rot(
-core::pose::Pose const & ref_pose,
-core::pose::Pose const & min_pose,
-core::Size const resid
+	core::pose::Pose const & ref_pose,
+	core::pose::Pose const & min_pose,
+	core::Size const resid
 )
 {
 	using core::pack::dunbrack::subtract_chi_angles;

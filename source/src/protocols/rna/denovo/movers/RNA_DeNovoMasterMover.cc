@@ -63,46 +63,46 @@ namespace rna {
 namespace denovo {
 namespace movers {
 
-	//Constructor
-	RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOptionsCOP options,
-																								protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-																								base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
-																								protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
-																								libraries::RNA_ChunkLibraryOP rna_chunk_library ):
-		options_( options ),
-		frag_size_( 3 ),
-		jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
-		close_loops_( false ),
-		do_rnp_docking_( false ),
-		move_type_( "" ),
-		rna_chunk_library_( rna_chunk_library ),
-		rna_loop_closer_( rna_loop_closer )
-	{
-		RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
-		rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map ) );
+//Constructor
+RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOptionsCOP options,
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
+	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
+	libraries::RNA_ChunkLibraryOP rna_chunk_library ):
+	options_( options ),
+	frag_size_( 3 ),
+	jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
+	close_loops_( false ),
+	do_rnp_docking_( false ),
+	move_type_( "" ),
+	rna_chunk_library_( rna_chunk_library ),
+	rna_loop_closer_( rna_loop_closer )
+{
+	RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
+	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map ) );
 
-		rna_jump_mover_ = RNA_JumpMoverOP( new RNA_JumpMover( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ),
-																													atom_level_domain_map ) );
-		rna_jump_mover_->set_rna_pairing_list ( rna_base_pair_handler->rna_pairing_list() );
-		rna_jump_mover_->set_chain_connections( rna_base_pair_handler->chain_connections() );
-		jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
-	}
+	rna_jump_mover_ = RNA_JumpMoverOP( new RNA_JumpMover( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ),
+		atom_level_domain_map ) );
+	rna_jump_mover_->set_rna_pairing_list ( rna_base_pair_handler->rna_pairing_list() );
+	rna_jump_mover_->set_chain_connections( rna_base_pair_handler->chain_connections() );
+	jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
+}
 
-	//Destructor
-	RNA_DeNovoMasterMover::~RNA_DeNovoMasterMover()
-	{}
+//Destructor
+RNA_DeNovoMasterMover::~RNA_DeNovoMasterMover()
+{}
 
-	void
-	RNA_DeNovoMasterMover::apply( core::pose::Pose & pose ) {
-		apply( pose, 1 );
-	}
+void
+RNA_DeNovoMasterMover::apply( core::pose::Pose & pose ) {
+	apply( pose, 1 );
+}
 
-	void
-	RNA_DeNovoMasterMover::apply( core::pose::Pose & pose,
-																Size const & cycle_number )
-	{
-		do_move_trial( cycle_number, pose );
-	}
+void
+RNA_DeNovoMasterMover::apply( core::pose::Pose & pose,
+	Size const & cycle_number )
+{
+	do_move_trial( cycle_number, pose );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @details
@@ -123,7 +123,7 @@ RNA_DeNovoMasterMover::do_move_trial( Size const & i, pose::Pose & pose )
 	}
 }
 
-	////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 /// @details
 /// There are three kinds of insertions --
 /// (1) fragment insertions for, e.g., contiguous 3-mers
@@ -174,7 +174,7 @@ RNA_DeNovoMasterMover::random_jump_trial( pose::Pose & pose ) {
 	move_type_ = move_type;
 }
 
-	////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoMasterMover::rnp_docking_trial( pose::Pose & pose ) {
 
@@ -240,8 +240,8 @@ RNA_DeNovoMasterMover::random_chunk_trial( pose::Pose & pose ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoMasterMover::setup_rigid_body_mover( pose::Pose const & pose,
-																							 Real const & rot_mag,
-																							 Real const & trans_mag )
+	Real const & rot_mag,
+	Real const & trans_mag )
 {
 
 	core::kinematics::MoveMap movemap;
@@ -261,8 +261,8 @@ RNA_DeNovoMasterMover::setup_rigid_body_mover( pose::Pose const & pose,
 /// Kalli -- this copies code from setup_rigid_body_mover -- can we unify? -- rhiju, 2017
 void
 RNA_DeNovoMasterMover::setup_rna_protein_docking_mover( pose::Pose const & pose,
-																							 Real const & rot_mag,
-																							 Real const & trans_mag )
+	Real const & rot_mag,
+	Real const & trans_mag )
 {
 	do_rnp_docking_ = false;
 
@@ -312,7 +312,7 @@ RNA_DeNovoMasterMover::setup_rna_protein_docking_mover( pose::Pose const & pose,
 ///  fragment insertions, jumps, chunks, etc. with no energy function checks.
 void
 RNA_DeNovoMasterMover::do_random_moves( core::pose::Pose & pose,
-																				Size const & monte_carlo_cycles ) {
+	Size const & monte_carlo_cycles ) {
 
 	rna_chunk_library_->check_fold_tree_OK( pose );
 	rna_chunk_library_->initialize_random_chunks( pose );

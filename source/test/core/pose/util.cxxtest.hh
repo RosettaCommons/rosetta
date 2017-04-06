@@ -244,12 +244,12 @@ public: // tests
 		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == false );
 		TS_ASSERT( val == 0.0 );
-			} // test_pose_float_map
+	} // test_pose_float_map
 
 
-			/// @brief test renumber_pdbinfo_based_on_conf_chains()
-			void test_renumber_pdbinfo_based_on_conf_chains() {
-			using core::pose::renumber_pdbinfo_based_on_conf_chains;
+	/// @brief test renumber_pdbinfo_based_on_conf_chains()
+	void test_renumber_pdbinfo_based_on_conf_chains() {
+		using core::pose::renumber_pdbinfo_based_on_conf_chains;
 
 		PoseOP pose_one = one_chain_pose();
 		PoseOP pose_two = two_chain_pose();
@@ -431,9 +431,9 @@ public: // tests
 		TS_ASSERT( uniq_chains[3156] == true );
 	}
 
-//////////////////////////////////////////
-// Chain/jump methods
-//
+	//////////////////////////////////////////
+	// Chain/jump methods
+	//
 public: // Utility methods
 	int get_parent_jump( core::pose::Pose const & pose, core::Size resi ) const {
 		core::kinematics::FoldTree const & fold_tree( pose.fold_tree() );
@@ -504,7 +504,7 @@ public: // tests
 		debug_assert( pose->size() == chain_ids.size() );
 		utility::vector1< core::Size > jumps{ 0, 1, 1, 1, 6, 2, 2, 2, 8, 8, 8, 7, 5, 9, 9, 9, 3, 4 };
 		debug_assert( pose->size() == chain_letters.size() );
-		for( core::Size ii(1); ii <= pose->size(); ++ii ) {
+		for ( core::Size ii(1); ii <= pose->size(); ++ii ) {
 			TR << "Residue " << ii
 				<< " letter: " << pdb_info->chain( ii )
 				<< " chain id: " << pose->chain( ii )

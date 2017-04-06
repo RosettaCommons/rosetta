@@ -93,7 +93,7 @@ public:
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
 	GlycanTreeRelax( GlycanTreeRelax const & src );
-	
+
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~GlycanTreeRelax() override;
 
@@ -107,10 +107,10 @@ public:
 	apply( core::pose::Pose & pose ) override;
 
 public:
-	
+
 	void
 	set_rounds( core::Size const rounds );
-	
+
 	///@brief Set the layer size we will be using.  A layer is a set of glycan residues that we will be optimizing.
 	///  We work our way through the layers, while the rest of the residues are virtual (not scored).
 	///
@@ -121,7 +121,7 @@ public:
 	///  We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on.
 	void
 	set_layer_size( core::Size const layer_size );
-	
+
 	///@brief Set the window size.  This is the overlap of the layers during modeling.
 	///
 	///@details
@@ -132,30 +132,30 @@ public:
 	///  Typically, we would want at least a window size of 1.
 	void
 	set_window_size( core::Size const window_size );
-	
+
 	///@brief Set the protocol to use a quench-like algorithm, where we work on a single glycan tree at a time until
 	/// all are modeled.
 	void
 	set_quench_mode( bool quench_mode );
-	
+
 public:
 	//GlcyanRelax options
-	
+
 	///@brief Set a boolean that we will be refining instead of de-novo modeling.
 	void
 	set_refine( bool const refine );
-	
+
 	///@brief Change the setting to do a final min/pack/min of all glycan residues or glycan residues set by the selector
 	/// at the end of the protocol.
 	void
 	set_final_min_pack_min( bool const minpackmin );
-	
+
 public:
-	
+
 	///@brief Set the scorefunction used for modeling.
 	void
 	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
-	
+
 	///@brief Set a residue selector to limit the residues we will be modeling.
 	/// If you are using quench mode, the selector will limit the trees to model.
 	/// So the residues that are true should correspond to the start of the trees you wish to model.
@@ -163,7 +163,7 @@ public:
 	/// If you wish to limit further, this is not currently supported.  So email me and I can add it.
 	void
 	set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
-	
+
 public:
 
 	void
@@ -204,29 +204,29 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private: // methods
-	
-	///@brief Setup classes, selectors, etc. 
+
+	///@brief Setup classes, selectors, etc.
 	void
 	setup( core::pose::Pose & pose );
-	
+
 	bool
 	is_quenched() const;
-	
+
 private: // data
-	
+
 	core::Size layer_size_ = 2;
 	core::Size window_size_ = 1;
 	core::Size rounds_ = 1;
 	core::Size completed_quenches_ = 0;
 	core::Size trees_to_model_ = 0;
-	
+
 	bool refine_ = false;
 	bool quench_mode_ = false;
 	bool final_min_pack_min_ = true;
-	
+
 	core::scoring::ScoreFunctionOP scorefxn_ = nullptr;
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
-	
+
 };
 
 std::ostream &

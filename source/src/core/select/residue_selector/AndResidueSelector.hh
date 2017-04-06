@@ -80,15 +80,15 @@ public:
 	///@brief adds a ResidueSelector
 	void
 	add_residue_selector(ResidueSelectorCOP selector);
-	
+
 	///@brief Get the number of contained selectors.
 	Size
 	num_selectors() const;
-	
+
 	///@brief Clear the contained selectors.
 	void
 	clear();
-	
+
 public:
 
 	virtual ResidueSubset

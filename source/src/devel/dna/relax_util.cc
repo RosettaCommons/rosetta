@@ -449,7 +449,7 @@ delete_unpaired_bases( pose::Pose & pose )
 			cuts(i) = f.cutpoint(i);
 		}
 		ASSERT_ONLY(bool valid_tree = new_f.tree_from_jumps_and_cuts( nres, num_jump, jumps, cuts );)
-			debug_assert( valid_tree );
+		debug_assert( valid_tree );
 	}
 	pose.fold_tree( new_f );
 

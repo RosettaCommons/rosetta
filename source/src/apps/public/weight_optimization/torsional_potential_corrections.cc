@@ -344,7 +344,7 @@ correct_rama() {
 	inscore >> fragline.id_  >> fragline.aa_;
 	inscore >> fragline.phibin_ >> fragline.psibin_ >> fragline.weight_ >> fragline.fragscore_;
 	while ( inscore.good() ) {
-		if ( currtag == "R" && ((int)fragline.aa_) <= 20) {
+		if ( currtag == "R" && ((int)fragline.aa_) <= 20 ) {
 			currentfrag.push_back( fragline );
 		}
 
@@ -352,7 +352,7 @@ correct_rama() {
 		inscore >> fragline.id_  >> fragline.aa_;
 		inscore >> fragline.phibin_ >> fragline.psibin_ >> fragline.weight_ >> fragline.fragscore_;
 
-		if (fragline.fragscore_>0) fragline.fragscore_=0;
+		if ( fragline.fragscore_>0 ) fragline.fragscore_=0;
 
 		if ( ((int)fragline.aa_) <= 20 ) {
 			bestscore[(int)fragline.aa_] = std::min( bestscore[(int)fragline.aa_] , fragline.fragscore_ );
@@ -360,14 +360,14 @@ correct_rama() {
 	}
 	std::cerr << "Read " << currentfrag.size() << " fragments" << std::endl;
 
-	for (int i=1; i<=(int)currentfrag.size(); ++i) {
+	for ( int i=1; i<=(int)currentfrag.size(); ++i ) {
 		currentfrag[i].fragscore_ -= bestscore[(int)currentfrag[i].aa_];
 		currentfrag[i].fragscore_ = std::min( currentfrag[i].fragscore_, peraa_cap[(int)currentfrag[1].aa_] );
 	}
 
 	/////
 	// 1b aggregate stats
-	for (int i=1; i<=(int)currentfrag.size(); ++i) {
+	for ( int i=1; i<=(int)currentfrag.size(); ++i ) {
 		//  A: counts (shared across rotamers)
 		if ( ramacount.find(currentfrag[i].aa_ ) == ramacount.end() ) {
 			ramacount[currentfrag[i].aa_].dimension( 36, 36 );
@@ -414,11 +414,11 @@ correct_rama() {
 		}
 
 		//dump_table ( data, "Ehat_raw.m",
-		//	"E_" + utility::to_string( (core::chemical::AA)aa ) );
+		// "E_" + utility::to_string( (core::chemical::AA)aa ) );
 		//dump_table ( dataMin, "Ehat_min.m",
-		//	"Emin_" + utility::to_string( (core::chemical::AA)aa ) );
+		// "Emin_" + utility::to_string( (core::chemical::AA)aa ) );
 		//dump_table ( dataMax, "Ehat_max.m",
-		//	"Emax_" + utility::to_string( (core::chemical::AA)aa ) );
+		// "Emax_" + utility::to_string( (core::chemical::AA)aa ) );
 
 		for ( int i=1; i<=36; ++i ) {
 			for ( int j=1; j<=36; ++j ) {
@@ -474,12 +474,12 @@ correct_rama() {
 		numeric::fourier::ifft2(Frot, data);
 
 		//dump_table ( data, "Ehat_smooth.m",
-		//	"Ehat_" + utility::to_string( (core::chemical::AA)aa ) );
+		// "Ehat_" + utility::to_string( (core::chemical::AA)aa ) );
 	}
 
 	// load rama table
 	std::string ramadir("scoring/score_functions/rama/fd");
-	if (basic::options::option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
 		ramadir = basic::options::option[ basic::options::OptionKeys::corrections::score::rama_pp_map ]();
 	}
 	utility::vector1<  ObjexxFCL::FArray2D< Real > > rama_ref(20);
@@ -504,9 +504,9 @@ correct_rama() {
 		}
 
 		//dump_table ( rama_ref[i], "Erama.m",
-		//	"Erama_" + utility::to_string( (core::chemical::AA)i ) );
+		// "Erama_" + utility::to_string( (core::chemical::AA)i ) );
 		//dump_table ( corrRamaScore[i], "Erama_hat.m",
-		//	"Erama_hat_" + utility::to_string( (core::chemical::AA)i ) );
+		// "Erama_hat_" + utility::to_string( (core::chemical::AA)i ) );
 	}
 
 	std::string outfile = "all.ramaProb.CORRECTED";
@@ -832,7 +832,7 @@ correct_dunbrack() {
 		numeric::fourier::ifft2(Frot, data);
 
 		//dump_table ( data, "data_smooth.m",
-		//	"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+		// "data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
 	}
 
 	/////
@@ -885,7 +885,7 @@ correct_dunbrack() {
 			numeric::fourier::ifft2(Frot, data);
 
 			//dump_table ( data, "data_semirot.m",
-			//	"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second )+"_"+utility::to_string( k ) );
+			// "data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second )+"_"+utility::to_string( k ) );
 		}
 	}
 
@@ -1033,18 +1033,18 @@ correct_dunbrack() {
 
 	// 4 dump files
 	//for ( std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it ) {
-	//	std::pair< int, int > rottag = it->first;
-	//	ObjexxFCL::FArray2D<core::Real> &data = it->second;
-	//	dump_table ( data, "probs.m", "probs_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
+	// std::pair< int, int > rottag = it->first;
+	// ObjexxFCL::FArray2D<core::Real> &data = it->second;
+	// dump_table ( data, "probs.m", "probs_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
 	//}
 
 	//for ( std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it ) {
-	//	std::pair< int, int > rottag = it->first;
-	//	for ( Size jj=1; jj<=36; ++jj ) {
-	//		ObjexxFCL::FArray2D<core::Real> &data = it->second[jj];
-	//		dump_table ( data, "probssemi.m", "probs_semi_"
-	//			+ utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) + "_semi" + utility::to_string( jj ) );
-	//	}
+	// std::pair< int, int > rottag = it->first;
+	// for ( Size jj=1; jj<=36; ++jj ) {
+	//  ObjexxFCL::FArray2D<core::Real> &data = it->second[jj];
+	//  dump_table ( data, "probssemi.m", "probs_semi_"
+	//   + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) + "_semi" + utility::to_string( jj ) );
+	// }
 	//}
 
 	for ( int aa = 1; aa<=20; aa++ ) {

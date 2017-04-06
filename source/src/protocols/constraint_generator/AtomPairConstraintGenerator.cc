@@ -196,8 +196,9 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::select::residue_selector::ResidueSubset const & subset2 ) const
 {
 	core::id::SequenceMapping const seqmap = create_sequence_mapping( pose, ref_pose );
-	if ( core::select::residue_selector::has_any_true_selection( subset2 ) )
+	if ( core::select::residue_selector::has_any_true_selection( subset2 ) ) {
 		return generate_atom_pair_constraints( pose, ref_pose, subset, subset2, seqmap );
+	}
 	return generate_atom_pair_constraints( pose, ref_pose, subset, seqmap );
 }
 
@@ -295,8 +296,7 @@ AtomPairConstraintGenerator::add_constraints(
 			core::scoring::func::FuncOP pair_func;
 			if ( !use_harmonic_ ) {  // This is the default behaviour
 				pair_func = core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, sd_ ) );
-			}
-			else {
+			} else {
 				pair_func = core::scoring::func::FuncOP (new core::scoring::func::HarmonicFunc( dist, sd_ ) );
 			}
 
@@ -304,8 +304,7 @@ AtomPairConstraintGenerator::add_constraints(
 			if ( !unweighted_ ) {  // This is the default behaviour
 				core::scoring::func::FuncOP weighted_func = scalar_weighted( pair_func, weight_ );
 				newcst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, weighted_func ) );
-			}
-			else {
+			} else {
 				newcst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, pair_func ) );
 			}
 
@@ -348,7 +347,7 @@ AtomPairConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "Selector specifying residues to be constrained. When not provided, all residues are selected" );
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "secondary_selector", "With a secondary selector, constraints are generated between the residues of primary selector vs. "
-																																																				"secondary selector. min_seq_seq does not apply here, but max_distance does." );
+		"secondary selector. min_seq_seq does not apply here, but max_distance does." );
 	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
 		xsd,
 		class_name(),

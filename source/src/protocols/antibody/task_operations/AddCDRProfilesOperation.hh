@@ -185,13 +185,13 @@ public:
 	///'BLOSUM80', 'blosum80', 'BLOSUM85', 'blosum85', 'BLOSUM90', 'blosum90', 'BLOSUM100', 'blosum100'
 	void
 	set_cons_design_data_source(std::string data_source);
-	
+
 	///@brief Ignore the cluster light chain.  Only use this for benchmarking.
 	void
 	set_ignore_light_chain( bool ignore_light_chain = false){
 		ignore_light_chain_ = ignore_light_chain;
 	};
-	
+
 private:
 
 	utility::vector1<bool>

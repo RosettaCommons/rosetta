@@ -65,10 +65,10 @@ ReturnResidueSubsetSelector::set_residue_subset( ResidueSubset const & subset ){
 ///
 ReturnResidueSubsetSelector::~ReturnResidueSubsetSelector() {}
 
- ///@brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
- ReturnResidueSubsetSelector::ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & src):
- ResidueSelector( src ),
- subset_( src.subset_ )
+///@brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
+ReturnResidueSubsetSelector::ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & src):
+	ResidueSelector( src ),
+	subset_( src.subset_ )
 {
 
 }

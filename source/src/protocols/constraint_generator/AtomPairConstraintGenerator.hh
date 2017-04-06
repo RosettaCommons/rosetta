@@ -108,14 +108,14 @@ private:
 	generate_atom_pair_constraints(
 		core::pose::Pose const & pose,
 		core::select::residue_selector::ResidueSubset const & subset,
-	 	core::select::residue_selector::ResidueSubset const & subset2 ) const;
+		core::select::residue_selector::ResidueSubset const & subset2 ) const;
 
 	core::scoring::constraints::ConstraintCOPs
 	generate_atom_pair_constraints(
 		core::pose::Pose const & pose,
 		core::pose::Pose const & ref_pose,
 		core::select::residue_selector::ResidueSubset const & subset,
-	 	core::select::residue_selector::ResidueSubset const & subset2 ) const;
+		core::select::residue_selector::ResidueSubset const & subset2 ) const;
 
 	core::scoring::constraints::ConstraintCOPs
 	generate_atom_pair_constraints(

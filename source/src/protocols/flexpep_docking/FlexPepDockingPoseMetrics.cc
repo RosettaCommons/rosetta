@@ -135,7 +135,7 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 
 	core::Size const nres1 = pose1.size();
 	ASSERT_ONLY(core::Size const nres2 = pose2.size();)
-		debug_assert( nres1 == nres2 );
+	debug_assert( nres1 == nres2 );
 
 	ngood = 0;
 	core::Size natoms_total( 0 );

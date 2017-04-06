@@ -118,16 +118,16 @@ public:
 	/// @details. Deterministic Protocol only available if GraftDesigning a single CDR.
 	void
 	set_design_protocol( AntibodyDesignProtocolEnum design_protocol);
-	
-	
+
+
 	/// @brief Set the CDRs which will undergo Sequence-Design
 	void
 	set_seq_design_cdrs( utility::vector1< CDRNameEnum > seq_design_cdrs );
-	
+
 	/// @brief Set the CDRs which will undergo Graft-Design
 	void
 	set_graft_design_cdrs( utility::vector1< CDRNameEnum > graft_design_cdrs );
-	
+
 	/// @brief Manually set the CDRs which can be chosen in the outer cycle.
 	/// @details
 	///  These should be on for either Sequence-Design or Graft-Design.
@@ -136,11 +136,11 @@ public:
 	///   (such as graft-designing H3 and allowing H1 and L3 to sequence design during the inner cycle.
 	void
 	set_primary_cdrs( utility::vector1< CDRNameEnum > primary_cdrs );
-	
+
 public:
 
 
-	
+
 	/// @brief Set the number of overall rounds.  Each round will choose a CDR and design it and others based on options
 	///  Default = 25.
 	void
@@ -150,7 +150,7 @@ public:
 	/// Essentially min cycles.
 	void
 	set_inner_cycles(core::Size inner_cycles);
-	
+
 public:
 	////////////////////////////////////////////////////////////////////////////
 	// Paratope and Epitope constraints
@@ -170,8 +170,8 @@ public:
 	/// @brief Setting to use epitope constraints.  Without this false, will not use any set epitope residues.
 	void
 	set_use_epitope_constraints(bool use_epitope_csts);
-	
-	
+
+
 public:
 
 
@@ -183,7 +183,7 @@ public:
 public:
 
 	///// Specific options set here instead of instructions file or explict CDR settings ////////
-	
+
 	/// @brief Set the options which will be used for querying the database
 	void
 	set_cdr_set_options(AntibodyCDRSetOptions cdr_set_options);
@@ -195,8 +195,8 @@ public:
 	/// @brief Set CDR-specific SeqDesign options
 	void
 	set_seq_design_options(AntibodyCDRSeqDesignOptions seq_design_options);
-	
-	
+
+
 public:
 	////////////////////////////////////////////////////////////////////////////
 	// Modeling Settings
@@ -358,7 +358,7 @@ private:
 	AntibodyInfoOP ab_info_ = nullptr;
 	AntibodyDesignEnumManagerOP design_enum_manager_ = nullptr;
 	AntibodyDatabaseManagerOP db_manager_ = nullptr;
-	
+
 	AntibodyCDRSetOptions cdr_set_options_;
 	AntibodyCDRGraftDesignOptions cdr_graft_design_options_;
 	AntibodyCDRSeqDesignOptions cdr_seq_design_options_;
@@ -448,12 +448,12 @@ private:
 	utility::vector1<CDRNameEnum> graft_design_override_;
 	utility::vector1<CDRNameEnum> cdrs_to_design_;
 	utility::vector1<CDRNameEnum> primary_cdrs_;
-	
+
 	std::string instruction_file_ = "NA";
 
 	core::Size stats_cutoff_;
 	bool mutate_framework_for_cluster_;
-	
+
 	std::string mintype_ = "NA";
 };
 

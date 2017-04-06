@@ -92,7 +92,7 @@ OPT_1GRP_KEY( Boolean, sweep_respair_energies, output_bestpose_only )
 OPT_1GRP_KEY( Boolean, sweep_respair_energies, find_local_minima )
 
 class hbgeom_to_measure {
-	public:
+public:
 	core::Size r1atind; // the acceptor
 	core::Size r2atind; // the donor
 	utility::vector1< std::string > hbgeoms_;

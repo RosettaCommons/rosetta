@@ -99,7 +99,7 @@ RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 	stub_stub_type_ = BASE_CENTROID;
 	if ( option[ denovo::out::output_jump_o3p_to_o5p ]() ) stub_stub_type_ = O3P_TO_O5P;
 	if ( option[ denovo::out::output_jump_chainbreak ]() ) stub_stub_type_ = CHAINBREAK;
-	if ( option[ denovo::out::output_jump_reference_RT ].user() ){
+	if ( option[ denovo::out::output_jump_reference_RT ].user() ) {
 		reference_RT_ = kinematics::RTOP( new kinematics::RT );
 		std::stringstream rt_stream( option[ denovo::out::output_jump_reference_RT ]() );
 		rt_stream >> *reference_RT_;
@@ -155,9 +155,9 @@ RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 	using namespace core::pose::full_model_info;
 	if ( full_model_info_defined( pose ) ) {
 		res1_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( jump_resnum_and_chain_.first[1],
-																																												 jump_resnum_and_chain_.second[1] );
+			jump_resnum_and_chain_.second[1] );
 		res2_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( jump_resnum_and_chain_.first[2],
-																																												 jump_resnum_and_chain_.second[2] );
+			jump_resnum_and_chain_.second[2] );
 	} else {
 		res1_ = jump_resnum_and_chain_.first[ 1 ];
 		res2_ = jump_resnum_and_chain_.first[ 2 ];
@@ -194,7 +194,7 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	using namespace core::conformation;
 
 	if ( rsd1.seqpos() == res2_ &&
-			 rsd2.seqpos() == res1_ ) {
+			rsd2.seqpos() == res1_ ) {
 		residue_pair_energy( rsd2, rsd1, pose, scorefxn, emap );
 		return;
 	}

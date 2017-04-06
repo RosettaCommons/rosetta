@@ -66,18 +66,18 @@ class CloudArchiveManagerWrapper : public protocols::jd2::archive::BaseArchiveMa
 	protected:
 	void queue_batch( protocols::jd2::archive::Batch const& batch ) {
 		std::cout << "START BATCH" << batch << std::endl;
-};
+		};
 
 
-// static bool options_registered_;
+	// static bool options_registered_;
 
-void save_batchlist();
-void restore_batchlist();
+	void save_batchlist();
+	void restore_batchlist();
 
-private:
-// protocols::jd2::archive::AbstractArchiveBaseOP theArchive_;
-// core::Size cancel_batches_previous_to_;
-// bool allow_reading_of_decoys_;
+	private:
+	// protocols::jd2::archive::AbstractArchiveBaseOP theArchive_;
+	// core::Size cancel_batches_previous_to_;
+	// bool allow_reading_of_decoys_;
 };
 
 CloudArchiveManagerWrapper::CloudArchiveManagerWrapper() {

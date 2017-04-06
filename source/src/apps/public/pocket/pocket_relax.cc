@@ -110,10 +110,10 @@ class NCMinimize : public moves::Mover {
 	virtual void test_move( Pose & pose )
 		{
 		apply(pose);
-}
+		}
 
-private:
-ScoreFunctionOP score_function_;
+		private:
+	ScoreFunctionOP score_function_;
 };
 
 NCMinimize::NCMinimize() :

@@ -119,7 +119,7 @@ CstInfoMover::apply( core::pose::Pose& pose ){
 		all_constraints = get_constraints_from_file( cst_file_, pose );
 	}
 
-	if ( !dump_cst_file_.empty() ){
+	if ( !dump_cst_file_.empty() ) {
 		ConstraintSetOP cst_set( new ConstraintSet );
 		cst_set->add_constraints( all_constraints );
 		ConstraintIO::get_instance()->write_constraints( dump_cst_file_, *cst_set, pose );

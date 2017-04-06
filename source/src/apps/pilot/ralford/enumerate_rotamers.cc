@@ -36,17 +36,17 @@ int
 main( int argc, char * argv [] )
 {
 
-  using namespace protocols::moves;
-  using namespace protocols::simple_moves;
+	using namespace protocols::moves;
+	using namespace protocols::simple_moves;
 
-  try {
-    devel::init( argc, argv );
-    DumpSingleResidueRotamersOP dump_rotamers( new DumpSingleResidueRotamers() );
-  	protocols::jd2::JobDistributor::get_instance()->go( dump_rotamers );
-    return 0;
-  } catch ( utility::excn::EXCN_Base const & e ) {
-  	std::cout << "Caught Exception " << e.msg() << std::endl;
-  	return -1;
-  }
+	try {
+		devel::init( argc, argv );
+		DumpSingleResidueRotamersOP dump_rotamers( new DumpSingleResidueRotamers() );
+		protocols::jd2::JobDistributor::get_instance()->go( dump_rotamers );
+		return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "Caught Exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 }

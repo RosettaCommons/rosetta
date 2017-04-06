@@ -215,34 +215,34 @@ SecondaryStructureSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attributes;
 	attributes
 		+ XMLSchemaAttribute::attribute_w_default( "overlap", xsct_non_negative_integer ,
-			"If specified, the ranges of residues with matching secondary structure are expanded "
-			"by this many residues. Each selected range of residues will not be expanded past chain "
-			"endings. For example, a pose with secondary structure LHHHHHHHLLLEEEEELLEEEEEL, ss='E', "
-			"and overlap 0 would select the two strand residue ranges EEEEE and EEEEE. With overlap 2, "
-			"the selected residues would also include up to two residues before and after the strands "
-			"(LLEEEEELLEEEEEL).", "0" )
+		"If specified, the ranges of residues with matching secondary structure are expanded "
+		"by this many residues. Each selected range of residues will not be expanded past chain "
+		"endings. For example, a pose with secondary structure LHHHHHHHLLLEEEEELLEEEEEL, ss='E', "
+		"and overlap 0 would select the two strand residue ranges EEEEE and EEEEE. With overlap 2, "
+		"the selected residues would also include up to two residues before and after the strands "
+		"(LLEEEEELLEEEEEL).", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "minH", xsct_non_negative_integer ,
-			"Defines the minimal number of consecutive residues with helix assignation to be considered "
-			"an helix. Smaller assignation patches are understood as loops.", "1" )
+		"Defines the minimal number of consecutive residues with helix assignation to be considered "
+		"an helix. Smaller assignation patches are understood as loops.", "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "minE", xsct_non_negative_integer ,
-			"Defines the minimal number of consecutive residues with beta assignation to be considered "
-			"a beta. Smaller assignation patches are understood as loops.", "1" )
+		"Defines the minimal number of consecutive residues with beta assignation to be considered "
+		"a beta. Smaller assignation patches are understood as loops.", "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "include_terminal_loops", xsct_rosetta_bool ,
-			"If false, one-residue \"loop\" regions at the termini of chains will be "
-			"ignored. If true, all residues will be considered for selection.", "false" )
+		"If false, one-residue \"loop\" regions at the termini of chains will be "
+		"ignored. If true, all residues will be considered for selection.", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_dssp", xsct_rosetta_bool,
-			"f true, dssp will be used to determine the pose secondary structure every "
-			"time the SecondaryStructure residue selector is applied. If false, and a "
-			"secondary structure is set in the pose, the secondary structure in the pose "
-			"will be used without re-computing DSSP. This option has no effect if pose_secstruct "
-			"is set.", "true" )
+		"f true, dssp will be used to determine the pose secondary structure every "
+		"time the SecondaryStructure residue selector is applied. If false, and a "
+		"secondary structure is set in the pose, the secondary structure in the pose "
+		"will be used without re-computing DSSP. This option has no effect if pose_secstruct "
+		"is set.", "true" )
 		+ XMLSchemaAttribute( "pose_secstruct", xs_string , " If set, the given secondary "
-			"structure string will be used instead of the pose secondary structure or DSSP. The given "
-			"secondary structure must match the length of the pose." )
+		"structure string will be used instead of the pose secondary structure or DSSP. The given "
+		"secondary structure must match the length of the pose." )
 		+ XMLSchemaAttribute::required_attribute( "ss", xs_string ,
-			"The secondary structure types to be selected. This parameter is required. "
-			"Valid secondary structure characters are 'E', 'H' and 'L'. To select loops, "
-			"for example, use ss=\"L\", and to select both helices and sheets, use ss=\"HE\"" );
+		"The secondary structure types to be selected. This parameter is required. "
+		"Valid secondary structure characters are 'E', 'H' and 'L'. To select loops, "
+		"for example, use ss=\"L\", and to select both helices and sheets, use ss=\"HE\"" );
 	xsd_type_definition_w_attributes( xsd, class_name(),
 		"SecondaryStructureSelector selects all residues with given secondary structure. "
 		"For example, you might use it to select all loop residues in a pose. "
@@ -275,21 +275,19 @@ SecondaryStructureSelector::check_ss( std::string const & ss ) const
 void
 SecondaryStructureSelector::fix_secstruct_definition( std::string & ss ) const
 {
-	if (minH_ == 1 and minE_ == 1) return;
+	if ( minH_ == 1 and minE_ == 1 ) return;
 
 	utility::vector1< std::pair< core::Size, core::Size > > Hcontent;
 	utility::vector1< std::pair< core::Size, core::Size > > Econtent;
 	char last = 'L';
 	core::Size i = 0;
-	for ( std::string::const_iterator c = ss.begin(); c != ss.end(); ++c) {
+	for ( std::string::const_iterator c = ss.begin(); c != ss.end(); ++c ) {
 		if ( *c == 'E' or *c == 'H' ) {
-			if ( *c != last )
-			{
+			if ( *c != last ) {
 				std::pair< core::Size, core::Size > newpair( i, 1 );
 				if ( *c == 'E' ) Econtent.push_back( newpair );
 				if ( *c == 'H' ) Hcontent.push_back( newpair );
-			}
-			else {
+			} else {
 				if ( *c == 'E' ) ++Econtent.back().second;
 				if ( *c == 'H' ) ++Hcontent.back().second;
 			}
@@ -299,15 +297,15 @@ SecondaryStructureSelector::fix_secstruct_definition( std::string & ss ) const
 	}
 	utility::vector1< std::pair< core::Size, core::Size > > todel;
 	for ( auto const & combo : Hcontent ) {
-		if (combo.second < minH_) todel.push_back( combo );
+		if ( combo.second < minH_ ) todel.push_back( combo );
 	}
 	for ( auto const & combo : Econtent ) {
-		if (combo.second < minE_) todel.push_back( combo );
+		if ( combo.second < minE_ ) todel.push_back( combo );
 	}
 	TR << ss << std::endl;
 	TR << todel << std::endl;
 	for ( auto const & combo : todel ) {
-		for (core::Size i = 0; i < combo.second; ++i ){
+		for ( core::Size i = 0; i < combo.second; ++i ) {
 			ss[combo.first + i] = 'L';
 		}
 	}

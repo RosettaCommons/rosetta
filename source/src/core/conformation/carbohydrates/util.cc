@@ -330,10 +330,10 @@ core::Size
 get_distance_to_start( conformation::Conformation const & conf, core::Size const position){
 	core::Size res_distance = 0;
 	core::Size parent = find_seqpos_of_saccharides_parent_residue(conf.residue(position));
-	if (parent == 0){
+	if ( parent == 0 ) {
 		return 0;
 	}
-	while ( ( parent != 0 ) && ( conf.residue(parent).is_carbohydrate() ) ){
+	while ( ( parent != 0 ) && ( conf.residue(parent).is_carbohydrate() ) ) {
 		res_distance+=1;
 		parent = find_seqpos_of_saccharides_parent_residue(conf.residue(parent));
 	}

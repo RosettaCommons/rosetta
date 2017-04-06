@@ -191,8 +191,8 @@ RotamerFeatures::report_features(
 	string library_name;
 
 	DunbrackAAParameterSet dps( option[ corrections::score::dun10 ] ? // Get value from actual RotamerLibrary?
-			DunbrackAAParameterSet::get_dun10_aa_parameters() :
-			DunbrackAAParameterSet::get_dun02_aa_parameters()
+		DunbrackAAParameterSet::get_dun10_aa_parameters() :
+		DunbrackAAParameterSet::get_dun02_aa_parameters()
 	);
 
 	string insert_sql(

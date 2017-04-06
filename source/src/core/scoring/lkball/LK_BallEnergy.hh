@@ -250,12 +250,12 @@ public:
 	//
 	//void
 	//residue_pair_energy_ext(
-	//	conformation::Residue const & rsd1,
-	//	conformation::Residue const & rsd2,
-	//	ResPairMinimizationData const & pairdata,
-	//	pose::Pose const &,// pose,
-	//	ScoreFunction const &,
-	//	EnergyMap & emap
+	// conformation::Residue const & rsd1,
+	// conformation::Residue const & rsd2,
+	// ResPairMinimizationData const & pairdata,
+	// pose::Pose const &,// pose,
+	// ScoreFunction const &,
+	// EnergyMap & emap
 	//) const override;
 
 	bool
@@ -279,10 +279,10 @@ public:
 
 	//void
 	//setup_for_scoring_for_residue(
-	//	conformation::Residue const & rsd,
-	//	pose::Pose const &,// pose,
-	//	ScoreFunction const & sfxn,
-	//	ResSingleMinimizationData & resdata
+	// conformation::Residue const & rsd,
+	// pose::Pose const &,// pose,
+	// ScoreFunction const & sfxn,
+	// ResSingleMinimizationData & resdata
 	//) const override;
 
 	bool

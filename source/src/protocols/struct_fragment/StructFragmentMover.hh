@@ -63,9 +63,9 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-);
+	);
 
-static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
 	// getters
@@ -167,18 +167,18 @@ static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	protocols::frag_picker::FragmentPickerOP structPicker_;
-	core::Real loop_angle_conf_;			// confidence of phi and psi angles
-	core::Size small_frag_size_;			// size of small fragments
-	core::Size large_frag_size_;			// size of large fragments
-	std::string small_frag_file_;			// path to small fragment file
-	std::string large_frag_file_;			// path to large fragment file
+	core::Real loop_angle_conf_;   // confidence of phi and psi angles
+	core::Size small_frag_size_;   // size of small fragments
+	core::Size large_frag_size_;   // size of large fragments
+	std::string small_frag_file_;   // path to small fragment file
+	std::string large_frag_file_;   // path to large fragment file
 	bool output_frag_files_;
 	bool steal_small_frags_;
 	bool steal_large_frags_;
 	bool changed_frags_;
-	std::string frag_weight_file_;		// path to fragment weight file
-	std::string sequence_profile_;		// path to sequence profile
-	std::string vall_file_;						// path to vall file
+	std::string frag_weight_file_;  // path to fragment weight file
+	std::string sequence_profile_;  // path to sequence profile
+	std::string vall_file_;      // path to vall file
 	core::fragment::FragSetOP smallF_;
 	core::fragment::FragSetOP largeF_;
 

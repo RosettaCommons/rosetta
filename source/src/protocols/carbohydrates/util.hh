@@ -38,5 +38,5 @@ get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & s
 } //carbohydrates
 
 
-#endif	//protocols/carbohydrates_util_hh
+#endif //protocols/carbohydrates_util_hh
 

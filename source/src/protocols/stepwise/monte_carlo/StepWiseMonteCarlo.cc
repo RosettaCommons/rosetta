@@ -143,9 +143,9 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	////////////////
 	// Main loop
 	////////////////
-	
+
 	// If options_->continue_until_none_missing() is true, also require there to be
-	// zero missing at end. Caveat: if there are bulge_res, we should account for 
+	// zero missing at end. Caveat: if there are bulge_res, we should account for
 	// them appropriately (it's kind of a legacy option, but it still matters)
 	Size n_missing = pose.energies().total_energies()[ missing_res ]/ pose.energies().weights()[ missing_res ];
 	Size n_bulge = core::pose::full_model_info::const_full_model_info( pose ).rna_bulge_res().size();

@@ -92,7 +92,7 @@ OPT_1GRP_KEY( Boolean, bpf, variable_sasa_radii )
 
 // mover deffinition
 class CalcsTestMover : public Mover {
-	public:
+public:
 
 	CalcsTestMover();
 
@@ -100,54 +100,54 @@ class CalcsTestMover : public Mover {
 
 	virtual std::string get_name() const{
 		return "CalcsTestMover";
-}
+	}
 
-virtual void register_calculators( );
+	virtual void register_calculators( );
 
-virtual void calc_stuff(
-	pose::Pose & pose,
-	core::id::AtomID_Map< core::Real > & atom_sasa,
-	core::id::AtomID_Map< core::Size > & atom_hbonds
-);
+	virtual void calc_stuff(
+		pose::Pose & pose,
+		core::id::AtomID_Map< core::Real > & atom_sasa,
+		core::id::AtomID_Map< core::Size > & atom_hbonds
+	);
 
-virtual void pretty_print(
-	pose::Pose const & pose,
-	conformation::Residue const & rsd,
-	Size resnum,
-	Size atom_number,
-	Real sasa,
-	Size numHbonds,
-	bool unsat
-) const;
+	virtual void pretty_print(
+		pose::Pose const & pose,
+		conformation::Residue const & rsd,
+		Size resnum,
+		Size atom_number,
+		Real sasa,
+		Size numHbonds,
+		bool unsat
+	) const;
 
-virtual core::Size satisfaction_cutoff( std::string atom_type );
+	virtual core::Size satisfaction_cutoff( std::string atom_type );
 
-virtual MoverOP clone() const {
-	return MoverOP( new CalcsTestMover( *this ) );
-}
+	virtual MoverOP clone() const {
+		return MoverOP( new CalcsTestMover( *this ) );
+	}
 
-virtual MoverOP fresh_instance() const {
-	return clone();
-}
+	virtual MoverOP fresh_instance() const {
+		return clone();
+	}
 
 private:
-core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 
-utility::file::FileName posename_;
+	utility::file::FileName posename_;
 
-//names of calculators;
-std::string Sasa_, NumberHBonds_, BuriedUnsatisfiedPolars_;
-bool calcs_ready_;
-//probe radius
-core::Real probe_radius_;
-//numbers of hbonds sat/unsat
-Real n_burried_unsat_, n_exposed_sat_;
-//cutoff to be considered burried...
-core::Real burial_cutoff_;
-//print only burried unsat atoms
-bool print_unsat_only_;
-//number of atoms of different types in a protein
-Real n_heavy_atoms_, n_burried_N_, n_burried_O, n_burried_polars_,n_exposed_polars_, n_polars_;
+	//names of calculators;
+	std::string Sasa_, NumberHBonds_, BuriedUnsatisfiedPolars_;
+	bool calcs_ready_;
+	//probe radius
+	core::Real probe_radius_;
+	//numbers of hbonds sat/unsat
+	Real n_burried_unsat_, n_exposed_sat_;
+	//cutoff to be considered burried...
+	core::Real burial_cutoff_;
+	//print only burried unsat atoms
+	bool print_unsat_only_;
+	//number of atoms of different types in a protein
+	Real n_heavy_atoms_, n_burried_N_, n_burried_O, n_burried_polars_,n_exposed_polars_, n_polars_;
 };
 
 CalcsTestMover::CalcsTestMover() {

@@ -1505,37 +1505,37 @@ void jacobi( ResidualDipolarCoupling::Tensor5 & a, ResidualDipolarCoupling::rvec
 					a[ip][iq]=0.0;
 					for ( j=0; j<ip; j++ ) {
 						ROTATE(a,j,ip,j,iq);
-							}
-							for (j=ip+1; j<iq; j++) {
-								ROTATE(a,ip,j,j,iq);
-							}
-							for (j=iq+1; j<n; j++) {
-								ROTATE(a,ip,j,iq,j);
-							}
-							for (j=0; j<n; j++) {
-								ROTATE(v,j,ip,j,iq);
-							}
-							++nrot;
 					}
+					for ( j=ip+1; j<iq; j++ ) {
+						ROTATE(a,ip,j,j,iq);
+					}
+					for ( j=iq+1; j<n; j++ ) {
+						ROTATE(a,ip,j,iq,j);
+					}
+					for ( j=0; j<n; j++ ) {
+						ROTATE(v,j,ip,j,iq);
+					}
+					++nrot;
 				}
 			}
-			for ( ip=0; ip<n; ip++ ) {
-				b[ip] +=  z[ip];
-				d[ip]  =  b[ip];
-				z[ip]  =  0.0;
-			}
 		}
-		//probably different type of Exception is better suited
-		throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
+		for ( ip=0; ip<n; ip++ ) {
+			b[ip] +=  z[ip];
+			d[ip]  =  b[ip];
+			z[ip]  =  0.0;
+		}
 	}
+	//probably different type of Exception is better suited
+	throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
+}
 
-	void jacobi3(
-		ResidualDipolarCoupling::Tensor & a,
-		ResidualDipolarCoupling::rvec & d,
-		ResidualDipolarCoupling::Tensor & v,
-		int & nrot
-		) {
-		int j,i;
+void jacobi3(
+	ResidualDipolarCoupling::Tensor & a,
+	ResidualDipolarCoupling::rvec & d,
+	ResidualDipolarCoupling::Tensor & v,
+	int & nrot
+) {
+	int j,i;
 	int iq,ip;
 	Real tresh,theta,tau,t,sm,s,h,g,c;
 	Real b[3];
