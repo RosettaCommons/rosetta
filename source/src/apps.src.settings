@@ -145,6 +145,7 @@ sources = {
 		"denovo_density",
 		"density_tools",
 		"mr_protocols",
+        "grower_prep",
 	],
 	"public/enzdes": [
 		"CstfileToTheozymePDB",

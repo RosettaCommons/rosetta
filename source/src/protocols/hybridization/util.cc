@@ -769,6 +769,35 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, std::set<core::Siz
 	return fragset;
 }
 
+core::fragment::FragSetOP
+create_fragment_set_no_ssbias( std::string tgt_seq, core::Size len, core::Size nfrag, char force_ss ) {
+	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( len ));
+
+	// number of residues
+	core::Size nres_tgt = tgt_seq.length();
+
+	// sequence
+	std::string tgt_ss (len, force_ss);
+
+	// pick from vall based on template SS + target sequence
+	for ( core::Size j=1; j<=nres_tgt-len+1; ++j ) {
+		bool crosses_cut = false;
+		for (core::Size k=j; k<j+len-1; ++k)   // it's alright if the last residue is a cutpoint
+			crosses_cut |= (tgt_seq[k]=='X' || tgt_seq[k]=='Z');
+
+		if (!crosses_cut) {
+			core::fragment::FrameOP frame( new core::fragment::Frame( j, len ) );
+			frame->add_fragment(
+				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
+					tgt_ss, tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD()
+				)
+			);
+			fragset->add( frame );
+		}
+	}
+	return fragset;
+}
+
 protocols::loops::Loops renumber_with_pdb_info(
 	protocols::loops::Loops & template_chunk,
 	core::pose::PoseCOP template_pose
