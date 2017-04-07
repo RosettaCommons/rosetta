@@ -10,7 +10,7 @@
 /// @file relax_protocols
 /// @brief Implementation of Leontis/Westhof nucleic acid base-pair classification
 /// @details
-/// @author Rhiju Das
+/// @author Rhiju Das, Andy Watkins
 
 
 // Unit headers
@@ -59,7 +59,6 @@ using basic::T;
 using namespace core::chemical::rna;
 
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 // Implementation of Leontis/Westhof  base pair classifier (RNA, 2001)
 //
 // Partly follows RNAVIEW algorithm, though no use of CH..O bonds, and
@@ -67,16 +66,22 @@ using namespace core::chemical::rna;
 //
 // This should probably be made into an object.
 //
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+// -- rhiju, 20xx
+//
+// A major to-do here is NCNT support, begun here in its infancy. (Basic logic:
+//   if one edge's key hydrogen atom is entirely missing, it can't be H-bonding 
+//   using that edge... also, accepts "S2/S4" for "O2/O4" so as to support the
+//   sulfur-substituted bases.) A strategy Rhiju suggests is to thread the pose
+//   with every residue's na_analogue and evaluate base pairs on THAT. 
+// It's an idea, but there could be false positives. (i.e., a 'bad pose' with a 
+//   clash between two Watson-Crick edge methyl substituents gets threaded into
+//   a pose with a nice H-bond.
+//
+//   -- andy, 2017
+//
 ///////////////////////////////////////////////////////////////////////////////
 
-// AMW TODO: implement a generic method to accomplish this classification
-// (WC/H/S edge ID, atom counting) for NCNTs
-// Note that NCNTs are MOSTLY canonical derived, with a very few variants
-// so 90% of the job is trivial and should be done immediately
-
-
+	
 ///////////////////////////////////////////////////////////////////
 void
 update_edge_hbond_numbers(
@@ -113,7 +118,10 @@ update_edge_hbond_numbers(
 
 	} else if ( rsd.aa() == na_rcy || rsd.type().na_analogue() == na_rcy ) {
 
+		// If the na_analogue is na_rcy, we may have S2 involved as well.
+
 		if ( atom_name == " O2 "  ||
+				atom_name == "S2 " ||
 				atom_name == " N3 "  ||
 				atom_name == " N4 " ) N_W++;
 
@@ -122,6 +130,7 @@ update_edge_hbond_numbers(
 				atom_name == " C6 "  ) N_H++;
 
 		if ( atom_name == " O2 "  ||
+				atom_name == "S2 " ||
 				atom_name == " N1 "  ||
 				atom_name == " C1'"  ||
 				atom_name == " C3'"  ||
@@ -148,20 +157,26 @@ update_edge_hbond_numbers(
 
 	} else if ( rsd.aa() == na_ura || rsd.name1() == 't' || rsd.type().na_analogue() == na_ura ) {
 
+		// If the na_analogue is na_ura, we may have S2 or S4 involved as well.
+		
 		if ( atom_name == " O2 "  ||
-				atom_name == " N3 "  ||
-				atom_name == " O4 " ) N_W++;
+				atom_name == " N3 " ||
+				atom_name == " O4 " ||
+				atom_name == " S2 " ||
+				atom_name == " S4 " ) N_W++;
 
 		if ( atom_name == " O4 "  ||
-				atom_name == " C5 "  ||
-				atom_name == " C6 "  ) N_H++;
+				atom_name == " S4 " ||
+				atom_name == " C5 " ||
+				atom_name == " C6 " ) N_H++;
 
 		if ( atom_name == " O2 "  ||
-				atom_name == " N1 "  ||
-				atom_name == " C1'"  ||
-				atom_name == " C3'"  ||
-				atom_name == " O3'"  ||
-				atom_name == " O2'"   ) N_S++;
+				atom_name == " S2 " ||
+				atom_name == " N1 " ||
+				atom_name == " C1'" ||
+				atom_name == " C3'" ||
+				atom_name == " O3'" ||
+				atom_name == " O2'" ) N_S++;
 
 	} else {
 		utility_exit_with_message( "Problem with base classification, residue " + rsd.type().name() +
@@ -185,9 +200,16 @@ update_edge_hbond_numbers_careful_hydrogen(
 
 	std::string atom_name = rsd.atom_name( atm );
 
-	if ( rsd.aa() == na_rad && atom_name == " N6 " ) {
+	// This assumes either one or the other H is doing something. So lacking one means
+	// the other, and we don't need to worry about the possibility that
+	// a third interaction is at hand.
+	if ( ( rsd.aa() == na_rad || rsd.type().na_analogue() == na_rad ) && atom_name == " N6 " ) {
 		//std::cout << "CHECKING " << rsd.seqpos() << std::endl;
-		if ( (rsd.xyz( rsd.atom_index(" H61") ) - other_rsd.xyz( other_atm )).length()  <
+		if ( ! rsd.has( " H62" ) ) {
+			N_W++;
+		} else if ( !rsd.has( " H61" ) ) {
+			N_H++;
+		} else if ( (rsd.xyz( rsd.atom_index(" H61") ) - other_rsd.xyz( other_atm )).length()  <
 				(rsd.xyz( rsd.atom_index(" H62") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_W++;
 		} else {
@@ -195,11 +217,15 @@ update_edge_hbond_numbers_careful_hydrogen(
 		}
 	}
 
-	if ( rsd.aa() == na_rcy && atom_name == " N4 " ) {
+	if ( ( rsd.aa() == na_rcy || rsd.type().na_analogue() == na_rcy ) && atom_name == " N4 " ) {
 		//  TR << "cyt check " << rsd.seqpos() << " to " << other_rsd.seqpos() << " atom " << other_rsd.atom_name( other_atm ) <<
 		//   "  dist to H42 " << (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length() <<
 		//   " dist to H41 " << (rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length()  << std::endl;
-		if ( (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length()  <
+		if ( ! rsd.has( " H42" ) ) {
+			N_W++;
+		} else if ( !rsd.has( " H41" ) ) {
+			N_H++;
+		} else if ( (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length()  <
 				(rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_H++;
 		} else {
@@ -207,9 +233,13 @@ update_edge_hbond_numbers_careful_hydrogen(
 		}
 	}
 
-	if ( rsd.aa() == na_rgu && atom_name == " N2 " ) {
-		if ( (rsd.xyz( rsd.atom_index(" H22") ) - other_rsd.xyz( other_atm )).length()  <
-				(rsd.xyz( rsd.atom_index(" H21") ) - other_rsd.xyz( other_atm )).length() ) {
+	if ( ( rsd.aa() == na_rgu || rsd.type().na_analogue() == na_rgu ) && atom_name == " N2 " ) {
+		if ( ! rsd.has( " H22" ) ) {
+			N_W++;
+		} else if ( !rsd.has( " H21" ) ) {
+			N_S++;
+		} else if ( ( rsd.xyz( rsd.atom_index( " H22" ) ) - other_rsd.xyz( other_atm ) ).length()  <
+				( rsd.xyz( rsd.atom_index( " H21" ) ) - other_rsd.xyz( other_atm ) ).length() ) {
 			N_S++;
 		} else {
 			N_W++;
@@ -547,11 +577,11 @@ classify_base_pairs(
 
 	//////////////////////////////////////////////////////////////
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( ! pose.residue(i).is_RNA()  ) continue;
+		if ( ! pose.residue_type( i ).is_RNA()  ) continue;
 		for ( Size j = i+1; j <= pose.size(); j++ ) {
-			if ( ! pose.residue(j).is_RNA()  ) continue;
+			if ( ! pose.residue_type( j ).is_RNA()  ) continue;
 
-			if ( ( pose.residue(i).nbr_atom_xyz() - pose.residue(j).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
+			if ( ( pose.residue( i ).nbr_atom_xyz() - pose.residue( j ).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
 
 			Size const num_hbonds = bases_form_a_hydrogen_bond( hbond_set, pose, i, j );
 			if ( num_hbonds == 0  ) continue;
