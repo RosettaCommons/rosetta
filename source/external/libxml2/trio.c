@@ -803,10 +803,12 @@ static trio_userdef_t *internalUserDef = NULL;
  *
  ************************************************************************/
 
-#if defined(TRIO_MINIMAL)
-# define TRIO_STRING_PUBLIC static
-# include "triostr.c"
-#endif /* defined(TRIO_MINIMAL) */
+
+/* Rosetta specific modification: QMake is 'smart' and treat triostr.c as 'include' even though we do not define TRIO_MINIMAL, so we have to comment this out... */
+/* #if defined(TRIO_MINIMAL) */
+/* # define TRIO_STRING_PUBLIC static */
+/* # include "triostr.c" */
+/* #endif /\* defined(TRIO_MINIMAL) *\/ */
 
 /*************************************************************************
  * TrioIsQualifier

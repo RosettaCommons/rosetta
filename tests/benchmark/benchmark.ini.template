@@ -24,3 +24,5 @@ boost_python_library = /Users/benchmark/G/PyRosetta.develop.boost-1.55/PyRosetta
 
 # Path to release's dir-tree
 release_dir = ./results/_release_
+
+release_root = ./results/_release_

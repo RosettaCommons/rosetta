@@ -32,13 +32,14 @@ tests = dict(
     ninja_release  = NT(command='./ninja_build.py release -remake -j{jobs}', incremental=True),
     ninja_graphics = NT(command='./ninja_build.py graphics -remake -j{jobs}', incremental=True),
 
-    PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
+    #PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
     header    = NT(command='./scons.py unit_test_platform_only ; cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
     levels    = NT(command='./update_options.sh && python version.py && cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}"', incremental=False),
 
+    ui  = NT(command='cd src/ui && python update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} ../qt/qt.pro && make -j{jobs}', incremental=True),
 )
 
 # def set_up():
@@ -68,13 +69,13 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
 
-    command_line = tests[test].command.format(compiler=compiler, jobs=jobs, extras=extras)
+    command_line = tests[test].command.format( **dict(config, compiler=compiler, jobs=jobs, extras=extras, platform_suffix=platform_to_pretty_string(platform)) )
 
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
 
     # re-running builds in case we got error - so we can get nice error message
-    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
+    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format( **dict(config, compiler=compiler, jobs=1, extras=extras, platform_suffix=platform_to_pretty_string(platform) ) ) ), return_='tuple')
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write( u'Running: {}\n{}\n'.format(command_line, output) )
 

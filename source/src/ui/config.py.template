@@ -1,0 +1,19 @@
+#
+# ui config file tempalte
+
+
+#
+# pilot_apps, use this to specifying list of pilot apps to build.
+# Each entry should be a tuple (path, project-name)
+# where path is the relative path to project file from main/source/ui/apps/pilot
+# and project-name is name of .pro file in this path without extension
+# for example to add project main/source/ui/apps/pilot/sergey/a/b/c.pro specify ('sergey/a/b', 'c')
+#
+pilot_apps = [
+    #('sergey/test', 'test')
+]
+
+
+# If public_apps is defined allow you to overwrite list of public apps to build, so you can speed up building process by skipping curretly irrelevant public_apps
+# public_apps = [
+# ]
