@@ -32,6 +32,7 @@ core/chemical/params/U30.mol  core/chemical/params/U30.params
 core/chemical/params/U31.mol  core/chemical/params/U31.params
 core/chemical/params/U32.mol  core/chemical/params/U32.params
 core/chemical/params/U33.mol  core/chemical/params/U33.params
-core/chemical/params/U34.mol  core/chemical/params/U34.params 
-core/chemical/params/odd_edta.mol  core/chemical/params/odd_edta.params 
+core/chemical/params/U34.mol  core/chemical/params/U34.params
+core/chemical/params/odd_edta.mol  core/chemical/params/odd_edta.params
+core/chemical/params/VA1_model.sdf  core/chemical/params/VA1_model.params
 

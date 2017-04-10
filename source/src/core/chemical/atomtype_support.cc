@@ -259,7 +259,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 		} else if ( element::I  == element ) {
 			restype.set_atom_type(vd, "I   ");
 		} else if ( element::B  == element ) {
-			restype.set_atom_type(vd, "B   ");
+			restype.set_atom_type(vd, "Bsp2");
 		} else if ( element::Na == element ) {
 			restype.set_atom_type(vd, "Na1p");
 		} else if ( element::K  == element ) {
