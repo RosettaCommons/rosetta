@@ -1,0 +1,16 @@
+-score:weights talaris2013 
+-ex1 
+-ex2 
+-use_input_sc 
+-parser:protocol ./inputs/design_pept.xml
+-extrachi_cutoff 1
+-s ./inputs/1LVB_1.pdb
+-bb_list ./inputs/list_cleaved1_1
+-rot_norm_weight 0.8
+-spec_profile ./inputs/1LVB.transfac
+-dump_transfac cleaved5_sort_1
+-resfile ./inputs/stdmfrf1LVB.txt
+-run:preserve_header
+-nooutput true
+-lazy_ig false
+-double_lazy_ig false

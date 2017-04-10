@@ -5926,6 +5926,50 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'heat_convergence_check', 'Integer',
 			desc ="jump out of current abinitio run if X unsuccesful mc-trials reached", default='0'),
 	), # -mc
+	
+		##############################################################################
+	# Mean-field Options -----------------------------------------------
+	Option_Group('mean_field',
+		Option( 'bb_list', 'FileVector',
+			desc='Specifies list of pdb files in backbone ensemble'
+			),
+		Option('dump_transfac', 'File',
+			desc='filename prefix for dumping the predicted specificity profile in transfac format',
+			default=''
+			),
+		Option('spec_profile', 'File',
+			desc='specify filename of specificity profile (PWM) (transfac format).  Used as gold standard to compare to mean-field predicted result.',
+			default=''
+			),
+		Option('bb_boltz_probs', 'File',
+			desc='specify filename of backbone Boltzmann probabilities.  Can be used in conjunction with bb_list as Boltz probs of backbones in bb_list.',
+			default=''
+			),
+		Option('rot_norm_weight', 'Real',
+			desc="weight rot_norm term",
+			default='0.0'
+			),
+		Option('bb_average_weight', 'Real',
+			desc="bb_average_weight term",
+			default='0.0'
+			),
+ 		Option('rf_peptide', 'File',
+                        desc='specify filename of resfile used for identifying peptide residues (or residues designated for sequence tolerance analysis)',
+                        default=''
+                        ),
+                Option('include_all_aa', 'Boolean',
+                        desc='upweight probabilities of all amino acids by adding 50 to each value',
+			default='false'
+                        ),
+                Option('ga_pack_detect_interface', 'Boolean',
+                        desc='automatically detect protein-peptide interface for calculation of fitness function',
+			default='false'
+                        ),
+                Option('biased_dist_all_gen', 'Boolean',
+                        desc='use biased distribution (as specified in spec_profile) for all generations of GA',
+                        default='false'
+                        ),
+	), # -mean_field
 
 
 	Option_Group( 'mh', # sheffler willsheffler@gmail.com

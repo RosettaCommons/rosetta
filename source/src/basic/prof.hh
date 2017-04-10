@@ -298,6 +298,8 @@ enum ProfTag {
 	SILENT_SET_POSE_COORDS,
 	SILENT_FILL_STRUCT,
 
+	MEAN_FIELD,
+
 	TOTAL, // keep these two last
 	n_prof_tags = TOTAL
 };

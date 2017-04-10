@@ -293,6 +293,8 @@ static MoverRegistrator< matdes::SchemePlaceMotifsMoverCreator > reg_SchemePlace
 
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
 
+static MoverRegistrator< mean_field::GenMeanFieldMoverCreator > reg_GenMeanFieldMoverCreator;
+
 static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator;
 static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;
 static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;

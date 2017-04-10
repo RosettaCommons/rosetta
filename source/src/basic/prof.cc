@@ -287,6 +287,9 @@ void setup_tag2string() {
 	tag2string[ SILENT_FILL_POSE ] = "SILENT_FILL_POSE";
 	tag2string[ SILENT_SET_POSE_COORDS ] = "SILENT_SET_POSE_COORDS";
 	tag2string[ SILENT_FILL_STRUCT ] = "SILENT_FILL_STRUCT";
+
+	tag2string[ MEAN_FIELD ] = "MEAN_FIELD";
+
 }
 
 

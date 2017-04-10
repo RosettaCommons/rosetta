@@ -1,0 +1,18 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name="init" />
+                <ReadResfile name="rrf" />
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+                <GenMeanFieldMover name="boltz" threshold="5" lambda_memory="0.5" tolerance="0.0001" temperature="0.8" task_operations="rrf,init"/>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="boltz"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

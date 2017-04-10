@@ -1,0 +1,12 @@
+-score:weights talaris2013 
+-ex1 
+-ex2 
+-use_input_sc 
+-parser:protocol ./inputs/design_pept.xml
+-extrachi_cutoff 1
+-s ./inputs/1LVB_1.pdb
+-resfile ./inputs/stdmfrf1LVB.txt
+-run:preserve_header
+-nooutput true
+-lazy_ig false
+-double_lazy_ig false

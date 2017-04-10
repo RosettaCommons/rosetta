@@ -276,6 +276,8 @@
 
 #include <protocols/md/CartesianMDCreator.hh>
 
+#include <protocols/mean_field/GenMeanFieldMoverCreator.hh>
+
 #include <protocols/membrane/AddMembraneMoverCreator.hh>
 #include <protocols/membrane/AddMPLigandMoverCreator.hh>
 #include <protocols/membrane/FlipMoverCreator.hh>

@@ -57,9 +57,11 @@
 #include <protocols/simple_filters/DdgFilter.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/AlaScan.hh>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
 namespace protocols {
 namespace simple_filters {
 
@@ -487,6 +489,7 @@ RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pos
 	} else {
 		compute_modified_ddG( pose, out );
 	}
+
 }
 
 void

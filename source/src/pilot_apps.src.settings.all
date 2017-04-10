@@ -53,6 +53,12 @@ sources = {
 		#"antibody_mode", # /* Aroop,Documentation Location,Demo Location */
 		#"model_e2c_ubiquitin", # /* Aroop,Documentation Location,Demo Location */
 	],
+	"pilot/arubenstein" : [
+		#"mean_field", #/*Aliza Rubenstein, Documentation Location, Demo Location */
+		#"sequence_tolerance_mf",
+		#"spec_prof_compare",
+		#"discrim_sim",
+	],
 	"pilot/ashworth" : [
 		#"multistate_design_ga", # /* Justin Ashworth, doc/apps/pilot/multistate_design_ga.dox, deprecated */
 		"MSA_design", # /* Justin Ashworth, documentation pending further testing, test/integration/tests/sequence_profile_constraints */

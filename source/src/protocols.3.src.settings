@@ -343,6 +343,20 @@ sources = {
 		"MDBase",
 		"CartesianMD",
 	],
+        "protocols/mean_field" : [
+                "RotProb",
+                "AAProb",
+                "RotMatrix",
+                "AAMatrix",
+                "MeanField",
+                "DesignMeanField",
+                "FlexBBMeanField",
+                "FlexBBDesignMeanField",
+                "MeanFieldFactory",
+                "GenMeanFieldMover",
+                "ResHashMap",
+		"EnergiesByTaskCalculator"
+        ],
 	"protocols/membrane": [
 		"AddMembraneMover",
 		"AddMPLigandMover",
