@@ -229,6 +229,16 @@ public:
 		core::Real sc_scale=1.0
 	);
 
+	/// @brief Matches an individual atom to the density using the fast approximation
+	core::Real
+	matchAtomFast( int resid,
+		Size atomid,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		bool ignoreBs=false
+	);
+
 	/// @brief Computes the symmatric rotation matrices
 	void
 	compute_symm_rotations(
