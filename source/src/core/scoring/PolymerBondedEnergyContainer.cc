@@ -351,12 +351,13 @@ PolymerBondedEnergyContainer::is_valid(
 		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
 
 		core::conformation::Residue const & rsd = pose.residue(ir);
-		core::Size nconnected = rsd.n_current_residue_connections(); // not sure if this should be "possible" instead
+		core::Size nconnected = rsd.n_possible_residue_connections();
 
 		typedef std::multimap<core::Size, core::Size>::const_iterator it;
 		std::pair<it,it> range = chemical_edges_.equal_range(ir);
 
 		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
+			if ( rsd.connected_residue_at_resconn( ic ) == 0 ) continue;
 			core::Size connect_i = rsd.residue_connection_partner( ic );
 			bool connect_found = false;
 
@@ -393,8 +394,9 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 	for ( core::Size ir=1; ir<=nres; ++ir ) {
 		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
 		core::conformation::Residue const & rsd = pose.residue(ir);
-		core::Size nconnected = rsd.n_current_residue_connections(); // not sure if this should be "possible" instead
+		core::Size nconnected = rsd.n_possible_residue_connections();
 		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
+			if ( rsd.connected_residue_at_resconn( ic ) == 0 ) continue;
 			std::pair<core::Size,core::Size> edge = std::make_pair(ir,rsd.residue_connection_partner( ic ));
 			chemical_edges_.insert(edge);
 			if ( edge.first < edge.second ) {
