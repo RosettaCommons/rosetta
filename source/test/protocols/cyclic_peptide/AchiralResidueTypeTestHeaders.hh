@@ -180,4 +180,4 @@ public:
 } //namespace protocols
 } //namespace test
 
-#endif //INCLUDED_test_protocols_cyclic_peptide_NMethylation_functions_HH
+#endif //INCLUDED_test_protocols_cyclic_peptide_AchiralResidueTypeTestHeaders_HH
