@@ -874,6 +874,7 @@ RotamerSets::prepare_sets_for_packing(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sfxn)
 {
+	update_offset_data();
 	for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 		sfxn.prepare_rotamers_for_packing( pose, *set_of_rotamer_sets_[ ii ] );
 	}
