@@ -31,6 +31,7 @@
 // Cereal headers
 #include <cereal/access.hpp>
 #include <cereal/types/map.hpp>
+#include <cereal/types/set.hpp>
 #include <cereal/types/base_class.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
@@ -359,6 +360,19 @@ PolymerBondedEnergyContainer::is_valid(
 		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
 			if ( rsd.connected_residue_at_resconn( ic ) == 0 ) continue;
 			core::Size connect_i = rsd.residue_connection_partner( ic );
+
+			// Only count one bond to the other residue.
+			// O(N^2) expense, but requires no memory allocation, and the number
+			// of chemical bonds per residue is small (2 or 3).
+			bool duplicate_bond = false;
+			for ( core::Size ic2 = ic+1; ic2 <= nconnected; ++ic2 ) {
+				if ( rsd.residue_connection_partner( ic2 ) == connect_i ) {
+					duplicate_bond = true;
+					break;
+				}
+			}
+			if ( duplicate_bond ) continue;
+
 			bool connect_found = false;
 
 			// ensure ir,rsd.residue_connection_partner( ic ) is in the list
@@ -390,6 +404,7 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 ) {
 	core::Size nres = pose.total_residue();
 	chemical_edges_.clear();
+	chemical_edge_set_.clear();
 
 	for ( core::Size ir=1; ir<=nres; ++ir ) {
 		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
@@ -398,7 +413,11 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
 			if ( rsd.connected_residue_at_resconn( ic ) == 0 ) continue;
 			std::pair<core::Size,core::Size> edge = std::make_pair(ir,rsd.residue_connection_partner( ic ));
+			// Don't insert two edges between the same residue pair
+			if ( chemical_edge_set_.count( edge ) ) continue;
+
 			chemical_edges_.insert(edge);
+			chemical_edge_set_.insert( edge );
 			if ( edge.first < edge.second ) {
 				tables_[edge] = utility::vector1<core::Real>(score_types_.size(),0.0);
 				computed_[edge] = false;
@@ -424,10 +443,11 @@ template< class Archive >
 void
 core::scoring::PolymerBondedEnergyContainer::save( Archive & arc ) const {
 	arc( CEREAL_NVP( size_ ) ); // Size
+	arc( CEREAL_NVP( chemical_edges_ ) ); // std::multimap<Size,Size>
+	arc( CEREAL_NVP( chemical_edge_set_ ) ); // std::set<std::pair<Size,Size>>
 	arc( CEREAL_NVP( score_types_ ) ); // utility::vector1<ScoreType>
 	arc( CEREAL_NVP( tables_ ) ); // utility::vector1<utility::vector1<Real> >
 	arc( CEREAL_NVP( computed_ ) ); // utility::vector1<_Bool>
-	arc( CEREAL_NVP( chemical_edges_ ) ); // std::multimap<Size,Size>
 }
 
 /// @brief Automatically generated deserialization method
@@ -435,10 +455,11 @@ template< class Archive >
 void
 core::scoring::PolymerBondedEnergyContainer::load( Archive & arc ) {
 	arc( size_ ); // Size
+	arc( chemical_edges_ ); // std::multimap<Size,Size>
+	arc( chemical_edge_set_ ); // std::set<std::pair<Size,Size>>
 	arc( score_types_ ); // utility::vector1<ScoreType>
 	arc( tables_ ); // utility::vector1<utility::vector1<Real> >
 	arc( computed_ ); // utility::vector1<_Bool>
-	arc( chemical_edges_ ); // std::multimap<Size,Size>
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::PolymerBondedEnergyContainer );

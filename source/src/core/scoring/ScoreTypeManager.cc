@@ -169,6 +169,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_pair_aro_pol" ] = fa_pair_aro_pol;
 	name2score_type_[ "fa_pair_pol_pol" ] = fa_pair_pol_pol;
 	name2score_type_[ "fa_plane" ] = fa_plane;
+
 	name2score_type_[ "hbond_sr_bb" ] = hbond_sr_bb;
 	name2score_type_[ "hbond_lr_bb" ] = hbond_lr_bb;
 	name2score_type_[ "hbond_bb_sc" ] = hbond_bb_sc;
@@ -176,6 +177,16 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hbond_lr_bb_sc" ] = hbond_lr_bb_sc;
 	name2score_type_[ "hbond_sc"    ] = hbond_sc;
 	name2score_type_[ "hbond"    ] = hbond;
+
+	name2score_type_[ "npd_hbond_sr_bb" ] = npd_hbond_sr_bb;
+	name2score_type_[ "npd_hbond_lr_bb" ] = npd_hbond_lr_bb;
+	name2score_type_[ "npd_hbond_bb_sc" ] = npd_hbond_bb_sc;
+	name2score_type_[ "npd_hbond_sr_bb_sc" ] = npd_hbond_sr_bb_sc;
+	name2score_type_[ "npd_hbond_lr_bb_sc" ] = npd_hbond_lr_bb_sc;
+	name2score_type_[ "npd_hbond_sc"    ] = npd_hbond_sc;
+	name2score_type_[ "npd_hbond_intra" ] = npd_hbond_intra;
+	name2score_type_[ "npd_hbond"    ] = npd_hbond;
+
 	name2score_type_[ "fa_grpelec" ] = fa_grpelec;
 	name2score_type_[ "interchain_pair" ] = interchain_pair;
 	name2score_type_[ "interchain_vdw" ] = interchain_vdw;

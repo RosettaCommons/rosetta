@@ -179,7 +179,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 			last_accepted_prop_density = move->last_proposal_density_ratio();
 			last_accepted_dE = delta_energy;
 		} else { //rejected metropolis criterion
-			ig->reject_change( resid );
+			ig->reject_change( resid, new_state, *new_state->nonconst_data_ptr() );
 			set_last_accepted( false );
 		}
 

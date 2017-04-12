@@ -75,7 +75,13 @@ protected:
 	}
 
 	inline
-	BackgroundToFirstClassEdge< V, E, G >* get_edge_to_bg_node( int index ) const {
+	BackgroundToFirstClassEdge< V, E, G > const * get_edge_to_bg_node( int index ) const {
+		debug_assert( bg_edge_vector_up_to_date_ );
+		return bg_edge_vector_[ index ];
+	}
+
+	inline
+	BackgroundToFirstClassEdge< V, E, G > * get_edge_to_bg_node( int index ) {
 		debug_assert( bg_edge_vector_up_to_date_ );
 		return bg_edge_vector_[ index ];
 	}
@@ -87,7 +93,13 @@ protected:
 	}
 
 	inline
-	BackgroundNode< V, E, G >* get_adjacent_background_node( int index ) const {
+	BackgroundNode< V, E, G > const * get_adjacent_background_node( int index ) const {
+		debug_assert( bg_edge_vector_up_to_date_ );
+		return bg_node_vector_[ index ];
+	}
+
+	inline
+	BackgroundNode< V, E, G > * get_adjacent_background_node( int index ) {
 		debug_assert( bg_edge_vector_up_to_date_ );
 		return bg_node_vector_[ index ];
 	}

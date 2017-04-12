@@ -2934,7 +2934,7 @@ HBNet::run( Pose & pose )
 	//    }
 
 	rotamer_sets_->prepare_sets_for_packing( pose, *init_scorefxn_ );
-	ig_ = InteractionGraphFactory::create_interaction_graph( *task_, *rotamer_sets_, pose, *init_scorefxn_ );
+	ig_ = InteractionGraphFactory::create_interaction_graph( *task_, *rotamer_sets_, pose, *init_scorefxn_, *packer_neighbor_graph_ );
 	ig_->initialize( *rotamer_sets_ );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig( utility::pointer::dynamic_pointer_cast< PrecomputedPairEnergiesInteractionGraph > ( ig_ ) );

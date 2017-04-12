@@ -40,6 +40,13 @@ public:
 	Vector const & f1() const { return f1_; }
 	Vector const & f2() const { return f2_; }
 
+	DerivVectorPair &
+	operator += ( DerivVectorPair const & rhs ) {
+		f1_ += rhs.f1_;
+		f2_ += rhs.f2_;
+		return *this;
+	}
+
 private:
 	Vector f1_;
 	Vector f2_;
@@ -50,6 +57,24 @@ public:
 #endif // SERIALIZATION
 
 };
+
+inline
+DerivVectorPair
+operator * ( Real scale, DerivVectorPair const & dvp ) {
+	DerivVectorPair return_val;
+	return_val.f1() = scale * dvp.f1();
+	return_val.f2() = scale * dvp.f2();
+	return return_val;
+}
+
+inline
+DerivVectorPair
+operator * ( DerivVectorPair const & dvp, Real scale ) {
+	DerivVectorPair return_val;
+	return_val.f1() = scale * dvp.f1();
+	return_val.f2() = scale * dvp.f2();
+	return return_val;
+}
 
 } // scoring
 } // core

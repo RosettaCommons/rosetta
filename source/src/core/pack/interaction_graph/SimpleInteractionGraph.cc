@@ -14,18 +14,27 @@
 // Unit headers
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 
-// Project headers
-#include <utility/graph/Graph.hh>
+// Package headers
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/packer_neighbors.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/util.hh>
+#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
+#include <core/scoring/LREnergyContainer.hh>
+#include <core/scoring/Energies.hh>
+
 
 // Basic headers
 #include <basic/Tracer.hh>
 
+// Utility headers
+#include <utility/graph/Graph.hh>
 #include <utility/vector1.hh>
 
 
@@ -102,9 +111,10 @@ SimpleNode::commit_change_no_res_pointer_update()
 }
 
 void
-SimpleNode::reject_change()
+SimpleNode::reject_change( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
 {
 	moved_ = false;
+	setup_for_scoring_for_residue( res, residue_data_cache );
 }
 
 bool
@@ -217,6 +227,22 @@ SimpleNode::get_alternate() const
 	return alternate_residue_;
 }
 
+/// @brief return the current state -- must not be 0
+conformation::Residue const &
+SimpleNode::get_current_ref() const
+{
+	debug_assert( current_residue_ );
+	return *current_residue_;
+}
+
+/// @brief return the alternate state -- must not be 0
+conformation::Residue const &
+SimpleNode::get_alternate_ref() const
+{
+	debug_assert( alternate_residue_ );
+	return *alternate_residue_;
+}
+
 Vector const &
 SimpleNode::bb_centroid() const
 {
@@ -256,6 +282,7 @@ SimpleNode::alt_sc_radius() const
 void
 SimpleNode::setup_for_scoring_for_residue( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache )
 {
+	//std::cout << "setup for scoring for residue " << res->seqpos() << " " << res->name() << std::endl;
 	// call setup for scoring for residue on the energy methods that require it:
 	for ( auto const & method : get_simple_ig_owner()->setup_for_scoring_for_residue_energy_methods() ) {
 		method->setup_for_scoring_for_residue( *res, get_simple_ig_owner()->pose(),
@@ -337,7 +364,9 @@ SimpleEdge::SimpleEdge( Graph* owner, Size res1, Size res2 ):
 	Edge( owner, res1, res2 ),
 	// long_range_energies_exist_( false ),
 	current_energy_(0),
-	proposed_energy_(0)
+	proposed_energy_(0),
+	calc_short_range_(true),
+	calc_long_range_(true)
 {
 	// compute_energy();
 	for ( Size ii = 0; ii < 3; ++ii ) {
@@ -399,13 +428,15 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 	debug_assert( node1 && node2 );
 	conformation::ResidueCOP res1;
 	conformation::ResidueCOP res2;
-	Vector r1bb_centroid( node1->bb_centroid() ), r2bb_centroid( node2->bb_centroid() );
+
 	//Real   r1bb_rad( node1->bb_radius() + 0.5 ), r2bb_rad( node2->bb_radius() + 0.5 );
+	Vector r1bb_centroid( node1->bb_centroid() ), r2bb_centroid( node2->bb_centroid() );
 	Real   r1bb_rad( node1->bb_radius() ), r2bb_rad( node2->bb_radius() );
 	Vector r1sc_centroid, r2sc_centroid;
 	Real   r1sc_rad, r2sc_rad;
-	//std::string node1_used = "";
-	//std::string node2_used = "";
+
+	//res1 = use_current_node1 ? node1->get_current() : node1->get_alternate();
+	//res2 = use_current_node2 ? node2->get_current() : node2->get_alternate();
 
 	if ( !use_current_node1 ) {
 		res1 = node1->get_alternate();
@@ -418,7 +449,7 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 		r1sc_rad = node1->curr_sc_radius();
 		//node1_used = "current";
 	}
-
+	
 	if ( !use_current_node2 ) {
 		//node2_used = "alternate";
 		res2 = node2->get_alternate();
@@ -430,11 +461,14 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 		r2sc_centroid = node2->curr_sc_centroid();
 		r2sc_rad = node2->curr_sc_radius();
 	}
-	//r1sc_rad += 0.5;
-	//r2sc_rad += 0.5;
 
-	//res1->update_actcoord();
-	//res2->update_actcoord();
+	// Add 1.0A fudge to the score-function cutoffs. There's a bug somewhere in either our thinking
+	// about the meaning of the atomic-interaction-cutoff, or in the implementation of certain terms
+	// that causes deltaE discrepancies in the absence of these
+	r1sc_rad += 0.5;
+	r2sc_rad += 0.5;
+	r1bb_rad += 0.5;
+	r2bb_rad += 0.5;
 
 	// TR.Debug << res1->seqpos() << " using " << node1_used << " " << res2->seqpos() << " " << node2_used << std::endl;
 
@@ -444,23 +478,49 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 	scoring::ScoreFunction const & sfxn = ig->scorefunction();
 	EnergyMap emap; // APL Note: class TwoBodyEnergyMap has been deprecated / removed
 
-	//ig->scorefunction().eval_ci_2b( *res1, *res2, pose, emap );
-	//ig->scorefunction().eval_cd_2b( *res1, *res2, pose, emap );
+	if ( calc_short_range_ ) {
+		// Just call residue pair energy directly?
+		//ig->scorefunction().eval_ci_2b( *res1, *res2, pose, emap );
+		//ig->scorefunction().eval_cd_2b( *res1, *res2, pose, emap );
 
-	scoring::eval_scsc_sr2b_energies( *res1, *res2, r1sc_centroid, r2sc_centroid, r1sc_rad, r2sc_rad, pose, sfxn, emap );
-	scoring::eval_bbsc_sr2b_energies( *res1, *res2, r1bb_centroid, r2sc_centroid, r1bb_rad, r2sc_rad, pose, sfxn, emap );
-	scoring::eval_bbsc_sr2b_energies( *res2, *res1, r2bb_centroid, r1sc_centroid, r2bb_rad, r1sc_rad, pose, sfxn, emap );
+		// Or break up residue pair energies into sc/sc, sc/bb, and bb/bb interactions.
+		scoring::eval_scsc_sr2b_energies( *res1, *res2, r1sc_centroid, r2sc_centroid, r1sc_rad, r2sc_rad, pose, sfxn, emap );
+		scoring::eval_bbsc_sr2b_energies( *res1, *res2, r1bb_centroid, r2sc_centroid, r1bb_rad, r2sc_rad, pose, sfxn, emap );
+		scoring::eval_bbsc_sr2b_energies( *res2, *res1, r2bb_centroid, r1sc_centroid, r2bb_rad, r1sc_rad, pose, sfxn, emap );
 
+		// Instead of calculating bb/bb energies repeatedly, only evaluate bb/bb energies once,
+		// allowing for three kinds of backbones: proline, glycine, and everything else. This
+		// is handled by the get_bbE function below.
+		//scoring::eval_bbbb_sr2b_energies( *res1, *res2, r1bb_centroid, r2bb_centroid, r1bb_rad, r2bb_rad, pose, sfxn, emap );
+
+	}
+	if ( calc_long_range_ ) {
+		for ( auto it = sfxn.long_range_energies_begin(); it != sfxn.long_range_energies_end(); ++it ) {
+			if ( (*it)->defines_residue_pair_energy( pose, get_first_node_ind(), get_second_node_ind()) ) {
+				(*it)->residue_pair_energy( *res1, *res2, pose, sfxn, emap);
+			}
+		}
+	}
+
+	//if ( res1->seqpos() == 49 && res2->seqpos() == 72 ) {
+	//	std::cout << " SimpleIG::compute_energy " << res1->seqpos() << " " << res2->seqpos() << " ";
+	//	emap.show_weighted( std::cout, ig->scorefunction().weights() );
+	//	std::cout << std::endl;
+	//}
 
 	Real energy =
-		ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_2b_types() ) +
-		ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_2b_types() ) +
+    ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_2b_types() ) +
+    ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_2b_types() ) +
+    ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_lr_2b_types() ) +
+    ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_lr_2b_types() ) +
 		get_bb_E( *res1, *res2 );
+
 	if ( use_current_node1 && use_current_node2 ) {
 		current_energy_ = energy;
 	} else {
 		proposed_energy_ = energy;
 	}
+
 }
 
 Real
@@ -552,59 +612,140 @@ void SimpleInteractionGraph::set_scorefunction( ScoreFunction const & sfxn )
 	}
 }
 
-//set up all nodes of graph
+pose::PoseCOP
+SimpleInteractionGraph::pose_cop() const {
+	return pose_;
+}
+
+
 void
 SimpleInteractionGraph::initialize( pose::Pose const & pose){
+	task::PackerTaskOP task( task::TaskFactory::create_packer_task(pose) );
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		task->nonconst_residue_task( ii ).restrict_to_repacking();
+	}
+	initialize(pose, task);
+}
+
+void
+SimpleInteractionGraph::initialize(
+	pose::Pose const & pose,
+	task::PackerTaskCOP task
+)
+{
 	TR.Debug << "calling initialize on pose " << std::endl;
 	set_pose_no_initialize( pose );
 
-	for ( auto const & method : sfxn_->all_methods() ) {
-		if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {
-			sfs_energy_methods_.push_back( method );
-		}
+	//Prepare Edges For Short Range Interactions
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn_, task );
+	copy_connectivity(*packer_neighbor_graph);
+	for ( EdgeListIter iter = edge_list_begin(), iter_end = edge_list_end();
+			iter != iter_end; ++iter ) {
+		SimpleEdge * existing_edge = static_cast< SimpleEdge * >( *iter );
+		existing_edge->calc_short_range(true);
+		existing_edge->calc_long_range(false);
 	}
 
-	//Real current_energy = (*sfxn_)(*pose_); //DEBUG
-	runtime_assert( pose_ != 0 );
-	//Graph::delete_everything();//DEBUG
-	if ( num_nodes() != pose.size() ) {
-		set_num_nodes( pose.size() );
-	}
 
-	// This already occurrs in the call to set_pose_no_initialize
-	//for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
-	// SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
-	// runtime_assert( newnode );
-	// newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
-	//}
+	//Prepare Edges For Long Range Interactions
+	for( auto it = sfxn_->long_range_energies_begin(); it != sfxn_->long_range_energies_end(); ++it){
+		scoring::LREnergyContainerCOP lrec = pose.energies().long_range_container( (*it)->long_range_type() );
 
-	//neighbors determined through ScoreFunction::are_they_neighbors function
-	for ( Size ii = 1; ii <= pose_->size(); ii++ ) {
-		for ( Size jj = 1; jj < ii; jj++ ) {
-			//TR.Debug << "examining nodes " << jj << " " << ii << std::endl;
-			if ( sfxn_->are_they_neighbors( *pose_, jj, ii ) ) {
-				if ( Graph::get_edge_exists( jj, ii ) ) {
-					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
+		if ( !lrec || lrec->empty() ) continue;
+		for ( Size ii = 1; ii <= pose_->size(); ii++ ) {
+			for ( scoring::ResidueNeighborConstIteratorOP rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii ); (*rni) != (*rniend); ++(*rni) ) {
+
+				Size node1 = rni->lower_neighbor_id();
+				Size node2 = rni->upper_neighbor_id();
+
+				if ( Graph::get_edge_exists( node1, node2 ) ) {
+					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( node1, node2 ) );
+
 					if ( existing_edge ) {
-						existing_edge->compute_energy( true, true );
+						existing_edge->calc_long_range(true);
 					}
 				} else {
-					/// NOOOOO SimpleEdge* newedge( new SimpleEdge( this, jj, ii ) ); //automatically adds edge upon creation
-					/// Edges should only be added to a graph using the "add_edge" method.
+					SimpleEdge * new_edge = static_cast< SimpleEdge * > ( add_edge( node1, node2 ));
+					new_edge->calc_short_range(false);
+					new_edge->calc_long_range(true);
+				}
 
-					SimpleEdge * newedge = static_cast< SimpleEdge * > ( add_edge( jj, ii ));
-					newedge->compute_energy( true, true );
-					//TR.Debug << "DEBUG2 these two residues are neighbors " << ii << " " << jj << std::endl;
+			}//rni
+		}//ii
+	}//it
+
+	for ( EdgeListIter iter = edge_list_begin(), iter_end = edge_list_end(); iter != iter_end; ++iter ) {
+		SimpleEdge * existing_edge = static_cast< SimpleEdge * >( *iter );
+		existing_edge->compute_energy( true, true );
+	}
+
+	/*
+	for ( Size ii = 2; ii <= pose_->size(); ii++ ) {
+		for ( Size jj = 1; jj < ii; jj++ ) {
+
+			bool calc_short_range_interactions = false;
+			bool calc_long_range_interactions = false;
+
+			//Short Range
+			if ( sfxn_->are_they_neighbors( *pose_, jj, ii ) ) {
+				calc_short_range_interactions = true;
+			}
+
+			//Long Range
+			for( auto it = sfxn_->long_range_energies_begin(); it != sfxn_->long_range_energies_end(); ++it){
+				if( (*it)->defines_residue_pair_energy(*pose_, ii, jj) ){
+					calc_long_range_interactions = true;
+					break;
 				}
 			}
-		}
-	}
+
+			//Update Edge Settings and Compute Energy
+			if ( calc_short_range_interactions || calc_long_range_interactions){
+				if ( Graph::get_edge_exists( jj, ii ) ){
+					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
+
+					if ( existing_edge ) {
+						existing_edge->calc_short_range(calc_short_range_interactions);
+						existing_edge->calc_long_range(calc_long_range_interactions);
+						existing_edge->compute_energy( true, true );
+					}
+				}
+				else{
+					SimpleEdge * new_edge = static_cast< SimpleEdge * > ( add_edge( jj, ii ));
+					new_edge->calc_short_range(calc_short_range_interactions);
+					new_edge->calc_long_range(calc_long_range_interactions);
+					new_edge->compute_energy( true, true );
+				}
+			}
+			else {//Negate (remove?) any edges that do not represent any interactions
+				if ( Graph::get_edge_exists( jj, ii ) ){
+					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
+
+					if ( existing_edge ) {
+						existing_edge->calc_short_range(false);
+						existing_edge->calc_long_range(false);
+						existing_edge->compute_energy( true, true );
+					}
+				}
+			}
+
+		}//jj
+		}//ii*/
 }
 
 void
 SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 {
 	pose_ = pose::PoseCOP( pose::PoseOP( new pose::Pose( pose ) ) );
+	if ( sfxn_ ) {
+		for ( auto const & method : sfxn_->all_methods() ) {
+			if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {
+				sfs_energy_methods_.push_back( method );
+			}
+		}
+	}
+
 	if ( num_nodes() != pose.size() ) {
 		set_num_nodes( pose.size() );
 	}
@@ -617,6 +758,18 @@ SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 }
 
 
+void SimpleInteractionGraph::setup_after_edge_addition()
+{
+	for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
+		for ( auto iter = get_node( ii )->upper_edge_list_begin(), iter_end = get_node( ii )->upper_edge_list_end(); iter != iter_end; ++iter ) {
+			(static_cast< SimpleEdge * > (*iter))->compute_energy( true, true );
+		}
+	}
+}
+
+//void SimpleInteractionGraph::setup_after_edge_addition() {}
+
+
 void
 SimpleInteractionGraph::commit_change( Size node_id ){
 	static_cast< SimpleNode * >(get_node( node_id ))->commit_change();
@@ -625,8 +778,8 @@ SimpleInteractionGraph::commit_change( Size node_id ){
 }
 
 void
-SimpleInteractionGraph::reject_change( Size node_id ){
-	static_cast< SimpleNode * >( get_node( node_id ) )->reject_change();
+SimpleInteractionGraph::reject_change( Size node_id , conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache ){
+	static_cast< SimpleNode * >( get_node( node_id ) )->reject_change( res, residue_data_cache );
 }
 
 /// @details Note, this function returns (currE - altE) which represents

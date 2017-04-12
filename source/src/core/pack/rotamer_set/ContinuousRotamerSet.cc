@@ -215,7 +215,7 @@ Size
 ContinuousRotamerSet::num_base_rotamers_total() const { return n_baserots_total_; }
 
 Size
-ContinuousRotamerSet::num_sampling_rotamers_total() const { return n_baserots_total_; }
+ContinuousRotamerSet::num_sampling_rotamers_total() const { return n_samplingrots_total_; }
 
 Size
 ContinuousRotamerSet::sampling_id_for_current_rotamer() const

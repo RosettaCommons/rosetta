@@ -84,6 +84,90 @@ WARNING WARNING WARNING
 **/
 
 
+HBDerivAssigner::HBDerivAssigner(
+	HBondOptions const & hbondoptions,
+	HBEvalTuple hb_eval,
+	conformation::Residue const & don_rsd,
+	Size don_h_atm,
+	conformation::Residue const & acc_rsd,
+	Size acc_atm
+) :
+	acc_hybrid_( get_hbe_acc_hybrid( hb_eval.eval_type())),
+	h_ind_( don_h_atm ),
+	d_ind_( don_rsd.atom_base( don_h_atm )),
+	a_ind_( acc_atm ),
+	abase_ind_( acc_rsd.atom_base( acc_atm )),
+	abase_prime_ind_( acc_hybrid_ == chemical::RING_HYBRID ? acc_rsd.abase2( acc_atm ) : 0 ),
+	abase2_ind_( acc_rsd.abase2( acc_atm )),
+	measure_sp3acc_BAH_from_hvy_( hbondoptions.measure_sp3acc_BAH_from_hvy() )
+{
+
+}
+
+Size HBDerivAssigner::h_ind() const { return h_ind_; }
+Size HBDerivAssigner::d_ind() const { return d_ind_; }
+Size HBDerivAssigner::a_ind() const { return a_ind_; }
+Size HBDerivAssigner::abase_ind() const { return abase_ind_; }
+Size HBDerivAssigner::abase_prime_ind() const  { return abase_prime_ind_; }
+Size HBDerivAssigner::abase2_ind() const { return abase2_ind_; }
+
+Size HBDerivAssigner::ind( which_atom_in_hbond which )
+{
+	switch ( which ) {
+		case which_hb_unassigned : return 0;
+		case which_hb_hatm : return h_ind_;
+		case which_hb_datm : return d_ind_;
+		case which_hb_aatm : return a_ind_;
+		case which_hb_abase : return abase_ind_;
+		case which_hb_abase_prime : return abase_prime_ind_;
+		case which_hb_abase2 : return abase2_ind_;
+	}
+	// appease compiler
+	return 0;
+}
+
+AssignmentScaleAndDerivVectID
+HBDerivAssigner::assignment( which_atom_in_hbond which )
+{
+	using namespace chemical;
+
+	AssignmentScaleAndDerivVectID assn; // scale_, dvect_id_
+	assn.scale_ = 1.0;
+	assn.dvect_id_ = which;
+
+	// Anything below is for changing the default specified above
+	switch ( which ) {
+	case which_hb_abase :
+		switch ( acc_hybrid_ ) {
+		case SP3_HYBRID :
+			if ( ! measure_sp3acc_BAH_from_hvy_ ) {
+				assn.scale_ = 0.0;
+				assn.dvect_id_ = which_hb_unassigned;
+			}
+			break;
+		case RING_HYBRID :
+			assn.scale_ = 0.5;
+			assn.dvect_id_ = which_hb_abase;
+			break;
+		default :
+			break;
+		}
+		break;
+	case which_hb_abase_prime :
+		if ( acc_hybrid_ == RING_HYBRID ) {
+			assn.scale_ = 0.5;
+			assn.dvect_id_ = which_hb_abase;
+		} else {
+			assn.scale_ = 0.0;
+			assn.dvect_id_ = which_hb_unassigned;
+		}
+		break;
+	default:
+		break;
+	}
+	return assn;
+}
+
 void
 fill_hbond_set(
 	pose::Pose const & pose,
@@ -629,6 +713,46 @@ identify_hbonds_1way(
 }
 
 
+/// @brief Returns the energy for the hydrogen bond between a given don/acceptor
+/// pair
+Real
+hb_energy(
+	HBondDatabase const & database,
+	HBondOptions const & options,
+	HBondSet const & hbset,
+	conformation::Residue const & acc_rsd,
+	Size aatm,
+	conformation::Residue const & don_rsd,
+	Size hatm
+)
+{
+	Real unweighted_energy( 0.0 );
+
+	Size datm = don_rsd.atom_base( hatm );
+	HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+
+	int const base ( acc_rsd.atom_base( aatm ) );
+	int const base2( acc_rsd.abase2( aatm ) );
+	debug_assert( base2 > 0 && base != base2 );
+
+	hb_energy_deriv( database, options, hbe_type,
+		don_rsd.xyz( datm ),
+		don_rsd.xyz( hatm ),
+		acc_rsd.xyz( aatm ),
+		acc_rsd.xyz( base ),
+		acc_rsd.xyz( base2),
+		unweighted_energy, false /*evaluate_derivative*/, DUMMY_DERIVS );
+
+	if ( unweighted_energy >= MAX_HB_ENERGY ) return unweighted_energy;
+
+	Real environmental_weight (!options.use_hb_env_dep() ? 1 :
+		get_environment_dependent_weight(hbe_type, hbset.nbrs( don_rsd.seqpos() ),
+		hbset.nbrs( acc_rsd.seqpos() ), options));
+
+	return environmental_weight * unweighted_energy;
+}
+
+
 void
 identify_hbonds_1way_AHdist(
 	HBondDatabase const & database,
@@ -783,6 +907,75 @@ identify_intra_res_hbonds(
 //instead.
 
 void
+increment_hbond_energy(
+	HBEvalType const & hbe_type,
+	EnergyMap & emap,
+	Real hbE
+)
+{
+	emap[hbond] += hbE;
+	switch ( get_hbond_weight_type( hbe_type )) {
+	case hbw_NONE:
+	case hbw_SR_BB :
+		emap[hbond_sr_bb] += hbE; break;
+	case hbw_LR_BB :
+		emap[hbond_lr_bb] += hbE; break;
+	case hbw_SR_BB_SC :
+		//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+		emap[hbond_bb_sc] += hbE;
+		emap[hbond_sr_bb_sc] += hbE; break;
+	case hbw_LR_BB_SC :
+		//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+		emap[hbond_bb_sc] += hbE;
+		emap[hbond_lr_bb_sc] += hbE; break;
+	case hbw_SC :
+		emap[hbond_sc] += hbE; break;
+	default :
+		tr.Fatal << "energy from unexpected HB type " << hbe_type << std::endl;
+		utility_exit_with_message("Unexpected HB type encountered.");
+		break;
+	}
+
+}
+
+void
+increment_npd_hbond_energy(
+	HBEvalType const & hbe_type,
+	EnergyMap & emap,
+	Real hbE,
+	bool intra_res
+)
+{
+	emap[npd_hbond] += hbE;
+	if ( intra_res ) {
+		emap[ npd_hbond_intra ] += hbE;
+	} else {
+		switch ( get_hbond_weight_type( hbe_type )) {
+		case hbw_NONE:
+		case hbw_SR_BB :
+			emap[npd_hbond_sr_bb] += hbE; break;
+		case hbw_LR_BB :
+			emap[npd_hbond_lr_bb] += hbE; break;
+		case hbw_SR_BB_SC :
+			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+			emap[npd_hbond_bb_sc] += hbE;
+			emap[npd_hbond_sr_bb_sc] += hbE; break;
+		case hbw_LR_BB_SC :
+			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+			emap[npd_hbond_bb_sc] += hbE;
+			emap[npd_hbond_lr_bb_sc] += hbE; break;
+		case hbw_SC :
+			emap[npd_hbond_sc] += hbE; break;
+		default :
+			tr << "Warning: energy from unexpected HB type ignored "
+				<< hbe_type << std::endl;
+			runtime_assert(false);
+			break;
+		}
+	}
+}
+
+void
 get_hbond_energies(
 	HBondSet const & hbond_set,
 	EnergyMap & emap
@@ -799,29 +992,8 @@ get_hbond_energies(
 		}
 
 		Real hbE = hbond_.energy() /*raw energy*/ * hbond_.weight() /*env-dep-wt*/;
-		emap[hbond] += hbE;
-		switch(get_hbond_weight_type(hbe_type)){
-		case hbw_NONE:
-		case hbw_SR_BB :
-			emap[hbond_sr_bb] += hbE; break;
-		case hbw_LR_BB :
-			emap[hbond_lr_bb] += hbE; break;
-		case hbw_SR_BB_SC :
-			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-			emap[hbond_bb_sc] += hbE;
-			emap[hbond_sr_bb_sc] += hbE; break;
-		case hbw_LR_BB_SC :
-			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-			emap[hbond_bb_sc] += hbE;
-			emap[hbond_lr_bb_sc] += hbE; break;
-		case hbw_SC :
-			emap[hbond_sc] += hbE; break;
-		default :
-			tr.Fatal << "energy from unexpected HB type "
-				<< hbond << std::endl;
-			utility_exit_with_message("Unexpected HB type encountered.");
-			break;
-		}
+
+		increment_hbond_energy( hbe_type, emap, hbE );
 	}
 }
 
@@ -860,6 +1032,51 @@ hb_eval_type_weight(
 			weight += weights[hbond_lr_bb_sc]; break;
 		case hbw_SC :
 			weight += weights[hbond_sc]; break;
+		default :
+			tr.Fatal << "Warning: Unexpected HBondWeightType " << get_hbond_weight_type(hbe_type) << std::endl;
+			utility_exit_with_message("Unexpected HB type encountered.");
+			break;
+		}
+	}
+
+	return weight;
+}
+
+Real
+npd_hb_eval_type_weight(
+	HBEvalType const & hbe_type,
+	EnergyMap const & weights,
+	bool const intra_res /*false*/,
+	bool const put_intra_into_total /*true*/ )
+{
+	Real weight(0.0);
+
+	if ( intra_res ) {
+		if ( put_intra_into_total ) {
+			weight += weights[npd_hbond]; // typically zero if other weights are non-zero.
+		} else {
+			weight += weights[npd_hbond_intra];
+		}
+	} else {
+
+		weight += weights[npd_hbond]; // typically zero if other weights are non-zero.
+
+		switch(get_hbond_weight_type(hbe_type)){
+		case hbw_NONE:
+		case hbw_SR_BB :
+			weight += weights[npd_hbond_sr_bb]; break;
+		case hbw_LR_BB :
+			weight += weights[npd_hbond_lr_bb]; break;
+		case hbw_SR_BB_SC :
+			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+			weight += weights[npd_hbond_bb_sc];
+			weight += weights[npd_hbond_sr_bb_sc]; break;
+		case hbw_LR_BB_SC :
+			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+			weight += weights[npd_hbond_bb_sc];
+			weight += weights[npd_hbond_lr_bb_sc]; break;
+		case hbw_SC :
+			weight += weights[npd_hbond_sc]; break;
 		default :
 			tr.Fatal << "Unexpected HBondWeightType " << get_hbond_weight_type(hbe_type) << std::endl;
 			utility_exit_with_message("Unexpected HB type encountered.");
@@ -1150,30 +1367,7 @@ identify_hbonds_1way_membrane(
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-			emap[hbond] += hbE;
-			switch(get_hbond_weight_type(hbe_type.eval_type())){
-			case hbw_NONE:
-			case hbw_SR_BB :
-				emap[hbond_sr_bb] += hbE; break;
-			case hbw_LR_BB :
-				emap[hbond_lr_bb] += hbE; break;
-			case hbw_SR_BB_SC :
-				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-				emap[hbond_bb_sc] += hbE;
-				emap[hbond_sr_bb_sc] += hbE; break;
-			case hbw_LR_BB_SC :
-				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-				emap[hbond_bb_sc] += hbE;
-				emap[hbond_lr_bb_sc] += hbE; break;
-			case hbw_SC :
-				emap[hbond_sc] += hbE; break;
-			default :
-				tr.Warning << "energy from unexpected HB type "
-					<< hbe_type.eval_type() << std::endl;
-				utility_exit_with_message("Unexpected HB type encountered.");
-				break;
-			}
-			/////////
+			increment_hbond_energy( hbe_type.eval_type(), emap, hbE );
 
 		} // loop over acceptors
 	} // loop over donors

@@ -263,6 +263,16 @@ enum ScoreType {
 	hbond_sc,
 	hbond_intra,  //Currently affects only RNA & ligands, but can be turned on for protein, DNA.
 	hbond, // all hbonds summed together with same weight.
+
+	npd_hbond_sr_bb,
+	npd_hbond_lr_bb,
+	npd_hbond_bb_sc,
+	npd_hbond_sr_bb_sc,
+	npd_hbond_lr_bb_sc,
+	npd_hbond_sc,
+	npd_hbond_intra,
+	npd_hbond, // all hbonds summed together with same weight.
+
 	fa_grpelec,
 
 #ifdef PYROSETTA

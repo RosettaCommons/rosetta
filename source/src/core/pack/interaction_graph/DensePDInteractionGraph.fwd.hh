@@ -21,7 +21,10 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
+class DensePDNode;
+class DensePDEdge;
 class DensePDInteractionGraph;
+
 typedef utility::pointer::shared_ptr< DensePDInteractionGraph > DensePDInteractionGraphOP;
 typedef utility::pointer::shared_ptr< DensePDInteractionGraph const > DensePDInteractionGraphCOP;
 

@@ -222,7 +222,7 @@ int DensePDNode::get_current_state() const
 }
 
 /// @brief returns the one body energy for the state the node is currently assigned
-core::PackerEnergy DensePDNode::get_one_body_energy_current_state()
+core::PackerEnergy DensePDNode::get_one_body_energy_current_state() const
 { return curr_state_one_body_energy_;}
 
 
@@ -285,6 +285,16 @@ void DensePDNode::update_internal_vectors()
 	alternate_state_two_body_energies_.resize( get_num_incident_edges() + 1);
 	return;
 }
+
+void
+DensePDNode::calc_deltaEpd( int alternate_state )
+{
+	//std::cout << "PDNode::calc_deltaEpd" << std::endl;
+
+	float dummy(0.0f);
+	project_deltaE_for_substitution( alternate_state, dummy );
+}
+
 
 /// @brief outputs to standard error the bookkeeping energies for the node in its
 /// current state assignment
@@ -468,16 +478,9 @@ void DensePDEdge::prepare_for_simulated_annealing()
 {
 	if ( ! energies_updated_since_last_prep_for_simA_ ) return;
 
-
 	energies_updated_since_last_prep_for_simA_ = false;
 
-	bool any_non_zero = false;
-	unsigned int const num_energies = two_body_energies_.size();
-	for ( unsigned int ii = 0; ii < num_energies; ++ii ) {
-		if ( two_body_energies_[ ii ] != 0.0f ) { any_non_zero = true; break;}
-	}
-
-	if ( ! any_non_zero ) delete this;
+	if ( pd_edge_table_all_zeros() ) delete this;
 }
 
 /// @brief returns the two body energy corresponding to the current states assigned to
@@ -627,6 +630,25 @@ DensePDEdge::swap_edge_energies(
 	two_body_energies_.swap( new_edge_table );
 }
 
+void
+DensePDEdge::prepare_for_simulated_annealing_no_deletion()
+{
+	energies_updated_since_last_prep_for_simA_ = false;
+}
+
+void
+DensePDEdge::declare_energies_final_no_deletion(){}
+
+bool DensePDEdge::pd_edge_table_all_zeros()
+{
+	unsigned int const num_energies = two_body_energies_.size();
+	for ( unsigned int ii = 0; ii < num_energies; ++ii ) {
+		if ( two_body_energies_[ ii ] != 0.0f ) { return false; }
+	}
+
+	return true;
+}
+
 
 //----------------------------------------------------------------------------//
 //--------- Dense Pairwise Decomposable Interaction Graph Class --------------//
@@ -758,6 +780,11 @@ DensePDInteractionGraph::commit_considered_substitution()
 core::PackerEnergy DensePDInteractionGraph::get_energy_current_state_assignment()
 {
 	update_internal_energy_totals();
+	return total_energy_current_state_assignment_;
+}
+
+float DensePDInteractionGraph::get_energy_PD_current_state_assignment()
+{
 	return total_energy_current_state_assignment_;
 }
 

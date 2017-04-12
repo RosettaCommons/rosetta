@@ -27,6 +27,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
+#include <core/pack/interaction_graph/NPDHBSimpleInteractionGraph.hh>
 
 //#include <core/conformation/symmetry/SymmetryInfo.hh>
 //#include <core/pose/symmetry/util.hh>
@@ -37,9 +38,11 @@
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -54,6 +57,7 @@
 
 // Numeric
 #include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -68,7 +72,7 @@
 namespace core {
 namespace pack {
 
-//#define APL_FULL_DEBUG
+// #define APL_FULL_DEBUG
 
 void compare_mingraph_and_energy_graph(
 	Size resid,
@@ -860,7 +864,7 @@ min_pack_optimize(
 #ifdef APL_FULL_DEBUG
 			conformation::ResidueOP before_sub_rotamer( 0 );
 			if ( bgres[ jj_resid ] ) {
-				before_sub_rotamer( new conformation::Residue( *bgres[ jj_resid ] ));
+				before_sub_rotamer.reset( new conformation::Residue( *bgres[ jj_resid ] ));
 			}
 			if ( ! curr_state.any_unassigned() ) {
 				for ( Size kk = 1; kk <= rotsets->nmoltenres(); ++kk ) {
@@ -1018,7 +1022,8 @@ min_pack_place_opt_rotamers_on_pose(
 
 void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 	Size resid,
-	pose::Pose const & pose,
+	pose::Pose const & curr_pose,
+	pose::Pose const & alt_pose,
 	scoring::ScoreFunction const & sfxn,
 	interaction_graph::SimpleInteractionGraph const & ig
 )
@@ -1028,12 +1033,31 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 	using namespace utility::graph;
 	using namespace interaction_graph;
 
+	std::cout << " total energy diff: ";
+	scoring::EnergyMap emap_diff( alt_pose.energies().total_energies() );
+	emap_diff -= curr_pose.energies().total_energies();
+	emap_diff.show_weighted( std::cout, sfxn.weights() );
+	std::cout << std::endl;
+
+	for ( Size ii = 1; ii <= alt_pose.size(); ++ii ) {
+		conformation::ResidueCOP iires = ( ii == resid ) ? ig.get_simple_node( ii )->get_alternate() : ig.get_simple_node( ii )->get_current();
+		if ( iires->natoms() != alt_pose.residue( ii ).natoms() ) {
+			std::cout << "Residue " << ii << " natoms discrepancy" << std::endl;
+		}
+		for ( Size jj = 1; jj <= alt_pose.residue( ii ).natoms(); ++jj ) {
+			if ( iires->xyz( jj ).distance_squared( alt_pose.residue(ii).xyz(jj) ) > 1e-6 ) {
+				std::cout << "Coordinate discrepancy between alt pose and ig's residue " << ii << " at atom " << jj << std::endl;
+			}
+		}
+	}
+
+
 	bool discrepancy( false );
 	// AMW: cppcheck flags this as being reducible in scope, but since it's static
 	// I think it should stay as-is
 	static int n_discreps( 0 );
 
-	EnergyMap const & one_body_emap( pose.energies().onebody_energies( resid ));
+	EnergyMap const & one_body_emap( alt_pose.energies().onebody_energies( resid ));
 	Real onebody_energy = sfxn.weights().dot( one_body_emap );
 	Real sig_onebody_energy = ig.get_simple_node( resid )->proposed_one_body_energy();
 
@@ -1050,7 +1074,7 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 	}
 	}*/
 
-	EnergyGraph const & eg( pose.energies().energy_graph() );
+	EnergyGraph const & eg( alt_pose.energies().energy_graph() );
 	for ( Node::EdgeListConstIter iter = eg.get_node(resid)->const_edge_list_begin(),
 			iter_end = eg.get_node(resid)->const_edge_list_end();
 			iter != iter_end; ++iter ) {
@@ -1063,9 +1087,9 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 		Real edge_energy = sfxn.weights().dot( emap );
 		if ( ! simple_edge ) {
 			std::cout << "Simple edge " << ii << " " << jj << " missing from simple interaction graph" << std::endl;
-			emap.show_if_nonzero_weight( std::cout, pose.energies().weights() );
+			emap.show_if_nonzero_weight( std::cout, alt_pose.energies().weights() );
 			std::cout << std::endl;
-			Real delta = emap.dot( pose.energies().weights() );
+			Real delta = emap.dot( alt_pose.energies().weights() );
 			if ( delta > 0 ) {
 				discrepancy = true;
 			}
@@ -1074,13 +1098,16 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 			Real ig_edge_energy = simple_edge->get_proposed_energy();
 			if ( std::abs( edge_energy - ig_edge_energy ) > 1e-5 ) {
 				std::cout << " twobody energy discrepancy: " << ii << " " << jj << " " << edge_energy << " " << ig_edge_energy << " " << edge_energy - ig_edge_energy << std::endl;
+				std::cout << "   ";
+				emap.show_weighted( std::cout, sfxn.weights() );
+				std::cout << std::endl;
 			}
 		}
 	}
 
 	if ( discrepancy ) {
 		++n_discreps;
-		pose.dump_pdb( "discrepancy_pose_" + utility::to_string( n_discreps ) + ".pdb" );
+		alt_pose.dump_pdb( "discrepancy_pose_" + utility::to_string( n_discreps ) + ".pdb" );
 	}
 
 }
@@ -1161,18 +1188,35 @@ off_rotamer_pack_setup(
 	rotsets = rotamer_set::ContinuousRotamerSetsOP( new rotamer_set::ContinuousRotamerSets( pose, *task ) );
 
 	// 1c
-	ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::SimpleInteractionGraph );
+	if (
+			sfxn.weights()[ scoring::npd_hbond_sr_bb ] != 0 ||
+			sfxn.weights()[ scoring::npd_hbond_lr_bb ] != 0 ||
+			sfxn.weights()[ scoring::npd_hbond_bb_sc ] != 0 ||
+			sfxn.weights()[ scoring::npd_hbond_sc ] != 0 ||
+			sfxn.weights()[ scoring::npd_hbond ] != 0 ) {
+		ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::NPDHBSimpleInteractionGraph );
+	} else {
+		ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::SimpleInteractionGraph );
+	}
 	ig->set_scorefunction( sfxn );
-	ig->set_pose_no_initialize( pose );
+	ig->initialize( pose, task ); // -- no, do not let the graph add its own edges
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
 	//for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 	// ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
 	//}
-	ig->copy_connectivity( *packer_neighbor_graph );
+	// ig->copy_connectivity( *packer_neighbor_graph );
+	ig->setup_after_edge_addition();
 }
 
 void
 off_rotamer_pack_optimize(
+#ifdef APL_FULL_DEBUG
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & sfxn,
+#else
+  pose::Pose const &,
+	scoring::ScoreFunction const &,
+#endif
 	rotamer_set::ContinuousRotamerSets const & rotsets,
 	scmin::AtomTreeCollectionOP atc,
 	interaction_graph::SimpleInteractionGraph & ig,
@@ -1188,6 +1232,18 @@ off_rotamer_pack_optimize(
 	Size const n_sample_rots = rotsets.n_sample_rotamers();
 	utility::vector1< Real > temps = initialize_temperatures_off_rotamer_pack();
 	scmin::SidechainStateAssignment curr_state( rotsets.nmoltenres() );
+
+	// TEMP! Assign the current rotamers to all residues for debugging purposes: jump directly
+	// to deltaE calculations that can be compared against a Pose. Do not leave in. DO NOT!
+	// Would crash if the input rotamers are not given on the command line.
+	//for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
+	//	Size ii_curr_rot = rotsets.rotamer_set_for_moltenres(ii).sampling_id_for_current_rotamer();
+	//	Size ii_rotblock = rotsets.rotamer_set_for_moltenres(ii).get_rotblock_index_for_sampling_rotamer( ii_curr_rot );
+	//	atc->moltenres_atomtree_collection( ii ).set_active_restype_index( ii_rotblock );
+	//	atc->moltenres_atomtree_collection( ii ).save_momento( curr_state.state_momento( ii ) );
+	//	curr_state.assign_state( ii, rotsets.rotamer_set_for_moltenres(ii).sampling_id_for_current_rotamer() );
+	//}
+
 
 	for ( Size ii = 1; ii <= temps.size(); ++ii ) {
 		Real ii_temperature = temps[ ii ];
@@ -1211,14 +1267,19 @@ off_rotamer_pack_optimize(
 			Real const deltaE = -1 * neg_deltaE;
 
 #ifdef APL_FULL_DEBUG
+			//std::cout << "scoring current" << std::endl;
 			Real curE = sfxn( debug_pose );
-			debug_pose.replace_residue( ran_res, atc->moltenres_atomtree_collection( ran_moltres ).active_residue(), false );
-			Real altE = sfxn( debug_pose );
+			pose::Pose alt_pose( debug_pose );
+			alt_pose.replace_residue( ran_res, atc->moltenres_atomtree_collection( ran_moltres ).active_residue(), false );
+			//std::cout << "scoring alternate" << std::endl;
+			Real altE = sfxn( alt_pose );
 			Real actual_deltaE = altE - curE;
-			if ( ! curr_state.any_unassigned() && std::abs( actual_deltaE - deltaE ) > 1e-5 ) {
+			if ( ! curr_state.any_unassigned() &&
+					(( std::abs( actual_deltaE ) > 1 && std::abs( (actual_deltaE - deltaE) / actual_deltaE ) > 1e-5 ) ||
+					( std::abs( actual_deltaE ) <= 1 && std::abs( actual_deltaE - deltaE ) > 1e-5 ))){
 				std::cout << "DeltaE discrepancy replacing residue " << ran_res << " "
 					<< actual_deltaE << " " << deltaE << " " << actual_deltaE - deltaE << std::endl;
-				compare_simple_inteaction_graph_alt_state_and_energy_graph( ran_res, debug_pose, sfxn, ig );
+				compare_simple_inteaction_graph_alt_state_and_energy_graph( ran_res, debug_pose, alt_pose, sfxn, ig );
 			}
 #endif
 
@@ -1228,6 +1289,9 @@ off_rotamer_pack_optimize(
 				++naccepts;
 				accum_deltaE += deltaE;
 				ig.commit_change( ran_res );
+#ifdef APL_FULL_DEBUG
+				debug_pose = alt_pose;
+#endif
 
 				/// Before assigning the state, write down: do we have extra bookkeeping we need to worry about?
 				bool const any_previously_unassigned = curr_state.any_unassigned();
@@ -1252,7 +1316,7 @@ off_rotamer_pack_optimize(
 
 					if ( curr_state.energy() < best_state.energy() ) {
 						Real totalE = ig.total_energy(); //get_total_energy_for_state( pose, bgres, sfxn, *mingraph, *scminmap, curr_state, atc, *rotsets );
-						debug_assert( std::abs( totalE - curr_state.energy() ) < 1e-5 ); // drift does accumulate, but it should be small!
+						//debug_assert( std::abs( totalE - curr_state.energy() ) < 1e-5 ); // drift does accumulate, but it should be small!
 						curr_state.assign_energy( totalE );
 						if ( totalE < best_state.energy() ) {
 							best_state = curr_state;
@@ -1263,10 +1327,8 @@ off_rotamer_pack_optimize(
 			} else {
 				// reject; restore the old residue
 				atc->moltenres_atomtree_collection( ran_moltres ).update_from_momento( curr_state.momento_for_moltenres( ran_moltres ) );
-				ig.reject_change( ran_res );
-#ifdef APL_FULL_DEBUG
-				debug_pose.replace_residue( ran_res, atc->moltenres_atomtree_collection( ran_moltres ).active_residue(), false );
-#endif
+				// AND call setup-for-scoring for this residue
+				ig.reject_change( ran_res, atc->moltenres_atomtree_collection( ran_moltres ).active_residue_cop(), atc->moltenres_atomtree_collection( ran_moltres ).active_residue_data() );
 			}
 		}
 		//std::cout << "Finished temperature " << ii_temperature << " with energy " << curr_state.energy() << " and best energy " << best_state.energy()
@@ -1325,7 +1387,7 @@ off_rotamer_pack(
 	off_rotamer_pack_setup( pose, sfxn, task, rotsets, atc, ig );
 
 	scmin::SidechainStateAssignment best_state( rotsets->nmoltenres() );
-	off_rotamer_pack_optimize( *rotsets, atc, *ig, best_state );
+	off_rotamer_pack_optimize( pose, sfxn, *rotsets, atc, *ig, best_state );
 
 	off_rotamer_pack_update_pose( pose, *rotsets, atc, best_state );
 

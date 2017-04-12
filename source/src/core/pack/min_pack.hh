@@ -107,6 +107,8 @@ off_rotamer_pack_setup(
 
 void
 off_rotamer_pack_optimize(
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & sfxn,
 	rotamer_set::ContinuousRotamerSets const & rotsets,
 	scmin::AtomTreeCollectionOP atc,
 	interaction_graph::SimpleInteractionGraph & ig,

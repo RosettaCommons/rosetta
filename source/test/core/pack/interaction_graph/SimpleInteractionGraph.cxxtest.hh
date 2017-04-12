@@ -281,7 +281,7 @@ public:
 		for ( core::Size ii(1); ii <= oneten.size(); ++ii ) {
 			ResidueOP res( new Residue(oneten.residue(ii)) );
 			TS_ASSERT_DELTA( simple_ig->consider_substitution(ii, res, *res->nonconst_data_ptr()), 0, 0.0001);
-			simple_ig->reject_change( ii );
+			simple_ig->reject_change( ii, res, *res->nonconst_data_ptr() );
 		}
 	}
 };

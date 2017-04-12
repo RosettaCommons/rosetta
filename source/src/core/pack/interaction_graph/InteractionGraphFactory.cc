@@ -23,10 +23,11 @@
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DoubleLazyInteractionGraph.hh>
+#include <core/pack/interaction_graph/HPatchInteractionGraph.hh>
 #include <core/pack/interaction_graph/LazyInteractionGraph.hh>
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
+#include <core/pack/interaction_graph/NPDHBondInteractionGraph.hh>
 #include <core/pack/interaction_graph/SurfaceInteractionGraph.hh>
-#include <core/pack/interaction_graph/HPatchInteractionGraph.hh>
 #include <core/pack/interaction_graph/SymmLinMemInteractionGraph.hh>
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
@@ -65,18 +66,28 @@ InteractionGraphFactory::create_interaction_graph(
 	task::PackerTask const & the_task,
 	rotamer_set::RotamerSets const & rotsets,
 	pose::Pose const & pose,
-	scoring::ScoreFunction const & sfxn
+	scoring::ScoreFunction const & sfxn,
+	utility::graph::Graph const & packer_neighbor_graph
 )
 {
 	core::Real surface_weight( sfxn.get_weight( core::scoring::surface ) );
 	core::Real hpatch_weight( sfxn.get_weight( core::scoring::hpatch ) );
+	core::Real npd_hbond_weight( std::max( {
+		sfxn.get_weight( core::scoring::npd_hbond ),
+		sfxn.get_weight( core::scoring::npd_hbond_sr_bb ),
+		sfxn.get_weight( core::scoring::npd_hbond_lr_bb ),
+		sfxn.get_weight( core::scoring::npd_hbond_bb_sc ),
+		sfxn.get_weight( core::scoring::npd_hbond_sr_bb_sc ),
+		sfxn.get_weight( core::scoring::npd_hbond_lr_bb_sc ),
+		sfxn.get_weight( core::scoring::npd_hbond_sc ),
+		sfxn.get_weight( core::scoring::npd_hbond_intra ) } ));
 
 	// don't use the surface or hpatch interaction graphs if we're not designing
 	if ( ! the_task.design_any() ) { surface_weight = 0; hpatch_weight = 0; }
 
 	if ( the_task.linmem_ig() ) {
-		/// Symmetric OTFIGs are not currently capable of handling either the Surface or HPatch scores, so check
-		/// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
+		// Symmetric OTFIGs are not currently capable of handling either the Surface, HPatch, or NPDHBond scores, so check
+		// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
 		if ( pose::symmetry::is_symmetric( pose ) ) {
 			T << "Instantiating SymmLinearMemoryInteractionGraph" << std::endl;
 			SymmLinearMemoryInteractionGraphOP symlinmemig( new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
@@ -109,6 +120,17 @@ InteractionGraphFactory::create_interaction_graph(
 			lmhig->set_recent_history_size( the_task.linmem_ig_history_size() );
 			return lmhig;
 		}
+		if ( npd_hbond_weight ) {
+			T << "Instantiating LinearMemoryNPDHBondInteractionGraph" << std::endl;
+			LinearMemoryNPDHBondInteractionGraphOP lmig( new LinearMemoryNPDHBondInteractionGraph( the_task.num_to_be_packed() ) );
+			lmig->set_pose( pose );
+			lmig->set_packer_neighbor_graph( packer_neighbor_graph );
+			lmig->set_packer_task( the_task );
+			lmig->set_score_function( sfxn );
+			lmig->set_rotamer_sets( rotsets );
+			lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
+			return lmig;
+		}
 
 		T << "Instantiating LinearMemoryInteractionGraph" << std::endl;
 		LinearMemoryInteractionGraphOP lmig( new LinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
@@ -140,6 +162,15 @@ InteractionGraphFactory::create_interaction_graph(
 						hig->set_score_weight( hpatch_weight );
 						return hig;
 
+					} else if ( npd_hbond_weight != 0 ) {
+						T << "Instantiating StandardNPDHBondInteractionGraph" << std::endl;
+						StandardNPDHBondInteractionGraphOP ig( new StandardNPDHBondInteractionGraph( the_task.num_to_be_packed() ));
+						ig->set_pose( pose );
+						ig->set_score_function( sfxn );
+						ig->set_packer_neighbor_graph( packer_neighbor_graph );
+						ig->set_packer_task( the_task );
+						ig->set_rotamer_sets( rotsets );
+						return ig;
 					} else if ( the_task.lazy_ig() ) {
 						T << "Instantiating LazyInteractionGraph" << std::endl;
 						LazyInteractionGraphOP lazy_ig( new LazyInteractionGraph( the_task.num_to_be_packed() ) );
@@ -161,13 +192,26 @@ InteractionGraphFactory::create_interaction_graph(
 				}
 			}
 		}
+	} else if ( npd_hbond_weight ) {
+		T << "Instantiating DenseNPDHBondInteractionGraph" << std::endl;
+
+		DenseNPDHBondInteractionGraphOP ig( new DenseNPDHBondInteractionGraph( the_task.num_to_be_packed() ));
+		ig->set_pose( pose );
+		ig->set_score_function( sfxn );
+		ig->set_packer_neighbor_graph( packer_neighbor_graph );
+		ig->set_packer_task( the_task );
+		ig->set_rotamer_sets( rotsets );
+		return ig;
+
 	}
 
 	// either of the two below
 	// 'linmem_ig flag is off and design is not being performed', or 'linmem_ig flag is off and centroid mode design is being performed'
 	//This will also trigger if there are no rotamers
+
 	T << "Instantiating DensePDInteractionGraph" << std::endl;
 	return InteractionGraphBaseOP( new DensePDInteractionGraph( the_task.num_to_be_packed() ) );
+
 }
 
 InteractionGraphBaseOP
@@ -178,7 +222,7 @@ InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
 	scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph)
 {
-	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn);
+	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn, *packer_neighbor_graph);
 
 	PROF_START( basic::GET_ENERGIES );
 	rotsets.compute_energies( pose, scfxn, packer_neighbor_graph, ig );
@@ -252,4 +296,3 @@ InteractionGraphFactory::setup_IG_res_res_weights(
 }
 }
 }
-

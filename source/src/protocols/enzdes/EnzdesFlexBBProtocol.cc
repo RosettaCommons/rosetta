@@ -1642,7 +1642,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 
 	rotsets->prepare_sets_for_packing( pose, *scorefxn );
 
-	//ig = InteractionGraphFactory::create_interaction_graph( *task, *rotsets, pose, *scorefxn );
+	//ig = InteractionGraphFactory::create_interaction_graph( *task, *rotsets, pose, *scorefxn, *packer_neighbor_graph );
 	core::pack::interaction_graph::PDInteractionGraphOP ig( new core::pack::interaction_graph::PDInteractionGraph( task->num_to_be_packed() ) );
 
 	ig->initialize( *rotsets );

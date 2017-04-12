@@ -532,7 +532,7 @@ GreenPacker::compute_reference_intragroup_rpes(
 {
 	using namespace core::pack::interaction_graph;
 	InteractionGraphBaseOP ig = InteractionGraphFactory::create_interaction_graph(
-		*reference_task_, *reference_rotamer_sets_, pose, *ci_sfxn_ );
+		*reference_task_, *reference_rotamer_sets_, pose, *ci_sfxn_, *reference_packer_neighbor_graph_ );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig(
 		utility::pointer::dynamic_pointer_cast< PrecomputedPairEnergiesInteractionGraph > ( ig ));
@@ -789,7 +789,9 @@ GreenPacker::compute_energies(
 		*current_task_,
 		*current_rotamer_sets_,
 		pose,
-		*full_sfxn_ );
+		*full_sfxn_,
+		*current_packer_neighbor_graph_
+	);
 
 	PrecomputedPairEnergiesInteractionGraphOP pig(
 		utility::pointer::dynamic_pointer_cast< PrecomputedPairEnergiesInteractionGraph > ( ig ));

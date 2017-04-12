@@ -186,7 +186,6 @@ public:
 		EnergyMap & emap
 	) const override;
 
-
 	/// @brief  Just used in packing, currently.
 	void
 	sidechain_sidechain_energy(

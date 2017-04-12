@@ -30,6 +30,7 @@
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ Headers
 #include <map>
@@ -69,6 +70,15 @@ public:
 		std::string const & protocol,
 		std::string const & comparer,
 		std::string const & reporter);
+
+	void
+	append_protocol_attributes( utility::tag::AttributeList & attlist ) const;
+
+	void
+	append_comparer_attributes( utility::tag::AttributeList & attlist ) const;
+
+	void
+	append_reporter_attributes( utility::tag::AttributeList & attlist ) const;
 
 private:
 

@@ -43,9 +43,6 @@ namespace pack {
 namespace interaction_graph {
 
 // belongs in DensePDInteractionGraph.fwd.hh
-class DensePDNode;
-class DensePDEdge;
-class DensePDInteractionGraph;
 
 class DensePDNode : public PrecomputedPairEnergiesNode
 {
@@ -68,7 +65,7 @@ public:
 	virtual bool state_unassigned() const { return current_state_ == 0;}
 	void assign_state(int new_state);
 	int get_current_state() const;
-	core::PackerEnergy get_one_body_energy_current_state();
+	core::PackerEnergy get_one_body_energy_current_state() const;
 	inline core::PackerEnergy project_deltaE_for_substitution
 	(
 		int alternate_state,
@@ -129,6 +126,17 @@ public:
 
 protected:
 	void update_internal_vectors();
+
+	//Hooks for SASANode< V, E, G > class
+	core::PackerEnergy get_curr_pd_energy_total() const { return curr_state_total_energy_;}
+	core::PackerEnergy get_alt_pd_energy_total() const { return alternate_state_total_energy_;}
+	void set_alternate_state( int alt ) { alternate_state_ = alt; }
+	int get_alternate_state() const { return alternate_state_; }
+	void calc_deltaEpd( int alternate_state );
+	bool considering_alternate_state() const
+	{
+		return alternate_state_is_being_considered_;
+	}
 
 private:
 
@@ -239,6 +247,13 @@ public:
 		ObjexxFCL::FArray2D< core::PackerEnergy > & new_edge_table
 	);
 
+protected:
+
+	// Hook for NPD classes
+	void prepare_for_simulated_annealing_no_deletion();
+	void declare_energies_final_no_deletion();
+	bool pd_edge_table_all_zeros();
+
 private:
 
 	inline DensePDNode       * get_dpd_node( int index );
@@ -286,6 +301,9 @@ public:
 	/// @brief removes all accumulated numerical drift and returns the
 	/// energy for the current state assignment.
 	virtual core::PackerEnergy get_energy_current_state_assignment();
+	/// @brief Hook for classes derived from AdditionalBackgroundNodesInteractionGraph
+	core::PackerEnergy get_energy_PD_current_state_assignment();
+
 	/// @brief returns the number of floats used in all edge two-body energy tables
 	virtual int get_edge_memory_usage() const;
 

@@ -217,6 +217,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 			protocol_ = factory->get_rotamer_recovery_protocol(protocol_name);
 		}
 	}
+	// TO DO: protocol_->parse_attributes( tag );
 
 	//mjo if there are many options to be passed to the components,
 	//consider passing the tag to the components themselves to do their
@@ -242,6 +243,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 	string const & comparer_name(tag->getOption<string>(
 		"comparer", "RRComparerAutomorphicRMSD"));
 	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
+	comparer_->parse_attributes_from_tag( tag );
 
 	if ( tag->hasOption("recovery_threshold") ) {
 		comparer_->set_recovery_threshold(tag->getOption<Real>("recovery_threshold"));
@@ -367,6 +369,10 @@ void RotamerRecoveryFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	attlist + XMLSchemaAttribute(
 		"predicted_features_reporter", xs_string,
 		"feature reporter that reports to db of type ReportToDB");
+
+	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
+	factory->append_protocol_attributes( attlist );
+	factory->append_comparer_attributes( attlist );
 
 	protocols::features::xsd_type_definition_w_attributes(
 		xsd, class_name(),

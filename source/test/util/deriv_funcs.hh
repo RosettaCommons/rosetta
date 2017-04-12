@@ -23,6 +23,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/optimization/atom_tree_minimize.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>
 #include <core/optimization/MinimizerMap.hh>
@@ -333,6 +334,22 @@ public:
 				r1_min_data, r2_min_data, *pose_, sfxn_->weights(),
 				min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 		}
+
+		// Whole-pose-context energies should have their contribution calculated here.
+		for ( auto
+						iter     = mingraph->whole_pose_context_enmeths_begin(),
+						iter_end = mingraph->whole_pose_context_enmeths_end();
+					iter != iter_end; ++iter ) {
+			for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
+				for ( Size jj = 1; jj <= pose_->residue(ii).natoms(); ++jj ) {
+					(*iter)->eval_atom_derivative( id::AtomID( jj, ii ), *pose_, min_map_->domain_map(),
+						*sfxn_, sfxn_->weights(),
+						min_map.atom_derivatives( ii )[ jj ].f1(),
+						min_map.atom_derivatives( ii )[ jj ].f2() );
+				}
+			}
+		}
+
 	}
 
 	inline

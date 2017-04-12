@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--class--.cc
-/// @brief --brief--
+/// @file   --path--/--class--.cc
+/// @brief  Creator for --brief--
 /// @author --name-- (--email--)
 
-+#ifndef INCLUDED_--path_underscore--_--class--_hh
-+#define INCLUDED_--path_underscore--_--class--_hh
+#ifndef INCLUDED_--path_underscore--_--class--Creator_HH
+#define INCLUDED_--path_underscore--_--class--Creator_HH
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
@@ -25,7 +25,7 @@ class --class--Creator : public core::pack::task::operation::TaskOperationCreato
 public:
 	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
 	std::string keyname() const override;
-	void provide_xml_schema( XMLSchemaDefinition & xsd ) override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 
@@ -33,4 +33,4 @@ public:
 --end_namespace--
 
 
-#endif //INCLUDED_--path--_--class--_hh
+#endif //INCLUDED_--path--_--class--Creator_HH

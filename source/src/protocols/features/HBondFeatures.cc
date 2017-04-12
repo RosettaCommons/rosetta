@@ -922,7 +922,7 @@ HBondFeatures::insert_hbond_row(
 	AtomID_Map< vector1<HBondCOP> > const & site_partners,
 	sessionOP db_session
 ){
-	ASSERT_ONLY( bool found_don_partner( false ); )
+	ASSERT_ONLY( bool found_don_partner( false ); );
 
 	//Zero if unique
 	//i in 1 through n if ith lowest energy hbond made with this site

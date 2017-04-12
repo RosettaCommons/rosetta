@@ -11,7 +11,7 @@
 require(ggplot2)
 require(proto)
 
-GeomIndicator <- proto(ggplot2:::Geom, {
+GeomIndicator <- ggproto(`class`=ggplot2:::Geom, `_inherit`=NULL, {
 	objname <- "indicator"
 	draw <- function(., data, scales, coordinates, ...){
 

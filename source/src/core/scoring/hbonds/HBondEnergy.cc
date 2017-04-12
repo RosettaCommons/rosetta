@@ -732,19 +732,19 @@ HBondEnergy::hbond_derivs_1way(
 					hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
 			}
 
-			/// Only accumulate h and acc derivs for now; soon, don, h, acc, a-base and abase2 derivs
-			don_atom_derivs[ datm ].f1() += weighted_energy * deriv.don_deriv.f1();
-			don_atom_derivs[ datm ].f2() += weighted_energy * deriv.don_deriv.f2();
-			don_atom_derivs[ hatm ].f1() += weighted_energy * deriv.h_deriv.f1();
-			don_atom_derivs[ hatm ].f2() += weighted_energy * deriv.h_deriv.f2();
-			acc_atom_derivs[ aatm ].f1() += weighted_energy * deriv.acc_deriv.f1();
-			acc_atom_derivs[ aatm ].f2() += weighted_energy * deriv.acc_deriv.f2();
-
-			// ring-acceptor derivative assignment logic is tricky
-			assign_abase_derivs( *options_, acc_rsd, aatm, hbe_type, deriv.abase_deriv, weighted_energy, acc_atom_derivs );
-
-			acc_atom_derivs[ base2 ].f1() += weighted_energy * deriv.abase2_deriv.f1();
-			acc_atom_derivs[ base2 ].f2() += weighted_energy * deriv.abase2_deriv.f2();
+			HBDerivAssigner assigner( *options_, hbe_type, don_rsd, hatm, acc_rsd, aatm );
+			for ( Size ii = 1; ii <= n_hb_atoms; ++ii ) {
+				which_atom_in_hbond ii_which = which_atom_in_hbond(ii);
+				if ( assigner.ind( ii_which ) == 0 ) continue;
+				AssignmentScaleAndDerivVectID ii_asadvi = assigner.assignment( ii_which );
+				if ( ii_asadvi.dvect_id_ == which_hb_unassigned ) continue;
+				DerivVectorPair ii_deriv = ii_asadvi.scale_ * weighted_energy * deriv.deriv( ii_asadvi.dvect_id_ );
+				if ( ii <= which_last_donor_atm ) {
+					don_atom_derivs[ assigner.ind( ii_which ) ] += ii_deriv;
+				} else {
+					acc_atom_derivs[ assigner.ind( ii_which ) ] += ii_deriv;
+				}
+			}
 
 		} // loop over acceptors
 	} // loop over donors

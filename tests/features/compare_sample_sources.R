@@ -173,17 +173,19 @@ initialize_packages <- function(opt, base_dir){
 	# load_packages() will help the user to install the packages if they are missing
 	source(paste(base_dir, "scripts/methods/load_packages.R", sep="/"))
 	libraries <- c(
+		"methods",
 		"reshape",
 		"plyr",
 		"proto",
 		"ggplot2",
 		"RSQLite",
-		"logspline",
 		"plotrix",
 		"polynom",
 		"rjson",
 		"xtable",
     "scales")
+
+#		"logspline", # APL TEMP!
 
 
 	if(!is.null(opt$ncores)){

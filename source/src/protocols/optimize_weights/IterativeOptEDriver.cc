@@ -2793,6 +2793,9 @@ void IterativeOptEDriver::write_new_scorefile()
 		if ( option[ optE::no_hb_env_dependence ] ) {
 			fout << "NO_HB_ENV_DEP\n";
 		}
+		if ( option[ optE::include_intra_res_protein ] ) {
+			fout << "INCLUDE_INTRA_RES_PROTEIN\n";
+		}
 
 		for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 			if ( combined_weights[ ScoreType( ii ) ] != 0 ) {
@@ -2954,11 +2957,6 @@ IterativeOptEDriver::configure_new_scorefunction() const
 		options.exclude_protein_protein_fa_elec( true );
 		scorefxn->set_energy_method_options( options );
 	}
-	if ( option[ optE::no_hb_env_dependence ] ) {
-		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
-		options.hbond_options().use_hb_env_dep( false );
-		scorefxn->set_energy_method_options( options );
-	}
 	if ( option[ optE::no_hb_env_dependence_DNA ] ) {
 		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 		options.hbond_options().use_hb_env_dep_DNA( false );
@@ -2977,6 +2975,11 @@ IterativeOptEDriver::configure_new_scorefunction() const
 	if ( option[ optE::centroid_rot_min ] ) {
 		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 		options.atom_vdw_atom_type_set_name( "centroid_rot:min" );
+		scorefxn->set_energy_method_options( options );
+	}
+	if ( option[ optE::include_intra_res_protein ] ) {
+		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
+		options.exclude_intra_res_protein( false );
 		scorefxn->set_energy_method_options( options );
 	}
 	return scorefxn;
@@ -3558,7 +3561,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 		design_task = copy_native_packertask_logic( native_pose,
 			pose,
 			task_factory_);
-	} else if ( option[ optE::design_with_minpack ] ) {
+	} else if ( option[ optE::design_with_minpack ] || option[ optE::design_with_offrotpack ]  ) {
 		// Don't use extra rotamers during design, but do use extra rotamers when coming up with the
 		// rotamers used in the weight fitting step.  Basically, with design_with_minpack on the command
 		// line, command line flags that effect the packer no longer effect the design phase.
@@ -3731,7 +3734,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 	// If desired lock the task to the starting pose to prevent changes as we go on.
 	if ( option[ optE::constant_logic_taskops_file ].user() ) {
 		packing_task = copy_native_packertask_logic( native_pose, pose, task_factory_);
-	} else if ( option[ optE::design_with_minpack ] ) {
+	} else if ( option[ optE::design_with_minpack ] || option[ optE::design_with_offrotpack ] ) {
 		// Don't use extra rotamers during design, but do use extra rotamers when coming up with the
 		// rotamers used in the weight fitting step.  Basically, with design_with_minpack on the command
 		// line, command line flags that effect the packer no longer effect the design phase.
@@ -4763,8 +4766,11 @@ IterativeOptEDriver::measure_sequence_recovery(
 
 	protocols::moves::MoverOP design_mover;
 
-	if ( option[ optE::design_with_minpack ] ) {
+	if ( option[ optE::design_with_minpack ] || option[ optE::design_with_offrotpack ] ) {
 		protocols::simple_moves::MinPackMoverOP minpack_mover( new protocols::simple_moves::MinPackMover );
+		if ( option[ optE::design_with_offrotpack ] ) {
+			minpack_mover->off_rotamer_pack( true );
+		}
 		minpack_mover->task_factory( task_factory_for_design );
 		minpack_mover->score_function( sfxn );
 		design_mover = minpack_mover;

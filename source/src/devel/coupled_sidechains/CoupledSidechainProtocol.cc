@@ -299,7 +299,7 @@ CoupledSidechainProtocol::apply(
 		core::conformation::ResidueOP new_state( new core::conformation::Residue( pose.residue( resid ) ) );
 		new_state = make_move( new_state );
 		counters_.count_trial( type() );
-		core::Real delta_energy = ig_->consider_substitution( resid, new_state );
+		core::Real delta_energy = ig_->consider_substitution( resid, new_state, *new_state->nonconst_data_ptr() );
 		if ( pass_metropolis( delta_energy, SidechainMover::last_proposal_density_ratio() ) ) { //ek
 			previous_[ resid ] = current_[ resid ] ;
 			ig_->commit_change( resid );
@@ -312,7 +312,7 @@ CoupledSidechainProtocol::apply(
 			}
 			counters_.count_accepted( type() );
 		} else { //rejected metropolis criterion
-			ig_->reject_change( resid );
+			ig_->reject_change( resid, new_state, *new_state->nonconst_data_ptr() );
 		}
 
 		if ( tempering_ ) {

@@ -45,6 +45,55 @@ struct SSWeightParameters {
 	Size len_l_, len_h_;
 };
 
+// The idea is that for each of the atoms involved in the hbond, there needs
+// to be a coorespondence to the entry in the HBondDerivs struct that holds
+// the derivative vector for that atom. In particular, the logic for the abase
+// and abase2 atoms is complicated, and so to encapsulate that logic, we
+// need this small struct and also the HBDerivAssigner.
+struct AssignmentScaleAndDerivVectID {
+	AssignmentScaleAndDerivVectID() : scale_( 1.0 ), dvect_id_( which_hb_unassigned ) {}
+	Real scale_;
+	which_atom_in_hbond dvect_id_;
+};
+
+class HBDerivAssigner
+{
+public:
+	HBDerivAssigner(
+		HBondOptions const & hbondoptions,
+		HBEvalTuple hb_eval,
+		conformation::Residue const & don_rsd,
+		Size don_h_atm,
+		conformation::Residue const & acc_rsd,
+		Size acc_atm
+	);
+
+	Size h_ind() const;
+	Size d_ind() const;
+	Size a_ind() const;
+	Size abase_ind() const;
+	Size abase_prime_ind() const; // returns zero if no appropriate abase'
+	Size abase2_ind() const;      // returns zero if no appropriate abase2
+
+	Size ind( which_atom_in_hbond which );
+
+	/// @brief For a given role in the hbond, return the scale factor and the entry
+	/// in the HBondDerivs struct so that the derivative can be properly assigned
+	/// to that atom.
+	AssignmentScaleAndDerivVectID
+	assignment( which_atom_in_hbond which );
+
+private:
+	chemical::Hybridization acc_hybrid_;
+	Size h_ind_;
+	Size d_ind_;
+	Size a_ind_;
+	Size abase_ind_;
+	Size abase_prime_ind_;
+	Size abase2_ind_;
+	bool measure_sp3acc_BAH_from_hvy_;
+};
+
 bool
 calculate_intra_res_hbonds( conformation::Residue const & rsd,
 	HBondOptions const & options );
@@ -100,6 +149,23 @@ fill_hbond_set_by_AHdist_threshold(
 	pose::Pose const & pose,
 	Real const AHdist_threshold,
 	HBondSet & hbond_set);
+
+/// @brief Increment the appropriate places in the input energy map for a particular hydrogen bond
+void
+increment_hbond_energy(
+	HBEvalType const & hbe_type,
+	EnergyMap & emap,
+	Real hbE
+);
+
+/// @brief Increment the appropriate places in the input energy map for a particular hydrogen bond
+void
+increment_npd_hbond_energy(
+	HBEvalType const & hbe_type,
+	EnergyMap & emap,
+	Real hbE,
+	bool intra_res
+);
 
 void
 get_hbond_energies(
@@ -166,6 +232,19 @@ identify_hbonds_1way(
 	Real ssdep_weight_factor = 1.0
 );
 
+/// @brief Returns the energy for the hydrogen bond between a given don/acceptor
+/// pair
+Real
+hb_energy(
+	HBondDatabase const & database,
+	HBondOptions const & hbondoptions,
+	HBondSet const & hbset,
+	conformation::Residue const & acc,
+	Size acc_atm,
+	conformation::Residue const & don,
+	Size don_atm
+);
+
 void
 identify_hbonds_1way_AHdist(
 	HBondDatabase const & database,
@@ -208,6 +287,14 @@ get_environment_dependent_weight(
 
 Real
 hb_eval_type_weight(
+	HBEvalType const & hbe_type,
+	EnergyMap const & emap,
+	bool const intra_res = false,
+	bool const put_intra_into_total = true
+);
+
+Real
+npd_hb_eval_type_weight(
 	HBEvalType const & hbe_type,
 	EnergyMap const & emap,
 	bool const intra_res = false,

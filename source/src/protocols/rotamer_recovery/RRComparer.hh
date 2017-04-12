@@ -18,15 +18,14 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
-// C++ Headers
-
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -79,6 +78,12 @@ public: // public interface
 		core::Real & score,
 		bool & recovered ) = 0;
 
+	virtual
+	void
+	parse_attributes_from_tag(
+		utility::tag::TagCOP tag
+	);
+
 };
 
 class RRComparerRotBins : public RRComparer {
@@ -101,16 +106,15 @@ public: // public interface
 	std::string
 	get_parameters() const override;
 
-
-	virtual
 	void
 	set_recovery_threshold(
-		core::Real const recovery_threshold) override;
+		core::Real const recovery_threshold
+	) override;
 
-	virtual
 	void
 	set_absolute_threshold(
-		core::Real const absolute_threshold) override;
+		core::Real const absolute_threshold
+	) override;
 
 	bool
 	measure_rotamer_recovery(
@@ -120,6 +124,11 @@ public: // public interface
 		core::conformation::Residue const & res2,
 		core::Real & score,
 		bool & recovered) override;
+
+	void
+	parse_attributes_from_tag(
+		utility::tag::TagCOP tag
+	) override;
 
 private: // data members
 
@@ -165,6 +174,15 @@ public: // public interface
 		core::conformation::Residue const & res2,
 		core::Real & score,
 		bool & recovered) override;
+
+	void
+	parse_attributes_from_tag(
+		utility::tag::TagCOP tag
+	) override;
+
+	static
+	void
+	append_attributes( utility::tag::AttributeList & attlist );
 
 private: // data members
 	core::Real tolerance_;

@@ -31,8 +31,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-//#include <utility/exit.hh>
-// #include <utility/pointer/access_ptr.hh>
+#include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -43,29 +42,20 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
 
-// C++
-#include <map> // what is the right header for std::pair ?
+// C++ headers
+#include <map>
 
-// option key includes
-
-#include <utility/vector1.hh>
-
-
-//#include <set>
-
-#ifdef SERIALIZATION
+#ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Cereal headers
 #include <cereal/access.hpp>
-#include <cereal/types/base_class.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
-
 
 namespace core {
 namespace scoring {
@@ -111,7 +101,12 @@ HBond::HBond(
 	eval_tuple_( hbe_tuple ),
 	energy_( energy_in ),
 	weight_( weight_in ),
-	derivs_( derivs_in )
+	don_npd_weight_( 1.0 ),
+	acc_npd_weight_( 1.0 ),
+	derivs_( derivs_in ),
+	index_( 0 ),
+	don_index_( 0 ),
+	acc_index_( 0 )
 {}
 
 
@@ -207,6 +202,62 @@ HBond::weight() const
 {
 	return weight_;
 }
+
+Real
+HBond::don_npd_weight() const
+{
+	return don_npd_weight_;
+}
+
+Real
+HBond::acc_npd_weight() const
+{
+	return acc_npd_weight_;
+
+}
+
+void
+HBond::don_npd_weight( Real setting )
+{
+	don_npd_weight_ = setting;
+}
+
+void
+HBond::acc_npd_weight( Real setting )
+{
+	acc_npd_weight_ = setting;
+}
+
+Size HBond::index() const
+{
+	return index_;
+}
+
+void HBond::index( Size setting )
+{
+	index_ = setting;
+}
+
+Size HBond::don_index() const
+{
+	return don_index_;
+}
+
+void HBond::don_index( Size setting )
+{
+	don_index_ = setting;
+}
+
+Size HBond::acc_index() const
+{
+	return acc_index_;
+}
+
+void HBond::acc_index( Size setting )
+{
+	acc_index_ = setting;
+}
+
 
 
 HBondDerivs const &
@@ -619,6 +670,7 @@ HBondSet::append_hbond(
 		aatm , aatm_is_protein_backbone, acc_rsd.is_protein(),
 		acc_rsd.is_DNA(), aatm_is_backbone, acc_pos,
 		hbe_tuple, energy, weight, derivs ) ) );
+	hbonds_[ hbonds_.size() ]->index( hbonds_.size() );
 
 	// update hbcheck
 	// note: these dimension checks could be removed completely & replaced by pose-aware dimensioning
@@ -693,12 +745,11 @@ HBondSet::nhbonds(Size const seqpos, bool include_only_allowed /* true */) const
 Size
 HBondSet::nhbonds( AtomID const & atom, bool include_only_allowed /* true */) const
 {
-	utility::vector1< HBondCOP > const bonds = atom_hbonds(atom, include_only_allowed);
+	utility::vector1< HBondCOP > const & bonds = atom_hbonds(atom, include_only_allowed);
 	return bonds.size();
 }
 
-/// @brief  Get a vector of all the hbonds involving this atom
-utility::vector1< HBondCOP > const
+utility::vector1< HBondCOP >
 HBondSet::atom_hbonds( AtomID const & atom, bool include_only_allowed /* true */ ) const
 {
 	setup_atom_map();
@@ -716,7 +767,19 @@ HBondSet::atom_hbonds( AtomID const & atom, bool include_only_allowed /* true */
 	return result_bonds;
 }
 
-utility::vector1< HBondCOP > const
+utility::vector1< HBondCOP > const &
+HBondSet::atom_hbonds_all( AtomID const & atom ) const
+{
+	setup_atom_map();
+	HBondAtomMap::const_iterator iter( atom_map_.find( atom ) );
+	if ( iter != atom_map_.end() ) {
+		return iter->second;
+	} else {
+		return empty_hbond_vector_;
+	}
+}
+
+utility::vector1< HBondCOP >
 HBondSet::residue_hbonds(const Size seqpos, bool include_only_allowed /* true */ ) const
 {
 	utility::vector1< HBondCOP > bonds;
@@ -770,7 +833,8 @@ HBondSet::setup_atom_map() const // lazy updating
 	if ( atom_map_init_ ) return;
 	atom_map_init_ = true;
 	for ( Size i=1; i<= hbonds_.size(); ++i ) {
-		HBondCOP hb( hbond_cop(i) );
+		// You can get an OP without changing an object
+		HBondOP hb( hbonds_[i] );
 		AtomID const don_atom( hb->don_hatm(), hb->don_res() );
 		AtomID const acc_atom( hb->acc_atm() , hb->acc_res() );
 		for ( Size r=1; r<= 2; ++r ) {
@@ -782,6 +846,9 @@ HBondSet::setup_atom_map() const // lazy updating
 				iter = atom_map_.find( atom );
 			} // atom not already present
 			iter->second.push_back( hb );
+
+			if ( r == 1 ) hb->don_index( iter->second.size() );
+			else          hb->acc_index( iter->second.size() );
 		} // repeat for donor and acceptor
 	} // i=1.nhbonds
 }
@@ -797,7 +864,8 @@ HBondSet::setup_for_residue_pair_energies(
 	// in the process we fill the arrays that keep track of which protein bb groups are making a
 	// bb-bb hbond
 	//
-	// sc-bb hbonds with these groups are disallowed
+	// sc-bb hbonds with these groups are disallowed if the
+	// hbondoptions.bb_donor_acceptor_check_ boolean is true.
 
 	SSWeightParameters ssdep;
 	ssdep.ssdep_ = options_->length_dependent_srbb();
@@ -936,56 +1004,21 @@ HBondSet::show(
 	}
 }
 
+void HBondSet::hbond_don_npd_weight( Size index, Real setting )
+{
+	hbonds_[ index ]->don_npd_weight( setting );
+}
+void HBondSet::hbond_acc_npd_weight( Size index, Real setting )
+{
+	hbonds_[ index ]->acc_npd_weight( setting );
+}
 
 }
 }
 }
+
 
 #ifdef    SERIALIZATION
-
-/// @brief Automatically generated serialization method
-template< class Archive >
-void
-core::scoring::hbonds::HBondSet::save( Archive & arc ) const {
-	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc( CEREAL_NVP( options_ ) ); // HBondOptionsCOP
-	arc( CEREAL_NVP( hbonds_ ) ); // utility::vector1<HBondOP>
-	arc( CEREAL_NVP( backbone_backbone_donor_ ) ); // utility::vector1<_Bool>
-	arc( CEREAL_NVP( backbone_backbone_acceptor_ ) ); // utility::vector1<_Bool>
-	arc( CEREAL_NVP( nbrs_ ) ); // utility::vector1<int>
-	arc( CEREAL_NVP( atom_map_ ) ); // HBondAtomMap
-	arc( CEREAL_NVP( atom_map_init_ ) ); // _Bool
-}
-
-/// @brief Automatically generated deserialization method
-template< class Archive >
-void
-core::scoring::hbonds::HBondSet::load( Archive & arc ) {
-	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	std::shared_ptr< core::scoring::hbonds::HBondOptions > local_options;
-	arc( local_options ); // HBondOptionsCOP
-	options_ = local_options; // copy the non-const pointer(s) into the const pointer(s)
-	arc( hbonds_ ); // utility::vector1<HBondOP>
-	arc( backbone_backbone_donor_ ); // utility::vector1<_Bool>
-	arc( backbone_backbone_acceptor_ ); // utility::vector1<_Bool>
-	arc( nbrs_ ); // utility::vector1<int>
-
-	std::map< core::id::AtomID, utility::vector1< HBondOP > > local_atom_map;
-	arc( local_atom_map ); // HBondAtomMap
-	//atom_map_ = local_atom_map; // this doesn't work!
-	for ( std::map< core::id::AtomID, utility::vector1< HBondOP > >::const_iterator
-					iter = local_atom_map.begin(), iter_end = local_atom_map.end();
-				iter != iter_end; ++iter ) {
-		atom_map_[ iter->first ] = iter->second;
-	}
-
-
-	arc( atom_map_init_ ); // _Bool
-}
-
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondSet );
-CEREAL_REGISTER_TYPE( core::scoring::hbonds::HBondSet )
-
 
 /// @brief Default constructor required by cereal to deserialize this class
 core::scoring::hbonds::HBond::HBond() {}
@@ -1009,7 +1042,12 @@ core::scoring::hbonds::HBond::save( Archive & arc ) const {
 	arc( CEREAL_NVP( eval_tuple_ ) ); // class core::scoring::hbonds::HBEvalTuple
 	arc( CEREAL_NVP( energy_ ) ); // Real
 	arc( CEREAL_NVP( weight_ ) ); // Real
+	arc( CEREAL_NVP( don_npd_weight_ ) ); // Real
+	arc( CEREAL_NVP( acc_npd_weight_ ) ); // Real
 	arc( CEREAL_NVP( derivs_ ) ); // struct core::scoring::hbonds::HBondDerivs
+	arc( CEREAL_NVP( index_ ) ); // Size
+	arc( CEREAL_NVP( don_index_ ) ); // Size
+	arc( CEREAL_NVP( acc_index_ ) ); // Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -1031,11 +1069,60 @@ core::scoring::hbonds::HBond::load( Archive & arc ) {
 	arc( eval_tuple_ ); // class core::scoring::hbonds::HBEvalTuple
 	arc( energy_ ); // Real
 	arc( weight_ ); // Real
+	arc( don_npd_weight_ ); // Real
+	arc( acc_npd_weight_ ); // Real
 	arc( derivs_ ); // struct core::scoring::hbonds::HBondDerivs
+	arc( index_ ); // Size
+	arc( don_index_ ); // Size
+	arc( acc_index_ ); // Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBond );
 CEREAL_REGISTER_TYPE( core::scoring::hbonds::HBond )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondSet::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( options_ ) ); // HBondOptionsCOP
+	arc( CEREAL_NVP( hbonds_ ) ); // utility::vector1<HBondOP>
+	arc( CEREAL_NVP( backbone_backbone_donor_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( backbone_backbone_acceptor_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( nbrs_ ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( atom_map_ ) ); // HBondAtomMap
+	arc( CEREAL_NVP( atom_map_init_ ) ); // _Bool
+	arc( CEREAL_NVP( empty_hbond_vector_ ) ); // utility::vector1<HBondCOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondSet::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	std::shared_ptr< core::scoring::hbonds::HBondOptions > local_options;
+	arc( local_options ); // HBondOptionsCOP
+	options_ = local_options; // copy the non-const pointer(s) into the const pointer(s)
+	arc( hbonds_ ); // utility::vector1<HBondOP>
+	arc( backbone_backbone_donor_ ); // utility::vector1<_Bool>
+	arc( backbone_backbone_acceptor_ ); // utility::vector1<_Bool>
+	arc( nbrs_ ); // utility::vector1<int>
+	std::map< core::id::AtomID, utility::vector1< std::shared_ptr< core::scoring::hbonds::HBond > >, struct std::less< core::id::AtomID > > local_atom_map;
+	arc( local_atom_map ); // HBondAtomMap
+	// atom_map_ = local_atom_map; // copy the non-const pointer(s) into the const pointer(s)
+	for ( auto iter : local_atom_map ) {
+		atom_map_[ iter.first ] = iter.second;
+	}
+
+	arc( atom_map_init_ ); // _Bool
+	utility::vector1< std::shared_ptr< core::scoring::hbonds::HBond > > local_empty_hbond_vector;
+	arc( local_empty_hbond_vector ); // utility::vector1<HBondCOP>
+	empty_hbond_vector_ = local_empty_hbond_vector; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondSet );
+CEREAL_REGISTER_TYPE( core::scoring::hbonds::HBondSet )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_hbonds_HBondSet )
 #endif // SERIALIZATION

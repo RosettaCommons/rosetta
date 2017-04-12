@@ -18,11 +18,15 @@
 // Unit headers
 #include <core/pack/interaction_graph/SimpleInteractionGraph.fwd.hh>
 
+// Package headers
+#include <core/pack/task/PackerTask.fwd.hh>
+
 // Project headers
 #include <core/types.hh>
-#include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
+//#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -32,8 +36,11 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
+// Utility headers
+#include <utility/graph/Graph.hh>
 #include <utility/vector1.hh>
 
+//#define OFFROT_PRINT_WEIGHTS_EVERY_LOOP
 
 namespace core {
 namespace pack {
@@ -47,12 +54,12 @@ public:
 	SimpleNode( utility::graph::Graph * owner, Size resnum );
 	virtual ~SimpleNode();
 
-	virtual  void copy_from( utility::graph::Node const * ) {}
+	void copy_from( utility::graph::Node const * ) override {}
 
-	virtual  void print() const {}
+	void print() const override {}
 
-	virtual  platform::Size count_static_memory() const {return 1;}
-	virtual  platform::Size count_dynamic_memory() const {return 1;}
+	platform::Size count_static_memory() const override {return 1;}
+	platform::Size count_dynamic_memory() const override {return 1;}
 
 	Real
 	one_body_energy() const;
@@ -81,7 +88,7 @@ public:
 	/// @brief Reset state on this node so that its incident edges will no longer
 	/// think it is considering an alternate conformation.
 	void
-	reject_change();
+	reject_change( conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	/// @brief Set the current residue COP, and follow by computing the energy
 	/// for this residue with its neighbors and storing those computed energies
@@ -110,6 +117,14 @@ public:
 	/// @brief return the pointer to the alternate state (might be 0)
 	conformation::ResidueCOP
 	get_alternate() const;
+
+	/// @brief return the current state -- must not be 0
+	conformation::Residue const &
+	get_current_ref() const;
+
+	/// @brief return the alternate state -- must not be 0
+	conformation::Residue const &
+	get_alternate_ref() const;
 
 	Vector const &
 	bb_centroid() const;
@@ -148,15 +163,9 @@ private:
 
 	void update_alternate_one_body_energy();
 
+protected:
 	void
 	initialize();
-
-	/*Vector
-	calc_sc_centroid( conformation::Residue const & res ) const;
-
-	Real
-	calc_sc_radius( conformation::Residue const & res, Vector const & centroid );*/
-
 
 private:
 	bool moved_;
@@ -188,10 +197,10 @@ public:
 	SimpleEdge( utility::graph::Graph* owner, Size res1, Size res2 );
 	virtual ~SimpleEdge();
 
-	virtual  void copy_from( utility::graph::Edge const * ) {}
+	void copy_from( utility::graph::Edge const * ) override {}
 
-	virtual  platform::Size count_static_memory() const {return 1;}
-	virtual  platform::Size count_dynamic_memory() const {return 1;}
+	platform::Size count_static_memory() const override {return 1;}
+	platform::Size count_dynamic_memory() const override {return 1;}
 
 	void compute_energy( bool use_current_node1, bool use_current_node2 );
 
@@ -204,19 +213,23 @@ public:
 	void
 	update_proposed_energy();
 
-	void commit_change();
+	virtual void commit_change();
 
-	//required functions to override
+	bool calc_long_range(){
+		return calc_long_range_;
+	}
 
-	/**
-	Real curr_scsc_E_;
-	Real curr_bbsc_E_;
-	Real curr_scbb_E_;
+	void calc_long_range( bool setting ){
+		calc_long_range_ = setting;
+	}
 
-	Real alt_scsc_E_;
-	Real alt_bbsc_E_;
-	Real alt_scbb_E_;
-	**/
+	bool calc_short_range(){
+		return calc_short_range_;
+	}
+
+	void calc_short_range( bool setting ){
+		calc_short_range_ = setting;
+	}
 
 private:
 
@@ -250,7 +263,6 @@ private:
 	Real
 	bb_bbE( Size ind1, Size ind2 ) const;
 
-
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// bool short_range_energies_exist_; // only evaluate short-range energies for edges between nearby residues
@@ -262,6 +274,12 @@ private:
 
 	bool bb_bbE_calced_[ 3 ][ 3 ]; // indexed 0 for non-pro&non-gly, 1 for pro, 2 for gly
 	Real bb_bbE_[ 3 ][ 3 ];        // indexed 0 for non-pro&non-gly, 1 for pro, 2 for gly
+
+	bool calc_short_range_;
+	bool calc_long_range_;
+
+	//scoring::EnergyMap current_emap_;
+	//scoring::EnergyMap proposed_emap_;
 
 }; //SimpleEdge
 
@@ -282,7 +300,7 @@ public:
 	SimpleInteractionGraph();
 	virtual ~SimpleInteractionGraph();
 
-	void set_scorefunction( scoring::ScoreFunction const & sfxn );
+	virtual void set_scorefunction( scoring::ScoreFunction const & sfxn );
 
 	scoring::ScoreFunction const &
 	scorefunction() const {
@@ -300,25 +318,43 @@ public:
 		return *pose_;
 	}
 
-	/// @brief Initialization where the graph adds its own edges
-	void initialize( pose::Pose const & pose);
+	pose::PoseCOP
+	pose_cop() const;
 
-	void set_pose_no_initialize( pose::Pose const & pose );
+	/// @brief Initialization where the graph adds its own edges; use set_pose_no_initialize
+	/// if the edges should be added externally. Assumes that the pose does not change its
+	/// sequence.
+	virtual void initialize( pose::Pose const & pose);
 
-	void commit_change( Size node_id );
-	void reject_change( Size node_id );
+	/// @brief Initialization where the graph creates a packer-neighbor graph from the input
+	/// packer task so that edges between residues that might become larger than they are in
+	/// the input Pose (e.g., GLY --> ARG mutation) can be added to the graph.
+	virtual void initialize( pose::Pose const & pose, task::PackerTaskCOP task );
+
+	/// @brief Initialize the graph so that all nodes take their current state from the
+	/// input Pose -- this does not add any edges to the graph.
+	virtual void set_pose_no_initialize( pose::Pose const & pose );
+
+	/// @brief If set_pose_no_initialize was called, then after edges have been added. This
+	/// function will also do any bookkeeping necessary before the start of simulated annealing
+	virtual void setup_after_edge_addition();
+
+	virtual void commit_change( Size node_id );
+	virtual void reject_change( Size node_id, conformation::ResidueCOP res, basic::datacache::BasicDataCache & residue_data_cache );
 
 	//returns delta-energy
+	virtual
 	Real consider_substitution( Size node_id, conformation::ResidueCOP new_state, basic::datacache::BasicDataCache & residue_data_cache );
 
+	virtual
 	Real total_energy();
 
 	//required functions to override
 
-	virtual  Size count_static_memory() const {return 0;}
-	virtual  Size count_dynamic_memory() const {return 0;}
+	Size count_static_memory() const override {return 0;}
+	Size count_dynamic_memory() const override {return 0;}
 
-	virtual void delete_edge( utility::graph::Edge * );
+	void delete_edge( utility::graph::Edge * ) override;
 
 	SimpleNode *
 	get_simple_node( Size ind ) {
@@ -330,10 +366,21 @@ public:
 		return static_cast< SimpleNode const * > ( get_node( ind ) );
 	}
 
+	conformation::ResidueCOP
+	get_current_for_node(Size id) const{
+		return  get_simple_node(id)->get_current();
+	}
+
+	conformation::ResidueCOP
+	get_alternate_for_node(Size id) const{
+		return  get_simple_node(id)->get_alternate();
+	}
+
+
 protected:
 
-	virtual utility::graph::Node* create_new_node( Size node_index );
-	virtual utility::graph::Edge* create_new_edge( Size index1, platform::Size index2 );
+	utility::graph::Node* create_new_node( Size node_index ) override;
+	utility::graph::Edge* create_new_edge( Size index1, platform::Size index2 ) override;
 
 	//virtual Edge* create_new_edge( Edge * example_edge );
 

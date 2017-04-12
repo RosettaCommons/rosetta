@@ -21,6 +21,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 --namespace--
 
@@ -35,7 +36,7 @@ public:
 	~--class--() override;
 
 	core::pack::task::operation::TaskOperationOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Configure from a RosettaScripts XML tag.
 	void
@@ -52,7 +53,7 @@ public:
 	static std::string keyname();
 
 	/// @brief Describe the format of XML file used to initialize this TaskOperation
-	static void provide_xml_schema( XMLSchemaDefinition & xsd );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

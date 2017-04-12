@@ -44,15 +44,11 @@
 
 #include <core/id/AtomID.fwd.hh>
 
-//#include <set>
-
-
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/access.fwd.hpp>
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
-
 
 namespace core {
 namespace scoring {
@@ -133,13 +129,32 @@ public:
 	acc_atm_is_backbone() const;
 
 	/// NOTE: this is unweighted energy, see weight() for the weight
+	/// (weight ==> environmental weight; hbonds closer to the surface are weaker)
 	Real
 	energy() const;
 
-
+	/// @brief The environmental weight for a hydrogen bond -- always 1 if environmental
+	/// dependence is not enabled
 	Real
 	weight() const;
 
+	Real
+	don_npd_weight() const;
+
+	Real
+	acc_npd_weight() const;
+
+	void don_npd_weight( Real setting );
+	void acc_npd_weight( Real setting );
+
+	Size index() const; // the index of this hbond in a hbond set
+	void index( Size setting );
+
+	Size don_index() const; // the index of this hbond in the list of the donor atom's hbonds
+	void don_index( Size setting );
+
+	Size acc_index() const; // the index of this hbond in the list of the donor atom's hbonds
+	void acc_index( Size setting );
 
 	HBondDerivs const &
 	derivs() const;
@@ -230,7 +245,14 @@ private:
 
 	Real energy_;
 	Real weight_;
+	Real don_npd_weight_;
+	Real acc_npd_weight_;
 	HBondDerivs derivs_;
+
+	Size index_;
+	Size don_index_;
+	Size acc_index_;
+
 
 #ifdef    SERIALIZATION
 protected:
@@ -321,15 +343,21 @@ public:
 	HBondCOP
 	hbond_cop( Size const number ) const;
 
-	/// @brief  Get a vector of all the hbonds involving this atom
+	/// @brief  Get a vector of the hbonds involving a particular atom
 	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
-	utility::vector1< HBondCOP > const
+	utility::vector1< HBondCOP >
 	atom_hbonds( AtomID const & atom, bool include_only_allowed = true ) const;
+
+	/// @brief  Get a reference to a vector of all the hbonds involving a particular atom; in
+	/// contrast to "atom_hbonds" (above), this function does not exclude sc/bb hydrogen bonds
+	// using the bb/bb hbond exclusion rule, but instead returns all hydrogen bonds
+	utility::vector1< HBondCOP > const &
+	atom_hbonds_all( AtomID const & atom ) const;
 
 	/// @brief Get a vector of all the hbonds involving this residue
 	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
-	utility::vector1< HBondCOP > const
-	residue_hbonds(Size const seqpos, bool include_only_allowed = true) const;
+	utility::vector1< HBondCOP >
+	residue_hbonds(Size const seqpos, bool include_only_allowed = true ) const;
 
 
 	/// @brief  Number of hbonds
@@ -489,6 +517,11 @@ public:
 		Size const residue,
 		bool const print_header=true) const { show(pose, residue, print_header, std::cout); }
 
+protected:
+	/// @brief allow the NPDHBondSet to store the npd weights in the hbond objects
+	void hbond_don_npd_weight( Size index, Real setting );
+	/// @brief allow the NPDHBondSet to store the npd weights in the hbond objects
+	void hbond_acc_npd_weight( Size index, Real setting );
 
 private:
 	typedef std::map< AtomID, utility::vector1< HBondCOP > > HBondAtomMap;
@@ -509,6 +542,9 @@ private:
 	utility::vector1< int > nbrs_;
 	mutable HBondAtomMap atom_map_;
 	mutable bool atom_map_init_;
+
+	utility::vector1< HBondCOP > empty_hbond_vector_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -520,6 +556,7 @@ public:
 } // namespace hbonds
 } // namespace scoring
 } // namespace core
+
 
 #ifdef    SERIALIZATION
 CEREAL_FORCE_DYNAMIC_INIT( core_scoring_hbonds_HBondSet )

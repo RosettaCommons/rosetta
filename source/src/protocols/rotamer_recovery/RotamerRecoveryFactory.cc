@@ -217,5 +217,29 @@ RotamerRecoveryFactory::get_rotamer_recovery(
 		get_rotamer_recovery_reporter(reporter_name)) );
 }
 
+void
+RotamerRecoveryFactory::append_protocol_attributes( utility::tag::AttributeList & attlist ) const
+{
+	for ( auto const & creator_pair : protocol_types_ ) {
+		creator_pair.second->append_attributes( attlist );
+	}
+}
+
+void
+RotamerRecoveryFactory::append_comparer_attributes( utility::tag::AttributeList & attlist ) const
+{
+	for ( auto const & creator_pair : comparer_types_ ) {
+		creator_pair.second->append_attributes( attlist );
+	}
+}
+
+void
+RotamerRecoveryFactory::append_reporter_attributes( utility::tag::AttributeList & attlist ) const
+{
+	for ( auto const & creator_pair : reporter_types_ ) {
+		creator_pair.second->append_attributes( attlist );
+	}
+}
+
 } // namespace
 } // namespace

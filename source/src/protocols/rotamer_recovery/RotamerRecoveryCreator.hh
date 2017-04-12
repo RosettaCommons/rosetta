@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
 
@@ -39,6 +40,7 @@ public:
 
 	virtual RRProtocolOP create_protocol() const = 0;
 	virtual std::string type_name() const = 0;
+	virtual void append_attributes( utility::tag::AttributeList & attlist ) const = 0;
 };
 
 class RRProtocolReferenceStructureCreator : public RRProtocolCreator {
@@ -48,6 +50,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRProtocolRTMinCreator : public RRProtocolCreator {
@@ -57,6 +60,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRProtocolRotamerTrialsCreator : public RRProtocolCreator {
@@ -66,6 +70,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRProtocolMinPackCreator : public RRProtocolCreator {
@@ -75,6 +80,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRProtocolPackRotamersCreator : public RRProtocolCreator {
@@ -84,6 +90,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRProtocolRelaxCreator : public RRProtocolCreator {
@@ -93,6 +100,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRProtocolMoverCreator : public RRProtocolCreator {
@@ -102,6 +110,7 @@ public:
 
 	RRProtocolOP create_protocol() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 
@@ -114,6 +123,7 @@ public:
 
 	virtual RRComparerOP create_comparer() const = 0;
 	virtual std::string type_name() const = 0;
+	virtual void append_attributes( utility::tag::AttributeList & attlist ) const = 0;
 };
 
 class RRComparerAutomorphicRMSDCreator : public RRComparerCreator {
@@ -123,6 +133,7 @@ public:
 
 	RRComparerOP create_comparer() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRComparerRotBinsCreator : public RRComparerCreator {
@@ -132,6 +143,7 @@ public:
 
 	RRComparerOP create_comparer() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRComparerChiDiffCreator : public RRComparerCreator {
@@ -141,6 +153,7 @@ public:
 
 	RRComparerOP create_comparer() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRComparerElecDensDiffCreator : public RRComparerCreator {
@@ -150,6 +163,7 @@ public:
 
 	RRComparerOP create_comparer() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 /// @brief The Creator class is responsible for creating a particular
@@ -161,6 +175,7 @@ public:
 
 	virtual RRReporterOP create_reporter() const = 0;
 	virtual std::string type_name() const = 0;
+	virtual void append_attributes( utility::tag::AttributeList & attlist ) const = 0;
 };
 
 class RRReporterSimpleCreator : public RRReporterCreator {
@@ -170,6 +185,7 @@ public:
 
 	RRReporterOP create_reporter() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRReporterHumanCreator : public RRReporterCreator {
@@ -179,6 +195,7 @@ public:
 
 	RRReporterOP create_reporter() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 class RRReporterSQLiteCreator : public RRReporterCreator {
@@ -188,6 +205,7 @@ public:
 
 	RRReporterOP create_reporter() const override;
 	std::string type_name() const override;
+	void append_attributes( utility::tag::AttributeList & attlist ) const override;
 };
 
 

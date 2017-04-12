@@ -23,10 +23,13 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <basic/Tracer.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+
 // C++ Headers
 #include <string>
-
-#include <utility/vector1.hh>
 
 
 using std::string;
@@ -45,6 +48,12 @@ namespace rotamer_recovery {
 
 /// @details Auto-generated virtual destructor
 RRComparer::~RRComparer() = default;
+
+void
+RRComparer::parse_attributes_from_tag(
+	utility::tag::TagCOP
+)
+{}
 
 static Tracer TR("protocol.moves.RRComparer");
 
@@ -115,6 +124,12 @@ RRComparerRotBins::measure_rotamer_recovery(
 	return true;
 }
 
+void
+RRComparerRotBins::parse_attributes_from_tag(
+	utility::tag::TagCOP
+)
+{}
+
 string
 RRComparerRotBins::get_name() const {
 	return "RRComparerRotBins";
@@ -182,7 +197,7 @@ RRComparerChiDiff::measure_rotamer_recovery(
 	recovered=true;
 	Size max_chi = res1.nchi();
 	if ( limit_chi_angles_ ) {
-		max_chi = std::min(max_chi, max_chi_considered_);
+ 		max_chi = std::min(max_chi, max_chi_considered_);
 	}
 
 	for ( Size chi_index=1; chi_index <= max_chi; ++chi_index ) {
@@ -204,6 +219,25 @@ RRComparerChiDiff::get_name() const {
 string
 RRComparerChiDiff::get_parameters() const {
 	return "";
+}
+
+void
+RRComparerChiDiff::parse_attributes_from_tag(
+	utility::tag::TagCOP tag
+)
+{
+	if ( tag->hasOption( "chidiff_num_chi_to_compare" ) ) {
+		limit_chi_angles_ = true;
+		max_chi_considered_ = tag->getOption< core::Size >( "chidiff_num_chi_to_compare" );
+	}
+}
+
+void
+RRComparerChiDiff::append_attributes( utility::tag::AttributeList & attlist )
+{
+	using namespace utility::tag;
+	attlist
+		+ XMLSchemaAttribute( "chidiff_num_chi_to_compare", xsct_non_negative_integer, "For use only with the ChiDiff rotamer-recovery comparer, this controls the maximum number of chi dihedrals will be examined for each residue. In the absence of this attribute, the ChiDiff reporter will examine all chi dihedrals" );
 }
 
 } // rotamer_recovery

@@ -53,6 +53,8 @@ RRProtocolReferenceStructureCreator::type_name() const {
 	return "RRProtocolReferenceStructure";
 }
 
+void RRProtocolReferenceStructureCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// RTMin ///////////////////
 RRProtocolOP
 RRProtocolRTMinCreator::create_protocol(
@@ -64,6 +66,8 @@ string
 RRProtocolRTMinCreator::type_name() const {
 	return "RRProtocolRTMin";
 }
+
+void RRProtocolRTMinCreator::append_attributes( utility::tag::AttributeList & ) const {}
 
 //////////////// RotamerTrials ///////////////////
 RRProtocolOP
@@ -77,6 +81,8 @@ RRProtocolRotamerTrialsCreator::type_name() const {
 	return "RRProtocolRotamerTrials";
 }
 
+void RRProtocolRotamerTrialsCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// MinPack ///////////////////
 RRProtocolOP
 RRProtocolMinPackCreator::create_protocol(
@@ -88,6 +94,8 @@ string
 RRProtocolMinPackCreator::type_name() const {
 	return "RRProtocolMinPack";
 }
+
+void RRProtocolMinPackCreator::append_attributes( utility::tag::AttributeList & ) const {}
 
 //////////////// PackRotamers ///////////////////
 RRProtocolOP
@@ -101,6 +109,8 @@ RRProtocolPackRotamersCreator::type_name() const {
 	return "RRProtocolPackRotamers";
 }
 
+void RRProtocolPackRotamersCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// Relax ///////////////////
 RRProtocolOP
 RRProtocolRelaxCreator::create_protocol(
@@ -113,6 +123,8 @@ RRProtocolRelaxCreator::type_name() const {
 	return "RRProtocolRelax";
 }
 
+void RRProtocolRelaxCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// Mover ///////////////////
 string
 RRProtocolMoverCreator::type_name() const {
@@ -124,6 +136,8 @@ RRProtocolMoverCreator::create_protocol(
 ) const {
 	return RRProtocolOP( new RRProtocolMover );
 }
+
+void RRProtocolMoverCreator::append_attributes( utility::tag::AttributeList & ) const {}
 
 /// Protocols /////
 //////////////// AutomorphicRMSD ///////////////////
@@ -138,6 +152,7 @@ RRComparerAutomorphicRMSDCreator::type_name() const {
 	return "RRComparerAutomorphicRMSD";
 }
 
+void RRComparerAutomorphicRMSDCreator::append_attributes( utility::tag::AttributeList & ) const {}
 
 //////////////// RotBins ///////////////////
 RRComparerOP
@@ -151,6 +166,8 @@ RRComparerRotBinsCreator::type_name() const {
 	return "RRComparerRotBins";
 }
 
+void RRComparerRotBinsCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// ChiDiff ///////////////////
 RRComparerOP
 RRComparerChiDiffCreator::create_comparer(
@@ -161,6 +178,11 @@ RRComparerChiDiffCreator::create_comparer(
 string
 RRComparerChiDiffCreator::type_name() const {
 	return "RRComparerChiDiff";
+}
+
+void RRComparerChiDiffCreator::append_attributes( utility::tag::AttributeList & attlist ) const
+{
+	RRComparerChiDiff::append_attributes( attlist );
 }
 
 //////////////// ElecDensDiff ///////////////////
@@ -175,6 +197,8 @@ RRComparerElecDensDiffCreator::type_name() const {
 	return "RRComparerElecDensDiff";
 }
 
+void RRComparerElecDensDiffCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// Simple ///////////////////
 RRReporterOP
 RRReporterSimpleCreator::create_reporter(
@@ -187,6 +211,7 @@ RRReporterSimpleCreator::type_name() const {
 	return "RRReporterSimple";
 }
 
+void RRReporterSimpleCreator::append_attributes( utility::tag::AttributeList & ) const {}
 
 //// Reporters ////
 //////////////// Human ///////////////////
@@ -201,6 +226,8 @@ RRReporterHumanCreator::type_name() const {
 	return "RRReporterHuman";
 }
 
+void RRReporterHumanCreator::append_attributes( utility::tag::AttributeList & ) const {}
+
 //////////////// SQLite ///////////////////
 RRReporterOP
 RRReporterSQLiteCreator::create_reporter(
@@ -212,6 +239,8 @@ string
 RRReporterSQLiteCreator::type_name() const {
 	return "RRReporterSQLite";
 }
+
+void RRReporterSQLiteCreator::append_attributes( utility::tag::AttributeList & ) const {}
 
 } //namespace features
 } //namespace protocols

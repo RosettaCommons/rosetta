@@ -36,19 +36,6 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-struct HBondDerivs {
-	DerivVectorPair don_deriv;    // derivative vectors for the heavyatom donor for a hydrogen
-	DerivVectorPair h_deriv;      // derivative vectors for the hydrogen forming a hydrogen bond
-	DerivVectorPair acc_deriv;    // derivative vectors for the heavyatom acceptor for a hydrogen
-	DerivVectorPair abase_deriv;  // derivative vectors for the acceptor base
-	DerivVectorPair abase2_deriv; // derivative vectors for the acceptor base 2 -- for sp2 acceptors
-#ifdef    SERIALIZATION
-	template< class Archive > void save( Archive & arc ) const;
-	template< class Archive > void load( Archive & arc );
-#endif // SERIALIZATION
-
-};
-
 /////////////////////////////////////////////////////////////////////////////////
 /////// WARNING WARNING WARNING
 ///////
@@ -369,6 +356,50 @@ enum HBSeqSep{
 	seq_sep_P4, // // acc_rsd.seqpos() - don_rsd.seqpos() = 4
 	seq_sep_MAX = seq_sep_P4
 };
+
+/// @brief If you have an atom that is involved in a hydrogen bond, this enumeration
+/// will help you keep track of the role that the atom plays.
+enum which_atom_in_hbond {
+	which_hb_unassigned = 0,
+	which_hb_hatm,
+	which_hb_datm,
+	which_last_donor_atm = which_hb_datm,
+	which_hb_aatm,
+	which_hb_abase,         // The base atom to the acceptor
+	which_hb_abase_prime,   // The other base atom to the acceptor; only used for rings
+	which_hb_abase2,        // The base atom to the base atom to the acceptor
+	n_hb_atoms = which_hb_abase2 // keep this guy last
+};
+
+struct HBondDerivs {
+
+	DerivVectorPair &
+	deriv( which_atom_in_hbond which ) {
+		switch ( which ) {
+		case which_hb_hatm  : return h_deriv;
+		case which_hb_datm  : return don_deriv;
+		case which_hb_aatm  : return acc_deriv;
+		case which_hb_abase : return abase_deriv;
+		case which_hb_abase2 : return abase2_deriv;
+		default :
+			utility_exit_with_message( "Improper access into the HBondDerivs struct" );
+		}
+		// appease compiler
+		return h_deriv;
+	}
+
+	DerivVectorPair don_deriv;    // derivative vectors for the heavyatom donor for a hydrogen
+	DerivVectorPair h_deriv;      // derivative vectors for the hydrogen forming a hydrogen bond
+	DerivVectorPair acc_deriv;    // derivative vectors for the heavyatom acceptor for a hydrogen
+	DerivVectorPair abase_deriv;  // derivative vectors for the acceptor base
+	DerivVectorPair abase2_deriv; // derivative vectors for the acceptor base 2 -- for sp2 acceptors
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
 
 /// @brief converts a string into an HBEvalType
 HBEvalType string_to_hb_eval_type(std::string const& hbe_str);

@@ -15,12 +15,15 @@
 #include <--path--/--class--Creator.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
@@ -57,7 +60,7 @@ void
 
 
 void
---class--::apply( const core::pose::Pose& pose, core::pack::task::PackerTask& ) const {
+--class--::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & ) const {
 
 
 }
@@ -68,8 +71,10 @@ std::string
 }
 
 void
---class--::provide_xml_schema( XMLSchemaDefinition & xsd )
+--class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+
 }
 
 core::pack::task::operation::TaskOperationOP
@@ -85,22 +90,10 @@ std::string
 }
 
 void
---class--Creator::provide_xml_schema( XMLSchemaDefinition & xsd )
+--class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	--class--::provide_xml_schema( xsd );
 }
 
 
-
-
-
 --end_namespace--
-
-
-
-
-
-
-
-
-

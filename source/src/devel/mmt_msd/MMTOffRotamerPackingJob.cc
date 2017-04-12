@@ -52,7 +52,7 @@ void MMTOffRotamerPackingJob::optimize()
 
 	best_assignment_ = core::pack::scmin::SidechainStateAssignmentOP( new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() ) );
 
-	core::pack::off_rotamer_pack_optimize( *rotsets_, atc_, *ig_, *best_assignment_ );
+	core::pack::off_rotamer_pack_optimize( pose(), sfxn(), *rotsets_, atc_, *ig_, *best_assignment_ );
 
 	// it'd be better if the stochastic packer tracked the total energy
 	update_pose( pose() );

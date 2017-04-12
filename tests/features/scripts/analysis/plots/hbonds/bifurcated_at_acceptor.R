@@ -78,7 +78,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	ggplot(sub_f) + theme_bw() +
 		geom_point(aes(x=AHdist1, y=AHdist2), size=.4) +
 		stat_density2d(aes(x=AHdist1, y=AHdist2), size=.2) +
-		geom_indicator(aes(indicator=counts), colour="red") + # TODO: fix colour
+		#geom_indicator(aes(indicator=counts), colour="red") + # TODO: fix colour
 		facet_grid(don_chem_type1 ~ don_chem_type2) +
 		scale_x_continuous(
 			expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ') Worse Energy HBond')),

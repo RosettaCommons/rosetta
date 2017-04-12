@@ -46,7 +46,8 @@ public:
 		task::PackerTask const & packer_task,
 		rotamer_set::RotamerSets const & rotsets,
 		pose::Pose const & pose,
-		scoring::ScoreFunction const & scfxn
+		scoring::ScoreFunction const & scfxn,
+		utility::graph::Graph const & packer_neighbor_graph
 	);
 
 	/// @brief Create and initialize two-body interaction graph for the given

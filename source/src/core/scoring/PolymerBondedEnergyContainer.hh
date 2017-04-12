@@ -37,6 +37,7 @@
 
 // STL headers:
 #include <map>
+#include <set>
 
 
 namespace core {
@@ -253,6 +254,7 @@ private:
 
 	/// @brief A map of all chemical edges in the pose
 	std::multimap< core::Size, core::Size > chemical_edges_;
+	std::set< std::pair< core::Size, core::Size > > chemical_edge_set_;
 
 	/// @brief The vector of score types that this PolymerBondedEnergyContainer will be used to calculate.
 	utility::vector1< ScoreType > score_types_;

@@ -88,6 +88,8 @@ sources = {
 		"InteractionGraphFactory",
 		"LazyInteractionGraph",
 		"LinearMemoryInteractionGraph",
+		"NPDHBondInteractionGraph",
+		"NPDHBSimpleInteractionGraph",
 		"MultiplexedAnnealableGraph",
 		"OnTheFlyInteractionGraph",
 		"PDInteractionGraph",
@@ -163,6 +165,7 @@ sources = {
 		"RNA_ResidueLevelTask",
 	],
 	"core/pack/task/operation": [
+		"EnableMultiCoolAnnealer",
 		"NoRepackDisulfides",
 		"OperateOnCertainResidues",
 		"OperateOnResidueSubset",

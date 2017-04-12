@@ -285,7 +285,7 @@ SidechainMCMover::apply(
 			}
 		} else { //rejected metropolis criterion
 			PROF_START( SIMPLEINTGRAPH );
-			ig_->reject_change( rand_res );
+			ig_->reject_change( rand_res, new_state, *new_state->nonconst_data_ptr() );
 			PROF_STOP( SIMPLEINTGRAPH );
 		}
 	} // n_iterations

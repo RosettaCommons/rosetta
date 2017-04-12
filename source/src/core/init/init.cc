@@ -41,6 +41,7 @@
 #include <core/scoring/etable/EtableEnergyCreator.hh>
 
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
+#include <core/scoring/hbonds/NPDHBondEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <core/scoring/methods/AspartimidePenaltyEnergyCreator.hh>
 #include <core/scoring/methods/CenPairEnergyCreator.hh>
@@ -253,6 +254,7 @@
 // for registering TaskOperations, ResLvlTaskOperations, and ResFilters
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationCreators.hh>
+#include <core/pack/task/operation/EnableMultiCoolAnnealerCreator.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
 #include <core/pack/task/operation/OperateOnResidueSubsetCreator.hh>
 #include <core/pack/task/operation/NoRepackDisulfidesCreator.hh>
@@ -383,6 +385,7 @@ static EnergyMethodRegistrator< scoring::disulfides::FullatomDisulfideEnergyCrea
 static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::hbonds::NPDHBondEnergyCreator > NPDHBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::AspartimidePenaltyEnergyCreator > AspartimidePenaltyEnergyCreator_registrator;
@@ -637,6 +640,7 @@ static TaskOperationRegistrator< PreventRepackingCreator > PreventRepackingCreat
 static TaskOperationRegistrator< PreserveCBetaCreator > PreserveCBetaCreator_registrator;
 static TaskOperationRegistrator< AppendRotamerSetCreator > AppendRotamerSetCreator_registrator;
 static TaskOperationRegistrator< AppendRotamerCreator > AppendRotamerCreator_registrator;
+static TaskOperationRegistrator< EnableMultiCoolAnnealerCreator > EnableMultiCoolAnnealerCreator_registrator;
 static TaskOperationRegistrator< ExtraRotamersCreator > ExtraRotamersCreator_registrator;
 static TaskOperationRegistrator< ExtraChiCutoffCreator > ExtraChiCutoffCreator_registrator;
 static TaskOperationRegistrator< SetRotamerCouplingsCreator > SetRotamerCouplingsCreator_registrator;
