@@ -9,7 +9,7 @@
 ###############################################################################
 # Imports.
 # Standard library.
-import os, sys, platform, os.path, json
+import os, sys, platform, os.path, json, random
 
 import rosetta
 
@@ -424,57 +424,47 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, \
         else:
             f.write(output_line + ' ' + score_line + '\n')
 
-# New classes.
+
 class PyJobDistributor:
     def __init__(self, pdb_name, nstruct, scorefxn):
         self.pdb_name = pdb_name
         self.nstruct = nstruct
-        self.current_num = 0		      # Current decoy number
-        self.current_name = " "		      # Current decoy name
-        self.job_complete = False	      # Job status
+        self.current_name = None	      # Current decoy name
         self.scorefxn = scorefxn	      # Used for final score calculation
         self.native_pose = None		      # Used for rmsd calculation
-        self.additional_decoy_info = None     # Used for any additional decoy
-                                               # information you want stored
+        self.additional_decoy_info = None     # Used for any additional decoy information you want stored
+
+        self.sequence = list(range(nstruct));  random.shuffle(self.sequence)
         self.start_decoy()		      # Initializes the job distributor
 
+
+    @property
+    def job_complete(self): return len(self.sequence) == 0
+
     def start_decoy(self):
-        if self.job_complete:
-            return
-        i = 1
-        file_exists = True
-        while (file_exists and i <= self.nstruct):
-            current_name = self.pdb_name + "_" + str(i) + ".pdb"
-            if not os.path.exists(current_name):
-                current_name_temp = current_name + ".in_progress"
-                if not os.path.exists(current_name_temp):
-                    file_exists = False	 # If such a file is not found, i is
-                                         # the current decoy #.
-                    with open(current_name_temp, 'w') as f:
-                        f.write("This decoy is in progress.")
-                    self.current_name = current_name
-            i += 1
-        self.current_num = i - 1
-        if file_exists:
-            self.job_complete = True
+        while(self.sequence):
+            self.current_name = self.pdb_name + '_' + str(self.sequence.pop()) + '.pdb'
+            self.current_in_progress_name = self.current_name + '.in_progress'
+
+            if (not os.path.isfile(self.current_name))  and  (not os.path.isfile(self.current_in_progress_name)):
+                with open(self.current_in_progress_name, 'w') as f: f.write("This decoy is in progress.")
+                print( 'Working on decoy: {}'.format(self.current_name) )
+                break
+
 
     def output_decoy(self, pose):
-        current_name_temp = self.current_name + ".in_progress"
-        if not os.path.exists(current_name_temp):
-            return
+        if os.path.isfile(self.current_in_progress_name):
+            dump_pdb(pose, self.current_name)  # Outputs pdb file.
+            os.remove(self.current_in_progress_name)
 
-        dump_pdb(pose, self.current_name)  # Outputs pdb file.
-        os.remove(current_name_temp)
+            score_tag = ".fasc"
+            if not pose.is_fullatom(): score_tag = ".sc"
 
-        score_tag = ".fasc"
-        if not pose.is_fullatom():
-            score_tag = ".sc"
+            scorefile = self.pdb_name + score_tag
+            output_scorefile(pose, self.pdb_name, self.current_name, scorefile, self.scorefxn,
+                             self.nstruct, self.native_pose, self.additional_decoy_info)
 
-        scorefile = self.pdb_name + score_tag
-        output_scorefile(pose, self.pdb_name, self.current_name, scorefile, self.scorefxn, \
-                     self.nstruct, self.native_pose, self.additional_decoy_info)
-
-        self.start_decoy()
+            self.start_decoy()
 
 
 ###############################################################################
