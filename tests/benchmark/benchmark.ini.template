@@ -12,6 +12,10 @@ memory = 64
 
 [config]  # additional config-options for various tests. All this fields will be pass as keys in 'config' function argument
 
+# user name and email for user who submitted this test
+user_name  = Jane Roe
+user_email = jane.roe@university.edu
+
 # HPC Driver, might have one of the following values: MultiCore, Condor
 hpc_driver = MultiCore
 

@@ -104,6 +104,8 @@ def main(args):
         Config.set('DEFAULT', 'hpc_driver', 'MultiCore')
         Config.set('DEFAULT', 'branch',     'unknown')
         Config.set('DEFAULT', 'revision',   '42')
+        Config.set('DEFAULT', 'user_name',  'Jane Roe')
+        Config.set('DEFAULT', 'user_email', 'jane.roe@university.edu')
         Config.add_section('config')
 
     Config.set('DEFAULT', 'cpu_count', str(Options.jobs) )
