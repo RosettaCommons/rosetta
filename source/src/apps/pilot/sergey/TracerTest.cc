@@ -82,7 +82,7 @@ static THREAD_LOCAL basic::Tracer TR_( "global" );
 
 void TracerDiskSpaceTest(void)
 {
-	for(int i=0; i<500000; ++i) {
+	for ( int i=0; i<500000; ++i ) {
 		TM << "Writing line: " << i << " _______________________________________________________________________________________"<< std::endl;
 	}
 
@@ -129,8 +129,8 @@ class AA {};
 
 std::ostream& operator <<(std::ostream &tr, AA)
 {
-  tr << "Class A \n";
-  return tr;
+	tr << "Class A \n";
+	return tr;
 }
 
 
@@ -219,7 +219,7 @@ void test_Random(void)
 {
 	//devel::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
 	devel::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
-	for(int i=0; i<100; i++) {
+	for ( int i=0; i<100; i++ ) {
 		double r = numeric::random::uniform();
 		TR_.precision(25);
 		TR_ << i << " " << r << std::endl;
@@ -232,78 +232,78 @@ int main( int argc, char * argv [] )
 
 	try {
 
-	basic::Tracer TR( "main" );
+		basic::Tracer TR( "main" );
 
-	using namespace core;
-	using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace basic::options::OptionKeys;
 
-	basic::options::option.add_relevant(in::path::database);
+		basic::options::option.add_relevant(in::path::database);
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	{
-		using basic::T;
 		{
-			core::pose::Pose pose;
-			core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);
+			using basic::T;
+			{
+				core::pose::Pose pose;
+				core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);
 
-			core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
-			T("Score:") << scorefxn->score(pose)  << std::endl;
-			pose.energies().residue_total_energies(1);
-			T("Scoring done!") << "---------------------" << std::endl;
+				core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
+				T("Score:") << scorefxn->score(pose)  << std::endl;
+				pose.energies().residue_total_energies(1);
+				T("Scoring done!") << "---------------------" << std::endl;
+			}
+			{
+				T("Testing pose_from_sequence...") << std::endl;
+				std::string sequence(1000, 'V');
+				core::pose::Pose pose;
+				core::pose::make_pose_from_sequence(pose, sequence, core::chemical::FA_STANDARD );
+				T("Testing pose_from_sequence... Done!") << std::endl;
+			}
 		}
+
+		test_Tracer();
+		std::cout << "Done !-------------------------------" << std::endl;
+		//return 0;
+
+
+		TR << "Some unflushed output 1...\n";
+		TR << "Some unflushed output 2...\n";
+
+		//std::cout << "Calling basic::Tracer::flush_all_tracers manually..." << std::endl;
+		//basic::Tracer::flush_all_tracers();
+		//std::cout << "Calling basic::Tracer::flush_all_tracers manually... Done." << std::endl;
+		utility_exit_with_message("\nExiting without flushing the tracers...");
+
+
+		// Testing std::IO errors
+		std::cerr << "Point 1" << std::endl;
+		OutputMoverOP om = new OutputMover();
+		protocols::jd2::JobDistributor::get_instance()->go(om);
+		std::cerr << "Point 2" << std::endl;
+
+
+		std::cout << "-------------------------------" << std::endl;
 		{
-			T("Testing pose_from_sequence...") << std::endl;
-			std::string sequence(1000, 'V');
-			core::pose::Pose pose;
-			core::pose::make_pose_from_sequence(pose, sequence, core::chemical::FA_STANDARD );
-			T("Testing pose_from_sequence... Done!") << std::endl;
+			//#boost::thread thrd(&hello);
+
+			//boost::thread_specific_ptr< int > * mint;
+			//mint = new boost::thread_specific_ptr< int >;
+
+
 		}
-	}
-
-	test_Tracer();
-	std::cout << "Done !-------------------------------" << std::endl;
-	//return 0;
+		std::cout << "Done !-------------------------------" << std::endl;
+		return 0;
 
 
-	TR << "Some unflushed output 1...\n";
-	TR << "Some unflushed output 2...\n";
-
-	//std::cout << "Calling basic::Tracer::flush_all_tracers manually..." << std::endl;
-	//basic::Tracer::flush_all_tracers();
-	//std::cout << "Calling basic::Tracer::flush_all_tracers manually... Done." << std::endl;
-	utility_exit_with_message("\nExiting without flushing the tracers...");
+		//TR << "clock:" << clock() << "\n";
 
 
-	// Testing std::IO errors
-	std::cerr << "Point 1" << std::endl;
-	OutputMoverOP om = new OutputMover();
-	protocols::jd2::JobDistributor::get_instance()->go(om);
-	std::cerr << "Point 2" << std::endl;
+		test_Tracer();
+		//test_Random();
 
-
-	std::cout << "-------------------------------" << std::endl;
-	{
-		//#boost::thread thrd(&hello);
-
-		//boost::thread_specific_ptr< int > * mint;
-		//mint = new boost::thread_specific_ptr< int >;
-
-
-	}
-	std::cout << "Done !-------------------------------" << std::endl;
-	return 0;
-
-
-	//TR << "clock:" << clock() << "\n";
-
-
-	test_Tracer();
-	//test_Random();
-
-	TR << "TTest ended. #@!  --------------------------------" << std::endl;
-	//TR.flush();
-	return 0;
+		TR << "TTest ended. #@!  --------------------------------" << std::endl;
+		//TR.flush();
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -193,4 +193,5 @@ def main(args):
             # Json by default serializes to an ascii-encoded format
             with file(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, encoding="utf-8", indent=2)
 
+
 if __name__ == "__main__": main(sys.argv)

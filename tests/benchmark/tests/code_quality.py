@@ -252,22 +252,22 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
     res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null || git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
     if res:
-        state, output = _S_failed_, 'Working directory is not clean! `git status`:\n{}\nThis might be because you trying to beautify pull-request..., please try too schedule `beautify` test for branch or SHA1...\n'.format( execute('Checking if there is local changes in main...', 'cd {} && git status'.format(rosetta_dir), return_='output') )
+        state, output = _S_failed_, 'Working directory is not clean! `git status`:\n{}\nThis might be because you trying to beautify pull-request..., please try too schedule `beautify` test for a branch or SHA1...\n'.format( execute('Checking if there is local changes in main...', 'cd {} && git status'.format(rosetta_dir), return_='output') )
 
     else:
-        o = execute('Getting list of branches where HEAD is present...', 'cd {} && git branch -r --contains HEAD'.format(rosetta_dir), return_='output')
-        branches = []
+        o = execute('Getting list of branches where HEAD is present...', 'cd {} && git branch --contains HEAD && git branch -r --contains HEAD'.format(rosetta_dir), return_='output')
+        branches = set()
         for line in o.split('\n'):
-            br = line.split()[0]
-            if br.startswith('origin/'):
-                br = br[len('origin/'):]
-                if br != 'HEAD': branches.append(br)
+            br = line.replace('*', '').split()[0]
+            if br.startswith('origin/'): br = br[len('origin/'):]
+            if br != 'HEAD': branches.add(br)
 
         if len(branches) != 1:
-            state, output = _S_failed_, 'Could not figure out which branch to beautify, current commit belong to following branches (expecting exactly one branch): {}\nAborting...\n'.format(o)
+            commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')
+            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one branch):\n{}\nAborting...\n'.format(commit, o)
 
         else:
-            branch = branches[0]
+            branch = branches.pop()
             output += 'Beautifying branch: {}\n'.format(branch)
 
             execute('Checking out branch...', 'cd {} && git checkout {} && git pull'.format(rosetta_dir, branch) )
@@ -277,9 +277,9 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                 state, output = _S_failed_, 'Beautification script failed with output: {}\nAborting...\n'.format(o)
 
             else:
-                res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null || git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
+                res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null && git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
 
-                if res: execute('Committing and pushing changes...', "cd {} && git commit -m 'beautifying' && git push".format(rosetta_dir, branch) )
+                if res: execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' && git push".format(rosetta_dir, branch) )
                 else: output += '\nBeautification script finished: no beautification required for branch {}!\n'.format(branch)
 
                 state =_S_passed_
