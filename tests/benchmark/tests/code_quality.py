@@ -279,7 +279,8 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
             else:
                 res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null && git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
 
-                if res: execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' && git push".format(rosetta_dir, branch) )
+                if res:
+                    output = execute('Committing and pushing changes...', "cd {} && git diff && git commit -a -m 'beautifying' && git push".format(rosetta_dir, branch), return_='output')
                 else: output += '\nBeautification script finished: no beautification required for branch {}!\n'.format(branch)
 
                 state =_S_passed_
