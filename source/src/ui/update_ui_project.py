@@ -238,6 +238,10 @@ def generate_rosetta_libraries_project_files(rosetta_source_path, prefix, linkin
 
             for h in os.listdir(scons_file_prefix + dir_):
                 if h.endswith('.hh') or h.endswith('.h'): headers.append(dir_ + '/' + h)
+                # # only add headers if .cc could be found...
+                # if h.endswith('.hh') or h.endswith('.h'):
+                #     base = h.replace('.fwd.hh', '').replace('.hh', '').replace('.h', '')
+                #     if os.path.isfile(scons_file_prefix + dir_ + '/' + base + '.cc'): headers.append(dir_ + '/' + h)
 
 
         sources.sort()

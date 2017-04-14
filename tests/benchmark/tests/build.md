@@ -14,6 +14,10 @@ Compile Rosetta release mode using Scons. Test will pass if compilation is succe
 Compile Rosetta staticly in release mode using Scons. Test will pass if compilation is successful and fail otherwise.
 
 -----
+### ui
+Compile Rosetta UI in debug mode. Test will pass if compilation is successful and fail otherwise.
+
+-----
 ### ninja_debug
 Compile Rosetta in debug mode using the CMake/Ninja build system. Test will pass if compilation is successful and fail otherwise.
 

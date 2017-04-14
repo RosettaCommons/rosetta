@@ -39,7 +39,7 @@ tests = dict(
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}"', incremental=False),
 
-    ui  = NT(command='cd src/ui && python update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} ../qt/qt.pro && make -j{jobs}', incremental=True),
+    ui  = NT(command='cd src/ui && python update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro && make -j{jobs}', incremental=True),
 )
 
 # def set_up():
