@@ -163,7 +163,7 @@ EXAMPLES For Running Demos/Tutorials
       metavar="SECONDS",
     )
     parser.add_option("-c", "--compiler",
-      default="gcc",
+      default="gcc" if sys.platform != "darwin" else "clang",
       help="In selecting binaries, which compiler was used? (default: gcc)",
     )
     parser.add_option("--mode",
@@ -316,14 +316,14 @@ EXAMPLES For Running Demos/Tutorials
     #Print the current SHA1 for demos, main, and tools.
 
     print("\nCurrent Versions Tested:")
-    print("MAIN:  " + get_git_sha1(Options.mini_home))
+    print("MAIN:  " + get_git_sha1(Options.mini_home).decode('utf-8'))
     if get_git_sha1(Options.mini_home) != get_git_sha1(Options.database):
         print("\n====== WARNING WARNING WARNING ========")
         print("\t Rosetta database version doesn't match source version!")
-        print("\t DATABASE: " + get_git_sha1(Options.database))
+        print("\t DATABASE: " + get_git_sha1(Options.database).decode('utf-8'))
         print("====== WARNING WARNING WARNING ========\n")
-    print("TOOLS: " + get_git_sha1(root_tools_dir))
-    print("DEMOS: " + get_git_sha1(root_demos_dir))
+    print("TOOLS: " + get_git_sha1(root_tools_dir).decode('utf-8'))
+    print("DEMOS: " + get_git_sha1(root_demos_dir).decode('utf-8'))
     print("\n")
 
     #All tests are in a subdirectory.  We set these up here.
@@ -1018,9 +1018,11 @@ def generateTestCommandline(test, outdir, options=None, host=None):
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
         if os.path.isfile( path.join(workdir, "command" ) ):
-            cmd += file(path.join(workdir, "command")).read().strip()
+            with open(path.join(workdir, "command"), 'r') as f:
+                cmd += f.read().strip()
         elif os.path.isfile( path.join(workdir, "command.new") ):
-            cmd += file(path.join(workdir, "command.new")).read().strip()
+            with open(path.join(workdir, "command.new"), 'r') as f:
+                cmd += f.read().strip()
         else:
           return None, None #If the command file doesn't exist, we skip it.  It may only be an MPI integration test.
 
@@ -1063,10 +1065,9 @@ def generateTestCommandline(test, outdir, options=None, host=None):
         cmd_line_sh = path.join(workdir, "command.sh")
 
     #Write the command.sh file
-    f = file(cmd_line_sh, 'w')
-    f.write(cmd)
-    f.close() # writing back so test can be easily re-run by user lately...
-
+    # writing back so test can be easily re-run by user later...
+    with open(cmd_line_sh, 'w') as f:
+        f.write(cmd)
 
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
     #print cmd; print
@@ -1248,7 +1249,8 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
             res = execute('Running Test %s' % nt.test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
             if res:
                 error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
-                file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
+                with open(path.join(nt.workdir, ".test_did_not_run.log"), 'w') as f:
+                    f.write(error_string)
                 print(error_string, end='')
                 times[test] = float('nan')
 
@@ -1267,14 +1269,16 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
 
         def error_finish(nt, times):
             error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (nt.test, datetime.datetime.now())
-            file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
+            with open(path.join(nt.workdir, ".test_did_not_run.log"), 'w') as f:
+                f.write(error_string)
             print(error_string, end='')
             times[nt.test] = float('nan')
             normal_finish(nt, times)
 
         def timeout_finish(nt, times):
             error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, Options.timeout, datetime.datetime.now())
-            file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
+            with open(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w') as f:
+                f.write(error_string)
             print(error_string, end='')
             times[nt.test] = float('inf')
             normal_finish(nt, times)
