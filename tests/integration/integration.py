@@ -9,8 +9,9 @@
 # For help, run with -h.  Requires Python 2.4+, like the unit tests.
 # Author: Sergey Lyskov
 # Author: Jared Adof-Bryfogle (demo extension)
+from __future__ import print_function
 
-import sys, thread, commands
+import sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
@@ -286,7 +287,7 @@ EXAMPLES For Running Demos/Tutorials
 
     #Parse valgrind options (will update options object)
     if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
-        print "Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you."
+        print("Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you.")
         options.valgrind = True
     if options.valgrind:
         parse_valgrind_options(options)
@@ -294,13 +295,13 @@ EXAMPLES For Running Demos/Tutorials
     global Options;  Options = options
     Options.num_procs = Options.jobs
 
-    print 'Using Rosetta source dir at: ', Options.mini_home
-    print 'Using Rosetta database dir at:', Options.database
+    print('Using Rosetta source dir at: ' + Options.mini_home)
+    print('Using Rosetta database dir at:' + Options.database)
     if Options.demos or Options.tutorials:
-        print '\nUsing Rosetta tools at: ', root_tools_dir
-        print 'Using Rosetta demos at: ', root_demos_dir
+        print('\nUsing Rosetta tools at: ' + root_tools_dir)
+        print('Using Rosetta demos at: ' + root_demos_dir)
     if options.valgrind:
-        print 'Using Valgrind at:', options.valgrind_path
+        print('Using Valgrind at:' + options.valgrind_path)
 
     # Make sure the current directory is the script directory:
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
@@ -314,16 +315,16 @@ EXAMPLES For Running Demos/Tutorials
 
     #Print the current SHA1 for demos, main, and tools.
 
-    print "\nCurrent Versions Tested:"
-    print "MAIN:  " + get_git_sha1(Options.mini_home)
+    print("\nCurrent Versions Tested:")
+    print("MAIN:  " + get_git_sha1(Options.mini_home))
     if get_git_sha1(Options.mini_home) != get_git_sha1(Options.database):
-        print "\n====== WARNING WARNING WARNING ========"
-        print "\t Rosetta database version doesn't match source version!"
-        print "\t DATABASE: " + get_git_sha1(Options.database)
-        print "====== WARNING WARNING WARNING ========\n"
-    print "TOOLS: " + get_git_sha1(root_tools_dir)
-    print "DEMOS: " + get_git_sha1(root_demos_dir)
-    print "\n"
+        print("\n====== WARNING WARNING WARNING ========")
+        print("\t Rosetta database version doesn't match source version!")
+        print("\t DATABASE: " + get_git_sha1(Options.database))
+        print("====== WARNING WARNING WARNING ========\n")
+    print("TOOLS: " + get_git_sha1(root_tools_dir))
+    print("DEMOS: " + get_git_sha1(root_demos_dir))
+    print("\n")
 
     #All tests are in a subdirectory.  We set these up here.
     test_subdir = "tests"
@@ -358,7 +359,7 @@ EXAMPLES For Running Demos/Tutorials
     if Options.demos or Options.tutorials:
         for test_dir in copy.deepcopy(tests):
             if os.path.isdir(test_dir):
-                print "Setting up: "+test_dir
+                print("Setting up: "+test_dir)
                 if not setup_demo_command_file(test_dir):
                     tests.remove(test_dir)
 
@@ -398,7 +399,7 @@ EXAMPLES For Running Demos/Tutorials
         queue.TotalNumberOfTasks = len(tests)
 
         # Write substitution parameters to result directory
-        print "Outdir: "+outdir
+        print("Outdir: "+outdir)
         with open(path.join( outdir, "test_parameters.json"), "w") as parameters_file:
             json.dump(generateIntegrationTestGlobalSubstitutionParameters(), parameters_file, sort_keys=True, indent=2)
 
@@ -458,9 +459,9 @@ EXAMPLES For Running Demos/Tutorials
     if rename_to_ref:
         os.renames( outdir, refdir )
 
-        print "Just generated 'ref' results [renamed '%s' to '%s'];  run again after making changes." % (outdir, refdir)
+        print("Just generated 'ref' results [renamed '%s' to '%s'];  run again after making changes." % (outdir, refdir))
         if options.daemon:
-            print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
+            print("SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0))
 
         if options.yaml:
             f = file(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
@@ -468,7 +469,7 @@ EXAMPLES For Running Demos/Tutorials
 
     else:
         if options.skip_comparison:
-            print 'Skipping comparison/analysis phase because command line option "--skip-comparison" was specified...'
+            print('Skipping comparison/analysis phase because command line option "--skip-comparison" was specified...')
 
         else:
             errors = 0
@@ -489,15 +490,15 @@ EXAMPLES For Running Demos/Tutorials
             full_log = ''.join(full_log)
 
             if options.daemon:
-                print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-errors, errors)
+                print("SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-errors, errors))
             else:
                 if errors:
                     if options.valgrind:
-                        print "%i test(s) failed.  Examine respective valgrind.out file(s) for details." % errors
+                        print("%i test(s) failed.  Examine respective valgrind.out file(s) for details." % errors)
                     else:
-                        print "%i test(s) failed.  Use 'diff' to compare results." % errors
+                        print("%i test(s) failed.  Use 'diff' to compare results." % errors)
                 else:
-                    print "All tests passed."
+                    print("All tests passed.")
 
             if options.yaml:
                 try:
@@ -550,7 +551,7 @@ def parse_database( options, option_parser ):
                 options.database = path.join( path.expanduser("~"), "rosetta_database")
 
             if not path.isdir( options.database ):
-                print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
+                print("Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database)
                 return 1
 
     # Normalize path before we change directories!
@@ -566,11 +567,11 @@ def parse_valgrind_options(options):
         import distutils.spawn
         options.valgrind_path = distutils.spawn.find_executable('valgrind')
         if options.valgrind_path is None:
-            print "Unable to find valgrind - install or specify the path with the --valgrind_path option."
+            print("Unable to find valgrind - install or specify the path with the --valgrind_path option.")
             sys.exit(1)
     options.valgrind_path = path.abspath( options.valgrind_path )
     if not os.path.exists( options.valgrind_path ):
-        print "Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option."
+        print("Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option.")
         sys.exit(1)
 
 
@@ -796,8 +797,8 @@ def order_tests(tests):
 # -------------------------------------
 def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
     if verbose:
-        print message
-        print command_line
+        print(message)
+        print(command_line)
 
     while True:
         #(res, output) = commands.getstatusoutput(commandline)
@@ -808,23 +809,23 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         output = ''
         for line in f:
             #po.poll()
-            if print_output: print line,
+            if print_output: print(line, end='')
             output += line
             sys.stdout.flush()
         f.close()
         while po.returncode is None: po.wait()
         res = po.returncode
-        #print '_____________________', res
+        #print('_____________________' + res)
 
         if res and untilSuccesses: pass  # Thats right - redability COUNT!
         else: break
 
-        print "Error while executing %s: %s\n" % (message, output)
-        print "Sleeping 60s... then I will retry..."
+        print("Error while executing %s: %s\n" % (message, output))
+        print("Sleeping 60s... then I will retry...")
         time.sleep(60)
 
     if res:
-        if print_output: print "\nEncounter error while executing: " + command_line
+        if print_output: print("\nEncounter error while executing: " + command_line)
         if not return_: sys.exit(1)
 
     if return_ == 'output': return output
@@ -1030,8 +1031,8 @@ def generateTestCommandline(test, outdir, options=None, host=None):
     except KeyError as e:
         out =  "*** Error in command file replacement: %("+str(e).strip('\'')+")s"
 
-        print "\n*** Test {s} did not run!  Check your --mode flag and paths.".format(s=test)
-        print out+"\n"
+        print("\n*** Test {s} did not run!  Check your --mode flag and paths.".format(s=test))
+        print(out+"\n")
 
         LOG = open(path.join(workdir, ".test_did_not_run.log"), "w")
         LOG.write(out)
@@ -1039,8 +1040,8 @@ def generateTestCommandline(test, outdir, options=None, host=None):
     except Exception as e:
         out =  "*** Error in command file replacement: "+str(e)
 
-        print "\n*** Test {s} did not run!  Check your --mode flag and paths.".format(s=test)
-        print out+"\n"
+        print("\n*** Test {s} did not run!  Check your --mode flag and paths.".format(s=test))
+        print(out+"\n")
 
         LOG = open(path.join(workdir, ".test_did_not_run.log"), "w")
         LOG.write(out)
@@ -1134,12 +1135,12 @@ def analyze_integration_test( test, outdir, refdir, results, full_log ):
     results[test] = result
 
     if result == 0:
-        print "ok   %s" % test
+        print("ok   %s" % test)
         full_log.append("ok   %s\n" % test)
         return 0
     else:
         #runtimes[test] = float('nan')
-        print msg
+        print(msg)
         full_log.append( full_log_msg )
         return 1
 
@@ -1205,11 +1206,11 @@ def analyze_valgrind_test( test, outdir, results, full_log ):
     results[test] = total_errors # I think this is what we should be attaching to the results object
 
     if len(msg)  == 0:
-        print "ok   %s" % test
+        print("ok   %s" % test)
         full_log.append( "ok   %s\n" % test )
         return 0
     else:
-        print "FAIL %s: %s" % (test, msg)
+        print("FAIL %s: %s" % (test, msg))
         full_log.append( "FAIL %s: %s\n" % (test, msg) )
 
         return 1
@@ -1224,7 +1225,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
     """
 
     def signal_handler(signal_, f):
-        print 'Ctrl-C pressed... killing child jobs...'
+        print('Ctrl-C pressed... killing child jobs...')
         for nt in Jobs:
             os.killpg(os.getpgid(nt.pid), signal.SIGKILL)
 
@@ -1237,7 +1238,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
         cmd_line_sh, workdir = GenerateJob(test, outdir, options);
 
         if ( ( cmd_line_sh is None ) or (workdir is None) ) :
-            print "No correct command.sh file found for %s.  Skipping." % test
+            print("No correct command.sh file found for %s.  Skipping." % test)
             queue.task_done() # Mark the task done, for proper counting.
             continue
 
@@ -1248,7 +1249,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
             if res:
                 error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
                 file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
-                print error_string,
+                print(error_string, end='')
                 times[test] = float('nan')
 
             #execute('Just sleeeping %s...' % test, 'ulimit -t%s && sleep 60 && echo "Done!"' % Options.timeout)
@@ -1259,7 +1260,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
             queue.task_done()
             percent = (100* (queue.TotalNumberOfTasks-queue.qsize())) / queue.TotalNumberOfTasks
             elapse_time = time.time() - nt.start_time
-            print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, elapse_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
+            print("Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, elapse_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() ))
             if nt.test not in times:
                 times[nt.test] = elapse_time
 
@@ -1267,14 +1268,14 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
         def error_finish(nt, times):
             error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (nt.test, datetime.datetime.now())
             file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
-            print error_string,
+            print(error_string, end='')
             times[nt.test] = float('nan')
             normal_finish(nt, times)
 
         def timeout_finish(nt, times):
             error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, Options.timeout, datetime.datetime.now())
             file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
-            print error_string,
+            print(error_string, end='')
             times[nt.test] = float('inf')
             normal_finish(nt, times)
 
@@ -1339,15 +1340,15 @@ class Worker:
                         cmd_line_sh, workdir = self.GenerateJob(test, self.outdir, options=self.opts, host=self.host)
 
                         if ( ( cmd_line_sh is None ) or ( workdir is None ) ) :
-                            print "No command file found for %s.  Skipping." % test
+                            print("No command file found for %s.  Skipping." % test)
                             continue
 
                         if self.host is None:
-                            print "Running  %-40s on localhost ..." % test
+                            print("Running  %-40s on localhost ..." % test)
                             proc = subprocess.Popen(["bash",  cmd_line_sh], preexec_fn=os.setpgrp)
                         # Can't use cwd=workdir b/c it modifies *local* dir, not remote dir.
                         else:
-                            print "Running  %-40s on %20s ..." % (test, self.host)
+                            print("Running  %-40s on %20s ..." % (test, self.host))
                             bash_cmd='bash '+cmd_line_sh
                             proc = subprocess.Popen(["ssh", self.host, bash_cmd], preexec_fn=os.setpgrp)#, cwd=workdir)
                             #os._exit(os.EX_IOERR)
@@ -1360,7 +1361,7 @@ class Worker:
                                 if retcode is not None: break
                                 time.sleep(1)
                             if retcode is None:
-                                print "*** Test %s exceeded the timeout and will be killed! [%s]\n" % (test, datetime.datetime.now())
+                                print("*** Test %s exceeded the timeout and will be killed! [%s]\n" % (test, datetime.datetime.now()))
                                 self.times[test] = float('inf')
                                 #os.kill(proc.pid, signal.SIGTERM)
                                 os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
@@ -1370,7 +1371,7 @@ class Worker:
                               error_string = "*** Test %s did not run on host %s!  Check your --mode flag and paths. [%s]\n" % (test, 'local_host', datetime.datetime.now())
                             else:
                               error_string = "*** Test %s did not run on host %s!  Check your --mode flag and paths. [%s]\n" % (test, self.host, datetime.datetime.now())
-                            print error_string,
+                            print(error_string, end='')
 
                             # Writing error_string to a file, so integration test should fail for sure
                             file(path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
@@ -1378,12 +1379,12 @@ class Worker:
                     finally: # inner try
                         percent = (100* (self.queue.TotalNumberOfTasks-self.queue.qsize())) / self.queue.TotalNumberOfTasks
                         elapse_time = time.time() - start
-                        print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (test, elapse_time, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() )
+                        print("Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (test, elapse_time, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() ))
                         if test not in self.times: self.times[test] = elapse_time
                         self.queue.task_done()
 
-                except Exception, e: # middle try
-                    print e
+                except Exception as e: # middle try
+                    print(e)
         except Empty: # outer try
             pass # we're done, just return
 
@@ -1420,21 +1421,21 @@ def local_copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: Tru
             else:
                 shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?
-        except (IOError, os.error), why:
+        except (IOError, os.error) as why:
             errors.append((srcname, dstname, str(why)))
         # catch the Error from the recursive copytree so that we can
         # continue with other files
-        except shutil.Error, err:
+        except shutil.Error as err:
             errors.extend(err.args[0])
     try:
         shutil.copystat(src, dst)
     #except WindowsError:
         # can't copy file access times on Windows
         pass
-    except OSError, why:
+    except OSError as why:
         errors.extend((src, dst, str(why)))
     if errors:
-        raise shutil.Error, errors
+        raise shutil.Error(errors)
 
 
 def match_patterns(search_string, patterns):

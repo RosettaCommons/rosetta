@@ -9,13 +9,13 @@
 ## @file   test/run.py
 ## @brief  Script to run unit tests in mini
 ## @author Sergey Lyskov
-
+from __future__ import print_function
 
 import sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
-import os, commands, re, subprocess, time
+import os, re, subprocess, time
 from os import path
 from optparse import OptionParser
 
@@ -46,7 +46,7 @@ class Tester:
     # print and log given mesage, return message
     def log(self, s):
         self.systemLog += s
-        print s
+        print(s)
         return s
 
 
@@ -60,7 +60,7 @@ class Tester:
                     self.jobs.remove(p)
                 elif r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
                     for p in self.jobs: os.waitpid(p, 0)
-                    print 'Some of the unit test suite terminate abnormally!'
+                    print('Some of the unit test suite terminate abnormally!')
                     sys.exit(1)
 
             if len(self.jobs) >= Options.jobs: time.sleep(.5)
@@ -86,7 +86,7 @@ class Tester:
         if Options.cxx_ver:
             cmd_str += " cxx_ver=%s" % (Options.cxx_ver)
 
-        pl = commands.getoutput(cmd_str)
+        pl = subprocess.getoutput(cmd_str)
         lines = pl.split('\n')
         for s in lines:
             if  len( s.split() ) > 1 and s.split()[0] == 'Platform:':
@@ -141,7 +141,7 @@ class Tester:
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd " + self.testpath + " && "
         exe = self.buildCommandLine(lib, Options.one)
-        print "Command line:: %s%s" % (path, exe)
+        print("Command line:: %s%s" % (path, exe))
 
         if os.path.isfile(yaml_file): os.remove(yaml_file)
 
@@ -170,7 +170,7 @@ class Tester:
     def parseOneLib(self, f, output):
         '''Parse output for OneLib run for regular unit tests.'''
         for line in f:
-            print line,
+            print(line, end='')
             output.append(line)
             sys.stdout.flush()
 
@@ -178,7 +178,7 @@ class Tester:
         valgrind_errors = 0
         for line in f:
             if line.startswith("=="):
-                print line.strip()
+                print(line.strip())
                 if line.find("ERROR SUMMARY") != -1:
                     valgrind_errors += int( line.split()[3] )
                 output.append(line)
@@ -231,7 +231,7 @@ class Tester:
     def parseOneSuite(self, f, output):
         for line in f:
             if line != 'All tests passed!\n':
-                print line,
+                print(line, end='')
                 output.append(line)
                 sys.stdout.flush()
 
@@ -242,7 +242,7 @@ class Tester:
                 if line.find("ERROR SUMMARY") != -1:
                     valgrind_errors += int( line.split()[3] )
                     if valgrind_errors != 0:
-                        print lib, suite, line.strip()
+                        print(lib, suite, line.strip())
                 output.append(line)
                 sys.stdout.flush()
 
@@ -274,11 +274,11 @@ class Tester:
 
         for lib in UnitTestExecutable:
             tests = set()
-            status, command_output = commands.getstatusoutput(self.testpath + '/' + lib + ' _ListAllTests_')
+            status, command_output = subprocess.getstatusoutput(self.testpath + '/' + lib + ' _ListAllTests_')
             if status != 0:
                 # The output doesn't contain a test list, only an error message
-                print "Error running unit test executable for", lib, "- not all tests may be availible."
-                print '\t', '\n\t'.join(command_output.split('\n'))
+                print("Error running unit test executable for", lib, "- not all tests may be availible.")
+                print('\t', '\n\t'.join(command_output.split('\n')))
             else:
                 for test in command_output.split():
                     tests.add( (lib, test.split(':')[0]) )
@@ -292,13 +292,13 @@ class Tester:
 
         if Options.one:  # or Options.jobs < 5:
             if Options.one not in [s for (l,s) in self.all_test_suites] + self.all_tests:
-                print '\nTest suite %s not found!' % Options.one
-                print "Available test suites are:"
+                print('\nTest suite %s not found!' % Options.one)
+                print("Available test suites are:")
                 tests = [s for (l,s) in self.all_test_suites]
                 for test in sorted(tests,key=str.lower):
-                    print "\t%s" % test
+                    print("\t%s" % test)
                 if len(tests) == 0:
-                    print "\t(No Tests Found!)"
+                    print("\t(No Tests Found!)")
                 sys.exit(1)
 
             for lib in UnitTestExecutable:
@@ -329,7 +329,7 @@ class Tester:
                     self.results[lib] = info
 
                     if not os.path.isfile(yaml_file):
-                        print "Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file
+                        print("Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file)
                         uf.close()
                         os.remove(all_results_yaml_file)
                         sys.exit(1)
@@ -349,7 +349,7 @@ class Tester:
             for lib, suite in self.all_test_suites:
                 pid = self.mfork()
                 if not pid:  # we are child process
-                    if Options.debug: print 'DEBUG MODE ENABLED: Skipping tests run: ', lib, suite
+                    if Options.debug: print('DEBUG MODE ENABLED: Skipping tests run: ' + lib + suite)
                     else: self.runOneSuite(lib, suite)
                     sys.exit(0)
 
@@ -373,7 +373,7 @@ class Tester:
                     suite_log = file(self.testpath + '/' + lib + '.' + suite + '.log').read()
                     log_file_h.write( suite_log )
 
-                    print 'trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml'
+                    print('trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml')
                     data = json.loads( file(self.testpath + '/' + lib + '.' + suite + '.yaml').read() )
                     for k in data:
                         if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
@@ -440,19 +440,19 @@ class Tester:
             failedTestsList.extend( [ self.results[t].name + ": " + r  for r in self.results[t].failedTestsList] )
             #print "--> ", self.results[t].failedTestsList
 
-        print "-------- Unit test summary --------"
-        print "Total number of tests:", total
-        print "  number tests passed:", total-failed
-        print "  number tests failed:", failed
+        print("-------- Unit test summary --------")
+        print("Total number of tests:", total)
+        print("  number tests passed:", total-failed)
+        print("  number tests failed:", failed)
         if failedTestsList:
-            print "  failed tests:"
+            print("  failed tests:")
             for t in failedTestsList:
-                print "   ", t
+                print("   ", t)
         if total == 0:
-            print "Success rate: 0%"
+            print("Success rate: 0%")
         else:
-            print "Success rate: %s%%" % ((total-failed)*100/total)
-        print "---------- End of Unit test summary"
+            print("Success rate: %s%%" % ((total-failed)*100/total))
+        print("---------- End of Unit test summary")
 
 
     def buildCommandLine(self, lib, test):
@@ -485,17 +485,17 @@ class Tester:
 
 def parse_valgrind_options(options, option_parser):
     if( options.timeout == option_parser.get_default_values().timeout ):
-        print "Default value for timeout used - turning off timeout for valgrind." # Valgrind runs take a long time.
+        print("Default value for timeout used - turning off timeout for valgrind.") # Valgrind runs take a long time.
         options.timeout = 0
     if options.valgrind_path is None:
         import distutils.spawn
         options.valgrind_path = distutils.spawn.find_executable('valgrind')
         if options.valgrind_path is None:
-            print "Unable to find valgrind - install or specify the path with the --valgrind_path option."
+            print("Unable to find valgrind - install or specify the path with the --valgrind_path option.")
             sys.exit(1)
     options.valgrind_path = path.abspath( options.valgrind_path )
     if not os.path.exists( options.valgrind_path ):
-        print "Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option."
+        print("Cannot find Valgrind at", options.valgrind_path, "install or use the --valgrind_path option.")
         sys.exit(1)
 
 def main(args):
@@ -629,7 +629,7 @@ def main(args):
 
 
     if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
-        print "Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you."
+        print("Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you.")
         options.valgrind = True
     if options.valgrind:
         parse_valgrind_options(options,parser)
@@ -645,7 +645,7 @@ def main(args):
     T.runUnitTests()
     if not Options.one: T.printSummary()
 
-    print "Done!"
+    print("Done!")
 
 
 if __name__ == "__main__": main(sys.argv)

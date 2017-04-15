@@ -10,20 +10,20 @@
 ## @file   performance-benchmark.py
 ## @brief  Script for running mini benchmarks
 ## @author Sergey Lyskov
+from __future__ import print_function
 
-
-import os, commands, sys, re, subprocess
+import os, sys, re, subprocess
 
 
 # Try to identity plaform by using scons compiliation feature.
 def getPlatformID():
-    print "Identifying platform...\n"
-    pl = commands.getoutput("""scons Abracadabra log=platform mode=release""")
+    print("Identifying platform...\n")
+    pl = subprocess.getoutput("""scons Abracadabra log=platform mode=release""")
     lines = pl.split('\n')
     for s in lines:
         if  len( s.split() ) > 1 and s.split()[0] == 'Platform:':
             platform = s.split()[1]
-            print "Platform found: " + platform
+            print("Platform found: " + platform)
             return platform
     return "PlatformWasNotFound!!!"  # <-- That should not reall happend.
 
@@ -37,11 +37,11 @@ def main(args):
 
     cl=required_flags
     if len(args) <= 1:
-        print "No database path supplied... usign defaut one."
+        print("No database path supplied... using defaut one.")
     else:
         database = " ".join(args[1:])
         cl += " -mute core protocols " + database
-    print "Comand line arguments:", cl
+    print("Comand line arguments:", cl)
 
     #platform = getPlatformID()
     #f = os.popen("""cd demo && ./../build/demo/%s/benchmark %s 1>&2""" % (platform, cl), 'r')
@@ -49,11 +49,11 @@ def main(args):
 
     #f = subprocess.Popen("""cd demo && ./../build/demo/%s/benchmark %s""" % (platform, cl), bufsize=0, shell=True, stdout=subprocess.PIPE).stdout
     for line in f:
-        print line,
+        print(line, end='')
         #sys.stdout.flush()
     f.close()
 
-    print "Done!"
+    print("Done!")
 
 
 

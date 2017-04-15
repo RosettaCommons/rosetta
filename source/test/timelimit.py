@@ -10,6 +10,7 @@
 ## @file   timelimit.py
 ## @brief  shell wraper to limit execution time
 ## @author Sergey Lyskov
+from __future__ import print_function
 
 import sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
@@ -20,7 +21,7 @@ import subprocess, signal, time, sys, os
 def main(argv):
     #print argv
     if len(argv) < 3:
-        print 'Usage: "timelimit <number of minutes to wait> <command line> <args...>"'
+        print('Usage: "timelimit <number of minutes to wait> <command line> <args...>"')
         return 1
 
     timeout = int(argv[1])
@@ -33,7 +34,7 @@ def main(argv):
         if retcode is not None: break
         time.sleep(5)
     if retcode is None:
-        print "*** '%s' exceeded the timeout and will be killed!" % commline
+        print("*** '%s' exceeded the timeout and will be killed!" % commline)
         os.kill(proc.pid, signal.SIGTERM)
         return 1
     return retcode

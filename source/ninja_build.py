@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 
 #Build Rosetta using CMake + Ninja.
+from __future__ import print_function
 
 import argparse
 import subprocess
@@ -51,7 +52,7 @@ help_message2 = (
 abbrev = {'r':'release', 'd':'debug', 'u':'debug'}
 
 help_message2 += "\nbuild name abbreviations:\n"
-for key, item in abbrev.items():
+for key, item in list(abbrev.items()):
     help_message2 += '%s\t== %s\n' % (key, item)
 
 
@@ -127,5 +128,5 @@ if args.k:
 
 subprocess.check_call(ninja_command)
 
-print "Job completed. Total time = %f s" % ( time.time() - start_time )
+print("Job completed. Total time = %f s" % ( time.time() - start_time ))
 
