@@ -71,14 +71,14 @@ public:
 	/// score identically with a given scorefunction.
 	void mirror_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
 		core::pose::Pose pose = pdb1rpb_pose();
-		
+
 		// Set up N-methylation:
-		for( core::Size i=2, imax=pose.total_residue(); i<imax; i+=3 ) { //N-methylate every third residue.
+		for ( core::Size i=2, imax=pose.total_residue(); i<imax; i+=3 ) { //N-methylate every third residue.
 			protocols::simple_moves::MutateResidue mutres( i, pose.residue_type(i).aa() == core::chemical::aa_gly ? "GLY:N_Methylation" : "TRP:N_Methylation" );
 			mutres.set_update_polymer_dependent( true );
 			mutres.apply(pose);
 		}
-		
+
 		core::pose::Pose pose2 = pose;
 
 		flip_residues(pose2);

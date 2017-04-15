@@ -263,18 +263,18 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	// AMW: here is where the party starts:
 	// 1. allow chi overrides from extra info in molfile? or alter the
 	// autodetermine_chi_bonds function to be smarter for peptidic types
-	// 2. definitely provide information like UPPER and LOWER as part of the 
+	// 2. definitely provide information like UPPER and LOWER as part of the
 	// extra info (what gets input as M lines in molfile to params operations)
 	// and export them from CIF somehow.
-	
-	
+
+
 	// TODO: Can't directly specify internal coordinate tree or chi bond info
 	// If that changes this needs to be adjusted so as not to overwrite those settings.
 
 	if ( restype->is_protein() ) {
 		// extra finalize call so I can grab atom vertex from N
 		restype->finalize();
-		restype->assign_internal_coordinates( restype->atom_vertex( "N" ) ); 
+		restype->assign_internal_coordinates( restype->atom_vertex( "N" ) );
 	} else {
 		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
 	}
@@ -284,7 +284,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	if ( restype->properties().get_list_of_properties().size() == 0 ) {  // TODO: I should add a size() method. ~Labonte
 		restype->add_property( "LIGAND" );
 	}
-	
+
 	// OK, we now have our chis. Assign chi rotamers if necessary.
 	if ( restype->is_protein() ) {
 		for ( Size ii = 1; ii <= restype->nchi(); ++ii ) {
@@ -294,21 +294,21 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			restype->add_chi_rotamer( ii, 300, 8 );
 		}
 	}
-	
+
 	restype->finalize();
-	
+
 	// If one of those properties is PROTEIN (inferred from a cif, for
 	// example) set upper and lower
 	if ( restype->is_polymer() ) {
 		if ( restype->is_protein() ) {
 			restype->set_lower_connect_atom( "N" );
 			restype->set_upper_connect_atom( "C" );
-			
+
 			// Taken -- hardcoded -- from alanine.
 			//restype->set_atom_base( "LOWER", "N" );
 			//restype->set_atom_base( "UPPER", "C" );
 			restype->set_atom_base( "H", "N" );
-			
+
 			using numeric::conversions::radians;
 			if ( restype->is_d_aa() ) {
 				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685, "N", "CA", "C" );
@@ -322,15 +322,15 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		}
 		restype->set_mainchain_atoms( define_mainchain_atoms( restype ) );
 	}
-	
+
 	restype->finalize();
-	
+
 	if ( restype->mainchain_atoms().size() == 3 ) {
 		restype->add_property( "ALPHA_AA" );
 	} else if ( restype->mainchain_atoms().size() == 4 ) {
 		restype->add_property( "BETA_AA" );
-	} 
-	
+	}
+
 	restype->finalize();
 
 	//restype->show( TR, true );
@@ -477,7 +477,7 @@ void MolFileIOMolecule::set_from_extra_data(ResidueType & restype, std::map< mio
 			for ( estream >> prop; estream; estream >> prop ) {
 				restype.add_property( prop );
 			}
-			
+
 			// TODO: should be more here - we should be able to round-trip a customized ResidueType.
 			// In particular, I'm skipping explicit Icoor, explicit chis, nu atoms, all rotamer library info
 			// mainchain atoms, connections, shadowed atoms, variant types, actcoords, backbone, orbitals

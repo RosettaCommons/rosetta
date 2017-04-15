@@ -109,114 +109,114 @@ using namespace protocols::loops;
 
 void
 SheetSampler::apply(core::pose::Pose & pose){
-		runtime_assert( start_-end_ >=3);
+	runtime_assert( start_-end_ >=3);
 
-		//get starting score
-		Real bestscore = (*sf_)(pose);
-		core::pose::Pose bestpose = pose;
-		Size total_residues = pose.total_residue();
+	//get starting score
+	Real bestscore = (*sf_)(pose);
+	core::pose::Pose bestpose = pose;
+	Size total_residues = pose.total_residue();
 
-		// add residues
-		core::Size insert_baseL = start_ + (end_ - start_)/2;
-		core::Size insert_baseR = insert_baseL-1;
+	// add residues
+	core::Size insert_baseL = start_ + (end_ - start_)/2;
+	core::Size insert_baseR = insert_baseL-1;
 
-		std::string chemicaltype;
-		if(pose.is_fullatom()){
-			chemicaltype = core::chemical::FA_STANDARD;
-		}else if(pose.is_centroid()){
-			chemicaltype = core::chemical::CENTROID;
-		}else{
-			chemicaltype = core::chemical::CENTROID_ROT;
+	std::string chemicaltype;
+	if ( pose.is_fullatom() ) {
+		chemicaltype = core::chemical::FA_STANDARD;
+	} else if ( pose.is_centroid() ) {
+		chemicaltype = core::chemical::CENTROID;
+	} else {
+		chemicaltype = core::chemical::CENTROID_ROT;
+	}
+	core::chemical::ResidueType const &ala_type = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemicaltype )->name_map("ALA");
+	core::conformation::ResidueOP newres( core::conformation::ResidueFactory::create_residue(ala_type) );
+
+	//disable sheet growing of strands that have a proline anchor
+	bool build_left = true;
+	if ( pose.residue(insert_baseL).name3() == "PRO" || pose.residue(insert_baseL+2).name3() == "PRO" ) {
+		build_left = false;
+	}
+	bool build_right = true;
+	if ( pose.residue(insert_baseR).name3() == "PRO" || pose.residue(insert_baseR+2).name3() == "PRO" ) {
+		build_right = false;
+	}
+
+	// strand(left)
+	if ( build_left ) {
+		pose.conformation().append_residue_by_jump(*newres, insert_baseL );
+		Size strand_start=pose.total_residue();
+		Size strand_ref = strand_start;
+
+		//this code assumes append residue by jump always appends the residue at the very end. This should be verified.
+		for ( Size i=end_; i>insert_baseL; i-- ) {
+			pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, strand_start, true);
+			strand_ref++;
 		}
-		core::chemical::ResidueType const &ala_type = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemicaltype )->name_map("ALA");
-		core::conformation::ResidueOP newres( core::conformation::ResidueFactory::create_residue(ala_type) );
-
-		//disable sheet growing of strands that have a proline anchor
-		bool build_left = true;
-		if( pose.residue(insert_baseL).name3() == "PRO" || pose.residue(insert_baseL+2).name3() == "PRO"){
-				build_left = false;
+		for ( Size i=insert_baseL-1; i>=start_; i-- ) {
+			pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
 		}
-		bool build_right = true;
-		if( pose.residue(insert_baseR).name3() == "PRO" || pose.residue(insert_baseR+2).name3() == "PRO" ) {
-				build_right = false;
+		Size strand_stop=pose.total_residue();
+
+		for ( Size j=strand_start; j<=strand_stop; j++ ) {
+			pose.set_phi( j, -140.0 );
+			pose.set_psi( j, 135.0 );
+			pose.set_omega( j, 180.0 );
 		}
 
-		// strand(left)
-		if( build_left ){
-				pose.conformation().append_residue_by_jump(*newres, insert_baseL );
-				Size strand_start=pose.total_residue();
-				Size strand_ref = strand_start;
-
-				//this code assumes append residue by jump always appends the residue at the very end. This should be verified.
-				for(Size i=end_; i>insert_baseL; i--){
-						pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, strand_start, true);
-						strand_ref++;
-				}
-				for(Size i=insert_baseL-1; i>=start_; i--){
-						pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
-				}
-				Size strand_stop=pose.total_residue();
-
-				for(Size j=strand_start; j<=strand_stop; j++){
-						pose.set_phi( j, -140.0 );
-						pose.set_psi( j, 135.0 );
-						pose.set_omega( j, 180.0 );
-				}
-
-				// align this to insert-base
-				if(ideal_sheets_){
-						Size sheet_size = strand_stop-strand_start+1;
-						alignStrand( pose, insert_baseL, strand_ref, strand_start, sheet_size);
-				}
-		
+		// align this to insert-base
+		if ( ideal_sheets_ ) {
+			Size sheet_size = strand_stop-strand_start+1;
+			alignStrand( pose, insert_baseL, strand_ref, strand_start, sheet_size);
 		}
-		Real afterfirst = (*sf_)(pose);
 
-		// strand(right)
-		if( build_right ) {
-				pose.conformation().append_residue_by_jump(*newres, insert_baseR );
-				Size strand_start=pose.total_residue();
-				Size strand_ref = strand_start;
+	}
+	Real afterfirst = (*sf_)(pose);
 
-				// align this to insert-base
-				alignPerfectCA( pose, pose.total_residue(), insert_baseR);
+	// strand(right)
+	if ( build_right ) {
+		pose.conformation().append_residue_by_jump(*newres, insert_baseR );
+		Size strand_start=pose.total_residue();
+		Size strand_ref = strand_start;
 
-				for(Size i=end_; i>insert_baseR; i--){
-						pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, strand_start, true);
-						strand_ref++;
-				}
-				for(Size i=insert_baseR-1; i>=start_; i--){
-						pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
-				}
-				Size strand_stop=pose.total_residue();
+		// align this to insert-base
+		alignPerfectCA( pose, pose.total_residue(), insert_baseR);
 
-				for(Size j=strand_start; j<=strand_stop; j++){
-						pose.set_phi( j, -140.0 );
-						pose.set_psi( j, 135.0 );
-						pose.set_omega( j, 180.0 );
-				}
-				// align this to insert-base
-				if(ideal_sheets_){
-						Size sheet_size = strand_stop-strand_start+1;
-						alignStrand( pose, insert_baseR, strand_ref, strand_start, sheet_size);
-				}
+		for ( Size i=end_; i>insert_baseR; i-- ) {
+			pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, strand_start, true);
+			strand_ref++;
 		}
-		Real aftersecond = (*sf_)(pose);
-		//Delete strands that clash
-		Size totalnew = end_-start_+1;
-		bool keep_first = true;
-		bool keep_second = true;
-		if (bestscore + clashtolerance_ < afterfirst ) keep_first = false;
-		if( afterfirst + clashtolerance_ < aftersecond ) keep_second = false;
-		
-		TR << " start " << bestscore << " after first " << afterfirst << " " << aftersecond << " ct " << clashtolerance_ << std::endl;
-		if( !keep_first and !keep_second ){
-				pose.conformation().delete_residue_range_slow(total_residues+1, pose.total_residue());
-		}else if ( !keep_first || ( !keep_second && !build_left )  ){
-				pose.conformation().delete_residue_range_slow(total_residues+1, total_residues+totalnew);
-		}else if ( !keep_second && build_left ){
-				pose.conformation().delete_residue_range_slow(total_residues+totalnew+1, pose.total_residue());
+		for ( Size i=insert_baseR-1; i>=start_; i-- ) {
+			pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
 		}
+		Size strand_stop=pose.total_residue();
+
+		for ( Size j=strand_start; j<=strand_stop; j++ ) {
+			pose.set_phi( j, -140.0 );
+			pose.set_psi( j, 135.0 );
+			pose.set_omega( j, 180.0 );
+		}
+		// align this to insert-base
+		if ( ideal_sheets_ ) {
+			Size sheet_size = strand_stop-strand_start+1;
+			alignStrand( pose, insert_baseR, strand_ref, strand_start, sheet_size);
+		}
+	}
+	Real aftersecond = (*sf_)(pose);
+	//Delete strands that clash
+	Size totalnew = end_-start_+1;
+	bool keep_first = true;
+	bool keep_second = true;
+	if ( bestscore + clashtolerance_ < afterfirst ) keep_first = false;
+	if ( afterfirst + clashtolerance_ < aftersecond ) keep_second = false;
+
+	TR << " start " << bestscore << " after first " << afterfirst << " " << aftersecond << " ct " << clashtolerance_ << std::endl;
+	if ( !keep_first and !keep_second ) {
+		pose.conformation().delete_residue_range_slow(total_residues+1, pose.total_residue());
+	} else if ( !keep_first || ( !keep_second && !build_left )  ) {
+		pose.conformation().delete_residue_range_slow(total_residues+1, total_residues+totalnew);
+	} else if ( !keep_second && build_left ) {
+		pose.conformation().delete_residue_range_slow(total_residues+totalnew+1, pose.total_residue());
+	}
 
 }
 
@@ -285,9 +285,9 @@ SheetSampler::alignPerfectCA( core::pose::Pose & pose, Size moving, Size ref ) {
 	pose.batch_set_xyz(ids, coords);
 }
 
-void 
+void
 printxyz(numeric::xyzVector< core::Real > printvec ){
-		TR << printvec[0] << " " << printvec[1] << " " << printvec[2] << std::endl;;
+	TR << printvec[0] << " " << printvec[1] << " " << printvec[2] << std::endl;;
 }
 
 void
@@ -342,7 +342,7 @@ SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size 
 	printxyz(y2_3);
 	TR << " second H ";
 	printxyz(y2_4);*/
-	
+
 	//center of mass
 	postT = 0.125*( y_1+y_2+y_3+y_4+y2_1+y2_2+y2_3+y2_4 );
 
@@ -369,7 +369,7 @@ SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size 
 		init_coords(j+1,6) = w2_2[j];
 		init_coords(j+1,7) = w2_3[j];
 		init_coords(j+1,8) = w2_4[j];
-		
+
 		final_coords(j+1,1) = y_1[j];
 		final_coords(j+1,2) = y_2[j];
 		final_coords(j+1,3) = y_3[j];
@@ -400,7 +400,7 @@ SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size 
 
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > coords;
-	for( Size i=strand_start; i<=strand_start+strand_size-1; i++){
+	for ( Size i=strand_start; i<=strand_start+strand_size-1; i++ ) {
 		for ( int j=1; j<=(int)pose.residue(i).natoms(); ++j ) {
 			core::id::AtomID src(j,i);
 			ids.push_back(src);
@@ -410,39 +410,39 @@ SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size 
 	pose.batch_set_xyz(ids, coords);
 }
 
-Real 
+Real
 SheetSampler::sheethbonds(core::pose::Pose& pose, Size lower, Size upper){
-	
-		Real hbond_energies = 0;	
-		//populate hbond set:
-		core::scoring::hbonds::HBondSet set1;
-		pose.update_residue_neighbors();
-		set1.setup_for_residue_pair_energies( pose, false, false );
-		
-		
-		//query hbond set, get energies:
-		for (Size i = 1; i<= set1.nhbonds(); i++) {
-		
-		  core::scoring::hbonds::HBond bond = set1.hbond( i );
-		  Size accResNum = bond.acc_res();
-		  Size donResNum = bond.don_res();
-		  //get acc and donor residues from sequence numbers
-		  core::conformation::Residue accRes = pose.residue( accResNum );
-		  core::conformation::Residue donRes = pose.residue( donResNum );
-			bool accinrange = false;
-			bool doninrange = false;
-			if( accResNum > lower && accResNum <= upper ) accinrange = true;
-			if( donResNum > lower && donResNum <= upper ) doninrange = true;
-			if( doninrange && accinrange) continue;
-			if( accinrange || doninrange ){
-		  		Real energy = bond.energy();
-		  		Real weight = bond.weight();
-		  		hbond_energies +=  weight*energy;
-			}
+
+	Real hbond_energies = 0;
+	//populate hbond set:
+	core::scoring::hbonds::HBondSet set1;
+	pose.update_residue_neighbors();
+	set1.setup_for_residue_pair_energies( pose, false, false );
+
+
+	//query hbond set, get energies:
+	for ( Size i = 1; i<= set1.nhbonds(); i++ ) {
+
+		core::scoring::hbonds::HBond bond = set1.hbond( i );
+		Size accResNum = bond.acc_res();
+		Size donResNum = bond.don_res();
+		//get acc and donor residues from sequence numbers
+		core::conformation::Residue accRes = pose.residue( accResNum );
+		core::conformation::Residue donRes = pose.residue( donResNum );
+		bool accinrange = false;
+		bool doninrange = false;
+		if ( accResNum > lower && accResNum <= upper ) accinrange = true;
+		if ( donResNum > lower && donResNum <= upper ) doninrange = true;
+		if ( doninrange && accinrange ) continue;
+		if ( accinrange || doninrange ) {
+			Real energy = bond.energy();
+			Real weight = bond.weight();
+			hbond_energies +=  weight*energy;
 		}
-		return hbond_energies;
+	}
+	return hbond_energies;
 
 }
 
-} //loop_grower		
+} //loop_grower
 } //protocols

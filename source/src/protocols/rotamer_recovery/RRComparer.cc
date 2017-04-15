@@ -197,7 +197,7 @@ RRComparerChiDiff::measure_rotamer_recovery(
 	recovered=true;
 	Size max_chi = res1.nchi();
 	if ( limit_chi_angles_ ) {
- 		max_chi = std::min(max_chi, max_chi_considered_);
+		max_chi = std::min(max_chi, max_chi_considered_);
 	}
 
 	for ( Size chi_index=1; chi_index <= max_chi; ++chi_index ) {

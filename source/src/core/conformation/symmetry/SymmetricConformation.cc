@@ -949,7 +949,7 @@ SymmetricConformation::append_polymer_residue_after_seqpos(
 		Residue new_new_rsd = new_rsd;
 		if ( !symm_info_->bb_is_independent( seqpos ) ) {
 			// transform coords
-			for (int j=1; j<=(int)new_new_rsd.natoms(); ++j) {
+			for ( int j=1; j<=(int)new_new_rsd.natoms(); ++j ) {
 				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
 			}
 		}
@@ -976,14 +976,14 @@ SymmetricConformation::safely_append_polymer_residue_after_seqpos(
 	core::Size nsubunits = symm_info_->subunits();
 	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
 
-	// Remove N-terminal types of all the subunits 
+	// Remove N-terminal types of all the subunits
 	for ( int i=nsubunits; i>=1; --i ) {
 		core::Size seq_pos = (i-1)*nres_monomer+asymm_anchor;
-	  core::conformation::remove_upper_terminus_type_from_conformation_residue( *this, seq_pos );
+		core::conformation::remove_upper_terminus_type_from_conformation_residue( *this, seq_pos );
 	}
 
-  append_polymer_residue_after_seqpos( new_rsd, seq_pos, ideal_geometry );
-	
+	append_polymer_residue_after_seqpos( new_rsd, seq_pos, ideal_geometry );
+
 }
 
 void
@@ -993,7 +993,7 @@ SymmetricConformation::prepend_polymer_residue_before_seqpos(
 	bool const ideal_geometry // default false
 )
 {
-//	core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
+	// core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
 	core::Size nres_monomer = symm_info_->get_nres_subunit();
 	core::Size nsubunits = symm_info_->subunits();
 	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
@@ -1007,7 +1007,7 @@ SymmetricConformation::prepend_polymer_residue_before_seqpos(
 		Residue new_new_rsd = new_rsd;
 		if ( !symm_info_->bb_is_independent( seqpos ) ) {
 			// transform coords
-			for (int j=1; j<=(int)new_new_rsd.natoms(); ++j) {
+			for ( int j=1; j<=(int)new_new_rsd.natoms(); ++j ) {
 				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
 			}
 		}
@@ -1017,7 +1017,7 @@ SymmetricConformation::prepend_polymer_residue_before_seqpos(
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + 1 );
 	// update ft
-	
+
 	FoldTree f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( *this );
 	core::conformation::symmetry::symmetrize_fold_tree( *this, f_in );
 	fold_tree( f_in );
@@ -1035,14 +1035,14 @@ SymmetricConformation::safely_prepend_polymer_residue_before_seqpos(
 	core::Size nsubunits = symm_info_->subunits();
 	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
 
-	// Remove N-terminal types of all the subunits 
+	// Remove N-terminal types of all the subunits
 	for ( int i=nsubunits; i>=1; --i ) {
 		core::Size seq_pos = (i-1)*nres_monomer+asymm_anchor;
-	  core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, seq_pos );
+		core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, seq_pos );
 	}
 
-  prepend_polymer_residue_before_seqpos( new_rsd, seq_pos, ideal_geometry );
-	
+	prepend_polymer_residue_before_seqpos( new_rsd, seq_pos, ideal_geometry );
+
 }
 
 void

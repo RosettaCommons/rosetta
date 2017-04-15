@@ -139,24 +139,24 @@ NPDHBondSet::NPDHBondSet(
 	//
 	//Real e_step = 1e-4;
 	//for ( Size ii = 1; ii <= 4; ++ii ) {
-	//	HBond const & ii_hb_const = hbond( hbs_to_alter[ ii ] );
-	//	HBond & ii_hb( const_cast< HBond & > ( ii_hb_const ) );
-	//	Real ii_orig_energy = ii_hb.energy();
-	//	Real ii_acc_wt = ii_hb.acc_npd_weight();
-	//	Real ii_don_wt = ii_hb.don_npd_weight();
-	//	utility::vector1< Real > energies( 2 );
-	//	for ( Size jj = 1; jj <= 2; ++jj ) {
-	//		Real deltaE = ( jj == 1 ? -1 : 1 ) * e_step;
-	//		Real jj_energy = ii_orig_energy + deltaE;
-	//		ii_hb.energy_ = jj_energy;
-	//		derive_per_hbond_donor_and_acceptor_weights( pose );
-	//		for ( Size kk = 1; kk <= nhbonds(); ++kk ) {
-	//			HBond const & kk_hb( hbond( kk ));
-	//			energies[ jj ] += kk_hb.energy() * kk_hb.don_npd_weight() * kk_hb.acc_npd_weight();
-	//		}
-	//	}
-	//	TR << "HBond dTotE / dE " << hbs_to_alter[ ii ] << ":    " <<
-	//		( energies[ 2 ] - energies[ 1 ] ) / ( 2 * e_step ) - ii_acc_wt * ii_don_wt  << std::endl;
+	// HBond const & ii_hb_const = hbond( hbs_to_alter[ ii ] );
+	// HBond & ii_hb( const_cast< HBond & > ( ii_hb_const ) );
+	// Real ii_orig_energy = ii_hb.energy();
+	// Real ii_acc_wt = ii_hb.acc_npd_weight();
+	// Real ii_don_wt = ii_hb.don_npd_weight();
+	// utility::vector1< Real > energies( 2 );
+	// for ( Size jj = 1; jj <= 2; ++jj ) {
+	//  Real deltaE = ( jj == 1 ? -1 : 1 ) * e_step;
+	//  Real jj_energy = ii_orig_energy + deltaE;
+	//  ii_hb.energy_ = jj_energy;
+	//  derive_per_hbond_donor_and_acceptor_weights( pose );
+	//  for ( Size kk = 1; kk <= nhbonds(); ++kk ) {
+	//   HBond const & kk_hb( hbond( kk ));
+	//   energies[ jj ] += kk_hb.energy() * kk_hb.don_npd_weight() * kk_hb.acc_npd_weight();
+	//  }
+	// }
+	// TR << "HBond dTotE / dE " << hbs_to_alter[ ii ] << ":    " <<
+	//  ( energies[ 2 ] - energies[ 1 ] ) / ( 2 * e_step ) - ii_acc_wt * ii_don_wt  << std::endl;
 	//}
 
 }
@@ -545,7 +545,7 @@ weights_and_derivs_for_hbonds(
 
 void
 get_weights_for_one_partner_hbonder(
- 	utility::vector1< Real > const & energies,
+	utility::vector1< Real > const & energies,
 	utility::vector1< Real > & weights,
 	utility::vector1< utility::vector1< Real > > & dwt_dE
 )
@@ -598,7 +598,7 @@ get_weights_for_one_partner_hbonder(
 
 Real
 get_weights_for_one_partner_hbonder(
- 	utility::vector1< Real > const & energies, // the sfxn-weighted energies
+	utility::vector1< Real > const & energies, // the sfxn-weighted energies
 	utility::vector1< Real > & weights
 )
 {
@@ -635,7 +635,7 @@ get_weights_for_one_partner_hbonder(
 
 void
 get_weights_for_two_partner_hbonder(
- 	utility::vector1< Real > const & energies, // the sfxn-weighted energies
+	utility::vector1< Real > const & energies, // the sfxn-weighted energies
 	utility::vector1< Real > & weights,
 	utility::vector1< utility::vector1< Real > > & dwt_dE
 )
@@ -683,7 +683,7 @@ get_weights_for_two_partner_hbonder(
 
 void
 get_weights_for_two_partner_hbonder(
- 	utility::vector1< Real > const & energies,
+	utility::vector1< Real > const & energies,
 	utility::vector1< Real > & weights
 )
 {

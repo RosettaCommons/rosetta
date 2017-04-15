@@ -73,14 +73,14 @@ PDNode::~PDNode()
 void PDNode::print() const
 {
 	// std::cerr << "NODE: " << get_node_index() << " with " <<
-	// 	get_num_states() << " states" << std::endl;
+	//  get_num_states() << " states" << std::endl;
 	// for ( int ii = 1; ii <= get_num_states(); ++ii ) {
-	// 	std::cerr << "(" << ii << ", " <<
-	// 		sparse_mat_info_for_state_[ii].get_aa_type() << ", ";
-	// 	std::cerr <<
-	// 		sparse_mat_info_for_state_[ii].get_state_ind_for_this_aa_type() << ", ";
-	// 	std::cerr << one_body_energies_[ ii ] << ") ";
-	// 	if ( ii % 3 == 0 ) std::cerr << std::endl;
+	//  std::cerr << "(" << ii << ", " <<
+	//   sparse_mat_info_for_state_[ii].get_aa_type() << ", ";
+	//  std::cerr <<
+	//   sparse_mat_info_for_state_[ii].get_state_ind_for_this_aa_type() << ", ";
+	//  std::cerr << one_body_energies_[ ii ] << ") ";
+	//  if ( ii % 3 == 0 ) std::cerr << std::endl;
 	// }
 	// std::cerr << std::endl  << "-----------------" << std::endl;
 

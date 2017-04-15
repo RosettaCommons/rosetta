@@ -77,21 +77,23 @@ get_unaligned( core::id::SequenceMapping const & sequencemap )
 	for ( unsigned int currentpos = 1; currentpos <= sequencemap.size1(); ++currentpos ) {
 
 		bool ismapped=false;
-		if (sequencemap[currentpos]==0)
+		if ( sequencemap[currentpos]==0 ) {
 			ismapped = false;
-		else
+		} else {
 			ismapped = true;
-		if (!inloop && !ismapped) {
-	 		startpos = currentpos;
-	 	}
-
-		if (inloop && ismapped) {
-				loops.push_back(protocols::loops::Loop(startpos,currentpos-1));
 		}
-             		inloop = !ismapped;
+		if ( !inloop && !ismapped ) {
+			startpos = currentpos;
+		}
+
+		if ( inloop && ismapped ) {
+			loops.push_back(protocols::loops::Loop(startpos,currentpos-1));
+		}
+		inloop = !ismapped;
 	}
-	if (inloop )
+	if ( inloop ) {
 		loops.push_back(protocols::loops::Loop(startpos, sequencemap.size1()));
+	}
 	return loops;
 }
 
@@ -103,100 +105,103 @@ void Prepare(){
 	utility::vector1< core::Size > cbreaks;
 
 	//Get the pose
-	if( option[pdb].user() ){
-			core::import_pose::pose_from_file( pose, option[ pdb ] );
-			haspdb = true;
+	if ( option[pdb].user() ) {
+		core::import_pose::pose_from_file( pose, option[ pdb ] );
+		haspdb = true;
 	}
 	//Get the chainbreaks and the clean sequence
-	if( option[ in::file::fasta].user() ){
-			sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1])[1];
-	
-			// read chainbreaks
-			std::string fulllength_clean;
-			std::string seq = sequence->sequence();
-			for (int i=0; i<(int)seq.length(); ++i) {
-				if (seq[i] == '/')
-					cbreaks.push_back(fulllength_clean.length());
-				else
-					fulllength_clean += seq[i];
+	if ( option[ in::file::fasta].user() ) {
+		sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1])[1];
+
+		// read chainbreaks
+		std::string fulllength_clean;
+		std::string seq = sequence->sequence();
+		for ( int i=0; i<(int)seq.length(); ++i ) {
+			if ( seq[i] == '/' ) {
+				cbreaks.push_back(fulllength_clean.length());
+			} else {
+				fulllength_clean += seq[i];
 			}
-			sequence = core::sequence::SequenceOP(new core::sequence::Sequence( fulllength_clean, "target" ));
-			hasfasta = true;
+		}
+		sequence = core::sequence::SequenceOP(new core::sequence::Sequence( fulllength_clean, "target" ));
+		hasfasta = true;
 	}
 	//Get the Fragsizes and respective amounts
 	utility::vector1< core::Size > frag_sizes;
 	utility::vector1< core::Size > frag_amounts;
-	if( option[fragsizes].user() ){
-			frag_sizes = option[fragsizes]();
-			if( option[fragamounts].user() ){
-					frag_amounts = option[fragamounts]();
-			}else{
-				TR << " You specificed the size of the fragments you want to pick fragments but didn't list how many you want. Exiting the protocol" << std::endl;
-				exit(0);
-			}
-			if( frag_sizes.size() != frag_amounts.size() ){
-					TR << " The list of frag sizes doesn't equal the list of the respective amounts. Exiting the protocol" << std::endl;
-					exit(0);
-			}
+	if ( option[fragsizes].user() ) {
+		frag_sizes = option[fragsizes]();
+		if ( option[fragamounts].user() ) {
+			frag_amounts = option[fragamounts]();
+		} else {
+			TR << " You specificed the size of the fragments you want to pick fragments but didn't list how many you want. Exiting the protocol" << std::endl;
+			exit(0);
+		}
+		if ( frag_sizes.size() != frag_amounts.size() ) {
+			TR << " The list of frag sizes doesn't equal the list of the respective amounts. Exiting the protocol" << std::endl;
+			exit(0);
+		}
 	}
 	//Pick the fragments
-	if( hasfasta and frag_sizes.size() > 0 ){
-		for (core::uint i=1; i<=frag_sizes.size(); ++i){
+	if ( hasfasta and frag_sizes.size() > 0 ) {
+		for ( core::uint i=1; i<=frag_sizes.size(); ++i ) {
 			core::fragment::FragSetOP fragments = protocols::hybridization::create_fragment_set_no_ssbias(sequence->sequence(), frag_sizes[i], frag_amounts[i]);
 			std::string totalfrags = utility::to_string(frag_amounts[i]);
 			std::string fraglength = utility::to_string(frag_sizes[i]);
-    	std::string fragname = totalfrags+"."+fraglength+"mers";
-	    core::fragment::FragmentIO().write_data( fragname, *(fragments) );
+			std::string fragname = totalfrags+"."+fraglength+"mers";
+			core::fragment::FragmentIO().write_data( fragname, *(fragments) );
 		}
-  }
+	}
 	//do the alignment
 	core::Size total_loops = 0;
-	if( haspdb && hasfasta ){
-			core::sequence::SequenceOP t_pdb_seq( new core::sequence::Sequence( pose.sequence(), "pose_seq" ));
-			core::sequence::SWAligner sw_align;
-			core::sequence::ScoringSchemeOP ss(  new core::sequence::SimpleScoringScheme(120, 0, -100, 0));
-			core::sequence::SequenceAlignment fasta2template;
+	if ( haspdb && hasfasta ) {
+		core::sequence::SequenceOP t_pdb_seq( new core::sequence::Sequence( pose.sequence(), "pose_seq" ));
+		core::sequence::SWAligner sw_align;
+		core::sequence::ScoringSchemeOP ss(  new core::sequence::SimpleScoringScheme(120, 0, -100, 0));
+		core::sequence::SequenceAlignment fasta2template;
 
-			fasta2template = sw_align.align(sequence, t_pdb_seq, ss);
-			core::id::SequenceMapping sequencemap = fasta2template.sequence_mapping(1,2);
+		fasta2template = sw_align.align(sequence, t_pdb_seq, ss);
+		core::id::SequenceMapping sequencemap = fasta2template.sequence_mapping(1,2);
 
-			TR << "Aligning:" << std::endl;
-			TR << fasta2template << std::endl;
-			for ( core::Size ii = 1; ii <= sequence->sequence().size(); ++ii ) {
-				if ( sequencemap[ii] )
-					TR << sequence->at(ii);
-				else
-					TR << "-";
+		TR << "Aligning:" << std::endl;
+		TR << fasta2template << std::endl;
+		for ( core::Size ii = 1; ii <= sequence->sequence().size(); ++ii ) {
+			if ( sequencemap[ii] ) {
+				TR << sequence->at(ii);
+			} else {
+				TR << "-";
 			}
-			TR << std::endl;
+		}
+		TR << std::endl;
 
-			utility::vector1<protocols::loops::Loop> loops_from_aln = get_unaligned(sequencemap), loops_to_build;
+		utility::vector1<protocols::loops::Loop> loops_from_aln = get_unaligned(sequencemap), loops_to_build;
 
 
-			// split chainbreaks
-			for (int i=1; i<=(int)loops_from_aln.size() ; ++i) {
-				bool loop_was_split=false;
-				for (int j=1; j<=(int)cbreaks.size(); ++j) {
-					if (loops_from_aln[i].start() <= cbreaks[j] && loops_from_aln[i].stop() > cbreaks[j]) {
-						runtime_assert( !loop_was_split );
-						loop_was_split = true;
-						loops_to_build.push_back(protocols::loops::Loop(loops_from_aln[i].start(), cbreaks[j]));
-						loops_to_build.push_back(protocols::loops::Loop(cbreaks[j]+1, loops_from_aln[i].stop()));
-					}
+		// split chainbreaks
+		for ( int i=1; i<=(int)loops_from_aln.size() ; ++i ) {
+			bool loop_was_split=false;
+			for ( int j=1; j<=(int)cbreaks.size(); ++j ) {
+				if ( loops_from_aln[i].start() <= cbreaks[j] && loops_from_aln[i].stop() > cbreaks[j] ) {
+					runtime_assert( !loop_was_split );
+					loop_was_split = true;
+					loops_to_build.push_back(protocols::loops::Loop(loops_from_aln[i].start(), cbreaks[j]));
+					loops_to_build.push_back(protocols::loops::Loop(cbreaks[j]+1, loops_from_aln[i].stop()));
 				}
-				if (!loop_was_split)
-					loops_to_build.push_back(loops_from_aln[i]);
 			}
-			total_loops = loops_to_build.size();
+			if ( !loop_was_split ) {
+				loops_to_build.push_back(loops_from_aln[i]);
+			}
+		}
+		total_loops = loops_to_build.size();
 	}
 	//report the total loops and fragments
 	std::ofstream outfile;
 	outfile.open("grower_prep.txt");
-	if(total_loops != 0){
-			outfile << "total loops = " << utility::to_string(total_loops) << std::endl;
+	if ( total_loops != 0 ) {
+		outfile << "total loops = " << utility::to_string(total_loops) << std::endl;
 	}
-	for(core::Size i=1; i<=frag_sizes.size(); i++){
-			outfile << "fragments = " << utility::to_string(frag_amounts[i]) << "." << utility::to_string(frag_sizes[i]) << "mers" << std::endl;
+	for ( core::Size i=1; i<=frag_sizes.size(); i++ ) {
+		outfile << "fragments = " << utility::to_string(frag_amounts[i]) << "." << utility::to_string(frag_sizes[i]) << "mers" << std::endl;
 	}
 	outfile.close();
 }

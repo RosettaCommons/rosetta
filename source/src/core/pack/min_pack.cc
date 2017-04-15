@@ -1214,7 +1214,7 @@ off_rotamer_pack_optimize(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sfxn,
 #else
-  pose::Pose const &,
+	pose::Pose const &,
 	scoring::ScoreFunction const &,
 #endif
 	rotamer_set::ContinuousRotamerSets const & rotsets,
@@ -1237,11 +1237,11 @@ off_rotamer_pack_optimize(
 	// to deltaE calculations that can be compared against a Pose. Do not leave in. DO NOT!
 	// Would crash if the input rotamers are not given on the command line.
 	//for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
-	//	Size ii_curr_rot = rotsets.rotamer_set_for_moltenres(ii).sampling_id_for_current_rotamer();
-	//	Size ii_rotblock = rotsets.rotamer_set_for_moltenres(ii).get_rotblock_index_for_sampling_rotamer( ii_curr_rot );
-	//	atc->moltenres_atomtree_collection( ii ).set_active_restype_index( ii_rotblock );
-	//	atc->moltenres_atomtree_collection( ii ).save_momento( curr_state.state_momento( ii ) );
-	//	curr_state.assign_state( ii, rotsets.rotamer_set_for_moltenres(ii).sampling_id_for_current_rotamer() );
+	// Size ii_curr_rot = rotsets.rotamer_set_for_moltenres(ii).sampling_id_for_current_rotamer();
+	// Size ii_rotblock = rotsets.rotamer_set_for_moltenres(ii).get_rotblock_index_for_sampling_rotamer( ii_curr_rot );
+	// atc->moltenres_atomtree_collection( ii ).set_active_restype_index( ii_rotblock );
+	// atc->moltenres_atomtree_collection( ii ).save_momento( curr_state.state_momento( ii ) );
+	// curr_state.assign_state( ii, rotsets.rotamer_set_for_moltenres(ii).sampling_id_for_current_rotamer() );
 	//}
 
 

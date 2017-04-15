@@ -59,7 +59,7 @@ public:
 
 	void setUp() {
 		core_init_with_additional_options( "-beta_nov16 -score:weights beta_nov16.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
-		
+
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
 		core::import_pose::pose_from_file( *initial_pose, "core/scoring/cyclic_peptide.pdb" , core::import_pose::PDB_file );
@@ -74,7 +74,7 @@ public:
 		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
-		
+
 		// Add N-methylation:
 		protocols::simple_moves::MutateResidueOP mutres3( new protocols::simple_moves::MutateResidue( 3, "TRP:N_Methylation" ) );
 		mutres3->set_update_polymer_dependent( true );
@@ -241,7 +241,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_elec scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_elec() {
@@ -252,7 +252,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_intra_elec scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_intra_elec() {

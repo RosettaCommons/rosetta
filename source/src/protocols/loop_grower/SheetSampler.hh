@@ -111,10 +111,10 @@ static basic::Tracer TR("protocols.loop_grower.SheetSampler");
 class SheetSampler: public protocols::moves::Mover {
 	protocols::jumping::PairingLibraryOP instance_;
 public:
-		SheetSampler():
-				clashtolerance_(5),ideal_sheets_(true) {}
+	SheetSampler():
+		clashtolerance_(5),ideal_sheets_(true) {}
 
-		SheetSampler(core::Size start, core::Size end,  core::Size frag){
+	SheetSampler(core::Size start, core::Size end,  core::Size frag){
 		instance_ = protocols::jumping::PairingLibraryOP ( new protocols::jumping::PairingLibrary );
 		instance_->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
 		start_ = start;
@@ -122,67 +122,67 @@ public:
 		frag_ = frag;
 		ideal_sheets_ = true;
 		runtime_assert( end_ >= start_  );
-		
+
 		//set default score function settings use set_sf to set custom scorefunction
 		sf_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-		sf_->set_weight(	core::scoring::hbond_sr_bb, 0);
-		sf_->set_weight(	core::scoring::hbond_lr_bb, 0);
-		sf_->set_weight(	core::scoring::vdw, 1);
-		sf_->set_weight(	core::scoring::elec_dens_fast, 0);
+		sf_->set_weight( core::scoring::hbond_sr_bb, 0);
+		sf_->set_weight( core::scoring::hbond_lr_bb, 0);
+		sf_->set_weight( core::scoring::vdw, 1);
+		sf_->set_weight( core::scoring::elec_dens_fast, 0);
 		clashtolerance_ = 5;
-		}		
+	}
 
-		// orientation: 1 = parallel, 2 = antiparallel
-		void
-		generate_jump_frags( core::pose::Pose const & pose, core::Size jump_nr, int orientation, int pleating, core::fragment::FrameList& all_frames ) {
+	// orientation: 1 = parallel, 2 = antiparallel
+	void
+	generate_jump_frags( core::pose::Pose const & pose, core::Size jump_nr, int orientation, int pleating, core::fragment::FrameList& all_frames ) {
 
-			int const startpos( pose.fold_tree().downstream_jump_residue( jump_nr ) );
-			int const endpos( pose.fold_tree().upstream_jump_residue( jump_nr ) );
+		int const startpos( pose.fold_tree().downstream_jump_residue( jump_nr ) );
+		int const endpos( pose.fold_tree().upstream_jump_residue( jump_nr ) );
 
-			// create storage for jump fragments
-			core::fragment::FragDataOPs frag_data;
-			core::Size const length( 2 ); // incl endpoint torsions
-			core::fragment::JumpingFrameOP frame( new core::fragment::JumpingFrame( startpos, endpos, length ) );
-		  frame->set_pos( 1, startpos ); frame->set_pos( 2, endpos );
-  		//frame->set_pos( 3, endpos );   frame->set_pos( 4, endpos );
+		// create storage for jump fragments
+		core::fragment::FragDataOPs frag_data;
+		core::Size const length( 2 ); // incl endpoint torsions
+		core::fragment::JumpingFrameOP frame( new core::fragment::JumpingFrame( startpos, endpos, length ) );
+		frame->set_pos( 1, startpos ); frame->set_pos( 2, endpos );
+		//frame->set_pos( 3, endpos );   frame->set_pos( 4, endpos );
 
-			instance_->create_jump_fragments( orientation, pleating, false, frag_data );
-			frame->add_fragment( frag_data );
-			all_frames.push_back( frame );
-		}
+		instance_->create_jump_fragments( orientation, pleating, false, frag_data );
+		frame->add_fragment( frag_data );
+		all_frames.push_back( frame );
+	}
 
-		void
-		alignPerfectCA( core::pose::Pose & pose, core::Size moving, core::Size ref );
+	void
+	alignPerfectCA( core::pose::Pose & pose, core::Size moving, core::Size ref );
 
-		void
-		alignStrand( core::pose::Pose & pose, core::Size ref, core::Size moving, core::Size strand_start, core::Size strand_size );
+	void
+	alignStrand( core::pose::Pose & pose, core::Size ref, core::Size moving, core::Size strand_start, core::Size strand_size );
 
-		core::Real
-		sheethbonds( core::pose::Pose & pose, core::Size lower, core::Size upper );
+	core::Real
+	sheethbonds( core::pose::Pose & pose, core::Size lower, core::Size upper );
 
-	  void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose);
 
-		void
-		set_sf( core::scoring::ScoreFunctionOP newsf ){ sf_ = newsf; }
-		
-		void set_ideal_sheets( bool ideal_sheets ){ ideal_sheets_ = ideal_sheets; }
-		
-		std::string	get_name() const { return "SheetSampler"; }
+	void
+	set_sf( core::scoring::ScoreFunctionOP newsf ){ sf_ = newsf; }
+
+	void set_ideal_sheets( bool ideal_sheets ){ ideal_sheets_ = ideal_sheets; }
+
+	std::string get_name() const { return "SheetSampler"; }
 
 
 
 private:
-		core::Size start_, end_, frag_;
-		core::scoring::ScoreFunctionOP sf_;
-		core::Real clashtolerance_;
-		bool ideal_sheets_;
-		//protocols::jumping::PairingLibraryOP instance_ = protocols::jumping::PairingLibraryOP ( new protocols::jumping::PairingLibrary );
+	core::Size start_, end_, frag_;
+	core::scoring::ScoreFunctionOP sf_;
+	core::Real clashtolerance_;
+	bool ideal_sheets_;
+	//protocols::jumping::PairingLibraryOP instance_ = protocols::jumping::PairingLibraryOP ( new protocols::jumping::PairingLibrary );
 
 };
 
 
 
-} //loop_grower		
+} //loop_grower
 } //protocols
 
 #endif

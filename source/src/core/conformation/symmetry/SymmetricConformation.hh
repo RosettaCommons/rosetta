@@ -233,34 +233,34 @@ public:
 	);
 
 	/// Apped a new residue after a given position in the pose
-  void
-  append_polymer_residue_after_seqpos(
+	void
+	append_polymer_residue_after_seqpos(
 		conformation::Residue const & new_rsd,
 		Size const seq_pos,
 		bool ideal_geometry = true
-  );
+	);
 
-  void
-  safely_append_polymer_residue_after_seqpos(
+	void
+	safely_append_polymer_residue_after_seqpos(
 		conformation::Residue const & new_rsd,
 		Size const seq_pos,
 		bool ideal_geometry = true
-  );	
-  
+	);
+
 	/// Prepend a new residue after a given position in the pose
-  void
-  prepend_polymer_residue_before_seqpos(
+	void
+	prepend_polymer_residue_before_seqpos(
 		conformation::Residue const & new_rsd,
 		Size const seq_pos,
 		bool ideal_geometry = true
-  );
+	);
 
-  void
-  safely_prepend_polymer_residue_before_seqpos(
+	void
+	safely_prepend_polymer_residue_before_seqpos(
 		conformation::Residue const & new_rsd,
 		Size const seq_pos,
 		bool ideal_geometry = true
-  );	
+	);
 
 	/// @brief Append a new conformation by a jump; clones this append to all copies
 	void

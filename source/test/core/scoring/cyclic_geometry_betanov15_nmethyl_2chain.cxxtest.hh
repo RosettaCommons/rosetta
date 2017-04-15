@@ -80,13 +80,13 @@ public:
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 24 );
 		initial_pose_2chain->conformation().declare_chemical_bond(1, "N", 24, "C");
 		initial_pose_2chain->conformation().declare_chemical_bond(13, "N", 12, "C");
-		
+
 		remove_disulfides(initial_pose_2chain);
 		form_disulfides(initial_pose_2chain);
 		for ( core::Size ir=1, irmax=initial_pose_2chain->size(); ir<=irmax; ++ir ) {
 			initial_pose_2chain->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(ir);
 		}
-		
+
 		// Add N-methylation:
 		protocols::simple_moves::MutateResidueOP mutres3( new protocols::simple_moves::MutateResidue( 3, "TRP:N_Methylation" ) );
 		mutres3->set_update_polymer_dependent( true );
@@ -176,7 +176,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_intra_sol_xover4 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_intra_sol_xover4() {

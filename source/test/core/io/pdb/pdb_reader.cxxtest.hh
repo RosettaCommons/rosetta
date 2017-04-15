@@ -356,13 +356,13 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// with the exception of the lines 5 through 7, which have been added to ensure that we don't try reading in
 		// linkages across different crystal cells.  They should be ignored by the reader.
 		string const sample_pdb_lines(
-				"SSBOND   1 CYS A    6    CYS A  127                          1555   1555  2.03  \n"
-				"SSBOND   2 CYS A   30    CYS A  115                          1555   1555  2.07  \n"
-				"SSBOND   3 CYS A   64    CYS A   80                          1555   1555  2.06  \n"
-				"SSBOND   4 CYS A   76    CYS A   94                          1555   1555  2.04  \n"
-				"SSBOND   5 CYS A   99    CYS A   11                          1555  11555  2.04  \n"
-				"SSBOND   6 CYS A  100    CYS A   22                        111555   6555  2.04  \n"
-				"SSBOND   7 CYS A  150    CYS A   33                          6555   1555  2.04  \n" );
+			"SSBOND   1 CYS A    6    CYS A  127                          1555   1555  2.03  \n"
+			"SSBOND   2 CYS A   30    CYS A  115                          1555   1555  2.07  \n"
+			"SSBOND   3 CYS A   64    CYS A   80                          1555   1555  2.06  \n"
+			"SSBOND   4 CYS A   76    CYS A   94                          1555   1555  2.04  \n"
+			"SSBOND   5 CYS A   99    CYS A   11                          1555  11555  2.04  \n"
+			"SSBOND   6 CYS A  100    CYS A   22                        111555   6555  2.04  \n"
+			"SSBOND   7 CYS A  150    CYS A   33                          6555   1555  2.04  \n" );
 
 		vector1< Record > records( create_records_from_pdb_file_contents( sample_pdb_lines ) );
 
@@ -417,14 +417,14 @@ public: // Tests //////////////////////////////////////////////////////////////
 		// with the exception of the lines 6 through 8, which have been added to ensure that we don't try reading in
 		// linkages across different crystal cells.  They should be ignored by the reader.
 		string const sample_pdb_lines(
-				"LINK         O   GLY A  49                NA    NA A6001     1555   1555  2.98  \n"
-				"LINK         OG1 THR A  51                NA    NA A6001     1555   1555  2.72  \n"
-				"LINK         OD2 ASP A  66                NA    NA A6001     1555   1555  2.72  \n"
-				"LINK         NE  ARG A  68                NA    NA A6001     1555   1555  2.93  \n"
-				"LINK         C21 2EG A   7                 C22 2EG B  19     1555   1555  1.56  \n"
-				"LINK        1CA  FOO A   1                1CA  BAR B   2     1555   1455  1.44  \n"
-				"LINK        1CA  FOO A   1                1CA  BAR B   2     1555   1565  1.44  \n"
-				"LINK        1CA  FOO A   1                1CA  BAR B   2     1555   1554  1.44  \n" );
+			"LINK         O   GLY A  49                NA    NA A6001     1555   1555  2.98  \n"
+			"LINK         OG1 THR A  51                NA    NA A6001     1555   1555  2.72  \n"
+			"LINK         OD2 ASP A  66                NA    NA A6001     1555   1555  2.72  \n"
+			"LINK         NE  ARG A  68                NA    NA A6001     1555   1555  2.93  \n"
+			"LINK         C21 2EG A   7                 C22 2EG B  19     1555   1555  1.56  \n"
+			"LINK        1CA  FOO A   1                1CA  BAR B   2     1555   1455  1.44  \n"
+			"LINK        1CA  FOO A   1                1CA  BAR B   2     1555   1565  1.44  \n"
+			"LINK        1CA  FOO A   1                1CA  BAR B   2     1555   1554  1.44  \n" );
 
 		vector1< Record > records( create_records_from_pdb_file_contents( sample_pdb_lines ) );
 

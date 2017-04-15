@@ -730,9 +730,9 @@ private:
 ///
 template < typename V, typename E, typename G >
 NPDHBondNode< V, E, G >::NPDHBondNode( G* owner, int node_index, int num_states ) :
-	FirstClassNode< V, E, G > ( owner, node_index, num_states ),
-	seqpos_( 0 ),
-	max_natoms_( 0 )
+FirstClassNode< V, E, G > ( owner, node_index, num_states ),
+seqpos_( 0 ),
+max_natoms_( 0 )
 {
 	rotamers_vector_.resize( num_states );
 	restype_group_for_rotamers_.resize( num_states, 0 );
@@ -1027,7 +1027,7 @@ void NPDHBondNode< V, E, G >::compute_alt_weights_for_hbonds(
 	bool curr_state
 )
 {
-	if (( curr_state && parent::get_current_state() == 0) || ( ! curr_state && parent::get_alternate_state() == 0)) return;
+	if ( ( curr_state && parent::get_current_state() == 0) || ( ! curr_state && parent::get_alternate_state() == 0) ) return;
 	//scoring::hbonds::NPDHBondSet const & hbset( get_npd_hbond_owner()->npd_hbond_set() );
 	conformation::Residue const & res( curr_state ? curr_state_rotamer() : alt_state_rotamer() );
 	compute_alt_weights_for_npd_hbonds( res, alt_atom_hbonds_, tmp_energies_, tmp_weights_ );
@@ -1187,8 +1187,8 @@ void NPDHBondNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 NPDHBondBackgroundNode< V, E, G >::NPDHBondBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-	BackgroundNode< V, E, G > ( owner, node_index ),
-	prepared_for_simA_( false )
+BackgroundNode< V, E, G > ( owner, node_index ),
+prepared_for_simA_( false )
 {}
 
 ///
@@ -1384,9 +1384,9 @@ void NPDHBondBackgroundNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 NPDHBondEdge< V, E, G >::NPDHBondEdge( G* owner, int node1, int node2 ) :
-	FirstClassEdge< V, E, G > ( owner, node1, node2 ),
-	node_changing_( -1 ),
-	node_not_changing_( -1 )
+FirstClassEdge< V, E, G > ( owner, node1, node2 ),
+node_changing_( -1 ),
+node_not_changing_( -1 )
 {
 	nodes_curr_states_[ 0 ] = nodes_curr_states_[ 1 ] = 0;
 	nodes_alt_states_[ 0 ] = nodes_alt_states_[ 1 ] = 0;
@@ -1406,7 +1406,7 @@ void NPDHBondEdge< V, E, G >::prepare_for_simulated_annealing() {
 
 	if ( parent::pd_edge_table_all_zeros() ) {
 		// TO DO: decide when to delete this edge
-		//	delete this;
+		// delete this;
 	}
 }
 
@@ -1484,7 +1484,7 @@ unsigned int NPDHBondEdge< V, E, G >::count_dynamic_memory() const {
 // template < typename V, typename E, typename G >
 // Real NPDHBondEdge< V, E, G >::get_current_two_body_energy() const
 // {
-// 	return current_two_body_energy_;
+//  return current_two_body_energy_;
 // }
 
 template < typename V, typename E, typename G >
@@ -1635,10 +1635,10 @@ NPDHBondBackgroundEdge< V, E, G >::NPDHBondBackgroundEdge(
 	int first_class_node_index,
 	int background_node_index
 ) :
-	BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
-	prepared_for_simA_( false ),
-	nodes_curr_state_( 0 ),
-	nodes_alt_state_( 0 )
+BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
+prepared_for_simA_( false ),
+nodes_curr_state_( 0 ),
+nodes_alt_state_( 0 )
 {}
 
 ///
@@ -1656,12 +1656,12 @@ void NPDHBondBackgroundEdge< V, E, G >::prepare_for_simulated_annealing() {}
 ////template < typename V, typename E, typename G >
 ////void NPDHBondBackgroundEdge< V, E, G >::acknowledge_state_change( int new_state ) {
 ////
-////	if ( new_state == nodes_curr_state_ ) { // in the case of the 0-state, just return - don't calculate deltaE
-////		return;
-////	}
+//// if ( new_state == nodes_curr_state_ ) { // in the case of the 0-state, just return - don't calculate deltaE
+////  return;
+//// }
 ////
-////	update_state_at_neighbor( new_state );
-////	acknowledge_substitution();
+//// update_state_at_neighbor( new_state );
+//// acknowledge_substitution();
 ////
 ////}
 
@@ -1800,24 +1800,24 @@ Size NPDHBondInteractionGraph< V, E, G >::num_npd_hbond_comps_later_made_ = 0;
 ///
 template < typename V, typename E, typename G >
 NPDHBondInteractionGraph< V, E, G >::NPDHBondInteractionGraph( int num_nodes ) :
-	AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
-	num_total_residues_( 0 ),
-	num_residues_assigned_as_background_( 0 ),
-	prepared_for_simulated_annealing_( false ),
-	observed_sufficient_npd_hbond_E_to_predict_min_( false ),
-	npd_hbond_score_min_last_100_( 0 ),
-	npd_hbond_score_min_recent_( 0 ),
-	num_substitutions_since_npd_hbond_min_update_( 0 ),
-	calculated_npd_hbond_deltaE_( false ),
-	deltaE_for_substitution_( 0.0f ),
-	node_considering_alt_state_( 0 ),
-	alt_state_being_considered_( 0 ),
-	total_energy_current_state_assignment_( 0 ),
-	total_energy_alternate_state_assignment_( 0 ),
-	npd_hbond_energy_current_state_assignment_( 0 ),
-	npd_hbond_energy_alternate_state_assignment_( 0 ),
-	num_commits_since_last_update_( 0 ),
-	deltaE_threshold_for_avoiding_npd_hbond_calcs_( -1.0f )
+AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
+num_total_residues_( 0 ),
+num_residues_assigned_as_background_( 0 ),
+prepared_for_simulated_annealing_( false ),
+observed_sufficient_npd_hbond_E_to_predict_min_( false ),
+npd_hbond_score_min_last_100_( 0 ),
+npd_hbond_score_min_recent_( 0 ),
+num_substitutions_since_npd_hbond_min_update_( 0 ),
+calculated_npd_hbond_deltaE_( false ),
+deltaE_for_substitution_( 0.0f ),
+node_considering_alt_state_( 0 ),
+alt_state_being_considered_( 0 ),
+total_energy_current_state_assignment_( 0 ),
+total_energy_alternate_state_assignment_( 0 ),
+npd_hbond_energy_current_state_assignment_( 0 ),
+npd_hbond_energy_alternate_state_assignment_( 0 ),
+num_commits_since_last_update_( 0 ),
+deltaE_threshold_for_avoiding_npd_hbond_calcs_( -1.0f )
 {
 }
 
@@ -1982,7 +1982,7 @@ void NPDHBondInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBa
 			// add an edge
 			Size ii_node_id = rotamer_sets().resid_2_moltenres( ii );
 			for ( auto edge_iter = neighbor_graph_->get_node( ii )->const_edge_list_begin();
-						edge_iter != neighbor_graph_->get_node( ii )->const_edge_list_end(); ++edge_iter ) {
+					edge_iter != neighbor_graph_->get_node( ii )->const_edge_list_end(); ++edge_iter ) {
 				Size jj = (*edge_iter)->get_other_ind( ii );
 				if ( ! packer_task().being_packed( jj ) && ! packer_task().being_designed( jj ) ) {
 					Size jj_bgnode_id = resid_2_bgenumeration_[ jj ];

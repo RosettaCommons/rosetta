@@ -74,7 +74,7 @@ public:
 		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
-		
+
 		// Add N-methylation:
 		protocols::simple_moves::MutateResidueOP mutres3( new protocols::simple_moves::MutateResidue( 3, "TRP:N_Methylation" ) );
 		mutres3->set_update_polymer_dependent( true );

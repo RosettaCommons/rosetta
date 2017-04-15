@@ -79,7 +79,7 @@ public:
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 24 );
 		initial_pose_2chain->conformation().declare_chemical_bond(1, "N", 24, "C");
 		initial_pose_2chain->conformation().declare_chemical_bond(13, "N", 12, "C");
-		
+
 		remove_disulfides(initial_pose_2chain);
 		form_disulfides(initial_pose_2chain);
 		for ( core::Size ir=1, irmax=initial_pose_2chain->size(); ir<=irmax; ++ir ) {
@@ -175,7 +175,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_intra_sol_xover4 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_intra_sol_xover4() {
@@ -227,7 +227,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the lk_ball_iso scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_lk_ball_iso() {
@@ -278,7 +278,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_intra_elec scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_intra_elec() {
@@ -341,7 +341,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_dun_dev scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_dun_dev() {
@@ -353,7 +353,7 @@ public:
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
-	
+
 	/// @brief Tests cyclic permutation scoring with the fa_dun_semi scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_dun_semi() {

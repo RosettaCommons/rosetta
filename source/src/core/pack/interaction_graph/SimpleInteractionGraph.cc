@@ -449,7 +449,7 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 		r1sc_rad = node1->curr_sc_radius();
 		//node1_used = "current";
 	}
-	
+
 	if ( !use_current_node2 ) {
 		//node2_used = "alternate";
 		res2 = node2->get_alternate();
@@ -503,16 +503,16 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 	}
 
 	//if ( res1->seqpos() == 49 && res2->seqpos() == 72 ) {
-	//	std::cout << " SimpleIG::compute_energy " << res1->seqpos() << " " << res2->seqpos() << " ";
-	//	emap.show_weighted( std::cout, ig->scorefunction().weights() );
-	//	std::cout << std::endl;
+	// std::cout << " SimpleIG::compute_energy " << res1->seqpos() << " " << res2->seqpos() << " ";
+	// emap.show_weighted( std::cout, ig->scorefunction().weights() );
+	// std::cout << std::endl;
 	//}
 
 	Real energy =
-    ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_2b_types() ) +
-    ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_2b_types() ) +
-    ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_lr_2b_types() ) +
-    ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_lr_2b_types() ) +
+		ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_2b_types() ) +
+		ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_2b_types() ) +
+		ig->scorefunction().weights().dot( emap, ig->scorefunction().ci_lr_2b_types() ) +
+		ig->scorefunction().weights().dot( emap, ig->scorefunction().cd_lr_2b_types() ) +
 		get_bb_E( *res1, *res2 );
 
 	if ( use_current_node1 && use_current_node2 ) {
@@ -648,7 +648,7 @@ SimpleInteractionGraph::initialize(
 
 
 	//Prepare Edges For Long Range Interactions
-	for( auto it = sfxn_->long_range_energies_begin(); it != sfxn_->long_range_energies_end(); ++it){
+	for ( auto it = sfxn_->long_range_energies_begin(); it != sfxn_->long_range_energies_end(); ++it ) {
 		scoring::LREnergyContainerCOP lrec = pose.energies().long_range_container( (*it)->long_range_type() );
 
 		if ( !lrec || lrec->empty() ) continue;
@@ -682,56 +682,56 @@ SimpleInteractionGraph::initialize(
 
 	/*
 	for ( Size ii = 2; ii <= pose_->size(); ii++ ) {
-		for ( Size jj = 1; jj < ii; jj++ ) {
+	for ( Size jj = 1; jj < ii; jj++ ) {
 
-			bool calc_short_range_interactions = false;
-			bool calc_long_range_interactions = false;
+	bool calc_short_range_interactions = false;
+	bool calc_long_range_interactions = false;
 
-			//Short Range
-			if ( sfxn_->are_they_neighbors( *pose_, jj, ii ) ) {
-				calc_short_range_interactions = true;
-			}
+	//Short Range
+	if ( sfxn_->are_they_neighbors( *pose_, jj, ii ) ) {
+	calc_short_range_interactions = true;
+	}
 
-			//Long Range
-			for( auto it = sfxn_->long_range_energies_begin(); it != sfxn_->long_range_energies_end(); ++it){
-				if( (*it)->defines_residue_pair_energy(*pose_, ii, jj) ){
-					calc_long_range_interactions = true;
-					break;
-				}
-			}
+	//Long Range
+	for( auto it = sfxn_->long_range_energies_begin(); it != sfxn_->long_range_energies_end(); ++it){
+	if( (*it)->defines_residue_pair_energy(*pose_, ii, jj) ){
+	calc_long_range_interactions = true;
+	break;
+	}
+	}
 
-			//Update Edge Settings and Compute Energy
-			if ( calc_short_range_interactions || calc_long_range_interactions){
-				if ( Graph::get_edge_exists( jj, ii ) ){
-					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
+	//Update Edge Settings and Compute Energy
+	if ( calc_short_range_interactions || calc_long_range_interactions){
+	if ( Graph::get_edge_exists( jj, ii ) ){
+	SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
 
-					if ( existing_edge ) {
-						existing_edge->calc_short_range(calc_short_range_interactions);
-						existing_edge->calc_long_range(calc_long_range_interactions);
-						existing_edge->compute_energy( true, true );
-					}
-				}
-				else{
-					SimpleEdge * new_edge = static_cast< SimpleEdge * > ( add_edge( jj, ii ));
-					new_edge->calc_short_range(calc_short_range_interactions);
-					new_edge->calc_long_range(calc_long_range_interactions);
-					new_edge->compute_energy( true, true );
-				}
-			}
-			else {//Negate (remove?) any edges that do not represent any interactions
-				if ( Graph::get_edge_exists( jj, ii ) ){
-					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
+	if ( existing_edge ) {
+	existing_edge->calc_short_range(calc_short_range_interactions);
+	existing_edge->calc_long_range(calc_long_range_interactions);
+	existing_edge->compute_energy( true, true );
+	}
+	}
+	else{
+	SimpleEdge * new_edge = static_cast< SimpleEdge * > ( add_edge( jj, ii ));
+	new_edge->calc_short_range(calc_short_range_interactions);
+	new_edge->calc_long_range(calc_long_range_interactions);
+	new_edge->compute_energy( true, true );
+	}
+	}
+	else {//Negate (remove?) any edges that do not represent any interactions
+	if ( Graph::get_edge_exists( jj, ii ) ){
+	SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( jj, ii ) );
 
-					if ( existing_edge ) {
-						existing_edge->calc_short_range(false);
-						existing_edge->calc_long_range(false);
-						existing_edge->compute_energy( true, true );
-					}
-				}
-			}
+	if ( existing_edge ) {
+	existing_edge->calc_short_range(false);
+	existing_edge->calc_long_range(false);
+	existing_edge->compute_energy( true, true );
+	}
+	}
+	}
 
-		}//jj
-		}//ii*/
+	}//jj
+	}//ii*/
 }
 
 void

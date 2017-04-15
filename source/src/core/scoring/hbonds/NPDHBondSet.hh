@@ -263,16 +263,16 @@ weights_for_hbonds(
 ///// evaluation.
 //void
 //weights_for_hbonds(
-//	conformation::Residue const & res,
-//	Size atom,
-//	utility::vector1< Real > const & energies,
-//	utility::vector1< Real > & weights,
-//	utility::vector1< utility::vector1< Real > > & d_wt_dE
+// conformation::Residue const & res,
+// Size atom,
+// utility::vector1< Real > const & energies,
+// utility::vector1< Real > & weights,
+// utility::vector1< utility::vector1< Real > > & d_wt_dE
 //);
 
 void
 get_weights_for_one_partner_hbonder(
- 	utility::vector1< Real > const & energies,
+	utility::vector1< Real > const & energies,
 	utility::vector1< Real > & weights,
 	utility::vector1< utility::vector1< Real > > & dwt_dE
 );
@@ -280,13 +280,13 @@ get_weights_for_one_partner_hbonder(
 /// @brief Helper function used by the weights_for_hbonds function above.
 Real
 get_weights_for_one_partner_hbonder(
- 	utility::vector1< Real > const & energies,
+	utility::vector1< Real > const & energies,
 	utility::vector1< Real > & weights
 );
 
 void
 get_weights_for_two_partner_hbonder(
- 	utility::vector1< Real > const & energies,
+	utility::vector1< Real > const & energies,
 	utility::vector1< Real > & weights,
 	utility::vector1< utility::vector1< Real > > & dwt_dE
 );
@@ -294,7 +294,7 @@ get_weights_for_two_partner_hbonder(
 /// @brief Helper function used by the weights_for_hbonds function above.
 void
 get_weights_for_two_partner_hbonder(
- 	utility::vector1< Real > const & energies,
+	utility::vector1< Real > const & energies,
 	utility::vector1< Real > & weights
 );
 

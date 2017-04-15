@@ -350,11 +350,11 @@ public: // Assignment
 	//void
 	//apply_func_to_all( one_param_func func ) {
 
-	//	for ( Size ii = 1 ; ii <= size() ; ++ii ) {
-	//		for ( Size jj = 1 ; jj <= ( *this )[ ii ].size() ; ++jj ) {
-	//			( *this ) [ ii ][ jj ] = ( *func )( ( *this ) [ ii ][ jj ] );
-	//		}
-	//	}
+	// for ( Size ii = 1 ; ii <= size() ; ++ii ) {
+	//  for ( Size jj = 1 ; jj <= ( *this )[ ii ].size() ; ++jj ) {
+	//   ( *this ) [ ii ][ jj ] = ( *func )( ( *this ) [ ii ][ jj ] );
+	//  }
+	// }
 
 	//}
 

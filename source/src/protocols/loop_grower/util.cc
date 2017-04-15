@@ -40,54 +40,54 @@ using namespace core;
 
 void
 transform_res_to_subunit( core::pose::Pose &pose, core::conformation::ResidueOP xformed, core::Size symmcopy) {
-				core::conformation::symmetry::SymmetricConformation & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
-				core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-        core::Size nres_asu = symm_info->num_independent_residues();
+	core::conformation::symmetry::SymmetricConformation & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	core::Size nres_asu = symm_info->num_independent_residues();
 
-        for (Size i=1; i<=xformed->atoms().size(); ++i) {
-                numeric::xyzVector< core::Real > X = xformed->xyz(i);
-                numeric::xyzVector< core::Real > sX = SymmConf.apply_transformation( X, 1, symmcopy*nres_asu);
-                xformed->set_xyz(i, sX);
-        }
+	for ( Size i=1; i<=xformed->atoms().size(); ++i ) {
+		numeric::xyzVector< core::Real > X = xformed->xyz(i);
+		numeric::xyzVector< core::Real > sX = SymmConf.apply_transformation( X, 1, symmcopy*nres_asu);
+		xformed->set_xyz(i, sX);
+	}
 }
 
 void
 transform_to_closest_symmunit(core::pose::Pose & cen_pose, core::pose::Pose & fa_pose, Size lower_pose){
-        core::conformation::symmetry::SymmetricConformation & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( cen_pose.conformation()) );
-				core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-        Size nsubunits = symm_info->subunits();
-				//add terminus checks!!!!
-				if( lower_pose == symm_info->num_independent_residues() ) return;
-				if( lower_pose == 1 ) return;
-				Size rescount = lower_pose;
-				while (!cen_pose.fold_tree().is_cutpoint(rescount)) rescount++;
-				core::conformation::ResidueOP xformed = cen_pose.conformation().residue_cop(rescount+1)->clone();
-				std::string mobileatom = "C";
-				std::string staticatom = "N";
-				Real shortest_dist = 9999;
-				Size bestsubunit = 1;
-				for(Size i=1; i<=nsubunits; i++){
-					transform_res_to_subunit(cen_pose, xformed, i);
-					Real distance = (cen_pose.residue(rescount).atom(staticatom).xyz()-xformed->atom(mobileatom).xyz()).length();
-					if(distance < shortest_dist){
-						shortest_dist = distance;
-						bestsubunit = i;
-					}
-				}
-				//replace with best symmetric unit
-				bool ischainbreak = false;
-				for(Size i=rescount+1; i<=cen_pose.total_residue(); i++){
-						if(cen_pose.fold_tree().is_cutpoint(i)){
-								ischainbreak = true;
-						}
-						xformed = cen_pose.conformation().residue_cop(i)->clone();
-						transform_res_to_subunit(cen_pose, xformed, bestsubunit);
-						cen_pose.replace_residue(i,*xformed,false);
-						xformed = fa_pose.conformation().residue_cop(i)->clone();
-						transform_res_to_subunit(fa_pose, xformed, bestsubunit);
-						fa_pose.replace_residue(i,*xformed,false);
-						if( ischainbreak ) break;
-				}
+	core::conformation::symmetry::SymmetricConformation & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( cen_pose.conformation()) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	Size nsubunits = symm_info->subunits();
+	//add terminus checks!!!!
+	if ( lower_pose == symm_info->num_independent_residues() ) return;
+	if ( lower_pose == 1 ) return;
+	Size rescount = lower_pose;
+	while ( !cen_pose.fold_tree().is_cutpoint(rescount) ) rescount++;
+	core::conformation::ResidueOP xformed = cen_pose.conformation().residue_cop(rescount+1)->clone();
+	std::string mobileatom = "C";
+	std::string staticatom = "N";
+	Real shortest_dist = 9999;
+	Size bestsubunit = 1;
+	for ( Size i=1; i<=nsubunits; i++ ) {
+		transform_res_to_subunit(cen_pose, xformed, i);
+		Real distance = (cen_pose.residue(rescount).atom(staticatom).xyz()-xformed->atom(mobileatom).xyz()).length();
+		if ( distance < shortest_dist ) {
+			shortest_dist = distance;
+			bestsubunit = i;
+		}
+	}
+	//replace with best symmetric unit
+	bool ischainbreak = false;
+	for ( Size i=rescount+1; i<=cen_pose.total_residue(); i++ ) {
+		if ( cen_pose.fold_tree().is_cutpoint(i) ) {
+			ischainbreak = true;
+		}
+		xformed = cen_pose.conformation().residue_cop(i)->clone();
+		transform_res_to_subunit(cen_pose, xformed, bestsubunit);
+		cen_pose.replace_residue(i,*xformed,false);
+		xformed = fa_pose.conformation().residue_cop(i)->clone();
+		transform_res_to_subunit(fa_pose, xformed, bestsubunit);
+		fa_pose.replace_residue(i,*xformed,false);
+		if ( ischainbreak ) break;
+	}
 }
 
 

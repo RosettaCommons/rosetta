@@ -341,7 +341,7 @@ void NPDHBSimpleNode::compute_alt_weights_for_hbonds(
 	bool curr_state
 )
 {
-	if (( curr_state && get_current() == nullptr ) || ( ! curr_state && get_alternate() == nullptr )) return;
+	if ( ( curr_state && get_current() == nullptr ) || ( ! curr_state && get_alternate() == nullptr ) ) return;
 
 	conformation::Residue const & res( curr_state ? get_current_ref() : get_alternate_ref() );
 	compute_alt_weights_for_npd_hbonds( res, alt_atom_hbonds_, tmp_energies_, tmp_weights_ );
@@ -378,7 +378,7 @@ NPDHBSimpleNode::find_curr_hbonds_to_upper_neighbors()
 
 	// this should only be called once per node at the very beginning of initialization
 	for ( auto iter = upper_edge_list_begin(), iter_end = upper_edge_list_end();
-				iter != iter_end; ++iter ) {
+			iter != iter_end; ++iter ) {
 		NPDHBSimpleNode * nbr( npdhb_cast( (*iter)->get_other_node( get_node_index() ) ) );
 		create_hbonds_one_way( database, hbondoptions, hbset, ig, hbonding_to_res,
 			nbr->get_current_ref(), nbr->curr_hbonds_, nbr->curr_atom_hbonds_,
@@ -481,11 +481,11 @@ void NPDHBSimpleInteractionGraph::set_scorefunction( scoring::ScoreFunction cons
 {
 	parent::set_scorefunction( sfxn );
 	npd_hbond_weight_ = std::max( {
-			sfxn.weights()[ scoring::npd_hbond_sr_bb ],
-			sfxn.weights()[ scoring::npd_hbond_lr_bb ],
-			sfxn.weights()[ scoring::npd_hbond_bb_sc ],
-			sfxn.weights()[ scoring::npd_hbond_sc ],
-			sfxn.weights()[ scoring::npd_hbond ] } );
+		sfxn.weights()[ scoring::npd_hbond_sr_bb ],
+		sfxn.weights()[ scoring::npd_hbond_lr_bb ],
+		sfxn.weights()[ scoring::npd_hbond_bb_sc ],
+		sfxn.weights()[ scoring::npd_hbond_sc ],
+		sfxn.weights()[ scoring::npd_hbond ] } );
 }
 
 void

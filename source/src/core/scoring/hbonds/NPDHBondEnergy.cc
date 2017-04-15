@@ -286,13 +286,13 @@ NPDHBondEnergy::eval_atom_derivative(
 		//// the way I had calculated the energies when the sfxn weights were not part
 		//// of the calculation for the donor and acceptor weights
 		//if ( atom_id.rsd() == ii_hb.don_res() ) {
-		//	ii_wtd_deriv = (
-		//		ii_hb.don_npd_weight() * ii_hb.acc_npd_weight() +
-		//		hbond_set.dEtot_dEhb( ii_hb.index() ) ) * ii_raw_deriv;
+		// ii_wtd_deriv = (
+		//  ii_hb.don_npd_weight() * ii_hb.acc_npd_weight() +
+		//  hbond_set.dEtot_dEhb( ii_hb.index() ) ) * ii_raw_deriv;
 		//} else {
-		//	ii_wtd_deriv = (
-		//		ii_hb.don_npd_weight() * ii_hb.acc_npd_weight() +
-		//		hbond_set.dEtot_dEhb( ii_hb.index() ) ) * ii_raw_deriv;
+		// ii_wtd_deriv = (
+		//  ii_hb.don_npd_weight() * ii_hb.acc_npd_weight() +
+		//  hbond_set.dEtot_dEhb( ii_hb.index() ) ) * ii_raw_deriv;
 		//}
 		//
 		//Real sfxn_weight = npd_hb_eval_type_weight( ii_hbe_type.eval_type(), weights );

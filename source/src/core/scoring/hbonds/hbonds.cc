@@ -114,13 +114,13 @@ Size HBDerivAssigner::abase2_ind() const { return abase2_ind_; }
 Size HBDerivAssigner::ind( which_atom_in_hbond which )
 {
 	switch ( which ) {
-		case which_hb_unassigned : return 0;
-		case which_hb_hatm : return h_ind_;
-		case which_hb_datm : return d_ind_;
-		case which_hb_aatm : return a_ind_;
-		case which_hb_abase : return abase_ind_;
-		case which_hb_abase_prime : return abase_prime_ind_;
-		case which_hb_abase2 : return abase2_ind_;
+	case which_hb_unassigned : return 0;
+	case which_hb_hatm : return h_ind_;
+	case which_hb_datm : return d_ind_;
+	case which_hb_aatm : return a_ind_;
+	case which_hb_abase : return abase_ind_;
+	case which_hb_abase_prime : return abase_prime_ind_;
+	case which_hb_abase2 : return abase2_ind_;
 	}
 	// appease compiler
 	return 0;
@@ -162,7 +162,7 @@ HBDerivAssigner::assignment( which_atom_in_hbond which )
 			assn.dvect_id_ = which_hb_unassigned;
 		}
 		break;
-	default:
+	default :
 		break;
 	}
 	return assn;

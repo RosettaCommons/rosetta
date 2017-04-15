@@ -69,11 +69,11 @@ using namespace core::chemical::rna;
 // -- rhiju, 20xx
 //
 // A major to-do here is NCNT support, begun here in its infancy. (Basic logic:
-//   if one edge's key hydrogen atom is entirely missing, it can't be H-bonding 
+//   if one edge's key hydrogen atom is entirely missing, it can't be H-bonding
 //   using that edge... also, accepts "S2/S4" for "O2/O4" so as to support the
 //   sulfur-substituted bases.) A strategy Rhiju suggests is to thread the pose
-//   with every residue's na_analogue and evaluate base pairs on THAT. 
-// It's an idea, but there could be false positives. (i.e., a 'bad pose' with a 
+//   with every residue's na_analogue and evaluate base pairs on THAT.
+// It's an idea, but there could be false positives. (i.e., a 'bad pose' with a
 //   clash between two Watson-Crick edge methyl substituents gets threaded into
 //   a pose with a nice H-bond.
 //
@@ -81,7 +81,7 @@ using namespace core::chemical::rna;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-	
+
 ///////////////////////////////////////////////////////////////////
 void
 update_edge_hbond_numbers(
@@ -158,7 +158,7 @@ update_edge_hbond_numbers(
 	} else if ( rsd.aa() == na_ura || rsd.name1() == 't' || rsd.type().na_analogue() == na_ura ) {
 
 		// If the na_analogue is na_ura, we may have S2 or S4 involved as well.
-		
+
 		if ( atom_name == " O2 "  ||
 				atom_name == " N3 " ||
 				atom_name == " O4 " ||
