@@ -15,19 +15,19 @@ lk_ball_bridge -0.33
 lk_ball_bridge_uncpl -0.33
 fa_elec 1.0
 fa_intra_elec 1.0
-pro_close 0.0
+pro_close 1.25
 hbond_sr_bb 1.0
 hbond_lr_bb 1.0
 hbond_bb_sc 1.0
 hbond_sc 1.0
 dslf_fa13 1.25
-rama_prepro 0.4
-omega 0.4
-p_aa_pp 0.6
-fa_dun_rot 0.85
-fa_dun_dev 0.7
-fa_dun_semi 0.85
-hxl_tors 0.85
+rama_prepro 0.50
+omega 0.48
+p_aa_pp 0.61
+fa_dun_rot 0.76
+fa_dun_dev 0.69
+fa_dun_semi 0.78
+hxl_tors 1.0
 ref 1
 INCLUDE_INTRA_RES_PROTEIN
 NO_HB_ENV_DEP

@@ -345,6 +345,7 @@ setup_water_builders_for_residue_type(
 	}
 
 	/// let's do a sanity check on something we assume down below
+/*
 	if ( rsd_type.aa() != aa_h2o ) {
 		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
 			//want to confirm that all waters are matched to a hydrogen
@@ -371,6 +372,7 @@ setup_water_builders_for_residue_type(
 			}
 		}
 	}
+*/
 
 	if ( dump_waters_pdb && !all_waters.empty() ) { // HACKING -- dump a pdb containing just this residue:
 		std::ofstream out( std::string( rsd->name() + "_waters.pdb" ).c_str() );

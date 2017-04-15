@@ -54,8 +54,12 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobDistributorFactory.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/SilentFileJobOutputter.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
@@ -98,6 +102,7 @@ using utility::vector1;
 
 
 
+OPT_1GRP_KEY(Boolean, min, scoreonly)
 OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, debug_verbose)
 OPT_1GRP_KEY(Boolean, min, cartesian)
@@ -516,9 +521,19 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::jd2;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	try{
+		// Set up a job outputter that writes a scorefile calling evaluators
+		if (option[min::scoreonly]()) {
+			SilentFileJobOutputterOP jobout( new SilentFileJobOutputter );
+			jobout->set_write_no_structures();
+			jobout->set_write_separate_scorefile(true);
+			protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
+		}
+
 		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MinTestMover() ) );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
@@ -535,6 +550,7 @@ int
 main( int argc, char * argv [] )
 {
 	try {
+		NEW_OPT(min::scoreonly, "scoresonly?", false);
 		NEW_OPT(min::debug, "debug derivs?", false);
 		NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 		NEW_OPT(min::cartesian, "cartesian minimization?", false);

@@ -206,54 +206,7 @@ LKB_ResPairMinData::initialize(
 }
 
 
-/////////////////////////////////////////// mindata retrieval functions
-////inline
-////LKB_ResPairMinData &
-////retrieve_nonconst_lkb_pairdata(
-//// ResPairMinimizationData & pairdata
-////)
-////{
-//// LKB_ResPairMinDataOP lkb_pairdata(0);
-//// if ( pairdata.get_data( lkb_respair_data ) ) {
-////  debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data )));
-////  lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ));
-//// } else {
-////  lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
-////  pairdata.set_data( lkb_respair_data, lkb_pairdata );
-//// }
-//// return *lkb_pairdata;
-////}
-////
-/////////////////////////////////////////// mindata retrieval functions
-////inline
-////LKB_ResPairMinData const &
-////retrieve_lkb_pairdata(
-//// ResPairMinimizationData const & pairdata
-////)
-////{
-//// debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data )));
-//// return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
-////}
-////
-/////////////////////////////////////////// mindata retrieval functions
-////inline
-////LKB_ResidueInfo &
-////retrieve_nonconst_lkb_resdata(
-//// ResSingleMinimizationData & resdata
-////)
-////{
-//// LKB_ResidueInfoOP lkb_resdata( 0 );
-//// if ( resdata.get_data( lkb_res_data ) ) {
-////  debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data )));
-////  lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
-//// } else {
-////  lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
-////  resdata.set_data( lkb_res_data, lkb_resdata );
-//// }
-//// return *lkb_resdata;
-////}
-////
-/////////////////////////////////////////// mindata retrieval functions
+
 inline
 LKB_ResidueInfo const &
 retrieve_lkb_resdata(
@@ -265,26 +218,6 @@ retrieve_lkb_resdata(
 	return ( static_cast< LKB_ResidueInfo const & > ( res.data_ptr()->get( LK_BALL_INFO ) ) );
 }
 
-/////////////////////////////////////////// mindata retrieval functions
-////inline
-////LKB_ResidueInfoCOP
-////retrieve_lkb_resdata_ptr(
-//// ResSingleMinimizationData const & resdata
-////)
-////{
-//// debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
-//// return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
-////}
-////
-////inline
-////LKB_ResidueInfo &
-////retrieve_lk_resdata(
-//// basic::datacache::BasicDataCache & residue_data_cache
-////)
-////{
-////}
-
-
 LK_BallEnergy::LK_BallEnergy( methods::EnergyMethodOptions const & options ):
 	parent             ( methods::EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
 	etable_            ( ScoringManager::get_instance()->etable( options ).lock() ),
@@ -293,26 +226,27 @@ LK_BallEnergy::LK_BallEnergy( methods::EnergyMethodOptions const & options ):
 	dsolv1_            ( ScoringManager::get_instance()->etable( options ).lock()->dsolv1()),
 	etable_bins_per_A2_( ScoringManager::get_instance()->etable( options ).lock()->get_bins_per_A2() ),
 	slim_etable_       ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ),
-	use_intra_dna_cp_crossover_4_( true ),
 	ramp_width_A2_     ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ]() ),
 	overlap_width_A2_  ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ]() ),
 	multi_water_fade_  ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ]() ),
 	lkbridge_angle_widthscale_ ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ]() ),
-	save_bridging_waters_ (false)
+	overlap_gap2_ ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_gap ]() )
+	//save_bridging_waters_ (false)
 {
 	// overlap target length
 	core::Real cos_overlap_base_angle = -1.0/3.0;
-	core::Real heavyatom_water_len2 = 2.65; // MUST MATCH LK_BallInfo.cc!!
+	core::Real heavyatom_water_len = 2.65, heavyatom_water_len2; // MUST MATCH LK_BallInfo.cc!!
 	if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user() ) {
-		heavyatom_water_len2 = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ]();
+		heavyatom_water_len = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ]();
 	}
-	overlap_target_len_ = std::sqrt( heavyatom_water_len2 + heavyatom_water_len2 - 2 * heavyatom_water_len2 * cos_overlap_base_angle );
+	heavyatom_water_len2 = heavyatom_water_len * heavyatom_water_len;
+	overlap_target_len2_ = heavyatom_water_len2 + heavyatom_water_len2 - 2 * heavyatom_water_len2 * cos_overlap_base_angle;
 
 	setup_d2_bounds();
 	if ( !slim_etable_ ) { runtime_assert( solv1_.size()>0 ); }
 
 	core::Real eps = 0.1;
-	lkb_max_dis_ = std::max( etable_->max_dis(), 2*heavyatom_water_len2 + std::sqrt( overlap_width_A2_ ) + eps );
+	lkb_max_dis_ = std::max( etable_->max_dis(), 2*heavyatom_water_len + std::sqrt(overlap_gap2_ +  overlap_width_A2_ ) + eps );
 	lkb_max_dis2_ = lkb_max_dis_*lkb_max_dis_;
 	fasol_max_dis2_ = etable_->get_safe_max_dis2();
 }
@@ -343,32 +277,16 @@ LK_BallEnergy::LK_BallEnergy( LK_BallEnergy const & src ):
 	lkb_max_dis2_( src.lkb_max_dis2_ ),
 	fasol_max_dis2_( src.fasol_max_dis2_ ),
 	slim_etable_( src.slim_etable_ ),
-	use_intra_dna_cp_crossover_4_( src.use_intra_dna_cp_crossover_4_ ),
 	ramp_width_A2_     ( src.ramp_width_A2_ ),
 	overlap_width_A2_     ( src.overlap_width_A2_ ),
 	multi_water_fade_  ( src.multi_water_fade_ ),
 	lkbridge_angle_widthscale_ ( src.lkbridge_angle_widthscale_ ),
-	overlap_target_len_  ( src.overlap_target_len_ ),
-	save_bridging_waters_ (src.save_bridging_waters_)
+	overlap_target_len2_  ( src.overlap_target_len2_ ),
+	overlap_gap2_ ( src.overlap_gap2_ )
+	//save_bridging_waters_ (src.save_bridging_waters_)
 {
 	setup_d2_bounds();
 }
-
-
-////void
-////compute_and_store_pose_waters(
-//// pose::Pose & pose
-////)
-////{
-//// //std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-//// // using namespace core::pack::rotamer_set; // WaterPackingInfo
-//// LKB_PoseInfoOP info( new LKB_PoseInfo() );
-//// for ( Size i=1; i<= pose.size(); ++i ) {
-////  info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
-//// }
-//// pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
-//// //std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-////}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -402,8 +320,8 @@ void
 LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
+	pose::Pose const & , //pose,
+	ScoreFunction const & , //scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
 	ResSingleMinimizationData const &,// res1data,
 	ResSingleMinimizationData const &,// res2data,
@@ -412,25 +330,25 @@ LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 {
 	using namespace etable::count_pair;
 
-	// create the residue-pair neighbor list only if the EtableEnergy will not be creating it
-	bool etable_online = false;
-	EnergyMap const & weights( scorefxn.weights() );
-	if ( weights[ fa_atr ] != 0 || weights[ fa_rep ] != 0 || weights[ fa_sol ] != 0 ) etable_online = true;
-	if ( etable_online && ! pose.energies().use_nblist_auto_update() ) return;
+	// create a residue-pair neighbor list
+	//EnergyMap const & weights( scorefxn.weights() );
+	//if ( pose.energies().use_nblist_auto_update() ) return;
 
-	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+	CPCrossoverBehavior crossover = (rsd1.is_polymer_bonded(rsd2) && rsd2.is_polymer_bonded(rsd1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
+	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
 
-	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( etab_pair_nblist ) ));
+	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( lkball_nblist ) ));
 	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
 
-	Real const XX2 = etable_->nblist_dis2_cutoff_XX();
-	Real const XH2 = etable_->nblist_dis2_cutoff_XH();
-	Real const HH2 = etable_->nblist_dis2_cutoff_HH();
+	//Real const XX2 = etable_->nblist_dis2_cutoff_XX();
+	//Real const XH2 = etable_->nblist_dis2_cutoff_XH();
+	//Real const HH2 = etable_->nblist_dis2_cutoff_HH();
 
-	nblist->initialize_from_residues( XX2, XH2, HH2, rsd1, rsd2, cpfxn );
+	//fd
+	Real const XX2 = atomic_interaction_cutoff()*atomic_interaction_cutoff(); 
+	nblist->initialize_from_residues(	XX2, 0, 0, rsd1, rsd2, cpfxn );
 
-	pair_data.set_data( etab_pair_nblist, nblist );
+	pair_data.set_data( lkball_nblist, nblist );
 }
 
 bool
@@ -450,33 +368,6 @@ LK_BallEnergy::setup_for_scoring_for_residue(
 	update_cached_lkb_resinfo( rsd, residue_data_cache );
 }
 
-
-////bool
-////LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const
-////{
-//// return true;
-////}
-////
-/////// @details The minimization form of this function updates the data stored in the resdata object
-/////// instead of in the rsd object.
-////void
-////LK_BallEnergy::setup_for_scoring_for_residue(
-//// conformation::Residue const & rsd,
-//// pose::Pose const & pose,
-//// ScoreFunction const &, // sfxn,
-//// ResSingleMinimizationData & resdata
-////) const
-////{
-//// if ( pose.energies().use_nblist_auto_update() ) return;
-////
-//// LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
-//// if ( !info.matches_residue_type( rsd.type() ) ) {
-////  std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
-////   rsd.type().name() << std::endl;
-////  info.initialize( rsd.type() );
-//// }
-//// info.build_waters( rsd ); // already initialized in setup for minimizing for rsd
-////}
 
 bool
 LK_BallEnergy::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const
@@ -553,9 +444,9 @@ LK_BallEnergy::setup_for_scoring(
 	// Mutable data for energy methods is a really bad idea and severely limits
 	// the usability of the energy method. Data should be cached in the Pose or
 	// in Residue objects.
-	if ( save_bridging_waters_ ) {
-		bridging_waters_.clear(  );
-	}
+	//if ( save_bridging_waters_ ) {
+	//	bridging_waters_.clear(  );
+	//}
 }
 
 void
@@ -629,7 +520,7 @@ Real
 LK_BallEnergy::eval_lk_fraction( Real const d2_delta, Real const width ) const
 {
 	debug_assert( d2_delta >= -0.001 && d2_delta <= width + 0.001 );
-	static Real const inv_range( 1.0 / width );
+	Real const inv_range( 1.0 / width );
 	Real const xprime( inv_range * d2_delta );
 	return ( 1 - xprime*xprime ) * ( 1 - xprime*xprime );
 }
@@ -638,7 +529,7 @@ Real
 LK_BallEnergy::eval_d_lk_fraction_dr_over_r( Real const d2_delta, Real const width ) const
 {
 	debug_assert( d2_delta >= -0.001 && d2_delta <= width + 0.001 );
-	static Real const inv_range( 1.0 / width );
+	Real const inv_range( 1.0 / width );
 	Real const xprime( inv_range * d2_delta );
 	return -8.0 * inv_range * ( 1 - xprime * xprime ) * xprime;  //?? why 8 (and not 4)
 }
@@ -694,9 +585,9 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	Real & pointterm_lkbr,
 	Real & angleterm_lkbr,
 	Real & d_angleterm_lkbr_dr,
-	Real const & lk_desolvation_sum,
-	Real const & lkbr_wt,
-	Real const & lkbr_uncpl_wt,
+	Real const & , //lk_desolvation_sum,
+	Real const & , //lkbr_wt,
+	Real const & , //lkbr_uncpl_wt,
 	bool compute_derivs /*=true*/
 ) const {
 	pointterm_lkbr = 0;
@@ -715,7 +606,7 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	for ( Size idx1 = 1; idx1 <= atom1_waters.size(); ++idx1 ) {
 		for ( Size idx2 = 1; idx2 <= atom2_waters.size(); ++idx2 ) {
 			numeric::xyzVector< core::Real > delta_ij = atom1_waters[idx1] - atom2_waters[idx2];
-			d2_delta = delta_ij.length_squared();
+			d2_delta = delta_ij.length_squared() - overlap_gap2_;
 			d2_delta_wt = exp( -d2_delta/multi_water_fade_ );
 			weighted_d2_water_delta += d2_delta_wt;
 
@@ -726,16 +617,16 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 			// Please work to store data such as this in the Pose or in the Residue objects.
 			// Let's figure out how to do that. Mutable data in EnergyMethods, however,
 			// severely limits their usability.
-			if ( save_bridging_waters_ ) {
-				Real score = 0.0, lkbridge_frac = 0.0;
-				if ( d2_delta < overlap_width_A2_ ) lkbridge_frac = d2_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( d2_delta, overlap_width_A2_ );
-				core::Real lkbr_uncpl_score = lkbr_uncpl_wt*lkbridge_frac;
-				core::Real lkbr_score = lkbr_wt*lk_desolvation_sum*lkbridge_frac;
-				score = ( lkbr_uncpl_score + lkbr_score );
-				if ( score < -1e-4 ) {
-					bridging_waters_.push_back( ScoredBridgingWater ( lkbr_uncpl_score, lkbr_score, 0.5*(atom1_waters[idx1] + atom2_waters[idx2]) ) );
-				}
-			}
+			//if ( save_bridging_waters_ ) {
+			//	Real score = 0.0, lkbridge_frac = 0.0;
+			//	if ( d2_delta < overlap_width_A2_ ) lkbridge_frac = d2_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( d2_delta, overlap_width_A2_ );
+			//	core::Real lkbr_uncpl_score = lkbr_uncpl_wt*lkbridge_frac;
+			//	core::Real lkbr_score = lkbr_wt*lk_desolvation_sum*lkbridge_frac;
+			//	score = ( lkbr_uncpl_score + lkbr_score );
+			//	if ( score < -1e-4 ) {
+			//		bridging_waters_.push_back( ScoredBridgingWater ( lkbr_uncpl_score, lkbr_score, 0.5*(atom1_waters[idx1] + atom2_waters[idx2]) ) );
+			//	}
+			//}
 		}
 	}
 
@@ -756,8 +647,8 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 
 	// now multiply by base angle (assumption! .. all water dists are equal!)
 	if ( lkbridge_angle_widthscale_!=0 ) {
-		core::Real act_len = (atom1_base-atom2_base).length();
-		core::Real base_atom_delta = std::abs( overlap_target_len_-act_len );
+		core::Real act_len = (atom1_base-atom2_base).length_squared();
+		core::Real base_atom_delta = std::abs( overlap_target_len2_-act_len );
 		if ( base_atom_delta > overlap_width_A2_ ) {
 			frac = 0;
 			angleterm_lkbr = d_angleterm_lkbr_dr = 0;
@@ -768,7 +659,7 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 			frac *= angleterm_lkbr;
 
 			if ( compute_derivs ) {
-				core::Real base_atom_delta_sign = (overlap_target_len_ > act_len )?1.0:-1.0;
+				core::Real base_atom_delta_sign = (overlap_target_len2_ > act_len )?1.0:-1.0;
 				d_angleterm_lkbr_dr = base_atom_delta_sign*eval_d_lk_fraction_dr_over_r(base_atom_delta, angle_constraint_width);
 			}
 		}
@@ -776,6 +667,7 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 		angleterm_lkbr = 1.0;
 		d_angleterm_lkbr_dr = 0;
 	}
+
 	return frac;
 }
 
@@ -847,6 +739,7 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	if ( weighted_d2_water_delta < ramp_width_A2_ ) {
 		frac = ( weighted_d2_water_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( weighted_d2_water_delta, ramp_width_A2_ ) );
 	}
+
 	return frac;
 }
 
@@ -901,29 +794,6 @@ LK_BallEnergy::sidechain_sidechain_energy(
 		sf, emap );
 }
 
-// this guy is used during minimization
-////bool
-////LK_BallEnergy::use_extended_residue_pair_energy_interface() const
-////{
-//// return true;
-////}
-////void
-////LK_BallEnergy::residue_pair_energy_ext(
-//// conformation::Residue const & rsd1,
-//// conformation::Residue const & rsd2,
-//// ResPairMinimizationData const & pairdata,
-//// pose::Pose const & pose,
-//// ScoreFunction const &sf,
-//// EnergyMap & emap
-////) const
-////{
-//// if ( pose.energies().use_nblist_auto_update() ) return;
-////
-//// LKB_ResPairMinData const & lkb_pairdata( retrieve_lkb_pairdata( pairdata ) );
-////
-//// residue_pair_energy( rsd1, lkb_pairdata.res1_data(), rsd2, lkb_pairdata.res2_data(), sf, emap );
-////}
-
 
 /// helper function for outsiders
 Real
@@ -934,8 +804,8 @@ LK_BallEnergy::calculate_lk_desolvation_of_single_atom_by_residue(
 )
 {
 	using namespace etable::count_pair;
-	CountPairFunctionOP cpfxn =
-		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+	CPCrossoverBehavior crossover = (rsd1.is_polymer_bonded(rsd2) && rsd2.is_polymer_bonded(rsd1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
+	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
 
 	// setup residue information
 	Vector const & atom1_xyz( rsd1.xyz( atom1 ) );
@@ -994,8 +864,8 @@ LK_BallEnergy::calculate_lk_ball_atom_energies(
 	lk_desolvation_of_atom1_by_atom2 = 0.0;
 	lk_ball_desolvation_of_atom1_by_atom2 = 0.0;
 
-	CountPairFunctionOP cpfxn =
-		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+	CPCrossoverBehavior crossover = (rsd1.is_polymer_bonded(rsd2) && rsd2.is_polymer_bonded(rsd1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
+	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
 
 	Real cp_weight = 1.0; Size pathdist;
 	if ( !cpfxn->count( atom1, atom2, cp_weight, pathdist ) ) return; /// NO COUNTPAIR
@@ -1167,34 +1037,6 @@ LK_BallEnergy::eval_desolvation_derivs_no_count_pair(
 	}
 }
 
-/// HACKY HELPER FXN TAKEN DIRECTLY FROM BaseEtableEnergy.tmpl.hh
-/// IF YOU CHANGE THE BEHAVIOR THERE YOU SHOULD CHANGE HERE AS WELL
-///
-scoring::etable::count_pair::CPCrossoverBehavior
-determine_crossover_behavior(
-	conformation::Residue const & res1,
-	conformation::Residue const & res2,
-	bool const use_intra_dna_cp_crossover_4
-)
-{
-	using namespace scoring::etable::count_pair;
-	// Ask "are these two residues polymers and do they share a polymeric bond?"
-	if ( res1.is_polymer_bonded(res2) && res2.is_polymer_bonded(res1) ) {
-		if ( ( !( res1.is_protein() && res2.is_protein() ) ) &&
-				( !( use_intra_dna_cp_crossover_4 && res1.is_DNA() && res2.is_DNA() ) ) &&
-				( !( res1.is_RNA() && res2.is_RNA() ) ) ) {
-			return CP_CROSSOVER_3;
-		} else {
-			return CP_CROSSOVER_4; // peptide bond w/ or w/o rama, but definately w/o mm_twist
-		}
-	} else if ( res1.seqpos() == res2.seqpos() ) {
-		// logic for controlling intra-residue count pair behavior goes here; for now, default to crossover 3
-		return CP_CROSSOVER_3;
-	} else {
-		return CP_CROSSOVER_3; // e.g. disulfides where seqsep != 1
-	}
-}
-
 void
 LK_BallEnergy::accumulate_single_atom_contributions(
 	Size const,
@@ -1241,7 +1083,7 @@ LK_BallEnergy::residue_pair_energy(
 	utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
 	utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
 
-	CPCrossoverBehavior crossover = determine_crossover_behavior( rsd1, rsd2, use_intra_dna_cp_crossover_4_ );
+	CPCrossoverBehavior crossover = (rsd1.is_polymer_bonded(rsd2) && rsd2.is_polymer_bonded(rsd1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
 
 	bool use_lkbr = (sfxn.get_weight( core::scoring::lk_ball_bridge )!=0);
@@ -1296,27 +1138,27 @@ LK_BallEnergy::residue_pair_energy(
 				accumulate_single_atom_contributions( atom1, atom1_type_index, atom1_waters, atom1_weights,
 					rsd1, atom2_type_index, atom2_xyz,
 					lk_desolvation_of_atom1_by_atom2, emap );
-
 				accumulate_single_atom_contributions( atom2, atom2_type_index, atom2_waters, atom2_weights,
 					rsd2, atom1_type_index, atom1_xyz,
 					lk_desolvation_of_atom2_by_atom1, emap );
 			}
 
-			// fpd - get lk_ball_bridge
-			if ( atom1_waters.empty() || atom2_waters.empty() ) continue;
 			if ( !use_lkbr_uncpl && !use_lkbr ) continue;
 
-			Real lk_desolvation_sum = lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1;
-			core::Real lkbr_wt = sfxn.get_weight( core::scoring::lk_ball_bridge );
-			core::Real lkbr_uncpl_wt = sfxn.get_weight( core::scoring::lk_ball_bridge_uncpl );
-			core::Real lkbridge_frac = get_lkbr_fractional_contribution(
-				atom1_xyz, atom2_xyz,
-				atom1_waters, atom2_waters,
-				lk_desolvation_sum,
-				lkbr_wt, lkbr_uncpl_wt );
+			// fpd - get lk_ball_bridge
+			if ( !atom1_waters.empty() && !atom2_waters.empty() ) {
+				Real lk_desolvation_sum = lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1;
+				core::Real lkbr_wt = sfxn.get_weight( core::scoring::lk_ball_bridge );
+				core::Real lkbr_uncpl_wt = sfxn.get_weight( core::scoring::lk_ball_bridge_uncpl );
+				core::Real lkbridge_frac = get_lkbr_fractional_contribution(
+					atom1_xyz, atom2_xyz,
+					atom1_waters, atom2_waters,
+					lk_desolvation_sum,
+					lkbr_wt, lkbr_uncpl_wt );
 
-			emap[ lk_ball_bridge ] += (lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1) * lkbridge_frac;
-			emap[ lk_ball_bridge_uncpl ] += lkbridge_frac;
+				emap[ lk_ball_bridge ] += (lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1) * lkbridge_frac;
+				emap[ lk_ball_bridge_uncpl ] += cp_weight * lkbridge_frac;
+			}
 		} // atom2
 	} // atom1
 
@@ -1640,7 +1482,7 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	EnergyMap const & , //weights,
+	EnergyMap const & ,//weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
@@ -1703,7 +1545,7 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	EnergyMap const & , //weights,
+	EnergyMap const & ,//weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
@@ -1740,6 +1582,23 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
 		energy_vector[ ii ] += temp_vector1[ ii ];
 	}
+
+	//debug
+	/*
+	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
+	EnergyMap emap;
+	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
+	emap.zero();
+	residue_pair_energy( *set.rotamer( ii ), rsd, pose, sfxn, emap );
+	temp_vector3[ ii ] += weights.dot( emap );
+	if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
+	std::cout << "lkballE: Residues " << set.resid() << " & " << rsd.seqpos() << " rotamers: " << ii << " & bg";
+	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
+	std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
+	}
+	}
+	std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << rsd.seqpos() << std::endl;
+	*/
 }
 
 
@@ -1767,7 +1626,7 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
 
 	ResiduePairNeighborList const & nblist =
-		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist ));
+		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( lkball_nblist ));
 
 	bool use_lkbr_uncpl = (weights[core::scoring::lk_ball_bridge_uncpl]!=0);
 
@@ -1801,106 +1660,6 @@ LK_BallEnergy::finalize_total_energy(
 ) const
 {
 	return;
-	/*
-	if ( !pose.energies().use_nblist() || !pose.energies().use_nblist_auto_update() ) return;
-
-	EnergyMap tbenergy_map;
-	// add in contributions from the nblist atom-pairs
-	NeighborList const & nblist ( pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ) );
-	nblist.check_domain_map( pose.energies().domain_map() );
-
-	/// Trick to avoid calls to Conformation::residue()
-	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.size() );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-	resvect.push_back( & pose.residue( ii ) );
-	}
-
-	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
-	conformation::Residue const & rsd1( *resvect[i] );
-	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
-	utility::vector1< Vectors > const & rsd1_waters( rsd1_info.waters() );
-	utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
-
-	for ( Size ii=1, ii_end=rsd1.nheavyatoms(); ii<= ii_end; ++ii ) {
-	Vectors const & atom1_waters( rsd1_waters[ ii ] );
-	Vector const & atom1_xyz( rsd1.xyz( ii ) );
-	Size const atom1_type_index( rsd1.atom( ii ).type() );
-	utility::vector1< Real > const & atom1_weights( rsd1_atom_wts[ii] );
-
-	AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
-	for ( AtomNeighbors::const_iterator nbr=nbrs.begin(),
-	nbr_end=nbrs.end(); nbr!= nbr_end; ++nbr ) {
-	Size const  j( nbr->rsd() );
-	Size const jj( nbr->atomno() );
-
-	conformation::Residue const & rsd2( *resvect[j] );
-
-	if ( rsd2.atom_is_hydrogen(jj) ) continue;
-	if ( i == j ) continue;
-
-	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
-	utility::vector1< Vectors > const & rsd2_waters( rsd2_info.waters() );
-	utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
-	utility::vector1< Real > const & atom2_weights( rsd2_atom_wts[jj] );
-
-	Vectors const & atom2_waters( rsd2_waters[ jj ] );
-	Vector const & atom2_xyz( rsd2.xyz( jj ) );
-
-	if ( atom1_waters.empty() && atom2_waters.empty() ) continue;
-
-	Real const cp_weight( nbr->weight_func()*nbr->weight() );  // fpd is this correct (same CP as etable)
-
-	Real const d2( atom1_xyz.distance_squared( atom2_xyz ) );
-
-	Real lk_desolvation_of_atom1_by_atom2, lk_desolvation_of_atom2_by_atom1;
-	Size const atom2_type_index( rsd2.atom( jj ).type() );
-	if ( slim_etable_ ) {
-	etable_->analytic_lk_energy( rsd1.atom( ii ), rsd2.atom( jj ), lk_desolvation_of_atom1_by_atom2,
-	lk_desolvation_of_atom2_by_atom1 );
-	lk_desolvation_of_atom1_by_atom2 *= cp_weight;
-	lk_desolvation_of_atom2_by_atom1 *= cp_weight;
-
-	} else {
-	// setup for solvation Etable lookups
-	Real const d2_bin = d2 * etable_bins_per_A2_;
-	int disbin = static_cast< int >( d2_bin ) + 1;
-	Real frac = d2_bin - ( disbin - 1 );
-	int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
-
-	lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
-	lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
-	}
-
-	if ( atom1_waters.size() > 0 ) {
-	accumulate_single_atom_contributions( ii, atom1_type_index, atom1_waters, atom1_weights,
-	rsd1, atom2_type_index, atom2_xyz,
-	lk_desolvation_of_atom1_by_atom2, tbenergy_map );
-	}
-
-	if ( atom2_waters.size() > 0 ) {
-	accumulate_single_atom_contributions( jj, atom2_type_index, atom2_waters, atom2_weights,
-	rsd2, atom1_type_index, atom1_xyz,
-	lk_desolvation_of_atom2_by_atom1, tbenergy_map );
-	}
-
-	if ( sf.get_weight( core::scoring::lk_ball_bridge ) != 0 || sf.get_weight( core::scoring::lk_ball_bridge_uncpl) != 0 ) {
-	Real lk_desolvation_sum = lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1;
-	Real lkbr_wt = sf.get_weight( core::scoring::lk_ball_bridge );
-	Real lkbr_uncpl_wt = sf.get_weight( core::scoring::lk_ball_bridge_uncpl );
-	Real lkbridge_frac = get_lkbr_fractional_contribution(
-	atom1_xyz, atom2_xyz,
-	atom1_waters, atom2_waters,
-	lk_desolvation_sum,
-	lkbr_wt, lkbr_uncpl_wt );
-	tbenergy_map[ lk_ball_bridge ] += (lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1) * lkbridge_frac;
-	tbenergy_map[ lk_ball_bridge_uncpl ] += lkbridge_frac;
-	}
-	}
-	}
-	}
-	totals += tbenergy_map;
-	*/
 }
 
 
@@ -1909,98 +1668,15 @@ LK_BallEnergy::finalize_total_energy(
 //fpd   there is some redundancy in this function as some terms are computed multiple times
 void
 LK_BallEnergy::eval_atom_derivative(
-	id::AtomID const & id,
-	pose::Pose const & pose,
+	id::AtomID const & ,//id,
+	pose::Pose const & ,//pose,
 	kinematics::DomainMap const &, // domain_map,
 	ScoreFunction const & , //sfxn, // needed for non-nblist minimization
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+	EnergyMap const & ,//weights,
+	Vector & ,//F1,
+	Vector & //F2
 ) const
 {
-	Size const idresid = id.rsd();
-
-	conformation::Residue const & rsd1( pose.residue(idresid) );
-	Size const atom1( id.atomno() );
-
-	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ) );
-
-	bool use_lkbr_uncpl = (weights[core::scoring::lk_ball_bridge_uncpl]!=0);
-
-	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
-	if ( !rsd1_info.has_waters() ) return;
-	scoring::AtomNeighbors const & nbrs( nblist.atom_neighbors(idresid,atom1) );
-
-	if ( !rsd1.atom_is_hydrogen( atom1 ) ) {
-		for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(), it2e=nbrs.end(); it2 != it2e; ++it2 ) {
-			// part 1: all heavyatoms desolvated by this atom
-			scoring::AtomNeighbor const & nbr( *it2 );
-			Size const nbrresid = nbr.rsd();
-			Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
-			if ( nbrresid == idresid ) continue; // no intra
-
-			conformation::Residue const & rsd2( pose.residue(nbrresid) );
-			Size const heavyatom2( nbr.atomno() );
-			if ( rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
-
-			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
-			if ( rsd2_info.waters()[heavyatom2].size() == 0 ) continue;
-
-			Real const d2( rsd1.xyz( atom1 ).distance_squared( rsd2.xyz( heavyatom2 ) ) );
-			if ( d2 == Real(0.0) ) continue; // sanity check
-			if ( !use_lkbr_uncpl && d2 >= fasol_max_dis2_ ) continue;
-			if ( d2 >= lkb_max_dis2_ ) continue;
-
-			utility::vector1< DerivVectorPair > r1_at_derivs(rsd1.natoms()), r2_at_derivs(rsd2.natoms());
-			sum_deriv_contributions_for_heavyatom_pair_one_way(
-				heavyatom2, rsd2, rsd2_info, atom1, rsd1, rsd1_info, weights, cp_weight, d2, r2_at_derivs, r1_at_derivs );
-
-			F1 += r1_at_derivs[atom1].f1();
-			F2 += r1_at_derivs[atom1].f2();
-		}
-	}
-
-	// part 2: _all_ atoms desolvating this atom
-	for ( Size i=1; i<=rsd1.nheavyatoms(); ++i ) {
-		Size nwaters = rsd1_info.waters()[i].size();
-		WaterBuilders const & builder = rsd1_info.get_water_builder( rsd1 , i );
-
-		bool need_to_calculate = false;
-		for ( Size j=1; j<=nwaters && !need_to_calculate; ++j ) {
-			if ( builder[j].atom1() == atom1 || builder[j].atom2() == atom1 || builder[j].atom3() == atom1 ) {
-				need_to_calculate = true;
-			}
-		}
-
-		if ( !need_to_calculate ) continue;
-
-		scoring::AtomNeighbors const & nbrs2( nblist.atom_neighbors(idresid,i) );
-
-		for ( scoring::AtomNeighbors::const_iterator it2=nbrs2.begin(), it2e=nbrs2.end(); it2 != it2e; ++it2 ) {
-			scoring::AtomNeighbor const & nbr( *it2 );
-			Size const nbrresid = nbr.rsd();
-			Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
-
-			if ( nbrresid == idresid ) continue; // no intra
-
-			conformation::Residue const & rsd2( pose.residue(nbrresid) );
-			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
-
-			Size const heavyatom2( nbr.atomno() );
-			if ( rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
-			Real const d2( rsd1.xyz( i ).distance_squared( rsd2.xyz( heavyatom2 ) ) );
-
-			if ( ( d2 >= lkb_max_dis2_ ) || ( d2 == Real(0.0) ) ) continue; // no contribution
-			if ( rsd1_info.waters()[i].size() == 0 ) continue;
-
-			utility::vector1< DerivVectorPair > r1_at_derivs(rsd1.natoms()), r2_at_derivs(rsd2.natoms());
-			sum_deriv_contributions_for_heavyatom_pair_one_way(
-				i, rsd1, rsd1_info, heavyatom2, rsd2, rsd2_info, weights, cp_weight, d2, r1_at_derivs, r2_at_derivs );
-
-			F1 += r1_at_derivs[atom1].f1();
-			F2 += r1_at_derivs[atom1].f2();
-		}
-	}
 }
 
 // create a lkb trie rotamer descriptor from a single rotamer
@@ -2185,7 +1861,7 @@ LK_BallEnergy::get_count_pair_function_trie(
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 
 	if ( connection == CP_ONE_BOND ) {
-		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, use_intra_dna_cp_crossover_4_ );
+		CPCrossoverBehavior crossover = (res1.is_polymer_bonded(res2) && res2.is_polymer_bonded(res1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
 		switch ( crossover ) {
 		case CP_CROSSOVER_3 :
 			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
@@ -2198,8 +1874,7 @@ LK_BallEnergy::get_count_pair_function_trie(
 			break;
 		}
 	} else if ( connection == CP_MULTIPLE_BONDS_OR_PSEUDOBONDS ) {
-		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, use_intra_dna_cp_crossover_4_ );
-
+		CPCrossoverBehavior crossover = (res1.is_polymer_bonded(res2) && res2.is_polymer_bonded(res1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
 		TrieCountPairGenericOP cpgen( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
 		if ( crossover == CP_CROSSOVER_3 ) {
 			cpgen->crossover( 3 );

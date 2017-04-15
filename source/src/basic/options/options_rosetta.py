@@ -4688,6 +4688,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'lk_ball_wtd_tag', 'String'),
 			Option( 'lk_ball_for_bb', 'Boolean', default='false'),
 			Option( 'lk_ball_ramp_width_A2', 'Real', default='5.0'),
+			Option( 'lk_ball_overlap_gap', 'Real', default='0.0'),
 			Option( 'lk_ball_overlap_width_A2', 'Real', default='5.0'),
 			Option( 'lk_ball_water_fade', 'Real', default='1.0'),
 			Option( 'lk_ball_wtd_prefactors', 'RealVector', desc = '6 scale factors that are applied to the lk_ball_wtd per-atom weights; the order is <donor-iso> <donor-ball> <acceptor-iso> <acceptor-ball> <don+acc-iso> <don+acc-ball>; where <don+acc> means atom-types that are both donors and acceptors (SP3 hybridized OH for example)'),

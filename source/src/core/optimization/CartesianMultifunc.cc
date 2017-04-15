@@ -31,10 +31,17 @@
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Energies.hh>
 
+#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
+
 /// Utility headers
 #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 
 namespace core {
@@ -77,11 +84,13 @@ void
 CartesianMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 	// AMW: cppcheck flags these bools as being inappropriately scoped for obvious reasons
 	// I don't suggest changing them, because the point is to have them at the top
-	bool debug_inaccurateG = false; // disables everything below
+	bool debug_inaccurateG =
+		basic::options::option[ basic::options::OptionKeys::optimization::debug_inaccurate_G ](); // disables everything below
 	bool check_score_components = true;
 	bool check_score_components_verbose = false;
 	bool check_rama = false;
 	bool check_hbonds = true;
+	bool dump_silent = true;  //fd dumping as pdbs often loses precision and makes it difficult to track down
 	//bool check_nblist = true;
 
 	if ( ! debug_inaccurateG ) return;
@@ -104,10 +113,27 @@ CartesianMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const 
 	Real score_vars2( score_function_( pose_ ) );
 
 	Real alt_score_vars = score_function_( pose1 );
-	pose1.dump_pdb( "Cartesian_multifunc_error_pose_before" + utility::to_string( count_dumped  ) + ".pdb" );
+	if ( dump_silent ) {
+		std::string outfile = "Cartesian_multifunc_error_pose_before" + utility::to_string( count_dumped  ) + ".silent";
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary", opts ); //true to store argv in silent file
+		core::io::silent::BinarySilentStruct silent_stream( opts, pose1, "S_1" );
+		sfd_out.write_silent_struct( silent_stream, outfile );
+	} else {
+		pose1.dump_pdb( "Cartesian_multifunc_error_pose_before" + utility::to_string( count_dumped  ) + ".pdb" );
+	}
 
 	Real alt_score_vars2 = score_function_( pose2 );
-	pose2.dump_pdb( "Cartesian_multifunc_error_pose_after" + utility::to_string( count_dumped  ) + ".pdb" );
+	if ( dump_silent ) {
+		core::io::silent::SilentFileOptions opts;
+		std::string outfile = "Cartesian_multifunc_error_pose_after" + utility::to_string( count_dumped  ) + ".silent";
+		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary", opts ); //true to store argv in silent file
+		core::io::silent::BinarySilentStruct silent_stream( opts, pose2, "S_1" );
+		sfd_out.write_silent_struct( silent_stream, outfile );
+
+	} else {
+		pose2.dump_pdb( "Cartesianmultifunc_error_pose_after" + utility::to_string( count_dumped  ) + ".pdb" );
+	}
 
 	std::cerr << "starting pose energies: " << score_vars << " vs " << alt_score_vars << std::endl;
 	pose1.energies().total_energies().show_weighted( std::cerr, score_function_.weights() );

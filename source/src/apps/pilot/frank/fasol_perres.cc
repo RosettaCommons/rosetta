@@ -36,6 +36,9 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/conformation/residue_datacache.hh>
+#include <core/conformation/RotamerSetBase.hh>
+#include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -127,9 +130,7 @@ public:
 		Etable etable = *( ScoringManager::get_instance()->etable( e_opts ).lock() ); // copy
 
 		core::scoring::lkball::LK_BallEnergy lkb(e_opts);
-		lkb.setup_for_scoring(pose, *sf);
-		lkball::LKB_PoseInfo const & lkbposeinfo
-			( static_cast< lkball::LKB_PoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) ) );
+		//lkb.setup_for_scoring(pose, *sf);
 
 		// atomtype used for burial calcs
 		int bur_type=1;
@@ -142,7 +143,9 @@ public:
 			if ( !rsd1.is_protein() ) continue;
 			if ( rsd_sasa[ires] != 0 ) continue;
 
-			lkball::LKB_ResidueInfo const &lkbinfo1 = lkbposeinfo[ires];
+			lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > ( 
+				rsd1.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+
 			utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd1_waters( lkbinfo1.waters() );
 			utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( lkbinfo1.atom_weights() );
 
@@ -155,9 +158,14 @@ public:
 				core::conformation::Atom a_i = rsd1.atom(iatm);
 				a_i.type(bur_type);
 
-				utility::vector1< numeric::xyzVector< core::Real > > const & atom1_waters( rsd1_waters[ iatm ] );
-				//numeric::xyzVector< core::Real > const & atom1_xyz( rsd1.xyz( iatm ) );
-				utility::vector1< core::Real > const & atom1_wts( rsd1_atom_wts[iatm] );
+				utility::vector1< numeric::xyzVector< core::Real > >atom1_waters;
+				utility::vector1< core::Real > atom1_wts;
+				numeric::xyzVector< core::Real > atom1_xyz( rsd1.xyz( iatm ) );
+
+				if (iatm <= rsd1.nheavyatoms()) {
+					atom1_waters = rsd1_waters[ iatm ];
+					atom1_wts = rsd1_atom_wts[iatm];
+				}
 
 				Real const sasa_this_atom( atom_sasa[ core::id::AtomID( iatm, ires ) ] );
 				if ( sasa_this_atom > option[fasol::max_sasa] ) continue;
@@ -171,43 +179,68 @@ public:
 					core::conformation::Residue const &rsd2( pose.residue(jres) );
 					if ( !rsd2.is_protein() ) continue;
 
-					//LKB_ResidueInfo const &lkbinfo2 = lkbposeinfo[jres];
-					//utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd2_waters( lkbinfo2.waters() );
-					//utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( lkbinfo2.atom_weights() );
+					lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > ( 
+						rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+					utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd2_waters( lkbinfo2.waters() );
 
 					// count pair
 					CountPairFunctionOP cpfxn =
 						CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 					for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
-						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( iatm ) );
+						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( jatm ) );
 
-						core::Real weight=sf->get_weight( core::scoring::fa_sol );
+						utility::vector1< numeric::xyzVector< core::Real > >atom2_waters;
+						if (jatm <= rsd2.nheavyatoms()) {
+							atom2_waters = rsd2_waters[ jatm ];
+						}
+
+
+						core::Real weightS=sf->get_weight( core::scoring::fa_sol );
 						core::Real weightA=sf->get_weight( core::scoring::fa_atr );
 						core::Real weightR=sf->get_weight( core::scoring::fa_rep );
-						core::Real weightLKb=sf->get_weight( core::scoring::lk_ball_wtd );
+						core::Real weightLKbw=sf->get_weight( core::scoring::lk_ball_wtd );
+						core::Real weightLKb=sf->get_weight( core::scoring::lk_ball );
+						core::Real weightLKbi=sf->get_weight( core::scoring::lk_ball_iso );
+						core::Real weightLKbr=sf->get_weight( core::scoring::lk_ball_bridge );
+						core::Real weightLKbru=sf->get_weight( core::scoring::lk_ball_bridge_uncpl );
 
 						core::Size path_dist;
-						if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
-							core::Real fasol1,fasol2, ljatr, ljrep, lkjunk, dis2;
+						core::Real weight = 1;
+						if ( !cpfxn->count( iatm, jatm, weight, path_dist ) ) continue;
 
-							etable.analytic_etable_evaluation( rsd1.atom(iatm), rsd2.atom(jatm), ljatr, ljrep, lkjunk, dis2);
-							fa_atr_i += 0.5*(weightA*ljatr);
-							fa_rep_i += 0.5*(weightR*ljrep);
+						core::Real fasol1,fasol2, ljatr, ljrep, lkjunk, dis2;
 
-							if ( iatm <= rsd1.nheavyatoms() && jatm <= rsd2.nheavyatoms() ) {
-								etable.analytic_lk_energy(rsd1.atom(iatm), rsd2.atom(jatm), fasol1,fasol2 );
-								fa_sol_i += weight*fasol1;
+						etable.analytic_etable_evaluation( rsd1.atom(iatm), rsd2.atom(jatm), ljatr, ljrep, lkjunk, dis2);
+						fa_atr_i += 0.5*(weightA*ljatr);
+						fa_rep_i += 0.5*(weightR*ljrep);
 
-								if ( !atom1_waters.empty() ) {
-									Real const fasol1_lkball =
-										fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), atom1_waters );
-									lk_ball_i += weightLKb * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
+						if ( iatm <= rsd1.nheavyatoms() && jatm <= rsd2.nheavyatoms() ) {
+							etable.analytic_lk_energy(rsd1.atom(iatm), rsd2.atom(jatm), fasol1,fasol2 );
+							fa_sol_i += weight*weightS*fasol1;
+
+							if ( !atom1_waters.empty() ) {
+								Real const fasol1_lkball =
+									fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), atom1_waters );
+								lk_ball_i += weight*weightLKb * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
+								lk_ball_i += weight*weightLKbw * ( fasol1_lkball );
+								lk_ball_i += weight*weightLKbi * ( fasol1);
+
+								if ( !atom2_waters.empty() ) {
+									Real lk_desolvation_sum = 0.0;
+									core::Real lkbr_wt = sf->get_weight( core::scoring::lk_ball_bridge );
+									core::Real lkbr_uncpl_wt = sf->get_weight( core::scoring::lk_ball_bridge_uncpl );
+									core::Real fasol1_lkbridge = lkb.get_lkbr_fractional_contribution(
+										atom1_xyz, atom2_xyz,
+										atom1_waters, atom2_waters,
+										lk_desolvation_sum, lkbr_wt, lkbr_uncpl_wt );
+									lk_ball_i += 0.5 * weight * weightLKbr * (fasol1+fasol2) * fasol1_lkbridge;
+									lk_ball_i += 0.5 * weight * weightLKbru * fasol1_lkbridge;
 								}
-
-								etable.analytic_lk_energy(a_i, rsd1.atom(jatm), fasol1,fasol2 );
-								burial_i += weight*fasol1; ///etable.lk_dgfree( bur_type );
 							}
+
+							etable.analytic_lk_energy(a_i, rsd2.atom(jatm), fasol1,fasol2 );
+							burial_i += weight*fasol1; ///etable.lk_dgfree( bur_type );
 						}
 					}
 				}
@@ -216,22 +249,23 @@ public:
 				CountPairFunctionOP cpfxn =
 					CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4 );
 				for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
-					core::Real weight=sf->get_weight( core::scoring::fa_intra_sol_xover4 );
+					core::Real weightS=sf->get_weight( core::scoring::fa_intra_sol_xover4 );
 					core::Real weightA=sf->get_weight( core::scoring::fa_intra_atr_xover4 );
 					core::Real weightR=sf->get_weight( core::scoring::fa_intra_rep_xover4 );
 					core::Size path_dist;
+					core::Real weight = 1;
 					if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
 						core::Real fasol1,fasol2, ljatr, ljrep, lkjunk, dis2;
 
 						etable.analytic_etable_evaluation( rsd1.atom(iatm), rsd1.atom(jatm), ljatr, ljrep, lkjunk, dis2);
-						fa_atr_i += 0.5*(weightA*ljatr);
-						fa_rep_i += 0.5*(weightR*ljrep);
+						fa_atr_i += 0.5*(weight*weightA*ljatr);
+						fa_rep_i += 0.5*(weight*weightR*ljrep);
 
 						if ( iatm <= rsd1.nheavyatoms() && jatm <= rsd1.nheavyatoms() ) {
-							etable.analytic_lk_energy(rsd1.atom(iatm), rsd1.atom(jatm), fasol1,fasol2 );
-							fa_sol_i += weight*fasol1;
+						etable.analytic_lk_energy(rsd1.atom(iatm), rsd1.atom(jatm), fasol1,fasol2 );
+							fa_sol_i += weight*weightS*fasol1;
 							etable.analytic_lk_energy(a_i, rsd1.atom(jatm), fasol1,fasol2 );
-							burial_i += weight*fasol1; ///etable.lk_dgfree( bur_type );
+							burial_i += weight*weightS*fasol1; ///etable.lk_dgfree( bur_type );
 						}
 					}
 				}
@@ -241,7 +275,6 @@ public:
 			TR << base_name << " " << pose.pdb_info()->number(ires) << " " << pose.size()
 				<< " " << pose.residue(ires).name1() << " " << fa_sol_i+lk_ball_i << " " << fa_atr_i+fa_rep_i << " " << burial_i << std::endl;
 		}
-
 	}
 	virtual std::string get_name() const {
 		return "FaSolReporter";

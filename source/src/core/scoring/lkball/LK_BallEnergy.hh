@@ -440,17 +440,6 @@ public:
 	void
 	setup_d2_bounds();
 
-	//
-	//  save bridging waters
-	void
-	set_save_bridging_waters( bool val) { save_bridging_waters_=val; }
-
-	utility::vector1< ScoredBridgingWater >
-	get_bridging_waters() { return bridging_waters_; }
-
-	void
-	clear_bridging_waters() { bridging_waters_.clear(); }
-
 private:
 
 	lkbtrie::LKBRotamerTrieOP
@@ -498,14 +487,14 @@ private:
 	Real lkb_max_dis_, lkb_max_dis2_;
 	Real fasol_max_dis2_;
 	bool const slim_etable_;
-	bool const use_intra_dna_cp_crossover_4_;
+	//bool const use_intra_dna_cp_crossover_4_;
 
 	// controls the shape of the potential:
 	//    ramp_width_A2: fade between water distance and heavyatom distance
 	//    overlap_width_A2: fade in water-water overlap
 	//    multi_water_fade: "softness" of soft-max
 	Real ramp_width_A2_, overlap_width_A2_, multi_water_fade_;
-	Real lkbridge_angle_widthscale_, overlap_target_len_;
+	Real lkbridge_angle_widthscale_, overlap_target_len2_, overlap_gap2_;
 
 	utility::vector1< Real > d2_low_;
 	utility::vector1< bool > atom_type_is_charged_;
@@ -513,8 +502,8 @@ private:
 	utility::vector1< Real > lk_ball_prefactor_;
 
 	// save bridging water positions
-	bool save_bridging_waters_;
-	mutable utility::vector1< ScoredBridgingWater > bridging_waters_; ///// WHOA! THIS DOES NOT BELONG HERE!
+	//bool save_bridging_waters_;
+	//mutable utility::vector1< ScoredBridgingWater > bridging_waters_; ///// WHOA! THIS DOES NOT BELONG HERE!
 
 public:
 	core::Size version() const override;

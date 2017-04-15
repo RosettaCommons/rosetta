@@ -273,7 +273,7 @@ Etable::read_alternate_parameter_set(
 void
 Etable::calculate_hydrogen_atom_reach()
 {
-	Real const MAX_H_HEAVY_DISTANCE = 1.35; // FIX THIS SULFUR to hydrogen bond length.
+	Real const MAX_H_HEAVY_DISTANCE = chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH;
 
 	Real max_lj_rep_for_h = std::max(
 		2 * max_hydrogen_lj_radius_ + 2 * MAX_H_HEAVY_DISTANCE,

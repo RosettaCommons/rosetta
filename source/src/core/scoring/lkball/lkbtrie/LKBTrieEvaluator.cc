@@ -97,7 +97,11 @@ LKBTrieEvaluator::heavyatom_heavyatom_energy(
 
 core::Real
 LKBTrieEvaluator::hydrogen_interaction_cutoff2() const {
-	return etable_->hydrogen_interaction_cutoff2();
+	//return etable_->hydrogen_interaction_cutoff2();
+
+	//fd uncpl makes this a bit different
+	core::Real maxHdist = (lkb_.atomic_interaction_cutoff());
+	return (maxHdist*maxHdist);
 }
 
 } // namespace lkbtrie

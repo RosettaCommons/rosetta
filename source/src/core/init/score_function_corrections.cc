@@ -2695,7 +2695,6 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 	// patch charges
 	if ( ! options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
 		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:ALA:CtermProteinFull:C:0.215733145869844" );
 		params.push_back("fa_standard:ALA:CtermProteinFull:C:0.35448");
 		params.push_back("fa_standard:ALA:CtermProteinFull:O:-0.67724");
 		params.push_back("fa_standard:ALA:CtermProteinFull:OXT:-0.67724");
@@ -2817,7 +2816,10 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.709);
 	}
 	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].user() ) {
-		options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.811);
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.60);
+	}
+	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_gap ].user() ) {
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_gap ].value(0.50);
 	}
 	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
 		options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
@@ -2826,7 +2828,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
 	}
 	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].user() ) {
-		options[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].value(1.0);
+		options[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].value(2.8);
 	}
 	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user() ) {
 		utility::vector1< core::Real > params;
@@ -2867,16 +2869,13 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].user() ) {
 		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].value(false);
 	}
-	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
-		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
-	}
 	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
 		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
 	}
 
 	// corrected torsions
 	if ( ! options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
-		options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd_beta_nov2016/");
+		options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd");
 	}
 	if ( ! options[ basic::options::OptionKeys::corrections::score::dun10_dir ].user() ) {
 		options[ basic::options::OptionKeys::corrections::score::dun10_dir ].value("rotamer/beta_nov2016");

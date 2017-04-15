@@ -46,6 +46,7 @@ enum min_single_data{
 enum min_pair_data {
 	etab_pair_nblist = 1,
 	etab_classic_intrares_pair_nblist,
+	lkball_nblist,
 	cst_respair_data,
 	elec_pair_nblist,
 	rna_elec_pair_nblist,
