@@ -527,7 +527,7 @@ my_main( void* ) {
 
 	try{
 		// Set up a job outputter that writes a scorefile calling evaluators
-		if (option[min::scoreonly]()) {
+		if ( option[min::scoreonly]() ) {
 			SilentFileJobOutputterOP jobout( new SilentFileJobOutputter );
 			jobout->set_write_no_structures();
 			jobout->set_write_separate_scorefile(true);

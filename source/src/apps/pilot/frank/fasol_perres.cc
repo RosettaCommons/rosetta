@@ -143,7 +143,7 @@ public:
 			if ( !rsd1.is_protein() ) continue;
 			if ( rsd_sasa[ires] != 0 ) continue;
 
-			lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > ( 
+			lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > (
 				rsd1.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
 
 			utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd1_waters( lkbinfo1.waters() );
@@ -162,7 +162,7 @@ public:
 				utility::vector1< core::Real > atom1_wts;
 				numeric::xyzVector< core::Real > atom1_xyz( rsd1.xyz( iatm ) );
 
-				if (iatm <= rsd1.nheavyatoms()) {
+				if ( iatm <= rsd1.nheavyatoms() ) {
 					atom1_waters = rsd1_waters[ iatm ];
 					atom1_wts = rsd1_atom_wts[iatm];
 				}
@@ -179,7 +179,7 @@ public:
 					core::conformation::Residue const &rsd2( pose.residue(jres) );
 					if ( !rsd2.is_protein() ) continue;
 
-					lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > ( 
+					lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > (
 						rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
 					utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd2_waters( lkbinfo2.waters() );
 
@@ -191,7 +191,7 @@ public:
 						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( jatm ) );
 
 						utility::vector1< numeric::xyzVector< core::Real > >atom2_waters;
-						if (jatm <= rsd2.nheavyatoms()) {
+						if ( jatm <= rsd2.nheavyatoms() ) {
 							atom2_waters = rsd2_waters[ jatm ];
 						}
 
@@ -262,7 +262,7 @@ public:
 						fa_rep_i += 0.5*(weight*weightR*ljrep);
 
 						if ( iatm <= rsd1.nheavyatoms() && jatm <= rsd1.nheavyatoms() ) {
-						etable.analytic_lk_energy(rsd1.atom(iatm), rsd1.atom(jatm), fasol1,fasol2 );
+							etable.analytic_lk_energy(rsd1.atom(iatm), rsd1.atom(jatm), fasol1,fasol2 );
 							fa_sol_i += weight*weightS*fasol1;
 							etable.analytic_lk_energy(a_i, rsd1.atom(jatm), fasol1,fasol2 );
 							burial_i += weight*weightS*fasol1; ///etable.lk_dgfree( bur_type );

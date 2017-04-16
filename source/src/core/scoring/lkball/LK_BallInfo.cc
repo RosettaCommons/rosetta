@@ -345,34 +345,34 @@ setup_water_builders_for_residue_type(
 	}
 
 	/// let's do a sanity check on something we assume down below
-/*
+	/*
 	if ( rsd_type.aa() != aa_h2o ) {
-		for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
-			//want to confirm that all waters are matched to a hydrogen
-			if ( ! rsd_type.heavyatom_has_polar_hydrogens(i) ) continue;
+	for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
+	//want to confirm that all waters are matched to a hydrogen
+	if ( ! rsd_type.heavyatom_has_polar_hydrogens(i) ) continue;
 
-			WaterBuilders const & water_builders( rsd_water_builders[i] );
-			for ( Size j=1; j<= water_builders.size(); ++j ) {
-				// look for a polar hydrogen that matches to this guy
-				Size hpos(0);
-				if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom1() ) ) {
-					hpos = water_builders[j].atom1();
-				}
-				if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom2() ) ) {
-					runtime_assert( !hpos );
-					hpos = water_builders[j].atom2();
-				}
-				if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom3() ) ) {
-					runtime_assert( !hpos );
-					hpos = water_builders[j].atom3();
-				}
-				runtime_assert( hpos );
-				TR.Trace << "donor-water-anchor: " << j << ' ' << rsd_type.name() << ' ' << rsd_type.atom_name(hpos ) <<
-					std::endl;
-			}
-		}
+	WaterBuilders const & water_builders( rsd_water_builders[i] );
+	for ( Size j=1; j<= water_builders.size(); ++j ) {
+	// look for a polar hydrogen that matches to this guy
+	Size hpos(0);
+	if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom1() ) ) {
+	hpos = water_builders[j].atom1();
 	}
-*/
+	if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom2() ) ) {
+	runtime_assert( !hpos );
+	hpos = water_builders[j].atom2();
+	}
+	if ( rsd_type.atom_is_polar_hydrogen( water_builders[j].atom3() ) ) {
+	runtime_assert( !hpos );
+	hpos = water_builders[j].atom3();
+	}
+	runtime_assert( hpos );
+	TR.Trace << "donor-water-anchor: " << j << ' ' << rsd_type.name() << ' ' << rsd_type.atom_name(hpos ) <<
+	std::endl;
+	}
+	}
+	}
+	*/
 
 	if ( dump_waters_pdb && !all_waters.empty() ) { // HACKING -- dump a pdb containing just this residue:
 		std::ofstream out( std::string( rsd->name() + "_waters.pdb" ).c_str() );

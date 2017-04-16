@@ -345,8 +345,8 @@ LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	//Real const HH2 = etable_->nblist_dis2_cutoff_HH();
 
 	//fd
-	Real const XX2 = atomic_interaction_cutoff()*atomic_interaction_cutoff(); 
-	nblist->initialize_from_residues(	XX2, 0, 0, rsd1, rsd2, cpfxn );
+	Real const XX2 = atomic_interaction_cutoff()*atomic_interaction_cutoff();
+	nblist->initialize_from_residues( XX2, 0, 0, rsd1, rsd2, cpfxn );
 
 	pair_data.set_data( lkball_nblist, nblist );
 }
@@ -445,7 +445,7 @@ LK_BallEnergy::setup_for_scoring(
 	// the usability of the energy method. Data should be cached in the Pose or
 	// in Residue objects.
 	//if ( save_bridging_waters_ ) {
-	//	bridging_waters_.clear(  );
+	// bridging_waters_.clear(  );
 	//}
 }
 
@@ -618,14 +618,14 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 			// Let's figure out how to do that. Mutable data in EnergyMethods, however,
 			// severely limits their usability.
 			//if ( save_bridging_waters_ ) {
-			//	Real score = 0.0, lkbridge_frac = 0.0;
-			//	if ( d2_delta < overlap_width_A2_ ) lkbridge_frac = d2_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( d2_delta, overlap_width_A2_ );
-			//	core::Real lkbr_uncpl_score = lkbr_uncpl_wt*lkbridge_frac;
-			//	core::Real lkbr_score = lkbr_wt*lk_desolvation_sum*lkbridge_frac;
-			//	score = ( lkbr_uncpl_score + lkbr_score );
-			//	if ( score < -1e-4 ) {
-			//		bridging_waters_.push_back( ScoredBridgingWater ( lkbr_uncpl_score, lkbr_score, 0.5*(atom1_waters[idx1] + atom2_waters[idx2]) ) );
-			//	}
+			// Real score = 0.0, lkbridge_frac = 0.0;
+			// if ( d2_delta < overlap_width_A2_ ) lkbridge_frac = d2_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( d2_delta, overlap_width_A2_ );
+			// core::Real lkbr_uncpl_score = lkbr_uncpl_wt*lkbridge_frac;
+			// core::Real lkbr_score = lkbr_wt*lk_desolvation_sum*lkbridge_frac;
+			// score = ( lkbr_uncpl_score + lkbr_score );
+			// if ( score < -1e-4 ) {
+			//  bridging_waters_.push_back( ScoredBridgingWater ( lkbr_uncpl_score, lkbr_score, 0.5*(atom1_waters[idx1] + atom2_waters[idx2]) ) );
+			// }
 			//}
 		}
 	}
