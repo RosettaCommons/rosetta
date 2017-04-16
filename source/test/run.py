@@ -86,7 +86,7 @@ class Tester:
         if Options.cxx_ver:
             cmd_str += " cxx_ver=%s" % (Options.cxx_ver)
 
-        pl = subprocess.getoutput(cmd_str)
+        pl = subprocess.check_output(cmd_str, shell=True).decode('utf-8')
         lines = pl.split('\n')
         for s in lines:
             if  len( s.split() ) > 1 and s.split()[0] == 'Platform:':
@@ -274,7 +274,12 @@ class Tester:
 
         for lib in UnitTestExecutable:
             tests = set()
-            status, command_output = subprocess.getstatusoutput(self.testpath + '/' + lib + ' _ListAllTests_')
+            p = subprocess.Popen(self.testpath + '/' + lib + ' _ListAllTests_',
+                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, shell=True)
+            command_output, _ = p.communicate()
+            status = p.returncode
+
             if status != 0:
                 # The output doesn't contain a test list, only an error message
                 print("Error running unit test executable for", lib, "- not all tests may be availible.")

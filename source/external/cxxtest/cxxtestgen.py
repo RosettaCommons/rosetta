@@ -19,6 +19,7 @@ Generate test source file for CxxTest.
   --part                 Don\'t write CxxTest globals
   --no-static-init       Don\'t rely on static initialization
 '''
+from __future__ import print_function
 
 import re
 import sys
@@ -57,7 +58,7 @@ def main():
 def usage( problem = None ):
     '''Print usage info and exit'''
     if problem is None:
-        print usageString()
+        print(usageString())
         sys.exit(0)
     else:
         sys.stderr.write( usageString() )
@@ -82,7 +83,7 @@ def parseCommandline():
                                             'error-printer', 'abort-on-fail', 'have-std', 'no-std',
                                             'have-eh', 'no-eh', 'template=', 'include=',
                                             'root', 'part', 'no-static-init', 'factor', 'longlong='] )
-    except getopt.error, problem:
+    except getopt.error as problem:
         usage( problem )
     setOptions( options )
     return setFiles( patterns )
@@ -320,7 +321,7 @@ def cstr( str ):
 
 def addSuiteCreateDestroy( suite, which, line ):
     '''Add createSuite()/destroySuite() to current suite'''
-    if suite.has_key(which):
+    if which in suite:
         abort( '%s:%s: %sSuite() already declared' % ( suite['file'], str(line), which ) )
     suite[which] = line
 
@@ -335,10 +336,10 @@ def closeSuite():
 
 def verifySuite(suite):
     '''Verify current suite is legal'''
-    if suite.has_key('create') and not suite.has_key('destroy'):
+    if 'create' in suite and 'destroy' not in suite:
         abort( '%s:%s: Suite %s has createSuite() but no destroySuite()' %
                (suite['file'], suite['create'], suite['name']) )
-    if suite.has_key('destroy') and not suite.has_key('create'):
+    if 'destroy' in suite and 'create' not in suite:
         abort( '%s:%s: Suite %s has destroySuite() but no createSuite()' %
                (suite['file'], suite['destroy'], suite['name']) )
 
@@ -463,7 +464,7 @@ def writeMain( output ):
 	output.write( '   << "ERROR: Unhandled Exception caught by cxxtest: "\n' )
 	output.write( '   << excn << std::endl;\n' )
         output.write( '  std::cerr << "Command line: ";\n' )
-        output.write( '  for ( int ii = 0; ii < argc; ++ii ) {\n' )  
+        output.write( '  for ( int ii = 0; ii < argc; ++ii ) {\n' )
 	output.write( '   std::cerr\n' )
 	output.write( '    << " "\n' )
 	output.write( '   << argv[ii];\n' )
@@ -507,7 +508,7 @@ def isGenerated(suite):
 
 def isDynamic(suite):
     '''Checks whether a suite is dynamic'''
-    return suite.has_key('create')
+    return 'create' in suite
 
 lastIncluded = ''
 def writeInclude(output, file):

@@ -810,7 +810,7 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         for line in f:
             #po.poll()
             if print_output: print(line, end='')
-            output += line
+            output += line.decode('utf-8')
             sys.stdout.flush()
         f.close()
         while po.returncode is None: po.wait()
