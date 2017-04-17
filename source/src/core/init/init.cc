@@ -694,6 +694,7 @@ static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCrea
 using namespace core::select::residue_selector;
 static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSelectorCreator;
 static ResidueSelectorRegistrator< BinSelectorCreator > reg_BinSelectorCreator;
+static ResidueSelectorRegistrator< BondedResidueSelectorCreator > reg_BondedResidueSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
 static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
 static ResidueSelectorRegistrator< GlycanResidueSelectorCreator > reg_GlycanResidueSelectorCreator;

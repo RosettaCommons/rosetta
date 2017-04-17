@@ -445,6 +445,7 @@ sources = {
 				"MPRangeRelaxMover",
     ],
 	"protocols/residue_selectors": [
+	        "HBondSelector",
 		"StoredResidueSubsetSelector",
 		"StoreResidueSubsetMover",
 		"TaskSelector",

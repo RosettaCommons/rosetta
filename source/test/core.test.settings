@@ -486,6 +486,7 @@ sources = {
 	"select/residue_selector" : [
 		"AndResidueSelector",
 		"BinSelector",
+                "BondedResidueSelector",
 		"CloseContactResidueSelector",
 		"GlycanResidueSelectorTest",
 		"JumpDownstreamSelector",

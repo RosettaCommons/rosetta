@@ -24,7 +24,7 @@ static ResidueSelectorRegistrator< protocols::cyclic_peptide::RamaMutationSelect
 
 static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::NamedSegmentSelectorCreator > reg_NamedSegmentSelectorCreator;
 static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::PairedSheetResidueSelectorCreator > reg_PairedSheetResidueSelectorCreator;
-
+static ResidueSelectorRegistrator< protocols::residue_selectors::HBondSelectorCreator > reg_HBondSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 

@@ -838,6 +838,7 @@ sources = {
 	"core/select/residue_selector": [
 		"AndResidueSelector",
 		"BinSelector",
+	        "BondedResidueSelector",
 		"CachedResidueSubset",
 		"ChainSelector",
 		"CloseContactResidueSelector",
