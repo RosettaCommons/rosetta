@@ -226,13 +226,15 @@ class Tester:
         f.close()
 
         # saving log to a file...
-        f = open(log_file, 'w');  f.write(''.join(output));  f.close()
+        with open(log_file, 'w') as f:
+            f.write(''.join(output))
 
     def parseOneSuite(self, f, output):
         for line in f:
-            if line != 'All tests passed!\n':
-                print(line, end='')
-                output.append(line)
+            l = line.decode('utf-8')
+            if l != 'All tests passed!\n':
+                print(l, end='')
+                output.append(l)
                 sys.stdout.flush()
 
     def parseOneSuiteValgrind(self, f, output, lib, suite, yaml_file):
@@ -278,6 +280,7 @@ class Tester:
                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, shell=True)
             command_output, _ = p.communicate()
+            command_output = command_output.decode('utf-8')
             status = p.returncode
 
             if status != 0:
@@ -326,27 +329,24 @@ class Tester:
             # extracting and aggregation results, but only if running all tests
             if not Options.one:
                 all_results_yaml_file = '.unit_test_results.yaml'
-                uf = file(all_results_yaml_file, 'w')
-                for lib in logs_yamls:
-                    (log_file, yaml_file) = logs_yamls[lib]
-                    info = self.extractInfo( file(log_file).read() )
-                    info.name = lib
-                    self.results[lib] = info
+                with open(all_results_yaml_file, 'w') as uf:
+                    for lib in logs_yamls:
+                        (log_file, yaml_file) = logs_yamls[lib]
+                        with open(log_file, 'r') as f:
+                            info = self.extractInfo( f.read() )
+                        info.name = lib
+                        self.results[lib] = info
 
-                    if not os.path.isfile(yaml_file):
-                        print("Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file)
-                        uf.close()
-                        os.remove(all_results_yaml_file)
-                        sys.exit(1)
+                        if not os.path.isfile(yaml_file):
+                            print("Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file)
+                            os.remove(all_results_yaml_file)
+                            sys.exit(1)
 
-                    # generating summary yaml file for all tests
-                    uf.write(lib + ':\n')
-                    f = file(yaml_file)
-                    for line in f: uf.write("    "+line)
-                    f.close()
-                    uf.write('\n')
-
-                uf.close()
+                        # generating summary yaml file for all tests
+                        uf.write(lib + ':\n')
+                        with open(yaml_file, 'w') as f:
+                            for line in f: uf.write("    "+line)
+                        uf.write('\n')
 
             #self.log( "Run unit tests... Done.\n")
 
@@ -371,35 +371,32 @@ class Tester:
 
                 logs_yamls[lib] = (log_file, yaml_file)
 
-                log_file_h = file(log_file, 'w')
-                yaml_file_h = file(yaml_file, 'w')
                 yaml_data = {}
-                for l, suite in self.all_test_suites_by_lib[lib]:
-                    suite_log = file(self.testpath + '/' + lib + '.' + suite + '.log').read()
-                    log_file_h.write( suite_log )
+                with open(log_file, 'w') as log_file_h:
+                    for l, suite in self.all_test_suites_by_lib[lib]:
+                        suite_log = open(self.testpath + '/' + lib + '.' + suite + '.log').read()
+                        log_file_h.write( suite_log )
 
-                    print('trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml')
-                    data = json.loads( file(self.testpath + '/' + lib + '.' + suite + '.yaml').read() )
-                    for k in data:
-                        if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
-                        else: yaml_data[k] = data[k]
-
-
-                    def json_key_from_test(test): return lib[:-len('.test')] + ':' + test.replace(':', ':')  # we might want different separator then ':' in the future
-
-                    for test in data['ALL_TESTS']:
-                        json_key = json_key_from_test(test)
-                        if json_key not in all_json['tests']: all_json['tests'][json_key] = dict(state=_finished_, log='')
-
-                    for test in data['FAILED_TESTS']:
-                        json_key = json_key_from_test(test)
-                        all_json['tests'][json_key] = dict(state=_failed_, log=suite_log)
+                        print('trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml')
+                        with open(self.testpath + '/' + lib + '.' + suite + '.yaml') as f:
+                            data = json.loads( f.read() )
+                        for k in data:
+                            if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
+                            else: yaml_data[k] = data[k]
 
 
-                yaml_file_h.write( json.dumps(yaml_data) )
+                        def json_key_from_test(test): return lib[:-len('.test')] + ':' + test.replace(':', ':')  # we might want different separator then ':' in the future
 
-                log_file_h.close()
-                yaml_file_h.close()
+                        for test in data['ALL_TESTS']:
+                            json_key = json_key_from_test(test)
+                            if json_key not in all_json['tests']: all_json['tests'][json_key] = dict(state=_finished_, log='')
+
+                        for test in data['FAILED_TESTS']:
+                            json_key = json_key_from_test(test)
+                            all_json['tests'][json_key] = dict(state=_failed_, log=suite_log)
+
+                with open(yaml_file, 'w') as yaml_file_h:
+                    yaml_file_h.write( json.dumps(yaml_data) )
 
                 #if 'ALL_TESTS' in yaml_data:
                 if yaml_data:
@@ -409,8 +406,8 @@ class Tester:
                 logs_yamls[lib] = (log_file, yaml_file)
 
             #print 'All_yaml:', all_yaml
-            f = file('.unit_test_results.yaml', 'w');  f.write( json.dumps(all_yaml) );  f.close()
-
+            with open('.unit_test_results.yaml', 'w') as f:
+                f.write( json.dumps(all_yaml) )
 
             for t in self.results:
                 all_json['summary']['total']   += self.results[t].testCount
@@ -418,7 +415,8 @@ class Tester:
 
             all_json['summary']['failed_tests'] = [ t for t in all_json['tests'] if all_json['tests'][t]['state'] == _failed_ ]
 
-            with file('.unit_test_results.json', 'w') as f: json.dump(all_json, f, sort_keys=True, indent=2)
+            with open('.unit_test_results.json', 'w') as f:
+                json.dump(all_json, f, sort_keys=True, indent=2)
 
 
         '''
