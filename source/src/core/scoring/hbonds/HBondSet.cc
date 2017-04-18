@@ -787,7 +787,7 @@ HBondSet::residue_hbonds(const Size seqpos, bool include_only_allowed /* true */
 	for ( Size i=1; i<= nhbonds(); ++i ) {
 		HBondCOP bond( hbond_cop(i) );
 		if ( (bond->don_res() == seqpos || bond->acc_res() == seqpos)
-				&& ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed) ) {
+				&& ((include_only_allowed && allow_hbond(*bond)) || !include_only_allowed) ) {
 			bonds.push_back( bond );
 		}
 	}
