@@ -87,8 +87,8 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
-			whacky_sugar, bad_pdb;
+			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57, maltobiose,
+			Me_glycoside, C_linked, whacky_sugar, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -282,6 +282,14 @@ main( int argc, char *argv[] )
 		pose_from_file( GalCer, PATH + "GalCer.pdb", PDB_file );
 
 		test_sugar( GalCer );
+
+
+                cout << "---------------------------------------------------------------------------------------------" << endl;
+                cout << "Importing UDP-D-Glc:" << endl;
+
+                pose_from_file( UDP_D_Glc, PATH + "UDP-alpha-D-Glcp.pdb", PDB_file );
+
+                test_sugar( UDP_D_Glc );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

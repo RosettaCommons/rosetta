@@ -1,0 +1,187 @@
+NAME UDP
+IO_STRING UDP Z
+TYPE POLYMER # POLYMER is selected here, because this is a "cap" for polymers such as UDP-saccharides.
+VARIANT LOWER_TERMINUS_VARIANT
+AA UNK
+
+# Main-chain atoms:
+ATOM  C1' CH1  CT1   0.04
+ATOM  C2' CH2  CT1   0.14
+ATOM  C3' CH1  CT1   0.14
+ATOM  C4' CH1  CT1   0.04
+ATOM  C5' CH2  CT2   -0.18
+ATOM  O5' Oet2 ON2   -0.40
+ATOM  PA  Phos P     2.08
+ATOM 3OPA OOC  ON2   -0.80
+ATOM_ALIAS 3OPA  O3A
+ATOM  PB  Phos P     2.08
+ATOM 3OPB OOC  ON2   -0.40
+ATOM_ALIAS 3OPB  O3B
+
+# Other backbone heavy atoms:
+ATOM  O4' Oet3 OS    -0.26
+ATOM 1OPA OOC  ON3   -0.64
+ATOM_ALIAS 1OPA  O1A
+ATOM 2OPA OOC  ON3   -0.64
+ATOM_ALIAS 2OPA  O2A
+ATOM 1OPB OOC  ON3   -0.64
+ATOM_ALIAS 1OPB  O1B
+ATOM 2OPB OOC  ON3   -0.64
+ATOM_ALIAS 2OPB  O2B
+ATOM VO4' VIRT VIRT  0.00  # to O4'; allows for consistent chi angles
+ATOM VC1' VIRT VIRT  0.00  # to C1'; required for ring flipping
+
+# Side-chain heavy atoms:
+ATOM  N1  Ntrp NN2   0
+ATOM  C2  CObb C     0.51
+ATOM  O2  OCbb O     -0.51
+ATOM  N3  Ntrp NH1   -0.31
+ATOM  C4  CObb C     0.51
+ATOM  O4  OCbb O     -0.51
+ATOM  C5  aroC CE1   0
+ATOM  C6  aroC CE1   0
+ATOM  O2' OH   OH1   -0.66
+ATOM  O3' OH   OH1   -0.66
+
+# Hydrogens:
+ATOM  H1' Hapo HB    0.09
+ATOM  H2' Hapo HA    0.09
+ATOM  H3' Hapo HA    0.09
+ATOM  H4' Hapo HA    0.09
+ATOM 1H5' Hapo HA    0.09
+ATOM 2H5' Hapo HA    0.09
+ATOM  H3  Hpol H     0.31
+ATOM  H5  Hapo HP    0
+ATOM  H6  Haro HP    0
+ATOM HO2' Hpol H     0.43
+ATOM HO3' Hpol H     0.43
+
+UPPER_CONNECT 3OPB          # The UDP is always the LOWER_TERMINUS; there is no LOWER_CONNECT.
+
+BOND VO4'  C1'
+BOND  C1'  C2'
+BOND  C2'  C3'
+BOND  C3'  C4'
+BOND  C4'  C5'
+BOND  C5'  O5'
+BOND  O5'  PA
+BOND  PA  3OPA
+BOND 3OPA  PB
+BOND  PB  3OPB
+BOND  C4'  O4'
+BOND_TYPE  PA  1OPA CARBOXY # Not actually a carboxyl
+BOND_TYPE  PA  2OPA CARBOXY # Not actually a carboxyl
+BOND_TYPE  PB  1OPB CARBOXY # Not actually a carboxyl
+BOND_TYPE  PB  2OPB CARBOXY # Not actually a carboxyl
+BOND  O4'  C1'              # cyclic bond
+CUT_BOND  O4'  C1'          # cyclic bond
+BOND  O4' VC1'              # cyclic bond
+BOND  C1'  N1
+BOND  N1   C2
+BOND  C2   O2
+BOND  C2   N3
+BOND  N3   C4
+BOND  C4   O4
+BOND  C4   C5
+BOND  C5   C6
+BOND  C6   N1               # cyclic bond
+CUT_BOND C6  N1             # cyclic bond
+BOND  C2'  O2'
+BOND  C3'  O3'
+BOND  C1'  H1'
+BOND  C2'  H2'
+BOND  C3'  H3'
+BOND  C4'  H4'
+BOND  C5' 1H5'
+BOND  C5' 2H5'
+BOND  N3   H3
+BOND  C5   H5
+BOND  C6   H6
+BOND  O2' HO2'
+BOND  O3' HO3'
+
+VIRTUAL_SHADOW VO4'  O4'
+VIRTUAL_SHADOW VC1'  C1'
+
+CHI 1 VO4'  C1'  N1  C2  # cannot use O4' to define torsion, since atom tree doesn't treat it as connected
+CHI_ROTAMERS 1  0  0
+CHI_ROTAMERS 1  60 0
+CHI_ROTAMERS 1 120 0
+CHI_ROTAMERS 1 180 0
+CHI_ROTAMERS 1 240 0
+CHI_ROTAMERS 1 300 0
+CHI_ROTAMERS 1 360 0
+CHI 2 C1'  C2' O2'  HO2'  # eta2'
+CHI_ROTAMERS 2  60 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 300 0
+CHI 3  C2'  C3'  O3'  HO3' # eta3'
+CHI_ROTAMERS 3  60 0
+CHI_ROTAMERS 3 180 0
+CHI_ROTAMERS 3 300 0
+
+ADD_RING 1  C1'  C2'  C3'  C4'  O4'
+
+NU 1 VO4'  C1'  C2'  C3'    # duplicates BB 1, but defined differently
+NU 2  C1'  C2'  C3'  C4'    # duplicates BB 2
+NU 3  C2'  C3'  C4'  O4'    # duplicates BB 3, but defined differently
+NU 4  C3'  C4'  O4'  VC1'
+#NU 5 is across the CUT_BOND
+#LOWEST_RING_CONFORMER 3E
+#LOW_RING_CONFORMERS 3T2 3T4 2T3 2E 2T1    # Ref: Altona, C. & Sundaralingam, M. (1972) JACS 94, 8205.
+
+
+PROPERTIES  POLAR AROMATIC NUCLEOTIDE_DIPHOSPHATE LOWER_TERMINUS CYCLIC
+
+NBR_ATOM C1'
+NBR_RADIUS 6.0
+
+MAINCHAIN_ATOMS  C1' C2' C3' C4' C5' O5' PA 3OPA PB 3OPB
+FIRST_SIDECHAIN_ATOM  N1
+
+# must build main chain 1st!
+ICOOR_INTERNAL    C1'     0.000000    0.000000    0.000000   C1'    C2'    C3'
+ICOOR_INTERNAL    C2'     0.000000    0.000000    1.530      C1'    C2'    C3'
+ICOOR_INTERNAL    C3'     0.000000    78.359      1.523      C2'    C1'    C3'
+ICOOR_INTERNAL    C4'     35.3676     77.41       1.520      C3'    C2'    C1'
+ICOOR_INTERNAL    C5'    -156.681     63.836      1.509      C4'    C3'    C2'
+ICOOR_INTERNAL    O5'     52.197      68.342      1.420      C5'    C4'    C3'
+ICOOR_INTERNAL    PA      170.312     59.064      1.605      O5'    C5'    C4'
+ICOOR_INTERNAL   3OPA    -60.0026     74.50       1.616      PA     O5'    C5'
+ICOOR_INTERNAL    PB      158.640     56.857      1.617     3OPA    PA     O5'
+ICOOR_INTERNAL   3OPB    -166.00      70.00       1.482      PB    3OPA    PA
+ICOOR_INTERNAL  UPPER    180.00       70.50       1.54      3OPB    PB    3OPA
+
+# then the rest of the backbone heavy atoms
+ICOOR_INTERNAL    O4'    -35.7258     75.974      1.451623   C4'    C3'    C2'
+ICOOR_INTERNAL   1OPA     60.0026     71.966764   1.485216   PA     O5'    C5'
+ICOOR_INTERNAL   2OPA    -180.00      71.953270   1.484530   PA     O5'    C5'
+ICOOR_INTERNAL   1OPB     73.8505     70.751      1.483      PB     3OPA   PA
+ICOOR_INTERNAL   2OPB    -45.8505     70.751      1.483      PB     3OPA   PA
+ICOOR_INTERNAL   VO4'    -23.2575     72.28       1.412      C1'    C2'    C3'  # must build as branch from main chain, unlike O5
+ICOOR_INTERNAL   VC1'    21.8929      70.073      1.412      O4'    C4'    C3'  # must build from end of ring, unlike C1
+
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    N1     97.004576    67.707315   1.483013   C1'    C2'    C3'
+ICOOR_INTERNAL    C2     81.836368    62.862929   1.382700   N1     C1'    C2'
+ICOOR_INTERNAL    O2      0.044687    56.883873   1.218662   C2     N1     C1'
+ICOOR_INTERNAL    N3    179.917552    64.904757   1.373313   C2     N1     O2
+ICOOR_INTERNAL    C4      0.068999    52.885771   1.378658   N3     C2     N1
+ICOOR_INTERNAL    O4    179.941472    60.605691   1.231957   C4     N3     C2
+ICOOR_INTERNAL    C5    179.981970    65.307892   1.431231   C4     N3     O4
+ICOOR_INTERNAL    C6    179.980824    60.555935   1.336920   C5     C4     O4
+ICOOR_INTERNAL    O2'  -115.795710    68.765983   1.420555   C2'    C3'    C1'
+ICOOR_INTERNAL    O3'    80.527639    66.979600   1.416355   C3'    C4'    C5'
+
+# now all the Hs
+ICOOR_INTERNAL    H1'   121.460207    70.786273   0.980531   C1'    C2'    N1
+ICOOR_INTERNAL    H2'  -125.392872    68.486702   0.979750   C2'    C3'    O2'
+ICOOR_INTERNAL    H3'  -121.689175    70.778267   0.979621   C3'    C4'    O3'
+ICOOR_INTERNAL    H4'  -119.077434    71.191397   0.979530   C4'    C5'    O4'
+ICOOR_INTERNAL   1H5'  -120.488339    70.985281   0.980078   C5'    O5'    C4'
+ICOOR_INTERNAL   2H5'  -118.995682    70.932483   0.979720   C5'    O5'    1H5'
+ICOOR_INTERNAL    H3    179.906863    63.572961   0.979691   N3     C2     C4
+ICOOR_INTERNAL    H5   -179.938492    59.775992   0.980186   C5     C4     C6
+ICOOR_INTERNAL    H6    179.929312    62.121020   0.979067   C6     C5     C4
+ICOOR_INTERNAL   HO2'   180.000000    70.997363   0.980453   O2'    C2'    C3'
+ICOOR_INTERNAL   HO3'  -60.0026       70.997363   0.980453   O3'    C3'    C4'

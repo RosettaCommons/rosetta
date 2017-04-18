@@ -737,3 +737,5 @@ residue_types/pna/UPN.params
 ## Coenzymes
 residue_types/coenzymes/flavin_oxidized.params
 residue_types/coenzymes/flavin_reduced.params
+residue_types/coenzymes/UDP.params
+

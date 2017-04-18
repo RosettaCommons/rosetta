@@ -172,6 +172,9 @@ patches/carbohydrates/omega-oxidation.txt
 patches/carbohydrates/2-reduction.txt
 patches/carbohydrates/4-reduction.txt
 
+## Coenzyme patches
+patches/coenzymes/non-conjugated_nucleotide_diphosphate.txt
+
 ## Terpene patches
 patches/terpenes/terpene_lower_term.txt
 patches/terpenes/terpene_upper_term.txt

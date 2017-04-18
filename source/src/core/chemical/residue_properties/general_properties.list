@@ -39,6 +39,7 @@ PEPTOID
 CARBOHYDRATE
 LIPID
 TERPENE
+NUCLEOTIDE_DIPHOSPHATE
 SRI # New class of artificial heteropolymers. ~VMulligan
 TRIAZOLE_LINKER # Another new class of artificial heteropolymers. ~Vmulligan
 METAL  # This residue type is a metal ion.
@@ -47,9 +48,6 @@ WATER
 SOLVENT
 VIRTUAL_RESIDUE
 INVERTED_VIRTUAL_RESIDUE #Used by the symmetry machinery for mirror symmetry. ~Vmulligan
-TERMINUS
-UPPERTERM_CAP
-LOWERTERM_CAP
 
 ## Variants
 LOWER_TERMINUS  # first residue in a chain
@@ -62,6 +60,9 @@ COARSE  # currently for coarse_RNA only
 ADDUCT
 SC_ORBITALS
 FRAGMENT # shows up in GrowLigand
+TERMINUS
+UPPERTERM_CAP
+LOWERTERM_CAP
 
 ## Qualitative Properties
 POLAR #This is for clearly polar side-chains (DEHKNQRST).  Note that it excludes glycine, alanine, cysteine, and proline (as well as very hydrophobic residues with polar groups, like tryptophan or tyrosine).
@@ -133,7 +134,7 @@ SEPTANOSE
 ALPHA_SUGAR
 BETA_SUGAR
 
-# Extra classifications
+## Extra classifications
 SIALIC_ACID
 
 ## Modifications
