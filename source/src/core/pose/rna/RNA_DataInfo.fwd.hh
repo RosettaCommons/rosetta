@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_DataInfo.fwd.hh
+/// @file   core/pose/rna/RNA_DataInfo.fwd.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_DataInfo_fwd_hh
-#define INCLUDED_core_scoring_rna_RNA_DataInfo_fwd_hh
+#ifndef INCLUDED_core_pose_rna_RNA_DataInfo_fwd_hh
+#define INCLUDED_core_pose_rna_RNA_DataInfo_fwd_hh
 
 // C++
 
@@ -23,9 +23,8 @@
 
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
-namespace data {
 
 enum RNA_ReactivityType {
 	NO_REACTIVITY,
@@ -43,9 +42,8 @@ class RNA_Reactivity;
 typedef utility::pointer::shared_ptr< RNA_Reactivity > RNA_ReactivityOP;
 typedef utility::pointer::weak_ptr< RNA_Reactivity > RNA_ReactivityAP;
 
-} //data
 } //rna
-} //scoring
+} //pose
 } //core
 
 #endif

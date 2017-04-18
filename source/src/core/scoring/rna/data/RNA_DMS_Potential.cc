@@ -13,7 +13,7 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/scoring/rna/data/util.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondEnergy.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -426,13 +426,13 @@ RNA_DMS_Potential::get_features( pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
-	RNA_Reactivity const & rna_reactivity ) {
+	pose::rna::RNA_Reactivity const & rna_reactivity ) {
 
 	using namespace core::pose::full_model_info;
 
 	if ( DMS_potential_.size() == 0 ) initialize_DMS_potential();
 
-	runtime_assert( rna_reactivity.type() == DMS );
+	runtime_assert( rna_reactivity.type() == pose::rna::DMS );
 	Size const & pos = rna_reactivity.position();
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	if ( pos < 1 || pos >= full_model_info.full_sequence().size() || full_model_info.full_sequence()[ pos - 1 ] != 'a' ) return 0.0;

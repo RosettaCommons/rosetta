@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_DataInfo.cc
+/// @file   core/pose/rna/RNA_DataInfo.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
 // Unit headers
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 
 // Package headers
 
@@ -44,10 +44,8 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
-namespace data {
-
 
 /// @details Copy constructors must copy all data, not just some...
 RNA_DataInfo::RNA_DataInfo( RNA_DataInfo const & src ):
@@ -75,10 +73,8 @@ RNA_DataInfo::zero()
 	rna_reactivities_.clear();
 }
 
-
-} //data
 } //rna
-} //scoring
+} //pose
 } //core
 
 #ifdef    SERIALIZATION
@@ -86,7 +82,7 @@ RNA_DataInfo::zero()
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::rna::data::RNA_DataInfo::save( Archive & arc ) const {
+core::pose::rna::RNA_DataInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rna_data_ ) ); // RNA_Data
 	arc( CEREAL_NVP( backbone_burial_ ) ); // ObjexxFCL::FArray1D<_Bool>
 	arc( CEREAL_NVP( backbone_exposed_ ) ); // ObjexxFCL::FArray1D<_Bool>
@@ -96,24 +92,24 @@ core::scoring::rna::data::RNA_DataInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::rna::data::RNA_DataInfo::load( Archive & arc ) {
+core::pose::rna::RNA_DataInfo::load( Archive & arc ) {
 	arc( rna_data_ ); // RNA_Data
 	arc( backbone_burial_ ); // ObjexxFCL::FArray1D<_Bool>
 	arc( backbone_exposed_ ); // ObjexxFCL::FArray1D<_Bool>
 	arc( rna_reactivities_ ); // RNA_Reactivities
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::data::RNA_DataInfo );
-CEREAL_REGISTER_TYPE( core::scoring::rna::data::RNA_DataInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_DataInfo );
+CEREAL_REGISTER_TYPE( core::pose::rna::RNA_DataInfo )
 
 
 /// @brief Default constructor required by cereal to deserialize this class
-core::scoring::rna::data::RNA_Datum::RNA_Datum() {}
+core::pose::rna::RNA_Datum::RNA_Datum() {}
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::rna::data::RNA_Datum::save( Archive & arc ) const {
+core::pose::rna::RNA_Datum::save( Archive & arc ) const {
 	arc( CEREAL_NVP( position_ ) ); // Size
 	arc( CEREAL_NVP( edge_ ) ); // Size
 	arc( CEREAL_NVP( weight_ ) ); // Real
@@ -122,35 +118,35 @@ core::scoring::rna::data::RNA_Datum::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::rna::data::RNA_Datum::load( Archive & arc ) {
+core::pose::rna::RNA_Datum::load( Archive & arc ) {
 	arc( position_ ); // Size
 	arc( edge_ ); // Size
 	arc( weight_ ); // Real
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::data::RNA_Datum );
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_Datum );
 
 /// @brief Default constructor required by cereal to deserialize this class
-core::scoring::rna::data::RNA_Reactivity::RNA_Reactivity() {}
+core::pose::rna::RNA_Reactivity::RNA_Reactivity() {}
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::rna::data::RNA_Reactivity::save( Archive & arc ) const {
+core::pose::rna::RNA_Reactivity::save( Archive & arc ) const {
 	arc( CEREAL_NVP( position_ ) ); // Size
-	arc( CEREAL_NVP( type_ ) ); // enum core::scoring::rna::data::RNA_ReactivityType
+	arc( CEREAL_NVP( type_ ) ); // enum core::pose::rna::RNA_ReactivityType
 	arc( CEREAL_NVP( value_ ) ); // Real
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::rna::data::RNA_Reactivity::load( Archive & arc ) {
+core::pose::rna::RNA_Reactivity::load( Archive & arc ) {
 	arc( position_ ); // Size
-	arc( type_ ); // enum core::scoring::rna::data::RNA_ReactivityType
+	arc( type_ ); // enum core::pose::rna::RNA_ReactivityType
 	arc( value_ ); // Real
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::data::RNA_Reactivity );
-CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_data_RNA_DataInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_Reactivity );
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_data_RNA_DataInfo )
 #endif // SERIALIZATION

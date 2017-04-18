@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_RawBaseBaseInfo.cc
+/// @file   core/pose/rna/RNA_RawBaseBaseInfo.hh
 /// @brief  Statistically derived RNA potential
 /// @author Rhiju Das
 
 
 // Unit headers
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/chemical/rna/util.hh>
 
 // Package headers
@@ -35,12 +35,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
-// C++
-
-///////////////////////////////////////////////////////
-// Keep track of some base geometry that is
-// useful for RNA scoring.
-///////////////////////////////////////////////////////
 using namespace core::chemical::rna;
 
 #ifdef    SERIALIZATION
@@ -57,7 +51,7 @@ using namespace core::chemical::rna;
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 using namespace ObjexxFCL::format;
@@ -196,10 +190,9 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 
 	// static bool const scale_axis_stagger_by_xy_score = true;
 
-	for ( pose::rna::EnergyBasePairList::const_iterator it = energy_base_pair_list.begin();
-			it != energy_base_pair_list.end(); ++it ) {
-		Real const energy = it->first;
-		pose::rna::BasePair const base_pair = it->second;
+	for ( auto const & elem : energy_base_pair_list ) {
+		Real const energy = elem.first;
+		pose::rna::BasePair const & base_pair = elem.second;
 
 		Size const i = base_pair.res1();
 		Size const k = base_pair.edge1();
@@ -244,7 +237,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 		filtered_base_stagger_array_( j, i ) = scaled_stagger_energy;
 		total_base_stagger_score_ += scaled_stagger_energy;
 
-		scored_base_pair_list_.push_back( *it );
+		scored_base_pair_list_.push_back( elem );
 	}
 }
 
@@ -315,20 +308,19 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 }
 
 /////////////////////////////////////////////////////////////////////
-Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_data_info ) const
+Real RNA_FilteredBaseBaseInfo::get_data_score( RNA_DataInfo const & rna_data_info ) const
 {
 	Real rna_data_score( 0.0 );
 
-	utility::vector1< data::RNA_Datum > const & rna_data( rna_data_info.rna_data() );
+	utility::vector1< pose::rna::RNA_Datum > const & rna_data( rna_data_info.rna_data() );
 
-	for ( Size n = 1; n <= rna_data.size(); n++ ) {
-		Size const seqpos( rna_data[n].position() );
+	for ( auto const & datum : rna_data ) {
+		Size const seqpos( datum.position() );
 
 		// This could be accelerated if needed.
-		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list_.begin();
-				it != scored_base_pair_list_.end(); ++it ) {
+		for ( auto const & elem : scored_base_pair_list_ ) {
 
-			pose::rna::BasePair const base_pair = it->second;
+			pose::rna::BasePair const & base_pair = elem.second;
 
 			Size const i = base_pair.res1();
 			Size const j = base_pair.res2();
@@ -342,8 +334,8 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 				continue;
 			}
 
-			if ( k == rna_data[ n ].edge() ) {
-				rna_data_score += rna_data[n].weight();
+			if ( k == datum.edge() ) {
+				rna_data_score += datum.weight();
 			}
 		}
 	}
@@ -368,7 +360,7 @@ RNA_FilteredBaseBaseInfo::base_stack_list() const
 }
 
 } //rna
-} //scoring
+} //pose
 } //core
 
 #ifdef    SERIALIZATION
@@ -376,7 +368,7 @@ RNA_FilteredBaseBaseInfo::base_stack_list() const
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::rna::RNA_FilteredBaseBaseInfo::save( Archive & arc ) const {
+core::pose::rna::RNA_FilteredBaseBaseInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( filtered_base_pair_array_ ) ); // ObjexxFCL::FArray2D<Real>
 	arc( CEREAL_NVP( filtered_base_axis_array_ ) ); // ObjexxFCL::FArray2D<Real>
@@ -401,7 +393,7 @@ core::scoring::rna::RNA_FilteredBaseBaseInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::rna::RNA_FilteredBaseBaseInfo::load( Archive & arc ) {
+core::pose::rna::RNA_FilteredBaseBaseInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( filtered_base_pair_array_ ); // ObjexxFCL::FArray2D<Real>
 	arc( filtered_base_axis_array_ ); // ObjexxFCL::FArray2D<Real>
@@ -423,8 +415,8 @@ core::scoring::rna::RNA_FilteredBaseBaseInfo::load( Archive & arc ) {
 	arc( rna_verbose_ ); // _Bool
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_FilteredBaseBaseInfo );
-CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_FilteredBaseBaseInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_FilteredBaseBaseInfo );
+CEREAL_REGISTER_TYPE( core::pose::rna::RNA_FilteredBaseBaseInfo )
 
-CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_FilteredBaseBaseInfo )
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_RNA_FilteredBaseBaseInfo )
 #endif // SERIALIZATION

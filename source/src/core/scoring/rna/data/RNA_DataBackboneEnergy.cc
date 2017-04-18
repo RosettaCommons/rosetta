@@ -19,9 +19,8 @@
 // Package headers
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/id/AtomID.hh>
@@ -163,7 +162,7 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 
 	//  rna_filtered_base_base_info.set_calculated( false );
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
+	pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
 
@@ -244,7 +243,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	if ( m > rsd1.nheavyatoms() ) return;
 
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
+	pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
 

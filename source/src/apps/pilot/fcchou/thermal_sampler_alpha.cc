@@ -19,8 +19,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/database/open.hh>
@@ -99,7 +97,6 @@ thermal_sampler()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
-	using namespace core::scoring::rna::data;
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::io::silent;

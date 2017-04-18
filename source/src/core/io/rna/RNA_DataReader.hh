@@ -13,7 +13,7 @@
 #include <core/io/rna/RNA_DataReader.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/io/rna/RDAT.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/Jump.hh>
@@ -67,11 +67,11 @@ private:
 	read_data_from_file( std::string const & rna_data_file );
 
 	void
-	read_reactivity_info( std::istringstream & line_stream, core::scoring::rna::data::RNA_ReactivityType const type );
+	read_reactivity_info( std::istringstream & line_stream, pose::rna::RNA_ReactivityType const type );
 
 	void
 	get_reactivity_from_rdat( core::io::rna::RDAT const & rdat,
-		core::scoring::rna::data::RNA_ReactivityType const & type,
+		pose::rna::RNA_ReactivityType const & type,
 		std::string const & modifier_name );
 	void
 	read_data_from_rdat( std::string const & filename );
@@ -82,12 +82,12 @@ private:
 
 private:
 
-	core::scoring::rna::data::RNA_DataInfoOP rna_data_info_with_conventional_numbering_;
+	pose::rna::RNA_DataInfoOP rna_data_info_with_conventional_numbering_;
 	utility::vector1< Size > backbone_burial_res_, backbone_exposed_res_;
 
 };
 
-core::scoring::rna::data::RNA_DataInfo const &
+pose::rna::RNA_DataInfo const &
 get_rna_data_info( core::pose::Pose & pose, std::string const & rna_data_file,
 	core::scoring::ScoreFunctionOP scorefxn = 0 );
 

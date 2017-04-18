@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_RawBaseBasePotential.fwd.hh
+/// @file   core/pose/rna/RNA_RawBaseBasePotential.fwd.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_RawBaseBaseInfo_fwd_hh
-#define INCLUDED_core_scoring_rna_RNA_RawBaseBaseInfo_fwd_hh
+#ifndef INCLUDED_core_pose_rna_RNA_RawBaseBaseInfo_fwd_hh
+#define INCLUDED_core_pose_rna_RNA_RawBaseBaseInfo_fwd_hh
 
 // C++
 
@@ -20,7 +20,7 @@
 #include <utility/pointer/access_ptr.fwd.hh>
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ typedef utility::pointer::shared_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoO
 typedef utility::pointer::weak_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoAP;
 
 } //rna
-} //scoring
+} //pose
 } //core
 
 #endif

@@ -1034,14 +1034,12 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	utility::vector1< bool > is_bulged;
 	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
-
 	utility::vector1< core::pose::rna::BasePair > base_pair_list_native;
 	utility::vector1< bool > is_bulged_native;
 	core::pose::rna::classify_base_pairs( native_pose, base_pair_list_native, is_bulged_native );
 
 	Size N_WC_NATIVE( 0 ), N_NWC_NATIVE( 0 );
 	Size N_WC( 0 ), N_NWC( 0 );
-
 	for ( BasePair const & native_base_pair : base_pair_list_native ) {
 		Size const i = native_base_pair.res1();
 		Size const j = native_base_pair.res2();

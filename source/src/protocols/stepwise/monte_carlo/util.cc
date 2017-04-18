@@ -105,7 +105,9 @@ prepare_silent_struct( std::string const & out_tag,
 	bool const eval_base_pairs = basic::options::option[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();
 
 	if ( native_pose ) {
-		if ( eval_base_pairs ) core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
+		if ( eval_base_pairs ) {
+			core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
+		}
 		s->add_energy( "rms",      rms );
 		if ( do_rms_fill_calculation ) s->add_energy( "rms_fill", rms_fill );
 	} else {

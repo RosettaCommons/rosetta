@@ -22,7 +22,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

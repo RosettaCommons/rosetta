@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_DataPotential.hh
+/// @file   core/pose/rna/RNA_DataPotential.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_DataInfo_hh
-#define INCLUDED_core_scoring_rna_RNA_DataInfo_hh
+#ifndef INCLUDED_core_pose_rna_RNA_DataInfo_hh
+#define INCLUDED_core_pose_rna_RNA_DataInfo_hh
 
 #include <core/types.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.fwd.hh>
+#include <core/pose/rna/RNA_DataInfo.fwd.hh>
 
 // Project headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,9 +47,8 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
-namespace data {
 
 class RNA_Datum {
 public:
@@ -186,13 +185,12 @@ public:
 
 };
 
-} //data
 } //rna
-} //scoring
+} //pose
 } //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_scoring_rna_data_RNA_DataInfo )
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_data_RNA_DataInfo )
 #endif // SERIALIZATION
 
 

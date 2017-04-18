@@ -20,9 +20,8 @@
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -331,7 +330,7 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 ) const {
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_RawBaseBaseInfo & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
+	pose::rna::RNA_RawBaseBaseInfo & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
 	clean_up_rna_two_body_energy_tables( raw_base_base_info, pose );
 
 	//This needs to take care of a bunch of base pair book-keeping.
@@ -348,7 +347,7 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 
 		// Create Pose cached non-pairwise, "filtered" base-base info.
 		// This forces each base edge to have only one pairing partner.
-		rna::RNA_FilteredBaseBaseInfo & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+		pose::rna::RNA_FilteredBaseBaseInfo & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 
 		// Maybe we should put an if statement.
 		rna_filtered_base_base_info.carry_out_filtering( raw_base_base_info );
@@ -361,7 +360,7 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 		totals[ rna_base_stack_axis ]  = rna_filtered_base_base_info.get_total_base_stack_axis_score();
 
 		if ( sfxn.has_nonzero_weight( rna_data_base ) ) {
-			rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
+			pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 			totals[ rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
 		}
 
@@ -415,14 +414,14 @@ RNA_PairwiseLowResolutionEnergy::eval_atom_derivative(
 
 void
 RNA_PairwiseLowResolutionEnergy::clean_up_rna_two_body_energy_tables(
-	scoring::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
+	pose::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
 	pose::Pose & pose
 ) const {
 
 	//Make sure to zero out any of the base pair, base stack, etc. energies
 	// in our special RNA cached energies that are not between neighbors,
 	// and were therefore never calculated in residue_pair_energy().
-	scoring::rna::RNA_RawBaseBaseInfo raw_base_base_info_save( raw_base_base_info );
+	pose::rna::RNA_RawBaseBaseInfo raw_base_base_info_save( raw_base_base_info );
 	raw_base_base_info.zero();
 
 	scoring::EnergyGraph & energy_graph( pose.energies().energy_graph() );

@@ -17,7 +17,7 @@
 #define INCLUDED_core_scoring_rna_data_RNA_DMS_Potential_HH
 
 #include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.fwd.hh>
+#include <core/pose/rna/RNA_DataInfo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -62,7 +62,7 @@ public:
 
 	core::Real
 	evaluate( core::pose::Pose const & pose,
-		RNA_Reactivity const & rna_reactivity );
+		pose::rna::RNA_Reactivity const & rna_reactivity );
 
 	Real
 	get_binding_energy( Size const i,

@@ -18,7 +18,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.fwd.hh>
+#include <core/pose/rna/RNA_DataInfo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -50,7 +50,7 @@ public:
 
 	core::Real
 	evaluate( core::pose::Pose const & pose,
-		RNA_Reactivity const & rna_reactivity );
+		pose::rna::RNA_Reactivity const & rna_reactivity );
 
 
 	void

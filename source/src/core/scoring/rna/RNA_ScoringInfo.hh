@@ -22,9 +22,9 @@
 #include <core/kinematics/Stub.fwd.hh>
 
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -117,22 +117,22 @@ public:
 	RNA_CentroidInfo const &
 	rna_centroid_info() const { return rna_centroid_info_; }
 
-	rna::RNA_RawBaseBaseInfo &
+	pose::rna::RNA_RawBaseBaseInfo &
 	rna_raw_base_base_info() { return rna_raw_base_base_info_; }
 
-	rna::RNA_RawBaseBaseInfo const &
+	pose::rna::RNA_RawBaseBaseInfo const &
 	rna_raw_base_base_info() const { return rna_raw_base_base_info_; }
 
-	rna::RNA_FilteredBaseBaseInfo &
+	pose::rna::RNA_FilteredBaseBaseInfo &
 	rna_filtered_base_base_info() { return rna_filtered_base_base_info_; }
 
-	rna::RNA_FilteredBaseBaseInfo const &
+	pose::rna::RNA_FilteredBaseBaseInfo const &
 	rna_filtered_base_base_info() const { return rna_filtered_base_base_info_; }
 
-	rna::data::RNA_DataInfo &
+	pose::rna::RNA_DataInfo &
 	rna_data_info() { return rna_data_info_; }
 
-	rna::data::RNA_DataInfo const &
+	pose::rna::RNA_DataInfo const &
 	rna_data_info() const { return rna_data_info_; }
 
 	void
@@ -150,9 +150,9 @@ public:
 private:
 
 	rna::RNA_CentroidInfo rna_centroid_info_;
-	rna::RNA_RawBaseBaseInfo rna_raw_base_base_info_;
-	rna::RNA_FilteredBaseBaseInfo rna_filtered_base_base_info_;
-	rna::data::RNA_DataInfo rna_data_info_;
+	pose::rna::RNA_RawBaseBaseInfo rna_raw_base_base_info_;
+	pose::rna::RNA_FilteredBaseBaseInfo rna_filtered_base_base_info_;
+	pose::rna::RNA_DataInfo rna_data_info_;
 
 	// for rna low-res VDW calculations
 	utility::vector1< utility::vector1< Size > > atom_numbers_for_vdw_calculation_;

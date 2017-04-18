@@ -37,6 +37,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzMatrix.hh>
+#include <numeric/conversions.hh>
 
 // External library headers
 
@@ -560,6 +561,57 @@ classify_base_pairs(
 
 	pose::Pose pose = pose_input;
 
+	auto & rna_scoring_info = nonconst_rna_scoring_info_from_pose( pose );
+	RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	rna_centroid_info.update( pose );
+	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	
+	// Create a raw and filtered base-base info and fill them ourselves
+	RNA_RawBaseBaseInfo raw_info;
+	raw_info.resize( pose.size() ); 
+	
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
+
+		kinematics::Stub const & stub_i( base_stubs[i] );
+		Vector const & centroid_i( base_centroids[i] );
+		Matrix const & M_i( stub_i.M );
+		//Vector const & x_i = M_i.col_x();
+		//Vector const & y_i = M_i.col_y();
+		Vector const & z_i = M_i.col_z();
+
+		for ( Size j = 1; j <= pose.size(); ++j ) {
+			if ( !pose.residue_type( j ).is_RNA() ) continue;
+			
+			kinematics::Stub const & stub_j( base_stubs[j] );
+			Vector const & centroid_j( base_centroids[j] );
+			Matrix const & M_j( stub_j.M );
+			Vector const & z_j = M_j.col_z();
+			
+			Real const cos_theta = dot_product( z_i, z_j );
+			Vector d_ij = centroid_j - centroid_i;
+			//Real const dist_x = dot_product( d_ij, x_i );
+			//Real const dist_y = dot_product( d_ij, y_i );
+			Real dist_z = dot_product( d_ij, z_i );
+
+			BaseEdge edge_bin;
+			// Use the locally popular method for assigning edges rather than the
+			// zeta binning method used in lores.
+			figure_out_number_base_contacts( pose.residue( i ), pose.residue( j ), edge_bin );
+
+			// We want a close-to-planar base pair. So cos_theta near 1 (not 
+			// twisted) and dist_z near 0. negative is better scoring, so 
+			// - cos_theta / dist_z is a dumb but fine start.
+			dist_z = std::abs( dist_z );
+			raw_info.base_pair_array()( i, j, edge_bin ) = -1.0 * std::abs( cos_theta / ( dist_z + 0.01 ) );
+			if ( dist_z > 2.8 ) raw_info.base_pair_array()( i, j, edge_bin ) = 0;
+		}
+	}
+	
+	RNA_FilteredBaseBaseInfo filtered_info;
+	filtered_info.carry_out_filtering( raw_info );
+	
 	//////////////////////////////////////////////////////////////
 	ObjexxFCL::FArray1D < bool > is_base_paired( pose.size(), false );
 
@@ -580,7 +632,12 @@ classify_base_pairs(
 		if ( ! pose.residue_type( i ).is_RNA()  ) continue;
 		for ( Size j = i+1; j <= pose.size(); j++ ) {
 			if ( ! pose.residue_type( j ).is_RNA()  ) continue;
-
+			
+			// The filtered info for this pair of residues will be zero only if
+			// the best i -- j edge is better off interacting with some third 
+			// residue.
+			if ( filtered_info.filtered_base_pair_array()( i, j ) == 0 ) continue;
+			
 			if ( ( pose.residue( i ).nbr_atom_xyz() - pose.residue( j ).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
 
 			Size const num_hbonds = bases_form_a_hydrogen_bond( hbond_set, pose, i, j );

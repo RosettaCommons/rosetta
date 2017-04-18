@@ -19,7 +19,6 @@
 // Package headers
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <basic/Tracer.hh>

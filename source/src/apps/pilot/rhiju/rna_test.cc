@@ -116,7 +116,7 @@
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
 #include <core/scoring/EnergyGraph.hh>

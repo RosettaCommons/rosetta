@@ -14,11 +14,11 @@
 
 
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/scoring/rna/data/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/Energies.hh>
@@ -190,13 +190,13 @@ RNA_DMS_LowResolutionPotential::figure_out_low_resolution_potential( numeric::Ma
 //////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_DMS_LowResolutionPotential::evaluate( core::pose::Pose const & pose,
-	RNA_Reactivity const & rna_reactivity ) {
+	pose::rna::RNA_Reactivity const & rna_reactivity ) {
 
 	using namespace core::pose::full_model_info;
 
 	if ( DMS_low_resolution_potential_.size() == 0 ) initialize_DMS_low_resolution_potential();
 
-	runtime_assert( rna_reactivity.type() == DMS );
+	runtime_assert( rna_reactivity.type() == pose::rna::DMS );
 	Size const & pos = rna_reactivity.position();
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	if ( full_model_info.full_sequence()[ pos - 1 ] != 'a' ) return 0.0;
@@ -289,7 +289,7 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 			(*scorefxn)( pose );
 		}
 		RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-		rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() ); // assume this has been filled.
+		pose::rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() ); // assume this has been filled.
 
 		pose::rna::EnergyBasePairList const & scored_base_pair_list = rna_filtered_base_base_info.scored_base_pair_list();
 		for ( auto const & elem : scored_base_pair_list ) {

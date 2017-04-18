@@ -21,7 +21,7 @@
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -301,7 +301,7 @@ inline
 RNA_Motifs
 get_rna_motifs( pose::Pose const & pose,
 	core::scoring::rna::RNA_LowResolutionPotential const & potential,
-	core::scoring::rna::RNA_FilteredBaseBaseInfo const & filtered_base_base_info )
+	core::pose::rna::RNA_FilteredBaseBaseInfo const & filtered_base_base_info )
 {
 	using namespace core::pose::rna;
 	using namespace core::scoring::rna;
@@ -827,7 +827,7 @@ Real
 get_rna_motif_score(
 	pose::Pose const & pose,
 	core::scoring::rna::RNA_LowResolutionPotential const & potential,
-	core::scoring::rna::RNA_FilteredBaseBaseInfo const & filtered_base_base_info )
+	core::pose::rna::RNA_FilteredBaseBaseInfo const & filtered_base_base_info )
 {
 	RNA_Motifs const rna_motifs = get_rna_motifs( pose, potential, filtered_base_base_info );
 	Real score( 0.0 );

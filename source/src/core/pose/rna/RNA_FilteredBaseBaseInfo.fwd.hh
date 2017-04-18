@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_FilteredBaseBasePotential.fwd.hh
+/// @file   core/pose/rna/RNA_FilteredBaseBasePotential.fwd.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_FilteredBaseBaseInfo_fwd_hh
-#define INCLUDED_core_scoring_rna_RNA_FilteredBaseBaseInfo_fwd_hh
+#ifndef INCLUDED_core_pose_rna_RNA_FilteredBaseBaseInfo_fwd_hh
+#define INCLUDED_core_pose_rna_RNA_FilteredBaseBaseInfo_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/database/open.hh>
@@ -127,7 +127,7 @@ analyze_base_pair_test()
 		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
 	}
 
-	PoseOP native_pose = nullptr;
+	PoseOP native_pose( new Pose );
 	if ( option[ in::file::native ].user() ) {
 		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ].value() );
 	}

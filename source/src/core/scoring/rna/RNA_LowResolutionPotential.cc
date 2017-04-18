@@ -30,7 +30,7 @@
 
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_ScoringUtil.hh>
 
@@ -761,7 +761,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 
 	Size const total_residue = pose.size();
 
-	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
+	pose::rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
 
 	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
 	ObjexxFCL::FArray3D < Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );
@@ -901,8 +901,8 @@ RNA_LowResolutionPotential::update_rna_base_pair_list(
 	update_rna_base_base_interactions( pose );
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_RawBaseBaseInfo & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
-	rna::RNA_FilteredBaseBaseInfo & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	pose::rna::RNA_RawBaseBaseInfo & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
+	pose::rna::RNA_FilteredBaseBaseInfo & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 	// Maybe we should put an if statement.
 	rna_filtered_base_base_info.carry_out_filtering( raw_base_base_info );
 }
@@ -910,7 +910,7 @@ RNA_LowResolutionPotential::update_rna_base_pair_list(
 ///////////////////////////////////////////////////////////////////////////
 void
 RNA_LowResolutionPotential::eval_rna_base_pair_energy(
-	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
+	pose::rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	Vector const & centroid1,
@@ -1004,7 +1004,7 @@ RNA_LowResolutionPotential::get_zeta_cutoff(
 ///////////////////////////////////////////////////////////////////////////
 void
 RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
-	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
+	pose::rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
 	conformation::Residue const & res_i,
 	conformation::Residue const & res_j,
 	Vector const & centroid_i,
@@ -1137,7 +1137,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 	// Information saved from the last score.
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	pose::rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 
 	//debug_assert( rna_filtered_base_base_info.calculated()  );
 

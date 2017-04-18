@@ -17,7 +17,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_Motif.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>

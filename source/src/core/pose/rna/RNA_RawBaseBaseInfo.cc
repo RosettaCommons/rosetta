@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_RawBaseBaseInfo.cc
+/// @file   core/pose/rna/RNA_RawBaseBaseInfo.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
 
 // Unit headers
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
 
 // Package headers
 #include <core/chemical/rna/util.hh>
@@ -31,11 +31,6 @@
 using namespace core::chemical::rna;
 
 
-///////////////////////////////////////////////////////
-// Keep track of some base geometry that is
-// useful for RNA scoring.
-///////////////////////////////////////////////////////
-
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -49,7 +44,7 @@ using namespace core::chemical::rna;
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 
@@ -111,7 +106,7 @@ RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & 
 }
 
 } //rna
-} //scoring
+} //pose
 } //core
 
 #ifdef    SERIALIZATION
@@ -119,7 +114,7 @@ RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::rna::RNA_RawBaseBaseInfo::save( Archive & arc ) const {
+core::pose::rna::RNA_RawBaseBaseInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( base_pair_array_ ) ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
 	arc( CEREAL_NVP( base_axis_array_ ) ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
@@ -134,7 +129,7 @@ core::scoring::rna::RNA_RawBaseBaseInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::rna::RNA_RawBaseBaseInfo::load( Archive & arc ) {
+core::pose::rna::RNA_RawBaseBaseInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( base_pair_array_ ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
 	arc( base_axis_array_ ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
@@ -146,8 +141,8 @@ core::scoring::rna::RNA_RawBaseBaseInfo::load( Archive & arc ) {
 	arc( calculated_ ); // _Bool
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_RawBaseBaseInfo );
-CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_RawBaseBaseInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_RawBaseBaseInfo );
+CEREAL_REGISTER_TYPE( core::pose::rna::RNA_RawBaseBaseInfo )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_RawBaseBaseInfo )
 #endif // SERIALIZATION

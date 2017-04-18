@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_RawBaseBasePotential.hh
+/// @file   core/pose/rna/RNA_RawBaseBasePotential.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_RawBaseBaseInfo_hh
-#define INCLUDED_core_scoring_rna_RNA_RawBaseBaseInfo_hh
+#ifndef INCLUDED_core_pose_rna_RNA_RawBaseBaseInfo_hh
+#define INCLUDED_core_pose_rna_RNA_RawBaseBaseInfo_hh
 
 #include <core/types.hh>
 
@@ -37,7 +37,7 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
 	zero();
 
 	void
-	copy_values( scoring::rna::RNA_RawBaseBaseInfo const & src, Size const & i, Size const & j );
+	copy_values( RNA_RawBaseBaseInfo const & src, Size const & i, Size const & j );
 
 	// Undefinded, comented out to make python bindings complile
 	//void
@@ -140,11 +140,11 @@ public:
 };
 
 } //rna
-} //scoring
+} //pose
 } //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_scoring_rna_RNA_RawBaseBaseInfo )
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_RNA_RawBaseBaseInfo )
 #endif // SERIALIZATION
 
 

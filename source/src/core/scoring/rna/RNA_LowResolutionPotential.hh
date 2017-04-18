@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
 
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
@@ -164,7 +164,7 @@ public:
 
 	void
 	eval_rna_base_pair_energy(
-		rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
+		pose::rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		Vector const & centroid1,
@@ -201,7 +201,7 @@ private:
 
 	void
 	eval_rna_base_pair_energy_one_way(
-		rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
+		pose::rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
 		conformation::Residue const & res_i,
 		conformation::Residue const & res_j,
 		Vector const & centroid1,

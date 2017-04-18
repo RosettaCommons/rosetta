@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/RNA_FilteredBaseBasePotential.hh
+/// @file   core/pose/rna/RNA_FilteredBaseBasePotential.hh
 /// @brief  Statistically derived RNA potential
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_FilteredBaseBaseInfo_hh
-#define INCLUDED_core_scoring_rna_RNA_FilteredBaseBaseInfo_hh
+#ifndef INCLUDED_core_pose_rna_RNA_FilteredBaseBaseInfo_hh
+#define INCLUDED_core_pose_rna_RNA_FilteredBaseBaseInfo_hh
 
 #include <core/types.hh>
 
@@ -20,9 +20,9 @@
 //#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -43,7 +43,7 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ public:
 	pose::rna::RNA_BasePairList base_pair_list() const;
 	pose::rna::RNA_BaseStackList base_stack_list() const;
 
-	Real get_data_score( rna::data::RNA_DataInfo const & rna_data_info ) const;
+	Real get_data_score( pose::rna::RNA_DataInfo const & rna_data_info ) const;
 
 private:
 
@@ -172,11 +172,11 @@ public:
 };
 
 } //rna
-} //scoring
+} //pose
 } //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_scoring_rna_RNA_FilteredBaseBaseInfo )
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_RNA_FilteredBaseBaseInfo )
 #endif // SERIALIZATION
 
 

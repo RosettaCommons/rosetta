@@ -377,7 +377,9 @@ RNA_DeNovoProtocol::output_silent_struct(
 	if ( get_native_pose() ) calc_rmsds( s, pose, out_file_tag );
 
 	add_number_base_pairs( pose, s );
-	if ( get_native_pose() ) add_number_native_base_pairs( pose, *get_native_pose(), s );
+	if ( get_native_pose() ) {
+		add_number_native_base_pairs( pose, *get_native_pose(), s );
+	}
 
 	// hopefully these will end up in silent file...
 	if ( options_->output_filters() && ( rna_fragment_monte_carlo_ != nullptr ) ) {

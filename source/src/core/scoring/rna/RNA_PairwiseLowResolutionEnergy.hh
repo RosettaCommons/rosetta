@@ -21,7 +21,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -167,14 +167,14 @@ private:
 
 	void
 	clean_up_rna_two_body_energy_tables(
-		scoring::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
+		pose::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
 		pose::Pose & pose ) const;
 
 private:
 
 	// const-ref to scoring database
 	rna::RNA_LowResolutionPotential const & rna_low_resolution_potential_;
-	mutable rna::RNA_RawBaseBaseInfo * rna_raw_base_base_info_;
+	mutable pose::rna::RNA_RawBaseBaseInfo * rna_raw_base_base_info_;
 	mutable bool might_be_designing_;
 	virtual
 	core::Size version() const;
