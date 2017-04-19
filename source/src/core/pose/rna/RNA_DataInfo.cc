@@ -148,5 +148,5 @@ core::pose::rna::RNA_Reactivity::load( Archive & arc ) {
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_Reactivity );
-CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_data_RNA_DataInfo )
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_RNA_DataInfo )
 #endif // SERIALIZATION

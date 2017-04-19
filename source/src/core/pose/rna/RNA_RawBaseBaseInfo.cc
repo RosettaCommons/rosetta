@@ -144,5 +144,5 @@ core::pose::rna::RNA_RawBaseBaseInfo::load( Archive & arc ) {
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::RNA_RawBaseBaseInfo );
 CEREAL_REGISTER_TYPE( core::pose::rna::RNA_RawBaseBaseInfo )
 
-CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_RawBaseBaseInfo )
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_RNA_RawBaseBaseInfo )
 #endif // SERIALIZATION

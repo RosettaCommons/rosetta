@@ -190,7 +190,7 @@ public:
 } //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_data_RNA_DataInfo )
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_RNA_DataInfo )
 #endif // SERIALIZATION
 
 
