@@ -66,6 +66,7 @@ residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Quip.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
+residue_types/carbohydrates/to6-beta-D-Glcp.params
 residue_types/carbohydrates/to3-beta-Bacp.params
 #### Galactoses
 residue_types/carbohydrates/to2-beta-D-Galp.params
