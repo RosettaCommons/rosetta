@@ -284,12 +284,12 @@ main( int argc, char *argv[] )
 		test_sugar( GalCer );
 
 
-                cout << "---------------------------------------------------------------------------------------------" << endl;
-                cout << "Importing UDP-D-Glc:" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing UDP-D-Glc:" << endl;
 
-                pose_from_file( UDP_D_Glc, PATH + "UDP-alpha-D-Glcp.pdb", PDB_file );
+		pose_from_file( UDP_D_Glc, PATH + "UDP-alpha-D-Glcp.pdb", PDB_file );
 
-                test_sugar( UDP_D_Glc );
+		test_sugar( UDP_D_Glc );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
