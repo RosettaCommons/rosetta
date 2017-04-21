@@ -1,0 +1,6 @@
+-out:prefix ready_
+-parser:protocol design_nat_rifdock.xml
+-extra_res_fa HCY.params.fa.params
+-extra_improper_file HCY.tors
+-overwrite
+-s predesigned_bb_SS_0024_7_input_0001_0001_0005_0001_000000013.pdb

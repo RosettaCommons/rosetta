@@ -1,6 +1,6 @@
 -parser:protocol inputs/test.xml
 -beta
--s inputs/SB13.pdb
+-s inputs/Sh13.pdb
 -nstruct 1
 -mute all
 -unmute protocols.hbnet

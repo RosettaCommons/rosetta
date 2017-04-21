@@ -82,27 +82,31 @@ public:
 	~HBNetStapleInterface();
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	void setup( core::pose::Pose & copy ) override;
+	void setup_packer_task_and_starting_residues( core::pose::Pose const & pose ) override;
 	void prepare_output() override;
-	std::string print_additional_info_for_net( hbond_net_struct & i ) override;
+	std::string print_additional_info_for_net( hbond_net_struct & i, core::pose::Pose const & pose ) override;
 	std::string print_additional_headers() override;
-	bool network_meets_criteria( core::pose::Pose & pose, hbond_net_struct & i ) override;
+	bool network_meets_initial_criteria( hbond_net_struct const & network ) override;
+	// final criteria that reuqires network rotamers placed on pose
+	bool network_meets_final_criteria( core::pose::Pose const & pose, hbond_net_struct & network ) override;
 	bool state_is_starting_aa_type( core::Size const res, core::Size const rot_id ) override;
 	bool pair_meets_starting_criteria( core::Size const res1, core::Size const rot1, core::Size const res2, core::Size const rot2 ) override;
+	core::Real scale_twobody_energy( core::Real input_twobody_energy, char res1, char res2 ) override;
 
-	bool same_helix(utility::vector1< std::pair<core::Size,core::Size> > helix_boundaries, core::Size r1, core::Size r2);
-	bool interhelical_contact(utility::vector1< std::pair<core::Size,core::Size> > helix_boundaries, core::Size r1, core::Size r2, core::pose::Pose & pose);
+	bool same_helix(utility::vector1< std::pair<core::Size,core::Size> > const helix_boundaries, core::Size const r1, core::Size const r2);
+	bool interhelical_contact(utility::vector1< std::pair<core::Size,core::Size> > const helix_boundaries, core::Size const r1, core::Size const r2, core::pose::Pose const & pose);
 	core::Size get_helix_id( core::Size r1 );
 
 	//void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, core::Size staple_count );
-	void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::vector< core::Size > net_ids, core::Size staple_count );
+	void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::set< core::Size > net_ids, core::Size staple_count );
 
-	bool network_spans_all_helices( hbond_net_struct & i );
-	core::Size num_helices_w_hbond( hbond_net_struct & i );
+	bool network_spans_all_helices( hbond_net_struct const & i );
+	core::Size num_helices_w_hbond( hbond_net_struct const & i );
 	core::Size num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues );
-	bool has_pH_His( core::pose::Pose & pose, hbond_net_struct & i );
+	bool has_pH_His( core::pose::Pose const & pose, hbond_net_struct & i );
+	bool residues_are_interface_pairs( core::Size const res1, core::Size const res2 );
 
-	core::Size num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose & pose );
+	core::Size num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose const & pose );
 
 	std::string
 	get_name() const override;
@@ -125,16 +129,19 @@ private:
 	bool his_tyr_;
 	bool pH_His_;
 	bool boundary_his_must_to_hbond_pos_charge_;
+	bool only_start_at_interface_pairs_;
+	bool use_aa_dependent_weights_;
 	core::Size runcount_;
 	core::Size min_networks_per_pose_;
 	core::Size max_networks_per_pose_;
 	core::Size combos_;
 	core::Size min_intermolecular_hbonds_;
 	core::Size min_helices_contacted_by_network_;
+	core::Size min_asp_glu_hbonds_;
 	core::Real interf_distance_;
 	utility::vector1< core::Size > jump_nums_;
 	utility::vector1< std::pair< core::Size, core::Size > > helix_boundaries_; //for helical bundles
-	//std::map<core::Size,std::set< core::Size > > jump_to_start_res_;
+	utility::vector1< std::list< Size > > pair_lists_vec_;
 };
 // end HBNetStapleInterface
 

@@ -1,0 +1,188 @@
+<ROSETTASCRIPTS># This XML uses HBNet to design hydrogen bond networks at the interfaces of heter-oligomeric helical bundles
+#	It assumes that you have already assembled the backbone parametrically, and cartesian minimized
+#	with backbone coordinate constraints using a poly-Ala backbone
+# 15/07/20
+# THIS PROTOCOL IS UPDATED SINCE THE PAPER
+# NOW USES TOM'S ConsensusLoopDesign and PrePro filter
+# Scott Boyken
+  <SCOREFXNS>
+     <ScoreFunction name="hard" weights="beta"/>
+     <ScoreFunction name="hard_cst" weights="beta_cst"/>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+      #for HBNet, use 3.6; will use 5.2 for everything else downstream design
+           # double check that sidechain_neighbors is true by default for LayerSelector; I think it is
+      <Layer name="core" select_core="true" core_cutoff="4.0" />
+      <SecondaryStructure name="loops" ss="L"/>
+      <Not name="not_loops" selector="loops"/>
+      <ResidueName name="all_ala" residue_name3="ALA"/>
+      <Not name="not_ala" selector="all_ala"/>
+      Index name="ends" resnums="1-8,31-41,70-74,218-222"/>
+      <Index name="ends" resnums="1A-40A,53A-63A,1B-9B,66B-77B,1C-7C,71C-78C"/>
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+      <IncludeCurrent name="current"/>
+      <LimitAromaChi2 name="arochi" />
+      <LayerDesign name="init_layers" layer="Nterm_core_boundary_surface_Cterm" make_pymol_script="0" use_sidechain_neighbors="True" core="3.6" >
+                <core>
+                <Helix append="HNQYSTD"/>
+                </core>
+                <boundary>
+                <Helix exclude="RW"/>
+                </boundary>
+      </LayerDesign>
+      <ConsensusLoopDesign name="disallow_non_abego_aas"/>
+      RestrictAbsentCanonicalAAS name=ala_only resnum=0 keep_aas="A" />
+      <OperateOnResidueSubset name="non_loops_ala_only" selector="not_loops">
+            <RestrictAbsentCanonicalAASRLT aas="A"/>
+      </OperateOnResidueSubset>
+      <OperateOnResidueSubset name="only_loops_designable" selector="not_loops">
+            <PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+      <OperateOnResidueSubset name="not_ends" selector="ends">
+            <PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+      <OperateOnResidueSubset name="loops_repack_only" selector="loops">
+            <RestrictToRepackingRLT/>
+      </OperateOnResidueSubset>
+      <OperateOnResidueSubset name="keep_current_nets" selector="not_ala">
+            <RestrictToRepackingRLT/>
+      </OperateOnResidueSubset>
+   </TASKOPERATIONS>
+  <FILTERS>
+                <EnzScore name="cst_score" score_type="cstE" scorefxn="hard_cst" whole_pose="1" energy_cutoff="1" confidence="0"/>
+                <BuriedUnsatHbonds name="uhb" scorefxn="hard_no_cst" task_operations="init_layers" confidence="0"/>
+                <BuriedUnsatHbonds2 name="uhb2" scorefxn="hard_no_cst" cutoff="4" AHD_cutoff="90" confidence="0"/>
+                Holes name="holes" threshold="1.8" confidence="0"/>
+                <PackStat name="packstat" threshold="0.65" confidence="0"/>
+                <PackStat name="init_pstat" threshold="0.575" confidence="0"/>
+                <Geometry name="geo" omega="165" cart_bonded="35" confidence="1"/>
+                <PreProline name="prepro" use_statistical_potential="0" />
+   </FILTERS> 
+  <MOVERS>
+     <PackRotamersMover name="transform_sc" scorefxn="hard" task_operations="non_loops_ala_only,disallow_non_abego_aas" />
+     <PackRotamersMover name="only_design_loops" scorefxn="hard" task_operations="only_loops_designable,disallow_non_abego_aas" />
+     <HBNetStapleInterface scorefxn="hard" design_residues="NQSTY" core_selector="core" find_native_networks="false" find_only_native_networks="false" keep_existing_networks="false" extend_existing_networks="false" only_extend_existing="false" name="hbnet_interf" hb_threshold="-0.5" min_connectivity="0.5" only_start_at_interface_pairs="true" upper_score_limit="15.0" use_aa_dependent_weights="true" secondary_search="0" min_core_res="4" show_task="0" verbose="true" no_heavy_unsats_allowed="1" write_network_pdbs="1" minimize="true" min_network_size="5" max_unsat="3" combos="2" min_networks_per_pose="1" min_intermolecular_hbonds="2" min_helices_contacted_by_network="4" max_replicates="1" max_replicates_before_branch="3" max_networks_per_pose="3" task_operations="current,arochi,init_layers,not_ends" />
+		<MultiplePoseMover name="MPM_design" max_input_poses="100">
+        	   <SELECT>
+        	   </SELECT>
+		   <ROSETTASCRIPTS>
+        		<SCOREFXNS>
+        			<ScoreFunction name="hard_cst" weights="beta_cst" />
+				<ScoreFunction name="soft" weights="beta_soft.wts"/>
+				<ScoreFunction name="soft_cst" weights="beta_soft.wts"/>
+				ScoreFunction name="soft_cst" weights="/work/sboyken/weights/beta_soft_rep_cst.wts"/>
+				<ScoreFunction name="up_ele" weights="beta" >
+                			<Reweight scoretype="fa_elec" weight="1.4" />
+               				<Reweight scoretype="hbond_sc" weight="2.0" />
+          			</ScoreFunction>
+			</SCOREFXNS>
+			<RESIDUE_SELECTORS>
+				<ResiduePDBInfoHasLabel name="hbnet_residues" property="HBNet" />
+                		<ResiduePDBInfoHasLabel name="bridging_waters" property="BridgingWater" />
+        		</RESIDUE_SELECTORS>
+        		<TASKOPERATIONS>
+	  			<InitializeFromCommandline name="init"/>
+          			<ConsensusLoopDesign name="disallow_non_abego_aas"/>
+				<OperateOnResidueSubset name="hbnet_task" selector="hbnet_residues">
+                                  <RestrictToRepackingRLT/>
+                                </OperateOnResidueSubset>
+        			OperateOnResidueSubset name="hbnet_task" selector="hbnet_residues">
+                                  PreventRepackingRLT/>
+                                /OperateOnResidueSubset>
+       				<OperateOnResidueSubset name="bw_task" selector="bridging_waters">
+                                  <PreventRepackingRLT/>
+                                </OperateOnResidueSubset>
+				#this task operation should be added to all design movers downstream of HBNet;
+					it acts as a safeguard to ensure network residues are not designed away and csts calculated incorrectly
+				ConstrainHBondNetwork name="hbnet_task" />
+          			<IncludeCurrent name="current"/>
+          			<LimitAromaChi2 name="arochi" />
+          			<ExtraRotamersGeneric name="ex1_ex2" ex1="1" ex2="1"/>
+          			<ExtraRotamersGeneric name="ex1" ex1="1"/>
+           			<LayerDesign name="all_layers" layer="other" make_pymol_script="0">
+            				<TaskLayer>
+                				<SelectBySASA name="inteface_core" state="bound" mode="mc" core="1" probe_radius="2.0" core_asa="35" surface_asa="45" verbose="1"/>
+                				<all copy_layer="core" />
+                				<Helix append="M"/>
+						<Helix exclude="W"/>
+            				</TaskLayer>
+            				<TaskLayer>
+                				<SelectBySASA name="inteface_surface" state="bound" mode="mc" surface="1" probe_radius="2.0" core_asa="35" surface_asa="45" verbose="1"/>
+                				<all copy_layer="surface" />
+            				</TaskLayer>
+            				<TaskLayer>
+             		   			<SelectBySASA name="inteface_boundary" state="bound" mode="mc" boundary="1" probe_radius="2.0" core_asa="35" surface_asa="45" verbose="1"/>
+             		   			<all copy_layer="boundary" />
+                				<Helix exclude="DW"/>
+            				</TaskLayer>
+          			</LayerDesign>
+          			<SelectBySASA name="select_core" state="bound" mode="mc" core="1" probe_radius="2.0" core_asa="35" surface_asa="45" verbose="1"/>
+          			<SelectBySASA name="select_boundary" state="bound" mode="mc" boundary="1" probe_radius="2.0" core_asa="35" surface_asa="45" verbose="1"/>
+          			<SelectBySASA name="select_surface" state="bound" mode="mc" surface="1" probe_radius="2.0" core_asa="35" surface_asa="45" verbose="1"/>
+          			SelectBySASA name=select_all state=bound mode=mc core=1 boundary=1 surface=1 probe_radius=2.2 core_asa=35 surface_asa=45 verbose=1/> 
+			</TASKOPERATIONS>
+			<MOVERS>
+          			<PackRotamersMover name="softpack_core" scorefxn="soft_cst" task_operations="init,all_layers,disallow_non_abego_aas,select_core,current,arochi,hbnet_task,bw_task"/>
+				<PackRotamersMover name="softpack_boundary" scorefxn="soft_cst" task_operations="init,all_layers,disallow_non_abego_aas,select_boundary,current,arochi,hbnet_task,bw_task"/>
+				<PackRotamersMover name="softpack_surface" scorefxn="soft_cst" task_operations="init,all_layers,disallow_non_abego_aas,select_surface,current,arochi,hbnet_task,bw_task"/>
+          			<PackRotamersMover name="hardpack_core" scorefxn="hard_cst" task_operations="init,all_layers,disallow_non_abego_aas,select_core,current,arochi,ex1_ex2,hbnet_task,bw_task"/>
+          			<PackRotamersMover name="hardpack_boundary"  scorefxn="hard_cst" task_operations="init,all_layers,disallow_non_abego_aas,select_boundary,current,arochi,ex1_ex2,hbnet_task,bw_task"/>
+          			<PackRotamersMover name="hardpack_surface" scorefxn="up_ele" task_operations="init,all_layers,disallow_non_abego_aas,select_surface,current,arochi,ex1,hbnet_task,bw_task"/>
+				<MinMover name="hardmin_sconly" scorefxn="hard_cst" chi="1" bb="0" bondangle="0" bondlength="0" />
+        		</MOVERS>
+        		<APPLY_TO_POSE>
+        		</APPLY_TO_POSE>
+        		<PROTOCOLS>
+          			<Add mover="softpack_core"/>
+	  			<Add mover="softpack_boundary"/>
+	  			<Add mover="softpack_surface"/>
+          			<Add mover="hardmin_sconly"/>
+          			<Add mover="hardpack_core"/>
+          			<Add mover="hardpack_boundary"/>
+          			<Add mover="hardpack_surface"/>
+        		</PROTOCOLS>
+      		   </ROSETTASCRIPTS>
+   		</MultiplePoseMover>
+    		<MultiplePoseMover name="MPM_min_repack" max_input_poses="100">
+      		   <ROSETTASCRIPTS>
+			<SCOREFXNS>
+				<ScoreFunction name="hard_no_cst" weights="beta" />
+ 	        		<ScoreFunction name="beta_cart" weights="beta_cart" />
+			</SCOREFXNS>
+			<TASKOPERATIONS>
+				<RestrictToRepacking name="repack_only" />
+			</TASKOPERATIONS>
+			<MOVERS>
+				<MinMover name="hardmin_cart" scorefxn="beta_cart" type="lbfgs_armijo_nonmonotone" tolerance="0.0001" chi="1" bb="1" bondangle="1" bondlength="1" jump="ALL" cartesian="1"/>
+				<PackRotamersMover name="repack" scorefxn="hard_no_cst" task_operations="repack_only" />
+			</MOVERS>
+			<APPLY_TO_POSE>
+        		</APPLY_TO_POSE>
+			<PROTOCOLS>
+				<Add mover="hardmin_cart" />
+				<Add mover="repack" />
+			</PROTOCOLS>
+      		   </ROSETTASCRIPTS>
+    		</MultiplePoseMover>
+    		<MultiplePoseMover name="MPM_filters" max_input_poses="100">
+        	   <SELECT>
+			<AndSelector>
+				#need to check that cst_score scores all constraints not just enzdes and submit pull request for filters that do no work properly in MPM
+				<Filter filter="cst_score"/>
+				<Filter filter="uhb"/>
+				<Filter filter="uhb2"/>
+				Filter filter="holes"/>
+				<Filter filter="prepro"/>
+        		</AndSelector>
+		   </SELECT>
+    		</MultiplePoseMover>
+	</MOVERS>
+	<PROTOCOLS>
+		#if backbone is not pre-assembled and minimized
+  		<Add mover_name="hbnet_interf"/>
+  		Add mover_name="MPM_design"/>
+  		Add mover_name="MPM_min_repack"/>
+  		Add mover_name="MPM_filters"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

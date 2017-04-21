@@ -14,7 +14,6 @@
 //Headers
 #include <protocols/hbnet/HBNet_util.hh>
 #include <protocols/hbnet/HBNet.hh>
-//#include <protocols/hbnet/HBNet.fwd.hh>
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -31,12 +30,10 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/symmetry/util.hh>
-//#include <core/io/Remarks.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-//#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -46,10 +43,8 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/sasa.hh>
-//#include <core/graph/Graph.hh>
 #include <core/id/AtomID.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
@@ -62,44 +57,10 @@ using namespace core::pose;
 using namespace core::scoring::hbonds;
 
 std::string
-print_list_to_string( utility::vector1< HBondResStructCOP > const & residues, bool chainid/* true */, bool term_w_start/*=false*/,
+print_list_to_string( hbond_net_struct const & network, bool chainid/* true */, bool term_w_start/*=false*/,
 	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/ )
 {
-	std::stringstream ret_str;
-	Size count(0);
-	for ( const auto & residue : residues ) {
-		if ( count > 0 ) {
-			ret_str << ",";
-		}
-		if ( chainid ) {
-			ret_str << residue->chainid << "_";
-		}
-		ret_str << residue->aa  << "_" << residue->resnum << ",";
-		count++;
-	}
-	if ( term_w_bb ) {
-		ret_str << "backbone, ";
-	}
-	if ( term_w_cycle ) {
-		ret_str << "cycle_";
-		if ( term_w_start ) {
-			ret_str << "start";
-		}
-	}
-	return ret_str.str();
-}
-
-std::string
-print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > const & residues, bool chainid, bool term_w_start/*=false*/,
-	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/, bool use_pdb_numbering/*=true*/ )
-{
-	Size total( pose.total_residue() );
-	//need to fix for water
-	//        if ( core::pose::symmetry::is_symmetric( *pose ) ){
-	//            core::conformation::symmetry::SymmetricConformation const & SymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose->conformation()));
-	//            core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
-	//            total = symm_info->num_independent_residues();
-	//        }
+	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
 	std::stringstream ret_str;
 	Size count(0);
 	for ( const auto & residue : residues ) {
@@ -110,6 +71,53 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 			ret_str << residue->chainid << "_";
 		}
 		ret_str << residue->aa << "_";
+		ret_str << residue->resnum;
+		count++;
+	}
+	//    for ( const auto & waterrot : network.waterrots ) {
+	//        ret_str << ",";
+	//        ret_str << waterrot->name1() << "_";
+	//        ret_str << waterrot->seqpos();
+	//    }
+	if ( term_w_bb ) {
+		ret_str << ",backbone";
+	}
+	if ( term_w_cycle ) {
+		ret_str << ",cycle";
+		if ( term_w_start ) {
+			ret_str << "_start";
+		}
+	}
+	return ret_str.str();
+}
+
+std::string
+print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool chainid, bool term_w_start/*=false*/,
+	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/, bool use_pdb_numbering/*=true*/ )
+{
+	Size total( pose.total_residue() );
+
+	//        if ( core::pose::symmetry::is_symmetric( *pose ) ){
+	//            core::conformation::symmetry::SymmetricConformation const & SymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose->conformation()));
+	//            core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
+	//            total = symm_info->num_independent_residues();
+	//        }
+
+	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
+	std::stringstream ret_str;
+	Size count(0);
+	for ( const auto & residue : residues ) {
+		if ( count > 0 ) {
+			ret_str << ",";
+		}
+		if ( chainid ) {
+			if ( use_pdb_numbering && ( residue->resnum <= total ) && pose.pdb_info() ) {
+				ret_str << pose.pdb_info()->chain(residue->resnum) << "_";
+			} else {
+				ret_str << residue->chainid << "_";
+			}
+		}
+		ret_str << residue->aa << "_";
 		if ( use_pdb_numbering && ( residue->resnum <= total ) && pose.pdb_info() ) {
 			ret_str << pose.pdb_info()->number(residue->resnum); //ASSUMING RESNUMS DON"T CHANGE...COULD BE TRICKY WITH WATER
 		} else {
@@ -117,8 +125,22 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 		}
 		count++;
 	}
+	//    for ( const auto & waterrot : network.waterrots ) {
+	//        ret_str << ",";
+	//        if ( chainid ) {
+	//            if ( use_pdb_numbering && ( waterrot->seqpos() <= total ) && pose.pdb_info()->chain(waterrot->seqpos()) ) {
+	//                ret_str << pose.pdb_info()->chain(waterrot->seqpos()) << "_";
+	//            }
+	//        }
+	//        ret_str << waterrot->name1() << "_";
+	//        if ( use_pdb_numbering && ( waterrot->seqpos() <= total ) && pose.pdb_info()->number( waterrot->seqpos() ) != 0 ) {
+	//            ret_str << pose.pdb_info()->number(waterrot->seqpos()); //ASSUMING RESNUMS DON"T CHANGE...COULD BE TRICKY WITH WATER
+	//        } else {
+	//            ret_str << waterrot->seqpos();
+	//        }
+	//    }
 	if ( term_w_bb ) {
-		ret_str << "backbone, ";
+		ret_str << ",backbone";
 	}
 	if ( term_w_cycle ) {
 		ret_str << "cycle_";
@@ -131,28 +153,26 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 
 //BETTER TO PASS REFERENCES THAT OP's HERE SINCE WE ARE OUTSIDE OF ANY CLASS
 std::string
-print_network( hbond_net_struct & i, bool chainid /* true */ )
+print_network( hbond_net_struct const & i, bool chainid /* true */ )
 {
-	utility::vector1< HBondResStructCOP > const residues( (i.asymm_residues.empty()) ? i.residues : i.asymm_residues );
-	//utility::vector1< HBondResStructCOP > const residues( i.residues );
+	Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
 	std::string net_prefix("");
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
 	std::stringstream output;
-	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
 	return output.str();
 }
 
 std::string
-print_network_w_pdb_numbering( Pose const & pose, hbond_net_struct const & i, bool chainid /* true */ )
+print_network_w_pdb_numbering( Pose const & pose, hbond_net_struct const & i, bool chainid )
 {
-	utility::vector1< HBondResStructCOP > const residues( (i.asymm_residues.empty()) ? i.residues : i.asymm_residues );
-	//utility::vector1< HBondResStructCOP > const & residues( (i.residues ) );
+	Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
 	std::string net_prefix("");
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
 	std::stringstream output;
-	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
 	return output.str();
 }
 
@@ -176,12 +196,10 @@ find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, S
 
 //utility::vector1< HBondCOP >
 void
-//get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion /* false */, Real hb_e_cutoff /* HB_E_CUTOFF */ )
-//get_hbond_atom_pairs( utility::vector1< HBondResStructCOP > const & residues, Pose & pose, core::utility::graph::GraphOP packer_neighbor_graph, Real hb_e_cutoff /* HB_E_CUTOFF */, bool bb_sc /* true */ )
 get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion /* false */ )
 {
-	//std::cout << "inside get_hbond_atom_pairs" << std::endl;
-	//utility::vector1 < std::pair< id::AtomID, id::AtomID > > hbond_atom_pairs(0);
+	runtime_assert( pose.energies().energies_updated() );
+
 	utility::vector1< HBondCOP > hbond_vec(0);
 
 	HBondSet temp_hbond_set;
@@ -195,11 +213,28 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 
 	core::scoring::hbonds::fill_hbond_set( pose, false /* deriv */, *full_hbond_set, true /* exclude bb-bb */, false /* exclude bb-sc */, false /* exclude sc-bb */, false /* exclude sc-sc */ );
 
-	for ( utility::vector1< HBondResStructCOP >::const_iterator i = network.residues.begin(); i != network.residues.end(); ++i ) {
-		Size res_i((*i)->resnum);
-
+	std::vector< Size > resnums(0);
+	for ( utility::vector1< HBondResStructCOP >::const_iterator res = network.residues.begin(); res != network.residues.end(); ++res ) {
+		//for ( std::set< Size >::const_iterator res = actual_hbond_residues.begin(); res != actual_hbond_residues.end(); ++res ){
+		resnums.push_back( (*res)->resnum );
+	}
+	//    if ( !(network.waterrots.empty()) ){
+	//        Size new_total( pose.total_residue() );
+	//        if ( core::pose::symmetry::is_symmetric(pose) ){
+	//            core::conformation::symmetry::SymmetricConformation const & newSymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()));
+	//            new_total = newSymmConf.Symmetry_Info()->num_independent_residues();
+	//        }
+	//        for ( Size r = 1; r <= new_total; r++ ){
+	//            if ( pose.residue(r).is_water() && pose.pdb_info()->res_haslabel(r, "HBNet")){
+	//                resnums.push_back(r);
+	//            }
+	//        }
+	//    }
+	// for ( utility::vector1< HBondResStructCOP >::const_iterator i = network.residues.begin(); i != network.residues.end(); ++i ) {
+	//  Size resnum((*i)->resnum);
+	for ( const auto & resnum : resnums ) {
 		//std::cout << "getting hbonds for residue " << res_i;
-		utility::vector1< HBondCOP > hbonds_for_res_i( full_hbond_set->residue_hbonds(res_i, false) );
+		utility::vector1< HBondCOP > hbonds_for_res_i( full_hbond_set->residue_hbonds(resnum, false) );
 		for ( auto & ih : hbonds_for_res_i ) {
 			//std::cout << ": arsd = " << (*ih)->acc_res() << "; drsd = " << (*ih)->don_res();
 			// NEED TO FIX; may need to uncomment
@@ -209,7 +244,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 			//   if ( (*ih)->energy() <= hb_e_cutoff && !( hbond_exists_in_vector( hbond_vec, *ih ) ) ) { //unweighted h-bond energy
 			//    hbond_vec.push_back( *ih );
 			//std::cout << "stored" << std::endl;
-			if ( !( hbond_exists_in_vector( hbond_vec, ih )) ) { //unweighted h-bond energy
+			if ( !( hbond_exists_in_vector( hbond_vec, ih )) ) { //check that it's not counted twice
 				hbond_vec.push_back( ih );
 			}
 		}
@@ -229,9 +264,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 	network.hbond_vec = hbond_vec;
 	//network.hbond_set = HBondSetOP(full_hbond_set->get_self_ptr());
 	network.hbond_set = full_hbond_set;
-
-	//return hbond_vec;
-	//return new_hbond_set;
+	network.total_hbonds = hbond_vec.size();
 }
 
 bool
@@ -406,16 +439,8 @@ network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > c
 }
 
 bool
-his_tyr_connectivity( Pose & pose, hbond_net_struct & i )
+his_tyr_connectivity( Pose const & pose, hbond_net_struct & i )
 {
-	//HBondSetOP hbond_set(new HBondSet(get_hbond_atom_pairs(pose, i.residues, false)) );
-	//utility::vector1<HBondOP> hbond_vec(0);
-
-	if ( i.hbond_vec.empty() ) {
-		//i.hbond_vec = get_hbond_atom_pairs( i.residues, pose );
-		get_hbond_atom_pairs( i, pose );
-	}
-
 	//runtime_assert( !(i.hbond_vec.empty() ) );
 	if ( i.hbond_vec.empty() ) {
 		return false;

@@ -1,0 +1,60 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <!-- ScoreFunction name="beta" weights="beta_nov16.wts"/ -->
+    <ScoreFunction name="standardfxn" weights="talaris2014">
+      <Reweight scoretype="cart_bonded" weight="0.5"/>
+      <Reweight scoretype="pro_close" weight="0.0"/>
+    </ScoreFunction>
+
+    <ScoreFunction name="standardfxn_cst" weights="talaris2014">
+      <Reweight scoretype="cart_bonded" weight="0.5"/>
+      <Reweight scoretype="pro_close" weight="0.0"/>
+      <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+      <Reweight scoretype="coordinate_constraint" weight="1.0"/>
+      <Reweight scoretype="angle_constraint" weight="1.0"/>
+    </ScoreFunction>
+
+  </SCOREFXNS>
+
+  <TASKOPERATIONS>
+    <DetectProteinLigandInterface name="DetectLigIinterf" cut1="10.0" cut2="10.0" cut3="10.0" cut4="10.0" design="True"/>
+  </TASKOPERATIONS>
+
+  <RESIDUE_SELECTORS> <!-- selectors for HBNet placemanet -->
+    <ResiduePDBInfoHasLabel name="rifRes" property="RIFRES"/>
+    <ResidueName name="polarAA" residue_name3="ASP,ASN,GLN,GLU,HIS,ARG,LYS,TYR,SER,THR,TRP"/>
+    <And name="polar_rifres" selectors="rifRes,polarAA"/>
+    <Chain name="ligand" chains="B"/>
+    <Chain name="A" chains="A"/>
+    <Or name="polar_rifres_or_ligand" selectors="polar_rifres,ligand"/>
+    <Task name="interface_by_vector" fixed="False" packable="True" designable="True" task_operations="DetectLigIinterf" />
+    <!-- Selectors for leaving loops out of design except of that one pos that goes to G-->
+    <!-- Leave out of HBnet design -->
+    <Not name="not_interface" selector="interface_by_vector"/>
+    <Or name="hbnet_no_touch" selectors="rifRes,not_interface"/>
+  </RESIDUE_SELECTORS>
+  
+  <TASKOPERATIONS>
+    <!-- Design around ligand -->
+    <OperateOnResidueSubset name="fixlig" selector="ligand"> <PreventRepackingRLT/> </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="replig" selector="ligand"> <RestrictToRepackingRLT/> </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="no_design_or_pack" selector="hbnet_no_touch"> <PreventRepackingRLT/> </OperateOnResidueSubset>
+    <LimitAromaChi2 name="limitAroChi" />
+    <ExtraRotamersGeneric name="extra_rots" ex1="True" ex2="True" ex3="True" ex1_sample_level="1" ex2_sample_level="1"
+			  ex3_sample_level="1" extrachi_cutoff="1"/>
+  </TASKOPERATIONS>
+
+  <FILTERS>
+  </FILTERS>  
+  
+  <MOVERS>
+    <HBNet name="hbnet_ligand" scorefxn="standardfxn" hb_threshold="-0.5" start_selector="polar_rifres_or_ligand" design_residues="STNQYW" write_cst_files="False" 
+	   write_network_pdbs="False" store_subnetworks="False" minimize="False" min_network_size="3" max_unsat="0" verbose="1"
+	   task_operations="fixlig,no_design_or_pack,limitAroChi" use_only_input_rot_for_start_res="True"/>
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover_name="hbnet_ligand"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

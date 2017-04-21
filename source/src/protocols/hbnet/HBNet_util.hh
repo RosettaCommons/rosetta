@@ -35,14 +35,14 @@
 namespace protocols {
 namespace hbnet {
 
-std::string print_list_to_string( utility::vector1< HBondResStructCOP > const & residues, bool chainid=true, bool term_w_start=false,
+std::string print_list_to_string( hbond_net_struct const & network, bool chainid=true, bool term_w_start=false,
 	bool term_w_cycle=false, bool term_w_bb=false );
 
-std::string print_list_to_string( core::pose::Pose const & pose, utility::vector1< HBondResStructCOP > const & residues, bool chainid=true, bool term_w_start=false,
+std::string print_list_to_string( core::pose::Pose const & pose, hbond_net_struct const & network, bool chainid=true, bool term_w_start=false,
 	bool term_w_cycle=false, bool term_w_bb=false, bool use_pdb_numbering=true );
 
-std::string print_network( hbond_net_struct & i, bool chainid=true );
-std::string print_network_w_pdb_numbering( core::pose::Pose const & pose, hbond_net_struct const & i, bool chainid /* true */ );
+std::string print_network( hbond_net_struct const & i, bool chainid=true );
+std::string print_network_w_pdb_numbering( core::pose::Pose const & pose, hbond_net_struct const & i, bool chainid );
 
 std::string print_headers();
 
@@ -75,7 +75,7 @@ void hbnet_one_body_energies(
 
 bool network_contains_aa( char aa_one_letter, hbond_net_struct const & i );
 bool network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > const & residues );
-bool his_tyr_connectivity( core::pose::Pose & pose, hbond_net_struct & i );
+bool his_tyr_connectivity( core::pose::Pose const & pose, hbond_net_struct & i );
 
 } //hbnet
 } //protocols

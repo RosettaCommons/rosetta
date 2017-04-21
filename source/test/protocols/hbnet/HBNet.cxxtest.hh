@@ -75,8 +75,10 @@ public:
 		hbnet_mover.set_max_unsat( 3 );
 
 		TR << "Applying mover" << std::endl;
-		//Apply the mover
+		//Apply the mover, will call all key functions
 		hbnet_mover.apply(testPose);
+
+		//all of most important functions called by .apply() above, but should add more individual funciton tests here:
 
 		//checks
 		//check that we found netowrks and mover was applied correctly
