@@ -613,20 +613,6 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 			if ( compute_derivs ) {
 				d_weighted_d2_d_di[idx1] += d2_delta_wt * delta_ij;
 			}
-
-			// Please work to store data such as this in the Pose or in the Residue objects.
-			// Let's figure out how to do that. Mutable data in EnergyMethods, however,
-			// severely limits their usability.
-			//if ( save_bridging_waters_ ) {
-			// Real score = 0.0, lkbridge_frac = 0.0;
-			// if ( d2_delta < overlap_width_A2_ ) lkbridge_frac = d2_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( d2_delta, overlap_width_A2_ );
-			// core::Real lkbr_uncpl_score = lkbr_uncpl_wt*lkbridge_frac;
-			// core::Real lkbr_score = lkbr_wt*lk_desolvation_sum*lkbridge_frac;
-			// score = ( lkbr_uncpl_score + lkbr_score );
-			// if ( score < -1e-4 ) {
-			//  bridging_waters_.push_back( ScoredBridgingWater ( lkbr_uncpl_score, lkbr_score, 0.5*(atom1_waters[idx1] + atom2_waters[idx2]) ) );
-			// }
-			//}
 		}
 	}
 
@@ -649,18 +635,18 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	if ( lkbridge_angle_widthscale_!=0 ) {
 		core::Real act_len = (atom1_base-atom2_base).length_squared();
 		core::Real base_atom_delta = std::abs( overlap_target_len2_-act_len );
-		if ( base_atom_delta > overlap_width_A2_ ) {
+		core::Real angle_overlap_A2 = lkbridge_angle_widthscale_ * overlap_width_A2_;
+		if ( base_atom_delta > angle_overlap_A2 ) {
 			frac = 0;
 			angleterm_lkbr = d_angleterm_lkbr_dr = 0;
 		} else {
-			core::Real angle_constraint_width = lkbridge_angle_widthscale_ * overlap_width_A2_;
-			angleterm_lkbr = eval_lk_fraction( base_atom_delta, angle_constraint_width);
+			angleterm_lkbr = eval_lk_fraction( base_atom_delta, angle_overlap_A2);
 
 			frac *= angleterm_lkbr;
 
 			if ( compute_derivs ) {
 				core::Real base_atom_delta_sign = (overlap_target_len2_ > act_len )?1.0:-1.0;
-				d_angleterm_lkbr_dr = base_atom_delta_sign*eval_d_lk_fraction_dr_over_r(base_atom_delta, angle_constraint_width);
+				d_angleterm_lkbr_dr = base_atom_delta_sign*eval_d_lk_fraction_dr_over_r(base_atom_delta, angle_overlap_A2);
 			}
 		}
 	} else {

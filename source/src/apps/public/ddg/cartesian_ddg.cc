@@ -463,13 +463,15 @@ main( int argc, char * argv [] )
 				ofp << "COMPLEX:   Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
 					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
 
-				Size rb_jump(interface_ddg);
-				protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
-				separate_partners->step_size(1000.0);
-				separate_partners->apply(local_pose);
-				final_score = (*score_fxn)( local_pose );
-				ofp << "APART:     Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
-					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+				if ( interface_ddg > 0 ) {
+					Size rb_jump(interface_ddg);
+					protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
+					separate_partners->step_size(1000.0);
+					separate_partners->apply(local_pose);
+					final_score = (*score_fxn)( local_pose );
+					ofp << "APART:     Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+						<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+				}
 			}
 
 			//interface mode, seperate and score
