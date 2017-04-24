@@ -1507,17 +1507,9 @@ void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seq
 
 	Residue const & rsd( pose.residue( seqpos ) );
 	core::chemical::ResidueType const &rsdtype = rsd.type();
-	FACTSRsdTypeMap::const_iterator it = FACTSrsdtypemap_.find( &rsdtype );
+	FACTSRsdTypeInfoCOP type_info( FACTSrsdtypemap_.get_type_info( rsdtype ) );
 
-	if ( it == FACTSrsdtypemap_.end() ) {
-		TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-		FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
-		rsdtypeinfo->create_info( rsdtype );
-		FACTSrsdtypemap_[ &rsdtype ] = rsdtypeinfo;
-		it = FACTSrsdtypemap_.find( &rsdtype );
-	}
-
-	facts.initialize( rsd, it->second );
+	facts.initialize( rsd, type_info );
 	get_single_rotamer_born_radii( rsd, pose, facts_info, facts );
 }
 

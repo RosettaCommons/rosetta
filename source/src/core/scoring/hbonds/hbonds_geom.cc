@@ -350,31 +350,33 @@ get_hb_don_chem_type(
 		auto aa = don_rsd.aa();
 		if ( don_rsd.type().na_analogue() != aa_unp ) aa = don_rsd.type().na_analogue();
 		switch( aa ){
-		case aa_none : return hbdon_NONE;
-		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : return hbdon_CXA; break;
+		case aa_none :
+			return hbdon_NONE;
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q :
+			return hbdon_CXA;
 		case aa_his: case aa_dhi: case aa_b3h :
 			if ( aname == " ND1" ) {
 				return hbdon_IMD;
 			} else {
 				debug_assert( aname == " NE2");
 				return hbdon_IME;
-			} break;
+			}
 		case aa_trp: case aa_dtr: case aa_b3w :
-			return hbdon_IND; break;
+			return hbdon_IND;
 		case aa_lys: case aa_dly: case aa_b3k :
-			return hbdon_AMO; break;
+			return hbdon_AMO;
 		case aa_arg: case aa_dar: case aa_b3r :
 			if ( aname == " NE " ) {
 				return hbdon_GDE;
 			} else {
 				debug_assert(aname == " NH1" || aname == " NH2");
 				return hbdon_GDH;
-			} break;
+			}
 		case aa_tyr: case aa_dty: case aa_b3y :
-			return hbdon_AHX; break;
+			return hbdon_AHX;
 		case aa_ser: case aa_dse: case aa_b3s:
 		case aa_thr: case aa_dth: case aa_b3t :
-			return hbdon_HXL; break;
+			return hbdon_HXL;
 		case aa_ala: case aa_cys: case aa_asp: case aa_glu: case aa_phe:
 		case aa_gly: case aa_ile: case aa_leu: case aa_met: case aa_pro: case aa_val:
 		case aa_dal: case aa_dcs: case aa_das: case aa_dgu: case aa_dph:
@@ -382,7 +384,7 @@ get_hb_don_chem_type(
 		case aa_b3a: case aa_b3c: case aa_b3d: case aa_b3e: case aa_b3f:
 		case aa_b3g: case aa_b3i: case aa_b3l: case aa_b3m: case aa_b3p: case aa_b3v:
 		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3transACPC : //Common cyclic beta-3 amino acids
-			return hbdon_NONE; break;
+			return hbdon_NONE;
 		case na_ade :
 			if ( aname == " N6 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -390,7 +392,7 @@ get_hb_don_chem_type(
 				return hbdon_CXA;
 			} else if ( aname == "WN6" || aname == "WN7" || aname == "WN3" ) { // DNA_MAJOR_GROOVE_WATER ADDUCTS
 				return hbdon_H2O;
-			} break;
+			}
 		case na_cyt :
 			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -400,7 +402,7 @@ get_hb_don_chem_type(
 				//  return hbdon_IND;
 			} else if ( aname == "WN4" || aname == "WO2" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} break;
+			}
 		case na_gua :
 			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -412,7 +414,7 @@ get_hb_don_chem_type(
 				return hbdon_CXA;
 			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
-			} break;
+			}
 		case na_thy :
 			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -420,7 +422,7 @@ get_hb_don_chem_type(
 				return hbdon_IND;
 			} else if ( aname == "WO4" || aname == "WO2" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} break;
+			}
 		case na_rad :
 			if ( aname == " N6 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -436,7 +438,7 @@ get_hb_don_chem_type(
 				return hbdon_GENERIC_SC;
 			} else if ( aname == " N3 " &&  don_rsd.has_variant_type( chemical::PROTONATED_N3_ADENOSINE ) ) { //Parin Sripakdeevong May 03, 2011.
 				return hbdon_GENERIC_SC;
-			} break;
+			}
 		case na_rgu :
 			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -452,7 +454,7 @@ get_hb_don_chem_type(
 				return hbdon_GENERIC_SC;
 			} else if ( aname == "WO6" || aname == "WN7" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
-			} break;
+			}
 		case na_rcy :
 			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -464,7 +466,7 @@ get_hb_don_chem_type(
 				return hbdon_GENERIC_SC;
 			} else if ( aname == "WN4" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
-			} break;
+			}
 		case na_ura :
 			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -476,14 +478,14 @@ get_hb_don_chem_type(
 				return hbdon_GENERIC_SC;
 			} else if ( aname == "WO4" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
-			} break;
+			}
 		case aa_h2o :
 			return hbdon_H2O;
 		case aa_vrt:
 		case aa_unp:
 		case aa_unk :
 			//tr.Warning << "Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.";
-			return hbdon_GENERIC_SC; break;
+			return hbdon_GENERIC_SC;
 		}
 	}
 	// Fallback for modified RNAs
@@ -552,16 +554,16 @@ get_hb_acc_chem_type(
 			switch (acc_rsd.atom_type(aatm).hybridization()){
 			case SP2_HYBRID :
 				//    tri.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP2BB.";
-				return hbacc_GENERIC_SP2BB; break;
+				return hbacc_GENERIC_SP2BB;
 			case SP3_HYBRID :
 				//tr.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP3BB.";
-				return hbacc_GENERIC_SP3BB; break;
+				return hbacc_GENERIC_SP3BB;
 			case RING_HYBRID :
 				//tr.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
-				return hbacc_GENERIC_RINGBB; break;
+				return hbacc_GENERIC_RINGBB;
 			case UNKNOWN_HYBRID :
 				//tr.Warning << "Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
-				return hbacc_NONE; break;
+				return hbacc_NONE;
 			}
 		}
 	} else {
@@ -570,23 +572,27 @@ get_hb_acc_chem_type(
 		if ( acc_rsd.type().na_analogue() != aa_unp ) aa = acc_rsd.type().na_analogue();
 
 		switch( aa ){
-		case aa_none : return hbacc_NONE; break;
-		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : return hbacc_CXA; break;
-		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e : return hbacc_CXL; break;
+		case aa_none :
+			return hbacc_NONE;
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q :
+			return hbacc_CXA;
+		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e :
+			return hbacc_CXL;
 		case aa_his: case aa_dhi: case aa_b3h :
 			if ( aname == " ND1" ) {
 				return hbacc_IMD;
 			} else {
 				return hbacc_IME;
-			} break;
+			}
 		case aa_ala: case aa_cys: case aa_phe: case aa_gly: case aa_ile: case aa_leu:
 		case aa_met: case aa_pro: case aa_val: case aa_tyr:
 		case aa_dal: case aa_dcs: case aa_dph: case aa_dil: case aa_dle:
 		case aa_dme: case aa_dpr: case aa_dva: case aa_dty:
 		case aa_b3a: case aa_b3c: case aa_b3f: case aa_b3g: case aa_b3i: case aa_b3l:
 		case aa_b3m: case aa_b3p: case aa_b3v: case aa_b3y :
-			return hbacc_AHX; break;
-		case aa_ser: case aa_thr: case aa_dse: case aa_dth: case aa_b3s: case aa_b3t : return hbacc_HXL; break;
+			return hbacc_AHX;
+		case aa_ser: case aa_thr: case aa_dse: case aa_dth: case aa_b3s: case aa_b3t :
+			return hbacc_HXL;
 		case aa_lys: case aa_arg: case aa_trp: case aa_dly: case aa_dar: case aa_dtr: case aa_b3k: case aa_b3r: case aa_b3w:
 		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3transACPC : //Common cyclic beta-3 amino acids
 			return hbacc_NONE;
@@ -597,7 +603,7 @@ get_hb_acc_chem_type(
 				return hbacc_IME;
 			} else if ( aname == "WN6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} break;
+			}
 		case na_gua :
 			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
@@ -607,7 +613,7 @@ get_hb_acc_chem_type(
 				return hbacc_CXL;
 			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} break;
+			}
 		case na_cyt :
 			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -619,7 +625,7 @@ get_hb_acc_chem_type(
 				return hbacc_IME;
 			} else if ( aname == "WN4" || aname == "WO2" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} break;
+			}
 		case na_thy :
 			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -627,7 +633,7 @@ get_hb_acc_chem_type(
 				return hbacc_CXA;
 			} else if ( aname == "WO4" || aname == "WO2" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} break;
+			}
 		case na_rad :
 			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
 				if ( aname == " N1 " && acc_rsd.has_variant_type( chemical::PROTONATED_N1_ADENOSINE ) ) {
@@ -643,7 +649,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
-			} break;
+			}
 		case na_rgu :
 			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
@@ -657,7 +663,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
-			} break;
+			}
 		case na_rcy :
 			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -671,7 +677,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
-			} break;
+			}
 		case na_ura :
 			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -681,7 +687,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
-			} break;
+			}
 		case aa_h2o :
 			return hbacc_H2O;
 		case aa_vrt:
@@ -690,13 +696,13 @@ get_hb_acc_chem_type(
 			// generic types; for backwards compatibility; prefer functional group based chem type
 			switch(acc_rsd.atom_type(aatm).hybridization()){
 			case SP2_HYBRID :
-				return hbacc_GENERIC_SP2SC; break;
+				return hbacc_GENERIC_SP2SC;
 			case SP3_HYBRID :
-				return hbacc_GENERIC_SP3SC; break;
+				return hbacc_GENERIC_SP3SC;
 			case RING_HYBRID :
-				return hbacc_GENERIC_RINGSC; break;
+				return hbacc_GENERIC_RINGSC;
 			case UNKNOWN_HYBRID :
-				return hbacc_NONE; break;
+				return hbacc_NONE;
 			}
 		}
 		if ( acc_rsd.is_RNA() ) {
@@ -710,16 +716,16 @@ get_hb_acc_chem_type(
 			// we can take this opportunity to just use these generic types for now.
 			switch(acc_rsd.atom_type(aatm).hybridization()){
 			case SP2_HYBRID :
-				return hbacc_GENERIC_SP2SC; break;
+				return hbacc_GENERIC_SP2SC;
 			case SP3_HYBRID :
-				return hbacc_GENERIC_SP3SC; break;
+				return hbacc_GENERIC_SP3SC;
 			case RING_HYBRID :
-				return hbacc_GENERIC_RINGSC; break;
+				return hbacc_GENERIC_RINGSC;
 			case UNKNOWN_HYBRID :
-				return hbacc_NONE; break;
+				return hbacc_NONE;
 			default :
 				// This is actually nuts, but we need some default here
-				return hbacc_GENERIC_SP2SC; break;
+				return hbacc_GENERIC_SP2SC;
 			}
 		}
 	}
@@ -766,21 +772,21 @@ get_seq_sep(
 			return seq_sep_other;
 		case hbacc_PBA :
 			switch(sep){
-			case -4 : return seq_sep_M4; break;
-			case -3 : return seq_sep_M3; break;
-			case -2 : return seq_sep_M2; break;
+			case -4 : return seq_sep_M4;
+			case -3 : return seq_sep_M3;
+			case -2 : return seq_sep_M2;
 			case -1:
-			case 1 : return seq_sep_PM1; break;
-			case 2 : return seq_sep_P2; break;
-			case 3 : return seq_sep_P3; break;
-			case 4 : return seq_sep_P4; break;
-			default : return seq_sep_other; break;
+			case 1 : return seq_sep_PM1;
+			case 2 : return seq_sep_P2;
+			case 3 : return seq_sep_P3;
+			case 4 : return seq_sep_P4;
+			default : return seq_sep_other;
 			}
 		default :
 			if ( sep == 1 || sep == -1 ) { return seq_sep_PM1;}
 			else { return seq_sep_other; }
-			break;
-		} break;
+		}
+		break;
 	case hbdon_CXA:
 	case hbdon_IMD:
 	case hbdon_IME:
@@ -802,14 +808,14 @@ get_seq_sep(
 		case hbacc_PES_DNA:
 		case hbacc_RRI_DNA:
 		case hbacc_H2O :
-			return seq_sep_other; break;
+			return seq_sep_other;
 		default :
 			if ( sep == 1 || sep == -1 ) { return seq_sep_PM1;}
-			else { return seq_sep_other; } break;
+			else { return seq_sep_other; }
 		}break;
 	default :
 		if ( sep == 1 || sep == -1 ) { return seq_sep_PM1;}
-		else { return seq_sep_other; } break;
+		else { return seq_sep_other; }
 	}
 	return seq_sep_other; // Make compilers happy.
 }

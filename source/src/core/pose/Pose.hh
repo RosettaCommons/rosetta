@@ -895,12 +895,32 @@ public:
 	/// See also:
 	///     Pose
 	///     Pose.residue
+	///     Pose.residue_type_ptr
 	///     Pose.sequence
 	///     Pose.size
 	///     Residue
 	///     ResidueType
 	chemical::ResidueType const &
 	residue_type(
+		Size const seqpos
+	) const;
+
+	/// @brief Returns the ResidueTypeCOP for position  <seqpos>  (read access)
+	/// Note: this method NOT will trigger a refold if either
+	/// the torsions or the coordinates are out-of-date
+	///
+	/// example(s):
+	///     pose.residue_type_ptr(5)
+	/// See also:
+	///     Pose
+	///     Pose.residue
+	///     Pose.residue_type
+	///     Pose.sequence
+	///     Pose.size
+	///     Residue
+	///     ResidueType
+	chemical::ResidueTypeCOP
+	residue_type_ptr(
 		Size const seqpos
 	) const;
 

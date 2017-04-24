@@ -40,6 +40,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/RestypeDestructionEvent.fwd.hh>
 
 #ifdef WIN32
 #include <core/chemical/Orbital.hh>
@@ -55,6 +56,7 @@
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -66,16 +68,19 @@
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
+#include <utility/signals/BufferedSignalHub.hh>
 
 // C++ headers
 #include <map>
-#include <core/chemical/VariantType.hh>
-#include <utility/vector1.hh>
 
 // External headers
 //#include <boost/graph/adjacency_list.hpp>
 //#include <boost/graph/copy.hpp>
 //#include <boost/graph/floyd_warshall_shortest.hpp>
+
+#ifdef MULTI_THREADED
+#include <mutex>
+#endif
 
 #ifdef    SERIALIZATION
 #include <utility/serialization/serialization.hh>
@@ -2236,6 +2241,43 @@ public:
 
 
 	////////////////////////////////////////////////////////////////////////////
+	// destruction observer methods
+public:
+
+	/// @brief attach RestypeDestructionEvent observer function
+	/// @param fn pointer to observer's unary member function with signature void( RestypeDestructionEvent const & )
+	/// @param ptr **RAW** pointer to observer object
+	/// @return Link that can be used to manage the connection.
+	/// @remarks RestypeDestructionEvent observers will only be notified upon destruction of the ResidueType
+	template< typename MemFn, typename Ptr >
+	inline
+	utility::signals::Link
+	attach_destruction_obs( MemFn fn, Ptr ptr ) const {
+#ifdef MULTI_THREADED
+		std::lock_guard<std::mutex> lock( destruction_obs_mutex_ );
+#endif
+		return destruction_obs_hub_.connect( fn, ptr );
+	}
+
+
+	/// @brief detach RestypeDestructionEvent observer function
+	/// @param fn pointer to observer's unary member function with signature void( RestypeDestructionEvent const & )
+	/// @param ptr **RAW** pointer to observer object
+	/// @return true if disconnect successful, false if connection does not exist
+	/// @remarks RestypeDestructionEvent observers will only be notified upon destruction of the ResidueType
+	template< typename MemFn, typename Ptr >
+	inline
+	bool
+	detach_destruction_obs( MemFn fn, Ptr ptr ) const {
+#ifdef MULTI_THREADED
+		std::lock_guard<std::mutex> lock( destruction_obs_mutex_ );
+#endif
+		return destruction_obs_hub_.disconnect( fn, ptr );
+	}
+
+
+
+	////////////////////////////////////////////////////////////////////////////
 	// private methods
 private:
 
@@ -2760,6 +2802,14 @@ private:
 	utility::vector1< Adduct > defined_adducts_;
 
 	bool nondefault_;
+
+	/// @brief Who needs to be told if this ResidueType is destroyed?
+	mutable utility::signals::BufferedSignalHub < void, RestypeDestructionEvent > destruction_obs_hub_;
+
+#ifdef MULTI_THREADED
+	/// @brief Mutex to control access to the destruction_obs_hub_ in multithreaded environment
+	mutable std::mutex destruction_obs_mutex_;
+#endif
 
 public:
 

@@ -276,7 +276,7 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 	//and for each residue, check whether the atoms specified in the cst file actually match atoms in this residue type
 	for ( std::map< Size, EnzCstTemplateResAtomsOP >::iterator respos_it = template_cache->seqpos_map_.begin(); respos_it != template_cache->seqpos_map_.end(); ++respos_it ) {
 
-		ResidueTypeCOP cur_res = pose.residue_type( respos_it->first ).get_self_ptr();
+		ResidueTypeCOP cur_res = pose.residue_type_ptr( respos_it->first );
 		std::string cur_res_name3 = pose.residue( respos_it->first ).name3();
 		//utility::trim( cur_res_name3 );
 
@@ -613,7 +613,7 @@ EnzCstTemplateRes::residue_conformations_redundant(
 ) const {
 	core::Real const sqdist_cutoff(0.2*0.2); //hardcoded for now
 
-	RestypeToTemplateAtomsMap::const_iterator res1_it(atom_inds_for_restype_.find( res1.type().get_self_ptr() ) ), res2_it(atom_inds_for_restype_.find( res2.type().get_self_ptr() ) );
+	RestypeToTemplateAtomsMap::const_iterator res1_it(atom_inds_for_restype_.find( res1.type_ptr() ) ), res2_it(atom_inds_for_restype_.find( res2.type_ptr() ) );
 	if ( res1_it == atom_inds_for_restype_.end() ) utility_exit_with_message("Residue of type "+res1.type().name()+" is not part of EnzCstTemplateRes.");
 	if ( res2_it == atom_inds_for_restype_.end() ) utility_exit_with_message("Residue of type "+res2.type().name()+" is not part of EnzCstTemplateRes.");
 

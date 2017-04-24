@@ -203,7 +203,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 				rsd_instantiated->reset_mainchain_torsion_potential_names();
 			}
 		} else {
-			rsd_instantiated->set_base_type_cop( rsd_base.get_self_ptr() );
+			rsd_instantiated->set_base_type_cop( rsd_base_ptr );
 		}
 
 		cache_object()->add_residue_type( rsd_instantiated );
@@ -243,7 +243,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 					rsd_instantiated->reset_mainchain_torsion_potential_names();
 				}
 			} else {
-				rsd_instantiated->set_base_type_cop( rsd_base.get_self_ptr() );
+				rsd_instantiated->set_base_type_cop( rsd_base_ptr );
 			}
 
 			cache_object()->add_residue_type( rsd_instantiated );

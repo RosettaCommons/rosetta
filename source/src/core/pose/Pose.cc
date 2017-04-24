@@ -841,6 +841,14 @@ Pose::residue_type(
 	return conformation_->residue_type( seqpos );
 }
 
+chemical::ResidueTypeCOP
+Pose::residue_type_ptr(
+	Size const seqpos
+) const
+{
+	PyAssert( (seqpos<=size()), "Pose::residue_type_ptr( Size const seqpos ): variable seqpos is out of range!" );
+	return conformation_->residue_type_ptr( seqpos );
+}
 
 // backbone torsions
 // peptides and saccharides

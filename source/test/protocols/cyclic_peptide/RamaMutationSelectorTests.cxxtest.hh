@@ -79,7 +79,7 @@ public:
 			utility::vector1<core::Real> mainchain_tors(2);
 			mainchain_tors[1] = pose2.phi(ir);
 			mainchain_tors[2] = pose2.psi(ir);
-			rama.eval_rpp_rama_score( pose2.conformation(), pose2.residue_type(ir).get_self_ptr(), pose2.residue_type(ir+1).get_self_ptr(), mainchain_tors, pro_energies2[ir], gradient, false);
+			rama.eval_rpp_rama_score( pose2.conformation(), pose2.residue_type_ptr(ir), pose2.residue_type_ptr(ir+1), mainchain_tors, pro_energies2[ir], gradient, false);
 			pro_energies2[ir] *= multiplier;
 
 			//DELETE THE FOLLOWING:

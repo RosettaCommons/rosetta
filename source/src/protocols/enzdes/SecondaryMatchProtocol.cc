@@ -274,7 +274,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			tr << "searching position " << *pos_try_it << "... ";
 
-			if ( ! restype_possible_at_position( pose, trial_res.type().get_self_ptr(), pose.residue( target_residue ).get_self_ptr(), *pos_try_it ) ) continue;
+			if ( ! restype_possible_at_position( pose, trial_res.type_ptr(), pose.residue( target_residue ).get_self_ptr(), *pos_try_it ) ) continue;
 
 			utility::vector1< std::string > current_variants;
 			bool match = variants_match( pose.residue_type( *pos_try_it ), trial_res.type() );

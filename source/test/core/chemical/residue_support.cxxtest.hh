@@ -61,7 +61,7 @@ public:
 		std::string const tag(FA_STANDARD);
 		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
-		ResidueTypeCOP rsd_ref( rsd_types->name_map("LYS").get_self_ptr() );
+		ResidueTypeCOP rsd_ref( rsd_types->name_mapOP("LYS") );
 		ResidueTypeOP rsd;
 		std::set< std::string > names;
 

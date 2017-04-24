@@ -506,7 +506,7 @@ private:
 private:
 
 	//seqpos and residue type the filter acts on
-	core::chemical::ResidueType const * restype_;
+	core::chemical::ResidueTypeCOP restype_;
 	core::Size seqpos_;
 
 	core::Size desired_conformer_; //the conformer that we'd like to have

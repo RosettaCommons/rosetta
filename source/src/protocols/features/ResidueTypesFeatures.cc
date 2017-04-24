@@ -98,13 +98,13 @@ ResidueTypesFeatures::report_features(
 
 	// Get a set of the unique residue types that are used in this pose
 	// THIS CODE IS THE SOURCE OF INTEGRATION TEST INSTABILITIES
-	set< ResidueType const * > res_types;
+	set< ResidueTypeCOP > res_types;
 	for ( Size i=1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
-		res_types.insert(&pose.residue_type(i));
+		res_types.insert( pose.residue_type_ptr(i) );
 	}
 
-	for ( ResidueType const * res_type : res_types ) {
+	for ( ResidueTypeCOP const & res_type : res_types ) {
 		string const & residue_type_set_name(core::chemical::string_from_type_set_mode( res_type->mode() ));
 
 		// Is this residue type already in the database?

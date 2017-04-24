@@ -170,7 +170,7 @@ create_trie(
 	AT    const & /* dummy variable for type identification */,
 	CPDAT const & /* dummy variable for type identification */,
 	CPDataCorrespondence const & cpdata_map,
-	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > const &cp_reps,
+	std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> > const &cp_reps,
 	Distance atomic_interaction_cutoff
 )
 {
@@ -187,7 +187,7 @@ create_trie(
 			newatom.is_hydrogen( false );
 
 			CPDAT cpdata;
-			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(ii_rotamer->type()));
+			std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( ii_rotamer->type_ptr() );
 			core::Size jj_rep = jj;
 			if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
 			initialize_cpdata_for_atom( cpdata, jj_rep, *ii_rotamer, cpdata_map );
@@ -203,7 +203,7 @@ create_trie(
 				newhatom.is_hydrogen( true );
 
 				CPDAT cpdata;
-				std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(ii_rotamer->type()));
+				std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( ii_rotamer->type_ptr() );
 				core::Size kk_rep = kk;
 				if ( it != cp_reps.end() ) kk_rep=lookup_cp_map( it->second, kk );
 				initialize_cpdata_for_atom( cpdata, kk_rep, *ii_rotamer, cpdata_map );
@@ -234,7 +234,7 @@ create_trie(
 	AT    const & /* dummy variable for type identification */,
 	CPDAT const & /* dummy variable for type identification */,
 	CPDataCorrespondence const & cpdata_map,
-	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > const &cp_reps,
+	std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> > const &cp_reps,
 	Distance atomic_interaction_cutoff
 )
 {
@@ -249,7 +249,7 @@ create_trie(
 		newatom.is_hydrogen( false );
 
 		CPDAT cpdata;
-		std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()) );
+		std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( res.type_ptr() );
 		core::Size jj_rep = jj;
 		if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
 		initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
@@ -265,7 +265,7 @@ create_trie(
 			newhatom.is_hydrogen( true );
 
 			CPDAT cpdata;
-			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()) );
+			std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( res.type_ptr() );
 			core::Size kk_rep = kk;
 			if ( it != cp_reps.end() ) kk_rep=lookup_cp_map( it->second, kk );
 			initialize_cpdata_for_atom( cpdata, kk_rep, res, cpdata_map );

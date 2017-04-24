@@ -228,7 +228,7 @@ void rotamers_for_trials(
 		dummy_sfxn,
 		*dummy_task,
 		empty_graph,
-		pose.residue_type(rsd_no).get_self_ptr(), //ResidueTypeCOP
+		pose.residue_type_ptr(rsd_no), //ResidueTypeCOP
 		pose.residue(rsd_no),
 		empty_extra_chi_steps,
 		true /* sure, let's pretend it's buried */,

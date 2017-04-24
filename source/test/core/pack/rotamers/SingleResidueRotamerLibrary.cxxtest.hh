@@ -130,7 +130,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init_with_additional_options( "-extra_res_fa core/pack/rotamers/6SA.params" );
-		hydroxyls_ = core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD)->name_map("6SA").get_self_ptr();
+		hydroxyls_ = core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD)->name_mapOP("6SA");
 	}
 
 	// Shared finalization goes here.

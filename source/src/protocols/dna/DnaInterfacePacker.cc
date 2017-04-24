@@ -369,11 +369,11 @@ DnaInterfacePacker::init_standard( Pose & pose )
 	reference_residue_types_.clear();
 	if ( reference_pose_ ) {
 		for ( Size index(1), end( reference_pose_->size() ); index <= end; ++index ) {
-			reference_residue_types_.push_back( reference_pose_->residue_type(index).get_self_ptr() );
+			reference_residue_types_.push_back( reference_pose_->residue_type_ptr(index) );
 		}
 	} else {
 		for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
-			reference_residue_types_.push_back( pose.residue_type(index).get_self_ptr() );
+			reference_residue_types_.push_back( pose.residue_type_ptr(index) );
 		}
 	}
 
@@ -772,7 +772,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 		utility::vector0< int > rot_to_pack;
 		vector1< ResidueTypeCOP > single_sequence;
 		for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
-			single_sequence.push_back( pose.residue_type(index).get_self_ptr() );
+			single_sequence.push_back( pose.residue_type_ptr(index) );
 		}
 		// alter dna types according to this dna sequence
 		for ( const auto & it : dna_sequence ) {
@@ -901,7 +901,7 @@ DnaInterfacePacker::reversion_scan(
 	vector1< ResidueTypeCOP > fixed_residue_types;
 
 	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
-		fixed_residue_types.push_back( pose.residue_type(index).get_self_ptr() );
+		fixed_residue_types.push_back( pose.residue_type_ptr(index) );
 	}
 
 	// find mutations (positions to revert) based upon comparison to a starting sequence
@@ -1101,7 +1101,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 	vector1< ResidueTypeCOP > pose_residue_types;
 	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
-		pose_residue_types.push_back( pose.residue_type(index).get_self_ptr() );
+		pose_residue_types.push_back( pose.residue_type_ptr(index) );
 	}
 
 	// get native energies
@@ -1280,14 +1280,14 @@ DnaInterfacePacker::get_targeted_sequence( Pose const & pose ) const
 			// if PackerTask indicates nucleotide type to target, add this to local targeted sequence
 			if ( rtask.target_type() != nullptr ) sequence[ resid ] = rtask.target_type();
 			// otherwise use the residue type at this position in the current pose
-			else sequence[ resid ] = pose.residue_type( resid ).get_self_ptr();
+			else sequence[ resid ] = pose.residue_type_ptr( resid );
 
 			if ( !pos.paired() ) continue;
 			// similar treatment for paired 'lower-strand' nucleotides
 			Size const comp_resid( pos.bottom() );
 			ResidueLevelTask const & comp_rtask( task()->residue_task(comp_resid) );
 			if ( comp_rtask.target_type() != nullptr ) sequence[ comp_resid ] = comp_rtask.target_type();
-			else sequence[ comp_resid ] = pose.residue_type( comp_resid ).get_self_ptr();
+			else sequence[ comp_resid ] = pose.residue_type_ptr( comp_resid );
 		}
 	}
 	return sequence;
@@ -1305,7 +1305,7 @@ DnaInterfacePacker::current_working_sequence( Pose const & pose ) const
 		Size const resid( it->first );
 		ResidueLevelTask const & rtask( task()->residue_task(resid) );
 		if ( !rtask.has_behavior("TARGET") && !rtask.has_behavior("SCAN") ) continue;
-		current_sequence[ resid ] = pose.residue( resid ).type().get_self_ptr();
+		current_sequence[ resid ] = pose.residue_type_ptr( resid );
 	}
 	return current_sequence;
 }

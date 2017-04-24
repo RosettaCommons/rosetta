@@ -148,7 +148,7 @@ public:
 
 			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
 			if ( rotlib ) {
-				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
+				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
 
 			bool bOut ( false  );//switch to true to produce a new test_input file

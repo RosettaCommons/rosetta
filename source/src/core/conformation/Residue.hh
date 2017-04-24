@@ -1136,11 +1136,26 @@ public:
 	///     residue.type()
 	/// See also:
 	///     Residue
+	///     Residue.type_ptr
 	///     Residue.atom_type
 	ResidueType const &
 	type() const
 	{
 		return rsd_type_;
+	}
+
+	/// @brief Returns this residue's ResidueType as a COP
+	///
+	/// example(s):
+	///     residue.typei_ptr()
+	/// See also:
+	///     Residue
+	///     Residue.type
+	///     Residue.atom_type
+	ResidueTypeCOP
+	type_ptr() const
+	{
+		return rsd_type_ptr_;
 	}
 
 	/// @brief Returns this residue's upper_connection

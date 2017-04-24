@@ -47,8 +47,8 @@ public:
 	void test_automorphism_counts() {
 		using namespace core::chemical;
 		ResidueTypeSetCOP residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		TS_ASSERT_EQUALS(3456, count_automorphisms( residue_set->name_map("QC1").get_self_ptr()) );
-		TS_ASSERT_EQUALS(8, count_automorphisms( residue_set->name_map("UK002").get_self_ptr()) );
+		TS_ASSERT_EQUALS(3456, count_automorphisms( residue_set->name_mapOP("QC1") ) );
+		TS_ASSERT_EQUALS(8, count_automorphisms( residue_set->name_mapOP("UK002") ) );
 	}
 
 	core::Size count_automorphisms(core::chemical::ResidueTypeCOP rsdtype)

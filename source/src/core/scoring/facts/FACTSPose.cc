@@ -115,16 +115,8 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
 
 		// initialize residuetypeinfo if it has not been
 		core::chemical::ResidueType const &rsdtype = pose.residue(i).type();
-		FACTSRsdTypeMap::const_iterator it = rsdtypemap.find( &rsdtype );
-
-		if ( it == rsdtypemap.end() ) {
-			TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-			FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
-			rsdtypeinfo->create_info( rsdtype );
-			rsdtypemap[ &rsdtype ] = rsdtypeinfo;
-			it = rsdtypemap.find( &rsdtype );
-		}
-		residue_info_[i]->initialize( pose.residue(i), it->second );
+		FACTSRsdTypeInfoCOP type_info( rsdtypemap.get_type_info( rsdtype ) );
+		residue_info_[i]->initialize( pose.residue(i), type_info );
 	}
 }
 

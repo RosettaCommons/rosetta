@@ -21,6 +21,8 @@
 namespace core {
 namespace scoring {
 
+class FACTSRsdTypeMap;
+
 //Declaring a class of type FACTSResidueInfo
 class FACTSRsdTypeInfo;
 //Creating an alias for a pointer of type FACTSResidueInfo
@@ -44,8 +46,6 @@ typedef utility::pointer::shared_ptr< FACTSRotamerSetInfo > FACTSRotamerSetInfoO
 class FACTSPotential;
 //Creating an alias for a pointer of type FACTSResidueInfo
 typedef utility::pointer::shared_ptr< FACTSPotential > FACTSPotentialOP;
-
-typedef std::map< chemical::ResidueType const *, FACTSRsdTypeInfoCOP > FACTSRsdTypeMap;
 
 } // scoring
 } // core

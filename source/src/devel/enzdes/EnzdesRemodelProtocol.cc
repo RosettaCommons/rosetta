@@ -656,7 +656,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 
 	if ( keep_existing_aa_identities_ ) {
 		init_aa_.clear();
-		for ( Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( pose.residue_type( i ).get_self_weak_ptr() );
+		for ( Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( pose.residue_type_ptr( i ) );
 	}
 
 

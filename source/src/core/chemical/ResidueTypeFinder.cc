@@ -316,7 +316,7 @@ ResidueTypeFinder::apply_patches_recursively(
 			// following just gets the right name of the patched residue
 			ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
 			// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
-			ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
+			ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
 			rsd_types_new.push_back( rsd_type_new );
 		}
 
@@ -375,7 +375,7 @@ ResidueTypeFinder::apply_metapatches_recursively(
 				// following just gets the right name of the patched residue
 				ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
 				// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
-				ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
+				ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
 				rsd_types_new.push_back( rsd_type_new );
 			}
 		}

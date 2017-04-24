@@ -86,7 +86,7 @@ void deserialize_residue_type( Archive & arc, ResidueTypeCOP & ptr )
 		if ( in_global_rts ) {
 			std::string rts_name, rt_name;
 			arc( rts_name, rt_name );
-			ptr = chemical::ChemicalManager::get_instance()->residue_type_set( rts_name )->name_map( rt_name ).get_self_ptr();
+			ptr = chemical::ChemicalManager::get_instance()->residue_type_set( rts_name )->name_mapOP( rt_name );
 		} else {
 			uint32_t id;
 			arc( id );

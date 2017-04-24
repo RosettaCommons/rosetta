@@ -287,8 +287,8 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 
 	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		if ( i==center ) continue;
-		chemical::ResidueType const * cur_restype = & pose.residue_type( i );
-		if ( cur_restype->aa() == chemical::aa_pro || cur_restype->aa() == chemical::aa_gly ) continue;
+		chemical::ResidueType const & cur_restype = pose.residue_type( i );
+		if ( cur_restype.aa() == chemical::aa_pro || cur_restype.aa() == chemical::aa_gly ) continue;
 		pose.replace_residue( i, replace_res, true);
 	}
 }

@@ -1606,11 +1606,11 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 
 				if ( use_rama_prepro_for_sampling() ) { //Using rama_prepro tables for sampling:
 					utility::vector1< core::Real > rand_torsions;
-					core::chemical::ResidueTypeCOP following_rsd( pose->residue_type(
+					core::chemical::ResidueTypeCOP following_rsd( pose->residue_type_ptr(
 						pose->residue(i).residue_connection_partner( pose->residue(i).upper_connect().index() )
-						).get_self_ptr()
+						)
 					);
-					ramaprepro.random_mainchain_torsions( pose->conformation(), pose->residue_type(i).get_self_ptr(), following_rsd, rand_torsions );
+					ramaprepro.random_mainchain_torsions( pose->conformation(), pose->residue_type_ptr(i), following_rsd, rand_torsions );
 					phi=rand_torsions[1]; psi=rand_torsions[2];
 				} else { //Using classic rama tables for sampling:
 					if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {

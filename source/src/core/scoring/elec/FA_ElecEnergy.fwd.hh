@@ -26,6 +26,11 @@ class FA_ElecEnergy;
 typedef utility::pointer::shared_ptr< FA_ElecEnergy > FA_ElecEnergyOP;
 typedef utility::pointer::shared_ptr< FA_ElecEnergy const > FA_ElecEnergyCOP;
 
+class CountPairRepMap;
+
+typedef utility::pointer::shared_ptr< CountPairRepMap > CountPairRepMapOP;
+typedef utility::pointer::shared_ptr< CountPairRepMap const > CountPairRepMapCOP;
+
 }
 }
 }

@@ -981,7 +981,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	//utility::graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
 	utility::graph::GraphOP neighbor_graph( new utility::graph::Graph( pose.energies().energy_graph() ) );
 
-	chemical::ResidueTypeCOP res_type = pose.residue_type( seqpos ).get_self_ptr();
+	chemical::ResidueTypeCOP res_type = pose.residue_type_ptr( seqpos );
 	conformation::Residue const & existing_residue( pose.residue( seqpos ) );
 
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( res_type->nchi() );

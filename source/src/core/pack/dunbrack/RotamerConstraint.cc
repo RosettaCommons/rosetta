@@ -143,7 +143,7 @@ RotamerConstraint::RotamerConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name_( pose.residue_type(seqpos).name() ),
 	atom_ids_(),
-	restype_( pose.residue_type(seqpos).get_self_ptr() ),
+	restype_( pose.residue_type_ptr(seqpos) ),
 	rotlib_( core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(seqpos) ) ), // may be NULL
 	favored_rotamers_(),
 	favored_rotamer_numbers_()

@@ -19,6 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/RestypeDestructionEvent.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/RotamerSetBase.hh>
@@ -499,6 +500,36 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 
 /// FACTSRsdTypeInfo
 
+FACTSRsdTypeMap::FACTSRsdTypeMap() = default;
+
+FACTSRsdTypeMap::~FACTSRsdTypeMap() {
+	// We need to de-register the destruction observers from each remaining ResidueType
+	// Otherwise when they get destroyed they'll attempt to notify this (no longer existent) database
+	for ( auto entry: type_info_map_ ) {
+		entry.first->detach_destruction_obs( &FACTSRsdTypeMap::restype_destruction_observer, this );
+	}
+}
+
+/// @brief get the info for the residue type, creating it if it doesn't exist
+FACTSRsdTypeInfoCOP
+FACTSRsdTypeMap::get_type_info( core::chemical::ResidueType const & rsdtype ) {
+	if ( type_info_map_.count( &rsdtype ) == 0 ) {
+		TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
+		FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
+		rsdtypeinfo->create_info( rsdtype );
+		rsdtype.attach_destruction_obs( &FACTSRsdTypeMap::restype_destruction_observer, this );
+		type_info_map_[ &rsdtype ] = rsdtypeinfo;
+	}
+	return type_info_map_[ &rsdtype ];
+}
+
+void
+FACTSRsdTypeMap::restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event ) {
+	// Remove the soon-to-be-destroyed object from the database caches
+	// std::map::erase() is robust if the key is not in the map
+	type_info_map_.erase( event.restype );
+}
+
 /**************************************************************************************************/
 /*                                                                                                */
 /*    @brief: The FACTSResidueInfo class provides all the functions, constants and parameters     */
@@ -575,16 +606,8 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
 	residue_info_.resize( nrot );
 	for ( Size i=1; i<= nrot; ++i ) {
 		core::chemical::ResidueType const &rsdtype = rotamer_set.rotamer(i)->type();
-		FACTSRsdTypeMap::const_iterator it = rsdtypemap.find( &rsdtype );
-		if ( it == rsdtypemap.end() ) {
-			TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-			FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
-			rsdtypeinfo->create_info( rsdtype );
-			rsdtypemap[ &rsdtype ] = rsdtypeinfo;
-			it = rsdtypemap.find( &rsdtype );
-		}
-
-		residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo( *rotamer_set.rotamer(i), it->second, true ) );
+		FACTSRsdTypeInfoCOP type_info( rsdtypemap.get_type_info( rsdtype ) );
+		residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo( *rotamer_set.rotamer(i), type_info, true ) );
 	}
 } // FACTSRotamerSetInfo
 

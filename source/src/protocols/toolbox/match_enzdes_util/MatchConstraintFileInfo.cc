@@ -475,7 +475,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 		core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 		backbone_interaction = true;
 		invrot_restypes.clear();
-		invrot_restypes.push_back( restype_set->name_map("ALA").get_self_ptr() );
+		invrot_restypes.push_back( restype_set->name_mapOP("ALA") );
 		tr << "Only Ala inverse rotamers will be built because it is a backbone interaction." << std::endl;
 	}
 	for ( core::Size ii =1; ii <= invrot_restypes.size(); ++ii ) {

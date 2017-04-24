@@ -27,7 +27,9 @@
 #include <basic/database/open.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
+#include <core/chemical/RestypeDestructionEvent.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
@@ -61,6 +63,7 @@ namespace core {
 namespace scoring {
 namespace custom_pair_distance {
 
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.custom_pair_distance.FullatomCustomPairDistanceEnergy" );
 
 /// @details This must return a fresh instance of the FullatomCustomPairDistanceEnergy class,
 /// never an instance already in use
@@ -115,12 +118,80 @@ AtomPairFuncList::add_interaction( atoms_and_func_struct const & interacting_pai
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+PairFuncMap::~PairFuncMap() {
+	// We need to de-register the destruction observers from each remaining ResidueType
+	// Otherwise when they get destroyed they'll attempt to notify this (no longer existent) database
+	std::set< chemical::ResidueType const * > to_remove;
+	for ( auto const & entry: pair_map_ ) {
+		to_remove.insert( entry.first.first );
+		to_remove.insert( entry.first.second );
+	}
+	for ( chemical::ResidueType const * restype: to_remove ) {
+		restype->detach_destruction_obs( &PairFuncMap::restype_destruction_observer, this );
+	}
+}
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.custom_pair_distance.FullatomCustomPairDistanceEnergy" );
+AtomPairFuncListOP
+PairFuncMap::get_atom_pair_func_list( core::chemical::ResidueType const & rsdtype1, core::chemical::ResidueType const & rsdtype2 ) const {
+
+	ResTypePair respair( & rsdtype1, & rsdtype2 );
+	auto iter =  pair_map_.find( respair );
+	if ( iter == pair_map_.end() ) {
+		return nullptr;
+	} else {
+		return iter->second;
+	}
+}
+
+AtomPairFuncListCOP
+PairFuncMap::get_atom_pair_func_list( core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2 ) const {
+
+	ResTypePair respair( & rsd1.type(), & rsd2.type() );
+	auto iter =  pair_map_.find( respair );
+	if ( iter == pair_map_.end() ) {
+		return nullptr;
+	} else {
+		return iter->second;
+	}
+}
+
+void
+PairFuncMap::set_atom_pair_func( core::chemical::ResidueType const & rsdtype1,
+	core::chemical::ResidueType const & rsdtype2,
+	AtomPairFuncListOP func_list )
+{
+	ResTypePair respair( & rsdtype1, & rsdtype2 );
+	debug_assert( pair_map_.count( respair ) == 0 );
+
+	// The destruction observer is robust to getting repeated attachements for the same object
+	rsdtype1.attach_destruction_obs( &PairFuncMap::restype_destruction_observer, this );
+	rsdtype2.attach_destruction_obs( &PairFuncMap::restype_destruction_observer, this );
+
+	pair_map_[ respair ] = func_list;
+}
+
+void
+PairFuncMap::restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event ) {
+	// Remove the soon-to-be-destroyed object from the database caches
+	utility::vector1< ResTypePair > to_remove;
+	for ( auto const & entry: pair_map_ ) {
+		if ( entry.first.first == event.restype || entry.first.second == event.restype ) {
+			to_remove.push_back( entry.first );
+		}
+	}
+	for ( ResTypePair const & key: to_remove ) {
+		pair_map_.erase( key );
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // constructor
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new FullatomCustomPairDistanceEnergyCreator ) )
+	parent( methods::EnergyMethodCreatorOP( new FullatomCustomPairDistanceEnergyCreator ) ),
+	pair_and_func_map_( new PairFuncMap )
 {
 	set_pair_and_func_map();
 }
@@ -149,17 +220,13 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	//ResTypePair respair;
-	//respair[1] = rsd1.type();
-	//respair[2] = rsd2.type();
+	AtomPairFuncListCOP atom_pair_func_list( pair_and_func_map_->get_atom_pair_func_list( rsd1, rsd2 ) );
+	if ( atom_pair_func_list == nullptr ) { return; }
 
-	PairFuncMap::const_iterator respairiter = find( rsd1, rsd2 );
-	if ( respairiter == pair_and_func_map_.end() ) return;
-	debug_assert( (*respairiter).second ); // there should be no null-pointing elements in the pair_and_func_map_
 	Energy score = 0.0;
 	for ( std::list<atoms_and_func_struct>::const_iterator
-			atom_func_iter     = (*respairiter).second->ats_n_func_list().begin(),
-			atom_func_iter_end = (*respairiter).second->ats_n_func_list().end();
+			atom_func_iter     = atom_pair_func_list->ats_n_func_list().begin(),
+			atom_func_iter_end = atom_pair_func_list->ats_n_func_list().end();
 			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
 		Vector const& atom_a_xyz( rsd1.xyz((*atom_func_iter).resA_atom_index_));
 		Vector const& atom_b_xyz( rsd2.xyz((*atom_func_iter).resB_atom_index_));
@@ -243,8 +310,8 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing_for_residue_pair(
 	RespairInteractionsOP respair_intxns = utility::pointer::static_pointer_cast< core::scoring::custom_pair_distance::RespairInteractions > ( pair_data.get_data( fa_custom_pair_dist_data ) );
 	if ( ! respair_intxns ) respair_intxns = RespairInteractionsOP( new RespairInteractions );
 
-	AtomPairFuncListCOP apfclist = find( rsd1, rsd2 )->second;
-	debug_assert( apfclist );
+	AtomPairFuncListCOP apfclist = pair_and_func_map_->get_atom_pair_func_list( rsd1, rsd2 );
+	runtime_assert( apfclist );
 	respair_intxns->apfc_list( apfclist );
 	pair_data.set_data( fa_custom_pair_dist_data, respair_intxns );
 }
@@ -305,18 +372,6 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 
 }
 
-FullatomCustomPairDistanceEnergy::PairFuncMap::const_iterator
-FullatomCustomPairDistanceEnergy::find(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2
-) const
-{
-	ResTypePair respair;
-	respair[1] = & rsd1.type();
-	respair[2] = & rsd2.type();
-	return pair_and_func_map_.find( respair );
-}
-
 
 bool
 FullatomCustomPairDistanceEnergy::interaction_defined(
@@ -324,7 +379,7 @@ FullatomCustomPairDistanceEnergy::interaction_defined(
 	conformation::Residue const & rsd2
 ) const
 {
-	return find( rsd1, rsd2 ) != pair_and_func_map_.end();
+	return pair_and_func_map_->get_atom_pair_func_list( rsd1, rsd2 ) != nullptr;
 }
 
 void
@@ -403,17 +458,14 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 					for ( Size k = 1; k <= possible_res_types_b.size(); ++k ) {
 						ResidueTypeCOP const & rsd_type_b = possible_res_types_b[ k ];
 						Size atom_index_b = rsd_type_b->atom_index( atomB[i] );
-						ResTypePair respair;
 
-						respair[1] = rsd_type_a.get();
-						respair[2] = rsd_type_b.get();
 						pair_func.resA_atom_index_ =  atom_index_a;
 						pair_func.resB_atom_index_ =  atom_index_b;
-						AtomPairFuncListOP atpairlist = pair_and_func_map_[ respair ];
+						AtomPairFuncListOP atpairlist = pair_and_func_map_->get_atom_pair_func_list( *rsd_type_a, *rsd_type_b );
 						if ( ! atpairlist ) {
 							//std::cout << "Adding new residue-pair interaction for " << respair[1]->name() << " " << respair[2]->name() << std::endl;
 							atpairlist = AtomPairFuncListOP( new AtomPairFuncList );
-							pair_and_func_map_[ respair ] = atpairlist;
+							pair_and_func_map_->set_atom_pair_func( *rsd_type_a, *rsd_type_b, atpairlist );
 						} else {
 							//std::cout << "Updating residue-pair interaction for " << respair[1]->name() << " " << respair[2]->name() << std::endl;
 						}
@@ -424,14 +476,12 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 						// I tried to prevent having to do this by sorting the pair but
 						// couldn't get it to work
 						if ( rsd_type_a != rsd_type_b ) {
-							respair[1] = rsd_type_b.get();
-							respair[2] = rsd_type_a.get();
 							pair_func.resA_atom_index_ =  atom_index_b;
 							pair_func.resB_atom_index_ =  atom_index_a;
-							atpairlist =  pair_and_func_map_[ respair ];
+							atpairlist = pair_and_func_map_->get_atom_pair_func_list( *rsd_type_b, *rsd_type_a );
 							if ( ! atpairlist ) {
 								atpairlist = AtomPairFuncListOP( new AtomPairFuncList );
-								pair_and_func_map_[ respair ] = atpairlist;
+								pair_and_func_map_->set_atom_pair_func( *rsd_type_b, *rsd_type_a, atpairlist );
 							}
 							atpairlist->add_interaction( pair_func );
 						}
@@ -440,7 +490,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			}
 		}
 	}
-	tr << "Added " << pair_and_func_map_.size() << " AtomPairFuncList lists" << std::endl;
+	tr << "Added " << pair_and_func_map_->size() << " AtomPairFuncList lists" << std::endl;
 }
 
 core::Size

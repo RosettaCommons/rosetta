@@ -27,6 +27,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/RestypeDestructionEvent.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
@@ -341,6 +342,19 @@ IdealParametersDatabase::IdealParametersDatabase(Real k_len_in, Real k_ang_in, R
 	// now that we resolved the defaults, initialize
 	init(k_len, k_ang, k_tors, k_tors_prot, k_tors_improper);
 }
+
+IdealParametersDatabase::~IdealParametersDatabase() {
+	// We need to de-register the destruction observers from each remaining ResidueType
+	// Otherwise when they get destroyed they'll attempt to notify this (no longer existent) database
+	for ( auto entry: prepro_restype_data_ ) {
+		entry.first->detach_destruction_obs( &IdealParametersDatabase::restype_destruction_observer, this );
+	}
+	for ( auto entry: nonprepro_restype_data_ ) {
+		entry.first->detach_destruction_obs( &IdealParametersDatabase::restype_destruction_observer, this );
+	}
+}
+
+
 
 // read bb-dep and bb-indep parameter files from the rosetta database
 void
@@ -1643,12 +1657,23 @@ IdealParametersDatabase::create_parameters_for_restype(
 		restype_params->cprev_n_bond_length_params( len_params );
 	}
 
+	// Register that we're using this ResidueType with its destruction observer
+	rsd_type.attach_destruction_obs( &IdealParametersDatabase::restype_destruction_observer, this );
+
 	if ( prepro ) {
 		prepro_restype_data_[ & rsd_type ] = restype_params;
 	} else {
 		nonprepro_restype_data_[ & rsd_type ] = restype_params;
 	}
 
+}
+
+void
+IdealParametersDatabase::restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event ) {
+	// Remove the soon-to-be-destroyed object from the database caches
+	// std::map::erase() is robust if the key is not in the map
+	prepro_restype_data_.erase( event.restype );
+	nonprepro_restype_data_.erase( event.restype );
 }
 
 

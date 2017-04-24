@@ -263,7 +263,7 @@ ProcessorFactory::create_output_writer(
 			/// DIRTY ASSUMPTION -- SINGLE RESIDUE IN DOWNSTREAM PARTNER
 			if ( matcher->downstream_builder( ii ) ) {
 				SingleDownstreamResidueWriterOP downstream_writer( new SingleDownstreamResidueWriter );
-				downstream_writer->set_restype( mtask->downstream_pose()->residue(1).type().get_self_ptr() );
+				downstream_writer->set_restype( mtask->downstream_pose()->residue(1).type_ptr() );
 				downstream_writer->set_downstream_builder( matcher->downstream_builder( ii ) );
 				downstream_writer->set_downstream_master( mtask->downstream_pose()->residue(1).name3() );
 

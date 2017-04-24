@@ -421,7 +421,7 @@ LigandConformerBuilder::initialize_from_residue(
 	if ( natoms < 3 ) {
 		utility_exit_with_message( "ERROR in LigandConformerBuilder: cannot build a residue with fewer than three atoms" );
 	}
-	downstream_restype_ = residue.type().get_self_ptr();
+	downstream_restype_ = residue.type_ptr();
 	atom_radii_.resize( natoms );
 	atom_required_in_active_site_.resize( natoms, false );
 

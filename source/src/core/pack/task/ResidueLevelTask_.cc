@@ -96,7 +96,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	include_current_( false ),
 	adducts_( true ),
 	original_residue_type_set_( pose.residue_type_set_for_pose( original_residue.type().mode() ) ),
-	original_residue_type_( original_residue.type().get_self_weak_ptr() ),
+	original_residue_type_( original_residue.type_ptr() ),
 	target_residue_type_(/* 0 */),
 	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
 	repacking_( true ),
@@ -150,12 +150,12 @@ ResidueLevelTask_::ResidueLevelTask_(
 		}
 		// allow noncanonical AAs and D-amino acids to be repacked
 		if ( original_residue.aa() == aa_unk || core::chemical::is_canonical_D_aa( original_residue.aa() ) ) {
-			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
+			allowed_residue_types_.push_back( original_residue.type_ptr() );
 		}
 
 		// allow metapatched residues to at least repack???
 		if ( allowed_residue_types_.empty() ) {
-			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
+			allowed_residue_types_.push_back( original_residue.type_ptr() );
 		}
 
 	} else if ( original_residue.is_DNA() ) {
@@ -172,7 +172,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 
 	} else {
 		// for non-amino acids, default is to include only the existing residuetype
-		allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
+		allowed_residue_types_.push_back( original_residue.type_ptr() );
 	}
 	if ( original_residue.is_RNA() ) rna_task_ = rna::RNA_ResidueLevelTaskOP( new rna::RNA_ResidueLevelTask );
 	// The intention is for all ResidueTasks to *start off* as repackable.
@@ -413,7 +413,7 @@ void ResidueLevelTask_::target_type( chemical::AA aa ) {
 	target_type( original_residue_type_set_->get_representative_type_aa( aa ) );
 }
 void ResidueLevelTask_::target_type( std::string name ) {
-	target_type( original_residue_type_set_->name_map( name ).get_self_ptr() );
+	target_type( original_residue_type_set_->name_mapOP( name ) );
 }
 
 void ResidueLevelTask_::or_adducts( bool setting )

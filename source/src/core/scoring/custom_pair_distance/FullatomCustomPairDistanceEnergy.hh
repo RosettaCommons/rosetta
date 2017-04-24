@@ -29,6 +29,7 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/RestypeDestructionEvent.fwd.hh>
 
 // Utility headers
 #include <numeric/interpolation/Histogram.hh>
@@ -66,6 +67,7 @@ struct resatom_and_func_struct
 	DistanceFuncCOP func_;
 };
 
+
 class AtomPairFuncList : public utility::pointer::ReferenceCount
 {
 public:
@@ -87,6 +89,47 @@ typedef utility::pointer::shared_ptr< AtomPairFuncList > AtomPairFuncListOP;
 typedef utility::pointer::shared_ptr< AtomPairFuncList const > AtomPairFuncListCOP;
 
 
+class PairFuncMap {
+public:
+
+	PairFuncMap() = default;
+
+	// If you copy/assign this object, you need to detach/reattach
+	// the ResidueType destruction observers for the appropriate object
+	PairFuncMap( PairFuncMap const & ) = delete;
+	PairFuncMap & operator=( PairFuncMap const & ) = delete;
+
+	~PairFuncMap();
+
+	core::Size
+	size() const { return pair_map_.size(); }
+
+	// Ideally this should pass back a COP, but the setup function needs it to be modifiable
+	AtomPairFuncListOP
+	get_atom_pair_func_list( core::chemical::ResidueType const & rsdtype1, core::chemical::ResidueType const & rsdtype2 ) const;
+
+	AtomPairFuncListCOP
+	get_atom_pair_func_list( core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2 ) const;
+
+	void
+	set_atom_pair_func( core::chemical::ResidueType const & rsdtype1,
+		core::chemical::ResidueType const & rsdtype2,
+		AtomPairFuncListOP func_list );
+
+	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
+
+private:
+
+	// The raw pointers here are registered in the destruction observer for their respective ResidueType
+	typedef std::pair< chemical::ResidueType const *, chemical::ResidueType const * > ResTypePair;
+
+	std::map< ResTypePair, AtomPairFuncListOP > pair_map_;
+
+};
+
+typedef utility::pointer::shared_ptr< PairFuncMap > PairFuncMapOP;
+typedef utility::pointer::shared_ptr< PairFuncMap const > PairFuncMapCOP;
+
 class FullatomCustomPairDistanceEnergy : public methods::ContextIndependentTwoBodyEnergy {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy parent;
@@ -96,10 +139,6 @@ public:
 	typedef utility::OrderedTuple< ResAtomIndex > ResAtomIndexTuple;
 	typedef std::map< ResAtomIndexTuple, std::list< resatom_and_func_struct > > ResAtomIndexFuncMap;
 
-	typedef utility::fixedsizearray1< chemical::ResidueType const * , 2 > ResTypePair;
-	typedef utility::OrderedTuple< ResTypePair > ResTypePairTuple;
-
-	typedef std::map< ResTypePairTuple, AtomPairFuncListOP > PairFuncMap;
 
 
 	FullatomCustomPairDistanceEnergy();
@@ -237,12 +276,6 @@ public:
 
 private:
 
-	PairFuncMap::const_iterator
-	find(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2
-	) const;
-
 	bool
 	interaction_defined(
 		conformation::Residue const & rsd1,
@@ -255,7 +288,7 @@ private:
 
 private:
 
-	PairFuncMap pair_and_func_map_;
+	PairFuncMapOP pair_and_func_map_;
 	Real max_dis_;
 	virtual
 	core::Size version() const;

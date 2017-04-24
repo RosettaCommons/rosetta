@@ -324,7 +324,7 @@ void append_seq( core::pose::Pose& pose0, int sp_lo, int sp_hi, utility::vector1
 	string s;
 
 	for ( int i = sp_lo; i <= sp_hi; ++i ) {
-		seq.push_back( pose0.residue_type(i).get_self_ptr() );
+		seq.push_back( pose0.residue_type_ptr(i) );
 		s.push_back( pose0.residue(i).name1() );
 	}
 

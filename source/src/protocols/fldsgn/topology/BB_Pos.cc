@@ -138,7 +138,7 @@ BB_Pos::update_indices( Pose const & pose )
 
 	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
-		residue_types_[ i ] = rsd.type().get_self_ptr();
+		residue_types_[ i ] = rsd.type_ptr();
 		if ( rsd.is_protein() ) {
 
 			N_index_[  i ] = rsd.atom_index( bbN );

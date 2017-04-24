@@ -427,7 +427,7 @@ PoseConformationFeatures::load_sequence(
 		while ( res.next() ) {
 			string res_type;
 			res >> res_type;
-			requested_types.push_back( residue_set->name_map( res_type ).get_self_ptr() );
+			requested_types.push_back( residue_set->name_mapOP( res_type ) );
 		}
 		make_pose_from_sequence(pose, requested_types);
 

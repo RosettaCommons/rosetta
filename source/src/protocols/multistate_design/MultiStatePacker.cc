@@ -226,7 +226,7 @@ limit_rotamer_set(
 	for ( Size rot_i(1); rot_i <= nrotamers; ++rot_i ) {
 
 		Size const rot_pos( rotsets.res_for_rotamer( rot_i ) );
-		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type().get_self_ptr() );
+		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type_ptr() );
 
 		core::chemical::AA seq_type( core::chemical::aa_unk );
 		for ( auto const & it : seq ) {

@@ -109,7 +109,7 @@ BB_Pos::bbindices_up_to_date( pose::Pose const & pose ) const
 	if ( N_.size() != pose.size() ) return false;
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( residue_types_[ ii ] != pose.residue_type( ii ).get_self_ptr() ) return false;
+		if ( residue_types_[ ii ] != pose.residue_type_ptr( ii ) ) return false;
 	}
 	return true;
 }
@@ -127,7 +127,7 @@ BB_Pos::update_indices( pose::Pose const & pose )
 
 	for ( Size i = 1; i <= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-		residue_types_[ i ] = rsd.type().get_self_ptr();
+		residue_types_[ i ] = rsd.type_ptr();
 		if ( rsd.is_protein() ) {
 
 			N_index_[  i ] = rsd.atom_index( bbN );

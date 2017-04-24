@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/RotamerSetBase.hh>
-
+#include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
@@ -124,6 +124,33 @@ public:
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
+
+};
+
+/// @brief The FACTSRsdTypeMap is a collection of FACTSRsdTypeInfo for a number of residue types
+/// (This is a separate class to shield the raw pointer usage here
+class FACTSRsdTypeMap {
+public:
+
+	FACTSRsdTypeMap();
+
+	// If you enable copy and assignment operators, you need to account for
+	// Detaching old/attaching new destruction observer to the ResidueType
+	FACTSRsdTypeMap( FACTSRsdTypeMap const & ) = delete;
+	FACTSRsdTypeMap & operator=( FACTSRsdTypeMap const & ) = delete;
+
+	~FACTSRsdTypeMap();
+
+	/// @brief get the info for the residue type, creating it if it doesn't exist
+	FACTSRsdTypeInfoCOP
+	get_type_info( core::chemical::ResidueType const & rsd_type );
+
+	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
+
+private:
+
+	// The raw pointers here are registered in the destruction observer for their respective ResidueType
+	std::map< chemical::ResidueType const *, FACTSRsdTypeInfoCOP > type_info_map_;
 
 };
 

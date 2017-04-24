@@ -21,6 +21,7 @@
 // // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
@@ -28,6 +29,8 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
+// Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/thread/ReadWriteMutex.hh>
 
 #ifdef    SERIALIZATION
@@ -75,12 +78,82 @@ private:
 };
 
 typedef utility::vector1< WaterBuilder > WaterBuilders;
+typedef utility::vector1< WaterBuilders > WaterBuildersList;
 
+typedef utility::vector1< utility::vector1< Real > >  AtomWeights;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// @brief A singleton class which stores data for LKBall terms.
+/// This is a separate singleton class, rather than static data on the LKB_ResidueInfo class
+/// so that the ResidueType destruction observer has a stable object to call back to.
+class LKBallDatabase : public utility::SingletonBase< LKBallDatabase >
+{
+public:
+	friend class utility::SingletonBase< LKBallDatabase >;
+
+	~LKBallDatabase();
+
+	/// @brief Returns true if the passed rsd_type is in the database
+	bool
+	has( chemical::ResidueType const & rsd_type ) const;
+
+	void
+	initialize_residue_type( chemical::ResidueType const & rsd_type );
+
+	/// @brief Get the water builders for the ResidueType
+	/// A vector of one per heavy atom.
+	/// @details IMPORTANT LIFETIME NOTE: The return value is only valid so long as the passed residue type is
+	WaterBuildersList const &
+	get_water_builders( chemical::ResidueType const & rsd_type ) const;
+
+	/// @brief Get the atom_weights for the ResidueType
+	/// @details IMPORTANT LIFETIME NOTE: The return value is only valid so long as the passed residue type is
+	AtomWeights const &
+	get_atom_weights( chemical::ResidueType const & rsd_type ) const;
+
+	/// danger
+	void
+	reset_arrays_danger_expert_only();
+
+private:
+
+	void
+	setup_atom_weights(
+		chemical::ResidueType const & rsd_type,
+		WaterBuildersList const & rsd_water_builders, // for sanity
+		AtomWeights & atom_wts
+	);
+
+	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
+
+private:
+
+	/// @brief private constructor
+	LKBallDatabase();
+	LKBallDatabase( LKBallDatabase const & ) = delete;
+	LKBallDatabase & operator=( LKBallDatabase const & ) = delete;
+
+private:
+
+	// The raw pointers here are registered in the destruction observer for their respective ResidueType
+	typedef std::map< chemical::ResidueType const *, WaterBuildersList > WaterBuilderMap;
+	typedef std::map< chemical::ResidueType const *, AtomWeights > AtomWeightsMap;
+
+	WaterBuilderMap water_builder_map_;
+	AtomWeightsMap atom_weights_map_;
+
+#ifdef MULTI_THREADED
+	static utility::thread::ReadWriteMutex lkball_db_mutex_;
+#endif
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Holds the locations of ideal waters attached to the atoms of a Residue
 class LKB_ResidueInfo; // fwd
 typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
@@ -141,45 +214,11 @@ public:
 	) const;
 
 
-	/// danger
-	static
-	void
-	reset_arrays_danger_expert_only();
-
 	bool
 	matches_residue_type( chemical::ResidueType const & rsd_type ) const;
 
 	chemical::ResidueType const &
 	residue_type() const;
-
-private:
-
-	typedef std::map< chemical::ResidueType const *, utility::vector1< WaterBuilders > > WaterBuilderMap;
-	typedef std::map< chemical::ResidueType const *, utility::vector1< utility::vector1< Real > > > AtomWeightsMap;
-
-	/////////////////////////////////////////////////////////////////////////////
-	// STATIC data
-	/////////////////////////////////////////////////////////////////////////////
-	static WaterBuilderMap water_builder_map_;
-	static AtomWeightsMap atom_weights_map_;
-
-#ifdef MULTI_THREADED
-
-private:
-	static utility::thread::ReadWriteMutex lkball_db_mutex_;
-
-#endif
-
-private:
-	void
-	initialize_residue_type( chemical::ResidueType const & rsd_type ) const;
-
-	void
-	setup_atom_weights(
-		chemical::ResidueType const & rsd_type,
-		utility::vector1< WaterBuilders > const & rsd_water_builders, // for sanity
-		utility::vector1< utility::vector1< Real > > & atom_wts
-	) const;
 
 private:
 	chemical::ResidueTypeCOP rsd_type_;

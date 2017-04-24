@@ -41,6 +41,7 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/bond_support.hh>
+#include <core/chemical/RestypeDestructionEvent.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -160,10 +161,7 @@ ResidueType::ResidueType(
 
 ResidueType::~ResidueType()
 {
-	//This tracer output can cause a segfault at the end of execution under certain circumstances,
-	//including running rosetta_scripts with match constraints on a static build, because tracer is already destroyed.
-	//I'm removing it.
-	//tr.Trace << "Residue dstor" << std::endl;
+	destruction_obs_hub_( RestypeDestructionEvent( this ) ); // Notify the destruction observers that this residue type is being destroyed.
 }
 
 ResidueType::ResidueType( ResidueType const & residue_type ):
@@ -176,6 +174,11 @@ ResidueType::ResidueType( ResidueType const & residue_type ):
 ResidueType &
 ResidueType::operator=( ResidueType const & residue_type )
 {
+	// We're overwriting the contents of the ResidueType - it's effectively being destroyed.
+	// Notify observers and then disconnect them.
+	destruction_obs_hub_( RestypeDestructionEvent( this ) );
+	destruction_obs_hub_.clear();
+
 	atom_types_ = residue_type.atom_types_;
 	elements_ = residue_type.elements_;
 	mm_atom_types_ = residue_type.mm_atom_types_;
@@ -3664,6 +3667,12 @@ void
 ResidueType::finalize()
 {
 
+	// We've made substantial changes to this ResidueType.
+	// On the off chance any observers has cached data about it,
+	// we need to notify them that the ResidueType they were observing is effectively destroyed.
+	destruction_obs_hub_( RestypeDestructionEvent( this ) );
+	destruction_obs_hub_.clear();
+
 	regenerate_graph_vertex_index( graph_ );
 
 	setup_atom_ordering();
@@ -4859,6 +4868,10 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	// ( will call finalization function on load )
 	arc( CEREAL_NVP( defined_adducts_ ) ); // utility::vector1<Adduct>
 	arc( CEREAL_NVP( nondefault_ ) ); // _Bool
+
+	// Observers aren't being serialized - any observer on the remote side will have to reattach itself.
+	// EXEMPT destruction_obs_hub_
+	// EXEMPT destruction_obs_mutex_;
 }
 
 /// @brief Automatically generated deserialization method
@@ -5051,6 +5064,10 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( rama_prepro_map_file_name_beforeproline_ ); // std::string
 	arc( defined_adducts_ ); // utility::vector1<Adduct>
 	arc( nondefault_ ); // _Bool
+
+	// Observers aren't being serialized - any observer on the remote side will have to reattach itself.
+	// EXEMPT destruction_obs_hub_
+	// EXEMPT destruction_obs_mutex_;
 
 	//finalize(); // Make sure all the derived data is up-to-date
 	// EXEMPT finalized_

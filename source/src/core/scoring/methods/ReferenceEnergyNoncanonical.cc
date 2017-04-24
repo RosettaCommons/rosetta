@@ -126,7 +126,6 @@ ReferenceEnergyNoncanonical::residue_energy(
 	case 20 : emap[ ref_nc ] +=   0.51; break;
 	default :
 		return;
-		break;
 	}
 }
 

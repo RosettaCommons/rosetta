@@ -60,6 +60,7 @@
 
 #include <core/scoring/hbonds/hbonds.hh>
 
+#include <core/chemical/RestypeDestructionEvent.hh>
 #include <core/conformation/residue_datacache.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
@@ -117,6 +118,79 @@ namespace core {
 namespace scoring {
 namespace elec {
 
+CountPairRepMap::~CountPairRepMap() {
+	for ( auto entry: cp_rep_map_ ) {
+		entry.first->detach_destruction_obs( &CountPairRepMap::restype_destruction_observer, this );
+	}
+}
+
+std::map<core::Size,core::Size> const &
+CountPairRepMap::get_map( chemical::ResidueType const & restype ) {
+
+	if ( cp_rep_map_.count( & restype ) == 0 ) {
+		// make parameters
+		std::map<core::Size,core::Size> rsd_map;
+
+		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_byname().find( restype.name3() );
+
+		if ( name_iter == cp_byname().end() ) {
+			TR.Trace << "Warning!  Unable to find countpair representatives for restype " << restype.name3() << std::endl;
+		} else {
+			std::map<std::string,std::string> const & atms = name_iter->second;
+			for ( std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter ) {
+				if ( restype.has(atom_iter->first) && restype.has(atom_iter->second) ) {
+					core::Size idx1 = restype.atom_index(atom_iter->first);
+					core::Size idx2 = restype.atom_index(atom_iter->second);
+					rsd_map.insert( std::make_pair(idx1,idx2) );
+				} else {
+					TR.Trace << "Warning!  Unable to find atompair " << atom_iter->first << "," << atom_iter->second  << " for " << restype.name3() << " (" << restype.name() << ")" << std::endl;
+				}
+			}
+		}
+
+		restype.attach_destruction_obs( &CountPairRepMap::restype_destruction_observer, this );
+		cp_rep_map_[ & restype ] = rsd_map;
+	}
+
+	return cp_rep_map_[ & restype ];
+}
+
+std::map<core::Size,core::Size> const &
+CountPairRepMap::get_map( chemical::ResidueType const & restype ) const {
+
+	if ( cp_rep_map_.count( & restype ) == 0 ) {
+		utility_exit_with_message( "Unable to get CountPair map for residue type " + restype.name() );
+	} else {
+		return cp_rep_map_.at( & restype );
+	}
+}
+
+void
+CountPairRepMap::restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event ) {
+	cp_rep_map_.erase( event.restype );
+}
+
+
+CPRepMapType const &
+CountPairRepMap::cp_byname() {
+	if ( cp_rep_map_byname_ == nullptr ) {
+		cp_rep_map_byname_ = core::scoring::ScoringManager::get_instance()->get_cp_rep_map_byname();
+	}
+	return *cp_rep_map_byname_;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 /// @details This must return a fresh instance of the FA_ElecEnergy class,
 /// never an instance already in use
@@ -144,11 +218,12 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-	eval_intrares_ST_only_( options.eval_intrares_elec_ST_only() )
+	eval_intrares_ST_only_( options.eval_intrares_elec_ST_only() ),
+	cp_rep_map_( new CountPairRepMap ),
+	nres_monomer_( 0 )
 {
 	initialize();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
@@ -157,7 +232,9 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	eval_intrares_ST_only_( src.eval_intrares_ST_only_ )
+	eval_intrares_ST_only_( src.eval_intrares_ST_only_ ),
+	cp_rep_map_( src.cp_rep_map_ ),
+	nres_monomer_( 0 )
 {
 	initialize();
 }
@@ -173,14 +250,6 @@ FA_ElecEnergy::initialize() {
 	// read countpair tables from DB
 	use_cp_rep_ = option[ score::elec_representative_cp ]() || option[ score::elec_representative_cp_flip ]();
 	flip_cp_rep_ = option[ score::elec_representative_cp_flip ]();
-	if ( use_cp_rep_ ) {
-		get_cp_tables(); //Lazily loaded once and only once.
-	}
-}
-
-void
-FA_ElecEnergy::get_cp_tables() {
-	cp_rep_map_byname_ = core::scoring::ScoringManager::get_instance()->get_cp_rep_map_byname();
 }
 
 core::Size
@@ -193,34 +262,8 @@ FA_ElecEnergy::get_countpair_representative_atom(
 	// for now ...
 	if ( !restype.is_protein() ) return atm_i;
 
-	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator iter = cp_rep_map_.find( & restype );
-	if ( iter == cp_rep_map_.end() ) {
-		// make parameters
-		std::map<core::Size,core::Size> rsd_map;
-
-		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_rep_map_byname_->find( restype.name3() );
-
-		if ( name_iter == cp_rep_map_byname_->end() ) {
-			TR.Trace << "Warning!  Unable to find countpair representatives for restype " << restype.name3() << std::endl;
-		} else {
-			std::map<std::string,std::string> const & atms = name_iter->second;
-			for ( std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter ) {
-				if ( restype.has(atom_iter->first) && restype.has(atom_iter->second) ) {
-					core::Size idx1 = restype.atom_index(atom_iter->first);
-					core::Size idx2 = restype.atom_index(atom_iter->second);
-					rsd_map.insert( std::make_pair(idx1,idx2) );
-				} else {
-					TR.Trace << "Warning!  Unable to find atompair " << atom_iter->first << "," << atom_iter->second  << " for " << restype.name3() << " (" << restype.name() << ")" << std::endl;
-				}
-			}
-		}
-
-		cp_rep_map_[ & restype ] = rsd_map;
-
-		iter = cp_rep_map_.find( & restype );
-	}
-
-	std::map<core::Size,core::Size> const &mapping_i = iter->second;
+	debug_assert( cp_rep_map_ != nullptr );
+	std::map<core::Size,core::Size> const &mapping_i = cp_rep_map_->get_map( restype );
 	std::map<core::Size,core::Size>::const_iterator iter_map_i = mapping_i.find(atm_i);
 	if ( iter_map_i == mapping_i.end() ) {
 		return atm_i;
@@ -637,7 +680,7 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 		get_countpair_representative_atom(rsd1.type(),1);
 		get_countpair_representative_atom(rsd2.type(),1);
 
-		nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair, cp_rep_map_[&(rsd1.type())], cp_rep_map_[&(rsd2.type())] );
+		nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair, cp_rep_map_->get_map(rsd1.type()), cp_rep_map_->get_map(rsd2.type()) );
 	}
 
 	pair_data.set_data( elec_pair_nblist, nblist );
@@ -1392,7 +1435,7 @@ void
 create_rotamer_descriptor(
 	conformation::Residue const & res,
 	trie::CPDataCorrespondence const &cpdata_map,
-	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > const &cp_reps,
+	CountPairRepMap const & cp_reps,
 	trie::RotamerDescriptor< electrie::ElecAtom, CPDAT > & rotamer_descriptor
 )
 {
@@ -1405,9 +1448,8 @@ create_rotamer_descriptor(
 	for ( Size jj = 1; jj <= res.nheavyatoms(); ++jj ) {
 		ElecAtom newatom;
 		CPDAT cpdata;
-		std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()));
 		core::Size jj_rep = jj;
-		if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
+		if ( cp_reps.has( res.type() ) ) jj_rep=lookup_cp_map( cp_reps.get_map( res.type() ), jj );
 		initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
 
 		newatom.atom( res.atom(jj) );
@@ -1428,9 +1470,8 @@ create_rotamer_descriptor(
 			newhatom.charge( res.atomic_charge( kk ) );
 
 			CPDAT hcpdata;
-			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()));
 			core::Size kk_rep = kk;
-			if ( it != cp_reps.end() ) kk_rep=lookup_cp_map( it->second, kk );
+			if ( cp_reps.has( res.type() ) ) kk_rep=lookup_cp_map( cp_reps.get_map( res.type() ), kk );
 			initialize_cpdata_for_atom( hcpdata, kk_rep, res, cpdata_map );
 
 			RotamerDescriptorAtom< ElecAtom, CPDAT> hrdatom( newhatom, hcpdata );
@@ -1461,7 +1502,7 @@ FA_ElecEnergy::create_rotamer_trie(
 			cpdata_map.n_entries() > 3 ) {
 		utility::vector1< RotamerDescriptor< electrie::ElecAtom, CountPairDataGeneric > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
-			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, *cp_rep_map_, rotamer_descriptors[ ii ] );
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
@@ -1469,7 +1510,7 @@ FA_ElecEnergy::create_rotamer_trie(
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_1 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
-			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, *cp_rep_map_, rotamer_descriptors[ ii ] );
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
@@ -1477,7 +1518,7 @@ FA_ElecEnergy::create_rotamer_trie(
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_2 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
-			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, *cp_rep_map_, rotamer_descriptors[ ii ] );
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
@@ -1485,7 +1526,7 @@ FA_ElecEnergy::create_rotamer_trie(
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_3 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
-			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, *cp_rep_map_, rotamer_descriptors[ ii ] );
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
@@ -1518,22 +1559,22 @@ FA_ElecEnergy::create_rotamer_trie(
 			cpdata_map.max_connpoints_for_residue() > 1 ||
 			cpdata_map.n_entries() > 3 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairDataGeneric > > rotamer_descriptors( 1 );
-		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
 		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_1 > > rotamer_descriptors( 1 );
-		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
 		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_2 > > rotamer_descriptors( 1 );
-		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
 		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_3 > > rotamer_descriptors( 1 );
-		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
 		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else {

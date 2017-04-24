@@ -59,15 +59,48 @@ struct weight_triple
 	Real wsc_sc_;
 };
 
+/// @brief A class to encapsulate the raw-pointer-based data caching
+class CountPairRepMap {
+public:
+
+	CountPairRepMap() = default;
+
+	// If you enable assignment or copying, you have to make sure to
+	// add attaching/detatching of the instance to the ResidueType deletion observers
+	CountPairRepMap( CountPairRepMap const & ) = delete;
+	CountPairRepMap & operator=( CountPairRepMap const & ) = delete;
+
+	~CountPairRepMap();
+
+	bool
+	has( chemical::ResidueType const & restype ) const { return cp_rep_map_.count( &restype ) != 0; }
+
+	std::map<core::Size,core::Size> const &
+	get_map( chemical::ResidueType const & restype );
+
+	std::map<core::Size,core::Size> const &
+	get_map( chemical::ResidueType const & restype ) const;
+
+	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
+
+private:
+	/// Return the byname repmap, loading it if we haven't already done so.
+	CPRepMapType const & cp_byname();
+
+private:
+	// The raw pointers here are registered in the destruction observer for their respective ResidueType
+	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > cp_rep_map_;
+	CPRepMapTypeCOP cp_rep_map_byname_;
+};
 
 class FA_ElecEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
+	FA_ElecEnergy() = delete; // Need to initialize with options
 
 	FA_ElecEnergy( methods::EnergyMethodOptions const & options );
-
 
 	FA_ElecEnergy( FA_ElecEnergy const & src );
 
@@ -399,10 +432,6 @@ public:
 
 
 	//fpd countpair representatives: read tables from DB
-	void
-	get_cp_tables();
-
-	//fpd countpair representatives: read tables from DB
 	core::Size
 	get_countpair_representative_atom(
 		core::chemical::ResidueType const & restype,
@@ -489,8 +518,7 @@ private:
 
 	//fpd: countpair representative atoms
 	bool use_cp_rep_, flip_cp_rep_;
-	mutable std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > cp_rep_map_;
-	CPRepMapTypeCOP cp_rep_map_byname_;
+	CountPairRepMapOP cp_rep_map_;
 
 	mutable Size nres_monomer_;
 

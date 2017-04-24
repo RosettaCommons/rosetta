@@ -349,7 +349,7 @@ GenBornPotential::build_placeholders(
 			gb_info.set_placeholder( i, existing_rsd.clone(), GenBornResidueInfoOP( new GenBornResidueInfo( existing_rsd ) ) );
 		} else {
 			// build a placeholder at this position
-			chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set->name_map("GB_AA_PLACEHOLDER").get_self_ptr() );
+			chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set->name_mapOP("GB_AA_PLACEHOLDER") );
 			// use appropriate termini variants if necessary:
 			if ( existing_rsd.is_lower_terminus() ) {
 				protein_placeholder_residue_type = chemical::ResidueTypeCOP(

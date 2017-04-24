@@ -470,9 +470,9 @@ P_AA::get_Paa_pp_deriv(
 			Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
 			switch ( tor_id.torsion()  ) {
 			case phi_id :
-				return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
+				return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi;
 			case psi_id :
-				return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
+				return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi;
 			default :
 				return EnergyDerivative( 0.0 );
 			}
@@ -480,9 +480,9 @@ P_AA::get_Paa_pp_deriv(
 			Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
 			switch ( tor_id.torsion()  ) {
 			case phi_id :
-				return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
+				return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi;
 			case psi_id :
-				return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
+				return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi;
 			default :
 				return EnergyDerivative( 0.0 );
 			}

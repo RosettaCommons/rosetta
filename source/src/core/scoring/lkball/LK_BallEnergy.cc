@@ -1282,8 +1282,9 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 				// dR/datom1 = dR/dwater * dwater/datom1
 				//core::Real dwater = f2.length();
 				//Real denom = dwater*dwater*dwater;
+				WaterBuilders const & rsd1_wb( rsd1_info.get_water_builder( rsd1 , heavyatom1 ) );
 				{
-					Size atom1 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom1();
+					Size atom1 = rsd1_wb[i].atom1();
 					Vector const & r1_atom1_xyz( rsd1.xyz( atom1 ) );
 
 					numeric::xyzMatrix< Real >const & dwater_datom1 = rsd1_info.atom1_derivs()[heavyatom1][i];
@@ -1299,7 +1300,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 					r1_at_derivs[atom1].f2() += dE_dr_over_r * f2t;
 				}
 				{
-					Size atom2 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom2();
+					Size atom2 = rsd1_wb[i].atom2();
 					Vector const & r1_atom2_xyz( rsd1.xyz( atom2 ) );
 
 					numeric::xyzMatrix< Real >const & dwater_datom2 = rsd1_info.atom2_derivs()[heavyatom1][i];
@@ -1315,7 +1316,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 					r1_at_derivs[atom2].f2() += dE_dr_over_r * f2t;
 				}
 				{
-					Size atom3 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom3();
+					Size atom3 = rsd1_wb[i].atom3();
 					Vector const & r1_atom3_xyz( rsd1.xyz( atom3 ) );
 
 					numeric::xyzMatrix< Real >const & dwater_datom3 = rsd1_info.atom3_derivs()[heavyatom1][i];
@@ -1377,8 +1378,9 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 
 			// derivatives for the desolvated atoms
 			// dR/datom1 = dR/dwater * dwater/datom1
+			WaterBuilders const & rsd1_wb( rsd1_info.get_water_builder( rsd1 , heavyatom1 ) );
 			{
-				Size atom1 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom1();
+				Size atom1 = rsd1_wb[i].atom1();
 				Vector const & r1_atom1_xyz( rsd1.xyz( atom1 ) );
 
 				numeric::xyzMatrix< Real >const & dwater_datom1 = rsd1_info.atom1_derivs()[heavyatom1][i];
@@ -1394,7 +1396,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 				r1_at_derivs[atom1].f2() += f2t;
 			}
 			{
-				Size atom2 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom2();
+				Size atom2 = rsd1_wb[i].atom2();
 				Vector const & r1_atom2_xyz( rsd1.xyz( atom2 ) );
 
 				numeric::xyzMatrix< Real >const & dwater_datom2 = rsd1_info.atom2_derivs()[heavyatom1][i];
@@ -1410,7 +1412,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 				r1_at_derivs[atom2].f2() += f2t;
 			}
 			{
-				Size atom3 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom3();
+				Size atom3 = rsd1_wb[i].atom3();
 				Vector const & r1_atom3_xyz( rsd1.xyz( atom3 ) );
 
 				numeric::xyzMatrix< Real >const & dwater_datom3 = rsd1_info.atom3_derivs()[heavyatom1][i];

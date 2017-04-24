@@ -626,8 +626,8 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res ] = count_disulfides;
-			disulfide_residue_types_[ ii ] = pose.residue_type( ii ).get_self_ptr();
-			disulfide_residue_types_[ other_res ] = pose.residue_type( other_res ).get_self_ptr();
+			disulfide_residue_types_[ ii ] = pose.residue_type_ptr( ii );
+			disulfide_residue_types_[ other_res ] = pose.residue_type_ptr( other_res );
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res ) );
 			disulfide_atom_indices_.push_back(
 				std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (

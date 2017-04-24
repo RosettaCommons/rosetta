@@ -162,9 +162,9 @@ public:
 				core::Real energy1(0.0), energy2(0.0);
 				utility::vector1< core::Real > mainchain_tors(2, 0.0);
 				mainchain_tors[1] = phi; mainchain_tors[2] = psi;
-				rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type(curpos).get_self_ptr(), pose->residue_type(curpos+1).get_self_ptr(), mainchain_tors, energy1, gradient, false); //Get energy
+				rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type_ptr(curpos), pose->residue_type_ptr(curpos+1), mainchain_tors, energy1, gradient, false); //Get energy
 				mainchain_tors[1] = -1.0*phi; mainchain_tors[2] = -1.0*psi;
-				rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type(curpos).get_self_ptr(), pose->residue_type(curpos+1).get_self_ptr(), mainchain_tors, energy2, gradient, false); //Get energy of mirror-image conformation.
+				rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type_ptr(curpos), pose->residue_type_ptr(curpos+1), mainchain_tors, energy2, gradient, false); //Get energy of mirror-image conformation.
 				TR << phi << "\t" << psi << "\t" << energy1 << "\t" << energy2 << "\n";
 				TS_ASSERT_DELTA( energy1, energy2, threshold);
 			}

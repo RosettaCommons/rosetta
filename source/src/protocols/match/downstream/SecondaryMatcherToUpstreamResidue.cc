@@ -285,7 +285,7 @@ SecondaryMatcherToUpstreamResidue::build(
 	for ( Size ii = 1; ii <= target_geomcst_coords_->n_restypes(); ++ii ) {
 		core::conformation::Residue target_residue( *target_geomcst_coords_->restype( ii ), false );
 		Size const ii_natoms = target_geomcst_coords_->n_atoms_for_restype( ii );
-		core::chemical::ResidueTypeCOP us_res_type = upstream_residue.type().get_self_ptr();
+		core::chemical::ResidueTypeCOP us_res_type = upstream_residue.type_ptr();
 		//TR << " sec. matched  residue type:  " << us_res_type->name() << std::endl;
 
 		for ( Size jj = 1; jj <= target_geomcst_coords_->n_rotamers_for_restype( ii ); ++jj ) {
@@ -628,7 +628,7 @@ SecondaryMatcherToUpstreamResidue::count_rotamer(
 			++last_seen_restype_index_;
 		}
 		runtime_assert( last_seen_restype_index_ <= target_restypes_.size() );
-		last_seen_restype_ = upstream_conformation.type().get_self_ptr();
+		last_seen_restype_ = upstream_conformation.type_ptr();
 	}
 	++n_rotamers_per_target_restype_[ last_seen_restype_index_ ];
 }
@@ -650,7 +650,7 @@ SecondaryMatcherToUpstreamResidue::store_rotamer_coords(
 			++last_seen_restype_index_;
 		}
 		runtime_assert( last_seen_restype_index_ <= target_restypes_.size() );
-		last_seen_restype_ = upstream_conformation.type().get_self_ptr();
+		last_seen_restype_ = upstream_conformation.type_ptr();
 		count_rotamer_for_lastseen_restype_ = 1;
 
 	}

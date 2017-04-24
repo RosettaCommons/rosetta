@@ -162,7 +162,7 @@ public:
 		TS_ASSERT_EQUALS( algo_strings[2], "  not so fat after all" );
 
 		utility::vector1< core::Size > const & at_ind_upres2_ser
-			= mcfil2->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 2, const_residue_set->name_map("SER").get_self_ptr() );
+			= mcfil2->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 2, const_residue_set->name_mapOP("SER") );
 
 		TS_ASSERT_EQUALS( at_ind_upres2_ser.size(), 1 );
 		TS_ASSERT_EQUALS( at_ind_upres2_ser[1], const_residue_set->name_map("SER").atom_index("CB")  );
@@ -194,7 +194,7 @@ public:
 
 		TS_ASSERT_EQUALS( down_res4_at1[1], const_residue_set->name_map("D2MX").atom_index("X1") );
 
-		utility::vector1< core::Size > const & at_ind_upres4_phe = mcfil4->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 1, const_residue_set->name_map("PHE").get_self_ptr() );
+		utility::vector1< core::Size > const & at_ind_upres4_phe = mcfil4->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 1, const_residue_set->name_mapOP("PHE") );
 
 		TS_ASSERT_EQUALS( at_ind_upres4_phe.size(), 6 );
 

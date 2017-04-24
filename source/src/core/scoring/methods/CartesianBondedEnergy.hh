@@ -21,6 +21,7 @@
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
@@ -232,6 +233,13 @@ class IdealParametersDatabase  : public utility::pointer::ReferenceCount {
 public:
 	IdealParametersDatabase(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
+	// If you enable copy and assignment operators, you need to account for
+	// Detaching old/attaching new destruction observer to the ResidueType
+	IdealParametersDatabase( IdealParametersDatabase const & ) = delete;
+	IdealParametersDatabase & operator=( IdealParametersDatabase const & ) = delete;
+
+	~IdealParametersDatabase();
+
 	void init(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
 	CartBondedParametersCOP
@@ -299,6 +307,8 @@ public:
 	Real k_torsion() { return k_torsion_; }
 	Real k_torsion_proton() { return k_torsion_proton_; }
 	Real k_torsion_improper() { return k_length_; }
+
+	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
 
 private:
 	// helper functions: find the ideal values by constructing from Rosetta's params file
@@ -372,8 +382,10 @@ private:
 	bool bbdep_bond_params_, bbdep_bond_devs_;
 
 	// per residue-type data
+	// The raw pointers here are registered in the destruction observer for their respective ResidueType
 	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > prepro_restype_data_;
 	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > nonprepro_restype_data_;
+
 };
 
 

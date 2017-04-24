@@ -293,14 +293,14 @@ GoapEnergy::read_angle_definitions( std::string const & connection_file )
 			break;
 		}
 
-		chemical::ResidueType const &rsdtype = rsdtypeset->name_map( s1 );
+		chemical::ResidueTypeCOP rsdtype = rsdtypeset->name_mapOP( s1 );
 
 		GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( s1 );
 
 		if ( it == rsdtypemap_.end() ) {
 			GoapRsdTypeOP rsdtypeinfo( new GoapRsdType );
-			//std::cout << "Adding new residue info for " << rsdtype.name() << std::endl;
-			rsdtypeinfo->setup_rsdtype( rsdtype.get_self_ptr() );
+			//std::cout << "Adding new residue info for " << rsdtype->name() << std::endl;
+			rsdtypeinfo->setup_rsdtype( rsdtype );
 			rsdtypemap_[ s1 ] = rsdtypeinfo;
 			it = rsdtypemap_.find( s1 );
 		}
@@ -313,9 +313,9 @@ GoapEnergy::read_angle_definitions( std::string const & connection_file )
 			if ( read_type == 1 ) { // Atom order definition
 				std::string s2("");
 				linestream >> s2;
-				debug_assert( rsdtype.has( s2 ) );
+				debug_assert( rsdtype->has( s2 ) );
 
-				Size const atmno( rsdtype.atom_index( s2 ) );
+				Size const atmno( rsdtype->atom_index( s2 ) );
 
 				rsdtypeinfo->add_atmname_using( s2 );
 				rsdtypeinfo->set_using( atmno, true );
@@ -332,8 +332,8 @@ GoapEnergy::read_angle_definitions( std::string const & connection_file )
 				std::string const atmname = rsdtypeinfo->atmname_using( iatm+4 );
 				std::string const rootname = rsdtypeinfo->atmname_using( i2 );
 
-				Size const atmno( rsdtype.atom_index( atmname ) ) ;
-				Size const rootno( rsdtype.atom_index( rootname ) );
+				Size const atmno( rsdtype->atom_index( atmname ) ) ;
+				Size const rootno( rsdtype->atom_index( rootname ) );
 
 				// Note that root_atom_[1:4] are assigned as 0
 				rsdtypeinfo->set_root_atom( atmno, rootno );
@@ -346,8 +346,8 @@ GoapEnergy::read_angle_definitions( std::string const & connection_file )
 				std::string const atmname = rsdtypeinfo->atmname_using( iatm+4 );
 				std::string const anglename = rsdtypeinfo->atmname_using( i2 );
 
-				Size const atmno( rsdtype.atom_index( atmname ) ) ;
-				Size const angleno( rsdtype.atom_index( anglename ) );
+				Size const atmno( rsdtype->atom_index( atmname ) ) ;
+				Size const angleno( rsdtype->atom_index( anglename ) );
 
 				rsdtypeinfo->set_angle_atom( atmno, angleno );
 			}

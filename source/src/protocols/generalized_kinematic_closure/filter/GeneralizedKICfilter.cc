@@ -793,8 +793,8 @@ GeneralizedKICfilter::apply_rama_prepro_check(
 
 	rama.eval_rpp_rama_score(
 		pose.conformation(),
-		this_residue.type().get_self_ptr(),
-		pose.residue_type(that_residue_index).get_self_ptr(),
+		this_residue.type_ptr(),
+		pose.residue_type_ptr(that_residue_index),
 		mainchain_torsions,
 		rama_out,
 		gradient,

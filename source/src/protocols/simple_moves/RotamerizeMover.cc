@@ -231,7 +231,7 @@ RotamerizeMover::task_is_valid( Pose const & pose ) const
 {
 	if ( task_->total_residue() != pose.size() ) return false;
 	for ( Size i(1); i <= pose.size(); ++i ) {
-		chemical::ResidueTypeCOP r( pose.residue_type(i).get_self_ptr() );
+		chemical::ResidueTypeCOP r( pose.residue_type_ptr(i) );
 		if ( ! task_->residue_task(i).is_original_type( r ) ) return false;
 	}
 	return true;

@@ -65,7 +65,7 @@ public:
 
 		if ( add_nmethyl ) {
 			core::chemical::ResidueTypeSetCOP rsd_set(pose->residue_type_set_for_pose( pose->residue_type(2).mode() ));
-			core::chemical::ResidueTypeCOP rsd_type( pose->residue_type(2).get_self_ptr() );
+			core::chemical::ResidueTypeCOP rsd_type( pose->residue_type_ptr(2) );
 			core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );
 			core::pose::replace_pose_residue_copying_existing_coordinates( *pose, 2, *new_rsd_type );
@@ -82,7 +82,7 @@ public:
 		core::Size leftcount(0);
 		for ( core::Size i=1; i<=1000; ++i ) {
 			utility::vector1 < core::Real > phipsi;
-			rama.random_mainchain_torsions( pose->conformation(), pose->residue_type(2).get_self_ptr(), pose->residue_type(3).get_self_ptr(), phipsi);
+			rama.random_mainchain_torsions( pose->conformation(), pose->residue_type_ptr(2), pose->residue_type_ptr(3), phipsi);
 			TR << phipsi[1] << "\t" << phipsi[2] << "\n";
 			if ( phipsi[1] <= 0 ) ++leftcount;
 		}
@@ -163,12 +163,12 @@ public:
 			utility::vector1< core::Real > mainchain_tors(2);
 			mainchain_tors[1] = pose.phi(ir);
 			mainchain_tors[2] = pose.psi(ir);
-			rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type(ir).get_self_ptr(), pose.residue_type(ir+1).get_self_ptr(), mainchain_tors, direct_calc, gradient, false);
+			rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type_ptr(ir), pose.residue_type_ptr(ir+1), mainchain_tors, direct_calc, gradient, false);
 			if ( ir > 2 ) {
 				utility::vector1< core::Real > mainchain_tors2(2);
 				mainchain_tors2[1] = pose.phi(ir-1);
 				mainchain_tors2[2] = pose.psi(ir-1);
-				rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type(ir-1).get_self_ptr(), pose.residue_type(ir).get_self_ptr(), mainchain_tors2, direct_calc_2, gradient, false);
+				rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type_ptr(ir-1), pose.residue_type_ptr(ir), mainchain_tors2, direct_calc_2, gradient, false);
 			}
 
 			// Note that there is a subtlety, here: because the rama_prepro energy is a two-body energy computed between residue i and i+1, the score is the sum of the rama_prepro score for

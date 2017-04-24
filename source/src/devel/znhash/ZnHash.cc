@@ -895,7 +895,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		debug_assert( restypeset->mode() == matchres.type().mode() );
 
 		// find the appropriate residue type for this position
-		core::chemical::ResidueTypeCOP newrestype( matchres.type().get_self_ptr() );
+		core::chemical::ResidueTypeCOP newrestype( matchres.type_ptr() );
 		utility::vector1< std::string > const & matchres_variants =
 			matchres.type().properties().get_list_of_variants();
 		for ( Size jj = 1; jj <= matchres_variants.size(); ++jj ) {

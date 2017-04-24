@@ -6,12 +6,6 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-// (C) 199x-2009 University of Washington
-// (C) 199x-2009 University of California Santa Cruz
-// (C) 199x-2009 University of California San Francisco
-// (C) 199x-2009 Johns Hopkins University
-// (C) 199x-2009 University of North Carolina, Chapel Hill
-// (C) 199x-2009 Vanderbilt University
 
 /// @file   core/pose/signals/DestructionEvent.hh
 /// @brief  signal that the Pose is getting destroyed

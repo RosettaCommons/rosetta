@@ -471,7 +471,7 @@ design_residues_list(
 					!ptask.residue_task(index).has_behavior("SCAN") &&
 					!ptask.residue_task(index).being_designed() ) continue;
 		} else if ( !ptask.pack_residue( index ) ) continue;
-		design_residues.emplace_back( index, pose.residue_type( index ).get_self_ptr(), ptask.design_residue( index ) );
+		design_residues.emplace_back( index, pose.residue_type_ptr( index ), ptask.design_residue( index ) );
 	}
 }
 

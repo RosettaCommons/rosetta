@@ -229,7 +229,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			// The next call requires reference -> COP because ResidueTypeSet's
 			// methods are not yet consistent in handing out ref vs COP.
 			ResidueTypeCOP rsd_type;
-			rsd_type = residue_set.name_map( fullname_list[ index ] ).get_self_ptr();
+			rsd_type = residue_set.name_mapOP( fullname_list[ index ] );
 			requested_types.push_back( rsd_type );
 
 		} else {
@@ -492,7 +492,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 				}
 
 				// Select a matching ResidueType and add to list (or exit without a match).
-				ResidueTypeCOP residue( residue_set.name_map( residue_type_name.str() ).get_self_ptr() );
+				ResidueTypeCOP residue( residue_set.name_mapOP( residue_type_name.str() ) );
 				Size const n_branches( branch_points.size() );
 				for ( uint i( 1 ); i <= n_branches; ++i ) {
 					VariantType const variant(

@@ -626,8 +626,8 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res_ii ] = count_disulfides;
-			disulfide_residue_types_[ ii ] = pose.residue_type( ii ).get_self_ptr();
-			disulfide_residue_types_[ other_res_ii ] = pose.residue_type( other_res_ii ).get_self_ptr();
+			disulfide_residue_types_[ ii ] = pose.residue_type_ptr( ii );
+			disulfide_residue_types_[ other_res_ii ] = pose.residue_type_ptr( other_res_ii );
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res_ii ) );
 			disulfide_atom_indices_.push_back( std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
 				DisulfideAtomIndices( pose.residue(ii ) ), DisulfideAtomIndices( pose.residue( other_res_ii ) ) ));

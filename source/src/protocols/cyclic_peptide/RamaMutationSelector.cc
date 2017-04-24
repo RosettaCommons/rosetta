@@ -112,7 +112,7 @@ RamaMutationSelector::apply(
 			continue; //Skip terminal residues.
 		}
 
-		core::chemical::ResidueTypeCOP restype( has_target_type ? nullptr /*set below*/ : pose.residue_type(ir).get_self_ptr() );
+		core::chemical::ResidueTypeCOP restype( has_target_type ? nullptr /*set below*/ : pose.residue_type_ptr(ir) );
 		if ( has_target_type ) {
 			core::chemical::ResidueTypeFinder finder( *rsd_type_set );
 			finder.residue_base_name( target_type() ).variants( pose.residue_type(ir).variant_type_enums(), pose.residue_type(ir).custom_variant_types() );
@@ -128,7 +128,7 @@ RamaMutationSelector::apply(
 		if ( pose.residue(ir).has_upper_connect() ) {
 			core::Size const other_res( pose.residue(ir).connected_residue_at_resconn( pose.residue_type(ir).upper_connect_id() ) );
 			if ( other_res > 0 && other_res <= nres ) {
-				other_restype = pose.residue_type( other_res ).get_self_ptr();
+				other_restype = pose.residue_type_ptr( other_res );
 			}
 		}
 		debug_assert(other_restype != nullptr); //Should be true.

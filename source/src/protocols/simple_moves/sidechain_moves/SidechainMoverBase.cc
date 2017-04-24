@@ -231,7 +231,7 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	using numeric::conversions::radians;
 	using namespace ObjexxFCL;
 	chemical::ResidueType  const& old_res_type( old_res->type() );
-	chemical::ResidueTypeCOP new_res_type( old_res->type().get_self_ptr() ); //for now until we fix the design stuff back in...
+	chemical::ResidueTypeCOP new_res_type( old_res->type_ptr() ); //for now until we fix the design stuff back in...
 	utility::vector1<Real> const old_chi( old_res->chi() );
 	Size resnum = old_res->seqpos();
 	Size nchi( old_chi.size() );

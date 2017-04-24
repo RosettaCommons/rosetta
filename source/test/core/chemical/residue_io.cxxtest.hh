@@ -58,7 +58,7 @@ public:
 		std::string const tag(FA_STANDARD);
 		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
-		ResidueTypeCOP rsd_ref( rsd_types->name_map("TYR").get_self_ptr() );
+		ResidueTypeCOP rsd_ref( rsd_types->name_mapOP("TYR") );
 
 		test::UTracer UT("core/chemical/TYR.dot.u");
 

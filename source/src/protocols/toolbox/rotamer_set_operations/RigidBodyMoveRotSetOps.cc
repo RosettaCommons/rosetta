@@ -72,9 +72,9 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	// Initialize residuetype
 	core::chemical::ResidueTypeCOP concrete_residue;
 	if ( rotamer_set.num_rotamers() != 0 ) {
-		concrete_residue = (*rotamer_set.begin())->type().get_self_ptr();
+		concrete_residue = (*rotamer_set.begin())->type_ptr();
 	} else {
-		concrete_residue = pose.residue( sequence_position ).type().get_self_ptr();
+		concrete_residue = pose.residue_type_ptr( sequence_position );
 	}
 
 	for ( core::Size i = 1; i <= rigid_body_confs.size(); i++ ) {

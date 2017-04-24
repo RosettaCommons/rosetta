@@ -532,6 +532,15 @@ public:  // Residues
 		return residues_[seqpos]->type();
 	}
 
+	/// @brief access one of the residue's types as a COP -- avoids coord/torsion update
+	chemical::ResidueTypeCOP
+	residue_type_ptr( Size seqpos ) const
+	{
+		debug_assert( seqpos >=1 );
+		debug_assert( seqpos <= size() );
+		return residues_[seqpos]->type_ptr();
+	}
+
 	/// @brief  Inefficient -- constructs copy of residues_
 	ResidueCOPs
 	const_residues() const;

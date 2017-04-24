@@ -7,26 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pose/signals/DestructionEvent.fwd.hh
-/// @brief forward declaration for core::pose::signals::DestructionEvent
-/// @author Yih-En Andrew Ban (yab@u.washington.edu)
+/// @file   core/chemical/RestypeDestructionEvent.fwd.hh
+/// @brief forward declaration for core::chemical::RestypeDestructionEvent
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#ifndef INCLUDED_core_pose_signals_DestructionEvent_fwd_hh
-#define INCLUDED_core_pose_signals_DestructionEvent_fwd_hh
+#ifndef INCLUDED_core_chemical_RestypeDestructionEvent_fwd_hh
+#define INCLUDED_core_chemical_RestypeDestructionEvent_fwd_hh
 
 
 namespace core {
-namespace pose {
-namespace signals {
+namespace chemical {
 
+struct RestypeDestructionEvent;
 
-/// @brief forward declaration for core::pose::signals::DestructionEvent
-struct DestructionEvent;
-
-
-} // namespace signals
-} // namespace pose
+} // namespace chemical
 } // namespace core
 
 
-#endif /* INCLUDED_core_pose_signals_DestructionEvent_FWD_HH */
+#endif

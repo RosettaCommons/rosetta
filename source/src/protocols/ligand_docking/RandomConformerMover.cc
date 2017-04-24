@@ -68,7 +68,7 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 		dummy_scorefxn,
 		*dummy_pack_task,
 		dummy_graph,
-		pose.residue_type(resid_).get_self_ptr(), //ResidueTypeCOP
+		pose.residue_type_ptr(resid_), //ResidueTypeCOP
 		pose.residue(resid_),
 		dummy_extra_chi_steps,
 		true /* sure, let's pretend it's buried */,

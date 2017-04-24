@@ -1004,11 +1004,11 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 		runtime_assert_string_msg(
 			loop_pose_copy.residue(loopindex).has_lower_connect() && loop_pose_copy.residue(loopindex).has_upper_connect(),
 			"Unable to apply randomize_backbone_by_rama_prepro perturbation.  The residue must be connected at both its lower and upper connections." );
-		core::chemical::ResidueTypeCOP following_rsd( loop_pose_copy.residue_type(
+		core::chemical::ResidueTypeCOP following_rsd( loop_pose_copy.residue_type_ptr(
 			loop_pose_copy.residue(loopindex).residue_connection_partner( loop_pose_copy.residue(loopindex).upper_connect().index() )
-			).get_self_ptr()
+			)
 		);
-		rama.random_mainchain_torsions( loop_pose_copy.conformation(), loop_pose_copy.residue_type(loopindex).get_self_ptr(), following_rsd, rand_torsions );
+		rama.random_mainchain_torsions( loop_pose_copy.conformation(), loop_pose_copy.residue_type_ptr(loopindex), following_rsd, rand_torsions );
 
 		core::Size const ntors( rand_torsions.size() );
 
