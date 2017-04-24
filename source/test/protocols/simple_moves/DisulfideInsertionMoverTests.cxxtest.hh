@@ -52,7 +52,8 @@ public:
 
 		test_shorter_pose_ = core::pose::PoseOP( new core::pose::Pose(*test_edge_pose_, N_TER_SHORT_PEP, C_TER) );
 
-		inserter_edges_ = protocols::simple_moves::DisulfideInsertionMoverOP( new protocols::simple_moves::DisulfideInsertionMover(PEP_CHAIN) );
+		inserter_edges_ = protocols::simple_moves::DisulfideInsertionMoverOP( new protocols::simple_moves::DisulfideInsertionMover() );
+		inserter_edges_->set_peptide_chain(PEP_CHAIN);
 
 	}
 
@@ -116,7 +117,6 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 			TS_ASSERT_EQUALS(mover->get_peptide_chain(), 2);
 			TS_ASSERT_EQUALS(mover->get_n_cyd_seqpos(), 2);
 			TS_ASSERT_EQUALS(mover->get_c_cyd_seqpos(), 6);
-			TS_ASSERT_EQUALS(mover->get_is_cyd_res_at_termini(), false);
 			TS_ASSERT_EQUALS(mover->get_scorefxn()->get_name(), "soft_rep");
 			TS_ASSERT_DELTA(mover->get_constraint_weight(), 0.1, 1e-6);
 		}

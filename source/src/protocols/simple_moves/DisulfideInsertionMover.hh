@@ -43,11 +43,8 @@ enum DisulfideCyclizationViability {
 class DisulfideInsertionMover : public protocols::moves::Mover {
 public:
 
-	// ctor
-	DisulfideInsertionMover(core::Size const peptide_chain = 1,
-		core::scoring::ScoreFunctionOP scorefxn = nullptr, core::kinematics::MoveMapOP mm = nullptr,
-		bool const is_cyd_res_at_termini = true,
-		core::Size const n_cyd_seqpos = 0, core::Size const c_cyd_seqpos = 0);
+	//empty ctor
+	DisulfideInsertionMover();
 
 	// cctor
 	DisulfideInsertionMover( DisulfideInsertionMover const & );
@@ -62,11 +59,11 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	// XRW TEMP  std::string get_name() const override { return "DisulfideInsertionMover"; }
 
-	/// @brief checks if residues next to a putative derived peptide are near enough in space to be mutated to cysteins that might form a cyclic peptide.
-	static DisulfideCyclizationViability determine_cyclization_viability(
-		core::pose::Pose const & partner_pose,
-		core::Size const n_putative_cyd_res,
-		core::Size const c_putative_cyd_res);
+	/// @brief checks if two residues in a pose are near enough in space
+	///         and geometrically similar enough to existing disulfide forming cys
+
+	DisulfideCyclizationViability determine_cyclization_viability(
+		core::pose::Pose const & partner_pose, core::Size const n_cyd_position, core::Size c_cyd_position);
 
 	// RosettaScripts implementation
 	void parse_my_tag( utility::tag::TagCOP tag,
@@ -84,14 +81,19 @@ public:
 	void set_peptide_chain(core::Size const value) { peptide_chain_num_ = value; }
 	core::Size get_peptide_chain () const {return peptide_chain_num_;}
 
-	void set_cyd_seqpos(core::Size const n_cyd_seqpos, core::Size const c_cyd_seqpos) { n_cyd_seqpos_ = n_cyd_seqpos; c_cyd_seqpos_ = c_cyd_seqpos; is_cyd_res_at_termini_ = false; }
-	void set_cyd_res_at_termini() { is_cyd_res_at_termini_ = true; }
-	bool get_is_cyd_res_at_termini() const { return is_cyd_res_at_termini_; }
+	void set_n_cyd_seqpos(core::Size const n_cyd_seqpos) { n_cyd_seqpos_ = n_cyd_seqpos; }
+	void set_c_cyd_seqpos(core::Size const c_cyd_seqpos) { c_cyd_seqpos_ = c_cyd_seqpos; }
 	core::Size get_n_cyd_seqpos() const { return n_cyd_seqpos_; }
 	core::Size get_c_cyd_seqpos() const { return c_cyd_seqpos_; }
 
 	void set_constraint_weight(core::Real const value) { constraint_weight_ = value; }
 	core::Real get_constraint_weight() const { return constraint_weight_; }
+
+	void set_max_dslf_pot(core::Real const value) {max_dslf_pot_ = value; }
+	core::Real get_max_dslf_pot () {return max_dslf_pot_; }
+
+	void set_max_dslf_energy(core::Real const value) {max_dslf_energy_ = value; }
+	core::Real get_max_dslf_energy () {return max_dslf_energy_; }
 
 	std::string
 	get_name() const override;
@@ -107,7 +109,7 @@ public:
 
 private:
 	/// @brief adds angle, dihedral angle and atom-pair constraints to the pose
-	/// Based on code by Nir London
+	///     Based on code by Nir London
 	static void setup_constraints(core::pose::Pose & peptide_receptor_pose,
 		core::conformation::Residue lower_cys,
 		core::conformation::Residue upper_cys,
@@ -134,10 +136,12 @@ private:
 	///        bond before repacking and minimization.
 	core::Real constraint_weight_;
 
-	/// @brief whether the cys seqpos' should be set to the peptide_chain termini.
-	/// If this is true, any setting to c_cyd_seqpos_ and n_cyd_seqpos_ is discarded
-	/// upon a call to apply().
-	bool is_cyd_res_at_termini_;
+	/// @brief the maximal allowed value of rot-trans deviation from database dslf bond geometry
+	/// when comparing two residues to potentially be mutated to cys to form a disulfide
+	core::Real max_dslf_pot_;
+
+	/// @brief the maximal allowed value of change in disulfide energy for the generated disulfide bonded peptide
+	core::Real max_dslf_energy_;
 
 };
 

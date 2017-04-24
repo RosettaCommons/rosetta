@@ -1181,7 +1181,7 @@ Options = Option_Group( '',
 		Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'),
 		Option( 'keep_pymol_simulation_history', 'Boolean', desc='Keep history when using show_simulation_in_pymol flag?', default='false' ),
 
-		Option( 'insert_disulfide_constraint_weight', 'Real', default='0.0', desc='Weight of the constraints on disulfide bonds formed by the DisulfideInsertionMover; EXPERIMENTAL'),
+
 
 	), # -run
 
@@ -4737,6 +4737,17 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			),
 		), # -dna:design
 	), # -dna
+
+	Option_Group('DisulfideInsertion',
+		Option( 'peptide_chain', 'Integer', desc='The number of peptide chain for which to perform a DisulfideInsertion check', default='1' ),
+		Option( 'n_cyd_seqpos', 'Integer', desc='The sequential position of the residue in the n-ter of the putative disulfide; 0 signals the peptide n-ter', default='0.0' ),
+		Option( 'c_cyd_seqpos', 'Integer', desc='The sequential position of the residue in the c-ter of the putative disulfide; 0 signals the peptide c-ter', default='0.0' ),
+		Option( 'max_dslf_pot', 'Real', desc='The maximum allowed match score for disulfide rotation and translation', default='2.0'),
+		Option( 'max_dslf_energy', 'Real', desc='The maximum allowed change in disulfide energy upon peptide disulfide bridge formation', default='1.0'),
+		Option( 'scorefxn', 'String', desc='The scorefunction to be used in disulfideInsertion'),
+		Option( 'constraint_weight', 'Real', desc='Weight of the constraints on disulfide bonds formed by the DisulfideInsertionMover; EXPERIMENTAL', default='0.0'),
+	), # optionGroup
+
 
 	##############################################################################
 	# Docking options ---------------------------------------------------------

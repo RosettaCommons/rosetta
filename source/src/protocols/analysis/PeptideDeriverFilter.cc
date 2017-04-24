@@ -841,7 +841,7 @@ PeptideDeriverFilter::derive_peptide(
 	// 1. split_by_chain() will return the chains according to the ordering of their indices
 	// 2. we assume a normal FoldTree, that is, chain-jump-chain. Constructing a new pose using pose_from_pose()
 	//    aids this assumption, but if chains are messed up (e.g. a residue from one chain covalently connected
-	//    to one from another chain), we will fail -- I honestly don't know if this is allowed is Rosetta.
+	//    to one from another chain), we will fail -- I honestly don't know if this is allowed in Rosetta.
 	//    This assumption is employed in the call to get_jump_that_builds_residue(), and I think that's it.
 	// - Yuval Sedan (yuval.sedan@mail.huji.ac.il), 2016-03-02
 	core::Size const first_chain_new_index = (first_chain_index < second_chain_index? 1 : 2);
@@ -920,8 +920,8 @@ PeptideDeriverFilter::derive_peptide(
 	const core::Size PEPTIDE_CHAIN = 2;
 
 	// TODO : perhaps we want the jump in the movemap that DisulfideInsertionMover uses to be user-defined (command-line option), to prevent the peptide from escaping the binding pocket
-	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover(PEPTIDE_CHAIN) );
-
+	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover());
+	disulfide_inserter->set_peptide_chain(PEPTIDE_CHAIN);
 	for ( core::Size const pep_length : pep_lengths_ ) {
 
 		if ( pep_length > (partner_end - partner_start + 1) ) {
@@ -1027,7 +1027,6 @@ PeptideDeriverFilter::derive_peptide(
 			core::Real cyclic_isc = UNLIKELY_ISC_VALUE;
 			core::pose::PoseOP receptor_cyclic_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
 			core::pose::PoseOP receptor_pre_cyclization_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
-
 
 			if ( (linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC) && (n_putative_cyd>=partner_start) && (c_putative_cyd<=partner_end) ) {
 				protocols::simple_moves::DisulfideCyclizationViability cyclization_viable(disulfide_inserter->determine_cyclization_viability(partner_pose, n_putative_cyd, c_putative_cyd));
