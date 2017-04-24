@@ -134,10 +134,10 @@ RNA_DataReader::read_backbone_info( std::istringstream & line_stream,
 /////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DataReader::read_data_info( std::istringstream & line_stream ) {
-	
+
 	using namespace pose::rna;
 	using namespace chemical::rna;
-	
+
 	int pos( 0 );
 	char edge( 'X' );
 	Real weight( 0.0 );
