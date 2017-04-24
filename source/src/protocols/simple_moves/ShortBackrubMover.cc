@@ -142,7 +142,7 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 	}
 
 	// only perform move if not adjacent to the end of the chain
-	if ( core::Size(resnum_-2) > 1 && core::Size(resnum_+2) < pose.size() ) {
+	if ( static_cast<int>(resnum_)-2 > 1 && core::Size(resnum_+2) < pose.size() ) {
 		utility::vector1<core::Size> pivot_residues;
 		utility::vector1<std::string> pivot_atoms;
 		backrubmover_->clear_segments();
@@ -159,6 +159,7 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			mid = resnum_;
 			end = resnum_ + 1;
 			backrubmover_->add_mainchain_segments(pivot_residues, pivot_atoms, 3, 34);
+        
 		} else if ( pose.residue(resnum_+1).name1() == 'P' && pose.residue(resnum_-1).name1() != 'P' ) {
 			// adjust backrub pivots if a proline is at i+1
 			pivot_residues.push_back(resnum_-1);
