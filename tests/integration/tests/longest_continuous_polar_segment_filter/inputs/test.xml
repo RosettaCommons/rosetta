@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="sel" resnums="1-154" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<LongestContinuousPolarSegment name="filt1" confidence="0" />
+		<LongestContinuousPolarSegment name="filt2" exclude_chain_termini="false" filter_out_high="false" cutoff="7" residue_selector="sel" count_gly_as_polar="false" />
+		<LongestContinuousPolarSegment name="filt3" exclude_chain_termini="false" filter_out_high="true" cutoff="13" count_gly_as_polar="true" />
+	</FILTERS>
+	<MOVERS>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add filter="filt1" />
+		<Add filter="filt2" />
+		<Add filter="filt3" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

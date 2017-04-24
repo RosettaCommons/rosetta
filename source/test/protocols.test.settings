@@ -509,6 +509,7 @@ sources = {
 	"simple_filters" : [
 		"DdgFilter",
 		"DdGScan",
+		"LongestContinuousPolarSegmentFilterTests",
 		"ResidueCountFilter",
 		"RotamerBoltzmannWeight2",
 		"TotalSasaFilter",
