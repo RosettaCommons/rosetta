@@ -159,7 +159,7 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			mid = resnum_;
 			end = resnum_ + 1;
 			backrubmover_->add_mainchain_segments(pivot_residues, pivot_atoms, 3, 34);
-        
+
 		} else if ( pose.residue(resnum_+1).name1() == 'P' && pose.residue(resnum_-1).name1() != 'P' ) {
 			// adjust backrub pivots if a proline is at i+1
 			pivot_residues.push_back(resnum_-1);
