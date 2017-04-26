@@ -226,7 +226,7 @@ public:
 		core::chemical::ResidueTypeCOP restype,
 		utility::vector1< std::string >  const & upstream_launch_atoms,
 		utility::vector1< core::id::AtomID > const & downstream_3atoms,
-		toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
+		utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & exgeom_list,
 		Size const exgeom_id,
 		bool enumerate_ligand_rotamers = false,
 		bool catalytic_bond = false,

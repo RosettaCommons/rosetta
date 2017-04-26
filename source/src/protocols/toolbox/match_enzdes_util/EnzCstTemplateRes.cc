@@ -153,6 +153,24 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 {
 }
 
+
+void EnzCstTemplateRes::initialize_from_params( std::string const & a1, std::string const & a2, std::string const & a3,
+	utility::vector1< std::string > const & allowed_3res )
+{
+	atom1_.push_back(a1);
+	atom2_.push_back(a2);
+	atom3_.push_back(a3);
+
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
+	for ( std::vector< std::string >::const_iterator it = allowed_3res.begin(); it != allowed_3res.end(); ++it ) {
+		if ( restype_set->has_name3( *it ) ) {
+			allowed_res_types_.push_back( *it );
+		} else {
+			utility_exit_with_message("Error in input: Residue with 3-letter code "+*it+" is unknown.");
+		}
+	}
+}
+
 /// @brief read and set up the general information for one residue of one pair block in a cstfile
 void
 EnzCstTemplateRes::read_params(std::istringstream & line_stream)

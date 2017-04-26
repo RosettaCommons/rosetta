@@ -165,13 +165,15 @@ class Tester:
         f.close()
 
         # saving log to a file...
-        f = open(log_file, 'w');  f.write(''.join(output));  f.close()
+        with open(log_file, 'w') as f:
+            f.write(''.join(output))
 
     def parseOneLib(self, f, output):
         '''Parse output for OneLib run for regular unit tests.'''
         for line in f:
-            print(line, end='')
-            output.append(line)
+            l = line.decode('utf-8')
+            print(l, end='')
+            output.append(l)
             sys.stdout.flush()
 
     def parseOneLibValgrind(self, f, output, yaml_file):

@@ -151,7 +151,7 @@ public:
 	void set_residue_type( core::chemical::ResidueTypeCOP restype );
 
 	void add_external_geom_sampler(
-		toolbox::match_enzdes_util::ExternalGeomSampler const & sampler,
+		utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & sampler,
 		Size const exgeom_id,
 		std::string const & atom1,
 		std::string const & atom2,
@@ -169,7 +169,7 @@ public:
 		return *restype_;
 	}
 
-	toolbox::match_enzdes_util::ExternalGeomSampler const &
+	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const &
 	external_sampler( Size external_geom_id ) const
 	{
 		return external_samplers_[ external_geom_id ];
@@ -188,7 +188,8 @@ public:
 private:
 	core::chemical::ResidueTypeCOP  restype_;
 
-	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > external_samplers_;
+	// each elelment of the vector is a list of closely-related ExternalGeomSamplers for the same residue
+	utility::vector1< utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > > external_samplers_;
 	utility::vector1< utility::fixedsizearray1< Size, 3 > > launch_points_;
 	utility::vector1< DownstreamBuilderCOP > dsbuilders_;
 	utility::vector1< Size > exgeom_ids_;

@@ -66,6 +66,7 @@ OutputWriter::determine_redundant_upstream_matchres(
 
 	for ( core::Size i = 1; i <= m.upstream_hits.size(); ++i ) {
 		core::Size this_scafpos = m.upstream_hits[i].scaffold_build_id();
+
 		MatchConstraintFileInfoCOP cur_mcfi =
 			cst_io_->mcfi_list( i )->mcfi( m.upstream_hits[i].external_geom_id() );
 		bool bb_interaction( cur_mcfi->is_backbone( cur_mcfi->upstream_res() ) );

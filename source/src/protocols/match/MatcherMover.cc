@@ -23,6 +23,8 @@
 #include <protocols/match/output/MatchProcessor.hh>
 #include <protocols/match/output/PDBWriter.hh>
 
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+
 //project headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -86,7 +88,8 @@ MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	incorporate_matches_into_pose_( incorporate_matches_into_pose ),
 	return_single_random_match_( false ),
 	ligres_(/* NULL */),
-	selectors_()
+	selectors_(),
+	mcfi_list_vec_()
 {
 	//we need this for the output to be correct
 	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
@@ -176,7 +179,10 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	if ( selectors_.size() ) {
 		setup_seqpos_from_selectors( *mtask, pose );
 	}
-	mtask->initialize_from_command_line();
+
+	// if the mcfi has been constructed from the tag, call a method that can configure it
+	if ( mcfi_list_vec_.size() ) { mtask->initialize_with_mcfi_list( mcfi_list_vec_ ); }
+	else { mtask->initialize_from_command_line(); }
 
 	if ( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
@@ -342,6 +348,24 @@ MatcherMover::parse_my_tag(
 		msg << "." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
+
+
+	using namespace toolbox::match_enzdes_util;
+	core::chemical::ResidueTypeSetCOP res_type_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+		core::chemical::FA_STANDARD );
+
+	// FIXME: hmmm... I wonder if mfci_list_ should be a vector of MatchConstraintFileInfoLists instead. It seems like
+	// that's how the EnzCnstraintIO will treat it later.
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	for ( auto const & branch_tag : branch_tags ) {
+		if ( branch_tag->getName() != "MatcherConstraint" ) { continue; }
+		// TODO: Remove this instance of a MatchConstraintFileInfo
+		MatchConstraintFileInfoOP mcfi( new MatchConstraintFileInfo( 1, res_type_set ) );
+		mcfi->initialize_from_tag( branch_tag );
+		MatchConstraintFileInfoListOP mcfi_list( new MatchConstraintFileInfoList( res_type_set ) );
+		mcfi_list->add_mcfi( mcfi );
+		mcfi_list_vec_.push_back( mcfi_list );
+	}
 }
 
 std::string MatcherMover::get_name() const {
@@ -360,7 +384,12 @@ void MatcherMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "incorporate_matches_into_pose", xsct_rosetta_bool, "Incorporate the identified matches into the input pose", "true" )
 		+ XMLSchemaAttribute( "residues_for_geomcsts", xs_string, "A comma-separated list of residue selectors specifying residues to be used in geometric constraints" );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Wrapper mover for the matcher. Constraints must be specified on the command line.", attlist );
+
+	XMLSchemaSimpleSubelementList matcher_constraint_subelements;
+	toolbox::match_enzdes_util::MatchConstraintFileInfo::return_complex_type_for_MatcherConstraint( matcher_constraint_subelements, xsd );
+	// TODO: Update descriptions!
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Wrapper mover for the matcher.", attlist, matcher_constraint_subelements );
 }
 
 std::string MatcherMoverCreator::keyname() const {

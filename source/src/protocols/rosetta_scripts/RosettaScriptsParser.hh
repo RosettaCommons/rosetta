@@ -68,7 +68,9 @@ public:
 	read_in_and_recursively_replace_includes(
 		std::string const &filename,
 		std::string & substituted_contents, // Return-by-reference
-		utility::vector1 < std::string > filenames_encountered
+		utility::vector1 < std::string > filenames_encountered,
+		core::Size const recursion_level,
+		bool const do_not_recurse = false
 	) const;
 
 	/// @brief Open the file given by xml_fname and construct a mover representing
@@ -200,6 +202,10 @@ private: //Varaibles
 
 	/// @brief A list of filenames that we have already encountered and validated.
 	utility::vector1 < std::string > filenames_already_validated_;
+
+	/// @brief The depth of the rabbit hole one can find oneself in by including XML files that include XML files.
+	/// Defaults to 8.
+	core::Size recursion_limit_;
 
 }; // Parser
 

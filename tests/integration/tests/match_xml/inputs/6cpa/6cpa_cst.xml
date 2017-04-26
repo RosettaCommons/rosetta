@@ -1,0 +1,48 @@
+<MatcherConstraint>
+    <DownstreamResidue   atom1="ZN1" atom2="O3" atom3="C4" name="6c1"/>
+    <UpstreamResidue atom1="ND1" atom2="CG" atom3="CB" name="HIS"/>
+    <Combination>
+        <DistanceAB x0="2.14"   xtol="0.2" k="100"  periodicity="1"    noSamples="1"/>
+        <AngleA     x0="91.9"   xtol="5."  k="50."  periodicity="360." noSamples="1"/>
+        <AngleB     x0="17.90"  xtol="5."  k="50."  periodicity="360." noSamples="1"/>
+        <TorsionA   x0="154.5"  xtol="5."  k="0."   periodicity="360." noSamples="1"/>
+        <TorsionAB  x0="120.8"  xtol="5."  k="0."   periodicity="360." noSamples="1"/>
+        <TorsionB   x0="-168.7" xtol="5."  k="50.0" periodicity="360." noSamples="1"/>
+    </Combination>
+</MatcherConstraint>
+<MatcherConstraint>
+    <DownstreamResidue   atom1="ZN1" atom2="O3" atom3="C4" name="6c1"/>
+    <UpstreamResidue atom1="OE1" atom2="CD" atom3="CG" name="GLU"/>
+    <Combination>
+        <DistanceAB x0="2.17"  xtol="0.2" k="100" periodicity="1"    noSamples="1"/>
+        <AngleA     x0="86."   xtol="5."  k="80." periodicity="360." noSamples="1"/>
+        <AngleB     x0="96.4"  xtol="5."  k="80." periodicity="360." noSamples="1"/>
+        <TorsionA   x0="-90.4" xtol="5."  k="0."  periodicity="360." noSamples="1"/>
+        <TorsionAB  x0="162."  xtol="5."  k="0."  periodicity="360." noSamples="1"/>
+        <TorsionB   x0="172.9" xtol="5."  k="0."  periodicity="360." noSamples="1"/>
+    </Combination>
+</MatcherConstraint>
+<MatcherConstraint>
+    <DownstreamResidue   atom1="ZN1" atom2="O3" atom3="C4" name="6c1"/>
+    <UpstreamResidue atom1="ND1" atom2="CG" atom3="CB" name="HIS"/>
+    <Combination>
+        <DistanceAB x0="2.15"   xtol="0.2" k="100"  periodicity="1"    noSamples="1"/>
+        <AngleA     x0="110."   xtol="5."  k="50."  periodicity="360." noSamples="1"/>
+        <AngleB     x0="124.5"  xtol="5."  k="50."  periodicity="360." noSamples="1"/>
+        <TorsionA   x0="60.0"   xtol="5."  k="0."   periodicity="360." noSamples="1"/>
+        <TorsionAB  x0="-121.7" xtol="5."  k="0."   periodicity="360." noSamples="1"/>
+        <TorsionB   x0="-142.2" xtol="5."  k="50.0" periodicity="360." noSamples="1"/>
+    </Combination>
+</MatcherConstraint>
+<MatcherConstraint>
+    <DownstreamResidue   atom1="ZN1" atom2="O3" atom3="C4" name="6c1"/>
+    <UpstreamResidue atom1="OE1" atom2="CD" atom3="CG" name="GLU"/>
+    <Combination>
+        <DistanceAB x0="2.21"   xtol="0.2" k="100" periodicity="1"    noSamples="1"/>
+        <AngleA     x0="136.8"  xtol="5."  k="70." periodicity="360." noSamples="1"/>
+        <AngleB     x0="128.5"  xtol="5."  k="50." periodicity="360." noSamples="1"/>
+        <TorsionA   x0="-158.6" xtol="5."  k="0."  periodicity="360." noSamples="1"/>
+        <TorsionAB  x0="60.2"   xtol="5."  k="0."  periodicity="360." noSamples="1"/>
+        <TorsionB   x0="-155.6" xtol="5."  k="70." periodicity="360." noSamples="1"/>
+    </Combination>
+</MatcherConstraint>

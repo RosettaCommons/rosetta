@@ -6357,6 +6357,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
 		Option( 'validate_and_exit', 'Boolean', desc='After XML Schema validation completes, exit' ),
 		Option( 'view', 'Boolean', desc='Use the viewer?' ),
+		Option( 'inclusion_recursion_limit', 'Integer', default = '8', desc='How many recursions to perform when parsing an XML file with inclusions' ),
 	), # -parser
 
 	Option_Group( 'patterson',

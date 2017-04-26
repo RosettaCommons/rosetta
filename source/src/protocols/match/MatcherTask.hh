@@ -19,6 +19,7 @@
 
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -150,6 +151,9 @@ public:
 
 	/// @brief Initialize many parameters from the command line options
 	void initialize_from_command_line();
+
+	/// @brief Initialize all parameters except for the MatchConstraints from the command line
+	void initialize_with_mcfi_list( utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoListOP > mcfi_list_vec );
 
 	/// @brief Matches may either be output as soon as they are generated, or they may be consolidated.
 	/// When consolidating matches, the MatchProcessor (the MatchEvaluator)
@@ -333,6 +337,9 @@ private:
 
 	void
 	initialize_enzdes_input_data_from_command_line();
+
+	void
+	initialize_enzdes_input_data_with_mcfi_list( utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoListOP > mcfi_list_vec );
 
 	/// @brief queries the enzdes input for which atoms are relevant to the matcher,
 	/// i.e. which atoms in the downstream object interact with any of the match residues

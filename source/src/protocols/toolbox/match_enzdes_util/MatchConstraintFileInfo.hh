@@ -33,6 +33,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/izstream.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // numeric headers
 #include <numeric/HomogeneousTransform.fwd.hh>
@@ -81,8 +83,12 @@ public:
 		core::Real ideal_val,
 		core::Real tolerance,
 		core::Real force_k,
-		core::Real periodicity_
+		core::Real periodicity,
+		core::Size num_steps = 0
 	);
+
+	// copy ctor
+	GeomSampleInfo( GeomSampleInfo const & gsi );
 
 	virtual ~GeomSampleInfo();
 
@@ -96,6 +102,9 @@ public:
 	/// into a vector of values
 	utility::vector1< core::Real >
 	create_sample_vector() const;
+
+	void
+	tag( std::string const & tag) { tag_ = tag; }
 
 	std::string
 	tag() const {
@@ -145,6 +154,26 @@ private:
 protected:
 	friend class cereal::access;
 	GeomSampleInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+
+struct SingleConstraint {
+	GeomSampleInfoCOP dis_U1D1;
+	GeomSampleInfoCOP ang_U1D2;
+	GeomSampleInfoCOP ang_U2D1;
+	GeomSampleInfoCOP tor_U1D3;
+	GeomSampleInfoCOP tor_U2D2;
+	GeomSampleInfoCOP tor_U3D1;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
 
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -228,30 +257,9 @@ public:  //atom and residue accessors
 	is_covalent() const {
 		return is_covalent_; }
 
-	GeomSampleInfoCOP
-	dis_U1D1() const {
-		return dis_U1D1_; }
-
-	GeomSampleInfoCOP
-	ang_U1D2() const {
-		return ang_U1D2_; }
-
-	GeomSampleInfoCOP
-	ang_U2D1() const {
-		return ang_U2D1_; }
-
-	GeomSampleInfoCOP
-	tor_U1D3() const {
-		return tor_U1D3_; }
-
-	GeomSampleInfoCOP
-	tor_U3D1() const {
-		return tor_U3D1_; }
-
-	GeomSampleInfoCOP
-	tor_U2D2() const {
-		return tor_U2D2_; }
-
+	utility::vector1< SingleConstraint >
+	constraints() const {
+		return constraints_; }
 
 	/// @brief all atoms of restype to be used as template_atom
 	/// in the matcher/constraints
@@ -273,10 +281,16 @@ public: //geometric sample accessors
 
 	/// @brief returns ExternalGeomSampler only if the user has specified all six degrees of freedom,
 	/// otherwise null pointer is returned
-	ExternalGeomSamplerOP
+	utility::vector1< ExternalGeomSamplerOP >
 	create_exgs() const;
 
 public: //mutators
+
+	static
+	void return_complex_type_for_MatcherConstraint(
+		utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd );
+
+	void initialize_from_tag( utility::tag::TagCOP const tag );
 
 	/// @brief data reading routine
 	bool
@@ -323,7 +337,6 @@ protected:
 		utility::io::izstream & data
 	);
 
-
 	//data
 private:
 
@@ -337,8 +350,9 @@ private:
 
 	bool is_covalent_;
 
+	utility::vector1< SingleConstraint > constraints_;
 	// the GeomSampleInfos read from the file
-	GeomSampleInfoOP dis_U1D1_, ang_U1D2_, ang_U2D1_, tor_U1D3_, tor_U3D1_, tor_U2D2_;
+	//GeomSampleInfoOP dis_U1D1_, ang_U1D2_, ang_U2D1_, tor_U1D3_, tor_U3D1_, tor_U2D2_;
 
 	//container for arbritrary algorithm specific information
 	std::map< std::string, utility::vector1< std::string > > algorithm_inputs_;
@@ -356,6 +370,9 @@ public:
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
+
+private:
+	void add_enzyme_template( core::Size index, utility::tag::TagCOP const tag);
 
 };
 
@@ -398,6 +415,8 @@ public: //mutators
 	/// @brief data reading routine
 	bool
 	read_data( utility::io::izstream & data );
+
+	void add_mcfi( MatchConstraintFileInfoOP mcfi );
 
 public: //convenience functions
 

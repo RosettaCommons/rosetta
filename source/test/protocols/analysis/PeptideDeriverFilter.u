@@ -33,7 +33,6 @@ peptide_entry entry_type=0 pep_start=3
 peptide_entry entry_type=0 pep_start=4
 peptide_entry entry_type=0 pep_start=5
 peptide_entry entry_type=1 pep_start=5
-peptide_entry entry_type=2 pep_start=4
 peptide_length 7
 peptide_entry entry_type=0 pep_start=1
 peptide_entry entry_type=0 pep_start=2

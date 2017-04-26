@@ -1,0 +1,15 @@
+-s inputs/6cpa/6cpa_9_nohet.pdb
+-match:lig_name 6c1
+-match:grid_boundary inputs/6cpa/6cpa_9.gridlig
+-match:scaffold_active_site_residues inputs/6cpa/6cpa_9.pos
+-parser:protocol inputs/6cpa/matcher.xml
+-extra_res_fa inputs/6cpa/6c1.params
+-output_matches_per_group 10
+-ex1
+-ex2
+-euclid_bin_size 0.5
+-euler_bin_size 5.0
+-bump_tolerance 0.3
+-use_input_sc
+-match:output_format KinWriter
+-match:consolidate_matches

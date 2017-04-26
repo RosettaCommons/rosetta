@@ -424,6 +424,57 @@ MatcherTask::initialize_from_command_line()
 	build_round1_hits_twice_ = option[ OptionKeys::match::build_round1_hits_twice ];
 }
 
+void MatcherTask::initialize_with_mcfi_list( utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoListOP > mcfi_list_vec )
+{
+	// TODO: get rid of the code duplication between this method and initialize_from_command_line()
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::match;
+
+	/// 1. Read the ligand grid header file and initialize the boundary for the active site.
+	/// 2. Initialize the euclid and euler bin witdhs
+	/// 3. Note the location of the output file
+	/// 4. Read in the EnzConstraintIO file.
+	/// 5. Read in the build position list
+
+	/// 1. liggrid
+	initialize_occupied_space_bounding_box_from_command_line();
+
+	euclidean_bin_widths_ = option[ euclid_bin_size ];
+	euler_bin_widths_ = option[ euler_bin_size ];
+
+	initialize_enzdes_input_data_with_mcfi_list( mcfi_list_vec );
+
+	if ( !ignore_cmdline_for_build_points_ ) initialize_scaffold_active_site_residue_list_from_command_line();
+
+	modify_pose_build_resids_from_endes_input();
+
+	//note: this function only does something if the input pose
+	//already contains a partial match
+	set_active_site_residue_list_to_preexisting_partial_match();
+
+	/// bump tolerance
+	permitted_overlap_ = option[ bump_tolerance ];
+
+	use_input_sc_ = option[ OptionKeys::packing::use_input_sc ];
+	dynamic_grid_refinement_ = option[ OptionKeys::match::dynamic_grid_refinement ];
+
+	initialize_orientation_atoms_from_command_line();
+
+	consolidate_matches_ = option[ OptionKeys::match::consolidate_matches ];
+	n_to_output_per_group_ = option[ output_matches_per_group ];
+
+	initialize_active_site_definition_from_command_line();
+	initialize_upstream_residue_collision_filter_data_from_command_line();
+	initialize_upstream_downstream_collision_filter_data_from_command_line();
+
+	initialize_output_options_from_command_line();
+
+	enumerate_ligand_rotamers_ = option[ OptionKeys::match::enumerate_ligand_rotamers ];
+	only_enumerate_non_match_redundant_ligand_rotamers_ =  option[ OptionKeys::match::only_enumerate_non_match_redundant_ligand_rotamers ];
+
+	build_round1_hits_twice_ = option[ OptionKeys::match::build_round1_hits_twice ];
+}
+
 void
 MatcherTask::consolidate_matches( bool setting )
 {
@@ -1144,6 +1195,23 @@ MatcherTask::initialize_enzdes_input_data_from_command_line()
 
 }
 
+void
+MatcherTask::initialize_enzdes_input_data_with_mcfi_list( utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoListOP > mcfi_list_vec )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::match;
+
+	using namespace protocols::toolbox::match_enzdes_util;
+	using namespace core::chemical;
+	/// create a local non-const version of the input data.
+	EnzConstraintIOOP enz_input_data( new EnzConstraintIO(
+		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ) );
+
+	// TODO: the initialize_with_mcfi_list method does not exist -- write it!
+	enz_input_data->initialize_with_mcfi_list( mcfi_list_vec );
+	enz_input_data_ = enz_input_data;
+	determine_all_match_relevant_downstream_atoms();
+}
 
 /// @details note: for the time being, this function sets all the residue numbers of
 /// the AtomIDs in relevant_downstream_atoms_ to 1, i.e. it will only function properly

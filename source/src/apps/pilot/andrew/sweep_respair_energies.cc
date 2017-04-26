@@ -289,7 +289,10 @@ write_new_respair_to_database(
 	std::string don3let = mcfi.allowed_res_name3s(2)[1];
 
 	/// 1. Figure out what parameters are being swept
-	ExternalGeomSamplerOP exgeom = mcfi.create_exgs();
+	utility::vector1< ExternalGeomSamplerOP > exgeoms = mcfi.create_exgs();
+	assert( exgeoms.size() == 1 );
+	ExternalGeomSamplerOP exgeom( exgeoms[ 1 ] );
+
 	utility::vector1< core::Size > nexgeoms( 6, 0 );
 	nexgeoms[1] = exgeom->n_tor_U3D1_samples();
 	nexgeoms[2] = exgeom->n_ang_U2D1_samples(); //
@@ -1259,7 +1262,10 @@ sweep_params_from_match_constraint_file(
 	HTReal launch( res2.xyz( r2ats[3] ), res2.xyz( r2ats[2] ), res2.xyz( r2ats[1] ) );
 
 	// prepare to enumerate all combinations of external geometries
-	ExternalGeomSamplerOP exgeom = mcfil.mcfi(1)->create_exgs();
+	utility::vector1< ExternalGeomSamplerOP > exgeoms = mcfil.mcfi(1)->create_exgs();
+	assert( exgeoms.size() == 1 );
+	ExternalGeomSamplerOP exgeom( exgeoms[ 1 ] );
+
 	exgeom->set_dis_D1D2( res1_geom.atom1_atom2_distance() );
 	exgeom->set_dis_D2D3( res1_geom.atom2_atom3_distance() );
 	exgeom->set_ang_D1D2D3( res1_geom.atom1_atom2_atom3_angle() );

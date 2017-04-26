@@ -61,7 +61,7 @@ public:
 		try {
 			TR << "===THIS SHOULD NOT TRIGGER AN EXCEPTION===" << std::endl;
 			std::string substituted_contents;
-			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in );
+			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in, 0 );
 		} catch( utility::excn::EXCN_Msg_Exception e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TS_ASSERT(false); //We shouldn't get here.
@@ -79,7 +79,7 @@ public:
 		try {
 			TR << "===THIS SHOULD TRIGGER AN EXCEPTION===" << std::endl;
 			std::string substituted_contents;
-			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in );
+			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in, 0 );
 		} catch( utility::excn::EXCN_Msg_Exception e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TR << "===THE ABOVE SHOULD HAVE TRIGGERED AN EXCEPTION===" << std::endl;
@@ -107,7 +107,7 @@ public:
 		//Read in the test XML (with includes):
 		utility::vector1< std::string > files_read_in;
 		std::string test2xml;
-		parser.read_in_and_recursively_replace_includes("protocols/rosetta_scripts/test2.xml", test2xml, files_read_in);
+		parser.read_in_and_recursively_replace_includes("protocols/rosetta_scripts/test2.xml", test2xml, files_read_in, 0);
 
 		if ( TR.visible() ) {
 			TR << "REFERENCE FILE (no includes):" << std::endl;

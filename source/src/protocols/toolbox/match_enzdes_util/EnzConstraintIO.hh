@@ -83,6 +83,7 @@ public:
 	void
 	read_enzyme_cstfile(std::string fname );
 
+	void initialize_with_mcfi_list( utility::vector1< MatchConstraintFileInfoListOP > mcfi_list_vec );
 
 	toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP
 	mcfi_list( core::Size block ) const;

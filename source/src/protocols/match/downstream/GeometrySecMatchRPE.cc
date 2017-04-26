@@ -343,31 +343,39 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 	utility::vector1< core::Size > const & upstream_inds
 ){
 
-	if ( mcfi.dis_U1D1() ) {
-		AtomDistanceSecMatchRPEOP adist( new AtomDistanceSecMatchRPE( *(mcfi.dis_U1D1() ) ) );
+
+	// TODO: Figure out who uses this to determine the best way to handle an mcfi with multiple constraints.
+	// For now, let's just grab the first one:
+	using namespace protocols::toolbox::match_enzdes_util;
+	utility::vector1< SingleConstraint > constraints( mcfi.constraints() );
+	assert( constraints.size() );
+	SingleConstraint const & constraint = constraints[ 1 ];
+
+	if ( constraint.dis_U1D1 ) {
+		AtomDistanceSecMatchRPEOP adist( new AtomDistanceSecMatchRPE( *(constraint.dis_U1D1 ) ) );
 		adist->add_at_ind( 1, upstream_inds[1] );
 		adist->add_at_ind( 2, downstream_inds[1] );
 		atom_geom_rpes_.push_back( adist );
 	}
 
-	if ( mcfi.ang_U2D1() ) {
-		AtomAngleSecMatchRPEOP aang1( new AtomAngleSecMatchRPE( *(mcfi.ang_U2D1() ) ) );
+	if ( constraint.ang_U2D1 ) {
+		AtomAngleSecMatchRPEOP aang1( new AtomAngleSecMatchRPE( *(constraint.ang_U2D1 ) ) );
 		aang1->add_at_ind( 1, upstream_inds[2] );
 		aang1->add_at_ind( 1, upstream_inds[1] );
 		aang1->add_at_ind( 2, downstream_inds[1] );
 		atom_geom_rpes_.push_back( aang1 );
 	}
 
-	if ( mcfi.ang_U1D2() ) {
-		AtomAngleSecMatchRPEOP aang2( new AtomAngleSecMatchRPE( *(mcfi.ang_U1D2() ) ) );
+	if ( constraint.ang_U1D2 ) {
+		AtomAngleSecMatchRPEOP aang2( new AtomAngleSecMatchRPE( *(constraint.ang_U1D2 ) ) );
 		aang2->add_at_ind( 1, upstream_inds[1] );
 		aang2->add_at_ind( 2, downstream_inds[1] );
 		aang2->add_at_ind( 2, downstream_inds[2] );
 		atom_geom_rpes_.push_back( aang2 );
 	}
 
-	if ( mcfi.tor_U3D1() ) {
-		AtomDihedralSecMatchRPEOP adih1( new AtomDihedralSecMatchRPE( *(mcfi.tor_U3D1() ) ) );
+	if ( constraint.tor_U3D1 ) {
+		AtomDihedralSecMatchRPEOP adih1( new AtomDihedralSecMatchRPE( *(constraint.tor_U3D1 ) ) );
 		adih1->add_at_ind( 1, upstream_inds[3] );
 		adih1->add_at_ind( 1, upstream_inds[2] );
 		adih1->add_at_ind( 1, upstream_inds[1] );
@@ -375,8 +383,8 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 		atom_geom_rpes_.push_back( adih1 );
 	}
 
-	if ( mcfi.tor_U2D2() ) {
-		AtomDihedralSecMatchRPEOP adih2( new AtomDihedralSecMatchRPE( *(mcfi.tor_U2D2() ) ) );
+	if ( constraint.tor_U2D2 ) {
+		AtomDihedralSecMatchRPEOP adih2( new AtomDihedralSecMatchRPE( *(constraint.tor_U2D2 ) ) );
 		adih2->add_at_ind( 1, upstream_inds[2] );
 		adih2->add_at_ind( 1, upstream_inds[1] );
 		adih2->add_at_ind( 2, downstream_inds[1] );
@@ -384,8 +392,8 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 		atom_geom_rpes_.push_back( adih2 );
 	}
 
-	if ( mcfi.tor_U1D3() ) {
-		AtomDihedralSecMatchRPEOP adih3( new AtomDihedralSecMatchRPE( *(mcfi.tor_U1D3() ) ) );
+	if ( constraint.tor_U1D3 ) {
+		AtomDihedralSecMatchRPEOP adih3( new AtomDihedralSecMatchRPE( *(constraint.tor_U1D3 ) ) );
 		adih3->add_at_ind( 1, upstream_inds[1] );
 		adih3->add_at_ind( 2, downstream_inds[1] );
 		adih3->add_at_ind( 2, downstream_inds[2] );

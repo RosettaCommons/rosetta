@@ -187,7 +187,6 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 	std::cerr << "Raised exception: " << e.msg() << std::endl;
 	TS_ASSERT( false );
 }
-
 	}
 
 	void test_protocol() {

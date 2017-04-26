@@ -250,9 +250,11 @@ ClassicMatchAlgorithm::build(
 	}
 
 	/// Sanity check: all transforms must have been precomputed before reaching this stage.
-	for ( Size ii = 1; ii <= n_external_samplers(); ++ii ) {
-		if ( ! external_samplers_[ ii ].transforms_uptodate() ) {
-			utility_exit_with_message( "CRITICAL ERROR in ClassicMatchAlgorithm::build.  ExternalGeomSampler transforms are not up-to-date" );
+	for ( auto const & exsampler_vec : external_samplers_ ) {
+		for ( auto const & exsampler : exsampler_vec ) {
+			if ( ! exsampler.transforms_uptodate() ) {
+				utility_exit_with_message( "CRITICAL ERROR in ClassicMatchAlgorithm::build.  ExternalGeomSampler transforms are not up-to-date" );
+			}
 		}
 	}
 
@@ -299,18 +301,21 @@ ClassicMatchAlgorithm::n_possible_hits_per_upstream_conformation() const
 	Size total = 0;
 	for ( Size ii = 1; ii <= n_external_samplers(); ++ii ) {
 		Size iitotal = 1;
-		toolbox::match_enzdes_util::ExternalGeomSampler const & exsampler( external_samplers_[ ii ] );
+		utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & exsampler_list( external_samplers_[ ii ] );
 
-		iitotal *= exsampler.n_tor_U3D1_samples();
-		iitotal *= exsampler.n_ang_U2D1_samples();
-		iitotal *= exsampler.n_dis_U1D1_samples();
-		iitotal *= exsampler.n_tor_U2D2_samples();
-		iitotal *= exsampler.n_ang_U1D2_samples();
-		iitotal *= exsampler.n_tor_U1D3_samples();
+		// for ( Size jj = 1; jj <= exsampler.size(); ++jj ) {
+		for ( auto const & exsampler : exsampler_list ) {
+			iitotal *= exsampler.n_tor_U3D1_samples();
+			iitotal *= exsampler.n_ang_U2D1_samples();
+			iitotal *= exsampler.n_dis_U1D1_samples();
+			iitotal *= exsampler.n_tor_U2D2_samples();
+			iitotal *= exsampler.n_ang_U1D2_samples();
+			iitotal *= exsampler.n_tor_U1D3_samples();
 
-		iitotal *= dsbuilders_[ ii ]->n_possible_hits_per_at3frame();
+			iitotal *= dsbuilders_[ ii ]->n_possible_hits_per_at3frame();
 
-		total += iitotal;
+			total += iitotal;
+		}
 	}
 	return total;
 }
@@ -329,7 +334,9 @@ ClassicMatchAlgorithm::build_from_three_coords(
 	Vector coord2( upstream_residue.xyz( launch_atom( which_external_sampler, 2 )));
 	Vector coord3( upstream_residue.xyz( launch_atom( which_external_sampler, 3 )));
 
-	toolbox::match_enzdes_util::ExternalGeomSampler const & exsampler( external_samplers_[ which_external_sampler ] );
+
+	// this returns a vector of ExternalGeomSamplers
+	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & exsampler_list( external_samplers_[ which_external_sampler ] );
 
 	DownstreamBuilderCOP dsbuilder( dsbuilders_[ which_external_sampler ] );
 
@@ -351,52 +358,54 @@ ClassicMatchAlgorithm::build_from_three_coords(
 	HTReal ht_start( coord3, coord2, coord1 );
 
 
-	/// Six nested for loops to iterate across all the specified geometries that describe how to
-	/// build the downstream target from the upstream conformation.  No transcendental function evaulations
-	/// necessary here, as the coordinate transformations have already been computed!  Just good old
-	/// addition and multiplication.
-	for ( Size ii = 1; ii <= exsampler.n_tor_U3D1_samples(); ++ii ) {
-		HTReal ht_ii = ht_start * exsampler.transform( HT_tor_U3D1, ii );
+	// This 7th loop (the outer-most loop) iterates over a list of ExternalGeomSamplers associated with the same constraints
+	for ( auto const & exsampler : exsampler_list ) {
+		/// Six nested for loops to iterate across all the specified geometries that describe how to
+		/// build the downstream target from the upstream conformation.  No transcendental function evaulations
+		/// necessary here, as the coordinate transformations have already been computed!  Just good old
+		/// addition and multiplication.
+		for ( Size ii = 1; ii <= exsampler.n_tor_U3D1_samples(); ++ii ) {
+			HTReal ht_ii = ht_start * exsampler.transform( HT_tor_U3D1, ii );
 
-		for ( Size jj = 1; jj <= exsampler.n_ang_U2D1_samples(); ++jj ) {
-			HTReal ht_jj = ht_ii * exsampler.transform( HT_ang_U2D1, jj );
+			for ( Size jj = 1; jj <= exsampler.n_ang_U2D1_samples(); ++jj ) {
+				HTReal ht_jj = ht_ii * exsampler.transform( HT_ang_U2D1, jj );
 
-			for ( Size kk = 1; kk <= exsampler.n_dis_U1D1_samples(); ++kk ) {
-				HTReal ht_kk = ht_jj;
-				ht_kk.walk_along_z( exsampler.dis_U1D1_samples()[ kk ] );
-				Vector pD1 = ht_kk.point();
-				if ( radD1 > ZERO && bbgrid().occupied( radD1, pD1 ) ) continue; /// Collision check atom D1
-				if ( active_site_check_D1 && ! active_site_grid().occupied( pD1 ) ) continue;
+				for ( Size kk = 1; kk <= exsampler.n_dis_U1D1_samples(); ++kk ) {
+					HTReal ht_kk = ht_jj;
+					ht_kk.walk_along_z( exsampler.dis_U1D1_samples()[ kk ] );
+					Vector pD1 = ht_kk.point();
+					if ( radD1 > ZERO && bbgrid().occupied( radD1, pD1 ) ) continue; /// Collision check atom D1
+					if ( active_site_check_D1 && ! active_site_grid().occupied( pD1 ) ) continue;
 
-				for ( Size ll = 1; ll <= exsampler.n_tor_U2D2_samples(); ++ll ) {
-					HTReal ht_ll = ht_kk * exsampler.transform( HT_tor_U2D2, ll );
+					for ( Size ll = 1; ll <= exsampler.n_tor_U2D2_samples(); ++ll ) {
+						HTReal ht_ll = ht_kk * exsampler.transform( HT_tor_U2D2, ll );
 
-					for ( Size mm = 1; mm <= exsampler.n_ang_U1D2_samples(); ++mm ) {
-						HTReal ht_mm = ht_ll * exsampler.transform( HT_ang_U1D2, mm );
-						Vector pD2 = ht_mm.point();
-						if ( radD2 > ZERO && bbgrid().occupied( radD2, pD2 ) ) continue; /// Collision check atom D2
-						if ( active_site_check_D2 && ! active_site_grid().occupied( pD2 ) ) continue;
+						for ( Size mm = 1; mm <= exsampler.n_ang_U1D2_samples(); ++mm ) {
+							HTReal ht_mm = ht_ll * exsampler.transform( HT_ang_U1D2, mm );
+							Vector pD2 = ht_mm.point();
+							if ( radD2 > ZERO && bbgrid().occupied( radD2, pD2 ) ) continue; /// Collision check atom D2
+							if ( active_site_check_D2 && ! active_site_grid().occupied( pD2 ) ) continue;
 
-						for ( Size nn = 1; nn <= exsampler.n_tor_U1D3_samples(); ++nn ) {
-							HTReal ht_nn = ht_mm * exsampler.transform( HT_tor_U1D3, nn );
-							Vector pD3 = ht_nn.point();
-							if ( radD3 > ZERO && bbgrid().occupied( radD3, pD3 ) ) continue; /// Collision check atom D3
-							if ( active_site_check_D3 && ! active_site_grid().occupied( pD3 ) ) continue;
+							for ( Size nn = 1; nn <= exsampler.n_tor_U1D3_samples(); ++nn ) {
+								HTReal ht_nn = ht_mm * exsampler.transform( HT_tor_U1D3, nn );
+								Vector pD3 = ht_nn.point();
+								if ( radD3 > ZERO && bbgrid().occupied( radD3, pD3 ) ) continue; /// Collision check atom D3
+								if ( active_site_check_D3 && ! active_site_grid().occupied( pD3 ) ) continue;
 
-							std::list< Hit > nn_hits = dsbuilder->build(
-								ht_nn,
-								scaffold_build_point_id,
-								upstream_conf_id,
-								exgeom_ids_[ which_external_sampler ],
-								upstream_residue );
-							hitlist.splice( hitlist.end(), nn_hits );
+								std::list< Hit > nn_hits = dsbuilder->build(
+									ht_nn,
+									scaffold_build_point_id,
+									upstream_conf_id,
+									exgeom_ids_[ which_external_sampler ],
+									upstream_residue );
+								hitlist.splice( hitlist.end(), nn_hits );
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-
 	return hitlist;
 
 }
@@ -457,7 +466,7 @@ void ClassicMatchAlgorithm::set_residue_type( core::chemical::ResidueTypeCOP res
 /// @details Precompute transforms for the external geom sampler as it is added
 /// so that the transforms are ready when build() is called.
 void ClassicMatchAlgorithm::add_external_geom_sampler(
-	toolbox::match_enzdes_util::ExternalGeomSampler const & sampler,
+	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & sampler,
 	Size const exgeom_id,
 	std::string const & atom1,
 	std::string const & atom2,
@@ -491,11 +500,19 @@ void ClassicMatchAlgorithm::add_external_geom_sampler(
 	exgeom_ids_.push_back( exgeom_id );
 
 	/// initialize the external sampler transforms
-	toolbox::match_enzdes_util::ExternalGeomSampler & samp( external_samplers_[ external_samplers_.size() ] );
-	samp.set_dis_D1D2(   dsbuilder->atom1_atom2_distance() );
-	samp.set_dis_D2D3(   dsbuilder->atom2_atom3_distance() );
-	samp.set_ang_D1D2D3( dsbuilder->atom1_atom2_atom3_angle() );
-	samp.precompute_transforms();
+	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > & samp_list( external_samplers_[ external_samplers_.size() ] );
+
+
+	Real atom1_atom2_distance = dsbuilder->atom1_atom2_distance();
+	Real atom2_atom3_distance = dsbuilder->atom2_atom3_distance();
+	Real atom1_atom2_atom3_angle = dsbuilder->atom1_atom2_atom3_angle();
+
+	for ( auto & samp : samp_list ) {
+		samp.set_dis_D1D2( atom1_atom2_distance );
+		samp.set_dis_D2D3( atom2_atom3_distance );
+		samp.set_ang_D1D2D3( atom1_atom2_atom3_angle );
+		samp.precompute_transforms();
+	}
 }
 
 void

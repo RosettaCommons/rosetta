@@ -248,19 +248,25 @@ EnzConstraintParameters::set_mcfi(
 	resA_->identical_info_consistency_check();
 	resB_->identical_info_consistency_check();
 
-	angleA_ = convert_GeomSampleInfo_to_FuncOP( mcfi_->ang_U1D2(), nangleA_ );
-	angleB_ = convert_GeomSampleInfo_to_FuncOP( mcfi_->ang_U2D1(), nangleB_ );
-	torsionA_ = convert_GeomSampleInfo_to_FuncOP( mcfi_->tor_U1D3(), ntorsionA_ );
-	torsionAB_ = convert_GeomSampleInfo_to_FuncOP( mcfi_->tor_U2D2(), ntorsionAB_ );
-	torsionB_ = convert_GeomSampleInfo_to_FuncOP( mcfi_->tor_U3D1(), ntorsionB_ );
+	// TODO: Figure out who uses this to determine the best way to handle an mcfi with multiple constraints.
+	// For now, let's just grab the first one:
+	utility::vector1< SingleConstraint > constraints( mcfi_->constraints() );
+	assert( constraints.size() );
+	SingleConstraint const & constraint = constraints[ 1 ];
+
+	angleA_ = convert_GeomSampleInfo_to_FuncOP( constraint.ang_U1D2, nangleA_ );
+	angleB_ = convert_GeomSampleInfo_to_FuncOP( constraint.ang_U2D1, nangleB_ );
+	torsionA_ = convert_GeomSampleInfo_to_FuncOP( constraint.tor_U1D3, ntorsionA_ );
+	torsionAB_ = convert_GeomSampleInfo_to_FuncOP( constraint.tor_U2D2, ntorsionAB_ );
+	torsionB_ = convert_GeomSampleInfo_to_FuncOP( constraint.tor_U3D1, ntorsionB_ );
 
 	//the distance is special, we'll do it explicitly
-	if ( mcfi_->dis_U1D1() ) {
-		ndisAB_ = mcfi_->dis_U1D1()->ideal_val();
+	if ( constraint.dis_U1D1 ) {
+		ndisAB_ = constraint.dis_U1D1->ideal_val();
 
-		core::Real min_dis = std::max(0.0, ndisAB_ - mcfi_->dis_U1D1()->tolerance() );
-		core::Real max_dis = ndisAB_ + mcfi_->dis_U1D1()->tolerance();
-		core::Real force_k_dis = mcfi_->dis_U1D1()->force_const();
+		core::Real min_dis = std::max(0.0, ndisAB_ - constraint.dis_U1D1->tolerance() );
+		core::Real max_dis = ndisAB_ + constraint.dis_U1D1->tolerance();
+		core::Real force_k_dis = constraint.dis_U1D1->force_const();
 
 		disAB_ = core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc(
 			min_dis, max_dis, sqrt(1/ force_k_dis), "dis") );

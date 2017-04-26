@@ -127,6 +127,9 @@ public:
 	);
 
 	void
+	initialize_from_params( std::string const & a1, std::string const & a2, std::string const & a3, utility::vector1< std::string > const & allowed_3res);
+
+	void
 	read_params(std::istringstream & line_stream);
 
 	void

@@ -911,6 +911,7 @@ ProteinUpstreamBuilder::build(
 		( build_point ) );
 
 	TR << "Considered " << n_possible_hits << " downstream conformations at residue " << bb.original_insertion_point()  << " and found " << local_hit_list.size() << " hits." << std::endl;
+
 	//std::cout << "APL DEBUG ProteinUpstreamBuilder::build end" << std::endl;
 	return local_hit_list;
 }

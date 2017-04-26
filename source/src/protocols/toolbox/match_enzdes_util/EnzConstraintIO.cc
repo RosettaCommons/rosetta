@@ -176,6 +176,23 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 } //funtion read enzyme cst
 
 
+void EnzConstraintIO::initialize_with_mcfi_list( utility::vector1< MatchConstraintFileInfoListOP > mcfi_list_vec )
+{
+	core::Size cst_number = mcfi_lists_.size();
+	for ( auto const & mcfi_list : mcfi_list_vec ) {
+		++cst_number;
+		EnzConstraintParametersOP parameters = EnzConstraintParametersOP( new EnzConstraintParameters() );
+		parameters->init( cst_number, restype_set_, get_self_weak_ptr() );
+
+		cst_pairs_.push_back( parameters );
+		mcfi_lists_.push_back( mcfi_list );
+	}
+
+	//if we're doing matching or building inverse rotamer trees later on,
+	//this information is necessary
+	this->determine_target_downstream_res();
+}
+
 toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP
 EnzConstraintIO::mcfi_list( core::Size block ) const
 {

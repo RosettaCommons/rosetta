@@ -1,0 +1,27 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+        <ScoreFunction name="FULL_hard" weights="beta_nov15_cst.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+        <InitializeFromCommandline name="init"/>
+    </TASKOPERATIONS>
+
+    <MOVERS>
+        <MatcherMover name="matcher">
+            <xi:include href="inputs/6cpa/6cpa_cst.xml" prevent_recursion="True"/>
+        </MatcherMover>
+    </MOVERS>
+
+    <FILTERS>
+    </FILTERS>
+
+    <PROTOCOLS>
+        <Add mover="matcher" />
+    </PROTOCOLS>
+
+    <OUTPUT scorefxn="FULL_hard"/>
+</ROSETTASCRIPTS>

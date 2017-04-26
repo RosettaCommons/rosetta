@@ -19,6 +19,7 @@
 
 // Package headers
 #include <protocols/match/MatcherTask.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 
 // Project headers
 #include <protocols/rosetta_scripts/MultiplePoseMover.hh>
@@ -127,6 +128,7 @@ private:
 	core::conformation::ResidueCOP ligres_;
 	utility::vector1< core::Size > match_positions_;
 	utility::vector1< core::select::residue_selector::ResidueSelectorCOP > selectors_;
+	utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoListOP > mcfi_list_vec_;
 };
 
 void

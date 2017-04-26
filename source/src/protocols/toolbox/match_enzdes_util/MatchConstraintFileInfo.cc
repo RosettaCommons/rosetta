@@ -38,6 +38,9 @@
 // Utility Headers
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -103,16 +106,29 @@ GeomSampleInfo::GeomSampleInfo(
 	core::Real ideal_val,
 	core::Real tolerance,
 	core::Real force_k,
-	core::Real periodicity
-) :
+	core::Real periodicity,
+	core::Size num_steps
+):
 	tag_(""),
 	function_tag_("default"),
 	ideal_val_(ideal_val),
 	tolerance_(tolerance),
 	periodicity_(periodicity),
 	force_const_(force_k),
-	num_steps_(0),
+	num_steps_(num_steps),
 	step_size_(0.0)
+{ if ( num_steps_ != 0 ) step_size_ = tolerance_ / num_steps_; }
+
+// copy ctor
+GeomSampleInfo::GeomSampleInfo( GeomSampleInfo const & gsi ) :
+	tag_(gsi.tag_),
+	function_tag_(gsi.function_tag_),
+	ideal_val_(gsi.ideal_val_),
+	tolerance_(gsi.tolerance_),
+	periodicity_(gsi.periodicity_),
+	force_const_(gsi.force_const_),
+	num_steps_(gsi.num_steps_),
+	step_size_(gsi.step_size_)
 {}
 
 GeomSampleInfo::~GeomSampleInfo() {}
@@ -264,17 +280,12 @@ MatchConstraintFileInfo::MatchConstraintFileInfo(
 :
 	index_( index ),
 	is_covalent_(false),
-	dis_U1D1_( /* NULL */ ),
-	ang_U1D2_(NULL),
-	ang_U2D1_(NULL),
-	tor_U1D3_(/* NULL */),
-	tor_U3D1_(NULL),
-	tor_U2D2_(NULL),
 	restype_set_( restype_set ),
 	native_ (false)
 {
 	allowed_seqpos_.clear();
 	enz_template_res_.clear();
+	constraints_.clear();
 }
 
 MatchConstraintFileInfo::~MatchConstraintFileInfo() {}
@@ -317,6 +328,148 @@ MatchConstraintFileInfo::enz_cst_template_res( core::Size template_res ) const
 // return exgs_;
 //}
 
+std::string matcher_constraint_name_mangler( std::string const & foo ) {
+	return "matcher_constraint_" + foo + "_type";
+}
+
+std::string matcher_constraint_combination_name_mangler( std::string const & foo ) {
+	return "matcher_constraint_combination_" + foo + "_type";
+}
+
+void
+setup_geometric_attribute_list( utility::tag::AttributeList & attlist ) {
+	using namespace utility::tag;
+
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "x0",  xsct_real, "x0 specifies the optimum distance x0 for the respective value." )
+		+ XMLSchemaAttribute::required_attribute( "xtol",  xsct_real, "xtol specifies the allowed tolerance of the value" )
+		+ XMLSchemaAttribute::required_attribute( "k",  xsct_real, "force constant k, or the strength of the parameter. If x is the value of the constrained parameter, the score penalty applied will be: 0 if |x - x0| is less than xtol and k * ( |x - x0| - xtol ) otherwise. This is only relevant for enzdes, and is not used by the matcher." )
+		+ XMLSchemaAttribute::required_attribute( "periodicity",  xsct_real, "the periodicity of the constraint. For example, if x0 is 120 and per is 360, the constraint function will have a its minimum at 120 degrees. If x0 is 120 and per is 180, the constraint function will have two minima, one at 120 degrees and one at 300 degrees. If x0 is 120 and per is 120, the constraint function will have 3 minima, at 120, 240, and 360 degrees. In the case of distances, i.e. when specifying the DistanceAB parameter, this value has a special meaning: it indicates whether the constrained interaction is covalent or not with '1' meaning covalent and '0' meaning non-covalent. If the constraint is covalent, Rosetta will not evaluate the vdW term between DownstreamResidue:Atom1 and UpstreamResidue:Atom1 and their [1,3] neighbors." )
+		+ XMLSchemaAttribute::required_attribute( "noSamples",  xsct_real, "specifies how many samples the matcher, if using the classic matching algorithm ( see the matcher documentation ), will place between the x0 and x0 +- tol value. If the value in this column is n, the matcher will sample 2n+1 points for the respective parameter. Note: the number of samples is also influenced by the periodicity, with the matcher sampling around every x0." );
+}
+
+void
+add_subelement_for_constraint_combination(
+	utility::tag::XMLSchemaSimpleSubelementList & ssl,
+	utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaSimpleSubelementList combination_subelements;
+
+	AttributeList
+		combination_attributes, DistanceAB_attributes, AngleA_attributes, AngleB_attributes, TorsionA_attributes,
+		TorsionB_attributes, TorsionAB_attributes;
+
+	setup_geometric_attribute_list( DistanceAB_attributes );
+	setup_geometric_attribute_list( AngleA_attributes );
+	setup_geometric_attribute_list( AngleB_attributes );
+	setup_geometric_attribute_list( TorsionA_attributes );
+	setup_geometric_attribute_list( TorsionB_attributes );
+	setup_geometric_attribute_list( TorsionAB_attributes );
+
+	combination_subelements.add_simple_subelement( "DistanceAB", DistanceAB_attributes , "The distance between UpstreamResidue:Atom1 amd  UpstreamResidue:Atom1 in angstroms." );
+	combination_subelements.add_simple_subelement( "AngleA", AngleA_attributes , "The angle formed by DownstreamResidue:Atom2, DownstreamResidue:Atom1, and UpstreamResidue:Atom1 in degrees." );
+	combination_subelements.add_simple_subelement( "AngleB", AngleB_attributes , "The angle formed by DownstreamResidue:Atom1, UpstreamResidue:Atom1, UpstreamResidue:Atom2 in degrees." );
+	combination_subelements.add_simple_subelement( "TorsionA", TorsionA_attributes , "The dihedral angle formed by DownstreamResidue:Atom3, DownstreamResidue:Atom2, DownstreamResidue:Atom1, and Upstream:Atom1 in degrees." );
+	combination_subelements.add_simple_subelement( "TorsionB", TorsionA_attributes , "The dihedral angle formed by DownstreamResidue:Atom1, Upstream:Atom1, Upstream:Atom2, Upstream:Atom3" );
+	combination_subelements.add_simple_subelement( "TorsionAB", TorsionA_attributes , "The dihedral angle formed by DownstreamResidue:Atom1, Upstream:Atom1, Upstream:Atom2, Upstream:Atom3" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & matcher_constraint_combination_name_mangler )
+		.element_name( "Combination" )
+		.description( "A fully-specified combinaiton of the six parameters needed to define an individual constraint. One or more Combinations can be specified in each MatcherConstraint tag." )
+		.set_subelements_repeatable( combination_subelements ) //this is probably not the right call but it will work
+		.add_attributes( combination_attributes ) //not that there are any
+		.write_complex_type_to_schema( xsd ); //this makes it a permanent type
+
+	ssl.add_already_defined_subelement( "Combination", & matcher_constraint_combination_name_mangler );
+}
+
+void MatchConstraintFileInfo::return_complex_type_for_MatcherConstraint(
+	utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	// attributes for both the Upstream and Downstream subelements
+	AttributeList residue_subelement_attributes;
+	residue_subelement_attributes
+		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "name of the first atom to use" )
+		+ XMLSchemaAttribute( "atom2", xs_string, "name of the second atom to use" )
+		+ XMLSchemaAttribute( "atom3", xs_string, "name of the third atom to use" )
+		+ XMLSchemaAttribute( "name", xs_string, "name of the residue to consider for the constraint" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & matcher_constraint_name_mangler );
+	subelements.add_simple_subelement( "UpstreamResidue", residue_subelement_attributes,
+		"Which atoms are constrained and what type of residue they are in" );
+	subelements.add_simple_subelement( "DownstreamResidue", residue_subelement_attributes,
+		"Which atoms are constrained and what type of residue they are in" );
+
+	add_subelement_for_constraint_combination( subelements, xsd );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & matcher_constraint_name_mangler )
+		.element_name( "MatcherConstraint" )
+		.description( "A complete description of an interaction pair to sample, including residue types, atoms to use as reference points to build coordinate frames, and one or Combinations." )
+		.set_subelements_repeatable( subelements ) //this is probably not the right call but it will work
+		.add_attributes( attlist ) //not that there are any
+		.write_complex_type_to_schema( xsd ); //this makes it a permanent type
+
+	ssl.add_already_defined_subelement( "MatcherConstraint", & matcher_constraint_name_mangler );
+}
+
+
+void MatchConstraintFileInfo::add_enzyme_template( core::Size index, utility::tag::TagCOP const tag ) {
+	std::string a1 = tag->getOption< std::string >( "atom1", "" );
+	std::string a2 = tag->getOption< std::string >( "atom2", "" );
+	std::string a3 = tag->getOption< std::string >( "atom3", "" );
+
+	// TODO: edit the XSD to support a comma separated list of residue names
+	utility::vector1< std::string > allowed_3res;
+	allowed_3res.push_back( tag->getOption< std::string >( "name", "" ) );
+
+	EnzCstTemplateResOP enz_cst_template( new EnzCstTemplateRes( restype_set_ ) );
+	enz_cst_template->initialize_from_params( a1, a2, a3, allowed_3res);
+	std::pair< core::Size, EnzCstTemplateResOP > to_insert( index, enz_cst_template );
+	enz_template_res_.insert( to_insert );
+}
+
+void MatchConstraintFileInfo::initialize_from_tag( utility::tag::TagCOP const tag ) {
+
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+
+	for ( auto const & branch_tag : branch_tags ) {
+		if ( branch_tag->getName() == "DownstreamResidue" ) { add_enzyme_template( 1, branch_tag ); }
+		else if ( branch_tag->getName() == "UpstreamResidue" ) { add_enzyme_template( 2, branch_tag ); }
+		else if ( branch_tag->getName() == "Combination" ) {
+			// Fill out the constraint struct!
+			SingleConstraint constraint;
+
+			// iterate over the components of the combination to create GeomSampleInfo instancees with the ctor:
+			utility::vector1< utility::tag::TagCOP > const combination_tags( branch_tag->getTags() );
+			for ( auto const & combination_tag : combination_tags ) {
+				core::Real x0 = combination_tag->getOption< core::Real >( "x0", 0. );
+				core::Real xtol = combination_tag->getOption< core::Real >( "xtol", 0. );
+				core::Real k = combination_tag->getOption< core::Real >( "k", 0. );
+				core::Real periodicity = combination_tag->getOption< core::Real >( "periodicity", 0. );
+				core::Size noSamples = combination_tag->getOption< core::Size >( "noSamples", 0 );
+				GeomSampleInfoOP gsi( new GeomSampleInfo( x0, xtol, k, periodicity, noSamples ) );
+
+				gsi->tag( combination_tag->getName() );  // this will let us keep track of which gsi is which
+
+				if ( combination_tag->getName() == "DistanceAB" ) { gsi->tag( "distanceAB:" ); constraint.dis_U1D1 = gsi; }
+				else if ( combination_tag->getName() == "AngleA" ) { constraint.ang_U1D2 = gsi; }
+				else if ( combination_tag->getName() == "AngleB" ) { constraint.ang_U2D1 = gsi; }
+				else if ( combination_tag->getName() == "TorsionA" ) { constraint.tor_U1D3 = gsi; }
+				else if ( combination_tag->getName() == "TorsionB" ) { constraint.tor_U3D1 = gsi; }
+				else if ( combination_tag->getName() == "TorsionAB" ) { constraint.tor_U2D2 = gsi; }
+			}
+			constraints_.push_back( constraint );
+		}
+	}
+}
 
 bool
 MatchConstraintFileInfo::read_data( utility::io::izstream & data )
@@ -327,6 +480,8 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 	core::Size map_id(0);
 
 	//std::cerr << "calling read data for mcfi " << std::endl;
+
+	SingleConstraint current_constraint;
 
 	while ( !data.eof() ) {
 
@@ -375,20 +530,20 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 			if ( tag == "distanceAB:" ) {
 
-				dis_U1D1_ = gs_info;
+				current_constraint.dis_U1D1 = gs_info;
 
 				//old convention to declare covalency in file
-				if ( dis_U1D1_->periodicity() == 1.0 ) is_covalent_ = true;
+				if ( current_constraint.dis_U1D1->periodicity() == 1.0 ) is_covalent_ = true;
 				else is_covalent_ = false;
-			} else if ( tag == "angle_A:" ) ang_U1D2_ = gs_info;
+			} else if ( tag == "angle_A:" ) current_constraint.ang_U1D2 = gs_info;
 
-			else if ( tag == "angle_B:" ) ang_U2D1_ = gs_info;
+			else if ( tag == "angle_B:" ) current_constraint.ang_U2D1 = gs_info;
 
-			else if ( tag == "torsion_A:" ) tor_U1D3_ = gs_info;
+			else if ( tag == "torsion_A:" ) current_constraint.tor_U1D3 = gs_info;
 
-			else if ( tag == "torsion_AB:" ) tor_U2D2_ = gs_info;
+			else if ( tag == "torsion_AB:" ) current_constraint.tor_U2D2 = gs_info;
 
-			else if ( tag == "torsion_B:" ) tor_U3D1_ = gs_info;
+			else if ( tag == "torsion_B:" ) current_constraint.tor_U3D1 = gs_info;
 
 			else {
 				std::cerr << "The following line in the cst file with key " << key << " was not recognized and will be ignored: " << std::endl << line << std::endl;
@@ -402,9 +557,11 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 			if ( !this->process_algorithm_info( tag, data ) ) return false;
 
-		} else if ( key == "CST::END" ) return true;
-
-		else if ( key != "" ) {
+		} else if ( key == "CST::END" ) {
+			constraints_.push_back( current_constraint );
+			current_constraint = SingleConstraint();
+			return true;
+		} else if ( key != "" ) {
 			std::cerr << "The following line in the cst file with key " << key << " was not recognized and will be ignored: " << std::endl << line << std::endl;
 		}
 
@@ -546,45 +703,51 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 		invrot_conformers[ rotcount ].initialize_from_residue( invrot_ats[1], invrot_ats[2], invrot_ats[3], inv_oat1, inv_oat2, inv_oat3, *(rotamers[rotcount]));
 	}
 
-	ExternalGeomSampler exgs( *(this->create_exgs()) );
-	//runtime_assert( exgs );
+	utility::vector1< ExternalGeomSamplerOP > exgs_list( this->create_exgs() );
 
-	//apparently we have to do some stuff with the sampler
-	exgs.set_dis_D1D2(   invrot_conformers[1].atom1_atom2_distance() );
-	exgs.set_dis_D2D3(   invrot_conformers[1].atom2_atom3_distance() );
-	exgs.set_ang_D1D2D3( invrot_conformers[1].atom1_atom2_atom3_angle() );
-	if ( flip_exgs_upstream_downstream_samples ) exgs.flip_upstream_downstream_samples();
-	exgs.precompute_transforms();
+	core::Real atom1_atom2_distance = invrot_conformers[1].atom1_atom2_distance();
+	core::Real atom2_atom3_distance = invrot_conformers[1].atom2_atom3_distance();
+	core::Real atom1_atom2_atom3_angle = invrot_conformers[1].atom1_atom2_atom3_angle();
 
-	HTReal ht_start( target_conf.xyz(target_ats[3]), target_conf.xyz(target_ats[2]), target_conf.xyz(target_ats[1]) );
+	for ( auto & exgs : exgs_list ) {
 
-	for ( Size ii = 1; ii <= exgs.n_tor_U3D1_samples(); ++ii ) {
-		HTReal ht_ii = ht_start * exgs.transform( HT_tor_U3D1, ii );
-		for ( Size jj = 1; jj <= exgs.n_ang_U2D1_samples(); ++jj ) {
-			HTReal ht_jj = ht_ii * exgs.transform( HT_ang_U2D1, jj );
-			for ( Size kk = 1; kk <= exgs.n_dis_U1D1_samples(); ++kk ) {
-				HTReal ht_kk = ht_jj;
-				ht_kk.walk_along_z( exgs.dis_U1D1_samples()[ kk ] );
-				for ( Size ll = 1; ll <= exgs.n_tor_U2D2_samples(); ++ll ) {
-					HTReal ht_ll = ht_kk * exgs.transform( HT_tor_U2D2, ll );
-					for ( Size mm = 1; mm <= exgs.n_ang_U1D2_samples(); ++mm ) {
-						HTReal ht_mm = ht_ll * exgs.transform( HT_ang_U1D2, mm );
-						for ( Size nn = 1; nn <= exgs.n_tor_U1D3_samples(); ++nn ) {
-							HTReal ht_nn = ht_mm * exgs.transform( HT_tor_U1D3, nn );
+		//apparently we have to do some stuff with the sampler
+		exgs->set_dis_D1D2( atom1_atom2_distance );
+		exgs->set_dis_D2D3( atom2_atom3_distance );
+		exgs->set_ang_D1D2D3( atom1_atom2_atom3_angle );
+		if ( flip_exgs_upstream_downstream_samples ) exgs->flip_upstream_downstream_samples();
+		exgs->precompute_transforms();
 
-							for ( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ) {
-								core::conformation::ResidueOP rot( new core::conformation::Residue( *(rotamers[rotcount]) ) );
-								for ( core::Size atm = 1; atm <= rot->natoms(); ++atm ) {
-									rot->set_xyz( atm, invrot_conformers[rotcount].coordinate_in_D3_frame( atm, ht_nn ) );
-								}
-								to_return.push_back( rot );
-							} //loop over all rotamers
-						} //nn sampler
-					} //mm sampler
-				}// ll sampler
-			} //kk sampler
-		} // jj sampler
-	} //ii sampler
+		HTReal ht_start( target_conf.xyz(target_ats[3]), target_conf.xyz(target_ats[2]), target_conf.xyz(target_ats[1]) );
+
+		for ( Size ii = 1; ii <= exgs->n_tor_U3D1_samples(); ++ii ) {
+			HTReal ht_ii = ht_start * exgs->transform( HT_tor_U3D1, ii );
+			for ( Size jj = 1; jj <= exgs->n_ang_U2D1_samples(); ++jj ) {
+				HTReal ht_jj = ht_ii * exgs->transform( HT_ang_U2D1, jj );
+				for ( Size kk = 1; kk <= exgs->n_dis_U1D1_samples(); ++kk ) {
+					HTReal ht_kk = ht_jj;
+					ht_kk.walk_along_z( exgs->dis_U1D1_samples()[ kk ] );
+					for ( Size ll = 1; ll <= exgs->n_tor_U2D2_samples(); ++ll ) {
+						HTReal ht_ll = ht_kk * exgs->transform( HT_tor_U2D2, ll );
+						for ( Size mm = 1; mm <= exgs->n_ang_U1D2_samples(); ++mm ) {
+							HTReal ht_mm = ht_ll * exgs->transform( HT_ang_U1D2, mm );
+							for ( Size nn = 1; nn <= exgs->n_tor_U1D3_samples(); ++nn ) {
+								HTReal ht_nn = ht_mm * exgs->transform( HT_tor_U1D3, nn );
+
+								for ( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ) {
+									core::conformation::ResidueOP rot( new core::conformation::Residue( *(rotamers[rotcount]) ) );
+									for ( core::Size atm = 1; atm <= rot->natoms(); ++atm ) {
+										rot->set_xyz( atm, invrot_conformers[rotcount].coordinate_in_D3_frame( atm, ht_nn ) );
+									}
+									to_return.push_back( rot );
+								} //loop over all rotamers
+							} //nn sampler
+						} //mm sampler
+					}// ll sampler
+				} //kk sampler
+			} // jj sampler
+		} //ii sampler
+	} // iteration over all ExternalGeomSamplers
 	return to_return;
 }
 
@@ -658,47 +821,51 @@ MatchConstraintFileInfo::process_algorithm_info(
 } //process algorithm_info
 
 
-ExternalGeomSamplerOP
+utility::vector1< ExternalGeomSamplerOP >
 MatchConstraintFileInfo::create_exgs() const
 {
+	// So if we're doing this with a list of explicit samples, we should return a vector of EXGSs
+	utility::vector1< ExternalGeomSamplerOP > exgs_list;
+	for ( auto const & constraint : constraints_ ) {
+		ExternalGeomSamplerOP exgs( new ExternalGeomSampler() );
 
-	ExternalGeomSamplerOP exgs( new ExternalGeomSampler() );
+		utility::vector1< std::string > tags_undefined_gsi;
 
-	utility::vector1< std::string > tags_undefined_gsi;
+		if ( constraint.dis_U1D1 ) exgs->set_dis_U1D1_samples( constraint.dis_U1D1->create_sample_vector() );
+		else tags_undefined_gsi.push_back( "distanceAB:" );
 
-	if ( dis_U1D1_ ) exgs->set_dis_U1D1_samples( dis_U1D1_->create_sample_vector() );
-	else tags_undefined_gsi.push_back( "distanceAB:" );
+		if ( constraint.ang_U1D2 ) exgs->set_ang_U1D2_samples( constraint.ang_U1D2->create_sample_vector() );
+		else tags_undefined_gsi.push_back( "angle_A:" );
 
-	if ( ang_U1D2_ ) exgs->set_ang_U1D2_samples( ang_U1D2_->create_sample_vector() );
-	else tags_undefined_gsi.push_back( "angle_A:" );
+		if ( constraint.ang_U2D1 ) exgs->set_ang_U2D1_samples( constraint.ang_U2D1->create_sample_vector() );
+		else tags_undefined_gsi.push_back( "angle_B:" );
 
-	if ( ang_U2D1_ ) exgs->set_ang_U2D1_samples( ang_U2D1_->create_sample_vector() );
-	else tags_undefined_gsi.push_back( "angle_B:" );
+		if ( constraint.tor_U1D3 ) exgs->set_tor_U1D3_samples( constraint.tor_U1D3->create_sample_vector() );
+		else tags_undefined_gsi.push_back( "torsion_A:" );
 
-	if ( tor_U1D3_ ) exgs->set_tor_U1D3_samples( tor_U1D3_->create_sample_vector() );
-	else tags_undefined_gsi.push_back( "torsion_A:" );
+		if ( constraint.tor_U2D2 ) exgs->set_tor_U2D2_samples( constraint.tor_U2D2->create_sample_vector() );
+		else tags_undefined_gsi.push_back( "torsion_AB:" );
 
-	if ( tor_U2D2_ ) exgs->set_tor_U2D2_samples( tor_U2D2_->create_sample_vector() );
-	else tags_undefined_gsi.push_back( "torsion_AB:" );
+		if ( constraint.tor_U3D1 ) exgs->set_tor_U3D1_samples( constraint.tor_U3D1->create_sample_vector() );
+		else tags_undefined_gsi.push_back( "torsion_B:" );
 
-	if ( tor_U3D1_ ) exgs->set_tor_U3D1_samples( tor_U3D1_->create_sample_vector() );
-	else tags_undefined_gsi.push_back( "torsion_B:" );
+		if ( tags_undefined_gsi.size() != 0 ) {
 
-	if ( tags_undefined_gsi.size() != 0 ) {
+			tr.Warning << "could not create external geom sampler from file input because not all 6 necessary degrees of freedom are specified.\n The following DOFs are missing specifications: ";
 
-		tr.Warning << "could not create external geom sampler from file input because not all 6 necessary degrees of freedom are specified.\n The following DOFs are missing specifications: ";
+			for ( core::Size i = 1; i <= tags_undefined_gsi.size(); ++i ) {
+				tr.Warning << tags_undefined_gsi[i] << ", ";
+			}
+			tr.Warning << "." << std::endl;
 
-		for ( core::Size i = 1; i <= tags_undefined_gsi.size(); ++i ) {
-			tr << tags_undefined_gsi[i] << ", ";
+			//std::cerr << "setting external geom sampler to null pointer" << std::endl;
+			exgs = NULL;
 		}
-		tr << "." << std::endl;
-
-		//std::cerr << "setting external geom sampler to null pointer" << std::endl;
-		exgs = NULL;
+		if ( exgs ) {
+			exgs_list.push_back( exgs );
+		}
 	}
-
-	return exgs;
-
+	return exgs_list;
 }
 
 
@@ -726,12 +893,17 @@ MatchConstraintFileInfoList::read_data( utility::io::izstream & data )
 	MatchConstraintFileInfoOP mcfi( new MatchConstraintFileInfo( new_index, restype_set_ ) );
 
 	if ( mcfi->read_data( data ) ) {
-		mcfi->process_data();
-		mcfis_.push_back( mcfi );
-		determine_upstream_restypes();
+		add_mcfi( mcfi );
 		return true;
 	}
 	return false;
+}
+
+void MatchConstraintFileInfoList::add_mcfi( MatchConstraintFileInfoOP mcfi )
+{
+	mcfi->process_data();
+	mcfis_.push_back( mcfi );
+	determine_upstream_restypes();
 }
 
 
@@ -892,12 +1064,7 @@ protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo::save( Archive & 
 	arc( CEREAL_NVP( allowed_seqpos_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( enz_template_res_ ) ); // std::map<core::Size, EnzCstTemplateResOP>
 	arc( CEREAL_NVP( is_covalent_ ) ); // _Bool
-	arc( CEREAL_NVP( dis_U1D1_ ) ); // GeomSampleInfoOP
-	arc( CEREAL_NVP( ang_U1D2_ ) ); // GeomSampleInfoOP
-	arc( CEREAL_NVP( ang_U2D1_ ) ); // GeomSampleInfoOP
-	arc( CEREAL_NVP( tor_U1D3_ ) ); // GeomSampleInfoOP
-	arc( CEREAL_NVP( tor_U3D1_ ) ); // GeomSampleInfoOP
-	arc( CEREAL_NVP( tor_U2D2_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( constraints_ ) ); // utility::vector1< SingleConstraint >
 	arc( CEREAL_NVP( algorithm_inputs_ ) ); // std::map<std::string, utility::vector1<std::string> >
 	core::chemical::serialize_residue_type_set( arc, restype_set_ );
 	arc( CEREAL_NVP( native_ ) ); // _Bool
@@ -911,12 +1078,7 @@ protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo::load( Archive & 
 	arc( allowed_seqpos_ ); // utility::vector1<core::Size>
 	arc( enz_template_res_ ); // std::map<core::Size, EnzCstTemplateResOP>
 	arc( is_covalent_ ); // _Bool
-	arc( dis_U1D1_ ); // GeomSampleInfoOP
-	arc( ang_U1D2_ ); // GeomSampleInfoOP
-	arc( ang_U2D1_ ); // GeomSampleInfoOP
-	arc( tor_U1D3_ ); // GeomSampleInfoOP
-	arc( tor_U3D1_ ); // GeomSampleInfoOP
-	arc( tor_U2D2_ ); // GeomSampleInfoOP
+	arc( constraints_ ); // utility::vector1< SingleConstraint >
 	arc( algorithm_inputs_ ); // std::map<std::string, utility::vector1<std::string> >
 
 	core::chemical::deserialize_residue_type_set( arc, restype_set_ );
@@ -927,6 +1089,47 @@ protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo::load( Archive & 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo );
 CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo )
 
+
+/// @brief SingleConstraint serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::SingleConstraint::save( Archive & arc ) const {
+	arc( CEREAL_NVP( dis_U1D1 ) ); // GeomSampleInfoCOP
+	arc( CEREAL_NVP( ang_U1D2 ) ); // GeomSampleInfoCOP
+	arc( CEREAL_NVP( ang_U2D1 ) ); // GeomSampleInfoCOP
+	arc( CEREAL_NVP( tor_U1D3 ) ); // GeomSampleInfoCOP
+	arc( CEREAL_NVP( tor_U2D2 ) ); // GeomSampleInfoCOP
+	arc( CEREAL_NVP( tor_U3D1 ) ); // GeomSampleInfoCOP
+}
+
+/// @brief SingleConstraint deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::SingleConstraint::load( Archive & arc ) {
+	// make a local non-const pointer to a GeomSampleInfo
+	GeomSampleInfoOP local_gis;
+
+	arc( local_gis ); // GeomSampleInfoCOP masquerading as a GeomSampleInfoOP
+	dis_U1D1 = local_gis; // copy the address of the non-const pointer into the const pointer
+
+	// repeat the process for each data member
+	arc( local_gis );
+	ang_U1D2 = local_gis;
+
+	arc( local_gis );
+	ang_U2D1 = local_gis;
+
+	arc( local_gis );
+	tor_U1D3 = local_gis;
+
+	arc( local_gis );
+	tor_U2D2 = local_gis;
+
+	arc( local_gis );
+	tor_U3D1 = local_gis;
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::SingleConstraint );
 
 /// @brief Default constructor required by cereal to deserialize this class
 protocols::toolbox::match_enzdes_util::GeomSampleInfo::GeomSampleInfo() {}

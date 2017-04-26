@@ -172,9 +172,13 @@ public:
 		//3. asserting stuff for residue 3
 		MatchConstraintFileInfoListCOP mcfil3 = enz_io->mcfi_list( 3 );
 
-		TS_ASSERT( mcfil3->mcfi(1)->create_exgs().get() == NULL );
+		TS_ASSERT( mcfil3->mcfi(1)->create_exgs().size() == 0 );
 
-		TS_ASSERT_EQUALS( mcfil3->mcfi(2)->tor_U1D3()->num_steps(), 4 );
+		utility::vector1< SingleConstraint > constraints( mcfil3->mcfi(2)->constraints() );
+		TS_ASSERT_EQUALS( constraints.size(), 1 );
+		SingleConstraint const & constraint = constraints[ 1 ];
+
+		TS_ASSERT_EQUALS( constraint.tor_U1D3->num_steps(), 4 );
 		TS_ASSERT_EQUALS( mcfil3->mcfi(2)->template_atom_inds( 2, 1, const_residue_set->name_map("THR") )[1], const_residue_set->name_map("THR").atom_index("OG1") );
 		//TO DO
 

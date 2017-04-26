@@ -759,9 +759,17 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 			/// 2 thousandths of an angstrom for distances should be enough; it's harder to say
 			/// with degrees.  Currently, it's coded to tolerate only a tenth of a degree disagreement.
 
-			Real const conf1_d12(    lig_conformers_[ 1 ]->atom1_atom2_distance());
-			Real const conf1_d23(    lig_conformers_[ 1 ]->atom2_atom3_distance());
-			Real const conf1_ang123( lig_conformers_[ 1 ]->atom1_atom2_atom3_angle());
+			utility::vector1< Real > const conf1_d12_vec(    lig_conformers_[ 1 ]->atom1_atom2_distance());
+			utility::vector1< Real > const conf1_d23_vec(    lig_conformers_[ 1 ]->atom2_atom3_distance());
+			utility::vector1< Real > const conf1_ang123_vec( lig_conformers_[ 1 ]->atom1_atom2_atom3_angle());
+
+			if ( conf1_d12_vec.size() > 1 || conf1_d23_vec.size() > 1 || conf1_ang123_vec.size() > 1 ) {
+				utility_exit_with_message( "Somehow there is more than allowable position for the ligand rotamers; this behavior is not fully supported at the moment." );
+			}
+
+			Real const conf1_d12( conf1_d12_vec[ 1 ] );
+			Real const conf1_d23( conf1_d23_vec[ 1 ] );
+			Real const conf1_ang123( conf1_ang123_vec[ 1 ] );
 
 			Real const conf1_oat_d12(    lig_conformers_[ 1 ]->oatom1_oatom2_distance());
 			Real const conf1_oat_d23(    lig_conformers_[ 1 ]->oatom2_oatom3_distance());
@@ -771,7 +779,6 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 			Real const angle_tolerance = 1e-1;
 
 			for ( Size ii = 2; ii <= nligrots; ++ii ) {
-
 				if ( std::abs( lig_conformers_[ ii ]->atom1_atom2_distance() - conf1_d12 ) > distance_tolerance ) {
 					utility_exit_with_message( "Ligand rotamers disagree on distances between atoms "
 						+ utility::trim( residue.atom_name( atoms_123_[ 1 ] ) ) + " and "

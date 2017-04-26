@@ -5,36 +5,36 @@ cd %(workdir)s
 
 #Test Vanilla clustering (thres_finder 0)
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list \
--run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log1 \
+-run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log1
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 #Test Loop Clustering
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -start 91 -end 101 \
--run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log2 \
+-run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log2
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 #Test Chain Clustering
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -chain " " \
--run:constant_seed nodelay 2>&1 | egrep -vf ../../ignore_list > log2 \
+-run:constant_seed nodelay 2>&1 | egrep -vf ../../ignore_list > log2
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 #Test Other clustering settings
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -thres_finder 1 \
-    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log3 \
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log3
     test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -thres_finder 2 \
-    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log4 \
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log4
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -thres_finder 2 -nofilter\
-    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log5 \
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log5
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -thres_finder 3 \
-    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log6 \
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log6
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 %(bin)s/calibur.%(binext)s %(additional_flags)s -database %(database)s -pdb_list pdb_list -thres_finder 3 -nofilter\
-    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log7 \
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log7
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true

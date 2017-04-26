@@ -89,6 +89,7 @@ RosettaScriptsParser::RosettaScriptsParser() :
 	validator_( new utility::tag::XMLValidator ),
 	filenames_already_validated_()  //Empty list initially
 {
+	recursion_limit_ = option[ OptionKeys::parser::inclusion_recursion_limit ].value();
 	register_factory_prototypes();
 }
 
@@ -113,9 +114,11 @@ typedef utility::vector0< TagCOP > TagCOPs;
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 void
 RosettaScriptsParser::read_in_and_recursively_replace_includes(
-	std::string const & filename,
+	std::string const &filename,
 	std::string & substituted_contents, // "output" variable
-	utility::vector1 < std::string > filenames_encountered
+	utility::vector1 < std::string > filenames_encountered,
+	core::Size const recursion_level,
+	bool const do_not_recurse
 ) const {
 
 	//Check whether we've already encountered this filename
@@ -136,37 +139,41 @@ RosettaScriptsParser::read_in_and_recursively_replace_includes(
 	utility::slurp( inputstream, contents );
 	inputstream.close();
 
-	//Find xi:include tags:
-	//Will be an innermost set of <> brackets.
-
 	std::string::const_iterator copy_start( contents.begin() ); // Where to start the next copy from
-	std::string::const_iterator start_bracket( contents.begin() ); // The position of '<', or where to start the search from
-	while ( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
-		std::string::const_iterator end_bracket = start_bracket + 1; // Will be the postion of corresponding '>'
-		// Advance to next non-whitespace portion
-		while ( end_bracket != contents.cend() && std::isspace( *end_bracket ) ) { ++end_bracket; }
-		if ( end_bracket == contents.cend() || std::string( end_bracket, end_bracket+10 ) != "xi:include" ) {
-			// This tag is not an "xi:include" tag
-			start_bracket = end_bracket;
-			continue;
-		}
-		end_bracket = std::find( end_bracket, contents.cend(), '>' );
-		if ( end_bracket == contents.end() ) { break; } // End of file, with unmatched open
 
-		TagCOP tag( utility::tag::Tag::create( std::string( start_bracket, end_bracket+1 ) ) ); //Parse the current inner tag.
-		if ( tag->getName() != "xi:include" ) {
-			// This tag is not an "xi:include" tag, for some reason
-			++start_bracket; // We might have skipped an alternative '<' when searching for the '>', so restart closer to the last place.
-			continue;
-		}
-		runtime_assert_string_msg( tag->hasOption("href"), "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag must include an \"href=...\" statement." );
-		runtime_assert_string_msg( !tag->hasOption("parse") || tag->getOption<std::string>("parse") == "XML", "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag can ONLY be used to include XML for parsing.  Other parse types are unsupporrted in RosettaScripts." );
-		std::string const & subfilename( tag->getOption<std::string>("href") );
+	if ( ! do_not_recurse || recursion_level < recursion_limit_ ) {
+		// Find xi:include tags:
+		// Will be an innermost set of <> brackets.
+		std::string::const_iterator start_bracket( contents.begin() ); // The position of '<', or where to start the search from
 
-		substituted_contents.append( copy_start, start_bracket );
-		read_in_and_recursively_replace_includes( subfilename, substituted_contents, filenames_encountered );  //Recursively call this function to read in included XML.
-		copy_start = end_bracket + 1;
-		start_bracket = end_bracket + 1; // Restart parsing after end of tag.
+		while ( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
+			std::string::const_iterator end_bracket = start_bracket + 1; // Will be the postion of corresponding '>'
+			// Advance to next non-whitespace portion
+			while ( end_bracket != contents.cend() && std::isspace( *end_bracket ) ) { ++end_bracket; }
+			if ( end_bracket == contents.cend() || std::string( end_bracket, end_bracket+10 ) != "xi:include" ) {
+				// This tag is not an "xi:include" tag
+				start_bracket = end_bracket;
+				continue;
+			}
+			end_bracket = std::find( end_bracket, contents.cend(), '>' );
+			if ( end_bracket == contents.end() ) { break; } // End of file, with unmatched open
+
+			TagCOP tag( utility::tag::Tag::create( std::string( start_bracket, end_bracket+1 ) ) ); //Parse the current inner tag.
+			if ( tag->getName() != "xi:include" ) {
+				// This tag is not an "xi:include" tag, for some reason
+				++start_bracket; // We might have skipped an alternative '<' when searching for the '>', so restart closer to the last place.
+				continue;
+			}
+			runtime_assert_string_msg( tag->hasOption("href"), "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag must include an \"href=...\" statement." );
+			runtime_assert_string_msg( !tag->hasOption("parse") || tag->getOption<std::string>("parse") == "XML", "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag can ONLY be used to include XML for parsing.  Other parse types are unsupporrted in RosettaScripts." );
+			std::string const & subfilename( tag->getOption<std::string>("href") );
+			bool prevent_recursion_next_time( tag->getOption< bool >( "prevent_recursion", false ) );
+
+			substituted_contents.append( copy_start, start_bracket );
+			read_in_and_recursively_replace_includes( subfilename, substituted_contents, filenames_encountered, recursion_level + 1, prevent_recursion_next_time );  //Recursively call this function to read in included XML.
+			copy_start = end_bracket + 1;
+			start_bracket = end_bracket + 1; // Restart parsing after end of tag.
+		}
 	}
 
 	// Copy over the remaining portion of the file contents.
@@ -233,7 +240,7 @@ RosettaScriptsParser::generate_mover_from_pose(
 	// After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
 	// No interpretation is done yet (except for recognizing xi:include).
 	std::string substituted_contents;
-	read_in_and_recursively_replace_includes( dock_design_filename, substituted_contents, filenames_encountered );
+	read_in_and_recursively_replace_includes( dock_design_filename, substituted_contents, filenames_encountered, 0 );
 	std::stringstream fin( substituted_contents );
 
 	// Do substitution of the script_vars in the stream

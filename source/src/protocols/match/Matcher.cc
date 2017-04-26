@@ -256,50 +256,57 @@ void Matcher::add_external_geometry_samples_for_constraint(
 	core::chemical::ResidueTypeCOP restype,
 	utility::vector1< std::string >  const & upstream_launch_atoms,
 	utility::vector1< core::id::AtomID > const & downstream_3atoms,
-	toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
+	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & exgeom_list,
 	Size const exgeom_id,
 	bool enumerate_ligand_rotamers /* = false */,
 	bool catalytic_bond /*= false */,
 	bool build_round1_hits_twice /* = false */
 )
 {
-	TR << "     Adding Classical Match Algorithm with geometry samples: " << std::endl;
-	TR << "     tor_U3D1:";
-	for ( Size ii = 1; ii <= exgeom.n_tor_U3D1_samples(); ++ii ) {
-		TR << " " << exgeom.tor_U3D1_samples()[ ii ];
-	}
-	TR << std::endl;
+	core::Size n_samples( exgeom_list.size() );
+	bool show_all_smaple_points( n_samples <= 10 );
 
-	TR << "     ang_U2D1:";
-	for ( Size ii = 1; ii <= exgeom.n_ang_U2D1_samples(); ++ii ) {
-		TR << " " << exgeom.ang_U2D1_samples()[ ii ];
-	}
-	TR << std::endl;
+	if ( ! show_all_smaple_points ) {
+		TR << "     Adding Classical Match Algorithm with " <<  n_samples << " explicit geometric samples" << std::endl;
+	} else {
+		TR << "     Adding Classical Match Algorithm with geometry samples: " << std::endl;
+		TR << "     tor_U3D1:";
 
-	TR << "     dis_U1D1:";
-	for ( Size ii = 1; ii <= exgeom.n_dis_U1D1_samples(); ++ii ) {
-		TR << " " << exgeom.dis_U1D1_samples()[ ii ];
-	}
-	TR << std::endl;
+		for ( auto const & exgeom : exgeom_list ) {
+			for ( auto const & sample : exgeom.tor_U3D1_samples() ) { TR << " " << sample; }
+		}
+		TR << std::endl;
 
-	TR << "     tor_U2D2:";
-	for ( Size ii = 1; ii <= exgeom.n_tor_U2D2_samples(); ++ii ) {
-		TR << " " << exgeom.tor_U2D2_samples()[ ii ];
-	}
-	TR << std::endl;
+		TR << "     ang_U2D1:";
+		for ( auto const & exgeom : exgeom_list ) {
+			for ( auto const & sample : exgeom.ang_U2D1_samples() ) { TR << " " << sample; }
+		}
+		TR << std::endl;
 
-	TR << "     ang_U1D2:";
-	for ( Size ii = 1; ii <= exgeom.n_ang_U1D2_samples(); ++ii ) {
-		TR << " " << exgeom.ang_U1D2_samples()[ ii ];
-	}
-	TR << std::endl;
+		TR << "     dis_U1D1:";
+		for ( auto const & exgeom : exgeom_list ) {
+			for ( auto const & sample : exgeom.dis_U1D1_samples() ) { TR << " " << sample; }
+		}
+		TR << std::endl;
 
-	TR << "     tor_U1D3:";
-	for ( Size ii = 1; ii <= exgeom.n_tor_U1D3_samples(); ++ii ) {
-		TR << " " << exgeom.tor_U1D3_samples()[ ii ];
-	}
-	TR << std::endl;
+		TR << "     tor_U2D2:";
+		for ( auto const & exgeom : exgeom_list ) {
+			for ( auto const & sample : exgeom.tor_U2D2_samples() ) { TR << " " << sample; }
+		}
+		TR << std::endl;
 
+		TR << "     ang_U1D2:";
+		for ( auto const & exgeom : exgeom_list ) {
+			for ( auto const & sample : exgeom.ang_U1D2_samples() ) { TR << " " << sample; }
+		}
+		TR << std::endl;
+
+		TR << "     tor_U1D3:";
+		for ( auto const & exgeom : exgeom_list ) {
+			for ( auto const & sample : exgeom.tor_U1D3_samples() ) { TR << " " << sample; }
+		}
+		TR << std::endl;
+	}
 
 	runtime_assert( upstream_launch_atoms.size() == 3 );
 	runtime_assert( downstream_3atoms.size() == 3 );
@@ -334,7 +341,7 @@ void Matcher::add_external_geometry_samples_for_constraint(
 	downstream::ClassicMatchAlgorithm & algorithm( static_cast< downstream::ClassicMatchAlgorithm & > (build_set.algorithm() ) );
 
 	algorithm.add_external_geom_sampler(
-		exgeom,
+		exgeom_list,
 		exgeom_id,
 		upstream_launch_atoms[ 1 ],
 		upstream_launch_atoms[ 2 ],
@@ -1100,11 +1107,12 @@ void Matcher::initialize_from_file(
 				Size const upstream_id = jj_mcfis[ kk ]->upstream_res();
 				Size const downstream_id = jj_mcfis[ kk ]->downstream_res();
 
-				toolbox::match_enzdes_util::ExternalGeomSamplerCOP exgs;
+				utility::vector1< toolbox::match_enzdes_util::ExternalGeomSamplerCOP > exgs_list( jj_mcfis[ kk ]->create_exgs() );
 				if ( !secondary_matching ) {
-					exgs = jj_mcfis[ kk ]->create_exgs();
-					if ( exgs.get() == nullptr ) {
-						utility_exit_with_message( "ERROR: could not define external geometry between upstream and downstream residues.  All 6 parameters must be defined." );
+					for ( auto const & exgs : exgs_list ) {
+						if ( exgs.get() == nullptr ) {
+							utility_exit_with_message( "ERROR: could not define external geometry between upstream and downstream residues.  All 6 parameters must be defined." );
+						}
 					}
 				}
 
@@ -1175,8 +1183,14 @@ void Matcher::initialize_from_file(
 									jj_mcfis[kk]->is_covalent() );
 							}
 						} else {
+							// ugh, exgs_list is a vector of pointers, but it needs to be a vector of exgs. Let's populate a new vector here
+							utility::vector1< ExternalGeomSampler > exgs_list_to_pass;
+							for ( auto exgs_ptr = exgs_list.cbegin(); exgs_ptr != exgs_list.cend(); ++exgs_ptr ) {
+								exgs_list_to_pass.push_back( *(*exgs_ptr) );
+							}
+
 							add_external_geometry_samples_for_constraint(
-								ii, upres[ jj ], upstream_launch_atoms, downstream_3atoms, *exgs,
+								ii, upres[ jj ], upstream_launch_atoms, downstream_3atoms, exgs_list_to_pass,
 								jj_mcfis[ kk ]->index(),
 								mtask.enumerate_ligand_rotamers(),
 								jj_mcfis[kk]->is_covalent(),

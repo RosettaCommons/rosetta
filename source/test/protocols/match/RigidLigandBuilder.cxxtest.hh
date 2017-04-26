@@ -276,6 +276,8 @@ public:
 		exsampler.set_tor_U2D2_samples(    tor_U2D2_1   );
 		exsampler.set_tor_U1D3_samples(     tor_U1D3_1    );
 
+		utility::vector1< ExternalGeomSampler > exsamplers;
+		exsamplers.push_back( exsampler );
 
 		std::string const  at4( "C12" ),  at5( "C9" ),   at6( "C13" );
 		std::string const oat1( "C17" ), oat2( "C19" ), oat3( "C22" ); // orientation atoms, oats
@@ -303,7 +305,7 @@ public:
 		ClassicMatchAlgorithmOP match_algorithm( new ClassicMatchAlgorithm( 1 ) );
 		match_algorithm->set_residue_type( cys_restype );
 		match_algorithm->add_external_geom_sampler(
-			exsampler, 1, "CA", "CB", "SG", rigid_builder );
+			exsamplers, 1, "CA", "CB", "SG", rigid_builder );
 		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( fout ) );
 		dsalgorithm->set_match_algorithm( match_algorithm );
 		dsalgorithm->set_n_downstream_to_output( 5 );
@@ -381,6 +383,8 @@ public:
 		exsampler.set_tor_U2D2_samples( tor_U2D2_1 );
 		exsampler.set_tor_U1D3_samples( tor_U1D3_1 );
 
+		utility::vector1< ExternalGeomSampler > exsamplers;
+		exsamplers.push_back( exsampler );
 
 		std::string const  at4( "C1" ),  at5( "C5" ),   at6( "C6" );
 		std::string const oat1( "C20" ), oat2( "C19" ), oat3( "C18" ); // orientation atoms, oats
@@ -408,7 +412,7 @@ public:
 		ClassicMatchAlgorithmOP match_algorithm( new ClassicMatchAlgorithm( 1 ) );
 		match_algorithm->set_residue_type( cys_restype );
 		match_algorithm->add_external_geom_sampler(
-			exsampler, 1, "CA", "CB", "SG", rigid_builder );
+			exsamplers, 1, "CA", "CB", "SG", rigid_builder );
 		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( fout ) );
 		dsalgorithm->set_match_algorithm( match_algorithm );
 		dsalgorithm->set_n_downstream_to_output( 15 );

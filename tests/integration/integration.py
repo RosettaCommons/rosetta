@@ -430,7 +430,14 @@ EXAMPLES For Running Demos/Tutorials
                 if f == 'command.sh': continue
                 if f == 'command.mpi.sh': continue
                 fname = dir_ + '/' + f
-                data = file(fname).read()
+                try:
+                    with open(fname, 'r') as f:
+                        data = f.read()
+                except UnicodeDecodeError:
+                    # binary files will not work with the replacements
+                    # below
+                    continue
+
                 mod = False
                 if root_rosetta_dir in data:
                     data = data.replace(root_rosetta_dir, 'ROSETTA')
@@ -450,10 +457,11 @@ EXAMPLES For Running Demos/Tutorials
                     data = data.replace( params['rosetta_demos'], "ROSETTA/demos")
                     mod = True
                 if mod:
-                    with file(fname, 'w') as f: f.write( data )
+                    with open(fname, 'w') as f:
+                        f.write( data )
 
     # Analyze results
-    print
+    print()
 
     refdir = os.path.join( os.path.dirname(outdir), 'ref' )
     if rename_to_ref:
@@ -464,7 +472,8 @@ EXAMPLES For Running Demos/Tutorials
             print("SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0))
 
         if options.yaml:
-            f = file(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
+            with open(options.yaml, 'w') as f:
+                f.write("{total : %s, failed : 0, details : {}}" % len(tests))
         write_runtimes(runtimes, refdir)
 
     else:
@@ -503,9 +512,8 @@ EXAMPLES For Running Demos/Tutorials
             if options.yaml:
                 try:
                   data = dict(total=len(tests), failed=errors, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
-                  f = file(options.yaml, 'w')
-                  json.dump(data, f, sort_keys=True, indent=2)
-                  f.close()
+                  with open(options.yaml, 'w') as f:
+                      json.dump(data, f, sort_keys=True, indent=2)
                   '''
                   f = file(options.yaml, 'w')
                   brief = makeBriefResults(full_log)
@@ -809,7 +817,7 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         output = ''
         for line in f:
             #po.poll()
-            if print_output: print(line, end='')
+            if print_output: print(line.decode('utf-8'), end='')
             output += line.decode('utf-8')
             sys.stdout.flush()
         f.close()
@@ -1013,7 +1021,8 @@ def generateTestCommandline(test, outdir, options=None, host=None):
     cmd += '\n'
     if options.mpi_tests :
         if os.path.isfile( path.join(workdir,"command.mpi") ):
-            cmd += file(path.join(workdir,"command.mpi")).read().strip()
+            with open(path.join(workdir,"command.mpi")) as f:
+                cmd += f.read().strip()
         else:
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
@@ -1378,7 +1387,8 @@ class Worker:
                             print(error_string, end='')
 
                             # Writing error_string to a file, so integration test should fail for sure
-                            file(path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
+                            with open(path.join(workdir, ".test_did_not_run.log"), 'w') as f:
+                                f.write(error_string)
 
                     finally: # inner try
                         percent = (100* (self.queue.TotalNumberOfTasks-self.queue.qsize())) / self.queue.TotalNumberOfTasks

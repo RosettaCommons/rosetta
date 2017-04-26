@@ -12,6 +12,8 @@ See main() for usage or run with --help.
 
 Author: Ian W. Davis
 '''
+from __future__ import print_function
+
 import os, sys, copy, random #{{{
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
@@ -182,7 +184,7 @@ def check_bond_count(atoms): #{{{
             raise ValueError("Atom %s is a hydrogen with >1 bonds" % atom.name)
         # Valence 4.5 for e.g. carbon comes up in peptide bonds and at the joins in multi-ring systems.
         if sum([valence(bond) for bond in atom.bonds]) > 4.5:
-            print "WARNING:  atom %s has valence > 4" % atom.name
+            print("WARNING:  atom %s has valence > 4" % atom.name)
 #}}}
 def check_aromaticity(bonds): #{{{
     '''Safety check for Kekule structures (alternating single/double bonds)
@@ -190,10 +192,10 @@ def check_aromaticity(bonds): #{{{
     aro_bonds = len([b for b in bonds if b.order == Bond.AROMATIC])
     dbl_bonds = len([b for b in bonds if b.order == Bond.DOUBLE])
     if aro_bonds == 0 and dbl_bonds > 0:
-        print "WARNING:  structure contains double bonds but no aromatic bonds"
-        print "  Aromatic bonds must be identified explicitly --"
-        print "  alternating single/double bonds (Kekule structure) won't cut it."
-        print "  This warning does not apply to you if your molecule really isn't aromatic."
+        print("WARNING:  structure contains double bonds but no aromatic bonds")
+        print("  Aromatic bonds must be identified explicitly --")
+        print("  alternating single/double bonds (Kekule structure) won't cut it.")
+        print("  This warning does not apply to you if your molecule really isn't aromatic.")
 #}}}
 def check_hydrogens(atoms): #{{{
     '''Safety check for from PDB structures.
@@ -202,10 +204,10 @@ def check_hydrogens(atoms): #{{{
     for a in atoms:
         if "H" == a.elem:
             return   # At least one hydrogen - we're probably fine.
-    print "WARNING:  structure does not contain any hydrogens"
-    print "  Hydrogens aren't automatically added. --"
-    print "  Check your PDB -> mol conversion program for hydrogen-addition options."
-    print "  This warning does not apply to you if your molecule shouldn't contain any hydrogens."
+    print("WARNING:  structure does not contain any hydrogens")
+    print("  Hydrogens aren't automatically added. --")
+    print("  Check your PDB -> mol conversion program for hydrogen-addition options.")
+    print("  This warning does not apply to you if your molecule shouldn't contain any hydrogens.")
 #}}}
 def assign_rosetta_types(atoms): #{{{
     '''Assigns Rosetta atom types.
@@ -361,8 +363,8 @@ def setup_amino_acid(atoms, molfiles): #{{{
     # These two things should (?) be enough to make the .params entries come out in the right order
     # Now, check to make sure all the required atoms are present
     atom_names = dict( (a.name, a) for a in atoms )
-    if not all( name in atom_names for name in atom_prio.iterkeys() ):
-        missing = set(atom_prio.iterkeys()) - set(atom_names.iterkeys())
+    if not all( name in atom_names for name in atom_prio.keys() ):
+        missing = set(atom_prio.keys()) - set(atom_names.keys())
         raise ValueError("Input is missing essential atom(s) for amino acids: %s" % ", ".join(missing))
     # Make N the root
     atom_names[" N  "].is_root = True
@@ -375,7 +377,7 @@ def setup_amino_acid(atoms, molfiles): #{{{
         " H  ":  ("H", "HNbb", "H   "),
         " HA ": ("H", "Hapo", "HB  "),
     }
-    for name, atype in atom_types.iteritems():
+    for name, atype in atom_types.items():
         atom_names[name].elem       = atype[0]
         atom_names[name].ros_type   = atype[1]
         atom_names[name].mm_type    = atype[2]
@@ -392,12 +394,12 @@ def assign_partial_charges(atoms, net_charge=0.0, recharge=False): #{{{
         abs_charge = sum(abs(a.partial_charge) for a in atoms if a.partial_charge is not None)
         if len(null_charge) == 0 and abs_charge > 0:
             net_charge = sum(a.partial_charge for a in atoms if a.partial_charge is not None)
-            print "Partial charges already fully assigned, no changes made; net charge %.3f" % net_charge
+            print("Partial charges already fully assigned, no changes made; net charge %.3f" % net_charge)
             return
         elif 0 < len(null_charge) and len(null_charge) < len(atoms):
             raise ValueError("Only some partial charges were assigned -- must be all or none.")
     else:
-        print "Ignoring partial charges in file; net charge set to %.3f" % net_charge
+        print("Ignoring partial charges in file; net charge set to %.3f" % net_charge)
     std_charges = { # from Rosetta++ aaproperties_pack.cc
         "CNH2" : 0.550,
         "COO " : 0.620,
@@ -530,11 +532,11 @@ def assign_partial_charges(atoms, net_charge=0.0, recharge=False): #{{{
             curr_net_charge += a.partial_charge
         else:
             a.partial_charge = 0
-            print "WARNING: Atom", a.name, "does not have naive partial charges - you may need to adjust partial charges in the params file for type '"+a.ros_type+"'"
+            print("WARNING: Atom", a.name, "does not have naive partial charges - you may need to adjust partial charges in the params file for type '"+a.ros_type+"'")
     # We only want to operate on non-virtual atoms now:
     atoms = [a for a in atoms if not a.is_virtual]
     charge_correction = (net_charge - curr_net_charge) / len(atoms)
-    print "Total naive charge %.3f, desired charge %.3f, offsetting all atoms by %.3f" % (curr_net_charge, net_charge, charge_correction)
+    print("Total naive charge %.3f, desired charge %.3f, offsetting all atoms by %.3f" % (curr_net_charge, net_charge, charge_correction))
     curr_net_charge = 0.0
     for a in atoms:
         a.partial_charge += charge_correction
@@ -594,8 +596,8 @@ def fragment_ligand(molfile): #{{{
     for b in molfile.bonds:
         if not b.break_me: continue
         if b.can_rotate:
-            print "WARNING: spliting ROTATABLE bond between %s and %s" % (b.a1.name, b.a2.name)
-        print "Split bond between %s and %s" % (b.a1.name, b.a2.name)
+            print("WARNING: spliting ROTATABLE bond between %s and %s" % (b.a1.name, b.a2.name))
+        print("Split bond between %s and %s" % (b.a1.name, b.a2.name))
         num_conn_id += 1
         b.connection_id = num_conn_id
         b.mirror.connection_id = b.connection_id
@@ -653,18 +655,18 @@ def fragment_ligand(molfile): #{{{
         num_rot_bonds = len([b for b in molfile.bonds if b.a1.fragment_id == frag_id and b.a2.fragment_id == frag_id and b.can_rotate])
         if num_atoms < 3:
             # Mini-Rosetta atomtree requires at least 3 points to establish a coordinate system.
-            print "Fragment %i: %s" % (frag_id, [a.name for a in frag_atoms])
+            print("Fragment %i: %s" % (frag_id, [a.name for a in frag_atoms]))
             raise ValueError("Fragment %i has %i atoms; merge with another fragment or add virtual atoms to make 3 total" % (frag_id, num_atoms))
         if not (7 <= num_atoms <= 24):
-            print "WARNING: fragment %i has %i total atoms including H; protein residues have 7 - 24 (DNA: 33)" % (frag_id, num_atoms)
+            print("WARNING: fragment %i has %i total atoms including H; protein residues have 7 - 24 (DNA: 33)" % (frag_id, num_atoms))
         if not (4 <= num_heavy_atoms <= 22):
-            print "WARNING: fragment %i has %i non-H atoms; protein residues have 4 - 14 (DNA: 22)" % (frag_id, num_heavy_atoms)
+            print("WARNING: fragment %i has %i non-H atoms; protein residues have 4 - 14 (DNA: 22)" % (frag_id, num_heavy_atoms))
         if num_rot_bonds > 4:
-            print "WARNING: fragment %i has %i rotatable bonds; protein residues have 0 - 4" % (frag_id, num_rot_bonds)
-    print "Average %.1f atoms (%.1f non-H atoms) per fragment" % (
-        float(len(molfile.atoms)) / float(num_frag_id), float(len([a for a in molfile.atoms if not a.is_H])) / float(num_frag_id))
+            print("WARNING: fragment %i has %i rotatable bonds; protein residues have 0 - 4" % (frag_id, num_rot_bonds))
+    print("Average %.1f atoms (%.1f non-H atoms) per fragment" % (
+        float(len(molfile.atoms)) / float(num_frag_id), float(len([a for a in molfile.atoms if not a.is_H])) / float(num_frag_id)))
     # Average stats tabulated by IWD from Richardson's Top500 database
-    print "(Proteins average 15.5 atoms (7.8 non-H atoms) per residue)"
+    print("(Proteins average 15.5 atoms (7.8 non-H atoms) per residue)")
     return num_frag_id
 #}}}
 def build_fragment_trees(molfile, options): #{{{
@@ -695,7 +697,7 @@ def build_fragment_trees(molfile, options): #{{{
         # If we want to have a default way of choosing the root atom, this is the place:
         root_atoms = [a for a in molfile.atoms if a.fragment_id == frag_id and a.is_root]
         if len(root_atoms) == 0:
-            print "WARNING:  no root atom specified, using NBR atom instead."
+            print("WARNING:  no root atom specified, using NBR atom instead.")
             (nbr, nbr_dist) = choose_neighbor_atom(molfile, frag_id)
             nbr.is_root = True
             root_atoms = [nbr]
@@ -802,7 +804,7 @@ def calc_internal_coords(child, input_stub1, input_stub2, input_stub3): #{{{
     # (except for CONNECT atoms, where we use different stubs!!)
     d = r3.distance(child, input_stub1)
     if d < 1e-2: # very small d;  theta, phi don't make sense
-        print "WARNING: very small d=%f for %s" % (d, child.name)
+        print("WARNING: very small d=%f for %s" % (d, child.name))
         theta = 0.0
         phi = 0.0
     else:
@@ -893,7 +895,7 @@ def floyd_warshall(nodes, nbr, dist): #{{{
     # Create an N x N array of all-against-all distances.
     # Syntax is awkward and Python lacks a reliable +Inf, so we use 1e100.
     N = len(nodes) # Number of Atoms
-    range_N = range(N)
+    range_N = list(range(N))
     d = [ [1e100] * N for i in range_N ]
     # Initialization: distance between directly connected nodes
     for j in range_N:
@@ -1100,7 +1102,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs, amino_aci
             if is_sp2_proton(a, b, c, d): num_H_confs *= 6
             else: num_H_confs *= 9
     if num_H_confs > max_confs:
-        print "WARNING: skipping extra samples for proton chis; would give %i conformers" % num_H_confs
+        print("WARNING: skipping extra samples for proton chis; would give %i conformers" % num_H_confs)
     num_chis = 0
     for bond, a, b, c, d in rot_bond_iter(sorted_bonds):
         num_chis += 1
@@ -1259,8 +1261,8 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
             for i, molfile in enumerate(molfiles):
                 pdb_file = "%s_%04i%s.pdb" % (options.pdb, i+1, suffix)
                 if not options.clobber and os.path.exists(pdb_file):
-                    print "File %s already exists -- aborting!" % pdb_file
-                    print "Use --clobber to overwrite existing files."
+                    print("File %s already exists -- aborting!" % pdb_file)
+                    print("Use --clobber to overwrite existing files.")
                     return 4
                 else:
                     # m is used for names, molfile is used for XYZ
@@ -1268,45 +1270,45 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
                         write_ligand_pdb(pdb_file, m, molfile, options.name, options.center, options.chain)
                     except ValueError as e:
                         if options.skip_bad_conformers:
-                            print "Skipping Bad Conformers:",e
+                            print("Skipping Bad Conformers:",e)
                             os.remove(pdb_file)
                         else:
                             sys.exit(e)
-                    print "Wrote PDB file %s" % pdb_file
+                    print("Wrote PDB file %s" % pdb_file)
     if not options.no_param:
         for i in range(num_frags):
             if num_frags == 1: param_file = "%s%s.params" % (options.pdb, suffix)
             else: param_file = "%s%i%s.params" % (options.pdb, i+1, suffix)
             if not options.clobber and os.path.exists(param_file):
-                print "File %s already exists -- aborting!" % param_file
-                print "Use --clobber to overwrite existing files."
+                print("File %s already exists -- aborting!" % param_file)
+                print("Use --clobber to overwrite existing files.")
                 return 2
             else:
                 # conformer_file defaults to empty
                 write_param_file(param_file, m, options.name, i+1, len(molfiles), options.max_confs, options.amino_acid, long_names=options.long_names, conformer_file=conformer_file)
-                print "Wrote params file %s" % param_file
+                print("Wrote params file %s" % param_file)
     if options.kinemage is not None:
         kin_file = options.kinemage
         dot = kin_file.rfind(".")
         if dot != -1: kin_file = kin_file[:dot] + suffix + kin_file[dot:]
         if not options.clobber and os.path.exists(kin_file):
-            print "File %s already exists -- aborting!" % kin_file
-            print "Use --clobber to overwrite existing files."
+            print("File %s already exists -- aborting!" % kin_file)
+            print("Use --clobber to overwrite existing files.")
             return 3
         else:
             write_ligand_kinemage(kin_file, m)
-            print "Wrote kinemage file %s" % kin_file
+            print("Wrote kinemage file %s" % kin_file)
 
     if num_frags > 1:
         for i in range(num_frags):
             mol2_file = "%s%i%s.mol2" % (options.pdb, i+1, suffix)
             if not options.clobber and os.path.exists(mol2_file):
-                print "File %s already exists -- aborting!" % mol2_file
-                print "Use --clobber to overwrite existing files."
+                print("File %s already exists -- aborting!" % mol2_file)
+                print("Use --clobber to overwrite existing files.")
                 return 5
             else:
                 write_fragment_mol2(mol2_file, m, i+1)
-                print "Wrote mol2 file %s" % mol2_file
+                print("Wrote mol2 file %s" % mol2_file)
 
     if options.extra_torsion_output:
         tor_file = "%s%s.tors" % (options.pdb, suffix)
@@ -1499,13 +1501,13 @@ and for visualizing exactly what was done to the ligand.
 
     if len(args) < 1:
         parser.print_help()
-        print "Must specify input .mol file!"
+        print("Must specify input .mol file!")
         return 1
     elif len(args) == 1:
         infile = args[0]
     else:
         parser.print_help()
-        print "Too many arguments!"
+        print("Too many arguments!")
         return 1
 
     ctr = None
@@ -1514,7 +1516,7 @@ and for visualizing exactly what was done to the ligand.
         if len(f) != 3:
             f = options.center.split()
             if len(f) != 3:
-                print "Must say -center 'X,Y,Z'"
+                print("Must say -center 'X,Y,Z'")
                 return 5
         ctr = r3.Triple( float(f[0]), float(f[1]), float(f[2]) )
         #print "Centering ligands at %s" % ctr
@@ -1528,7 +1530,7 @@ and for visualizing exactly what was done to the ligand.
 			infile_lc.endswith(".mol.gz") or infile_lc.endswith(".mdl.gz") or infile_lc.endswith(".sdf.gz"):
         molfiles = list(read_mdl_sdf(infile, do_find_rings=False))
     else:
-        print "Unrecognized file type, must be .mol/.sdf or .mol2!"
+        print("Unrecognized file type, must be .mol/.sdf or .mol2!")
         return 6
     # Add additional M_____ control records, if any specified.
     if options.m_ctrl is not None:
@@ -1546,7 +1548,7 @@ and for visualizing exactly what was done to the ligand.
     # If -center not given, default is to center like first entry
     if ctr is None:
         ctr = r3.centroid([a for a in m.atoms if not a.is_H])
-    print "Centering ligands at %s" % ctr
+    print("Centering ligands at %s" % ctr)
     options.center = ctr
 
     mark_fragments(m)
@@ -1554,7 +1556,7 @@ and for visualizing exactly what was done to the ligand.
     add_fields_to_bonds(m.bonds)
     find_virtual_atoms(m.atoms)
     if uniquify_atom_names(m.atoms, force=(not options.keep_names)):
-        print "Atom names contain duplications -- renaming all atoms."
+        print("Atom names contain duplications -- renaming all atoms.")
     for atom in m.atoms: atom.name = pdb_pad_atom_name(atom) # for output convenience
     check_bond_count(m.atoms)
     check_aromaticity(m.bonds)
