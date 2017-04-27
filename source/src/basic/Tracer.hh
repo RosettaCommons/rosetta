@@ -232,6 +232,10 @@ public:
 	/// basis and stored in mutable data members.
 	static void calculate_tracer_visibilities();
 
+	/// @brief set/get globale string-prefix for all Tracer output strings
+	static void output_prefix(std::string const &);
+	static std::string output_prefix();
+
 public: /// Inner Classes
 	/// @brief Small inner class acting as a proxy to an object that hold it.
 	class TracerProxy : public otstream // std::ostringstream //
@@ -373,6 +377,9 @@ private: /// Data members
 
 	/// @which Mpi rank is this process
 	static int mpi_rank_;
+
+	/// @brief global prefix for all tracer output
+	static std::string output_prefix_;
 
 	/// @brief T is special function for assign tracer property on the static object.
 	friend Tracer & T(std::string const &, TracerPriority);

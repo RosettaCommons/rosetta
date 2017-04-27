@@ -51,6 +51,9 @@ namespace basic {
 
 bool Tracer::initial_tracers_visibility_calculated_( false );
 
+std::string Tracer::output_prefix_;
+
+
 #ifdef MULTI_THREADED
 
 /// @brief This mutex ensures that any time static data is read from or written to by
@@ -314,6 +317,25 @@ void Tracer::init( Tracer const & tr )
 
 }
 
+/// @brief set/get globale string-prefix for all Tracer output strings
+void Tracer::output_prefix(std::string const &new_output_prefix)
+{
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+
+	output_prefix_ = new_output_prefix;
+}
+
+std::string Tracer::output_prefix()
+{
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+	return output_prefix_;
+}
+
+
 void Tracer::flush_all_channels()
 {
 	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(
@@ -525,6 +547,8 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 	// If we're calling this function, we're at the begining of the line.
 
 	sout << this->Reset;
+
+	sout << output_prefix_;
 
 	if ( tracer_options_.print_channel_name ) {
 		sout << channel_name_color_;
