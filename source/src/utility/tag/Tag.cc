@@ -566,7 +566,7 @@ Tag::create(std::istream& in) {
 } // creates a new tag and reads into it
 
 TagOP
-Tag::create(std::string instring) {
+Tag::create(std::string const &instring) {
 	std::stringstream in(instring);
 
 	return create(in);

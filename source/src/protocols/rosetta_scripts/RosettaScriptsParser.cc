@@ -1041,7 +1041,7 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 	// IMPORT
 	AttributeList import_attributes;
 	import_attributes
-		+ XMLSchemaAttribute( "taskoperations", xs_string, "A comma separated list of TaskOperations that have been"
+		+ XMLSchemaAttribute( "taskoperations", xsct_task_operation_comma_separated_list, "A comma separated list of TaskOperations that have been"
 		" defined at a higher level than the MultiplePoseMover that this IMPORT statement is inside of" )
 		+ XMLSchemaAttribute( "movers", xs_string, "A comma separated list of Movers that have been"
 		" defined at a higher level than the MultiplePoseMover that this IMPORT statement is inside of" )

@@ -401,7 +401,7 @@ void StoreCompoundTaskMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute( "task_name", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute( "task_name", xsct_pose_cached_task_operation, "The name by which the task operation to be cached will be identified after it is cached in the datacache of a Pose object." )
 		//I'm calling these defaults since the empty string is a valid setting
 		+ XMLSchemaAttribute::attribute_w_default( "true_behavior", "compound_task_behavior", "XRW TO DO", "")
 		+ XMLSchemaAttribute::attribute_w_default( "false_behavior", "compound_task_behavior", "XRW TO DO",  "")
@@ -412,11 +412,7 @@ void StoreCompoundTaskMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	AttributeList subtag_attributes;
 	//All subtags have the same possible attributes
-	subtag_attributes
-		//This doesn't use parse_task_operations for whatever reason
-		//takes a cslist of task operations
-		+ XMLSchemaAttribute( "task_operations", xs_string, "XRW_TODO" );
-
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( subtag_attributes );
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements

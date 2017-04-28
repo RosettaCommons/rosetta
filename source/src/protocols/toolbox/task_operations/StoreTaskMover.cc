@@ -120,12 +120,12 @@ void StoreTaskMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "task_name", xs_string, "XRW_TODO" )
-		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "XRW TO DO", "false" );
+		+ XMLSchemaAttribute::required_attribute( "task_name", xsct_pose_cached_task_operation, "The identifier of the task operation that will be cached in the Pose object.  This is used to retrieve the task operation from the Pose object in the future." )
+		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "If true, an already-cached task operation with the given name will be overwritten.  If false, an error is thrown instead if a task operation with the given name is already present in the Pose object.", "false" );
 
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover caches a task operation in the datacache of a Pose object, allowing later retrieval of that task operation.", attlist );
 }
 
 std::string StoreTaskMoverCreator::keyname() const {

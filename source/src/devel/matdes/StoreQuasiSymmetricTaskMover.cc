@@ -338,8 +338,8 @@ void StoreQuasiSymmetricTaskMover::provide_xml_schema( utility::tag::XMLSchemaDe
 	using namespace utility::tag;
 	AttributeList attlist;
 
-	attlist + XMLSchemaAttribute::required_attribute( "task_name", xs_string, "The name of the stored task." )
-		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "Will overwrite the old stored task.", "false" )
+	attlist + XMLSchemaAttribute::required_attribute( "task_name", xsct_pose_cached_task_operation, "The name of the stored task to be cached in the Pose object's datacache.  The object can later be retrieved using this name." )
+		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "Will overwrite old stored tasks with the same name?", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "quasi_symm_comp", xs_string, "Which component (if multi-component, A or B), is going to be quasi-equivalent." , "B" )
 		+ XMLSchemaAttribute::attribute_w_default( "num_quasi_repeats", xsct_non_negative_integer, "How many subunits your quasi-equivalent building block consists of. For example, a trimer would be 3.", "2" )
 		+ XMLSchemaAttribute::attribute_w_default( "offset_resis", xsct_non_negative_integer, "If your building block is non-quasi-equivalent domains, this number denotes the number of residues to skip. Currently needs to be resis 1-x, the skipped portion must be on the N-terminus.", "0" ) ;

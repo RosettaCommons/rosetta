@@ -205,10 +205,10 @@ void StoreCombinedStoredTasksMover::provide_xml_schema( utility::tag::XMLSchemaD
 	xsd.add_top_level_element( operator_type );
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "task1", xs_string, "XRW_TODO" )
-		+ XMLSchemaAttribute::required_attribute( "task2", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "task1", xsct_pose_cached_task_operation, "A first task operation, previously cached in the datacache of a Pose object." )
+		+ XMLSchemaAttribute::required_attribute( "task2", xsct_pose_cached_task_operation, "A second task operation, previously cached in the datacache of a Pose object." )
 		+ XMLSchemaAttribute::required_attribute( "operator", "operator_type", "XRW_TODO" )
-		+ XMLSchemaAttribute::required_attribute( "task_name", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "task_name", xsct_pose_cached_task_operation, "The identifier by which the combined task will be referred once it is cached in the datacache of the Pose object." )
 		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "XRW TO DO",  "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "XRW TO DO", "false" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW_TODO", attlist );

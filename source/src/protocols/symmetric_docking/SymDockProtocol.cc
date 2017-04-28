@@ -826,6 +826,7 @@ void SymDockProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist , "docking_score_low" ) ;
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist , "docking_score_high" ) ;
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Symmetric oligomer docking.", attlist );
 }

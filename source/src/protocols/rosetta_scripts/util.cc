@@ -264,7 +264,7 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 void
 attributes_for_parse_task_operations( utility::tag::AttributeList & attributes, std::string const & description )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string,
+	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xsct_task_operation_comma_separated_list,
 		( description == ""  ? "A comma separated list of TaskOperations to use." : description )  );
 }
 
@@ -273,7 +273,7 @@ attributes_for_parse_task_operations( utility::tag::AttributeList & attributes, 
 void
 attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes, std::string const & used_for_descr )
 {
-	std::string to_descrip = "A comma separated list of TaskOperations to use";
+	std::string to_descrip = "A comma separated list of TaskOperations to use.";
 	std::string tf_descrip = "A TaskFactory specification to use";
 	if ( ! used_for_descr.empty() ) {
 		to_descrip += " for " + used_for_descr;
@@ -281,7 +281,7 @@ attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & at
 	}
 
 	attributes
-		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string, to_descrip )
+		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xsct_task_operation_comma_separated_list, to_descrip )
 		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string , tf_descrip );
 }
 

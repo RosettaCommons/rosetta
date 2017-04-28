@@ -416,8 +416,8 @@ void MergePDBMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		+ XMLSchemaAttribute::attribute_w_default( "design_range", xsct_real, "XRW TO DO", "3" )
 		+ XMLSchemaAttribute::attribute_w_default( "packing_range", xsct_real, "XRW TO DO", "5" )
 		+ XMLSchemaAttribute::attribute_w_default( "do_minimize", xsct_rosetta_bool, "Perform energy minimization", "true" )
-		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function used for packing and design." )
-		+ XMLSchemaAttribute( "task_operations", xsct_rosetta_bool, "Set task operations" );
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function used for packing and design." );
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Align + combine parts of the pdb", attlist );
 }
 

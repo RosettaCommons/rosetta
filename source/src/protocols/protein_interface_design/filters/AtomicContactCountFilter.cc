@@ -510,8 +510,8 @@ void AtomicContactCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute::attribute_w_default( "normalize_by_sasa", xsct_rosetta_bool, "Normalize contacts by sasa", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "normalize_by_carbon_count", xsct_rosetta_bool, "Normalize contacts by number of carbons", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "ss_only", xsct_rosetta_bool, "Only consider SS elements (i.e., non-L)", "0" )
-		+ XMLSchemaAttribute( "taskA", xs_string, "String-separated list of task operations" )
-		+ XMLSchemaAttribute( "taskB", xs_string, "String-separated list of task operations" );
+		+ XMLSchemaAttribute( "taskA", xsct_task_operation_comma_separated_list, "Comma-separated list of task operations to use for selecting residue set A.  This is an alternative to using \"task_operations\" to select a single group of residues." )
+		+ XMLSchemaAttribute( "taskB", xsct_task_operation_comma_separated_list, "Comma-separated list of task operations to use for selecting residue set B.  This is an alternative to using \"task_operations\" to select a single group of residues." );
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	attlist + XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump across which to define contacts", "1" )
 		+ XMLSchemaAttribute( "sym_dof_name", xs_string, "Name of the sym dof -- a symmetry-aware jump identifier" );

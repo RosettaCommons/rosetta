@@ -519,10 +519,10 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" );
 	//All of these are lists of task operations, but none use parse_task_operations
 	attributes
-		+ XMLSchemaAttribute( "bb_task_operations", xs_string , "Task operations specifying residues for backbone minimization" )
-		+ XMLSchemaAttribute( "chi_task_operations", xs_string , "Task operations specifying residues for sidechain minimization" )
-		+ XMLSchemaAttribute( "bondangle_task_operations", xs_string , "Task operations specifying residues for bond angle minimization" )
-		+ XMLSchemaAttribute( "bondlength_task_operations", xs_string , "Task operation specifying residues for bond length minimization" );
+		+ XMLSchemaAttribute( "bb_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for backbone minimization" )
+		+ XMLSchemaAttribute( "chi_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for sidechain minimization" )
+		+ XMLSchemaAttribute( "bondangle_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for bond angle minimization" )
+		+ XMLSchemaAttribute( "bondlength_task_operations", xsct_task_operation_comma_separated_list , "Task operation specifying residues for bond length minimization" );
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );

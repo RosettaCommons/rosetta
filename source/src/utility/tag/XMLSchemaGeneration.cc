@@ -80,6 +80,9 @@ std::string name_for_common_type( XMLSchemaCommonType common_type )
 	case xsct_chain_cslist : return "chain_cslist";
 	case xsct_dssp_string : return "dssp_string";
 	case xsct_canonical_res_char : return "canonical_res_char";
+	case xsct_task_operation : return "task_operation";
+	case xsct_task_operation_comma_separated_list : return "task_operation_comma_separated_list";
+	case xsct_pose_cached_task_operation : return "pose_cached_task_operation";
 	case xsct_none :
 		throw utility::excn::EXCN_Msg_Exception( "Error in requesting name for xsct_none;" );
 		break;
@@ -327,6 +330,10 @@ std::string canonical_res_char_string() {
 	return "[ACDEFGHIKLMNPQRSTVWY]";
 }
 
+std::string task_operation_name_pattern() {
+	return "[A-Za-z][A-Za-z0-9\\-_]*";
+}
+
 void
 activate_common_simple_type(
 	utility::tag::XMLSchemaDefinition & xsd,
@@ -508,6 +515,18 @@ activate_common_simple_type(
 		canonical_res_char.add_restriction( xsr_maxLength, "1" );
 		canonical_res_char.add_restriction( xsr_pattern, canonical_res_char_string());
 		xsd.add_top_level_element( canonical_res_char );
+	} else if ( common_type == xsct_task_operation || common_type == xsct_pose_cached_task_operation ) {
+		XMLSchemaRestriction to_list;
+		to_list.name( name_for_common_type( common_type ) );
+		to_list.base_type( xs_string );
+		to_list.add_restriction( xsr_pattern, task_operation_name_pattern() );
+		xsd.add_top_level_element( to_list );
+	} else if ( common_type == xsct_task_operation_comma_separated_list ) {
+		XMLSchemaRestriction to_list;
+		to_list.name( name_for_common_type( common_type ));
+		to_list.base_type( xs_string );
+		to_list.add_restriction( xsr_pattern, "[ \t]*" + task_operation_name_pattern() + "([ \t]*,[ \t]*" + task_operation_name_pattern() + "[ \t]*)*" );
+		xsd.add_top_level_element( to_list );
 	}
 	/* else if ( common_type == xsct_zero_or_one ) {
 	XMLSchemaRestriction zero_or_one;

@@ -287,7 +287,7 @@ void FindConsensusSequence::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function to use when evaluating best amino acids at each position" )
-		+ XMLSchemaAttribute( "task_operations", xs_string, "Specifies behavior of the packer when substituting different amino acids and repacking." )
+		+ XMLSchemaAttribute( "task_operations", xsct_task_operation_comma_separated_list, "Specifies behavior of the packer when substituting different amino acids and repacking." )
 		+ XMLSchemaAttribute( "resfiles", xs_string,
 		"A list of resfiles to define designable and repackable residues"
 		"for all states in multistate design. Multiple resfiles can be used"

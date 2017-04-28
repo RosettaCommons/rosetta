@@ -163,7 +163,7 @@ public:
 	TagOP create(std::istream& in); // creates a new tag and reads into it
 
 	static
-	TagOP create(std::string instring); // creates a new tag and reads into it
+	TagOP create(std::string const &instring); // creates a new tag and reads into it
 
 	TagOP clone() const;
 

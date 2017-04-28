@@ -158,7 +158,10 @@ enum XMLSchemaCommonType {
 	xsct_size_cs_pair,
 	xsct_chain_cslist,
 	xsct_dssp_string,
-	xsct_canonical_res_char
+	xsct_canonical_res_char,
+	xsct_task_operation, //A single task operation, previously defined in XML
+	xsct_task_operation_comma_separated_list, //A comma-separated list of task operations, all of which are previously defined in XML
+	xsct_pose_cached_task_operation //The identifier of a task operation stored in the datacache of a Pose object.
 };
 std::string residue_number_string();
 std::string real_regex_pattern();

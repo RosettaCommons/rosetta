@@ -140,9 +140,6 @@ TaskSelector::parse_my_tag(
 
 	set_select_designable( tag->getOption< bool >( "designable", select_designable_ ) );
 	set_select_packable( tag->getOption< bool >( "packable", select_packable_ ) );
-	if ( tag->hasOption( "repackable" ) ) {
-		set_select_packable( tag->getOption< bool >( "repackable" ) );
-	}
 	set_select_fixed( tag->getOption< bool >( "fixed", select_fixed_ ) );
 }
 
@@ -155,13 +152,12 @@ TaskSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "task_operations", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "designable", xsct_rosetta_bool , "Sample side chain identities." )
-		+ XMLSchemaAttribute( "packable", xsct_rosetta_bool , "Sample side chain conformations." )
-		+ XMLSchemaAttribute( "repackable", xsct_rosetta_bool , "Sample side chain conformations." )
-		+ XMLSchemaAttribute( "fixed", xsct_rosetta_bool , "Keep input side chain conformation and identity." );
+		+ XMLSchemaAttribute::required_attribute( "task_operations", xsct_task_operation_comma_separated_list , "A comma-separated list of task operations to use to generate a selection." )
+		+ XMLSchemaAttribute::attribute_w_default( "designable", xsct_rosetta_bool , "If true, residues that the task operations designate as designable are selected.", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "packable", xsct_rosetta_bool , "If true, residues that the task operations designate as packable are selected.", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "fixed", xsct_rosetta_bool , "If ture, residues that the task operations designate as fixed (i.e. not designable or packable) are selected.", "false" );
 
-	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Selects residues to be repacked or design using a string containing residue names", attributes );
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Before residue selectors were introduced in Rosetta, task operations were commonly used as the means of selecting residues.  The TaskSelector provides an easy way to convert an old-style selection, made with task operations, to a new-style, residue selector-based selection.", attributes );
 
 }
 

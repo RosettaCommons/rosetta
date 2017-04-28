@@ -346,8 +346,8 @@ void TaskOperationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attlist;
 
 	attlist + XMLSchemaAttribute::required_attribute(
-		"task_operation", xs_string,
-		"comma separated TaskOperation list");
+		"task_operations", xsct_task_operation_comma_separated_list,
+		"Comma-separated list of previously-defined TaskOperations.");
 
 	protocols::features::xsd_type_definition_w_attributes(
 		xsd, class_name(),
