@@ -428,7 +428,7 @@ public:
 		vector1< float > scores( sparta.score_pose_per_residue(pose) );
 		float sum_scores( std::accumulate( scores.begin(), scores.end(), 0.0 ) );
 
-		TS_ASSERT_DELTA( sparta_score, 180.3510, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( sparta_score, 180.1838, TOLERATED_ERROR );
 		TS_ASSERT( scores.size() == 87 );
 		TS_ASSERT_DELTA( sparta_score, sum_scores/4, TOLERATED_ERROR );
 		#include "asserts_scores.cc"

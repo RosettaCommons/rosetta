@@ -93,7 +93,8 @@ public:
 		protocols::simple_filters::TotalSasaFilter test;
 
 		//TS_ASSERT_DELTA( test.report_sm(pose), 5236.9648, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( test.report_sm(pose), 5135.0014, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( test.report_sm(pose), 5135.0014, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( test.report_sm(pose), 5112.5681, TOLERATED_ERROR );
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
@@ -123,7 +124,8 @@ public:
 
 		//Note 3302.5455 is different from what Ron got in his tests (3212.4579) - assuming small differences are due to slighlty different settings, etc.
 		//TS_ASSERT_DELTA( test.report_sm(pose), 3311.7659, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( test.report_sm(pose), 2772.0655, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( test.report_sm(pose), 2772.0655, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( test.report_sm(pose), 2767.7070, TOLERATED_ERROR );
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );

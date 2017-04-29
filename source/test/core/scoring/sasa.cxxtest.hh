@@ -318,7 +318,7 @@ public:
 		core::pose::initialize_atomid_map( atom_subset, pose, true );
 
 		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset );
-		TS_ASSERT_DELTA( total_sasa, 5135.0014, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( total_sasa, 5112.5681, TOLERATED_ERROR );
 
 		TS_ASSERT_DELTA( rsd_sasa[1], 64.1370, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( rsd_sasa[11], 102.1410, TOLERATED_ERROR );

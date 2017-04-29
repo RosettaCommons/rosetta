@@ -109,20 +109,20 @@ public:
 		//correct_values.push_back(core::PointPosition(21.96481459076445, 20.18967154960102, 33.51494841696830));
 
 		/// Values based on the 05.2009_icoor parameter set
-		correct_values.push_back(core::PointPosition(18.895,22.15893618713942,32.38748887255936));
-		correct_values.push_back(core::PointPosition(19.638,20.93253511404154,32.06464152797626));
-		correct_values.push_back(core::PointPosition(18.978,20.53098030444744,30.75255779021718));
-		correct_values.push_back(core::PointPosition(19.467,19.71614754795157,29.99833993114638));
-		correct_values.push_back(core::PointPosition(19.415,19.83948196934927,33.11993145158888));
-		correct_values.push_back(core::PointPosition(20.175,20.17416164178848,34.40592465408102));
-		correct_values.push_back(core::PointPosition(19.581,20.30170181134952,35.45805844079653));
-		correct_values.push_back(core::PointPosition(21.473,20.3102550736285,34.37130417155975));
-		correct_values.push_back(core::PointPosition(18.061,22.31601745027575,31.90314346195707));
-		correct_values.push_back(core::PointPosition(20.69,21.13929143644122,31.92091671053767));
-		correct_values.push_back(core::PointPosition(18.34862887616823,19.74933767671548,33.33107121378288));
-		correct_values.push_back(core::PointPosition(19.75316108496716,18.88036641386387,32.72745689243406));
-		correct_values.push_back(core::PointPosition(21.97554788964828,20.52895163661636,35.20829619775137));
-		correct_values.push_back(core::PointPosition(21.9646378577982,20.19595906857806,33.50862294710074));
+		correct_values.push_back(core::PointPosition(18.895,22.15893618713942,32.3862));
+		correct_values.push_back(core::PointPosition(19.638,20.93253511404154,32.0633));
+		correct_values.push_back(core::PointPosition(18.978,20.53098030444744,30.7512));
+		correct_values.push_back(core::PointPosition(19.467,19.71614754795157,29.9970));
+		correct_values.push_back(core::PointPosition(19.415,19.83948196934927,33.1186));
+		correct_values.push_back(core::PointPosition(20.175,20.17416164178848,34.4046));
+		correct_values.push_back(core::PointPosition(19.581,20.30170181134952,35.4567));
+		correct_values.push_back(core::PointPosition(21.473,20.3102550736285,34.3700));
+		correct_values.push_back(core::PointPosition(18.061,22.31601745027575,31.9018));
+		correct_values.push_back(core::PointPosition(20.69,21.13929143644122,31.9196));
+		correct_values.push_back(core::PointPosition(18.3600,19.7630,33.3361));
+		correct_values.push_back(core::PointPosition(19.7700,18.8947,32.7328));
+		correct_values.push_back(core::PointPosition(21.9650,20.5202,35.1921));
+		correct_values.push_back(core::PointPosition(21.9550,20.1997,33.5251));
 
 		//std::cout.precision( 16 );
 		//for ( core::Size ii = 1; ii <= light_res.natoms(); ++ii ) {
@@ -134,14 +134,24 @@ public:
 
 
 		for ( core::Size atom_index =1; atom_index <= light_res.natoms(); ++atom_index ) {
-			TS_ASSERT_DELTA(correct_values[atom_index],light_res[atom_index],0.001);
+			// The original way this was written compared the objects. As such it was
+			// quite hard to tell what was different (and the delta of 0.001 was 
+			// meaningless.
+			//TS_ASSERT_DELTA(correct_values[atom_index],light_res[atom_index],0.001);
+			TS_ASSERT_DELTA(correct_values[atom_index].x(),light_res[atom_index].x(),0.001);
+			TS_ASSERT_DELTA(correct_values[atom_index].y(),light_res[atom_index].y(),0.001);
+			TS_ASSERT_DELTA(correct_values[atom_index].z(),light_res[atom_index].z(),0.001);
 		}
 
 		light_res.update_conformation(pose_.conformation());
 		TS_ASSERT_EQUALS(pose_.residue(3).natoms(),light_res.natoms());
 
 		for ( core::Size atom_index = 1; atom_index <= light_res.natoms(); ++atom_index ) {
-			TS_ASSERT_EQUALS(light_res[atom_index],pose_.residue(3).xyz(atom_index));
+			// Ditto.
+			//TS_ASSERT_EQUALS(light_res[atom_index],pose_.residue(3).xyz(atom_index));
+			TS_ASSERT_EQUALS(light_res[atom_index].x(),pose_.residue(3).xyz(atom_index).x());
+			TS_ASSERT_EQUALS(light_res[atom_index].y(),pose_.residue(3).xyz(atom_index).y());
+			TS_ASSERT_EQUALS(light_res[atom_index].z(),pose_.residue(3).xyz(atom_index).z());
 		}
 
 		//******************END- Perform a simple 1D rotation and check against correct coordinates
