@@ -733,6 +733,39 @@ void build_pose_as_is2(
 		set_reasonable_fold_tree( pose );
 	}
 
+	// Given this fold tree, look for residues that are not connected in the FT
+	// but yet are chemically bonded upper to lower. (Chief example: N-to-C cyclization.)
+	// To these residues, add CUTPOINT_LOWER and CUTPOINT_UPPER variants.
+	//
+	// AMW TODO: the above; for now, just see if the upper and lower of each edge (kinda
+	// assumes each one is threading N to C) need cutpoint variants (to be scored by chainbreak).
+	//
+	// AMW: just did something a HAIR fancier; now we check ALL starts and stops that might
+	// be chemically bonded to each other. Note that there is no danger of accidentally
+	// melding termini together; we are after 'fixup termini' so only things that
+	// have already been recognized as Weird Termini (due to, e.g., link_map() presence) are
+	// gonna be eligible. The reason we check any starts and stops is because it's possible that
+	// you have a slightly messed up chain with a chain-break in the middle, but it's cyclized
+	// overall -- despite having been chopped into two Edges.
+	for ( auto const edge1 : pose.fold_tree() ) {
+		for ( auto const edge2 : pose.fold_tree() ) {
+			if ( !edge1.is_polymer() || !edge2.is_polymer() ) continue;
+
+			if ( !pose.residue_type( edge1.start() ).is_polymer() ) continue;
+			if ( !pose.residue_type( edge2.stop()  ).is_polymer() ) continue;
+
+			if ( pose.residue_type( edge1.start() ).is_lower_terminus() ) continue;
+			if ( pose.residue_type( edge2.stop()  ).is_upper_terminus() ) continue;
+
+			id::AtomID lower( pose.residue_type( edge1.start() ).lower_connect_atom(), edge1.start() );
+			id::AtomID upper( pose.residue_type( edge2.stop()  ).upper_connect_atom(),  edge2.stop() );
+			if ( pose.conformation().atoms_are_bonded( upper, lower ) ) {
+				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, edge1.start() );
+				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, edge2.stop()  );
+			}
+		}
+	}
+
 	// optimize H if using a full-atom residue type set, and no_optH is not specified
 	if ( residue_set.mode() == FULL_ATOM_t ) {
 		//if pack_missing_density specified, repack residues w/ missing density

@@ -1093,6 +1093,14 @@ public:  // ID access and conversions
 	) const;
 
 
+	/// @brief Helper method to determine whether two atoms have a chemical bond linking them.
+	/// @details Intended for internal use, but there's really no reason not to make this a public
+	/// method.  This works for atoms within the same residue or in different residues.
+	/// AMW went and made this a public method.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool atoms_are_bonded( AtomID const &id1, AtomID const &id2 ) const;
+
+
 public:  // for tracking changes to the structure
 
 	/// @brief Generate a domain_map from the current dof/xyz moved data
@@ -1444,13 +1452,6 @@ private:
 		AtomID & id2,
 		AtomID & id3,
 		AtomID & id4 ) const;
-
-
-	/// @brief Helper method to determine whether two atoms have a chemical bond linking them.
-	/// @details Intended for internal use, but there's really no reason not to make this a public
-	/// method.  This works for atoms within the same residue or in different residues.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	bool atoms_are_bonded( AtomID const &id1, AtomID const &id2 ) const;
 
 
 private:  // setting the moved data
