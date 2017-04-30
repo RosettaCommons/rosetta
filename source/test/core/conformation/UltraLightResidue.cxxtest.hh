@@ -135,7 +135,7 @@ public:
 
 		for ( core::Size atom_index =1; atom_index <= light_res.natoms(); ++atom_index ) {
 			// The original way this was written compared the objects. As such it was
-			// quite hard to tell what was different (and the delta of 0.001 was 
+			// quite hard to tell what was different (and the delta of 0.001 was
 			// meaningless.
 			//TS_ASSERT_DELTA(correct_values[atom_index],light_res[atom_index],0.001);
 			TS_ASSERT_DELTA(correct_values[atom_index].x(),light_res[atom_index].x(),0.001);

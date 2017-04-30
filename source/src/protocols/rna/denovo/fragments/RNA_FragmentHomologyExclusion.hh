@@ -35,6 +35,13 @@ private:
 
 };
 
+
+// For map key
+inline bool operator<( RNA_FragmentHomologyExclusion const & lhs, RNA_FragmentHomologyExclusion const & rhs ) {
+	// Bad but ok for now.
+	return lhs.get_fragment_lines().size() < rhs.get_fragment_lines().size();
+}
+
 } //fragments
 } //denovo
 } //rna

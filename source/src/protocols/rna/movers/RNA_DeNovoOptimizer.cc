@@ -41,8 +41,23 @@ RNA_DeNovoOptimizer::RNA_DeNovoOptimizer( utility::vector1< pose::PoseOP > const
 	core::Size cycles /* = 0 */):
 	pose_list_( pose_list ),
 	scorefxn_(std::move( scorefxn )),
-	cycles_( cycles )
-{}
+	cycles_( cycles ),
+	options_( new RNA_FragmentMonteCarloOptions )
+{
+	using namespace core::scoring;
+	options_->initialize_for_farna_optimizer( cycles_ );
+	rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
+
+	if ( options_->minimize_structure() ) {
+		static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
+		rna_fragment_monte_carlo_->set_denovo_scorefxn( lores_scorefxn );
+		rna_fragment_monte_carlo_->set_hires_scorefxn( scorefxn_ );
+	} else {
+		rna_fragment_monte_carlo_->set_denovo_scorefxn( scorefxn_ );
+	}
+
+	rna_fragment_monte_carlo_->set_refine_pose( true ); // no heating, etc.
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Destructor
@@ -52,23 +67,8 @@ RNA_DeNovoOptimizer::~RNA_DeNovoOptimizer() = default;
 void
 RNA_DeNovoOptimizer::apply( core::pose::Pose & pose )
 {
-	using namespace core::scoring;
-	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
-		pose = *pose_list_[ n ];
-
-		RNA_FragmentMonteCarloOptionsOP options( new RNA_FragmentMonteCarloOptions );
-		options->initialize_for_farna_optimizer( cycles_ );
-		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options ) );
-
-		if ( options->minimize_structure() ) {
-			static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
-			rna_fragment_monte_carlo_->set_denovo_scorefxn( lores_scorefxn );
-			rna_fragment_monte_carlo_->set_hires_scorefxn( scorefxn_ );
-		} else {
-			rna_fragment_monte_carlo_->set_denovo_scorefxn( scorefxn_ );
-		}
-
-		rna_fragment_monte_carlo_->set_refine_pose( true ); // no heating, etc.
+	for ( auto const & pose_list_elem : pose_list_ ) {
+		pose = *pose_list_elem;
 		rna_fragment_monte_carlo_->apply( pose );
 	}
 }

@@ -14,7 +14,7 @@
 
 #include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.fwd.hh>
 #include <protocols/rna/denovo/fragments/RNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/RNA_FragmentHomologyExclusion.fwd.hh>
+#include <protocols/rna/denovo/fragments/RNA_FragmentHomologyExclusion.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -58,7 +58,7 @@ class FullAtomRNA_Fragments; // defined below.
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef std::tuple< std::string, std::string, RNA_FragmentHomologyExclusionCOP, utility::vector1< SYN_ANTI_RESTRICTION > > FragmentLibraryPointerKey;
+typedef std::tuple< std::string, std::string, RNA_FragmentHomologyExclusion, utility::vector1< SYN_ANTI_RESTRICTION > > FragmentLibraryPointerKey;
 typedef std::map< FragmentLibraryPointerKey, FragmentLibraryOP >  FragmentLibraryPointerMap;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

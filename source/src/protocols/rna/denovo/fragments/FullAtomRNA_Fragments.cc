@@ -116,15 +116,14 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 {
 	FragmentLibraryOP fragment_library_p( new FragmentLibrary );
 
-	std::string const RNA_string = std::get< 0 >( key );
-	std::string const RNA_secstruct_string = std::get< 1 >( key );
-	RNA_FragmentHomologyExclusionCOP const exclusion = std::get< 2 >( key );
+	std::string const & RNA_string = std::get< 0 >( key );
+	std::string const & RNA_secstruct_string = std::get< 1 >( key );
+	RNA_FragmentHomologyExclusion const & exclusion = std::get< 2 >( key );
 	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = std::get< 3 >( key );
 
 	Size const BASE_CHI_TORSION_INDEX = 7;
 
-	std::set< Size > exclude_fragments;
-	if ( exclusion ) exclude_fragments = exclusion->get_fragment_lines();
+	std::set< Size > exclude_fragments = exclusion.get_fragment_lines();
 	// Otherwise, empty set.
 
 	Size const size = RNA_string.length();
@@ -237,8 +236,7 @@ FullAtomRNA_Fragments::get_fragment_library_pointer(
 
 	std::string const RNA_string_local = convert_based_on_match_type( RNA_string, type );
 
-	// AMW TODO: create a good RNA_FragmentHomologyExclusionCOP here!
-	FragmentLibraryPointerKey const key( std::make_tuple( RNA_string_local, RNA_secstruct_string, homology_exclusion, restriction ) );
+	FragmentLibraryPointerKey const key( std::make_tuple( RNA_string_local, RNA_secstruct_string, *homology_exclusion, restriction ) );
 
 	if ( ! fragment_library_pointer_map.count( key ) ) {
 		pick_fragment_library( key );
