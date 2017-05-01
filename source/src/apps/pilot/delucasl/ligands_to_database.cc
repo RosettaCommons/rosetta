@@ -55,10 +55,9 @@ int main(int argc, char*argv[])
 		core::chemical::ResidueTypeSetCOP residue_types =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
-		utility::vector1<std::string> res_file_paths(basic::options::option[basic::options::OptionKeys::in::file::extra_res_fa]());
+		utility::vector1<std::string> const & res_file_paths(basic::options::option[basic::options::OptionKeys::in::file::extra_res_fa]());
 
-		for ( utility::vector1<std::string>::iterator res_file_it= res_file_paths.begin(); res_file_it != res_file_paths.end(); ++res_file_it ) {
-			std::string params_file_path = *res_file_it;
+		for ( std::string const & params_file_path : res_file_paths ) {
 			core::chemical::ResidueTypeOP new_residue_type = core::chemical::read_topology_file( params_file_path, residue_types );
 
 			residue_database_io.write_residuetype_to_database("fa_standard",*new_residue_type,db_session);

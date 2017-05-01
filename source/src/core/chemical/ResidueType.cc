@@ -345,7 +345,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 		//debug_assert(strip_name_vd_inserted.second); // If this is 4 chars, than it will be the same as before.
 	}
 	// We also have to add in the aliased names
-	for ( auto iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
+	for ( auto iter( residue_type.atom_aliases_.begin() ), iter_end( residue_type.atom_aliases_.end() );
 			iter != iter_end; ++iter ) {
 		debug_assert( !atom_name_to_vd_.count( iter->first ) );
 		debug_assert( atom_name_to_vd_.count( iter->second ) );
@@ -385,8 +385,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	utility::vector1<utility::vector1<VD> > old_chi_atoms(chi_atoms_);
 	chi_atoms_.clear();
 	//chi_atoms_.resize(old_chi_atoms.size());
-	for ( utility::vector1<utility::vector1<VD> >::const_iterator it= old_chi_atoms.begin(); it != old_chi_atoms.end(); ++it ) {
-		utility::vector1<VD> old_vector = *it;
+	for ( auto const & old_vector : old_chi_atoms ) {
 		debug_assert(old_vector.size() == 4);
 		utility::vector1<VD> new_vector;
 		for ( Size i= 1; i<= old_vector.size(); ++i ) {
@@ -397,9 +396,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	utility::vector1< utility::vector1< VD > > old_nu_atoms( nu_atoms_ );
 	nu_atoms_.clear();
-	for ( utility::vector1< utility::vector1< VD > >::const_iterator it = old_nu_atoms.begin();
-			it != old_nu_atoms.end(); ++it ) {
-		utility::vector1< VD > old_vector = *it;
+	for ( auto const & old_vector : old_nu_atoms ) {
 		debug_assert( old_vector.size() == 4 );
 		utility::vector1< VD > new_vector;
 		for ( Size i= 1; i<= old_vector.size(); ++i ) {
@@ -410,9 +407,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	utility::vector1< utility::vector1< VD > > old_ring_atoms( ring_atoms_ );
 	ring_atoms_.clear();
-	for ( utility::vector1< utility::vector1< VD > >::const_iterator it = old_ring_atoms.begin();
-			it != old_ring_atoms.end(); ++it ) {
-		utility::vector1< VD > old_vector = *it;
+	for ( auto const & old_vector : old_ring_atoms ) {
 		utility::vector1< VD > new_vector;
 		for ( Size i( 1 ); i <= old_vector.size(); ++i ) {
 			new_vector.push_back( old_to_new[ old_vector[ i ] ] );
@@ -442,9 +437,9 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	std::map<VD, utility::vector1<VD> > old_cut_bonds(cut_bond_neighbor_);
 	cut_bond_neighbor_.clear();
-	for ( std::map<VD, utility::vector1<VD> >::const_iterator it = old_cut_bonds.begin(); it != old_cut_bonds.end(); ++it ) {
-		VD old_key = it->first;
-		utility::vector1<VD> old_value = it->second;
+	for ( auto const & elem : old_cut_bonds ) {
+		VD old_key = elem.first;
+		utility::vector1<VD> old_value = elem.second;
 		VD new_key = old_to_new[old_key];
 		utility::vector1<VD> new_value;
 		for ( Size i=1; i<= old_value.size(); ++i ) {
@@ -455,10 +450,10 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	std::map< VD, AtomICoor > old_icoor(icoor_);
 	icoor_.clear();
-	for ( std::map<VD, AtomICoor >::const_iterator it= old_icoor.begin(); it != old_icoor.end(); ++it ) {
-		VD old_key = it->first;
+	for ( auto const & elem : old_icoor ) {
+		VD old_key = elem.first;
 		VD new_key = old_to_new[old_key];
-		AtomICoor old_icoor = it->second; //now we have to change the vertex descriptors within icoor. They are pointing to an old vertex descriptor
+		AtomICoor old_icoor = elem.second; //now we have to change the vertex descriptors within icoor. They are pointing to an old vertex descriptor
 		old_icoor.built_atom_vertex( old_to_new[ old_icoor.built_atom_vertex() ] );
 		for ( Size i=1; i<= 3; ++i ) {
 			ICoorAtomID & stub_atom( old_icoor.stub_atom(i) );
@@ -471,19 +466,18 @@ ResidueType::operator=( ResidueType const & residue_type )
 		icoor_[new_key] = old_icoor;
 	}
 
+	for ( auto & residue_connection : residue_connections_ ) {
+		VD old_vertex = residue_connection.vertex();
+		residue_connection.vertex(old_to_new[old_vertex]);
+		residue_connection.atomno(vd_to_index_.find(residue_connection.vertex())->second);
 
-	for ( Size i=1; i<= residue_connections_.size(); ++i ) {
-		VD old_vertex = residue_connections_[i].vertex();
-		residue_connections_[i].vertex(old_to_new[old_vertex]);
-		residue_connections_[i].atomno(vd_to_index_.find(residue_connections_[i].vertex())->second);
-
-		AtomICoor new_icoor = residue_connections_[i].icoor();
+		AtomICoor new_icoor = residue_connection.icoor();
 		for ( Size j = 1; j <= 3; ++j ) {
 			VD old_vd = new_icoor.stub_atom( j ).vertex();
 			new_icoor.stub_atom( j ).vertex( old_to_new[old_vd] );
 			new_icoor.stub_atom( j ).atomno( vd_to_index_.find(new_icoor.stub_atom(j).vertex())->second );
 		}
-		residue_connections_[ i ].icoor( new_icoor );
+		residue_connection.icoor( new_icoor );
 
 	}
 
@@ -1086,6 +1080,15 @@ ResidueType::delete_atom( Size const index )
 	VD const vd = ordered_atoms_[index];
 	graph_.clear_vertex(vd);
 	graph_.remove_vertex(vd);
+
+	// Delete any atom aliases mentioning this atom.
+	for ( auto const elem : atom_aliases_ ) {
+		std::string const & rosetta_atom = strip_whitespace( elem.second );
+		std::string const & alias        = elem.first;
+		if ( elem.second == atom_name( index ) || rosetta_atom == atom_name( index ) ) {
+			delete_atom_alias( alias );
+		}
+	}
 }
 
 /// @brief Add an alias name for an atom.

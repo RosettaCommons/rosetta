@@ -140,7 +140,6 @@ ResidueLevelTask_::ResidueLevelTask_(
 		//no rule yet to treat chemically modified aa's differently
 		ResidueType const & match_residue_type( original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			for ( Size jj = 1; jj <= match_residue_type.variant_types().size(); ++jj ) {}
 			ResidueTypeCOPs const & aas( original_residue_type_set_->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
 			for ( ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(),

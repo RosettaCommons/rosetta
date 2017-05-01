@@ -253,7 +253,6 @@ PoseToStructFileRepConverter::init_from_pose(
 		for ( Size atom_index = 1; atom_index <= rsd.natoms(); ++atom_index ) {
 			id::AtomID atm = id::AtomID( atom_index, resnum );
 			if ( ( ! mask[ atm ] ) || ( ! mask.has( atm ) ) ) { continue; }
-
 			bool const success( append_atom_info_to_sfr(
 				pose, res_info, rsd, atom_index, use_pdb_info, new_atom_num, new_tercount ) );
 			if ( success ) { ++new_atom_num; }
@@ -378,7 +377,9 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	ai.terCount = new_tercount;
 
 	// Output with pdb-specific info if possible.
-	if ( use_pdb_info ) {
+	// AMW: we can't safely do this if we have cutpoint variants -- they may
+	// have been added during the run.
+	if ( use_pdb_info && !rsd.type().has_variant_type( chemical::CUTPOINT_LOWER ) && !rsd.type().has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 		if ( pdb_info->is_het( rsd.seqpos(), atom_index ) ) { // override standard het only if .is_het() is true
 			ai.isHet = true;
 		}
@@ -1187,9 +1188,9 @@ PoseToStructFileRepConverter::get_residue_information(
 		// If option is specified, renumber per-chain.
 		if ( renumber_chains ) {
 			vector1< uint > const & chn_ends = pose.conformation().chain_endings();
-			for ( uint i = 1; i <= chn_ends.size(); ++i ) {
-				if ( chn_ends[ i ] < seqpos ) {
-					res_info.resSeq( seqpos - chn_ends[ i ] );
+			for ( uint const chn_end : chn_ends ) {
+				if ( chn_end < seqpos ) {
+					res_info.resSeq( seqpos - chn_end );
 				}
 			}
 		}

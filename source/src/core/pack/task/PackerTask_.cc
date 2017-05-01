@@ -688,15 +688,15 @@ PackerTask_::initialize_from_options( utility::options::OptionCollection const &
 		} else {
 			utility::vector1< Size > good_positions;
 			good_positions.reserve( positions_to_fix.size() );
-			for ( Size ii = 1; ii <= positions_to_fix.size(); ++ii ) {
-				if ( positions_to_fix[ ii ] > 0 && positions_to_fix[ ii ] <= int(nres_) ) {
-					good_positions.push_back( positions_to_fix[ ii ] );
+			for ( auto const position_to_fix : positions_to_fix ) {
+				if ( position_to_fix > 0 && position_to_fix <= int(nres_) ) {
+					good_positions.push_back( position_to_fix );
 				} else {
-					T.Warning << "Ignoring position " << positions_to_fix[ ii ] << " given on the command line for the fix_his_tautomer flag\n";
-					if ( positions_to_fix[ii] == 0 ) {
+					T.Warning << "Ignoring position " << position_to_fix << " given on the command line for the fix_his_tautomer flag\n";
+					if ( position_to_fix == 0 ) {
 						T.Warning << "The given value of 0 can only be given if there is only a single value given.\n";
 						T.Warning << "If multiple values are given, they must all be greater than 0 and less than the total number of residues in the protein" << std::endl;
-					} else if ( positions_to_fix[ii] < 0 ) {
+					} else if ( position_to_fix < 0 ) {
 						T.Warning << "A negative value was given, but this flag accepts only positive values" << std::endl;
 					} else {
 						T.Warning << "There are only " << nres_ << " residues in the Pose at the time this flag is read" << std::endl;
@@ -969,8 +969,8 @@ std::string ResidueLevelTask_::command_string() const{
 	if ( include_current() ) command_string << " USE_INPUT_SC";
 
 	//SCAN, AUTO, TARGET etc
-	for ( utility::vector1<std::string>::const_iterator i = behaviors_.begin(); i < behaviors_.end(); ++i ) {
-		if ( *i == "TARGET" ) {
+	for ( std::string const & elem : behaviors_ ) {
+		if ( elem == "TARGET" ) {
 			command_string << " TARGET ";
 			if ( target_type() == 0 ) {
 				command_string << "_";
@@ -978,7 +978,7 @@ std::string ResidueLevelTask_::command_string() const{
 				command_string << target_type()->name();
 			}
 		} else {
-			command_string << " " << *i;
+			command_string << " " << elem;
 		}
 	}
 
