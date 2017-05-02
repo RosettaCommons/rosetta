@@ -355,13 +355,15 @@ public:
 	value_type &
 	operator [] ( Size index ) {
 		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
-		return array_[ index - 1 ];
+		int zero_based_index( index - 1 ); // Needed for gcc 4.9 static compilation, as Size as an index throws a warning
+		return array_[ zero_based_index ];
 	}
 
 	value_type const &
 	operator [] ( Size index ) const  {
 		assert( range( index ) ); // debug_assert() gives compile errors for gcc 4.8 release_debug compile
-		return array_[ index - 1 ];
+		int zero_based_index( index - 1 ); // Needed for gcc 4.9 static compilation, as Size as an index throws a warning
+		return array_[ zero_based_index ];
 	}
 
 	bool
