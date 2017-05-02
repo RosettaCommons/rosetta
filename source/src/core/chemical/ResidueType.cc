@@ -1082,12 +1082,16 @@ ResidueType::delete_atom( Size const index )
 	graph_.remove_vertex(vd);
 
 	// Delete any atom aliases mentioning this atom.
+	utility::vector1< std::string > aliases_to_delete;
 	for ( auto const elem : atom_aliases_ ) {
 		std::string const & rosetta_atom = strip_whitespace( elem.second );
 		std::string const & alias        = elem.first;
 		if ( elem.second == atom_name( index ) || rosetta_atom == atom_name( index ) ) {
-			delete_atom_alias( alias );
+			aliases_to_delete.push_back( alias );
 		}
+	}
+	for ( auto const & alias : aliases_to_delete ) {
+		delete_atom_alias( alias );
 	}
 }
 
