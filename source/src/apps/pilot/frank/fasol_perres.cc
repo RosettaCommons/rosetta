@@ -130,7 +130,6 @@ public:
 		Etable etable = *( ScoringManager::get_instance()->etable( e_opts ).lock() ); // copy
 
 		core::scoring::lkball::LK_BallEnergy lkb(e_opts);
-		//lkb.setup_for_scoring(pose, *sf);
 
 		// atomtype used for burial calcs
 		int bur_type=1;
@@ -138,16 +137,29 @@ public:
 			bur_type++;
 		}
 
+		core::Real weightS=sf->get_weight( core::scoring::fa_sol );
+		core::Real weightA=sf->get_weight( core::scoring::fa_atr );
+		core::Real weightR=sf->get_weight( core::scoring::fa_rep );
+		core::Real weightLKbw=sf->get_weight( core::scoring::lk_ball_wtd );
+		core::Real weightLKb=sf->get_weight( core::scoring::lk_ball );
+		core::Real weightLKbi=sf->get_weight( core::scoring::lk_ball_iso );
+		core::Real weightLKbr=sf->get_weight( core::scoring::lk_ball_bridge );
+		core::Real weightLKbru=sf->get_weight( core::scoring::lk_ball_bridge_uncpl );
+
 		for ( Size ires=1; ires<= pose.size(); ++ires ) {
 			core::conformation::Residue const & rsd1( pose.residue(ires) );
 			if ( !rsd1.is_protein() ) continue;
 			if ( rsd_sasa[ires] != 0 ) continue;
 
-			lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > (
-				rsd1.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+			utility::vector1< utility::vector1< numeric::xyzVector<Real> > > rsd1_waters, rsd2_waters;
+			utility::vector1< utility::vector1< Real > > rsd1_atom_wts;
 
-			utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd1_waters( lkbinfo1.waters() );
-			utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( lkbinfo1.atom_weights() );
+			if (weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
+				lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > (
+					rsd1.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+				rsd1_waters = ( lkbinfo1.waters() );
+				rsd1_atom_wts = ( lkbinfo1.atom_weights() );
+			}
 
 			core::Real fa_sol_i = 0.0, lk_ball_i = 0.0, fa_atr_i=0, fa_rep_i=0;
 			core::Real burial_i = 0.0;
@@ -162,7 +174,7 @@ public:
 				utility::vector1< core::Real > atom1_wts;
 				numeric::xyzVector< core::Real > atom1_xyz( rsd1.xyz( iatm ) );
 
-				if ( iatm <= rsd1.nheavyatoms() ) {
+				if ( iatm <= rsd1.nheavyatoms() && rsd1_waters.size() > 0) {
 					atom1_waters = rsd1_waters[ iatm ];
 					atom1_wts = rsd1_atom_wts[iatm];
 				}
@@ -179,31 +191,22 @@ public:
 					core::conformation::Residue const &rsd2( pose.residue(jres) );
 					if ( !rsd2.is_protein() ) continue;
 
-					lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > (
-						rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
-					utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd2_waters( lkbinfo2.waters() );
+					if (weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
+						lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > (
+							rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+						rsd2_waters = ( lkbinfo2.waters() );
+					}
 
 					// count pair
-					CountPairFunctionOP cpfxn =
-						CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+					CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 					for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
 						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( jatm ) );
 
 						utility::vector1< numeric::xyzVector< core::Real > >atom2_waters;
-						if ( jatm <= rsd2.nheavyatoms() ) {
+						if ( jatm <= rsd2.nheavyatoms()  && rsd2_waters.size() > 0) {
 							atom2_waters = rsd2_waters[ jatm ];
 						}
-
-
-						core::Real weightS=sf->get_weight( core::scoring::fa_sol );
-						core::Real weightA=sf->get_weight( core::scoring::fa_atr );
-						core::Real weightR=sf->get_weight( core::scoring::fa_rep );
-						core::Real weightLKbw=sf->get_weight( core::scoring::lk_ball_wtd );
-						core::Real weightLKb=sf->get_weight( core::scoring::lk_ball );
-						core::Real weightLKbi=sf->get_weight( core::scoring::lk_ball_iso );
-						core::Real weightLKbr=sf->get_weight( core::scoring::lk_ball_bridge );
-						core::Real weightLKbru=sf->get_weight( core::scoring::lk_ball_bridge_uncpl );
 
 						core::Size path_dist;
 						core::Real weight = 1;
