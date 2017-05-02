@@ -1,0 +1,29 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="sel" resnums="1-153" />
+		<Index name="sel2" resnums="5-35" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<BuriedSurfaceArea name="filt1" />
+		<BuriedSurfaceArea name="filt2a" cutoff_buried_surface_area="100" filter_out_low="true" residue_selector="sel" />
+		<BuriedSurfaceArea name="filt2b" cutoff_buried_surface_area="100" filter_out_low="true" residue_selector="sel" select_only_FAMILYVW="true" />
+		<BuriedSurfaceArea name="filt2c" cutoff_buried_surface_area="100" filter_out_low="true" select_only_FAMILYVW="true" />
+		<BuriedSurfaceArea name="filt3" cutoff_buried_surface_area="350" filter_out_low="false" residue_selector="sel2" probe_radius="2.0" />
+	</FILTERS>
+	<MOVERS>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add filter="filt1" />
+		<Add filter="filt2a" />
+		<Add filter="filt2b" />
+		<Add filter="filt2c" />
+		<Add filter="filt3" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

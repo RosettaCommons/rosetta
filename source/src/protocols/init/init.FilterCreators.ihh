@@ -104,6 +104,7 @@
 #include <protocols/simple_filters/AtomicContactFilterCreator.hh>
 #include <protocols/simple_filters/AtomicDistanceFilterCreator.hh>
 #include <protocols/simple_filters/AveragePathLengthFilterCreator.hh>
+#include <protocols/simple_filters/BuriedSurfaceAreaFilterCreator.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
 #include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_filters/ConstraintScoreFilterCreator.hh>

@@ -460,8 +460,18 @@ Real normalizing_area(char const res) {
 
 	//std::cout << "INDEX: " << res << " " << index << " " << area_sc[index] << " " << area_total[index] << std::endl;
 	return area_sc[index];
+}
 
-
+/// @brief Given a one-letter code for a canonical amino acid, return
+/// its total surface area.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real
+normalizing_area_total (
+	char const res
+) {
+	static utility::vector1<Real> const area_sc=init_normalizing_area_sc(); //Not used here, but might as well initialize both together.
+	static utility::vector1< Real > const area_total=init_normalizing_area_total(); //If not already initialized.
+	return area_total[ static_cast<unsigned int>( static_cast<unsigned char>( res ) ) ];
 }
 
 Real

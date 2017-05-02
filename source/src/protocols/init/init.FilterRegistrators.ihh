@@ -119,6 +119,7 @@ static FilterRegistrator< protocols::simple_filters::AlaScanFilterCreator > reg_
 static FilterRegistrator< protocols::simple_filters::AtomicContactFilterCreator > reg_AtomicContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::AtomicDistanceFilterCreator > reg_AtomicDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::AveragePathLengthFilterCreator > reg_AveragePathLengthFilterCreator;
+static FilterRegistrator< protocols::simple_filters::BuriedSurfaceAreaFilterCreator > reg_BuriedSurfaceAreaFilterCreator;
 static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ConstraintScoreFilterCreator > reg_ConstraintScoreFilterCreator;

@@ -50,6 +50,11 @@ Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_
 Real calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa, bool normalize);
 Real normalizing_area(char const res);
 
+/// @brief Given a one-letter code for a canonical amino acid, return
+/// its total surface area.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real normalizing_area_total (char const res);
+
 /// returns total sasa
 //Real
 //calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
