@@ -77,7 +77,7 @@ public:
 			query_coordinates[i] = *input;
 		}
 
-		return lookup_fragment(query_coordinates);
+		return lookup_fragment_v(query_coordinates);
 	}
 
 	// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
@@ -91,7 +91,7 @@ public:
 			query_coordinates[i] = *input;
 		}
 
-		return lookup_closest_fragment(query_coordinates);
+		return lookup_closest_fragment_v(query_coordinates);
 	}
 
 	// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
@@ -105,7 +105,7 @@ public:
 			query_coordinates[i] = *input;
 		}
 
-		return lookup_closest_fragment_subset(query_coordinates,subset);
+		return lookup_closest_fragment_subset_v(query_coordinates,subset);
 	}
 
 	// @brief Copy fragment_specification().fragment_length coordinates from input vector and lookup.
@@ -118,7 +118,7 @@ public:
 			query_coordinates[i] = *input;
 		}
 
-		return lookup_close_fragments(query_coordinates,rms_threshold);
+		return lookup_close_fragments_v(query_coordinates,rms_threshold);
 	}
 
 	template<class FragmentLookupOutputIterator, class ResidueNumberOutputIterator>
@@ -197,13 +197,15 @@ protected:
 	//         [(2,6), (6, 10)]
 	std::vector< ResidueSpan > get_fragment_residue_spans(core::pose::Pose const & target_pose);
 
-	FragmentLookupResult lookup_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
 
-	FragmentLookupResult lookup_closest_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
+	// Alex, Clang seems to think that functions below is template specialization of the above public template functions with the same name and different access rights (public). Which lead to Binder confusion. So i am adding suffix `_v` to resolve this.
+	FragmentLookupResult lookup_fragment_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
 
-	FragmentLookupResult lookup_closest_fragment_subset(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates, std::vector<bool> subset);
+	FragmentLookupResult lookup_closest_fragment_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
 
-	std::vector<FragmentLookupResult> lookup_close_fragments(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  Real rms_threshold, Size max_matches=99999999);
+	FragmentLookupResult lookup_closest_fragment_subset_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates, std::vector<bool> subset);
+
+	std::vector<FragmentLookupResult> lookup_close_fragments_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  Real rms_threshold, Size max_matches=99999999);
 
 private:
 	FragmentStoreOP store_;

@@ -639,19 +639,15 @@ MMLJEnergyInter::version() const
 // SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrieGeneric );
 // CEREAL_REGISTER_TYPE( MMEtableRotTrieGeneric )
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, core::scoring::etable::etrie::CountPairData_1_1 > MMEtableRotTrie11;
-SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrie11 );
+typedef core::scoring::trie::RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, core::scoring::etable::etrie::CountPairData_1_1 > MMEtableRotTrie11; SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrie11 );
 CEREAL_REGISTER_TYPE( MMEtableRotTrie11 )
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, core::scoring::etable::etrie::CountPairData_1_2 > MMEtableRotTrie12;
-SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrie12 );
+typedef core::scoring::trie::RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, core::scoring::etable::etrie::CountPairData_1_2 > MMEtableRotTrie12; SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrie12 );
 CEREAL_REGISTER_TYPE( MMEtableRotTrie12 )
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, core::scoring::etable::etrie::CountPairData_1_3 > MMEtableRotTrie13;
-SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrie13 );
+typedef core::scoring::trie::RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, core::scoring::etable::etrie::CountPairData_1_3 > MMEtableRotTrie13; SAVE_AND_LOAD_SERIALIZABLE( MMEtableRotTrie13 );
 CEREAL_REGISTER_TYPE( MMEtableRotTrie13 )
 
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_MMLJEnergyInter )
 #endif // SERIALIZATION
-

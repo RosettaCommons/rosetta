@@ -944,7 +944,7 @@ void Graph::load( Archive & archive )
   }
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( Graph );
+SAVE_AND_LOAD_SERIALIZABLE( utility::graph::Graph );
 #endif // SERIALIZATION
 
 } //end namespace graph

@@ -445,7 +445,7 @@ void EnergyGraph::load( Archive & arc )
 	// EXEMPT energy_edge_pool_ energy_array_pool_
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( EnergyGraph );
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::EnergyGraph );
 #endif // SERIALIZATION
 
 } //namespace scoring

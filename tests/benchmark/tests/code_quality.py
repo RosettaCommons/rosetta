@@ -259,8 +259,10 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
         branches = set()
         for line in o.split('\n'):
             br = line.replace('*', '').split()[0]
-            if br.startswith('origin/'): br = br[len('origin/'):]
-            if br != 'HEAD': branches.add(br)
+            if br.startswith('origin/'):
+                br = br[len('origin/'):]
+                branches.add(br)
+            #if br != 'HEAD': branches.add(br)
 
         if len(branches) != 1:
             commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')

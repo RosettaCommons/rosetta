@@ -16,7 +16,7 @@
 
 #ifdef SERIALIZATION
 
-#include <utility/vector1.hh>
+//#include <utility/vector1.hh>
 
 // Archives
 #include <cereal/archives/binary.hpp>
@@ -45,7 +45,18 @@ template void T::load( typename cereal::BinaryInputArchive &); \
 template void T::load( typename cereal::XMLInputArchive &); \
 template void T::load( typename cereal::JSONInputArchive &)
 
-#define EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( T ) \
+
+// PyRosetta macro to forward declare template instantiation for the split save and load methods.
+#define EXTERN_SAVE_AND_LOAD_SERIALIZABLE(T) \
+extern template void T::save( typename cereal::BinaryOutputArchive &) const; \
+extern template void T::save( typename cereal::XMLOutputArchive &) const; \
+extern template void T::save( typename cereal::JSONOutputArchive &) const; \
+extern template void T::load( typename cereal::BinaryInputArchive &); \
+extern template void T::load( typename cereal::XMLInputArchive &); \
+extern template void T::load( typename cereal::JSONInputArchive &)
+
+
+#define EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( T )						\
 template void save( typename cereal::BinaryOutputArchive &, T const & ); \
 template void save( typename cereal::XMLOutputArchive &, T const & ); \
 template void save( typename cereal::JSONOutputArchive &, T const & ); \

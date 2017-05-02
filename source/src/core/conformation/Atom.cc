@@ -47,7 +47,7 @@ Atom::load( Archive & arch )
 	arch( xyz_, type_, mm_type_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( Atom );
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::Atom );
 
 #endif // SERIALIZATION
 

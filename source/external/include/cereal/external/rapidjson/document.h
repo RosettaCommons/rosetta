@@ -50,8 +50,7 @@ public:
 	GenericValue() : flags_(kNull_Flag) {}
 
 	//! Copy constructor is not permitted.
-private:
-	GenericValue(const GenericValue& rhs);
+	GenericValue(const GenericValue& rhs)  = delete;
 
 public:
 

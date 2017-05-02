@@ -176,7 +176,9 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verb
     extra = ''
     if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
         python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
-        extra = ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
+        extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
+
+    if 'serialization' in platform['extras']: extra += ' --serialization'
 
     command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}{extra}'.format(rosetta_dir=rosetta_dir, python=platform['python'], jobs=jobs, compiler=platform['compiler'], mode=mode, extra=extra)
 
@@ -217,12 +219,12 @@ def install_llvm_tool(name, source_location, config, clean=True):
     os.symlink(source_location, tool_link_path)
 
     cmake_lists = prefix + '/llvm/tools/clang/tools/extra/CMakeLists.txt'
-    tool_build_line = 'add_subdirectory({})'.format(name)
+    tool_build_line = 'add_subdirectory({})\n'.format(name)
 
     for line in codecs.open(cmake_lists, encoding='utf-8', errors='replace'):
         if line == tool_build_line: break
     else:
-        with codecs.open(cmake_lists, 'w', encoding='utf-8', errors='replace') as f: f.write( codecs.open(cmake_lists, encoding='utf-8', errors='replace').read() + tool_build_line + '\n' )
+        with codecs.open(cmake_lists, 'w', encoding='utf-8', errors='replace') as f: f.write( codecs.open(cmake_lists, encoding='utf-8', errors='replace').read() + tool_build_line)
 
     build_dir = prefix+'/llvm/build-' + release
     if not os.path.isdir(build_dir): os.makedirs(build_dir)

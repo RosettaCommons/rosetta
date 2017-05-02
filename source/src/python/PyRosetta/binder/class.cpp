@@ -45,7 +45,10 @@ string template_specialization(clang::CXXRecordDecl const *C)
 
 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
 		templ += "<";
+
 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
+			//if( t->getTemplateArgs()[i].isInstantiationDependent() ) break;  // avoid explicitly specifying SFINAE related arguments
+
 			//outs() << " template argument: " << template_argument_to_string(t->getTemplateArgs()[i]) << "\n";
 			templ += template_argument_to_string(t->getTemplateArgs()[i]) + ",";
 
@@ -222,6 +225,25 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config)
 }
 
 
+// Check if given method is const overload of some other method in class
+bool is_const_overload(CXXMethodDecl *mc)
+{
+	string name = function_qualified_name(mc);
+
+	string _const = " const";
+
+	if( ends_with(name, _const) ) {
+		name.resize( name.size() - _const.size() );
+
+		CXXRecordDecl const *C = mc->getParent();
+
+		for(auto m = C->method_begin(); m != C->method_end(); ++m) {
+			if( m->getAccess() == mc->getAccess()  and  function_qualified_name(*m) == name ) return true;
+		}
+	}
+
+	return false;;
+}
 
 // extract include needed for declaration and add it to includes
 void add_relevant_includes(clang::CXXRecordDecl const *C, IncludeSet &includes, int level)
@@ -247,6 +269,51 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, IncludeSet &includes, 
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Integral ) {
 				add_relevant_includes(t->getTemplateArgs()[i].getIntegralType(), includes, level+1);
 			}
+		}
+	}
+
+	// member function templates: we have to treat them separatly because instantiation types might not be included in class header
+	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
+		if(FunctionTemplateDecl *ft = dyn_cast<FunctionTemplateDecl>(*d) ) {
+			for(auto s = ft->spec_begin(); s != ft->spec_end(); ++s) {
+				if(CXXMethodDecl *m = dyn_cast<CXXMethodDecl>(*s) ) {
+					if( m->getAccess() == AS_public
+						and  is_bindable(m)  //and  !is_skipping_requested(FunctionDecl const *F, Config const &config)
+						and  !is_skipping_requested(m, Config::get())
+						and  !isa<CXXConstructorDecl>(m)  and   !isa<CXXDestructorDecl>(m)
+						and  !is_const_overload(m) ) {
+						//m->dump();
+						add_relevant_includes(m, includes, level+1);
+					}
+				}
+			}
+
+			// ArrayRef< TemplateArgument > args = ft->getInjectedTemplateArgs();
+			// for(auto a = args.begin(); a != args.end(); ++a) {
+			// 	outs() << "function template argument: " << template_argument_to_string( *a ) << " type:" << a->getKind() << "\n";
+			// 	if( a->isDependent() ) {
+			// 		outs() << "isDependent!" << "\n";
+			// 	}
+			// 	if( a->isInstantiationDependent() ) {
+			// 		outs() << "isInstantiationDependent!" << "\n";
+			// 	}
+			// }
+
+			// if( FunctionDecl const *td = ft->getTemplatedDecl() ) {
+			// 	td->dump();
+			// 	if( TemplateArgumentList const *ta = td->getTemplateSpecializationArgs() ) {
+			// 		for(uint i=0; i < ta->size(); ++i) {
+			// 			outs() << "function template argument: " << template_argument_to_string( ta->get(i) ) << "\n";
+			// 			if( ta->get(i).isDependent() ) {
+			// 				outs() << "isDependent!" << "\n";
+			// 			}
+			// 			if( ta->get(i).isInstantiationDependent() ) {
+			// 				outs() << "isInstantiationDependent!" << "\n";
+			// 			}
+			// 		}
+			// 	}
+			// }
+
 		}
 	}
 
@@ -364,26 +431,6 @@ string binding_public_data_members(CXXRecordDecl const *C)
 		}
 	}
 	return c;
-}
-
-// Check if given method is const overload of some other method in class
-bool is_const_overload(CXXMethodDecl *mc)
-{
-	string name = function_qualified_name(mc);
-
-	string _const = " const";
-
-	if( ends_with(name, _const) ) {
-		name.resize( name.size() - _const.size() );
-
-		CXXRecordDecl const *C = mc->getParent();
-
-		for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-			if( m->getAccess() == mc->getAccess()  and  function_qualified_name(*m) == name ) return true;
-		}
-	}
-
-	return false;;
 }
 
 // generate call-back structure name for given class
@@ -589,6 +636,22 @@ string binding_public_member_functions(CXXRecordDecl const *C, bool callback_str
 								c += bind_function("\tcl", m, context, C);
 							}
 						}
+					}
+				}
+			}
+		}
+
+		if(FunctionTemplateDecl *ft = dyn_cast<FunctionTemplateDecl>(*d) ) {
+			for(auto s = ft->spec_begin(); s != ft->spec_end(); ++s) {
+				if(CXXMethodDecl *m = dyn_cast<CXXMethodDecl>(*s) ) {
+					if( m->getAccess() == AS_public
+						and  is_bindable(m)  //and  !is_skipping_requested(FunctionDecl const *F, Config const &config)
+						and  !is_skipping_requested(m, Config::get())
+						and  !isa<CXXConstructorDecl>(m)  and   !isa<CXXDestructorDecl>(m)
+						and  !is_const_overload(m) ) {
+						//m->dump();
+
+						c += bind_function("\tcl", m, context);
 					}
 				}
 			}

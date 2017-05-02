@@ -895,7 +895,7 @@ void Digraph::load( Archive & archive )
   }
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( Digraph );
+SAVE_AND_LOAD_SERIALIZABLE( utility::graph::Digraph );
 #endif // SERIALIZATION
 
 

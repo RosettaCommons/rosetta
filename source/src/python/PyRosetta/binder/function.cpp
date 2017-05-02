@@ -123,11 +123,50 @@ string template_specialization(FunctionDecl const *F)
 	string templ;
 
 	if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
+
+
+		// TemplateArgumentList const *master = nullptr;
+		// if( FunctionTemplateDecl const *fdc = F->getDescribedFunctionTemplate() ) {
+		// 	//F->dump();
+		// 	if( FunctionDecl const *td = fdc->getTemplatedDecl() ) {
+		// 		//td->dump();
+		// 	}
+		// }
+
+		// ArrayRef< TemplateArgument > args;
+
+		// if( FunctionTemplateDecl *fdc = F->getPrimaryTemplate() ) {
+		//  	outs() << "master for: " << F->getNameAsString() << "\n";
+		// 	args = fdc->getInjectedTemplateArgs();
+		// 	for(auto a = args.begin(); a != args.end(); ++a) {
+		// 		outs() << "  function template argument: " << template_argument_to_string( *a ) << " type:" << a->getKind() <<  " :" << a->isDependent() << " :" << a->isInstantiationDependent() << "\n";
+		// 	}
+		// }
+
+		// if( FunctionDecl const *master = F->getTemplateInstantiationPattern() ) {
+		// 	outs() << "master for: " << F->getNameAsString() << "\n";
+		// 	if( TemplateArgumentList const *ta = F->getTemplateSpecializationArgs() ) {
+		// 		for(uint i=0; i < ta->size(); ++i) {
+		// 			string arg = template_argument_to_string( ta->get(i) );
+		// 			outs() << arg << " kind: " << ta->get(i).getKind()  << "\n";
+		// 		}
+		// 	}
+		// }
+
 		if( TemplateArgumentList const *ta = F->getTemplateSpecializationArgs() ) {
+
 			templ += "<";
 			for(uint i=0; i < ta->size(); ++i) {
 				//outs() << "function template argument: " << template_argument_to_string( ta->get(i) ) << "\n";
-				templ += template_argument_to_string( ta->get(i) ) + ",";
+
+				//if( ta->get(i).isDependent() ) break;  // avoid explicitly specifying SFINAE related arguments
+				//if( ta->get(i).getKind() == TemplateArgument::Expression ) break;  // avoid explicitly specifying SFINAE related arguments
+
+				string arg = template_argument_to_string( ta->get(i) );
+				if( ta->get(i).getKind() == TemplateArgument::ArgKind::Pack   and  arg.size() > 2 ) arg = arg.substr(1, arg.size()-2);  // removing extra <> around template parameter pack
+				templ += arg + ",";
+
+				//outs() << arg << " kind: " << ta->get(i).getKind()  << "\n";
 
 				//if( t->getTemplateArgs()[i].ArgKind() == TemplateArgument::ArgKind::Integral ) outs() << " template arg:" << t->getTemplateArgs()[i].<< "\n";
 				//outs() << expresion_to_string( t->getTemplateArgs()[i].getAsExpr() ) << "\n";
@@ -146,7 +185,8 @@ string template_specialization(FunctionDecl const *F)
 string python_function_name(FunctionDecl const *F)
 {
 	if( F->isOverloadedOperator() ) return cpp_python_operator_map.at( F->getNameAsString() );
-	else return mangle_type_name( F->getNameAsString() + template_specialization(F) );
+	else return F->getNameAsString();
+	//else return mangle_type_name( F->getNameAsString() + template_specialization(F) );
 }
 
 // Generate function pointer type string for given function: void (*)(int, doule)_ or  void (ClassName::*)(int, doule)_ for memeber function
@@ -197,7 +237,8 @@ vector<QualType> get_type_dependencies(FunctionDecl const *F)
 	r.push_back( F->getReturnType() ); //.getDesugaredType(F->getASTContext()) );
 	for(uint i=0; i<F->getNumParams(); ++i) r.push_back(F->getParamDecl(i)->getOriginalType()/*.getDesugaredType(F->getASTContext())*/ );
 
-	if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
+	//if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
+	if( F->getTemplatedKind() != FunctionDecl::TK_NonTemplate  ) {
 		if( TemplateArgumentList const *tal = F->getTemplateSpecializationArgs() ) {
 			for(uint i=0; i < tal->size(); ++i) {
 				TemplateArgument const &ta( tal->get(i) );
@@ -362,6 +403,11 @@ string FunctionBinder::id() const
 /// check if generator can create binding
 bool is_bindable(FunctionDecl const *F)
 {
+	// outs() << "is_bindable: " << F->getQualifiedNameAsString() << "\n";
+	// if( F->getQualifiedNameAsString() == "utility::Base::foo" ) {
+	// 	outs() << "FunctionDecl::TK_FunctionTemplate: " << F->getQualifiedNameAsString() << "\n";
+	// }
+
 	//bool r = true;
 	bool r = !F->isDeleted();
 

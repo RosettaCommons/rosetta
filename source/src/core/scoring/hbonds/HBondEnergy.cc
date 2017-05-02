@@ -1474,9 +1474,7 @@ HBondEnergy::version() const
 
 #ifdef    SERIALIZATION
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::hbonds::hbtrie::HBAtom, core::scoring::hbonds::hbtrie::HBCPData > HBRotTrie;
-
-SAVE_AND_LOAD_SERIALIZABLE( HBRotTrie );
+typedef core::scoring::trie::RotamerTrie< core::scoring::hbonds::hbtrie::HBAtom, core::scoring::hbonds::hbtrie::HBCPData > HBRotTrie; SAVE_AND_LOAD_SERIALIZABLE( HBRotTrie );
 CEREAL_REGISTER_TYPE( HBRotTrie )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_hbonds_HBondEnergy )

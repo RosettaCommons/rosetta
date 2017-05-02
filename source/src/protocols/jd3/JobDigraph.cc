@@ -368,7 +368,7 @@ void JobDigraph::load( Archive & archive )
   }
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( JobDigraph );
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobDigraph );
 #endif // SERIALIZATION
 
 JobDigraphUpdater::JobDigraphUpdater( JobDigraphOP job_digraph ) :

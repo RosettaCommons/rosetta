@@ -68,6 +68,7 @@ def get_defines():
     defines = 'PYROSETTA BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD'
     if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
+    if Options.serialization: defines += ' SERIALIZATION'
     return defines.split()
 
 
@@ -197,7 +198,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
 
     #p = os.path.join(p, 'monolith' if True else 'namespace' )
 
-    p = os.path.join(p, Options.type.lower())
+    p = os.path.join(p, Options.type.lower() + ('.serialization' if Options.serialization else '') )
 
     source_p = p + '/source'
     build_p  = p + '/build'
@@ -352,26 +353,36 @@ def generate_bindings(rosetta_source_path):
 
 
     # generate include file that contains all headers
-    all_includes = []
+    all_includes, serialization_instantiation = [], []
 
     #for path in 'ObjexxFCL utility numeric basic core protocols'.split():
     for path in 'ObjexxFCL utility numeric basic core protocols'.split():
         for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
             for f in sorted(files):
-                if f.endswith('.hh')  and  (not f.endswith('.fwd.hh')):
-                    #if f == 'exit.hh':
-                    #if dir_name.endswith('utility'):
-                    if not is_dir_banned(dir_name):
-                    #if 'utility/' in dir_name  and  'src/utility/pointer' not in dir_name:
+                if not is_dir_banned(dir_name):
+                    if f.endswith('.hh')  and  (not f.endswith('.fwd.hh')):
                         header = dir_name[len(rosetta_source_path+'/src/'):] + '/' + f
                         if header not in _banned_headers_  and  not header.startswith('basic/options/keys/OptionKeys.cc.gen'):
                             #print(header)
                             all_includes.append(header)
 
+                    elif f.endswith('.cc')  and  Options.serialization:
+                        #print('{} {}'.format(dir_name, f))
+                        with codecs.open(dir_name + '/' + f, encoding='utf-8', errors='replace') as fcc:
+                            for line in fcc.read().split('\n'):
+                                source = dir_name[len(rosetta_source_path+'/src/'):] + '/' + f
+                                #if line.split('(')[0] in 'SAVE_AND_LOAD_SERIALIZABLE EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE INSTANTIATE_FOR_OUTPUT_ARCHIVES INSTANTIATE_FOR_INPUT_ARCHIVES'.split(): serialization_instantiation.append(line)
+                                if 'SAVE_AND_LOAD_SERIALIZABLE' in line  and  '_SAVE_AND_LOAD_SERIALIZABLE' not in line :
+                                    serialization_instantiation.append( line.replace('SAVE_AND_LOAD_SERIALIZABLE', 'EXTERN_SAVE_AND_LOAD_SERIALIZABLE') + '  // file:{}\n'.format(source) )
+
+
     all_includes.sort()
+    serialization_instantiation.sort()
+
     include = prefix + 'all_rosetta_includes.hh'
     with open(include, 'w') as fh:
         for i in all_includes: fh.write( '#include <{}>\n'.format(i) )
+        for s in serialization_instantiation: fh.write(s)
 
     config = open('rosetta.config').read()
     if 'clang' not in Options.compiler: config += open('rosetta.gcc.config').read()
@@ -411,6 +422,28 @@ def  build_generated_bindings(rosetta_source_path):
     execute('Building...', 'cd {prefix} && ninja -j{jobs}'.format(prefix=prefix, jobs=Options.jobs))
 
 
+
+_documentation_index_template_ = '''\
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PyRosetta-4 Documentation</title>
+    </head>
+
+    <body>
+        <a href="rosetta.html">[Rosetta Module Documentation]</a> <a href="pyrosetta.html">[PyRosetta Module Documentation]</a>
+        <br/>
+        <br/>
+        <form method="get" id="search" action="http://duckduckgo.com/">
+          Search PyRosetta/Rosetta API:
+          <input type="hidden" name="sites" value="http://graylab.jhu.edu/PyRosetta.documentation"/>
+          <input type="text" name="q" maxlength="255" placeholder="Search&hellip;" size="64"/>
+          <input type="submit" value="DuckDuckGo Search" style="visibility: hidden;" />
+        </form>
+    </body>
+</html>
+'''
+
 def generate_documentation(rosetta_source_path, path):
     path = os.path.abspath(path)
     print('Creating PyRosetta documentation at: {}...'.format(path))
@@ -429,7 +462,7 @@ def generate_documentation(rosetta_source_path, path):
     if not os.path.isdir(path): os.makedirs(path)
     execute('Generating PyRosetta documentation...', 'cd {build_prefix} && {pydoc} -w {modules} && mv *.html {path}'.format(pydoc=Options.pydoc, **vars()), silent=True)
 
-    with open(path+'/index.html', 'w') as f: f.write('<!DOCTYPE html><html><head><title>PyRosetta-4 Documentation</title></head> <body><a href="rosetta.html">[Rosetta Module Documentation]</a> <a href="pyrosetta.html">[PyRosetta Module Documentation]</a> </body> </html>')
+    with open(path+'/index.html', 'w') as f: f.write('_documentation_index_template_')
 
 
 def create_package(rosetta_source_path, path):
@@ -482,6 +515,8 @@ def main(args):
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
 
     parser.add_argument('--gcc-install-prefix', default=None, help='Path to GCC install prefix which will be used to determent location of libstdc++ for Binder build. Default is: auto-detected. Use this option if you would like to build Binder with compiler that was side-installed and which LLVM build system failed to identify. To see what path Binder uses for libstdc++ run `binder -- -xc++ -E -v`.')
+
+    parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
 
     global Options
     Options = parser.parse_args()

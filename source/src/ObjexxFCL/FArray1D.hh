@@ -256,7 +256,7 @@ public: // Assignment
 	FArray1D &
 	operator =( FArray1< U > const & a )
 	{
-		if ( ! equal_dimension( a ) ) dimension( a );
+		if ( ! this->equal_dimension( a ) ) dimension( a );
 		Base::operator =( a );
 		return *this;
 	}
@@ -1038,7 +1038,7 @@ FArray1D< T >
 cross( FArray1< T > const & a, FArray1< T > const & b );
 
 
-	/// @brief Swap
+/// @brief Swap
 template< typename T >
 void
 swap( FArray1D<T> & a, FArray1D<T> & b )

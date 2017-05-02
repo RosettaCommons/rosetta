@@ -94,7 +94,7 @@ std::vector< std::pair< Size, Size > > FragmentLookup::get_fragment_residue_span
 	return valid_residue_spans;
 }
 
-FragmentLookupResult FragmentLookup::lookup_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates)
+FragmentLookupResult FragmentLookup::lookup_fragment_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates)
 {
 	FragmentLookupResult result;
 
@@ -107,7 +107,7 @@ FragmentLookupResult FragmentLookup::lookup_fragment(std::vector< numeric::xyzVe
 	return result;
 }
 
-FragmentLookupResult FragmentLookup::lookup_closest_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates)
+FragmentLookupResult FragmentLookup::lookup_closest_fragment_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates)
 {
 	FragmentLookupResult result;
 	numeric::Real* coordinate_start = &(query_coordinates[0].x());
@@ -120,7 +120,7 @@ FragmentLookupResult FragmentLookup::lookup_closest_fragment(std::vector< numeri
 	return result;
 }
 
-FragmentLookupResult FragmentLookup::lookup_closest_fragment_subset(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,std::vector<bool> subset)
+FragmentLookupResult FragmentLookup::lookup_closest_fragment_subset_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,std::vector<bool> subset)
 {
 	FragmentLookupResult result;
 	numeric::Real* coordinate_start = &(query_coordinates[0].x());
@@ -134,7 +134,7 @@ FragmentLookupResult FragmentLookup::lookup_closest_fragment_subset(std::vector<
 }
 
 
-std::vector<FragmentLookupResult> FragmentLookup::lookup_close_fragments(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  Real rms_threshold, Size max_matches)
+std::vector<FragmentLookupResult> FragmentLookup::lookup_close_fragments_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  Real rms_threshold, Size max_matches)
 {
 	std::vector<FragmentLookupResult> results;
 	std::vector<Size>match_indexes;

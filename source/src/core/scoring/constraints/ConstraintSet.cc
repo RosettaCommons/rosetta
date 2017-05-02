@@ -74,7 +74,7 @@ ResidueConstraints::load(
 	arc( map_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( ResidueConstraints );
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::ResidueConstraints );
 
 #endif // SERIALIZATION
 
@@ -1186,7 +1186,7 @@ ConstraintSet::load( Archive & arc )
 	// EXEMPT conformation_pt_
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( ConstraintSet );
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::ConstraintSet );
 
 #endif // SERIALIZATION
 

@@ -96,7 +96,7 @@ PseudoBond::load( Archive & arch )
 	arch( lr_conn_, ur_conn_, nbonds_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( PseudoBond );
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::PseudoBond );
 #endif
 
 // A PBCollection stores all of the PBs between a pair of residues.
@@ -148,7 +148,7 @@ PseudoBondCollection::load( Archive & arch )
 	arch( pseudo_bonds_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( PseudoBondCollection );
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::PseudoBondCollection );
 #endif
 
 } // conformation

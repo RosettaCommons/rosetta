@@ -91,7 +91,7 @@ ResConnID::load( Archive & arch ) {
 	arch( res_id_, conn_id_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( ResConnID );
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResConnID );
 #endif
 
 }

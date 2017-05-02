@@ -271,7 +271,7 @@ void
 	VDW_screen_bin_ = local_VDW_screen_bin; // copy the non-const pointer(s) into the const pointer(s)
 }
 
-SAVE_AND_LOAD_SERIALIZABLE(  protocols::scoring::VDW_CachedRepScreenInfo );
+SAVE_AND_LOAD_SERIALIZABLE( protocols::scoring::VDW_CachedRepScreenInfo );
 CEREAL_REGISTER_TYPE(  protocols::scoring::VDW_CachedRepScreenInfo )
 
 CEREAL_REGISTER_DYNAMIC_INIT(  protocols_scoring_VDW_CachedRepScreenInfo )

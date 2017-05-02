@@ -42,7 +42,7 @@ OrbitalXYZCoords::load( Archive & arch )
 	arch( xyz_, type_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( OrbitalXYZCoords );
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::orbitals::OrbitalXYZCoords );
 
 #endif // SERIALIZATION
 

@@ -315,12 +315,26 @@ PYBIND11_PLUGIN({1}) {{
 {2}	}};
 	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
 
+	//pybind11::class_<std::shared_ptr<void>>(M(""), "_encapsulated_data_");
+
 {3}
 	return modules[""]->ptr();
 }}
 )_";
 
-const char * module_header = "\n#include <pybind11/pybind11.h>\n\n{}#ifndef BINDER_PYBIND11_TYPE_CASTER\n\t#define BINDER_PYBIND11_TYPE_CASTER\n\tPYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n\tPYBIND11_DECLARE_HOLDER_TYPE(T, T*);\n#endif\n\n";
+
+const char * module_header = R"_(
+#include <pybind11/pybind11.h>
+{}
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
+	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>);
+#endif
+
+)_";
+
 
 const char * module_function_suffix = "(std::function< pybind11::module &(std::string const &namespace_) > &M)";
 

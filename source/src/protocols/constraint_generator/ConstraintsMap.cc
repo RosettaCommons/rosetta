@@ -157,9 +157,8 @@ ConstraintsMap::load( Archive & arc )
 	}
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( ConstraintsMap ); // 12
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraint_generator::ConstraintsMap ); // 12
 CEREAL_REGISTER_TYPE( ConstraintsMap ) // 14
 
 CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraint_generator_ConstraintsMap )
 #endif // SERIALIZATION
-

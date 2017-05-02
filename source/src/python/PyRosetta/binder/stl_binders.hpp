@@ -46,7 +46,9 @@ public:
 		cl.def("capacity",      &Vector::capacity,      "returns the number of elements that can be held in currently allocated storage");
 		cl.def("shrink_to_fit", &Vector::shrink_to_fit, "reduces memory usage by freeing unused memory");
 		cl.def("clear",         &Vector::clear,         "clears the contents");
-		cl.def("swap",          &Vector::swap,          "swaps the contents");
+		cl.def("swap",          (void (Vector::*)(Vector &)) &Vector::swap,          "swaps the contents");
+
+
 
 		// cl.def("front", [](Vector &v) {
 		// 		if (v.size()) return v.front();
