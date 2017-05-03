@@ -131,6 +131,7 @@ sources = {
 	],
 	"protocols/jd2/parser": [
 		"BluePrint",
+		"ConstraintGeneratorLoader",
 		"DataLoader",
 		"DataLoaderCreator",
 		"DataLoaderFactory",

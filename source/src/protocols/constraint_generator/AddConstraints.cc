@@ -26,6 +26,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -57,6 +58,23 @@ AddConstraints::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
+	//We should also accept a comma-separated list of previously defined constraint generators
+	if ( tag->hasOption( "constraint_generators" ) ) {
+		std::string cst_gen_cslist = tag->getOption< std::string >( "constraint_generators" );
+		utility::vector1< std::string > cst_gen_vector = utility::string_split( cst_gen_cslist, ',' );
+		for ( std::string gen: cst_gen_vector ) {
+			//Retrieve from the data map
+			if ( data.has( "ConstraintGenerators", gen ) ) {
+				ConstraintGeneratorCOP new_cg( data.get_ptr< ConstraintGenerator >( "ConstraintGenerators", gen ) );
+				add_generator( new_cg );
+				TR << "Added constraint generator " << new_cg->id() << "." << std::endl;
+				//No need to add generator to data map
+			} else {
+				throw utility::excn::EXCN_RosettaScriptsOption("ConstraintGenerator " + gen + " not found in basic::datacache::DataMap.");
+			}
+		}
+	}
+	//Note that this mover is a little unusual in that it adds any constraint generators defined as subtags to the DataMap.
 	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		ConstraintGeneratorOP new_cg = ConstraintGeneratorFactory::get_instance()->new_constraint_generator( (*subtag)->getName(), *subtag, data );
 		add_generator( new_cg );
@@ -139,7 +157,9 @@ void AddConstraints::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 {
 	using namespace utility::tag;
 	ConstraintGeneratorFactory::get_instance()->define_constraint_generator_xml_schema_group( xsd );
-	AttributeList attlist; //No attributes, just subelements
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "constraint_generators", xs_string, "Comma-separated list of previously defined constraint generators to be added." );
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & ConstraintGeneratorFactory::constraint_generator_xml_schema_group_name );
 

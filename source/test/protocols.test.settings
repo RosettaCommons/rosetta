@@ -298,6 +298,7 @@ sources = {
 
 	"jd2/parser" : [
 		"BluePrint",
+                "DataLoaders"
 	],
 	"jd3" : [
 		"JobGenealogist",

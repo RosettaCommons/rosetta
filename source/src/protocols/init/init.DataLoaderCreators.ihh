@@ -15,6 +15,7 @@
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 #include <protocols/jd2/parser/StandardLoaderCreators.hh>
 #include <protocols/jd2/parser/ResidueSelectorLoaderCreator.hh>
+#include <protocols/jd2/parser/ConstraintGeneratorLoaderCreator.hh>
 #include <protocols/jd2/parser/MoveMapFactoryLoaderCreator.hh>
 #include <protocols/jd2/parser/JumpSelectorLoaderCreator.hh>
 #include <protocols/loops/loops_definers/LoopsDefinerLoaderCreator.hh>
