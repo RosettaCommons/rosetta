@@ -341,7 +341,8 @@ bool is_python_builtin(NamedDecl const *C)
  	};
 
 	for(auto &k : known_builtin) {
-		if( begins_with(name, k) ) return true;
+		//if( begins_with(name, k) ) return true;
+		if( name == k ) return true;
 	}
 
 	return false;

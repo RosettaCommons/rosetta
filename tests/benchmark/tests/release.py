@@ -478,7 +478,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             python_version = execute('Getting Python version...', '{python} --version'.format(python=platform['python']), return_='output').split()[1][:3].replace('.', '')
 
-            release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join(platform['os']+platform['extras']), python_version=python_version)
+            release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=python_version)
             package_dir = working_dir + '/' + release_name
 
             execute('Creating PyRosetta4 distribution package...', '{build_command_line} --create-package {package_dir}'.format(**vars()))

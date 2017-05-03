@@ -1,43 +1,31 @@
 /*
  A C++ interface to POSIX functions.
 
- Copyright (c) 2014 - 2015, Victor Zverovich
+ Copyright (c) 2012 - 2016, Victor Zverovich
  All rights reserved.
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice, this
-    list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ For the license information refer to format.h.
  */
 
 #ifndef FMT_POSIX_H_
 #define FMT_POSIX_H_
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(__CYGWIN__)
 // Workaround MinGW bug https://sourceforge.net/p/mingw/bugs/2024/.
 # undef __STRICT_ANSI__
 #endif
 
 #include <errno.h>
-#include <fcntl.h>  // for O_RDONLY
+#include <fcntl.h>   // for O_RDONLY
+#include <locale.h>  // for locale_t
 #include <stdio.h>
+#include <stdlib.h>  // for strtod_l
 
 #include <cstddef>
+
+#if defined __APPLE__ || defined(__FreeBSD__)
+# include <xlocale.h>  // for LC_NUMERIC_MASK on OS X
+#endif
 
 #include "format.h"
 
@@ -61,25 +49,6 @@
 # else
 #  define FMT_POSIX_CALL(call) ::call
 # endif
-#endif
-
-#if FMT_GCC_VERSION >= 407
-# define FMT_UNUSED __attribute__((unused))
-#else
-# define FMT_UNUSED
-#endif
-
-#ifndef FMT_USE_STATIC_ASSERT
-# define FMT_USE_STATIC_ASSERT 0
-#endif
-
-#if FMT_USE_STATIC_ASSERT || FMT_HAS_FEATURE(cxx_static_assert) || \
-  (FMT_GCC_VERSION >= 403 && FMT_HAS_GXX_CXX11) || _MSC_VER >= 1600
-# define FMT_STATIC_ASSERT(cond, message) static_assert(cond, message)
-#else
-# define FMT_CONCAT_(a, b) FMT_CONCAT(a, b)
-# define FMT_STATIC_ASSERT(cond, message) \
-  typedef int FMT_CONCAT_(Assert, __LINE__)[(cond) ? 1 : -1] FMT_UNUSED
 #endif
 
 // Retries the expression while it evaluates to error_result and errno
@@ -119,7 +88,7 @@ class BufferedFile {
 
  public:
   // Constructs a BufferedFile object which doesn't represent any file.
-  BufferedFile() FMT_NOEXCEPT : file_(0) {}
+  BufferedFile() FMT_NOEXCEPT : file_(FMT_NULL) {}
 
   // Destroys the object closing the file it represents if any.
   ~BufferedFile() FMT_NOEXCEPT;
@@ -139,9 +108,9 @@ public:
   // A "move constructor" for moving from a temporary.
   BufferedFile(Proxy p) FMT_NOEXCEPT : file_(p.file) {}
 
-  // A "move constructor" for for moving from an lvalue.
+  // A "move constructor" for moving from an lvalue.
   BufferedFile(BufferedFile &f) FMT_NOEXCEPT : file_(f.file_) {
-    f.file_ = 0;
+    f.file_ = FMT_NULL;
   }
 
   // A "move assignment operator" for moving from a temporary.
@@ -155,7 +124,7 @@ public:
   BufferedFile &operator=(BufferedFile &other) {
     close();
     file_ = other.file_;
-    other.file_ = 0;
+    other.file_ = FMT_NULL;
     return *this;
   }
 
@@ -163,7 +132,7 @@ public:
   //   BufferedFile file = BufferedFile(...);
   operator Proxy() FMT_NOEXCEPT {
     Proxy p = {file_};
-    file_ = 0;
+    file_ = FMT_NULL;
     return p;
   }
 
@@ -173,13 +142,13 @@ public:
 
  public:
   BufferedFile(BufferedFile &&other) FMT_NOEXCEPT : file_(other.file_) {
-    other.file_ = 0;
+    other.file_ = FMT_NULL;
   }
 
   BufferedFile& operator=(BufferedFile &&other) {
     close();
     file_ = other.file_;
-    other.file_ = 0;
+    other.file_ = FMT_NULL;
     return *this;
   }
 #endif
@@ -245,7 +214,7 @@ class File {
   // A "move constructor" for moving from a temporary.
   File(Proxy p) FMT_NOEXCEPT : fd_(p.fd) {}
 
-  // A "move constructor" for for moving from an lvalue.
+  // A "move constructor" for moving from an lvalue.
   File(File &other) FMT_NOEXCEPT : fd_(other.fd_) {
     other.fd_ = -1;
   }
@@ -299,7 +268,8 @@ class File {
   // Closes the file.
   void close();
 
-  // Returns the file size.
+  // Returns the file size. The size has signed type for consistency with
+  // stat::st_size.
   LongLong size() const;
 
   // Attempts to read count bytes from the file into the specified buffer.
@@ -331,6 +301,59 @@ class File {
 
 // Returns the memory page size.
 long getpagesize();
+
+#if (defined(LC_NUMERIC_MASK) || defined(_MSC_VER)) && \
+    !defined(__ANDROID__) && !defined(__CYGWIN__)
+# define FMT_LOCALE
+#endif
+
+#ifdef FMT_LOCALE
+// A "C" numeric locale.
+class Locale {
+ private:
+# ifdef _MSC_VER
+  typedef _locale_t locale_t;
+
+  enum { LC_NUMERIC_MASK = LC_NUMERIC };
+
+  static locale_t newlocale(int category_mask, const char *locale, locale_t) {
+    return _create_locale(category_mask, locale);
+  }
+
+  static void freelocale(locale_t locale) {
+    _free_locale(locale);
+  }
+
+  static double strtod_l(const char *nptr, char **endptr, _locale_t locale) {
+    return _strtod_l(nptr, endptr, locale);
+  }
+# endif
+
+  locale_t locale_;
+
+  FMT_DISALLOW_COPY_AND_ASSIGN(Locale);
+
+ public:
+  typedef locale_t Type;
+
+  Locale() : locale_(newlocale(LC_NUMERIC_MASK, "C", FMT_NULL)) {
+    if (!locale_)
+      FMT_THROW(fmt::SystemError(errno, "cannot create locale"));
+  }
+  ~Locale() { freelocale(locale_); }
+
+  Type get() const { return locale_; }
+
+  // Converts string to floating-point number and advances str past the end
+  // of the parsed input.
+  double strtod(const char *&str) const {
+    char *end = FMT_NULL;
+    double result = strtod_l(str, &end, locale_);
+    str = end;
+    return result;
+  }
+};
+#endif  // FMT_LOCALE
 }  // namespace fmt
 
 #if !FMT_USE_RVALUE_REFERENCES
