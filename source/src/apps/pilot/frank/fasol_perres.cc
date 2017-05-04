@@ -154,7 +154,7 @@ public:
 			utility::vector1< utility::vector1< numeric::xyzVector<Real> > > rsd1_waters, rsd2_waters;
 			utility::vector1< utility::vector1< Real > > rsd1_atom_wts;
 
-			if (weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
+			if ( weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
 				lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > (
 					rsd1.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
 				rsd1_waters = ( lkbinfo1.waters() );
@@ -174,7 +174,7 @@ public:
 				utility::vector1< core::Real > atom1_wts;
 				numeric::xyzVector< core::Real > atom1_xyz( rsd1.xyz( iatm ) );
 
-				if ( iatm <= rsd1.nheavyatoms() && rsd1_waters.size() > 0) {
+				if ( iatm <= rsd1.nheavyatoms() && rsd1_waters.size() > 0 ) {
 					atom1_waters = rsd1_waters[ iatm ];
 					atom1_wts = rsd1_atom_wts[iatm];
 				}
@@ -191,7 +191,7 @@ public:
 					core::conformation::Residue const &rsd2( pose.residue(jres) );
 					if ( !rsd2.is_protein() ) continue;
 
-					if (weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
+					if ( weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
 						lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > (
 							rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
 						rsd2_waters = ( lkbinfo2.waters() );
@@ -204,7 +204,7 @@ public:
 						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( jatm ) );
 
 						utility::vector1< numeric::xyzVector< core::Real > >atom2_waters;
-						if ( jatm <= rsd2.nheavyatoms()  && rsd2_waters.size() > 0) {
+						if ( jatm <= rsd2.nheavyatoms()  && rsd2_waters.size() > 0 ) {
 							atom2_waters = rsd2_waters[ jatm ];
 						}
 
