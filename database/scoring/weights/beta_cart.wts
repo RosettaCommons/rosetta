@@ -1,6 +1,6 @@
 # beta_nov16
 #   beta energy function following parameter refitting (Frank DiMaio and Hahnbeom Park), November 2016
-METHOD_WEIGHTS ref 2.2619 4.3148 -1.6204 -1.6358 1.9602 1.4350 0.8406 1.8006 -0.8895 1.3223 1.4633 -0.3009 -4.6787 -0.1077 -0.1423 -0.5390 -0.9333 2.7371 3.7077 1.7379
+METHOD_WEIGHTS ref 1.8394 3.6196 -2.3716 -2.7348 1.0402 0.83697 -0.45461 0.73287 -1.5107 0.18072 0.60916 -0.93687 -2.4119 -0.18838 -1.2888 -0.77834 -1.0874 1.9342 1.6906 1.2797
 fa_atr 1
 fa_rep 0.55
 fa_sol 1.0
