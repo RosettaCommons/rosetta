@@ -1657,7 +1657,7 @@ if ($helix_mode == 1) {
 		#####
 		# controlling vrts on the helical axis
 		#####
-		my $T_about    = vscale( $subunit, $del_COM_alonghelix );
+		my $T_about    = vadd( $helix_center ,vscale( $subunit, $del_COM_alonghelix ));
 
 		foreach my $i (0..$sym_order_ncs-1) {
 			my $id = "0_".$subunit."_".$i;
