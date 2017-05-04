@@ -48,12 +48,28 @@ Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_
 
 //@brief Return total SASA for side chains
 Real calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa, bool normalize);
+
+/// @brief Get the area of the sidechain.
+/// @details Threadsafe now, but these values are suspect.
 Real normalizing_area(char const res);
 
 /// @brief Given a one-letter code for a canonical amino acid, return
 /// its total surface area.
+/// @details Threadsafe now, but these values are suspect.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 Real normalizing_area_total (char const res);
+
+/// @brief Given a one-letter code for a canonical amino acid, return
+/// its total surface area, computed only using hydrophobic atoms.
+/// @details Threadsafe now.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real normalizing_area_total_hydrophobic_atoms_only ( char const res );
+
+/// @brief Given a one-letter code for a canonical amino acid, return
+/// its total surface area, computed only using polar atoms.
+/// @details Threadsafe.  Based on Gabe Rocklin's values (grocklin@gmail.com).
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real normalizing_area_total_polar_atoms_only ( char const res );
 
 /// returns total sasa
 //Real

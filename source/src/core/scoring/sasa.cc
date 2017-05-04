@@ -401,8 +401,11 @@ calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_s
 //ATOM S   2  TRP  249.36   0.0 187.67   0.0  23.60   0.0 211.26   0.0  38.10   0.0 189.67   0.0  59.69   0.0
 //ATOM S   2  TYR  212.76   0.0 135.35   0.0  42.03   0.0 177.38   0.0  35.38   0.0 136.50   0.0  76.26   0.0
 
-static utility::vector1<Real> init_normalizing_area_sc() {
-	static utility::vector1<Real> area_sc(255,0);
+
+/// @brief Get the area of the sidechain.
+/// @details Threadsafe now, but these values are suspect.
+Real normalizing_area(char const res) {
+	/* Values:
 	area_sc[65]= 69.41;   // 69.41;     //A
 	area_sc[67]= 96.75;   // 96.75;   //C
 	area_sc[68]=102.69;   // 48.00;   //D
@@ -423,12 +426,64 @@ static utility::vector1<Real> init_normalizing_area_sc() {
 	area_sc[86]=114.28;   //114.28;   //V
 	area_sc[87]=211.26;   //187.67;   //W
 	area_sc[89]=177.38;   //135.35;   //Y
-	// std::cout << "INIT!!!!!!HELLO" << std::endl;
-	return area_sc;
+	*/
+
+	switch( static_cast<unsigned char>(res) ) {
+	case 'A' :
+		return 69.41;
+	case 'C' :
+		return 96.75;
+	case 'D' :
+		return 102.69;
+	case 'E' :
+		return 134.74;
+	case 'F' :
+		return 164.11;
+	case 'G' :
+		return 32.33;
+	case 'H' :
+		return 147.08;
+	case 'I' :
+		return 137.96;
+	case 'K' :
+		return 163.30;
+	case 'L' :
+		return 141.12;
+	case 'M' :
+		return 156.64;
+	case 'N' :
+		return 106.24;
+	case 'P' :
+		return 119.90;
+	case 'Q' :
+		return 140.99;
+	case 'R' :
+		return 201.25;
+	case 'S' :
+		return 78.11;
+	case 'T' :
+		return 101.70;
+	case 'V' :
+		return 114.28;
+	case 'W' :
+		return 211.26;
+	case 'Y' :
+		return 177.38;
+	default :
+		break;
+	}
+	return 0.0;
 }
 
-static utility::vector1<Real> init_normalizing_area_total() {
-	static utility::vector1<Real> area_total(255,0);
+/// @brief Given a one-letter code for a canonical amino acid, return
+/// its total surface area.
+/// @details Threadsafe now, but these values are suspect.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real
+normalizing_area_total (
+	char const res
+) {
+	/* Values:
 	area_total[65]=107.95;     //A
 	area_total[67]=134.28;   //C
 	area_total[68]=140.39;   //D
@@ -449,29 +504,211 @@ static utility::vector1<Real> init_normalizing_area_total() {
 	area_total[86]=151.44;   //V
 	area_total[87]=249.36;   //W
 	area_total[89]=212.76;   //Y
-	return area_total;
-}
-Real normalizing_area(char const res) {
+	*/
 
-	int index=static_cast<unsigned int>(static_cast<unsigned char>(res));
-	static utility::vector1<Real> const area_sc=init_normalizing_area_sc();
-	static utility::vector1<Real> const area_total=init_normalizing_area_total();
-
-
-	//std::cout << "INDEX: " << res << " " << index << " " << area_sc[index] << " " << area_total[index] << std::endl;
-	return area_sc[index];
+	switch( static_cast<unsigned char>(res) ) {
+	case 'A' :
+		return 107.95;
+	case 'C' :
+		return 134.28;
+	case 'D' :
+		return 140.39;
+	case 'E' :
+		return 172.25;
+	case 'F' :
+		return 199.48;
+	case 'G' :
+		return 80.10;
+	case 'H' :
+		return 182.88;
+	case 'I' :
+		return 175.12;
+	case 'K' :
+		return 200.81;
+	case 'L' :
+		return 178.63;
+	case 'M' :
+		return 194.15;
+	case 'N' :
+		return 143.94;
+	case 'P' :
+		return 136.13;
+	case 'Q' :
+		return 178.50;
+	case 'R' :
+		return 238.76;
+	case 'S' :
+		return 116.50;
+	case 'T' :
+		return 139.27;
+	case 'V' :
+		return 151.44;
+	case 'W' :
+		return 249.36;
+	case 'Y' :
+		return 212.76;
+	default :
+		break;
+	}
+	return 0.0;
 }
 
 /// @brief Given a one-letter code for a canonical amino acid, return
-/// its total surface area.
+/// its total surface area, computed only using hydrophobic atoms.
+/// @details Threadsafe now.  Based on Gabe Rocklin's values (grocklin@gmail.com).
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 Real
-normalizing_area_total (
+normalizing_area_total_hydrophobic_atoms_only (
 	char const res
 ) {
-	static utility::vector1<Real> const area_sc=init_normalizing_area_sc(); //Not used here, but might as well initialize both together.
-	static utility::vector1< Real > const area_total=init_normalizing_area_total(); //If not already initialized.
-	return area_total[ static_cast<unsigned int>( static_cast<unsigned char>( res ) ) ];
+
+	/* Gabe's values:
+	ALA 111
+	CYS 125
+	ASP 92
+	GLU 124
+	PHE 210
+	GLY 92
+	HIS 155
+	ILE 182
+	LYS 182
+	LEU 183
+	MET 208
+	ASN 90
+	PRO 171
+	GLN 118
+	ARG 141
+	SER 96
+	THR 121
+	VAL 157
+	TRP 222
+	TYR 177
+	*/
+
+	switch( static_cast<unsigned char>(res) ) {
+	case 'A' :
+		return 111;
+	case 'C' :
+		return 125;
+	case 'D' :
+		return 92;
+	case 'E' :
+		return 124;
+	case 'F' :
+		return 210;
+	case 'G' :
+		return 92;
+	case 'H' :
+		return 155;
+	case 'I' :
+		return 182;
+	case 'K' :
+		return 182;
+	case 'L' :
+		return 183;
+	case 'M' :
+		return 208;
+	case 'N' :
+		return 90;
+	case 'P' :
+		return 171;
+	case 'Q' :
+		return 118;
+	case 'R' :
+		return 141;
+	case 'S' :
+		return 96;
+	case 'T' :
+		return 121;
+	case 'V' :
+		return 157;
+	case 'W' :
+		return 222;
+	case 'Y' :
+		return 177;
+	default :
+		break;
+	}
+	return 0.0;
+}
+
+/// @brief Given a one-letter code for a canonical amino acid, return
+/// its total surface area, computed only using polar atoms.
+/// @details Threadsafe.  Based on Gabe Rocklin's values (grocklin@gmail.com).
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real
+normalizing_area_total_polar_atoms_only (
+	char const res
+) {
+
+	/* Gabe's values:
+	ALA 42
+	CYS 31
+	ASP 93
+	GLU 99
+	PHE 27
+	GLY 72
+	HIS 86
+	ILE 25
+	LYS 70
+	LEU 27
+	MET 54
+	ASN 94
+	PRO 28
+	GLN 99
+	ARG 124
+	SER 66
+	THR 53
+	VAL 25
+	TRP 48
+	TYR 71
+	*/
+
+	switch( static_cast<unsigned char>(res) ) {
+	case 'A' :
+		return 42;
+	case 'C' :
+		return 31;
+	case 'D' :
+		return 93;
+	case 'E' :
+		return 99;
+	case 'F' :
+		return 27;
+	case 'G' :
+		return 72;
+	case 'H' :
+		return 86;
+	case 'I' :
+		return 25;
+	case 'K' :
+		return 70;
+	case 'L' :
+		return 27;
+	case 'M' :
+		return 54;
+	case 'N' :
+		return 94;
+	case 'P' :
+		return 28;
+	case 'Q' :
+		return 99;
+	case 'R' :
+		return 124;
+	case 'S' :
+		return 66;
+	case 'T' :
+		return 53;
+	case 'V' :
+		return 25;
+	case 'W' :
+		return 48;
+	case 'Y' :
+		return 71;
+	default :
+		break;
+	}
+	return 0.0;
 }
 
 Real

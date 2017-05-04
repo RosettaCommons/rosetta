@@ -12,7 +12,9 @@
 		<BuriedSurfaceArea name="filt2a" cutoff_buried_surface_area="100" filter_out_low="true" residue_selector="sel" />
 		<BuriedSurfaceArea name="filt2b" cutoff_buried_surface_area="100" filter_out_low="true" residue_selector="sel" select_only_FAMILYVW="true" />
 		<BuriedSurfaceArea name="filt2c" cutoff_buried_surface_area="100" filter_out_low="true" select_only_FAMILYVW="true" />
-		<BuriedSurfaceArea name="filt3" cutoff_buried_surface_area="350" filter_out_low="false" residue_selector="sel2" probe_radius="2.0" />
+		<BuriedSurfaceArea name="filt2d" cutoff_buried_surface_area="100" filter_out_low="true" select_only_FAMILYVW="true" atom_mode="hydrophobic_atoms" />
+		<BuriedSurfaceArea name="filt2e" cutoff_buried_surface_area="100" filter_out_low="true" select_only_FAMILYVW="true" atom_mode="polar_atoms" />
+		<BuriedSurfaceArea name="filt4" cutoff_buried_surface_area="350" filter_out_low="false" residue_selector="sel2" confidence="0" />
 	</FILTERS>
 	<MOVERS>
 	</MOVERS>
@@ -23,7 +25,9 @@
 		<Add filter="filt2a" />
 		<Add filter="filt2b" />
 		<Add filter="filt2c" />
-		<Add filter="filt3" />
+		<Add filter="filt2d" />
+		<Add filter="filt2e" />
+		<Add filter="filt4" />
 	</PROTOCOLS>
 	<OUTPUT />
 </ROSETTASCRIPTS>

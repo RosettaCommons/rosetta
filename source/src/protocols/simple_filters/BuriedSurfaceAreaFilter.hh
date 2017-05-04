@@ -32,6 +32,13 @@
 namespace protocols {
 namespace simple_filters {
 
+enum BSAF_mode {
+	BSAF_all_atoms = 1, //keep first
+	BSAF_hydrophobic_atoms,
+	BSAF_polar_atoms, //keep second-to-last
+	BSAF_end_of_list = BSAF_polar_atoms //keep last
+};
+
 ///@brief Calculates buried surface area (exposed surface area minus total surface area, on a per-residue basis).  Accepts a residue selector to allow buried subsets to be considered.
 class BuriedSurfaceAreaFilter : public protocols::filters::Filter {
 
@@ -102,9 +109,13 @@ public: //Setters:
 	/// @details If true, structures with less than the cutoff buried area are discrded.
 	void set_filter_out_low( bool const setting );
 
-	/// @brief Set the probe radius for calculating solvent-accessible surface area.
+	/// @brief Set the atom mode (the subset of atoms to use for the calculation) by string.
 	///
-	void set_probe_radius( core::Real const &setting );
+	void set_atom_mode( std::string const &setting );
+
+	/// @brief Set the atom mode (the subset of atoms to use for the calculation).
+	///
+	void set_atom_mode( BSAF_mode const setting );
 
 public: //Getters:
 
@@ -125,9 +136,9 @@ public: //Getters:
 	/// @details If true, structures with less than the cutoff buried area are discrded.
 	inline bool filter_out_low() const { return filter_out_low_; }
 
-	/// @brief Get the probe radius for calculating solvent-accessible surface area.
+	/// @brief Get the atom mode (the subset of atoms to use).
 	///
-	inline core::Real const & probe_radius() const { return probe_radius_; }
+	inline BSAF_mode atom_mode() const { return atom_mode_; }
 
 private: //Methods:
 
@@ -157,6 +168,10 @@ private: //Data:
 	/// @details The selection FAMILYVW is combined with the residue selector, if specified, using AND logic.
 	bool select_only_FAMILYVW_;
 
+	/// @brief The subset of atoms to consider.  Default is all atoms, but only hydrophobic atoms or only polar atoms
+	/// are both possible, too.
+	BSAF_mode atom_mode_;
+
 	/// @brief The cutoff buried surface area below which (or above which, if filter_out_low_ is false) structures
 	/// are discarded.
 	/// @details Defaults to 500 square Angstroms (arbitrarily chosen).
@@ -165,10 +180,6 @@ private: //Data:
 	/// @brief If true, structures with less than the cutoff buried area are discrded.
 	/// @details True by default.
 	bool filter_out_low_;
-
-	/// @brief The probe radius for calculating solvent-accessible surface area.
-	/// @details Defaults to 2.0 Angstroms.
-	core::Real probe_radius_;
 
 };
 
