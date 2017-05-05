@@ -346,7 +346,14 @@ void xyzVector_add_on_binder(pybind11::class_<numeric::xyzVector<T>, std::shared
 
 
 
+//template<class Stream>
+//void stringstream_add_on_binder(pybind11::class_<Stream<char,std::char_traits<char>,std::allocator<char>>, std::shared_ptr<Stream<char,std::char_traits<char>,std::allocator<char>>> > &cl)
 
+template<class CL>
+void stringstream_add_on_binder(CL &cl)
+{
+    cl.def("bytes", [](typename CL::type const&s) { return pybind11::bytes( s.str() ); } );
+}
 
 
 //using Vector = utility::vectorL<L, T, Allocator>;

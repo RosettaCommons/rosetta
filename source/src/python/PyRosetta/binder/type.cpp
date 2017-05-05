@@ -140,6 +140,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 
 		make_pair("<bits/basic_string.h>",  "<string>"),
 		make_pair("<bits/basic_string.tcc>","<string>"),
+		make_pair("<bits/streambuf_iterator.h>", "<streambuf>"),
 
 		make_pair("<bits/shared_ptr_base.h>", "<memory>"),
 		make_pair("<backward/auto_ptr.h>",    "<memory>"),
@@ -166,6 +167,11 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 
 		//make_pair("<bits/hashtable_policy.h>", could be either unordered_map or unordered_set
 		make_pair("<bits/hashtable_policy.h>", "<unordered_map>"),
+
+		make_pair("<__locale>", "<locale>"),
+
+		make_pair("<__bit_reference>", "<vector>"),
+
 	};
 
 	string name = decl->getQualifiedNameAsString();
@@ -283,6 +289,7 @@ string standard_name(string const &type)
 
 		make_pair("class std::string",  "std::string"), // for return/paremeters types
 		make_pair("class std::ostream", "std::ostream"),
+
 
 		//make_pair("const class ", "const "),
 		//make_pair("const struct ", "const "),

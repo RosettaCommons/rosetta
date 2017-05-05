@@ -65,7 +65,52 @@ string template_specialization(clang::CXXRecordDecl const *C)
 // generate class name that could be used in bindings code indcluding template specialization if any
 string class_name(CXXRecordDecl const *C)
 {
-	return standard_name(C->getNameAsString() + template_specialization(C));
+	string res = standard_name( C->getNameAsString() + template_specialization(C) );
+
+	if(  namespace_from_named_decl(C) == "std" ) {
+		static std::map<string, string> const std_typedef_map {
+			{"basic_iostream<char,std::char_traits<char>>", "iostream"},
+			{"basic_ostream<char,std::char_traits<char>>" ,  "ostream"},
+			{"basic_istream<char,std::char_traits<char>>",   "istream"},
+
+			{"basic_ostream<wchar_t,std::char_traits<wchar_t>>", "wostream"},
+			{"basic_istream<wchar_t,std::char_traits<wchar_t>>", "wistream"},
+
+			{"basic_stringstream<char,std::char_traits<char>,std::allocator<char>>",   "stringstream"},
+			{"basic_istringstream<char,std::char_traits<char>,std::allocator<char>>", "istringstream"},
+			{"basic_ostringstream<char,std::char_traits<char>,std::allocator<char>>", "ostringstream"},
+
+			{"basic_filebuf<char,std::char_traits<char>>", "filebuf"},
+			{"basic_stringbuf<char>", "stringbuf"},
+
+			{"basic_ifstream<char,std::char_traits<char>>", "ifstream"},
+			{"basic_ofstream<char,std::char_traits<char>>", "ofstream"},
+
+			{"basic_stringbuf<char,std::char_traits<char>,std::allocator<char>>",            "stringbuf"},
+			{"basic_stringbuf<wchar_t,std::wchar_traits<wchar_t>,std::allocator<wchar_t>>", "wstringbuf"},
+
+			{"basic_streambuf<char,std::char_traits<char>>",        "streambuf"},
+			{"basic_streambuf<wchar_t,std::char_traits<wchar_t>>", "wstreambuf"},
+		};
+
+		auto it = std_typedef_map.find(res);
+		if( it != std_typedef_map.end() ) {
+			return it->second;
+		}
+
+		// make_pair("class std::ostream", "std::ostream"),
+		// make_pair("class std::istream", "std::istream"),
+		// make_pair("class std::wostream", "std::wostream"),
+		// make_pair("class std::wistream", "std::wistream"),
+		// make_pair("class std::streambuf",  "std::streambuf"),
+		// make_pair("class std::wstreambuf", "std::wstreambuf"),
+		// make_pair("class std::filebuf",  "std::filebuf"),
+
+
+	}
+	return res;
+
+	//return standard_name(C->getNameAsString() + template_specialization(C));
 }
 
 
