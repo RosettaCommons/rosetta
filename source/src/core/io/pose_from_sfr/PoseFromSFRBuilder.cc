@@ -380,9 +380,20 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		determine_residue_branching_info(
 			rinfos_[ ii ].resid(), name3, same_chain_prev, same_chain_next, branch_points_on_this_residue, is_branch_point, is_branch_lower_terminus );
 
-		bool const is_lower_terminus( ( ( ii == 1 || rinfos_.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
+		bool is_lower_terminus( ( ( ii == 1 || rinfos_.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
 			&& check_Ntermini_for_this_chain ) );
-		bool const is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain );
+		bool is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain );
+
+		// If branch_points_on_this_residue contains P, and it's a BLT, it's neither upper nor lower terminal.
+		// (This logic relies on only nucleic acid types having an atom named P, or at least no other
+		// polymeric types having a non-lower-terminal atom named P. An okay assumption.)
+		if ( branch_points_on_this_residue.contains( " P  " ) && is_branch_lower_terminus ) {
+			is_lower_terminus = false;
+			is_upper_terminus = false;
+			// But also don't look for a branch_point or branch_lower_terminal variant
+			is_branch_point = false;
+			is_branch_lower_terminus = false;
+		}
 
 		// Determine if this residue is a D-AA residue, an L-AA residue, or neither.
 		StructFileRep::ResidueCoords const & xyz = rinfo.xyz();
@@ -600,7 +611,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		// << " at " << rinfos_[ ii ].chainID() << rinfos_[ ii ].resSeq() << rinfos_[ ii ].iCode() << " " << rinfos_[ ii ].segmentID() << std::endl;
 
 		ResidueOP ii_rsd( ResidueFactory::create_residue( ii_rsd_type ) );
-		for ( StructFileRep::ResidueCoords::const_iterator iter = rinfos_[ ii ].xyz().begin(), iter_end = rinfos_[ ii ].xyz().end();
+		for ( auto iter = rinfos_[ ii ].xyz().begin(), iter_end = rinfos_[ ii ].xyz().end();
 				iter != iter_end; ++iter ) {
 
 			std::string const & rinfo_name( iter->first );
@@ -815,6 +826,38 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 
 	// Step 5. Reconcile connectivity data.
+
+	// Special RNA step: look for any residues that are LINKed to
+	// themselves (cyclic mono-nucleotides). These cannot be addressed
+	// by detect_bonds(), and that's fine.
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+
+		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
+		std::string const & resid = rinfo.resid();
+		if ( sfr_.link_map().count( resid ) ) {  // if found in the linkage map
+			for ( LinkInformation const & link_info : sfr_.link_map()[ resid ] ) {
+
+				if ( link_info.chainID1 == link_info.chainID2 && link_info.resSeq1 == link_info.resSeq2 && link_info.name1 == " P  " && link_info.name2 == " O3'" ) {
+					// Optionally, assert that we are seeing a compatible variant type state
+					// We can't use correctly_add_cutpoint_variants() because that function requires position_cutpoint_phosphate_torsions and we:
+					//   1. don't want to change input geometry
+					//   2. can't tell if that function would even work when n == m
+					// We don't necessarily know why these particular variants are coming in.
+					// AMW TODO: when everyday847/cyclic_peptide_stepwise gets merged, make sure that this
+					// ends up able to be much simpler!
+					remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, ii );
+					remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, ii );
+					remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, ii );
+					add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, ii );
+					add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, ii );
+					// important -- to prevent artificial penalty from steric clash.
+					declare_cutpoint_chemical_bond( pose, ii, ii );
+				}
+			}
+		}
+	}
+
+
 
 	// Look for and create any remaining non-mainchain (Edge::CHEMICAL) bonds
 	// based on a specified radius from any unsatisfied residue connections.
