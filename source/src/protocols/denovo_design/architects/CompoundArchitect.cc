@@ -27,6 +27,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+// Boost
+#include <boost/assign.hpp>
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.CompoundArchitect" );
 
 namespace protocols {
@@ -103,8 +106,9 @@ CompoundArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.write_complex_type_to_schema( xsd );
 
 	AttributeList connections_subelement_attributes;
-	connections_subelement_attributes
-		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "XRW TO DO" );
+	connection::ConnectionArchitect::attributes_for_parse_my_tag( connections_subelement_attributes );
+	//connections_subelement_attributes
+	//  + XMLSchemaAttribute::required_attribute( "name", xs_string, "XRW TO DO" );
 	XMLSchemaSimpleSubelementList connections_subelements;
 	connections_subelements
 		.add_simple_subelement( "Connection", connections_subelement_attributes, "XRW TO DO" );
@@ -118,15 +122,15 @@ CompoundArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	define_pairing_group( xsd );
 	XMLSchemaSimpleSubelementList pairing_subelements;
 	pairing_subelements.add_group_subelement( & pairing_group_namer );
+
 	//all of the SegmentPairingOP derived classes are valid
+
 	XMLSchemaComplexTypeGenerator pairing_ct_gen;
 	pairing_ct_gen.element_name( "Pairing" )
 		.set_subelements_repeatable( pairing_subelements )
 		.complex_type_naming_func( & subelement_ct_namer )
 		.description( "XRW TO DO" )
 		.write_complex_type_to_schema( xsd );
-
-
 
 	AttributeList attlist;
 	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
@@ -136,15 +140,15 @@ CompoundArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.add_already_defined_subelement( "Pairing",  & subelement_ct_namer )
 		.add_already_defined_subelement( "Connections", & subelement_ct_namer )
 		.add_already_defined_subelement( "Architects", & subelement_ct_namer );
+
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( class_name() )
 		.complex_type_naming_func( & DeNovoArchitectFactory::complex_type_name_for_architect )
+		.add_attributes( attlist )
 		.set_subelements_repeatable( subelements )
 		.description( "XRW TO DO" )
 		.write_complex_type_to_schema( xsd );
 }
-
-
 
 void
 CompoundArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
@@ -188,67 +192,71 @@ CompoundArchitect::parse_connection_tags( utility::tag::TagCOP tag, basic::datac
 
 
 void
-CompoundArchitect::define_pairing_group( utility::tag::XMLSchemaDefinition & xsd ){
-	//components::StrandPairing::class_name()
-	//components::HelixPairing::class_name()
-	//components::HelixSheetPairing::class_name()
+CompoundArchitect::define_pairing_group( utility::tag::XMLSchemaDefinition & xsd )
+{
 	using namespace utility::tag;
 
-	AttributeList strand_pairing_attlist;
+	components::StrandPairing::provide_xml_schema( xsd );
+	components::HelixPairing::provide_xml_schema( xsd );
+	components::HelixSheetPairing::provide_xml_schema( xsd );
 
-	//Define the complex types for all of these
-	XMLSchemaComplexTypeGenerator strand_pairing_ct;
-	strand_pairing_ct.element_name( components::StrandPairing::class_name() )
-		.complex_type_naming_func ( & pairing_subelement_ct_namer )
-		.description( "XRW TO DO" )
-		.add_attributes( strand_pairing_attlist )
-		.write_complex_type_to_schema( xsd );
+	// AttributeList strand_pairing_attlist;
+	// components::StrandPairing::attributes_for_parse_my_tag( strand_pairing_attlist );
+	//
+	// //Define the complex types for all of these
+	// XMLSchemaComplexTypeGenerator strand_pairing_ct;
+	// strand_pairing_ct.element_name( components::StrandPairing::class_name() )
+	//  .complex_type_naming_func ( & pairing_subelement_ct_namer )
+	//  .description( "XRW TO DO" )
+	//  .add_attributes( strand_pairing_attlist )
+	//  .write_complex_type_to_schema( xsd );
+	//
+	//
+	// AttributeList helix_pairing_attlist;
+	// components::HelixPairing::attributes_for_parse_my_tag( helix_pairing_attlist );
+	//
+	// XMLSchemaComplexTypeGenerator helix_pairing_ct;
+	// helix_pairing_ct.element_name( components::HelixPairing::class_name() )
+	//  .complex_type_naming_func ( & pairing_subelement_ct_namer )
+	//  .description( "XRW TO DO" )
+	//  .add_attributes( helix_pairing_attlist )
+	//  .write_complex_type_to_schema( xsd );
+	//
+	//
+	// AttributeList helix_sheet_pairing_attlist;
+	// components::HelixSheetPairing::attributes_for_parse_my_tag( helix_sheet_pairing_attlist );
+	//
+	// XMLSchemaComplexTypeGenerator helix_sheet_pairing_ct;
+	// helix_sheet_pairing_ct.element_name( components::HelixSheetPairing::class_name() )
+	//  .complex_type_naming_func ( & pairing_subelement_ct_namer )
+	//  .description( "XRW TO DO" )
+	//  .add_attributes( helix_sheet_pairing_attlist )
+	//  .write_complex_type_to_schema( xsd );
 
 
-	//random and null have no attributes
-	XMLSchemaComplexTypeGenerator helix_pairing_ct;
-	helix_pairing_ct.element_name( components::HelixPairing::class_name() )
-		.complex_type_naming_func ( & pairing_subelement_ct_namer )
-		.description( "XRW TO DO" )
-		.write_complex_type_to_schema( xsd );
-
-
-	XMLSchemaComplexTypeGenerator helix_sheet_pairing_ct;
-	helix_sheet_pairing_ct.element_name( components::HelixSheetPairing::class_name() )
-		.complex_type_naming_func ( & pairing_subelement_ct_namer )
-		.description( "XRW TO DO" )
-		.write_complex_type_to_schema( xsd );
-
-
-	XMLSchemaElementOP strand_pairing_subelement( new XMLSchemaElement );
-	strand_pairing_subelement->name( components::StrandPairing::class_name() );
-	strand_pairing_subelement->type_name( pairing_subelement_ct_namer( components::StrandPairing::class_name() ) );
-
-	XMLSchemaElementOP helix_pairing_subelement( new XMLSchemaElement );
-	helix_pairing_subelement->name( components::HelixPairing::class_name() );
-	helix_pairing_subelement->type_name( pairing_subelement_ct_namer( components::HelixPairing::class_name() ) );
-
-	XMLSchemaElementOP helix_sheet_pairing_subelement( new XMLSchemaElement );
-	helix_sheet_pairing_subelement->name( components::HelixSheetPairing::class_name() );
-	helix_sheet_pairing_subelement->type_name( pairing_subelement_ct_namer( components::HelixSheetPairing::class_name() ) );
+	utility::vector1< std::string > pairing_names = boost::assign::list_of
+		(components::StrandPairing::class_name())
+		(components::HelixPairing::class_name())
+		(components::HelixSheetPairing::class_name());
 
 	XMLSchemaModelGroupOP pairing_choice( new XMLSchemaModelGroup );
 	pairing_choice->type( xsmgt_choice );
-	pairing_choice->append_particle( helix_pairing_subelement );
-	pairing_choice->append_particle( strand_pairing_subelement );
-	pairing_choice->append_particle( helix_sheet_pairing_subelement );
+
+	for ( std::string const & pairing_name : pairing_names ) {
+		std::string const element_name =
+			components::SegmentPairing::complex_type_name_for_pairing( pairing_name );
+
+		XMLSchemaElementOP pairing_subelement( new XMLSchemaElement );
+		pairing_subelement->name( pairing_name );
+		pairing_subelement->type_name( element_name );
+		pairing_choice->append_particle( pairing_subelement );
+	}
 
 	XMLSchemaModelGroup pairing_group;
 	pairing_group.group_name( pairing_group_namer() );
 	pairing_group.append_particle( pairing_choice );
 	xsd.add_top_level_element( pairing_group );
 }
-
-
-
-
-
-
 
 void
 CompoundArchitect::parse_connection_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )

@@ -87,16 +87,30 @@ StrandArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	bulge_string.add_restriction( xsr_pattern, "[0-9]+([,;][0-9])+" );
 	xsd.add_top_level_element( bulge_string );
 
+	XMLSchemaRestriction register_shift_string;
+	register_shift_string.name( "register_shift_string" );
+	register_shift_string.base_type( xs_string );
+	register_shift_string.add_restriction( xsr_pattern, "-?[0-9]+([,:]-?[0-9])+" );
+	xsd.add_top_level_element( register_shift_string );
+
+	XMLSchemaRestriction orientation_string;
+	orientation_string.name( "orientation_string" );
+	orientation_string.base_type( xs_string );
+	orientation_string.add_restriction( xsr_pattern, "[U,D](,[U,D])*(:[U,D](,[U,D])*)*" );
+	xsd.add_top_level_element( orientation_string );
+
 	XMLSchemaRestriction length_string;
-	length_string.name( "length_string" );
+	length_string.name( "strand_length_string" );
 	length_string.base_type( xs_string );
-	length_string.add_restriction( xsr_pattern, "[0-9]+(-[0-9]+)?(,[0-9]+(-[0-9]+)?)*" );
+	length_string.add_restriction( xsr_pattern, "[0-9]+(:[0-9]+)?(,[0-9]+(:[0-9]+)?)*" );
 	xsd.add_top_level_element( length_string );
 
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute( "length", "length_string", "Comma-separated list of single integers and hyphen-separated ranges to specify all possible strand lengths" )
-		+ XMLSchemaAttribute( "bulge", "bulge_string", "Specifies where bulges occur in a strand" );
+		+ XMLSchemaAttribute( "length", "strand_length_string", "Comma-separated list of single integers and hyphen-separated ranges to specify all possible strand lengths" )
+		+ XMLSchemaAttribute( "bulge", "bulge_string", "Specifies where bulges occur in a strand" )
+		+ XMLSchemaAttribute( "register_shift", "register_shift_string", "Specifies what register shifts are to be used.  This option is only used in the context of the BetaSheetArchitect." )
+		+ XMLSchemaAttribute( "orientation", "orientation_string", "Specifies the orientation of strands in a beta sheet.  This option is only used in the context of the BetaSheetArchitect." );
 
 	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
 	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, class_name(), "Architect to construct a beta strand", attlist );

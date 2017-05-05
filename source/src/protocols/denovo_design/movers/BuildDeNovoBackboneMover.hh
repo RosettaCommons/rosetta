@@ -233,19 +233,22 @@ private:
 	parse_folder( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	void
-	parse_perturbers( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	parse_perturber( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
 	static std::string
 	build_denovo_backbone_ct_naming_func( std::string );
 
 	static std::string
 	prefold_ct_naming_func( std::string );
 
-
 	static std::string
 	postfold_ct_naming_func( std::string );
 
 	static std::string
 	filters_ct_naming_func( std::string );
+
+	static std::string
+	connections_ct_naming_func( std::string );
 
 	static std::string
 	folder_ct_namer( std::string );
@@ -258,6 +261,15 @@ private:
 
 	static void
 	define_perturber_group( utility::tag::XMLSchemaDefinition & );
+
+	static void
+	define_filters_ct( utility::tag::XMLSchemaDefinition & );
+
+	static void
+	define_prefold_movers_ct( utility::tag::XMLSchemaDefinition & );
+
+	static void
+	define_postfold_movers_ct( utility::tag::XMLSchemaDefinition & );
 
 	static std::string
 	perturber_group_name();

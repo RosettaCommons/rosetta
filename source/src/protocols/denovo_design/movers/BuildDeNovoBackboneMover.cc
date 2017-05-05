@@ -122,20 +122,22 @@ BuildDeNovoBackboneMover::parse_my_tag(
 	dump_pdbs_ = tag->getOption< bool >( "dump_pdbs", dump_pdbs_ );
 
 	core::Size idx = 1;
-	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
-		if ( (*subtag)->getName() == "PreFoldMovers" ) parse_prefold_movers( *subtag, movers );
-		else if ( (*subtag)->getName() == "PostFoldMovers" ) parse_postfold_movers( *subtag, movers );
-		else if ( (*subtag)->getName() == "Filters" ) parse_filters( *subtag, filters );
-		else if ( (*subtag)->getName() == "Perturbers" ) parse_perturbers( *subtag, data );
+	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
+		if ( subtag->getName() == "PreFoldMovers" ) parse_prefold_movers( subtag, movers );
+		else if ( subtag->getName() == "PostFoldMovers" ) parse_postfold_movers( subtag, movers );
+		else if ( subtag->getName() == "Filters" ) parse_filters( subtag, filters );
 		else if ( idx == 1 ) {
-			parse_architect( *subtag, data );
+			parse_architect( subtag, data );
 			++idx;
 		} else if ( idx == 2 ) {
-			parse_folder( *subtag, data );
+			parse_folder( subtag, data );
+			++idx;
+		} else if ( idx == 3 ) {
+			parse_perturber( subtag, data );
 			++idx;
 		} else {
 			std::stringstream msg;
-			msg << get_name() << "::parse_my_tag(): Invalid subtag found:" << **subtag << std::endl;
+			msg << get_name() << "::parse_my_tag(): Invalid subtag found:" << *subtag << std::endl;
 			msg << "Valid subtags are \"PreFoldMovers\", \"PostFoldMovers\", a DeNovo architect, and a Pose Folder."
 				<< std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
@@ -384,17 +386,9 @@ BuildDeNovoBackboneMover::find_roots(
 }
 
 void
-BuildDeNovoBackboneMover::parse_perturbers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+BuildDeNovoBackboneMover::parse_perturber( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	if ( tag->getTags().size() > 1 ) {
-		std::stringstream msg;
-		msg << get_name() << ": Only one perturber can be used at a time. You have specified "
-			<< tag->getTags().size() << " : " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
-	}
-	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
-		perturber_ = components::StructureDataPerturber::create( **subtag, data );
-	}
+	perturber_ = components::StructureDataPerturber::create( *tag, data );
 }
 
 void
@@ -865,6 +859,7 @@ std::string BuildDeNovoBackboneMover::mover_name() {
 std::string BuildDeNovoBackboneMover::folder_ct_namer( std::string folder_name ){
 	return "denovo_folder_" + folder_name + "_complex_type";
 }
+
 std::string BuildDeNovoBackboneMover::perturber_ct_namer( std::string perturber_name ){
 	return "denovo_perturber_" + perturber_name + "_complex_type";
 }
@@ -893,7 +888,6 @@ std::string BuildDeNovoBackboneMover::postfold_ct_naming_func( std::string subel
 std::string BuildDeNovoBackboneMover::filters_ct_naming_func( std::string subelement_name ){
 	return "denovo_filters_" + subelement_name + "_complex_type";
 }
-
 
 void BuildDeNovoBackboneMover::define_perturber_group( utility::tag::XMLSchemaDefinition & xsd ){
 
@@ -941,7 +935,7 @@ void BuildDeNovoBackboneMover::define_perturber_group( utility::tag::XMLSchemaDe
 	compound_perturber_subelements
 		.add_group_subelement( & perturber_group_name );
 	XMLSchemaComplexTypeGenerator compound_perturber_ct;
-	helix_perturber_ct.element_name( "CompoundPerturber" )
+	compound_perturber_ct.element_name( "CompoundPerturber" )
 		.complex_type_naming_func ( & perturber_ct_namer )
 		.description( "Used to combine other perturbers" )
 		.set_subelements_repeatable( compound_perturber_subelements)
@@ -978,11 +972,34 @@ void BuildDeNovoBackboneMover::define_perturber_group( utility::tag::XMLSchemaDe
 
 }
 
+void
+BuildDeNovoBackboneMover::define_filters_ct( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList filters_subelements_attlist;
+	filters_subelements_attlist
+		+ XMLSchemaAttribute::required_attribute( "filter", xs_string, "Filter to add" );
+
+	XMLSchemaSimpleSubelementList filters_subelements;
+	filters_subelements.add_simple_subelement( "Add", filters_subelements_attlist, "Specifies a filter to apply to the backbones" );
+
+	XMLSchemaComplexTypeGenerator filters_ct_gen;
+	filters_ct_gen
+		.set_subelements_repeatable( filters_subelements )
+		.complex_type_naming_func( & filters_ct_naming_func )
+		.element_name( "Filters" )
+		.description( "Filters to apply to generated backbones" )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+}
+
 void BuildDeNovoBackboneMover::define_folder_group( utility::tag::XMLSchemaDefinition & xsd ){
 	using namespace utility::tag;
 
 	AttributeList remodel_folder_attlist;
 	rosetta_scripts::attributes_for_parse_score_function( remodel_folder_attlist );
+
 	//Define the complex types for all of these
 	XMLSchemaComplexTypeGenerator remodel_folder_ct;
 	remodel_folder_ct.element_name( "RemodelLoopMoverPoseFolder" )
@@ -1031,73 +1048,111 @@ void BuildDeNovoBackboneMover::define_folder_group( utility::tag::XMLSchemaDefin
 	xsd.add_top_level_element( folder_group );
 }
 
-
-
-void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+utility::tag::XMLSchemaSimpleSubelementList
+pre_and_post_fold_mover_subelements()
 {
 	using namespace utility::tag;
-	architects::DeNovoArchitectFactory::get_instance()->define_architect_group( xsd );
-	//prefold and postfold take the same subelements
-	AttributeList prefold_subelements_attlist;
-	prefold_subelements_attlist
+
+	AttributeList attlist;
+	attlist
 		+ XMLSchemaAttribute::required_attribute( "mover", xs_string, "Mover to add to this step step" );
-	XMLSchemaSimpleSubelementList prefold_subelements;
-	prefold_subelements.add_simple_subelement( "Add", prefold_subelements_attlist, "Specify a mover to add to this step" );
-	//no attributes for prefold
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_simple_subelement( "Add", attlist, "Specify a mover to add to this step" );
+
+	return subelements;
+}
+
+void
+BuildDeNovoBackboneMover::define_prefold_movers_ct( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// prefold and postfold take the same subelements
+	XMLSchemaSimpleSubelementList const prefold_subelements =
+		pre_and_post_fold_mover_subelements();
+
 	XMLSchemaComplexTypeGenerator prefold_ct_gen;
 	prefold_ct_gen
 		.set_subelements_repeatable( prefold_subelements )
 		.complex_type_naming_func( & prefold_ct_naming_func )
-		.element_name( "Prefold" )
+		.element_name( "PreFoldMovers" )
 		.description( "Prefold protocol" )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
+}
 
+void
+BuildDeNovoBackboneMover::define_postfold_movers_ct( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// prefold and postfold take the same subelements
+	XMLSchemaSimpleSubelementList const postfold_subelements =
+		pre_and_post_fold_mover_subelements();
 
 	XMLSchemaComplexTypeGenerator postfold_ct_gen;
 	postfold_ct_gen
-		.set_subelements_repeatable( prefold_subelements )
+		.set_subelements_repeatable( postfold_subelements )
 		.complex_type_naming_func( & postfold_ct_naming_func )
-		.element_name( "Postfold" )
+		.element_name( "PostFoldMovers" )
 		.description( "Postfold protocol" )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
+}
 
-	AttributeList filters_subelements_attlist;
-	filters_subelements_attlist
-		+ XMLSchemaAttribute::required_attribute( "filter", xs_string, "Filter to add" );
+void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
 
+	///
+	/// PreFoldMovers
+	///
+	define_prefold_movers_ct( xsd );
+	XMLSchemaSimpleSubelementList prefold_subelements;
+	prefold_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
+		.add_already_defined_subelement( "PreFoldMovers", & prefold_ct_naming_func );
+
+	///
+	/// PostFoldMovers
+	///
+	define_postfold_movers_ct( xsd );
+	XMLSchemaSimpleSubelementList postfold_subelements;
+	postfold_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
+		.add_already_defined_subelement( "PostFoldMovers", & postfold_ct_naming_func );
+
+	///
+	/// Filters
+	///
+	define_filters_ct( xsd );
 	XMLSchemaSimpleSubelementList filters_subelements;
-	filters_subelements.add_simple_subelement( "Add", filters_subelements_attlist, "Specifies a filter to apply to the backbones" );
+	filters_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
+		.add_already_defined_subelement( "Filters", & filters_ct_naming_func );
 
-	XMLSchemaComplexTypeGenerator filters_ct_gen;
-	filters_ct_gen
-		.set_subelements_repeatable( filters_subelements )
-		.complex_type_naming_func( & filters_ct_naming_func )
-		.element_name( "Filters" )
-		.description( "Filters to apply to generated backbones" )
-		.add_optional_name_attribute()
-		.write_complex_type_to_schema( xsd );
-
-
-	//These functions define the complex types for all elements of these groups and define the groups to be used later
-	define_perturber_group( xsd );
-	define_folder_group( xsd );
-
-
-	XMLSchemaSimpleSubelementList unordered_subelements;
-	unordered_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func );
-	unordered_subelements.add_already_defined_subelement( "Prefold", & prefold_ct_naming_func )
-		.add_already_defined_subelement( "Postfold", & postfold_ct_naming_func )
-		.add_already_defined_subelement( "Filters", & filters_ct_naming_func )
-		.add_group_subelement( & perturber_group_name );
+	///
+	/// Architects
+	///
+	architects::DeNovoArchitectFactory::get_instance()->define_architect_group( xsd );
 	XMLSchemaSimpleSubelementList architect_subelements;
 	architect_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
 		.add_group_subelement( & architects::DeNovoArchitectFactory::architect_group_name );
 
+	///
+	/// Folders
+	///
+	define_folder_group( xsd );
 	XMLSchemaSimpleSubelementList folder_subelements;
 	folder_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
 		.add_group_subelement( & folder_group_name );
+
+	///
+	/// Perturbers
+	///
+	define_perturber_group( xsd );
+	XMLSchemaSimpleSubelementList perturber_subelements;
+	perturber_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
+		.add_group_subelement( & perturber_group_name );
+
 
 	AttributeList attlist;
 	attlist
@@ -1111,13 +1166,16 @@ void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 	XMLSchemaComplexTypeGenerator complex_type_generator;
 	complex_type_generator
 		.element_name( mover_name() )
-		.description( "Mover to generate backbones for de novo design")
-		.complex_type_naming_func( & moves::complex_type_name_for_mover)
+		.description( "Mover to generate backbones for de novo design" )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attlist )
-		.add_ordered_subelement_set_as_repeatable( unordered_subelements)
 		.add_ordered_subelement_set_as_required( architect_subelements )
 		.add_ordered_subelement_set_as_required( folder_subelements )
-		.write_complex_type_to_schema( xsd);
+		.add_ordered_subelement_set_as_optional( perturber_subelements )
+		.add_ordered_subelement_set_as_optional( prefold_subelements )
+		.add_ordered_subelement_set_as_optional( postfold_subelements )
+		.add_ordered_subelement_set_as_optional( filters_subelements )
+		.write_complex_type_to_schema( xsd );
 }
 
 std::string BuildDeNovoBackboneMoverCreator::keyname() const {

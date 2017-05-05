@@ -26,6 +26,7 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
 #include <boost/assign.hpp>
@@ -69,6 +70,41 @@ SegmentPairing::SegmentPairing( SegmentNames const & segment_names ):
 	utility::pointer::ReferenceCount(),
 	segments_( segment_names )
 {
+}
+
+std::string
+SegmentPairing::complex_type_name_for_pairing( std::string const & pairing_name )
+{
+	return "denovo_segment_pairing_" + pairing_name + "_complex_type";
+}
+
+void
+SegmentPairing::add_common_xml_elements(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & class_name,
+	std::string const & description,
+	utility::tag::AttributeList & attlist )
+{
+	using namespace utility::tag;
+
+	//Define the length restriction and the bulge restriction
+	XMLSchemaRestriction segments_string;
+	segments_string.name( "segment_pairing_segment_list" );
+	segments_string.base_type( xs_string );
+	segments_string.add_restriction( xsr_pattern, "([A-Z]|[0-9]|[a-z])+(,[A-Z]|[0-9]|[a-z])*" );
+	xsd.add_top_level_element( segments_string );
+
+	attlist
+		+ XMLSchemaAttribute(
+		"segments", "segment_pairing_segment_list",
+		"Indicates the segments which are involved in the pairing." );
+
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & complex_type_name_for_pairing )
+		.element_name( class_name )
+		.description( description )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
 }
 
 void
@@ -298,6 +334,20 @@ HelixPairing::parse_tag( utility::tag::Tag const & tag )
 	parallel_ = tag.getOption< bool >( "parallel" );
 }
 
+void
+HelixPairing::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"parallel", xs_boolean,
+		"Indicates whether the segments are parallel or not." );
+
+	SegmentPairing::add_common_xml_elements( xsd, class_name(), "Defines a helix-helix pairing.", attlist );
+}
+
 std::string
 HelixPairing::pairing_string( StructureData const & sd ) const
 {
@@ -358,6 +408,27 @@ StrandPairing::parse_tag( utility::tag::Tag const & tag )
 	orient1_ = architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient1", orient1_ ) );
 	orient2_ = architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient2", orient2_ ) );
 	shift_ = tag.getOption< RegisterShift >( "shift", shift_ );
+}
+
+void
+StrandPairing::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"shift", xs_integer,
+		"Indicates the registers shift of the strands." )
+		+ XMLSchemaAttribute(
+		"orient1", xsct_non_negative_integer,
+		"Indicates the orientation of the strands." )
+		+ XMLSchemaAttribute(
+		"orient2", xsct_non_negative_integer,
+		"Indicates the orientation of the strands." );
+
+	SegmentPairing::add_common_xml_elements(
+		xsd, class_name(), "Pairing between two strands", attlist );
 }
 
 void
@@ -485,6 +556,14 @@ HelixSheetPairing::clone() const
 void
 HelixSheetPairing::parse_tag( utility::tag::Tag const & )
 {
+}
+
+void
+HelixSheetPairing::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	SegmentPairing::add_common_xml_elements( xsd, class_name(), "Pairing between a helix and beta sheet", attlist );
 }
 
 void

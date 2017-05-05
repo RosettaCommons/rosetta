@@ -27,6 +27,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -62,7 +63,17 @@ public:
 	virtual PairingType
 	type() const = 0;
 
+	static std::string
+	complex_type_name_for_pairing( std::string const & pairing_name );
+
 protected:
+	static void
+	add_common_xml_elements(
+		utility::tag::XMLSchemaDefinition & xsd,
+		std::string const & class_name,
+		std::string const & description,
+		utility::tag::AttributeList & attlist );
+
 	virtual void
 	parse_tag( utility::tag::Tag const & tag ) = 0;
 
@@ -145,6 +156,9 @@ public:
 	static std::string
 	class_name() { return "HelixPairing"; }
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	virtual PairingType
 	type() const { return HELIX; }
 
@@ -182,6 +196,9 @@ public:
 
 	static std::string
 	class_name() { return "StrandPairing"; }
+
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	virtual PairingType
 	type() const { return STRAND; }
@@ -241,6 +258,9 @@ public:
 
 	static std::string
 	class_name() { return "HelixSheetPairing"; }
+
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	virtual PairingType
 	type() const { return HELIX_SHEET; }
