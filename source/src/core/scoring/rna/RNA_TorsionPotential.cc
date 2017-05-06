@@ -203,7 +203,8 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 	if ( is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) ) {
 		Real chi_score( 0.0 );
 		if ( use_new_potential_ ) {
-			if ( rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad  ) {
+			// If purine, rather than fixed rgu/rad checks
+			if ( rsd.type().is_purine() ) {
 				chi_score += ( fade_delta_north_->func( delta ) * chi_purine_north_potential_->func( chi ) +
 					fade_delta_south_->func( delta ) * chi_purine_south_potential_->func( chi ) ); //chi
 			} else {
@@ -211,7 +212,7 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 					fade_delta_south_->func( delta ) * chi_pyrimidine_south_potential_->func( chi ) ); //chi
 			}
 		} else {
-			if ( rsd.aa() == core::chemical::na_rgu ) {
+			if ( rsd.aa() == core::chemical::na_rgu || rsd.type().na_analogue() == core::chemical::na_rgu ) {
 				chi_score += ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->func( chi ) +
 					fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->func( chi ) ); //chi
 			} else {
@@ -219,7 +220,8 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 					fade_delta_south_->func( delta ) * chi_south_potential_others_->func( chi ) ); //chi
 			}
 		}
-		if ( rsd.aa() == core::chemical::na_rgu && syn_G_potential_bonus_ != 0.0 ) chi_score += chi_potential_syn_guanosine_bonus_->func( chi );
+		if ( ( rsd.aa() == core::chemical::na_rgu || rsd.type().na_analogue() == core::chemical::na_rgu )
+				&& syn_G_potential_bonus_ != 0.0 ) chi_score += chi_potential_syn_guanosine_bonus_->func( chi );
 		intrares_side_chain_score_ += chi_score;
 		if ( verbose_ )  TR << "chi score " << chi_score << std::endl;
 	}
@@ -480,7 +482,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 				fade_delta_south_->func( delta )  * delta_south_potential_->dfunc( delta ) );
 
 			if ( use_new_potential_ ) {
-				if (  rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad ) {
+				if ( rsd.type().is_purine() ) {
 					dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_purine_north_potential_->func( chi ) +
 						fade_delta_south_->dfunc( delta ) * chi_purine_south_potential_->func( chi ) );
 				} else {
@@ -488,7 +490,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 						fade_delta_south_->dfunc( delta ) * chi_pyrimidine_south_potential_->func( chi ) );
 				}
 			} else {
-				if ( rsd.aa() == core::chemical::na_rgu ) {
+				if ( rsd.aa() == core::chemical::na_rgu || rsd.type().na_analogue() == core::chemical::na_rgu ) {
 					dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_guanosine_->func( chi ) +
 						fade_delta_south_->dfunc( delta ) * chi_south_potential_guanosine_->func( chi ) );
 
@@ -543,7 +545,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 			Real dE_dtorsion;
 
 			if ( use_new_potential_ ) {
-				if ( rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad ) {
+				if ( rsd.is_purine() ) {
 					dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_purine_north_potential_->dfunc( chi ) +
 						fade_delta_south_->func( delta ) * chi_purine_south_potential_->dfunc( chi ) );
 				} else {
@@ -551,7 +553,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 						fade_delta_south_->func( delta ) * chi_pyrimidine_south_potential_->dfunc( chi ) );
 				}
 			} else {
-				if ( rsd.aa() == core::chemical::na_rgu ) {
+				if ( rsd.aa() == core::chemical::na_rgu || rsd.type().na_analogue() == core::chemical::na_rgu ) {
 					dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->dfunc( chi ) +
 						fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->dfunc( chi ) );
 				} else {
@@ -560,7 +562,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 				}
 			}
 
-			if ( rsd.aa() == core::chemical::na_rgu && syn_G_potential_bonus_ != 0.0 ) dE_dtorsion += chi_potential_syn_guanosine_bonus_->dfunc( chi );
+			if ( ( rsd.aa() == core::chemical::na_rgu || rsd.type().na_analogue() == core::chemical::na_rgu ) && syn_G_potential_bonus_ != 0.0 ) dE_dtorsion += chi_potential_syn_guanosine_bonus_->dfunc( chi );
 
 			F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 			F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
