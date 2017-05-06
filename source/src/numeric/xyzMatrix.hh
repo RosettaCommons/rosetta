@@ -816,30 +816,52 @@ public: // Methods: basic mathematical
 	}
 
 
-	/// @brief xyzMatrix + xyzMatrix
-	friend
+	/// @brief xyzMatrix * xyzMatrix
 	inline
-	xyzMatrix
-	operator +( xyzMatrix const & a, xyzMatrix const & b )
+	xyzMatrix<T>
+	operator *(xyzMatrix<T> const & m ) const
 	{
 		return xyzMatrix(
-			a.xx_ + b.xx_, a.xy_ + b.xy_, a.xz_ + b.xz_,
-			a.yx_ + b.yx_, a.yy_ + b.yy_, a.yz_ + b.yz_,
-			a.zx_ + b.zx_, a.zy_ + b.zy_, a.zz_ + b.zz_
+			// First row
+			( xx_ * m.xx_ ) + ( xy_ * m.yx_ ) + ( xz_ * m.zx_ ),
+			( xx_ * m.xy_ ) + ( xy_ * m.yy_ ) + ( xz_ * m.zy_ ),
+			( xx_ * m.xz_ ) + ( xy_ * m.yz_ ) + ( xz_ * m.zz_ ),
+
+			// Second row
+			( yx_ * m.xx_ ) + ( yy_ * m.yx_ ) + ( yz_ * m.zx_ ),
+			( yx_ * m.xy_ ) + ( yy_ * m.yy_ ) + ( yz_ * m.zy_ ),
+			( yx_ * m.xz_ ) + ( yy_ * m.yz_ ) + ( yz_ * m.zz_ ),
+
+			// Third row
+			( zx_ * m.xx_ ) + ( zy_ * m.yx_ ) + ( zz_ * m.zx_ ),
+			( zx_ * m.xy_ ) + ( zy_ * m.yy_ ) + ( zz_ * m.zy_ ),
+			( zx_ * m.xz_ ) + ( zy_ * m.yz_ ) + ( zz_ * m.zz_ )
+		);
+	}
+
+
+	/// @brief xyzMatrix + xyzMatrix
+	inline
+	xyzMatrix
+	operator +( xyzMatrix const & m ) const
+	{
+		return xyzMatrix(
+			xx_ + m.xx_, xy_ + m.xy_, xz_ + m.xz_,
+			yx_ + m.yx_, yy_ + m.yy_, yz_ + m.yz_,
+			zx_ + m.zx_, zy_ + m.zy_, zz_ + m.zz_
 		);
 	}
 
 
 	/// @brief xyzMatrix + Value
-	friend
 	inline
 	xyzMatrix
-	operator +( xyzMatrix const & m, Value const & t )
+	operator +( Value const & t ) const
 	{
 		return xyzMatrix(
-			m.xx_ + t, m.xy_ + t, m.xz_ + t,
-			m.yx_ + t, m.yy_ + t, m.yz_ + t,
-			m.zx_ + t, m.zy_ + t, m.zz_ + t
+			xx_ + t, xy_ + t, xz_ + t,
+			yx_ + t, yy_ + t, yz_ + t,
+			zx_ + t, zy_ + t, zz_ + t
 		);
 	}
 
@@ -859,29 +881,27 @@ public: // Methods: basic mathematical
 
 
 	/// @brief xyzMatrix - xyzMatrix
-	friend
 	inline
 	xyzMatrix
-	operator -( xyzMatrix const & a, xyzMatrix const & b )
+	operator -( xyzMatrix const & m ) const
 	{
 		return xyzMatrix(
-			a.xx_ - b.xx_, a.xy_ - b.xy_, a.xz_ - b.xz_,
-			a.yx_ - b.yx_, a.yy_ - b.yy_, a.yz_ - b.yz_,
-			a.zx_ - b.zx_, a.zy_ - b.zy_, a.zz_ - b.zz_
+			xx_ - m.xx_, xy_ - m.xy_, xz_ - m.xz_,
+			yx_ - m.yx_, yy_ - m.yy_, yz_ - m.yz_,
+			zx_ - m.zx_, zy_ - m.zy_, zz_ - m.zz_
 		);
 	}
 
 
 	/// @brief xyzMatrix - Value
-	friend
 	inline
 	xyzMatrix
-	operator -( xyzMatrix const & m, Value const & t )
+	operator -( Value const & t ) const
 	{
 		return xyzMatrix(
-			m.xx_ - t, m.xy_ - t, m.xz_ - t,
-			m.yx_ - t, m.yy_ - t, m.yz_ - t,
-			m.zx_ - t, m.zy_ - t, m.zz_ - t
+			xx_ - t, xy_ - t, xz_ - t,
+			yx_ - t, yy_ - t, yz_ - t,
+			zx_ - t, zy_ - t, zz_ - t
 		);
 	}
 
@@ -900,41 +920,15 @@ public: // Methods: basic mathematical
 	}
 
 
-	/// @brief xyzMatrix * xyzMatrix
-	friend
-	inline
-	xyzMatrix
-	operator *( xyzMatrix const & a, xyzMatrix const & b )
-	{
-		return xyzMatrix(
-			// First row
-			( a.xx_ * b.xx_ ) + ( a.xy_ * b.yx_ ) + ( a.xz_ * b.zx_ ),
-			( a.xx_ * b.xy_ ) + ( a.xy_ * b.yy_ ) + ( a.xz_ * b.zy_ ),
-			( a.xx_ * b.xz_ ) + ( a.xy_ * b.yz_ ) + ( a.xz_ * b.zz_ ),
-
-			// Second row
-			( a.yx_ * b.xx_ ) + ( a.yy_ * b.yx_ ) + ( a.yz_ * b.zx_ ),
-			( a.yx_ * b.xy_ ) + ( a.yy_ * b.yy_ ) + ( a.yz_ * b.zy_ ),
-			( a.yx_ * b.xz_ ) + ( a.yy_ * b.yz_ ) + ( a.yz_ * b.zz_ ),
-
-			// Third row
-			( a.zx_ * b.xx_ ) + ( a.zy_ * b.yx_ ) + ( a.zz_ * b.zx_ ),
-			( a.zx_ * b.xy_ ) + ( a.zy_ * b.yy_ ) + ( a.zz_ * b.zy_ ),
-			( a.zx_ * b.xz_ ) + ( a.zy_ * b.yz_ ) + ( a.zz_ * b.zz_ )
-		);
-	}
-
-
 	/// @brief xyzMatrix * Value
-	friend
 	inline
 	xyzMatrix
-	operator *( xyzMatrix const & m, Value const & t )
+	operator *( Value const & t ) const
 	{
 		return xyzMatrix(
-			m.xx_ * t, m.xy_ * t, m.xz_ * t,
-			m.yx_ * t, m.yy_ * t, m.yz_ * t,
-			m.zx_ * t, m.zy_ * t, m.zz_ * t
+			xx_ * t, xy_ * t, xz_ * t,
+			yx_ * t, yy_ * t, yz_ * t,
+			zx_ * t, zy_ * t, zz_ * t
 		);
 	}
 
@@ -954,17 +948,16 @@ public: // Methods: basic mathematical
 
 
 	/// @brief xyzMatrix / Value
-	friend
 	inline
 	xyzMatrix
-	operator /( xyzMatrix const & m, Value const & t )
+	operator /( Value const & t ) const
 	{
 		assert( t != Value( 0 ) );
 		Value const inv_t( Value( 1 ) / t );
 		return xyzMatrix(
-			m.xx_ * inv_t, m.xy_ * inv_t, m.xz_ * inv_t,
-			m.yx_ * inv_t, m.yy_ * inv_t, m.yz_ * inv_t,
-			m.zx_ * inv_t, m.zy_ * inv_t, m.zz_ * inv_t
+			xx_ * inv_t, xy_ * inv_t, xz_ * inv_t,
+			yx_ * inv_t, yy_ * inv_t, yz_ * inv_t,
+			zx_ * inv_t, zy_ * inv_t, zz_ * inv_t
 		);
 	}
 
@@ -2097,16 +2090,16 @@ private: // Fields
 }; // xyzMatrix
 
 
-/// @brief xyzMatrix + xyzMatrix
-template< typename T >
-xyzMatrix< T >
-operator +( xyzMatrix< T > const & a, xyzMatrix< T > const & b );
+// /// @brief xyzMatrix + xyzMatrix
+// template< typename T >
+// xyzMatrix< T >
+// operator +( xyzMatrix< T > const & a, xyzMatrix< T > const & b );
 
 
-/// @brief xyzMatrix + T
-template< typename T >
-xyzMatrix< T >
-operator +( xyzMatrix< T > const & m, T const & t );
+// /// @brief xyzMatrix + T
+// template< typename T >
+// xyzMatrix< T >
+// operator +( xyzMatrix< T > const & m, T const & t );
 
 
 /// @brief T + xyzMatrix
@@ -2115,16 +2108,16 @@ xyzMatrix< T >
 operator +( T const & t, xyzMatrix< T > const & m );
 
 
-/// @brief xyzMatrix - xyzMatrix
-template< typename T >
-xyzMatrix< T >
-operator -( xyzMatrix< T > const & a, xyzMatrix< T > const & b );
+// /// @brief xyzMatrix - xyzMatrix
+// template< typename T >
+// xyzMatrix< T >
+// operator -( xyzMatrix< T > const & a, xyzMatrix< T > const & b );
 
 
-/// @brief xyzMatrix - T
-template< typename T >
-xyzMatrix< T >
-operator -( xyzMatrix< T > const & m, T const & t );
+// /// @brief xyzMatrix - T
+// template< typename T >
+// xyzMatrix< T >
+// operator -( xyzMatrix< T > const & m, T const & t );
 
 
 /// @brief T - xyzMatrix
@@ -2133,16 +2126,16 @@ xyzMatrix< T >
 operator -( T const & t, xyzMatrix< T > const & m );
 
 
-/// @brief xyzMatrix * xyzMatrix
-template< typename T >
-xyzMatrix< T >
-operator *( xyzMatrix< T > const & a, xyzMatrix< T > const & b );
+// /// @brief xyzMatrix * xyzMatrix
+// template< typename T >
+// xyzMatrix< T >
+// operator *( xyzMatrix< T > const & a, xyzMatrix< T > const & b );
 
 
-/// @brief xyzMatrix * T
-template< typename T >
-xyzMatrix< T >
-operator *( xyzMatrix< T > const & m, T const & t );
+// /// @brief xyzMatrix * T
+// template< typename T >
+// xyzMatrix< T >
+// operator *( xyzMatrix< T > const & m, T const & t );
 
 
 /// @brief T * xyzMatrix
@@ -2151,10 +2144,10 @@ xyzMatrix< T >
 operator *( T const & t, xyzMatrix< T > const & m );
 
 
-/// @brief xyzMatrix / T
-template< typename T >
-xyzMatrix< T >
-operator /( xyzMatrix< T > const & m, T const & t );
+// /// @brief xyzMatrix / T
+// template< typename T >
+// xyzMatrix< T >
+// operator /( xyzMatrix< T > const & m, T const & t );
 
 
 /// @brief xyzMatrix == xyzMatrix
