@@ -1104,7 +1104,7 @@ Conformation::append_polymer_residue_after_seqpos(
 )
 {
 	pre_nresidue_change();
-	debug_assert( !new_rsd.is_lower_terminus() );
+	debug_assert( new_rsd.is_lower_terminus() == false );
 
 	ResidueOP ideal_geometry_rsd;
 	if ( build_ideal_geometry ) {
@@ -1139,7 +1139,8 @@ Conformation::safely_append_polymer_residue_after_seqpos(
 {
 	pre_nresidue_change();
 	core::conformation::remove_upper_terminus_type_from_conformation_residue( *this, seqpos );
-	append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
+	Conformation::append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
+
 }
 
 /// @details Fires a LengthEvent::RESIDUE_PREPEND signal.
@@ -1187,7 +1188,7 @@ Conformation::safely_prepend_polymer_residue_before_seqpos(
 )
 {
 	core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, seqpos );
-	prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
+	Conformation::prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
 }
 
 /// @details replace a residue

@@ -699,6 +699,7 @@ remove_lower_terminus_type_from_conformation_residue(
 )
 {
 	remove_variant_type_from_conformation_residue( conformation, chemical::LOWER_TERMINUS_VARIANT, seqpos );
+	remove_variant_type_from_conformation_residue( conformation, chemical::LOWERTERM_TRUNC_VARIANT, seqpos );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -719,6 +720,7 @@ remove_upper_terminus_type_from_conformation_residue(
 )
 {
 	remove_variant_type_from_conformation_residue( conformation, chemical::UPPER_TERMINUS_VARIANT, seqpos );
+	remove_variant_type_from_conformation_residue( conformation, chemical::UPPERTERM_TRUNC_VARIANT, seqpos );
 }
 
 
