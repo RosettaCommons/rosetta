@@ -54,23 +54,6 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.MakeBundle");
 
-// XRW TEMP std::string
-// XRW TEMP MakeBundleCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MakeBundle::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeBundleCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MakeBundle );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP MakeBundle::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MakeBundle";
-// XRW TEMP }
-
 /// @brief Creator for MakeBundle mover.
 MakeBundle::MakeBundle():
 	Mover("MakeBundle"),
@@ -252,10 +235,6 @@ void MakeBundle::apply (core::pose::Pose & pose)
 			pose=newpose;
 		} else {
 			if ( TR.Debug.visible() ) TR.Debug << "Appending helical bundle to pose." << std::endl;
-			if ( pose.pdb_info() ) {
-				pose.pdb_info()->detach_from();
-				pose.pdb_info(nullptr);
-			}
 			pose.append_pose_by_jump(newpose, 1);
 		}
 	}

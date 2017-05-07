@@ -272,6 +272,7 @@ sources = {
         ],
 
 	"helical_bundle" : [
+		"HelicalBundlePDBInfoTests",
 		"params_data_storage",
 	],
 
@@ -764,6 +765,7 @@ testinputfiles = [
 	"grafting/2j88_L1_overhang3_rotated.pdb",
 	"grafting/2aabL_L1.pdb",
 	"hbnet/SB13.pdb",
+	"helical_bundle/helical_bundle_input.pdb",
 	"hotspot_hashing/3ve0_IJ.pdb",
 	"jd2/parser/test.bbskel",
 	"jd3/example_bad.xml",
