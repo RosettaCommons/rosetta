@@ -178,12 +178,12 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				//     std::cout << "  " << stub_atom1_scratch_atom_id.rsd() << " " << scratch_pose_.residue( stub_atom1_scratch_atom_id.rsd() ).atom_name( stub_atom1_scratch_atom_id.atomno() ) << std::endl;
 				//     std::cout << "  " << stub_atom2_scratch_atom_id.rsd() << " " << scratch_pose_.residue( stub_atom2_scratch_atom_id.rsd() ).atom_name( stub_atom2_scratch_atom_id.atomno() ) << std::endl;
 				//     std::cout << "  " << stub_atom3_scratch_atom_id.rsd() << " " << scratch_pose_.residue( stub_atom3_scratch_atom_id.rsd() ).atom_name( stub_atom3_scratch_atom_id.atomno() ) << std::endl;
-				std::cout << "OLD " << pose.jump( AtomID( j, i ) ) << std::endl;
+				std::cout << "OLD " << pose.jump( aid_pair.first ) << std::endl;
 			}
 
 			if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
-				copy_dofs_info_.emplace_back( std::make_pair( AtomID( j, i ), jump ) );
-				if ( verbose ) std::cout << "NEW " << pose.jump( AtomID( j, i ) ) << std::endl;
+				copy_dofs_info_.emplace_back( std::make_pair( aid_pair.first, jump ) );
+				if ( verbose ) std::cout << "NEW " << pose.jump( aid_pair.first ) << std::endl;
 			}
 
 			//    pose.dump_pdb( "after_jump_change.pdb" );
@@ -203,7 +203,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 			Real const d = ( scratch_pose_.xyz( current_atom_scratch_atom_id ) -
 				scratch_pose_.xyz( input_stub_atom1_scratch_atom_id ) ).length();
 
-			copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( AtomID( j, i), D), d ) );
+			copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( aid_pair.first, D), d ) );
 
 		} else {
 			if ( verbose ) { std::cout << "D not OK to change? " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl; }
@@ -265,7 +265,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				scratch_pose_.xyz( input_stub_atom1_scratch_atom_id ),
 				scratch_pose_.xyz( input_stub_atom2_scratch_atom_id ) );
 
-			copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( AtomID( j, i), THETA), numeric::constants::d::pi - theta ) );
+			copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( aid_pair.first, THETA), numeric::constants::d::pi - theta ) );
 
 
 			if ( verbose ) {
@@ -392,7 +392,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 					scratch_pose_.xyz( input_stub_atom2_scratch_atom_id ),
 					scratch_pose_.xyz( input_stub_atom3_scratch_atom_id ) );
 
-				copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( AtomID( j, i ), PHI),  phi ) );
+				copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( aid_pair.first, PHI),  phi ) );
 
 				if ( verbose ) std::cout << "Good JOB, CHANGED PHI!  " << pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;
 
@@ -429,7 +429,7 @@ CopyDofs::get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
 	using namespace core::id;
 	if ( !other_atom ) return false;
 
-	std::map< AtomID, AtomID >::const_iterator iter( atom_id_map.find( other_atom->id() ) );
+	auto iter( atom_id_map.find( other_atom->id() ) );
 	if ( iter == atom_id_map.end() ) return false; // atom not present in scratch pose!
 
 	other_scratch_atom_id = iter->second;
@@ -447,8 +447,8 @@ CopyDofs::check_domain_map(
 {
 	if ( atom_id_domain_map.size() == 0 ) return true; //blank atom id domain map
 
-	std::map< id::AtomID, Size >::const_iterator it1 = atom_id_domain_map.find( atom_id1 );
-	std::map< id::AtomID, Size >::const_iterator it2 = atom_id_domain_map.find( atom_id2 );
+	auto it1 = atom_id_domain_map.find( atom_id1 );
+	auto it2 = atom_id_domain_map.find( atom_id2 );
 
 	Size domain1( FIXED_DOMAIN );
 	Size domain2( FIXED_DOMAIN );
@@ -478,9 +478,9 @@ CopyDofs::check_domain_map(
 
 	if ( atom_id_domain_map.size() == 0 ) return true;
 
-	for ( Size i = 1; i <= atom_ids1.size(); i++ ) {
-		for ( Size j = 1; j <= atom_ids2.size(); j++ ) {
-			if ( !check_domain_map( atom_id_domain_map, atom_ids1[ i ], atom_ids2[ j ] ) ) return false;
+	for ( auto const & atom_id1 : atom_ids1 ) {
+		for ( auto const & atom_id2 : atom_ids2 ) {
+			if ( !check_domain_map( atom_id_domain_map, atom_id1, atom_id2 ) ) return false;
 		}
 	}
 	return true;

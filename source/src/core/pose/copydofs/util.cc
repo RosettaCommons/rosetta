@@ -42,11 +42,9 @@ copy_dofs(
 	MiniPose const & scratch_pose,
 	core::pose::ResMap const & res_map )
 {
-
 	std::map < id::AtomID , id::AtomID > atom_id_map;
 	setup_atom_id_map( atom_id_map, res_map, pose ); // note that this is *not* careful about atom names, etc.
 	copy_dofs( pose, scratch_pose, atom_id_map );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,13 +53,11 @@ copy_dofs_match_atom_names(
 	pose::Pose & pose,
 	Pose const & scratch_pose )
 {
-
 	// Assumes the poses have the same number of residues
 	runtime_assert( pose.size() == scratch_pose.size() );
 	std::map< Size, Size > res_map;
 	for ( Size n = 1; n <= pose.size(); ++n ) res_map[n] = n;
 	copy_dofs_match_atom_names( pose, scratch_pose, res_map );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,11 +67,9 @@ copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
 	MiniPose const & chunk_pose,
 	core::pose::ResMap const & res_map )
 {
-
 	std::map < id::AtomID , id::AtomID > atom_id_map;
 	setup_atom_id_map_match_atom_names( atom_id_map, res_map, pose, chunk_pose ); // note that this is CAREFUL about atom names, etc.
 	copy_dofs( pose, chunk_pose, atom_id_map );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +136,6 @@ copy_dofs(
 
 	std::map< id::AtomID, Size > atom_id_domain_map = copydofs::blank_atom_id_domain_map( pose );
 	copy_dofs( pose, scratch_pose, atom_id_map, atom_id_domain_map );
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,10 +146,8 @@ copy_dofs(
 	std::map < id::AtomID , id::AtomID > const & atom_id_map,
 	std::map< id::AtomID, Size > const & atom_id_domain_map )
 {
-
 	copydofs::CopyDofs copy_dofs( scratch_pose, atom_id_map, atom_id_domain_map );
 	copy_dofs.apply( pose );
-
 }
 
 
@@ -189,7 +180,6 @@ setup_atom_id_map(
 			count++;
 			atom_id_map[  AtomID( j, i ) ] = AtomID( count, i_scratch_pose );
 		}
-
 	}
 }
 
@@ -206,11 +196,9 @@ setup_atom_id_map_match_atom_names(
 {
 	using namespace core::id;
 
-	for ( ResMap::const_iterator
-			it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
-
-		Size const i1 = it->first; //Index in big pose.
-		Size const i2 = it->second; // Index in the little "chunk" or "scratch" pose
+	for ( auto const & elem : res_map ) {
+		Size const i1 = elem.first; //Index in big pose.
+		Size const i2 = elem.second; // Index in the little "chunk" or "scratch" pose
 
 		chemical::ResidueType const & rsd_type1( pose.residue_type( i1 ) );
 		chemical::ResidueType const & rsd_type2( reference_pose.residue_type( i2 ) );
@@ -257,10 +245,10 @@ setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 	MiniPose const & chunk_pose ){
 	using namespace core::id;
 
-	for ( ResMap::const_iterator it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
+	for ( auto const & elem : res_map ) {
 
-		Size const full_seq_num = it->first; //Index in full pose.
-		Size const chunk_seq_num = it->second; // Index in the little "chunk" or "scratch" pose
+		Size const full_seq_num = elem.first; //Index in full pose.
+		Size const chunk_seq_num = elem.second; // Index in the little "chunk" or "scratch" pose
 
 		chemical::ResidueType const & rsd_type1( pose.residue_type( full_seq_num ) );
 
@@ -293,7 +281,6 @@ apply_dofs( pose::Pose & pose,
 	core::Real const dof_tolerance /* = 1.0e-5*/ ){
 
 	copy_dofs_info.apply_dofs( pose, dof_tolerance );
-
 }
 
 /////////////////////////////////////////////////////////////////////

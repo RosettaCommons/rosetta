@@ -75,7 +75,6 @@ get_full_edge_from_num( Size const num ) {
 	std::cout << "Invalid edge num = " << num << std::endl;
 	utility_exit_with_message( "Invalid edge num!" );
 	return "ERROR";
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -261,8 +260,9 @@ get_watson_crick_base_pair_atoms(
 
 	using namespace core::chemical;
 
-	AA const & aa1 = rsd_type1.aa();
-	AA const & aa2 = rsd_type2.aa();
+	// Defaults automatically to returning aa()
+	AA const & aa1 = rsd_type1.na_analogue();
+	AA const & aa2 = rsd_type2.na_analogue();
 
 	if ( aa1 == na_rad && aa2 == na_ura ) {
 		atom1 = " N1 ";

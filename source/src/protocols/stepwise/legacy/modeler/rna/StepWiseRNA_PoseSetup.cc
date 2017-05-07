@@ -558,7 +558,6 @@ StepWiseRNA_PoseSetup::get_nearest_dist_to_O2prime( Size const O2prime_seq_num,
 
 	for ( Size input_pose_seq_num = 1; input_pose_seq_num <= input_res_list.size(); input_pose_seq_num++ ) {
 		Size const full_seq_num = input_res_list[input_pose_seq_num];
-
 		if ( common_res_list.has_value( full_seq_num ) ) continue; //A common/background res..not a residue built by SWA.
 
 		conformation::Residue const & input_pose_rsd = input_pose.residue( input_pose_seq_num );

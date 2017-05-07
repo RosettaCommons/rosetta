@@ -21,6 +21,8 @@
 #include <utility/vectorL.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray0.hh>
+#include <utility/fixedsizearray1.hh>
 
 #include <ostream>
 
@@ -44,6 +46,40 @@ std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v) 
 		for ( size_t i=v.l(); i<=v.u(); ++i ) {
 			os << v[i];
 			if ( i < v.u() ) os << ", ";
+		}
+	}
+	os << "]";
+	return os;
+}
+
+/*
+/// @brief Output function for utility::fixedsizearray1 object.
+template <class T, platform::SSize L>
+std::ostream & operator <<(std::ostream & os, utility::fixedsizearray1<T, L> const & v) {
+	os << "[";
+	if ( v.size() ) {
+		for ( size_t i=1; i<=L; ++i ) {
+			os << v[i];
+			if ( i < L ) os << ", ";
+		}
+	}
+	os << "]";
+	return os;
+}
+*/
+
+
+//template < typename T, platform::Size S >
+//class fixedsizearray1
+
+/// @brief Output function for utility::fixedsizearray0 object.
+template <class T, platform::Size S>
+std::ostream & operator <<(std::ostream & os, utility::fixedsizearray1<T, S> const & v) {
+	os << "[";
+	if ( v.size() ) {
+		for ( size_t i=0; i<=S; ++i ) {
+			os << v[i];
+			if ( i < S ) os << ", ";
 		}
 	}
 	os << "]";

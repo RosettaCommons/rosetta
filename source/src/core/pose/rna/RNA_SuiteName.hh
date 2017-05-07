@@ -30,7 +30,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 // C++ headers
 #include <string>
@@ -66,12 +66,12 @@ class RNA_SuiteInfo {
 public:
 	std::string name;
 	Size classifier;
-	utility::vector1<Real> torsion;
+	utility::fixedsizearray1<Real, 7> torsion;
 
 	RNA_SuiteInfo(
 		std::string const & name_in,
 		Size const & classifier_in,
-		utility::vector1<Real> const & torsion_in
+		utility::fixedsizearray1<Real, 7> const & torsion_in
 	):
 		name( name_in ),
 		classifier( classifier_in ),
@@ -93,19 +93,19 @@ public:
 
 	RNA_SuiteInfo name2suite( std::string const & name ) const;
 
-	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in) const;
+	RNA_SuiteAssignment assign(utility::fixedsizearray1<Real, 7> const & torsions_in) const;
 
-	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in,
-		utility::vector1<Real> & deriv ) const;
+	RNA_SuiteAssignment assign(utility::fixedsizearray1<Real, 7> const & torsions_in,
+		utility::fixedsizearray1<Real,7> & deriv ) const;
 
 	RNA_SuiteAssignment assign(Pose const & pose, Size const res) const;
 
 	void
-	update_centers( utility::vector1< utility::vector1< Real > > const & centers,
+	update_centers( utility::vector1< utility::fixedsizearray1< Real, 7 > > const & centers,
 		utility::vector1< std::string > const & tags );
 
 	RNA_SuiteInfo closest_suite(
-		utility::vector1< Real > const & suite_dihedrals
+		utility::fixedsizearray1< Real, 7 > const & suite_dihedrals
 	) const;
 
 	RNA_SuiteInfo closest_suite(
@@ -114,7 +114,7 @@ public:
 	) const;
 
 	RNA_SuiteInfo closest_by_dist4(
-		utility::vector1< Real > const & suite_dihedrals
+		utility::fixedsizearray1< Real, 7 > const & suite_dihedrals
 	) const;
 
 	RNA_SuiteInfo closest_by_dist4(
@@ -143,22 +143,22 @@ private:
 	void init();
 
 	Size
-	get_classifier( utility::vector1< Real > const & torsions, bool & is_outlier ) const;
+	get_classifier( utility::fixedsizearray1< Real, 7 > const & torsions, bool & is_outlier ) const;
 
 	Size
-	get_classifier( utility::vector1< Real > const & torsions ) const;
+	get_classifier( utility::fixedsizearray1< Real, 7 > const & torsions ) const;
 
-	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2,
-		utility::vector1<Size> const & half_width) const;
+	Real distance_4d(utility::fixedsizearray1<Real, 7> const &torsion1, utility::fixedsizearray1<Real, 7> const &torsion2,
+		utility::fixedsizearray1<Size, 7> const & half_width) const;
 
-	Real distance_7d(utility::vector1<Real> const &torsion1, utility::vector1 <Real> const &torsion2,
-		utility::vector1<Size> const & half_width) const;
+	Real distance_7d(utility::fixedsizearray1<Real, 7> const &torsion1, utility::fixedsizearray1<Real,7> const &torsion2,
+		utility::fixedsizearray1<Size, 7> const & half_width) const;
 
 	Real distance_7d(
-		utility::vector1<Real> const & torsion1,
-		utility::vector1<Real> const & torsion2,
-		utility::vector1<Size> const & half_width,
-		utility::vector1<Real> & deriv // fill if non-empty
+		utility::fixedsizearray1<Real,7> const & torsion1,
+		utility::fixedsizearray1<Real,7> const & torsion2,
+		utility::fixedsizearray1<Size, 7> const & half_width,
+		utility::fixedsizearray1<Real,7> & deriv // fill if non-empty
 	) const;
 
 	Real
@@ -169,24 +169,24 @@ private:
 
 	void
 	fill_suiteness_derivative_7d (
-		utility::vector1< Real  > & deriv,
-		utility::vector1< Real > const & torsions,
-		utility::vector1< Real > const & torsions_center,
-		utility::vector1< Real > const & half_width ) const;
+		utility::fixedsizearray1< Real,7 > & deriv,
+		utility::fixedsizearray1< Real,7 > const & torsions,
+		utility::fixedsizearray1< Real,7 > const & torsions_center,
+		utility::fixedsizearray1< Size,7 > const & half_width ) const;
 
-	bool is_in_between( utility::vector1<Real> const & target,
-		utility::vector1<Real> const & dominant,
-		utility::vector1<Real> const & satellite ) const;
+	bool is_in_between( utility::fixedsizearray1<Real,7> const & target,
+		utility::fixedsizearray1<Real,7> const & dominant,
+		utility::fixedsizearray1<Real,7> const & satellite ) const;
 
 	//////////////////////////////////
-	RNA_SuiteAssignment const suite_undefined;
+	RNA_SuiteAssignment const suite_undefined_;
 	Real const dist_pow_;
 	utility::vector1<RNA_SuiteInfo> all_suites_;
-	utility::vector1<Size> regular_half_width;
-	utility::vector1<std::string> dominant_suites;
-	utility::vector1<std::string> satellite_suites;
-	utility::vector1< utility::vector1<Size> > half_width_sat;
-	utility::vector1< utility::vector1<Size> > half_width_dom;
+	utility::fixedsizearray1<Size, 7> regular_half_width_;
+	utility::vector1<std::string> dominant_suites_;
+	utility::vector1<std::string> satellite_suites_;
+	utility::vector1< utility::fixedsizearray1<Size, 7> > half_width_sat_;
+	utility::vector1< utility::fixedsizearray1<Size, 7> > half_width_dom_;
 };
 
 }

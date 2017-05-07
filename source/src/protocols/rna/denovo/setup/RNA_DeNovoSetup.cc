@@ -177,6 +177,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			for ( Size n = 1; n <= new_numbering.size(); n++ ) { new_numbering[ n ] += offset; }
 			full_model_parameters->set_conventional_numbering( new_numbering );
 		}
+
 	} else {
 		// basic read-in of sequence from command line
 		if ( sequence_strings.size() == 0 ) utility_exit_with_message( "Must specify -sequence or -fasta" );
@@ -276,8 +277,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	vector1< vector1< int > > resnum_list;
 	vector1< Size > input_res;
 	Size input_res_user_defined_count( 0 );
-	for ( Size n = 1; n <= input_pdbs.size(); n++ ) {
-		std::string const pdb = input_pdbs[ n ];
+	for ( std::string const & pdb : input_pdbs ) {
 		std::string pdb_seq;
 		vector1< int > resnum;
 		vector1< char >  chain;
@@ -336,8 +336,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		input_silent_res_user_defined_count = input_res_user_defined_count;
 	}
 
-	for ( Size n = 1; n <= input_silent_files.size(); n++ ) {
-		std::string const silent = input_silent_files[ n ];
+	for ( std::string const & silent : input_silent_files ) {
 		std::string seq = get_silent_seq( silent );
 		Size len_seq = seq.size();
 		vector1< Size > resnum_in_full_model;
@@ -349,8 +348,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			}
 		} else {
 			vector1<Size> input_silent_res_from_file = full_model_parameters->conventional_to_full( get_silent_resnum( silent ) );
-			for ( Size q = 1; q <= input_silent_res_from_file.size(); q++ ) {
-				resnum_in_full_model.push_back( input_silent_res_from_file[ q ] );
+			for ( Size const res : input_silent_res_from_file ) {
+				resnum_in_full_model.push_back( res );
 			}
 		}
 		runtime_assert( resnum_in_full_model.size() == len_seq);

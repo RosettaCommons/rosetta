@@ -31,7 +31,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
-#include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/stream_util.hh>
@@ -61,24 +60,20 @@ namespace full_model_info {
 // Following are utils and should not be in here...
 utility::vector1<Size>
 reorder_moving_res_list_after_delete( utility::vector1<Size> const & moving_res_list,
-	Size const & res_to_delete ){
+	Size const res_to_delete ){
 
 	utility::vector1< Size > moving_res_list_new;
-
-	for ( Size i = 1; i <= moving_res_list.size(); i++ ) {
-		Size const n = moving_res_list[ i ];
+	for ( Size const n : moving_res_list ) {
 		if ( n < res_to_delete ) moving_res_list_new.push_back( n );
 		else if ( n > res_to_delete ) moving_res_list_new.push_back( n-1 );
 	}
-
 	return moving_res_list_new;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 reorder_res_list_after_delete( utility::vector1< Size > const & res_list,
-	Size const & res_to_delete ){
+	Size const res_to_delete ){
 
 	utility::vector1< Size > res_list_new(  res_list.size() - 1, 0 );
 
@@ -99,18 +94,15 @@ reorder_moving_res_list_after_insert( utility::vector1<Size> const & moving_res_
 
 	utility::vector1< Size > moving_res_list_new;
 
-	for ( Size i = 1; i <= moving_res_list.size(); i++ ) {
-		Size const n = moving_res_list[ i ];
+	for ( Size const n : moving_res_list ) {
 		if ( n < res_to_add ) moving_res_list_new.push_back( n );
 	}
 	moving_res_list_new.push_back( res_to_add );
-	for ( Size i = 1; i <= moving_res_list.size(); i++ ) {
-		Size const n = moving_res_list[ i ];
+	for ( Size const n : moving_res_list ) {
 		if ( n >= res_to_add ) moving_res_list_new.push_back( n+1 );
 	}
 
 	return moving_res_list_new;
-
 }
 
 
@@ -165,7 +157,6 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
 
 	pose.pdb_info( pdb_info );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +206,7 @@ update_disulfides_from_full_model_info( pose::Pose & pose ){
 		Size const & res2_full = disulf_bonds[ i ].second;
 		if ( !res_list.has_value( res1_full ) ) continue;
 		if ( !res_list.has_value( res2_full ) ) continue;
+
 		std::pair< Size, Size > const disulfide_pair =
 			std::make_pair( full_model_info.full_to_sub( res1_full ),
 			full_model_info.full_to_sub( res2_full ) );
@@ -224,7 +216,6 @@ update_disulfides_from_full_model_info( pose::Pose & pose ){
 	}
 
 	pose.conformation().fix_disulfides( working_disulf_bonds );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -415,9 +406,8 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return false;
 	}
 
-	for ( Size n = 1; n <= res_list.size(); n++ ) {
-
-		Size const & res_num = res_list[ n ];
+	for ( Size n = 1; n <= res_list.size(); ++n ) {
+		Size const res_num = res_list[ n ];
 		char sequence_char = clean_seq[ res_num   - 1 ];
 
 		if ( sequence_char == 'n' ) continue; // any nucleotide
@@ -497,9 +487,8 @@ get_move_elements_from_full_model_info_const( pose::Pose const & pose ){
 		}
 	}
 
-	for ( std::map< Size, utility::vector1< Size > >::const_iterator iter = move_element_map.begin(), end = move_element_map.end();
-			iter != end; ++iter ) {
-		move_elements.push_back( iter->second );
+	for ( auto const & move_elem : move_element_map ) {
+		move_elements.push_back( move_elem.second );
 	}
 
 	return move_elements;
@@ -530,8 +519,8 @@ get_fixed_domain_from_full_model_info_const( pose::Pose const & pose ) {
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 
 	utility::vector1< Size > fixed_domain_local;
-	for ( Size i = 1; i <= res_list.size(); i++ ) {
-		fixed_domain_local.push_back ( fixed_domain_map[ res_list[i] ] );
+	for ( Size const res : res_list ) {
+		fixed_domain_local.push_back ( fixed_domain_map[ res ] );
 	}
 	return fixed_domain_local;
 
@@ -545,8 +534,8 @@ get_input_domain_from_full_model_info_const( pose::Pose const & pose ) {
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 
 	utility::vector1< Size > input_domain_local;
-	for ( Size i = 1; i <= res_list.size(); i++ ) {
-		input_domain_local.push_back ( input_domain_map[ res_list[i] ] );
+	for ( Size const res : res_list ) {
+		input_domain_local.push_back ( input_domain_map[ res ] );
 	}
 	return input_domain_local;
 
@@ -593,12 +582,12 @@ update_pose_domain_map_const( Pose const & pose,
 	utility::vector1< Size > & pose_domain_map ) {
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
-	for ( Size k = 1; k <= res_list.size(); k++ ) {
-		pose_domain_map[ res_list[k] ] = pose_domain_number;
+	for ( Size const res : res_list ) {
+		pose_domain_map[ res ] = pose_domain_number;
 	}
 	utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
-		update_pose_domain_map_const( *(other_pose_list[ n ]), ++pose_domain_number, pose_domain_map );
+	for ( PoseOP const & poseop : other_pose_list ) {
+		update_pose_domain_map_const( *poseop, ++pose_domain_number, pose_domain_map );
 	}
 }
 
@@ -645,26 +634,19 @@ get_residue(
 
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		if ( res_list.has_value( seqpos_in_full_model ) ) {
-
 			found_residue = true;
 			return pose.residue( res_list.index( seqpos_in_full_model ) );
-
 		} else {
-
 			utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
-			for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
-				core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, *(other_pose_list[ n ]), found_residue );
+			for ( PoseOP const & poseop : other_pose_list ) {
+				core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, *poseop, found_residue );
 				if ( found_residue ) return rsd;
 			}
-
 		}
-
 	} else {
-
 		// if we're here, then full_model_info is not defined.
 		found_residue = ( seqpos_in_full_model > 0 ) && ( seqpos_in_full_model <= pose.size() );
 		if ( found_residue ) return pose.residue( seqpos_in_full_model );
-
 	}
 
 	return pose.residue( 1 ); // dummy return.
@@ -922,9 +904,8 @@ get_connection_domains( utility::vector1< std::pair< Size, Size > > const & chai
 	Size count( 0 );
 	std::set< Size > unique_domains( connection_domains.begin(), connection_domains.end() );
 	utility::vector1< Size > connection_domains_relabel = connection_domains;
-	for ( std::set< Size >::const_iterator it = unique_domains.begin(), end = unique_domains.end(); it != end; ++it ) {
+	for ( Size const domain_number : unique_domains ) {
 		count++;
-		Size const & domain_number( *it );
 		for ( Size k = 1; k <= nchains; k++ ) {
 			if ( connection_domains[ k ] == domain_number ) connection_domains_relabel[ k ] = count;
 		}
@@ -986,7 +967,6 @@ append_virtual_residue_to_full_model_info( pose::Pose & pose )
 	new_res_list.push_back( new_full_sequence.size() );
 	new_full_model_info->set_res_list( new_res_list );
 	set_full_model_info( pose, new_full_model_info );
-
 }
 
 } //full_model_info

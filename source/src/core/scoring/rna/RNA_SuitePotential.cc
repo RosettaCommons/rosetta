@@ -80,7 +80,7 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 	inv_cov_( n_torsions_, n_torsions_ ),
 	offset_( 0.0 ),
 	score_( 0 ),
-	deriv_( n_torsions_, 0 ),
+	deriv_( 0 ),
 	calculate_suiteness_bonus_( calculate_suiteness_bonus )
 {
 	using namespace basic::options;
@@ -134,10 +134,10 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 
 		// But need to update Suite centers if user has specified differently in suite_bonus file. Do this based on *tags*.
 		// have to convert from ublas::vector to utility::vector1
-		utility::vector1< utility::vector1< Real > >  centers_vector1;
+		utility::vector1< utility::fixedsizearray1< Real,7 > >  centers_vector1;
 		for ( Size n = 1; n <= centers_.size(); n++ ) {
-			utility::vector1< Real > center_vector1;
-			for ( Size k = 1; k <= n_torsions_; k++ ) center_vector1.push_back( centers_[n](k-1) );
+			utility::fixedsizearray1< Real,7 > center_vector1;
+			for ( Size k = 1; k <= n_torsions_; k++ ) center_vector1[k] = centers_[n](k-1);
 			centers_vector1.push_back( center_vector1 );
 		}
 		rna_suite_name_->update_centers( centers_vector1, tags_); // could relax this. just need some way to input information.
@@ -196,20 +196,19 @@ bool RNA_SuitePotential::eval_score(
 
 	// Find the suite torsions
 	torsion_ids_.clear();
-	torsion_ids_.push_back( TorsionID( rsdnum1, BB, DELTA ) );
-	torsion_ids_.push_back( TorsionID( rsdnum1, BB, EPSILON ) );
-	torsion_ids_.push_back( TorsionID( rsdnum1, BB, ZETA ) );
-	torsion_ids_.push_back( TorsionID( rsdnum2, BB, ALPHA ) );
-	torsion_ids_.push_back( TorsionID( rsdnum2, BB, BETA ) );
-	torsion_ids_.push_back( TorsionID( rsdnum2, BB, GAMMA ) );
-	torsion_ids_.push_back( TorsionID( rsdnum2, BB, DELTA ) );
+	torsion_ids_.emplace_back( rsdnum1, BB, DELTA );
+	torsion_ids_.emplace_back( rsdnum1, BB, EPSILON );
+	torsion_ids_.emplace_back( rsdnum1, BB, ZETA );
+	torsion_ids_.emplace_back( rsdnum2, BB, ALPHA );
+	torsion_ids_.emplace_back( rsdnum2, BB, BETA );
+	torsion_ids_.emplace_back( rsdnum2, BB, GAMMA );
+	torsion_ids_.emplace_back( rsdnum2, BB, DELTA );
 
-	utility::vector1<Real> torsions;
+	utility::fixedsizearray1<Real, 7> torsions;
 	for ( Size i = 1; i <= torsion_ids_.size(); ++i ) {
 		// A suite must have all its torsions being valid
 		if ( !is_torsion_valid( pose, torsion_ids_[i] ) ) return false;
-		Real const tor( pose.torsion( torsion_ids_[i] ) );
-		torsions.push_back( tor );
+		torsions[ i ] = pose.torsion( torsion_ids_[i] );
 	}
 
 	eval_score( torsions );
@@ -219,7 +218,7 @@ bool RNA_SuitePotential::eval_score(
 
 ////////////////////////////////////////////////////////
 void RNA_SuitePotential::eval_score(
-	utility::vector1<Real> const & torsions
+	utility::fixedsizearray1<Real, 7> const & torsions
 ) const {
 	if ( calculate_suiteness_bonus_ ) {
 		eval_suiteness_bonus( torsions );
@@ -230,7 +229,7 @@ void RNA_SuitePotential::eval_score(
 
 ////////////////////////////////////////////////////////
 void RNA_SuitePotential::eval_suiteness_bonus(
-	utility::vector1<Real> const & torsions
+	utility::fixedsizearray1<Real, 7> const & torsions
 ) const {
 	runtime_assert( rna_suite_name_ != 0 );
 	pose::rna::RNA_SuiteAssignment assignment( rna_suite_name_->assign( torsions, deriv_ ) );
@@ -244,7 +243,7 @@ void RNA_SuitePotential::eval_suiteness_bonus(
 
 ////////////////////////////////////////////////////////
 void RNA_SuitePotential::eval_likelihood_potential(
-	utility::vector1<Real> const & torsions_in
+	utility::fixedsizearray1<Real, 7> const & torsions_in
 ) const {
 
 	ublas::vector<Real> torsions( n_torsions_);

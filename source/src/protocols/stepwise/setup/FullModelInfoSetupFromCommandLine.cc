@@ -362,17 +362,17 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 		if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
 
 		Size const clean_len = core::pose::rna::remove_bracketed( fasta_sequences[n]->sequence() ).size();
-		if ( !found_info || resnum.size() != clean_len ) { //fasta_sequences[n]->sequence().size() /*happens with stray numbers*/ ) {
+		if ( !found_info || resnum.size() != clean_len ) { /*happens with stray numbers*/
 			resnum.clear();
-			for ( Size q = 1; q <= clean_len; ++q ) { //fasta_sequences[n]->sequence().size(); q++ ) {
+			for ( Size q = 1; q <= clean_len; ++q ) {
 				resnum.push_back( ++count );
 				chains.push_back( ' ' ); // unknown chain
 			}
 		}
 		std::string const sequence = fasta_sequences[n]->sequence();
 		runtime_assert( clean_len == resnum.size() ); //sequence.size() == resnum.size() );
-		for ( Size q = 1; q <= clean_len /*sequence.size()*/; q++ ) conventional_chains.push_back( chains[ q ] );
-		for ( Size q = 1; q <= clean_len /*sequence.size()*/; q++ ) conventional_numbering.push_back( resnum[q] );
+		for ( Size q = 1; q <= clean_len; q++ ) conventional_chains.push_back( chains[ q ] );
+		for ( Size q = 1; q <= clean_len; q++ ) conventional_numbering.push_back( resnum[q] );
 
 		found_info_in_previous_sequence  = found_info;
 	}
@@ -520,6 +520,7 @@ get_sequence_information(
 
 	full_model_parameters->set_conventional_numbering( conventional_numbering );
 	full_model_parameters->set_conventional_chains( conventional_chains );
+
 	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 	cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
 		conventional_chains, conventional_numbering );
@@ -1134,9 +1135,9 @@ add_virtual_sugar_res( pose::Pose & pose,
 	vector1< Size > const & res_list,
 	vector1< Size > const & virtual_sugar_res )
 {
-	for ( Size n = 1; n <= virtual_sugar_res.size(); n++ ) {
-		if ( !res_list.has_value( virtual_sugar_res[ n ] ) ) continue;
-		Size const i = res_list.index( virtual_sugar_res[ n ] );
+	for ( Size const res : virtual_sugar_res ) {
+		if ( !res_list.has_value( res ) ) continue;
+		Size const i = res_list.index( res );
 		runtime_assert( i == 1 || pose.fold_tree().is_cutpoint( i - 1 ) );
 		runtime_assert( i == pose.size() || pose.fold_tree().is_cutpoint( i ) );
 		add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, i );

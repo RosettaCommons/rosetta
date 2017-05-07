@@ -343,6 +343,14 @@ public:
 		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = source.array_[ ii ];
 	}
 
+	/// @brief initializer list construction
+	fixedsizearray1( std::initializer_list< T > const & source ) {
+		assert( S == source.size() );
+		//for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = source[ ii ];
+		//array_ = &source;
+		std::copy( source.begin(), source.end(), array_ );
+	}
+
 	fixedsizearray1< T, S > const &
 	operator = ( fixedsizearray1< T, S > const & rhs ) {
 		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = rhs.array_[ ii ];

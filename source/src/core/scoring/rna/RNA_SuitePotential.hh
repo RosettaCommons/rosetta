@@ -28,6 +28,7 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 // ublas Headers
 #include <boost/numeric/ublas/vector.hpp>
@@ -54,7 +55,7 @@ public:
 
 	Real get_score() const { return score_; }
 
-	utility::vector1<Real> get_deriv() const { return deriv_; }
+	utility::fixedsizearray1<Real,7> get_deriv() const { return deriv_; }
 
 	utility::vector1<id::TorsionID> get_torsion_ids() const {
 		return torsion_ids_;
@@ -63,13 +64,13 @@ public:
 private:
 
 	void eval_score(
-		utility::vector1<Real> const & torsions ) const;
+		utility::fixedsizearray1<Real, 7> const & torsions ) const;
 
 	void eval_suiteness_bonus(
-		utility::vector1<Real> const & torsions ) const;
+		utility::fixedsizearray1<Real, 7> const & torsions ) const;
 
 	void eval_likelihood_potential(
-		utility::vector1<Real> const & torsions ) const;
+		utility::fixedsizearray1<Real, 7> const & torsions ) const;
 
 	void regularize_torsions(
 		boost::numeric::ublas::vector<Real> & torsions ) const;
@@ -84,7 +85,7 @@ private:
 	boost::numeric::ublas::matrix<Real> inv_cov_;
 	Real offset_;
 	mutable Real score_;
-	mutable utility::vector1<Real> deriv_;
+	mutable utility::fixedsizearray1<Real,7> deriv_;
 	mutable utility::vector1<id::TorsionID> torsion_ids_;
 	bool const calculate_suiteness_bonus_;
 	pose::rna::RNA_SuiteNameOP rna_suite_name_;

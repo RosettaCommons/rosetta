@@ -56,14 +56,6 @@ is_cutpoint_open( Pose const & pose, Size const i );
 bool
 is_rna_chainbreak( Pose const & pose, Size const i );
 
-void
-fix_sugar_coords_WORKS_BUT_SLOW(
-	utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
-	utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
-	utility::vector1< Vector > const & non_main_chain_sugar_coords,
-	Pose & pose,
-	Size const i);
-
 bool
 check_in_base_pair_list( core::pose::rna::BasePair const & base_pair /*from native*/,
 	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/);

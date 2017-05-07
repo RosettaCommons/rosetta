@@ -29,6 +29,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 using namespace core::chemical;
 using namespace core::chemical::rna;
@@ -64,7 +65,7 @@ RNA_JR_SuiteEnergyCreator::create_energy_method(
 ScoreTypes
 RNA_JR_SuiteEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( rna_jr_suite );
+	sts.emplace_back( rna_jr_suite );
 	return sts;
 }
 
@@ -93,21 +94,20 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 	Size const rsdnum1( rsd1.seqpos() ), rsdnum2( rsd2.seqpos() );
 	if ( rsdnum1 + 1 != rsdnum2 ) return;
 
-	utility::vector1<TorsionID> torsion_ids;
-	torsion_ids.push_back( TorsionID( rsdnum1, id::BB, DELTA ) );
-	torsion_ids.push_back( TorsionID( rsdnum1, id::BB, EPSILON ) );
-	torsion_ids.push_back( TorsionID( rsdnum1, id::BB, ZETA ) );
-	torsion_ids.push_back( TorsionID( rsdnum2, id::BB, ALPHA ) );
-	torsion_ids.push_back( TorsionID( rsdnum2, id::BB, BETA ) );
-	torsion_ids.push_back( TorsionID( rsdnum2, id::BB, GAMMA ) );
-	torsion_ids.push_back( TorsionID( rsdnum2, id::BB, DELTA ) );
+	utility::vector1< TorsionID > torsion_ids;
+	torsion_ids.emplace_back( rsdnum1, id::BB, DELTA );
+	torsion_ids.emplace_back( rsdnum1, id::BB, EPSILON );
+	torsion_ids.emplace_back( rsdnum1, id::BB, ZETA );
+	torsion_ids.emplace_back( rsdnum2, id::BB, ALPHA );
+	torsion_ids.emplace_back( rsdnum2, id::BB, BETA );
+	torsion_ids.emplace_back( rsdnum2, id::BB, GAMMA );
+	torsion_ids.emplace_back( rsdnum2, id::BB, DELTA );
 
-	utility::vector1<Real> torsions;
+	utility::fixedsizearray1<Real, 7> torsions;
 
 	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
 		if ( !is_torsion_valid( pose, torsion_ids[i] ) ) return;
-		Real const tor( pose.torsion( torsion_ids[i] ) );
-		torsions.push_back( tor );
+		torsions[i] = pose.torsion( torsion_ids[i] );
 	}
 	RNA_SuiteAssignment assignment( suitename_.assign( torsions ) );
 	Real const dist( assignment.dist );

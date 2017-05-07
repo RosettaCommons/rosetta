@@ -270,65 +270,6 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////////////
-// Following is quite slow, because it works on a residue in the context
-//  of a full pose -- a lot of time wasted on refolding everything.
-void
-fix_sugar_coords_WORKS_BUT_SLOW(
-	utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
-	utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
-	utility::vector1< Vector > const & non_main_chain_sugar_coords,
-	Pose & pose,
-	Size const i )
-{
-
-	using namespace core::id;
-
-	conformation::Residue const & rsd( pose.residue( i ) );
-
-	//Yup, hard-wired...
-	kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
-
-	utility::vector1< Vector > start_vectors;
-	utility::vector1< utility::vector1< Real > > new_dof_sets;
-
-	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
-		Size const j = rsd.atom_index( non_main_chain_sugar_atoms[ n ] );
-		//Save a copy of starting location
-		Vector v = rsd.xyz( non_main_chain_sugar_atoms[ n ]  );
-		start_vectors.push_back( v );
-
-		//Desired location
-		Vector v2 = input_stub.local2global( non_main_chain_sugar_coords[ n ] );
-		pose.set_xyz( id::AtomID( j,i ), v2 );
-	}
-
-	for ( Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
-		utility::vector1< Real > dof_set;
-		Size const j = rsd.atom_index( atoms_for_which_we_need_new_dofs[ n ] );
-		for ( Size m = 1; m <= which_dofs[n].size(); m++ ) {
-			dof_set.push_back( pose.atom_tree().dof( DOF_ID( AtomID( j,i) , which_dofs[ n ][ m ] ) ) );
-		}
-		new_dof_sets.push_back( dof_set );
-	}
-
-	// Now put the ring atoms in the desired spots, but by changing internal DOFS --
-	// rest of the atoms (e.g., in base and 2'-OH) will scoot around as well, preserving
-	// ideal bond lengths and angles.
-	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
-		Size const j = rsd.atom_index( non_main_chain_sugar_atoms[ n ] );
-		pose.set_xyz( id::AtomID( j,i ), start_vectors[n] );
-	}
-
-	for ( Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
-		Size const j = rsd.atom_index( atoms_for_which_we_need_new_dofs[ n ] );
-
-		for ( Size m = 1; m <= which_dofs[n].size(); m++ ) {
-			pose.set_dof(  DOF_ID( AtomID( j,i) , which_dofs[ n ][ m ] ), new_dof_sets[ n ][ m ] );
-		}
-	}
-}
-
 /////////////////////////////////////////////////////////
 void
 prepare_scratch_residue(
@@ -344,12 +285,10 @@ prepare_scratch_residue(
 		scratch_rsd->set_xyz( j , start_rsd.xyz( j ) );
 	}
 
-	//Yup, hard-wired...
-	// AMW: changing to grab this from the RNA_Info
-	// reasoning: if we do any artful stuff making these indices refer to other named atoms, it should go through only one point
-	// (i.e. perhaps for a TNA there's an equivalent for one or more of these?)
-	// AMW TODO: shouldn't RNA_Info have members for C3' and C5' as well?
-	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( scratch_rsd->type().RNA_info().c4prime_atom_index() ), scratch_rsd->xyz( " C5'" ) );
+	kinematics::Stub const input_stub( scratch_rsd->xyz( scratch_rsd->type().RNA_info().c3prime_atom_index() ), 
+		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c3prime_atom_index() ), 
+		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c4prime_atom_index() ), 
+		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c5prime_atom_index() ) );
 
 	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		//Desired location
@@ -384,9 +323,10 @@ fix_sugar_coords(
 	for ( auto const & atom_name : atoms_for_which_we_need_new_dofs ) {
 		Size const j = scratch_rsd->atom_index( atom_name );
 
+		AtomID const aid( j, i );
 		// "Don't do update" --> my hack to prevent lots of refolds. I just want information about whether the
 		// atom is a jump_atom, what its stub atoms are, etc... in principle could try to use input_stub_atom1_id(), etc.
-		kinematics::tree::AtomCOP current_atom ( reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );
+		kinematics::tree::AtomCOP current_atom ( reference_pose.atom_tree().atom_dont_do_update( aid ).get_self_ptr() );
 		kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 
 		if ( !input_stub_atom1 ) continue;
@@ -395,7 +335,7 @@ fix_sugar_coords(
 
 		Real const d = ( scratch_rsd->xyz( (input_stub_atom1->id()).atomno() ) -
 			scratch_rsd->xyz( (current_atom->id()).atomno() ) ).length();
-		pose.set_dof( DOF_ID( AtomID( j, i), D), d );
+		pose.set_dof( DOF_ID( aid, D), d );
 
 		if ( input_stub_atom1->is_jump() ) continue;
 
@@ -409,7 +349,7 @@ fix_sugar_coords(
 			scratch_rsd->xyz( (input_stub_atom1->id()).atomno() ),
 			scratch_rsd->xyz( (input_stub_atom2->id()).atomno() ) );
 
-		pose.set_dof( DOF_ID( AtomID( j, i), THETA), numeric::constants::d::pi - theta );
+		pose.set_dof( DOF_ID( aid, THETA), numeric::constants::d::pi - theta );
 
 		// I commented out the following because otherwise, O4' at the 5' end of a pose did not get set properly. (RD, Nov. 2010)
 		//  but there may be fallout.
@@ -427,7 +367,7 @@ fix_sugar_coords(
 			scratch_rsd->xyz( (input_stub_atom2->id()).atomno() ),
 			scratch_rsd->xyz( (input_stub_atom3->id()).atomno() ) );
 
-		pose.set_dof( DOF_ID( AtomID( j, i), PHI), phi );
+		pose.set_dof( DOF_ID( aid, PHI), phi );
 	}
 }
 
@@ -448,6 +388,10 @@ initialize_atoms_for_which_we_need_new_dofs(
 	//
 	ResidueType const & rsd( pose.residue_type( i ) );
 	RNA_Info const & rna_type( rsd.RNA_info() );
+
+	// AMW: We don't need to ask ALL of these by RNA_info -- note
+	// that they're using strings anyway. The key is since some residues don't
+	// have O4' but S4'.
 
 	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rna_type.c1prime_atom_index(), i ) ).get_self_ptr() );
 	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rna_type.o2prime_index(), i ) ).get_self_ptr() );
@@ -617,7 +561,7 @@ position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
 
 	static const ResidueTypeSetCOP rsd_set = current_pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 
-	chemical::AA res_aa = aa_from_name( "RAD" );
+	chemical::AA res_aa = chemical::na_rad; //aa_from_name( "RAD" );
 	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );
 
 	current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );

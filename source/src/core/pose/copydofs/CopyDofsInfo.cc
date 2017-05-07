@@ -71,7 +71,6 @@ void
 CopyDofsInfo::apply_dofs( pose::Pose & pose,
 	core::Real const dof_tolerance /* = 1.0e-5*/ ) const
 {
-
 	for ( auto const & dof_info : dofs_info_ ) {
 		if ( dof_tolerance > 0.0 ) {
 			Real const dof_value_original = pose.dof( dof_info.first );

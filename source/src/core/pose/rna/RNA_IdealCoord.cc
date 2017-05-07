@@ -85,9 +85,9 @@ void RNA_IdealCoord::init() {
 	chemical::ResidueTypeSetCOP rsd_set;
 	// FA_STANDARD now includes rna_phenix by default.
 	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
-	for ( Size i = 1; i <= pdb_file_list.size(); ++i ) {
+	for ( std::string const & file : pdb_file_list ) {
 		PoseOP ref_pose( new Pose() );
-		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, pdb_file_list[i] );
+		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, file );
 		MiniPoseOP ref_mini_pose( new MiniPose( *ref_pose ) );
 		ref_mini_pose_list_.push_back( ref_mini_pose );
 	}
@@ -173,6 +173,7 @@ void RNA_IdealCoord::apply_coords(
 		}
 	}
 }
+
 //////////////////////////
 void RNA_IdealCoord::apply(
 	Pose & pose,
@@ -232,7 +233,6 @@ void RNA_IdealCoord::apply_pucker(
 	using namespace id;
 	using namespace chemical;
 	using namespace conformation;
-
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;

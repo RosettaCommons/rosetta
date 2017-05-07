@@ -37,6 +37,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 //Numeric Headers
 #include <numeric/deriv/dihedral_deriv.hh>
@@ -183,7 +184,7 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	if ( weight == 0.0 ) return;
 	if ( !rna_suite_potential->eval_score( rsd1, rsd2, pose ) ) return;
 
-	utility::vector1<Real> const & deriv( rna_suite_potential->get_deriv() );
+	utility::fixedsizearray1<Real,7> const & deriv( rna_suite_potential->get_deriv() );
 	utility::vector1<TorsionID> const & torsion_ids(
 		rna_suite_potential->get_torsion_ids() );
 

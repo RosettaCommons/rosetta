@@ -92,8 +92,8 @@ VDW_Grid::reset() const
 void
 VDW_Grid::reset( utility::vector1< Atom_Bin > const & occupied_xyz_bins_ ) const
 {
-	for ( core::Size n = 1; n <= occupied_xyz_bins_.size(); n++ ) {
-		set_xyz_bin( occupied_xyz_bins_[ n ], false );
+	for ( auto const & occ_bin : occupied_xyz_bins_ ) {
+		set_xyz_bin( occ_bin, false );
 	}
 	is_occupied_ = false;
 }
