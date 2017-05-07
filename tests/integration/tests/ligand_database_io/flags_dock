@@ -1,14 +1,10 @@
 -run
  -constant_seed
- -rng mt19937
 -in
  -file
   -s inputs/7cpa_input.pdb.gz
   -extra_res_database ligand_parameters.db3
   -treat_residues_in_these_chains_as_separate_chemical_entities WZ
--out
- -file
- -overwrite	
 -packing
  -no_optH
  -ex1
@@ -19,3 +15,4 @@
 
 -mute core.util.prof ## dont show timing info
 -mute core.io.database
+-out:levels protocols.ligand_docking:debug

@@ -44,17 +44,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-
-using basic::T;
-using basic::Error;
-using basic::Warning;
-
-//STL headers
+// C++ headers
+#include <iomanip>
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer FinalMinimizer_tracer( "protocols.ligand_docking.ligand_options.FinalMinimizer", basic::t_debug );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_options.FinalMinimizer" );
 
 // XRW TEMP std::string
 // XRW TEMP FinalMinimizerCreator::keyname() const
@@ -136,26 +132,32 @@ FinalMinimizer::parse_my_tag(
 
 void
 FinalMinimizer::apply( core::pose::Pose & pose ){
-	(*score_fxn_)(pose); // Debug Line, Remove Later...
 	debug_assert(movemap_builder_);
 
+	std::streamsize orig_precision( TR.precision() );
+	TR << "Energy prior to minimizing: " << std::setprecision(9) << (*score_fxn_)(pose) << std::setprecision(orig_precision)<< std::endl;
+
 	if ( movemap_builder_->minimize_backbone() ) {
-		core::kinematics::FoldTree fold_tree_copy;
-		FinalMinimizer_tracer<< "setting up fold_tree for min_bb"<< std::endl;
-		fold_tree_copy= pose.fold_tree();
+		TR.Debug << "Setting up FoldTree for backbone minimization" << std::endl;
+		TR.Debug << "FoldTree Before: " << pose.fold_tree() << std::endl;
+		core::kinematics::FoldTree fold_tree_copy( pose.fold_tree() );
 		InterfaceBuilderOP bb_interface_builder= movemap_builder_->get_bb_interface_builder();
 		MinimizeBackbone backbone_foldtree_setup(bb_interface_builder);
 		backbone_foldtree_setup.apply(pose);
+		TR.Debug << "FoldTree Reordered: " << pose.fold_tree() << std::endl;
 
 		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
+
 		pose.fold_tree(fold_tree_copy);
+		TR.Debug << "FoldTree Restored: " << pose.fold_tree() << std::endl;
 	} else {
 		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
 	}
+	TR << "Energy after minimizing: " << std::setprecision(9) << (*score_fxn_)(pose) << std::setprecision(orig_precision)<< std::endl;
 
 }
 
@@ -165,8 +167,8 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	core::Real tolerance= 0.02;
 	bool use_nb_list=true;
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
-	movemap->show(FinalMinimizer_tracer, pose.size());
-	FinalMinimizer_tracer<< std::endl;
+	movemap->show(TR.Debug, pose.size());
+	TR.Debug << std::endl;
 	return protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list) );
 }
 

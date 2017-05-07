@@ -10,3 +10,4 @@
 
 -mute core.util.prof ## dont show timing info
 -mute core.io.database
+-out:levels protocols.ligand_docking:debug
