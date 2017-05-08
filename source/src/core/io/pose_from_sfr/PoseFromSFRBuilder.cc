@@ -552,7 +552,8 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 				( ii == ii_next ||
 				( residue_types_[ ii_next ] && (
 				!residue_types_[ ii_next ]->is_polymer() ||
-				residue_types_[  ii_next ]->is_lower_terminus() /* ||
+				residue_types_[  ii_next ]->is_lower_terminus() ||
+				chainID != rinfos_[ ii_next ].chainID() /* ||
 				residue_types_[  ii_next ]->has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)*/ ) ) ) ) {
 			TR << "Adding undetected upper terminus type to residue " << ii << std::endl;
 			residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
