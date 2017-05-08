@@ -1,4 +1,5 @@
 !/external/lib/*/*/*.so
+external/DAlpahBall/DAlphaBall.*
 /build/*
 /bin/*
 /html/
