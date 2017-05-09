@@ -27,6 +27,8 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+#include <core/scoring/constraints/ConstraintSet.hh>
+
 // Scripter Headers
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -148,10 +150,26 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 
 		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
+		if ( TR.Trace.visible() ) {
+			score_fxn_->show(TR.Trace);
+			TR.Trace << pose.annotated_sequence(true) << std::endl;
+			TR.Trace << "Fold Tree: " << pose.fold_tree() << std::endl;
+			pose.constraint_set()->show_definition(TR.Trace, pose);
+			TR.Trace << "Energy *directly before* minimizing: " << (*score_fxn_)(pose) << std::endl;
+			score_fxn_->show(TR.Trace, pose);
+		}
 		dfpMinTightTol->apply(pose);
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Energy *directly after* minimizing: " << (*score_fxn_)(pose) << std::endl;
+			score_fxn_->show(TR.Trace, pose);
+		}
 
 		pose.fold_tree(fold_tree_copy);
 		TR.Debug << "FoldTree Restored: " << pose.fold_tree() << std::endl;
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Energy after FoldTree restoration: " << (*score_fxn_)(pose) << std::endl;
+			score_fxn_->show(TR.Trace, pose);
+		}
 	} else {
 		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
