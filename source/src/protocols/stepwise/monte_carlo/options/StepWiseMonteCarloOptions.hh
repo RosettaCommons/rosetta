@@ -200,6 +200,9 @@ public:
 	bool const & use_first_jump_for_submotif() const { return use_first_jump_for_submotif_; }
 	void set_use_first_jump_for_submotif( bool const & setting ){ use_first_jump_for_submotif_ = setting; }
 
+	bool designing_with_noncanonicals() const { return designing_with_noncanonicals_; }
+	void set_designing_with_noncanonicals( bool const & setting ){ designing_with_noncanonicals_ = setting; }
+
 	bool checkpoint() const { return checkpoint_; }
 	void set_checkpoint( bool const setting ){ checkpoint_ = setting; }
 
@@ -253,6 +256,7 @@ private:
 	bool use_precomputed_library_;
 	bool minimize_after_delete_;
 	bool use_first_jump_for_submotif_;
+	bool designing_with_noncanonicals_;
 	bool checkpoint_;
 	core::Size checkpointing_frequency_;
 	bool continue_until_none_missing_;

@@ -41,6 +41,23 @@ A
 C
 G
 U
+OMA
+OMC
+OMG
+OMU
+H2U
+PSU
+1AP
+OMI
+PUR
+2AP
+8OG
+6MG
+5FC
+5FU
+5BU
+5IU
+NPU
 
 # Metal Ions
 CA

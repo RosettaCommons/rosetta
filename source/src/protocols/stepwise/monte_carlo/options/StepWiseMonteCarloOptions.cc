@@ -77,6 +77,7 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	use_precomputed_library_( true ),
 	minimize_after_delete_( true ),
 	use_first_jump_for_submotif_( false ),
+	designing_with_noncanonicals_( false ),
 	checkpoint_( false ),
 	checkpointing_frequency_( 0 ),
 	continue_until_none_missing_( false )
@@ -156,6 +157,7 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
 	use_first_jump_for_submotif_ = option[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
+	designing_with_noncanonicals_ = option[ OptionKeys::stepwise::monte_carlo::designing_with_noncanonicals ]();
 	checkpoint_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]() != 0;
 	checkpointing_frequency_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]();
 	continue_until_none_missing_ = option[ OptionKeys::stepwise::monte_carlo::continue_until_none_missing ]();

@@ -46,8 +46,8 @@ void
 MgOrbitalFrameFinder::apply( pose::Pose & pose )
 {
 	vector1< Size > mg_res = get_mg_res( pose );
-	for ( Size n = 1; n <= mg_res.size(); n++ ) {
-		determine_mg_orbital_frame( pose, mg_res[ n ] );
+	for ( Size const seqpos : mg_res ) {
+		determine_mg_orbital_frame( pose, seqpos );
 	}
 }
 
@@ -70,7 +70,6 @@ MgOrbitalFrameFinder::determine_mg_orbital_frame( pose::Pose & pose,
 
 	clock_t end_time = clock();
 	TR << "orbital frame finder finished in " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
-
 }
 
 
@@ -142,8 +141,7 @@ MgOrbitalFrameFinder::get_orbital_frame_score_upon_rotation( utility::vector1< V
 
 	Real score( 0.0 );
 
-	for ( Size m = 1; m <= r_lig.size(); m++ ) {
-		Vector const & r = r_lig[ m ];
+	for ( Vector const & r : r_lig ) {
 
 		// find 'orbital'  that aligns best with each ligand
 		Real best_dot( -1.0 );
@@ -153,7 +151,6 @@ MgOrbitalFrameFinder::get_orbital_frame_score_upon_rotation( utility::vector1< V
 		}
 		//runtime_assert( best_dot >= 0.0 );
 		score += best_dot;
-
 	}
 
 	return score;
@@ -172,13 +169,13 @@ MgOrbitalFrameFinder::sample_orbital_frame( pose::Pose & pose,
 	if ( urs_ == nullptr ) urs_ = get_octahedral_uniform_rotation_sampler();
 
 	utility::vector1< Vector > r_lig;
-	for ( Size n = 1; n <= ligands.size(); n++ ) {
-		r_lig.push_back(  ( pose.xyz( ligands[ n ] ) - xyz_mg ).normalized() );
+	for ( auto const & ligand : ligands ) {
+		r_lig.push_back( ( pose.xyz( ligand ) - xyz_mg ).normalized() );
 	}
 
 	utility::vector1< Vector > v_lig;
 	for ( Size n = 1; n <= 6; n++ ) {
-		v_lig.push_back(  ( pose.xyz( NamedAtomID( "V"+I(1,n), i ) ) - xyz_mg ).normalized() );
+		v_lig.push_back( ( pose.xyz( NamedAtomID( "V"+I(1,n), i ) ) - xyz_mg ).normalized() );
 	}
 
 	numeric::xyzMatrix< core::Real > R, best_R( numeric::xyzMatrix<Real>::identity() );

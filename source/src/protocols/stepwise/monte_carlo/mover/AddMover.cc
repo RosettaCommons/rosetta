@@ -425,7 +425,7 @@ AddMover::sample_by_monte_carlo_internal( pose::Pose & pose ) const {
 	MonteCarloOP monte_carlo_internal( new MonteCarlo( pose, *scorefxn_, kT_ ) );
 
 	std::string move_type( "" );
-	for ( Size count_internal = 1; count_internal <= internal_cycles_; count_internal++ ) {
+	for ( Size count_internal = 1; count_internal <= internal_cycles_; ++count_internal ) {
 
 		rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);
 		if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_large_);
@@ -564,15 +564,30 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	// figure out new residue type from sequence
 	std::string const & full_sequence  = const_full_model_info( pose ).full_sequence();
 	std::map< Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
-	char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
-	modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 
-	// use name3 to account for non-canonicals
-	// AMW: important to note that this is actually gonna be the base name
-	// in annotated sequence format, for example
-	std::string newrestype3 = chemical::name_from_aa( chemical::aa_from_oneletter_code( newrestype ) );
+	if ( TR.Debug.visible() ) {
+		for ( auto const & nc_res_pair : nc_res_map ) {
+			TR.Debug << nc_res_pair.first << " " << nc_res_pair.second << std::endl;
+		}
+	}
+
+	std::string newrestype3;
 	if ( nc_res_map.find( res_to_add_in_full_model_numbering_ ) != nc_res_map.end() ) {
 		newrestype3 = nc_res_map.at( res_to_add_in_full_model_numbering_ );
+	} else {
+		// Otherwise, we need to look at the fasta. Get the relevant character.
+		char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
+		if ( newrestype == 'n' ) {
+			if ( ! designing_with_noncanonicals_ ) {
+				// output parameter is also newrestype
+				modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
+				newrestype3 = chemical::name_from_aa( chemical::aa_from_oneletter_code( newrestype ) );
+			} else {
+				newrestype3 = modeler::rna::choose_randomly_from_allowed_at_position( pose, res_to_add_in_full_model_numbering_ );
+			}
+		} else {
+			newrestype3 = chemical::name_from_aa( chemical::aa_from_oneletter_code( newrestype ) );
+		}
 	}
 
 	TR.Debug << "Going to add a " << newrestype3 << " for " << res_to_add_in_full_model_numbering_ << "." << std::endl;
@@ -588,7 +603,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	// shot of creating a protonated adenosine (50/50 because score will take
 	// care of the rest)
 	chemical::ResidueTypeCOP rsd_type = nullptr;
-	if ( newrestype == 'a' && sample_pH_ ) {
+	if ( newrestype3 == "RAD" && sample_pH_ ) {
 		TR << "Going to add adenosine." << std::endl;
 		// There is something irritating about enforcing the exact equality of
 		// [0, 0.5) and [0.5, 1) in floating point space, but we don't care for

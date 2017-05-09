@@ -1678,11 +1678,11 @@ figure_out_moving_partition_res( pose::Pose const & pose,
 	utility::vector1< Size > const & moving_res_list ){
 
 	utility::vector1< Size > moving_partition_res_all;
-	for ( Size n = 1; n <= moving_res_list.size(); n++ ) {
-		if ( pose.residue_type( moving_res_list[n] ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue; // legacy insanity from SWA 'dinucleotide' move.
-		utility::vector1< Size > moving_partition_res = figure_out_moving_partition_res( pose, moving_res_list[n] );
-		for ( Size i = 1; i <= moving_partition_res.size(); i++ ) {
-			if ( !moving_partition_res_all.has_value( moving_partition_res[i] ) ) moving_partition_res_all.push_back( moving_partition_res[i] );
+	for ( Size const moving_res : moving_res_list ) {
+		if ( pose.residue_type( moving_res ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue; // legacy insanity from SWA 'dinucleotide' move.
+		utility::vector1< Size > moving_partition_res = figure_out_moving_partition_res( pose, moving_res );
+		for ( Size const seqpos : moving_partition_res ) {
+			if ( !moving_partition_res_all.has_value( seqpos ) ) moving_partition_res_all.push_back( seqpos );
 		}
 	}
 	std::sort( moving_partition_res_all.begin(), moving_partition_res_all.end() );

@@ -243,6 +243,7 @@ StepWiseMasterMover::initialize(){
 	add_mover_->set_presample_added_residue(  true );
 	add_mover_->set_presample_by_swa(  true );
 	add_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
+	add_mover_->set_designing_with_noncanonicals( options_->designing_with_noncanonicals() );
 	add_mover_->set_sample_pH( options_->sample_pH() );
 
 	delete_mover_ = DeleteMoverOP( new DeleteMover );
@@ -367,10 +368,8 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
 	initialize();
 
-
 	utility::vector1< StepWiseMove > stepwise_moves, internal_moves, terminal_moves;
 	stepwise_move_selector_->get_resample_terminal_move_elements( output_pose, terminal_moves );
-	//stepwise_move_selector_->get_resample_internal_move_elements( output_pose, internal_moves );
 	stepwise_move_selector_->get_resample_internal_local_move_elements( output_pose, internal_moves );
 
 	// get first terminal move
@@ -387,8 +386,7 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 	}
 
 	// do moves in serial
-	for ( Size n = 1; n <= stepwise_moves.size(); n++ ) {
-		StepWiseMove const & stepwise_move = stepwise_moves[ n ];
+	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
 		TR.Debug << "Applying Move: " << stepwise_move << "." << std::endl;
 		apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
 		if ( checkpointing_breadcrumbs ) {

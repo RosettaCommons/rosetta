@@ -82,10 +82,21 @@ residue_types/nucleic/rna_nonnatural/SSC.params
 residue_types/nucleic/rna_nonnatural/SSG.params
 residue_types/nucleic/rna_nonnatural/SSU.params
 # 4'S
-residue_types/nucleic/rna_nonnatural/S4A.params
-residue_types/nucleic/rna_nonnatural/S4C.params
-residue_types/nucleic/rna_nonnatural/S4G.params
-residue_types/nucleic/rna_nonnatural/S4U.params
+#residue_types/nucleic/rna_nonnatural/S4A.params
+#residue_types/nucleic/rna_nonnatural/S4C.params
+#residue_types/nucleic/rna_nonnatural/S4G.params
+#residue_types/nucleic/rna_nonnatural/S4U.params
+
+residue_types/nucleic/rna_nonnatural/NPU.params
+
+residue_types/nucleic/rna_nonnatural/5FU.params
+residue_types/nucleic/rna_nonnatural/5IU.params
+residue_types/nucleic/rna_nonnatural/2AP.params
+residue_types/nucleic/rna_nonnatural/PUR.params
+residue_types/nucleic/rna_nonnatural/6MG.params
+residue_types/nucleic/rna_nonnatural/5FC.params
+residue_types/nucleic/rna_nonnatural/8OG.params
+residue_types/nucleic/rna_nonnatural/OMI.params
 
 residue_types/nucleic/rna_nonnatural/PSU.params
 residue_types/nucleic/rna_nonnatural/UR3.params

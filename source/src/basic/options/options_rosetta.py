@@ -7244,6 +7244,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		  Option( 'force_submotif_without_intervening_bulge', 'Boolean', desc="for submotif moves, only add base pairs that have an attachment point and a cutpoint closed, with no intervening bulge", default='false' ),
 		  Option( 'use_first_jump_for_submotif', 'Boolean', desc="for submotif moves, only use first jump from jump library -- does not change stepwise -lores (which resamples jump) except in balance of move selection.", default='false' ),
 		  Option( 'vary_loop_length_frequency', 'Real', desc="In design, allow loops ('n') to shorten from loop lengths defined in FASTA files.", default='0.0'),
+		  Option( 'designing_with_noncanonicals', 'Boolean', desc="Are we designing with noncanonicals, meaning 'n' has to read from a set of possible symbols (instead of 4 canonical NAs)?", default='false'),
 		  Option( 'checkpointing_frequency', 'Integer', desc="How often should we output checkpoint files?", default='100'),
 		  Option( 'continue_until_none_missing', 'Boolean', desc="If there are missing residues when we've reached n-cycles, just keep going! Suggested with checkpointing.", default='false'),
 		  Option_Group( 'csa',

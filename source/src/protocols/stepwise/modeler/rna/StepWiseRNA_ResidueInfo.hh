@@ -38,26 +38,8 @@ struct Residue_info{
 void
 print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type );
 
-utility::vector1 < Residue_info >
-Convert_rebuild_residue_string_to_list( std::string const & rebuild_residue_string );
-
-void
-output_residue_struct( Residue_info const & residue );
-
-std::string
-get_one_letter_name( std::string const & three_letter_name );
-
-std::string
-get_three_letter_name( std::string const & one_letter_name );
-
-core::Size
-get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map );
-
 void
 output_res_map( std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num );
-
-void
-output_copy_dofs( utility::vector1< Residue_info > copy_dofs );
 
 utility::vector1< Residue_info >
 get_copy_dofs_from_fasta( std::string const & full_fasta_sequence );

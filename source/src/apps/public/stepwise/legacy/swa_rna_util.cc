@@ -820,6 +820,55 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const & res_n
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// AMW TODO: the following two functions, thankfully only used here,
+// are useless for NCNTs.
+std::string
+get_one_letter_name( std::string const & three_letter_name ){
+	if ( three_letter_name == "RAD" ) return "A";
+	if ( three_letter_name == "RCY" ) return "C";
+	if ( three_letter_name == "URA" ) return "U";
+	if ( three_letter_name == "RGU" ) return "G";
+	TR << "In get_one_letter_name_function, an invalid three_letter_name was passed into the function: " << three_letter_name << std::endl;
+	exit ( 1 );
+}
+
+std::string
+get_three_letter_name( std::string const & one_letter_name ){
+	if ( one_letter_name == "A" ) return "RAD";
+	if ( one_letter_name == "C" ) return "RCY";
+	if ( one_letter_name == "U" ) return "URA";
+	if ( one_letter_name == "G" ) return "RGU";
+	TR << "In get_three_letter_name_function, an invalid one_letter_name was passed into the function: " << one_letter_name << std::endl;
+	exit ( 1 );
+}
+
+// Helper only used by this app.
+utility::vector1< Residue_info >
+Convert_rebuild_residue_string_to_list( std::string const& rebuild_residue_string ){
+	utility::vector1 < Residue_info > rebuild_copy_dofs;
+	utility::vector1< std::string > nucleotides_token = core::pose::rna::tokenize( rebuild_residue_string, "-" );
+	for ( std::string const & token : nucleotides_token ) {
+		//   TR<< token << " ";
+		Residue_info res_info;
+		res_info.name = get_three_letter_name( token.substr( 0, 1 ) );
+		std::string seq_num_string = token.substr( 1, token.length() - 1 );
+		res_info.seq_num = core::pose::rna::string_to_int( seq_num_string );
+		rebuild_copy_dofs.push_back( res_info );
+	}
+	//  TR << std::endl;
+
+	return rebuild_copy_dofs;
+}
+
+void
+output_residue_struct( Residue_info const & residue ) {
+	using namespace ObjexxFCL;
+	using namespace ObjexxFCL::format;
+	TR << get_one_letter_name( residue.name );
+	TR << lead_zero_string_of( residue.seq_num, 2 );
+	TR << A( 1, " " );
+}
+
 void
 mutate_residues_wrapper()
 {

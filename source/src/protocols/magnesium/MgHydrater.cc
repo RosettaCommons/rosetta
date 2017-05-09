@@ -402,8 +402,7 @@ MgHydrater::fix_fold_tree_in_excised_pose_for_mg_bound_waters(
 
 	// slide jumps for water daughters in full fold tree to be daughters in the excised pose
 	utility::vector1< core::Size > bound_waters_in_full_pose = find_bound_waters_that_are_daughters_in_fold_tree( pose_full, mg_res_in_full );
-	for ( Size n = 1; n <= bound_waters_in_full_pose.size(); n++ ) {
-		Size const & water_res_in_full = bound_waters_in_full_pose[ n ];
+	for ( Size const water_res_in_full : bound_waters_in_full_pose ) {
 		Size const water_res_in_mini = slice_res.index( water_res_in_full );
 		fix_water_jump( pose, mg_res, water_res_in_mini );
 	}
@@ -411,8 +410,7 @@ MgHydrater::fix_fold_tree_in_excised_pose_for_mg_bound_waters(
 	// and make sure there are no *additional* daughters...
 	utility::vector1< core::Size > bound_waters_in_mini_pose = find_bound_waters_that_are_daughters_in_fold_tree( pose, mg_res );
 	Size other_res( 0 );
-	for ( Size n = 1; n <= bound_waters_in_mini_pose.size(); n++ ) {
-		Size const & water_res_in_mini = bound_waters_in_mini_pose[ n ];
+	for ( Size const water_res_in_mini : bound_waters_in_mini_pose ) {
 		Size const water_res_in_full = slice_res[ water_res_in_mini ];
 		if ( bound_waters_in_full_pose.has_value( water_res_in_full ) ) continue;
 		if ( other_res == 0 ) { // need to attach water to some other residue
@@ -447,12 +445,10 @@ MgHydrater::setup_virtual_waters_around_magnesiums( pose::Pose & pose )
 	std::map< Size, vector1< Size > > mg_water_map = define_mg_water_map( pose );
 
 	// get mg-water pairs, properly assigned.
-	for ( Size n = 1; n <= all_mg_res.size(); n++ ) {
+	for ( Size const mg_res : all_mg_res ) {
 		// now go through each mg(2+), and fix up fold tree for waters bound to it already.
-		Size const mg_res = all_mg_res[ n ];
-		vector1< Size > water_ligands = mg_water_map[ mg_res ];
-		for ( Size n = 1; n <= water_ligands.size(); n++ ) {
-			Size const water_res = water_ligands[ n ];
+		vector1< Size > const & water_ligands = mg_water_map[ mg_res ];
+		for ( Size const water_res : water_ligands ) {
 			if ( pose.fold_tree().get_parent_residue( water_res ) != int( mg_res ) ) {
 				fix_water_jump( pose, mg_res, water_res );
 			}

@@ -270,6 +270,8 @@ build_proton_chi_rotamers(
 
 	bool const & include_virtual_side_chain = residue_task.include_virtual_side_chain(); /* this means 2'-OH for RNA*/
 
+	if ( n_proton_chi == 0 ) return;
+
 	// Which rotlib to use is a little fuzzy at this point - we're assuming the one for the concrete_residue is
 	// applicable to all rotamers ... which might not be the case if the rotamers come from different ResidueTypes
 	rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue, /*forcebasic*/ true );
@@ -296,15 +298,19 @@ build_proton_chi_rotamers(
 				rot->set_chi( jj_protchi,
 					proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 
-				if ( include_virtual_side_chain ) {
-					runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
-					static core::scoring::rna::RNA_EnergyMethodOptions const rna_options;
-					static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential( rna_options ); // I think this is OK.
-					Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
-					if ( n_min == 0 || rna_torsion < rna_torsion_min ) {
-						n_min = new_rotamer_number; rna_torsion_min = rna_torsion;
-					}
+				if ( !include_virtual_side_chain ) continue;
+
+				runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
+				static core::scoring::rna::RNA_EnergyMethodOptions const rna_options;
+				static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential( rna_options ); // I think this is OK.
+				Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
+				if ( n_min == 0 || rna_torsion < rna_torsion_min ) {
+					n_min = new_rotamer_number; rna_torsion_min = rna_torsion;
 				}
+			}
+			if ( include_virtual_side_chain ) {
+				ResidueOP rot = core::pose::add_variant_type_to_residue( *rotamers[ n_min ], chemical::VIRTUAL_O2PRIME_HYDROGEN, pose);
+				rotamers.push_back( rot );
 			}
 
 		}

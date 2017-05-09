@@ -110,8 +110,8 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 					pose.append_residue_by_jump( *rsd_hoh, i );
 				} else {
 					vector1< bool > already_coordinated( 6, false );
-					for ( Size m = 1; m <= ligands.size(); m++ ) {
-						already_coordinated[ get_closest_orbital_axis( pose.residue( i ), pose.xyz( ligands[ m ]) ) ] = true;
+					for ( auto const & ligand : ligands ) {
+						already_coordinated[ get_closest_orbital_axis( pose.residue( i ), pose.xyz( ligand ) ) ] = true;
 					}
 					vector1< Size > pick_orbitals;
 					for ( Size m = 1; m <= 6; m++ ) {
@@ -160,7 +160,7 @@ MgMonteCarlo::setup_mg_water_fold_tree( pose::Pose & pose ) const {
 	FoldTree f( pose.size() );
 	vector1< Size > mg_res = get_mg_res( pose );
 	for ( Size n = 1; n <= pose.size(); n++ ) {
-		if ( pose.residue( n ).name3() == "HOH" ) {
+		if ( pose.residue_type( n ).name3() == "HOH" ) {
 			f.new_jump( n, 1, n - 1 /* cutpoint */ );
 		}
 	}

@@ -1560,15 +1560,14 @@ setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose con
 		Residue const & rsd2 = pose2.residue( i );
 
 		for ( Size j = 1; j <= rsd1.nheavyatoms(); j++ ) {
-			std::string name( rsd1.atom_name( j )  );
+			std::string const & name( rsd1.atom_name( j )  );
 			if ( !rsd2.has( name ) ) continue;
-
-			if ( rsd1.is_virtual(j) ) continue;
+			if ( rsd1.is_virtual( j ) ) continue;
 
 			Size const j2( rsd2.atom_index( name ) );
 			if ( rsd2.is_virtual(j2) ) continue;
 
-			atom_id_map[ AtomID( j, i ) ] = AtomID(  j2, i ) ;
+			atom_id_map[ AtomID( j, i ) ] = AtomID( j2, i ) ;
 		}
 	}
 }
@@ -1668,8 +1667,7 @@ residue_sc_rmsd_no_super( core::conformation::ResidueCOP res1, core::conformatio
 	}
 
 	// compare over sidechain heavy atoms only, ignoring hydrogens
-	for ( std::vector< core::Size >::const_iterator it = compare_atoms.begin(); it != compare_atoms.end(); ++it ) {
-		core::Size const atomno = *it;
+	for ( Size const atomno : compare_atoms ) {
 		core::Vector const diff = res1->xyz(atomno) - res2->xyz(atomno);
 		sum2 += diff.length_squared();
 	}
@@ -1717,9 +1715,7 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 		ResidueType const & rsd_type1 = pose1.residue_type( i );
 		ResidueType const & rsd_type2 = pose2.residue_type( i );
 
-		for ( Size n = 1; n <= atom_names_to_find.size(); n++ ) {
-			std::string const & atom_name = atom_names_to_find[ n ];
-
+		for ( std::string const & atom_name : atom_names_to_find ) {
 			if ( !rsd_type1.has( atom_name )  ) continue;
 			if ( !rsd_type2.has( atom_name )  ) continue;
 

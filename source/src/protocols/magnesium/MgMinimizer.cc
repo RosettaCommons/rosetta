@@ -68,11 +68,11 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 
 	vector1< ConstraintCOP > coord_csts;
 	if ( mg_coord_cst_dist_ > 0.0 ) {
-		for ( Size n = 1; n <= pose_mg_res.size(); n++ ) {
+		for ( Size const mg_res : pose_mg_res ) {
 			coord_csts.push_back( pose.add_constraint( ConstraintOP(
-				new CoordinateConstraint( AtomID( 1, pose_mg_res[ n ] ),
+				new CoordinateConstraint( AtomID( 1, mg_res ),
 				AtomID( 1, 1 ),
-				pose.residue( pose_mg_res[ n ] ).xyz( 1 ),
+				pose.residue( mg_res ).xyz( 1 ),
 				FuncOP( new HarmonicFunc( 0.0, mg_coord_cst_dist_ ) ) ) ) ) );
 		}
 	}

@@ -124,6 +124,16 @@ ReferenceEnergyNoncanonical::residue_energy(
 	case 18 : emap[ ref_nc ] +=   0.29; break;
 	case 19 : emap[ ref_nc ] +=   0.91; break;
 	case 20 : emap[ ref_nc ] +=   0.51; break;
+		// "OMA", "OMC", "OMG", "OMU", "PSU", "H2U", "PUR", "1MA"
+		// GACU 4.14  3.58  2.82  3.76
+	case 21 : emap[ ref_nc ] +=   3.58; break;
+	case 22 : emap[ ref_nc ] +=   2.82; break;
+	case 23 : emap[ ref_nc ] +=   4.14; break;
+	case 24 : emap[ ref_nc ] +=   3.76; break;
+	case 25 : emap[ ref_nc ] +=   3.76; break;
+	case 26 : emap[ ref_nc ] +=   3.76; break;
+	case 27 : emap[ ref_nc ] +=   3.58; break;
+	case 28 : emap[ ref_nc ] +=   3.58; break;
 	default :
 		return;
 	}
@@ -148,7 +158,7 @@ ReferenceEnergyNoncanonical::init_res_list()
 	if ( !res_list_.empty() ) return;
 	//Must all be 3-character string!
 	std::string const res_list [] = {"B3A", "B3C", "B3D", "B3E", "B3F", "B3G", "B3H", "B3I", "B3K", "B3L", "B3M", "B3N",
-		"B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
+		"B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y", "OMA", "OMC", "OMG", "OMU", "PSU", "H2U", "PUR", "1MA" };
 	Size const res_list_size = sizeof( res_list ) / sizeof( res_list [0] );
 	for ( Size i = 0; i != res_list_size; ++i ) {
 		res_list_.push_back(res_list[i]);

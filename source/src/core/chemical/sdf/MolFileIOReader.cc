@@ -154,11 +154,10 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 		rotamers::StoredRotamerLibrarySpecificationOP rotlib( new rotamers::StoredRotamerLibrarySpecification );
 		for ( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
 			std::map< std::string, core::Vector > location_map;
-			for ( std::map< core::chemical::sdf::AtomIndex, std::string >::const_iterator itr( index_name_map.begin() ), itr_end( index_name_map.end() );
-					itr != itr_end; ++itr ) {
-				MolFileIOAtomOP atom = molfile_data[ ii ]->atom_index( itr->first );
+			for ( auto const & map_elem : index_name_map ) {
+				MolFileIOAtomOP atom = molfile_data[ ii ]->atom_index( map_elem.first );
 				if ( atom ) {
-					location_map[ itr->second ] = atom->position();
+					location_map[ map_elem.second ] = atom->position();
 				}
 			}
 			rotlib->add_rotamer( location_map );

@@ -178,8 +178,7 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 	Real rmsd( 0.0 );
 	Size natoms( 0 );
 
-	for ( Size n = 1; n <= working_res_list.size(); n++ ) {
-		Size const i      = working_res_list[ n ];
+	for ( Size const i : working_res_list ) {
 		Size const i_full = res_list[ i ];
 
 		//  std::cout << "NATIVE CHECK: " <<  i << ' ' << i_full << std::endl;
@@ -212,8 +211,7 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 		runtime_assert( rsd_next.aa() == rsd_next_native.aa() );
 
 		//std::cout << "RMSD:  num_suite_atoms " << next_suite_atoms_.size() << std::endl;
-		for ( Size k = 1; k <= next_suite_atoms_.size(); k++ ) {
-			std::string atom_name = next_suite_atoms_[ k ];
+		for ( std::string const & atom_name : next_suite_atoms_ ) {
 			//std::cout << "RMSD: " << i+1 << atom_name << std::endl;
 			runtime_assert( rsd_next.has( atom_name ) );
 			runtime_assert( rsd_next_native.has( atom_name ) );

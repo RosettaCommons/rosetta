@@ -26,11 +26,18 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_trials.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <devel/init.hh>
+#include <core/init/init.hh>
+
+#include <protocols/simple_moves/PackRotamersMover.hh>
+
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
+#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 
@@ -50,6 +57,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 
 // option key includes
@@ -90,6 +98,12 @@ OPT_KEY( Boolean, sample_chi )
 OPT_KEY( Boolean, ss_ds_ts_assign )
 OPT_KEY( Boolean, dump )
 OPT_KEY( Boolean, all_RNA )
+OPT_KEY( Boolean, rotamer_trials )
+OPT_KEY( Boolean, final_minimize )
+OPT_KEY( Boolean, multiround )
+OPT_KEY( Real, ligand_distance )
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -165,16 +179,23 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 
 }
 
+bool residues_too_distant( conformation::Residue const & r1, conformation::Residue const & r2, Real const dist ) {
+	return r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) > dist*dist;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 rna_design_test()
 {
-
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
+	using namespace protocols::toolbox;
+	using namespace protocols::rna::denovo;
+	using namespace protocols::rna::denovo::movers;
+	using namespace protocols::rna::denovo::options;
+
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -184,6 +205,12 @@ rna_design_test()
 	core::import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	protocols::rna::denovo::ensure_phosphate_nomenclature_matches_mini( pose );
 
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	RNA_MinimizerOptionsOP min_options( new RNA_MinimizerOptions );
+	min_options->initialize_from_command_line();
+	RNA_Minimizer rna_minimizer( min_options );
+
 	dump_pdb( pose, "start.pdb");
 	pose::Pose save_pose( pose );
 
@@ -192,49 +219,63 @@ rna_design_test()
 
 	utility::vector1< std::string > names;
 	if ( option[ all_RNA ] ) {
-		auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
-		for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
+		//auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
+		//for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
+		// Explicitly permit names of particular interest.
+		names.emplace_back( "OMA" );
+		names.emplace_back( "OMC" );
+		names.emplace_back( "OMG" );
+		names.emplace_back( "OMU" );
+		names.emplace_back( "  I" );
+		names.emplace_back( "H2U" );
+		names.emplace_back( "PSU" );
+		names.emplace_back( "1AP" ); // diaminopurine by another name.
+		// Newly added for Dharmacon
+		names.emplace_back( "OMI" );
+		names.emplace_back( "PUR" );
+		names.emplace_back( "2AP" );
+		names.emplace_back( "8OG" );
+		names.emplace_back( "6MG" );
+		names.emplace_back( "5FC" );
+		names.emplace_back( "5FU" );
+		names.emplace_back( "5BU" );
+		names.emplace_back( "5IU" );
+		names.emplace_back( "NPU" );
 	}
+	//utility::vector1< core::chemical::AA > empty_na_vector;
 
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		pack::task::parse_resfile(pose, *task);
 	} else {
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			// AMW: We can no longer use 'allow_aa( na_rad )' etc. because
-			// L-RNA residues share the parent na_rad (for now -- could add
-			// new ones like for the D_AAs
-			// Instead, the misnomer: allow_noncanonical_aa
-			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  A" );
-			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  U" );
-			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  G" );
-			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  C" );
+			// If residue is far from ligand, skip
+			if ( residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
+
+			if ( !pose.residue_type( ii ).is_RNA() ) continue;
+			//task->nonconst_residue_task( ii ).restrict_absent_nas( empty_na_vector );
+			task->nonconst_residue_task( ii ).allow_aa( na_rad );
+			task->nonconst_residue_task( ii ).allow_aa( na_ura );
+			task->nonconst_residue_task( ii ).allow_aa( na_rgu );
+			task->nonconst_residue_task( ii ).allow_aa( na_rcy );
 			if ( option[ all_RNA ] ) {
 				for ( auto const & name : names ) {
 					task->nonconst_residue_task( ii ).allow_noncanonical_aa(name);
 				}
 			}
-			debug_assert( task->design_residue(ii) );
+			assert( task->design_residue(ii) );
 		}
 	}
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		if ( !pose.residue_type( ii ).is_RNA() ) continue;
+		if ( residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
 
 		//Hmmm, extras.
-		task->nonconst_residue_task( ii ).and_extrachi_cutoff( 0 );
+		//task->nonconst_residue_task( ii ).and_extrachi_cutoff( 0 );
 
 		if ( option[ disable_o2prime_rotamers ]() ) task->nonconst_residue_task(ii).sample_proton_chi( false );
 
-		if ( option[ sample_chi ]() ) task->nonconst_residue_task(ii).nonconst_rna_task().set_sample_rna_chi( true );
-
-		// Can input this from command line:
-		//  task->nonconst_residue_task( ii ).or_ex4( true );
-
-		// Can input this from command line?
-		//  task->nonconst_residue_task( ii ).or_ex1( true );
-
-		// Screw this, can figure this out from command line.
-		//  if ( !option[ disable_include_current ]() ) task->nonconst_residue_task( ii ).or_include_current( true );
-
+		//if ( option[ sample_chi ]() ) task->nonconst_residue_task(ii).nonconst_rna_task().set_sample_rna_chi( true );
 	}
 
 	ScoreFunctionOP scorefxn = get_score_function();
@@ -244,20 +285,73 @@ rna_design_test()
 	options.exclude_DNA_DNA( false );
 	scorefxn->set_energy_method_options( options );
 
-	scorefxn->show( std::cout,pose );
+	scorefxn->show( std::cout, pose );
 
 	pose.dump_pdb( "start.pdb" );
 
 	Size const nstruct = option[ out::nstruct ];
 	utility::vector1< std::pair< Real, std::string > > results;
 	utility::vector1< pose::PoseOP > pose_list;
-
-	pack::pack_rotamers_loop( pose, *scorefxn, task, nstruct, results, pose_list);
-
-	std::string outfile( pdb_file );
 	Size pos( pdb_file.find( ".pdb" ) );
-	outfile.replace( pos, 4, ".pack.txt" );
-	protocols::rna::denovo::export_packer_results( results, pose_list, scorefxn, outfile, option[ dump ] );
+
+	if ( option[ multiround ] ) {
+		// TODO: also fill results vector
+		core::pose::Pose start_pose = pose;
+		for ( Size ii = 1; ii <= nstruct; ++ii ) {
+			protocols::simple_moves::PackRotamersMover prm( scorefxn, task );
+			prm.apply( pose );
+			if ( option[ final_minimize ] ) {
+				AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
+				atom_level_domain_map->set( true );
+				rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
+				rna_minimizer.apply( pose );
+			}
+			pose_list.push_back( core::pose::PoseOP(&pose) );
+			std::string outfile( pdb_file );
+			std::stringstream suffix;
+			suffix << ii << ".pdb";
+			std::string name = outfile;
+			name.replace( pos, 4, suffix.str() );
+			if ( option[ dump ] ) pose.dump_pdb( name );
+		}
+	} else if ( option[ rotamer_trials ]() ) {
+		// TODO: also fill results vector
+		// AMW: this scheme allows the graphics viewer to follow each pose.
+		core::pose::Pose start_pose = pose;
+		for ( Size ii = 1; ii <= nstruct; ++ii ) {
+			pose = start_pose;
+			//core::pose::PoseOP poseop( new core::pose::Pose( pose ) );
+			pack::rotamer_trials( pose, *scorefxn, task );
+
+			if ( option[ final_minimize ] ) {
+				AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
+				atom_level_domain_map->set( true );
+				rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
+				rna_minimizer.apply( pose );
+			}
+
+			pose_list.push_back( core::pose::PoseOP(&pose) );
+			std::string outfile( pdb_file );
+			std::stringstream suffix;
+			suffix << ii << ".pdb";
+			std::string name = outfile;
+			name.replace( pos, 4, suffix.str() );
+			if ( option[ dump ] ) pose.dump_pdb( name );
+		}
+	} else {
+		pack::pack_rotamers_loop( pose, *scorefxn, task, nstruct, results, pose_list);
+		if ( option[ final_minimize ] ) {
+			for ( auto const & poseop : pose_list ) {
+				AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( *poseop ) );
+				atom_level_domain_map->set( true );
+				rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
+				rna_minimizer.apply( *poseop );
+			}
+		}
+		std::string outfile( pdb_file );
+		outfile.replace( pos, 4, ".pack.txt" );
+		protocols::rna::denovo::export_packer_results( results, pose_list, scorefxn, outfile, option[ dump ] );
+	}
 
 	std::string sequence_recovery_file( pdb_file );
 	sequence_recovery_file.replace( pos, 4, ".sequence_recovery.txt" );
@@ -315,6 +409,7 @@ my_main( void* )
 		ss_ds_ts_assign_test();
 	} else {
 		rna_design_test();
+		protocols::viewer::clear_conformation_viewers();
 	}
 	exit( 0 );
 }
@@ -333,16 +428,20 @@ main( int argc, char * argv [] )
 		//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
 		NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
 		NEW_OPT( disable_include_current, "In designing, don't include current",false);
-		NEW_OPT( sample_chi,  "In designing RNA, chi torsion sample",false);
+		NEW_OPT( sample_chi,  "In designing RNA, chi torsion sample", false);
 		NEW_OPT( ss_ds_ts_assign, "Figure out assignment of residues to single-stranded, double-stranded, tertiary contact categories",false);
 		NEW_OPT( dump, "Dump pdb", false );
 		NEW_OPT( all_RNA, "Use all RNA", false );
+		NEW_OPT( rotamer_trials, "Do rotamer trials instead", false );
+		NEW_OPT( final_minimize, "Do a final minimization (compare to minimized starting structures!", false );
+		NEW_OPT( multiround, "Do a multiround protocol instead", false );
+		NEW_OPT( ligand_distance, "Distance from ligand to design", 10.0 );
 
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		devel::init(argc, argv);
+		core::init::init(argc, argv);
 
 
 		////////////////////////////////////////////////////////////////////////////

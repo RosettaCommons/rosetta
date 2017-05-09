@@ -297,7 +297,7 @@ string_to_real( std::string const & input_string ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< std::string >
-tokenize( std::string const & str, std::string const & delimiters ){
+tokenize( std::string const & str, std::string const & delimiters ) {
 	return core::pose::rna::tokenize( str, delimiters );
 }
 
@@ -604,11 +604,14 @@ suite_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, Size const & mov
 
 	suite_square_deviation( pose1, pose2, prepend_res, moving_res_num, moving_res_num, atom_count, sum_sd, false, ignore_virtual_atom );
 
+	if ( atom_count == 0 ) {
+		TR.Warning << "Caution: RMSD value calculated over... zero atoms?" << std::endl;
+		return 0.01;
+	}
+
 	sum_sd = sum_sd/( atom_count );
 	Real rmsd = sqrt( sum_sd );
 
-	// AMW: we just divided by atom_count, so it shouldn't be 0!
-	if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on June_11, 2010, took me a whole day to debug this since buggy only on Biox compiler!
 
 	return ( std::max( 0.01, rmsd ) );
 }
@@ -655,11 +658,13 @@ rmsd_over_residue_list(
 
 	}
 
+	if ( atom_count == 0 ) {
+		TR.Warning << "Caution: RMSD value calculated over... zero atoms?" << std::endl;
+		return 0.01;
+	}
+
 	sum_sd = sum_sd/( atom_count );
 	Real rmsd = sqrt( sum_sd );
-
-	// AMW: we just divided by atom_count, so it shouldn't be 0!
-	if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on May 5, 2010
 
 	if ( verbose ) {
 		TR << "sum_sd = " << sum_sd << " atom_count = " << atom_count << " rmsd = " << rmsd << std::endl;
@@ -700,34 +705,6 @@ print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pos
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// AMW: we are deprecating this function as of 2016. Delete before merging.
-/*Size
-get_num_side_chain_atom_from_res_name( chemical::AA const & res_aa, bool const verbose ){
-
-Size num_side_chain_atom;
-
-if ( name_from_aa( res_aa ) == "RAD" ) {
-if ( verbose ) TR << "name_from_aa: RAD" << std::endl;
-num_side_chain_atom = 11;
-} else if ( name_from_aa( res_aa ) == "RCY" ) {
-if ( verbose ) TR << "name_from_aa: RCY" << std::endl;
-num_side_chain_atom = 9;
-} else if ( name_from_aa( res_aa ) == "RGU" ) {
-if ( verbose ) TR << "name_from_aa: RGU" << std::endl;
-num_side_chain_atom = 12;
-} else if ( name_from_aa( res_aa ) == "URA" ) {
-if ( verbose ) TR << "name_from_aa: URA" << std::endl;
-num_side_chain_atom = 9;
-} else {
-TR << "Error, cannot identify residue type" << std::endl;
-num_side_chain_atom = 0;
-exit ( 1 );
-}
-
-return num_side_chain_atom;
-}*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
@@ -842,11 +819,14 @@ phosphate_base_phosphate_rmsd( pose::Pose const & pose1, pose::Pose const & pose
 
 	phosphate_base_phosphate_square_deviation( pose1, pose2, moving_res_num, moving_res_num, atom_count, sum_sd, false, ignore_virtual_atom );
 
+	// AMW: we just divided by atom_count, so it shouldn't be 0!
+	if ( atom_count == 0 ) {
+		TR.Warning << "Interpret results carefully; just computed RMSD over zero atoms... " << std::endl;
+		return 0.01;
+	}
+
 	sum_sd = sum_sd/( atom_count );
 	Real rmsd = sqrt( sum_sd );
-
-	// AMW: we just divided by atom_count, so it shouldn't be 0!
-	if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on June_11, 2010, took me a whole day to debug this since buggy only on Biox compiler!
 
 	return ( std::max( 0.01, rmsd ) );
 }
@@ -975,10 +955,6 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 
 	atom_count++;
 	sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno_1, atomno_2, verbose );
-
-	// AMW: returning here until I know why not to, since the sugar suite sure shouldn't
-	// include any sidechain atoms except O2'
-	// AMW: NOT returning here because screw it, I want no integration test changes
 
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculates num_heavy_atom by considering
 	//the virtual O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
@@ -1548,6 +1524,15 @@ choose_random_if_unspecified_nucleotide( char & newrestype ) {
 		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
 		TR << "Choosing random nucleotide: " << newrestype << std::endl;
 	}
+}
+
+// Since we're not getting it from the full model info yet, TEMPORARILY make this global for testing
+utility::vector1< std::string > possible_rts( utility::tools::make_vector1( "RAD", "RGU", "RCY", "URA", "OMA", "OMC", "OMG", "OMU", "PSU", "H2U", "PUR", "1MA", "NPU", "8OG", "6MG", "5IU", "5FC", "5FU" ) );
+
+// At the moment, don't actually depend on the full model info or anything
+std::string
+choose_randomly_from_allowed_at_position( core::pose::Pose const & /*pose*/, core::Size const /*ii*/ ) {
+	return possible_rts[ numeric::random::rg().random_range( 1, possible_rts.size() ) ];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

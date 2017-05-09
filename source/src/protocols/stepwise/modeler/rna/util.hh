@@ -264,6 +264,9 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 void
 choose_random_if_unspecified_nucleotide( char & newrestype );
 
+std::string
+choose_randomly_from_allowed_at_position( core::pose::Pose const & pose, core::Size const ii );
+
 bool
 mutate_res_if_allowed( core::pose::Pose & pose, core::Size const mutate_res, core::Real const mutation_frequency = 0.5 );
 

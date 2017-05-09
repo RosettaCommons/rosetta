@@ -179,7 +179,7 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 	ConstraintSetOP cst_set( new ConstraintSet );
 	for ( Size i = 1; i <= nres; ++i ) {
 		ResidueType const & res = pose.residue_type( i );
-		if ( res.is_RNA() && ( res.is_purine() ) ) {
+		if ( res.is_RNA() && res.is_purine() ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			core::scoring::func::FuncOP chi_cst_func( new core::scoring::func::CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
 			AtomID const atom1( res.atom_index( "C2'" ), i );

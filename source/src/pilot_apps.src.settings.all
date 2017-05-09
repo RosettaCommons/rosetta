@@ -105,6 +105,8 @@ sources = {
 		"test_mm_lj",
 		"test_nu_angles",
 		"test_terpenes",
+		"torsion_scoring",
+		"trial_rna_mutants",
 		"triazolamer_creator",
 		"triazolamer_dock_design",
 		"trivial_alascan",

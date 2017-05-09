@@ -71,6 +71,8 @@ public:
 
 	void set_presample_by_swa( core::Size const setting ){ presample_by_swa_ = setting; }
 
+	void set_designing_with_noncanonicals( bool const setting ){ designing_with_noncanonicals_ = setting; }
+
 	void set_start_added_residue_in_aform( core::Size const setting ){ start_added_residue_in_aform_ = setting; }
 
 	void set_minimize_single_res( core::Size const setting ){ minimize_single_res_ = setting; }
@@ -129,6 +131,7 @@ private:
 	bool presample_by_swa_;
 	bool minimize_single_res_;
 	bool start_added_residue_in_aform_;
+	bool designing_with_noncanonicals_;
 	core::Size internal_cycles_;
 	bool sample_pH_ = false;
 
