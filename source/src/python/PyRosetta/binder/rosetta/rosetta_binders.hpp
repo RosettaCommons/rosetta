@@ -344,6 +344,21 @@ void xyzVector_add_on_binder(pybind11::class_<numeric::xyzVector<T>, std::shared
     cl.def(pybind11::self /= T());
 }
 
+template< typename T >
+void xyzMatrix_add_on_binder(pybind11::class_<numeric::xyzMatrix<T>, std::shared_ptr< numeric::xyzMatrix<T> > > &cl) {
+	using Matrix = numeric::xyzMatrix<T>;
+	cl.def_property("xx", (T const & (Matrix::*)() const) &Matrix::xx, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::xx);
+	cl.def_property("xy", (T const & (Matrix::*)() const) &Matrix::xy, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::xy);
+	cl.def_property("xz", (T const & (Matrix::*)() const) &Matrix::xz, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::xz);
+
+	cl.def_property("yx", (T const & (Matrix::*)() const) &Matrix::yx, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::yx);
+	cl.def_property("yy", (T const & (Matrix::*)() const) &Matrix::yy, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::yy);
+	cl.def_property("yz", (T const & (Matrix::*)() const) &Matrix::yz, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::yz);
+
+	cl.def_property("zx", (T const & (Matrix::*)() const) &Matrix::zx, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::zx);
+	cl.def_property("zy", (T const & (Matrix::*)() const) &Matrix::zy, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::zy);
+	cl.def_property("zz", (T const & (Matrix::*)() const) &Matrix::zz, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::zz);
+}
 
 
 //template<class Stream>

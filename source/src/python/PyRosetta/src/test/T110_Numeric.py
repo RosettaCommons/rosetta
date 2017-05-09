@@ -20,3 +20,16 @@ I = rosetta.numeric.xyzMatrix_double_t.identity()
 V = rosetta.numeric.xyzVector_double_t()
 
 a = I * V
+
+
+m = rosetta.numeric.xyzMatrix_double_t.identity()
+m = m * m
+
+
+m.xx = 1;  m.xy = 2;  m.xz = 3;
+m.yx = 4;  m.yy = 5;  m.yz = 6;
+m.zx = 7;  m.zy = 8;  m.zz = 9;
+
+assert( m.xx == 1 );  assert( m.xy == 2 );  assert( m.xz == 3 );
+assert( m.yx == 4 );  assert( m.yy == 5 );  assert( m.yz == 6 );
+assert( m.zx == 7 );  assert( m.zy == 8 );  assert( m.zz == 9 );
