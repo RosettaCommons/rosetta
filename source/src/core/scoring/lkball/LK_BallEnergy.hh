@@ -186,7 +186,36 @@ public:
 		EnergyMap & emap
 	) const override;
 
-	/// @brief  Just used in packing, currently.
+	/// @brief Let the energy-method consumers (e.g. the packer) use bounding-sphere logic for
+	/// deciding whether bb/bb, bb/sc, and sc/sc energies should be evaluated.
+	bool
+	divides_backbone_and_sidechain_energetics() const override;
+
+	/// @brief The sum bbE(r1,r2) + bs(r1,r2) + bs(r2,r1) + ss(r1,r2) must equal rpe(r1,r2).
+	/// This function evaluates only the energies of bb/bb interactions.
+	void
+	backbone_backbone_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const override;
+
+	/// @brief The sum bbE(r1,r2) + bs(r1,r2) + bs(r2,r1) + ss(r1,r2) must equal rpe(r1,r2).
+	/// This function evaluates only the energies of bb/sc interactions; that is, the backbone
+	/// from residue 1 with the sidechain of residue 2
+	void
+	backbone_sidechain_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const override;
+
+	/// @brief The sum bbE(r1,r2) + bs(r1,r2) + bs(r2,r1) + ss(r1,r2) must equal rpe(r1,r2).
+	/// This function evaluates only the energies of sc/sc interactions.
 	void
 	sidechain_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -440,6 +469,46 @@ public:
 	void
 	setup_d2_bounds();
 
+	etable::Etable const & etable() const;
+
+	ObjexxFCL::FArray3D< Real > const & solv1() const { return solv1_; }
+	ObjexxFCL::FArray3D< Real > const & solv2() const { return solv2_; }
+
+	inline
+	Real
+	etable_bins_per_A2() const
+	{
+		return etable_bins_per_A2_;
+	}
+
+	inline
+	Real
+	lkb_max_dis() const
+	{
+		return lkb_max_dis_;
+	}
+
+	inline
+	Real
+	lkb_max_dis2() const
+	{
+		return lkb_max_dis2_;
+	}
+
+	inline
+	Real
+	fasol_max_dis2() const
+	{
+		return fasol_max_dis2_;
+	}
+
+	inline
+	bool
+	slim_etable() const
+	{
+		return slim_etable_;
+	}
+
 private:
 
 	lkbtrie::LKBRotamerTrieOP
@@ -504,6 +573,7 @@ private:
 	// save bridging water positions
 	//bool save_bridging_waters_;
 	//mutable utility::vector1< ScoredBridgingWater > bridging_waters_; ///// WHOA! THIS DOES NOT BELONG HERE!
+
 
 public:
 	core::Size version() const override;

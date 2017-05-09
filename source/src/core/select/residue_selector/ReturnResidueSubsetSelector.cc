@@ -118,7 +118,7 @@ void ReturnResidueSubsetSelector::provide_xml_schema( utility::tag::XMLSchemaDef
 /// indicating whether each residue is selected ("true") or not ("false").
 ReturnResidueSubsetSelector::ResidueSubset
 ReturnResidueSubsetSelector::apply(
-	core::pose::Pose const & pose//pose
+	core::pose::Pose const & ASSERT_ONLY( pose )
 ) const {
 
 	if ( subset_.empty() ) {

@@ -2208,6 +2208,18 @@ public:
 	basic::datacache::BasicDataCacheOP
 	nonconst_data_ptr();
 
+	/// @brief BasicDataCache indexed by enum in residue_datacache.hh. Beware, this
+	/// will crash if a call to nonconst_data_ptr() or data_ptr() has not previously
+	/// been made on this %Residue -- the datacache is created just-in-time
+	basic::datacache::BasicDataCache const &
+	data() const { return *data_cache_; }
+
+	/// @brief BasicDataCache indexed by enum in residue_datacache.hh. Beware, this
+	/// will crash if a call to nonconst_data_ptr() or data_ptr() has not previously
+	/// been made on this %Residue -- the datacache is created just-in-time
+	basic::datacache::BasicDataCache &
+	nonconst_data() { return *data_cache_; }
+
 	/// @brief Is this residue mirrored relative to its coordinates in the ResidueType?
 	/// @details Only used for achiral residues like glycine in the context of mirror symmetry and other mirror-image structures.
 	inline bool mirrored_relative_to_type() const { return mirrored_relative_to_type_; }

@@ -109,13 +109,13 @@ StructureDataObserver::on_length_change( core::conformation::signals::LengthEven
 }
 
 void
-StructureDataObserver::on_residue_append( core::conformation::signals::LengthEvent const & event )
+StructureDataObserver::on_residue_append( core::conformation::signals::LengthEvent const & ASSERT_ONLY(event) )
 {
 	debug_assert( event.tag == core::conformation::signals::LengthEvent::RESIDUE_APPEND );
 }
 
 void
-StructureDataObserver::on_residue_prepend( core::conformation::signals::LengthEvent const & event )
+StructureDataObserver::on_residue_prepend( core::conformation::signals::LengthEvent const & ASSERT_ONLY(event) )
 {
 	debug_assert( event.tag == core::conformation::signals::LengthEvent::RESIDUE_PREPEND );
 }

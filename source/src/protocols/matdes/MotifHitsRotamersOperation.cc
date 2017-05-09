@@ -81,7 +81,7 @@ void
 MotifHitsRotamersOperation::alter_rotamer_set(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & /*sfxn*/,
-	core::pack::task::PackerTask const & ptask,
+	core::pack::task::PackerTask const & ASSERT_ONLY(ptask),
 	utility::graph::GraphCOP /*packer_neighbor_graph*/,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )

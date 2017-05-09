@@ -81,6 +81,65 @@ public:
 
 	void tearDown() {}
 
+	void test_lk_ball_rpe_matches_bbbb_bbsc_scscE()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::lk_ball, 1.0 );
+		core::scoring::methods::EnergyMethodOptions options;
+
+		core::scoring::lkball::LK_BallEnergy lkbE( options );
+		TS_ASSERT( lkbE.divides_backbone_and_sidechain_energetics() );
+		sfxn( pose );
+
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size jj = ii+1; jj <= pose.total_residue(); ++jj ) {
+				EnergyMap emap_rpe, emap_divided;
+				lkbE.residue_pair_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_rpe );
+
+				lkbE.backbone_backbone_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_divided );
+				lkbE.backbone_sidechain_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_divided );
+				lkbE.backbone_sidechain_energy( pose.residue( jj ), pose.residue( ii ), pose, sfxn, emap_divided );
+				lkbE.sidechain_sidechain_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_divided );
+
+				for ( Size kk = 1; kk <= lkbE.score_types().size(); ++kk ) {
+					ScoreType kkst = lkbE.score_types()[ kk ];
+					TS_ASSERT_DELTA( emap_rpe[ kkst ], emap_divided[ kkst ], 1e-6 );
+				}
+			}
+		}
+	}
+
+	void test_lk_ball_bridge_rpe_matches_bbbb_bbsc_scscE()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::lk_ball, 1.0 );
+		sfxn.set_weight( core::scoring::lk_ball_bridge, 1.0 );
+		core::scoring::methods::EnergyMethodOptions options;
+
+		core::scoring::lkball::LK_BallEnergy lkbE( options );
+		TS_ASSERT( lkbE.divides_backbone_and_sidechain_energetics() );
+		sfxn( pose );
+
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size jj = ii+1; jj <= pose.total_residue(); ++jj ) {
+				EnergyMap emap_rpe, emap_divided;
+				lkbE.residue_pair_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_rpe );
+
+				lkbE.backbone_backbone_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_divided );
+				lkbE.backbone_sidechain_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_divided );
+				lkbE.backbone_sidechain_energy( pose.residue( jj ), pose.residue( ii ), pose, sfxn, emap_divided );
+				lkbE.sidechain_sidechain_energy( pose.residue( ii ), pose.residue( jj ), pose, sfxn, emap_divided );
+
+				for ( Size kk = 1; kk <= lkbE.score_types().size(); ++kk ) {
+					ScoreType kkst = lkbE.score_types()[ kk ];
+					TS_ASSERT_DELTA( emap_rpe[ kkst ], emap_divided[ kkst ], 1e-6 );
+				}
+			}
+		}
+	}
+
 	void test_start_func_matches_start_score_w_full_bbflex()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();

@@ -37,6 +37,8 @@ namespace lkball {
 
 class LK_BallEnergy;
 
+class LK_Ball_RPE_Invoker;
+
 }
 }
 }
