@@ -285,9 +285,9 @@ prepare_scratch_residue(
 		scratch_rsd->set_xyz( j , start_rsd.xyz( j ) );
 	}
 
-	kinematics::Stub const input_stub( scratch_rsd->xyz( scratch_rsd->type().RNA_info().c3prime_atom_index() ), 
-		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c3prime_atom_index() ), 
-		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c4prime_atom_index() ), 
+	kinematics::Stub const input_stub( scratch_rsd->xyz( scratch_rsd->type().RNA_info().c3prime_atom_index() ),
+		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c3prime_atom_index() ),
+		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c4prime_atom_index() ),
 		scratch_rsd->xyz( scratch_rsd->type().RNA_info().c5prime_atom_index() ) );
 
 	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {

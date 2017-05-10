@@ -56,15 +56,15 @@ std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v) 
 /// @brief Output function for utility::fixedsizearray1 object.
 template <class T, platform::SSize L>
 std::ostream & operator <<(std::ostream & os, utility::fixedsizearray1<T, L> const & v) {
-	os << "[";
-	if ( v.size() ) {
-		for ( size_t i=1; i<=L; ++i ) {
-			os << v[i];
-			if ( i < L ) os << ", ";
-		}
-	}
-	os << "]";
-	return os;
+os << "[";
+if ( v.size() ) {
+for ( size_t i=1; i<=L; ++i ) {
+os << v[i];
+if ( i < L ) os << ", ";
+}
+}
+os << "]";
+return os;
 }
 */
 
