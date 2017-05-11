@@ -363,11 +363,12 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 			for ( core::Size i=1, imax=pose.size(); i<=imax; ++i ) {
 				secstruct2 = secstruct2 + "L";
 			}
+		} else {
+			// calc dssp
+			core::scoring::dssp::Dssp dssp( pose );
+			dssp.dssp_reduced();
+			secstruct2 = dssp.get_dssp_secstruct();
 		}
-		// calc dssp
-		core::scoring::dssp::Dssp dssp( pose );
-		dssp.dssp_reduced();
-		secstruct2 = dssp.get_dssp_secstruct();
 	}
 	runtime_assert( pose.size() == secstruct2.length() );
 
