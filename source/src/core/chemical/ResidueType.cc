@@ -1077,11 +1077,9 @@ void
 ResidueType::delete_atom( Size const index )
 {
 	finalized_ = false;
-	VD const vd = ordered_atoms_[index];
-	graph_.clear_vertex(vd);
-	graph_.remove_vertex(vd);
 
 	// Delete any atom aliases mentioning this atom.
+	// Do this first so we don't attempt to use any deleted atom information
 	utility::vector1< std::string > aliases_to_delete;
 	for ( auto const elem : atom_aliases_ ) {
 		std::string const & rosetta_atom = strip_whitespace( elem.second );
@@ -1093,6 +1091,11 @@ ResidueType::delete_atom( Size const index )
 	for ( auto const & alias : aliases_to_delete ) {
 		delete_atom_alias( alias );
 	}
+
+	VD const vd = ordered_atoms_[index];
+	graph_.clear_vertex(vd);
+	graph_.remove_vertex(vd);
+
 }
 
 /// @brief Add an alias name for an atom.

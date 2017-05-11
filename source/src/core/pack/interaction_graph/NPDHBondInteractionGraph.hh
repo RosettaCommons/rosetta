@@ -662,9 +662,9 @@ private:
 	void reset_from_previous_delta_npd_hbond_comp();
 	bool decide_procrastinate_npd_hbond_computations( Real const pd_deltaE, Real const threshold ) const;
 
-	NPDHBondInteractionGraph();
-	NPDHBondInteractionGraph( NPDHBondInteractionGraph< V, E, G > const & );
-	NPDHBondInteractionGraph< V, E, G > & operator = ( NPDHBondInteractionGraph< V, E, G > const & );
+	NPDHBondInteractionGraph() = delete;
+	NPDHBondInteractionGraph( NPDHBondInteractionGraph< V, E, G > const & ) = delete;
+	NPDHBondInteractionGraph< V, E, G > & operator = ( NPDHBondInteractionGraph< V, E, G > const & ) = delete;
 
 private:
 	pose::PoseOP pose_;
@@ -675,37 +675,37 @@ private:
 
 	scoring::EnergyMap npd_hbond_score_weights_;
 
-	Size num_total_residues_;
-	Size num_residues_assigned_as_background_;
+	Size num_total_residues_ = 0 ;
+	Size num_residues_assigned_as_background_ = 0;
 	utility::vector1< Size > resid_2_bgenumeration_;
 	utility::vector1< Size > bgenumeration_2_resid_;
 
-	bool prepared_for_simulated_annealing_;
+	bool prepared_for_simulated_annealing_ = false;
 
-	bool observed_sufficient_npd_hbond_E_to_predict_min_;
+	bool observed_sufficient_npd_hbond_E_to_predict_min_ = false;
 
 	static Size num_state_substitutions_considered_;
 	static Size num_npd_hbond_comps_procrastinated_;
 	static Size num_npd_hbond_comps_later_made_;
 
-	Real npd_hbond_score_min_last_100_;
-	Real npd_hbond_score_min_recent_;
-	Size num_substitutions_since_npd_hbond_min_update_;
+	Real npd_hbond_score_min_last_100_ = 0;
+	Real npd_hbond_score_min_recent_ = 0;
+	Size num_substitutions_since_npd_hbond_min_update_ = 0;
 
-	bool calculated_npd_hbond_deltaE_;
-	core::PackerEnergy deltaE_for_substitution_;
+	bool calculated_npd_hbond_deltaE_ = false;
+	core::PackerEnergy deltaE_for_substitution_ = 0.0;
 
-	bool last_considered_substitution_accepted_;
-	Size node_considering_alt_state_;
-	Size alt_state_being_considered_;
-	Real total_energy_current_state_assignment_;
-	Real total_energy_alternate_state_assignment_;
+	bool last_considered_substitution_accepted_ = false;
+	Size node_considering_alt_state_ = 0;
+	Size alt_state_being_considered_ = 0;
+	Real total_energy_current_state_assignment_ = 0;
+	Real total_energy_alternate_state_assignment_ = 0;
 
-	Real npd_hbond_energy_current_state_assignment_;
-	Real npd_hbond_energy_alternate_state_assignment_;
+	Real npd_hbond_energy_current_state_assignment_ = 0;
+	Real npd_hbond_energy_alternate_state_assignment_ = 0;
 
-	int num_commits_since_last_update_;
-	float deltaE_threshold_for_avoiding_npd_hbond_calcs_;
+	int num_commits_since_last_update_ = 0;
+	float deltaE_threshold_for_avoiding_npd_hbond_calcs_ = 0.0;
 
 	scoring::hbonds::HBondDatabaseCOP hbond_database_;
 	scoring::hbonds::HBondOptionsCOP hbond_options_;
@@ -1800,26 +1800,8 @@ Size NPDHBondInteractionGraph< V, E, G >::num_npd_hbond_comps_later_made_ = 0;
 ///
 template < typename V, typename E, typename G >
 NPDHBondInteractionGraph< V, E, G >::NPDHBondInteractionGraph( int num_nodes ) :
-AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
-num_total_residues_( 0 ),
-num_residues_assigned_as_background_( 0 ),
-prepared_for_simulated_annealing_( false ),
-observed_sufficient_npd_hbond_E_to_predict_min_( false ),
-npd_hbond_score_min_last_100_( 0 ),
-npd_hbond_score_min_recent_( 0 ),
-num_substitutions_since_npd_hbond_min_update_( 0 ),
-calculated_npd_hbond_deltaE_( false ),
-deltaE_for_substitution_( 0.0f ),
-node_considering_alt_state_( 0 ),
-alt_state_being_considered_( 0 ),
-total_energy_current_state_assignment_( 0 ),
-total_energy_alternate_state_assignment_( 0 ),
-npd_hbond_energy_current_state_assignment_( 0 ),
-npd_hbond_energy_alternate_state_assignment_( 0 ),
-num_commits_since_last_update_( 0 ),
-deltaE_threshold_for_avoiding_npd_hbond_calcs_( -1.0f )
-{
-}
+AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes )
+{}
 
 ///
 template < typename V, typename E, typename G >
