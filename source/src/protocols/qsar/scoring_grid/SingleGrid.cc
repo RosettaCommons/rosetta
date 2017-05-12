@@ -26,6 +26,7 @@
 #include <utility/json_spirit/json_spirit_value.h>
 
 #include <numeric/xyz.json.hh>
+#include <numeric/xyzVector.io.hh>
 
 #include <algorithm>
 
@@ -33,7 +34,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static THREAD_LOCAL basic::Tracer GridBaseTracer( "protocols.qsar.scoring_grid.SingleGrid" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.scoring_grid.SingleGrid" );
 
 
 SingleGrid::SingleGrid(std::string type) : type_(type),chain_('A')
@@ -64,7 +65,7 @@ void SingleGrid::initialize(core::Vector const & center, core::Real width,core::
 	grid_.zero();
 }
 
-utility::json_spirit::Value SingleGrid::serialize()
+utility::json_spirit::Value SingleGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
@@ -99,7 +100,7 @@ char SingleGrid::get_chain()
 	return chain_;
 }
 
-core::grid::CartGrid<core::Real> const & SingleGrid::get_grid()
+core::grid::CartGrid<core::Real> const & SingleGrid::get_grid() const
 {
 	return grid_;
 }
@@ -109,7 +110,7 @@ void SingleGrid::set_type(std::string type)
 	type_ = type;
 }
 
-std::string SingleGrid::get_type()
+std::string SingleGrid::get_type() const
 {
 	return type_;
 }
@@ -119,7 +120,7 @@ void SingleGrid::set_center(core::Vector center)
 	center_ = center;
 }
 
-core::Vector SingleGrid::get_center()
+core::Vector SingleGrid::get_center() const
 {
 	return center_;
 }
@@ -134,7 +135,7 @@ core::Real SingleGrid::get_min_value() const
 	return grid_.getMinValue();
 }
 
-core::Real SingleGrid::get_point(core::Real x, core::Real y, core::Real z)
+core::Real SingleGrid::get_point(core::Real x, core::Real y, core::Real z) const
 {
 	if ( grid_.is_in_grid(x,y,z) ) {
 		return grid_.getValue(x,y,z);
@@ -143,7 +144,7 @@ core::Real SingleGrid::get_point(core::Real x, core::Real y, core::Real z)
 	}
 }
 
-core::Real SingleGrid::get_point(core::Vector coords)
+core::Real SingleGrid::get_point(core::Vector coords) const
 {
 	return grid_.getValue(coords);
 }
@@ -151,9 +152,9 @@ core::Real SingleGrid::get_point(core::Vector coords)
 
 numeric::xyzVector<core::Size> SingleGrid::get_dimensions()
 {
-	int x_size(0);
-	int y_size(0);
-	int z_size(0);
+	core::Size x_size(0);
+	core::Size y_size(0);
+	core::Size z_size(0);
 
 	grid_.getNumberOfPoints(x_size,y_size,z_size);
 	return numeric::xyzVector<core::Size>(x_size,y_size,z_size);
@@ -170,10 +171,10 @@ core::Vector SingleGrid::get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt
 	return grid_.coords(gridpt);
 }
 
-core::Real SingleGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP)
+core::Real SingleGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP) const
 {
 	core::Real score = 0.0;
-	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
+	//TR << "map size is: " << qsar_map->size() <<std::endl;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		//TODO qsar map is broken, comment it out until it works right
 		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
@@ -193,7 +194,7 @@ core::Real SingleGrid::score(core::conformation::UltraLightResidue const & resid
 	return score;
 }
 
-core::Real SingleGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
+core::Real SingleGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP) const
 {
 	core::Vector const & atom = residue[atomno];
 	if ( grid_.is_in_grid(atom.x(),atom.y(), atom.z()) ) {
@@ -205,10 +206,10 @@ core::Real SingleGrid::atom_score(core::conformation::UltraLightResidue const & 
 	}
 }
 
-core::Real SingleGrid::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP /*qsar_map*/)
+core::Real SingleGrid::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
-	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
+	//TR << "map size is: " << qsar_map->size() <<std::endl;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		//TODO qsar map is broken, comment it out until it works right
 		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
@@ -228,7 +229,7 @@ core::Real SingleGrid::score(core::conformation::Residue const & residue, core::
 	return score;
 }
 
-core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
+core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
 {
 	core::Vector const & atom = residue.xyz(atomno);
 	if ( grid_.is_in_grid(atom.x(),atom.y(), atom.z()) ) {
@@ -246,16 +247,16 @@ std::list<std::pair<core::Vector, core::Real> >
 SingleGrid::get_point_value_list_within_range(
 	core::Real lower_bound,
 	core::Real upper_bound,
-	core::Size stride)
+	core::Size stride) const
 {
 	std::list<std::pair<core::Vector, core::Real> > point_list;
-	int x_size(0);
-	int y_size(0);
-	int z_size(0);
+	core::Size x_size(0);
+	core::Size y_size(0);
+	core::Size z_size(0);
 	grid_.getNumberOfPoints(x_size, y_size, z_size);
-	for ( int x_index =0; x_index < x_size; x_index+= stride ) {
-		for ( int y_index = 0; y_index < y_size; y_index += stride ) {
-			for ( int z_index = 0; z_index < z_size; z_index+= stride ) {
+	for ( core::Size x_index =0; x_index < x_size; x_index+= stride ) {
+		for ( core::Size y_index = 0; y_index < y_size; y_index += stride ) {
+			for ( core::Size z_index = 0; z_index < z_size; z_index+= stride ) {
 				core::grid::CartGrid<core::Real>::GridPt grid_point(x_index,y_index,z_index);
 				core::Vector pdb_coords(grid_.coords(grid_point));
 				core::Real value = grid_.getValue(grid_point);
@@ -272,13 +273,13 @@ SingleGrid::get_point_value_list_within_range(
 
 void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride)
 {
-	int x_size(0);
-	int y_size(0);
-	int z_size(0);
+	core::Size x_size(0);
+	core::Size y_size(0);
+	core::Size z_size(0);
 	grid_.getNumberOfPoints(x_size, y_size, z_size);
-	for ( int x_index =0; x_index < x_size; x_index +=stride ) {
-		for ( int y_index = 0; y_index < y_size; y_index += stride ) {
-			for ( int z_index = 0; z_index < z_size; z_index += stride ) {
+	for ( core::Size x_index =0; x_index < x_size; x_index +=stride ) {
+		for ( core::Size y_index = 0; y_index < y_size; y_index += stride ) {
+			for ( core::Size z_index = 0; z_index < z_size; z_index += stride ) {
 				core::grid::CartGrid<core::Real>::GridPt grid_point(x_index,y_index,z_index);
 				core::Vector box_counter = grid_.coords(grid_point);
 				core::Real value = grid_.getValue(grid_point);
@@ -292,7 +293,7 @@ void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, co
 }
 
 
-bool SingleGrid::is_in_grid(core::conformation::UltraLightResidue const & residue)
+bool SingleGrid::is_in_grid(core::conformation::UltraLightResidue const & residue) const
 {
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		core::Vector atom_coords = residue[atom_index];
@@ -303,7 +304,7 @@ bool SingleGrid::is_in_grid(core::conformation::UltraLightResidue const & residu
 	return true;
 }
 
-bool SingleGrid::is_in_grid(core::conformation::Residue const & residue)
+bool SingleGrid::is_in_grid(core::conformation::Residue const & residue) const
 {
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		core::Vector atom_coords = residue.xyz(atom_index);
@@ -334,22 +335,24 @@ void SingleGrid::set_ring(
 	core::Real outer_radius,
 	core::Real value
 ){
-	//TR <<"making sphere of radius " << radius << "and value " << value <<std::endl;
+	//TR << "Making ring with radii " << inner_radius << "/" << outer_radius << " and value " << value << " at " << coords << std::endl;
 	core::Real inner_radius2 = inner_radius*inner_radius;
 	core::Real outer_radius2 = outer_radius*outer_radius;
-	int x_count(0);
-	int y_count(0);
-	int z_count(0);
+	core::Size x_count(0);
+	core::Size y_count(0);
+	core::Size z_count(0);
 	grid_.getNumberOfPoints(x_count,y_count,z_count);
+	debug_assert( x_count >0 && y_count > 0 && z_count > 0 );
+
 	core::Vector vector_radius (outer_radius);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - outer_radius);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + outer_radius);
 	//TR <<"min: " <<grid_min.x() << " "<<grid_min.y() << " " <<grid_min.z() <<std::endl;
 	//TR <<"max: "<<grid_max.x() << " "<<grid_max.y() << " " <<grid_max.z() <<std::endl;
 	//TR <<"counts: " << x_count <<" "<< y_count << " " << z_count <<std::endl;
-	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
-		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
-			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(int(x_count)-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(int(y_count)-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(int(z_count)-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center = grid_.coords(point);
 				//TR <<x_index << " "<<y_index << " " <<z_index <<std::endl;
@@ -368,17 +371,18 @@ void SingleGrid::set_ring(
 void SingleGrid::set_distance_sphere_for_atom(core::Real const & atom_shell,core::Vector const & coords,core::Real cutoff)
 {
 	core::Real cutoff2 = cutoff*cutoff;
-	int x_count(0);
-	int y_count(0);
-	int z_count(0);
-
+	core::Size x_count(0);
+	core::Size y_count(0);
+	core::Size z_count(0);
 	grid_.getNumberOfPoints(x_count,y_count,z_count);
+	debug_assert( x_count >0 && y_count > 0 && z_count > 0 );
+
 	core::Vector vector_radius (cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + cutoff);
-	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
-		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
-			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(int(x_count)-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(int(y_count)-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(int(z_count)-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center(grid_.coords(point));
 				core::Real distance2 = box_center.distance_squared(coords);
@@ -394,20 +398,21 @@ void SingleGrid::set_distance_sphere_for_atom(core::Real const & atom_shell,core
 	}
 }
 
-void SingleGrid::set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorOP lj_spline,core::Vector const & coords, core::Real cutoff)
+void SingleGrid::set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorCOP lj_spline,core::Vector const & coords, core::Real cutoff)
 {
 	core::Real cutoff2 = cutoff*cutoff;
-	int x_count(0);
-	int y_count(0);
-	int z_count(0);
-
+	core::Size x_count(0);
+	core::Size y_count(0);
+	core::Size z_count(0);
 	grid_.getNumberOfPoints(x_count,y_count,z_count);
+	debug_assert( x_count >0 && y_count > 0 && z_count > 0 );
+
 	core::Vector vector_radius (cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + cutoff);
-	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
-		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
-			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(int(x_count)-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(int(y_count)-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(int(z_count)-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center(grid_.coords(point));
 				core::Real distance2 = box_center.distance_squared(coords);
@@ -434,16 +439,18 @@ void SingleGrid::diffuse_ring(core::Vector const & coords, core::Real radius, co
 	core::Real radius_squared = radius*radius;
 	core::Real half_width = width/2;
 	core::Real half_width_squared = half_width*half_width;
-	int x_count(0);
-	int y_count(0);
-	int z_count(0);
+	core::Size x_count(0);
+	core::Size y_count(0);
+	core::Size z_count(0);
 	grid_.getNumberOfPoints(x_count,y_count,z_count);
+	debug_assert( x_count >0 && y_count > 0 && z_count > 0 );
+
 	core::Vector vector_radius (radius);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - radius);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + radius);
-	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
-		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
-			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(int(x_count)-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(int(y_count)-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(int(z_count)-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index,y_index,z_index);
 				core::Vector origin = grid_.coords(point);
 				core::Real distance_squared = origin.distance_squared(coords);
@@ -480,10 +487,15 @@ void SingleGrid::set_point(core::Vector const & coords, core::Real value)
 	grid_.setValue(coords,value);
 }
 
-void SingleGrid::dump_BRIX(std::string const & prefix)
+void SingleGrid::dump_BRIX(std::string const & prefix) const
 {
 	//std::string grid_type_string(qsar::qsarTypeManager::name_from_qsar_type(type_));
 	grid_.write_to_BRIX(prefix + type_ + ".omap");
+}
+
+/// @brief Print a brief summary about this grid to the provided output stream
+void SingleGrid::show( std::ostream & out ) const {
+	out << "SingleGrid of type " << type_ << " for chain " << chain_ << " with center " << center_ << " between " << grid_.getBase() << " and " << grid_.getTop() << std::endl;
 }
 
 }

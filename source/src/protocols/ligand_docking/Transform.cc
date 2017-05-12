@@ -52,7 +52,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-static THREAD_LOCAL basic::Tracer transform_tracer( "protocols.ligand_docking.Transform" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.Transform" );
 
 // XRW TEMP std::string TransformCreator::keyname() const
 // XRW TEMP {
@@ -203,15 +203,20 @@ void Transform::apply(core::pose::Pose & pose)
 
 	setup_conformers(pose, begin);
 
+	// Check conformers, to make sure that they'll fit in the grid (at least in the initial position)
+	if ( !check_conformers( *grid_manager, original_ligand ) ) {
+		// Already printed error message
+		set_last_move_status( protocols::moves::FAIL_RETRY );
+		return;
+	}
+
 	utility::io::ozstream sampled_space;
 	if ( output_sampled_space_ ) {
 		sampled_space.open(sampled_space_file_);
 	}
 
-
 	for ( core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat ) {
-		core::Size cycle = 1;
-		bool not_converged = true;
+		TR.Trace << "Starting transform repeat " << repeat << " of " << transform_info_.repeats << std::endl;
 		ligand_residue = original_ligand;
 		core::conformation::UltraLightResidue last_accepted_ligand_residue = ligand_residue;
 
@@ -220,12 +225,17 @@ void Transform::apply(core::pose::Pose & pose)
 		// away from the starting point and randomize its orientation before beginning a trajectory.
 		// The defaults of 0.0 & -360.0 won't trigger, but if either are set to positive they will.
 
-		//Setting an initial perturb will also randomize the startign conformer
+		//Setting an initial perturb will also randomize the starting conformer
 
 		if ( initial_perturb_ > 0.0 || initial_angle_perturb_ > 0 ) {
 			bool perturbed = false;
-			while ( !perturbed )
-					{
+			core::Size n_perturb_trials(0);
+			while ( !perturbed && n_perturb_trials < 10*ligand_conformers_.size() ) {
+				if ( initial_perturb_ > transform_info_.box_size ) {
+					TR.Warning << "[ Warning ] In the Transform mover, the initial perturbation size is larger than the box size. This is highly inefficient." << std::endl;
+				}
+
+				++n_perturb_trials;
 				perturbed=true;
 				randomize_ligand( ligand_residue, initial_perturb_, initial_angle_perturb_ );
 
@@ -236,13 +246,23 @@ void Transform::apply(core::pose::Pose & pose)
 				core::Vector new_center(ligand_residue.center());
 				core::Real distance = new_center.distance(original_center);
 
-
 				//Not everything in grid, also checks center distance
 				if ( !check_grid(grid_manager, ligand_residue, distance) ) {
+					TR.Debug << "In the initial perturbation, the ligand moved outside the grid - retrying." << std::endl;
 					ligand_residue = last_accepted_ligand_residue;
 					perturbed = false;
 					continue;
 				}
+			}
+			if ( n_perturb_trials >= 10*ligand_conformers_.size() ) {
+				TR.Error << "[ Error ] Could not get a decent initial perturbation - check grid size, ligand size, and initial pertubation size." << std::endl;
+				TR.Error << "[ Error ]     For this system, with a pertubation of " << initial_perturb_
+						<< ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
+				set_last_move_status( protocols::moves::FAIL_RETRY );
+				return;
+			} else if ( n_perturb_trials > 10 ) {
+				TR.Warning << "[ Warning ] It took more than 10 tries to get a decent inital perturbation. You likely want to check your grid size and initial perturbation size." << std::endl;
+				TR.Warning << "[ Warning ]     With the current purturbation setting of " << initial_perturb_ << ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
 			}
 			last_accepted_ligand_residue = ligand_residue;
 		}
@@ -253,13 +273,17 @@ void Transform::apply(core::pose::Pose & pose)
 		best_score = last_score;
 		best_ligand = ligand_residue;
 
-		while ( not_converged )
-				{
+		core::Size cycle = 1;
+		bool not_converged = true;
+
+		while ( not_converged ) {
 
 			if ( optimize_until_score_is_negative_ ) {
 				if ( cycle >= transform_info_.cycles && last_score <= 0.0 ) {
-
 					not_converged= false;
+				} else if ( cycle % 2*transform_info_.cycles == 0 ) { // Print every time we're twice the requested cycles.
+					// Print a warning, so at least we can see if we're in an infinite loop.
+					TR.Warning << "Warning: optimized for " << cycle << " cycles and the score (" << last_score << ") is still not negative." << std::endl;
 				}
 			} else {
 				if ( cycle >= transform_info_.cycles ) {
@@ -307,7 +331,7 @@ void Transform::apply(core::pose::Pose & pose)
 			} else if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {  //reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
-				//  transform_tracer << "Move rejected- did not meet Monte Carlo probability " << std::endl;
+				//  TR << "Move rejected- did not meet Monte Carlo probability " << std::endl;
 
 			} else if ( probability < 1 ) {  // Accept the new pose
 				last_score = current_score;
@@ -324,20 +348,24 @@ void Transform::apply(core::pose::Pose & pose)
 			if ( last_score <= best_score ) {
 				best_score = last_score;
 				best_ligand = last_accepted_ligand_residue;
-				//   transform_tracer << "accepting new best pose" << std::endl;
+				//   TR << "accepting new best pose" << std::endl;
 			} else {
-				//   transform_tracer << "not accepting new best pose" << std::endl;
-
+				//   TR << "not accepting new best pose" << std::endl;
 			}
 
 		}
 
 
 		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
-		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
+		TR <<"percent acceptance: "<< accepted_moves << " " << accept_ratio <<" " << rejected_moves <<std::endl;
 		if ( outside_grid_moves > 0 ) {
 			core::Real outside_grid_ratio = (core::Real)outside_grid_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
-			transform_tracer << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
+			TR << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
+			if ( outside_grid_ratio > 0.05 ) { // 5% is rather arbitrary here
+				TR.Warning << "[ Warning ] A large number of moves were rejected for being outside the grid. You likely want to reexamine your settings." << std::endl;
+				TR.Warning << "[ Warning ]     For the current settings, a grid size of at least " << utility::Real2string(recommended_grid_size( accept_ratio ),1);
+				TR.Warning << " and a box size of at least " << utility::Real2string(recommended_box_size( accept_ratio ),1) << " are recommended." << std::endl;
+			}
 		}
 
 		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Transform_accept_ratio", accept_ratio);
@@ -349,9 +377,8 @@ void Transform::apply(core::pose::Pose & pose)
 	}
 	pose = best_pose;
 
-	transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
+	TR << "Accepted pose with grid score: " << best_score << std::endl;
 	jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Grid_score", best_score);
-
 }
 
 
@@ -379,7 +406,7 @@ void Transform::randomize_ligand(core::conformation::UltraLightResidue & residue
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
 	if ( transform_info_.angle ==0 && transform_info_.move_distance == 0 ) {
-		transform_tracer.Warning << "angle and distance are both 0.  Transform will do nothing" <<std::endl;
+		TR.Warning << "angle and distance are both 0.  Transform will do nothing" <<std::endl;
 		return;
 	}
 
@@ -416,16 +443,87 @@ bool Transform::check_grid(qsar::scoring_grid::GridManager* grid, core::conforma
 
 void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
 {
+	using namespace core::conformation;
+
+	utility::vector1< core::conformation::ResidueOP > ligand_confs;
+	rotamers_for_trials(pose,begin,ligand_confs);
+
 	ligand_conformers_.clear();
-	rotamers_for_trials(pose,begin,ligand_conformers_);
-	transform_tracer << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
+	for ( core::conformation::ResidueOP const & conf: ligand_confs ) {
+		ligand_conformers_.push_back( UltraLightResidueOP( new UltraLightResidue( conf ) ) );
+	}
+	if ( ligand_conformers_.empty() ) {
+		// Add the starting conformer, so we at least have the one.
+		ligand_conformers_.push_back( UltraLightResidueOP( new UltraLightResidue( pose.residue(begin).get_self_ptr() ) ) );
+	}
+	TR << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
+}
+
+bool Transform::check_conformers(qsar::scoring_grid::GridManager & grid_manager, core::conformation::UltraLightResidue & starting_residue ) const
+{
+	core::Size n_outside( 0 );
+	for ( core::conformation::UltraLightResidueOP conf: ligand_conformers_ ) {
+		core::conformation::UltraLightResidue lig( *conf );
+		lig.align_to_residue(starting_residue);
+		if ( ! grid_manager.is_in_grid( lig ) ) { ++n_outside; }
+	}
+	if ( n_outside == ligand_conformers_.size() ) {
+		TR.Error << "[ Error ] All conformers start with atoms outside the grid -- Docking will be impossible. Increase the size of the grid." << std::endl;
+		TR.Error << "[ Error ] (For the current system and settings, a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended.)" << std::endl;
+		return false;
+	} else if ( n_outside > ligand_conformers_.size()/2 ) {
+		TR.Warning << "[ Warning ] " << n_outside << " of " << ligand_conformers_.size() << " conformers start with atoms outside the grid." << std::endl;
+		TR.Warning << "[ Warning ]        You likely want to increase the grid size to accomodate the size of the ligand. Recommended grid size for this run: at least " << utility::Real2string(recommended_grid_size(),1) << std::endl;
+	}
+	return true;
+}
+
+core::Real Transform::recommended_grid_size( core::Real success_rate ) const
+{
+	core::Real ligand_width( 0 );
+	for ( core::conformation::UltraLightResidueOP conf: ligand_conformers_ ) {
+		core::Real maxdist( conf->max_dist_to_center() );
+		if ( maxdist > ligand_width ) {
+			ligand_width = maxdist;
+		}
+	}
+
+	core::Real perturb_size = initial_perturb_;
+	core::Real estimated_travel = estimate_mc_travel( success_rate );
+	core::Real total_travel = ligand_width + perturb_size + estimated_travel;
+	return 2.0*total_travel; // total_travel is radius, recommended size is diameter
+}
+
+core::Real Transform::recommended_box_size( core::Real success_rate ) const
+{
+	// We don't need the ligand width here, as we're only concerned about the center.
+	core::Real perturb_size = initial_perturb_;
+	if ( success_rate < 0.33 ) { success_rate = 0.33; }
+	core::Real estimated_travel = estimate_mc_travel( success_rate );
+	core::Real total_travel = perturb_size + estimated_travel;
+	return 2.0*total_travel; // total_travel is radius, recommended size is diameter
+}
+
+core::Real Transform::estimate_mc_travel( core::Real success_rate )  const
+{
+	if ( success_rate < 0.33 ) { // An accept ratio of 0.33 as a default/minimum is somewhat arbitrary.
+		success_rate = 0.03;
+	}
+	// Estimate for how many translational moves we make
+	core::Size effective_moves = success_rate * transform_info_.cycles;
+	if ( ligand_conformers_.size() > 1 && use_conformers_ == true ) {
+		effective_moves *= 0.5; // Reduce based on conformer switches.
+	}
+	// We can consider each axis separately, which is a gaussian random walk with sd = move_distance
+	core::Real estimated_travel = std::sqrt( effective_moves ) * transform_info_.move_distance;
+	return estimated_travel;
 }
 
 void Transform::change_conformer(core::conformation::UltraLightResidue & residue)
 {
 	debug_assert(ligand_conformers_.size());
 	core::Size index_to_select = numeric::random::rg().random_range(1,ligand_conformers_.size());
-	core::conformation::UltraLightResidue new_residue(ligand_conformers_[index_to_select]);
+	core::conformation::UltraLightResidue new_residue(*ligand_conformers_[index_to_select]);
 	new_residue.align_to_residue(residue);
 	residue = new_residue;
 

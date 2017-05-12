@@ -68,6 +68,10 @@ AtrGrid::AtrGrid() :
 	//
 }
 
+GridBaseOP AtrGrid::clone() const {
+	return GridBaseOP( new AtrGrid( *this ) );
+}
+
 void
 AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 
@@ -91,7 +95,7 @@ AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 	}
 }
 
-utility::json_spirit::Value AtrGrid::serialize()
+utility::json_spirit::Value AtrGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;

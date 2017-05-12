@@ -37,6 +37,21 @@ struct compare_interp_range {
 	}
 };
 
+CompoundInterpolator::CompoundInterpolator( CompoundInterpolator const & other ):
+	Interpolator( other )
+{
+	// Make deep copy of the sub-interpolater ranges.
+	for ( interp_range const & other_range: other.interpolators_ ) {
+		interp_range new_range( other_range );
+		new_range.interp = other_range.interp->clone();
+		interpolators_.push_back( new_range );
+	}
+}
+
+InterpolatorOP CompoundInterpolator::clone() const {
+	return InterpolatorOP( new CompoundInterpolator( *this ) );
+}
+
 void
 CompoundInterpolator::add_range(
 	InterpolatorOP interp,
@@ -60,7 +75,7 @@ CompoundInterpolator::interpolate(
 	Real x,
 	Real & y,
 	Real & dy
-) {
+) const {
 
 	if ( has_lb_function() && x < get_lb_function_cutoff() ) {
 		return compute_lb_function_solution(x,y);
@@ -78,12 +93,12 @@ CompoundInterpolator::interpolate(
 }
 
 /// @brief serialize the Interpolator to a json_spirit object
-utility::json_spirit::Value CompoundInterpolator::serialize()
+utility::json_spirit::Value CompoundInterpolator::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
 	std::vector<Value> interpolator_data;
-	for ( utility::vector1<interp_range>::iterator it = interpolators_.begin(); it != interpolators_.end(); ++it ) {
+	for ( utility::vector1<interp_range>::const_iterator it = interpolators_.begin(); it != interpolators_.end(); ++it ) {
 		Pair ub("ub",Value(it->ub));
 		Pair lb("lb",Value(it->lb));
 		Pair interpolator("interp",it->interp->serialize());

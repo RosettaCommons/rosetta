@@ -66,13 +66,13 @@ void SolvationGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 //}
 
 SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
-{
-
-}
+{}
 
 SolvationGrid::~SolvationGrid()
-{
+{}
 
+GridBaseOP SolvationGrid::clone() const {
+	return GridBaseOP( new SolvationGrid( *this ) );
 }
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & /*center*/)
@@ -142,7 +142,7 @@ void SolvationGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 }
 
 
-utility::json_spirit::Value SolvationGrid::serialize()
+utility::json_spirit::Value SolvationGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;

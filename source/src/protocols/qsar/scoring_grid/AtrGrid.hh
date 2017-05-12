@@ -28,14 +28,16 @@ class AtrGrid : public SingleGrid
 public:
 
 	AtrGrid();
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
+	/// @brief Make a copy of the grid, respecting the subclassing.
+	GridBaseOP clone() const override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude) override;
 	/// @brief serialize the SingleGrid to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
+	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json_spirit object to a SingleGrid
-	virtual void deserialize(utility::json_spirit::mObject data);
-	void parse_my_tag(utility::tag::TagCOP tag);
+	void deserialize(utility::json_spirit::mObject data) override;
+	void parse_my_tag(utility::tag::TagCOP tag) override;
 
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

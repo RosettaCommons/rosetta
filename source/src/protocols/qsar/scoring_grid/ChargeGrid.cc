@@ -35,7 +35,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-utility::json_spirit::Value ChargeAtom::serialize()
+utility::json_spirit::Value ChargeAtom::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
@@ -103,7 +103,11 @@ ChargeGrid::ChargeGrid(core::Real /*charge*/) :
 	//
 }
 
-utility::json_spirit::Value ChargeGrid::serialize()
+GridBaseOP ChargeGrid::clone() const {
+	return GridBaseOP( new ChargeGrid( *this ) );
+}
+
+utility::json_spirit::Value ChargeGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
@@ -111,8 +115,8 @@ utility::json_spirit::Value ChargeGrid::serialize()
 	Pair base_data("base_data",SingleGrid::serialize());
 
 	std::vector<Value> charge_atom_data;
-	for ( std::list<ChargeAtom>::iterator it = charge_atom_list_.begin(); it != charge_atom_list_.end(); ++it ) {
-		charge_atom_data.push_back(it->serialize());
+	for ( ChargeAtom const & atm: charge_atom_list_ ) {
+		charge_atom_data.push_back(atm.serialize());
 	}
 
 	Pair charge_atom_record("atoms",charge_atom_data);
@@ -194,7 +198,7 @@ void ChargeGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 }
 
 
-core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP)
+core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP) const
 {
 	core::Real score = 0.0;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
@@ -209,7 +213,7 @@ core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & resid
 	return score;
 }
 
-core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
+core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP) const
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
@@ -220,7 +224,7 @@ core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & 
 	}
 }
 
-core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/)
+core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
@@ -236,7 +240,7 @@ core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::
 	return score;
 }
 
-core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
+core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {

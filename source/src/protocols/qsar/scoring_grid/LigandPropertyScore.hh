@@ -29,23 +29,29 @@ public:
 
 	virtual ~LigandPropertyScore() {}
 
-	virtual void parse_my_tag(utility::tag::TagCOP tag);
+	/// @brief Make a copy of the grid, respecting the subclassing.
+	GridBaseOP clone() const override;
+
+	void parse_my_tag(utility::tag::TagCOP tag) override;
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
 
 	/// @brief return the current score of a residue using the current grid
-	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
 
 	/// @brief get the type of the grid
-	virtual std::string get_type();
+	std::string get_type() const override;
 
 	/// @brief Serialize the GridBase object into a json_spirit Value
-	virtual utility::json_spirit::Value serialize();
+	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json spirit Value into a GridBase object
-	virtual void deserialize(utility::json_spirit::mObject data);
+	void deserialize(utility::json_spirit::mObject data) override;
 
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	/// @brief Print a brief summary about this grid to the provided output stream
+	void show( std::ostream & out ) const override;
 
 private:
 	std::string parameter_tag_;

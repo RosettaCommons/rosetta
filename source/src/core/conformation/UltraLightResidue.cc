@@ -174,6 +174,19 @@ void UltraLightResidue::slide(core::Vector const & translation_vector)
 	center_ = numeric::center_of_mass(coords_);
 }
 
+core::Real UltraLightResidue::max_dist_to_center() const
+{
+	core::Real dist(0.0);
+	// Assumes center is correctly calculated
+	for ( PointPosition const & pos: coords_ ) {
+		core::Real atmdist( center_.distance_squared(pos) );
+		if ( atmdist > dist ) {
+			dist = atmdist;
+		}
+	}
+	return std::sqrt( dist );
+}
+
 
 }
 }

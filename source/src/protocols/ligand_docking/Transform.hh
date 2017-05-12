@@ -105,6 +105,18 @@ public:
 	/// @brief setup conformers for use
 	void setup_conformers(core::pose::Pose & pose, core::Size begin);
 
+	/// @brief Check that conformers are safely within the grids.
+	/// Returns true if good, false if bad.
+	bool check_conformers(qsar::scoring_grid::GridManager & grid_manager,core::conformation::UltraLightResidue & starting_residue) const;
+
+	/// @brief Return the recommended minimum size of the ligand grids for this particular setup.
+	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum
+	core::Real recommended_grid_size( core::Real success_rate = -1 ) const;
+
+	/// @brief Return the recommended minimum box size for this particular setup.
+	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum
+	core::Real recommended_box_size( core::Real success_rate = -1 ) const;
+
 	/// @brief randomly change the ligand conformation
 	void change_conformer(core::conformation::UltraLightResidue & residue);
 
@@ -118,9 +130,14 @@ public:
 	bool check_grid(qsar::scoring_grid::GridManager* grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
 
 private:
+	/// @brief Estimate how much the ligand will travel during the MC translation
+	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum
+	core::Real estimate_mc_travel( core::Real success_rate = -1 ) const;
+
+private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
-	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
+	utility::vector1< core::conformation::UltraLightResidueOP > ligand_conformers_;
 	bool optimize_until_score_is_negative_ = false;
 	bool output_sampled_space_ = false;
 	bool check_rmsd_ = false;

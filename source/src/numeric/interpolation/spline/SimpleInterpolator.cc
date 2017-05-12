@@ -45,12 +45,16 @@ SimpleInterpolator::SimpleInterpolator(
 }
 
 SimpleInterpolator::SimpleInterpolator() :Interpolator()
-{
+{}
 
+InterpolatorOP
+SimpleInterpolator::clone() const {
+	return InterpolatorOP( new SimpleInterpolator( *this ) );
 }
 
+
 void
-SimpleInterpolator::interpolate( Real x, Real & y, Real & dy ) {
+SimpleInterpolator::interpolate( Real x, Real & y, Real & dy ) const {
 	if ( has_lb_function() && x < get_lb_function_cutoff() ) {
 		return compute_lb_function_solution(x,y);
 	}
@@ -60,22 +64,22 @@ SimpleInterpolator::interpolate( Real x, Real & y, Real & dy ) {
 	return spline_interpolate(x_,y_,ddy_,x,y,dy);
 }
 
-utility::json_spirit::Value SimpleInterpolator::serialize()
+utility::json_spirit::Value SimpleInterpolator::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
 
 	std::vector<Value> x_values,y_values,ddy_values;
 
-	for ( utility::vector1<Real>::iterator it = x_.begin(); it != x_.end(); ++it ) {
+	for ( utility::vector1<Real>::const_iterator it = x_.begin(); it != x_.end(); ++it ) {
 		x_values.push_back(Value(*it));
 	}
 
-	for ( utility::vector1<Real>::iterator it = y_.begin(); it != y_.end(); ++it ) {
+	for ( utility::vector1<Real>::const_iterator it = y_.begin(); it != y_.end(); ++it ) {
 		y_values.push_back(Value(*it));
 	}
 
-	for ( utility::vector1<Real>::iterator it = ddy_.begin(); it != ddy_.end(); ++it ) {
+	for ( utility::vector1<Real>::const_iterator it = ddy_.begin(); it != ddy_.end(); ++it ) {
 		ddy_values.push_back(Value(*it));
 	}
 

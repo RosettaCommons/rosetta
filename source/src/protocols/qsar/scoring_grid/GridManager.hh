@@ -40,8 +40,13 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
+typedef std::map<std::string,GridBaseCOP> ConstGridMap;
 typedef std::map<std::string,GridBaseOP> GridMap;
 typedef std::map<std::string,core::Real> ScoreMap;
+
+// TODO: Why is this singleton managing a single system-dependent, modifiable global state (grid_map_)?
+// Someone (RM: yes, I know it's going to be me) needs to separate out
+// the global data management from the protocol-level code.
 
 class GridManager : public utility::SingletonBase< GridManager >
 {
@@ -61,7 +66,7 @@ public:
 	/// @brief make a new grid from grid tag, and insert it into the grid manager
 	void make_new_grid(utility::tag::TagCOP tag);
 	/// @brief insert a grid pointer into the grid manager
-	void insert_grid(std::string const & name,GridBaseOP const grid);
+	void insert_grid(std::string const & name, GridBaseOP const grid);
 	/// @brief set the qsar_map
 	void set_qsar_map(qsarMapOP qsar_map);
 	/// @brief is a qsar map attached to the grid manager?
@@ -69,7 +74,7 @@ public:
 	/// @brief is normalization applied during scoring?
 	bool is_normalization_enabled();
 	/// @brief given a grid type, return a pointer to the grid
-	GridBaseOP get_grid(std::string const & grid_name);
+	GridBaseCOP get_grid(std::string const & grid_name);
 	/// @brief get a list of grid names
 	utility::vector1<std::string> get_grid_names();
 
@@ -124,9 +129,16 @@ private:
 	/// @brief deserialize the JSON object to a map.  There is no public interface for this because the grid manager takes care of it on its own
 	void deserialize(utility::json_spirit::mArray data);
 
+	/// @brief Insert the given GridMap into the grid_map_cache under the given index value.
+	void insert_into_cache( std::string const & hash_val, GridMap const & grid_map );
+
+	/// @brief Reset the grid_map_ variable to the cached state
+	/// @details As grid_map_ is modifiable, make a copy of cached value
+	void set_grid_map_from_cache( std::string const & hash_val );
+
 private:
 
-	std::map<std::string,GridMap> grid_map_cache_;
+	std::map<std::string,ConstGridMap> grid_map_cache_;
 
 	std::map<std::string,core::Real> grid_weights_;
 
@@ -146,4 +158,4 @@ private:
 }
 }
 
-#endif /* GRIDMANAGER_HH_ */
+#endif

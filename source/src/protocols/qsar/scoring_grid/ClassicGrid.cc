@@ -59,7 +59,11 @@ ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid"), atr_radius_(4.75), rep_ra
 	//
 }
 
-utility::json_spirit::Value ClassicGrid::serialize()
+GridBaseOP ClassicGrid::clone() const {
+	return GridBaseOP( new ClassicGrid( *this ) );
+}
+
+utility::json_spirit::Value ClassicGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;

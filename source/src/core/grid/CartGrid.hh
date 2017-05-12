@@ -20,6 +20,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/string_util.hh>
 #include <utility/json_spirit/json_spirit_value.h>
@@ -42,6 +43,7 @@ template <typename T>
 class CartGrid : public utility::pointer::ReferenceCount
 {
 public:
+	/// @brief This needs to be an int, as it can hold negative values.
 	typedef numeric::xyzVector< int > GridPt;
 
 	CartGrid():
@@ -52,18 +54,14 @@ public:
 		name_("default"),
 		npoints_(0),
 		fullyOccupied_(false),
-		zones_(NULL)
-	{
+		zones_()
+	{}
 
+	CartGrid( CartGrid<T> const & other ) {
+		other.clone( *this );
 	}
 
-	~CartGrid() override
-	{
-		if ( zones_ !=NULL ) {
-			delete [] zones_;
-			zones_ = NULL;
-		}
-	}
+	~CartGrid() override = default;
 
 	/*
 	std::ostream & operator<< (Grid<T> const & mygrid)
@@ -83,7 +81,7 @@ public:
 		this->setTop();
 	}
 
-	void setDimensions(int nX, int nY, int nZ, core::Real lX, core::Real lY, core::Real lZ)
+	void setDimensions(core::Size nX, core::Size nY, core::Size nZ, core::Real lX, core::Real lY, core::Real lZ)
 	{
 		nX_ = nX;
 		nY_ = nY;
@@ -106,9 +104,9 @@ public:
 		return name_;
 	}
 
-	int longestSide() const
+	core::Size longestSide() const
 	{
-		int ls = this->nX_;
+		core::Size ls = this->nX_;
 		if ( this->nY_ > ls ) ls = this->nY_;
 		if ( this->nZ_ > ls ) ls = this->nZ_;
 
@@ -164,20 +162,9 @@ public:
 
 	bool setupZones()
 	{
-		if ( zones_ != NULL ) {
-			//delete zones_;
-			delete[] zones_;
-			zones_ = NULL;
-		}
-
 		npoints_ = nX_*nY_*nZ_;
-		// Why npoints_+2 ?
-		// Because in deserialize() we use a function which does a 4->3 transformation on the input data
-		// ... which means we may run off the end of the array if the size of the array isn't divisible by 3
-		// By adding an extra 2 items padding, we give it a safe space to overrun.
-		// (All other uses include serialize() use npoints_ to know how big the array is, so won't use the extra space.)
-		zones_ = new T[npoints_+2];
-
+		// Make zones_ npoints_ copies of the default value of the type
+		zones_.assign( npoints_, T() );
 		return true;
 	}
 
@@ -189,74 +176,38 @@ public:
 		this->setTop();
 	}
 
-	bool setValue(int ix, int iy, int iz, T value)
+	void setValue(core::Size ix, core::Size iy, core::Size iz, T value)
 	{
-		if ( value == 0 ) {
-			fullyOccupied_ = false;
-		}
-
-		int index = this->get_index(ix, iy, iz);
-		debug_assert( index >= 0 && index < npoints_ );
-		this->zones_[index] = value;
-		return true;
+		core::Size index = this->get_index(ix, iy, iz);
+		setValue( index, value );
 	}
 
-
-	bool setValue(core::Real fx, core::Real fy, core::Real fz, T value)
+	void setValue(core::Real fx, core::Real fy, core::Real fz, T value)
 	{
-		if ( value == 0 ) {
-			fullyOccupied_ = false;
-		}
-
-		int ix = int((fx - bX_)/lX_);
-		if ( ix < 0 || ix >= nX_ ) return 0;
-
-		int iy = int((fy - bY_)/lY_);
-		if ( iy < 0 || iy >= nY_ ) return 0;
-
-		int iz = int((fz - bZ_)/lZ_);
-		if ( iz < 0 || iz >= nZ_ ) return 0;
-
-		int index = this->get_index(ix,iy,iz);
-		debug_assert( index >= 0 && index < npoints_ );
-		this->zones_[index] = value;
-		return true;
+		core::Size index = this->get_index(fx,fy,fz);
+		setValue( index, value );
 	}
 
-	T getValue(int ix, int iy, int iz) const
+	T getValue(core::Size ix, core::Size iy, core::Size iz) const
 	{
-		int index = this->get_index(ix, iy, iz);
+		core::Size index = this->get_index(ix, iy, iz);
 		return this->getValue(index);
 	}
 
 	T getValue(core::Real fx, core::Real fy, core::Real fz) const
 	{
-		// --- round down --- //
-		int ix = int((fx - bX_)/lX_);
-		if ( ix < 0 || ix >= nX_ ) return 0;
-
-		int iy = int((fy - bY_)/lY_);
-		if ( iy < 0 || iy >= nY_ ) return 0;
-
-		int iz = int((fz - bZ_)/lZ_);
-		if ( iz < 0 || iz >= nZ_ ) return 0;
-
-		int index = ix*(nY_*nZ_) + iy*(nZ_) + iz;
-		return this->zones_[index];
+		core::Size index = this->get_index(fx, fy, fz);
+		return this->getValue(index);
 	}
 
 	void zero()
 	{
-		for ( int i=0; i < npoints_; i++ ) {
-			this->zones_[i] = 0;
-		}
+		zones_.assign( npoints_, 0 );
 	}
 
 	void setFullOccupied(T value)
 	{
-		for ( int i=0; i < npoints_; i++ ) {
-			this->zones_[i] = value;
-		}
+		zones_.assign( npoints_, value );
 		fullyOccupied_ = true;
 	}
 
@@ -282,23 +233,23 @@ public:
 
 		copy.setupZones();
 
-		for ( int i=0; i < this->npoints_; i++ ) {
+		for ( core::Size i=0; i < this->npoints_; i++ ) {
 			copy.zones_[i] = this->zones_[i];
 		}
 	}
 
 	void reset_boundaries() {
-		int minx = this->nX_;
-		int miny = this->nY_;
-		int minz = this->nZ_;
+		core::Size minx = this->nX_;
+		core::Size miny = this->nY_;
+		core::Size minz = this->nZ_;
 
-		int maxx = 0;
-		int maxy = 0;
-		int maxz = 0;
+		core::Size maxx = 0;
+		core::Size maxy = 0;
+		core::Size maxz = 0;
 
-		for ( int ix=0; ix < this->nX_; ix++ ) {
-			for ( int iy=0; iy < this->nY_; iy++ ) {
-				for ( int iz=0; iz < this->nZ_; iz++ ) {
+		for ( core::Size ix=0; ix < this->nX_; ix++ ) {
+			for ( core::Size iy=0; iy < this->nY_; iy++ ) {
+				for ( core::Size iz=0; iz < this->nZ_; iz++ ) {
 					if ( this->getValue(ix,iy,iz) ) {
 						minx = std::min(minx,ix);
 						miny = std::min(miny,iy);
@@ -319,9 +270,9 @@ public:
 		CartGrid<T> tmpgrid;
 		this->clone(tmpgrid);
 
-		int nx = maxx - minx + 1;
-		int ny = maxy - miny + 1;
-		int nz = maxz - minz + 1;
+		core::Size nx = maxx - minx + 1;
+		core::Size ny = maxy - miny + 1;
+		core::Size nz = maxz - minz + 1;
 
 		this->nX_ = nx;
 		this->nY_ = ny;
@@ -333,46 +284,14 @@ public:
 
 		this->setupZones();
 
-		int index2=0;
-		int value = 0;
-		for ( int i=0; i < nx; i++ ) {
-			for ( int j=0; j < ny; j++ ) {
-				for ( int k=0; k < nz; k++ ) {
-					index2 = tmpgrid.get_index(minx+i, miny+j, minz+k);
-					value = tmpgrid.getValue(index2);
-					this->setValue(i,j,k,value);
+		for ( core::Size i=0; i < nx; i++ ) {
+			for ( core::Size j=0; j < ny; j++ ) {
+				for ( core::Size k=0; k < nz; k++ ) {
+					this->setValue( i, j, k, tmpgrid.getValue(minx+i, miny+j, minz+k) );
 				}
 			}
 		}
 	}
-
-	// its_nX_ is no longer a member... looks liks this functon is now deprecated - commenting out to fix PyRosetta build
-	// void fluff(utility::pointer::shared_ptr<CartGrid<T> > input, utility::pointer::shared_ptr<CartGrid<T> > original, int amount=6) {
-	//  int istart, iend, jstart, jend, kstart, kend;
-	//  for ( int i=0; i < input->its_nX_; i++ ) {
-	//   for ( int j=0; j < input->its_nY_; j++ ) {
-	//    for ( int k=0; k < input->its_nZ_; k++ ) {
-	//     if ( input->getValue(i,j,k) != 0 ) {
-	//      istart = std::max(0, (i-amount));
-	//      iend   = std::min(input->its_nX_, (i+amount));
-	//      jstart = std::max(0, (j-amount));
-	//      jend   = std::min(input->its_nY_, (j+amount));
-	//      kstart = std::max(0, (k-amount));
-	//      kend   = std::min(input->its_nZ_, (k+amount));
-	//      for ( int ii=istart; ii < iend; ii++ ) {
-	//       for ( int jj=jstart; jj < jend; jj++ ) {
-	//        for ( int kk=kstart; kk < kend; kk++ ) {
-	//         if ( original->getValue(ii,jj,kk) != 0 ) {
-	//          this->setValue(ii,jj,kk,1);
-	//         }
-	//        }
-	//       }
-	//      }
-	//     }
-	//    }
-	//   }
-	//  }
-	// }
 
 	void read(std::string const & filename) {
 		//std::ifstream file;
@@ -392,8 +311,8 @@ public:
 		core::Real bx=0.0, by=0.0, bz=0.0;
 		core::Real lx=0.0, ly=0.0, lz=0.0;
 		T occupied(0);
-		int nx=0, ny=0, nz=0;
-		int ix=0, iy=0;
+		core::Size nx=0, ny=0, nz=0;
+		core::Size ix=0, iy=0;
 
 		while ( file ) {
 			getline(file, line);
@@ -424,7 +343,7 @@ public:
 				this->setupZones();
 			} else {
 				line_stream.seekg( std::ios::beg );
-				for ( int iz=0; iz < nz; iz++ ) {
+				for ( core::Size iz=0; iz < nz; iz++ ) {
 					line_stream >> occupied;
 					this->setValue(ix,iy,iz,occupied);
 				}
@@ -443,9 +362,9 @@ public:
 		file << "SIZE: " << this->nX_ << " " << this->nY_ << " " << this->nZ_ << std::endl;
 		file << "LENGTH: " << this->lX_ << " " << this->lY_ << " " << this->lZ_ << std::endl;
 
-		for ( int i=0; i < this->nX_; i++ ) {
-			for ( int j=0; j < this->nY_; j++ ) {
-				for ( int k=0; k < this->nZ_; k++ ) {
+		for ( core::Size i=0; i < this->nX_; i++ ) {
+			for ( core::Size j=0; j < this->nY_; j++ ) {
+				for ( core::Size k=0; k < this->nZ_; k++ ) {
 					file << this->getValue(i,j,k) << " ";
 				}
 				file << std::endl;
@@ -460,7 +379,7 @@ public:
 	}
 
 	bool isEmpty() const {
-		for ( int i=0; i < npoints_; i++ ) {
+		for ( core::Size i=0; i < npoints_; i++ ) {
 			if ( this->zones_[i] != 0 ) {
 				return false;
 			}
@@ -474,12 +393,16 @@ public:
 		using utility::json_spirit::Value;
 		using utility::json_spirit::Array;
 		Pair name("name",this->get_name());
+
 		Pair base("base",utility::tools::make_vector(Value(this->bX_),Value(this->bY_),Value(this->bZ_)));
-		Pair size("size",utility::tools::make_vector(Value(this->nX_),Value(this->nY_),Value(this->nZ_)));
+		// Need explicit conversion to int here, as utility::json_spirit::Value doesn't have a constructor for size_t.
+		Pair size("size",utility::tools::make_vector(Value(int(this->nX_)),Value(int(this->nY_)),Value(int(this->nZ_))));
 		Pair length("length",utility::tools::make_vector(Value(this->lX_),Value(this->lY_),Value(this->lZ_)));
 
 		std::string point_data;
-		utility::encode6bit((unsigned char*)zones_,npoints_*sizeof(T),point_data);
+		// vector::data() gives a raw pointer to the underlying (contigous) array.
+		debug_assert( npoints_ == zones_.size() );
+		utility::encode6bit( (unsigned char*)zones_.data(), npoints_*sizeof(T), point_data );
 
 		utility::json_spirit::Pair data("data",Value(point_data));
 
@@ -519,17 +442,24 @@ public:
 
 		std::string point_data = grid_data["data"].get_str();
 
-		debug_assert( sizeof(T)*(npoints_+2)*4 >= point_data.size()*3 ); // 3 bytes of array data for every 4 bytes of string data
-		utility::decode6bit((unsigned char*)zones_,point_data);
+		// Why do we do the dance where we resize too big, decode, and then re-resize?
+		// Because we use a function which does a 4->3 transformation on the input data
+		// ... which means we may run off the end of the array if the size of the array isn't divisible by 3
+		// By adding an extra 2 items padding, we give it a safe space to overrun.
+		zones_.resize( npoints_+2 );
+		debug_assert( sizeof(T)*zones_.size()*4 >= point_data.size()*3 ); // 3 bytes of array data for every 4 bytes of string data
+		// vector::data() gives a raw pointer to the underlying (contigous) array.
+		utility::decode6bit( (unsigned char*) zones_.data(), point_data );
+		zones_.resize( npoints_ );
 
 	}
 
 	void sum(utility::vector0<utility::pointer::shared_ptr<CartGrid<T> > > const & list_grids) {
-		int ngrids = static_cast<int>(list_grids.size());
+		core::Size ngrids = list_grids.size();
 
 		this->zero();
 		T curr_value, new_value;
-		for ( int i=0; i < ngrids; i++ ) {
+		for ( core::Size i=0; i < ngrids; i++ ) {
 			if ( !this->equalDimensions(*(list_grids[i])) ) {
 				return;
 			}
@@ -537,7 +467,7 @@ public:
 				return;
 			}
 
-			for ( int j=0; j < this->its_npoints; j++ ) {
+			for ( core::Size j=0; j < this->its_npoints; j++ ) {
 				curr_value = this->getValue(j);
 				new_value = list_grids[i]->getValue(j);
 				curr_value += new_value;
@@ -558,90 +488,6 @@ public:
 		this->setupZones();
 	}
 
-	// its_nX_ is no longer a member... looks liks this functon is now deprecated - commenting out to fix PyRosetta build
-	// void split(int nsplits, int igrid, core::Real pad, utility::pointer::shared_ptr<CartGrid<T> > grid) {
-	//  int tsplits = nsplits*nsplits*nsplits;
-	//  if ( igrid < 0 || igrid >= tsplits ) {
-	//   utility_exit_with_message("accessing split out of bounds");
-	//  }
-
-	//  int split_x = int(core::Real(this->nX_)/core::Real(nsplits)) + 1;
-	//  int split_y = int(core::Real(this->nY_)/core::Real(nsplits)) + 1;
-	//  int split_z = int(core::Real(this->nZ_)/core::Real(nsplits)) + 1;
-
-	//  int iz = int(igrid / (nsplits*nsplits));
-	//  int rem = igrid - (iz*nsplits*nsplits);
-	//  int iy = int(rem/nsplits);
-	//  int ix = rem - (iy*nsplits);
-
-	//  int padx = int((pad/lX_)-0.1);
-	//  int pady = int((pad/lY_)-0.1);
-	//  int padz = int((pad/lZ_)-0.1);
-
-	//  int leftx = padx;
-	//  int rightx = padx;
-	//  int lefty = pady;
-	//  int righty = pady;
-	//  int leftz = padz;
-	//  int rightz = padz;
-
-	//  if ( ix == 0 ) {
-	//   leftx = 0;
-	//  }
-	//  if ( iy == 0 ) {
-	//   lefty = 0;
-	//  }
-	//  if ( iz == 0 ) {
-	//   leftz = 0;
-	//  }
-
-	//  if ( ix == nsplits-1 ) {
-	//   rightx = 0;
-	//  }
-	//  if ( iy == nsplits-1 ) {
-	//   righty = 0;
-	//  }
-	//  if ( iz == nsplits-1 ) {
-	//   rightz = 0;
-	//  }
-
-	//  grid->its_nX_ = split_x+leftx+rightx;
-	//  grid->its_nY_ = split_y+lefty+righty;
-	//  grid->its_nZ_ = split_z+leftz+rightz;
-
-	//  core::Real bx = this->its_bX + ix*split_x*(this->lX_) - padx*(this->lX_);
-	//  core::Real by = this->its_bY + iy*split_y*(this->lY_) - pady*(this->lY_);
-	//  core::Real bz = this->its_bZ + iz*split_z*(this->lZ_) - padz*(this->lZ_);
-
-	//  grid->its_bX_ = std::max(this->bX_, bx);
-	//  grid->its_bY_ = std::max(this->bY_, by);
-	//  grid->its_bZ_ = std::max(this->bZ_, bz);
-
-	//  grid->its_lX_ = this->lX_;
-	//  grid->its_lY_ = this->lY_;
-	//  grid->its_lZ_ = this->lZ_;
-
-
-	//  // copy over grid data
-	//  grid->setDimensions(grid->its_nX_,grid->its_nY_,grid->its_nZ_,grid->its_lX_,grid->its_lY_,grid->its_lZ_);
-	//  grid->setupZones();
-	//  grid->zero();
-
-	//  int xstart = std::max(0,ix*split_x-padx);
-	//  int ystart = std::max(0,iy*split_y-pady);
-	//  int zstart = std::max(0,iz*split_z-padz);
-
-	//  for ( int i=0; i < grid->its_nX_; i++ ) {
-	//   for ( int j=0; j < grid->its_nY_; j++ ) {
-	//    for ( int k=0; k < grid->its_nZ_; k++ ) {
-	//     int value = this->getValue(xstart+i,ystart+j,zstart+k);
-	//     if ( value == -1 ) value = 0;
-	//     grid->setValue(i,j,k,value);
-	//    }
-	//   }
-	//  }
-	// }
-
 	core::Vector getBase() const
 	{
 		return core::Vector(bX_, bY_, bZ_);
@@ -652,17 +498,23 @@ public:
 		return core::Vector(tX_, tY_, tZ_);
 	}
 
-	void getNumberOfPoints(int & x, int & y, int & z) const
+	void getNumberOfPoints(core::Size & x, core::Size & y, core::Size & z) const
 	{
 		x = nX_;
 		y = nY_;
 		z = nZ_;
 	}
 
+	core::Vector getNumberOfPoints() const
+	{
+		return core::Vector(nX_, nY_, nZ_);
+	}
+
 	GridPt gridpt(Vector const & coords) const
 	{
 		// Round down.
 		// Just casting to int will give wrong values for points outside the grid.
+		// May return a negative number if it's outside of the box.
 		return GridPt(
 			static_cast<int>(std::floor((coords.x() - bX_)/lX_)),
 			static_cast<int>(std::floor((coords.y() - bY_)/lY_)),
@@ -693,12 +545,12 @@ public:
 
 	T getMinValue() const
 	{
-		return *std::min_element(zones_,zones_+npoints_);
+		return *std::min_element(zones_.begin(),zones_.end());
 	}
 
 	T getMaxValue() const
 	{
-		return *std::max_element(zones_,zones_+npoints_);
+		return *std::max_element(zones_.begin(),zones_.end());
 	}
 
 	void setValue(GridPt const & gridpt, T value)
@@ -714,14 +566,14 @@ public:
 	/// @details This format was choosen because it's space-efficient for small
 	/// integer values (such as are typically stored in grids) and PyMOL can read it.
 	/// Typical extension is .brix or .omap
-	void write_to_BRIX(std::string const & filename)
+	void write_to_BRIX(std::string const & filename) const
 	{
 		std::ofstream out( filename.c_str() );
 		write_to_BRIX(out);
 		out.close();
 	}
 
-	void write_to_BRIX(std::ostream & out)
+	void write_to_BRIX(std::ostream & out) const
 	{
 		int const plus = 127; // to convert values to unsigned bytes
 		// Crystallographic maps always expect one grid point to be at the origin.
@@ -737,12 +589,12 @@ public:
 		for ( long i = out.tellp(); i < 512; ++i ) out << ' ';
 		// Data stored in (padded) 8x8x8 blocks with X fast, Y medium, Z slow
 		typedef unsigned char ubyte;
-		for ( int zz = 0; zz < nZ_; zz += 8 ) {
-			for ( int yy = 0; yy < nY_; yy += 8 ) {
-				for ( int xx = 0; xx < nX_; xx += 8 ) {
-					for ( int z = zz, z_end = zz+8; z < z_end; ++z ) {
-						for ( int y = yy, y_end = yy+8; y < y_end; ++y ) {
-							for ( int x = xx, x_end = xx+8; x < x_end; ++x ) {
+		for ( core::Size zz = 0; zz < nZ_; zz += 8 ) {
+			for ( core::Size yy = 0; yy < nY_; yy += 8 ) {
+				for ( core::Size xx = 0; xx < nX_; xx += 8 ) {
+					for ( core::Size z = zz, z_end = zz+8; z < z_end; ++z ) {
+						for ( core::Size y = yy, y_end = yy+8; y < y_end; ++y ) {
+							for ( core::Size x = xx, x_end = xx+8; x < x_end; ++x ) {
 								if ( x < nX_ && y < nY_ && z < nZ_ ) out << ubyte( getValue(x, y, z) + plus );
 								else out << ubyte( 0 + plus );
 							}
@@ -761,42 +613,79 @@ private:
 		tZ_ = bZ_ + nZ_*lZ_;
 	}
 
-	void setValue(int index, T value)
+	bool valid_index(core::Size index) const
 	{
+		return (index >= 0) && (index < npoints_);
+	}
+
+	// setValue for GridPt
+	void setValue(int ix, int iy, int iz, T value)
+	{
+		debug_assert( ix >= 0 && iy >= 0 && iz >= 0 );
+		core::Size index = this->get_index(core::Size(ix), core::Size(iy), core::Size(iz));
+		setValue( index, value );
+	}
+
+	void setValue(core::Size index, T value)
+	{
+		if ( ! valid_index( index ) ) {
+			utility_exit_with_message( "Cannot set value for point not in grid." );
+		}
+
 		if ( value == 0 ) {
 			fullyOccupied_ = false;
 		}
-		debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 	}
 
-	T getValue(int index) const
+	// getValue for GridPt
+	T getValue(int ix, int iy, int iz) const
 	{
-		if ( index < 0 || index >= npoints_ ) {
-			return -1;
-		} else {
-			return this->zones_[index];
+		debug_assert( ix >= 0 && iy >= 0 && iz >= 0 );
+		core::Size index = this->get_index(core::Size(ix), core::Size(iy), core::Size(iz));
+		return this->getValue(index);
+	}
+
+	T getValue(core::Size index) const
+	{
+		if ( ! valid_index( index ) ) {
+			utility_exit_with_message( "Cannot get value for point not in grid." );
 		}
+		return this->zones_[index];
 	}
 
-	int get_index(int ix, int iy, int iz) const
+	core::Size get_index(core::Size ix, core::Size iy, core::Size iz) const
 	{
-		int index;
-		index = ix*(nY_*nZ_) + iy*(nZ_) + iz;
-		return index;
+		if ( ix >= nX_ || iy >= nY_ || iz >= nZ_ ) {
+			return npoints_+1; // Invalid index
+		}
+
+		return ix*(nY_*nZ_) + iy*(nZ_) + iz;
 	}
 
+	core::Size get_index(core::Real fx, core::Real fy, core::Real fz) const
+	{
+		if ( ! is_in_grid(fx,fy,fz) ) {
+			return npoints_+1; // Invalid index
+		}
+
+		core::Size ix((fx - bX_)/lX_);
+		core::Size iy((fy - bY_)/lY_);
+		core::Size iz((fz - bZ_)/lZ_);
+
+		return this->get_index(core::Size(ix),core::Size(iy),core::Size(iz));
+	}
 
 private:
 
-	int nX_, nY_, nZ_;
+	core::Size nX_, nY_, nZ_;
 	core::Real lX_, lY_,lZ_;
 	core::Real bX_, bY_, bZ_;
 	core::Real tX_,tY_,tZ_;
 	std::string name_;
-	int npoints_;
+	core::Size npoints_;
 	bool fullyOccupied_;
-	T* zones_;
+	utility::vector0< T > zones_;
 
 };
 

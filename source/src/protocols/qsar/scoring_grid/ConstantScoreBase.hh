@@ -28,83 +28,89 @@ class ConstantScoreBase : public GridBase
 {
 public:
 	ConstantScoreBase() : GridBase() {}
-	virtual ~ConstantScoreBase() {}
+	~ConstantScoreBase() override {}
+
+	/// @brief Make a copy of the grid, respecting the subclassing.
+	GridBaseOP clone() const override =0;
 
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
-	virtual void initialize(core::Vector const & /*center*/, core::Real /*width*/, core::Real /*resolution*/)
+	void initialize(core::Vector const & /*center*/, core::Real /*width*/, core::Real /*resolution*/) override
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(
+	void refresh(
 		core::pose::Pose const & /*pose*/,
 		core::Vector const & /*center*/,
-		core::Size const & /*ligand_chain_id_to_exclude*/)
+		core::Size const & /*ligand_chain_id_to_exclude*/) override
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(
+	void refresh(
 		core::pose::Pose const & /*pose*/,
 		core::Vector const & /*center*/,
-		utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/)
+		utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/) override
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & /*pose*/, core::Vector const & /*center*/)
+	void refresh(core::pose::Pose const & /*pose*/, core::Vector const & /*center*/) override
 	{}
 
 	/// @setup a grid based on RosettaScripts input
-	virtual void parse_my_tag(utility::tag::TagCOP tag)=0;
+	void parse_my_tag(utility::tag::TagCOP tag) override =0 ;
 
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override = 0;
 
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::UltraLightResidue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/)
+	core::Real atom_score(core::conformation::UltraLightResidue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/) const override
 	{
 		return 0.0;
 	}
 
 	/// @brief return the current score of a residue using the current grid
-	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override = 0;
 
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::Residue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/)
+	core::Real atom_score(core::conformation::Residue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/) const override
 	{
 		return 0.0;
 	}
 
 	/// @brief get the type of the grid
-	virtual std::string get_type() = 0;
+	std::string get_type() const override = 0;
 
 	/// @brief set the chain the grid applies to
-	virtual void set_chain(char )
+	void set_chain(char ) override
 	{
 
 	}
 
 	/// @brief output a BRIX formatted grid.  This really does not work well but is being left for legacy purposes
-	virtual void dump_BRIX(std::string const & )
+	void dump_BRIX(std::string const & ) const override
 	{
 
 	}
 
 	/// @brief Serialize the GridBase object into a json_spirit Value
-	virtual utility::json_spirit::Value serialize() = 0;
+	utility::json_spirit::Value serialize() const override = 0;
 
 	/// @brief deserialize a json spirit Value into a GridBase object
-	virtual void deserialize(utility::json_spirit::mObject data) = 0;
+	void deserialize(utility::json_spirit::mObject data) override = 0;
 
 	/// @brief determine if all residue atoms are in a grid
-	virtual bool is_in_grid(core::conformation::UltraLightResidue const & /*residue*/)
+	bool is_in_grid(core::conformation::UltraLightResidue const & /*residue*/) const override
 	{
 		return true;
 	}
 
 	/// @brief determine if all residue atoms are in a grid
-	virtual bool is_in_grid(core::conformation::Residue const & /*residue*/)
+	bool is_in_grid(core::conformation::Residue const & /*residue*/) const override
 	{
 		return true;
 	}
+
+	/// @brief Print a brief summary about this grid to the provided output stream
+	void show( std::ostream & out ) const override = 0;
 
 };
 

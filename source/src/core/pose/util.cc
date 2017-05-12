@@ -2598,7 +2598,7 @@ mass(
 }
 
 
-core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose)
+core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -2619,11 +2619,14 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 			boost::hash_combine(hash,current_xyz);
 		}
 	}
+	if ( ! extra_label.empty() ) {
+		boost::hash_combine(hash,extra_label);
+	}
 
 	return hash;
 }
 
-core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose)
+core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -2644,11 +2647,14 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 			boost::hash_combine(hash,current_xyz);
 		}
 	}
+	if ( ! extra_label.empty() ) {
+		boost::hash_combine(hash,extra_label);
+	}
 
 	return hash;
 }
 
-std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose)
+std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -2669,10 +2675,13 @@ std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const 
 			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,3);
 		}
 	}
+	if ( ! extra_label.empty() ) {
+		coord_stream << extra_label;
+	}
 	return utility::string_to_sha1(coord_stream.str());
 }
 
-std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose)
+std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -2692,6 +2701,9 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
 			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,5);
 		}
+	}
+	if ( ! extra_label.empty() ) {
+		coord_stream << extra_label;
 	}
 	return utility::string_to_sha1(coord_stream.str());
 }

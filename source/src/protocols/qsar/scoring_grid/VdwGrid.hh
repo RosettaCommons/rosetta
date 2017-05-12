@@ -29,34 +29,35 @@ class VdwGrid : public SingleGrid
 public:
 
 	VdwGrid();
-	virtual ~VdwGrid();
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & );
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> );
+	~VdwGrid() override;
+	/// @brief Make a copy of the grid, respecting the subclassing.
+	GridBaseOP clone() const override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ) override;
 
-	void parse_my_tag(utility::tag::TagCOP tag);
+	void parse_my_tag(utility::tag::TagCOP tag) override;
 
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map);
+	core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
 
-	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
+	core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
 
 	/// @brief serialize the Interpolator to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
+	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json_spirit object to a Interpolator
-	virtual void deserialize(utility::json_spirit::mObject data);
+	void deserialize(utility::json_spirit::mObject data) override;
 
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 
-
-	numeric::interpolation::spline::InterpolatorOP lj_spline_;
+	numeric::interpolation::spline::InterpolatorCOP lj_spline_;
 	core::Real cutoff_;
 
 };

@@ -112,6 +112,7 @@ public: // Methods: imports
 	using super::crbegin;
 	using super::crend;
 	using super::clear;
+	using super::data;
 	using super::emplace;
 	using super::emplace_back;
 	using super::empty;

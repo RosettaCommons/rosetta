@@ -32,6 +32,13 @@ class GridBase:  public utility::pointer::ReferenceCount
 public:
 	GridBase() {}
 	virtual ~GridBase() {}
+
+	/// @brief Make a copy of the grid, respecting the subclassing.
+	/// @details Note that due to the heavy use of modification to reset positions
+	/// you need to be sure to do deep copying on anything that can be changed
+	/// with refresh/initialize.
+	virtual GridBaseOP clone() const =0;
+
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
 	virtual void initialize(core::Vector const & center, core::Real width, core::Real resolution)=0;
 	/// @brief populate the grid with values based on a passed pose
@@ -45,27 +52,30 @@ public:
 	virtual void parse_my_tag(utility::tag::TagCOP tag)=0;
 
 	/// @brief return the current scoer of an UltraLightResidue using the current grid
-	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const = 0;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) = 0;
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) const = 0;
 	/// @brief return the current score of a residue using the current grid
-	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const = 0;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) = 0;
+	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) const = 0;
 	/// @brief get the type of the grid
-	virtual std::string get_type() = 0;
+	virtual std::string get_type() const = 0;
 	/// @brief set the chain the grid applies to
 	virtual void set_chain(char chain) = 0;
 	/// @brief output a BRIX formatted grid.  This really does not work well but is being left for legacy purposes
-	virtual void dump_BRIX(std::string const & prefix) = 0;
+	virtual void dump_BRIX(std::string const & prefix) const = 0;
 	/// @brief Serialize the GridBase object into a json_spirit Value
-	virtual utility::json_spirit::Value serialize() = 0;
+	virtual utility::json_spirit::Value serialize() const = 0;
 	/// @brief deserialize a json spirit Value into a GridBase object
 	virtual void deserialize(utility::json_spirit::mObject data) = 0;
 	/// @brief determine if all residue atoms are in a grid
-	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue) =0;
+	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue) const =0;
 	/// @brief determine if all residue atoms are in a grid
-	virtual bool is_in_grid(core::conformation::Residue const & residue) =0;
+	virtual bool is_in_grid(core::conformation::Residue const & residue) const =0;
+
+	/// @brief Print a brief summary about this grid to the provided output stream
+	virtual void show( std::ostream & out ) const = 0;
 };
 
 }

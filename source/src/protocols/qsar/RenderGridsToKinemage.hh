@@ -94,7 +94,7 @@ private:
 	numeric::xyzVector<core::Real> zero_color_;
 	numeric::xyzVector<core::Real> high_color_;
 	utility::vector1<ColorGradient> color_data_;
-	scoring_grid::SingleGridOP grid_;
+	scoring_grid::SingleGridCOP grid_;
 
 };
 

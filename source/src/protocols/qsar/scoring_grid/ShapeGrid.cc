@@ -87,8 +87,10 @@ ShapeGrid::ShapeGrid() : SingleGrid("ShapeGrid")
 }
 
 ShapeGrid::~ShapeGrid()
-{
+{}
 
+GridBaseOP ShapeGrid::clone() const {
+	return GridBaseOP( new ShapeGrid( *this ) );
 }
 
 
@@ -156,7 +158,7 @@ void ShapeGrid::parse_my_tag(utility::tag::TagCOP)
 
 }
 
-core::Real ShapeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP)
+core::Real ShapeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP) const
 {
 	core::Real total_score = 0.0;
 	for ( core::Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
@@ -169,12 +171,12 @@ core::Real ShapeGrid::score(core::conformation::UltraLightResidue const & residu
 	return total_score;
 }
 
-core::Real ShapeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
+core::Real ShapeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP) const
 {
 	return this->get_point(residue[atomno]);
 }
 
-core::Real ShapeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP)
+core::Real ShapeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP) const
 {
 	core::Real total_score = 0.0;
 	for ( core::Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
@@ -187,12 +189,12 @@ core::Real ShapeGrid::score(core::conformation::Residue const & residue, core::R
 	return total_score;
 }
 
-core::Real ShapeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP )
+core::Real ShapeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP ) const
 {
 	return this->get_point(residue.xyz(atomno));
 }
 
-utility::json_spirit::Value ShapeGrid::serialize()
+utility::json_spirit::Value ShapeGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
@@ -271,9 +273,9 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 
 core::Real ShapeGrid::get_score_from_angles(std::string const & name3,core::Real distance, core::Real theta, core::Real phi)
 {
-	int distance_bin = static_cast<int>(std::floor(distance/distance_bin_width_));
-	int theta_bin = static_cast<int>(std::floor((1.0+theta)/theta_bin_width_));
-	int phi_bin = static_cast<int>(std::floor((180.0+phi)/phi_bin_width_));
+	core::Size distance_bin = static_cast<int>(std::floor(distance/distance_bin_width_));
+	core::Size theta_bin = static_cast<int>(std::floor((1.0+theta)/theta_bin_width_));
+	core::Size phi_bin = static_cast<int>(std::floor((180.0+phi)/phi_bin_width_));
 
 	return kbp_data_[name3]->getValue(distance_bin, theta_bin, phi_bin);
 
@@ -322,9 +324,9 @@ void ShapeGrid::load_kbp_data()
 
 		utility::json_spirit::mArray current_res_list(current_res_data[1].get_array());
 		utility::json_spirit::mArray::iterator res_list_it = current_res_list.begin();
-		for ( int distance_bin = 0; distance_bin < 25; ++distance_bin ) {
-			for ( int theta_bin = 0; theta_bin < 25; ++theta_bin ) {
-				for ( int phi_bin = 0; phi_bin < 25; ++phi_bin ) {
+		for ( core::Size distance_bin = 0; distance_bin < 25; ++distance_bin ) {
+			for ( core::Size theta_bin = 0; theta_bin < 25; ++theta_bin ) {
+				for ( core::Size phi_bin = 0; phi_bin < 25; ++phi_bin ) {
 					core::Real kbp_value = res_list_it->get_real();
 					current_array->setValue(distance_bin, theta_bin, phi_bin, kbp_value);
 					++res_list_it;

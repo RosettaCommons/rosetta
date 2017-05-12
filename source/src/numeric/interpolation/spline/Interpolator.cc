@@ -90,7 +90,7 @@ void Interpolator::compute_ub_function_solution(Real x, Real & y) const
 }
 
 
-utility::json_spirit::Value Interpolator::serialize()
+utility::json_spirit::Value Interpolator::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;

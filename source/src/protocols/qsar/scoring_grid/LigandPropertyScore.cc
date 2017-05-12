@@ -59,6 +59,11 @@ LigandPropertyScore::LigandPropertyScore()
 
 }
 
+/// @brief Make a copy of the grid, respecting the subclassing.
+GridBaseOP LigandPropertyScore::clone() const {
+	return GridBaseOP( new LigandPropertyScore( *this ) );
+}
+
 void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP tag)
 {
 	if ( !tag->hasOption("parameter") ) {
@@ -69,25 +74,25 @@ void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP tag)
 
 }
 
-core::Real LigandPropertyScore::score(core::conformation::UltraLightResidue const & residue, core::Real const , qsarMapOP )
+core::Real LigandPropertyScore::score(core::conformation::UltraLightResidue const & residue, core::Real const , qsarMapOP ) const
 {
 	core::Real property_score = residue.residue()->type().get_numeric_property(parameter_tag_);
 	return property_score;
 }
 
-core::Real LigandPropertyScore::score(core::conformation::Residue const & residue, core::Real const , qsarMapOP )
+core::Real LigandPropertyScore::score(core::conformation::Residue const & residue, core::Real const , qsarMapOP ) const
 {
 	core::Real property_score = residue.type().get_numeric_property(parameter_tag_);
 	return property_score;
 }
 
-std::string LigandPropertyScore::get_type()
+std::string LigandPropertyScore::get_type() const
 {
 	//return "LigandPropertyScore";
 	return grid_name();
 }
 
-utility::json_spirit::Value LigandPropertyScore::serialize()
+utility::json_spirit::Value LigandPropertyScore::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
@@ -121,6 +126,11 @@ void LigandPropertyScore::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		" of delivering a bonus or a penalty for a given ResidueType and fits smoothly within the scoring"
 		" grid machinery", attributes );
 
+}
+
+/// @brief Print a brief summary about this grid to the provided output stream
+void LigandPropertyScore::show( std::ostream & out ) const {
+	out << "LigandPropertyScore grid using parameter " << parameter_tag_ << std::endl;
 }
 
 }

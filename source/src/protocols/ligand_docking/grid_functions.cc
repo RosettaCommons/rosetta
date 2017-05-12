@@ -215,9 +215,12 @@ void rotamers_for_trials(
 	PackerTaskOP dummy_task = TaskFactory::create_packer_task(pose); // actually used, in a trivial way
 
 	utility::graph::GraphCOP empty_graph( utility::graph::GraphOP( new utility::graph::Graph() ) );
-	// Retrieve conformers
-	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(rsd_no) );
-	if ( reslib.get() == nullptr ) return;
+	// Retrieve conformers - force a basic rotamer library if we don't have a specific one.
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(rsd_no), true );
+	if ( reslib.get() == nullptr ) {
+		TR.Warning << "Got a null SingleResidueRotamerLibrary for residue type " << pose.residue_type(rsd_no).name() << std::endl;
+		return; // Shouldn't happen with forcebasic
+	}
 
 	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);
 	utility::vector1< utility::vector1< core::Real > > empty_extra_chi_steps( res_type.nchi(), utility::vector1< core::Real >() );
@@ -257,14 +260,15 @@ void set_sphere(
 	using namespace std; // min, max
 
 	core::Real radius2 = radius*radius;
-	int nx(0), ny(0), nz(0); // grid points in each dimension
+	core::Size nx(0), ny(0), nz(0); // grid points in each dimension
 	grid.getNumberOfPoints(nx, ny, nz);
+	debug_assert( nx > 0 && ny > 0 && nz > 0 );
 	Vector vec_rad( radius );
 	GridPt grid_min = grid.gridpt( center - vec_rad );
 	GridPt grid_max = grid.gridpt( center + vec_rad );
-	for ( int i = max(0, grid_min.x()), i_end = min(nx-1, grid_max.x()); i <= i_end; ++i ) {
-		for ( int j = max(0, grid_min.y()), j_end = min(ny-1, grid_max.y()); j <= j_end; ++j ) {
-			for ( int k = max(0, grid_min.z()), k_end = min(nz-1, grid_max.z()); k <= k_end; ++k ) {
+	for ( int i = max(0,grid_min.x()), i_end = min(int(nx)-1, grid_max.x()); i <= i_end; ++i ) {
+		for ( int j = max(0,grid_min.y()), j_end = min(int(ny)-1, grid_max.y()); j <= j_end; ++j ) {
+			for ( int k = max(0,grid_min.z()), k_end = min(int(nz)-1, grid_max.z()); k <= k_end; ++k ) {
 				GridPt grid_pt(i, j, k);
 				//std::cout << "Checking grid pt " << i << " " << j << " " << k << std::endl;
 				Vector box_ctr = grid.coords( grid_pt );

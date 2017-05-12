@@ -45,44 +45,46 @@ class SingleGrid : public GridBase
 public:
 
 	SingleGrid(std::string type);
-	virtual ~SingleGrid();
+	~SingleGrid() override;
+	/// @brief Make a copy of the grid, respecting the subclassing.
+	GridBaseOP clone() const override =0;
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
-	virtual void initialize(core::Vector const & center, core::Real width, core::Real resolution);
+	void initialize(core::Vector const & center, core::Real width, core::Real resolution) override;
 	/// @brief set the chain around which to calculate the grid
-	virtual void set_chain(char chain);
+	void set_chain(char chain) override;
 	/// @brief get the chain around which the grid is calculated
 	char get_chain();
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude)=0;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude) override = 0;
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)=0;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude) override = 0;
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
-	// virtual void reset(){};
+	void refresh(core::pose::Pose const & pose, core::Vector const & center) override = 0;
+	// void reset(){} override;
 	/// @brief setup a grid based on RosettaScripts input
-	virtual void parse_my_tag(utility::tag::TagCOP tag)=0;
+	void parse_my_tag(utility::tag::TagCOP tag) override = 0;
 	/// @brief serialize the SingleGrid to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
+	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json_spirit object to a SingleGrid
-	virtual void deserialize(utility::json_spirit::mObject data);
+	void deserialize(utility::json_spirit::mObject data) override;
 	/// @brief return a constant reference to the grid
-	core::grid::CartGrid<core::Real> const &  get_grid();
+	core::grid::CartGrid<core::Real> const &  get_grid() const;
 	/// @brief set the grid type
 	void set_type(std::string type);
 	/// @brief return the grids type
-	virtual std::string get_type();
+	std::string get_type() const override;
 	/// @brief set the center of the grid
 	void set_center(core::Vector center);
 	/// @brief get the center of the grid
-	core::Vector get_center();
+	core::Vector get_center() const;
 	/// @brief get the max score value in the grid
 	core::Real get_min_value() const;
 	/// @brief get the minimum score value in the grid
 	core::Real get_max_value() const;
 	/// @brief get the value of a single point in the grid based on pdb coordinates
-	core::Real get_point(core::Real x, core::Real y, core::Real z);
+	core::Real get_point(core::Real x, core::Real y, core::Real z) const;
 	/// @brief get the value of a single point in the grid based on pdb coordinates
-	core::Real get_point(core::Vector coords);
+	core::Real get_point(core::Vector coords) const;
 	/// @brief get dimensions of the grid
 	numeric::xyzVector<core::Size> get_dimensions();
 	/// @brief get the pdb coordinates based on grid point coordinates
@@ -90,23 +92,23 @@ public:
 	/// @brief get the pdb coordinates based on grid point coordinates
 	core::Vector get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt gridpt);
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map);
+	core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
 	/// @brief return the current score of a residue using the current grid
-	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
+	core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
 	void grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride);
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
 	/// @brief check to see if residue is in grid
-	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
+	bool is_in_grid(core::conformation::UltraLightResidue const & residue) const override;
 	/// @brief check to see if residue is in grid
-	virtual bool is_in_grid(core::conformation::Residue const & residue);
+	bool is_in_grid(core::conformation::Residue const & residue) const override;
 
-	std::list<std::pair<core::Vector, core::Real> > get_point_value_list_within_range(core::Real lower_bound, core::Real upper_bound,core::Size stride);
+	std::list<std::pair<core::Vector, core::Real> > get_point_value_list_within_range(core::Real lower_bound, core::Real upper_bound,core::Size stride) const;
 
-	virtual void dump_BRIX(std::string const & prefix);
+	void dump_BRIX(std::string const & prefix) const override;
 
 	//Various mathematical functions for assigning values to the grid go here
 	void set_sphere(core::Vector const & coords, core::Real radius, core::Real value);
@@ -120,13 +122,17 @@ public:
 	//void set_distance_sphere( core::Vector const & coords,core::Real cutoff);
 	void set_point(core::Vector const & coords, core::Real value);
 	void set_distance_sphere_for_atom(core::Real const & atom_shell, core::Vector const & coords,core::Real cutoff);
-	void set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorOP lj_spline,core::Vector const & coords, core::Real cutoff);
+	void set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorCOP lj_spline,core::Vector const & coords, core::Real cutoff);
 	/// @fill the entire grid with some value
 	void fill_with_value(core::Real);
+
+	/// @brief Print a brief summary about this grid to the provided output stream
+	void show( std::ostream & out ) const override;
+
 private:
 	core::grid::CartGrid<core::Real> grid_;
 	std::string type_;
-	core::Vector center_;
+	core::Vector center_ = { 0,0,0 };
 	char chain_;
 
 };

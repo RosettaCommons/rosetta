@@ -143,11 +143,11 @@ void grid_to_kin(
 	typedef core::grid::CartGrid<int>::GridPt GridPt;
 	using core::Vector;
 
-	int nx(0), ny(0), nz(0); // grid points in each dimension
+	core::Size nx(0), ny(0), nz(0); // grid points in each dimension
 	grid.getNumberOfPoints(nx, ny, nz);
-	for ( int i = 0, i_end = nx; i < i_end; i += stride ) {
-		for ( int j = 0, j_end = ny; j < j_end; j += stride ) {
-			for ( int k = 0, k_end = nz; k < k_end; k += stride ) {
+	for ( core::Size i = 0, i_end = nx; i < i_end; i += stride ) {
+		for ( core::Size j = 0, j_end = ny; j < j_end; j += stride ) {
+			for ( core::Size k = 0, k_end = nz; k < k_end; k += stride ) {
 				GridPt grid_pt(i, j, k);
 				Vector box_ctr = grid.coords( grid_pt );
 				T value = grid.getValue(grid_pt);

@@ -76,6 +76,10 @@ VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();
 }
 
+GridBaseOP VdwGrid::clone() const {
+	return GridBaseOP( new VdwGrid( *this ) );
+}
+
 void
 VdwGrid::parse_my_tag(utility::tag::TagCOP  /*tag*/){
 
@@ -128,7 +132,7 @@ VdwGrid::~VdwGrid()
 core::Real VdwGrid::score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Real const max_score,
-	qsarMapOP /*qsar_map*/)
+	qsarMapOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
 
@@ -151,7 +155,7 @@ core::Real VdwGrid::score(
 core::Real VdwGrid::atom_score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Size atomno,
-	qsarMapOP /*qsar_map*/)
+	qsarMapOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	core::Real const & radius(residue.residue()->atom_type(atomno).lj_radius());
@@ -167,7 +171,7 @@ core::Real VdwGrid::atom_score(
 	return 0;
 }
 
-core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
+core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP ) const
 {
 	core::Real score = 0.0;
 
@@ -187,7 +191,7 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
+core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	core::Real const & radius(residue.atom_type(atomno).lj_radius());
@@ -203,7 +207,7 @@ core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core
 	return 0;
 }
 
-utility::json_spirit::Value VdwGrid::serialize()
+utility::json_spirit::Value VdwGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;

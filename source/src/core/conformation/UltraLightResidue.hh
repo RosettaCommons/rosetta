@@ -84,6 +84,9 @@ public:
 		return center_;
 	}
 
+	/// @brief Return the maximum distance from any atom to the center.
+	core::Real max_dist_to_center() const;
+
 	///@brief get const ref to residue coords
 	void set_coords(utility::vector1<PointPosition> const & input_coords)
 	{

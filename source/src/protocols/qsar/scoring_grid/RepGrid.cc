@@ -65,11 +65,13 @@ void RepGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 //}
 
 RepGrid::RepGrid() : SingleGrid("RepGrid"), radius_(2.25), bb_(1), sc_(0), ligand_(1)
-{
+{}
 
+GridBaseOP RepGrid::clone() const {
+	return GridBaseOP( new RepGrid( *this ) );
 }
 
-utility::json_spirit::Value RepGrid::serialize()
+utility::json_spirit::Value RepGrid::serialize() const
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;

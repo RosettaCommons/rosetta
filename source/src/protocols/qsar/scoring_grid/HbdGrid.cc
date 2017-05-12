@@ -74,11 +74,13 @@ HbdGrid::HbdGrid(): SingleGrid ("HbdGrid")
 
 
 HbdGrid::~HbdGrid()
-{
+{}
 
+GridBaseOP HbdGrid::clone() const {
+	return GridBaseOP( new HbdGrid( *this ) );
 }
 
-utility::json_spirit::Value HbdGrid::serialize()
+utility::json_spirit::Value HbdGrid::serialize() const
 {
 
 	using utility::json_spirit::Value;
@@ -92,8 +94,10 @@ utility::json_spirit::Value HbdGrid::serialize()
 
 void HbdGrid::deserialize(utility::json_spirit::mObject data)
 {
+	numeric::interpolation::spline::InterpolatorOP lj_spline( lj_spline_->clone() );
+	lj_spline->deserialize(data["spline"].get_obj());
+	lj_spline_ = lj_spline;
 
-	lj_spline_->deserialize(data["spline"].get_obj());
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
@@ -141,7 +145,7 @@ void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 core::Real HbdGrid::score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Real const max_score,
-	qsarMapOP /*qsar_map*/)
+	qsarMapOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -163,7 +167,7 @@ core::Real HbdGrid::score(
 core::Real HbdGrid::atom_score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Size atomno,
-	qsarMapOP /*qsar_map*/)
+	qsarMapOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
@@ -176,7 +180,7 @@ core::Real HbdGrid::atom_score(
 	return 0;
 }
 
-core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
+core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP ) const
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -195,7 +199,7 @@ core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
+core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {

@@ -45,15 +45,17 @@ public:
 
 	SimpleInterpolator();
 
-	void interpolate( Real x, Real & y, Real & dy );
+	InterpolatorOP clone() const override;
+
+	void interpolate( Real x, Real & y, Real & dy ) const override;
 
 	/// @brief serialize the Interpolator to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
+	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json_spirit object to a Interpolator
-	virtual void deserialize(utility::json_spirit::mObject data);
+	void deserialize(utility::json_spirit::mObject data) override;
 
-	virtual bool operator == ( Interpolator const & other ) const;
-	virtual bool same_type_as_me( Interpolator const & other ) const;
+	bool operator == ( Interpolator const & other ) const override;
+	bool same_type_as_me( Interpolator const & other ) const override;
 
 	/// @brief accessor for the x-values defining the interpolation knots
 	utility::vector1< Real > const & x()   const { return x_; }

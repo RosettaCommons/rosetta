@@ -30,6 +30,10 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
+class Interpolator;
+typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
+typedef utility::pointer::shared_ptr< Interpolator const > InterpolatorCOP;
+
 class Interpolator : public utility::pointer::ReferenceCount {
 
 public:
@@ -38,7 +42,9 @@ public:
 
 	Interpolator();
 
-	virtual void interpolate( numeric::Real x, numeric::Real & y, numeric::Real & dy ) = 0;
+	virtual InterpolatorOP clone() const = 0;
+
+	virtual void interpolate( numeric::Real x, numeric::Real & y, numeric::Real & dy ) const = 0;
 
 	/// @brief set a linear function describing the behavior of the interpolator after a given lower bound.  This lower bound can be distinct from the lb of the spline
 	void set_lb_function(numeric::Real const &  lb, numeric::Real const & slope, numeric::Real const & intercept);
@@ -62,7 +68,7 @@ public:
 	void compute_ub_function_solution(numeric::Real x, numeric::Real & y) const;
 
 	/// @brief serialize the Interpolator to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
+	virtual utility::json_spirit::Value serialize() const;
 	/// @brief deserialize a json_spirit object to a Interpolator
 	virtual void deserialize(utility::json_spirit::mObject data);
 
@@ -91,8 +97,6 @@ public:
 #endif // SERIALIZATION
 
 };
-
-typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
 
 } // end namespace spline
 } // end namespace interpolation
