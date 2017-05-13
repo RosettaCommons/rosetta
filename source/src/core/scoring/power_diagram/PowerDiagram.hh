@@ -52,21 +52,22 @@ typedef numeric::xyzMatrix< core::Real > Matrix;
 class PDinter : public utility::pointer::ReferenceCount {
 
 public:
-	PDinter( Vector & xyz, PDvertexCOP & v1, PDvertexCOP & v2 ) : xyz_(xyz), v1_(v1), v2_(v2), circle_(false) {}
+	PDinter( Vector & xyz, PDvertex const * v1, PDvertex const * v2 ) : xyz_(xyz), v1_(v1), v2_(v2), circle_(false) {}
 
 	Vector const & xyz() const { return xyz_; }
-	PDvertexCOP const & vrt1() const { return v1_; }
-	PDvertexCOP const & vrt2() const { return v2_; }
-	utility::vector1< PDsphereCOP > const & atoms() const { return atoms_; }
-	utility::vector1< PDsphereCOP > & nonconst_atoms() { return atoms_; }
-	void add_atom( PDsphereCOP pa ) { atoms_.push_back( pa ); }
-	bool & circle() { return circle_; }
+	PDvertex const * vrt1() const { return v1_; }
+	PDvertex const * vrt2() const { return v2_; }
+	utility::vector1< PDsphere const * > const & atoms() const { return atoms_; }
+	utility::vector1< PDsphere const * > & nonconst_atoms() { return atoms_; }
+	void add_atom( PDsphere const * pa ) { atoms_.push_back( pa ); }
+	bool const & circle() const { return circle_; }
+	bool & nonconst_circle() { return circle_; }
 
 private:
 	Vector xyz_;
-	PDvertexCOP v1_;
-	PDvertexCOP v2_;
-	utility::vector1< PDsphereCOP > atoms_;
+	PDvertex const * v1_;
+	PDvertex const * v2_;
+	utility::vector1< PDsphere const * > atoms_;
 	bool circle_;
 };
 
@@ -79,12 +80,12 @@ private:
 class SAnode : public utility::pointer::ReferenceCount {
 
 public:
-	SAnode( PDinterOP & inter, PDsphereCOP & other_atom, core::Real ct, core::Real phi ) : inter_(inter), other_atom_(other_atom), cos_theta_(ct), phi_(phi) {}
-	SAnode( PDinterOP & inter, PDsphereCOP & other_atom ) : inter_(inter), other_atom_(other_atom), cos_theta_(0.0), phi_(0.0) {}
+	SAnode( PDinterOP & inter, PDsphere const *other_atom, core::Real ct, core::Real phi ) : inter_(inter), other_atom_(other_atom), cos_theta_(ct), phi_(phi) {}
+	SAnode( PDinterOP & inter, PDsphere const * other_atom ) : inter_(inter), other_atom_(other_atom), cos_theta_(0.0), phi_(0.0) {}
 
 	Vector const & xyz() const { return inter_->xyz(); }
 	PDinterOP const & inter() const { return inter_; }
-	PDsphereCOP const & other_atom() const { return other_atom_; }
+	PDsphere const * other_atom() const { return other_atom_; }
 	core::Real cos_theta() const { return cos_theta_; }
 	core::Real phi() const { return phi_; }
 	void set_cos_theta( core::Real ct ) { cos_theta_ = ct; }
@@ -92,7 +93,7 @@ public:
 
 private:
 	PDinterOP inter_;
-	PDsphereCOP other_atom_;
+	PDsphere const * other_atom_;
 	core::Real cos_theta_;
 	core::Real phi_;
 };
@@ -124,7 +125,7 @@ public:
 	core::Real & nonconst_rad() { return rad_; }
 	core::Real const & rad2() const { return rad2_; }
 	core::Real & nonconst_rad2() { return rad2_; }
-	std::list< PDvertexOP > & vertices(){ return cell_vertices_; }
+	std::list< PDvertex * > & vertices(){ return cell_vertices_; }
 	utility::vector1< utility::vector1< SAnode > > & cycles() { return cycles_; }
 
 private:
@@ -133,7 +134,7 @@ private:
 	core::Real rad_;
 	core::Real rad2_;
 	Vector xyz_;
-	std::list< PDvertexOP > cell_vertices_;
+	std::list< PDvertex * > cell_vertices_;
 	utility::vector1< utility::vector1< SAnode > > cycles_;
 };
 
@@ -160,10 +161,10 @@ public:
 	Vector & nonconst_direction() { return xyz_; }
 	core::Real power() { return power_; }
 	core::Real & nonconst_power() { return power_; }
-	utility::vector1< PDvertexOP >  const & partners() const { return partners_; }
-	utility::vector1< PDvertexOP > & nonconst_partners() { return partners_; }
-	utility::vector1< PDsphereOP >  const & generators() const { return generators_; }
-	utility::vector1< PDsphereOP > & nonconst_generators() { return generators_; }
+	utility::vector1< PDvertex * >  const & partners() const { return partners_; }
+	utility::vector1< PDvertex * > & nonconst_partners() { return partners_; }
+	utility::vector1< PDsphere * > const & generators() const { return generators_; }
+	utility::vector1< PDsphere * > & nonconst_generators() { return generators_; }
 	std::list< PDvertexOP >::iterator & my_itr() { return my_itr_; }
 
 private:
@@ -172,8 +173,8 @@ private:
 	bool live_;
 	Vector xyz_;
 	core::Real power_;
-	utility::vector1< PDvertexOP > partners_;
-	utility::vector1< PDsphereOP > generators_;
+	utility::vector1< PDvertex * > partners_;
+	utility::vector1< PDsphere * > generators_;
 	std::list< PDvertexOP >::iterator my_itr_;
 };
 
@@ -253,14 +254,14 @@ public:
 	void
 	store_new_sphere( PDsphereOP new_sph ) {
 		spheres_.push_back( new_sph );
-		sphere_lookup_[ new_sph->res() ][ new_sph->atom() ] = new_sph;
+		sphere_lookup_[ new_sph->res() ][ new_sph->atom() ] = new_sph.get();
 	}
 
 	std::list< PDinterOP > get_intersections_for_atom( Size ires, Size iatm );
 
-	std::list< PDinterOP > get_intersections_for_atom( PDsphereOP patom );
+	std::list< PDinterOP > get_intersections_for_atom( PDsphere* patom );
 
-	PDsphereOP sphere_lookup( Size ires, Size iatm  )
+	PDsphere* sphere_lookup( Size ires, Size iatm  )
 	{ return sphere_lookup_[ ires ][ iatm ]; }
 
 	core::Real extract_sasa_for_atom( Size ires, Size iatm );
@@ -276,31 +277,27 @@ private: // data
 	utility::vector1< PDsphereOP > spheres_;
 	std::list< PDvertexOP > finite_vertices_;
 	std::list< PDvertexOP > infinite_vertices_;
-	utility::vector1< utility::vector1< PDsphereOP > > sphere_lookup_;
+	utility::vector1< utility::vector1< PDsphere* > > sphere_lookup_;
 
 };
 
 // Utility functions
-core::Real power_distance( Vector const & pt, PDsphereOP const & sph );
+core::Real power_distance( Vector const & pt, PDsphere const * sph );
 
 inline void
 link_vertex_to_generators( PDvertexOP vrt )
 {
 	//TR << "New Vertex has generators: ";
-	for ( utility::vector1< PDsphereOP >::iterator itr( vrt->nonconst_generators().begin() ) ;
-			itr != vrt->nonconst_generators().end() ; ++itr ) {
-		(*itr)->vertices().push_back( vrt );
-		//TR << " res " << (*itr)->res() << " atom " << (*itr)->atom();
+	for ( auto pvert : vrt->nonconst_generators() ) {
+		pvert->vertices().push_back( vrt.get() );
 	}
-	//TR << std::endl;
 	return;
 }
 
-Vector vertex_xyz_from_generators( PDsphereCOP a1, PDsphereCOP a2, PDsphereCOP a3, PDsphereCOP a4 );
+Vector vertex_xyz_from_generators( PDsphere const * a1, PDsphere const * a2, PDsphere const * a3, PDsphere const * a4 );
+Vector vertex_xyz_from_generators( utility::vector1< PDsphere* > const & gen );
 
-Vector vertex_xyz_from_generators( utility::vector1< PDsphereOP > const & gen );
-
-PDvertexOP find_next_vertex_with_smallest_dist( PDvertexOP & srch_vrt, PDsphereOP & new_sph, Real & this_dist );
+PDvertex * find_next_vertex_with_smallest_dist( PDvertex * srch_vrt, PDsphereOP & new_sph, Real & this_dist );
 
 ///////////////////////////////////////////////////////////////////
 // Start Surface Area Calculation Functions ///////////////////////
@@ -308,9 +305,9 @@ PDvertexOP find_next_vertex_with_smallest_dist( PDvertexOP & srch_vrt, PDsphereO
 
 
 void find_intersections(
-	PDsphereCOP patom,
-	PDvertexCOP vrt1,
-	PDvertexCOP vrt2,
+	PDsphere const * patom,
+	PDvertex const * vrt1,
+	PDvertex const * vrt2,
 	Vector const & start_pt,
 	Vector const & dir,
 	core::Real const max_extent,
@@ -329,10 +326,10 @@ void
 find_common_intersection_atoms( PDinterOP inter );
 
 utility::vector1< utility::vector1< SAnode > >
-get_cycles_from_intersections( std::list< PDinterOP > & intersections, PDsphereOP & this_atom );
+get_cycles_from_intersections( std::list< PDinterOP > & intersections, PDsphere const * this_atom );
 
 core::Real
-get_sasa_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles, PDsphereOP & this_atom );
+get_sasa_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles, PDsphere* this_atom );
 
 void
 get_derivs_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles,
@@ -356,9 +353,9 @@ check_deriv_cycle(
 		PDsphereOP & this_atom, PDsphereOP & check_atom );
 #endif
 
-bool share_axis_atoms( PDinterCOP v1, PDsphereCOP a1, PDsphereCOP a2 );
+bool share_axis_atoms( PDinterCOP v1, PDsphere const * a1, PDsphere const * a2 );
 
-core::Real get_area_from_cycle( PDsphereOP this_atom, utility::vector1< SAnode > & cycle );
+core::Real get_area_from_cycle( PDsphere* this_atom, utility::vector1< SAnode > & cycle );
 
 
 ///////////////////////////////////////////////////////////////////

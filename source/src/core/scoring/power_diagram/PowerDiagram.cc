@@ -36,6 +36,7 @@
 
 #include <stack>
 #include <iterator>
+#include <functional>
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.power_diagram.PowerDiagram" );
 
@@ -46,8 +47,13 @@ namespace core {
 namespace scoring {
 namespace power_diagram {
 
+bool
+matches_ptr( PDvertexOP elem, PDvertex * test ){
+	return( elem.get() == test );
+}
 
-Real power_distance( Vector const & pt, PDsphereOP const & sph )
+
+Real power_distance( Vector const & pt, PDsphere const * sph )
 {
 	return ( pt.distance_squared( sph->xyz() ) - sph->rad2() );
 }
@@ -167,7 +173,7 @@ PowerDiagram::construct_from_pose(
 					make_initial_power_diagram();
 				}
 			} else {
-				//    TR << "Adding atom for residue " << ires << " atomno " << iatm << std::endl;
+				//TR << "Adding atom for residue " << ires << " atomno " << iatm << std::endl;
 
 				//    TR << "ATOMINFO " << new_sph->xyz()(1) << " " << new_sph->xyz()(2) << " " << new_sph->xyz()(3) << " " << new_sph->rad() << std::endl;
 
@@ -181,21 +187,14 @@ PowerDiagram::construct_from_pose(
 	}
 	// Now get the cycles and associate them with the spheres
 
-	for ( utility::vector1< PDsphereOP >::iterator sph_itr = spheres_.begin() ; sph_itr != spheres_.end() ; ++sph_itr ) {
+	for ( auto patom : spheres_ ) {
 
-		PDsphereOP patom( *sph_itr );
-		std::list< PDinterOP > intersections( get_intersections_for_atom( patom ) );
-		for ( std::list< PDinterOP >::iterator itr = intersections.begin() ;
-				itr != intersections.end() ; ++itr ) {
-			find_common_intersection_atoms( (*itr) );
-		}
-		//  utility::vector1< utility::vector1< SAnode > > cycles ( get_cycles_from_intersections( intersections, patom ) );
-		(*sph_itr)->cycles() = get_cycles_from_intersections( intersections, patom );
+		std::list< PDinterOP > intersections( get_intersections_for_atom( patom.get() ) );
 
-		for ( std::list< PDinterOP >::iterator itr = intersections.begin() ;
-				itr != intersections.end() ; ++itr ) {
-			(*itr)->nonconst_atoms().clear();
+		for ( auto inter : intersections ) {
+			find_common_intersection_atoms( inter );
 		}
+		patom->cycles() = get_cycles_from_intersections( intersections, patom.get() );
 
 	}
 }
@@ -208,26 +207,25 @@ PowerDiagram::clear()
 	// reset vertex count
 	vertex_count_ = 0;
 
-	for ( auto itr = spheres_.begin() ; itr != spheres_.end() ; ++itr ) {
-		(*itr)->vertices().clear();
-		for ( auto cyc_itr = (*itr)->cycles().begin() ; cyc_itr != (*itr)->cycles().end() ; ++cyc_itr ) {
-			cyc_itr->clear();
-
+	for ( auto this_sphere : spheres_ ) {
+		this_sphere->vertices().clear();
+		for ( auto cyc : this_sphere->cycles() ) {
+			cyc.clear();
 		}
 	}
 
-	for ( auto itr = sphere_lookup_.begin() ; itr != sphere_lookup_.end() ; ++itr ) {
-		itr->clear();
+	for ( auto sl : sphere_lookup_ ) {
+		sl.clear();
 	}
 
-	for ( auto itr = finite_vertices_.begin() ; itr != finite_vertices_.end() ; ++itr ) {
-		(*itr)->nonconst_partners().clear();
-		(*itr)->nonconst_generators().clear();
+	for ( auto fv : finite_vertices_ ) {
+		fv->nonconst_partners().clear();
+		fv->nonconst_generators().clear();
 	}
 
-	for ( auto itr = infinite_vertices_.begin() ; itr != infinite_vertices_.end() ; ++itr ) {
-		(*itr)->nonconst_partners().clear();
-		(*itr)->nonconst_generators().clear();
+	for ( auto iv : infinite_vertices_ ) {
+		iv->nonconst_partners().clear();
+		iv->nonconst_generators().clear();
 	}
 
 	// Clear the stored vertices
@@ -244,14 +242,7 @@ PowerDiagram::extract_sasa_for_atom( Size ires, Size iatm )
 {
 
 	Real surf_area( 0.0 );
-	PDsphereOP patom( sphere_lookup( ires, iatm ) );
-	// std::list< PDinterOP > intersections( get_intersections_for_atom( ires, iatm ) );
-	// for ( std::list< PDinterOP >::iterator itr = intersections.begin() ;
-	//   itr != intersections.end() ; ++itr ) {
-	//  find_common_intersection_atoms( (*itr) );
-	// }
-	//utility::vector1< utility::vector1< SAnode > > cycles ( get_cycles_from_intersections( intersections, patom ) );
-
+	PDsphere* patom( sphere_lookup( ires, iatm ) );
 	surf_area += get_sasa_from_cycles( patom->cycles(), patom );
 
 	return surf_area;
@@ -319,9 +310,9 @@ PowerDiagram::make_initial_power_diagram()
 	vrt1->set_finite( false );
 	vrt1->set_live( true );
 	vrt1->nonconst_id() = vertex_count_++;
-	vrt1->nonconst_generators().push_back( spheres_[1] );
-	vrt1->nonconst_generators().push_back( spheres_[2] );
-	vrt1->nonconst_generators().push_back( spheres_[3] );
+	vrt1->nonconst_generators().push_back( spheres_[1].get() );
+	vrt1->nonconst_generators().push_back( spheres_[2].get() );
+	vrt1->nonconst_generators().push_back( spheres_[3].get() );
 	std::sort( vrt1->nonconst_generators().begin(), vrt1->nonconst_generators().end() );
 	vrt1->nonconst_direction() = dir1;
 	link_vertex_to_generators( vrt1 );
@@ -331,9 +322,9 @@ PowerDiagram::make_initial_power_diagram()
 	vrt2->set_finite( false );
 	vrt2->set_live( true );
 	vrt2->nonconst_id() = vertex_count_++;
-	vrt2->nonconst_generators().push_back( spheres_[2] );
-	vrt2->nonconst_generators().push_back( spheres_[3] );
-	vrt2->nonconst_generators().push_back( spheres_[4] );
+	vrt2->nonconst_generators().push_back( spheres_[2].get() );
+	vrt2->nonconst_generators().push_back( spheres_[3].get() );
+	vrt2->nonconst_generators().push_back( spheres_[4].get() );
 	std::sort( vrt2->nonconst_generators().begin(), vrt2->nonconst_generators().end() );
 	vrt2->nonconst_direction() = dir2;
 	link_vertex_to_generators( vrt2 );
@@ -343,9 +334,9 @@ PowerDiagram::make_initial_power_diagram()
 	vrt3->set_finite( false );
 	vrt3->set_live( true );
 	vrt3->nonconst_id() = vertex_count_++;
-	vrt3->nonconst_generators().push_back( spheres_[3] );
-	vrt3->nonconst_generators().push_back( spheres_[4] );
-	vrt3->nonconst_generators().push_back( spheres_[1] );
+	vrt3->nonconst_generators().push_back( spheres_[3].get() );
+	vrt3->nonconst_generators().push_back( spheres_[4].get() );
+	vrt3->nonconst_generators().push_back( spheres_[1].get() );
 	std::sort( vrt3->nonconst_generators().begin(), vrt3->nonconst_generators().end() );
 	vrt3->nonconst_direction() = dir3;
 	link_vertex_to_generators( vrt3 );
@@ -355,55 +346,55 @@ PowerDiagram::make_initial_power_diagram()
 	vrt4->set_finite( false );
 	vrt4->set_live( true );
 	vrt4->nonconst_id() = vertex_count_++;
-	vrt4->nonconst_generators().push_back( spheres_[4] );
-	vrt4->nonconst_generators().push_back( spheres_[1] );
-	vrt4->nonconst_generators().push_back( spheres_[2] );
+	vrt4->nonconst_generators().push_back( spheres_[4].get() );
+	vrt4->nonconst_generators().push_back( spheres_[1].get() );
+	vrt4->nonconst_generators().push_back( spheres_[2].get() );
 	std::sort( vrt4->nonconst_generators().begin(), vrt4->nonconst_generators().end() );
 	vrt4->nonconst_direction() = dir4;
 	link_vertex_to_generators( vrt4 );
 	// TR << "Made initial infinite vertex with id " << vrt4->id() << std::endl;
 
-	vrt1->nonconst_partners().push_back( vrt2 );
-	vrt1->nonconst_partners().push_back( vrt3 );
-	vrt1->nonconst_partners().push_back( vrt4 );
-	vrt2->nonconst_partners().push_back( vrt3 );
-	vrt2->nonconst_partners().push_back( vrt4 );
-	vrt2->nonconst_partners().push_back( vrt1 );
-	vrt3->nonconst_partners().push_back( vrt4 );
-	vrt3->nonconst_partners().push_back( vrt1 );
-	vrt3->nonconst_partners().push_back( vrt2 );
-	vrt4->nonconst_partners().push_back( vrt1 );
-	vrt4->nonconst_partners().push_back( vrt2 );
-	vrt4->nonconst_partners().push_back( vrt3 );
+	vrt1->nonconst_partners().push_back( vrt2.get() );
+	vrt1->nonconst_partners().push_back( vrt3.get() );
+	vrt1->nonconst_partners().push_back( vrt4.get() );
+	vrt2->nonconst_partners().push_back( vrt3.get() );
+	vrt2->nonconst_partners().push_back( vrt4.get() );
+	vrt2->nonconst_partners().push_back( vrt1.get() );
+	vrt3->nonconst_partners().push_back( vrt4.get() );
+	vrt3->nonconst_partners().push_back( vrt1.get() );
+	vrt3->nonconst_partners().push_back( vrt2.get() );
+	vrt4->nonconst_partners().push_back( vrt1.get() );
+	vrt4->nonconst_partners().push_back( vrt2.get() );
+	vrt4->nonconst_partners().push_back( vrt3.get() );
 
 	// Now get the initial finite vertex
 
-	Vector const p_intersect( vertex_xyz_from_generators( spheres_[1], spheres_[2],
-		spheres_[3], spheres_[4] ) );
+	Vector const p_intersect( vertex_xyz_from_generators( spheres_[1].get(), spheres_[2].get(),
+		spheres_[3].get(), spheres_[4].get() ) );
 
 	PDvertexOP vrt5( new PDvertex() );
 	vrt5->set_finite( true );
 	vrt5->set_live( true );
 	vrt5->nonconst_id() = vertex_count_++;
-	vrt5->nonconst_power() = power_distance( p_intersect, spheres_[1] );
-	vrt5->nonconst_generators().push_back( spheres_[1] );
-	vrt5->nonconst_generators().push_back( spheres_[2] );
-	vrt5->nonconst_generators().push_back( spheres_[3] );
-	vrt5->nonconst_generators().push_back( spheres_[4] );
+	vrt5->nonconst_power() = power_distance( p_intersect, spheres_[1].get() );
+	vrt5->nonconst_generators().push_back( spheres_[1].get() );
+	vrt5->nonconst_generators().push_back( spheres_[2].get() );
+	vrt5->nonconst_generators().push_back( spheres_[3].get() );
+	vrt5->nonconst_generators().push_back( spheres_[4].get() );
 	std::sort( vrt5->nonconst_generators().begin(), vrt5->nonconst_generators().end() );
 	vrt5->nonconst_xyz() = p_intersect;
-	vrt5->nonconst_partners().push_back( vrt1 );
-	vrt5->nonconst_partners().push_back( vrt2 );
-	vrt5->nonconst_partners().push_back( vrt3 );
-	vrt5->nonconst_partners().push_back( vrt4 );
+	vrt5->nonconst_partners().push_back( vrt1.get() );
+	vrt5->nonconst_partners().push_back( vrt2.get() );
+	vrt5->nonconst_partners().push_back( vrt3.get() );
+	vrt5->nonconst_partners().push_back( vrt4.get() );
 	link_vertex_to_generators( vrt5 );
 	// TR << "Made initial finite vertex with id " << vrt5->id() << std::endl;
 
 	// Add this vertex to the infinite vertices
-	vrt1->nonconst_partners().push_back( vrt5 );
-	vrt2->nonconst_partners().push_back( vrt5 );
-	vrt3->nonconst_partners().push_back( vrt5 );
-	vrt4->nonconst_partners().push_back( vrt5 );
+	vrt1->nonconst_partners().push_back( vrt5.get() );
+	vrt2->nonconst_partners().push_back( vrt5.get() );
+	vrt3->nonconst_partners().push_back( vrt5.get() );
+	vrt4->nonconst_partners().push_back( vrt5.get() );
 
 	// Set up the vertex lists
 	infinite_vertices_.push_front( vrt1 );
@@ -448,10 +439,10 @@ PowerDiagram::add_single_atom_to_power_diagram(
 		// Optimization - start at end and follow lowest power
 
 		// Get any finite vertex.
-		PDvertexOP srch_vrt( *finite_vertices_.rbegin() );
-		PDvertexOP next_vrt = nullptr;
-		PDvertexOP delete_vrt = nullptr;
-		Real pd( power_distance( srch_vrt->xyz(), new_sph ) );
+		PDvertex * srch_vrt( (*finite_vertices_.rbegin()).get() );
+		PDvertex * next_vrt = nullptr;
+		PDvertex * delete_vrt = nullptr;
+		Real pd( power_distance( srch_vrt->xyz(), new_sph.get() ) );
 		Real this_dist( pd - srch_vrt->power() );
 
 		while ( this_dist > 0.0 && next_vrt != srch_vrt ) {
@@ -496,31 +487,31 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 		if ( delete_vrt != nullptr ) {
 			// Ok, got one.  Now process this one and all its neighbors
-			std::stack< PDvertexOP > delete_me;
-			//   (*itr)->set_live( false );
+			std::stack< PDvertex * > delete_me;
 			delete_vrt->set_live( false );
 			delete_me.push( delete_vrt );
 			while ( !delete_me.empty() ) {
 				// Get the next one to deldete
-				PDvertexOP this_vrt( delete_me.top() );
+				PDvertex * this_vrt( delete_me.top() );
 				delete_me.pop();
 
 				// Check each partner vertex and push to deletion stack if necessary
-				for ( Size i = 1 ; i <= this_vrt->partners().size() ; ++i ) {
-					PDvertexOP & partner_vrt( this_vrt->nonconst_partners()[i] );
-					//     TR << "Checking partner at " << partner_vrt->xyz() << std::endl;
+				for ( auto partner_vrt : this_vrt->partners() ) {
+					//    for ( Size i = 1 ; i <= this_vrt->partners().size() ; ++i ) {
+					//     PDvertex * partner_vrt( this_vrt->nonconst_partners()[i] );
+					//TR << "Checking partner at " << partner_vrt->xyz() << std::endl;
 					// Different test for finite vs. infinite
 					if ( partner_vrt->finite() ) {
-						Real partner_pd( power_distance( partner_vrt->xyz(), new_sph ) );
+						Real partner_pd( power_distance( partner_vrt->xyz(), new_sph.get() ) );
 						if ( ( partner_pd < partner_vrt->power() ) && partner_vrt->live() ) {
 							partner_vrt->set_live( false );
 							delete_me.push( partner_vrt );
 						}
 					} else {
 						Real const check_val( ( new_sph->xyz() - partner_vrt->generators()[1]->xyz() ).dot( partner_vrt->direction() ) );
-						//   TR << "Comparing to infinite vertex plane, check_val is " << check_val << std::endl;
+						//TR << "Comparing to infinite vertex plane, check_val is " << check_val << std::endl;
 						if ( ( check_val > 0.0 ) && partner_vrt->live() ) {
-							//       TR << "Removed an infinite vertex with id " << partner_vrt->id() << " at " << partner_vrt->xyz() << std::endl;
+							//TR << "Removed an infinite vertex with id " << partner_vrt->id() << " at " << partner_vrt->xyz() << std::endl;
 							partner_vrt->set_live( false );
 							delete_me.push( partner_vrt );
 						} else if ( check_val == 0.0 ) {
@@ -528,9 +519,9 @@ PowerDiagram::add_single_atom_to_power_diagram(
 							// the infinite vertex if the lone finite partner vertex
 							// will be deleted.
 							//       TR << "New atom is on generator plane of infinite vertex" << std::endl;
-							utility::vector1< PDvertexOP >::const_iterator fv_itr( partner_vrt->partners().begin() );
+							utility::vector1< PDvertex * >::const_iterator fv_itr( partner_vrt->partners().begin() );
 							while ( !(*fv_itr)->finite() ) ++fv_itr;
-							Real finite_partner_pd( power_distance( (*fv_itr)->xyz(), new_sph ) );
+							Real finite_partner_pd( power_distance( (*fv_itr)->xyz(), new_sph.get() ) );
 
 							// Note we're just checking the finite partner here - we don't push it yet
 							if ( finite_partner_pd < (*fv_itr)->power() && partner_vrt->live() ) {
@@ -545,7 +536,8 @@ PowerDiagram::add_single_atom_to_power_diagram(
 				// Remove this vertex from the list and push onto the trash
 				//    TR << "Deleting vertex at " << this_vrt->xyz() << std::endl;
 				this_vrt->set_live( false );
-				trash.push_front( this_vrt );
+				// This needs owning pointers, else the erase call below destroys the object
+				trash.push_front( *(this_vrt->my_itr()) );
 
 				if ( this_vrt->finite() ) {
 					finite_vertices_.erase( this_vrt->my_itr() );
@@ -563,21 +555,21 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	}
 
-	// TR << "Printing finite list" << std::endl;
+	//TR << "Printing finite list" << std::endl;
 
-	// for( std::list< PDvertexOP >::iterator fin_itr = finite_vertices_.begin() ; fin_itr != finite_vertices_.end() ; ++fin_itr ) {
+	//for( std::list< PDvertexOP >::iterator fin_itr = finite_vertices_.begin() ; fin_itr != finite_vertices_.end() ; ++fin_itr ) {
 	//  TR << "Finite vertex at " << (*fin_itr)->xyz() << std::endl;
 	// }
 
-	//TR << "Done finite list" << std::endl;
-
-	//TR << "Printing trash list" << std::endl;
-
+	// TR << "Done finite list" << std::endl;
+	//
+	// TR << "Printing trash list" << std::endl;
+	//
 	// for( std::list< PDvertexOP >::iterator trash_itr = trash.begin() ; trash_itr != trash.end() ; ++trash_itr ) {
-	//  TR << "Trashed vertex at " << (*trash_itr)->xyz() << std::endl;
+	//   TR << "Trashed vertex at " << (*trash_itr)->xyz() << std::endl;
 	// }
-
-	//TR << "Done trash list" << std::endl;
+	//
+	// TR << "Done trash list" << std::endl;
 
 
 	//////////////////////////////////////////////////////
@@ -592,33 +584,33 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			trash_itr != trash.end() ; ++trash_itr ) {
 
 		// Remove this vertex from all of its generator atoms' lists
-		for ( std::vector< PDsphereOP >::iterator gen_itr( (*trash_itr)->nonconst_generators().begin() ) ;
-				gen_itr != (*trash_itr)->nonconst_generators().end() ; ++gen_itr ) {
-			Size check_val( (*gen_itr)->vertices().size() );
-			(*gen_itr)->vertices().remove( *trash_itr );
-			debug_assert( (*gen_itr)->vertices().size() == (check_val - 1)   );
+		for ( auto pvert : (*trash_itr)->nonconst_generators() ) {
+			Size check_val( pvert->vertices().size() );
+
+			pvert->vertices().remove( (*trash_itr).get() );
+
+			debug_assert( pvert->vertices().size() == (check_val - 1)   );
 			//   TR << "Atom res " << (*gen_itr)->res() << " atom " << (*gen_itr)->atom() << " lost a vertex" << std::endl;
 		}
 
-		PDvertexOP & trash_vrt( *trash_itr );
-		for ( std::vector< PDvertexOP >::iterator part_itr( trash_vrt->nonconst_partners().begin() ) ;
-				part_itr != trash_vrt->nonconst_partners().end() ; ++part_itr ) {
+		PDvertex * trash_vrt( (*trash_itr).get() );
 
+		for ( auto part_vrt : trash_vrt->nonconst_partners() ) {
 			//   TR << "Examining trashed vertex " << trash_vrt->id() << " partner id " << (*part_itr)->id() << std::endl;
 
 			// Skip any partners that are also marked for deletion
-			if ( !((*part_itr)->live()) ) continue;
+			if ( !(part_vrt->live()) ) continue;
 
 			// Two infinite vertices don't form an edge, so no new finite vertex
 			// in this case.  Just remove the trashed vertice from the partners
 			// of the surviving infinite vertex.
-			if ( !trash_vrt->finite() && !((*part_itr)->finite()) ) {
+			if ( !trash_vrt->finite() && !(part_vrt->finite()) ) {
 				// For infinite vertex partners, remove the trashed vertex
 				//    TR << "Infinite vertex id " << (*part_itr)->id() << " losing connection to trashed vertex " << trash_vrt->id() << std::endl;
-				(*part_itr)->nonconst_partners().erase(
-					std::remove((*part_itr)->nonconst_partners().begin(),
-					(*part_itr)->nonconst_partners().end(), trash_vrt ),
-					(*part_itr)->nonconst_partners().end());
+				part_vrt->nonconst_partners().erase(
+					std::remove(part_vrt->nonconst_partners().begin(),
+					part_vrt->nonconst_partners().end(), trash_vrt ),
+					part_vrt->nonconst_partners().end());
 				continue;
 			}
 
@@ -633,26 +625,15 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			// add in the new atom.
 			// Sorting here isn't necessary.  Generators are sorted at vertex construction,
 			// and they never change.
-			//std::sort( (*part_itr)->nonconst_generators().begin(), (*part_itr)->nonconst_generators().end() );
-			//std::sort( trash_vrt->nonconst_generators().begin(), trash_vrt->nonconst_generators().end() );
-			std::set_intersection( (*part_itr)->nonconst_generators().begin(), (*part_itr)->nonconst_generators().end(),
+			std::set_intersection( part_vrt->nonconst_generators().begin(), part_vrt->nonconst_generators().end(),
 				trash_vrt->nonconst_generators().begin(), trash_vrt->nonconst_generators().end(),
 				std::back_inserter( new_vrt->nonconst_generators() ) );
-			for ( utility::vector1< PDsphereOP >::iterator debug_itr = (*part_itr)->nonconst_generators().begin() ;
-					debug_itr != (*part_itr)->nonconst_generators().end() ; ++debug_itr ) {
-				//    TR << "Survivor vertex generator residue " << (*debug_itr)->res() << " atom " << (*debug_itr)->atom() << std::endl;
-			}
-
-			for ( utility::vector1< PDsphereOP >::iterator debug_itr = trash_vrt->nonconst_generators().begin() ;
-					debug_itr != trash_vrt->nonconst_generators().end() ; ++debug_itr ) {
-				//    TR << "Deleted vertex generator residue " << (*debug_itr)->res() << " atom " << (*debug_itr)->atom() << std::endl;
-			}
 
 			debug_assert( new_vrt->nonconst_generators().size() == 3 );
 			//   TR << "Set intersection found " << new_vrt->nonconst_generators().size() << " in common " << std::endl;
 
 			// Add in new atom
-			new_vrt->nonconst_generators().push_back( new_sph );
+			new_vrt->nonconst_generators().push_back( new_sph.get() );
 			std::sort( new_vrt->nonconst_generators().begin(), new_vrt->nonconst_generators().end() );
 			link_vertex_to_generators( new_vrt );
 			// Now we have enough info to get the xyz
@@ -662,17 +643,17 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			//   TR << "Connecting new vertex id " << new_vrt->id() << " with old vertex id " << (*part_itr)->id() << std::endl;
 
 			// Stitch up the connections on this edge
-			new_vrt->nonconst_partners().push_back( *part_itr );
+			new_vrt->nonconst_partners().push_back( part_vrt );
 			// The trashed vertex is replaced by the new one in the surviving vertex
-			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
-				trash_vrt ) != (*part_itr)->nonconst_partners().end() );
-			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
-				new_vrt ) == (*part_itr)->nonconst_partners().end() );
-			std::replace( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(), trash_vrt, new_vrt );
-			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
-				new_vrt ) != (*part_itr)->nonconst_partners().end() );
-			debug_assert( std::find( (*part_itr)->nonconst_partners().begin(), (*part_itr)->nonconst_partners().end(),
-				trash_vrt ) == (*part_itr)->nonconst_partners().end() );
+			debug_assert( std::find( part_vrt->nonconst_partners().begin(), part_vrt->nonconst_partners().end(),
+				trash_vrt ) != part_vrt->nonconst_partners().end() );
+			debug_assert( std::find( part_vrt->nonconst_partners().begin(), part_vrt->nonconst_partners().end(),
+				new_vrt.get() ) == part_vrt->nonconst_partners().end() );
+			std::replace( part_vrt->nonconst_partners().begin(), part_vrt->nonconst_partners().end(), trash_vrt, new_vrt.get() );
+			debug_assert( std::find( part_vrt->nonconst_partners().begin(), part_vrt->nonconst_partners().end(),
+				new_vrt.get() ) != part_vrt->nonconst_partners().end() );
+			debug_assert( std::find( part_vrt->nonconst_partners().begin(), part_vrt->nonconst_partners().end(),
+				trash_vrt ) == part_vrt->nonconst_partners().end() );
 
 			// Move the new vertex to a temporary list - it still needs the
 			// rest of its partners to be specified.
@@ -683,9 +664,9 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	// Done with the trashed vertices.
 
-	for ( auto itr = trash.begin() ; itr != trash.end() ; ++itr ) {
-		(*itr)->nonconst_partners().clear();
-		(*itr)->nonconst_generators().clear();
+	for ( auto tr_vrt : trash ) {
+		tr_vrt->nonconst_partners().clear();
+		tr_vrt->nonconst_generators().clear();
 	}
 
 	trash.clear();
@@ -703,14 +684,14 @@ PowerDiagram::add_single_atom_to_power_diagram(
 			itr1 != new_vertices.end() ; ++itr1 ) {
 		for ( std::list< PDvertexOP >::iterator itr2( std::next( itr1 ) ) ;
 				itr2 != new_vertices.end() ; ++itr2 ) {
-			utility::vector1< PDsphereOP > shared_atoms;
+			utility::vector1< PDsphere* > shared_atoms;
 			std::set_intersection( (*itr1)->nonconst_generators().begin(), (*itr1)->nonconst_generators().end(),
 				(*itr2)->nonconst_generators().begin(), (*itr2)->nonconst_generators().end(),
 				std::back_inserter( shared_atoms ) );
 			if ( shared_atoms.size() == 3 ) {
 				//    TR << "Connecting new finite vertex id " << (*itr1)->id() << " with other new finite vertex " << (*itr2)->id() <<std::endl;
-				(*itr1)->nonconst_partners().push_back( *itr2 );
-				(*itr2)->nonconst_partners().push_back( *itr1 );
+				(*itr1)->nonconst_partners().push_back( (*itr2).get() );
+				(*itr2)->nonconst_partners().push_back( (*itr1).get() );
 			}
 		}
 	}
@@ -726,9 +707,8 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	std::list< PDvertexOP > new_infinite_vertices;
 
-	for ( std::list< PDvertexOP >::iterator itr( new_vertices.begin() ) ;
-			itr != new_vertices.end() ; ++itr ) {
-		if ( (*itr)->partners().size() < 4 ) {
+	for ( auto nvp : new_vertices ) {
+		if ( nvp->partners().size() < 4 ) {
 			//   TR << "Checking generators of new finite vertex " << (*itr)->id()  << std::endl;
 			// Check for each set of three (out of four) generators whether
 			// any of the current partners shares all three.  If not, those
@@ -741,19 +721,18 @@ PowerDiagram::add_single_atom_to_power_diagram(
 				// of the required infinite vertices to make, we will
 				// know because the partner count will have hit four,
 				// and we can bag out.
-				if ( (*itr)->partners().size() == 4 ) continue;
-				utility::vector1< PDsphereOP > only_three;
+				if ( nvp->partners().size() == 4 ) continue;
+				utility::vector1< PDsphere * > only_three;
 				for ( Size igen( 1 ) ; igen <= 4 ; igen++ ) {
-					if ( igen != omit ) only_three.push_back( (*itr)->nonconst_generators()[ igen ] );
+					if ( igen != omit ) only_three.push_back( nvp->nonconst_generators()[ igen ] );
 				}
 				debug_assert( only_three.size() == 3 );
 				// Check this set of three against each of the current partners
 				bool build_infinite_vertex( true );
-				for ( utility::vector1< PDvertexOP >::iterator part_itr = (*itr)->nonconst_partners().begin() ;
-						part_itr != (*itr)->nonconst_partners().end() ; ++part_itr ) {
+				for ( auto pvp : nvp->nonconst_partners() ) {
 					if ( !build_infinite_vertex ) continue; // short circuit
-					utility::vector1< PDsphereOP > shared_gens;
-					std::set_intersection( (*part_itr)->nonconst_generators().begin(), (*part_itr)->nonconst_generators().end(),
+					utility::vector1< PDsphere* > shared_gens;
+					std::set_intersection( pvp->nonconst_generators().begin(), pvp->nonconst_generators().end(),
 						only_three.begin(), only_three.end(),
 						std::back_inserter( shared_gens ) );
 					//     TR << "Infinite vertex build check shared gen atoms is " << shared_gens.size() << std::endl;
@@ -774,7 +753,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 					new_inf_vrt->nonconst_generators().push_back( only_three[3] );
 					link_vertex_to_generators( new_inf_vrt );
 					Vector dir( (only_three[1]->xyz() - only_three[2]->xyz()).cross( only_three[3]->xyz() - only_three[2]->xyz() ).normalize() );
-					if ( dir.dot( (*itr)->generators()[omit]->xyz() - only_three[1]->xyz() ) > 0.0 ) dir *= -1.0;
+					if ( dir.dot( nvp->generators()[omit]->xyz() - only_three[1]->xyz() ) > 0.0 ) dir *= -1.0;
 					new_inf_vrt->nonconst_direction() = dir;
 					new_infinite_vertices.push_front( new_inf_vrt );
 					new_inf_vrt->my_itr() = new_infinite_vertices.begin();
@@ -789,12 +768,12 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 					// Link up the connection
 					//     TR << "Connecting new infinite vertex id " << new_inf_vrt->id() << " with old finite vertex id " << (*itr)->id() << std::endl;
-					(*itr)->nonconst_partners().push_back( new_inf_vrt );
-					new_inf_vrt->nonconst_partners().push_back( *itr );
+					nvp->nonconst_partners().push_back( new_inf_vrt.get() );
+					new_inf_vrt->nonconst_partners().push_back( nvp.get() );
 				}
 			}
 		}
-		debug_assert( (*itr)->partners().size() == 4 );
+		debug_assert( nvp->partners().size() == 4 );
 	}
 
 	// At this point the new finite vertices are complete, and can be added
@@ -814,40 +793,19 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	// TR << "There are currently " << infinite_vertices_.size() << " old infinite vertices" << std::endl;
 
-	for ( std::list< PDvertexOP >::iterator itr( infinite_vertices_.begin() ) ;
-			itr != infinite_vertices_.end() ; ++itr ) {
-
+	for ( auto ivp : infinite_vertices_ ) {
 		// Check for dead partners
-
-		//  TR << "old infinite vertex id " << (*itr)->id() << " has " << (*itr)->partners().size() << " partners" << std::endl;
-
-		//  TR << "Old infinite vertex id " << (*itr)->id() << " has partners: ";
-		//  for( utility::vector1<PDvertexOP>::iterator chk_itr( (*itr)->nonconst_partners().begin() ) ;
-		//    chk_itr != (*itr)->nonconst_partners().end() ; ++chk_itr ) {
-		//   TR << (*chk_itr)->id() << "   ";
-		//   if( !(*chk_itr)->live() ) {
-		//    TR << std::endl << "Old infinite vertex id " << (*itr)->id() << " still has link to dead vertex ";
-		//   }
-		//  }
-		//  TR << std::endl;
-
-		while ( (*itr)->partners().size() != 4 ) {
-
-			debug_assert( (*itr)->partners().size() <= 4 );
-
-			for ( std::list< PDvertexOP >::iterator new_itr( new_infinite_vertices.begin() ) ;
-					new_itr != new_infinite_vertices.end() ; ++new_itr ) {
-
-				utility::vector1< PDsphereOP > shared_atoms;
-				std::set_intersection( (*itr)->nonconst_generators().begin(), (*itr)->nonconst_generators().end(),
-					(*new_itr)->nonconst_generators().begin(), (*new_itr)->nonconst_generators().end(),
+		while ( ivp->partners().size() != 4 ) {
+			debug_assert( ivp->partners().size() <= 4 );
+			for ( auto nivp : new_infinite_vertices ) {
+				utility::vector1< PDsphere* > shared_atoms;
+				std::set_intersection( ivp->nonconst_generators().begin(), ivp->nonconst_generators().end(),
+					nivp->nonconst_generators().begin(), nivp->nonconst_generators().end(),
 					std::back_inserter( shared_atoms ) );
-				//    TR << "Old infinite vertex id " << (*itr)->id() << " shares " << shared_atoms.size() << " atoms with new vertex id " << (*new_itr)->id() << std::endl;
 				if ( shared_atoms.size() == 2 ) {
 					// Link them up
-					//     TR << "Connecting new infinite vertex id " << (*new_itr)->id() << " with old infinite vertex " << (*itr)->id() << std::endl;
-					(*itr)->nonconst_partners().push_back( *new_itr );
-					(*new_itr)->nonconst_partners().push_back( *itr );
+					ivp->nonconst_partners().push_back( nivp.get() );
+					nivp->nonconst_partners().push_back( ivp.get() );
 				}
 			}
 		}
@@ -855,36 +813,23 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	// Now the infinite vertices need to look amongst themselves to
 	// find the last bunch of partners.
-	// Hmmm.  Note the code duplication with previous block
 
 	for ( std::list< PDvertexOP >::iterator itr( new_infinite_vertices.begin() ) ;
 			itr != new_infinite_vertices.end() ; ++itr ) {
 		while ( (*itr)->partners().size() != 4 ) {
 
 			debug_assert( (*itr)->partners().size() <= 4 );
-
-			//   TR << "New vertex id " << (*itr)->id() << " currently has " << (*itr)->partners().size() << " partners" << std::endl;
-
-			//  TR << "New infinite vertex id " << (*itr)->id() << " has partners: ";
-			//  for( utility::vector1<PDvertexOP>::iterator chk_itr( (*itr)->nonconst_partners().begin() ) ;
-			//     chk_itr != (*itr)->nonconst_partners().end() ; ++chk_itr ) {
-			//   TR << (*chk_itr)->id() << "   ";
-			//  }
-			//  TR << std::endl;
-
 			for ( std::list< PDvertexOP >::iterator new_itr( std::next( itr ) ) ;
 					new_itr != new_infinite_vertices.end() ; ++new_itr ) {
 
-				utility::vector1< PDsphereOP > shared_atoms;
+				utility::vector1< PDsphere * > shared_atoms;
 				std::set_intersection( (*itr)->nonconst_generators().begin(), (*itr)->nonconst_generators().end(),
 					(*new_itr)->nonconst_generators().begin(), (*new_itr)->nonconst_generators().end(),
 					std::back_inserter( shared_atoms ) );
-				//    TR << "This new vertex id " << (*itr)->id() << " shares " << shared_atoms.size() << " atoms with other new vertex id " << (*new_itr)->id() << std::endl;
 				if ( shared_atoms.size() == 2 ) {
 					// Link them up
-					//     TR << "Connecting new infinite vertex id " << (*new_itr)->id() << " with new infinite vertex id " << (*itr)->id() << std::endl;
-					(*itr)->nonconst_partners().push_back( *new_itr );
-					(*new_itr)->nonconst_partners().push_back( *itr );
+					(*itr)->nonconst_partners().push_back( (*new_itr).get() );
+					(*new_itr)->nonconst_partners().push_back( (*itr).get() );
 				}
 			}
 		}
@@ -982,7 +927,7 @@ std::list< PDinterOP >
 PowerDiagram::get_intersections_for_atom( Size ires, Size iatm )
 {
 
-	PDsphereOP psph( sphere_lookup_[ ires ][ iatm ] );
+	PDsphere* psph( sphere_lookup_[ ires ][ iatm ] );
 	return get_intersections_for_atom( psph );
 
 }
@@ -992,7 +937,7 @@ PowerDiagram::get_intersections_for_atom( Size ires, Size iatm )
 
 
 std::list< PDinterOP >
-PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
+PowerDiagram::get_intersections_for_atom( PDsphere* psph )
 {
 
 	std::list< PDinterOP > intersections;
@@ -1003,17 +948,13 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 	// the convex polygon they form encloses the circle of intersection
 	// where the plane slices the sphere.
 
-	std::multimap< PDsphereOP, PDvertexOP > gen_dist2_map;
-	utility::vector1< PDsphereOP > valid_neighbors;
+	std::multimap< PDsphere*, PDvertex* > gen_dist2_map;
+	utility::vector1< PDsphere* > valid_neighbors;
 	// Load up a multimap with squared distances
-	for ( std::list< PDvertexOP >::const_iterator itr1 = psph->vertices().begin() ;
-			itr1 != psph->vertices().end() ; ++itr1 ) {
-		PDvertexOP vrt( *itr1 );
+	for ( auto vrt : psph->vertices() ) {
 		if ( !vrt->finite() ) continue;
 		// Check the dist between psph and each of the generators of vrt
-		for ( utility::vector1< PDsphereOP >::iterator gitr( vrt->nonconst_generators().begin() ) ;
-				gitr != vrt->nonconst_generators().end() ; ++gitr ) {
-			PDsphereOP osph( *gitr );
+		for ( auto osph : vrt->nonconst_generators() ) {
 			if ( osph == psph ) continue;
 			gen_dist2_map.insert( std::make_pair( osph, vrt ) );
 			if ( std::find( valid_neighbors.begin(), valid_neighbors.end(), osph ) == valid_neighbors.end() ) {
@@ -1025,12 +966,12 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 
 	// Now iterate through the multimap to find enclosing neighbors
 	for ( Size iat = 1 ; iat <= valid_neighbors.size() ; ++iat ) {
-		PDsphereOP osph( valid_neighbors[iat] );
+		PDsphere * osph( valid_neighbors[iat] );
 		Size const vrt_count( gen_dist2_map.count( osph ) );
 		//TR << "Testing other atom " << osph->atom() << " which has " << vrt_count << " shared finite vertices " <<std::endl;
 		if ( vrt_count >= 3 ) {
 			// Get iterators for these vertices
-			std::pair< std::multimap< PDsphereOP, PDvertexOP >::iterator, std::multimap< PDsphereOP, PDvertexOP >::iterator > key_range;
+			std::pair< std::multimap< PDsphere*, PDvertex* >::iterator, std::multimap< PDsphere*, PDvertex* >::iterator > key_range;
 			key_range = gen_dist2_map.equal_range( osph );
 
 			// Quick check here to see if psph and osph have a common neighbor nsph
@@ -1044,15 +985,13 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 
 
 			bool found_a_shared_overlap( false );
-			for ( std::multimap< PDsphereOP, PDvertexOP >::iterator it = key_range.first ;
+			for ( std::multimap< PDsphere*, PDvertex* >::iterator it = key_range.first ;
 					it != key_range.second; ++it ) {
 				if ( found_a_shared_overlap ) continue;
-				PDvertexOP nvrt( (*it).second );
+				PDvertex* nvrt( (*it).second );
 				// Loop through the generators
-				for ( utility::vector1< PDsphereOP >::iterator nitr( nvrt->nonconst_generators().begin() ) ;
-						nitr != nvrt->nonconst_generators().end() ; ++nitr ) {
+				for ( auto nsph : nvrt->nonconst_generators() ) {
 					if ( found_a_shared_overlap ) continue;
-					PDsphereOP nsph( *nitr );
 					if ( nsph == psph || nsph == osph ) continue;
 
 					if ( ( psph->xyz().distance( nsph->xyz() ) < ( psph->rad() + nsph->rad() ) ) &&
@@ -1089,9 +1028,9 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 			//   TR << "Found full circle intersection!" << std::endl;
 			Vector new_inter_pt( center_in_plane );
 			PDvertexCOP vrt1( (*key_range.first).second );
-			PDinterOP new_inter( new PDinter( new_inter_pt, vrt1, vrt1 ) );
+			PDinterOP new_inter( new PDinter( new_inter_pt, vrt1.get(), vrt1.get() ) );
 			new_inter->add_atom( osph );
-			new_inter->circle() = true;
+			new_inter->nonconst_circle() = true;
 			intersections.push_back( new_inter );
 
 		}
@@ -1099,16 +1038,13 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 
 
 	// Get points of intersections that correspond to triple atom overlaps
-	for ( std::list< PDvertexOP >::const_iterator itr1 = psph->vertices().begin() ;
-			itr1 != psph->vertices().end() ; ++itr1 ) {
-		PDvertexCOP vrt1( *itr1 );
-		for ( utility::vector1< PDvertexOP >::const_iterator itr2 = vrt1->partners().begin() ;
-				itr2 != vrt1->partners().end() ; ++itr2 ) {
-			PDvertexCOP vrt2( *itr2 );
+	for ( auto vrt1 : psph->vertices() ) {
+		for ( auto vrt2 : vrt1->partners() ) {
 			if ( vrt1->id() > vrt2->id() ) continue; // otherwise we do it twice
 			// Make sure this other vertex is also in work_atom's list of vertices
 			if ( find( psph->vertices().begin(), psph->vertices().end(), vrt2 ) !=
 					psph->vertices().end() ) {
+
 				// Handle by case - in any case you need a start point, a direction, and
 				// a maximum extent if both vertices are finite.
 				//TR << "Working with vertices " << vrt1->id() << " and " << vrt2->id() << std::endl;
@@ -1149,9 +1085,9 @@ PowerDiagram::get_intersections_for_atom( PDsphereOP psph )
 
 void
 find_intersections(
-	PDsphereCOP psph,
-	PDvertexCOP vrt1,
-	PDvertexCOP vrt2,
+	PDsphere const * psph,
+	PDvertex const * vrt1,
+	PDvertex const * vrt2,
 	Vector const & start_pt,
 	Vector const & dir,
 	Real const max_extent,
@@ -1213,21 +1149,14 @@ find_intersections(
 	Real const rad_sqr( psph->rad2() );
 	Real const discrim( s_dot_dir*s_dot_dir - s_mag_sqr + rad_sqr );
 
-	//TR << "Distance from start point to atom center is " << s.magnitude() << " and radius is " << psph->rad() << std::endl;
-
-
-
 	if ( discrim < 0.0 ) {
 		//TR << "Discriminant is less than zero (value " << discrim << " ) - skipping" << std::endl;
 		return false; // No intersections
 	}
 
 	Real const discrim_sqrt( std::sqrt( discrim ) );
-
 	Real const alpha1( -s_dot_dir + discrim_sqrt );
 	Real const alpha2( -s_dot_dir - discrim_sqrt );
-
-	//TR << "For comparison, alpha1 id " << alpha1 << " , alpha2 is " << alpha2 << " and max_extent is " << max_extent << std::endl;
 
 	if ( alpha1 >= 0.0 && ( max_extent < 0.0 || alpha1 <= max_extent ) ) {
 		Vector new_inter_pt( start_pt + alpha1*dir );
@@ -1254,33 +1183,30 @@ find_common_intersection_atoms(
 	if ( inter->circle() ) return;
 
 	// All of the information is in the vertices' generator info
-	PDvertexCOP const & vrt1( inter->vrt1() );
-	PDvertexCOP const & vrt2( inter->vrt2() );
+	PDvertex const * vrt1( inter->vrt1() );
+	PDvertex const * vrt2( inter->vrt2() );
 
 	if ( vrt1->generators().size() == 3 ) {
 		//  TR << "Common atoms: ";
 		//  for( utility::vector1< PDsphereOP const >::iterator itr( vrt1->generators().begin() ) ;
-		for ( utility::vector1< PDsphereOP >::const_iterator itr( vrt1->generators().begin() ) ;
-				itr != vrt1->generators().end() ; ++itr ) {
-			//   TR << " res " << (*itr)->res() << " atom " << (*itr)->atom() << "   ";
-			inter->add_atom( *itr );
+		for ( auto this_atom : vrt1->generators() ) {
+			//   TR << " res " << atom->res() << " atom " << atom->atom() << "   ";
+			inter->add_atom( this_atom );
 		}
 		//  TR << std::endl;
 	} else if ( vrt2->generators().size() == 3 ) {
 		//  TR << "Common atoms: ";
-		for ( utility::vector1< PDsphereOP >::const_iterator itr( vrt2->generators().begin() ) ;
-				itr != vrt2->generators().end() ; ++itr ) {
-			//   TR << " res " << (*itr)->res() << " atom " << (*itr)->atom() << "   ";
-			inter->add_atom( *itr );
+		for ( auto this_atom : vrt2->generators() ) {
+			//   TR << " res " << atom->res() << " atom " << atom->atom() << "   ";
+			inter->add_atom( this_atom );
 		}
 		//  TR << std::endl;
 	} else {
 		//  TR << "Common atoms: ";
-		for ( utility::vector1< PDsphereOP >::const_iterator itr( vrt1->generators().begin() ) ;
-				itr != vrt1->generators().end() ; ++itr ) {
-			if (  find( vrt2->generators().begin(), vrt2->generators().end(), (*itr) ) != vrt2->generators().end() ) {
-				//    TR << " res " << (*itr)->res() << " atom " << (*itr)->atom() << "   ";
-				inter->add_atom( *itr );
+		for ( auto atom1 : vrt1->generators() ) {
+			if (  find( vrt2->generators().begin(), vrt2->generators().end(), atom1 ) != vrt2->generators().end() ) {
+				//    TR << " res " << atom1->res() << " atom " << atom1->atom() << "   ";
+				inter->add_atom( atom1 );
 			}
 		}
 		//  TR << std::endl;
@@ -1292,7 +1218,7 @@ find_common_intersection_atoms(
 utility::vector1< utility::vector1< SAnode > >
 get_cycles_from_intersections(
 	std::list< PDinterOP > & inters,
-	PDsphereOP & this_sph )
+	PDsphere const * this_sph )
 {
 	Real const two_pi( 2.0*numeric::constants::d::pi );
 	// Real const four_pi( 4.0*numeric::constants::d::pi );
@@ -1312,28 +1238,27 @@ get_cycles_from_intersections(
 
 		PDinterOP i_start;
 
-		for ( std::list< PDinterOP >::iterator itr = inters.begin() ;
-				itr != inters.end() ; ++itr ) {
+		for ( auto interp : inters ) {
 			bool skip( false );
 			// Check all cycles
 			//   TR << "Checking potential new start intersection " << (*itr) << std::endl;
 			for ( Size icyc = 1 ; icyc <= cycles.size() ; ++icyc ) {
 				for ( Size ivrt = 1 ; ivrt <= cycles[icyc].size() ; ++ivrt ) {
 					//     TR << "Against stored intersection " << ((cycles[icyc])[ivrt].inter()) << std::endl;
-					if ( *itr == ((cycles[icyc])[ivrt].inter()) ) skip = true;
+					if ( interp == ((cycles[icyc])[ivrt].inter()) ) skip = true;
 				}
 			}
 
 			// Must be ok
 			if ( !skip ) {
-				i_start = (*itr);
+				i_start = interp;
 				break;
 			}
 		}
 
 		PDinterOP i_current( i_start );
 
-		PDsphereCOP other_sph( ( i_current->atoms()[1] == this_sph ?
+		PDsphere const * other_sph( ( i_current->atoms()[1] == this_sph ?
 			i_current->atoms()[2] :
 			i_current->atoms()[1] ) );
 
@@ -1343,8 +1268,8 @@ get_cycles_from_intersections(
 		// Full circles are complete cycles on their own
 		if ( i_current->circle() ) {
 			// Circles only know the other atom
-			PDsphereCOP other_sph( i_current->atoms()[1] );
-			SAnode this_node( i_current,other_sph  );
+			PDsphere const * other_sph( i_current->atoms()[1] );
+			SAnode this_node( i_current, other_sph );
 			cycle.push_back( this_node );
 			//   TR << "Pushing completed cycle with " << cycle.size() << " intersections" << std::endl;
 			cycles.push_back( cycle ); // Maybe 'cycle' should hold pointers rather than SAnodes.  This copy could be costly.
@@ -1354,7 +1279,7 @@ get_cycles_from_intersections(
 
 		while ( !cycle_done ) {
 			// Figure out the direction to search
-			PDsphereCOP limit_atom( ( i_current->atoms()[1] != this_sph && i_current->atoms()[1] != other_sph ) ?  i_current->atoms()[1] :
+			PDsphere const * limit_atom( ( i_current->atoms()[1] != this_sph && i_current->atoms()[1] != other_sph ) ?  i_current->atoms()[1] :
 				( ( i_current->atoms()[2] != this_sph && i_current->atoms()[2] != other_sph ) ? i_current->atoms()[2] : i_current->atoms()[3] ) );
 
 			//   TR << "Got the atoms to work with" << std::endl;
@@ -1381,7 +1306,7 @@ get_cycles_from_intersections(
 
 			if ( yaxis.dot( limit_vec ) < 0.0 ) {
 				//    TR << "Switching direction of path!" << std::endl;
-				PDsphereCOP tmp_switch( other_sph );
+				PDsphere const * tmp_switch( other_sph );
 				other_sph = limit_atom;
 				limit_atom = tmp_switch;
 				axis = ( (other_sph->xyz() - this_sph->xyz()).normalized() );
@@ -1415,18 +1340,16 @@ get_cycles_from_intersections(
 			// Now that we have it, check to see if it is the same as the first in this cycle.
 			// If so, we have completed to cycle and we are done.
 
-			for ( std::list< PDinterOP >::iterator itr = inters.begin() ;
-					itr != inters.end() ;
-					++itr ) {
-				if ( (*itr) == i_current ) {
+			for ( auto interp : inters ) {
+				if ( interp == i_current ) {
 					//     TR << "Skipping current intersection" << std::endl;
 					continue;
 				}
 
 				// Full circles aren't part of other cycles.
-				if ( (*itr)->circle() ) continue;
+				if ( interp->circle() ) continue;
 
-				if ( share_axis_atoms( (*itr), this_sph, other_sph ) ) {
+				if ( share_axis_atoms( interp, this_sph, other_sph ) ) {
 					// Calculate angle for this intersection point
 					//     TR << "Checking angle for intersections" << std::endl;
 					//     TR << "Current Inter atoms " << i_current->atoms()[1]->atom() << "   "
@@ -1436,7 +1359,7 @@ get_cycles_from_intersections(
 					//                << (*itr)->atoms()[2]->atom() << "   "
 					//                << (*itr)->atoms()[3]->atom() << std::endl;
 
-					Vector temp2( (*itr)->xyz() - this_sph->xyz() );
+					Vector temp2( interp->xyz() - this_sph->xyz() );
 					Vector check( (temp2 - (temp2.dot(axis)*axis) ).normalized() );
 					Real xcomp( check.dot( xaxis ) );
 					Real ycomp( check.dot( yaxis ) );
@@ -1451,15 +1374,15 @@ get_cycles_from_intersections(
 					if ( best_val < 0.0 ) {
 						//      TR << "Found new best intersection" << std::endl;
 						best_val = angle;
-						next_inter = (*itr);
+						next_inter = interp;
 					} else if ( search_positive && ( angle > best_val ) ) {
 						//      TR << "Found new best intersection" << std::endl;
 						best_val = angle;
-						next_inter = (*itr);
+						next_inter = interp;
 					} else if ( !search_positive && ( angle < best_val ) ) {
 						//      TR << "Found new best intersection" << std::endl;
 						best_val = angle;
-						next_inter = (*itr);
+						next_inter = interp;
 					}
 				} else {
 					//     TR << "Skipping vertex - not on this great circle" << std::endl;
@@ -1504,7 +1427,7 @@ get_cycles_from_intersections(
 Real
 get_sasa_from_cycles(
 	utility::vector1< utility::vector1< SAnode > > & cycles,
-	PDsphereOP & this_sph )
+	PDsphere* this_sph )
 {
 
 	// Real const two_pi( 2.0*numeric::constants::d::pi );
@@ -1686,8 +1609,8 @@ get_derivs_from_cycle(
 bool
 share_axis_atoms(
 	PDinterCOP v1,
-	PDsphereCOP a1,
-	PDsphereCOP a2
+	PDsphere const * a1,
+	PDsphere const * a2
 )
 {
 	Size same_count( 0 );
@@ -1720,7 +1643,7 @@ share_axis_atoms(
 
 Real
 get_area_from_cycle(
-	PDsphereOP this_atom,
+	PDsphere* this_atom,
 	utility::vector1< SAnode > & cycle
 )
 {
@@ -1754,8 +1677,8 @@ get_area_from_cycle(
 
 		//  TR << "Working indices are " << arc_num << " and " << arc_num_m1 << std::endl;
 
-		PDsphereCOP other_atom( cycle[ arc_num ].other_atom() );
-		PDsphereCOP other_atom_m1( cycle[ arc_num_m1 ].other_atom() );
+		PDsphere const * other_atom( cycle[ arc_num ].other_atom() );
+		PDsphere const * other_atom_m1( cycle[ arc_num_m1 ].other_atom() );
 
 		//  TR << "Other atom is " << other_atom->atom() << " and other minus one is " << other_atom_m1->atom() << std::endl;
 
@@ -1805,20 +1728,8 @@ get_area_from_cycle(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 Vector
-vertex_xyz_from_generators( PDsphereCOP a1, PDsphereCOP a2, PDsphereCOP a3, PDsphereCOP a4 )
+vertex_xyz_from_generators( PDsphere const * a1, PDsphere const * a2, PDsphere const * a3, PDsphere const * a4 )
 {
 	// Need three planes to interesect
 	Vector const n1( (a2->xyz() - a1->xyz()).normalize() );
@@ -1853,7 +1764,7 @@ vertex_xyz_from_generators( PDsphereCOP a1, PDsphereCOP a2, PDsphereCOP a3, PDsp
 }
 
 Vector
-vertex_xyz_from_generators( utility::vector1< PDsphereOP > const & gen )
+vertex_xyz_from_generators( utility::vector1< PDsphere* > const & gen )
 {
 	return vertex_xyz_from_generators( gen[1], gen[2], gen[3], gen[4] );
 }
@@ -1885,7 +1796,7 @@ print_partners( PDvertexCOP vrt )
 {
 
 	TR << "Partners: ";
-	for ( std::vector< PDvertexOP >::const_iterator itr( vrt->partners().begin() ) ;
+	for ( std::vector< PDvertex * >::const_iterator itr( vrt->partners().begin() ) ;
 			itr != vrt->partners().end() ; ++itr ) {
 		TR << " id " << (*itr)->id() << "   ";
 	}
@@ -1899,9 +1810,8 @@ print_generators( PDvertexCOP vrt )
 {
 
 	TR << "Generators: ";
-	for ( utility::vector1< PDsphereOP >::const_iterator itr( vrt->generators().begin() ) ;
-			itr != vrt->generators().end() ; ++itr ) {
-		TR << " res " << (*itr)->res() << " atom " << (*itr)->atom() << "   ";
+	for ( auto gen : vrt->generators() ) {
+		TR << " res " << gen->res() << " atom " << gen->atom() << "   ";
 	}
 	TR << std::endl;
 
@@ -1925,9 +1835,9 @@ print_vertices( std::list< PDvertexOP > & fv, std::list< PDvertexOP > & iv )
 			F(6,2,1.0) << F(6,2,1.0) << std::endl;
 	}
 	for ( std::list< PDvertexOP >::iterator itr = iv.begin() ; itr != iv.end() ; ++itr ) {
-		PDvertexOP finite_partner;
+		PDvertex * finite_partner = nullptr;
 
-		for ( std::vector< PDvertexOP >::iterator part_itr( (*itr)->nonconst_partners().begin() ) ;
+		for ( std::vector< PDvertex * >::iterator part_itr( (*itr)->nonconst_partners().begin() ) ;
 				part_itr != (*itr)->nonconst_partners().end(); ++part_itr ) {
 			if ( (*part_itr)->finite() ) {
 				finite_partner = (*part_itr);
@@ -1962,9 +1872,9 @@ print_vertices( std::list< PDvertexOP > & v )
 				F(8,3,(*itr)->xyz()(3)) <<
 				F(6,2,1.0) << F(6,2,1.0) << std::endl;
 		} else {
-			PDvertexOP finite_partner;
+			PDvertex * finite_partner = nullptr;
 
-			for ( std::vector< PDvertexOP >::iterator part_itr( (*itr)->nonconst_partners().begin() ) ;
+			for ( std::vector< PDvertex * >::iterator part_itr( (*itr)->nonconst_partners().begin() ) ;
 					part_itr != (*itr)->nonconst_partners().end(); ++part_itr ) {
 				if ( (*part_itr)->finite() ) {
 					finite_partner = (*part_itr);
@@ -1990,14 +1900,14 @@ print_vertices( std::list< PDvertexOP > & v )
 	return;
 }
 
-PDvertexOP
-find_next_vertex_with_smallest_dist( PDvertexOP & srch_vrt, PDsphereOP & new_sph, Real & this_dist )
+PDvertex *
+find_next_vertex_with_smallest_dist( PDvertex * srch_vrt, PDsphereOP & new_sph, Real & this_dist )
 {
-	PDvertexOP return_vrt = nullptr;
+	PDvertex * return_vrt = nullptr;
 	for ( auto itr = srch_vrt->partners().begin() ; itr != srch_vrt->partners().end() ; ++itr ) {
 		// Only checking finite vertices
 		if ( !(*itr)->finite() ) continue;
-		Real check_dist( power_distance( (*itr)->xyz(), new_sph ) - (*itr)->power() );
+		Real check_dist( power_distance( (*itr)->xyz(), new_sph.get() ) - (*itr)->power() );
 		if ( check_dist < this_dist ) {
 			this_dist = check_dist;
 			return_vrt = (*itr);
