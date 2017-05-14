@@ -54,21 +54,6 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.Transform" );
 
-// XRW TEMP std::string TransformCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return Transform::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP TransformCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new Transform );
-// XRW TEMP }
-
-// XRW TEMP std::string Transform::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Transform";
-// XRW TEMP }
-
 Transform::Transform():
 	Mover("Transform")
 	// & in class defaults
@@ -106,11 +91,6 @@ protocols::moves::MoverOP Transform::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new Transform );
 }
-
-// XRW TEMP std::string Transform::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "Transform";
-// XRW TEMP }
 
 void Transform::parse_my_tag
 (
@@ -257,7 +237,7 @@ void Transform::apply(core::pose::Pose & pose)
 			if ( n_perturb_trials >= 10*ligand_conformers_.size() ) {
 				TR.Error << "[ Error ] Could not get a decent initial perturbation - check grid size, ligand size, and initial pertubation size." << std::endl;
 				TR.Error << "[ Error ]     For this system, with a pertubation of " << initial_perturb_
-						<< ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
+					<< ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
 				return;
 			} else if ( n_perturb_trials > 10 ) {

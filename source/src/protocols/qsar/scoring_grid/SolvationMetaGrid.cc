@@ -53,11 +53,6 @@ void SolvationMetaGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefini
 	SolvationMetaGrid::provide_xml_schema( xsd );
 }
 
-//std::string SolvationMetaGridCreator::grid_name()
-//{
-// return "SolvationMetaGrid";
-//}
-
 SolvationMetaGrid::SolvationMetaGrid() :type_("SolvationMetaGrid")
 {}
 
@@ -65,7 +60,7 @@ SolvationMetaGrid::SolvationMetaGrid( SolvationMetaGrid const & other):
 	GridBase( other ),
 	type_( other.type_ )
 {
-	for( std::map<core::ShortSize,SingleGridOP>::value_type entry: grid_map_ ) {
+	for ( std::map<core::ShortSize,SingleGridOP>::value_type entry: grid_map_ ) {
 		grid_map_[ entry.first ] = utility::pointer::dynamic_pointer_cast< SingleGrid >( entry.second->clone() );
 	}
 }
