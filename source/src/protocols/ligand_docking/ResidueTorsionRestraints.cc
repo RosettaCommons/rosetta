@@ -69,7 +69,7 @@ void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 	// input stddev is in degrees, but dihedral constraints deal in radians
 	core::Real const stddev_radians = numeric::conversions::radians( stddev_degrees_ );
 
-	std::set< core::scoring::constraints::ConstraintCOP > dont_care;
+	utility::vector1< core::scoring::constraints::ConstraintCOP > dont_care;
 	ConstraintSetOP new_constraints = without_my_constraints( pose.constraint_set(), dont_care );
 	// Over the lifetime of this object, its original Pose may be cloned, copied over,
 	// reverted to some previous version (think MC trials), etc.
@@ -109,7 +109,7 @@ void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 core::scoring::constraints::ConstraintSetOP
 ResidueTorsionRestraints::without_my_constraints(
 	core::scoring::constraints::ConstraintSetCOP old_constraints,
-	std::set< core::scoring::constraints::ConstraintCOP > & removed_constraints
+	utility::vector1< core::scoring::constraints::ConstraintCOP > & removed_constraints
 )
 {
 	using namespace core::scoring::constraints;
@@ -123,7 +123,7 @@ ResidueTorsionRestraints::without_my_constraints(
 				new_constraints->add_constraint( old_constr[i] );
 				TR << "Keeping old constraint " << old_constr[i]->to_string() << std::endl;
 			} else {
-				removed_constraints.insert( old_constr[i] );
+				removed_constraints.push_back( old_constr[i] );
 				TR << "Removing old constraint " << old_constr[i]->to_string() << std::endl;
 			}
 		}
@@ -147,7 +147,7 @@ void ResidueTorsionRestraints::enable( core::pose::Pose & pose )
 	}
 
 	TR.Trace << "Residue " << resid_ << " has changed conformation? " << resid_has_changed << std::endl;
-	if ( !resid_has_changed ) {
+	if ( !resid_has_changed && !old_constraints_.empty() ) {
 		// No:  restore constraints exactly as they were
 		ConstraintSetOP new_constraints = pose.constraint_set()->clone(); // deep copy, constraints and their funcs are cloned too
 		for ( core::scoring::constraints::ConstraintCOP constraint : old_constraints_ ) {
@@ -170,6 +170,7 @@ void ResidueTorsionRestraints::disable( core::pose::Pose & pose )
 	old_chi_ = pose.residue(resid_).chi(); // need a copy, not a reference
 	// Remove constraints
 	TR.Trace << "disable(), # constraints before: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
+	old_constraints_.clear(); // Guard against double-disable
 	ConstraintSetOP new_constraints = without_my_constraints( pose.constraint_set(), old_constraints_ );
 	pose.constraint_set( new_constraints );
 	TR.Trace << "disable(), # constraints after: " << pose.constraint_set()->get_all_constraints().size() << std::endl;

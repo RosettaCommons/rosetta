@@ -17,15 +17,15 @@
 #define INCLUDED_protocols_ligand_docking_ResidueTorsionRestraints_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh> ///TODO .fwd fails (why?)
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <set>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
 
+#include <set>
 
 namespace protocols {
 namespace ligand_docking {
@@ -67,7 +67,7 @@ private:
 	core::scoring::constraints::ConstraintSetOP
 	without_my_constraints(
 		core::scoring::constraints::ConstraintSetCOP old_constraints,
-		std::set< core::scoring::constraints::ConstraintCOP > & removed_constraints
+		utility::vector1< core::scoring::constraints::ConstraintCOP > & removed_constraints
 	);
 
 	core::Size resid_;
@@ -78,7 +78,7 @@ private:
 	std::set< std::string > my_constraints_;
 	// Values from the last time a pose was disabled():
 	utility::vector1< core::Real > old_chi_;
-	std::set< core::scoring::constraints::ConstraintCOP > old_constraints_;
+	utility::vector1< core::scoring::constraints::ConstraintCOP > old_constraints_;
 
 }; // ResidueTorsionRestraints
 
