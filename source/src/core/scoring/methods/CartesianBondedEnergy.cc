@@ -155,14 +155,6 @@ static const Real K_TORSION=20.0;
 static const Real K_TORSION_PROTON=10.0;  // proton chi
 static const Real K_TORSION_IMPROPER=40.0;
 
-IdealParametersDatabaseOP CartesianBondedEnergy::db_=NULL;
-
-#if defined MULTI_THREADED
-utility::thread::ReadWriteMutex CartesianBondedEnergy::params_db_mutex_;
-utility::thread::ReadWriteMutex CartesianBondedEnergy::restype_db_mutex_;
-#endif
-
-
 //////////////////////
 /// EnergyMethod Creator
 methods::EnergyMethodOP
@@ -196,12 +188,15 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 		if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
 		return rsdname;
-	} else if ( !restype.is_protein() && !restype.is_NA() ) {
-		return restype.name3();
-	} else {
+	} else if ( restype.is_protein() || restype.is_NA() ) {
 		std::string rsdname = restype.name();
 		rsdname = rsdname.substr( 0, rsdname.find(chemical::PATCH_LINKER) );
 		return rsdname;
+	} else {
+		// If we're not a protein or nucleic acid, there's no guarantees that anything that
+		// shares the same three letter code is reasonably similar.
+		// Just tag on the full residue type name.
+		return restype.name();
 	}
 }
 
@@ -346,6 +341,7 @@ IdealParametersDatabase::IdealParametersDatabase(Real k_len_in, Real k_ang_in, R
 IdealParametersDatabase::~IdealParametersDatabase() {
 	// We need to de-register the destruction observers from each remaining ResidueType
 	// Otherwise when they get destroyed they'll attempt to notify this (no longer existent) database
+	// (We don't need to get a mutex for this, as destructors are inherently single threaded)
 	for ( auto entry: prepro_restype_data_ ) {
 		entry.first->detach_destruction_obs( &IdealParametersDatabase::restype_destruction_observer, this );
 	}
@@ -357,6 +353,8 @@ IdealParametersDatabase::~IdealParametersDatabase() {
 
 
 // read bb-dep and bb-indep parameter files from the rosetta database
+// Note that init() and the called read_*() functions are not mutex protected because they're only called during
+// (single-threaded) object construction.
 void
 IdealParametersDatabase::init(
 	Real k_len_in,
@@ -404,7 +402,7 @@ IdealParametersDatabase::read_length_database(
 	bool const symmetrize_gly
 ) {
 	std::string line;
-	std::string name3, atom1, atom2;
+	std::string restag, atom1, atom2;
 	Real mu_d, K_d;
 
 	utility::io::izstream instream;
@@ -416,11 +414,11 @@ IdealParametersDatabase::read_length_database(
 
 		std::istringstream linestream(line);
 
-		linestream >> name3 >> atom1 >> atom2 >> mu_d >> K_d;
-		tuple = boost::make_tuple( name3, atom1, atom2 );
+		linestream >> restag >> atom1 >> atom2 >> mu_d >> K_d;
+		tuple = boost::make_tuple( restag, atom1, atom2 );
 		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d) );
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
-		tuple = boost::make_tuple( name3, atom2, atom1 );
+		tuple = boost::make_tuple( restag, atom2, atom1 );
 		params_i = CartBondedParametersOP( new BBIndepCartBondedParameters(mu_d, K_d) );
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
 	}
@@ -451,7 +449,7 @@ IdealParametersDatabase::read_angle_database(
 	bool const symmetrize_gly
 ) {
 	std::string line;
-	std::string name3, atom1, atom2, atom3;
+	std::string restag, atom1, atom2, atom3;
 	Real mu_d, K_d;
 
 	utility::io::izstream instream;
@@ -463,11 +461,11 @@ IdealParametersDatabase::read_angle_database(
 
 		std::istringstream linestream(line);
 
-		linestream >> name3 >> atom1 >> atom2 >> atom3 >> mu_d >> K_d;
-		tuple = boost::make_tuple( name3, atom1, atom2, atom3 );
+		linestream >> restag >> atom1 >> atom2 >> atom3 >> mu_d >> K_d;
+		tuple = boost::make_tuple( restag, atom1, atom2, atom3 );
 		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d) );
 		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
-		tuple = boost::make_tuple( name3, atom3, atom2, atom1 );
+		tuple = boost::make_tuple( restag, atom3, atom2, atom1 );
 		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
 	}
 	TR << "Read " << bondangles_indep_.size() << " bb-independent angles." << std::endl;
@@ -486,7 +484,7 @@ IdealParametersDatabase::read_angle_database(
 void
 IdealParametersDatabase::read_torsion_database(
 	std::string const & infile,
-	bool const //symmetrize_gly
+	bool const /*symmetrize_gly*/
 ) {
 	std::string line;
 	std::string name3, atom1, atom2, atom3, atom4;
@@ -511,49 +509,52 @@ IdealParametersDatabase::read_torsion_database(
 }
 
 void
-IdealParametersDatabase::read_improper_database(
-	std::string const & infile,
-	bool const symmetrize_gly
-) {
+IdealParametersDatabase::add_impropers_from_stream(std::istream & instream) {
 	std::string line;
-	std::string name3, atom1, atom2, atom3, atom4;
+	std::string restag, atom1, atom2, atom3, atom4;
 	Real mu_d, K_d;
 	Size period;
 
-	utility::io::izstream instream;
 	atm_name_quad tuple;
-	basic::database::open( instream, infile);
-	while ( instream ) {
-		getline( instream, line );
+
+	while ( getline( instream, line ) ) {
 		if ( line[0] == '#' ) continue;
 
 		std::istringstream linestream(line);
 
-		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
-		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+		linestream >> restag >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+		tuple = boost::make_tuple( restag, atom1, atom2, atom3, atom4 );
 		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
-		impropers_indep_.insert( std::make_pair( tuple, params_i) );
+		impropers_indep_.insert( std::make_pair( tuple, params_i ) );
 	}
+}
+
+void
+IdealParametersDatabase::read_improper_database(
+	std::string const & infile,
+	bool const symmetrize_gly
+) {
+
+	utility::io::izstream instream;
+	basic::database::open( instream, infile);
+	if ( !instream.good() ) { utility_exit_with_message( "Unable to open file: " + infile + '\n' ); }
+
+	add_impropers_from_stream( instream );
+	instream.close();
+
 	TR << "Read " << impropers_indep_.size() << " bb-independent improper tors." << std::endl;
 
 	//hpark  extra impropers from the command line
+	// Note that these are still considered to be "database" impropers.
 	if ( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ].user() ) {
 		std::string extra_file( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ]().c_str() );
-		atm_name_quad tuple;
-		std::string line;
 		Size const size_before = impropers_indep_.size();
 
-		utility::io::izstream instream( extra_file );
-		if ( !instream.good() ) utility_exit_with_message( "Unable to open file: " + extra_file + '\n' );
+		utility::io::izstream extra_instream( extra_file );
+		if ( !extra_instream.good() ) { utility_exit_with_message( "Unable to open file: " + extra_file + '\n' ); }
 
-		while ( instream.getline( line ) ) {
-			if ( line[0] == '#' ) continue;
-			std::istringstream l( line );
-			l >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
-			tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
-			CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
-			impropers_indep_.insert( std::make_pair( tuple, params_i) );
-		}
+		add_impropers_from_stream( extra_instream );
+
 		TR << "Read " << impropers_indep_.size() - size_before << " extra improper tors.";
 		TR << extra_file << std::endl;
 	}
@@ -818,7 +819,7 @@ IdealParametersDatabase::read_bbdep_table(
 void
 IdealParametersDatabase::symmetrize_tables(
 	ObjexxFCL::FArray2D<core::Real> &table
-) {
+) const {
 
 	//std::cout << "SYMMETRIZE_TABLES CALLED." << std::endl; //DELETE ME
 
@@ -868,7 +869,7 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	int atm3,
 	Real & Ktheta,
 	Real & theta0
-) {
+) const {
 	Ktheta = k_angle_;
 
 	// Create mini-conformation for idealized residue
@@ -931,7 +932,7 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 	int atm2,
 	Real &Kd,
 	Real &d0
-)
+) const
 {
 	Kd = k_length_;
 
@@ -982,7 +983,7 @@ IdealParametersDatabase::lookup_improper(
 	// lookup in bb-indep table
 	// this can probably be made way faster
 	atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
-	boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it = impropers_indep_.find( tuple1 );
+	boost::unordered_map<atm_name_quad,CartBondedParametersOP>::const_iterator b_it = impropers_indep_.find( tuple1 );
 	if ( b_it != impropers_indep_.end() ) {
 		return b_it->second;
 	}
@@ -995,6 +996,74 @@ IdealParametersDatabase::lookup_improper(
 
 	// if we don't find this improper torsion in the table, it's unconstrained
 	return NULL;
+}
+
+IdealParametersDatabase::TorsionsIndepSubmap
+IdealParametersDatabase::generate_impropers_map_res(
+	core::chemical::ResidueType const & restype
+) {
+	using namespace core::chemical;
+
+	if ( restype.aa() == core::chemical::aa_gly ) {
+		// Special case glycine, as it doesn't have a database entry. (It doesn't need one.)
+		// Just generate an empty map.
+		return TorsionsIndepSubmap();
+	}
+
+	// use 'annotated sequence' to id this restype
+	std::string restag = get_restag( restype );
+
+	// Build a new torsion set for the residue
+
+	TR.Debug << "Cart_bonded torsion parameters do not exist for '" << restag << "' generating from residue type " << restype.name() << std::endl;
+	// Does not exist - generate
+	// Logic from -extra_torsion_output of molfile_to_params.py (Yifan c00e20a5)
+	TorsionsIndepSubmap resmap; // Make new map
+	for ( core::chemical::EIterPair bitrs( restype.bond_iterators() ); bitrs.first != bitrs.second; ++bitrs.first ) {
+		core::chemical::Bond const & bond( restype.bond( *bitrs.first ) );
+		core::chemical::BondName bondtype( bond.bond_name() );
+		core::chemical::VD a2( boost::source( *bitrs.first, restype.graph() ) );
+		core::chemical::VD a3( boost::target( *bitrs.first, restype.graph() ) );
+		// Planar bonds include aromatic bonds and double bonds to carbons.
+		// (General double bonds aren't, due to phosphate and sulfates, etc.)
+		if ( bondtype == core::chemical::AromaticBond ||
+				( bondtype == core::chemical::DoubleBond && (
+				restype.atom(a2).element_type()->element() == core::chemical::element::C ||
+				restype.atom(a3).element_type()->element() == core::chemical::element::C )
+				) ) {
+			// Find all the atoms within one bond of the two conjugated atoms
+			utility::vector1< core::chemical::VD > adjacent_atoms;
+			for ( core::chemical::AdjacentIterPair aitrs( restype.bonded_neighbor_iterators( a2 ) ); aitrs.first != aitrs.second; ++aitrs.first ) {
+				if ( *aitrs.first != a3 ) {
+					adjacent_atoms.push_back( *aitrs.first );
+				}
+			}
+			for ( core::chemical::AdjacentIterPair aitrs( restype.bonded_neighbor_iterators( a3 ) ); aitrs.first != aitrs.second; ++aitrs.first ) {
+				if ( *aitrs.first != a2 ) {
+					adjacent_atoms.push_back( *aitrs.first );
+				}
+			}
+			// Add an entry for each pair
+			std::string const & atom2( restype.atom_name(a2) ), atom3( restype.atom_name(a3) );
+			for ( core::Size ii(1); ii <= adjacent_atoms.size(); ++ii ) {
+				std::string const & atom1( restype.atom_name( adjacent_atoms[ii] ) );
+				for ( core::Size jj(ii+1); jj <= adjacent_atoms.size(); ++jj ) {
+					std::string const & atom4( restype.atom_name( adjacent_atoms[jj] ) );
+
+					atm_name_quad tuple(boost::make_tuple( restag, atom1, atom2, atom3, atom4 ) );
+					core::Real mu(0), K(80);
+					core::Size period(2);
+					CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu, K, period) );
+					TR << "Adding undefined torsion " << restag << ": " << atom1 << "," << atom2 << "," << atom3 << "," << atom4
+						<< " to DB with mu0 = " << mu << ", K = " << K << ", period = " << period << std::endl;
+					resmap.insert( std::make_pair( tuple, params_i) );
+				}
+			}
+		}
+	}
+
+	TR.Debug << "Generated " << resmap.size() << " torsional parmeters for " <<  restag << std::endl;
+	return resmap;
 }
 
 /// Angle Database
@@ -1017,7 +1086,7 @@ IdealParametersDatabase::lookup_angle(
 
 	// 1 lookup in bb-dep table
 	// figure out what table to look in
-	boost::unordered_map< atm_name_pair, CartBondedParametersOP > *angle_table;
+	boost::unordered_map< atm_name_pair, CartBondedParametersOP > const * angle_table;
 	if ( restype.aa() == core::chemical::aa_gly ) {
 		angle_table = &bondangles_bbdep_gly_;
 	} else if ( restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr ) { //L- or D-proline
@@ -1030,32 +1099,43 @@ IdealParametersDatabase::lookup_angle(
 		angle_table = &bondangles_bbdep_def_;
 	}
 	atm_name_pair alt_tuple( atm1_name,atm2_name,atm3_name );
-	boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator a_it = angle_table->find( alt_tuple );
+	boost::unordered_map<atm_name_pair,CartBondedParametersOP>::const_iterator a_it = angle_table->find( alt_tuple );
 	if ( a_it != angle_table-> end() ) {
 		return a_it->second;
 	}
 
 	// 2 lookup in bb-indep table
-	boost::unordered_map<atm_name_triple,CartBondedParametersOP>::iterator b_it = bondangles_indep_.find( tuple );
-	if ( b_it != bondangles_indep_.end() ) {
-		return b_it->second;
-	}
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( data_map_mutex_ );
+#endif
+		boost::unordered_map<atm_name_triple,CartBondedParametersOP>::const_iterator b_it = bondangles_indep_.find( tuple );
+		if ( b_it != bondangles_indep_.end() ) {
+			return b_it->second;
+		}
 
-	atm_name_triple tuple_alt( "*", atm1_name,atm2_name,atm3_name );
-	b_it = bondangles_indep_.find( tuple_alt );
-	if ( b_it != bondangles_indep_.end() ) {
-		return b_it->second;
+		atm_name_triple tuple_alt( "*", atm1_name,atm2_name,atm3_name );
+		b_it = bondangles_indep_.find( tuple_alt );
+		if ( b_it != bondangles_indep_.end() ) {
+			return b_it->second;
+		}
 	}
 
 	// 3 build from ideal, add to bb-indep table
 	Real Ktheta, theta0;
 	lookup_bondangle_buildideal( restype, atm1idx, atm2idx, atm3idx, Ktheta, theta0 );
-	bondangles_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( theta0, Ktheta ) );
-	TR << "Adding undefined angle "
-		<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
-		<< " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
-
-	return bondangles_indep_[ tuple ];
+	{
+#if defined MULTI_THREADED
+		utility::thread::WriteLockGuard lock( data_map_mutex_ );
+#endif
+		if ( bondangles_indep_.count( tuple ) == 0 ) {
+			bondangles_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( theta0, Ktheta ) );
+			TR << "Adding undefined angle "
+				<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
+				<< " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
+		}
+		return bondangles_indep_[ tuple ];
+	}
 }
 
 /// BondLength Database
@@ -1095,26 +1175,37 @@ IdealParametersDatabase::lookup_length(
 	}
 
 	// 2 lookup in bb-indep table
-	boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator b_it = bondlengths_indep_.find( tuple );
-	if ( b_it != bondlengths_indep_.end() ) {
-		return b_it->second;
-	}
+	{
+#if defined MULTI_THREADED
+		utility::thread::ReadLockGuard lock( data_map_mutex_ );
+#endif
+		boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator b_it = bondlengths_indep_.find( tuple );
+		if ( b_it != bondlengths_indep_.end() ) {
+			return b_it->second;
+		}
 
-	atm_name_pair tuple_alt( "*", atm1_name,atm2_name );
-	b_it = bondlengths_indep_.find( tuple_alt );
-	if ( b_it != bondlengths_indep_.end() ) {
-		return b_it->second;
+		atm_name_pair tuple_alt( "*", atm1_name,atm2_name );
+		b_it = bondlengths_indep_.find( tuple_alt );
+		if ( b_it != bondlengths_indep_.end() ) {
+			return b_it->second;
+		}
 	}
-
 	// 3 build from ideal, add to bb-indep table
 	Real Kd, d0;
 	lookup_bondlength_buildideal( restype, atm1idx, atm2idx, Kd, d0 );
-	bondlengths_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( d0, Kd ) );
-	TR << "Adding undefined length "
-		<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
-		<< " d0 = " << d0 << " , Kd = " << Kd << std::endl;
+	{
+#if defined MULTI_THREADED
+		utility::thread::WriteLockGuard lock( data_map_mutex_ );
+#endif
+		if ( bondlengths_indep_.count( tuple ) == 0 ) {
+			bondlengths_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( d0, Kd ) );
+			TR << "Adding undefined length "
+				<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
+				<< " d0 = " << d0 << " , Kd = " << Kd << std::endl;
+		}
 
-	return bondlengths_indep_[ tuple ];
+		return bondlengths_indep_[ tuple ];
+	}
 }
 
 
@@ -1130,7 +1221,7 @@ IdealParametersDatabase::lookup_torsion_legacy(
 	Real & Kphi,
 	Real & phi0,
 	Real &phi_step
-) {
+) const {
 	using namespace core::chemical;
 
 	Kphi=k_torsion_; // default
@@ -1239,7 +1330,7 @@ IdealParametersDatabase::lookup_angle_legacy(
 	int atm3,
 	Real & Ktheta,
 	Real & theta0
-) {
+) const {
 	using namespace core::chemical;
 
 	Ktheta=k_angle_;
@@ -1311,7 +1402,7 @@ IdealParametersDatabase::lookup_length_legacy(
 	int atm2,
 	Real &Kd,
 	Real &d0
-)
+) const
 {
 	using namespace core::chemical;
 
@@ -1353,32 +1444,42 @@ IdealParametersDatabase::parameters_for_restype(
 	bool prepro
 )
 {
-	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > const * resdatamap;
-	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter;
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersCOP > * resdatamap;
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersCOP >::iterator iter;
+
+	// Addresses of member variables will never change and thus are threadsafe to access
+	resdatamap = prepro ? &prepro_restype_data_ : &nonprepro_restype_data_;
 
 	{
 #if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( CartesianBondedEnergy::restype_db_mutex_ );
+		utility::thread::ReadLockGuard lock( restype_db_mutex_ );
 #endif
-
-		resdatamap = prepro ? &prepro_restype_data_ : &nonprepro_restype_data_;
-		iter = resdatamap->find( & restype );
-	}
-
-	if ( iter == resdatamap->end() ) {
-#if defined MULTI_THREADED
-		utility::thread::WriteLockGuard lock( CartesianBondedEnergy::restype_db_mutex_ );
-#endif
-		if ( resdatamap->find( & restype ) == resdatamap->end() ) {
-			create_parameters_for_restype( restype, prepro );
+		if ( resdatamap->count( &restype ) != 0 ) {
+			return *(*resdatamap)[ &restype ];
 		}
-		iter = resdatamap->find( & restype );
 	}
-	return *iter->second;
+
+	// It doesn't exist, or at least it didn't when we checked - create a new one
+	{
+#if defined MULTI_THREADED
+		utility::thread::WriteLockGuard lock( restype_db_mutex_ );
+#endif
+		// We check again here, as another thread may have snuck in a creation between releasing
+		// the read lock and obtaining the write lock.
+		if ( resdatamap->count( &restype ) != 0 ) {
+			return *(*resdatamap)[ &restype ];
+		}
+		// Register that we're using this ResidueType with its destruction observer
+		restype.attach_destruction_obs( &IdealParametersDatabase::restype_destruction_observer, this );
+
+		(*resdatamap)[ &restype ] = create_parameters_for_restype( restype, prepro );
+
+		return *(*resdatamap)[ &restype ];
+	}
 }
 
 
-void
+ResidueCartBondedParametersCOP
 IdealParametersDatabase::create_parameters_for_restype(
 	core::chemical::ResidueType const & rsd_type,
 	bool prepro
@@ -1387,6 +1488,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 	ResidueCartBondedParametersOP restype_params( new ResidueCartBondedParameters );
 
 	std::string const rsdname = get_restag(rsd_type);  //fpd don't use seperate logic here
+
+	bool imp_found_in_database( false );
 
 	// Iter over parameters - this would be fast enough as far as parameter size is small enough
 	for ( boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it =
@@ -1408,7 +1511,33 @@ IdealParametersDatabase::create_parameters_for_restype(
 		ids[3] = rsd_type.atom_index( tuple.get<3>() );
 		ids[4] = rsd_type.atom_index( tuple.get<4>() );
 
+		//TR << "Adding parameters for " << tuple.get<0>() << " - " << tuple.get<1>() << " " << tuple.get<2>() << " " << tuple.get<3>() << " " << tuple.get<4>() << std::endl;
+		imp_found_in_database = true;
 		restype_params->add_improper_parameter( ids, tor_params );
+	}
+
+	if ( ! imp_found_in_database ) {
+		// See if we need to generate a new one.
+		TorsionsIndepSubmap const & resdata( generate_impropers_map_res( rsd_type ) );
+		for ( TorsionsIndepSubmap::const_iterator b_it( resdata.begin() ); b_it != resdata.end(); ++b_it ) {
+
+			atm_name_quad const &tuple( b_it->first );
+
+			// Double-check to make sure that the atom names exist.
+			if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
+					!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
+
+			CartBondedParametersCOP tor_params = b_it->second;
+
+			ResidueCartBondedParameters::Size4 ids;
+			ids[1] = rsd_type.atom_index( tuple.get<1>() );
+			ids[2] = rsd_type.atom_index( tuple.get<2>() );
+			ids[3] = rsd_type.atom_index( tuple.get<3>() );
+			ids[4] = rsd_type.atom_index( tuple.get<4>() );
+
+			restype_params->add_improper_parameter( ids, tor_params );
+
+		}
 	}
 
 	typedef boost::unordered_multimap< atm_name_quad, CartBondedParametersOP >::const_iterator tors_iterator;
@@ -1657,19 +1786,15 @@ IdealParametersDatabase::create_parameters_for_restype(
 		restype_params->cprev_n_bond_length_params( len_params );
 	}
 
-	// Register that we're using this ResidueType with its destruction observer
-	rsd_type.attach_destruction_obs( &IdealParametersDatabase::restype_destruction_observer, this );
-
-	if ( prepro ) {
-		prepro_restype_data_[ & rsd_type ] = restype_params;
-	} else {
-		nonprepro_restype_data_[ & rsd_type ] = restype_params;
-	}
+	return restype_params;
 
 }
 
 void
 IdealParametersDatabase::restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event ) {
+#if defined MULTI_THREADED
+	utility::thread::WriteLockGuard lock( restype_db_mutex_ );
+#endif
 	// Remove the soon-to-be-destroyed object from the database caches
 	// std::map::erase() is robust if the key is not in the map
 	prepro_restype_data_.erase( event.restype );
@@ -1692,22 +1817,12 @@ CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const
 	core::Real cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper;
 	options.get_cartesian_bonded_parameters( cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper );
 
-	if ( !db_ ) {
-#if defined MULTI_THREADED
-		utility::thread::WriteLockGuard lock( params_db_mutex_ );
-#endif
-		if ( !db_ ) {
-			db_ = IdealParametersDatabaseOP( new IdealParametersDatabase(cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper) );
-		}
-	}
+	db_ = get_db( cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper);
 }
 
-CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & src ) : parent( src ) {
-	linear_bonded_potential_ = src.linear_bonded_potential_;
-	pro_nv_ = src.pro_nv_;
-}
+CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & ) = default;
 
-CartesianBondedEnergy::~CartesianBondedEnergy() {}
+CartesianBondedEnergy::~CartesianBondedEnergy() = default;
 
 EnergyMethodOP
 CartesianBondedEnergy::clone() const {
@@ -1852,15 +1967,10 @@ CartesianBondedEnergy::eval_intrares_energy(
 		psi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(2));
 	}
 
-	ResidueCartBondedParameters const * rsdparams;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		rsdparams = &(db_->parameters_for_restype( rsd.type(), false ));
-	}
+	ResidueCartBondedParameters const & rsdparams( db_->parameters_for_restype( rsd.type(), false ) );
+
 	if ( rsd.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_energy(rsd, *rsdparams, phi, psi, pose, emap ); // calls singleres improper
+		eval_singleres_energy(rsd, rsdparams, phi, psi, pose, emap ); // calls singleres improper
 	}
 }
 
@@ -1896,16 +2006,10 @@ CartesianBondedEnergy::eval_intrares_derivatives(
 		psi = nonnegative_principal_angle_degrees( d_multiplier * rsd.mainchain_torsion(2));
 	}
 
-	ResidueCartBondedParameters const * rsdparams;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		rsdparams = &(db_->parameters_for_restype( rsd.type(), false ));
-	}
+	ResidueCartBondedParameters const & rsdparams( db_->parameters_for_restype( rsd.type(), false ) );
 
 	if ( rsd.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_derivatives( rsd, *rsdparams, phi, psi, weights, atom_derivs );
+		eval_singleres_derivatives( rsd, rsdparams, phi, psi, weights, atom_derivs );
 	}
 }
 
@@ -1961,14 +2065,8 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
 
-	ResidueCartBondedParameters const *res1params, *res2params;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		res1params = &(db_->parameters_for_restype( rsd1.type(), preproline ) );
-		res2params = &(db_->parameters_for_restype( rsd2.type(), false ) );
-	}
+	ResidueCartBondedParameters const & res1params(db_->parameters_for_restype( rsd1.type(), preproline ) );
+	ResidueCartBondedParameters const & res2params(db_->parameters_for_restype( rsd2.type(), false ) );
 
 	// get phi,psis for bb-dep angles/lengths
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
@@ -1983,7 +2081,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 
 	// get subcomponents
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_derivatives( rsd1, *res1params, phi1, psi1, weights, r1_atom_derivs );
+		eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
 	}
 
 	// If residue1 and 2 are the same (signal used by the PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
@@ -1996,18 +2094,18 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
 	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
 
-	eval_interresidue_improper_derivatives( rsd1, rsd2, *res1params, *res2params, weights, r1_atom_derivs, r2_atom_derivs );
+	eval_interresidue_improper_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_angle_derivs_two_from_rsd1(
-		rsd1, rsd2, *res1params, *res2params, phi1, psi1,
+		rsd1, rsd2, res1params, res2params, phi1, psi1,
 		weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_angle_derivs_two_from_rsd2(
-		rsd1, rsd2, *res1params, *res2params, phi2, psi2,
+		rsd1, rsd2, res1params, res2params, phi2, psi2,
 		weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_bond_length_derivs(
-		rsd1, rsd2, *res1params, *res2params, phi2, psi2,
+		rsd1, rsd2, res1params, res2params, phi2, psi2,
 		weights, r1_atom_derivs, r2_atom_derivs );
 }
 
@@ -2027,12 +2125,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	using numeric::constants::d::pi;
 
 	// save some time if we're only doing bb-indep
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		if ( !db_->bbdep_bond_params() ) return 0.0;
-	}
+	if ( !db_->bbdep_bond_params() ) return 0.0;
 
 	if ( !tor_id.valid() || tor_id.type()!=id::BB || tor_id.torsion() > 2  || !rsd.is_protein() ) {
 		return 0.0;
@@ -2050,20 +2143,13 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
 	}
 
-	ResidueCartBondedParameters const *resparams;
-	bool bbdepbonds;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		resparams = &(db_->parameters_for_restype( rsd.type(), preproline ) );
-		bbdepbonds = db_->bbdep_bond_devs();
-	}
+	ResidueCartBondedParameters const & resparams(db_->parameters_for_restype( rsd.type(), preproline ) );
+	bool bbdepbonds = db_->bbdep_bond_devs();
 
 	core::Real deriv=0.0;
 
 	/// Backbone dependent bond lengths
-	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps = resparams->bbdep_length_parameters();
+	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps = resparams.bbdep_length_parameters();
 	for ( Size ii = 1; ii <= lps.size(); ++ii ) {
 		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
 		CartBondedParameters const & len_params( *lps[ ii ].second );
@@ -2113,7 +2199,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	}
 
 	/// Backbone-dependent bond angles
-	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps = resparams->bbdep_angle_parameters();
+	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps = resparams.bbdep_angle_parameters();
 	for ( Size ii = 1; ii <= aps.size(); ++ii ) {
 		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
 		CartBondedParameters const & ang_params( *aps[ ii ].second );
@@ -2211,14 +2297,8 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
-	ResidueCartBondedParameters const *res1params, *res2params;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		res1params = &(db_->parameters_for_restype( rsd1.type(), preproline ) );
-		res2params = &(db_->parameters_for_restype( rsd2.type(), false ) );
-	}
+	ResidueCartBondedParameters const & res1params(db_->parameters_for_restype( rsd1.type(), preproline ) );
+	ResidueCartBondedParameters const & res2params(db_->parameters_for_restype( rsd2.type(), false ) );
 
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
 	if ( rsd1.is_protein() ) {
@@ -2232,7 +2312,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	// get one body component (but which has two-body influence based on whether or not rsd2 is a proline)
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
-		eval_singleres_energy(rsd1, *res1params, phi1, psi1, pose, emap ); // calls singleres improper
+		eval_singleres_energy(rsd1, res1params, phi1, psi1, pose, emap ); // calls singleres improper
 	}
 
 	// If residue1 and 2 are the same, stop here to avoid double-counting.
@@ -2241,7 +2321,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
 
 	/// evaluate all the inter-residue energy components
-	eval_residue_pair_energies( rsd1, rsd2, *res1params, *res2params, phi1, psi1, phi2, psi2, pose, emap );
+	eval_residue_pair_energies( rsd1, rsd2, res1params, res2params, phi1, psi1, phi2, psi2, pose, emap );
 }
 
 void
@@ -2287,14 +2367,8 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 	Size const n_rings( rsd.type().n_rings() );
 	if ( n_rings==0 ) return;
 
-	core::Real Ktheta, Kphi;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
-		Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
-	}
+	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
+	core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
@@ -2654,15 +2728,9 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params;
-				{
-#if defined MULTI_THREADED
-					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-					ang_params =
-						db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
-						atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
-				}
+				CartBondedParametersCOP ang_params =
+					db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
+					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
@@ -2773,15 +2841,9 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
 				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
 
-				CartBondedParametersCOP ang_params;
-				{
-#if defined MULTI_THREADED
-					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-					ang_params =
-						db_->lookup_angle(rsd2.type(), false,
-						atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
-				}
+				CartBondedParametersCOP ang_params =
+					db_->lookup_angle(rsd2.type(), false,
+					atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
 
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
@@ -2894,13 +2956,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
 			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 
-			CartBondedParametersCOP len_params;
-			{
-#if defined MULTI_THREADED
-				utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-				len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
-			}
+			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
 
 			if ( len_params->is_null() ) continue;
 			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
@@ -3137,14 +3193,8 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 	Size const n_rings( rsd.type().n_rings() );
 	if ( n_rings==0 ) return;
 
-	core::Real Ktheta, Kphi;
-	{
-#if defined MULTI_THREADED
-		utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-		Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
-		Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
-	}
+	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
+	core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
 
 	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
 
@@ -3553,16 +3603,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 				std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
-				CartBondedParametersCOP ang_params;
-				{
-#if defined MULTI_THREADED
-					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-					ang_params =
-						db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
-						atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
-				}
-
+				CartBondedParametersCOP ang_params =
+					db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
+					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
@@ -3683,14 +3726,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
 				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
 
-				CartBondedParametersCOP ang_params;
-				{
-#if defined MULTI_THREADED
-					utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-					ang_params =
-						db_->lookup_angle(rsd2.type(), false, atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
-				}
+				CartBondedParametersCOP ang_params =
+					db_->lookup_angle(rsd2.type(), false, atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
 
 				if ( ang_params->is_null() ) continue;
 				Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
@@ -3790,13 +3827,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
 			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 
-			CartBondedParametersCOP len_params;
-			{
-#if defined MULTI_THREADED
-				utility::thread::ReadLockGuard lock( params_db_mutex_ );
-#endif
-				len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
-			}
+			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
 
 			if ( len_params->is_null() ) continue;
 			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
@@ -4058,6 +4089,32 @@ CartesianBondedEnergy::eval_score(
 core::Size
 CartesianBondedEnergy::version() const {
 	return 2; //fd  Fix a typo in params file, update HIS_D params
+}
+
+IdealParametersDatabaseOP
+CartesianBondedEnergy::get_db(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper) {
+	typedef std::tuple< Real, Real, Real, Real, Real > FiveReals;
+	// We want to share the methods across all method objects,
+	// but we need different ones based on the parameters -
+	// hence using a static map here, shared across all objects/calls
+	static std::map< FiveReals, IdealParametersDatabaseOP > databases;
+
+#if defined MULTI_THREADED
+	// We need to lock against creation, but the actual value
+	// (or rather, the object pointed to by the stored OP) won't change location after creation.
+	// (It might change contents, but it has its own internal mutex to control access to that.)
+	static std::mutex database_mutex; //static to be shared across all calls
+
+	// lock all access, as it shouldn't be perfomance critical, and avoids race conditions.
+	std::lock_guard< std::mutex > database_lock( database_mutex );
+#endif
+
+	FiveReals key(k_len, k_ang, k_tors, k_tors_prot, k_tors_improper );
+	if ( databases.count( key ) == 0 ) {
+		// Only create once - we're protected against double creation by the mutex
+		databases[ key ] =  IdealParametersDatabaseOP( new IdealParametersDatabase(k_len, k_ang, k_tors, k_tors_prot, k_tors_improper) );
+	}
+	return databases[ key ];
 }
 
 } // namespace methods

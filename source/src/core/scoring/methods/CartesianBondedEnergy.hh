@@ -47,6 +47,7 @@
 
 #if defined MULTI_THREADED
 
+#include <mutex>
 #include <utility/thread/ReadWriteMutex.hh>
 
 #endif
@@ -231,6 +232,9 @@ private:
 //  Database stores all ideal parameters
 class IdealParametersDatabase  : public utility::pointer::ReferenceCount {
 public:
+	// The per-residue maping for the torsions
+	typedef boost::unordered_map< atm_name_quad, CartBondedParametersOP > TorsionsIndepSubmap;
+
 	IdealParametersDatabase(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
 	// If you enable copy and assignment operators, you need to account for
@@ -240,8 +244,6 @@ public:
 
 	~IdealParametersDatabase();
 
-	void init(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
-
 	CartBondedParametersCOP
 	lookup_improper(
 		core::chemical::ResidueType const & rsd_type,
@@ -249,6 +251,12 @@ public:
 		std::string const & atm2_name,
 		std::string const & atm3_name,
 		std::string const & atm4_name
+	);
+
+	/// @brief Get the improper torsion constraints for the particular residue.
+	TorsionsIndepSubmap
+	generate_impropers_map_res(
+		core::chemical::ResidueType const & restype
 	);
 
 	// needs both names (for keying off databases) and indices (for building those not found from ideal)
@@ -278,23 +286,22 @@ public:
 	// old-style interface to database
 	void
 	lookup_torsion_legacy( core::chemical::ResidueType const & restype,
-		int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step );
+		int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step ) const;
 
 	// old-style interface to database
 	void
 	lookup_angle_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res,
-		int atm1, int atm2, int atm3, Real &Ktheta, Real &d0);
+		int atm1, int atm2, int atm3, Real &Ktheta, Real &d0) const;
 
 	// old-style interface to database
 	void
-	lookup_length_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res, int atm1, int atm2, Real &Kd, Real &d0 );
+	lookup_length_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res, int atm1, int atm2, Real &Kd, Real &d0 ) const;
 
-	bool bbdep_bond_params() { return bbdep_bond_params_; }
-	bool bbdep_bond_devs() { return bbdep_bond_devs_; }
+	bool bbdep_bond_params() const { return bbdep_bond_params_; }
+	bool bbdep_bond_devs() const { return bbdep_bond_devs_; }
 
 	/// @brief Return a list of all the bond lengths, bond angles, and bond torsions
 	/// for a single residue type.  This list is constructed lazily as required.
-	/// (This may cause thread safety issues!) << fd (1/31) Now mutex protected!
 	ResidueCartBondedParameters const &
 	parameters_for_restype(
 		core::chemical::ResidueType const & restype,
@@ -302,15 +309,17 @@ public:
 	);
 
 	// getters
-	Real k_length() { return k_length_; }
-	Real k_angle() { return k_angle_; }
-	Real k_torsion() { return k_torsion_; }
-	Real k_torsion_proton() { return k_torsion_proton_; }
-	Real k_torsion_improper() { return k_length_; }
+	Real k_length() const { return k_length_; }
+	Real k_angle() const { return k_angle_; }
+	Real k_torsion() const { return k_torsion_; }
+	Real k_torsion_proton() const { return k_torsion_proton_; }
+	Real k_torsion_improper() const { return k_length_; }
 
 	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
 
 private:
+	void init(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
+
 	// helper functions: find the ideal values by constructing from Rosetta's params file
 	void
 	lookup_bondangle_buildideal(
@@ -320,7 +329,7 @@ private:
 		int atm3,
 		Real &Ktheta,
 		Real &theta0
-	);
+	) const;
 
 	void
 	lookup_bondlength_buildideal(
@@ -329,13 +338,14 @@ private:
 		int atm2,
 		Real &Kd,
 		Real &d0
-	);
+	) const;
 
 	// read bb indep tables
 	void read_length_database( std::string const & infile, bool const symmetrize_gly );
 	void read_angle_database(std::string const & infile, bool const symmetrize_gly);
 	void read_torsion_database(std::string const & infile, bool const symmetrize_gly);
 	void read_improper_database(std::string const & infile, bool const symmetrize_gly);
+	void add_impropers_from_stream(std::istream & instream);
 
 	// another helper function: read backbone dependent db files
 	void
@@ -347,7 +357,8 @@ private:
 		bool const symmetrize_table
 	);
 
-	void
+	/// @brief Generate cached parameters for the given ResidueType
+	ResidueCartBondedParametersCOP
 	create_parameters_for_restype(
 		core::chemical::ResidueType const & restype,
 		bool prepro
@@ -360,17 +371,35 @@ private:
 	/// conformation over a right).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	//fd : make this private since it should only be called during initialization
-	void symmetrize_tables( ObjexxFCL::FArray2D<core::Real> &table );
+	void symmetrize_tables( ObjexxFCL::FArray2D<core::Real> &table ) const;
 
+
+	// TODO: Make the following statement actually true.
+	// All of these values (except *_restype_data_) are set in the constructor and
+	// are read-only, meaning they don't need to be mutex protected.
 
 	// defaults (they should be rarely used as everything should be in the DB now)
 	Real k_length_, k_angle_, k_torsion_, k_torsion_proton_, k_torsion_improper_;
 
+	// options
+	bool bbdep_bond_params_, bbdep_bond_devs_;
+
+#if defined MULTI_THREADED
+	// The following two mutexes are separate because in the generation of the
+	// ResidueCartBondedParametersCOP, we access the data maps, and recursive mutex locking is hairy at best
+
+	// mutex protecting shared access to bondlengths_indep_, bondangles_indep_
+	// (These are the only data maps that are altered after initial loading.)
+	utility::thread::ReadWriteMutex data_map_mutex_;
+	// mutex protecting shared access to the residue-pointer indexed data
+	utility::thread::ReadWriteMutex restype_db_mutex_;
+#endif
+
 	// backbone-independent parameters (keyed on atom names)
-	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > impropers_indep_;
-	boost::unordered_multimap< atm_name_quad, CartBondedParametersOP > torsions_indep_;
-	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP > bondlengths_indep_;
+	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
+	boost::unordered_multimap< atm_name_quad, CartBondedParametersOP > torsions_indep_;
+	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > impropers_indep_;
 
 	// backbone-dependent parameter sets
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP >
@@ -378,13 +407,10 @@ private:
 	boost::unordered_map< atm_name_single, CartBondedParametersOP >
 		bondlengths_bbdep_def_, bondlengths_bbdep_pro_, bondlengths_bbdep_valile_, bondlengths_bbdep_prepro_, bondlengths_bbdep_gly_;
 
-	// options
-	bool bbdep_bond_params_, bbdep_bond_devs_;
-
 	// per residue-type data
 	// The raw pointers here are registered in the destruction observer for their respective ResidueType
-	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > prepro_restype_data_;
-	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > nonprepro_restype_data_;
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersCOP > prepro_restype_data_;
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersCOP > nonprepro_restype_data_;
 
 };
 
@@ -396,11 +422,9 @@ class CartesianBondedEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
 
-	// fd make this a friend since it needs access to the mutex
-	friend ResidueCartBondedParameters const &
-	IdealParametersDatabase::parameters_for_restype( core::chemical::ResidueType const & restype, bool prepro );
-
 public:
+	CartesianBondedEnergy() = delete; // Need options to initialize this structure
+
 	CartesianBondedEnergy( methods::EnergyMethodOptions const & options );
 
 	CartesianBondedEnergy( CartesianBondedEnergy const & src );
@@ -816,17 +840,14 @@ private:
 
 private:
 
-	// the ideal parameter database
-	static IdealParametersDatabaseOP db_;
+	/// @brief Accessor function which gives access to the appropriate IdealParametersDatabase
+	static
+	IdealParametersDatabaseOP
+	get_db(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
-#if defined MULTI_THREADED
-
-	// database lock for parameter sets
-	static utility::thread::ReadWriteMutex params_db_mutex_;
-
-	// database lock for restype sets
-	static utility::thread::ReadWriteMutex restype_db_mutex_;
-#endif
+private:
+	// the ideal parameter database used by this method.
+	IdealParametersDatabaseOP db_;
 
 	// option
 	bool linear_bonded_potential_;

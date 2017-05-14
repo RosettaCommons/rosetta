@@ -929,6 +929,8 @@ testinputfiles = [
 	"scoring/loop_graph/P3.pdb",
 	"scoring/loop_graph/SRL_1JBT.pdb",
 	"scoring/loop_graph/bound_seq_GC_SRL.fasta",
+	"scoring/methods/HEM.fa.params",
+	"scoring/methods/HEM.fa.tors",
 	"scoring/methods/MMBondAngleEnergyTests.u",
 	"scoring/methods/score3_in.silent_out",
 	"scoring/methods/test_in.pdb",

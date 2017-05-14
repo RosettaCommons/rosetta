@@ -33,6 +33,8 @@ public:
 	/// Until this thread has invoked "release_read_lock," there is a guarantee that
 	/// no other thread will be able to obtain a write lock.  Multiple threads may
 	/// obtain a read lock simultaneously.
+	/// Attempting to obtain two read locks in the same thread
+	/// (e.g. in one function and then again in a called function) can result in deadlock.
 	void obtain_read_lock();
 
 	/// @brief After having obtained a read lock, release it.  Never release a read lock
@@ -54,6 +56,8 @@ public:
 	int read_counter() const { return read_counter_.load(); }
 
 private:
+	// Despite the use of std::recursive_mutex here, the current implementation cannot handle
+	// recursive locking of ReadWriteMutex
 	std::recursive_mutex read_lock_;
 	std::atomic< int > read_counter_;
 	std::recursive_mutex write_lock_;
@@ -64,6 +68,7 @@ class ReadLockGuard
 {
 public:
 	/// @brief Block until you obtain read permission
+	/// Do not instantiate if the current thread has any other read or write locks for this mutex.
 	ReadLockGuard( ReadWriteMutex & rwm );
 
 	/// @brief Invoke release_read_lock() on the RealWriteLock used to construct this instance
@@ -76,6 +81,7 @@ class WriteLockGuard
 {
 public:
 	/// @brief Block until you obtain write permission
+	/// Do not instantiate if the current thread has any other read or write locks for this mutex.
 	WriteLockGuard( ReadWriteMutex & rwm );
 
 	/// @brief Invoke release_write_lock() on the ReadWriteMutex used to construct this instance
