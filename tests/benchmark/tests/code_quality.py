@@ -261,7 +261,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
             br = line.replace('*', '').split()[0]
             if br.startswith('origin/'):
                 br = br[len('origin/'):]
-                branches.add(br)
+                if br != 'master': branches.add(br)
             #if br != 'HEAD': branches.add(br)
 
         if len(branches) != 1:
