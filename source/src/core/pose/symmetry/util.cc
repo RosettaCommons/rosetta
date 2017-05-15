@@ -213,7 +213,8 @@ make_symmetric_pose(
 
 	debug_assert( is_symmetric( pose ) );
 
-	pose.conformation().detect_disulfides();
+	//pose.conformation().detect_disulfides();
+	core::pose::initialize_disulfide_bonds( pose );
 
 	if ( option[ OptionKeys::symmetry::detect_bonds ] ) {
 		pose.conformation().detect_bonds();
