@@ -467,15 +467,15 @@ activate_common_simple_type(
 		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_atol");
 		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_armijo_atol");
 		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_armijo_nonmonotone_atol");
-		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_stronge_wolfe");
-		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_stronge_wolfe_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_strong_wolfe");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_strong_wolfe_atol");
 		minimizer_type.add_restriction( xsr_enumeration, "lbfgs");
 		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo");
 		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_rescored");
 		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_atol");
 		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_nonmonotone");
 		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_nonmonotone_atol");
-		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_stronge_wolfe");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_strong_wolfe");
 		minimizer_type.add_restriction( xsr_enumeration, "GA");
 		xsd.add_top_level_element( minimizer_type );
 	} else if ( common_type == xsct_size_cs_pair ) {
