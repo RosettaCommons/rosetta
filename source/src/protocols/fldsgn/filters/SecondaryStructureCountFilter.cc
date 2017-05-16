@@ -25,6 +25,11 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+// Core Headers
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+
 // Parser headers
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
@@ -45,7 +50,9 @@ namespace fldsgn {
 namespace filters {
 
 // @brief default constructor
-SecondaryStructureCountFilter::SecondaryStructureCountFilter( ): Filter( "SecondaryStructureCount" )
+SecondaryStructureCountFilter::SecondaryStructureCountFilter( ):
+	Filter( "SecondaryStructureCount" ),
+	selector_( new core::select::residue_selector::TrueResidueSelector )
 {}
 
 // @brief returns true if the given pose passes the filter, false otherwise.
@@ -102,7 +109,7 @@ bool SecondaryStructureCountFilter::apply( core::pose::Pose const & pose ) const
 void
 SecondaryStructureCountFilter::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )
@@ -122,6 +129,11 @@ SecondaryStructureCountFilter::parse_my_tag(
 	filter_sheet_ = tag->getOption<bool>( "filter_sheet", 0 );
 	filter_loop_ = tag->getOption<bool>( "filter_loop", 0 );
 	filter_helix_sheet_ = tag->getOption<bool>( "filter_helix_sheet", 1 );
+	min_element_resis_ = tag->getOption<core::Size>( "min_element_resis", 1 );
+	return_total_ = tag->getOption<bool>("return_total", 0 );
+
+	std::string const selector_name = tag->getOption< std::string >( "residue_selector", "" );
+	if ( !selector_name.empty() ) selector_ = core::select::residue_selector::get_residue_selector( selector_name, data );
 
 	if ( filter_helix_ ) {
 		tr << "filter on "<< num_helix_ << " helix with length: "<<min_helix_length_<<"-"<< max_helix_length_ << std::endl;
@@ -151,61 +163,115 @@ core::Size SecondaryStructureCountFilter::compute( core::pose::Pose const & pose
 	std::string dssp_ss=dssp.get_dssp_secstruct();
 	tr << dssp_ss << std::endl;
 
+	//create residue_selector subset
+	using core::select::residue_selector::ResidueSubset;
+	ResidueSubset const subset = selector_->apply( pose_copy );
+
+	//Debugging residue_selector
+	//ResidueSubset::const_iterator subs=subset.begin();
+	//while ( subs< subset.end() ) {
+	// tr << *subs << std::endl;
+	// ++subs;
+	//}
+
 	num_helix_pose_=0;
 	num_sheet_pose_=0;
 	num_loop_pose_=0;
 
 	core::Size tmp_count=0;
+	core::Size resi_num=1;
+	core::Size num_encounter=1;
+	tr.Debug << "Only elements with >= " << min_element_resis_ << " residues will be counted." << std::endl;
+
 	std::string::const_iterator iter=dssp_ss.begin();
 	while ( iter< dssp_ss.end() ) {
+		tr.Debug << "Looking at residue: " << resi_num << " with SS: " << *iter << std::endl;
+
+		//if H
 		if ( *iter=='H' ) {
 			tmp_count=0;
+			num_encounter=0;
 			while ( *iter=='H' && iter< dssp_ss.end() ) {
 				++tmp_count;
 				++iter;
+				++resi_num;
+				if ( subset[ resi_num ] ) {
+					++num_encounter;
+				}
 			}
 
 			if ( tmp_count >= min_helix_length_ && tmp_count <= max_helix_length_ ) {
-				num_helix_pose_+=1;
+				if ( num_encounter >= min_element_resis_ ) {
+					tr.Debug << "Terminal residue " << ( resi_num - 1 ) << " accepted as H SS element, encountered " << num_encounter << " times." << std::endl;
+					num_helix_pose_+=1;
+				}
 			}
 
-		} else if ( *iter=='E' ) {
+		} else if ( *iter=='E' ) { //end H
+			//if E
 			tmp_count=0;
+			num_encounter=0;
 			while ( *iter=='E' && iter< dssp_ss.end() ) {
 				++tmp_count;
 				++iter;
+				++resi_num;
+				if ( subset[ resi_num ] ) {
+					++num_encounter;
+				}
 			}
 
 			if ( tmp_count >= min_sheet_length_ && tmp_count <= max_sheet_length_ ) {
-				num_sheet_pose_+=1;
+				if ( num_encounter >= min_element_resis_ ) {
+					tr.Debug << "Terminal residue " << ( resi_num - 1 ) << " accepted as E SS element, encountered " << num_encounter << " times." << std::endl;
+					num_sheet_pose_+=1;
+				}
 			}
-
-		} else {
+		} else { //end E
+			//if L
 			tmp_count=0;
+			num_encounter=0;
 			while ( *iter=='L' && iter< dssp_ss.end() ) {
 				++tmp_count;
 				++iter;
+				++resi_num;
+				if ( subset[ resi_num ] ) {
+					++num_encounter;
+				}
 			}
 
 			if ( tmp_count >= min_loop_length_ && tmp_count <= max_loop_length_ ) {
-				num_loop_pose_+=1;
+				if ( num_encounter >= min_element_resis_ ) {
+					tr.Debug << "Terminal residue " << ( resi_num - 1 ) << " accepted as L SS element, encountered " << num_encounter << " times." << std::endl;
+					num_loop_pose_+=1;
+				}
 			}
-			++iter;
-		}
-	}
+			//increase iterator
+			//++iter;
+			//++resi_num;
+		} //end L
+	} //while iterator
 
-	tr << " Pose has " << num_helix_pose_ << " helix, " << num_sheet_pose_  << " sheet, " << num_helix_pose_ << " loop, according to dssp_reduced definition" <<  std::endl;
-	return 0;
+	tr << " Pose has " << num_helix_pose_ << " helix, " << num_sheet_pose_  << " sheet, " << num_loop_pose_ << " loop (filtered elements), according to dssp_reduced definition." <<  std::endl;
+
+	if ( return_total_ ) {
+		tr << "Returning TOTAL number of filtered SS elements into score file." << std::endl;
+		core::Size total=0;
+		if ( filter_helix_ ) { total+=num_helix_pose_; }
+		if ( filter_sheet_ ) { total+=num_sheet_pose_; }
+		if ( filter_loop_ ) { total+=num_loop_pose_; }
+		if ( filter_helix_sheet_ ) { total+=num_helix_pose_; total+=num_sheet_pose_; }
+		return total;
+	} else { return 0; }
 }
 
 core::Real SecondaryStructureCountFilter::report_sm( core::pose::Pose const & pose ) const {
-	compute( pose );
-	return 0;
+	return compute( pose );
+	//return 0;
 }
 
 void SecondaryStructureCountFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
 	compute( pose );
-	out << " Pose has " << num_helix_pose_ << " helix " << num_sheet_pose_  << " sheet " << num_helix_pose_ << " loop according to dssp_reduced definition" <<  std::endl;
+	out << " Pose has " << num_helix_pose_ << " helix " << num_sheet_pose_  << " sheet " << num_loop_pose_ << " loop (filtered elements) according to dssp_reduced definition." <<  std::endl;
 }
 
 // XRW TEMP protocols::filters::FilterOP
@@ -240,7 +306,10 @@ void SecondaryStructureCountFilter::provide_xml_schema( utility::tag::XMLSchemaD
 		+ XMLSchemaAttribute::attribute_w_default( "filter_helix", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "filter_sheet", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "filter_loop", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "filter_helix_sheet", xsct_rosetta_bool, "XRW TO DO", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "filter_helix_sheet", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "return_total", xsct_rosetta_bool, "Returns total count to score file instead of 0.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_element_resis", xsct_non_negative_integer, "Minimum number of residues on an element for it to be counted.", "1" )
+		+ XMLSchemaAttribute( "residue_selector" , xs_string , "Explicitly set which SS elements to count using residue_selectors." );
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
 }
 

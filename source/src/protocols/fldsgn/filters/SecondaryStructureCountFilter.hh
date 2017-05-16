@@ -33,6 +33,9 @@
 
 #include <utility/vector1.hh>
 
+// Core Headers
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 //// C++ headers
 
@@ -131,6 +134,9 @@ private:
 	bool filter_loop_;
 	bool filter_helix_sheet_;
 
+	bool return_total_;
+	core::Size min_element_resis_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 } // filters
