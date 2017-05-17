@@ -44,8 +44,21 @@
 #define SimpleCycpepPredictApplication_PEPBOND_C_ANGLE 2.02807246864
 #define SimpleCycpepPredictApplication_PEPBOND_N_ANGLE 2.12406564732
 
+#define SimpleCycpepPredictApplication_DISULFBOND_LENGTH 2.02
+#define SimpleCycpepPredictApplication_DISULFBOND_ANGLE 1.83259571459
+
 namespace protocols {
 namespace cyclic_peptide_predict {
+
+/// @brief An enum for the cyclization type.
+/// @details If additional values are added, please add them to the
+/// SimpleCycpepPredictApplication::get_cyclization_name_from_type() function.
+enum SCPA_cyclization_type {
+	SCPA_n_to_c_amide_bond = 1, //Keep this first
+	SCPA_terminal_disulfide,
+	SCPA_invalid_type, //Keep this second-to-last
+	SCPA_number_of_types = SCPA_invalid_type //Keep this last
+};
 
 /// @brief Application-level code for simple_cycpep_predict application.
 /// @details Also called by the BOINC minirosetta app.
@@ -66,6 +79,14 @@ public:
 	///
 	SimpleCycpepPredictApplication( SimpleCycpepPredictApplication const &src );
 
+	/// @brief Given a cyclization type enum, return its name string.
+	///
+	static SCPA_cyclization_type get_cyclization_type_from_name( std::string const &name );
+
+	/// @brief Given a cyclization name string, return its type enum.
+	///
+	static std::string get_cyclization_name_from_type( SCPA_cyclization_type const type );
+
 	/// @brief Register the set of options that this application uses (for the help menu).
 	///
 	static void register_options();
@@ -73,6 +94,10 @@ public:
 	/// @brief Initialize the application.
 	/// @details Initializes using the option system.
 	void initialize_from_options();
+
+	/// @brief Set the cyclization type.
+	///
+	void set_cyclization_type( SCPA_cyclization_type const type_in );
 
 	/// @brief Sets the default scorefunction to use.
 	/// @details The scorefunction is cloned.  The high-hbond version is constructed
@@ -224,14 +249,36 @@ private:
 		utility::vector1 < std::string > &resnames
 	) const;
 
-	/// @brief Set up the DeclareBond mover used to connect the termini.
+	/// @brief Set up the mover that creates N-to-C amide bonds, and which updates the
+	/// atoms dependent on the amide bond.
+	void
+	set_up_n_to_c_cyclization_mover (
+		protocols::cyclic_peptide::DeclareBondOP termini,
+		core::pose::PoseCOP pose,
+		bool const native,
+		core::Size const last_res
+	) const;
+
+	/// @brief Set up the mover that creates terminal disulfide bonds.
 	///
 	void
-	set_up_termini_mover (
+	set_up_terminal_disulfide_cyclization_mover (
+		protocols::cyclic_peptide::DeclareBondOP termini,
+		core::pose::PoseCOP pose,
+		bool const native,
+		core::Size const last_disulf_res,
+		core::Size const first_disulf_res
+	) const;
+
+	/// @brief Set up the DeclareBond mover used to connect the termini, or whatever
+	/// atoms are involved in the cyclization.  (Handles different cyclization modes).
+	void
+	set_up_cyclization_mover (
 		protocols::cyclic_peptide::DeclareBondOP termini,
 		core::pose::PoseCOP pose,
 		bool const native=false,
-		core::Size const last_res=0
+		core::Size const last_res=0,
+		core::Size const first_res=0
 	) const;
 
 	/// @brief Takes a vector of residue names, chooses a random number for cyclic offset, and
@@ -478,6 +525,22 @@ private:
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
 	void re_append_tbmb_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, core::Size const offset ) const;
 
+	/// @brief Get the cyclization type (N-to-C cyclic, terminal disulfide, etc.).
+	/// @details Const-access only.
+	inline SCPA_cyclization_type cyclization_type() const { return cyclization_type_; }
+
+	/// @brief Given a pose, return the index of the first residue that can form a disulfide.
+	/// @details Throws an error if no residue is found.
+	core::Size find_first_disulf_res( core::pose::PoseCOP pose ) const;
+
+	/// @brief Given a pose, return the index of the last residue that can form a disulfide.
+	/// @details Throws an error if no residue is found.
+	core::Size find_last_disulf_res( core::pose::PoseCOP pose ) const;
+
+	/// @brief Given a pose, add disulfide variant types to the first and last cysteine residues in the pose.
+	/// @details This should ONLY be called on a pose just before a bond is declared between these residues.
+	void set_up_terminal_disulfide_variants( core::pose::PoseOP pose ) const;
+
 private:
 	/// ------------- Data -------------------------------
 	/// -------- When you add new data to this class, ----
@@ -490,6 +553,10 @@ private:
 	/// @brief The number of jobs that this slave process has already completed.  Only used in MPI mode; zero otherwise.
 	///
 	core::Size already_completed_job_count_;
+
+	/// @brief The type of cyclization.
+	///
+	SCPA_cyclization_type cyclization_type_;
 
 	/// @brief The default ScoreFunction to use.  The high h-bond version is constructed from this.
 	///

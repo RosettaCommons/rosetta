@@ -4505,6 +4505,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	## Options for cyclic peptide structure prediction app (simple_cycpep_predict) -- Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu) ##
 	Option_Group( 'cyclic_peptide',
+		Option( 'cyclization_type', 'String', desc="The type of cyclization for the peptide (e.g. N-to-C amide bond, terminal disulfide, etc.", default="n_to_c_amide_bond", legal=['n_to_c_amide_bond','terminal_disulfide'] ),
 		Option( 'rand_checkpoint_file', 'String', desc="The name of the checkpoint file used for the random number generator.  Defaults to rng.state.gz.  Not used if the -cyclic_peptide:checkpoint_job_identifier flag isn't used.", default="rng.state.gz" ),
 		Option( 'checkpoint_file', 'String', desc="The name of the checkpoint file.  Defaults to checkpoint.txt.  Not used if the -cyclic_peptide:checkpoint_job_identifier flag isn't used.", default="checkpoint.txt" ),
 		Option( 'checkpoint_job_identifier', 'String', desc="A unique job name for checkpointing.  If none is provided, jobs are not checkpointed.", default="" ),
