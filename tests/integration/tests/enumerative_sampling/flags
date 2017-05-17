@@ -1,0 +1,18 @@
+-in::file::s inputs/input.pdb
+-parser:protocol inputs/RosettaES.xml
+-nstruct 1
+
+# ligand
+-ignore_unrecognized_res
+    
+# density map options
+-edensity:mapfile inputs/T20S_48A_alpha_chainA.mrc
+-edensity:mapreso 2.0
+-edensity:sliding_window 3
+
+
+-corrections::beta_nov15
+-missing_density_to_jump
+
+# reduce memory footprint
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

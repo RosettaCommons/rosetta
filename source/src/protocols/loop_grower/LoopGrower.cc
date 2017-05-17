@@ -555,9 +555,17 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 
 		n_to_insert_lower = (int)maxfrag-insert_lower_melt;
 		n_to_insert_upper = (int)maxfrag-insert_upper_melt;
+		//turn off dump beam this is done a precaution to avoid accidentally creating many thousands of pdb files
+		if ( steps_ != 0 ) {
+			if ( dumpbeam_ ) {
+				TR << " warning dump beam set to true in a production run. This will produce many thousands of pdbfiles. This behavior is being turned off" << std::endl;
+			}
+			dumpbeam_ = false;
+		}
 		//This logic handles setting up the pose and other inputs when doing filtering using the parallelization through the python script
 		if ( readbeams_ && steps_ == 0 && (dumpbeam_ || clustercheck_ || rescorebeams_ || nativegrow_ || (coordfile_ != "") || auto_stop_) ) update_pose = true;
 		if ( readbeams_ && steps_ == 0 ) {
+			if ( dumpbeam_ ) samplesheets_ = false;
 			solutionset.clear();
 			read_from_disk(solutionset, cycle, acceptlower, false);
 			cycle++;
@@ -3140,7 +3148,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 			mod_dens += residue_dens;
 		}
 	}
-	TRACER << " mod dens is " << mod_dens << " total fast dens " << total_fast_dens << " sc dens is " << sc_dens << std::endl;
+	TRACER.Debug << " mod dens is " << mod_dens << " total fast dens " << total_fast_dens << " sc dens is " << sc_dens << std::endl;
 
 	Real adjusted_dens = 0;
 	if ( windowdensweight_ != 0 ) {
@@ -3265,7 +3273,7 @@ Real LoopGrower::modifiedscore( core::pose::Pose& fapose, core::pose::Pose& cen_
 			score -= nton3hbonds*hbond_weight*.7;
 		}
 	}
-	TRACER << "pre subtraction score is " << score << " basescore is " << basescore << std::endl;
+	TRACER.Debug << "pre subtraction score is " << score << " basescore is " << basescore << std::endl;
 	score -= basescore;
 	if ( !rescorebeams_ ) TRACER << " score is " << score << std::endl;
 	return score;

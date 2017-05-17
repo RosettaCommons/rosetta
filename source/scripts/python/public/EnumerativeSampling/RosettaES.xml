@@ -1,0 +1,39 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<ScoreFunction name="dens" weights="beta_nov15" symmetric="0">
+            <Reweight scoretype="fa_rep" weight="0.3"/>
+            <Reweight scoretype="fa_sol" weight="0"/>
+            <Reweight scoretype="fa_intra_sol_xover4" weight="0"/>
+   			<Reweight scoretype="elec_dens_fast" weight="20.0"/>
+            <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+            <Set scale_sc_dens_byres="R:0.76,K:0.76,E:0.76,D:0.76,M:0.76,C:0.81,Q:0.81,H:0.81,N:0.81,T:0.81,S:0.81,Y:0.88,W:0.88,A:0.88,F:0.88,P:0.88,I:0.88,L:0.88,V:0.88"/>
+		</ScoreFunction>
+       <ScoreFunction name="cendens" symmetric="0">
+   			<Reweight scoretype="vdw" weight="1.0"/>
+            <Reweight scoretype="elec_dens_fast" weight="40"/>
+            <Reweight scoretype="rama" weight="0.2"/>
+            <Reweight scoretype="omega" weight="0.2"/>
+            <Reweight scoretype="hbond_sr_bb" weight="2.0"/>
+            <Reweight scoretype="hbond_lr_bb" weight="2.0"/>
+            <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+       </ScoreFunction>
+	</SCOREFXNS>
+	<MOVERS>
+        <SetupForDensityScoring name="setup_dens"/>
+        <FragmentExtension name="ext" fasta="t20sA.fasta" scorefxn="dens" censcorefxn="cendens" beamwidth="32" fragtrials="3" masterbeamwidth="250" masterbeamcutoff="3.0" dumpbeam="0" samplesheets="1" 
+            sheetcriteria="2" continuous_sheets="0" sheetbonus=".5" sheet_tolerance=".7" greedy="1" read_from_file="0" comparatorrounds="100"
+            chainbreak="1.5" continuous_weight="0.3" windowdensweight="30" rmscutoff="1.2" rmswindow="20" beamscorecutoff="0.85"
+            pack_min_cycles="2" fafilter="1" minimize="1" fragmelt="2" minmelt="15" looporder="1" direction="1"
+            writelps="1" writebeams="1" readbeams="%%readbeams%%" storedbeams="%%beams%%" steps="%%steps%%" pcount="%%pcount%%" filterprevious="%%filterprevious%%" filterbeams="%%filterbeams%%">
+            <Fragments fragfile="100.3mers"/>
+            <Fragments fragfile="20.9mers"/>
+        </FragmentExtension>
+	</MOVERS>
+	<PROTOCOLS>
+        <Add mover="setup_dens"/>
+        <Add mover="ext"/>
+	</PROTOCOLS>
+ 
+</ROSETTASCRIPTS>

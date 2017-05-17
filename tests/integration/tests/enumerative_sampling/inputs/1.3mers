@@ -1,0 +1,1314 @@
+FRAME    1   3
+         1    93 1f3uA BBTorsion T E   -123.847   157.102   179.916
+         2    93 1f3uA BBTorsion V E   -109.980   129.693   175.809
+         3    93 1f3uA BBTorsion F E   -126.917   140.530  -178.199
+
+
+FRAME    2   4
+         2   100 2bzpA BBTorsion V H    -65.847   -20.160   176.395
+         3   100 2bzpA BBTorsion F H    -81.914    -4.521  -174.208
+         4   100 2bzpA BBTorsion S H    -95.264     4.264   177.390
+
+
+FRAME    3   5
+         3   415 1u2zA BBTorsion F L    -71.392   147.850   177.797
+         4   415 1u2zA BBTorsion S L    -73.838   158.200  -179.052
+         5   415 1u2zA BBTorsion P L    -52.043   -42.627  -179.370
+
+
+FRAME    4   6
+         4    51 1ijxA BBTorsion S L   -156.220   130.333   179.311
+         5    51 1ijxA BBTorsion P L    -74.493    -9.775  -178.402
+         6    51 1ijxA BBTorsion D L    -99.678    -7.713  -175.454
+
+
+FRAME    5   7
+         5   155 1st8A BBTorsion P L    -64.577   -17.291   179.267
+         6   155 1st8A BBTorsion D L    -89.237     5.419   178.906
+         7   155 1st8A BBTorsion G L     75.658    22.167   179.420
+
+
+FRAME    6   8
+         6   188 1l5wA BBTorsion D L    -91.325    16.676   170.704
+         7   188 1l5wA BBTorsion G L     85.222    17.654   180.125
+         8   188 1l5wA BBTorsion R L    -97.518   131.598   179.093
+
+
+FRAME    7   9
+         7   125 1b35B BBTorsion G E    164.195   164.261  -179.797
+         8   125 1b35B BBTorsion R E   -135.400   125.442  -179.126
+         9   125 1b35B BBTorsion L E   -108.208   141.948  -177.297
+
+
+FRAME    8  10
+         8     6 1qauA BBTorsion R E    -96.693   119.720   179.655
+         9     6 1qauA BBTorsion L E   -124.614   156.742   177.216
+        10     6 1qauA BBTorsion F E   -104.146   129.171   178.391
+
+
+FRAME    9  11
+         9    95 1jv1A BBTorsion L H    -65.226   -35.275   177.071
+        10    95 1jv1A BBTorsion F H    -62.903   -46.792   177.923
+        11    95 1jv1A BBTorsion Q H    -59.741   -43.306   178.845
+
+
+FRAME   10  12
+        10    37 1vjjA BBTorsion F E   -135.074   148.208  -177.093
+        11    37 1vjjA BBTorsion Q E   -108.658   130.159   177.917
+        12    37 1vjjA BBTorsion V E   -122.680   158.405   178.016
+
+
+FRAME   11  13
+        11    13 1ez3A BBTorsion Q H    -75.898   -25.623   176.875
+        12    13 1ez3A BBTorsion V H    -70.401   -42.824   177.781
+        13    13 1ez3A BBTorsion E H    -68.347   -30.559   176.145
+
+
+FRAME   12  14
+        12   362 1lwjA BBTorsion V H    -65.410   -43.040   180.519
+        13   362 1lwjA BBTorsion E H    -68.594   -25.091   179.972
+        14   362 1lwjA BBTorsion Y H    -83.073   -53.669  -178.074
+
+
+FRAME   13  15
+        13   179 1wy5A BBTorsion E H    -68.746   -30.082   178.353
+        14   179 1wy5A BBTorsion Y H    -67.274   -48.332  -179.744
+        15   179 1wy5A BBTorsion A H    -63.881   -42.520   179.572
+
+
+FRAME   14  16
+        14   204 1j3uA BBTorsion Y H    -75.137   -50.303   179.755
+        15   204 1j3uA BBTorsion A H    -51.151   -39.564  -179.012
+        16   204 1j3uA BBTorsion R H    -69.816   -48.575   179.550
+
+
+FRAME   15  17
+        15   615 1fepA BBTorsion A E    -60.844   -52.875   175.450
+        16   615 1fepA BBTorsion R E   -123.852   167.896  -180.233
+        17   615 1fepA BBTorsion E L    -68.335   -22.929  -179.829
+
+
+FRAME   16  18
+        16    14 1ku3A BBTorsion R H    -69.069   -41.326  -178.708
+        17    14 1ku3A BBTorsion E H    -61.514   -52.217  -179.298
+        18    14 1ku3A BBTorsion A H    -62.038   -35.137  -179.716
+
+
+FRAME   17  19
+        17   300 1f8mA BBTorsion E H    -62.135   -44.819   180.263
+        18   300 1f8mA BBTorsion A H    -57.476   -44.561  -178.763
+        19   300 1f8mA BBTorsion V H    -72.828   -41.928  -177.240
+
+
+FRAME   18  20
+        18     8 1g0cA BBTorsion A L    -76.910   -23.417  -176.377
+        19     8 1g0cA BBTorsion V L    -84.847    75.260  -173.881
+        20     8 1g0cA BBTorsion K L   -100.951   153.068   175.853
+
+
+FRAME   19  21
+        19   563 1r9dA BBTorsion V H    -66.774   -44.559  -176.786
+        20   563 1r9dA BBTorsion K H    -66.133   -45.658  -174.826
+        21   563 1r9dA BBTorsion K H    -82.756   -54.054  -173.456
+
+
+FRAME   20  22
+        20    43 1hkfA BBTorsion K E    -62.128   142.027  -181.769
+        21    43 1hkfA BBTorsion K E   -112.833   140.478  -173.430
+        22    43 1hkfA BBTorsion G E   -140.908   154.571   172.853
+
+
+FRAME   21  23
+        21   314 1ebfA BBTorsion K L    -88.104   134.835   177.997
+        22   314 1ebfA BBTorsion G L     59.812  -118.303  -179.889
+        23   314 1ebfA BBTorsion S L   -129.222    29.259  -177.228
+
+
+FRAME   22  24
+        22   305 1ohvA BBTorsion G L     98.383     1.099  -173.702
+        23   305 1ohvA BBTorsion S L    -62.474   -23.693   179.789
+        24   305 1ohvA BBTorsion T L    -82.826    -1.066   180.510
+
+
+FRAME   23  25
+        23    21 1v73A BBTorsion S L    -75.911   152.649   176.330
+        24    21 1v73A BBTorsion T E   -134.167   142.496  -178.618
+        25    21 1v73A BBTorsion A E   -115.764   135.569   174.464
+
+
+FRAME   24  26
+        24   224 1gtkA BBTorsion T H    -66.604   -40.014  -180.115
+        25   224 1gtkA BBTorsion A H    -62.719   -39.152   176.945
+        26   224 1gtkA BBTorsion L H    -61.235   -48.316   180.080
+
+
+FRAME   25  27
+        25   110 1h8eA BBTorsion A L    -62.868   -22.823  -175.725
+        26   110 1h8eA BBTorsion L L   -103.413     8.706   172.498
+        27   110 1h8eA BBTorsion G L     80.528    14.806   170.117
+
+
+FRAME   26  28
+        26   436 1xmeA BBTorsion L H    -55.019   -48.874   179.263
+        27   436 1xmeA BBTorsion G H    -55.902   -45.927  -180.067
+        28   436 1xmeA BBTorsion M H    -62.120   -36.008   179.143
+
+
+FRAME   27  29
+        27    84 1efyA BBTorsion G L     74.270  -141.756   177.960
+        28    84 1efyA BBTorsion M L    -88.253    29.655  -179.511
+        29    84 1efyA BBTorsion K L   -116.516   153.422   178.847
+
+
+FRAME   28  30
+        28   318 1khbA BBTorsion M E   -132.718   134.023  -180.289
+        29   318 1khbA BBTorsion K E   -146.282   136.965   176.936
+        30   318 1khbA BBTorsion F E    -59.172   133.608   174.686
+
+
+FRAME   29  31
+        29   276 1noyA BBTorsion K H    -91.985   -26.133  -172.175
+        30   276 1noyA BBTorsion F H   -116.252   -19.854  -177.867
+        31   276 1noyA BBTorsion A L    -68.254   -47.430   180.302
+
+
+FRAME   30  32
+        30    34 1ql0A BBTorsion F L   -128.658   160.987   178.457
+        31    34 1ql0A BBTorsion A E    -68.904   131.838   173.839
+        32    34 1ql0A BBTorsion N E    -67.113   -34.755   178.853
+
+
+FRAME   31  33
+        31    62 1ddzA BBTorsion A H    -64.322   -16.354  -178.200
+        32    62 1ddzA BBTorsion N L   -124.348    40.931  -179.347
+        33    62 1ddzA BBTorsion G L    -76.259   178.771  -179.522
+
+
+FRAME   32  34
+        32    55 1o97D BBTorsion N L    -55.514   133.052   177.168
+        33    55 1o97D BBTorsion G L     95.296    -2.774   178.815
+        34    55 1o97D BBTorsion V L   -104.848   113.667  -180.137
+
+
+FRAME   33  35
+        33   146 1g57A BBTorsion G H     60.458  -144.563  -176.850
+        34   146 1g57A BBTorsion V H    -64.971   -18.053   176.966
+        35   146 1g57A BBTorsion L H    -68.375   -24.681   174.940
+
+
+FRAME   34  36
+        34     3 1iirA BBTorsion V E   -108.053   134.689   179.586
+        35     3 1iirA BBTorsion L E   -102.142   130.732   176.273
+        36     3 1iirA BBTorsion L E   -116.079   124.934  -177.964
+
+
+FRAME   35  37
+        35   126 1jixA BBTorsion L H   -102.169   -22.819  -179.044
+        36   126 1jixA BBTorsion L L    -68.192   114.565  -180.434
+        37   126 1jixA BBTorsion I L    -91.656   112.315  -176.947
+
+
+FRAME   36  38
+        36    77 1f8eA BBTorsion L E    -78.677   124.056   179.214
+        37    77 1f8eA BBTorsion I E   -125.763   156.234   173.510
+        38    77 1f8eA BBTorsion S E   -132.168   157.115  -177.121
+
+
+FRAME   37  39
+        37   146 1o6vA BBTorsion I E    -76.849   125.194   176.720
+        38   146 1o6vA BBTorsion S L   -110.686    -6.444  -170.805
+        39   146 1o6vA BBTorsion D L   -142.953   119.027  -175.486
+
+
+FRAME   38  40
+        38   193 1g4mA BBTorsion S L   -153.986   158.837  -180.537
+        39   193 1g4mA BBTorsion D L    -69.215   -33.779  -179.528
+        40   193 1g4mA BBTorsion K L   -116.182   148.076  -176.630
+
+
+FRAME   39  41
+        39   242 1upvA BBTorsion D L     59.708    35.210   171.199
+        40   242 1upvA BBTorsion K L   -107.671   112.223  -176.008
+        41   242 1upvA BBTorsion K L   -106.052   134.635   173.582
+
+
+FRAME   40  42
+        40    80 2b4rO BBTorsion K L   -139.824   131.595   173.232
+        41    80 2b4rO BBTorsion K E    -89.746   140.165   171.385
+        42    80 2b4rO BBTorsion V E   -123.945   132.620   179.975
+
+
+FRAME   41  43
+        41   167 1w5bA BBTorsion K H    -75.093   -28.340   180.223
+        42   167 1w5bA BBTorsion V H    -61.413   -45.808  -179.230
+        43   167 1w5bA BBTorsion R H    -67.935   -35.157   179.536
+
+
+FRAME   42  44
+        42   119 1at0_ BBTorsion V E   -165.553   152.701   177.342
+        43   119 1at0_ BBTorsion R E   -116.335   121.032  -178.533
+        44   119 1at0_ BBTorsion S E   -137.985   174.303   179.702
+
+
+FRAME   43  45
+        43     4 1qycA BBTorsion R L   -149.999   -36.218  -171.971
+        44     4 1qycA BBTorsion S L    -60.782   143.542   179.016
+        45     4 1qycA BBTorsion R L    -85.030   116.432  -179.169
+
+
+FRAME   44  46
+        44    77 1opc_ BBTorsion S H    -66.027   -45.916   176.101
+        45    77 1opc_ BBTorsion R H    -60.962   -43.969   177.176
+        46    77 1opc_ BBTorsion L H    -62.042   -39.855   178.266
+
+
+FRAME   45  47
+        45   529 1ikpA BBTorsion R H    -65.448   -42.999  -178.821
+        46   529 1ikpA BBTorsion L H    -66.163   -45.124  -176.322
+        47   529 1ikpA BBTorsion I H    -77.173   -18.976   176.088
+
+
+FRAME   46  48
+        46    76 2bh4X BBTorsion L H    -60.926   -43.795   180.117
+        47    76 2bh4X BBTorsion I H    -61.137   -44.638  -179.544
+        48    76 2bh4X BBTorsion E H    -66.733   -47.153  -178.150
+
+
+FRAME   47  49
+        47   320 1tedA BBTorsion I H    -68.517   -48.487   180.022
+        48   320 1tedA BBTorsion E H    -43.957   -59.013  -177.154
+        49   320 1tedA BBTorsion Q H    -69.772   -30.174   178.374
+
+
+FRAME   48  50
+        48    89 2bzgA BBTorsion E H    -71.976   -33.698   179.567
+        49    89 2bzgA BBTorsion Q L    -85.746    -0.538  -177.897
+        50    89 2bzgA BBTorsion N L     53.584    49.083   178.639
+
+
+FRAME   49  51
+        49    95 1npmA BBTorsion Q L    -62.213   -37.389   178.448
+        50    95 1npmA BBTorsion N L   -128.739   159.563   179.823
+        51    95 1npmA BBTorsion S L    -74.039   145.687   177.842
+
+
+FRAME   50  52
+        50   501 1bf2_ BBTorsion N H    -85.336    -7.441   177.146
+        51   501 1bf2_ BBTorsion S E    -93.993   112.792   177.365
+        52   501 1bf2_ BBTorsion I E    -82.775   108.001  -178.857
+
+
+FRAME   51  53
+        51   208 1ckeA BBTorsion S L    -73.680   157.911   179.484
+        52   208 1ckeA BBTorsion I H    -54.539   -36.960   178.178
+        53   208 1ckeA BBTorsion E H    -70.797   -33.094  -179.410
+
+
+FRAME   52  54
+        52   270 1lrzA BBTorsion I H    -63.778   -25.849   178.561
+        53   270 1lrzA BBTorsion E H    -75.060   -44.966  -180.058
+        54   270 1lrzA BBTorsion K H    -81.152   -11.911   179.039
+
+
+FRAME   53  55
+        53   372 1zjcA BBTorsion E H    -71.656   -33.522   177.491
+        54   372 1zjcA BBTorsion K H    -58.627   -47.924   179.954
+        55   372 1zjcA BBTorsion I H    -61.188   -44.377  -178.259
+
+
+FRAME   54  56
+        54    12 1x72A BBTorsion K L    -57.610   113.357  -179.350
+        55    12 1x72A BBTorsion I L   -100.613   130.221   179.680
+        56    12 1x72A BBTorsion Q L    -79.262   -48.417   179.837
+
+
+FRAME   55  57
+        55   173 1pgs_ BBTorsion I E   -121.639   137.113   176.386
+        56   173 1pgs_ BBTorsion Q E   -125.096   117.707   180.138
+        57   173 1pgs_ BBTorsion L L    -90.048   144.158   174.476
+
+
+FRAME   56  58
+        56    19 1s0yB BBTorsion Q H    -72.633   -38.886   177.782
+        57    19 1s0yB BBTorsion L H    -63.028   -36.452   177.174
+        58    19 1s0yB BBTorsion I H    -64.438   -50.508   177.705
+
+
+FRAME   57  59
+        57    33 1kqfB BBTorsion L E   -121.657   119.163  -179.632
+        58    33 1kqfB BBTorsion I E   -107.037   106.806   178.802
+        59    33 1kqfB BBTorsion D E    -88.972    96.205  -177.644
+
+
+FRAME   58  60
+        58   252 1in4A BBTorsion I L   -105.679   124.619  -177.926
+        59   252 1in4A BBTorsion D L    -82.819  -180.370  -177.411
+        60   252 1in4A BBTorsion D L    -68.375   -17.910   178.441
+
+
+FRAME   59  61
+        59    35 1ly1A BBTorsion D H    -60.972   -42.618   179.648
+        60    35 1ly1A BBTorsion D H    -60.764   -41.969  -179.093
+        61    35 1ly1A BBTorsion Y H    -69.556   -40.535   179.633
+
+
+FRAME   60  62
+        60    93 1bjnA BBTorsion D E    -86.581   131.674  -179.736
+        61    93 1bjnA BBTorsion Y E   -125.236   119.502   178.647
+        62    93 1bjnA BBTorsion V E    -89.082   126.031  -178.476
+
+
+FRAME   61  63
+        61    54 1shfA BBTorsion Y H   -100.769    -0.595  -175.225
+        62    54 1shfA BBTorsion V E   -131.282   154.022   172.165
+        63    54 1shfA BBTorsion A E   -134.070   159.702   180.963
+
+
+FRAME   62  64
+        62   479 1jdhA BBTorsion V H    -65.877   -31.249   178.886
+        63   479 1jdhA BBTorsion A H    -67.569   -49.793   179.499
+        64   479 1jdhA BBTorsion A H    -68.847   -34.145   179.015
+
+
+FRAME   63  65
+        63   401 1hbnA BBTorsion A H    -58.122   -46.723  -177.756
+        64   401 1hbnA BBTorsion A H    -63.714   -47.169  -176.206
+        65   401 1hbnA BBTorsion V H    -68.747   -47.624  -178.633
+
+
+FRAME   64  66
+        64    54 1rypI BBTorsion A H    -67.525   -49.224  -177.783
+        65    54 1rypI BBTorsion V H    -65.604   -35.828   179.804
+        66    54 1rypI BBTorsion T H    -72.582   -47.153  -179.179
+
+
+FRAME   65  67
+        65   139 1je0A BBTorsion V H    -57.699   -44.094   178.505
+        66   139 1je0A BBTorsion T H    -63.171   -43.495  -179.003
+        67   139 1je0A BBTorsion S H    -65.280   -40.093   179.931
+
+
+FRAME   66  68
+        66   191 1cg2A BBTorsion T E   -133.297   139.821  -179.673
+        67   191 1cg2A BBTorsion S L    -72.748   141.874   177.454
+        68   191 1cg2A BBTorsion G E    -80.384   163.432   179.538
+
+
+FRAME   67  69
+        67    58 1ogqA BBTorsion S E   -143.947   140.348   173.008
+        68    58 1ogqA BBTorsion G L     62.684    39.899  -174.120
+        69    58 1ogqA BBTorsion L L    -74.907   -22.696   178.076
+
+
+FRAME   68  70
+        68   233 1wdyA BBTorsion G H    -59.440   -41.512   179.308
+        69   233 1wdyA BBTorsion L H    -70.020   -39.796   174.423
+        70   233 1wdyA BBTorsion V H    -62.022   -39.430  -178.271
+
+
+FRAME   69  71
+        69    85 1t5iA BBTorsion L E   -105.667   123.134   175.841
+        70    85 1t5iA BBTorsion V E   -110.850   117.992  -178.035
+        71    85 1t5iA BBTorsion A E   -133.898   160.462   179.901
+
+
+FRAME   70  72
+        70    54 2bbkH BBTorsion V E   -138.593   127.056  -180.735
+        71    54 2bbkH BBTorsion A L    -65.837   134.597  -178.734
+        72    54 2bbkH BBTorsion D L    -60.282   -26.370  -178.474
+
+
+FRAME   71  73
+        71   181 1ko3A BBTorsion A L    -55.000   -44.679  -177.815
+        72   181 1ko3A BBTorsion D L   -106.085    12.027  -178.900
+        73   181 1ko3A BBTorsion A L    -82.276   160.925   173.564
+
+
+FRAME   72  74
+        72   134 1gqpA BBTorsion D L   -109.496    -6.491  -179.607
+        73   134 1gqpA BBTorsion A L    -47.644   137.890  -180.293
+        74   134 1gqpA BBTorsion R E   -129.854   151.283   178.862
+
+
+FRAME   73  75
+        73   158 1s2wA BBTorsion A E   -104.117   123.070  -178.440
+        74   158 1s2wA BBTorsion R E    -90.326   127.870  -178.759
+        75   158 1s2wA BBTorsion V E   -105.142   122.174  -178.337
+
+
+FRAME   74  76
+        74    10 1eerA BBTorsion R H    -55.874   -34.696   179.717
+        75    10 1eerA BBTorsion V H    -66.825   -49.810  -180.224
+        76    10 1eerA BBTorsion L H    -71.699   -35.233  -178.546
+
+
+FRAME   75  77
+        75   214 1zpdA BBTorsion V E   -107.976   127.160  -178.906
+        76   214 1zpdA BBTorsion L E   -112.456   114.114  -174.077
+        77   214 1zpdA BBTorsion V E    -83.042   126.046  -176.175
+
+
+FRAME   76  78
+        76    94 1qpcA BBTorsion L H    -63.943   -38.569  -177.735
+        77    94 1qpcA BBTorsion V H    -61.525   -33.767   178.646
+        78    94 1qpcA BBTorsion D H    -84.530   -36.740  -176.718
+
+
+FRAME   77  79
+        77   264 1cs6A BBTorsion V L    -65.363   146.260   176.647
+        78   264 1cs6A BBTorsion D L   -139.412  -179.648  -176.226
+        79   264 1cs6A BBTorsion F H    -56.630   -35.271  -178.852
+
+
+FRAME   78  80
+        78   330 1vns_ BBTorsion D H    -56.712   -47.593  -176.962
+        79   330 1vns_ BBTorsion F H    -68.648   -45.966   180.242
+        80   330 1vns_ BBTorsion A H    -60.394   -39.358   177.954
+
+
+FRAME   79  81
+        79    80 1gqzA BBTorsion F H    -57.739   -50.963  -176.426
+        80    80 1gqzA BBTorsion A H    -64.977   -40.432   176.829
+        81    80 1gqzA BBTorsion R H    -63.707   -42.638  -177.238
+
+
+FRAME   80  82
+        80    73 1m0wA BBTorsion A H    -67.724   -46.147  -180.433
+        81    73 1m0wA BBTorsion R H    -63.910   -36.593   178.944
+        82    73 1m0wA BBTorsion I H    -66.266   -44.985   181.265
+
+
+FRAME   81  83
+        81    11 1nrvA BBTorsion R L    -85.730    38.422   176.261
+        82    11 1nrvA BBTorsion I L    -67.731   155.427  -178.121
+        83    11 1nrvA BBTorsion S L    -84.840   167.568   177.437
+
+
+FRAME   82  84
+        82   100 1fgyA BBTorsion I E   -123.177   147.196   177.248
+        83   100 1fgyA BBTorsion S E   -124.092   125.804   178.919
+        84   100 1fgyA BBTorsion A L    -86.941   156.133  -177.781
+
+
+FRAME   83  85
+        83    62 1vyrA BBTorsion S L   -164.824   168.558   174.499
+        84    62 1vyrA BBTorsion A L    -62.618   -34.927   178.646
+        85    62 1vyrA BBTorsion Q L    -69.415   -30.197  -177.300
+
+
+FRAME   84  86
+        84    20 1jcnA BBTorsion A H    -61.590   -35.732  -179.899
+        85    20 1jcnA BBTorsion Q H    -71.272   -25.234   177.727
+        86    20 1jcnA BBTorsion Q H    -85.521   -49.408  -179.536
+
+
+FRAME   85  87
+        85    83 1mnmA BBTorsion Q L    -95.753   163.520  -177.134
+        86    83 1mnmA BBTorsion Q H    -71.445   -42.474  -177.200
+        87    83 1mnmA BBTorsion E H    -52.940   -48.401   179.999
+
+
+FRAME   86  88
+        86    21 1j8bA BBTorsion Q H    -65.724   -44.030   179.651
+        87    21 1j8bA BBTorsion E H    -67.620   -39.993   179.617
+        88    21 1j8bA BBTorsion K H    -69.289   -36.488   176.570
+
+
+FRAME   87  89
+        87    83 1xe1A BBTorsion E E   -137.400   132.588   175.476
+        88    83 1xe1A BBTorsion K E    -64.669   129.794   175.507
+        89    83 1xe1A BBTorsion V E   -135.288   159.199  -177.453
+
+
+FRAME   88  90
+        88   109 1q7sA BBTorsion K H    -70.856   -28.707  -176.893
+        89   109 1q7sA BBTorsion V H    -87.299   -47.237  -172.000
+        90   109 1q7sA BBTorsion T H   -118.967     4.193  -175.600
+
+
+FRAME   89  91
+        89   103 1jz8A BBTorsion V L    -95.667   -48.348  -174.841
+        90   103 1jz8A BBTorsion T L    -62.132   131.061  -178.555
+        91   103 1jz8A BBTorsion Y L    -60.277   153.315   178.202
+
+
+FRAME   90  92
+        90    53 1lfo_ BBTorsion T E   -113.164   124.993  -178.989
+        91    53 1lfo_ BBTorsion Y E   -116.365   119.784   177.541
+        92    53 1lfo_ BBTorsion G E   -121.406    88.397  -176.935
+
+
+FRAME   91  93
+        91   276 1w99A BBTorsion Y E   -105.228   122.318   180.046
+        92   276 1w99A BBTorsion G E    116.044  -149.488  -178.912
+        93   276 1w99A BBTorsion S L   -106.004   122.076  -179.805
+
+
+FRAME   92  94
+        92    60 1gheA BBTorsion G L     91.686    10.790   178.243
+        93    60 1gheA BBTorsion S L    -88.863   -21.744   174.611
+        94    60 1gheA BBTorsion L E   -121.209   128.272   178.817
+
+
+FRAME   93  95
+        93   233 1f76A BBTorsion S H    -66.894   -37.705   178.650
+        94   233 1f76A BBTorsion L H    -64.204   -40.121   179.376
+        95   233 1f76A BBTorsion V H    -68.697   -40.565   180.383
+
+
+FRAME   94  96
+        94   290 1kkhA BBTorsion L E    -82.861   110.955  -174.153
+        95   290 1kkhA BBTorsion V L    -70.490   132.648   170.437
+        96   290 1kkhA BBTorsion N L   -100.469   101.550  -175.468
+
+
+FRAME   95  97
+        95   294 1nhs_ BBTorsion V E   -139.102   155.087   173.789
+        96   294 1nhs_ BBTorsion N L    -88.681   115.332  -179.639
+        97   294 1nhs_ BBTorsion I L   -126.882    97.862  -175.737
+
+
+FRAME   96  98
+        96    46 1ctj_ BBTorsion N L   -146.636   147.496   179.488
+        97    46 1ctj_ BBTorsion I H    -53.807   -41.368  -177.304
+        98    46 1ctj_ BBTorsion E H    -64.702   -39.557  -178.789
+
+
+FRAME   97  99
+        97   649 1n7oA BBTorsion I E    -88.528   -42.920  -178.894
+        98   649 1n7oA BBTorsion E E   -150.038   145.942   173.200
+        99   649 1n7oA BBTorsion N E   -154.542    83.518   179.956
+
+
+FRAME   98 100
+        98    45 1knvA BBTorsion E H    -60.280   -44.252  -179.936
+        99    45 1knvA BBTorsion N H    -61.373   -37.452   179.957
+       100    45 1knvA BBTorsion L H    -66.076   -46.880   178.652
+
+
+FRAME   99 101
+        99   436 1h3gA BBTorsion N H    -64.496   -40.211  -178.834
+       100   436 1h3gA BBTorsion L H    -64.088   -47.957  -179.710
+       101   436 1h3gA BBTorsion V H    -62.444   -40.454  -181.791
+
+
+FRAME  100 102
+       100   399 1f60A BBTorsion L E    -84.676   121.972  -174.899
+       101   399 1f60A BBTorsion V E   -125.067   139.993   172.711
+       102   399 1f60A BBTorsion K E    -89.999   121.179   179.874
+
+
+FRAME  101 103
+       101   119 1b6rA BBTorsion V E    -96.849   134.411  -177.935
+       102   119 1b6rA BBTorsion K E   -143.529   148.912   177.242
+       103   119 1b6rA BBTorsion R E    -78.730   158.347  -179.319
+
+
+FRAME  102 104
+       102    11 1syyA BBTorsion K H    -87.580    -1.948  -179.943
+       103    11 1syyA BBTorsion R L    -60.594   137.657  -174.155
+       104    11 1syyA BBTorsion V L    -78.733   130.417   173.412
+
+
+FRAME  103 105
+       103    15 1p3cA BBTorsion R L    -96.100     0.242  -179.552
+       104    15 1p3cA BBTorsion V L   -126.705   161.141  -179.318
+       105    15 1p3cA BBTorsion A L    -72.621   149.287     0.831
+
+
+FRAME  104 106
+       104    25 1k38A BBTorsion V E   -127.754   125.718   178.053
+       105    25 1k38A BBTorsion A E   -116.862   102.907  -178.983
+       106    25 1k38A BBTorsion D E    -89.984   113.553  -178.652
+
+
+FRAME  105 107
+       105   100 1u8bA BBTorsion A H    -52.397   -47.613   179.457
+       106   100 1u8bA BBTorsion D H    -56.778   -52.559  -177.834
+       107   100 1u8bA BBTorsion Q H    -58.640   -47.176   178.493
+
+
+FRAME  106 108
+       106    65 1s9pA BBTorsion D H    -65.705   -35.176   178.725
+       107    65 1s9pA BBTorsion Q H    -62.087   -49.397   180.077
+       108    65 1s9pA BBTorsion M H    -66.803   -36.969  -179.413
+
+
+FRAME  107 109
+       107    18 1wl9A BBTorsion Q H    -84.921    -8.150  -177.549
+       108    18 1wl9A BBTorsion M L    -83.434   149.606   170.720
+       109    18 1wl9A BBTorsion Q L    -74.075   150.716   172.002
+
+
+FRAME  108 110
+       108   328 1fn9A BBTorsion M H    -57.988   -41.117   180.695
+       109   328 1fn9A BBTorsion Q H    -73.414   -27.812   179.695
+       110   328 1fn9A BBTorsion Q H    -91.231    -3.426  -176.951
+
+
+FRAME  109 111
+       109    12 1pq4A BBTorsion Q H    -69.620   -23.124  -180.764
+       110    12 1pq4A BBTorsion Q H    -68.703   -35.497   176.408
+       111    12 1pq4A BBTorsion Y H    -64.109   -44.043  -180.359
+
+
+FRAME  110 112
+       110   240 1vr0A BBTorsion Q E   -137.251   130.770   179.391
+       111   240 1vr0A BBTorsion Y E    -87.645   122.450  -175.473
+       112   240 1vr0A BBTorsion T E   -148.392   125.130   177.162
+
+
+FRAME  111 113
+       111   146 2akaA BBTorsion Y L   -125.635    22.543  -177.757
+       112   146 2akaA BBTorsion T L    -77.269   168.095   177.910
+       113   146 2akaA BBTorsion Q H    -59.902   -35.991  -178.812
+
+
+FRAME  112 114
+       112   490 1eg7A BBTorsion T L    -67.734   140.136  -178.805
+       113   490 1eg7A BBTorsion Q L    -86.914   -13.285  -177.452
+       114   490 1eg7A BBTorsion Y L    -82.878     8.203  -179.643
+
+
+FRAME  113 115
+       113   242 1y42X BBTorsion Q L    -98.129    10.757  -175.092
+       114   242 1y42X BBTorsion Y H    -64.838   -45.028   175.504
+       115   242 1y42X BBTorsion G H    -56.635   -46.078  -178.120
+
+
+FRAME  114 116
+       114    36 1qw9A BBTorsion Y E    -87.941   107.704  -170.585
+       115    36 1qw9A BBTorsion G L     93.261     0.950   178.946
+       116    36 1qw9A BBTorsion G L   -113.008   -93.303   176.159
+
+
+FRAME  115 117
+       115   142 1c3mA BBTorsion G E   -142.413   177.417  -178.270
+       116   142 1c3mA BBTorsion G E   -115.698   143.214   174.408
+       117   142 1c3mA BBTorsion V E   -110.480   107.203  -170.246
+
+
+FRAME  116 118
+       116   447 1or0B BBTorsion G L     80.705    16.606  -180.196
+       117   447 1or0B BBTorsion V L    -96.707   133.873  -179.614
+       118   447 1or0B BBTorsion R E   -133.581   153.913   178.963
+
+
+FRAME  117 119
+       117   599 2bklA BBTorsion V L    -84.898    84.615  -177.325
+       118   599 2bklA BBTorsion R L    -69.348   143.857   176.955
+       119   599 2bklA BBTorsion P L    -75.305   162.490   174.433
+
+
+FRAME  118 120
+       118   184 1v6sA BBTorsion R L   -115.237   159.590     1.261
+       119   184 1v6sA BBTorsion P L    -66.881   147.306  -180.914
+       120   184 1v6sA BBTorsion Y E   -117.500   114.668   177.775
+
+
+FRAME  119 121
+       119   424 1xkwA BBTorsion P E    -84.394   166.600   178.893
+       120   424 1xkwA BBTorsion Y E   -151.279   135.744   179.565
+       121   424 1xkwA BBTorsion G E   -149.365   144.558   179.275
+
+
+FRAME  120 122
+       120   575 1s5jA BBTorsion Y H    -66.424   -44.207   180.667
+       121   575 1s5jA BBTorsion G H    -55.979   -42.298  -177.714
+       122   575 1s5jA BBTorsion V H    -72.923   -42.620   179.758
+
+
+FRAME  121 123
+       121   107 1v0eA BBTorsion G L    163.769   179.226  -173.817
+       122   107 1v0eA BBTorsion V L    -96.137     2.341   172.042
+       123   107 1v0eA BBTorsion S L    -54.544   130.712  -179.564
+
+
+FRAME  122 124
+       122   132 1qqfA BBTorsion V H    -76.936   -43.188  -180.016
+       123   132 1qqfA BBTorsion S H    -57.450   -47.995  -174.464
+       124   132 1qqfA BBTorsion L H    -73.674   -36.734   180.192
+
+
+FRAME  123 125
+       123   143 1tzpA BBTorsion S H    -67.317   -39.691   177.184
+       124   143 1tzpA BBTorsion L H    -56.513   -48.406  -178.915
+       125   143 1tzpA BBTorsion I H    -69.092   -43.593  -179.888
+
+
+FRAME  124 126
+       124   117 1wx0A BBTorsion L E     62.662    38.917   179.990
+       125   117 1wx0A BBTorsion I E   -103.731   126.260  -177.005
+       126   117 1wx0A BBTorsion F L   -125.990     5.467   177.330
+
+
+FRAME  125 127
+       125   234 1ml9A BBTorsion I E    -87.573   140.461   179.244
+       126   234 1ml9A BBTorsion F E   -122.843   147.060   178.572
+       127   234 1ml9A BBTorsion A E    -88.642   126.025   178.097
+
+
+FRAME  126 128
+       126    47 1yx1A BBTorsion F L    -88.135   121.123   174.619
+       127    47 1yx1A BBTorsion A L    -87.677    75.885  -170.659
+       128    47 1yx1A BBTorsion G L     87.860   169.374  -174.507
+
+
+FRAME  127 129
+       127   311 1v4vA BBTorsion A H    -71.404   -19.957   180.169
+       128   311 1v4vA BBTorsion G L     75.696    28.773  -178.784
+       129   311 1v4vA BBTorsion I L    -93.926    -9.567   180.663
+
+
+FRAME  128 130
+       128   308 1ku0A BBTorsion G L     75.321    19.016   176.145
+       129   308 1ku0A BBTorsion I E    -82.964   100.190  -173.571
+       130   308 1ku0A BBTorsion D L   -111.415  -167.268  -178.023
+
+
+FRAME  129 131
+       129   179 1o5kA BBTorsion I H    -66.547   -30.792   173.811
+       130   179 1o5kA BBTorsion D H    -64.958   -37.771   175.868
+       131   179 1o5kA BBTorsion Q H    -67.145   -44.112  -178.562
+
+
+FRAME  130 132
+       130    32 2viuA BBTorsion D L    -78.817   -34.670   178.021
+       131    32 2viuA BBTorsion Q L   -143.005   118.454   178.364
+       132    32 2viuA BBTorsion I E   -138.046   141.139  -177.051
+
+
+FRAME  131 133
+       131     7 1ro5A BBTorsion Q E   -112.694   133.902   175.530
+       132     7 1ro5A BBTorsion I E   -133.242   121.499  -177.527
+       133     7 1ro5A BBTorsion G E   -173.001   179.501   178.307
+
+
+FRAME  132 134
+       132   393 1ewfA BBTorsion I L   -119.690    29.514  -179.908
+       133   393 1ewfA BBTorsion G L     96.110   171.845   179.167
+       134   393 1ewfA BBTorsion P L    -70.375   155.496   175.248
+
+
+FRAME  133 135
+       133   273 1jhdA BBTorsion G L     68.939  -124.002  -173.450
+       134   273 1jhdA BBTorsion P H    -49.405   -48.010  -177.130
+       135   273 1jhdA BBTorsion R H    -62.348   -32.959   179.641
+
+
+FRAME  134 136
+       134    80 1lvl_ BBTorsion P L    -64.895   125.886  -177.871
+       135    80 1lvl_ BBTorsion R L   -128.384   148.472   179.893
+       136    80 1lvl_ BBTorsion L L   -141.166   120.511   173.948
+
+
+FRAME  135 137
+       135   160 1ii7A BBTorsion R H    -77.797   -34.905  -173.756
+       136   160 1ii7A BBTorsion L H    -85.835   -36.693  -173.300
+       137   160 1ii7A BBTorsion F L   -115.467   117.671   174.398
+
+
+FRAME  136 138
+       136   111 1phk_ BBTorsion L H    -64.980   -28.102   177.221
+       137   111 1phk_ BBTorsion F H    -61.304   -47.474   178.008
+       138   111 1phk_ BBTorsion D H    -60.040   -44.850   177.666
+
+
+FRAME  137 139
+       137     2 1ddjA BBTorsion F L   -118.795   109.675   178.686
+       138     2 1ddjA BBTorsion D L    -72.264   137.063  -177.324
+       139     2 1ddjA BBTorsion C L    -64.596   154.499   173.265
+
+
+FRAME  138 140
+       138   318 1hwxA BBTorsion D L    -91.520   116.182  -180.165
+       139   318 1hwxA BBTorsion C L   -165.537   168.024  -178.799
+       140   318 1hwxA BBTorsion D L    -76.546   -46.121  -178.819
+
+
+FRAME  139 141
+       139   166 1moxA BBTorsion C L    -61.324   150.981   179.234
+       140   166 1moxA BBTorsion D L    -57.668   143.611  -179.589
+       141   166 1moxA BBTorsion P L    -61.770   -18.222  -178.473
+
+
+FRAME  140 142
+       140   132 1v9mA BBTorsion D L   -154.817   175.522   180.661
+       141   132 1v9mA BBTorsion P H    -55.368   -39.934   178.373
+       142   132 1v9mA BBTorsion A H    -58.549   -38.950   177.367
+
+
+FRAME  141 143
+       141    89 1i1qA BBTorsion P L    -79.888   154.391   180.310
+       142    89 1i1qA BBTorsion A L    -54.009   140.176   178.881
+       143    89 1i1qA BBTorsion G L     98.155   -24.120   179.779
+
+
+FRAME  142 144
+       142    48 1zmaA BBTorsion A H    -62.081   -32.360   174.196
+       143    48 1zmaA BBTorsion G H    -59.458   -49.481  -179.857
+       144    48 1zmaA BBTorsion T H    -67.404   -43.900  -179.574
+
+
+FRAME  143 145
+       143   242 1j8mF BBTorsion G E    -86.370   140.411   170.787
+       144   242 1j8mF BBTorsion T E   -136.433   167.330  -170.867
+       145   242 1j8mF BBTorsion I E   -130.649   135.397   170.949
+
+
+FRAME  144 146
+       144   160 1zn6A BBTorsion T E   -114.559   154.476   174.575
+       145   160 1zn6A BBTorsion I E   -135.240   168.803  -179.561
+       146   160 1zn6A BBTorsion N E    -68.052   132.511  -180.558
+
+
+FRAME  145 147
+       145   204 1otkA BBTorsion I H    -63.702   -41.586  -180.473
+       146   204 1otkA BBTorsion N H    -71.262   -34.346   177.528
+       147   204 1otkA BBTorsion E H    -65.654   -31.882   178.200
+
+
+FRAME  146 148
+       146    55 1guxB BBTorsion N H   -100.869   -29.284  -177.768
+       147    55 1guxB BBTorsion E L   -116.412    38.367  -175.239
+       148    55 1guxB BBTorsion Y H    -61.245   -20.762   180.411
+
+
+FRAME  147 149
+       147   932 1twfA BBTorsion E H    -64.629   -43.706  -180.039
+       148   932 1twfA BBTorsion Y H    -64.933   -51.925   180.282
+       149   932 1twfA BBTorsion K H    -53.062   -35.390   179.795
+
+
+FRAME  148 150
+       148   211 1cbf_ BBTorsion Y E    -90.315   125.464  -179.265
+       149   211 1cbf_ BBTorsion K L     46.812    56.512  -176.726
+       150   211 1cbf_ BBTorsion A L    -55.832   138.719   175.158
+
+
+FRAME  149 151
+       149   124 1d2oA BBTorsion K E   -102.771   137.333   176.130
+       150   124 1d2oA BBTorsion A E    -64.247   144.150  -177.562
+       151   124 1d2oA BBTorsion T E   -101.187   -22.006  -176.755
+
+
+FRAME  150 152
+       150   250 1m22A BBTorsion A H    -61.495   -27.446  -176.659
+       151   250 1m22A BBTorsion T H    -74.404   -18.368   179.330
+       152   250 1m22A BBTorsion A H    -88.345    -8.434  -179.136
+
+
+FRAME  151 153
+       151   163 1mv8A BBTorsion T L   -134.736    28.679  -170.826
+       152   163 1mv8A BBTorsion A H    -62.504   -43.558  -177.629
+       153   163 1mv8A BBTorsion I H    -67.290   -47.148   176.540
+
+
+FRAME  152 154
+       152   435 1tv5A BBTorsion A H    -80.444   -17.366  -177.662
+       153   435 1tv5A BBTorsion I L    -63.051   114.850   176.398
+       154   435 1tv5A BBTorsion G L     78.732     5.745  -177.909
+
+
+FRAME  153 155
+       153   748 1z5hA BBTorsion I L    -65.081   -30.665   177.707
+       154   748 1z5hA BBTorsion G L     70.640    31.680   177.471
+       155   748 1z5hA BBTorsion S L    -97.606   107.752  -178.932
+
+
+FRAME  154 156
+       154   173 1ve1A BBTorsion G E    -85.189   103.539  -170.675
+       155   173 1ve1A BBTorsion S L    -67.305   133.652   173.125
+       156   173 1ve1A BBTorsion G L   -117.999   -81.521   172.731
+
+
+FRAME  155 157
+       155    10 1c9kA BBTorsion S L    -95.155    -3.731  -179.788
+       156    10 1c9kA BBTorsion G L     81.736    25.464  -179.419
+       157    10 1c9kA BBTorsion K H    -75.446   -35.769   178.309
+
+
+FRAME  156 158
+       156   675 1h16A BBTorsion G L    174.771   167.637  -178.386
+       157   675 1h16A BBTorsion K L    -78.519   -26.667   180.611
+       158   675 1h16A BBTorsion D L   -144.975   175.716  -176.700
+
+
+FRAME  157 159
+       157   271 1ve9A BBTorsion K H    -53.229   -21.376   182.605
+       158   271 1ve9A BBTorsion D H   -106.765     8.395   177.050
+       159   271 1ve9A BBTorsion A L    -85.496   136.335   180.179
+
+
+FRAME  158 160
+       158   173 1amf_ BBTorsion D H    -64.695   -38.260   178.534
+       159   173 1amf_ BBTorsion A H    -65.447   -38.954   180.616
+       160   173 1amf_ BBTorsion V H    -64.511   -38.264  -179.414
+
+
+FRAME  159 161
+       159    21 1kkhA BBTorsion A H    -64.481   -34.425  -177.699
+       160    21 1kkhA BBTorsion V H    -53.229   -31.867  -177.397
+       161    21 1kkhA BBTorsion V H    -65.594   -25.076  -175.716
+
+
+FRAME  160 162
+       160   271 1p5dX BBTorsion V H    -67.944   -45.656  -176.237
+       161   271 1p5dX BBTorsion V H    -68.493   -25.031   178.882
+       162   271 1p5dX BBTorsion S H    -62.439   -31.504  -179.449
+
+
+FRAME  161 163
+       161   472 1wd3A BBTorsion V L   -112.202    10.644   178.794
+       162   472 1wd3A BBTorsion S L   -114.756   124.959  -178.538
+       163   472 1wd3A BBTorsion F E   -131.390   139.701   177.346
+
+
+FRAME  162 164
+       162    17 1h6gA BBTorsion S L    -58.441   -53.198  -179.386
+       163    17 1h6gA BBTorsion F L    -81.688   -10.143   179.877
+       164    17 1h6gA BBTorsion L L   -101.973    -6.917  -180.250
+
+
+FRAME  163 165
+       163   549 1x9mA BBTorsion F H    -59.787   -46.580  -178.426
+       164   549 1x9mA BBTorsion L H    -66.111   -30.929   178.201
+       165   549 1x9mA BBTorsion E H    -70.471   -28.664   179.057
+
+
+FRAME  164 166
+       164   161 1mnaA BBTorsion L H    -59.717   -38.311   182.495
+       165   161 1mnaA BBTorsion E H    -68.850   -45.108  -171.544
+       166   161 1mnaA BBTorsion R H    -90.983   -33.751  -173.826
+
+
+FRAME  165 167
+       165   164 1qo0D BBTorsion E H    -56.831   -43.614   178.154
+       166   164 1qo0D BBTorsion R H    -60.603   -40.146   178.127
+       167   164 1qo0D BBTorsion E H    -59.006   -47.659  -179.125
+
+
+FRAME  166 168
+       166   144 1ly1A BBTorsion R H    -63.952   -37.316   178.217
+       167   144 1ly1A BBTorsion E H    -65.010   -38.725   178.218
+       168   144 1ly1A BBTorsion Y H    -66.043   -35.663  -178.905
+
+
+FRAME  167 169
+       167   273 2bjqA BBTorsion E L   -132.015   150.781   174.791
+       168   273 2bjqA BBTorsion Y L    -96.486   145.795   173.749
+       169   273 2bjqA BBTorsion K E   -142.346   140.361   171.896
+
+
+FRAME  168 170
+       168    64 1sacA BBTorsion Y E   -118.464   136.956   176.442
+       169    64 1sacA BBTorsion K E   -105.739   104.276  -173.649
+       170    64 1sacA BBTorsion E E    -75.886   -37.157  -175.373
+
+
+FRAME  169 171
+       169   543 1vqqA BBTorsion K H    -57.831   -41.707   179.272
+       170   543 1vqqA BBTorsion E H    -65.190   -38.352  -180.015
+       171   543 1vqqA BBTorsion N H    -72.111   -29.645   176.163
+
+
+FRAME  170 172
+       170   117 1krhA BBTorsion E E   -139.037   138.694   174.633
+       171   117 1krhA BBTorsion N E    -95.241    90.163   177.961
+       172   117 1krhA BBTorsion L L    -55.743   -31.996   176.029
+
+
+FRAME  171 173
+       171   101 1k8kD BBTorsion N L   -140.668    65.524   179.526
+       172   101 1k8kD BBTorsion L L    -96.600   150.977  -179.247
+       173   101 1k8kD BBTorsion P L    -74.597   166.132   179.461
+
+
+FRAME  172 174
+       172   112 1eylA BBTorsion L L   -105.713   161.584   175.008
+       173   112 1eylA BBTorsion P L    -68.077   157.199  -177.239
+       174   112 1eylA BBTorsion E H    -61.175   -33.529  -177.997
+
+
+FRAME  173 175
+       173    71 1zn6A BBTorsion P H    -53.198   -32.734  -178.051
+       174    71 1zn6A BBTorsion E H    -80.765    -2.013  -178.893
+       175    71 1zn6A BBTorsion K H   -121.812    -0.053  -178.415
+
+
+FRAME  174 176
+       174    90 1bu6O BBTorsion E E   -102.519   107.376   176.337
+       175    90 1bu6O BBTorsion K L    -41.877   -26.964   176.623
+       176    90 1bu6O BBTorsion E L    -52.869   -74.417  -175.543
+
+
+FRAME  175 177
+       175   120 1l0wA BBTorsion K L    -93.266   109.957  -177.275
+       176   120 1l0wA BBTorsion E L    -77.908   140.012   174.757
+       177   120 1l0wA BBTorsion A L    -90.476   173.189   179.606
+
+
+FRAME  176 178
+       176    15 1uwwA BBTorsion E L   -104.421   151.130  -178.084
+       177    15 1uwwA BBTorsion A L    -62.693   117.847  -178.235
+       178    15 1uwwA BBTorsion V L   -134.231   129.420   178.142
+
+
+FRAME  177 179
+       177   181 1c7gA BBTorsion A E   -101.972   143.196   179.474
+       178   181 1c7gA BBTorsion V L   -145.557   112.888    -0.511
+       179   181 1c7gA BBTorsion T L    -85.453  -176.213   179.683
+
+
+FRAME  178 180
+       178    30 1mvhA BBTorsion V E   -128.360   118.809  -178.665
+       179    30 1mvhA BBTorsion T E   -104.514   166.958  -179.824
+       180    30 1mvhA BBTorsion L E   -131.360   125.617  -177.375
+
+
+FRAME  179 181
+       179   101 1lzjA BBTorsion T L    -72.502   124.374  -176.732
+       180   101 1lzjA BBTorsion L L   -105.258   145.494   175.244
+       181   101 1lzjA BBTorsion G L    -73.414   166.206  -179.727
+
+
+FRAME  180 182
+       180   172 1wu2A BBTorsion L L    -87.777    -5.499   177.388
+       181   172 1wu2A BBTorsion G L     78.403    28.398   177.581
+       182   172 1wu2A BBTorsion I L    -94.101   112.830  -179.809
+
+
+FRAME  181 183
+       181   278 1pixA BBTorsion G H    -65.373   -39.661   177.283
+       182   278 1pixA BBTorsion I H    -63.691   -44.363   179.234
+       183   278 1pixA BBTorsion K H    -61.920   -39.391  -179.168
+
+
+FRAME  182 184
+       182    22 1uvjA BBTorsion I H    -55.273   -44.124   179.715
+       183    22 1uvjA BBTorsion K H    -61.970   -44.536  -179.654
+       184    22 1uvjA BBTorsion A H    -65.545   -45.185  -179.907
+
+
+FRAME  183 185
+       183    19 1ct9A BBTorsion K H    -68.813   -36.258  -179.817
+       184    19 1ct9A BBTorsion A H    -59.797   -40.281   177.237
+       185    19 1ct9A BBTorsion L H    -60.249   -53.946   177.185
+
+
+FRAME  184 186
+       184    80 1goiA BBTorsion A H    -63.931   -24.801  -179.751
+       185    80 1goiA BBTorsion L H    -64.115   -18.822  -179.625
+       186    80 1goiA BBTorsion K H    -66.991   -14.530   175.980
+
+
+FRAME  185 187
+       185    23 1t4fM BBTorsion L H    -59.826   -40.939  -176.631
+       186    23 1t4fM BBTorsion K H    -66.875   -20.931  -177.124
+       187    23 1t4fM BBTorsion S H    -73.716   -21.124   182.229
+
+
+FRAME  186 188
+       186   580 1n7oA BBTorsion K E    -50.133   127.817  -170.795
+       187   580 1n7oA BBTorsion S E   -136.295   155.366  -178.794
+       188   580 1n7oA BBTorsion S E    -99.477   109.799  -178.603
+
+
+FRAME  187 189
+       187    61 1n7eA BBTorsion S E    -99.465   110.309  -177.310
+       188    61 1n7eA BBTorsion S E    -63.233   143.482   178.565
+       189    61 1n7eA BBTorsion L L   -102.767     6.452   179.554
+
+
+FRAME  188 190
+       188   141 2trcP BBTorsion S H    -58.672   -46.386  -178.191
+       189   141 2trcP BBTorsion L H    -57.738   -44.027   178.791
+       190   141 2trcP BBTorsion E H    -57.815   -37.687   178.742
+
+
+FRAME  189 191
+       189    73 1je0A BBTorsion L H    -64.895   -43.103  -179.134
+       190    73 1je0A BBTorsion E H    -60.798   -44.412  -178.299
+       191    73 1je0A BBTorsion E H    -71.518   -38.091   178.564
+
+
+FRAME  190 192
+       190   267 1ogiA BBTorsion E H    -70.710   -35.473  -176.774
+       191   267 1ogiA BBTorsion E H    -57.210   -48.966  -177.703
+       192   267 1ogiA BBTorsion G H    -65.667   -37.434   181.697
+
+
+FRAME  191 193
+       191    70 1u04A BBTorsion E L    -82.033    17.046   180.127
+       192    70 1u04A BBTorsion G L   -114.283  -182.413  -180.205
+       193    70 1u04A BBTorsion E L    -76.519   142.678   178.947
+
+
+FRAME  192 194
+       192   559 1wzlA BBTorsion G L     84.590     5.071   179.919
+       193   559 1wzlA BBTorsion E L    -65.062   136.103   179.758
+       194   559 1wzlA BBTorsion E E    -96.935   125.849   179.997
+
+
+FRAME  193 195
+       193   115 1cjcA BBTorsion E L    -64.792   -23.748   180.888
+       194   115 1cjcA BBTorsion E L    -79.995   -12.481  -176.650
+       195   115 1cjcA BBTorsion L L    -65.538   134.918   173.714
+
+
+FRAME  194 196
+       194   202 1xb2B BBTorsion E L    -66.281   151.138   179.264
+       195   202 1xb2B BBTorsion L L    -61.982   131.836   181.199
+       196   202 1xb2B BBTorsion K H    -64.457   -32.412  -177.561
+
+
+FRAME  195 197
+       195    91 1k2xA BBTorsion L L     67.292    15.773   172.400
+       196    91 1k2xA BBTorsion K L    -79.414   152.922   178.835
+       197    91 1k2xA BBTorsion A E   -150.329   155.019   176.144
+
+
+FRAME  196 198
+       196   230 1jixA BBTorsion K L   -117.960   123.587  -179.259
+       197   230 1jixA BBTorsion A L    -98.740   161.369   178.327
+       198   230 1jixA BBTorsion P L    -76.958   172.972   179.279
+
+
+FRAME  197 199
+       197   317 1siqA BBTorsion A L    -96.792   153.486   180.551
+       198   317 1siqA BBTorsion P H    -52.910   -32.595  -179.884
+       199   317 1siqA BBTorsion E H    -65.054   -35.480   178.903
+
+
+FRAME  198 200
+       198    86 1p2xA BBTorsion P L    -49.242   133.686  -176.786
+       199    86 1p2xA BBTorsion E H    -64.478   -29.835   179.803
+       200    86 1p2xA BBTorsion I H    -58.781   -22.006  -179.213
+
+
+FRAME  199 201
+       199   590 1m7xA BBTorsion E L    -88.773    76.976  -179.752
+       200   590 1m7xA BBTorsion I L   -134.270   113.700  -179.103
+       201   590 1m7xA BBTorsion A L    -49.531   133.792   177.493
+
+
+FRAME  200 202
+       200    86 1moq_ BBTorsion I E    -61.754   133.531  -174.394
+       201    86 1moq_ BBTorsion A H    -58.259   -34.894   179.982
+       202    86 1moq_ BBTorsion S H    -65.005   -37.821   177.878
+
+
+FRAME  201 203
+       201   317 1mx3A BBTorsion A H    -67.555   -41.750  -178.563
+       202   317 1mx3A BBTorsion S H    -60.186   -52.524   179.416
+       203   317 1mx3A BBTorsion I H    -65.992   -42.724  -177.373
+
+
+FRAME  202 204
+       202    57 1hy5A BBTorsion S H    -67.804   -40.645   179.030
+       203    57 1hy5A BBTorsion I H    -67.792   -42.295   175.189
+       204    57 1hy5A BBTorsion T H    -60.927   -38.115   177.167
+
+
+FRAME  203 205
+       203    74 1rrmA BBTorsion I H    -61.924   -33.163   179.629
+       204    74 1rrmA BBTorsion T H    -65.560   -43.352   179.688
+       205    74 1rrmA BBTorsion V H    -65.728   -35.765   179.242
+
+
+FRAME  204 206
+       204    34 1rypF BBTorsion T E   -146.797   142.205  -171.644
+       205    34 1rypF BBTorsion V E   -121.372   147.752   174.973
+       206    34 1rypF BBTorsion G E   -131.894   136.292   178.619
+
+
+FRAME  205 207
+       205   159 1f0kA BBTorsion V L   -122.610    -5.749  -180.461
+       206   159 1f0kA BBTorsion G L     76.729  -167.494   179.873
+       207   159 1f0kA BBTorsion N L   -118.308   153.419   178.908
+
+
+FRAME  206 208
+       206    11 1elwA BBTorsion G H    -65.164   -43.678   178.374
+       207    11 1elwA BBTorsion N H    -61.048   -38.518   178.959
+       208    11 1elwA BBTorsion K H    -65.450   -41.683   178.628
+
+
+FRAME  207 209
+       207    37 1twlA BBTorsion N E    -74.830   124.202   177.625
+       208    37 1twlA BBTorsion K E    -88.245   102.651   173.604
+       209    37 1twlA BBTorsion Y E    -89.121   148.284   172.436
+
+
+FRAME  208 210
+       208   734 1epwA BBTorsion K H    -57.057   -47.948  -179.704
+       209   734 1epwA BBTorsion Y H    -59.485   -50.658   179.973
+       210   734 1epwA BBTorsion R H    -59.960   -36.585  -179.906
+
+
+FRAME  209 211
+       209   211 1v9fA BBTorsion Y E   -139.995   148.662   171.584
+       210   211 1v9fA BBTorsion R E   -134.678   154.506   178.907
+       211   211 1v9fA BBTorsion I E    -87.289   113.954   177.954
+
+
+FRAME  210 212
+       210    96 1xdyA BBTorsion R E   -134.521   126.026   177.440
+       211    96 1xdyA BBTorsion I E    -91.529    97.010  -178.684
+       212    96 1xdyA BBTorsion Y E   -112.094   163.516   171.452
+
+
+FRAME  211 213
+       211   395 1zr6A BBTorsion I E   -113.984   108.815  -176.573
+       212   395 1zr6A BBTorsion Y L    -71.263   -36.003  -177.722
+       213   395 1zr6A BBTorsion D L    -98.800    38.268  -177.235
+
+
+FRAME  212 214
+       212   118 1nkoA BBTorsion Y L   -102.798     5.018  -180.253
+       213   118 1nkoA BBTorsion D L   -134.861    49.607  -175.182
+       214   118 1nkoA BBTorsion Q L    -75.375   155.437   175.069
+
+
+FRAME  213 215
+       213     3 1iukA BBTorsion D H    -55.643   -45.109   180.052
+       214     3 1iukA BBTorsion Q H    -56.626   -50.163   179.917
+       215     3 1iukA BBTorsion E H    -69.065   -42.204   179.859
+
+
+FRAME  214 216
+       214   215 1vheA BBTorsion Q L     50.567    44.801   174.529
+       215   215 1vheA BBTorsion E L    -76.641   -39.632  -178.692
+       216   215 1vheA BBTorsion E L    -70.316    -8.054   184.507
+
+
+FRAME  215 217
+       215   105 1pz1A BBTorsion E H    -83.358   -35.096  -176.691
+       216   105 1pz1A BBTorsion E H    -66.017   -40.281  -175.203
+       217   105 1pz1A BBTorsion V H    -61.392   -38.277   181.483
+
+
+FRAME  216 218
+       216   202 1iyeA BBTorsion E E   -131.424   151.220   177.350
+       217   202 1iyeA BBTorsion V E   -126.815   127.441   179.763
+       218   202 1iyeA BBTorsion K E   -148.553   124.100  -179.887
+
+
+FRAME  217 219
+       217   166 1paqA BBTorsion V H    -60.792   -23.939  -175.239
+       218   166 1paqA BBTorsion K H    -91.479    -8.776  -176.870
+       219   166 1paqA BBTorsion K H    -44.788   -58.960  -174.685
+
+
+FRAME  218 220
+       218    15 1wy6A BBTorsion K H    -57.886   -51.002   180.214
+       219    15 1wy6A BBTorsion K H    -56.475   -46.569   177.826
+       220    15 1wy6A BBTorsion F H    -57.515   -51.405  -178.528
+
+
+FRAME  219 221
+       219    67 1v5vA BBTorsion K H    -65.529   -37.225   178.642
+       220    67 1v5vA BBTorsion F H    -65.540   -47.290   180.228
+       221    67 1v5vA BBTorsion L H    -66.598   -29.241   181.160
+
+

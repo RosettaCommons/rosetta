@@ -183,7 +183,7 @@ FragmentExtension::mover_name() {
 
 FragmentExtension::FragmentExtension( ) {
 	beamwidth_ = 1;
-	fragtrials_ = 10;
+	fragtrials_ = 200;
 	chainbreak_ = 1.5;
 	continuous_weight_ = 1.0;
 	rmscutoff_ = 0.0;
@@ -221,8 +221,8 @@ FragmentExtension::FragmentExtension( ) {
 	cenrot_ = false;
 	greedy_ = true;
 	readbeams_ = false;
-	writebeams_ = false;
-	writelps_ = false;
+	writebeams_ = true;
+	writelps_ = true;
 	fafilter_ = true;
 	famin_ = false;
 	samplesheets_ = true;
@@ -526,6 +526,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 		TR << "applying comparator " << std::endl;
 
 		//the creation of comparator pose is only necessary if you want to use the option to remove a clashing loop. This is currrently disabled but I'm leaving the logic here for now
+		pose.conformation().reset_chain_endings();
 		core::pose::Pose comparatorpose = pose;
 		core::pose::Pose bestpose = pose;
 		Real least_clashing = pre_grow_clash + 99999;
@@ -538,7 +539,9 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 				least_clashing = clashscore;
 				bestpose = comparatorpose;
 			}
-			comparatorpose.dump_pdb("aftercomparator_"+utility::to_string(comparator.get_one_body_score())+"_"+utility::to_string(i)+".pdb");
+			core::pose::PDBInfoOP newpdbinfo(new core::pose::PDBInfo( comparatorpose, true ));
+			comparatorpose.pdb_info( newpdbinfo );
+			comparatorpose.dump_pdb("aftercomparator_"+utility::to_string(i)+"_"+utility::to_string(clashscore)+".pdb");
 			comparatorpose = pose;
 		}
 		Real finalclash = least_clashing-pre_grow_clash;
@@ -835,11 +838,11 @@ void FragmentExtension::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	attlist
 		//
 		+ XMLSchemaAttribute::attribute_w_default( "fasta", xs_string, "The name of the fasta file", "")
-		+ XMLSchemaAttribute::attribute_w_default( "beamwidth", xsct_non_negative_integer, "Controls the maximize size of the beam search", "10" )
-		+ XMLSchemaAttribute::attribute_w_default( "fragtrials", xsct_non_negative_integer, "The maximum number of fragments to apply at each extension.", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "beamwidth", xsct_non_negative_integer, "Controls the maximize size of the beam search", "32" )
+		+ XMLSchemaAttribute::attribute_w_default( "fragtrials", xsct_non_negative_integer, "The maximum number of fragments to apply at each extension.", "200" )
 		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "Triggers all the debuging options", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "chainbreak", xsct_real, "The weight on the chainbreak term when closing the loop", "1.5" )
-		+ XMLSchemaAttribute::attribute_w_default( "continuous_weight", xsct_real, "The weight on the non-continuous density penalty", "0.85" )
+		+ XMLSchemaAttribute::attribute_w_default( "continuous_weight", xsct_real, "The weight on the non-continuous density penalty", "0.3" )
 		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "The rms cutoff for two structures to be considered different", "1.5" )
 		+ XMLSchemaAttribute::attribute_w_default( "fragcluster", xsct_real, "The torsional RMS for two fragments to be considered different. Default doesn't filter", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "masterbeamcutoff", xsct_real, "The RMS different for two structures to be considered in a different path", "3.0" )
@@ -847,14 +850,14 @@ void FragmentExtension::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default( "sheet_tolerance", xsct_real, "How good do the sheets need to be in order to be accepted", "0.7" )
 		+ XMLSchemaAttribute::attribute_w_default( "sc_scale", xsct_real, "Scales down the side chain density score", "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "windowdensweight", xsct_real, "Density weight on the windowdens", "30" )
-		+ XMLSchemaAttribute::attribute_w_default( "masterbeamwidth", xsct_non_negative_integer, "Cap on the number of beams within a cluster", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "masterbeamwidth", xsct_non_negative_integer, "Cap on the number of beams within a cluster", "200" )
 		+ XMLSchemaAttribute::attribute_w_default( "rmswindow", xsct_real, "The number of residues to include in the ", "20" )
 		+ XMLSchemaAttribute::attribute_w_default( "rmscutoff", xsct_real, "How close two conformations must be to be considered identical", "1.5" )
 		+ XMLSchemaAttribute::attribute_w_default( "steps", xsct_non_negative_integer, "The number of steps to take before exiting.", "10000" )
 		+ XMLSchemaAttribute::attribute_w_default( "pcount", xsct_non_negative_integer, "The tag for the parallelcount. Purely used for managing jobs through the python script", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "sheetcriteria", xsct_non_negative_integer, "The strategy to use for deciding whether or not to grow sheets", "2" )
-		+ XMLSchemaAttribute::attribute_w_default( "comparatorrounds", xsct_non_negative_integer, "The number of models to produce with the loop comparator", "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "beamscorecutoff", xsct_real, "The number of models to produce with the loop comparator", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "comparatorrounds", xsct_non_negative_integer, "The number of models to produce with the loop comparator", "100" )
+		+ XMLSchemaAttribute::attribute_w_default( "beamscorecutoff", xsct_real, "The number of models to produce with the loop comparator", "0.85" )
 		+ XMLSchemaAttribute::attribute_w_default( "pack_min_cycles", xsct_non_negative_integer, "The number of cycles of packing and minimization to use in full atom mode", "2" )
 		+ XMLSchemaAttribute::attribute_w_default( "dumpbeam", xsct_rosetta_bool, "Dump the structures after filtering", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "dumperrors", xsct_rosetta_bool, "Dump the poses when the beam deviates from the native", "false" )
@@ -866,11 +869,11 @@ void FragmentExtension::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default( "nativegrow", xsct_rosetta_bool, "Use the native structure as a fragment when growing", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "parametercheck", xsct_rosetta_bool, "Uses the native structures to figure out what the settings would need to be to capture the native", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "cenrot", xsct_rosetta_bool, "Use the cenrot representation", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "writebeams", xsct_rosetta_bool, "Writes 'beamfiles' used in parallelization through python", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "writebeams", xsct_rosetta_bool, "Writes 'beamfiles' used in parallelization through python", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "readbeams", xsct_rosetta_bool, "Reads the beams from the file", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "clustercheck", xsct_rosetta_bool, "Dumps all the structures in the neighborhood of the native for debugging", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "rescorebeams", xsct_rosetta_bool, "Rescores all the beams in the beamfile. Useful when testing score functions", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "writelps", xsct_rosetta_bool, "Writes an lps file when the loop is finished that can be input for the monte carlo assembler", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "writelps", xsct_rosetta_bool, "Writes an lps file when the loop is finished that can be input for the monte carlo assembler", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "fafilter", xsct_rosetta_bool, "Rescores the top 2N structures with the full atom representation before filtering down to N.", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "famin", xsct_rosetta_bool, "Toggles minimization in full atom", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "samplesheets", xsct_rosetta_bool, "Toggles the sheet sampler", "true" )
@@ -1211,6 +1214,17 @@ void LoopComparator::fill_pose(core::pose::Pose & pose){
 			} else {
 				core::conformation::ResidueOP newres( core::conformation::ResidueFactory::create_residue(*restypes_pose[j] ));
 				pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, j-1, true);
+			}
+		}
+	}
+	for ( core::Size i=1; i<=solutionsets_.size(); i++ ) {
+		LoopPartialSolutionStore loop = solutionsets_[i];
+		for ( int j=1; j<=(int)pose.fold_tree().num_jump(); j++ ) {
+			if ( pose.fold_tree().cutpoint_by_jump(j) == (int)loop.get_cutpoint() ) {
+				core::kinematics::FoldTree ft_closed = pose.fold_tree();
+				ft_closed.delete_jump_and_intervening_cutpoint(j);
+				pose.fold_tree(ft_closed);
+				break;
 			}
 		}
 	}
