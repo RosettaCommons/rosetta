@@ -1945,7 +1945,7 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		//CHI 4 C3' C2' O2' HO2'
 		// First base atom is either N1 or N9
 		
-		VD first_base_atom;
+		VD first_base_atom = atom_vertex( "N9" );
 		for ( VDs const & chi : found_chis ) {
 			tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			if ( atom_name( chi[ 1 ] ) == "C2'" && atom_name( chi[ 2 ] ) != "O2'" ) {
