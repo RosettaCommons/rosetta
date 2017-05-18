@@ -68,6 +68,7 @@ public:
 private:
 	core::pose::PoseOP pose_; //dflt NULL;
 	core::Size source_chain_, target_chain_ ; //dflt 0; which chains to align from source (current pose) on target (pose from disk). 0 means all chains
+	bool align_to_com_;
 };
 
 

@@ -53,7 +53,8 @@ AlignChainMover::AlignChainMover()
 : moves::Mover("AlignChain"),
 	pose_( /* NULL */ ),
 	source_chain_( 0 ),
-	target_chain_( 0 )
+	target_chain_( 0 ),
+	align_to_com_( 0 )
 {
 }
 
@@ -77,31 +78,37 @@ Ca_coord( core::pose::Pose const & pose, utility::vector1< core::Size > const po
 void
 AlignChainMover::apply( Pose & in_pose )
 {
-	utility::vector1< core::Size > in_pose_positions, target_positions;
-	in_pose_positions.clear(); target_positions.clear();
-	runtime_assert( pose() != nullptr );
-	core::Size const in_pose_chain_begin( source_chain() == 0 ? 1 : in_pose.conformation().chain_begin( source_chain() ) );
-	core::Size const in_pose_chain_end  ( source_chain() == 0 ? in_pose.size() : in_pose.conformation().chain_end( source_chain() ) );
-	core::Size const target_pose_chain_begin( target_chain() == 0 ? 1 : pose()->conformation().chain_begin( target_chain() ) );
-	core::Size const target_pose_chain_end  ( target_chain() == 0 ? pose()->size() : pose()->conformation().chain_end( target_chain() ) );
-	TR<<"In_pose from residue: "<<in_pose_chain_begin<<" to_residue: "<<in_pose_chain_end<<"\ntarget_pose from residue: "<<target_pose_chain_begin<<" to_residue: "<<target_pose_chain_end<<std::endl;
-	for ( core::Size i = in_pose_chain_begin; i<=in_pose_chain_end; ++i ) {
-		in_pose_positions.push_back( i );
+	//default behavior
+	if ( ! align_to_com_ ) {
+		utility::vector1< core::Size > in_pose_positions, target_positions;
+		in_pose_positions.clear(); target_positions.clear();
+		runtime_assert( pose() != nullptr );
+
+		core::Size const in_pose_chain_begin( source_chain() == 0 ? 1 : in_pose.conformation().chain_begin( source_chain() ) );
+		core::Size const in_pose_chain_end  ( source_chain() == 0 ? in_pose.size() : in_pose.conformation().chain_end( source_chain() ) );
+		core::Size const target_pose_chain_begin( target_chain() == 0 ? 1 : pose()->conformation().chain_begin( target_chain() ) );
+		core::Size const target_pose_chain_end  ( target_chain() == 0 ? pose()->size() : pose()->conformation().chain_end( target_chain() ) );
+		TR<<"In_pose from residue: "<<in_pose_chain_begin<<" to_residue: "<<in_pose_chain_end<<"\ntarget_pose from residue: "<<target_pose_chain_begin<<" to_residue: "<<target_pose_chain_end<<std::endl;
+		for ( core::Size i = in_pose_chain_begin; i<=in_pose_chain_end; ++i ) {
+			in_pose_positions.push_back( i );
+		}
+		for ( core::Size i = target_pose_chain_begin; i<=target_pose_chain_end; ++i ) {
+			target_positions.push_back( i );
+		}
+
+		utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coord( in_pose, in_pose_positions ) ), ref_coords( Ca_coord( *pose(), target_positions ) );
+
+		numeric::xyzMatrix< core::Real > rotation;
+		numeric::xyzVector< core::Real > to_init_center, to_fit_center;
+
+		using namespace protocols::toolbox;
+
+		superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
+
+		apply_superposition_transform( in_pose, rotation, to_init_center, to_fit_center );
+	} else {
+		in_pose.center();
 	}
-	for ( core::Size i = target_pose_chain_begin; i<=target_pose_chain_end; ++i ) {
-		target_positions.push_back( i );
-	}
-
-	utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coord( in_pose, in_pose_positions ) ), ref_coords( Ca_coord( *pose(), target_positions ) );
-
-	numeric::xyzMatrix< core::Real > rotation;
-	numeric::xyzVector< core::Real > to_init_center, to_fit_center;
-
-	using namespace protocols::toolbox;
-
-	superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
-
-	apply_superposition_transform( in_pose, rotation, to_init_center, to_fit_center );
 }
 
 // XRW TEMP std::string
@@ -133,9 +140,12 @@ AlignChainMover::parse_my_tag(
 	target_chain( tag->getOption< core::Size >( "target_chain", 0 ) );
 	std::string const fname( tag->getOption< std::string >( "target_name" ) );
 
-	pose( core::import_pose::pose_from_file( fname ) );
+	align_to_com_ = tag->getOption< bool >( "align_to_com", "0" );
+	if ( ! align_to_com_ ) {
+		pose( core::import_pose::pose_from_file( fname ) );
+	}
 
-	TR<<"source_chain: "<<source_chain()<<" target_chain: "<<target_chain()<<" pdb name: "<<fname<<std::endl;
+	TR << "source_chain: " << source_chain() << " target_chain: " << target_chain() << " pdb name: " << fname << " align_to_com: " << align_to_com_ << std::endl;
 }
 
 std::string AlignChainMover::get_name() const {
@@ -160,7 +170,9 @@ void AlignChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"target_chain", xsct_non_negative_integer,
 		"the chain number in the target pose. 0 means the entire pose", "0");
-
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"align_to_com", xsct_rosetta_bool,
+		"If true, will align pose to COM instead of target", "0" );
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
 		"Align a chain in the working pose to a chain in a pose on disk (CA superposition). "
