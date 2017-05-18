@@ -275,6 +275,10 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		// extra finalize call so I can grab atom vertex from N
 		restype->finalize();
 		restype->assign_internal_coordinates( restype->atom_vertex( "N" ) );
+	} else if ( restype->is_RNA() ) {
+		// extra finalize call so I can grab atom vertex from P
+		restype->finalize();
+		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
 	} else {
 		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
 	}
@@ -319,16 +323,37 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685, "C", "CA", "N" );
 				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000, "N", "CA", "LOWER" );
 			}
+		} else if ( restype->is_RNA() ) {
+			restype->set_lower_connect_atom( "P" );
+			restype->set_upper_connect_atom( "O3'" );
+			
+			// Taken -- hardcoded -- from RAD_n.
+			// Necessary?
+			restype->set_atom_base( "OP1", "P" );
+			restype->set_atom_base( "OP2", "P" );
+			
+			using numeric::conversions::radians;
+			if ( restype->is_d_rna() ) {
+				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
+				restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, "O3'", "C3'", "C4'" );
+				restype->set_icoor( "OP2", radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+			} else { // is L or achiral
+				restype->set_icoor( "LOWER", radians(60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
+				restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, "O3'", "C3'", "C4'" );
+				restype->set_icoor( "OP2", radians(114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+			}
 		}
 		restype->set_mainchain_atoms( define_mainchain_atoms( restype ) );
 	}
 
 	restype->finalize();
 
-	if ( restype->mainchain_atoms().size() == 3 ) {
-		restype->add_property( "ALPHA_AA" );
-	} else if ( restype->mainchain_atoms().size() == 4 ) {
-		restype->add_property( "BETA_AA" );
+	if ( restype->is_protein() ) {
+		if ( restype->mainchain_atoms().size() == 3 ) {
+			restype->add_property( "ALPHA_AA" );
+		} else if ( restype->mainchain_atoms().size() == 4 ) {
+			restype->add_property( "BETA_AA" );
+		}
 	}
 
 	restype->finalize();

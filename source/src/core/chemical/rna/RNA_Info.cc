@@ -84,44 +84,44 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	runtime_assert( is_virtual_.size() == residue_type->natoms() );
 
 	// There must be EITHER O2', a replacement like F2', or a virt.
-	if ( residue_type->has( " O2'" ) ) {
-		o2prime_index_ = residue_type->atom_index( " O2'" );
-	} else if ( residue_type->has( " F2'" ) ) {
-		o2prime_index_ = residue_type->atom_index( " F2'" );
+	if ( residue_type->has( "O2'" ) ) {
+		o2prime_index_ = residue_type->atom_index( "O2'" );
+	} else if ( residue_type->has( "F2'" ) ) {
+		o2prime_index_ = residue_type->atom_index( "F2'" );
 	} else {
 		o2prime_index_ = 0;
 	}
 	if ( residue_type->has( "HO2'" ) ) {
-		ho2prime_index_ = residue_type->atom_index( "HO2'" );
+		ho2prime_index_ = residue_type->atom_index("HO2'" );
 	} else {
 		ho2prime_index_ = 0;
 	}
-	p_atom_index_  = residue_type->atom_index( " P  " );
+	p_atom_index_  = residue_type->atom_index( "P" );
 
 	// Could be phosphorothioate
-	if ( residue_type->has( " OP2" ) ) {
-		op2_atom_index_ = residue_type->atom_index( " OP2" );
+	if ( residue_type->has( "OP2" ) ) {
+		op2_atom_index_ = residue_type->atom_index( "OP2" );
 	} else {
-		op2_atom_index_ = residue_type->atom_index( " SP2" );
+		op2_atom_index_ = residue_type->atom_index( "SP2" );
 	}
-	if ( residue_type->has( " OP1" ) ) {
-		op1_atom_index_ = residue_type->atom_index( " OP1" );
+	if ( residue_type->has( "OP1" ) ) {
+		op1_atom_index_ = residue_type->atom_index( "OP1" );
 	} else {
-		op1_atom_index_ = residue_type->atom_index( " SP1" );
+		op1_atom_index_ = residue_type->atom_index( "SP1" );
 	}
-	o5prime_index_  = residue_type->atom_index( " O5'" );
-	o3prime_index_  = residue_type->atom_index( " O3'" );
+	o5prime_index_  = residue_type->atom_index( "O5'" );
+	o3prime_index_  = residue_type->atom_index( "O3'" );
 
-	if ( residue_type->has( " O4'" ) ) {
-		o4prime_index_ = residue_type->atom_index( " O4'" );
+	if ( residue_type->has( "O4'" ) ) {
+		o4prime_index_ = residue_type->atom_index( "O4'" );
 	} else {
-		o4prime_index_ = residue_type->atom_index( " S4'" );
+		o4prime_index_ = residue_type->atom_index( "S4'" );
 	}
-	c1prime_index_ = residue_type->atom_index( " C1'" );
-	c2prime_index_ = residue_type->atom_index( " C2'" );
-	c4prime_index_ = residue_type->atom_index( " C4'" );
-	c3prime_index_ = residue_type->atom_index( " C3'" );
-	c5prime_index_ = residue_type->atom_index( " C5'" );
+	c1prime_index_ = residue_type->atom_index( "C1'" );
+	c2prime_index_ = residue_type->atom_index( "C2'" );
+	c4prime_index_ = residue_type->atom_index( "C4'" );
+	c3prime_index_ = residue_type->atom_index( "C3'" );
+	c5prime_index_ = residue_type->atom_index( "C5'" );
 
 	base_atom_list_.clear();
 
@@ -174,11 +174,11 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 		std::string const chi_atom_name = residue_type->atom_name( residue_type->chi_atoms( ii )[ 4 ] );
 		if ( chi_atom_name == "XO5'" ) {
 			chi_number_pseudogamma_ = ii;
-		} else if ( chi_atom_name == "XP  " ) {
+		} else if ( chi_atom_name == "XP" ) {
 			chi_number_pseudobeta_ = ii;
 		} else if ( chi_atom_name == "XO3'" ) {
 			chi_number_pseudoalpha_ = ii;
-		} else if ( chi_atom_name == "YP  " ) {
+		} else if ( chi_atom_name == "YP" ) {
 			chi_number_pseudoepsilon_ = ii;
 		} else if ( chi_atom_name == "YO5'" ) {
 			chi_number_pseudozeta_ = ii;

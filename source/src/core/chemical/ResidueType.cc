@@ -1928,7 +1928,7 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		}
 
 		for ( VDs const & chi : true_chis ) {
-			tr << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+			tr.Debug << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			debug_assert( chi.size() == 4 );
 			add_chi( chi[1], chi[2], chi[3], chi[4] );
 			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
@@ -1936,6 +1936,80 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 				proton_chis.push_back( nchi() );
 			}
 		} // for all found chis
+	} else if ( is_RNA() ) {
+		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
+		
+		//CHI 1 C2' C1' N9  C4
+		//CHI 2 C4' C3' C2' C1'
+		//CHI 3 C3' C2' C1' N9 
+		//CHI 4 C3' C2' O2' HO2'
+		// First base atom is either N1 or N9
+		
+		VD first_base_atom;
+		for ( VDs const & chi : found_chis ) {
+			tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+			if ( atom_name( chi[ 1 ] ) == "C2'" && atom_name( chi[ 2 ] ) != "O2'" ) {
+				true_chis.push_back( chi );
+				first_base_atom = chi[3];
+				// Third atom of chi1 is first base atom.
+				for ( Size ii = 1; ii < atom_index( atom_name( chi[ 3 ] ) ); ++ii ) {
+					set_backbone_heavyatom( atom_name( ii ) );
+				}
+				break;
+			}
+		}
+		
+		// Step 2. Hard-fix three chis: two rings, and proton chi for HO2'.
+		VDs chi{atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'")};
+		true_chis.emplace_back( chi );
+		chi = VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'"), first_base_atom };
+		//true_chis.emplace_back( { atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'") } );
+		true_chis.emplace_back( chi );
+		// What to do absent HO2'?
+		// answer: whatever else O2' is bonded to that's not C2'
+		if ( has( "HO2'" ) ) {
+			//chi = ;
+			true_chis.emplace_back( VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("O2'"), atom_vertex("HO2'") } );
+		} else {
+			// implement later
+		}
+		
+		// Theoretical final step (AMW TODO): add all chis that are children of the base
+		// or of O2', in a protein-y way, as chis 5+.
+		
+		std::string target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
+		
+		while ( true ) {
+			
+			// this extra loop is to future-proof a bit against branching: multiple
+			// chis per pass may start with the target_first_atom and therefore
+			// we don't want to update it right away.
+			
+			std::string candidate_new_atom = target_first_atom;
+			for ( VDs const & chi : found_chis ) {
+				tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+				if ( atom_name( chi[ 1 ] ) == target_first_atom ) {
+					true_chis.push_back( chi );
+					candidate_new_atom = atom_name( chi[ 2 ] );
+				}
+			}
+			if ( candidate_new_atom == target_first_atom ) break;
+			
+			// This may have to become a vector -- where we accumulated many
+			// candidate_new_atom -- later.
+			target_first_atom = candidate_new_atom;
+		}
+		
+		for ( VDs const & chi : true_chis ) {
+			tr.Debug << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
+			debug_assert( chi.size() == 4 );
+			add_chi( chi[1], chi[2], chi[3], chi[4] );
+			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
+				// proton chi
+				proton_chis.push_back( nchi() );
+			}
+		} // for all found chis
+
 	} else {
 		// ligand logic: far simpler.
 
@@ -3514,8 +3588,12 @@ ResidueType::update_derived_data()
 		//It appears that the rna_info_ is shared across multiple ResidueType object, if the rna_info_ is not reinitialized here!
 		rna_info_ = core::chemical::rna::RNA_InfoOP( new core::chemical::rna::RNA_Info );
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
-		rna_info_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
-		rna_info_->update_derived_rna_data( get_self_weak_ptr() );
+		if ( nchi() >= 4 ) {
+			// safety against hypothetical RNA RTs without 4 chi AND vs.
+			// premature finalize() calls.
+			rna_info_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
+			rna_info_->update_derived_rna_data( get_self_weak_ptr() );
+		}
 	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
 		carbohydrate_info_ =
 			carbohydrates::CarbohydrateInfoOP( new carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
