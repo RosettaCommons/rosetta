@@ -174,6 +174,7 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 	}
 
 	initialize( tag->getOption< bool >( "initialize", true ) );
+	yield_cut_bias(tag->getOption< bool >("yield_cut_bias", false));
 
 	set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 }
@@ -267,10 +268,6 @@ void FragmentCM::passport_updated() {
 		mover()->set_movemap( mm );
 	}
 }
-
-// XRW TEMP std::string FragmentCM::get_name() const {
-// XRW TEMP  return "FragmentCM("+mover()->get_name()+")";
-// XRW TEMP }
 
 std::string FragmentCM::get_name() const {
 	return mover_name();

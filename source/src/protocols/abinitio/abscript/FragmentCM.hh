@@ -62,8 +62,6 @@ public:
 
 	void apply( Pose& pose ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
-
 	core::select::residue_selector::ResidueSelectorCOP const&
 	selector() const { return selector_; }
 

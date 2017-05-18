@@ -454,7 +454,8 @@ AbscriptMover::parse_my_tag(
 
 			add_frags( stagetag->getOption< std::string >( "small_frags" ),
 				stagetag->getOption< std::string >( "large_frags" ),
-				selector );
+				selector,
+				stagetag->getOption< bool >( "initialize", true ));
 		} else {
 			tr.Error << "AbscriptMover recieved illegal tag ('Stage' and 'Fragments' are acceptable): '" << stagetag << "'" << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("Illegal AbscriptMover subtag.");
@@ -480,9 +481,12 @@ AbscriptMover::parse_my_tag(
 	}
 }
 
-void AbscriptMover::add_frags( std::string const& small_fragfile,
+void AbscriptMover::add_frags(
+	std::string const& small_fragfile,
 	std::string const& large_fragfile,
-	core::select::residue_selector::ResidueSelectorCOP selector ){
+	core::select::residue_selector::ResidueSelectorCOP selector,
+	bool initialize ){
+
 	using namespace core::fragment;
 	using namespace basic::options;
 	using namespace protocols::simple_moves;
@@ -497,9 +501,19 @@ void AbscriptMover::add_frags( std::string const& small_fragfile,
 	FragSetOP frags_large = big_frag_io.read_data( large_fragfile );
 
 	//embed standard movers in movers that will claim and unlock for them.
-	FragmentCMOP claim_large( new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_large ) ) ) );
-	FragmentCMOP claim_small( new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_small ) ) ) );
-	FragmentCMOP claim_smooth( new FragmentCM( simple_moves::FragmentMoverOP( new SmoothFragmentMover( frags_small, simple_moves::FragmentCostOP( new GunnCost() ) ) ) ) );
+	FragmentCMOP claim_large(
+		new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_large ) ) ) );
+	FragmentCMOP claim_small(
+		new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_small ) ) ) );
+	FragmentCMOP claim_smooth(
+		new FragmentCM( simple_moves::FragmentMoverOP( new SmoothFragmentMover( frags_small, simple_moves::FragmentCostOP( new GunnCost() ) ) ) ) );
+
+
+	// Initialize controls if fragments are inserted along the
+	// length of the protein as the first move.
+	claim_large->initialize(initialize);
+	claim_small->initialize(false);
+	claim_smooth->initialize(false);
 
 	if ( selector ) {
 		claim_large->set_selector( selector );
@@ -673,7 +687,11 @@ void AbscriptMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		"Fragments file containing small fragments (i.e. 3mers) ")
 		+ XMLSchemaAttribute(
 		"large_frags", xs_string,
-		"Fragments file containing large fragments (i.e. 9mers)");
+		"Fragments file containing large fragments (i.e. 9mers)")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"initialize", xsct_rosetta_bool,
+		"Use small fragments insert a fragment at all positions before starting",
+		"true");
 
 	XMLSchemaComplexTypeGenerator stage_ctgen;
 	stage_ctgen.element_name( "Stage" )
