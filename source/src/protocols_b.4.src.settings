@@ -14,6 +14,17 @@ sources = {
 		"APCluster",
 		"cluster",
 	],
+	"protocols/cluster/calibur": [
+		"AdjacentList",
+		"Clustering",
+		"InitCluster",
+		"pdb_util",
+		"PreloadedPDB",
+		"SimPDB",
+		"jacobi",
+		"rmsd",
+		"cubic",
+	],
         "protocols/forge/build": [
                 "Bridge",
                 "BuildInstruction",

@@ -22,15 +22,20 @@
 
 //Calibur Includes - Note this is EXTERNAL and is written outside of the coding conventions for SPEED.
 // If you are intrepid, please convert these to Rosetta proper if possible!
-#include <calibur/InitCluster.hh>
-#include <calibur/SimpPDB.hh>
+#include <protocols/cluster/calibur/AdjacentList.hh>
+#include <protocols/cluster/calibur/Clustering.hh>
+#include <protocols/cluster/calibur/SimPDB.hh>
 
 #include <utility/string_constants.hh>
 #include <utility/string_util.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace protocols::cluster::calibur;
 
+// Also defined in libcalibur, but not in a header.
+#define RANDOM_DECOY_SIZE_FOR_THRESHOLD 101
+#define NUM_TRIALS_FOR_THRESHOLD 16
 OPT_1GRP_KEY( String, input, pdb_list ) // 1st default param
 OPT_1GRP_KEY( Integer, res, start ) // r
 OPT_1GRP_KEY( Integer, res, end   ) // r
@@ -71,7 +76,7 @@ int main(int argc, char** argv)
 
 		devel::init(argc, argv);
 
-		Clustering * ic = new Clustering();
+		auto ic = std::shared_ptr< Clustering >( new Clustering );
 
 		//JAB - thres_finder 4 does not work.  I'm disabling it instead of trying to fix it.
 
@@ -106,44 +111,44 @@ int main(int argc, char** argv)
 				SimPDB::e_residue = LONGEST_CHAIN;
 			}
 		}
-		cout << "Using C-alphas #" << SimPDB::s_residue << "-";
+		std::cout << "Using C-alphas #" << SimPDB::s_residue << "-";
 		if ( SimPDB::e_residue == LONGEST_CHAIN ) {
-			cout << "end" << endl;
+			std::cout << "end" << std::endl;
 		} else {
-			cout << "#" << SimPDB::e_residue << endl;
+			std::cout << "#" << SimPDB::e_residue << std::endl;
 		}
 
 		// Handles strategy::nofilter
-		Clustering::FILTER_MODE = (!option[strategy::nofilter]());
+		ic->FILTER_MODE = (!option[strategy::nofilter]());
 
 		// Handles strategy::thres_finder
-		Clustering::EST_THRESHOLD = PERCENT_EDGES;
+		ic->EST_THRESHOLD = PERCENT_EDGES;
 		bool strategy_specified = false;
 		if ( option[strategy::thres_finder].user() ) {
 			strategy_specified = true;
 			switch (option[strategy::thres_finder]())
 					{
 					case 0 :
-						Clustering::EST_THRESHOLD = PERCENT_EDGES;
+						ic->EST_THRESHOLD = PERCENT_EDGES;
 						break;
 					case 1 :
-						Clustering::EST_THRESHOLD = MOST_FREQ_BASED;
+						ic->EST_THRESHOLD = MOST_FREQ_BASED;
 						break;
 					case 2 :
-						Clustering::EST_THRESHOLD = MIN_AVG_DIST_BASED;
+						ic->EST_THRESHOLD = MIN_AVG_DIST_BASED;
 						break;
 					case 3 :
-						Clustering::EST_THRESHOLD = ROSETTA;
+						ic->EST_THRESHOLD = ROSETTA;
 						break;
 					case 4 :
-						//Clustering::EST_THRESHOLD = SAMPLED_ROSETTA;
+						//ic->EST_THRESHOLD = SAMPLED_ROSETTA;
 						utility_exit_with_message("Threshold strategy 4 no longer supported");
 						break;
 					default : break;
 					}
 		}
 
-		char * filename;
+		std::string filename;
 		if ( option[input::pdb_list].user() ) {
 			filename = strdup( option[input::pdb_list]().c_str() );
 		} else if ( option[in::file::l].user() ) {
@@ -158,15 +163,15 @@ int main(int argc, char** argv)
 			if ( !strategy_specified ) {
 				threshold = c; // use supplied value as threshold
 			} else { // use supplied value to guide the threshold finding strategy
-				switch (Clustering::EST_THRESHOLD)
+				switch (ic->EST_THRESHOLD)
 						{
 						case MOST_FREQ_BASED:
 						case MIN_AVG_DIST_BASED :
-							Clustering::xFactor = c;
+							ic->xFactor = c;
 							break;
 						case PERCENT_EDGES :
-							Clustering::autoAdjustPercentile = false;
-							Clustering::xPercentile = c;
+							ic->autoAdjustPercentile = false;
+							ic->xPercentile = c;
 							break;
 						default :
 							break; // ignore
@@ -175,11 +180,11 @@ int main(int argc, char** argv)
 		}
 
 		/*
-		cout << "filter mode=" << Clustering::FILTER_MODE << endl;
-		cout << "strategy="    << Clustering::EST_THRESHOLD << endl;
+		cout << "filter mode=" << ic->FILTER_MODE << endl;
+		cout << "strategy="    << ic->EST_THRESHOLD << endl;
 		cout << "filename="    << filename << endl;
-		cout << "xfactor="     << Clustering::xFactor << endl;
-		cout << "xpercent="    << Clustering::xPercentile << endl;
+		cout << "xfactor="     << ic->xFactor << endl;
+		cout << "xpercent="    << ic->xPercentile << endl;
 		cout << "threshold="   << threshold << endl;
 		cout << "residues="    << SimPDB::s_residue << "," << SimPDB::e_residue << endl;
 		exit(0);
@@ -190,48 +195,46 @@ int main(int argc, char** argv)
 
 		double acceptMargin = 0.15;
 		if ( ic->bestClusMargin < acceptMargin ) {
-			cout << "Best cluster larger than 2nd best cluster by only "
+			std::cout << "Best cluster larger than 2nd best cluster by only "
 				<< (ic->bestClusMargin*100) << "% (<"
-				<< (acceptMargin*100) << "%)" << endl
-				<< "Two possible clusters could be present." << endl
-				<< "Starting refined clustering..." << endl;
+				<< (acceptMargin*100) << "%)" << std::endl
+				<< "Two possible clusters could be present." << std::endl
+				<< "Starting refined clustering..." << std::endl;
 
 			// create new PDBs and Names out of the elements in the best two
 			// clusters
 
 			// first get the lists
-			vector<AdjacentList *> * finalClusters = ic->mFinalClusters;
-			vector<char *>* Names = new vector<char *>(0);
-			vector<Stru *>* PDBs = new vector<Stru *>(0);
+			std::vector< AdjacentListOP > const & finalClusters = ic->mFinalClusters;
+			StringVec Names;
+			std::vector< StruOP > PDBs;
 
 			// then add elements into them
-			AdjacentList* clus;
-			clus = (*finalClusters)[1];
-			ic->getPDBs(Names, PDBs, clus->neigh, clus->mNumNeigh);
-			clus = (*finalClusters)[0];
-			ic->getPDBs(Names, PDBs, clus->neigh, clus->mNumNeigh);
+			// AMW: NOTE that getPDBs assumes Names and PDBs are empty.
+			ic->getPDBs(Names, PDBs, finalClusters[1]->neigh, finalClusters[1]->num_neighbors_);
+			ic->getPDBs(Names, PDBs, finalClusters[0]->neigh, finalClusters[0]->num_neighbors_);
 
 			// Refined Clustering
 			double minDist, maxDist, mostFreqDist, xPercentileDist;
-			int numDecoys = Names->size() > 2*RANDOM_DECOY_SIZE_FOR_THRESHOLD?
-				RANDOM_DECOY_SIZE_FOR_THRESHOLD: Names->size()/2;
+			int numDecoys = Names.size() > 2*RANDOM_DECOY_SIZE_FOR_THRESHOLD?
+				RANDOM_DECOY_SIZE_FOR_THRESHOLD: Names.size()/2;
 			ic->estimateDist(Names,
 				NUM_TRIALS_FOR_THRESHOLD,
 				numDecoys,
 				0.5,
-				&minDist,
-				&maxDist,
-				&mostFreqDist,
-				&xPercentileDist);
+				minDist,
+				maxDist,
+				mostFreqDist,
+				xPercentileDist);
 			ic->reinitialize(Names, PDBs, xPercentileDist);
 			ic->cluster();
 
 			if ( ic->bestClusMargin < acceptMargin ) {
-				cout << "MORE THAN ONE BEST DECOYS DETECTED!" << endl;
+				std::cout << "MORE THAN ONE BEST DECOYS DETECTED!" << std::endl;
 			}
 		}
 
-		ic->showClusters(3);
+		ic->showClusters(2);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

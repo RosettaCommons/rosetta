@@ -279,14 +279,14 @@ int main( int argc, char * argv [] ) {
 		//core::scoring::ScoreFunctionOP sfxn;
 		//sfxn = core::scoring::getScoreFunction();
 
-		core::Real R1 = static_cast<core::Real>(option[v_R1]());
-		core::Real omega1 = 14.0*numeric::constants::d::pi/17.8;
+		core::Real R1;// = static_cast<core::Real>(option[v_R1]());
+		core::Real omega1;// = 14.0*numeric::constants::d::pi/17.8;
 
 		core::Real R0 = static_cast<core::Real>(option[v_R0]());
-		core::Real omega0 = 3.231/360.0*2.0*numeric::constants::d::pi;
+		core::Real omega0;// = 3.231/360.0*2.0*numeric::constants::d::pi;
 		core::Real phi0 = 0;
 		core::Real phi1 = 0;
-		core::Real alpha = 12.0/360.0*2.0*numeric::constants::d::pi;
+		core::Real alpha;// = 12.0/360.0*2.0*numeric::constants::d::pi;
 		core::Real Dz = 0;
 		core::Real Dz_N = option[v_Dz_N]();
 		core::Real Dz_C = option[v_Dz_C]();
@@ -357,7 +357,6 @@ int main( int argc, char * argv [] ) {
 				mypose.replace_residue(ir, rsd, false);
 			}
 			mypose.update_residue_neighbors();
-			Dz=0.0; R1=2.27; phi1=0.0;
 
 			for ( core::Size ir=1; ir<=mypose.size(); ir++ ) {
 

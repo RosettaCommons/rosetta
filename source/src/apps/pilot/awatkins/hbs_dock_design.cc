@@ -551,9 +551,6 @@ HbsDockDesignMinimizeMover::apply(
 	core::Real hbond_ener_sum_complex;
 	core::Real hbond_ener_sum_seperated;
 
-	// calc energy
-	energy_complex = (*score_fxn)(pose);
-
 	TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
 	if ( option[ hddm::final_design_min].value() ) {

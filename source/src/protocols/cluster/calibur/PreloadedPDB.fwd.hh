@@ -7,16 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file apps/pilot/kalngyk/SimpPDB.fwd.hh
+/// @file external/calibur/PreloadedPDB.fwd.hh
 /// @author SC Li & YK Ng (kalngyk@gmail.com)
 
-#ifndef apps_pilot_kalngyk_SimpPDB_FWD_HH
-#define apps_pilot_kalngyk_SimpPDB_FWD_HH
+#ifndef external_calibur_PreloadedPDB_FWD_HH
+#define external_calibur_PreloadedPDB_FWD_HH
 
-namespace apps { namespace pilot { namespace kalngyk {
+#include <utility/pointer/owning_ptr.hh>
 
-class SimPDB;
+namespace protocols {
+namespace cluster {
+namespace calibur {
 
-} } }
+class PreloadedPDB;
+typedef utility::pointer::shared_ptr< PreloadedPDB > PreloadedPDBOP;
+
+
+}
+}
+}
 
 #endif
