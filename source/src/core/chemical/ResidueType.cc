@@ -1945,7 +1945,12 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		//CHI 4 C3' C2' O2' HO2'
 		// First base atom is either N1 or N9
 		
-		VD first_base_atom = atom_vertex( "N9" );
+		// Will never actually remain this value -- but we need
+		// to know that we're not using uninitialized, and we 
+		// need a value we can always initialize to for RNA rsd.
+		// (This is tough just because of thenature of VDs.)
+		// So we use a runtime_assert after the loop.
+		VD first_base_atom = atom_vertex( "P" );
 		for ( VDs const & chi : found_chis ) {
 			tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			if ( atom_name( chi[ 1 ] ) == "C2'" && atom_name( chi[ 2 ] ) != "O2'" ) {
@@ -1958,6 +1963,7 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 				break;
 			}
 		}
+		runtime_assert( first_base_atom != atom_vertex( "P" ) );
 		
 		// Step 2. Hard-fix three chis: two rings, and proton chi for HO2'.
 		VDs chi{atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'")};
