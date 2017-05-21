@@ -379,14 +379,21 @@ Clustering::getThresholdAndDecoys()
 
 		destroyRandomDecoys(names, decoys);
 
+		// AMW: this isn't great, but I need a way to throw out ridiculous
+		// values coming from likely uninitialized values in nbors. 
+
 		// find the minimum of average distances
 		double min_avg_dist = _OVER_RMSD_;
 		for ( int i=0; i < numDecoys; i++ ) {
 			double sum_of_dist = 0;
+			uint num_to_avg = 0;
 			for ( unsigned int j=0; j < names_.size(); j++ ) {
-				sum_of_dist += nbors[i][j];
+				if ( nbors[i][j] >= 0 && nbors[i][j] < 500 ) {
+					sum_of_dist += nbors[i][j];
+					num_to_avg++;
+				}
 			}
-			double avg_dist = sum_of_dist / names_.size();
+			double avg_dist = sum_of_dist / num_to_avg;//names_.size();
 			if ( avg_dist < min_avg_dist ) {
 				min_avg_dist = avg_dist;
 			}

@@ -45,3 +45,5 @@ Found .+ duplicate lines in .+ blocks in .+ files
 Processed a total .* lines in .* files
 completed in [0-9.]+ s
 core.chemical.GlobalResidueTypeSet: Finished initializing fa_standard residue type set.  Created [0-9]+ residue types
+read in [0-9.]+ s
+Found in [0-9.]+ s
