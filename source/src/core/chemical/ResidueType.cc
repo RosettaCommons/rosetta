@@ -1938,15 +1938,15 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		} // for all found chis
 	} else if ( is_RNA() ) {
 		utility::vector1<VDs> true_chis; // filtered and ordered from found_chis.
-		
+
 		//CHI 1 C2' C1' N9  C4
 		//CHI 2 C4' C3' C2' C1'
-		//CHI 3 C3' C2' C1' N9 
+		//CHI 3 C3' C2' C1' N9
 		//CHI 4 C3' C2' O2' HO2'
 		// First base atom is either N1 or N9
-		
+
 		// Will never actually remain this value -- but we need
-		// to know that we're not using uninitialized, and we 
+		// to know that we're not using uninitialized, and we
 		// need a value we can always initialize to for RNA rsd.
 		// (This is tough just because of thenature of VDs.)
 		// So we use a runtime_assert after the loop.
@@ -1964,7 +1964,7 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 			}
 		}
 		runtime_assert( first_base_atom != atom_vertex( "P" ) );
-		
+
 		// Step 2. Hard-fix three chis: two rings, and proton chi for HO2'.
 		VDs chi{atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'")};
 		true_chis.emplace_back( chi );
@@ -1979,18 +1979,18 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		} else {
 			// implement later
 		}
-		
+
 		// Theoretical final step (AMW TODO): add all chis that are children of the base
 		// or of O2', in a protein-y way, as chis 5+.
-		
+
 		std::string target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
-		
+
 		while ( true ) {
-			
+
 			// this extra loop is to future-proof a bit against branching: multiple
 			// chis per pass may start with the target_first_atom and therefore
 			// we don't want to update it right away.
-			
+
 			std::string candidate_new_atom = target_first_atom;
 			for ( VDs const & chi : found_chis ) {
 				tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
@@ -2000,12 +2000,12 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 				}
 			}
 			if ( candidate_new_atom == target_first_atom ) break;
-			
+
 			// This may have to become a vector -- where we accumulated many
 			// candidate_new_atom -- later.
 			target_first_atom = candidate_new_atom;
 		}
-		
+
 		for ( VDs const & chi : true_chis ) {
 			tr.Debug << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			debug_assert( chi.size() == 4 );

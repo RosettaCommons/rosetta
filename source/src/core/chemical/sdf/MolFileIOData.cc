@@ -326,12 +326,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		} else if ( restype->is_RNA() ) {
 			restype->set_lower_connect_atom( "P" );
 			restype->set_upper_connect_atom( "O3'" );
-			
+
 			// Taken -- hardcoded -- from RAD_n.
 			// Necessary?
 			restype->set_atom_base( "OP1", "P" );
 			restype->set_atom_base( "OP2", "P" );
-			
+
 			using numeric::conversions::radians;
 			if ( restype->is_d_rna() ) {
 				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );

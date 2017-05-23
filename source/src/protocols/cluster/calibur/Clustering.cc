@@ -380,7 +380,7 @@ Clustering::getThresholdAndDecoys()
 		destroyRandomDecoys(names, decoys);
 
 		// AMW: this isn't great, but I need a way to throw out ridiculous
-		// values coming from likely uninitialized values in nbors. 
+		// values coming from likely uninitialized values in nbors.
 
 		// find the minimum of average distances
 		double min_avg_dist = _OVER_RMSD_;

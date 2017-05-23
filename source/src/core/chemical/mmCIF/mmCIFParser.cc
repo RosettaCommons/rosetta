@@ -206,16 +206,16 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 			}
 		}
 	} else if ( is_nucleic_linking ) {
-		if ( block.IsTablePresent( "chem_comp_bond" ) ) {	
+		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
 			ISTable& bond_comp = block.GetTable("chem_comp_bond");
-			
+
 			//start bond block
 			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
 				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
-				
+
 				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
 				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
-				
+
 				// Could imagine getting 'all Hs' by finding, instead, the
 				// names that match H[number] -- but why not wait, for now.
 				if ( source == "P" ) {
