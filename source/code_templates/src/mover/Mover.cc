@@ -88,7 +88,7 @@ void
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief required in the context of the parser/scripting scheme
-moves::MoverOP
+protocols::moves::MoverOP
 --class--::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new --class-- );
