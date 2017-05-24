@@ -516,6 +516,7 @@ enum ScoreType {
 	dof_constraint,
 
 	rama_prepro,  //fpd rama with separate pre-proline potential
+	paa_abego3, // probability of finding an amino acid in a particular abego triplet
 
 	cart_bonded,  // cartesian bonded potential
 	cart_bonded_angle,  // cartesian bonded potential

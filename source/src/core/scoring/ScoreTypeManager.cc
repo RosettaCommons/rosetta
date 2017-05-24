@@ -264,6 +264,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "rama"    ] = rama;
 	name2score_type_[ "rama2b"  ] = rama2b;
+	name2score_type_[ "paa_abego3"  ] = paa_abego3;
 	name2score_type_[ "omega"    ] = omega;
 	name2score_type_[ "fa_dun" ] = fa_dun;
 	name2score_type_[ "fa_dun_dev" ] = fa_dun_dev;

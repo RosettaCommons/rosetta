@@ -34,6 +34,7 @@
 #include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Ramachandran2B.hh>
+#include <core/scoring/P_AA_ABEGO3.hh>
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/HydroxylTorsionPotential.hh>
@@ -131,6 +132,7 @@ ScoringManager::ScoringManager() :
 	rama_( /* 0 */ ),
 	rama2b_( /* 0 */ ),
 	rama_pp_( /* 0 */ ),
+	paa_abego3_( /* 0 */ ),
 	omega_( /* 0 */ ),
 	env_pair_potential_( /* 0 */ ),
 	smooth_env_pair_potential_( /* 0 */ ),
@@ -654,6 +656,19 @@ ScoringManager::get_RamaPrePro() const
 		rama_pp_ = RamaPreProOP( new RamaPrePro );
 	}
 	return *rama_pp_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Get an owning pointer to data used by AbegoEnergy
+/// @details The data is lazily loaded, not threadsafe, and meant to be instantiated once
+/// @author imv@uw.edu
+P_AA_ABEGO3 const &
+ScoringManager::get_P_AA_ABEGO3() const
+{
+	if ( paa_abego3_ == nullptr ) {
+		paa_abego3_ = P_AA_ABEGO3_OP( new P_AA_ABEGO3 );
+	}
+	return *paa_abego3_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -37,6 +37,7 @@
 #include <core/scoring/RamaPrePro.fwd.hh>
 #include <core/scoring/Ramachandran.fwd.hh>
 #include <core/scoring/Ramachandran2B.fwd.hh>
+#include <core/scoring/P_AA_ABEGO3.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
 #include <core/scoring/SmoothEnvPairPotential.fwd.hh>
 #include <core/scoring/UnfoldedStatePotential.fwd.hh>
@@ -159,6 +160,8 @@ public:
 
 	Ramachandran2BCOP get_Ramachandran2B_ptr() const;
 	Ramachandran2B const & get_Ramachandran2B() const;
+
+	P_AA_ABEGO3 const & get_P_AA_ABEGO3() const;
 
 	RamachandranCOP get_Ramachandran_ptr() const;
 
@@ -348,6 +351,7 @@ private:
 	mutable RamachandranOP rama_;
 	mutable Ramachandran2BOP rama2b_;
 	mutable RamaPreProOP rama_pp_;
+	mutable P_AA_ABEGO3_OP paa_abego3_;
 	mutable OmegaTetherOP omega_;
 	mutable EnvPairPotentialOP env_pair_potential_;
 	mutable SmoothEnvPairPotentialOP smooth_env_pair_potential_;

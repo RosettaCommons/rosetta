@@ -59,6 +59,7 @@
 #include <core/scoring/methods/P_AA_EnergyCreator.hh>
 #include <core/scoring/methods/P_AA_ss_EnergyCreator.hh>
 #include <core/scoring/methods/P_AA_pp_EnergyCreator.hh>
+#include <core/scoring/methods/AbegoEnergyCreator.hh>
 #include <core/scoring/methods/PackStatEnergyCreator.hh>
 #include <core/scoring/methods/PairEnergyCreator.hh>
 #include <core/scoring/methods/PeptideBondEnergyCreator.hh>
@@ -406,6 +407,7 @@ static EnergyMethodRegistrator< scoring::methods::NMerSVMEnergyCreator > NMerSVM
 static EnergyMethodRegistrator< scoring::methods::P_AA_EnergyCreator > P_AA_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::P_AA_ss_EnergyCreator > P_AA_ss_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::P_AA_pp_EnergyCreator > P_AA_pp_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::AbegoEnergyCreator > AbegoEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PackStatEnergyCreator > PackStatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PairEnergyCreator > PairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PeptideBondEnergyCreator > PeptideBondEnergyCreator_registrator;
