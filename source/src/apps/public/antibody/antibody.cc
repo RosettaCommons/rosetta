@@ -30,6 +30,7 @@
 // Grafting util function related includes
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/sequence/util.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -85,6 +86,7 @@ OPT_KEY( StringVector, multi_template_regions)
 OPT_KEY( Boolean,      no_relax)
 OPT_KEY( Boolean,      optimal_graft)
 OPT_KEY( Boolean,      optimize_cdrs)
+OPT_KEY( Boolean,      vhh_only)
 
 void register_options()
 {
@@ -96,6 +98,7 @@ void register_options()
 	NEW_OPT( no_relax, "Do not relax grafted model", false);
 	NEW_OPT( optimal_graft, "If the graft is not closed, use a new graft mover.  Before any full relax, relax the CDRs with dihedral constraints to make them fit better.   May become default after testing", false);
 	NEW_OPT( optimize_cdrs, "Optimize CDRs.  If doing optimal graft, we will optimize the CDRs.", false);
+	NEW_OPT( vhh_only, "Enable modeling of only a heavy chain.", false );
 }
 
 void relax_model(core::pose::PoseOP &pose)
@@ -170,23 +173,45 @@ int antibody_main()
 	}
 	TR << TR.Magenta << "Done unzipping." << TR.Reset << std::endl;
 
-
-	if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  !basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-		heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::heavy ]();
-		light_fasta_file = basic::options::option[ basic::options::OptionKeys::light ]();
-	} else if( basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-		heavy_fasta_file = light_fasta_file = basic::options::option[ basic::options::OptionKeys::fasta ]();
-	} else if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-		utility_exit_with_message( "Error: options --fasta and [--light, heavy] can't be specifed at the same time!");
+	// parsing of heavy/light and associated options (there are a few)
+	if( basic::options::option[ basic::options::OptionKeys::vhh_only]) {
+		// only need heavy chain specified
+		if( basic::options::option[ basic::options::OptionKeys::heavy ].user() and !basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::heavy ]();
+		} else if( basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::fasta ]();
+		} else if( basic::options::option[ basic::options::OptionKeys::heavy ].user() and basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+			utility_exit_with_message( "Error: options --fasta and --heavy can't be specifed at the same time!");
+		} else {
+			utility_exit_with_message( "Error: no input sequence was specified!");
+		}
 	} else {
-		utility_exit_with_message( "Error: no input sequences was specified!");
+		// need both
+		if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  !basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::heavy ]();
+			light_fasta_file = basic::options::option[ basic::options::OptionKeys::light ]();
+		} else if( basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = light_fasta_file = basic::options::option[ basic::options::OptionKeys::fasta ]();
+		} else if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+			utility_exit_with_message( "Error: options --fasta and [--light, heavy] can't be specifed at the same time!");
+		} else {
+			utility_exit_with_message( "Error: no input sequences were specified!");
+		}
 	}
 
 	TR << TR.Green << "Heavy chain fasta input file: " << TR.Bold << heavy_fasta_file << TR.Reset << std::endl;
 	TR << TR.Blue  << "Light chain fasta input file: " << TR.Bold << light_fasta_file << TR.Reset << std::endl;
 
-	heavy_chain_sequence = core::sequence::read_fasta_file_section(heavy_fasta_file, "heavy");
-	light_chain_sequence = core::sequence::read_fasta_file_section(light_fasta_file, "light");
+	if( basic::options::option[ basic::options::OptionKeys::vhh_only] ) {
+		TR << TR.Red << TR.Bold << "Running with option \"-vhh_only\"! Using a dummy light chain!" << TR.Reset << std::endl;
+		// only heavy chain, give dummy light for now (later fix code to not model light
+		heavy_chain_sequence = core::sequence::read_fasta_file_section(heavy_fasta_file, "heavy");
+		light_chain_sequence = "DVVMTQTPLSLPVSLGNQASISCRSSQSLVHSNGNTYLHWYLQKPGQSPKLLIYKVSNRFSGVPDRFSGSGSGTDFTLKISRVEAEDLGVYFCSQSTHVPFTFGSGTKLEIKR";
+	} else {
+		// read both
+		heavy_chain_sequence = core::sequence::read_fasta_file_section(heavy_fasta_file, "heavy");
+		light_chain_sequence = core::sequence::read_fasta_file_section(light_fasta_file, "light");
+	}
 
 	{
 		TR << TR.Red << "Antibody grafting protocol" << TR.Reset << " Running with input:" << std::endl;
@@ -318,6 +343,14 @@ int antibody_main()
 				bool optimize_cdrs = basic::options::option[ basic::options::OptionKeys::optimize_cdrs]();
 
 				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database, optimal_graft, optimize_cdrs );
+
+				if( basic::options::option[ basic::options::OptionKeys::vhh_only] ) {
+					// delete light chain
+					core::pose::PoseOP temp_pose = model->split_by_chain( core::pose::get_chain_id_from_chain( 'H', *model ) );
+					// over-write graft output with just heavy model
+					model = temp_pose;
+					model->dump_pdb(prefix + "model" + suffix + ".pdb");
+				}
 
 				if( !basic::options::option[ basic::options::OptionKeys::no_relax ]() ) {
 					relax_model(model);

@@ -102,7 +102,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 	AntibodyFramework trimmed_heavy_fr = A.heavy_framework();
 	AntibodyFramework trimmed_light_fr = A.light_framework();
 
-	trim_framework(A, trimmed_heavy_fr, trimmed_light_fr);
+	trim_framework(A, trimmed_heavy_fr, trimmed_light_fr); // what happens if no light?
 
 	AntibodyNumbering an( Chothia_Numberer().number(A, trimmed_heavy_fr, trimmed_light_fr) );
 
@@ -232,7 +232,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 	AntibodyEnumManager enum_manager = AntibodyEnumManager();
 
-	result->dump_pdb("result_pre_graft.pdb");
+	//result->dump_pdb("result_pre_graft.pdb");
 
 	for(auto &g : G) {
 
