@@ -15,15 +15,15 @@
 #define INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor_fwd_hh
 
 // Utility headers
-//#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {
 
 class UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor;
 
-//typedef utility::pointer::owning_ptr< UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor > UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributorOP;
-//typedef utility::pointer::owning_ptr< UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor const > UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributorCOP;
+typedef utility::pointer::shared_ptr< UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor > UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributorOP;
+typedef utility::pointer::shared_ptr< UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor const > UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributorCOP;
 
 } // UnfoldedStateEnergyCalculator
 } // protocols

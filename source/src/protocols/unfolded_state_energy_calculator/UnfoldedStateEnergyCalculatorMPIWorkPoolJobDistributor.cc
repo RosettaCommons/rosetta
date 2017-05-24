@@ -90,14 +90,14 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 	// Job Distribution Loop
 	while ( next_job_to_assign_ != 0 ) {
 		TR << "Master Node: Waiting for job requests..." << std::endl;
-		MPI_Recv( &slave_data, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		TR << "Master Node: Received message from " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
 		switch ( status.MPI_TAG ) {
 		case NEW_JOB_ID_TAG:
 			TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+			MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 			master_get_new_job_id();
 			break;
 		case BAD_INPUT_TAG:
@@ -107,8 +107,8 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			break;
 		case JOB_SUCCESS_TAG:
 			TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
-			MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
+			MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+			MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
 			TR << "Master Node: Received job output finish messege for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 			break;
 		case UNFOLDED_ENERGY_DATA_TAG:
@@ -117,7 +117,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			slave_data_emap.clear(); slave_tlc_string.clear();
 
 			// send responce to send data
-			MPI_Send( &slave_data, 1, MPI_INT, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
+			MPI_Send( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
 
 			// get vector of tlc data
 			MPI_Recv( &slave_data_vector, LENGTH_TLC, MPI_CHAR, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status);
@@ -145,7 +145,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			slave_data_emap.clear();
 
 			// send responce to send data
-			MPI_Send( &slave_data, 1, MPI_INT, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
+			MPI_Send( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
 
 			// get vector of data
 			MPI_Recv( &slave_data_vector, n_score_types, MPI_DOUBLE, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status);
@@ -168,22 +168,22 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 	// Node Spin Down loop
 	while ( n_nodes_left_to_spin_down > 0 ) {
 		TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
-		MPI_Recv( &slave_data, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		TR << "Master Node: Recieved message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
 		switch ( status.MPI_TAG ) {
 		case NEW_JOB_ID_TAG:
 			TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+			MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 			n_nodes_left_to_spin_down--;
 			break;
 		case BAD_INPUT_TAG:
 			break;
 		case JOB_SUCCESS_TAG:
 			TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
-			MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
+			MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+			MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
 			TR << "Master Node: Received job output finish messege for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 			break;
 		case UNFOLDED_ENERGY_DATA_TAG:
@@ -192,7 +192,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			slave_data_emap.clear(); slave_tlc_string.clear();
 
 			// send responce to send data
-			MPI_Send( &slave_data, 1, MPI_INT, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
+			MPI_Send( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
 
 			// get vector of tlc data
 			MPI_Recv( &slave_data_vector, LENGTH_TLC, MPI_CHAR, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status);
@@ -220,7 +220,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			slave_data_emap.clear();
 
 			// send responce to send data
-			MPI_Send( &slave_data, 1, MPI_INT, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
+			MPI_Send( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
 
 			// get vector of data
 			MPI_Recv( &slave_data_vector, n_score_types, MPI_DOUBLE, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status);
@@ -278,10 +278,10 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energ
 	char tlc_vector[LENGTH_TLC];
 
 	// send message that we want to send a vector of energies
-	MPI_Send( &current_job_id_, 1, MPI_INT, 0, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
+	MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
 
 	// get responce from master
-	MPI_Recv( &empty_data, 1, MPI_INT, 0, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status );
+	MPI_Recv( &empty_data, 1, MPI_UNSIGNED_LONG, 0, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status );
 	TR << "Slave Node " << rank_ << ": Sending unfolded energy data to master" <<std::endl;
 
 	// convert string to vector of chars
@@ -351,10 +351,10 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_set_energy_terms(c
 	double data_vector[ n_score_types ];
 
 	// send message that we want to send a vector of energies
-	MPI_Send( &current_job_id_, 1, MPI_INT, 0, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
+	MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
 
 	// get responce from master
-	MPI_Recv( &empty_data, 1, MPI_INT, 0, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status );
+	MPI_Recv( &empty_data, 1, MPI_UNSIGNED_LONG, 0, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status );
 	TR << "Slave Node " << rank_ << ": Sending unfolded energy terms to master" <<std::endl;
 
 	// convert EMapVector to vector of doubles
