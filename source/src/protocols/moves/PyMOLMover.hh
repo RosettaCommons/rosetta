@@ -253,6 +253,9 @@ public:
 	/// @brief dtor
 	~UDPSocketClient();
 
+	UDPSocketClient & operator= (UDPSocketClient const&);
+
+
 	void sendMessage(std::string msg);
 
 	void show(std::ostream & output) const;
@@ -286,9 +289,13 @@ std::ostream &operator<< (std::ostream & output, UDPSocketClient const & client)
 
 class PyMOLMover : public protocols::moves::Mover
 {
+	static std::string const  _default_address_;
+	static unsigned int const _default_port_;
+
 public:
+
 	/// @brief ctor
-	PyMOLMover(std::string const & address="127.0.0.1", int port=65000);
+	PyMOLMover(std::string const & address=_default_address_, int port=_default_port_);
 
 	/// @brief cctor
 	PyMOLMover( PyMOLMover const & other );

@@ -144,6 +144,7 @@ UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCo
 #endif
 }
 
+
 UDPSocketClient::UDPSocketClient( UDPSocketClient const & other ) :
 	max_packet_size_( other.max_packet_size_ ),
 	uuid_( other.uuid_ ),
@@ -156,6 +157,25 @@ UDPSocketClient::UDPSocketClient( UDPSocketClient const & other ) :
 	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
 #endif
 }
+
+
+UDPSocketClient & UDPSocketClient::operator= (UDPSocketClient const&o)
+{
+#ifndef  __native_client__
+
+	max_packet_size_ = o.max_packet_size_;
+	uuid_            = o.uuid_;
+	sentCount_       = o.sentCount_;
+	socket_addr_     = o.socket_addr_;
+	socket_h_        = o.socket_h_;
+
+	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+
+#endif
+
+	return *this;
+}
+
 
 UDPSocketClient::~UDPSocketClient()
 {
@@ -247,6 +267,9 @@ operator<<(std::ostream & output, UDPSocketClient const & client)
 /* -------------------------------------------------------------------------------------------------
 PyMOLMover Class
 ---------------------------------------------------------------------------------------------- */
+
+std::string const PyMOLMover::_default_address_ = "127.0.0.1";
+unsigned int const PyMOLMover::_default_port_   = 65000;
 
 /// @brief ctor
 PyMOLMover::PyMOLMover(std::string const & address, int port) :
@@ -1070,6 +1093,14 @@ PyMOLMover::parse_my_tag(
 	core::pose::Pose const &
 ) {
 	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );
+
+	std::string address = tag->getOption<std::string>("address", _default_address_);
+	unsigned int port = tag->getOption<unsigned int>("port", _default_port_);
+
+	//TR << "Settin addres to: " << address << std::endl;
+	//TR << "Settin port to: " << port << std::endl;
+
+	link_ = UDPSocketClient(address, port);
 }
 
 /// @brief required in the context of the parser/scripting scheme
@@ -1103,7 +1134,11 @@ void PyMOLMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Each call to the mover stores the pose in a new state/frame of "
 		"an object in PyMOL rather than overwriting it. Frames can then be "
 		"played back like a movie to visualize the flow of a protocol.",
-		"0");
+		"0")
+		+ XMLSchemaAttribute::attribute_w_default("address", xs_string, "IP address of machine running PyMOL with PyMOL-RosettaServer.py script running.", _default_address_)
+		+ XMLSchemaAttribute::attribute_w_default("port",    xsct_positive_integer, "Port number to which UDP/IP connection should be made", std::to_string(_default_port_) )
+		;
+
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
 		"PyMOLMover will send a pose to an instance of the PyMOL "
@@ -1133,4 +1168,3 @@ void PyMOLMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 } // protocols
 
 #endif // INCLUDED_protocols_moves_PyMOLMover_CC
-
