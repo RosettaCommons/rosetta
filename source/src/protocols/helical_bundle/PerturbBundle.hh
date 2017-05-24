@@ -295,11 +295,15 @@ public:
 	core::Size add_helix( core::Size const helix_index );
 
 	/// @brief Set whether user input is in degrees (true) or radians (false).
-	///
+	/// @details Only affects values parsed by parse_my_tag().  When configuring this mover from
+	/// code, use radians, or use the convert_angle() public method to convert the angle to radians
+	/// or degrees depending on the use_degrees_ setting.
 	void set_use_degrees( bool const val ) { use_degrees_=val; return; }
 
 	/// @brief Get whether user input is in degrees (true) or radians (false).
-	///
+	/// @details Only affects values parsed by parse_my_tag().  When configuring this mover from
+	/// code, use radians, or use the convert_angle() public method to convert the angle to radians
+	/// or degrees depending on the use_degrees_ setting.
 	bool use_degrees() const { return use_degrees_; }
 
 	std::string
@@ -389,7 +393,9 @@ private:
 	core::Size bundleparametersset_index_;
 
 	/// @brief Should user input be interpreted as being in radians (false) or degrees (true)?
-	/// @details Default radians (false).
+	/// @details Default radians (false).  Only affects values parsed by parse_my_tag().  When configuring this mover from
+	/// code, use radians, or use the convert_angle() public method to convert the angle to radians
+	/// or degrees depending on the use_degrees_ setting.
 	bool use_degrees_;
 
 private:

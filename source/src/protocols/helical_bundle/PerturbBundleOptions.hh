@@ -88,6 +88,10 @@ public: //Getters
 	///
 	bool is_perturbable() const { return perturbable_; }
 
+	/// @brief Returns whether this parameter is being set to its default value.
+	/// @details Used by the PerturbBundle mover.
+	bool is_being_set() const { return being_set_; }
+
 	/// @brief Returns the perturbation magnitude.  Returns 0 if not perturbable.
 	core::Real perturbation_magnitude() const { return (perturbable_? perturbation_magnitude_ : 0.0); }
 
@@ -130,11 +134,21 @@ public: //Setters
 
 	/// @brief Sets the index of the helix that these options refer to.
 	///
-	void set_helix_index(core::Size const val) { helix_index_=val; return; }
+	inline void set_helix_index(core::Size const val) { helix_index_=val; }
 
 	/// @brief Sets whether this option is peturbable.
 	///
-	void set_perturbable(bool const val) { perturbable_=val; return; }
+	inline void set_perturbable(bool const val) { perturbable_=val; }
+
+	/// @brief Sets whether this parameter is being set to its default value.
+	/// @details Used by the PerturbBundle mover.
+	inline void set_being_set( bool const val ) {
+		being_set_ = val;
+		if ( val ) {
+			perturbable_ = false;
+			use_defaults_ = false;
+		}
+	}
 
 	/// @brief Sets the perturbation magnitude.  Sets perturbable to true in the process.
 	///
@@ -201,6 +215,10 @@ private:
 	///
 	bool perturbable_;
 
+	/// @brief Is this parameter being set to its default value?
+	///
+	bool being_set_;
+
 	/// @brief Should we just use the default options for this parameter?
 	///
 	bool use_defaults_;
@@ -217,7 +235,7 @@ private:
 	/// @brief Default value (0) means no sampling.
 	core::Size samples_;
 
-	/// @brief For the grid sampler only -- the default value of this parameter.
+	/// @brief For the grid sampler, and for setting a value with PerturbBundle -- the default value of this parameter.
 	///
 	core::Real default_value_;
 
