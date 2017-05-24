@@ -21,6 +21,7 @@
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -51,7 +52,9 @@ namespace residue_selector {
 RandomResidueSelector::RandomResidueSelector():
 	ResidueSelector(),
 	selector_( new TrueResidueSelector ),
-	num_residues_( 1 )
+	num_residues_( 1 ),
+	select_res_cluster_( false ),
+	distance_cutoff_( 8.0 )
 {
 }
 
@@ -66,7 +69,18 @@ RandomResidueSelector::clone() const
 RandomResidueSelector::RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues ):
 	ResidueSelector(),
 	selector_( selector ),
-	num_residues_( num_residues )
+	num_residues_( num_residues ),
+	select_res_cluster_( false ),
+	distance_cutoff_( 8.0 )
+{
+}
+
+RandomResidueSelector::RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues, bool const select_res_cluster, Real const distance_cutoff ):
+	ResidueSelector(),
+	selector_( selector ),
+	num_residues_( num_residues ),
+	select_res_cluster_( select_res_cluster ),
+	distance_cutoff_( distance_cutoff )
 {
 }
 
@@ -76,7 +90,9 @@ ResidueSubset
 RandomResidueSelector::apply( core::pose::Pose const & pose ) const
 {
 	ResidueVector residue_set( selector_->apply( pose ) );
+	// shuffle order of residue set
 	numeric::random::random_permutation( residue_set, numeric::random::rg() );
+	// return random subset
 	return subset_from_randomized_vector( pose, residue_set );
 }
 
@@ -85,9 +101,30 @@ RandomResidueSelector::subset_from_randomized_vector(
 	core::pose::Pose const & pose,
 	ResidueVector const & random_order_residue_set ) const
 {
+	// calc neighbors of random residue?
+	ResidueSubset nbrs( pose.size(), false );
+	if ( select_res_cluster_ && random_order_residue_set.size() > 0 ) {
+		// create subset that is just focus
+		ResidueSubset focus( pose.size(), false );
+		// focus residue is the first one in the selected set
+		focus[ random_order_residue_set[ 1 ] ] = true;
+		core::select::residue_selector::NeighborhoodResidueSelector nbrs_selector( focus, distance_cutoff_, true );
+		// get residue subset bool vector of neighbors
+		nbrs = nbrs_selector.apply( pose );
+		TR << "Neigbor residues: ";
+		for ( Size ires = 1; ires <= nbrs.size(); ++ires ) {
+			if ( nbrs[ ires ] ) TR << ires << " ";
+		}
+		TR << std::endl;
+	}
+
 	TR << "Selected residues: ";
+
 	std::set< core::Size > selected;
+	// populate selected with residues from random_order_residue_set until >= num_residues_
 	for ( auto const & r : random_order_residue_set ) {
+		// if first res in selected is init, only add next residue r if is within cutoff distance of first
+		if ( select_res_cluster_ && selected.size() >= 1 && nbrs[ r ] == false ) continue;
 		TR << r << " ";
 		selected.insert( r );
 		if ( selected.size() >= num_residues_ ) break;
@@ -108,6 +145,8 @@ RandomResidueSelector::parse_my_tag(
 	basic::datacache::DataMap & data )
 {
 	num_residues_ = tag->getOption< Size >( "num_residues", num_residues_ );
+	select_res_cluster_ = tag->getOption< bool >( "select_res_cluster", select_res_cluster_ );
+	distance_cutoff_ = tag->getOption< Real >( "distance_cutoff", distance_cutoff_ );
 
 	std::string const selectorname = tag->getOption< std::string >( "selector", "" );
 	if ( !selectorname.empty() ) {
@@ -147,6 +186,12 @@ RandomResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		"num_residues", xsct_non_negative_integer,
 		"The number of residues to be randomly selected")
 		+ XMLSchemaAttribute(
+		"select_res_cluster", xsct_rosetta_bool,
+		"option to only select multiple residues near each other, only applies to case where num_residues greater than 1, multiple random residues are required to be within distance_cutoff angstroms of one another")
+		+ XMLSchemaAttribute(
+		"distance_cutoff", xsct_real,
+		"only active when select_res_cluster set to true, distance that defines whether two residues are neighbors or not")
+		+ XMLSchemaAttribute(
 		"selector", xs_string,
 		"Defines the subset from which random residues are chosen.");
 	xsd_type_definition_w_attributes_and_optional_subselector(
@@ -180,4 +225,3 @@ RandomResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 } //namespace residue_selector
 } //namespace select
 } //namespace core
-

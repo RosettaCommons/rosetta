@@ -46,6 +46,7 @@ class RandomResidueSelector : public ResidueSelector {
 public:
 	RandomResidueSelector();
 	RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues );
+	RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues, bool const select_res_cluster, Real const distance_cutoff );
 	virtual ~RandomResidueSelector();
 
 	virtual ResidueSelectorOP
@@ -75,6 +76,8 @@ private:
 private: // data members
 	ResidueSelectorCOP selector_;
 	Size num_residues_;
+	bool select_res_cluster_;
+	Real distance_cutoff_;
 
 #ifdef    SERIALIZATION
 public:
