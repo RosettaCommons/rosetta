@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # :noTabs=true:
 #
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -11,7 +12,7 @@
 # Standard library.
 import os, sys, platform, os.path, json, random
 
-import rosetta
+import pyrosetta.rosetta as rosetta
 
 import logging
 logger = logging.getLogger("rosetta")
@@ -20,16 +21,16 @@ import pyrosetta.logging_support as logging_support
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
-from rosetta.core.pose import make_pose_from_sequence, Pose
-from rosetta.core.kinematics import FoldTree, MoveMap
-from rosetta.core.import_pose import pose_from_file
-from rosetta.core.io.pdb import dump_pdb
-from rosetta.core.id import AtomID
-from rosetta.core.scoring import ScoreFunction
+from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
+from pyrosetta.rosetta.core.kinematics import FoldTree, MoveMap
+from pyrosetta.rosetta.core.import_pose import pose_from_file
+from pyrosetta.rosetta.core.io.pdb import dump_pdb
+from pyrosetta.rosetta.core.id import AtomID
+from pyrosetta.rosetta.core.scoring import ScoreFunction
 
-from rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
-from rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
-from rosetta.protocols.loops import get_fa_scorefxn
+from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
+from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
+from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 
 get_score_function = rosetta.core.scoring.get_score_function
 create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
@@ -80,6 +81,10 @@ class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
 def _rosetta_database_from_env():
     """Read rosetta database directory from environment or standard install locations.
 
+    Database resolution proceeds by first searching the current installation for a 'database' or 'rosetta_database'
+    path. If not found the search then continues to the users's home dir, cygwin, and osx standard installation
+    locations.
+
     Returns database path if found, else None."""
 
     # Figure out database dir....
@@ -91,20 +96,21 @@ def _rosetta_database_from_env():
         else:
             logger.warning('Invalid PYROSETTA_DATABASE environment variable was specified: %s', database)
 
+    candidate_paths = []
+
     database_names = ["rosetta_database", "database"]
+    for database_name in database_names:
+        #Package directory database
+        candidate_paths.append(os.path.join(os.path.dirname(__file__), database_name))
+        candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
 
     for database_name in database_names:
-        candidate_paths = []
-
         #Current directory database
         candidate_paths.append(database_name)
 
-        #Package directory database
-        #if '__file__' in vars(): candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
-        candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
-
         #Home directory database
-        if 'HOME' in os.environ: candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
+        if 'HOME' in os.environ:
+            candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
 
         #Cygwin root install
         if sys.platform == "cygwin":
@@ -113,11 +119,11 @@ def _rosetta_database_from_env():
         # Mac /usr/lib database install
         candidate_paths.append(os.path.join('rosetta', database_name))
 
-        for candidate in candidate_paths:
-            if os.path.isdir(candidate):
-                database = os.path.abspath(candidate)
-                logger.info('Found rosetta database at: %s; using it....', database)
-                return database
+    for candidate in candidate_paths:
+        if os.path.isdir(candidate):
+            database = os.path.abspath(candidate)
+            logger.info('Found rosetta database at: %s; using it....', database)
+            return database
 
     # No database found.
     return None

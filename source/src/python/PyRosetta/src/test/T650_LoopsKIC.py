@@ -8,12 +8,11 @@
 
 from __future__ import print_function
 
-from rosetta import *
 from pyrosetta import *
+from pyrosetta.rosetta import *
 
-from rosetta.protocols.loops.loop_closure.kinematic_closure import *
-
-import rosetta.protocols.loops.loop_mover.refine
+from pyrosetta.rosetta.protocols.loops.loop_closure.kinematic_closure import *
+import pyrosetta.rosetta.protocols.loops.loop_mover.refine
 
 from sys import exit
 from random import randrange

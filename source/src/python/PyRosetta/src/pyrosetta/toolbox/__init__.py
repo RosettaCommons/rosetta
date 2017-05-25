@@ -32,7 +32,7 @@ from __future__ import print_function
 # Imports.
 import os
 
-import rosetta
+import pyrosetta.rosetta as rosetta
 import pyrosetta
 
 from pyrosetta.toolbox.rcsb import load_from_rcsb, pose_from_rcsb, load_fasta_from_rcsb

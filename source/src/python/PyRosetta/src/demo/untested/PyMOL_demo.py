@@ -5,10 +5,7 @@ import time, bz2
 
 from random import random
 
-import rosetta, rosetta.core.pose
-
-import rosetta.core.pose.signals
-
+import pyrosetta.rosetta as rosetta
 
 def test(pose):
     pymol.update_energy = True

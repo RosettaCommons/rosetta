@@ -65,10 +65,9 @@ The method packer_task:
 """
 
 import optparse    # for option sorting
-import rosetta.core.pack.task    # for using resfiles
 
-from rosetta import *
 from pyrosetta import *
+from pyrosetta.rosetta import *
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

@@ -3,7 +3,8 @@
 
 from __future__ import print_function
 
-import rosetta, pyrosetta
+import pyrosetta
+import pyrosetta.rosetta as rosetta
 import math
 #init()
 

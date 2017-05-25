@@ -74,8 +74,28 @@ include_directories(${PYTHON_INCLUDE_DIR})
 # Include path for pybind11 header files -- this may need to be changed depending on your setup
 include_directories(${PROJECT_SOURCE_DIR}/pybind11/include)
 
-
 #%__Rosetta_cmake_instructions__%#
+#
+# Copy source and database files into build from source directory.
+file(COPY
+  src/python/PyRosetta/src/pyrosetta
+  src/python/PyRosetta/src/rosetta
+  src/python/PyRosetta/src/test
+  src/python/PyRosetta/src/demo
+  src/python/PyRosetta/src/self-test.py
+  src/python/PyRosetta/src/setup.py
+  src/python/PyRosetta/src/setup.cfg
+  DESTINATION .
+)
+
+file(GLOB PYROSETTA_DATABASE_FILES database/*)
+file(COPY ${PYROSETTA_DATABASE_FILES} DESTINATION pyrosetta/database)
+
+if(PYROSETTA_EXTERNAL_LINK) 
+    # Copy compiled external modules into pyrosetta module
+    file(GLOB PYROSETTA_LIB_FILES lib/*.so)
+    file(COPY ${PYROSETTA_LIB_FILES} DESTINATION pyrosetta/lib)
+endif()
 
 # Create the binding library
 add_library(rosetta SHARED
@@ -86,6 +106,20 @@ target_link_libraries(rosetta #%__Rosetta_libraries__%# z)
 
 # Don't add a 'lib' prefix to the shared library
 set_target_properties(rosetta PROPERTIES PREFIX "")
+
+if(PYROSETTA_EXTERNAL_LINK) 
+    #Need to set rpath property directly w/ link flag, as opposed to cmake rpath handling
+    #as $ORIGIN is mangled when passed in via .rsp file when linking large libraries
+    set_property(TARGET rosetta APPEND PROPERTY LINK_FLAGS "-Wl,-rpath,\\$ORIGIN/lib")
+    #set_target_properties(rosetta  PROPERTIES INSTALL_RPATH "$ORIGIN")
+    #set_target_properties(rosetta  PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
+endif()
+
+# Place compiled module into pyrosetta module directory
+set_target_properties( rosetta
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/pyrosetta"
+)
 
 if (WIN32)
   if (MSVC)
@@ -130,11 +164,11 @@ elseif (UNIX)
     set_target_properties(rosetta PROPERTIES MACOSX_RPATH ".")
     set_target_properties(rosetta PROPERTIES LINK_FLAGS "-undefined dynamic_lookup ")
     if (NOT ${U_CMAKE_BUILD_TYPE} MATCHES DEBUG)
-      add_custom_command(TARGET rosetta POST_BUILD COMMAND strip -u -r ${PROJECT_BINARY_DIR}/rosetta.so)
+      add_custom_command(TARGET rosetta POST_BUILD COMMAND strip -u -r ${PROJECT_BINARY_DIR}/pyrosetta/rosetta.so)
     endif()
   else()
     if (NOT ${U_CMAKE_BUILD_TYPE} MATCHES DEBUG)
-      add_custom_command(TARGET rosetta POST_BUILD COMMAND strip ${PROJECT_BINARY_DIR}/rosetta.so)
+      add_custom_command(TARGET rosetta POST_BUILD COMMAND strip ${PROJECT_BINARY_DIR}/pyrosetta/rosetta.so)
     endif()
   endif()
 endif()

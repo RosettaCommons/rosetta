@@ -1,7 +1,7 @@
 import os, sys, json
 import logging
 
-import rosetta
+import pyrosetta.rosetta as rosetta
 
 _logger = logging.getLogger("rosetta")
 

@@ -16,10 +16,7 @@ from __future__ import print_function
 
 
 from math import acos, degrees
-import rosetta.core.pose
-import rosetta.core.conformation
-import rosetta.numeric
-
+import pyrosetta.rosetta as rosetta
 
 class NotInstalled(object):
     def __init__(self, name):

@@ -1,6 +1,34 @@
 PyRosetta 4
 ===========
 
+Building with external Rosetta libraries
+----------------------------------------
+
+PyRosetta may be linked against externally compiled Rosetta shared libraries.
+This may be used to suppport "extras" builds or debug builds of the shared
+libraries with release-mode bindings. To support external links, configure &
+build via cmake and clang, then specify `--external-link` to `build.py`.
+
+For example:
+````
+export CC=`which clang`
+export CXX=`which clang++`
+
+cd `git rev-parse --show-toplevel`
+
+pushd source/cmake
+./make_project.py all
+
+pushd build_debug
+cmake -G ninja && ninja
+
+popd
+popd
+
+pushd source/src/python/PyRosetta
+python build.py --external-link debug
+````
+
 Building PyRosetta under Anaconda python
 ----------------------------------------
 If you use Anaconda python (https://www.continuum.io) and would like to use

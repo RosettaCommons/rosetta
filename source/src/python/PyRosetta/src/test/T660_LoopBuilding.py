@@ -9,10 +9,11 @@
 
 from __future__ import print_function
 
-from rosetta import *
 from pyrosetta import *
+from pyrosetta.rosetta import *
+import pyrosetta.rosetta as rosetta
 
-import rosetta.protocols.loops.loop_mover.refine
+import pyrosetta.rosetta.protocols.loops.loop_mover.refine
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

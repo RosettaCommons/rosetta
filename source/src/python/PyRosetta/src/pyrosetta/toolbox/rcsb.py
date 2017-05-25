@@ -17,7 +17,7 @@ from __future__ import print_function
 import os, sys
 import urllib
 
-import rosetta
+import pyrosetta.rosetta as rosetta
 
 from pyrosetta import Pose, pose_from_file
 

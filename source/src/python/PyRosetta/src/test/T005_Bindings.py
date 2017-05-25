@@ -9,8 +9,8 @@
 
 from __future__ import print_function
 
-import rosetta
 import pyrosetta
+import pyrosetta.rosetta as rosetta
 
 pyrosetta.init()
 print( pyrosetta.version() )

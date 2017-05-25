@@ -13,8 +13,8 @@ from __future__ import print_function
 
 import sys
 
-import rosetta, pyrosetta
-import rosetta.core.scoring.methods
+import pyrosetta
+import pyrosetta.rosetta as rosetta
 
 import os; os.chdir('.test.output')
 
