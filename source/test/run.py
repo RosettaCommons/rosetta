@@ -305,7 +305,10 @@ class Tester:
                 print('\nTest suite %s not found!' % Options.one)
                 print("Available test suites are:")
                 tests = [s for (l,s) in self.all_test_suites]
-                for test in sorted(tests,key=str.lower):
+                def make_lower(string):
+                    '''A lower function which works on both regular strings and unicode strings.'''
+                    return string.lower()
+                for test in sorted(tests,key=make_lower):
                     print("\t%s" % test)
                 if len(tests) == 0:
                     print("\t(No Tests Found!)")
