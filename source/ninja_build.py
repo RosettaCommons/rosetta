@@ -99,21 +99,19 @@ if args.clean_exit or args.clean:
 
 #Run make_project.py if requested
 if args.remake:
-    os.chdir(cmake_path)
     if args.my:
-        subprocess.check_call(["./make_project.py", "my"])
+        subprocess.check_call(["./make_project.py", "my"], cwd=cmake_path)
     else:
-        subprocess.check_call(["./make_project.py", "all"])
+        subprocess.check_call(["./make_project.py", "all"], cwd=cmake_path)
 
 #Run cmake if requested
-os.chdir(build_path)
 if args.remake:
-    subprocess.check_call(["cmake", "-G", "Ninja"])
-elif not os.path.isfile("build.ninja"):
+    subprocess.check_call(["cmake", "-G", "Ninja"], cwd=build_path)
+elif not os.path.isfile(os.path.join(build_path, "build.ninja")):
     raise NinjaBuildError("File build.ninja not found. Use option '-remake' the first time building.")
 
 #Run ninja to build Rosetta
-ninja_command = ["ninja"]
+ninja_command = ["ninja", "-C", build_path]
 
 if args.j is not None:
     ninja_command.extend( ["-j",str(args.j)] )
