@@ -17,6 +17,7 @@
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
+	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>);
 #endif
 
 void bind_T07_class(std::function< pybind11::module &(std::string const &namespace_) > &M)
@@ -110,6 +111,8 @@ PYBIND11_PLUGIN(T07_class) {
 	std::vector< std::pair<std::string, std::string> > sub_modules {
 	};
 	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	//pybind11::class_<std::shared_ptr<void>>(M(""), "_encapsulated_data_");
 
 	bind_T07_class(M);
 

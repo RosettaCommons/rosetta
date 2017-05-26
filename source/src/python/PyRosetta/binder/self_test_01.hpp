@@ -16,6 +16,13 @@
 #include <type_traits>
 #include <sstream>
 #include <vector>
+#include <set>
+#include <map>
+#include <list>
+#include <unordered_set>
+#include <unordered_map>
+#include <deque>
+#include <forward_list>
 
 #include <self_test.incl.hpp>
 //#include <iostream>
@@ -33,8 +40,20 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
+void foo(std::set<float> ) {}
+void foo(std::map<float,int> ) {}
+void foo(std::unordered_set<float> ) {}
+void foo(std::unordered_map<float,int> ) {}
+void foo(std::vector<double> ) {}
+void foo(std::list<double> ) {}
+void foo(std::deque<int> ) {}
+void foo(std::multiset<float> ) {}
+void foo(std::multimap<float, int> ) {}
+void foo(std::forward_list<float> ) {}
+void foo(std::unordered_multiset<float> ) {}
+void foo(std::unordered_multimap<float, int> ) {}
 
-void foo(std::stringstream ) {}
+//void foo(std::stringstream ) {}
 //void foo(std::vector<int> &) {}
 
 // struct X final

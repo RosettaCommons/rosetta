@@ -16,20 +16,27 @@ pyrosetta.init()
 
 if hasattr(rosetta, 'cereal'): # check if this is a cereliazation build
 
-    pose = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV")
+    pose1 = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV")
+    pose2 = pyrosetta.pose_from_sequence("DDDDDD")
 
     # saving into oss stream
     oss = rosetta.std.ostringstream()
     arc = rosetta.cereal.BinaryOutputArchive(oss);
-    pose.save(arc)
+    pose1.save(arc)
+    pose2.save(arc)
 
 
     # loading from oss stream
-    pose_l = pyrosetta.Pose()
+    pose1_l = pyrosetta.Pose()
+    pose2_l = pyrosetta.Pose()
     iss = rosetta.std.istringstream( oss.bytes() )
     arc = rosetta.cereal.BinaryInputArchive(iss);
-    pose_l.load(arc)
+    pose1_l.load(arc)
+    pose2_l.load(arc)
 
-    print(pose)
-    print(pose_l)
-    assert( pose_l.sequence() == pose.sequence() )
+    print( 'Pose1  :\n{}-----------------\n'.format(pose1) )
+    print( 'Pose1_l:\n{}-----------------\n'.format(pose1_l) )
+    print( 'Pose2  :\n{}-----------------\n'.format(pose2) )
+    print( 'Pose2_l:\n{}-----------------\n'.format(pose2_l) )
+    assert( pose1_l.sequence() == pose1.sequence() )
+    assert( pose2_l.sequence() == pose2.sequence() )

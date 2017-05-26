@@ -54,6 +54,10 @@ void request_bindings(clang::QualType const &qt, Context &context);
 std::string standard_name(std::string const &type);
 
 
+/// Attempt to simplify std:: name by removing unneded template arguments. Function assume that there is no 'std::' namespaces prefix at the beginning of the argument string
+std::string simplify_std_class_name(std::string const &type);
+
+
 /// check if given class/struct is builtin in Python and therefor should not be binded
 bool is_python_builtin(clang::NamedDecl const *C);
 

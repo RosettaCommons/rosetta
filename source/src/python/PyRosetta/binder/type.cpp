@@ -19,6 +19,7 @@
 
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/ExprCXX.h>
+#include <llvm/Support/Regex.h>
 
 //#include <experimental/filesystem>
 #include <cstdlib>
@@ -118,7 +119,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/istream.tcc>",    "<istream>"),
 		make_pair("<bits/ostream.tcc>",    "<ostream>"),
 		make_pair("<bits/postypes.h>",     "<ios>"),
-		make_pair("<bits/shared_ptr.h>",   "<memory>"),
+
 		make_pair("<bits/stl_function.h>", "<functional>"),
 		make_pair("<bits/stl_tree.h>",     "<map>"),
 		make_pair("<bits/stl_map.h>",      "<map>"),
@@ -132,7 +133,6 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/stl_list.h>",     "<list>"),
 		make_pair("<bits/stl_deque.h>",    "<deque>"),
 		make_pair("<bits/stl_queue.h>",    "<queue>"),
-		make_pair("<bits/stl_multimap.h>", "<map>"),
 		make_pair("<bits/sched.h>",        "<unistd.h>"),
 		make_pair("<bits/pthreadtypes.h>", "<pthread.h>"),
 		make_pair("<bits/gthr-default.h>", "<pthread.h>"),
@@ -142,6 +142,9 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/basic_string.tcc>","<string>"),
 		make_pair("<bits/streambuf_iterator.h>", "<streambuf>"),
 
+		make_pair("<bits/shared_ptr.h>",      "<memory>"),
+		make_pair("<bits/unique_ptr.h>",      "<memory>"),
+		make_pair("<bits/uses_allocator.h>",  "<memory>"),
 		make_pair("<bits/shared_ptr_base.h>", "<memory>"),
 		make_pair("<backward/auto_ptr.h>",    "<memory>"),
 		make_pair("<ext/concurrence.h>",      "<memory>"),
@@ -160,10 +163,12 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<ctype.h>",   "<cctype>"),
 		make_pair("<wchar.h>",   "<cwchar>"),
 
-		make_pair("<bits/unique_ptr.h>",      "<memory>"),
 		make_pair("<bits/functional_hash.h>", "<functional>"),
 		make_pair("<bits/unordered_set.h>",   "<unordered_set>"),
 		make_pair("<bits/unordered_map.h>",   "<unordered_map>"),
+
+		make_pair("<bits/stl_multiset.h>", "<set>"),
+		make_pair("<bits/stl_multimap.h>", "<map>"),
 
 		//make_pair("<bits/hashtable_policy.h>", could be either unordered_map or unordered_set
 		make_pair("<bits/hashtable_policy.h>", "<unordered_map>"),
@@ -310,9 +315,85 @@ string standard_name(string const &type)
 	// 	}
 	// }
 
+	if( begins_with(r, "std::") ) r = "std::" + simplify_std_class_name( r.substr(5) );
+
 	fix_boolean_types(r);
 
 	return r;
+}
+
+
+/// Attempt to simplify std:: name by removing unneded template arguments. Function assume that there is no 'std::' namespaces prefix at the beginning of the argument string
+string simplify_std_class_name(string const &type)
+{
+	static std::map<string, string> const std_typedef_map {
+		{"basic_iostream<char,std::char_traits<char>>", "iostream"},
+		{"basic_ostream<char,std::char_traits<char>>" ,  "ostream"},
+		{"basic_istream<char,std::char_traits<char>>",   "istream"},
+
+		{"basic_ostream<wchar_t,std::char_traits<wchar_t>>", "wostream"},
+		{"basic_istream<wchar_t,std::char_traits<wchar_t>>", "wistream"},
+
+		{"basic_stringstream<char,std::char_traits<char>,std::allocator<char>>",   "stringstream"},
+		{"basic_istringstream<char,std::char_traits<char>,std::allocator<char>>", "istringstream"},
+		{"basic_ostringstream<char,std::char_traits<char>,std::allocator<char>>", "ostringstream"},
+
+		{"basic_filebuf<char,std::char_traits<char>>", "filebuf"},
+		{"basic_stringbuf<char>", "stringbuf"},
+
+		{"basic_ifstream<char,std::char_traits<char>>", "ifstream"},
+		{"basic_ofstream<char,std::char_traits<char>>", "ofstream"},
+
+		{"basic_stringbuf<char,std::char_traits<char>,std::allocator<char>>",            "stringbuf"},
+		{"basic_stringbuf<wchar_t,std::wchar_traits<wchar_t>,std::allocator<wchar_t>>", "wstringbuf"},
+
+		{"basic_streambuf<char,std::char_traits<char>>",        "streambuf"},
+		{"basic_streambuf<wchar_t,std::char_traits<wchar_t>>", "wstreambuf"},
+	};
+
+	auto it = std_typedef_map.find(type);
+	if( it != std_typedef_map.end() ) {
+		return it->second;
+	}
+
+	// make_pair("class std::ostream", "std::ostream"),
+	// make_pair("class std::istream", "std::istream"),
+	// make_pair("class std::wostream", "std::wostream"),
+	// make_pair("class std::wistream", "std::wistream"),
+	// make_pair("class std::streambuf",  "std::streambuf"),
+	// make_pair("class std::wstreambuf", "std::wstreambuf"),
+	// make_pair("class std::filebuf",  "std::filebuf"),
+
+	//llvm::Regex R("std::set<(.*),std::less<\\1>.*");
+	//llvm::Regex R("std::set<(.*),std::less<\\1>,std::allocator<\\1>>");
+	//r = R.sub("std::set<\\1>", r);
+
+	string res = type;
+
+	static vector< std::pair<string, string> > regex_map = {
+		make_pair("^list<(.*),std::allocator<\\1>>$", "list<\\1>"),
+		make_pair("^deque<(.*),std::allocator<\\1>>$", "deque<\\1>"),
+		make_pair("^vector<(.*),std::allocator<\\1>>$", "vector<\\1>"),
+		make_pair("^set<(.*),std::less<\\1>,std::allocator<\\1>>$", "set<\\1>"),
+		make_pair("^forward_list<(.*),std::allocator<\\1>>$", "forward_list<\\1>"),
+		make_pair("^map<(.*),(.*),std::less<\\1>,std::allocator<std::pair<const \\1, \\2> >>$", "map<\\1,\\2>"),
+
+		make_pair("^multiset<(.*),std::less<(.*)>,std::allocator<(.*)>>$", "multiset<\\1>"),
+		make_pair("^multimap<(.*),(.*),std::less<\\1>,std::allocator<std::pair<const \\1, \\2> >>$", "multimap<\\1,\\2>"),
+
+		make_pair("^unordered_set<(.*),std::hash<\\1>,std::equal_to<\\1>,std::allocator<\\1>>$", "unordered_set<\\1>"),
+		make_pair("^unordered_map<(.*),(.*),std::hash<\\1>,std::equal_to<\\1>,std::allocator<std::pair<const \\1, \\2> >>$", "unordered_map<\\1,\\2>"),
+
+		make_pair("^unordered_multiset<(.*),std::hash<\\1>,std::equal_to<\\1>,std::allocator<\\1>>$", "unordered_multiset<\\1>"),
+		make_pair("^unordered_multimap<(.*),(.*),std::hash<\\1>,std::equal_to<\\1>,std::allocator<std::pair<const \\1, \\2> >>$", "unordered_multimap<\\1,\\2>"),
+	};
+
+	for(auto & p : regex_map) {
+		llvm::Regex R(p.first);
+		res = R.sub(p.second, res);
+	}
+
+	return res;
 }
 
 
