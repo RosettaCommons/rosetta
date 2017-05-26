@@ -51,15 +51,15 @@ generate_dunbrack_binaries() {
 		TR << "Generated Dunbrack binary cache for -beta: " << beta_rotamer_library.get_binary_name() << std::endl;
 	}
 
-	// Generate the beta_nov15 Rotamer Library
+	// Generate the talaris Rotamer Library
 	{
-		TR.Debug << "Making sure the beta_nov15 Dunbrack binaries are generated" << std::endl;
-		utility::options::OptionCollection beta15_options( basic::options::option );
-		beta15_options[ corrections::beta_nov15 ].set_value( "true" );
-		core::init::init_score_function_corrections( beta15_options );
+		TR.Debug << "Making sure the talaris Dunbrack binaries are generated" << std::endl;
+		utility::options::OptionCollection talaris_options( basic::options::option );
+		talaris_options[ corrections::restore_talaris_behavior ].set_value( "true" );
+		core::init::init_score_function_corrections( talaris_options );
 
-		core::pack::dunbrack::RotamerLibrary beta15_rotamer_library( beta15_options );
-		TR << "Generated Dunbrack binary cache for -beta_nov15: " << beta15_rotamer_library.get_binary_name() << std::endl;
+		core::pack::dunbrack::RotamerLibrary talaris_rotamer_library( talaris_options );
+		TR << "Generated Dunbrack binary cache for -restore_talaris_behavior: " << talaris_rotamer_library.get_binary_name() << std::endl;
 	}
 
 	// Generate the score12 Rotamer Library

@@ -913,17 +913,22 @@ public: // test functions
 		// get chains
 		utility::vector1< int > chains = get_chains( pose );
 
-		// initializations
-		core::Vector com1( -8.6927, 3.7495, 19.4293 );
-		core::Vector com2( -4.70189, -9.09737, 19.3467 );
-		core::Vector com3( 8.92337, -3.8958, 18.6790 );
-		core::Vector com4( 4.4793, 9.22617, 19.3396 );
+		// initializations; hpark: slight chance with beta_nov15
+		core::Vector com1( /*-8.6927, 3.7495, 19.4293   */-8.66951, 3.74931, 19.4430 );
+		core::Vector com2( /*-4.70189, -9.09737, 19.3467*/-4.70721, -9.09404, 19.3549);
+		core::Vector com3( /*8.92337, -3.8958, 18.6790  */ 8.90770,-3.89594, 18.7045 );
+		core::Vector com4( /*4.4793, 9.22617, 19.3396   */ 4.46862, 9.22600, 19.3294 );
 
 		// compute chain COM for all chains and pushback into vector
 		core::Vector com_1 = protocols::membrane::chain_com( pose, chains[ 1 ] );
 		core::Vector com_2 = protocols::membrane::chain_com( pose, chains[ 2 ] );
 		core::Vector com_3 = protocols::membrane::chain_com( pose, chains[ 3 ] );
 		core::Vector com_4 = protocols::membrane::chain_com( pose, chains[ 4 ] );
+
+		std::cout << "core::Vector com1( " << com_1[0] << ", " << com_1[1] << ", " << com_1[2] << " );" << std::endl;
+		std::cout << "core::Vector com2( " << com_2[0] << ", " << com_2[1] << ", " << com_2[2] << " );" << std::endl;
+		std::cout << "core::Vector com3( " << com_3[0] << ", " << com_3[1] << ", " << com_3[2] << " );" << std::endl;
+		std::cout << "core::Vector com4( " << com_4[0] << ", " << com_4[1] << ", " << com_4[2] << " );" << std::endl;
 
 		// test
 		position_equal_within_delta( com1, com_1 , 0.001 );

@@ -1,0 +1,25 @@
+# Rosetta Residue Topology File
+# Type: EMB
+# Desc: Defines the embedding of a molecule in the implicit membrane
+# Author: Rebecca Alford (rfalford12@gmail.com)
+# Author: Julia Koehler Leman (julia.koehler1982@gmail.com)
+# Last Modified 9/6/14
+NAME EMB                
+IO_STRING EMB Z         
+TYPE LIGAND
+PROPERTIES MEMBRANE             
+AA UNK
+ROTAMERS BASIC
+ATOM DPTH MPdp H    0.0 # Embedding Depth
+ATOM CNTR MPct H    0.0 # Embedding Center
+ATOM NORM MPnm H    0.0 # Embedding Normal
+BOND CNTR NORM
+BOND CNTR DPTH
+
+ICOOR_INTERNAL CNTR     0.000   0.000  0.000 CNTR DPTH NORM 
+ICOOR_INTERNAL DPTH    90.000 180.000 15.000 CNTR DPTH NORM 
+ICOOR_INTERNAL NORM   270.000  90.000  1.000 CNTR DPTH NORM 
+
+NBR_ATOM CNTR
+NBR_RADIUS -100000.0 ## dont interact with anyone
+FIRST_SIDECHAIN_ATOM ALL

@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
   <SCOREFXNS>
-    <ScoreFunction name="talaris" weights="talaris2014"/>
+    <ScoreFunction name="ref" weights="ref2015"/>
   </SCOREFXNS>
   <RESIDUE_SELECTORS>
   </RESIDUE_SELECTORS>
@@ -13,11 +13,11 @@
                          enrichment_threshold="0.0"  secstruct="LHHHHHHHHHHHHHHHHHHLLHHHHHHHLLLLLEEEELLEEEELHHHHHHHHHHHHHHLLEEEEEEEEEEEELLEEEEEEEEEEEELLEEEEEEEEEEEEEELLEEEEEEEEELHHHHHHHHHHHL" use_dssp="false" />
   </TASKOPERATIONS>
   <FILTERS>
-    <TaskAwareScoreType name="test1" task_operations="disallow_nonnative_loop_sequences_1" scorefxn="talaris"
+    <TaskAwareScoreType name="test1" task_operations="disallow_nonnative_loop_sequences_1" scorefxn="ref"
 			score_type="total_score" threshold="100000" mode="total"/>
-    <TaskAwareScoreType name="test2" task_operations="disallow_nonnative_loop_sequences_2" scorefxn="talaris"
+    <TaskAwareScoreType name="test2" task_operations="disallow_nonnative_loop_sequences_2" scorefxn="ref"
                         score_type="total_score" threshold="100000" mode="total"/>
-    <TaskAwareScoreType name="test3" task_operations="disallow_nonnative_loop_sequences_3" scorefxn="talaris"
+    <TaskAwareScoreType name="test3" task_operations="disallow_nonnative_loop_sequences_3" scorefxn="ref"
                         score_type="total_score" threshold="100000" mode="total"/>
   </FILTERS>
   <MOVERS>

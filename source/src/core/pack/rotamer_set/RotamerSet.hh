@@ -36,6 +36,9 @@
 #include <core/conformation/Residue.hh> // WIN32 INCLUDE
 #endif
 
+// Basic headers
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
@@ -182,6 +185,10 @@ public:
 	virtual
 	conformation::ResidueCOP
 	rotamer( Size rot_id ) const = 0;
+
+	virtual
+	basic::datacache::BasicDataCache &
+	rotamer_data_cache( Size rot_id ) const = 0;
 
 	// iterate over rotamers directly
 	virtual Rotamers::const_iterator begin() const = 0;

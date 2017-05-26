@@ -352,10 +352,12 @@ public:
 		rosetta_recharge_fullatom( *rsd );
 
 		// 21 atoms in TYR -- Nbb + Cabb + CObb + OCbb + CH2 + aroC * 6 + OH + HNbb + Hapo * 3 + Haro * 4 + Hpol
-		core::Real Y_naive_charge = -0.47 + 0.07 + 0.51 + -0.51 + -0.18 + -0.115*6 + -0.66 + 0.31 + 0.115*4 + 0.095*3 + 0.43;
-		TS_ASSERT_DELTA( rsd->atom(" N  ").charge(), -0.470 - Y_naive_charge/21, 1e-4 ); //"Nbb "
-		TS_ASSERT_DELTA( rsd->atom(" CA ").charge(),  0.070 - Y_naive_charge/21, 1e-4 ); //"CAbb"
-		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/21, 1e-4 ); //"OH  "
+		//core::Real Y_naive_charge = -0.47 + 0.07 + 0.51 + -0.51 + -0.18 + -0.115*6 + -0.66 + 0.31 + 0.115*4 + 0.095*3 + 0.43; // -0.4450
+		core::Real Y_naive_charge = -0.47 + 0.07 + 0.51 + -0.51 + -0.18 + -0.115*4 + -0.66 + 0.31 + 0.115*4 + 0.095*3 + 0.43; // -0.2150; two aroC -> CH0 in beta_nov15
+		// skip two CH0 with zero-charge: 21 -> 19
+		TS_ASSERT_DELTA( rsd->atom(" N  ").charge(), -0.470 - Y_naive_charge/19, 1e-4 ); //"Nbb "
+		TS_ASSERT_DELTA( rsd->atom(" CA ").charge(),  0.070 - Y_naive_charge/19, 1e-4 ); //"CAbb"
+		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/19, 1e-4 ); //"OH  "
 
 		core::Real net_charge(0);
 		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
@@ -370,9 +372,9 @@ public:
 
 		rosetta_recharge_fullatom( *rsd );
 
-		TS_ASSERT_DELTA( rsd->atom(" N  ").charge(), -0.470 - Y_naive_charge/21 + -2.0/21, 1e-4 ); //"Nbb "
-		TS_ASSERT_DELTA( rsd->atom(" CA ").charge(),  0.070 - Y_naive_charge/21 + -2.0/21, 1e-4 ); //"CAbb"
-		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/21 + -2.0/21, 1e-4 ); //"OH  "
+		TS_ASSERT_DELTA( rsd->atom(" N  ").charge(), -0.470 - Y_naive_charge/19 + -2.0/19, 1e-4 ); //"Nbb "
+		TS_ASSERT_DELTA( rsd->atom(" CA ").charge(),  0.070 - Y_naive_charge/19 + -2.0/19, 1e-4 ); //"CAbb"
+		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/19 + -2.0/19, 1e-4 ); //"OH  "
 
 		net_charge = 0;
 		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {

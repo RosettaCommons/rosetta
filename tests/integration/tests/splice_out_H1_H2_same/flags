@@ -21,3 +21,5 @@
 -pdb_comments true
 -unmute protocols.simple_filters.ScoreTypeFilter
 -mute protocols.toolbox.task_operations.SeqprofConsensusOperation
+
+-restore_talaris_behavior

@@ -49,8 +49,10 @@ public:
 	void tearDown() {}
 
 	void test_rama_maps() {
-		do_test_rama_map("scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4");
-		do_test_rama_map("scoring/score_functions/rama/Rama.10.2009.yfsong.dat");
+		//do_test_rama_map("scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4");
+		//do_test_rama_map("scoring/score_functions/rama/Rama.10.2009.yfsong.dat");
+		// hpark: test on shapovalov style instead
+		do_test_rama_map("scoring/score_functions/rama/fd/all.ramaProb");
 	}
 
 	void do_test_rama_map(
@@ -85,11 +87,17 @@ public:
 	}
 
 	void test_specific_parts_rama_map() {
+		// hpark: test on shapovalov style instead
 		do_test_specific_parts_rama_map(
-			"scoring/score_functions/rama/Rama.10.2009.yfsong.dat",
+			"scoring/score_functions/rama/fd/all.ramaProb",
 			core::chemical::aa_pro,
 			289.51369082867473,
-			158.66287604720782);
+			158.66287604720782
+			/*"scoring/score_functions/rama/Rama.10.2009.yfsong.dat",
+			core::chemical::aa_pro,
+			289.51369082867473,
+			158.66287604720782*/
+		);
 	}
 
 	void do_test_specific_parts_rama_map(

@@ -3,3 +3,4 @@
 -docking:partners A_B
 -mp:setup:optimize1 1
 -mp:setup:optimize2 1
+-restore_talaris_behavior

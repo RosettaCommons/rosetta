@@ -1,0 +1,71 @@
+## fullatom protein sulfation patch for tyrosine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME sulfated
+TYPES SULFATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NAME3 TYR DTY
+NOT VARIANT_TYPE PHOSPHORYLATION  ## Just in case
+NOT VARIANT_TYPE SULFATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING TYS Y
+SET_INTERCHANGEABILITY_GROUP TYS
+## these are the operations involved
+ADD_ATOM  S   S    S    -0.16 ## Best guess from the small molecule docking script molfile_to_params.py
+ADD_ATOM  O1  OOC  OC   -0.33 ## Best guess for a -1 charge over 3 oxygen atoms
+ADD_ATOM  O2  OOC  OC   -0.33
+ADD_ATOM  O3  OOC  OC   -0.33
+ADD_BOND  OH  S    
+ADD_BOND  S   O1  
+ADD_BOND  S   O2  
+ADD_BOND  S   O3  
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 166 samples of RCSB's PDB files (with NMR structures excluded):
+##   OH-S bond length, S-O1/O2/O3 bond length, CZ-OH-S bond angle, OH-S-O1/O2/O3 bond angle
+##   For dihedral angles, O1 is given the anti conformation (180 degrees), 
+##     while O2 and O3 are placed in their ideal positions for a tetrahedral configuration.
+##
+## The dihedral angle for placing S was taken from the mean value of the rotamer bin 
+##   with the highest probability.
+##
+SET_ICOOR S   81.17  61.81  1.564  OH  CZ  CE2
+SET_ICOOR O1  180.0  71.37  1.480  S   OH  CZ
+SET_ICOOR O2 -120.0  71.37  1.480  S   OH  O1
+SET_ICOOR O3 -120.0  71.37  1.480  S   OH  O2
+
+
+ADD_PROPERTY CHARGED ## For the sulfate group
+
+
+## Chi 3 was a proton chi in TYR.params. Since the hydrogen atom isn't there anymore, 
+##   redefine the fourth atom of chi3 to the added P and then remove the hydrogen.
+REDEFINE_CHI 3  CE2  CZ   OH   S 
+DELETE_ATOM HH
+
+
+## Manually define rotamer bins for chi 3 using data from the 166 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding.
+
+ADD_CHI_ROTAMER 3   81.17  15.50  #86.1%
+ADD_CHI_ROTAMER 3  -92.82  19.81  #13.9%
+
+
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+END_CASE
+

@@ -183,6 +183,7 @@ sources = {
 		"InteractionGraphFactory",
 		"FASTERInteractionGraph",
 		"HPatchInteractionGraph",
+		"LinMemInteractionGraph",
 		"NPDHBondInteractionGraph",
 		"RotamerDots",
 		"SimpleInteractionGraph",

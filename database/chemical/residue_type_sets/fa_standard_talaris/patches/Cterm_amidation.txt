@@ -1,0 +1,60 @@
+# This is for adding an -NH2 group to C-terminus of protein/peptide (replaces -OH group)
+# Added by who-knows-who, who-knows-when.
+# Made to actually work on 13 September 2016, by Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
+
+NAME Cterm_amidation
+TYPES CTERM_AMIDATION
+
+## general requirements for this patch
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE N_METHYLATION
+NOT VARIANT_TYPE CTERM_AMIDATION
+NOT VARIANT_TYPE CUTPOINT_UPPER
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+# Case selector...if specify CTERM_AMIDATION, apply to upper (C) terminus
+BEGIN_CASE
+BEGIN_SELECTOR
+VARIANT_TYPE UPPER_TERMINUS_VARIANT
+END_SELECTOR
+
+# If modified, no longer canonical.
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+# Delete the OH at C-term and replace with the following stuff
+DELETE_ATOM OXT
+
+# add these atoms and bonds instead
+ADD_ATOM  NT   NH2O  NH2  -0.62
+ADD_ATOM 1HN    Hpol H    0.3
+ADD_ATOM 2HN    Hpol H    0.3
+ADD_BOND  C    NT
+ADD_BOND  NT  1HN
+ADD_BOND  NT  2HN
+
+SET_BACKBONE_HEAVYATOM NT
+SET_POLYMER_CONNECT UPPER NONE
+
+# set internal coordinates for this functional group
+SET_ICOOR	O	180.00000	60.00000	1.2		C  CA N
+SET_ICOOR	NT	180.000031	63.799957	1.328686	C  CA O
+SET_ICOOR	1HN	180.000000	58.299980	1.000000	NT C  CA
+SET_ICOOR	2HN	-179.999878	60.850006	1.000000	NT C  1HN
+
+# change normal atom types appropriately
+SET_ATOM_TYPE O ONH2
+SET_ATOM_TYPE C CNH2
+SET_MM_ATOM_TYPE O O
+SET_MM_ATOM_TYPE C CC
+SET_ATOMIC_CHARGE C 0.55
+SET_ATOMIC_CHARGE O -0.55
+
+END_CASE # Umm I think this ends the case of if you're calling CTERM_AMIDATION on a non-amidated terminus
+
+# Begin case for all other instances?
+BEGIN_CASE
+
+END_CASE

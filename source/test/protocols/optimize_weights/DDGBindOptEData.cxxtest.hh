@@ -296,12 +296,12 @@ public:
 			20 /* chemical::num_canonical_aas */,  33 /* free_score_list.size() + chemical::num_canonical_aas */, fixed_parameters, free_score_list, fixed_score_list );
 		score = ddg_bind_position_data->get_score( component_weights, dofs, dE_dvars, 13 /* free_score_list.size() */,
 			20 /* chemical::num_canonical_aas */,  33 /* free_score_list.size() + chemical::num_canonical_aas */, fixed_parameters, free_score_list, fixed_score_list );
-		TS_ASSERT_DELTA( score, 3.9490, 0.1 );
+		TS_ASSERT_DELTA( score, /*3.9490*/5.9764, 0.1 );
 
 		// also check to make sure the change in the reference energy for all of the mutated residues was taken into account by checking the dE_dvars array
 		// The refE's are in order by one letter code, and a MultiVec is a vector1 of Reals. So E38A would touch indices (14 and 17)
-		TS_ASSERT_DELTA( dE_dvars[ 14 ], -4.0566, 0.1 );
-		TS_ASSERT_DELTA( dE_dvars[ 17 ],  4.0566, 0.1 );
+		TS_ASSERT_DELTA( dE_dvars[ 14 ], /*-4.0566*/-4.8893, 0.1 );
+		TS_ASSERT_DELTA( dE_dvars[ 17 ],  /*4.0566*/ 4.8893, 0.1 );
 
 		//score = ddg_bind_position_data->get_score( component_weights, vars, dE_dvars, free_score_list.size(),
 		// chemical::num_canonical_aas, free_score_list.size() + chemical::num_canonical_aas, fixed_parameters, free_score_list, fixed_score_list );

@@ -10,3 +10,4 @@
 -parser:script_vars source=1k8r_repack.pdb
 -parser:protocol fuzzy.xml
 -s 1bkd_design.pdb
+-restore_talaris_behavior

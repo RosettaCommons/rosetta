@@ -1,15 +1,15 @@
-        <tala weights=talaris2014/>
-        <tala_comp weights=talaris2014 > <!--score function that has constraints and composition on-->
+        <ref weights="ref2015"/>
+        <ref_comp weights="ref2015" > <!--score function that has constraints and composition on-->
             <Reweight scoretype=coordinate_constraint weight=1 />
             <Reweight scoretype=atom_pair_constraint weight=1 />
             <Reweight scoretype=dihedral_constraint weight=1 />
             <Reweight scoretype=angle_constraint weight=1 />
             <Reweight scoretype=aa_composition weight=1.0 />
-        </tala_comp>
-        <tala_cst weights=talaris2014 > <!--score function that has constriants on-->
+        </ref_comp>
+        <ref_cst weights="ref2015_cst" > <!--score function that has constriants on-->
             <Reweight scoretype=coordinate_constraint weight=1 />
             <Reweight scoretype=atom_pair_constraint weight=1 />
             <Reweight scoretype=dihedral_constraint weight=1 />
             <Reweight scoretype=angle_constraint weight=1 />
             Reweight scoretype=aa_composition weight=1.0 />
-        </tala_cst>
+        </ref_cst>

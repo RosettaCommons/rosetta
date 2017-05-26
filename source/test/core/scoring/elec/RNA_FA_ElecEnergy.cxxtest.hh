@@ -58,7 +58,7 @@ public:
 		core::Real const score = sfxn( rna_pose );
 		//std::cout.precision(16);
 		//std::cout << "score rna pdb: " << score << std::endl;
-		TS_ASSERT_DELTA( score, -0.3105545358020205, 1e-6 );
+		TS_ASSERT_DELTA( score, -0.3867971789450972, 1e-6 );
 	}
 
 	/// @brief Smoothed fa-elec derivative check.

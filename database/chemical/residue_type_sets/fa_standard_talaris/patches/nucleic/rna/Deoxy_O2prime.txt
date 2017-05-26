@@ -1,0 +1,110 @@
+# Yes, this is insane -- a patch to make DNA from RNA.
+# Virtualizes 2'-OH and O2' so that all RNA-handling code that
+# looks for those atoms is fooled into thinking this is still RNA.
+NAME deoxy_O2prime
+TYPES  DEOXY_O2PRIME
+
+BEGIN_SELECTOR
+PROPERTY RNA
+END_SELECTOR
+
+BEGIN_CASE
+BEGIN_SELECTOR
+AA RAD
+END_SELECTOR
+SET_IO_STRING  DA a
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
+AA RCY
+END_SELECTOR
+SET_IO_STRING  DC c
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
+AA RGU
+END_SELECTOR
+SET_IO_STRING  DG g
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
+AA URA
+END_SELECTOR
+SET_IO_STRING  DU u
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 5MU
+END_SELECTOR
+SET_IO_STRING  DT t
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
+AA URA
+END_SELECTOR
+SET_IO_STRING  DU u
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+
+# All other RNA can also be deoxy -- will not change IO strings though.
+BEGIN_CASE ### general case ###
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE

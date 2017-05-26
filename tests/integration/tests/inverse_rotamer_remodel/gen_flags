@@ -24,3 +24,4 @@
 -jd2:enzdes_out
 -dump_inverse_rotamers #comment this out for production runs
 -enzdes:no_packstat_calculation #comment this out for production runs
+-restore_talaris_behavior

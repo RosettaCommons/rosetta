@@ -14,7 +14,7 @@ residue_1 = test_pose.residue(275)
 residue_2 = test_pose.residue(55)
 
 #sfxn =create_score_function('score12')
-sfxn = create_score_function('talaris2013')
+sfxn = create_score_function('ref2015')
 
 #calculating atom-atom pairwise interactions and summing
 #to get total energy (which should match, residue-residue energy!!!)

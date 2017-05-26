@@ -4,3 +4,4 @@
 -overwrite
 -mute all
 -unmute protocols.simple_filters.SimpleHbondsToAtomFilter
+-restore_talaris_behavior

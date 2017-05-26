@@ -200,7 +200,8 @@ public:
 		}
 		TR << "\n";
 
-		core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014" ) );
+		// call default, not hardcoded one
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "ref2015") );
 		core::Real const score1( (*scorefxn)(good_pose) );
 		core::Real const score2( (*scorefxn)(questionable_pose) );
 		TR << "SCORE1\tSCORE2\n" << score1 << "\t" << score2 << "\n";

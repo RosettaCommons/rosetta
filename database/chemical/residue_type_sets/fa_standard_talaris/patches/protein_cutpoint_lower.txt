@@ -1,0 +1,92 @@
+## patch for the residue on the lower side of a cutpoint, for loop modeling
+
+NAME protein_cutpoint_lower
+TYPES CUTPOINT_LOWER
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+BEGIN_CASE ## SRI's special backbones
+
+BEGIN_SELECTOR
+PROPERTY SRI
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND C6 OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1 180.0 63.799 1.329   C6  C5  O1 ## guarantees planarity at carbonyl carbon
+SET_ICOOR OVL2 180.0 58.3   1.458 OVL1  C6 C5 ## sets omega = 180.0
+
+END_CASE
+
+BEGIN_CASE ## Triazolemer linker 
+
+BEGIN_SELECTOR
+PROPERTY TRIAZOLE_LINKER
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND C OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1 180.0 63.799 1.329   C  C4  O ## guarantees planarity at carbonyl carbon
+SET_ICOOR OVL2 180.0 58.3   1.458 OVL1  C C4 ## sets omega = 180.0
+
+END_CASE
+
+BEGIN_CASE ## Gamma-amino acids
+
+BEGIN_SELECTOR
+PROPERTY GAMMA_AA
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND C OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1 180.0 63.799 1.329   C  C2  O ## guarantees planarity at carbonyl carbon
+SET_ICOOR OVL2 180.0 58.3   1.458 OVL1  C C2 ## sets omega = 180.0
+
+END_CASE
+
+BEGIN_CASE ## general
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND C OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1 180.0 63.799 1.329   C  CA  O ## guarantees planarity at carbonyl carbon
+SET_ICOOR OVL2 180.0 58.3   1.458 OVL1  C CA ## sets omega = 180.0
+
+END_CASE
+

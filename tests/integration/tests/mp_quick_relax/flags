@@ -3,3 +3,4 @@
 -mp:setup:spanfiles inputs/1AFO_AB.span
 -mp:quickrelax:angle_max 2
 -mp:quickrelax:nmoves nres
+-restore_talaris_behavior

@@ -17,6 +17,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
@@ -1079,13 +1080,18 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
 			EtableOptions options_local( options_in );
 			options_local.lj_switch_dis2sigma = 0.91;
+			/*
 			if ( option[corrections::beta_nov15 ]() || option[ corrections::beta_nov15_cart ]() ) {
-				// hacky route for beta energy function
-				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-					options_local, "SOFTBETANOV15" ) );
-			} else { // default
+			// hacky route for beta energy function
+			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+			options_local, "SOFTBETANOV15" ) );
+			*/
+			if ( option[ mistakes::restore_pre_talaris_2013_behavior ]() || option[ corrections::restore_talaris_behavior ]() ) {
 				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 					options_local, "SOFT" ) );
+			} else { // default
+				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+					options_local, "SOFTBETANOV15" ) );
 			}
 		} else if ( table_id == FA_STANDARD_MULTIPOLE ) {
 			// multipole etable: change to lj_switch_dis2sigma to make harder repulsion.

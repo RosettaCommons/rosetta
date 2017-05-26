@@ -157,7 +157,14 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -21.80687107813451, false );
+
+		/*Size before_precision = std::cout.precision();
+		std::cout.precision( 16 );
+		core::Real score = sfxn.score( pose );
+		std::cout << "MINE: " << score << std::endl;
+		std::cout.precision( before_precision );*/
+
+		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
 	}
 
 	void test_lkball_numeric_deriv_check()
@@ -197,7 +204,14 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -21.80687107813451, false );
+
+		/*Size before_precision = std::cout.precision();
+		std::cout.precision( 16 );
+		core::Real score = sfxn.score( pose );
+		std::cout << "MINE: " << score << std::endl;
+		std::cout.precision( before_precision );*/
+
+		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
 
 		adv.simple_deriv_check( true, 5e-3 );
 	}
@@ -219,7 +233,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -21.80687107813451, false );
+		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
 
 		adv.simple_deriv_check( true, 5e-3 );
 	}
@@ -241,7 +255,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -21.80687107813451, false );
+		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
 
 		adv.simple_deriv_check( true, 5e-3 );
 	}

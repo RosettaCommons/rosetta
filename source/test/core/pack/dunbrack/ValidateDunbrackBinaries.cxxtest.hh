@@ -58,7 +58,8 @@ void print_relevant_info() {
 	TR.Error << "Dun10: " << (option[ corrections::score::dun10 ] ? " true " : " false " ) << std::endl;
 	TR.Error << "-correct " << (option[ corrections::correct ] ? " true " : " false " ) << std::endl;
 	TR.Error << "-beta " << (option[ corrections::beta ] ? " true " : " false " ) << std::endl;
-	TR.Error << "-beta_nov15 " << (option[ corrections::beta_nov15 ] ? " true " : " false " ) << std::endl;
+	TR.Error << "-beta_nov16 " << (option[ corrections::beta_nov16 ] ? " true " : " false " ) << std::endl;
+	TR.Error << "-restore_talaris_behavior " << (option[ corrections::restore_talaris_behavior ] ? " true " : " false " ) << std::endl;
 	TR.Error << "-shapovalov_lib_fixes_enable " << ( option[ corrections::shapovalov_lib_fixes_enable ] ? " true " : " false " ) << std::endl;
 	TR.Error << "-shap_dun10_enable " << ( option[ corrections::shapovalov_lib::shap_dun10_enable ] ? " true " : " false " ) << std::endl;
 
@@ -74,7 +75,8 @@ void print_relevant_info() {
 	TR.Error << "Dunbrack library binary file: " << rotamer_library->get_binary_name() << std::endl;
 	TR.Error << "-----------------------------------------------------------------" << std::endl;
 }
-class ValidateDun10BinariesTests : public CxxTest::TestSuite
+
+class ValidateDefaultBinariesTests : public CxxTest::TestSuite
 {
 public:
 
@@ -93,9 +95,9 @@ public:
 		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
 
 		if ( ! rotamer_library->validate_dunbrack_binary() ) {
-			TR << "Failure validating the Dunbrack2010 binary" << std::endl;
+			TR << "Failure validating the default Dunbrack binary" << std::endl;
 			print_relevant_info();
-			TS_FAIL("Dunbrack2010 ASCII/binary inconsistency");
+			TS_FAIL("Default Dunbrack ASCII/binary inconsistency");
 		}
 	}
 };
@@ -151,27 +153,27 @@ public:
 };
 
 
-class ValidateBetaNov15BinariesTests : public CxxTest::TestSuite
+class ValidateTalarisBinariesTests : public CxxTest::TestSuite
 {
 public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-out:levels core.pack.dunbrack:debug -beta_nov15" );
+		core_init_with_additional_options( "-out:levels core.pack.dunbrack:debug -restore_talaris_behavior" );
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
 	}
 
-	void test_beta_nov15_binaries() {
+	void test_talaris_binaries() {
 
 		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
 
 		if ( ! rotamer_library->validate_dunbrack_binary() ) {
-			TR << "Failure validating the Beta Nov15 Dunbrack binary" << std::endl;
+			TR << "Failure validating the Talaris Dunbrack binary" << std::endl;
 			print_relevant_info();
-			TS_FAIL("Beta Nov15 ASCII/binary inconsistency");
+			TS_FAIL("Talaris ASCII/binary inconsistency");
 		}
 	}
 };

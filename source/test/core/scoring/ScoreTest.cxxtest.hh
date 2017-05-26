@@ -152,7 +152,7 @@ public:
 		double rel_p=0.0001
 	)
 	{
-		TR << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
+		TR << " Testing score?: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
 		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);

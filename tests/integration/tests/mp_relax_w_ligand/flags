@@ -7,4 +7,6 @@
 -relax:jump_move true
 -relax:fast
 -packing:pack_missing_sidechains false 
+-restore_talaris_behavior
 -score:weights mpframework_smooth_fa_2012
+-restore_talaris_behavior

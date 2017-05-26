@@ -1,0 +1,17 @@
+NAME           LK_BALL_ATOM_WEIGHT
+Ntrp  3.34
+Nbb   3.26 ## copied
+Nhis  2.70
+Narg  2.46
+NH2O  2.33
+OOC   2.14
+ONH2  1.98
+Nlys  1.74
+OH    1.51
+****  2.0
+#NtpR  3.26
+#OPdd  2.14 ## copied
+#OCbb  1.98 ## copied
+#ORdd  1.98 ## copied
+#OEdd  1.98 ## copied
+#OBdd  1.98 ## copied

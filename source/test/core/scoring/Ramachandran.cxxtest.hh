@@ -82,7 +82,8 @@ public:
 	// Test the score function on a handful of points, as defined in setup().
 	void test_eval_rama_score_residue() {
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
-		Real expected[] = { -0.2578, -0.9390, 0.4680, 4.9683};
+		//Real expected[] = { -0.2578, -0.9390, 0.4680, 4.9683};
+		Real expected[] = { -1.0048, -0.7500, 1.4618, 6.9079};
 
 		for ( Size i = 1; i <= pose_->size(); i++ ) {
 			Real observed = rama.eval_rama_score_residue(pose_->residue(i));

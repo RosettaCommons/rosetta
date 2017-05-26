@@ -1,12 +1,14 @@
 NAME SASA_RADIUS_LEGACY
 CNH2      1.8900
 COO       1.8900
+CH0       2.1285
 CH1       2.1285
 CH2       2.0115
 CH3       1.9485
 aroC      1.6650
 Ntrp      1.4400
 Nhis      1.4400
+NtrR      1.4400
 NH2O      1.4400
 Nlys      1.4400
 Narg      1.4400
@@ -18,6 +20,7 @@ Oaro      1.4400
 Oet2      1.4400
 Oet3      1.4400
 S         1.7010
+SH1       1.7010
 Nbb       1.4400
 CAbb      2.1285
 CObb      1.8900
@@ -25,6 +28,7 @@ OCbb      1.4400
 Phos      2.0425
 Pbb       2.0425  # copied from Phos
 Hpol      0.5400
+HS        0.5400
 Hapo      1.0800
 Haro      1.0800
 HNbb      0.5400

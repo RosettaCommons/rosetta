@@ -1,5 +1,6 @@
 -restore_pre_talaris_2013_behavior
 -score12prime
+-score:weights score12prime.wts
 -in:file:silent ./../../data/five_structures.out
 -in:file:silent_struct_type binary
 -in:file:fullatom

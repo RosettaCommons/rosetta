@@ -397,7 +397,7 @@ LK_Ball_BB_BB_E_Invoker::LK_Ball_BB_BB_E_Invoker(
 void LK_Ball_BB_BB_E_Invoker::invoke( etable::count_pair::CountPairFunction const & cpfxn )
 {
 	evaluate_lk_ball_energy_for_atom_ranges( lk_ball(), rsd1(), rsd1_info(), rsd2(), rsd2_info(), sfxn(), cpfxn,
-		1, rsd1().n_mainchain_atoms(), 1, rsd2().n_mainchain_atoms(), emap() );
+		1, rsd1().last_backbone_atom(), 1, rsd2().last_backbone_atom(), emap() );
 }
 
 
@@ -416,7 +416,7 @@ LK_Ball_BB_SC_E_Invoker::LK_Ball_BB_SC_E_Invoker(
 void LK_Ball_BB_SC_E_Invoker::invoke( etable::count_pair::CountPairFunction const & cpfxn )
 {
 	evaluate_lk_ball_energy_for_atom_ranges( lk_ball(), rsd1(), rsd1_info(), rsd2(), rsd2_info(), sfxn(), cpfxn,
-		1, rsd1().n_mainchain_atoms(), rsd2().n_mainchain_atoms()+1, rsd2().nheavyatoms(), emap() );
+		1, rsd1().last_backbone_atom(), rsd2().first_sidechain_atom(), rsd2().nheavyatoms(), emap() );
 }
 
 
@@ -435,7 +435,7 @@ LK_Ball_SC_SC_E_Invoker::LK_Ball_SC_SC_E_Invoker(
 void LK_Ball_SC_SC_E_Invoker::invoke( etable::count_pair::CountPairFunction const & cpfxn )
 {
 	evaluate_lk_ball_energy_for_atom_ranges( lk_ball(), rsd1(), rsd1_info(), rsd2(), rsd2_info(), sfxn(), cpfxn,
-		rsd1().n_mainchain_atoms()+1, rsd1().nheavyatoms(), rsd2().n_mainchain_atoms()+1, rsd2().nheavyatoms(), emap() );
+		rsd1().first_sidechain_atom(), rsd1().nheavyatoms(), rsd2().first_sidechain_atom(), rsd2().nheavyatoms(), emap() );
 }
 
 

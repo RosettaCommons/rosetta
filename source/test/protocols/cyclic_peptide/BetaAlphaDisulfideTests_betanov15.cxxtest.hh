@@ -42,7 +42,7 @@ class BetaAlphaDisulfide_betanov15_Tests : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options("-write_all_connect_info -beta_nov15");
+		core_init_with_additional_options("-write_all_connect_info");
 	}
 
 	void tearDown(){

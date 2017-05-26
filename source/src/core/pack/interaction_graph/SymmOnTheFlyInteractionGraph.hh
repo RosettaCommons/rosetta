@@ -27,19 +27,24 @@
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #ifdef WIN32
 #include <core/conformation/Residue.hh> // WIN32 INCLUDE
+#include <core/scoring/methods/EnergyMethod.hh> // WIN32 INCLUDE PERHAPS UNNEEDED?
 #endif
 
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
+#include <numeric/HomogeneousTransform.hh>
 
 /// C++ headers
+#include <list>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -48,7 +53,6 @@
 
 #include <utility/vector1.hh>
 
-#include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
 
@@ -60,6 +64,7 @@ class SymmOnTheFlyNode : public FixedBBNode
 {
 public:
 	typedef std::pair< Vector, Real > BoundingSphere;
+	typedef numeric::HomogeneousTransform< Real > HTReal;
 
 public:
 	SymmOnTheFlyNode(
@@ -215,6 +220,9 @@ private:
 	/// unit, and those on all of the symmetric clones.
 	utility::vector1< utility::vector1< conformation::ResidueOP > > rotamer_representatives_;
 
+	// The linear transforms that orient an ASU rotamer onto the symmetric clones
+	utility::vector1< HTReal > symmetric_transforms_;
+
 	/// Bounding spheres for each of the rotamers in the asymmetric unit
 	utility::vector1< BoundingSphere > sc_bounding_spheres_;
 	BoundingSphere bb_bounding_sphere_;
@@ -249,6 +257,16 @@ public:
 		core::PackerEnergy sc_probb_E
 	);
 
+	void
+	add_GlyCorrection_values(
+		int node_not_necessarily_glycine,
+		int state,
+		core::PackerEnergy bb_nonglybb_E,
+		core::PackerEnergy bb_glybb_E,
+		core::PackerEnergy sc_nonglybb_E,
+		core::PackerEnergy sc_glybb_E
+	);
+
 	inline
 	core::PackerEnergy
 	get_proline_correction_for_node(
@@ -260,6 +278,16 @@ public:
 		return get_proline_correction( which_node, state );
 	}
 
+	inline
+	core::PackerEnergy
+	get_glycine_correction_for_node(
+		int node_ind,
+		int state
+	) const
+	{
+		int which_node = node_ind == get_node_index( 0 ) ? 0 : 1;
+		return get_glycine_correction( which_node, state );
+	}
 
 	virtual unsigned int count_static_memory() const = 0;
 	virtual unsigned int count_dynamic_memory() const;
@@ -324,6 +352,16 @@ protected:
 	}
 
 	inline
+	core::PackerEnergy
+	get_glycine_correction(
+		int which_node,
+		int state
+	) const
+	{
+		return glycine_corrections_[ which_node ][ state ];
+	}
+
+	inline
 	SymmOnTheFlyNode const *
 	get_otf_node( int which_node ) const
 	{
@@ -355,6 +393,7 @@ private:
 	ObjexxFCL::FArray4D< unsigned char > restypegroup_adjacency_;
 
 	utility::vector1< core::PackerEnergy > proline_corrections_[ 2 ];
+	utility::vector1< core::PackerEnergy > glycine_corrections_[ 2 ];
 	ResiduePairEvalType eval_types_[ 2 ];
 	bool long_range_interactions_exist_;
 	bool short_range_interactions_exist_;
@@ -421,6 +460,11 @@ public:
 	{
 		debug_assert( score_function_ );
 		return *score_function_;
+	}
+
+	std::list< scoring::methods::EnergyMethodCOP > const &
+	setup_for_scoring_for_residue_energy_methods() const {
+		return sfs_energy_methods_;
 	}
 
 	inline
@@ -502,10 +546,22 @@ public:
 		int node2,
 		int node_not_neccessarily_proline,
 		int state,
-		core::PackerEnergy bb_nonprobb_E,
+		core::PackerEnergy bb_regbb_E,
 		core::PackerEnergy bb_probb_E,
-		core::PackerEnergy sc_nonprobb_E,
+		core::PackerEnergy sc_regbb_E,
 		core::PackerEnergy sc_probb_E
+	);
+
+	void
+	add_GlyCorrection_values_for_edge(
+		int node1,
+		int node2,
+		int node_not_neccessarily_proline,
+		int state,
+		core::PackerEnergy bb_regbb_E,
+		core::PackerEnergy bb_glybb_E,
+		core::PackerEnergy sc_regbb_E,
+		core::PackerEnergy sc_glybb_E
 	);
 
 
@@ -556,6 +612,7 @@ private:
 	conformation::symmetry::SymmetryInfoCOP symm_info_;
 	utility::vector1< HTReal > symmetric_transforms_;
 	scoring::ScoreFunctionOP score_function_;
+	std::list< scoring::methods::EnergyMethodCOP > sfs_energy_methods_;
 	scoring::ScoreTypes active_score_types_;
 	pose::PoseOP pose_;
 

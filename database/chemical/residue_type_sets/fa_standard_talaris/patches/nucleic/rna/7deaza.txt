@@ -1,0 +1,28 @@
+##  DOES NOT WORK -- ICOOR for H7 depends on C7 and that is leading to some
+##   funny business where it can't be built in from scratch when missing
+## This patch replaces N7 with C7 in purines (well, just adenosine for now).
+NAME 7_Deaza
+
+BEGIN_SELECTOR
+PROPERTY RNA
+AA RAD 
+END_SELECTOR
+
+BEGIN_CASE ### general case ###
+SET_IO_STRING 7DA A
+SET_INTERCHANGEABILITY_GROUP 7DA
+
+# copied from C8 information -- note that partial charges of other atoms in base will be wrong. [N7 had -0.71]
+
+ADD_ATOM  C7  aroC H   0.34  
+ADD_ATOM  H7  Haro H   0.12
+ADD_BOND  C7   H7
+ADD_BOND  C5   C7
+ADD_BOND  C7   C8
+
+SET_ICOOR C7  -179.991943   47.658039    1.388401  C5   C6   N1 
+SET_ICOOR H7   179.969884   56.913803    0.980513  C7   C5   C4 
+
+DELETE_ATOM N7
+
+END_CASE

@@ -9,12 +9,14 @@
 NAME NACCESS_SASA_RADIUS
 CNH2      1.7600
 COO       1.7600
+CH0       1.8700
 CH1       1.8700
 CH2       1.8700
 CH3       1.8700
 aroC      1.7600
 Ntrp      1.6500
 Nhis      1.6500
+NtrR      1.6500
 NH2O      1.6500
 Nlys      1.5000
 Narg      1.6500
@@ -26,6 +28,7 @@ Oaro      1.4000
 Oet2      1.4000
 Oet3      1.4000
 S         1.8500
+SH1       1.8500
 Nbb       1.6500
 CAbb      1.8700
 CObb      1.7600
@@ -33,6 +36,7 @@ OCbb      1.4000
 Phos      2.0425
 Pbb       2.0425  # copied from Phos
 Hpol      1.0000
+HS        1.0000
 Hapo      1.0000
 Haro      1.0000
 HNbb      1.0000

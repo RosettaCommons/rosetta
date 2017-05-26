@@ -51,7 +51,9 @@ public:
 		sfxn.set_weight( occ_sol_fitted, 0.5 );
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
-		adv.validate_start_func_matches_start_score( 29.76503680191131, false, 1e-6 );
+		//std::cout.precision( 16 );
+		//std::cout << sfxn.score( pose ) << std::endl;
+		adv.validate_start_func_matches_start_score( 29.77499608096777, false, 1e-6 );
 	}
 
 	void test_occ_sol_fitted_deriv_check_w_total_flexibility()
@@ -74,7 +76,9 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( 29.76503680191131, false, 1e-6 );
+		//std::cout.precision( 16 );
+		//std::cout << sfxn.score( pose ) << std::endl;
+		adv.validate_start_func_matches_start_score( 29.77499608096777, false, 1e-6 );
 
 	}
 

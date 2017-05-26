@@ -10,7 +10,7 @@ CST::BEGIN
   TEMPLATE::   ATOM_MAP: 1 atom_name: C6 O4 O2
   TEMPLATE::   ATOM_MAP: 1 residue3: D2N
 
-  TEMPLATE::   ATOM_MAP: 2 atom_type: S   ,
+  TEMPLATE::   ATOM_MAP: 2 atom_type: SH1  ,
   TEMPLATE::   ATOM_MAP: 2 residue3: CYS
  
   CONSTRAINT:: distanceAB:    2.00   0.30 180.00  1       2
@@ -120,7 +120,7 @@ VARIABLE_CST::END
 #block 5: accessory for enforcing the cys-his interaction
 #commented out in match file
 #CST::BEGIN
-  TEMPLATE::   ATOM_MAP: 1 atom_type: S   ,
+  TEMPLATE::   ATOM_MAP: 1 atom_type: SH1  ,
   TEMPLATE::   ATOM_MAP: 1 identical: 1 2
   TEMPLATE::   ATOM_MAP: 1 residue3: CYS
 

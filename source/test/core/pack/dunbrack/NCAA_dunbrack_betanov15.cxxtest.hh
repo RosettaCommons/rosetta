@@ -48,7 +48,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options("-beta_nov15");
+		core_init_with_additional_options("");
 	}
 
 	// Shared finalization goes here.

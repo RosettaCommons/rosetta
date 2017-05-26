@@ -717,6 +717,7 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 
 	utility::vector1< Size > example_gly_rotamers( nmoltenres_, 0 );
 	utility::vector1< Size > example_pro_rotamers( nmoltenres_, 0 );
+	utility::vector1< Size > example_reg_rotamers( nmoltenres_, 0 );
 
 	/// 0. Find example proline and glycine residues where possible.
 	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
@@ -730,6 +731,7 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 				example_pro_rotamers[ ii ] = ii_rotset->get_residue_type_begin( jj );
 			} else if ( jj_rotamer->is_protein() ) {
 				potential_gly_replacement = ii_rotset->get_residue_type_begin( jj );
+				example_reg_rotamers[ ii ] = ii_rotset->get_residue_type_begin( jj );
 			}
 		}
 		/// failed to find a glycine backbone for this residue, any other
@@ -757,40 +759,53 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 			RotamerSetCOP jj_rotset = set_of_rotamer_sets_[ jj ];
 
 			for ( Size kk = 1; kk <= ii_rotset->num_rotamers(); ++kk ) {
-				core::PackerEnergy bb_bbnonproE( 0 ), bb_bbproE( 0 );
-				core::PackerEnergy sc_npbb_energy( 0 ), sc_probb_energy( 0 );
+				core::PackerEnergy bb_bbregE( 0 ), bb_bbproE( 0 ), bb_bbglyE( 0 );
+				core::PackerEnergy sc_regbb_energy( 0 ), sc_probb_energy( 0 ), sc_glybb_energy( 0 );
+
 				//calc sc_npbb_energy;
+				if ( example_reg_rotamers[ jj ] != 0 ) {
+					bb_bbregE       = get_bb_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_reg_rotamers[ jj ] ) );
+					sc_regbb_energy = get_sc_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_reg_rotamers[ jj ] ));
+				}
 				if ( example_gly_rotamers[ jj ] != 0 ) {
-					bb_bbnonproE = get_bb_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_gly_rotamers[ jj ] )  );
-					sc_npbb_energy = get_sc_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_gly_rotamers[ jj ] ) );
+					bb_bbglyE       = get_bb_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_gly_rotamers[ jj ] )  );
+					sc_glybb_energy = get_sc_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_gly_rotamers[ jj ] ) );
 				}
 				//calc sc_probb_energy
 				if ( example_pro_rotamers[ jj ] != 0 ) {
-					bb_bbproE = get_bb_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_pro_rotamers[ jj ] )  );
+					bb_bbproE       = get_bb_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_pro_rotamers[ jj ] )  );
 					sc_probb_energy = get_sc_bbE( pose, scfxn, *ii_rotset->rotamer( kk ), *jj_rotset->rotamer( example_pro_rotamers[ jj ] ) );
 				}
-				otfig->add_to_one_body_energy_for_node_state( ii, kk, sc_npbb_energy +  0.5 * bb_bbnonproE  );
+				otfig->add_to_one_body_energy_for_node_state( ii, kk, sc_regbb_energy +  0.5 * bb_bbregE  );
 				otfig->set_ProCorrection_values_for_edge( ii, jj, ii, kk,
-					bb_bbnonproE, bb_bbproE, sc_npbb_energy, sc_probb_energy );
+					bb_bbregE, bb_bbproE, sc_regbb_energy, sc_probb_energy );
+				otfig->set_GlyCorrection_values_for_edge( ii, jj, ii, kk,
+					bb_bbregE, bb_bbglyE, sc_regbb_energy, sc_glybb_energy );
 			}
 
 			for ( Size kk = 1; kk <= jj_rotset->num_rotamers(); ++kk ) {
-				core::PackerEnergy bb_bbnonproE( 0 ), bb_bbproE( 0 );
-				core::PackerEnergy sc_npbb_energy( 0 ), sc_probb_energy( 0 );
+				core::PackerEnergy bb_bbregE( 0 ), bb_bbproE( 0 ), bb_bbglyE( 0 );
+				core::PackerEnergy sc_regbb_energy( 0 ), sc_probb_energy( 0 ), sc_glybb_energy( 0 );
 				//calc sc_npbb_energy;
+				if ( example_reg_rotamers[ ii ] != 0 ) {
+					bb_bbregE       = get_bb_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_reg_rotamers[ ii ] ) );
+					sc_regbb_energy = get_sc_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_reg_rotamers[ ii ] ));
+				}
 				if ( example_gly_rotamers[ ii ] != 0 ) {
-					bb_bbnonproE   = get_bb_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_gly_rotamers[ ii ] ) );
-					sc_npbb_energy = get_sc_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_gly_rotamers[ ii ] ) );
+					bb_bbglyE       = get_bb_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_gly_rotamers[ ii ] ) );
+					sc_glybb_energy = get_sc_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_gly_rotamers[ ii ] ) );
 				}
 				//calc sc_probb_energy
 				if ( example_pro_rotamers[ ii ] != 0 ) {
 					bb_bbproE       = get_bb_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_pro_rotamers[ ii ] ) );
 					sc_probb_energy = get_sc_bbE( pose, scfxn, *jj_rotset->rotamer( kk ), *ii_rotset->rotamer( example_pro_rotamers[ ii ] ) );
 				}
-				otfig->add_to_one_body_energy_for_node_state( jj, kk, sc_npbb_energy + 0.5 * bb_bbnonproE );
+				otfig->add_to_one_body_energy_for_node_state( jj, kk, sc_regbb_energy + 0.5 * bb_bbregE );
 
 				otfig->set_ProCorrection_values_for_edge( ii, jj, jj, kk,
-					bb_bbnonproE, bb_bbproE, sc_npbb_energy, sc_probb_energy );
+					bb_bbregE, bb_bbproE, sc_regbb_energy, sc_probb_energy );
+				otfig->set_GlyCorrection_values_for_edge( ii, jj, jj, kk,
+					bb_bbregE, bb_bbglyE, sc_regbb_energy, sc_glybb_energy );
 			}
 		}
 	}

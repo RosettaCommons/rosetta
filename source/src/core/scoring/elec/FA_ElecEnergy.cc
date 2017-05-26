@@ -19,6 +19,7 @@
 #include <core/scoring/elec/FA_ElecEnergyCreator.hh>
 
 // Package headers
+#include <core/scoring/elec/CountPairRepresentative.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -249,7 +250,6 @@ FA_ElecEnergy::initialize() {
 
 	// read countpair tables from DB
 	use_cp_rep_ = option[ score::elec_representative_cp ]() || option[ score::elec_representative_cp_flip ]();
-	flip_cp_rep_ = option[ score::elec_representative_cp_flip ]();
 }
 
 core::Size
@@ -756,6 +756,7 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 		Real const dis2( f2.length_squared() );
 		Real dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 		Real sfxn_weight = elec_weight(
+			false,
 			rsd1.atom_is_backbone( at1 ),
 			rsd2.atom_is_backbone( at2 ),
 			wtrip );
@@ -777,11 +778,13 @@ void
 FA_ElecEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
 	ResSingleMinimizationData const & /*min_data*/,
-	pose::Pose const & /*pose*/,
+	pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	using namespace etable::count_pair;
 	if ( weights[ fa_intra_elec ] == 0 ) return;
 	Real sfxn_weight = weights[fa_intra_elec];
@@ -905,7 +908,7 @@ FA_ElecEnergy::eval_atom_derivative(
 		Real const dE_dr_over_r = nbr.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, ii_charge, jj_charge );
 		if ( dE_dr_over_r == 0.0 ) continue;
 
-		Real sfxn_weight = elec_weight( ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
+		Real sfxn_weight = elec_weight( i == j, ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
 		Vector f1 = ii_xyz.cross( jj_xyz );
 		f1 *= dE_dr_over_r * sfxn_weight;
 		f2 *= dE_dr_over_r * sfxn_weight;
@@ -1368,9 +1371,17 @@ FA_ElecEnergy::get_intrares_countpair(
 ) const
 {
 	using namespace etable::count_pair;
-	return CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
+	etable::count_pair::CountPairFunctionCOP reg_cpfxn = CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
+	if ( use_cp_rep_ ) {
+		return etable::count_pair::CountPairFunctionCOP( new CountPairRepresentative( *this, res, res, reg_cpfxn ));
+	} else {
+		return reg_cpfxn;
+	}
 }
 
+/// @details This function is used by external classes (in particular the NeighborList) that needs to
+/// know which pairs of atoms to evaluate interactions between. For this reason, it needs to return
+/// a CountPairRepresentative object if the use_cp_rep_ flag is on.
 etable::count_pair::CountPairFunctionCOP
 FA_ElecEnergy::get_count_pair_function(
 	Size const res1,
@@ -1388,10 +1399,15 @@ FA_ElecEnergy::get_count_pair_function(
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
 	conformation::Residue const & rsd2( pose.residue( res2 ) );
-	return get_count_pair_function( rsd1, rsd2 );
+	etable::count_pair::CountPairFunctionCOP reg_cpfxn= get_count_pair_function( rsd1, rsd2 );
+	if ( use_cp_rep_ ) {
+		return etable::count_pair::CountPairFunctionCOP( new CountPairRepresentative( *this, rsd1, rsd2, reg_cpfxn ));
+	} else {
+		return reg_cpfxn;
+	}
 }
 
-
+/// @brief Returns a regular count-pair function as opposed to a CountPairRepresentative function
 etable::count_pair::CountPairFunctionCOP
 FA_ElecEnergy::get_count_pair_function(
 	conformation::Residue const & rsd1,
@@ -1427,6 +1443,7 @@ FA_ElecEnergy::setup_weight_triple(
 	wttrip.wbb_sc_ = weights[ fa_elec ] + weights[ fa_elec_bb_sc ];
 	wttrip.wsc_bb_ = weights[ fa_elec ] + weights[ fa_elec_bb_sc ];
 	wttrip.wsc_sc_ = weights[ fa_elec ] + weights[ fa_elec_sc_sc ];
+	wttrip.w_intra_ = weights[ fa_intra_elec ];
 }
 
 // create an elec trie rotamer descriptor from a single rotamer

@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="tal" weights="talaris2013.wts" >
+		<ScoreFunction name="ref" weights="ref2015.wts" >
 			<Reweight scoretype="res_type_constraint" weight="1.0" />
 		</ScoreFunction>
 	</SCOREFXNS>
@@ -9,9 +9,9 @@
 	</TASKOPERATIONS>
 	<MOVERS>
 		Design movers
-		<PackRotamersMover name="design" scorefxn="tal" task_operations="ifcl" />
+		<PackRotamersMover name="design" scorefxn="ref" task_operations="ifcl" />
 		<MSDMover name="msd1" design_mover="design" constraint_weight="0.5" resfiles="one.resfile,two.resfile" />
-		<FindConsensusSequence name="finish" scorefxn="tal" resfiles="one.resfile,two.resfile" />
+		<FindConsensusSequence name="finish" scorefxn="ref" resfiles="one.resfile,two.resfile" />
 	</MOVERS>
 	<FILTERS>
 	</FILTERS>

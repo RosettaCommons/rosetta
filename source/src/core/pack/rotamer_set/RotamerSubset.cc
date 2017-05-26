@@ -163,6 +163,12 @@ RotamerSubset::rotamer( Size rot_id ) const
 	return rotamers_[ rot_id ];
 }
 
+basic::datacache::BasicDataCache &
+RotamerSubset::rotamer_data_cache( Size rot_id ) const
+{
+	return *rotamers_[ rot_id ]->nonconst_data_ptr();
+}
+
 conformation::Residue const &
 RotamerSubset::rotamer_ref( Size rot_id ) const
 {

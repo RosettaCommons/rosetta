@@ -60,7 +60,8 @@ public:
 	// Test the score function on a handful of points, as defined in setup().
 	void test_eval_rama_score_residue() {
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
-		Real expected[] = { -0.2578, -0.9390, 1.1552, 34.6217 };
+		//Real expected[] = { -0.2578, -0.9390, 1.1552, 34.6217 };
+		Real expected[] = { -1.0049, -0.7500, 5.0607, 61.5358 };
 
 		TR << "Res\tExpected\tObserved" << std::endl;
 		for ( Size i = 1; i <= pose_->size(); i++ ) {

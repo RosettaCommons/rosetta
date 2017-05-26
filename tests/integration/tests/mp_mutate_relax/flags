@@ -7,3 +7,4 @@
 -relax:range:angle_max 0.1
 -relax:range:nmoves nres
 -relax:range:cycles 1
+-restore_talaris_behavior

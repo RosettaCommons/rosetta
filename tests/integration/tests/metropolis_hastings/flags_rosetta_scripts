@@ -4,3 +4,4 @@
 -overwrite
 -parser:protocol input/metropolis_hastings.xml
 -out:user_tag rs
+-restore_pre_talaris_2013_behavior

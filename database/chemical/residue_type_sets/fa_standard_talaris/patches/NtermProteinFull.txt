@@ -1,0 +1,779 @@
+## fullatom protein n-terminus patch
+## I would like to redo this in YAML! no begin_ end_ blocks!
+
+NAME NtermProteinFull
+TYPES LOWER_TERMINUS_VARIANT
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE LOWERTERM_TRUNC_VARIANT
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE N_FORMYLATION
+END_SELECTOR
+
+
+### null cases
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 DPA
+END_SELECTOR
+END_CASE
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 GLV
+END_SELECTOR
+END_CASE
+
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE #### PNA residues ################################################
+
+## these define which residues match this case
+
+BEGIN_SELECTOR
+NAME3 APN CPN GPN TPN UPN
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.13
+SET_ATOMIC_CHARGE 1HA 0.09
+SET_ATOMIC_CHARGE 2HA 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ## PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 PRO
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD 0.16
+SET_ATOMIC_CHARGE 1HD 0.09
+SET_ATOMIC_CHARGE 2HD 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## D-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 DPR
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD 0.16
+SET_ATOMIC_CHARGE 1HD 0.09
+SET_ATOMIC_CHARGE 2HD 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ##HYDROXYPROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 HPR
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD1 0.16
+SET_ATOMIC_CHARGE 1HD1 0.09
+SET_ATOMIC_CHARGE 2HD1 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ##D-HYDROXYPROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 DHP
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD1 0.16
+SET_ATOMIC_CHARGE 1HD1 0.09
+SET_ATOMIC_CHARGE 2HD1 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## BETA-3-PROLINE ##########################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 B3P
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD 0.16
+SET_ATOMIC_CHARGE 1HD 0.09
+SET_ATOMIC_CHARGE 2HD 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE #### glycine ################################################
+
+## these define which residues match this case
+
+BEGIN_SELECTOR
+AA GLY
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.13
+SET_ATOMIC_CHARGE 1HA 0.09
+SET_ATOMIC_CHARGE 2HA 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ### THE MAL CASE ##########################################
+# Also applies to A04
+# really the "missing HA" case
+BEGIN_SELECTOR
+NAME3 MAL A04 A05 A24 A96 A97 A98 A99 B00 B01 B02 B03 B04 B05 B06 B07 B54 B56 B57 B58 B60 B61 B62 C15 C16 APN CPN GPN TPN UPN
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.21
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ## ALPHA-METHYL-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 B59
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE CD 0.16
+SET_ATOMIC_CHARGE 1HD 0.09
+SET_ATOMIC_CHARGE 2HD 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## HOMOPROLINE_CHAIR #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 C29
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## N should become tetrahedral and hydrogens should be like in other positions in
+## cyclohexo ring
+SET_ICOOR 1H 180 70.5 1.09 N CA C
+SET_ICOOR 2H  60 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## HOMOPROLINE_BOAT #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 C28
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## N should become tetrahedral and hydrogens should be like in other positions in
+## cyclohexo ring
+SET_ICOOR 1H 180 70.5 1.09 N CA C
+SET_ICOOR 2H  60 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## 4-FLUOROR-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 B19
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 60 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD2 0.16
+SET_ATOMIC_CHARGE 1HD2 0.09 # since it's CD2
+SET_ATOMIC_CHARGE 2HD2 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## 4-FLUOROR-PROLINE_PUCK #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 C89
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD2 0.16
+SET_ATOMIC_CHARGE 1HD2 0.09 # since it's CD2
+SET_ATOMIC_CHARGE 2HD2 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ## D-4-FLUORO-PROLINE #################################################
+
+## AMW: this isn't D-4-FLUORO-PROLINE but I don't know what it is...
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 CHC
+END_SELECTOR
+
+END_CASE
+
+BEGIN_CASE ## SRI's Special Backbones ########################################
+
+BEGIN_SELECTOR
+PROPERTY SRI
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H3 ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N1 1H
+ADD_BOND N1 2H
+ADD_BOND N1 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N1 C1 C2
+SET_ICOOR 2H 120 70.5 1 N1 C1 1H
+SET_ICOOR 3H 120 70.5 1 N1 C1 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N1 Nlys
+SET_MM_ATOM_TYPE N1 NH3
+SET_ATOMIC_CHARGE N1 -0.3
+SET_ATOMIC_CHARGE C1 0.21
+SET_ATOMIC_CHARGE H4 0.10
+SET_ATOMIC_CHARGE H5 0.10
+
+SET_FORMAL_CHARGE  N1  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+END_CASE
+
+BEGIN_CASE ## BETA-3-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 B3P
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD 0.16
+SET_ATOMIC_CHARGE 1HD 0.09
+SET_ATOMIC_CHARGE 2HD 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE #### BETA-3_GLYCINE ################################################
+
+## these define which residues match this case
+
+BEGIN_SELECTOR
+NAME3 B3G
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.13
+SET_ATOMIC_CHARGE 1HA 0.09
+SET_ATOMIC_CHARGE 2HA 0.09
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ############### FOR PHOSPHONATES ###############################
+
+BEGIN_SELECTOR
+PROPERTY PHOSPHONATE
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA Pbb
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.21
+SET_ATOMIC_CHARGE HA 0.10
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## Non-proline D-amino acids #####################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 DAL
+NAME3 DAR
+NAME3 DAN
+NAME3 DAS
+NAME3 DCS
+NAME3 DGN
+NAME3 DGU
+NAME3 DHI
+NAME3 DIL
+NAME3 DLE
+NAME3 DLY
+NAME3 DME
+NAME3 DPH
+NAME3 DSE
+NAME3 DTH
+NAME3 DTR
+NAME3 DTY
+NAME3 DVA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H -180 70.5 1 N CA C
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+SET_ICOOR 3H -120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.21
+SET_ATOMIC_CHARGE HA 0.10
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ### TRIAZOLE_LINKER LINKER ##########################################
+
+BEGIN_SELECTOR
+PROPERTY TRIAZOLE_LINKER
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N C1 C2
+SET_ICOOR 2H 120 70.5 1 N C1 1H
+SET_ICOOR 3H 120 70.5 1 N C1 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE C1 0.41
+#SET_ATOMIC_CHARGE H11 0.10
+#SET_ATOMIC_CHARGE H12 0.10
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ### GAMMA-AMINO ACIDS ##########################################
+
+BEGIN_SELECTOR
+PROPERTY GAMMA_AA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N C4 C3
+SET_ICOOR 2H 120 70.5 1 N C4 1H
+SET_ICOOR 3H 120 70.5 1 N C4 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE C4 0.41
+#SET_ATOMIC_CHARGE HA41 0.10
+#SET_ATOMIC_CHARGE HA42 0.10
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.21
+SET_ATOMIC_CHARGE HA 0.10
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+

@@ -1,0 +1,541 @@
+## Acetylated N Terminus Patch by Doug Renfrew (renfrew@unc.edu)
+
+NAME AcetylatedNtermProteinFull
+TYPES LOWER_TERMINUS_VARIANT ACETYLATED_NTERMINUS_VARIANT
+
+#############################################################################################
+## general requirements
+##   protein
+##   anything that is not already N terminally patched
+#############################################################################################
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+NOT VARIANT_TYPE SHOVE_BB
+NOT VARIANT_TYPE VIRTUAL_BB
+NOT VARIANT_TYPE SPECIAL_ROT
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT VARIANT_TYPE VIRTUAL_NTERM
+NOT VARIANT_TYPE REPLONLY
+NOT VARIANT_TYPE CTERM_CONNECT
+NOT VARIANT_TYPE N_METHYLATION
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE N_FORMYLATION
+NOT VARIANT_TYPE C_METHYLAMIDATION
+NOT NAME3 TES # TES creator, feel free to create acetylation with atom names that work for TES.
+NOT NAME3 S56 # S56 creator, feel free to create acetylation with atom names that work for TES.
+END_SELECTOR
+
+
+
+BEGIN_CASE ### SAL ##################################
+BEGIN_SELECTOR
+NAME3 SAL
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO  -150.000169   57.684068    1.348791   N     CB2    CA
+SET_ICOOR  OP1   -2.200808   57.317771    1.203828   CO    N     CB2
+SET_ICOOR  CP2 -178.916686   64.195695    1.513616   CO    N     OP1
+SET_ICOOR 1HP2 -136.216863   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 2HP2  122.078056   66.682399    1.083159   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.977283   71.438584    1.084823   CP2   CO   2HP2
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## beta-3-proline case
+## internal coordinates are from PRO case
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 B3P
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO   -70.242986   53.293317    1.359600   N     CA    CM
+SET_ICOOR  OP1  178.192966   58.965098    1.200801   CO    N     CA
+SET_ICOOR  CP2  179.506937   62.453575    1.513915   CO    N     OP1
+SET_ICOOR 1HP2 -173.837646   72.137627    1.079630   CP2   CO    N
+SET_ICOOR 2HP2  120.098147   68.103801    1.084205   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.862343   69.501752    1.085080   CP2   CO   2HP2
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## proline case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-HPR-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+AA PRO
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO   -70.242986   53.293317    1.359600   N     CA    C
+SET_ICOOR  OP1  178.192966   58.965098    1.200801   CO    N     CA
+SET_ICOOR  CP2  179.506937   62.453575    1.513915   CO    N     OP1
+SET_ICOOR 1HP2 -173.837646   72.137627    1.079630   CP2   CO    N
+SET_ICOOR 2HP2  120.098147   68.103801    1.084205   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.862343   69.501752    1.085080   CP2   CO   2HP2
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## d-proline, d-proline:pro_hydrozylated_case1 and d-proline:pro_hydrozylated_case2 cases
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 DPR HYP 0AZ
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO   -70.242986   53.293317    1.359600   N     CA    C
+SET_ICOOR  OP1  178.192966   58.965098    1.200801   CO    N     CA
+SET_ICOOR  CP2  179.506937   62.453575    1.513915   CO    N     OP1
+SET_ICOOR 1HP2 -173.837646   72.137627    1.079630   CP2   CO    N
+SET_ICOOR 2HP2  120.098147   68.103801    1.084205   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.862343   69.501752    1.085080   CP2   CO   2HP2
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## glycine case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-MAL-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+AA GLY
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO    -53.987421   58.601240    1.360895   N     CA    C
+SET_ICOOR  OP1   -13.339096   57.486387    1.201197   CO    N     CA
+SET_ICOOR  CP2   179.655760   64.751350    1.512311   CO    N     OP1
+SET_ICOOR 1HP2   -84.044006   71.278413    1.085649   CP2   CO    N
+SET_ICOOR 2HP2   119.869337   67.924011    1.083706   CP2   CO   1HP2
+SET_ICOOR 3HP2   121.874854   70.998464    1.080460   CP2   CO   2HP2
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## hydroxyproline case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-HPR-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 HPR
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO   -70.242986   53.293317    1.359600   N     CA    C
+SET_ICOOR  OP1  178.192966   58.965098    1.200801   CO    N     CA
+SET_ICOOR  CP2  179.506937   62.453575    1.513915   CO    N     OP1
+SET_ICOOR 1HP2 -173.837646   72.137627    1.079630   CP2   CO    N
+SET_ICOOR 2HP2  120.098147   68.103801    1.084205   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.862343   69.501752    1.085080   CP2   CO   2HP2
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## methyl-alanine case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-MAL-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 MAL
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO    -53.987421   58.601240    1.360895   N     CA    C
+SET_ICOOR  OP1   -13.339096   57.486387    1.201197   CO    N     CA
+SET_ICOOR  CP2   179.655760   64.751350    1.512311   CO    N     OP1
+SET_ICOOR 1HP2   -84.044006   71.278413    1.085649   CP2   CO    N
+SET_ICOOR 2HP2   119.869337   67.924011    1.083706   CP2   CO   1HP2
+SET_ICOOR 3HP2   121.874854   70.998464    1.080460   CP2   CO   2HP2
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## phosphonate case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-NLU-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+
+BEGIN_SELECTOR
+PROPERTY PHOSPHONATE
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO  -150.000169   57.684068    1.348791   N     CA    Pbb
+SET_ICOOR  OP1   -2.200808   57.317771    1.203828   CO    N     CA
+SET_ICOOR  CP2 -178.916686   64.195695    1.513616   CO    N     OP1
+SET_ICOOR 1HP2 -136.216863   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 2HP2  122.078056   66.682399    1.083159   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.977283   71.438584    1.084823   CP2   CO   2HP2
+#SET_ICOOR  H   -180.000000   60.849998    1.010000   N     CA  LOWER
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## SRI's special backbones
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-NLU-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+
+BEGIN_SELECTOR
+PROPERTY SRI
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N1
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO  -150.000169   57.684068    1.348791   N1    C1    C2
+SET_ICOOR  OP1   -2.200808   57.317771    1.203828   CO    N1    C1
+SET_ICOOR  CP2 -178.916686   64.195695    1.513616   CO    N1    OP1
+SET_ICOOR 1HP2 -136.216863   71.360284    1.082267   CP2   CO    N1
+SET_ICOOR 2HP2  122.078056   66.682399    1.083159   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.977283   71.438584    1.084823   CP2   CO   2HP2
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## Triazolemer linker. 
+## internal coordinates are idealized to ensure symmetric scoring
+#############################################################################################
+BEGIN_CASE
+
+BEGIN_SELECTOR
+PROPERTY TRIAZOLE_LINKER
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO   180.000000   57.684068    1.348791   N     C1    C2
+SET_ICOOR  OP1    0.000000   57.317771    1.203828   CO    N     C1
+SET_ICOOR  CP2  180.000000   64.195695    1.513616   CO    N     OP1
+SET_ICOOR 1HP2  180.000000   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 2HP2   60.000000   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 3HP2  -60.000000   71.360284    1.082267   CP2   CO    N
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
+## Gamma-amino acids
+## internal coordinates are idealized to ensure symmetric scoring
+#############################################################################################
+BEGIN_CASE
+
+BEGIN_SELECTOR
+PROPERTY GAMMA_AA
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO   180.000000   57.684068    1.348791   N     C4    C3
+SET_ICOOR  OP1    0.000000   57.317771    1.203828   CO    N     C4
+SET_ICOOR  CP2  180.000000   64.195695    1.513616   CO    N     OP1
+SET_ICOOR 1HP2  180.000000   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 2HP2   60.000000   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 3HP2  -60.000000   71.360284    1.082267   CP2   CO    N
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+
+#############################################################################################
+## general case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-NLU-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+
+BEGIN_SELECTOR
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+SET_ICOOR  CO  -150.000169   57.684068    1.348791   N     CA    C
+SET_ICOOR  OP1   -2.200808   57.317771    1.203828   CO    N     CA
+SET_ICOOR  CP2 -178.916686   64.195695    1.513616   CO    N     OP1
+SET_ICOOR 1HP2 -136.216863   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 2HP2  122.078056   66.682399    1.083159   CP2   CO   1HP2
+SET_ICOOR 3HP2  120.977283   71.438584    1.084823   CP2   CO   2HP2
+#Unpatched H gets its geometry from LOWER, which we have removed
+SET_ANCESTOR H GREATGRANDPARENT  CO
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE

@@ -1,6 +1,6 @@
 -in:file:silent ./../../data/five_structures.out
 -score:weights beta_nov15.wts
--beta_nov15
+#-beta_nov15 #post-default_as_beta_nov15
 -in:file:silent_struct_type binary
 -in:file:fullatom
 -out:nooutput

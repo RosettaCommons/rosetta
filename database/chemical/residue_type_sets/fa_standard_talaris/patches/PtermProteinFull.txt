@@ -1,0 +1,44 @@
+## fullatom protein c-terminus patch
+
+NAME PtermProteinFull
+TYPES PHOSPHONATE_UPPER_VARIANT UPPER_TERMINUS_VARIANT
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+PROPERTY PHOSPHONATE
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE PHOSPHONATE_UPPER_VARIANT
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+
+ADD_ATOM  O2P   OH X -0.67
+#ADD_ATOM  HO2 Hpol X 0.40
+ADD_BOND  Pbb O2P
+#ADD_BOND  O2P HO2
+SET_BACKBONE_HEAVYATOM O2P
+SET_POLYMER_CONNECT UPPER NONE
+
+SET_ICOOR    O2P -170.145584   79.412453    1.629742   Pbb   CA    N
+SET_ICOOR    O1P -114.815605   71.651505    1.511859   Pbb   CA    O2P
+#SET_ICOOR    HO2  -80.605576   62.205589    1.414618   O2P   Pbb   CA
+
+#ADD_CHI 4  CA   Pbb  O2P   HO2
+#ADD_PROTON_CHI 4 SAMPLES 2 0 180 EXTRA 1 20
+## modify properties of existing atoms
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+ADD_PROPERTY PHOSPHONATE_UPPER
+
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+END_CASE
+

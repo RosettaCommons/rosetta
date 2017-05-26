@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="tala" weights="talaris2014.wts" symmetric="false" />
-		<ScoreFunction name="tala_symm" weights="talaris2014.wts" symmetric="true" />
+		<ScoreFunction name="ref" weights="ref2015.wts" symmetric="false" />
+		<ScoreFunction name="ref_symm" weights="ref2015.wts" symmetric="true" />
 	</SCOREFXNS>
 	<RESIDUE_SELECTORS>
 		<Index name="helix1" resnums="1-20" />
@@ -14,7 +14,7 @@
 	<MOVERS>
 		<BundleGridSampler name="mkbundle" nstruct_mode="1" r0_min="4" r0_max="6" r0_samples="5" omega0_min="-2.5" omega0_max="2.5" omega0_samples="5" delta_omega0="0" delta_omega1_min="-30" delta_omega1_max="30" delta_omega1_samples="5" delta_t="0" use_degrees="1"
 			set_dihedrals="true" set_bondlengths="true" set_bondangles="true"
-			residue_name="ALA" crick_params_file="alpha_helix_100" helix_length="20" scorefxn="tala" >
+			residue_name="ALA" crick_params_file="alpha_helix_100" helix_length="20" scorefxn="ref" >
 			<Helix />
 			Helix delta_omega0=180 invert=true />
 		</BundleGridSampler>
@@ -23,7 +23,7 @@
 		
 		<SetupForSymmetry name="make_symm" definition="inputs/c2.symm" />
 
-		<Disulfidize name="disulf" scorefxn="tala_symm" set1="helix1" set2="helix2" match_rt_limit="2.0" score_or_matchrt="false" max_disulf_score="1.0" min_loop="1" min_disulfides="1" max_disulfides="2" />
+		<Disulfidize name="disulf" scorefxn="ref_symm" set1="helix1" set2="helix2" match_rt_limit="2.0" score_or_matchrt="false" max_disulf_score="1.0" min_loop="1" min_disulfides="1" max_disulfides="2" />
 
 	</MOVERS>
 	<APPLY_TO_POSE>
@@ -34,6 +34,6 @@
 		<Add mover="make_symm" />
 		<Add mover="disulf" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="tala_symm" />
+	<OUTPUT scorefxn="ref_symm" />
 
 </ROSETTASCRIPTS>

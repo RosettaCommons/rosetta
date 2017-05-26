@@ -200,8 +200,9 @@ public:
 					etable.analytic_lk_energy( at1, at2, fasol_individual_1, fasol_individual_2 );
 
 					/// There's surprising disagreement in some atom pairs (22 vs 22) as high as 5e-4
-					TS_ASSERT_DELTA( fasol_regular, fasol_individual_1 + fasol_individual_2, 1e-3 );
-					if ( std::abs( fasol_regular - ( fasol_individual_1 + fasol_individual_2 )) > 1e-3 ) {
+					/// hpark: even higher with beta_nov15, over 1e-3 b/w 44-50
+					TS_ASSERT_DELTA( fasol_regular, fasol_individual_1 + fasol_individual_2, 1.1e-3/*1e-3*/  );
+					if ( std::abs( fasol_regular - ( fasol_individual_1 + fasol_individual_2 )) > 1.1e-3/*1e-3*/  ) {
 						std::cout << "Error: " << ii << " " << jj << " " << step*kk+offset << " " << fasol_regular << " vs " << fasol_individual_1 + fasol_individual_2 << " ( " << fasol_individual_1 << " + " << fasol_individual_2 << "); diff= " << fasol_regular - ( fasol_individual_1 + fasol_individual_2 ) << std::endl;
 					}
 

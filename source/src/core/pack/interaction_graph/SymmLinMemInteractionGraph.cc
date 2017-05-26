@@ -930,11 +930,13 @@ SymmLinearMemEdge::get_energy_for_alt_state
 {
 	debug_assert( other_node_curr_state != 0 );
 
-	//T << "get_energy_for_alt_state: " << get_node_index( 0 )  << " " << get_node_index( 1 ) << " srpe: " << store_rpes;
-	//T << " chID " << changing_node_index << " alt: " << alternate_state << " altHI: " << alternate_state_recent_history_index;
-	//T << " oncurr: " << other_node_curr_state << " oncurrHI: " << other_node_state_recent_history_index << std::endl;
+	//if ( changing_node_index == 4 && alternate_state == 1 ) {
+	// T << "get_energy_for_alt_state: " << get_node_index( 0 )  << " " << get_node_index( 1 ) << " srpe: " << store_rpes;
+	// T << " chID " << changing_node_index << " alt: " << alternate_state << " altHI: " << alternate_state_recent_history_index;
+	// T << " oncurr: " << other_node_curr_state << " oncurrHI: " << other_node_state_recent_history_index << std::endl;
+	//}
 
-	bool assignment_of_interest = debug && false; //get_node_index(0) == 67 && get_node_index(1) == 68;
+	bool assignment_of_interest = false; // changing_node_index == 4 && alternate_state == 1; // debug && false; //get_node_index(0) == 67 && get_node_index(1) == 68;
 
 	///if ( false ) {
 	if ( assignment_of_interest ) {

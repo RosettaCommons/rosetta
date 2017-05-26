@@ -1,5 +1,4 @@
 -parser:protocol inputs/test.xml
--beta_nov15
 -in:file:s inputs/c4m_symm.pdb
 -nstruct 1
 -symmetric_gly_tables true

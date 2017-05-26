@@ -276,7 +276,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 	using namespace basic;
 
 	// no longer supporting legacy (uncorrected) rna bond params -- probably should deprecate this option entirely.
-	runtime_assert ( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	//runtime_assert ( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
 	GlobalResidueTypeSets::const_iterator iter;
 	{ // scope for the ReadLockGuard
@@ -322,6 +322,8 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 			temp_str += "_05.2009_icoor";
 		} else if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ] ) {
 			temp_str += "_pre_talaris2013";
+		} else if ( basic::options::option[basic::options::OptionKeys::corrections::restore_talaris_behavior ] ) {
+			temp_str += "_talaris";
 		}
 	} else if ( tag == CENTROID ) {
 		if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ] ) {
@@ -382,7 +384,7 @@ ChemicalManager::create_ideal_bond_length_set( std::string const & tag ) const
 // global data
 /// @brief tag name for querying fullatom chemical type set.
 std::string const FA_STANDARD( "fa_standard" );
-/// @brief tag name for querying centroid chemical type set.
+/// @brief tag name for querying fullatom chemical type set.
 std::string const CENTROID( "centroid" );
 /// @brief tag name for querying centroid_rot chemical type set.
 std::string const CENTROID_ROT( "centroid_rot" );

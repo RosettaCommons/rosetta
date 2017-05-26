@@ -8,3 +8,4 @@
 ##### these are general flags
 -score:weights talaris2014
 #-extra_res_fa d-caa/DALA.params
+-restore_talaris_behavior

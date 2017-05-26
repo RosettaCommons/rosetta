@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="tala" weights="beta_nov15.wts" />
+		<ScoreFunction name="ref" weights="ref2015.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 		<RestrictToRepacking name="repack_only" />
@@ -14,7 +14,7 @@
 		
 		<DeclareBond name="bond1" res1="42" atom1="C" res2="1" atom2="N" />
 
-		<ThreefoldLinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="tala" />
+		<ThreefoldLinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="ref" />
 
 	</MOVERS>
 	<APPLY_TO_POSE>
@@ -23,5 +23,5 @@
 		<Add mover="bond1" />
 		<Add mover="threefold" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="tala" />
+	<OUTPUT scorefxn="ref" />
 </ROSETTASCRIPTS>

@@ -58,7 +58,7 @@ CST::END
 
 #block 4: accessory for enforcing the cys-his interaction
 CST::BEGIN
-  TEMPLATE::   ATOM_MAP: 1 atom_type: S   ,
+  TEMPLATE::   ATOM_MAP: 1 atom_type: S  ,
   TEMPLATE::   ATOM_MAP: 1 identical: 1 2
   TEMPLATE::   ATOM_MAP: 1 residue3: CYS
 

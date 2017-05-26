@@ -1,6 +1,8 @@
 #You'll define your own database flag, of course
 #-database /ifs1/home/smlewis/minirosetta_database
 
+-restore_talaris_behavior #for some reason this mover is not compatible in debug mode with ref2015
+
 #useful for debugging
 #-options:user
 #-show_accessed_options

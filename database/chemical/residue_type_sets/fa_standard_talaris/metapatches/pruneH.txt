@@ -1,0 +1,21 @@
+## Metapatch for aromatic bromination
+NAME pruneH
+TYPES blank-PRUNEH
+
+PERTINENT_PROPERTY NO_ATOM_PROPERTY
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+# anything except metals which are handled otherwise
+NOT PROPERTY METAL
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+DELETE_CHILD_PROTON blank
+
+END_CASE

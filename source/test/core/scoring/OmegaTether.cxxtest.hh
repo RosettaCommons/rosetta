@@ -69,9 +69,10 @@ public:
 		pose_->clear();
 		pose_ = core::import_pose::pose_from_file("core/scoring/betapose.pdb", core::import_pose::PDB_file);
 		pose_->set_phi(3, 140.0);
-		pose_->set_theta(3, 140.0);
-		pose_->set_psi(3, 140.0);
+		pose_->set_theta(3, /*140.0*/134.448); // new optimum for beta_nov15
+		pose_->set_psi(3, /*140.0*/103.883);// new optimum for beta_nov15
 		pose_->set_omega(3, 140.0);
+		pose_->dump_pdb("core/scoring/betapose.premin.pdb");
 
 		core::Real const phi_start( pose_->phi(3));
 		core::Real const theta_start( pose_->theta(3));
@@ -89,6 +90,8 @@ public:
 		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.0000001, true, false, false ) );
 
 		minimizer.run( *pose_, *mm, *scorefxn, *min_options );
+
+		pose_->dump_pdb("core/scoring/betapose.min.pdb");
 
 		core::Real const phi_end( pose_->phi(3) );
 		core::Real const theta_end( pose_->theta(3) );

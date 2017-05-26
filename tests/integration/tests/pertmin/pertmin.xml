@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
     <SCOREFXNS>
-	<ScoreFunction name="t14_cart" weights="talaris2014_cart" />
+	<ScoreFunction name="ref15_cart" weights="ref2015_cart" />
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
     </RESIDUE_SELECTORS>
@@ -9,12 +9,12 @@
     <FILTERS>
     </FILTERS>
     <MOVERS>
-	<PertMinMover name="pertmin" pert_size="0.01" scorefxn="t14_cart" />
+	<PertMinMover name="pertmin" pert_size="0.01" scorefxn="ref15_cart" />
     </MOVERS>
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
     <PROTOCOLS>
 	<Add mover="pertmin" />
     </PROTOCOLS>
-    <OUTPUT scorefxn="talaris2014" />
+    <OUTPUT scorefxn="ref15_cart" />
 </ROSETTASCRIPTS>

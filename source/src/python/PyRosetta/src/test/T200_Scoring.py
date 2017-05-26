@@ -20,7 +20,7 @@ print('Scoring ----------------------------------------------')
 pose = core.import_pose.pose_from_file("../test/data/test_fragments.pdb")
 
 print('Creating standard fullatom score function and scoring')
-scorefxn = create_score_function('talaris2013')
+scorefxn = create_score_function('ref2015')
 scorefxn(pose)
 
 print('Creating standard centroid score function and scoring')
@@ -28,7 +28,7 @@ scorefxn = create_score_function('score3')
 scorefxn(pose)
 
 print('Creating standard score function and scoring, again')
-scorefxn = create_score_function('talaris2013', 'docking')
+scorefxn = create_score_function('ref2015', 'docking')
 scorefxn(pose)
 print('Creating standard score from scratch')
 scorefxn = ScoreFunction()

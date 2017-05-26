@@ -1,3 +1,4 @@
 -s input/1vii.pdb
 -pose_metrics:shobuns:tgt_res input/tgtres.txt
 -score:patch occ_Hbond_sol_exact_talaris2014
+-restore_talaris_behavior

@@ -7,3 +7,4 @@
 -out:pdb
 -out:file:scorefile relax_scores_1afo.sc
 -packing:pack_missing_sidechains 0
+-restore_talaris_behavior

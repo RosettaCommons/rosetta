@@ -59,10 +59,10 @@ EtableOptions::EtableOptions( utility::options::OptionCollection const & options
 	lj_switch_dis2sigma( 0.6 ),
 	no_lk_polar_desolvation( false ),
 	proline_N_is_lk_nonpolar( false),
-	lj_hbond_OH_donor_dis(3.0),
-	lj_hbond_hdis(1.95),
+	lj_hbond_OH_donor_dis(/*3.0*/2.6),
+	lj_hbond_hdis(/*1.95*/1.75),
 	enlarge_h_lj_wdepth(false),
-	fa_hatr(false)
+	fa_hatr(/*false*/true)
 {
 	initialize_from_options( options );
 }

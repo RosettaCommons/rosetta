@@ -1,0 +1,21 @@
+## this patch turns DNA phosphate groups (P,OP2,OP1) into virtual atoms
+## useful when non-crystallographic phosphates must be built for atom tree purposes, but should not contribute to energetics
+## author Phil Bradley
+NAME VirtualDNAPhosphate
+TYPES VIRTUAL_DNA_PHOSPHATE
+
+BEGIN_SELECTOR
+PROPERTY DNA
+END_SELECTOR
+
+BEGIN_CASE ### general
+SET_ATOM_TYPE P VIRT
+SET_ATOM_TYPE OP2 VIRT
+SET_ATOM_TYPE OP1 VIRT
+
+ADD_ATOM HO5' Hpol H   0.38
+ADD_BOND O5'   HO5'
+
+SET_ICOOR HO5'  179.890442   70.479956    1.000437   O5'   C5'   C4'
+
+END_CASE

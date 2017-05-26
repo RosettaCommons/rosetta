@@ -4,3 +4,4 @@
 -out:levels protocols.simple_moves.ModifyVariantTypeMover:500
 ##### these are general flags
 -score:weights talaris2014
+-restore_talaris_behavior

@@ -110,23 +110,26 @@ public:
 
 		core_init_with_additional_options(""); //init with NO beta params
 		//These should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
-		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
-		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
-
-		core_init_with_additional_options("-beta_nov15"); //init with beta_nov15 params
-		//shouldn't throw
+		//hpark: shouldn't throw with default change
 		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
 		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
-		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
 
+		/*
+		//core_init_with_additional_options("-beta_nov15"); //init with beta_nov15 params
+		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
+		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
+		*/
+
+		// july15 will be deprecated soon
 		core_init_with_additional_options("-beta_july15"); //init with NO beta params
 		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
 		//shouldn't throw
 		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
 		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
@@ -140,23 +143,26 @@ public:
 
 		core_init_with_additional_options(""); //init with NO beta params
 		//These should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
-		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		//hpark: shouldn't throw with default change
+		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
 
-		core_init_with_additional_options("-beta_nov15"); //init with beta_nov15 params
+		/*
+		//core_init_with_additional_options("-beta_nov15"); //init with beta_nov15 params
 		//shouldn't throw
 		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
 		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
 		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
+		*/
 
 		core_init_with_additional_options("-beta_july15"); //init with NO beta params
 		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
 		//shouldn't throw
 		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
 		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));

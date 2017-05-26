@@ -341,35 +341,22 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 {
 	using namespace basic::options;
 
-	// will attempt to modify the relax script for beta_nov15 only
+
+	// will attempt to modify the relax script for -beta only
 	// options for any other score functions could be also added below
 	std::vector< std::string > filelines;
 
+	// Now beta_nov15 as default... this is pretty dangerous for talaris
 	if ( !(FastRelax::script_file_specified_) ) {
-		if ( option[ OptionKeys::corrections::beta_nov15 ]() || option[ OptionKeys::corrections::beta_nov15_cart ] ) {
-			// hard-coded reference weights for now...
-			TR << "Calling correction for beta_nov15, " << FastRelax::default_repeats() << " repeats..." << std::endl;
-			filelines.push_back( "repeat "+ObjexxFCL::string_of(FastRelax::default_repeats()));
-
-			filelines.push_back( "reference 0.3     3.0     -2.2     -2.7     5.0     -0.2    0.5     5.2     -0.5     4.5     5.0     -1.8     -0.3     -1.5     0.0     -0.8     1.0     4.0     9.5     3.5" );
-			filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-
-			filelines.push_back( "reference 1.32468 3.74979 -2.16074 -2.40953 1.99829 0.41816 0.27935 3.02374 -0.54958 2.20647 2.50235 -1.34026 -1.17821 -1.31095 0.08526 -0.27469 1.31675 3.12269 3.24099 1.18223" );
-			filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-
-			filelines.push_back( "reference 1.32468 3.5979  -2.16074 -2.50953 1.79829 0.51816 0.17935 2.82374 -0.54958 2.00647 2.30235 -1.34026 -1.27821 -1.31095 0.08526 -0.27469 1.31675 3.02269 2.94099 1.00223" );
-			filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-			// change final line if beta_nov15_patch
-			if ( option[ OptionKeys::corrections::beta_nov15_patch ]() ) {
-				filelines.push_back( "reference  2.01692 3.95229 -1.84895 -2.44909 1.54388 1.43603 0.25816 2.70992 -0.38208 2.00235 2.31398 -0.91852 -0.67964 -0.97481 -0.11701 -1.53805 -1.70469 2.85306 2.72731 -0.99943" ); // using "minimized context"
-			} else {
-				filelines.push_back( "reference 1.32468 3.25479 -2.14574 -2.72453 1.21829 0.79816 -0.30065 2.30374 -0.71458 1.66147 1.65735 -1.34026 -1.64321 -1.45095 -0.09474 -0.28969 1.15175 2.64269 2.26099 0.58223" );
-			}
-			filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-			filelines.push_back( "accept_to_best"                  );
-			filelines.push_back( "endrepeat "                      );
-
-		} else if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ] ) {
+		/* // no more support for beta_nov15_patch
+		if ( option[ OptionKeys::corrections::beta_nov15_patch ]() ) {
+		filelines.push_back( "reference  2.01692 3.95229 -1.84895 -2.44909 1.54388 1.43603 0.25816 2.70992 -0.38208 2.00235 2.31398 -0.91852 -0.67964 -0.97481 -0.11701 -1.53805 -1.70469 2.85306 2.72731 -0.99943" ); // using "minimized context"
+		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
+		} else
+		*/
+		if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ] ) {
 			TR << "Calling correction for beta_nov16, " << FastRelax::default_repeats() << " repeats..." << std::endl;
 			filelines.push_back( "repeat "+ObjexxFCL::string_of(FastRelax::default_repeats()));
 

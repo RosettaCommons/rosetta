@@ -44,9 +44,9 @@ CoordinateConstraint  CA     9 ORIG   22 3.068 -1.374 5.306 HARMONIC 0 0.75
 CoordinateConstraint  C      9 ORIG   22 3.365 -0.238 6.335 HARMONIC 0 0.75
 CoordinateConstraint  O      9 ORIG   22 4.368 -0.297 7.009 HARMONIC 0 0.75
 CoordinateConstraint  CB     9 ORIG   22 2.7342 -0.744591 3.95126 HARMONIC 0 0.75
-CoordinateConstraint  CG     9 ORIG   22 3.8694 0.105808 3.39715 HARMONIC 0 0.75
-CoordinateConstraint  OD1    9 ORIG   22 4.95974 -0.400304 3.27516 HARMONIC 0 0.75
-CoordinateConstraint  OD2    9 ORIG   22 3.63528 1.25312 3.10127 HARMONIC 0 0.75
+CoordinateConstraint  CG     9 ORIG   22 1.42172 0.0275091 3.96386 HARMONIC 0 0.75
+CoordinateConstraint  OD1    9 ORIG   22 0.563996 -0.310073 4.74502 HARMONIC 0 0.75
+CoordinateConstraint  OD2    9 ORIG   22 1.28959 0.947276 3.19233 HARMONIC 0 0.75
 CoordinateConstraint  N     10 ORIG   22 2.486 0.779 6.469 HARMONIC 0 0.75
 CoordinateConstraint  CA    10 ORIG   22 2.722 1.912 7.413 HARMONIC 0 0.75
 CoordinateConstraint  C     10 ORIG   22 1.416 2.425 8.114 HARMONIC 0 0.75

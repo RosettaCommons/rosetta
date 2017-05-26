@@ -102,6 +102,10 @@ void DatabaseOccSolEne::init_don_mapping(chemical::AtomTypeSet const & atom_set)
 	don_type_mapping_[ atom_set.atom_type_index("HOH") ] = atom_set.atom_type_index("OH");
 	don_type_mapping_[ atom_set.atom_type_index("OHha") ] = atom_set.atom_type_index("OH");
 
+	// hpark: below is added for beta_nov15
+	don_type_mapping_[ atom_set.atom_type_index("NtrR") ] = atom_set.atom_type_index("Ntrp");
+
+
 	// check that all donors have pwSHO parameters
 	Size const PROTEIN_TYPE = atom_set.atom_type_index("aroC");
 	for ( Size i = 1; i <= N; ++i ) {

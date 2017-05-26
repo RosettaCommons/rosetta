@@ -30,7 +30,7 @@ rosetta.init()
 p = pose_from_file(os.path.dirname(os.path.abspath(__file__))+"/data/gui/2j88.pdb")
 
 os.chdir(".test.output/")
-scorefxn = create_score_function("talaris2013")
+scorefxn = create_score_function("ref2015")
 
 loop_string = "24:42:L"
 loops_as_strings = []; loops_as_strings.append(loop_string); loops_as_strings.append("24:42:H")

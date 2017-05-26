@@ -130,6 +130,10 @@ public:
 	rotamer( Size rot_id ) const;
 
 	virtual
+	basic::datacache::BasicDataCache &
+	rotamer_data_cache( Size rot_id ) const;
+
+	virtual
 	conformation::Residue const &
 	rotamer_ref( Size rot_id ) const;
 

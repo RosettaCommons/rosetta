@@ -17,11 +17,11 @@
         
         <!--required torsions to keep things in place. make sure you have them set for both ends-->
         
-        <PackRotamersMover name="packer" scorefxn=tala_comp task_operations=l_res,d_res />
+        <PackRotamersMover name="packer" scorefxn=ref_comp task_operations=l_res,d_res />
 
     </MOVERS>
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
 <xi:include href="protocols/rosetta_scripts/include3.xml" parser="XML" />
-    <OUTPUT scorefxn=tala />
+    <OUTPUT scorefxn=ref />
 </ROSETTASCRIPTS>

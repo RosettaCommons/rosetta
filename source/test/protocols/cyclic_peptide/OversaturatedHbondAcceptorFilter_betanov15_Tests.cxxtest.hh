@@ -36,7 +36,7 @@ class OversaturatedHbondAcceptorFilter_betanov15_Tests : public CxxTest::TestSui
 public:
 
 	void setUp(){
-		core_init_with_additional_options("-no_optH -beta_nov15");
+		core_init_with_additional_options("-no_optH");
 
 		oversaturated_bb_bb_bb_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/oversaturated_bb_bb_bb.pdb", false, core::import_pose::PDB_file);
 

@@ -1,0 +1,80 @@
+## fullatom protein n-terminus patch
+## I would like to redo this in YAML! no begin_ end_ blocks!
+
+NAME NtermTruncation
+TYPES LOWERTERM_TRUNC_VARIANT
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE LOWERTERM_TRUNC_VARIANT
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE N_FORMYLATION
+NOT VARIANT_TYPE HBS_POST
+NOT VARIANT_TYPE A3B_HBS_POST
+NOT VARIANT_TYPE OOP_PRE
+NOT VARIANT_TYPE OOP_POST
+NOT VARIANT_TYPE TRIAZOLAMERN
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+BEGIN_CASE ## PROLINE AND D-PROLINE #####################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+AA PRO DPR
+END_SELECTOR
+
+## these are the operations involved
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## OTHER PROLINES ############################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 B19 C89 B59 HPR 0AZ B3P
+END_SELECTOR
+
+## these are the operations involved
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE #### glycine ################################################
+
+## these define which residues match this case
+
+BEGIN_SELECTOR
+AA GLY
+END_SELECTOR
+
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR H 120 60 1 N CA C
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR H 120 60 1 N CA C
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+

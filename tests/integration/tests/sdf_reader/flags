@@ -15,3 +15,4 @@
   -protocol ligand_dock.xml
 -mute core.util.prof ## dont show timing info
 -mute core.io.database
+-restore_talaris_behavior

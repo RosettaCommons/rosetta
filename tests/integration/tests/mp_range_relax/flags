@@ -3,3 +3,4 @@
 -relax:range:angle_max 1
 -relax:range:nmoves nres
 -nstruct 1
+-restore_talaris_behavior

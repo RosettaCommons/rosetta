@@ -1,0 +1,150 @@
+NAME	CHARGE
+CNH2	0.550
+COO	0.620
+CH1	-0.090
+CH2	-0.180
+CH3	-0.270
+aroC	-0.115
+Ntrp	-0.610
+Nhis	-0.530
+NH2O	-0.470
+Nlys	-0.620
+Narg	-0.750
+Npro	-0.370
+OH	-0.660
+Oaro	-0.660
+ONH2	-0.550
+OOC	-0.760
+Oet2	-0.550
+Oet3	-0.660
+S	-0.160
+Nbb	-0.470
+CAbb	0.070
+CObb	0.510
+OCbb	-0.510
+Phos	1.500
+Pbb	1.500	#copied from Phos
+Hpol	0.430
+Hapo	0.095
+Haro	0.115
+HNbb	0.310
+H2O	0.000
+HOH	0.000
+Bsp2  0.000 # Unknown
+F	-0.250
+Cl	-0.130
+Br	-0.100
+I	-0.090
+Zn2p	2.000
+Co2p  2.000
+Cu2p  2.000
+Fe2p	2.000
+Fe3p	3.000
+Mg2p	2.000
+Ca2p	2.000
+Pha     2.600  # P/ HA, S.Hauptmann PCCP 2003 & CHARMM27, Kosta Makrodimitris 11/2005@Robin 
+OPha   -1.400  # OP/ HA, S.Hauptmann PCCP 2003 & CHARMM27, Kosta Makrodimitris 11/2005@Robin
+OHha   -1.600  # OH/ HA, S.Hauptmann PCCP 2003 & CHARMM27, Kosta Makrodimitris 11/2005@Robin
+Hha     0.600  # HO/ HA, S.Hauptmann PCCP 2003 & CHARMM27, Kosta Makrodimitris 11/2005 @Robin
+CO3     1.075  # CO3 J. Bio. Chem. 2000, Vol. 275, No. 2, 1057-1064@Robin
+OC3    -0.980  # OC3 J. Bio. Chem. 2000, Vol. 275, No. 2, 1057-1064@Robin
+Si      2.400  # Si in quartz, Phys Rev Lett Volume 64 Number 16 Page 1955-1958@Robin
+OSi    -1.200  # O in quartz, Phys Rev Lett Volume 64 Number 16 Page 1955-1958@Robin
+Oice   -0.834  # O in ice, TIP3p@Robin
+Hice    0.417  # H in ice, TIP3p@Robin
+Na1p	1.000
+K1p	1.000
+### The following are from the charge on the metal ions, where they match the UFF oxidation state.
+## Metaloids and non-metals are rough guesses based off of other group members
+He      0    # UFF ion based guess 
+Li      1    # UFF ion based guess 
+Be      2    # UFF ion based guess 
+Ne      0    # UFF ion based guess 
+Al      3    # UFF ion based guess 
+Ar      0    # UFF ion based guess 
+Sc      3    # UFF ion based guess 
+Ti      4    # UFF ion based guess 
+V       5    # UFF ion based guess 
+Cr      3    # UFF ion based guess 
+Mn      2    # UFF ion based guess 
+Ni      2    # UFF ion based guess 
+Ga      3    # UFF ion based guess 
+Ge      3    # UFF ion based guess 
+As      1.5  # As phosphorus
+Se     -0.15 # As sulfur
+Kr      0    # UFF ion based guess 
+Rb      1    # UFF ion based guess 
+Sr      2    # UFF ion based guess 
+Y       3    # UFF ion based guess 
+Zr      4    # UFF ion based guess 
+Nb      5    # UFF ion based guess 
+Mo      6    # UFF ion based guess 
+Tc      5    # UFF ion based guess 
+Ru      2    # UFF ion based guess 
+Rh      3    # UFF ion based guess 
+Pd      2    # UFF ion based guess 
+Ag      1    # UFF ion based guess 
+Cd      2    # UFF ion based guess 
+In      3    # UFF ion based guess 
+Sn      0.5  # UFF ion based guess 
+Sb      1.5  # UFF ion based guess 
+Te      0.15 # UFF ion based guess 
+Xe      0    # UFF ion based guess 
+Cs      1    # UFF ion based guess 
+Ba      2    # UFF ion based guess 
+La      3    # UFF ion based guess 
+Ce      3    # UFF ion based guess 
+Pr      3    # UFF ion based guess 
+Nd      3    # UFF ion based guess 
+Pm      3    # UFF ion based guess 
+Sm      3    # UFF ion based guess 
+Eu      3    # UFF ion based guess 
+Gd      3    # UFF ion based guess 
+Tb      3    # UFF ion based guess 
+Dy      3    # UFF ion based guess 
+Ho      3    # UFF ion based guess 
+Er      3    # UFF ion based guess 
+Tm      3    # UFF ion based guess 
+Yb      3    # UFF ion based guess 
+Lu      3    # UFF ion based guess 
+Hf      4    # UFF ion based guess 
+Ta      5    # UFF ion based guess 
+W       6    # UFF ion based guess 
+Re      7    # UFF ion based guess 
+Os      6    # UFF ion based guess 
+Ir      3    # UFF ion based guess 
+Pt      2    # UFF ion based guess 
+Au      3    # UFF ion based guess 
+Hg      2    # UFF ion based guess 
+Tl      3    # UFF ion based guess 
+Pb      3    # UFF ion based guess 
+Bi      3    # UFF ion based guess 
+Po      0.5  # UFF ion based guess 
+At     -1    # UFF ion based guess 
+Rn      0    # UFF ion based guess 
+Fr      1    # UFF ion based guess 
+Ra      2    # UFF ion based guess 
+Ac      3    # UFF ion based guess 
+Th      4    # UFF ion based guess 
+Pa      4    # UFF ion based guess 
+U       4    # UFF ion based guess 
+Np      4    # UFF ion based guess 
+Pu      4    # UFF ion based guess 
+Am      4    # UFF ion based guess 
+Cm      3    # UFF ion based guess 
+Bk      3    # UFF ion based guess 
+Cf      3    # UFF ion based guess 
+Es      3    # UFF ion based guess 
+Fm      3    # UFF ion based guess 
+Md      3    # UFF ion based guess 
+No      3    # UFF ion based guess 
+Lr      3    # UFF ion based guess 
+REPL    0.000
+REPLS   0.000
+HREPS   0.000
+VIRT	0.000
+SUCK	0.000
+MPct	  0.0000
+MPnm	  0.0000
+MPdp	  0.0000
+MPtk      0.0000

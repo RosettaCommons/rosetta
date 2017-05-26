@@ -164,13 +164,12 @@ public:
 		core::chemical::AromaticAtomVIterPair vp = boost::vertices(HAgraph);
 		core::chemical::VD vd = *vp.first; //get the vertex
 		core::chemical::Atom atom(HAgraph[vd]); //get the atom
-		TS_ASSERT_EQUALS(atom.name(), " CG ");
+		TS_ASSERT_EQUALS(atom.name(), /*" CG "*/" CD1");
 
 		++vp.first;
 		vd = *vp.first;
 		atom = HAgraph[vd];
-		TS_ASSERT_EQUALS(atom.name(), " CD1");
-
+		TS_ASSERT_EQUALS(atom.name(), /*" CD1"*/" CD2");
 
 	}
 

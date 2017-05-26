@@ -21,3 +21,4 @@
 -pdb_comments true
 -unmute protocols.simple_filters.ScoreTypeFilter
 
+-restore_talaris_behavior

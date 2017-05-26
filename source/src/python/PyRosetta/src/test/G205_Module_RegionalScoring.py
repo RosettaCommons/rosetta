@@ -25,7 +25,7 @@ from rosetta import *
 rosetta.init()
 
 p = pose_from_file(os.path.dirname(os.path.abspath(__file__))+"/data/gui/2j88.pdb")
-scorefxn = create_score_function("talaris2013")
+scorefxn = create_score_function("ref2015")
 
 
 print "Testing RegionalScoring Class \n\n"

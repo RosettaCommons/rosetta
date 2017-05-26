@@ -12,3 +12,4 @@
 -bb_average_weight 0.8
 -lazy_ig false
 -double_lazy_ig false
+-restore_talaris_behavior

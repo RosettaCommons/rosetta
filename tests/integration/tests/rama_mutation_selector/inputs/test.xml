@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="bnv" weights="beta_nov15" />
+		<ScoreFunction name="ref" weights="ref2015" />
 	</SCOREFXNS>
 	<RESIDUE_SELECTORS>
 		<RamaMutationSelector name="aib_positions" target_type="AIB" score_threshold="-0.1" rama_prepro_multiplier="0.8" />
@@ -17,5 +17,5 @@
 	<PROTOCOLS>
 		<Add mover="mut" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="bnv" />
+	<OUTPUT scorefxn="ref" />
 </ROSETTASCRIPTS>

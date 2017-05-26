@@ -221,10 +221,20 @@ public:
 	set_ProCorrection_values(
 		int node_not_necessarily_proline,
 		int state,
-		core::PackerEnergy bb_nonprobb_E,
+		core::PackerEnergy bb_regbb_E,
 		core::PackerEnergy bb_probb_E,
-		core::PackerEnergy sc_nonprobb_E,
+		core::PackerEnergy sc_regbb_E,
 		core::PackerEnergy sc_probb_E
+	);
+
+	void
+	set_GlyCorrection_values(
+		int node_not_necessarily_glycine,
+		int state,
+		core::PackerEnergy bb_regbb_E,
+		core::PackerEnergy bb_glybb_E,
+		core::PackerEnergy sc_regbb_E,
+		core::PackerEnergy sc_glybb_E
 	);
 
 	inline
@@ -236,6 +246,17 @@ public:
 	{
 		int which_node = node_ind == get_node_index( 0 ) ? 0 : 1;
 		return get_proline_correction( which_node, state );
+	}
+
+	inline
+	core::PackerEnergy
+	get_glycine_correction_for_node(
+		int node_ind,
+		int state
+	) const
+	{
+		int which_node = node_ind == get_node_index( 0 ) ? 0 : 1;
+		return get_glycine_correction( which_node, state );
 	}
 
 
@@ -266,6 +287,16 @@ protected:
 	}
 
 	inline
+	core::PackerEnergy
+	get_glycine_correction(
+		int which_node,
+		int state
+	) const
+	{
+		return glycine_corrections_[ which_node ][ state ];
+	}
+
+	inline
 	OnTheFlyNode const *
 	get_otf_node( int which_node ) const
 	{
@@ -282,6 +313,7 @@ protected:
 private:
 
 	utility::vector1< core::PackerEnergy > proline_corrections_[ 2 ];
+	utility::vector1< core::PackerEnergy > glycine_corrections_[ 2 ];
 	ResiduePairEvalType eval_types_[ 2 ];
 	bool long_range_interactions_exist_;
 	bool short_range_interactions_exist_;
@@ -409,10 +441,22 @@ public:
 		int node2,
 		int node_not_neccessarily_proline,
 		int state,
-		core::PackerEnergy bb_nonprobb_E,
+		core::PackerEnergy bb_regbb_E,
 		core::PackerEnergy bb_probb_E,
-		core::PackerEnergy sc_nonprobb_E,
+		core::PackerEnergy sc_regbb_E,
 		core::PackerEnergy sc_probb_E
+	);
+
+	void
+	set_GlyCorrection_values_for_edge(
+		int node1,
+		int node2,
+		int node_not_neccessarily_glycine,
+		int state,
+		core::PackerEnergy bb_regbb_E,
+		core::PackerEnergy bb_glybb_E,
+		core::PackerEnergy sc_regbb_E,
+		core::PackerEnergy sc_glybb_E
 	);
 
 

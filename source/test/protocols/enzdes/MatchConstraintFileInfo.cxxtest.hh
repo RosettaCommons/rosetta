@@ -200,7 +200,8 @@ public:
 
 		utility::vector1< core::Size > const & at_ind_upres4_phe = mcfil4->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 1, const_residue_set->name_mapOP("PHE") );
 
-		TS_ASSERT_EQUALS( at_ind_upres4_phe.size(), 6 );
+		// hpark: beta_nov15 matches to 5 instead because of CG atomtype change from aroC -> CH0
+		TS_ASSERT_EQUALS( at_ind_upres4_phe.size(), /*6*/5 );
 
 		//TS_ASSERT_EQUALS
 

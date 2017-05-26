@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="bnv" weights="beta_nov15.wts" />
+		<ScoreFunction name="ref" weights="ref2015.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
@@ -20,5 +20,5 @@
 		<Add mover="bond1" />
 		<Add filter="symmfilter" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="bnv" />
+	<OUTPUT scorefxn="ref" />
 </ROSETTASCRIPTS>

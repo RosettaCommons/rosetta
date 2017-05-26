@@ -90,6 +90,16 @@ public:
 	void
 	list_read_options( utility::options::OptionKeyList & opts );
 
+	/// @brief checks if the weights file is probably a talaris weights file
+	/// and if it is consistent with the options system.
+	/// static because C++ says it has to be; public because unit test
+	/// spiritually const but you can't do that with static
+	static
+	bool
+	validate_talaris(
+		std::string const & weights_tag,
+		utility::options::OptionCollection const & options );
+
 	/// @brief checks if the weights file is probably a beta_15 weights file
 	/// and if it is consistent with the options system.
 	/// static because C++ says it has to be; public because unit test
@@ -111,6 +121,7 @@ private:
 
 };
 
+extern std::string const REF_2015;
 extern std::string const TALARIS_2014;
 extern std::string const TALARIS_2013;
 extern std::string const TALARIS_2013_CART;

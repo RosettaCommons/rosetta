@@ -105,6 +105,7 @@ ScoreFunctionFactory::create_score_function(
 		}
 	}
 
+	runtime_assert(validate_talaris(weights_tag, options) );
 	runtime_assert(validate_beta(weights_tag, options));
 
 	load_weights_file( weights_tag, scorefxn );
@@ -122,6 +123,52 @@ ScoreFunctionFactory::create_score_function(
 
 	scorefxn->name( weights_tag );
 	return scorefxn;
+}
+
+/// @details If requested tag is talaris2013/talaris2014, but the user did not
+/// pass the relevant options-system option, ERROR! This is because this
+/// scorefunction family has overrides to parameters (LK solvation params, etc).
+/// Those are loaded from the command-line flag, not the weights file. Using
+/// only the weights file will give you mismatched weights/params and much
+/// sadness.
+bool
+ScoreFunctionFactory::validate_talaris(
+	std::string const & weights_tag,
+	utility::options::OptionCollection const & options
+)
+{
+	bool const sf_maybe_talaris(weights_tag.find("talaris") != std::string::npos);
+	core::Size const weights_length(weights_tag.length());
+
+	if ( !sf_maybe_talaris || weights_length < 11 ) return true;
+
+	core::Size const fname_length(weights_tag.length() - 4); //4 represents ".wts"
+	std::string const weights_tag_extension(weights_tag.substr(fname_length)); // might or might not actually be an extension
+	bool const weights_tag_has_extension(weights_tag_extension == ".wts");
+	//this ternary creates the de-extended weights tag if it was extended
+	std::string const weights_tag_no_extension(weights_tag_has_extension ? weights_tag.substr(0, fname_length): weights_tag);
+
+	using namespace basic::options::OptionKeys;
+	bool const talaris_active( options[corrections::restore_talaris_behavior].value());
+
+	if ( (weights_tag_no_extension == (TALARIS_2014)) && !talaris_active ) {
+		utility_exit_with_message(TALARIS_2014 + "(.wts) requested, but -corrections::restore_talaris_behavior not set to true. This leads to a garbage scorefunction.  Exiting.");
+		return false; //can't get here
+	} else if ( (weights_tag_no_extension == (TALARIS_2013)) && !talaris_active ) {
+		utility_exit_with_message(TALARIS_2013 + "(.wts) requested, but -corrections::restore_talaris_behavior not set to true. This leads to a garbage scorefunction.  Exiting.");
+		return false; //can't get here
+	} else if ( sf_maybe_talaris && !talaris_active ) {
+		TR.Warning << "**************************************************************************\n"
+			<< "*****************************************************\n"
+			<< "****************************************************\n"
+			<< weights_tag << " may be a 'talaris' scorefunction, but ScoreFunctionFactory thinks the -restore_talaris_behavior flags weren't set.  "
+			<< "Your scorefunction may be garbage!\n"
+			<< "**************************************************************************\n"
+			<< "*****************************************************\n"
+			<< "****************************************************" << std::endl;
+	}
+
+	return true;
 }
 
 
@@ -163,21 +210,21 @@ ScoreFunctionFactory::validate_beta(
 	using namespace basic::options::OptionKeys;
 	bool const betanov16_active(options[corrections::beta_nov16].value()
 		|| options[corrections::beta_nov16_cart].value() );
-	bool const betanov15_active(options[corrections::beta_nov15].value()
-		|| options[corrections::beta_nov15_cart].value() );
+	//bool const betanov15_active(options[corrections::beta_nov15].value()
+	// || options[corrections::beta_nov15_cart].value() );
 	bool const betajuly15_active(options[corrections::beta_july15].value()
 		|| options[corrections::beta_july15_cart].value() );
 
 	if ( (weights_tag_no_extension == (BETA_NOV16)) && !betanov16_active ) {
 		utility_exit_with_message(BETA_NOV16 + "(.wts) requested, but -corrections::beta_nov16 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
-	} else if ( (weights_tag_no_extension == (BETA_NOV15)) && !betanov15_active ) {
+		/*} else if ( (weights_tag_no_extension == (BETA_NOV15)) && !betanov15_active ) {
 		utility_exit_with_message(BETA_NOV15 + "(.wts) requested, but -corrections::beta_nov15 not set to true. This leads to a garbage scorefunction.  Exiting.");
-		return false; //can't get here
+		return false; //can't get here*/
 	} else if ( (weights_tag_no_extension == (BETA_JULY15)) && !betajuly15_active ) {
 		utility_exit_with_message(BETA_JULY15 + "(.wts) requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
-	} else if ( sf_maybe_beta && !betanov16_active && !betanov15_active && !betajuly15_active ) {
+	} else if ( sf_maybe_beta && !betanov16_active /*&& !betanov15_active && !betajuly15_active*/ ) {
 		TR.Warning << "**************************************************************************\n"
 			<< "*****************************************************\n"
 			<< "****************************************************\n"
@@ -229,8 +276,8 @@ ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts 
 		+ abinitio::rg_reweight
 		+ score::ref_offset
 		+ score::ref_offsets
-		+ basic::options::OptionKeys::corrections::beta_nov15
-		+ basic::options::OptionKeys::corrections::beta_nov15_cart
+		//+ basic::options::OptionKeys::corrections::beta_nov15
+		//+ basic::options::OptionKeys::corrections::beta_nov15_cart
 		+ basic::options::OptionKeys::corrections::beta_july15
 		+ basic::options::OptionKeys::corrections::beta_july15_cart;
 }
@@ -304,6 +351,7 @@ void ScoreFunctionFactory::load_weights_file( std::string weights_tag, ScoreFunc
 	scorefxn->initialize_from_file(weights_tag);
 }
 
+std::string const REF_2015( "ref2015" );
 std::string const TALARIS_2014( "talaris2014" );
 std::string const TALARIS_2013( "talaris2013" );
 std::string const TALARIS_2013_CART( "talaris2013_cart" );

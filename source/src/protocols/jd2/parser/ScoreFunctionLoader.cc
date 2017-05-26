@@ -23,11 +23,13 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/etable/EtableOptions.hh>
+#include <core/init/score_function_corrections.hh>
 #include <basic/Tracer.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 
 // Utility headers
@@ -67,30 +69,36 @@ void ScoreFunctionLoader::load_data(
 		if ( scorefxn_name == "ScoreFunction" ) {
 			scorefxn_name = scorefxn_tag->getOption< std::string >( "name" );
 		}
-		std::string const default_sfxn_weights(
-			basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ?
-			"pre_talaris_2013_standard.wts" : "talaris2013" );
-		std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights", default_sfxn_weights ) );
-		if (  scorefxn_tag->hasOption( "weights" ) && scorefxn_tag->hasOption( "patch" ) ) {
-			std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
-			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);
-			TR << "defined score function \"" << scorefxn_name << "\" with weights \""
-				<< scorefxn_weights << "\" and patch \"" << scorefxn_patch << "\"\n";
-		} else if ( scorefxn_tag->hasOption( "weights" ) ) {
-			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights );
-			TR << "defined score function \"" << scorefxn_name << "\" with weights \""
-				<< scorefxn_weights << "\"\n";
+
+		if (  scorefxn_tag->hasOption( "weights" ) ) {
+			std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights" ) );
+			if ( ! core::init::check_score_function_sanity( basic::options::option, scorefxn_weights ) ) {
+				// The check should only really trigger on database files (explicit path will result in the heuristic not matching.)
+				TR.Error << "Incompatible weights and options detected for " << scorefxn_weights << " - either fix your options, or rename the weights file." << std::endl;
+				throw utility::excn::EXCN_RosettaScriptsOption("Weights " + scorefxn_weights + " was requested with incompatible options.");
+			}
+
+			if (  scorefxn_tag->hasOption( "patch" ) ) {
+				std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
+				in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);
+				TR << "defined score function \"" << scorefxn_name << "\" with weights \""
+					<< scorefxn_weights << "\" and patch \"" << scorefxn_patch << "\"" << std::endl;
+			} else {
+				in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights );
+				TR << "defined score function \"" << scorefxn_name << "\" with weights \""
+					<< scorefxn_weights << "\"" << std::endl;
+			}
 		} else {
 			in_scorefxn = ScoreFunctionOP( new ScoreFunction );
 			in_scorefxn->reset();
-			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
+			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights." << std::endl;
 		}
 		for ( TagCOP mod_tag : scorefxn_tag->getTags() ) {
 			std::string const tagname( mod_tag->getName() ); //Get the name of the tag
 			if ( tagname == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
 				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );
-				TR<<"setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight<<'\n';
+				TR<<" setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight << std::endl;
 				core::scoring::ScoreType const type = score_type_from_name( scoretype_name );
 				in_scorefxn->set_weight( type, weight );
 			} else if ( tagname == "Set" ) { // Set energy method options:
@@ -193,7 +201,7 @@ void ScoreFunctionLoader::load_data(
 		if ( scorefxn_tag->hasOption("hs_hash") ) {
 			core::Real hotspot_hash( 0.0 ); // APL FIX THIS!  This used to be initialized when the HotspotHashingConstraints were read in.
 			core::Real const hs_hash( scorefxn_tag->getOption<core::Real>( "hs_hash", hotspot_hash ) );
-			TR<<"setting "<<scorefxn_name<<" backbone_stub_constraint to "<<hs_hash<<'\n';
+			TR<<"setting "<<scorefxn_name<<" backbone_stub_constraint to " << hs_hash << std::endl;
 			in_scorefxn->set_weight( backbone_stub_constraint, hs_hash );
 		}
 
@@ -201,7 +209,7 @@ void ScoreFunctionLoader::load_data(
 		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) );
 		if ( scorefxn_symm ) {
 			in_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *in_scorefxn );
-			TR<<"symmetrizing "<<scorefxn_name<<'\n';
+			TR<<"symmetrizing "<<scorefxn_name<< std::endl;
 		}
 
 		// auto-generate and set cache-tags for bound and unbound energy states, if PB term is used.
@@ -227,7 +235,6 @@ void ScoreFunctionLoader::load_data(
 		}
 
 	}//end user-defined scorefxns
-	TR.flush();
 }
 
 std::string score_function_subtag_complex_type_namer( std::string const & element_name ) { return "sfxn_" + element_name + "_type"; }

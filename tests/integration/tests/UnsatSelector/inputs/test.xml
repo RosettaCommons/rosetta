@@ -1,9 +1,9 @@
 <ROSETTASCRIPTS>
     <SCOREFXNS>
-        <ScoreFunction name="beta" weights="beta_nov15"/>
+        <ScoreFunction name="ref" weights="ref2015"/>
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
-        <Unsat name="Unsat" check_acceptors="false" scorefxn="beta" consider_mainchain_only="false"/>
+        <Unsat name="Unsat" check_acceptors="false" scorefxn="ref" consider_mainchain_only="false"/>
 	<Not name="Sat" selector="Unsat"/>
     </RESIDUE_SELECTORS>
     <TASKOPERATIONS>

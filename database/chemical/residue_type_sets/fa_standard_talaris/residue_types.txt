@@ -1,0 +1,737 @@
+## the atom_type_set and mm-atom_type_set to be used for the subsequent parameter files
+TYPE_SET_MODE full_atom
+ATOM_TYPE_SET fa_standard
+ELEMENT_SET default
+MM_ATOM_TYPE_SET fa_standard
+ORBITAL_TYPE_SET fa_standard
+##
+
+## L-CAA Types
+residue_types/l-caa/ALA.params
+residue_types/l-caa/ARG.params
+residue_types/l-caa/ASN.params
+residue_types/l-caa/ASP.params
+residue_types/l-caa/CYS.params
+#residue_types/l-caa/CYV.params
+# for the broker...
+residue_types/l-caa/CYZ.params
+residue_types/l-caa/GLN.params
+residue_types/l-caa/GLU.params
+residue_types/l-caa/GLY.params
+residue_types/l-caa/HIS.params
+residue_types/l-caa/HIS_D.params
+residue_types/l-caa/ILE.params
+residue_types/l-caa/LEU.params
+residue_types/l-caa/LYS.params
+residue_types/l-caa/MET.params
+residue_types/l-caa/PHE.params
+residue_types/l-caa/PRO.params
+residue_types/l-caa/SER.params
+residue_types/l-caa/THR.params
+residue_types/l-caa/TRP.params
+residue_types/l-caa/TYR.params
+residue_types/l-caa/VAL.params
+
+## Nucleic Acid Types
+residue_types/nucleic/dna/ADE.params
+residue_types/nucleic/dna/THY.params
+residue_types/nucleic/dna/CYT.params
+residue_types/nucleic/dna/GUA.params
+#residue_types/nucleic/dna/GNP.params
+#residue_types/nucleic/dna/GDP.params
+#residue_types/nucleic/dna/GTP.params
+residue_types/nucleic/rna_phenix/RAD_n.params
+residue_types/nucleic/rna_phenix/RCY_n.params
+residue_types/nucleic/rna_phenix/RGU_n.params
+residue_types/nucleic/rna_phenix/URA_n.params
+# needed for 3cce
+residue_types/nucleic/rna_nonnatural/1AP.params
+residue_types/nucleic/rna_nonnatural/1MA.params
+residue_types/nucleic/rna_nonnatural/2MA.params
+residue_types/nucleic/rna_nonnatural/2MG.params
+residue_types/nucleic/rna_nonnatural/2MU.params
+residue_types/nucleic/rna_nonnatural/4OC.params
+residue_types/nucleic/rna_nonnatural/5MC.params
+residue_types/nucleic/rna_nonnatural/5MU.params
+residue_types/nucleic/rna_nonnatural/BRU.params
+residue_types/nucleic/rna_nonnatural/7MG.params
+residue_types/nucleic/rna_nonnatural/7DA.params
+#residue_types/nucleic/rna_nonnatural/ICY.params
+#residue_types/nucleic/rna_nonnatural/IGU.params
+residue_types/nucleic/rna_nonnatural/INO.params
+residue_types/nucleic/rna_nonnatural/M2G.params
+residue_types/nucleic/rna_nonnatural/MA6.params
+# 2'OMe
+residue_types/nucleic/rna_nonnatural/OMA.params
+residue_types/nucleic/rna_nonnatural/OMC.params
+residue_types/nucleic/rna_nonnatural/OMG.params
+residue_types/nucleic/rna_nonnatural/OMU.params
+# 2'F
+residue_types/nucleic/rna_nonnatural/FMA.params
+residue_types/nucleic/rna_nonnatural/FMC.params
+residue_types/nucleic/rna_nonnatural/FMG.params
+residue_types/nucleic/rna_nonnatural/FMU.params
+# OP1 => SP1
+residue_types/nucleic/rna_nonnatural/SRA.params
+residue_types/nucleic/rna_nonnatural/SRC.params
+residue_types/nucleic/rna_nonnatural/SRG.params
+residue_types/nucleic/rna_nonnatural/SRU.params
+# OP2 => SP2
+residue_types/nucleic/rna_nonnatural/SSA.params
+residue_types/nucleic/rna_nonnatural/SSC.params
+residue_types/nucleic/rna_nonnatural/SSG.params
+residue_types/nucleic/rna_nonnatural/SSU.params
+# 4'S
+residue_types/nucleic/rna_nonnatural/S4A.params
+residue_types/nucleic/rna_nonnatural/S4C.params
+residue_types/nucleic/rna_nonnatural/S4G.params
+residue_types/nucleic/rna_nonnatural/S4U.params
+
+residue_types/nucleic/rna_nonnatural/PSU.params
+residue_types/nucleic/rna_nonnatural/UR3.params
+residue_types/nucleic/rna_nonnatural/6MZ.params
+residue_types/nucleic/rna_nonnatural/1MG.params
+residue_types/nucleic/rna_nonnatural/4SU.params
+residue_types/nucleic/rna_nonnatural/3TD.params
+residue_types/nucleic/rna_nonnatural/H2U.params
+residue_types/nucleic/rna_nonnatural/MIA.params
+
+residue_types/nucleic/rna_nonnatural/1PU.params
+residue_types/nucleic/rna_nonnatural/2ST.params
+residue_types/nucleic/rna_nonnatural/2SU.params
+residue_types/nucleic/rna_nonnatural/31U.params
+residue_types/nucleic/rna_nonnatural/52U.params
+residue_types/nucleic/rna_nonnatural/I6A.params
+residue_types/nucleic/rna_nonnatural/M1I.params
+residue_types/nucleic/rna_nonnatural/MPU.params
+residue_types/nucleic/rna_nonnatural/MTA.params
+residue_types/nucleic/rna_nonnatural/T6A.params
+residue_types/nucleic/rna_nonnatural/S2C.params
+residue_types/nucleic/rna_nonnatural/3MC.params
+residue_types/nucleic/rna_nonnatural/A4C.params
+residue_types/nucleic/rna_nonnatural/K2C.params
+residue_types/nucleic/rna_nonnatural/F5C.params
+residue_types/nucleic/rna_nonnatural/52C.params
+residue_types/nucleic/rna_nonnatural/FA7.params
+residue_types/nucleic/rna_nonnatural/IHA.params
+residue_types/nucleic/rna_nonnatural/RIA.params
+residue_types/nucleic/rna_nonnatural/Q.params
+residue_types/nucleic/rna_nonnatural/yW.params
+residue_types/nucleic/rna_nonnatural/O2W.params
+residue_types/nucleic/rna_nonnatural/NMT.params
+residue_types/nucleic/rna_nonnatural/NST.params
+residue_types/nucleic/rna_nonnatural/C5T.params
+residue_types/nucleic/rna_nonnatural/CMT.params
+residue_types/nucleic/rna_nonnatural/MOT.params
+residue_types/nucleic/rna_nonnatural/MST.params
+residue_types/nucleic/rna_nonnatural/CNT.params
+residue_types/nucleic/rna_nonnatural/CNS.params
+residue_types/nucleic/rna_nonnatural/CNM.params
+residue_types/nucleic/rna_nonnatural/APU.params
+residue_types/nucleic/rna_nonnatural/OAU.params
+residue_types/nucleic/rna_nonnatural/MOU.params
+residue_types/nucleic/rna_nonnatural/MHU.params
+residue_types/nucleic/rna_nonnatural/M3G.params
+residue_types/nucleic/rna_nonnatural/M26.params
+
+# Modomics support
+#01A	1,2′-O-dimethyladenosine	m1Am	œ	œ	C12O4N5H17	295.128053	295.298867
+#01G	1,2′-O-dimethylguanosine	m1Gm	ε	ε	C12O5N5H17	311.123	311.2977
+#019A	1,2′-O-dimethylinosine	m1Im	ξ	ξ	C12O5N4H16	296.112069	296.283473
+#U31	1-methyl-3-(3-amino-3-carboxypropyl)pseudouridine	m1acp3Y	α	α	C14O8N3H21	359.132864	359.336617
+#1A	1-methyladenosine	m1A	"	"	C11O4N5H15	281.112403	281.271879
+#1G	1-methylguanosine	m1G	K	K	C11O5N5H15	297.107318	297.271183
+#19A	1-methylinosine	m1I	O	O	C11O5N4H14	282.096419	282.256484
+#19U	1-methylpseudouridine	m1Y	]	]	C10O6N2H14	258.085186	258.231306
+#28A	2,8-dimethyladenosine	m2,8A	±	±	C12H17N5O4	295.12804	295.29828
+#21U	2-geranylthiouridine	ges2U	Γ	Γ	C19H28N2O5S	396.17187	396.5078
+#21C	2-lysidine	k2C	}	}	C15O6N5H25	371.180483	371.394395
+#2A	2-methyladenosine	m2A	/	/	C11O4N5H15	281.112403	281.271879
+#2160A	2-methylthio-N6-(cis-hydroxyisopentenyl) adenosine	ms2io6A	≠	≠	C16O5N5H23S1	397.141989	397.454563
+#2163A	2-methylthio-N6-hydroxynorvalylcarbamoyladenosine	ms2hn6A	≈	≈	C17O8N6H24S1	472.137631	472.478213
+#2161A	2-methylthio-N6-isopentenyladenosine	ms2i6A	*	*	C16O4N5H23S1	381.147074	381.455259
+#621A	2-methylthio-N6-methyladenosine	ms2m6A	∞	∞	C12O4N5H17S1	327.100124	327.363255
+#2162A	2-methylthio-N6-threonylcarbamoyladenosine	ms2t6A	[	[	C16O8N6H22S1	458.121981	458.451225
+#20U	2-selenouridine	se2U	ω	ω	C9O5N2H12Se1	305.9919	306.122097
+#02U	2-thio-2′-O-methyluridine	s2Um	∏	∏	C10O5N2H14S1	274.062342	274.296389
+#2C	2-thiocytidine	s2C	%	%	C9O4N3H13S1	259.062676	259.284795
+#2U	2-thiouridine	s2U	2	2	C9O5N2H12S1	260.046692	260.269401
+#0A	2′-O-methyladenosine	Am	:	:	C11O4N5H15	281.112403	281.271879
+#0C	2′-O-methylcytidine	Cm	B	B	C10O5N3H15	257.10117	257.2467
+#0G	2′-O-methylguanosine	Gm	#	#	C11O5N5H15	297.107318	297.271183
+#09A	2′-O-methylinosine	Im	≤	≤	C11O5N4H14	282.096419	282.256484
+#09U	2′-O-methylpseudouridine	Ym	Z	Z	C10O6N2H14	258.085186	258.231306
+#00A	2′-O-ribosyladenosine (phosphate)	Ar(p)	^	ˆ	C15O11N5H22P1	479.105343	479.340753
+#00G	2′-O-ribosylguanosine (phosphate)	Gr(p)	ℑ	ℑ	C15O12N5H22P1	495.100257	495.340057
+#3377N	2′3′-cyclic phosphate end	(pN)2′3′>p				None	None
+#03U	3,2′-O-dimethyluridine	m3Um	σ	σ	C11O6N2H16	272.100836	272.258295
+#308U	3-(3-amino-3-carboxypropyl)-5,6-dihydrouridine	acp3D	Ð	Ð	C13H21N3O8	347.13285	347.32516
+#309U	3-(3-amino-3-carboxypropyl)pseudouridine	acp3Y	Þ	Þ	C13H19N3O8	345.1172	345.30928
+#30U	3-(3-amino-3-carboxypropyl)uridine	acp3U	X	X	C13O8N3H19	345.117214	345.309629
+#3C	3-methylcytidine	m3C	'	'	C10O5N3H15	257.10117	257.2467
+#39U	3-methylpseudouridine	m3Y	κ	κ	C10O6N2H14	258.085186	258.231306
+#3U	3-methyluridine	m3U	δ	δ	C10O6N2H14	258.085186	258.231306
+#4G	4-demethylwyosine	imG-14	†	†	C13O5N5H15	321.107318	321.293257
+#74U	4-thiouridine	s4U	4	4	C9O5N2H12S1	260.046692	260.269401
+#05C	5,2′-O-dimethylcytidine	m5Cm	τ	τ	C11O5N3H17	271.11682	271.273689
+#05U	5,2′-O-dimethyluridine	m5Um	\	\	C11O6N2H16	272.100836	272.258295
+#0522U	5-(carboxyhydroxymethyl)-2′-O-methyluridine methyl ester	mchm5Um	b	b	C13H18N2O9	346.10121	346.294
+#522U	5-(carboxyhydroxymethyl)uridine methyl ester	mchm5U	,	,	C12O9N2H16	332.085579	332.267246
+#2583U	5-(isopentenylaminomethyl)-2-thiouridine	inm5s2U	½	½	C15H23N3O5S	357.13583	357.43084
+#0583U	5-(isopentenylaminomethyl)-2′-O-methyluridine	inm5Um	¼	¼	C16H25N3O6	355.17432	355.39112
+#583U	5-(isopentenylaminomethyl)uridine	inm5U	¾	¾	C15H23N3O6	341.15867	341.36424
+#21510U	5-aminomethyl-2-geranylthiouridine	nm5ges2U	Δ	Δ	C20H31N3O5S	425.19842	425.54936
+#20510U	5-aminomethyl-2-selenouridine	nm5se2U	π	π	C10O5N3H15Se1	335.0185	335.163597
+#2510U	5-aminomethyl-2-thiouridine	nm5s2U	∫	∫	C10O5N3H15S1	289.073241	289.311088
+#510U	5-aminomethyluridine	nm5U	∪	∪	C10O6N3H15	273.096085	273.246005
+#531U	5-carbamoylhydroxymethyluridine	nchm5U	r	r	C11H15N3O8	317.0859	317.2555
+#253U	5-carbamoylmethyl-2-thiouridine	ncm5s2U	l	l	C11H15N3O6S	317.06814	317.32272
+#053U	5-carbamoylmethyl-2′-O-methyluridine	ncm5Um	~	∼	C12O7N3H17	315.106649	315.283335
+#53U	5-carbamoylmethyluridine	ncm5U	&	&	C11O7N3H15	301.090999	301.256347
+#520U	5-carboxyhydroxymethyluridine	chm5U	≥	≥	C11O9N2H14	318.069929	318.240257
+#2540U	5-carboxymethyl-2-thiouridine	cm5s2U	℘	℘	C11O7N2H14S1	318.052171	318.306036
+#2151U	5-carboxymethylaminomethyl-2-geranylthiouridine	cmnm5ges2U	f	f	C22H33N3O7S	483.2039	483.58604
+#2051U	5-carboxymethylaminomethyl-2-selenouridine	cmnm5se2U	⊥	⊥	C12O7N3H17Se1	393.0239	393.200297
+#251U	5-carboxymethylaminomethyl-2-thiouridine	cmnm5s2U	$	$	C12O7N3H17S1	347.07872	347.347723
+#051U	5-carboxymethylaminomethyl-2′-O-methyluridine	cmnm5Um	)	)	C13O8N3H19	345.117214	345.309629
+#51U	5-carboxymethylaminomethyluridine	cmnm5U	!	!	C12O8N3H17	331.101564	331.28264
+#52U	5-carboxymethyluridine	cm5U	◊	◊	C11O8N2H14	302.075015	302.240952
+#55U	5-cyanomethyluridine	cnm5U	Ѷ	Ѷ	C11H13N3O6	283.08042	283.24083
+#071C	5-formyl-2′-O-methylcytidine	f5Cm	°	°	C11O6N3H15	285.096085	285.257042
+#71C	5-formylcytidine	f5C	>	>	C10O6N3H13	271.080435	271.230053
+#50C	5-hydroxycytidine	ho5C	Ç	Ç	C9H13N3O6	259.08042	259.21884
+#51C	5-hydroxymethylcytidine	hm5C	∅	∅	C10O6N3H15	273.096085	273.246005
+#50U	5-hydroxyuridine	ho5U	∝	∝	C9O7N2H12	260.06445	260.203622
+#2521U	5-methoxycarbonylmethyl-2-thiouridine	mcm5s2U	3	3	C12O7N2H16S1	332.067821	332.333024
+#0521U	5-methoxycarbonylmethyl-2′-O-methyluridine	mcm5Um	∩	∩	C13O8N2H18	330.106315	330.29493
+#521U	5-methoxycarbonylmethyluridine	mcm5U	1	1	C12O8N2H16	316.090665	316.267941
+#501U	5-methoxyuridine	mo5U	5	5	C10O7N2H14	274.0801	274.230611
+#25U	5-methyl-2-thiouridine	m5s2U	F	F	C10O5N2H14S1	274.062342	274.296389
+#21511U	5-methylaminomethyl-2-geranylthiouridine	mnm5ges2U	h	h	C21H33N3O5S	439.21407	439.57624
+#20511U	5-methylaminomethyl-2-selenouridine	mnm5se2U	≅	≅	C11O5N3H17Se1	349.0341	349.190497
+#2511U	5-methylaminomethyl-2-thiouridine	mnm5s2U	S	S	C11O5N3H17S1	303.088891	303.338077
+#511U	5-methylaminomethyluridine	mnm5U	{	{	C11O6N3H17	287.111735	287.272994
+#5C	5-methylcytidine	m5C	?	?	C10O5N3H15	257.10117	257.2467
+#58U	5-methyldihydrouridine	m5D	ρ	ρ	C10O6N2H16	260.100836	260.247258
+#5U	5-methyluridine	m5U	T	T	C10O6N2H14	258.085186	258.231306
+#254U	5-taurinomethyl-2-thiouridine	tm5s2U	∃	∃	C12O8N3H19S2	397.061355	397.427368
+#54U	5-taurinomethyluridine	tm5U	Ê	Ê	C12O9N3H19S1	381.084199	381.362285
+#47G	7-aminocarboxypropyl-demethylwyosine	yW-86	¥	¥	C17O7N6H22	422.154996	422.398569
+#347G	7-aminocarboxypropylwyosine	yW-72	Ω	Ω	C18O7N6H24	436.170646	436.425557
+#348G	7-aminocarboxypropylwyosine methyl ester	yW-58	⇑	⇑	C19O7N6H26	450.186296	450.452546
+#101G	7-aminomethyl-7-deazaguanosine	preQ1tRNA	∉	∉	C12O5N5H17	311.122968	311.298172
+#100G	7-cyano-7-deazaguanosine	preQ0tRNA	φ	φ	C12O5N5H13	307.091668	307.266269
+#8A	8-methyladenosine	m8A	â	â	C11O4N5H15	281.112403	281.271879
+#02G	N2,2′-O-dimethylguanosine	m2Gm	γ	γ	C12O5N5H17	311.122968	311.298172
+#027G	N2,7,2′-O-trimethylguanosine	m2,7Gm	æ	æ	C13H21N5O5	327.15425	327.34044
+#27G	N2,7-dimethylguanosine	m2,7G	∨	∨	C12O5N5H19	313.1386	313.31356
+#279553N	N2,7-dimethylguanosine cap (cap DMG)	m2,7Gpp(pN)	®	®	C12H17N5O11P2	469.04	469.2416
+#022G	N2,N2,2′-O-trimethylguanosine	m2,2Gm	|	|	C13O5N5H19	325.138618	325.325161
+#227G	N2,N2,7-trimethylguanosine	m2,2,7G	∠	∠	C13O5N5H21	327.15425	327.34044
+#2279553N	N2,N2,7-trimethylguanosine cap (cap TMG)	m2,2,7Gpp(pN)	¶	¶	C13H19N5O11P2	483.05561	483.26848
+#22G	N2,N2-dimethylguanosine	m2,2G	R	R	C12O5N5H17	311.122968	311.298172
+#2G	N2-methylguanosine	m2G	L	L	C11O5N5H15	297.107318	297.271183
+#04C	N4,2′-O-dimethylcytidine	m4Cm	λ	λ	C11O5N3H17	271.11682	271.273689
+#044C	N4,N4,2′-O-trimethylcytidine	m4,4Cm	β	β	C12O5N3H19	285.13247	285.300678
+#44C	N4,N4-dimethylcytidine	m4,4C	μ	μ	C11O5N3H17	271.11682	271.273689
+#042C	N4-acetyl-2′-O-methylcytidine	ac4Cm	ℵ	ℵ	C12O6N3H17	299.111735	299.284031
+#42C	N4-acetylcytidine	ac4C	M	M	C11O6N3H15	285.096085	285.257042
+#4C	N4-methylcytidine	m4C	ν	ν	C10O5N3H15	257.10117	257.2467
+#06A	N6,2′-O-dimethyladenosine	m6Am	χ	χ	C12O4N5H17	295.128053	295.298867
+#066A	N6,N6,2′-O-trimethyladenosine	m6,6Am	η	η	C13O4N5H19	309.143703	309.325856
+#60A	N6-(cis-hydroxyisopentenyl)adenosine	io6A	`	`	C15O5N5H21	351.154268	351.363186
+#64A	N6-acetyladenosine	ac6A	⇓	⇓	C12O5N5H15	309.107318	309.28222
+#67A	N6-formyladenosine	f6A	Ϩ	Ϩ	C11H13N5O5	295.09165	295.25491
+#65A	N6-glycinylcarbamoyladenosine	g6A	≡	≡	C13O7N6H16	368.108046	368.306566
+#68A	N6-hydroxymethyladenosine	hm6A	Ϫ	Ϫ	C11H15N5O5	297.1073	297.2708
+#63A	N6-hydroxynorvalylcarbamoyladenosine	hn6A	√	√	C16O8N6H22	426.149911	426.386836
+#6A	N6-methyladenosine	m6A	=	=	C11O4N5H15	281.112403	281.271879
+#10G (base)	Qbase	Qbase	∴	∴	C12O3N5H15	277.117489	277.283611
+#20C	agmatidine	C+	¿	¿	C14H25N7O4	355.1968	355.3973
+#103G	archaeosine	G+	(	(	C12H16N6O5	324.1182	324.29648
+#69A	cyclic N6-threonylcarbamoyladenosine	ct6A	e	e	C15O7N6H18	394.12368	394.34416
+#102G	epoxyqueuosine	oQtRNA	ς	ς	C17O8N5H23	425.154662	425.399126
+#104G	galactosyl-queuosine	galQtRNA	9	9	C23O12N5H33	571.21257	571.542325
+#105G	glutamyl-queuosine	gluQtRNA	⊄	⊄	C22O10N6H30	538.20234	538.515474
+#106G	mannosyl-queuosine	manQtRNA	8	8	C23O12N5H33	571.21257	571.542325
+#10G	queuosine	QtRNA	Q	Q	C17O7N5H23	409.159747	409.399821
+
+#GN	guanosine added to any nucleotide	pG(pN)	none	none	C10H13N5O8P	362.05016	362.21587
+#9553N	guanylylated 5′ end (cap G)	Gpp(pN)	ϑ	ϑ	C10H12N5O14P3	440.00084	440.1799
+#34830G	hydroxywybutosine	OHyW	⊆	⊆	C21O10N6H28	524.18669	524.488486
+#9A	inosine	I	I	I	C10O5N4H12	268.080769	268.229496
+#42G	isowyosine	imG2	⊇	⊇	C14O5N5H17	335.122968	335.320246
+#3480G	methylated undermodified hydroxywybutosine	OHyWy	y	y	C19H26N6O8	466.18119	466.45108
+#342G	methylwyosine	mimG	∑	∑	C15O5N5H19	349.138618	349.347235
+#34832G	peroxywybutosine	o2yW	W	W	C21O11N6H28	540.181605	540.48779
+#100G (base)	preQ0base	preQ0base	ψ	ψ	C7O1N5H5	175.04941	175.150058
+#101G (base)	preQ1base	preQ1base	∇	∇	C7O1N5H9	179.08071	179.181962
+#3470G	undermodified hydroxywybutosine	OHyWx	š	š	C18O8N6H24	452.16554	452.4242
+#502U	uridine 5-oxyacetic acid	cmo5U	V	V	C11O9N2H14	318.069929	318.240257
+#503U	uridine 5-oxyacetic acid methyl ester	mcmo5U	υ	υ	C12O9N2H16	332.085579	332.267246
+#3483G	wybutosine	yW	Y	Y	C21O9N6H28	508.191775	508.489181
+#34G	wyosine	imG	€	€	C14O5N5H17	335.122968	335.32024
+
+## Metal Ion Types
+residue_types/metal_ions/CA.params
+#residue_types/metal_ions/CD.params
+residue_types/metal_ions/CO.params
+residue_types/metal_ions/CU.params
+residue_types/metal_ions/FE.params
+residue_types/metal_ions/FE2.params
+residue_types/metal_ions/K.params
+residue_types/metal_ions/MG.params
+residue_types/metal_ions/MN.params
+residue_types/metal_ions/NA.params
+#residue_types/metal_ions/NI.params
+residue_types/metal_ions/ZN.params
+
+## Spin label types
+## residue_types/spin_labels/R1A.params # kills my unit tests???
+
+## Mineral Surface
+#residue_types/mineral_surface/PHA.params
+#residue_types/mineral_surface/HHA.params
+#residue_types/mineral_surface/OPH.params
+#residue_types/mineral_surface/OHH.params
+residue_types/mineral_surface/PHO.params
+residue_types/mineral_surface/HYD.params
+residue_types/mineral_surface/CAL.params
+residue_types/mineral_surface/CO3.params
+#residue_types/mineral_surface/OC3.params
+## residue_types/mineral_surface/Hice.params ##Fails the core/devel/protocol/app unit test do know why?
+#residue_types/mineral_surface/Oice.params
+#residue_types/mineral_surface/OSi.params
+#residue_types/mineral_surface/Si.params
+
+## Protonation State Types
+residue_types/protonation_states/ASP_P1.params
+residue_types/protonation_states/ASP_P2.params
+residue_types/protonation_states/GLU_P1.params
+residue_types/protonation_states/GLU_P2.params
+residue_types/protonation_states/HIS_P.params
+residue_types/protonation_states/LYS_D.params
+residue_types/protonation_states/TYR_D.params
+
+## Rosetta Specific Types
+residue_types/rosetta_specific/GB_AA_PLACEHOLDER.params
+residue_types/rosetta_specific/SUCK.params
+residue_types/rosetta_specific/VRT.params
+residue_types/rosetta_specific/INV_VRT.params
+residue_types/rosetta_specific/VRT1.params
+residue_types/rosetta_specific/VRTBB.params
+
+## Staple Types
+residue_types/staple/08A.params
+residue_types/staple/08B.params
+
+## Artificial Crosslinker Types
+#residue_types/crosslinker/1.3.5_trisbromomethylbenzene.params
+#residue_types/crosslinker/1.3.5_trisbromomethylbenzene_symm.params
+#residue_types/crosslinker/1.2_bisbromomethylbenzene.params
+#residue_types/crosslinker/1.3_bisbromomethylbenzene.params
+#residue_types/crosslinker/1.4_bisbromomethylbenzene.params
+#residue_types/crosslinker/BoronateLDopa.params
+#residue_types/crosslinker/triazolemer_linker.params
+
+## Sidechain Conjugation Types
+#residue_types/sidechain_conjugation/CYX.params
+#residue_types/sidechain_conjugation/LYX.params
+#residue_types/sidechain_conjugation/ASX.params
+#residue_types/sidechain_conjugation/VDP.params
+#residue_types/sidechain_conjugation/VSR.params
+#residue_types/sidechain_conjugation/VHA.params
+#residue_types/sidechain_conjugation/VOR.params
+#residue_types/sidechain_conjugation/VLS.params
+#residue_types/sidechain_conjugation/PET.params
+#residue_types/sidechain_conjugation/ALT.params
+
+## Water Types
+residue_types/water/TP3.params
+residue_types/water/TP5.params
+residue_types/water/HOH.params
+
+## Types needed to model cyclosporin
+residue_types/cyclosporin/BMT.params
+residue_types/cyclosporin/LMA.params
+
+## L-NCAA Types
+residue_types/l-ncaa/V01.params
+residue_types/l-ncaa/V02.params
+residue_types/l-ncaa/V03.params
+residue_types/l-ncaa/V04.params
+residue_types/l-ncaa/ABA.params
+residue_types/l-ncaa/APA.params
+residue_types/l-ncaa/HLU.params
+#residue_types/l-ncaa/EDA.params # not present in l-ncaa directory
+residue_types/l-ncaa/YPN.params
+residue_types/l-ncaa/HPR.params
+residue_types/l-ncaa/HTY.params
+residue_types/l-ncaa/MAL.params
+residue_types/l-ncaa/MPA.params
+residue_types/l-ncaa/MTP.params
+residue_types/l-ncaa/NLU.params
+residue_types/l-ncaa/NVL.params
+residue_types/l-ncaa/BZP.params
+residue_types/l-ncaa/SAL.params
+residue_types/l-ncaa/BCS.params
+residue_types/l-ncaa/0TD.params
+residue_types/l-ncaa/1-amino-cyclopentane-carboxylic_acid.params
+residue_types/l-ncaa/1-methyl-histidine.params
+residue_types/l-ncaa/1-methyl-histidine_prot.params
+residue_types/l-ncaa/2.4-dimethyl-phenylalanine.params
+residue_types/l-ncaa/2-allyl-glycine.params
+residue_types/l-ncaa/2-amino-2-phenylbutyric_acid.params
+residue_types/l-ncaa/2-amino-3-methylamino-propanoic_acid.params
+residue_types/l-ncaa/2-amino-4-bromo-4-pentenoic_acid.params
+residue_types/l-ncaa/2-amino-5-phenyl-pentanoic_acid.params
+residue_types/l-ncaa/2-amino-octanoic_acid.params
+residue_types/l-ncaa/2-amino-heptanoic_acid.params
+residue_types/l-ncaa/2-aminomethyl-phenylalanine.params
+residue_types/l-ncaa/2-hydroxy-phenylalanine.params
+residue_types/l-ncaa/2-indanyl-glycine_puck1.params
+residue_types/l-ncaa/2-indanyl-glycine_puck2.params
+residue_types/l-ncaa/2-methyl-phenylalanine.params
+residue_types/l-ncaa/3-aminomethyl-phenylalanine.params
+residue_types/l-ncaa/3-amino-tyrosine.params
+residue_types/l-ncaa/3-chloro-phenylalanine.params
+residue_types/l-ncaa/3-hydroxy-phenylalanine.params
+residue_types/l-ncaa/3-hydroxy-tyrosine.params
+residue_types/l-ncaa/3-methyl-histidine.params
+residue_types/l-ncaa/3-methyl-histidine_prot.params
+residue_types/l-ncaa/3-methyl-phenylalanine.params
+residue_types/l-ncaa/4.5-dehydro-leucine.params
+residue_types/l-ncaa/4.5-dehydro-lysine.params
+residue_types/l-ncaa/4.5-dihydroxy-isoleucine.params
+residue_types/l-ncaa/4-aminomethyl-phenylalanine.params
+residue_types/l-ncaa/4-amino-piperidine-4-carboxylic-acid.params
+residue_types/l-ncaa/4-amino-tetrahydropyran-4-carboxylic_acid.params
+residue_types/l-ncaa/4-amino-tetrahydrothiopyran-4-carboxylic_acid.params
+residue_types/l-ncaa/4-carboxy-phenylalanine.params
+residue_types/l-ncaa/4-fluoro-proline.params
+residue_types/l-ncaa/4-fluoro-proline_puck.params
+residue_types/l-ncaa/4-fluoro-tryptophan.params
+residue_types/l-ncaa/4-hydroxy-phenylglycine.params
+residue_types/l-ncaa/4-methyl-phenylalanine.params
+residue_types/l-ncaa/4-methyl-tryptophan.params
+residue_types/l-ncaa/4-phenyl-phenylalanine.params
+residue_types/l-ncaa/4-phenyl-phenylalanine_tyr_rot.params
+residue_types/l-ncaa/4-tert-butyl-phenylalanine.params
+residue_types/l-ncaa/5-bromo-tryptophan.params
+residue_types/l-ncaa/5-chloro-tryptophan.params
+residue_types/l-ncaa/5-fluoro-tryptophan.params
+residue_types/l-ncaa/5-hydroxy-tryptophan.params
+residue_types/l-ncaa/5-methyl-tryptophan.params
+residue_types/l-ncaa/6-bromo-tryptophan.params
+residue_types/l-ncaa/6-chloro-tryptophan.params
+residue_types/l-ncaa/6-fluoro-tryptophan.params
+residue_types/l-ncaa/6-methyl-tryptophan.params
+residue_types/l-ncaa/7-azatryptophan.params
+residue_types/l-ncaa/7-bromo-tryptophan.params
+residue_types/l-ncaa/7-methyl-tryptophan.params
+residue_types/l-ncaa/9-anthryl-alanine.params
+residue_types/l-ncaa/allo-isoleucine.params
+residue_types/l-ncaa/allo-threonine.params
+residue_types/l-ncaa/alpha-aminoadipic_acid.params
+residue_types/l-ncaa/alpha-amino-glycine.params
+#residue_types/l-ncaa/alpha.beta-diaminoproionic_acid.params # not present in l-ncaa directory
+residue_types/l-ncaa/alpha.gama-diaminobutyric_acid.params
+residue_types/l-ncaa/alpha-methyl-3-hydroxy-tyrosine.params
+residue_types/l-ncaa/alpha-methyl-histidine.params
+residue_types/l-ncaa/alpha-methyl-leucine.params
+residue_types/l-ncaa/alpha-methyl-phenylalanine.params
+residue_types/l-ncaa/alpha-methyl-proline.params
+residue_types/l-ncaa/alpha-methyl-tryptophan.params
+residue_types/l-ncaa/alpha-methyl-tyrosine.params
+residue_types/l-ncaa/alpha-methyl-valine.params
+residue_types/l-ncaa/amino-ethyl-cysteine.params
+residue_types/l-ncaa/beta-(1-naphthyl)-alanine.params
+residue_types/l-ncaa/beta-(2-naphthyl)-alanine.params
+residue_types/l-ncaa/beta-beta-dicyclohexyl-alanine.params
+residue_types/l-ncaa/beta.beta-diphenyl-alanine.params
+residue_types/l-ncaa/beta-chloro-alanine.params
+residue_types/l-ncaa/beta-cyclohexyl-alanine.params
+residue_types/l-ncaa/beta-cyclopentyl-alanine.params
+residue_types/l-ncaa/beta-fluoro-alanine.params
+residue_types/l-ncaa/beta-hydroxy-norvaline.params
+residue_types/l-ncaa/beta-iodo-alanine.params
+residue_types/l-ncaa/cyclohexyl-glycine.params
+residue_types/l-ncaa/diphenylglycine.params
+residue_types/l-ncaa/dipropyl-glycine.params
+residue_types/l-ncaa/ethionine.params
+residue_types/l-ncaa/fluoro-leucine_ent1.params
+residue_types/l-ncaa/fluoro-leucine_ent2.params
+residue_types/l-ncaa/hexafluoro-leucine.params
+residue_types/l-ncaa/homocysteine.params
+residue_types/l-ncaa/homophenylalanine.params
+residue_types/l-ncaa/homoserine.params
+residue_types/l-ncaa/n-in-methyl-tryptophan.params
+residue_types/l-ncaa/ornithine.params
+residue_types/l-ncaa/penicillamine.params
+residue_types/l-ncaa/phenylglycine.params
+residue_types/l-ncaa/phenyl-serine.params
+residue_types/l-ncaa/tert-butyl-alanine.params
+residue_types/l-ncaa/tert-butyl-cysteine.params
+residue_types/l-ncaa/tert-butyl-glycine.params
+residue_types/l-ncaa/trifluoro-alanine.params
+residue_types/l-ncaa/trifluoro-leucine_ent2.params
+residue_types/l-ncaa/trifluoro-leucine.params
+residue_types/l-ncaa/TES.params
+residue_types/l-ncaa/S56.params
+
+
+## Metal-binding NCAA types
+#residue_types/metal_binding_ncaa/2S-2-amino-7-sulfanylheptanoic-acid.params
+#residue_types/metal_binding_ncaa/6-mercapto-norleucine.params
+#residue_types/metal_binding_ncaa/BPY.params
+
+## Peptoid Types
+##residue_types/peptoids/sar.params
+#
+residue_types/peptoids/001.params
+##residue_types/peptoids/002.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+#residue_types/peptoids/003.params
+#residue_types/peptoids/004.params
+#residue_types/peptoids/005.params
+#residue_types/peptoids/006.params
+#residue_types/peptoids/007.params
+##residue_types/peptoids/008.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+#residue_types/peptoids/009.params
+##residue_types/peptoids/010.params	# ???: Problems calculating unfolded stat energies
+##residue_types/peptoids/011.params	# ERROR: ResidueType::add_chi: atoms dont exist!, missing MM atom types, CE1
+##residue_types/peptoids/012.params	# MAJOR: Missing MM atom types for nitro group
+#residue_types/peptoids/013.params
+##residue_types/peptoids/014.params	# MAJOR: don't think this exists, MAJOR: Missing MM atom types for nitro group, MINOR: not an N-arly
+##residue_types/peptoids/015.params	# MINOR: chi2 is not really a proton chi
+##residue_types/peptoids/016.params	# MAJOR: Missing MM atom types for ring nitrogen, MINOR: chi2 is not really a proton chi
+#residue_types/peptoids/020.params
+#
+residue_types/peptoids/101.params
+residue_types/peptoids/102.params
+#residue_types/peptoids/103.params
+#residue_types/peptoids/104.params
+##residue_types/peptoids/105.params	# MAJOR: Missing MM atom types for nitro group, chi3 is not a proton chi, and something ales is up with chi3
+##residue_types/peptoids/106.params	# symmetrically identical to 102
+##residue_types/peptoids/107.params	# MAJOR: Missing MM atom types for nitro group, where is chi for nitro
+##residue_types/peptoids/108.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring, MINOR: chi3/4 are not a proton chi
+##residue_types/peptoids/109.params	# MAJOR: Missing MM atom types for nitro group
+##residue_types/peptoids/110.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring, MINOR: chi3/4 are not a proton chi
+#residue_types/peptoids/111.params
+##residue_types/peptoids/112.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+##residue_types/peptoids/113.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+#residue_types/peptoids/114.params
+#residue_types/peptoids/115.params
+#residue_types/peptoids/116.params
+#residue_types/peptoids/117.params
+#residue_types/peptoids/118.params
+##residue_types/peptoids/119.params	# symmetrically identical to 117
+#residue_types/peptoids/120.params
+##residue_types/peptoids/121.params	# symmetrically identical to 104
+##residue_types/peptoids/122.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/123.params	# symmetrically identical 102
+##residue_types/peptoids/124.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/125.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/126.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+#residue_types/peptoids/127.params
+#residue_types/peptoids/128.params
+#residue_types/peptoids/129.params
+#residue_types/peptoids/130.params
+##residue_types/peptoids/131.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+#
+residue_types/peptoids/201.params
+#residue_types/peptoids/202.params
+#residue_types/peptoids/203.params
+#residue_types/peptoids/204.params
+#residue_types/peptoids/205.params
+#residue_types/peptoids/206.params
+##residue_types/peptoids/207.params	# Identical to 24.params
+#residue_types/peptoids/208.params
+#residue_types/peptoids/209.params
+#residue_types/peptoids/210.params
+#residue_types/peptoids/211.params
+#
+##residue_types/peptoids/302.params	# MAJOR: No MM atom type for tertiary amine (but try toppar_amines.str)
+#residue_types/peptoids/303.params
+##residue_types/peptoids/304.params	# MAJOR: No MM atom type for tertiary amine (but try toppar_amines.str)
+residue_types/peptoids/305.params
+#residue_types/peptoids/306.params
+#residue_types/peptoids/307.params
+##residue_types/peptoids/308.params	# ERROR: dont add residue bonds more than once! Totally broken
+##residue_types/peptoids/309.params	# ERROR: dont add residue bonds more than once! Totally broken
+#residue_types/peptoids/313.params
+#residue_types/peptoids/314.params
+#
+#residue_types/peptoids/401.params
+#residue_types/peptoids/402.params
+##residue_types/peptoids/403.params	# ERROR: dont add residue bonds more than once!
+##residue_types/peptoids/404.params	# MINOR: chi3/4 are not a proton chi
+##residue_types/peptoids/405.params	# ???: problems calculating unfolded state energies
+#residue_types/peptoids/406.params
+##residue_types/peptoids/407.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring, MINOR: chi4 are not a proton chi
+##residue_types/peptoids/408.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/409.params	# MAJOR: Missing MM atom types for nitro group
+#residue_types/peptoids/410.params
+#residue_types/peptoids/411.params
+#residue_types/peptoids/412.params
+#
+##residue_types/peptoids/501.params	# MAJOR: No MM Atom type for furan
+##residue_types/peptoids/502.params	# MAJOR: No MM Atom type for furan
+##residue_types/peptoids/503.params	# MAJOR: is this possible, is it suposed to be an indol like trp? DBCHK: MM atom type for ring nitrogen
+##residue_types/peptoids/504.params 	# MAJOR: No MM Atom type for furan
+##residue_types/peptoids/505.params	# MAJOR: is this possible, is it suposed to be an indol like trp? DBCHK: MM atom type for ring nitrogen
+##residue_types/peptoids/506.params	# ERROR: dont add residue bonds more than once!
+##residue_types/peptoids/507.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str)
+##residue_types/peptoids/508.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str)
+##residue_types/peptoids/509.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str), DBCHK: rosetta atom types to use histidine types
+#
+residue_types/peptoids/601.params
+#residue_types/peptoids/602.params
+#residue_types/peptoids/621.params
+#residue_types/peptoids/622.params
+#residue_types/peptoids/623.params
+#residue_types/peptoids/624.params
+#
+#residue_types/peptoids/701.params
+#residue_types/peptoids/702.params
+#residue_types/peptoids/703.params
+#residue_types/peptoids/704.params
+#
+#residue_types/peptoids/017.params
+#residue_types/peptoids/018.params
+#residue_types/peptoids/019.params
+#residue_types/peptoids/021.params
+#residue_types/peptoids/132.params
+#residue_types/peptoids/315.params
+#residue_types/peptoids/316.params
+#residue_types/peptoids/317.params
+#residue_types/peptoids/318.params
+#residue_types/peptoids/320.params
+#residue_types/peptoids/413.params
+
+## Gamma-peptide Types
+#residue_types/gamma-peptide/GABA.params
+#residue_types/gamma-peptide/G2ALA.params
+#residue_types/gamma-peptide/G3ALA.params
+#residue_types/gamma-peptide/G4ALA.params
+#residue_types/gamma-peptide/4D3L_GALA.params
+#residue_types/gamma-peptide/4L3L_GALA.params
+#residue_types/gamma-peptide/4D2L_GALA.params
+#residue_types/gamma-peptide/4L2L_GALA.params
+#residue_types/gamma-peptide/3D2L_GALA.params
+#residue_types/gamma-peptide/3L2L_GALA.params
+#residue_types/gamma-peptide/4L3L2L_GALA.params
+#residue_types/gamma-peptide/4D3L2L_GALA.params
+#residue_types/gamma-peptide/4L3D2L_GALA.params
+#residue_types/gamma-peptide/4D3D2L_GALA.params
+
+## Beta-peptide Types
+residue_types/beta-peptide/B3A.params
+residue_types/beta-peptide/B3C.params
+residue_types/beta-peptide/B3D.params
+residue_types/beta-peptide/B3E.params
+residue_types/beta-peptide/B3F.params
+residue_types/beta-peptide/B3G.params
+residue_types/beta-peptide/B3H.params
+residue_types/beta-peptide/B3I.params
+residue_types/beta-peptide/B3K.params
+residue_types/beta-peptide/B3L.params
+residue_types/beta-peptide/B3M.params
+residue_types/beta-peptide/B3N.params
+residue_types/beta-peptide/B3O.params
+residue_types/beta-peptide/B3P.params
+residue_types/beta-peptide/B3Q.params
+residue_types/beta-peptide/B3R.params
+residue_types/beta-peptide/B3S.params
+residue_types/beta-peptide/B3T.params
+residue_types/beta-peptide/B3V.params
+residue_types/beta-peptide/B3W.params
+residue_types/beta-peptide/B3X.params
+residue_types/beta-peptide/B3Y.params
+residue_types/beta-peptide/cisACHC.params
+residue_types/beta-peptide/cisACPC.params
+residue_types/beta-peptide/transACPC.params
+
+## Saccharide Types (require -include_sugars flag to be loaded in)
+### Aldopentoses
+#### Xyloses
+residue_types/carbohydrates/to4-alpha-D-Xylp.params
+### Aldohexoses
+#### Glucoses
+residue_types/carbohydrates/to2-beta-D-Glcp.params
+residue_types/carbohydrates/to3-alpha-D-Glcp.params
+residue_types/carbohydrates/to3-beta-D-Glcp.params
+residue_types/carbohydrates/to4-alpha-D-Glcp.params
+residue_types/carbohydrates/to4-beta-D-Glcp.params
+residue_types/carbohydrates/to4-beta-D-Quip.params
+residue_types/carbohydrates/to6-alpha-D-Glcp.params
+residue_types/carbohydrates/to3-beta-Bacp.params
+#### Galactoses
+residue_types/carbohydrates/to2-beta-D-Galp.params
+residue_types/carbohydrates/to3-alpha-D-Galp.params
+residue_types/carbohydrates/to3-beta-D-Galp.params
+residue_types/carbohydrates/to4-alpha-D-Galp.params
+residue_types/carbohydrates/to4-beta-D-Galp.params
+residue_types/carbohydrates/to6-alpha-D-Galp.params
+residue_types/carbohydrates/to6-beta-D-Galp.params
+residue_types/carbohydrates/to3-alpha-L-Fucp.params
+residue_types/carbohydrates/to4-alpha-L-Fucp.params
+residue_types/carbohydrates/to4-alpha-D-Abep.params
+residue_types/carbohydrates/to4-alpha-Daup.params
+#### Mannoses
+residue_types/carbohydrates/to3-beta-D-Manp.params
+residue_types/carbohydrates/to2-alpha-D-Manp.params
+residue_types/carbohydrates/to3-alpha-D-Manp.params
+residue_types/carbohydrates/to4-alpha-D-Manp.params
+residue_types/carbohydrates/to4-beta-L-Manp.params
+residue_types/carbohydrates/to6-beta-D-Manp.params
+residue_types/carbohydrates/to3-alpha-L-Rhap.params
+residue_types/carbohydrates/to4-alpha-L-Rhap.params
+#### Idoses
+residue_types/carbohydrates/to4-alpha-L-Idop.params
+#### Guloses
+residue_types/carbohydrates/to4-beta-L-Gulp.params
+#### Altroses
+residue_types/carbohydrates/to4-beta-L-Altp.params
+### Ketohexoses
+#### Fructoses
+residue_types/carbohydrates/to4-beta-D-Fruf.params
+#### Psicoses
+residue_types/carbohydrates/to5-beta-D-Psip.params
+### Ketononoses
+#### Ketoaldonic Acids (e.g., Sialic Acids)
+residue_types/carbohydrates/to8-alpha-Neup.params
+
+## Membrane Types
+residue_types/membrane/MEM.params
+residue_types/membrane/EMB.params
+
+## Lipid Types (require -include_lipids flag to be loaded in)
+### Sphingolipids
+residue_types/lipids/sphingosine.params
+### Fatty Acids
+residue_types/lipids/linoleate.params
+### Synthetic Adducts
+residue_types/lipids/ONonOMe.params
+
+## Terpene types
+residue_types/terpenes/isoprene.params
+
+## Terminal types
+residue_types/terminal/ACE.params
+residue_types/terminal/NME.params
+residue_types/terminal/BZO.params
+residue_types/terminal/BZA.params
+
+## Extras
+residue_types/extra/C.params
+
+## Peptide nucleic acids
+residue_types/pna/APN.params
+residue_types/pna/CPN.params
+residue_types/pna/GPN.params
+residue_types/pna/TPN.params
+residue_types/pna/UPN.params
+
+## Coenzymes
+residue_types/coenzymes/flavin_oxidized.params
+residue_types/coenzymes/flavin_reduced.params

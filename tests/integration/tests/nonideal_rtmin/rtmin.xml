@@ -9,13 +9,13 @@
 			</OperateOnCertainResidues> 
 		</TASKOPERATIONS>
 		<SCOREFXNS>
-			<ScoreFunction name="score12_cart" weights="score12_cart" symmetric="0">
+			<ScoreFunction name="ref2015_cart" weights="ref2015_cart" symmetric="0">
 			</ScoreFunction>
 		</SCOREFXNS>
 		<FILTERS>
 		</FILTERS>
 		<MOVERS>
-			<RotamerTrialsMinMover name="rtmin" scorefxn="score12_cart" task_operations="restrict,onlypacksome" nonideal="1"/>
+			<RotamerTrialsMinMover name="rtmin" scorefxn="ref2015_cart" task_operations="restrict,onlypacksome" nonideal="1"/>
 		</MOVERS>
 
 		<PROTOCOLS>

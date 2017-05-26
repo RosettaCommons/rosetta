@@ -9,7 +9,8 @@ ONH2  1.98
 Nlys  1.74
 OH    1.51
 ****  2.0
-#NtpR  3.26
+NtrR  3.34
+#NtpR  3.26 #what is this?
 #OPdd  2.14 ## copied
 #OCbb  1.98 ## copied
 #ORdd  1.98 ## copied

@@ -10,7 +10,7 @@
 		<Reweight scoretype="elec_dens_fast" weight="2.0"/>
 		<Reweight scoretype="atom_pair_constraint" weight="0.5"/>
 	</ScoreFunction>
-	<ScoreFunction name="fullatom" weights="talaris2013" symmetric="1">
+	<ScoreFunction name="fullatom" weights="ref2015" symmetric="1">
 		<Reweight scoretype="pro_close" weight="0.0"/>
 		<Reweight scoretype="cart_bonded" weight="0.5"/>
 		<Reweight scoretype="atom_pair_constraint" weight="0.3"/>

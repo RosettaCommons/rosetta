@@ -37,7 +37,7 @@ class AchiralResidueTypeTests_betanov15 : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-beta_nov15 -symmetric_gly_tables true" );
+		core_init_with_additional_options( "-symmetric_gly_tables true" );
 	}
 
 	void tearDown(){

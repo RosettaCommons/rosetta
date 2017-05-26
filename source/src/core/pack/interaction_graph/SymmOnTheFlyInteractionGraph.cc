@@ -86,15 +86,55 @@ SymmOnTheFlyNode::set_rotamers(
 		rotamers_[ ii ] = rotamer_set_->rotamer( ii );
 		if ( ii == 1 ) {
 			bb_bounding_sphere_.first  = scoring::compute_bb_centroid( *rotamers_[ ii ] );
-			bb_bounding_sphere_.second = scoring::compute_bb_radius(   *rotamers_[ ii ], bb_bounding_sphere_.first );
+			bb_bounding_sphere_.second = scoring::compute_bb_radius(   *rotamers_[ ii ], bb_bounding_sphere_.first ) + 0.05; // Add in some fudge to avoid sharp cutoff issues.
 		}
 		sc_bounding_spheres_[ ii ].first  = scoring::compute_sc_centroid( *rotamers_[ ii ] );
-		sc_bounding_spheres_[ ii ].second = scoring::compute_sc_radius(   *rotamers_[ ii ], sc_bounding_spheres_[ ii ].first );
+		sc_bounding_spheres_[ ii ].second = scoring::compute_sc_radius(   *rotamers_[ ii ], sc_bounding_spheres_[ ii ].first ) + 0.05;
+
+		// setup for scoring for residue -- initialize lk-ball coordinates
+		for ( auto const & method : get_on_the_fly_owner()->setup_for_scoring_for_residue_energy_methods() ) {
+			method->setup_for_scoring_for_residue( *rotamers_[ ii ], get_on_the_fly_owner()->pose(),
+				get_on_the_fly_owner()->score_function(), rotamer_set_->rotamer_data_cache( ii ));
+		}
+
 	}
 
-	Size const nsubunits = get_on_the_fly_owner()->symm_info().subunits();
-	//Size const nres_asu = get_on_the_fly_owner()->symm_info().num_independent_residues();
 	core::pose::Pose const & pose = get_on_the_fly_owner()->pose();
+	Size const nsubunits = get_on_the_fly_owner()->symm_info().subunits();
+	symmetric_transforms_.resize( nsubunits );
+
+	if ( rotamers_.size() > 0 && pose.residue( rotamers_[ 1 ]->seqpos() ).natoms() >= 3 ) {
+		Size const asu_residue = rotamers_[ 1 ]->seqpos();
+		HTReal asu_frame(
+			pose.xyz( id::AtomID( 1, asu_residue )),
+			pose.xyz( id::AtomID( 2, asu_residue )),
+			pose.xyz( id::AtomID( 3, asu_residue )) );
+
+		HTReal inv_asu_frame = asu_frame.inverse();
+
+		for ( Size ii = 1; ii <= nsubunits; ++ii ) {
+			Size iiresidue = get_on_the_fly_owner()->symm_info().equivalent_residue_on_subunit( ii, asu_residue );
+			if ( iiresidue == asu_residue ) {
+				symmetric_transforms_[ ii ].set_identity();
+				continue;
+			}
+			HTReal iiframe(
+				pose.xyz( id::AtomID( 1, iiresidue )),
+				pose.xyz( id::AtomID( 2, iiresidue )),
+				pose.xyz( id::AtomID( 3, iiresidue )) );
+			symmetric_transforms_[ ii ] = iiframe * inv_asu_frame;
+		}
+	} else {
+		// Just take the coordinate frames computed by the graph
+		// Less precise, but workable.
+		for ( Size ii = 1; ii <= nsubunits; ++ii ) {
+			symmetric_transforms_[ ii ] = get_on_the_fly_owner()->symmetric_transform( ii );
+		}
+	}
+
+
+
+	//Size const nres_asu = get_on_the_fly_owner()->symm_info().num_independent_residues();
 	rotamer_representatives_.resize( nsubunits );
 	for ( int ii = 1; ii <= num_restype_groups_; ++ii ) {
 		state_offset_for_restype_group_[ ii ] = rotamers->get_residue_group_begin( ii ) - 1;
@@ -106,6 +146,7 @@ SymmOnTheFlyNode::set_rotamers(
 			rotamer_representatives_[ ii ][ jj ] = rotamers->rotamer( rotamers->get_residue_type_begin( jj ) )->clone();
 			rotamer_representatives_[ ii ][ jj ]->seqpos( get_on_the_fly_owner()->symm_info().equivalent_residue_on_subunit( ii, rotamers->resid() ));
 			rotamer_representatives_[ ii ][ jj ]->copy_residue_connections_from( pose.residue( rotamer_representatives_[ ii ][ jj ]->seqpos() ) );
+			rotamer_representatives_[ ii ][ jj ]->data_ptr(); // allocate the datacache for this residue
 		}
 	}
 
@@ -240,6 +281,8 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 	scoring::ScoreTypes const & active_score_types = get_on_the_fly_owner()->active_score_types();
 
 	//std::cout << "SymmOnTheFlyNode::compute_rotamer_pair_energy " << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << std::endl;
+
+	bool assignment_of_interest = false; // ( get_node_index() == 4 && state_this == 1 ) || ( neighbor.get_node_index() == 4 && state_other == 1 );
 
 	for ( Size ii = 1; ii <= 2; ++ii ) {
 
@@ -402,10 +445,11 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 				}
 
 				// if (  (get_node_index() == 1 && ( state_this == 1||state_this == 9) ) || ( neighbor.get_node_index() == 1 && (state_other == 1 || state_other == 9 ))) {
-				//  std::cout << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
-				//  //std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
-				//  //std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
-				// }
+				if ( assignment_of_interest ) {
+					std::cout << get_node_index() << " " << neighbor.get_node_index() << " " << this_rotamer.seqpos() << " " << other_rotamer.seqpos() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
+					//std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
+					//std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
+				}
 				esum += iijj_score_multiply * static_cast< core::PackerEnergy >
 					( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
 			}
@@ -440,20 +484,29 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 	if ( get_adjacent_otf_node( edge_making_energy_request )->get_asu_rotamer( state_other ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_node_index(), state_this );
-		// if ( get_node_index() == 1 && state_this == 1 ) {
-		//  std::cout << "adding proline correction 1: " << get_incident_otf_edge( edge_making_energy_request )->
-		//   get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
-		// }
+	} else if ( get_adjacent_otf_node( edge_making_energy_request )->get_asu_rotamer( state_other ).aa() == chemical::aa_gly ) {
+		esum += get_incident_otf_edge( edge_making_energy_request )->
+			get_glycine_correction_for_node( get_node_index(), state_this );
+		if ( assignment_of_interest ) {
+			std::cout << " gly correction: " << get_incident_otf_edge( edge_making_energy_request )->
+				get_glycine_correction_for_node( get_node_index(), state_this ) << std::endl;
+		}
 	}
+
 	if ( get_asu_rotamer( state_this ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ),
 			state_other
 		);
-		// if ( get_node_index() == 1 && state_this == 1 ) {
-		//  std::cout << "adding proline correction 2: " <<  get_incident_otf_edge( edge_making_energy_request )->
-		//   get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
-		// }
+	} else if ( get_asu_rotamer( state_this ).aa() == chemical::aa_gly ) {
+		esum += get_incident_otf_edge( edge_making_energy_request )->
+			get_glycine_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ),
+			state_other
+		);
+		if ( assignment_of_interest ) {
+			std::cout << " gly correction: " << get_incident_otf_edge( edge_making_energy_request )->
+				get_glycine_correction_for_node( get_node_index(), state_this ) << std::endl;
+		}
 	}
 
 	return get_incident_edge( edge_making_energy_request )->edge_weight() * esum;
@@ -485,7 +538,8 @@ SymmOnTheFlyNode::get_rotamer( int state, int subunit ) const
 	rotamer.chi() = asymm_rotamer.chi();
 
 	// rotate coordinates
-	SymmOnTheFlyInteractionGraph::HTReal transform = get_on_the_fly_owner()->symmetric_transform( subunit );
+	//SymmOnTheFlyInteractionGraph::HTReal const & transform = get_on_the_fly_owner()->symmetric_transform( subunit );
+	SymmOnTheFlyInteractionGraph::HTReal const & transform = symmetric_transforms_[ subunit ];
 	for ( Size ii = 1, iiend = rotamer.natoms(); ii <= iiend; ++ii ) {
 		rotamer.set_xyz( ii, transform * asymm_rotamer.xyz( ii ) );
 	}
@@ -493,7 +547,19 @@ SymmOnTheFlyNode::get_rotamer( int state, int subunit ) const
 	// rotate the act_coord
 	rotamer.actcoord() = transform * asymm_rotamer.actcoord();
 
-	// orbital rotation would happen here, too, I think
+	// initialize any data that belongs in the Residue's datacache:
+	for ( auto const & method : get_on_the_fly_owner()->setup_for_scoring_for_residue_energy_methods() ) {
+		method->setup_for_scoring_for_residue( rotamer, get_on_the_fly_owner()->pose(),
+			get_on_the_fly_owner()->score_function(), *rotamer.nonconst_data_ptr() );
+	}
+
+	//// call setup for scoring for residue on the energy methods that require it:
+	//for ( auto const & method : get_on_the_fly_owner()->setup_for_scoring_for_residue_energy_methods() ) {
+	// method->setup_for_scoring_for_residue( rotamer, get_on_the_fly_owner()->pose(),
+	//  get_on_the_fly_owner()->score_function(), *rotamer.nonconst_data_ptr() );
+	// // replace when beta becomes default -- get_on_the_fly_owner()->score_function(), rotamer.nonconst_data() );
+	//}
+
 
 	return rotamer;
 }
@@ -512,7 +578,7 @@ SymmOnTheFlyNode::BoundingSphere
 SymmOnTheFlyNode::sc_bounding_sphere( int state, int subunit ) const
 {
 	BoundingSphere transformed_bs = sc_bounding_spheres_[ state ];
-	transformed_bs.first = get_on_the_fly_owner()->symmetric_transform( subunit ) * transformed_bs.first;
+	transformed_bs.first = symmetric_transforms_[ subunit ] * transformed_bs.first;
 	return transformed_bs;
 }
 
@@ -521,7 +587,7 @@ SymmOnTheFlyNode::BoundingSphere
 SymmOnTheFlyNode::bb_bounding_sphere( int subunit ) const
 {
 	BoundingSphere transformed_bs = bb_bounding_sphere_;
-	transformed_bs.first = get_on_the_fly_owner()->symmetric_transform( subunit ) * transformed_bs.first;
+	transformed_bs.first = symmetric_transforms_[ subunit ] * transformed_bs.first;
 	return transformed_bs;
 }
 
@@ -548,7 +614,9 @@ SymmOnTheFlyEdge::SymmOnTheFlyEdge(
 	bool distinguish_sc_bb[ 2 ];
 	for ( int ii = 0; ii < 2; ++ii ) {
 		proline_corrections_[ ii ].resize( get_num_states_for_node( ii ) );
+		glycine_corrections_[ ii ].resize( get_num_states_for_node( ii ) );
 		std::fill( proline_corrections_[ ii ].begin(), proline_corrections_[ ii ].end(), 0.0f );
+		std::fill( glycine_corrections_[ ii ].begin(), glycine_corrections_[ ii ].end(), 0.0f );
 		distinguish_sc_bb[ ii ] = get_otf_node( ii )->distinguish_backbone_and_sidechain();
 	}
 
@@ -590,6 +658,22 @@ SymmOnTheFlyEdge::add_ProCorrection_values(
 }
 
 
+void
+SymmOnTheFlyEdge::add_GlyCorrection_values(
+	int node_not_necessarily_glycine,
+	int state,
+	core::PackerEnergy bb_regbb_E,
+	core::PackerEnergy bb_glybb_E,
+	core::PackerEnergy sc_regbb_E,
+	core::PackerEnergy sc_glybb_E
+) {
+	int const which_node = node_not_necessarily_glycine == get_node_index( 0 ) ? 0 : 1;
+
+	glycine_corrections_[ which_node ][ state ] +=
+		sc_glybb_E + 0.5 * bb_glybb_E -
+		(sc_regbb_E + 0.5 * bb_regbb_E);
+}
+
 unsigned int
 SymmOnTheFlyEdge::count_dynamic_memory() const
 {
@@ -597,6 +681,8 @@ SymmOnTheFlyEdge::count_dynamic_memory() const
 
 	total_memory_usage += proline_corrections_[ 0 ].size() * sizeof( core::PackerEnergy );
 	total_memory_usage += proline_corrections_[ 1 ].size() * sizeof( core::PackerEnergy );
+	total_memory_usage += glycine_corrections_[ 0 ].size() * sizeof( core::PackerEnergy );
+	total_memory_usage += glycine_corrections_[ 1 ].size() * sizeof( core::PackerEnergy );
 
 	return total_memory_usage;
 }
@@ -709,7 +795,16 @@ void
 SymmOnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 {
 	score_function_ = sfxn.clone();
-	if ( pose_ ) ( *score_function_)(*pose_); // rescore the pose with the input score function
+	if ( pose_ ) {
+		( *score_function_)(*pose_); // rescore the pose with the input score function
+		sfs_energy_methods_.clear();
+		for ( auto const & method : score_function_->all_methods() ) {
+			if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {
+				sfs_energy_methods_.push_back( method );
+			}
+		}
+	}
+
 	active_score_types_ = sfxn.get_nonzero_weighted_scoretypes();
 }
 
@@ -717,7 +812,15 @@ void
 SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 {
 	pose_ = pose::PoseOP( new pose::Pose( pose ) );
-	if ( score_function_ ) ( *score_function_)(*pose_);
+	if ( score_function_ ) {
+		( *score_function_)(*pose_);
+		sfs_energy_methods_.clear();
+		for ( auto const & method : score_function_->all_methods() ) {
+			if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {
+				sfs_energy_methods_.push_back( method );
+			}
+		}
+	}
 
 	using conformation::symmetry::SymmetricConformation;
 	using id::AtomID;
@@ -858,9 +961,9 @@ SymmOnTheFlyInteractionGraph::add_ProCorrection_values_for_edge(
 	int node2,
 	int node_not_neccessarily_proline,
 	int state,
-	core::PackerEnergy bb_nonprobb_E,
+	core::PackerEnergy bb_regbb_E,
 	core::PackerEnergy bb_probb_E,
-	core::PackerEnergy sc_nonprobb_E,
+	core::PackerEnergy sc_regbb_E,
 	core::PackerEnergy sc_probb_E
 )
 {
@@ -868,7 +971,27 @@ SymmOnTheFlyInteractionGraph::add_ProCorrection_values_for_edge(
 	if ( edge != 0 ) {
 		edge->add_ProCorrection_values(
 			node_not_neccessarily_proline, state,
-			bb_nonprobb_E, bb_probb_E, sc_nonprobb_E, sc_probb_E );
+			bb_regbb_E, bb_probb_E, sc_regbb_E, sc_probb_E );
+	}
+}
+
+void
+SymmOnTheFlyInteractionGraph::add_GlyCorrection_values_for_edge(
+	int node1,
+	int node2,
+	int node_not_neccessarily_glycine,
+	int state,
+	core::PackerEnergy bb_regbb_E,
+	core::PackerEnergy bb_glybb_E,
+	core::PackerEnergy sc_regbb_E,
+	core::PackerEnergy sc_glybb_E
+)
+{
+	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != 0 ) {
+		edge->add_GlyCorrection_values(
+			node_not_neccessarily_glycine, state,
+			bb_regbb_E, bb_glybb_E, sc_regbb_E, sc_glybb_E );
 	}
 }
 

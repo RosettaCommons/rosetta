@@ -1,0 +1,20 @@
+## Metapatch for aromatic hydroxylation
+NAME hydroxylated
+TYPES blank-HYDROXYLATED
+
+PERTINENT_PROPERTY AROMATIC_CARBON_WITH_FREE_VALENCE
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN PEPTOID
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+REPLACE_PROTON_WITH_HYDROXYL blank
+
+END_CASE

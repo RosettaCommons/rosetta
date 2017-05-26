@@ -21,6 +21,7 @@
 #include <core/chemical/AA.hh>
 #include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/residue_datacache.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -33,6 +34,8 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/lkball/LK_BallInfo.hh>
+#include <core/scoring/util.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -53,6 +56,8 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <numeric/xyz.io.hh>
 
 using namespace core;
 
@@ -358,6 +363,7 @@ public:
 		sfxn->set_weight( fa_atr, 0.8 );
 		sfxn->set_weight( fa_rep, 0.44 );
 		sfxn->set_weight( fa_sol, 0.65 );
+		sfxn->set_weight( lk_ball, 0.65 );
 		methods::EnergyMethodOptionsOP emopts( new methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		sfxn->set_energy_method_options( *emopts );
@@ -583,7 +589,7 @@ public:
 
 		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info = symm_conf.Symmetry_Info();
-		// Size const nres_asu = symm_info->num_independent_residues();
+		Size const nres_asu = symm_info->num_independent_residues();
 
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			//if ( symm_info->bb_follows( ii ) != 0 ) continue;
@@ -602,6 +608,7 @@ public:
 		sfxn->set_weight( fa_atr, 0.8 );
 		sfxn->set_weight( fa_rep, 0.44 );
 		sfxn->set_weight( fa_sol, 0.65 );
+		sfxn->set_weight( lk_ball, 0.65 );
 		methods::EnergyMethodOptionsOP emopts( new methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		sfxn->set_energy_method_options( *emopts );
@@ -717,9 +724,9 @@ public:
 			//pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( 1 ), false );
 			//std::cout << "current rotamer for " << ii << " is " << iicurrentrot << std::endl;
 		}
-		// Real ref_score = (*sfxn)( pose );
+		Real start_score = (*sfxn)( pose );
 
-		//Size ii = 1;
+		//Size ii = 4;
 		//Size jj = 1;
 		//
 		//symlinmem_ig->consider_substitution( ii, jj, otf_deltaE, otf_prevnode_energy );
@@ -854,8 +861,8 @@ public:
 				regular_ig->consider_substitution(   ii, jj, reg_deltaE, reg_prevnode_energy );
 
 				//if ( ii == 1 && (jj == 1||jj==9) ) {
-				// pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue(ii)->rotamer( jj ), false );
-				// (*sfxn)(pose);
+				pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue(ii)->rotamer( jj ), false );
+				Real actual_deltaE = (*sfxn)(pose) - start_score;
 				//
 				// regular_ig->print_vertices();
 				// symlinmem_ig->print_vertices();
@@ -910,7 +917,121 @@ public:
 				//}
 
 				// TS_ASSERT_DELTA( otf_deltaE, reg_deltaE, 1e-5 );
-				TS_ASSERT( std::abs( ( otf_deltaE - reg_deltaE) / ( reg_deltaE + 1e-6 ) ) < 2e-4 || ( std::abs( reg_deltaE ) < 1.0 && std::abs( otf_deltaE - reg_deltaE ) < 2e-4 ));
+				TS_ASSERT( std::abs( ( otf_deltaE - actual_deltaE) / ( actual_deltaE + 1e-6 ) ) < 3e-4 || ( std::abs( actual_deltaE ) < 1.0 && std::abs( otf_deltaE - actual_deltaE ) < 2e-4 ));
+				if ( ! ( std::abs( ( otf_deltaE - actual_deltaE) / ( actual_deltaE + 1e-6 ) ) < 3e-4 || ( std::abs( actual_deltaE ) < 1.0 && std::abs( otf_deltaE - actual_deltaE ) < 2e-4 ) ) ) {
+					std::cout << " ii " << ii << " jj " << jj << " otf_deltaE: " << otf_deltaE << " actual_deltaE: " << actual_deltaE << " diff: " << std::abs( otf_deltaE - actual_deltaE ) << " substituting " <<
+						rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( jj )->name() << std::endl;
+				}
+
+				// OK!
+				// Let's examine the rotamer data from LK_Ball and figure out how it is wrong.
+				// Iterate across the subunits and for each one, nab the Rotamer out of the Symm OFT IG
+				// SymmOTF -- aka "sotf".
+				using core::pack::interaction_graph::SymmOnTheFlyNode;
+				SymmOnTheFlyNode * ii_node = symlinmem_ig->get_on_the_fly_node( ii );
+
+				//utility::vector1< Real > sc_sc_energies_to_node( rotsets->nmoltenres(), 0.0 );
+				for ( Size kk = 1; kk <= 7; ++kk ) {
+					Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
+					core::conformation::Residue const & kk_pose_res( pose.residue( kkresid ) );
+					core::conformation::Residue const & kk_sotf_res( ii_node->get_rotamer( jj, kk ));
+					TS_ASSERT( &kk_pose_res.type() == &kk_sotf_res.type() );
+					if ( &kk_pose_res.type() != &kk_sotf_res.type() ) continue;
+
+					for ( Size ll = 1; ll <= kk_pose_res.natoms(); ++ll ) {
+						TS_ASSERT_DELTA( kk_pose_res.xyz( ll ).distance_squared( kk_sotf_res.xyz( ll ) ), 0, 1e-6 );
+					}
+
+					SymmOnTheFlyNode::BoundingSphere kk_bb_bound = ii_node->bb_bounding_sphere( kk );
+					SymmOnTheFlyNode::BoundingSphere kk_sc_bound = ii_node->sc_bounding_sphere( jj, kk );
+					for ( Size ll = 1; ll <= kk_sotf_res.nheavyatoms(); ++ll ) {
+						if ( ll <= kk_sotf_res.last_backbone_atom() ) {
+							TS_ASSERT( kk_sotf_res.xyz( ll ).distance_squared( kk_bb_bound.first ) <= kk_bb_bound.second * kk_bb_bound.second );
+							if ( kk_sotf_res.xyz( ll ).distance_squared( kk_bb_bound.first ) > kk_bb_bound.second * kk_bb_bound.second ) {
+								std::cout << "  bb atom " << ll << " on rotamer " << jj << " subunit " << kk << " coord: " << kk_sotf_res.xyz( ll ) << " vs bounding sphere " << kk_bb_bound.first << " " << " with distance " << kk_sotf_res.xyz( ll ).distance( kk_bb_bound.first ) << " and radius " << kk_bb_bound.second << std::endl;
+							}
+						} else {
+							TS_ASSERT( kk_sotf_res.xyz( ll ).distance_squared( kk_sc_bound.first ) <= kk_sc_bound.second * kk_sc_bound.second );
+							if ( kk_sotf_res.xyz( ll ).distance_squared( kk_sc_bound.first ) > kk_sc_bound.second * kk_sc_bound.second ) {
+								std::cout << "  sc atom " << ll << " on rotamer " << jj << " subunit " << kk << " coord: " << kk_sotf_res.xyz( ll ) << " vs bounding sphere " << kk_sc_bound.first << " " << " with distance " << kk_sotf_res.xyz( ll ).distance( kk_sc_bound.first ) << " and radius " << kk_sc_bound.second << std::endl;
+							}
+						}
+					}
+
+					basic::datacache::BasicDataCacheCOP kk_pose_data( kk_pose_res.data_ptr() );
+					basic::datacache::BasicDataCacheCOP kk_sotf_data( kk_sotf_res.data_ptr() );
+
+					using conformation::residue_datacache::LK_BALL_INFO;
+					using scoring::lkball::LKB_ResidueInfo;
+					TS_ASSERT( kk_pose_data->has( LK_BALL_INFO ) );
+					TS_ASSERT( kk_sotf_data->has( LK_BALL_INFO ) );
+
+					if ( ! kk_pose_data->has( LK_BALL_INFO ) || ! kk_sotf_data->has( LK_BALL_INFO ) ) continue;
+
+					LKB_ResidueInfo const & kk_pose_lkb_info( static_cast< LKB_ResidueInfo const & > ( kk_pose_data->get( LK_BALL_INFO )));
+					LKB_ResidueInfo const & kk_sotf_lkb_info( static_cast< LKB_ResidueInfo const & > ( kk_sotf_data->get( LK_BALL_INFO )));
+
+					utility::vector1< LKB_ResidueInfo::Vectors > const & kk_pose_waters( kk_pose_lkb_info.waters() );
+					utility::vector1< LKB_ResidueInfo::Vectors > const & kk_sotf_waters( kk_sotf_lkb_info.waters() );
+					TS_ASSERT_EQUALS( kk_pose_waters.size(), kk_sotf_waters.size() );
+					//std::cout << "#Waters: " << kk_pose_waters.size() << std::endl;
+					if ( kk_pose_waters.size() != kk_sotf_waters.size() ) continue;
+
+					for ( Size ll = 1; ll <= kk_pose_waters.size(); ++ll ) {
+						TS_ASSERT_EQUALS( kk_pose_waters[ ll ].size(), kk_sotf_waters[ ll ].size() );
+						if ( kk_pose_waters[ ll ].size() != kk_sotf_waters[ ll ].size() ) continue;
+						for ( Size mm = 1; mm <= kk_pose_waters[ ll ].size(); ++mm ) {
+							TS_ASSERT_DELTA( kk_pose_waters[ ll ][ mm ].distance_squared( kk_sotf_waters[ ll ][ mm ] ), 0, 1e-6 );
+						}
+					}
+
+					//if ( false ) {
+					// //if ( ii == 4 && jj == 1 ) {
+					// //pose.dump_pdb( "fibril_symmetry_bug.pdb" );
+					//
+					// for ( auto eedge_iter = pose.energies().energy_graph().get_node( kkresid )->edge_list_begin(); eedge_iter != pose.energies().energy_graph().get_node( kkresid )->edge_list_end(); ++eedge_iter ) {
+					//  scoring::EnergyMap emap;
+					//  Size nbr = (*eedge_iter)->get_other_ind( kkresid );
+					//  Real kk_nbr_score_multiply = symlinmem_ig->symm_info().score_multiply( kkresid, nbr );
+					//  if ( kk_nbr_score_multiply == 0 ) continue;
+					//
+					//  conformation::Residue const & nbr_res( pose.residue( nbr ));
+					//  Vector nbr_sc_sphere_center = scoring::compute_sc_centroid( nbr_res );
+					//  Real   nbr_sc_sphere_radius = scoring::compute_sc_radius( nbr_res, nbr_sc_sphere_center );
+					//
+					//
+					//  scoring::eval_scsc_sr2b_energies(
+					//   kk_pose_res,nbr_res,
+					//   kk_sc_bound.first,  nbr_sc_sphere_center,
+					//   kk_sc_bound.second, nbr_sc_sphere_radius,
+					//   pose, *sfxn,
+					//   emap );
+					//  std::cout << " pose scsc: kk " << kk << " kkresid " << kkresid << " nbr: " << nbr << " smult: " << kk_nbr_score_multiply << " score: " << kk_nbr_score_multiply * sfxn->weights().dot( emap ) << std::endl;
+					//
+					//  // asu == 4
+					//  Size nbr_asu = symlinmem_ig->symm_info().equivalent_residue_on_subunit( 4, nbr );
+					//  Size nbr_moltenres = rotsets->resid_2_moltenres( nbr_asu );
+					//  if ( nbr_moltenres ) {
+					//   sc_sc_energies_to_node[ nbr_moltenres ] += kk_nbr_score_multiply * sfxn->weights().dot( emap );
+					//  }
+					// }
+
+				}
+				//
+				//if ( ii == 4 && jj == 1 ) {
+				//
+				// for ( Size kk = 1; kk <= rotsets->nmoltenres(); ++kk ) {
+				//  std::cout << " sc/sc energy total: to moltenres: " << kk << " " << sc_sc_energies_to_node[ kk ] << std::endl;
+				// }
+				//}
+
+
+				TS_ASSERT( std::abs( ( reg_deltaE - actual_deltaE) / ( actual_deltaE + 1e-6 ) ) < 3e-4 || ( std::abs( actual_deltaE ) < 1.0 && std::abs( reg_deltaE - actual_deltaE ) < 2e-4 ));
+				if ( ! ( std::abs( ( reg_deltaE - actual_deltaE) / ( actual_deltaE + 1e-6 ) ) < 3e-4 || ( std::abs( actual_deltaE ) < 1.0 && std::abs( reg_deltaE - actual_deltaE ) < 2e-4 ) ) ) {
+					std::cout << " ii " << ii << " jj " << jj << " reg_deltaE: " << reg_deltaE << " actual_deltaE: " << actual_deltaE << " diff: " << std::abs( reg_deltaE - actual_deltaE ) << " substituting " <<
+						rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( jj )->name() << std::endl;
+
+				}
 
 
 				//std::cout << "Delta otf_deltaE-reg_deltaE: " << otf_deltaE - reg_deltaE << std::endl;

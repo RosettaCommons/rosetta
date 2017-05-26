@@ -1,0 +1,29 @@
+## fullatom protein c-terminus patch
+
+NAME CtermTruncation
+TYPES UPPERTERM_TRUNC_VARIANT
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE UPPERTERM_TRUNC_VARIANT
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+
+SET_ICOOR O    80.0 60 1.2 C CA N
+
+SET_POLYMER_CONNECT UPPER NONE
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+
+END_CASE
+

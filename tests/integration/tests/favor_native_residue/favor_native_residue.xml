@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
         <SCOREFXNS>
-	  <ScoreFunction name="s12_prime" weights="score12prime"/>
+	  <ScoreFunction name="ref" weights="ref2015"/>
         </SCOREFXNS>
 	<TASKOPERATIONS>
 	  <InitializeFromCommandline name="cmdTask"/>
@@ -9,7 +9,7 @@
 	</FILTERS>
         <MOVERS>
 	  <FavorNativeResidue name="favor" bonus="0.5"/>
-	  <PackRotamersMover name="pack" scorefxn="s12_prime" task_operations="cmdTask" />
+	  <PackRotamersMover name="pack" scorefxn="ref" task_operations="cmdTask" />
         </MOVERS>
         <APPLY_TO_POSE>
         </APPLY_TO_POSE>

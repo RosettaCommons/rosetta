@@ -1,0 +1,21 @@
+# created by liza lee (Graylab@JHU)
+# For hydrogen of hydroxyl ion in hydroxyapatite surface
+NAME HHA
+IO_STRING HHA Z 
+TYPE LIGAND 
+AA UNK
+ATOM  Hha Hha   X    0.60 
+ATOM  V1  VIRT  X    0.00
+ATOM  V2  VIRT  X    0.00
+ATOM  V3  VIRT  X    0.00
+BOND  Hha  V1
+BOND  V1   V2
+BOND  V2   V3
+NBR_ATOM  Hha
+#distance beyond which residue i and j would not be neighbors
+NBR_RADIUS 0.10
+ICOOR_INTERNAL    Hha    0.000000    0.000000    0.000000   Hha   V1    V2
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765   Hha   V1    V2
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1    Hha   V2
+ICOOR_INTERNAL    V3     0.000000   62.060678    1.415324   V2    V1    Hha
+

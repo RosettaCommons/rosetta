@@ -1,0 +1,22 @@
+# created by liza lee (Graylab@JHU)
+# For phosphate ion in monoclinic hydroxyapatite surface
+NAME PHO
+IO_STRING PHO Z
+TYPE LIGAND
+AA UNK
+ATOM  P1  Pha   X   2.60
+ATOM  O1  OPha  X   -1.40
+ATOM  O2  OPha  X   -1.40
+ATOM  O3  OPha  X   -1.40
+ATOM  O4  OPha  X   -1.40
+BOND  P1   O1 
+BOND  P1   O2 
+BOND  P1   O3 
+BOND  P1   O4 
+NBR_ATOM  P1 
+NBR_RADIUS 1.553003
+ICOOR_INTERNAL    P1     0.000000    0.000000    0.000000   P1    O1    O2 
+ICOOR_INTERNAL    O1     0.000000  180.000000    1.534474   P1    O1    O2 
+ICOOR_INTERNAL    O2     0.000001   68.016091    1.542721   P1    O1    O2 
+ICOOR_INTERNAL    O3  -121.836536   72.273693    1.531881   P1    O1    O2 
+ICOOR_INTERNAL    O4  -116.987827   72.666985    1.553003   P1    O1    O3 

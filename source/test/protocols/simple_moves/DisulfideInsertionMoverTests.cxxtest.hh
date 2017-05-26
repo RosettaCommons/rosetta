@@ -117,7 +117,7 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 			TS_ASSERT_EQUALS(mover->get_peptide_chain(), 2);
 			TS_ASSERT_EQUALS(mover->get_n_cyd_seqpos(), 2);
 			TS_ASSERT_EQUALS(mover->get_c_cyd_seqpos(), 6);
-			TS_ASSERT_EQUALS(mover->get_scorefxn()->get_name(), "soft_rep");
+			TS_ASSERT_EQUALS(mover->get_scorefxn()->get_name(), "ref2015_soft");
 			TS_ASSERT_DELTA(mover->get_constraint_weight(), 0.1, 1e-6);
 		}
 

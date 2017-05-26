@@ -49,7 +49,7 @@ slide.apply(pose)
 movemap = MoveMap()
 movemap.set_jump(jump_num, True)
 
-scorefxn = create_score_function("talaris2013")
+scorefxn = create_score_function("ref2015")
 scorefxn( pose )
 
 print( "_____ Check point 3" )
@@ -109,7 +109,7 @@ while (jd.job_complete == False):
     jd.output_decoy(pose_low)
 
 # High-Resolution Docking
-scorefxn_high = create_score_function("pre_talaris_2013_standard.wts", "docking")
+scorefxn_high = create_score_function("ref2015.wts", "docking")
 dock_hires = protocols.docking.DockMCMProtocol()
 dock_hires.set_scorefxn(scorefxn_high)
 dock_hires.set_partners("A_B")

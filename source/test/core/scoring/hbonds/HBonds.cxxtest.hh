@@ -146,7 +146,6 @@ public:
 		//std::cout.precision(16);
 		HBondDatabaseCOP database(HBondDatabase::get_database("sp2_params"));
 
-
 		HBondOptions hboptions;
 		hboptions.use_sp2_chi_penalty(true);
 

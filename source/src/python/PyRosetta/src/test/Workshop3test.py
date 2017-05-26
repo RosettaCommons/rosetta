@@ -16,7 +16,7 @@ import os; os.chdir('.test.output')
 # Scoring Poses
 ras = pose_from_file("../test/data/workshops/6Q21.clean.pdb")
 
-scorefxn = create_score_function("talaris2013")
+scorefxn = create_score_function("ref2015")
 
 print( scorefxn )
 

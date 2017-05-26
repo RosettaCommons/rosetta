@@ -168,7 +168,8 @@ public:
 		scorefxn->set_weight( scoring::fa_atr, 0.80 );
 		scorefxn->set_weight( scoring::fa_rep, 0.44 );
 		scorefxn->set_weight( scoring::fa_sol, 0.65 );
-		scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
+		//scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
+		scorefxn->set_weight( scoring::dihedral_constraint, 4.0 ); // hpark adjusted for beta_nov15
 
 		// input stddev is in degrees, but dihedral constraints deal in radians
 		core::Real const stddev_radians = numeric::conversions::radians( 5.0 );

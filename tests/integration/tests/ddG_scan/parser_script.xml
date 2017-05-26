@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
   <SCOREFXNS>
-    <ScoreFunction name="s" weights="talaris2014">
+    <ScoreFunction name="s" weights="ref2015">
     </ScoreFunction>
   </SCOREFXNS>
   <TASKOPERATIONS>

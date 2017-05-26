@@ -5,3 +5,4 @@
 
 # Symmetry Options
 -symmetry:symmetry_definition inputs/1afo_tr.c2.symm  # Symmetry Definition file
+-restore_talaris_behavior

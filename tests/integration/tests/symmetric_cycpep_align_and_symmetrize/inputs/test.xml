@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="bnv" weights="beta_nov15.wts" symmetric="true" />
-		<ScoreFunction name="bnv_cst" weights="beta_nov15_cst.wts" symmetric="true" />
+		<ScoreFunction name="ref" weights="ref2015.wts" symmetric="true" />
+		<ScoreFunction name="ref_cst" weights="ref2015_cst.wts" symmetric="true" />
 	</SCOREFXNS>
 	<RESIDUE_SELECTORS>
 		<Index name="peptide_selector" resnums="1-20" />
@@ -20,7 +20,7 @@
 
 		<PeptideCyclizeMover name="bond2" residue_selector="peptide_selector" />
 		
-		<FastRelax name="frlx" repeats="3" scorefxn="bnv_cst" >
+		<FastRelax name="frlx" repeats="3" scorefxn="ref_cst" >
 			<MoveMap name="frlx_mm1" >
 				<Span begin="1" end="999" bb="true" chi="true" />
 				<Jump number="1" setting="true" />
@@ -48,6 +48,6 @@
 		<Add mover="bond2" />
 		<Add mover="frlx" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="bnv" />
+	<OUTPUT scorefxn="ref" />
 
 </ROSETTASCRIPTS>

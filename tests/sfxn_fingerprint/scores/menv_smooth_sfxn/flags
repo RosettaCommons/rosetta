@@ -2,3 +2,4 @@
 -mp:setup:spanfiles 1AFO_A.span
 -ignore_unrecognized_res
 -score:weights mpframework_smooth_fa_2012
+-restore_talaris_behavior

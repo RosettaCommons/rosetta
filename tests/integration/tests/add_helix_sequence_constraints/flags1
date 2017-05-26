@@ -1,7 +1,9 @@
 -parser:protocol inputs/test.xml
+-restore_talaris_behavior true
 -nstruct 3
 -score:weights talaris2014
 -inout:write_all_connect_info true
 -inout:connect_info_cutoff 0.0
 -in:file:s inputs/2ND2_state1_glyonly.pdb
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+-restore_talaris_behavior

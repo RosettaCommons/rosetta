@@ -1,2 +1,3 @@
 -s ./input/1A6M.pdb
 -score:patch occ_Hbond_sol_exact_talaris2014
+-restore_talaris_behavior

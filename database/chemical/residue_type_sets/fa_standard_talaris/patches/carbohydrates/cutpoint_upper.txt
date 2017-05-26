@@ -1,0 +1,87 @@
+ ## patch for the residue on the upper (downstream) side of a cutpoint, for loop modeling
+
+NAME cutpoint_upper
+TYPES CUTPOINT_UPPER
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT VARIANT_TYPE CUTPOINT_UPPER
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE BRANCH_LOWER_TERMINUS_VARIANT
+END_SELECTOR
+
+
+BEGIN_CASE ## ALPHA ALDOSE ####################################################
+
+BEGIN_SELECTOR
+PROPERTY ALDOSE
+PROPERTY ALPHA_SUGAR
+END_SELECTOR
+
+ADD_ATOM OVU1 VIRT VIRT 0.0  # virtual atom to overlap with the previous mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVU1
+
+ADD_BOND  C1  OVU1
+
+SET_ICOOR OVU1 -63.396951   71.218273    1.456186   C1    C2    C3
+
+END_CASE
+
+
+BEGIN_CASE ## BETA ALDOSE #####################################################
+
+BEGIN_SELECTOR
+PROPERTY ALDOSE
+PROPERTY BETA_SUGAR
+END_SELECTOR
+
+ADD_ATOM OVU1 VIRT VIRT 0.0  # virtual atom to overlap with the previous mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVU1
+
+ADD_BOND  C1  OVU1
+
+SET_ICOOR OVU1 -178.882118   73.093678    1.393201   C1    C2    C3
+
+END_CASE
+
+
+BEGIN_CASE ## ALPHA KETOSE ##########################################################
+
+BEGIN_SELECTOR
+PROPERTY KETOSE
+PROPERTY ALPHA_SUGAR
+END_SELECTOR
+
+ADD_ATOM OVU1 VIRT VIRT 0.0  # virtual atom to overlap with the previous mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVU1
+
+ADD_BOND  C2  OVU1
+
+SET_ICOOR OVU1 -171.866263   70.670487    1.438104   C2    C3    C4
+
+END_CASE
+
+
+BEGIN_CASE ## BETA KETOSE ##########################################################
+
+BEGIN_SELECTOR
+PROPERTY KETOSE
+PROPERTY BETA_SUGAR
+END_SELECTOR
+
+ADD_ATOM OVU1 VIRT VIRT 0.0  # virtual atom to overlap with the previous mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVU1
+
+ADD_BOND  C2  OVU1
+
+SET_ICOOR OVU1 -113.553634   64.612569    1.431041   C2    C3    C1
+
+END_CASE

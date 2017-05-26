@@ -1,0 +1,30 @@
+# beta_nov15
+#   beta energy function following parameter refitting (Frank DiMaio and Hahnbeom Park), November 2015
+#
+#   Two sets of reference weight are provided.
+#      The first is for use in "minimization context" (e.g., RTmin, min_pack, or sidechain relax).
+#      The second, and default set, is for use in "packing context" (e.g. Rotamer trials or packing)
+#
+#METHOD_WEIGHTS ref 1.82468 3.75479 -2.14574 -2.72453 1.21829 0.79816 -0.30065 2.30374 -0.71458 1.66147 2.15735 -1.34026 -1.94321 -1.45095 -0.59474 -0.28969 1.15175 2.64269 2.26099 0.58223
+METHOD_WEIGHTS ref 1.32468 3.25479 -2.14574 -2.72453 1.21829 0.79816 -0.30065 2.30374 -0.71458 1.66147 1.65735 -1.34026 -1.64321 -1.45095 -0.09474 -0.28969 1.15175 2.64269 2.26099 0.58223
+fa_atr 1
+fa_rep 0.55
+fa_sol 1.0
+fa_intra_sol_xover4 1.0
+lk_ball_wtd 1.0
+fa_intra_rep 0.005
+fa_elec 1.0
+pro_close 1.25
+hbond_sr_bb 1.0
+hbond_lr_bb 1.0
+hbond_bb_sc 1.0
+hbond_sc 1.0
+dslf_fa13 1.25
+rama_prepro 0.45
+omega 0.4
+p_aa_pp 0.6
+fa_dun 0.7
+yhh_planarity 0.625
+ref 1
+INCLUDE_INTRA_RES_PROTEIN
+NO_HB_ENV_DEP

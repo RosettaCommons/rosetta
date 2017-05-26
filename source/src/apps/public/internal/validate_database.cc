@@ -45,7 +45,8 @@ validate_dunbrack_binaries() {
 		TR.Error << "Dun10: " << (option[ corrections::score::dun10 ] ? " true " : " false " ) << std::endl;
 		TR.Error << "-correct " << (option[ corrections::correct ] ? " true " : " false " ) << std::endl;
 		TR.Error << "-beta " << (option[ corrections::beta ] ? " true " : " false " ) << std::endl;
-		TR.Error << "-beta_nov15 " << (option[ corrections::beta_nov15 ] ? " true " : " false " ) << std::endl;
+		TR.Error << "-beta_nov16 " << (option[ corrections::beta_nov16 ] ? " true " : " false " ) << std::endl;
+		TR.Error << "-restore_talaris_behavior " << (option[ corrections::restore_talaris_behavior ] ? " true " : " false " ) << std::endl;
 		TR.Error << "-shapovalov_lib_fixes_enable " << ( option[ corrections::shapovalov_lib_fixes_enable ] ? " true " : " false " ) << std::endl;
 		TR.Error << "-shap_dun10_enable " << ( option[ corrections::shapovalov_lib::shap_dun10_enable ] ? " true " : " false " ) << std::endl;
 

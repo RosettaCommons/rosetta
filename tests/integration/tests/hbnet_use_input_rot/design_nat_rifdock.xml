@@ -1,12 +1,12 @@
 <ROSETTASCRIPTS>
   <SCOREFXNS>
     <!-- ScoreFunction name="beta" weights="beta_nov16.wts"/ -->
-    <ScoreFunction name="standardfxn" weights="talaris2014">
+    <ScoreFunction name="standardfxn" weights="ref2015">
       <Reweight scoretype="cart_bonded" weight="0.5"/>
       <Reweight scoretype="pro_close" weight="0.0"/>
     </ScoreFunction>
 
-    <ScoreFunction name="standardfxn_cst" weights="talaris2014">
+    <ScoreFunction name="standardfxn_cst" weights="ref2015">
       <Reweight scoretype="cart_bonded" weight="0.5"/>
       <Reweight scoretype="pro_close" weight="0.0"/>
       <Reweight scoretype="atom_pair_constraint" weight="1.0"/>

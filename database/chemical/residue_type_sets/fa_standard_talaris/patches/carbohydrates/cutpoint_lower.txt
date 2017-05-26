@@ -1,0 +1,179 @@
+## patch for the residue on the lower (upstream) side of a cutpoint, for loop modeling
+
+NAME cutpoint_lower
+TYPES CUTPOINT_LOWER
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+END_SELECTOR
+
+
+BEGIN_CASE  # ->1)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 1
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O1  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O1    C1    C2
+
+END_CASE
+
+
+BEGIN_CASE  # ->2)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 2
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O2  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O2    C2    C1
+
+END_CASE
+
+
+BEGIN_CASE  # ->3)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 3
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O3  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O3    C3    C2
+
+END_CASE
+
+
+BEGIN_CASE  # ->4)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 4
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O4  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O4    C4    C3
+
+END_CASE
+
+
+BEGIN_CASE  # ->5)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 5
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O5  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O5    C5    C4
+
+END_CASE
+
+
+BEGIN_CASE  # ->6)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 6
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O6  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O6    C6    C5
+
+END_CASE
+
+
+BEGIN_CASE  # ->7)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 7
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O7  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O7    C7    C6
+
+END_CASE
+
+
+BEGIN_CASE  # ->8)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 8
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O8  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O8    C8    C7
+
+END_CASE
+
+
+BEGIN_CASE  # ->9)-Sugar
+
+BEGIN_SELECTOR
+UPPER_POSITION 9
+END_SELECTOR
+
+ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
+
+# Ensure that it is considered a backbone atom.
+SET_BACKBONE_HEAVYATOM OVL1
+
+ADD_BOND  O9  OVL1
+
+SET_ICOOR OVL1 -179.961011   70.413151    1.499799   O9    C9    C8
+
+END_CASE
+
+
+BEGIN_CASE  # Default Case
+
+# This should never happen!
+
+END_CASE

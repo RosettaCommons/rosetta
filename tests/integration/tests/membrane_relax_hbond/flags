@@ -15,3 +15,4 @@
 -mute core.io.database
 -run:no_prof_info_in_silentout
 -out:file:scorefile score.sc
+-restore_talaris_behavior

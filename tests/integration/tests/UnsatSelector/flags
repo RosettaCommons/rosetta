@@ -1,7 +1,6 @@
 -parser:protocol inputs/test.xml
 -in:file:s inputs/test.pdb
 -nstruct 1 
--beta_nov15
 -mute all
 -unmute protocols.residue_selectors.UnsatSelector core.select.residue_selector core.conformation 
 ##### these are general flags

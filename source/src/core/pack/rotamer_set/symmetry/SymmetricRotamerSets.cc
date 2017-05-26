@@ -368,6 +368,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 		}
 		if ( all_canonical_aas ) {
 			ig->distinguish_backbone_and_sidechain_for_node( ii, true );
+			//std::cout << "temp" << all_canonical_aas << std::endl;
 		}
 	}
 
@@ -496,11 +497,14 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 
 	Size const nsubunits = symm_info->subunits();
 
+	utility::vector1< Size > example_reg_rotamer_inds( nmoltenres(), 0 );
 	utility::vector1< Size > example_gly_rotamer_inds( nmoltenres(), 0 );
 	utility::vector1< Size > example_pro_rotamer_inds( nmoltenres(), 0 );
+	utility::vector1< utility::vector1< ResidueOP > > example_reg_rotamers( nsubunits );
 	utility::vector1< utility::vector1< ResidueOP > > example_gly_rotamers( nsubunits );
 	utility::vector1< utility::vector1< ResidueOP > > example_pro_rotamers( nsubunits );
 	for ( Size ii = 1; ii <= nsubunits; ++ii ) {
+		example_reg_rotamers[ ii ].resize( nmoltenres() );
 		example_gly_rotamers[ ii ].resize( nmoltenres() );
 		example_pro_rotamers[ ii ].resize( nmoltenres() );
 	}
@@ -518,6 +522,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 				example_pro_rotamer_inds[ ii ] = ii_rotset->get_residue_type_begin( jj );
 			} else if ( jj_rotamer->is_protein() ) {
 				potential_gly_replacement = ii_rotset->get_residue_type_begin( jj );
+				example_reg_rotamer_inds[ ii ] = ii_rotset->get_residue_type_begin( jj );
 			}
 		}
 		/// failed to find a glycine backbone for this residue, any other
@@ -532,6 +537,9 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 			}
 			if ( example_gly_rotamer_inds[ ii ] != 0 ) {
 				example_gly_rotamers[ jj ][ ii ] = otfig->get_on_the_fly_node( ii )->get_rotamer( example_gly_rotamer_inds[ ii ], jj ).clone();
+			}
+			if ( example_reg_rotamer_inds[ ii ] != 0 ) {
+				example_reg_rotamers[ jj ][ ii ] = otfig->get_on_the_fly_node( ii )->get_rotamer( example_reg_rotamer_inds[ ii ], jj ).clone();
 			}
 		}
 	}
@@ -589,14 +597,21 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 			for ( Size kk = 1; kk <= ii_rotset->num_rotamers(); ++kk ) {
 				//bool target_interaction = ( ii_master == 1 && ( kk == 1 || kk == 9 ) );
 
-				core::PackerEnergy bb_bbnonproE( iijj_scale ), bb_bbproE( iijj_scale );
-				core::PackerEnergy sc_npbb_energy( iijj_scale ), sc_probb_energy( iijj_scale );
-				//calc sc_npbb_energy;
-				if ( example_gly_rotamer_inds[ jj_master ] != 0 ) {
-					bb_bbnonproE   *= get_bb_bbE( pose, scfxn, iinode->get_rotamer( kk, ii_subunit ), *example_gly_rotamers[ jj_subunit ][ jj_master ] );
-					sc_npbb_energy *= get_sc_bbE( pose, scfxn, iinode->get_rotamer( kk, ii_subunit ), *example_gly_rotamers[ jj_subunit ][ jj_master ] );
+				core::PackerEnergy bb_bbregE( iijj_scale ), bb_bbproE( iijj_scale ), bb_bbglyE( iijj_scale );
+				core::PackerEnergy sc_regbb_energy( iijj_scale ), sc_probb_energy( iijj_scale ), sc_glybb_energy( iijj_scale );
+				//calc sc_regbb_energy;
+				if ( example_reg_rotamer_inds[ jj_master ] != 0 ) {
+					bb_bbregE       *= get_bb_bbE( pose, scfxn, iinode->get_rotamer( kk, ii_subunit ), *example_reg_rotamers[ jj_subunit ][ jj_master ] );
+					sc_regbb_energy *= get_sc_bbE( pose, scfxn, iinode->get_rotamer( kk, ii_subunit ), *example_reg_rotamers[ jj_subunit ][ jj_master ] );
 				} else {
-					bb_bbnonproE = sc_npbb_energy = 0;
+					bb_bbregE = sc_regbb_energy = 0;
+				}
+
+				if ( example_gly_rotamer_inds[ jj_master ] != 0 ) {
+					bb_bbglyE       *= get_bb_bbE( pose, scfxn, iinode->get_rotamer( kk, ii_subunit ), *example_gly_rotamers[ jj_subunit ][ jj_master ] );
+					sc_glybb_energy *= get_sc_bbE( pose, scfxn, iinode->get_rotamer( kk, ii_subunit ), *example_gly_rotamers[ jj_subunit ][ jj_master ] );
+				} else {
+					bb_bbglyE = sc_glybb_energy = 0;
 				}
 				//calc sc_probb_energy
 				if ( example_pro_rotamer_inds[ jj_master ] != 0 ) {
@@ -606,22 +621,34 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 					bb_bbproE = sc_probb_energy = 0;
 				}
 				//if ( target_interaction ) { std::cout << "  procorr: " << ii_master << " " << jj_master << " 1 kk: " << kk << " " << bb_bbnonproE << " " << sc_npbb_energy << " " << bb_bbproE << " " << sc_probb_energy << " add1b: " << sc_npbb_energy +  0.5 * bb_bbnonproE << std::endl; }
-				otfig->add_to_one_body_energy_for_node_state( ii_master, kk, sc_npbb_energy +  0.5 * bb_bbnonproE  );
+
+				otfig->add_to_one_body_energy_for_node_state( ii_master, kk, sc_regbb_energy +  0.5 * bb_bbregE  );
 				otfig->add_ProCorrection_values_for_edge( ii_master, jj_master, ii_master, kk,
-					bb_bbnonproE, bb_bbproE, sc_npbb_energy, sc_probb_energy );
+					bb_bbregE, bb_bbproE, sc_regbb_energy, sc_probb_energy );
+				otfig->add_GlyCorrection_values_for_edge( ii_master, jj_master, ii_master, kk,
+					bb_bbregE, bb_bbglyE, sc_regbb_energy, sc_glybb_energy );
 			}
 
 			for ( Size kk = 1; kk <= jj_rotset->num_rotamers(); ++kk ) {
 				// bool target_interaction = ( ii_master == 1 );
-				core::PackerEnergy bb_bbnonproE( iijj_scale ), bb_bbproE( iijj_scale );
-				core::PackerEnergy sc_npbb_energy( iijj_scale ), sc_probb_energy( iijj_scale );
-				//calc sc_npbb_energy;
-				if ( example_gly_rotamer_inds[ ii_master ] != 0 ) {
-					bb_bbnonproE   *= get_bb_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_gly_rotamers[ ii_subunit ][ ii_master ] );
-					sc_npbb_energy *= get_sc_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_gly_rotamers[ ii_subunit ][ ii_master ] );
+				core::PackerEnergy bb_bbregE( iijj_scale ), bb_bbproE( iijj_scale ), bb_bbglyE( iijj_scale );
+				core::PackerEnergy sc_regbb_energy( iijj_scale ), sc_probb_energy( iijj_scale ), sc_glybb_energy( iijj_scale );
+				//calc sc_regbb_energy;
+				if ( example_reg_rotamer_inds[ ii_master ] != 0 ) {
+					bb_bbregE       *= get_bb_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_reg_rotamers[ ii_subunit ][ ii_master ] );
+					sc_regbb_energy *= get_sc_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_reg_rotamers[ ii_subunit ][ ii_master ] );
 				} else {
-					bb_bbnonproE = sc_npbb_energy = 0;
+					bb_bbregE = sc_regbb_energy = 0;
 				}
+
+				//calc sc_glybb_energy;
+				if ( example_gly_rotamer_inds[ ii_master ] != 0 ) {
+					bb_bbglyE       *= get_bb_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_gly_rotamers[ ii_subunit ][ ii_master ] );
+					sc_glybb_energy *= get_sc_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_gly_rotamers[ ii_subunit ][ ii_master ] );
+				} else {
+					bb_bbglyE = sc_glybb_energy = 0;
+				}
+
 				//calc sc_probb_energy
 				if ( example_pro_rotamer_inds[ ii_master ] != 0 ) {
 					bb_bbproE       *= get_bb_bbE( pose, scfxn, jjnode->get_rotamer( kk, jj_subunit ), *example_pro_rotamers[ ii_subunit ][ ii_master ] );
@@ -630,10 +657,12 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 					bb_bbproE = sc_probb_energy = 0;
 				}
 				//if ( target_interaction ) { std::cout << "  procorr: " << ii_master << " " << jj_master << " 2 kk: " << kk << " " << bb_bbnonproE << " " << sc_npbb_energy << " " << bb_bbproE << " " << sc_probb_energy << " add1b: " << sc_npbb_energy +  0.5 * bb_bbnonproE << std::endl; }
-				otfig->add_to_one_body_energy_for_node_state( jj_master, kk, sc_npbb_energy + 0.5 * bb_bbnonproE );
+				otfig->add_to_one_body_energy_for_node_state( jj_master, kk, sc_regbb_energy + 0.5 * bb_bbregE );
 
 				otfig->add_ProCorrection_values_for_edge( ii_master, jj_master, jj_master, kk,
-					bb_bbnonproE, bb_bbproE, sc_npbb_energy, sc_probb_energy );
+					bb_bbregE, bb_bbproE, sc_regbb_energy, sc_probb_energy );
+				otfig->add_GlyCorrection_values_for_edge( ii_master, jj_master, jj_master, kk,
+					bb_bbregE, bb_bbglyE, sc_regbb_energy, sc_glybb_energy );
 			}
 		}
 	}

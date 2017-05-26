@@ -1,12 +1,14 @@
 NAME    ORBITAL_HYBRIDIZATION  ORBITAL_TYPES BOHR_RADIUS
 CNH2    0                         0              0
 COO     0                         0              0
+CH0     2                         1              0.7 #copied from aroC
 CH1     0                         0              0 
 CH2     0                         0              0
 CH3     0                         0              0
 aroC    2                         1              0.7
 Ntrp    2                         1              0.65
 Nhis    2                         1              0.65
+NtrR    2                         1              0.65
 NH2O    0                         0              0
 Nlys    0                         0              0
 Narg    2                         1              0.65
@@ -18,6 +20,7 @@ OOC     2                         2              0.6
 Oet2    2                         2              0.6
 Oet3    3                         3              0.6
 S       0                         0              0
+SH1     0                         0              0
 Nbb     2                         1              0.65
 CAbb    0                         0              0
 CObb    0                         0              0 
@@ -25,6 +28,7 @@ OCbb    2                         2              0.6
 Phos    0                         0              0
 Pbb     0                         0              0    # copied from Phos
 Hpol    0                         0              0
+HS      0                         0              0
 Hapo    0                         0              0
 Haro    0                         0              0
 HNbb    0                         0              0

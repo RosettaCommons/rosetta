@@ -1,12 +1,14 @@
 NAME	CHARGE
 CNH2	0.550
-COO	0.620
+COO	 0.620
+CH0	 0.000
 CH1	-0.090
 CH2	-0.180
 CH3	-0.270
 aroC	-0.115
 Ntrp	-0.610
 Nhis	-0.530
+NtrR	-0.610
 NH2O	-0.470
 Nlys	-0.620
 Narg	-0.750
@@ -17,14 +19,16 @@ ONH2	-0.550
 OOC	-0.760
 Oet2	-0.550
 Oet3	-0.660
-S	-0.160
-Nbb	-0.470
-CAbb	0.070
-CObb	0.510
+S    	-0.160
+SH1	    -0.160
+Nbb	    -0.470
+CAbb     0.070
+CObb	 0.510
 OCbb	-0.510
 Phos	1.500
 Pbb	1.500	#copied from Phos
 Hpol	0.430
+HS		0.430
 Hapo	0.095
 Haro	0.115
 HNbb	0.310

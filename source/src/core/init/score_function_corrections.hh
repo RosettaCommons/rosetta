@@ -21,6 +21,9 @@
 namespace core {
 namespace init {
 
+/// @brief Initialize the revert-to-Talaris2014
+void init_revert_to_talaris( utility::options::OptionCollection & options );
+
 /// @brief Reset a set of flags to their pre-talaris behavior
 void revert_to_pre_talaris_2013_defaults( utility::options::OptionCollection & options );
 
@@ -46,8 +49,8 @@ void init_beta_correction( utility::options::OptionCollection & options );
 /// @brief Initialize the -beta_july15 score function
 void init_beta_july15_correction( utility::options::OptionCollection & options );
 
-/// @brief Initialize the -beta_nov15 score function
-void init_beta_nov15_correction( utility::options::OptionCollection & options );
+/// @brief Initialize the -beta_nov15 score function; no longer valid
+//void init_beta_nov15_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -beta_nov16 score function
 void init_beta_nov16_correction( utility::options::OptionCollection & options );
@@ -65,10 +68,12 @@ void init_restore_score12prime( utility::options::OptionCollection & options );
 void init_score_function_corrections( utility::options::OptionCollection & options );
 
 /// @brief Check if a score function is requested with incompatible option flags
-void check_score_function_sanity(
+/// Will return true if scorefunction is "sane" and false if not.
+/// If throw_exception is true, will raise an exception instead of returning false.
+bool check_score_function_sanity(
 	utility::options::OptionCollection const & options,
 	std::string const & scorefxn_key,
-	bool warn_only=false);
+	bool throw_exception=false);
 
 /// @brief  Apply some DNA-specific mods that are still in testing phase; only if -corrections::newdna present
 void

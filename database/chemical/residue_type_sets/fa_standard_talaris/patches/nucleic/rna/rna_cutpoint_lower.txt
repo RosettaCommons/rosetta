@@ -1,0 +1,27 @@
+## patch for the residue on the lower side of a cutpoint, for loop modeling
+
+NAME rna_cutpoint_lower
+TYPES CUTPOINT_LOWER
+
+BEGIN_SELECTOR
+PROPERTY RNA
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+END_SELECTOR
+
+BEGIN_CASE ## general
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND O3'  OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1  -151.943465   60.314519    1.606497   O3'   C3'   C4'
+SET_ICOOR OVL2   -76.418503   71.059360    1.593180  OVL1   O3'   C3'
+
+END_CASE
+

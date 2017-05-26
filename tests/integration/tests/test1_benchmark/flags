@@ -1,3 +1,4 @@
 -run:benchmark
 -ignore_unrecognized_res
 -mute core.io.database
+-restore_talaris_behavior #suppose benchmark is built for talaris

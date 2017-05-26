@@ -321,23 +321,25 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 	if ( get_adjacent_otf_node( edge_making_energy_request )->get_rotamer( state_other ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_node_index(), state_this );
+	} else if ( get_adjacent_otf_node( edge_making_energy_request )->get_rotamer( state_other ).aa() == chemical::aa_gly ) {
+		esum += get_incident_otf_edge( edge_making_energy_request )->
+			get_glycine_correction_for_node( get_node_index(), state_this );
 	}
+
 	if ( get_rotamer( state_this ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ),
+			state_other
+		);
+	} else if ( get_rotamer( state_this ).aa() == chemical::aa_gly ) {
+		esum += get_incident_otf_edge( edge_making_energy_request )->
+			get_glycine_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ),
 			state_other
 		);
 	}
 
 
 	return get_incident_edge( edge_making_energy_request )->edge_weight() * esum;
-
-	// if ( ! get_on_the_fly_owner()->check_empty_weight_map() ) {
-	//esum *= get_on_the_fly_owner()->get_residue_weights(this_rotamer.get_resid(), aa_this,
-	// other_rotamer.get_resid(), aa_other);
-
-	//return esum;
-
 }
 
 
@@ -357,6 +359,8 @@ OnTheFlyEdge::OnTheFlyEdge(
 	for ( int ii = 0; ii < 2; ++ii ) {
 		proline_corrections_[ ii ].resize( get_num_states_for_node( ii ) );
 		std::fill( proline_corrections_[ ii ].begin(), proline_corrections_[ ii ].end(), 0.0f );
+		glycine_corrections_[ ii ].resize( get_num_states_for_node( ii ) );
+		std::fill( glycine_corrections_[ ii ].begin(), glycine_corrections_[ ii ].end(), 0.0f );
 		distinguish_sc_bb[ ii ] = get_otf_node( ii )->distinguish_backbone_and_sidechain();
 	}
 
@@ -380,9 +384,9 @@ void
 OnTheFlyEdge::set_ProCorrection_values(
 	int node_not_necessarily_proline,
 	int state,
-	core::PackerEnergy bb_nonprobb_E,
+	core::PackerEnergy bb_regbb_E,
 	core::PackerEnergy bb_probb_E,
-	core::PackerEnergy sc_nonprobb_E,
+	core::PackerEnergy sc_regbb_E,
 	core::PackerEnergy sc_probb_E
 )
 {
@@ -390,7 +394,24 @@ OnTheFlyEdge::set_ProCorrection_values(
 
 	proline_corrections_[ which_node ][ state ] =
 		sc_probb_E + 0.5 * bb_probb_E -
-		(sc_nonprobb_E + 0.5 * bb_nonprobb_E);
+		(sc_regbb_E + 0.5 * bb_regbb_E);
+}
+
+void
+OnTheFlyEdge::set_GlyCorrection_values(
+	int node_not_necessarily_glycine,
+	int state,
+	core::PackerEnergy bb_regbb_E,
+	core::PackerEnergy bb_glybb_E,
+	core::PackerEnergy sc_regbb_E,
+	core::PackerEnergy sc_glybb_E
+)
+{
+	int const which_node = node_not_necessarily_glycine == get_node_index( 0 ) ? 0 : 1;
+
+	glycine_corrections_[ which_node ][ state ] =
+		sc_glybb_E + 0.5 * bb_glybb_E -
+		(sc_regbb_E + 0.5 * bb_regbb_E);
 }
 
 
@@ -401,6 +422,8 @@ OnTheFlyEdge::count_dynamic_memory() const
 
 	total_memory_usage += proline_corrections_[ 0 ].size() * sizeof( core::PackerEnergy );
 	total_memory_usage += proline_corrections_[ 1 ].size() * sizeof( core::PackerEnergy );
+	total_memory_usage += glycine_corrections_[ 0 ].size() * sizeof( core::PackerEnergy );
+	total_memory_usage += glycine_corrections_[ 1 ].size() * sizeof( core::PackerEnergy );
 
 	return total_memory_usage;
 }
@@ -539,9 +562,9 @@ OnTheFlyInteractionGraph::set_ProCorrection_values_for_edge(
 	int node2,
 	int node_not_neccessarily_proline,
 	int state,
-	core::PackerEnergy bb_nonprobb_E,
+	core::PackerEnergy bb_regbb_E,
 	core::PackerEnergy bb_probb_E,
-	core::PackerEnergy sc_nonprobb_E,
+	core::PackerEnergy sc_regbb_E,
 	core::PackerEnergy sc_probb_E
 )
 {
@@ -549,7 +572,27 @@ OnTheFlyInteractionGraph::set_ProCorrection_values_for_edge(
 	if ( edge != 0 ) {
 		edge->set_ProCorrection_values(
 			node_not_neccessarily_proline, state,
-			bb_nonprobb_E, bb_probb_E, sc_nonprobb_E, sc_probb_E );
+			bb_regbb_E, bb_probb_E, sc_regbb_E, sc_probb_E );
+	}
+}
+
+void
+OnTheFlyInteractionGraph::set_GlyCorrection_values_for_edge(
+	int node1,
+	int node2,
+	int node_not_neccessarily_glycine,
+	int state,
+	core::PackerEnergy bb_regbb_E,
+	core::PackerEnergy bb_glybb_E,
+	core::PackerEnergy sc_regbb_E,
+	core::PackerEnergy sc_glybb_E
+)
+{
+	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != 0 ) {
+		edge->set_GlyCorrection_values(
+			node_not_neccessarily_glycine, state,
+			bb_regbb_E, bb_glybb_E, sc_regbb_E, sc_glybb_E );
 	}
 }
 

@@ -1,0 +1,743 @@
+# N-methylation: methyl groups on peptide amide replacing amide proton (in the MIDDLE of a sequence, not at the N-terminus).
+# Created by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory, 7 September 2016.
+
+NAME N_Methylation
+TYPES N_METHYLATION
+
+# General requirements for this patch:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT PROPERTY PEPTOID
+NOT PROPERTY LOWER_TERMINUS
+NOT PROPERTY PHOSPHONATE
+NOT VARIANT_TYPE HBS_PRE 
+NOT VARIANT_TYPE HBS_POST
+NOT VARIANT_TYPE A3B_HBS_PRE
+NOT VARIANT_TYPE A3B_HBS_POST
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+NOT VARIANT_TYPE METHYLATED_NTERM_VARIANT 
+NOT VARIANT_TYPE METHYLATED_CTERMINUS_VARIANT
+NOT VARIANT_TYPE NTERM_CONNECT
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE N_FORMYLATION
+NOT VARIANT_TYPE N_METHYLATION
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE LOWERTERM_TRUNC_VARIANT
+NOT VARIANT_TYPE SHOVE_BB
+NOT VARIANT_TYPE VIRTUAL_BB
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT VARIANT_TYPE REPLONLY
+NOT NAME3 PRO DPR
+END_SELECTOR
+
+BEGIN_CASE ### CYS ##########################################
+
+BEGIN_SELECTOR
+NAME3 CYS
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH CYS_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### ASP ##########################################
+
+BEGIN_SELECTOR
+NAME3 ASP
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH ASP_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### GLU ##########################################
+
+BEGIN_SELECTOR
+NAME3 GLU
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH GLU_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 3 3 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### PHE ##########################################
+
+BEGIN_SELECTOR
+NAME3 PHE
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH PHE_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### HIS ##########################################
+
+BEGIN_SELECTOR
+NAME3 HIS
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH HIS_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### ILE ##########################################
+
+BEGIN_SELECTOR
+NAME3 ILE
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH ILE_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### LYS ##########################################
+
+BEGIN_SELECTOR
+NAME3 LYS
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH LYS_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 4 3 3 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### LEU ##########################################
+
+BEGIN_SELECTOR
+NAME3 LEU
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH LEU_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### MET ##########################################
+
+BEGIN_SELECTOR
+NAME3 MET
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH MET_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 3 3 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### ASN ##########################################
+
+BEGIN_SELECTOR
+NAME3 ASN
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH ASN_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 6
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### GLN ##########################################
+
+BEGIN_SELECTOR
+NAME3 GLN
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH GLN_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 3 3 3 4
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### ARG ##########################################
+
+BEGIN_SELECTOR
+NAME3 ARG
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH ARG_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 4 3 3 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### SER ##########################################
+
+BEGIN_SELECTOR
+NAME3 SER
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH SER_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 1 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### THR ##########################################
+
+BEGIN_SELECTOR
+NAME3 THR
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH THR_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 1 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### VAL ##########################################
+
+BEGIN_SELECTOR
+NAME3 VAL
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH VAL_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 1 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### TRP ##########################################
+
+BEGIN_SELECTOR
+NAME3 TRP
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH TRP_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### TYR ##########################################
+
+BEGIN_SELECTOR
+NAME3 TYR
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set rotamers:
+REMOVE_ROTAMER_SPECIFICATIONS
+NCAA_ROTLIB_PATH TYR_Nmethylated.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+END_CASE
+
+BEGIN_CASE ### GLY ##########################################
+### Note: N-methyl-glycine is more commonly called "sarcosine".
+
+BEGIN_SELECTOR
+NAME3 GLY
+END_SELECTOR
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/sarcosine_ramatable_MM.txt scoring/score_functions/rama/n_methyl/sarcosine_ramatable_prepro_MM.txt
+RAMA_PREPRO_RESNAME GENERIC_NMETHYLGLYCINE_AA
+
+END_CASE
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+# Add a methyl group, and delete the amide proton:
+ADD_ATOM  CN  CH3   CT3   -0.17
+ADD_ATOM 1HN  Hapo  HA    0.014
+ADD_ATOM 2HN  Hapo  HA    0.014
+ADD_ATOM 3HN  Hapo  HA    0.014
+DELETE_ATOM  H
+
+# Define the connectivity of the added atoms:
+ADD_BOND  N   CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+# Set the coordinates of the added atoms:
+SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+# Update properties:
+ADD_PROPERTY N_METHYLATED
+
+# Set Ramachandran maps:
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
+RAMA_PREPRO_RESNAME GENERIC_L_ALPHA_NMETHYL_AA
+
+END_CASE

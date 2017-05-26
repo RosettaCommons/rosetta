@@ -156,12 +156,12 @@ public:
 		TR << min_c_phi << " ";
 		TR << max_c_phi << " ";
 		TR << phi_rate << " ";
-		TS_ASSERT_LESS_THAN(0.4, phi_rate);
+		TS_ASSERT_LESS_THAN(/*0.4*/0.35, phi_rate); // decreases with beta_nov15
 		double psi_rate = double(min_c_psi)/max_c_psi;
 		TR << min_c_psi << " ";
 		TR << max_c_psi << " ";
 		TR << psi_rate << " ";
-		TS_ASSERT_LESS_THAN(0.4, psi_rate);
+		TS_ASSERT_LESS_THAN(/*0.4*/0.35, psi_rate); // decreases with beta_nov15
 		TR << "test_ShearMover completed!! " << std::endl;
 	}
 };

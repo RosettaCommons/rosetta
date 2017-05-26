@@ -14,7 +14,7 @@ import os; os.chdir('.test.output')
 
 # Side Chain Conformations, the Rotamer Library, and Dunbrack Energies
 pose = pose_from_file("../test/data/workshops/1YY8.clean.pdb")
-scorefxn = create_score_function("talaris2013")
+scorefxn = create_score_function("ref2015")
 
 for i in range(1, 3):
     pose.set_chi(i, 49, 180)

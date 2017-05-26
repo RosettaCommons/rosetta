@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="tala" weights="beta_nov15.wts" />
+		<ScoreFunction name="ref" weights="ref2015.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 		<RestrictToRepacking name="repack_only" />
@@ -41,9 +41,9 @@
 		
 		<DeclareBond name="bond1" res1="18" atom1="C" res2="1" atom2="N" />
 
-		<PackRotamersMover name="pack" scorefxn="tala" task_operations="repack_only" />
+		<PackRotamersMover name="pack" scorefxn="ref" task_operations="repack_only" />
 
-		<MinMover name="min" scorefxn="tala" tolerance="0.000001" chi="1" bb="0" jump="0" >
+		<MinMover name="min" scorefxn="ref" tolerance="0.000001" chi="1" bb="0" jump="0" >
 			<MoveMap name="min_mm" >
 				<Span begin="1" end="999" chi="1" bb="0" />
 			</MoveMap>
@@ -54,7 +54,7 @@
 			<Add mover="min" />
 		</ParsedProtocol>
 		
-		<GeneralizedKIC name="close1" selector="lowest_energy_selector" selector_scorefunction="tala" closure_attempts="2000" stop_when_n_solutions_found="1" pre_selection_mover="pack_and_min" >
+		<GeneralizedKIC name="close1" selector="lowest_energy_selector" selector_scorefunction="ref" closure_attempts="2000" stop_when_n_solutions_found="1" pre_selection_mover="pack_and_min" >
 			<AddResidue res_index="3" />
 			<AddResidue res_index="4" />
 			<AddResidue res_index="5" />
@@ -109,6 +109,6 @@
 		<Add mover="bond1" />
 		<Add mover="close1" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="tala" />
+	<OUTPUT scorefxn="ref" />
 
 </ROSETTASCRIPTS>

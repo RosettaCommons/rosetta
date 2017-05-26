@@ -258,7 +258,7 @@ public:
 		sp->compute_pose_hpatch_score( pose, total_hpatch_score, patch_scores, atoms_in_patches );
 
 		TS_ASSERT_DELTA( total_hpatch_score, 4.9600, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 170 ].first, 0.160, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 170 ].first, 0.00 /*0.160*/, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( patch_scores[ 196 ].first, 0.6400, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( patch_scores[ 289 ].first, 4.0000, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( patch_scores[ 617 ].first, 0.1600, TOLERATED_ERROR );

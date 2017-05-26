@@ -8,7 +8,10 @@
 -native j44a_2R8SR.pdb
 -out:file:silent swm_TEST.out
 -out:overwrite
+-restore_talaris_behavior
+-score:weights talaris2014.wts
 
 # should probably instead inherit chain & residue numbering from 2R8S, which will make cutpoint placement obvious:
 -cut_at_rna_chainbreak
 -superimpose_over_all false
+-restore_talaris_behavior

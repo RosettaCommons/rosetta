@@ -1,0 +1,39 @@
+## Peptoid C Terminus Patch by Doug Renfrew (renfrew@nyu.edu)
+
+NAME CtermPeptoidFull
+TYPES UPPER_TERMINUS_VARIANT
+
+#############################################################################################
+## general requirements
+##   peptoid
+##   anything that is not already C terminally patched
+#############################################################################################
+BEGIN_SELECTOR
+PROPERTY PEPTOID
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+END_SELECTOR
+
+#############################################################################################
+## general case
+## internal coordinates are from CtermProteinFull
+#############################################################################################
+BEGIN_CASE
+
+ADD_ATOM  OXT OOC OC -0.67
+
+ADD_BOND C OXT
+
+SET_ICOOR O    80.0 60 1.2 C CA N
+SET_ICOOR OXT 180.0 60 1.2 C CA O
+
+SET_ATOM_TYPE O OOC
+SET_ATOM_TYPE C COO
+
+SET_MM_ATOM_TYPE O OC
+SET_MM_ATOM_TYPE C CC
+
+SET_BACKBONE_HEAVYATOM OXT
+SET_POLYMER_CONNECT UPPER NONE
+ADD_PROPERTY UPPER_TERMINUS
+
+END_CASE

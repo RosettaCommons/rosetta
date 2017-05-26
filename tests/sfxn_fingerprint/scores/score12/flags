@@ -1,4 +1,5 @@
 -restore_pre_talaris_2013_behavior
+-score:weights score12
 -in:file:silent ./../../data/five_structures.out
 -in:file:silent_struct_type binary
 -in:file:fullatom

@@ -1,0 +1,138 @@
+## fullatom protein N(6)-trimethylation patch for lysine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME lys_trimethylated 
+TYPES TRIMETHYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NAME3 LYS DLY
+NOT VARIANT_TYPE ACETYLATION
+NOT VARIANT_TYPE METHYLATION
+NOT VARIANT_TYPE DIMETHYLATION
+NOT VARIANT_TYPE TRIMETHYLATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+NOT VARIANT_TYPE SIDECHAIN_CONJUGATION
+NOT VARIANT_TYPE SC_BRANCH_POINT
+END_SELECTOR
+
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+
+SET_IO_STRING M3L K
+SET_INTERCHANGEABILITY_GROUP M3L
+
+## these are the operations involved
+DELETE_ATOM 1HZ ## This amine hydrogen is now a carbon atom
+DELETE_ATOM 2HZ ## This amine hydrogen is now also a carbon atom
+DELETE_ATOM 3HZ ## This amine hydrogen is now a carbon atom as well
+
+ADD_ATOM  CM1 CH3  CT3  0.12
+## Note: the first "CM1" refers to the fact that the added carbon 
+##   is part of a "m"ethyl group. A more systematic naming would be "CH1"
+##   since that's the "eta carbon," but the CM1/2/3 code is more commonly seen.
+## The 0.12 charge was estimated by comparing the difference between 
+##   "C bonded to 3 H's" and "C bonded to C and 2 H's" in existing params files 
+##   (-0.27 vs. -0.18) and then applying the 0.09 correction onto the charge 
+##   given for the epsilon C of lysine, which is 0.21 (bonded to C, N, and 2 H's)
+
+ADD_ATOM HM11 Hapo HA   0.09
+## Copied from the 1HD1 atom of Ile (hydrogen on primary carbon)
+ADD_ATOM HM12 Hapo HA   0.09
+ADD_ATOM HM13 Hapo HA   0.09
+
+## Repeat for the second methyl group
+ADD_ATOM  CM2 CH3  CT3  0.12
+ADD_ATOM HM21 Hapo HA   0.09
+ADD_ATOM HM22 Hapo HA   0.09
+ADD_ATOM HM23 Hapo HA   0.09
+
+## and the third methyl group
+ADD_ATOM  CM3 CH3  CT3  0.12
+ADD_ATOM HM31 Hapo HA   0.09
+ADD_ATOM HM32 Hapo HA   0.09
+ADD_ATOM HM33 Hapo HA   0.09
+
+
+ADD_BOND  NZ   CM1
+ADD_BOND  CM1 HM11
+ADD_BOND  CM1 HM12
+ADD_BOND  CM1 HM13
+
+ADD_BOND  NZ   CM2
+ADD_BOND  CM2 HM21
+ADD_BOND  CM2 HM22
+ADD_BOND  CM2 HM23
+
+ADD_BOND  NZ   CM3
+ADD_BOND  CM3 HM31
+ADD_BOND  CM3 HM32
+ADD_BOND  CM3 HM33
+
+
+## The methyl groups add an extra chi angle
+ADD_CHI 5  CD   CE   NZ   CM1
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 33 actual samples from RCSB (with NMR structures and homologues with similarity >70% excluded):
+##   NZ-CM1/2/3 bond length, CE-NZ-CM1/2/3 bond angle
+##
+## The dihedral angle for placing CM1 was simply set to 180 degrees since there is a near-tie 
+##   between the three main rotamer bins (around +/-180, -60, and +60 degrees)
+##
+## The following were based on information in LYS.params:
+##   Dihedral angle Dihedral angle for placing CM2 and CM3 
+##   (120 degrees was meant to maintain the sp3 configuration around NZ)
+##
+SET_ICOOR  CM1  180.00  69.81  1.482  NZ   CE    CD 
+SET_ICOOR  CM2  120.00  69.81  1.482  NZ   CE    CM1 
+SET_ICOOR  CM3  120.00  69.81  1.482  NZ   CE    CM2
+
+
+SET_ICOOR HM11 -179.974518 70.500000 1.090290  CM1   NZ   CE
+SET_ICOOR HM12  119.989571 70.500000 1.090575  CM1   NZ  HM11
+SET_ICOOR HM13  120.044632 70.500000 1.089057  CM1   NZ  HM12
+## The information for the added hydrogens was copied from the 3 hydrogens 
+##   bonded to the delta carbon of Ile
+
+
+SET_ICOOR HM21 -179.974518 70.500000 1.090290  CM2   NZ   CE
+SET_ICOOR HM22  119.989571 70.500000 1.090575  CM2   NZ  HM21
+SET_ICOOR HM23  120.044632 70.500000 1.089057  CM2   NZ  HM22
+
+SET_ICOOR HM31 -179.974518 70.500000 1.090290  CM3   NZ   CE
+SET_ICOOR HM32  119.989571 70.500000 1.090575  CM3   NZ  HM31
+SET_ICOOR HM33  120.044632 70.500000 1.089057  CM3   NZ  HM32 
+## Same here
+
+
+
+## Change the atom type since the nitrogen is now bonded to four carbons.
+##  (The Npro choice was the best guess from the small molecule docking script molfile_to_params.py)
+SET_ATOM_TYPE NZ Npro
+SET_MM_ATOM_TYPE NZ N
+
+
+## Manually define rotamer bins for chi 5 using data from the 33 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding or exclusion of outliers.
+##
+ADD_CHI_ROTAMER 5   63.63  8.38  #30.3%, gauche +
+ADD_CHI_ROTAMER 5  -56.67 12.31  #30.3%, gauche - 
+ADD_CHI_ROTAMER 5  172.82 12.21  #27.3%, +/- 180 bin
+
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+END_CASE
+
+
+

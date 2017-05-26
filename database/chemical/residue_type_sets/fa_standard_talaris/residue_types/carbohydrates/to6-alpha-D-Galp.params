@@ -1,0 +1,144 @@
+NAME ->6)-alpha-D-Galp     # ->6)-alpha-D-galactopyranosyl
+IO_STRING Gal Z            # Note lower case!
+TYPE POLYMER
+AA UNK
+
+# Main-chain atoms:
+ATOM  C1  CH1  CT1   0.18  # anomeric carbon
+ATOM  C2  CH1  CT1   0.13
+ATOM  C3  CH1  CT1   0.11
+ATOM  C4  CH1  CT1   0.11
+ATOM  C5  CH1  CT1   0.11
+ATOM  C6  CH2  CT2   0.07
+ATOM  O6  OH    OS  -0.38
+
+# Other backbone heavy atoms:
+ATOM  O5  OOC   OS  -0.34
+ATOM  VO5 VIRT VIRT  0.00  # to O5; allows for consistent chi angles
+ATOM  VC1 VIRT VIRT  0.00  # to C1; required for ring flipping
+
+# Side-chain heavy atoms:
+ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM  O2  OH   OH1  -0.39
+ATOM  O3  OH   OH1  -0.39
+ATOM  O4  OH   OH1  -0.39
+
+# Hydrogens:
+ATOM  H1  Hapo  HA   0.10
+ATOM  HO1 VIRT VIRT  0.00  # for internal res, virtual; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM_ALIAS  HO1  H1O 
+ATOM  H2  Hapo  HA   0.07
+ATOM  HO2 Hpol  H    0.21
+ATOM_ALIAS  HO2  H2O 
+ATOM  H3  Hapo  HA   0.07
+ATOM  HO3 Hpol  H    0.21
+ATOM_ALIAS  HO3  H3O 
+ATOM  H4  Hapo  HA   0.07
+ATOM  HO4 Hpol  H    0.21
+ATOM_ALIAS  HO4  H4O 
+ATOM  H5  Hapo  HA   0.07
+ATOM 1H6  Hapo  HA   0.06  # pro-S
+ATOM 2H6  Hapo  HA   0.06  # pro-R
+ATOM  HO6 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
+ATOM_ALIAS  HO6  H6O 
+
+LOWER_CONNECT C1
+UPPER_CONNECT O6
+
+BOND  C1   VO5             # cyclic bond
+BOND  C1   C2
+BOND  C2   C3
+BOND  C3   C4
+BOND  C4   C5
+BOND  C5   C6
+BOND  C6   O6
+BOND  O6   HO6
+BOND  C5   O5
+BOND  O5   C1              # cyclic bond
+CUT_BOND  O5   C1          # cyclic bond
+BOND  O5   VC1             # cyclic bond
+BOND  C1   O1
+BOND  C2   O2
+BOND  C3   O3
+BOND  C4   O4
+BOND  C1   H1
+BOND  O1   HO1
+BOND  C2   H2
+BOND  O2   HO2
+BOND  C3   H3
+BOND  O3   HO3
+BOND  C4   H4
+BOND  O4   HO4
+BOND  C5   H5
+BOND  C6  1H6              # pro-S
+BOND  C6  2H6              # pro-R
+
+VIRTUAL_SHADOW VO5   O5
+VIRTUAL_SHADOW VC1   C1
+
+CHI 1  VO5  C1   O1   HO1  # cannot use O5 to define torsion, since atom tree doesn't treat it as connected
+CHI 2  C1   C2   O2   HO2
+CHI_ROTAMERS 2  60 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 300 0
+CHI 3  C2   C3   O3   HO3
+CHI_ROTAMERS 3  60 0
+CHI_ROTAMERS 3 180 0
+CHI_ROTAMERS 3 300 0
+CHI 4  C3   C4   O4   HO4
+CHI_ROTAMERS 4  60 0
+CHI_ROTAMERS 4 180 0
+CHI_ROTAMERS 4 300 0
+CHI 5  C4   C5   C6   O6   # duplicates BB 5
+CHI 6  C5   C6   O6   HO6  # duplicates BB 6
+
+ADD_RING 1 C1 C2 C3 C4 C5 O5
+
+NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
+NU 2  C1   C2   C3   C4    # duplicates BB 2
+NU 3  C2   C3   C4   C5    # duplicates BB 3
+NU 4  C3   C4   C5   O5    # duplicates BB 4, but defined differently
+NU 5  C4   C5   O5   VC1
+#NU 6 is across the CUT_BOND
+LOWEST_RING_CONFORMER 1 4C1
+
+PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE D_SUGAR PYRANOSE ALPHA_SUGAR
+
+NBR_ATOM  C4
+NBR_RADIUS 6.967819
+
+MAINCHAIN_ATOMS  C1 C2 C3 C4 C5 C6 O6
+FIRST_SIDECHAIN_ATOM O1
+
+# must build main chain 1st!
+ICOOR_INTERNAL    C1     0.000000    0.000000    0.000000   C1    C2    C3
+ICOOR_INTERNAL    C2     0.000000  179.999999    1.491337   C1    C2    C3
+ICOOR_INTERNAL    C3     0.000000   68.661823    1.474930   C2    C1    C3
+ICOOR_INTERNAL    C4   -60.512023   73.843937    1.569720   C3    C2    C1
+ICOOR_INTERNAL    C5    59.7        73.450324    1.568111   C4    C3    C2
+ICOOR_INTERNAL    C6  -179.288386   67.562812    1.540525   C5    C4    C3
+ICOOR_INTERNAL    O6   -62.797083   67.644322    1.449102   C6    C5    C4
+ICOOR_INTERNAL  UPPER -178.777685   69.501511    1.499799   O6    C6    C5
+# then the rest of the backbone heavy atoms
+ICOOR_INTERNAL    O5   -61.061789   71.134273    1.433482   C5    C4    C3
+ICOOR_INTERNAL    VO5   60.755967   71.897802    1.457688   C1    C2    C3  # must build as branch from main chain, unlike O5
+ICOOR_INTERNAL    VC1   56.8        66.2         1.457688   O5    C5    C4  # must build from end of ring, unlike C1
+ICOOR_INTERNAL  LOWER  -63.396951   71.218273    1.456186   C1    C2    C3
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    O1   -63.396951   71.218273    1.456186   C1    C2    C3
+ICOOR_INTERNAL    O2   118.860412   71.031502    1.358465   C2    C1    C3
+ICOOR_INTERNAL    O3  -123.094309   72.342817    1.440460   C3    C2    C4
+ICOOR_INTERNAL    O4   -57.422550   68.476187    1.469471   C4    C3    C2
+# now all the Hs
+ICOOR_INTERNAL    H1   179.2        70.3         1.1        C1    C2    C3
+ICOOR_INTERNAL    HO1   58.728312   68.473625    0.980761   O1    C1    C2
+ICOOR_INTERNAL    H2   120.538751   70.262779    1.098302   C2    C1    O2
+ICOOR_INTERNAL    HO2 -179.445405   72.039553    0.990268   O2    C2    C1
+ICOOR_INTERNAL    H3  -118.043401   69.840524    1.100932   C3    C2    O3
+ICOOR_INTERNAL    HO3  178.810585   72.973678    0.980355   O3    C3    C2
+ICOOR_INTERNAL    H4   119.664061   69.328520    1.100938   C4    C3    C5
+ICOOR_INTERNAL    HO4 -120.000011   64.875311    1.0        O4    C4    C3
+ICOOR_INTERNAL    H5  -121.577784   70.228640    1.100631   C5    C4    C6
+ICOOR_INTERNAL   1H6  -119.421753   71.347852    1.103722   C6    C5    O6
+ICOOR_INTERNAL   2H6  -118.970223   71.452404    1.099201   C6    C5   1H6
+ICOOR_INTERNAL    HO6 -176.382127   69.133630    1.044317   O6    C6    C5

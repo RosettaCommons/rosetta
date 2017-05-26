@@ -59,7 +59,7 @@ class CyclicGeometry_nmethyl_betanov15_TwoChainTests : public CxxTest::TestSuite
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta_nov15 -score:weights beta_nov15.wts" );
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -score:weights beta_nov15.wts" );
 
 		// Pull in the two-chain cyclic peptide pose (12 + 12 = 24 residues)
 		core::pose::PoseOP initial_pose_2chain( new core::pose::Pose );

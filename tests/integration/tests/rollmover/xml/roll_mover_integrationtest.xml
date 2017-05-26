@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 
 <SCOREFXNS>
-  <ScoreFunction name="SFXN7" weights="talaris2014">
+  <ScoreFunction name="SFXN7" weights="ref2015">
   </ScoreFunction>
 </SCOREFXNS>
 

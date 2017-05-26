@@ -53,7 +53,7 @@ public:
 
 	void setUp() {
 		//core_init();
-		core_init_with_additional_options( "-beta_nov15 -score:weights beta_nov15.wts -symmetric_gly_tables true" );
+		core_init_with_additional_options( "-score:weights beta_nov15.wts -symmetric_gly_tables true" );
 	}
 
 	void tearDown() {

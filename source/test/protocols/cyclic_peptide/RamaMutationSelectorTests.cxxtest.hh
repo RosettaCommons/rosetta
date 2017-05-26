@@ -46,7 +46,7 @@ class RamaMutationSelectorTests : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-beta_nov15" );
+		core_init_with_additional_options( "" );
 		testpose_ = pdb1ubq5to13_poseop();
 	}
 

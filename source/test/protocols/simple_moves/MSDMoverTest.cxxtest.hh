@@ -276,8 +276,9 @@ public:
 		// I think this should be fine since the energy difference btwn N and G or R is large
 		// enough that it should be reproducible, but it's possible that the random nature of
 		// rotamer packing could cause this to fail
-		TS_ASSERT_EQUALS( poses[ 1 ]->residue( 1 ).name3(), "ASN" );
-		TS_ASSERT_EQUALS( poses2[ 1 ]->residue( 1 ).name3(), "ASN" );
+		// hpark: in REF2015 the lowest energy AA has been changed to GLY (from ASN)
+		TS_ASSERT_EQUALS( poses[ 1 ]->residue( 1 ).name3(), "GLY"/*"ASN"*/ );
+		TS_ASSERT_EQUALS( poses2[ 1 ]->residue( 1 ).name3(), "GLY"/*"ASN"*/ );
 	}
 
 private:

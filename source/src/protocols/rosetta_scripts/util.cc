@@ -319,9 +319,7 @@ attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes,
 ///////////////////////////////////////////////////////////
 //////////////////// ScoreFunction ////////////////////////
 
-/// @details Utility function to find a scorefunction from
-/// parser-provided data. This is essentially a shameless copy of
-/// Justin's PackRotamersMover::parse_score_function.
+/// @details Utility function to find a scorefunction from parser-provided data.
 core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagCOP tag,
@@ -331,37 +329,16 @@ parse_score_function(
 {
 	std::string const scorefxn_key( tag->getOption<std::string>(option_name, dflt_key) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
+		if ( ! core::init::check_score_function_sanity( basic::options::option, scorefxn_key ) ) {
+			// Incompatible default score functions aren't loaded.
+			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " was requested with incompatible options.");
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
+		}
 	}
 
-	try{
-		core::init::check_score_function_sanity(basic::options::option, scorefxn_key, false);
-	} catch(utility::excn::EXCN_BadInput & e){
-		stringstream err_msg;
-		err_msg
-			<< std::endl << std::endl
-			<< "Error getting score function from";
-		if ( tag->hasOption("name") ) {
-			err_msg
-				<< " the tag '" << tag->getOption<std::string>("name") << "' of type ";
-		} else {
-			err_msg
-				<< " a tag of type ";
-		}
-		err_msg
-			<< "'" << tag->getName() << "':" << std::endl;
+	// We don't check "sanity" for the scorefxn_key, as that's user defined, and not necessarily representative of the actual scorefunction.
 
-		if ( !tag->hasOption(option_name) ) {
-			err_msg
-				<< "  No value for option '" << option_name << "' is provided, so it is using the default value of '" << dflt_key << "'" << std::endl;
-		} else {
-			err_msg
-				<< "  The value for option '" << option_name << "' = '" << scorefxn_key << "'" << std::endl;
-		}
-		err_msg
-			<< "ERROR MESSAGE: " << e << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(err_msg.str());
-	}
 	return data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 }
 

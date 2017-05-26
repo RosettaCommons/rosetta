@@ -5,3 +5,4 @@
 -pH_mode
 -value_pH 7.0
 -packing:pack_missing_sidechains false 
+-restore_talaris_behavior

@@ -1,12 +1,14 @@
 NAME   GK_RADIUS
 CNH2      1.7000
 COO       1.7000
+CH0       1.7000
 CH1       1.7000
 CH2       1.7000
 CH3       1.7000
 aroC      1.7000
 Ntrp      1.5500
 Nhis      1.5500
+NtrR      1.5500
 NH2O      1.5500
 Nlys      1.5500
 Narg      1.5500
@@ -20,6 +22,7 @@ Oes3      1.5200
 Oet2      1.5200
 Oet3      1.5200
 S         1.8000
+SH1       1.8000
 Nbb       1.5500
 CAbb      1.7000
 CObb      1.7000
@@ -27,6 +30,7 @@ OCbb      1.5200
 Phos      1.8000
 Pbb       1.8000
 Hpol      1.2000
+HS        1.2000
 Hapo      1.2000
 Haro      1.2000
 HNbb      1.2000

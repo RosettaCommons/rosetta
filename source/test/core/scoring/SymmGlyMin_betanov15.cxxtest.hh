@@ -56,7 +56,7 @@ class SymmGlyMin_betanov15_Tests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-beta_nov15 -score:weights beta_nov15.wts -symmetric_gly_tables true -run:constant_seed -nodelay -run:jran 35153" );
+		core_init_with_additional_options( "-score:weights beta_nov15.wts -symmetric_gly_tables true -run:constant_seed -nodelay -run:jran 35153" );
 	}
 
 	void tearDown() {

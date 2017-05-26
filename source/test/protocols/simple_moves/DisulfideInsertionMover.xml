@@ -2,7 +2,7 @@
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<some_scorefxn weights="soft_rep"/>
+		<some_scorefxn weights="ref2015_soft"/>
 	</SCOREFXNS>
 	<MOVERS>
 		<DisulfideInsertion name="disulfide_insertion"

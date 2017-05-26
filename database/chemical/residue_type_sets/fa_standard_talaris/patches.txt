@@ -1,0 +1,195 @@
+## protein standard
+patches/D_AA.txt
+patches/CtermProteinFull.txt
+patches/NtermProteinFull.txt
+patches/protein_cutpoint_upper.txt
+patches/protein_cutpoint_lower.txt
+patches/disulfide.txt
+patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).
+
+## DNA standard
+patches/nucleic/dna/LowerDNA.txt
+patches/nucleic/dna/UpperDNA.txt
+patches/nucleic/dna/dna_cutpoint_upper.txt
+patches/nucleic/dna/dna_cutpoint_lower.txt
+patches/nucleic/dna/VirtualDNAPhosphate.txt
+
+## RNA standard
+patches/nucleic/rna/L_RNA.txt
+patches/nucleic/rna/LowerRNA.txt
+patches/nucleic/rna/UpperRNA.txt
+patches/nucleic/rna/UpperConnectionRNA.txt
+patches/nucleic/rna/rna_cutpoint_lower.txt
+patches/nucleic/rna/rna_cutpoint_upper.txt
+patches/nucleic/rna/Virtual_Phosphate.txt
+patches/nucleic/rna/Repulsive_Phosphate.txt
+patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
+patches/nucleic/rna/Deoxy_O2prime.txt
+patches/nucleic/rna/2prime_connection.txt
+patches/nucleic/rna/LowerConnectRNA.txt
+
+## Used to be selected from command line (not patched in by default to save memory);
+## but should be OK to instantiate with refactored ResidueTypeSet
+# Protein
+patches/RepulsiveOnly_fa.txt        # replonly
+patches/ShoveBB.txt                 # SHOVE_BB
+patches/VirtualBB.txt               # VIRTUAL_BB
+patches/VirtualProteinSideChain.txt # VIRTUAL_SIDE_CHAIN
+patches/N_acetylated.txt            # PEPTIDE_CAP
+patches/N_formylated.txt
+patches/C_methylamidated.txt        # PEPTIDE_CAP
+patches/NtermProteinMethylated.txt  # METHYLATED_NTERM_VARIANT
+
+# RNA
+patches/nucleic/rna/5prime_phosphate.txt # TERMINAL_PHOSPHATE
+patches/nucleic/rna/3prime_phosphate.txt # TERMINAL_PHOSPHATE
+patches/nucleic/rna/Virtual_Ribose.txt   # VIRTUAL_RIBOSE
+patches/nucleic/rna/VirtualBase.txt # VIRTUAL_BASE
+patches/nucleic/rna/Virtual_RNA_Residue.txt       # VIRTUAL_RNA_RESIDUE
+patches/nucleic/rna/3prime5prime_methyl_phosphate.txt # capping for optimization
+patches/nucleic/rna/BlockStackAbove.txt # blocker to define terminal base pairs
+patches/nucleic/rna/BlockStackBelow.txt # blocker to define terminal base pairs
+
+# Special
+patches/SpecialRotamer.txt
+
+# Branching/Conjugation
+patches/branching/O-linked_conjugation.txt
+patches/branching/N-linked_conjugation.txt
+patches/branching/aryl-O-conjugated.txt
+patches/branching/aryl-C-conjugated.txt
+patches/branching/S-linked_conjugation.txt
+#patches/branching/C-terminal_conjugation.txt  # Something is broken with this patch. ~Labonte
+patches/branching/sidechain_carboxyl_conjugation.txt
+patches/branching/sidechain_electrophile_conjugation.txt
+patches/branching/phg_cd1_conjugation.txt
+patches/branching/phg_cd2_conjugation.txt
+
+## protein
+patches/Cterm_amidation.txt
+patches/VirtualProteinResidue.txt
+patches/VirtualNterm.txt
+
+## terminal connection patches
+patches/CtermConnect.txt
+#patches/CtermConnectBP.txt
+patches/NtermConnect.txt
+
+##fpd
+## AMW: these two CANNOT be commented in because otherwise N and C termini
+## will never be filled in. Really, they do not belong in this file at all
+## as a result. They are patched in ONLY with special flags.
+#patches/CtermTruncation.txt
+#patches/NtermTruncation.txt
+
+##added by steven combs November 11 2010
+## Commented out because it does not appear to exist?!
+#patches/sc_orbitals.txt
+
+## RNA
+patches/nucleic/rna/BulgeRNA.txt
+patches/nucleic/rna/3prime_end_OH.txt
+patches/nucleic/rna/5prime_end_OH.txt
+patches/nucleic/rna/5prime_end_phosphate.txt
+patches/nucleic/rna/Protonated_N1_Adenosine.txt
+patches/nucleic/rna/Protonated_N3_Adenosine.txt
+# patches/nucleic/rna/7deaza.txt # fails to build H7
+patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
+
+## Added by David P. Nannemann 29 Nov 2012
+patches/PtermProteinFull.txt
+
+## The following were added by Andy M. Chen in June 2009
+##   for post-translational modifications
+patches/pro_hydroxylated_case1.txt
+patches/pro_hydroxylated_case2.txt
+patches/ser_phosphorylated.txt
+patches/thr_phosphorylated.txt
+patches/tyr_phosphorylated.txt
+patches/tyr_sulfated.txt
+patches/lys_monomethylated.txt
+patches/lys_dimethylated.txt
+patches/lys_trimethylated.txt
+patches/lys_acetylated.txt
+patches/glu_carboxylated.txt
+
+patches/cys_acetylated.txt
+patches/tyr_diiodinated.txt
+
+## The following were added by Andy M. Chen in July 2009
+##   for post-translational modifications
+##
+##Note: The histidine methylated patch is commented out for now, as it was discovered that
+##  Rosetta would try to patch HIS_D as well-- which obviously doesn't work
+##  since the hydrogen to be removed isn't there. And since there is no variant code
+##  added to HIS_D, I have no way of applying a patch to HIS without affecting HIS_D.
+##  The added methyl group otherwise works fine.
+##
+## Note (from rhiju): I added a TAUTOMER property to HIS_D which would allow its exclusion by the path
+##  but I didn't implement yet on his_methylated.
+##
+patches/his_methylated.txt
+
+## patches for the MakeRotLib protocol
+patches/MethylatedProteinCterm.txt
+patches/AcetylatedProteinNterm.txt
+
+## peptoid patches
+patches/NtermPeptoidFull.txt
+patches/CtermPeptoidFull.txt
+patches/NtermCtermDipeptoid.txt
+patches/AcetylatedPeptoidNterm.txt
+
+## carbohydrate patches
+### termini
+patches/carbohydrates/lower_terminus.txt
+patches/carbohydrates/upper_terminus.txt
+patches/carbohydrates/Me_glycoside.txt
+### cutpoints
+patches/carbohydrates/cutpoint_lower.txt
+patches/carbohydrates/cutpoint_upper.txt
+### branching
+patches/carbohydrates/N-linked_glycosylation.txt
+patches/carbohydrates/C-linked_glycosylation.txt
+patches/carbohydrates/branch_lower_term.txt
+patches/carbohydrates/2-branch.txt
+patches/carbohydrates/3-branch.txt
+patches/carbohydrates/4-branch.txt
+patches/carbohydrates/6-branch.txt
+### modifications
+patches/carbohydrates/2-amination.txt
+patches/carbohydrates/3-amination.txt
+patches/carbohydrates/3-methylation.txt
+patches/carbohydrates/N-acetyl-2-amination.txt
+patches/carbohydrates/N-R-3'-hydroxybutyryl-3-amination.txt
+patches/carbohydrates/N2-acetylation.txt
+patches/carbohydrates/N4-acetylation.txt
+patches/carbohydrates/N5-acetylation.txt
+patches/carbohydrates/2-sulfation.txt
+patches/carbohydrates/6-sulfation.txt
+patches/carbohydrates/2-sulfamidation.txt
+patches/carbohydrates/omega-oxidation.txt
+patches/carbohydrates/2-reduction.txt
+patches/carbohydrates/4-reduction.txt
+
+## Terpene patches
+patches/terpenes/terpene_lower_term.txt
+patches/terpenes/terpene_upper_term.txt
+
+## alternative backbones
+patches/hbs_pre.txt
+patches/hbs_post.txt
+
+patches/a3b_hbs_pre.txt
+patches/a3b_hbs_post.txt
+
+patches/oop_pre.txt
+patches/oop_post.txt
+
+patches/triazolamerN.txt
+patches/triazolamerC.txt
+
+patches/water/VirtualWater.txt
+
+## repulsive backbone
+patches/ReplsBB.txt

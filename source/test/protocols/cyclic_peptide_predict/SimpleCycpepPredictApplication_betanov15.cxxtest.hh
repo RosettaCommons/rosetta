@@ -36,7 +36,7 @@ private:
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-beta_nov15 -cyclic_peptide:sequence_file protocols/cyclic_peptide_predict/seq.txt -symmetric_gly_tables true -cyclic_peptide:genkic_closure_attempts 1000 -cyclic_peptide:genkic_min_solution_count 1 -cyclic_peptide:min_genkic_hbonds 2 -cyclic_peptide:min_final_hbonds 2 -cyclic_peptide:fast_relax_rounds 1 -cyclic_peptide:rama_cutoff 3.0 -in:file:native protocols/cyclic_peptide_predict/native.pdb" );
+		core_init_with_additional_options( "-cyclic_peptide:sequence_file protocols/cyclic_peptide_predict/seq.txt -symmetric_gly_tables true -cyclic_peptide:genkic_closure_attempts 1000 -cyclic_peptide:genkic_min_solution_count 1 -cyclic_peptide:min_genkic_hbonds 2 -cyclic_peptide:min_final_hbonds 2 -cyclic_peptide:fast_relax_rounds 1 -cyclic_peptide:rama_cutoff 3.0 -in:file:native protocols/cyclic_peptide_predict/native.pdb" );
 	}
 
 	void tearDown() {

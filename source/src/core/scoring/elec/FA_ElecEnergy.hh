@@ -57,6 +57,7 @@ struct weight_triple
 	Real wbb_sc_;
 	Real wsc_bb_; //fpd allow asymmetric weights
 	Real wsc_sc_;
+	Real w_intra_;
 };
 
 /// @brief A class to encapsulate the raw-pointer-based data caching
@@ -426,8 +427,12 @@ public:
 
 	inline
 	Real
-	elec_weight( bool at1isbb, bool at2isbb, weight_triple const & wts ) const {
-		return ( at1isbb ? ( at2isbb ? wts.wbb_bb_ : wts.wbb_sc_ ) : ( at2isbb ? wts.wsc_bb_ : wts.wsc_sc_ ) );
+	elec_weight( bool intra_res, bool at1isbb, bool at2isbb, weight_triple const & wts ) const {
+		if ( intra_res ) {
+			return wts.w_intra_;
+		} else {
+			return ( at1isbb ? ( at2isbb ? wts.wbb_bb_ : wts.wbb_sc_ ) : ( at2isbb ? wts.wsc_bb_ : wts.wsc_sc_ ) );
+		}
 	}
 
 
@@ -517,7 +522,7 @@ private:
 	bool eval_intrares_ST_only_; // hpark: intrares_elec for ST hydroxyl only
 
 	//fpd: countpair representative atoms
-	bool use_cp_rep_, flip_cp_rep_;
+	bool use_cp_rep_;
 	CountPairRepMapOP cp_rep_map_;
 
 	mutable Size nres_monomer_;

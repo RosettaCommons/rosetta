@@ -1,0 +1,70 @@
+## fullatom protein phosphorylation patch for serine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME phosphorylated
+TYPES PHOSPHORYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NAME3 SER DSE
+NOT VARIANT_TYPE PHOSPHORYLATION ## Don't phosphorylate a residue twice
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING SEP S
+SET_INTERCHANGEABILITY_GROUP SEP
+## these are the operations involved
+ADD_ATOM  P   Phos P    1.50  ## Best guess from the small molecule ligand params file generator molfile_to_params.py
+ADD_ATOM  O1P OOC  ON3  -0.78 ## The charge is taken from the free oxygen atoms of the phosphate backbone in DNA residues
+ADD_ATOM  O2P OOC  ON3  -0.78
+ADD_ATOM  O3P OOC  ON3  -0.78
+ADD_BOND  OG  P
+ADD_BOND  P   O1P
+ADD_BOND  P   O2P
+ADD_BOND  P   O3P
+
+SET_MM_ATOM_TYPE OG ON2
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 155 samples of RCSB's PDB files (with the NMR structures and homologues with >70% similarity excluded):
+##   OG-P bond length, P-O1P/O2P/O3P bond length, CB-OG-P bond angle, OG-P-O1P/O2P/O3P bond angle
+##   For dihedral angles, O1P is given the anti conformation (180 degrees), 
+##     while O2P and O3P are placed in their ideal positions for a tetrahedral configuration.
+##
+## The dihedral angle for placing P was taken from the mean value of the rotamer bin 
+##   with the highest probability.
+##
+SET_ICOOR P   -179.16  66.09  1.615  OG   CB   CA
+SET_ICOOR O1P  180.00  72.49  1.597  P    OG   CB
+SET_ICOOR O2P -120.00  72.49  1.597  P    OG   O1P
+SET_ICOOR O3P -120.00  72.49  1.597  P    OG   O2P
+
+ADD_PROPERTY CHARGED ## For the phosphate group
+
+
+## Chi 2 was a proton chi in SER.params. Since the hydrogen atom isn't there anymore, 
+##   redefine the fourth atom of chi2 to the added P and then remove the hydrogen.
+REDEFINE_CHI 2  CA   CB   OG   P 
+DELETE_ATOM HG 
+
+## Manually define rotamer bins for chi 2 using data from the 155 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding or exclusion of outliers.
+ADD_CHI_ROTAMER 2 -179.16  10.17  #32.9% (+/- 180 bin)
+ADD_CHI_ROTAMER 2  152.48   4.57  #19.4%
+ADD_CHI_ROTAMER 2  117.55  15.89  #16.1%
+ADD_CHI_ROTAMER 2 -106.20  15.99  #15.5% 
+ADD_CHI_ROTAMER 2  153.19   7.19  #14.8% 
+
+
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+END_CASE
+

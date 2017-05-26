@@ -109,8 +109,8 @@ public:
 		// OK -- lets build an AtomTreeCollection
 		RotamerSetCOP r7rotset = rotsets->rotamer_set_for_residue( 7 );
 		TS_ASSERT( r7rotset->get_n_residue_types() == 21 ); // 20 + 1 extra his restype.
-		//std::cout << "N tyr rots; " << r7rotset->get_n_rotamers_for_residue_type( 20 ) << std::endl;
-		TS_ASSERT( r7rotset->get_n_rotamers_for_residue_type( 20 ) == 11 ); // this test will crash below if nrots < 4
+		//std::cout << "MINE N tyr rots; " << r7rotset->get_n_rotamers_for_residue_type( 20 ) << std::endl;
+		TS_ASSERT( r7rotset->get_n_rotamers_for_residue_type( 20 ) == 9 ); // this test will crash below if nrots < 4
 		ResidueAtomTreeCollection ratc( task->residue_task( 7 ), pose.conformation(), pose.residue( 7 ) );
 		ratc.set_active_restype_index( 20 );
 		{ // scope

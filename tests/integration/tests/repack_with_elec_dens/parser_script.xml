@@ -1,10 +1,10 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-	        <ScoreFunction name="scfxn_dens_repack" weights="score12_full" symmetric="1">
+	        <ScoreFunction name="scfxn_dens_repack" weights="ref2015" symmetric="1">
 	                <Reweight scoretype="cart_bonded" weight="0.5"/>
 	                <Reweight scoretype="elec_dens_fast" weight="100.0"/>
 	        </ScoreFunction>
-	        <ScoreFunction name="scfxn_dens_score" weights="score12_full" symmetric="1">
+	        <ScoreFunction name="scfxn_dens_score" weights="ref2015" symmetric="1">
 	                <Reweight scoretype="cart_bonded" weight="0.5"/>
 	                <Reweight scoretype="elec_dens_fast" weight="1.0"/>
 	        </ScoreFunction>

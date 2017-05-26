@@ -159,7 +159,7 @@ public:
 
 		//rotsets->dump_pdb( pose, "test_rotamer_sets.pdb");
 
-		TS_ASSERT_EQUALS( rotsets->nrotamers(), 2314 );
+		TS_ASSERT_EQUALS( rotsets->nrotamers(), /*2314*/2249 );
 
 		//now we'll load the template rotamer set and make sure that all rotamers are equal.
 		//we rely on the multimodel pdb reader for file processing

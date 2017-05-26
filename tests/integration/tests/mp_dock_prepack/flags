@@ -4,3 +4,4 @@
 -nstruct 1
 -score:weights mpframework_smooth_fa_2012.wts #for scoring as a membrane protein
 -out:file:fullatom #output in fullatom scorefile
+-restore_talaris_behavior

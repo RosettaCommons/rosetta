@@ -1,0 +1,25 @@
+# Rosetta Residue Topology File
+# Type: MEM
+# Desc: Defines the position of the implicit membrane
+# Author: Rebecca Alford (rfalford12@gmail.com)
+# Author: Julia Koehler Leman (julia.koehler1982@gmail.com)
+# Last Modified 9/6/14
+NAME MEM                
+IO_STRING MEM Z         
+TYPE LIGAND             
+PROPERTIES MEMBRANE
+AA UNK
+ROTAMERS BASIC
+ATOM THKN MPtk H    0.0 # Membrane Thickness
+ATOM CNTR MPct H    0.0 # Membrane Center
+ATOM NORM MPnm H    0.0 # Membrane Normal
+BOND CNTR NORM
+BOND CNTR THKN
+
+ICOOR_INTERNAL CNTR     0.000   0.000  0.000 CNTR THKN NORM 
+ICOOR_INTERNAL THKN    90.000 180.000 15.000 CNTR THKN NORM 
+ICOOR_INTERNAL NORM   270.000  90.000  1.000 CNTR THKN NORM 
+
+NBR_ATOM CNTR
+NBR_RADIUS -100000.0 ## dont interact with anyone
+FIRST_SIDECHAIN_ATOM ALL

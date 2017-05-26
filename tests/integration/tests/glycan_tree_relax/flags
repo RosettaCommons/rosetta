@@ -7,3 +7,6 @@
 
 #Short for integration test.  Typically, you will want 10-25 (25 being the default).  25 takes about 1 minute/ per (man5) glycan/ per structure.
 -glycan_relax_rounds 3
+#keep using talaris... I don't know why but this app slow downs quite a lot with ref2015
+-restore_talaris_behavior 
+-score:weights talaris2014.wts

@@ -92,21 +92,21 @@ def pose_scoring(pose, display_residues = []):
     # the 1st (a) and 2nd (b) methods are only present since PyRosetta v2.0
     #
     # a. this method returns the hard-coded set of weights for the standard
-    #    fullatom ScoreFunction, which is currently called "talaris2013"
+    #    fullatom ScoreFunction, which is currently called "ref2015"
     fa_scorefxn = get_fa_scorefxn()
 
     # b. this method returns a ScoreFunction with its weights set based on
     #    files stored in the database/scoring/weights (.wts files)
-    full_scorefxn = create_score_function('talaris2013')
+    full_scorefxn = create_score_function('ref2015')
 
-    # c. this method sets the weights based on 'talaris2013.wts' and then
+    # c. this method sets the weights based on 'ref2015.wts' and then
     #    corrects them based on 'docking.wts_patch'
-    ws_patch_scorefxn = create_score_function('talaris2013', 'docking')  # create_score_function_ws_patch('talaris2013', 'docking')
+    ws_patch_scorefxn = create_score_function('ref2015', 'docking')  # create_score_function_ws_patch('ref2015', 'docking')
 
     # d. this method returns a ScoreFunction with its weights set by loading
-    #    weights from 'talaris2013' followed by an adjustment by setting
+    #    weights from 'ref2015' followed by an adjustment by setting
     #    weights from 'docking.wts_patch'
-    patch_scorefxn = create_score_function('talaris2013')
+    patch_scorefxn = create_score_function('ref2015')
     patch_scorefxn.apply_patch_from_file('docking')
 
     # e. here an empty ScoreFunction is created and the weights are set manually

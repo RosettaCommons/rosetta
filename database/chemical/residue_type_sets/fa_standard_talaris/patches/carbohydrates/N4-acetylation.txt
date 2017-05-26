@@ -1,0 +1,76 @@
+## full-atom 4-acetyl sugar patch
+
+NAME 4-Ac
+TYPES C4_ACETYLAMINO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT VARIANT_TYPE C4_ACETYLAMINO_SUGAR
+VARIANT_TYPE C4_AMINO_SUGAR
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, remove hydrogens on amine.
+DELETE_ATOM 1HN4
+DELETE_ATOM 2HN4
+DELETE_ATOM 3HN4
+
+# Next, change the nitrogen atom type
+SET_ATOM_TYPE  N4  NH2O
+SET_MM_ATOM_TYPE  N4   NH1
+SET_ATOMIC_CHARGE  N4  -0.35
+
+SET_FORMAL_CHARGE  N4   0
+
+# Next, add the new atoms
+ADD_ATOM  CN4 CObb C    0.22
+ADD_ATOM CAN4 CH3  CT3  0.01
+ADD_ATOM OCN4 OCbb O    -0.27
+ADD_ATOM  HN4 Hpol H    0.16
+ADD_ATOM 1HC4 Hapo HA   0.03   # 1st H on CA of the acetyl on N4
+ADD_ATOM 2HC4 Hapo HA   0.03
+ADD_ATOM 3HC4 Hapo HA   0.03
+
+# These atoms usually are named differently in the PDB, so add aliases.
+# These aliases assume a 6-membered sugar that also has an N2Ac group.
+# This will need to be fixed in the future somehow. ~Labonte
+ADD_ATOM_ALIAS  CN4  C10
+ADD_ATOM_ALIAS CAN4  C9  # The numbering is backwards, because that is how it is in .pdb structures for Bacp2,4Ac.
+ADD_ATOM_ALIAS OCN4  O10
+
+ADD_BOND  N4   CN4
+ADD_BOND_TYPE  CN4 OCN4 DOUBLE
+ADD_BOND  CN4 CAN4
+ADD_BOND  N4   HN4
+ADD_BOND CAN4 1HC4
+ADD_BOND CAN4 2HC4
+ADD_BOND CAN4 3HC4
+
+REDEFINE_CHI 4  C3   C4   N4   CN4
+CLEAR_CHI_ROTAMERS  4  # Old chi4 was defined off of a hydrogen, but now it's defined off a carbon, so they need to shift 180 degrees from what they were before so that an anti H is still anti.
+ADD_CHI_ROTAMER 4    0 0
+ADD_CHI_ROTAMER 4  120 0
+ADD_CHI_ROTAMER 4 -120 0
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C4   N4   CN4 CAN4
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
+
+SET_ICOOR  CN4  -28.295   62.736  1.312  N4    C4    H4
+SET_ICOOR CAN4 -178.271   58.957  1.496  CN4   N4    C4
+SET_ICOOR OCN4    0.654   61.455  1.234  CN4   N4    C4
+SET_ICOOR  HN4  152.671   58.88   0.99   N4    C4    H4
+SET_ICOOR 1HC4   33.119   70.479  1.099 CAN4   CN4   N4
+SET_ICOOR 2HC4  -84.152   70.479  1.099 CAN4   CN4   N4
+SET_ICOOR 3HC4  157.255   70.479  1.099 CAN4   CN4   N4
+
+DELETE_VARIANT_TYPE C4_AMINO_SUGAR
+DELETE_PROPERTY AMINO_SUGAR
+ADD_PROPERTY ACETYLAMINO_SUGAR
+
+END_CASE

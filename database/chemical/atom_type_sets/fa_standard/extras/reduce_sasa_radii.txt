@@ -22,12 +22,14 @@
 NAME REDUCE_SASA_RADIUS
 CNH2      1.75
 COO       1.75
+CH0       1.75
 CH1       1.75
 CH2       1.75
 CH3       1.75
 aroC      1.75
 Ntrp      1.55
 Nhis      1.55
+NtrR      1.55
 NH2O      1.55
 Nlys      1.55
 Narg      1.55
@@ -39,6 +41,7 @@ Oaro      1.4
 Oet2      1.4
 Oet3      1.4
 S         1.8
+SH1       1.8
 Nbb       1.55
 CAbb      1.75
 CObb      1.65
@@ -46,6 +49,7 @@ OCbb      1.4
 Phos      1.8
 Pbb       1.8 #Copied from Phos (JAB 2/20/14)
 Hpol      1.0
+HS        1.0
 Hapo      1.17
 Haro      1.0
 HNbb      1.0

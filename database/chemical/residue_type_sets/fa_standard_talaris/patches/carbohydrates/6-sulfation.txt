@@ -1,0 +1,55 @@
+## full-atom 6-sulfate sugar patch
+
+NAME 6-OSO3-
+TYPES C6_SULFATED_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT UPPER_POSITION 6
+NOT VARIANT_TYPE C6_BRANCH_POINT
+NOT PROPERTY C6_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, deprotonate.
+SET_ATOM_TYPE HO6 VIRT
+SET_MM_ATOM_TYPE HO6 VIRT
+SET_ATOMIC_CHARGE HO6 0.00
+
+# Next, add the new atoms.
+ADD_ATOM  S6   S    S    1.43
+ADD_ATOM 1OS6  OOC  O   -0.68
+ADD_ATOM 2OS6  OOC  O   -0.68
+ADD_ATOM 3OS6  OOC  O   -0.68
+
+SET_FORMAL_CHARGE  S6  +2
+SET_FORMAL_CHARGE 1OS6 -1
+SET_FORMAL_CHARGE 2OS6 -1
+SET_FORMAL_CHARGE 3OS6 -1
+
+ADD_BOND  O6   S6
+ADD_BOND  S6  1OS6
+ADD_BOND  S6  2OS6
+ADD_BOND  S6  3OS6
+
+REDEFINE_CHI 2  C5   C6   O6   S6
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C6   O6   S6  1OS6
+ADD_CHI_ROTAMER N  180 0  # Because of the three-fold symmetry, that's it.
+
+SET_ICOOR   S6  -174.914561   59.126121    1.533389   O6    C6    C5
+SET_ICOOR  3OS6   93.264746   71.969596    1.524903   S6    O6    C6
+SET_ICOOR  2OS6 -120.164122   70.294592    1.521531   S6    O6   3OS6
+SET_ICOOR  1OS6 -120.273269   71.415771    1.533003   S6    O6   2OS6
+
+ADD_PROPERTY C6_MODIFIED
+ADD_PROPERTY SULFATED_SUGAR
+ADD_PROPERTY CHARGED
+
+END_CASE

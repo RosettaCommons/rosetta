@@ -1,0 +1,26 @@
+# I think right now that Mini has to have at least three atoms per residue,
+# hence the virtual atoms.
+NAME CO
+IO_STRING  CO Z
+TYPE LIGAND
+PROPERTIES METAL
+AA UNK
+ROTAMERS BASIC
+ATOM CO   Co2p  Co2p 2.00
+ATOM  V1  VIRT  VIRT 0.00
+ATOM  V2  VIRT  VIRT 0.00
+ATOM  V3  VIRT  VIRT 0.00
+ATOM  V4  VIRT  VIRT 0.00
+BOND CO    V1
+BOND CO    V2
+BOND CO    V3
+BOND CO    V4
+NBR_ATOM CO
+NBR_RADIUS 5.0
+# tetrahedral geometry with 2.2 distance from center to vertex
+# chirality is defined so that viewing from V1 to CO, V2-V3-V4 are in clockwise direction.
+ICOOR_INTERNAL   CO      0.000000    0.000000    0.000000  CO     V1    V2
+ICOOR_INTERNAL    V1     0.000000    0.000000    2.200000  CO     V1    V2
+ICOOR_INTERNAL    V2     0.000000   70.500000    2.200000  CO     V1    V2
+ICOOR_INTERNAL    V3   120.000000   70.500000    2.200000  CO     V1    V2
+ICOOR_INTERNAL    V4  -120.000000   70.500000    2.200000  CO     V1    V2

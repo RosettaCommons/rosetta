@@ -1,0 +1,47 @@
+## full-atom 4-deoxy sugar patch
+
+# Because a deoxy sugar loses a stereocenter, this patch will result in two
+# ResidueTypes with the same connectivity and properties but with distinct
+# names.  For example ->3)-alpha-D-Glcp:4-deoxy is equivalent to
+# ->3)-alpha-D-Galp:4-deoxy.  I do not see any way around this problem
+# currently. ~Labonte
+
+NAME 4-deoxy
+TYPES C4_DEOXY_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT UPPER_POSITION 4
+NOT VARIANT_TYPE C4_BRANCH_POINT
+NOT PROPERTY C4_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, virtualize atoms and remove the hydrogen.
+SET_ATOM_TYPE HO4 VIRT
+SET_MM_ATOM_TYPE HO4 VIRT
+SET_ATOMIC_CHARGE HO4 0.00
+
+SET_ATOM_TYPE O4 VIRT
+SET_MM_ATOM_TYPE O4 VIRT
+SET_ATOMIC_CHARGE O4 0.00
+
+DELETE_ATOM  H4 
+
+CLEAR_CHI_ROTAMERS 4
+
+# Next, add the new atoms.
+ADD_ATOM 1H4  Hapo HA    0.09  # pro-S
+ADD_ATOM 2H4  Hapo HA    0.09  # pro-R
+
+ADD_BOND  C4  1H4
+ADD_BOND  C4  2H4 
+
+SET_ICOOR 1H4  120.153  70.806  1.09034 C4   C3   C5
+SET_ICOOR 2H4 -120.217  70.792  1.08952 C4   C3   C5
+
+ADD_PROPERTY C4_MODIFIED
+ADD_PROPERTY DEOXY_SUGAR
+
+END_CASE

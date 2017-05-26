@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-	        <ScoreFunction name="s" weights="score12_w_corrections" symmetric="1"/>
+	        <ScoreFunction name="s" weights="ref2015" symmetric="1"/>
 	</SCOREFXNS>
 	<MOVERS>
 	        <SetupForSymmetry name="setup_symm" resource_description="symmdef"/>

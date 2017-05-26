@@ -1,7 +1,7 @@
 -s 2LVO.pdb
 -nstruct 1
--parser
- -protocol ddG_backrub_integration.xml
+-parser:protocol ddG_backrub_integration.xml
+-restore_talaris_behavior
 #
 # Mute some tracers...
 -mute protocols.jobdist

@@ -176,6 +176,207 @@ void revert_to_pre_talaris_2013_defaults( utility::options::OptionCollection & o
 	}
 }
 
+void
+init_pre_beta_nov15_etable( utility::options::OptionCollection & options ){
+	// atom properties
+	// should work on setting atom_type_set...  make sure not to call any beta...
+	if ( options[ corrections::restore_talaris_behavior ] ||
+			options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+			options[ corrections::hbond_sp2_correction ] ||
+			options[corrections::facts_default] ) {
+		if ( options[corrections::beta]() ||
+				options[corrections::beta_nov16]() || options[corrections::beta_nov16_cart]() ||
+				options[corrections::beta_july15]() || options[corrections::beta_july15_cart]() ) {
+			utility_exit_with_message("pre_beta_nov15_etable is not compatible with any of -beta flags!");
+		}
+	} else {
+		return;
+	}
+
+	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back("fa_standard:CNH2:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:CNH2:LJ_WDEPTH:0.1200");
+		params.push_back("fa_standard:CNH2:LK_DGFREE:0.0000");
+		params.push_back("fa_standard:CNH2:LK_VOLUME:14.7000");
+		params.push_back("fa_standard:COO:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:COO:LJ_WDEPTH:0.1200");
+		params.push_back("fa_standard:COO:LK_DGFREE:-1.4000");
+		params.push_back("fa_standard:COO:LK_VOLUME:8.3000");
+		params.push_back("fa_standard:CH1:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:CH1:LJ_WDEPTH:0.0486");
+		params.push_back("fa_standard:CH1:LK_DGFREE:-0.2500");
+		params.push_back("fa_standard:CH1:LK_VOLUME:23.7000");
+		params.push_back("fa_standard:CH2:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:CH2:LJ_WDEPTH:0.1142");
+		params.push_back("fa_standard:CH2:LK_DGFREE:0.5200");
+		params.push_back("fa_standard:CH2:LK_VOLUME:22.4000");
+		params.push_back("fa_standard:CH3:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:CH3:LJ_WDEPTH:0.1811");
+		params.push_back("fa_standard:CH3:LK_DGFREE:1.5000");
+		params.push_back("fa_standard:CH3:LK_VOLUME:30.0000");
+		params.push_back("fa_standard:aroC:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:aroC:LJ_WDEPTH:0.1200");
+		params.push_back("fa_standard:aroC:LK_DGFREE:0.0800");
+		params.push_back("fa_standard:aroC:LK_VOLUME:18.4000");
+		params.push_back("fa_standard:Ntrp:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:Ntrp:LJ_WDEPTH:0.2384");
+		params.push_back("fa_standard:Ntrp:LK_DGFREE:-8.9000");
+		params.push_back("fa_standard:Ntrp:LK_VOLUME:4.4000");
+		params.push_back("fa_standard:Nhis:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:Nhis:LJ_WDEPTH:0.2384");
+		params.push_back("fa_standard:Nhis:LK_DGFREE:-4.0000");
+		params.push_back("fa_standard:Nhis:LK_VOLUME:4.4000");
+		params.push_back("fa_standard:NH2O:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:NH2O:LJ_WDEPTH:0.2384");
+		//params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8000");
+		params.push_back("fa_standard:NH2O:LK_VOLUME:11.2000");
+		params.push_back("fa_standard:Nlys:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:Nlys:LJ_WDEPTH:0.2384");
+		params.push_back("fa_standard:Nlys:LK_DGFREE:-20.0000");
+		params.push_back("fa_standard:Nlys:LK_VOLUME:11.2000");
+		params.push_back("fa_standard:Narg:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:Narg:LJ_WDEPTH:0.2384");
+		//params.push_back("fa_standard:Narg:LK_DGFREE:-10.0000");
+		params.push_back("fa_standard:Narg:LK_VOLUME:11.2000");
+		params.push_back("fa_standard:Npro:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:Npro:LJ_WDEPTH:0.2384");
+		params.push_back("fa_standard:Npro:LK_DGFREE:-1.5500");
+		params.push_back("fa_standard:Npro:LK_VOLUME:0.0000");
+		params.push_back("fa_standard:OH:LJ_RADIUS:1.5500");
+		params.push_back("fa_standard:OH:LJ_WDEPTH:0.1591");
+		//params.push_back("fa_standard:OH:LK_DGFREE:-6.7000");
+		params.push_back("fa_standard:OH:LK_VOLUME:10.8000");
+		params.push_back("fa_standard:ONH2:LJ_RADIUS:1.5500");
+		params.push_back("fa_standard:ONH2:LJ_WDEPTH:0.1591");
+		//params.push_back("fa_standard:ONH2:LK_DGFREE:-5.8500");
+		params.push_back("fa_standard:ONH2:LK_VOLUME:10.8000");
+		params.push_back("fa_standard:OOC:LJ_RADIUS:1.5500");
+		params.push_back("fa_standard:OOC:LJ_WDEPTH:0.2100");
+		params.push_back("fa_standard:OOC:LK_DGFREE:-10.0000");
+		params.push_back("fa_standard:OOC:LK_VOLUME:10.8000");
+		params.push_back("fa_standard:S:LJ_RADIUS:1.9000");
+		params.push_back("fa_standard:S:LJ_WDEPTH:0.1600");
+		params.push_back("fa_standard:S:LK_DGFREE:-4.1000");
+		params.push_back("fa_standard:S:LK_VOLUME:14.7000");
+		params.push_back("fa_standard:Nbb:LJ_RADIUS:1.7500");
+		params.push_back("fa_standard:Nbb:LJ_WDEPTH:0.2384");
+		params.push_back("fa_standard:Nbb:LK_DGFREE:-5.0000");
+		params.push_back("fa_standard:Nbb:LK_VOLUME:4.4000");
+		params.push_back("fa_standard:CAbb:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:CAbb:LJ_WDEPTH:0.0486");
+		params.push_back("fa_standard:CAbb:LK_DGFREE:1.0000");
+		params.push_back("fa_standard:CAbb:LK_VOLUME:23.7000");
+		params.push_back("fa_standard:CObb:LJ_RADIUS:2.0000");
+		params.push_back("fa_standard:CObb:LJ_WDEPTH:0.1400");
+		params.push_back("fa_standard:CObb:LK_DGFREE:1.0000");
+		params.push_back("fa_standard:CObb:LK_VOLUME:14.7000");
+		params.push_back("fa_standard:OCbb:LJ_RADIUS:1.5500");
+		params.push_back("fa_standard:OCbb:LJ_WDEPTH:0.1591");
+		params.push_back("fa_standard:OCbb:LK_DGFREE:-5.0000");
+		params.push_back("fa_standard:OCbb:LK_VOLUME:10.8000");
+		params.push_back("fa_standard:Hpol:LJ_RADIUS:1.0000");
+		params.push_back("fa_standard:Hpol:LJ_WDEPTH:0.0500");
+		params.push_back("fa_standard:Hapo:LJ_RADIUS:1.2000");
+		params.push_back("fa_standard:Hapo:LJ_WDEPTH:0.0500");
+		params.push_back("fa_standard:Haro:LJ_RADIUS:1.2000");
+		params.push_back("fa_standard:Haro:LJ_WDEPTH:0.0500");
+		params.push_back("fa_standard:HNbb:LJ_RADIUS:1.0000");
+		params.push_back("fa_standard:HNbb:LJ_WDEPTH:0.0500");
+
+		// lambda
+		params.push_back("fa_standard:Narg:LK_LAMBDA:6.0000");
+		params.push_back("fa_standard:Nlys:LK_LAMBDA:6.0000");
+		params.push_back("fa_standard:OOC:LK_LAMBDA:6.0000");
+
+		// this is very hacky... put it here because splitting it into revert_to_pre_talaris_2013_default
+		//will clear all the information above
+		// Doing this because we know we will get rid of this .cc file in near future
+		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ) { //pre-talaris
+			params.push_back("fa_standard:ONH2:LK_DGFREE:-10.0000");
+			params.push_back("fa_standard:NH2O:LK_DGFREE:-10.0000");
+			params.push_back("fa_standard:Narg:LK_DGFREE:-11.0000");
+			params.push_back("fa_standard:OH:LK_DGFREE:-6.7700" );
+		} else { // talaris
+			params.push_back("fa_standard:ONH2:LK_DGFREE:-5.8500");
+			params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8000");
+			params.push_back("fa_standard:Narg:LK_DGFREE:-10.0000");
+			params.push_back("fa_standard:OH:LK_DGFREE:-6.7000");
+		}
+
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+	}
+}
+
+void
+init_revert_to_talaris( utility::options::OptionCollection & options ) {
+	if ( !(options[ corrections::restore_talaris_behavior ] ||
+			options[ mistakes::restore_pre_talaris_2013_behavior ]
+			)
+			) {
+		return;
+	}
+
+	// specific for talaris / pre-talaris
+	if ( !options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		// hbond_param_set
+		if ( ! options[ score::hbond_params ].user() ) {
+			options[ score::hbond_params ].value( "sp2_elec_params" );
+		}
+
+		// weights file
+		if ( ! options[ score::weights ].user() ) {
+			options[ score::weights ].value( "talaris2014.wts" );
+		} else {
+			TR.Warning << "Flag -restore_talaris_behavior is set but -weights are also specified.  Not changing input weights file!" << std::endl;
+		}
+	}
+
+	// below are shared b/w talaris and pre-talaris
+	// residue_type_set
+	// let chemical manager take care of this part instead
+	//if ( ! options[ basic::options::OptionKeys::in::file::residue_type_set ].user() ) {
+	// options[ basic::options::OptionKeys::in::file::residue_type_set ].value("fa_standard_talaris");
+	//}
+
+	// unmodifypot
+	if ( ! options[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+		options[ basic::options::OptionKeys::score::unmodifypot ].value(false);
+	}
+
+	// attractive hydrogens
+	if ( ! options[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
+		options[ basic::options::OptionKeys::score::fa_Hatr ].value(false);
+	}
+
+	// sigmoidal dielectric
+	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(false);
+	}
+
+	// roland's new smoothed p_aa_pp and fa_dun libraries
+	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
+		options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(false);
+	}
+
+	// bbdep omega
+	if ( ! options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(false);
+	}
+
+	// updated fa_elec countpair logic
+	if ( ! options[ basic::options::OptionKeys::score::elec_representative_cp ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_representative_cp ].value(false);
+	}
+	if ( ! options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
+		options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(false);
+	}
+
+	// updated cartbonded parameters
+	if ( ! options[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
+		options[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_talaris/");
+	}
+}
 
 void
 init_hbond_sp2_correction( utility::options::OptionCollection & options ) {
@@ -234,15 +435,17 @@ init_hbond_sp2_correction( utility::options::OptionCollection & options ) {
 			options[ score::elec_r_option ].value( false );
 		}
 
+		/*
 		if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() || options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
-			std::cout << "overriding sc12 changes to the LK_DGFREEs" << std::endl;
-			utility::vector1< std::string > params;
-			params.push_back("fa_standard:ONH2:LK_DGFREE:-5.85");
-			params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8");
-			params.push_back("fa_standard:Narg:LK_DGFREE:-10.0");
-			params.push_back("fa_standard:OH:LK_DGFREE:-6.70" );
-			options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		std::cout << "overriding sc12 changes to the LK_DGFREEs" << std::endl;
+		utility::vector1< std::string > params;
+		params.push_back("fa_standard:ONH2:LK_DGFREE:-5.85");
+		params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8");
+		params.push_back("fa_standard:Narg:LK_DGFREE:-10.0");
+		params.push_back("fa_standard:OH:LK_DGFREE:-6.70" );
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 		}
+		*/
 
 		if ( ! options[ corrections::score::dun10 ].user() ) {
 			options[corrections::score::dun10].value( true );
@@ -524,14 +727,17 @@ init_beta_correction( utility::options::OptionCollection & options ) {
 	if ( options[corrections::beta_cart]() ) {
 		options[ corrections::beta_nov16_cart ].value(true);
 	}
+
+	/*
 	if ( options[corrections::beta_patch]() ) {
-		utility_exit_with_message("-beta_patch no longer supported!  Use '-beta' (nov16) or '-beta_nov15_patch'");
+	utility_exit_with_message("-beta_patch no longer supported!  Use '-beta' (nov16) or '-beta_nov15_patch'");
 	}
 	if ( options[corrections::beta_nov15_patch]() ) {
-		if ( !options[corrections::beta_nov15]() ) {
-			utility_exit_with_message("-beta_nov15_patch _must_ be used with '-beta_nov15'");
-		}
+	if ( !options[corrections::beta_nov15]() ) {
+	utility_exit_with_message("-beta_nov15_patch _must_ be used with '-beta_nov15'");
 	}
+	}
+	*/
 
 	// if multiple flags specified use the most recent
 	if ( options[corrections::beta_nov16]() || options[corrections::beta_nov16_cart]() ) {
@@ -539,9 +745,11 @@ init_beta_correction( utility::options::OptionCollection & options ) {
 		if ( options[corrections::score::rama_prepro_steep]() ) {
 			utility_exit_with_message("-rama_prepro_steep is incompatible with -beta_nov16.  Use beta_nov15 or remove this flag");
 		}
+
 		init_beta_nov16_correction( options );
-	} if ( options[corrections::beta_nov15]() || options[corrections::beta_nov15_cart]() ) {
-		init_beta_nov15_correction( options );
+		//} if ( options[corrections::beta_nov15]() || options[corrections::beta_nov15_cart]() ) {
+		//init_beta_nov15_correction( options );
+		// not sure if beta_july15 will be reproduce correctly -- should we remove all july15?
 	} else if ( options[corrections::beta_july15]() || options[corrections::beta_july15_cart]() ) {
 		init_beta_july15_correction( options );
 	}
@@ -800,1097 +1008,68 @@ init_beta_july15_correction( utility::options::OptionCollection & options ) {
 }
 
 void
-init_beta_nov15_correction( utility::options::OptionCollection & options ) {
-	// atom clone
-	if ( ! options[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:CH1:CH0" );
-		params.push_back( "fa_standard:Hpol:HS" );
-		params.push_back( "fa_standard:Ntrp:NtrR" );
-		params.push_back( "fa_standard:S:SH1" );
-		options[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
-	}
-
-	// atom reassign
-	if ( ! options[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:ARG:NE:NtrR" );
-		params.push_back( "fa_standard:CYS:HG:HS" );
-		params.push_back( "fa_standard:CYS:SG:SH1" );
-		params.push_back( "fa_standard:HIS:CG:CH0" );
-		params.push_back( "fa_standard:HIS_D:CG:CH0" );
-		params.push_back( "fa_standard:PHE:CG:CH0" );
-		params.push_back( "fa_standard:TRP:CD2:CH0" );
-		params.push_back( "fa_standard:TRP:CE2:CH0" );
-		params.push_back( "fa_standard:TRP:CG:CH0" );
-		params.push_back( "fa_standard:TYR:CG:CH0" );
-		params.push_back( "fa_standard:TYR:CZ:CH0" );
-		options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
-	}
-
-	// atom properties
-	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:aroC:LJ_RADIUS:2.01644141886894" );
-		params.push_back( "fa_standard:aroC:LJ_WDEPTH:0.0687751895736266" );
-		params.push_back( "fa_standard:aroC:LK_DGFREE:1.79794973942804" );
-		params.push_back( "fa_standard:aroC:LK_VOLUME:16.704" );
-		params.push_back( "fa_standard:CAbb:LJ_RADIUS:2.01176015918381" );
-		params.push_back( "fa_standard:CAbb:LJ_WDEPTH:0.0626417215905244" );
-		params.push_back( "fa_standard:CAbb:LK_DGFREE:2.53379083632817" );
-		params.push_back( "fa_standard:CAbb:LK_VOLUME:12.137" );
-		params.push_back( "fa_standard:CH0:LJ_RADIUS:2.01176015918381" );
-		params.push_back( "fa_standard:CH0:LJ_WDEPTH:0.0626417215905244" );
-		params.push_back( "fa_standard:CH0:LK_DGFREE:1.40928391914" );
-		params.push_back( "fa_standard:CH0:LK_VOLUME:8.9980" );
-		params.push_back( "fa_standard:CH1:LJ_RADIUS:2.01176015918381" );
-		params.push_back( "fa_standard:CH1:LJ_WDEPTH:0.0626417215905244" );
-		params.push_back( "fa_standard:CH1:LK_DGFREE:-3.53838699235766" );
-		params.push_back( "fa_standard:CH1:LK_VOLUME:10.686" );
-		params.push_back( "fa_standard:CH2:LJ_RADIUS:2.01176015918381" );
-		params.push_back( "fa_standard:CH2:LJ_WDEPTH:0.0626417215905244" );
-		params.push_back( "fa_standard:CH2:LK_DGFREE:-1.85465801632499" );
-		params.push_back( "fa_standard:CH2:LK_VOLUME:18.331" );
-		params.push_back( "fa_standard:CH3:LJ_RADIUS:2.01176015918381" );
-		params.push_back( "fa_standard:CH3:LJ_WDEPTH:0.0626417215905244" );
-		params.push_back( "fa_standard:CH3:LK_DGFREE:7.29292868961935" );
-		params.push_back( "fa_standard:CH3:LK_VOLUME:25.855" );
-		params.push_back( "fa_standard:CNH2:LJ_RADIUS:1.96829729523936" );
-		params.push_back( "fa_standard:CNH2:LJ_WDEPTH:0.0946382353433124" );
-		params.push_back( "fa_standard:CNH2:LK_DGFREE:3.07702990672077" );
-		params.push_back( "fa_standard:CNH2:LK_VOLUME:13.500" );
-		params.push_back( "fa_standard:CObb:LJ_RADIUS:1.91666056488602" );
-		params.push_back( "fa_standard:CObb:LJ_WDEPTH:0.141799451961604" );
-		params.push_back( "fa_standard:CObb:LK_DGFREE:3.10424837818125" );
-		params.push_back( "fa_standard:CObb:LK_VOLUME:13.221" );
-		params.push_back( "fa_standard:COO:LJ_RADIUS:1.91666056488602" );
-		params.push_back( "fa_standard:COO:LJ_WDEPTH:0.141799451961604" );
-		params.push_back( "fa_standard:COO:LK_DGFREE:-3.33264775500511" );
-		params.push_back( "fa_standard:COO:LK_VOLUME:14.653" );
-		params.push_back( "fa_standard:Hapo:LJ_RADIUS:1.42127246663917" );
-		params.push_back( "fa_standard:Hapo:LJ_WDEPTH:0.021807819704247" );
-		params.push_back( "fa_standard:Haro:LJ_RADIUS:1.37491393520446" );
-		params.push_back( "fa_standard:Haro:LJ_WDEPTH:0.0159091255013661" );
-		params.push_back( "fa_standard:HNbb:LJ_RADIUS:0.901680817581659" );
-		params.push_back( "fa_standard:HNbb:LJ_WDEPTH:0.005" );
-		params.push_back( "fa_standard:Hpol:LJ_RADIUS:0.901680817581659" );
-		params.push_back( "fa_standard:Hpol:LJ_WDEPTH:0.005" );
-		params.push_back( "fa_standard:HS:LJ_RADIUS:0.363887298021668" );
-		params.push_back( "fa_standard:HS:LJ_WDEPTH:0.0508363565235709" );
-		params.push_back( "fa_standard:Narg:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:Narg:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:Narg:LK_DGFREE:-8.96835062995162" );
-		params.push_back( "fa_standard:Narg:LK_LAMBDA:3.500" );
-		params.push_back( "fa_standard:Narg:LK_VOLUME:15.717" );
-		params.push_back( "fa_standard:Nbb:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:Nbb:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:Nbb:LK_DGFREE:-9.96949399981436" );
-		params.push_back( "fa_standard:Nbb:LK_VOLUME:15.992" );
-		params.push_back( "fa_standard:NH2O:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:NH2O:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:NH2O:LK_DGFREE:-8.10163796593946" );
-		params.push_back( "fa_standard:NH2O:LK_VOLUME:15.689" );
-		params.push_back( "fa_standard:Nhis:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:Nhis:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:Nhis:LK_DGFREE:-9.73960629046204" );
-		params.push_back( "fa_standard:Nhis:LK_VOLUME:9.3177" );
-		params.push_back( "fa_standard:Nlys:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:Nlys:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:Nlys:LK_DGFREE:-20.8646410937031" );
-		params.push_back( "fa_standard:Nlys:LK_LAMBDA:3.500" );
-		params.push_back( "fa_standard:Nlys:LK_VOLUME:16.514" );
-		params.push_back( "fa_standard:Npro:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:Npro:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:Npro:LK_DGFREE:-0.984584634015307" );
-		params.push_back( "fa_standard:Npro:LK_VOLUME:3.7181" );
-		params.push_back( "fa_standard:Ntrp:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:Ntrp:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:Ntrp:LK_DGFREE:-8.41311572996296" );
-		params.push_back( "fa_standard:Ntrp:LK_VOLUME:9.5221" );
-		params.push_back( "fa_standard:NtrR:LJ_RADIUS:1.80245153411117" );
-		params.push_back( "fa_standard:NtrR:LJ_WDEPTH:0.161725465479242" );
-		params.push_back( "fa_standard:NtrR:LK_DGFREE:-5.15808048223778" );
-		params.push_back( "fa_standard:NtrR:LK_VOLUME:9.7792" );
-		params.push_back( "fa_standard:OCbb:LJ_RADIUS:1.54057990663207" );
-		params.push_back( "fa_standard:OCbb:LJ_WDEPTH:0.142417039562418" );
-		params.push_back( "fa_standard:OCbb:LK_DGFREE:-8.00682866905788" );
-		params.push_back( "fa_standard:OCbb:LK_VOLUME:12.196" );
-		params.push_back( "fa_standard:OH:LJ_RADIUS:1.54274254979079" );
-		params.push_back( "fa_standard:OH:LJ_WDEPTH:0.161946733777774" );
-		params.push_back( "fa_standard:OH:LK_DGFREE:-8.13351966548561" );
-		params.push_back( "fa_standard:OH:LK_VOLUME:10.722" );
-		params.push_back( "fa_standard:ONH2:LJ_RADIUS:1.54866233322361" );
-		params.push_back( "fa_standard:ONH2:LJ_WDEPTH:0.182923877142655" );
-		params.push_back( "fa_standard:ONH2:LK_DGFREE:-6.59164355451412" );
-		params.push_back( "fa_standard:ONH2:LK_VOLUME:10.102" );
-		params.push_back( "fa_standard:OOC:LJ_RADIUS:1.49287051607643" );
-		params.push_back( "fa_standard:OOC:LJ_WDEPTH:0.099873399903218" );
-		params.push_back( "fa_standard:OOC:LK_DGFREE:-9.23983203659934" );
-		params.push_back( "fa_standard:OOC:LK_LAMBDA:3.500" );
-		params.push_back( "fa_standard:OOC:LK_VOLUME:9.9956" );
-		params.push_back( "fa_standard:S:LJ_RADIUS:1.97596675068577" );
-		params.push_back( "fa_standard:S:LJ_WDEPTH:0.455970487944057" );
-		params.push_back( "fa_standard:S:LK_DGFREE:-1.70722936816671" );
-		params.push_back( "fa_standard:S:LK_VOLUME:17.640" );
-		params.push_back( "fa_standard:SH1:LJ_RADIUS:1.97596675068577" );
-		params.push_back( "fa_standard:SH1:LJ_WDEPTH:0.455970487944057" );
-		params.push_back( "fa_standard:SH1:LK_DGFREE:3.29164334466414" );
-		params.push_back( "fa_standard:SH1:LK_VOLUME:23.240" );
-		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
-	}
-
-	// atomic charge
-	if ( ! options[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:ALA:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:ALA:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:ALA:3HB:0.0964166565538089" );
-		params.push_back( "fa_standard:ALA:C:0.688487076960265" );
-		params.push_back( "fa_standard:ALA:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:ALA:CB:-0.289249969661427" );
-		params.push_back( "fa_standard:ALA:H:0.398795532341501" );
-		params.push_back( "fa_standard:ALA:HA:0.115779348099145" );
-		params.push_back( "fa_standard:ALA:N:-0.604625484517759" );
-		params.push_back( "fa_standard:ALA:O:-0.688487076960265" );
-		params.push_back( "fa_standard:ARG:1HB:0.0735433492427525" );
-		params.push_back( "fa_standard:ARG:1HD:0.0735433492427525" );
-		params.push_back( "fa_standard:ARG:1HG:0.0735433492427525" );
-		params.push_back( "fa_standard:ARG:1HH1:0.266767068527804" );
-		params.push_back( "fa_standard:ARG:1HH2:0.266767068527804" );
-		params.push_back( "fa_standard:ARG:2HB:0.0735433492427525" );
-		params.push_back( "fa_standard:ARG:2HD:0.0735433492427525" );
-		params.push_back( "fa_standard:ARG:2HG:0.0735433492427525" );
-		params.push_back( "fa_standard:ARG:2HH1:0.266767068527804" );
-		params.push_back( "fa_standard:ARG:2HH2:0.266767068527804" );
-		params.push_back( "fa_standard:ARG:C:0.688487076960265" );
-		params.push_back( "fa_standard:ARG:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:ARG:CB:-0.0674577432085012" );
-		params.push_back( "fa_standard:ARG:CD:0.13098823875993" );
-		params.push_back( "fa_standard:ARG:CG:-0.0674577432085012" );
-		params.push_back( "fa_standard:ARG:CZ:0.36076779682864" );
-		params.push_back( "fa_standard:ARG:H:0.398795532341501" );
-		params.push_back( "fa_standard:ARG:HA:0.115779348099145" );
-		params.push_back( "fa_standard:ARG:HE:0.256322543161044" );
-		params.push_back( "fa_standard:ARG:N:-0.604625484517759" );
-		params.push_back( "fa_standard:ARG:NE:-0.339015402744249" );
-		params.push_back( "fa_standard:ARG:NH1:-0.391238029578047" );
-		params.push_back( "fa_standard:ARG:NH2:-0.391238029578047" );
-		params.push_back( "fa_standard:ARG:O:-0.688487076960265" );
-		params.push_back( "fa_standard:ASN:1HB:0.0628020700784757" );
-		params.push_back( "fa_standard:ASN:1HD2:0.223296249167914" );
-		params.push_back( "fa_standard:ASN:2HB:0.0628020700784757" );
-		params.push_back( "fa_standard:ASN:2HD2:0.209340233594919" );
-		params.push_back( "fa_standard:ASN:C:0.688487076960265" );
-		params.push_back( "fa_standard:ASN:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:ASN:CB:-0.125604140156951" );
-		params.push_back( "fa_standard:ASN:CG:0.383790428257352" );
-		params.push_back( "fa_standard:ASN:H:0.398795532341501" );
-		params.push_back( "fa_standard:ASN:HA:0.115779348099145" );
-		params.push_back( "fa_standard:ASN:N:-0.604625484517759" );
-		params.push_back( "fa_standard:ASN:ND2:-0.432636482762833" );
-		params.push_back( "fa_standard:ASN:O:-0.688487076960265" );
-		params.push_back( "fa_standard:ASN:OD1:-0.383790428257352" );
-		params.push_back( "fa_standard:ASP:1HB:0.111441686307203" );
-		params.push_back( "fa_standard:ASP:2HB:0.111441686307203" );
-		params.push_back( "fa_standard:ASP:C:0.688487076960265" );
-		params.push_back( "fa_standard:ASP:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:ASP:CB:-0.289467757590193" );
-		params.push_back( "fa_standard:ASP:CG:0.685717376214284" );
-		params.push_back( "fa_standard:ASP:H:0.398795532341501" );
-		params.push_back( "fa_standard:ASP:HA:0.115779348099145" );
-		params.push_back( "fa_standard:ASP:N:-0.604625484517759" );
-		params.push_back( "fa_standard:ASP:O:-0.688487076960265" );
-		params.push_back( "fa_standard:ASP:OD1:-0.809566495619248" );
-		params.push_back( "fa_standard:ASP:OD2:-0.809566495619248" );
-		params.push_back( "fa_standard:CYD:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:CYD:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:CYD:C:0.688487076960265" );
-		params.push_back( "fa_standard:CYD:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:CYD:CB:-0.107129618393121" );
-		params.push_back( "fa_standard:CYD:H:0.398795532341501" );
-		params.push_back( "fa_standard:CYD:HA:0.115779348099145" );
-		params.push_back( "fa_standard:CYD:N:-0.604625484517759" );
-		params.push_back( "fa_standard:CYD:O:-0.688487076960265" );
-		params.push_back( "fa_standard:CYD:SG:-0.0857036947144968" );
-		params.push_back( "fa_standard:CYS:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:CYS:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:CYS:C:0.688487076960265" );
-		params.push_back( "fa_standard:CYS:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:CYS:CB:-0.117842580232433" );
-		params.push_back( "fa_standard:CYS:H:0.398795532341501" );
-		params.push_back( "fa_standard:CYS:HA:0.115779348099145" );
-		params.push_back( "fa_standard:CYS:HG:0.171407389428994" );
-		params.push_back( "fa_standard:CYS:N:-0.604625484517759" );
-		params.push_back( "fa_standard:CYS:O:-0.688487076960265" );
-		params.push_back( "fa_standard:CYS:SG:-0.246398122304178" );
-		params.push_back( "fa_standard:GLN:1HB:0.0889003756598599" );
-		params.push_back( "fa_standard:GLN:1HE2:0.316090224568391" );
-		params.push_back( "fa_standard:GLN:1HG:0.0889003756598599" );
-		params.push_back( "fa_standard:GLN:2HB:0.0889003756598599" );
-		params.push_back( "fa_standard:GLN:2HE2:0.296334585532867" );
-		params.push_back( "fa_standard:GLN:2HG:0.0889003756598599" );
-		params.push_back( "fa_standard:GLN:C:0.688487076960265" );
-		params.push_back( "fa_standard:GLN:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:GLN:CB:-0.17780075131972" );
-		params.push_back( "fa_standard:GLN:CD:0.543280073476922" );
-		params.push_back( "fa_standard:GLN:CG:-0.17780075131972" );
-		params.push_back( "fa_standard:GLN:H:0.398795532341501" );
-		params.push_back( "fa_standard:GLN:HA:0.115779348099145" );
-		params.push_back( "fa_standard:GLN:N:-0.604625484517759" );
-		params.push_back( "fa_standard:GLN:NE2:-0.612424810101258" );
-		params.push_back( "fa_standard:GLN:O:-0.688487076960265" );
-		params.push_back( "fa_standard:GLN:OE1:-0.543280073476922" );
-		params.push_back( "fa_standard:GLU:1HB:0.0387903081455886" );
-		params.push_back( "fa_standard:GLU:1HG:0.0387903081455886" );
-		params.push_back( "fa_standard:GLU:2HB:0.0387903081455886" );
-		params.push_back( "fa_standard:GLU:2HG:0.0387903081455886" );
-		params.push_back( "fa_standard:GLU:C:0.688487076960265" );
-		params.push_back( "fa_standard:GLU:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:GLU:CB:-0.162458558591307" );
-		params.push_back( "fa_standard:GLU:CD:0.433834379888383" );
-		params.push_back( "fa_standard:GLU:CG:-0.236995175901268" );
-		params.push_back( "fa_standard:GLU:H:0.398795532341501" );
-		params.push_back( "fa_standard:GLU:HA:0.115779348099145" );
-		params.push_back( "fa_standard:GLU:N:-0.604625484517759" );
-		params.push_back( "fa_standard:GLU:O:-0.688487076960265" );
-		params.push_back( "fa_standard:GLU:OE1:-0.594770938989082" );
-		params.push_back( "fa_standard:GLU:OE2:-0.594770938989082" );
-		params.push_back( "fa_standard:GLY:1HA:0.115779348099145" );
-		params.push_back( "fa_standard:GLY:2HA:0.115779348099145" );
-		params.push_back( "fa_standard:GLY:C:0.688487076960265" );
-		params.push_back( "fa_standard:GLY:CA:-0.0257287440220323" );
-		params.push_back( "fa_standard:GLY:H:0.398795532341501" );
-		params.push_back( "fa_standard:GLY:N:-0.604625484517759" );
-		params.push_back( "fa_standard:GLY:O:-0.688487076960265" );
-		params.push_back( "fa_standard:HIS_D:1HB:0.0707394986059596" );
-		params.push_back( "fa_standard:HIS_D:2HB:0.0707394986059596" );
-		params.push_back( "fa_standard:HIS_D:C:0.688487076960265" );
-		params.push_back( "fa_standard:HIS_D:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:HIS_D:CB:-0.0707394986059596" );
-		params.push_back( "fa_standard:HIS_D:CD2:0.172918774370124" );
-		params.push_back( "fa_standard:HIS_D:CE1:0.196498607238777" );
-		params.push_back( "fa_standard:HIS_D:CG:-0.0392997214477554" );
-		params.push_back( "fa_standard:HIS_D:H:0.398795532341501" );
-		params.push_back( "fa_standard:HIS_D:HA:0.115779348099145" );
-		params.push_back( "fa_standard:HIS_D:HD1:0.251518217265634" );
-		params.push_back( "fa_standard:HIS_D:HD2:0.0785994428955107" );
-		params.push_back( "fa_standard:HIS_D:HE1:0.102179275764164" );
-		params.push_back( "fa_standard:HIS_D:N:-0.604625484517759" );
-		params.push_back( "fa_standard:HIS_D:ND1:-0.282957994423839" );
-		params.push_back( "fa_standard:HIS_D:NE2:-0.550196100268575" );
-		params.push_back( "fa_standard:HIS_D:O:-0.688487076960265" );
-		params.push_back( "fa_standard:HIS:1HB:0.0707394986059596" );
-		params.push_back( "fa_standard:HIS:2HB:0.0707394986059596" );
-		params.push_back( "fa_standard:HIS:C:0.688487076960265" );
-		params.push_back( "fa_standard:HIS:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:HIS:CB:-0.0628795543164086" );
-		params.push_back( "fa_standard:HIS:CD2:-0.0392997214477554" );
-		params.push_back( "fa_standard:HIS:CE1:0.196498607238777" );
-		params.push_back( "fa_standard:HIS:CG:0.172918774370124" );
-		params.push_back( "fa_standard:HIS:H:0.398795532341501" );
-		params.push_back( "fa_standard:HIS:HA:0.115779348099145" );
-		params.push_back( "fa_standard:HIS:HD2:0.0707394986059596" );
-		params.push_back( "fa_standard:HIS:HE1:0.102179275764164" );
-		params.push_back( "fa_standard:HIS:HE2:0.251518217265634" );
-		params.push_back( "fa_standard:HIS:N:-0.604625484517759" );
-		params.push_back( "fa_standard:HIS:ND1:-0.550196100268575" );
-		params.push_back( "fa_standard:HIS:NE2:-0.282957994423839" );
-		params.push_back( "fa_standard:HIS:O:-0.688487076960265" );
-		params.push_back( "fa_standard:ILE:1HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:1HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:1HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:2HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:2HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:2HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:3HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:3HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:C:0.688487076960265" );
-		params.push_back( "fa_standard:ILE:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:ILE:CB:-0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:CD1:-0.289249969661427" );
-		params.push_back( "fa_standard:ILE:CG1:-0.192833313107618" );
-		params.push_back( "fa_standard:ILE:CG2:-0.289249969661427" );
-		params.push_back( "fa_standard:ILE:H:0.398795532341501" );
-		params.push_back( "fa_standard:ILE:HA:0.115779348099145" );
-		params.push_back( "fa_standard:ILE:HB:0.0964166565538089" );
-		params.push_back( "fa_standard:ILE:N:-0.604625484517759" );
-		params.push_back( "fa_standard:ILE:O:-0.688487076960265" );
-		params.push_back( "fa_standard:LEU:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:1HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:1HD2:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:2HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:2HD2:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:3HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:3HD2:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:C:0.688487076960265" );
-		params.push_back( "fa_standard:LEU:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:LEU:CB:-0.192833313107618" );
-		params.push_back( "fa_standard:LEU:CD1:-0.289249969661427" );
-		params.push_back( "fa_standard:LEU:CD2:-0.289249969661427" );
-		params.push_back( "fa_standard:LEU:CG:-0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:H:0.398795532341501" );
-		params.push_back( "fa_standard:LEU:HA:0.115779348099145" );
-		params.push_back( "fa_standard:LEU:HG:0.0964166565538089" );
-		params.push_back( "fa_standard:LEU:N:-0.604625484517759" );
-		params.push_back( "fa_standard:LEU:O:-0.688487076960265" );
-		params.push_back( "fa_standard:LYS:1HB:0.0874319778880386" );
-		params.push_back( "fa_standard:LYS:1HD:0.0874319778880386" );
-		params.push_back( "fa_standard:LYS:1HE:0.0511672827781643" );
-		params.push_back( "fa_standard:LYS:1HG:0.0874319778880386" );
-		params.push_back( "fa_standard:LYS:1HZ:0.305020148547285" );
-		params.push_back( "fa_standard:LYS:2HB:0.0874319778880386" );
-		params.push_back( "fa_standard:LYS:2HD:0.0874319778880386" );
-		params.push_back( "fa_standard:LYS:2HE:0.0511672827781643" );
-		params.push_back( "fa_standard:LYS:2HG:0.0874319778880386" );
-		params.push_back( "fa_standard:LYS:2HZ:0.305020148547285" );
-		params.push_back( "fa_standard:LYS:3HZ:0.305020148547285" );
-		params.push_back( "fa_standard:LYS:C:0.688487076960265" );
-		params.push_back( "fa_standard:LYS:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:LYS:CB:-0.157354714103613" );
-		params.push_back( "fa_standard:LYS:CD:-0.157354714103613" );
-		params.push_back( "fa_standard:LYS:CE:0.196226063217662" );
-		params.push_back( "fa_standard:LYS:CG:-0.157354714103613" );
-		params.push_back( "fa_standard:LYS:H:0.398795532341501" );
-		params.push_back( "fa_standard:LYS:HA:0.115779348099145" );
-		params.push_back( "fa_standard:LYS:N:-0.604625484517759" );
-		params.push_back( "fa_standard:LYS:NZ:-0.266148799433236" );
-		params.push_back( "fa_standard:LYS:O:-0.688487076960265" );
-		params.push_back( "fa_standard:MET:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:1HE:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:1HG:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:2HE:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:2HG:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:3HE:0.0964166565538089" );
-		params.push_back( "fa_standard:MET:C:0.688487076960265" );
-		params.push_back( "fa_standard:MET:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:MET:CB:-0.192833313107618" );
-		params.push_back( "fa_standard:MET:CE:-0.235685160464866" );
-		params.push_back( "fa_standard:MET:CG:-0.149981465750369" );
-		params.push_back( "fa_standard:MET:H:0.398795532341501" );
-		params.push_back( "fa_standard:MET:HA:0.115779348099145" );
-		params.push_back( "fa_standard:MET:N:-0.604625484517759" );
-		params.push_back( "fa_standard:MET:O:-0.688487076960265" );
-		params.push_back( "fa_standard:MET:SD:-0.0964166565538089" );
-		params.push_back( "fa_standard:PHE:1HB:0.0952333955204116" );
-		params.push_back( "fa_standard:PHE:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:PHE:2HB:0.0952333955204116" );
-		params.push_back( "fa_standard:PHE:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:PHE:C:0.688487076960265" );
-		params.push_back( "fa_standard:PHE:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:PHE:CB:-0.190466791040823" );
-		params.push_back( "fa_standard:PHE:CB:-0.192833313107618" );
-		params.push_back( "fa_standard:PHE:CD1:-0.121687116498304" );
-		params.push_back( "fa_standard:PHE:CD1:-0.123199061152089" );
-		params.push_back( "fa_standard:PHE:CD2:-0.121687116498304" );
-		params.push_back( "fa_standard:PHE:CD2:-0.123199061152089" );
-		params.push_back( "fa_standard:PHE:CE1:-0.121687116498304" );
-		params.push_back( "fa_standard:PHE:CE1:-0.123199061152089" );
-		params.push_back( "fa_standard:PHE:CE2:-0.121687116498304" );
-		params.push_back( "fa_standard:PHE:CE2:-0.123199061152089" );
-		params.push_back( "fa_standard:PHE:CG:4.19564715952362e-18" );
-		params.push_back( "fa_standard:PHE:CG:4.24777746283392e-18" );
-		params.push_back( "fa_standard:PHE:CZ:-0.121687116498304" );
-		params.push_back( "fa_standard:PHE:CZ:-0.123199061152089" );
-		params.push_back( "fa_standard:PHE:H:0.398795532341501" );
-		params.push_back( "fa_standard:PHE:HA:0.115779348099145" );
-		params.push_back( "fa_standard:PHE:HD1:0.121687116498304" );
-		params.push_back( "fa_standard:PHE:HD1:0.123199061152089" );
-		params.push_back( "fa_standard:PHE:HD2:0.121687116498304" );
-		params.push_back( "fa_standard:PHE:HD2:0.123199061152089" );
-		params.push_back( "fa_standard:PHE:HE1:0.121687116498304" );
-		params.push_back( "fa_standard:PHE:HE1:0.123199061152089" );
-		params.push_back( "fa_standard:PHE:HE2:0.121687116498304" );
-		params.push_back( "fa_standard:PHE:HE2:0.123199061152089" );
-		params.push_back( "fa_standard:PHE:HZ:0.121687116498304" );
-		params.push_back( "fa_standard:PHE:HZ:0.123199061152089" );
-		params.push_back( "fa_standard:PHE:N:-0.604625484517759" );
-		params.push_back( "fa_standard:PHE:O:-0.688487076960265" );
-		params.push_back( "fa_standard:PRO:1HB:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:1HD:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:1HG:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:2HB:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:2HD:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:2HG:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:C:0.688487076960265" );
-		params.push_back( "fa_standard:PRO:CA:0.0257287440220323" );
-		params.push_back( "fa_standard:PRO:CB:-0.231558696198291" );
-		params.push_back( "fa_standard:PRO:CG:-0.231558696198291" );
-		params.push_back( "fa_standard:PRO:HA:0.115779348099145" );
-		params.push_back( "fa_standard:PRO:N:-0.373066788319468" );
-		params.push_back( "fa_standard:PRO:O:-0.688487076960265" );
-		params.push_back( "fa_standard:SER:1HB:0.0694693466329634" );
-		params.push_back( "fa_standard:SER:2HB:0.0694693466329634" );
-		params.push_back( "fa_standard:SER:C:0.688487076960265" );
-		params.push_back( "fa_standard:SER:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:SER:CB:0.0385940814627574" );
-		params.push_back( "fa_standard:SER:H:0.398795532341501" );
-		params.push_back( "fa_standard:SER:HA:0.115779348099145" );
-		params.push_back( "fa_standard:SER:HG:0.331909100579714" );
-		params.push_back( "fa_standard:SER:N:-0.604625484517759" );
-		params.push_back( "fa_standard:SER:O:-0.688487076960265" );
-		params.push_back( "fa_standard:SER:OG:-0.509441875308398" );
-		params.push_back( "fa_standard:THR:1HG2:0.0731977903347616" );
-		params.push_back( "fa_standard:THR:2HG2:0.0731977903347616" );
-		params.push_back( "fa_standard:THR:3HG2:0.0731977903347616" );
-		params.push_back( "fa_standard:THR:C:0.688487076960265" );
-		params.push_back( "fa_standard:THR:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:THR:CB:0.113863229409629" );
-		params.push_back( "fa_standard:THR:CG2:-0.219593371004285" );
-		params.push_back( "fa_standard:THR:H:0.398795532341501" );
-		params.push_back( "fa_standard:THR:HA:0.115779348099145" );
-		params.push_back( "fa_standard:THR:HB:0.0731977903347616" );
-		params.push_back( "fa_standard:THR:HG1:0.349722776043861" );
-		params.push_back( "fa_standard:THR:N:-0.604625484517759" );
-		params.push_back( "fa_standard:THR:O:-0.688487076960265" );
-		params.push_back( "fa_standard:THR:OG1:-0.536783795788252" );
-		params.push_back( "fa_standard:TRP:1HB:0.0781112921423692" );
-		params.push_back( "fa_standard:TRP:2HB:0.0781112921423692" );
-		params.push_back( "fa_standard:TRP:C:0.688487076960265" );
-		params.push_back( "fa_standard:TRP:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:TRP:CB:-0.156222584284738" );
-		params.push_back( "fa_standard:TRP:CD1:0.0303766136109214" );
-		params.push_back( "fa_standard:TRP:CD2:-0.0173580649205265" );
-		params.push_back( "fa_standard:TRP:CE2:0.112827421983422" );
-		params.push_back( "fa_standard:TRP:CE3:-0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:CG:-0.0260370973807897" );
-		params.push_back( "fa_standard:TRP:CH2:-0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:CZ2:-0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:CZ3:-0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:H:0.398795532341501" );
-		params.push_back( "fa_standard:TRP:HA:0.115779348099145" );
-		params.push_back( "fa_standard:TRP:HD1:0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:HE1:0.329803233490003" );
-		params.push_back( "fa_standard:TRP:HE3:0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:HH2:0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:HZ2:0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:HZ3:0.0998088732930273" );
-		params.push_back( "fa_standard:TRP:N:-0.604625484517759" );
-		params.push_back( "fa_standard:TRP:NE1:-0.529420980076058" );
-		params.push_back( "fa_standard:TRP:O:-0.688487076960265" );
-		params.push_back( "fa_standard:TYR:1HB:0.0629991496545642" );
-		params.push_back( "fa_standard:TYR:2HB:0.0629991496545642" );
-		params.push_back( "fa_standard:TYR:C:0.688487076960265" );
-		params.push_back( "fa_standard:TYR:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:TYR:CB:-0.125998299309128" );
-		params.push_back( "fa_standard:TYR:CD1:-0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:CD2:-0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:CE1:-0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:CE2:-0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:CG:7.77145627536702e-18" );
-		params.push_back( "fa_standard:TYR:CZ:0.0769989606889118" );
-		params.push_back( "fa_standard:TYR:H:0.398795532341501" );
-		params.push_back( "fa_standard:TYR:HA:0.115779348099145" );
-		params.push_back( "fa_standard:TYR:HD1:0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:HD2:0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:HE1:0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:HE2:0.0804989134474987" );
-		params.push_back( "fa_standard:TYR:HH:0.300995937238473" );
-		params.push_back( "fa_standard:TYR:N:-0.604625484517759" );
-		params.push_back( "fa_standard:TYR:O:-0.688487076960265" );
-		params.push_back( "fa_standard:TYR:OH:-0.377994897927385" );
-		params.push_back( "fa_standard:VAL:1HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:1HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:2HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:2HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:3HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:3HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:C:0.688487076960265" );
-		params.push_back( "fa_standard:VAL:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:VAL:CB:-0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:CG1:-0.289249969661427" );
-		params.push_back( "fa_standard:VAL:CG2:-0.289249969661427" );
-		params.push_back( "fa_standard:VAL:H:0.398795532341501" );
-		params.push_back( "fa_standard:VAL:HA:0.115779348099145" );
-		params.push_back( "fa_standard:VAL:HB:0.0964166565538089" );
-		params.push_back( "fa_standard:VAL:N:-0.604625484517759" );
-		params.push_back( "fa_standard:VAL:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DAL:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DAL:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DAL:3HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DAL:C:0.688487076960265" );
-		params.push_back( "fa_standard:DAL:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DAL:CB:-0.289249969661427" );
-		params.push_back( "fa_standard:DAL:H:0.398795532341501" );
-		params.push_back( "fa_standard:DAL:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DAL:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DAL:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DAR:1HB:0.0735433492427525" );
-		params.push_back( "fa_standard:DAR:1HD:0.0735433492427525" );
-		params.push_back( "fa_standard:DAR:1HG:0.0735433492427525" );
-		params.push_back( "fa_standard:DAR:1HH1:0.266767068527804" );
-		params.push_back( "fa_standard:DAR:1HH2:0.266767068527804" );
-		params.push_back( "fa_standard:DAR:2HB:0.0735433492427525" );
-		params.push_back( "fa_standard:DAR:2HD:0.0735433492427525" );
-		params.push_back( "fa_standard:DAR:2HG:0.0735433492427525" );
-		params.push_back( "fa_standard:DAR:2HH1:0.266767068527804" );
-		params.push_back( "fa_standard:DAR:2HH2:0.266767068527804" );
-		params.push_back( "fa_standard:DAR:C:0.688487076960265" );
-		params.push_back( "fa_standard:DAR:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DAR:CB:-0.0674577432085012" );
-		params.push_back( "fa_standard:DAR:CD:0.13098823875993" );
-		params.push_back( "fa_standard:DAR:CG:-0.0674577432085012" );
-		params.push_back( "fa_standard:DAR:CZ:0.36076779682864" );
-		params.push_back( "fa_standard:DAR:H:0.398795532341501" );
-		params.push_back( "fa_standard:DAR:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DAR:HE:0.256322543161044" );
-		params.push_back( "fa_standard:DAR:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DAR:NE:-0.339015402744249" );
-		params.push_back( "fa_standard:DAR:NH1:-0.391238029578047" );
-		params.push_back( "fa_standard:DAR:NH2:-0.391238029578047" );
-		params.push_back( "fa_standard:DAR:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DAN:1HB:0.0628020700784757" );
-		params.push_back( "fa_standard:DAN:1HD2:0.223296249167914" );
-		params.push_back( "fa_standard:DAN:2HB:0.0628020700784757" );
-		params.push_back( "fa_standard:DAN:2HD2:0.209340233594919" );
-		params.push_back( "fa_standard:DAN:C:0.688487076960265" );
-		params.push_back( "fa_standard:DAN:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DAN:CB:-0.125604140156951" );
-		params.push_back( "fa_standard:DAN:CG:0.383790428257352" );
-		params.push_back( "fa_standard:DAN:H:0.398795532341501" );
-		params.push_back( "fa_standard:DAN:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DAN:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DAN:ND2:-0.432636482762833" );
-		params.push_back( "fa_standard:DAN:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DAN:OD1:-0.383790428257352" );
-		params.push_back( "fa_standard:DAS:1HB:0.111441686307203" );
-		params.push_back( "fa_standard:DAS:2HB:0.111441686307203" );
-		params.push_back( "fa_standard:DAS:C:0.688487076960265" );
-		params.push_back( "fa_standard:DAS:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DAS:CB:-0.289467757590193" );
-		params.push_back( "fa_standard:DAS:CG:0.685717376214284" );
-		params.push_back( "fa_standard:DAS:H:0.398795532341501" );
-		params.push_back( "fa_standard:DAS:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DAS:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DAS:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DAS:OD1:-0.809566495619248" );
-		params.push_back( "fa_standard:DAS:OD2:-0.809566495619248" );
-		params.push_back( "fa_standard:CYD:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:CYD:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:CYD:C:0.688487076960265" );
-		params.push_back( "fa_standard:CYD:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:CYD:CB:-0.107129618393121" );
-		params.push_back( "fa_standard:CYD:H:0.398795532341501" );
-		params.push_back( "fa_standard:CYD:HA:0.115779348099145" );
-		params.push_back( "fa_standard:CYD:N:-0.604625484517759" );
-		params.push_back( "fa_standard:CYD:O:-0.688487076960265" );
-		params.push_back( "fa_standard:CYD:SG:-0.0857036947144968" );
-		params.push_back( "fa_standard:DCS:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DCS:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DCS:C:0.688487076960265" );
-		params.push_back( "fa_standard:DCS:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DCS:CB:-0.117842580232433" );
-		params.push_back( "fa_standard:DCS:H:0.398795532341501" );
-		params.push_back( "fa_standard:DCS:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DCS:HG:0.171407389428994" );
-		params.push_back( "fa_standard:DCS:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DCS:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DCS:SG:-0.246398122304178" );
-		params.push_back( "fa_standard:DGN:1HB:0.0889003756598599" );
-		params.push_back( "fa_standard:DGN:1HE2:0.316090224568391" );
-		params.push_back( "fa_standard:DGN:1HG:0.0889003756598599" );
-		params.push_back( "fa_standard:DGN:2HB:0.0889003756598599" );
-		params.push_back( "fa_standard:DGN:2HE2:0.296334585532867" );
-		params.push_back( "fa_standard:DGN:2HG:0.0889003756598599" );
-		params.push_back( "fa_standard:DGN:C:0.688487076960265" );
-		params.push_back( "fa_standard:DGN:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DGN:CB:-0.17780075131972" );
-		params.push_back( "fa_standard:DGN:CD:0.543280073476922" );
-		params.push_back( "fa_standard:DGN:CG:-0.17780075131972" );
-		params.push_back( "fa_standard:DGN:H:0.398795532341501" );
-		params.push_back( "fa_standard:DGN:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DGN:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DGN:NE2:-0.612424810101258" );
-		params.push_back( "fa_standard:DGN:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DGN:OE1:-0.543280073476922" );
-		params.push_back( "fa_standard:DGU:1HB:0.0387903081455886" );
-		params.push_back( "fa_standard:DGU:1HG:0.0387903081455886" );
-		params.push_back( "fa_standard:DGU:2HB:0.0387903081455886" );
-		params.push_back( "fa_standard:DGU:2HG:0.0387903081455886" );
-		params.push_back( "fa_standard:DGU:C:0.688487076960265" );
-		params.push_back( "fa_standard:DGU:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DGU:CB:-0.162458558591307" );
-		params.push_back( "fa_standard:DGU:CD:0.433834379888383" );
-		params.push_back( "fa_standard:DGU:CG:-0.236995175901268" );
-		params.push_back( "fa_standard:DGU:H:0.398795532341501" );
-		params.push_back( "fa_standard:DGU:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DGU:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DGU:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DGU:OE1:-0.594770938989082" );
-		params.push_back( "fa_standard:DGU:OE2:-0.594770938989082" );
-		params.push_back( "fa_standard:DHI_D:1HB:0.0707394986059596" );
-		params.push_back( "fa_standard:DHI_D:2HB:0.0707394986059596" );
-		params.push_back( "fa_standard:DHI_D:C:0.688487076960265" );
-		params.push_back( "fa_standard:DHI_D:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DHI_D:CB:-0.0707394986059596" );
-		params.push_back( "fa_standard:DHI_D:CD2:0.172918774370124" );
-		params.push_back( "fa_standard:DHI_D:CE1:0.196498607238777" );
-		params.push_back( "fa_standard:DHI_D:CG:-0.0392997214477554" );
-		params.push_back( "fa_standard:DHI_D:H:0.398795532341501" );
-		params.push_back( "fa_standard:DHI_D:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DHI_D:HD1:0.251518217265634" );
-		params.push_back( "fa_standard:DHI_D:HD2:0.0785994428955107" );
-		params.push_back( "fa_standard:DHI_D:HE1:0.102179275764164" );
-		params.push_back( "fa_standard:DHI_D:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DHI_D:ND1:-0.282957994423839" );
-		params.push_back( "fa_standard:DHI_D:NE2:-0.550196100268575" );
-		params.push_back( "fa_standard:DHI_D:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DHI:1HB:0.0707394986059596" );
-		params.push_back( "fa_standard:DHI:2HB:0.0707394986059596" );
-		params.push_back( "fa_standard:DHI:C:0.688487076960265" );
-		params.push_back( "fa_standard:DHI:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DHI:CB:-0.0628795543164086" );
-		params.push_back( "fa_standard:DHI:CD2:-0.0392997214477554" );
-		params.push_back( "fa_standard:DHI:CE1:0.196498607238777" );
-		params.push_back( "fa_standard:DHI:CG:0.172918774370124" );
-		params.push_back( "fa_standard:DHI:H:0.398795532341501" );
-		params.push_back( "fa_standard:DHI:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DHI:HD2:0.0707394986059596" );
-		params.push_back( "fa_standard:DHI:HE1:0.102179275764164" );
-		params.push_back( "fa_standard:DHI:HE2:0.251518217265634" );
-		params.push_back( "fa_standard:DHI:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DHI:ND1:-0.550196100268575" );
-		params.push_back( "fa_standard:DHI:NE2:-0.282957994423839" );
-		params.push_back( "fa_standard:DHI:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DIL:1HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:1HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:1HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:2HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:2HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:2HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:3HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:3HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:C:0.688487076960265" );
-		params.push_back( "fa_standard:DIL:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DIL:CB:-0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:CD1:-0.289249969661427" );
-		params.push_back( "fa_standard:DIL:CG1:-0.192833313107618" );
-		params.push_back( "fa_standard:DIL:CG2:-0.289249969661427" );
-		params.push_back( "fa_standard:DIL:H:0.398795532341501" );
-		params.push_back( "fa_standard:DIL:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DIL:HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DIL:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DIL:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DLE:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:1HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:1HD2:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:2HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:2HD2:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:3HD1:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:3HD2:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:C:0.688487076960265" );
-		params.push_back( "fa_standard:DLE:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DLE:CB:-0.192833313107618" );
-		params.push_back( "fa_standard:DLE:CD1:-0.289249969661427" );
-		params.push_back( "fa_standard:DLE:CD2:-0.289249969661427" );
-		params.push_back( "fa_standard:DLE:CG:-0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:H:0.398795532341501" );
-		params.push_back( "fa_standard:DLE:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DLE:HG:0.0964166565538089" );
-		params.push_back( "fa_standard:DLE:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DLE:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DLY:1HB:0.0874319778880386" );
-		params.push_back( "fa_standard:DLY:1HD:0.0874319778880386" );
-		params.push_back( "fa_standard:DLY:1HE:0.0511672827781643" );
-		params.push_back( "fa_standard:DLY:1HG:0.0874319778880386" );
-		params.push_back( "fa_standard:DLY:1HZ:0.305020148547285" );
-		params.push_back( "fa_standard:DLY:2HB:0.0874319778880386" );
-		params.push_back( "fa_standard:DLY:2HD:0.0874319778880386" );
-		params.push_back( "fa_standard:DLY:2HE:0.0511672827781643" );
-		params.push_back( "fa_standard:DLY:2HG:0.0874319778880386" );
-		params.push_back( "fa_standard:DLY:2HZ:0.305020148547285" );
-		params.push_back( "fa_standard:DLY:3HZ:0.305020148547285" );
-		params.push_back( "fa_standard:DLY:C:0.688487076960265" );
-		params.push_back( "fa_standard:DLY:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DLY:CB:-0.157354714103613" );
-		params.push_back( "fa_standard:DLY:CD:-0.157354714103613" );
-		params.push_back( "fa_standard:DLY:CE:0.196226063217662" );
-		params.push_back( "fa_standard:DLY:CG:-0.157354714103613" );
-		params.push_back( "fa_standard:DLY:H:0.398795532341501" );
-		params.push_back( "fa_standard:DLY:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DLY:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DLY:NZ:-0.266148799433236" );
-		params.push_back( "fa_standard:DLY:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DME:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:1HE:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:1HG:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:2HE:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:2HG:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:3HE:0.0964166565538089" );
-		params.push_back( "fa_standard:DME:C:0.688487076960265" );
-		params.push_back( "fa_standard:DME:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DME:CB:-0.192833313107618" );
-		params.push_back( "fa_standard:DME:CE:-0.235685160464866" );
-		params.push_back( "fa_standard:DME:CG:-0.149981465750369" );
-		params.push_back( "fa_standard:DME:H:0.398795532341501" );
-		params.push_back( "fa_standard:DME:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DME:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DME:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DME:SD:-0.0964166565538089" );
-		params.push_back( "fa_standard:DPH:1HB:0.0952333955204116" );
-		params.push_back( "fa_standard:DPH:1HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DPH:2HB:0.0952333955204116" );
-		params.push_back( "fa_standard:DPH:2HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DPH:C:0.688487076960265" );
-		params.push_back( "fa_standard:DPH:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DPH:CB:-0.190466791040823" );
-		params.push_back( "fa_standard:DPH:CB:-0.192833313107618" );
-		params.push_back( "fa_standard:DPH:CD1:-0.121687116498304" );
-		params.push_back( "fa_standard:DPH:CD1:-0.123199061152089" );
-		params.push_back( "fa_standard:DPH:CD2:-0.121687116498304" );
-		params.push_back( "fa_standard:DPH:CD2:-0.123199061152089" );
-		params.push_back( "fa_standard:DPH:CE1:-0.121687116498304" );
-		params.push_back( "fa_standard:DPH:CE1:-0.123199061152089" );
-		params.push_back( "fa_standard:DPH:CE2:-0.121687116498304" );
-		params.push_back( "fa_standard:DPH:CE2:-0.123199061152089" );
-		params.push_back( "fa_standard:DPH:CG:4.19564715952362e-18" );
-		params.push_back( "fa_standard:DPH:CG:4.24777746283392e-18" );
-		params.push_back( "fa_standard:DPH:CZ:-0.121687116498304" );
-		params.push_back( "fa_standard:DPH:CZ:-0.123199061152089" );
-		params.push_back( "fa_standard:DPH:H:0.398795532341501" );
-		params.push_back( "fa_standard:DPH:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DPH:HD1:0.121687116498304" );
-		params.push_back( "fa_standard:DPH:HD1:0.123199061152089" );
-		params.push_back( "fa_standard:DPH:HD2:0.121687116498304" );
-		params.push_back( "fa_standard:DPH:HD2:0.123199061152089" );
-		params.push_back( "fa_standard:DPH:HE1:0.121687116498304" );
-		params.push_back( "fa_standard:DPH:HE1:0.123199061152089" );
-		params.push_back( "fa_standard:DPH:HE2:0.121687116498304" );
-		params.push_back( "fa_standard:DPH:HE2:0.123199061152089" );
-		params.push_back( "fa_standard:DPH:HZ:0.121687116498304" );
-		params.push_back( "fa_standard:DPH:HZ:0.123199061152089" );
-		params.push_back( "fa_standard:DPH:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DPH:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DPR:1HB:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:1HD:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:1HG:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:2HB:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:2HD:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:2HG:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:C:0.688487076960265" );
-		params.push_back( "fa_standard:DPR:CA:0.0257287440220323" );
-		params.push_back( "fa_standard:DPR:CB:-0.231558696198291" );
-		params.push_back( "fa_standard:DPR:CG:-0.231558696198291" );
-		params.push_back( "fa_standard:DPR:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DPR:N:-0.373066788319468" );
-		params.push_back( "fa_standard:DPR:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DSE:1HB:0.0694693466329634" );
-		params.push_back( "fa_standard:DSE:2HB:0.0694693466329634" );
-		params.push_back( "fa_standard:DSE:C:0.688487076960265" );
-		params.push_back( "fa_standard:DSE:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DSE:CB:0.0385940814627574" );
-		params.push_back( "fa_standard:DSE:H:0.398795532341501" );
-		params.push_back( "fa_standard:DSE:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DSE:HG:0.331909100579714" );
-		params.push_back( "fa_standard:DSE:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DSE:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DSE:OG:-0.509441875308398" );
-		params.push_back( "fa_standard:DTH:1HG2:0.0731977903347616" );
-		params.push_back( "fa_standard:DTH:2HG2:0.0731977903347616" );
-		params.push_back( "fa_standard:DTH:3HG2:0.0731977903347616" );
-		params.push_back( "fa_standard:DTH:C:0.688487076960265" );
-		params.push_back( "fa_standard:DTH:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DTH:CB:0.113863229409629" );
-		params.push_back( "fa_standard:DTH:CG2:-0.219593371004285" );
-		params.push_back( "fa_standard:DTH:H:0.398795532341501" );
-		params.push_back( "fa_standard:DTH:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DTH:HB:0.0731977903347616" );
-		params.push_back( "fa_standard:DTH:HG1:0.349722776043861" );
-		params.push_back( "fa_standard:DTH:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DTH:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DTH:OG1:-0.536783795788252" );
-		params.push_back( "fa_standard:DTR:1HB:0.0781112921423692" );
-		params.push_back( "fa_standard:DTR:2HB:0.0781112921423692" );
-		params.push_back( "fa_standard:DTR:C:0.688487076960265" );
-		params.push_back( "fa_standard:DTR:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DTR:CB:-0.156222584284738" );
-		params.push_back( "fa_standard:DTR:CD1:0.0303766136109214" );
-		params.push_back( "fa_standard:DTR:CD2:-0.0173580649205265" );
-		params.push_back( "fa_standard:DTR:CE2:0.112827421983422" );
-		params.push_back( "fa_standard:DTR:CE3:-0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:CG:-0.0260370973807897" );
-		params.push_back( "fa_standard:DTR:CH2:-0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:CZ2:-0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:CZ3:-0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:H:0.398795532341501" );
-		params.push_back( "fa_standard:DTR:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DTR:HD1:0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:HE1:0.329803233490003" );
-		params.push_back( "fa_standard:DTR:HE3:0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:HH2:0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:HZ2:0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:HZ3:0.0998088732930273" );
-		params.push_back( "fa_standard:DTR:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DTR:NE1:-0.529420980076058" );
-		params.push_back( "fa_standard:DTR:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DTY:1HB:0.0629991496545642" );
-		params.push_back( "fa_standard:DTY:2HB:0.0629991496545642" );
-		params.push_back( "fa_standard:DTY:C:0.688487076960265" );
-		params.push_back( "fa_standard:DTY:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DTY:CB:-0.125998299309128" );
-		params.push_back( "fa_standard:DTY:CD1:-0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:CD2:-0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:CE1:-0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:CE2:-0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:CG:7.77145627536702e-18" );
-		params.push_back( "fa_standard:DTY:CZ:0.0769989606889118" );
-		params.push_back( "fa_standard:DTY:H:0.398795532341501" );
-		params.push_back( "fa_standard:DTY:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DTY:HD1:0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:HD2:0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:HE1:0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:HE2:0.0804989134474987" );
-		params.push_back( "fa_standard:DTY:HH:0.300995937238473" );
-		params.push_back( "fa_standard:DTY:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DTY:O:-0.688487076960265" );
-		params.push_back( "fa_standard:DTY:OH:-0.377994897927385" );
-		params.push_back( "fa_standard:DVA:1HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:1HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:2HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:2HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:3HG1:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:3HG2:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:C:0.688487076960265" );
-		params.push_back( "fa_standard:DVA:CA:0.0900506040771131" );
-		params.push_back( "fa_standard:DVA:CB:-0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:CG1:-0.289249969661427" );
-		params.push_back( "fa_standard:DVA:CG2:-0.289249969661427" );
-		params.push_back( "fa_standard:DVA:H:0.398795532341501" );
-		params.push_back( "fa_standard:DVA:HA:0.115779348099145" );
-		params.push_back( "fa_standard:DVA:HB:0.0964166565538089" );
-		params.push_back( "fa_standard:DVA:N:-0.604625484517759" );
-		params.push_back( "fa_standard:DVA:O:-0.688487076960265" );
-		options[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -set_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
-	}
-
-	// patch charges
-	if ( ! options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:ALA:CtermProteinFull:C:0.215733145869844" );
-		params.push_back( "fa_standard:ALA:CtermProteinFull:O:-0.607866572934922" );
-		params.push_back( "fa_standard:ALA:CtermProteinFull:OXT:-0.607866572934922" );
-		params.push_back( "fa_standard:ALA:NtermProteinFull:1H:0.29454804575387" );
-		params.push_back( "fa_standard:ALA:NtermProteinFull:2H:0.29454804575387" );
-		params.push_back( "fa_standard:ALA:NtermProteinFull:3H:0.29454804575387" );
-		params.push_back( "fa_standard:ALA:NtermProteinFull:CA:0.200594379485721" );
-		params.push_back( "fa_standard:ALA:NtermProteinFull:HA:0.114470185406583" );
-		params.push_back( "fa_standard:ALA:NtermProteinFull:N:-0.198708702153915" );
-		params.push_back( "fa_standard:DAL:CtermProteinFull:C:0.215733145869844" );
-		params.push_back( "fa_standard:DAL:CtermProteinFull:O:-0.607866572934922" );
-		params.push_back( "fa_standard:DAL:CtermProteinFull:OXT:-0.607866572934922" );
-		params.push_back( "fa_standard:DAL:NtermProteinFull:1H:0.29454804575387" );
-		params.push_back( "fa_standard:DAL:NtermProteinFull:2H:0.29454804575387" );
-		params.push_back( "fa_standard:DAL:NtermProteinFull:3H:0.29454804575387" );
-		params.push_back( "fa_standard:DAL:NtermProteinFull:CA:0.200594379485721" );
-		params.push_back( "fa_standard:DAL:NtermProteinFull:HA:0.114470185406583" );
-		params.push_back( "fa_standard:DAL:NtermProteinFull:N:-0.198708702153915" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:1H:0.289380122394376" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:1HA:0.101472789858077" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:2H:0.289380122394376" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:2HA:0.101472789858077" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:3H:0.289380122394376" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:CA:0.132790678614127" );
-		params.push_back( "fa_standard:GLY:NtermProteinFull:N:-0.20387662551341" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:1H:0.214239973776526" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:1HB:0.0967978909413394" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:1HD:0.0967978909413394" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:1HG:0.0967978909413394" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:2H:0.214239973776526" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:2HB:0.0967978909413394" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:2HD:0.0967978909413394" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:2HG:0.0967978909413394" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:CA:0.151604196264427" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:CB:-0.114597858161997" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:CG:-0.114597858161997" );
-		params.push_back( "fa_standard:PRO:NtermProteinFull:HA:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:N:-0.0284736640828602" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:1H:0.214239973776526" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:1HB:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:1HD:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:1HG:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:2H:0.214239973776526" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:2HB:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:2HD:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:2HG:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:CA:0.151604196264427" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:CB:-0.114597858161997" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:CG:-0.114597858161997" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:HA:0.0967978909413394" );
-		params.push_back( "fa_standard:DPR:NtermDPRteinFull:N:-0.0284736640828602" );
-		options[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -set_patch_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
-	}
-
-	// hbonds
-	if ( ! options[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "hbacc_AHX:1.18");
-		params.push_back( "hbacc_CXA:1.24");
-		params.push_back( "hbacc_CXL:1.12");
-		params.push_back( "hbacc_HXL:1.15");
-		params.push_back( "hbacc_IMD:1.13");
-		params.push_back( "hbacc_IME:1.16");
-		params.push_back( "hbacc_PBA:1.08");
-		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
-	}
-	if ( ! options[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "hbdon_AHX:1.03");
-		params.push_back( "hbdon_AMO:1.11");
-		params.push_back( "hbdon_CXA:1.27");
-		params.push_back( "hbdon_GDE:1.10");
-		params.push_back( "hbdon_GDH:1.10");
-		params.push_back( "hbdon_HXL:0.96");
-		params.push_back( "hbdon_IMD:1.15");
-		params.push_back( "hbdon_IME:1.42");
-		params.push_back( "hbdon_IND:1.25");
-		params.push_back( "hbdon_PBA:1.41");
-		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
-	}
-
-	// unmodifypot
-	if ( ! options[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
-		options[ basic::options::OptionKeys::score::unmodifypot ].value(true);
-	}
-
-	// attractive hydrogens
-	if ( ! options[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
-		options[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
-	}
-
-	// sigmoidal dielectric
-	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
-		options[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
-	}
-	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
-		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(80.0);
-	}
-	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
-		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.0);
-	}
-	if ( ! options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
-		options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.4);
-	}
-
-	// lkball
-	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].user() ) {
-		options[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.9);
-	}
-	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
-		options[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
-	}
-	if ( ! options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].user() ) {
-		options[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
-	}
-
-	// roland's new smoothed p_aa_pp and fa_dun libraries
-	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
-		options[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(true);
-	}
-	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
-		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
-	}
-	if ( ! options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
-		options[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
-	}
-
-	// bbdep omega
-	if ( ! options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
-		options[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(true);
-	}
-
-	// updated fa_elec countpair logic
-	if ( ! options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
-		options[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(true);
-	}
-
-	// updated cartbonded parameters
-	if ( ! options[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
-		options[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
-	}
-
-	// weights file
-	if ( ! options[ score::weights ].user() ) {
-		if ( options[ corrections::beta_nov15_patch ]() ) {
-			options[ score::weights ].value( "beta_nov15_patch.wts" );
-		} else if ( options[corrections::beta_nov15_cart]() || options[optimization::nonideal]() ) {
-			options[ score::weights ].value( "beta_nov15_cart.wts" );
-		} else {
-			options[ score::weights ].value( "beta_nov15.wts" );
-		}
-
-	} else {
-		TR.Warning << "Flag -beta_nov15 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
-	}
-
-	// protocol option but it should be default ...
-	if ( !options[optimization::default_max_cycles]() ) {
-		options[ optimization::default_max_cycles ].value( 200 );
-	}
-
-	// apply patch (optional)
-	if ( options[ corrections::beta_nov15_patch ]() ) {
-		if ( !options[ corrections::score::rama_prepro_steep ].user() ) {
-			options[ corrections::score::rama_prepro_steep ].value( true );
-		}
-		if ( !options[ score::eval_intrares_elec_ST_only ].user() ) {
-			options[ score::eval_intrares_elec_ST_only ].value( true );
-		}
-	}
-}
-
-void
 init_beta_nov16_correction( utility::options::OptionCollection & options ) {
+	/* // shares with beta_nov16 and not necessary any more
 	// atom clone
 	if ( ! options[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:CH1:CH0" );
-		params.push_back( "fa_standard:Hpol:HS" );
-		params.push_back( "fa_standard:Ntrp:NtrR" );
-		params.push_back( "fa_standard:S:SH1" );
-		options[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
+	utility::vector1< std::string > params;
+	params.push_back( "fa_standard:CH1:CH0" );
+	params.push_back( "fa_standard:Hpol:HS" );
+	params.push_back( "fa_standard:Ntrp:NtrR" );
+	params.push_back( "fa_standard:S:SH1" );
+	options[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
 	} else {
-		TR.Warning << "Flag -beta_nov16 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
+	TR.Warning << "Flag -beta_nov16 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
 
 	// atom reassign
 	if ( ! options[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
-		utility::vector1< std::string > params;
-		params.push_back( "fa_standard:ARG:NE:NtrR" );
-		params.push_back( "fa_standard:CYS:HG:HS" );
-		params.push_back( "fa_standard:CYS:SG:SH1" );
-		params.push_back( "fa_standard:HIS:CG:CH0" );
-		params.push_back( "fa_standard:HIS_D:CG:CH0" );
-		params.push_back( "fa_standard:PHE:CG:CH0" );
-		params.push_back( "fa_standard:TRP:CD2:CH0" );
-		params.push_back( "fa_standard:TRP:CE2:CH0" );
-		params.push_back( "fa_standard:TRP:CG:CH0" );
-		params.push_back( "fa_standard:TYR:CG:CH0" );
-		params.push_back( "fa_standard:TYR:CZ:CH0" );
-		options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
+	utility::vector1< std::string > params;
+	params.push_back( "fa_standard:ARG:NE:NtrR" );
+	params.push_back( "fa_standard:CYS:HG:HS" );
+	params.push_back( "fa_standard:CYS:SG:SH1" );
+	params.push_back( "fa_standard:HIS:CG:CH0" );
+	params.push_back( "fa_standard:HIS_D:CG:CH0" );
+	params.push_back( "fa_standard:PHE:CG:CH0" );
+	params.push_back( "fa_standard:TRP:CD2:CH0" );
+	params.push_back( "fa_standard:TRP:CE2:CH0" );
+	params.push_back( "fa_standard:TRP:CG:CH0" );
+	params.push_back( "fa_standard:TYR:CG:CH0" );
+	params.push_back( "fa_standard:TYR:CZ:CH0" );
+	options[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
 	} else {
-		TR.Warning << "Flag -beta_nov16 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
+	TR.Warning << "Flag -beta_nov16 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
 	}
+	*/
 
 	// atom properties
 	if ( ! options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
+		// keep DGFREEs only
+		params.push_back("fa_standard:aroC:LK_DGFREE:2.22283");
+		params.push_back("fa_standard:CAbb:LK_DGFREE:4.44945");
+		params.push_back("fa_standard:CH0:LK_DGFREE:1.24868");
+		params.push_back("fa_standard:CH1:LK_DGFREE:-6.49218");
+		params.push_back("fa_standard:CH2:LK_DGFREE:-2.55184");
+		params.push_back("fa_standard:CH3:LK_DGFREE:7.72716");
+		params.push_back("fa_standard:CNH2:LK_DGFREE:3.70334");
+		params.push_back("fa_standard:CObb:LK_DGFREE:3.57899");
+		params.push_back("fa_standard:COO:LK_DGFREE:-2.50876");
+		params.push_back("fa_standard:Narg:LK_DGFREE:-8.69602");
+		params.push_back("fa_standard:Nbb:LK_DGFREE:-12.84665");
+		params.push_back("fa_standard:NH2O:LK_DGFREE:-7.66671");
+		params.push_back("fa_standard:Nhis:LK_DGFREE:-9.72534");
+		params.push_back("fa_standard:Nlys:LK_DGFREE:-18.74326");
+		params.push_back("fa_standard:Npro:LK_DGFREE:-1.51111");
+		params.push_back("fa_standard:Ntrp:LK_DGFREE:-10.64481");
+		params.push_back("fa_standard:NtrR:LK_DGFREE:-4.92802");
+		params.push_back("fa_standard:OCbb:LK_DGFREE:-9.52921");
+		params.push_back("fa_standard:OH:LK_DGFREE:-5.46060");
+		params.push_back("fa_standard:ONH2:LK_DGFREE:-5.03501");
+		params.push_back("fa_standard:OOC:LK_DGFREE:-10.20822");
+		params.push_back("fa_standard:S:LK_DGFREE:-4.89802");
+		params.push_back("fa_standard:SH1:LK_DGFREE:2.07945");
+		/*
 		params.push_back("fa_standard:aroC:LJ_RADIUS:2.01644");
 		params.push_back("fa_standard:aroC:LJ_WDEPTH:0.06877");
 		params.push_back("fa_standard:aroC:LK_DGFREE:2.22283");
@@ -1996,6 +1175,8 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		params.push_back("fa_standard:SH1:LJ_WDEPTH:0.45597");
 		params.push_back("fa_standard:SH1:LK_DGFREE:2.07945");
 		params.push_back("fa_standard:SH1:LK_VOLUME:23.240");
+		*/
+
 		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
@@ -2894,7 +2075,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 
 	// updated cartbonded parameters
 	if ( ! options[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
-		options[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
+		options[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle");
 	}
 
 	// weights file
@@ -3004,6 +2185,9 @@ init_restore_score12prime( utility::options::OptionCollection & options ) {
 //MaximCode:
 void
 init_score_function_corrections( utility::options::OptionCollection & options ){
+	init_pre_beta_nov15_etable( options ); // call first
+
+	init_revert_to_talaris( options ); //option[ corrections::restore_talaris_behavior ] keep before pre_talaris_2013
 	init_revert_to_pre_talaris_2013_mistake( options );
 	init_hbond_sp2_correction( options );
 	init_facts_correction( options );
@@ -3015,44 +2199,74 @@ init_score_function_corrections( utility::options::OptionCollection & options ){
 	init_dna_correction( options );
 }
 
-void
+bool
 check_score_function_sanity(
 	utility::options::OptionCollection const & options,
 	std::string const & scorefxn_key,
-	bool only_warn
+	bool throw_exception
 ) {
-	if ( scorefxn_key == "score12" ) {
-		if ( ! options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+	if ( utility::startswith( scorefxn_key, "score12" ) || utility::startswith( scorefxn_key, "pre_talaris" ) ) {
+		if ( ! options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+				options[ corrections::restore_talaris_behavior ] ) {
 			TR.Error
 				<< "**********************************************" << std::endl
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
-				<< "please using the " << std::endl
+				<< "please use the " << std::endl
 				<< std::endl
 				<< "        -restore_pre_talaris_2013_behavior" << std::endl
 				<< std::endl
 				<< "flag on the command line." << std::endl
+				<< std::endl
+				<< "(And do not use the -restore_talaris_behavior flag.)" << std::endl
 				<< "**********************************************" << std::endl;
-			if ( !only_warn ) {
+			if ( throw_exception ) {
 				throw utility::excn::EXCN_BadInput("Missing -restore_pre_talaris_2013_behavior flag.");
+			} else {
+				return false;
 			}
 		}
-	} else if ( scorefxn_key == "talaris2013" ) {
-		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+	} else if ( utility::startswith( scorefxn_key, "talaris20" ) ) {
+		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+				! options[ corrections::restore_talaris_behavior ] ) {
 			TR.Error
 				<< "**********************************************" << std::endl
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
-				<< "please don't using the " << std::endl
+				<< "please use the " << std::endl
 				<< std::endl
-				<< "        -restore_pre_talaris_2013_behavior" << std::endl
+				<< "        -restore_talaris_behavior" << std::endl
 				<< std::endl
 				<< "flag on the command line." << std::endl
+				<< std::endl
+				<< "(And do not use the -restore_pre_talaris_2013_behavior flag.)" << std::endl
 				<< "**********************************************" << std::endl;
-			if ( !only_warn ) {
-				throw utility::excn::EXCN_BadInput("Using -restore_pre_talaris_2013_behavior flag with talaris2013 energy function");
+			if ( throw_exception ) {
+				throw utility::excn::EXCN_BadInput("Missing -restore_talaris_behavior flag.");
+			} else {
+				return false;
+			}
+		}
+	} else if ( utility::startswith( scorefxn_key, "ref20" ) || utility::startswith( scorefxn_key, "beta_nov15" ) ) {
+		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+				options[ corrections::restore_talaris_behavior ] ) {
+			TR.Error
+				<< "**********************************************" << std::endl
+				<< "To use the '" << scorefxn_key << "' score function" << std::endl
+				<< "please do not use either of the" << std::endl
+				<< std::endl
+				<< "        -restore_talaris_behavior" << std::endl
+				<< "        -restore_pre_talaris_2013_behavior" << std::endl
+				<< std::endl
+				<< "flags on the command line." << std::endl
+				<< "**********************************************" << std::endl;
+			if ( throw_exception ) {
+				throw utility::excn::EXCN_BadInput("Using -restore_talaris_behavior or -restore_pre_talaris_2013_behavior with REF-era scorefunctions.");
+			} else {
+				return false;
 			}
 		}
 	}
-
+	// Likely sane score function
+	return true;
 }
 
 void
@@ -3182,5 +2396,6 @@ init_dna_correction( utility::options::OptionCollection & options )
 
 
 }
+
 } // namespace
 } // namespace

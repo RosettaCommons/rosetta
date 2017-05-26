@@ -4,3 +4,4 @@
 -mp:setup:normal 0 0 1
 -ignore_unrecognized_res
 -score:weights mpframework_cen_2006
+-restore_talaris_behavior

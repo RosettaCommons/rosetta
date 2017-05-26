@@ -5,4 +5,3 @@
 -unmute protocols.cyclic_peptide protocols.simple_moves
 -inout:write_all_connect_info
 -inout:connect_info_cutoff 0.0
--beta_nov15

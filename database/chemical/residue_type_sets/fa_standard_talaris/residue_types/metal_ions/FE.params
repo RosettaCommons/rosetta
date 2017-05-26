@@ -1,0 +1,20 @@
+# I think right now that Mini has to have at least three atoms per residue,
+# hence the virtual atoms.
+NAME FE
+IO_STRING  FE Z
+TYPE LIGAND
+PROPERTIES METAL
+AA UNK
+ROTAMERS BASIC
+ATOM FE   Fe3p  Fe3p    3.00
+ATOM  V1  VIRT  VIRT    0.00
+ATOM  V2  VIRT  VIRT    0.00
+BOND FE    V1 
+BOND FE    V2 
+BOND  V1   V2 
+CHARGE FE FORMAL +3
+NBR_ATOM FE  
+NBR_RADIUS 0.01
+ICOOR_INTERNAL   FE      0.000000    0.000000    0.000000  FE     V1    V2 
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765  FE     V1    V2 
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1   FE     V2 

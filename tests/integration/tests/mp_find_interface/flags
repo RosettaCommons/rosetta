@@ -11,3 +11,4 @@
 -relax:range:nmoves nres
 -score::docking_interface_score true
 -packing:pack_missing_sidechains false 
+-restore_talaris_behavior

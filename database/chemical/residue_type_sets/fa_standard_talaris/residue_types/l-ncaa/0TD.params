@@ -1,0 +1,75 @@
+# Generated using Gaussian minimization, molfile to params
+# Notably, renamed atoms to match 4Y4O.pdb
+NAME 0TD
+IO_STRING 0TD X
+TYPE POLYMER
+AA UNK
+ATOM  N   Nbb  NH1  -0.60
+ATOM  CA  CAbb CT1  -0.08
+ATOM  C   CObb C    0.63
+ATOM  O   OCbb O    -0.54
+ATOM  CB  CH1  CT1  -0.08
+ATOM  SB  S    S    -0.15 # Rosetta standard SG1
+ATOM  CG  COO  CC   0.63 # Rosetta standard CG2
+ATOM  OD1 OOC  OC   -0.75
+ATOM  OD2 OOC  OC   -0.75
+ATOM CSB  CH3  CT3  -0.26 # Rosetta standard CD3
+ATOM  HA  Hapo HB   0.10
+ATOM  H   HNbb H    0.44
+ATOM 1HB  Hapo HA   0.10
+ATOM HSB1 Hapo HA   0.10 # Rosetta standard 1HD3
+ATOM HSB2 Hapo HA   0.10
+ATOM HSB3 Hapo HA   0.10
+
+BOND  N    CA 
+BOND  N    H  
+BOND  CA   C  
+BOND  CA   CB 
+BOND  CA   HA 
+BOND_TYPE  C    O  2
+BOND  CB   SB
+BOND  CB   CG
+BOND  CB  1HB 
+BOND  SB  CSB
+BOND_TYPE  CG   OD1 CARBOXY
+BOND_TYPE  CG   OD2 CARBOXY
+BOND CSB HSB1
+BOND CSB HSB2
+BOND CSB HSB3
+
+LOWER_CONNECT N
+UPPER_CONNECT C
+
+# Asp chis followed by the "new chi" introduced by S-methyl
+CHI 1  N    CA   C    O
+CHI 2  CA   CB   CG   OD1
+CHI 3  CA   CB   SB  CSB
+NBR_ATOM  CB 
+NBR_RADIUS 6.950274
+FIRST_SIDECHAIN_ATOM  CB 
+PROPERTIES PROTEIN ALPHA_AA L_AA POLAR CHARGED METALBINDING
+METAL_BINDING_ATOMS O OD1 OD2 SB
+
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.450622   N     CA    C  
+ICOOR_INTERNAL    C      0.000000   68.388745    1.537263   CA    N     C  
+ICOOR_INTERNAL    O    120.486011   59.573381    1.208950   C     CA    N  
+ICOOR_INTERNAL   UPPER  -58.238044   63.325647    1.340854   C     CA    N
+ICOOR_INTERNAL    CB  -128.466562   70.764723    1.547015   CA    N     C  
+ICOOR_INTERNAL    SB   179.926547   66.362996    1.829999   CB    CA    N
+ICOOR_INTERNAL   CSB    47.993043   77.698268    1.812862   SB    CB    CA
+ICOOR_INTERNAL   HSB1  -69.685993   67.858514    1.080478  CSB    SB    CB
+ICOOR_INTERNAL   HSB2 -118.856480   73.629186    1.084282  CSB    SB   HSB1
+ICOOR_INTERNAL   HSB3 -117.693892   68.681248    1.084582  CSB    SB   HSB2
+ICOOR_INTERNAL    CG  -126.344954   63.566762    1.573158   CB    CA    SB
+ICOOR_INTERNAL    OD1  173.497926   64.452705    1.214008   CG    CB    CA
+ICOOR_INTERNAL    OD2  178.136980   64.157443    1.251371   CG    CB    OD1
+ICOOR_INTERNAL   1HB  -116.690673   74.218874    1.085905   CB    CA    CG
+ICOOR_INTERNAL    HA  -118.114709   73.574070    1.076433   CA    N     CB 
+ICOOR_INTERNAL   LOWER -109.985577   55.795048    1.339887   N     CA    C
+ICOOR_INTERNAL    H   -170.095290   66.145708    0.999291   N     CA   LOWER
+
+# Note--if you ever want to treat the asp chi semirotamerically, we'll have to 
+# switch the order of chi2 and chi3 (or make it so that any chi can be nonrotameric)
+NCAA_ROTLIB_PATH ncaa_rotamer_libraries/alpha_amino_acid/0TD.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 3 3 6 3

@@ -13,3 +13,5 @@
 -s 3u43_aligned_ImB.pdb
 -parser:protocol splice_out_generic.xml
 -parser:script_vars from_res=82 to_res=98 start_pdb=3u43_aligned_ImB.pdb source=1emv_aligned_ImB.pdb dbase=1emv_2_3u43
+
+-restore_talaris_behavior

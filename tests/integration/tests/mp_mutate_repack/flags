@@ -4,3 +4,4 @@
 -mp:mutate_relax:mutant_file inputs/mutations_1AFO.mut
 -mp:mutate_relax:nmodels 1
 -mp:mutate_relax:repack_radius 5
+-restore_talaris_behavior

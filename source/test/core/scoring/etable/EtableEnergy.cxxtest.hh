@@ -111,15 +111,15 @@ public:
 		ScoreFunction sfxn;
 		etab_energy.residue_pair_energy( pose.residue( 4 ), pose.residue( 5 ), pose, sfxn, emap );
 
-		//int const old_precision( TR.precision() );
-		//TR.precision( 16 );
-		//TR << "etable energy, trpcage 4 and 5: " << emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << std::endl;
-		//TR.precision( old_precision );
+		int const old_precision( TR.precision() );
+		TR.precision( 16 );
+		TR << "etable energy, trpcage 4 and 5: " << emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << std::endl;
+		TR.precision( old_precision );
 
-		//core.scoring.etable.EtableEnergy.cxxtest: etable energy, trpcage 4 and 5: -0.6079854186280232 0.0778507865338765 0.4275630856840362
-		TS_ASSERT_DELTA( emap[ fa_atr ], -0.6079854186280232, 1e-12 );
-		TS_ASSERT_DELTA( emap[ fa_rep ],  0.0778507865338765, 1e-12 );
-		TS_ASSERT_DELTA( emap[ fa_sol ],  0.4041439359347673, 1e-12 );
+		//core.scoring.etable.EtableEnergy.cxxtest: etable energy, trpcage 4 and 5: -0.8749661684247915 0.06392760829213764 0.5689299178237454
+		TS_ASSERT_DELTA( emap[ fa_atr ], -0.8749661684247915, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_rep ],  0.06392760829213764, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_sol ],  0.5689299178237454, 1e-12 );
 	}
 
 	void test_eval_residue_pair_energy_analytic_version()
@@ -139,15 +139,15 @@ public:
 		ScoreFunction sfxn;
 		etab_energy.residue_pair_energy( pose.residue( 4 ), pose.residue( 5 ), pose, sfxn, emap );
 
-		//int const old_precision( TR.precision() );
-		//TR.precision( 16 );
-		//TR << "etable energy, trpcage 4 and 5: " << emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << std::endl;
-		//TR.precision( old_precision );
+		int const old_precision( TR.precision() );
+		TR.precision( 16 );
+		TR << "etable energy, trpcage 4 and 5: " << emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << std::endl;
+		TR.precision( old_precision );
 
-		//core.scoring.etable.EtableEnergy.cxxtest: etable energy, trpcage 4 and 5: -0.6079854186280232 0.0778507865338765 0.4275630856840362
-		TS_ASSERT_DELTA( emap[ fa_atr ], -0.607982997381734, 1e-12 );
-		TS_ASSERT_DELTA( emap[ fa_rep ],  0.0778346123883227, 1e-12 );
-		TS_ASSERT_DELTA( emap[ fa_sol ],  0.40414285103945, 1e-12 );
+		//core.scoring.etable.EtableEnergy.cxxtest: etable energy, trpcage 4 and 5: -0.8749634526321776 0.06391568136965026 0.5689286245924211
+		TS_ASSERT_DELTA( emap[ fa_atr ], -0.8749634526321776, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_rep ],  0.06391568136965026, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_sol ],  0.5689286245924211, 1e-12 );
 	}
 
 	void test_eval_residue_pair_energy_w_minimization_data()
@@ -348,7 +348,15 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -26.03949788109572 );
+
+		/*Real score = sfxn.score( pose );
+		int const old_precision( TR.precision() );
+		TR.precision( 16 );
+		TR << "MINE w_full_bbflex " << score << std::endl;
+		TR.precision( old_precision );*/
+
+		adv.validate_start_func_matches_start_score( -28.52951683437025 );
+		//adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
 
 	void test_start_func_matches_start_score_w_full_bbflex_analytic_version()
@@ -367,7 +375,8 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -26.03949788109572 );
+		adv.validate_start_func_matches_start_score( -28.52951683437025 );
+		//adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
 
 	void test_etab_numeric_deriv_check_table_version()
@@ -383,7 +392,7 @@ public:
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 
-		adv.simple_deriv_check( true, 5e-3 );
+		adv.simple_deriv_check( true, 1e-2 );
 	}
 
 	void test_etab_numeric_deriv_check_analytic_version()
@@ -421,7 +430,8 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -26.03949788109572 );
+		adv.validate_start_func_matches_start_score( -28.52951683437025 );
+		//adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
 
 
@@ -444,7 +454,15 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -26.04170800071507 );
+
+		/*Real score = sfxn.score( pose );
+		int const old_precision( TR.precision() );
+		TR.precision( 16 );
+		TR << "MINE w_full_bbflex_analytic " << score << std::endl;
+		TR.precision( old_precision );*/
+
+		//adv.validate_start_func_matches_start_score( -26.04170800071507 );
+		adv.validate_start_func_matches_start_score( -28.53244316787823 );
 	}
 
 
@@ -580,7 +598,16 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.39185655926555 );
+
+		/*Real score = sfxn.score( pose );
+		int const old_precision( TR.precision() );
+		TR.precision( 16 );
+		TR << "MINE w_full_bbflex_and_intraresidue" << score << std::endl;
+		TR.precision( old_precision );*/
+
+		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
+
 	}
 
 	/// @brief Create a move map that has the central residue changing, while everything
@@ -605,7 +632,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.39669996258689 );
+		adv.validate_start_func_matches_start_score( -27.69352060731158 );
 	}
 
 	/// @brief Make sure that the domain map logic inside the ScoreFunction
@@ -629,7 +656,9 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.39185655926555 );
+		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+
+		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 	}
 
 	/// @brief Make sure that the domain map logic inside the ScoreFunction
@@ -653,7 +682,8 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.39669996258689 );
+		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		//adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 
@@ -676,7 +706,8 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.39185655926555 );
+		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 	}
 
 	void test_setup_for_minimizing_with_autoupdate_w_full_bb_flexibility_analytic_version()
@@ -698,7 +729,15 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.39669996258689 );
+
+		/*Real score = sfxn.score( pose );
+		int const old_precision( TR.precision() );
+		TR.precision( 16 );
+		TR << "MINE w_full_bbflex_autoupdate_analytic" << score << std::endl;
+		TR.precision( old_precision );*/
+
+		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		//adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 	void test_setup_for_minimizing_with_autoupdate_w_partial_bb_flexibility_table_version()
@@ -720,7 +759,8 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.39185655926555 );
+		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 
 		/*using namespace core;
 		using namespace utility::graph;
@@ -785,7 +825,8 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.39669996258689 );
+		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		//adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
 	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_full_bb_flex_table_version()
@@ -812,7 +853,7 @@ public:
 		adv.add_res_for_deriv( 10 );
 		adv.add_res_for_deriv( 11 );
 
-		adv.simple_deriv_check( true, 5e-3 );
+		adv.simple_deriv_check( true, 1e-2 );
 
 	}
 
@@ -957,7 +998,8 @@ public:
 		//std::cout.precision( 16 );
 		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -22.39185655926555, start_score, 1e-12 );
+		TS_ASSERT_DELTA( -27.68721495001052, start_score, 1e-12 );
+		//TS_ASSERT_DELTA( -22.39185655926555, start_score, 1e-12 );
 
 
 		kinematics::MoveMap movemap;
@@ -975,8 +1017,9 @@ public:
 		/// END AtomTreeMinimizer setup block
 
 		Real start_func = sfxn(pose);
-		//std::cout << "start_func: " << start_func << std::endl;
-		TS_ASSERT_DELTA( -22.39185655926555, start_func, 1e-12 );
+		std::cout << "start_func: " << start_func << std::endl;
+		TS_ASSERT_DELTA( -27.68721495001052, start_score, 1e-12 );
+		//TS_ASSERT_DELTA( -22.39185655926555, start_func, 1e-12 );
 	}
 
 	void test_setup_for_minimizing_with_autoupdate2_analytic_version()
@@ -1005,8 +1048,7 @@ public:
 		//std::cout.precision( 16 );
 		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -22.39669996258689, start_score, 1e-12 );
-
+		TS_ASSERT_DELTA( -27.69352060731158, start_score, 1e-12 );
 
 		kinematics::MoveMap movemap;
 		movemap.set_bb( 10, true );
@@ -1023,8 +1065,12 @@ public:
 		/// END AtomTreeMinimizer setup block
 
 		Real start_func = sfxn(pose);
-		//std::cout << "start_func: " << start_func << std::endl;
-		TS_ASSERT_DELTA( -22.39669996258687, start_func, 1e-12 );
+		/*int const old_precision( std::cout.precision() );
+		std::cout.precision( 16 );
+		std::cout << "start_func: " << start_func << std::endl;
+		std::cout.precision( old_precision );*/
+		TS_ASSERT_DELTA( -27.69352060731158, start_func, 1e-12 );
+		//TS_ASSERT_DELTA( -22.39669996258687, start_func, 1e-12 );
 	}
 
 	void dont_test_atom_tree_minimize_with_autoupdate2()

@@ -1,12 +1,14 @@
 NAME   LJ_RADIUS_SOFT
 CNH2           2.0000
 COO            2.0000
+CH0            2.1400
 CH1            2.1400
 CH2            2.1400
 CH3            2.1400
 aroC           2.1400
 Ntrp           1.7500
 Nhis           1.7500
+NtrR           1.7500
 NH2O           1.7500
 Nlys           1.7500
 Narg           1.7500
@@ -18,6 +20,7 @@ Oaro           1.6585
 Oet2           1.5500
 Oet3           1.6585
 S              2.0330
+SH1            2.0330
 Nbb            1.8725
 CAbb           2.1400
 CObb           2.1400
@@ -25,6 +28,7 @@ OCbb           1.6585
 Phos           2.1500
 Pbb            2.1500  # copied from Phos
 Hpol           1.0700
+HS             1.0700
 Hapo           1.2840
 Haro           1.2840
 HNbb           1.0700

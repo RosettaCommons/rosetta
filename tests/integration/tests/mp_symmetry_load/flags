@@ -5,6 +5,7 @@
 -in:file:s inputs/1afo_tr_input.pdb
 -mp:setup:spanfiles inputs/1afo_tr.span
 -mp:scoring:hbond
+-restore_talaris_behavior
 
 # Symmetry Options
 -symmetry:symmetry_definition inputs/1afo_tr.c2.symm  # Symmetry Definition file

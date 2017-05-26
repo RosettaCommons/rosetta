@@ -10,3 +10,4 @@
 ##### these are general flags
 -score:weights talaris2014
 -mpi_tracer_to_file log
+-restore_talaris_behavior
