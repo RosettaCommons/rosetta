@@ -71,6 +71,10 @@ public:
 		set_and_reinit( extra_chi_, setting );
 	}
 
+	void set_sample_all_chi( bool const setting ) {
+		set_and_reinit( sample_all_chi_, setting );
+	}
+
 	void set_skip_same_pucker( bool const setting ) {
 		set_and_reinit( skip_same_pucker_, setting );
 	}
@@ -103,7 +107,7 @@ private:
 	core::chemical::rna::ChiState base_state_lower_, base_state_upper_;
 
 	bool sample_nucleoside_lower_, sample_nucleoside_upper_,
-		extra_epsilon_, extra_beta_, extra_chi_,
+		extra_epsilon_, extra_beta_, extra_chi_, sample_all_chi_,
 		skip_same_pucker_, idealize_coord_, fast_;
 
 	core::Real bin_size_;

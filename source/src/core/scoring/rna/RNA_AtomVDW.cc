@@ -113,7 +113,7 @@ RNA_AtomVDW::RNA_AtomVDW()
 void
 RNA_AtomVDW::initialize_rnp_vdw_parameters() {
 
-	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
+	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() );
 
 	utility::io::izstream stream;
 	std::string filename;

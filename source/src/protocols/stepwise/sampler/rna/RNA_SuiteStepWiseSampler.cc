@@ -55,6 +55,7 @@ RNA_SuiteStepWiseSampler::RNA_SuiteStepWiseSampler(
 	extra_epsilon_( false ),
 	extra_beta_( false ),
 	extra_chi_( false ),
+	sample_all_chi_( false ),
 	skip_same_pucker_( true ),
 	idealize_coord_( true ),
 	fast_( false ),
@@ -151,6 +152,7 @@ void RNA_SuiteStepWiseSampler::init_standard() {
 				nucleoside_rotamer1->set_skip_same_pucker( skip_same_pucker_ );
 				nucleoside_rotamer1->set_idealize_coord( idealize_coord_ );
 				nucleoside_rotamer1->set_extra_chi( extra_chi_ );
+				nucleoside_rotamer1->set_sample_all_chi( sample_all_chi_ );
 				new_rotamer_agg->add_external_loop_rotamer( nucleoside_rotamer1 );
 			}
 
@@ -161,6 +163,7 @@ void RNA_SuiteStepWiseSampler::init_standard() {
 				nucleoside_rotamer2->set_skip_same_pucker( skip_same_pucker_ );
 				nucleoside_rotamer2->set_idealize_coord( idealize_coord_ );
 				nucleoside_rotamer2->set_extra_chi( extra_chi_ );
+				nucleoside_rotamer2->set_sample_all_chi( sample_all_chi_ );
 				new_rotamer_agg->add_external_loop_rotamer( nucleoside_rotamer2 );
 			}
 

@@ -45,7 +45,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
@@ -63,7 +63,7 @@
 //
 //  -- This object's name should not be ConstrainToIdealMover.
 //
-//  -- Does this reproduce functionality already developed in cartbond framework (which was
+//  -- Does this reproduce functionality already developed in cart_bond framework (which was
 //      set up later by Frank Dimaio but is more general?). If so let's get rid of this one.
 //
 //  -- note also Steven Lewis comments in ConstrainToIdealMover.hh function.
@@ -90,14 +90,18 @@ ConstrainToIdealMover::ConstrainToIdealMover() :
 	bond_length_sd_( 0.05 ), // might be better to have in a database for each atom
 	bond_length_sd_polar_hydrogen_( 0.20 ), // might be better to have in a database for each atom
 	bond_angle_sd_( numeric::conversions::radians( 5.0 ) ), // might be better to have in a database for each atom
-	bond_angle_sd_polar_hydrogen_( numeric::conversions::radians( option[ OptionKeys::score::bond_angle_sd_polar_hydrogen ]() ) ), // might be better to have in a database for each atom
+	bond_angle_sd_polar_hydrogen_( numeric::conversions::radians( option[ OptionKeys::stepwise::polar_hydrogens::bond_angle_sd_polar_hydrogen ]() ) ), // 60.0, might be better to have in a database for each atom
 	bond_torsion_sd_( numeric::conversions::radians( 5.0 ) ), // might be better to have in a database for each atom
-	bond_torsion_sd_polar_hydrogen_( numeric::conversions::radians( option[ OptionKeys::score::bond_torsion_sd_polar_hydrogen ]() ) ), // might be better to have in a database for each atom
+	bond_torsion_sd_polar_hydrogen_( numeric::conversions::radians( option[ OptionKeys::stepwise::polar_hydrogens::bond_torsion_sd_polar_hydrogen ]() ) ), // 30.0, might be better to have in a database for each atom
 	score_type_( core::scoring::bond_geometry ),
 	just_rna_backbone_( false ),
 	just_polar_hydrogens_( false ),
 	legacy_dof_allow_move_( false ), // old setting -- did not move all atoms that should have been moving.
-	verbose_( false )
+	verbose_( false ),
+	fix_lengths_(  option[ OptionKeys::stepwise::polar_hydrogens::fix_lengths ]()  ), // for debugging
+	fix_angles_(   option[ OptionKeys::stepwise::polar_hydrogens::fix_angles ]()   ), // for debugging
+	fix_torsions_( option[ OptionKeys::stepwise::polar_hydrogens::fix_torsions ]() ),  // for debugging
+	disallow_vary_geometry_proton_chi_( option[ OptionKeys::stepwise::polar_hydrogens::disallow_vary_geometry_proton_chi ]() ) // for debugging
 {}
 
 ConstrainToIdealMover::~ConstrainToIdealMover()= default;
@@ -397,26 +401,47 @@ ConstrainToIdealMover::check_if_really_connected(
 	return false;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+core::Size
+check_if_proton_chi_atom( core::chemical::ResidueType const & rsd_type, core::Size const j ){
+	for ( core::Size n = 1; n <= rsd_type.n_proton_chi(); n++ ) {
+		core::Size chino = rsd_type.proton_chi_2_chi( n );
+		core::Size const & proton_chi_atom = rsd_type.chi_atoms( chino )[4];
+		if ( proton_chi_atom == j ) return n;
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+core::Size
+check_if_proton_chi_atom( core::pose::Pose const & pose, core::Size const i, core::Size const j ){
+	core::chemical::ResidueType const & rsd_type = pose.residue_type( i );
+	return check_if_proton_chi_atom( rsd_type, j );
+}
+
+
 //copied from src/protocols/rna/RNA_Minimizer.cc, SVN #44771
 // AMW TODO: adapt version from erraser_minimizer plus figure out how to incorporate the atom_level_domain_map bit...
 bool
-ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k ) const
+ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue const & residue, core::Size const & k ) const
 {
 
 	if ( just_rna_backbone_ ) { //default
-		if ( !residue2.is_RNA() ) return false;
-		if ( k > residue2.first_sidechain_atom() &&
-				k != core::chemical::rna::first_base_atom_index( residue2.type() ) ) return false;
+		if ( !residue.is_RNA() ) return false;
+		if ( k > residue.first_sidechain_atom() &&
+				k != core::chemical::rna::first_base_atom_index( residue.type() ) ) return false;
 	}
 
 	if ( just_polar_hydrogens_ ) {
-		if ( !residue2.Hpos_polar().has_value( k ) )  return false;
+		if ( !residue.Hpos_polar().has_value( k ) )  return false;
+		// temporary for debugging -- don't vary bond length/angle at protons like 2'-OH (which can move anyway).
+		if ( disallow_vary_geometry_proton_chi_ && check_if_proton_chi_atom( residue.type(), k ) > 0 ) return false;
 	}
 
-	core::id::AtomID id( k, residue2.seqpos() );
+	core::id::AtomID id( k, residue.seqpos() );
 	if ( !atom_level_domain_map_->get( id ) ) return false;
 
-	if ( residue2.is_virtual( k ) ) return false;
+	if ( residue.is_virtual( k ) ) return false;
 
 	return true;
 
@@ -429,18 +454,6 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::pose::Pose const & pose, 
 	core::conformation::Residue const & residue( pose.residue( atom_id.rsd() ) );
 	core::Size const & k( atom_id.atomno() );
 	return i_want_this_atom_to_move( residue, k );
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-core::Size
-check_if_proton_chi_atom( core::pose::Pose const & pose, core::Size const i, core::Size const j ){
-	core::chemical::ResidueType rsd_type = pose.residue_type( i );
-	for ( core::Size n = 1; n <= rsd_type.n_proton_chi(); n++ ) {
-		core::Size chino = rsd_type.proton_chi_2_chi( n );
-		core::Size const & proton_chi_atom = rsd_type.chi_atoms( chino )[4];
-		if ( proton_chi_atom == j ) return n;
-	}
-	return 0;
 }
 
 
@@ -464,7 +477,10 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 	core::Size const nres( pose.size() );
 
-	//std::map< AtomID, utility::vector1< AtomID > > lists_of_angle_bonded_atoms;
+
+	////////////////////////////////////////////////////////////////////////
+	// update move map to move DOFs
+	////////////////////////////////////////////////////////////////////////
 
 	for  ( core::Size i = 1; i <= nres; i++ )  {
 
@@ -484,7 +500,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 			if ( !input_stub_atom1 ) continue;
 			if ( legacy_dof_allow_move_ && !i_want_this_atom_to_move( pose, input_stub_atom1->id() ) ) continue;
-			mm.set( DOF_ID( AtomID( j, i ), D ), true );
+			if ( !fix_lengths_ ) mm.set( DOF_ID( AtomID( j, i ), D ), true );
 			if ( input_stub_atom1->is_jump() ) continue;
 
 			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
@@ -493,7 +509,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 			if ( !input_stub_atom2 ) continue;
 			if ( input_stub_atom2 == current_atom ) continue;
 			if ( legacy_dof_allow_move_ && !i_want_this_atom_to_move( pose, input_stub_atom2->id() ) ) continue;
-			mm.set( DOF_ID( AtomID( j, i ), THETA ), true );
+			if ( !fix_angles_ ) mm.set( DOF_ID( AtomID( j, i ), THETA ), true );
 			if ( input_stub_atom2->is_jump() ) continue;
 
 			///////////////////
@@ -501,10 +517,15 @@ ConstrainToIdealMover::vary_bond_geometry(
 			if ( !input_stub_atom3 ) continue;
 			if ( legacy_dof_allow_move_ && !i_want_this_atom_to_move( pose, input_stub_atom3->id() ) ) continue;
 			if ( input_stub_atom3 == current_atom ) continue;
-			mm.set( DOF_ID( AtomID( j, i ), PHI ), true );
+			if ( !fix_torsions_ ) mm.set( DOF_ID( AtomID( j, i ), PHI ), true );
 
 		}
 	}
+
+
+	////////////////////////////////////////////////////////////////////////
+	// add constraints based on lengths, angles, torsions in reference pose.
+	////////////////////////////////////////////////////////////////////////
 
 	utility::vector1< std::pair< AtomID, AtomID > >  bond_list;
 	utility::vector1< std::pair< AtomID, std::pair< AtomID, AtomID > > > bond_angle_list;
@@ -617,7 +638,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 				//   << " " << check_if_proton_chi_atom( pose, i, j ) << std::endl;
 				// if ( input_stub_atom3->input_stub_atom1() == current_atom->input_stub_atom1() ) continue;
 
-				if ( check_if_proton_chi_atom( pose, i, j ) > 0 ) continue; // no phi constraints.
+				if ( check_if_proton_chi_atom( pose, i, j ) > 0 ) continue; // no need for more phi constraints.
 
 				add_bond_dihedral_constraint( current_atom->id(), input_stub_atom1->id(), input_stub_atom2->id(), input_stub_atom3->id(),
 					pose, pose_reference, cst_set );

@@ -60,6 +60,7 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	verbose_( false ),
 	extra_epsilon_( false ),
 	extra_chi_( false ),
+	sample_all_chi_( false ),
 	skip_same_pucker_( false ),
 	idealize_coord_( false ),
 	torsion_screen_( true ),
@@ -138,6 +139,7 @@ void RNA_KIC_Sampler::init() {
 		chi_rotamer_ = RNA_ChiStepWiseSamplerOP( new RNA_ChiStepWiseSampler(
 			sample_nucleoside_, NORTH/*arbitary*/, base_state_ ) );
 		chi_rotamer_->set_extra_chi( extra_chi_ );
+		chi_rotamer_->set_sample_all_chi( sample_all_chi_ );
 		chi_rotamer_->set_bin_size( bin_size_ );
 		chi_rotamer_->init();
 	}

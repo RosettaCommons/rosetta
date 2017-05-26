@@ -89,8 +89,10 @@ public:
 	defines_residue_pair_energy(
 		pose::Pose const &,
 		Size res1,
-		Size res2
-	) const { return ( res1 == (res2+1) || res1 == (res2-1) ); }
+		Size res2 ) const
+	{
+		return ( res1 == (res2+1) || res2 == (res1+1) );
+	}
 
 	virtual Distance atomic_interaction_cutoff() const { return 0; }
 

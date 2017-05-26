@@ -92,7 +92,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	allow_fragment_moves_in_bps_( false ),
 	frag_size_( 0 ),
 	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
-	use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
+	use_chem_shift_data_( option[ OptionKeys::score::rna::rna_chemical_shift_exp_data].user() ),
 	superimpose_over_all_( false ),
 	fixed_stems_( false ),
 	all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),

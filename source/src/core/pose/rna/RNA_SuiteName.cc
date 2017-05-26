@@ -449,6 +449,11 @@ RNA_SuiteName::fill_suiteness_derivative_7d (
 RNA_SuiteAssignment
 RNA_SuiteName::assign( Pose const & pose, Size const res ) const {
 	using namespace chemical::rna;
+	if ( res == 1 ) return suite_undefined_;
+	if ( res > pose.total_residue() ) return suite_undefined_;
+	if ( !pose.residue( res - 1 ).is_RNA()  ) return suite_undefined_;
+	if ( !pose.residue( res ).is_RNA()  )     return suite_undefined_;
+	if ( is_rna_chainbreak(pose, res - 1) )   return suite_undefined_;
 	if ( is_rna_chainbreak(pose, res - 1) ) return suite_undefined_;
 	utility::fixedsizearray1 <Real,7> torsions;
 	torsions[1] = numeric::principal_angle_degrees(

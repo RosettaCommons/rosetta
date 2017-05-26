@@ -482,7 +482,7 @@ get_rna_motifs( pose::Pose const & pose,
 			if ( base_pair.res1() + 1 != u_turn[ 1 ] ) continue;
 			if ( !check_rna_loop( pose, base_pair.res1(), base_pair.res2() - base_pair.res1() + 1 ) ) continue;
 			if ( !check_stack( base_pair.res1(), u_turn[1], base_stacks ) ) continue;
-			//runtime_assert( u_turn[3] < base_pair.res2() );
+			if ( u_turn[3] >= base_pair.res2() ) continue;
 			// Now look for 'A' in GNRA:
 			for ( Size i = u_turn[3]+1; i < base_pair.res2(); i++ ) {
 				if ( !check_stack( u_turn[3],        i, base_stacks ) ) continue;
@@ -507,6 +507,15 @@ get_rna_motifs( pose::Pose const & pose,
 	// Could also set up Type 0, I, II, III ?
 	//  [note this supercedes 'ribose zipper']
 	//
+	//  An alternative would be to use
+	//   Grabow et al., 2013 WIRES nomenclature --
+	//   A-planar & A-twisted.
+	//  Note that they force stereotyped sugar-sugar base pair as anchor:
+	//
+	//      A > G -o- C
+	//      A   X -o- X
+	//      5'  5'    3'
+	//   Not implemented yet.
 	/////////////////////////////////////////
 	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( pose.residue( i ).aa() != na_rad &&  pose.residue( i ).na_analogue() != na_rad ) continue;
@@ -517,7 +526,7 @@ get_rna_motifs( pose::Pose const & pose,
 		for ( Size a_offset = 0; a_offset <= 1; a_offset++ ) {
 			for ( auto const & base_pair : base_pairs ) {
 				if ( base_pair.res1() != i + a_offset ) continue;
-				// if ( base_pair.edge1() != WATSON_CRICK ) continue;
+				// if ( base_pair.edge1() != WATSON_CRICK ) continue; // should be SUGAR in Grabow.
 				if ( base_pair.edge2() != SUGAR ) continue;
 				for ( auto const & stacked_pair : rna_motifs.get_motifs( WC_STACKED_PAIR ) ) {
 					for ( Size stacked_pair_offset = 0; stacked_pair_offset <= 1; stacked_pair_offset++ ) {
@@ -668,9 +677,9 @@ get_rna_motifs( pose::Pose const & pose,
 	/////////////////////////////////////////////////////////////////////////////////
 	// loopE-submotif
 	//
-	// 3  A @-o  U 4
-	// 2  G <-@  A 5
-	// 1  G -o-  C 6
+	// 3  A @-o U 4
+	// 2  G <-@ A 5
+	// 1  G -o- C 6
 	//
 	//  occurs in loopE, SRL, SRP -- note that
 	//  sequence can shift in, e.g., SRP
@@ -679,6 +688,7 @@ get_rna_motifs( pose::Pose const & pose,
 	//  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2448414/pdf/CFG-03-518.pdf
 	//
 	// Specific case of "cross-strand purine stack" from Moore, Ann. Rev. Biochem. 1999.
+	// Also called GA_UA motif [see, e.g., Grabow et al., WIREs RNA 2013]
 	//
 	/////////////////////////////////////////////////////////////////////////////////
 	for ( auto const & base_pair1 : base_pairs ) {
@@ -797,6 +807,9 @@ get_rna_motifs( pose::Pose const & pose,
 	// what is P4-P6 j5/5a? --
 	//  W/C stacked pair with minor groove
 	//  docked into non-W/C stacked-pair
+	// May be describable as an 'off-label'
+	// UA_h turn, since it has a UA_handle
+	//  made with a CC instead of a UA.
 	/////////////////////////////////////////
 
 	/////////////////////////////////////////

@@ -59,7 +59,7 @@ RNA_BulgeEnergyCreator::score_types_for_method() const {
 RNA_BulgeEnergy::RNA_BulgeEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_BulgeEnergyCreator ) ),
 	bulge_bonus_( -10.0 ), /*Totally made up for now*/
-	rna_bulge_bonus_once_per_loop_( basic::options::option[ basic::options::OptionKeys::score::rna_bulge_bonus_once_per_loop ]() /*default true*/)
+	rna_bulge_bonus_once_per_loop_( basic::options::option[ basic::options::OptionKeys::score::rna::rna_bulge_bonus_once_per_loop ]() /*default true*/)
 {}
 
 RNA_BulgeEnergy::~RNA_BulgeEnergy() {}

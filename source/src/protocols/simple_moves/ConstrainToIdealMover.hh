@@ -78,6 +78,10 @@ public:
 	void set_just_rna_backbone( bool const setting ){ just_rna_backbone_ = setting; }
 	void set_just_polar_hydrogens( bool const setting ){ just_polar_hydrogens_ = setting; }
 
+	void set_fix_lengths( bool const & setting ){ fix_lengths_ = setting; }
+	void set_fix_angles( bool const & setting ){ fix_angles_ = setting; }
+	void set_fix_torsions( bool const & setting ){ fix_torsions_ = setting; }
+
 private:
 
 	/// @most of the work happens here.  This modifies the movemap and adds constraints to the Pose that will gently idealize angles and bond lengths
@@ -169,6 +173,11 @@ private:
 
 	bool const legacy_dof_allow_move_;
 	bool const verbose_;
+
+	bool fix_lengths_;
+	bool fix_angles_;
+	bool fix_torsions_;
+	bool disallow_vary_geometry_proton_chi_;
 
 }; //end ConstrainToIdealMover
 

@@ -140,7 +140,7 @@ stepwise_monte_carlo()
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
-	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif() ) ) );
+	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) ) );
 
 	// main loop
 	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );

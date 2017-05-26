@@ -70,6 +70,7 @@ private:
 	utility::vector1< core::scoring::hbonds::HBEvalTuple > hb_eval_tuples_;
 
 	bool allow_virtual_o2prime_hydrogens_;
+	bool disallow_vary_geometry_proton_chi_;
 };
 
 } //polar_hydrogens

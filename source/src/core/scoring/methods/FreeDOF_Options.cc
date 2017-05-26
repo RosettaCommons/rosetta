@@ -47,10 +47,10 @@ FreeDOF_Options::~FreeDOF_Options()
 
 /////////////////////////////
 void FreeDOF_Options::initialize_from_options() {
-	free_suite_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_suite_bonus ]();
-	free_2HOprime_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_2HOprime_bonus ]();
-	free_sugar_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ](); // this is -1.0 by default (also ad ho
-	pack_phosphate_penalty_ = basic::options::option[ basic::options::OptionKeys::score::pack_phosphate_penalty ]();
+	free_suite_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::free_suite_bonus ]();
+	free_2HOprime_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::free_2HOprime_bonus ]();
+	free_sugar_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::free_sugar_bonus ](); // this is -1.0 by default (also ad ho
+	pack_phosphate_penalty_ = basic::options::option[ basic::options::OptionKeys::score::rna::pack_phosphate_penalty ]();
 	free_side_chain_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_side_chain_bonus ]();
 }
 

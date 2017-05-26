@@ -45,6 +45,7 @@ RNA_NucleosideStepWiseSampler::RNA_NucleosideStepWiseSampler(
 	rsd_id_( rsd_id ),
 	base_state_( base_state ),
 	extra_chi_( false ),
+	sample_all_chi_( false ),
 	skip_same_pucker_( true ),
 	idealize_coord_( true ),
 	fast_( false ),
@@ -74,6 +75,7 @@ void RNA_NucleosideStepWiseSampler::init() {
 				rsd_id_, pucker_state, base_state_ ) );
 			chi_rotamer->set_bin_size( bin_size_ );
 			chi_rotamer->set_extra_chi( extra_chi_);
+			chi_rotamer->set_sample_all_chi( sample_all_chi_);
 			if ( fast_ ) chi_rotamer->set_max_range( 1 );
 			new_rotamer_agg->add_external_loop_rotamer( chi_rotamer );
 		}

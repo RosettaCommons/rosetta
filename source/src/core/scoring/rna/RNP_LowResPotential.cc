@@ -101,7 +101,7 @@ RNP_LowResPotential::initialize_rnp_base_pair() {
 	// use different file depending on whether we're scoring from actual centroid positions or "CEN"
 	// positions
 	std::string filename;
-	if ( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() ) { //default false
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() ) { //default false
 		filename = "scoring/rna/rnp_base_pair_actual_centroid.txt";
 	} else {
 		filename = "scoring/rna/rnp_base_pair.txt";
@@ -145,7 +145,7 @@ RNP_LowResPotential::initialize_rnp_aa_rna_backbone() {
 	rnp_aa_rna_backbone_.dimension( num_backbone_dbins_ /*7*/, max_aa_ /*20*/ );
 
 	std::string filename;
-	if ( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() ) { //default false
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() ) { //default false
 		filename = "scoring/rna/rnp_backbone_potential_actual_centroid.txt";
 	} else {
 		filename = "scoring/rna/rnp_backbone_potential.txt";
@@ -228,7 +228,7 @@ RNP_LowResPotential::initialize_rnp_pair() {
 	rnp_pair_base_interface_protein_notburied_.dimension( num_dbins_, max_base_, max_aa_ );
 
 	std::string filename;
-	if ( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() ) { //default false
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() ) { //default false
 		filename = "scoring/rna/rnp_pair_protein_buried_actual_centroid.txt";
 	} else {
 		filename = "scoring/rna/rnp_pair_protein_buried.txt";
@@ -257,7 +257,7 @@ RNP_LowResPotential::initialize_rnp_pair() {
 
 
 	std::string filename2;
-	if ( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() ) { //default false
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() ) { //default false
 		filename2 = "scoring/rna/rnp_pair_protein_notburied_actual_centroid.txt";
 	} else {
 		filename2 = "scoring/rna/rnp_pair_protein_notburied.txt";

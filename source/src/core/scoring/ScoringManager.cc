@@ -544,6 +544,16 @@ ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 	return *rna_dms_low_resolution_potential_;
 }
 
+rna::RNA_SuitePotentialCOP
+ScoringManager::get_rna_suite_potential( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus ) const
+{
+	std::pair< bool, std::string > const key = std::make_pair( calculate_suiteness_bonus, suiteness_bonus );
+	if ( rna_suite_potential_[ key ] == nullptr ) {
+		rna_suite_potential_[ key ] = rna::RNA_SuitePotentialCOP( new rna::RNA_SuitePotential( calculate_suiteness_bonus, suiteness_bonus ) );
+	}
+	return rna_suite_potential_[ key ];
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 loop_graph::evaluator::SixDTransRotPotentialCOP
 ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) const

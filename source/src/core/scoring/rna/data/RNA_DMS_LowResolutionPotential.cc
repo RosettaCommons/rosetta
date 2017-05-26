@@ -79,7 +79,7 @@ namespace data {
 
 //Constructor
 RNA_DMS_LowResolutionPotential::RNA_DMS_LowResolutionPotential():
-	careful_base_pair_classifier_( option[ OptionKeys::score::DMS_careful_base_pair_classifier ]() )
+	careful_base_pair_classifier_( option[ OptionKeys::score::rna::DMS_careful_base_pair_classifier ]() )
 {
 }
 

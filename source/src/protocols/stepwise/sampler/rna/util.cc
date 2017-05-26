@@ -145,6 +145,7 @@ setup_sampler( pose::Pose const & pose,
 		sampler->set_idealize_coord( options->use_phenix_geo() );
 		sampler->set_extra_epsilon( options->sampler_extra_epsilon_rotamer() );
 		sampler->set_extra_chi( options->extra_chi() );
+		sampler->set_sample_all_chi( options->sample_all_chi() );
 		sampler->set_random( options->choose_random() );
 		sampler->set_fast( options->integration_test_mode() ); // overrules extra_chi, extra_epsilon; and sets bin size to 40!
 		if ( options->finer_sampling_at_chain_closure() ) sampler->set_bin_size( 10 );
@@ -162,6 +163,7 @@ setup_sampler( pose::Pose const & pose,
 	sampler->set_extra_epsilon( options->sampler_extra_epsilon_rotamer() );
 	sampler->set_extra_beta( options->sampler_extra_beta_rotamer() );
 	sampler->set_extra_chi( options->extra_chi() );
+	sampler->set_sample_all_chi( options->sample_all_chi() );
 	sampler->set_random( options->choose_random() );
 	if ( close_chain && options->finer_sampling_at_chain_closure()  ) sampler->set_bin_size( 10 );
 	sampler->init();

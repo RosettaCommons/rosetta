@@ -102,31 +102,31 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 		TR << "include_magnetic_anisotropy_effect_ = false " << std::endl;
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_exp_data].user() == false ) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_exp_data].user() == false ) {
 		utility_exit_with_message( "User need to pass in score:rna_chemical_shift_exp_data" );
 	}
 
 
-	std::string const exp_CS_data_filename = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_exp_data]();
+	std::string const exp_CS_data_filename = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_exp_data]();
 
 	utility::vector1< core::Size > include_res_list;
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_include_res].user() ) {
-		include_res_list = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_include_res]();
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_include_res].user() ) {
+		include_res_list = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_include_res]();
 	} else {
 		TR << "User did not pass in score:rna_chemical_shift_include_res, including all residue!" << std::endl;
 		if ( include_res_list.size() != 0 ) utility_exit_with_message( "User did not pass in score:rna_chemical_shift_include_res option but include_res_list.size() != 0!" );
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_H5_prime_mode].user() ) {
-		H5_prime_mode_ = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_H5_prime_mode]();
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_H5_prime_mode].user() ) {
+		H5_prime_mode_ = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_H5_prime_mode]();
 		TR << "Using user - specified H5_prime_mode_ = " << H5_prime_mode_ << std::endl;
 	} else {
 		H5_prime_mode_ = "LEAST_SQUARE_IGNORE_DUPLICATE"; //DEFAULT!
 		TR << "Using default H5_prime_mode_ = " << H5_prime_mode_ << std::endl;
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord ]() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord ]() ) {
 		nuchemics_mode_ = false;
 		// for now, when using LARMORD, deriv_check fails when H5_prime_mode_ = "LEAST"
 		// until fixed will set H5_prime_mode_ = "UNIQUE" when using LARMORD
@@ -137,8 +137,8 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 		//TR << "Using default NUCHEMICS to calculate 1H chemical shifts" << std::endl;
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_verbose ]() ) {
-		cs_verbose_mode_ = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_verbose ]();
+	if ( basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_verbose ]() ) {
+		cs_verbose_mode_ = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_verbose ]();
 	}
 
 	utility::vector1< utility::vector1< std::string > > proton_entry_list;
@@ -186,31 +186,31 @@ RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 	path_to_parameter_files_ = "scoring/rna/chem_shift_larmor_d/";
 
 	//load accuracy weights from file
-	std::string const larmord_accuracy_filename = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord_wt]();
+	std::string const larmord_accuracy_filename = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord_wt]();
 	std::string const full_filename_acc = basic::database::full_name( path_to_parameter_files_ + "/" + larmord_accuracy_filename  );
 	load_larmord_weights( full_filename_acc );
 
 	if ( !nuchemics_mode_ ) {
 		//load parameter file
-		std::string const larmord_parameter_filename = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord_par]();
+		std::string const larmord_parameter_filename = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord_par]();
 		std::string const full_filename_par = basic::database::full_name( path_to_parameter_files_ + "/" + larmord_parameter_filename  );
 		load_larmord_parameters( full_filename_par );
 
 		//load reference shift file
-		std::string const larmord_reference_filename = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord_ref]();
+		std::string const larmord_reference_filename = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord_ref]();
 		std::string const full_filename_ref = basic::database::full_name( path_to_parameter_files_ + "/" + larmord_reference_filename  );
 		load_larmord_reference_shifts( full_filename_ref );
 
 		// load neighbor atoms file
-		std::string const larmord_neigbhor_filename = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord_nei]();
+		std::string const larmord_neigbhor_filename = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord_nei]();
 		std::string const full_filename_nei = basic::database::full_name( path_to_parameter_files_ + "/" + larmord_neigbhor_filename  );
 		load_larmord_neighbor_atoms( full_filename_nei );
 
 		// get distance cutoff
-		larmord_distance_cutoff_ = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord_cut]();
+		larmord_distance_cutoff_ = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord_cut]();
 
 		// get beta
-		larmord_beta_ = basic::options::option[ basic::options::OptionKeys::score::rna_chemical_shift_larmord_beta]();
+		larmord_beta_ = basic::options::option[ basic::options::OptionKeys::score::rna::rna_chemical_shift_larmord_beta]();
 
 		TR << "LARMORD parameter file " << full_filename_par << std::endl;
 		TR << "LARMORD weight file " << larmord_accuracy_filename << std::endl;

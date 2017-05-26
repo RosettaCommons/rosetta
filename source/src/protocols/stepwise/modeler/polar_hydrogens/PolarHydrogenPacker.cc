@@ -30,6 +30,8 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.polar_hydrogens.PolarHydrogenPacker" );
@@ -51,7 +53,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.polar_hydrogen
 //
 // - Allows for virtualizing/instantiation of 2'-OH; could be generalized to any proton chi torsion, actually.
 //
-// - Not guaranteed to give best scoring configuration (currently is greedy, traversing through hydrogens in their
+// - TODO: Not guaranteed to give best scoring configuration (currently is greedy, traversing through hydrogens in
 //    sequence order), but we could solve this exactly through dynamic programming. See, e.g.,
 //
 //    Leaver-Fay, et al. (2008), "Faster placement of hydrogens in protein structures by dynamic programming", JEA.
@@ -66,6 +68,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace core::scoring::hbonds;
 using utility::vector1;
+using namespace basic::options;
 
 namespace protocols {
 namespace stepwise {
@@ -74,7 +77,8 @@ namespace polar_hydrogens {
 
 //Constructor
 PolarHydrogenPacker::PolarHydrogenPacker():
-	Mover()
+	Mover(),
+	disallow_vary_geometry_proton_chi_( option[ OptionKeys::stepwise::polar_hydrogens::disallow_vary_geometry_proton_chi ]() ) // for debugging
 {
 	init();
 }
@@ -145,6 +149,7 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 				Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_input_stub.global2local( ideal_res.xyz( j ) ) );
 				ideal_hydrogen_xyz_positions.push_back( ideal_hydrogen_xyz );
 			} else {
+				if ( disallow_vary_geometry_proton_chi_ ) continue;
 				// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
 				utility::vector1< Real > samples = residue.type().proton_chi_samples( proton_chi_no );
 				utility::vector1< Real > const & extra_samples = residue.type().proton_chi_extra_samples( proton_chi_no );
@@ -273,6 +278,23 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 
 			Distance dist = ( rsd.xyz( j ) - moving_xyz ).length();
 			if ( dist >= contact_distance_cutoff_ ) continue;
+
+			// check if there's already a H-bond "back" from this acceptor -- happens in, e.g.,
+			//  2'-OH/2'-OH pairs for RNA. Without this check, get a 'Mexican standoff':
+			//
+			//     O-H ... H-O
+			//
+			if ( pose.residue_type( i ).heavyatom_has_polar_hydrogens( j ) ) {
+				bool H_pointing_back( false );
+				for ( Size jj = pose.residue_type( i ).attached_H_begin( j );
+						jj <= pose.residue_type( i ).attached_H_end( j ); jj++ ) {
+					if ( angle_of( moving_xyz, rsd.xyz( j ), rsd.xyz( jj ) ) < 1.0 /* radians, so ~60 degrees */ ) {
+						//TR << "WATCH OUT! " << pose.pdb_info()->number(i) << " " << rsd.atom_name( j )  << "already has an H that points back to " << pose.pdb_info()->number(moving_res) << " " << pose.residue( moving_res ).atom_name( atomno ) << std::endl;
+						H_pointing_back = true; break;
+					}
+				}
+				if ( H_pointing_back ) continue;
+			}
 
 			vector1< Vector > acceptor_xyz_info;
 			acceptor_xyz_info.push_back( rsd.xyz( j ) );

@@ -65,7 +65,7 @@ RNA_FilteredBaseBaseInfo::RNA_FilteredBaseBaseInfo():
 	scale_axis_stagger_( true ),
 	basepair_axis_stagger_scaling_( 0.1 ),
 	basestack_axis_scaling_( 1.0 ),
-	include_neighbor_base_stacks_( basic::options::option[ basic::options::OptionKeys::score::include_neighbor_base_stacks ]() ),
+	include_neighbor_base_stacks_( basic::options::option[ basic::options::OptionKeys::score::rna::include_neighbor_base_stacks ]() ),
 	calculated_( false ),
 	rna_verbose_( false )
 {}

@@ -74,6 +74,7 @@ StepWiseRNA_ModelerOptions::initialize_variables(){
 	PBP_clustering_at_chain_closure_ = false;
 	allow_syn_pyrimidine_ = false;
 	extra_chi_ = false;
+	sample_all_chi_ = false;
 	use_phenix_geo_ = false;
 	virtual_sugar_legacy_mode_ = false;
 	virtual_sugar_keep_base_fixed_ = true;
@@ -129,6 +130,11 @@ StepWiseRNA_ModelerOptions::initialize_from_command_line(){
 	finer_sampling_at_chain_closure_ = option[ OptionKeys::stepwise::rna::finer_sampling_at_chain_closure]();
 	PBP_clustering_at_chain_closure_ = option[ OptionKeys::stepwise::rna::PBP_clustering_at_chain_closure]();
 	allow_syn_pyrimidine_ = option[ OptionKeys::stepwise::rna::sampler_allow_syn_pyrimidine ]();
+	sample_all_chi_ = option[ OptionKeys::stepwise::rna::sample_all_chi]();
+	if ( sample_all_chi_ && !allow_syn_pyrimidine_ ) {
+		TR << TR.Red << "Setting allow_syn_pyrimidine to true since -sample_all_chi was specified" << std::endl;
+		allow_syn_pyrimidine_ = true;
+	}
 	extra_chi_ = option[ OptionKeys::stepwise::rna::sampler_extra_chi_rotamer]();
 	use_phenix_geo_ = option[ basic::options::OptionKeys::rna::corrected_geo ]();
 	virtual_sugar_legacy_mode_ = option[ OptionKeys::stepwise::rna::virtual_sugar_legacy_mode ];

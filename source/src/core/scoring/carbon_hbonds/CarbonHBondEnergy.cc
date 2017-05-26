@@ -82,7 +82,7 @@ CarbonHBondEnergy::CarbonHBondEnergy() :
 	max_dis_( carbon_hbond_potential_.max_dis() ),
 	max_dis2_( max_dis_*max_dis_ ),
 	path_dist_cutoff_( 4 ),
-	orientation_dep_rna_ch_o_bonds_( ! basic::options::option[ basic::options::OptionKeys::score::disable_orientation_dependent_rna_ch_o_bonds ]),
+	orientation_dep_rna_ch_o_bonds_( ! basic::options::option[ basic::options::OptionKeys::score::rna::disable_orientation_dependent_rna_ch_o_bonds ]),
 	verbose_( false )
 {}
 

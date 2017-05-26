@@ -44,7 +44,8 @@ RNA_ChiStepWiseSampler::RNA_ChiStepWiseSampler(
 	base_state_( base_state ),
 	pucker_state_( pucker_state ),
 	bin_size_( 20 ),
-	max_range_( 20 ) //+- 20 degrees
+	max_range_( 20 ), //+- 20 degrees
+	sample_all_chi_( false )
 {
 	runtime_assert( base_state <= 2 );
 	runtime_assert( pucker_state == NORTH || pucker_state_ == SOUTH );
@@ -53,23 +54,27 @@ RNA_ChiStepWiseSampler::RNA_ChiStepWiseSampler(
 void RNA_ChiStepWiseSampler::init() {
 	Real chi_center;
 	TorsionList allowed_torsions;
-	if ( pucker_state_ == NORTH ) {
-		if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
-			chi_center = torsion_info_.chi_north_anti();
-			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
-		}
-		if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
-			chi_center = torsion_info_.chi_north_syn();
-			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
-		}
-	} else if ( pucker_state_ == SOUTH ) {
-		if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
-			chi_center = torsion_info_.chi_south_anti();
-			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
-		}
-		if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
-			chi_center = torsion_info_.chi_south_syn();
-			add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
+	if ( sample_all_chi_ /* to test blind learning of chi potential */ ) {
+		allowed_torsions = get_full_torsions( bin_size_ );
+	} else {
+		if ( pucker_state_ == NORTH ) {
+			if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
+				chi_center = torsion_info_.chi_north_anti();
+				add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
+			}
+			if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
+				chi_center = torsion_info_.chi_north_syn();
+				add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
+			}
+		} else if ( pucker_state_ == SOUTH ) {
+			if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
+				chi_center = torsion_info_.chi_south_anti();
+				add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
+			}
+			if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
+				chi_center = torsion_info_.chi_south_syn();
+				add_values_from_center( allowed_torsions, chi_center, max_range_, bin_size_ );
+			}
 		}
 	}
 

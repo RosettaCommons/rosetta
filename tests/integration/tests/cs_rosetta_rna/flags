@@ -1,6 +1,6 @@
 -pdb 1MIS_NMR.pdb
 -mode score_pdb
 -out:file:silent SCORE.out
--score:rna_chemical_shift_exp_data 1MIS_exp_1H_chem_shifts.str
+-rna_chemical_shift_exp_data 1MIS_exp_1H_chem_shifts.str
 -set_weights rna_chem_shift 1.0
 -analytic_etable_evaluation false

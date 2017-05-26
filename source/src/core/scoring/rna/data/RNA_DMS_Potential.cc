@@ -116,7 +116,7 @@ namespace data {
 
 //Constructor
 RNA_DMS_Potential::RNA_DMS_Potential():
-	separate_scores_( option[ OptionKeys::score::DMS_separate_features ]() ),
+	separate_scores_( option[ OptionKeys::score::rna::DMS_separate_features ]() ),
 	occ_dist_( 1.5 ),
 	methyl_probe_dist_( 3.5 ),
 	oxygen_probe_dist_( 5.5 ),

@@ -71,6 +71,7 @@ StepWiseBasicOptions::initialize_variables(){
 	min_tolerance_ = 0.000025;
 	vary_rna_bond_geometry_ = false;
 	vary_polar_hydrogen_geometry_ = false;
+	disallow_pack_polar_hydrogens_ = false;
 	use_packer_instead_of_rotamer_trials_ = false;
 	mapfile_activated_ = false;
 	lores_ = false;
@@ -108,7 +109,8 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	min_type_ = option[ basic::options::OptionKeys::stepwise::min_type ]();
 	min_tolerance_ = option[ basic::options::OptionKeys::stepwise::min_tolerance ]();
 	vary_rna_bond_geometry_ = option[ basic::options::OptionKeys::rna::vary_geometry ]();
-	vary_polar_hydrogen_geometry_ = option[ basic::options::OptionKeys::stepwise::vary_polar_hydrogen_geometry ]();
+	vary_polar_hydrogen_geometry_ = option[ basic::options::OptionKeys::stepwise::polar_hydrogens::vary_polar_hydrogen_geometry ]();
+	disallow_pack_polar_hydrogens_ = option[ basic::options::OptionKeys::stepwise::polar_hydrogens::disallow_pack_polar_hydrogens ]();
 	use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
 	output_minimized_pose_list_ = option[ basic::options::OptionKeys::stepwise::output_minimized_pose_list ]();
 	output_cluster_size_ = option[ basic::options::OptionKeys::stepwise::output_cluster_size ]();

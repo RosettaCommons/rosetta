@@ -17,14 +17,18 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/rna/util.hh>
-#include <devel/init.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
 #include <protocols/rna/denovo/util.hh>
 
 // C++ headers
@@ -41,6 +45,7 @@
 
 using namespace core;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL::format;
 using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,14 +75,18 @@ rna_suitename()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		protocols::rna::denovo::ensure_phosphate_nomenclature_matches_mini( pose );
+		//  protocols::rna::denovo::ensure_phosphate_nomenclature_matches_mini( pose );
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 		core::pose::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
 
-		std::cout << "-----Pose " << i << "-----" << std::endl;
+		std::cout << "-----Pose " << i << ": " << tag_from_pose( pose ) << "-----" << std::endl;
 		for ( Size j = 1; j <= pose.size(); ++j ) {
-			RNA_SuiteAssignment assignment = suitename.assign(pose, j);
-			std::cout << "Residue " << j << ' ' << assignment.name << ' ' << std::setprecision(3) <<assignment.suiteness << std::endl;
+			if ( !pose.residue( j ).is_RNA() ) continue;
+			RNA_SuiteAssignment assignment = suitename.assign(pose, j + 1 ); // note funny j+1 convention in suitename.assign
+			std::cout << "Residue " << I( 3, j ) << ' ' <<
+				pose.pdb_info()->chain(j) << ':' << I(4, pose.pdb_info()->number(j)) <<
+				' ' << pose.residue(j).name3() << ' ' <<
+				assignment.name << ' ' << std::setprecision(3) <<assignment.suiteness << std::endl;
 		}
 	}
 

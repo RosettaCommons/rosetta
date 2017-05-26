@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility/file/FileName.hh>
 
 static basic::Tracer TR( "protocols.stepwise.setup.StepWiseMonteCarloJobDistributor" );
 
@@ -88,7 +89,7 @@ StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
 	runtime_assert( start_pose_ != 0 ); // initialized.
 	pose = *start_pose_;
 	stepwise_monte_carlo_->set_model_tag( out_tag_ );
-	stepwise_monte_carlo_->set_out_file_prefix( silent_file_ );
+	stepwise_monte_carlo_->set_out_file_prefix( utility::file::FileName(silent_file_).base() );
 
 	// Maybe here is where we check for a possibly checkpointed file for structure out_tag_
 

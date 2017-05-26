@@ -129,7 +129,7 @@ RNA_VDW_Energy::residue_pair_energy(
 
 	if ( (rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA()) ) {
 
-		bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
+		bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() );
 		if ( rsd1.is_protein() ) {
 			bool is_centroid = rsd1.type().mode() == core::chemical::CENTROID_t;
 			if ( !is_centroid && !use_actual_centroid ) {

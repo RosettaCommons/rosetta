@@ -109,6 +109,9 @@ public:
 	bool vary_polar_hydrogen_geometry() const { return vary_polar_hydrogen_geometry_; }
 	void set_vary_polar_hydrogen_geometry( bool const & setting ){ vary_polar_hydrogen_geometry_ = setting; }
 
+	void set_disallow_pack_polar_hydrogens( bool const & setting ){ disallow_pack_polar_hydrogens_ = setting; }
+	bool disallow_pack_polar_hydrogens() const { return disallow_pack_polar_hydrogens_; }
+
 	void set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
 	bool use_packer_instead_of_rotamer_trials() const{ return use_packer_instead_of_rotamer_trials_; }
 
@@ -171,6 +174,7 @@ private:
 	core::Real min_tolerance_;
 	bool vary_rna_bond_geometry_;
 	bool vary_polar_hydrogen_geometry_;
+	bool disallow_pack_polar_hydrogens_;
 	bool use_packer_instead_of_rotamer_trials_;
 	bool lores_;
 	bool verbose_sampler_;

@@ -230,7 +230,7 @@ freeze_waters( core::pose::Pose const & pose, core::kinematics::MoveMap & mm )
 void
 StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 	rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
-	if ( options_->vary_polar_hydrogen_geometry() ) polar_hydrogens::pack_polar_hydrogens( pose, allow_virtual_o2prime_hydrogens_ );
+	if ( options_->vary_polar_hydrogen_geometry() && !options_->disallow_pack_polar_hydrogens() ) polar_hydrogens::pack_polar_hydrogens( pose, allow_virtual_o2prime_hydrogens_ );
 	if ( options_->hydrate_magnesiums() ) magnesium::hydrate_magnesiums( pose, true, options_->test_all_mg_hydration_frames() ); // this might be better as part of MasterPacker, in connection sampler.
 
 	core::scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();

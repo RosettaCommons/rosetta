@@ -67,12 +67,15 @@ namespace monte_carlo {
 namespace submotif {
 
 //Constructor
-SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
+SubMotifLibrary::SubMotifLibrary(
+	core::chemical::ResidueTypeSetCAP rsd_set,
 	bool const include_submotifs_from_jump_library,
-	bool const use_first_jump_for_submotif):
+	bool const use_first_jump_for_submotif,
+	utility::vector1< std::string > const & exclude_submotif_list ):
 	rsd_set_( rsd_set ),
 	include_submotifs_from_jump_library_( include_submotifs_from_jump_library ),
-	use_first_jump_for_submotif_( use_first_jump_for_submotif )
+	use_first_jump_for_submotif_( use_first_jump_for_submotif ),
+	exclude_submotif_list_( exclude_submotif_list )
 {
 	initialize();
 }
@@ -107,8 +110,16 @@ SubMotifLibrary::initialize_from_directory( std::string const & directory ){
 		}
 	}
 
+	for ( auto const & exclude_submotif : exclude_submotif_list_ ) {
+		if ( !filenames.has_value( exclude_submotif ) ) {
+			TR << TR.Red << exclude_submotif << " must be in " << filenames;
+			utility_exit_with_message( "requested exclude submotif is not in list" );
+		}
+	}
+
 	for ( Size n = 1; n <= filenames.size(); n++ ) {
 		PoseTag const & tag = filenames[ n ];
+		if ( exclude_submotif_list_.has_value( tag ) ) continue;
 		if ( tag.substr(  tag.size()-4, 4 ) != ".pdb" ) continue;
 		std::string const full_filename = directory + "/" + tag ;
 		runtime_assert( utility::file::file_exists( full_filename ) );

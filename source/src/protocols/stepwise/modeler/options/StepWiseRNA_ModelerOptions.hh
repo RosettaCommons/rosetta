@@ -95,6 +95,9 @@ public:
 	bool const & extra_chi() const { return extra_chi_; }
 	void set_extra_chi( bool const & setting ){ extra_chi_ = setting; }
 
+	void set_sample_all_chi( bool const & setting ){ sample_all_chi_ = setting; }
+	bool sample_all_chi() const { return sample_all_chi_; }
+
 	bool const & use_phenix_geo() const { return use_phenix_geo_; }
 	void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
 
@@ -208,6 +211,7 @@ private:
 	bool PBP_clustering_at_chain_closure_;
 	bool allow_syn_pyrimidine_;
 	bool extra_chi_;
+	bool sample_all_chi_;
 	bool use_phenix_geo_;
 	bool virtual_sugar_legacy_mode_;
 	bool virtual_sugar_keep_base_fixed_;

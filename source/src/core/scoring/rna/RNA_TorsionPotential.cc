@@ -120,10 +120,11 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & options ):
 	delta_fade_( 10.0 ),
 	alpha_fade_( 10.0 ),
-	skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
+	skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna::rna_torsion_skip_chainbreak ]() ),
 	verbose_( false ),
 	use_new_potential_( false ),
-	use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
+	use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::rna::use_2prime_OH_potential ]() ),
+	use_chi_potential_( basic::options::option[ basic::options::OptionKeys::score::rna::use_rna_chi_potential ]() ),
 	syn_G_potential_bonus_( options.syn_G_potential_bonus() ),
 	rna_fitted_torsion_info_( chemical::rna::RNA_FittedTorsionInfoOP( new chemical::rna::RNA_FittedTorsionInfo ) ),
 	intrares_side_chain_score_( 0.0 )
@@ -200,7 +201,8 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 
 	intrares_side_chain_score_ = 0.0; // saves info on just side-chain terms: CHI, NU2, NU1, O2H
 	if ( verbose_ )  TR << "Chi torsion" << std::endl;
-	if ( is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) ) {
+	if ( is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) &&
+			use_chi_potential_ ) {
 		Real chi_score( 0.0 );
 		if ( use_new_potential_ ) {
 			// If purine, rather than fixed rgu/rad checks
@@ -540,7 +542,8 @@ RNA_TorsionPotential::eval_atom_derivative(
 		}
 
 		/////////////////////////////////////CHI///////////////////////////////////////////////////
-		if ( get_f1_f2( id::TorsionID( seqpos, id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ), pose, id, f1, f2 ) ) {
+		if ( use_chi_potential_ &&
+				get_f1_f2( id::TorsionID( seqpos, id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ), pose, id, f1, f2 ) ) {
 
 			Real dE_dtorsion;
 

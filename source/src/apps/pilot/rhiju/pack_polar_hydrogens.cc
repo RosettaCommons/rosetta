@@ -50,14 +50,12 @@ static basic::Tracer TR( "apps.pilot.rhiju.pack_polar_hydrogens" );
 void
 pack_polar_hydrogens()
 {
-  using namespace core::pose;
-  using namespace core::scoring;
-  using namespace core::chemical;
-  using namespace protocols::stepwise::setup;
-  using namespace utility::file;
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace protocols::stepwise::setup;
+	using namespace utility::file;
 
-	// Following could be generalized to fa_standard, after recent unification, but
-	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Following could go to a FullModelSetup class.
@@ -81,7 +79,7 @@ my_main( void* )
 	pack_polar_hydrogens();
 	protocols::viewer::clear_conformation_viewers();
 	std::cout << "Total time to run " << static_cast<core::Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-  exit( 0 );
+	exit( 0 );
 }
 
 

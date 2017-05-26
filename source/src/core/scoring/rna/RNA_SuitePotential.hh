@@ -42,8 +42,8 @@ class RNA_SuitePotential : public utility::pointer::ReferenceCount {
 
 public:
 
-	RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
-		bool const calculate_suiteness_bonus = false );
+	RNA_SuitePotential( bool const calculate_suiteness_bonus = false,
+		std::string const & suiteness_bonus = "" );
 
 	virtual ~RNA_SuitePotential();
 

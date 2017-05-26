@@ -51,9 +51,9 @@ RNA_EnergyMethodOptions::~RNA_EnergyMethodOptions()
 
 /////////////////////////////
 void RNA_EnergyMethodOptions::initialize_from_options() {
-	syn_G_potential_bonus_ = basic::options::option[ basic::options::OptionKeys::score::syn_G_potential_bonus ]();
+	syn_G_potential_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::syn_G_potential_bonus ]();
 	torsion_potential_ = basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ]();
-	suiteness_bonus_ = basic::options::option[ basic::options::OptionKeys::score::suiteness_bonus ]();
+	suiteness_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::suiteness_bonus ]();
 }
 
 ////////////////////////////

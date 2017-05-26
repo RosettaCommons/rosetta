@@ -34,6 +34,7 @@
 #include <core/pose/rna/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -41,6 +42,9 @@
 
 //Numeric Headers
 #include <numeric/deriv/dihedral_deriv.hh>
+
+static basic::Tracer TR( "core.scoring.rna.RNA_SuiteEnergy", basic::t_info );
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Note:
@@ -87,8 +91,8 @@ RNA_SuiteEnergyCreator::score_types_for_method() const {
 RNA_SuiteEnergy::RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
 	parent( methods::EnergyMethodCreatorOP( new RNA_SuiteEnergyCreator ) ),
 	options_( options ),
-	rna_suite_potential_( RNA_SuitePotentialOP( new RNA_SuitePotential( options, false ) ) ),
-	rna_suite_potential_for_suiteness_bonus_(  RNA_SuitePotentialOP( new RNA_SuitePotential( options, true ) ) )
+	rna_suite_potential_( RNA_SuitePotentialOP( new RNA_SuitePotential( false ) ) ),
+	rna_suite_potential_for_suiteness_bonus_(  RNA_SuitePotentialOP( new RNA_SuitePotential( true, options.suiteness_bonus() ) ) )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -129,7 +129,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 	core::Real const NEIGHBOR_CUTOFF( 10.0 );
 	// Calculate the environment for each residue in the pose
 	// this option defaults to false
-	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
+	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() );
 
 	// Figure out the interface residues
 	// and buried or not for protein residues
@@ -240,7 +240,7 @@ RNP_LowResEnergy::residue_pair_energy(
 	if ( !(( rsd1.is_RNA() && rsd2.is_protein() ) || ( rsd1.is_protein() && rsd2.is_RNA() )) ) return;
 
 	// this option is false by default
-	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
+	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]() );
 
 	// Just give a warning and return if the protein isn't coarse
 	if ( rsd1.is_protein() ) {

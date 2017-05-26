@@ -90,6 +90,10 @@ public:
 		set_and_reinit( extra_chi_, setting );
 	}
 
+	void set_sample_all_chi( bool const setting ) {
+		set_and_reinit( sample_all_chi_, setting );
+	}
+
 	void set_skip_same_pucker( bool const setting ) {
 		set_and_reinit( skip_same_pucker_, setting );
 	}
@@ -119,6 +123,7 @@ public:
 	void set_fast( core::Real const setting ) {
 		if ( setting ) {
 			extra_chi_ = false;
+			sample_all_chi_ = false;
 			extra_epsilon_ = false;
 			set_and_reinit( bin_size_, 40.0 /*setting*/ );
 		}
@@ -143,7 +148,7 @@ private:
 	core::Size sample_nucleoside_;
 	core::Real bin_size_;
 	core::Size max_tries_;
-	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,
+	bool verbose_, extra_epsilon_, extra_chi_, sample_all_chi_, skip_same_pucker_,
 		idealize_coord_, torsion_screen_, random_chain_closed_;
 
 	StepWiseSamplerSizedCombOP bb_rotamer_;

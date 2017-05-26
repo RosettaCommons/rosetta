@@ -80,6 +80,11 @@ public:
 		}
 	}
 
+	void set_sample_all_chi( bool const & setting ){
+		sample_all_chi_ = setting;
+		if ( sample_all_chi_ ) max_range_ = 180.0;
+	}
+
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_ChiStepWiseSampler"; }
 
@@ -91,8 +96,7 @@ private:
 	core::chemical::rna::ChiState base_state_;
 	core::chemical::rna::PuckerState pucker_state_;
 	core::Real bin_size_, max_range_;
-	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// bool extra_chi_;
+	bool sample_all_chi_;
 
 	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 };

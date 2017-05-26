@@ -25,6 +25,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
+#include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -642,6 +643,7 @@ FullModelParameters::read_cst_file( std::string const & cst_file ) {
 	cst_string_ = "";
 	full_model_pose_for_constraints_ = 0;
 	cst_set_ = 0;
+	runtime_assert( utility::file::file_exists( cst_file ) );
 	utility::io::izstream data( cst_file.c_str() );
 	while ( data.good() ) {
 		std::string line;

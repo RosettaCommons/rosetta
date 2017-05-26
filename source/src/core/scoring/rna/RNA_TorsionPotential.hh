@@ -125,6 +125,7 @@ private:
 	bool verbose_;
 	bool use_new_potential_;
 	bool const use_2prime_OH_potential_;
+	bool const use_chi_potential_;
 	Real const syn_G_potential_bonus_;
 	chemical::rna::RNA_FittedTorsionInfoOP rna_fitted_torsion_info_;
 

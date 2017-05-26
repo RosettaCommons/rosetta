@@ -297,7 +297,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 	apply_set_weights(  denovo_scorefxn_, option[ OptionKeys::rna::denovo::set_lores_weights ]() );
 
 	if ( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
-		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna_chem_map_lores_weight ]() );
+		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna::rna_chem_map_lores_weight ]() );
 	}
 
 	if ( options_->filter_vdw() ) {

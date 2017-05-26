@@ -14,7 +14,6 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_SuitePotential.hh>
-#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Package Headers
 
@@ -74,8 +73,8 @@ namespace rna {
 
 RNA_SuitePotential::~RNA_SuitePotential() {}
 
-RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
-	bool const calculate_suiteness_bonus /* = false */ ):
+RNA_SuitePotential::RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */,
+	std::string const & suiteness_bonus ):
 	n_torsions_( 7 ),
 	inv_cov_( n_torsions_, n_torsions_ ),
 	offset_( 0.0 ),
@@ -87,9 +86,9 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 
 	std::string path;
 	if ( calculate_suiteness_bonus_ ) {
-		path = "scoring/rna/suiteness_bonus/" + options.suiteness_bonus();
+		path = "scoring/rna/suiteness_bonus/" + suiteness_bonus;
 	} else {
-		path = "scoring/rna/suite_potentials/" + option[ OptionKeys::score::rna_suite_potential ]() /* default is Richardson*/;
+		path = "scoring/rna/suite_potentials/" + option[ OptionKeys::score::rna::rna_suite_potential ]() /* default is Richardson*/;
 	}
 	utility::io::izstream stream;
 	std::string line;
@@ -166,7 +165,8 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 // (torsion - centers_[i]).T.dot(inv_cov_).dot(torsion - centers_[i])
 // which is the mahalanobis distance between the torsions and the centers
 // Return false if there is no valid suite.
-bool RNA_SuitePotential::eval_score(
+bool
+RNA_SuitePotential::eval_score(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose

@@ -208,6 +208,8 @@ public:
 
 	carbon_hbonds::CarbonHBondPotential const & get_CarbonHBondPotential() const;
 
+	rna::RNA_SuitePotentialCOP get_rna_suite_potential( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus ) const;
+
 	loop_graph::evaluator::SixDTransRotPotentialCOP get_LoopCloseSixDPotential( std::string const & database_file ) const;
 
 	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
@@ -379,6 +381,7 @@ private:
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotentialOP rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;
+	mutable std::map< std::pair< bool, std::string >, rna::RNA_SuitePotentialCOP > rna_suite_potential_;
 	mutable std::map< std::string, loop_graph::evaluator::SixDTransRotPotentialCOP > loop_close_six_d_potential_;
 	mutable P_AAOP p_aa_;
 	mutable P_AA_ssOP p_aa_ss_;

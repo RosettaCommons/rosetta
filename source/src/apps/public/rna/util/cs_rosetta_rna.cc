@@ -222,8 +222,8 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 Real
 compute_chem_shift_RMSD(Pose const & pose) {
 
-	if ( !option[ score::rna_chemical_shift_exp_data ].user() ) {
-		utility_exit_with_message("-score::rna_chemical_shift_exp_data option required!");
+	if ( !option[ score::rna::rna_chemical_shift_exp_data ].user() ) {
+		utility_exit_with_message("-score::rna::rna_chemical_shift_exp_data option required!");
 	}
 
 	Pose chem_shift_pose = pose;
@@ -292,8 +292,8 @@ cs_rosetta_rna_pdb(bool perform_minimize)
 	}
 	string pdb_file  = option[ pdb ]();
 
-	if ( !option[ score::rna_chemical_shift_exp_data ].user() ) {
-		utility_exit_with_message("-score::rna_chemical_shift_exp_data option required!");
+	if ( !option[ score::rna::rna_chemical_shift_exp_data ].user() ) {
+		utility_exit_with_message("-score::rna::rna_chemical_shift_exp_data option required!");
 	}
 
 	pose::Pose pose;
