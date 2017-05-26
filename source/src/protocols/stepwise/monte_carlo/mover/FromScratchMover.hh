@@ -20,6 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/FromScratchMoverCreator.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 
 namespace protocols {
@@ -46,8 +47,22 @@ public:
 		utility::vector1<core::Size> const & residues_to_instantiate_in_full_model_numbering ) const;
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
-	virtual std::string get_name() const;
+	virtual void apply( core::pose::Pose & pose_to_visualize ) override;
+	protocols::moves::MoverOP fresh_instance() const override { return FromScratchMoverOP( new FromScratchMover ); }
+	protocols::moves::MoverOP clone() const override;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
@@ -62,6 +77,7 @@ private:
 private:
 
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
+	utility::vector1< core::Size > residues_to_instantiate_in_full_model_numbering_;
 
 };
 

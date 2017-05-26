@@ -1032,8 +1032,80 @@ core::Angle
 get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position );
 
 
+// Stepwise
+
+void
+fix_up_residue_type_variants_at_strand_beginning( core::pose::Pose & pose, core::Size const res );
+
+void
+fix_up_residue_type_variants_at_strand_end( core::pose::Pose & pose, core::Size const res );
+
+void
+fix_up_residue_type_variants( core::pose::Pose & pose );
 
 
+bool
+just_modeling_RNA( std::string const & sequence );
+
+bool
+stepwise_addable_pose_residue( core::Size const n /*in pose numbering*/,
+	core::pose::Pose const & pose );
+
+bool
+stepwise_addable_residue( core::Size const n /*in full model numbering*/,
+	std::map< core::Size, std::string > const & non_standard_residue_map );
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+effective_lower_terminus_based_on_working_res( Size const i,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & cutpoint_open_in_full_model );
+
+bool
+effective_upper_terminus_based_on_working_res( Size const i,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	Size const nres_full);
+
+bool
+definite_terminal_root( utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & res_list,
+	Size const nres,
+	Size const i );
+
+bool
+definite_terminal_root( pose::Pose const & pose, Size const i );
+
+Size
+get_definite_terminal_root( pose::Pose const & pose,
+	utility::vector1< Size > const & partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res );
+
+Size
+get_definite_terminal_root( pose::Pose const & pose,
+	utility::vector1< Size > const & partition_res /* should not be empty */ );
+
+utility::vector1< Size >
+reorder_root_partition_res(
+	utility::vector1< Size > const & root_partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */ );
+
+void
+reroot( pose::Pose & pose,
+	utility::vector1< Size > const & root_partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & preferred_root_res /* can be empty */,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res );
 
 } // pose
 } // core

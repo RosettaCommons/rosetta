@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 // Protocol Headers
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
@@ -53,6 +54,7 @@ public:
 
 		using namespace core::chemical;
 		using namespace core::pose;
+		using namespace core::import_pose;
 		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::monte_carlo::submotif;
 		using namespace protocols::stepwise::monte_carlo::mover;

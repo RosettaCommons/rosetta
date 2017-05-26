@@ -113,11 +113,11 @@ pose_setup_from_file( options::RECCES_Options const & options )
 {
 	using namespace core::chemical::rna;
 
-	PoseOP pose = stepwise::setup::get_pdb_and_cleanup( options.infile() );
+	PoseOP pose = core::import_pose::get_pdb_and_cleanup( options.infile() );
 	// // needs to accept command-line input -- need to guess sequence info if fasta not specified!
 	// // also -- force sample_res all on if not specified from command-line. [different from stepwise default behavior]
-	stepwise::setup::fill_full_model_info_from_command_line( *pose );
-	stepwise::modeler::fix_up_residue_type_variants( *pose ); //virtualizes phosphates, etc.
+	core::import_pose::fill_full_model_info_from_command_line( *pose );
+	core::pose::fix_up_residue_type_variants( *pose ); //virtualizes phosphates, etc.
 
 	TR << "Annotated sequence of pose from " << options.infile() << ": " << pose->annotated_sequence() << std::endl;
 

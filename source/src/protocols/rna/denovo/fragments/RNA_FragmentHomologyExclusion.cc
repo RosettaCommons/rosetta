@@ -14,6 +14,7 @@
 #include <protocols/rna/denovo/fragments/TorsionSet.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -141,7 +142,7 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-	PoseOP pose_op = get_pdb_and_cleanup( in_file, rsd_set );
+	PoseOP pose_op = core::import_pose::get_pdb_and_cleanup( in_file, rsd_set );
 	Pose & pose_input = *pose_op;
 
 	std::string const secstruct = figure_out_secstruct( pose_input );
@@ -181,7 +182,7 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 		// make the scratch pose.
 		Pose pose;
 		make_pose_from_sequence( pose, sequence, ResidueTypeSetCOP( rsd_set ), false );
-		cleanup( pose );
+		core::import_pose::cleanup( pose );
 
 		// get ready to compute rmsd's.
 		Real rmsd( 0.0 );

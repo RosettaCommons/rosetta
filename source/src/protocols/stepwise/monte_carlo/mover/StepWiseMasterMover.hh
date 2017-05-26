@@ -108,9 +108,6 @@ private:
 
 	bool minimize_single_res_;
 
-	modeler::StepWiseModelerOP
-	setup_unified_stepwise_modeler();
-
 	bool
 	test_all_moves( core::pose::Pose & pose );
 
@@ -138,6 +135,11 @@ private:
 
 	Size num_tested_moves_;
 };
+
+// AMW TODO: truly, this is a utility function that could go anywhere.
+modeler::StepWiseModelerOP
+setup_unified_stepwise_modeler( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options, core::scoring::ScoreFunctionCOP scorefxn );
+
 
 } //mover
 } //monte_carlo

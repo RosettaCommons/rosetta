@@ -171,7 +171,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		// numbers & chains based on fasta header lines.
 		if ( sequence_strings.size() > 0 ) utility_exit_with_message( "Cannot specify both -sequence and -fasta" );
 		if ( fasta_files.size() != 1 ) utility_exit_with_message( "Please specify exactly one fasta file." );
-		full_model_parameters = stepwise::setup::get_sequence_information( fasta_files[ 1 ], cutpoint_open_in_full_model );
+		full_model_parameters = core::import_pose::get_sequence_information( fasta_files[ 1 ], cutpoint_open_in_full_model );
 		if ( offset != 0 ) {
 			vector1< int > new_numbering = full_model_parameters->conventional_numbering();
 			for ( Size n = 1; n <= new_numbering.size(); n++ ) { new_numbering[ n ] += offset; }
@@ -187,7 +187,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		std::map< Size, std::string > non_standard_residue_map = core::sequence::parse_out_non_standard_residues( sequence );
 		vector1< int > res_numbers_in_pose;
 		for ( Size n = 1; n <= sequence.size(); n++ ) res_numbers_in_pose.push_back( n + offset );
-		stepwise::setup::get_extra_cutpoints_from_names( sequence.size(), cutpoint_open_in_full_model, non_standard_residue_map );
+		core::import_pose::get_extra_cutpoints_from_names( sequence.size(), cutpoint_open_in_full_model, non_standard_residue_map );
 		full_model_parameters = FullModelParametersOP( new FullModelParameters( sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) );
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 		Size chain_num( 1 ), res( 0 );

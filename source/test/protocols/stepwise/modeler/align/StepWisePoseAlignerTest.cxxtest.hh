@@ -22,6 +22,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Protocol Headers
@@ -59,6 +60,7 @@ public:
 	void test_superimpose_res_in_root_partition()
 	{
 		using namespace core::chemical;
+		using namespace core::import_pose;
 		using namespace core::pose::full_model_info;
 		using namespace core::kinematics;
 		using namespace protocols::stepwise::setup;
@@ -69,6 +71,7 @@ public:
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
+		protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( *pose );
 
 		PoseOP native_pose, align_pose;
 		initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose );

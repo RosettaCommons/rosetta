@@ -13,13 +13,14 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/AddMoverCreator.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -33,7 +34,10 @@
 #include <core/kinematics/Jump.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #include <map>
 
@@ -92,18 +96,81 @@ AddMover::AddMover( scoring::ScoreFunctionCOP scorefxn ):
 AddMover::~AddMover()
 {}
 
-////////////////////////////////////////////////////////////////////
-std::string
-AddMover::get_name() const {
+//////////////////////////////////////////////////////////////////////////
+void
+AddMover::apply( core::pose::Pose & pose  )
+{
+	// This syntax is only used by RoesttaScripts and assumes you have
+	// already set swa_move_.
+	//std::cout << "not defined yet" << std::endl;
+
+	// Not sure -- haven't even checked -- how to best differentiate the
+	// two poses.
+	apply( pose, swa_move_ );
+}
+
+protocols::moves::MoverOP
+AddMover::clone() const {
+	return AddMoverOP( new AddMover( *this ) );
+}
+
+void
+AddMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose ) {
+
+	// Oh man, we have access to the pose here! hooray.
+
+	// We have to define the swa_move here, in addition to possibly setting the members
+	// that are by default set in the ctor
+	scorefxn_  = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
+	//scorefxn_ = tag->getOption<bool>("ncbb_design_first", ncbb_design_first_);
+	presample_added_residue_ = tag->getOption< bool >( "presample_added_residue", presample_added_residue_ );
+	presample_by_swa_ = tag->getOption< bool >( "presample_by_swa", presample_by_swa_ );
+	minimize_single_res_ = tag->getOption< bool >( "minimize_single_res", minimize_single_res_ );
+	start_added_residue_in_aform_ = tag->getOption< bool >( "start_added_residue_in_aform", start_added_residue_in_aform_ );
+	internal_cycles_ = tag->getOption< Size >( "internal_cycles", internal_cycles_ );
+	sample_range_small_ = tag->getOption< Real >( "sample_range_small", sample_range_small_ );
+	sample_range_large_ = tag->getOption< Real >( "sample_range_large", sample_range_large_ );
+	kT_ = tag->getOption< Real >( "kT", kT_ );
+
+	// required.
+	std::string move_str = tag->getOption< std::string >( "swa_move" );
+
+	// swa_move_ -- formatted as ADD $move_element $attachments
+	// for example, ADD 4 BOND_TO_PREVIOUS 3
+	swa_move_ = StepWiseMove( utility::string_split( move_str ), const_full_model_info( pose ).full_model_parameters() );
+}
+
+std::string AddMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddMover::mover_name() {
 	return "AddMover";
 }
 
-//////////////////////////////////////////////////////////////////////////
-void
-AddMover::apply( core::pose::Pose &  )
+
+void AddMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	std::cout << "not defined yet" << std::endl;
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "presample_added_residue", xsct_rosetta_bool, "Presample the residue being added", "true" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "presample_by_swa", xsct_rosetta_bool, "Presample the residue being added using SWA", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "minimize_single_res", xsct_rosetta_bool, "Run in single residue minimization mode", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "start_added_residue_in_aform", xsct_rosetta_bool, "Just start the added residue in A-form (for RNA)", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "internal_cycles", xsct_non_negative_integer, "Number of presample monte carlo cycles", "50" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "sample_range_small", xsct_real, "For monte carlo presampling, small-size move size (degrees)", "5.0" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "sample_range_large", xsct_real, "For monte carlo presampling, large-size move size (degrees)", "40.0" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "kT", xsct_real, "Simulation kT", "0.5" );
+	attlist + XMLSchemaAttribute::required_attribute( "swa_move", xs_string, "String describing the SWA move to perform" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
+
 
 //////////////////////////////////////////////////////////////////////
 void
@@ -143,7 +210,7 @@ AddMover::apply(
 	nucleoside_num_ = 0;
 
 	swa_move_ = swa_move;
-	res_to_add_in_full_model_numbering_       = get_add_res( swa_move, pose );
+	res_to_add_in_full_model_numbering_   = get_add_res( swa_move, pose );
 	res_to_build_off_in_full_model_numbering_ = swa_move.attached_res();
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
@@ -356,10 +423,10 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 	Size actual_offset = offset;
 	if ( swa_move_.attachment_type() == BOND_TO_NEXT ) {
 		runtime_assert( offset == 1 );
-		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE,    res_to_build_off ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE,res_to_build_off ); // got to be safe.
 		remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, res_to_build_off ); // got to be safe.
-		remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT,       res_to_build_off ); // got to be safe.
-		remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION,        res_to_build_off ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT,   res_to_build_off ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION,res_to_build_off ); // got to be safe.
 		pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 		suite_num_ = res_to_add;
 	} else {
@@ -627,6 +694,21 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 
 	return conformation::ResidueFactory::create_residue( *rsd_type );
 }
+
+std::string AddMoverCreator::keyname() const {
+	return AddMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddMover );
+}
+
+void AddMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddMover::provide_xml_schema( xsd );
+}
+
 
 
 } //mover

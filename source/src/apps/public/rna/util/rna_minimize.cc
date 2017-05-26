@@ -94,6 +94,7 @@ rna_fullatom_minimize_test()
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
+	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::toolbox;
 	using namespace protocols::rna::denovo;

@@ -77,6 +77,7 @@
 
 
 using namespace core;
+using namespace core::import_pose;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;

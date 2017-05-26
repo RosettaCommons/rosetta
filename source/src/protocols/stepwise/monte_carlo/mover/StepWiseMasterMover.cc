@@ -230,7 +230,7 @@ StepWiseMasterMover::initialize(){
 	runtime_assert( scorefxn_ != 0 );
 	runtime_assert( options_  != 0 );
 
-	stepwise_modeler_ = setup_unified_stepwise_modeler();
+	stepwise_modeler_ = setup_unified_stepwise_modeler( options_, scorefxn_ );
 	stepwise_modeler_->set_native_pose( get_native_pose() );
 
 	// maybe AddMover could just hold a copy of ResampleMover...
@@ -269,28 +269,6 @@ StepWiseMasterMover::initialize(){
 	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
 	if ( options_->new_move_selector() || options_->test_all_moves() ) stepwise_move_selector_->set_force_unique_moves( true );
 	stepwise_move_selector_->set_submotif_library( submotif_library_ );
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// used in all movers.
-modeler::StepWiseModelerOP
-StepWiseMasterMover::setup_unified_stepwise_modeler(){
-	using namespace modeler;
-	using namespace modeler::rna;
-	using namespace modeler::protein;
-	using namespace modeler::precomputed;
-
-	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn_ ) );
-	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
-	stepwise_modeler->set_options( options );
-
-	// Precomputed library will probably be deprecated in favor of SubmotifLibrary soon. -- rhiju, jan 2015.
-	if ( options_->use_precomputed_library() ) {
-		PrecomputedLibraryMoverOP precomputed_library_mover( new PrecomputedLibraryMover );
-		stepwise_modeler->set_precomputed_library_mover( precomputed_library_mover );
-	}
-	return stepwise_modeler;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -434,6 +412,29 @@ StepWiseMasterMover::set_options( protocols::stepwise::monte_carlo::options::Ste
 	options_ = options;
 	initialize(); // all movers accept options -- got to make them again.
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// used in all movers.
+modeler::StepWiseModelerOP
+setup_unified_stepwise_modeler( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP mc_options, core::scoring::ScoreFunctionCOP scorefxn ){
+	using namespace modeler;
+	using namespace modeler::rna;
+	using namespace modeler::protein;
+	using namespace modeler::precomputed;
+
+	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn ) );
+	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = mc_options->setup_modeler_options();
+	stepwise_modeler->set_options( options );
+
+	// Precomputed library will probably be deprecated in favor of SubmotifLibrary soon. -- rhiju, jan 2015.
+	if ( mc_options->use_precomputed_library() ) {
+		PrecomputedLibraryMoverOP precomputed_library_mover( new PrecomputedLibraryMover );
+		stepwise_modeler->set_precomputed_library_mover( precomputed_library_mover );
+	}
+	return stepwise_modeler;
+}
+
 
 } //mover
 } //monte_carlo

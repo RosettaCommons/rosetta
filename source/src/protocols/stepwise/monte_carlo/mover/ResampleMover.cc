@@ -14,6 +14,8 @@
 
 
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/ResampleMoverCreator.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh> // just for setup_unified_stepwise_modeler...
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
@@ -22,12 +24,16 @@
 #include <protocols/stepwise/modeler/packer/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
@@ -66,21 +72,74 @@ ResampleMover::ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP st
 	slide_docking_jumps_( false )
 {}
 
+ResampleMover::ResampleMover() :
+	stepwise_modeler_( nullptr ),
+	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
+	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) ),
+	minimize_single_res_( false ),
+	slide_docking_jumps_( false )
+{
+	stepwise_modeler_->set_native_pose( get_native_pose() );
+}
+
 //Destructor
 ResampleMover::~ResampleMover()
 {}
 
+protocols::moves::MoverOP
+ResampleMover::clone() const {
+	return ResampleMoverOP( new ResampleMover( *this ) );
+}
+
+void
+ResampleMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & /*pose*/ ) {
+
+	// WARNING: don't use this with RNA scorefunctions; something goes wrong?
+	// EnergyMethodOptions, suite bonus directories...
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data)->clone();
+	stepwise_modeler_ = setup_unified_stepwise_modeler( options_, scorefxn_ );
+	minimize_single_res_ = tag->getOption< bool >( "minimize_single_res", minimize_single_res_ );
+	slide_docking_jumps_ = tag->getOption< bool >( "slide_docking_jumps", slide_docking_jumps_ );
+	full_move_description_ = tag->getOption< std::string >( "swa_move" );
+}
+
+void
+ResampleMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	//rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "minimize_single_res", xsct_rosetta_bool, "Run in single residue minimization mode", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "slide_docking_jumps", xsct_rosetta_bool, "Slide docking jumps", "false" );
+	attlist + XMLSchemaAttribute::required_attribute( "swa_move", xs_string, "String describing the SWA move to perform" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
 ////////////////////////////////////////////////////////////////////
 std::string
 ResampleMover::get_name() const {
+	return mover_name();
+}
+
+std::string ResampleMover::mover_name() {
 	return "ResampleMover";
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-ResampleMover::apply( pose::Pose & pose ){
-	std::string move_type;
-	apply( pose, move_type );
+ResampleMover::apply( pose::Pose & pose ) {
+	if ( full_move_description_ == "" ) {
+		std::string move_type;
+		apply( pose, move_type );
+	} else {
+		StepWiseMove swa_move = StepWiseMove( utility::string_split( full_move_description_ ), const_full_model_info( pose ).full_model_parameters() );
+		apply( pose, swa_move );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,6 +348,20 @@ ResampleMover::slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) cons
 		" to: " << new_remodel_res << " -- " << new_reference_res << std::endl;
 
 	remodel_res = new_remodel_res;
+}
+
+std::string ResampleMoverCreator::keyname() const {
+	return ResampleMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ResampleMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ResampleMover );
+}
+
+void ResampleMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResampleMover::provide_xml_schema( xsd );
 }
 
 } //mover

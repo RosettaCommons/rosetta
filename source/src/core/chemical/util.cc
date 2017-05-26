@@ -379,6 +379,8 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 
 //////////////////////////////////////
 // rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+// AMW TODO: this will die abruptly if used w/ a centroid scorefunction
+// (sensible, because we don't have many of these Hs, but unexpected)
 void
 enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & atom_type_set ) {
 	Real const enlarged_lj_wdepth = 0.15;

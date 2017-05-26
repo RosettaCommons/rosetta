@@ -19,6 +19,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/scoring/CachedVdwScreenInfo.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
@@ -73,6 +74,7 @@ stepwise_lores_test()
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	PoseOP native_pose, align_pose;
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
+	protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( *pose_op );
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose_op );
 	Pose & pose = *pose_op;
 

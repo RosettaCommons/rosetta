@@ -21,8 +21,10 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/io/rna/RNA_DataReader.hh> // temporary, for scoring RNA chemical mapping data. Move into core?
 #include <core/io/silent/util.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
 #include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>
@@ -78,6 +80,7 @@ stepwise_monte_carlo()
 	using namespace core::scoring;
 	using namespace core::chemical;
 	using namespace core::pose::full_model_info;
+	using namespace core::import_pose;
 	using namespace protocols::stepwise;
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::monte_carlo::submotif;
@@ -100,6 +103,7 @@ stepwise_monte_carlo()
 
 	PoseOP native_pose, align_pose;
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
+	protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( *pose_op );
 	pose::Pose & pose = *pose_op;
 
 	// If we care about the 'viewability' of the pose, center it -- obviously this

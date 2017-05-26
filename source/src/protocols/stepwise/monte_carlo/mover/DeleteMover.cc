@@ -13,6 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/DeleteMoverCreator.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/packer/util.hh>
@@ -32,10 +33,14 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/tools/make_vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 #include <utility/stream_util.hh>
 
@@ -79,11 +84,45 @@ DeleteMover::DeleteMover( ):
 DeleteMover::~DeleteMover()
 {}
 
+protocols::moves::MoverOP
+DeleteMover::clone() const {
+	return DeleteMoverOP( new DeleteMover( *this ) );
+}
+
+void DeleteMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,// data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose ) {
+
+	minimize_after_delete_ = tag->getOption< bool >( "minimize_after_delete", minimize_after_delete_ );
+
+	std::string move_str = tag->getOption< std::string >( "swa_move" );
+	StepWiseMove swa_move = StepWiseMove( utility::string_split( move_str ), const_full_model_info( pose ).full_model_parameters() );
+	residues_to_delete_in_full_model_numbering_ = swa_move.move_element();
+}
+
+void DeleteMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	//rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "minimize_after_delete", xsct_rosetta_bool, "Minimize after delete", "true" );
+	attlist + XMLSchemaAttribute::required_attribute( "swa_move", xs_string, "String describing the SWA move to perform" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 void
-DeleteMover::apply( core::pose::Pose &  )
+DeleteMover::apply( core::pose::Pose & pose )
 {
-	std::cout << "not defined" << std::endl;
+	//std::cout << "not defined" << std::endl;
+	// We get here from RosettaScripts applications
+	// so, assume we were able to set residues_to_delete_in_full_model_numbering_
+	// based on swa_move option.
+	apply( pose, residues_to_delete_in_full_model_numbering_ );
 }
 
 
@@ -243,17 +282,37 @@ DeleteMover::set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModeler
 	stepwise_modeler_ = stepwise_modeler;
 }
 
-//////////////////////////////////////////////////////////////////////
-std::string
-DeleteMover::get_name() const {
-	return "DeleteMover";
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 DeleteMover::set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){
 	options_ = options;
 }
+
+//////////////////////////////////////////////////////////////////////
+std::string
+DeleteMover::get_name() const {
+	return mover_name();
+}
+
+std::string
+DeleteMover::mover_name() {
+	return "DeleteMover";
+}
+
+std::string DeleteMoverCreator::keyname() const {
+	return DeleteMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DeleteMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DeleteMover );
+}
+
+void DeleteMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DeleteMover::provide_xml_schema( xsd );
+}
+
 
 } //mover
 } //monte_carlo

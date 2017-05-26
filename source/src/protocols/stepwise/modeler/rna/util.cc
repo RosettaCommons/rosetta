@@ -1839,17 +1839,6 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-bool
-just_modeling_RNA( std::string const & sequence ) {
-	std::string const rna_letters( "acgunZ" );
-	for ( Size k = 1; k <= sequence.size(); k++ ) {
-		if ( rna_letters.find( sequence[k-1] ) == std::string::npos ) return false;
-	}
-	return true;
-}
-
 } //rna
 } //modeler
 } //stepwise

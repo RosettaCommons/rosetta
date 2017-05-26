@@ -14,6 +14,10 @@
 
 
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/FromScratchMoverCreator.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
@@ -26,6 +30,10 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
@@ -51,11 +59,44 @@ FromScratchMover::FromScratchMover()
 FromScratchMover::~FromScratchMover()
 {}
 
+protocols::moves::MoverOP
+FromScratchMover::clone() const {
+	return FromScratchMoverOP( new FromScratchMover( *this ) );
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 void
-FromScratchMover::apply( core::pose::Pose &  )
+FromScratchMover::apply( core::pose::Pose & pose )
 {
-	std::cout << "not defined" << std::endl;
+	//std::cout << "not defined" << std::endl;
+	// AMW arises from the RosettaScripts case... this is where storing residues_to_instantiate_in_full_model_numbering_ as a member comes in handy.
+	apply( pose, residues_to_instantiate_in_full_model_numbering_ );
+}
+
+void FromScratchMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose ) {
+
+	auto options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) );
+	auto scorefxn  = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
+	stepwise_modeler_ = setup_unified_stepwise_modeler( options, scorefxn );
+
+	std::string move_str = tag->getOption< std::string >( "swa_move" );
+	StepWiseMove swa_move = StepWiseMove( utility::string_split( move_str ), const_full_model_info( pose ).full_model_parameters() );
+	residues_to_instantiate_in_full_model_numbering_ = swa_move.move_element();
+}
+
+void FromScratchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::required_attribute( "swa_move", xs_string, "String describing the SWA move to perform" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -108,7 +149,7 @@ void
 FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pose & pose, pose::Pose & new_pose, utility::vector1< Size > const & resnum ) const {
 	// prepare full_model_info for this new pose
 	FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();
-	FullModelInfoOP full_model_info     = nonconst_full_model_info( pose ).clone_info();
+	FullModelInfoOP full_model_info = nonconst_full_model_info( pose ).clone_info();
 
 	// relieve original pose of holding information on other poses.
 	full_model_info->clear_other_pose_list();
@@ -145,8 +186,29 @@ FromScratchMover::set_stepwise_modeler( protocols::stepwise::modeler::StepWiseMo
 ///////////////////////////////////////////////////////////////////////////////
 std::string
 FromScratchMover::get_name() const {
+	return mover_name();
+}
+
+std::string
+FromScratchMover::mover_name() {
 	return "FromScratchMover";
 }
+
+
+std::string FromScratchMoverCreator::keyname() const {
+	return FromScratchMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FromScratchMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FromScratchMover );
+}
+
+void FromScratchMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FromScratchMover::provide_xml_schema( xsd );
+}
+
 
 } //mover
 } //monte_carlo

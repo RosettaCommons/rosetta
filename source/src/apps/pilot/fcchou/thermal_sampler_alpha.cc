@@ -100,6 +100,7 @@ thermal_sampler()
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
+	using namespace core::import_pose;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
@@ -134,10 +135,10 @@ thermal_sampler()
 	input->fill_pose( pose, *rsd_set );
 
 	utility::vector1< pose::PoseOP > other_poses;
-	if ( !option[ in::file::silent ].user() ) protocols::stepwise::setup::cleanup( pose );
+	if ( !option[ in::file::silent ].user() ) cleanup( pose );
 
 	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ) {
-		protocols::stepwise::setup::fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 	}
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );

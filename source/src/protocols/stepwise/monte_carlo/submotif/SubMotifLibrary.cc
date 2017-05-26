@@ -114,7 +114,7 @@ SubMotifLibrary::initialize_from_directory( std::string const & directory ){
 		runtime_assert( utility::file::file_exists( full_filename ) );
 
 		TR  << "Reading in submotif: " << full_filename << TR.Reset << std::endl;
-		PoseOP pose = setup::get_pdb_and_cleanup( full_filename, rsd_set_ );
+		PoseOP pose = core::import_pose::get_pdb_and_cleanup( full_filename, rsd_set_ );
 		save_pose_as_submotif( pose, tag );
 	}
 }
@@ -168,7 +168,7 @@ SubMotifLibrary::initialize_from_jump_library()
 							pose->fold_tree( f );
 							core::kinematics::Jump const & j( templates[ n ]->jump_forward() );
 							pose->set_jump( 1, j );
-							setup::cleanup( *pose, true /* force_cut_at_rna_chainbreak */ );
+							core::import_pose::cleanup( *pose, true /* force_cut_at_rna_chainbreak */ );
 
 							std::string tag( base_pair_type.tag() + "_" + ObjexxFCL::lead_zero_string_of( n, 5 ) );
 							//pose->dump_pdb( tag + ".pdb" );
@@ -407,7 +407,7 @@ SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 	full_model_info_for_pose->update_submotif_info_list();
 	set_full_model_info( *new_pose, full_model_info_for_pose );
 
-	modeler::fix_up_residue_type_variants( *new_pose );
+	core::pose::fix_up_residue_type_variants( *new_pose );
 
 	return new_pose;
 }

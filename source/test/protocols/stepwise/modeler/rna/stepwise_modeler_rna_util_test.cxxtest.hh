@@ -53,6 +53,7 @@ public:
 		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
+		using namespace core::import_pose;
 		using namespace core::pose::full_model_info;
 		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::modeler::rna;

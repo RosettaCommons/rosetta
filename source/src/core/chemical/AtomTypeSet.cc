@@ -170,8 +170,7 @@ AtomTypeSet::name() const {
 int
 AtomTypeSet::atom_type_index( std::string const & atom_type_name ) const
 {
-	auto
-		iter( atom_type_index_.find( atom_type_name ) );
+	auto iter( atom_type_index_.find( atom_type_name ) );
 	if ( iter == atom_type_index_.end() ) {
 		std::string trimmed( utility::trim(atom_type_name) ); // Try with stripped whitespace
 		iter = atom_type_index_.find( trimmed );

@@ -166,7 +166,7 @@ BuildFullModel::BuildFullModel() {
 	// 2. Setup native pose
 	if ( option[ in::file::native ].user() ) {
 		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		native_pose_ = stepwise::setup::get_pdb_with_full_model_info( option[ in::file::native ], rsd_set ); //import_pose::pose_from_file( option[ in::file::native ] );
+		native_pose_ = core::import_pose::get_pdb_with_full_model_info( option[ in::file::native ], rsd_set ); //import_pose::pose_from_file( option[ in::file::native ] );
 	}
 }
 

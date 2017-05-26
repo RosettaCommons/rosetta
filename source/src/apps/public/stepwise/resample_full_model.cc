@@ -78,6 +78,7 @@ resample_full_model_test()
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::io::silent;
+	using namespace core::import_pose;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
 	using namespace core::pose::rna;
@@ -105,7 +106,7 @@ resample_full_model_test()
 
 	// iterate over input stream
 	input.fill_pose( start_pose, *rsd_set );
-	stepwise::setup::fill_full_model_info_from_command_line( start_pose/*, other_ops */);
+	fill_full_model_info_from_command_line( start_pose/*, other_ops */);
 	(*scorefxn)(start_pose);
 
 	seq_rebuild_pose = start_pose;

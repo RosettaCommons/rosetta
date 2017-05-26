@@ -543,6 +543,8 @@ static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > r
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 
+static MoverRegistrator< stepwise::monte_carlo::mover::AddMoverCreator > reg_AddMoverCreator;
+
 static MoverRegistrator< struct_fragment::StructFragmentMoverCreator > reg_StructFragmentMoverCreator;
 
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;

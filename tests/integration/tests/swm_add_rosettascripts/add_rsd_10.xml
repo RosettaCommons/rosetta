@@ -1,0 +1,8 @@
+<ROSETTASCRIPTS>
+<MOVERS>
+	<AddMover name="add_10" swa_move="ADD 10 BOND_TO_PREVIOUS 9" />
+</MOVERS>
+<PROTOCOLS>
+    <Add mover="add_10" />
+</PROTOCOLS>
+</ROSETTASCRIPTS>

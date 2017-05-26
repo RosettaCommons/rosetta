@@ -20,6 +20,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/pose/util.tmpl.hh>
@@ -84,6 +86,7 @@
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 
 // C/C++ headers
 #include <cmath>
@@ -3575,6 +3578,455 @@ set_bfactors_from_atom_id_map(Pose & pose, id::AtomID_Map< Real > const & bfacto
 		}
 	}
 
+}
+
+
+// Stepwise
+
+
+////////////////////////////////////////////////////////////////////
+void
+fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) {
+
+	using namespace core::chemical;
+	using namespace core::pose::full_model_info;
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const chains_full = get_chains_full( pose );
+
+	// Could this be a chainbreak (cutpoint_closed )?
+	TR.Debug << "checking for cutpoint after append: " << res << " " << res_list[ res ]  << " " << cutpoint_open_in_full_model.size() << std::endl;
+
+	if ( res < pose.size() &&
+			res_list[ res ] + 1 == res_list[ res + 1 ] &&
+			! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) {
+
+		if ( pose.residue_type( res ).has_variant_type( CUTPOINT_LOWER ) &&
+				pose.residue_type( res + 1 ).has_variant_type( CUTPOINT_UPPER ) ) return;
+
+		// can happen after additions
+		core::pose::correctly_add_cutpoint_variants( pose, res );
+
+		// leave virtual riboses in this should actually get instantiated by the modeler
+		// remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_RIBOSE, res );
+
+	} else {
+
+		// can happen after deletions
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res );
+
+		// proteins...
+		if ( pose.residue_type( res ).is_protein() ) {
+			if ( res_list[ res ] < full_model_info.size() &&
+					chains_full[ res_list[ res ] + 1 ] == chains_full[ res_list[ res ] ] &&
+					( res == pose.size()  || res_list[ res ] + 1 < res_list[ res + 1 ] ) ) {
+				remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res );
+				add_variant_type_to_pose_residue( pose, C_METHYLAMIDATION, res );
+			} else {
+				remove_variant_type_from_pose_residue( pose, C_METHYLAMIDATION, res );
+				add_variant_type_to_pose_residue( pose, UPPER_TERMINUS_VARIANT, res );
+			}
+		}
+
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////
+void
+fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const res ) {
+
+	using namespace core::chemical;
+	using namespace core::pose::full_model_info;
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const chains_full = get_chains_full( pose );
+
+	// Could this be a chainbreak (cutpoint_closed )?
+
+	TR.Debug << "checking for cutpoint after prepend: " << res << " " << res_list[ res ] << " " << cutpoint_open_in_full_model.size() << std::endl;
+
+	if ( res > 1 &&
+			res_list[ res ] - 1 == res_list[ res - 1 ] &&
+			! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) {
+
+		if ( pose.residue_type( res - 1 ).has_variant_type( CUTPOINT_LOWER ) &&
+				pose.residue_type( res     ).has_variant_type( CUTPOINT_UPPER ) ) return;
+
+		// can happen after additions
+		core::pose::correctly_add_cutpoint_variants( pose, res - 1 );
+	} else {
+		// can happen after additions
+		if ( pose.residue_type( res ).is_RNA() &&
+				!pose.residue_type( res ).has_variant_type( FIVE_PRIME_PHOSPHATE ) ) {
+			add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, res );
+		}
+
+		// can happen after deletions
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res );
+
+		// proteins...
+		if ( pose.residue_type( res ).is_protein() ) {
+			if ( res_list[ res ] > 1 &&
+					chains_full[ res_list[ res ] - 1 ] == chains_full[ res_list[ res ] ] &&
+					( res == 1 || res_list[ res ] - 1 > res_list[ res - 1 ] ) ) {
+				remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res );
+				add_variant_type_to_pose_residue( pose, N_ACETYLATION, res );
+			} else {
+				remove_variant_type_from_pose_residue( pose, N_ACETYLATION, res );
+				add_variant_type_to_pose_residue( pose, LOWER_TERMINUS_VARIANT, res );
+			}
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////
+void
+fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res ) {
+
+	using namespace full_model_info;
+
+	if ( !pose.residue_type(res ).is_RNA() ) return;
+	remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, res );
+	remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res );
+
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const & sample_res = full_model_info.sample_res();
+	utility::vector1< Size > const & sample_sugar_res = full_model_info.rna_sample_sugar_res();
+
+	if ( !sample_res.has_value( res_list[ res ] ) &&
+			!sample_sugar_res.has_value( res_list[ res ] ) ) return;
+
+	if ( res > 1 &&
+			res_list[ res ] - 1 == res_list[ res - 1 ] &&
+			! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) return;
+
+	if ( res < pose.size() &&
+			res_list[ res ] + 1 == res_list[ res + 1 ] &&
+			! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) return;
+
+	if ( pose.residue_type( res ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) )  return;
+	if ( pose.residue_type( res ).has_variant_type( core::chemical::THREE_PRIME_PHOSPHATE ) ) return;
+
+	add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res );
+
+}
+
+////////////////////////////////////////////////////////////////////
+void
+update_block_stack_variants( pose::Pose & pose, Size const & n ) {
+	using namespace core::chemical;
+	using namespace core::pose::full_model_info;
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & block_stack_above_res = full_model_info.rna_block_stack_above_res();
+	utility::vector1< Size > const & block_stack_below_res = full_model_info.rna_block_stack_below_res();
+
+	if ( block_stack_above_res.has_value( res_list[ n ] ) ) {
+		add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, n );
+	} else {
+		runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_ABOVE ) );
+	}
+	if ( block_stack_below_res.has_value( res_list[ n ] ) ) {
+		add_variant_type_to_pose_residue( pose, BLOCK_STACK_BELOW, n );
+	} else {
+		runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_BELOW ) );
+	}
+
+}
+
+
+////////////////////////////////////////////////////////////////////
+void
+fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
+
+	using namespace core::chemical;
+	pose::Pose pose = pose_to_fix; // costly, but prevents seg fault with graphics.
+
+	for ( Size n = 1; n <= pose.size(); n++ ) {
+
+		// Are we at a strand beginning?
+		bool const at_strand_beginning = ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) );
+		if ( at_strand_beginning ) {
+			fix_up_residue_type_variants_at_strand_beginning( pose, n );
+		} else { // make sure there is nothing crazy here
+			remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, n );
+			remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
+			remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, n );
+			remove_variant_type_from_pose_residue( pose, VIRTUAL_RIBOSE, n );
+			runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_UPPER ) );
+		}
+
+		// Look for strand ends.
+		bool const at_strand_end = ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) );
+		if ( at_strand_end ) {
+			fix_up_residue_type_variants_at_strand_end( pose, n );
+		} else {
+			remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, n );
+			remove_variant_type_from_pose_residue( pose, VIRTUAL_RIBOSE, n );
+			remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, n );
+			runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );
+		}
+
+		// check for floating_base
+		if ( at_strand_end && at_strand_beginning ) fix_up_residue_type_variants_at_floating_base( pose,  n );
+
+		update_block_stack_variants( pose, n );
+	}
+
+	// Just copying the conformation() makes sure that other objects (such as other_pose_list) don't get cloned --
+	//  can be important if external functions are holding OPs to those objects.
+	pose_to_fix.conformation() = pose.conformation();
+	pose_to_fix.pdb_info( pose.pdb_info() ); // silly -- ensures that PDBInfo is not flagged as 'obsolete'.
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+bool
+just_modeling_RNA( std::string const & sequence ) {
+	// AMW TODO: note can't distinguish an all-NCAA pose from an all-NCNT pose
+	std::string const rna_letters( "acgunZX" );
+	for ( Size k = 1; k <= sequence.size(); k++ ) {
+		if ( rna_letters.find( sequence[k-1] ) == std::string::npos ) return false;
+	}
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// don't allow Mg(2+) or HOH yet -- must be an easier way to figure out ligand or not.
+bool
+stepwise_addable_pose_residue( Size const n /*in pose numbering*/, pose::Pose const & pose ) {
+	using namespace pose::full_model_info;
+	runtime_assert( full_model_info_defined( pose ) );
+	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+	return stepwise_addable_residue( res_list[ n ],
+		const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map() );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+stepwise_addable_residue( Size const n /* in full model numbering*/, std::map< Size, std::string > const & non_standard_residue_map )
+{
+	std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( n );
+	if ( it != non_standard_residue_map.end() && ( it->second == "HOH" || it->second == "MG" ) ) return false;
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+effective_lower_terminus_based_on_working_res( Size const i,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & cutpoint_open_in_full_model ){
+
+	if ( working_res.size() == 0 ) return false; // not defined
+
+	// decrement to the nearest cutpoint -- anything planning to be sampled along the way?
+	for ( Size n = res_list[ i ] - 1; n >= 1; n-- ) {
+		if ( cutpoint_open_in_full_model.has_value( n ) ) {
+			return true;
+		} else { // not a cutpoint yet.
+			if ( working_res.has_value( n ) ) return false;
+		}
+	}
+	return true;
+
+	// this was a problem when skip_bulge was activated.
+	// return ( working_res.size() > 0 && !sample_res.has_value( res_list[ i ] - 1 ) &&
+	//      ( i == 1 || ( res_list[i - 1] < res_list[i] - 1 ) ) );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+effective_upper_terminus_based_on_working_res( Size const i,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	Size const nres_full){
+
+	if ( working_res.size() == 0 ) return false; // not defined
+
+	// increment to the nearest cutpoint -- anything planning to be sampled along the way?
+	for ( Size n = res_list[ i ]; n <= nres_full; n++ ) {
+		if ( cutpoint_open_in_full_model.has_value( n ) ) {
+			return true;
+		} else { // not a cutpoint yet.
+			if ( working_res.has_value( n ) ) return false;
+		}
+	}
+	return true;
+
+	// this was a problem when skip_bulge was activated.
+	//    ( sample_res.size() > 0 && !sample_res.has_value( res_list[i] + 1 ) &&
+	//     ( i == pose.size() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+bool
+definite_terminal_root( utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & res_list,
+	Size const nres,
+	Size const i ) {
+	if ( res_list[ i ] == 1 ||
+			cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ||
+			effective_lower_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model ) ) {
+		// great, nothing will ever get prepended here.
+		return true;
+	}
+	if ( res_list[ i ] == nres ||
+			cutpoint_open_in_full_model.has_value( res_list[ i ] ) ||
+			effective_upper_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model, nres ) ) {
+		// great, nothing will ever get appended here.
+		return true;
+	}
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+definite_terminal_root( pose::Pose const & pose, Size const i ){
+	using namespace core::pose::full_model_info;
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	return definite_terminal_root( full_model_info.cutpoint_open_in_full_model(),
+		full_model_info.working_res(),
+		full_model_info.res_list(),
+		full_model_info.size(), i );
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+get_definite_terminal_root( pose::Pose const & pose,
+	utility::vector1< Size > const & partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res ){
+	for ( Size n = 1; n <= partition_res.size(); n++ ) {
+		Size const i = partition_res[ n ];
+		if ( !pose.fold_tree().possible_root( i ) ) continue;
+		if ( definite_terminal_root( cutpoint_open_in_full_model, working_res, res_list, fixed_domain_map.size(), i ) ) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+get_definite_terminal_root( pose::Pose const & pose,
+	utility::vector1< Size > const & partition_res /* should not be empty */ ) {
+	core::pose::full_model_info::FullModelInfo const & full_model_info = core::pose::full_model_info::const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const & working_res = full_model_info.working_res();
+	return get_definite_terminal_root( pose, partition_res,
+		res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+reorder_root_partition_res(
+	utility::vector1< Size > const & root_partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */ ){
+
+	// reorder these residues based on size of fixed domains -- prefer *big* domains first.
+	utility::vector1< std::pair< Size, Size > > domain_sizes;
+	for ( Size domain = 1; domain <= utility::max( fixed_domain_map ); domain++ ) {
+		Size nres_with_domain( 0 );
+		for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
+			if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+				nres_with_domain++;
+			}
+		}
+		domain_sizes.push_back( std::make_pair( nres_with_domain, domain ) );
+	}
+
+	// largest block to smallest.
+	std::sort( domain_sizes.begin(), domain_sizes.end() );
+	std::reverse( domain_sizes.begin(), domain_sizes.end() );
+
+	utility::vector1< Size > root_partition_res_reorder;
+	for ( Size k = 1; k <= domain_sizes.size(); k++ ) {
+		if ( domain_sizes[ k ].first == 0 ) continue; // no residues found.
+		Size const domain = domain_sizes[ k ].second;
+		for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
+			if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+				root_partition_res_reorder.push_back( root_partition_res[ n ] );
+			}
+		}
+	}
+
+	// the rest of the residues that weren't in fixed domains.
+	Size const domain( 0 );
+	for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
+		if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+			root_partition_res_reorder.push_back( root_partition_res[ n ] );
+		}
+	}
+
+	runtime_assert( root_partition_res_reorder.size() == root_partition_res.size() );
+	return root_partition_res_reorder;
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+reroot( pose::Pose & pose,
+	utility::vector1< Size > const & root_partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & preferred_root_res /* can be empty */,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res ){
+
+	using namespace core::kinematics;
+	Size new_root( 0 );
+	if ( root_partition_res.size() == 0 ) return;
+
+	runtime_assert( root_partition_res.size() > 0 );
+	utility::vector1< Size > root_partition_res_ordered = reorder_root_partition_res( root_partition_res, res_list, fixed_domain_map );
+
+	for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ) {
+		Size const i = root_partition_res_ordered[ n ];
+		if ( preferred_root_res.has_value( res_list[ root_partition_res_ordered[ n ] ] ) ) {
+			if ( !pose.fold_tree().possible_root( i ) ) {
+				TR.Warning << res_list[ root_partition_res_ordered[ n ] ] << " specified as root res but not at a pose terminal. Cannot be used." << std::endl;
+				continue;
+			}
+			new_root = i; break;
+		}
+	}
+
+	// next preference: roots that are definitely terminal -- nothing will be built past them.
+	if ( new_root == 0 ) {
+		new_root = get_definite_terminal_root( pose, root_partition_res_ordered,
+			res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+	}
+
+	// if all else fails...
+	if ( new_root == 0 ) {
+		for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ) {
+			Size const i = root_partition_res_ordered[ n ];
+			if ( !pose.fold_tree().possible_root( i ) ) continue;
+			new_root = i; break;
+		}
+	}
+	runtime_assert( new_root > 0 );
+
+	FoldTree f = pose.fold_tree();
+	if ( static_cast<int>(new_root) == f.root() ) return;
+	f.reorder( new_root );
+	pose.fold_tree( f );
 }
 
 

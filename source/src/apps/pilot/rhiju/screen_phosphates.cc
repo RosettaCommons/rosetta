@@ -15,7 +15,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/rna/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -91,6 +91,7 @@ void
 screen_phosphates()
 {
 	using namespace core::pose;
+	using namespace core::import_pose;
 	using namespace core::scoring;
 	using namespace core::id;
 	using namespace core::chemical;

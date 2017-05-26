@@ -482,7 +482,7 @@ get_rna_motifs( pose::Pose const & pose,
 			if ( base_pair.res1() + 1 != u_turn[ 1 ] ) continue;
 			if ( !check_rna_loop( pose, base_pair.res1(), base_pair.res2() - base_pair.res1() + 1 ) ) continue;
 			if ( !check_stack( base_pair.res1(), u_turn[1], base_stacks ) ) continue;
-			runtime_assert( u_turn[3] < base_pair.res2() );
+			//runtime_assert( u_turn[3] < base_pair.res2() );
 			// Now look for 'A' in GNRA:
 			for ( Size i = u_turn[3]+1; i < base_pair.res2(); i++ ) {
 				if ( !check_stack( u_turn[3],        i, base_stacks ) ) continue;

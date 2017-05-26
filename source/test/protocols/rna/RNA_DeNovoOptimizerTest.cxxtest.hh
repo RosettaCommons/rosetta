@@ -22,6 +22,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/NamedAtomID.hh>
 
@@ -82,6 +83,7 @@ public:
 		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
+		using namespace core::import_pose;
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace core::id;

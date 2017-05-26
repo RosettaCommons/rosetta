@@ -1,0 +1,19 @@
+-parser:protocol add_rsd_10.xml
+
+-native mini_3d2v_RNA.pdb
+-s  noloop_mini_3d2v_RNA.pdb
+-out:file:silent swm_TEST.out
+-out:overwrite
+-input_res 1-9 15-26
+-fasta mini_3d2v.fasta
+-nstruct 1
+-stepwise::monte_carlo::cycles 3
+-score:weights stepwise/rna/rna_res_level_energy4.wts
+-score:rna_torsion_potential RNA11_based_new
+-num_random_samples 100
+#-chemical::enlarge_H_lj
+
+# should probably instead inherit chain & residue numbering from 3d2v
+-cut_at_rna_chainbreak
+-superimpose_over_all false
+

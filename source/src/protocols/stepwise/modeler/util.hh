@@ -148,15 +148,6 @@ check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, core::Size c
 	utility::vector1< core::Size > const & chains_in_full_model );
 
 void
-fix_up_residue_type_variants_at_strand_beginning( core::pose::Pose & pose, core::Size const res );
-
-void
-fix_up_residue_type_variants_at_strand_end( core::pose::Pose & pose, core::Size const res );
-
-void
-fix_up_residue_type_variants( core::pose::Pose & pose );
-
-void
 switch_focus_to_other_pose( core::pose::Pose & pose,
 	core::Size const & focus_pose_idx,
 	core::scoring::ScoreFunctionCOP scorefxn = 0 );
@@ -181,9 +172,6 @@ void make_variants_match(
 	core::pose::Pose const & reference_pose,
 	core::Size const n,
 	core::chemical::VariantType const variant_type );
-
-bool
-definite_terminal_root( core::pose::Pose const & pose, core::Size const i );
 
 utility::vector1< core::Size >
 figure_out_moving_cutpoints_closed( core::pose::Pose const & pose,
@@ -218,14 +206,6 @@ reroot_based_on_full_model_info( core::pose::Pose & pose );
 void
 reroot_based_on_full_model_info( core::pose::Pose & pose,
 	utility::vector1< core::Size > const & root_partition_res );
-void
-reroot( core::pose::Pose & pose,
-	utility::vector1< core::Size > const & root_partition_res /* should not be empty */,
-	utility::vector1< core::Size > const & res_list,
-	utility::vector1< core::Size > const & preferred_root_res /* can be empty */,
-	utility::vector1< core::Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
-	utility::vector1< core::Size > const & cutpoint_open_in_full_model,
-	utility::vector1< core::Size > const & working_res );
 
 utility::vector1< core::Size >
 figure_out_moving_partition_res_for_suite( core::pose::Pose const & pose,
@@ -306,14 +286,6 @@ get_all_residues( core::pose::Pose const & pose );
 
 core::Size
 get_unique_connection_res( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_partition_res );
-
-bool
-stepwise_addable_pose_residue( core::Size const n /*in pose numbering*/,
-	core::pose::Pose const & pose );
-
-bool
-stepwise_addable_residue( core::Size const n /*in full model numbering*/,
-	std::map< core::Size, std::string > const & non_standard_residue_map );
 
 } //modeler
 } //stepwise

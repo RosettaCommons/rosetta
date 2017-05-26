@@ -233,6 +233,7 @@ rna_score_test()
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
+	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::setup;

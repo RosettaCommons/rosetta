@@ -20,6 +20,7 @@
 #include <devel/init.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
@@ -49,6 +50,7 @@
 #include <list>
 
 using namespace core;
+using namespace core::import_pose;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

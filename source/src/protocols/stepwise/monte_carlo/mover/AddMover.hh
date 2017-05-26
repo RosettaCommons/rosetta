@@ -26,6 +26,7 @@
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/AddMoverCreator.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 
 namespace protocols {
@@ -54,8 +55,21 @@ public:
 	apply( core::pose::Pose & pose, StepWiseMove const & swa_move );
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
-	virtual std::string get_name() const;
+	virtual void apply( core::pose::Pose & pose_to_visualize ) override;
+	protocols::moves::MoverOP fresh_instance() const override { return AddMoverOP( new AddMover ); }
+	protocols::moves::MoverOP clone() const override;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void set_kT( core::Real const & setting ){ kT_ = setting; }
 

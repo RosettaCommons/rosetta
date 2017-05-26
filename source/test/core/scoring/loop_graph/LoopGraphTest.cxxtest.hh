@@ -27,6 +27,7 @@
 
 // Protocol Headers
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
@@ -54,12 +55,14 @@ public:
 		using namespace core::chemical;
 		using namespace core::scoring::loop_graph;
 		using namespace core::pose;
+		using namespace core::import_pose;
 		using namespace core::pose::full_model_info;
 		using namespace protocols::stepwise::setup;
 		using namespace utility::tools;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
+		protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( *pose );
 
 		LoopGraph loop_graph;
 		loop_graph.set_error_out_on_complex_cycles( false );

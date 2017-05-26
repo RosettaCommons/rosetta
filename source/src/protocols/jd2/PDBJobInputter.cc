@@ -20,6 +20,7 @@
 ///Project headers
 
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/util.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -60,8 +61,20 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 
 	if ( !job->inner_job()->get_pose() ) {
 		TR << "filling pose from PDB " << job->input_tag() << std::endl;
-		core::import_pose::pose_from_file( pose, job->input_tag()); // Let it autodetermine PDB/CIF
+
+		// 'stepwise case' -- characterized by providing both -s and -fasta --
+		// basically, indicates that you (may) have need of full_model_info
+		// AMW TODO: super trivial, but extend to silent files (in the other JI)?
+		if ( option[in::file::s].user()
+				&& option[in::file::fasta].user() ) {
+			auto rsd_set =  pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
+			core::pose::PoseOP pose_op = core::import_pose::initialize_pose_and_other_poses_from_command_line( rsd_set );
+			pose = *pose_op;
+		} else {
+			core::import_pose::pose_from_file( pose, job->input_tag()); // Let it autodetermine PDB/CIF
+		}
 		load_pose_into_job(pose, job);
+
 	} else {
 		TR << "filling pose from saved copy " << job->input_tag() << std::endl;
 		pose = *(job->inner_job()->get_pose());

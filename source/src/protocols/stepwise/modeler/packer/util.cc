@@ -21,6 +21,7 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -83,7 +84,7 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 
 	utility::vector1< Size > interface_res;
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( !stepwise_addable_pose_residue( i, pose ) ) continue;
+		if ( !core::pose::stepwise_addable_pose_residue( i, pose ) ) continue;
 		if ( at_interface[i] ) interface_res.push_back( i );
 	}
 

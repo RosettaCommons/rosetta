@@ -21,6 +21,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.magnesium.minimize_util" );
@@ -176,7 +177,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 
 	// choose fold tree and put into pose.
 	runtime_assert( cuts.size() == jump_partners1.size() );
-	FoldTree f_new = protocols::stepwise::setup::get_tree( pose.size(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
+	FoldTree f_new = core::import_pose::get_tree( pose.size(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 	pose.fold_tree( f_new );
 }
 

@@ -343,7 +343,7 @@ RNA_FragmentMonteCarlo::initialize_parameters() {
 		if ( options_->align_pdb().size() > 0 ) {
 			using namespace core::chemical;
 			ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-			align_pose_ = stepwise::setup::get_pdb_with_full_model_info( options_->align_pdb(), rsd_set );
+			align_pose_ = core::import_pose::get_pdb_with_full_model_info( options_->align_pdb(), rsd_set );
 		}
 	}
 }
