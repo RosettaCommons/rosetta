@@ -13,8 +13,6 @@
 #ifndef _INCLUDED_T42_stl_names_hpp_
 #define _INCLUDED_T42_stl_names_hpp_
 
-#include <memory>
-
 #include <set>
 #include <map>
 #include <list>

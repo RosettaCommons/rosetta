@@ -25,6 +25,7 @@
 #include <sstream>
 #include <fstream>
 #include <set>
+#include <cstdlib>
 
 using namespace llvm;
 using namespace clang;
@@ -251,7 +252,12 @@ void Context::sort_binders()
 						//outs() << "Pushing forward binding for " << class_qualified_name(c) << "...\n";
 						auto e = find_if(b, binders.end(), [&c](BinderOP const &p) -> bool { return dyn_cast<CXXRecordDecl const >(p->named_decl()) == c; } );
 						if( e == binders.end() ) {
-							if(!repeat) throw std::runtime_error( "ERROR: Could not find binder for type: " + class_qualified_name(c) + "!");
+							if(!repeat) {
+								errs() << "ERROR: Could not find binder for type: " + class_qualified_name(c) + "!\nUsually cause for this is that type was only forward declared. Please check that Binder input include file with full declaration of this class.\n";
+								std::exit(1);
+
+								//throw std::runtime_error( "ERROR: Could not find binder for type: " + class_qualified_name(c) + "!");
+							}
 							// just declare forward declaration for now instead
 							// outs() << "Could not find binder for type: " + class_qualified_name(c) + "... will use forward declaration instead...\n";
 							// forward.insert( class_qualified_name(c) );
