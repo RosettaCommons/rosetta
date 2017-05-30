@@ -8,3 +8,4 @@
 -mute core.init
 -mpi_tracer_to_file log
 -jd2:sequential_mpi_job_distribution true
+-restore_talaris_behavior true
