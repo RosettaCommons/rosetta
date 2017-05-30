@@ -261,9 +261,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	utility::vector1< utility::vector1< Size > > obligate_pairing_sets,  stem_pairing_sets;
 	obligate_pairing_sets = rna_params_.obligate_pairing_sets();
 	if ( bps_moves_ ) { // supplement obligate_pairing_sets with stems in freely moving regions.
-		for ( Size n = 1; n <= rna_params_.stem_pairing_sets().size(); n++ ) {
-			for ( Size m = 1; m <= rna_params_.stem_pairing_sets()[n].size(); m++ ) {
-				Size const idx = rna_params_.stem_pairing_sets()[n][m];
+		for ( auto const & stem_pairing_set : rna_params_.stem_pairing_sets() ) {
+			for ( Size const idx : stem_pairing_set ) {
 				BasePair const & base_pair = rna_params_.rna_pairing_list()[ idx ] ;
 				if ( rna_params_.check_in_pairing_sets( obligate_pairing_sets, base_pair ) ) continue;
 				if ( !base_pair_moving( base_pair, rna_jump_mover.atom_level_domain_map(), pose ) ) continue;
@@ -299,8 +298,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		RNA_BasePairHandler const rna_base_pair_handler( rna_params_ ); // has get_base_pair_steps() function.
 		utility::vector1< BasePairStep > base_pair_steps = rna_base_pair_handler.get_base_pair_steps( false /* just canonical */ );
 
-		for ( Size n = 1; n <= base_pair_steps.size(); n++ ) {
-			BasePairStep const & base_pair_step = base_pair_steps[n];
+		for ( BasePairStep const & base_pair_step : base_pair_steps ) {
 			if ( base_pair_step.j_next() != (base_pair_step.j() + 1) ) continue;
 
 			// some base pair steps are actually not moveable.

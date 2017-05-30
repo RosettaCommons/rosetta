@@ -25,6 +25,8 @@
 #include <protocols/rna/denovo/movers/RNA_Relaxer.hh>
 #include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
+#include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
 
 // Package headers
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
@@ -69,6 +71,7 @@
 
 // option key includes
 #include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
@@ -188,11 +191,52 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	///////////////////////////////////////////////////////////////////////////
 	Size refine_pose_id( 1 );
 	std::list< core::Real > all_lores_score_final; // used for filtering.
-	output::RNA_FragmentMonteCarloOutputterOP outputter;
-	for ( Size n = 1; n <= options_->nstruct(); n++ ) {
 
-		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys::stepwise::monte_carlo;
+
+	std::string const silent_file = option[ out::file::silent ]();
+
+	RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
+		options_->input_res(), rna_params_->allow_insert_res() ) );
+	RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params_ ) );
+
+	// main loop
+	rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
+
+	rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
+	rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
+
+
+	protocols::rna::setup::RNA_JobDistributorOP denovo_job_distributor;
+	if ( option[ csa::csa_bank_size ].user() ) {
+		denovo_job_distributor = protocols::rna::setup::RNA_JobDistributorOP( new protocols::rna::setup::RNA_CSA_JobDistributor(
+			rna_fragment_monte_carlo_,
+			silent_file,
+			option[ out::nstruct ](),
+			option[ csa::csa_bank_size ](),
+			option[ csa::csa_rmsd ](),
+			option[ csa::csa_output_rounds ](),
+			option[ csa::annealing ]() ) );
+	} else {
+		denovo_job_distributor = protocols::rna::setup::RNA_JobDistributorOP( new protocols::rna::setup::RNA_MonteCarloJobDistributor(
+			rna_fragment_monte_carlo_,
+			silent_file,
+			options_->nstruct() ) );
+	}
+	denovo_job_distributor->set_native_pose( get_native_pose() );
+	denovo_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
+	denovo_job_distributor->initialize( pose ); // start_pose_ gets saved.
+
+	output::RNA_FragmentMonteCarloOutputterOP outputter;
+	//for ( Size n = 1; n <= options_->nstruct(); n++ ) {
+	Size n = 1;
+	while ( denovo_job_distributor->has_another_job() ) {
+
+		std::string const out_file_tag = "S_"+lead_zero_string_of( n++, 6 );
 		if ( tag_is_done_[ out_file_tag ] ) continue;
+
 		std::clock_t start_time = clock();
 
 		if ( refine_pose_list_.size() > 0 ) {
@@ -203,17 +247,10 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 			pose = start_pose;
 		}
 
-		RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
-			options_->input_res(), rna_params_->allow_insert_res() ) );
-		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params_ ) );
-
-		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
 		rna_fragment_monte_carlo_->set_out_file_tag( out_file_tag );
 		rna_fragment_monte_carlo_->set_native_pose( get_native_pose() );
 		rna_fragment_monte_carlo_->set_denovo_scorefxn( denovo_scorefxn_ );
 		rna_fragment_monte_carlo_->set_hires_scorefxn( hires_scorefxn_ );
-		rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
-		rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
 		rna_fragment_monte_carlo_->set_refine_pose( refine_pose );
 		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() ); // need to know this for the high resolution stuff
 		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
@@ -221,7 +258,9 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
 		if ( outputter != 0 ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
 
-		rna_fragment_monte_carlo_->apply( pose );
+		// This calls apply on the rna_fragment_monte_carlo_ object, to which it
+		// has a shared_ptr
+		denovo_job_distributor->apply( pose );
 
 		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated, used for filtering.
 		if ( options_->output_lores_silent_file() ) align_and_output_to_silent_file( *(rna_fragment_monte_carlo_->lores_pose()), lores_silent_file_, out_file_tag );
@@ -233,7 +272,9 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
 
 		align_and_output_to_silent_file( pose, options_->silent_file(), out_file_tag );
-	} //nstruct
+	}
+
+	//} //nstruct
 }
 
 
@@ -249,7 +290,7 @@ void
 RNA_DeNovoProtocol::show(std::ostream & output) const
 {
 	Mover::show(output);
-	output <<   "nstruct:                       " << options_->nstruct()  <<
+	output <<   "nstruct:                   " << options_->nstruct()  <<
 		"\nUser defined MC cycles:        " << (options_->user_defined_cycles()  ? "True" : "False") <<
 		"\nAll RNA fragment file:         " << options_->all_rna_fragments_file() <<
 		"\nDump pdb:                      " << (options_->dump_pdb() ? "True" : "False") <<

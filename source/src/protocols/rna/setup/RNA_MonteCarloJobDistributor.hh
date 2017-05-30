@@ -7,40 +7,46 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.hh
+/// @file protocols/rna/setup/RNA_MonteCarloJobDistributor.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_setup_StepWiseMonteCarloJobDistributor_HH
-#define INCLUDED_protocols_stepwise_setup_StepWiseMonteCarloJobDistributor_HH
+#ifndef INCLUDED_protocols_rna_setup_RNA_MonteCarloJobDistributor_HH
+#define INCLUDED_protocols_rna_setup_RNA_MonteCarloJobDistributor_HH
 
-#include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
+#include <protocols/rna/setup/RNA_JobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.fwd.hh>
-#include <protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.fwd.hh>
+#include <protocols/rna/setup/RNA_MonteCarloJobDistributor.fwd.hh>
+#include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {
-namespace stepwise {
+namespace rna {
 namespace setup {
 
-class StepWiseMonteCarloJobDistributor: public StepWiseJobDistributor {
+class RNA_MonteCarloJobDistributor: public RNA_JobDistributor {
 
 public:
 
 	//constructor
-	StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+	RNA_MonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+		std::string const & silent_file,
+		core::Size const nstruct );
+
+	//constructor
+	RNA_MonteCarloJobDistributor( rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo,
 		std::string const & silent_file,
 		core::Size const nstruct );
 
 	//destructor
-	~StepWiseMonteCarloJobDistributor();
+	~RNA_MonteCarloJobDistributor();
 
 public:
 
 	virtual std::string get_name() const {
-		return "StepWiseMonteCarloJobDistributor";
+		return "RNA_MonteCarloJobDistributor";
 	}
 
 	virtual
@@ -75,7 +81,7 @@ private:
 };
 
 } //setup
-} //stepwise
+} //rna
 } //protocols
 
 #endif

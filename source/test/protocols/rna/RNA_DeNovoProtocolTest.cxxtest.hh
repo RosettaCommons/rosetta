@@ -55,7 +55,7 @@ class RNA_DeNovoProtocolTest : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-save_times -rna:denovo:cycles 1 -nstruct 1 -out:file:silent default.out" );
+		core_init_with_additional_options( "-save_times -rna:denovo:cycles 1 -nstruct 1 -out:file:silent default.out -run:constant_seed" );
 	}
 
 	void tearDown(){
@@ -191,8 +191,8 @@ public:
 
 		RNA_LoopCloser const & rna_loop_closer = *(rna_de_novo_protocol.rna_fragment_monte_carlo()->rna_loop_closer());
 		utility::vector1< Size > loop_closer_cutpoints = rna_loop_closer.get_cutpoints_closed( pose );
-		TS_ASSERT_EQUALS( loop_closer_cutpoints, moving_cutpoints_closed );
 
+		TS_ASSERT_EQUALS( loop_closer_cutpoints, moving_cutpoints_closed );
 	}
 
 	void test_sarcin_ricin_loop_free_with_base_pair_steps(){
@@ -295,7 +295,6 @@ public:
 		RNA_LoopCloser const & rna_loop_closer = *(rna_de_novo_protocol.rna_fragment_monte_carlo()->rna_loop_closer());
 		utility::vector1< Size > loop_closer_cutpoints = rna_loop_closer.get_cutpoints_closed( pose );
 		TS_ASSERT_EQUALS( loop_closer_cutpoints, moving_cutpoints_closed );
-
 	}
 
 };

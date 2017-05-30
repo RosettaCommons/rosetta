@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/setup/StepWiseCSA_JobDistributor.fwd.hh
+/// @file protocols/rna/setup/RNA_MonteCarloJobDistributor.fwd.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_setup_StepWiseCSA_JobDistributor_FWD_HH
-#define INCLUDED_protocols_stepwise_setup_StepWiseCSA_JobDistributor_FWD_HH
+#ifndef INCLUDED_protocols_rna_setup_RNA_MonteCarloJobDistributor_FWD_HH
+#define INCLUDED_protocols_rna_setup_RNA_MonteCarloJobDistributor_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace stepwise {
+namespace rna {
 namespace setup {
 
-class StepWiseCSA_JobDistributor;
-typedef utility::pointer::shared_ptr< StepWiseCSA_JobDistributor > StepWiseCSA_JobDistributorOP;
-typedef utility::pointer::shared_ptr< StepWiseCSA_JobDistributor const > StepWiseCSA_JobDistributorCOP;
+class RNA_MonteCarloJobDistributor;
+typedef utility::pointer::shared_ptr< RNA_MonteCarloJobDistributor > RNA_MonteCarloJobDistributorOP;
+typedef utility::pointer::shared_ptr< RNA_MonteCarloJobDistributor const > RNA_MonteCarloJobDistributorCOP;
 
 } //setup
-} //stepwise
+} //rna
 } //protocols
 
 #endif

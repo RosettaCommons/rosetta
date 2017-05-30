@@ -7,14 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/setup/StepWiseCSA_JobDistributor.cc
+/// @file protocols/rna/setup/RNA_CSA_JobDistributor.cc
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>
+#include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
+#include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <core/io/silent/util.hh>
@@ -32,14 +33,14 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
-static basic::Tracer TR( "protocols.stepwise.setup.StepWiseCSA_JobDistributor" );
+static basic::Tracer TR( "protocols.rna.setup.RNA_CSA_JobDistributor" );
 
 using namespace core;
 using namespace core::io::silent;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Initial attempt at population-based optimization for stepwise monte carlo.
+// Initial attempt at population-based optimization for rna monte carlo.
 //
 //  CSA = conformational space annealing. Not attempting to directly use that Scheraga/Lee method,
 //         just recalling from memory what M. Tyka and I coded up a while back for Rosetta++.
@@ -73,57 +74,76 @@ using namespace core::io::silent;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
-namespace stepwise {
+namespace rna {
 namespace setup {
 
 //Constructor
-StepWiseCSA_JobDistributor::StepWiseCSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+RNA_CSA_JobDistributor::RNA_CSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP rna_monte_carlo,
 	std::string const & silent_file,
 	core::Size const nstruct,
 	core::Size const csa_bank_size,
 	core::Real const csa_rmsd,
-	bool const output_round_silent_files ):
-	StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
+	bool const output_round_silent_files,
+	bool const annealing ):
+	RNA_JobDistributor( rna_monte_carlo, silent_file, nstruct ),
 	lock_file( silent_file + ".lock" ),
 	csa_bank_size_( csa_bank_size ),
 	total_updates_( csa_bank_size * nstruct ),
 	csa_rmsd_( csa_rmsd ),
 	output_round_silent_files_( output_round_silent_files ),
-	total_updates_so_far_( 0 )
+	total_updates_so_far_( 0 ),
+	annealing_( annealing )
+{}
+
+RNA_CSA_JobDistributor::RNA_CSA_JobDistributor( denovo::RNA_FragmentMonteCarloOP rna_monte_carlo,
+	std::string const & silent_file,
+	core::Size const nstruct,
+	core::Size const csa_bank_size,
+	core::Real const csa_rmsd,
+	bool const output_round_silent_files,
+	bool const annealing ):
+	RNA_JobDistributor( rna_monte_carlo, silent_file, nstruct ),
+	lock_file( silent_file + ".lock" ),
+	csa_bank_size_( csa_bank_size ),
+	total_updates_( csa_bank_size * nstruct ),
+	csa_rmsd_( csa_rmsd ),
+	output_round_silent_files_( output_round_silent_files ),
+	total_updates_so_far_( 0 ),
+	annealing_( annealing )
 {}
 
 //Destructor
-StepWiseCSA_JobDistributor::~StepWiseCSA_JobDistributor()
+RNA_CSA_JobDistributor::~RNA_CSA_JobDistributor()
 {}
 
 void
-StepWiseCSA_JobDistributor::initialize( core::pose::Pose const & pose ) {
+RNA_CSA_JobDistributor::initialize( core::pose::Pose const & pose ) {
 	start_pose_ = pose.clone();
 	total_updates_so_far_ = 0;
 }
 
 ////////////////////////////////////////////////////////////
 bool
-StepWiseCSA_JobDistributor::has_another_job() {
+RNA_CSA_JobDistributor::has_another_job() {
 	return ( total_updates_so_far_ < total_updates_ );
 }
 
 ////////////////////////////////////////////////////////////
 Size
-StepWiseCSA_JobDistributor::get_updates( core::io::silent::SilentStructCOP s ) const {
+RNA_CSA_JobDistributor::get_updates( core::io::silent::SilentStructCOP s ) const {
 	runtime_assert( s->has_energy( "updates" ) );
 	return static_cast< Size >( s->get_energy( "updates" ) );
 }
 
 void
-StepWiseCSA_JobDistributor::set_updates( core::io::silent::SilentStructOP s, Size const updates ) const {
+RNA_CSA_JobDistributor::set_updates( core::io::silent::SilentStructOP s, Size const updates ) const {
 	s->add_string_value( "updates", utility::to_string( updates ) );
 	s->set_decoy_tag( "S_" +  ObjexxFCL::lead_zero_string_of( updates, 6 ) ); // redundant with updates column.
 }
 
 ////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::apply( core::pose::Pose & pose ) {
+RNA_CSA_JobDistributor::apply( core::pose::Pose & pose ) {
 
 	///////////////////////
 	// "check out" a model
@@ -134,18 +154,70 @@ StepWiseCSA_JobDistributor::apply( core::pose::Pose & pose ) {
 	////////////////////
 	// run some cycles
 	////////////////////
-	if ( sfd_->structure_list().size() < nstruct_ ) {
-		// If bank is not yet full, start from scratch.
-		pose = *start_pose_;
-		stepwise_monte_carlo_->set_model_tag( "NEW" );
+
+	if ( stepwise_monte_carlo_ ) {
+		if ( sfd_->structure_list().size() < nstruct_ ) {
+			// If bank is not yet full, start from scratch.
+			pose = *start_pose_;
+			stepwise_monte_carlo_->set_model_tag( "NEW" );
+		} else {
+			if ( annealing_ ) {
+				if ( total_updates_so_far_ == csa_bank_size_ ) {
+					// time to compute d_cut
+					// only have to calculate once so it's fine not to cache it.
+					csa_rmsd_ = average_pairwise_distance() / 2.0;
+				} else if ( total_updates_so_far_ % csa_bank_size_ == 0 ) {
+					// time to update d_cut -- for now, fixed schedule
+					// Lee 2003 Phys Rev Lett suggests going from dave/2 to dave/5
+					// in a fixed ratio, 'slowly' (approximately 10 pool-sizes, it looked
+					// like), then staying there.
+					// multiplying by 0.9124 every update approximately does this.
+					csa_rmsd_ *= 0.9124;
+				}
+			}
+
+
+			// Start from a model in the bank.
+			SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
+			TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
+			s->fill_pose( pose );
+			stepwise_monte_carlo_->set_model_tag( s->decoy_tag() );
+		}
+		stepwise_monte_carlo_->apply( pose );
 	} else {
-		// Start from a model in the bank.
-		SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
-		TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
-		s->fill_pose( pose );
-		stepwise_monte_carlo_->set_model_tag( s->decoy_tag() );
+		TR << "nstruct_ " << nstruct_ << std::endl;
+		TR << "bank_size_ " << csa_bank_size_ << std::endl;
+		TR << "sfd_ has " << sfd_->structure_list().size() << std::endl;
+		if ( sfd_->structure_list().size() < nstruct_ ) {
+			// If bank is not yet full, start from scratch.
+			pose = *start_pose_;
+			rna_fragment_monte_carlo_->set_out_file_tag( "NEW" );
+		} else {
+			TR << "Total_updates_so_far_ " << total_updates_so_far_ << "  annealing " << annealing_  << std::endl;
+			if ( annealing_ ) {
+				if ( total_updates_so_far_ == csa_bank_size_ ) {
+					// time to compute d_cut
+					// only have to calculate once so it's fine not to cache it.
+					csa_rmsd_ = average_pairwise_distance() / 2.0;
+				} else if ( total_updates_so_far_ % csa_bank_size_ == 0 ) {
+					// time to update d_cut -- for now, fixed schedule
+					// Lee 2003 Phys Rev Lett suggests going from dave/2 to dave/5
+					// in a fixed ratio, 'slowly' (approximately 10 pool-sizes, it looked
+					// like), then staying there.
+					// multiplying by 0.9124 every update approximately does this.
+					csa_rmsd_ *= 0.9124;
+				}
+			}
+
+			// Start from a model in the bank.
+			SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
+			TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
+			s->fill_pose( pose );
+			rna_fragment_monte_carlo_->set_refine_pose( true );
+			rna_fragment_monte_carlo_->set_out_file_tag( s->decoy_tag() );
+		}
+		rna_fragment_monte_carlo_->apply( pose );
 	}
-	stepwise_monte_carlo_->apply( pose );
 
 	/////////////////////
 	// now update bank
@@ -159,9 +231,36 @@ StepWiseCSA_JobDistributor::apply( core::pose::Pose & pose ) {
 	if ( output_round_silent_files_ ) write_out_round_silent_file();
 }
 
+Real
+RNA_CSA_JobDistributor::average_pairwise_distance() const {
+	runtime_assert( sfd_ != 0 );
+
+	// This is a big computation. If you have a bank of 200 structures, you are
+	// taking 200 * 200 RMSDs. At some point -- maybe jd3 migration? -- let's be
+	// clever and farm them out.
+	utility::vector1< SilentStructOP > const & struct_list = sfd_->structure_list();
+
+	// Oh, don't be dumb. It's "just" 99 * 200. Upper triangle.
+	Real distance = 0;
+	Size num = 0;
+	for ( Size ii = 1; ii <= struct_list.size(); ++ii ) {
+		core::pose::PoseOP ii_pose( new Pose );
+		struct_list[ ii ]->fill_pose( *ii_pose );
+		for ( Size jj = ii + 1; jj <= struct_list.size(); ++jj ) {
+			core::pose::PoseOP jj_pose( new Pose );
+			struct_list[ jj ]->fill_pose( *jj_pose );
+
+			distance += stepwise::modeler::align::get_rmsd( *ii_pose, *jj_pose, false, false );
+			++num;
+		}
+	}
+
+	return distance / Real( num );
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
+RNA_CSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 
 	runtime_assert( sfd_ != 0 );
 
@@ -186,7 +285,7 @@ StepWiseCSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 		} else {
 			// else if better in energy ... there's a chance this will get inserted.
 			utility::vector1< SilentStructOP > const & struct_list = sfd_->structure_list();
-			full_model_pose = monte_carlo::build_full_model( pose ); // makes a full model with all residues.
+			full_model_pose = stepwise::monte_carlo::build_full_model( pose ); // makes a full model with all residues.
 
 			//  If within X RMSD of a model, replace it.
 			Size kick_out_idx( struct_list.size() );
@@ -218,7 +317,7 @@ StepWiseCSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 	}
 
 	if ( s == 0 ) {
-		s = monte_carlo::prepare_silent_struct( "S_0", pose, get_native_pose(),
+		s = stepwise::monte_carlo::prepare_silent_struct( "S_0", pose, get_native_pose(),
 			superimpose_over_all_, true /*do_rms_fill_calculation*/, full_model_pose );
 		sfd_->add_structure( s );
 	}
@@ -234,7 +333,7 @@ StepWiseCSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::read_in_silent_file(){
+RNA_CSA_JobDistributor::read_in_silent_file(){
 
 	core::io::silent::SilentFileOptions opts;
 	sfd_ = SilentFileDataOP( new SilentFileData(opts) );
@@ -253,7 +352,7 @@ StepWiseCSA_JobDistributor::read_in_silent_file(){
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::write_out_silent_file( std::string const & silent_file_in ){
+RNA_CSA_JobDistributor::write_out_silent_file( std::string const & silent_file_in ){
 	std::string const silent_file = silent_file_in.size() == 0 ?  silent_file_ : silent_file_in;
 	runtime_assert( sfd_ != 0 );
 	runtime_assert( sfd_->structure_list().size() > 0 );
@@ -267,7 +366,7 @@ StepWiseCSA_JobDistributor::write_out_silent_file( std::string const & silent_fi
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::write_out_round_silent_file(){
+RNA_CSA_JobDistributor::write_out_round_silent_file(){
 	// keep track of stages along the way -- every time we do a multiple of csa_bank_size is a 'round'.
 	if ( ( total_updates_so_far_ % csa_bank_size_ ) == 0 ) {
 		Size const nrounds = total_updates_so_far_ / csa_bank_size_;
@@ -280,7 +379,7 @@ StepWiseCSA_JobDistributor::write_out_round_silent_file(){
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::put_lock_on_silent_file() {
+RNA_CSA_JobDistributor::put_lock_on_silent_file() {
 	Size ntries( 0 );
 	Size const MAX_TRIES( 1000 );
 	while ( utility::file::file_exists( lock_file ) && ++ntries <= MAX_TRIES ) {
@@ -295,7 +394,7 @@ StepWiseCSA_JobDistributor::put_lock_on_silent_file() {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseCSA_JobDistributor::free_lock_on_silent_file() {
+RNA_CSA_JobDistributor::free_lock_on_silent_file() {
 	runtime_assert( utility::file::file_exists( lock_file ) );
 	utility::file::file_delete( lock_file );
 }
@@ -309,14 +408,14 @@ StepWiseCSA_JobDistributor::free_lock_on_silent_file() {
 // Also we create full_model_pose anyway to calculate rms_fill.
 //
 bool
-StepWiseCSA_JobDistributor::check_for_closeness( pose::Pose & pose_test,
+RNA_CSA_JobDistributor::check_for_closeness( pose::Pose & pose_test,
 	pose::Pose const & full_model_pose ) const {
-	Real const rms = modeler::align::superimpose_with_stepwise_aligner( pose_test, full_model_pose, superimpose_over_all_ );
+	Real const rms = stepwise::modeler::align::superimpose_with_stepwise_aligner( pose_test, full_model_pose, superimpose_over_all_ );
 	TR << TR.Cyan << "Calculated RMS to model: " << tag_from_pose( pose_test ) << " to be: " << rms << " and compared to " << csa_rmsd_ << TR.Reset << std::endl;
 	return ( rms < csa_rmsd_ );
 }
 
 
 } //setup
-} //stepwise
+} //rna
 } //protocols

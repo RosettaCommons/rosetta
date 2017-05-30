@@ -31,7 +31,7 @@
 //
 // MyMover testmover;
 // TagCOP tag = tagptr_from_string("<MyTest name=test filter=stubby mover=null reps=4>\n"
-//		"</MyTest>"); // Remember that C++ has implicit string literal concatenation, but note that the \n is required for the tag parser
+//  "</MyTest>"); // Remember that C++ has implicit string literal concatenation, but note that the \n is required for the tag parser
 // testmover.parse_my_tag( tag, data, filters, movers, pose );
 //
 //
@@ -101,9 +101,9 @@ utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 	core::pose::Pose pose;
 
 	protocols::moves::MoverOP base_mover(
-			protocols::moves::MoverFactory::get_instance()->newMover(
-				tag, data, filters, movers, pose ) );
-	utility::pointer::shared_ptr<MoverSubclass> mover = 
+		protocols::moves::MoverFactory::get_instance()->newMover(
+		tag, data, filters, movers, pose ) );
+	utility::pointer::shared_ptr<MoverSubclass> mover =
 		utility::pointer::dynamic_pointer_cast<MoverSubclass>(base_mover);
 
 	TSM_ASSERT("Instantiated the wrong type of mover", mover.get());
@@ -152,7 +152,7 @@ public:
 		tag_(tag)
 	{}
 	FilterOP clone() const { return FilterOP( new StubFilter( *this ) ); }
-	FilterOP fresh_instance() const {	return FilterOP( new StubFilter() ); }
+	FilterOP fresh_instance() const { return FilterOP( new StubFilter() ); }
 	void set( bool truth, core::Real value) { truth_ = truth; value_ = value; }
 	bool apply( core::pose::Pose const & ) const { return truth_; }
 	core::Real report_sm( core::pose::Pose const & ) const { return value_;}
@@ -180,7 +180,7 @@ public:
 		tag_(tag)
 	{}
 	FilterOP clone() const { return FilterOP( new StubMultiFilter( *this ) ); }
-	FilterOP fresh_instance() const {	return FilterOP( new StubMultiFilter() ); }
+	FilterOP fresh_instance() const { return FilterOP( new StubMultiFilter() ); }
 	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") { values_ = values, truth_ = truth; tag_ = tag; }
 	void push_back( core::Real value ) { values_.push_back( value); }
 	void set_pos( core::Size pos = 1) { pos_ = pos; }
@@ -195,7 +195,7 @@ public:
 	}
 	void report( std::ostream & ostream, core::pose::Pose const & ) const {
 		ostream << "StubMultiFilter " << tag_ << ": " << truth_ << " ";
-		for( core::Size ii(1); ii <= values_.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= values_.size(); ++ii ) {
 			ostream << values_[ ii ] << " ";
 		}
 		ostream << std::endl;

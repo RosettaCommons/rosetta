@@ -121,6 +121,7 @@ private:
 	core::scoring::ScoreFunctionOP hires_scorefxn_;
 
 	utility::vector1<core::pose::PoseOP> refine_pose_list_;
+	core::Size refine_pose_id_ = 1;
 
 }; // class RNA_DeNovoProtocol
 

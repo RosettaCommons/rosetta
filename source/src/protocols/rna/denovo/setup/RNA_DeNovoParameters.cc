@@ -355,11 +355,11 @@ RNA_DeNovoParameters::read_chain_connection( std::istringstream & line_stream ) 
 Size
 RNA_DeNovoParameters::check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
 	BasePair const & rna_pairing_check ) const {
-	for ( Size n = 1; n <= pairing_sets.size(); n++ ) {
-		for ( Size m = 1; m <= pairing_sets[n].size(); m++ ) {
-			BasePair rna_pairing = rna_pairing_list_[ pairing_sets[n][m] ];
-			if ( rna_pairing.res1() == rna_pairing_check.res1() && rna_pairing.res2() == rna_pairing_check.res2() ) return pairing_sets[n][m];
-			if ( rna_pairing.res2() == rna_pairing_check.res1() && rna_pairing.res1() == rna_pairing_check.res2() ) return pairing_sets[n][m];
+	for ( auto const & pairing_set : pairing_sets ) {
+		for ( Size const idx : pairing_set ) {
+			BasePair const & rna_pairing = rna_pairing_list_[ idx ];
+			if ( rna_pairing.res1() == rna_pairing_check.res1() && rna_pairing.res2() == rna_pairing_check.res2() ) return idx;
+			if ( rna_pairing.res2() == rna_pairing_check.res1() && rna_pairing.res1() == rna_pairing_check.res2() ) return idx;
 		}
 	}
 	return false;

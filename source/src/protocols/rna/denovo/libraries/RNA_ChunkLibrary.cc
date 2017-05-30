@@ -279,9 +279,6 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 	using namespace core::id;
 	using namespace core::conformation;
 
-	// connected doesn't do anything anymore...
-	FArray1D< bool > connected( pose.size(), false );
-
 	Size i_prev( 0 );
 
 	for ( auto const & elem : res_map ) {

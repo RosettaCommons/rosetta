@@ -7,27 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.cc
+/// @file protocols/rna/setup/RNA_MonteCarloJobDistributor.cc
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.hh>
+#include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
+#include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
+#include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <core/io/silent/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/file/FileName.hh>
 
-static basic::Tracer TR( "protocols.stepwise.setup.StepWiseMonteCarloJobDistributor" );
+static basic::Tracer TR( "protocols.rna.setup.RNA_MonteCarloJobDistributor" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Bare-bones job distributor for StepWiseMonteCarlo. Also should work for single moves.
+// Bare-bones job distributor for RNA_MonteCarlo. Also should work for single moves.
 //
 // Just looks to see if tag S_0, S_1, etc. is already in silent_file up to
 //  nstruct.
@@ -42,14 +44,26 @@ static basic::Tracer TR( "protocols.stepwise.setup.StepWiseMonteCarloJobDistribu
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
-namespace stepwise {
+namespace rna {
 namespace setup {
 
 //Constructor
-StepWiseMonteCarloJobDistributor::StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+RNA_MonteCarloJobDistributor::RNA_MonteCarloJobDistributor(
+	stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
 	std::string const & silent_file,
 	core::Size const nstruct ):
-	StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
+	RNA_JobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
+	count_( 1 ),
+	out_tag_( "" ),
+	init_tag_is_done_( false )
+{
+}
+
+RNA_MonteCarloJobDistributor::RNA_MonteCarloJobDistributor(
+	protocols::rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo,
+	std::string const & silent_file,
+	core::Size const nstruct ):
+	RNA_JobDistributor( rna_fragment_monte_carlo, silent_file, nstruct ),
 	count_( 1 ),
 	out_tag_( "" ),
 	init_tag_is_done_( false )
@@ -57,17 +71,17 @@ StepWiseMonteCarloJobDistributor::StepWiseMonteCarloJobDistributor( stepwise::mo
 }
 
 //Destructor
-StepWiseMonteCarloJobDistributor::~StepWiseMonteCarloJobDistributor()
+RNA_MonteCarloJobDistributor::~RNA_MonteCarloJobDistributor()
 {}
 
 void
-StepWiseMonteCarloJobDistributor::initialize( core::pose::Pose const & pose ) {
+RNA_MonteCarloJobDistributor::initialize( core::pose::Pose const & pose ) {
 	start_pose_ = pose.clone();
 	count_ = 1;
 }
 
 void
-StepWiseMonteCarloJobDistributor::move_forward_to_next_model() {
+RNA_MonteCarloJobDistributor::move_forward_to_next_model() {
 	while ( count_ <= nstruct_ && !get_out_tag() ) {
 		count_++;
 		if ( !get_out_tag() ) TR << "Already done: " << out_tag_ << std::endl;
@@ -75,30 +89,43 @@ StepWiseMonteCarloJobDistributor::move_forward_to_next_model() {
 }
 
 bool
-StepWiseMonteCarloJobDistributor::has_another_job() {
+RNA_MonteCarloJobDistributor::has_another_job() {
 	move_forward_to_next_model();
 	return ( count_ <= nstruct_ );
 }
 
 void
-StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
+RNA_MonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
+
+	runtime_assert( stepwise_monte_carlo_ || rna_fragment_monte_carlo_ );
 
 	runtime_assert( has_another_job() );
 	TR << std::endl << TR.Green << "Embarking on structure " << count_ << " of " << nstruct_ << TR.Reset << std::endl;
 
 	runtime_assert( start_pose_ != 0 ); // initialized.
 	pose = *start_pose_;
-	stepwise_monte_carlo_->set_model_tag( out_tag_ );
-	stepwise_monte_carlo_->set_out_file_prefix( utility::file::FileName(silent_file_).base() );
 
-	// Maybe here is where we check for a possibly checkpointed file for structure out_tag_
+	// AMW TODO unify -- right now we just switch on pointer nullity to do one of two behaviors!
+	if ( stepwise_monte_carlo_ ) {
+		stepwise_monte_carlo_->set_model_tag( out_tag_ );
+		stepwise_monte_carlo_->set_out_file_prefix( utility::file::FileName( silent_file_ ).base() );
 
-	stepwise_monte_carlo_->apply( pose );
+		// Maybe here is where we check for a possibly checkpointed file for structure out_tag_
 
-	if ( ! stepwise_monte_carlo_->options()->output_minimized_pose_list() ) {
-		monte_carlo::output_to_silent_file( out_tag_, silent_file_,
-			pose, get_native_pose(), superimpose_over_all_,
-			true /*rms_fill*/ );
+		stepwise_monte_carlo_->apply( pose );
+
+		if ( ! stepwise_monte_carlo_->options()->output_minimized_pose_list() ) {
+			stepwise::monte_carlo::output_to_silent_file( out_tag_, silent_file_,
+				pose, get_native_pose(), superimpose_over_all_,
+				true /*rms_fill*/ );
+		}
+	} else {
+		rna_fragment_monte_carlo_->set_out_file_tag( out_tag_ );
+		rna_fragment_monte_carlo_->apply( pose );
+
+
+
+
 	}
 	tag_is_done_[ out_tag_ ] = true;
 }
@@ -106,7 +133,7 @@ StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////
 // used to be in a util.cc
 bool
-StepWiseMonteCarloJobDistributor::get_out_tag(){
+RNA_MonteCarloJobDistributor::get_out_tag(){
 	using namespace core::io::silent;
 	if ( !init_tag_is_done_ ) {
 		tag_is_done_ = initialize_tag_is_done( silent_file_ );
@@ -122,5 +149,5 @@ StepWiseMonteCarloJobDistributor::get_out_tag(){
 
 
 } //setup
-} //stepwise
+} //rna
 } //protocols

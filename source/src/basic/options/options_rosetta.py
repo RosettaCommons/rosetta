@@ -7254,6 +7254,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				  Option( 'csa_bank_size', 'Integer', desc='Do conformational space annealing (population monte carlo) with this number of models in the bank',default='0' ),
 				  Option( 'csa_rmsd', 'Real', desc='RMSD cutoff for calling two poses different in conformational space annealing (population monte carlo)',default='1.0' ),
 		      Option( 'csa_output_rounds', 'Boolean', desc='output silent files at intermediate stages (at integral multiples of bank_size)',default='false' ),
+		      Option( 'annealing', 'Boolean', desc='Actually anneal the RMSD from the half the average distance between first-bank models to one-fifth that distance', default='false' ),
 			),
 		), # -stepwise:monte_carlo
 		Option_Group( 'polar_hydrogens',

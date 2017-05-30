@@ -7,41 +7,60 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/setup/StepWiseJobDistributor.hh
+/// @file protocols/rna/setup/RNA_JobDistributor.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_setup_StepWiseJobDistributor_HH
-#define INCLUDED_protocols_stepwise_setup_StepWiseJobDistributor_HH
+#ifndef INCLUDED_protocols_rna_setup_RNA_JobDistributor_HH
+#define INCLUDED_protocols_rna_setup_RNA_JobDistributor_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/setup/StepWiseJobDistributor.fwd.hh>
+#include <protocols/rna/setup/RNA_JobDistributor.fwd.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.fwd.hh>
+//#include <protocols/rna/denovo/RNA_DeNovoProtocol.fwd.hh>
+
+// AMW TODO: write a forward header
+#include <utility/pointer/owning_ptr.hh>
+namespace protocols { namespace rna { namespace denovo {
+class RNA_FragmentMonteCarlo;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo > RNA_FragmentMonteCarloOP;
+} } }
 #include <core/types.hh>
 
 namespace protocols {
-namespace stepwise {
+namespace rna {
 namespace setup {
 
-class StepWiseJobDistributor: public protocols::moves::Mover {
+class RNA_JobDistributor: public protocols::moves::Mover {
 
 public:
 
-	StepWiseJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+	RNA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
 		std::string const & silent_file,
 		core::Size const nstruct ):
 		stepwise_monte_carlo_( stepwise_monte_carlo ),
+		rna_fragment_monte_carlo_( nullptr ),
 		silent_file_( silent_file ),
 		nstruct_( nstruct ),
 		superimpose_over_all_( false )
 	{
 	}
 
+	RNA_JobDistributor( rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo,
+		std::string const & silent_file,
+		core::Size const nstruct ):
+		stepwise_monte_carlo_( nullptr ),
+		rna_fragment_monte_carlo_( rna_fragment_monte_carlo ),
+		silent_file_( silent_file ),
+		nstruct_( nstruct ),
+		superimpose_over_all_( false )
+	{
+	}
 
 	virtual std::string get_name() const {
-		return "StepWiseJobDistributor";
+		return "RNA_JobDistributor";
 	}
 
 	virtual
@@ -61,7 +80,12 @@ public:
 
 protected:
 
+	// The True way to achieve this effect would be through a sum type
+	// (in... some other language) or via a superclass. Upon unification with
+	// jd3, the natural superclass would be Mover, but at the moment this
+	// makes some assumptions. So we use two pointers and a runtime_assert instead.
 	stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo_;
+	rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo_;
 	std::string const silent_file_;
 	core::Size const nstruct_;
 	bool superimpose_over_all_;
@@ -70,7 +94,7 @@ protected:
 };
 
 } //setup
-} //stepwise
+} //rna
 } //protocols
 
 #endif

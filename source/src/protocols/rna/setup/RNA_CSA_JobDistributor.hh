@@ -7,37 +7,46 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh
+/// @file protocols/rna/setup/RNA_CSA_JobDistributor.hh
 /// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_setup_StepWiseCSA_JobDistributor_HH
-#define INCLUDED_protocols_stepwise_setup_StepWiseCSA_JobDistributor_HH
+#ifndef INCLUDED_protocols_rna_setup_RNA_CSA_JobDistributor_HH
+#define INCLUDED_protocols_rna_setup_RNA_CSA_JobDistributor_HH
 
-#include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
-#include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.fwd.hh>
+#include <protocols/rna/setup/RNA_JobDistributor.hh>
+#include <protocols/rna/setup/RNA_CSA_JobDistributor.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 
 namespace protocols {
-namespace stepwise {
+namespace rna {
 namespace setup {
 
-class StepWiseCSA_JobDistributor: public StepWiseJobDistributor {
+class RNA_CSA_JobDistributor: public RNA_JobDistributor {
 
 public:
 
-	StepWiseCSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+	RNA_CSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
 		std::string const & silent_file,
 		core::Size const nstruct,
 		core::Size const csa_bank_size,
 		core::Real const csa_rmsd,
-		bool const output_round_silent_files );
+		bool const output_round_silent_files,
+		bool const annealing );
+
+	RNA_CSA_JobDistributor( protocols::rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo,
+		std::string const & silent_file,
+		core::Size const nstruct,
+		core::Size const csa_bank_size,
+		core::Real const csa_rmsd,
+		bool const output_round_silent_files,
+		bool const annealing );
 
 	//destructor
-	~StepWiseCSA_JobDistributor();
+	~RNA_CSA_JobDistributor();
 
 public:
 
@@ -80,21 +89,25 @@ private:
 	check_for_closeness( core::pose::Pose & pose_test,
 		core::pose::Pose const & full_model_pose ) const;
 
+	core::Real
+	average_pairwise_distance() const;
+
 private:
 
 	std::string const lock_file;
 	core::Size const csa_bank_size_;
 	core::Size const total_updates_;
-	core::Real const csa_rmsd_;
+	core::Real csa_rmsd_;
 	bool const output_round_silent_files_;
 	core::Size total_updates_so_far_;
 	core::io::silent::SilentFileDataOP sfd_;
+	bool const annealing_;
 
 
 };
 
 } //setup
-} //stepwise
+} //rna
 } //protocols
 
 #endif

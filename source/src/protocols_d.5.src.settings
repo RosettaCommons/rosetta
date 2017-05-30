@@ -11,7 +11,7 @@
 
 sources = {
     "protocols/rna/": [
-	"util",
+		"util",
     ],
     "protocols/rna/denovo": [
         "RNA_DeNovoProtocol",
@@ -74,6 +74,10 @@ sources = {
         "RNAIdealizeMover",
         "RNA_DeNovoOptimizer",
     ],
+	"protocols/rna/setup": [
+        "RNA_CSA_JobDistributor",
+        "RNA_MonteCarloJobDistributor",
+	],
     "protocols/magnesium": [
         "MgOrbitalFrameFinder",
         "MgHydrater",
@@ -169,8 +173,6 @@ sources = {
     ],
     "protocols/stepwise/setup/": [
         "FullModelInfoSetupFromCommandLine",
-        "StepWiseCSA_JobDistributor",
-        "StepWiseMonteCarloJobDistributor",
         "util",
     ],
     "protocols/stepwise/legacy/modeler": [

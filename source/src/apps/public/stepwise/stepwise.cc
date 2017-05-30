@@ -26,9 +26,9 @@
 #include <core/io/silent/util.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/stepwise/setup/StepWiseJobDistributor.hh>
-#include <protocols/stepwise/setup/StepWiseCSA_JobDistributor.hh>
-#include <protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.hh>
+#include <protocols/rna/setup/RNA_JobDistributor.hh>
+#include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
+#include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
@@ -85,6 +85,7 @@ stepwise_monte_carlo()
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::monte_carlo::submotif;
 	using namespace protocols::stepwise::setup;
+	using namespace protocols::rna::setup;
 	using namespace protocols::stepwise::monte_carlo;
 	using namespace protocols::stepwise::monte_carlo::mover;
 	using namespace protocols::stepwise::monte_carlo::options;
@@ -143,9 +144,9 @@ stepwise_monte_carlo()
 	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) ) );
 
 	// main loop
-	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
+	RNA_JobDistributorOP stepwise_job_distributor( new RNA_MonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
 	if ( option[ csa::csa_bank_size ].user() ) {
-		stepwise_job_distributor = StepWiseJobDistributorOP( new StepWiseCSA_JobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ csa::csa_bank_size ](), option[ csa::csa_rmsd ](), option[ csa::csa_output_rounds ]() ) );
+		stepwise_job_distributor = RNA_JobDistributorOP( new RNA_CSA_JobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ csa::csa_bank_size ](), option[ csa::csa_rmsd ](), option[ csa::csa_output_rounds ](), option[ csa::annealing ]() ) );
 	}
 	stepwise_job_distributor->set_native_pose( native_pose );
 	stepwise_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
@@ -218,6 +219,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_bank_size );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_rmsd );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::csa_output_rounds );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::csa::annealing );
 		option.add_relevant( OptionKeys::stepwise::superimpose_over_all );
 		option.add_relevant( OptionKeys::stepwise::move );
 		option.add_relevant( OptionKeys::stepwise::num_random_samples );
