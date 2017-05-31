@@ -480,7 +480,7 @@ GeneralizedKICselector::define_valid_selector_name_enumeration( utility::tag::XM
 	genkic_selector_name.add_restriction( xsr_enumeration, "no_selector" );
 	genkic_selector_name.add_restriction( xsr_enumeration, "random_selector" );
 	genkic_selector_name.add_restriction( xsr_enumeration, "lowest_energy_selector" );
-	genkic_selector_name.add_restriction( xsr_enumeration, "botlzmann_energy_selector" );
+	genkic_selector_name.add_restriction( xsr_enumeration, "boltzmann_energy_selector" );
 	genkic_selector_name.add_restriction( xsr_enumeration, "lowest_rmsd_selector" );
 	genkic_selector_name.add_restriction( xsr_enumeration, "lowest_delta_torsion_selector" );
 	xsd.add_top_level_element( genkic_selector_name );

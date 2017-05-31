@@ -82,8 +82,9 @@ public:
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	// XRW TEMP  std::string get_name() const override;
-
+	// Note that this mover is not intended to be configurable from RosettaScripts.  It is only
+	// meant to be invoked from the MakeBundle and BundleGridSampler movers.  As such, it has no
+	// parse_my_tag function.
 	/*virtual void parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,

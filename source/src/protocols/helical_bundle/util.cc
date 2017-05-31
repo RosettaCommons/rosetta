@@ -71,33 +71,28 @@ void add_attributes_for_make_bundle_symmetry( AttributeList & attlist ) {
 }
 
 void add_attributes_for_make_bundle_dofs( AttributeList & attlist ) {
-	attlist + XMLSchemaAttribute::attribute_w_default( "set_bondlengths", xsct_rosetta_bool, "Should bond lengths be sampled?", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "set_bondangles", xsct_rosetta_bool, "Should bond angles be sampled?", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "set_dihedrals", xsct_rosetta_bool, "Should dihedrals be sampled?", "true" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "set_bondlengths", xsct_rosetta_bool, "Should bond lengths be set (true) or fixed at ideal values (false)?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "set_bondangles", xsct_rosetta_bool, "Should bond angles be set (true) or fixed at ideal values (false)?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "set_dihedrals", xsct_rosetta_bool, "Should dihedrals be set (true) or fixed at ideal values (false)?", "true" );
 }
 
 void add_attributes_for_make_bundle_minorhelix_defaults( AttributeList & attlist ) {
 	if ( ! attribute_w_name_in_attribute_list( "crick_params_file", attlist ) ) {
-		attlist + XMLSchemaAttribute( "crick_params_file", xs_string, "File name indicator containing Crick parameters for the helical bundle geometry desired" );
-	}
-	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "omega1", xsct_real, "Minor helical turn per residue, by default", "0" );
-	if ( ! attribute_w_name_in_attribute_list( "z1", attlist ) ) {
-		attlist + XMLSchemaAttribute::attribute_w_default( "z1", xsct_real, "Default value for helix rise per residue", "0" );
+		attlist + XMLSchemaAttribute( "crick_params_file", xs_string, "File name of a file containing Crick parameters for the secondary structure type desired." );
 	}
 }
 
 void add_attributes_for_make_bundle_other_defaults( AttributeList & attlist ) {
 	attlist + XMLSchemaAttribute( "residue_name", xs_string, "Residue, indicated by name, from which to build the helical bundle." )
-		+ XMLSchemaAttribute::attribute_w_default( "repeating_unit_offset", xsct_non_negative_integer, "Offset between repeating units", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repeating_unit_offset", xsct_non_negative_integer, "Offset between repeating units.", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "Should this helix be flipped?", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "helix_length", xsct_non_negative_integer, "Length for this helix", "0" );
+		+ XMLSchemaAttribute::attribute_w_default( "helix_length", xsct_non_negative_integer, "Length, in residues, for this helix.", "0" );
 }
 
 void add_attributes_for_helix_params( AttributeList & attlist ) {
 	// This may already exist if add_attributes_for_minor_helix_params has been called
 	if ( ! attribute_w_name_in_attribute_list( "crick_params_file", attlist ) ) {
-		attlist + XMLSchemaAttribute( "crick_params_file", xs_string, "File indicator that may contain Crick parameters" );
+		attlist + XMLSchemaAttribute( "crick_params_file", xs_string, "File name of a file containing Crick parameters for the secondary structure type desired." );
 	}
 	// Per-helix control of bond lengths, angles, and dihedrals
 	add_attributes_for_make_bundle_dofs( attlist );
@@ -105,7 +100,7 @@ void add_attributes_for_helix_params( AttributeList & attlist ) {
 
 void add_attributes_for_minor_helix_params( AttributeList & attlist ) {
 	if ( ! attribute_w_name_in_attribute_list( "crick_params_file", attlist ) ) {
-		attlist + XMLSchemaAttribute( "crick_params_file", xs_string, "File name indicator containing Crick parameters for the helical bundle geometry desired" );
+		attlist + XMLSchemaAttribute( "crick_params_file", xs_string, "File name of a file containing Crick parameters for the secondary structure type desired." );
 	}
 	attlist + XMLSchemaAttribute::attribute_w_default( "omega1", xsct_real, "Minor helical turn per residue, for a specific helix", "0" );
 	if ( ! attribute_w_name_in_attribute_list( "delta_omega1", attlist ) ) {
@@ -120,7 +115,7 @@ void add_attributes_for_other_helix_params( AttributeList & attlist ) {
 	attlist + XMLSchemaAttribute( "residue_name", xs_string, "For a specific helix, residue, indicated by name, from which to build the helical bundle." )
 		+ XMLSchemaAttribute::attribute_w_default( "repeating_unit_offset", xsct_non_negative_integer, "For a specific helix, Offset between repeating units", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "For a specific helix, should this helix be flipped?", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "helix_length", xsct_non_negative_integer, "For a specific helix, length for this helix", "0" );
+		+ XMLSchemaAttribute::attribute_w_default( "helix_length", xsct_non_negative_integer, "For a specific helix, length, in residues, for this helix", "0" );
 }
 
 /// @brief Actual write of the crick_params file data.

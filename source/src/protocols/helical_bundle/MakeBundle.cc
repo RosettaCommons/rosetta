@@ -245,14 +245,6 @@ void MakeBundle::apply (core::pose::Pose & pose)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-
-/// @brief Returns the name of this mover ("MakeBundle").
-// XRW TEMP std::string MakeBundle::get_name() const{
-// XRW TEMP  return "MakeBundle";
-// XRW TEMP }
-
-////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -811,7 +803,7 @@ void MakeBundle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	utility::tag::XMLSchemaSimpleSubelementList ssl;
 	ssl.add_simple_subelement( "Helix", subtag_attributes, "Tags describing individual helices in the bundle"/*, 0 minoccurs*/ );
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "The MakeBundle mover builds a helical bundle parametrically, using the Crick parameterization, given a set of Crick parameter values.  Note that the Crick parameterization is compatible with arbitrary helices (including strands, which are special cases of helices in which the turn per residue is about 180 degrees).", attlist, ssl );
 }
 
 std::string MakeBundleCreator::keyname() const {

@@ -52,24 +52,6 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
 
-// XRW TEMP std::string
-// XRW TEMP MakeBundleHelixCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MakeBundleHelix::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeBundleHelixCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MakeBundleHelix );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP MakeBundleHelix::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MakeBundleHelix";
-// XRW TEMP }
-
-
 /// @brief Constructor for MakeBundleHelix mover.
 MakeBundleHelix::MakeBundleHelix():
 	Mover("MakeBundleHelix"),
@@ -227,12 +209,6 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-/// @brief Returns the name of this mover ("MakeBundleHelix").
-// XRW TEMP std::string MakeBundleHelix::get_name() const{
-// XRW TEMP  return "MakeBundleHelix";
-// XRW TEMP }
-
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
@@ -314,11 +290,9 @@ std::string MakeBundleHelix::mover_name() {
 
 void MakeBundleHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	// TO DO!
 	using namespace utility::tag;
-	AttributeList attlist; // TO DO: add attributes to this list
-	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This is a helper mover called by the MakeBundle and BundleGridSampler movers.  It is NOT intended to be invoked directly from RosettaScripts.  As such, it has no configurable settings.", attlist );
 }
 
 std::string MakeBundleHelixCreator::keyname() const {

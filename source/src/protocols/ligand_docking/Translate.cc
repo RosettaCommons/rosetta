@@ -394,7 +394,7 @@ void Translate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer,
 		"Number of attempts to make such a movement without landing on top of another molecule.");
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
-		"Performs a course random movement of a small molecule in xyz-space.", attlist );
+		"Performs a coarse random movement of a small molecule in xyz-space.", attlist );
 }
 
 std::string TranslateCreator::keyname() const {

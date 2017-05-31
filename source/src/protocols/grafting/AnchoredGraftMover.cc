@@ -778,7 +778,9 @@ AnchoredGraftMover::complex_type_generator_for_anchored_graft_mover( utility::ta
 	ct_gen->
 		add_attributes( attlist )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
-		.set_subelements_repeatable( movemaps, 0, 2 );
+		.set_subelements_repeatable( movemaps, 0, 2 )
+		.add_optional_name_attribute();
+
 	return ct_gen;
 
 }
