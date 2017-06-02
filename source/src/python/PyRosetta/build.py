@@ -571,7 +571,9 @@ def main(args):
 
     else:
         if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
-        if not Options.binder: Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder', rosetta_source_path + '/build/prefix', Options.binder_debug)
+        if not Options.binder:
+            execute('Updating Binder and other sub-modules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
+            Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
 
         generate_bindings(rosetta_source_path)
 

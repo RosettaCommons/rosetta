@@ -1,6 +1,3 @@
-[submodule "rosetta_tools"]
-	path = rosetta_tools
-	url = git@github.com:decarboxy/rosetta_tools.git
-[submodule "rosetta_demos"]
-	path = rosetta_demos
-	url = git@github.com:decarboxy/rosetta_demos.git
+[submodule "source/src/python/PyRosetta/binder"]
+	path = source/src/python/PyRosetta/binder
+	url = git@github.com:RosettaCommons/binder.git
