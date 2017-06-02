@@ -401,10 +401,17 @@ StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 			if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() ) continue; // never use phosphates to superimpose
 			if ( extra_suite_atoms_lower.find( atom_name ) != extra_suite_atoms_lower.end() ) continue; // never use carbonyl oxygens to superimpose
 			if ( sample_sugar && core::chemical::rna::sugar_atoms.has_value( atom_name ) ) continue;
-			add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
-				atom_name,
-				n, res_list_in_reference[n],
-				pose, *reference_pose_local_ );
+			if ( mod_reference_pose_local_ ) {
+				add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
+					atom_name,
+					n, res_list_in_reference[n],
+					pose, *mod_reference_pose_local_ );
+			} else {
+				add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
+					atom_name,
+					n, res_list_in_reference[n],
+					pose, *reference_pose_local_ );
+			}
 		}
 	}
 
@@ -553,10 +560,17 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 	std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map;
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
-			add_to_atom_id_map_after_checks( coordinate_constraint_atom_id_map,
-				pose.residue_type( n ).atom_name( q ),
-				n, res_list_in_reference[ n ],
-				pose, *reference_pose_local_ );
+			if ( mod_reference_pose_local_ ) {
+				add_to_atom_id_map_after_checks( coordinate_constraint_atom_id_map,
+					pose.residue_type( n ).atom_name( q ),
+					n, res_list_in_reference[ n ],
+					pose, *mod_reference_pose_local_ );
+			} else {
+				add_to_atom_id_map_after_checks( coordinate_constraint_atom_id_map,
+					pose.residue_type( n ).atom_name( q ),
+					n, res_list_in_reference[ n ],
+					pose, *reference_pose_local_ );
+			}
 		}
 	}
 
@@ -679,10 +693,17 @@ StepWisePoseAligner::get_root_triad_atom_id_map( pose::Pose const & pose ) const
 	for ( Size i = 1; i <= 3; i++ ) {
 		Size const n = stub_atoms[i]->id().rsd();
 		Size const q = stub_atoms[i]->id().atomno();
-		add_to_atom_id_map_after_checks( root_triad_atom_id_map,
-			pose.residue_type( n ).atom_name( q ),
-			n, res_list_in_reference[ n ],
-			pose, *reference_pose_local_, false /* do_the_checks */ );
+		if ( mod_reference_pose_local_ ) {
+			add_to_atom_id_map_after_checks( root_triad_atom_id_map,
+				pose.residue_type( n ).atom_name( q ),
+				n, res_list_in_reference[ n ],
+				pose, *mod_reference_pose_local_, false /* do_the_checks */ );
+		} else {
+			add_to_atom_id_map_after_checks( root_triad_atom_id_map,
+				pose.residue_type( n ).atom_name( q ),
+				n, res_list_in_reference[ n ],
+				pose, *reference_pose_local_, false /* do_the_checks */ );
+		}
 	}
 	return root_triad_atom_id_map;
 }
