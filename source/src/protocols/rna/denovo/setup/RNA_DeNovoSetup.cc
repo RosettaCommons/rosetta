@@ -577,10 +577,12 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////////
 	//Read in native if it exists.
 	if ( option[ in::file::native ].user() ) {
-		//Read in native if it exists.
-		std::string native_pdb_file  = option[ in::file::native ]();
-		native_pose_ = PoseOP( new Pose );
-		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+		// AMW TODO: later, let this pass align_pose on to the RNA_DeNovoProtocol
+		// and the RNA_FragmentMonteCarlo. At the moment, this isn't necessary at
+		// all, though.
+		PoseOP align_pose;
+		stepwise::setup::initialize_native_and_align_pose( native_pose_, align_pose, rsd_set_, pose_ );
+
 		// if refine native, set the full_pose equal to the native_pose
 		if ( option[ OptionKeys::rna::denovo::refine_native ]() ) {
 			full_pose = *(native_pose_->clone());

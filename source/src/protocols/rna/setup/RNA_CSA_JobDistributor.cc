@@ -155,70 +155,47 @@ RNA_CSA_JobDistributor::apply( core::pose::Pose & pose ) {
 	// run some cycles
 	////////////////////
 
-	if ( stepwise_monte_carlo_ ) {
-		if ( sfd_->structure_list().size() < nstruct_ ) {
-			// If bank is not yet full, start from scratch.
-			pose = *start_pose_;
+	if ( sfd_->structure_list().size() < csa_bank_size_ ) {
+		// If bank is not yet full, start from scratch.
+		pose = *start_pose_;
+		if ( stepwise_monte_carlo_ ) {
 			stepwise_monte_carlo_->set_model_tag( "NEW" );
 		} else {
-			if ( annealing_ ) {
-				if ( total_updates_so_far_ == csa_bank_size_ ) {
-					// time to compute d_cut
-					// only have to calculate once so it's fine not to cache it.
-					csa_rmsd_ = average_pairwise_distance() / 2.0;
-				} else if ( total_updates_so_far_ % csa_bank_size_ == 0 ) {
-					// time to update d_cut -- for now, fixed schedule
-					// Lee 2003 Phys Rev Lett suggests going from dave/2 to dave/5
-					// in a fixed ratio, 'slowly' (approximately 10 pool-sizes, it looked
-					// like), then staying there.
-					// multiplying by 0.9124 every update approximately does this.
-					csa_rmsd_ *= 0.9124;
-				}
-			}
-
-
-			// Start from a model in the bank.
-			SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
-			TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
-			s->fill_pose( pose );
-			stepwise_monte_carlo_->set_model_tag( s->decoy_tag() );
-		}
-		stepwise_monte_carlo_->apply( pose );
-	} else {
-		TR << "nstruct_ " << nstruct_ << std::endl;
-		TR << "bank_size_ " << csa_bank_size_ << std::endl;
-		TR << "sfd_ has " << sfd_->structure_list().size() << std::endl;
-		if ( sfd_->structure_list().size() < nstruct_ ) {
-			// If bank is not yet full, start from scratch.
-			pose = *start_pose_;
 			rna_fragment_monte_carlo_->set_out_file_tag( "NEW" );
-		} else {
-			TR << "Total_updates_so_far_ " << total_updates_so_far_ << "  annealing " << annealing_  << std::endl;
-			if ( annealing_ ) {
-				if ( total_updates_so_far_ == csa_bank_size_ ) {
-					// time to compute d_cut
-					// only have to calculate once so it's fine not to cache it.
-					csa_rmsd_ = average_pairwise_distance() / 2.0;
-				} else if ( total_updates_so_far_ % csa_bank_size_ == 0 ) {
-					// time to update d_cut -- for now, fixed schedule
-					// Lee 2003 Phys Rev Lett suggests going from dave/2 to dave/5
-					// in a fixed ratio, 'slowly' (approximately 10 pool-sizes, it looked
-					// like), then staying there.
-					// multiplying by 0.9124 every update approximately does this.
-					csa_rmsd_ *= 0.9124;
-				}
+		}
+	} else {
+		if ( annealing_ ) {
+			if ( total_updates_so_far_ == csa_bank_size_ ) {
+				// time to compute d_cut
+				// only have to calculate once so it's fine not to cache it.
+				csa_rmsd_ = average_pairwise_distance() / 2.0;
+			} else if ( total_updates_so_far_ % csa_bank_size_ == 0 ) {
+				// time to update d_cut -- for now, fixed schedule
+				// Lee 2003 Phys Rev Lett suggests going from dave/2 to dave/5
+				// in a fixed ratio, 'slowly' (approximately 10 pool-sizes, it looked
+				// like), then staying there.
+				// multiplying by 0.9124 every update approximately does this.
+				csa_rmsd_ *= 0.9124;
 			}
-
-			// Start from a model in the bank.
-			SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
-			TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
-			s->fill_pose( pose );
-			rna_fragment_monte_carlo_->set_refine_pose( true );
+		}
+		
+		
+		// Start from a model in the bank.
+		SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
+		TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
+		s->fill_pose( pose );
+		if ( stepwise_monte_carlo_ ) {
+			stepwise_monte_carlo_->set_model_tag( s->decoy_tag() );
+		} else {
 			rna_fragment_monte_carlo_->set_out_file_tag( s->decoy_tag() );
 		}
+	}
+	if ( stepwise_monte_carlo_ ) {
+		stepwise_monte_carlo_->apply( pose );
+	} else {
 		rna_fragment_monte_carlo_->apply( pose );
 	}
-
+	
 	/////////////////////
 	// now update bank
 	/////////////////////
