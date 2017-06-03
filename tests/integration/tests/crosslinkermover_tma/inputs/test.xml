@@ -1,0 +1,49 @@
+ 	<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="bnv" weights="beta_nov15.wts" />
+		<ScoreFunction name="bnv_cst" weights="beta_nov15_cst.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_connecting" resnums="10,30,50" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+	
+		<BundleGridSampler name="bgs1" use_degrees="true" nstruct_mode="true" scorefxn="bnv" helix_length="20" >
+			<Helix r0_min="8.1" r0_max="8.7" r0_samples="3" omega0="0" delta_omega0="0" delta_omega1_min="-100" delta_omega1_max="-75" delta_omega1_samples="3" />
+			<Helix r0_min="9.0" r0_max="10.0" r0_samples="3" pitch_from_helix="1" delta_omega0="120" delta_omega1_copies_helix="1" />
+			<Helix r0_min="9.5" r0_max="12.0" r0_samples="3" pitch_from_helix="1" delta_omega0="240" delta_omega1_copies_helix="1" />
+		</BundleGridSampler>
+		
+		<DeclareBond name="bond1" res1="2" atom1="C" res2="3" atom2="N" add_termini="true" />
+
+		<MutateResidue name="mut1" target="10" new_res="DPP" />
+		<MutateResidue name="mut2" target="30" new_res="DAB" />
+		<MutateResidue name="mut3" target="50" new_res="ORN" />
+
+		<CrosslinkerMover name="threefold"
+			residue_selector="select_connecting"
+			linker_name="TMA" scorefxn="bnv"
+			filter_by_constraints_energy="true"
+		/>
+
+		<FastRelax name="relax" scorefxn="bnv_cst" repeats="1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="bond1" />
+		<Add mover="mut1" />
+		<Add mover="mut2" />
+		<Add mover="mut3" />
+		<Add mover="threefold" />
+		Add mover="relax" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="bnv_cst" />
+</ROSETTASCRIPTS>

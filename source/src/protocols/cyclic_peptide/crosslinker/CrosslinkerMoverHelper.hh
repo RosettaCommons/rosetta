@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide/threefold_linker/ThreefoldLinkerMoverHelper.hh
-/// @brief A base class for helper objects that the ThreefoldLinkerMover uses to set up specific types
+/// @file protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.hh
+/// @brief A base class for helper objects that the CrosslinkerMover uses to set up specific types
 /// of threefold linkers.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
-#ifndef INCLUDED_protocols_cyclic_peptide_threefold_linker_ThreefoldLinkerMoverHelper_hh
-#define INCLUDED_protocols_cyclic_peptide_threefold_linker_ThreefoldLinkerMoverHelper_hh
+#ifndef INCLUDED_protocols_cyclic_peptide_crosslinker_CrosslinkerMoverHelper_hh
+#define INCLUDED_protocols_cyclic_peptide_crosslinker_CrosslinkerMoverHelper_hh
 
 // Unit headers
-#include <protocols/cyclic_peptide/threefold_linker/ThreefoldLinkerMoverHelper.fwd.hh>
+#include <protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.fwd.hh>
 
 // Protocol headers
 
@@ -30,22 +30,22 @@
 
 namespace protocols {
 namespace cyclic_peptide {
-namespace threefold_linker {
+namespace crosslinker {
 
-/// @brief A base class for helper objects that the ThreefoldLinkerMover uses to set up specific types
+/// @brief A base class for helper objects that the CrosslinkerMover uses to set up specific types
 /// of threefold linkers.
-class ThreefoldLinkerMoverHelper : public utility::pointer::ReferenceCount {
+class CrosslinkerMoverHelper : public utility::pointer::ReferenceCount {
 
 public: //Constructors
 
 	/// @brief Default constructor
-	ThreefoldLinkerMoverHelper();
+	CrosslinkerMoverHelper();
 
 	/// @brief Copy constructor
-	ThreefoldLinkerMoverHelper( ThreefoldLinkerMoverHelper const & src );
+	CrosslinkerMoverHelper( CrosslinkerMoverHelper const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~ThreefoldLinkerMoverHelper();
+	virtual ~CrosslinkerMoverHelper();
 
 
 public: // public pure virtual methods
@@ -63,6 +63,10 @@ public: // public pure virtual methods
 	/// align it crudely to the selected residues, and set up covalent bonds.
 	/// @details Must be defined by derived classes.  Version for symmetric poses.
 	virtual void add_linker_symmetric(core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection) const = 0;
+
+	/// @brief Given a pose and a linker, add bonds between the linker and the residues that coordinate the linker.
+	/// @details Can be called by add_linker_symmetric().  Must be defined by derived classes (pure virtual).  Version for symmetric poses.
+	virtual void add_linker_bonds_symmetric(core::pose::Pose &pose, core::Size const res1, core::Size const linker_index1, core::Size const linker_index2 ) const = 0;
 
 	/// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
 	/// add constraints for the crosslinker.
@@ -116,6 +120,21 @@ public: // public defined methods
 	/// @note Can be overriden.
 	virtual bool selection_is_symmetric( core::select::residue_selector::ResidueSubset const & selection, core::pose::Pose const &pose ) const;
 
+	/// @brief Optional steps that the helper can apply before every relaxation round.
+	/// @details Defaults to doing nothing; can be overriden.  (One example is the TMA helper, which uses this to update amide bond-dependent atom positions).
+	virtual void pre_relax_round_update_steps( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const &selection, bool const whole_structure, bool const symmetric, bool const linker_was_added ) const;
+
+	/// @brief Optional steps that the helper can apply after every relaxation round.
+	/// @details Defaults to doing nothing; can be overriden.  (One example is the TMA helper, which uses this to update amide bond-dependent atom positions).
+	virtual void post_relax_round_update_steps( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const &selection, bool const whole_structure, bool const symmetric, bool const linker_was_added ) const;
+
+protected: // protected methods
+
+	/// @brief Determine whether the sidechain-crosslinker system has too high a constraints score.  Both the symmetric and asymmetric versions call this code.
+	/// @details Returns TRUE for failure (too high a constraints score) and FALSE for success.
+	virtual bool filter_by_constraints_energy( core::pose::Pose const &pose, core::select::residue_selector::ResidueSubset const & selection, bool const symmetric, bool const linker_was_added, core::Real const &filter_multiplier ) const;
+
+
 private: // private methods
 
 
@@ -125,8 +144,8 @@ private: // data
 
 };
 
-} //threefold_linker
+} //crosslinker
 } //protocols
 } //cyclic_peptide
 
-#endif //protocols/cyclic_peptide_threefold_linker_ThreefoldLinkerMoverHelper_hh
+#endif //protocols/cyclic_peptide_crosslinker_CrosslinkerMoverHelper_hh

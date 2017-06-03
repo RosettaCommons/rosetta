@@ -405,6 +405,8 @@ residue_types/l-ncaa/2-hydroxy-phenylalanine.params
 residue_types/l-ncaa/2-indanyl-glycine_puck1.params
 residue_types/l-ncaa/2-indanyl-glycine_puck2.params
 residue_types/l-ncaa/2-methyl-phenylalanine.params
+residue_types/l-ncaa/2.3-diaminopropionic_acid.params
+residue_types/l-ncaa/2.4-diaminobutyric_acid.params
 residue_types/l-ncaa/3-aminomethyl-phenylalanine.params
 residue_types/l-ncaa/3-amino-tyrosine.params
 residue_types/l-ncaa/3-chloro-phenylalanine.params
@@ -447,8 +449,6 @@ residue_types/l-ncaa/allo-isoleucine.params
 residue_types/l-ncaa/allo-threonine.params
 residue_types/l-ncaa/alpha-aminoadipic_acid.params
 residue_types/l-ncaa/alpha-amino-glycine.params
-#residue_types/l-ncaa/alpha.beta-diaminoproionic_acid.params # not present in l-ncaa directory
-residue_types/l-ncaa/alpha.gama-diaminobutyric_acid.params
 residue_types/l-ncaa/alpha-methyl-3-hydroxy-tyrosine.params
 residue_types/l-ncaa/alpha-methyl-histidine.params
 residue_types/l-ncaa/alpha-methyl-leucine.params

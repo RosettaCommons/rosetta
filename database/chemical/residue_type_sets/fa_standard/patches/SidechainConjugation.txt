@@ -1,0 +1,203 @@
+## Sidechain conjugation patch to allow certain amino acid types to have something
+## connected on the side-chain (other than a cys-cys disulfide bond).
+## Created by Vikram K. Mulligan (vmullig@uw.edu) on 12 March 2017.
+
+NAME SidechainConjugation
+TYPES SIDECHAIN_CONJUGATION
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+NAME3 LYS DLY ORN DOR DAB DDA DPP DDP # Add to this list as more sidechain-conjugable types are added.
+NOT VARIANT_TYPE SIDECHAIN_CONJUGATION
+NOT VARIANT_TYPE TRIMETHYLATION
+NOT VARIANT_TYPE DIMETHYLATION
+NOT VARIANT_TYPE METHYLATION
+NOT VARIANT_TYPE ACETYLATION
+END_SELECTOR
+
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ## lysine (LYS), L- or D-version #################################################
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 LYS DLY #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete the extra hydrogen atoms on the sidechain nitrogen:
+DELETE_ATOM 3HZ
+DELETE_ATOM 2HZ
+DELETE_ATOM 1HZ
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  HZ  HNbb H 0.31 0.00
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT NZ ICOOR 180.0 63.800007 1.328685 NZ CE CD
+
+# Add new bonds:
+ADD_BOND NZ HZ
+ADD_BOND NZ V1 
+
+# Set position of the new HE and V1 atoms:
+SET_ICOOR  HZ  180.00 60.849998 1.010000 NZ CE CONN%LASTCONN
+SET_ICOOR  V1    0.00 63.800007 1.328685 NZ CE CONN%LASTCONN
+
+# Add a chi5:
+ADD_CHI 5 CD CE NZ V1
+
+# Add proton chi:
+ADD_PROTON_CHI 5 SAMPLES 3 -120 120 180 EXTRA 1 20
+
+# Modify existing atoms:
+SET_ATOM_TYPE NZ Nbb
+SET_MM_ATOM_TYPE NZ NH1
+SET_ATOMIC_CHARGE NZ -0.47
+SET_ATOMIC_CHARGE CE -0.18
+SET_ATOMIC_CHARGE 1HE 0.17
+SET_ATOMIC_CHARGE 2HE 0.17
+
+SET_FORMAL_CHARGE NZ 0
+
+END_CASE
+
+
+BEGIN_CASE ## ornithine (ORN), L- or D-version #################################################
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 ORN DOR #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete the extra hydrogen atoms on the sidechain nitrogen:
+DELETE_ATOM 3HE
+DELETE_ATOM 2HE
+DELETE_ATOM 1HE
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  HE  HNbb H 0.31 0.00
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT NE ICOOR 180.0 63.800007 1.328685 NE CD CG
+
+# Add new bonds:
+ADD_BOND NE HE
+ADD_BOND NE V1 
+
+# Set position of the new HE and V1 atoms:
+SET_ICOOR  HE  180.00 60.849998 1.010000 NE CD CONN%LASTCONN
+SET_ICOOR  V1    0.00 63.800007 1.328685 NE CD CONN%LASTCONN
+
+# Add a chi4:
+ADD_CHI 4 CG CD NE V1
+
+# Add proton chi:
+ADD_PROTON_CHI 4 SAMPLES 3 -120 120 180 EXTRA 1 20
+
+# Modify existing atoms:
+SET_ATOM_TYPE NE Nbb
+SET_MM_ATOM_TYPE NE NH1
+SET_ATOMIC_CHARGE NE -0.47
+SET_ATOMIC_CHARGE CD -0.18
+SET_ATOMIC_CHARGE 1HD 0.17
+SET_ATOMIC_CHARGE 2HD 0.17
+
+SET_FORMAL_CHARGE NE 0
+
+END_CASE
+
+BEGIN_CASE ## 2,4-diaminobutyric acid (DAB), L- or D-version #################################################
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 DAB DDA #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete the extra hydrogen atoms on the sidechain nitrogen:
+DELETE_ATOM 3HD
+DELETE_ATOM 2HD
+DELETE_ATOM 1HD
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  HD  HNbb H 0.31 0.00
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT ND ICOOR 180.0 63.800007 1.328685 ND CG CB
+
+# Add new bonds:
+ADD_BOND ND HD
+ADD_BOND ND V1 
+
+# Set position of the new HD and V1 atoms:
+SET_ICOOR  HD  180.00 60.849998 1.010000 ND CG CONN%LASTCONN
+SET_ICOOR  V1    0.00 63.800007 1.328685 ND CG CONN%LASTCONN
+
+# Add a chi3:
+ADD_CHI 3 CB CG ND V1
+
+# Add proton chi:
+ADD_PROTON_CHI 3 SAMPLES 3 -120 120 180 EXTRA 1 20
+
+# Modify existing atoms:
+SET_ATOM_TYPE ND Nbb
+SET_MM_ATOM_TYPE ND NH1
+SET_ATOMIC_CHARGE ND -0.47
+SET_ATOMIC_CHARGE CG -0.18
+SET_ATOMIC_CHARGE 1HG 0.17
+SET_ATOMIC_CHARGE 2HG 0.17
+
+SET_FORMAL_CHARGE ND 0
+
+END_CASE
+
+BEGIN_CASE ## 2,3-diaminopropionic acid (DAP, or DPP in PDB codes), L- or D-version #################################################
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 DPP DDP #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete the extra hydrogen atoms on the sidechain nitrogen:
+DELETE_ATOM 3HG
+DELETE_ATOM 2HG
+DELETE_ATOM 1HG
+
+# Add a new amide proton, a new sidechain connection, and a new virtual atom:
+ADD_ATOM  HG  HNbb H 0.31 0.00
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT NG ICOOR 180.0 63.800007 1.328685 NG CB CA
+
+# Add new bonds:
+ADD_BOND NG HG
+ADD_BOND NG V1 
+
+# Set position of the new HG and V1 atoms:
+SET_ICOOR  HG  180.00 60.849998 1.010000 NG CB CONN%LASTCONN
+SET_ICOOR  V1    0.00 63.800007 1.328685 NG CB CONN%LASTCONN
+
+# Add a chi2:
+ADD_CHI 2 CA CB NG V1
+
+# Add proton chi:
+ADD_PROTON_CHI 2 SAMPLES 3 -120 120 180 EXTRA 1 20
+
+# Modify existing atoms:
+SET_ATOM_TYPE NG Nbb
+SET_MM_ATOM_TYPE NG NH1
+SET_ATOMIC_CHARGE NG -0.47
+SET_ATOMIC_CHARGE CB -0.18
+SET_ATOMIC_CHARGE 1HB 0.17
+SET_ATOMIC_CHARGE 2HB 0.17
+
+SET_FORMAL_CHARGE NG 0
+
+END_CASE

@@ -13,8 +13,7 @@
 	<MOVERS>
 		
 		<DeclareBond name="bond1" res1="42" atom1="C" res2="1" atom2="N" />
-
-		<ThreefoldLinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="ref" />
+		<CrosslinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="ref" />
 
 	</MOVERS>
 	<APPLY_TO_POSE>

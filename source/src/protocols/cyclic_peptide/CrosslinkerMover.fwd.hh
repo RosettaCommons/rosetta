@@ -7,36 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide/ThreefoldLinkerMoverCreator.hh
+/// @file protocols/cyclic_peptide/CrosslinkerMover.fwd.hh
 /// @brief This mover links three cysteine residues with a three-way cross-linker.  It adds the crosslinker,
 /// sets up constraints, optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker and
 /// the side-chains to which it connects), andthen optionally relaxes the whole structure.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
-#ifndef INCLUDED_protocols_cyclic_peptide_ThreefoldLinkerMoverCreator_hh
-#define INCLUDED_protocols_cyclic_peptide_ThreefoldLinkerMoverCreator_hh
 
-#include <protocols/moves/MoverCreator.hh>
+#ifndef INCLUDED_protocols_cyclic_peptide_CrosslinkerMover_fwd_hh
+#define INCLUDED_protocols_cyclic_peptide_CrosslinkerMover_fwd_hh
 
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
+
+
+// Forward
 namespace protocols {
 namespace cyclic_peptide {
 
-class ThreefoldLinkerMoverCreator : public protocols::moves::MoverCreator {
+class CrosslinkerMover;
 
-public:
-
-	virtual protocols::moves::MoverOP
-	create_mover() const;
-
-	virtual std::string
-	keyname() const;
-
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
-
-};
+typedef utility::pointer::shared_ptr< CrosslinkerMover > CrosslinkerMoverOP;
+typedef utility::pointer::shared_ptr< CrosslinkerMover const > CrosslinkerMoverCOP;
 
 } //protocols
 } //cyclic_peptide
 
-#endif //INCLUDED_protocols/cyclic_peptide_ThreefoldLinkerMover_fwd_hh
+#endif //INCLUDED_protocols_cyclic_peptide_CrosslinkerMover_fwd_hh

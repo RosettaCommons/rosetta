@@ -416,7 +416,7 @@ FoldTree::get_jump_that_builds_residue( int const seqpos ) const
 {
 	check_topology();
 	Edge const & edge( get_residue_edge( seqpos ) );
-	if ( !edge.is_jump() ) utility_exit_with_message( "get_jump_that_builds_residue: not build by a jump!" );
+	if ( !edge.is_jump() ) utility_exit_with_message( "Error in core::kinematics::FoldTree::get_jump_that_builds_residue(): This residue is not the child of (built by) a jump!" );
 	return edge.label();
 }
 

@@ -657,6 +657,9 @@ NAME3 DTH
 NAME3 DTR
 NAME3 DTY
 NAME3 DVA
+NAME3 DOR #D-ornithine
+NAME3 DDA #D-DAB
+NAME3 DDP #D-DAP ("DPP").
 END_SELECTOR
 
 ## these are the operations involved

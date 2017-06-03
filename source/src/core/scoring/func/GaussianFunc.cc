@@ -51,6 +51,7 @@ bool GaussianFunc::operator == ( Func const & other ) const
 	if ( mean_          != other_downcast.mean_          ) return false;
 	if ( sd_            != other_downcast.sd_            ) return false;
 	if ( use_log_score_ != other_downcast.use_log_score_ ) return false;
+	if ( weight_        != other_downcast.weight_        ) return false;
 
 	return true;
 }
@@ -64,13 +65,23 @@ void
 GaussianFunc::read_data( std::istream& in ) {
 	in  >> mean_ >> sd_;
 
-	//I'm not sure what in.good() is meant to do here; it does NOT prevent GaussianFunc from chomping the next line of the constraint file as its tag if no tag is present.  SML 08.21.12
-	if ( in.good() ) {
+	if ( !in.eof() ) {
 		std::string tag;
 		in >> tag;
 
 		if ( tag == "NOLOG" ) {
 			use_log_score_ = false;
+		} else if ( tag == "WEIGHT" ) {
+			in >> weight_;
+			runtime_assert_string_msg( !in.fail(), "Error parsing Gaussian function definition.  A \"WEIGHT\" statement must be followed by a floating-point value!" );
+		}
+
+		if ( !in.eof() ) {
+			in >> tag;
+			if ( tag == "WEIGHT" ) {
+				in >> weight_;
+				runtime_assert_string_msg( !in.fail(), "Error parsing Gaussian function definition.  A \"WEIGHT\" statement must be followed by a floating-point value!" );
+			}
 		}
 	}
 
@@ -78,18 +89,18 @@ GaussianFunc::read_data( std::istream& in ) {
 
 Real
 GaussianFunc::func( Real const x ) const {
-	if ( use_log_score_ ) return - logdgaussian( x, mean_, sd_, 1 );
-	else                  return dgaussian( x, mean_, sd_, 1 );
+	if ( use_log_score_ ) return - weight_*logdgaussian( x, mean_, sd_, 1 );
+	else                  return weight_*dgaussian( x, mean_, sd_, 1 );
 } // func
 
 Real
 GaussianFunc::dfunc( Real const x ) const {
-	if ( use_log_score_ ) return - logdgaussian_deriv( x, mean_, sd_, 1 );
-	else                  return gaussian_deriv( x, mean_, sd_, 1 );
+	if ( use_log_score_ ) return - weight_*logdgaussian_deriv( x, mean_, sd_, 1 );
+	else                  return weight_*gaussian_deriv( x, mean_, sd_, 1 );
 } // dfunc
 
 void GaussianFunc::show_definition( std::ostream& out ) const {
-	out << "GAUSSIANFUNC " << mean_ << ' ' << sd_ << "\n";
+	out << "GAUSSIANFUNC " << mean_ << ' ' << sd_ << ' ' << weight_ << "\n";
 }
 
 } // namespace constraints
@@ -109,6 +120,7 @@ core::scoring::func::GaussianFunc::save( Archive & arc ) const {
 	arc( CEREAL_NVP( mean_ ) ); // Real
 	arc( CEREAL_NVP( sd_ ) ); // Real
 	arc( CEREAL_NVP( use_log_score_ ) ); // _Bool
+	arc( CEREAL_NVP( weight_ ) ); // Real
 }
 
 /// @brief Automatically generated deserialization method
@@ -119,6 +131,7 @@ core::scoring::func::GaussianFunc::load( Archive & arc ) {
 	arc( mean_ ); // Real
 	arc( sd_ ); // Real
 	arc( use_log_score_ ); // _Bool
+	arc( weight_ ); // Real
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::GaussianFunc );

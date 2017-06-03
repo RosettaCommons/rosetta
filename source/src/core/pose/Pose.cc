@@ -1166,9 +1166,7 @@ Pose::chi(
 ) const
 {
 	PyAssert( (seqpos<=size()), "Pose::chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
-		"Pose::chi( int const chino , Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
-	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
+	PyAssert( (chino>0) && (chino<=static_cast<int>(residue_type(seqpos).nchi())),
 		"Pose::chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
 
 	return residue( seqpos ).chi( chino );
@@ -1184,7 +1182,7 @@ Pose::set_chi(
 	PyAssert( (seqpos<=size()), "Pose::set_chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein()  || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_ligand() ),
 		"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, ligand or carbohydrate!" );
-	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
+	PyAssert( (chino>0) && (chino<=static_cast<int>(residue_type(seqpos).nchi())),
 		"Pose::set_chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
 
 	conformation_->set_torsion( TorsionID(seqpos, id::CHI, chino), setting);

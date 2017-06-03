@@ -346,7 +346,7 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 		if ( !instantiate && !operation->applies_to_placeholder() ) { continue; }
 		bool const fail( operation->apply( *rsd ) );
 		if ( fail ) {
-			utility_exit_with_message( "Failed to apply a PatchOperation to " + rsd->name() );
+			utility_exit_with_message( "Failed to apply a PatchOperation to " + rsd->name() + ".\nThe PatchOperation was: " + operation->name() + "." );
 			return nullptr;
 		}
 	}

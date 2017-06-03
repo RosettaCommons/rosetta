@@ -499,8 +499,6 @@ Residue::update_connections_to_other_residue( Residue const &other_rsd)
 			//runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
 			if ( connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos() ) {
 				TR.Warning << "While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
-				//utility_exit_with_message( "Let it die" );
-				continue;
 			}
 			residue_connection_partner( this_conn_id, other_rsd.seqpos(), ic ); //Set this residue's connection appropriately for the other residue's connection indices.
 		}

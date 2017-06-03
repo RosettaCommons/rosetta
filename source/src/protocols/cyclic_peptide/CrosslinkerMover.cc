@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide/ThreefoldLinkerMover.cc
+/// @file protocols/cyclic_peptide/CrosslinkerMover.cc
 /// @brief This mover links three cysteine residues with a three-way cross-linker.  It adds the crosslinker,
 /// sets up constraints, optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker
 /// and the side-chains to which it connects), andthen optionally relaxes the whole structure.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 // Unit headers
-#include <protocols/cyclic_peptide/ThreefoldLinkerMover.hh>
-#include <protocols/cyclic_peptide/ThreefoldLinkerMoverCreator.hh>
-#include <protocols/cyclic_peptide/threefold_linker/ThreefoldLinkerMoverHelper.hh>
-#include <protocols/cyclic_peptide/threefold_linker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/CrosslinkerMover.hh>
+#include <protocols/cyclic_peptide/CrosslinkerMoverCreator.hh>
+#include <protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -34,6 +35,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Protocols headers
 #include <protocols/rosetta_scripts/util.hh>
@@ -46,7 +48,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.ThreefoldLinkerMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CrosslinkerMover" );
 
 namespace protocols {
 namespace cyclic_peptide {
@@ -56,8 +58,8 @@ namespace cyclic_peptide {
 /////////////////////
 
 /// @brief Default constructor
-ThreefoldLinkerMover::ThreefoldLinkerMover():
-	protocols::moves::Mover( ThreefoldLinkerMover::class_name() ),
+CrosslinkerMover::CrosslinkerMover():
+	protocols::moves::Mover( CrosslinkerMover::class_name() ),
 	residue_selector_(), //Defaults to NULL pointer.
 	linker_(no_crosslinker), //Defaults to no_crosslinker
 	add_linker_(true),
@@ -81,7 +83,7 @@ ThreefoldLinkerMover::ThreefoldLinkerMover():
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
-ThreefoldLinkerMover::ThreefoldLinkerMover( ThreefoldLinkerMover const & src ):
+CrosslinkerMover::CrosslinkerMover( CrosslinkerMover const & src ):
 	protocols::moves::Mover( src ),
 	residue_selector_(src.residue_selector_),
 	linker_(src.linker_),
@@ -107,7 +109,7 @@ ThreefoldLinkerMover::ThreefoldLinkerMover( ThreefoldLinkerMover const & src ):
 /// @brief Destructor (important for properly forward-declaring smart-pointer
 /// members)
 ////////////////////////////////////////////////////////////////////////////////
-ThreefoldLinkerMover::~ThreefoldLinkerMover(){}
+CrosslinkerMover::~CrosslinkerMover(){}
 
 /////////////////////
 /// Mover Methods ///
@@ -115,24 +117,27 @@ ThreefoldLinkerMover::~ThreefoldLinkerMover(){}
 
 /// @brief Apply the mover
 void
-ThreefoldLinkerMover::apply( core::pose::Pose& pose){
+CrosslinkerMover::apply( core::pose::Pose& pose){
 	//Check for a residue selector, then apply it to the pose:
-	runtime_assert_string_msg( residue_selector(), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::apply():  A residue selector must be specified before calling this function." );
-	runtime_assert_string_msg( scorefxn(), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::apply():  A scorefunction must be specified before calling this function." );
+	runtime_assert_string_msg( residue_selector(), "Error in protocols::cyclic_peptide::CrosslinkerMover::apply():  A residue selector must be specified before calling this function." );
+	runtime_assert_string_msg( scorefxn(), "Error in protocols::cyclic_peptide::CrosslinkerMover::apply():  A scorefunction must be specified before calling this function." );
 
 	core::select::residue_selector::ResidueSubset const selection( residue_selector()->apply(pose) );
 
 	//Check that we've selected exactly three residues:
-	runtime_assert_string_msg( exactly_three_selected( selection ), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::apply():  The residue selector did not select exactly three residues." );
+	runtime_assert_string_msg( exactly_three_selected( selection ), "Error in protocols::cyclic_peptide::CrosslinkerMover::apply():  The residue selector did not select exactly three residues." );
 
 	//Create the helper, which has the functions that set up specific types of crosslinkers:
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperOP helper;
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
 	switch( linker_ ) {
 	case TBMB :
-		helper = protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperOP( protocols::cyclic_peptide::threefold_linker::TBMB_HelperOP( new protocols::cyclic_peptide::threefold_linker::TBMB_Helper ) );
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TBMB_HelperOP( new protocols::cyclic_peptide::crosslinker::TBMB_Helper ) );
+		break;
+	case TMA :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TMA_HelperOP( new protocols::cyclic_peptide::crosslinker::TMA_Helper ) );
 		break;
 	default :
-		utility_exit_with_message( "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::apply(): Invalid crosslinker specified." );
+		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
 	}
 
 	// Decide whether to call symmetric or asymmetric functions from here on:
@@ -143,11 +148,44 @@ ThreefoldLinkerMover::apply( core::pose::Pose& pose){
 	}
 }
 
+/// @brief Given a CrossLinker enum, get its name.
+///
+std::string
+CrosslinkerMover::get_crosslinker_name(
+	CrossLinker const crosslinker
+) {
+	switch( crosslinker) {
+	case no_crosslinker :
+		return "no_crosslinker";
+	case TBMB :
+		return "TBMB";
+	case TMA :
+		return "TMA";
+	default :
+		break;
+	}
+	return "unknown_crosslinker";
+}
+
+/// @brief Given a CrossLinker name, get its enum.
+///
+CrossLinker
+CrosslinkerMover::get_crosslinker_enum(
+	std::string const &name
+) {
+	for ( core::Size i(2); i < static_cast<core::Size>(end_of_crosslinker_list); ++i ) {
+		if ( !name.compare( get_crosslinker_name( static_cast<CrossLinker>(i) ) ) ) {
+			return static_cast<CrossLinker>(i);
+		}
+	}
+	return unknown_crosslinker;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Show the contents of the Mover
 ////////////////////////////////////////////////////////////////////////////////
 void
-ThreefoldLinkerMover::show(std::ostream & output) const
+CrosslinkerMover::show(std::ostream & output) const
 {
 	protocols::moves::Mover::show(output);
 }
@@ -158,18 +196,18 @@ ThreefoldLinkerMover::show(std::ostream & output) const
 
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
-ThreefoldLinkerMover::parse_my_tag(
+CrosslinkerMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-	runtime_assert_string_msg( tag->hasOption("residue_selector"), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::parse_my_tag(): A residue selector MUST be supplied with the \"residue_selector\" option." );
+	runtime_assert_string_msg( tag->hasOption("residue_selector"), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): A residue selector MUST be supplied with the \"residue_selector\" option." );
 	set_residue_selector( protocols::rosetta_scripts::parse_residue_selector( tag, datamap ) );
-	runtime_assert_string_msg( residue_selector(), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::parse_my_tag(): Setting residue selector failed." );
+	runtime_assert_string_msg( residue_selector(), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): Setting residue selector failed." );
 
-	runtime_assert_string_msg( tag->hasOption("linker_name"), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::parse_my_tag(): The name of the linker residue MUST be supplied with the \"linker_name\" option." );
+	runtime_assert_string_msg( tag->hasOption("linker_name"), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): The name of the linker residue MUST be supplied with the \"linker_name\" option." );
 	set_linker_name( tag->getOption<std::string>("linker_name") );
 
 	set_behaviour(
@@ -189,7 +227,7 @@ ThreefoldLinkerMover::parse_my_tag(
 		tag->getOption<core::Real>( "constraints_energy_filter_multiplier", constraints_energy_filter_multiplier() )
 	);
 
-	runtime_assert_string_msg( tag->hasOption("scorefxn"), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::parse_my_tag(): A scorefunction must be supplied with the \"scorefxn\" option." );
+	runtime_assert_string_msg( tag->hasOption("scorefxn"), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): A scorefunction must be supplied with the \"scorefxn\" option." );
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
 
 	set_sidechain_frlx_rounds( tag->getOption<core::Size>("sidechain_fastrelax_rounds", sidechain_frlx_rounds()) );
@@ -199,14 +237,21 @@ ThreefoldLinkerMover::parse_my_tag(
 /// @brief Provide information on what options are available in XML tag.
 ///
 void
-ThreefoldLinkerMover::provide_xml_schema(
+CrosslinkerMover::provide_xml_schema(
 	utility::tag::XMLSchemaDefinition & xsd
 ) {
 	using namespace utility::tag;
+
+	XMLSchemaRestriction linker_names_allowed;
+	std::string const linker_possibles("TBMB|TMA");
+	linker_names_allowed.name("linker_names_allowed");
+	linker_names_allowed.base_type( xs_string );
+	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );
+
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "A unique name for this instance of the ThreefoldLinkerMover." )
-		+ XMLSchemaAttribute::required_attribute( "linker_name", xs_string, "The name of the type of linker to use (e.g. TBMB for 1,3,5-tris(bromomethyl)benzene).")
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "A unique name for this instance of the CrosslinkerMover." )
+		+ XMLSchemaAttribute::required_attribute( "linker_name", xs_string, "The name of the type of linker to use.  For example, use TBMB for 1,3,5-tris(bromomethyl)benzene. (Allowed options are " + linker_possibles + ".)" )
 		+ XMLSchemaAttribute( "add_linker", xsct_rosetta_bool, "Should the linker geometry be added to the pose?  Default true." )
 		+ XMLSchemaAttribute( "constrain_linker", xsct_rosetta_bool, "Should constraints for the linker be added to the pose?  Default true." )
 		+ XMLSchemaAttribute( "pack_and_minimize_linker_and_sidechains", xsct_rosetta_bool, "Should the linker and the connecting sidechains be repacked, and should the jump to the linker, and the linker and connnecting side-chain degrees of torsional freedom, be energy-minimized?  Default true." )
@@ -231,71 +276,71 @@ ThreefoldLinkerMover::provide_xml_schema(
 /// @brief required in the context of the parser/scripting scheme
 ////////////////////////////////////////////////////////////////////////////////
 moves::MoverOP
-ThreefoldLinkerMover::fresh_instance() const
+CrosslinkerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ThreefoldLinkerMover );
+	return protocols::moves::MoverOP( new CrosslinkerMover );
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
-ThreefoldLinkerMover::clone() const
+CrosslinkerMover::clone() const
 {
-	return protocols::moves::MoverOP( new ThreefoldLinkerMover( *this ) );
+	return protocols::moves::MoverOP( new CrosslinkerMover( *this ) );
 }
 
 /// @brief Get the name of the Mover
 std::string
-ThreefoldLinkerMover::get_name() const
+CrosslinkerMover::get_name() const
 {
-	return ThreefoldLinkerMover::class_name();
+	return CrosslinkerMover::class_name();
 }
 
 std::string
-ThreefoldLinkerMover::class_name()
+CrosslinkerMover::class_name()
 {
-	return "ThreefoldLinkerMover";
+	return "CrosslinkerMover";
 }
 
 /// @brief Returns the name of this Mover.
 std::string
-ThreefoldLinkerMover::mover_name() {
-	return "ThreefoldLinkerMover";
+CrosslinkerMover::mover_name() {
+	return "CrosslinkerMover";
 }
 
 
 /// @brief Set the residue selector to use.
 ///
 void
-ThreefoldLinkerMover::set_residue_selector(
+CrosslinkerMover::set_residue_selector(
 	core::select::residue_selector::ResidueSelectorCOP selector_in
 ) {
-	runtime_assert_string_msg( selector_in, "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_residue_selector(): A null pointer was passed to this function." );
+	runtime_assert_string_msg( selector_in, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_residue_selector(): A null pointer was passed to this function." );
 	residue_selector_ = selector_in;
 }
 
 /// @brief Set the linker name.
 ///
 void
-ThreefoldLinkerMover::set_linker_name(
+CrosslinkerMover::set_linker_name(
 	std::string const &name_in
 ) {
-	runtime_assert_string_msg( !name_in.empty(), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_linker_name(): An empty string was passed to this function." );
+	runtime_assert_string_msg( !name_in.empty(), "Error in protocols::cyclic_peptide::CrosslinkerMover::set_linker_name(): An empty string was passed to this function." );
 	CrossLinker linker_in( get_crosslinker_enum( name_in ) );
-	runtime_assert_string_msg( linker_in != unknown_crosslinker, "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_linker_name(): Could not interpret the linker name \"" + name_in + "\"." );
+	runtime_assert_string_msg( linker_in != unknown_crosslinker, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_linker_name(): Could not interpret the linker name \"" + name_in + "\"." );
 	linker_ = linker_in;
 }
 
 /// @brief Get the linker name.
 ///
 std::string
-ThreefoldLinkerMover::linker_name() const {
+CrosslinkerMover::linker_name() const {
 	return get_crosslinker_name( linker_ );
 }
 
 /// @brief Set the behaviour of this mover.
 ///
 void
-ThreefoldLinkerMover::set_behaviour(
+CrosslinkerMover::set_behaviour(
 	bool const add_linker,
 	bool const constrain_linker,
 	bool const pack_and_minimize_linker_and_sidechains,
@@ -312,7 +357,7 @@ ThreefoldLinkerMover::set_behaviour(
 /// @brief Set the filtering behaviour of this mover.
 ///
 void
-ThreefoldLinkerMover::set_filter_behaviour(
+CrosslinkerMover::set_filter_behaviour(
 	bool const filter_by_sidechain_distance,
 	bool const filter_by_constraints_energy,
 	bool const filter_by_total_score,
@@ -331,42 +376,42 @@ ThreefoldLinkerMover::set_filter_behaviour(
 /// @brief Set the scorefunction to use for packing and minimization.
 /// @details Cloned at apply time.  (That is, the scorefunction is shared until apply time).
 void
-ThreefoldLinkerMover::set_scorefxn(
+CrosslinkerMover::set_scorefxn(
 	core::scoring::ScoreFunctionCOP sfxn_in
 ) {
-	runtime_assert_string_msg( sfxn_in, "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_scorefxn(): A null pointer was passed to this function." );
+	runtime_assert_string_msg( sfxn_in, "Error in Error in protocols::cyclic_peptide::CrosslinkerMover::set_scorefxn(): A null pointer was passed to this function." );
 	sfxn_ = sfxn_in;
 }
 
 /// @brief Get the scorefunction to use for packing and minimization.
 ///
 core::scoring::ScoreFunctionCOP
-ThreefoldLinkerMover::scorefxn() const {
+CrosslinkerMover::scorefxn() const {
 	return sfxn_;
 }
 
 /// @brief Set the number of rounds of FastRelax to apply when minimizing the linker and the
 /// side-chains that connect to it.
 void
-ThreefoldLinkerMover::set_sidechain_frlx_rounds(
+CrosslinkerMover::set_sidechain_frlx_rounds(
 	core::Size const rounds_in
 ) {
-	runtime_assert_string_msg(rounds_in > 0, "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_sidechain_frlx_rounds(): The number of rounds must be greater than zero.");
+	runtime_assert_string_msg(rounds_in > 0, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_sidechain_frlx_rounds(): The number of rounds must be greater than zero.");
 	sidechain_frlx_rounds_ = rounds_in;
 }
 
 /// @brief Set the number of rounds of FastRelax to apply at the end.
 ///
 void
-ThreefoldLinkerMover::set_final_frlx_rounds(
+CrosslinkerMover::set_final_frlx_rounds(
 	core::Size const rounds_in
 ) {
-	runtime_assert_string_msg(rounds_in > 0, "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::set_final_frlx_rounds(): The number of rounds must be greater than zero.");
+	runtime_assert_string_msg(rounds_in > 0, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_final_frlx_rounds(): The number of rounds must be greater than zero.");
 	final_frlx_rounds_ = rounds_in;
 }
 
 std::ostream &
-operator<<( std::ostream & os, ThreefoldLinkerMover const & mover )
+operator<<( std::ostream & os, CrosslinkerMover const & mover )
 {
 	mover.show(os);
 	return os;
@@ -375,22 +420,22 @@ operator<<( std::ostream & os, ThreefoldLinkerMover const & mover )
 /////////////// Creator ///////////////
 
 protocols::moves::MoverOP
-ThreefoldLinkerMoverCreator::create_mover() const
+CrosslinkerMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new ThreefoldLinkerMover );
+	return protocols::moves::MoverOP( new CrosslinkerMover );
 }
 
 std::string
-ThreefoldLinkerMoverCreator::keyname() const
+CrosslinkerMoverCreator::keyname() const
 {
-	return ThreefoldLinkerMover::class_name();
+	return CrosslinkerMover::class_name();
 }
 
 void
-ThreefoldLinkerMoverCreator::provide_xml_schema(
+CrosslinkerMoverCreator::provide_xml_schema(
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	ThreefoldLinkerMover::provide_xml_schema( xsd );
+	CrosslinkerMover::provide_xml_schema( xsd );
 }
 
 
@@ -401,13 +446,13 @@ ThreefoldLinkerMoverCreator::provide_xml_schema(
 /// @brief Apply the mover to a symmetric pose.
 /// @details Requires threefold symmetry in the pose, and threefold_symmetric_ = true.
 void
-ThreefoldLinkerMover::symmetric_apply(
+CrosslinkerMover::symmetric_apply(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) {
-	runtime_assert_string_msg(threefold_symmetric(), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::symmetric_apply(): The function was called, but the mover's \"threefold_symmetric\" option is not set.");
-	runtime_assert_string_msg( helper->selection_is_symmetric( selection, pose ), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::symmetric_apply(): The selector does not select three equivalent, symmetric residues." );
+	runtime_assert_string_msg(threefold_symmetric(), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): The function was called, but the mover's \"threefold_symmetric\" option is not set.");
+	runtime_assert_string_msg( helper->selection_is_symmetric( selection, pose ), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): The selector does not select three equivalent, symmetric residues." );
 
 	core::pose::PoseOP pose_copy( pose.clone() );
 
@@ -448,11 +493,11 @@ ThreefoldLinkerMover::symmetric_apply(
 	}
 
 	if ( !failed ) {
-		TR << "Symmetric ThreefoldLinkerMover reports SUCCESS.  Updating pose." << std::endl;
+		TR << "Symmetric CrosslinkerMover reports SUCCESS.  Updating pose." << std::endl;
 		pose = *pose_copy;
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 	} else {
-		TR << "Symmetric ThreefoldLinkerMover reports FAILURE.  Returning input pose." << std::endl;
+		TR << "Symmetric CrosslinkerMover reports FAILURE.  Returning input pose." << std::endl;
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 	}
 
@@ -461,10 +506,10 @@ ThreefoldLinkerMover::symmetric_apply(
 /// @brief Determine whether the residues to be crosslinked are too far apart.  This version is for symmetric poses.
 /// @details Returns TRUE for failure (too far apart), FALSE for success.
 bool
-ThreefoldLinkerMover::filter_by_sidechain_distance_symmetric(
+CrosslinkerMover::filter_by_sidechain_distance_symmetric(
 	core::pose::Pose const &pose,
 	core::select::residue_selector::ResidueSubset const &selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) const {
 	return helper->filter_by_sidechain_distance_symmetric( pose, selection, sidechain_distance_filter_multiplier() );
 }
@@ -472,10 +517,10 @@ ThreefoldLinkerMover::filter_by_sidechain_distance_symmetric(
 /// @brief Determine whether the sidechain-crosslinker system has too high a constraints score.  This version is for symmetric poses.
 /// @details Returns TRUE for failure (too high a constraints score) and FALSE for success.
 bool
-ThreefoldLinkerMover::filter_by_constraints_energy_symmetric(
+CrosslinkerMover::filter_by_constraints_energy_symmetric(
 	core::pose::Pose const &pose,
 	core::select::residue_selector::ResidueSubset const &selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper,
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper,
 	bool const linker_was_added
 ) const {
 	return helper->filter_by_constraints_energy_symmetric( pose, selection, linker_was_added, constraints_energy_filter_multiplier() );
@@ -484,10 +529,10 @@ ThreefoldLinkerMover::filter_by_constraints_energy_symmetric(
 /// @brief Given a selection of exactly three residues, add a crosslinker, align it crudely to the
 /// selected residues, and set up covalent bonds.  This version is for symmetric poses.
 void
-ThreefoldLinkerMover::add_linker_symmetric(
+CrosslinkerMover::add_linker_symmetric(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) const {
 	helper->add_linker_symmetric(pose, selection);
 }
@@ -495,10 +540,10 @@ ThreefoldLinkerMover::add_linker_symmetric(
 /// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
 /// add constraints for the crosslinker.  This version is for symmetric poses.
 void
-ThreefoldLinkerMover::add_linker_constraints_symmetric(
+CrosslinkerMover::add_linker_constraints_symmetric(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper,
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper,
 	bool const linker_was_added
 ) const {
 	helper->add_linker_constraints_symmetric( pose, selection, linker_was_added );
@@ -507,12 +552,12 @@ ThreefoldLinkerMover::add_linker_constraints_symmetric(
 /// @brief Apply the mover to an asymmetric pose.
 /// @details Requires and asymmetric pose, and threefold_symmetric_ = false.
 void
-ThreefoldLinkerMover::asymmetric_apply(
+CrosslinkerMover::asymmetric_apply(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) {
-	runtime_assert_string_msg(!threefold_symmetric(), "Error in protocols::cyclic_peptide::ThreefoldLinkerMover::asymmetric_apply(): The function was called, but the mover's \"threefold_symmetric\" option is set.");
+	runtime_assert_string_msg(!threefold_symmetric(), "Error in protocols::cyclic_peptide::CrosslinkerMover::asymmetric_apply(): The function was called, but the mover's \"threefold_symmetric\" option is set.");
 
 	core::pose::PoseOP pose_copy( pose.clone() );
 
@@ -554,11 +599,11 @@ ThreefoldLinkerMover::asymmetric_apply(
 	}
 
 	if ( !failed ) {
-		TR << "ThreefoldLinkerMover reports SUCCESS.  Updating pose." << std::endl;
+		TR << "CrosslinkerMover reports SUCCESS.  Updating pose." << std::endl;
 		pose = *pose_copy;
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 	} else {
-		TR << "ThreefoldLinkerMover reports FAILURE.  Returning input pose." << std::endl;
+		TR << "CrosslinkerMover reports FAILURE.  Returning input pose." << std::endl;
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 	}
 }
@@ -566,10 +611,10 @@ ThreefoldLinkerMover::asymmetric_apply(
 /// @brief Determine whether the residues to be crosslinked are too far apart.
 /// @details Returns TRUE for failure (too far apart), FALSE for success.
 bool
-ThreefoldLinkerMover::filter_by_sidechain_distance_asymmetric(
+CrosslinkerMover::filter_by_sidechain_distance_asymmetric(
 	core::pose::Pose const &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) const {
 	return helper->filter_by_sidechain_distance_asymmetric( pose, selection, sidechain_distance_filter_multiplier() );
 }
@@ -577,10 +622,10 @@ ThreefoldLinkerMover::filter_by_sidechain_distance_asymmetric(
 /// @brief Determine whether the sidechain-crosslinker system has too high a constraints score.
 /// @details Returns TRUE for failure (too high a constraints score) and FALSE for success.
 bool
-ThreefoldLinkerMover::filter_by_constraints_energy_asymmetric(
+CrosslinkerMover::filter_by_constraints_energy_asymmetric(
 	core::pose::Pose const &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) const {
 	return helper->filter_by_constraints_energy_asymmetric( pose, selection, constraints_energy_filter_multiplier() );
 }
@@ -588,7 +633,7 @@ ThreefoldLinkerMover::filter_by_constraints_energy_asymmetric(
 /// @brief Determine whether the overall system has too high an overall score (including constraints) at the end of the protocol.
 /// @details Returns TRUE for failure (too high an overall score) and FALSE for success.
 bool
-ThreefoldLinkerMover::filter_by_total_score(
+CrosslinkerMover::filter_by_total_score(
 	core::pose::Pose const &pose
 ) const {
 	core::pose::Pose pose_copy(pose);
@@ -603,8 +648,8 @@ ThreefoldLinkerMover::filter_by_total_score(
 	bool const failed( total_eng > filter_by_total_score_cutoff_energy() );
 
 	if ( TR.Debug.visible() ) {
-		TR.Debug << "Total energy (including constraints) at end of ThreefoldLinkerMover protocol: " << total_eng << std::endl;
-		TR.Debug << "Energy cutoff for ThreefoldLinkerMover protocol: " << filter_by_total_score_cutoff_energy() << std::endl;
+		TR.Debug << "Total energy (including constraints) at end of CrosslinkerMover protocol: " << total_eng << std::endl;
+		TR.Debug << "Energy cutoff for CrosslinkerMover protocol: " << filter_by_total_score_cutoff_energy() << std::endl;
 		if ( failed ) { TR.Debug << "Energy filter FAILED." << std::endl; }
 		else { TR.Debug << "Energy filter PASSED." << std::endl; }
 	}
@@ -615,10 +660,10 @@ ThreefoldLinkerMover::filter_by_total_score(
 /// @brief Given a selection of exactly three residues, add a crosslinker, align it crudely to the
 /// selected residues, and set up covalent bonds.
 void
-ThreefoldLinkerMover::add_linker_asymmetric(
+CrosslinkerMover::add_linker_asymmetric(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) const {
 	helper->add_linker_asymmetric(pose, selection);
 }
@@ -626,10 +671,10 @@ ThreefoldLinkerMover::add_linker_asymmetric(
 /// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
 /// add constraints for the crosslinker.
 void
-ThreefoldLinkerMover::add_linker_constraints_asymmetric(
+CrosslinkerMover::add_linker_constraints_asymmetric(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) const {
 	helper->add_linker_constraints_asymmetric( pose, selection );
 }
@@ -637,10 +682,10 @@ ThreefoldLinkerMover::add_linker_constraints_asymmetric(
 /// @brief Repack and minimize the sidechains.
 /// @details Also repacks and minimzes the linker, letting all jumps vary.
 void
-ThreefoldLinkerMover::pack_and_minimize_linker_and_sidechains(
+CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
-	protocols::cyclic_peptide::threefold_linker::ThreefoldLinkerMoverHelperCOP helper,
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper,
 	bool const whole_structure,
 	bool const symmetric
 ) const {
@@ -650,46 +695,62 @@ ThreefoldLinkerMover::pack_and_minimize_linker_and_sidechains(
 	if ( sfxn->get_weight( core::scoring::angle_constraint ) == 0.0 ) { sfxn->set_weight( core::scoring::angle_constraint, 1.0); }
 	if ( sfxn->get_weight( core::scoring::dihedral_constraint ) == 0.0 ) { sfxn->set_weight( core::scoring::dihedral_constraint, 1.0); }
 
-	protocols::relax::FastRelax frlx( sfxn, ( whole_structure ? final_frlx_rounds() : sidechain_frlx_rounds() ) );
+	core::Size const rounds( whole_structure ? final_frlx_rounds() : sidechain_frlx_rounds() );
 
-	if ( !whole_structure ) {
-		core::Size res1, res2, res3, linker_index1, linker_index2, linker_index3;
+	for ( core::Size i=1; i<=rounds; ++i ) {
+		helper->pre_relax_round_update_steps(pose, selection, whole_structure, symmetric, add_linker());
+		protocols::relax::FastRelax frlx( sfxn, 1 );
 
-		helper->get_sidechain_indices( selection, res1, res2, res3 );
-		if ( symmetric ) {
-			if ( add_linker() ) {
-				res2 += 1;
-				res3 += 2;
+		if ( !whole_structure ) {
+			core::Size res1, res2, res3, linker_index1, linker_index2, linker_index3;
+
+			helper->get_sidechain_indices( selection, res1, res2, res3 );
+			if ( symmetric ) {
+				if ( add_linker() ) {
+					res2 += 1;
+					res3 += 2;
+				}
+				helper->get_linker_indices_symmetric(pose, res1, res2, res3, linker_index1, linker_index2, linker_index3);
+			} else {
+				linker_index1 = helper->get_linker_index_asymmetric( pose, res1, res2, res3);
 			}
-			helper->get_linker_indices_symmetric(pose, res1, res2, res3, linker_index1, linker_index2, linker_index3);
-		} else {
-			linker_index1 = helper->get_linker_index_asymmetric( pose, res1, res2, res3);
+
+			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+			movemap->set_bb(false);
+			movemap->set_chi(false);
+			movemap->set_jump(false);
+			movemap->set_chi( res1, true );
+			movemap->set_chi( res2, true );
+			movemap->set_chi( res3, true );
+			movemap->set_chi( linker_index1, true );
+			if ( symmetric ) {
+				movemap->set_chi( linker_index2, true );
+				movemap->set_chi( linker_index3, true );
+				utility::vector1< core::Size > jump_indices(3);
+				utility::vector1< core::Size > linker_indices(3);
+				linker_indices[1] = linker_index1;
+				linker_indices[2] = linker_index2;
+				linker_indices[3] = linker_index3;
+				get_jump_indices_for_symmetric_crosslinker( pose, linker_indices, jump_indices );
+				for ( core::Size i(1), imax(jump_indices.size()); i<=imax; ++i ) {
+					movemap->set_jump(jump_indices[i], true);
+				}
+			} else {
+				movemap->set_jump( get_jump_index_for_crosslinker( pose, linker_index1 ), true );
+			}
+
+			frlx.set_movemap(movemap);
 		}
 
-		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-		movemap->set_bb(false);
-		movemap->set_chi(false);
-		movemap->set_jump(true);
-		movemap->set_chi( res1, true );
-		movemap->set_chi( res2, true );
-		movemap->set_chi( res3, true );
-		movemap->set_chi( linker_index1, true );
-		if ( symmetric ) {
-			movemap->set_chi( linker_index2, true );
-			movemap->set_chi( linker_index3, true );
-		}
-
-		frlx.set_movemap(movemap);
+		frlx.apply(pose);
+		helper->post_relax_round_update_steps(pose, selection, whole_structure, symmetric, add_linker());
 	}
-
-	frlx.apply(pose);
-
 }
 
 /// @brief Given a selection from a ResidueSelector, check that exactly three residues have been selected.
 /// @details Returns true if exactly three have been selected, false otherwise.
 bool
-ThreefoldLinkerMover::exactly_three_selected(
+CrosslinkerMover::exactly_three_selected(
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
 	core::Size const nres( selection.size() );
@@ -701,35 +762,41 @@ ThreefoldLinkerMover::exactly_three_selected(
 	return (count == 3);
 }
 
-/// @brief Given a CrossLinker enum, get its name.
-///
-std::string
-ThreefoldLinkerMover::get_crosslinker_name(
-	CrossLinker const crosslinker
+/// @brief Given a pose and the index of a crosslinker, figure out the jump in the foldtree that moves the crosslinker.
+/// @details Throws an error if the foldtree isn't set up so that a unique jump moves the crosslinker.
+core::Size
+CrosslinkerMover::get_jump_index_for_crosslinker(
+	core::pose::Pose const &pose,
+	core::Size const linker_index
 ) const {
-	switch( crosslinker) {
-	case no_crosslinker :
-		return "no_crosslinker";
-	case TBMB :
-		return "TBMB";
-	default :
-		break;
-	}
-	return "unknown_crosslinker";
+	runtime_assert_string_msg( linker_index > 0  && linker_index <= pose.total_residue(),
+		"Error in protocols::cyclic_peptide::CrosslinkerMover::get_jump_index_for_crosslinker(): The linker index is out of range." );
+
+	core::kinematics::FoldTree const &foldtree( pose.fold_tree() ); //Get a reference to the fold tree.
+	runtime_assert_string_msg( foldtree.is_jump_point( linker_index ),
+		"Error in protocols::cyclic_peptide::CrosslinkerMover::get_jump_index_for_crosslinker(): The linker index is not a jump point." );
+	return foldtree.get_jump_that_builds_residue( linker_index );
 }
 
-/// @brief Given a CrossLinker name, get its enum.
-///
-CrossLinker
-ThreefoldLinkerMover::get_crosslinker_enum(
-	std::string const &name
+/// @brief Given a pose and the indices of the pieces of a symmetric crosslinker, figure out the jumps in the foldtree that move the crosslinker.
+/// @details Throws an error if the foldtree isn't set up so that a unique jump moves the crosslinker.
+void
+CrosslinkerMover::get_jump_indices_for_symmetric_crosslinker(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const & linker_indices_in,
+	utility::vector1< core::Size > & jump_indices_out
 ) const {
-	for ( core::Size i(2); i < static_cast<core::Size>(end_of_crosslinker_list); ++i ) {
-		if ( !name.compare( get_crosslinker_name( static_cast<CrossLinker>(i) ) ) ) {
-			return static_cast<CrossLinker>(i);
-		}
+	core::Size const linker_count( linker_indices_in.size() );
+	runtime_assert_string_msg( linker_count > 0, "Error in protocols::cyclic_peptide::CrosslinkerMover::get_jump_indices_for_symmetric_crosslinker(): At least one linker index must be provided as input." );
+	jump_indices_out.resize(linker_count);
+
+	core::kinematics::FoldTree const &foldtree( pose.fold_tree() ); //Get a reference to the fold tree.
+	for ( core::Size i(1); i<=linker_count; ++i ) {
+		runtime_assert_string_msg( foldtree.is_jump_point( linker_indices_in[i] ),
+			"Error in protocols::cyclic_peptide::CrosslinkerMover::get_jump_indices_for_symmetric_crosslinker(): A provided linker index is not a jump point." );
+		jump_indices_out[i] = foldtree.get_jump_that_builds_residue( linker_indices_in[i] );
 	}
-	return unknown_crosslinker;
+
 }
 
 } //protocols

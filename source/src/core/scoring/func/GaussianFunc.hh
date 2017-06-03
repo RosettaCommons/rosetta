@@ -45,7 +45,8 @@ public:
 	) :
 		mean_         ( mean ),
 		sd_           ( sd ),
-		use_log_score_( true )
+		use_log_score_( true ),
+		weight_ (1.0)
 	{}
 
 	/// @brief returns a clone of this GaussianFunc
@@ -86,6 +87,11 @@ private:
 	Real mean_;
 	Real sd_;
 	bool use_log_score_;
+
+	/// @brief A multiplier for the Gaussian function.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	Real weight_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;

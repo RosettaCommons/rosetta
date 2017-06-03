@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide/threefold_linker/TBMB_Helper.cc
-/// @brief A derived class of the ThreefoldLinkerMoverHelper base class, used to set up
+/// @file protocols/cyclic_peptide/crosslinker/TBMB_Helper.cc
+/// @brief A derived class of the CrosslinkerMoverHelper base class, used to set up
 /// the 1,3,5-tris(bromomethyl)benzene (TBMB) cross-linker.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 // Unit headers
-#include <protocols/cyclic_peptide/threefold_linker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -28,9 +28,6 @@
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 #include <core/kinematics/MoveMap.hh>
 
 // Protocols headers
@@ -40,17 +37,16 @@
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateAngleConstraint.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.hh>
-#include <protocols/simple_moves/ClearConstraintsMover.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.threefold_linker.TBMB_Helper" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TBMB_Helper" );
 
 namespace protocols {
 namespace cyclic_peptide {
-namespace threefold_linker {
+namespace crosslinker {
 
 /////////////////////
 /// Constructors  ///
@@ -67,7 +63,7 @@ TBMB_Helper::TBMB_Helper() //:
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
 TBMB_Helper::TBMB_Helper( TBMB_Helper const &src ) :
-	ThreefoldLinkerMoverHelper( src )
+	CrosslinkerMoverHelper( src )
 	//TODO copy data here
 {
 
@@ -91,14 +87,14 @@ TBMB_Helper::add_linker_asymmetric(
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
 	core::Size cys1, cys2, cys3;
-	ThreefoldLinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
 
 	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not an L- or D-cysteine.");
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not an L- or D-cysteine.");
 	runtime_assert_string_msg( pose.residue_type(cys2).aa() == core::chemical::aa_cys || pose.residue_type(cys2).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The second residue selected by the ResidueSelector is not an L- or D-cysteine.");
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The second residue selected by the ResidueSelector is not an L- or D-cysteine.");
 	runtime_assert_string_msg( pose.residue_type(cys3).aa() == core::chemical::aa_cys || pose.residue_type(cys3).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
 
 	//Mutate the cysteines to CYX:
 	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "DCYX" : "CYX" );
@@ -165,14 +161,14 @@ TBMB_Helper::add_linker_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
 	core::Size cys1, cys2, cys3;
-	ThreefoldLinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
 
 	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not an L- or D-cysteine.");
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not an L- or D-cysteine.");
 	runtime_assert_string_msg( pose.residue_type(cys2).aa() == core::chemical::aa_cys || pose.residue_type(cys2).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The second residue selected by the ResidueSelector is not an L- or D-cysteine.");
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The second residue selected by the ResidueSelector is not an L- or D-cysteine.");
 	runtime_assert_string_msg( pose.residue_type(cys3).aa() == core::chemical::aa_cys || pose.residue_type(cys3).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
 
 	//Mutate the cysteines to CYX:
 	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "DCYX" : "CYX" );
@@ -201,26 +197,30 @@ TBMB_Helper::add_linker_symmetric(
 	core::Size const res_per_subunit( symminfo->num_independent_residues() );
 	core::Size const tbmb_res1( res_per_subunit + 1 );
 	core::Size const tbmb_res2( 2*res_per_subunit + 2 );
-	core::Size const tbmb_res3( 3*res_per_subunit + 3 );
 	pose.append_residue_by_jump( tbmb_pose.residue(1), cys1 );
 	cys2 += 1;
 	cys3 += 2;
 
-	//Declare covalent bonds (a bit redundant -- symmetric copy bonds should be handled properly by the symmetry machinery, but we'll declare them just to be sure):
-	protocols::cyclic_peptide::DeclareBond bond1, bond2, bond3, bond4, bond5, bond6;
-	bond1.set( tbmb_res1, "CM1", cys1, "SG", false );
-	bond2.set( tbmb_res2, "CM1", cys2, "SG", false );
-	bond3.set( tbmb_res3, "CM1", cys3, "SG", false );
-	bond4.set( tbmb_res1, "C2", tbmb_res2, "C1", false );
-	bond5.set( tbmb_res2, "C2", tbmb_res3, "C1", false );
-	bond6.set( tbmb_res3, "C2", tbmb_res1, "C1", false );
-	bond1.apply(pose);
-	bond2.apply(pose);
-	bond3.apply(pose);
-	bond4.apply(pose);
-	bond5.apply(pose);
-	bond6.apply(pose);
+	add_linker_bonds_symmetric(pose, cys1, tbmb_res1, tbmb_res2);
 }
+
+/// @brief Given a pose and a linker, add bonds between the TBMB linker and the residues that coordinate the linker.
+/// @details Called by add_linker_symmetric().  Version for symmetric poses.
+void
+TBMB_Helper::add_linker_bonds_symmetric(
+	core::pose::Pose &pose,
+	core::Size const res1,
+	core::Size const linker_index1,
+	core::Size const linker_index2
+) const {
+	//Declare covalent bonds:
+	protocols::cyclic_peptide::DeclareBond bond1, bond4;
+	bond1.set( linker_index1, "CM1", res1, "SG", false );
+	bond4.set( linker_index1, "C2", linker_index2, "C1", false );
+	bond1.apply(pose);
+	bond4.apply(pose);
+}
+
 
 /// @brief Given a selection of exactly three residues that have already been connected to a 1,3,5-tris(bromomethyl)benzene crosslinker,
 /// add constraints for the crosslinker.
@@ -231,7 +231,7 @@ TBMB_Helper::add_linker_constraints_asymmetric(
 ) const {
 	//Get indices of residues
 	core::Size cys1, cys2, cys3;
-	ThreefoldLinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
 	core::Size const tbmb_index( get_linker_index_asymmetric( pose, cys1, cys2, cys3) );
 
 	//Set up distance constraints:
@@ -338,7 +338,7 @@ TBMB_Helper::add_linker_constraints_symmetric(
 ) const {
 	//Get indices of residues
 	core::Size cys1, cys2, cys3;
-	ThreefoldLinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
 	if ( linker_was_added ) {
 		cys2 += 1;
 		cys3 += 2;
@@ -441,7 +441,7 @@ TBMB_Helper::get_linker_index_asymmetric(
 	core::Size const res2,
 	core::Size const res3
 ) const {
-	std::string const errmsg( "Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::get_linker_index_asymmetric(): " );
+	std::string const errmsg( "Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::get_linker_index_asymmetric(): " );
 
 	core::Size const nconn1( pose.residue(res1).n_possible_residue_connections() );
 	core::Size const nconn2( pose.residue(res2).n_possible_residue_connections() );
@@ -472,7 +472,7 @@ TBMB_Helper::get_linker_indices_symmetric(
 	core::Size &linker_index2,
 	core::Size &linker_index3
 ) const {
-	std::string const errmsg( "Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::get_linker_indices_symmetric(): " );
+	std::string const errmsg( "Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::get_linker_indices_symmetric(): " );
 
 	core::Size const nconn1( pose.residue(res1).n_possible_residue_connections() );
 	core::Size const nconn2( pose.residue(res2).n_possible_residue_connections() );
@@ -510,14 +510,14 @@ TBMB_Helper::filter_by_sidechain_distance_asymmetric(
 
 	//Get indices of residues
 	core::Size cys1, cys2, cys3;
-	ThreefoldLinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
 
 	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The first residue selected is not D- or L-cysteine." );
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The first residue selected is not D- or L-cysteine." );
 	runtime_assert_string_msg( pose.residue_type(cys2).aa() == core::chemical::aa_cys || pose.residue_type(cys2).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The second residue selected is not D- or L-cysteine." );
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The second residue selected is not D- or L-cysteine." );
 	runtime_assert_string_msg( pose.residue_type(cys3).aa() == core::chemical::aa_cys || pose.residue_type(cys3).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The third residue selected is not D- or L-cysteine." );
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The third residue selected is not D- or L-cysteine." );
 
 	core::Real const d1( pose.residue(cys1).xyz("CB").distance_squared( pose.residue(cys2).xyz("CB") ) );
 	if ( TR.Debug.visible() ) {
@@ -556,12 +556,12 @@ TBMB_Helper::filter_by_sidechain_distance_symmetric(
 
 	//Get indices of residues
 	core::Size cys1, cys2, cys3;
-	ThreefoldLinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
 
 	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The first residue selected is not D- or L-cysteine." );
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The first residue selected is not D- or L-cysteine." );
 	runtime_assert_string_msg( pose.residue_type(cys2).aa() == core::chemical::aa_cys || pose.residue_type(cys2).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The second residue selected is not D- or L-cysteine." );
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The second residue selected is not D- or L-cysteine." );
 
 	core::Real const d1( pose.residue(cys1).xyz("CB").distance_squared( pose.residue(cys2).xyz("CB") ) );
 	if ( TR.Debug.visible() ) {
@@ -599,50 +599,6 @@ TBMB_Helper::filter_by_constraints_energy_symmetric(
 PRIVATE FUNCTIONS
 *********************************************/
 
-/// @brief Determine whether the sidechain-crosslinker system has too high a constraints score.  This version is for symmetric poses.
-/// @details Returns TRUE for failure (too high a constraints score) and FALSE for success.
-bool
-TBMB_Helper::filter_by_constraints_energy(
-	core::pose::Pose const &pose,
-	core::select::residue_selector::ResidueSubset const & selection,
-	bool const symmetric,
-	bool const linker_was_added,
-	core::Real const &filter_multiplier
-) const {
-	core::pose::Pose pose_copy( pose ); //Scoring alters the energies in the pose, so we need a copy here.  We're also going to manipulate it a bit.
-
-	//Remove constraints from pose, and add back only those for the linker:
-	protocols::simple_moves::ClearConstraintsMover clear_csts;
-	clear_csts.apply(pose_copy);
-	if ( symmetric ) {
-		add_linker_constraints_symmetric( pose_copy, selection, linker_was_added );
-	} else {
-		add_linker_constraints_asymmetric( pose_copy, selection );
-	}
-
-	core::scoring::ScoreFunctionOP sfxn;
-	if ( symmetric ) {
-		sfxn = core::scoring::ScoreFunctionOP( core::scoring::symmetry::SymmetricScoreFunctionOP ( new core::scoring::symmetry::SymmetricScoreFunction ) );
-	} else {
-		sfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-	}
-
-	sfxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-	sfxn->set_weight( core::scoring::angle_constraint, 1.0 );
-	sfxn->set_weight( core::scoring::dihedral_constraint, 1.0 );
-
-	(*sfxn)( pose_copy );
-
-	core::Real const cst_energy( pose_copy.energies().total_energy() );
-	bool const failure( cst_energy > (50.0 * filter_multiplier) );
-
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Constraint energy for crosslinked pose is " << cst_energy << ".  " << (failure ? "Filter failed." : "Filter passes.") << std::endl;
-	}
-
-	return failure;
-}
-
-} //threefold_linker
+} //crosslinker
 } //protocols
 } //cyclic_peptide

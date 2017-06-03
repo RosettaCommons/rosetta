@@ -520,10 +520,10 @@ private:
 	/// @details This is also the index of the last sequence residue.  Crosslinker residues follow this position.
 	inline core::Size sequence_length() const { return sequence_length_; }
 
-	/// @brief Given a pose with TBMB in it and another pose without TBMB, copy the TBMB residues from the first to the second,
+	/// @brief Given a pose with a linker (e.g. TBMB, TMA) in it and another pose without the linker, copy the linker residues from the first to the second,
 	/// and add back covalent bonds.
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
-	void re_append_tbmb_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, core::Size const offset ) const;
+	void re_append_linker_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, core::Size const offset, utility::vector1< utility::vector1< core::Size > > const &linker_positions, std::string const & linker_name ) const;
 
 	/// @brief Get the cyclization type (N-to-C cyclic, terminal disulfide, etc.).
 	/// @details Const-access only.
@@ -850,6 +850,23 @@ private:
 	/// @brief Multiplier to make the TBMB constraints energy filter more permissive.
 	/// @details Default 1.0.
 	core::Real tbmb_constraints_energy_filter_multiplier_;
+
+	/// @brief List of positions linked by trimesic acid.
+	/// @details This is a vector of lists of three residues.
+	utility::vector1< utility::vector1 < core::Size >  > tma_positions_;
+
+	/// @brief If true, filters are applied based on distance between trimesic acid-conjugated residues and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_tma_filters_;
+
+	/// @brief Multiplier to make the trimesic acid distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real tma_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the trimesic acid constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real tma_constraints_energy_filter_multiplier_;
 
 	/// @brief If this option is used, then only backbones that are cN (or cN/m, if mirror symmetry is required) symmetric will be accepted.
 	/// For example, if set to 2, then only c2-symmetric backbones will be accepted.

@@ -64,3 +64,6 @@
 
 #number of moving C-terminal tail residues on attached protein (ubiquitin)
 -chemically_conjugated_docking:n_tail_res 3
+
+#exclude the new patches that prevent use of LYX:
+-chemical:exclude_patches SidechainConjugation

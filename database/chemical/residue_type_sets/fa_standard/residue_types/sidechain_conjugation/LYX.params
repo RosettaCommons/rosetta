@@ -1,4 +1,13 @@
 #Lysine forming a side-chain amide bond to something else.
+#
+# Note that this is a LEGACY params file, which is included ONLY to allow old protocols
+# to be run.  Use of this params file requires the flags:
+#      -chemical:exclude_patches SidechainConjugation
+#      -extra_res_fa sidechain_conjugation/LYX.params
+#
+# It is highly, HIGHLY recommended that you instead use the LYS:SidechainConjugation patch,
+# which does the same thing (allows the side-chain of lysine to form covalent bonds) while
+# preserving all up-to-date geometry and properties of lysine.
 NAME LYX
 VARIANT SIDECHAIN_CONJUGATION
 IO_STRING LYX X

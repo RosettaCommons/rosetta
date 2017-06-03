@@ -4555,6 +4555,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'TBMB_constraints_energy_filter_multiplier', 'Real', desc="A multiplier for the constraints energy for TBMB cysteines.  Higher values result in more permissive filtering.  Default 1.0.", default='1.0' ),
 		Option( 'link_all_cys_with_TBMB', 'Boolean', desc="If true, then all cysteine residues in the peptide are linked with 1,3,5-tris(bromomethyl)benzene.  There must be exactly three cysteine residues for this flag to be used, and it cannot be used with the -TBMB_positions flag.  False/unused by default.", default='false'),
 
+		Option( 'TMA_positions', 'IntegerVector', desc="If provided, then these positions will be linked by a trimesic acid crosslinker.  The positions must have sidechain primary amines (i.e. be one of lysine [LYS], ornithine [ORN], 2,4-diaminobutyric acid [DAB], or 2,3-diaminopripionic acid [DPP].  There must be 3N positions specified, and every group of three will be linked.  Unused if not specified." ),
+		Option( 'use_TMA_filters', 'Boolean', desc="If true, then filters are applied based on distance between TMA-conjugated sidechains and on constraints to discard GenKIC solutions that can't be crosslinked easily.  True by default.", default='true' ),
+		Option( 'TMA_sidechain_distance_filter_multiplier', 'Real', desc="A multiplier for the distance cutoff for side-chains linked by trimseic acid (TMA).  Higher values result in more permissive filtering.  Default 1.0.", default='1.0' ),
+		Option( 'TMA_constraints_energy_filter_multiplier', 'Real', desc="A multiplier for the constraints energy for side-chains linked by trimseic acid (TMA).  Higher values result in more permissive filtering.  Default 1.0.", default='1.0' ),
+
+
 		Option( 'require_symmetry_repeats', 'Integer', desc="If this option is used, then only backbones that are cN (or cN/m, if mirror symmetry is required) symmetric will be accepted.  For example, if set to 2, then only c2-symmetric backbones will be accepted.  Unused if not specified.", default='1' ),
 		Option( 'require_symmetry_mirroring', 'Boolean', desc="If this option is used, then only backbones with mirror symmetry are accepted.  Must be used with the -cyclic_peptide:require_symmetry_repeats flag.", default='false' ),
 		Option( 'require_symmetry_angle_threshold', 'Real', desc="The cutoff, in degrees, to use when comparing mainchain torsion values to determine whether symmetry repeats are truely symmetric.  Defaults to 10 degrees.", default='10.0' ),

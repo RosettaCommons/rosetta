@@ -96,8 +96,9 @@
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
 //TBMB
-#include <protocols/cyclic_peptide/ThreefoldLinkerMover.hh>
-#include <protocols/cyclic_peptide/threefold_linker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/CrosslinkerMover.hh>
+#include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
@@ -180,6 +181,10 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_constraints_energy_filter_multiplier  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_positions                        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TMA_filters                      );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_constraints_energy_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats             );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring           );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold     );
@@ -314,6 +319,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	use_tbmb_filters_(true),
 	tbmb_sidechain_distance_filter_multiplier_(1.0),
 	tbmb_constraints_energy_filter_multiplier_(1.0),
+	tma_positions_(),
+	use_tma_filters_(true),
+	tma_sidechain_distance_filter_multiplier_(1.0),
+	tma_constraints_energy_filter_multiplier_(1.0),
 	required_symmetry_repeats_(1),
 	required_symmetry_mirroring_(false),
 	required_symmetry_angle_threshold_(10.0),
@@ -405,6 +414,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	use_tbmb_filters_(src.use_tbmb_filters_),
 	tbmb_sidechain_distance_filter_multiplier_(src.tbmb_sidechain_distance_filter_multiplier_),
 	tbmb_constraints_energy_filter_multiplier_(src.tbmb_constraints_energy_filter_multiplier_),
+	tma_positions_(src.tma_positions_),
+	use_tma_filters_(src.use_tma_filters_),
+	tma_sidechain_distance_filter_multiplier_(src.tma_sidechain_distance_filter_multiplier_),
+	tma_constraints_energy_filter_multiplier_(src.tma_constraints_energy_filter_multiplier_),
 	required_symmetry_repeats_(src.required_symmetry_repeats_),
 	required_symmetry_mirroring_(src.required_symmetry_mirroring_),
 	required_symmetry_angle_threshold_(src.required_symmetry_angle_threshold_),
@@ -627,7 +640,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		runtime_assert_string_msg( ntbmbres % 3 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TBMB_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of three.  Groups of three residues will be linked with 1,3,5-tris(bromomethyl)benzene." );
 		core::Size count(0);
 		tbmb_positions_.resize(ntbmbres / 3);
-		for ( core::Size i=1; i<=ntbmbres / 3; ++i ) {
+		for ( core::Size i(1), imax(ntbmbres / 3); i<=imax; ++i ) {
 			utility::vector1 <core::Size> innervect(3);
 			for ( core::Size j=1; j<=3; ++j ) {
 				++count;
@@ -640,6 +653,26 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	tbmb_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier]();
 	tbmb_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TBMB_constraints_energy_filter_multiplier]();
 	link_all_cys_with_tbmb_ = option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]();
+
+	//Store the TMA positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::TMA_positions].user() ) {
+		core::Size const n_tma_res(option[basic::options::OptionKeys::cyclic_peptide::TMA_positions]().size());
+		runtime_assert_string_msg( n_tma_res > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TMA_positions\" commandline option must be followed by a list of residues to link with trimesic acid." );
+		runtime_assert_string_msg( n_tma_res % 3 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TMA_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of three.  Groups of three residues will be linked with trimesic acid." );
+		core::Size count(0);
+		tma_positions_.resize(n_tma_res / 3);
+		for ( core::Size i(1), imax(n_tma_res / 3); i<=imax; ++i ) {
+			utility::vector1 <core::Size> innervect(3);
+			for ( core::Size j=1; j<=3; ++j ) {
+				++count;
+				innervect[j] = option[basic::options::OptionKeys::cyclic_peptide::TMA_positions]()[count];
+			}
+			tma_positions_[i] = innervect;
+		}
+	}
+	use_tma_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_TMA_filters]();
+	tma_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TMA_sidechain_distance_filter_multiplier]();
+	tma_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TMA_constraints_energy_filter_multiplier]();
 
 	//Options for symmetric sampling:
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:require_symmetry_repeats\" flag must be provided with a positive value." );
@@ -1942,16 +1975,39 @@ SimpleCycpepPredictApplication::genkic_close(
 			}
 			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
 			index_selector->set_index( cys_indices.str() );
-			protocols::cyclic_peptide::ThreefoldLinkerMoverOP threelinker( new protocols::cyclic_peptide::ThreefoldLinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( new protocols::cyclic_peptide::CrosslinkerMover );
 			threelinker->set_residue_selector(index_selector);
 			threelinker->set_linker_name("TBMB");
 			threelinker->set_behaviour( true, true, true, false, false );
 			threelinker->set_filter_behaviour( use_tbmb_filters_, use_tbmb_filters_, false, 0.0, tbmb_sidechain_distance_filter_multiplier_, tbmb_constraints_energy_filter_multiplier_ );
 			threelinker->set_scorefxn( sfxn_highhbond );
 			threelinker->set_sidechain_frlx_rounds(3);
-			//TODO -- set options for filtering.
 			std::stringstream movername;
 			movername << "TBMB_link_" << i;
+			pp->add_mover_filter_pair( threelinker, movername.str(), nullptr );
+		}
+	}
+
+	//If we're considering TMA, add it here.
+	if ( tma_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(tma_positions_.size()); i<=imax; ++i ) {
+			debug_assert(tma_positions_[i].size() == 3); //Should be true always.
+			std::stringstream tma_indices;
+			for ( core::Size j=1; j<=3; ++j ) {
+				tma_indices << current_position( tma_positions_[i][j], cyclic_offset, nres );
+				if ( j<3 ) tma_indices << ",";
+			}
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			index_selector->set_index( tma_indices.str() );
+			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			threelinker->set_residue_selector(index_selector);
+			threelinker->set_linker_name("TMA");
+			threelinker->set_behaviour( true, true, true, false, false );
+			threelinker->set_filter_behaviour( use_tma_filters_, use_tma_filters_, false, 0.0, tma_sidechain_distance_filter_multiplier_, tma_constraints_energy_filter_multiplier_ );
+			threelinker->set_scorefxn( sfxn_highhbond );
+			threelinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "TMA_link_" << i;
 			pp->add_mover_filter_pair( threelinker, movername.str(), nullptr );
 		}
 	}
@@ -2593,9 +2649,14 @@ SimpleCycpepPredictApplication::depermute (
 	//Re-form the disulfides:
 	rebuild_disulfides( newpose, new_disulfides );
 
-	//Re-append linker residues:
+	//Re-append TBMB linker residues:
 	if ( tbmb_positions_.size() > 0 ) {
-		re_append_tbmb_residues( pose, newpose, offset );
+		re_append_linker_residues( pose, newpose, offset, tbmb_positions_, "TBM" );
+	}
+
+	//Re-append TMA linker residues:
+	if ( tma_positions_.size() > 0 ) {
+		re_append_linker_residues( pose, newpose, offset, tma_positions_, "TMA" );
 	}
 
 	//I don't bother to set up cyclic constraints, since we won't be doing any more minimization after calling this function.
@@ -2835,37 +2896,45 @@ void SimpleCycpepPredictApplication::erase_random_seed_info() const {
 	return;
 }
 
-/// @brief Given a pose with TBMB in it and another pose without TBMB, copy the TBMB residues from the first to the second,
+/// @brief Given a pose with a linker (e.g. TBMB, TMA) in it and another pose without the linker, copy the linker residues from the first to the second,
 /// and add back covalent bonds.
 /// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
 void
-SimpleCycpepPredictApplication::re_append_tbmb_residues(
+SimpleCycpepPredictApplication::re_append_linker_residues(
 	core::pose::PoseCOP pose,
 	core::pose::PoseOP newpose,
-	core::Size const offset
+	core::Size const offset,
+	utility::vector1< utility::vector1< core::Size > > const &linker_positions,
+	std::string const & linker_name
 ) const {
 	debug_assert( pose->total_residue() > newpose->total_residue() );
 
 	core::Size lastres(0);
-	for ( core::Size i=1, imax=tbmb_positions_.size(); i<=imax; ++i ) { //Loop through all TBMBs
-		//For each one, loop through the sequence and find the next TBMB.
+	for ( core::Size i=1, imax=linker_positions.size(); i<=imax; ++i ) { //Loop through all linkers
+		//For each one, loop through the sequence and find the next linker of the given type.
 		for ( core::Size j=lastres+1, jmax=pose->total_residue(); j<=jmax; ++j ) {
-			if ( !pose->residue_type(j).name3().compare("TBM") ) {
+			if ( !pose->residue_type(j).name3().compare(linker_name) ) {
 				lastres = j;
 				break;
 			}
 		}
-		newpose->append_residue_by_jump( pose->residue(lastres), tbmb_positions_[i][1] ); //Jump from the first cys that links this TBMB to the TBMB
-		protocols::cyclic_peptide::threefold_linker::TBMB_Helper helper;
-		core::Size cys1, cys2, cys3;
-		if ( offset >= tbmb_positions_[i][3] || offset < tbmb_positions_[i][1] ) {
-			cys1 = tbmb_positions_[i][1]; cys2 = tbmb_positions_[i][2]; cys3 = tbmb_positions_[i][3];
-		} else if ( offset >= tbmb_positions_[i][2] ) {
-			cys1 = tbmb_positions_[i][3]; cys2 = tbmb_positions_[i][1]; cys3 = tbmb_positions_[i][2];
-		} else {
-			cys1 = tbmb_positions_[i][2]; cys2 = tbmb_positions_[i][3]; cys3 = tbmb_positions_[i][1];
+		newpose->append_residue_by_jump( pose->residue(lastres), linker_positions[i][1] ); //Jump from the first residue that links this linker, to the linker itself.
+		protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
+		if ( linker_name == "TBM" ) {
+			helper = protocols::cyclic_peptide::crosslinker::TBMB_HelperOP( new protocols::cyclic_peptide::crosslinker::TBMB_Helper );
+		} else if ( linker_name == "TMA" ) {
+			helper = protocols::cyclic_peptide::crosslinker::TMA_HelperOP( new protocols::cyclic_peptide::crosslinker::TMA_Helper );
 		}
-		helper.add_linker_bonds_asymmetric( *newpose, cys1, cys2, cys3, newpose->total_residue() );
+
+		core::Size res1, res2, res3;
+		if ( offset >= linker_positions[i][3] || offset < linker_positions[i][1] ) {
+			res1 = linker_positions[i][1]; res2 = linker_positions[i][2]; res3 = linker_positions[i][3];
+		} else if ( offset >= linker_positions[i][2] ) {
+			res1 = linker_positions[i][3]; res2 = linker_positions[i][1]; res3 = linker_positions[i][2];
+		} else {
+			res1 = linker_positions[i][2]; res2 = linker_positions[i][3]; res3 = linker_positions[i][1];
+		}
+		helper->add_linker_bonds_asymmetric( *newpose, res1, res2, res3, newpose->total_residue() );
 	}
 }
 

@@ -1,0 +1,21 @@
+#-in:file:native inputs/TBStest1.pdb
+-nstruct 5
+-output_virtual true
+-write_all_connect_info
+-extra_res_fa crosslinker/trimesic_acid.params
+-symmetric_gly_tables true
+-cyclic_peptide:sequence_file inputs/seq.txt
+-cyclic_peptide:rama_cutoff 3.0
+-cyclic_peptide:TMA_positions 7 14 21
+-cyclic_peptide:TMA_sidechain_distance_filter_multiplier 1.0
+-cyclic_peptide:TMA_constraints_energy_filter_multiplier 4.0
+-cyclic_peptide:fast_relax_rounds 1
+-cyclic_peptide:min_genkic_hbonds 0
+-cyclic_peptide:min_final_hbonds 0
+#-cyclic_peptide:user_set_alpha_dihedrals 1 116.0 98.8 180 2 58.2 -118.4 180 3 -48.3 -31.1 180 4 -71.4 -30.2 180 5 -81.0 -34.4 180 6 -61.7 -37.8 180 7 -64.8 -49.5 180 8 -53.3 -39.9 180 9 -62.7 -54.8 180 10 -64.0 -37.8 180 11 -66.2 -36.8 180 12 -69.3 -39.8 180 13 -69.7 -38.3 180 14 88.9 -179.2 180 15 116.0 98.8 180 16 58.2 -118.4 180 17 -48.3 -31.1 180 18 -71.4 -30.2 180 19 -81.0 -34.4 180 20 -61.7 -37.8 180 21 -64.8 -49.5 180 22 -53.3 -39.9 180 23 -62.7 -54.8 180 24 -64.0 -37.8 180 25 -66.2 -36.8 180 26 -69.3 -39.8 180 27 -69.7 -38.3 180 28 88.9 -179.2 180 29 116.0 98.8 180 30 58.2 -118.4 180 31 -48.3 -31.1 180 32 -71.4 -30.2 180 33 -81.0 -34.4 180 34 -61.7 -37.8 180 35 -64.8 -49.5 180 36 -53.3 -39.9 180 37 -62.7 -54.8 180 38 -64.0 -37.8 180 39 -66.2 -36.8 180 40 -69.3 -39.8 180 41 -69.7 -38.3 180 42 88.9 -179.2 180
+#-cyclic_peptide:user_set_alpha_dihedral_perturbation 3.0
+-mute protocols.protein_interface_design.design_utils
+##### these are general flags
+#-jd2:failed_job_exception false
+-out:levels protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication:500 protocols.cyclic_peptide.CrosslinkerMover:500 protocols.cyclic_peptide.crosslinker.TBMB_Helper:500
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

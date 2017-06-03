@@ -79,6 +79,13 @@ DeleteAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("DeleteAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteAtom::name() const {
+	return "DeleteAtom";
+}
+
 SetBackboneHeavyatom::SetBackboneHeavyatom( std::string const & atom_name_in ) :
 	atom_name_( atom_name_in )
 {}
@@ -98,6 +105,13 @@ SetBackboneHeavyatom::apply( ResidueType & rsd ) const
 		rsd.set_backbone_heavyatom( atom_name_ );
 	}
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("SetBackboneHeavyatom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetBackboneHeavyatom::name() const {
+	return "SetBackboneHeavyatom";
 }
 
 /// @brief constructor the type of connection is "LOWER" or "UPPER"
@@ -135,6 +149,13 @@ SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetPolymerConnectAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetPolymerConnectAtom::name() const {
+	return "SetPolymerConnectAtom";
+}
+
 AddConnect::AddConnect( std::string const & connect_atom,
 	Real const phi, Real const theta, Real const d,
 	std::string const & parent_atom,
@@ -162,6 +183,13 @@ AddConnect::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("AddConnect").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddConnect::name() const {
+	return "AddConnect";
+}
+
 AddProperty::AddProperty( std::string const & property_in ):
 	property_( property_in )
 {}
@@ -174,6 +202,13 @@ AddProperty::apply( ResidueType & rsd ) const
 		TR_PatchOperations.Trace << "AddProperty::apply: " << property_ << std::endl;
 	}
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("AddProperty").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddProperty::name() const {
+	return "AddProperty";
 }
 
 DeleteProperty::DeleteProperty( std::string const & property_in ):
@@ -190,6 +225,12 @@ DeleteProperty::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("DeleteProperty").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteProperty::name() const {
+	return "DeleteProperty";
+}
 
 // DeleteVariantType //////////////////////////////////////////////////////////
 DeleteVariantType::DeleteVariantType( std::string const & variant_in ) :
@@ -204,6 +245,13 @@ DeleteVariantType::apply( ResidueType & rsd ) const
 {
 	rsd.remove_variant_type( variant_ );
 	return false;  // success
+}
+
+/// @brief Return the name of this PatchOperation ("DeleteVariantType").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteVariantType::name() const {
+	return "DeleteVariantType";
 }
 
 // AddChi ////////////////////////////////////////////////////////////////////
@@ -258,6 +306,12 @@ AddChi::apply( ResidueType & rsd ) const
 	}
 }
 
+/// @brief Return the name of this PatchOperation ("AddChi").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddChi::name() const {
+	return "AddChi";
+}
 
 // AddProtonChi //////////////////////////////////////////////////////////////
 AddProtonChi::AddProtonChi(
@@ -273,6 +327,12 @@ AddProtonChi::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("AddProtonChi").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddProtonChi::name() const {
+	return "AddProtonChi";
+}
 
 RedefineChi::RedefineChi(Size const & chino_in,
 	std::string const & atom1_in,
@@ -302,6 +362,13 @@ RedefineChi::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("RedefineChi").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+RedefineChi::name() const {
+	return "RedefineChi";
+}
+
 bool
 DeleteTerminalChi::apply( ResidueType & rsd ) const
 {
@@ -316,6 +383,14 @@ DeleteTerminalChi::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("DeleteTerminalChi").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteTerminalChi::name() const {
+	return "DeleteTerminalChi";
+}
+
+
 DeleteMetalbindingAtom::DeleteMetalbindingAtom(
 	std::string const & atom_name
 ):
@@ -327,6 +402,13 @@ DeleteMetalbindingAtom::apply( ResidueType & rsd ) const
 {
 	rsd.delete_metalbinding_atom( atom_name_ );
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("DeleteMetalbindingAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteMetalbindingAtom::name() const {
+	return "DeleteMetalbindingAtom";
 }
 
 DeleteActCoordAtom::DeleteActCoordAtom(
@@ -342,6 +424,12 @@ DeleteActCoordAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("DeleteActCoordAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteActCoordAtom::name() const {
+	return "DeleteActCoordAtom";
+}
 
 // AddChiRotamer /////////////////////////////////////////////////////////////
 // Constructor for when the chi index is specified
@@ -376,6 +464,12 @@ AddChiRotamer::apply( ResidueType & rsd ) const
 	return false;  // success
 }
 
+/// @brief Return the name of this PatchOperation ("AddChiRotamer").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddChiRotamer::name() const {
+	return "AddChiRotamer";
+}
 
 // ClearChiRotamers ///////////////////////////////////////////////////////////
 
@@ -397,6 +491,12 @@ ClearChiRotamers::apply( ResidueType & rsd ) const
 	}
 }
 
+/// @brief Return the name of this PatchOperation ("ClearChiRotamers").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ClearChiRotamers::name() const {
+	return "ClearChiRotamers";
+}
 
 // AddAtom ///////////////////////////////////////////////////////////////////
 AddAtom::AddAtom(
@@ -410,6 +510,13 @@ AddAtom::AddAtom(
 	mm_atom_type_name_( mm_atom_type_name_in ),
 	charge_( charge )
 {}
+
+/// @brief Return the name of this PatchOperation ("AddAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddAtom::name() const {
+	return "AddAtom";
+}
 
 bool
 AddAtom::apply( ResidueType & rsd ) const
@@ -445,6 +552,13 @@ AddAtomAlias::apply( ResidueType & rsd ) const
 	return false;  // success
 }
 
+/// @brief Return the name of this PatchOperation ("AddAtomAlias").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddAtomAlias::name() const {
+	return "AddAtomAlias";
+}
+
 
 // AddBond ////////////////////////////////////////////////////////////////////
 
@@ -455,6 +569,11 @@ AddBond::AddBond(
 	atom1_( atom1_in ),
 	atom2_( atom2_in )
 {}
+
+/// @brief Return the name of this PatchOperation ("AddBond").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddBond::name() const { return "AddBond"; }
 
 bool
 AddBond::apply( ResidueType & rsd ) const
@@ -495,6 +614,12 @@ AddBondType::apply( ResidueType & rsd ) const
 	return false;  // success
 }
 
+/// @brief Return the name of this PatchOperation ("AddBondType").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddBondType::name() const {
+	return "AddBondType";
+}
 
 // ChangeBondType /////////////////////////////////////////////////////////////
 
@@ -520,6 +645,12 @@ ChangeBondType::apply( ResidueType & rsd ) const
 	return false;  // success
 }
 
+/// @brief Return the name of this PatchOperation ("ChangeBondType").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ChangeBondType::name() const {
+	return "ChangeBondType";
+}
 
 // SetAtomicCharge ////////////////////////////////////////////////////////////
 
@@ -547,6 +678,12 @@ SetAtomicCharge::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetAtomicCharge").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetAtomicCharge::name() const {
+	return "SetAtomicCharge";
+}
 
 // SetFormalCharge ////////////////////////////////////////////////////////////
 
@@ -568,6 +705,12 @@ SetFormalCharge::apply( ResidueType & rsd ) const
 	return false;  // success
 }
 
+/// @brief Return the name of this PatchOperation ("SetFormalCharge").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetFormalCharge::name() const {
+	return "SetFormalCharge";
+}
 
 // SetAtomType ////////////////////////////////////////////////////////////////
 
@@ -599,6 +742,12 @@ SetAtomType::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetAtomType").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetAtomType::name() const {
+	return "SetAtomType";
+}
 
 // SetIO_String //////////////////////////////////////////////////////////////
 
@@ -618,6 +767,13 @@ SetIO_String::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetIO_String").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetIO_String::name() const {
+	return "SetIO_String";
+}
+
 SetInterchangeabilityGroup_String::SetInterchangeabilityGroup_String(
 	std::string const & intgrp
 ):
@@ -629,6 +785,13 @@ SetInterchangeabilityGroup_String::apply( ResidueType & rsd ) const
 {
 	rsd.interchangeability_group( intgrp_ );
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("SetInterchangeabilityGroup_String").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetInterchangeabilityGroup_String::name() const {
+	return "SetInterchangeabilityGroup_String";
 }
 
 // SetMMAtomType //////////////////////////////////////////////////////////////
@@ -660,6 +823,12 @@ SetMMAtomType::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetMMAtomType").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetMMAtomType::name() const {
+	return "SetMMAtomType";
+}
 
 // SetICoor //////////////////////////////////////////////////////////////////
 
@@ -667,12 +836,10 @@ SetMMAtomType::apply( ResidueType & rsd ) const
 std::string
 expand_icoor_atom_name( std::string name, ResidueType const & rsd )
 {
-	std::string const nconn_tag( "%NCONN" );
+	std::string const nconn_tag( "%LASTCONN" );
 	Size pos( name.find( nconn_tag ) );
 	if ( pos < name.size() ) {
-		//std::cout << "name before replace: " << name << std::endl;
 		name.replace( pos, nconn_tag.size(), ObjexxFCL::string_of( rsd.n_possible_residue_connections() ) );
-		//std::cout << "name after replace: " << name << std::endl;
 	}
 	return name;
 }
@@ -694,6 +861,11 @@ SetICoor::SetICoor(
 	stub2_( stub2_in ),
 	stub3_( stub3_in )
 {}
+
+/// @brief Return the name of this PatchOperation ("SetICoor").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetICoor::name() const { return "SetICoor"; }
 
 bool
 SetICoor::apply( ResidueType & rsd ) const
@@ -755,6 +927,12 @@ ChangeAncestory::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("ChangeAncestory").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ChangeAncestory::name() const {
+	return "ChangeAncestory";
+}
 
 // ResetBondLength ////////////////////////////////////////////////////////////
 
@@ -777,6 +955,12 @@ ResetBondLength::apply( ResidueType & rsd ) const
 	}
 }
 
+/// @brief Return the name of this PatchOperation ("ResetBondLength").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ResetBondLength::name() const {
+	return "ResetBondLength";
+}
 
 // PrependMainchainAtom ///////////////////////////////////////////////////////
 
@@ -804,6 +988,13 @@ PrependMainchainAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("PrependMainchainAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+PrependMainchainAtom::name() const {
+	return "PrependMainchainAtom";
+}
+
 AppendMainchainAtom::AppendMainchainAtom( std::string const & atom_name_in ) :
 	atom_name_( atom_name_in )
 {}
@@ -822,6 +1013,13 @@ AppendMainchainAtom::apply( ResidueType & rsd ) const
 	}
 	rsd.finalize();
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("AppendMainchainAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AppendMainchainAtom::name() const {
+	return "AppendMainchainAtom";
 }
 
 ReplaceMainchainAtom::ReplaceMainchainAtom( std::string const & target, std::string const & new_atom ) :
@@ -855,6 +1053,12 @@ ReplaceMainchainAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("ReplaceMainchainAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceMainchainAtom::name() const {
+	return "ReplaceMainchainAtom";
+}
 
 SetNbrAtom::SetNbrAtom( std::string const & atom_name_in ) :
 	atom_name_( atom_name_in )
@@ -873,6 +1077,13 @@ SetNbrAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetNbrAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetNbrAtom::name() const {
+	return "SetNbrAtom";
+}
+
 SetNbrRadius::SetNbrRadius( Real const & radius ) :
 	radius_( radius )
 {}
@@ -884,6 +1095,34 @@ SetNbrRadius::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetNbrRadius").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetNbrRadius::name() const {
+	return "SetNbrRadius";
+}
+
+/// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
+bool
+SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
+
+	for ( Size i = 1; i <= rsd.natoms(); ++i ) {
+		if ( rsd.atom_is_hydrogen( i ) ) {
+			rsd.set_atom_type( rsd.atom_name( i ), "REPLS" );
+		} else {
+			rsd.set_atom_type( rsd.atom_name( i ), "HREPS" );
+		}
+	}
+
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("SetAllAtomsRepulsive").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetAllAtomsRepulsive::name() const {
+	return "SetAllAtomsRepulsive";
+}
 
 SetOrientAtom::SetOrientAtom(bool force_nbr_atom_orient):
 	force_nbr_atom_orient_(force_nbr_atom_orient)
@@ -896,6 +1135,12 @@ SetOrientAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetOrientAtom").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetOrientAtom::name() const {
+	return "SetOrientAtom";
+}
 
 /// @brief Constructor.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -912,6 +1157,13 @@ RemoveRotamerSpecifications::apply( ResidueType & rsd ) const {
 		rsd.strip_rotamer_library_specification();
 	}
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("RemoveRotamerSpecifications").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+RemoveRotamerSpecifications::name() const {
+	return "RemoveRotamerSpecifications";
 }
 
 /// @brief Constructor.
@@ -936,6 +1188,13 @@ RamaPreproFilename::apply(
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("RamaPreproFilename").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+RamaPreproFilename::name() const {
+	return "RamaPreproFilename";
+}
+
 /// @brief Constructor.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 RamaPreproResname::RamaPreproResname(
@@ -954,6 +1213,13 @@ RamaPreproResname::apply(
 	rsd.set_rama_prepro_mainchain_torsion_potential_name( resname_, false );
 	rsd.set_rama_prepro_mainchain_torsion_potential_name( resname_, true );
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("RamaPreproResname").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+RamaPreproResname::name() const {
+	return "RamaPreproResname";
 }
 
 NCAARotLibPath::NCAARotLibPath( std::string const & path_in ) :
@@ -986,6 +1252,13 @@ NCAARotLibPath::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("NCAARotLibPath").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+NCAARotLibPath::name() const {
+	return "NCAARotLibPath";
+}
+
 /// @brief Constructor
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 NCAARotLibNumRotamerBins::NCAARotLibNumRotamerBins(
@@ -1006,6 +1279,13 @@ NCAARotLibNumRotamerBins::apply(
 	runtime_assert_string_msg( ncaa_libspec, "A patch may only set the number of NCAA rotamer bins (\"NCAA_ROTLIB_NUM_ROTAMER_BINS\") for a residue type that already has an NCAA rotamer library specified, either in the params file or in patches." );
 	ncaa_libspec->ncaa_rotlib_n_bin_per_rot( binsizes_ );
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("NCAARotLibNumRotamerBins").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+NCAARotLibNumRotamerBins::name() const {
+	return "NCAARotLibNumRotamerBins";
 }
 
 /// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
@@ -1032,21 +1312,13 @@ ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
 
 	return x;
 }
-/// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
-bool
-SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
 
-	for ( Size i = 1; i <= rsd.natoms(); ++i ) {
-		if ( rsd.atom_is_hydrogen( i ) ) {
-			rsd.set_atom_type( rsd.atom_name( i ), "REPLS" );
-		} else {
-			rsd.set_atom_type( rsd.atom_name( i ), "HREPS" );
-		}
-	}
-
-	return false;
+/// @brief Return the name of this PatchOperation ("ConnectSulfurAndMakeVirtualProton").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ConnectSulfurAndMakeVirtualProton::name() const {
+	return "ConnectSulfurAndMakeVirtualProton";
 }
-
 
 bool
 ChiralFlipNaming::apply( ResidueType & rsd ) const {
@@ -1151,6 +1423,12 @@ ChiralFlipNaming::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("ChiralFlipNaming").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ChiralFlipNaming::name() const {
+	return "ChiralFlipNaming";
+}
 
 bool
 ChiralFlipAtoms::apply( ResidueType & rsd ) const {
@@ -1203,6 +1481,13 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 	rsd.fill_ideal_xyz_from_icoor();
 
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("ChiralFlipAtoms").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ChiralFlipAtoms::name() const {
+	return "ChiralFlipAtoms";
 }
 
 /// @brief replace proton with trifluoromethyl
@@ -1285,6 +1570,13 @@ ReplaceProtonWithTrifluoromethyl::apply( ResidueType & rsd ) const {
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithTrifluoromethyl").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithTrifluoromethyl::name() const {
+	return "ReplaceProtonWithTrifluoromethyl";
 }
 
 /// @brief replace proton with methyl
@@ -1374,6 +1666,13 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithMethyl").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithMethyl::name() const {
+	return "ReplaceProtonWithMethyl";
 }
 
 /// @brief replace proton with methoxy
@@ -1484,6 +1783,13 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithMethoxy").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithMethoxy::name() const {
+	return "ReplaceProtonWithMethoxy";
 }
 
 /// @brief replace proton with ethyl
@@ -1618,6 +1924,13 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithEthyl").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithEthyl::name() const {
+	return "ReplaceProtonWithEthyl";
+}
+
 /// @brief replace proton with chlorine
 bool
 ReplaceProtonWithChlorine::apply( ResidueType & rsd ) const {
@@ -1670,6 +1983,13 @@ ReplaceProtonWithChlorine::apply( ResidueType & rsd ) const {
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithChlorine").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithChlorine::name() const {
+	return "ReplaceProtonWithChlorine";
 }
 
 /// @brief replace proton with fluorine
@@ -1726,6 +2046,13 @@ ReplaceProtonWithFluorine::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithFluorine").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithFluorine::name() const {
+	return "ReplaceProtonWithFluorine";
+}
+
 /// @brief replace proton with bromine
 bool
 ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
@@ -1780,6 +2107,13 @@ ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithBromine").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithBromine::name() const {
+	return "ReplaceProtonWithBromine";
+}
+
 /// @brief replace proton with iodine
 bool
 ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
@@ -1832,6 +2166,13 @@ ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithIodine").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithIodine::name() const {
+	return "ReplaceProtonWithIodine";
 }
 
 /// @brief replace proton with hydroxyl
@@ -1913,29 +2254,11 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 	return false;
 }
 
-bool
-AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
-	if ( !rsd.has( atom_ ) ) return true; // failure!
-	rsd.add_metapatch_connect( atom_ );
-	return false;
-}
-
-bool
-DeleteChildProton::apply( ResidueType & rsd ) const {
-	if ( !rsd.has( atom_ ) ) return true; // failure!
-	rsd.delete_child_proton( atom_ );
-	return false;
-}
-
-bool
-VirtualizeAll::apply( ResidueType & rsd ) const {
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		rsd.set_atom_type( rsd.atom_name( ii ), "VIRT" );
-		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
-		rsd.atom( ii ).charge( 0.0 );
-		rsd.atom( ii ).is_virtual( true );
-	}
-	return false;
+/// @brief Return the name of this PatchOperation ("ReplaceProtonWithHydroxyl").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+ReplaceProtonWithHydroxyl::name() const {
+	return "ReplaceProtonWithHydroxyl";
 }
 
 bool
@@ -1992,6 +2315,59 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("AddConnectAndTrackingVirt").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddConnectAndTrackingVirt::name() const {
+	return "AddConnectAndTrackingVirt";
+}
+
+bool
+AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
+	if ( !rsd.has( atom_ ) ) return true; // failure!
+	rsd.add_metapatch_connect( atom_ );
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("AddConnectDeleteChildProton").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+AddConnectDeleteChildProton::name() const {
+	return "AddConnectDeleteChildProton";
+}
+
+bool
+DeleteChildProton::apply( ResidueType & rsd ) const {
+	if ( !rsd.has( atom_ ) ) return true; // failure!
+	rsd.delete_child_proton( atom_ );
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("DeleteChildProton").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+DeleteChildProton::name() const {
+	return "DeleteChildProton";
+}
+
+bool
+VirtualizeAll::apply( ResidueType & rsd ) const {
+	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+		rsd.set_atom_type( rsd.atom_name( ii ), "VIRT" );
+		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
+		rsd.atom( ii ).charge( 0.0 );
+		rsd.atom( ii ).is_virtual( true );
+	}
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("VirtualizeAll").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+VirtualizeAll::name() const {
+	return "VirtualizeAll";
+}
+
 // SetVirtualShadow //////////////////////////////////////////////////////////////
 
 SetVirtualShadow::SetVirtualShadow(
@@ -2027,6 +2403,12 @@ SetVirtualShadow::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Return the name of this PatchOperation ("SetVirtualShadow").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetVirtualShadow::name() const {
+	return "SetVirtualShadow";
+}
 
 PatchOperationOP
 patch_operation_from_patch_file_line(
@@ -2041,14 +2423,20 @@ patch_operation_from_patch_file_line(
 	Size chino;
 	SSize formal_charge;
 	l >> tag;
-	if ( l.fail() || tag[0] == '#' ) return nullptr;
 	if ( tag == "ADD_ATOM" ) {
-		if ( line.size() < 25 ) return nullptr;
-		atom_name = line.substr( 9,4); l >> tag;
+		if ( line.size() < 25 ) {
+			utility_exit_with_message( "Could not parse an ADD_ATOM line.  Note that the first 5 characters following the \"ADD_ATOM\" tag are whitespace-sensitive, since atom names have different whitespace paddings in PDB files.\nLine: " + line );
+			return nullptr;
+		}
+		l >> atom_name; //Needed to advance cursor, although overwritten by next line.
+		atom_name = line.substr( 9,4);
 		l >> atom_type_name; // = line.substr( 14,4);
 		l >> mm_atom_type_name; // = line.substr( 19,4);
 		l >> charge;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Could not parse an ADD_ATOM line.  Note that the first 5 characters following the \"ADD_ATOM\" tag are whitespace-sensitive, since atom names have different whitespace paddings in PDB files.\nLine: " + line );
+			return nullptr;
+		}
 
 		//fd let command line override charge
 		if ( atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) ) != atomic_charge_reassignments.end() ) {
@@ -2061,55 +2449,85 @@ patch_operation_from_patch_file_line(
 		return PatchOperationOP( new AddAtom( atom_name, atom_type_name, mm_atom_type_name, charge ) );
 	} else if ( tag == "DELETE_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse DELETE_ATOM patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new DeleteAtom( atom_name ) );
 
 	} else if ( tag == "ADD_ATOM_ALIAS" ) {
 		l >> atom_name >> atom_alias;
 		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse ADD_ATOM_ALIAS patch operation." );
 			return nullptr;
 		}
 		return PatchOperationOP( new AddAtomAlias( atom_name, atom_alias ) );
 
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse SET_BACKBONE_HEAVYATOM patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new SetBackboneHeavyatom( atom_name ) );
 
 	} else if ( tag == "SET_IO_STRING" ) { // 13 character tag
 		// NOTE - USE FIXED WIDTH IO SINCE NAME3 CAN CONTAIN INTERNAL WHITESPACE (EG DNA,RNA)
-		if ( line.size() < 19 ) return nullptr;
+		if ( line.size() < 19 ) {
+			utility_exit_with_message( "Failed to parse SET_IO_STRING patch operation.  Note that this is a whitespace-sensitive line.\nLine: " + line );
+			return nullptr;
+		}
 		std::string const three_letter_code( line.substr(14,3) ), one_letter_code( line.substr(18,1) );
 		return PatchOperationOP( new SetIO_String( three_letter_code, one_letter_code[0] ) );
 
 	} else if ( tag == "SET_INTERCHANGEABILITY_GROUP" ) {
 		std::string intgrp;
 		l >> intgrp;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse SET_INTERCHANGEABILITY_GROUP patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new SetInterchangeabilityGroup_String( intgrp ) );
 
 	} else if ( tag == "NBR_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse NBR_ATOM patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new SetNbrAtom( atom_name ) );
 
 	} else if ( tag == "NBR_RADIUS" ) {
 		Real radius;
 		l >> radius;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse NBR_RADIUS patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new SetNbrRadius( radius ) );
 
 	} else if ( tag == "ADD_PROPERTY" ) {
 		l >> property;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse ADD_PROPERTY patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new AddProperty( property ) );
 
 	} else if ( tag == "DELETE_PROPERTY" ) {
 		l >> property;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse DELETE_PROPERTY patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new DeleteProperty( property ) );
 
 	} else if ( tag == "DELETE_VARIANT_TYPE" ) {
 		l >> variant;
-		if ( l.fail() ) { return nullptr; }
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse DELETE_VARIANT_TYPE patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new DeleteVariantType( variant ) );
 
 		// Added by Andy M. Chen in June 2009
@@ -2117,11 +2535,17 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "ADD_CHI" ) {
 		if ( line.substr(8, 3) == "N+1" ) {
 			l >> dummy >> atom1 >> atom2 >> atom3 >> atom4;
-			if ( l.fail() ) return nullptr;
+			if ( l.fail() ) {
+				utility_exit_with_message( "Failed to parse ADD_CHI patch operation." );
+				return nullptr;
+			}
 			return PatchOperationOP( new AddChi(atom1, atom2, atom3, atom4) );
 		} else {
 			l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
-			if ( l.fail() ) return nullptr;
+			if ( l.fail() ) {
+				utility_exit_with_message( "Failed to parse ADD_CHI patch operation." );
+				return nullptr;
+			}
 			return PatchOperationOP( new AddChi(chino, atom1, atom2, atom3, atom4) );
 		}
 
@@ -2143,14 +2567,20 @@ patch_operation_from_patch_file_line(
 		for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
 			l >> extra_samples[ ii ];
 		}
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse ADD_PROTON_CHI patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new AddProtonChi( chino, samples, extra_samples ) );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "REDEFINE_CHI" ) {
 		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse REDEFINE_CHI patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new RedefineChi( chino, atom1, atom2, atom3, atom4 ) );
 
 	} else if ( tag == "DELETE_TERMINAL_CHI" ) {
@@ -2158,13 +2588,19 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "DELETE_METALBINDING_ATOM" ) {
 		std::string atom_name;
 		l >> atom_name;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse DELETE_METALBINDING_ATOM patch operation." );
+			return nullptr;
+		}
 
 		return PatchOperationOP( new DeleteMetalbindingAtom( atom_name ) );
 	} else if ( tag == "DELETE_ACT_COORD_ATOM" ) {
 		std::string atom_name;
 		l >> atom_name;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse DELETE_ACT_COORD_ATOM patch operation." );
+			return nullptr;
+		}
 
 		return PatchOperationOP( new DeleteActCoordAtom( atom_name ) );
 
@@ -2173,29 +2609,42 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "ADD_CHI_ROTAMER" ) {
 		if ( line.substr(16, 1) == "N" ) {
 			l >> dummy >> mean >> sdev;
-			if ( l.fail() ) return nullptr;
+			if ( l.fail() ) {
+				utility_exit_with_message( "Failed to parse ADD_CHI_ROTAMER patch operation." );
+				return nullptr;
+			}
 			return PatchOperationOP( new AddChiRotamer(mean, sdev) );
 		} else {
 			l >> chino >> mean >> sdev;
-			if ( l.fail() ) return nullptr;
+			if ( l.fail() ) {
+				utility_exit_with_message( "Failed to parse ADD_CHI_ROTAMER patch operation." );
+				return nullptr;
+			}
 			return PatchOperationOP( new AddChiRotamer(chino, mean, sdev) );
 		}
 
 	} else if ( tag == "CLEAR_CHI_ROTAMERS" ) {
 		l >> chino;
-		if ( l.fail() ) { return nullptr; }
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse CLEAR_CHI_ROTAMERS patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new ClearChiRotamers( chino ) );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_BOND" ) {
 		l >> atom1 >> atom2;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse ADD_BOND patch operation." );
+			return nullptr;
+		}
 		return PatchOperationOP( new AddBond( atom1, atom2 ) );
 
 	} else if ( tag == "ADD_BOND_TYPE" ) {
 		l >> atom1 >> atom2 >> bond_type;
 		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse ADD_BOND_TYPE patch operation." );
 			return nullptr;
 		}
 		return PatchOperationOP( new AddBondType( atom1, atom2, bond_type ) );
@@ -2204,6 +2653,7 @@ patch_operation_from_patch_file_line(
 		std::string old_bond_type;
 		l >> atom1 >> atom2 >> old_bond_type >> dummy >> bond_type;
 		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse CHANGE_BOND_TYPE patch operation." );
 			return nullptr;
 		}
 		return PatchOperationOP( new ChangeBondType( atom1, atom2, old_bond_type, bond_type ) );
@@ -2211,7 +2661,10 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "ADD_CONNECT" ) {
 		std::string connect_atom;
 		l >> connect_atom;
-		if ( l.fail() ) return nullptr;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse ADD_CONNECT patch operation." );
+			return nullptr;
+		}
 		l >> tag;
 		if ( l.fail() ) {
 			return PatchOperationOP( new AddConnect(
@@ -2229,18 +2682,19 @@ patch_operation_from_patch_file_line(
 
 	} else if ( tag == "SET_ATOM_TYPE" ) {
 		l >> atom_name >> atom_type_name;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_ATOM_TYPE line in patchfile: " + line );
 		return PatchOperationOP( new SetAtomType( atom_name, atom_type_name ) );
 
 	} else if ( tag == "SET_MM_ATOM_TYPE" ) {
 		runtime_assert( l.good() );
 		l >> atom_name >> mm_atom_type_name;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_MM_ATOM_TYPE line in patchfile: " + line );
 		return PatchOperationOP( new SetMMAtomType( atom_name, mm_atom_type_name ) );
 
 	} else if ( tag == "SET_FORMAL_CHARGE" ) {
 		l >> atom_name >> formal_charge;
 		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse SET_FORMAL_CHARGE patch operation." );
 			return nullptr;
 		}
 		return PatchOperationOP( new SetFormalCharge( atom_name, formal_charge ) );
@@ -2257,19 +2711,19 @@ patch_operation_from_patch_file_line(
 		}
 
 
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_ATOMIC_CHARGE line in patchfile: " + line );
 		return PatchOperationOP( new SetAtomicCharge( atom_name, charge ) );
 
 	} else if ( tag == "SET_POLYMER_CONNECT" ) {
 		l >> tag >> atom_name; // tag should be "UPPER" or "LOWER"
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_POLYMER_CONNECT line in patchfile: " + line );
 		return PatchOperationOP( new SetPolymerConnectAtom( atom_name, tag ) );
 
 	} else if ( tag == "SET_ICOOR" ) {
 		Real phi,theta,d;
 		std::string stub1, stub2, stub3;
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_ICOOR line in patchfile: " + line );
 		return PatchOperationOP( new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 ) );
 	} else if ( tag == "SET_ANCESTOR" ) {
 		std::string atom_name, which_anc, anc_atom_name;
@@ -2291,70 +2745,70 @@ patch_operation_from_patch_file_line(
 		core::Distance d;
 		l >> atom_name >> d;
 		if ( l.fail() ) {
-			utility_exit_with_message( "bad line in patchfile: " + line );
+			utility_exit_with_message( "bad RESET_BOND_LENGTH line in patchfile: " + line );
 		}
 		return PatchOperationOP( new ResetBondLength( atom_name, d ) );
 
 	} else if ( tag == "PREPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad PREPEND_MAINCHAIN_ATOM line in patchfile: " + line );
 		return PatchOperationOP( new PrependMainchainAtom( atom_name ) );
 
 	} else if ( tag == "APPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad APPEND_MAINCHAIN_ATOM line in patchfile: " + line );
 		return PatchOperationOP( new AppendMainchainAtom( atom_name ) );
 
 	}  else if ( tag == "REPLACE_MAINCHAIN_ATOM" ) {
 		std::string target, new_atom;
 		l >> target >> new_atom;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_MAINCHAIN_ATOM line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceMainchainAtom( target, new_atom ) );
 	} else if ( tag == "RAMA_PREPRO_FILENAME" ) {
 		std::string file1, file2;
 		l >> file1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad RAMA_PREPRO_FILENAME line in patchfile: " + line );
 		l >> file2;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad RAMA_PREPRO_FILENAME line in patchfile: " + line );
 		return PatchOperationOP( new RamaPreproFilename( file1, file2 ) );
 	} else if ( tag == "RAMA_PREPRO_RESNAME" ) {
 		std::string name;
 		l >> name;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad RAMA_PREPRO_RESNAME line in patchfile: " + line );
 		return PatchOperationOP( new RamaPreproResname( name ) );
 	} else if ( tag == "REMOVE_ROTAMER_SPECIFICATIONS" ) {
 		return PatchOperationOP( new RemoveRotamerSpecifications() );
 	} else if ( tag == "NCAA_ROTLIB_PATH" ) {
 		std::string path;
 		l >> path;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad NCAA_ROTLIB_PATH line in patchfile: " + line );
 		return PatchOperationOP( new NCAARotLibPath( path ) );
 	} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
 		core::Size n_rots(0);
 		utility::vector1<core::Size> n_bins_per_rot;
 		l >> n_rots;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad NCAA_ROTLIB_NUM_ROTAMER_BINS line in patchfile: " + line );
 		n_bins_per_rot.resize( n_rots );
 		for ( Size i = 1; i <= n_rots; ++i ) {
 			Size bin_size(0);
 			l >> bin_size;
-			if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+			if ( l.fail() ) utility_exit_with_message( "bad NCAA_ROTLIB_NUM_ROTAMER_BINS line in patchfile: " + line );
 			n_bins_per_rot[i] = bin_size;
 		}
 		return PatchOperationOP( new NCAARotLibNumRotamerBins( n_bins_per_rot ) );
 	} else if ( tag == "SET_NBR_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_NBR_ATOM line in patchfile: " + line );
 		return PatchOperationOP( new SetNbrAtom( atom_name ) );
 
 	} else if ( tag == "SET_NBR_RADIUS" ) {
 		l >> radius;
-		if ( l.fail() ) utility_exit_with_message("bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message("bad SET_NBR_RADIUS line in patchfile: " + line );
 		return PatchOperationOP( new SetNbrRadius( radius ) );
 
 	} else if ( tag == "SET_ORIENT_ATOM" ) {
 		l >> tag;
-		if ( l.fail() ) utility_exit_with_message("bad line in patchfile: " +  line );
+		if ( l.fail() ) utility_exit_with_message("bad SET_ORIENT_ATOM line in patchfile: " +  line );
 		if ( tag == "NBR" ) {
 			return PatchOperationOP( new SetOrientAtom(true) );
 		} else if ( tag == "DEFAULT" ) {
@@ -2369,51 +2823,51 @@ patch_operation_from_patch_file_line(
 		return PatchOperationOP( new ConnectSulfurAndMakeVirtualProton() );
 	} else if ( tag == "REPLACE_PROTON_WITH_CHLORINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_CHLORINE line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithChlorine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_FLUORINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_FLUORINE line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithFluorine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_BROMINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_BROMINE line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithBromine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_IODINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_IODINE line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithIodine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_METHYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_METHYL line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithMethyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_TRIFLUOROMETHYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_TRIFLUOROMETHYL line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithTrifluoromethyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_HYDROXYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_HYDROXYL line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithHydroxyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_METHOXY" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_METHOXY line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithMethoxy( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_ETHYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_ETHYL line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithEthyl( atom1 ) );
 	} else if ( tag == "ADD_CONNECT_AND_DELETE_CHILD_PROTON" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad ADD_CONNECT_AND_DELETE_CHILD_PROTON line in patchfile: " + line );
 		return PatchOperationOP( new AddConnectDeleteChildProton( atom1 ) );
 	} else if ( tag == "DELETE_CHILD_PROTON" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad DELETE_CHILD_PROTON line in patchfile: " + line );
 		return PatchOperationOP( new DeleteChildProton( atom1 ) );
 	} else if ( tag == "ADD_CONNECT_AND_TRACKING_VIRT" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad ADD_CONNECT_AND_TRACKING_VIRT line in patchfile: " + line );
 		return PatchOperationOP( new AddConnectAndTrackingVirt( atom1 ) );
 	} else if ( tag == "CHIRAL_FLIP_NAMING" ) {
 		return PatchOperationOP( new ChiralFlipNaming );//( atom1, atom2 ) );
@@ -2427,7 +2881,7 @@ patch_operation_from_patch_file_line(
 		runtime_assert( l.good() );
 		std::string shadower, shadowee;
 		l >> shadower >> shadowee;
-		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		if ( l.fail() ) utility_exit_with_message( "bad SET_VIRTUAL_SHADOW line in patchfile: " + line );
 		return PatchOperationOP( new SetVirtualShadow( shadower, shadowee ) );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
@@ -2648,6 +3102,8 @@ CEREAL_REGISTER_TYPE( core::chemical::RedefineChi )
 
 /// @brief Default constructor required by cereal to deserialize this class
 core::chemical::SetICoor::SetICoor() {}
+
+
 
 /// @brief Automatically generated serialization method
 template< class Archive >

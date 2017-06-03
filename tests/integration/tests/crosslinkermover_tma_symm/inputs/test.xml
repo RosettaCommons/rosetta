@@ -1,0 +1,48 @@
+ 	<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="bnv" weights="beta_nov15.wts" symmetric="false" />
+		<ScoreFunction name="bnv_symm" weights="beta_nov15.wts" symmetric="true" />
+		<ScoreFunction name="bnv_cst" weights="beta_nov15_cst.wts" symmetric="true" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_connecting" resnums="10,30,50" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+	
+		<BundleGridSampler name="bgs1" use_degrees="true" nstruct_mode="true" scorefxn="bnv" helix_length="20" >
+			<Helix r0_min="8.1" r0_max="8.7" r0_samples="9" omega0="0" delta_omega0="0" delta_omega1_min="-100" delta_omega1_max="-75" delta_omega1_samples="9" />
+		</BundleGridSampler>
+		
+		<DeclareBond name="bond1" res1="2" atom1="C" res2="3" atom2="N" add_termini="true" />
+
+		<MutateResidue name="mut1" target="10" new_res="DPP" />
+
+		<SetupForSymmetry name="setup_symm" definition="inputs/c3.symm" />
+
+		<CrosslinkerMover name="threefold"
+			residue_selector="select_connecting"
+			linker_name="TMA" scorefxn="bnv_symm"
+			filter_by_constraints_energy="true"
+			threefold_symmetric="true"
+		/>
+
+		<FastRelax name="relax" scorefxn="bnv_cst" repeats="1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="bond1" />
+		<Add mover="mut1" />
+		<Add mover="setup_symm" />
+		<Add mover="threefold" />
+		Add mover="relax" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="bnv_cst" />
+</ROSETTASCRIPTS>

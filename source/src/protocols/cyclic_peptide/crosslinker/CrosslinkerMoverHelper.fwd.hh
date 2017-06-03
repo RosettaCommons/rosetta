@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide/threefold_linker/ThreefoldLinkerMoverHelper.fwd.hh
-/// @brief A base class for helper objects that the ThreefoldLinkerMover uses to set up specific types
+/// @file protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.fwd.hh
+/// @brief A base class for helper objects that the CrosslinkerMover uses to set up specific types
 /// of threefold linkers.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 
-#ifndef INCLUDED_protocols_cyclic_peptide_threefold_linker_ThreefoldLinkerMoverHelper_fwd_hh
-#define INCLUDED_protocols_cyclic_peptide_threefold_linker_ThreefoldLinkerMoverHelper_fwd_hh
+#ifndef INCLUDED_protocols_cyclic_peptide_crosslinker_CrosslinkerMoverHelper_fwd_hh
+#define INCLUDED_protocols_cyclic_peptide_crosslinker_CrosslinkerMoverHelper_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,15 +22,15 @@
 // Forward
 namespace protocols {
 namespace cyclic_peptide {
-namespace threefold_linker {
+namespace crosslinker {
 
-class ThreefoldLinkerMoverHelper;
+class CrosslinkerMoverHelper;
 
-typedef utility::pointer::shared_ptr< ThreefoldLinkerMoverHelper > ThreefoldLinkerMoverHelperOP;
-typedef utility::pointer::shared_ptr< ThreefoldLinkerMoverHelper const > ThreefoldLinkerMoverHelperCOP;
+typedef utility::pointer::shared_ptr< CrosslinkerMoverHelper > CrosslinkerMoverHelperOP;
+typedef utility::pointer::shared_ptr< CrosslinkerMoverHelper const > CrosslinkerMoverHelperCOP;
 
-} //threefold_linker
+} //crosslinker
 } //protocols
 } //cyclic_peptide
 
-#endif //INCLUDED_protocols_cyclic_peptide_threefold_linker_ThreefoldLinkerMoverHelper_fwd_hh
+#endif //INCLUDED_protocols_cyclic_peptide_crosslinker_CrosslinkerMoverHelper_fwd_hh

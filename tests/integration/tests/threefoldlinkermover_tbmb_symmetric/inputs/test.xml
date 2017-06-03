@@ -18,7 +18,7 @@
 
 		<ConstraintSetMover name="constrain_pepbonds" add_constraints="1" cst_file="inputs/pepbonds.cst" />
 
-		<ThreefoldLinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="ref" threefold_symmetric="true" />
+		<CrosslinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="ref" threefold_symmetric="true" />
 
 	</MOVERS>
 	<APPLY_TO_POSE>

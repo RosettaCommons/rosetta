@@ -1,0 +1,43 @@
+# Trimesic acid, a non-canonical three-way crosslinking agent that
+# can link three amine-containing amino acid residues.
+# This version is one-third of the molecule, for use in cases with c3 symmetry.
+# Params file originally created by Gauarv Bhardwaj, Ph.D.
+# Modified and added to database by Vikram K. Mulligan, Ph.D. (vmullig@uw.edu)
+# on 16 May 2017.
+NAME TMASYMM
+IO_STRING TMS X
+TYPE LIGAND
+AA UNK
+ATOM  CM1 CObb  C    0.58
+ATOM  C1  aroC  CA  -0.09
+ATOM  C2  aroC  CA  -0.09
+ATOM  V1  VIRT VIRT  0.00 #Where amide connection would go.
+ATOM  V2  VIRT VIRT  0.00 #Where C6 would go.
+ATOM  V3  VIRT VIRT  0.00 #Where C3 would go.
+ATOM  O1  OCbb  O   -0.53
+ATOM  H2  Haro  HP   0.13
+BOND_TYPE  CM1  C1  1
+BOND_TYPE  C1   C2  4
+BOND_TYPE  C1   V2  1
+BOND_TYPE  CM1  O1  2
+BOND_TYPE  CM1  V1  4
+BOND_TYPE  C2   H2  1
+BOND_TYPE  C2   V3  1
+CONNECT CM1
+CONNECT C1
+CONNECT C2
+CHI 1  V1   CM1  C1   C2
+PROTON_CHI 1 SAMPLES 4 -150 -30 30 150 EXTRA 1 10
+NBR_ATOM  C1
+NBR_RADIUS 6.0
+ICOOR_INTERNAL    CM1    0.000000    0.000000    0.000000   CM1   C1    C2
+ICOOR_INTERNAL    C1     0.000000  180.000000    1.492931   CM1   C1    C2
+ICOOR_INTERNAL    C2     0.000000   62.339297    1.398971   C1    CM1   C2
+ICOOR_INTERNAL  CONN1   16.957489   62.434929    1.378269   CM1   C1    C2
+ICOOR_INTERNAL    V1     0.000000   62.434929    1.378269   CM1   C1   CONN1 #Same as CONN1
+ICOOR_INTERNAL    O1   180.000000   60.523514    1.227021   CM1   C1   CONN1
+ICOOR_INTERNAL  CONN2 -180.000000   57.565071    1.398971   C1    CM1   C2 #Improper dihedral
+ICOOR_INTERNAL    V2     0.000000   57.565071    1.398971   C1    CM1  CONN2 #Same as CONN2
+ICOOR_INTERNAL    H2   180.000000   61.602286    1.086749   C2    C1    V2
+ICOOR_INTERNAL  CONN3 -180.000000   60.000000    1.398971   C2    C1    CM1
+ICOOR_INTERNAL    V3     0.000000   60.000000    1.398971   C2    C1   CONN3 #Same as CONN3

@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide/threefold_linker/TBMB_Helper.fwd.hh
-/// @brief A derived class of the ThreefoldLinkerMoverHelper base class, used to set up
-/// the 1,3,5-tris(bromomethyl)benzene (TBMB) cross-linker.
+/// @file protocols/cyclic_peptide/crosslinker/TMA_Helper.fwd.hh
+/// @brief A derived class of the CrosslinkerMoverHelper base class, used to set up
+/// the trimesic acid (TMA) cross-linker.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 
-#ifndef INCLUDED_protocols_cyclic_peptide_threefold_linker_TBMB_Helper_fwd_hh
-#define INCLUDED_protocols_cyclic_peptide_threefold_linker_TBMB_Helper_fwd_hh
+#ifndef INCLUDED_protocols_cyclic_peptide_crosslinker_TMA_Helper_fwd_hh
+#define INCLUDED_protocols_cyclic_peptide_crosslinker_TMA_Helper_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,15 +22,15 @@
 // Forward
 namespace protocols {
 namespace cyclic_peptide {
-namespace threefold_linker {
+namespace crosslinker {
 
-class TBMB_Helper;
+class TMA_Helper;
 
-typedef utility::pointer::shared_ptr< TBMB_Helper > TBMB_HelperOP;
-typedef utility::pointer::shared_ptr< TBMB_Helper const > TBMB_HelperCOP;
+typedef utility::pointer::shared_ptr< TMA_Helper > TMA_HelperOP;
+typedef utility::pointer::shared_ptr< TMA_Helper const > TMA_HelperCOP;
 
-} //threefold_linker
+} //crosslinker
 } //protocols
 } //cyclic_peptide
 
-#endif //INCLUDED_protocols_cyclic_peptide_threefold_linker_TBMB_Helper_fwd_hh
+#endif //INCLUDED_protocols_cyclic_peptide_crosslinker_TMA_Helper_fwd_hh
