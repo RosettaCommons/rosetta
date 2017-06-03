@@ -100,8 +100,8 @@ void
 StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	initialize();
 
-	if ( checkpoint_file_exists(/* model_tag_ */) ) {
-		pose = pose_from_checkpoint_file(/* model_tag_ */);
+	if ( checkpoint_file_exists() ) {
+		pose = pose_from_checkpoint_file();
 	}
 
 	if ( pose.size() > 0 && move_.move_type() == NO_MOVE ) show_scores( pose, "Initial score:" );
@@ -122,6 +122,14 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	using namespace core::scoring;
 
 	MonteCarloOP monte_carlo( new MonteCarlo( pose, *scorefxn_, options_->temperature() ) );
+
+	// Oh, if checkpoint_file_exists(), we also want to recover our old low.
+	if ( checkpoint_file_exists() ) {
+		Pose low = pose_from_checkpoint_file_low();
+		monte_carlo->set_lowest_score_pose( low );
+	}
+
+
 	initialize_for_movie( pose );
 
 	Size k( 0 );
@@ -173,7 +181,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 		if ( options_->checkpoint() && k % options_->checkpointing_frequency() == 0 ) {
 			remove_checkpoint_file();
-			output_checkpoint_file( pose, k );
+			output_checkpoint_file( pose, monte_carlo->lowest_score_pose(), k );
 		}
 	}
 	// Done with this pose, so we can remove the checkpoint file
@@ -188,11 +196,15 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 // AMW: no need to have k in there because we only want latest
 void
-StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, Size const k ) const {
+StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, pose::Pose const & lowest, Size const k ) const {
 	// I don't think we'll need this. In theory we could store a bunch of checkpoints and restore only the one with biggest frame.
 	Pose pose_copy = pose;
 	setPoseExtraScore(pose_copy, "frame", k);
 	output_to_silent_file( model_tag_ + "_CHECK" /*+ lead_zero_string_of( k, 6 )*/, checkpoint_file_name(), pose_copy, get_native_pose() );
+	
+	Pose low_copy = lowest;
+	setPoseExtraScore(low_copy, "frame", k);
+	output_to_silent_file( model_tag_ + "_CHECK_LOW" /*+ lead_zero_string_of( k, 6 )*/, checkpoint_file_name_low(), low_copy, get_native_pose() );
 }
 
 // AMW: no need to have k in there because we only want latest
@@ -210,6 +222,21 @@ core::pose::Pose
 StepWiseMonteCarlo::pose_from_checkpoint_file() const {
 	core::pose::Pose pose;
 	std::string const checkpoint_file = checkpoint_file_name();
+	core::io::silent::SilentFileOptions opts;
+	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
+	debug_assert( checkpoint_file_exists() );
+	sfd->read_file( checkpoint_file );
+
+	core::io::silent::SilentStructOP s( sfd->structure_list()[ 1 ] );
+	s->fill_pose( pose );
+
+	return pose;
+}
+
+core::pose::Pose
+StepWiseMonteCarlo::pose_from_checkpoint_file_low() const {
+	core::pose::Pose pose;
+	std::string const checkpoint_file = checkpoint_file_name_low();
 	core::io::silent::SilentFileOptions opts;
 	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
 	debug_assert( checkpoint_file_exists() );
@@ -327,6 +354,12 @@ StepWiseMonteCarlo::set_native_pose( PoseCOP pose ){
 std::string
 StepWiseMonteCarlo::checkpoint_file_name() const {
 	return out_path_ + out_file_prefix_ + ".checkpoint"; // do not end in .out, or will get collated by easy_cat.py
+}
+
+/// @brief Helper that contains the formula for naming checkpoint files.
+std::string
+StepWiseMonteCarlo::checkpoint_file_name_low() const {
+	return out_path_ + out_file_prefix_ + ".checkpoint_low"; // do not end in .out, or will get collated by easy_cat.py
 }
 
 } //monte_carlo

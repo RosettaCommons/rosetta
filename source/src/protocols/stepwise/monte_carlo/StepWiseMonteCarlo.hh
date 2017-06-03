@@ -76,7 +76,7 @@ public:
 	mover::StepWiseMasterMoverCOP master_mover() const { return master_mover_; }
 
 	void
-	output_checkpoint_file( core::pose::Pose const & pose, Size const k ) const;
+	output_checkpoint_file( core::pose::Pose const & pose, core::pose::Pose const & low, Size const k ) const;
 
 	void
 	remove_checkpoint_file() const;
@@ -86,6 +86,9 @@ public:
 
 	core::pose::Pose
 	pose_from_checkpoint_file() const;
+
+	core::pose::Pose
+	pose_from_checkpoint_file_low() const;
 
 	void
 	set_out_file_prefix( std::string const & setting ) { out_file_prefix_ = setting; }
@@ -109,6 +112,7 @@ private:
 	core::Real show_scores( core::pose::Pose & pose, std::string const & tag );
 
 	std::string checkpoint_file_name() const;
+	std::string checkpoint_file_name_low() const;
 
 	void
 	anneal_missing( protocols::moves::MonteCarloOP monte_carlo );
