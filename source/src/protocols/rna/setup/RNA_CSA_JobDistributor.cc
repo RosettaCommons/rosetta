@@ -178,8 +178,8 @@ RNA_CSA_JobDistributor::apply( core::pose::Pose & pose ) {
 				csa_rmsd_ *= 0.9124;
 			}
 		}
-		
-		
+
+
 		// Start from a model in the bank.
 		SilentStructOP s = numeric::random::rg().random_element( sfd_->structure_list() );
 		TR << TR.Cyan << "Starting from model in bank " << s->decoy_tag() <<  TR.Reset << std::endl;
@@ -195,7 +195,7 @@ RNA_CSA_JobDistributor::apply( core::pose::Pose & pose ) {
 	} else {
 		rna_fragment_monte_carlo_->apply( pose );
 	}
-	
+
 	/////////////////////
 	// now update bank
 	/////////////////////

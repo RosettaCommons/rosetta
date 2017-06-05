@@ -201,7 +201,7 @@ StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, pose::Pose 
 	Pose pose_copy = pose;
 	setPoseExtraScore(pose_copy, "frame", k);
 	output_to_silent_file( model_tag_ + "_CHECK" /*+ lead_zero_string_of( k, 6 )*/, checkpoint_file_name(), pose_copy, get_native_pose() );
-	
+
 	Pose low_copy = lowest;
 	setPoseExtraScore(low_copy, "frame", k);
 	output_to_silent_file( model_tag_ + "_CHECK_LOW" /*+ lead_zero_string_of( k, 6 )*/, checkpoint_file_name_low(), low_copy, get_native_pose() );
