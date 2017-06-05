@@ -482,7 +482,6 @@ _documentation_index_template_ = '''\
     </body>
 </html>
 '''
-
 def generate_documentation(rosetta_source_path, path):
     path = os.path.abspath(path)
     print('Creating PyRosetta documentation at: {}...'.format(path))
@@ -501,7 +500,8 @@ def generate_documentation(rosetta_source_path, path):
     if not os.path.isdir(path): os.makedirs(path)
     execute('Generating PyRosetta documentation...', 'cd {build_prefix} && {pydoc} -w {modules} && mv *.html {path}'.format(pydoc=Options.pydoc, **vars()), silent=True)
 
-    with open(path+'/index.html', 'w') as f: f.write('_documentation_index_template_')
+    with open(path+'/index.html', 'w') as f: f.write(_documentation_index_template_)
+
 
 def create_package(rosetta_source_path, path):
     print('Creating Python package at: {}...'.format(path))
@@ -572,7 +572,7 @@ def main(args):
     else:
         if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
         if not Options.binder:
-            execute('Updating Binder and other sub-modules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
+            execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
             Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
 
         generate_bindings(rosetta_source_path)
