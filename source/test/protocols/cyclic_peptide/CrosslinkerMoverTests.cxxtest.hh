@@ -53,7 +53,7 @@ public:
 
 
 	void test_tma_dihedral_fxn(){
-		/*core::pose::Pose pose;
+		core::pose::Pose pose;
 		protocols::cyclic_peptide::PeptideStubMover pepstub;
 		pepstub.set_reset_mode(true);
 		pepstub.add_residue("Append","ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",1,true,"",0,0,"");
@@ -65,9 +65,9 @@ public:
 		pose.dump_pdb("vtemp1.pdb"); //DELETE ME
 
 		for ( core::Size ir=1; ir<=4; ++ir ) {
-		for ( core::Size ia=1, iamax=pose.residue_type(ir).nchi(); ia<=iamax; ++ia ) {
-		pose.set_chi(ia,ir,180.0);
-		}
+			for ( core::Size ia=1, iamax=pose.residue_type(ir).nchi(); ia<=iamax; ++ia ) {
+				pose.set_chi(ia,ir,180.0);
+			}
 		}
 
 		pose.update_residue_neighbors();
@@ -84,11 +84,11 @@ public:
 
 		TR << "\nChi\tE\n";
 		for ( core::Real c(0.0); c<360.1; c+=1.0 ) {
-		pose.set_chi(1,2,c);
-		pose.set_chi(2,2,c);
-		pose.set_chi(3,2,c);
-		core::Real const curenergy( (*sfxn)(pose) );
-		TR << c << "\t" << curenergy << "\n";
+			pose.set_chi(1,2,c);
+			pose.set_chi(2,2,c);
+			pose.set_chi(3,2,c);
+			core::Real const curenergy( (*sfxn)(pose) );
+			TR << c << "\t" << curenergy << "\n";
 		}
 		TR.flush();
 
@@ -115,10 +115,7 @@ public:
 		TS_ASSERT_DELTA( finalenergy, 0.0, 0.01 );
 
 		TR.flush();
-		*/
 	}
-
-
 
 };
 
