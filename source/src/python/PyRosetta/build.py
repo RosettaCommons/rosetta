@@ -125,8 +125,8 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and terminate with error on failure
     '''
-    release = 'release_38'
-    prefix += '/llvm-3.8'
+    release = 'release_40'
+    prefix += '/llvm-4.0'
 
     git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
 
