@@ -806,6 +806,7 @@ void build_pose_as_is2(
 	// If pose contains carbohydrate residues, assure that their virtual atoms have the correct coordinates.
 	if ( pose.conformation().contains_carbohydrate_residues() ) {
 		for ( uint i = 1, n_residues = pose.size(); i <= n_residues; ++i ) {
+
 			ResidueType const & res_type = pose.residue_type(i);
 			if ( res_type.is_carbohydrate() ) {
 				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue(pose, i);

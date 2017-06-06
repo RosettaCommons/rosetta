@@ -80,6 +80,7 @@ public:
 	missing_atoms() const;
 
 
+
 private:
 	void setup( StructFileRep const & sfr );
 	void pass_1_merge_residues_as_necessary();
@@ -101,7 +102,7 @@ private:
 	/// and branch polymer connectivity.
 	void
 	determine_residue_branching_info(
-		std::string const & resid,
+		Size seqpos,
 		std::string const & name3,
 		bool & same_chain_prev,
 		bool & same_chain_next,
@@ -155,7 +156,6 @@ private:
 	bool last_residue_was_recognized( Size seqpos ) const;
 	void output_ignore_water_warning_once();
 
-
 private:
 	chemical::ResidueTypeSetCOP residue_type_set_;
 	StructFileRep sfr_;
@@ -170,11 +170,14 @@ private:
 	utility::vector1< StructFileRep::ResidueTemps> pose_temps_;
 	utility::vector1< core::pose::UnrecognizedAtomRecord > unrecognized_atoms_;
 	StructFileRep::Strings branch_lower_termini_;
+	StructFileRep::Strings branch_lower_termini_extra_;
 
 	utility::vector1< chemical::merge_residue_behavior > merge_behaviors_;
 	utility::vector1< std::map< std::string, std::string > > merge_atom_maps_;
 
 	utility::vector1< std::string > rosetta_residue_name3s_;
+	utility::vector1< core::Size > glycan_positions_;
+	utility::vector1< std::string > glycan_tree_roots_;
 	utility::vector1< chemical::ResidueTypeCOP > residue_types_;
 	utility::vector1< NameBimap > remapped_atom_names_;
 	utility::vector1< bool > is_lower_terminus_;

@@ -126,7 +126,7 @@
   SGA   Gal           ->?)-beta-D-Galp
   FUC   Fuc           ->?)-alpha-L-Fucp  # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
   ABE   Abe           ->?)-alpha-D-Abep  # trivial name for ->?)-alpha-D-Galp, 3,6-deoxy-
-
+  
 
 # KETOSES
 
@@ -137,7 +137,7 @@
   13P   DHA           ->1)-DHA
 
 
-# Ketotetrose
+
 
 # Code  Rosetta Code  Default HETNAM
   DE2   Eul           ->?)-L-Eul
@@ -206,4 +206,4 @@
   SI3   Neu           ->?)-Neu
   SID   Neu           ->?)-alpha-Neup
   SLB   Neu           ->?)-beta-Neup
-  
+  SIA   Neu           ->?)-alpha-Neup

@@ -1,6 +1,3 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
-//
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -36,6 +33,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedAtomID_Map.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
+#include <core/io/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -94,7 +92,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <utility>
-
+#include <algorithm>    // std::sort std::find
+#include <vector>
+#include <boost/tokenizer.hpp>
 
 namespace core {
 namespace io {
@@ -276,6 +276,8 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 		}
 	}
 	sfr_.link_map() = pruned_links;
+
+
 }
 
 void
@@ -352,22 +354,32 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 	using namespace core::chemical;
 
 	Size const nres_pdb( rinfos_.size() );
+
+	if ( options_.auto_detect_glycan_connections() == true ) {
+		core::io::fix_residue_info_and_order( rinfos_, sfr_, residue_type_set_, rosetta_residue_name3s_,branch_lower_termini_extra_, glycan_tree_roots_, glycan_positions_, options_ );
+		TR.Trace << "Glycan tree roots: " << glycan_tree_roots_ << std::endl;
+	}
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
 		if ( merge_behaviors_[ ii ] == mrb_merge_w_next || merge_behaviors_[ ii ] == mrb_merge_w_prev ) continue;
+		if ( options_.auto_detect_glycan_connections() == false ) {
+			core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
+			std::string const & pdb_name = rinfo.resName();
+			std::string const & resid = rinfo.resid();
+
+			// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
+			std::pair< std::string, std::string > const & rosetta_names(
+				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
+			std::string const & name3( rosetta_names.first );
+			rosetta_residue_name3s_[ ii ] = name3;
+			if ( rosetta_names.second != "" ) {
+				sfr_.residue_type_base_names()[ resid ] = std::make_pair( name3, rosetta_names.second );
+			}
+		}
 
 		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
 		char chainID = rinfo.chainID();
-		std::string const & pdb_name = rinfo.resName();
+		std::string const name3 = rosetta_residue_name3s_[ ii ];
 		std::string const & resid = rinfo.resid();
-
-		// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
-		std::pair< std::string, std::string > const & rosetta_names(
-			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
-		std::string const & name3( rosetta_names.first );
-		rosetta_residue_name3s_[ ii ] = name3;
-		if ( rosetta_names.second != "" ) {
-			sfr_.residue_type_base_names()[ resid ] = std::make_pair( name3, rosetta_names.second );
-		}
 
 		bool const separate_chemical_entity = determine_separate_chemical_entity( chainID );
 		bool same_chain_prev = determine_same_chain_prev( ii, separate_chemical_entity );
@@ -377,8 +389,12 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 		bool is_branch_point( false ), is_branch_lower_terminus( false );
 		utility::vector1< std::string > branch_points_on_this_residue;
+
+		//----- the hairy stuff happens here -----------------------
 		determine_residue_branching_info(
-			rinfos_[ ii ].resid(), name3, same_chain_prev, same_chain_next, branch_points_on_this_residue, is_branch_point, is_branch_lower_terminus );
+			ii, name3, same_chain_prev, same_chain_next, branch_points_on_this_residue, is_branch_point, is_branch_lower_terminus );
+		//----------------------------------------------------------
+
 
 		bool is_lower_terminus( ( ( ii == 1 || rinfos_.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
 			&& check_Ntermini_for_this_chain ) );
@@ -410,7 +426,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 			continue;
 		}
 
-		TR.Debug << "Residue " << ii << std::endl;
+		TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid << " )" << std::endl;
 		TR.Trace << "...same_chain_prev: " << same_chain_prev << std::endl;
 		TR.Trace << "...same_chain_next: " << same_chain_next << std::endl;
 		TR.Trace << "...is_lower_terminus: " << is_lower_terminus << std::endl;
@@ -422,6 +438,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		TR.Trace << "...last_residue_was_recognized: " << last_residue_was_recognized( ii ) << std::endl;
 		TR.Trace << "...is_d_aa: " << is_d_aa << std::endl;
 		TR.Trace << "...is_l_aa: " << is_l_aa << std::endl;
+
 
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, ii, branch_points_on_this_residue,
 			resid, is_lower_terminus, is_upper_terminus, is_branch_point, is_branch_lower_terminus, is_d_aa, is_l_aa );
@@ -440,8 +457,9 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 				variant += " branch-point";
 			}
 			utility_exit_with_message( "No match found for unrecognized residue at position " +
-				boost::lexical_cast< std::string >(ii) +
-				"\nLooking for" + variant + " residue with 3-letter code: " + name3 );
+				boost::lexical_cast< std::string >(ii) + "( PDB ID: " + resid + " )" +
+				"\nLooking for" + variant + " residue with 3-letter code: " + name3 +
+				"\nThis can be caused by wrong residue naming. E.g. a BMA (beta-mannose) is named MAN (alpha-mannose)");
 		}
 
 		residue_types_[ ii ] = rsd_type_cop;
@@ -635,6 +653,9 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			//else runtime_assert( iter->first == " H  " && ii_rsd_type.is_terminus() ); // special casee
 		}
 
+		// store residue name as in PDB file for interpretable error messages
+		std::string const & PDB_resid = rinfos_[ ii ].resid();
+
 		// These sister atoms are THUS FAR only found in RNA (it's to perfectly copy
 		// native structure coordinates). So, at the moment, we only need to call
 		// this function for RNA. Eventually, we may implement more proteinaceous use
@@ -678,8 +699,17 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 		} else { // Append residue to current chain dependent on bond length.
 			if ( ! options_.missing_dens_as_jump() ) {
-				TR.Trace << ii_rsd_type.name() << " " << ii << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
-				pose.append_residue_by_bond( *ii_rsd );
+				TR.Trace << ii_rsd_type.name() << " " << ii << " (PDB residue: " << PDB_resid << ")" << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
+				try{
+					pose.append_residue_by_bond( *ii_rsd );
+				} catch (utility::excn::EXCN_Msg_Exception & e) {
+					std::stringstream message;
+					message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
+						<< PDB_resid << std::endl;
+					message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() << " -> " << PDB_resid << std::endl;
+					std::string error_msg = message.str() + "ERROR: " + e.msg();
+					utility_exit_with_message( error_msg );
+				}
 			} else {
 				//fpd look for missing density in the input PDB
 				//fpd if there is a bondlength > 3A
@@ -711,7 +741,17 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 					}
 				} else {
 					TR.Trace << ii_rsd_type.name() << " " << ii << " is appended to chain" << rinfos_[ ii ].chainID() << std::endl;
-					pose.append_residue_by_bond( *ii_rsd );
+					//pose.append_residue_by_bond( *ii_rsd );
+					try{
+						pose.append_residue_by_bond( *ii_rsd );
+					} catch (utility::excn::EXCN_Msg_Exception & e) {
+						std::stringstream message;
+						message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
+							<< PDB_resid << std::endl;
+						message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() << " -> " << PDB_resid << std::endl;
+						std::string error_msg = message.str() + "ERROR: " + e.msg();
+						throw utility::excn::EXCN_Msg_Exception( error_msg );
+					}
 				}
 			}
 		}
@@ -1017,17 +1057,21 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 ///   names.
 void
 PoseFromSFRBuilder::determine_residue_branching_info(
-	std::string const & resid,
+	Size const seqpos,
 	std::string const & name3,
 	bool & same_chain_prev,
 	bool & same_chain_next,
 	utility::vector1< std::string > & branch_points_on_this_residue,
 	bool & is_branch_point,
-	bool & is_branch_lower_terminus )
+	bool & is_branch_lower_terminus)
 {
 	using namespace std;
 	using namespace core::io::pdb;
 	using namespace core::chemical;
+
+	std::string const & resid = rinfos_[ seqpos ].resid();
+	ResidueTypeCOP RT = ResidueTypeFinder( *residue_type_set_ ).name3( name3 ).get_representative_type();
+	Size mainchain_neighbor = seqpos + 1;
 
 	// Carbohydrate base names will have "->?)-" as a prefix if their main-
 	// chain connectivity requires LINK records to determine.  Fortuitously,
@@ -1044,11 +1088,18 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 	}
 
 	//is_branch_point = false;
-	TR.Trace << "Checking if resid " << resid << " is in the link map " << endl;
-	if ( sfr_.link_map().count( resid ) ) {  // if found in the linkage map
+	TR.Trace << "Checking if resid " << resid << "(" << seqpos << ")" << " is in the link map " << endl;
+	if ( ( sfr_.link_map().count( resid ) ) && ( options_.auto_detect_glycan_connections() == false ) ) {  // if found in the linkage map
 		// The link map is keyed by resID of each branch point.
 		TR.Trace << "Found resid " << resid << " in link map " << endl;
 		Size const n_branches( sfr_.link_map()[ resid ].size() );
+		if ( n_branches > 1 ) {
+			// sort link records by PDB-residue number
+			// and replace unsorted with sorted link record in the link_map()
+			utility::vector1<LinkInformation> link_records = sfr_.link_map()[resid];
+			core::io::sort_link_records( link_records );
+			sfr_.link_map()[resid] = link_records;
+		}
 		for ( uint branch( 1 ); branch <= n_branches; ++branch ) {
 			TR.Trace << "Examining branch " << branch << endl;
 			LinkInformation const & link_info( sfr_.link_map()[ resid ][ branch ] );
@@ -1077,18 +1128,40 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 				branch_points_on_this_residue.push_back( link_info.name1 );
 			}
 		}
-	} else if ( unknown_main_chain_connectivity ) {
+	} else if ( unknown_main_chain_connectivity || ( options_.auto_detect_glycan_connections() && ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) ) ) {
 		// If .pdb 3-letter codes are being used, LINK records MUST be used to designate main-chain connectivity
 		// for anything with a HETATM record.  So if we got here, it means that this must be an upper terminus.
 		// First, assign an arbitrary main-chain connection and then reset this to be NOT of the same chain as
 		// the next residue.
-		TR.Trace << "Assigning main-chain connectivity arbitrarily to position 3 of this terminal residue." << endl;
-		// TODO: In the future, we might want something else.
-		sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] = '3';
-		same_chain_next = false;
+		bool is_upper_terminus = true; // i.e. no main chain connection further down
+		if ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+			// Update LINK record for mainchain connection
+			mainchain_neighbor = core::io::find_mainchain_connection(rinfos_, sfr_, resid, seqpos, rosetta_residue_name3s_, same_chain_next, is_upper_terminus, CARB_MAINCHAIN_CONN_POS, glycan_positions_, options_ );
+
+			TR.Trace << "Upper Termini: " << is_upper_terminus << std::endl;
+		}
+		if ( is_upper_terminus ) {
+			TR.Trace << "Assigning main-chain connectivity arbitrarily to position 3 of this terminal residue." << endl;
+			// TODO: In the future, we might want something else.
+			sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] = '3';
+			same_chain_next = false;
+		}
+	}// else if(unknown_mainchain_connectivity)
+	if ( options_.auto_detect_glycan_connections() && ( same_chain_next != false  ) && ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) || name3 == "ASN" || name3 == "SER" || name3 == "THR" ) ) {
+		core::io::find_branch_points( seqpos, RT, is_branch_point, branch_points_on_this_residue, rosetta_residue_name3s_, mainchain_neighbor, rinfos_, branch_lower_termini_, glycan_positions_, options_ );
 	}
-	is_branch_lower_terminus = branch_lower_termini_.contains( resid );
+
+	//is_branch_lower_terminus = branch_lower_termini_.contains( resid );
+	if ( branch_lower_termini_.contains( resid ) || branch_lower_termini_extra_.contains( resid ) ) {
+		is_branch_lower_terminus = true;
+		TR.Trace << "Branch lower terminus " << is_branch_lower_terminus << std::endl;
+	}
 	if ( is_branch_lower_terminus && carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+		same_chain_prev = false;
+	}
+	if ( ( std::find( glycan_tree_roots_.begin(), glycan_tree_roots_.end(), resid ) != glycan_tree_roots_.end() ) && ( is_branch_lower_terminus == false ) ) {
+		// A root must be connected as a branch to the protein, otherwise it's a new chain and new terminus
+		TR << "Change same_chain_prev to false." << std::endl;
 		same_chain_prev = false;
 	}
 }

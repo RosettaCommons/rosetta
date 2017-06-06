@@ -86,6 +86,9 @@ public:
 	bool remember_unrecognized_water() const;
 	bool renumber_pdb() const;
 	bool suppress_zero_occ_pdb_output() const;
+	bool auto_detect_glycan_connections() const;
+	core::Real max_bond_length() const;
+	core::Real min_bond_length() const;
 	bool use_pdb_format_HETNAM_records() const;
 	bool write_pdb_link_records() const;
 	bool write_pdb_parametric_info() const;
@@ -130,6 +133,9 @@ public:
 	void set_remember_unrecognized_water( bool const remember_unrecognized_water );
 	void set_renumber_pdb( bool const setting );
 	void set_suppress_zero_occ_pdb_output( bool const setting );
+	void set_auto_detect_glycan_connections( bool const auto_detect_glycan_connections );
+	void set_max_bond_length( core::Real const max_bond_length );
+	void set_min_bond_length( core::Real const min_bond_length );
 	void set_use_pdb_format_HETNAM_records( bool const setting );
 	void set_write_pdb_link_records( bool const setting );
 	void set_write_pdb_parametric_info( bool const setting );
@@ -196,6 +202,9 @@ private:
 	bool remember_unrecognized_water_;
 	bool renumber_pdb_;
 	bool suppress_zero_occ_pdb_output_;
+	bool auto_detect_glycan_connections_;
+	core::Real max_bond_length_;
+	core::Real min_bond_length_;
 	bool use_pdb_format_HETNAM_records_;
 	bool write_pdb_link_records_;
 	bool write_pdb_parametric_info_;

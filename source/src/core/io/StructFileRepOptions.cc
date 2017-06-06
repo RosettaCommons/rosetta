@@ -88,6 +88,9 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_remember_unrecognized_water( tag->getOption< bool >( "remember_unrecognized_water", 0 ) );
 	set_renumber_pdb( tag->getOption< bool >( "renumber_pdb", 0 ) );
 	set_suppress_zero_occ_pdb_output( tag->getOption< bool >( "suppress_zero_occ_pdb_output", 0 ) );
+	set_auto_detect_glycan_connections( tag->getOption< bool >( "auto_detect_glycan_connections", 0) );
+	set_max_bond_length( tag->getOption< core::Real >( "max_bond_length", 1.6) );
+	set_min_bond_length( tag->getOption< core::Real >( "min_bond_length", 1.3) );
 	set_use_pdb_format_HETNAM_records( tag->getOption< bool >( "use_pdb_format_HETNAM_records", 0 ) );
 	set_write_pdb_link_records( tag->getOption <bool >( "write_pdb_link_records", 0 ) );
 	set_write_pdb_parametric_info( tag->getOption< bool >("write_pdb_parametric_info", 1) );
@@ -138,6 +141,9 @@ bool StructFileRepOptions::remember_unrecognized_res() const { return remember_u
 bool StructFileRepOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
 bool StructFileRepOptions::renumber_pdb() const { return renumber_pdb_; }
 bool StructFileRepOptions::suppress_zero_occ_pdb_output() const { return suppress_zero_occ_pdb_output_; }
+bool StructFileRepOptions::auto_detect_glycan_connections() const { return auto_detect_glycan_connections_; }
+core::Real StructFileRepOptions::max_bond_length() const { return max_bond_length_; }
+core::Real StructFileRepOptions::min_bond_length() const { return min_bond_length_; }
 bool StructFileRepOptions::use_pdb_format_HETNAM_records() const { return use_pdb_format_HETNAM_records_; }
 bool StructFileRepOptions::write_pdb_link_records() const { return write_pdb_link_records_; }
 bool StructFileRepOptions::write_pdb_parametric_info() const { return write_pdb_parametric_info_; }
@@ -248,6 +254,15 @@ void StructFileRepOptions::set_renumber_pdb( bool const setting )
 void StructFileRepOptions::set_suppress_zero_occ_pdb_output( bool const setting )
 { suppress_zero_occ_pdb_output_ = setting; }
 
+void StructFileRepOptions::set_auto_detect_glycan_connections( bool const auto_detect_glycan_connections )
+{ auto_detect_glycan_connections_ = auto_detect_glycan_connections; }
+
+void StructFileRepOptions::set_max_bond_length( core::Real const max_bond_length )
+{ max_bond_length_ = max_bond_length; }
+
+void StructFileRepOptions::set_min_bond_length( core::Real const min_bond_length )
+{ min_bond_length_ = min_bond_length; }
+
 void StructFileRepOptions::set_use_pdb_format_HETNAM_records( bool const setting )
 { use_pdb_format_HETNAM_records_ = setting; }
 
@@ -323,7 +338,10 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::constraints_from_link_records
 		+ out::file::output_pose_energies_table
 		+ out::file::output_pose_cache_data
-		+ out::file::output_pose_fold_tree;
+		+ out::file::output_pose_fold_tree
+		+ in::auto_detect_glycan_connections
+		+ in::max_bond_length
+		+ in::min_bond_length;
 
 }
 
@@ -391,6 +409,9 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_remember_unrecognized_water( options[ in::remember_unrecognized_water ]() );
 	set_renumber_pdb( options[ OptionKeys::out::file::renumber_pdb ].value() );
 	set_suppress_zero_occ_pdb_output( options[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() );
+	set_auto_detect_glycan_connections( options[ in::auto_detect_glycan_connections ]() );
+	set_max_bond_length( options[ in::max_bond_length ]() );
+	set_min_bond_length( options[ in::min_bond_length ]() );
 	set_use_pdb_format_HETNAM_records( options[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
 	set_write_pdb_link_records( options[ out::file::write_pdb_link_records ]() );
 	set_chains_whose_residues_are_separate_chemical_entities( options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
@@ -448,6 +469,9 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( pdb_comments_                                          != other.pdb_comments_                                         ) return false;
 	if ( show_all_fixes_                                        != other.show_all_fixes_                                       ) return false;
 	if ( constraints_from_link_records_                         != other.constraints_from_link_records_                        ) return false;
+	if ( auto_detect_glycan_connections_                        != other.auto_detect_glycan_connections_                       ) return false;
+	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
+	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
 
 	return true;
 }
@@ -531,6 +555,12 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( show_all_fixes_                                        != other.show_all_fixes_                                       ) return false;
 	if ( constraints_from_link_records_                         <  other.constraints_from_link_records_                        ) return true;
 	//if ( constraints_from_link_records_                         != other.constraints_from_link_records_                        ) return false;
+	if ( auto_detect_glycan_connections_                        <  other.auto_detect_glycan_connections_                       ) return true;
+	if ( auto_detect_glycan_connections_                        != other.auto_detect_glycan_connections_                       ) return false;
+	if ( max_bond_length_                                       <  other.max_bond_length_                                      ) return true;
+	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
+	if ( min_bond_length_                                       <  other.min_bond_length_                                      ) return true;
+	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
 	return false;
 
 }

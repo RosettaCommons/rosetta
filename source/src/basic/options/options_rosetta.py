@@ -163,6 +163,20 @@ Options = Option_Group( '',
 				short="Load mineral surface residues into memory?",
 				legal=["true", "false"],
 				default="false"),
+		Option("auto_detect_glycan_connections", "Boolean",
+				desc='Sets whether to search for non-protein connections using PDB coordinates and generate LINK records.',
+				short='Generate missing LINK records.',
+				legal=["true","false"],
+				default="false"),
+		Option("max_bond_length", "Real",
+				desc='Sets maximum O-C distance for glycan connection search. Default is 1.6 Angstroms.',
+				short='Max distance for glycan C-O bond',
+				default="1.6"),
+		Option("min_bond_length", "Real",
+				desc='Sets minimum O-C distance for glycan connection search. Default is 1.3 Angstroms.',
+				short='Min. distance for glycan C-O bond',
+				default="1.3"),
+
 
 		## Membrane JD2 Option
 		## Last Modified: 8/23/14

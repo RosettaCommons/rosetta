@@ -694,12 +694,10 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const z( res->carbohydrate_info()->branch_point( branch_num ) );
 		uint const OZ( res->atom_index( "O" + string( 1, z + '0' ) ) );
 		uint const HOZ( res->atom_index( "HO" + string( 1, z + '0' ) ) );
-
 		uint const branch_connection_id( res->type().residue_connection_id_for_atom( OZ ) );
 		uint const branch_res_seqpos( res->residue_connection_partner( branch_connection_id ) );
 		ResidueCOP branch_res( conf.residue( branch_res_seqpos ).get_self_ptr() );
 		uint const HOZ_ref( branch_res->atom_index( branch_res->carbohydrate_info()->anomeric_carbon_name() ) );
-
 		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
 	}
 
