@@ -316,6 +316,9 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 		} else if ( tag == "COARSE_RNA" ) {
 			std::cout << "ATOM_VDW set to COARSE_RNA" << std::endl;
 			energy_method_options_->atom_vdw_atom_type_set_name( "coarse_rna" );
+		} else if ( tag == "CENTROID_MIN" ) {
+			tr << "ATOM_VDW set to CENTROID_MIN" << std::endl;
+			energy_method_options_->atom_vdw_atom_type_set_name( "centroid_min" );
 		} else if ( tag == "CENTROID_ROT" ) {
 			tr << "ATOM_VDW set to CENTROID_ROT" << std::endl;
 			energy_method_options_->atom_vdw_atom_type_set_name( "centroid_rot" );
