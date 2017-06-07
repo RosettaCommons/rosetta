@@ -571,7 +571,7 @@ testinputfiles = [
 	"chemical/carbohydrates/isomaltose.pdb",
 	"chemical/carbohydrates/lactose.pdb",
 	"chemical/carbohydrates/Lex.pdb",
-	"chemical/carbohydrates/linkage_data_table.tsv",
+	"chemical/carbohydrates/test_linkage_data_table.tsv",
 	"chemical/carbohydrates/maltotriose.pdb",
 	"chemical/carbohydrates/Neu.pdb",
 	"chemical/carbohydrates/nomenclature.table",

@@ -33,7 +33,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	void setUp()
 	{
 		core_init_with_additional_options(
-			"-linkage_conformer_data_file core/chemical/carbohydrates/linkage_data_table.tsv" );
+			"-linkage_conformer_data_file core/chemical/carbohydrates/test_linkage_data_table.tsv" );
 	}
 
 	// Destruction

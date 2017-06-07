@@ -31,6 +31,7 @@ struct LinkageConformerData{
 	//@brief There can be none or multiple omega data
 	utility::vector1< std::pair< core::Real, core::Real > > omega_mean_sd;
 
+	std::string conformer_bins;
 
 	//////////////////////////////////////////////////////////////////
 	core::Real

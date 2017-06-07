@@ -292,6 +292,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		if ( n_conformers == 1 ) {
 			conformer_num = 1;
 		} else if ( use_conformer_population_stats_ ) {
+			//TR.Debug << "Sampling on conformer stats" << std::endl;
 			utility::vector1< core::Real > populations;
 			for ( core::uint i =1 ; i <= n_conformers; ++i ) {
 				populations.push_back( conformers[ i ].population );
@@ -299,6 +300,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 			numeric::random::WeightedSampler sampler( populations );
 			conformer_num = sampler.random_sample( numeric::random::rg() );
 		} else {
+			//TR.Debug << "Sampling all conformers: Total="<<conformers.size() << std::endl;
 			conformer_num = numeric::random::rg().random_range( 1, conformers.size() );
 		}
 		set_dihedrals_from_linkage_conformer_data(

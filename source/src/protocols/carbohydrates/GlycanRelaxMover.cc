@@ -171,6 +171,9 @@ GlycanRelaxMover::parse_my_tag(
 
 
 	tree_based_min_pack_ = tag->getOption< bool >("tree_based_min_pack", tree_based_min_pack_);
+	population_based_conformer_sampling_ = tag->getOption< bool >("population_based_conformer_sampling", population_based_conformer_sampling_);
+	uniform_conformer_sd_sampling_ = tag->getOption< bool >("uniform_sd_sampling", uniform_conformer_sd_sampling_);
+	conformer_sd_ = tag->getOption< core::Real >("conformer_sampling_sd", conformer_sd_);
 }
 
 void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -187,7 +190,10 @@ void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 		+ XMLSchemaAttribute("pack_distance", xsct_real, "Neighbor distance for packing")
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
-		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true");
+		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true")
+		+ XMLSchemaAttribute::attribute_w_default("population_based_conformer_sampling", xsct_rosetta_bool, "Use the populations of the conformers as probabilities during our linkage conformer sampling.  This makes it harder to overcome energy barriers with more-rare conformers!", "false")
+		+ XMLSchemaAttribute::attribute_w_default("conformer_sampling_sd", xsct_real, "Number of SDs to sample within during conformer sampling.", "2.0")
+		+ XMLSchemaAttribute::attribute_w_default("uniform_sd_sampling", xsct_rosetta_bool, "Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.", "true");
 
 	//Append for MoveMap, scorefxn, and task_operation tags.
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
@@ -233,7 +239,9 @@ GlycanRelaxMover::set_cmd_line_defaults(){
 	cartmin_ = option[ OptionKeys::carbohydrates::glycan_relax::cartmin]();
 	refine_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_refine]();
 	tree_based_min_pack_ = option[ OptionKeys::carbohydrates::glycan_relax::tree_based_min_pack]();
-
+	population_based_conformer_sampling_ = option[ OptionKeys::carbohydrates::glycan_relax::population_based_conformer_sampling]();
+	conformer_sd_ = option[ OptionKeys::carbohydrates::glycan_relax::conformer_sampling_sd]();
+	uniform_conformer_sd_sampling_ = option[ OptionKeys::carbohydrates::glycan_relax::uniform_sd_sampling]();
 
 }
 
@@ -252,7 +260,10 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	parsed_positions_( src.parsed_positions_),
 	pack_distance_( src.pack_distance_ ),
 	cartmin_( src.cartmin_ ),
-	tree_based_min_pack_( src.tree_based_min_pack_ )
+	tree_based_min_pack_( src.tree_based_min_pack_ ),
+	population_based_conformer_sampling_(src.population_based_conformer_sampling_),
+	conformer_sd_(src.conformer_sd_),
+	uniform_conformer_sd_sampling_(src.uniform_conformer_sd_sampling_)
 {
 	if ( src.full_movemap_ ) full_movemap_ = src.full_movemap_->clone();
 	if ( src.glycan_movemap_ ) glycan_movemap_ = src.glycan_movemap_->clone();
@@ -396,6 +407,20 @@ GlycanRelaxMover::set_refine( bool refine ){
 	refine_ = refine;
 }
 
+void
+GlycanRelaxMover::set_population_based_conformer_sampling(bool pop_based_sampling){
+	population_based_conformer_sampling_ = pop_based_sampling;
+}
+
+void
+GlycanRelaxMover::set_conformer_sampling_sd(core::Real const conformer_sampling_sd){
+	conformer_sd_ = conformer_sampling_sd;
+}
+
+void
+GlycanRelaxMover::set_uniform_sd_sampling(bool uniform_sd_sampling){
+	uniform_conformer_sd_sampling_ = uniform_sd_sampling;
+}
 
 void
 GlycanRelaxMover::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
@@ -616,6 +641,9 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	}
 
 	linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( glycan_movemap_ ));
+	linkage_mover_->set_use_conformer_population_stats(population_based_conformer_sampling_); //Uniform sampling of conformers.
+	linkage_mover_->set_x_standard_deviations( conformer_sd_ );
+	linkage_mover_->set_prob_sd_sampling(! uniform_conformer_sd_sampling_);
 
 	//Setup Sugar Samplers
 	sugar_sampler_mover->add_sampler( phi_sugar_sampler );

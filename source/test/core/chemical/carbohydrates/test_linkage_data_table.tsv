@@ -1,0 +1,12 @@
+# THIS IS JUST A TABLE FOR UNIT TESTING! Actual, current data files are found
+# in the database: database/chemical/carbohydrates/
+# If you edit this file, you must also edit database_io.cxxtest.hh.
+
+# non-reducing-end_res	reducing-end_res	conformer	population	phi_stdev	psi_mean	psi_stdev	omega_mean	omega_stdev
+
+alpha-evilsugar	->3)-evilsugar	1.1	1.0	66.6	6.6	-66.6	6.6
+beta-evilsugar	->6)-evilsugar	1.1	1.0	66.6	6.6	-66.6	6.6	66.6	6.6
+alpha-goodsugar	->2)-goodsugar	1.1	0.8	77.7	7.7	-77.7	7.7
+alpha-goodsugar	->2)-goodsugar	1.2	0.2	10.0	0.0	-10.0	0.0
+beta-goodsugar	->4)-evilsugar	1.1	1.0	0.0	0.0	0.0	0.0
+alpha-saneshortsugar	->9)-crazylongsugar	1.1.1.1	1.0	12.0	4.0	67.0	9.0	12.0	4.0	65.0	9.0	66.0	5.0	67.0	10.0

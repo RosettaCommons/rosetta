@@ -97,6 +97,20 @@ public:
 	void
 	set_rounds( core::Size rounds);
 
+	///@brief Set how our Conformer mover samples.  Default is to do uniform sampling on the conformers instead of using the population as probabilities.
+	void
+	set_population_based_conformer_sampling(bool pop_based_sampling);
+
+	///@brief Number of SDs to sample within during conformer sampling. Default is 2.0 SDs
+	///@details Sample within X standard_deviations of the means when building [non-idealized] conformers
+	void
+	set_conformer_sampling_sd(core::Real conformer_sampling_sd);
+
+	///@brief Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.
+	/// Default True
+	void
+	set_uniform_sd_sampling(bool uniform_sd_sampling);
+
 	void
 	set_kt( core::Real kt);
 
@@ -215,6 +229,9 @@ private:
 	bool tree_based_min_pack_ = true; // cmdline
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;  //Residue selector to pass residues to relax.  Currently used for RS only.
+	bool population_based_conformer_sampling_ = false;
+	core::Real conformer_sd_ = 2.0;
+	bool uniform_conformer_sd_sampling_ = true;
 
 };
 

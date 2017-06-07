@@ -1995,7 +1995,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				'but any path can be provided.  '
 				'The default filename is default.table',
 			short='Specify a file containing glycosidic linkage data.',
-			default='default.table'
+			default='default.table',
+			legal=['default.table', 'original.table', 'core/chemical/carbohydrates/test_linkage_data_table.tsv']
 			),
 
 
@@ -2039,7 +2040,19 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 					' This makes the speed of the algorithm mostly-linear with the addition of more glycans, and wastes less time packing and minimizing',
 				default = 'true'
 				),
-
+			Option('population_based_conformer_sampling', 'Boolean',
+				desc = 'Use the populations of the conformers as probabilities during our linkage conformer sampling.  This makes it harder to overcome energy barriers with more-rare conformers',
+				default = 'false'
+				),
+			Option('conformer_sampling_sd', 'Real',
+				default = '2.0',
+				desc = 'Number of SDs to sample within during conformer sampling.'
+				),
+			Option('uniform_sd_sampling', 'Boolean',
+				default = 'true',
+				desc = 'Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.'
+				)
+			
 		), # - glycan_relax
 
 

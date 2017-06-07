@@ -204,18 +204,20 @@ read_linkage_conformers_from_database_file( std::string const & filename ) {
 		// Every line is a new conformer.
 		LinkageConformerData conformer;
 		string non_red_res, red_res;
+		string conformer_bins;
 		Real pop;
 		Angle phi_mean, phi_sd, psi_mean, psi_sd, omega_mean, omega_sd;
 
-		line_word_by_word >> non_red_res >> red_res >> pop >> phi_mean >> phi_sd >> psi_mean >> psi_sd;
+		line_word_by_word >> non_red_res >> red_res >> conformer_bins >> pop >> phi_mean >> phi_sd >> psi_mean >> psi_sd;
 
 		conformer.population = pop;
 		conformer.mean_sd.push_back( make_pair( phi_mean, phi_sd ) );
 		conformer.mean_sd.push_back( make_pair( psi_mean, psi_sd ) );
+		conformer.conformer_bins = conformer_bins;
 
 		utility::vector1< std::string > entries = utility::string_split_multi_delim(lines[i]);
 		core::Size total_entries = entries.size();
-		core::Size total_omegas = (total_entries - 7) / 2;
+		core::Size total_omegas = (total_entries - 8) / 2;
 
 		TR.Debug << "split " <<utility::to_string( entries ) << std::endl;
 		TR.Debug << "total entries " << total_entries << std::endl;

@@ -102,7 +102,7 @@ public:
 	///@brief Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.
 	/// Default FALSE
 	void
-	set_prob_sd_sampling(bool uniform_sd_sample);
+	set_prob_sd_sampling(bool prob_sd_sample);
 
 	///@brief Idealize the torsion angles instead of sampling from SD.
 	/// Default FALSE

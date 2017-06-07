@@ -1,0 +1,9 @@
+# libraries compiled by Maxim Shapovalov, Jared Adolf-Bryfogle, and Roland Dunbrack, Fox Chase Cancer Center, Philadelphia, PA, USA, 2017 (C)
+# compiled on 05/26/2017
+# backbone-independent probabilities
+# residueID_internal	a-D-Galp ->6)-D-Galp
+# angleIndex	phi
+bin	p	left_min	maxima	right_min
+1	0.539500	331.747688	70.323468	87.969991
+2	0.349257	87.969991	100.953787	127.011426
+3	0.111243	127.011426	148.582811	331.747688

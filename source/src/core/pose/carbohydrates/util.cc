@@ -1023,6 +1023,8 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 
 	core::Size const n_torsions = conformer.n_torsions();
 
+	//TR << "Sampling Bin " << conformer.conformer_bins << " which has population of " << conformer.population << std::endl;
+
 	if ( idealize ) {
 		for ( core::Size i = 1; i <= n_torsions; ++i ) {
 			TR.Debug << "torsion "<< i << std::endl;

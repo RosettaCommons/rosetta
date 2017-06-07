@@ -115,7 +115,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TR << "Testing read_linkage_conformers_from_database_file() method."  << std::endl;
 
 		LinkageConformers linkages( read_linkage_conformers_from_database_file(
-			"core/chemical/carbohydrates/linkage_data_table.tsv" ) );
+			"core/chemical/carbohydrates/test_linkage_data_table.tsv" ) );
 
 		pair< string, string> key;
 		utility::vector1< LinkageConformerData > conformers;
