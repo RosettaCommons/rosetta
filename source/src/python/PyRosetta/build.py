@@ -130,30 +130,29 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 
     git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
 
+    if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
+
     if not os.path.isdir(prefix): os.makedirs(prefix)
 
-    if not os.path.isdir(prefix+'/llvm'): execute('Clonning llvm...', 'cd {} && git clone http://llvm.org/git/llvm.git llvm'.format(prefix) )
-    execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix}/llvm && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+    if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone http://llvm.org/git/llvm.git .'.format(prefix) )
+    execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix} && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
-    if not os.path.isdir(prefix+'/llvm/tools/clang'): execute('Clonning clang...', 'cd {}/llvm/tools && git clone http://llvm.org/git/clang.git clang'.format(prefix) )
-    execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/llvm/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+    if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone http://llvm.org/git/clang.git clang'.format(prefix) )
+    execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
-    if not os.path.isdir(prefix+'/llvm/tools/clang/tools/extra'): execute('Clonning clang...', 'cd {}/llvm/tools/clang/tools && git clone http://llvm.org/git/clang-tools-extra.git extra'.format(prefix) )
-    execute('Checking out Clang-tools revision: {}...'.format(release), 'cd {prefix}/llvm/tools/clang/tools/extra && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+    if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
 
-    tool_link_path = '{prefix}/llvm/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
+    tool_link_path = '{prefix}/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
     if os.path.islink(tool_link_path): os.unlink(tool_link_path)
     os.symlink(source_location, tool_link_path)
 
-    cmake_lists = prefix + '/llvm/tools/clang/tools/extra/CMakeLists.txt'
+    cmake_lists = prefix + '/tools/clang/tools/extra/CMakeLists.txt'
     tool_build_line = 'add_subdirectory({})'.format(name)
 
-    for line in open(cmake_lists):
-        if line == tool_build_line: break
-    else:
-        with open(cmake_lists, 'w') as f: f.write( open(cmake_lists).read() + tool_build_line + '\n' )
+    if not os.path.isfile(cmake_lists):
+        with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
 
-    build_dir = prefix+'/llvm/build_' + release + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
+    build_dir = prefix+'/build_' + release + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
     if not os.path.isdir(build_dir): os.makedirs(build_dir)
     execute(
         'Building tool: {}...'.format(name),
@@ -164,7 +163,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
             gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
         silent=True)
     print()
-    # build_dir = prefix+'/llvm/build-ninja-' + release
+    # build_dir = prefix+'/build-ninja-' + release
     # if not os.path.isdir(build_dir): os.makedirs(build_dir)
     # execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE={build_type} .. -G Ninja && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release')) )
 

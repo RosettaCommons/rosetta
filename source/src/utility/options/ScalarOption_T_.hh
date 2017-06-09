@@ -196,6 +196,7 @@ public: // Methods
 	/// @brief Activate
 	inline
 	ScalarOption_T_ &
+
 	activate() override
 	{
 		state_ = USER;
