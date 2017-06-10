@@ -18,8 +18,6 @@ namespace protocols {
 
 using protocols::filters::FilterRegistrator;
 
-static FilterRegistrator< protocols::analysis::PeptideDeriverFilterCreator > reg_PeptideDeriverFilterCreator;
-
 static FilterRegistrator< protocols::cyclic_peptide::CycpepSymmetryFilterCreator > reg_CycpepSymmetryFilterCreator;
 static FilterRegistrator< protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterCreator > reg_OversaturatedHbondAcceptorFilterCreator;
 
@@ -90,6 +88,8 @@ static FilterRegistrator< protocols::matdes::GetRBDOFValuesCreator > reg_GetRBDO
 static FilterRegistrator< protocols::matdes::InterfacePackingFilterCreator > reg_InterfacePackingFilterCreator;
 static FilterRegistrator< protocols::matdes::OligomericAverageDegreeFilterCreator > reg_OligomericAverageDegreeFilterCreator;
 static FilterRegistrator< protocols::matdes::SymUnsatHbondFilterCreator > reg_SymUnsatHbondFilterCreator;
+
+static FilterRegistrator< protocols::peptide_deriver::PeptideDeriverFilterCreator > reg_PeptideDeriverFilterCreator;
 
 static FilterRegistrator< protocols::protein_interface_design::filters::AtomicContactCountFilterCreator > reg_AtomicContactCountFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::AverageDegreeFilterCreator > reg_AverageFilterCreator;

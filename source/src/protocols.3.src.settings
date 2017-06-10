@@ -20,8 +20,6 @@ sources = {
 		"InterfaceAnalyzerMover",
 		"LoopAnalyzerMover",
 		"PackStatMover",
-		"PeptideDeriverFilter",
-		"PeptideDeriverFilterCreator",
 	],
   "protocols/backbone_moves/local_backbone_mover":[
     "LocalBackboneMover",

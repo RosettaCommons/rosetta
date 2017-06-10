@@ -18,13 +18,15 @@
 #define INCLUDED_protocols_analysis_PeptideDeriverFilter_hh
 
 // Unit headers
-#include <protocols/analysis/PeptideDeriverFilter.fwd.hh>
+#include <protocols/peptide_deriver/PeptideDeriverFilter.fwd.hh>
 
 // Project headers
 #include <basic/options/keys/OptionKeys.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/io/orstream.hh>
+#include <utility/io/ozstream.hh>
+
 
 // RosettaScripts header
 #include <basic/datacache/DataMap.hh>
@@ -35,7 +37,9 @@
 #include <string>
 
 namespace protocols {
-namespace analysis {
+namespace peptide_deriver {
+
+
 
 /// @brief an enum specifying whether the peptide entry encountered during the
 ///        sliding window run in known to be the "best" peptide, when calling
@@ -58,6 +62,55 @@ enum PeptideDeriverReportFormat {
 	/// a stripped-down, easily parsable format
 	PRF_BASIC
 };
+
+
+enum CyclizationMethod {
+	CYCLIZATION_METHOD_DISULFIDE,
+	CYCLIZATION_METHOD_END_TO_END,
+	NUM_CYCLIZATION_METHODS
+};
+
+
+const std::string CYCLIZATION_METHOD_NAMES[NUM_CYCLIZATION_METHODS] = { "disulfide", "end-to-end" };
+
+// TODO : this is 0-based, which is inconsistent with that we allowed CYCLIZATION_METHOD_BEGIN above
+//        to be considered non-zero.
+
+const core::Real UNLIKELY_ISC_VALUE = 2e6;
+
+class CyclizedPeptideInfo {
+public:
+	core::Real cyc_isc = UNLIKELY_ISC_VALUE;
+	core::pose::PoseCOP pre_cyc_pose;
+	core::pose::PoseCOP cyc_pose;
+	bool is_cyclizable;
+	bool was_cyclic_model_created;
+	/* the above should replace the following:
+	bool current_peptide_cyclizable_by_method[NUM_CYCLIZATION_METHODS];
+	bool current_peptide_cyclic_model_created_by_method[NUM_CYCLIZATION_METHODS];
+	*/
+
+	// place
+	// previously disulfide_info for disulfide bridge cyclization
+	std::string cyc_comment;
+
+	CyclizedPeptideInfo(core::pose::PoseCOP reference_pose);
+};
+
+
+class DerivedPeptideEntry {
+public:
+	// TODO : make this private and provide accessors
+	core::Real lin_isc ;
+	core::Size pep_start;
+	core::pose::PoseCOP lin_pose;
+	CyclizedPeptideInfoOP cyc_info_set[NUM_CYCLIZATION_METHODS];
+
+	DerivedPeptideEntry(core::Real const lin_isc= UNLIKELY_ISC_VALUE, core::Size const pep_start=0, core::pose::PoseCOP lin_pose=nullptr);
+
+};
+
+
 
 /// @brief an abstract base class for handling calculation outputs from
 ///        PeptideDeriverFilter
@@ -87,9 +140,12 @@ public:
 
 	/// @brief called by PeptideDeriverFilter for each 'peptide' entry that should be output.
 	/// besides the peptides for each sliding window, this is being called for the 'best' peptides (@see PeptideDeriverEntryType)
-	virtual void peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
-		core::pose::Pose const & cyclic_pose, core::Real const cyclic_isc) = 0;
+	/*
+	* virtual void peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const pep_start,
+	core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
+	core::pose::Pose const & cyclic_pose, core::Real const cyclic_isc) = 0;
+	*/
+	virtual void peptide_entry(PeptideDeriverEntryType entry_type, core::Real const total_isc, DerivedPeptideEntryCOP entry) = 0;
 
 	/// @brief called by PeptideDeriverFilter when calculation concludes for a receptor-partner pair (for all the different peptide lengths)
 	virtual void end_receptor_partner_pair() = 0;
@@ -118,11 +174,7 @@ public:
 
 	void peptide_length(core::Size const pep_length) override;
 
-	void peptide_entry(core::pose::Pose const & pose,
-		PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info,
-		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
-		core::Real const cyclic_isc) override;
+	void peptide_entry(PeptideDeriverEntryType entry_type,  core::Real const total_isc, DerivedPeptideEntryCOP entry) override;
 
 
 	void end_receptor_partner_pair() override;
@@ -157,9 +209,7 @@ public:
 
 	// TODO : consider using a PeptideDeriverEntry struct to make this signature less verbose and more tolerant to changes in the protocol
 	//        e.g.,  virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntry const & peptide_deriver_entry) --yuvals
-	void peptide_entry(core::pose::Pose const & , PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
-		core::pose::Pose const &, core::Real const cyclic_isc) override;
+	void peptide_entry(PeptideDeriverEntryType entry_type, core::Real const total_isc, DerivedPeptideEntryCOP entry) override;
 
 
 	void end_receptor_partner_pair() override;
@@ -171,6 +221,7 @@ private:
 	std::string prefix_;
 
 }; // PeptideDeriverBasicStreamOutputter
+
 
 // TODO : add an option to allow output in this format
 // TODO : allow easy switching with reST format
@@ -200,26 +251,35 @@ public:
 
 	void peptide_length(core::Size const pep_length) override;
 
-	void peptide_entry(core::pose::Pose const & pose,
-		PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info,
-		bool const was_cyclic_pep_modeled, core::pose::Pose const &,
-		core::Real const cyclic_isc ) override;
+	void peptide_entry(PeptideDeriverEntryType entry_type, core::Real const total_isc, DerivedPeptideEntryCOP entry) override;
 
 	void end_receptor_partner_pair() override;
 
+
+
 private:
+
+	class CyclizedReportInfo {
+	public:
+
+		core::Size best_cyclic_pep_start;
+		bool cyclic_peptide_encountered_for_current_pep_length;
+		std::ostringstream best_cyclic_peptides_;
+		std::ostringstream cyclic_peptides_;
+	};
+
+	typedef utility::pointer::shared_ptr<CyclizedReportInfo> CyclizedReportInfoOP;
+	typedef utility::pointer::shared_ptr<CyclizedReportInfo const> CyclizedReportInfoCOP;
+
+	CyclizedReportInfoOP cyc_report_info_set_[NUM_CYCLIZATION_METHODS];
+
 	/// clear accumulating member variables
 	void clear_buffers();
-
-	/// store location of best cyclic peptide for comparison reasons
-	core::Size best_cyclic_start_position_;
 
 	utility::io::orstream * out_p_;
 	std::string prefix_;
 
 	core::Size current_pep_length_;
-	bool current_pep_length_cyclic_peptide_encountered_;
 	core::Real current_total_isc_;
 	char current_receptor_chain_letter_;
 	char current_partner_chain_letter_;
@@ -227,10 +287,10 @@ private:
 
 	std::ostringstream header_;
 	std::ostringstream best_linear_peptides_;
-	std::ostringstream best_cyclic_peptides_;
 	std::ostringstream all_peptides_;
-	std::ostringstream cyclic_peptides_;
 	std::ostringstream footer_;
+
+	/// store location of best cyclic peptide for comparison reasons
 
 }; // PeptideDeriverMarkdownStreamOutputter
 
@@ -265,11 +325,7 @@ public:
 		// do nothing
 	}
 
-	void peptide_entry(core::pose::Pose const & pose,
-		PeptideDeriverEntryType const entry_type, core::Size const,
-		core::Real const, core::Real const, std::string const & disulfide_info,
-		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
-		core::Real const) override;
+	void peptide_entry(PeptideDeriverEntryType entry_type, core::Real const total_isc, DerivedPeptideEntryCOP entry) override;
 
 private:
 	/// output a post to the given file
@@ -522,7 +578,7 @@ private:
 };
 
 
-} // namespace analysis
+} // namespace peptide_deriver
 } // namespace protocols
 
 #endif

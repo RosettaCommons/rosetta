@@ -17,22 +17,27 @@
 // PeptideDeriverFilterCreator
 
 
-#ifndef INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_fwd_hh
-#define INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_fwd_hh
+#ifndef INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_hh
+#define INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_hh
 
-// Project headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+// Package Headers
+#include <protocols/filters/FilterCreator.hh>
 
 namespace protocols {
-namespace analysis {
+namespace peptide_deriver {
 
-class PeptideDeriverFilterCreator;
+class PeptideDeriverFilterCreator : public protocols::filters::FilterCreator {
+public:
+	// XRW TEMP  protocols::filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+};
 
-typedef utility::pointer::shared_ptr< PeptideDeriverFilterCreator >  PeptideDeriverFilterCreatorOP;
-typedef utility::pointer::shared_ptr< PeptideDeriverFilterCreator const >  PeptideDeriverFilterCreatorCOP;
+} //namespace peptide_deriver
+} //namespace protocols
 
-} // namespace analysis
-} // namespace protocols
 
 #endif
-// INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_fwd_hh
+// INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_hh

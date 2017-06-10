@@ -226,6 +226,10 @@ sources = {
 		"MotifHitsRotamersOperation",
 		"SymUnsatHbondFilter",
 	],
+	"protocols/peptide_deriver": [
+		"PeptideDeriverFilter",
+		"PeptideDeriverFilterCreator",
+	],
 	"protocols/protein_interface_design": [
 		"design_utils",
 		"DockDesignFilterFactory",

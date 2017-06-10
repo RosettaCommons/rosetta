@@ -14,8 +14,6 @@
 //FilterCreator #includes
 #include <protocols/filters/FilterFactory.hh>
 
-#include <protocols/analysis/PeptideDeriverFilterCreator.hh>
-
 #include <protocols/cyclic_peptide/CycpepSymmetryFilterCreator.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterCreator.hh>
 
@@ -74,6 +72,8 @@
 #include <protocols/matdes/InterfacePackingFilterCreator.hh>
 #include <protocols/matdes/OligomericAverageDegreeFilterCreator.hh>
 #include <protocols/matdes/SymUnsatHbondFilterCreator.hh>
+
+#include <protocols/peptide_deriver/PeptideDeriverFilterCreator.hh>
 
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>

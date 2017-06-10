@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief test suite for protocols::analysis::PeptideDeriverFilter
+/// @brief test suite for protocols::peptide_deriver::PeptideDeriverFilter
 /// @author Yuval Sadan (yuval.sedan@mail.huji.ac.il)
 
 // Test headers
@@ -19,7 +19,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/analysis/PeptideDeriverFilter.hh>
+#include <protocols/peptide_deriver/PeptideDeriverFilter.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
@@ -30,13 +30,13 @@
 // C++ headers
 #include <fstream>
 
-class PeptideDeriverUTracerOutputter : public protocols::analysis::PeptideDeriverOutputter {
+class PeptideDeriverUTracerOutputter : public protocols::peptide_deriver::PeptideDeriverOutputter {
 private:
 	utility::pointer::shared_ptr<test::UTracer> ut_;
 
 public:
 	PeptideDeriverUTracerOutputter() {
-		ut_ = utility::pointer::shared_ptr<test::UTracer>( new test::UTracer("protocols/analysis/PeptideDeriverFilter.u") );
+		ut_ = utility::pointer::shared_ptr<test::UTracer>( new test::UTracer("protocols/peptide_deriver/PeptideDeriverFilter.u") );
 	}
 
 	virtual void begin_structure(core::pose::Pose const & pose, std::string const &) {
@@ -64,15 +64,16 @@ public:
 		(*ut_) << "peptide_length " << pep_length << std::endl;
 	}
 
-	virtual void peptide_entry(core::pose::Pose const & /*pose*/,
-		protocols::analysis::PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-		core::Real const /*linear_isc*/, core::Real const /*binding_contribution_fraction*/, std::string const & /*disulfide_info*/,
-		bool const /*was_cyclic_pep_modeled*/, core::pose::Pose const & /*cyclic_pose*/,
-		core::Real const /*cyclic_isc*/) {
+	virtual void peptide_entry(protocols::peptide_deriver::PeptideDeriverEntryType const entry_type, core::Real const /*total_isc*/, protocols::peptide_deriver::DerivedPeptideEntryCOP entry) {
 		(*ut_) << "peptide_entry" <<
 			" entry_type=" << entry_type <<
-			" pep_start=" << pep_start <<
-			std::endl;
+			" pep_start=" << entry->pep_start;
+		for ( core::Size method = 0; method<protocols::peptide_deriver::CyclizationMethod::NUM_CYCLIZATION_METHODS; ++method ) {
+			if ( entry->cyc_info_set[method]->is_cyclizable ) {
+				(*ut_) << " cyclization_type=" << entry->cyc_info_set[method]->cyc_comment;
+			}
+		}
+		(*ut_) << std::endl;
 		// we don't compare energies (was_cyclic_pep_modeled depends on energies, so we don't do that either)
 	}
 
@@ -89,14 +90,16 @@ public:
 class PeptideDeriverFilterTests : public CxxTest::TestSuite {
 public:
 	core::pose::PoseOP test_pose_;
+	core::pose::PoseOP cyclic_test_pose_;
 
-	protocols::analysis::PeptideDeriverFilterOP peptiderive_;
+	protocols::peptide_deriver::PeptideDeriverFilterOP peptiderive_;
 
 	PeptideDeriverFilterTests() {}
 
 	void setUp() {
 		protocols_init_with_additional_options("-in:missing_density_to_jump 1");
 		test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+		cyclic_test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 
 		// NOTE : this pose is PDB entry 2HLE modified such that
 		// 1. only residues 144-157 from chain A and 114-134 from chain B are included
@@ -127,14 +130,15 @@ public:
 		// plus 21A, which makes sure chain C is shifted completely away from chain B (the width
 		// in the z-axis of this segment is 18A), but still close enough so a B-C interaction
 		// exists.
-		core::import_pose::pose_from_file( *test_pose_, "protocols/analysis/2hle_remixed.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( *test_pose_, "protocols/peptide_deriver/2hle_remixed.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( *cyclic_test_pose_, "protocols/peptide_deriver/1sfi_short.pdb", core::import_pose::PDB_file);
 
-		peptiderive_ = protocols::analysis::PeptideDeriverFilterOP( new protocols::analysis::PeptideDeriverFilter() );
+		peptiderive_ = protocols::peptide_deriver::PeptideDeriverFilterOP( new protocols::peptide_deriver::PeptideDeriverFilter() );
 
 		peptiderive_->set_is_skip_zero_isc(false); // we want to count all residues
 		peptiderive_->set_is_do_minimize(true);
 
-		// the model above has exactly one cyclic peptide candidate; this make sure it gets modeled, so we cover the disulfide creation code as well
+		// the model above has exactly one cyclic peptide candidate; this makes sure it gets modeled, so we cover the disulfide creation code as well
 		peptiderive_->set_optimize_cyclic_threshold(-1);
 
 		// the following only have an effect when report() is invoked.
@@ -143,16 +147,17 @@ public:
 		peptiderive_->set_is_report_gzip(false);
 		peptiderive_->set_is_dump_peptide_pose(false);
 		peptiderive_->set_is_dump_prepared_pose(false);
-		peptiderive_->set_report_format(protocols::analysis::PRF_MARKDOWN);
+		peptiderive_->set_report_format(protocols::peptide_deriver::PRF_MARKDOWN);
 	}
 
 	void tearDown() {
 		test_pose_ = NULL; // delete
+		cyclic_test_pose_ = NULL;
 	}
 
 	void test_rosettascripts_options() {
 
-		std::ifstream xml_stream( "protocols/analysis/test_peptiderive.xml" );
+		std::ifstream xml_stream( "protocols/peptide_deriver/test_peptiderive.xml" );
 
 		utility::tag::TagCOP tag =  utility::tag::Tag::create( xml_stream );
 		try {
@@ -162,7 +167,7 @@ public:
 			TS_ASSERT_EQUALS(protocol->size(), 1);
 			protocols::rosetta_scripts::ParsedProtocol::MoverFilterPair pair = protocol->get_mover_filter_pair(1);
 			TS_ASSERT_EQUALS(pair.filter().get_type(), "PeptideDeriverFilter");
-			protocols::analysis::PeptideDeriverFilter const & filter( dynamic_cast<protocols::analysis::PeptideDeriverFilter const &> (pair.filter()) );
+			protocols::peptide_deriver::PeptideDeriverFilter const & filter( dynamic_cast<protocols::peptide_deriver::PeptideDeriverFilter const &> (pair.filter()) );
 
 			TS_ASSERT_EQUALS(filter.get_is_skip_zero_isc(), false);
 			TS_ASSERT_EQUALS(filter.get_pep_lengths().size(), 2);
@@ -202,16 +207,22 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 		peptiderive_->derive_peptide( ut_out, *test_pose_, /*first_chain=*/1, /*second_chain=*/3, /*both_ways=*/true );
 		peptiderive_->set_is_skip_zero_isc(false);
 
+		// Run the protocol on a cyclic peptide, expecting the PeptideDeriver to identify the obvious and to suggest a cyclized, minimized structure
+		pep_lengths.clear();
+		pep_lengths.push_back(14);
+		peptiderive_->set_pep_lengths(pep_lengths);
+		peptiderive_->derive_peptide( ut_out, *cyclic_test_pose_, 1 /*first_chain*/, 2 /*second_chain*/, false /*both_ways*/ );
+
 	}
 
 	void test_report_format_parsing() {
-		TS_ASSERT_EQUALS(protocols::analysis::PeptideDeriverFilter::parse_report_format_string("basic"), protocols::analysis::PRF_BASIC);
-		TS_ASSERT_EQUALS(protocols::analysis::PeptideDeriverFilter::parse_report_format_string("markdown"), protocols::analysis::PRF_MARKDOWN);
-		TS_ASSERT_THROWS(protocols::analysis::PeptideDeriverFilter::parse_report_format_string(""), utility::excn::EXCN_KeyError);
+		TS_ASSERT_EQUALS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string("basic"), protocols::peptide_deriver::PRF_BASIC);
+		TS_ASSERT_EQUALS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string("markdown"), protocols::peptide_deriver::PRF_MARKDOWN);
+		TS_ASSERT_THROWS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string(""), utility::excn::EXCN_KeyError);
 	}
 
-	void assert_peptiderive_filter_equal( protocols::analysis::PeptideDeriverFilter const & lhs,
-		protocols::analysis::PeptideDeriverFilter const & rhs ) {
+	void assert_peptiderive_filter_equal( protocols::peptide_deriver::PeptideDeriverFilter const & lhs,
+		protocols::peptide_deriver::PeptideDeriverFilter const & rhs ) {
 		TS_ASSERT_EQUALS(lhs.get_is_skip_zero_isc(), rhs.get_is_skip_zero_isc());
 		TS_ASSERT_EQUALS(lhs.get_pep_lengths().size(), rhs.get_pep_lengths().size());
 		for ( core::Size i = 1; i <= rhs.get_pep_lengths().size(); ++i ) {
@@ -237,12 +248,12 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 	}
 
 	void test_copy_ctor() {
-		protocols::analysis::PeptideDeriverFilter another_peptiderive( *peptiderive_ );
+		protocols::peptide_deriver::PeptideDeriverFilter another_peptiderive( *peptiderive_ );
 		assert_peptiderive_filter_equal( another_peptiderive, *peptiderive_ );
 	}
 
 	void test_assignment() {
-		protocols::analysis::PeptideDeriverFilter another_peptiderive;
+		protocols::peptide_deriver::PeptideDeriverFilter another_peptiderive;
 		another_peptiderive = *peptiderive_;
 		assert_peptiderive_filter_equal( another_peptiderive, *peptiderive_ );
 	}

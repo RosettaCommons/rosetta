@@ -18,7 +18,7 @@
 
 // Unit Headers
 #include <protocols/moves/FilterReporterMover.hh>
-#include <protocols/analysis/PeptideDeriverFilter.hh>
+#include <protocols/peptide_deriver/PeptideDeriverFilter.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -40,7 +40,7 @@ using basic::Warning;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR("apps.public.analysis.PeptideDeriver");
+static THREAD_LOCAL basic::Tracer TR("apps.public.peptide_deriver.PeptideDeriver");
 
 
 // PeptideDeriver app
@@ -94,9 +94,9 @@ main( int argc, char * argv[] ) {
 		// create a pose
 		// pose::Pose orig_pose;
 		// core::import_pose::pose_from_file(orig_pose, start_file(), core::import_pose::PDB_file);
-		protocols::analysis::PeptideDeriverFilterOP filter =
-			protocols::analysis::PeptideDeriverFilterOP(
-			new protocols::analysis::PeptideDeriverFilter );
+		protocols::peptide_deriver::PeptideDeriverFilterOP filter =
+			protocols::peptide_deriver::PeptideDeriverFilterOP(
+			new protocols::peptide_deriver::PeptideDeriverFilter );
 
 		protocols::moves::MoverOP null_mover = protocols::moves::MoverOP(
 			new protocols::moves::NullMover );

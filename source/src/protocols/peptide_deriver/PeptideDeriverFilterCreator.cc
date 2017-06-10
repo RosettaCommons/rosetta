@@ -17,11 +17,11 @@
 // PeptideDeriverFilterCreator
 
 
-#include <protocols/analysis/PeptideDeriverFilterCreator.hh>
-#include <protocols/analysis/PeptideDeriverFilter.hh>
+#include <protocols/peptide_deriver/PeptideDeriverFilterCreator.hh>
+#include <protocols/peptide_deriver/PeptideDeriverFilter.hh>
 
 namespace protocols {
-namespace analysis {
+namespace peptide_deriver {
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP PeptideDeriverFilterCreator::create_filter() const {
@@ -34,5 +34,5 @@ namespace analysis {
 // XRW TEMP  return "PeptideDeriver";
 // XRW TEMP }
 
-} //namespace analysis
+} //namespace peptide_deriver
 } //namespace protocols

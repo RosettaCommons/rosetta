@@ -21,7 +21,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace analysis {
+namespace peptide_deriver {
 
 class PeptideDeriverOutputter;
 class PeptideDeriverStreamOutputter;
@@ -30,13 +30,21 @@ class PeptideDeriverPoseOutputter;
 
 class PeptideDeriverFilter;
 
+class CyclizedPeptideInfo;
+class DerivedPeptideEntry;
+
 typedef utility::pointer::shared_ptr<PeptideDeriverFilter> PeptideDeriverFilterOP;
 typedef utility::pointer::shared_ptr<PeptideDeriverFilter const> PeptideDeriverFilterCOP;
 
 typedef utility::pointer::shared_ptr<PeptideDeriverOutputter> PeptideDeriverOutputterOP;
 typedef utility::pointer::shared_ptr<PeptideDeriverOutputter const> PeptideDeriverOutputterCOP;
 
-} // namespace analysis
+typedef utility::pointer::shared_ptr<CyclizedPeptideInfo> CyclizedPeptideInfoOP;
+typedef utility::pointer::shared_ptr<CyclizedPeptideInfo const> CyclizedPeptideInfoCOP;
+
+typedef utility::pointer::shared_ptr<DerivedPeptideEntry> DerivedPeptideEntryOP;
+typedef utility::pointer::shared_ptr<DerivedPeptideEntry const> DerivedPeptideEntryCOP;
+} // namespace peptide_deriver
 } // namespace protocols
 
 #endif

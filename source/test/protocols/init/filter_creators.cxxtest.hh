@@ -25,7 +25,7 @@
 #include <sstream>
 
 // Filter creator headers
-#include <protocols/analysis/PeptideDeriverFilterCreator.hh>
+
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterCreator.hh>
 #include <protocols/enzdes/EnzFilterCreators.hh>
 #include <protocols/enzdes/EnzFilterCreators.hh>
@@ -81,6 +81,7 @@
 #include <protocols/matdes/InterfacePackingFilterCreator.hh>
 #include <protocols/matdes/OligomericAverageDegreeFilterCreator.hh>
 #include <protocols/matdes/SymUnsatHbondFilterCreator.hh>
+#include <protocols/peptide_deriver/PeptideDeriverFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
@@ -168,7 +169,7 @@ class BackwardsProtocolsFilterCreatorTests : public CxxTest::TestSuite
 public:
 
 	void test_protocols_analysis_PeptideDeriverFilterCreator_name()
-	{ protocols::analysis::PeptideDeriverFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PeptideDeriver" ); }
+	{ protocols::peptide_deriver::PeptideDeriverFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PeptideDeriver" ); }
 
 	void test_protocols_cyclic_peptide_OversaturatedHbondAcceptorFilterCreator_name()
 	{ protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "OversaturatedHbondAcceptorFilter" ); }
@@ -580,7 +581,7 @@ public:
 
 
 	//void test_protocols_analysis_PeptideDeriverFilterCreator()
-	//{ protocols::analysis::PeptideDeriverFilterCreator cr; std::cout << "protocols::analysis::PeptideDeriverFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::peptide_deriver::PeptideDeriverFilterCreator cr; std::cout << "protocols::peptide_deriver::PeptideDeriverFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_cyclic_peptide_OversaturatedHbondAcceptorFilterCreator()
 	//{ protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterCreator cr; std::cout << "protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterCreator " << cr.keyname() << std::endl; }

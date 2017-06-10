@@ -25,7 +25,7 @@ sources = {
 	],
 	"analysis": [
 		"InterfaceDdGMoverTests",
-		"PeptideDeriverFilterTests",
+
 	],
 	"antibody": [
 		"AntibodyInfo",
@@ -453,6 +453,10 @@ sources = {
 	"pmut_scan" : [
 		"PointMutScanDriver",
 	],
+	
+	"peptide_deriver" : [
+		"PeptideDeriverFilterTests",
+	],
 
 	"protein_interface_design" : [
 		"protein_interface_design",
@@ -642,9 +646,6 @@ testinputfiles = [
 	"abinitio/score3_pcs_only.wts_patch",
 	"abinitio/abscript/one_frag3_per_pos",
 	"abinitio/abscript/ubq_frag.pdb",
-	"analysis/2hle_remixed.pdb",
-	"analysis/test_peptiderive.xml",
-	"analysis/PeptideDeriverFilter.u",
 	"antibody/2j88.pdb",
 	"antibody/1bln_AB_chothia.pdb",
 	"antibody/1bln_AB_aho.pdb",
@@ -895,6 +896,10 @@ testinputfiles = [
 	"optimize_weights/1UAD.wt_unbounded.pdb",
 	"optimize_weights/1UAD.E38A.mut_complex.pdb",
 	"optimize_weights/1UAD.E38A.mut_unbounded.pdb",
+	"peptide_deriver/PeptideDeriverFilter.u",
+	"peptide_deriver/2hle_remixed.pdb",
+	"peptide_deriver/1sfi_short.pdb",
+	"peptide_deriver/test_peptiderive.xml",
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
