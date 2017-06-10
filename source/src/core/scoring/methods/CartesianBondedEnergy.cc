@@ -1636,8 +1636,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 	//fpd protein only
 	if ( rsd_type.is_protein() ) {
 		/// backbone dependent bond lengths
-		bool is_nterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_lower_terminus()); //Modified by VKM to check for D-amino acids
-		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amino acids
+		bool is_nterm = ( rsd_type.is_lower_terminus());
+		bool is_cterm = ( rsd_type.is_upper_terminus());
 		for ( int i=1; i<=5; ++i ) {
 			if ( i==1 && is_nterm ) continue;
 			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
