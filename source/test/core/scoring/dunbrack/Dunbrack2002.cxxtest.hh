@@ -442,9 +442,8 @@ public:
 		sfxn( Lpose );
 		sfxn( Dpose );
 
-		//std::cout << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
-		// AMW TODO
-		//TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
+		std::cout << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 		
 		remove_variant_type_from_pose_residue( Lpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		remove_variant_type_from_pose_residue( Lpose, chemical::UPPER_TERMINUS_VARIANT, Lpose.size() );
@@ -474,9 +473,8 @@ public:
 		sfxn( Lpose );
 		sfxn( Dpose );
 
-		//std::cout << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
-		// AMW TODO
-		//TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
+		std::cout << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 		
 		remove_variant_type_from_pose_residue( Lpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		remove_variant_type_from_pose_residue( Lpose, chemical::UPPER_TERMINUS_VARIANT, Lpose.size() );

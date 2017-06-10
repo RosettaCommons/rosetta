@@ -738,7 +738,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_phi_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	if ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) return parent::NEUTRAL_PHI;
+	Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+	if ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) return d_multiplier * parent::NEUTRAL_PHI;
 	else return rsd.mainchain_torsion( 1 );
 }
 
@@ -750,7 +751,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_psi_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	if ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) return parent::NEUTRAL_PSI;
+	Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+	if ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) return d_multiplier * parent::NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( 2 );
 }
 
@@ -763,8 +765,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
-	if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bbn == 1 ) return parent::NEUTRAL_PHI;
-	else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bbn == N ) return parent::NEUTRAL_PSI;
+	Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+	if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bbn == 1 ) return d_multiplier * parent::NEUTRAL_PHI;
+	else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bbn == N ) return d_multiplier * parent::NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( bbn );
 }
 
@@ -776,11 +779,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bbs_from_rsd(
 ) const
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
+	Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
 
 	utility::fixedsizearray1< Real, N > tors;
 	for ( Size ii = 1; ii <= N; ++ii ) {
-		if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && ii == 1 ) tors[ ii ] = parent::NEUTRAL_PHI;
-		else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && ii == N ) tors[ ii ] = parent::NEUTRAL_PSI;
+		if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && ii == 1 ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PHI;
+		else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && ii == N ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PSI;
 		else tors[ ii ] = rsd.mainchain_torsion( ii );
 	}
 	return tors;
