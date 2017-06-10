@@ -325,19 +325,14 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_nrchi_score(
 	Size const packed_rotno( parent::rotwell_2_packed_rotno( scratch.rotwell() ));
 
 	Real nrchi = rsd.chi( T + 1 );
-	core::Real d_multiplier = 1.0; //A multiplier for D-amino acid angles.  -1.0 if D-amino acid, 1.0 otherwise.
-
 	if ( rsd.type().is_d_aa() ) {
 		nrchi *= -1.0; //Invert chi if this is a D-amino acid
-		d_multiplier = -1.0;
 	}
 	Size nrchi_bin, nrchi_bin_next;
 	Real nrchi_alpha;
 	get_bbdep_nrchi_bin( nrchi, nrchi_bin, nrchi_bin_next, nrchi_alpha );
 
 	utility::fixedsizearray1< Real, N > bbs = parent::get_bbs_from_rsd( rsd );
-	for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= d_multiplier;
-
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
@@ -580,13 +575,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	utility::vector1< Size > rotamer_has_been_interpolated( grandparent::n_packed_rots(), 0 );
 	utility::vector1< PackedDunbrackRotamer< T, N, Real > > interpolated_rotamers( grandparent::n_packed_rots() );
 
-	//Determine whether this is a D-amino acid:
-	core::Real d_multiplier = 1.0;
-	if ( existing_residue.type().is_d_aa() ) d_multiplier = -1.0;
-
 	/// Save backbone interpolation data for reuse
 	utility::fixedsizearray1< Real, N > bbs = parent::get_bbs_from_rsd( existing_residue );
-	for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= d_multiplier;
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );

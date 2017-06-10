@@ -504,14 +504,14 @@ RotamericSingleResidueDunbrackLibrary< T, N >::correct_termini_derivatives(
 	// mt: for the termini, these derivatives are 0, because these "pseudo"
 	// mt: torsions are kept fixed.
 	// amw: assume that we are more interested in 1 and N than PHI and PSI per se; this reduces in the 1,2 case
-	if ( rsd.is_lower_terminus() ) {
+	if ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) {
 		// amw: now 1 is actually better here than RotamerLibraryScratchSpace::AA_PHI_INDEX because the right element to alter is always element 1 but not necessarily has the meaning of "PHI"
 		scratch.dE_dbb()[ 1 ] = 0;
 		scratch.dE_dbb_dev()[ 1 ] = 0;
 		scratch.dE_dbb_rot()[ 1 ] = 0;
 		scratch.dE_dbb_semi()[ 1 ] = 0;
 	}
-	if ( rsd.is_upper_terminus() ) {
+	if ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) {
 		scratch.dE_dbb()[ N ] = 0;
 		scratch.dE_dbb_dev()[ N ] = 0;
 		scratch.dE_dbb_rot()[ N ] = 0;
@@ -739,8 +739,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_phi_from_rsd(
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
 	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
-	if ( rsd.is_lower_terminus() ) return d_multiplier * parent::NEUTRAL_PHI;
-	else return rsd.mainchain_torsion( 1 );
+	if ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) return d_multiplier * parent::NEUTRAL_PHI;
+	else return d_multiplier * rsd.mainchain_torsion( 1 );
 }
 
 /// @details Handle upper-term residues by returning a "neutral" psi value
@@ -752,8 +752,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_psi_from_rsd(
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
 	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
-	if ( rsd.is_upper_terminus() ) return d_multiplier * parent::NEUTRAL_PSI;
-	else return rsd.mainchain_torsion( 2 );
+	if ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) return d_multiplier * parent::NEUTRAL_PSI;
+	else return d_multiplier * rsd.mainchain_torsion( 2 );
 }
 
 /// @details Handle lower-term residues by returning a "neutral" phi value
@@ -766,9 +766,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_from_rsd(
 {
 	debug_assert( rsd.is_protein() || rsd.is_peptoid() );
 	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
-	if      ( rsd.is_lower_terminus() && bbn == 1 ) return d_multiplier * parent::NEUTRAL_PHI;
-	else if ( rsd.is_upper_terminus() && bbn == N ) return d_multiplier * parent::NEUTRAL_PSI;
-	else return rsd.mainchain_torsion( bbn );
+	if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bbn == 1 ) return d_multiplier * parent::NEUTRAL_PHI;
+	else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bbn == N ) return d_multiplier * parent::NEUTRAL_PSI;
+	else return d_multiplier * rsd.mainchain_torsion( bbn );
 }
 
 /// @details Handle upper-term residues by returning a "neutral" psi value
@@ -783,9 +783,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bbs_from_rsd(
 	utility::fixedsizearray1< Real, N > tors;
 	core::Real const d_multiplier( rsd.type().is_d_aa() ? -1.0 : 1.0 );
 	for ( Size ii = 1; ii <= N; ++ii ) {
-		if      ( rsd.is_lower_terminus() && ii == 1 ) tors[ ii ] = d_multiplier*parent::NEUTRAL_PHI;
-		else if ( rsd.is_upper_terminus() && ii == N ) tors[ ii ] = d_multiplier*parent::NEUTRAL_PSI;
-		else tors[ ii ] = rsd.mainchain_torsion( ii );
+		if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && ii == 1 ) tors[ ii ] = d_multiplier*parent::NEUTRAL_PHI;
+		else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && ii == N ) tors[ ii ] = d_multiplier*parent::NEUTRAL_PSI;
+		else tors[ ii ] = d_multiplier * rsd.mainchain_torsion( ii );
 	}
 	return tors;
 }
