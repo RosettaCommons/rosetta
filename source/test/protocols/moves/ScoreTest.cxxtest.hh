@@ -70,7 +70,7 @@ class ScoreTest : public CxxTest::TestSuite, public test::UMoverTest {
 
 public:
 	void setUp() {
-		core_init_with_additional_options( "-no_optH -score:weights score12 -out:output -restore_pre_talaris_2013_behavior -no_colors" );
+		core_init_with_additional_options( "-no_optH -score:weights score12 -out:output -restore_pre_talaris_2013_behavior" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 		//test::UMoverTest::setUp();
 	}
