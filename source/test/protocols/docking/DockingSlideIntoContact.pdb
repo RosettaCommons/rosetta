@@ -1,4 +1,12 @@
 set_abs_tolerance(0.003)
+SSBOND     CYS E    1    CYS E  122                                       3.59  
+SSBOND     CYS I    9    CYS I   38                                       0.00  
+SSBOND     CYS I   16    CYS I   35                                       0.00  
+SSBOND     CYS I   24    CYS I   56                                       0.00  
+SSBOND     CYS E   42    CYS E   58                                       0.00  
+SSBOND     CYS E  136    CYS E  201                                       0.00  
+SSBOND     CYS E  168    CYS E  182                                       0.00  
+SSBOND     CYS E  191    CYS E  220                                       0.00  
 ATOM      1  N   CYS E   1      11.377  21.513  11.770  1.00  0.00      1CGI N  
 ATOM      2  CA  CYS E   1      12.025  21.956  13.016  1.00  0.00      1CGI C  
 ATOM      3  C   CYS E   1      11.406  21.350  14.300  1.00  0.00      1CGI C  

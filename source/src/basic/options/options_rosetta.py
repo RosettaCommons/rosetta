@@ -735,7 +735,7 @@ Options = Option_Group( '',
 							'The default value is false.',
 					short='Write LINK records?',
 					legal=['true', 'false'],
-					default='false'),
+					default='true'),
 			Option('use_pdb_format_HETNAM_records', 'Boolean',
 					desc='Sets whether or not the HETNAM records in PDB files '
 							'are written in the standard PDB format with a '

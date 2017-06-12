@@ -33,6 +33,7 @@
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -99,7 +100,7 @@ public:
 	/// @details This is rewritten from the old core/io/pdb/file_data.cc:write_additional_pdb_data() function.
 	/// This was a catch-all for dumping out all sorts of protocol-specific stuff (e.g. membrane info).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void grab_additional_pose_data( core::pose::Pose const &pose );
+	void grab_additional_pose_data( core::pose::Pose const & pose );
 
 
 	/// @brief Append pdb information to StructFileRep for a single residue.
@@ -117,10 +118,10 @@ public:
 
 	/// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 	/// SSBondInformation data as appropriate.
-	void get_connectivity_annotation_info( core::pose::Pose const & pose );
+	void get_connectivity_annotation_info( core::pose::Pose const & pose, core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
 
-	LinkInformation get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn );
-	SSBondInformation get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn );
+	LinkInformation get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn, core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+	SSBondInformation get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn, core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
 
 	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
 	void get_parametric_info( core::io::RemarksOP remarks, core::pose::Pose const & pose );
@@ -263,7 +264,17 @@ private: //PRIVATE FUNCTIONS:
 		bool const use_PDB/*=true*/,
 		bool const renumber_chains/*=false*/,
 		core::Size const new_tercount,
-		ResidueInformation & res_info
+		ResidueInformation & res_info ) const;
+
+	void
+	get_residue_information(
+		core::pose::Pose const & pose,
+		core::uint const seqpos,
+		bool const use_PDB/*=true*/,
+		bool const renumber_chains/*=false*/,
+		core::Size const new_tercount,
+		ResidueInformation & res_info,
+		core::pose::PDBInfoOP & fresh_pdb_info
 	) const;
 
 	/// @brief fills HELIXInformation and SHEETInformation for SFR
