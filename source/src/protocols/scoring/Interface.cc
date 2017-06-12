@@ -240,6 +240,7 @@ Interface::ligand_calculate(
 		}
 		// on protein side, have to do distance check
 		conformation::Residue const & prot_rsd = pose.residue(i);
+		bool done = false;
 		for ( Size j = 1, j_end = pose.size(); j <= j_end; ++j ) {
 			if ( partner_(j) ) continue; // compare against only ligand residues
 			conformation::Residue const & lig_rsd = pose.residue(j);
@@ -251,11 +252,13 @@ Interface::ligand_calculate(
 
 					contact_list_[i].push_back(j);
 					contact_list_[j].push_back(i);
-					goto END_LIGRES_LOOP; // C++ lacks multi-level break  :(
+					done = true;
+					break;
 				}
 			}
+			if ( done ) break;
 		}
-		END_LIGRES_LOOP: ; // compiler needs ; as a no-op before end of loop
+		// Breaks to here
 	}
 }
 

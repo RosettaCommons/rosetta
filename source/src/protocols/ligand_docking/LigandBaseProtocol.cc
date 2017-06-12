@@ -574,17 +574,21 @@ LigandBaseProtocol::find_interface_rsds(
 		for ( core::Size j = 1, j_end = pose.size(); j <= j_end; ++j ) {
 			if ( is_upstream(j) ) continue; // compare against only ligand residues
 			core::conformation::Residue const & lig_rsd = pose.residue(j);
+			bool done = false;
 			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
 				double cutoff = prot_rsd.nbr_radius() + 6.0 + padding;
 				if ( dist2 <= cutoff * cutoff ) {
 					is_interface(i) = true;
 					num_in_interface += 1;
-					goto END_LIGRES_LOOP; // C++ lacks multi-level break  :(
+					done = true;
+					break;
 				}
+				if ( done ) break;
 			}
+			if ( done ) break;
 		}
-		END_LIGRES_LOOP: ; // compiler needs ; as a no-op before end of loop
+		// break gets to here
 	}
 	TR << "Interface is " << num_in_interface << " / " << pose.size()
 		<< " residues (" << 100*(double(num_in_interface) / double(pose.size())) << "%)" << std::endl;
@@ -632,6 +636,7 @@ LigandBaseProtocol::find_interface_backbone(
 		for ( core::Size j = 1, j_end = pose.size(); j <= j_end; ++j ) {
 			if ( is_upstream(j) ) continue; // compare against only ligand residues
 			core::conformation::Residue const & lig_rsd = pose.residue(j);
+			bool done = false;
 			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				double dist2 = lig_rsd.xyz(k).distance_squared( prot_cb );
 				if ( dist2 <= cutoff2 ) {
@@ -639,11 +644,12 @@ LigandBaseProtocol::find_interface_backbone(
 					//std::cout << "{bb iface " << prot_rsd.name3() << " " << i << "} "
 					// << prot_cb.x() << " " << prot_cb.y() << " " << prot_cb.z() << "\n";
 					num_in_interface += 1;
-					goto END_LIGRES_LOOP; // C++ lacks multi-level break  :(
+					done = true;
+					break;
 				}
 			}
+			if ( done ) break;
 		}
-		END_LIGRES_LOOP: ; // compiler needs ; as a no-op before end of loop
 	}
 	TR << "Backbone interface is " << num_in_interface << " / " << pose.size()
 		<< " residues (" << 100*(double(num_in_interface) / double(pose.size())) << "%)" << std::endl;

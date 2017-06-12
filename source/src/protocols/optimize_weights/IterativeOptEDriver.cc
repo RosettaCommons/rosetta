@@ -1588,6 +1588,7 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 			// on protein side, have to do distance check
 			core::conformation::Residue const & prot_rsd = context_pose.residue(i);
 			if ( ! prot_rsd.is_protein() ) continue;
+			bool done = false;
 			for ( core::Size j = 1, j_end = context_pose.size(); j <= j_end; ++j ) {
 				if ( is_upstream(j) ) continue; // compare against only ligand residues
 				core::conformation::Residue const & lig_rsd = context_pose.residue(j);
@@ -1596,11 +1597,13 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 					double cutoff = prot_rsd.nbr_radius() + 6.0;
 					if ( dist2 <= cutoff * cutoff ) {
 						include_rsd[i] = true;
-						goto END_LIGRES_LOOP; // C++ lacks multi-level break  :(
+						done = true;
+						break;
 					}
 				}
+				if ( done ) break;
 			}
-			END_LIGRES_LOOP: ; // compiler needs ; as a no-op before end of loop
+			// Break comes to here.
 		}
 
 		get_nat_rot_opte_data(

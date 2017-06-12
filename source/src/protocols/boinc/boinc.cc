@@ -766,11 +766,14 @@ int Boinc::create_semaphore() {
 	OSVERSIONINFO osvi;
 	char global_sema_name[256];
 
+	bool error_requires_cleanup = false;
+
 	osvi.dwOSVersionInfoSize = sizeof(osvi);
 	GetVersionEx(&osvi);
 	if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
 		sem_des_ = CreateSemaphore(NULL,1,1, name);
 	} else {
+
 		// Create a well-known SID for the Everyone group.
 		if(!AllocateAndInitializeSid(&SIDAuthWorld, 1,
 			SECURITY_WORLD_RID,
@@ -778,93 +781,107 @@ int Boinc::create_semaphore() {
 			&pEveryoneSID)
 		) {
 			std::cerr << "CreateSemaphore failure: AllocateAndInitializeSid Error " << GetLastError() << std::endl;
-			goto Cleanup;
+			//goto Cleanup;
+			error_requires_cleanup = true;
 		}
 
-		// Initialize an EXPLICIT_ACCESS structure for an ACE.
-		// The ACE will allow Everyone all access to the shared memory object.
-		ZeroMemory(&ea, sizeof(EXPLICIT_ACCESS));
-		ea.grfAccessPermissions = SEMAPHORE_ALL_ACCESS;
-		ea.grfAccessMode = SET_ACCESS;
-		ea.grfInheritance= NO_INHERITANCE;
-		ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
-		ea.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
-		ea.Trustee.ptstrName  = (LPTSTR) pEveryoneSID;
+		if ( !error_requires_cleanup ) {
+			// Initialize an EXPLICIT_ACCESS structure for an ACE.
+			// The ACE will allow Everyone all access to the shared memory object.
+			ZeroMemory(&ea, sizeof(EXPLICIT_ACCESS));
+			ea.grfAccessPermissions = SEMAPHORE_ALL_ACCESS;
+			ea.grfAccessMode = SET_ACCESS;
+			ea.grfInheritance= NO_INHERITANCE;
+			ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+			ea.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
+			ea.Trustee.ptstrName  = (LPTSTR) pEveryoneSID;
 
-		// Create a new ACL that contains the new ACEs.
-		dwRes = SetEntriesInAcl(1, &ea, NULL, &pACL);
-		if (ERROR_SUCCESS != dwRes) {
-				std::cerr <<  "CreateSemaphore failure: SetEntriesInAcl " << GetLastError() << std::endl;
-				goto Cleanup;
-		}
-
-		// Initialize a security descriptor.
-		pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
-		if (NULL == pSD) {
-			std::cerr << "CreateSemaphore failure: LocalAlloc Error " << GetLastError() << std::endl;
-			goto Cleanup;
-		}
-
-		if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {
-			std::cerr << "CreateSemaphore failure: InitializeSecurityDescriptor  Error " << GetLastError() << std::endl;
-			goto Cleanup;
-		}
-
-		// Add the ACL to the security descriptor.
-		if (!SetSecurityDescriptorDacl(pSD,
-				TRUE,     // bDaclPresent flag
-				pACL,
-		    FALSE) // not a default DACL
-		) {
-			std::cerr << "CreateSemaphore failure: SetSecurityDescriptorDacl Error " << GetLastError() <<  std::endl;
-			goto Cleanup;
-		}
-
-		// Initialize a security attributes structure.
-		sa.nLength = sizeof (SECURITY_ATTRIBUTES);
-		sa.lpSecurityDescriptor = pSD;
-		sa.bInheritHandle = FALSE;
-
-		// Use the security attributes to set the security descriptor
-		// when you create a shared file mapping.
-
-		// Try using 'Global' so that it can cross terminal server sessions
-		// The 'Global' prefix must be included in the shared memory
-		// name if the shared memory segment is going to cross
-		// terminal server session boundaries.
-		//
-		bool try_global = true;
-		if (try_global) {
-			sprintf(global_sema_name, "Global\\%s", name);
-			sem_des_ = CreateSemaphore(&sa, 1, 1, global_sema_name);
-			dwError = GetLastError();
-			if (!sem_des_ && (ERROR_ACCESS_DENIED == dwError)) {
-				// Couldn't use the 'Global' tag, so try the original name.
-				try_global = false;
+			// Create a new ACL that contains the new ACEs.
+			dwRes = SetEntriesInAcl(1, &ea, NULL, &pACL);
+			if (ERROR_SUCCESS != dwRes) {
+					std::cerr <<  "CreateSemaphore failure: SetEntriesInAcl " << GetLastError() << std::endl;
+				//goto Cleanup;
+				error_requires_cleanup = true;
 			}
 		}
-		if (!try_global) {
-			sem_des_ = CreateSemaphore(&sa, 1, 1, name);
-			dwError = GetLastError();
+
+		if ( !error_requires_cleanup ) {
+			// Initialize a security descriptor.
+			pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
+			if (NULL == pSD) {
+				std::cerr << "CreateSemaphore failure: LocalAlloc Error " << GetLastError() << std::endl;
+				error_requires_cleanup = true;
+			}
+		}
+
+		if ( !error_requires_cleanup ) {
+			if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {
+				std::cerr << "CreateSemaphore failure: InitializeSecurityDescriptor  Error " << GetLastError() << std::endl;
+				error_requires_cleanup = true;
+			}
+		}
+
+		if ( !error_requires_cleanup ) {
+			// Add the ACL to the security descriptor.
+			if (!SetSecurityDescriptorDacl(pSD,
+					TRUE,     // bDaclPresent flag
+					pACL,
+			    FALSE) // not a default DACL
+			) {
+				std::cerr << "CreateSemaphore failure: SetSecurityDescriptorDacl Error " << GetLastError() <<  std::endl;
+				error_requires_cleanup = true;
+			}
+		}
+
+		if ( !error_requires_cleanup ) {
+			// Initialize a security attributes structure.
+			sa.nLength = sizeof (SECURITY_ATTRIBUTES);
+			sa.lpSecurityDescriptor = pSD;
+			sa.bInheritHandle = FALSE;
+
+			// Use the security attributes to set the security descriptor
+			// when you create a shared file mapping.
+
+			// Try using 'Global' so that it can cross terminal server sessions
+			// The 'Global' prefix must be included in the shared memory
+			// name if the shared memory segment is going to cross
+			// terminal server session boundaries.
+			//
+			bool try_global = true;
+			if (try_global) {
+				sprintf(global_sema_name, "Global\\%s", name);
+				sem_des_ = CreateSemaphore(&sa, 1, 1, global_sema_name);
+				dwError = GetLastError();
+				if (!sem_des_ && (ERROR_ACCESS_DENIED == dwError)) {
+					// Couldn't use the 'Global' tag, so try the original name.
+					try_global = false;
+				}
+			}
+			if (!try_global) {
+				sem_des_ = CreateSemaphore(&sa, 1, 1, name);
+				dwError = GetLastError();
+			}
 		}
 	}
 
-	if (sem_des_) {
-		if (GetLastError() == ERROR_ALREADY_EXISTS) {
-			CloseHandle(sem_des_);
-			sem_des_ = NULL;
+	if ( !error_requires_cleanup ) {
+		if (sem_des_) {
+			if (GetLastError() == ERROR_ALREADY_EXISTS) {
+				CloseHandle(sem_des_);
+				sem_des_ = NULL;
+			}
+		}
+
+		if (!sem_des_) {
+			std::cerr << "CreateSemaphore failure! Cannot create semaphore!" << std::endl;
+			return 0;
+		} else {
+			std::cout << "Created semaphore" << std::endl;
+			return 1;
 		}
 	}
 
-	if (!sem_des_) {
-		std::cerr << "CreateSemaphore failure! Cannot create semaphore!" << std::endl;
-		return 0;
-	} else {
-		std::cout << "Created semaphore" << std::endl;
-		return 1;
-	}
-
-Cleanup:
+//Cleanup:
 
 	if (osvi.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
 		if (pEveryoneSID)

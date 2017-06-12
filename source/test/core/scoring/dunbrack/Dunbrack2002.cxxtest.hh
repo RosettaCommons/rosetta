@@ -371,15 +371,15 @@ public:
 		Pose Lpose, Dpose;
 		make_pose_from_sequence(Lpose, "A[ALA:NtermProteinFull]WA[ALA:CtermProteinFull]", core::chemical::FA_STANDARD, true);
 		make_pose_from_sequence(Dpose, "A[DALA:NtermProteinFull]W[DTRP]A[DALA:CtermProteinFull]", core::chemical::FA_STANDARD, true);
-		
+
 		ScoreFunction sfxn;
 		sfxn.set_weight( fa_dun, 0.75 );
 
 		for ( Size ii = 1; ii <= Lpose.size(); ++ii ) {
-				Lpose.set_phi( ii, -150 );
-				Dpose.set_phi( ii,  150 );
-				Lpose.set_psi( ii,  150 );
-				Dpose.set_psi( ii, -150 );
+			Lpose.set_phi( ii, -150 );
+			Dpose.set_phi( ii,  150 );
+			Lpose.set_psi( ii,  150 );
+			Dpose.set_psi( ii, -150 );
 		}
 		Lpose.set_chi( 1, 2,   90 );
 		Lpose.set_chi( 2, 2,  150 );
@@ -394,12 +394,12 @@ public:
 
 		make_pose_from_sequence(Lpose, "A[ALA:NtermProteinFull]LA[ALA:CtermProteinFull]", core::chemical::FA_STANDARD, true);
 		make_pose_from_sequence(Dpose, "A[DALA:NtermProteinFull]L[DLEU]A[DALA:CtermProteinFull]", core::chemical::FA_STANDARD, true);
-		
+
 		for ( Size ii = 1; ii <= Lpose.size(); ++ii ) {
-				Lpose.set_phi( ii, -150 );
-				Dpose.set_phi( ii,  150 );
-				Lpose.set_psi( ii,  150 );
-				Dpose.set_psi( ii, -150 );
+			Lpose.set_phi( ii, -150 );
+			Dpose.set_phi( ii,  150 );
+			Lpose.set_psi( ii,  150 );
+			Dpose.set_psi( ii, -150 );
 		}
 		Lpose.set_chi( 1, 2,   90 );
 		Lpose.set_chi( 2, 2,  150 );
@@ -424,15 +424,15 @@ public:
 		Pose Lpose, Dpose;
 		make_pose_from_sequence(Lpose, "A[ALA:NtermProteinFull]W[TRP:CtermProteinFull]", core::chemical::FA_STANDARD, true);
 		make_pose_from_sequence(Dpose, "A[DALA:NtermProteinFull]W[DTRP:CtermProteinFull]", core::chemical::FA_STANDARD, true);
-		
+
 		ScoreFunction sfxn;
 		sfxn.set_weight( fa_dun, 0.75 );
 
 		for ( Size ii = 1; ii <= Lpose.size(); ++ii ) {
-				Lpose.set_phi( ii, -150 );
-				Dpose.set_phi( ii,  150 );
-				Lpose.set_psi( ii,  150 );
-				Dpose.set_psi( ii, -150 );
+			Lpose.set_phi( ii, -150 );
+			Dpose.set_phi( ii,  150 );
+			Lpose.set_psi( ii,  150 );
+			Dpose.set_psi( ii, -150 );
 		}
 		Lpose.set_chi( 1, 2,   90 );
 		Lpose.set_chi( 2, 2,  150 );
@@ -444,26 +444,26 @@ public:
 
 		std::cout << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
-		
+
 		remove_variant_type_from_pose_residue( Lpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		remove_variant_type_from_pose_residue( Lpose, chemical::UPPER_TERMINUS_VARIANT, Lpose.size() );
 		remove_variant_type_from_pose_residue( Dpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		remove_variant_type_from_pose_residue( Dpose, chemical::UPPER_TERMINUS_VARIANT, Dpose.size() );
 		sfxn( Lpose );
 		sfxn( Dpose );
-		
+
 		//std::cout << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 
 
 		make_pose_from_sequence(Lpose, "A[ALA:NtermProteinFull]L[LEU:CtermProteinFull]", core::chemical::FA_STANDARD, true);
 		make_pose_from_sequence(Dpose, "A[DALA:NtermProteinFull]L[DLEU:CtermProteinFull]", core::chemical::FA_STANDARD, true);
-		
+
 		for ( Size ii = 1; ii <= Lpose.size(); ++ii ) {
-				Lpose.set_phi( ii, -150 );
-				Dpose.set_phi( ii,  150 );
-				Lpose.set_psi( ii,  150 );
-				Dpose.set_psi( ii, -150 );
+			Lpose.set_phi( ii, -150 );
+			Dpose.set_phi( ii,  150 );
+			Lpose.set_psi( ii,  150 );
+			Dpose.set_psi( ii, -150 );
 		}
 		Lpose.set_chi( 1, 2,   90 );
 		Lpose.set_chi( 2, 2,  150 );
@@ -475,14 +475,14 @@ public:
 
 		std::cout << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
-		
+
 		remove_variant_type_from_pose_residue( Lpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		remove_variant_type_from_pose_residue( Lpose, chemical::UPPER_TERMINUS_VARIANT, Lpose.size() );
 		remove_variant_type_from_pose_residue( Dpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		remove_variant_type_from_pose_residue( Dpose, chemical::UPPER_TERMINUS_VARIANT, Dpose.size() );
 		sfxn( Lpose );
 		sfxn( Dpose );
-		
+
 		//std::cout << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 	}
