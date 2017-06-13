@@ -552,7 +552,7 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 		if ( ! residue_types_[ ii ]->is_polymer() ) { continue; }
 		if ( ! residue_types_[ ii ]->is_lower_terminus() &&
 				( ii == 1 || ii == ii_prev || ( residue_types_[ ii_prev ] && (
-				!residue_types_[ ii_prev ]->is_polymer() ||
+				( !residue_types_[ ii_prev ]->is_polymer() && !residue_types_[ ii]->residue_connection_is_polymeric( residue_types_[ ii]->lower_connect_id() ) ) ||
 				(residue_types_[ ii_prev ]->is_upper_terminus() &&
 				!residue_types_[ ii ]->is_branch_lower_terminus() ) ) ) ) ) {
 			TR << "Adding undetected lower terminus type to residue " << ii << std::endl;
