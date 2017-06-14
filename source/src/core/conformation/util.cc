@@ -535,13 +535,13 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 
 	if ( preserve_only_sidechain_dihedrals ) { //If we're keeping only the sidechain dihedral information
 		Size const natoms(target_rsd.natoms());
-		Size const nmainchain( target_rsd.n_mainchain_atoms() );
 		bool any_missing(false);
 		utility::vector1< bool > missing( natoms, false );
+		Size const to_preserve = source_rsd.type().first_sidechain_atom() >= source_rsd.type().natoms() ? source_rsd.type().first_sidechain_atom() : source_rsd.n_mainchain_atoms();
 
 		for ( Size ia=1; ia<=natoms; ++ia ) { //Loop through all atoms
 			std::string const & atom_name( target_rsd.atom_name(ia) );
-			if ( ia <= nmainchain && source_rsd.has( atom_name ) ) { //If this is a mainchain atom and it's present in both target and source
+			if ( ia <= to_preserve && source_rsd.has( atom_name ) ) { //If this is a mainchain atom and it's present in both target and source
 				target_rsd.atom(ia).xyz( source_rsd.atom(atom_name).xyz() );
 			} else {
 				if ( TR.Debug.visible() ) TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' << atom_name << std::endl;
