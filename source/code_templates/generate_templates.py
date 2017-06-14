@@ -12,6 +12,8 @@
 
 #See Readme for use.
 
+from __future__ import print_function
+
 import os
 work_dir = os.getcwd()
 
@@ -22,6 +24,8 @@ import glob
 import sys
 import re
 import subprocess
+
+
 
 template_types = ["src", "application", "unit_test"]
 residue_selector_namespace = ["core", "select", "residue_selector"]
@@ -84,7 +88,7 @@ class GenerateRosettaTemplates(object):
             template_dir = self.template_type
             files = glob.glob(os.path.join(template_dir, "*"))
 
-        print "Type: "+self.template_type
+        print("Type: ", self.template_type)
 
         #Add forward class template for most types
         if self.fwd_class_template not in files \
@@ -119,7 +123,7 @@ class GenerateRosettaTemplates(object):
 
             new_file_name = os.path.join(outdir, out_basename)
 
-            print "Creating "+new_file_name
+            print("Creating ",new_file_name)
 
             INFILE = open(os.path.abspath( template ), 'r')
             out_lines = []
@@ -161,40 +165,40 @@ class GenerateRosettaTemplates(object):
         if hasattr(self.options, "type"):
 
             if self.options.type == "util":
-                print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/util"+"*"
+                print("\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/util"+"*")
             else:
-                print "\nRemember to add your newly created files to the git repository:",
-                print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
-                      self.get_option("class_name", fail_on_none=False)+"*"
+                print("\nRemember to add your newly created files to the git repository:")
+                print("\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
+                      self.get_option("class_name", fail_on_none=False)+"*")
 
 
             if self.options.type == "residue_selector":
 
                 if self.options.namespace[0] == "core":
-                    print "\nRegister in (core.5): \n"+\
-                            "   "+self.get_base_outdir()+"/"+"core/init/init.cc"
+                    print("\nRegister in (core.5): \n"+\
+                            "   "+self.get_base_outdir()+"/"+"core/init/init.cc")
                 else:
-                    print "\nRegister in (protocols.7):\n" \
+                    print("\nRegister in (protocols.7):\n" \
                             "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorCreators.ihh\n" \
-                            "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorRegistrators.ihh\n"
+                            "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorRegistrators.ihh\n")
 
-                print "\n See Wiki for How to serialize your Selector: \n" \
-                    "   "+"https://wiki.rosettacommons.org/index.php/SerializationFAQ"
+                print("\n See Wiki for How to serialize your Selector: \n" \
+                    "   "+"https://wiki.rosettacommons.org/index.php/SerializationFAQ")
 
             elif self.options.type == "singleton":
-                print "\n Singletons do not need to be registered.  " \
+                print("\n Singletons do not need to be registered.  " \
                       "To get the current instance from anywhere, use:\n" \
-                      "  "+self.replacement["--namespace_2colon--"]()+"::"+self.replacement["--class--"]()+"::get_instance()->"
+                      "  "+self.replacement["--namespace_2colon--"]()+"::"+self.replacement["--class--"]()+"::get_instance()->")
 
             elif self.options.type == "mover":
-                print "\nMover Creator should be registered in (protocols.7) \n" \
+                print("\nMover Creator should be registered in (protocols.7) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverRegistrators.ihh and \n" \
-                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverCreators.ihh\n"
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverCreators.ihh\n")
 
             elif self.options.type == "features_reporter":
-                print "\nFeature Reporter Creator should be registered in (protocols.7) \n" \
+                print("\nFeature Reporter Creator should be registered in (protocols.7) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterRegistrators.ihh and \n" \
-                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterCreators.ihh\n"
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterCreators.ihh\n")
 
     ######## Replacement Functions#############
     def get_option(self, option_name, fail_on_none = True):
@@ -282,7 +286,7 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
     """
     def __init__(self, template_type_name = template_types[0]):
         self.types = sorted( [os.path.basename(d) for d in glob.glob(os.path.join(template_type_name,"*")) if os.path.isdir(d)] )
-        print "Found template types: "+repr(self.types)
+        print("Found template types: "+repr(self.types))
 
 
         parser = ArgumentParser(description="This class is used to generate Rosetta templates for use in any IDE. "

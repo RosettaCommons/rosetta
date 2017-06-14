@@ -11,6 +11,7 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #See Readme for use.
+from __future__ import print_function
 
 import os
 work_dir = os.getcwd()
@@ -83,8 +84,8 @@ class GenerateUnitTestTemplate(GenerateRosettaTemplates):
             return "\n".join(blocks)
 
     def print_dev_help(self):
-        print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
-                      self.get_option("class_name", fail_on_none=False)+".cxxtest.hh\n"
+        print("\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
+                      self.get_option("class_name", fail_on_none=False)+".cxxtest.hh\n")
 
 
 if __name__ == "__main__":

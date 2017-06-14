@@ -27,6 +27,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
+#include <basic/options/option_macros.hh>
 
 static THREAD_LOCAL basic::Tracer TR("--app_name--");
 

@@ -11,6 +11,7 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #See Readme for use.
+from __future__ import print_function
 
 import os
 work_dir = os.getcwd()
@@ -159,7 +160,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         :rtype: str
         """
         opt_lines = ["\n"]
-        line_fmt = "OPT_{opt_n}KEY( {opt_type}, {opts} );"
+        line_fmt = "OPT_{opt_n}KEY( {opt_type}, {opts} )"
         all_opts = vars(self.options)
         for opt_type in self.option_type_names:
             opt_name = self.option_type_names[opt_type]
@@ -184,7 +185,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         :rtype str:
         """
 
-        opt_lines = ["\n"]
+        opt_lines = ["\n//this won't compile until you fill in brief and default yourself"]
         line_fmt = "\t\tNEW_OPT( {opt_name}, brief, default );"
         all_opts = vars(self.options)
         for opt_type in self.option_type_names:
@@ -205,7 +206,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
 
         if self.options.pilot:
             if not self.options.user_name:
-                sys.exit("Please give the option -user_name for pilot apps")
+                sys.exit("Please give the option --user_name for pilot apps")
             else:
                 l = ["apps", "pilot", self.options.user_name]
                 if self.options.app_dir:
