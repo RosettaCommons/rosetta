@@ -1699,11 +1699,11 @@ if ($helix_mode == 1) {
 			print "$xyzline\n";
 
 
-			my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
+			my $fakePDBline1 = sprintf "ATOM   %4d  C   ORI Z %3d    %8.3f%8.3f%8.3f  1.00  0.00\n", 1,$subunit,
 								 $origin->[0], $origin->[1], $origin->[2];
-			my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
+			my $fakePDBline2 = sprintf "ATOM   %4d  O   X   Z %3d    %8.3f%8.3f%8.3f  1.00  0.00\n", 2,$subunit,
 								 $origin->[0]+$myX->[0], $origin->[1]+$myX->[1], $origin->[2]+$myX->[2];
-			my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,$subunit,
+			my $fakePDBline3 = sprintf "ATOM   %4d  C   Y   Z %3d    %8.3f%8.3f%8.3f  1.00  0.00\n", 3,$subunit,
 								 $origin->[0]+$myY->[0], $origin->[1]+$myY->[1], $origin->[2]+$myY->[2];
 			push @fakepdblines, $fakePDBline1;
 			push @fakepdblines, $fakePDBline2;
@@ -1751,11 +1751,11 @@ if ($helix_mode == 1) {
 				$xyzline = $xyzline." ".$string;
 				print "$xyzline\n";
 
-				my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
+				my $fakePDBline1 = sprintf "ATOM   %4d  C   ORI Y %3d    %8.3f%8.3f%8.3f  1.00  0.00\n", 1,$subunit,
 									 $origin->[0], $origin->[1], $origin->[2];
-				my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
+				my $fakePDBline2 = sprintf "ATOM   %4d  O   X   Y %3d    %8.3f%8.3f%8.3f  1.00  0.00\n", 2,$subunit,
 									 $origin->[0]+$myX->[0], $origin->[1]+$myX->[1], $origin->[2]+$myX->[2];
-				my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,$subunit,
+				my $fakePDBline3 = sprintf "ATOM   %4d  C   Y   Y %3d    %8.3f%8.3f%8.3f  1.00  0.00\n", 3,$subunit,
 									 $origin->[0]+$myY->[0], $origin->[1]+$myY->[1], $origin->[2]+$myY->[2];
 				push @fakepdblines, $fakePDBline1;
 				push @fakepdblines, $fakePDBline2;
