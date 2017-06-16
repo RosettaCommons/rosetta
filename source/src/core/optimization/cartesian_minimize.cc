@@ -85,15 +85,12 @@ cartesian_dfunc(
 	scorefxn.setup_for_derivatives( pose );
 
 	//fpd  scale derivatives for symmetry
-	core::Real scale = 1;
+	core::Real scale = 1.0;
 	if ( pose::symmetry::is_symmetric( pose ) ) {
-		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
-		if ( old_sym_min ) {
-			conformation::symmetry::SymmetricConformation & symm_conf (
-				dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
-			conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-			scale = symm_info->score_multiply_factor();
-		}
+		conformation::symmetry::SymmetricConformation & symm_conf (
+			dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		scale = symm_info->score_multiply_factor();
 	}
 
 	// get derivative of all atom pair potentials
@@ -144,7 +141,10 @@ cartesian_collect_atompairE_deriv(
 		ResSingleMinimizationData const & r1_min_data( mingraph->get_minimization_node( rsd1ind )->res_min_data() );
 		ResSingleMinimizationData const & r2_min_data( mingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-		eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+		//eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+		//	r1_min_data, r2_min_data, pose, scorefxn.weights(),
+		//	min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
+		eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 			r1_min_data, r2_min_data, pose, scorefxn.weights(),
 			min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 	}
@@ -166,7 +166,10 @@ cartesian_collect_atompairE_deriv(
 			ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
 			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-			eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+			//eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+			//	r1_min_data, r2_min_data, pose, scorefxn.weights(),
+			//	min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
+			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 				r1_min_data, r2_min_data, pose, scorefxn.weights(),
 				min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 		}
