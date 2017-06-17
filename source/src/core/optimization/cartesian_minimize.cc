@@ -142,8 +142,8 @@ cartesian_collect_atompairE_deriv(
 		ResSingleMinimizationData const & r2_min_data( mingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
 		//eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-		//	r1_min_data, r2_min_data, pose, scorefxn.weights(),
-		//	min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
+		// r1_min_data, r2_min_data, pose, scorefxn.weights(),
+		// min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 		eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 			r1_min_data, r2_min_data, pose, scorefxn.weights(),
 			min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
@@ -167,8 +167,8 @@ cartesian_collect_atompairE_deriv(
 			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
 			//eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-			//	r1_min_data, r2_min_data, pose, scorefxn.weights(),
-			//	min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
+			// r1_min_data, r2_min_data, pose, scorefxn.weights(),
+			// min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 				r1_min_data, r2_min_data, pose, scorefxn.weights(),
 				min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
