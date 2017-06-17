@@ -105,6 +105,52 @@ public:
 
 	}
 
+	// Different sets of code run when we include focus vs not
+	void test_NeighborhoodResidueSelector_dont_include_focus_close() {
+		std::string tag_string =
+			"<Neighborhood name=neighbor_rs resnums=2,3,5 distance=5.2 include_focus_in_subset=false/>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagOP tag( new utility::tag::Tag() );
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
+		neighbor_rs->parse_my_tag( tag, dm );
+
+		ResidueSubset subset = neighbor_rs->apply( trpcage );
+
+		utility::vector1< core::Size > testFocus(trpcage.size(), false);
+		testFocus[2] = true;
+		testFocus[3] = true;
+		testFocus[5] = true;
+
+		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2, false ) );
+
+	}
+
+	// Additionally, different code runs when distance > 10
+	void test_NeighborhoodResidueSelector_dont_include_focus_far() {
+		std::string tag_string =
+			"<Neighborhood name=neighbor_rs resnums=2,3,5 distance=10.1 include_focus_in_subset=false/>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagOP tag( new utility::tag::Tag() );
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
+		neighbor_rs->parse_my_tag( tag, dm );
+
+		ResidueSubset subset = neighbor_rs->apply( trpcage );
+
+		utility::vector1< core::Size > testFocus(trpcage.size(), false);
+		testFocus[2] = true;
+		testFocus[3] = true;
+		testFocus[5] = true;
+
+		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 10.1, false ) );
+
+	}
+
 	// make sure we fail if neither selector nor focus string are provided
 	void test_NeighbohoodResidueSelector_fail_no_focus() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs distance=5.2/>";
@@ -163,7 +209,8 @@ public:
 	check_calculation( core::pose::Pose const & pose,
 		ResidueSubset const & subset,
 		ResidueSubset const & focus,
-		core::Real distance)
+		core::Real distance,
+		bool include_focus_in_subset = true )
 	{
 
 		if ( focus.size() != subset.size() ) {
@@ -201,6 +248,19 @@ public:
 
 
 		}
+
+		// bcov - Putting this after rather than inside the above loop
+		//  to be absolutely sure we get it correct
+
+		if ( ! include_focus_in_subset ) {
+			for ( core::Size i = 1; i <= ctrl_subset.size(); i++ ) {
+				if ( focus[i] ) {
+					ctrl_subset[i] = false;
+				}
+			}
+		}
+
+
 		TR<< "focus " << utility::to_string(focus) << std::endl;
 		TR<< "subset" << utility::to_string(subset) << std::endl;
 		TR<< "ctrl  " << utility::to_string(ctrl_subset) << std::endl;

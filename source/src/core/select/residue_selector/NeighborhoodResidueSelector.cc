@@ -268,6 +268,7 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 		// go through each residue of the pose and check if it's near anything in the focus set
 		for ( Size ii = 1; ii <= pose.size() ; ++ii ) {
 			if ( subset[ ii ] ) continue;
+			if ( ! include_focus_in_subset_ && focus_subset[ ii ] ) continue;
 			conformation::Residue const & r1( pose.residue( ii ) );
 
 			core::Size i_atom_names = 0;

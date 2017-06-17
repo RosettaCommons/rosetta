@@ -68,7 +68,7 @@ get_neighbor_residues(
 	utility::vector1< bool > selection_and_neighbors = residue_positions;
 
 	if ( neighbor_dis <= 10.0 ) {
-		fill_neighbor_residues(pose, selection_and_neighbors);
+		fill_neighbor_residues(pose, selection_and_neighbors, neighbor_dis);
 
 		//Make sure to turn off subset residues!
 		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
