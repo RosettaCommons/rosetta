@@ -31,7 +31,7 @@ def setup_package():
             name = "pyrosetta",
             description="PyRosetta package",
             version = "4.0",
-            packages = find_packages(include=["pyrosetta*", "rosetta*"]),
+            packages = find_packages(),
             package_data = {
                 "pyrosetta" :
                     ["*.so"] +
