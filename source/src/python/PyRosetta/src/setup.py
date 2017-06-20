@@ -1,10 +1,5 @@
 import os, sys
-
-# Assert or bootstrap minimum setuptools version required for find_packages
-import ez_setup
-ez_setup.use_setuptools("3.3")
-
-from setuptools import setup, find_packages, Distribution
+from setuptools import setup, find_packages, Distribution, Extension
 
 def get_file_list(directory):
     """Get list of all files in directory, relative to directory name."""
