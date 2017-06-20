@@ -10,14 +10,16 @@
 /// @file   src/protocols/qsar/RenderGridsToKinemage.cc
 /// @author Sam DeLuca
 
-
-#include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/RenderGridsToKinemage.hh>
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>
+
+#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -32,6 +34,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -68,22 +71,21 @@ ColorGradient::ColorGradient(numeric::xyzVector<core::Real> const & value,
 }
 
 RenderGridsToKinemage::RenderGridsToKinemage() :
-	protocols::moves::Mover("RenderGridsToKinemage"),
-	color_mode_(0),
-	gradient_bins_(10),
-	stride_(1)
-	//low_cut_(0.0),
-	//high_cut_(0.0)
-{
+	protocols::moves::Mover("RenderGridsToKinemage")
+{}
 
-}
+RenderGridsToKinemage::RenderGridsToKinemage(
+	scoring_grid::GridSetCOP grid_set_prototype,
+	std::string const & grid_name,
+	std::string const & filename):
+	grid_set_prototype_( grid_set_prototype ),
+	filename_( filename ),
+	grid_name_( grid_name )
+{}
 
 RenderGridsToKinemage::RenderGridsToKinemage( RenderGridsToKinemage const & ) = default;
 
-RenderGridsToKinemage::~RenderGridsToKinemage()
-{
-	//
-}
+RenderGridsToKinemage::~RenderGridsToKinemage() = default;
 
 protocols::moves::MoverOP RenderGridsToKinemage::clone() const
 {
@@ -96,10 +98,23 @@ protocols::moves::MoverOP RenderGridsToKinemage::clone() const
 // XRW TEMP }
 
 
-void RenderGridsToKinemage::apply(core::pose::Pose & )
+void RenderGridsToKinemage::apply(core::pose::Pose & pose)
 {
+	debug_assert( grid_set_prototype_ );
+	debug_assert( grid_name_ != "" );
+	debug_assert( filename_ != "" );
 
-	setup_colors();
+	char chain( grid_set_prototype_->chain() );
+	utility::vector1< core::Size > chain_residues( core::pose::get_resnums_for_chain( pose, chain ) );
+	core::Vector center( core::pose::all_atom_center(pose, chain_residues) );
+
+	scoring_grid::GridSetCOP grid_set = scoring_grid::GridManager::get_instance()->get_grids(*grid_set_prototype_, pose, center, chain);
+	scoring_grid::SingleGridCOP grid = utility::pointer::dynamic_pointer_cast<scoring_grid::SingleGrid const>( grid_set->get_grid( grid_name_ ) );
+	if ( ! grid ) {
+		utility_exit_with_message( "RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
+	}
+
+	setup_colors( *grid );
 
 	//we can write multiple grids to one file, peek at the first line and see if the header has been written
 	utility::io::izstream infile;
@@ -118,32 +133,26 @@ void RenderGridsToKinemage::apply(core::pose::Pose & )
 		write_header(outfile);
 	}
 	write_colors(outfile);
-	write_points(outfile);
+	write_points(outfile, *grid);
 	outfile.close();
 
 }
 
 void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 )
 {
 
+	grid_set_prototype_ = scoring_grid::parse_grid_set_from_tag( tag, data );
+
 	if ( !tag->hasOption("grid_name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the'grid name' option");
 	}
 
 	grid_name_ = tag->getOption<std::string>("grid_name");
-	grid_ = utility::pointer::dynamic_pointer_cast<scoring_grid::SingleGrid const>(scoring_grid::GridManager::get_instance()->get_grid(grid_name_) );
-	if ( ! grid_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
-	}
-
-	if ( !tag->hasOption("file_name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the 'file_name' option");
-	}
 	filename_ = tag->getOption<std::string>("file_name");
 
 	if ( !tag->hasOption("low_color") && !tag->hasOption("zero_color") && !tag->hasOption("high_color") ) {
@@ -182,14 +191,14 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
 }
 
 
-void RenderGridsToKinemage::setup_colors()
+void RenderGridsToKinemage::setup_colors( scoring_grid::SingleGrid const & grid )
 {
 	if ( color_mode_ == 1 ) {
-		setup_one_color_scheme();
+		setup_one_color_scheme(grid);
 	} else if ( color_mode_ == 2 ) {
-		setup_two_color_scheme();
+		setup_two_color_scheme(grid);
 	} else if ( color_mode_ == 3 ) {
-		setup_three_color_scheme();
+		setup_three_color_scheme(grid);
 	} else {
 		TR.Fatal << "Improper value of color mode found: " << color_mode_ << std::endl;
 		utility_exit_with_message("Improper color mode in RenderGridsToKinemage."); //This should never happen
@@ -197,19 +206,19 @@ void RenderGridsToKinemage::setup_colors()
 
 }
 
-void RenderGridsToKinemage::setup_one_color_scheme()
+void RenderGridsToKinemage::setup_one_color_scheme( scoring_grid::SingleGrid const & grid )
 {
-	core::Real grid_min =grid_->get_min_value();
-	core::Real grid_max = grid_->get_max_value();
+	core::Real grid_min = grid.get_min_value();
+	core::Real grid_max = grid.get_max_value();
 
 	ColorGradient new_color(color_,grid_min,grid_max,grid_name_+"_color");
 	color_data_.push_back(new_color);
 }
 
-void RenderGridsToKinemage::setup_two_color_scheme()
+void RenderGridsToKinemage::setup_two_color_scheme( scoring_grid::SingleGrid const & grid )
 {
-	core::Real grid_min = grid_->get_min_value();
-	core::Real grid_max = grid_->get_max_value();
+	core::Real grid_min = grid.get_min_value();
+	core::Real grid_max = grid.get_max_value();
 
 	core::Real red_step = (high_color_.x() - low_color_.x())/static_cast<core::Real>(gradient_bins_);
 	core::Real green_step = (high_color_.y() - low_color_.y())/static_cast<core::Real>(gradient_bins_);
@@ -235,10 +244,10 @@ void RenderGridsToKinemage::setup_two_color_scheme()
 
 }
 
-void RenderGridsToKinemage::setup_three_color_scheme()
+void RenderGridsToKinemage::setup_three_color_scheme( scoring_grid::SingleGrid const & grid )
 {
-	core::Real grid_min = grid_->get_min_value();
-	core::Real grid_max = grid_->get_max_value();
+	core::Real grid_min = grid.get_min_value();
+	core::Real grid_max = grid.get_max_value();
 	if ( grid_min >= 0 ) {
 		utility_exit_with_message("This grid does not have any scores greater than 0, a three color gradient makes no sense here");
 	}
@@ -291,7 +300,7 @@ void RenderGridsToKinemage::setup_three_color_scheme()
 
 }
 
-void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file)
+void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file, scoring_grid::SingleGrid const & grid)
 {
 	//setup grid master
 	std::string master_name = grid_name_;
@@ -304,7 +313,7 @@ void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file)
 		//write dot for each point in color_range
 		ColorGradient current_color(color_data_[color_index]);
 		std::list<std::pair<core::Vector, core::Real> > point_list(
-			grid_->get_point_value_list_within_range(current_color.lower_bound,current_color.upper_bound,stride_));
+			grid.get_point_value_list_within_range(current_color.lower_bound,current_color.upper_bound,stride_));
 
 		auto point_iterator = point_list.begin();
 		for ( ; point_iterator != point_list.end(); ++point_iterator ) {
@@ -360,14 +369,16 @@ void RenderGridsToKinemage::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	xsd.add_top_level_element( three_dim_real_vector );
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "grid_name", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::required_attribute( "file_name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "grid_name", xs_string, "The name of the grid to dump to the file" )
+		+ XMLSchemaAttribute::required_attribute( "file_name", xs_string, "The name of the file to which to dump the given grid" )
 		+ XMLSchemaAttribute( "low_color", "three_dim_real_vector", "RGB values for color to use for low value" )
 		+ XMLSchemaAttribute( "zero_color", "three_dim_real_vector", "RGB values for color to use for zero" )
 		+ XMLSchemaAttribute( "high_color", "three_dim_real_vector", "RGB values for color to use for high value" )
 		+ XMLSchemaAttribute( "color", "three_dim_real_vector", "RGB values for color to use" )
 		+ XMLSchemaAttribute::attribute_w_default( "gradient_bins", xsct_non_negative_integer, "Size of bins to use", "10" )
 		+ XMLSchemaAttribute::attribute_w_default( "stride", xsct_non_negative_integer, "Separation between possible colors", "2" );
+
+	scoring_grid::attributes_for_parse_grid_set_from_tag( attlist, "The Grid Set from which to take the grid." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Visualization tool for grids", attlist );
 }

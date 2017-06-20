@@ -35,12 +35,12 @@ public:
 	void refresh(core::pose::Pose const & pose, core::Vector const & center) override;
 	void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude) override;
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
-	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
+	core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapCOP qsar_map) const override;
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
+	core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP qsar_map) const override;
 	/// @brief serialize the SingleGrid to a json_spirit object
 	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json_spirit object to a SingleGrid
@@ -49,6 +49,8 @@ public:
 
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	std::string hash_fingerprint() const override;
 
 private:
 	numeric::interpolation::spline::InterpolatorCOP lj_spline_;

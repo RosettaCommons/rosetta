@@ -42,6 +42,8 @@ public:
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	std::string hash_fingerprint() const override;
+
 private:
 	void set_protein_rings( core::conformation::Residue const & rsd);
 	void set_ligand_rings(

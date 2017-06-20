@@ -179,9 +179,19 @@ void SolvationGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" );
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid based on the EEF1 (aka Lazaridis Karplus) solvation energy for a probe atom for this grid. DO NOT USE! The probe atom is not correctly initialized and this will give you garbage. Contact Sam Deluca for advice.", attributes );
+}
+
+std::string
+SolvationGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	ss << sep << probe_atom_type_;
+	return ss.str();
 }
 
 }

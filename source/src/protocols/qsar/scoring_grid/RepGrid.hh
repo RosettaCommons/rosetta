@@ -43,6 +43,8 @@ public:
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	std::string hash_fingerprint() const override;
+
 private:
 	core::Real radius_;
 	core::Real bb_; // score for a clash with a backbone atom

@@ -7,21 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/protocols/qsar/scoring_grid/GridInitMover.fwd.hh
-/// @author Sam DeLuca
+/// @file protocols/qsar/scoring_grid/GridSet.fwd.hh
+/// @brief A set of related grids
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_GridInitMover_FWD_HH_
-#define INCLUDED_protocols_qsar_scoring_grid_GridInitMover_FWD_HH_
+#ifndef INCLUDED_protocols_qsar_scoring_grid_GridSet_fwd_hh
+#define INCLUDED_protocols_qsar_scoring_grid_GridSet_fwd_hh
 
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
+
+
+// Forward
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class GridInitMover;
+class GridSet;
 
-}
-}
-}
+typedef utility::pointer::shared_ptr< GridSet > GridSetOP;
+typedef utility::pointer::shared_ptr< GridSet const > GridSetCOP;
 
+} //protocols
+} //qsar
+} //scoring_grid
 
-#endif /* GRIDINITMOVER_FWD_HH_ */
+#endif //INCLUDED_protocols_qsar_scoring_grid_GridSet_fwd_hh

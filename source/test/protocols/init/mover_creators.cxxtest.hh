@@ -271,7 +271,6 @@
 #include <protocols/protein_interface_design/movers/DockWithHotspotMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/TopologyBrokerMoverCreator.hh>
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>
-#include <protocols/qsar/scoring_grid/GridInitMoverCreator.hh>
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 #include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
@@ -1156,9 +1155,6 @@ public:
 
 	void test_protocols_qsar_RenderGridsToKinemageCreator_name()
 	{ protocols::qsar::RenderGridsToKinemageCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RenderGridsToKinemage" ); }
-
-	void test_protocols_qsar_scoring_grid_GridInitMoverCreator_name()
-	{ protocols::qsar::scoring_grid::GridInitMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GridInitMover" ); }
 
 	void test_protocols_rbsegment_relax_MakeStarTopologyMoverCreator_name()
 	{ protocols::rbsegment_relax::MakeStarTopologyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MakeStarTopology" ); }
@@ -2314,9 +2310,6 @@ public:
 	//
 	// void test_protocols_qsar_RenderGridsToKinemageCreator()
 	// { protocols::qsar::RenderGridsToKinemageCreator cr; std::cout << "protocols::qsar::RenderGridsToKinemageCreator " << cr.keyname() << std::endl; }
-	//
-	// void test_protocols_qsar_scoring_grid_GridInitMoverCreator()
-	// { protocols::qsar::scoring_grid::GridInitMoverCreator cr; std::cout << "protocols::qsar::scoring_grid::GridInitMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_rbsegment_relax_MakeStarTopologyMoverCreator()
 	// { protocols::rbsegment_relax::MakeStarTopologyMoverCreator cr; std::cout << "protocols::rbsegment_relax::MakeStarTopologyMoverCreator " << cr.keyname() << std::endl; }

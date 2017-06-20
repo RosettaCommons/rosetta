@@ -158,7 +158,7 @@ void ShapeGrid::parse_my_tag(utility::tag::TagCOP)
 
 }
 
-core::Real ShapeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP) const
+core::Real ShapeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP) const
 {
 	core::Real total_score = 0.0;
 	for ( core::Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
@@ -171,12 +171,12 @@ core::Real ShapeGrid::score(core::conformation::UltraLightResidue const & residu
 	return total_score;
 }
 
-core::Real ShapeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP) const
+core::Real ShapeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapCOP) const
 {
 	return this->get_point(residue[atomno]);
 }
 
-core::Real ShapeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP) const
+core::Real ShapeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP) const
 {
 	core::Real total_score = 0.0;
 	for ( core::Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
@@ -189,7 +189,7 @@ core::Real ShapeGrid::score(core::conformation::Residue const & residue, core::R
 	return total_score;
 }
 
-core::Real ShapeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP ) const
+core::Real ShapeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP ) const
 {
 	return this->get_point(residue.xyz(atomno));
 }
@@ -349,10 +349,21 @@ void ShapeGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" );
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that gives a bonus based on a knowledge-based potential looking at favorable scores to residues based on a distance, an angle, and a dihedral; no parameters may be customized for this grid", attributes );
 
+}
+
+std::string
+ShapeGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	// kbp_data_ is constant for all ShapeGrids
+	ss << sep << distance_bin_width_ << sep << theta_bin_width_ << sep << phi_bin_width_;
+	return ss.str();
 }
 
 }

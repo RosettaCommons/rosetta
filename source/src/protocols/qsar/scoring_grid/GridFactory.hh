@@ -48,7 +48,7 @@ class GridFactory : public utility::SingletonBase< GridFactory >
 public:
 	friend class utility::SingletonBase< GridFactory >;
 
-	typedef std::map<std::string, GridCreatorOP > GridMap;
+	typedef std::map<std::string, GridCreatorOP > GridSet;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
 
@@ -74,7 +74,7 @@ private:
 
 private:
 
-	GridMap grid_creator_map_;
+	GridSet grid_creator_map_;
 
 };
 

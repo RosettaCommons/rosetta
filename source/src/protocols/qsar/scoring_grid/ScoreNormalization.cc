@@ -30,7 +30,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 	return NULL;
 }
 
-core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
+core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const
 {
 	core::Size n_atoms = 0;
 	for ( core::Size i = 1; i <= residues.size(); ++i ) {
@@ -40,12 +40,12 @@ core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, co
 	return input_score/static_cast<core::Real>(n_atoms);
 }
 
-core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
+core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue) const
 {
 	return input_score/static_cast<core::Real>(residue.nheavyatoms());
 }
 
-core::Real AllAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
+core::Real AllAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const
 {
 	core::Size n_atoms = 0;
 	for ( core::Size i = 1; i <= residues.size(); ++i ) {
@@ -55,12 +55,12 @@ core::Real AllAtomNormalization::operator()(core::Real const & input_score, core
 	return input_score/static_cast<core::Real>(n_atoms);
 }
 
-core::Real AllAtomNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
+core::Real AllAtomNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue) const
 {
 	return input_score/static_cast<core::Real>(residue.natoms());
 }
 
-core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
+core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const
 {
 	core::Size n_chi = 0;
 	for ( core::Size i = 1; i <= residues.size(); ++i ) {
@@ -74,7 +74,7 @@ core::Real ChiAngleNormalization::operator()(core::Real const & input_score, cor
 	}
 }
 
-core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
+core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue) const
 {
 	if ( residue.nchi() > 0 ) {
 		return input_score/static_cast<core::Real>(residue.nchi());
@@ -83,7 +83,7 @@ core::Real ChiAngleNormalization::operator()(core::Real const & input_score, cor
 	}
 }
 
-core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
+core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const
 {
 	core::Real total_mass = 0.0;
 	for ( core::Size i = 1; i <= residues.size(); ++i ) {
@@ -92,7 +92,7 @@ core::Real MolecularWeightNormalization::operator()(core::Real const & input_sco
 	return input_score/total_mass;
 }
 
-core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
+core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue) const
 {
 	return input_score/residue.type().mass();
 }

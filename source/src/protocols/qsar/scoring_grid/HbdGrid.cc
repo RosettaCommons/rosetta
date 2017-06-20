@@ -145,7 +145,7 @@ void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 core::Real HbdGrid::score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Real const max_score,
-	qsarMapOP /*qsar_map*/) const
+	qsarMapCOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -167,7 +167,7 @@ core::Real HbdGrid::score(
 core::Real HbdGrid::atom_score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Size atomno,
-	qsarMapOP /*qsar_map*/) const
+	qsarMapCOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
@@ -180,7 +180,7 @@ core::Real HbdGrid::atom_score(
 	return 0;
 }
 
-core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP ) const
+core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP ) const
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -199,7 +199,7 @@ core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
+core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
@@ -222,10 +222,20 @@ void HbdGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" );
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that computes the hydrogen-bonding energy as given by the location of hydrogen-bond donors -- acceptor atoms can be queried against this grid; no parameters may be customized currently", attributes );
 
+}
+
+std::string
+HbdGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	// Spline is constant for all HbdGrids - don't bother
+	return ss.str();
 }
 
 }

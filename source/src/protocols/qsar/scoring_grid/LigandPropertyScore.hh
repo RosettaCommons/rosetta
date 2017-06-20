@@ -34,10 +34,10 @@ public:
 
 	void parse_my_tag(utility::tag::TagCOP tag) override;
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override;
 
 	/// @brief return the current score of a residue using the current grid
-	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override;
 
 	/// @brief get the type of the grid
 	std::string get_type() const override;
@@ -52,6 +52,8 @@ public:
 
 	/// @brief Print a brief summary about this grid to the provided output stream
 	void show( std::ostream & out ) const override;
+
+	std::string hash_fingerprint() const override;
 
 private:
 	std::string parameter_tag_;

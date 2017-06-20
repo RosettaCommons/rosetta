@@ -2659,6 +2659,13 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 
 std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
+	utility::vector1< std::string > chains;
+	chains.push_back( utility::to_string( chain ) );
+	return get_sha1_hash_from_chains(chains, pose, extra_label);
+}
+
+std::string
+get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label) {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_sha1_hash_from_chain: Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
@@ -2668,7 +2675,7 @@ std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const 
 	std::stringstream coord_stream;
 
 	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
-		if ( pdb_info->chain( res_num ) != chain ) {
+		if ( ! chains.contains( utility::to_string( pdb_info->chain( res_num ) ) ) ) {
 			continue;
 		}
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
@@ -2682,9 +2689,18 @@ std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const 
 		coord_stream << extra_label;
 	}
 	return utility::string_to_sha1(coord_stream.str());
+
 }
 
 std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
+{
+	utility::vector1< std::string > chains;
+	chains.push_back( utility::to_string( chain ) );
+	return get_sha1_hash_excluding_chains(chains, pose, extra_label);
+}
+
+std::string
+get_sha1_hash_excluding_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
@@ -2695,7 +2711,7 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 	std::stringstream coord_stream;
 
 	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
-		if ( pdb_info->chain( res_num ) == chain ) {
+		if ( chains.contains( utility::to_string( pdb_info->chain( res_num ) ) ) ) {
 			continue;
 		}
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
@@ -2710,8 +2726,6 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 	}
 	return utility::string_to_sha1(coord_stream.str());
 }
-
-
 
 void
 initialize_disulfide_bonds(

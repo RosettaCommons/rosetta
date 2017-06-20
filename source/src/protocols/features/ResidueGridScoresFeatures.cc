@@ -14,6 +14,8 @@
 #include <protocols/features/ResidueGridScoresFeatures.hh>
 #include <protocols/features/ResidueGridScoresFeaturesCreator.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -119,22 +121,20 @@ core::Size ResidueGridScoresFeatures::report_features(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
+	debug_assert( grid_set_prototype_ != nullptr );
+
 	using basic::database::insert_statement_generator::InsertGenerator;
 	using basic::database::insert_statement_generator::RowDataBaseOP;
 	using basic::database::insert_statement_generator::RowData;
 
-	protocols::qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+	utility::vector1< core::Size > chain_residues( core::pose::get_resnums_for_chain( pose, chain_ ) );
+	core::Vector center( core::pose::all_atom_center(pose, chain_residues) );
 
-	if ( grid_manager->size()==0 ) {
+	protocols::qsar::scoring_grid::GridSetCOP grid_set( qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, chain_ ) );
+
+	if ( grid_set->size()==0 ) {
 		utility_exit_with_message("In order to use the ResidueGridScoresFeatures reporter you must define at least one scoring grid");
 	}
-
-	core::Size chain_id = core::pose::get_chain_id_from_chain(chain_,pose);
-	core::Size jump_id = core::pose::get_jump_id_from_chain(chain_,pose);
-	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose,jump_id));
-	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(pose,center);
-
 
 	InsertGenerator grid_insert("residue_grid_scores");
 	grid_insert.add_column("struct_id");
@@ -144,7 +144,7 @@ core::Size ResidueGridScoresFeatures::report_features(
 	grid_insert.add_column("score");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for ( Size i = pose.conformation().chain_begin(chain_id); i <= pose.conformation().chain_end(chain_id); ++i ) {
+	for ( Size i: chain_residues ) {
 
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
@@ -153,7 +153,7 @@ core::Size ResidueGridScoresFeatures::report_features(
 		core::conformation::Residue const & residue(pose.residue(i));
 		for ( Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
 			RowDataBaseOP atomno_data( new RowData<core::Size>("atomno",atomno) );
-			std::map<std::string,core::Real> atom_map = grid_manager->atom_score(pose,residue,atomno);
+			std::map<std::string,core::Real> atom_map = grid_set->atom_score(pose,residue,atomno);
 			for ( std::map<std::string,core::Real>::const_iterator score_it = atom_map.begin(); score_it != atom_map.end(); ++score_it ) {
 				RowDataBaseOP grid_name_data( new RowData<std::string>("grid_name",score_it->first) );
 				RowDataBaseOP score_data( new RowData<core::Real>("score",score_it->second) );
@@ -168,18 +168,19 @@ core::Size ResidueGridScoresFeatures::report_features(
 
 void ResidueGridScoresFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/)
 {
+	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, datamap);
+
 	if ( !tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The ResidueGridScoresFeatures reporter requires a Chain tag");
 
 	}
 
 	chain_ = tag->getOption<char>("chain");
-
 }
 
 std::string ResidueGridScoresFeatures::type_name() const {
@@ -197,6 +198,8 @@ void ResidueGridScoresFeatures::provide_xml_schema( utility::tag::XMLSchemaDefin
 	attlist + XMLSchemaAttribute::required_attribute(
 		"chain", xsct_char,
 		"required chain name tag (single character)");
+
+	protocols::qsar::scoring_grid::attributes_for_parse_grid_set_from_tag( attlist, "The Grid Set from which to get the scoring features" );
 
 	protocols::features::xsd_type_definition_w_attributes(
 		xsd, class_name(),

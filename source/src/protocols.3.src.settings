@@ -403,12 +403,12 @@ sources = {
 		"RenderGridsToKinemage",
 	],
 	"protocols/qsar/scoring_grid": [
-		"GridInitMover",
 		"AtrGrid",
 		"SingleGrid",
 		"GridCreator",
 		"GridFactory",
 		"GridManager",
+		"GridSet",
 		"ClassicGrid",
 		"ChargeGrid",
 		"HbaGrid",

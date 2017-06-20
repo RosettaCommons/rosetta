@@ -25,7 +25,7 @@
 
 #include <core/pose/util.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -61,20 +61,12 @@ InterfaceScoreCalculator::InterfaceScoreCalculator():
 	native_(/* NULL */),
 	score_fxn_(/* NULL */),
 	normalization_function_(/* NULL */),
-	compute_grid_scores_(true),
+	compute_grid_scores_(false),
+	grid_set_prototype_(/* NULL */),
 	prefix_("")
 {}
 
-InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	chains_(that.chains_),
-	native_(that.native_),
-	score_fxn_(that.score_fxn_),
-	normalization_function_(that.normalization_function_),
-	compute_grid_scores_(that.compute_grid_scores_),
-	prefix_(that.prefix_)
-{}
+InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & ) = default;
 
 InterfaceScoreCalculator::~InterfaceScoreCalculator() = default;
 
@@ -98,6 +90,15 @@ void InterfaceScoreCalculator::score_fxn(core::scoring::ScoreFunctionOP const & 
 }
 
 
+void InterfaceScoreCalculator::grid_set_prototype(protocols::qsar::scoring_grid::GridSetCOP grid_prototype)
+{
+	grid_set_prototype_ = grid_prototype;
+	if ( grid_set_prototype_ != nullptr ) {
+		compute_grid_scores_ = true; // If we explicitly set the prototype, chances are we want the scores
+	} else {
+		compute_grid_scores_ = false;
+	}
+}
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceScoreCalculator::parse_my_tag(
@@ -108,9 +109,6 @@ InterfaceScoreCalculator::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "InterfaceScoreCalculator" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
-	}
 	if ( ! tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
@@ -139,6 +137,17 @@ InterfaceScoreCalculator::parse_my_tag(
 		normalization_function_ = protocols::qsar::scoring_grid::get_score_normalization_function(normalization_mode);
 	}
 	compute_grid_scores_ = tag->getOption<bool>("compute_grid_scores", true);
+	if ( compute_grid_scores_ ) {
+		grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag(tag, datamap);
+		if ( grid_set_prototype_ == nullptr ) {
+			if ( tag->hasOption("compute_grid_scores") ) {
+				// Explicitly asked for grid scores, but there are none to be had.
+				utility::excn::EXCN_RosettaScriptsOption("InterfaceScoreCalculator cannot compute Grid Scores as requested, as the appropriate grid set is not present!");
+			} else {
+				compute_grid_scores_ = false; // Just ignore it.
+			}
+		}
+	}
 
 	prefix_ = tag->getOption<std::string>("prefix","");
 
@@ -258,11 +267,9 @@ InterfaceScoreCalculator::get_ligand_docking_scores(
 	}
 
 	if ( compute_grid_scores_ ) {
-		protocols::qsar::scoring_grid::ScoreNormalizationOP norm_func( nullptr );
-		if ( normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled() ) {
-			norm_func = normalization_function_;
-		}
-		utility::map_merge( retval, get_ligand_grid_scores( chain, after, prefix_, norm_func ) );
+		debug_assert( grid_set_prototype_ != nullptr );
+		// get_ligand_grid_scores() won't double normalize if the normalization is enabled in the Grids already.
+		utility::map_merge( retval, get_ligand_grid_scores( *grid_set_prototype_, chain, after, prefix_, normalization_function_ ) );
 	}
 
 	return retval;
@@ -285,6 +292,8 @@ void InterfaceScoreCalculator::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute( "native", xs_string , "This is your native pdb without interface mutations. If a native structure is specified, 4 additional score terms are calculated: ligand_centroid_travel, ligand_radious_of_gyration, ligand_rms_no_super, and ligand_rms_with_super." )
 		+ XMLSchemaAttribute( "normalize", xs_string , "The normalization function you wish to use." )
 		+ XMLSchemaAttribute::attribute_w_default( "compute_grid_scores", xsct_rosetta_bool , "If compute_grid_scores is true, the scores for each grid will be calculated. This may result in the regeneration of the scoring grids, which can be slow.", "false" );
+
+	protocols::qsar::scoring_grid::attributes_for_parse_grid_set_from_tag( attlist, "The Grid Set to use when computing grid scores." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "InterfaceScoreCalculator calculates a myriad of ligand specific scores and appends them to the output file. After scoring the complex the ligand is moved 1000 Å away from the protein. The model is then scored again. An interface score is calculated for each score term by subtracting separated energy from complex energy.", attlist );
 }

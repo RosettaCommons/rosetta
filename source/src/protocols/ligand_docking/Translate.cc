@@ -23,6 +23,8 @@
 #include <core/conformation/Conformation.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -110,20 +112,20 @@ protocols::moves::MoverOP Translate::fresh_instance() const {
 void
 Translate::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data_map*/,
+	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & pose
 )
 {
-	if ( tag->getName() != "Translate" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
-	}
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires chain tag");
 	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires distribution tag");
 	if ( ! tag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires angstroms tag");
 	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires cycles tag");
 	//if ( ! tag->hasOption("force") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
+
+	// Will return a nullptr if this XML didn't define any ScoringGrids
+	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag( tag, data_map );
 
 	std::string chain = tag->getOption<std::string>("chain");
 	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(chain, pose) );
@@ -174,11 +176,14 @@ void Translate::apply(core::pose::Pose & pose) {
 	}
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, translate_info_.jump_id);
 
-	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
-	if ( grid_manager->size() == 0 ) {
+	if ( grid_set_prototype_ == nullptr ) {
 		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude_);
 		translate_ligand(grid, translate_info_.jump_id, pose);// move ligand to a random point in binding pocket
 	} else {
+		// How we treat chains here is rather poor, but it should work in the historical one-residue-ligand case.
+		qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+		char chain_letter( core::pose::get_chain_from_chain_id( translate_info_.chain_id, pose ) );
+		qsar::scoring_grid::GridSetCOP grid_set( grid_manager->get_grids( *grid_set_prototype_, pose, center, chain_letter ) );
 		//TODO refactor qsar map so it works properly
 		/*
 		if(!grid_manager->is_qsar_map_attached())
@@ -187,12 +192,10 @@ void Translate::apply(core::pose::Pose & pose) {
 		core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
 		qsar::qsarMapOP qsar_map(new qsar::qsarMap("default",residue));
 		qsar_map->fill_with_value(1,grid_names);
-		grid_manager->set_qsar_map(qsar_map);
+		grid_set->set_qsar_map(qsar_map);
 		}
 		*/
-		grid_manager->initialize_all_grids(center);
-		grid_manager->update_grids(pose,center);
-		translate_ligand(translate_info_.jump_id,pose,begin);
+		translate_ligand(grid_set, translate_info_.jump_id,pose,begin);
 	}
 }
 
@@ -306,7 +309,7 @@ void Translate::translate_ligand(
 	else if ( translate_info_.distribution == Gaussian ) gaussian_translate_ligand(grid, jump_id, pose);
 }
 
-void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pose, core::Size const & residue_id)
+void Translate::translate_ligand(qsar::scoring_grid::GridSetCOP grid_set, core::Size const jump_id,core::pose::Pose & pose, core::Size const & residue_id)
 {
 	if ( translate_info_.angstroms < 0 ) utility_exit_with_message("cannot have a negative translation value");
 	if ( translate_info_.angstroms == 0 ) return;
@@ -328,7 +331,6 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
 	core::Real best_score = 1000000;
 
-	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	for ( Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
 
 		translate_tracer.Trace <<"Doing a translate move" <<std::endl;
@@ -339,7 +341,7 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 		//  translate_tracer.Trace <<"Doing a conformer selection move" <<std::endl;
 		//  conformer_mover->apply(pose);
 		// }
-		core::Real score(grid_manager->total_score(residue));
+		core::Real score(grid_set->total_score(residue));
 		if ( score <= best_score ) {
 			best_score = score;
 			orig_pose = pose;
@@ -393,6 +395,10 @@ void Translate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::required_attribute("angstroms", xsct_real, "Movement can be anywhere within a sphere of radius specified by \"angstroms\".")
 		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer,
 		"Number of attempts to make such a movement without landing on top of another molecule.");
+
+	protocols::qsar::scoring_grid::attributes_for_parse_optional_grid_set_from_tag( attlist, "The ScoringGrid set to use for scoring the translation. "
+		"If no scoring grids (at all) are present in the XML, use a default classic grid." );
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Performs a coarse random movement of a small molecule in xyz-space.", attlist );
 }

@@ -16,7 +16,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/ligand_docking/TransformEnsemble.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
@@ -37,24 +37,15 @@ public:
 	utility::vector1<std::string> chains;
 	utility::vector1<core::Size> chain_ids;
 	utility::vector1<core::Size> jump_ids;
-	core::Real move_distance;
-	core::Real box_size;
-	core::Real angle;
-	core::Size cycles;
-	core::Real temperature;
-	core::Size repeats;
-	TransformEnsemble_info(): chains(), move_distance(0),box_size(0), angle(0), cycles(0),repeats(1){};
+	core::Real move_distance = 0;
+	core::Real box_size = 0;
+	core::Real angle = 0;
+	core::Size cycles = 0;
+	core::Real temperature; // no default
+	core::Size repeats = 1;
 
-	TransformEnsemble_info(TransformEnsemble_info const & other) :
-		chains(other.chains),
-		chain_ids(other.chain_ids),
-		jump_ids(other.jump_ids),
-		move_distance(other.move_distance),
-		box_size(other.box_size),
-		angle(other.angle),
-		cycles(other.cycles),
-		temperature(other.temperature),
-		repeats(other.repeats){}
+	TransformEnsemble_info() = default;
+	TransformEnsemble_info(TransformEnsemble_info const & ) = default;
 };
 
 class TransformEnsemble: public protocols::moves::Mover
@@ -62,6 +53,7 @@ class TransformEnsemble: public protocols::moves::Mover
 public:
 	TransformEnsemble();
 	TransformEnsemble(
+		protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype,
 		utility::vector1<std::string> const & chains,
 		core::Real const & box_size,
 		core::Real const & move_distance,
@@ -88,10 +80,10 @@ public:
 	void transform_ligand(utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, utility::vector1<core::conformation::UltraLightResidue> & reference_residues);
 	void change_conformers(utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, const utility::vector1<core::conformation::UltraLightResidue> & reference_residues);
 	void change_conformer(core::conformation::UltraLightResidue & ligand_residue, const core::conformation::UltraLightResidue & reference_residue, core::Size resid);
-	void dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output);
+	void dump_conformer(core::conformation::UltraLightResidue const & residue, utility::io::ozstream & output);
 	void print_xyz(core::Vector vector);
 	bool monte_carlo(core::Real & current, core::Real & last);
-	bool check_grid(qsar::scoring_grid::GridManager* grid, utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, core::Real distance = 0);
+	bool check_grid(qsar::scoring_grid::GridSetCOP grid, utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, core::Real distance = 0);
 
 	static
 	void
@@ -105,7 +97,7 @@ public:
 	mover_name();
 
 private:
-	//qsar::scoring_grid::GridManagerOP grid_manager_;
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 
 	TransformEnsemble_info transform_info_;
 
@@ -116,14 +108,14 @@ private:
 	utility::vector1<core::conformation::UltraLightResidue> last_accepted_reference_residues_;
 
 	std::map<core::Size, utility::vector1< core::conformation::ResidueOP > > ligand_conformers_;
-	bool optimize_until_score_is_negative_;
-	bool output_sampled_space_;
-	bool optimize_until_ideal_;
-	bool use_conformers_;
+	bool optimize_until_score_is_negative_ = false;
+	bool output_sampled_space_ = false;
+	bool optimize_until_ideal_ = false;
+	bool use_conformers_ = true;
 
 
 	std::string sampled_space_file_;
-	core::Real initial_perturb_;
+	core::Real initial_perturb_ = 0.0;
 
 
 };

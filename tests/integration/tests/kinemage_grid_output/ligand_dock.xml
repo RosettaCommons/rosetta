@@ -15,16 +15,24 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 			<Reweight scoretype="rama" weight="0.2"/>
 		</ScoreFunction>
 	</SCOREFXNS>
-	<SCORINGGRIDS>
+	<SCORINGGRIDS name="AtrRep" >
 		<AtrGrid grid_name="atr" weight="1.0"/>
 		<RepGrid grid_name="rep" weight="1.0"/>
+	</SCORINGGRIDS>
+	<SCORINGGRIDS name="HBond" >
 		<HbaGrid grid_name="hba" weight="1.0"/>
 		<HbdGrid grid_name="hbd" weight="1.0"/>
-		<VdwGrid grid_name="vdw" weight="1.0"/>
-		<ClassicGrid grid_name="classic" weight="1.0"/>
-		<ChargeGrid grid_name="charge" weight="1.0"/>
-		
 	</SCORINGGRIDS>
+	<SCORINGGRIDS name="VDW" >
+		<VdwGrid grid_name="vdw" weight="1.0"/>
+	</SCORINGGRIDS>
+	<SCORINGGRIDS> This is the default.
+		<ClassicGrid grid_name="classic" weight="1.0"/>
+	</SCORINGGRIDS>
+	<SCORINGGRIDS name="Charge" >
+		<ChargeGrid grid_name="charge" weight="1.0"/>
+	</SCORINGGRIDS>
+		
 	<LIGAND_AREAS>
 		<LigandArea name="docking_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
 		<LigandArea name="final_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
@@ -49,11 +57,11 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep" native="inputs/7cpa_7cpa_native.pdb"/>
 	compound movers
 		A stride of 5 is used to cut down on integration test file size. In production use a stride of 1 or 2
-		<RenderGridsToKinemage name="kineAtr" file_name="output.kin" grid_name="atr" color="1.0,0.0,0.0" stride="5"/>
-		<RenderGridsToKinemage name="kineRep" file_name="output.kin" grid_name="rep" color="0.0,1.0,0.0" stride="5"/>
-		<RenderGridsToKinemage name="kineHba" file_name="output.kin" grid_name="hba" low_color="1.0,1.0,1.0" high_color="1.0,0.0,0.0" stride="5"/>
-		<RenderGridsToKinemage name="kineHbd" file_name="output.kin" grid_name="hbd" low_color="1.0,1.0,1.0" high_color="1.0,1.0,0.0" stride="5"/>
-		<RenderGridsToKinemage name="kineVdw" file_name="output.kin" grid_name="vdw" low_color="1.0,1.0,1.0" high_color="1.0,0.0,1.0" stride="5"/>
+		<RenderGridsToKinemage name="kineAtr" file_name="output.kin" grid_name="atr" color="1.0,0.0,0.0" stride="5" grid_set="AtrRep" />
+		<RenderGridsToKinemage name="kineRep" file_name="output.kin" grid_name="rep" color="0.0,1.0,0.0" stride="5" grid_set="AtrRep" />
+		<RenderGridsToKinemage name="kineHba" file_name="output.kin" grid_name="hba" low_color="1.0,1.0,1.0" high_color="1.0,0.0,0.0" stride="5" grid_set="HBond" />
+		<RenderGridsToKinemage name="kineHbd" file_name="output.kin" grid_name="hbd" low_color="1.0,1.0,1.0" high_color="1.0,1.0,0.0" stride="5" grid_set="HBond" />
+		<RenderGridsToKinemage name="kineVdw" file_name="output.kin" grid_name="vdw" low_color="1.0,1.0,1.0" high_color="1.0,0.0,1.0" stride="5" grid_set="VDW"/>
 		<RenderGridsToKinemage name="kineClassic" file_name="output.kin" grid_name="classic" low_color="0.0,1.0,0.0" high_color="0.0,0.0,1.0" stride="5"/>
 		<ParsedProtocol name="low_res_dock">
 			<Add mover_name="start_from"/>

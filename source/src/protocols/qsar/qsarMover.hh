@@ -17,6 +17,8 @@
 #include <protocols/qsar/qsarMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
+
 #include <core/types.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
@@ -33,7 +35,7 @@ class qsarMover : public protocols::moves::Mover
 {
 public:
 	qsarMover();
-	//qsarMover(core::Real width, core::Real resolution);
+	//qsarMover(scoring_grid::GridSetCOP grid_set_prototype, core::Real width, core::Real resolution);
 	void apply(core::pose::Pose & pose) override;
 	void parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -44,10 +46,10 @@ public:
 	std::string get_name() const override;
 
 private:
+	scoring_grid::GridSetCOP grid_set_prototype_;
 	qsarMapOP qsar_map_;
 	std::string chain_;
 	utility::vector1<std::string>  grids_to_use_;
-	bool initialize_;
 };
 
 }

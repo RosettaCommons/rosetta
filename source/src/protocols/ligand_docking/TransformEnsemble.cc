@@ -16,6 +16,9 @@
 #include <protocols/ligand_docking/TransformEnsembleCreator.hh>
 #include <protocols/ligand_docking/TransformEnsemble.hh>
 
+#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -34,10 +37,6 @@
 
 #include <sstream>
 #include <utility/string_util.hh>
-
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyz.functions.hh>
@@ -64,41 +63,14 @@ namespace ligand_docking {
 static THREAD_LOCAL basic::Tracer transform_tracer("protocols.ligand_docking.TransformEnsemble", basic::t_debug);
 
 TransformEnsemble::TransformEnsemble():
-	Mover("TransformEnsemble"),
-	transform_info_(),
-	best_ligands_(),
-	ligand_residues_(),
-	reference_residues_(),
-	last_accepted_ligand_residues_(),
-	last_accepted_reference_residues_(),
-	ligand_conformers_(),
-	optimize_until_score_is_negative_(false),
-	output_sampled_space_(false),
-	optimize_until_ideal_(false),
-	use_conformers_(true),
-	sampled_space_file_(),
-	initial_perturb_(0.0)
+	Mover("TransformEnsemble")
+	// & in declaration values
 {}
 
-TransformEnsemble::TransformEnsemble(TransformEnsemble const & other) :
-	Mover(other),
-	transform_info_(other.transform_info_),
-	best_ligands_(other.best_ligands_),
-	ligand_residues_(other.ligand_residues_),
-	reference_residues_(other.reference_residues_),
-	last_accepted_ligand_residues_(other.last_accepted_ligand_residues_),
-	last_accepted_reference_residues_(other.last_accepted_reference_residues_),
-	ligand_conformers_(other.ligand_conformers_),
-	optimize_until_score_is_negative_(other.optimize_until_score_is_negative_),
-	output_sampled_space_(other.output_sampled_space_),
-	optimize_until_ideal_(other.optimize_until_ideal_),
-	use_conformers_(other.use_conformers_),
-	sampled_space_file_(other.sampled_space_file_),
-	initial_perturb_(other.initial_perturb_)
-
-{}
+TransformEnsemble::TransformEnsemble(TransformEnsemble const & ) = default;
 
 TransformEnsemble::TransformEnsemble(
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype,
 	utility::vector1<std::string> const & chains,
 	core::Real const & box_size,
 	core::Real const & move_distance,
@@ -107,19 +79,8 @@ TransformEnsemble::TransformEnsemble(
 	core::Real const & temp
 ) :
 	Mover("TransformEnsemble"),
-	transform_info_(),
-	best_ligands_(),
-	ligand_residues_(),
-	reference_residues_(),
-	last_accepted_ligand_residues_(),
-	last_accepted_reference_residues_(),
-	ligand_conformers_(),
-	optimize_until_score_is_negative_(false),
-	output_sampled_space_(false),
-	optimize_until_ideal_(false),
-	use_conformers_(true),
-	sampled_space_file_(),
-	initial_perturb_(0.0)
+	grid_set_prototype_( grid_set_prototype )
+	// & in declaration default values
 {
 	transform_info_.chains = chains;
 	transform_info_.box_size = box_size;
@@ -144,7 +105,7 @@ protocols::moves::MoverOP TransformEnsemble::fresh_instance() const
 void TransformEnsemble::parse_my_tag
 (
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & /*data_map*/,
+	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & pose/*pose*/
@@ -188,18 +149,22 @@ void TransformEnsemble::parse_my_tag
 		sampled_space_file_ = tag->getOption<std::string>("sampled_space_file");
 	}
 
+	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, data_map);
 }
 
 void TransformEnsemble::apply(core::pose::Pose & pose)
 {
+	debug_assert( grid_set_prototype_ != nullptr );
 
 	//Grid setup: Use centroid of all chains as center of grid
 	core::Vector const center(protocols::geometry::centroid_by_chains(pose, transform_info_.chain_ids));
 
-	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
-	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(pose,center, true);
-	debug_assert(grid_manager != 0); //something has gone hopelessly wrong if this triggers
+	// TODO: TransformEnsemble should be able to get the chains it's concerned about
+	// itself, rather than relying on the GridSet.
+	char chain = grid_set_prototype_->chain();
+	// We pass exclude=false, so that only the passed chain is the one used in grid caching calculations
+	qsar::scoring_grid::GridSetCOP grid_set( qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, chain, false ) );
+	debug_assert(grid_set != nullptr); //something has gone hopelessly wrong if this triggers
 
 	//Setting up ligands and ligand center
 	utility::vector1<core::conformation::ResidueOP> single_conformers;
@@ -284,7 +249,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 				core::Real distance = new_center.distance(original_center);
 
 				//Not everything in grid, also checks center distance
-				if ( !check_grid(grid_manager, ligand_residues_, distance) ) {
+				if ( !check_grid(grid_set, ligand_residues_, distance) ) {
 					ligand_residues_ = last_accepted_ligand_residues_;
 					reference_residues_ = last_accepted_reference_residues_;
 					perturbed = false;
@@ -296,7 +261,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		}
 
 
-		last_score = grid_manager->total_score(ligand_residues_);
+		last_score = grid_set->average_score(ligand_residues_);
 		//set post-perturb ligand as best model and score
 		best_ligands_ = ligand_residues_;
 		best_score = last_score;
@@ -304,7 +269,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 
 		//Optimize until within 5 percent of the theoretical maximum score
 		//Based on all atoms having an attractive score of 1
-		core::Real ideal_limit = grid_manager->ideal_score(ligand_residues_);
+		core::Real ideal_limit = grid_set->ideal_score(ligand_residues_);
 		ideal_limit = (core::Real)0.95 * ideal_limit;
 
 		//Limit to 4 * number of cycles to prevent infinite loop
@@ -346,13 +311,13 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 					change_conformer(ligand_residues_[i], reference_residues_[i], i);
 
 					//Not everything in grid
-					if ( !check_grid(grid_manager, ligand_residues_) ) {
+					if ( !check_grid(grid_set, ligand_residues_) ) {
 						move_accepted = false;
 						ligand_residues_[i] = last_accepted_ligand_residues_[i];
 						continue;
 					}
 
-					current_score = grid_manager->total_score(ligand_residues_);
+					current_score = grid_set->average_score(ligand_residues_);
 
 					//If monte_carlo rejected
 					if ( !monte_carlo(current_score, last_score) ) {
@@ -366,7 +331,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 
 				}
 
-				current_score = grid_manager->total_score(ligand_residues_);
+				current_score = grid_set->average_score(ligand_residues_);
 				if ( current_score < best_score ) {
 					best_score = current_score;
 					best_ligands_ = ligand_residues_;
@@ -380,13 +345,13 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 				core::Real distance = new_center.distance(original_center);
 
 				//Not everything in grid, also checks center distance
-				if ( !check_grid(grid_manager, ligand_residues_, distance) ) {
+				if ( !check_grid(grid_set, ligand_residues_, distance) ) {
 					ligand_residues_ = last_accepted_ligand_residues_;
 					reference_residues_ = last_accepted_reference_residues_;
 					move_accepted = false;
 				} else {
 
-					current_score = grid_manager->total_score(ligand_residues_);
+					current_score = grid_set->average_score(ligand_residues_);
 
 					//If monte_carlo rejected
 					if ( !monte_carlo(current_score, last_score) ) {
@@ -415,7 +380,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 			}
 
 			if ( output_sampled_space_ ) {
-				foreach ( core::conformation::UltraLightResidue ligand_residue, ligand_residues_ ) {
+				for ( core::conformation::UltraLightResidue const & ligand_residue: ligand_residues_ ) {
 					dump_conformer(ligand_residue,sampled_space);
 				}
 			}
@@ -461,15 +426,13 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		protocols::jd2::JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
 		job->add_string_real_pair("Grid_score", best_score);
 
-		// grid_manager->reset_grids();
-		// grid_manager->update_grids(pose,center, true);
 
 		std::map< std::string, core::Real > grid_scores;
 		for ( core::Size i=1; i<=transform_info_.jump_ids.size(); ++i ) {
 			core::Size jump = transform_info_.jump_ids[i];
 
 			//Add ligand grid scores, hopefully to overall pose output
-			utility::map_merge( grid_scores, get_ligand_grid_scores( jump, pose, "" ) );
+			utility::map_merge( grid_scores, get_ligand_grid_scores( *grid_set, jump, pose, "" ) );
 		}
 
 		for ( auto const & entry : grid_scores ) {
@@ -479,7 +442,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 	}
 }
 
-bool TransformEnsemble::check_grid(qsar::scoring_grid::GridManager* grid, utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, core::Real distance) //distance=0 default
+bool TransformEnsemble::check_grid(qsar::scoring_grid::GridSetCOP grid, utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, core::Real distance) //distance=0 default
 {
 
 	if ( distance > transform_info_.box_size ) {
@@ -607,7 +570,7 @@ void TransformEnsemble::change_conformers(utility::vector1<core::conformation::U
 
 }
 
-void TransformEnsemble::dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output)
+void TransformEnsemble::dump_conformer(core::conformation::UltraLightResidue const & residue, utility::io::ozstream & output)
 {
 	using namespace ObjexxFCL::format;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
@@ -679,6 +642,9 @@ void TransformEnsemble::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"Make an initial, unscored translation and rotation "
 		"Translation will be selected uniformly in a sphere of the given radius (Angstrom)."
 		"Automatically triggers 360 degrees randomized rotation", "0.0");
+
+	protocols::qsar::scoring_grid::attributes_for_parse_grid_set_from_tag(attlist, "The Scoring Grid set to use with TransformEnsemble scoring");
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Performs a monte carlo search of the ligand ensemble binding site using precomputed scoring grids. "
 		"Replaces the Translate, Rotate, and SlideTogether movers.", attlist );

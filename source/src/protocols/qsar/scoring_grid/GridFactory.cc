@@ -68,7 +68,7 @@ GridBaseOP GridFactory::new_grid(utility::tag::TagCOP tag) const
 	std::string const type = tag->getName();
 	//std::string const type = tag->getOption<std::string>("grid_type");
 
-	GridMap::const_iterator iter(grid_creator_map_.find(type));
+	GridSet::const_iterator iter(grid_creator_map_.find(type));
 	if ( iter != grid_creator_map_.end() ) {
 		if ( !iter->second ) {
 			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");
@@ -102,7 +102,7 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 
 	//make a new grid
 	GridBaseOP new_grid;
-	GridMap::const_iterator iter(grid_creator_map_.find(type));
+	GridSet::const_iterator iter(grid_creator_map_.find(type));
 	if ( iter != grid_creator_map_.end() ) {
 		if ( !iter->second ) {
 			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");

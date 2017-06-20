@@ -22,6 +22,7 @@
 
 #include <core/types.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -48,24 +49,30 @@ get_ligand_travel(
 	std::string const & prefix = ""
 );
 
+/// @details normalizaton_function will only be used if the Grids do not have their own normalization
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
+	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
 	core::Size jump_id,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix = "",
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
 );
 
+/// @details normalizaton_function will only be used if the Grids do not have their own normalization
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
+	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
 	char chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix = "",
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
 );
 
+/// @details normalizaton_function will only be used if the Grids do not have their own normalization
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
+	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
 	utility::vector1< core::Size > const & residues,
 	std::string const & chain_label,
 	core::pose::Pose const & test_pose,

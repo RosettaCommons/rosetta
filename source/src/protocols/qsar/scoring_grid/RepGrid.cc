@@ -160,13 +160,24 @@ void RepGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" )
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" )
 		+ XMLSchemaAttribute( "bb", xsct_real, "The repulsive value assigned to the grid for backbone atoms; positive values are considered unfavorable. If provided, then both 'sc' and 'ligand' attributes need to be provided also" )
 		+ XMLSchemaAttribute( "sc", xsct_real, "The repulsive value assigned to the grid for sidechain atoms; positive values are considered unfavorable. If provided, then both 'bb' and 'ligand' attributes need to be provided also" )
 		+ XMLSchemaAttribute( "ligand", xsct_real, "The repulsive value assigned to the grid for ligand atoms; positive values are considered unfavorable. If provided, then both 'bb' and 'sc' attributes need to be provided also" );
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that gives penalties for being too close to an atom; the too close distance is 2.25A", attributes );
 
+}
+
+std::string
+RepGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	ss << sep << radius_;
+	ss << sep << bb_ << sep << sc_ << sep << ligand_;
+	return ss.str();
 }
 
 

@@ -13,13 +13,66 @@
 
 // Unit headers
 #include <protocols/qsar/scoring_grid/schema_util.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
+
+GridSetCOP
+parse_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name ) {
+
+	std::string grid_set_name( tag->getOption<std::string>( option_name, "default" ) );
+	if ( ! data.has( "scoring_grids", grid_set_name ) ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("Cannot find the ScoringGrids GridSet " + grid_set_name );
+	}
+	GridSetCOP grid_set = data.get_ptr< qsar::scoring_grid::GridSet const >( "scoring_grids", grid_set_name );
+	if ( grid_set == nullptr ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("Problem getting GridSet " + grid_set_name + " - the stored GridSet is malformed!");
+	}
+	return grid_set;
+}
+
+void
+attributes_for_parse_grid_set_from_tag(utility::tag::AttributeList &attributes, std::string const & description, std::string const & option_name ) {
+
+	using namespace utility::tag;
+	attributes + XMLSchemaAttribute::attribute_w_default(option_name, xs_string, description, "default");
+}
+
+GridSetCOP
+parse_optional_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name ) {
+
+	std::string grid_set_name( tag->getOption<std::string>( option_name, "default" ) );
+	if ( ! data.has( "scoring_grids", grid_set_name ) ) {
+		if ( tag->hasOption( option_name ) ) {
+			// If it's been explcitly called for, then it's an error
+			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find the ScoringGrids GridSet " + grid_set_name );
+		} else {
+			// If it's just missing, it's not an error
+			return nullptr;
+		}
+	}
+	GridSetCOP grid_set = data.get_ptr< qsar::scoring_grid::GridSet const >( "scoring_grids", grid_set_name );
+	if ( grid_set == nullptr ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("Problem getting GridSet " + grid_set_name + " - the stored GridSet is malformed!");
+	}
+	return grid_set;
+}
+
+void
+attributes_for_parse_optional_grid_set_from_tag(utility::tag::AttributeList &attributes, std::string const & description, std::string const & option_name ) {
+
+	using namespace utility::tag;
+	attributes + XMLSchemaAttribute::attribute_w_default(option_name, xs_string, description, "default");
+}
+
+
 
 /// @brief Used to name the xs:complexType for a scoring grid that is
 /// created with the given element name

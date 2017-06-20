@@ -18,7 +18,10 @@
 #include <core/types.hh>
 
 // Utility headers
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -27,6 +30,23 @@
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
+
+/// @brief Get a GridSet from the datamap, using the option_name attribute of the tag.
+GridSetCOP
+parse_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name = "grid_set" );
+
+/// @brief Append the attributes read by parse_grid_set_from_tag()
+void
+attributes_for_parse_grid_set_from_tag(utility::tag::AttributeList &attributes, std::string const & description = "", std::string const & option_name = "grid_set");
+
+/// @brief Get a GridSet from the datamap, using the option_name attribute of the tag.
+/// If a GridSet hasn't been specified, return a nullptr
+GridSetCOP
+parse_optional_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name = "grid_set" );
+
+/// @brief Append the attributes read by parse_optional_grid_set_from_tag()
+void
+attributes_for_parse_optional_grid_set_from_tag(utility::tag::AttributeList &attributes, std::string const & description = "", std::string const & option_name = "grid_set");
 
 /// @brief Used to name the xs:complexType for a scoring grid that is
 /// created with the given element name
@@ -42,6 +62,7 @@ xsd_type_definition_w_attributes(
 	std::string const & description,
 	utility::tag::AttributeList const & attributes
 );
+
 
 }
 }

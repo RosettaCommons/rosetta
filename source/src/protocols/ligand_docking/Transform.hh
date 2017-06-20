@@ -15,7 +15,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/ligand_docking/Transform.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
@@ -31,27 +31,17 @@ namespace ligand_docking {
 struct Transform_info{ // including default values
 
 public:
-	std::string chain;
-	core::Size chain_id;
-	core::Size jump_id;
-	core::Real move_distance;
-	core::Real box_size;
-	core::Real angle;
-	core::Real rmsd;
-	core::Size cycles;
-	core::Real temperature;
-	core::Size repeats;
-	Transform_info():
-		chain(""),
-		chain_id(0),
-		jump_id(0),
-		move_distance(0.0),
-		box_size(0.0),
-		angle(0.0),
-		rmsd(0.0),
-		cycles(0),
-		temperature(0.0),
-		repeats(1){};
+	std::string chain = "";
+	core::Size chain_id = 0;
+	core::Size jump_id = 0;
+	core::Real move_distance = 0.0;
+	core::Real box_size = 0.0;
+	core::Real angle = 0.0;
+	core::Real rmsd = 0.0;
+	core::Size cycles = 0;
+	core::Real temperature = 0.0;
+	core::Size repeats = 1;
+	Transform_info() = default;
 	Transform_info(Transform_info const & ) = default;
 };
 
@@ -60,6 +50,7 @@ class Transform: public protocols::moves::Mover
 public:
 	Transform();
 	Transform(
+		qsar::scoring_grid::GridSetCOP grid_prototype,
 		std::string const & chain,
 		core::Real const & box_size,
 		core::Real const & move_distance,
@@ -107,7 +98,7 @@ public:
 
 	/// @brief Check that conformers are safely within the grids.
 	/// Returns true if good, false if bad.
-	bool check_conformers(qsar::scoring_grid::GridManager & grid_manager,core::conformation::UltraLightResidue & starting_residue) const;
+	bool check_conformers(qsar::scoring_grid::GridSet const & grid_set,core::conformation::UltraLightResidue & starting_residue) const;
 
 	/// @brief Return the recommended minimum size of the ligand grids for this particular setup.
 	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum
@@ -127,7 +118,7 @@ public:
 	bool check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const;
 
 	/// @brief check ligand still inside the grid
-	bool check_grid(qsar::scoring_grid::GridManager* grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
+	bool check_grid(qsar::scoring_grid::GridSet const & grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
 
 private:
 	/// @brief Estimate how much the ligand will travel during the MC translation
@@ -135,9 +126,9 @@ private:
 	core::Real estimate_mc_travel( core::Real success_rate = -1 ) const;
 
 private:
-	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
 	utility::vector1< core::conformation::UltraLightResidueOP > ligand_conformers_;
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	bool optimize_until_score_is_negative_ = false;
 	bool output_sampled_space_ = false;
 	bool check_rmsd_ = false;

@@ -24,6 +24,7 @@
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
@@ -190,6 +191,7 @@ get_ligand_travel(
 
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
+	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
 	char chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix,
@@ -201,11 +203,12 @@ get_ligand_grid_scores(
 		utility_exit_with_message( "In get_ligand_grid_scores: test pose does not have a chain " + utility::to_string( chain ) );
 	}
 
-	return get_ligand_grid_scores( test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
+	return get_ligand_grid_scores( grid_set_prototype, test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
 }
 
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
+	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
 	core::Size jump_id,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix,
@@ -220,13 +223,14 @@ get_ligand_grid_scores(
 
 	char const chain =core::pose::get_chain_from_jump_id( jump_id, test_pose );
 
-	return get_ligand_grid_scores( test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
+	return get_ligand_grid_scores( grid_set_prototype, test_resi, utility::to_string( chain ), test_pose, prefix, normalization_function );
 }
 
 std::map< std::string, core::Real >
 get_ligand_grid_scores(
+	protocols::qsar::scoring_grid::GridSet const & grid_set_prototype,
 	utility::vector1< core::Size > const & test_resi,
-	std::string const & chain_label,
+	std::string const & chain,
 	core::pose::Pose const & test_pose,
 	std::string const & prefix,
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
@@ -234,17 +238,19 @@ get_ligand_grid_scores(
 
 	std::map< std::string, core::Real > retval;
 
-	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+	core::Vector center( core::pose::all_atom_center( test_pose, test_resi ) );
 
-	if ( grid_manager->size()==0 ) {
+	if ( grid_set_prototype.size()==0 ) {
 		TR << "skipping 'append ligand grid scores'. No grids used." << std::endl;
 		return retval;
 	}
 
-	core::Vector center( core::pose::all_atom_center( test_pose, test_resi ) );
+	qsar::scoring_grid::GridSetCOP grid_set = qsar::scoring_grid::GridManager::get_instance()->get_grids( grid_set_prototype, test_pose, center, chain );
 
-	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(test_pose,center);
+	if ( grid_set->is_normalization_enabled() ) {
+		// Note that the GridSet::total_score() function would also normalize, if the normalization function was set in the GridSet
+		normalization_function = nullptr; // Not passed by reference, so wouldn't change any upstream pointers
+	}
 
 	core::conformation::ResidueCOPs residues;
 	if ( normalization_function ) {
@@ -253,13 +259,12 @@ get_ligand_grid_scores(
 		}
 	}
 
-	core::Real total_score( grid_manager->total_score( test_pose, test_resi ) );
+	core::Real total_score( grid_set->total_score( test_pose, test_resi ) );
 	if ( normalization_function ) {
-		// Note that the GridManager::total_score() function already normalizes, if the normalization function was set in the GridManager
 		total_score = (*normalization_function)( total_score, residues );
 	}
 
-	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
+	qsar::scoring_grid::GridSet::ScoreMap grid_scores( grid_set->grid_scores( test_pose, test_resi ) );
 	for ( auto const & grid_score : grid_scores ) {
 		core::Real component_score( grid_score.second );
 		if (  normalization_function ) {
@@ -267,7 +272,7 @@ get_ligand_grid_scores(
 		}
 
 		std::string label(grid_score.first);
-		label += "_grid_" + chain_label;
+		label += "_grid_" + chain;
 		if ( prefix != "" ) {
 			label = prefix + "_" + label;
 		}
@@ -275,7 +280,7 @@ get_ligand_grid_scores(
 		retval[ label ] = component_score;
 	}
 
-	std::string total_label("total_score_" + chain_label);
+	std::string total_label("total_score_" + chain);
 	if ( prefix != "" ) {
 		total_label = prefix + "_" + total_label;
 	}

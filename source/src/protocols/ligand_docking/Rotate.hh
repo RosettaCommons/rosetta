@@ -18,6 +18,7 @@
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/ligand_docking/DistributionMap.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -136,6 +137,9 @@ private:
 	core::Size const end,
 	core::pose::Pose & local_pose) const;
 	*/
+
+private:
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	Rotate_info rotate_info_;
 }; // class Rotate
 

@@ -788,12 +788,26 @@ get_hash_excluding_chain( char const & chain, core::pose::Pose const & pose, std
 std::string
 get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label="");
 
+/// @brief Get a value representing the position of all the atoms for residues with the given chain letters
+///
+/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+///
+std::string
+get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label="");
+
 /// @brief Get a value representing the position of all the atoms for residues which don't have the given chain letter
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 ///
 std::string
 get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label="");
+
+/// @brief Get a value representing the position of all the atoms for residues which don't have the given chain letter
+///
+/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+///
+std::string
+get_sha1_hash_excluding_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label="");
 
 /// @brief Initialize a DOF_ID_Map for a given Pose using the DOF_ID_Map's current default fill values
 template< typename T >

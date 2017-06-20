@@ -132,7 +132,7 @@ VdwGrid::~VdwGrid()
 core::Real VdwGrid::score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Real const max_score,
-	qsarMapOP /*qsar_map*/) const
+	qsarMapCOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
 
@@ -155,7 +155,7 @@ core::Real VdwGrid::score(
 core::Real VdwGrid::atom_score(
 	core::conformation::UltraLightResidue const & residue,
 	core::Size atomno,
-	qsarMapOP /*qsar_map*/) const
+	qsarMapCOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	core::Real const & radius(residue.residue()->atom_type(atomno).lj_radius());
@@ -171,7 +171,7 @@ core::Real VdwGrid::atom_score(
 	return 0;
 }
 
-core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP ) const
+core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP ) const
 {
 	core::Real score = 0.0;
 
@@ -191,7 +191,7 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
+core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	core::Real const & radius(residue.atom_type(atomno).lj_radius());
@@ -240,7 +240,7 @@ void VdwGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" );
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that stores at each grid point the shortest"
 		" distance to the closest surface point on any van der Waals sphere in the protein, and then uses that distance"
@@ -248,6 +248,17 @@ void VdwGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		" table in the rosetta database: scoring/qsar/lj_table.txt. No parameters may be customized for this grid",
 		attributes );
 
+}
+
+std::string
+VdwGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	ss << sep << cutoff_;
+	// lj_spline_ is always read from the same file
+	return ss.str();
 }
 
 }

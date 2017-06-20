@@ -27,6 +27,7 @@
 //#include <protocols/jd2/Job.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
 
 #include <utility/vector1.hh>
@@ -54,6 +55,8 @@ public:
 	void chains(std::vector<std::string> const & chains);
 
 	void score_fxn(core::scoring::ScoreFunctionOP const & score_fxn);
+
+	void grid_set_prototype(protocols::qsar::scoring_grid::GridSetCOP grid_prototype);
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -100,6 +103,7 @@ private:
 	core::scoring::ScoreFunctionOP score_fxn_;
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function_;
 	bool compute_grid_scores_;
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	std::string prefix_;
 
 };

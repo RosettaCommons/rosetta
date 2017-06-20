@@ -59,19 +59,19 @@ public:
 	void parse_my_tag(utility::tag::TagCOP tag) override =0 ;
 
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override = 0;
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override = 0;
 
 	/// @brief return the current score of an atom using the current grid
-	core::Real atom_score(core::conformation::UltraLightResidue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/) const override
+	core::Real atom_score(core::conformation::UltraLightResidue const & /*residue*/, core::Size /*atomno*/, qsarMapCOP /*qsar_map*/) const override
 	{
 		return 0.0;
 	}
 
 	/// @brief return the current score of a residue using the current grid
-	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override = 0;
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override = 0;
 
 	/// @brief return the current score of an atom using the current grid
-	core::Real atom_score(core::conformation::Residue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/) const override
+	core::Real atom_score(core::conformation::Residue const & /*residue*/, core::Size /*atomno*/, qsarMapCOP /*qsar_map*/) const override
 	{
 		return 0.0;
 	}

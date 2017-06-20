@@ -393,7 +393,6 @@ static MoverRegistrator< protein_interface_design::movers::TopologyBrokerMoverCr
 
 // Q //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;
-static MoverRegistrator< qsar::scoring_grid::GridInitMoverCreator >  reg_GridInitMoverCreator;
 
 // R //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_MakeStarTopologyMoverCreator;

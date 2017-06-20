@@ -49,6 +49,8 @@ public:
 	static std::string grid_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	std::string hash_fingerprint() const override;
+
 private:
 	core::ShortSize probe_atom_type_;
 

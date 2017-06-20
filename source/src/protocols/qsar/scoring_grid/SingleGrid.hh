@@ -92,13 +92,13 @@ public:
 	/// @brief get the pdb coordinates based on grid point coordinates
 	core::Vector get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt gridpt);
 	/// @brief return the current score of an UltraLightResidue using the current grid
-	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
+	core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
+	core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapCOP qsar_map) const override;
 	/// @brief return the current score of a residue using the current grid
-	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const override;
+	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const override;
 	/// @brief return the current score of an atom using the current grid
-	core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) const override;
+	core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP qsar_map) const override;
 	void grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride);
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
 	/// @brief check to see if residue is in grid
@@ -128,6 +128,11 @@ public:
 
 	/// @brief Print a brief summary about this grid to the provided output stream
 	void show( std::ostream & out ) const override;
+
+	/// @brief Return a string representing the settings which don't change based on reinitialization
+	// SingleGrid isn't defining this, as type_ is currently the only value of interest here,
+	// and we want an error if derived classes don't define this.
+	virtual std::string hash_fingerprint() const override = 0;
 
 private:
 	core::grid::CartGrid<core::Real> grid_;

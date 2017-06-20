@@ -15,6 +15,8 @@
 #include <protocols/qsar/qsarMap.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -56,26 +58,25 @@ qsarCreator::mover_name()
 
 qsarMover::qsarMover():
 	qsar_map_(/* 0 */),
-	chain_(),
-	initialize_(false)
+	chain_()
 {}
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 qsarMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*datamap*/,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "qsarMover" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+	grid_set_prototype_ = scoring_grid::parse_grid_set_from_tag( tag, datamap );
 
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'qsar' mover requires chain tag");
 	chain_= tag->getOption<std::string>("chain");
 
-	if ( ! tag->hasOption("grids") ) throw utility::excn::EXCN_RosettaScriptsOption("'qsarMover' requires grids tag");
+	if ( ! tag->hasOption("grids") ) throw utility::excn::EXCN_RosettaScriptsOption("'qsar' mover requires grids tag");
 
 	std::string grids_string= tag->getOption<std::string>("grids");
 	utility::vector1<std::string> grid_strings(utility::string_split(grids_string, ','));
@@ -84,57 +85,50 @@ qsarMover::parse_my_tag(
 
 void qsarMover::apply(core::pose::Pose & pose)
 {
-	scoring_grid::GridManager* grid_manager(scoring_grid::GridManager::get_instance());
-
-	core::Size const chain_id(core::pose::get_chain_id_from_chain(chain_,pose));
-	core::Size const begin(pose.conformation().chain_begin(chain_id));
-	/// TODO The next line assumes the chain is one residue. fix this.
-	core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(begin)) );
+	debug_assert( grid_set_prototype_ != nullptr );
 
 	if ( grids_to_use_.size()==0 ) {
 		TR.Warning << "no grids specified, QSAR scoring function will be empty!!" <<std::endl;
 		return;
-	} else if ( !initialize_ ) {
-		auto grid_iterator(grids_to_use_.begin());
-		for ( ; grid_iterator != grids_to_use_.end(); ++grid_iterator ) {
-			//grid_manager->make_new_grid(*grid_iterator);
-			grid_manager->get_grid(*grid_iterator);
-			TR.Debug << "getting grid: " << *grid_iterator << std::endl;
-		}
-		if ( qsar_map_ == nullptr ) {
-
-			qsar_map_ = qsarMapOP( new qsarMap("default",residue) );
-
-			qsar_map_->fill_with_value(1,grids_to_use_);
-		}
-
-		grid_manager->set_qsar_map(qsar_map_);
-
 	}
 
-	if ( !initialize_ || pose.conformation().structure_moved() ) {
-		core::Size const jump_id(core::pose::get_jump_id_from_chain_id(chain_id,pose));
-		core::Vector const center(geometry::downstream_centroid_by_jump(pose,jump_id));
-
-		if ( !initialize_ ) {
-			TR.Debug <<"initializing grids" << std::endl;
-			grid_manager->initialize_all_grids(center);
-			TR.Debug <<"grids initialized" <<std::endl;
-		}
-		grid_manager->update_grids(pose,center);
-		TR.Debug <<"grids updated, scoring.."<<std::endl;
-		core::Real score(grid_manager->total_score(*residue));
-		TR.Debug << "total score is " << score <<std::endl;
-		std::map<std::string,core::Real> scores(grid_manager->get_cached_scores());
-
-
-		jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
-		grid_manager->append_cached_scores(job);
-		//grid_manager->write_grids("test_");
+	debug_assert( chain_.size() == 1 );
+	utility::vector1< core::Size > chain_residues( core::pose::get_resnums_for_chain( pose, chain_[0] ) );
+	if ( chain_residues.size() != 1 ) {
+		utility_exit_with_message("The qsarMover can only operate on single residue chains.");
 	}
-	if ( !initialize_ ) {
-		initialize_=true;
+
+	core::Size resnum( chain_residues[1] );
+	// need to make a copy, as qsarMap takes an OP to it.
+	core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(resnum)) );
+
+	if ( qsar_map_ == nullptr ) {
+
+		qsar_map_ = qsarMapOP( new qsarMap("default", residue) );
+
+		qsar_map_->fill_with_value(1,grids_to_use_);
+
+		scoring_grid::GridSetOP mod_prototype( grid_set_prototype_->clone() );
+		mod_prototype->set_qsar_map(qsar_map_);
+		grid_set_prototype_ = mod_prototype;
 	}
+
+	core::Vector center( core::pose::all_atom_center(pose, chain_residues) );
+
+	scoring_grid::GridSetCOP grid_set = scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, chain_ );
+
+	scoring_grid::GridSet::ScoreMap grid_scores( grid_set->grid_scores(*residue) );
+	core::Real total_score(grid_set->total_score(*residue));
+	TR.Debug << "total score is " << total_score <<std::endl;
+
+	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
+	for ( scoring_grid::GridSet::ScoreMap::value_type const & pair: grid_scores ) {
+		job->add_string_real_pair( "grid_"+pair.first, pair.second );
+	}
+	job->add_string_real_pair( "grid_total", total_score );
+
+	//grid_manager->write_grids("test_");
+
 }
 
 std::string qsarMover::get_name() const

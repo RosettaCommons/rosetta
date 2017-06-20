@@ -151,13 +151,24 @@ void ClassicGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" )
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" )
 		+ XMLSchemaAttribute::attribute_w_default("atr", xsct_real, "Score for attractive term of grid (negative scoring is better)", "-1.0")
 		+ XMLSchemaAttribute::attribute_w_default("rep", xsct_real, "Score for repulsive term of grid (negative scoring is better)", "1.0");
 
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that treats all atoms as both attractive within 4.75A (getting a default score of -1) and repulsive within 2.25A (getting a default score of +1) atr and rep changes scoring weights; ", attributes );
 
+}
+
+std::string
+ClassicGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	ss << sep << atr_radius_ << sep << rep_radius_;
+	ss << sep << atr_weight_ << sep << rep_weight_;
+	return ss.str();
 }
 
 }

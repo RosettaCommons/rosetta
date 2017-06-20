@@ -47,7 +47,7 @@
 
 //protocol headers
 #include <protocols/ligand_docking/StartFrom.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
 
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option_macros.hh>
@@ -142,11 +142,11 @@ private:
 };
 
 
-void setup_grid_manager(GridWeights const & /*weights*/)
+protocols::qsar::scoring_grid::GridSetCOP setup_grids(GridWeights const & /*weights*/)
 {
 	using namespace protocols::qsar::scoring_grid;
-	GridManager* grid_manager( GridManager::get_instance() );
-	grid_manager->reset();
+	// Initialize the prototype grid set
+	GridSetOP grid_set( new GridSet );
 
 	SingleGridOP atr( new AtrGrid() );
 	SingleGridOP rep( new RepGrid() );
@@ -154,13 +154,15 @@ void setup_grid_manager(GridWeights const & /*weights*/)
 	SingleGridOP hba( new HbaGrid() );
 	SingleGridOP hbd( new HbdGrid() );
 
-	grid_manager->insert_grid("atr",atr);
-	grid_manager->insert_grid("rep",rep);
-	grid_manager->insert_grid("vdw",vdw);
-	grid_manager->insert_grid("hba",hba);
-	grid_manager->insert_grid("hbd",hbd);
+	grid_set->add_grid("atr",atr); // Add weights?
+	grid_set->add_grid("rep",rep);
+	grid_set->add_grid("vdw",vdw);
+	grid_set->add_grid("hba",hba);
+	grid_set->add_grid("hbd",hbd);
+
 	roc_tracer << "setup grids" <<std::endl;
 
+	return grid_set;
 }
 
 
@@ -177,7 +179,7 @@ protocols::moves::MoverOP setup_start_coords()
 
 }
 
-protocols::moves::MoverOP setup_transform_mover()
+protocols::moves::MoverOP setup_transform_mover( protocols::qsar::scoring_grid::GridSetCOP grid_set )
 {
 	//TODO boo hard coding bad
 	std::string chain("X");
@@ -187,7 +189,7 @@ protocols::moves::MoverOP setup_transform_mover()
 	core::Size cycles(8000);
 	core::Real temp(100.0);
 
-	protocols::moves::MoverOP transform( new protocols::ligand_docking::Transform(chain,box_size,move_distance,angle,cycles,temp) );
+	protocols::moves::MoverOP transform( new protocols::ligand_docking::Transform(grid_set, chain,box_size,move_distance,angle,cycles,temp) );
 	return transform;
 
 
@@ -200,7 +202,7 @@ protocols::moves::MoverOP setup_slide_mover()
 	return slide_together;
 }
 
-protocols::moves::MoverOP setup_score_mover()
+protocols::moves::MoverOP setup_score_mover( protocols::qsar::scoring_grid::GridSetCOP grid_set )
 {
 	std::vector<std::string> chains;
 	chains.push_back("X");
@@ -208,6 +210,7 @@ protocols::moves::MoverOP setup_score_mover()
 	core::scoring::ScoreFunctionOP score_fxn(core::scoring::get_score_function_legacy( "score12prime.wts" ));
 
 	protocols::ligand_docking::InterfaceScoreCalculatorOP score_mover( new protocols::ligand_docking::InterfaceScoreCalculator() );
+	score_mover->grid_set_prototype( grid_set );
 
 	score_mover->chains(chains);
 	score_mover->score_fxn(score_fxn);
@@ -215,14 +218,16 @@ protocols::moves::MoverOP setup_score_mover()
 
 }
 
-protocols::moves::MoverOP setup_lowres_protocol()
+protocols::moves::MoverOP setup_lowres_protocol( GridWeights const & weights )
 {
 	protocols::moves::SequenceMoverOP lowres_protocol_mover( new protocols::moves::SequenceMover() );
 
+	protocols::qsar::scoring_grid::GridSetCOP grid_set( setup_grids(weights) );
+
 	lowres_protocol_mover->add_mover(setup_start_coords());
-	lowres_protocol_mover->add_mover(setup_transform_mover());
+	lowres_protocol_mover->add_mover(setup_transform_mover(grid_set));
 	lowres_protocol_mover->add_mover(setup_slide_mover());
-	lowres_protocol_mover->add_mover(setup_score_mover());
+	lowres_protocol_mover->add_mover(setup_score_mover(grid_set));
 
 	return lowres_protocol_mover;
 
@@ -428,9 +433,7 @@ int main(int argc, char* argv[])
 #endif
 
 		for ( core::Size cycle = 1; cycle <= 10; ++cycle ) {
-
-			setup_grid_manager(current_weights);
-			protocols::moves::MoverOP mover(setup_lowres_protocol());
+			protocols::moves::MoverOP mover(setup_lowres_protocol(current_weights));
 			protocols::jd2::JobDistributor::get_instance()->mpi_finalize(false);
 			roc_tracer << "starting docking for cycle " << cycle << std::endl;
 			protocols::jd2::JobDistributor::get_instance()->go(mover);

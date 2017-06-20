@@ -74,13 +74,13 @@ void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP tag)
 
 }
 
-core::Real LigandPropertyScore::score(core::conformation::UltraLightResidue const & residue, core::Real const , qsarMapOP ) const
+core::Real LigandPropertyScore::score(core::conformation::UltraLightResidue const & residue, core::Real const , qsarMapCOP ) const
 {
 	core::Real property_score = residue.residue()->type().get_numeric_property(parameter_tag_);
 	return property_score;
 }
 
-core::Real LigandPropertyScore::score(core::conformation::Residue const & residue, core::Real const , qsarMapOP ) const
+core::Real LigandPropertyScore::score(core::conformation::Residue const & residue, core::Real const , qsarMapCOP ) const
 {
 	core::Real property_score = residue.type().get_numeric_property(parameter_tag_);
 	return property_score;
@@ -133,6 +133,14 @@ void LigandPropertyScore::show( std::ostream & out ) const {
 	out << "LigandPropertyScore grid using parameter " << parameter_tag_ << std::endl;
 }
 
+std::string
+LigandPropertyScore::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << parameter_tag_;
+	return ss.str();
+}
 }
 }
 }

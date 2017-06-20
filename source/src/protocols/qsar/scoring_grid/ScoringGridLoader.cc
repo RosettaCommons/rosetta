@@ -16,10 +16,11 @@
 #include <protocols/qsar/scoring_grid/ScoringGridLoaderCreator.hh>
 
 // Project Headers
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 //#include <protocols/qsar/qsarTypeManager.hh>
 
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -43,48 +44,100 @@ ScoringGridLoader::~ScoringGridLoader() {}
 void ScoringGridLoader::load_data(
 	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &
+	basic::datacache::DataMap & data
 ) const
 {
 	using namespace utility::tag;
 	typedef utility::vector0< TagCOP > TagCOPs;
 
-	/// Setup the scoring grid_manager
+	TagCOPs const sub_tags( tag->getTags() );
 
-	//core::Real width = 40.0;
-	//core::Real resolution = 0.25;
+	TagCOPs gridset_tags;
+	TagCOPs default_gridset_tags;
 
-	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
-
-	if ( tag->hasOption("width") ) {
-		grid_manager->set_width(tag->getOption<core::Real>("width"));
-
+	for ( TagCOP subtag : sub_tags ) {
+		if ( subtag->getName() == "GridSet" ) {
+			// Note that we'll never actually get here, as I haven't actually enabled this in the XSD
+			// For now, just repeat the SCORINGGRIDS tags (with the `name` attribute) if you need multiple Scoring Grids.
+			gridset_tags.push_back( subtag );
+		} else {
+			default_gridset_tags.push_back( subtag );
+		}
 	}
+
+	if ( !gridset_tags.empty() && !default_gridset_tags.empty() ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("Cannot use 'GridSet' tags simultaneously with bare non-GridSet tags!");
+	}
+
+	if ( gridset_tags.empty() ) {
+		parse_gridset_tag( tag, tag, data );
+	} else {
+		// Note that we'll never actually get here, as I haven't actually enabled this in the XSD
+		// For now, just repeat the SCORINGGRIDS tags (with the `name` attribute) if you need multiple Scoring Grids.
+		for ( TagCOP gridset_tag : gridset_tags ) {
+			parse_gridset_tag( gridset_tag, tag, data );
+		}
+	}
+
+}
+
+void ScoringGridLoader::parse_gridset_tag( utility::tag::TagCOP tag, utility::tag::TagCOP parent, basic::datacache::DataMap & data ) const
+{
+	using namespace utility::tag;
+	typedef utility::vector0< TagCOP > TagCOPs;
+
+	// Initialize the prototype grid set
+	qsar::scoring_grid::GridSetOP grid_set( new qsar::scoring_grid::GridSet );
+
+	std::string name = "default";
+	if ( tag->hasOption("name") ) {
+		name = tag->getOption<std::string>("name");
+	}
+
+	// We defer to parent, such that we can set things in the SCORINGGRIDS tag that applies to all sub tags
+	if ( tag->hasOption("width") ) {
+		grid_set->width(tag->getOption<core::Real>("width"));
+	} else if ( parent->hasOption("width") ) {
+		grid_set->width(parent->getOption<core::Real>("width"));
+	}
+
 	if ( tag->hasOption("resolution") ) {
-		grid_manager->set_resolution(tag->getOption<core::Real>("resolution"));
+		grid_set->resolution(tag->getOption<core::Real>("resolution"));
+	} else if ( parent->hasOption("resolution") ) {
+		grid_set->resolution(parent->getOption<core::Real>("resolution"));
 	}
 
 	if ( tag->hasOption("ligand_chain") ) {
-		grid_manager->set_chain(tag->getOption<char>("ligand_chain"));
+		grid_set->chain(tag->getOption<char>("ligand_chain"));
+	} else if ( parent->hasOption("ligand_chain") ) {
+		grid_set->chain(parent->getOption<char>("ligand_chain"));
 	}
 
 	if ( tag->hasOption("normalize_mode") ) {
 		std::string normalize_mode = tag->getOption<std::string>("normalize_mode");
-		grid_manager->set_normalization_function(normalize_mode);
+		grid_set->set_normalization_function(normalize_mode);
+	} else if ( parent->hasOption("normalize_mode") ) {
+		std::string normalize_mode = parent->getOption<std::string>("normalize_mode");
+		grid_set->set_normalization_function(normalize_mode);
 	}
 
-	/// Add grids to the scoring grid manager
+	// Add grids to the GridSet
 
 	TagCOPs const grid_tags( tag->getTags() );
 	if ( grid_tags.size()==0 ) {
-		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
+		TR.Warning << "No Scoring grids specified! Scoring Grids for the " << name << " GridSet will be empty!" << std::endl;
 	}
 
 	for ( TagCOP tag : grid_tags ) {
-		grid_manager->make_new_grid(tag);
+		grid_set->make_new_grid(tag);
 	}
 
-	TR.flush();
+	// Put the grid in the "default" slot for the DataMap.
+	bool data_add_status = data.add( "scoring_grids", name, grid_set );
+
+	if ( !data_add_status ) {
+		utility_exit_with_message( "Scoring Grid " + name + " already exists in the DataMap. Please rename or combine into a single entry." );
+	}
 }
 
 protocols::jd2::parser::DataLoaderOP
@@ -134,7 +187,8 @@ void ScoringGridLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	xsd.add_top_level_element( grid_score_norm_enumeration );
 
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "width", xsct_real, "The reach of the grid, in Angstroms" )
+	attributes + XMLSchemaAttribute::attribute_w_default( "name", xs_string, "The name of the GridSet for the listed set of grids", "default" )
+		+ XMLSchemaAttribute( "width", xsct_real, "The reach of the grid, in Angstroms" )
 		+ XMLSchemaAttribute( "resolution", xsct_real, "The distance between grid points, in Angstroms" )
 		+ XMLSchemaAttribute( "ligand_chain", xsct_char, "The chain in the input Pose that the ligand will be" )
 		+ XMLSchemaAttribute( "normalize_mode", "grid_score_normalization", "The normalization function to use to"
@@ -143,11 +197,9 @@ void ScoringGridLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( loader_name() )
 		.complex_type_naming_func( & ScoringGridLoader::scoring_grid_loader_ct_namer )
-		.description( "The ScoringGridLoader will populate the singleton (?!!?!?!) GridManager with the set of"
-		" ScoringGrids that are given as subelements of the " + loader_name() + " element. Instead, it ought to"
-		" create an object as a collection of Grids and load that object into the datamap for other Movers and"
-		" filters to retrieve. If someone starts using ScoringGrids again, please make that refactor! Until that"
-		" happens, any protocol that relies on ScoringGrids cannot be run in a multi-threaded environment." )
+		.description( "The ScoringGridLoader will populate a GridSet with the set of"
+		" ScoringGrids that are given as subelements of the " + loader_name() + " element."
+		" By default, the grids with be loaded into the 'default' GridSet." )
 		.set_subelements_repeatable( subelements )
 		.add_attributes( attributes )
 		.write_complex_type_to_schema( xsd );

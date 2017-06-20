@@ -198,7 +198,7 @@ void ChargeGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 }
 
 
-core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP) const
+core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP) const
 {
 	core::Real score = 0.0;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
@@ -213,7 +213,7 @@ core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & resid
 	return score;
 }
 
-core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP) const
+core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapCOP) const
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
@@ -224,7 +224,7 @@ core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & 
 	}
 }
 
-core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/) const
+core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP /*qsar_map*/) const
 {
 	core::Real score = 0.0;
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
@@ -240,7 +240,7 @@ core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::
 	return score;
 }
 
-core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/) const
+core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP /*qsar_map*/) const
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
@@ -338,13 +338,24 @@ void ChargeGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridSet" );
 
 	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that computes the electrostatic potential at a set of grid points; no parameters may be customized currently", attributes );
 
 }
 
 
+std::string
+ChargeGrid::hash_fingerprint() const {
+	std::stringstream ss;
+	const char sep('\t');
+	ss << grid_name();
+	ss << sep << get_type(); // Only thing of interest from parent class
+	ss << sep << zeta_ << sep << indirect_numerator_ << sep << epsilon_0_;
+	// It looks like the charge_atom_list_ is reset by reinitialization
+	// if this is incorrect, the contents should be added here.
+	return ss.str();
+}
 
 }
 }

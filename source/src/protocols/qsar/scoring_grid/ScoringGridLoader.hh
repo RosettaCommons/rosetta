@@ -49,6 +49,12 @@ public:
 		basic::datacache::DataMap & data
 	) const;
 
+	/// @brief Utility function for load_data(), which only takes tags for a single GridSet
+	void parse_gridset_tag(
+		utility::tag::TagCOP tag,
+		utility::tag::TagCOP parent,
+		basic::datacache::DataMap & data ) const;
+
 	static std::string loader_name();
 	static std::string scoring_grid_loader_ct_namer( std::string const & element_name );
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

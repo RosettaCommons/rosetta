@@ -17,6 +17,8 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ResidueGridScoresFeatures.fwd.hh>
 
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -81,6 +83,7 @@ public:
 
 
 private:
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	char chain_;
 
 

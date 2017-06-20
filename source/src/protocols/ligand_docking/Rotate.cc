@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/task/ResfileReader.cc
-/// @brief  implementation of resfile reader and its command classes
+/// @file
+/// @brief
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
 // Unit Headers
@@ -25,7 +25,8 @@
 
 #include <core/scoring/rms_util.tmpl.hh>
 
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>
@@ -51,7 +52,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer rotate_tracer( "protocols.ligand_docking.ligand_options.rotate", basic::t_debug );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_options.rotate" );
 
 // XRW TEMP std::string
 // XRW TEMP RotateCreator::keyname() const
@@ -121,19 +122,19 @@ protocols::moves::MoverOP Rotate::fresh_instance() const {
 void
 Rotate::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data_map*/,
+	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & pose
 )
 {
-	if ( tag->getName() != "Rotate" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
-	}
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'chain' tag");
 	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'distribution' tag");
 	if ( ! tag->hasOption("degrees") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'degrees' tag");
 	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'cycles' tag");
+
+	// Will return a nullptr if this XML didn't define any ScoringGrids
+	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag( tag, data_map );
 
 	rotate_info_.chain = tag->getOption<std::string>("chain");
 	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(rotate_info_.chain, pose) );
@@ -168,13 +169,17 @@ Rotate::parse_my_tag(
 void Rotate::apply(core::pose::Pose & pose){
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, rotate_info_.jump_id);
 
-	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
-	if ( grid_manager->size() == 0 ) {
+	if ( grid_set_prototype_ == nullptr ) {
 		utility::vector1<core::Size> all_chain_ids = rotate_info_.tag_along_chains;
 		all_chain_ids.push_back(rotate_info_.chain_id);
 		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, all_chain_ids);
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
 	} else {
+		TR.Error << "############################################################" << std::endl << std::endl;
+		TR.Error << "The Rotate mover will not work properly with defined GridSets - it will do nothing!" << std::endl;
+		TR.Error << "You probably want to switch over to the Transform Mover, anyway." << std::endl;
+		TR.Error << std::endl;
+		TR.Error << "############################################################" << std::endl;
 		// TODO refactor qsar map so it works properly
 		/*
 		if(grid_manager->is_qsar_map_attached())
@@ -325,6 +330,9 @@ void Rotate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute("chain", xs_string, "Chain ID. MUST be a completely connected single chain.")
 		+ XMLSchemaAttribute("tag_along_chains", xs_string,
 		"Comma separated list of chains to be moved together with the rotating chain. E.g. metals or water.");
+
+	protocols::qsar::scoring_grid::attributes_for_parse_optional_grid_set_from_tag( attlist, "The ScoringGrid set to use for scoring the rotation. "
+		"If no scoring grids (at all) are present in the XML, use a default classic grid." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform a course random rotation "
 		" throughout all rotational degrees of freedom", attlist );

@@ -52,13 +52,13 @@ public:
 	virtual void parse_my_tag(utility::tag::TagCOP tag)=0;
 
 	/// @brief return the current scoer of an UltraLightResidue using the current grid
-	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) const = 0;
+	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const = 0;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) const = 0;
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapCOP qsar_map) const = 0;
 	/// @brief return the current score of a residue using the current grid
-	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) const = 0;
+	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapCOP qsar_map) const = 0;
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) const = 0;
+	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP qsar_map) const = 0;
 	/// @brief get the type of the grid
 	virtual std::string get_type() const = 0;
 	/// @brief set the chain the grid applies to
@@ -76,6 +76,9 @@ public:
 
 	/// @brief Print a brief summary about this grid to the provided output stream
 	virtual void show( std::ostream & out ) const = 0;
+
+	/// @brief Return a string representing the settings which don't change based on reinitialization
+	virtual std::string hash_fingerprint() const = 0;
 };
 
 }

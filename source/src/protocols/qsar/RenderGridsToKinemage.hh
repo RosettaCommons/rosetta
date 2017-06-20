@@ -19,6 +19,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.fwd.hh>
 
 #include <protocols/qsar/RenderGridsToKinemage.fwd.hh>
@@ -48,6 +49,7 @@ class RenderGridsToKinemage : public protocols::moves::Mover
 public:
 
 	RenderGridsToKinemage();
+	RenderGridsToKinemage(scoring_grid::GridSetCOP grid_set_prototype, std::string const & grid_name, std::string const & filename);
 	RenderGridsToKinemage(RenderGridsToKinemage const & mover);
 	~RenderGridsToKinemage() override;
 	moves::MoverOP clone() const override;
@@ -73,19 +75,21 @@ public:
 
 private:
 
-	void setup_colors();
-	void setup_one_color_scheme();
-	void setup_two_color_scheme();
-	void setup_three_color_scheme();
-	void write_points(utility::io::ozstream & kin_file);
+	void setup_colors( scoring_grid::SingleGrid const & grid );
+	void setup_one_color_scheme( scoring_grid::SingleGrid const & grid );
+	void setup_two_color_scheme( scoring_grid::SingleGrid const & grid );
+	void setup_three_color_scheme( scoring_grid::SingleGrid const & grid );
+	void write_points(utility::io::ozstream & kin_file, scoring_grid::SingleGrid const & grid );
 	void write_colors(utility::io::ozstream & kin_file);
 	void write_header(utility::io::ozstream & kin_file);
 
 private:
+	scoring_grid::GridSetCOP grid_set_prototype_;
+
 	std::string filename_;
-	core::Size color_mode_;
-	core::Size gradient_bins_;
-	core::Size stride_;
+	core::Size color_mode_ = 0;
+	core::Size gradient_bins_ = 10;
+	core::Size stride_ = 1;
 	//core::Real low_cut_;
 	//core::Real high_cut_;
 	std::string grid_name_;
@@ -94,7 +98,6 @@ private:
 	numeric::xyzVector<core::Real> zero_color_;
 	numeric::xyzVector<core::Real> high_color_;
 	utility::vector1<ColorGradient> color_data_;
-	scoring_grid::SingleGridCOP grid_;
 
 };
 

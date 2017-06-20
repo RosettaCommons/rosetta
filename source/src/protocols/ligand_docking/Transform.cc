@@ -19,6 +19,8 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -29,6 +31,7 @@
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/xyz.functions.hh>
@@ -62,15 +65,16 @@ Transform::Transform():
 Transform::Transform(Transform const & ) = default;
 
 Transform::Transform(
+	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype,
 	std::string const & chain,
 	core::Real const & box_size,
 	core::Real const & move_distance,
 	core::Real const & angle,
 	core::Size const & cycles,
 	core::Real const & temp
-) : Mover("Transform")
+) : Mover("Transform"),
+	grid_set_prototype_( grid_set_prototype )
 	// & in class defaults
-
 {
 	transform_info_.chain = chain;
 	transform_info_.box_size = box_size;
@@ -95,7 +99,7 @@ protocols::moves::MoverOP Transform::fresh_instance() const
 void Transform::parse_my_tag
 (
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data_map*/,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/
@@ -146,24 +150,25 @@ void Transform::parse_my_tag
 		sampled_space_file_ = tag->getOption<std::string>("sampled_space_file");
 	}
 
+	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, data);
 }
 
 void Transform::apply(core::pose::Pose & pose)
 {
-	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
 
 	debug_assert(transform_info_.chain.size() == 1);
 	transform_info_.chain_id = core::pose::get_chain_id_from_chain(transform_info_.chain, pose);
 	transform_info_.jump_id = core::pose::get_jump_id_from_chain_id(transform_info_.chain_id, pose);
 	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, transform_info_.jump_id));
-	debug_assert(grid_manager != nullptr); //something has gone hopelessly wrong if this triggers
 
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
 
-	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(pose,center);
+	if ( grid_set_prototype_ == nullptr ) {
+		utility_exit_with_message( "The Transform mover needs to have the GridSet prototype set in order to work." );
+	}
+	qsar::scoring_grid::GridSetCOP grid_set( qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, transform_info_.chain ) );
 
 	core::Real last_score(10000.0);
 	core::Real best_score(10000.0);
@@ -184,7 +189,7 @@ void Transform::apply(core::pose::Pose & pose)
 	setup_conformers(pose, begin);
 
 	// Check conformers, to make sure that they'll fit in the grid (at least in the initial position)
-	if ( !check_conformers( *grid_manager, original_ligand ) ) {
+	if ( !check_conformers( *grid_set, original_ligand ) ) {
 		// Already printed error message
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		return;
@@ -227,7 +232,7 @@ void Transform::apply(core::pose::Pose & pose)
 				core::Real distance = new_center.distance(original_center);
 
 				//Not everything in grid, also checks center distance
-				if ( !check_grid(grid_manager, ligand_residue, distance) ) {
+				if ( !check_grid(*grid_set, ligand_residue, distance) ) {
 					TR.Debug << "In the initial perturbation, the ligand moved outside the grid - retrying." << std::endl;
 					ligand_residue = last_accepted_ligand_residue;
 					perturbed = false;
@@ -235,19 +240,19 @@ void Transform::apply(core::pose::Pose & pose)
 				}
 			}
 			if ( n_perturb_trials >= 10*ligand_conformers_.size() ) {
-				TR.Error << "[ Error ] Could not get a decent initial perturbation - check grid size, ligand size, and initial pertubation size." << std::endl;
-				TR.Error << "[ Error ]     For this system, with a pertubation of " << initial_perturb_
+				TR.Error << "Could not get a decent initial perturbation - check grid size, ligand size, and initial pertubation size." << std::endl;
+				TR.Error << "    For this system, with a pertubation of " << initial_perturb_
 					<< ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
 				return;
 			} else if ( n_perturb_trials > 10 ) {
-				TR.Warning << "[ Warning ] It took more than 10 tries to get a decent inital perturbation. You likely want to check your grid size and initial perturbation size." << std::endl;
-				TR.Warning << "[ Warning ]     With the current purturbation setting of " << initial_perturb_ << ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
+				TR.Warning << "It took more than 10 tries to get a decent inital perturbation. You likely want to check your grid size and initial perturbation size." << std::endl;
+				TR.Warning << "    With the current purturbation setting of " << initial_perturb_ << ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
 			}
 			last_accepted_ligand_residue = ligand_residue;
 		}
 
-		last_score = grid_manager->total_score(ligand_residue);
+		last_score = grid_set->total_score(ligand_residue);
 
 		//Define starting ligand model (after perturb) as best model/score
 		best_score = last_score;
@@ -263,7 +268,7 @@ void Transform::apply(core::pose::Pose & pose)
 					not_converged= false;
 				} else if ( cycle % 2*transform_info_.cycles == 0 ) { // Print every time we're twice the requested cycles.
 					// Print a warning, so at least we can see if we're in an infinite loop.
-					TR.Warning << "Warning: optimized for " << cycle << " cycles and the score (" << last_score << ") is still not negative." << std::endl;
+					TR.Warning << "optimized for " << cycle << " cycles and the score (" << last_score << ") is still not negative." << std::endl;
 				}
 			} else {
 				if ( cycle >= transform_info_.cycles ) {
@@ -289,14 +294,14 @@ void Transform::apply(core::pose::Pose & pose)
 			core::Real distance = new_center.distance(original_center);
 
 			//Not everything in grid - Check distance too
-			if ( !check_grid(grid_manager, ligand_residue, distance) ) {
+			if ( !check_grid(*grid_set, ligand_residue, distance) ) {
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 				outside_grid_moves++;
 				continue;
 			}
 
-			core::Real current_score = grid_manager->total_score(ligand_residue);
+			core::Real current_score = grid_set->total_score(ligand_residue);
 			core::Real const boltz_factor((last_score-current_score)/temperature);
 			core::Real const probability = std::exp( boltz_factor ) ;
 
@@ -342,9 +347,9 @@ void Transform::apply(core::pose::Pose & pose)
 			core::Real outside_grid_ratio = (core::Real)outside_grid_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
 			TR << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
 			if ( outside_grid_ratio > 0.05 ) { // 5% is rather arbitrary here
-				TR.Warning << "[ Warning ] A large number of moves were rejected for being outside the grid. You likely want to reexamine your settings." << std::endl;
-				TR.Warning << "[ Warning ]     For the current settings, a grid size of at least " << utility::Real2string(recommended_grid_size( accept_ratio ),1);
-				TR.Warning << " and a box size of at least " << utility::Real2string(recommended_box_size( accept_ratio ),1) << " are recommended." << std::endl;
+				TR.Warning << "A large number of moves were rejected for being outside the grid. You likely want to reexamine your settings." << std::endl;
+				TR.Warning << "    For the current settings, a grid size of at least " << utility::Real2string(recommended_grid_size( accept_ratio ),1);
+				TR.Warning << "    and a box size of at least " << utility::Real2string(recommended_box_size( accept_ratio ),1) << " are recommended." << std::endl;
 			}
 		}
 
@@ -404,7 +409,7 @@ void Transform::transform_ligand(core::conformation::UltraLightResidue & residue
 
 }
 
-bool Transform::check_grid(qsar::scoring_grid::GridManager* grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance) //distance=0 default
+bool Transform::check_grid(qsar::scoring_grid::GridSet const & grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance) //distance=0 default
 {
 
 	if ( distance > transform_info_.box_size ) {
@@ -412,7 +417,7 @@ bool Transform::check_grid(qsar::scoring_grid::GridManager* grid, core::conforma
 	}
 
 	//The score is meaningless if any atoms are outside of the grid
-	if ( !grid->is_in_grid(ligand_residue) ) { //Reject the pose
+	if ( !grid.is_in_grid(ligand_residue) ) { //Reject the pose
 		return false;
 	}
 
@@ -439,21 +444,21 @@ void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
 	TR << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 }
 
-bool Transform::check_conformers(qsar::scoring_grid::GridManager & grid_manager, core::conformation::UltraLightResidue & starting_residue ) const
+bool Transform::check_conformers(qsar::scoring_grid::GridSet const & grid_set, core::conformation::UltraLightResidue & starting_residue ) const
 {
 	core::Size n_outside( 0 );
 	for ( core::conformation::UltraLightResidueOP conf: ligand_conformers_ ) {
 		core::conformation::UltraLightResidue lig( *conf );
 		lig.align_to_residue(starting_residue);
-		if ( ! grid_manager.is_in_grid( lig ) ) { ++n_outside; }
+		if ( ! grid_set.is_in_grid( lig ) ) { ++n_outside; }
 	}
 	if ( n_outside == ligand_conformers_.size() ) {
-		TR.Error << "[ Error ] All conformers start with atoms outside the grid -- Docking will be impossible. Increase the size of the grid." << std::endl;
-		TR.Error << "[ Error ] (For the current system and settings, a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended.)" << std::endl;
+		TR.Error << "All conformers start with atoms outside the grid -- Docking will be impossible. Increase the size of the grid." << std::endl;
+		TR.Error << "(For the current system and settings, a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended.)" << std::endl;
 		return false;
 	} else if ( n_outside > ligand_conformers_.size()/2 ) {
-		TR.Warning << "[ Warning ] " << n_outside << " of " << ligand_conformers_.size() << " conformers start with atoms outside the grid." << std::endl;
-		TR.Warning << "[ Warning ]        You likely want to increase the grid size to accomodate the size of the ligand. Recommended grid size for this run: at least " << utility::Real2string(recommended_grid_size(),1) << std::endl;
+		TR.Warning << n_outside << " of " << ligand_conformers_.size() << " conformers start with atoms outside the grid." << std::endl;
+		TR.Warning << "     You likely want to increase the grid size to accomodate the size of the ligand. Recommended grid size for this run: at least " << utility::Real2string(recommended_grid_size(),1) << std::endl;
 	}
 	return true;
 }
@@ -584,6 +589,9 @@ void Transform::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Translation will be selected uniformly in a sphere of the given radius (Angstrom)."
 		"Triggers 360 degress rotations are triggered.", "0.0")
 		+ XMLSchemaAttribute::attribute_w_default("initial_angle_perturb", "non_negative_real", "Control the size of the rotational perturbation by intitial_perturb. (Degrees)", "0.0");
+
+	protocols::qsar::scoring_grid::attributes_for_parse_grid_set_from_tag(attlist, "The Scoring Grid set to use with Transform scoring");
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Performs a monte carlo search of the ligand binding site using precomputed scoring grids. "
 		"Replaces the Translate, Rotate, and SlideTogether movers.", attlist );
