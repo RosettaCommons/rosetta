@@ -31,6 +31,9 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
     """
     def __init__(self):
 
+        self.types = sorted(
+            [os.path.basename(d) for d in glob.glob(os.path.join("application", "*")) if os.path.isdir(d)])
+
         option_types = ["Boolean", "Integer", "String", "Real"]
         option_types.extend([x+"Vector" for x in option_types])
 
@@ -43,16 +46,19 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
 
         required = parser.add_argument_group("Required")
 
+        required.add_argument("--type",
+                            help = "The type of template you will be needing.",
+                            required = True,
+                            choices = self.types)
+
         required.add_argument("--app_name", "-a",
                             help = "The name of the app.",
                             required = True)
 
 
 
-
-
         required.add_argument("--mover_name", "-c",
-                            help = "The name of the Mover you are calling for JD2",
+                            help = "The name of the main Mover you are calling (JD2 especially).",
                             required = True)
 
         required.add_argument("--brief", "-b",
@@ -60,13 +66,14 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
                             required = True)
 
         required.add_argument("--mover_namespace",
-                            help = "Mover namespace for JD2 to add. Will add this hh file for include",
+                            help = "Main Mover namespace to add. Will add this hh file for include",
                             nargs='*',
                             default = [])
 
 
 
         optional = parser.add_argument_group("Optional")
+
         optional.add_argument("--pilot", "-p",
                             help = "Signify that this is a pilot app",
                             default = False,

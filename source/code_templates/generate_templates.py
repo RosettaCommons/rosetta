@@ -199,6 +199,13 @@ class GenerateRosettaTemplates(object):
                 print("\nFeature Reporter Creator should be registered in (protocols.7) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterCreators.ihh\n")
+            elif re.search("jd3", self.options.type):
+                print("\n Help for creating a JD3 application can be found at https://wiki.rosettacommons.org/index.php/JD3FAQ \n" \
+                     "   "+"See src/apps/pilot/andrew/fixbb_jd3.cc for a current standard JD3 example. \n")
+
+                if self.options.type == "jd3_standard":
+                     print("\n   "+"This template is for a standard JD3 app, however, much more complex apps can be created.  See the docs for more.\n")
+
 
     ######## Replacement Functions#############
     def get_option(self, option_name, fail_on_none = True):
