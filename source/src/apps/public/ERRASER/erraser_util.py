@@ -49,7 +49,7 @@ def rosetta_bin_path(exe_file, rosetta_folder = "") :
         exe_folder = rosetta_folder
     check_path_exist(exe_folder)
     # AMW: check for the "no extension" symlink (cmake) first
-    name_extensions = [ "linuxgccrelease", ".linuxclangrelease", "", ".macosgccrelease", ".macosclangrelease",
+    name_extensions = [ ".linuxgccrelease", ".linuxclangrelease", "", ".macosgccrelease", ".macosclangrelease",
                        "failed_to_find_Rosetta_path"] #this makes a better error message if pathing fails
     exe_path = ""
     for name in name_extensions :
@@ -354,7 +354,7 @@ def parse_option_chain_res_list ( argv, tag ) :
     if not tag_argv in argv :
         print "%s = %s" % (tag, list_load)
         return list_load
-    
+
     pos = argv.index(tag_argv)
     #print pos
     for i in range( pos + 1, len(argv) ) :
@@ -386,7 +386,7 @@ def parse_option_chain_res_list ( argv, tag ) :
                 list_load.append('%s:%s' % (chain_id, j))
         else :
             error_exit("Incorrect input for -%s: instance %s" % (tag, argv[i]) )
-    
+
     print "%s = %s" % (tag, list_load)
     return list_load
 #####################################################
@@ -406,7 +406,7 @@ def rna_rosetta_ready_set( input_pdb, out_name, option, rosetta_bin = "", rosett
     command += " -ignore_unrecognized_res -inout:skip_connect_info true" # -ignore_waters"
     command += " -in:guarantee_no_DNA %s " % str(option.guarantee_no_DNA).lower()
     command += " -out:file:write_pdb_link_records true "
-    
+
     # calebgeniesse: output virtual phosphates here
     command += " -output_virtual true"
     print "######Start submitting the Rosetta command for rna_rosetta_ready_set########"
@@ -461,19 +461,19 @@ def extract_pdb( silent_file, output_folder_name, rosetta_bin = "",
     command += " -output_virtual " + str(output_virtual).lower()
     if( rna_prot_erraser ) :
         command += " -rna:rna_prot_erraser true -rna:corrected_geo true "
-    
+
     print "######Start submitting the Rosetta command for extract_pdb##################"
     subprocess_call( command, sys.stdout, sys.stderr )
     print "######Rosetta section completed#############################################"
 
-    ############## Reformat pdb files withoriginal naming conventions ############                                                                          
+    ############## Reformat pdb files withoriginal naming conventions ############
     pdbs = [pdb for pdb in glob('S_*.pdb') if pdb not in other_pdbs]
     for pdb in pdbs:
         idx = pdb.replace('S_','').replace('.pdb','')
         if not idx.isdigit() or len(idx) >= 6:
             continue
         move(pdb, pdb.replace(idx, idx.zfill(6)))
-    ##############################################################################               
+    ##############################################################################
 
     os.chdir( base_dir )
     return True
@@ -484,7 +484,7 @@ def phenix_release_tag():
     for line in output:
         if 'Release tag:' in line:
             return int( line.split()[-1] )
-    return None    
+    return None
 
 #####################################################
 def phenix_rna_validate(input_pdb, outliers_only = True):
@@ -513,14 +513,14 @@ def phenix_rna_validate(input_pdb, outliers_only = True):
         "Backbone bond angles" : "angle",
         "Backbone torsion suites" : "suite",
         # legacy format used prior to phenix release 1703
-        "Pucker Outliers:" : "pucker", 
+        "Pucker Outliers:" : "pucker",
         "Bond Length Outliers:" : "bond",
         "Angle Outliers:" : "angle",
         "Suite Outliers:" : "suite",
         "Suite Validation:" : "suite"
     }
     data = dict([(type, []) for type in data_types])
-    
+
     output = filter(None, output)
     for line_idx, line in enumerate(output):
         if any (header in line for header in data_headers):
@@ -564,10 +564,10 @@ def find_error_res(input_pdb):
     Return a list of error resdiue in the given pdb file (RNA only).
     Use phenix.rna_validate.
     """
-    
+
     data = phenix_rna_validate( input_pdb )
     error_res = []
-    
+
     for error_type, output in data.iteritems():
         for cols in output:
             chn = cols[1]
@@ -580,7 +580,7 @@ def find_error_res(input_pdb):
                 if res > 1:
                     error_res.append( "%s:%s" % ( chn, res - 1 ) )
             error_res.append( "%s:%s" % ( chn, res ) )
-    
+
     error_res = list(set(sorted(error_res)))
     return error_res
 #####################################################
@@ -663,7 +663,7 @@ def pdb_slice(input_pdb, out_name, segment) :
     # they need to match the output resnum.
     # A normal PDB would have the LINK lines first, but let's test if that
     # is actually necessary. I don't think it is.
-    # 1. Determine what atom lines should be output. 
+    # 1. Determine what atom lines should be output.
     # 2. Learn old_res <-> kept_res correspondence
     # 3. Output corresponding LINK records.
     old_kept_res = []
@@ -683,11 +683,11 @@ def pdb_slice(input_pdb, out_name, segment) :
         if old_res in kept_res :
             new_atom += 1
             output.write('%s%7d%s%4d%s' % (line[0:4], new_atom, line[11:22], new_res, line[26:]) )
-    
+
     linklines = ( line for line in open(input_pdb) if line[0:4] == 'LINK' )
     for line in linklines:
         # if either residue is in kept_res, write it
-        # ^ no that could lead to LINKs to nonexistent res -- AND 
+        # ^ no that could lead to LINKs to nonexistent res -- AND
         first, second = line.split()[4], line.split()[8]
         if first in old_kept_res and second in old_kept_res:
             output.write(line)
@@ -1447,7 +1447,7 @@ def sliced2orig_merge_back( orig_pdb, new_pdb, out_name, res_list ) :
             else :
                 if len(new_pdb_line) > 4 and new_pdb_line[0:4] == 'ATOM' :
                     if new_pdb_line[21].isspace():
-                        new_pdb_line = new_pdb_line[:21] + chain + new_pdb_line[22:]    
+                        new_pdb_line = new_pdb_line[:21] + chain + new_pdb_line[22:]
                     atom_num += 1
                     out.write('%s%7d%s%4d%s' % (new_pdb_line[0:4], atom_num, new_pdb_line[11:22], res_num, new_pdb_line[26:]) )
                     res_new_pre = int( new_pdb_line[22:26] )
@@ -1460,7 +1460,7 @@ def sliced2orig_merge_back( orig_pdb, new_pdb, out_name, res_list ) :
                         res_new = int( new_pdb_line[22:26] )
                         if res_new == res_new_pre :
                             if new_pdb_line[21].isspace():
-                                new_pdb_line = new_pdb_line[:21] + chain + new_pdb_line[22:]    
+                                new_pdb_line = new_pdb_line[:21] + chain + new_pdb_line[22:]
                             atom_num += 1
                             out.write('%s%7d%s%4d%s' % (new_pdb_line[0:4], atom_num, new_pdb_line[11:22], res_num, new_pdb_line[26:]) )
                             res_new_pre = int( new_pdb_line[22:26] )
