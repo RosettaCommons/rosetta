@@ -116,7 +116,6 @@
   DDL   Gal           ->?)-beta-D-Galp
   DGS   Gal           ->?)-alpha-D-Galp
   DR4   Gal           ->?)-beta-D-Galp
-  FUL   Gal           ->?)-beta-L-Galp
   G6S   Gal           ->?)-beta-D-Galp
   GAF   Gal           ->?)-alpha-D-Galp
   GL1   Gal           ->?)-alpha-D-Galp
@@ -125,6 +124,7 @@
   MBG   Gal           ->?)-beta-D-Galp
   SGA   Gal           ->?)-beta-D-Galp
   FUC   Fuc           ->?)-alpha-L-Fucp  # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
+  FUL   Fuc           ->?)-beta-L-Fucp   # trivial name for ->?)-beta-L-Galp, 6-deoxy-
   ABE   Abe           ->?)-alpha-D-Abep  # trivial name for ->?)-alpha-D-Galp, 3,6-deoxy-
   
 
@@ -137,7 +137,7 @@
   13P   DHA           ->1)-DHA
 
 
-
+# Ketotetroses
 
 # Code  Rosetta Code  Default HETNAM
   DE2   Eul           ->?)-L-Eul
