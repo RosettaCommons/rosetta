@@ -509,6 +509,7 @@ static MoverRegistrator< simple_moves::SaneMinMoverCreator > reg_SaneMinMoverCre
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;
 static MoverRegistrator< simple_moves::SetTorsionCreator > reg_SetTorsionCreator;
+static MoverRegistrator< simple_moves::SetupMetalsMoverCreator > reg_SetupMetalsMoverCreator;
 static MoverRegistrator< simple_moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< simple_moves::ShortBackrubMoverCreator > reg_ShortBackrubMoverCreator;
 static MoverRegistrator< simple_moves::SimpleThreadingMoverCreator > reg_SimpleThreadingMoverCreator;

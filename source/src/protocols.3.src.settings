@@ -746,6 +746,7 @@ sources = {
 		"SequenceProfileMover",
 		"SetReturningPackRotamersMover",
 		"SetTorsion",
+	        "SetupMetalsMover",
 		"SimpleThreadingMover",
 		"ShakeStructureMover",
 		"ShortBackrubMover",

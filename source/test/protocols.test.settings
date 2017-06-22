@@ -533,6 +533,7 @@ sources = {
 		#"UniformPositionMover",
 		"MSDMoverTest",
 		"MutateResidue",
+                "SetupMetalsMoverTests",
 		"SimpleThreadingMoverTests",
 	],
 

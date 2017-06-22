@@ -290,6 +290,125 @@ auto_setup_all_metal_bonds(
 	return;
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Function to set up distance and angle constraints for a specified metal ion.
+/// @details Modified/taken from auto_setup_all_metal_constraints to allow constraint setup for only specified metal residues.
+/// Does not modify score function weights.
+/// Inputs:
+///  pose (The pose that we'll operate on, changed by operation)
+///  metal_position (The residue number of the metal to be constrained)
+///  distance_constraint_multiplier (A float for the strength of the metal - binding atom distance constraint.  A value of 2.0 doubles
+///   it, for example.)
+///  angle_constraint_multiplier (A float for the strength of the metal - binding atom - binding atom parent angle constraint.)
+/// @author Sharon Guffy (guffy@email.unc.edu); originally written by Vikram K. Mulligan (vmulligan@uw.edu) as part of auto_setup_all_metal_constraints
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_constraints_to_metal(
+	core::pose::Pose &pose,
+	core::Size const metal_position,
+	core::Real const distance_constraint_multiplier,
+	core::Real const angle_constraint_multiplier
+)
+{
+	using namespace core;
+	using namespace scoring;
+	using namespace scoring::func;
+	using namespace scoring::constraints;
+	using namespace id;
+
+	conformation::Residue const & ir_res = pose.residue( metal_position );
+	//If this residue is not a metal, throw an error
+	if ( !ir_res.is_metal() ) {
+		utility_exit_with_message( "Attempted to add metal constraints to non-metal residue!" );
+	}
+	Size const ir_nconn = ir_res.n_possible_residue_connections();
+
+	// Make a vector of indices of virtual atoms in this residue:
+	utility::vector1< std::string > ir_virt_names;
+	utility::vector1< Size > ir_virt_atomnos;
+	for ( Size ia = 1, ia_max = ir_res.natoms(); ia <= ia_max; ++ia ) {
+		if ( ir_res.is_virtual( ia ) ) {
+			ir_virt_atomnos.push_back( ia );
+			ir_virt_names.push_back( ir_res.atom_name( ia ) );
+		}
+	}
+
+	// We must have at least as many virt atoms as connections
+	if ( ir_nconn > ir_virt_names.size() ) {
+		std::stringstream ss;
+		ss << "Error!  The number of connections to a metal, " << ir_nconn << ", is greater than the number of virtual atoms , " << ir_virt_names.size() << ", in that metal's residuetype, " << ir_res.name() << ".  Unable to continue.";
+		std::string const & message = ss.str();
+		utility_exit_with_message(message);
+	}
+
+	// Constrain all the metal's residue connections
+	// Note: since allowing design we must use Named*Constraints
+	// because atom indices may change.
+	for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
+		chemical::ResConnID const & jr_conn = ir_res.connect_map( jr );
+		Size const conn_res = jr_conn.resid();
+		conformation::Residue const & jr_res = pose.residue( conn_res );
+		Size const conn_res_conid = jr_conn.connid(); //The other residue's connection id for the bond to the metal.
+		Size const conn_res_atomno = jr_res.residue_connection(conn_res_conid).atomno(); //The atom index of the atom to which this metal is bonded.
+		std::string const conn_res_atom = jr_res.atom_name( conn_res_atomno ); //The atom index of the atom to which this metal is bonded.
+		std::string const conn_res_atom_parent = jr_res.atom_name( jr_res.type().atom_base( conn_res_atomno ) ); //The atom index of the parent of the atom to which this metal is bonded in the other residue.
+
+		// Note: assumes that metal residue types have the first atom as the metal.
+		NamedAtomID metalID( ir_res.atom_name( 1 ), metal_position );
+		NamedAtomID virtID(ir_virt_names[jr], metal_position);
+		NamedAtomID otherID(conn_res_atom, conn_res);
+		NamedAtomID otherparentID(conn_res_atom_parent, conn_res);
+
+		pose.set_xyz(virtID, pose.xyz(otherID)); //Move this residue's virt to the other residue's metal-binding atom position.
+
+		// Setting up distance constraints:
+		if ( distance_constraint_multiplier > 1.0e-10 ) {
+			FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( 0.0, 0.1 )) ));
+			//Atom pair constraint holding the virt at the position of the metal-binding atom.
+			NamedAtomPairConstraintOP pairconst(
+				new NamedAtomPairConstraint(virtID, otherID, hfunc, core::scoring::metalbinding_constraint) );
+			pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
+		}
+
+		// Setting up angle constraints
+		if ( angle_constraint_multiplier > 1.0e-10 ) {
+			core::Real const ang1 = numeric::angle_radians( pose.residue( metal_position ).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
+			//Circular harmonic function for constraining angles (works in RADIANS).
+			FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, FuncOP(new CircularHarmonicFunc( ang1, 0.05 )) ));
+			NamedAngleConstraintOP angleconst1(
+				new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1, core::scoring::metalbinding_constraint ) );
+			pose.add_constraint(angleconst1);
+		}
+	} //Loop through all of the metal's connections
+
+	// set up coordinate constraints to the generated virtuals (for cartrefine)
+	if ( distance_constraint_multiplier > 1.0e-10 ) {
+		for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
+			NamedAtomID metalID( ir_res.atom_name( 1 ), metal_position );
+			NamedAtomID virtID(ir_virt_names[jr], metal_position);
+			core::Real const mvdist =
+				(pose.residue(metal_position).xyz(ir_virt_atomnos[jr]) - pose.residue(metal_position).xyz(1)).length();
+			FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( mvdist, 0.1 )) ));
+			NamedAtomPairConstraintOP pairconst_mv(
+				new NamedAtomPairConstraint(metalID, virtID, mvfunc, core::scoring::metalbinding_constraint) );
+			pose.add_constraint(pairconst_mv);
+
+			for ( Size kr = jr+1; kr <= ir_nconn; ++kr ) {
+				NamedAtomID virtID_j(ir_virt_names[kr], metal_position);
+				core::Real const vvdist =
+					(pose.residue(metal_position).xyz(ir_virt_atomnos[jr]) - pose.residue(metal_position).xyz(ir_virt_atomnos[kr])).length();
+				FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( vvdist, 0.1 )) ));
+				NamedAtomPairConstraintOP pairconst_vv(
+					new NamedAtomPairConstraint(virtID, virtID_j, vvfunc, core::scoring::metalbinding_constraint) );
+				pose.add_constraint(pairconst_vv);
+			}
+		}
+	}
+}
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function to set up distance and angle constraints between metals and
 /// the residues that bind them.
@@ -310,99 +429,98 @@ auto_setup_all_metal_constraints(
 	//core::scoring::ScoreFunctionOP sfxn
 ) {
 	using namespace core;
-	using namespace scoring;
-	using namespace scoring::func;
-	using namespace scoring::constraints;
-	using namespace id;
 
 	TR << "Automatically setting up constraints between metal ions and metal-binding residues." << std::endl ;
 
 	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
-		conformation::Residue const & ir_res = pose.residue( ir );
-		if ( ! ir_res.is_metal() ) continue;
+		//conformation::Residue const & ir_res = pose.residue( ir );
+		if ( ! pose.residue( ir ).is_metal() ) continue;
+		add_constraints_to_metal( pose, ir, distance_constraint_multiplier, angle_constraint_multiplier );
+		/*
 		Size const ir_nconn = ir_res.n_possible_residue_connections();
 
 		// Make a vector of indices of virtual atoms in this residue:
 		utility::vector1< std::string > ir_virt_names;
 		utility::vector1< Size > ir_virt_atomnos;
 		for ( Size ia = 1, ia_max = ir_res.natoms(); ia <= ia_max; ++ia ) {
-			if ( ir_res.is_virtual( ia ) ) {
-				ir_virt_atomnos.push_back( ia );
-				ir_virt_names.push_back( ir_res.atom_name( ia ) );
-			}
+		if ( ir_res.is_virtual( ia ) ) {
+		ir_virt_atomnos.push_back( ia );
+		ir_virt_names.push_back( ir_res.atom_name( ia ) );
+		}
 		}
 
 		// We must have at least as many virt atoms as connections
 		if ( ir_nconn > ir_virt_names.size() ) {
-			std::stringstream ss;
-			ss << "Error!  The number of connections to a metal, " << ir_nconn << ", is greater than the number of virtual atoms , " << ir_virt_names.size() << ", in that metal's residuetype, " << ir_res.name() << ".  Unable to continue.";
-			std::string const & message = ss.str();
-			utility_exit_with_message(message);
+		std::stringstream ss;
+		ss << "Error!  The number of connections to a metal, " << ir_nconn << ", is greater than the number of virtual atoms , " << ir_virt_names.size() << ", in that metal's residuetype, " << ir_res.name() << ".  Unable to continue.";
+		std::string const & message = ss.str();
+		utility_exit_with_message(message);
 		}
 
 		// Constrain all the metal's residue connections
 		// Note: since allowing design we must use Named*Constraints
 		// because atom indices may change.
 		for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
-			chemical::ResConnID const & jr_conn = ir_res.connect_map( jr );
-			Size const conn_res = jr_conn.resid();
-			conformation::Residue const & jr_res = pose.residue( conn_res );
-			Size const conn_res_conid = jr_conn.connid(); //The other residue's connection id for the bond to the metal.
-			Size const conn_res_atomno = jr_res.residue_connection(conn_res_conid).atomno(); //The atom index of the atom to which this metal is bonded.
-			std::string const conn_res_atom = jr_res.atom_name( conn_res_atomno ); //The atom index of the atom to which this metal is bonded.
-			std::string const conn_res_atom_parent = jr_res.atom_name( jr_res.type().atom_base( conn_res_atomno ) ); //The atom index of the parent of the atom to which this metal is bonded in the other residue.
+		chemical::ResConnID const & jr_conn = ir_res.connect_map( jr );
+		Size const conn_res = jr_conn.resid();
+		conformation::Residue const & jr_res = pose.residue( conn_res );
+		Size const conn_res_conid = jr_conn.connid(); //The other residue's connection id for the bond to the metal.
+		Size const conn_res_atomno = jr_res.residue_connection(conn_res_conid).atomno(); //The atom index of the atom to which this metal is bonded.
+		std::string const conn_res_atom = jr_res.atom_name( conn_res_atomno ); //The atom index of the atom to which this metal is bonded.
+		std::string const conn_res_atom_parent = jr_res.atom_name( jr_res.type().atom_base( conn_res_atomno ) ); //The atom index of the parent of the atom to which this metal is bonded in the other residue.
 
-			// Note: assumes that metal residue types have the first atom as the metal.
-			NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
-			NamedAtomID virtID(ir_virt_names[jr], ir);
-			NamedAtomID otherID(conn_res_atom, conn_res);
-			NamedAtomID otherparentID(conn_res_atom_parent, conn_res);
+		// Note: assumes that metal residue types have the first atom as the metal.
+		NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
+		NamedAtomID virtID(ir_virt_names[jr], ir);
+		NamedAtomID otherID(conn_res_atom, conn_res);
+		NamedAtomID otherparentID(conn_res_atom_parent, conn_res);
 
-			pose.set_xyz(virtID, pose.xyz(otherID)); //Move this residue's virt to the other residue's metal-binding atom position.
+		pose.set_xyz(virtID, pose.xyz(otherID)); //Move this residue's virt to the other residue's metal-binding atom position.
 
-			// Setting up distance constraints:
-			if ( distance_constraint_multiplier > 1.0e-10 ) {
-				FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( 0.0, 0.1 )) ));
-				//Atom pair constraint holding the virt at the position of the metal-binding atom.
-				NamedAtomPairConstraintOP pairconst(
-					new NamedAtomPairConstraint(virtID, otherID, hfunc, core::scoring::metalbinding_constraint) );
-				pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
-			}
+		// Setting up distance constraints:
+		if ( distance_constraint_multiplier > 1.0e-10 ) {
+		FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( 0.0, 0.1 )) ));
+		//Atom pair constraint holding the virt at the position of the metal-binding atom.
+		NamedAtomPairConstraintOP pairconst(
+		new NamedAtomPairConstraint(virtID, otherID, hfunc, core::scoring::metalbinding_constraint) );
+		pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
+		}
 
-			// Setting up angle constraints
-			if ( angle_constraint_multiplier > 1.0e-10 ) {
-				core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
-				//Circular harmonic function for constraining angles (works in RADIANS).
-				FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, FuncOP(new CircularHarmonicFunc( ang1, 0.05 )) ));
-				NamedAngleConstraintOP angleconst1(
-					new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1, core::scoring::metalbinding_constraint ) );
-				pose.add_constraint(angleconst1);
-			}
+		// Setting up angle constraints
+		if ( angle_constraint_multiplier > 1.0e-10 ) {
+		core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
+		//Circular harmonic function for constraining angles (works in RADIANS).
+		FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, FuncOP(new CircularHarmonicFunc( ang1, 0.05 )) ));
+		NamedAngleConstraintOP angleconst1(
+		new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1, core::scoring::metalbinding_constraint ) );
+		pose.add_constraint(angleconst1);
+		}
 		} //Loop through all of the metal's connections
 
 		// set up coordinate constraints to the generated virtuals (for cartrefine)
 		if ( distance_constraint_multiplier > 1.0e-10 ) {
-			for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
-				NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
-				NamedAtomID virtID(ir_virt_names[jr], ir);
-				core::Real const mvdist =
-					(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(1)).length();
-				FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( mvdist, 0.1 )) ));
-				NamedAtomPairConstraintOP pairconst_mv(
-					new NamedAtomPairConstraint(metalID, virtID, mvfunc, core::scoring::metalbinding_constraint) );
-				pose.add_constraint(pairconst_mv);
+		for ( Size jr = 1; jr <= ir_nconn; ++jr ) {
+		NamedAtomID metalID( ir_res.atom_name( 1 ), ir );
+		NamedAtomID virtID(ir_virt_names[jr], ir);
+		core::Real const mvdist =
+		(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(1)).length();
+		FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( mvdist, 0.1 )) ));
+		NamedAtomPairConstraintOP pairconst_mv(
+		new NamedAtomPairConstraint(metalID, virtID, mvfunc, core::scoring::metalbinding_constraint) );
+		pose.add_constraint(pairconst_mv);
 
-				for ( Size kr = jr+1; kr <= ir_nconn; ++kr ) {
-					NamedAtomID virtID_j(ir_virt_names[kr], ir);
-					core::Real const vvdist =
-						(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(ir_virt_atomnos[kr])).length();
-					FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( vvdist, 0.1 )) ));
-					NamedAtomPairConstraintOP pairconst_vv(
-						new NamedAtomPairConstraint(virtID, virtID_j, vvfunc, core::scoring::metalbinding_constraint) );
-					pose.add_constraint(pairconst_vv);
-				}
-			}
+		for ( Size kr = jr+1; kr <= ir_nconn; ++kr ) {
+		NamedAtomID virtID_j(ir_virt_names[kr], ir);
+		core::Real const vvdist =
+		(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(ir_virt_atomnos[kr])).length();
+		FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( vvdist, 0.1 )) ));
+		NamedAtomPairConstraintOP pairconst_vv(
+		new NamedAtomPairConstraint(virtID, virtID_j, vvfunc, core::scoring::metalbinding_constraint) );
+		pose.add_constraint(pairconst_vv);
 		}
+		}
+		}
+		*/
 	} //Loop through all residues
 }
 

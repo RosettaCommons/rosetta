@@ -99,6 +99,27 @@ auto_setup_all_metal_bonds (
 );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Function to set up distance and angle constraints for a specified metal ion.
+/// @details Modified/taken from auto_setup_all_metal_constraints to allow constraint setup for only specified metal residues.
+/// Does not modify score function weights.
+/// Inputs:
+///  pose (The pose that we'll operate on, changed by operation)
+///  metal_position (The residue number of the metal to be constrained)
+///  distance_constraint_multiplier (A float for the strength of the metal - binding atom distance constraint.  A value of 2.0 doubles
+///   it, for example.)
+///  angle_constraint_multiplier (A float for the strength of the metal - binding atom - binding atom parent angle constraint.)
+/// @author Sharon Guffy (guffy@email.unc.edu); originally written by Vikram K. Mulligan (vmulligan@uw.edu) as part of auto_setup_all_metal_constraints
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_constraints_to_metal(
+	core::pose::Pose &pose,
+	core::Size const metal_position,
+	core::Real const distance_constraint_multiplier,
+	core::Real const angle_constraint_multiplier
+);
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function to set up distance and angle constraints between metals and the residues that bind them.
 /// @details This function constrains the distances to be whatever they are in the input pose.  This version
 /// does not set the weights for the constraints terms in the scorefunction.
