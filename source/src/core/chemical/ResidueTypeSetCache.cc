@@ -85,7 +85,10 @@ ResidueTypeSetCache::clear_cached_maps()
 void
 ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
 {
-	runtime_assert_string_msg( name_map_.find( residue_type->name() ) == name_map_.end(), "Error in core::chemical::ResidueTypeSetCache::add_residue_type(): Attempting to add a new residue type, but it already exists in the cache.  (Did you load a .params file with the -extra_res_fa commandline option that was already listed in residue_types.txt, perhaps?)" );
+	if ( name_map_.find( residue_type->name() ) != name_map_.end() ) {
+		TR.Error << "Residue type " << residue_type->name() << " is already in thge ResidueTypeSetCache!" << std::endl;
+		utility_exit_with_message( "Error in core::chemical::ResidueTypeSetCache::add_residue_type(): Attempting to add a new residue type, but it already exists in the cache.  (Did you load a .params file with the -extra_res_fa commandline option that was already listed in residue_types.txt, perhaps?)" );
+	}
 	name_map_[ residue_type->name() ] = residue_type;
 	//  clear_cached_maps(); // no can't do this
 }
