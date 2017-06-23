@@ -1089,7 +1089,7 @@ ResidueType::delete_atom( Size const index )
 		}
 	}
 	for ( auto const & alias : aliases_to_delete ) {
-		delete_atom_alias( alias );
+		delete_atom_alias( alias, false );
 	}
 
 	VD const vd = ordered_atoms_[index];
@@ -1120,12 +1120,13 @@ ResidueType::add_atom_alias( std::string const & rosetta_atom, std::string const
 
 /// @brief Remove a given alias name for an atom.
 void
-ResidueType::delete_atom_alias( std::string const & alias ) {
+ResidueType::delete_atom_alias( std::string const & alias, bool error ) {
 	finalized_ = false;
-	if ( ! atom_aliases_.count(alias) ) {
+	if ( atom_aliases_.count(alias) ) {
+		atom_aliases_.erase( atom_aliases_.find(alias) );
+	} else if ( error ) {
 		utility_exit_with_message("Cannot remove atom alias "+alias+" as it does not exist as an alias.");
 	}
-	atom_aliases_.erase( atom_aliases_.find(alias) );
 	std::string stripped_alias( strip_whitespace( alias ) );
 	if ( atom_aliases_.count(stripped_alias) ) { // Double check, as it might not be there, or alias==stripped_alias
 		atom_aliases_.erase( atom_aliases_.find(stripped_alias) );

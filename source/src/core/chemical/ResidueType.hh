@@ -1081,8 +1081,9 @@ public:
 	add_atom_alias( std::string const & rosetta_atom, std::string const & alias );
 
 	/// @brief Remove a given alias name for an atom.
+	/// @details If error is true, raise error if the alias can't be found
 	void
-	delete_atom_alias( std::string const & alias );
+	delete_atom_alias( std::string const & alias, bool error=true );
 
 	/// @brief set atom type
 	void
