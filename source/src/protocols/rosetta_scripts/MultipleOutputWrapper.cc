@@ -27,6 +27,7 @@
 // Project headers
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
+#include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <protocols/filters/Filter.hh>
@@ -130,7 +131,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 
 	if ( !mover_ && rosetta_scripts_tag_ ) {
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		mover_ = parser.parse_protocol_tag( pose, rosetta_scripts_tag_ );
+		mover_ = parser.parse_protocol_tag( pose, rosetta_scripts_tag_, basic::options::option );
 	}
 
 	if ( !mover_ && mover_tag_ ) {
@@ -209,7 +210,7 @@ void MultipleOutputWrapper::parse_my_tag(
 			if ( curr_tag->getName() == "ROSETTASCRIPTS" ) {
 				// Treat subtag as a ROSETTASCRIPTS protocol
 				protocols::rosetta_scripts::RosettaScriptsParser parser;
-				protocols::moves::MoverOP mover( parser.parse_protocol_tag( curr_tag ) );
+				protocols::moves::MoverOP mover( parser.parse_protocol_tag( curr_tag, basic::options::option ) );
 				rosetta_scripts_tag_ = curr_tag;
 			} else {
 				// Treat subtag as a regular mover tag

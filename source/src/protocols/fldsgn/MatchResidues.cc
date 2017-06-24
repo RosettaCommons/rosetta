@@ -33,7 +33,7 @@
 #include <utility/exit.hh>
 
 // Parser headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -193,7 +193,7 @@ MatchResidues::parse_my_tag(
 	std::map< std::string, boost::tuple< core::Size, core::Size> > ss_seg;
 	if ( blueprint != "" ) {
 		// get the segment start and end points from the blueprint
-		protocols::jd2::parser::BluePrint blue;
+		protocols::parser::BluePrint blue;
 		blue.read_blueprint( blueprint );
 		const std::string ss = blue.secstruct();
 		ss_seg = map_ss_segments( ss );

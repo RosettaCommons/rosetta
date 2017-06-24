@@ -28,7 +28,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Protocol headers
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
@@ -53,8 +53,8 @@ public:
 	typedef core::pack::task::operation::TaskOperation parent;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 
-	typedef protocols::jd2::parser::BluePrint BluePrint;
-	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+	typedef protocols::parser::BluePrint BluePrint;
+	typedef protocols::parser::BluePrintOP BluePrintOP;
 
 	typedef std::map< std::string, std::string > SecStructResidues;
 	typedef std::pair< std::string, std::string > SecStruct;

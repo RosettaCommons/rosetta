@@ -22,7 +22,7 @@
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Parser.fwd.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 
 namespace protocols {
 namespace jd2 {
@@ -46,7 +46,7 @@ public:
 	create_job_outputter( JobOutputterOP default_jobout );
 
 	static
-	ParserOP
+	rosetta_scripts::RosettaScriptsParserOP
 	create_parser();
 
 };

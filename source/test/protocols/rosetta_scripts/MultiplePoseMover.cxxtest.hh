@@ -27,6 +27,9 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
+// Basic headers
+#include <basic/options/option.hh>
+
 // Utility headers
 #include <util/pose_funcs.hh>
 #include <utility/excn/Exceptions.hh>
@@ -274,7 +277,7 @@ public:
 
 		try {
 			RosettaScriptsParser parser;
-			MoverOP mover = parser.parse_protocol_tag( script_tags );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
@@ -331,7 +334,7 @@ public:
 
 		try {
 			RosettaScriptsParser parser;
-			MoverOP mover = parser.parse_protocol_tag( script_tags );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
@@ -364,7 +367,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones)
@@ -403,7 +406,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones)
@@ -453,7 +456,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
@@ -509,7 +512,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 3 poses (1 + 2 additional ones) due to n=3 above
@@ -570,7 +573,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 2 additional ones) due to (n=7 && n=3) || n=5 above
@@ -624,7 +627,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
@@ -676,7 +679,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones) due to max_poses=10
@@ -727,7 +730,7 @@ public:
 
 		try {
 			RosettaScriptsParser parser;
-			MoverOP mover = parser.parse_protocol_tag( script_tags );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Failed to import mover2 from MOVERS";
@@ -769,7 +772,7 @@ public:
 
 		try {
 			RosettaScriptsParser parser;
-			MoverOP mover = parser.parse_protocol_tag( script_tags );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Cannot import mover mpm into itself; recursion detected";
@@ -826,7 +829,7 @@ public:
 
 		try {
 			RosettaScriptsParser parser;
-			MoverOP mover = parser.parse_protocol_tag( script_tags );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Failed to import filter3 from FILTERS";
@@ -893,7 +896,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (see comment above)
@@ -987,7 +990,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 50 poses (see comment above)
@@ -1071,7 +1074,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 30 poses (see comment above)
@@ -1136,7 +1139,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 10 poses, and all should be identical here since a fresh instance of

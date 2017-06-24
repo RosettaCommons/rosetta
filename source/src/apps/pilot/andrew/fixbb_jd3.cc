@@ -41,8 +41,8 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <protocols/jd2/parser/ScoreFunctionLoader.hh>
-#include <protocols/jd2/parser/TaskOperationLoader.hh>
+#include <protocols/parser/ScoreFunctionLoader.hh>
+#include <protocols/parser/TaskOperationLoader.hh>
 
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
@@ -109,7 +109,7 @@ public:
 		using namespace utility::tag;
 		using namespace protocols::simple_moves;
 		using namespace protocols::moves;
-		using namespace protocols::jd2::parser;
+		using namespace protocols::parser;
 
 		PackRotamersMover::provide_xml_schema(   job_definition_xsd );
 		MinMover::provide_xml_schema(            job_definition_xsd );
@@ -142,7 +142,7 @@ public:
 	) const
 	{
 		using namespace utility::tag;
-		using namespace protocols::jd2::parser;
+		using namespace protocols::parser;
 		ScoreFunctionLoader::provide_xml_schema( job_definition_xsd );
 		TaskOperationLoader::provide_xml_schema( job_definition_xsd );
 
@@ -307,7 +307,7 @@ public:
 		if ( ! tag ) return;
 
 		using namespace utility::tag;
-		using namespace protocols::jd2::parser;
+		using namespace protocols::parser;
 
 		for ( Tag::tags_t::const_iterator iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
 			if ( (*iter)->getName() == ScoreFunctionLoader::loader_name() ) {

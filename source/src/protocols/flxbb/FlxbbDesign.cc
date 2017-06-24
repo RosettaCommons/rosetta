@@ -16,7 +16,7 @@
 #include <protocols/flxbb/FlxbbDesignCreator.hh>
 
 // Package Headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/flxbb/DesignTask.hh>
 #include <protocols/flxbb/FilterStructs.hh>
 #include <protocols/flxbb/utility.hh>

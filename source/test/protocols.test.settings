@@ -298,10 +298,6 @@ sources = {
 		"MultiThreadedJobDistributor",
 	],
 
-	"jd2/parser" : [
-		"BluePrint",
-                "DataLoaders"
-	],
 	"jd3" : [
 		"JobGenealogist",
 		"StandardJobQueen",
@@ -449,7 +445,10 @@ sources = {
 		"MultistateFitnessFunction",
 		"PackDaemon",
 	],
-
+	"parser" : [
+		"BluePrint",
+                "DataLoaders"
+	],
 	"pmut_scan" : [
 		"PointMutScanDriver",
 	],
@@ -770,7 +769,7 @@ testinputfiles = [
 	"hbnet/SB13.pdb",
 	"helical_bundle/helical_bundle_input.pdb",
 	"hotspot_hashing/3ve0_IJ.pdb",
-	"jd2/parser/test.bbskel",
+	"parser/test.bbskel",
 	"jd3/example_bad.xml",
 	"jd3/pose_inputters/four_pdbs.list",
 	"jd3/pose_inputters/relaxed_decoys.out",

@@ -17,7 +17,7 @@
 #include <core/chemical/AA.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/ABEGOManager.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/Sheet.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>

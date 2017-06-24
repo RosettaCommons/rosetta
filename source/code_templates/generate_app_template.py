@@ -232,4 +232,3 @@ if __name__ == "__main__":
     generate_files = GenerateAppTemplate()
     generate_files.apply()
 
-

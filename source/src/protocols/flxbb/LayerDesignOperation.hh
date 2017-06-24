@@ -42,7 +42,7 @@
 #include <protocols/flxbb/LayerDesignOperation.fwd.hh>
 
 //protocols headers
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 #include <core/select/util/SelectResiduesByLayer.fwd.hh>
 
 //core headers
@@ -348,7 +348,7 @@ private:
 	core::select::util::SelectResiduesByLayerOP srbl_;
 
 	// for defining secondary structure
-	protocols::jd2::parser::BluePrintOP blueprint_;
+	protocols::parser::BluePrintOP blueprint_;
 
 	/// @brief Should LayerDesign work with symmetry?  Default false.
 	/// @details If false, the asymmetric unit is extracted and used for layer setup.

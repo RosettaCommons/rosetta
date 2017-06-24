@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_ScoringGridLoaderCreator_HH
 
 // Package headers
-#include <protocols/jd2/parser/DataLoaderCreator.hh>
+#include <protocols/parser/DataLoaderCreator.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -24,10 +24,10 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class ScoringGridLoaderCreator : public protocols::jd2::parser::DataLoaderCreator
+class ScoringGridLoaderCreator : public protocols::parser::DataLoaderCreator
 {
 public:
-	virtual protocols::jd2::parser::DataLoaderOP create_loader() const;
+	virtual protocols::parser::DataLoaderOP create_loader() const;
 	virtual std::string keyname() const;
 	virtual DerivedNameFunction schema_ct_naming_function() const;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;

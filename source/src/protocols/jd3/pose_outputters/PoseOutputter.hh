@@ -66,10 +66,10 @@ public:
 	) const = 0;
 
 	virtual
-	bool job_has_already_completed( LarvalJob const & job ) const = 0;
+	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
 
 	virtual
-	void mark_job_as_having_started( LarvalJob const & job ) const = 0;
+	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
 
 	virtual
 	void write_output_pose(

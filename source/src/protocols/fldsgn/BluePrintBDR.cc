@@ -12,7 +12,7 @@
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu ),  Yih-En Andrew Ban (yab@u.washington.edu)
 
 // unit headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/BluePrintBDR.hh>
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 

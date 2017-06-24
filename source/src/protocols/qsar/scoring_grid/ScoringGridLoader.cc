@@ -140,8 +140,8 @@ void ScoringGridLoader::parse_gridset_tag( utility::tag::TagCOP tag, utility::ta
 	}
 }
 
-protocols::jd2::parser::DataLoaderOP
-ScoringGridLoaderCreator::create_loader() const { return protocols::jd2::parser::DataLoaderOP( new ScoringGridLoader ); }
+protocols::parser::DataLoaderOP
+ScoringGridLoaderCreator::create_loader() const { return protocols::parser::DataLoaderOP( new ScoringGridLoader ); }
 
 std::string
 ScoringGridLoaderCreator::keyname() const { return ScoringGridLoader::loader_name(); }

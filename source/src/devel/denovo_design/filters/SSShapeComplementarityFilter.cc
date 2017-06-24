@@ -21,7 +21,7 @@
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 
 // Core Headers
 #include <core/conformation/Residue.hh>
@@ -120,7 +120,7 @@ SSShapeComplementarityFilter::parse_my_tag(
 
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
-		protocols::jd2::parser::BluePrint bp( bp_filename );
+		protocols::parser::BluePrint bp( bp_filename );
 		secstruct_ = bp.secstruct();
 	}
 

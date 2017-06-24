@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/jd2/JobInputter.fwd.hh> //for friendship
-#include <protocols/jd2/Parser.fwd.hh> //for friendship
+//#include <protocols/jd2/Parser.fwd.hh> //for friendship
 #include <protocols/jd2/JobDistributor.fwd.hh> //for friendship
 
 //utility headers
@@ -120,7 +120,7 @@ protected:
 	/// to NULL when done with the input.
 	void set_pose( core::pose::PoseCOP pose );
 
-	friend class protocols::jd2::Parser;
+	//friend class protocols::jd2::Parser;
 	friend class protocols::jd2::JobInputter;
 	friend class protocols::jd2::JobDistributor;
 

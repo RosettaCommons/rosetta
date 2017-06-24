@@ -24,7 +24,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // Utility headers
@@ -259,7 +259,7 @@ InterlockingAromaFilter::parse_my_tag(
 {
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
 	if ( blueprint != "" ) {
-		jd2::parser::BluePrint blue( blueprint );
+		parser::BluePrint blue( blueprint );
 		input_ss_ = blue.secstruct();
 	}
 	// set threshold

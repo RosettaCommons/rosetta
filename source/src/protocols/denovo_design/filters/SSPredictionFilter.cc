@@ -25,7 +25,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
 
 // utility headers
@@ -70,7 +70,7 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 : protocols::filters::Filter( "SSPrediction" ),
 	threshold_( threshold ),
 	cmd_( cmd ),
-	blueprint_( protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_filename ) ) ),
+	blueprint_( protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint_filename ) ) ),
 	use_probability_( use_probability ),
 	mismatch_probability_ (mismatch_probability),
 	use_confidence_( false ),
@@ -246,7 +246,7 @@ void SSPredictionFilter::parse_my_tag(
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
 	if ( blueprint_file != "" ) {
 		TR << "Dssp-derived secondary structure will be overridden by user-specified blueprint file." << std::endl;
-		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_file ) );
+		blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint_file ) );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message("There was an error getting the blueprint file loaded.");
 		}

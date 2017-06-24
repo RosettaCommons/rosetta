@@ -30,7 +30,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>

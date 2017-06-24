@@ -19,7 +19,7 @@
 // Project Headers
 #include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
 #include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>

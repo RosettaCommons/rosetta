@@ -58,7 +58,7 @@
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
 #include <protocols/jd2/JobOutputter.fwd.hh>
-#include <protocols/jd2/Parser.fwd.hh>
+//#include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>

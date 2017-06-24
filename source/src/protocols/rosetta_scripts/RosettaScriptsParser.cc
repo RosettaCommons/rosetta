@@ -11,6 +11,7 @@
 /// @brief  August 2008 job distributor as planned at RosettaCon08 - Interface base class Parser
 /// @author Sarel Fleishman sarelf@u.washington.edu
 /// @author Luki Goldschmidt lugo@uw.edu
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com). JD3/PyRosetta compatability, removal of JD2 code, general updates and docs.
 
 // Unit Headers
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
@@ -20,8 +21,8 @@
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/parser/DataLoader.hh>
-#include <protocols/jd2/parser/DataLoaderFactory.hh>
+#include <protocols/parser/DataLoader.hh>
+#include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
@@ -61,6 +62,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/vector0.hh>
@@ -81,21 +83,20 @@ namespace protocols {
 namespace rosetta_scripts {
 
 using namespace core;
+using namespace core::pose;
 using namespace basic::options;
 using namespace scoring;
 using namespace moves;
-using namespace jd2;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
 RosettaScriptsParser::RosettaScriptsParser() :
-	Parser(),
-	validator_( new utility::tag::XMLValidator ),
-	filenames_already_validated_()  //Empty list initially
-{
-	recursion_limit_ = option[ OptionKeys::parser::inclusion_recursion_limit ].value();
+	validator_( new utility::tag::XMLValidator ) {
+
+	set_recursion_limit( basic::options::option );
 	register_factory_prototypes();
 }
+
 
 RosettaScriptsParser::~RosettaScriptsParser()= default;
 
@@ -105,84 +106,155 @@ using utility::tag::TagCAP;
 
 typedef utility::vector0< TagCOP > TagCOPs;
 
-/// @brief Actually read in the XML file.  Called recursively to read in XML files that
-/// this XML file includes.  At the end of this operation, substituted_contents contains the contents
-/// of the XML file, with all xi:includes replaced with the contents of included XML
-/// files.  Files are opened and closed here.
-///
-/// @details Note that filenames_encountered is passed by copy rather than by reference
-/// DELIBERATELY.  This is so that it remains a list of parent files, so that only
-/// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
-/// detected.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-/// @author Rocco Moretti (rmorettiase@gmail.com)
 void
-RosettaScriptsParser::read_in_and_recursively_replace_includes(
-	std::string const &filename,
-	std::string & substituted_contents, // "output" variable
-	utility::vector1 < std::string > filenames_encountered,
-	core::Size const recursion_level,
-	bool const do_not_recurse
-) const {
+RosettaScriptsParser::list_options_read( utility::options::OptionKeyList & read_options ){
 
-	//Check whether we've already encountered this filename
-	for ( std::string const & seen_fn : filenames_encountered ) {
-		if ( seen_fn == filename ) {
-			throw utility::excn::EXCN_BadInput( "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"" + filename + "\"." );
-		}
-	}
-	if ( filenames_encountered.size() != 0 && TR.visible() ) TR << "Including RosettaScripts XML file " << filename << "." << std::endl;
-	filenames_encountered.push_back(filename);
+	read_options
+		+ OptionKeys::parser::protocol
+		+ OptionKeys::parser::script_vars
+		+ OptionKeys::parser::inclusion_recursion_limit
+		+ OptionKeys::corrections::restore_talaris_behavior
+		+ OptionKeys::mistakes::restore_pre_talaris_2013_behavior;
 
-	//Actually read in the file
-	utility::io::izstream inputstream( filename );
-	if ( !inputstream.good() ) {
-		utility_exit_with_message("Unable to open RosettaScripts XML file: \"" + filename + "\".");
-	}
-	std::string contents;
-	utility::slurp( inputstream, contents );
-	inputstream.close();
+	core::scoring::list_read_options_in_get_score_function( read_options );
 
-	std::string::const_iterator copy_start( contents.begin() ); // Where to start the next copy from
-
-	if ( ! do_not_recurse || recursion_level < recursion_limit_ ) {
-		// Find xi:include tags:
-		// Will be an innermost set of <> brackets.
-		std::string::const_iterator start_bracket( contents.begin() ); // The position of '<', or where to start the search from
-
-		while ( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
-			std::string::const_iterator end_bracket = start_bracket + 1; // Will be the postion of corresponding '>'
-			// Advance to next non-whitespace portion
-			while ( end_bracket != contents.cend() && std::isspace( *end_bracket ) ) { ++end_bracket; }
-			if ( end_bracket == contents.cend() || std::string( end_bracket, end_bracket+10 ) != "xi:include" ) {
-				// This tag is not an "xi:include" tag
-				start_bracket = end_bracket;
-				continue;
-			}
-			end_bracket = std::find( end_bracket, contents.cend(), '>' );
-			if ( end_bracket == contents.end() ) { break; } // End of file, with unmatched open
-
-			TagCOP tag( utility::tag::Tag::create( std::string( start_bracket, end_bracket+1 ) ) ); //Parse the current inner tag.
-			if ( tag->getName() != "xi:include" ) {
-				// This tag is not an "xi:include" tag, for some reason
-				++start_bracket; // We might have skipped an alternative '<' when searching for the '>', so restart closer to the last place.
-				continue;
-			}
-			runtime_assert_string_msg( tag->hasOption("href"), "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag must include an \"href=...\" statement." );
-			runtime_assert_string_msg( !tag->hasOption("parse") || tag->getOption<std::string>("parse") == "XML", "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag can ONLY be used to include XML for parsing.  Other parse types are unsupporrted in RosettaScripts." );
-			std::string const & subfilename( tag->getOption<std::string>("href") );
-			bool prevent_recursion_next_time( tag->getOption< bool >( "prevent_recursion", false ) );
-
-			substituted_contents.append( copy_start, start_bracket );
-			read_in_and_recursively_replace_includes( subfilename, substituted_contents, filenames_encountered, recursion_level + 1, prevent_recursion_next_time );  //Recursively call this function to read in included XML.
-			copy_start = end_bracket + 1;
-			start_bracket = end_bracket + 1; // Restart parsing after end of tag.
-		}
-	}
-
-	// Copy over the remaining portion of the file contents.
-	substituted_contents.append( copy_start, contents.cend() );
 }
+
+void
+RosettaScriptsParser::set_recursion_limit(const utility::options::OptionCollection &options) {
+	recursion_limit_ = options[ OptionKeys::parser::inclusion_recursion_limit ].value();
+}
+
+///@brief
+///  Main, Basic XML to Mover Function.
+///
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, std::string const & xml_fname){
+	bool modified_pose;
+	return generate_mover_and_apply_to_pose(pose, modified_pose, xml_fname);
+}
+
+///@brief
+///  Main, Basic XML to Mover Function.
+///
+///@details
+///  Use XML file passed in, set modified pose variable. Use any passed in script_vars to substitute.
+///  Script Vars is a list of "xx=yy" to repace XML script syntax %xx%.
+///
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname){
+
+	modified_pose = false ;
+	utility::vector1< std::string > empty_vector;
+	TagCOP tag = create_tag_from_xml( xml_fname, empty_vector);
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option );
+	return in_mover;
+}
+
+///@brief
+///  Main, Basic XML to Mover Function.
+///
+///@details
+///  Use XML file passed in, set modified pose variable. Use any passed in script_vars to substitute.
+///  Script Vars is a list of "xx=yy" to repace XML script syntax %xx%.
+///
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname,
+	utility::vector1< std::string > const & script_vars){
+
+	modified_pose = false;
+	TagCOP tag = create_tag_from_xml( xml_fname, script_vars);
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option );
+	return in_mover;
+}
+
+
+///@brief
+/// Main XML to Mover function.
+///
+/// @details
+///   Read XML-file from local options collection, set modified pose varialbe, and returned full ParsedProtocol Mover.
+///
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose){
+	debug_assert(options[ OptionKeys::parser::protocol ].user());
+
+	return generate_mover_and_apply_to_pose( pose, options, modified_pose, options[ OptionKeys::parser::protocol ]() );
+
+}
+
+///@brief
+/// Main XML to Mover function.
+///
+/// @details
+///   Use XML file passed in, set modified pose varialbe, and returned full ParsedProtocol Mover.
+///
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose, std::string const & xml_fname){
+
+	modified_pose = false;
+	TagCOP tag = create_tag_from_xml( xml_fname, options);
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options );
+	return in_mover;
+
+}
+
+
+TagCOP
+RosettaScriptsParser::create_tag_from_xml( std::string const & xml_fname, utility::vector1< std::string > const & script_vars ){
+
+	// A list of all of the files that have been included, which is checked whenever a
+	// new file is included to prevent circular dependencies.
+	utility::vector1 < std::string > filenames_encountered;
+	// The input string.  Input files are opened and closed by read_in_and_recursively_replace_includes().
+	// After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
+	// No interpretation is done yet (except for recognizing xi:include).
+	std::string substituted_contents;
+	read_in_and_recursively_replace_includes( xml_fname, substituted_contents, filenames_encountered, 0 );
+	std::stringstream fin( substituted_contents );
+
+	// Do substitution of the script_vars in the stream
+	if ( script_vars.size() > 0 ) {
+		std::stringstream fin_sub;
+		substitute_variables_in_stream(fin, script_vars, fin_sub);
+		fin.clear();
+		fin.str( fin_sub.str() );
+	}
+
+	// Validate the input script against the XSD for RosettaScripts, if it hasn't yet been validated.
+	validate_input_script_against_xsd( xml_fname, fin );
+
+	TagCOP tag = utility::tag::Tag::create(fin);
+
+	//fin.close();
+	TR << "Parsed script:" << "\n";
+	TR << tag;
+	TR.flush();
+	runtime_assert( tag->getName() == "dock_design" || tag->getName() == "ROSETTASCRIPTS" );
+
+	if ( tag->getName() == "dock_design" ) {
+		TR << "<dock_design> tag is deprecated; please use <ROSETTASCRIPTS> instead." << std::endl;
+	}
+	return tag;
+
+
+}
+
+///@brief Create a tag from an XML file.  Read from a local options collection.
+TagCOP
+RosettaScriptsParser::create_tag_from_xml( std::string const & xml_fname, utility::options::OptionCollection const & options){
+
+
+
+	// Do substitution of the script_vars in the stream
+	if ( options[ OptionKeys::parser::script_vars ].user() ) {
+		return create_tag_from_xml(xml_fname, options[ OptionKeys::parser::script_vars ]());
+	} else {
+		utility::vector1< std::string > empty_vector;
+		return create_tag_from_xml(xml_fname, empty_vector);
+	}
+}
+
 
 /// @details Uses the Tag interface to the xml reader library in boost to parse
 /// an xml file that contains design protocol information. A sample protocol
@@ -221,9 +293,8 @@ RosettaScriptsParser::read_in_and_recursively_replace_includes(
 /// statement.
 bool
 RosettaScriptsParser::generate_mover_from_pose(
-	JobCOP,
 	Pose & pose,
-	MoverOP & in_mover,
+	moves::MoverOP & in_mover,
 	bool new_input,
 	std::string const & xml_fname,
 	bool guarantee_new_mover
@@ -231,84 +302,25 @@ RosettaScriptsParser::generate_mover_from_pose(
 {
 
 	bool modified_pose( false );
-
 	if ( !new_input && !guarantee_new_mover ) return modified_pose;
 
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
 
-	// A list of all of the files that have been included, which is checked whenever a
-	// new file is included to prevent circular dependencies.
-	utility::vector1 < std::string > filenames_encountered;
-	// The input string.  Input files are opened and closed by read_in_and_recursively_replace_includes().
-	// After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
-	// No interpretation is done yet (except for recognizing xi:include).
-	std::string substituted_contents;
-	read_in_and_recursively_replace_includes( dock_design_filename, substituted_contents, filenames_encountered, 0 );
-	std::stringstream fin( substituted_contents );
+	TagCOP tag = create_tag_from_xml( dock_design_filename, basic::options::option);
 
-	// Do substitution of the script_vars in the stream
-	if ( option[ OptionKeys::parser::script_vars ].user() ) {
-		std::stringstream fin_sub;
-		substitute_variables_in_stream(fin, option[ OptionKeys::parser::script_vars ], fin_sub);
-		fin.clear();
-		fin.str( fin_sub.str() );
-	}
-
-	// Validate the input script against the XSD for RosettaScripts, if it hasn't yet been validated.
-	if ( !was_already_validated( dock_design_filename ) ) {
-		validate_input_script_against_xsd( dock_design_filename, fin );
-		set_validated( dock_design_filename );
-	}
-
-	TagCOP tag = utility::tag::Tag::create(fin);
-
-	//fin.close();
-	TR << "Parsed script:" << "\n";
-	TR << tag;
-	TR.flush();
-	runtime_assert( tag->getName() == "dock_design" || tag->getName() == "ROSETTASCRIPTS" );
-
-	if ( tag->getName() == "dock_design" ) {
-		TR << "<dock_design> tag is deprecated; please use <ROSETTASCRIPTS> instead." << std::endl;
-	}
-
-	in_mover = generate_mover_for_protocol( pose, modified_pose, tag );
+	in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option );
 
 	return modified_pose;
 }
 
-MoverOP RosettaScriptsParser::parse_protocol_tag(Pose & pose, utility::tag::TagCOP protocol_tag)
-{
-	bool modified_pose = false;
 
-	MoverOP mover =  generate_mover_for_protocol(pose, modified_pose, protocol_tag);
-
-	if ( modified_pose ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
-	}
-
-	return mover;
-}
-
-MoverOP RosettaScriptsParser::parse_protocol_tag(TagCOP protocol_tag)
-{
-	Pose temp_pose;
-	bool modified_pose = false;
-
-	MoverOP mover =  generate_mover_for_protocol(temp_pose, modified_pose, protocol_tag);
-
-	if ( modified_pose ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
-	}
-
-	return mover;
-}
-
-MoverOP RosettaScriptsParser::generate_mover_for_protocol(
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_for_protocol(
 	Pose & pose,
 	bool & modified_pose,
-	TagCOP tag
+	TagCOP tag,
+	utility::options::OptionCollection const & options
 )
 {
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
@@ -333,13 +345,13 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	movers.insert( StringMover_pair( "null", null_mover) );
 
 	// default scorefxns
-	ScoreFunctionOP commandline_sfxn  = core::scoring::get_score_function();
+	ScoreFunctionOP commandline_sfxn  = core::scoring::get_score_function(options);
 	data.add( "scorefxns", "commandline", commandline_sfxn );
 	// Only add the default scorefunctions if compatible options have been provided.
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::restore_talaris_behavior ]() ) {
+	if ( options[ basic::options::OptionKeys::corrections::restore_talaris_behavior ]() ) {
 		data.add( "scorefxns", "talaris2014", ScoreFunctionFactory::create_score_function(TALARIS_2014) );
 		data.add( "scorefxns", "talaris2013", ScoreFunctionFactory::create_score_function(TALARIS_2013) );
-	} else if ( basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() ) {
+	} else if ( options[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() ) {
 		data.add( "scorefxns", "score12", ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH ) );
 		data.add( "scorefxns", "score_docking", ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH ) );
 	} else {
@@ -485,8 +497,113 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	return protocol;
 }
 
+/// @brief Actually read in the XML file.  Called recursively to read in XML files that
+/// this XML file includes.  At the end of this operation, substituted_contents contains the contents
+/// of the XML file, with all xi:includes replaced with the contents of included XML
+/// files.  Files are opened and closed here.
+///
+/// @details Note that filenames_encountered is passed by copy rather than by reference
+/// DELIBERATELY.  This is so that it remains a list of parent files, so that only
+/// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
+/// detected.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
+void
+RosettaScriptsParser::read_in_and_recursively_replace_includes(
+	std::string const &filename,
+	std::string & substituted_contents, // "output" variable
+	utility::vector1 < std::string > filenames_encountered,
+	core::Size const recursion_level,
+	bool const do_not_recurse
+) const {
+
+	//Check whether we've already encountered this filename
+	for ( std::string const & seen_fn : filenames_encountered ) {
+		if ( seen_fn == filename ) {
+			throw utility::excn::EXCN_BadInput( "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"" + filename + "\"." );
+		}
+	}
+	if ( filenames_encountered.size() != 0 && TR.visible() ) TR << "Including RosettaScripts XML file " << filename << "." << std::endl;
+	filenames_encountered.push_back(filename);
+
+	//Actually read in the file
+	utility::io::izstream inputstream( filename );
+	if ( !inputstream.good() ) {
+		utility_exit_with_message("Unable to open RosettaScripts XML file: \"" + filename + "\".");
+	}
+	std::string contents;
+	utility::slurp( inputstream, contents );
+	inputstream.close();
+
+	std::string::const_iterator copy_start( contents.begin() ); // Where to start the next copy from
+
+	if ( ! do_not_recurse || recursion_level < recursion_limit_ ) {
+		// Find xi:include tags:
+		// Will be an innermost set of <> brackets.
+		std::string::const_iterator start_bracket( contents.begin() ); // The position of '<', or where to start the search from
+
+		while ( (start_bracket = std::find( start_bracket, contents.cend(), '<') ) != contents.cend() ) {
+			std::string::const_iterator end_bracket = start_bracket + 1; // Will be the postion of corresponding '>'
+			// Advance to next non-whitespace portion
+			while ( end_bracket != contents.cend() && std::isspace( *end_bracket ) ) { ++end_bracket; }
+			if ( end_bracket == contents.cend() || std::string( end_bracket, end_bracket+10 ) != "xi:include" ) {
+				// This tag is not an "xi:include" tag
+				start_bracket = end_bracket;
+				continue;
+			}
+			end_bracket = std::find( end_bracket, contents.cend(), '>' );
+			if ( end_bracket == contents.end() ) { break; } // End of file, with unmatched open
+
+			TagCOP tag( utility::tag::Tag::create( std::string( start_bracket, end_bracket+1 ) ) ); //Parse the current inner tag.
+			if ( tag->getName() != "xi:include" ) {
+				// This tag is not an "xi:include" tag, for some reason
+				++start_bracket; // We might have skipped an alternative '<' when searching for the '>', so restart closer to the last place.
+				continue;
+			}
+			runtime_assert_string_msg( tag->hasOption("href"), "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag must include an \"href=...\" statement." );
+			runtime_assert_string_msg( !tag->hasOption("parse") || tag->getOption<std::string>("parse") == "XML", "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): An \"xi:include\" tag can ONLY be used to include XML for parsing.  Other parse types are unsupporrted in RosettaScripts." );
+			std::string const & subfilename( tag->getOption<std::string>("href") );
+			bool prevent_recursion_next_time( tag->getOption< bool >( "prevent_recursion", false ) );
+
+			substituted_contents.append( copy_start, start_bracket );
+			read_in_and_recursively_replace_includes( subfilename, substituted_contents, filenames_encountered, recursion_level + 1, prevent_recursion_next_time );  //Recursively call this function to read in included XML.
+			copy_start = end_bracket + 1;
+			start_bracket = end_bracket + 1; // Restart parsing after end of tag.
+		}
+	}
+
+	// Copy over the remaining portion of the file contents.
+	substituted_contents.append( copy_start, contents.cend() );
+}
+
+
+MoverOP
+RosettaScriptsParser::parse_protocol_tag( TagCOP protocol_tag, utility::options::OptionCollection const & options)
+{
+	Pose temp_pose;
+	//bool modified_pose = false;
+
+	return parse_protocol_tag(temp_pose, protocol_tag, options);
+}
+
+MoverOP
+RosettaScriptsParser::parse_protocol_tag( Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options )
+{
+	bool modified_pose = false;
+
+	MoverOP mover =  generate_mover_for_protocol(pose, modified_pose, protocol_tag, options);
+
+	if ( modified_pose ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
+	}
+
+	return mover;
+}
+
+
 /// @brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block
-void RosettaScriptsParser::instantiate_filter(
+void
+RosettaScriptsParser::instantiate_filter(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map & filters,
@@ -511,7 +628,8 @@ void RosettaScriptsParser::instantiate_filter(
 }
 
 /// @brief Instantiate a new mover and add it to the list of defined movers for this ROSETTASCRIPTS block
-void RosettaScriptsParser::instantiate_mover(
+void
+RosettaScriptsParser::instantiate_mover(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map & filters,
@@ -537,7 +655,8 @@ void RosettaScriptsParser::instantiate_mover(
 
 
 /// @brief Instantiate a new task operation (used in IMPORT tag)
-void RosettaScriptsParser::instantiate_taskoperation(
+void
+RosettaScriptsParser::instantiate_taskoperation(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map & /*filters*/,
@@ -563,7 +682,8 @@ void RosettaScriptsParser::instantiate_taskoperation(
 }
 
 /// @brief Recursively find a specific tag by option name and valie in any ROSETTASCRIPTS tag that's a child of rootTag
-TagCOP RosettaScriptsParser::find_rosettascript_tag(
+TagCOP
+RosettaScriptsParser::find_rosettascript_tag(
 	TagCOP tag_in,
 	const std::string & section_name,
 	const std::string & option_name,
@@ -607,7 +727,8 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 
 /// @brief Import filters, movers, ... specified in the IMPORT tag
 /// in the order they were originally defined elsewhere in the script
-void RosettaScriptsParser::import_tags(
+void
+RosettaScriptsParser::import_tags(
 	std::set< ImportTagName > & import_tag_names,
 	utility::tag::TagCOP & my_tag,
 	basic::datacache::DataMap & data,
@@ -702,14 +823,14 @@ void RosettaScriptsParser::import_tags(
 ///
 ///Having the return value be passed through a parameter is to get around some copy-constructor limitations of C++ streams.
 void
-RosettaScriptsParser::substitute_variables_in_stream( std::istream & instream, utility::options::StringVectorOption const& script_vars, std::stringstream & out){
+RosettaScriptsParser::substitute_variables_in_stream( std::istream & instream, utility::vector1< std::string > const& script_vars, std::stringstream & out){
 	using namespace std;
 	//Parse variable substitutions
 	map<string,string> var_map;
-	for ( Size ii = 1; ii <= script_vars.size(); ii++ ) {
-		Size eq_pos(script_vars[ii].find('='));
+	for ( std::string const & s : script_vars ) {
+		Size eq_pos(s.find('='));
 		if ( eq_pos != string::npos ) { //ignore ones without a '='
-			var_map[ script_vars[ii].substr(0,eq_pos) ] = script_vars[ii].substr(eq_pos+1);
+			var_map[ s.substr(0,eq_pos) ] = s.substr(eq_pos+1);
 		}
 	}
 	//Print parsing for confirmation
@@ -830,27 +951,6 @@ RosettaScriptsParser::has_double_percent_signs(
 
 }
 
-/// @brief Is a filename in the list of files already validated?
-/// @details Returns ture if it is, false if it is not.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-bool
-RosettaScriptsParser::was_already_validated(
-	std::string const &filename
-) const {
-	for ( core::Size i=1, imax=filenames_already_validated_.size(); i<=imax; ++i ) {
-		if ( !filenames_already_validated_[i].compare( filename ) ) return true;
-	}
-	return false;
-}
-
-/// @brief Add a filename to the list already validated.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-void
-RosettaScriptsParser::set_validated(
-	std::string const &filename
-) {
-	filenames_already_validated_.push_back(filename);
-}
 
 void
 RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fname, std::stringstream const & input_xml ) const
@@ -1096,6 +1196,11 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 		.set_subelements_repeatable( apply_to_pose_subelements )
 		.write_complex_type_to_schema( xsd );
 
+}
+
+bool
+RosettaScriptsParser::protocol_option_set(utility::options::OptionCollection const & options) const {
+	return options[ OptionKeys::parser::protocol ].user();
 }
 
 std::string

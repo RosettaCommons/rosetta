@@ -1,0 +1,21 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<GlycanRelaxMover name="glycan_relax" rounds="3" cartmin="%%cartmin%%"/>
+		<Dssp name="dssp" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="dssp" />
+		<Add mover_name="glycan_relax" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

@@ -36,7 +36,6 @@
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
 #include <protocols/jd2/JobOutputter.fwd.hh>
-#include <protocols/jd2/Parser.fwd.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>

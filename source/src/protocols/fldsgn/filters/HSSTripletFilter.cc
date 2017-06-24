@@ -23,7 +23,7 @@
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -308,7 +308,7 @@ HSSTripletFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using protocols::jd2::parser::BluePrint;
+	using protocols::parser::BluePrint;
 
 	// set filtered helix_pairings
 	String const hss3s = tag->getOption<String>( "hsstriplets", "" );

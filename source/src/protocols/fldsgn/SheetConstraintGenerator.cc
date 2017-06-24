@@ -43,7 +43,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/sequence/ABEGOManager.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 
 // Utility headers
 #include <basic/options/option.hh>
@@ -225,7 +225,7 @@ SheetConstraintGenerator::initialize_from_blueprint( std::string const & bluepri
 	if ( blueprint_file == "" ) {
 		utility_exit_with_message( "SheetConstraintGenerator requires a blueprint file" );
 	}
-	BluePrintOP bp( new protocols::jd2::parser::BluePrint( blueprint_file ) );
+	BluePrintOP bp( new protocols::parser::BluePrint( blueprint_file ) );
 	if ( ! bp ) {
 		utility_exit_with_message( "SheetConstraintGenerator tried to read a blueprint file, but failed to create the proper object." );
 	}
@@ -285,7 +285,7 @@ SheetConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 
 void
-SheetConstraintGenerator::initialize_from_blueprint( protocols::jd2::parser::BluePrintCOP bp )
+SheetConstraintGenerator::initialize_from_blueprint( protocols::parser::BluePrintCOP bp )
 {
 	set_secstruct( bp->secstruct() );
 	set_strand_pairs( bp->strand_pairings() );

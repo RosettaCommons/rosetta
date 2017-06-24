@@ -17,7 +17,7 @@
 
 // package headers
 #include <protocols/denovo_design/util.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 
 // core headers
 #include <core/chemical/ResidueType.hh>
@@ -213,7 +213,7 @@ ConsensusLoopDesignOperation::set_secstruct_from_blueprint( std::string const & 
 {
 	using namespace core::select::residue_selector;
 
-	protocols::jd2::parser::BluePrint bp( bpfile );
+	protocols::parser::BluePrint bp( bpfile );
 	set_secstruct( bp.secstruct() );
 
 }

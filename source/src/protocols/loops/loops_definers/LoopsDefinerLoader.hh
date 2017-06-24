@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_loops_loops_definers_LoopsDefinerLoader_hh
 
 // Package Headers
-#include <protocols/jd2/parser/DataLoader.hh>
+#include <protocols/parser/DataLoader.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -25,7 +25,7 @@ namespace loops {
 namespace loops_definers {
 
 /// @brief A class for loading Loops data into the XML parser's basic::datacache::DataMap.
-class LoopsDefinerLoader : public jd2::parser::DataLoader
+class LoopsDefinerLoader : public parser::DataLoader
 {
 public:
 	LoopsDefinerLoader();

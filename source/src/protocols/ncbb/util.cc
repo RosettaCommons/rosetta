@@ -424,16 +424,31 @@ setup_filter_stats() {
 	*********************************************************************************************************************/
 
 	// create and register sasa calculator
-	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
+		Warning() << "In setup_filter_stats, calculator " << "sasa"
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
+	} else {
+		pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+	}
 
 	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
+	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ) ) {
+		Warning() << "In setup_filters_stats, calculator " << "num_hbonds"
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
+	} else {
+		pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
+	}
 
 	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
+	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ) ) {
+		Warning() << "In setup_filters_stats, calculator " << "unsat"
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
+	} else {
+		pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
+	}
 
 	// create and register packstat calculator
 	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new pose_metric_calculators::PackstatCalculator() );

@@ -18,7 +18,7 @@
 #include <protocols/flxbb/FlxbbDesign.fwd.hh>
 
 // Package Headers
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 #include <protocols/flxbb/DesignTask.fwd.hh>
 #include <protocols/flxbb/FilterStructs.fwd.hh>
 #ifdef __clang__
@@ -70,8 +70,8 @@ public:
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 
 	typedef protocols::moves::MoverOP MoverOP;
-	typedef protocols::jd2::parser::BluePrint BluePrint;
-	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+	typedef protocols::parser::BluePrint BluePrint;
+	typedef protocols::parser::BluePrintOP BluePrintOP;
 	typedef protocols::flxbb::DesignTaskOP DesignTaskOP;
 	typedef protocols::flxbb::DesignTaskSet DesignTaskSet;
 

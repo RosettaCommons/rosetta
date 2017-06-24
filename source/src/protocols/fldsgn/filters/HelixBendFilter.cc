@@ -29,7 +29,7 @@
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 #include <numeric/conversions.hh>
@@ -91,7 +91,7 @@ HelixBendFilter::parse_my_tag(
 	helix_id_ = tag->getOption<core::Size>( "HelixID", 1 );
 	std::string const blueprint = tag->getOption<std::string>( "blueprint", "" );
 	if ( blueprint != "" ) {
-		protocols::jd2::parser::BluePrint blue( blueprint );
+		protocols::parser::BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 	}
 }

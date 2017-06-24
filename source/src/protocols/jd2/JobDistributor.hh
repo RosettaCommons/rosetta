@@ -22,10 +22,10 @@
 // Package headers
 #include <protocols/jd2/JobInputter.fwd.hh>
 #include <protocols/jd2/JobOutputter.fwd.hh>
-#include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/JobsContainer.fwd.hh>
 #include <protocols/jd2/JobsContainer.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
@@ -74,6 +74,8 @@ namespace jd2 {
 // init_jd() has special bootstrapping logic to avoid this.
 
 class JobDistributor {
+
+	typedef rosetta_scripts::RosettaScriptsParserOP RosettaScriptsParserOP;
 
 protected:
 	/// @brief Singleton instantiation pattern; Derived classes will call default ctor, but their ctors, too must be
@@ -197,7 +199,7 @@ protected:
 
 
 	/// @brief Parser access
-	ParserOP
+	RosettaScriptsParserOP
 	parser() const;
 
 	void begin_critical_section();
@@ -279,6 +281,7 @@ protected:
 	void check_for_parser_in_go_main();
 
 	/// @brief Is the parser in use?
+	/// @details Checks parser::protocol flag since this is JD2.
 	bool using_parser() const;
 
 	bool
@@ -324,7 +327,7 @@ private:
 
 	JobInputterOP job_inputter_;
 	JobOutputterOP job_outputter_;
-	ParserOP parser_;
+	RosettaScriptsParserOP parser_;
 
 	/// @brief Container for the array of owning pointers to the Job objects.
 	/// @details By making this a class, it makes it easier to permit easy updating of the jobs list (e.g. if it's too long

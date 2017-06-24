@@ -10,15 +10,18 @@
 /// @file   protocols/rosetta_scripts/RosettaScriptsParser.hh
 /// @brief  header file for Parser class, part of August 2008 job distributor
 /// @author Sarel Fleishman sarelf@u.washington.edu
-
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com). JD3/PyRosetta compatability, removal of JD2 code, general updates and docs.
+///   Simplification - generate_mover_and_apply_to_pose functions.
 
 #ifndef INCLUDED_protocols_rosetta_scripts_RosettaScriptsParser_hh
 #define INCLUDED_protocols_rosetta_scripts_RosettaScriptsParser_hh
 
 // Unit Headers
+#include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/Parser.hh>
+//#include <protocols/jd2/Parser.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.fwd.hh>
 
@@ -33,6 +36,9 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/XMLSchemaValidation.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // C++ headers
 #include <iostream>
@@ -41,18 +47,136 @@
 namespace protocols {
 namespace rosetta_scripts {
 
+
 /// @brief Reading the xml file and generating the mover
-class RosettaScriptsParser : public protocols::jd2::Parser
+/// @details Uses the Tag interface to the xml reader library in boost to parse
+/// an xml file that contains design protocol information.
+///
+/// SCOREFXNS provides a way to define scorefunctions as they are defined in the
+/// rosetta database, using the weights/patch convenctions. Several default
+/// scorefunctions are preset and can be used without defining them explicitly.
+///
+/// FILTERS defines a set of filters that can be used together with the
+/// dockdesign movers to prune out poses that don't meet certain criteria
+///
+/// MOVERS defines the movers that will be used
+///
+/// PROTOCOLS is the only order-sensitive section where subsequent movers and
+/// filters are expected to be defined. These movers and filters were defined
+/// in the previous two sections. The order in which the protocols are specified
+/// by the user will be maintained by the DockDesign mover.
+///
+/// APPLY_TO_POSE This section allows for certain movers to be applied to the
+/// pose prior to starting the DockDesign protocol. For instance, these movers
+/// could set constraints, such as favor_native_residue. In this case, for
+/// example, the weights of res_type_constraint in all of the scorefunctions
+/// that are defined in SCOREFXNS or by default are set to 1.0, but can be
+/// changed by the user globally (in the definition of the weight on the
+/// constraint), or in particular for each of the scorefunctions by changing
+/// the relevant term (which is set by default to the global value).
+///
+/// xi:include statements can be placed anywhere to trigger read-in of another
+/// RosettaScripts XML file.  Contents of the file replace the xi:include
+/// statement.
+class RosettaScriptsParser : public utility::pointer::ReferenceCount
 {
 public:
 	typedef utility::vector0< utility::tag::TagCOP > TagCOPs;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef moves::MoverOP MoverOP;
 	typedef protocols::moves::MoverFactory MoverFactory;
 	typedef protocols::moves::MoverFactoryOP MoverFactoryOP;
 	typedef std::pair<std::string, std::string> ImportTagName;
 
 public:
 	RosettaScriptsParser();
+
 	~RosettaScriptsParser() override;
+
+	///@brief
+	///  Main, Basic XML to Mover Function.
+	///
+	ParsedProtocolOP
+	generate_mover_and_apply_to_pose(core::pose::Pose & pose, std::string const & xml_fname);
+
+	///@brief
+	///  Main, Basic XML to Mover Function.
+	///
+	///@details
+	///  Use XML file passed in, set modified pose variable. Use any passed in script_vars to substitute.
+	///
+	///
+	ParsedProtocolOP
+	generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname);
+
+	///@brief
+	///  Main, Basic XML to Mover Function.
+	///
+	///@details
+	///  Use XML file passed in, set modified pose variable. Use any passed in script_vars to substitute.
+	///  Script Vars is a list of "xx=yy" to repace XML script syntax %%xx%%.
+	///
+	ParsedProtocolOP
+	generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname,
+		utility::vector1< std::string > const & script_vars);
+
+	///@brief
+	/// Main XML to Mover function.
+	///
+	/// @details
+	///   Read XML-file from LOCAL options collection, set modified pose varialbe, and returned full ParsedProtocol Mover.
+	///
+	ParsedProtocolOP
+	generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose);
+
+	///@brief
+	/// Main XML to Mover function.
+	///
+	/// @details
+	///   Use XML file passed in, set modified pose varialbe, and returned full ParsedProtocol Mover.
+	///
+	ParsedProtocolOP
+	generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose, std::string const & xml_fname);
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	///@brief
+	///  Create a tag from an XML file.  Read from Script Vars options from a local options collection.
+	TagCOP
+	create_tag_from_xml( std::string const & xml_fname, utility::options::OptionCollection const & options);
+
+	///@brief
+	///  Create a tag from an XML file.  Use Script Vars bariable to do any substitutions.
+	///  Script Var String: "xx=yy" for %xx% replacement in XML script.
+	TagCOP
+	create_tag_from_xml( std::string const & xml_fname, utility::vector1< std::string > const & script_vars );
+
+	///@brief
+	///
+	/// Create the ParsedProtocolMover for the protocol using a tag.  Set modified pose variable.
+	/// Apply to pose if needed.
+	///
+	///@details
+	///
+	/// Go through tags, apply to pose, generate DataMap and ParsedProtocol Mover.
+	/// This funciton does the heavy lifting.
+	/// READS from LOCAL OptionsCollection.
+	///
+	ParsedProtocolOP
+	generate_mover_for_protocol(
+		core::pose::Pose & pose,
+		bool & modified_pose,
+		utility::tag::TagCOP protocol_tag,
+		utility::options::OptionCollection const & options
+	);
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Actually read in the XML file.  Called recursively to read in XML files that
 	/// this XML file includes.  At the end of this operation, substituted_contents contains the contents
@@ -73,33 +197,13 @@ public:
 		bool const do_not_recurse = false
 	) const;
 
-	/// @brief Open the file given by xml_fname and construct a mover representing
-	/// the script contained in that file. If new_input is true, run the APPLY_TO_POSE
-	/// block on the input mover.  If both new_input and guarantee_new_mover are false,
-	/// then the input mover is considered up-to-date and the file is not re-read.
-
-	bool
-	generate_mover_from_pose(
-		protocols::jd2::JobCOP job,
-		core::pose::Pose & pose,
-		protocols::moves::MoverOP & mover,
-		bool new_input,
-		std::string const & xml_fname,
-		bool guarantee_new_mover = false
-	) override;
-
-	MoverOP
-	generate_mover_for_protocol(
-		Pose & pose,
-		bool & modified_pose,
-		utility::tag::TagCOP protocol_tag
-	);
 
 	//@brief Temporary hook into parsing machinery with pose reference
-	MoverOP parse_protocol_tag( Pose & pose, utility::tag::TagCOP protocol_tag );
+	MoverOP parse_protocol_tag( core::pose::Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
+
 
 	//@brief Temporary hook into parsing machinery w/o pose reference.
-	MoverOP parse_protocol_tag( utility::tag::TagCOP protocol_tag );
+	MoverOP parse_protocol_tag( utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
 
 	void register_factory_prototypes();
 
@@ -156,13 +260,47 @@ public:
 	static std::string rosetta_scripts_element_name(); // returns "ROSETTASCRIPTS"
 	static std::string rosetta_scripts_complex_type_naming_func( std::string const & element_name );
 
+	/// @brief List the command-line options used by this class.
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
+
+	void
+	set_recursion_limit( utility::options::OptionCollection const & options );
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	///@brief
+	/// Original, JD2-compatible mover generating function.
+	///
+	///@detals
+	/// NOT accessible in PyRosetta.
+	/// For general use and PyRosetta, use generate_mover_and_apply_to_pose functions.
+	/// READS FROM GLOBAL OPTIONS.
+	bool
+	generate_mover_from_pose(
+		core::pose::Pose & pose,
+		MoverOP & mover,
+		bool new_input,
+		std::string const & xml_file,
+		bool guarantee_new_mover = false
+	);
+
+	///@brief Checks the LOCAL options collection to see if a protocol has been set.
+	bool
+	protocol_option_set(utility::options::OptionCollection const & options) const;
+
 private: //Methods
 
+	///@brief Substitute xx==yy using the XML syntax %%xx%%.
+	//// script_vars is a list of strings of "xx==yy".
 	static
 	void
 	substitute_variables_in_stream(
 		std::istream & in,
-		utility::options::StringVectorOption const& script_vars,
+		utility::vector1< std::string > const & script_vars,
 		std::stringstream & out
 	);
 
@@ -187,21 +325,11 @@ private: //Methods
 		core::Size const endpos
 	) const;
 
-	/// @brief Is a filename in the list of files already validated?
-	/// @details Returns ture if it is, false if it is not.
-	bool
-	was_already_validated( std::string const &filename ) const;
-
-	/// @brief Add a filename to the list already validated.
-	void set_validated( std::string const &filename );
 
 private: //Varaibles
 
 	/// @brief The object used to validate XML input files against the schema
 	utility::tag::XMLSchemaValidatorOP validator_;
-
-	/// @brief A list of filenames that we have already encountered and validated.
-	utility::vector1 < std::string > filenames_already_validated_;
 
 	/// @brief The depth of the rabbit hole one can find oneself in by including XML files that include XML files.
 	/// Defaults to 8.

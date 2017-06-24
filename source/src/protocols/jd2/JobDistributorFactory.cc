@@ -155,15 +155,13 @@ JobDistributorFactory::create_job_outputter( JobOutputterOP default_jobout ) {
 	return protocols::jd2::JobOutputterFactory::get_instance()->get_new_JobOutputter( default_jobout );
 }
 
-/// @details this function handles the determination of which Parser is required
-/// (if any; returning NULL is valid if no parser is desired)
-ParserOP
+/// @details Create the RosettaScriptParser.  Determine if we need it down the road.
+rosetta_scripts::RosettaScriptsParserOP
 JobDistributorFactory::create_parser()
 {
-	if ( option[ OptionKeys::jd2::dd_parser ].user() ) {
-		return ParserOP( new protocols::rosetta_scripts::RosettaScriptsParser );
-	}
-	return nullptr;
+
+	return rosetta_scripts::RosettaScriptsParserOP( new rosetta_scripts::RosettaScriptsParser );
+
 }
 
 } // namespace jd2

@@ -25,7 +25,7 @@
 #include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
 

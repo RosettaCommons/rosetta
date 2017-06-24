@@ -17,7 +17,7 @@
 #include <protocols/fldsgn/filters/SecondaryStructureCountFilterCreator.hh>
 
 // Project Headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -114,7 +114,7 @@ SecondaryStructureCountFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using protocols::jd2::parser::BluePrint;
+	using protocols::parser::BluePrint;
 	num_helix_ = tag->getOption<core::Size>( "num_helix", 0 );
 	num_sheet_ = tag->getOption<core::Size>( "num_sheet", 0 );
 	num_loop_ = tag->getOption<core::Size>( "num_loop", 0 );

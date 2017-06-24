@@ -54,7 +54,7 @@
 #include <core/select/util/SelectResiduesByLayer.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 
 // Utility Headers
 #include <protocols/flxbb/utility.hh>
@@ -1027,7 +1027,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	}
 
 	if ( tag->hasOption( "blueprint" ) ) {
-		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
+		blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
 	}
 
 	set_use_symmetry( tag->getOption<bool>("use_symmetry", true) );

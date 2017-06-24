@@ -26,7 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>

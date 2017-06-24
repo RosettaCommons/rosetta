@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/sequence/ABEGOManager.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // Utility headers
@@ -359,7 +359,7 @@ SheetTopologyFilter::parse_my_tag(
 
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
 	if ( blueprint != "" ) {
-		protocols::jd2::parser::BluePrint blue( blueprint );
+		protocols::parser::BluePrint blue( blueprint );
 		set_secstruct( blue.secstruct() );
 
 		if ( ! blue.strand_pairings().empty() ) {

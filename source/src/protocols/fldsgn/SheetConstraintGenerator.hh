@@ -29,7 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/types.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -56,7 +56,7 @@ public:
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
-	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+	typedef protocols::parser::BluePrintOP BluePrintOP;
 
 public:
 	SheetConstraintGenerator();
@@ -133,7 +133,7 @@ public:
 
 	/// @brief initialize from a blueprint
 	void initialize_from_blueprint( std::string const & blueprint_file );
-	void initialize_from_blueprint( protocols::jd2::parser::BluePrintCOP bp );
+	void initialize_from_blueprint( protocols::parser::BluePrintCOP bp );
 
 	/// @brief computes and returns a vector of residues that are paired in the sheet
 	ResiduePairs

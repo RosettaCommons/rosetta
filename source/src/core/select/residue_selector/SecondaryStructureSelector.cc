@@ -175,7 +175,7 @@ void SecondaryStructureSelector::parse_my_tag(
 	throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
 	}
 	std::string const bp_name = tag->getOption< std::string >( "blueprint" );
-	protocols::jd2::parser::BluePrint bp( bp_name );
+	protocols::parser::BluePrint bp( bp_name );
 	set_pose_secstruct( bp.secstruct() );
 	}
 	*/

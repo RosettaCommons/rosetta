@@ -73,14 +73,8 @@ main( int argc, char * argv [] )
 		protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
 
 		protocols::rosetta_scripts::RosettaScriptsParser rs;
-		rs.generate_mover_from_pose(
-			JobCOP( new Job( InnerJobOP( new InnerJob( "foo", 1 ) ), 1 ) ),
-			*PoseOP( new Pose),
-			mover,
-			true,
-			option[ parser::protocol ].value(),
-			true
-		);
+		rs.generate_mover_and_apply_to_pose( *PoseOP( new Pose), option[ parser::protocol ].value());
+
 
 	} catch( utility::excn::EXCN_Base& excn ) {
 		basic::Error()

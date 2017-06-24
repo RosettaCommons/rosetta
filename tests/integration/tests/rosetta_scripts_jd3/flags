@@ -1,0 +1,4 @@
+-include_sugars
+-write_pdb_link_records
+-in:file:job_definition_file jd3_rs_definition.xml
+-out:prefix jd3_rs_

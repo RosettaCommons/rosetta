@@ -94,13 +94,13 @@ SilentFilePoseOutputter::outputter_for_job(
 	}
 }
 
-bool SilentFilePoseOutputter::job_has_already_completed( LarvalJob const & /*job*/ ) const
+bool SilentFilePoseOutputter::job_has_already_completed( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
 {
 	return false;
 }
 
 
-void SilentFilePoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/ ) const
+void SilentFilePoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
 {
 	// This is not a behavior supported by the SilentFilePoseOutputter
 }

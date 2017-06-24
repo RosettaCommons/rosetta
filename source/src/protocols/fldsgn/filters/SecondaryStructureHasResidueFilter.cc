@@ -19,7 +19,7 @@
 #include <protocols/fldsgn/filters/SecondaryStructureHasResidueFilterCreator.hh>
 
 // Project Headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -73,7 +73,7 @@ SecondaryStructureHasResidueFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using protocols::jd2::parser::BluePrint;
+	using protocols::parser::BluePrint;
 	min_helix_length_ = tag->getOption<core::Size>( "min_helix_length", 4 );
 	min_sheet_length_ = tag->getOption<core::Size>( "min_sheet_length", 3 );
 	min_loop_length_ = tag->getOption<core::Size>( "min_loop_length", 1 );

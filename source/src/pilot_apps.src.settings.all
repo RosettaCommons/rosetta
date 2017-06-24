@@ -391,6 +391,9 @@ sources = {
 	],
 
 	# J ######################################################################
+	"pilot/jadolfbr" : [
+		"rosetta_scripts_jd3",
+	],
  	"pilot/jadolfbr/cluster_utilities" : [
 		#"relax_cdrs", # /* Jared Adolf-Bryfogle, In CC file, Demo Location. /*
 	],

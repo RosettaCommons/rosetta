@@ -32,7 +32,7 @@
 #include <utility/exit.hh>
 
 // Parser headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_loops_loops_definers_LoopsDefinerLoaderCreator_hh
 
 // Package headers
-#include <protocols/jd2/parser/DataLoaderCreator.hh>
+#include <protocols/parser/DataLoaderCreator.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -25,10 +25,10 @@ namespace loops {
 namespace loops_definers {
 
 
-class LoopsDefinerLoaderCreator : public jd2::parser::DataLoaderCreator
+class LoopsDefinerLoaderCreator : public parser::DataLoaderCreator
 {
 public:
-	virtual jd2::parser::DataLoaderOP create_loader() const;
+	virtual parser::DataLoaderOP create_loader() const;
 	virtual std::string keyname() const;
 	virtual DerivedNameFunction schema_ct_naming_function() const;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;

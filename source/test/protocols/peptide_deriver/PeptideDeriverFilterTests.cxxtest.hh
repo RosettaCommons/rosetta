@@ -23,6 +23,9 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
+// Basic headers
+#include <basic/options/option.hh>
+
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
@@ -163,7 +166,7 @@ public:
 		try {
 			protocols::rosetta_scripts::RosettaScriptsParser parser;
 			// NOTE : the following assumes that RosettaScriptParser::parse_protocol_tag() returns a pointer ParsedProtocol instance, even though the interface is to a MoverOP.
-			protocols::rosetta_scripts::ParsedProtocolOP protocol(utility::pointer::dynamic_pointer_cast<protocols::rosetta_scripts::ParsedProtocol> (parser.parse_protocol_tag(tag)) );
+			protocols::rosetta_scripts::ParsedProtocolOP protocol(utility::pointer::dynamic_pointer_cast<protocols::rosetta_scripts::ParsedProtocol> (parser.parse_protocol_tag(tag, basic::options::option)) );
 			TS_ASSERT_EQUALS(protocol->size(), 1);
 			protocols::rosetta_scripts::ParsedProtocol::MoverFilterPair pair = protocol->get_mover_filter_pair(1);
 			TS_ASSERT_EQUALS(pair.filter().get_type(), "PeptideDeriverFilter");

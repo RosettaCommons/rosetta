@@ -55,9 +55,9 @@ public:
 		InnerLarvalJob const & job
 	) const override;
 
-	bool job_has_already_completed( LarvalJob const & job ) const override;
+	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	void mark_job_as_having_started( LarvalJob const & job ) const override;
+	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
 	void write_output_pose(
 		LarvalJob const & job,

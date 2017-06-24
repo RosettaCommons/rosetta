@@ -26,7 +26,7 @@
 
 #include <core/io/external/PsiPredInterface.fwd.hh>
 #include <protocols/ss_prediction/SS_predictor.fwd.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -75,7 +75,7 @@ private:
 	core::io::external::PsiPredInterfaceOP psipred_interface_;
 
 	protocols::ss_prediction::SS_predictorOP ss_predictor_;
-	protocols::jd2::parser::BluePrintOP blueprint_;
+	protocols::parser::BluePrintOP blueprint_;
 	core::Real start_time_;
 };
 

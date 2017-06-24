@@ -21,8 +21,6 @@
 
 //project headers
 
-#include <protocols/jd2/Parser.fwd.hh> //for friendship
-
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>

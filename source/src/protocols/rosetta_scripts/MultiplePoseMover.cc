@@ -45,6 +45,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/options/option.hh>
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -292,7 +293,7 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	protocols::moves::MoverOP mover;
 	try {
 		rosetta_scripts_tag_->reset_accessed_options();
-		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_ );
+		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_, basic::options::option );
 		if ( !mover ) {
 			TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
 			return false;

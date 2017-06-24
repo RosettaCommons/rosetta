@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
@@ -120,7 +120,7 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String co
 	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
 	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
 {
-	protocols::jd2::parser::BluePrint bp( filename );
+	protocols::parser::BluePrint bp( filename );
 	init_from_blueprint( bp, ss_from_blueprint );
 }
 
@@ -321,7 +321,7 @@ SetSecStructEnergies::parse_my_tag(
 {
 	std::string const blueprintfile( tag->getOption<std::string>( "blueprint", "" ) );
 	if ( !blueprintfile.empty() ) {
-		protocols::jd2::parser::BluePrint const bp( blueprintfile );
+		protocols::parser::BluePrint const bp( blueprintfile );
 		bool const ss_from_blueprint( tag->getOption<bool>( "ss_from_blueprint", true ) );
 		init_from_blueprint( bp, ss_from_blueprint );
 	}
@@ -463,7 +463,7 @@ SetSecStructEnergies::get_secstruct( core::pose::Pose const & pose ) const
 /// @param[in] ss_from_blueprint If true, secstruct_ will be set from the blueprint.  If false,
 ///                              secstruct_ will be unchanged, and only the pairings will be set.
 void
-SetSecStructEnergies::init_from_blueprint( protocols::jd2::parser::BluePrint const & bp, bool const ss_from_blueprint )
+SetSecStructEnergies::init_from_blueprint( protocols::parser::BluePrint const & bp, bool const ss_from_blueprint )
 {
 	if ( ss_from_blueprint ) secstruct_ = bp.secstruct();
 	hh_pair_ = bp.helix_pairings();

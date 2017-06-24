@@ -32,14 +32,18 @@
 // basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.PDBPoseOutputter" );
 
 namespace protocols {
 namespace jd3 {
@@ -57,11 +61,17 @@ PDBPoseOutputter::outputter_specified_by_command_line()
 
 void
 PDBPoseOutputter::determine_job_tag(
-	utility::tag::TagCOP pdb_tag,
-	utility::options::OptionCollection const & /*job_options*/,
+	utility::tag::TagCOP output_tag,
+	utility::options::OptionCollection const & job_options,
 	InnerLarvalJob & job
 ) const
 {
+	using namespace basic::options;
+	utility::tag::TagCOP pdb_tag;
+	if ( output_tag && output_tag->hasTag( keyname() ) ) {
+		pdb_tag = output_tag->getTag( keyname() );
+	}
+
 	if ( pdb_tag ) {
 		using namespace utility::tag;
 		if ( pdb_tag->hasOption( "filename" ) ) {
@@ -78,6 +88,21 @@ PDBPoseOutputter::determine_job_tag(
 	} else {
 		job.job_tag( job.input_tag() );
 	}
+
+	//Deal with prefix and suffix options.
+
+	if ( pdb_tag and pdb_tag->hasOption( "prefix" ) ) {
+		job.job_tag( pdb_tag->getOption< std::string >( "prefix" ) + job.job_tag() );
+	} else if ( job_options[ OptionKeys::out::prefix].user() ) {
+		job.job_tag( job_options[ OptionKeys::out::prefix]() + job.job_tag() );
+	}
+
+	if ( pdb_tag and pdb_tag->hasOption( "suffix ") ) {
+		job.job_tag(  job.job_tag() + pdb_tag->getOption< std::string >( "suffix" ) );
+	} else if ( job_options[ OptionKeys::out::suffix].user() ) {
+		job.job_tag( job.job_tag() + job_options[ OptionKeys::out::suffix]());
+	}
+
 }
 
 /// @details In returning the empty string, we signal to the JobQueen (or any other
@@ -94,14 +119,37 @@ PDBPoseOutputter::outputter_for_job(
 	return "";
 }
 
-bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & /*job*/ ) const
+bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const
 {
-	// STUBBED OUT!
-	return false;
+	using namespace basic::options::OptionKeys;
+
+	InnerLarvalJobCOP inner_job( job.inner_job() );
+	utility::tag::TagCOP jobdef_tag( inner_job->jobdef_tag() );
+	utility::tag::TagCOP pdb_output_tag;
+	if ( jobdef_tag->hasTag( "Output" ) && jobdef_tag->getTag( "Output" )->hasTag( keyname() ) ) {
+		pdb_output_tag = jobdef_tag->getTag( "Output" )->getTag( keyname() );
+	}
+
+	// PDB tag "overwrite" attribute takes precedence over the options system
+	// if the tag says "do not overwrite," then do not look at the options system.
+	if ( pdb_output_tag && pdb_output_tag->hasOption( "overwrite" ) ) {
+		if ( pdb_output_tag->getOption< bool >( "overwrite", false ) ) {
+			return false;
+		}
+	} else if ( options[ out::overwrite ] ) { return false; }
+
+	// Since we're not running with the "overwrite" behavior, check if the PDB already exists
+	std::string filename( output_pdb_name( job, options, pdb_output_tag ));
+
+	bool exists = utility::file::file_exists( filename );
+	if ( exists ) {
+		TR <<std::endl << "Skipping "<< filename << ". Please pass the overwrite option/tag" << std::endl;
+	}
+	return exists;
 }
 
 
-void PDBPoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/ ) const
+void PDBPoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
 {
 	// STUBBED OUT!
 }
@@ -146,6 +194,8 @@ PDBPoseOutputter::output_pdb_name(
 	if ( tag && tag->hasOption( "path" ) ) {
 		fn.path( tag->getOption< std::string >( "path" ) );
 	}
+
+
 	return fn();
 }
 
@@ -180,9 +230,18 @@ PDBPoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 		" the dolar sign. E.g. '$_steal_native_frags' would produce pdbs named"
 		" '1abc_steal_native_frags_0001.pdb', '1abc_steal_native_frags_0002.pdb', ...,"
 		" '2def_steal_native_frags_0001.pdb', etc. if it were used with input tags '1abc' and '2def'. Cannot be"
-		" combined with the 'filename' attribute." )
-		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "pdb_gz", xsct_rosetta_bool, "Should the output PDB file be written as a .gz?", "false" );
+		" combined with the 'filename' attribute. Cannot be combined with either the 'prefix' or 'suffix' attributes."
+		"  Cannot be combined with either the out:prefix or out:suffix flags that might be provided on the command line" )
+		+ XMLSchemaAttribute( "path", xs_string , "Give the directory to which the output .pdb file should be written."
+		" Note that the output path does not become part of the job name, so if you have two jobs with the same job"
+		" name written to different directories, then your log file and your score file (and any other secondary pose"
+		" outputter) will not distinguish between which of the two jobs it is writing output for" )
+		+ XMLSchemaAttribute( "overwrite", xsct_rosetta_bool , "If this is set to 'true', then the job(s) will run"
+		" even if an output file with the name that this job would produce exists, and that previously-existing"
+		" output file will be overwritten with the new output file." )
+		+ XMLSchemaAttribute::attribute_w_default( "pdb_gz", xsct_rosetta_bool, "Should the output PDB file be written as a .gz?", "false" )
+		+ XMLSchemaAttribute( "prefix", xs_string, "Set output PDB Prefix. Cannot be combined with the 'filename_pattern' attribute")
+		+ XMLSchemaAttribute( "suffix", xs_string, "Set output PDB Suffix. Cannot be combined with the 'filename_pattern' attribute");
 
 	pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(),
 		"The (typically) default PoseOutputter that writes the structure out as a PDB-formatted file", output_pdb_attributes );
@@ -194,7 +253,11 @@ PDBPoseOutputter::list_options_read(
 )
 {
 	core::io::StructFileRepOptions::list_options_read( read_options );
-	read_options + basic::options::OptionKeys::out::pdb_gz;
+	read_options
+		+ basic::options::OptionKeys::out::pdb_gz
+		+ basic::options::OptionKeys::out::overwrite
+		+ basic::options::OptionKeys::out::prefix
+		+ basic::options::OptionKeys::out::suffix;
 }
 
 PoseOutputterOP PDBPoseOutputterCreator::create_outputter() const

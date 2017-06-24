@@ -16,7 +16,6 @@
 #include <protocols/protein_interface_design/movers/SubroutineMoverCreator.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Parser.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -87,11 +86,11 @@ SubroutineMover::parse_my_tag( TagCOP const tag,
 	std::string const xml_fname( tag->getOption< std::string >( "xml_fname" ) );
 
 	JobOP job( JobDistributor::get_instance()->current_job() );
-	ParserOP rsparser( new protocols::rosetta_scripts::RosettaScriptsParser );
+	protocols::rosetta_scripts::RosettaScriptsParserOP rsparser( new protocols::rosetta_scripts::RosettaScriptsParser );
 	TR<<"Parsing a subroutine xml_file"<<std::endl;
 	TR<<"*************WARNING: AT THIS POINT, CONSTRAINTS ADDED TO THE POSE IN A SUBROUTINE WILL BE IGNORED***********"<<std::endl;
 	core::pose::Pose nonconst_pose( pose );
-	rsparser->generate_mover_from_pose( job, nonconst_pose, mover_, true /*new input*/, xml_fname );
+	rsparser->generate_mover_from_pose( nonconst_pose, mover_, true /*new input*/, xml_fname );
 }
 
 protocols::moves::MoverOP

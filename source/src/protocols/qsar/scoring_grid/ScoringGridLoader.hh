@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd2/parser/ScoringGridLoader.hh
+/// @file   protocols/parser/ScoringGridLoader.hh
 /// @brief  Declartion of the XML parser's ScoringGridLoader class for adding named ScoringGrids to the basic::datacache::DataMap
 /// @author Sam DeLuca
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com) -- moved here from DockDesignParser.cc
@@ -17,7 +17,7 @@
 
 // Package Headers
 #include <protocols/qsar/scoring_grid/ScoringGridLoader.fwd.hh>
-#include <protocols/jd2/parser/DataLoader.hh>
+#include <protocols/parser/DataLoader.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -35,7 +35,7 @@ namespace qsar {
 namespace scoring_grid {
 
 /// @brief A class for loading ScoringGrids into the XML parser's basic::datacache::DataMap.
-class ScoringGridLoader : public protocols::jd2::parser::DataLoader
+class ScoringGridLoader : public protocols::parser::DataLoader
 {
 public:
 	ScoringGridLoader();

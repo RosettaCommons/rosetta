@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 // Protocol Headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers

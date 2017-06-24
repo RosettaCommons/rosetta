@@ -127,9 +127,9 @@ public:
 		return "dummy";
 	}
 
-	bool job_has_already_completed( LarvalJob const & ) const override { return false; }
+	bool job_has_already_completed( LarvalJob const &, utility::options::OptionCollection const & ) const override { return false; }
 
-	void mark_job_as_having_started( LarvalJob const & ) const override {}
+	void mark_job_as_having_started( LarvalJob const &, utility::options::OptionCollection const & ) const override {}
 
 	void write_output_pose(
 		LarvalJob const & job,

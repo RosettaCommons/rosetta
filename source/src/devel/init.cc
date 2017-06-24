@@ -24,7 +24,7 @@
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/jd2/parser/DataLoaderFactory.hh>
+#include <protocols/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators

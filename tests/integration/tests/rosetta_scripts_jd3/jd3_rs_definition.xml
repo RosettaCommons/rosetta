@@ -1,0 +1,42 @@
+<JobDefinitionFile>
+
+   <Job nstruct="2">
+      <Input>
+         <PDB filename="five_glycans.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="default_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_relax.xml"/>
+         <parser__script_vars value="cartmin=0"/>
+      </Options>
+   </Job>
+
+   <Job nstruct="1">
+      <Input>
+         <PDB filename="five_glycans.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="cartmin_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_relax.xml"/>
+         <parser__script_vars value="cartmin=1"/>
+      </Options>
+   </Job>
+
+   <Job nstruct="1">
+      <Input>
+         <PDB filename="pareto_4JAN_CH103_GP120_renum_0001.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycosylated_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycosylate.xml"/>
+         <parser__script_vars value="positions=463G,460G glycosylation=man5 cartmin=1"/>
+      </Options>
+   </Job>
+
+</JobDefinitionFile>

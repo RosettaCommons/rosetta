@@ -16,7 +16,7 @@
 
 namespace protocols {
 
-using namespace jd2::parser;
+using namespace parser;
 static DataLoaderRegistrator< ScoreFunctionLoaderCreator > reg_ScoreFunctionLoaderCreator;
 static DataLoaderRegistrator< TaskOperationLoaderCreator > reg_TaskOperationLoaderCreator;
 static DataLoaderRegistrator< MoveMapFactoryLoaderCreator > reg_MoveMapFactoryLoaderCreator;

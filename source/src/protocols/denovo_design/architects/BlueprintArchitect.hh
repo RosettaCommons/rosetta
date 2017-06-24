@@ -22,7 +22,7 @@
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/types.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -65,7 +65,7 @@ protected:
 
 public:
 	void
-	set_blueprint( protocols::jd2::parser::BluePrint const & bp );
+	set_blueprint( protocols::parser::BluePrint const & bp );
 
 private:
 	/// @brief add templated segments from pose. These are designated by a residue number
@@ -101,7 +101,7 @@ private:
 		char & orientation ) const;
 
 private:
-	protocols::jd2::parser::BluePrintCOP blueprint_;
+	protocols::parser::BluePrintCOP blueprint_;
 
 };
 

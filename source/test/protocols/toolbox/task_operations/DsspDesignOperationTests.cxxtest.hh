@@ -15,7 +15,7 @@
 #include <test/UTracer.hh>
 
 // Unit headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/toolbox/task_operations/DsspDesignOperation.hh>
 
 // Core headers
@@ -65,8 +65,8 @@ public:
 
 	void test_copy_constructor() {
 
-		protocols::jd2::parser::BluePrintOP blueprint;
-		blueprint = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint(
+		protocols::parser::BluePrintOP blueprint;
+		blueprint = protocols::parser::BluePrintOP( new protocols::parser::BluePrint(
 			"protocols/toolbox/task_operations/dssp_in.blueprint" ) );
 
 		DsspDesignOperationOP dssp_design( new DsspDesignOperation );

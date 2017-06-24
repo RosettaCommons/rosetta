@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/simple_moves/MakePolyXMover.hh>
@@ -248,7 +248,7 @@ InterlockAroma::parse_my_tag(
 	// read secondary structure info through blueprint
 	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if ( blueprint != "" ) {
-		protocols::jd2::parser::BluePrintOP bop( new protocols::jd2::parser::BluePrint( blueprint ) );
+		protocols::parser::BluePrintOP bop( new protocols::parser::BluePrint( blueprint ) );
 		input_ss_ = bop->secstruct();
 	}
 

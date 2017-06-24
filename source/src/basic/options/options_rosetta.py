@@ -1199,6 +1199,19 @@ Options = Option_Group( '',
 
 	), # -run
 
+	## options for parser
+	Option_Group( 'parser',
+		Option( 'protocol', 'String', desc = 'The protocol you will be running. (Input XML File'),
+		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
+		Option( 'view', 'Boolean', desc='Use the viewer?' ),
+		Option( 'info', 'StringVector', desc='Have the rosetta_scripts application print out the available XML-accessible options for a given mover, filter, task operation, or residue selector, and then exit.' ),
+		Option( 'output_schema', 'String', desc='Have the rosetta_scripts application write out its XML Schema to the given file and then exit.' ),
+		Option( 'validate_and_exit', 'Boolean', desc='After XML Schema validation completes, exit' ),
+		Option( 'patchdock', 'String', desc='Patchdock output file name.' ),
+		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),
+		Option( 'inclusion_recursion_limit', 'Integer', default = '8', desc='How many recursions to perform when parsing an XML file with inclusions' ),
+	), # -parser
+
 	# jd3 Options ---------------------------------------------------------
 	Option_Group( 'jd3',
 		Option('mpi_work_partition_job_distributor','Boolean',desc='determine if we should use the WorkPartition job distributor', default='false'),
@@ -1229,7 +1242,7 @@ Options = Option_Group( '',
 
 
 		Option( 'dd_parser', 'Boolean', desc='determine whether to use the dock_design_parser', default='false' ),
-		Option( 'ntrials', 'Integer', desc='number of attempts at creating an output file for each nstruct. e.g., ntrials 3 and nstruct 10 would mean that each of 10 trajectories would attempt to write an output file 3 times and if unsuccessful would fail.' ),
+		Option( 'ntrials', 'Integer', desc='number of attempts at creating an output file for each nstruct. e.g., ntrials 3 and nstruct 10 would mean that each of 10 trajectories would attempt to write an output file 3 times and if unsuccessful would fail.', default='1' ),
 		Option( 'generic_job_name', 'String', desc='job name when using GenericJobInputter (i.e. abinitio)', default = 'S'),#no I don't know why it's S, I think it's S for Success
 		Option( 'no_output', 'Boolean', desc='use NoOutputJobOutputter; do not store the pose after a run (no silent or scorefile)', default='false'),
 		Option( 'enzdes_out', 'Boolean', desc='causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile', default='false'),
@@ -6383,18 +6396,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #		Option( 'max_cav_ball_radius', 'Real', desc='radius of largest void-ball to consider', default='3.0'),
 	), # -packstat
 
-	## options for parser
-	Option_Group( 'parser',
-		Option( 'info', 'StringVector', desc='Have the rosetta_scripts application print out the available XML-accessible options for a given mover, filter, task operation, or residue selector, and then exit.' ),
-		Option( 'output_schema', 'String', desc='Have the rosetta_scripts application write out its XML Schema to the given file and then exit.' ),
-		Option( 'patchdock', 'String', desc='Patchdock output file name.' ),
-		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),
-		Option( 'protocol', 'String', desc='File name for the xml parser protocol' ),
-		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
-		Option( 'validate_and_exit', 'Boolean', desc='After XML Schema validation completes, exit' ),
-		Option( 'view', 'Boolean', desc='Use the viewer?' ),
-		Option( 'inclusion_recursion_limit', 'Integer', default = '8', desc='How many recursions to perform when parsing an XML file with inclusions' ),
-	), # -parser
 
 	Option_Group( 'patterson',
 #		Option( 'debug', 'Boolean', default = 'false'),

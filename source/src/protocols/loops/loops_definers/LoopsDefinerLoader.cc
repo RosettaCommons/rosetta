@@ -100,8 +100,8 @@ void LoopsDefinerLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 }
 
 
-jd2::parser::DataLoaderOP
-LoopsDefinerLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new LoopsDefinerLoader ); }
+parser::DataLoaderOP
+LoopsDefinerLoaderCreator::create_loader() const { return parser::DataLoaderOP( new LoopsDefinerLoader ); }
 
 string
 LoopsDefinerLoaderCreator::keyname() const { return LoopsDefinerLoader::loader_name(); }

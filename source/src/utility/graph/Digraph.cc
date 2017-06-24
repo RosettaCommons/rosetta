@@ -936,7 +936,8 @@ find_unmarked_node(
 	platform::Size last_descend_from
 )
 {
-	for ( platform::Size ii = last_descend_from+1; ii <= visited_status.size(); ++ii ) {
+	if ( last_descend_from == 0 ) last_descend_from = visited_status.size() + 1;
+	for ( platform::Size ii = last_descend_from-1; ii >= 1; --ii ) {
 		if ( visited_status[ ii ] == NOT_VISITED ) {
 			return ii;
 		}

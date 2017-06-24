@@ -127,7 +127,7 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 
 
 			for ( core::Size ii = 1; ii <= working_poses.size(); ++ii ) {
-				parser.generate_mover_from_pose( jobs[ ii ], *working_poses[ ii ], mover, 1,
+				parser.generate_mover_from_pose( *working_poses[ ii ], mover, 1,
 					option[ parser::protocol ]() );
 				protocols::rosetta_scripts::ParsedProtocolOP parsed_protocol =
 					utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mover );

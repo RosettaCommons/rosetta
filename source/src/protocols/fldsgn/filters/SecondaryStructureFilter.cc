@@ -24,7 +24,7 @@
 #include <protocols/denovo_design/residue_selectors/PairedSheetResidueSelector.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 // Core headers
@@ -186,7 +186,7 @@ SecondaryStructureFilter::set_residue_selector( core::select::residue_selector::
 void
 SecondaryStructureFilter::set_blueprint( std::string const & blueprint_file )
 {
-	using protocols::jd2::parser::BluePrint;
+	using protocols::parser::BluePrint;
 	BluePrint blue( blueprint_file );
 	filtered_ss_ = blue.secstruct();
 	filtered_abego_ = blue.abego();

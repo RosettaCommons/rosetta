@@ -48,45 +48,39 @@ public:
 	bool
 	outputter_specified_by_command_line();
 
-	virtual
 	void
 	determine_job_tag(
 		utility::tag::TagCOP output_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob & job
-	) const;
+	) const override;
 
-	virtual
 	std::string
 	outputter_for_job(
 		utility::tag::TagCOP output_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob const & job
-	) const;
+	) const override;
 
-	virtual
-	bool job_has_already_completed( LarvalJob const & job ) const;
+	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	virtual
-	void mark_job_as_having_started( LarvalJob const & job ) const;
+	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	virtual
 	void write_output_pose(
 		LarvalJob const & job,
 		utility::options::OptionCollection const & job_options,
 		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	/// @brief Currently a no-op since the "write output pose" method sends all
-	/// outputs to disk.
-	virtual
-	void flush();
+	/// @brief Write out all cached silent files -- may happen after an exception is caught by
+	/// the JobDistributor and the process is about to be spun down.
+	void flush() override;
 
-	/// @brief Return the stiring used by the PDBPoseOutputterCreator for this class
-	virtual
+	/// @brief Return the string used by the SilentFilePoseOutputterCreator to identify the
+	/// class in an XML file (which is the string returned by the static keyname method)
 	std::string
-	class_key() const;
+	class_key() const override;
 
 	std::string
 	output_silent_name( LarvalJob const & job ) const;

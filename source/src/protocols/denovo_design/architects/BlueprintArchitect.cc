@@ -21,7 +21,7 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
@@ -65,7 +65,7 @@ BlueprintArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 			<< "You must specify a blueprint file using the \"blueprint\" option" << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
-	protocols::jd2::parser::BluePrint bp( bp_file );
+	protocols::parser::BluePrint bp( bp_file );
 	set_blueprint( bp );
 }
 void
@@ -108,9 +108,9 @@ BlueprintArchitect::design( core::pose::Pose const & pose, core::Real & ) const
 }
 
 void
-BlueprintArchitect::set_blueprint( protocols::jd2::parser::BluePrint const & bp )
+BlueprintArchitect::set_blueprint( protocols::parser::BluePrint const & bp )
 {
-	blueprint_ = protocols::jd2::parser::BluePrintCOP( new protocols::jd2::parser::BluePrint( bp ) );
+	blueprint_ = protocols::parser::BluePrintCOP( new protocols::parser::BluePrint( bp ) );
 }
 
 /// @brief Adds helix pairings to the given SD using the HHPAIR line of the blueprint

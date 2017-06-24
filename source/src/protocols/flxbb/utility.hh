@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -30,7 +30,7 @@ namespace flxbb {
 typedef core::Size Size;
 typedef core::Real Real;
 typedef core::pose::Pose Pose;
-typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+typedef protocols::parser::BluePrintOP BluePrintOP;
 typedef core::scoring::constraints::ConstraintOPs ConstraintOPs;
 
 /// @brief constrain hydrogen bonds in beta sheet  ( not used )

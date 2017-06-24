@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_ligand_docking_LigandDockingLoaders_hh
 
 // Package Headers
-#include <protocols/jd2/parser/DataLoader.hh>
+#include <protocols/parser/DataLoader.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -26,7 +26,7 @@ namespace protocols {
 namespace ligand_docking {
 
 /// @brief A class for loading InterfaceBuilders into the XML parser's basic::datacache::DataMap.
-class InterfaceBuilderLoader : public jd2::parser::DataLoader
+class InterfaceBuilderLoader : public parser::DataLoader
 {
 public:
 	InterfaceBuilderLoader();
@@ -48,7 +48,7 @@ public:
 /// @brief A class for loading MoveMapBuilders into the XML parser's basic::datacache::DataMap.
 /// NOTE that in the input .xml file, the InterfaceBuilder must be specified before
 /// the MoveMapBuilder
-class MoveMapBuilderLoader : public jd2::parser::DataLoader
+class MoveMapBuilderLoader : public parser::DataLoader
 {
 public:
 	MoveMapBuilderLoader();
@@ -68,7 +68,7 @@ public:
 
 };
 
-class LigandAreaLoader : public jd2::parser::DataLoader
+class LigandAreaLoader : public parser::DataLoader
 {
 public:
 	LigandAreaLoader();

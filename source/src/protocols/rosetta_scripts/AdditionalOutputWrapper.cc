@@ -36,6 +36,7 @@
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/options/option.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 #include <utility/vector0.hh>
@@ -119,7 +120,7 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 
 	if ( !mover && rosetta_scripts_tag_ ) {
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_ );
+		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_, basic::options::option );
 	}
 
 	if ( !mover && mover_tag_ ) {
@@ -167,7 +168,7 @@ void AdditionalOutputWrapper::parse_my_tag(
 			if ( curr_tag->getName() == "ROSETTASCRIPTS" ) {
 				// Treat subtag as a ROSETTASCRIPTS protocol
 				protocols::rosetta_scripts::RosettaScriptsParser parser;
-				protocols::moves::MoverOP mover( parser.parse_protocol_tag( curr_tag ) );
+				protocols::moves::MoverOP mover( parser.parse_protocol_tag( curr_tag, basic::options::option ) );
 				rosetta_scripts_tag_ = curr_tag;
 			} else {
 				// Treat subtag as a regular mover tag

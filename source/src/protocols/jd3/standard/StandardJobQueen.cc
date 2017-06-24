@@ -464,7 +464,8 @@ StandardJobQueen::has_job_completed( protocols::jd3::LarvalJobCOP job )
 {
 	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
-	return pose_outputter_for_job( *inner_job )->job_has_already_completed( *job );
+	utility::options::OptionCollectionCOP job_options = options_for_job( *inner_job );
+	return pose_outputter_for_job( *inner_job )->job_has_already_completed( *job, *job_options );
 }
 
 void
@@ -472,7 +473,8 @@ StandardJobQueen::mark_job_as_having_begun( protocols::jd3::LarvalJobCOP job )
 {
 	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
-	return pose_outputter_for_job( *inner_job )->mark_job_as_having_started( *job );
+	utility::options::OptionCollectionCOP job_options = options_for_job( *inner_job );
+	return pose_outputter_for_job( *inner_job )->mark_job_as_having_started( *job, *job_options );
 }
 
 JobOP
@@ -1131,16 +1133,16 @@ StandardJobQueen::options_from_tag( utility::tag::TagCOP job_options_tag ) const
 		OptionTypes opt_type = option_type_from_key( opt );
 
 		std::string opt_tag_name = basic::options::replace_option_namespace_colons_with_underscores( opt );
-		if ( job_options_tag && job_options_tag->hasTag( opt.identifier() ) ) {
-			TagCOP opt_tag = job_options_tag->getTag( opt.identifier() );
+		if ( job_options_tag && job_options_tag->hasTag( opt_tag_name ) ) {
+			TagCOP opt_tag = job_options_tag->getTag( opt_tag_name );
 			if ( opt_type == BOOLEAN_OPTION ) {
 				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value", "true" ) );
 			} else {
 				debug_assert( opt_tag->hasOption( "value" ) );
 				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value" ) );
 			}
-		} else if ( common_options_tag && common_options_tag->hasTag( opt.identifier() ) ) {
-			TagCOP opt_tag = common_options_tag->getTag( opt.identifier() );
+		} else if ( common_options_tag && common_options_tag->hasTag( opt_tag_name ) ) {
+			TagCOP opt_tag = common_options_tag->getTag( opt_tag_name );
 			if ( opt_type == BOOLEAN_OPTION ) {
 				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value", "true" ) );
 			} else {
@@ -1179,7 +1181,11 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 			continue;
 		}
 
-		utility::options::OptionCollectionCOP job_options = options_from_tag( subtag );
+		TagCOP job_options_tag;
+		if ( subtag->hasTag( "Options" ) ) {
+			job_options_tag = subtag->getTag( "Options" );
+		}
+		utility::options::OptionCollectionCOP job_options = options_from_tag( job_options_tag );
 
 		// ok -- look at input tag
 		TagCOP input_tag = subtag->getTag( "Input" );

@@ -28,6 +28,9 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
+// Basic headers
+#include <basic/options/option.hh>
+
 class DisulfideInsertionMoverTests : public CxxTest::TestSuite {
 public:
 
@@ -108,7 +111,7 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 		try {
 			protocols::rosetta_scripts::RosettaScriptsParser parser;
 			// NOTE : the following assumes that RosettaScriptParser::parse_protocol_tag() returns a pointer ParsedProtocol instance, even though the interface is to a MoverOP.
-			protocols::rosetta_scripts::ParsedProtocolOP protocol(utility::pointer::dynamic_pointer_cast<protocols::rosetta_scripts::ParsedProtocol> (parser.parse_protocol_tag(tag)) );
+			protocols::rosetta_scripts::ParsedProtocolOP protocol(utility::pointer::dynamic_pointer_cast<protocols::rosetta_scripts::ParsedProtocol> (parser.parse_protocol_tag(tag,basic::options::option)) );
 			TS_ASSERT_EQUALS(protocol->size(), 1);
 			protocols::rosetta_scripts::ParsedProtocol::MoverFilterPair pair = protocol->get_mover_filter_pair(1);
 			TS_ASSERT_EQUALS(protocol->get_mover(1)->get_name(), "DisulfideInsertion");

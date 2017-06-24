@@ -26,7 +26,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/parser/BluePrint.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
@@ -341,7 +341,7 @@ DesignBySecondaryStructureOperation::initialize_blueprint_ss( std::string const 
 		//utility_exit_with_message( "A blueprint filename must be provided to DesignBySecondaryStructure." );
 		return;
 	}
-	protocols::jd2::parser::BluePrintOP bp( new protocols::jd2::parser::BluePrint( blueprint_file ) );
+	protocols::parser::BluePrintOP bp( new protocols::parser::BluePrint( blueprint_file ) );
 	if ( ! bp ) {
 		utility_exit_with_message( "Error initializing the blueprint." );
 	}

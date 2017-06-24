@@ -328,6 +328,27 @@ attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 //void
 //attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
 
+
+
+
+/// @brief Prints out an empty template RosettaScript to the tracer.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void print_template_script();
+
+/// @brief Prints out XSD information about the XML-accessible options for a given RosettaScipts-accessible
+/// mover, filter, task operation, or residue selector.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool print_information( std::string const &component_name, std::stringstream &outstream );
+
+/// @brief Prints out XSD information about the XML-accessible options for a given set of RosettaScipts-accessible
+/// movers, filters, task operations, or residue selectors.
+/// @details Calls the single string version.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void print_information( utility::vector1 < std::string > const &component_names );
+
+/// @brief Saves the XSD to the given file.
+void save_schema(  std::string const & filename );
+
 } // RosettaScripts
 } // protocols
 
