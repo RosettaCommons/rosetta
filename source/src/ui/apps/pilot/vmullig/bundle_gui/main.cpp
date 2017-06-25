@@ -7,28 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   ui/ui_lib_test.cpp
-/// @brief  Unit tests for the ui library.
-/// @author Sergey Lyskov (sergey.lyskov@jhu.edu).
+/// @file   ui/apps/pilot/vmullig/bundle_gui/main.cpp
+/// @brief  Main function for the bundle GUI project.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-#include "ui_lib_test.h"
+#include "mainwindow.h"
+#include <QApplication>
 
 #include <protocols/init/init.hh>
 #include <libxml/parser.h> // dummy include to make sure external excludes path is set
-#include <core/pose/Pose.hh>
 
-namespace ui {
+#include <QDebug>
 
-ui_lib_test::ui_lib_test()
+#if defined(MAC) || defined(__APPLE__) || defined (__OSX__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+int main(int argc, char *argv[])
 {
+    qDebug() << "bundle_gui::main: Calling Rosetta init()...";
 
-}
+	glutInit(&argc, argv);
+    protocols::init::init(argc, argv);
 
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
 
-void ui_lib_test::test()
-{
-     core::pose::Pose p = core::pose::Pose();
-
-}
-
+    return a.exec();
 }

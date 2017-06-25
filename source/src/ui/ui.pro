@@ -1,6 +1,6 @@
 QT += core gui widgets
 
-CONFIG += object_parallel_to_source c++11
+CONFIG += object_parallel_to_source c++11 no_keywords
 
 TARGET = ui
 TEMPLATE = lib
@@ -24,7 +24,11 @@ SOURCES += \
     task/project.cpp \
     task/project_model.cpp \
     task/project_view.cpp \
-    task/task.cpp
+    task/task.cpp \
+    ui_protocols/helical_bundle/HelicalBundleDialogueWidget.cpp \
+    ui_protocols/helical_bundle/HelixOptionWidget.cpp \
+    ui_core/pose_draw/SimplePoseDrawOpenGLWidget.cpp \
+    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp
 
 
 HEADERS  += \ 
@@ -33,10 +37,20 @@ HEADERS  += \
     task/project.h \
     task/project_model.h \
     task/project_view.h \
-    task/task.h
+    task/task.h \
+    ui_protocols/helical_bundle/HelicalBundleDialogueWidget.h \
+    ui_protocols/helical_bundle/HelixOptionWidget.h \
+    ui_protocols/helical_bundle/HelicalBundleDialogueWidget.fwd.h \
+    ui_protocols/helical_bundle/HelixOptionWidget.fwd.h \
+    ui_core/pose_draw/SimplePoseDrawOpenGLWidget.h \
+    ui_core/pose_draw/SimplePoseDrawOpenGLWidget.fwd.h \
+    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.h \
+    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h
 
 FORMS    += \ 
-    task/project_view.ui
+    task/project_view.ui \
+    ui_protocols/helical_bundle/HelicalBundleDialogueWidget.ui \
+    ui_protocols/helical_bundle/HelixOptionWidget.ui
 
 
 LIBS += \
@@ -71,3 +85,16 @@ LIBS += \
         -L$$OUT_PWD/../rosetta/protocols_e_5    -lprotocols_e_5 \
         -L$$OUT_PWD/../rosetta/protocols_6      -lprotocols_6 \
         -L$$OUT_PWD/../rosetta/protocols_7      -lprotocols_7
+
+macx {
+LIBS += \
+        -framework OpenGL \
+        -framework GLUT
+}
+
+unix:!macx {
+LIBS += \
+        -lglut \
+        -lGLU \
+        -lGL
+}

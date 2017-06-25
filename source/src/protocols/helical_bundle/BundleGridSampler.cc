@@ -1378,6 +1378,18 @@ BundleGridSampler::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////
 
 
+/// @brief Set whether we're using degrees (true) or radians (false)
+void BundleGridSampler::set_use_degrees( bool const use_degrees ) {
+	debug_assert( make_bundle_ != nullptr ); //Should be true
+	make_bundle_->set_use_degrees(use_degrees);
+}
+
+/// @brief Get whether we're using degrees (true) or radians (false)
+bool BundleGridSampler::use_degrees() const {
+	debug_assert( make_bundle_ != nullptr ); //Should be true
+	return make_bundle_->use_degrees();
+}
+
 /// @brief Add options for a new helix
 /// @details Return value is the current total number of helices after the addition.
 core::Size BundleGridSampler::add_helix( ) {

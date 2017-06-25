@@ -7,29 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   ui/task/task.h
-/// @brief  Task class for ui library.
-/// @author Sergey Lyskov (sergey.lyskov@jhu.edu).
+/// @file   ui/ui_protocols/HelicalBundleDialogueWidget.fwd.h
+/// @brief  Forward declarations for a dialogue widget that displays controls for manipulating
+/// Crick parameters during helical bundle parametric design.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-#ifndef TASK_H
-#define TASK_H
+#ifndef HELICALBUNDLEDIALOGUEWIDGET_FWD_H
+#define HELICALBUNDLEDIALOGUEWIDGET_FWD_H
 
-#include <ui/task/node.h>
 
 namespace ui {
-namespace task {
+namespace ui_protocols {
+namespace helical_bundle {
 
-class Task : public Node
-{
-public:
-	explicit Task(QUuid _node_id, Node *_parent);
+class HelicalBundleDialogueWidget; //Forward declaration.
 
-	std::string type() const override;
+} //helical_bundle
+} //protocols
+} //ui
 
-};
-
-} // namespace task
-} // namespace ui
-
-
-#endif // TASK_H
+#endif // HELICALBUNDLEDIALOGUEWIDGET_FWD_H

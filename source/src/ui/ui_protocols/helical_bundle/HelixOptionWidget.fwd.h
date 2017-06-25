@@ -7,29 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   ui/task/task.h
-/// @brief  Task class for ui library.
-/// @author Sergey Lyskov (sergey.lyskov@jhu.edu).
+/// @file   ui/ui_protocols/HelicalBundlePoseDrawOpenGLWidget.fwd.h
+/// @brief  Forward declarations for a simple widget that shows a slider and other options that can be set
+/// for a single parameter during helical bundle design.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-#ifndef TASK_H
-#define TASK_H
-
-#include <ui/task/node.h>
+#ifndef HELIXOPTIONWIDGET_FWD_H
+#define HELIXOPTIONWIDGET_FWD_H
 
 namespace ui {
-namespace task {
+namespace ui_protocols {
+namespace helical_bundle {
 
-class Task : public Node
-{
-public:
-	explicit Task(QUuid _node_id, Node *_parent);
+class HelixOptionWidget; //Forward declaration.
 
-	std::string type() const override;
+} //namespace helical_bundle
+} //namespace ui_protocols
+} //namespace ui
 
-};
-
-} // namespace task
-} // namespace ui
-
-
-#endif // TASK_H
+#endif // HELIXOPTIONWIDGET_FWD_H

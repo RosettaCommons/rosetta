@@ -1,0 +1,36 @@
+TEMPLATE = subdirs
+
+SUBDIRS += external cifparse libxml2 ObjexxFCL utility numeric basic core_1 core_2 core_3 core_4 core_5 simple_pose_draw
+
+workbench.depends = rosetta ui
+
+simple_pose_draw.depends = rosetta ui
+
+ui.depends = rosetta 
+
+#ui.depends = rosetta
+external.file = rosetta/external/external.pro
+cifparse.file = rosetta/cifparse/cifparse.pro
+cifparse.depends = external
+libxml2.file = rosetta/libxml2/libxml2.pro
+libxml2.depends = external cifparse
+ObjexxFCL.file = rosetta/ObjexxFCL/ObjexxFCL.pro
+ObjexxFCL.depends = external libxml2 cifparse
+utility.file = rosetta/utility/utility.pro
+utility.depends = external libxml2 cifparse ObjexxFCL
+numeric.file = rosetta/numeric/numeric.pro
+numeric.depends = external libxml2 cifparse ObjexxFCL utility
+basic.file = rosetta/basic/basic.pro
+basic.depends = external libxml2 cifparse ObjexxFCL utility numeric
+core_1.file = rosetta/core_1/core_1.pro
+core_1.depends = external libxml2 cifparse ObjexxFCL utility numeric basic
+core_2.file = rosetta/core_2/core_2.pro
+core_2.depends = external libxml2 cifparse ObjexxFCL utility numeric basic core_1
+core_3.file = rosetta/core_3/core_3.pro
+core_3.depends = external libxml2 cifparse ObjexxFCL utility numeric basic core_1 core_2
+core_4.file = rosetta/core_4/core_4.pro
+core_4.depends = external libxml2 cifparse ObjexxFCL utility numeric basic core_1 core_2 core_3
+core_5.file = rosetta/core_5/core_5.pro
+core_5.depends = external libxml2 cifparse ObjexxFCL utility numeric basic core_1 core_2 core_3 core_4
+simple_pose_draw.file = simple_pose_draw/simple_pose_draw.pro
+simple_pose_draw.depends = external libxml2 cifparse ObjexxFCL utility numeric basic core_1 core_2 core_3 core_4 core_5

@@ -97,7 +97,7 @@ def update_source_file(file_name, data):
 library_project_template = '''\
 QT -= core gui
 
-CONFIG += object_parallel_to_source {config}
+CONFIG += object_parallel_to_source no_keywords {config}
 
 TARGET = {name}
 TEMPLATE = lib

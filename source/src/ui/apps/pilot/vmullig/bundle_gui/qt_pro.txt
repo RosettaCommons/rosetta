@@ -1,0 +1,7 @@
+TEMPLATE = subdirs
+
+SUBDIRS += bundle_gui ui rosetta
+
+bundle_gui.depends = rosetta ui
+
+ui.depends = rosetta

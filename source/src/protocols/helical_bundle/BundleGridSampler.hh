@@ -113,6 +113,20 @@ public:
 	/// @brief If true (default), the pose is reset before generating bundles.  If false, it is not.
 	bool reset_mode() const { return reset_mode_; }
 
+	/// @brief Set whether we're using degrees (true) or radians (false)
+	void set_use_degrees( bool const use_degrees );
+
+	/// @brief Get whether we're using degrees (true) or radians (false)
+	bool use_degrees() const;
+
+	/// @brief Access the mover that makes one of the helices (non-const):
+	///
+	MakeBundleHelixOP helix( core::Size const helix_index ) { return make_bundle_->helix(helix_index); }
+
+	/// @brief Access the mover that makes one of the helices  (const):
+	///
+	MakeBundleHelixCOP helix_cop( core::Size const helix_index ) const { return make_bundle_->helix_cop(helix_index); }
+
 	/// @brief Access the r0_ BundleOptions object, by index.
 	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
 	PerturbBundleOptionsOP r0( core::Size const index ) {
