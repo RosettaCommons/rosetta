@@ -1,6 +1,6 @@
 -nstruct 5
 ##### these are general flags
--score:weights talaris2014
+#-score:weights talaris2014
 -inout:write_all_connect_info true
 -sequence_file inputs/seq1.txt
 -genkic_closure_attempts 3000
@@ -16,4 +16,4 @@
 -mute all
 -unmute protocols.cyclic_peptide_predict
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
--restore_talaris_behavior
+#-restore_talaris_behavior
