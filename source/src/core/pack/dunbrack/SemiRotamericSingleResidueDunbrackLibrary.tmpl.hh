@@ -1665,7 +1665,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 		/// was first encountered.  Fortunately, none of the rotamer building subroutines
 		/// require that the rotamers_ tables be sorted by probability.
 
-		Size const packed_rotno( grandparent::rotwell_2_packed_rotno( rotwell ) );
+		Size const & packed_rotno( grandparent::rotwell_2_packed_rotno( rotwell ) ); // Needs to be `const &` for GCC 7.1 template resolution issue
 		if ( parent::packed_rotno_2_sorted_rotno()( ind, packed_rotno ) == 0 ) {
 			// first time this rotwell has been encountered.
 			Size nencountered = ++rotameric_count( ind );
@@ -1789,7 +1789,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		parent::get_bb_bins( bbs, bb_bin );
 		Size ind = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
 
-		Size const rotno = grandparent::rotwell_2_rotno( rotwell );
+		Size const & rotno = grandparent::rotwell_2_rotno( rotwell ); // Needs to be `const &` for GCC 7.1 template resolution issue
 		for ( Size ii = 1; ii <= bbdep_nrchi_nbins_; ++ii ) {
 			/// input data has probability 0 events; assign a tiny probability for these cases.
 
@@ -1917,7 +1917,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 
 		if ( ! in_rotdef ) break; // we've read past the end of the file...
 
-		Size const rotno( grandparent::rotwell_2_rotno( rotwell ) );
+		Size const & rotno( grandparent::rotwell_2_rotno( rotwell ) ); // Needs to be `const &` for GCC 7.1 template resolution issue
 		//std::cout << "amw rotwell[ T + 1 ] = rotwell[ " << (T+1) << " ] = " << rotwell[ T+1 ] << std::endl;
 		if ( rotwell[ T + 1 ] == 1 ) grandparent::mark_rotwell_exists( rotwell );
 		lefts[   rotno ].push_back( left );

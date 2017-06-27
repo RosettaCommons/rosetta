@@ -927,24 +927,28 @@ void Matcher::initialize_from_file(
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											case 2 : {
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											case 3 : {
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											case 4 : {
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											default : {
 												utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
@@ -960,24 +964,28 @@ void Matcher::initialize_from_file(
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											case 2 : {
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											case 3 : {
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											case 4 : {
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
+												break;
 											}
 											default : {
 												utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"

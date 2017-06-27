@@ -762,7 +762,7 @@ parse_resfile_string(
 	PackerTask & the_task,
 	std::string const & resfile_fname,
 	std::string const & resfile_string
-) throw( ResfileReaderException );
+);
 
 
 /// @brief changes the state of the given PackerTask according to the commands in the resfile.
@@ -776,7 +776,7 @@ parse_resfile_string(
 	std::string const & resfile_string,
 	core::select::residue_selector::ResidueSubset const &mask
 
-) throw(ResfileReaderException);
+);
 
 void
 onError( std::string message );

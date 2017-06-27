@@ -1393,7 +1393,7 @@ parse_resfile_string(
 	PackerTask & the_task,
 	std::string const & resfile_fname,
 	std::string const & resfile_string
-) throw(ResfileReaderException)
+)
 {
 	core::select::residue_selector::ResidueSubset const mask( pose.size(), true );
 	parse_resfile_string( pose, the_task, resfile_fname, resfile_string, mask );
@@ -1414,7 +1414,7 @@ parse_resfile_string(
 	std::string const & resfile_fname,
 	std::string const & resfile_string,
 	core::select::residue_selector::ResidueSubset const & mask
-) throw(ResfileReaderException)
+)
 {
 	using namespace std;
 	istringstream resfile(resfile_string);

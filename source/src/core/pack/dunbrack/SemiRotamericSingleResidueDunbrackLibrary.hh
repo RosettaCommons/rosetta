@@ -201,7 +201,10 @@ class SemiRotamericSingleResidueDunbrackLibrary : public RotamericSingleResidueD
 {
 public:
 	typedef RotamericSingleResidueDunbrackLibrary< T, N > parent;
-	typedef SingleResidueDunbrackLibrary grandparent;
+	// NOTE: For GCC 7.1 to do template resolution properly,
+	// it's critical that you bounce this typedef through the parent (templated) class.
+	// Don't replace this typedef with a direct reference
+	typedef typename RotamericSingleResidueDunbrackLibrary< T, N >::parent grandparent;
 
 public:
 

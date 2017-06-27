@@ -393,6 +393,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WN6" || aname == "WN7" || aname == "WN3" ) { // DNA_MAJOR_GROOVE_WATER ADDUCTS
 				return hbdon_H2O;
 			}
+			break; // Use is_RNA clause below
 		case na_cyt :
 			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -403,6 +404,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WN4" || aname == "WO2" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
+			break; // Use is_RNA clause below
 		case na_gua :
 			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -415,6 +417,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			}
+			break; // Use is_RNA clause below
 		case na_thy :
 			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -423,6 +426,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WO4" || aname == "WO2" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
+			break; // Use is_RNA clause below
 		case na_rad :
 			if ( aname == " N6 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -439,6 +443,7 @@ get_hb_don_chem_type(
 			} else if ( aname == " N3 " &&  don_rsd.has_variant_type( chemical::PROTONATED_N3_ADENOSINE ) ) { //Parin Sripakdeevong May 03, 2011.
 				return hbdon_GENERIC_SC;
 			}
+			break; // Use is_RNA clause below
 		case na_rgu :
 			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -455,6 +460,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WO6" || aname == "WN7" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			}
+			break; // Use is_RNA clause below
 		case na_rcy :
 			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -467,6 +473,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WN4" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			}
+			break; // Use is_RNA clause below
 		case na_ura :
 			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
@@ -479,6 +486,7 @@ get_hb_don_chem_type(
 			} else if ( aname == "WO4" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			}
+			break; // Use is_RNA clause below
 		case aa_h2o :
 			return hbdon_H2O;
 		case aa_vrt:
@@ -604,6 +612,7 @@ get_hb_acc_chem_type(
 			} else if ( aname == "WN6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
+			break; // Use is_RNA clause below
 		case na_gua :
 			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
@@ -614,6 +623,7 @@ get_hb_acc_chem_type(
 			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
+			break; // Use is_RNA clause below
 		case na_cyt :
 			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -626,6 +636,7 @@ get_hb_acc_chem_type(
 			} else if ( aname == "WN4" || aname == "WO2" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
+			break; // Use is_RNA clause below
 		case na_thy :
 			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -634,6 +645,7 @@ get_hb_acc_chem_type(
 			} else if ( aname == "WO4" || aname == "WO2" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
+			break; // Use is_RNA clause below
 		case na_rad :
 			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
 				if ( aname == " N1 " && acc_rsd.has_variant_type( chemical::PROTONATED_N1_ADENOSINE ) ) {
@@ -650,6 +662,7 @@ get_hb_acc_chem_type(
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			}
+			break; // Use is_RNA clause below
 		case na_rgu :
 			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
@@ -664,6 +677,7 @@ get_hb_acc_chem_type(
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			}
+			break; // Use is_RNA clause below
 		case na_rcy :
 			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -678,6 +692,7 @@ get_hb_acc_chem_type(
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			}
+			break; // Use is_RNA clause below
 		case na_ura :
 			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
@@ -688,6 +703,7 @@ get_hb_acc_chem_type(
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			}
+			break; // Use is_RNA clause below
 		case aa_h2o :
 			return hbacc_H2O;
 		case aa_vrt:

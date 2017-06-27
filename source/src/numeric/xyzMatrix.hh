@@ -1468,10 +1468,13 @@ public: // Properties: rows
 		switch ( i ) {
 		case 1 :
 			xx_ = v.x_; xy_ = v.y_; xz_ = v.z_;
+			break;
 		case 2 :
 			yx_ = v.x_; yy_ = v.y_; yz_ = v.z_;
+			break;
 		default : // Assume i == 3
 			zx_ = v.x_; zy_ = v.y_; zz_ = v.z_;
+			break;
 		}
 		return *this;
 	}
