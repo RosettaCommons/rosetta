@@ -259,7 +259,7 @@ private:
 	utility::vector1 < std::pair<core::Size,core::Size> > fragmenthistory_;
 	numeric::xyzVector<core::Real> centerofmass_;
 	core::Real score_;
-	core::Real bonus_score_, RMS_, GDT_;
+	core::Real bonus_score_, RMS_, GDT_ = 0;
 	std::string id_;
 };
 

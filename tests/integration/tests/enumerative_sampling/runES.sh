@@ -17,5 +17,4 @@
     -parser::script_vars filterbeams=$9 \
     -edensity:sliding_window 3\
     -mapreso 2 \
-    -corrections::beta_nov15 \
     -missing_density_to_jump
