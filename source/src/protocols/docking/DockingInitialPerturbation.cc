@@ -520,6 +520,10 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 	//slide_axis_(0);
 	scorefxn_ = ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
+	scoretype_for_contact_ = core::scoring::interchain_vdw;
+	threshold_ = 0.1;
+	use_delta_ = false;
+	
 }
 
 //constructor
@@ -531,6 +535,9 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	Mover::type( "DockingSlideIntoContact" );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
+	scoretype_for_contact_ = core::scoring::interchain_vdw;
+	threshold_ = 0.1;
+	use_delta_ = false;
 }
 
 DockingSlideIntoContact::DockingSlideIntoContact(
@@ -542,8 +549,35 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	Mover::type( "DockingSlideIntoContact" );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
+	scoretype_for_contact_ = core::scoring::interchain_vdw;
+	threshold_ = 0.1;
+	use_delta_ = false;
 }
 
+DockingSlideIntoContact::DockingSlideIntoContact(
+	core::Size const rb_jump,
+	core::Vector const & slide_axis,
+	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreType scoretype_for_contact
+): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis), scorefxn_(scorefxn), scoretype_for_contact_(scoretype_for_contact)
+{
+	Mover::type( "DockingSlideIntoContact" );
+	threshold_ = 0.1;
+	use_delta_ = false;
+}
+	
+DockingSlideIntoContact::DockingSlideIntoContact(
+	core::Size const rb_jump,
+	core::Vector const & slide_axis,
+	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreType scoretype_for_contact,
+	core::Real threshold
+): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis), scorefxn_(scorefxn), scoretype_for_contact_(scoretype_for_contact), threshold_(threshold)
+{
+	Mover::type( "DockingSlideIntoContact" );
+	use_delta_ = false;
+}
+	
 //destructor
 DockingSlideIntoContact::~DockingSlideIntoContact() = default;
 
@@ -616,11 +650,23 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	core::Size const counter_breakpoint( 500 );
 	core::Size counter( 0 );
 
-	// first try moving away from each other
-	while ( pose.energies().total_energies()[ interchain_vdw ] > 0.1 && counter <= counter_breakpoint ) {
+	// Move chains away from each other until ScoreType or delta surpasses threshold
+	core::Real last_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
+	
+	// Current score for comparison (if necessary)
+	core::Real current_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
+	
+	// Move until a move generates no difference or the maximum number of attempts is made
+	while ( is_there_contact(current_score, last_score) && counter <= counter_breakpoint ) {
+		
+		//TR << "interchain_vdw diff: " << std::abs(current_score - last_score) << std::endl;
 		mover->apply( pose );
 		( *scorefxn_ )( pose );
+		last_score = current_score;
+		current_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
 		++counter;
+		
+		// update condition
 	}
 	if ( counter > counter_breakpoint ) {
 		TR<<"failed moving away with original vector. Aborting DockingSlideIntoContact."<<std::endl;
@@ -628,15 +674,19 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		return;
 	}
 	counter = 0;
+	
 
 	// then try moving towards each other
 	TR << "Moving together" << std::endl;
 	mover->trans_axis().negate();
-	while ( counter <= counter_breakpoint && pose.energies().total_energies()[ interchain_vdw ] < 0.1 ) {
+	
+	// Move until a move generates a difference (i.e. contact is made)
+	while ( counter <= counter_breakpoint && not is_there_contact(current_score, last_score) ) {
 
-		//  TR << "interchain_vdw: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
 		mover->apply( pose );
 		( *scorefxn_ )( pose );
+		last_score = current_score;
+		current_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
 		++counter;
 	}
 	if ( counter > counter_breakpoint ) {
@@ -649,12 +699,14 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	// moving it back out
 	counter = 0;
 	if ( mover->step_size() > 1.0 ) {
+		
 		TR << "step size of 1.0..." << std::endl;
-		TR << "interchain scores: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
-		while ( counter <= 10 && pose.energies().total_energies()[ interchain_vdw ] < 0.1 ) {
+		TR << scoretype_for_contact_ << " scores: " << pose.energies().total_energies()[ scoretype_for_contact_ ] << std::endl;
+		
+		while ( counter <= 10 && not is_there_contact(current_score, last_score) ) {
 
 			TR << "moving partners together" << std::endl;
-			TR << "interchain scores: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
+			//TR << scoretype_for_contact_ << " scores: " << pose.energies().total_energies()[ scoretype_for_contact_ ] << std::endl;
 			mover->vary_stepsize( false );
 			mover->step_size( 1.0 );
 			mover->apply( pose );
@@ -665,6 +717,21 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	// move away again until just touching
 	mover->trans_axis().negate();
 	mover->apply( pose );
+}
+	
+bool DockingSlideIntoContact::is_there_contact( core::Real current_score, core::Real last_score) {
+	
+	if (use_delta_) {
+		// current score is greater than last score, contact is made
+		if ( (current_score - last_score) > threshold_) {return true;}
+	} else {
+		// current score is greater than threshold, contact is made
+		if (current_score > threshold_) {return true;}
+	}
+	
+	// neither condition satisfied
+	return false;
+	
 }
 
 std::string

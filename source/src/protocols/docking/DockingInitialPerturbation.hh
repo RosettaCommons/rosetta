@@ -176,23 +176,38 @@ public:
 
 	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
+	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis, core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType scoretype_for_contact);
+	
+	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis, core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType scoretype_for_contact, core::Real threshold);
+
 	//destructor
 	~DockingSlideIntoContact() override;
 
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
 	void show(std::ostream & output=std::cout) const override;
+	
+	// setters
+	void set_use_delta( bool setting ){
+		use_delta_ = setting;
+	}
 
 	// getters
 	std::string get_name() const override;
 	core::Size get_jump_num() const { return rb_jump_; }
 
 private:
-	core::scoring::ScoreFunctionOP scorefxn_;
+	
+	// helper function for evaluating contact condition
+	bool is_there_contact( core::Real current_score, core::Real last_score);
 
 	// which jump to use for docking
 	core::Size rb_jump_;
 	core::Vector slide_axis_; //used if a specific slide axis is specified in the constructor
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreType scoretype_for_contact_; // score_type determining contact
+	core::Real threshold_; // change in scoretype determining termination of sliding
+	bool use_delta_; // compute delta energy for thershold comparison instead of just energy
 
 };  // class DockingSlideIntoContact
 
