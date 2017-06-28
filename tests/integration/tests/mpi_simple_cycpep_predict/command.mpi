@@ -35,11 +35,13 @@ mpirun -np 3 %(bin)s/simple_cycpep_predict.%(binext)s %(additional_flags)s @mpi.
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-grep -v '(1)' log | grep -v '(2)' > log_emperor
-grep '(1)' log > log_master
-grep '(2)' log > log_slave
-
-rm log
+# Filter out the ignore_list items from the MPI logs.
+egrep -vf ../../ignore_list log_0 > log_0.filt
+rm log_0
+egrep -vf ../../ignore_list log_1 > log_1.filt
+rm log_1
+egrep -vf ../../ignore_list log_2 > log_2.filt
+rm log_2
 
 #
 # After that, do whatever you want.

@@ -12,3 +12,4 @@
 -mute all
 -unmute protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary
 -out:levels protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI:500 protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication:500
+-mpi_tracer_to_file log
