@@ -554,6 +554,10 @@ void FoldTreeHybridize::get_residue_weights(
 
 	for ( core::Size i=1; i<=template_poses_[initial_template_index_]->size(); ++i ) {
 		Size ires = template_poses_[initial_template_index_]->pdb_info()->number(i);
+		if ( ires > wt9.size() ) {
+			TR.Error << "Template " << initial_template_index_ << " has a residue with PDB number " << ires << " but the input protein only has " << num_residues_nonvirt << " residues." << std::endl;
+			utility_exit_with_message("Template/Input length mismatch.");
+		}
 		wt9[ires] = frag_weight_aligned_;  // covered by starting template
 	}
 	for ( core::Size i=1; i<=num_residues_nonvirt; ++i ) {
