@@ -25,7 +25,6 @@
 //#include <core/chemical/ResidueTypeSelector.fwd.hh>
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
 #include <core/chemical/MergeBehaviorManager.fwd.hh>
-
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -34,12 +33,17 @@
 #include <core/chemical/Metapatch.fwd.hh>
 #include <core/chemical/Patch.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+
+// Utility headers
+#include <utility/thread/ReadWriteMutex.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
+// STL headers
+#include <list>
 #include <map>
 #include <set>
 
@@ -106,29 +110,37 @@ public:
 		return mode_;
 	}
 
-	/// @brief query ResidueType by its unique residue id.
+	/// @brief query ResidueType by its unique residue id. Note for derived classes: this
+	/// method will obtain a read lock, and possibly a write lock on the ResidueTypeSetCache.
 	///
-	/// @details since residue id is unique, it only returns
-	/// one residue type or exit without match.
+	/// @details since within a ResidueTypeSet, each residue id must be unique, this
+	/// method only returns one residue type or it exits (the program!) without a match.
 	virtual
 	ResidueType const &
 	name_map( std::string const & name ) const;
 
-	/// @brief Get ResidueType by exact name, returning COP
-	/// Will return null pointer for no matches
+	/// @brief Get ResidueType by exact name, returning COP. Will return null pointer
+	/// for no matches. Note for derived classes: this method will obtain a read lock,
+	/// and possibly a write lock on the ResidueTypeSetCache.
 	virtual
 	ResidueTypeCOP
 	name_mapOP( std::string const & name ) const;
 
 	/// @brief query if a ResidueType of the unique residue id (name) is present.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	virtual
 	bool
 	has_name( std::string const & name ) const = 0;
 
-	/// @brief query if any ResidueTypes in the set have a "name3" tat matches the input name3
+	/// @brief query if any ResidueTypes in the set have a "name3" that matches the input name3
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	bool has_name3( std::string const & name3 ) const;
 
 	/// @brief Does this ResidueTypeSet have ResidueTypes with the given interchangeability group?
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	bool
 	has_interchangeability_group( std::string const & name ) const;
 
@@ -136,10 +148,14 @@ public:
 	/// @details Returns 0 if one does not exist.
 	/// The returned type will have at least all the variants given, but may have more
 	/// if a minimal variant type isn't availible.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_aa( AA aa,
 		utility::vector1< std::string > const & variants ) const;
 
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_aa( AA aa ) const;
 
@@ -147,10 +163,14 @@ public:
 	/// @details Returns 0 if one does not exist.
 	/// The returned type will have at least all the variants given, but may have more
 	/// if a minimal variant type isn't availible.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_name1( char name1,
 		utility::vector1< std::string > const & variants ) const;
 
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_name1( char name1 ) const;
 
@@ -158,62 +178,88 @@ public:
 	/// @details Returns 0 if one does not exist.
 	/// The returned type will have at least all the variants given, but may have more
 	/// if a minimal variant type isn't availible.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_name3( std::string const &  name3,
 		utility::vector1< std::string > const & variants ) const;
 
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_name3( std::string const &  name3 ) const;
 
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOP
 	get_representative_type_base_name( std::string const & base_name ) const;
 
 	/// @brief Gets all non-patched types with the given aa type
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOPs
 	get_base_types_aa( AA aa ) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name1
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOPs
 	get_base_types_name1( char name1 ) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name3
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueTypeCOPs
 	get_base_types_name3( std::string const &  name3 ) const;
 
 	/// @brief Given a D-residue, get its L-equivalent.
 	/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not a D-residue.
 	/// Preserves variant types.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	ResidueTypeCOP get_d_equivalent( ResidueTypeCOP l_rsd ) const;
 
 	/// @brief Given an L-residue, get its D-equivalent.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
 	/// Preserves variant types.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	ResidueTypeCOP get_l_equivalent( ResidueTypeCOP d_rsd ) const;
 
 	/// @brief Given a residue, get its mirror-image type.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @details Returns the same residue if this is an ACHIRAL type (e.g. gly), the D-equivalent for an L-residue, the L-equivalent of a D-residue,
 	/// or NULL if this is an L-residue with no D-equivalent (or a D- with no L-equivalent).  Preserves variant types.
 	ResidueTypeCOP get_mirrored_type( ResidueTypeCOP original_rsd ) const;
 
 	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	virtual
 	bool
 	generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const;
 
 	/// @brief Check if a base type (like "CYS") generates any types with a new interchangeability group (like "SCY" (via cys_acetylated))
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	virtual
 	bool
 	generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name, std::string const & interchangeability_group ) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name1
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @details The number of variants must match exactly.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
 	get_all_types_with_variants_name1( char name1, utility::vector1< std::string > const & variants ) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name3
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @details The number of variants must match exactly.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
@@ -223,6 +269,8 @@ public:
 	) const;
 
 	/// @brief Query a variant ResidueType by its base ResidueType and VariantType
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueType const &
 	get_residue_type_with_variant_added(
 		ResidueType const & init_rsd,
@@ -230,6 +278,8 @@ public:
 	) const;
 
 	/// @brief return the residuetype we get from variant rsd type after removing the desired variant type
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	ResidueType const &
 	get_residue_type_with_variant_removed(
 		ResidueType const & init_rsd,
@@ -277,6 +327,8 @@ public:
 	}
 
 	/// @brief Gets all types with the given aa type and variants
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @details The number of variants must match exactly. Variants can be custom variants.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	virtual
@@ -284,8 +336,10 @@ public:
 	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const;
 
 	/// @brief Gets all types with the given aa type and variants, making exceptions for some variants.
+	/// Note for derived classes: this method will obtain a read lock, and possibly
+	/// a write lock on the ResidueTypeSetCache.
 	/// @details The number of variants must match exactly. Variants can be custom variants, but exceptions must
-	///           be standard types, listed in VariantType.hh.
+	/// be standard types, listed in VariantType.hh.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	virtual
 	ResidueTypeCOPs
@@ -316,16 +370,22 @@ protected:
 	prep_restype( ResidueTypeOP new_type );
 
 	/// @brief adds a new base residue type to the set, one that isn't patched, but can be.
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain.
 	virtual
 	void
 	add_base_residue_type( ResidueTypeOP new_type );
 
 	/// @brief adds a new residue type to the set, one that can be patched
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain.
 	virtual
 	void
 	add_base_residue_type( std::string const &  filename );
 
 	/// @brief adds new residue types, ones that can be patched
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain.
 	virtual
 	void
 	read_files_for_base_residue_types(
@@ -333,16 +393,22 @@ protected:
 	);
 
 	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain.
 	virtual
 	void
 	add_unpatchable_residue_type( ResidueTypeOP new_type );
 
 	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain.
 	virtual
 	void
 	add_unpatchable_residue_type( std::string const &  filename );
 
 	/// @brief adds new residue types, ones that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain.
 	virtual
 	void
 	read_files_for_unpatchable_residue_types(
@@ -351,11 +417,21 @@ protected:
 
 	/// @brief delete an base residue type from the set (Use with care)
 	/// Currently will not remove any patched types
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain. In any case, this is not a thread-safe function as it will invariably
+	/// lead to race conditions if the RTS is shared between two threads. This method is
+	/// only to be used on PoseResidueTypeSet objects (the GlobalResidueTypeSet class will
+	/// exit if you call it), and these objects must not be shared between two threads.
 	virtual
 	void
 	remove_base_residue_type( std::string const & name );
 
 	/// @brief delete an unpatchable residue type from the set (Use with care)
+	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
+	/// call chain. In any case, this is not a thread-safe function as it will invariably
+	/// lead to race conditions if the RTS is shared between two threads. This method is
+	/// only to be used on PoseResidueTypeSet objects (the GlobalResidueTypeSet class will
+	/// exit if you call it), and these objects must not be shared between two threads.
 	virtual
 	void
 	remove_unpatchable_residue_type( std::string const & name );
@@ -363,27 +439,77 @@ protected:
 protected:
 
 	/// @brief helper function used during replacing residue types after, e.g., orbitals.
+	/// Does not lock the RTSC, but does modify the RTS and should not be used outside
+	/// of construction in a multi-threaded context
 	bool
 	update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, ResidueTypeCOP rsd_type_new );
 
 	void
 	mode( TypeSetMode setting ) { mode_ = setting; }
 
-	// The alterable cache object
+	/// @brief The alterable cache object
+	/// @details Mind whether or not a write/read lock has been obtained
+	/// by the template method wherein this accessor is invoked. Either a
+	/// read lock or a write lock on the RTSC must have been obtained to call
+	/// this function, but if one has already been obtained and you try to
+	/// create another, then you will deadlock.
 	ResidueTypeSetCacheOP
 	cache_object() const { return cache_; }
 
+	/// @brief Template method invoked by the base class to be overridden by the derived class
+	/// when a not-yet-generated ResidueType is requested by name. The function returns "true" if
+	/// the ResidueType can be generated and "false" if no such residue type exists.
+	/// @details If the requested ResidueType has not been generated yet, then this function will
+	/// obtain a write lock on the ResidueTypeSetCache and generate it. If it has already
+	/// been generated, then this function will obtain a read lock. This function should not
+	/// be invoked by a function that has already obtained either a read or a write lock.
 	virtual
 	bool
 	generate_residue_type( std::string const & rsd_name ) const;
 
+	/// @brief Template method to return a residue type with the given name, updating the
+	/// ResidueTypeSetCache as needed -- meant to be overridden by the derived
+	/// %ResidueTypeSet.
+	/// Note that this method must only be called by a function that has obtained a write
+	/// lock or a function that itself requires a write lock to call it. The derived class's
+	/// version of this method must not attempt to call any function that would itself try
+	/// to obtain a read- or write lock on the ResidueTypeSetCache
+	virtual
+	ResidueTypeCOP
+	name_mapOP_write_locked( std::string const & name ) const;
+
+	/// @brief Template method to return whether a residue type with a given name is creatable
+	/// or has already been created; meant to be overridden by the derived %ResidueTypeSet.
+	/// Note that this should only be invoked after a write lock has been obtained on the
+	/// ResidueTypeSetCache (e.g. inside functions within the generate_residue_type call chain);
+	/// and that the derived class's version of this function must assume a write lock
+	/// has already been obtained when it is invoked. Therefore, it must not attempt to call
+	/// any function that would itself try and obtain a read or write lock.
+	virtual
+	bool
+	has_name_write_locked( std::string const & name ) const = 0;
+
+	/// @brief Template method to recursively determine whether or not the requested residue
+	/// type exists / can be created in this %ResidueTypeSet -- meant to be overridden by the
+	/// derived %ResidueTypeSet.
+	///
+	/// This function is invoked after a write lock has been obtained on the
+	/// ResidueTypeSetCache, and so it should not invoke either name_mapOP or
+	/// generate_residue_type as both of these will also attempt to create locks, and
+	/// would thus deadlock.
+	bool
+	generate_residue_type_write_locked( std::string const & rsd_name ) const;
+
 	/// @brief Attempt to lazily load the given residue type from data.
+	/// This function will only be called when the RTS has already obtained
+	/// a write lock on the ResidueTypeSetCache.
 	virtual
 	bool
 	lazy_load_base_type( std::string const & rsd_base_name ) const = 0;
 
 	void
-	figure_out_last_patch_from_name( std::string const & rsd_name,
+	figure_out_last_patch_from_name(
+		std::string const & rsd_name,
 		std::string & rsd_name_base,
 		std::string & patch_name ) const;
 
@@ -437,8 +563,10 @@ private:
 	MergeBehaviorManagerCOP merge_behavior_manager_;
 
 	/// @brief all cached residue_type information including generated residue_types, name3_map, etc.
-	/// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
+	/// By making the following an OP (instead of an object) the cache effectively becomes mutable even when in a
 	/// const ResidueTypeSet.
+	/// Direct access to the cache_ must never be provided; thread safety relies on
+	/// the ResidueTypeSet maintaining strict control over its cache
 	ResidueTypeSetCacheOP cache_;
 
 	/// @brief ResidueTypes that don't have any patches, but can be patched.

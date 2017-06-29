@@ -166,6 +166,13 @@ protected:
 	bool
 	lazy_load_base_type( std::string const & rsd_base_name ) const override;
 
+	/// @brief Recursive function for looking up / instantiating a ResidueType given its name
+	ResidueTypeCOP
+	name_mapOP_write_locked( std::string const & name ) const override;
+
+	bool
+	has_name_write_locked( std::string const & name ) const override;
+
 
 private:
 

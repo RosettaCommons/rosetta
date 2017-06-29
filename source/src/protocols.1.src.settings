@@ -149,6 +149,7 @@ sources = {
 	"protocols/jd3/job_distributors": [
 	#	"MPIWorkPartitionJobDistributor",
 		"MPIWorkPoolJobDistributor",
+		# not yet "MultiThreadedJobDistributor",
 		"VanillaJobDistributor",
 	],
 	"protocols/jd3/pose_inputters": [

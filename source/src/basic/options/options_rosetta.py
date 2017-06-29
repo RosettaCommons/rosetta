@@ -1219,6 +1219,7 @@ Options = Option_Group( '',
 		Option( 'mpi_fast_nonblocking_output', 'Boolean', desc='By default the master node blocks while a slave node outputs to avoid two slaves writing to a score file or silent file at the same time setting this to true disables that feature', default='false' ),
 		Option( 'n_archive_nodes', 'Integer', desc='The number of nodes that should perform archival roles only. This flag is only used by the MPIWorkPoolJobDistributor', default='0' ),
 		Option( 'do_not_archive_on_node0', 'Boolean', desc='Should the master node in the MPIWorkPoolJobDistributor archive any JobResults on it?', default='false' ),
+		Option( 'nthreads', 'Integer', desc = "For the multithreaded job distributor, how many threads should be run at the same time" ),
 	), # -jd3
 
 	# jd2 Options ---------------------------------------------------------
@@ -1265,8 +1266,8 @@ Options = Option_Group( '',
 	Option_Group( 'view',
 		Option( 'show_virtual_residues', 'Boolean', desc='Show virtual residues?', default = 'true'),
 		Option( 'single_glycan_color', 'Boolean', desc="Show glycans as a single color instead of default", default = 'true'),
-
 	), # view
+
 	# score function settings  -----------------------------------------------------------
 	Option_Group( 'score',
 		Option( 'score_pose_cutpoint_variants', 'Boolean', desc='Include cutpoint variants in the pose during linear chainbreak', default='false'),

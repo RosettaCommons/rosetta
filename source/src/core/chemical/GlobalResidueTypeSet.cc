@@ -679,7 +679,7 @@ GlobalResidueTypeSet::~GlobalResidueTypeSet() {}
 //////////////////////////////////////////////////////////////////////////////
 
 /// @brief   checks if name exists.
-/// @details actually instantiates the residue type if it does not exist.
+/// @details actually instantiates the residue type if it does not yet exist.
 bool
 GlobalResidueTypeSet::has_name( std::string const & name ) const
 {
@@ -692,8 +692,7 @@ GlobalResidueTypeSet::has_name( std::string const & name ) const
 ResidueTypeCOPs
 GlobalResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const
 {
-	utility::vector1< VariantType > exceptions;
-	return cache_object()->get_all_types_with_variants_aa( aa, variants, exceptions );
+	return ResidueTypeSet::get_all_types_with_variants_aa( aa, variants );
 }
 
 ResidueTypeCOPs
@@ -701,7 +700,7 @@ GlobalResidueTypeSet::get_all_types_with_variants_aa( AA aa,
 	utility::vector1< std::string > const & variants,
 	utility::vector1< VariantType > const & exceptions ) const
 {
-	return cache_object()->get_all_types_with_variants_aa( aa, variants, exceptions );
+	return ResidueTypeSet::get_all_types_with_variants_aa( aa, variants, exceptions );
 }
 
 void
@@ -746,7 +745,16 @@ GlobalResidueTypeSet::load_shadowed_ids( std::string const & directory, std::str
 	}
 }
 
+bool
+GlobalResidueTypeSet::has_name_write_locked( std::string const & name ) const
+{
+	return generate_residue_type_write_locked( name );
+}
+
 /// @brief Attempt to lazily load the given residue type from data.
+/// @details Note that the base class has already created a write lock on the cache object
+/// when this function is called. This function must not call any functions of the parent
+/// that attempts to create a write or a read lock, or this function will deadlock.
 bool
 GlobalResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
 {

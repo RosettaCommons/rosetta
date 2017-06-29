@@ -136,6 +136,9 @@ public:
 	// protected methods, implement from base class
 protected:
 
+	bool
+	has_name_write_locked( std::string const & name ) const override;
+
 	/// @brief Attempt to lazily load the given residue type from data.
 	bool
 	lazy_load_base_type( std::string const & rsd_base_name ) const override;

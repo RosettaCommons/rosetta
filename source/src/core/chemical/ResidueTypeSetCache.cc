@@ -12,16 +12,24 @@
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
+// Unit headers
 #include <core/chemical/ResidueTypeSetCache.hh>
+
+// Package headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-
 #include <core/chemical/Patch.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/tools/make_vector1.hh>
 
-#include <basic/Tracer.hh>
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -43,7 +51,11 @@ namespace chemical {
 //Constructor
 ResidueTypeSetCache::ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set ):
 	rsd_type_set_( rsd_type_set )
-{}
+{
+#ifdef MULTI_THREADED
+	read_write_mutex_.reset( new utility::thread::ReadWriteMutex );
+#endif
+}
 
 //Destructor
 ResidueTypeSetCache::~ResidueTypeSetCache() = default;
@@ -62,7 +74,8 @@ ResidueTypeSetCache::clone( ResidueTypeSet const & rsd_type_set ) const {
 	return cloned;
 }
 
-/// @details Main accessor function into ResidueTypeSetCache
+/// @details Main accessor function into ResidueTypeSetCache.  Must be read locked
+/// by calling function.
 ResidueTypeCOP
 ResidueTypeSetCache::name_map( std::string const & name_in ) const
 {
@@ -71,17 +84,7 @@ ResidueTypeSetCache::name_map( std::string const & name_in ) const
 	return it->second;
 }
 
-void
-ResidueTypeSetCache::clear_cached_maps()
-{
-	cache_up_to_date_ = false;
-	//aa_map_.clear();
-	//name3_map_.clear();
-	cached_aa_variants_map_.clear();
-	name3_generated_by_base_residue_name_.clear();
-	interchangeability_group_generated_by_base_residue_name_.clear();
-}
-
+/// @details Must be write-locked by calling function
 void
 ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
 {
@@ -93,6 +96,7 @@ ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
 	//  clear_cached_maps(); // no can't do this
 }
 
+/// @details Danger Danger Danger.  Unsafe in a multi-threaded environment.
 void
 ResidueTypeSetCache::remove_residue_type( std::string const & name )
 {
@@ -102,6 +106,7 @@ ResidueTypeSetCache::remove_residue_type( std::string const & name )
 	clear_cached_maps();
 }
 
+/// @details Danger Danger Danger. Unsafe in a multi-threaded environment
 void
 ResidueTypeSetCache::update_residue_type( ResidueTypeCOP residue_type_original, ResidueTypeCOP residue_type_new )
 {
@@ -112,6 +117,7 @@ ResidueTypeSetCache::update_residue_type( ResidueTypeCOP residue_type_original, 
 	clear_cached_maps();
 }
 
+/// @details Must be read-locked by calling function
 bool
 ResidueTypeSetCache::has_generated_residue_type( ResidueTypeCOP residue_type ) const {
 	auto it = name_map_.find( residue_type->name() );
@@ -121,43 +127,96 @@ ResidueTypeSetCache::has_generated_residue_type( ResidueTypeCOP residue_type ) c
 	return it->second == residue_type;
 }
 
+/// @details Must be read-locked by calling function
 bool
 ResidueTypeSetCache::has_generated_residue_type( std::string const & rsd_name ) const {
 	return ( name_map_.find( rsd_name ) != name_map_.end() );
 }
 
-ResidueTypeCOPs
-ResidueTypeSetCache::generated_residue_types() {
-	ResidueTypeCOPs residue_types;
-	for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
-			it != name_map_.end(); ++it ) {
-		residue_types.push_back( it->second );
-	}
-	return residue_types;
-}
 
+///// @details Must be read-locked by calling function
+//ResidueTypeCOPs
+//ResidueTypeSetCache::generated_residue_types() {
+// ResidueTypeCOPs residue_types;
+// for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
+//   it != name_map_.end(); ++it ) {
+//  residue_types.push_back( it->second );
+// }
+// return residue_types;
+//}
+
+/// @details Needs to be write-locked by calling function
 void
 ResidueTypeSetCache::add_prohibited( std::string const & rsd_name )
 {
 	prohibited_types_.insert( rsd_name );
 }
 
+/// @details Needs to be read-locked by calling function
 bool
 ResidueTypeSetCache::is_prohibited( std::string const & rsd_name ) const
 {
 	return prohibited_types_.count( rsd_name );
 }
 
-ResidueTypeCOPs
-ResidueTypeSetCache::get_all_types_with_variants_aa( AA aa,
+bool
+ResidueTypeSetCache::all_types_with_variants_aa_already_cached(
+	AA aa,
 	utility::vector1< std::string > const & variants,
-	utility::vector1< VariantType > const & exceptions )
+	utility::vector1< VariantType > const & exceptions
+) const
 {
 	AA_VariantsExceptions query( std::make_pair( aa, std::make_pair( variants, exceptions ) ) );
-	if ( cached_aa_variants_map_.find( query ) == cached_aa_variants_map_.end() ) {
-		cached_aa_variants_map_[ query ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variants( variants ).variant_exceptions( exceptions ).get_all_possible_residue_types();
-	}
-	return cached_aa_variants_map_[ query ];
+	return cached_aa_variants_map_.find( query ) != cached_aa_variants_map_.end();
+}
+
+void
+ResidueTypeSetCache::cache_all_types_with_variants_aa(
+	AA aa,
+	utility::vector1< std::string > const & variants,
+	utility::vector1< VariantType > const & exceptions,
+	ResidueTypeCOPs cached_types
+)
+{
+	AA_VariantsExceptions query( std::make_pair( aa, std::make_pair( variants, exceptions ) ) );
+	cached_aa_variants_map_[ query ] = cached_types;
+}
+
+ResidueTypeCOPs
+ResidueTypeSetCache::retrieve_all_types_with_variants_aa(
+	AA aa,
+	utility::vector1< std::string > const & variants,
+	utility::vector1< VariantType > const & exceptions
+) const
+{
+	AA_VariantsExceptions query( std::make_pair( aa, std::make_pair( variants, exceptions ) ) );
+	return cached_aa_variants_map_.find( query )->second;
+}
+
+/// @details Danger danger danger.  Unsafe in a multithreaded environment.
+void
+ResidueTypeSetCache::clear_cached_maps()
+{
+	cache_up_to_date_ = false;
+	//aa_map_.clear();
+	//name3_map_.clear();
+	cached_aa_variants_map_.clear();
+	name3_generated_by_base_residue_name_.clear();
+	interchangeability_group_generated_by_base_residue_name_.clear();
+}
+
+/// @brief information on residue types whose name3's can be changed by patches.
+std::map< std::string, std::set< std::string > > const &
+ResidueTypeSetCache::name3_generated_by_base_residue_name() {
+	if ( ! cache_up_to_date_ ) { regenerate_cached_maps(); }
+	return name3_generated_by_base_residue_name_;
+}
+
+/// @brief interchangeability groups that appear upon patch application.
+std::map< std::string, std::set< std::string > > const &
+ResidueTypeSetCache::interchangeability_group_generated_by_base_residue_name() {
+	if ( ! cache_up_to_date_ ) { regenerate_cached_maps(); }
+	return interchangeability_group_generated_by_base_residue_name_;
 }
 
 /// @details following assumes that all new name3 and interchangeability groups for residue types
@@ -194,6 +253,14 @@ ResidueTypeSetCache::regenerate_cached_maps() {
 
 	cache_up_to_date_ = true;
 }
+
+#ifdef MULTI_THREADED
+//std::recursive_mutex & ResidueTypeSetCache::cache_mutex() { return cache_mutex_; }
+
+utility::thread::ReadWriteMutex &
+ResidueTypeSetCache::read_write_mutex() { return *read_write_mutex_; }
+
+#endif
 
 } //chemical
 } //core

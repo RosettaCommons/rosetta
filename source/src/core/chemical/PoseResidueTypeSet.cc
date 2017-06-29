@@ -89,11 +89,42 @@ PoseResidueTypeSet::name_mapOP( std::string const & name ) const {
 	}
 }
 
+ResidueTypeCOP
+PoseResidueTypeSet::name_mapOP_write_locked( std::string const & name ) const
+{
+	// Begin by attempting the recursion on myself, using the parental version of this function
+	ResidueTypeCOP restype( ResidueTypeSet::name_mapOP_write_locked( name ) );
+	if ( restype ) {
+		return restype;
+	} else if ( default_rts_ ) {
+		// I may be write locked, but the default_rts that I follow is not yet write locked; invoke
+		// its non-write-locked version of name_mapOP
+		return default_rts_->name_mapOP( name );
+	} else {
+		return nullptr;
+	}
+}
+
+
 bool
 PoseResidueTypeSet::has_name( std::string const & name ) const {
 	if ( generate_residue_type( name ) ) {
 		return true;
 	} else if ( default_rts_ ) {
+		return default_rts_->has_name( name );
+	} else {
+		return false;
+	}
+}
+
+bool
+PoseResidueTypeSet::has_name_write_locked( std::string const & name ) const {
+	// Begin by attempting the recursion on myself, using the parental version of this function
+	if ( generate_residue_type_write_locked( name ) ) {
+		return true;
+	} else if ( default_rts_ ) {
+		// I may be write locked, but the default_rts that I follow is not yet write locked; invoke
+		// its non-write-locked version of name_mapOP
 		return default_rts_->has_name( name );
 	} else {
 		return false;

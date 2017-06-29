@@ -16,12 +16,18 @@
 #ifndef INCLUDED_core_chemical_ResidueTypeSetCache_HH
 #define INCLUDED_core_chemical_ResidueTypeSetCache_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+// Package headers
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AA.hh>
+
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/thread/ReadWriteMutex.fwd.hh>
+
+// C++ headers
 #include <map>
 #include <set>
 
@@ -30,6 +36,11 @@
 #include <cereal/access.fwd.hpp>
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
+
+#ifdef MULTI_THREADED
+//#include <mutex>
+#include <utility/thread/ReadWriteMutex.fwd.hh>
+#endif
 
 namespace core {
 namespace chemical {
@@ -70,8 +81,8 @@ public:
 	bool
 	has_generated_residue_type( std::string const & rsd_name ) const;
 
-	ResidueTypeCOPs
-	generated_residue_types();
+	//ResidueTypeCOPs
+	//generated_residue_types();
 
 	void
 	add_prohibited( std::string const & rsd_name );
@@ -79,26 +90,65 @@ public:
 	bool
 	is_prohibited( std::string const & rsd_name ) const;
 
-	ResidueTypeCOPs
-	get_all_types_with_variants_aa( AA aa,
+	/// @brief Returns whether or not the all_types_with_variants_aa map already
+	/// has an entry for the given combination of aa, variants, and exceptions.
+	/// If so, then the cached data may be directly retrieved.
+	bool
+	all_types_with_variants_aa_already_cached(
+		AA aa,
 		utility::vector1< std::string > const & variants,
-		utility::vector1< VariantType > const & exceptions );
+		utility::vector1< VariantType > const & exceptions ) const;
+
+	void
+	cache_all_types_with_variants_aa(
+		AA aa,
+		utility::vector1< std::string > const & variants,
+		utility::vector1< VariantType > const & exceptions,
+		ResidueTypeCOPs cached_types
+	);
+
+	ResidueTypeCOPs
+	retrieve_all_types_with_variants_aa(
+		AA aa,
+		utility::vector1< std::string > const & variants,
+		utility::vector1< VariantType > const & exceptions ) const;
+
+	//ResidueTypeCOPs
+	//get_all_types_with_variants_aa( AA aa,
+	// utility::vector1< std::string > const & variants,
+	// utility::vector1< VariantType > const & exceptions );
 
 	void clear_cached_maps();
 
-	/// @brief information on residue types whose name3's can be changed by patches.
-	std::map< std::string, std::set< std::string > > const &
-	name3_generated_by_base_residue_name() {
-		if ( ! cache_up_to_date_ ) { regenerate_cached_maps(); }
-		return name3_generated_by_base_residue_name_;
+	/// @brief The RTSC performs just-in-time updates on data members that are accessed
+	/// through two of its methods -- before calling these methods, the ResidueTypeSet may
+	/// need to obtain a write lock on the RTSC. Thse are:
+	/// - name3_generated_by_base_residue_name, and
+	/// - interchangeability_group_generated_by_base_residue_name
+	bool
+	maps_up_to_date() const {
+		return cache_up_to_date_;
 	}
 
-	/// @brief interchangeability groups that appear upon patch application.
+	/// @brief information on residue types whose name3's can be changed by patches.
+	/// @details To call this function, the ResidueTypeSet will need to obtain a
+	/// write lock if the maps_up_to_date function returns false. Otherwise, a read lock
+	/// will suffice.
 	std::map< std::string, std::set< std::string > > const &
-	interchangeability_group_generated_by_base_residue_name() {
-		if ( ! cache_up_to_date_ ) { regenerate_cached_maps(); }
-		return interchangeability_group_generated_by_base_residue_name_;
-	}
+	name3_generated_by_base_residue_name();
+
+	/// @brief interchangeability groups that appear upon patch application.
+	/// @details To call this function, the ResidueTypeSet will need to obtain a
+	/// write lock if the maps_up_to_date function returns false. Otherwise, a read lock
+	/// will suffice.
+	std::map< std::string, std::set< std::string > > const &
+	interchangeability_group_generated_by_base_residue_name();
+
+#ifdef MULTI_THREADED
+	/// @brief The %ResidueTypeSet will lock this instance for read and write opperations
+	/// by accessing the mutex that this RTSC stores.
+	utility::thread::ReadWriteMutex & read_write_mutex();
+#endif
 
 private:
 
@@ -156,6 +206,11 @@ public:
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< ResidueTypeSetCache > & construct );
 #endif // SERIALIZATION
+
+#ifdef MULTI_THREADED
+	utility::thread::ReadWriteMutexOP read_write_mutex_;
+	//std::recursive_mutex cache_mutex_;
+#endif
 
 };
 

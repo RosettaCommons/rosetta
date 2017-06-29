@@ -62,6 +62,10 @@
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
@@ -129,16 +133,56 @@ ResidueTypeCOP
 ResidueTypeSet::name_mapOP( std::string const & name_in ) const
 {
 	std::string const name = fixup_patches( name_in );
-	if ( generate_residue_type( name ) ) {
+	{ // scope the read lock
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard read_lock( cache_->read_write_mutex() );
+#endif
+		if ( cache_object()->has_generated_residue_type( name) ) {
+			return cache_object()->name_map( name );
+		}
+	}
+
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_->read_write_mutex() );
+#endif
+	return name_mapOP_write_locked( name );
+}
+
+bool
+ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
+{
+	{ // scope the read lock
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard read_lock( cache_->read_write_mutex() );
+#endif
+		if ( cache_object()->has_generated_residue_type( rsd_name ) ) {
+			return true;
+		}
+	}
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_->read_write_mutex() );
+#endif
+	return generate_residue_type_write_locked( rsd_name );
+}
+
+/// @details The calling function must first obtain a write lock on the ResidueTypeSetCache
+ResidueTypeCOP
+ResidueTypeSet::name_mapOP_write_locked( std::string const & name_in ) const
+{
+	std::string const name = fixup_patches( name_in );
+	if ( generate_residue_type_write_locked( name ) ) {
 		return cache_object()->name_map( name );
 	} else {
 		return ResidueTypeCOP( nullptr );
 	}
 }
 
-/// @details Instantiates ResidueType
+/// @details Instantiates ResidueType recursively, peeling off the last-most patch and generating
+/// the patched ResidueType from the base ResidueType and the corresponding Patch, recursively
+/// generating the base ResidueType if necessary. The function that calls this function must first
+/// obtain a write lock
 bool
-ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
+ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name ) const
 {
 	if ( cache_object()->has_generated_residue_type( rsd_name ) ) return true; // already generated
 
@@ -154,7 +198,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 	}
 
 	// now apply patches.
-	ResidueTypeCOP rsd_base_ptr = name_mapOP( rsd_name_base );
+	ResidueTypeCOP rsd_base_ptr = name_mapOP_write_locked( rsd_name_base );
 	if ( ! rsd_base_ptr ) { return false; }
 
 	ResidueType const & rsd_base( *rsd_base_ptr );
@@ -253,6 +297,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 	}
 }
 
+
 void
 ResidueTypeSet::add_patches(
 	utility::vector1< std::string > const & patch_filenames,
@@ -273,15 +318,36 @@ ResidueTypeSet::add_patches(
 		metapatch_map_[ p->name() ] = p;
 	}
 
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 	cache_object()->clear_cached_maps();
 }
+
+
 
 /// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 bool
 ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name,
 	std::string const & name3 ) const
 {
+#ifdef MULTI_THREADED
+	{ // scope the read lock
+		utility::thread::ReadLockGuard read_lock( cache_object()->read_write_mutex() );
+		if ( cache_object()->maps_up_to_date() ) {
+			std::map< std::string, std::set< std::string > > const & name3_generated_by_base_residue_name(
+				cache_object()->name3_generated_by_base_residue_name() );
 
+			if ( name3_generated_by_base_residue_name.find( base_residue_name ) ==
+					name3_generated_by_base_residue_name.end() ) return false;
+			std::set< std::string> const & name3_set = name3_generated_by_base_residue_name.find( base_residue_name )->second;
+			return ( name3_set.count( name3 ) );
+		}
+	}
+
+	//otherwise, obtain a write lock and let the cache update its internal maps
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 	std::map< std::string, std::set< std::string > > const & name3_generated_by_base_residue_name(
 		cache_object()->name3_generated_by_base_residue_name() );
 
@@ -297,7 +363,26 @@ bool
 ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name,
 	std::string const & interchangeability_group ) const
 {
-	/// @brief interchangeability groups that appear upon patch application.
+#ifdef MULTI_THREADED
+	{ // scope the read lock
+		utility::thread::ReadLockGuard read_lock( cache_object()->read_write_mutex() );
+		if ( cache_object()->maps_up_to_date() ) {
+			std::map< std::string, std::set< std::string > > const & interchangeability_group_generated_by_base_residue_name(
+				cache_object()->interchangeability_group_generated_by_base_residue_name() );
+
+			if ( interchangeability_group_generated_by_base_residue_name.find( base_residue_name ) ==
+					interchangeability_group_generated_by_base_residue_name.end() ) {
+				return false;
+			}
+			std::set< std::string> const & interchangeability_group_set =
+				interchangeability_group_generated_by_base_residue_name.find( base_residue_name )->second;
+			return interchangeability_group_set.count( interchangeability_group );
+		}
+	}
+
+	// otherwise, obtain a write lock and let the cache update its internal maps
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 	std::map< std::string, std::set< std::string > > const & interchangeability_group_generated_by_base_residue_name(
 		cache_object()->interchangeability_group_generated_by_base_residue_name() );
 
@@ -308,6 +393,7 @@ ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( st
 	std::set< std::string> const & interchangeability_group_set =
 		interchangeability_group_generated_by_base_residue_name.find( base_residue_name )->second;
 	return interchangeability_group_set.count( interchangeability_group );
+
 }
 
 void
@@ -355,7 +441,9 @@ ResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type )
 	}
 
 	prep_restype( new_type );
-
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 	cache_object()->add_residue_type( new_type );
 	cache_object()->clear_cached_maps();
 	base_residue_types_.push_back( new_type );
@@ -390,6 +478,9 @@ ResidueTypeSet::add_unpatchable_residue_type( ResidueTypeOP new_type )
 
 	prep_restype( new_type );
 
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 	cache_object()->add_residue_type( new_type );
 	cache_object()->clear_cached_maps();
 	unpatchable_residue_types_.push_back( new_type );
@@ -401,6 +492,10 @@ ResidueTypeSet::remove_base_residue_type( std::string const & name )
 	if ( ! has_name( name ) ) {
 		utility_exit_with_message( "Attempting to remove ResidueType " + name + " from a ResidueTypeSet which doesn't contain it.");
 	}
+
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 
 	ResidueTypeCOP rsd_type( cache_object()->name_map( name ) );
 	ResidueTypeCOPs::iterator res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
@@ -417,6 +512,10 @@ ResidueTypeSet::remove_unpatchable_residue_type( std::string const & name )
 	if ( ! has_name( name ) ) {
 		utility_exit_with_message( "Attempting to remove ResidueType " + name + " from a ResidueTypeSet which doesn't contain it.");
 	}
+
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
 
 	ResidueTypeCOP rsd_type( cache_object()->name_map( name ) );
 	ResidueTypeCOPs::iterator res_it = std::find( unpatchable_residue_types_.begin(), unpatchable_residue_types_.end(), rsd_type );
@@ -438,6 +537,10 @@ ResidueTypeSet::update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, 
 }
 
 //////////////////////////////////////////////////////////////////////////////
+/// @details Invoked only during residue-type construction of get_residue_type_write_locked,
+/// and so it must invoke the version of has_name that presumes a write lock has been
+/// obtained already (and will thus not invoke another function that tries to establish
+/// either a read or a write lock on the ResidueTypeSetCache)
 void
 ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 	std::string & rsd_name_base,
@@ -453,13 +556,13 @@ ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 	}
 
 	// For D patch, it's the first letter.
-	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'D' && has_name( rsd_name.substr( 1 ) ) ) {
+	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'D' && has_name_write_locked( rsd_name.substr( 1 ) ) ) {
 		rsd_name_base = rsd_name.substr( 1 );
 		patch_name    = "D";
 	}
 
 	// For chiral-flip nucleic acid patch, it's the first letter.
-	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'L' && has_name( rsd_name.substr( 1 ) ) ) {
+	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'L' && has_name_write_locked( rsd_name.substr( 1 ) ) ) {
 		rsd_name_base = rsd_name.substr( 1 );
 		patch_name    = "L";
 	}
@@ -605,7 +708,7 @@ ResidueTypeCOPs
 ResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const
 {
 	utility::vector1< VariantType > exceptions;
-	return cache_->get_all_types_with_variants_aa( aa, variants, exceptions );
+	return get_all_types_with_variants_aa( aa, variants, exceptions );
 }
 
 ResidueTypeCOPs
@@ -613,7 +716,25 @@ ResidueTypeSet::get_all_types_with_variants_aa( AA aa,
 	utility::vector1< std::string > const & variants,
 	utility::vector1< VariantType > const & exceptions ) const
 {
-	return cache_->get_all_types_with_variants_aa( aa, variants, exceptions );
+	{ // scope the read lock
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard read_lock( cache_object()->read_write_mutex() );
+#endif
+		if ( cache_object()->all_types_with_variants_aa_already_cached( aa, variants, exceptions ) ) {
+			return cache_object()->retrieve_all_types_with_variants_aa( aa, variants, exceptions );
+		}
+	}
+
+	// Without creating a write lock, go collect the appropriate set of RTs for the
+	// given query. Wait until this statement completes before creating the write lock,
+	// or the locks that the RTF creates will create a deadlock
+	ResidueTypeCOPs rts = ResidueTypeFinder( *this ).aa( aa ).variants( variants ).variant_exceptions( exceptions ).get_all_possible_residue_types();
+
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
+	cache_object()->cache_all_types_with_variants_aa( aa, variants, exceptions, rts );
+	return rts;
 }
 
 /// @brief Gets all types with the given name1 and variants
@@ -729,7 +850,7 @@ ResidueTypeSet::ResidueTypeSet( ResidueTypeSet const & src ) :
 	orbital_types_( src.orbital_types_ ), // const, so can share
 	mode_( src.mode_ ),
 	merge_behavior_manager_( src.merge_behavior_manager_ ), // const, so can share
-	cache_( src.cache_->clone(*this) ), // DEEP-ish COPY NEEDED!
+	//cache_( src.cache_->clone(*this) ), // DEEP-ish COPY NEEDED!
 	base_residue_types_( src.base_residue_types_ ), // individual entries are const, so can share
 	unpatchable_residue_types_( src.unpatchable_residue_types_ ), // individual entries are const, so can share
 	patches_( src.patches_ ), // individual entries are const, so can share
@@ -738,7 +859,12 @@ ResidueTypeSet::ResidueTypeSet( ResidueTypeSet const & src ) :
 	metapatch_map_( src.metapatch_map_ ) // individual entries are const, so can share
 	//l_to_d_mapping_;
 	//d_to_l_mapping_;
-{}
+{
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard read_lock( src.cache_->read_write_mutex() );
+#endif
+	cache_ = src.cache_->clone(*this); // DEEP-ish COPY NEEDED!
+}
 
 } // chemical
 } // core
@@ -747,9 +873,11 @@ ResidueTypeSet::ResidueTypeSet( ResidueTypeSet const & src ) :
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
-
 bool
 core::chemical::ResidueTypeSet::has( core::chemical::ResidueTypeCOP restype ) const {
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard read_lock( cache_->read_write_mutex() );
+#endif
 	return cache_->has_generated_residue_type( restype );
 }
 
@@ -780,6 +908,7 @@ core::chemical::ResidueTypeSet::save( Archive & arc ) const {
 	arc( CEREAL_NVP( l_to_d_mapping_ ) ); // std::map < ResidueTypeCOP, ResidueTypeCOP >
 	arc( CEREAL_NVP( d_to_l_mapping_ ) ); // std::map < ResidueTypeCOP, ResidueTypeCOP >
 }
+
 
 /// @brief Automatically generated deserialization method
 template< class Archive >

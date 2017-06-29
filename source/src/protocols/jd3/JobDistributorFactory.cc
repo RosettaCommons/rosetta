@@ -18,11 +18,13 @@
 #include <protocols/jd3/JobDistributor.hh>
 //#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
+// not yet #include <protocols/jd3/job_distributors/MultiThreadedJobDistributor.hh>
 #include <protocols/jd3/job_distributors/VanillaJobDistributor.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
+
 
 //#include <protocols/jd3/job_distributors/FileSystemJobDistributor.hh>
 
@@ -48,10 +50,15 @@ JobDistributorFactory::create_job_distributor()
 	return nullptr;
 #endif // SERIALIZATION
 
-#else
+#ifdef MULTI_THREADED
+	// not yet return JobDistributorOP( new job_distributors::MultiThreadedJobDistributor );
+#endif
 
+#else
 	return JobDistributorOP( new job_distributors::VanillaJobDistributor );
 #endif
+
+
 }
 
 

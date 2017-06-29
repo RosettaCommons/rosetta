@@ -16,6 +16,9 @@
 
 #ifdef MULTI_THREADED
 
+// Unit headers
+#include <utility/thread/ReadWriteMutex.fwd.hh>
+
 // C++11 Headers
 #include <atomic>
 #include <condition_variable>
