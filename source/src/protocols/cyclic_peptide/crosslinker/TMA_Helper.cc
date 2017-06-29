@@ -266,8 +266,8 @@ TMA_Helper::add_linker_constraints_asymmetric(
 
 		utility::vector1< std::string > atom1(3), atom2(3), atom3(3), atom4(3);
 		atom1[1] = "C2"; atom2[1] = "C1"; atom3[1] = "CM1"; atom4[1] = get_sidechain_amide_name( pose.residue_type(res1) );
-		atom1[2] = "C4"; atom2[2] = "C3"; atom3[2] = "CM2"; atom4[2] = get_sidechain_amide_name( pose.residue_type(res2) );
-		atom1[3] = "C6"; atom2[3] = "C5"; atom3[3] = "CM3"; atom4[3] = get_sidechain_amide_name( pose.residue_type(res3) );
+		atom1[2] = "C2"; atom2[2] = "C3"; atom3[2] = "CM2"; atom4[2] = get_sidechain_amide_name( pose.residue_type(res2) );
+		atom1[3] = "C4"; atom2[3] = "C5"; atom3[3] = "CM3"; atom4[3] = get_sidechain_amide_name( pose.residue_type(res3) );
 
 		utility::vector1 < core::Size > r1(3), r2(3), r3(3), r4(3);
 		for ( core::Size i=1; i<=3; ++i ) {

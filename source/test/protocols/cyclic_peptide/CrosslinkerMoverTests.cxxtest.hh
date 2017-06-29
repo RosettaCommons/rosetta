@@ -62,7 +62,7 @@ public:
 		pepstub.add_residue("Append", "ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",4,false,"NE",0,2,"CM3");
 		pepstub.apply(pose);
 
-		pose.dump_pdb("vtemp1.pdb"); //DELETE ME
+		//pose.dump_pdb("vtemp1.pdb"); //DELETE ME
 
 		for ( core::Size ir=1; ir<=4; ++ir ) {
 			for ( core::Size ia=1, iamax=pose.residue_type(ir).nchi(); ia<=iamax; ++ia ) {
@@ -71,7 +71,7 @@ public:
 		}
 
 		pose.update_residue_neighbors();
-		pose.dump_pdb("vtemp2.pdb"); //DELETE ME
+		//pose.dump_pdb("vtemp2.pdb"); //DELETE ME
 
 		protocols::cyclic_peptide::crosslinker::TMA_Helper helper;
 
