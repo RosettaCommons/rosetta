@@ -177,7 +177,7 @@ public:
 	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
 	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis, core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType scoretype_for_contact);
-	
+
 	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis, core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType scoretype_for_contact, core::Real threshold);
 
 	//destructor
@@ -186,7 +186,7 @@ public:
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
 	void show(std::ostream & output=std::cout) const override;
-	
+
 	// setters
 	void set_use_delta( bool setting ){
 		use_delta_ = setting;
@@ -197,7 +197,7 @@ public:
 	core::Size get_jump_num() const { return rb_jump_; }
 
 private:
-	
+
 	// helper function for evaluating contact condition
 	bool is_there_contact( core::Real current_score, core::Real last_score);
 

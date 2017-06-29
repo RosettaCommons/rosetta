@@ -25,6 +25,7 @@
 #include <utility/tag/Tag.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/pose/carbohydrates/util.hh>
 
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -114,27 +115,11 @@ void set_loop_pose (
 
 	pose.update_residue_neighbors();
 
-	//Rebuild the H and O atoms on peptide bonds and other atoms that are dependent on the connection to another atom.
-	for ( core::Size ir=2, irmax=pose.size()-1; ir<=irmax; ++ir ) {
-		core::Size const nresconn = pose.residue(ir).n_possible_residue_connections();
-		if ( nresconn>0 ) {
-			for ( core::Size ic=1; ic<=nresconn; ++ic ) {
-				if ( !pose.residue(ir).connection_incomplete(ic) ) {
-					core::Size const conn_at_index = pose.residue(ir).residue_connect_atom_index(ic); //The index of the connection atom
-					for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
-						if ( pose.residue(ir).icoor(ia).stub_atom(1).atomno()==conn_at_index /*||
-								pose.residue(ir).icoor(ia).stub_atom(2).atomno()==conn_at_index ||
-								pose.residue(ir).icoor(ia).stub_atom(3).atomno()==conn_at_index */ ) {
-							//TR << "Rebuilding rsd " << ir << " atom " << ia << " (" << pose.residue(ir).atom_name(ia) << ")" << std::endl; TR.flush();
-							pose.conformation().set_xyz( AtomID( ia, ir ), pose.residue(ir).icoor(ia).build(pose.residue(ir), pose.conformation()) );
-							//pose.conformation().set_xyz( AtomID( ia, ir ), pose.residue(ir).icoor(ia).build(pose.residue(ir) ) );
-						}
-					}
-					//pose.conformation().rebuild_residue_connection_dependent_atoms(ir, ic);
-				}
-			}
+	//Update carbohydrate residues' virtual atoms:
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		if ( pose.residue_type(i).is_carbohydrate() ) {
+			core::pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( pose, i );
 		}
-		//pose.conformation().rebuild_polymer_bond_dependent_atoms(ir);
 	}
 
 	pose.update_residue_neighbors();
@@ -192,6 +177,13 @@ void copy_loop_pose_to_original (
 		}
 		nres=tail_residue_map.size();
 		if ( nres==0 ) break;
+	}
+
+	//Update carbohydrate residues' virtual atoms:
+	for ( core::Size i(1), imax(original_pose.total_residue()); i<=imax; ++i ) {
+		if ( original_pose.residue_type(i).is_carbohydrate() ) {
+			core::pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( original_pose, i );
+		}
 	}
 
 	original_pose.update_residue_neighbors();

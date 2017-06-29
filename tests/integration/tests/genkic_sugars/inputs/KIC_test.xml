@@ -1,0 +1,41 @@
+<ROSETTASCRIPTS>
+        <SCOREFXNS>
+		<ScoreFunction name="Aasgard" weights="ref2015" >
+			<Reweight scoretype="sugar_bb" weight="1.0" />
+		</ScoreFunction>
+        </SCOREFXNS>
+        <RESIDUE_SELECTORS>
+        </RESIDUE_SELECTORS>
+        <TASKOPERATIONS>
+        </TASKOPERATIONS>
+        <FILTERS>
+        </FILTERS>
+        <MOVERS>
+		<GeneralizedKIC selector="lowest_energy_selector" selector_scorefunction="Aasgard" closure_attempts="100" stop_when_n_solutions_found="1" name="kic_test_mover">
+        		<AddResidue res_index="69" />
+			<AddResidue res_index="216" />
+			<AddResidue res_index="217" />
+			<AddResidue res_index="218" />
+			<AddResidue res_index="219" />
+			<AddResidue res_index="220" />
+        		<AddTailResidue res_index="222" />
+			<AddTailResidue res_index="223" />
+        		<SetPivots res1="69" atom1="CB" res2="218" atom2="O6" res3="219" atom3="O2" />
+		       	<AddPerturber effect="perturb_dihedral">
+               			<AddAtoms res1="216" atom1="C4" res2="216" atom2="O4" />
+				<AddAtoms res1="216" atom1="O4" res2="217" atom2="C1" />
+				<AddAtoms res1="217" atom1="C4" res2="217" atom2="O4" />
+ 				<AddAtoms res1="217" atom1="O4" res2="218" atom2="C1" />
+               			<AddValue value="15" />
+        		</AddPerturber>
+        		<AddFilter type="loop_bump_check" />
+		</GeneralizedKIC>
+        </MOVERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+		<Add mover="kic_test_mover" />
+        </PROTOCOLS>
+        <OUTPUT scorefxn="Aasgard" />
+</ROSETTASCRIPTS>
+

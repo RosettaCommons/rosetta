@@ -1,11 +1,15 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ScoreFunction name="tala" weights="talaris2014.wts" />
+		<ScoreFunction name="ref" weights="ref2015.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
 	</TASKOPERATIONS>
 	<FILTERS>
 	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_five" resnums="5" />
+	</RESIDUE_SELECTORS>
 	<MOVERS>
 
 		<PeptideStubMover name="build1" reset="true">
@@ -13,7 +17,7 @@
 			<Append resname="ALA" />
 			<Append resname="ALA" />
 			<Append resname="ALA" />
-			<Append resname="ALA" />
+			<Append resname="TRP" /> <!-- Nmethylated position -->
 			<Append resname="ALA" />
 			<Append resname="ALA" />
 			<Append resname="ALA" />
@@ -28,14 +32,29 @@
 			<Append resname="ALA" />
 			<Append resname="ALA" />
 		</PeptideStubMover>
+
+		<ModifyVariantType name="add_n_methyl" add_type="N_METHYLATION" residue_selector="select_five" />
 		
 		<SetTorsion name="tors1">
 			<Torsion torsion_name="omega" residue="ALL" angle="180" />
 		</SetTorsion>
-
-		<DeclareBond name="bond1" res1="18" atom1="C" res2="1" atom2="N" />
 		
-		<GeneralizedKIC name="close1" correct_polymer_dependent_atoms="true" selector="lowest_energy_selector" selector_scorefunction="tala" closure_attempts="2000" stop_when_n_solutions_found="5" low_memory_mode="true" >
+		<DeclareBond name="bond1" res1="18" atom1="C" res2="1" atom2="N" />
+
+		<PackRotamersMover name="pack" scorefxn="ref" task_operations="repack_only" />
+
+		<MinMover name="min" scorefxn="ref" tolerance="0.000001" chi="1" bb="0" jump="0" >
+			<MoveMap name="min_mm" >
+				<Span begin="1" end="999" chi="1" bb="0" />
+			</MoveMap>
+		</MinMover>
+
+		<ParsedProtocol name="pack_and_min">
+			<Add mover="pack" />
+			<Add mover="min" />
+		</ParsedProtocol>
+		
+		<GeneralizedKIC name="close1" selector="lowest_energy_selector" selector_scorefunction="ref" closure_attempts="2000" stop_when_n_solutions_found="1" pre_selection_mover="pack_and_min" >
 			<AddResidue res_index="3" />
 			<AddResidue res_index="4" />
 			<AddResidue res_index="5" />
@@ -55,7 +74,7 @@
 			<AddResidue res_index="1" />
 			<CloseBond res1="18" atom1="C" res2="1" atom2="N" bondlength="1.32" angle1="114" angle2="123" torsion="180" />
 			<SetPivots res1="3" atom1="CA" res2="11" atom2="CA" res3="1" atom3="CA" />
-			<AddPerturber effect="randomize_alpha_backbone_by_rama" >
+			<AddPerturber effect="randomize_backbone_by_rama_prepro" >
 				<AddResidue index="3" />
 				<AddResidue index="4" />
 				<AddResidue index="5" />
@@ -75,17 +94,21 @@
 				<AddResidue index="1" />
 			</AddPerturber>
 			<AddFilter type="loop_bump_check" />
+			<AddFilter type="rama_prepro_check" residue="3" rama_cutoff_energy="3.0" />
+			<AddFilter type="rama_prepro_check" residue="11" rama_cutoff_energy="3.0" />
+			<AddFilter type="rama_prepro_check" residue="1" rama_cutoff_energy="3.0" />
 		</GeneralizedKIC>
-
+		
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
 		<Add mover="build1" />
+		<Add mover="add_n_methyl" />
 		<Add mover="tors1" />
 		<Add mover="bond1" />
 		<Add mover="close1" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn="tala" />
+	<OUTPUT scorefxn="ref" />
 
 </ROSETTASCRIPTS>

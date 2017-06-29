@@ -523,7 +523,7 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 	scoretype_for_contact_ = core::scoring::interchain_vdw;
 	threshold_ = 0.1;
 	use_delta_ = false;
-	
+
 }
 
 //constructor
@@ -565,7 +565,7 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	threshold_ = 0.1;
 	use_delta_ = false;
 }
-	
+
 DockingSlideIntoContact::DockingSlideIntoContact(
 	core::Size const rb_jump,
 	core::Vector const & slide_axis,
@@ -577,7 +577,7 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	Mover::type( "DockingSlideIntoContact" );
 	use_delta_ = false;
 }
-	
+
 //destructor
 DockingSlideIntoContact::~DockingSlideIntoContact() = default;
 
@@ -652,20 +652,20 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 
 	// Move chains away from each other until ScoreType or delta surpasses threshold
 	core::Real last_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
-	
+
 	// Current score for comparison (if necessary)
 	core::Real current_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
-	
+
 	// Move until a move generates no difference or the maximum number of attempts is made
 	while ( is_there_contact(current_score, last_score) && counter <= counter_breakpoint ) {
-		
+
 		//TR << "interchain_vdw diff: " << std::abs(current_score - last_score) << std::endl;
 		mover->apply( pose );
 		( *scorefxn_ )( pose );
 		last_score = current_score;
 		current_score = pose.energies().total_energies()[ scoretype_for_contact_ ];
 		++counter;
-		
+
 		// update condition
 	}
 	if ( counter > counter_breakpoint ) {
@@ -674,12 +674,12 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		return;
 	}
 	counter = 0;
-	
+
 
 	// then try moving towards each other
 	TR << "Moving together" << std::endl;
 	mover->trans_axis().negate();
-	
+
 	// Move until a move generates a difference (i.e. contact is made)
 	while ( counter <= counter_breakpoint && not is_there_contact(current_score, last_score) ) {
 
@@ -699,10 +699,10 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	// moving it back out
 	counter = 0;
 	if ( mover->step_size() > 1.0 ) {
-		
+
 		TR << "step size of 1.0..." << std::endl;
 		TR << scoretype_for_contact_ << " scores: " << pose.energies().total_energies()[ scoretype_for_contact_ ] << std::endl;
-		
+
 		while ( counter <= 10 && not is_there_contact(current_score, last_score) ) {
 
 			TR << "moving partners together" << std::endl;
@@ -718,20 +718,20 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	mover->trans_axis().negate();
 	mover->apply( pose );
 }
-	
+
 bool DockingSlideIntoContact::is_there_contact( core::Real current_score, core::Real last_score) {
-	
-	if (use_delta_) {
+
+	if ( use_delta_ ) {
 		// current score is greater than last score, contact is made
-		if ( (current_score - last_score) > threshold_) {return true;}
+		if ( (current_score - last_score) > threshold_ ) { return true;}
 	} else {
 		// current score is greater than threshold, contact is made
-		if (current_score > threshold_) {return true;}
+		if ( current_score > threshold_ ) { return true;}
 	}
-	
+
 	// neither condition satisfied
 	return false;
-	
+
 }
 
 std::string

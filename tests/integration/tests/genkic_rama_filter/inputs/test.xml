@@ -36,7 +36,7 @@
 		
 		<DeclareBond name="bond1" res1="18" atom1="C" res2="1" atom2="N" />
 		
-		<GeneralizedKIC name="close1" selector="lowest_energy_selector" selector_scorefunction="tala" closure_attempts="2000" stop_when_n_solutions_found="1" >
+		<GeneralizedKIC name="close1" selector="lowest_energy_selector" selector_scorefunction="tala" closure_attempts="2000" stop_when_n_solutions_found="1" correct_polymer_dependent_atoms="true" >
 			<AddResidue res_index="3" />
 			<AddResidue res_index="4" />
 			<AddResidue res_index="5" />

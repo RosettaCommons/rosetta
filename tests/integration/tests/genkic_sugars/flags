@@ -1,0 +1,7 @@
+-parser:protocol inputs/KIC_test.xml
+-in:file:s inputs/KIC_test.pdb
+-include_sugars
+-nstruct 5
+-write_all_connect_info
+##### these are general flags
+-score:weights ref2015

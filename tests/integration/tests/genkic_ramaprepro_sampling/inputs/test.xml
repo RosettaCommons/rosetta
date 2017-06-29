@@ -54,7 +54,7 @@
 			<Add mover="min" />
 		</ParsedProtocol>
 		
-		<GeneralizedKIC name="close1" selector="lowest_energy_selector" selector_scorefunction="ref" closure_attempts="2000" stop_when_n_solutions_found="1" pre_selection_mover="pack_and_min" >
+		<GeneralizedKIC name="close1" correct_polymer_dependent_atoms="true" selector="lowest_energy_selector" selector_scorefunction="ref" closure_attempts="2000" stop_when_n_solutions_found="1" pre_selection_mover="pack_and_min" >
 			<AddResidue res_index="3" />
 			<AddResidue res_index="4" />
 			<AddResidue res_index="5" />
