@@ -24,12 +24,13 @@
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/conformation/carbohydrates/GlycanTree.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -157,13 +158,13 @@ public:  // Standard Rosetta methods
 				bool bp = pose.residue( resnum ).is_branch_point();
 
 
-				std::cout << "Carbohydrate: "<< resnum  << " Parent: " << parent_res << " BP: "<<bp << " CON: " << " DIS: " << pose.glycan_tree_set()->get_distance_to_start( resnum )
+				std::cout << "Carbohydrate: "<< resnum  <<" "<< pose.pdb_info()->pose2pdb(resnum) << " Parent: " << parent_res << " BP: "<<bp <<" "<< pose.pdb_info()->pose2pdb(resnum) << " " << " CON: " << " DIS: " << pose.glycan_tree_set()->get_distance_to_start( resnum )
 					<< utility::pad_right( attachment_points, 10) << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
 
 				carbohydrate_residues += 1;
 
 			} else if ( pose.residue( resnum ).is_branch_point() ) {
-				std::cout << "Branch Point: " << pose.residue( resnum ).name3()<<" "<< resnum << std::endl;
+				std::cout << "Branch Point: " << pose.residue( resnum ).name3()<<" "<< resnum <<" " <<pose.pdb_info()->pose2pdb(resnum) << std::endl;
 				protein_branches += 1;
 
 			}
@@ -171,6 +172,18 @@ public:  // Standard Rosetta methods
 		std::cout << "Glycan Residues: " << carbohydrate_residues <<std::endl;
 		std::cout << "Protein BPs: " << protein_branches << std::endl;
 
+		std::cout << "TREES" << std::endl;
+		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
+			if ( pose.glycan_tree_set()->has_tree(resnum) ) {
+				core::Size length = pose.glycan_tree_set()->get_tree(resnum)->get_size();
+				core::Size root = pose.glycan_tree_set()->get_tree(resnum)->get_root();
+				if ( root != 0 ) {
+					std::cout << root << " " <<pose.pdb_info()->pose2pdb(root) <<" "<<"Length: "<< length << std::endl;
+				} else {
+					std::cout << root <<" "<<"Length: "<< length << std::endl;
+				}
+			}
+		}
 	}
 
 	virtual bool
