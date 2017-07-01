@@ -3315,8 +3315,9 @@ Conformation::append_residue(
 		if ( root_atom.size() ) root_atomno = new_rsd.atom_index( root_atom );
 
 		// try to detect a non-polymer chemical bond:
+		// VKM, 30 June 2017: This is a real mess.  We should really revisit this and clean it up sometime.
 		if ( !attach_by_jump && root_atomno != 0 && ( new_rsd.is_ligand() || // needed because new_rsd.is_lower_terminus() asserts this is a polymer
-				new_rsd.is_lower_terminus() || anchor_id.rsd() != seqpos-1 ||
+				new_rsd.is_lower_terminus() || !new_rsd.has_lower_connect() || anchor_id.rsd() != seqpos-1 ||
 				residues_[ seqpos-1 ]->is_upper_terminus() ||   // if we got here we're connect to seqpos-1...
 				root_atomno != int(new_rsd_in.lower_connect_atom()) ||  // ...by our lower-connect-atom
 				anchor_atomno != int(residues_[ seqpos-1 ]->upper_connect_atom()) ) ) {
