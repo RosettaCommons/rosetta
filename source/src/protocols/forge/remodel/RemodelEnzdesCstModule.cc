@@ -44,7 +44,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelEnzdesCstM
 RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data)
 : protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ))
 {
-	read_enzyme_cstfile(option[OptionKeys::enzdes::cstfile]);
 	scorefxn_ = core::scoring::get_score_function();
 	remodel_data_ = external_data;
 

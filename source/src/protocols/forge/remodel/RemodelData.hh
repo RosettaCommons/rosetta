@@ -77,6 +77,8 @@ public:
 
 	std::string abego;
 
+	std::string LD_types;
+
 	// merge the dssp assignment with ss string, exclude ".",
 	// gets the final dssp_updated_ss for fragment pick
 	std::string dssp_updated_ss;

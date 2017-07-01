@@ -35,10 +35,14 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/datacache/CacheableDataType.hh> // for silent file tags
+#include <basic/datacache/CacheableString.hh> // for silent file tags
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -911,10 +915,11 @@ void RemodelMover::apply( Pose & pose ) {
 				TR << "apply(): constraint file found on command line. updating score functions to include constraint terms." << std::endl;
 
 				forge::remodel::RemodelEnzdesCstModuleOP cstOP( new forge::remodel::RemodelEnzdesCstModule(remodel_data) );
+				cstOP->read_enzyme_cstfile(option[OptionKeys::enzdes::cstfile]);
 
 				// RemodelEnzdesCstModule cst(remodel_data);
 				//safety
-				pose.remove_constraints();
+				//pose.remove_constraints();
 				//wipe out cst_cache
 				toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
 				//wipe out observer too
@@ -930,7 +935,7 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 			if ( option[OptionKeys::constraints::cst_file].user() ) {
 				//safety
-				pose.remove_constraints();
+				//pose.remove_constraints();
 
 				protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
 				constraint->apply( pose );
@@ -1316,6 +1321,31 @@ void RemodelMover::apply( Pose & pose ) {
 				Real rise = RGF.rise();
 				Real radius = RGF.radius();
 				Real omega = RGF.omega();
+
+				/*  currently don't use this, use SCORE_LINE_STRING instead
+				//set tags for silent file output BOINC
+				std::stringstream outtag;
+				outtag << "RISE_" << rise << "_RADIUS_" << radius << "_OMEGA_" << omega << std::endl;
+				using namespace basic::datacache;
+				(*(*it)).data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString( outtag.str() ) ) );
+				*/
+				{ //scope for string stream
+					std::stringstream outtag;
+					outtag << rise;
+					core::pose::add_score_line_string( (*(*it)), std::string("RGF_rise"), outtag.str() );
+				}
+
+				{ //scope for string stream
+					std::stringstream outtag;
+					outtag << radius;
+					core::pose::add_score_line_string( (*(*it)), std::string("RGF_radius"), outtag.str() );
+				}
+
+				{ //scope for string stream
+					std::stringstream outtag;
+					outtag << omega;
+					core::pose::add_score_line_string( (*(*it)), std::string("RGF_omega"), outtag.str() );
+				}
 
 				//filter on the values; this really should be turned into a separate
 				//class
@@ -1738,7 +1768,9 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	sfx->set_weight( core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
 	sfx->set_weight( core::scoring::res_type_constraint, 1.0);
 	sfx->set_weight( core::scoring::res_type_linking_constraint, 1.0);
-	protocols::relax::FastRelax relaxMover(sfx);
+
+	std::string relax_script_name = option[OptionKeys::relax::script];
+	protocols::relax::FastRelax relaxMover(sfx, relax_script_name );
 
 
 	scoring::constraints::ConstraintSetOP cst_set_post_built;

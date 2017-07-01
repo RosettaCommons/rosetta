@@ -32,6 +32,10 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringMap.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
@@ -260,6 +264,16 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 
 	if ( !suffix.empty() ) {
 		tag << "_" << suffix;
+	}
+
+	if ( pose_in.data().has( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) ) {
+		using namespace basic::datacache;
+		CacheableStringMapCOP data = utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
+			( pose_in.data().get_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
+
+		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() ); it != end; ++it ) {
+			ss->add_energy( it->first, (core::Real) atof( it->second.c_str() ) );
+		}
 	}
 
 	ss->fill_struct( pose_in, tag.str() );

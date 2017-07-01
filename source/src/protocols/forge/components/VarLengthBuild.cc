@@ -780,9 +780,10 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	if ( (!ignore_cmdline_enzdes_cstfile_) && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 
 		protocols::forge::remodel::RemodelEnzdesCstModuleOP cstOP( new protocols::forge::remodel::RemodelEnzdesCstModule(remodel_data_) );
+		cstOP->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
 
 		//safety
-		pose.remove_constraints();
+		//pose.remove_constraints();
 		//wipe out cst_cache
 		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
 		//wipe out observer too
@@ -796,7 +797,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() && !basic::options::option[basic::options::OptionKeys::remodel::cst_fa_only].user() ) {
 		//safety
-		pose.remove_constraints();
+		//pose.remove_constraints();
 
 		protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
 		constraint->apply( pose );

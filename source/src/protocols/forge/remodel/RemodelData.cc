@@ -33,6 +33,8 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <core/chemical/ChemicalManager.hh> // for ncaa handling
+#include <core/chemical/ResidueTypeSet.hh> // for ncaa handling
+#include <core/chemical/ResidueType.hh> // for ncaa handling
 
 #include <protocols/forge/remodel/RemodelData.hh>
 //#include <protocols/sparta/PDB.hh>
@@ -156,6 +158,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 
 		line.resname = split_info[1];
 		line.sstype = split_info[2]; // could be 'H', 'L', 'E', 'D', or 'I", which stand for helix, loop, extended, random or inserted
+		//Feb 2016. Extended to handle ABEGO and also D-amino acids '1', '2', '3'.
 
 		// do some input file syntax checking
 		// error checking, disallow '#' in columns 1 and 2
@@ -274,7 +277,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			bool pickaa = false;
 			for ( int i = 3; i< (int)split_info.size();  i++ ) {
 
-				if ( split_info[i].substr(0,3) != "CST" && split_info[i].substr(0,3) != "DM_" && split_info[i].substr(0,3) != "DS_" ) {
+				if ( split_info[i].substr(0,3) != "CST" && split_info[i].substr(0,3) != "DM_" && split_info[i].substr(0,3) != "DS_" && split_info[i].substr(0,3) != "EMP" ) {
 					oss << split_info[i] << " " ;
 					oss_switch << split_info[i];
 				}
@@ -286,9 +289,15 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 				if ( split_info[i].substr(0,5) == "EMPTY" ) {
 					line.has_ncaa = true;
 					// get the list of ncaa
+					oss << split_info[i];
 					for ( int j = i+1; j < (int)split_info.size() - 1; j = j+2 ) {
 						if ( split_info[j] == "NC" ) {
+							core::chemical::ResidueTypeSetCOP res_type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+							std::string ncaa_fullname = res_type_set->name_map(split_info[j+1]).name3();
+							std::cout << "debugDATA " << ncaa_fullname << std::endl;
 							line.ncaaList.push_back(split_info[j+1]);
+							oss << " " << split_info[j] << " "  << ncaa_fullname;
+							i+=2;
 						}
 					}
 				}
@@ -388,13 +397,24 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 		// sequence and ss are class member variables
 		sequence.append( iter->resname );
 		if ( iter->sstype.size()==1 ) {
-			ss.append( iter->sstype ); //std case
+			//Feb 2016.  handling LD types
+			if ( iter->sstype.compare( "1" )  == 0 ) { // 0 means match
+				ss.append( "H" );
+				LD_types.append( "D" );
+			} else if ( iter->sstype.compare( "2" ) == 0 ) {
+				ss.append( "E" );
+				LD_types.append( "D" );
+			} else {
+				ss.append( iter->sstype ); //std case
+				LD_types.append( "L" ); //std L-amino acid case
+			}
 		} else if ( iter->sstype.size()==2 ) {
 			hle_abego_mode=true;
 			char tmp_ss = iter->sstype[0];
 			char tmp_abego = iter->sstype[1];
 			ss.append(1,tmp_ss);
 			abego.append(1,tmp_abego);
+			LD_types.append( "L" );
 			if ( !(tmp_ss=='H'||tmp_ss=='L'||tmp_ss=='E'||tmp_ss=='D') ) {
 				utility_exit_with_message("First SS-term is:" + string_of(tmp_ss)+ " but must be either H,L,E or D if you want it ignored");
 			}
@@ -416,6 +436,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 	TR_REMODEL << " sequence (based on blueprint): " << std::endl << " " << sequence << std::endl;
 	TR_REMODEL << " ss (based on blueprint): " << std::endl << " " << ss << std::endl;
 	TR_REMODEL << " ABEGOtype: " << std::endl << abego << std::endl;
+	TR_REMODEL << " LD_types: " << std::endl << LD_types << std::endl;
 
 }
 

@@ -19,6 +19,7 @@
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
 
@@ -76,7 +77,7 @@ SingleResidueFragDataOP IndependentBBTorsionSRFD::create() const {
 
 
 /// @brief apply only torsions in this fragment marked as moveable in the given
-///  MoveMap
+///  MoveMap for D-amino acids
 /// @param[in] movemap Check for moveable torsions in this MoveMap.
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] seqpos Insert at this sequence position.
@@ -104,8 +105,13 @@ bool IndependentBBTorsionSRFD::apply(
 	for ( Size j = 1, je = nbb(); j <= je; ++j ) {
 		id::TorsionID const torsion_id( seqpos, id::BB, j );
 		if ( movemap.get( torsion_id ) ) {
-			pose.set_torsion( torsion_id, Super::torsion( j ) );
-			success = true;
+			if ( pose.residue_type( seqpos ).is_d_aa() && ( j == 1 || j == 2 ) ) {  // negate phi and psi
+				pose.set_torsion( torsion_id, ( -1 )*(Super::torsion( j ) ) );
+				success = true;
+			} else {
+				pose.set_torsion( torsion_id, Super::torsion( j ) );
+				success = true;
+			}
 		}
 	}
 

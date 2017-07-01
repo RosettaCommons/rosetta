@@ -27,6 +27,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/OrderedFragSet.fwd.hh>
@@ -89,6 +90,7 @@ RemodelWorkingSet::RemodelWorkingSet(RemodelWorkingSet const & rval):
 	sequence = rval.sequence;
 	ss = rval.ss;
 	abego = rval.abego;
+	LD_types = rval.LD_types;
 	hasInsertion = rval.hasInsertion;
 }
 
@@ -99,6 +101,7 @@ RemodelWorkingSet & RemodelWorkingSet::operator= ( RemodelWorkingSet const & rva
 		sequence = rval.sequence;
 		ss = rval.ss;
 		abego = rval.abego;
+		LD_types = rval.LD_types;
 		translate_index = rval.translate_index;
 		begin = rval.begin ;
 		end = rval.end;
@@ -135,11 +138,13 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	// copy ss/seq from RemodelData so it can be passed elsewhere later
 	ss = data.dssp_updated_ss;
 	this->abego = data.abego;
+	this->LD_types = data.LD_types;
 
 	// this is purely experimental for matching fragment set
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		ss.append( ss );
 		this->abego.append(this->abego);
+		this->LD_types.append(this->LD_types);
 	} else {
 		//ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 	}
@@ -346,6 +351,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using core::fragment::OrderedFragSet;
 	using core::fragment::Frame;
 	using core::fragment::FrameOP;
+	using core::chemical::ChemicalManager;
 	using build::BuildInstructionOP;
 
 	SegmentInsertOP segIns;
@@ -379,21 +385,26 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	// for now only allow one letter code
 	String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
 
+	//an array to store individual amino acids, just to keep things simpler while handling ncaa
+	std::vector<std::string> seq_aa;
+
 	runtime_assert (build_aa_type.size() == 1);
 
 	if ( option[OptionKeys::remodel::use_blueprint_sequence]() ) {
 		for ( int i = 0; i < (int)data.blueprint.size(); i++ ) {
 			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ) {
 				aa.append(build_aa_type);
+				seq_aa.push_back(build_aa_type);
 			} else {
 				aa.append( data.blueprint[i].resname );
+				seq_aa.push_back(data.blueprint[i].resname);
 			}
 		}
 		//  runtime_assert( aa.size() == data.dssp_updated_ss.size());
 
 	} else {
 
-		//JAB - check for Alanine is removed as it breaks the use of Alanine as the building AA!
+		// remove centroid name AA check == 'A'
 
 		//build the aa string to be the same length as dssp updated ss
 		//use that length because repeat structures are bigger than blueprint
@@ -403,10 +414,14 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 				core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue_type_set_for_pose() );
 				std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
 				char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
-				aa += one_let_name;
-				aa += "[" + data.blueprint[i].ncaaList[0] + "]";
+				std::string this_aa;
+				this_aa += one_let_name;
+				this_aa += "[" + data.blueprint[i].ncaaList[0] + "]";
+				aa.append(this_aa);
+				seq_aa.push_back(this_aa);
 			} else {
 				aa.append(build_aa_type);
+				seq_aa.push_back(build_aa_type);
 			}
 		}
 	}
@@ -437,6 +452,10 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			//duplicate length of dssp and aastring
 			DSSP += DSSP;
 			aa += aa;
+			for ( int i = 0; i < (int)seq_aa.size(); i++ ) {
+				seq_aa.push_back(seq_aa[i]);
+			}
+
 
 			if ( idFront > seg_size && idBack > seg_size ) { //ignore this type of assigment in repeat structures
 				continue;
@@ -557,51 +576,52 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		continue;
 		}
 		}*/
-
+		/*
+		//initialize string to feed into build manager
+		std::string mod_region_aa;
+		std::string c_term_mod_region_aa;
+		for (int count = 0; count < gap; i++){
+		mod_region_aa += seq_aa[headNew-1+count];
+		//c_term_mod_region_aa += seq_aa[segmentStorageVector[i].residues.front()-1+count];
+		}
+		*/
 		if ( head == 0 && segmentStorageVector[i].residues.front() == 1 ) { // N-term extension
 			TR << "N-terminal extension found" << std::endl;
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) ) );
+			std::string mod_region_aa;
+			for ( int count = 0; count < gap; count++ ) {
+				mod_region_aa += seq_aa[headNew-1+count];
+			}
+			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), mod_region_aa ) ) );
 		} else if ( tail == 0 && segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) {
 			TR << "C-terminal extension found" << std::endl;
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.size()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
+			std::string mod_region_aa;
+			for ( int count = 0; count < gap; count++ ) {
+				mod_region_aa += seq_aa[segmentStorageVector[i].residues.front()-1+count];
+			}
+			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), mod_region_aa ) ) );
 		} else if ( head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ) { // N-term deletion
 			TR << "debug: N-term deletion" << std::endl;
-			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) ) );
-		} else if ( tail != static_cast<int>(input_pose.size()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
+			std::string mod_region_aa;
+			for ( int count = 0; count < gap; count++ ) {
+				mod_region_aa += seq_aa[headNew-1+count];
+			}
+			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), mod_region_aa ) ) );
+		} else if ( tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
 				segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) { // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
+			std::string mod_region_aa;
+			for ( int count = 0; count < gap; count++ ) {
+				mod_region_aa += seq_aa[segmentStorageVector[i].residues.front()-1+count];
+			}
 			TR << "debug: C-term deletion" << std::endl;
-			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.size()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
+			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), mod_region_aa ) ) );
 		} else {
 			TR << "normal rebuild" << std::endl;
 			// if the sequence contains ncaa, handle it properly
-			// one has to construct the string with ncaa expressed between brackets
-			// each NCAA will be defined as, for example, Z[BPY]  <= counting as one residue.
-			// the string will be further processed in SegmentRebuild to get the proper one letter code and length.
 			std::string mod_region_aa;
-			if ( (int)aa.substr( headNew-1, gap ).find('[') != -1 ) {
-				int count = 0;
-				for ( int i = 1; i <= gap; i++ ) {
-					if ( aa[headNew+count-1] != '[' ) {
-						mod_region_aa += aa[headNew+count-1];
-						count++;
-					} else {
-						while ( aa[headNew+count-1] != ']' ) {
-							mod_region_aa += aa[headNew+count-1];
-							count++;
-							if ( aa[headNew+count-1] == ']' ) {
-								mod_region_aa += aa[headNew+count-1];
-								count++;
-								mod_region_aa += aa[headNew+count-1];
-								count++;
-								break;
-							}
-						}
-					}
-				}
-			} else {
-				mod_region_aa = aa.substr( headNew-1, gap );
+			for ( int count = 0; count < gap; count++ ) {
+				mod_region_aa += seq_aa[headNew-1+count];
 			}
 			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head, tail), DSSP.substr( headNew-1, gap ), mod_region_aa) ) );
 		}

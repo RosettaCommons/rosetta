@@ -78,6 +78,7 @@ public:
 	std::string sequence;
 	std::string ss;
 	std::string abego;
+	std::string LD_types;
 	std::map<int,int> translate_index;
 
 	std::vector<int> begin;
