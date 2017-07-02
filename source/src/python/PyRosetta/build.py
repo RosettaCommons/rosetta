@@ -72,7 +72,7 @@ def get_defines():
     return defines.split()
 
 
-def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
+def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False):
     if not silent: print(message);  print(command_line); sys.stdout.flush();
     while True:
 
@@ -85,7 +85,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
 
         exit_code = p.returncode
 
-        if exit_code  or  not silent: print(output); sys.stdout.flush();
+        if exit_code  or  not (silent or silence_output): print(output); sys.stdout.flush();
 
         if exit_code and until_successes: pass  # Thats right - redability COUNT!
         else: break
@@ -134,10 +134,10 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 
     if not os.path.isdir(prefix): os.makedirs(prefix)
 
-    if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone http://llvm.org/git/llvm.git .'.format(prefix) )
+    if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone https://github.com/llvm-mirror/llvm.git .'.format(prefix) )
     execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix} && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
-    if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone http://llvm.org/git/clang.git clang'.format(prefix) )
+    if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone https://github.com/llvm-mirror/clang.git clang'.format(prefix) )
     execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
     if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
@@ -161,7 +161,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
             jobs="-j{}".format(Options.jobs) if Options.jobs else "",
             build_type='Debug' if debug else 'Release',
             gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
-        silent=True)
+        silence_output=True)
     print()
     # build_dir = prefix+'/build-ninja-' + release
     # if not os.path.isdir(build_dir): os.makedirs(build_dir)
