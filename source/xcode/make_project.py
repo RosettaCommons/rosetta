@@ -11,6 +11,7 @@ import build_util, xcode_util
 sys.path.append( '..' )
 import version
 
+
 # generate new svn_version file
 #os.popen( 'cd ..; python svn_version.py' )
 starting_directory = os.path.basename( os.getcwd() )

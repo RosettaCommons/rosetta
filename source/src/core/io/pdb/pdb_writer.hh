@@ -96,6 +96,22 @@ dump_pdb(
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
+/// @brief PyRosetta-Compatible; Writes pdb data for the given residue, beginning from the given atom number
+std::string
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions ),
+	core::Size start_atom_number = 1
+);
+
+/// @brief PyRosetta-Compatible; Writes pdb data for the given residue, incrementing atom_number counter
+std::string
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	core::Size & atom_number,
+	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+);
+
 
 /// @brief Writes pdb data for the given residue, incrementing atom_number counter
 void
@@ -114,7 +130,6 @@ dump_pdb_residue(
 	core::Size start_atom_number = 1,
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
-
 
 /// @brief Create a full .pdb as a string given a StructFileRep object.
 std::string create_pdb_contents_from_sfr(

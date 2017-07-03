@@ -506,16 +506,8 @@ create_records_from_sfr(
 	return VR;
 }
 
-/// @note Python compatible wrapper avoiding reference parameter
-void
-dump_pdb_residue(
-	conformation::Residue const & rsd,
-	std::ostream & out,
-	core::Size start_atom_number,
-	core::io::StructFileRepOptionsCOP options
-) {
-	dump_pdb_residue(rsd, start_atom_number, out, options);
-}
+
+
 
 /// @details Create a faux PDBInfo object from a Residue
 pose::PDBInfoOP
@@ -541,11 +533,42 @@ create_pdb_info_for_single_residue_pose(
 	return pdb_info;
 }
 
+/// @note Python compatible wrapper avoiding reference parameter
+void
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	std::ostream & out,
+	core::Size start_atom_number,
+	core::io::StructFileRepOptionsCOP options
+) {
+	dump_pdb_residue(rsd, start_atom_number, out, options);
+}
+
+std::string
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	core::io::StructFileRepOptionsCOP options,
+	core::Size start_atom_number
+	
+){
+	return dump_pdb_residue(rsd, start_atom_number, options);
+}
+
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	core::Size & atom_number,
 	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options
+) {
+	std::string data = dump_pdb_residue(rsd, atom_number, options);
+	out.write( data.c_str(), data.size() );
+}
+
+std::string
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	core::Size & atom_number,
 	core::io::StructFileRepOptionsCOP options
 ) {
 
@@ -558,8 +581,10 @@ dump_pdb_residue(
 	pose_to_sfr::PoseToStructFileRepConverter converter(*options);
 	converter.append_residue_to_sfr(pose, 1, atom_number, 0);
 	std::string data = create_pdb_contents_from_sfr(*converter.sfr(), options);
-	out.write( data.c_str(), data.size() );
+	return data;
+	
 }
+
 
 ///////////////////////////////////////////////////////////////
 //////// LEGACY JD2-layer compatability (DO NOT USE) //////////
