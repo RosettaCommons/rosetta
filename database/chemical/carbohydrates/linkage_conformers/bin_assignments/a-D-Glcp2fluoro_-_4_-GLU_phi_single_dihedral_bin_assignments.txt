@@ -1,8 +1,0 @@
-# libraries compiled by Maxim Shapovalov, Jared Adolf-Bryfogle, and Roland Dunbrack, Fox Chase Cancer Center, Philadelphia, PA, USA, 2017 (C)
-# compiled on 05/26/2017
-# backbone-independent probabilities
-# residueID_internal	a-D-Glcp2fluoro ->4)-GLU
-# angleIndex	phi
-bin	p	left_min	maxima	right_min
-1	0.720137	343.148811	88.410683	140.370054
-2	0.279857	140.370054	158.425609	343.148811

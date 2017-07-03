@@ -1,8 +1,0 @@
-# libraries compiled by Maxim Shapovalov, Jared Adolf-Bryfogle, and Roland Dunbrack, Fox Chase Cancer Center, Philadelphia, PA, USA, 2017 (C)
-# compiled on 05/26/2017
-# backbone-independent probabilities
-# residueID_internal	a-L-Araf ->5)-L-Araf
-# angleIndex	omega
-bin	p	left_min	maxima	right_min
-1	0.326384	15.132964	74.477882	196.109699
-2	0.673098	196.109699	293.832695	15.132964

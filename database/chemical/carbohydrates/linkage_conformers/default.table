@@ -17,7 +17,7 @@
 
 #      THOMAS LUTTEKE & CLAUS-W VON DER LIETH, The protein data bank (PDB) as a versatile resource for glycobiology and glycomics,
 #      Biocatalysis and Biotransformation, Jan /Feb/March /April 2006; 24(1/2): 147 /155
-# Filter these values: [2, 3, 4, 5, 6, 10]
+# Filter these values: [2, 3, 4, 5, 6, 10, 16, 32, 1024, 4096, 65536, 524288, 1048576]
 
 #        1  = Positive control
 #        2  = Wrong assignment of anomeric
@@ -36,6 +36,22 @@
 #        15 = Carbohydrate chain is connected to a nucleotide
 #        16 = Glycosidic linkage reported in the PDB is not consistent with the detected one
 #        17 = A carbohydrate residuum reported in the PDB-file was not detected
+#	 32 = residue has no oxygen or respective atom attached to anomeric carbon
+#	 64 = residue was 1-deoxy, linkage to o1 or respective atom was added 
+#	 128 = residue contains non-standard "sidechain"
+#	 256 = residue contains unusual angle in stereochemistry checks 
+#	 512 = chain contains non-standard residue at reducing end 
+#	 1024 = residue is linked to another residue (except ASN) by an non-oxygen glycosidic atom 
+#	 2048 = linucs code comparison error (oligosaccharides / combined residues) 
+#	 4096 = number of rings in oligosaccharide doesn't match expected value 
+#	 8192 = chain contains "inserted" non-carbohydrate ring 
+#	 16384 = chain contains nucleotide residue 
+#	 32768 = linkage error (oligosaccharides / combined residues) 
+#	 65536 = residue could not be assigned 
+#	 131072 = residue consists of more backbone carbons than umfconverter can handle 
+#	 262144 = residue has more than one oxygen (or equiv. atoms) attached to the anomeric center, not counting the ring oxygen
+#	 524288 = N-glycan chain does not match known biological pathway
+#	 1048576 = a monosaccharide is linked to its parent one via a carbon other than the anomeric carbon
 
 #  Conformers were then generated as follows for each linkage type and dihedral angle:
 #  A) Bin Identification
@@ -94,11 +110,9 @@
 
 #non-reducing-end	reducing-end	conformer	p	points	phi-mean	phi-sd	psi-mean	psi-sd	omega-mean	omega-sd	omega2-mean	omega2-sd
 
-#beta-D-GlcpNAc ->4)-D-GlcpNAc	TotalConformers=4 PossibleConformers=4 PossibleCombos=2.2
-beta-D-GlcpNAc ->4)-D-GlcpNAc	2.2	0.9808	2299	280.925	13.818	235.318	18.007
-beta-D-GlcpNAc ->4)-D-GlcpNAc	1.2	0.0119	28	68.823	22.809	245.156	14.224
-beta-D-GlcpNAc ->4)-D-GlcpNAc	2.1	0.0068	16	271.347	51.263	64.395	26.162
-#beta-D-GlcpNAc ->4)-D-GlcpNAc	1.1	0.0004	1	30.200	-0.000	55.300	-0.000
+#beta-D-GlcpNAc ->4)-D-GlcpNAc	TotalConformers=2 PossibleConformers=2 PossibleCombos=2.1
+beta-D-GlcpNAc ->4)-D-GlcpNAc	2.1	0.9876	2315	280.880	14.334	235.258	20.313
+beta-D-GlcpNAc ->4)-D-GlcpNAc	1.1	0.0124	29	67.481	23.527	245.531	25.986
 
 #beta-D-GlcpNAc ->4)-ASN	TotalConformers=10 PossibleConformers=12 PossibleCombos=2.2.1.3
 beta-D-GlcpNAc ->4)-ASN	2.1.1.2	0.4755	2116	261.204	18.738	176.582	12.940	173.004	42.546	190.375	12.882
@@ -133,15 +147,12 @@ beta-D-Xylp ->2)-D-Manp	2.1	0.9787	46	277.074	10.063	131.723	7.102
 #alpha-D-Manp ->3)-D-Manp	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
 alpha-D-Manp ->3)-D-Manp	1.1	1.0000	628	76.504	25.055	125.953	23.759
 
-#alpha-D-Manp ->6)-D-Manp	TotalConformers=4 PossibleConformers=4 PossibleCombos=1.2.2
-alpha-D-Manp ->6)-D-Manp	1.2.2	0.5056	270	69.172	26.059	180.292	17.636	298.000	12.980
-alpha-D-Manp ->6)-D-Manp	1.2.1	0.3614	193	78.158	39.792	172.947	21.432	59.308	27.007
-alpha-D-Manp ->6)-D-Manp	1.1.1	0.0730	39	62.734	10.670	85.502	6.817	73.478	17.678
-alpha-D-Manp ->6)-D-Manp	1.1.2	0.0599	32	92.074	18.599	83.823	9.142	286.944	6.125
+#alpha-D-Manp ->6)-D-Manp	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.1.2
+alpha-D-Manp ->6)-D-Manp	1.1.2	0.5599	299	71.152	24.784	173.040	33.093	296.683	11.407
+alpha-D-Manp ->6)-D-Manp	1.1.1	0.4401	235	75.813	38.077	161.378	38.128	61.404	27.884
 
-#beta-D-Galp ->4)-D-Glcp	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2
-beta-D-Galp ->4)-D-Glcp	1.2	0.9882	251	284.387	13.943	241.745	17.006
-beta-D-Galp ->4)-D-Glcp	1.1	0.0118	3	278.975	12.856	99.164	12.879
+#beta-D-Galp ->4)-D-Glcp	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
+beta-D-Galp ->4)-D-Glcp	1.1	1.0000	254	284.323	13.943	241.317	20.757
 
 #beta-D-Galp ->4)-D-GlcpNAc	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2
 beta-D-Galp ->4)-D-GlcpNAc	1.2	0.9864	218	286.858	19.942	245.149	16.571
@@ -166,33 +177,38 @@ alpha-D-Manp ->2)-D-Manp	1.1	1.0000	317	77.598	17.631	137.555	33.021
 #alpha-D-Manp ->3)-THR	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
 alpha-D-Manp ->3)-THR	1.1	1.0000	139	86.797	24.349	127.166	22.706
 
-#alpha-D-Galp ->4)-D-Galp	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2
-alpha-D-Galp ->4)-D-Galp	1.1	0.9600	24	71.024	3.995	103.288	3.453
-#alpha-D-Galp ->4)-D-Galp	1.2	0.0400	1	43.000	-0.000	134.800	-0.000
+#alpha-D-Galp ->4)-D-Galp	TotalConformers=3 PossibleConformers=3 PossibleCombos=1.3
+alpha-D-Galp ->4)-D-Galp	1.1	0.9200	23	70.630	3.594	102.757	2.364
+#alpha-D-Galp ->4)-D-Galp	1.2	0.0400	1	80.100	-0.000	115.600	-0.000
+#alpha-D-Galp ->4)-D-Galp	1.3	0.0400	1	43.000	-0.000	134.800	-0.000
 
 #alpha-D-6-deoxy-Glcp4N ->4)-D-Glcp	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2
 alpha-D-6-deoxy-Glcp4N ->4)-D-Glcp	1.2	0.9412	32	103.565	19.020	232.624	21.033
 alpha-D-6-deoxy-Glcp4N ->4)-D-Glcp	1.1	0.0588	2	92.650	1.250	54.650	5.254
 
 #alpha-L-Fucp ->6)-D-GlcpNAc	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.1.2
-alpha-L-Fucp ->6)-D-GlcpNAc	1.1.2	0.8132	148	287.139	23.144	180.549	35.639	296.688	17.679
-alpha-L-Fucp ->6)-D-GlcpNAc	1.1.1	0.1868	34	287.100	44.874	139.824	76.430	64.394	23.421
+alpha-L-Fucp ->6)-D-GlcpNAc	1.1.2	0.8187	149	287.067	23.079	180.443	35.526	297.074	18.501
+alpha-L-Fucp ->6)-D-GlcpNAc	1.1.1	0.1813	33	287.514	45.620	137.790	77.920	65.935	21.670
 
-#alpha-D-Glcp ->1)-D-Glcp	TotalConformers=5 PossibleConformers=5 PossibleCombos=5.1
-alpha-D-Glcp ->1)-D-Glcp	2.1	0.5938	38	78.864	6.328	186.397	6.940
-alpha-D-Glcp ->1)-D-Glcp	1.1	0.3594	23	59.708	5.827	191.291	10.020
-#alpha-D-Glcp ->1)-D-Glcp	5.1	0.0156	1	314.300	-0.000	218.300	-0.000
-#alpha-D-Glcp ->1)-D-Glcp	4.1	0.0156	1	183.400	-0.000	189.000	-0.000
-#alpha-D-Glcp ->1)-D-Glcp	3.1	0.0156	1	136.900	-0.000	158.000	-0.000
+#alpha-D-Glcp ->1)-D-Glcp	TotalConformers=4 PossibleConformers=4 PossibleCombos=4.1
+alpha-D-Glcp ->1)-D-Glcp	1.1	0.9531	61	71.658	11.148	188.233	8.569
+#alpha-D-Glcp ->1)-D-Glcp	2.1	0.0156	1	136.900	-0.000	158.000	-0.000
+#alpha-D-Glcp ->1)-D-Glcp	4.1	0.0156	1	314.300	-0.000	218.300	-0.000
+#alpha-D-Glcp ->1)-D-Glcp	3.1	0.0156	1	183.400	-0.000	189.000	-0.000
 
-#beta-D-Manp ->6)-D-Manp	TotalConformers=4 PossibleConformers=4 PossibleCombos=2.1.2
-beta-D-Manp ->6)-D-Manp	1.1.2	0.4324	16	221.834	29.335	197.449	23.953	265.971	29.283
-beta-D-Manp ->6)-D-Manp	2.1.1	0.2432	9	327.824	21.275	160.878	64.238	132.515	29.566
-beta-D-Manp ->6)-D-Manp	2.1.2	0.1622	6	314.830	38.659	241.066	37.097	308.128	31.412
-beta-D-Manp ->6)-D-Manp	1.1.1	0.1622	6	222.468	36.982	315.365	113.088	130.999	44.781
+#beta-D-Manp ->6)-D-Manp	TotalConformers=8 PossibleConformers=8 PossibleCombos=2.2.2
+beta-D-Manp ->6)-D-Manp	1.1.2	0.3514	13	214.213	24.614	191.704	16.640	267.390	25.161
+beta-D-Manp ->6)-D-Manp	2.2.2	0.1622	6	309.382	42.635	251.652	12.042	310.048	24.285
+beta-D-Manp ->6)-D-Manp	2.1.1	0.1622	6	340.907	11.588	130.741	8.759	150.815	8.514
+beta-D-Manp ->6)-D-Manp	1.1.1	0.0811	3	192.189	28.692	88.362	41.291	102.188	36.949
+beta-D-Manp ->6)-D-Manp	1.2.1	0.0811	3	249.759	14.121	280.549	8.892	158.193	31.880
+beta-D-Manp ->6)-D-Manp	2.2.1	0.0811	3	301.372	5.288	257.168	3.176	92.811	13.586
+beta-D-Manp ->6)-D-Manp	2.1.2	0.0541	2	286.250	13.006	169.000	12.651	222.450	15.138
+#beta-D-Manp ->6)-D-Manp	1.2.2	0.0270	1	224.200	-0.000	248.100	-0.000	309.400	-0.000
 
-#alpha-D-GlcpNAc ->4)-D-GlcpNAc	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
-alpha-D-GlcpNAc ->4)-D-GlcpNAc	1.1	1.0000	32	53.749	39.298	202.582	59.484
+#alpha-D-GlcpNAc ->4)-D-GlcpNAc	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2
+alpha-D-GlcpNAc ->4)-D-GlcpNAc	1.2	0.7812	25	44.718	41.277	217.903	25.668
+alpha-D-GlcpNAc ->4)-D-GlcpNAc	1.1	0.2188	7	79.607	7.448	84.848	15.435
 
 #alpha-D-Glcp2fluoro ->4)-GLU	TotalConformers=2 PossibleConformers=2 PossibleCombos=2.1
 alpha-D-Glcp2fluoro ->4)-GLU	1.1	0.6667	14	87.701	3.102	185.686	7.350
@@ -205,46 +221,41 @@ beta-D-Glcp ->4)-D-Glcp2fluoro	235.1	1.0000	10	285.650	0.768	252.663	7.919
 beta-D-Glcp ->4)-D-Glcp	1.2	0.9902	507	280.661	23.055	230.724	18.432
 beta-D-Glcp ->4)-D-Glcp	1.1	0.0098	5	252.894	61.367	79.168	20.225
 
-#alpha-D-Glcp ->2)-D-Fruf	TotalConformers=7 PossibleConformers=7 PossibleCombos=1.7
-alpha-D-Glcp ->2)-D-Fruf	1.5	0.9086	179	101.843	10.915	201.117	11.195
-alpha-D-Glcp ->2)-D-Fruf	1.4	0.0508	10	63.512	13.428	156.416	4.872
-alpha-D-Glcp ->2)-D-Fruf	1.7	0.0102	2	119.750	20.777	325.700	2.100
-alpha-D-Glcp ->2)-D-Fruf	1.2	0.0102	2	90.400	4.402	76.200	2.400
-alpha-D-Glcp ->2)-D-Fruf	1.3	0.0102	2	102.450	1.950	107.600	2.000
-#alpha-D-Glcp ->2)-D-Fruf	1.6	0.0051	1	209.800	-0.000	254.000	-0.000
-#alpha-D-Glcp ->2)-D-Fruf	1.1	0.0051	1	101.200	-0.000	8.600	-0.000
+#alpha-D-Glcp ->2)-D-Fruf	TotalConformers=4 PossibleConformers=6 PossibleCombos=2.3
+alpha-D-Glcp ->2)-D-Fruf	1.2	0.9594	189	99.959	13.909	198.920	14.759
+alpha-D-Glcp ->2)-D-Fruf	1.1	0.0203	4	96.432	6.925	91.902	15.954
+alpha-D-Glcp ->2)-D-Fruf	1.3	0.0152	3	113.315	19.051	339.695	20.457
+#alpha-D-Glcp ->2)-D-Fruf	2.2	0.0051	1	209.800	-0.000	254.000	-0.000
 
-#beta-L-Fucp ->6)-D-GlcpNAc	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1.1
-beta-L-Fucp ->6)-D-GlcpNAc	1.1.1	1.0000	26	100.552	36.324	181.324	81.886	341.181	53.915
+#beta-L-Fucp ->6)-D-GlcpNAc	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2.1
+beta-L-Fucp ->6)-D-GlcpNAc	1.2.1	0.6154	16	98.892	33.629	225.941	37.115	332.498	25.843
+beta-L-Fucp ->6)-D-GlcpNAc	1.1.1	0.3846	10	103.414	40.246	92.141	24.712	23.310	85.871
 
 #alpha-D-Neup5Ac ->3)-D-Galp	TotalConformers=3 PossibleConformers=4 PossibleCombos=2.2
-alpha-D-Neup5Ac ->3)-D-Galp	1.1	0.7266	93	63.554	9.992	107.315	14.020
-alpha-D-Neup5Ac ->3)-D-Galp	2.1	0.2578	33	310.137	12.599	99.584	6.428
+alpha-D-Neup5Ac ->3)-D-Galp	1.1	0.7344	94	63.046	11.339	106.937	14.447
+alpha-D-Neup5Ac ->3)-D-Galp	2.1	0.2500	32	308.594	7.821	100.459	3.960
 alpha-D-Neup5Ac ->3)-D-Galp	1.2	0.0156	2	76.850	15.545	275.000	11.640
 
-#alpha-D-GlcpNAc ->4)-ASN	TotalConformers=6 PossibleConformers=6 PossibleCombos=1.1.2.3
-alpha-D-GlcpNAc ->4)-ASN	1.1.1.2	0.2683	11	54.091	49.805	129.373	62.061	127.098	23.505	192.368	12.858
-alpha-D-GlcpNAc ->4)-ASN	1.1.1.3	0.2683	11	80.964	49.600	151.207	75.843	142.920	25.134	284.567	12.875
-alpha-D-GlcpNAc ->4)-ASN	1.1.2.2	0.2439	10	83.323	91.136	218.515	50.570	218.583	11.158	192.620	14.869
-alpha-D-GlcpNAc ->4)-ASN	1.1.2.1	0.0976	4	92.274	33.706	264.932	87.803	210.791	25.211	63.550	4.982
-alpha-D-GlcpNAc ->4)-ASN	1.1.1.1	0.0732	3	57.299	10.313	126.773	13.726	92.715	41.211	62.173	19.000
-alpha-D-GlcpNAc ->4)-ASN	1.1.2.3	0.0488	2	69.350	65.212	201.650	21.191	232.550	32.950	282.000	2.500
+#alpha-D-GlcpNAc ->4)-ASN	TotalConformers=3 PossibleConformers=3 PossibleCombos=1.1.1.3
+alpha-D-GlcpNAc ->4)-ASN	1.1.1.2	0.5122	21	61.937	69.342	176.813	73.633	171.955	52.020	192.487	13.850
+alpha-D-GlcpNAc ->4)-ASN	1.1.1.3	0.3171	13	79.559	52.157	165.220	71.657	152.540	40.353	284.164	11.909
+alpha-D-GlcpNAc ->4)-ASN	1.1.1.1	0.1707	7	75.966	31.371	149.241	87.898	171.980	70.823	62.977	12.932
 
 #alpha-L-Fucp ->2)-D-Galp	TotalConformers=2 PossibleConformers=2 PossibleCombos=1.2
 alpha-L-Fucp ->2)-D-Galp	1.2	0.7463	153	290.958	9.135	259.727	9.177
 alpha-L-Fucp ->2)-D-Galp	1.1	0.2537	52	252.769	24.576	217.982	8.745
 
-#beta-D-Glcp ->3)-D-Glcp	TotalConformers=6 PossibleConformers=6 PossibleCombos=1.6
-beta-D-Glcp ->3)-D-Glcp	1.3	0.7368	70	280.189	17.291	112.618	13.064
-beta-D-Glcp ->3)-D-Glcp	1.4	0.2105	20	284.728	12.311	144.990	4.642
+#beta-D-Glcp ->3)-D-Glcp	TotalConformers=4 PossibleConformers=4 PossibleCombos=1.4
+beta-D-Glcp ->3)-D-Glcp	1.3	0.9579	91	281.183	16.328	120.318	18.697
 beta-D-Glcp ->3)-D-Glcp	1.2	0.0211	2	279.700	10.126	63.350	2.751
-#beta-D-Glcp ->3)-D-Glcp	1.5	0.0105	1	278.400	-0.000	175.000	-0.000
-#beta-D-Glcp ->3)-D-Glcp	1.6	0.0105	1	258.200	-0.000	291.000	-0.000
+#beta-D-Glcp ->3)-D-Glcp	1.4	0.0105	1	258.200	-0.000	291.000	-0.000
 #beta-D-Glcp ->3)-D-Glcp	1.1	0.0105	1	244.400	-0.000	11.300	-0.000
 
-#beta-D-Manp ->4)-D-Manp	TotalConformers=2 PossibleConformers=2 PossibleCombos=2.1
-beta-D-Manp ->4)-D-Manp	2.1	0.9647	82	277.105	23.575	228.923	39.263
-beta-D-Manp ->4)-D-Manp	1.1	0.0353	3	55.783	9.495	83.278	23.085
+#beta-D-Manp ->4)-D-Manp	TotalConformers=4 PossibleConformers=4 PossibleCombos=2.2
+beta-D-Manp ->4)-D-Manp	2.2	0.9176	78	279.236	18.947	229.255	29.133
+beta-D-Manp ->4)-D-Manp	2.1	0.0471	4	216.486	39.579	55.058	21.767
+beta-D-Manp ->4)-D-Manp	1.1	0.0235	2	62.100	3.801	68.600	11.135
+#beta-D-Manp ->4)-D-Manp	1.2	0.0118	1	43.100	-0.000	113.100	-0.000
 
 #alpha-D-GalpA ->4)-D-GalpA	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
 alpha-D-GalpA ->4)-D-GalpA	1.1	1.0000	59	87.304	27.798	127.757	30.679
@@ -252,12 +263,13 @@ alpha-D-GalpA ->4)-D-GalpA	1.1	1.0000	59	87.304	27.798	127.757	30.679
 #beta-D-Manp ->3)-D-Manp	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
 beta-D-Manp ->3)-D-Manp	1.1	1.0000	21	283.585	59.065	155.652	52.897
 
-#beta-D-GlcpNAc ->2)-D-Manp	TotalConformers=5 PossibleConformers=8 PossibleCombos=2.4
-beta-D-GlcpNAc ->2)-D-Manp	2.2	0.9505	96	278.599	12.708	147.940	16.210
-beta-D-GlcpNAc ->2)-D-Manp	1.2	0.0198	2	94.100	18.254	142.850	7.159
-#beta-D-GlcpNAc ->2)-D-Manp	2.3	0.0099	1	245.600	-0.000	252.800	-0.000
-#beta-D-GlcpNAc ->2)-D-Manp	1.1	0.0099	1	185.000	-0.000	41.500	-0.000
-#beta-D-GlcpNAc ->2)-D-Manp	2.4	0.0099	1	267.700	-0.000	302.400	-0.000
+#beta-D-GlcpNAc ->2)-D-Manp	TotalConformers=6 PossibleConformers=10 PossibleCombos=2.5
+beta-D-GlcpNAc ->2)-D-Manp	2.3	0.8416	85	279.370	12.638	152.356	10.516
+beta-D-GlcpNAc ->2)-D-Manp	2.2	0.1089	11	272.658	11.632	112.072	3.013
+beta-D-GlcpNAc ->2)-D-Manp	1.3	0.0198	2	94.100	18.254	142.850	7.159
+#beta-D-GlcpNAc ->2)-D-Manp	2.1	0.0099	1	185.000	-0.000	41.500	-0.000
+#beta-D-GlcpNAc ->2)-D-Manp	2.5	0.0099	1	267.700	-0.000	302.400	-0.000
+#beta-D-GlcpNAc ->2)-D-Manp	2.4	0.0099	1	245.600	-0.000	252.800	-0.000
 
 #beta-D-GalpNAc ->3)-D-Galp	TotalConformers=4 PossibleConformers=6 PossibleCombos=2.3
 beta-D-GalpNAc ->3)-D-Galp	2.2	0.5882	10	326.010	4.351	115.691	6.601
@@ -302,8 +314,9 @@ alpha-D-Kdop ->4)-D-Kdop	1.1	1.0000	14	54.221	12.470	85.776	36.387
 beta-D-Galp ->3)-D-GlcpNAc	2.1	0.9516	59	289.552	12.890	127.382	17.414
 beta-D-Galp ->3)-D-GlcpNAc	1.1	0.0484	3	39.931	4.049	124.801	3.103
 
-#beta-D-GlcpNAc ->3)-D-Galp	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
-beta-D-GlcpNAc ->3)-D-Galp	1.1	1.0000	87	278.201	13.641	98.494	15.905
+#beta-D-GlcpNAc ->3)-D-Galp	TotalConformers=2 PossibleConformers=2 PossibleCombos=2.1
+beta-D-GlcpNAc ->3)-D-Galp	2.1	0.5172	45	270.374	5.787	94.245	11.378
+beta-D-GlcpNAc ->3)-D-Galp	1.1	0.4828	42	286.822	14.510	103.200	18.593
 
 #alpha-D-GalpNAc ->3)-D-Galp	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
 alpha-D-GalpNAc ->3)-D-Galp	1.1	1.0000	56	59.987	13.358	65.129	14.510
@@ -338,11 +351,13 @@ alpha-L-Fucp ->3)-D-Glcp	1.1	1.0000	14	291.764	7.582	142.549	2.760
 #beta-D-GalpNAc ->4)-D-Galp	TotalConformers=1 PossibleConformers=1 PossibleCombos=1.1
 beta-D-GalpNAc ->4)-D-Galp	1.1	1.0000	30	276.791	6.129	129.329	6.504
 
-#alpha-D-Galp ->3)-D-Galp	TotalConformers=4 PossibleConformers=6 PossibleCombos=3.2
-alpha-D-Galp ->3)-D-Galp	1.1	0.5556	35	54.790	11.771	71.310	12.317
-alpha-D-Galp ->3)-D-Galp	2.2	0.4127	26	100.950	11.621	123.368	7.841
-#alpha-D-Galp ->3)-D-Galp	2.1	0.0159	1	86.500	-0.000	54.700	-0.000
-#alpha-D-Galp ->3)-D-Galp	3.1	0.0159	1	331.600	-0.000	66.500	-0.000
+#alpha-D-Galp ->3)-D-Galp	TotalConformers=6 PossibleConformers=10 PossibleCombos=5.2
+alpha-D-Galp ->3)-D-Galp	2.1	0.5397	34	56.003	9.108	70.615	11.788
+alpha-D-Galp ->3)-D-Galp	3.2	0.3810	24	97.935	3.573	121.982	6.014
+alpha-D-Galp ->3)-D-Galp	4.2	0.0317	2	140.050	2.650	140.300	7.611
+#alpha-D-Galp ->3)-D-Galp	5.1	0.0159	1	331.600	-0.000	66.500	-0.000
+#alpha-D-Galp ->3)-D-Galp	1.1	0.0159	1	9.500	-0.000	95.100	-0.000
+#alpha-D-Galp ->3)-D-Galp	3.1	0.0159	1	86.500	-0.000	54.700	-0.000
 
 #alpha-D-Neup5Ac ->8)-D-Neup5Ac	TotalConformers=2 PossibleConformers=2 PossibleCombos=2.1.1
 alpha-D-Neup5Ac ->8)-D-Neup5Ac	1.1.1	0.7500	33	66.826	23.375	118.325	13.338	69.104	24.030
