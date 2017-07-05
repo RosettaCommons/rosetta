@@ -1,7 +1,7 @@
 #!/bin/sh
 
 $ROSETTA3/source/bin/rosetta_scripts.default.linuxgccrelease\
-    -database ~/Desktop/Rosetta/main/database\
+    -database $ROSETTA3/database\
     -parser:protocol $1 \
     -edensity:mapfile $3\
     -s $2 \
@@ -17,5 +17,4 @@ $ROSETTA3/source/bin/rosetta_scripts.default.linuxgccrelease\
     -parser::script_vars filterbeams=$9 \
     -edensity:sliding_window 3\
     -mapreso 2 \
-    -corrections::beta_nov15 \
     -missing_density_to_jump
