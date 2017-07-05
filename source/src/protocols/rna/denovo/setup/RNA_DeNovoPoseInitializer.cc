@@ -544,7 +544,7 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		core::pose::correctly_add_cutpoint_variants( pose, n, true, m );
 	}
 
-	// Oh, this is a bummer. If this is empty, we have to separately check -- 
+	// Oh, this is a bummer. If this is empty, we have to separately check --
 	// since uint(0-1) > 1
 	for ( Size i = 1; !rna_params_.fiveprime_cap().empty() && i <= rna_params_.fiveprime_cap().size() - 1; i += 2 ) {
 

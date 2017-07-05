@@ -1,46 +1,16 @@
-#
-# This is a command file.
-#
-# To make a new test, all you have to do is:
-#   1.  Make a new directory under tests/
-#   2.  Put a file like this (named "command") into that directory.
-#
-# The contents of this file will be passed to the shell (Bash or SSH),
-# so any legal shell commands can go in this file.
-# Or comments like this one, for that matter.
-#
-# Variable substiution is done using Python's printf format,
-# meaning you need a percent sign, the variable name in parentheses,
-# and the letter 's' (for 'string').
-#
-# Available variables include:
-#   workdir     the directory where test input files have been copied,
-#               and where test output files should end up.
-#   minidir     the base directory where Mini lives
-#   database    where the Mini database lives
-#   bin         where the Mini binaries live
-#   binext      the extension on binary files, like ".linuxgccrelease"
-#
-# The most important thing is that the test execute in the right directory.
-# This is especially true when we're using SSH to execute on other hosts.
-# All command files should start with this line:
-#
-
 cd %(workdir)s
 
-#
-# After that, do whatever you want.
-# It's nice to test that the executable exists first, to ensure the test actually runs:
-#
 [ -x %(bin)s/rna_denovo.%(binext)s ] || exit 1
-[ -x %(bin)s/dump_capped_residue.%(binext)s ] || exit 1
+#[ -x %(bin)s/dump_capped_residue.%(binext)s ] || exit 1
 
-
-%(bin)s/dump_capped_residue.%(binext)s -residue_name URA -fiveprime -write_all_connect_info true -score:weights stepwise/rna/rna_res_level_energy4.wts -set_weights branch_conn 1.0 linear_branch_conn 1.0 -database %(database)s -r    un:constant_seed -nodelay  2>&1 \
-	| egrep -vf ../../ignore_list \
-	> log_dump
-
-mv URA.pdb cap.pdb
+#You might generate cap.pdb by:
+#%(bin)s/dump_capped_residue.%(binext)s -residue_name URA -fiveprime -write_all_connect_info true -score:weights stepwise/rna/rna_res_level_energy4.wts -set_weights branch_conn 1.0 linear_branch_conn 1.0 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+#	| egrep -vf ../../ignore_list \
+#	> log_dump
+#mv URA.pdb cap.pdb
+#renumber_pdb_in_place.py cap.pdb A:1 B:1
+# I don't want to assume the user has renumber_pdb_in_place.py on the path to run this integration test, 
+# and so forth... so instead, I'm just going to give you a working cap.pdb
 
 %(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \

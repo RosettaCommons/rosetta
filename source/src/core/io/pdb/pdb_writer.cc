@@ -549,7 +549,7 @@ dump_pdb_residue(
 	conformation::Residue const & rsd,
 	core::io::StructFileRepOptionsCOP options,
 	core::Size start_atom_number
-	
+
 ){
 	return dump_pdb_residue(rsd, start_atom_number, options);
 }
@@ -582,7 +582,7 @@ dump_pdb_residue(
 	converter.append_residue_to_sfr(pose, 1, atom_number, 0);
 	std::string data = create_pdb_contents_from_sfr(*converter.sfr(), options);
 	return data;
-	
+
 }
 
 

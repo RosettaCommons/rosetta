@@ -83,7 +83,7 @@ void LinearBranchEnergy::finalize_total_energy( pose::Pose & pose,
 	EnergyMap & totals ) const
 {
 	using core::Size;
-	using conformation::Residue;	using utility::vector1;
+	using conformation::Residue; using utility::vector1;
 
 	Real total_dev = 0.0;
 
