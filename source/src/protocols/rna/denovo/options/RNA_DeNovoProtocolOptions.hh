@@ -81,6 +81,9 @@ public:
 	void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 	std::string silent_file() const { return silent_file_; }
 
+	void set_dump_stems( bool const setting ){ dump_stems_ = setting; }
+	bool dump_stems() const { return dump_stems_; }
+
 	void
 	initialize_from_command_line();
 
@@ -97,6 +100,7 @@ private:
 	bool save_times_;
 	bool use_legacy_setup_;
 	bool cst_gap_;
+	bool dump_stems_;
 };
 
 } //options

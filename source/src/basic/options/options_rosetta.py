@@ -7041,6 +7041,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			 Option( 'fragment_homology_rmsd', 'Real', desc= "Distance in RMSD below which a fragment is considered homologous to the native", default='1.0' ),
 			 Option( 'exclude_native_fragments', 'Boolean', desc= "Exclude fragments from -in:file:native", default='false' ),
 			 Option( 'exclude_fragment_files', 'StringVector', desc= "Files from which to exclude fragments", default=[] ),
+			 Option( 'dump_stems', 'Boolean', desc= "Dump initial stem assignment", default='false' ),
 		   Option_Group( 'out',
 		      Option( 'output_lores_silent_file', 'Boolean', desc= "output lores stuff",default= 'false' ),
 				  Option( 'dump', 'Boolean', desc= "Dump pdb",default= 'false' ),

@@ -17,6 +17,7 @@
 #include <protocols/rna/denovo/setup/RNA_DeNovoParameters.hh>
 #include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/rna/denovo/util.hh>
+#include <protocols/rna/movers/RNA_HelixAssembler.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
@@ -91,6 +92,46 @@ namespace protocols {
 namespace rna {
 namespace denovo {
 namespace setup {
+
+
+using namespace core::pose::rna;
+void
+dump_stems( RNA_SecStruct const & working_secstruct, std::string const & working_sequence, core::pose::full_model_info::FullModelParameters const & full_model_parameters ) {
+
+	movers::RNA_HelixAssembler rha;
+
+	vector1< vector1< std::pair< Size, Size > > > const & working_stems = working_secstruct.stems();
+
+	Size ii = 1;
+	for ( auto const & stem : working_stems ) {
+		std::stringstream filename_stream, helix_seq_stream;
+		filename_stream << "helix_" << ii << ".pdb";
+		utility::vector1< int > resnums;
+		utility::vector1< char > chains;
+		for ( Size ii = 1; ii <= stem.size(); ++ii ) {
+			helix_seq_stream << working_sequence[stem[ii].first-1];
+			resnums.push_back( full_model_parameters.full_to_conventional_resnum_and_chain( stem[ii].first ).first );
+			chains.push_back( full_model_parameters.full_to_conventional_resnum_and_chain( stem[ii].first ).second );
+		}
+		for ( Size ii = stem.size(); ii >= 1; --ii ) {
+			helix_seq_stream << working_sequence[stem[ii].second-1];
+			resnums.push_back( full_model_parameters.full_to_conventional_resnum_and_chain( stem[ii].second ).first );
+			chains.push_back( full_model_parameters.full_to_conventional_resnum_and_chain( stem[ii].second ).second );
+		}
+
+		pose::Pose helix_pose;
+		rha.apply( helix_pose, helix_seq_stream.str() );
+
+		pose::PDBInfoOP pdb_info( new pose::PDBInfo( helix_pose ) );
+		pdb_info->set_chains( chains );
+		pdb_info->set_numbering( resnums );
+		helix_pose.pdb_info( pdb_info );
+
+		helix_pose.dump_pdb( filename_stream.str() );
+		++ii;
+	}
+}
+
 
 //Constructor
 RNA_DeNovoSetup::RNA_DeNovoSetup()
@@ -515,6 +556,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	std::string secstruct_legacy = option[ OptionKeys::rna::denovo::secstruct_legacy ]();
 	std::string working_secstruct_legacy = working_res_map( secstruct_legacy, working_res );
 	if ( secstruct_legacy.size() > 0  ) TR << "Secstruct [legacy]: " << working_secstruct_legacy << std::endl;
+
+	if ( options_->dump_stems() ) dump_stems( working_secstruct, working_sequence, *full_model_parameters );
 
 	////////////////////
 	// Step 9

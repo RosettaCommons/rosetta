@@ -44,7 +44,8 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	binary_rna_output_( false ),
 	save_times_( false ),
 	use_legacy_setup_( false ),
-	cst_gap_( false )
+	cst_gap_( false ),
+	dump_stems_( false )
 {}
 
 //Destructor
@@ -110,6 +111,8 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 	use_legacy_setup_ = option[ basic::options::OptionKeys::rna::denovo::use_legacy_setup ]();
 
 	cst_gap_ = option[ basic::options::OptionKeys::rna::denovo::cst_gap ]();
+
+	dump_stems_ = option[ basic::options::OptionKeys::rna::denovo::dump_stems ]();
 }
 
 } //options
