@@ -518,6 +518,7 @@ def create_package(rosetta_source_path, path):
 
     shutil.copy(build_prefix + '/setup.py', package_prefix)
     shutil.copy(build_prefix + '/setup.cfg', package_prefix)
+    shutil.copy(build_prefix + '/ez_setup.py', package_prefix)
     distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
     distutils.dir_util.copy_tree(build_prefix + '/rosetta', package_prefix + '/rosetta', update=False)
 

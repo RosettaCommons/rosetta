@@ -85,6 +85,7 @@ file(COPY
   src/python/PyRosetta/src/self-test.py
   src/python/PyRosetta/src/setup.py
   src/python/PyRosetta/src/setup.cfg
+  src/python/PyRosetta/src/ez_setup.py
   DESTINATION .
 )
 

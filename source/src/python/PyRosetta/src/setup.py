@@ -1,5 +1,10 @@
 import os, sys
-from setuptools import setup, find_packages, Distribution, Extension
+
+# Assert or bootstrap minimum setuptools version required for find_packages
+import ez_setup
+ez_setup.use_setuptools("3.3")
+
+from setuptools import setup, find_packages, Distribution
 
 def get_file_list(directory):
     """Get list of all files in directory, relative to directory name."""
@@ -18,11 +23,6 @@ class PyRosettaDistribution( Distribution ):
     def has_ext_modules(self):
         return True
 
-def setuptools_version():
-    import setuptools
-    return float( '.'.join( setuptools.__version__.split('.')[:2] ) )
-
-
 def setup_package():
     # chdir to source path and add sources to sys.path to allow invocation of setup script from other directories.
     # Code structure taken from numpy/setup.py
@@ -36,7 +36,7 @@ def setup_package():
             name = "pyrosetta",
             description="PyRosetta package",
             version = "4.0",
-            packages = find_packages(include=["pyrosetta*", "rosetta*"]) if setuptools_version() > 3.3 else find_packages(),
+            packages = find_packages(include=["pyrosetta*", "rosetta*"]),
             package_data = {
                 "pyrosetta" :
                     ["*.so"] +
