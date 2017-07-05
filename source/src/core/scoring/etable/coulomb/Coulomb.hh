@@ -102,6 +102,10 @@ public:
 	inline Real die( ) const { return die_; }
 	inline bool no_dis_dep_die( ) const { return no_dis_dep_die_; }
 
+	// needed by stack_elec to "over-ride" command-line or ref2015 option.
+	void
+	set_sigmoidal_die( bool const & setting ) { sigmoidal_die_ = setting; }
+
 private:
 
 	Real max_dis_;

@@ -38,7 +38,8 @@
 #include <core/chemical/AtomType.hh>
 #include <ObjexxFCL/format.hh>
 
-using namespace ObjexxFCL::format;
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 
@@ -48,6 +49,10 @@ using namespace ObjexxFCL::format;
 //Auto Headers
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
+
+using namespace ObjexxFCL::format;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +110,7 @@ StackElecEnergy::StackElecEnergy( methods::EnergyMethodOptions const & options )
 	might_be_designing_( false ),
 	using_extended_method_( false )
 {
+	coulomb_.set_sigmoidal_die( option[ score::stack_elec_sigmoidal_die ]() ); // override -elec_sigmoidal_die command-line
 	coulomb_.initialize();
 }
 
@@ -117,6 +123,7 @@ StackElecEnergy::StackElecEnergy( StackElecEnergy const & src ):
 	might_be_designing_( src.might_be_designing_ ),
 	using_extended_method_( src.using_extended_method_ )
 {
+	coulomb_.set_sigmoidal_die( option[ score::stack_elec_sigmoidal_die ]() ); // override -elec_sigmoidal_die command-line
 	coulomb_.initialize();
 }
 

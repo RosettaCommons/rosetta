@@ -1358,6 +1358,7 @@ Options = Option_Group( '',
 		Option( 'elec_sigmoidal_die_D', 'Real', desc='D parameter for sigmoidal dielectric', default='80.0'),
 		Option( 'elec_sigmoidal_die_D0', 'Real', desc='D0 parameter for sigmoidal dielectric', default='6.0'),
 		Option( 'elec_sigmoidal_die_S', 'Real', desc='S parameter for sigmoidal dielectric', default='0.4'),
+		Option( 'stack_elec_sigmoidal_die', 'Boolean', desc='override of -elec_sigmoidal_die for stack_elec', default='false' ),
 		Option( 'elec_representative_cp', 'Boolean', desc='Use representative atoms for countpair to avoid dipole splits', default='true'),
 		Option( 'elec_representative_cp_flip', 'Boolean', desc='Enable elec_representative_cp, but FLIP the order in the table', default='true'),
 		Option( 'eval_intrares_elec_ST_only', 'Boolean', desc='Intrares elec only for free DOF atoms in Ser/Thr', default='false'),
@@ -2066,7 +2067,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default = 'true',
 				desc = 'Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.'
 				)
-			
+
 		), # - glycan_relax
 
 
@@ -5988,7 +5989,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'heat_convergence_check', 'Integer',
 			desc ="jump out of current abinitio run if X unsuccesful mc-trials reached", default='0'),
 	), # -mc
-	
+
 		##############################################################################
 	# Mean-field Options -----------------------------------------------
 	Option_Group('mean_field',
