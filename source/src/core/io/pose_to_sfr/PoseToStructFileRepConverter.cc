@@ -629,7 +629,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 
 			// if bonded to not ii + 1 or bonded to not ii + 1's lower
 			if ( ii == pose.total_residue() || ii_res.connected_residue_at_resconn( upper ) != ii + 1 ||
-					ii_res.residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) {
+					( !pose.residue( ii + 1 ).has_lower_connect() || ii_res.residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) ) {
 
 				// Escape if it's bonded to residue 1's lower--we don't want to double-count cyclization here.
 				// If jj < ii, we already counted it

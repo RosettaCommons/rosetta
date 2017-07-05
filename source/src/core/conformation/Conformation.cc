@@ -3372,7 +3372,6 @@ Conformation::residues_replace(
 	residues_[ seqpos ] = new_rsd.clone();
 	residues_[ seqpos ]->seqpos( seqpos );
 	residues_[ seqpos ]->chain( old_chain );
-
 	residues_[ seqpos ]->copy_residue_connections( *old_residue );
 	if ( residues_[ seqpos ]->data_ptr() != nullptr ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 	//Loop through all the connections of the new residue and ensure that the residues connected to it have their

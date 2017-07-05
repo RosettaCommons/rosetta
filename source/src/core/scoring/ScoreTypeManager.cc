@@ -481,6 +481,10 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "overlap_chainbreak" ] = overlap_chainbreak;
 	name2score_type_[ "distance_chainbreak" ] = distance_chainbreak;
 	name2score_type_[ "dof_constraint" ] = dof_constraint;
+
+	name2score_type_[ "branch_conn" ] = branch_conn;
+	name2score_type_[ "linear_branch_conn" ] = linear_branch_conn;
+
 	name2score_type_[ "rms_energy" ] = rms;
 	name2score_type_[ "suck" ] = suck;
 	name2score_type_[ "res_type_constraint" ] = res_type_constraint;

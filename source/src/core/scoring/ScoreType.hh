@@ -515,6 +515,9 @@ enum ScoreType {
 	distance_chainbreak,
 	dof_constraint,
 
+	branch_conn,
+	linear_branch_conn,
+
 	rama_prepro,  //fpd rama with separate pre-proline potential
 	paa_abego3, // probability of finding an amino acid in a particular abego triplet
 

@@ -79,7 +79,6 @@ sources = {
 		"cov_test",
 		"diversify_conotoxin",
 		"evaluate_beta_mutants",
-		"dump_capped_residue",
 		"get_dihedral_b3aa",
 		"hbs_dock_design",
 		"hbs_creator",

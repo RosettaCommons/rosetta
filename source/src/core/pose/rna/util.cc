@@ -602,7 +602,6 @@ is_torsion_valid(
 	bool verbose,
 	bool skip_chainbreak_torsions
 ) {
-
 	id::AtomID id1, id2, id3, id4;
 
 	bool is_fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
@@ -616,6 +615,11 @@ is_torsion_valid(
 	chemical::ResidueType const & rsd_2 = pose.residue_type( id2.rsd() );
 	chemical::ResidueType const & rsd_3 = pose.residue_type( id3.rsd() );
 	chemical::ResidueType const & rsd_4 = pose.residue_type( id4.rsd() );
+
+	if ( rsd_1.has_variant_type( chemical::FIVEPRIME_CAP ) ) return false;
+	if ( rsd_2.has_variant_type( chemical::FIVEPRIME_CAP ) ) return false;
+	if ( rsd_3.has_variant_type( chemical::FIVEPRIME_CAP ) ) return false;
+	if ( rsd_4.has_variant_type( chemical::FIVEPRIME_CAP ) ) return false;
 
 	if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
 			!rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
@@ -634,6 +638,9 @@ is_torsion_valid(
 	// (Since these torsions will contain virtual atom(s),
 	// but want to score these torsions
 	bool const is_cutpoint_closed1 = is_cutpoint_closed_torsion( pose, torsion_id );
+
+	// Oh, either this OR one of em has 5prime_cap
+	// Note that having to make this exception is awful.... at least make it earlier.
 	debug_assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
 
 	// AMW: If this isn't a cutpoint in the FT, the below is not a problem (fingers crossed -- hack)

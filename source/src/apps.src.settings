@@ -48,6 +48,7 @@ sources = {
 		"backrub",
 		"calculate_sasa",
 		"combine_silent",
+		"dump_capped_residue",
 		"extract_pdbs",
 		"fragment_picker",
 		"idealize_jd2",

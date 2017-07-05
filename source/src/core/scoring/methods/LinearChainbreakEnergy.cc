@@ -121,7 +121,7 @@ core::Real LinearChainbreakEnergy::do_score_dev( core::conformation::Residue con
 
 core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue const & lower_rsd,
 	core::conformation::Residue const & upper_rsd,
-	core::Size const nbb,
+	core::Size const /*nbb*/,
 	core::Size const cutpoint,
 	core::pose::Pose const & pose) const
 {
@@ -142,10 +142,19 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 		upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz(),          // N
 		upper_rsd.atom( "OVU1" ).xyz() );                                  // virtual C
 
+
+	// AMW: OVL1 may be bonded to other atoms! For example, we could hang these
+	// two atoms off a 5'-capped residue -- off the end of the triphosphate --
+	// and getting this right is SUPER important because we use the manual_lower_stub
+	// for scoring.
+
+	// Therefore, I'm going to change the below definition to ask for OVL1's parent.
+
 	//for double-checking... ( debug )
 	Stub manual_lower_stub( lower_rsd.atom( "OVL2" ).xyz(),                // virtual CA
 		lower_rsd.atom( "OVL1" ).xyz(),                                // virtual N
-		lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb ] ).xyz() );  // C
+		lower_rsd.atom( lower_rsd.atom_name( lower_rsd.type().atom_base( lower_rsd.atom_index( "OVL1" ) ) ) ).xyz() );  // C
+
 
 	if ( distance( lower_stub, manual_lower_stub ) > 0.01 ) {
 		tr.Warning << "mismatch between manual computed and atom-tree stub: "
@@ -265,6 +274,8 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 	if ( is_lower_cutpoint( residue, pose ) ) {
 		Residue const & lower_rsd( pose.residue( residue ) );
 		Size cutpoint_partner( get_upper_cutpoint_partner_for_lower( pose, residue ) );
+		// Long term maybe these should just skip the rest of the if.
+		if ( cutpoint_partner == 0 ) return;
 		Residue const & upper_rsd( pose.residue( cutpoint_partner ) );
 		Vector const & xyz_moving( pose.xyz( id ) );
 
@@ -295,6 +306,7 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 	// CASE 2: right-hand side of chainbreak (CUTPOINT_UPPER)
 	if ( is_upper_cutpoint( residue,pose ) ) {
 		Size cutpoint_partner( get_lower_cutpoint_partner_for_upper( pose, residue ) );
+		if ( cutpoint_partner == 0 ) return;
 		Residue const & lower_rsd( pose.residue( cutpoint_partner ) );
 		Residue const & upper_rsd( pose.residue( residue ) );
 		Vector const & xyz_moving( pose.xyz( id ) );

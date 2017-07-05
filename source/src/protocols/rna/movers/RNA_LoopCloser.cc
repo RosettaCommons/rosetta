@@ -193,7 +193,9 @@ RNA_LoopCloser::passes_fast_scan( core::pose::Pose & pose, Size const i ) const
 	//Don't bother if there hasn't been any movement...
 	core::kinematics::DomainMap domain_map;
 	pose.conformation().update_domain_map( domain_map );
-	if ( domain_map( i ) == domain_map( i+1 ) ) {
+	// AMW: eliminated i+1 assumption
+	Size const j = core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, i );
+	if ( domain_map( i ) == domain_map( j ) ) {
 		if ( verbose_ ) TR << "Skipping " << i << " due to domain map."  << domain_map( i ) << " " << domain_map( i+1 ) << std::endl;
 		return false;
 	}

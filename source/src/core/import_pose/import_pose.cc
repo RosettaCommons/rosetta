@@ -995,6 +995,8 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	vector1< Size > const cutpoint_closed          =
 		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
 	if ( option[ full_model::cyclize ].user() ) utility_exit_with_message( "Cannot handle cyclize yet in stepwise." );
+	vector1< Size > const fiveprime_res  =
+		full_model_parameters->conventional_to_full( option[ full_model::fiveprime_cap ].resnum_and_chain() );
 	vector1< Size > const bulge_res                =
 		full_model_parameters->conventional_to_full( option[ full_model::rna::bulge_res ].resnum_and_chain() );
 	vector1< Size > const extra_minimize_jump_res  =
@@ -1099,6 +1101,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	// full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
 
 	full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
+	full_model_parameters->set_parameter_as_res_list_in_pairs( FIVEPRIME_CAP,  fiveprime_res );
 	full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
 	if ( option[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );
 

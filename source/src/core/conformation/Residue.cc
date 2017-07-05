@@ -1460,14 +1460,11 @@ Residue::update_sequence_numbering( utility::vector1< Size > const & old2new )
 	if ( ! pseudobonds_.empty() ) {
 		std::map< Size, PseudoBondCollectionCOP > copy_pseudobonds( pseudobonds_ );
 		pseudobonds_.clear();
-		for ( std::map< Size, PseudoBondCollectionCOP >::const_iterator
-				pb_iter = copy_pseudobonds.begin(),
-				pb_iter_end = copy_pseudobonds.end();
-				pb_iter != pb_iter_end; ++pb_iter ) {
-			Size old_neighbor_resid = pb_iter->first;
+		for ( auto const & elem : copy_pseudobonds ) {
+			Size old_neighbor_resid = elem.first;
 			Size new_neighbor_resid = old2new[ old_neighbor_resid ];
 			if ( ! new_neighbor_resid ) continue;
-			pseudobonds_[ new_neighbor_resid ] = pb_iter->second->clone_with_new_sequence_numbering( old2new );
+			pseudobonds_[ new_neighbor_resid ] = elem.second->clone_with_new_sequence_numbering( old2new );
 		}
 	}
 
@@ -1563,7 +1560,9 @@ Residue::connect_atom( Residue const & other ) const
 		return rsd_type_.residue_connection( connections_to_residues_.find( Size( other_seqpos) )->second[ 1 ] ).atomno();
 	}
 
-	utility_exit_with_message( "Residue::conect_atom: I'm not bonded to that other residue!!");
+	TR.Error << "Residue::conect_atom: I'm not bonded to that other residue!! (" << seqpos() << " " << other_seqpos << ")" << std::endl;
+	TR.Error << type().name() << " " << other.type().name() << std::endl;
+	utility_exit();
 	return 0;
 }
 

@@ -231,6 +231,10 @@ FullModelInfo::rna_anti_chi_res() const {
 	return full_model_parameters_->get_res_list( RNA_ANTI_CHI );
 }
 utility::vector1< std::pair< Size, Size > >
+FullModelInfo::fiveprime_cap() const {
+	return full_model_parameters_->get_res_list_as_pairs( FIVEPRIME_CAP );
+}
+utility::vector1< std::pair< Size, Size > >
 FullModelInfo::jump_pairs() const {
 	return full_model_parameters_->get_res_list_as_pairs( JUMP );
 }

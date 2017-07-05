@@ -1,6 +1,6 @@
 # Gaussian corrected charges and positions
 # via HF/6-31G(d), SCF=Tight optimization
-# contact amw579@nyu.edu
+# contact amw579@stanford.edu
 NAME 7MG
 IO_STRING 7MG X
 TYPE POLYMER #residue type
@@ -43,6 +43,10 @@ ATOM  H8  Haro H    0.438902
 ATOM 1HM7 Hapo H    0.321930
 ATOM 2HM7 Hapo H    0.202194
 ATOM 3HM7 Hapo H    0.193095
+
+ATOM_ALIAS 1HM7 HM71
+ATOM_ALIAS 2HM7 HM72
+ATOM_ALIAS 3HM7 HM73
 
 ATOM_ALIAS  OP2  O1P 
 ATOM_ALIAS  OP1  O2P 

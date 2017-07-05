@@ -40,6 +40,7 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreType.hh>
@@ -511,7 +512,6 @@ void
 RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
-
 	pose::Pose pose_copy = pose;
 	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open() );
 
@@ -544,6 +544,34 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		core::pose::correctly_add_cutpoint_variants( pose, n, true, m );
 	}
 
+	// Oh, this is a bummer. If this is empty, we have to separately check -- 
+	// since uint(0-1) > 1
+	for ( Size i = 1; !rna_params_.fiveprime_cap().empty() && i <= rna_params_.fiveprime_cap().size() - 1; i += 2 ) {
+
+		// Add 5PrimeCap to first, assert second is 7MG, add cutpoint lower to it.
+		Size const capped = rna_params_.fiveprime_cap()[i];
+		Size const methylg = rna_params_.fiveprime_cap()[i+1];
+		runtime_assert( pose.residue_type( methylg ).base_name() == "7MG" );
+
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, capped );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, capped );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, capped );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, capped );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, capped );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::FIVEPRIME_CAP, capped );
+
+
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, methylg );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, methylg );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, methylg );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, methylg );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, methylg );
+
+		pose.conformation().declare_chemical_bond( capped, "ZO3'", methylg, "P" );
+		// Not obvious why I have to re-do this, but maybe it's because I nuke some polymeric variants?
+		pose.conformation().declare_chemical_bond( capped, "O3'", capped+1, "P" );
+	}
+
 	atom_level_domain_map->renumber_after_variant_changes( pose );
 
 }
@@ -568,7 +596,8 @@ RNA_DeNovoPoseInitializer::setup_virtual_phosphate_variants( pose::Pose & pose )
 	using namespace id;
 	using namespace chemical;
 
-	if ( pose.residue( 1 ).is_RNA() ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
+	// Special exception for FIVEPRIME_CAP use in rna_denovo
+	if ( pose.residue( 1 ).is_RNA() && !pose.residue_type( 1 ).has_variant_type( FIVEPRIME_CAP ) ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 
 	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open() );
 	for ( Size i = 1; i <= cutpoints_open.size(); i++ ) {

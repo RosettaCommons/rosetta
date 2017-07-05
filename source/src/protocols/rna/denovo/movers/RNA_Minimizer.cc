@@ -282,6 +282,9 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 		if ( jump_atom2.size() > 0 ) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
 
 		if ( moveable_jump( jump_atom_id1, jump_atom_id2, *atom_level_domain_map_ ) )  mm.set_jump( n, true );
+		// Always minimize jumps between chain-broken 5prime_cap residues, basically...
+		if ( pose.residue_type( jump_pos1 ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) mm.set_jump( n, true );
+		if ( pose.residue_type( jump_pos2 ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) mm.set_jump( n, true );
 	}
 
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.

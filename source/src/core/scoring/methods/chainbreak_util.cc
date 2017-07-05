@@ -113,10 +113,7 @@ get_upper_cutpoint_partner_for_lower( pose::Pose const & pose, Size const lower_
 			upper_cutpoint_partner = other; break;
 		}
 	}
-	if ( upper_cutpoint_partner == 0 &&
-			pose.residue_type( lower_res + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
-		utility_exit_with_message( "Did you mean to specify a chainbreak at " + ObjexxFCL::string_of( lower_res ) + "? If so, specify a chemical bond to " + ObjexxFCL::string_of( lower_res + 1 ) + ". See, e.g., core/pose/util.cc:correctly_add_cutpoint_variants()."  );
-	}
+
 	return upper_cutpoint_partner;
 }
 
@@ -134,10 +131,7 @@ get_lower_cutpoint_partner_for_upper( pose::Pose const & pose, Size const upper_
 			lower_cutpoint_partner = other; break;
 		}
 	}
-	if ( lower_cutpoint_partner == 0 &&
-			pose.residue_type( upper_res - 1 ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
-		utility_exit_with_message( "Did you mean to specify a chainbreak before " + ObjexxFCL::string_of( upper_res ) + "? If so, specify a chemical bond to " + ObjexxFCL::string_of( upper_res - 1 ) + ". See, e.g., core/pose/correctly_add_cutpoint_variants()."  );
-	}
+
 	return lower_cutpoint_partner;
 }
 

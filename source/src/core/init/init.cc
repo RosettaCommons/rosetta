@@ -46,6 +46,7 @@
 #include <core/scoring/methods/AspartimidePenaltyEnergyCreator.hh>
 #include <core/scoring/methods/CenPairEnergyCreator.hh>
 #include <core/scoring/methods/ChainbreakEnergyCreator.hh>
+#include <core/scoring/methods/BranchEnergyCreator.hh>
 #include <core/scoring/methods/ContactOrderEnergyCreator.hh>
 #include <core/scoring/methods/EnvEnergyCreator.hh>
 #include <core/scoring/methods/EnvSmoothEnergyCreator.hh>
@@ -135,6 +136,7 @@
 #include <core/scoring/methods/LK_hackCreator.hh>
 #include <core/scoring/lkball/LK_BallEnergyCreator.hh>
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
+#include <core/scoring/methods/LinearBranchEnergyCreator.hh>
 #include <core/scoring/methods/MMBondAngleEnergyCreator.hh>
 #include <core/scoring/methods/MMBondLengthEnergyCreator.hh>
 #include <core/scoring/methods/CartesianBondedEnergyCreator.hh>
@@ -391,6 +393,7 @@ static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator
 static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::AspartimidePenaltyEnergyCreator > AspartimidePenaltyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::BranchEnergyCreator > BranchEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairMotifEnergyCreator > CenPairMotifEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairMotifDegreeEnergyCreator > CenPairMotifDegreeEnergyCreator_registrator;
@@ -486,6 +489,7 @@ static EnergyMethodRegistrator< scoring::methods::LK_PolarNonPolarEnergyCreator 
 static EnergyMethodRegistrator< scoring::methods::LK_hackCreator > LK_hackCreator_registrator;
 static EnergyMethodRegistrator< scoring::lkball::LK_BallEnergyCreator > LK_BallEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::LinearChainbreakEnergyCreator > LinearChainbreakEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::LinearBranchEnergyCreator > LinearBranchEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MMBondAngleEnergyCreator > MMBondAngleEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CartesianBondedEnergyCreator > CartesianBondedEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MMBondLengthEnergyCreator > MMBondLengthEnergyCreator_registrator;

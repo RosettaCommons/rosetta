@@ -76,6 +76,7 @@ enum FullModelParameterType {
 	RNA_TERMINAL, // base pairs on which new bases cannot stack
 	RNA_BLOCK_STACK_ABOVE, // base pairs on which new bases cannot stack 'above' (3' direction)
 	RNA_BLOCK_STACK_BELOW, // base pairs on which new bases cannot stack 'below' (5' direction)
+	FIVEPRIME_CAP, // pair: first has 5' cap patch; second must be a cutpoint upper 7MG.
 	// next-section: anything protein-specific
 	DISULFIDE,
 

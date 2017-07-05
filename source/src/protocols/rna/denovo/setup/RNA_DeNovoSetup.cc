@@ -219,6 +219,9 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
 	vector1< Size > const cutpoint_cyclize          =
 		full_model_parameters->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() );
+	// Ends up as pairs. Starts as a vector
+	vector1< Size > const fiveprime_cap =
+		full_model_parameters->conventional_to_full( option[ full_model::fiveprime_cap ].resnum_and_chain() );
 	vector1< Size > block_stack_above_res  =
 		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
 	vector1< Size > block_stack_below_res  =
@@ -522,6 +525,11 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	vector1< Size > working_cutpoint_open   = working_res_map( cutpoint_open_in_full_model, working_res, true /*leave out last residue*/ );
 	vector1< Size > working_cutpoint_closed = working_res_map( cutpoint_closed, working_res );
 	vector1< Size > working_cutpoint_cyclize = working_res_map( cutpoint_cyclize, working_res );
+	vector1< Size > working_fiveprime_cap = working_res_map( fiveprime_cap, working_res );
+	/*vector1< std::pair< Size, Size > > working_fiveprime_cap_in_pairs;
+	for ( Size ii = 1; ii <= working_fiveprime_cap.size() - 1; ii += 2 ) {
+	working_fiveprime_cap_in_pairs.emplace_back( std::make_pair( working_fiveprime_cap[ii], working_fiveprime_cap[ii+1] ) );
+	}*/
 	vector1< Size > working_block_stack_above_res = working_res_map( block_stack_above_res, working_res );
 	vector1< Size > working_block_stack_below_res = working_res_map( block_stack_below_res, working_res );
 	vector1< Size > working_virtual_anchor  = working_res_map( virtual_anchor, working_res );
@@ -867,6 +875,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	rna_params_->set_cutpoints_open( working_cutpoint_open );
 	rna_params_->set_cutpoints_closed( working_cutpoint_closed );
 	rna_params_->set_cutpoints_cyclize( working_cutpoint_cyclize );
+	rna_params_->set_fiveprime_cap( working_fiveprime_cap );
 	rna_params_->set_block_stack_above_res( working_block_stack_above_res );
 	rna_params_->set_block_stack_below_res( working_block_stack_below_res );
 	rna_params_->set_virtual_anchor_attachment_points( working_virtual_anchor );

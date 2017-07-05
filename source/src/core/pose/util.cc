@@ -3128,7 +3128,9 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 	// check simple loop, like  in get_upper_cutpoint_partner_for_lower() in chainbreak_util.hh
 	Residue const & lower_rsd( pose.conformation().residue( cutpoint_res ) );
 	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
-		if ( lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+		if ( lower_rsd.has_upper_connect() && lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+		// If there isn't an upper connect, one of the few valid options is ZO3'
+		if ( !lower_rsd.has_upper_connect() && ( ! lower_rsd.has_variant_type( core::chemical::FIVEPRIME_CAP ) || lower_rsd.atom_name( lower_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) ) continue;
 		Size upper( lower_rsd.connected_residue_at_resconn( k ) );
 		if ( upper == 0 ) continue;
 		Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
@@ -3143,7 +3145,7 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 	// and code up analogous loop for lower/upper.
 	Residue const & upper_rsd( pose.conformation().residue( next_res ) );
 	for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
-		if ( upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
+		if ( upper_rsd.has_lower_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
 		Size lower( upper_rsd.connected_residue_at_resconn( k ) );
 		if ( lower == 0 ) continue;
 		Residue const & lower_rsd( pose.conformation().residue( lower ) ); // lower residue.
@@ -3155,11 +3157,22 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 		pose.conformation().sever_chemical_bond( next_res, k, lower, m );
 	}
 
-	pose.conformation().declare_chemical_bond(
-		cutpoint_res,
-		pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
-		next_res,
-		pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
+	// Two options. Might be ZO3'...
+	if ( !lower_rsd.has_upper_connect() ) {
+		debug_assert( pose.residue( cutpoint_res ).has( "ZO3'" ) );
+		// Right now, assume ZO3'
+		pose.conformation().declare_chemical_bond(
+			cutpoint_res,
+			"ZO3'",
+			next_res,
+			pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
+	} else {
+		pose.conformation().declare_chemical_bond(
+			cutpoint_res,
+			pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
+			next_res,
+			pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
+	}
 }
 
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.

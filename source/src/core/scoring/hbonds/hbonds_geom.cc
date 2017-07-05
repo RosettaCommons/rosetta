@@ -543,10 +543,11 @@ get_hb_acc_chem_type(
 			chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_info();
 			if ( aatm == rna_type.op2_atom_index() || aatm == rna_type.op1_atom_index() || aname == " O3P" ||
 					aname == "XOP2" || aname == "XOP1" ||
-					aname == "YOP2" || aname == "YOP1" ) {
+					aname == "YOP2" || aname == "YOP1" ||
+					aname == "ZOP2" || aname == "ZOP1" ) {
 				return hbacc_PCA_RNA;
 			} else if ( aatm == rna_type.o5prime_atom_index() || aatm == rna_type.o3prime_atom_index() ||
-					aname == "YO5'" || aname == "XO3'" ) {
+					aname == "YO5'" || aname == "XO3'" || aname == "YO3'" || aname == "ZO3'" ) {
 				return hbacc_PES_RNA;
 			} else if ( aatm == rna_type.o4prime_atom_index() ) {
 				return hbacc_RRI_RNA;

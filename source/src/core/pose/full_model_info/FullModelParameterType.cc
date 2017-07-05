@@ -64,6 +64,7 @@ initialize_full_model_parameter_type_name(){
 		full_model_parameter_type_name[ RNA_TERMINAL ]    = "RNA_TERMINAL";
 		full_model_parameter_type_name[ RNA_BLOCK_STACK_ABOVE ]    = "RNA_BLOCK_STACK_ABOVE";
 		full_model_parameter_type_name[ RNA_BLOCK_STACK_BELOW ]    = "RNA_BLOCK_STACK_BELOW";
+		full_model_parameter_type_name[ FIVEPRIME_CAP ]      = "FIVEPRIME_CAP";
 		full_model_parameter_type_name[ DISULFIDE ]      = "DISULFIDE";
 		init = true;
 	}
