@@ -2991,8 +2991,13 @@ Conformation::jump_atom_id( int const jump_number ) const
 
 	Size const seqpos( edge.stop() );
 
+	// AMW TODO: this edge SHOULDN'T get atom info if the atom isn't found.
 	if ( edge.has_atom_info() ) {
-		return id::AtomID( residues_[ seqpos ]->atom_index( edge.downstream_atom() ), seqpos );
+		if ( !residues_[ seqpos ]->has( edge.downstream_atom() ) ) {
+			return id::AtomID( 1, seqpos );
+		} else {
+			return id::AtomID( residues_[ seqpos ]->atom_index( edge.downstream_atom() ), seqpos );
+		}
 	} else {
 		// get the default atomno used for Jump attachment
 		int const atomno( get_root_atomno( const_residue_( seqpos ), kinematics::dir_jump));

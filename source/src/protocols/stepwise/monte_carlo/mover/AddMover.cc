@@ -389,9 +389,11 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ){
 			default_jump_atom( pose.residue_type( res_to_add ) ) );
 		pose.fold_tree( f );
 
-		add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
-		if ( res_to_add_in_full_model_numbering_ < res_list[ res_to_build_off+1 ]-1 ) {
-			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
+		if ( pose.residue_type( res_to_add ).is_RNA() ) {
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
+			if ( res_to_add_in_full_model_numbering_ < res_list[ res_to_build_off+1 ]-1 ) {
+				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
+			}
 		}
 		suite_num_ = 0;
 	}
@@ -457,9 +459,11 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 		pose.fold_tree( f );
 
 		if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
-			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
-			if ( !pose.residue_type( res_to_add+1).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
-				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add+1 );
+			if ( pose.residue_type( res_to_add ).is_RNA() ) {
+				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
+				if ( !pose.residue_type( res_to_add+1).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
+					add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add+1 );
+				}
 			}
 		}
 		suite_num_ = 0;
@@ -691,7 +695,12 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	} else {
 		rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
 	}
-
+	
+	// Might not be able to get by base name if adding a ligand -- particularly
+	// from the CCD?
+	if ( !rsd_type ) {
+		rsd_type = chemical::ResidueTypeCOP( rsd_set->name_map( newrestype3 ).get_self_ptr() );
+	}
 	return conformation::ResidueFactory::create_residue( *rsd_type );
 }
 

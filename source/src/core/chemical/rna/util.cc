@@ -365,8 +365,20 @@ get_watson_crick_base_pair_atoms(
 Vector
 get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
+	// The centroid is C for pdb_GAI -- we sort of need this by
+	// definition. So that we don't refer to pdb_GAI by name,
+	// let's say that all non-polymer residues have a centroid of 
+	// their first atom's xyz. This is vaguely reasonable a priori,
+	// since it's slightly more likely than not to be the root, maybe,
+	// and may prompt a better general centroid function.
+ 
+	// Really, AMW TODO don't call get_rna_base_centroid on non RNA.
+	// instead call something else!
+	if ( !rsd.is_polymer() ) return rsd.xyz(1);
+	
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() ) {
+		std::cout << "name " << rsd.type().name() << std::endl;
 		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return Vector( 0.0, 0.0, 0.0 );
 		} else { //if not option
@@ -423,10 +435,17 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 numeric::xyzMatrix< core::Real >
 get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ){
 
+	// AMW TODO: similarly, don't call this RNA FUNCTION for non RNA residues.
+	// I suppose ligands with planar bits with H-bond donors/acceptors can have
+	// 'edges' in the same way, perhaps. Separate function!
+	
+	// We have to retain our mentions of pdb_GAI here because we are specialized
+	// to its particular WC atoms. 
+	
 	using namespace chemical;
 
 	//SML PHENIX conference
-	if ( !rsd.is_RNA() ) {
+	if ( !rsd.is_RNA() && rsd.type().name() != "pdb_GAI" ) {
 		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
 		} else { //if not option
@@ -441,9 +460,14 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	Vector WC_coord, H_coord;
 	if ( res_type == aa_unk || res_type == aa_unp ) {
-		// Just use the first two sidechain atoms for generality
-		WC_coord = rsd.xyz( rsd.first_sidechain_atom() );
-		H_coord = rsd.xyz( rsd.first_sidechain_atom() + 1 );
+		if ( rsd.type().name() == "pdb_GAI" ) {
+			WC_coord = rsd.xyz("N2");
+			H_coord = rsd.xyz("N3");
+		} else {
+			// Just use the first two sidechain atoms for generality
+			WC_coord = rsd.xyz( rsd.first_sidechain_atom() );
+			H_coord = rsd.xyz( rsd.first_sidechain_atom() + 1 );
+		}
 	} else {
 		// Make an axis pointing from base centroid to Watson-Crick edge.
 		std::string WC_atom;

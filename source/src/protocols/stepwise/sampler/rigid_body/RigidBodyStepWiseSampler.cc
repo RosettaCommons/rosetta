@@ -245,6 +245,9 @@ RigidBodyStepWiseSampler::calculate_jump( pose::Pose & pose, Size const seq_num,
 	Size const jump_no = stepwise::modeler::look_for_unique_jump_to_moving_res( pose.fold_tree(), seq_num );
 	std::string downstream_atom_name = pose.fold_tree().downstream_atom( jump_no );
 	Size const i = seq_num;
+	// Atom 1 works for pdb_GAI and for metals -- and will probably work as a default 
+	// choice for ligands. We can always write a function here.
+	if ( !pose.residue_type( i ).is_polymer() ) downstream_atom_name = pose.residue_type( i ).atom_name( 1 );
 	Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );
 	kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );
 	runtime_assert( current_atom->is_jump() );

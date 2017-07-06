@@ -83,6 +83,8 @@ get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::Residu
 		auto const & rsd_at_origin = rsd_at_origin_list[n];
 		numeric::xyzVector< core::Real > const centroid = core::chemical::rna::get_rna_base_centroid( *rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
 
+		if ( !rsd_at_origin->has( atom_name ) ) continue;
+		
 		Real const distance = ( rsd_at_origin->xyz( atom_name ) - centroid ).length();
 
 		if ( max_distance < distance ) max_distance = distance;

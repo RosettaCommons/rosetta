@@ -973,6 +973,10 @@ get_root_residue_root_atomno(
 	kinematics::FoldTree const & fold_tree
 )
 {
+	// AMW TODO: Right now, we assume that this should be 1 for pdb_GAI.
+	// That's not necessarily true for all ligand residues, so we are keeping it
+	// this way.
+	if (rsd.type().name() == "pdb_GAI") return 1; 
 	Size const seqpos( rsd.seqpos() );
 	debug_assert( seqpos == Size( fold_tree.root() ) ); // need to refactor foldtree to use Size instead of int
 
@@ -1609,6 +1613,10 @@ get_anchor_and_root_atoms(
 	Size & root_atomno
 )
 {
+	// AMW: There are some ugly special cases for pdb_GAI here. That's 
+	// because the edges weren't getting good atom indices on them, I think?
+	// In any case, this function isn't called in tight loops, so we are ok.
+	
 	ASSERT_ONLY(Size const anchor_pos( anchor_rsd.seqpos() ););
 	ASSERT_ONLY(Size const root_pos( root_rsd.seqpos() ););
 
@@ -1623,13 +1631,17 @@ get_anchor_and_root_atoms(
 		debug_assert( anchor_pos == Size(edge.start()) && root_pos == Size(edge.stop()) );
 		if ( edge.has_atom_info() ) {
 			// JUMP OR CHEMICAL W/ ATOM INFO
-			anchor_atomno = anchor_rsd.atom_index( edge.upstream_atom() );
-			root_atomno   =   root_rsd.atom_index( edge.downstream_atom() );
+			if ( anchor_rsd.type().name() == "pdb_GAI" ) anchor_atomno = 1;
+			else anchor_atomno = anchor_rsd.atom_index( edge.upstream_atom() );
+			if ( root_rsd.type().name() == "pdb_GAI" ) root_atomno = 1;
+			else root_atomno   =   root_rsd.atom_index( edge.downstream_atom() );
 		} else {
 			if ( edge.is_jump() ) {
 				// JUMP EDGE
-				anchor_atomno = get_anchor_atomno( anchor_rsd, kinematics::dir_jump );
-				root_atomno   =   get_root_atomno(   root_rsd, kinematics::dir_jump );
+				if ( anchor_rsd.type().name() == "pdb_GAI" ) anchor_atomno = 1;
+				else anchor_atomno = get_anchor_atomno( anchor_rsd, kinematics::dir_jump );
+				if ( root_rsd.type().name() == "pdb_GAI" ) root_atomno = 1;
+				else root_atomno   =   get_root_atomno(   root_rsd, kinematics::dir_jump );
 			} else if ( edge.is_chemical_bond() ) {
 				// CHEMICAL EDGE
 				get_chemical_root_and_anchor_atomnos( anchor_rsd, root_rsd, anchor_atomno, root_atomno );

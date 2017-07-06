@@ -223,15 +223,11 @@ SubMotifLibrary::get_submotif_moves( pose::Pose const & pose ) const {
 
 	utility::vector1< StepWiseMove > submotif_moves;
 
-	for ( std::set< SubMotifSequenceSet >::const_iterator it = submotif_sequence_sets_.begin(),
-			end = submotif_sequence_sets_.end(); it != end; ++it ) {
-
-		SubMotifSequenceSet const & submotif_sequence_set( *it );
+	for ( SubMotifSequenceSet const & submotif_sequence_set : submotif_sequence_sets_ ) {
 		utility::vector1< SequenceMapping > all_matches =
 			get_matches_for_one_submotif_sequence_set( submotif_sequence_set, pose );
 
-		for ( Size m = 1; m <= all_matches.size(); m++ ) {
-			SequenceMapping const & mapping_to_pose = all_matches[ m ];
+		for ( SequenceMapping const & mapping_to_pose : all_matches ) {
 
 			// need to combine this mapping from submotif_sequence_set --> pose
 			// with stored          mapping from submotif_sequence_set --> submotif_pose
@@ -265,8 +261,7 @@ SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet 
 	Size submotif_length = 0;
 	vector1< Size > submotif_cutpoints;
 	std::string submotif_full_sequence;
-	for ( Size n = 1; n <= submotif_sequence_set.size(); n++ ) {
-		std::string const & submotif_sequence = submotif_sequence_set[ n ];
+	for ( std::string const & submotif_sequence : submotif_sequence_set ) {
 		submotif_length += submotif_sequence.size();
 		submotif_cutpoints.push_back( submotif_length );
 		submotif_full_sequence += submotif_sequence;
@@ -356,8 +351,7 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 	///  is set separately.
 	//
 	////////////////////////////////////////////////////////////////////////////
-	for ( Size n = 1; n <= possible_next_res.size(); n++ ) {
-		Size const i_full = possible_next_res[ n ];
+	for ( Size const i_full : possible_next_res ) {
 
 		if ( i_full <= pose_full_sequence.size() &&
 				submotif_full_sequence[ i_submotif - 1 ] == pose_full_sequence[ i_full - 1 ] &&
@@ -383,9 +377,8 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 SubMotifLibrary::output_tags() const {
-	for ( std::map< PoseTag, core::pose::PoseCOP >::const_iterator it = submotif_poses_by_tag_.begin(),
-			end = submotif_poses_by_tag_.end(); it != end; ++it ) {
-		TR << TR.Green << it->first << " " << get_submotif_sequence_set( *(it->second), false /*sort_sequences*/ ) << TR.Reset << std::endl;
+	for ( auto const & elem : submotif_poses_by_tag_ ) {
+		TR << TR.Green << elem.first << " " << get_submotif_sequence_set( *elem.second, false /*sort_sequences*/ ) << TR.Reset << std::endl;
 	}
 }
 

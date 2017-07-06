@@ -2,6 +2,7 @@ base_pairs/cg_standard.pdb
 base_pairs/ua_handle_1q9a.pdb
 base_pairs/gg_1raw_RNA.pdb
 base_pairs/gg_2grb_RNA.pdb
+#base_pairs/G_GAI.pdb
 uturns/uturn_t_loop_3l0u_RNA.pdb
 uturns/uturn_t_loop_3l0u_RNA_thread_to_uaa.pdb
 #dinucleotides/uu.out.2.pdb

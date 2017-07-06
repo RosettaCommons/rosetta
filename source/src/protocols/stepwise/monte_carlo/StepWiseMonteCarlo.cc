@@ -185,7 +185,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 		}
 	}
 	// Done with this pose, so we can remove the checkpoint file
-	if ( options_->checkpoint() ) remove_checkpoint_file();
+	if ( options_->checkpoint() )	remove_checkpoint_file();
 
 	if ( options_->recover_low() ) monte_carlo->recover_low( pose );
 	show_scores( pose, "Final score:" );
