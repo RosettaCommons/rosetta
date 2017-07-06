@@ -667,6 +667,7 @@ residue_types/beta-peptide/transACPC.params
 ## Saccharide Types (require -include_sugars flag to be loaded in)
 ### Aldopentoses
 #### Xyloses
+residue_types/carbohydrates/to3-beta-D-Xylp.params
 residue_types/carbohydrates/to4-alpha-D-Xylp.params
 ### Aldohexoses
 #### Glucoses

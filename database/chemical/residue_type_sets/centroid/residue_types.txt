@@ -56,6 +56,7 @@ residue_types/staple/08B.params
 ## **These are currently exact copies of the fa .params.**
 ### Aldopentoses
 #### Xyloses
+residue_types/carbohydrates/to3-beta-D-Xylp.params
 residue_types/carbohydrates/to4-alpha-D-Xylp.params
 ### Aldohexoses
 #### Glucoses
