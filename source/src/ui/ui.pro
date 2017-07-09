@@ -1,4 +1,4 @@
-QT += core gui widgets
+QT += core gui widgets network
 
 CONFIG += object_parallel_to_source c++11 no_keywords
 
@@ -18,26 +18,30 @@ QMAKE_CXXFLAGS += \
     -isystem$$PWD/../../external/libxml2/include
 
 
-SOURCES += \ 
+SOURCES += \
     ui_lib_test.cpp \
     task/node.cpp \
     task/project.cpp \
     task/project_model.cpp \
     task/project_view.cpp \
     task/task.cpp \
+    task/task_view.cpp \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.cpp \
     ui_protocols/helical_bundle/HelixOptionWidget.cpp \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.cpp \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp
 
 
-HEADERS  += \ 
+HEADERS  += \
     ui_lib_test.h \
     task/node.h \
     task/project.h \
     task/project_model.h \
     task/project_view.h \
+    task/task.fwd.h \
     task/task.h \
+    task/util.h \
+    task/task_view.h \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.h \
     ui_protocols/helical_bundle/HelixOptionWidget.h \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.fwd.h \
@@ -45,10 +49,13 @@ HEADERS  += \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.h \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.fwd.h \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.h \
-    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h
+    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h \
+    util/exception.h
 
-FORMS    += \ 
+
+FORMS    += \
     task/project_view.ui \
+    task/task_view.ui \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.ui \
     ui_protocols/helical_bundle/HelixOptionWidget.ui
 

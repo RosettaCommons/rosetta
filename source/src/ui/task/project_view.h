@@ -14,6 +14,8 @@
 #ifndef PROJECT_VIEW_H
 #define PROJECT_VIEW_H
 
+#include <ui/task/project_model.h>
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -32,8 +34,24 @@ public:
     explicit ProjectView(QWidget *parent = 0);
     ~ProjectView();
 
+public  Q_SLOTS:
+
+private Q_SLOTS:
+	void on_new_task_clicked();
+    void on_submit_clicked();
+
+    void on_action_open_project_triggered();
+    void on_action_save_project_triggered();
+
+    void on_project_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::ProjectView *ui;
+
+	ProjectModel * project_model_ = nullptr;
+
+	ProjectSP project_;
+	QString file_name_;
 };
 
 } // namespace task

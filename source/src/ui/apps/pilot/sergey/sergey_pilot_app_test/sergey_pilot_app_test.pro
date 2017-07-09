@@ -1,8 +1,8 @@
 QT += core gui widgets
 
-CONFIG += object_parallel_to_source c++11
+CONFIG += object_parallel_to_source no_keywords c++11
 
-TARGET = test
+TARGET = sergey_pilot_app_test
 TEMPLATE = app
 
 DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD UNUSUAL_ALLOCATOR_DECLARATION

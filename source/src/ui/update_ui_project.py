@@ -311,7 +311,7 @@ def generate_app_project_files(rosetta_source_path, prefix):
     #if not os.path.isdir(apps_project_root): os.makedirs(apps_project_root)
     #projects = [ p for p in os.listdir(rosetta_source_path+'/src/ui/apps/public') if os.path.isdir(rosetta_source_path+'/src/ui/apps/public/'+p) ]
 
-    projects = ['workbench']  # WARNING: DO NOT ADD EXTRA APPS to this list! We intentionally want to keep only one UI app public to enforce merge-ability of apps. If you feel that you need to change this - please write to devel list first!
+    projects = ['workbench', 'tests']  # WARNING: DO NOT ADD EXTRA APPS to this list! We intentionally want to keep only one UI app public to enforce merge-ability of apps. If you feel that you need to change this - please write to devel list first!
 
 
     pilot_filename = 'config.py'

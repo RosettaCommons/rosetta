@@ -21,17 +21,93 @@
 namespace ui {
 namespace task {
 
+//using std::string;
+using std::vector;
+
+/// struct to help represent Project as tree. This is local datatype used only by ProjectModel
+struct PNode
+{
+	PNode *parent = nullptr;
+	QString name, type;
+	TaskSP task;
+
+	vector <PNodeSP> leafs;
+
+
+	PNode(Project const &p) : name("root"), type("project") {
+		for(auto it=p.tasks_.begin(); it!=p.tasks_.end(); ++it) leafs.push_back( std::make_shared<PNode>(this, it->first, it->second) );
+	}
+
+	PNode(PNode *_parent, QString const &_name, TaskSP const &t) : parent(_parent), name(_name), type("task"), task(t) {
+		if( !t->script().empty() ) leafs.push_back( std::make_shared<PNode>(this, "script", t, static_cast<File const & (Task::*)() const>( &Task::script) ) );
+
+		//if( !t->script().empty() ) leafs.push_back( std::make_shared<PNode>(this, "script", t, &Task::script) );
+		//if( !t->output().empty() ) leafs.push_back( std::make_shared<PNode>(this, "output", t, nullptr) );
+	}
+
+	PNode(PNode *_parent, QString const &_name, TaskSP const &t, File const & (Task::*/* f */)() const) : parent(_parent), name(_name), type("script"), task(t) {
+	}
+
+
+	// return i'th leaf or nullptr if no such leaf exists
+	PNode * leaf(unsigned int i) const {
+		if( i < leafs.size() ) return leafs[i].get();
+		return nullptr;
+	}
+
+	// return index of node, return -1 if node could not be found
+	int node_index(PNode *node) {
+		for(unsigned int i=0; i<leafs.size(); ++i) {
+			if( leafs[i].get() == node ) return i;
+		}
+
+		return -1;
+	}
+
+	int size() { return leafs.size(); }
+};
+
+
 
 ProjectModel::ProjectModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-	root_ = new Project( QUuid("AABCDEF0-1234-0000-0000-123456846422") );  // temp debug project with a known ID
-	root_->setParent(this);
+	//root_ = new Project( QUuid("AABCDEF0-1234-0000-0000-123456846422") );  // temp debug project with a known ID
+	//root_->setParent(this);
+	// root_->add( "Task-1", std::make_shared<Task>( QUuid::createUuid(), nullptr) );
+	// root_->add( "Task-2", std::make_shared<Task>( QUuid::createUuid(), nullptr) );
 
-	root_->add( "Task-1", std::make_shared<Task>( QUuid::createUuid(), nullptr) );
-	root_->add( "Task-2", std::make_shared<Task>( QUuid::createUuid(), nullptr) );
+
+	//root_ = new Project( QUuid() );  // v1 API, Task sync only, all project have NULL UUID
+	project_ = std::make_shared<Project>();  // v1 API, Task sync only, all project have NULL UUID
+	//project_->setParent(this);
+
+	auto task_1 = std::make_shared<Task>("T1");  // v1 API, Task have NULL UUID until submission
+	task_1->script( File("some-file-name", "example script...") );
+
+	project_->add( "Task-1", task_1);
+	project_->add( "Task-2", std::make_shared<Task>("T2") );
 
 	qDebug() << "ProjectModel(...)";
+}
+
+
+void ProjectModel::set(ProjectSP const &p)
+{
+	beginResetModel();
+
+	root_.reset();
+
+	project_ = p;
+
+	endResetModel();
+}
+
+
+PNode * ProjectModel::root() const
+{
+	if( !root_ ) root_ = std::make_shared<PNode>(*project_);
+	return root_.get();
 }
 
 
@@ -51,10 +127,10 @@ QVariant ProjectModel::headerData(int section, Qt::Orientation orientation, int 
 }
 
 
-Node *ProjectModel::get_item(const QModelIndex &index) const
+PNode *ProjectModel::get_item(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        Node *item = static_cast<Node*>(index.internalPointer());
+        PNode *item = static_cast<PNode*>(index.internalPointer());
         if (item) return item;
     }
     return root();
@@ -65,9 +141,9 @@ QModelIndex ProjectModel::index(int row, int column, const QModelIndex &parent) 
 {
     if (parent.isValid() && parent.column() != 0) return QModelIndex();
 
-	Node *parent_node = get_item(parent);
+	PNode *parent_node = get_item(parent);
 
-    Node *leaf = parent_node->leaf(row);
+    PNode *leaf = parent_node->leaf(row);
 
     if (leaf) return createIndex(row, column, leaf);
     else return QModelIndex();
@@ -78,8 +154,8 @@ QModelIndex ProjectModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid()) return QModelIndex();
 
-    Node *leaf = get_item(index);
-    Node *parent = leaf->parent();
+    PNode *leaf = get_item(index);
+    PNode *parent = leaf->parent;
 
     if( parent == nullptr  or  leaf == nullptr ) return QModelIndex();
 
@@ -91,7 +167,7 @@ int ProjectModel::rowCount(const QModelIndex &parent_index) const
 {
     //if (!parent.isValid()) return 0;
 	if( auto parent = get_item(parent_index) ) {
-		qDebug() << "ProjectModel::rowCount: " << parent->size();
+		//qDebug() << "ProjectModel::rowCount: " << parent->size();
 		return parent->size();
 	}
 	return 0;
@@ -113,22 +189,25 @@ QVariant ProjectModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole && role != Qt::EditRole) return QVariant();
 	//if (role != Qt::DisplayRole ) return QVariant();
 
-    Node *node = get_item(index);
+    PNode *node = get_item(index);
 
-    if( node->parent() == nullptr ) return QString("root"); // this branch is never executed in practice
+	if( node == nullptr ) return QString("ProjectModelError!");
+    if( node->parent == nullptr ) return QString("root"); // this branch is never executed in practice
 
 	if( index.column() == 0 ) {
-		Node::Key const * key = node->parent()->find(node);
-		if( key ) {
-                    //return QString("<%1, '%2'>") .arg(key->first) .arg( QString::fromStdString(key->second) );
-                    //return QString::fromStdString(*key);
-                    return *key;
-		}
+		return node->name;
+		// Node::Key const * key = node->parent()->find(node);
+		// if( key ) {
+        //             //return QString("<%1, '%2'>") .arg(key->first) .arg( QString::fromStdString(key->second) );
+        //             //return QString::fromStdString(*key);
+        //             return *key;
+		// }
 	}
     else if( index.column() == 1 ) {
 		//qDebug() << "data: " << QString(node->data().toHex() );
 		//return QString("%1 {%2}") .arg( QString::fromStdString( node->type() ) ).arg( QString(node->data().toHex() ) );
-		return QString::fromStdString( node->type() );
+		//return QString::fromStdString( node->type() );
+		return node->type;
 	}
         /*
 	else if( index.column() == 2 ) {
@@ -151,6 +230,14 @@ Qt::ItemFlags ProjectModel::flags(const QModelIndex &index) const
 
 	return QAbstractItemModel::flags(index);
 }
+
+
+TaskSP ProjectModel::task(QModelIndex const &index)
+{
+    if (index.isValid()) return get_item(index)->task;
+	else return TaskSP();
+}
+
 
 } // namespace task
 } // namespace ui

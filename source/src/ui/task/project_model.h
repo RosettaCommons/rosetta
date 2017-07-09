@@ -22,6 +22,9 @@
 namespace ui {
 namespace task {
 
+struct PNode;
+using  PNodeSP  = std::shared_ptr< PNode >;
+using  PNodeCSP = std::shared_ptr< PNode const >;
 
 class ProjectModel : public QAbstractItemModel
 {
@@ -45,15 +48,22 @@ public:
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 
-	Node * root() const { return root_; }
+	//Node * root() const { return root_; }
 
+	TaskSP task(QModelIndex const &index);
 
+	ProjectSP project() const { return project_; }
+
+	void set(ProjectSP const &);
 
 private:
-	Node *get_item(const QModelIndex &index) const;
+	PNode * root() const;
 
-	Project* root_ = nullptr;
+	PNode *get_item(const QModelIndex &index) const;
 
+	ProjectSP project_;
+
+	mutable PNodeSP root_;
 };
 
 } // namespace task
