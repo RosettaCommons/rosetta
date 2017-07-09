@@ -1405,8 +1405,15 @@ Conformation::detect_bonds()
 		Size const ii_resid = incomp_2_resid[ ii ];
 		Size const ii_n_conn = residue( ii_resid ).type().n_possible_residue_connections();
 		Residue const & ii_res( residue( ii_resid ) );
+
+		TR.Trace << " Searching residue " << ii_resid << ", " << ii_res.name();
+		TR.Trace << "'s neighbors for " << ii_n_conn << " connections..." << std::endl;
 		for ( Size jj = 1; jj <= ii_n_conn; ++jj ) {
-			if ( ! ii_res.connection_incomplete( jj ) ) continue;
+			TR.Trace << "  Searching for connection " << jj << "..." << std::endl;
+			if ( ! ii_res.connection_incomplete( jj ) ) {
+				TR.Trace << "   Connection already complete." << std::endl;
+				continue;
+			}
 
 			// Get the atom index of the jjth ResidueConnection of the iith incomplete residue.
 			Size const jjatom = ii_res.residue_connection( jj ).atomno();
@@ -1425,18 +1432,25 @@ Conformation::detect_bonds()
 				Residue const & neighb( residue( neighb_resid ) );
 				Size const neighb_n_conn = neighb.type().n_possible_residue_connections();
 
+				TR.Trace << "   Searching residue " << neighb_resid << ", " << neighb.name();
+				TR.Trace << "'s " << neighb_n_conn << " connection(s)..." << std::endl;
+
 				// Get the atom index of the kkth ResidueConnection of the iith incomplete residue's neighbor.
 				for ( Size kk = 1; kk <= neighb_n_conn; ++kk ) {
-					if ( ! neighb.connection_incomplete( kk ) ) continue;
+					TR.Trace << "    Checking connection " << kk << "..." << std::endl;
+					if ( ! neighb.connection_incomplete( kk ) ) {
+						TR.Trace << "     Connection already complete." << std::endl;
+						continue;
+					}
 
 					Size const kkatom = neighb.residue_connection( kk ).atomno();
-					bool multiple_connections_for_kkatom = neighb.type().n_residue_connections_for_atom(kkatom) > 1;
+					bool multiple_connections_for_kkatom = neighb.type().n_residue_connections_for_atom( kkatom ) > 1;
 
 					// Calculate distances between expected atoms and actual atoms for these two connections.
-					Distance kk_distance = ii_res.connection_distance( *this,
-						jj, neighb.atom( kkatom /*neighb.type().residue_connection( kk ).atomno()*/ ).xyz() );
-					Distance jj_distance = neighb.connection_distance( *this,
-						kk, ii_res.atom( jjatom /*ii_res.type().residue_connection( jj ).atomno()*/ ).xyz() );
+					Distance kk_distance =
+						ii_res.connection_distance( *this, jj, neighb.atom( kkatom ).xyz() );
+					Distance jj_distance =
+						neighb.connection_distance( *this, kk, ii_res.atom( jjatom ).xyz() );
 
 					if ( multiple_connections_for_jjatom ) {
 						Vector jj_expected_coord = ii_res.residue_connection( jj ).icoor().build( ii_res, *this );

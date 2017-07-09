@@ -1,0 +1,113 @@
+NAME choline               # N,N,N-trimethylethanolamine
+IO_STRING CHT Z
+TYPE POLYMER               # POLYMER is selected here, because this is a "cap" for lipids.
+VARIANT UPPER_TERMINUS_VARIANT
+AA UNK
+
+
+# Main-chain atoms:
+ATOM  C2  CH2  CT2  -0.05
+ATOM_ALIAS  C2   C4 
+# (PDB naming for the ion; I'm assuming it starts at C4 since it would usually be attached to glycerol.)
+ATOM  C1  CH1  CT1   0.04
+ATOM_ALIAS  C1   C5 
+# (PDB naming for the ion; I'm assuming it starts at C4 since it would usually be attached to glycerol.)
+ATOM  N1  Nlys NH3  -0.18
+ATOM 1CN  CH3  CT3  -0.40
+ATOM_ALIAS 1CN   C6 
+# (PDB naming for the ion; I'm assuming it starts at C4 since it would usually be attached to glycerol.)
+
+# Other backbone heavy atoms:
+ATOM 2CN  CH3  CT3  -0.40
+ATOM_ALIAS 2CN   C7 
+# (PDB naming for the ion; I'm assuming it starts at C4 since it would usually be attached to glycerol.)
+ATOM 3CN  CH3  CT3  -0.40
+ATOM_ALIAS 3CN   C8 
+# (PDB naming for the ion; I'm assuming it starts at C4 since it would usually be attached to glycerol.)
+
+# Side-chain heavy atoms:
+ATOM  O2  VIRT VIRT  0.00
+ATOM_ALIAS  O2   O6 
+# (PDB naming for the ion; I'm assuming it starts at C4 since it would usually be attached to glycerol.)
+
+# Hydrogens:
+ATOM 1H1  Hapo  HA   0.09
+ATOM 2H1  Hapo  HA   0.09
+ATOM  HO2 VIRT VIRT  0.00
+ATOM 1H2  Hapo  HA   0.09
+ATOM 2H2  Hapo  HA   0.09
+ATOM 1HCN Hapo  HA   0.09
+ATOM 2HCN Hapo  HA   0.09
+ATOM 3HCN Hapo  HA   0.09
+ATOM 4HCN Hapo  HA   0.09
+ATOM 5HCN Hapo  HA   0.09
+ATOM 6HCN Hapo  HA   0.09
+ATOM 7HCN Hapo  HA   0.09
+ATOM 8HCN Hapo  HA   0.09
+ATOM 9HCN Hapo  HA   0.09
+
+
+LOWER_CONNECT  C2           # Choline is the cap of a head group or other molecule it is an UPPER_TERMINUS; there is no UPPER_CONNECT.
+
+BOND  C2   C1 
+BOND  C1   N1 
+BOND  N1  1CN 
+BOND  N1  2CN 
+BOND  N1  3CN 
+BOND  C2   O2 
+BOND  C1  1H1 
+BOND  C1  2H1 
+BOND  O2   HO2
+BOND  C2  1H2 
+BOND  C2  2H2 
+BOND 1CN  1HCN
+BOND 1CN  2HCN
+BOND 1CN  3HCN
+BOND 2CN  4HCN
+BOND 2CN  5HCN
+BOND 2CN  6HCN
+BOND 3CN  7HCN
+BOND 3CN  8HCN
+BOND 3CN  9HCN
+
+
+PROPERTIES LIPID UPPER_TERMINUS
+
+
+NBR_ATOM  C1
+NBR_RADIUS 3.6
+
+
+MAINCHAIN_ATOMS  C2   C1   N1  1CN  
+FIRST_SIDECHAIN_ATOM  O2 
+
+
+# must build main chain 1st!
+ICOOR_INTERNAL    C2     0.00        0.00        0.00       C2    C1    N1 
+ICOOR_INTERNAL    C1     0.00      180.00        1.59       C2    C1    N1 
+ICOOR_INTERNAL    N1     0.00       57.18        1.63       C1    C2    N1 
+ICOOR_INTERNAL   1CN   180.00       68.97        1.50       N1    C1    C2 
+ICOOR_INTERNAL  LOWER  180.00       70.34        1.50       C2    C1    N1 
+
+# then the other backbone heavy atoms
+ICOOR_INTERNAL   2CN   180.00       68.97        1.50       N1    C1    C2 
+ICOOR_INTERNAL   3CN   180.00       68.97        1.50       N1    C1    C2 
+
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    O2   180.00       70.34        1.50       C2    C1    N1 
+
+# now all the Hs (improper torsions used for some hydrogens so that placement is good no matter the backbone conformation)
+ICOOR_INTERNAL   1H1   120.00       73.36        1.10       C1    N1    C2 
+ICOOR_INTERNAL   2H1  -120.00       73.36        1.10       C1    N1    C2 
+ICOOR_INTERNAL    HO2  180.00       73.02        0.98       O2    C2    C1 
+ICOOR_INTERNAL   1H2    60.00       69.51        1.10       C2    C1    N1 
+ICOOR_INTERNAL   2H2   -60.00       69.51        1.10       C2    C1    N1 
+ICOOR_INTERNAL   1HCN  180.00       70.13        1.10      1CN    N1    C1 
+ICOOR_INTERNAL   2HCN   60.00       70.13        1.10      1CN    N1    C1 
+ICOOR_INTERNAL   3HCN  -60.00       70.13        1.10      1CN    N1    C1 
+ICOOR_INTERNAL   4HCN  180.00       70.13        1.10      2CN    N1    C1 
+ICOOR_INTERNAL   5HCN   60.00       70.13        1.10      2CN    N1    C1 
+ICOOR_INTERNAL   6HCN  -60.00       70.13        1.10      2CN    N1    C1 
+ICOOR_INTERNAL   7HCN  180.00       70.13        1.10      3CN    N1    C1 
+ICOOR_INTERNAL   8HCN   60.00       70.13        1.10      3CN    N1    C1 
+ICOOR_INTERNAL   9HCN  -60.00       70.13        1.10      3CN    N1    C1 

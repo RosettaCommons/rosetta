@@ -1,0 +1,106 @@
+# Ideally, this ResidueType should be created with patches, but I'll worry about that later. ~Labonte
+
+NAME glycerol-3-phosphate
+IO_STRING GOL Z 
+TYPE POLYMER               # POLYMER is selected here, because this is a "cap" for polymers such as glycolipids.
+VARIANT LOWER_TERMINUS_VARIANT C1_BRANCH_POINT C2_BRANCH_POINT
+AA UNK
+
+
+# Main-chain atoms:
+ATOM  C1  CH2  CT2  -0.05
+ATOM  C2  CH1  CT1   0.04
+ATOM  C3  CH2  CT2  -0.18
+ATOM  O3  OH   OS   -0.40
+ATOM  P   Phos P     2.08
+ATOM 3OP  OOC  ON2  -0.40
+
+# Other backbone heavy atoms:
+ATOM 1OP  OOC  ON3  -0.64
+ATOM 2OP  OOC  ON3  -0.64
+
+# Side-chain heavy atoms:
+ATOM  O1  OH   OS   -0.34  # to a branch residue, which will typically be a fatty acid
+ATOM  O2  OH   OS   -0.34  # to a branch residue, which will typically be a fatty acid
+
+# Hydrogens:
+ATOM  HO1 VIRT VIRT  0.00
+ATOM 1H1  Hapo  HA   0.09
+ATOM 2H1  Hapo  HA   0.09
+ATOM  HO2 VIRT VIRT  0.00
+ATOM  H2  Hapo  HA   0.09
+ATOM 1H3  Hapo  HA   0.09
+ATOM 2H3  Hapo  HA   0.09
+
+
+UPPER_CONNECT 3OP          # The head group of a lipid is always the LOWER_TERMINUS; there is no LOWER_CONNECT.
+CONNECT  O1  CAN_ROTATE    # CONN2  It will be rare for G3P not to have a fatty acid attached here; hence, if one wants the free hydroxyl, she or he will need to write a patch file for that.
+CONNECT  O2  CAN_ROTATE    # CONN3  It will be rare for G3P not to have a fatty acid attached here; hence, if one wants the free hydroxyl, she or he will need to write a patch file for that.
+
+
+BOND  C1   C2 
+BOND  C2   C3 
+BOND  C3   O3 
+BOND  O3   P  
+BOND  P   3OP 
+BOND_TYPE  P   1OP CARBOXY # Not actually a carboxyl
+BOND_TYPE  P   2OP CARBOXY # Not actually a carboxyl
+BOND  C1   O1 
+BOND  C2   O2 
+BOND  O1  HO1 
+BOND  C1  1H1 
+BOND  C1  2H1 
+BOND  O2  HO2 
+BOND  C2   H2 
+BOND  C3  1H3 
+BOND  C3  2H3 
+
+
+CHI 1  C2   C1   O1   HO1
+CHI_ROTAMERS 1  60 0
+CHI_ROTAMERS 1 180 0
+CHI_ROTAMERS 1 300 0
+CHI 2  C1   C2   O2   HO2
+CHI_ROTAMERS 2  60 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 300 0
+
+
+PROPERTIES LIPID LOWER_TERMINUS BRANCH_POINT
+
+
+NBR_ATOM  C3
+NBR_RADIUS 6.0
+
+
+MAINCHAIN_ATOMS  C1   C2   C3   O3   P   3OP 
+FIRST_SIDECHAIN_ATOM  O1
+
+
+# must build main chain 1st!
+ICOOR_INTERNAL    C1     0.00        0.00        0.00       C1    C2    C3
+ICOOR_INTERNAL    C2     0.00      180.00        1.41       C1    C2    C3
+ICOOR_INTERNAL    C3     0.00       73.39        1.39       C2    C1    C3
+ICOOR_INTERNAL    O3   180.00       78.32        1.25       C3    C2    C1
+ICOOR_INTERNAL    P    180.00       80.68        1.38       O3    C3    C2
+ICOOR_INTERNAL   3OP   180.00       73.51        1.44       P     O3    C3
+ICOOR_INTERNAL UPPER   180.00       77.41        1.40      3OP    P     O3
+
+# then the other backbone heavy atoms
+ICOOR_INTERNAL   1OP    60.00       67.18        1.46       P     O3    C3
+ICOOR_INTERNAL   2OP   -60.00       67.18        1.46       P     O3    C3
+
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    O1   180.00       80.07        1.33       C1    C2    C3
+ICOOR_INTERNAL    O2   -60.00       66.52        1.49       C2    C3    O3
+ICOOR_INTERNAL  CONN2  180.00       71.12        1.35       O1    C1    C2
+ICOOR_INTERNAL  CONN3   60.00       61.33        1.35       O2    C2    C1
+
+# now all the Hs
+ICOOR_INTERNAL    HO1  180.00       71.12        0.98       O1    C1    C2
+ICOOR_INTERNAL   1H1   -60.00       69.14        1.10       C1    C2    C3
+ICOOR_INTERNAL   2H1    60.00       69.14        1.10       C1    C2    C3
+ICOOR_INTERNAL    HO2   60.00       61.33        0.98       O2    C2    C1
+ICOOR_INTERNAL    H2    60.00       71.22        1.11       C2    C3    O3
+ICOOR_INTERNAL   1H3    60.00       67.64        1.10       C3    C2    C1
+ICOOR_INTERNAL   2H3   -60.00       67.64        1.10       C3    C2    C1

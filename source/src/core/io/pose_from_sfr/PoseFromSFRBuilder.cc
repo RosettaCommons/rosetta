@@ -694,19 +694,25 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			if ( ii_rsd->is_metal() && basic::options::option[basic::options::OptionKeys::in::auto_setup_metals] ) {
 				root_index = find_atom_tree_root_for_metal_ion( pose, ii_rsd );
 			}
-			if ( root_index>1 ) { TR << ii_rsd_type.name() << " " << ii << " was added by a jump, with base residue " << root_index << std::endl;}
+			if ( root_index>1 ) {
+				TR << ii_rsd_type.name() << " " << ii;
+				TR << " was added by a jump, with base residue " << root_index << std::endl;
+			}
 			pose.append_residue_by_jump( *ii_rsd, root_index /*pose.size()*/ );
 
 		} else { // Append residue to current chain dependent on bond length.
 			if ( ! options_.missing_dens_as_jump() ) {
-				TR.Trace << ii_rsd_type.name() << " " << ii << " (PDB residue: " << PDB_resid << ")" << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
-				try{
+				TR.Trace << ii_rsd_type.name() << " " << ii;
+				TR.Trace << " (PDB residue: " << PDB_resid << ")";
+				TR.Trace << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
+				try {
 					pose.append_residue_by_bond( *ii_rsd );
 				} catch (utility::excn::EXCN_Msg_Exception & e) {
 					std::stringstream message;
 					message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
 						<< PDB_resid << std::endl;
-					message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() << " -> " << PDB_resid << std::endl;
+					message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() <<
+						" -> " << PDB_resid << std::endl;
 					std::string error_msg = message.str() + "ERROR: " + e.msg();
 					utility_exit_with_message( error_msg );
 				}
@@ -788,6 +794,8 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			pose.conformation().insert_chain_ending( pose.size() - 1 );
 		}
 	}
+
+	TR.Trace << "Initial, pre-refined Pose built successfully." << std::endl;
 }
 
 void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
@@ -899,7 +907,6 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	}
 
 
-
 	// Look for and create any remaining non-mainchain (Edge::CHEMICAL) bonds
 	// based on a specified radius from any unsatisfied residue connections.
 	// This is used for such things as branched polymers, ubiquitination, or
@@ -949,6 +956,9 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 			core::pose::add_comment( pose, it->first, it->second );
 		}
 	}
+	
+	TR.Trace << "Pose refined successfully:" << std::endl;
+	TR.Trace << pose << std::endl;
 }
 
 void
@@ -1050,11 +1060,12 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 
 // This function uses linkage information to determine main-chain and branch
 // polymer connectivity.
-/// @details  This function does two separate things that are related:
+/// @details  This function does three separate things that are related:
 /// - It determines from linkage information whether a residue is a branch
 ///   lower terminus or branch point.
 /// - It assigns main-chain connectivity to carbohydrate ResidueType base
 ///   names.
+/// - It assigns proper termini to the residue components of lipid molecules.
 void
 PoseFromSFRBuilder::determine_residue_branching_info(
 	Size const seqpos,
@@ -1072,6 +1083,11 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 	std::string const & resid = rinfos_[ seqpos ].resid();
 	ResidueTypeCOP RT = ResidueTypeFinder( *residue_type_set_ ).name3( name3 ).get_representative_type();
 	Size mainchain_neighbor = seqpos + 1;
+	bool is_carbohydrate( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) );
+	// TODO: I need a way to read from the database whether a residue is a fixed-upper terminus or else figure it
+	// out somehow here.  For now, I am just going to hard code the current cases, and I'll wait for Rocco to merge
+	// his pull request and then find a fix for this if still needed then. ~Labonte
+	bool is_upper_terminus_cap( name3 == "CHT" || name3 == "EIC" || name3 == "OLA" || name3 == "PLM" );  // TEMP
 
 	// Carbohydrate base names will have "->?)-" as a prefix if their main-
 	// chain connectivity requires LINK records to determine.  Fortuitously,
@@ -1087,7 +1103,6 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 			( sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] == '?' );
 	}
 
-	//is_branch_point = false;
 	TR.Trace << "Checking if resid " << resid << "(" << seqpos << ")" << " is in the link map " << endl;
 	if ( ( sfr_.link_map().count( resid ) ) && ( options_.auto_detect_glycan_connections() == false ) ) {  // if found in the linkage map
 		// The link map is keyed by resID of each branch point.
@@ -1115,7 +1130,7 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 				// makers did things reasonably.
 				continue;
 			}
-			if ( unknown_main_chain_connectivity && branch == 1 ) {
+			if ( is_carbohydrate && unknown_main_chain_connectivity && branch == 1 ) {
 				char const connectivity( link_info.name1[ CARB_MAINCHAIN_CONN_POS ] );
 				TR.Trace << "Assigning main-chain connectivity to position " << connectivity;
 				TR.Trace << " of this residue." << endl;
@@ -1128,38 +1143,45 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 				branch_points_on_this_residue.push_back( link_info.name1 );
 			}
 		}
-	} else if ( unknown_main_chain_connectivity || ( options_.auto_detect_glycan_connections() && ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) ) ) {
+	} else if ( unknown_main_chain_connectivity || is_upper_terminus_cap ||
+			( options_.auto_detect_glycan_connections() && is_carbohydrate ) ) {
 		// If .pdb 3-letter codes are being used, LINK records MUST be used to designate main-chain connectivity
 		// for anything with a HETATM record.  So if we got here, it means that this must be an upper terminus.
-		// First, assign an arbitrary main-chain connection and then reset this to be NOT of the same chain as
-		// the next residue.
-		bool is_upper_terminus = true; // i.e. no main chain connection further down
-		if ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+		// First, for glycans, assign an arbitrary main-chain connection and then reset this to be NOT of the same
+		// chain as the next residue.
+		bool is_upper_terminus = true;  // i.e. no main chain connection further down
+		if ( is_carbohydrate ) {
 			// Update LINK record for mainchain connection
-			mainchain_neighbor = core::io::find_mainchain_connection(rinfos_, sfr_, resid, seqpos, rosetta_residue_name3s_, same_chain_next, is_upper_terminus, CARB_MAINCHAIN_CONN_POS, glycan_positions_, options_ );
+			mainchain_neighbor =
+				core::io::find_mainchain_connection(rinfos_, sfr_, resid, seqpos, rosetta_residue_name3s_, same_chain_next, is_upper_terminus, CARB_MAINCHAIN_CONN_POS, glycan_positions_, options_ );
 
 			TR.Trace << "Upper Termini: " << is_upper_terminus << std::endl;
 		}
 		if ( is_upper_terminus ) {
-			TR.Trace << "Assigning main-chain connectivity arbitrarily to position 3 of this terminal residue." << endl;
-			// TODO: In the future, we might want something else.
-			sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] = '3';
+			if ( is_carbohydrate ) {
+				TR.Trace << "Assigning main-chain connectivity arbitrarily to position 3 of this terminal residue." << endl;
+				// TODO: In the future, we might want something else.
+				sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] = '3';
+			}
 			same_chain_next = false;
 		}
-	}// else if(unknown_mainchain_connectivity)
-	if ( options_.auto_detect_glycan_connections() && ( same_chain_next != false  ) && ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) || name3 == "ASN" || name3 == "SER" || name3 == "THR" ) ) {
-		core::io::find_branch_points( seqpos, RT, is_branch_point, branch_points_on_this_residue, rosetta_residue_name3s_, mainchain_neighbor, rinfos_, branch_lower_termini_, glycan_positions_, options_ );
 	}
-
-	//is_branch_lower_terminus = branch_lower_termini_.contains( resid );
+	if ( options_.auto_detect_glycan_connections() && ( same_chain_next != false  ) &&
+			( is_carbohydrate || name3 == "ASN" || name3 == "SER" || name3 == "THR" ) ) {
+		// This is too hacky: Sugars can also connect to CYS and TRP and potentially to any number of other things.
+		// This should not be hard-coded. ~Labonte
+		core::io::find_branch_points( seqpos, RT, is_branch_point, branch_points_on_this_residue,
+			rosetta_residue_name3s_, mainchain_neighbor, rinfos_, branch_lower_termini_, glycan_positions_, options_ );
+	}
 	if ( branch_lower_termini_.contains( resid ) || branch_lower_termini_extra_.contains( resid ) ) {
 		is_branch_lower_terminus = true;
 		TR.Trace << "Branch lower terminus " << is_branch_lower_terminus << std::endl;
 	}
-	if ( is_branch_lower_terminus && carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+	if ( is_branch_lower_terminus && ( is_carbohydrate || is_upper_terminus_cap ) ) {
 		same_chain_prev = false;
 	}
-	if ( ( std::find( glycan_tree_roots_.begin(), glycan_tree_roots_.end(), resid ) != glycan_tree_roots_.end() ) && ( is_branch_lower_terminus == false ) ) {
+	if ( ( std::find( glycan_tree_roots_.begin(), glycan_tree_roots_.end(), resid ) != glycan_tree_roots_.end() ) &&
+			( is_branch_lower_terminus == false ) ) {
 		// A root must be connected as a branch to the protein, otherwise it's a new chain and new terminus
 		TR << "Change same_chain_prev to false." << std::endl;
 		same_chain_prev = false;
@@ -1235,7 +1257,6 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	if ( rsd_type != 0 ) rsd_type_list.push_back( rsd_type );
 	return is_residue_type_recognized( pdb_residue_index, rosetta_residue_name3, rsd_type_list );
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////

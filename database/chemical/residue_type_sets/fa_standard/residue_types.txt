@@ -726,9 +726,14 @@ residue_types/membrane/MEM.params
 residue_types/membrane/EMB.params
 
 ## Lipid Types (require -include_lipids flag to be loaded in)
-### Sphingolipids
+### Head Groups
 residue_types/lipids/sphingosine.params
+residue_types/lipids/glycerol-3-phosphate.params
+### Head Group Caps
+residue_types/lipids/choline.params
 ### Fatty Acids
+residue_types/lipids/palmitate.params
+residue_types/lipids/oleate.params
 residue_types/lipids/linoleate.params
 ### Synthetic Adducts
 residue_types/lipids/ONonOMe.params

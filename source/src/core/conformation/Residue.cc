@@ -1498,8 +1498,8 @@ Residue::connection_distance(
 ) const
 {
 	Vector ipos = type().residue_connection( resconn_index ).icoor().build( *this, conf );
-	//std::cout << "ipos for " << name() << "'s connection atom " << resconn_index;
-	//std::cout << ": ( " << ipos.x() << ", " << ipos.y() << ", " << ipos.z() << ")" << std::endl;
+	TR.Debug << "Expected coordinates of " << name() << "'s connection atom " << resconn_index;
+	TR.Debug << ": ( " << ipos.x() << ", " << ipos.y() << ", " << ipos.z() << ")" << std::endl;
 	return ipos.distance( matchpoint );
 }
 

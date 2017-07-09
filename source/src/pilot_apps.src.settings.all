@@ -539,10 +539,10 @@ sources = {
  	],
 
 	# K ######################################################################
-    "pilot/kblacklock" : [
-        "loodo",
-        "transform_loodo",
-    ],
+	"pilot/kblacklock" : [
+		"loodo",
+		"transform_loodo",
+	],
 	"pilot/kdrew" : [
 		"oop_dock_design",
 		"oop_creator",
@@ -1090,6 +1090,7 @@ sources = {
 		"test_CarbohydrateInfo",
 		"test_carbohydrate_scoring",
 		"test_CCD_loop_closure",
+		"test_explicit_membrane_input",
 		"test_non-canonical_connectivities",
 		"test_RingConformationMover",
 		"test_SiteConstraint",
