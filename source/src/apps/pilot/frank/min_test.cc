@@ -476,7 +476,7 @@ public:
 			// setup the options
 			if ( !option[ OptionKeys::min::cartesian ]() )  {
 				if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-					core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
+					core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 					core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
 					minimizer.run( pose, mm, *scorefxn, options );
 				} else {

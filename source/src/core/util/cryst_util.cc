@@ -98,7 +98,6 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 
 		kinematics::MoveMap semisym_move_map;
 		if ( !old_sym_min ) {
-			sym_min.check_and_correct_edge_weights_for_new_minimizer( pose );
 			sym_min.make_asymmetric_movemap( pose, move_map, semisym_move_map );
 		} else {
 			sym_min.make_semisymmetric_movemap( pose, move_map, semisym_move_map );

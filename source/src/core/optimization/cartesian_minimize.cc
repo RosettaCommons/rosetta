@@ -141,10 +141,7 @@ cartesian_collect_atompairE_deriv(
 		ResSingleMinimizationData const & r1_min_data( mingraph->get_minimization_node( rsd1ind )->res_min_data() );
 		ResSingleMinimizationData const & r2_min_data( mingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-		//eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-		// r1_min_data, r2_min_data, pose, scorefxn.weights(),
-		// min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
-		eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+		eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 			r1_min_data, r2_min_data, pose, scorefxn.weights(),
 			min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 	}
@@ -166,10 +163,7 @@ cartesian_collect_atompairE_deriv(
 			ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
 			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-			//eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-			// r1_min_data, r2_min_data, pose, scorefxn.weights(),
-			// min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
-			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+			eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 				r1_min_data, r2_min_data, pose, scorefxn.weights(),
 				min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 		}
@@ -271,7 +265,7 @@ cart_numerical_derivative_check(
 
 	bool const write_to_stdout( ! deriv_check_result || deriv_check_result->send_to_stdout() );
 
-	Real const increment = 0.0005; //fpd
+	Real const increment = 0.0001; //fpd
 	Size const n_increment = 1;
 	utility::vector1< Multivec > dE_dvars_numeric( n_increment );
 	for ( Size i=1; i<= n_increment; ++i ) {
@@ -284,7 +278,7 @@ cart_numerical_derivative_check(
 
 	Multivec vars( start_vars );
 
-	//Real const f00 = func( vars );
+	Real const f00 = func( vars );
 
 	Size natoms=min_map.natoms();
 	for ( Size i=1; i<=natoms; ++i ) {
@@ -294,8 +288,6 @@ cart_numerical_derivative_check(
 
 			Real deriv_dev = 10000.0;
 			for ( Size j = 1,factor=1; j <= n_increment; ++j ) {
-				factor*=2;
-
 				vars[ii] = start_vars[ii] + factor * increment;
 				Real const f11 = func( vars );
 
@@ -310,9 +302,7 @@ cart_numerical_derivative_check(
 
 				vars[ii] = start_vars[ii];
 
-				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
-					deriv / dE_dvars[ii] );
-
+				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 : deriv / dE_dvars[ii] );
 
 				if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
 					if ( verbose && write_to_stdout ) {
@@ -347,13 +337,22 @@ cart_numerical_derivative_check(
 					}
 
 				}
+				if ( min_debug ) {
+					DerivCheckDataPoint dp( deriv, dE_dvars[ii], ratio, f11, f00, f22, start_vars[ ii ] );
+					min_debug->step_data( ii, j, dp );
+				}
+
+				factor*=2;
 			}
+
 			if ( true ) {
 				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
 					deriv_dev / std::abs( dE_dvars[ii] ) );
 
-				if ( min_debug ) min_debug->rel_deriv_dev( ii, ratio );
-				if ( min_debug ) min_debug->abs_deriv_dev( ii, deriv_dev );
+				if ( min_debug ) {
+					min_debug->rel_deriv_dev( ii, ratio );
+					min_debug->abs_deriv_dev( ii, deriv_dev );
+				}
 
 				//if ( verbose && write_to_stdout ) {
 				// if you change this output, please also change the comments

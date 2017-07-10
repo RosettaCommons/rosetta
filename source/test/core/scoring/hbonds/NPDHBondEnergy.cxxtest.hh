@@ -16,6 +16,7 @@
 #include <cxxtest/TestSuite.h>
 #include <test/UTracer.hh>
 #include <test/util/deriv_funcs.hh>
+#include <test/util/symmetric_deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/pdb_cyc_pep_w_too_many_hbonds.hh>
 #include <test/core/init_util.hh>
@@ -24,19 +25,26 @@
 #include <core/scoring/hbonds/NPDHBondEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
 
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/EnergyGraph.hh>
 
@@ -113,7 +121,8 @@ class NPDHBondEnergyTests : public CxxTest::TestSuite {
 
 public:
 	void setUp() {
-		core_init();
+		//core_init();
+		core_init_with_additional_options( "-no_optH -symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat -use_truncated_termini" );
 	}
 
 	void tearDown(){}
@@ -480,6 +489,36 @@ public:
 		sfxn2( pose );
 		hbe_wo_bbsc_exclusion.backbone_sidechain_energy( pose.residue(4), pose.residue(8), pose, sfxn, emap );
 		TS_ASSERT( emap[ hbond_bb_sc ] != 0.0 );
+
+	}
+
+	void test_npd_hbond_symmetric_score_function_bad_symm_hbond_derivs() {
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::symmetry;
+
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd( opts );
+		sfd.read_file( "core/scoring/hbonds/bad_symm_hbonds.silent" );
+		std::string tag = sfd.begin()->decoy_tag();
+		Pose pose; sfd.get_structure( tag ).fill_pose( pose );
+
+		SymmetricScoreFunctionOP symm_sfxn( new SymmetricScoreFunction ); //get_score_function();
+		symm_sfxn->set_weight( fa_atr, 0.8 );
+		symm_sfxn->set_weight( fa_rep, 0.44 );
+		symm_sfxn->set_weight( fa_sol, 0.65 );
+		//symm_sfxn->set_weight( hbond_sr_bb, 0.75 );
+		//symm_sfxn->set_weight( hbond_lr_bb, 0.75 );
+		//symm_sfxn->set_weight( hbond_bb_sc, 0.75 );
+		//symm_sfxn->set_weight( hbond_sc,    0.75 );
+
+		core::kinematics::MoveMap movemap;
+		for ( Size ii = 1; ii <= 20; ++ii ) {
+			movemap.set_bb( ii, true );
+			movemap.set_chi( ii, true );
+		}
+		SymmetricAtomDerivValidator adv( pose, *symm_sfxn, movemap );
+		adv.simple_cart_deriv_check( 1e-3 );
 
 	}
 

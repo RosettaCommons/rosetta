@@ -586,7 +586,6 @@ SymmetryInfo::update_score_multiply_factor()
 // reasonable default: main subunit = score_multiply_factor
 //    all other subunits = score_multiply_factor/2
 //    jump derivative weights = 1
-// this default is required for Phil's new minimization scheme, so it is forced there
 bool
 SymmetryInfo::reset_score_multiply_to_reasonable_default() {
 	bool any_changes = false;

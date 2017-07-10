@@ -594,65 +594,6 @@ public:
 		}
 
 		return;
-
-		/// EVERYTHING BELOW IS UNREACHABLE
-
-
-		Pose pose;
-		pose = start_pose;
-
-		// set the moving dofs
-		kinematics::MoveMapOP mm1( new kinematics::MoveMap );
-		kinematics::MoveMapOP mm2( new kinematics::MoveMap );
-		kinematics::MoveMapOP mm3( new kinematics::MoveMap );
-		kinematics::MoveMapOP mm4( new kinematics::MoveMap );
-		kinematics::MoveMapOP mm5( new kinematics::MoveMap );
-		// single backbone
-		mm1->set_bb( 4, true );
-
-		// all bb and chi
-		mm2->set_bb( true );
-		mm2->set_chi( true );
-
-		// single dof
-		mm3->set( DOF_ID( AtomID(1,4), PHI ), true );
-
-		// everything!
-		mm4->set( PHI, true );
-		mm4->set( THETA, true );
-		mm4->set( D, true );
-
-
-		// everything! + neighborlist auto-update
-		mm5->set( PHI, true );
-		mm5->set( THETA, true );
-		mm5->set( D, true );
-
-		// setup scorefxn
-		scorefxn->reset();
-		scorefxn->set_weight( scoring::fa_atr, 0.80 );
-
-		pose.dump_pdb( "before.pdb" );
-		MinimizerOptionsOP min_options2( new MinimizerOptions( "dfpmin", 0.001, true, true, false ) );
-		minimizer.run( pose, *mm1, *scorefxn, *min_options2 );
-
-		pose.dump_pdb( "after1.pdb" );
-
-		exit(0);
-
-		minimizer.run( pose, *mm2, *scorefxn, *min_options2 );
-		pose.dump_pdb( "after2.pdb" );
-
-		minimizer.run( pose, *mm3, *scorefxn, *min_options2 );
-		pose.dump_pdb( "after3.pdb" );
-
-		minimizer.run( pose, *mm4, *scorefxn, *min_options2 );
-		pose.dump_pdb( "after4.pdb" );
-
-		min_options2->nblist_auto_update( true );
-		minimizer.run( pose, *mm5, *scorefxn, *min_options2 );
-		pose.dump_pdb( "after5.pdb" );
-
 	}
 
 

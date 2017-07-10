@@ -901,6 +901,7 @@ testinputfiles = [
 	"scoring/func/GaussianFunc.u",
 	"scoring/hbond_sr_bb.data",
 	"scoring/hbonds/1ubq_23_to_34.pdb",
+	"scoring/hbonds/bad_symm_hbonds.silent",
 	"scoring/hbonds/hbond_compute_energy.u",
 	"scoring/hbonds/hbond_compute_energy_sp2.u",
 	"scoring/hbonds/hbond_compute_energy_sp2_specific_cases.u",

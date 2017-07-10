@@ -20,11 +20,21 @@
 // Project headers
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/optimization/NumericalDerivCheckResult.hh>
+#include <core/optimization/CartesianMinimizerMap.hh>
+#include <core/optimization/CartesianMultifunc.hh>
+#include <core/optimization/cartesian_minimize.hh>
 #include <core/optimization/symmetry/sym_atom_tree_minimize.hh>
 #include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+
 
 class SymmetricAtomDerivValidator
 {
@@ -77,12 +87,19 @@ public:
 		(*sfxn_)( *pose_ );
 
 		MoveMap semisym_move_map;
-		SymAtomTreeMinimizer::make_semisymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+
+		//fd
+		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+		if ( !old_sym_min ) {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_asymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		} else {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_semisymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		}
 
 		SymmetricConformation const & symm_conf ( dynamic_cast< SymmetricConformation const & > ( pose_->conformation()) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		core::optimization::symmetry::SymMinimizerMap sym_min_map( *pose_, semisym_move_map, symm_info );
+		core::optimization::symmetry::SymMinimizerMap sym_min_map( *pose_, semisym_move_map, symm_info, !old_sym_min );
 
 		pose_->energies().set_use_nblist( *pose_, sym_min_map.domain_map(), false );
 
@@ -149,12 +166,19 @@ public:
 		(*sfxn_)( *pose_ );
 
 		MoveMap semisym_move_map;
-		SymAtomTreeMinimizer::make_semisymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+
+		//fd
+		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+		if ( !old_sym_min ) {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_asymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		} else {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_semisymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		}
 
 		SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose_->conformation()) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		core::optimization::symmetry::SymMinimizerMap sym_min_map( *pose_, semisym_move_map, symm_info );
+		core::optimization::symmetry::SymMinimizerMap sym_min_map( *pose_, semisym_move_map, symm_info, !old_sym_min );
 
 		pose_->energies().set_use_nblist( *pose_, sym_min_map.domain_map(), false );
 
@@ -264,6 +288,15 @@ public:
 				edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
 			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+
+			EnergyMap respair_weight_scaled = sfxn_->weights();
+			if (sym_min_map.new_sym_min()) {
+				if (minedge.weight() == 0) continue;
+				respair_weight_scaled *= minedge.weight();
+			} else {
+				respair_weight_scaled *= minedge.dweight();
+			}
+
 			Size const rsd1ind = minedge.get_first_node_ind();
 			Size const rsd2ind = minedge.get_second_node_ind();
 			conformation::Residue const & rsd1( pose_->residue( rsd1ind ));
@@ -272,24 +305,30 @@ public:
 			ResSingleMinimizationData const & r2_min_data( mingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
 			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-				r1_min_data, r2_min_data, *pose_, sfxn_->weights(),
+				r1_min_data, r2_min_data, *pose_, respair_weight_scaled,
 				sym_min_map.atom_derivatives( rsd1ind ), sym_min_map.atom_derivatives( rsd2ind ));
 		}
 		/// 2b. eval inter-residue derivatives
-		for ( utility::graph::Node::EdgeListConstIter
-				edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
-				edgeit != edgeit_end; ++edgeit ) {
-			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
-			Size const rsd1ind = minedge.get_first_node_ind();
-			Size const rsd2ind = minedge.get_second_node_ind();
-			conformation::Residue const & rsd1( pose_->residue( rsd1ind ));
-			conformation::Residue const & rsd2( pose_->residue( rsd2ind ));
-			ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
-			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
+		if (!sym_min_map.new_sym_min()) {
+			for ( utility::graph::Node::EdgeListConstIter
+					edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
+					edgeit != edgeit_end; ++edgeit ) {
+				MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 
-			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-				r1_min_data, r2_min_data, *pose_, sfxn_->weights(),
-				sym_min_map.atom_derivatives( rsd1ind ), sym_min_map.atom_derivatives( rsd2ind ));
+				EnergyMap respair_weight_scaled = sfxn_->weights();
+				respair_weight_scaled *= minedge.dweight();
+
+				Size const rsd1ind = minedge.get_first_node_ind();
+				Size const rsd2ind = minedge.get_second_node_ind();
+				conformation::Residue const & rsd1( pose_->residue( rsd1ind ));
+				conformation::Residue const & rsd2( pose_->residue( rsd2ind ));
+				ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
+				ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
+
+				eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+					r1_min_data, r2_min_data, *pose_, respair_weight_scaled,
+					sym_min_map.atom_derivatives( rsd1ind ), sym_min_map.atom_derivatives( rsd2ind ));
+			}
 		}
 	}
 
@@ -366,6 +405,97 @@ public:
 		return full_success;
 	}
 
+	inline
+	bool // return true for success, false for failure
+	simple_cart_deriv_check( core::Real tolerance ) {
+		using namespace core::optimization;
+		using namespace core::optimization::symmetry;
+
+		core::kinematics::MoveMap sym_move_map( *move_map_ );
+		core::pose::symmetry::make_symmetric_movemap( *pose_, sym_move_map );
+
+		(*sfxn_)(*pose_);
+
+		// setup the function that we will pass to the simple deriv checker
+
+		CartesianMinimizerMap min_map;
+		core::kinematics::MoveMap asym_move_map;
+		if ( core::pose::symmetry::is_symmetric( *pose_ ) ) {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_asymmetric_movemap( *pose_, sym_move_map, asym_move_map );
+		} else {
+			asym_move_map = sym_move_map;
+		}
+		min_map.setup( *pose_, asym_move_map );
+
+		pose_->energies().set_use_nblist( *pose_, min_map.domain_map(), false /* no autoupdate */ );
+
+		sfxn_->setup_for_minimizing( *pose_, min_map );
+
+		CartesianMultifunc f( *pose_, min_map, *sfxn_, false, false );
+		NumericalDerivCheckResultOP numeric_result( new NumericalDerivCheckResult );
+		f.set_deriv_check_result( numeric_result );
+
+		// starting position -- "dofs" = Degrees Of Freedom
+		Multivec vars( min_map.ndofs() );
+		min_map.copy_dofs_from_pose( *pose_, vars );
+
+		Multivec dE_dvars( vars );
+		f.dfunc( vars, dE_dvars );
+
+		cart_numerical_derivative_check( min_map, f, vars, dE_dvars, numeric_result, false );
+		NumDerivCheckData const & result = numeric_result->deriv_check_result(1);
+
+		bool full_success = true;
+
+		for ( core::Size ii = 1; ii <= (core::Size) min_map.ndofs(); ++ii ) {
+
+			TS_ASSERT_DELTA( result.step_data( ii, 1 ).num_deriv(), result.step_data( ii, 1 ).ana_deriv(), tolerance );
+			//if ( false ) { /// re-enable to look at all derivatives
+			//	std::cout << "dof  " << ii << " " << (*dof_iterator)->dof_id() << std::endl;
+			//	std::cout << "    F1: " << (*dof_iterator)->F1().x() << " " <<
+			//		(*dof_iterator)->F1().y() << " " <<
+			//		(*dof_iterator)->F1().z() << std::endl;
+			//	std::cout << "    F2: " << (*dof_iterator)->F2().x() << " " <<
+			//		(*dof_iterator)->F2().y() << " " <<
+			//		(*dof_iterator)->F2().z() << std::endl;
+			//	for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
+			//		core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
+			//		std::cout << "    Atom: " << id.rsd() << " " << id.atomno() << " " <<
+			//			pose_->residue( id.rsd() ).name() << " " <<
+			//			pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
+			//	}
+			//	std::cout << "    Numeric deriv: " << result.step_data( ii, 1 ).num_deriv() <<
+			//		" analytic deriv: " << result.step_data( ii, 1 ).ana_deriv() << std::endl;
+			//}
+			if ( std::abs( result.step_data( ii, 1 ).num_deriv() - result.step_data( ii, 1 ).ana_deriv() ) > tolerance ) {
+				full_success = false;
+				core::Size ii_atom_index = (ii-1) / 3 + 1;
+				core::id::AtomID ii_atom_id = min_map.get_atom( ii_atom_index );
+				//core::Size precision_old( std::cout.precision() );
+				//std::cout.precision( 16 );
+				std::cout << "Minmap dof " << ii << " incorrectly computed for DOF: " << ii_atom_id.rsd() << " " <<
+					ii_atom_id.atomno() << " " << (ii-1)%3 + 1;
+				std::cout << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
+				std::cout << std::endl;
+				//std::cout.precision( precision_old );
+				//for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
+				//	core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
+				//	std::cout << "  Atom: " << id.rsd() << " " << id.atomno() << " " <<
+				//		pose_->residue( id.rsd() ).name() << " " <<
+				//		pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
+				//}
+			} else {
+				core::Size ii_atom_index = (ii-1) / 3 + 1;
+				core::id::AtomID ii_atom_id = min_map.get_atom( ii_atom_index );
+				std::cout << "Derivative matches: " << ii << ": " << ii_atom_id.rsd() << " " <<
+					ii_atom_id.atomno() << " " << (ii-1)%3+1;
+				std::cout << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
+				std::cout << std::endl;
+			}
+		}
+		return full_success;
+	}
+
 	/// @brief Setup the minimizer map and ready the pose for minimization.  Return the start score and the start func.
 	inline
 	std::pair< core::Real, core::Real >
@@ -386,14 +516,19 @@ public:
 
 		core::Real start_score = (*sfxn_)(*pose_);
 
-		MoveMap semisym_move_map;
-		SymAtomTreeMinimizer::make_asymmetric_movemap( *pose_, *move_map_, semisym_move_map ); //fd: new minimizer
+		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+		kinematics::MoveMap semisym_move_map;
+		if ( !old_sym_min ) {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_asymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		} else {
+			core::optimization::symmetry::SymAtomTreeMinimizer::make_semisymmetric_movemap( *pose_, *move_map_, semisym_move_map );
+		}
 
 		SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose_->conformation()) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		sym_min_map_ = core::optimization::symmetry::SymMinimizerMapOP(
-			new core::optimization::symmetry::SymMinimizerMap( *pose_, semisym_move_map, symm_info, true ) ); //fd: new minimizer
+			new core::optimization::symmetry::SymMinimizerMap( *pose_, semisym_move_map, symm_info, !old_sym_min ) );
 
 		pose_->energies().set_use_nblist( *pose_, sym_min_map_->domain_map(), false );
 		sfxn_->setup_for_minimizing( *pose_, *sym_min_map_ );

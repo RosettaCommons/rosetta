@@ -19,6 +19,9 @@
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Numeric headers
 
@@ -184,11 +187,26 @@ CartesianMinimizerMap::setup(
 	Size const n_res( pose.size() );
 	core::pose::initialize_atomid_map( atom_indices_, pose );
 
+	// special case for symmetry
+	core::conformation::symmetry::SymmetryInfoOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
+
+	/////////////////////
+	// setup the domain_map which indicates what rsd pairs are fixed/moving
+	id::AtomID_Mask moving_dof, moving_xyz;
+	core::pose::initialize_atomid_map( moving_xyz, pose, false );
+	core::pose::initialize_atomid_map( moving_dof, pose, false );
+
 	for ( Size i = 1; i <= n_res; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 
 		bool const bb_move( mm.get_bb(i) );
 		bool const chi_move( mm.get_chi(i) );
+		bool const is_independent = (!symm_info || symm_info->bb_is_independent(i));
 
 		//fpd  do not let aa_vrt move
 		if ( rsd.aa() == chemical::aa_vrt ) continue;
@@ -196,34 +214,29 @@ CartesianMinimizerMap::setup(
 		// cartesian logic ...
 		//    if (chi_move && !bb_move) sc atoms only
 		//    if (bb_move) all atoms
-		if ( chi_move && !bb_move ) {
+		if ( chi_move || bb_move ) {
 			Size start1 = rsd.first_sidechain_atom();
 			Size stop1  = rsd.nheavyatoms();
 			Size start2 = rsd.first_sidechain_hydrogen();
 			Size stop2  = rsd.natoms();
 
-			for ( Size j=start1; j<=stop1; ++j ) {
-				moving_atoms_.push_back( id::AtomID( j,i ) );
-				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
-			}
-			for ( Size j=start2; j<=stop2; ++j ) {
-				moving_atoms_.push_back( id::AtomID( j,i ) );
-				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
-			}
-		} else if ( bb_move ) {
-			Size start1 = 1;
-			Size stop1 = rsd.natoms();
+			for ( Size j=1; j<=stop2; ++j ) {
+				if ( !bb_move && j<start1 ) continue;
+				if ( !bb_move && j>stop1 && j<start2 ) continue;
 
-			for ( Size j=start1; j<=stop1; ++j ) {
-				moving_atoms_.push_back( id::AtomID( j,i ) );
-				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
+				id::AtomID atm_ij( j,i );
+				moving_xyz[ atm_ij ] = true;
+				if ( is_independent ) {
+					moving_atoms_.push_back( atm_ij );
+					atom_indices_[ atm_ij ] = moving_atoms_.size();
+				}
 			}
-		} // if ( chi_move )
+		}
 	} // i=1,n_res
+
 
 	/////////////////////
 	// get a list of torsional DOFs which are implicitly moved by these xyzs
-	//TODO: be smarted about setting input movemap so we dont have to check every torsion later
 	kinematics::MoveMap move_map_torsional;
 	move_map_torsional.set_bb(true);
 	move_map_torsional.set_chi(true);
@@ -236,21 +249,9 @@ CartesianMinimizerMap::setup(
 	DOF_ID tmp( id::BOGUS_DOF_ID );
 	pose.atom_tree().root()->setup_min_map( tmp, dof_mask, *this );
 
-	// trim this list ensuring that at least one of the
-	//   four atoms that define the torsion
-	//   are in our movable set
+	// now trim this list ensuring that at least one of the
+	//   four atoms that define the torsion are in our movable set
 	assign_rosetta_torsions_and_trim( pose );
-
-	/////////////////////
-	// setup the domain_map which indicates what rsd pairs are fixed/moving
-	id::AtomID_Mask moving_dof, moving_xyz;
-	core::pose::initialize_atomid_map( moving_xyz, pose, false );
-	core::pose::initialize_atomid_map( moving_dof, pose, false );
-
-	Size nmoving_atoms = moving_atoms_.size();
-	for ( Size i=1; i<=nmoving_atoms; ++i ) {
-		moving_xyz[ moving_atoms_[i] ] = true;
-	}
 
 	domain_map_.dimension( pose.size() );
 	pose.conformation().atom_tree().update_domain_map( domain_map_, moving_dof, moving_xyz );

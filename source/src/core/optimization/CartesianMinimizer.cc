@@ -23,10 +23,13 @@
 #include <core/optimization/CartesianMultifunc.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+#include <core/pose/symmetry/util.hh>
+
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh> // for make_asymmetric_movemap
 
 #include <basic/Tracer.hh>
 
@@ -78,9 +81,16 @@ CartesianMinimizer::run(
 	// it's important that the structure be scored prior to nblist setup
 	Real const start_score( scorefxn( pose ) );
 
+	kinematics::MoveMap asym_move_map;
+	if ( pose::symmetry::is_symmetric( pose ) ) {
+		symmetry::SymAtomTreeMinimizer::make_asymmetric_movemap( pose, move_map, asym_move_map );
+	} else {
+		asym_move_map = move_map;
+	}
+
 	// setup the map of the degrees of freedom
 	CartesianMinimizerMap min_map;
-	min_map.setup( pose, move_map );
+	min_map.setup( pose, asym_move_map );
 
 	// if we are using the nblist, set it up
 	if ( use_nblist ) {
@@ -125,6 +135,8 @@ CartesianMinimizer::run(
 
 	return end_score;
 }
+
+
 
 NumericalDerivCheckResultOP
 CartesianMinimizer::deriv_check_result() const

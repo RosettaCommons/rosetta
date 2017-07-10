@@ -193,36 +193,31 @@ atom_tree_dfunc(
 
 		DOF_Node const & dof_node( **it );
 		kinematics::tree::Atom const & atom( pose.atom_tree().atom( dof_node.atom_id() ) );
-		/////////////////////////////////////////////////////////////////
+
 		// derivatives of this particular degree of freedom
-		//
-		// eg rama,Paa,dunbrack,and torsional constraints
+		Real sfxn_dof_deriv(0.0);
+		if ( !dof_node.dependent() ) {
+			sfxn_dof_deriv = scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
+		}
 
-		if ( symm_min_map.new_sym_min() ) { // new way
-			Real sfxn_dof_deriv(0.0);
-			if ( !dof_node.dependent() ) {
-				sfxn_dof_deriv = symm_info->score_multiply_factor() *
-					scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
-			}
-			Real const scale = symm_min_map.torsion_scale_factor( dof_node ); // dont divide by score_multiply_factor
-			Real const deriv( torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale ) );
-			if ( dof_node.dependent() ) {
-				// sum in the deriv into the independent deriv that this guy follows...
-				dE_dvars[ independent_dof_node_index[ symm_min_map.asymmetric_dof( dof_node.dof_id() ) ] ] += deriv;
-				--imap;
-			} else {
-				dE_dvars[ imap ] += deriv;
-				runtime_assert( imap == independent_dof_node_index[ dof_node.dof_id() ] );
-			}
-		} else { // old way
-			Real sfxn_dof_deriv = scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
-			Real scale = symm_min_map.torsion_scale_factor( dof_node ) / symm_info->score_multiply_factor();
+		Real scale  = symm_min_map.torsion_scale_factor( dof_node );
+		if ( !symm_min_map.new_sym_min() ) {
+			scale /= symm_info->score_multiply_factor();
+		} else {
+			sfxn_dof_deriv *= symm_info->score_multiply_factor();
+		}
 
-			dE_dvars[ imap ] = torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale );
+		Real const deriv( torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale ) );
+		if ( dof_node.dependent() ) {
+			// sum in the deriv into the independent deriv that this guy follows...
+			dE_dvars[ independent_dof_node_index[ symm_min_map.asymmetric_dof( dof_node.dof_id() ) ] ] += deriv;
+			--imap;
+		} else {
+			dE_dvars[ imap ] += deriv;
+			//runtime_assert( imap == independent_dof_node_index[ dof_node.dof_id() ] );
 		}
 	} // loop over map
 	runtime_assert( imap == int( symm_min_map.nangles()+1 ) );
-
 
 	scorefxn.finalize_after_derivatives( pose );
 }
@@ -260,15 +255,12 @@ atom_tree_get_atompairE_deriv(
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		MinimizationNode const & minnode =  * mingraph->get_minimization_node( ii );
 		/// 1. eval intra-residue derivatives
-		if ( symm_min_map.new_sym_min() ) {
-			if ( symm_info->chi_is_independent(ii) ) { // only do this at independent positions
-				EnergyMap weights( scorefxn.weights());
-				weights *= symm_info->score_multiply_factor();
-				eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, weights,
-					symm_min_map.atom_derivatives( ii ) );
+		if ( symm_info->chi_is_independent(ii) ) { // only do this at independent positions
+			EnergyMap respair_weight_scaled = scorefxn.weights();
+			if ( symm_min_map.new_sym_min() ) {
+				respair_weight_scaled *= minnode.weight();
 			}
-		} else {
-			eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, scorefxn.weights(),
+			eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, respair_weight_scaled,
 				symm_min_map.atom_derivatives( ii ) );
 		}
 	}
@@ -278,6 +270,15 @@ atom_tree_get_atompairE_deriv(
 			edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
 		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+
+		EnergyMap respair_weight_scaled = scorefxn.weights();
+		if ( symm_min_map.new_sym_min() ) {
+			if ( minedge.weight() == 0 ) continue;
+			respair_weight_scaled *= minedge.weight();
+		} else {
+			respair_weight_scaled *= minedge.dweight();
+		}
+
 		Size const rsd1ind = minedge.get_first_node_ind();
 		Size const rsd2ind = minedge.get_second_node_ind();
 		conformation::Residue const & rsd1( pose.residue( rsd1ind ));
@@ -285,17 +286,21 @@ atom_tree_get_atompairE_deriv(
 		ResSingleMinimizationData const & r1_min_data( mingraph->get_minimization_node( rsd1ind )->res_min_data() );
 		ResSingleMinimizationData const & r2_min_data( mingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-		eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-			r1_min_data, r2_min_data, pose, scorefxn.weights(),
+		eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+			r1_min_data, r2_min_data, pose, respair_weight_scaled,
 			symm_min_map.atom_derivatives( rsd1ind ), symm_min_map.atom_derivatives( rsd2ind ));
 	}
 
+	/// 2b. eval inter-residue derivatives from derivative minimization graph
 	if ( !symm_min_map.new_sym_min() ) {
-		/// 2b. eval inter-residue derivatives from derivative minimization graph
 		for ( utility::graph::Node::EdgeListConstIter
 				edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
 			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+
+			EnergyMap respair_weight_scaled = scorefxn.weights();
+			respair_weight_scaled *= minedge.dweight();
+
 			Size const rsd1ind = minedge.get_first_node_ind();
 			Size const rsd2ind = minedge.get_second_node_ind();
 			conformation::Residue const & rsd1( pose.residue( rsd1ind ));
@@ -303,22 +308,18 @@ atom_tree_get_atompairE_deriv(
 			ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
 			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-			eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-				r1_min_data, r2_min_data, pose, scorefxn.weights(),
+			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+				r1_min_data, r2_min_data, pose, respair_weight_scaled,
 				symm_min_map.atom_derivatives( rsd1ind ), symm_min_map.atom_derivatives( rsd2ind ));
 		}
 	}
 
-	//std::cerr << pose.fold_tree();
-
 	// Loop over all dofs in the symmetric movemap
-	// use atom lists from the semisymmetric movemap
-	//
 	for ( MinimizerMap::const_iterator iter = symm_min_map.begin(), iter_e = symm_min_map.end();
 			iter != iter_e; ++iter ) {
 		DOF_Node & dof_node( **iter );
 
-		core::Real dof_wt_i =  symm_info->get_dof_derivative_weight( dof_node.dof_id(), symm_conf );
+		//core::Real dof_wt_i =  symm_info->get_dof_derivative_weight( dof_node.dof_id(), symm_conf );
 
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion
@@ -331,14 +332,7 @@ atom_tree_get_atompairE_deriv(
 			dof_node.F2() += symm_min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f2();
 
 			scorefxn.eval_npd_atom_derivative( atom_id, pose, symm_min_map.domain_map(), dof_node.F1(), dof_node.F2() );
-
 		} // atom1
-
-		//std::cout << "   ... summing " << dof_node.atom_id() << " with weight " << dof_wt_i << std::endl;
-		//std::cout << "   " << f1.x() << " " << f1.y() << " " << f1.z() << " " << f2.x() << " " << f2.y() << " " << f2.z() << std::endl;
-		// note that f1 and f2 here are exactly 0,0,0 vectors
-		dof_node.F1() += dof_wt_i * f1;
-		dof_node.F2() += dof_wt_i * f2;
 	}
 	for ( MinimizerMap::const_iterator iter = symm_min_map.dependent_begin(), iter_e = symm_min_map.dependent_end();
 			iter != iter_e; ++iter ) {
@@ -358,7 +352,6 @@ atom_tree_get_atompairE_deriv(
 			f2 += symm_min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f2();
 
 			scorefxn.eval_npd_atom_derivative( atom_id, pose, symm_min_map.domain_map(), f1, f2 );
-
 		} // atom1
 
 		Size this_jump = pose.fold_tree().get_jump_that_builds_residue( dof_node.dof_id().rsd() );
@@ -368,14 +361,9 @@ atom_tree_get_atompairE_deriv(
 		// get the equiv node in the symm min map
 		DOF_NodeOP symm_dof_node = symm_min_map.dof_node_from_id( symm_dof_id );
 
-		//std::cout << "   ... summing " << dof_node.atom_id() << " at dof node " << symm_dof_node->atom_id() << " with weight " << dof_wt_i << std::endl;
-		//std::cout << "   ... summing " << dof_node.atom_id() << " at dof node " << symm_dof_node->atom_id() << " with weight " << dof_wt_i << std::endl;
-		//std::cout << "   " << f1.x() << " " << f1.y() << " " << f1.z() << " " << f2.x() << " " << f2.y() << " " << f2.z() << std::endl;
-
 		// add f1 f2 using dof deriv wt
 		symm_dof_node->F1() += dof_wt_i * f1;
 		symm_dof_node->F2() += dof_wt_i * f2;
-
 	} // tor
 }
 

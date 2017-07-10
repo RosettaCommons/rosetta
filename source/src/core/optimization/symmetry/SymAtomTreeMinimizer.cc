@@ -54,24 +54,6 @@ namespace symmetry {
 
 static THREAD_LOCAL basic::Tracer TR( "core.optimize" );
 
-///////////////////////////////////////////////////////////////////////////////
-// fpd  helper function
-//      for backwards compatability with old symmdef files,
-//      use a default definition for derivative weights when using the new minimizer
-void
-SymAtomTreeMinimizer::check_and_correct_edge_weights_for_new_minimizer (
-	pose::Pose & pose
-) {
-	core::conformation::symmetry::SymmetricConformation & symm_conf (
-		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
-	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
-	core::conformation::symmetry::SymmetryInfoOP symm_info( symm_conf.Symmetry_Info() );
-
-	bool warn = symm_info->reset_score_multiply_to_reasonable_default();
-	if ( warn ) {
-		TR << "Warning!  Updating SymmetryInfo to deal with new minimization scheme!\n";
-	}
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
@@ -98,7 +80,6 @@ SymAtomTreeMinimizer::run(
 	bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
 	kinematics::MoveMap semisym_move_map;
 	if ( !old_sym_min ) {
-		check_and_correct_edge_weights_for_new_minimizer( pose );
 		make_asymmetric_movemap( pose, move_map, semisym_move_map );
 	} else {
 		make_semisymmetric_movemap( pose, move_map, semisym_move_map );

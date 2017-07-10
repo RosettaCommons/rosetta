@@ -228,20 +228,15 @@ SymmetricScoreFunction::setup_for_minimizing(
 	pose::Pose & pose,
 	kinematics::MinimizerMapBase const & min_map
 ) const {
-	bool const new_sym_min( !basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
 	/// 1. Initialize the nodes of the minimization graph
 	/// 2. Initialize the edges with the short-ranged two-body energies
 	/// 3. Initialize the edges with the long-ranged two-body energies
 	/// 4. Run setup-for-minimization on the edges of the mingraph; dropping edges with no active 2b enmeths.
 	/// 5. Let whole-structure energies initialize themselves
 
-	SymmetricConformation & symm_conf (
-		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfo const & symm_info( * symm_conf.Symmetry_Info() );
-
-	SymmetricEnergies & symm_energies(
-		dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
-
+	SymmetricEnergies & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 	MinimizationGraphOP g( new MinimizationGraph( pose.size() ) );
 	MinimizationGraphOP dg( new MinimizationGraph( pose.size() ) ); // derivative graph
@@ -296,34 +291,32 @@ SymmetricScoreFunction::setup_for_minimizing(
 
 		Real edge_weight = symm_info.score_multiply( node1, node2 );
 		Real edge_dweight = symm_info.deriv_multiply( node1, node2 );
-		if ( new_sym_min ) { // new way
-			edge_dweight = edge_weight; // NOTE
-			if ( edge_weight != 0.0 ) {
-				MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
-				setup_for_minimizing_sr2b_enmeths_for_minedge(
-					pose.residue( node1 ), pose.residue( node2 ),
-					minedge, min_map, pose, res_moving_wrt_eachother, true,
-					static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies, edge_weight );
-				minedge.weight( edge_weight );
-				minedge.dweight( edge_dweight );
-			}
-		} else { // classic way
-			if ( edge_weight != 0.0 ) {
-				MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
-				setup_for_minimizing_sr2b_enmeths_for_minedge(
-					pose.residue( node1 ), pose.residue( node2 ),
-					minedge, min_map, pose, res_moving_wrt_eachother, true,
-					static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies, edge_weight );
-				minedge.weight( edge_weight );
-				minedge.dweight( edge_dweight );
-			} else {
-				MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**dedge_iter) );
-				setup_for_minimizing_sr2b_enmeths_for_minedge(
-					pose.residue( node1 ), pose.residue( node2 ),
-					minedge, min_map, pose, res_moving_wrt_eachother, false,
-					static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies ); // edge weight of 1
-				minedge.dweight( edge_dweight );
-			}
+
+		// fd, 7/17, removing this separate logic for old_sym_min and new_sym_min
+		//  the reason is that the derivative weights serve 2 purposes:
+		//    1) handing scaling of jumps in lattice systems
+		//    2) handing computation of derivatives on edges where the weight on scoring is 0
+		//  the new_sym_min logic (commented out) was meant to address the first case but broke the second case
+		//  instead, we will address the first case in SymmetryInfo and restore old_sym_min behavior here
+
+		//bool const new_sym_min( !basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+		// if ( new_sym_min ) { // new way
+		// } else { // classic way
+		if ( edge_weight != 0.0 ) {
+			MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+			setup_for_minimizing_sr2b_enmeths_for_minedge(
+				pose.residue( node1 ), pose.residue( node2 ),
+				minedge, min_map, pose, res_moving_wrt_eachother, true,
+				static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies, edge_weight );
+			minedge.weight( edge_weight );
+			minedge.dweight( edge_dweight );
+		} else {
+			MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**dedge_iter) );
+			setup_for_minimizing_sr2b_enmeths_for_minedge(
+				pose.residue( node1 ), pose.residue( node2 ),
+				minedge, min_map, pose, res_moving_wrt_eachother, false,
+				static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies ); // edge weight of 1
+			minedge.dweight( edge_dweight );
 		}
 	}
 
@@ -359,26 +352,24 @@ SymmetricScoreFunction::setup_for_minimizing(
 					domain_map( ii ) != domain_map( jj ) );
 
 				Real edge_weight = symm_info.score_multiply( ii, jj );
-				if ( new_sym_min ) {
-					if ( edge_weight != 0.0 ) {
-						// adjust/add the edge to the scoring graph
-						// use the edge_weight as the deriv weight, too
-						setup_for_lr2benmeth_minimization_for_respair(
-							pose.residue( ii ), pose.residue( jj ), *iter, *g, min_map, pose,
-							res_moving_wrt_eachother, true, rni, fixed_energies, edge_weight, edge_weight );
-					}
+
+				// fd, 7/17, removing this separate logic for old and new
+				//  see comment above
+
+				//bool const new_sym_min( !basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+				// if ( new_sym_min ) { // new way
+				// } else { // classic way
+
+				if ( edge_weight != 0.0 ) {
+					// adjust/add the edge to the scoring graph
+					setup_for_lr2benmeth_minimization_for_respair(
+						pose.residue( ii ), pose.residue( jj ), *iter, *g, min_map, pose,
+						res_moving_wrt_eachother, true, rni, fixed_energies, edge_weight );
 				} else {
-					if ( edge_weight != 0.0 ) {
-						// adjust/add the edge to the scoring graph
-						setup_for_lr2benmeth_minimization_for_respair(
-							pose.residue( ii ), pose.residue( jj ), *iter, *g, min_map, pose,
-							res_moving_wrt_eachother, true, rni, fixed_energies, edge_weight );
-					} else {
-						/// adjust/add this edge to the derivative graph
-						setup_for_lr2benmeth_minimization_for_respair(
-							pose.residue( ii ), pose.residue( jj ), *iter, *dg, min_map, pose,
-							res_moving_wrt_eachother, false, rni, fixed_energies ); // no edge weight
-					}
+					/// adjust/add this edge to the derivative graph
+					setup_for_lr2benmeth_minimization_for_respair(
+						pose.residue( ii ), pose.residue( jj ), *iter, *dg, min_map, pose,
+						res_moving_wrt_eachother, false, rni, fixed_energies ); // no edge weight
 				}
 			}
 		}
@@ -460,9 +451,9 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 
 	EnergyMap & total_energies( const_cast< EnergyMap & > ( energies.total_energies() ) );
 
-	SymmetricConformation & SymmConf (
-		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	SymmetryInfo const & symm_info( * symm_conf.Symmetry_Info() );
+	SymmetricEnergies & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( energies.energy_graph() );
@@ -475,7 +466,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 
 	if ( minimizing ) {
 		/// When minimizing, do not touch the EnergyGraph -- leave it fixed
-		MinimizationGraphCOP g = energies.minimization_graph();
+		MinimizationGraphCOP g = symm_energies.minimization_graph();
 		EnergyMap scratch_emap;
 		for ( utility::graph::Graph::EdgeListConstIter
 				edge_iter = g->const_edge_list_begin(),
@@ -486,10 +477,9 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 			conformation::Residue const & rsd1( pose.residue( node1 ));
 			conformation::Residue const & rsd2( pose.residue( node2 ));
 			MinimizationEdge const & minedge( static_cast< MinimizationEdge const & > (**edge_iter) );
-
 			eval_weighted_res_pair_energy_for_minedge( minedge, rsd1, rsd2, pose, *this, total_energies, scratch_emap );
 		}
-
+		total_energies +=  scratch_emap;
 	} else {
 		EnergyMap tbemap;
 
@@ -512,7 +502,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 				eval_cd_2b( resl, resu, pose, tbemap );
 
 				for ( Size ii = 1; ii <= cd_2b_types().size(); ++ii ) {
-					tbemap[ cd_2b_types()[ ii ]] *= symm_info->score_multiply(i,j);
+					tbemap[ cd_2b_types()[ ii ]] *= symm_info.score_multiply(i,j);
 				}
 
 				if ( edge.energies_not_yet_computed() ) {
@@ -531,14 +521,14 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 						// yet been computed...
 						eval_ci_2b( resl, resu, pose, tbemap );
 						for ( Size ii = 1; ii <= ci_2b_types().size(); ++ii ) {
-							tbemap[ ci_2b_types()[ ii ]] *= symm_info->score_multiply(i,j);
+							tbemap[ ci_2b_types()[ ii ]] *= symm_info.score_multiply(i,j);
 						}
 						edge.store_active_energies( tbemap );
 						// do not mark energies as computed!!!!!!!!!!!!!
 					} else {
 						eval_ci_2b( resl, resu, pose, tbemap );
 						for ( Size ii = 1; ii <= ci_2b_types().size(); ++ii ) {
-							tbemap[ ci_2b_types()[ ii ]] *= symm_info->score_multiply(i,j);
+							tbemap[ ci_2b_types()[ ii ]] *= symm_info.score_multiply(i,j);
 						}
 						edge.store_active_energies( tbemap );
 						edge.mark_energies_computed();
