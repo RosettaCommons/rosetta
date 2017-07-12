@@ -35,6 +35,8 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 
+using namespace core::scoring;
+
 --class--::-class--();
 
 // copy constructor (not needed unless you need deep copies)
@@ -45,14 +47,14 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
-ore::scoring::methods::EnergyMethodOP 
+methods::EnergyMethodOP
 --class--::clone() const {
 
 }
 
 /// @brief Indicate required setup steps for scoring
 void 
---class--::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+--class--::setup_for_scoring( core::pose::Pose & pose, ScoreFunction const & ) const {
 
 }
 
@@ -79,7 +81,7 @@ void
 
 }
 
-Distance 
+core::Real
 --class--::atomic_interaction_cutoff() const {
 
 } 

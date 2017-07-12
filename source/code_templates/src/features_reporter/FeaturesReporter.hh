@@ -59,7 +59,7 @@ public: // Feature-Reporter Specific Methods
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		StructureID struct_id,
+		protocols::features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session ) override;
 
 

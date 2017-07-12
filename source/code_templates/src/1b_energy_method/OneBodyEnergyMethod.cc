@@ -37,8 +37,10 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 
+using namespace core::scoring;
+
 --class--::--class--():
-	core::scoring::methods::OneBodyEnergy( --class--::class_name() )
+	methods::OneBodyEnergy( --class--::class_name() )
 {
 
 }
@@ -47,12 +49,12 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
-core::scoring::methods::EnergyMethodOP 
+methods::EnergyMethodOP
 --class--::clone() const;
 
 /// @brief Indicate required setup steps for scoring
 void 
---class--::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+--class--::setup_for_scoring( core::pose::Pose & pose, ScoreFunction const & ) const;
 
 /// @brief Is the score context dependent or context independent? 
 void 

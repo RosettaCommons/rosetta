@@ -39,7 +39,7 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --class--::~--class--() {}
 
-TaskOperationOP
+core::task::operation::TaskOperationOP
 --class--::clone() const {
 	return TaskOperationOP( new --class--( *this ) );
 }

@@ -41,6 +41,8 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 
+using namespace core::scoring;
+
 --class--::--class--():
 	core::scoring::methods::TwoBodyEnergy( --class--::class_name() )
 {
@@ -51,17 +53,17 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 void
 --class--::residue_pair_energy(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const;
 
 bool
 --class--::defines_score_for_residue_pair(
-	conformation::Residue const & res1,
-	conformation::Residue const & res2,
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
 	bool res_moving_wrt_eachother
 ) const;
 
@@ -70,74 +72,74 @@ bool
 
 void
 --class--::residue_pair_energy_ext(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
 	ResPairMinimizationData const & min_data,
-	pose::Pose const & pose,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const;
 
 void
 --class--::setup_for_minimizing_for_residue(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	kinematics::MinimizerMapBase const & minmap,
+	core::kinematics::MinimizerMapBase const & minmap,
 	ResSingleMinimizationData & res_data_cache
 ) const;
 
 void
 --class--::setup_for_minimizing_for_residue_pair(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	kinematics::MinimizerMapBase const & minmap,
+	core::kinematics::MinimizerMapBase const & minmap,
 	ResSingleMinimizationData const & res1_data_cache,
 	ResSingleMinimizationData const & res2_data_cache,
 	ResPairMinimizationData & data_cache
 ) const;
 
 bool
---class--::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & pose ) const;
+--class--::requires_a_setup_for_scoring_for_residue_opportunity( core::pose::Pose const & pose ) const;
 
 void
 --class--::setup_for_scoring_for_residue(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	ResSingleMinimizationData & min_data
 ) const;
 
 bool
---class--::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & pose ) const;
+--class--::requires_a_setup_for_derivatives_for_residue_opportunity( core::pose::Pose const & pose ) const;
 
 void
 --class--::setup_for_derivatives_for_residue(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	ResSingleMinimizationData & min_data
 ) const;
 
 
 bool
---class--::requires_a_setup_for_scoring_for_residue_pair_opportunity( pose::Pose const & pose ) const;
+--class--::requires_a_setup_for_scoring_for_residue_pair_opportunity( core::pose::Pose const & pose ) const;
 
 void
 --class--::setup_for_scoring_for_residue_pair(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
 	ResSingleMinimizationData const & minsingle_data1,
 	ResSingleMinimizationData const & minsingle_data2,
-	pose::Pose const & pose,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	ResPairMinimizationData & data_cache
 ) const;
 
 bool
---class--::requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & pose ) const;
+--class--::requires_a_setup_for_derivatives_for_residue_pair_opportunity( core::pose::Pose const & pose ) const;
 
 void
 --class--::setup_for_derivatives_for_residue_pair(
@@ -152,12 +154,12 @@ void
 
 void
 --class--::eval_residue_pair_derivatives(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
 	ResPairMinimizationData const & min_data,
-	pose::Pose const & pose, // provides context
+	core::pose::Pose const & pose, // provides context
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
@@ -165,27 +167,27 @@ void
 
 void
 --class--::backbone_backbone_energy(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const;
 
 void
 --class--::backbone_sidechain_energy(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const;
 
 void
 --class--::sidechain_sidechain_energy(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const;
@@ -195,15 +197,15 @@ bool
 
 void
 --class--::eval_intrares_energy(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	core::conformation::Residue const & rsd,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const = 0;
 
 bool
 --class--::defines_intrares_energy_for_residue(
-	conformation::Residue const & res
+	core::conformation::Residue const & res
 ) const;
 
 bool
@@ -211,18 +213,18 @@ bool
 
 void
 --class--::eval_intrares_energy_ext(
-	conformation::Residue const & rsd,
+	core::conformation::Residue const & rsd,
 	ResSingleMinimizationData const & data_cache,
-	pose::Pose const & pose,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const;
 
 void
 --class--::eval_intrares_derivatives(
-	conformation::Residue const & rsd,
+	core::conformation::Residue const & rsd,
 	ResSingleMinimizationData const & min_data,
-	pose::Pose const & pose,
+	core::pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const;
@@ -232,20 +234,20 @@ bool
 
 Real
 --class--::eval_intraresidue_dof_derivative(
-	conformation::Residue const & rsd,
+	core::conformation::Residue const & rsd,
 	ResSingleMinimizationData const & min_data,
-	id::DOF_ID const & dof_id,
-	id::TorsionID const & torsion_id,
-	pose::Pose const & pose,
+	core::id::DOF_ID const & dof_id,
+	core::id::TorsionID const & torsion_id,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights
 ) const;
 
 void
 --class--::bump_energy_full(
-	conformation::Residue const &,
-	conformation::Residue const &,
-	pose::Pose const &,
+	core::conformation::Residue const &,
+	core::conformation::Residue const &,
+	core::pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap &
 ) const;
@@ -253,34 +255,34 @@ void
 virtual
 void
 --class--::bump_energy_backbone(
-	conformation::Residue const &,
-	conformation::Residue const &,
-	pose::Pose const &,
+	core::conformation::Residue const &,
+	core::conformation::Residue const &,
+	core::pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap &
 ) const;
 
 void
 --class--::evaluate_rotamer_intrares_energies(
-	conformation::RotamerSetBase const & set,
-	pose::Pose const & pose,
+	core::conformation::RotamerSetBase const & set,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	utility::vector1< core::PackerEnergy > & energies
 ) const;
 
 void
 --class--::evaluate_rotamer_intrares_energy_maps(
-	conformation::RotamerSetBase const & set,
-	pose::Pose const & pose,
+	core::conformation::RotamerSetBase const & set,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	utility::vector1< EnergyMap > & emaps
 ) const;
 
 void
 --class--::evaluate_rotamer_pair_energies(
-	conformation::RotamerSetBase const & set1,
-	conformation::RotamerSetBase const & set2,
-	pose::Pose const & pose,
+	core::conformation::RotamerSetBase const & set1,
+	core::conformation::RotamerSetBase const & set2,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
@@ -288,9 +290,9 @@ void
 
 void
 --class--::evaluate_rotamer_background_energies(
-	conformation::RotamerSetBase const & set,
-	conformation::Residue const & residue,
-	pose::Pose const & pose,
+	core::conformation::RotamerSetBase const & set,
+	core::conformation::Residue const & residue,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
@@ -298,9 +300,9 @@ void
 
 void
 --class--::evaluate_rotamer_background_energy_maps(
-	conformation::RotamerSetBase const & set,
-	conformation::Residue const & residue,
-	pose::Pose const & pose,
+	core::conformation::RotamerSetBase const & set,
+	core::conformation::Residue const & residue,
+	core::pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights,
 	utility::vector1< EnergyMap > & emaps

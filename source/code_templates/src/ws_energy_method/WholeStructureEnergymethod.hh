@@ -35,6 +35,9 @@
 class --class-- : public core::scoring::methods::WholeStructureEnergy {
 
 	typedef core::scoring::methods::WholeStructureEnergy parent;
+	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::EnergyMethodOP EnergyMethodOP;
+	typedef core::scoring::EnergyMap EnergyMap;
 
 public:
 
@@ -48,7 +51,7 @@ public:
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
-	virtual core::scoring::methods::EnergyMethodOP clone() const;
+	virtual EnergyMethodOP clone() const;
 
 	/// @brief Indicate required setup steps for scoring
 	virtual
@@ -65,7 +68,7 @@ public:
 	virtual void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
 
 	virtual
-	Distance atomic_interaction_cutoff() const; 
+	core::Real atomic_interaction_cutoff() const;
 
 private:
 

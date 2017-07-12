@@ -59,10 +59,10 @@ utility::vector1< std::string >
 
 Size
 --class--::report_features(
-	Pose const & pose,
-	vector1< bool > const & relevant_residues,
-	StructureID const struct_id,
-	sessionOP db_session
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & relevant_residues,
+	protocols::features::StructureID const struct_id,
+	utility::sql_database::sessionOP db_session
 ) {
 
 }

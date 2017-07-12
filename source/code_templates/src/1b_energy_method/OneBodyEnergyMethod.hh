@@ -41,7 +41,14 @@
 ///@brief --brief--
 class --class-- : public core::scoring::methods::OneBodyEnergy {
 
+public:
+
 	typedef core::scoring::methods::OneBodyEnergy parent; 
+    typedef core::pose::Pose Pose;
+    typedef core::conformation::Residue Residue;
+    typedef core::scoring::ScoreFunction ScoreFunction;
+    typedef core::scoring::EnergyMap EnergyMap;
+    typedef core::scoring::ResPairMinimizationData ResPairMinimizationData;
 
 public:
 
@@ -58,8 +65,8 @@ public:
 	virtual
 	void
 	residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
+		Residue const & rsd,
+		Pose const & pose,
 		EnergyMap & emap
 	) const;
 
@@ -69,7 +76,7 @@ public:
 	virtual
 	bool
 	defines_score_for_residue(
-		conformation::Residue const &
+		Residue const &
 	) const;
 
 	/// @brief Rely on the extended version of the residue_energy function during score-function
@@ -91,9 +98,9 @@ public:
 	virtual
 	void
 	residue_energy_ext(
-		conformation::Residue const & rsd,
+		Residue const & rsd,
 		ResSingleMinimizationData const & min_data,
-		pose::Pose const & pose,
+		Pose const & pose,
 		EnergyMap & emap
 	) const;
 
@@ -107,10 +114,10 @@ public:
 	virtual
 	void
 	setup_for_minimizing_for_residue(
-		conformation::Residue const & rsd,
-		pose::Pose const & ,
+		Residue const & rsd,
+		Pose const & ,
 		ScoreFunction const & ,
-		kinematics::MinimizerMapBase const & ,
+		MinimizerMapBase const & ,
 		ResSingleMinimizationData &
 	) const;
 
@@ -119,7 +126,7 @@ public:
 	/// in doing so.
 	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity( Pose const & pose ) const;
 
 	/// @brief Do any setup work should the coordinates of this residue, who is still guaranteed to be
 	/// of the same residue type as when setup_for_minimizing_for_residue was called, have changed so dramatically
@@ -127,8 +134,8 @@ public:
 	virtual
 	void
 	setup_for_scoring_for_residue(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
+		Residue const & rsd,
+		Pose const & pose,
 		ScoreFunction const & sfxn,
 		ResSingleMinimizationData & min_data
 	) const;
@@ -137,8 +144,8 @@ public:
 	virtual
 	void
 	setup_for_derivatives_for_residue(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
+		Residue const & rsd,
+		Pose const & pose,
 		ScoreFunction const & sfxn,
 		ResSingleMinimizationData & min_data
 	) const;
@@ -151,9 +158,9 @@ public:
 	virtual
 	void
 	eval_residue_derivatives(
-		conformation::Residue const & rsd,
+		Residue const & rsd,
 		ResSingleMinimizationData const & min_data,
-		pose::Pose const & pose,
+		Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
 	) const;
