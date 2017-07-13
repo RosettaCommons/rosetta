@@ -1176,6 +1176,7 @@ NearNativeLoopCloser::parse_my_tag(
 		resAfterLoop_ = tag->getOption<Size>("resAfterLoop");
 	}
 	output_closed_ = tag->getOption<bool>("close",true);
+	closure_type_ = tag->getOption<std::string>("closure_type","lookback");
 	if ( output_closed_ ) {
 		SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
 		SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
@@ -1313,7 +1314,9 @@ void NearNativeLoopCloser::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"output_all", xsct_rosetta_bool,
 		"XSD_XRW: TO DO", "false");
-
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"closure_type", xs_string,
+		"type of closure, either kic or lookback", "lookback");
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
 		"XSD_XRW: TO DO",
