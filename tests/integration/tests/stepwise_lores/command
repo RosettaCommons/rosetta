@@ -46,5 +46,8 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log
 
+cat swm_bps_rebuild_submotif0.9.out | sed s'/S_000001/S_0001/g' > foo
+mv foo swm_bps_rebuild_submotif0.9.out
+
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
