@@ -1,0 +1,7 @@
+TEMPLATE = subdirs
+
+SUBDIRS += stepwise_interface ui rosetta
+
+stepwise_interface.depends = rosetta ui
+
+ui.depends = rosetta

@@ -46,11 +46,13 @@ public:
 	static ConstraintSetOP read_constraints(
 		std::string const & filename,
 		ConstraintSetOP cst_set,
-		pose::Pose const& pose );
+		pose::Pose const& pose,
+		bool const force_pdb_info_mapping = false );
 	static ConstraintSetOP read_constraints(
 		std::istream & data,
 		ConstraintSetOP cst_set,
-		pose::Pose const& pose );
+		pose::Pose const& pose,
+		bool const force_pdb_info_mapping = false );
 
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );
@@ -60,26 +62,22 @@ public:
 
 	static ConstraintOP parse_atom_pair_constraint(
 		std::istream & data,
-		core::pose::Pose pose
+		core::pose::Pose pose,
+		bool const force_pdb_info_mapping = false
 	);
 
 	static ConstraintSetOP read_constraints_new(
 		std::string const & fname,
 		ConstraintSetOP cset,
-		pose::Pose const & pose
+		pose::Pose const & pose,
+		bool const force_pdb_info_mapping = false
 	);
 
 	static ConstraintSetOP read_constraints_new(
 		std::istream & data,
 		ConstraintSetOP cset,
-		pose::Pose const & pose
-	);
-
-	/// @brief read one individual constraint defined.
-	static ConstraintOP read_individual_constraint_new(
-		std::istream & data,
-		core::pose::Pose const& pose,
-		func::FuncFactory const & func_factory
+		pose::Pose const & pose,
+		bool const force_pdb_info_mapping = false
 	);
 
 	/// @brief read one individual constraint defined.
@@ -87,31 +85,47 @@ public:
 		std::istream & data,
 		core::pose::Pose const& pose,
 		func::FuncFactory const & func_factory,
-		std::string type /*cst -type*/
+		bool const force_pdb_info_mapping = false
+	);
+
+	/// @brief read one individual constraint defined.
+	static ConstraintOP read_individual_constraint_new(
+		std::istream & data,
+		core::pose::Pose const& pose,
+		func::FuncFactory const & func_factory,
+		std::string type, /*cst -type*/
+		bool const force_pdb_info_mapping = false
 	);
 
 	static ConstraintOP parse_coordinate_constraint(
 		std::istream & data,
-		core::pose::Pose pose
+		core::pose::Pose pose,
+		bool const force_pdb_info_mapping = false
 	);
 
 	static void parse_residue(
 		pose::Pose const& pose,
 		std::string const & residue_string,
-		Size & residue_num
+		Size & residue_num,
+		bool const force_pdb_info_mapping = false
 	);
 
 	/// @details a value of 0 for the chain means to ignore PDBInfo settings,
 	/// and treat the resnum as Rosetta/Pose numbering.
 	static Size
-	parse_residue( pose::Pose const& pose, int const resnum, char const chain = 0 );
+	parse_residue( pose::Pose const& pose, int const resnum, char const chain = 0,
+		bool const force_pdb_info_numbering = false);
 
 	// gkt - tmp hack for BoundFunc, should be private
 protected:
-	static void read_cst_bindingsites( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
-	static void read_cst_atom_pairs( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
-	static void read_cst_coordinates( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
-	static void read_cst_angles( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
+	static void read_cst_bindingsites( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const& ,
+		bool const force_pdb_info_mapping = false );
+	static void read_cst_atom_pairs( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const& ,
+		bool const force_pdb_info_mapping = false );
+	static void read_cst_coordinates( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const& ,
+		bool const force_pdb_info_mapping = false );
+	static void read_cst_angles( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const& ,
+		bool const force_pdb_info_mapping = false );
 
 private:
 	ConstraintIO () {};

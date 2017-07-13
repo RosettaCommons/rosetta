@@ -367,15 +367,15 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 	// The centroid is C for pdb_GAI -- we sort of need this by
 	// definition. So that we don't refer to pdb_GAI by name,
-	// let's say that all non-polymer residues have a centroid of 
+	// let's say that all non-polymer residues have a centroid of
 	// their first atom's xyz. This is vaguely reasonable a priori,
 	// since it's slightly more likely than not to be the root, maybe,
 	// and may prompt a better general centroid function.
- 
+
 	// Really, AMW TODO don't call get_rna_base_centroid on non RNA.
 	// instead call something else!
 	if ( !rsd.is_polymer() ) return rsd.xyz(1);
-	
+
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() ) {
 		std::cout << "name " << rsd.type().name() << std::endl;
@@ -438,10 +438,10 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 	// AMW TODO: similarly, don't call this RNA FUNCTION for non RNA residues.
 	// I suppose ligands with planar bits with H-bond donors/acceptors can have
 	// 'edges' in the same way, perhaps. Separate function!
-	
+
 	// We have to retain our mentions of pdb_GAI here because we are specialized
-	// to its particular WC atoms. 
-	
+	// to its particular WC atoms.
+
 	using namespace chemical;
 
 	//SML PHENIX conference

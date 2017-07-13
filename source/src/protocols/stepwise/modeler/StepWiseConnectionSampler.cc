@@ -613,7 +613,7 @@ StepWiseConnectionSampler::initialize_moving_residue_pose_list( pose::Pose const
 	if ( which_residue_alternative_set_is_moving_residue() > 0 ) return; // already initialized.
 	utility::vector1< pose::PoseOP > pose_list;
 	if ( pose.residue_type( moving_res_ ).is_RNA() && // can't be a ligand, or a protein at the moment for that matter...
-		rigid_body_modeler_ && moving_partition_res_.size() == 1 ) { // single floating base [classic]
+			rigid_body_modeler_ && moving_partition_res_.size() == 1 ) { // single floating base [classic]
 		pose_list = setup_pose_with_moving_residue_alternative_list( pose, moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
 	} else {
 		pose_list = utility::tools::make_vector1( pose.clone() ); // no alternatives.

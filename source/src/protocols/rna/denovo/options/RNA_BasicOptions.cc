@@ -16,6 +16,8 @@
 #include <protocols/rna/denovo/options/RNA_BasicOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 #include <basic/Tracer.hh>
 
@@ -58,10 +60,21 @@ RNA_BasicOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_BasicOptions::initialize_from_command_line() {
-	set_dump_pdb( option[ basic::options::OptionKeys::rna::denovo::out::dump ] ) ;
-	set_move_first_rigid_body(  option[ basic::options::OptionKeys::rna::denovo::move_first_rigid_body ] );
-
+	initialize_from_options( basic::options::option );
 }
+
+void
+RNA_BasicOptions::initialize_from_options( utility::options::OptionCollection const & opts ) {
+	set_dump_pdb( opts[ basic::options::OptionKeys::rna::denovo::out::dump ] ) ;
+	set_move_first_rigid_body( opts[ basic::options::OptionKeys::rna::denovo::move_first_rigid_body ] );
+}
+void
+RNA_BasicOptions::list_options_read( utility::options::OptionKeyList & opts ) {
+	using namespace basic::options;
+	opts + OptionKeys::rna::denovo::out::dump
+		+ OptionKeys::rna::denovo::move_first_rigid_body;
+}
+
 
 } //options
 } //denovo

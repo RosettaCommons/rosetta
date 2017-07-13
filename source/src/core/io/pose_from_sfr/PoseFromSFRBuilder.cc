@@ -956,7 +956,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 			core::pose::add_comment( pose, it->first, it->second );
 		}
 	}
-	
+
 	TR.Trace << "Pose refined successfully:" << std::endl;
 	TR.Trace << pose << std::endl;
 }

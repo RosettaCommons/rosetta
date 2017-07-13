@@ -1,0 +1,7 @@
+TEMPLATE = subdirs
+
+SUBDIRS += rna_denovo ui rosetta
+
+rna_denovo.depends = rosetta ui
+
+ui.depends = rosetta

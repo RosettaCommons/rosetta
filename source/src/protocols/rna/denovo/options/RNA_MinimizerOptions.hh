@@ -20,6 +20,8 @@
 #include <protocols/rna/denovo/options/RNA_MinimizerOptions.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 namespace protocols {
 namespace rna {
@@ -44,6 +46,10 @@ public:
 
 	void
 	initialize_from_command_line();
+	void
+	initialize_from_options( utility::options::OptionCollection const & opts );
+	static void
+	list_options_read( utility::options::OptionKeyList & opts );
 
 	/// @brief Initialize from the recursive "tag" structure.
 	virtual

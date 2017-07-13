@@ -22,6 +22,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 
 static basic::Tracer TR( "protocols.rna.denovo.options.RNA_DeNovoProtocolOptions" );
@@ -72,16 +74,20 @@ RNA_DeNovoProtocolOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocolOptions::initialize_from_command_line() {
+	initialize_from_options( basic::options::option );
+}
 
-	RNA_FragmentMonteCarloOptions::initialize_from_command_line();
+void
+RNA_DeNovoProtocolOptions::initialize_from_options( utility::options::OptionCollection const & opts ) {
+	RNA_FragmentMonteCarloOptions::initialize_from_options( opts );
 
-	nstruct_ = option[ out::nstruct ]();
-	if ( option[ out::file::silent ].user() ) {
-		silent_file_ = option[ out::file::silent ]();
+	nstruct_ = opts[ out::nstruct ]();
+	if ( opts[ out::file::silent ].user() ) {
+		silent_file_ = opts[ out::file::silent ]();
 	} else {
 		std::string tag;
-		if ( option[ basic::options::OptionKeys::rna::denovo::tag ].user() ) {
-			tag = option[ basic::options::OptionKeys::rna::denovo::tag ]();
+		if ( opts[ basic::options::OptionKeys::rna::denovo::tag ].user() ) {
+			tag = opts[ basic::options::OptionKeys::rna::denovo::tag ]();
 		} else {
 			tag = utility::file_basename( utility::file::cwd() );
 			TR << TR.Green << "Setting silent file name based on directory: " << tag << ".out" << std::endl;
@@ -89,30 +95,52 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 		silent_file_ = tag  + ".out";
 	}
 
-	set_output_lores_silent_file( option[ basic::options::OptionKeys::rna::denovo::out::output_lores_silent_file ] );
-	set_output_filters(  option[ basic::options::OptionKeys::rna::denovo::output_filters ] );
-	set_overwrite(  option[ out::overwrite ] );
+	set_output_lores_silent_file( opts[ basic::options::OptionKeys::rna::denovo::out::output_lores_silent_file ] );
+	set_output_filters(  opts[ basic::options::OptionKeys::rna::denovo::output_filters ] );
+	set_overwrite(  opts[ out::overwrite ] );
 
 	// note that althrough the following variables are held in the base class RNA_FragmentMonteCarloOptions, they are not initialized from command-line there.
 	// they really should only be set up for runs using the rna_denovo exectuable -- so they are set up here.
-	if ( option[ in::file::s ].user() ) set_chunk_pdb_files( option[ in::file::s ]() );
-	if ( option[ in::file::silent ].user() )  set_chunk_silent_files( option[ in::file::silent ]() );
-	if ( option[ in::file::input_res ].user() )  set_input_res( option[ in::file::input_res ]() ) ;
+	if ( opts[ in::file::s ].user() ) set_chunk_pdb_files( opts[ in::file::s ]() );
+	if ( opts[ in::file::silent ].user() )  set_chunk_silent_files( opts[ in::file::silent ]() );
+	if ( opts[ in::file::input_res ].user() )  set_input_res( opts[ in::file::input_res ]() ) ;
 
-	if ( option[ basic::options::OptionKeys::rna::denovo::lores_scorefxn ].user() ) set_lores_scorefxn( option[ basic::options::OptionKeys::rna::denovo::lores_scorefxn ] );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::lores_scorefxn ].user() ) set_lores_scorefxn( opts[ basic::options::OptionKeys::rna::denovo::lores_scorefxn ] );
 
-	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  ||
-			option[ basic::options::OptionKeys::rna::denovo::out::binary_output ]() ||
+	if ( opts[ in::file::silent_struct_type ]() == "binary_rna"  ||
+			opts[ basic::options::OptionKeys::rna::denovo::out::binary_output ]() ||
 			close_loops() ||
 			vary_bond_geometry() ) set_binary_rna_output( true );
 
-	save_times_ = option[ OptionKeys::out::save_times ]();
+	save_times_ = opts[ OptionKeys::out::save_times ]();
 
-	use_legacy_setup_ = option[ basic::options::OptionKeys::rna::denovo::use_legacy_setup ]();
+	use_legacy_setup_ = opts[ basic::options::OptionKeys::rna::denovo::use_legacy_setup ]();
 
-	cst_gap_ = option[ basic::options::OptionKeys::rna::denovo::cst_gap ]();
+	cst_gap_ = opts[ basic::options::OptionKeys::rna::denovo::cst_gap ]();
 
 	dump_stems_ = option[ basic::options::OptionKeys::rna::denovo::dump_stems ]();
+}
+
+void
+RNA_DeNovoProtocolOptions::list_options_read( utility::options::OptionKeyList & opts ) {
+	using namespace basic::options;
+	RNA_FragmentMonteCarloOptions::list_options_read( opts );
+	opts + OptionKeys::out::nstruct
+		+ OptionKeys::out::file::silent
+		+ OptionKeys::rna::denovo::tag
+		+ OptionKeys::rna::denovo::out::output_lores_silent_file
+		+ OptionKeys::rna::denovo::output_filters
+		+ OptionKeys::out::overwrite
+		+ OptionKeys::in::file::s
+		+ OptionKeys::in::file::silent
+		+ OptionKeys::in::file::input_res
+		+ OptionKeys::rna::denovo::lores_scorefxn
+		+ OptionKeys::in::file::silent_struct_type
+		+ OptionKeys::rna::denovo::out::binary_output
+		+ OptionKeys::out::save_times
+		+ OptionKeys::rna::denovo::use_legacy_setup
+		+ OptionKeys::rna::denovo::cst_gap
+		+ OptionKeys::rna::denovo::dump_stems;
 }
 
 } //options

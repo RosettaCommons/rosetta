@@ -18,6 +18,8 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 #include <basic/Tracer.hh>
 
@@ -65,21 +67,42 @@ RNA_MinimizerOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_MinimizerOptions::initialize_from_command_line() {
+	initialize_from_options( basic::options::option );
+}
 
-	RNA_BasicOptions::initialize_from_command_line();
+void
+RNA_MinimizerOptions::initialize_from_options( utility::options::OptionCollection const & opts ) {
 
-	set_minimize_rounds( option[ OptionKeys::rna::denovo::minimize::minimize_rounds ]() );
-	set_vary_bond_geometry( option[ OptionKeys::rna::vary_geometry ]() );
-	set_deriv_check( option[ OptionKeys::rna::denovo::minimize::deriv_check ]() );
-	set_skip_o2prime_trials( option[ OptionKeys::rna::denovo::minimize::skip_o2prime_trials]() );
+	RNA_BasicOptions::initialize_from_options( opts );
 
-	set_extra_minimize_res( option[ OptionKeys::rna::denovo::minimize::extra_minimize_res ]() ) ;
-	set_extra_minimize_chi_res( option[ OptionKeys::rna::denovo::minimize::extra_minimize_chi_res ]() ) ;
+	set_minimize_rounds( opts[ OptionKeys::rna::denovo::minimize::minimize_rounds ]() );
+	set_vary_bond_geometry( opts[ OptionKeys::rna::vary_geometry ]() );
+	set_deriv_check( opts[ OptionKeys::rna::denovo::minimize::deriv_check ]() );
+	set_skip_o2prime_trials( opts[ OptionKeys::rna::denovo::minimize::skip_o2prime_trials]() );
 
-	set_minimizer_use_coordinate_constraints( option[ OptionKeys::rna::denovo::minimize::minimizer_use_coordinate_constraints ]() );
-	set_min_type( option[ OptionKeys::rna::denovo::minimize::min_type ]() );
-	if ( option[ OptionKeys::rna::denovo::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
-	set_minimize_bps( option[ OptionKeys::rna::denovo::minimize::minimize_bps ]() ) ;
+	set_extra_minimize_res( opts[ OptionKeys::rna::denovo::minimize::extra_minimize_res ]() ) ;
+	set_extra_minimize_chi_res( opts[ OptionKeys::rna::denovo::minimize::extra_minimize_chi_res ]() ) ;
+
+	set_minimizer_use_coordinate_constraints( opts[ OptionKeys::rna::denovo::minimize::minimizer_use_coordinate_constraints ]() );
+	set_min_type( opts[ OptionKeys::rna::denovo::minimize::min_type ]() );
+	if ( opts[ OptionKeys::rna::denovo::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
+	set_minimize_bps( opts[ OptionKeys::rna::denovo::minimize::minimize_bps ]() ) ;
+}
+
+void
+RNA_MinimizerOptions::list_options_read( utility::options::OptionKeyList & opts ) {
+	using namespace basic::options;
+	RNA_BasicOptions::list_options_read( opts );
+	opts + OptionKeys::rna::denovo::minimize::minimize_rounds
+		+ OptionKeys::rna::vary_geometry
+		+ OptionKeys::rna::denovo::minimize::deriv_check
+		+ OptionKeys::rna::denovo::minimize::skip_o2prime_trials
+		+ OptionKeys::rna::denovo::minimize::extra_minimize_res
+		+ OptionKeys::rna::denovo::minimize::extra_minimize_chi_res
+		+ OptionKeys::rna::denovo::minimize::minimizer_use_coordinate_constraints
+		+ OptionKeys::rna::denovo::minimize::min_type
+		+ OptionKeys::rna::denovo::minimize::skip_coord_constraints
+		+ OptionKeys::rna::denovo::minimize::minimize_bps;
 }
 
 } //options

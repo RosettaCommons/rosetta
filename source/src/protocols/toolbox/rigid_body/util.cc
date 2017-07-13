@@ -175,7 +175,7 @@ set_to_origin( pose::Pose & pose, Size const seq_num, bool verbose ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 kinematics::Stub
 initialize_stub( conformation::Residue const & rsd ){
-	
+
 	runtime_assert( rsd.is_RNA() || rsd.type().name() == "pdb_GAI" ); // for now. can easily update in the future!
 	scoring::rna::RNA_CentroidInfo rna_centroid_info;
 	return rna_centroid_info.get_base_coordinate_system( rsd );

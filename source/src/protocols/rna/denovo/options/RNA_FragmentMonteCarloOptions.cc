@@ -25,6 +25,8 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh> // for superimpose_over_all
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 #include <basic/Tracer.hh>
 
@@ -125,58 +127,62 @@ RNA_FragmentMonteCarloOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
+	initialize_from_options( basic::options::option );
+}
 
-	RNA_MinimizerOptions::initialize_from_command_line(); // includes RNA_BasicOptions
+void
+RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::OptionCollection const & opts ) {
+	RNA_MinimizerOptions::initialize_from_options( opts ); // includes RNA_BasicOptions
 
-	if ( option[ basic::options::OptionKeys::rna::denovo::cycles ].user() ) {
-		set_monte_carlo_cycles( option[ basic::options::OptionKeys::rna::denovo::cycles ]() );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::cycles ].user() ) {
+		set_monte_carlo_cycles( opts[ basic::options::OptionKeys::rna::denovo::cycles ]() );
 		set_user_defined_cycles( true );
 	}
-	set_rounds( option[ basic::options::OptionKeys::rna::denovo::rounds ]() );
-	minimize_structure_ = option[ basic::options::OptionKeys::rna::denovo::minimize_rna ]();
-	relax_structure_ = option[ basic::options::OptionKeys::rna::denovo::relax_rna ]();
-	allow_bulge_ = option[ basic::options::OptionKeys::rna::denovo::allow_bulge ]();
-	set_temperature( option[ basic::options::OptionKeys::rna::denovo::temperature ] );
-	set_ignore_secstruct( option[ basic::options::OptionKeys::rna::denovo::ignore_secstruct ] );
-	set_jump_change_frequency( option[ basic::options::OptionKeys::rna::denovo::jump_change_frequency ] );
-	set_close_loops( option[ basic::options::OptionKeys::rna::denovo::close_loops] );
-	set_close_loops_after_each_move( option[ basic::options::OptionKeys::rna::denovo::close_loops_after_each_move ] );
-	set_staged_constraints( option[ basic::options::OptionKeys::rna::denovo::staged_constraints ] ) ;
-	set_filter_lores_base_pairs(  option[ basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs] );
-	set_filter_lores_base_pairs_early(  option[ basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs_early] );
-	set_suppress_bp_constraint(  option[ basic::options::OptionKeys::rna::denovo::suppress_bp_constraint]() );
-	set_filter_chain_closure(  option[ basic::options::OptionKeys::rna::denovo::filter_chain_closure ]() );
-	set_filter_chain_closure_distance(  option[ basic::options::OptionKeys::rna::denovo::filter_chain_closure_distance ]() );
-	set_filter_chain_closure_halfway(  option[ basic::options::OptionKeys::rna::denovo::filter_chain_closure_halfway ]() );
-	set_vary_bond_geometry(  option[ basic::options::OptionKeys::rna::vary_geometry ] );
-	set_root_at_first_rigid_body(  option[ basic::options::OptionKeys::rna::denovo::root_at_first_rigid_body ] );
-	set_autofilter( option[ basic::options::OptionKeys::rna::denovo::autofilter ] );
-	set_bps_moves( option[ basic::options::OptionKeys::rna::denovo::bps_moves ] );
-	set_disallow_bps_at_extra_min_res( option[ basic::options::OptionKeys::rna::denovo::disallow_bps_at_extra_min_res ] );
-	set_allow_fragment_moves_in_bps( option[ basic::options::OptionKeys::rna::denovo::allow_fragment_moves_in_bps ] );
-	set_frag_size( option[ basic::options::OptionKeys::rna::denovo::frag_size ]() );
+	set_rounds( opts[ basic::options::OptionKeys::rna::denovo::rounds ]() );
+	minimize_structure_ = opts[ basic::options::OptionKeys::rna::denovo::minimize_rna ]();
+	relax_structure_ = opts[ basic::options::OptionKeys::rna::denovo::relax_rna ]();
+	allow_bulge_ = opts[ basic::options::OptionKeys::rna::denovo::allow_bulge ]();
+	set_temperature( opts[ basic::options::OptionKeys::rna::denovo::temperature ] );
+	set_ignore_secstruct( opts[ basic::options::OptionKeys::rna::denovo::ignore_secstruct ] );
+	set_jump_change_frequency( opts[ basic::options::OptionKeys::rna::denovo::jump_change_frequency ] );
+	set_close_loops( opts[ basic::options::OptionKeys::rna::denovo::close_loops] );
+	set_close_loops_after_each_move( opts[ basic::options::OptionKeys::rna::denovo::close_loops_after_each_move ] );
+	set_staged_constraints( opts[ basic::options::OptionKeys::rna::denovo::staged_constraints ] ) ;
+	set_filter_lores_base_pairs(  opts[ basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs] );
+	set_filter_lores_base_pairs_early(  opts[ basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs_early] );
+	set_suppress_bp_constraint(  opts[ basic::options::OptionKeys::rna::denovo::suppress_bp_constraint]() );
+	set_filter_chain_closure(  opts[ basic::options::OptionKeys::rna::denovo::filter_chain_closure ]() );
+	set_filter_chain_closure_distance(  opts[ basic::options::OptionKeys::rna::denovo::filter_chain_closure_distance ]() );
+	set_filter_chain_closure_halfway(  opts[ basic::options::OptionKeys::rna::denovo::filter_chain_closure_halfway ]() );
+	set_vary_bond_geometry(  opts[ basic::options::OptionKeys::rna::vary_geometry ] );
+	set_root_at_first_rigid_body(  opts[ basic::options::OptionKeys::rna::denovo::root_at_first_rigid_body ] );
+	set_autofilter( opts[ basic::options::OptionKeys::rna::denovo::autofilter ] );
+	set_bps_moves( opts[ basic::options::OptionKeys::rna::denovo::bps_moves ] );
+	set_disallow_bps_at_extra_min_res( opts[ basic::options::OptionKeys::rna::denovo::disallow_bps_at_extra_min_res ] );
+	set_allow_fragment_moves_in_bps( opts[ basic::options::OptionKeys::rna::denovo::allow_fragment_moves_in_bps ] );
+	set_frag_size( opts[ basic::options::OptionKeys::rna::denovo::frag_size ]() );
 
-	set_output_score_frequency( option[ basic::options::OptionKeys::rna::denovo::out::output_score_frequency ]() );
-	set_output_score_file( option[ basic::options::OptionKeys::rna::denovo::out::output_score_file ]() );
-	set_output_jump_res( option[ basic::options::OptionKeys::rna::denovo::out::output_jump_res ]() );
-	set_output_jump_o3p_to_o5p( option[ basic::options::OptionKeys::rna::denovo::out::output_jump_o3p_to_o5p ]() );
-	set_output_jump_chainbreak( option[ basic::options::OptionKeys::rna::denovo::out::output_jump_chainbreak ]() );
-	set_output_rotation_vector( option[ basic::options::OptionKeys::rna::denovo::out::output_rotation_vector ]() );
-	if ( option[ basic::options::OptionKeys::rna::denovo::out::target_xyz ].user() ) {
-		runtime_assert( option[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]().size() == 3 );
+	set_output_score_frequency( opts[ basic::options::OptionKeys::rna::denovo::out::output_score_frequency ]() );
+	set_output_score_file( opts[ basic::options::OptionKeys::rna::denovo::out::output_score_file ]() );
+	set_output_jump_res( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_res ]() );
+	set_output_jump_o3p_to_o5p( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_o3p_to_o5p ]() );
+	set_output_jump_chainbreak( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_chainbreak ]() );
+	set_output_rotation_vector( opts[ basic::options::OptionKeys::rna::denovo::out::output_rotation_vector ]() );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ].user() ) {
+		runtime_assert( opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]().size() == 3 );
 		set_output_jump_target_xyz( core::Vector(
-			option[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[1],
-			option[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[2],
-			option[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[3]) );
+			opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[1],
+			opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[2],
+			opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[3]) );
 	}
-	set_output_jump_reference_RT_string( option[ basic::options::OptionKeys::rna::denovo::out::output_jump_reference_RT ]() );
-	set_save_jump_histogram( option[ basic::options::OptionKeys::rna::denovo::out::save_jump_histogram ]() );
-	set_jump_histogram_boxsize( option[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_boxsize ]() );
-	set_jump_histogram_binwidth( option[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_binwidth ]() );
-	set_jump_histogram_binwidth_rotvector( option[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_binwidth_rotvector ]() );
-	set_output_histogram_file( option[ basic::options::OptionKeys::rna::denovo::out::output_histogram_file ]() );
+	set_output_jump_reference_RT_string( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_reference_RT ]() );
+	set_save_jump_histogram( opts[ basic::options::OptionKeys::rna::denovo::out::save_jump_histogram ]() );
+	set_jump_histogram_boxsize( opts[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_boxsize ]() );
+	set_jump_histogram_binwidth( opts[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_binwidth ]() );
+	set_jump_histogram_binwidth_rotvector( opts[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_binwidth_rotvector ]() );
+	set_output_histogram_file( opts[ basic::options::OptionKeys::rna::denovo::out::output_histogram_file ]() );
 	if ( output_score_file_.size() == 0 && ( output_score_frequency_ != 0 || output_jump_res_.size() > 0 ) )  {
-		output_score_file_ = option[ out::file::silent ]();
+		output_score_file_ = opts[ out::file::silent ]();
 		std::string::size_type pos = output_score_file_.find( ".out", 0 );
 		std::string const new_prefix = ".SCORES.txt";
 		if ( pos == std::string::npos ) utility_exit_with_message(  "If you want to output a running score file, specify -output_score_file" );
@@ -190,46 +196,46 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 		output_histogram_file_.replace( pos, new_prefix.length(), new_prefix );
 	}
 
-	set_allow_consecutive_bulges( option[ basic::options::OptionKeys::rna::denovo::allow_consecutive_bulges ]() ) ;
-	set_allowed_bulge_res( option[ basic::options::OptionKeys::rna::denovo::allowed_bulge_res ]() ) ;
+	set_allow_consecutive_bulges( opts[ basic::options::OptionKeys::rna::denovo::allow_consecutive_bulges ]() ) ;
+	set_allowed_bulge_res( opts[ basic::options::OptionKeys::rna::denovo::allowed_bulge_res ]() ) ;
 
-	if ( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) {
+	if ( opts[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) {
 		set_filter_vdw( true );
-		VDW_rep_screen_info_ = basic::options::option[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info]();
-		set_vdw_rep_screen_include_sidechains( option[ basic::options::OptionKeys::rna::denovo::VDW_rep_screen_include_sidechains ]() );
+		VDW_rep_screen_info_ = opts[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info]();
+		set_vdw_rep_screen_include_sidechains( opts[ basic::options::OptionKeys::rna::denovo::VDW_rep_screen_include_sidechains ]() );
 	}
-	set_gradual_constraints( option[ basic::options::OptionKeys::rna::denovo::gradual_constraints ]() );
-	set_grid_vdw_weight( option[ basic::options::OptionKeys::rna::denovo::grid_vdw_weight ]() );
+	set_gradual_constraints( opts[ basic::options::OptionKeys::rna::denovo::gradual_constraints ]() );
+	set_grid_vdw_weight( opts[ basic::options::OptionKeys::rna::denovo::grid_vdw_weight ]() );
 
-	set_convert_protein_centroid( option[ basic::options::OptionKeys::rna::denovo::convert_protein_CEN ]() ); // default true
+	set_convert_protein_centroid( opts[ basic::options::OptionKeys::rna::denovo::convert_protein_CEN ]() ); // default true
 
 	// default true, but of course only happens if structure contains both rna and protein
-	set_rna_protein_docking( option[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() );
-	set_rna_protein_docking_freq( option[ basic::options::OptionKeys::rna::denovo::rna_protein_docking_freq ]() ); // default 10
+	set_rna_protein_docking( opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() );
+	set_rna_protein_docking_freq( opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking_freq ]() ); // default 10
 
-	set_simple_rmsd_cutoff_relax( option[ basic::options::OptionKeys::rna::denovo::simple_relax ] );
+	set_simple_rmsd_cutoff_relax( opts[ basic::options::OptionKeys::rna::denovo::simple_relax ] );
 
-	set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );
+	set_superimpose_over_all( opts[ stepwise::superimpose_over_all ]() );
 
-	set_fixed_stems( option[ basic::options::OptionKeys::rna::denovo::fixed_stems ]() );
+	set_fixed_stems( opts[ basic::options::OptionKeys::rna::denovo::fixed_stems ]() );
 
-	std::string const in_path = option[ in::path::path ]()[1];
-	if ( option[ basic::options::OptionKeys::rna::denovo::vall_torsions ].user() ) {
+	std::string const in_path = opts[ in::path::path ]()[1];
+	if ( opts[ basic::options::OptionKeys::rna::denovo::vall_torsions ].user() ) {
 		// check in database first
-		std::string vall_torsions_file = basic::database::full_name("/sampling/rna/" + option[ basic::options::OptionKeys::rna::denovo::vall_torsions ]() );
-		if ( !utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ basic::options::OptionKeys::rna::denovo::vall_torsions ]();
+		std::string vall_torsions_file = basic::database::full_name("/sampling/rna/" + opts[ basic::options::OptionKeys::rna::denovo::vall_torsions ]() );
+		if ( !utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + opts[ basic::options::OptionKeys::rna::denovo::vall_torsions ]();
 		set_vall_torsions_file( vall_torsions_file );
 	}
-	if ( option[ basic::options::OptionKeys::rna::denovo::use_1jj2_torsions ]() ) set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
-	if ( option[ basic::options::OptionKeys::rna::denovo::jump_library_file ].user() ) set_jump_library_file( in_path + option[ basic::options::OptionKeys::rna::denovo::jump_library_file] );
-	if ( option[ basic::options::OptionKeys::rna::denovo::params_file ].user() ) set_rna_params_file( in_path + option[ basic::options::OptionKeys::rna::denovo::params_file ] );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::use_1jj2_torsions ]() ) set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::jump_library_file ].user() ) set_jump_library_file( in_path + opts[ basic::options::OptionKeys::rna::denovo::jump_library_file] );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::params_file ].user() ) set_rna_params_file( in_path + opts[ basic::options::OptionKeys::rna::denovo::params_file ] );
 
-	if ( option[ basic::options::OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ].user() ) set_linear_chainbreak_weight( option[ basic::options::OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ]() );
-	if ( option[ basic::options::OptionKeys::rna::denovo::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( option[ basic::options::OptionKeys::rna::denovo::rna_lores_chainbreak_weight ]() );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ].user() ) set_linear_chainbreak_weight( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ]() );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_chainbreak_weight ]() );
 
 	if ( filter_lores_base_pairs_early_ ) set_filter_lores_base_pairs( true );
 
-	if ( option[ basic::options::OptionKeys::rna::denovo::no_filters ]() ) {
+	if ( opts[ basic::options::OptionKeys::rna::denovo::no_filters ]() ) {
 		set_autofilter( false );
 		set_filter_chain_closure( false );
 		set_filter_chain_closure_distance( false );
@@ -240,13 +246,80 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 
 	// AMW: this doesn't correspond to an actual option. But, this way,
 	// we will only do this song and dance if we have an align_pdb specified.
-	disallow_realign_ = !option[ stepwise::align_pdb ].user();
-	rmsd_screen_ = option[ stepwise::rmsd_screen ]();
-	if ( option[ stepwise::align_pdb ].user() ) {
-		align_pdb_ = option[ stepwise::align_pdb ]();
+	disallow_realign_ = !opts[ stepwise::align_pdb ].user();
+	rmsd_screen_ = opts[ stepwise::rmsd_screen ]();
+	if ( opts[ stepwise::align_pdb ].user() ) {
+		align_pdb_ = opts[ stepwise::align_pdb ]();
 	} else {
 		align_pdb_ = "";
 	}
+}
+
+void
+RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyList & opts ) {
+	using namespace basic::options;
+	RNA_MinimizerOptions::list_options_read( opts ); // includes RNA_BasicOptions
+
+	opts + OptionKeys::rna::denovo::cycles
+		+ OptionKeys::rna::denovo::rounds
+		+ OptionKeys::rna::denovo::minimize_rna
+		+ OptionKeys::rna::denovo::relax_rna
+		+ OptionKeys::rna::denovo::allow_bulge
+		+ OptionKeys::rna::denovo::temperature
+		+ OptionKeys::rna::denovo::ignore_secstruct
+		+ OptionKeys::rna::denovo::jump_change_frequency
+		+ OptionKeys::rna::denovo::close_loops
+		+ OptionKeys::rna::denovo::close_loops_after_each_move
+		+ OptionKeys::rna::denovo::staged_constraints
+		+ OptionKeys::rna::denovo::filter_lores_base_pairs
+		+ OptionKeys::rna::denovo::filter_lores_base_pairs_early
+		+ OptionKeys::rna::denovo::suppress_bp_constraint
+		+ OptionKeys::rna::denovo::filter_chain_closure
+		+ OptionKeys::rna::denovo::filter_chain_closure_distance
+		+ OptionKeys::rna::denovo::filter_chain_closure_halfway
+		+ OptionKeys::rna::vary_geometry
+		+ OptionKeys::rna::denovo::root_at_first_rigid_body
+		+ OptionKeys::rna::denovo::autofilter
+		+ OptionKeys::rna::denovo::bps_moves
+		+ OptionKeys::rna::denovo::disallow_bps_at_extra_min_res
+		+ OptionKeys::rna::denovo::allow_fragment_moves_in_bps
+		+ OptionKeys::rna::denovo::frag_size
+		+ OptionKeys::rna::denovo::out::output_score_frequency
+		+ OptionKeys::rna::denovo::out::output_score_file
+		+ OptionKeys::rna::denovo::out::output_jump_res
+		+ OptionKeys::rna::denovo::out::output_jump_o3p_to_o5p
+		+ OptionKeys::rna::denovo::out::output_jump_chainbreak
+		+ OptionKeys::rna::denovo::out::output_rotation_vector
+		+ OptionKeys::rna::denovo::out::target_xyz
+		+ OptionKeys::rna::denovo::out::output_jump_reference_RT
+		+ OptionKeys::rna::denovo::out::save_jump_histogram
+		+ OptionKeys::rna::denovo::out::jump_histogram_boxsize
+		+ OptionKeys::rna::denovo::out::jump_histogram_binwidth
+		+ OptionKeys::rna::denovo::out::jump_histogram_binwidth_rotvector
+		+ OptionKeys::rna::denovo::out::output_histogram_file
+		+ OptionKeys::out::file::silent
+		+ OptionKeys::rna::denovo::allow_consecutive_bulges
+		+ OptionKeys::rna::denovo::allowed_bulge_res
+		+ OptionKeys::stepwise::rna::VDW_rep_screen_info
+		+ OptionKeys::rna::denovo::VDW_rep_screen_include_sidechains
+		+ OptionKeys::rna::denovo::gradual_constraints
+		+ OptionKeys::rna::denovo::grid_vdw_weight
+		+ OptionKeys::rna::denovo::convert_protein_CEN
+		+ OptionKeys::rna::denovo::rna_protein_docking
+		+ OptionKeys::rna::denovo::rna_protein_docking_freq
+		+ OptionKeys::rna::denovo::simple_relax
+		+ OptionKeys::stepwise::superimpose_over_all
+		+ OptionKeys::rna::denovo::fixed_stems
+		+ OptionKeys::in::path::path
+		+ OptionKeys::rna::denovo::vall_torsions
+		+ OptionKeys::rna::denovo::use_1jj2_torsions
+		+ OptionKeys::rna::denovo::jump_library_file
+		+ OptionKeys::rna::denovo::params_file
+		+ OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight
+		+ OptionKeys::rna::denovo::rna_lores_chainbreak_weight
+		+ OptionKeys::rna::denovo::no_filters
+		+ OptionKeys::stepwise::align_pdb
+		+ OptionKeys::stepwise::rmsd_screen;
 }
 
 

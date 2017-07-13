@@ -70,7 +70,8 @@ ConstraintIO::read_cst_atom_pairs(
 	std::istream & data,
 	std::string & next_section_name,
 	ConstraintSet & cst_set,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const force_pdb_info_mapping
 ) {
 	tr.Debug << "ConstraintIO::read_cst_atom_pairs" << std::endl;
 	std::string line;
@@ -89,8 +90,9 @@ ConstraintIO::read_cst_atom_pairs(
 		name1 = utility::replace_in( name1, "*", "'" );
 		name2 = utility::replace_in( name2, "*", "'" );
 
-		parse_residue( pose, tempres1, res1 );
-		parse_residue( pose, tempres2, res2 );
+		tr.Debug << "\tabout to parse residues" << std::endl;
+		parse_residue( pose, tempres1, res1, force_pdb_info_mapping );
+		parse_residue( pose, tempres2, res2, force_pdb_info_mapping );
 
 		if ( name1.find("[" )!=std::string::npos ) { //end of this section
 			tr.Debug << "section end detected in line " << line << std::endl;
@@ -129,7 +131,8 @@ ConstraintIO::read_cst_atom_pairs(
 
 ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	std::istream & data,
-	core::pose::Pose pose
+	core::pose::Pose pose,
+	bool const force_pdb_info_mapping
 ) {
 	Size res1, res2;
 	std::string tempres1, tempres2;
@@ -141,8 +144,8 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 		>> name2 >> tempres2
 		>> func_type;
 
-	parse_residue( pose, tempres1, res1 );
-	parse_residue( pose, tempres2, res2 );
+	parse_residue( pose, tempres1, res1, force_pdb_info_mapping );
+	parse_residue( pose, tempres2, res2, force_pdb_info_mapping  );
 
 	tr.Info  << "read: " << name1 << " " << name2 << " "
 		<< res1 << " " << res2 << " func: " << func_type
@@ -172,7 +175,8 @@ ConstraintIO::read_cst_coordinates(
 	std::istream & data,
 	std::string & next_section_name,
 	ConstraintSet & cst_set,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const force_pdb_info_mapping
 ) {
 
 	tr.Debug << "ConstraintIO::read_cst_coordinate" << std::endl;
@@ -204,8 +208,8 @@ ConstraintIO::read_cst_coordinates(
 		name1 = utility::replace_in( name1, "*", "'" );
 		name2 = utility::replace_in( name2, "*", "'" );
 
-		res1 = parse_residue( pose, res1 );
-		res2 = parse_residue( pose, res2 );
+		res1 = parse_residue( pose, res1, 0/*chain*/, force_pdb_info_mapping );
+		res2 = parse_residue( pose, res2, 0/*chain*/, force_pdb_info_mapping );
 
 		tr.Debug  << "read: " << name1 << " " << name2 << " "
 			<< res1 << " " << res2 << " func: " << func_type
@@ -241,7 +245,8 @@ ConstraintIO::read_cst_coordinates(
 
 ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	std::istream & data,
-	core::pose::Pose pose
+	core::pose::Pose pose,
+	bool const force_pdb_info_mapping
 ) {
 	Real x, y, z;
 	Size fixed_res, other_res;
@@ -255,8 +260,8 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 		>> x >> y >> z
 		>> func_type;
 
-	parse_residue( pose, tempfixed_res, fixed_res );
-	parse_residue( pose, tempother_res, other_res );
+	parse_residue( pose, tempfixed_res, fixed_res, force_pdb_info_mapping );
+	parse_residue( pose, tempother_res, other_res, force_pdb_info_mapping );
 
 	tr.Debug  << "read: " << fixed_res_name << " " << other_res_name << " "
 		<< fixed_res << " " << other_res << " func: " << func_type << std::endl;
@@ -288,7 +293,8 @@ ConstraintIO::read_cst_angles(
 	std::istream & data,
 	std::string & next_section_name,
 	ConstraintSet & cst_set,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const force_pdb_info_mapping
 ) {
 	tr.Debug << "ConstraintIO::read_cst_angles" << std::endl;
 	std::string line;
@@ -304,9 +310,9 @@ ConstraintIO::read_cst_angles(
 			>> name3 >> tempres3
 			>> func_type;
 
-		parse_residue( pose, tempres1, res1 );
-		parse_residue( pose, tempres2, res2 );
-		parse_residue( pose, tempres3, res3 );
+		parse_residue( pose, tempres1, res1, force_pdb_info_mapping );
+		parse_residue( pose, tempres2, res2, force_pdb_info_mapping );
+		parse_residue( pose, tempres3, res3, force_pdb_info_mapping );
 
 		if ( name1.find("[" )!=std::string::npos ) { //end of this section
 			tr.Debug << "section end detected in line " << line << std::endl;
@@ -371,7 +377,8 @@ ConstraintIO::read_cst_bindingsites(
 	std::istream & data,
 	std::string & next_section_name,
 	ConstraintSet & cst_set,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const //force_pdb_info_mapping // = false
 ) {
 	tr.Debug << "ConstraintIO::read_cst_angles" << std::endl;
 	std::string line;
@@ -394,7 +401,8 @@ ConstraintIO::read_cst_bindingsites(
 ConstraintSetOP ConstraintIO::read_constraints(
 	std::istream & data,
 	ConstraintSetOP cset,
-	pose::Pose const& pose
+	pose::Pose const& pose,
+	bool const force_pdb_info_mapping// = false
 ) {
 	std::string line;
 	std::streampos original_pos = data.tellg();
@@ -404,13 +412,13 @@ ConstraintSetOP ConstraintIO::read_constraints(
 	while ( section.size() ) {
 		tr.Info << "read constraints section --" << section << "---" << std::endl;
 		if ( section ==  "atompairs" ) {
-			read_cst_atom_pairs( data, pre_read, *cset, pose );
+			read_cst_atom_pairs( data, pre_read, *cset, pose, force_pdb_info_mapping );
 		} else if ( section == "coordinates" ) {
-			read_cst_coordinates( data, pre_read, *cset, pose );
+			read_cst_coordinates( data, pre_read, *cset, pose, force_pdb_info_mapping );
 		} else if ( section == "angles" ) {
-			read_cst_angles( data, pre_read, *cset, pose );
+			read_cst_angles( data, pre_read, *cset, pose, force_pdb_info_mapping );
 		} else if ( section == "bindingsites" ) {
-			read_cst_bindingsites( data, pre_read, *cset, pose );
+			read_cst_bindingsites( data, pre_read, *cset, pose, force_pdb_info_mapping );
 		} else if ( section == "NO_SECTION" ) {
 			tr.Info << " no section header [ xxx ] found, try reading line-based format... DON'T MIX"
 				<< std::endl;
@@ -421,7 +429,7 @@ ConstraintSetOP ConstraintIO::read_constraints(
 			debug_assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
 
 			data.seekg( original_pos );
-			return read_constraints_new( data, cset, pose );
+			return read_constraints_new( data, cset, pose, force_pdb_info_mapping );
 		} else { //section header, but unknown name
 			utility_exit_with_message(
 				"constraint-file: section " + section + " not recognized!"
@@ -443,7 +451,8 @@ ConstraintSetOP
 ConstraintIO::read_constraints(
 	std::string const & fname,
 	ConstraintSetOP cset,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const force_pdb_info_mapping // = false
 ) {
 	utility::io::izstream data( fname.c_str() );
 	tr.Info << "read constraints from " << fname << std::endl;
@@ -456,12 +465,12 @@ ConstraintIO::read_constraints(
 	std::string section = get_section_name( line );
 	data.seek_beg();
 	if ( section == "NO_SECTION" ) {
-		return read_constraints_new( data, cset, pose );
+		return read_constraints_new( data, cset, pose, force_pdb_info_mapping );
 	} else {
-		return read_constraints( data, cset, pose );
+		return read_constraints( data, cset, pose, force_pdb_info_mapping );
 	}
 
-	return read_constraints( data, cset, pose );
+	return read_constraints( data, cset, pose, force_pdb_info_mapping );
 } // read_constraints
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -470,26 +479,28 @@ ConstraintSetOP
 ConstraintIO::read_constraints_new(
 	std::string const & fname,
 	ConstraintSetOP cset,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const force_pdb_info_mapping
 ) {
 	utility::io::izstream data( fname.c_str() );
 	tr.Info << "read constraints from " << fname << std::endl;
 	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open constraints file: " + fname );
 	}
-	return read_constraints_new( data, cset, pose );
+	return read_constraints_new( data, cset, pose, force_pdb_info_mapping );
 }
 ConstraintSetOP
 ConstraintIO::read_constraints_new(
 	std::istream & data,
 	ConstraintSetOP cset,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool const force_pdb_info_mapping
 ) {
 	Size count_constraints(0);
 	while ( data.good() ) { // check if we reach the end of file or not
 		// read in each constraint and add it constraint_set
 		ConstraintOP cst_op;
-		cst_op = read_individual_constraint_new( data, pose, get_func_factory() );
+		cst_op = read_individual_constraint_new( data, pose, get_func_factory(), force_pdb_info_mapping );
 		if ( cst_op ) {
 			++count_constraints;
 			cset->add_constraint( cst_op );
@@ -512,7 +523,8 @@ ConstraintIO::read_individual_constraint_new(
 	std::istream & data,
 	pose::Pose const& pose,
 	func::FuncFactory const & func_factory,
-	std::string tag
+	std::string tag,
+	bool const //force_pdb_info_mapping // = false
 )
 {
 	ConstraintOP cst_op;
@@ -563,7 +575,8 @@ ConstraintOP
 ConstraintIO::read_individual_constraint_new(
 	std::istream & data,
 	pose::Pose const& pose,
-	func::FuncFactory const & func_factory
+	func::FuncFactory const & func_factory,
+	bool const force_pdb_info_mapping // = false
 )
 {
 	std::string tag;
@@ -583,7 +596,7 @@ ConstraintIO::read_individual_constraint_new(
 		break;
 	}
 	if ( ( tag.substr(0,3) == "END" )||( tag.substr(0,3) == "End" ) ) return NULL; // stopper for MultiConstraint or AmbiguousConstraint
-	return read_individual_constraint_new( data, pose, func_factory, tag );
+	return read_individual_constraint_new( data, pose, func_factory, tag, force_pdb_info_mapping );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -598,7 +611,7 @@ ConstraintIO::write_constraints( std::string const& filename, ConstraintSet cons
 }
 
 void
-ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue_string, Size & residue_num )
+ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue_string, Size & residue_num, bool const force_pdb_info_mapping )
 {
 	std::stringstream data;
 	char chain;
@@ -610,20 +623,22 @@ ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue
 
 	if ( (data >> chain).fail() ) chain = 0;
 
-	residue_num = parse_residue( pose, resnum, chain );
+	residue_num = parse_residue( pose, resnum, chain, force_pdb_info_mapping );
 }
 
 
 Size
-ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char const chain /* = 0 */ )
+ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char const chain /* = 0 */, bool const force_pdb_info_mapping_in )
 {
 	// this option is a vector1< bool > for pretty arcane reasons -- rosetta does not provide a set default option for bool, but does so for vector< bool>.
 	using namespace basic::options;
-	if ( chain != 0 ) {
+	if ( chain != 0 && pose.pdb_info() ) {
 		return pose.pdb_info()->pdb2pose( chain, resnum );
 	}
-	bool force_pdb_info_mapping = option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ? option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false;
-	if ( force_pdb_info_mapping ) {
+	bool force_pdb_info_mapping = pose.pdb_info() &&
+		( force_pdb_info_mapping_in || ( option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ?
+		option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false ) );
+	if ( force_pdb_info_mapping && pose.pdb_info() ) {
 		return pose.pdb_info()->pdb2pose( 'A', resnum );
 	}
 	return Size( resnum );

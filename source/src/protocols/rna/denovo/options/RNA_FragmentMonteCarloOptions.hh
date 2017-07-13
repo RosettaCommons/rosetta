@@ -19,6 +19,8 @@
 #include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
 #include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <numeric/xyzVector.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 namespace protocols {
 namespace rna {
@@ -43,6 +45,10 @@ public:
 
 	void
 	initialize_from_command_line();
+	void
+	initialize_from_options( utility::options::OptionCollection const & opts );
+	static void
+	list_options_read( utility::options::OptionKeyList & opts );
 
 	void
 	initialize_for_farna_optimizer( core::Size const & cycles /* = 0 */ );

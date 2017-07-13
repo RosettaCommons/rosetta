@@ -61,7 +61,7 @@ main( int argc, char *argv[] )
 		pose_from_file( lipid_surface, INPUT_PATH + "lipid_surface.pdb", PDB_file );
 
 		cout << endl << lipid_surface << endl;
- 
+
 		cout << endl << "Residue Info:" << endl;
 		Size const n_res( 8 );  // Only output the first two lipids, each composed of 4 residues.
 		for ( core::uint i( 1 ); i <= n_res; ++i ) {

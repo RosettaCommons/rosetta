@@ -976,7 +976,7 @@ get_root_residue_root_atomno(
 	// AMW TODO: Right now, we assume that this should be 1 for pdb_GAI.
 	// That's not necessarily true for all ligand residues, so we are keeping it
 	// this way.
-	if (rsd.type().name() == "pdb_GAI") return 1; 
+	if ( rsd.type().name() == "pdb_GAI" ) return 1;
 	Size const seqpos( rsd.seqpos() );
 	debug_assert( seqpos == Size( fold_tree.root() ) ); // need to refactor foldtree to use Size instead of int
 
@@ -1613,10 +1613,10 @@ get_anchor_and_root_atoms(
 	Size & root_atomno
 )
 {
-	// AMW: There are some ugly special cases for pdb_GAI here. That's 
+	// AMW: There are some ugly special cases for pdb_GAI here. That's
 	// because the edges weren't getting good atom indices on them, I think?
 	// In any case, this function isn't called in tight loops, so we are ok.
-	
+
 	ASSERT_ONLY(Size const anchor_pos( anchor_rsd.seqpos() ););
 	ASSERT_ONLY(Size const root_pos( root_rsd.seqpos() ););
 

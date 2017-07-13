@@ -695,7 +695,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	} else {
 		rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
 	}
-	
+
 	// Might not be able to get by base name if adding a ligand -- particularly
 	// from the CCD?
 	if ( !rsd_type ) {

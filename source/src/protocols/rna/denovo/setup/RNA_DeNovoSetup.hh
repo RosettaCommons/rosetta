@@ -25,6 +25,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/rna/BasePair.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 
 namespace protocols {
 namespace rna {
@@ -44,6 +45,8 @@ public:
 public:
 
 	void
+	initialize_from_options( utility::options::OptionCollection const & opts );
+	void
 	initialize_from_command_line();
 
 	protocols::rna::denovo::options::RNA_DeNovoProtocolOptionsCOP options() const { return  options_; }
@@ -56,12 +59,14 @@ private:
 
 	void
 	de_novo_setup_from_command_line();
+	void
+	de_novo_setup_from_options( utility::options::OptionCollection const & opts );
 
 	void
 	de_novo_setup_from_command_line_legacy();
 
 	void
-	setup_refine_pose_list();
+	setup_refine_pose_list( utility::options::OptionCollection const & opts );
 
 	utility::vector1< core::pose::PoseOP >
 	get_refine_pose_list( std::string const & input_silent_file,

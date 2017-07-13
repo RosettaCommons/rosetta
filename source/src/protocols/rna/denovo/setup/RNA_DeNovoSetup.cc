@@ -52,6 +52,7 @@
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <utility/options/OptionCollection.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -163,8 +164,29 @@ RNA_DeNovoSetup::initialize_from_command_line()
 	set_output_res_and_chain( *pose_, option[ OptionKeys::rna::denovo::output_res_num ].resnum_and_chain() );
 
 	// refine_pose is a seldom-used functionality at the moment -- not well tested.
-	setup_refine_pose_list();
+	setup_refine_pose_list( option );
 
+}
+
+void
+RNA_DeNovoSetup::initialize_from_options( utility::options::OptionCollection const & opts )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::chemical;
+	using namespace protocols::rna::denovo::options;
+
+	options_ = RNA_DeNovoProtocolOptionsOP( new RNA_DeNovoProtocolOptions);
+	options_->initialize_from_options( opts );
+
+	rsd_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	de_novo_setup_from_options( opts );
+
+	// if output_res_num supplied, this will change PDBInfo numbering & chain.
+	set_output_res_and_chain( *pose_, opts[ OptionKeys::rna::denovo::output_res_num ].resnum_and_chain() );
+
+	// refine_pose is a seldom-used functionality at the moment -- not well tested.
+	setup_refine_pose_list( opts );
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -182,6 +204,12 @@ RNA_DeNovoSetup::initialize_from_command_line()
 void
 RNA_DeNovoSetup::de_novo_setup_from_command_line()
 {
+	de_novo_setup_from_options( basic::options::option );
+}
+
+void
+RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection const & opts )
+{
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -198,9 +226,9 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////
 	// Step 1
 	////////////////////
-	vector1< std::string > sequence_strings  = option[ OptionKeys::rna::denovo::sequence ]();
-	vector1< std::string > fasta_files = option[ in::file::fasta ]();
-	int const offset = option[ OptionKeys::rna::denovo::offset ]();
+	vector1< std::string > sequence_strings  = opts[ OptionKeys::rna::denovo::sequence ]();
+	vector1< std::string > fasta_files = opts[ in::file::fasta ]();
+	int const offset = opts[ OptionKeys::rna::denovo::offset ]();
 
 	// Sequence setup:
 	// FullModelParameters is a nice object that holds sequence, non-standard residues ("Z[Mg]"),
@@ -249,50 +277,50 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// Step 2
 	////////////////////
 	// Other useful residues.
-	if ( option[ full_model::cutpoint_open ].user() ) {
+	if ( opts[ full_model::cutpoint_open ].user() ) {
 		cutpoint_open_in_full_model  =
-			full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
+			full_model_parameters->conventional_to_full( opts[ full_model::cutpoint_open ].resnum_and_chain() );
 	}
 	vector1< Size > working_res        =
-		full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
+		full_model_parameters->conventional_to_full( opts[ full_model::working_res ].resnum_and_chain() ); //all working stuff
 	std::sort( working_res.begin(), working_res.end() ); // some the following depends on correct order.
 	vector1< Size > const cutpoint_closed          =
-		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ full_model::cutpoint_closed ].resnum_and_chain() );
 	vector1< Size > const cutpoint_cyclize          =
 		full_model_parameters->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() );
 	// Ends up as pairs. Starts as a vector
 	vector1< Size > const fiveprime_cap =
 		full_model_parameters->conventional_to_full( option[ full_model::fiveprime_cap ].resnum_and_chain() );
 	vector1< Size > block_stack_above_res  =
-		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
 	vector1< Size > block_stack_below_res  =
-		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
 	vector1< Size > extra_minimize_res =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::minimize::extra_minimize_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::minimize::extra_minimize_res ].resnum_and_chain() );
 	vector1< Size > extra_minimize_chi_res =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::minimize::extra_minimize_chi_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::minimize::extra_minimize_chi_res ].resnum_and_chain() );
 	vector1< Size > input_res_user_defined =
-		full_model_parameters->conventional_to_full( option[ in::file::input_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ in::file::input_res ].resnum_and_chain() );
 	vector1< Size > input_silent_res_user_defined =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::input_silent_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::input_silent_res ].resnum_and_chain() );
 	vector1< Size > virtual_anchor =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::virtual_anchor ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::virtual_anchor ].resnum_and_chain() );
 	vector1< Size > obligate_pair =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::obligate_pair ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::obligate_pair ].resnum_and_chain() );
 	vector1< Size > remove_pair =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::remove_pair ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::remove_pair ].resnum_and_chain() );
 	vector1< Size > remove_obligate_pair =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::remove_obligate_pair ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::remove_obligate_pair ].resnum_and_chain() );
 	vector1< Size > output_jump_res =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::denovo::out::output_jump_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ OptionKeys::rna::denovo::out::output_jump_res ].resnum_and_chain() );
 
 	////////////////////
 	// Step 3
 	////////////////////
 	// secondary structure setup.
-	RNA_SecStruct secstruct( option[ OptionKeys::rna::denovo::secstruct ](), option[ OptionKeys::rna::denovo::secstruct_file ](), sequence );
+	RNA_SecStruct secstruct( opts[ OptionKeys::rna::denovo::secstruct ](), opts[ OptionKeys::rna::denovo::secstruct_file ](), sequence );
 	// "general" secondary structure includes non-canonical pairs that should be connected by jumps during run; used with -bps_moves.
-	RNA_SecStruct secstruct_general( option[ OptionKeys::rna::denovo::secstruct_general ](), option[ OptionKeys::rna::denovo::secstruct_general_file ](), sequence );
+	RNA_SecStruct secstruct_general( opts[ OptionKeys::rna::denovo::secstruct_general ](), opts[ OptionKeys::rna::denovo::secstruct_general_file ](), sequence );
 
 	secstruct.check_compatible_with_sequence( sequence, true  /*check_complementarity*/ );
 	secstruct_general.check_compatible_with_sequence( sequence, false /*check_complementarity*/ );
@@ -303,11 +331,11 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// Step 4
 	////////////////////
 	/////////////
-	vector1< std::string > input_pdbs = option[ in::file::s ]();
-	vector1< std::string > input_silent_files = option[ in::file::silent ]();
-	std::string const working_native_pdb = option[ OptionKeys::rna::denovo::working_native ]();
-	vector1< std::string > obligate_pair_explicit = option[ OptionKeys::rna::denovo::obligate_pair_explicit ]();
-	vector1< std::string > chain_connections = option[ OptionKeys::rna::denovo::chain_connection ]();
+	vector1< std::string > input_pdbs = opts[ in::file::s ]();
+	vector1< std::string > input_silent_files = opts[ in::file::silent ]();
+	std::string const working_native_pdb = opts[ OptionKeys::rna::denovo::working_native ]();
+	vector1< std::string > obligate_pair_explicit = opts[ OptionKeys::rna::denovo::obligate_pair_explicit ]();
+	vector1< std::string > chain_connections = opts[ OptionKeys::rna::denovo::chain_connection ]();
 
 	runtime_assert( remove_pair.size() % 2 == 0 );
 	for ( Size n = 1; n <= remove_pair.size(); n += 2 ) {
@@ -553,7 +581,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	if ( !secstruct_general.blank() ) TR << "Secstruct [general]: " << working_secstruct_general.secstruct() << std::endl;
 
 	// Step 8B [good ol' secstruct_legacy]
-	std::string secstruct_legacy = option[ OptionKeys::rna::denovo::secstruct_legacy ]();
+	std::string secstruct_legacy = opts[ OptionKeys::rna::denovo::secstruct_legacy ]();
 	std::string working_secstruct_legacy = working_res_map( secstruct_legacy, working_res );
 	if ( secstruct_legacy.size() > 0  ) TR << "Secstruct [legacy]: " << working_secstruct_legacy << std::endl;
 
@@ -599,7 +627,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////////
 	// working pose
 	////////////////////////
-	std::string const in_path = option[ in::path::path ]()[1];
+	std::string const in_path = opts[ in::path::path ]()[1];
 	Pose full_pose;
 	pose_ = PoseOP( new Pose );
 	std::string const full_annotated_sequence = full_model_parameters->full_annotated_sequence();
@@ -617,7 +645,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 
 	//
 	if ( is_rna_and_protein ) {
-		if ( !option[ OptionKeys::rna::denovo::lores_scorefxn ].user() ) {
+		if ( !opts[ OptionKeys::rna::denovo::lores_scorefxn ].user() ) {
 			// set default low-res RNA/protein score function
 			options_->set_lores_scorefxn( "rna/denovo/rna_lores_with_rnp" );
 		}
@@ -627,7 +655,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// Working native pose
 	////////////////////////
 	//Read in native if it exists.
-	if ( option[ in::file::native ].user() ) {
+	if ( opts[ in::file::native ].user() ) {
 		// AMW TODO: later, let this pass align_pose on to the RNA_DeNovoProtocol
 		// and the RNA_FragmentMonteCarlo. At the moment, this isn't necessary at
 		// all, though.
@@ -635,20 +663,20 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		stepwise::setup::initialize_native_and_align_pose( native_pose_, align_pose, rsd_set_, pose_ );
 
 		// if refine native, set the full_pose equal to the native_pose
-		if ( option[ OptionKeys::rna::denovo::refine_native ]() ) {
+		if ( opts[ OptionKeys::rna::denovo::refine_native ]() ) {
 			full_pose = *(native_pose_->clone());
 		}
 		pdbslice( *native_pose_, working_res );
-	} else if ( option[ OptionKeys::rna::denovo::working_native ].user() ) {
-		std::string native_pdb_file  = option[ OptionKeys::rna::denovo::working_native ];
+	} else if ( opts[ OptionKeys::rna::denovo::working_native ].user() ) {
+		std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
 		native_pose_ = PoseOP( new Pose );
 		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 	} else {
-		runtime_assert( !option[ OptionKeys::rna::denovo::refine_native ]() );
+		runtime_assert( !opts[ OptionKeys::rna::denovo::refine_native ]() );
 	}
 
 	// if the refine_native, then the full pose is equal to the native pose
-	if ( ! option[ OptionKeys::rna::denovo::working_native ].user() ) { // usually not defined by user
+	if ( ! opts[ OptionKeys::rna::denovo::working_native ].user() ) { // usually not defined by user
 		pdbslice( *pose_, full_pose, working_res );
 	} else {
 		// there might still be issues with how the csts are set up here...?
@@ -663,10 +691,10 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////////
 	// working constraints.
 	////////////////////////
-	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
+	if ( opts[ OptionKeys::constraints::cst_file ].user() ) {
 		ConstraintSetOP cst_set( new ConstraintSet );
-		option[ OptionKeys::constraints::force_pdb_info_mapping ].def( true ); // using option as global variable due to difficulty in dealing with static functions.
-		cst_set = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ](1), ConstraintSetOP( new ConstraintSet ), full_pose );
+		//opts[ OptionKeys::constraints::force_pdb_info_mapping ].def( true ); // using option as global variable due to difficulty in dealing with static functions.
+		cst_set = ConstraintIO::get_instance()->read_constraints( opts[ OptionKeys::constraints::cst_file ](1), ConstraintSetOP( new ConstraintSet ), full_pose, true /*force_pdb_info_mapping*/ );
 		full_pose.constraint_set( cst_set );
 		id::SequenceMappingOP sequence_map( new id::SequenceMapping( working_res ) );
 		sequence_map->reverse();
@@ -700,8 +728,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////////
 	// working data
 	////////////////////////
-	if ( option[ OptionKeys::rna::data_file].user() ) {
-		core::io::rna::RNA_DataReader rna_data_reader( in_path + option[ OptionKeys::rna::data_file ]  );
+	if ( opts[ OptionKeys::rna::data_file].user() ) {
+		core::io::rna::RNA_DataReader rna_data_reader( in_path + opts[ OptionKeys::rna::data_file ]  );
 		// note that this actually does look at conventional numbering in a smart way (but not chains yet):
 		rna_data_reader.fill_rna_data_info( *pose_ );
 	}
@@ -934,27 +962,27 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	//// Working native pose
 	//////////////////////////
 	////Read in native if it exists.
-	//if ( option[ in::file::native ].user() ) {
+	//if ( opts[ in::file::native ].user() ) {
 	// //Read in native if it exists.
-	// std::string native_pdb_file  = option[ in::file::native ]();
+	// std::string native_pdb_file  = opts[ in::file::native ]();
 	// native_pose_ = PoseOP( new Pose );
 	// core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 	// pdbslice( *native_pose_, working_res );
 	// // set the pose equal to the native pose if user wants to refine_native
 	// // does having this way down here mess anything up?
-	// if ( option[ OptionKeys::rna::denovo::refine_native ]() ) {
+	// if ( opts[ OptionKeys::rna::denovo::refine_native ]() ) {
 	//  pose_ = native_pose_->clone();
 	// }
-	//} else if ( option[ OptionKeys::rna::denovo::working_native ].user() ) {
-	// std::string native_pdb_file  = option[ OptionKeys::rna::denovo::working_native ];
+	//} else if ( opts[ OptionKeys::rna::denovo::working_native ].user() ) {
+	// std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
 	// native_pose_ = PoseOP( new Pose );
 	// core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 	//} else {
-	// runtime_assert( !option[ OptionKeys::rna::denovo::refine_native ]() );
+	// runtime_assert( !opts[ OptionKeys::rna::denovo::refine_native ]() );
 	//}
 
-	if ( !option[ OptionKeys::rna::denovo::minimize_rna ].user() ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
-	// runtime_assert( option[ OptionKeys::score::include_neighbor_base_stacks ].user() ); // user should specify -include_neighbor_base_stacks true or -include_neighbor_base_stacks false.
+	if ( !opts[ OptionKeys::rna::denovo::minimize_rna ].user() ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
+	// runtime_assert( opts[ OptionKeys::score::include_neighbor_base_stacks ].user() ); // user should specify -include_neighbor_base_stacks true or -include_neighbor_base_stacks false.
 
 	// some stuff to update in *options*
 	options_->set_input_res( working_input_res );
@@ -971,9 +999,9 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// handle FARFAR setup. -- rhiju & amwatkins, dec. 2016.
 	full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
 	full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
+		full_model_parameters->conventional_to_full( opts[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
 	full_model_parameters->set_parameter_as_res_list( RNA_ANTI_CHI,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
+		full_model_parameters->conventional_to_full( opts[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
 	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_ABOVE, block_stack_above_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_BELOW, block_stack_below_res );
 	full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
@@ -1049,21 +1077,21 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 void
-RNA_DeNovoSetup::setup_refine_pose_list() {
+RNA_DeNovoSetup::setup_refine_pose_list( utility::options::OptionCollection const & opts ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::constraints;
 
-	if ( option[ OptionKeys::rna::denovo::refine_native ]() ) options_->set_refine_pose( true );
+	if ( opts[ OptionKeys::rna::denovo::refine_native ]() ) options_->set_refine_pose( true );
 
 	// Silent file input for fine refinement
 	refine_pose_list_ = get_refine_pose_list(
-		option[ OptionKeys::rna::denovo::refine_silent_file ](),
-		option[ OptionKeys::rna::denovo::output_res_num ].resnum_and_chain(),
+		opts[ OptionKeys::rna::denovo::refine_silent_file ](),
+		opts[ OptionKeys::rna::denovo::output_res_num ].resnum_and_chain(),
 		rsd_set_ );
 
-	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
+	if ( opts[ OptionKeys::constraints::cst_file ].user() ) {
 		ConstraintSetOP cst_set( pose_->constraint_set()->clone() ); // assume constraints have been set up already
 		for ( Size i = 1; i <= refine_pose_list_.size(); ++i ) refine_pose_list_[ i ]->constraint_set( cst_set );
 	}
