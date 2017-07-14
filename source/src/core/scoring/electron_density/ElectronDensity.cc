@@ -1446,14 +1446,24 @@ ElectronDensity::calcRhoC(
 /////////////////////////////////////
 /// setup oversampled maps for fast density scoring
 void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose) {
+
+	//This function shouldn't exist. It results in protocol dependent scoring of the electron density.
+	//For example if you load and score a centroid pose alone vs a centroid pose that had a full atom pose read in before it
+	//you will get a different value. This should be reworked with the removal of electron density from global data. BF
+
 	// atom count
-	core::Size natms=0,nres=0;
-	for ( core::Size i=1; i<=pose.size(); ++i ) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) { continue; } nres++;
-		core::conformation::Residue const& rsd_i = pose.residue(i);
-		natms += rsd_i.nheavyatoms();
+	//core::Size natms=0,nres=0;
+	//for ( core::Size i=1; i<=pose.size(); ++i ) {
+	// if ( pose.residue(i).aa() == core::chemical::aa_vrt ) { continue; } nres++;
+	// core::conformation::Residue const& rsd_i = pose.residue(i);
+	// natms += rsd_i.nheavyatoms();
+	//}
+	//core::Real scalefactor = ((core::Real)natms/(core::Real)nres);
+	if ( pose.size() == 0 ) {
+		TR << " This makes compiling in debug stop complaining about unused variables" << std::endl;
 	}
-	core::Real scalefactor = ((core::Real)natms/(core::Real)nres);
+
+	core::Real scalefactor = 8;
 	setup_fastscoring_first_time(scalefactor);
 }
 
