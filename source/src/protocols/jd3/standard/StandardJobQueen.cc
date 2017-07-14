@@ -506,18 +506,24 @@ StandardJobQueen::mature_larval_job(
 
 bool StandardJobQueen::larval_job_needed_for_note_job_completed() const { return false; }
 
-void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status )
+void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults )
 {
 	// pass the status to the other note_job_completed function
-	note_job_completed( job->job_index(), status );
+	note_job_completed( job->job_index(), status, nresults );
 }
 
-void StandardJobQueen::note_job_completed( core::Size job_id, JobStatus status )
+void StandardJobQueen::note_job_completed( core::Size job_id, JobStatus status, Size nresults )
 {
 	completed_jobs_.insert( job_id );
 	if ( status == jd3_job_status_success ) {
-		recent_successes_.push_back( job_id );
+		for ( Size ii = 1; ii <= nresults; ++ii ) {
+			recent_successes_.push_back( std::make_pair( job_id, ii ) );
+		}
 		successful_jobs_.insert( job_id );
+		PartialOutputStatus output_status;
+		output_status.n_results = nresults;
+		output_status.n_output_or_discarded  = 0;
+		results_processed_for_job_[ job_id ] = output_status;
 	} else {
 		failed_jobs_.insert( job_id );
 	}
@@ -525,26 +531,30 @@ void StandardJobQueen::note_job_completed( core::Size job_id, JobStatus status )
 
 bool StandardJobQueen::larval_job_needed_for_completed_job_summary() const { return false; }
 
-void StandardJobQueen::completed_job_summary( LarvalJobCOP, JobSummaryOP ) {}
+void StandardJobQueen::completed_job_summary( LarvalJobCOP, core::Size, JobSummaryOP ) {}
 
-void StandardJobQueen::completed_job_summary( core::Size, JobSummaryOP ) {}
+void StandardJobQueen::completed_job_summary( core::Size, core::Size, JobSummaryOP ) {}
 
-std::list< core::Size > StandardJobQueen::jobs_that_should_be_output()
+std::list< JobResultID >
+StandardJobQueen::jobs_that_should_be_output()
 {
-	std::list< core::Size > return_list = recent_successes_;
-	recent_successes_.clear();
+	std::list< JobResultID > return_list;
+	recent_successes_.swap( return_list );
 	return return_list;
 }
 
 /// @details Default implementation does not discard any job results.
-std::list< core::Size >
+std::list< JobResultID >
 StandardJobQueen::job_results_that_should_be_discarded() {
-	return std::list< core::Size >();
+	return std::list< JobResultID >();
 }
 
-void StandardJobQueen::completed_job_result( LarvalJobCOP job, JobResultOP job_result )
+void StandardJobQueen::completed_job_result(
+	LarvalJobCOP job,
+	core::Size result_index,
+	JobResultOP job_result
+)
 {
-	note_job_result_output( job );
 	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 	pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
@@ -560,7 +570,10 @@ void StandardJobQueen::completed_job_result( LarvalJobCOP job, JobResultOP job_r
 			outputter_tag = tag->getTag( "Output" )->getTags()[ 0 ];
 		}
 	}
-	outputter->write_output_pose( *job, *job_options, outputter_tag, *pose_result->pose() );
+	std::pair< core::Size, core::Size > pose_of_total =
+		{ result_index, results_processed_for_job_[ job->job_index() ].n_results };
+
+	outputter->write_output_pose( *job, pose_of_total, *job_options, outputter_tag, *pose_result->pose() );
 
 	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
 	for ( std::list< pose_outputters::SecondaryPoseOutputterOP >::const_iterator
@@ -568,6 +581,8 @@ void StandardJobQueen::completed_job_result( LarvalJobCOP job, JobResultOP job_r
 			iter != iter_end; ++iter ) {
 		(*iter)->write_output_pose( *job, *job_options, *pose_result->pose() );
 	}
+
+	note_job_result_output_or_discarded( job, result_index );
 }
 
 /// @details Construct the XSD and then invoke the (private) determine_preliminary_job_list_from_xml_file method,
@@ -829,8 +844,8 @@ StandardJobQueen::failed_jobs() const
 }
 
 numeric::DiscreteIntervalEncodingTree< core::Size > const &
-StandardJobQueen::output_jobs() const {
-	return output_jobs_;
+StandardJobQueen::processed_jobs() const {
+	return processed_jobs_;
 }
 
 /// @details This base class implementation merely returns a one-element list containing the
@@ -1459,9 +1474,34 @@ StandardJobQueen::secondary_outputter_for_job(
 }
 
 void
-StandardJobQueen::note_job_result_output( LarvalJobCOP job )
+StandardJobQueen::note_job_result_output_or_discarded( LarvalJobCOP job, Size result_index )
 {
-	output_jobs_.insert( job->job_index() );
+	auto result_pos_iter = results_processed_for_job_.find( job->job_index() );
+	if ( result_pos_iter == results_processed_for_job_.end() ) {
+		std::ostringstream oss;
+		oss << "From StandardJobQueen::note_job_result_output_or_discarded:\n";
+		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
+			" was output; this job has already had all of its results output or the" <<
+			" StandardJobQueen was unaware of its existence\n";
+		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+	}
+
+	if ( result_pos_iter->second.results_output_or_discarded.member( result_index ) ) {
+		// we've already output this job; the derived class has messed up here
+		std::ostringstream oss;
+		oss << "From StandardJobQueen::note_job_result_output_or_discarded:\n";
+		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
+			" was output; this result index for this job has already been output or discarded.\n";
+		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+	}
+
+
+	if ( result_pos_iter->second.n_results == ++result_pos_iter->second.n_output_or_discarded ) {
+		results_processed_for_job_.erase( result_pos_iter );
+		processed_jobs_.insert( job->job_index() );
+	} else {
+		result_pos_iter->second.results_output_or_discarded.insert( result_index );
+	}
 }
 
 utility::options::OptionKeyList

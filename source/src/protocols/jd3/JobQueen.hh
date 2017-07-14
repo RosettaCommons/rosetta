@@ -19,6 +19,7 @@
 
 //project headers
 #include <core/types.hh>
+#include <protocols/jd3/CompletedJobOutput.fwd.hh>
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobResult.fwd.hh>
@@ -133,15 +134,17 @@ public:
 	/// a job has "completed" -- in the sense that it will not be run in the future.
 	/// It does not guarantee that the job was run on this CPU or that it successfully
 	/// completed anywhere.  The JobStatus indicates whether the job completed or
-	/// whether it failed.
-	virtual void note_job_completed( LarvalJobCOP job, JobStatus status ) = 0;
+	/// whether it failed. The nresults count lists how many JobSummary/JobResult pairs
+	/// were produced by the completed job.
+	virtual void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) = 0;
 
 	/// @brief The JobDistributor will call this function to inform the JobQueen that
 	/// a job has "completed" -- in the sense that it will not be run in the future.
 	/// It does not guarantee that the job was run on this CPU or that it successfully
 	/// completed anywhere.  The JobStatus indicates whether the job completed or
-	/// whether it failed.
-	virtual void note_job_completed( core::Size job_id, JobStatus status ) = 0;
+	/// whether it failed. The nresults count lists how many JobSummary/JobResult pairs
+	/// were produced by the completed job.
+	virtual void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) = 0;
 
 	/// @brief There are two interfaces to completed_job_summary: one in which the
 	/// job index alone is passed in, a second in which the entire LarvalJob is
@@ -152,32 +155,34 @@ public:
 	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
 	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
 	/// from structures instead of forcing that computation into accessory scripts.
-	virtual void completed_job_summary( LarvalJobCOP job, JobSummaryOP summary ) = 0;
+	virtual void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) = 0;
 
 	/// @brief The JobDistributor guarnatees that exactly one JobQueen will see every
 	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
 	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
 	/// from structures instead of forcing that computation into accessory scripts.
-	virtual void completed_job_summary( core::Size job_id, JobSummaryOP summary ) = 0;
+	virtual void completed_job_summary( core::Size job_id, Size result_index, JobSummaryOP summary ) = 0;
 
 	/// @brief The JobDistributor asks the JobQueen which JobResults should be queued for output.
-	/// Each job should be indicated by its "global" index. This is asked of each queen which has
-	/// seen the job summaries for a batch of jobs.  The JobQueen should ask for a given
-	/// JobResult only once.  After a job result is output, the JobDistributor will discard the
-	/// JobResult, so the JobQueen should not tell the JobDistributor to output a job if it will
-	/// be used as an input to another job in the future.
-	virtual std::list< core::Size > jobs_that_should_be_output() = 0;
+	/// The JobResult is indicated by a pair of Sizes: the first Size being the job index, and
+	/// the second Size being the index of the JobSummary/JobResult pair in the CompletedJob.
+	/// Each job id should be indicated by its "global" index. This is asked of each queen which
+	/// has seen the job summaries for a batch of jobs. The JobQueen should ask for a given
+	/// JobResult only once. After a job result is output, the JobDistributor will discard
+	/// the JobResult, so the JobQueen should not tell the JobDistributor to output a job if
+	/// it will be used as an input to another job in the future.
+	virtual std::list< JobResultID > jobs_that_should_be_output() = 0;
 
 	/// @brief The JobDistributor, to manage memory use, asks the JobQueen which JobResults may be
 	/// discarded because they will not be used in the future.  The JobDistributor will exit with
 	/// an error message if the %JobQueen gives it a LarvalJob that lists one of these discarded
 	/// JobResults as a required input for that LarvalJob.
-	virtual std::list< core::Size > job_results_that_should_be_discarded() = 0;
+	virtual std::list< JobResultID > job_results_that_should_be_discarded() = 0;
 
 	/// @brief The JobDistributor hands the JobResult for a particular larval job to a JobQueen
 	/// after it has been requested through a call to jobs_that_should_be_output, but the JobDistributor
 	/// will not necessarily give the JobResult to the JobQueen that requested the job result.
-	virtual void completed_job_result( LarvalJobCOP job, JobResultOP job_result ) = 0;
+	virtual void completed_job_result( LarvalJobCOP job, Size result_id, JobResultOP job_result ) = 0;
 
 	/// @brief Send all buffered output to disk -- called by the JobDistributor right before it shuts down
 	/// if it hits an error or catches an exception that it cannot ignore.

@@ -20,7 +20,7 @@
 namespace protocols {
 namespace jd3 {
 namespace job_distributors {
-			
+
 class MPIWorkPoolJobDistributor;
 typedef utility::pointer::shared_ptr< MPIWorkPoolJobDistributor > MPIWorkPoolJobDistributorOP;
 typedef utility::pointer::shared_ptr< MPIWorkPoolJobDistributor const > MPIWorkPoolJobDistributorCOP;

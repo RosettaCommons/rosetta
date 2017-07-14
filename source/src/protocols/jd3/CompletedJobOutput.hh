@@ -14,17 +14,30 @@
 #ifndef INCLUDED_protocols_jd3_CompletedJobOutput_HH
 #define INCLUDED_protocols_jd3_CompletedJobOutput_HH
 
-// Package headers
-#include <protocols/jd3/JobSummary.fwd.hh>
-#include <protocols/jd3/JobResult.fwd.hh>
+// Unit headers
+#include <protocols/jd3/CompletedJobOutput.fwd.hh>
 
-// C++ headers
-#include <utility>
+// Package headers
+#include <protocols/jd3/Job.fwd.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace jd3 {
 
-typedef std::pair< JobSummaryOP, JobResultOP > CompletedJobOutput;
+/// @brief Each Job will return a JobStatus and a list of JobSummary/JobResult pairs.
+/// A pair's index in th job_results vector is used as its identifier for when
+/// the JobResult is used as input for another job, or when it is to be output
+/// by the JobQueen.
+struct CompletedJobOutput
+{
+public:
+	CompletedJobOutput() : status( jd3_job_status_failed_do_not_retry ) {}
+
+	JobStatus status;
+	utility::vector1< SingleJobOutputPair > job_results;
+};
 
 }
 }

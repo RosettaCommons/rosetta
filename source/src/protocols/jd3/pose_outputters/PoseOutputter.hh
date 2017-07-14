@@ -15,14 +15,15 @@
 #ifndef INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH
 #define INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH
 
-//unit headers
+// Unit headers
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 
-//package headers
+// Package headers
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
-//project headers
+// Project headers
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
@@ -71,9 +72,18 @@ public:
 	virtual
 	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
 
+	/// @brief Write a pose out to permanent storage (whatever that may be). The
+	/// pose_ind_of_total tag is a pair stating how many poses were generated for a particular
+	/// job; the first entry in the pair is the index, the second entry in the pair is the
+	/// total number of Poses generated for a particular job. Thus job 532 from input "1l6x" might
+	/// have produced 10 Poses; so the pair might be {4, 10} in a particular call to this function.
+	/// In such a case, the outputter ought to name the output structure "1l6x_0532_0004.pdb"
+	/// or something along those lines where a second suffix is listed for the job. If both entries
+	/// in the pair are 1, then no additional suffix needs to be given for a job.
 	virtual
 	void write_output_pose(
 		LarvalJob const & job,
+		std::pair< core::Size, core::Size > const & pose_ind_of_total,
 		utility::options::OptionCollection const & options,
 		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 		core::pose::Pose const & pose

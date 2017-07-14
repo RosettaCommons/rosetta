@@ -136,10 +136,14 @@ bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility
 		if ( pdb_output_tag->getOption< bool >( "overwrite", false ) ) {
 			return false;
 		}
-	} else if ( options[ out::overwrite ] ) { return false; }
+	} else if ( options[ basic::options::OptionKeys::out::overwrite ] ) { return false; }
 
 	// Since we're not running with the "overwrite" behavior, check if the PDB already exists
-	std::string filename( output_pdb_name( job, options, pdb_output_tag ));
+	// Assume that each job is only going to produce a single PDB file -- if a job were
+	// to form more than one PDB file output, then the output structures that it would write
+	// would have different file names.
+	std::pair< core::Size, core::Size > one_of_one{ 1, 1 };
+	std::string filename( output_pdb_name( job, one_of_one, options, pdb_output_tag ));
 
 	bool exists = utility::file::file_exists( filename );
 	if ( exists ) {
@@ -163,11 +167,39 @@ PDBPoseOutputter::class_key() const
 void
 PDBPoseOutputter::write_output_pose(
 	LarvalJob const & job,
+	std::pair< core::Size, core::Size > const & pose_ind_of_total,
 	utility::options::OptionCollection const & job_options,
-	utility::tag::TagCOP tag, // possibly null-pointing tag pointer
-	core::pose::Pose const & pose )
+	utility::tag::TagCOP pdb_output_tag, // possibly null-pointing tag pointer
+	core::pose::Pose const & pose
+)
 {
-	std::string out_fname = output_pdb_name( job, job_options, tag );
+	std::string out_fname = output_pdb_name( job, pose_ind_of_total, job_options, pdb_output_tag );
+
+	// We might not have checked whether the PDB file that's about to be written
+	// already exists on disk, because we might not have known about the fact that
+	// multiple Poses are produced by a given job. Check now, and if the PDB file
+	// already exists then only overwrite it if we have the overwrite flag.
+	if ( pose_ind_of_total.second != 1 && utility::file::file_exists( out_fname ) ) {
+
+		// PDB tag "overwrite" attribute takes precedence over the options system
+		// if the tag says "do not overwrite," then do not look at the options system.
+		bool skip_outputting_this_pose( false );
+		if ( pdb_output_tag && pdb_output_tag->hasOption( "overwrite" ) ) {
+			if ( pdb_output_tag->getOption< bool >( "overwrite", false ) ) {
+				skip_outputting_this_pose = true;
+			}
+		} else if ( ! job_options[ basic::options::OptionKeys::out::overwrite ] ) {
+			skip_outputting_this_pose = true;
+		}
+
+		if ( skip_outputting_this_pose ) {
+			TR << "PDB file '" + out_fname + "' already exists and neither the -overwrite flag," <<
+				" nor the overwrite attribute of the PDB outputter tag are set. This pose will not be" <<
+				" written to disk." << std::endl;
+			return;
+		}
+	}
+
 	core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions( job_options ) );
 	core::io::pdb::dump_pdb( pose, out_fname, sfr_opts );
 }
@@ -175,6 +207,7 @@ PDBPoseOutputter::write_output_pose(
 std::string
 PDBPoseOutputter::output_pdb_name(
 	LarvalJob const & job,
+	std::pair< core::Size, core::Size > const & pose_ind_of_total,
 	utility::options::OptionCollection const & options,
 	utility::tag::TagCOP tag
 ) const
@@ -190,6 +223,13 @@ PDBPoseOutputter::output_pdb_name(
 
 	fn.base( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
 		+ job.nstruct_suffixed_job_tag() );
+
+	// If there is more than one pose to output, then append a second numerical
+	// qualifier on the the output pdb file name
+	if ( pose_ind_of_total.second != 1 ) {
+		fn.base( fn.base() + "_" + ObjexxFCL::lead_zero_string_of( pose_ind_of_total.first,
+			std::max( 4, 1 + int( std::log10( pose_ind_of_total.second ))) ));
+	}
 
 	if ( tag && tag->hasOption( "path" ) ) {
 		fn.path( tag->getOption< std::string >( "path" ) );

@@ -49,11 +49,7 @@ public:
 
 	JobSummary();
 	virtual ~JobSummary();
-	JobStatus status() const;
-	void status( JobStatus setting );
 
-private:
-	JobStatus status_;
 
 #ifdef    SERIALIZATION
 public:

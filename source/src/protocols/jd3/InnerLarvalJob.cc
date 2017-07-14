@@ -41,6 +41,7 @@
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
 
 namespace protocols {
@@ -256,13 +257,13 @@ InnerLarvalJob::input_source( Size index ) const
 	return *input_sources_[ index ];
 }
 
-utility::vector1< core::Size > const &
+utility::vector1< JobOutputID > const &
 InnerLarvalJob::input_job_result_indices() const
 {
 	return input_job_result_indices_;
 }
 
-void InnerLarvalJob::add_input_job_result_index( core::Size job_index )
+void InnerLarvalJob::add_input_job_result_index( JobOutputID job_index )
 {
 	input_job_result_indices_.push_back( job_index );
 }

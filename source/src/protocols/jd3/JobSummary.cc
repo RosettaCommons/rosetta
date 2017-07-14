@@ -26,14 +26,8 @@
 namespace protocols {
 namespace jd3 {
 
-JobSummary::JobSummary() : status_( jd3_job_status_success ) {}
+JobSummary::JobSummary() {}
 JobSummary::~JobSummary() {}
-
-JobStatus
-JobSummary::status() const { return status_; }
-
-void
-JobSummary::status( JobStatus setting ) { status_ = setting; }
 
 } // namespace jd3
 } // namespace protocols
@@ -44,16 +38,12 @@ JobSummary::status( JobStatus setting ) { status_ = setting; }
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::JobSummary::save( Archive & arc ) const {
-	arc( CEREAL_NVP( status_ ) ); // enum protocols::jd3::JobStatus
-}
+protocols::jd3::JobSummary::save( Archive & ) const {}
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::JobSummary::load( Archive & arc ) {
-	arc( status_ ); // enum protocols::jd3::JobStatus
-}
+protocols::jd3::JobSummary::load( Archive & ) {}
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobSummary );
 CEREAL_REGISTER_TYPE( protocols::jd3::JobSummary )

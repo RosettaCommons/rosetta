@@ -19,6 +19,7 @@
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
 // Package headers
+#include <protocols/jd3/CompletedJobOutput.fwd.hh>
 #include <protocols/jd3/PoseInputSource.fwd.hh>
 
 // Project headers
@@ -158,11 +159,13 @@ public:
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs
-	utility::vector1< core::Size > const &
+	utility::vector1< JobOutputID > const &
 	input_job_result_indices() const;
 
-	void add_input_job_result_index( core::Size job_index );
-
+	/// @brief Add a required input by the pair representing 1) the global index of the job
+	/// that produced the JobResult, and 2) the index of that JobResult among all the results
+	/// produced by that job.
+	void add_input_job_result_index( JobResultID job_result_id );
 
 	/// @brief Store the fact that this job is bad, for some reason or another, e.g. it has
 	/// malformed inputs.
@@ -193,7 +196,7 @@ private:
 
 	/// @brief What set of JobResults are required as inputs for the JobQueen to mature larval jobs that point at
 	/// this %InnerLarvalJob into a full job?
-	utility::vector1< core::Size > input_job_result_indices_;
+	utility::vector1< JobResultID > input_job_result_indices_;
 
 	bool bad_;
 

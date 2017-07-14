@@ -18,6 +18,7 @@
 #include <protocols/jd3/LarvalJob.fwd.hh>
 
 // Package headers
+#include <protocols/jd3/CompletedJobOutput.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
 // utility headers
@@ -109,8 +110,8 @@ public:
 	core::Size job_index() const;
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
-	/// already-executed (Lavral)Jobs
-	utility::vector1< core::Size > const &
+	/// already-executed (Lavral)Jobs and the result_index for that job.
+	utility::vector1< JobOutputID > const &
 	input_job_result_indices() const;
 
 	void set_status_prefix( std::string const & prefix );

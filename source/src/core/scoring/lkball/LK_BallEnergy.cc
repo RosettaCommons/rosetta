@@ -86,6 +86,18 @@
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #endif
 
+#ifdef SERIALIZATION
+// Project serialization headers
+#include <core/scoring/trie/RotamerTrie.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// #include <boost/preprocessor/punctuation/comma.hpp> // typedefs remove the need for this one
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace lkball {
@@ -2246,3 +2258,20 @@ LK_BallEnergy::version() const
 }
 }
 
+#ifdef    SERIALIZATION
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::lkball::lkbtrie::LKBAtom, core::scoring::etable::etrie::CountPairDataGeneric > LKBRotTrieGeneric; SAVE_AND_LOAD_SERIALIZABLE( LKBRotTrieGeneric );
+CEREAL_REGISTER_TYPE( LKBRotTrieGeneric )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::lkball::lkbtrie::LKBAtom, core::scoring::etable::etrie::CountPairData_1_1 > LKBRotTrie11; SAVE_AND_LOAD_SERIALIZABLE( LKBRotTrie11 );
+CEREAL_REGISTER_TYPE( LKBRotTrie11 )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::lkball::lkbtrie::LKBAtom, core::scoring::etable::etrie::CountPairData_1_2 > LKBRotTrie12; SAVE_AND_LOAD_SERIALIZABLE( LKBRotTrie12 );
+CEREAL_REGISTER_TYPE( LKBRotTrie12 )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::lkball::lkbtrie::LKBAtom, core::scoring::etable::etrie::CountPairData_1_3 > LKBRotTrie13; SAVE_AND_LOAD_SERIALIZABLE( LKBRotTrie13 );
+CEREAL_REGISTER_TYPE( LKBRotTrie13 )
+
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_lkball_LKBallEnergy )
+#endif

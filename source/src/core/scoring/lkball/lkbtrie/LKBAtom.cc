@@ -25,6 +25,7 @@
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
+#include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Numeric serialization headers
@@ -65,4 +66,28 @@ std::ostream & operator << ( std::ostream & os, LKBAtom const & atom )
 } // namespace lkball
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::lkball::lkbtrie::LKBAtom::save( Archive & arc ) const {
+	arc( CEREAL_NVP( base_ ) ); // conformation::Atom
+	arc( CEREAL_NVP( waters_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( atom_weights_ ) ); // utility::vector1<Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::lkball::lkbtrie::LKBAtom::load( Archive & arc ) {
+	arc( base_ ); // conformation::Atom
+	arc( waters_ ); // utility::vector1<Vector>
+	arc( atom_weights_ ); // utility::vector1<Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::lkball::lkbtrie::LKBAtom );
+#endif // SERIALIZATION
 

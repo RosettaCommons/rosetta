@@ -113,6 +113,13 @@ private:
 	conformation::Atom base_;
 	utility::vector1< Vector > waters_;
 	utility::vector1< Real > atom_weights_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator << ( std::ostream & os, LKBAtom const & atom );

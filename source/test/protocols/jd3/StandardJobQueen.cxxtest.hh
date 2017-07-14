@@ -130,9 +130,9 @@ public:
 	//virtual bool has_job_completed( protocols::jd3::LarvalJobCOP job ) { return pose_outputter_for_job( *job->inner_job() )->job_has_already_completed( *job ); }
 	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) override {/*TEMP*/}
 
-	void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) override {}
+	void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/, core::Size ) override {}
 
-	void completed_job_result( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobResultOP /*result*/ ) override {}
+	void completed_job_result( protocols::jd3::LarvalJobCOP /*job*/, core::Size, protocols::jd3::JobResultOP /*result*/ ) override {}
 
 	utility::vector1< core::Size > const &
 	preliminary_job_nodes() const {
@@ -158,7 +158,7 @@ public:
 	numeric::DiscreteIntervalEncodingTree< core::Size > const & completed_jobs() const { return parent::completed_jobs();}
 	numeric::DiscreteIntervalEncodingTree< core::Size > const & successful_jobs() const { return parent::successful_jobs();}
 	numeric::DiscreteIntervalEncodingTree< core::Size > const & failed_jobs() const { return parent::failed_jobs();}
-	numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const { return parent::output_jobs();}
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const { return parent::processed_jobs();}
 
 
 
@@ -418,10 +418,10 @@ public:
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
 
-		djq.note_job_completed( 1, jd3_job_status_success );
-		djq.note_job_completed( 2, jd3_job_status_success );
-		djq.note_job_completed( 3, jd3_job_status_success );
-		djq.note_job_completed( 4, jd3_job_status_failed_max_retries );
+		djq.note_job_completed( 1, jd3_job_status_success, 1 );
+		djq.note_job_completed( 2, jd3_job_status_success, 1 );
+		djq.note_job_completed( 3, jd3_job_status_success, 1 );
+		djq.note_job_completed( 4, jd3_job_status_failed_max_retries, 0 );
 
 		TS_ASSERT( djq.completed_jobs().member( 1 ) );
 		TS_ASSERT( djq.completed_jobs().member( 2 ) );

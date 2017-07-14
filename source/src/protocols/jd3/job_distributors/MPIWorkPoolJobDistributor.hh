@@ -87,8 +87,8 @@ class MPIWorkPoolJobDistributor : public JobDistributor
 public:
 	typedef std::list< core::Size > SizeList;
 	typedef std::pair< LarvalJobOP, JobResultOP > LarvalJobAndResult;
-	typedef std::map< Size, std::string > SerializedJobResultMap;
-	typedef std::map< Size, Size > JobResultLocationMap;
+	typedef std::map< JobResultID, std::string > SerializedJobResultMap;
+	typedef std::map< JobResultID, Size > JobResultLocationMap;
 	typedef std::map< Size, LarvalJobOP > JobMap;
 	typedef utility::pointer::shared_ptr< JobMap > JobMapOP;
 	typedef std::set< core::Size > JobSet;
@@ -222,6 +222,7 @@ private:
 	throw_after_failed_to_retrieve_job_result(
 		int worker_node,
 		Size job_id,
+		Size result_index,
 		int archival_node
 	);
 
@@ -290,14 +291,14 @@ private:
 		LarvalJobAndResult job_and_result
 	) const;
 
-	JobSummaryOP
-	deserialize_job_summary(
-		std::string const & job_summary_string
+	utility::vector1< JobSummaryOP >
+	deserialize_job_summaries(
+		std::string const & job_summaries_string
 	) const;
 
 	std::string
-	serialize_job_summary(
-		JobSummaryOP job_summary
+	serialize_job_summaries(
+		utility::vector1< JobSummaryOP > const & job_summaries
 	) const;
 
 private:
@@ -354,8 +355,8 @@ private:
 	utility::vector1< core::Size > n_remaining_nodes_for_deallocation_message_;
 
 	numeric::DiscreteIntervalEncodingTree< core::Size > job_indices_seen_;
-	numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;
-	numeric::DiscreteIntervalEncodingTree< core::Size > discarded_jobs_;
+	//numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;
+	//numeric::DiscreteIntervalEncodingTree< core::Size > discarded_jobs_;
 
 	Size default_retry_limit_;
 	bool complete_;

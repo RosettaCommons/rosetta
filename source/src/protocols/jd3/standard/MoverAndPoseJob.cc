@@ -44,29 +44,43 @@ MoverAndPoseJob::run()
 	using namespace protocols::moves;
 
 	mover_->apply( *pose_ );
-	PoseJobResultOP job_result = create_job_result();
-	job_result->pose( pose_ );
-
-	EnergyJobSummaryOP summary = create_job_summary();
-	summary->energy( pose_->energies().total_energy() );
-	if ( mover_->get_last_move_status() == MS_SUCCESS ) {
-		summary->status( jd3_job_status_success );
-	} else if ( mover_->get_last_move_status() == FAIL_RETRY ) {
-		summary->status( jd3_job_status_failed_retry );
-	} else if ( mover_->get_last_move_status() == FAIL ) { // treat fail like fail retry?
-		summary->status( jd3_job_status_failed_retry );
-	} else if ( mover_->get_last_move_status() == FAIL_DO_NOT_RETRY ) {
-		summary->status( jd3_job_status_failed_do_not_retry );
-	} else if ( mover_->get_last_move_status() == FAIL_BAD_INPUT ) {
-		summary->status( jd3_job_status_inputs_were_bad );
-	}
-
-	finalize_job_result( job_result );
-	finalize_job_summary( summary );
 
 	CompletedJobOutput job_output;
-	job_output.first  = summary;
-	job_output.second = job_result;
+
+	// prepare the job status
+	if ( mover_->get_last_move_status() == MS_SUCCESS ) {
+		job_output.status = jd3_job_status_success;
+	} else if ( mover_->get_last_move_status() == FAIL_RETRY ) {
+		job_output.status = jd3_job_status_failed_retry;
+	} else if ( mover_->get_last_move_status() == FAIL ) { // treat fail like fail retry?
+		job_output.status = jd3_job_status_failed_retry;
+	} else if ( mover_->get_last_move_status() == FAIL_DO_NOT_RETRY ) {
+		job_output.status = jd3_job_status_failed_do_not_retry;
+	} else if ( mover_->get_last_move_status() == FAIL_BAD_INPUT ) {
+		job_output.status = jd3_job_status_inputs_were_bad;
+	}
+
+	// Retrieve all Poses created by the Mover and append them individually to
+	// the CompletedJobOutput's job_results vector.
+	while ( pose_ ) {
+
+		PoseJobResultOP job_result = create_job_result();
+		job_result->pose( pose_ );
+
+		EnergyJobSummaryOP summary = create_job_summary();
+		summary->energy( pose_->energies().total_energy() );
+
+		finalize_job_result( job_result );
+		finalize_job_summary( summary );
+
+		job_output.job_results.push_back( std::make_pair( summary, job_result ));
+
+		// keep retrieving Poses from the Mover until the Mover stops returning any.
+		// This could perhaps be expensive if the Mover wants to deliver 10K poses and
+		// was not anticipating that they would all need to live in memory simultaneously!
+		pose_ = mover_->get_additional_output();
+	}
+
 	return job_output;
 }
 
@@ -98,9 +112,22 @@ MoverAndPoseJob::create_job_result() { return PoseJobResultOP( new PoseJobResult
 EnergyJobSummaryOP
 MoverAndPoseJob::create_job_summary() { return EnergyJobSummaryOP( new EnergyJobSummary ); }
 
-
+/// @details Template method invoked by the base class during result preparation and finalization.
+/// The derived MoverAndPoseJob class is encouraged to stash any additional information in
+/// some possible derived PoseJobResult class. This is invoked once per Pose returned by the
+/// Mover -- multiple poses may be returned using Mover's get_additional_output method. The
+/// derived MoverAndPoseJob may look at each Pose by calling the pose() method: that is, the
+/// pose() method will return the pose that corresponds to a particular PoseJobResult that's
+/// being prepared. It is also already stored in the PoseJobResult.
 void MoverAndPoseJob::finalize_job_result( PoseJobResultOP ) {}
 
+/// @details Template method invoked by the base class during result preparation and finalization.
+/// The derived MoverAndPoseJob class is encouraged to stash any additional information in
+/// some possible derived EnergyJobSummary class. This is invoked once per Pose returned by the
+/// Mover -- multiple poses may be returned using Mover's get_additional_output method. The
+/// derived MoverAndPoseJob may look at each Pose by calling the pose() method: that is, the
+/// pose() method will return the pose that corresponds to a particular EnergyJobSummary that's
+/// being prepared.
 void MoverAndPoseJob::finalize_job_summary( EnergyJobSummaryOP ) {}
 
 

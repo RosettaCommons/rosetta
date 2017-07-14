@@ -118,16 +118,16 @@ public:
 	) override;
 
 	bool larval_job_needed_for_note_job_completed() const override;
-	void note_job_completed( LarvalJobCOP job, JobStatus status ) override;
-	void note_job_completed( core::Size job_id, JobStatus status ) override;
+	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override;
+	void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) override;
 
 	bool larval_job_needed_for_completed_job_summary() const override;
-	void completed_job_summary( LarvalJobCOP job, JobSummaryOP summary ) override;
-	void completed_job_summary( core::Size job_id, JobSummaryOP summary ) override;
+	void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override;
+	void completed_job_summary( core::Size job_id, Size result_index, JobSummaryOP summary ) override;
 
-	std::list< core::Size > jobs_that_should_be_output() override;
-	std::list< core::Size > job_results_that_should_be_discarded() override;
-	void completed_job_result( LarvalJobCOP job, JobResultOP job_result ) override;
+	std::list< JobResultID > jobs_that_should_be_output() override;
+	std::list< JobResultID > job_results_that_should_be_discarded() override;
+	void completed_job_result( LarvalJobCOP job, Size result_id, JobResultOP job_result ) override;
 
 
 	/// @brief Read from an input string representing the contents of the job-definiton XML file
@@ -316,8 +316,8 @@ protected:
 	numeric::DiscreteIntervalEncodingTree< core::Size > const & failed_jobs() const;
 
 	/// @brief Read access for which jobs have completed and how; if a job-id is a member
-	/// of this DIET, then the job has already been output.
-	numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const;
+	/// of this DIET, then the job has had all of its results output or discarded.
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & processed_jobs() const;
 
 	/// @brief Ask the derived JobQueen to expand / refine a preliminary larval job, by
 	/// possibly reading per-job data out of the Tag associated with each job. If there is
@@ -479,10 +479,13 @@ private:
 		std::string const & secondary_outputter_type
 	);
 
-	/// @brief The SJQ will keep track of all output jobs in the output_jobs_ diet, but requires
+	/// @brief The SJQ will keep track of all jobs in the processed_jobs_ diet, but requires
 	/// that derived classes who are not calling the SJQ's version of completed_job_result call
 	/// this function.
-	void note_job_result_output( LarvalJobCOP job );
+	void note_job_result_output_or_discarded( LarvalJobCOP job, Size result_index );
+
+	/// @brief The SJQ will keep track of all discarded jobs in the discarded_jobs_ diet
+	void note_job_result_discarded( LarvalJobCOP job, Size result_index );
 
 	utility::options::OptionKeyList concatenate_all_options() const;
 
@@ -539,11 +542,23 @@ private:
 	utility::vector1< core::Size > pjn_job_ind_end_;
 	utility::vector1< char > preliminary_job_nodes_complete_; // complete == all jobs assigned
 
-	numeric::DiscreteIntervalEncodingTree< core::Size > completed_jobs_;
-	numeric::DiscreteIntervalEncodingTree< core::Size > successful_jobs_;
-	numeric::DiscreteIntervalEncodingTree< core::Size > failed_jobs_;
-	numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;
-	std::list< core::Size > recent_successes_;
+	typedef numeric::DiscreteIntervalEncodingTree< core::Size > SizeDIET;
+
+	SizeDIET completed_jobs_;
+	SizeDIET successful_jobs_;
+	SizeDIET failed_jobs_;
+	SizeDIET processed_jobs_; // jobs where all nresults have been output or discarded
+
+	struct PartialOutputStatus {
+		core::Size n_results;
+		core::Size n_output_or_discarded;
+		SizeDIET results_output_or_discarded;
+	};
+
+	std::map< core::Size, PartialOutputStatus > results_processed_for_job_;
+
+	// The jobs that have completed, but have not yet been output
+	std::list< JobResultID > recent_successes_;
 
 	// A mapping from the outputter-type to a representative PoseOutputter/SecondaryPoseOutputter.
 	typedef std::map< std::string, pose_outputters::PoseOutputterOP > RepresentativeOutputterMap;

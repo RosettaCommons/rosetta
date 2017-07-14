@@ -133,6 +133,7 @@ public:
 
 	void write_output_pose(
 		LarvalJob const & job,
+		std::pair< core::Size, core::Size > const &,
 		utility::options::OptionCollection const &,
 		utility::tag::TagCOP,
 		core::pose::Pose const & pose
@@ -228,7 +229,8 @@ public:
 		utility::vector1< protocols::jd3::JobResultCOP > results;
 		JobOP job1 = djq2.mature_larval_job( larval_job1, results );
 		CompletedJobOutput output1 = job1->run();
-		djq2.completed_job_result( larval_job1, output1.second );
+		TS_ASSERT_EQUALS( output1.job_results.size(), 1 );
+		djq2.completed_job_result( larval_job1, 1, output1.job_results[1].second );
 		PoseOutputterOP outputter = djq2.outputter( larval_job1 );
 		DummyPoseOutputterOP dummy_outputter = utility::pointer::dynamic_pointer_cast< DummyPoseOutputter > ( outputter );
 		TS_ASSERT( dummy_outputter );
@@ -261,7 +263,8 @@ public:
 			utility::vector1< protocols::jd3::JobResultCOP > results;
 			JobOP job = djq2.mature_larval_job( larval_job, results );
 			CompletedJobOutput output = job->run();
-			djq2.completed_job_result( larval_job, output.second );
+			TS_ASSERT_EQUALS( output.job_results.size(), 1 );
+			djq2.completed_job_result( larval_job, 1, output.job_results[1].second );
 		}
 
 		PoseOutputterOP outputter = djq2.outputter( jobs.front() );

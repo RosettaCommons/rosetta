@@ -19,7 +19,7 @@
 #include <protocols/jd3/job_distributors/VanillaJobDistributor.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/CompletedJobOutput.hh>
+#include <protocols/jd3/CompletedJobOutput.fwd.hh>
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobDistributor.hh>
@@ -47,7 +47,8 @@ namespace job_distributors {
 class VanillaJobDistributor : public JobDistributor {
 public:
 	typedef std::list< core::Size > SizeList;
-	typedef std::map< Size, std::pair< LarvalJobOP, JobResultOP > > JobResultMap;
+	typedef std::list< JobResultID > JobResultIDList;
+	typedef std::map< JobResultID, std::pair< LarvalJobOP, JobResultOP > > JobResultMap;
 
 public:
 
