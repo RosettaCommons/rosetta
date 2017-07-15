@@ -1685,12 +1685,20 @@ SimpleCycpepPredictApplication::set_up_native (
 
 	if ( cyclization_type() == SCPA_n_to_c_amide_bond ) {
 		TR << "Stripping termini from native structure." << std::endl;
-		core::pose::remove_lower_terminus_type_from_pose_residue(*native_pose, 1);
-		core::pose::remove_upper_terminus_type_from_pose_residue(*native_pose, last_res);
-	}
-
-	//Set up disulfide variants, if we're doing disulfide cyclization.
-	if ( cyclization_type() == SCPA_terminal_disulfide ) {
+		if ( native_pose->residue_type(1).is_lower_terminus() ) {
+			core::pose::remove_lower_terminus_type_from_pose_residue(*native_pose, 1);
+			TR << "Removed lower terminus type from first residue." << std::endl;
+		} else {
+			TR << "No lower terminus type found on first residue.  (The PDB file may contain a LINK record specifying cyclic geometry.)" << std::endl;
+		}
+		if ( native_pose->residue_type(last_res).is_upper_terminus() ) {
+			core::pose::remove_upper_terminus_type_from_pose_residue(*native_pose, last_res);
+			TR << "Removed upper terminus type from last residue." << std::endl;
+		} else {
+			TR << "No upper terminus type found on last residue.  (The PDB file may contain a LINK record specifying cyclic geometry.)" << std::endl;
+		}
+	} else if ( cyclization_type() == SCPA_terminal_disulfide ) {
+		//Set up disulfide variants, if we're doing disulfide cyclization.
 		set_up_terminal_disulfide_variants( native_pose );
 	}
 
