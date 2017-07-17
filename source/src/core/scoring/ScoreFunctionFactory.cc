@@ -137,7 +137,10 @@ ScoreFunctionFactory::validate_talaris(
 	utility::options::OptionCollection const & options
 )
 {
-	bool const sf_maybe_talaris(weights_tag.find("talaris") != std::string::npos);
+	bool sf_maybe_talaris(weights_tag.find("talaris") != std::string::npos);
+	if ( weights_tag.find("pre_talaris") != std::string::npos ) {
+		sf_maybe_talaris = false;
+	}
 	core::Size const weights_length(weights_tag.length());
 
 	if ( !sf_maybe_talaris || weights_length < 11 ) return true;
