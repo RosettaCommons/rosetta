@@ -1165,13 +1165,16 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 			}
 			same_chain_next = false;
 		}
+	}// else if(unknown_mainchain_connectivity)
+	if ( options_.auto_detect_glycan_connections() && ( same_chain_next != false  ) && ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) || name3 == "ASN" || name3 == "SER" || name3 == "THR" ) ) {
+		core::io::find_branch_points( seqpos, RT, is_branch_point, branch_points_on_this_residue, rosetta_residue_name3s_, mainchain_neighbor, rinfos_, branch_lower_termini_, glycan_positions_, options_, sfr_);
 	}
 	if ( options_.auto_detect_glycan_connections() && ( same_chain_next != false  ) &&
 			( is_carbohydrate || name3 == "ASN" || name3 == "SER" || name3 == "THR" ) ) {
 		// This is too hacky: Sugars can also connect to CYS and TRP and potentially to any number of other things.
 		// This should not be hard-coded. ~Labonte
 		core::io::find_branch_points( seqpos, RT, is_branch_point, branch_points_on_this_residue,
-			rosetta_residue_name3s_, mainchain_neighbor, rinfos_, branch_lower_termini_, glycan_positions_, options_ );
+			rosetta_residue_name3s_, mainchain_neighbor, rinfos_, branch_lower_termini_, glycan_positions_, options_, sfr_ );
 	}
 	if ( branch_lower_termini_.contains( resid ) || branch_lower_termini_extra_.contains( resid ) ) {
 		is_branch_lower_terminus = true;

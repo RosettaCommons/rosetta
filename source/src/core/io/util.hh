@@ -104,7 +104,7 @@ void pose_from_pose(
 /// @brief Identify residues that are branch points (have more than one downstream neighbor)
 /// One eneighbpr will be considered as the mainchain continuations. All others are branches.
 void
-find_branch_points( Size const & seqpos, chemical::ResidueTypeCOP & RT, bool & is_branch_point, utility::vector1< std::string > & branch_points_on_this_residue, utility::vector1< std::string > const & rosetta_residue_name3s, Size mainchain_neighbor, utility::vector1< core::io::ResidueInformation > & rinfos_, StructFileRep::Strings& branch_lower_termini_, utility::vector1< Size >& glycan_positions_, core::io::StructFileRepOptions const & options );
+find_branch_points( Size const & seqpos, chemical::ResidueTypeCOP & RT, bool & is_branch_point, utility::vector1< std::string > & branch_points_on_this_residue, utility::vector1< std::string > const & rosetta_residue_name3s, Size mainchain_neighbor, utility::vector1< core::io::ResidueInformation > & rinfos_, StructFileRep::Strings& branch_lower_termini_, utility::vector1< Size >& glycan_positions_, core::io::StructFileRepOptions const & options, StructFileRep const & sfr );
 
 /// @brief Helper function to find connected residues.
 void
