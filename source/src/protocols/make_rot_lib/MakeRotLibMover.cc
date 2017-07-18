@@ -77,7 +77,10 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	TR << "Inside MakeRotLibMover::apply..." << std::endl;
 
 	// get out job object
-	MakeRotLibJobOP job( utility::pointer::static_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+	MakeRotLibJobOP job( utility::pointer::dynamic_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+	if ( ! job ) {
+		utility_exit_with_message( "ERROR: Cannot use the MakeRotLibMover without the MakeRotLibJobInputter.");
+	}
 
 	// get the shared data from the job
 	protocols::make_rot_lib::MakeRotLibOptionsDataOP mrlod( job->get_options_data() );
@@ -526,7 +529,8 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 		// scan rd for energies
 		Real min_ener = 100000;
 
-		MakeRotLibJobOP job( utility::pointer::static_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+		MakeRotLibJobOP job( utility::pointer::dynamic_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+		debug_assert( job );
 		MakeRotLibOptionsDataOP mrlod( job->get_options_data() );
 
 		Real step = mrlod->get_chi_data()[ nchi ].step;
@@ -780,6 +784,7 @@ MakeRotLibMover::calc_final_rotamers()
 
 	// get out job object
 	MakeRotLibJobOP job( utility::pointer::static_pointer_cast< MakeRotLibJob >( jd2::JobDistributor::get_instance()->current_job() ) );
+	debug_assert( job );
 
 	RotData rd_init( num_chi, rotamers_[1].get_num_bbs(), num_clusters, job->get_semirotameric() );
 	final_rotamers_.resize( num_clusters, rd_init );

@@ -50,8 +50,6 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-
 #include <boost/unordered/unordered_map.hpp>
 
 

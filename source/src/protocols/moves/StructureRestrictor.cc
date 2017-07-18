@@ -23,8 +23,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <basic/Tracer.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/StructureRestrictor.hh>
+#include <protocols/jd2/util.hh>
 
 
 #include <utility/io/izstream.hh>
@@ -33,7 +33,6 @@
 
 #include <string>
 
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -42,7 +41,6 @@ using namespace std;
 using namespace core;
 using namespace boost;
 using namespace pose;
-using namespace protocols::jd2;
 
 static THREAD_LOCAL basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
 
@@ -133,7 +131,7 @@ StructureRestrictor::pose_name(Pose const & pose){
 		name = static_cast< basic::datacache::CacheableString const & >
 			( pose.data().get( datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
 	} else {
-		name = JobDistributor::get_instance()->current_job()->input_tag();
+		name = protocols::jd2::current_input_tag();
 	}
 	return name;
 }

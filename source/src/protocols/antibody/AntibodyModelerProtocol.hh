@@ -23,7 +23,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.fwd.hh>
@@ -200,7 +199,7 @@ private:
 	void setup_objects();
 
 	/// @brief Output of various metrics of final model
-	void echo_metrics_to_jd2( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	void echo_metrics_to_output( core::pose::Pose & pose );
 
 }; // class
 

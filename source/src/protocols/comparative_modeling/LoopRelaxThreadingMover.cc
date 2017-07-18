@@ -70,7 +70,6 @@ void LoopRelaxThreadingMover::setup() {
 
 void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	using namespace protocols::loops;
-	using namespace protocols::jd2;
 
 	// apply a mover which calculates only repulsive energy on designate residues
 	protocols::simple_moves::RepulsiveOnlyMover replonly;
@@ -79,7 +78,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	using core::Size;
 	basic::Tracer tr( "protocols.threading" );
 	// looprelax
-	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( JobDistributor::get_instance()->current_job()->inner_job() );
+	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job() );
 	if ( !job ) {
 		utility_exit_with_message("ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover - did you forget the -in:file:template_pdb option?");
 	}

@@ -15,8 +15,7 @@
 
 #include <protocols/simple_moves/AddJobPairData.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 // XSD XRW Includes
@@ -61,13 +60,11 @@ AddJobPairData::~AddJobPairData() = default;
 
 void AddJobPairData::apply( Pose & pose)
 {
-	jd2::JobOP current_job = jd2::JobDistributor::get_instance()->current_job();
-
 	if ( ligand_chain_ == "" ) {
 		if ( value_type_ == string_value ) {
-			current_job->add_string_string_pair(string_key_,string_value_);
+			protocols::jd2::add_string_string_pair_to_current_job(string_key_,string_value_);
 		} else if ( value_type_ == real_value ) {
-			current_job->add_string_real_pair(string_key_,real_value_);
+			protocols::jd2::add_string_real_pair_to_current_job(string_key_,real_value_);
 		} else {
 			//This really shouldn't happen
 			TR.Fatal << "No ligand found, and value_type is '" << value_type_ << "' for AddJobPairData" << std::endl;
@@ -81,10 +78,10 @@ void AddJobPairData::apply( Pose & pose)
 		core::chemical::ResidueType ligand_res_type(pose.conformation().residue_type(ligand_seqpos));
 		if ( value_type_ == string_value ) {
 			std::string value = ligand_res_type.get_string_property(string_key_);
-			current_job->add_string_string_pair(string_key_, value);
+			protocols::jd2::add_string_string_pair_to_current_job(string_key_, value);
 		} else if ( value_type_ == real_value ) {
 			core::Real value = ligand_res_type.get_numeric_property(string_key_);
-			current_job->add_string_real_pair(string_key_,value);
+			protocols::jd2::add_string_real_pair_to_current_job(string_key_,value);
 		} else {
 			//This really shouldn't happen
 			TR.Fatal << "value_type is '" << value_type_ << "' for AddJobPairData" << std::endl;

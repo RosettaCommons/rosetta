@@ -28,6 +28,7 @@
 #include <core/io/raw_data/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <utility/string_util.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -130,15 +131,16 @@ SilentTrajectoryRecorder::parse_my_tag(
 ) {
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	score_stride_ = tag->getOption< core::Size >( "score_stride", 100 );
-	runtime_assert( jd2::jd2_used() );
-	job_outputter_ = jd2::JobDistributor::get_instance()->job_outputter();
 
 	std::string silent_struct_type = tag->getOption< std::string >( "silent_struct_type", "any" );
 	if ( silent_struct_type != "any" ) {
+		// TODO: Make this more generalized with silent file output, and not directly contingent on the JD2 outputter implementation
 		jd2::SilentFileJobOutputterOP silent_job_outputter( new jd2::SilentFileJobOutputter() );
 		silent_job_outputter->set_forced_silent_struct_type( silent_struct_type );
 		silent_job_outputter->set_write_separate_scorefile( tag->getOption< bool >( "write_extra_scores", false ) );
 		job_outputter_ = silent_job_outputter;
+	} else {
+		job_outputter_ = nullptr;
 	}
 }
 
@@ -147,11 +149,15 @@ SilentTrajectoryRecorder::write_model(
 	core::pose::Pose const & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 ) {
-	runtime_assert( jd2::jd2_used() );
 	std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) : file_name() );
 	core::Size mc = model_count();
 	tr.Debug << "write model " << filename << " count: " << mc << std::endl;
-	job_outputter_->other_pose( jd2::get_current_job(),  pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 );
+	if ( job_outputter_ ) {
+		// TODO: Make this more generalized with silent file output, and not directly contingent on the JD2 outputter implementation
+		job_outputter_->other_pose( jd2::get_current_job(),  pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 );
+	} else {
+		protocols::jd2::output_intermediate_pose( pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 );
+	}
 }
 
 bool
@@ -228,11 +234,10 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
 	Pose const& pose( mc.last_accepted_pose() );
 	if ( step_count() % std::max(stride(),(core::Size)500) == 0 ) {
-		jd2::JobOP job( jd2::get_current_job() ) ;
 		tr.Info << step_count() << " E=" << pose.energies().total_energy();
 		//output what is in job-object (e.g. temperature )
-		for ( auto it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
-			tr.Info << " " << it->first << "=" << it->second;
+		for ( auto const srpair: protocols::jd2::get_string_real_pairs_from_current_job() ) {
+			tr.Info << " " << srpair.first << "=" << srpair.second;
 		}
 		mc.show_counters();
 		tr.Info << std::endl;

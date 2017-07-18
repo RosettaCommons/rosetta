@@ -35,6 +35,7 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <iostream>
@@ -45,61 +46,61 @@
 int
 main( int argc, char * argv [] )
 {
-    try {
- 	using namespace core;
- 	using namespace protocols;
- 	using namespace protocols::jobdist;
- 	using namespace protocols::moves;
- 	using namespace basic::options;
-//	// initialize core
-//	devel::init(argc, argv);
-//
-//	utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-//
-//	provider->show_contents();
-//
-//	std::istream *mystream;
-//
-//	if(!provider->get_istream( "scoring/myfile.test", &mystream )){
-//		 std::cout << "Cannot find file" << std::endl;
-//	}else{
-//		std::cout << "Here" << std::endl;
-//		if( mystream->good() ){
-//			std::cout << "Here" << std::endl;
-//			std::string read_me;
-//			(*mystream) >> read_me;
-//			std::cout << "DATA:" << read_me << std::endl;
-//		}
-//	}
+	try {
+		using namespace core;
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace basic::options;
+		// // initialize core
+		// devel::init(argc, argv);
+		//
+		// utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+		//
+		// provider->show_contents();
+		//
+		// std::istream *mystream;
+		//
+		// if(!provider->get_istream( "scoring/myfile.test", &mystream )){
+		//   std::cout << "Cannot find file" << std::endl;
+		// }else{
+		//  std::cout << "Here" << std::endl;
+		//  if( mystream->good() ){
+		//   std::cout << "Here" << std::endl;
+		//   std::string read_me;
+		//   (*mystream) >> read_me;
+		//   std::cout << "DATA:" << read_me << std::endl;
+		//  }
+		// }
 
-	relax::ClassicRelax::register_options();
-	jd2::register_options();
-	option.add_relevant( OptionKeys::in::file::fullatom );
-	option.add_relevant( OptionKeys::relax::fast );
-	devel::init(argc, argv);
+		relax::ClassicRelax::register_options();
+		jd2::register_options();
+		option.add_relevant( OptionKeys::in::file::fullatom );
+		option.add_relevant( OptionKeys::relax::fast );
+		devel::init(argc, argv);
 
-	return relax::Relax_main( false );
+		return relax::Relax_main( false );
 
 
-//	utility::io::izstream data( "./scoring/weights/standard.wts" ); // may or may not include .wts extension
-//	std::cout << __FILE__ << __LINE__ << std::endl;
-//	if( data.good() ){
-//	std::cout << __FILE__ << __LINE__ << std::endl;
-//		std::string test;
-//		std::cout << __FILE__ << __LINE__ << std::endl;
-//		data >> test;
-//		std::cout << __FILE__ << __LINE__ << std::endl;
-//		std::cout << test << std::endl;
-//		std::cout << __FILE__ << __LINE__ << std::endl;
-//		data.close();
-//		std::cout << __FILE__ << __LINE__ << std::endl;
-//	}
-//std::cout << __FILE__ << __LINE__ << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		// utility::io::izstream data( "./scoring/weights/standard.wts" ); // may or may not include .wts extension
+		// std::cout << __FILE__ << __LINE__ << std::endl;
+		// if( data.good() ){
+		// std::cout << __FILE__ << __LINE__ << std::endl;
+		//  std::string test;
+		//  std::cout << __FILE__ << __LINE__ << std::endl;
+		//  data >> test;
+		//  std::cout << __FILE__ << __LINE__ << std::endl;
+		//  std::cout << test << std::endl;
+		//  std::cout << __FILE__ << __LINE__ << std::endl;
+		//  data.close();
+		//  std::cout << __FILE__ << __LINE__ << std::endl;
+		// }
+		//std::cout << __FILE__ << __LINE__ << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 
 

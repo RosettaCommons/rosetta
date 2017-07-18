@@ -16,7 +16,6 @@
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 
 // Project Headers
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/types.hh>
 
@@ -29,8 +28,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/Jobs.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>

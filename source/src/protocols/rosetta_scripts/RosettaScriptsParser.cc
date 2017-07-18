@@ -20,7 +20,6 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/parser/DataLoader.hh>
 #include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -379,7 +378,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	// in the non_data_loader_tags set are considered DataLoader tags.
 	TagCOPs const all_tags = tag->getTags();
 	for ( Size ii = 0; ii < all_tags.size(); ++ii ) {
-		using namespace parser;
+		using namespace protocols::parser;
 		TagCOP iitag = all_tags[ ii ];
 		if ( non_data_loader_tags.find( iitag->getName() ) != non_data_loader_tags.end() ) continue;
 		DataLoaderOP loader = DataLoaderFactory::get_instance()->newDataLoader( iitag->getName() );
@@ -1079,14 +1078,14 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 	// Do the ROSETTASCRIPTS complex type first, so that if we recurse here, we can
 	// quit
 	XMLSchemaSimpleSubelementList rosetta_scripts_initial_subelements;
-	for ( auto data_loader_pair : parser::DataLoaderFactory::get_instance()->loader_map() ) {
+	for ( auto data_loader_pair : protocols::parser::DataLoaderFactory::get_instance()->loader_map() ) {
 		rosetta_scripts_initial_subelements.add_already_defined_subelement(
 			data_loader_pair.first, data_loader_pair.second->schema_ct_naming_function() );
 	}
 	rosetta_scripts_initial_subelements.add_already_defined_subelement(
-		"MOVERS", & parser::DataLoaderFactory::data_loader_ct_namer );
+		"MOVERS", & protocols::parser::DataLoaderFactory::data_loader_ct_namer );
 	rosetta_scripts_initial_subelements.add_already_defined_subelement(
-		"FILTERS", & parser::DataLoaderFactory::data_loader_ct_namer );
+		"FILTERS", & protocols::parser::DataLoaderFactory::data_loader_ct_namer );
 	rosetta_scripts_initial_subelements.add_already_defined_subelement(
 		"APPLY_TO_POSE", & rosetta_scripts_complex_type_naming_func );
 	rosetta_scripts_initial_subelements.add_already_defined_subelement(
@@ -1114,7 +1113,7 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 
 	// Make sure the schemas for the DataLoaders, for all of the Movers, and all of the Filters are
 	// written to the XSD.
-	for ( auto data_loader_pair : parser::DataLoaderFactory::get_instance()->loader_map() ) {
+	for ( auto data_loader_pair : protocols::parser::DataLoaderFactory::get_instance()->loader_map() ) {
 		data_loader_pair.second->provide_xml_schema( xsd );
 	}
 	moves::MoverFactory::get_instance()->define_mover_xml_schema( xsd );
@@ -1125,7 +1124,7 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 	movers_subelements.add_group_subelement( & moves::MoverFactory::mover_xml_schema_group_name );
 	XMLSchemaComplexTypeGenerator movers_ct_gen;
 	movers_ct_gen.element_name( "MOVERS" )
-		.complex_type_naming_func( & parser::DataLoaderFactory::data_loader_ct_namer )
+		.complex_type_naming_func( & protocols::parser::DataLoaderFactory::data_loader_ct_namer )
 		.description( "The set of all of the Movers that are to be used in the script" )
 		.set_subelements_repeatable( movers_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -1135,7 +1134,7 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 	filters_subelements.add_group_subelement( & filters::FilterFactory::filter_xml_schema_group_name );
 	XMLSchemaComplexTypeGenerator filters_ct_gen;
 	filters_ct_gen.element_name( "FILTERS" )
-		.complex_type_naming_func( & parser::DataLoaderFactory::data_loader_ct_namer )
+		.complex_type_naming_func( & protocols::parser::DataLoaderFactory::data_loader_ct_namer )
 		.description( "The set of all of the Filters that are to be used in the script" )
 		.set_subelements_repeatable( filters_subelements )
 		.write_complex_type_to_schema( xsd );

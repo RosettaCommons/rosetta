@@ -25,7 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // utility headers
 #include <utility/tag/Tag.hh>
@@ -40,7 +40,6 @@
 
 // C++ headers
 
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 
 //Auto Headers
@@ -366,7 +365,7 @@ void ContactMap::apply(Pose & pose) {
 		if ( reset_count_ ) {
 			// Get the file name of the output structure.  This will be
 			// something_XXXX.pdb if you're outputting to pdbs, something_XXXX if you're outputting to silent files
-			std::string structure_output_name(protocols::jd2::JobDistributor::get_instance()->current_output_name());
+			std::string structure_output_name(protocols::jd2::current_output_name());
 			// Append a prefix and a suffix to get a final filename for the contact map output
 			std::string contact_map_file_name(output_prefix_ + structure_output_name + ".csv");
 			// Call output function with the generated filename
@@ -376,7 +375,7 @@ void ContactMap::apply(Pose & pose) {
 		} else {
 			// If the ContactMap should just be updated, reconstruct the output name based on the current job name and
 			// the specified prefix
-			std::string current_job_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+			std::string current_job_tag(protocols::jd2::current_input_tag());
 			// Append a prefix and a suffix to get a final filename for the contact map output
 			std::string contact_map_file_name(output_prefix_ + current_job_tag + ".csv");
 			// Call output function with the generated filename

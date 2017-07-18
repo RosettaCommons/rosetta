@@ -30,7 +30,7 @@
 #include <core/io/util.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -201,7 +201,7 @@ ExtractSubposeMover::apply(Pose & pose) {
 		resis = core::pose::symmetry::get_intracomponent_and_neighbor_resis(pose, sym_dof_name_list[1], contact_dist_);
 	}
 	core::io::pose_from_pose(pose_out, pose, resis);
-	pose_out.dump_pdb(prefix_ + protocols::jd2::JobDistributor::get_instance()->current_output_name() + suffix_ + ".pdb");
+	pose_out.dump_pdb(prefix_ + protocols::jd2::current_output_name() + suffix_ + ".pdb");
 	//TODO: JBB Add option to actually modify pose to be the newly extracted asymmetric pose rather than just dumping the extracted pose.
 	//TODO: JBB Modify to handle multiple symdofnames with the core/pose/symmetry/util.cc funcitonality.
 	//TODO: JBB Make version that can generate a new trimmed-down symmetric pose/symmetry definition file.

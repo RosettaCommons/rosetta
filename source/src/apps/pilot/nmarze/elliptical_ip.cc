@@ -13,6 +13,7 @@
 
 
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/exit.hh>
 
@@ -42,7 +43,7 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nmarze.elliptical_ip" );
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
 		protocols::jd2::register_options();
 
@@ -51,12 +52,12 @@ main( int argc, char * argv [] )
 
 		protocols::docking::DockingInitialPerturbationOP elliptical_ip = new protocols::docking::DockingInitialPerturbation( 1, true );
 
-//		protocols::docking::EllipsoidalRandomizationMoverOP elliptical_ip = new protocols::docking::EllipsoidalRandomizationMover( 1, false );
+		//  protocols::docking::EllipsoidalRandomizationMoverOP elliptical_ip = new protocols::docking::EllipsoidalRandomizationMover( 1, false );
 		protocols::jd2::JobDistributor::get_instance()->go( elliptical_ip );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

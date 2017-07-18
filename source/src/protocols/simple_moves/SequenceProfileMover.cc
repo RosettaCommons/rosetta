@@ -29,8 +29,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <utility/file/FileName.hh>
@@ -90,8 +89,7 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	using namespace core::scoring;
 
 	//handle cst_file_name
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	std::string const input_file_name( job->input_tag() );
+	std::string const input_file_name( protocols::jd2::current_input_tag() );
 	core::Size const wheres_period( input_file_name.find_first_of( "." ) );
 	std::string const dflt_cst_file_name( input_file_name.substr(0, wheres_period ) + ".cst" );
 	set_cst_file_name( tag->getOption< std::string >( "file_name", dflt_cst_file_name ) );

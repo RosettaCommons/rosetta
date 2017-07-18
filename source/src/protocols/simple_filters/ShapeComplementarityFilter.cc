@@ -36,8 +36,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -172,11 +171,10 @@ ShapeComplementarityFilter::compute( Pose const & pose ) const
 void
 ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area_val ) const
 {
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string column_header = this->get_user_defined_name() + "_int_area";
 
 	if ( area_val < 0.0 ) {
-		job->add_string_real_pair( column_header, area_val );
+		protocols::jd2::add_string_real_pair_to_current_job( column_header, area_val );
 		return;
 	}
 
@@ -204,7 +202,7 @@ ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area
 			int_area /= (Real)( ndownstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
 		}
 	}
-	job->add_string_real_pair( column_header, int_area );
+	protocols::jd2::add_string_real_pair_to_current_job( column_header, int_area );
 }
 
 /// @brief
@@ -382,8 +380,8 @@ ShapeComplementarityFilter::setup_multi_component_symm(
 
 	//core::pose::Pose full_intracomp_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, sym_dof_name_list[sym_dof_index]);
 	//core::pose::Pose full_intracomp_neighbor_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, sym_dof_name_list[sym_dof_index], 12.0);
-	//full_intracomp_subpose.dump_pdb("full_intracomp_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-	//full_intracomp_neighbor_subpose.dump_pdb("full_intracomp_neighbor_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+	//full_intracomp_subpose.dump_pdb("full_intracomp_subpose_" + protocols::jd2::current_output_name() + ".pdb");
+	//full_intracomp_neighbor_subpose.dump_pdb("full_intracomp_neighbor_subpose_" + protocols::jd2::current_output_name() + ".pdb");
 
 	for ( core::Size i=1; i<=full_intracomp_resis.size(); i++ ) {
 		scc.AddResidue(0,pose.residue(full_intracomp_resis[i]));

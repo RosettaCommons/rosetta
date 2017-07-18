@@ -28,9 +28,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
@@ -60,7 +58,6 @@ namespace protocols {
 namespace surface_docking {
 
 using namespace core;
-using protocols::jd2::JobDistributor;
 using namespace protocols::moves;
 
 //constructor
@@ -199,15 +196,10 @@ void FullatomRelaxMover::output_solution_state( core::pose::Pose & pose )
 	monte_carlo_->show_counters();
 	TR<<"Calculating Secondary Structure of Solution State..."<<std::endl;
 	calc_secondary_struct(pose);
-	// Creating a job compatible with JD2
-	protocols::jd2::JobOP job2
-		=jd2::JobDistributor::get_instance()->current_job();
-	//std::string job_name (JobDistributor::get_instance()->
-	//        job_outputter()->output_name( job2 ) );
-	job2->add_string_real_pair("Total weighted score: ", pose.energies().total_energy());
-	job2->add_string_string_pair("SolState_SecondaryStructure:",sec_struct_);
-	JobDistributor::get_instance()->job_outputter()->
-		other_pose( job2,pose, "SolState_");
+	//std::string job_name = protocols::jd2::current_output_name();
+	protocols::jd2::add_string_real_pair_to_current_job("Total weighted score: ", pose.energies().total_energy());
+	protocols::jd2::add_string_string_pair_to_current_job("SolState_SecondaryStructure:",sec_struct_);
+	protocols::jd2::output_intermediate_pose( pose, "SolState_" );
 	sol_sec_struct_ = sec_struct_;
 
 }

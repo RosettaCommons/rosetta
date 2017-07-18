@@ -30,7 +30,6 @@
 #include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
-#include <protocols/jd2/Job.hh>
 
 // Utility Headers
 #include <core/types.hh>

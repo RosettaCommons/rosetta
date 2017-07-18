@@ -59,8 +59,7 @@
 #include <protocols/scoring/Interface.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/Mover.hh>
@@ -1509,7 +1508,6 @@ FlexPepDockingProtocol::addLowResStatistics
 	core::pose::Pose& pose_after_lowres ) const
 {
 	using namespace scoring;
-	using protocols::jd2::JobDistributor;
 
 	if ( !get_native_pose() ) {
 		TR.Warning << "missing '-native' flag, skipping statistics on RMSD to native" << std::endl;
@@ -1517,7 +1515,6 @@ FlexPepDockingProtocol::addLowResStatistics
 	}
 
 	// Score statistics are added to current job
-	protocols::jd2::JobOP cur_job( JobDistributor::get_instance()->current_job() );
 	// switch residue set to centroid if necessary
 	protocols::simple_moves::SwitchResidueTypeSetMover
 		to_centroid_mover( core::chemical::CENTROID );
@@ -1534,9 +1531,9 @@ FlexPepDockingProtocol::addLowResStatistics
 		to_centroid_mover.apply(native_CEN);
 	}
 	// add score statistics
-	cur_job->add_string_real_pair( "score_lowres_start",
+	protocols::jd2::add_string_real_pair_to_current_job( "score_lowres_start",
 		(*scorefxn_lowres_)(start_pose_CEN) );
-	cur_job->add_string_real_pair( "score_lowres_opt",
+	protocols::jd2::add_string_real_pair_to_current_job( "score_lowres_opt",
 		(*scorefxn_lowres_)(pose_after_lowres_CEN) );
 	// mark peptide residues and interface (computed from native)
 	FArray1D_bool superpos_partner ( native_CEN.size(), false );
@@ -1549,19 +1546,19 @@ FlexPepDockingProtocol::addLowResStatistics
 	using core::scoring::is_protein_CA;
 	using core::scoring::is_protein_backbone;
 	if ( !flags_.pep_fold_only ) {
-		cur_job->add_string_real_pair( "rmsCA_lowres",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsCA_lowres",
 			rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, superpos_partner, is_protein_CA ) );
-		cur_job->add_string_real_pair( "rmsBB_lowres",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB_lowres",
 			rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, superpos_partner, is_protein_backbone ) );
 		// add peptide interface-only RMSD:
-		cur_job->add_string_real_pair( "rmsCA_intrf_lowres",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsCA_intrf_lowres",
 			rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, native_interface_residues, is_protein_CA ) );
-		cur_job->add_string_real_pair( "rmsBB_intrf_lowres",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB_intrf_lowres",
 			rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, native_interface_residues, is_protein_backbone ) );
 	} else if ( flags_.pep_fold_only ) {
-		cur_job->add_string_real_pair( "rmsCA_lowres",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsCA_lowres",
 			rmsd_with_super( native_CEN, pose_after_lowres_CEN, is_protein_CA ) );
-		cur_job->add_string_real_pair( "rmsBB_lowres",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB_lowres",
 			rmsd_with_super( native_CEN, pose_after_lowres_CEN, is_protein_backbone ) );
 	}
 }
@@ -1582,29 +1579,27 @@ FlexPepDockingProtocol::storeJobStatistics
 	pose::Pose& final_pose )
 {
 	using namespace scoring;
-	using protocols::jd2::JobDistributor;
 
 	// Score statistics are added to current job
-	protocols::jd2::JobOP cur_job( JobDistributor::get_instance()->current_job() );
 	// interface_metrics for docking mode:
 	if ( ! flags_.pep_fold_only ) {
 		if_metrics_ = fpdock_metrics_.calc_interface_metrics(final_pose,rb_jump_,scorefxn_); // if score only this would be performed only once
-		cur_job->add_string_real_pair( "I_sc", if_metrics_.find("I_sc")->second );
-		cur_job->add_string_real_pair( "I_bsa", if_metrics_.find("I_bsa")->second );
-		cur_job->add_string_real_pair( "I_hb", if_metrics_.find("I_hb")->second );
-		cur_job->add_string_real_pair( "I_pack", if_metrics_.find("I_pack")->second );
-		cur_job->add_string_real_pair( "I_unsat", if_metrics_.find("I_unsat")->second );
+		protocols::jd2::add_string_real_pair_to_current_job( "I_sc", if_metrics_.find("I_sc")->second );
+		protocols::jd2::add_string_real_pair_to_current_job( "I_bsa", if_metrics_.find("I_bsa")->second );
+		protocols::jd2::add_string_real_pair_to_current_job( "I_hb", if_metrics_.find("I_hb")->second );
+		protocols::jd2::add_string_real_pair_to_current_job( "I_pack", if_metrics_.find("I_pack")->second );
+		protocols::jd2::add_string_real_pair_to_current_job( "I_unsat", if_metrics_.find("I_unsat")->second );
 	}
 
 	// peptide scores with / without reference energy
 	Real pepScore, pepScore_noref, totalScore;
 	totalScore = (*scorefxn_)(final_pose); // making sure energies are up-to-date
 	fpdock_metrics_.calc_pep_scores(final_pose, pepScore, pepScore_noref);
-	cur_job->add_string_real_pair( "pep_sc", pepScore );
-	cur_job->add_string_real_pair( "pep_sc_noref", pepScore_noref );
+	protocols::jd2::add_string_real_pair_to_current_job( "pep_sc", pepScore );
+	protocols::jd2::add_string_real_pair_to_current_job( "pep_sc_noref", pepScore_noref );
 
 	// reweighted score (total score + interface score + peptide score)
-	cur_job->add_string_real_pair( "reweighted_sc", totalScore + pepScore + if_metrics_.find("I_sc")->second );
+	protocols::jd2::add_string_real_pair_to_current_job( "reweighted_sc", totalScore + pepScore + if_metrics_.find("I_sc")->second );
 
 	// Comparisons to native metrics:
 	if ( !get_native_pose() ) {
@@ -1635,89 +1630,89 @@ FlexPepDockingProtocol::storeJobStatistics
 	using core::scoring::is_protein_sidechain_heavyatom;
 
 	if ( ! flags_.pep_fold_only ) {
-		cur_job->add_string_real_pair( "startRMSca",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSca",
 			rmsd_no_super_subset( native_pose, start_pose, superpos_partner, is_protein_CA ) );
-		cur_job->add_string_real_pair( "startRMSbb",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSbb",
 			rmsd_no_super_subset( native_pose, start_pose, superpos_partner, is_protein_backbone ) );
-		cur_job->add_string_real_pair( "startRMSall",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSall",
 			rmsd_no_super_subset( native_pose, start_pose, superpos_partner, is_polymer_heavyatom ) );
-		cur_job->add_string_real_pair( "startRMSallif",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSallif",
 			rmsd_no_super_subset( native_pose, start_pose, native_interface_residues, is_polymer_heavyatom ) );
 
 		// final pose statistics - all peptide residues:
-		cur_job->add_string_real_pair( "rmsCA",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsCA",
 			rmsd_no_super_subset( native_pose, final_pose, superpos_partner, is_protein_CA ) );
-		cur_job->add_string_real_pair( "rmsBB",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB",
 			rmsd_no_super_subset( native_pose, final_pose, superpos_partner, is_protein_backbone ) );
 		if ( ! flags_.design_peptide ) {
-			cur_job->add_string_real_pair( "rmsALL",
+			protocols::jd2::add_string_real_pair_to_current_job( "rmsALL",
 				rmsd_no_super_subset( native_pose, final_pose, superpos_partner, is_polymer_heavyatom ) );
 		} else {
-			cur_job->add_string_real_pair( "rmsALL", -1.0 ); // invalid RMS on all atoms in design mode
+			protocols::jd2::add_string_real_pair_to_current_job( "rmsALL", -1.0 ); // invalid RMS on all atoms in design mode
 		}
 		// final pose statistics - peptide interface residues only:
-		cur_job->add_string_real_pair( "rmsCA_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsCA_if",
 			rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_protein_CA ) );
-		cur_job->add_string_real_pair( "rmsBB_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB_if",
 			rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_protein_backbone ) );
-		cur_job->add_string_real_pair( "rmsSC_CAPRI_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsSC_CAPRI_if",
 			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_protein_sidechain_heavyatom ) );
-		cur_job->add_string_real_pair( "rmsALL_CAPRI_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsALL_CAPRI_if",
 			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_polymer_heavyatom ) );
-		cur_job->add_string_real_pair( "rmsBB_CAPRI_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB_CAPRI_if",
 			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_protein_backbone ) );
-		cur_job->add_string_real_pair( "rmsBB_allIF",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB_allIF",
 			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_protein_backbone ) );
-		cur_job->add_string_real_pair( "rmsALL_allIF",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsALL_allIF",
 			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_polymer_heavyatom ) );
-		cur_job->add_string_real_pair( "rmsSC_allIF",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsSC_allIF",
 			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_protein_sidechain_heavyatom ) );
 
 		if ( ! flags_.design_peptide ) {
-			cur_job->add_string_real_pair( "rmsALL_if",
+			protocols::jd2::add_string_real_pair_to_current_job( "rmsALL_if",
 				rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_polymer_heavyatom ) );
 		} else {
-			cur_job->add_string_real_pair( "rmsALL_if", -1.0 ); // invalid RMS on all atoms in design mode
+			protocols::jd2::add_string_real_pair_to_current_job( "rmsALL_if", -1.0 ); // invalid RMS on all atoms in design mode
 		}
 	}
 
 	if ( flags_.pep_fold_only ) {
-		cur_job->add_string_real_pair( "startRMSca",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSca",
 			rmsd_with_super( native_pose, start_pose, is_protein_CA ) );
-		cur_job->add_string_real_pair( "startRMSbb",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSbb",
 			rmsd_with_super( native_pose, start_pose, is_protein_backbone ) );
-		cur_job->add_string_real_pair( "startRMSall",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSall",
 			rmsd_with_super(native_pose, start_pose, is_polymer_heavyatom ) );
 
 		// final pose statistics - all peptide residues:
 
 
-		cur_job->add_string_real_pair( "rmsCA",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsCA",
 			rmsd_with_super( native_pose, final_pose, is_protein_CA ) );
-		cur_job->add_string_real_pair( "rmsBB",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsBB",
 			rmsd_with_super( native_pose, final_pose, is_protein_backbone ) );
-		cur_job->add_string_real_pair( "rmsALL",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsALL",
 			rmsd_no_super_subset( native_pose, final_pose, superpos_partner, is_polymer_heavyatom ) );
 	}
 
 	if ( flags_.score_only ) {
 		if ( !flags_.pep_fold_only ) {
 			//fraction of native contacts
-			cur_job->add_string_real_pair( "fnat5",
+			protocols::jd2::add_string_real_pair_to_current_job( "fnat5",
 				fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 5.0 /*RMS threashold*/) );
-			cur_job->add_string_real_pair( "fnat3.5",
+			protocols::jd2::add_string_real_pair_to_current_job( "fnat3.5",
 				fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 3.5 /*RMS threashold*/) );
-			cur_job->add_string_real_pair( "fnat4",
+			protocols::jd2::add_string_real_pair_to_current_job( "fnat4",
 				fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 4.0 /*RMS threashold*/) );
 		}
 		// torsion RMS data
-		cur_job->add_string_real_pair( "startRMSphipsi",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSphipsi",
 			fpdock_metrics_.calc_phipsi_RMSD( native_pose, start_pose, superpos_partner) );
-		cur_job->add_string_real_pair( "startRMSphipsi_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "startRMSphipsi_if",
 			fpdock_metrics_.calc_phipsi_RMSD( native_pose, start_pose, native_interface_residues) );
-		cur_job->add_string_real_pair( "rmsPHIPSI",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsPHIPSI",
 			fpdock_metrics_.calc_phipsi_RMSD( native_pose, final_pose, superpos_partner) );
-		cur_job->add_string_real_pair( "rmsPHIPSI_if",
+		protocols::jd2::add_string_real_pair_to_current_job( "rmsPHIPSI_if",
 			fpdock_metrics_.calc_phipsi_RMSD( native_pose, final_pose, native_interface_residues) );
 
 		core::Size ngoodatoms;
@@ -1741,10 +1736,10 @@ FlexPepDockingProtocol::storeJobStatistics
 			final_pose,
 			native_interface_residues,
 			&is_polymer_heavyatom, 2 /*Angstrom*/, ngoodatoms);
-		cur_job->add_string_real_pair( "frac_iatoms_less_1A", frac1 );
-		cur_job->add_string_real_pair( "frac_iatoms_less_1A_bb", frac1_bb );
-		cur_job->add_string_real_pair( "frac_iatoms_less_1.5A", frac1_5 );
-		cur_job->add_string_real_pair( "frac_iatoms_less_2A", frac2 );
+		protocols::jd2::add_string_real_pair_to_current_job( "frac_iatoms_less_1A", frac1 );
+		protocols::jd2::add_string_real_pair_to_current_job( "frac_iatoms_less_1A_bb", frac1_bb );
+		protocols::jd2::add_string_real_pair_to_current_job( "frac_iatoms_less_1.5A", frac1_5 );
+		protocols::jd2::add_string_real_pair_to_current_job( "frac_iatoms_less_2A", frac2 );
 		std::map<core::Size,core::Real> subsetRMS;
 		for ( int k=4; k <= flags_.peptide_nres(); k++ ) {
 			subsetRMS[k] = fpdock_metrics_.best_Kmer_rms
@@ -1752,7 +1747,7 @@ FlexPepDockingProtocol::storeJobStatistics
 			std::ostringstream oss;
 			oss << "bestRMS_" << k << "mer_all";
 			std::string s = oss.str();
-			cur_job->add_string_real_pair( s, subsetRMS[k] );
+			protocols::jd2::add_string_real_pair_to_current_job( s, subsetRMS[k] );
 		}
 	}
 

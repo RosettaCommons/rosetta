@@ -16,7 +16,6 @@
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/qsar/qsarMap.hh>
 
 #include <core/pose/util.hh>

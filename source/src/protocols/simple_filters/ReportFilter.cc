@@ -20,9 +20,7 @@
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -111,10 +109,8 @@ ReportFilter::apply( core::pose::Pose const & pose ) const {
 
 void
 ReportFilter::report( std::ostream & out, core::pose::Pose const & /*pose*/ ) const {
-	using namespace protocols::jd2;
 	out<<"filter: "<<report_filter_name_;
-	protocols::jd2::JobOP job2 = jd2::JobDistributor::get_instance()->current_job();
-	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
+	std::string job_name ( protocols::jd2::current_output_name() );
 	if ( report_string_ != nullptr && report_string_->obj.length() > 0 ) {
 		out<<"job name: "<<job_name<<" report_string: "<<report_string_->obj<<std::endl;
 	}

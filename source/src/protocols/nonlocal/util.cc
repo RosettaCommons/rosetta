@@ -45,11 +45,9 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/comparative_modeling/util.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/comparative_modeling/ThreadingJob.hh>
 
 namespace protocols {
 namespace nonlocal {
@@ -216,16 +214,6 @@ void emit_intermediate(const core::pose::Pose& pose,
 	if ( option[OptionKeys::abinitio::debug]() ) {
 		core::io::pdb::dump_pdb(pose, filename);
 	}
-}
-
-protocols::comparative_modeling::ThreadingJob const * /*const*/ current_job() {
-	using protocols::jd2::InnerJobCOP;
-	using protocols::jd2::JobDistributor;
-	using protocols::comparative_modeling::ThreadingJob;
-
-	JobDistributor* jd2 = JobDistributor::get_instance();
-	InnerJobCOP inner = jd2->current_job()->inner_job();
-	return (protocols::comparative_modeling::ThreadingJob const * const) inner.get();
 }
 
 core::Real get_per_residue_score(

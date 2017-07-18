@@ -19,8 +19,7 @@
 #include <protocols/loops/loops_definers/util.hh>
 
 // Project Headers
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -47,7 +46,6 @@ using utility::tag::TagCOP;
 using core::pose::Pose;
 using basic::datacache::DataMap;
 using utility::sql_database::sessionOP;
-using protocols::jd2::JobDistributor;
 using basic::database::parse_database_connection;
 using cppdb::result;
 
@@ -106,7 +104,7 @@ LoopsDatabaseDefiner::apply(
 	Pose const &
 ) {
 
-	string pose_tag(JobDistributor::get_instance()->current_job()->input_tag());
+	string pose_tag( protocols::jd2::current_input_tag() );
 
 	stringstream sql_stmt;
 	sql_stmt

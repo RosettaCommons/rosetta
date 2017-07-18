@@ -237,8 +237,7 @@ void RigidChunkClaimer::new_decoy( core::pose::Pose const& pose ) {
 
 		// use loops from ThreadingJob ???
 		if ( bUseThreadingJobLoops_ ) {
-			using namespace protocols::jd2;
-			protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( JobDistributor::get_instance()->current_job()->inner_job() );
+			protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job() );
 			if ( job ) {
 				tr.Debug << "------------------found ThreadingJob ... get loops " << std::endl;
 				rigid_core_ = generate_rigid_from_alignment( input_pose_, job->alignment(), min_loop_size_ );

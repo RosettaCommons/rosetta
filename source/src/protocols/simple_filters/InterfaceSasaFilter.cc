@@ -29,8 +29,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // Project Headers
 #include <utility/excn/Exceptions.hh>
@@ -242,9 +240,9 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 			core::pose::Pose full_component_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, sym_dof_names_[i]);
 			core::pose::Pose full_component_neighbors_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, sym_dof_names_[i]);
 			core::pose::Pose full_component_and_neighbors_subpose = core::pose::symmetry::get_full_intracomponent_and_neighbor_subpose(pose, sym_dof_names_[i]);
-			//full_component_subpose.dump_pdb("full_component_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-			//full_component_neighbors_subpose.dump_pdb("full_component_neighbors_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-			//full_component_and_neighbors_subpose.dump_pdb("full_component_and_neighbors_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+			//full_component_subpose.dump_pdb("full_component_subpose_" + protocols::jd2::current_output_name() + ".pdb");
+			//full_component_neighbors_subpose.dump_pdb("full_component_neighbors_subpose_" + protocols::jd2::current_output_name() + ".pdb");
+			//full_component_and_neighbors_subpose.dump_pdb("full_component_and_neighbors_subpose_" + protocols::jd2::current_output_name() + ".pdb");
 
 			MetricValue< core::Real > mv_sasa;
 			full_component_subpose.metric( "sasa", "total_sasa", mv_sasa);

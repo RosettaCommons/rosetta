@@ -80,7 +80,7 @@ void protocols::abinitio::IterativeFullatom::register_options() {
 
 namespace protocols {
 namespace abinitio {
-using namespace jd2::archive;
+using jd2::archive::Batch;
 
 IterativeFullatom::IterativeFullatom()
 : IterativeBase( "fullatom_pool" )

@@ -33,8 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -266,12 +265,9 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 	TR << "dumping pose..." << std::endl;
 	pose.dump_pdb("superimposed_pose.pdb");
 
-	// get job
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
 	// calculate and store the rmsds in the score file
-	job->add_string_real_pair( "Lrms", protocols::docking::calc_Lrmsd( pose, native_, jumps_ ) );
-	job->add_string_real_pair( "P1rms", protocols::docking::calc_P1rmsd( pose, native_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "Lrms", protocols::docking::calc_Lrmsd( pose, native_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "P1rms", protocols::docking::calc_P1rmsd( pose, native_, jumps_ ) );
 
 }// apply
 

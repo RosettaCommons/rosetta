@@ -45,8 +45,6 @@
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 
 //constraints
@@ -261,11 +259,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 			std::string decoy_name = option [OptionKeys::out::prefix] + "dr_init";
 
-
-			protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( decoy_name ); // setting up struct name
-
-
-			protocols::jd2::output_intermediate_pose( input_pose, std::string() ); //output it to the same file name
+			protocols::jd2::output_intermediate_pose( input_pose, decoy_name ); //output it to the same file name
 
 
 			if ( option [OptionKeys::fold_from_loops::add_relax_cycles ].user() ) {
@@ -283,19 +277,12 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 					relax_protocol.apply( input_pose );
 
-
-					protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( outfilename_n_rlx );
-
-					protocols::jd2::output_intermediate_pose( input_pose, std::string() );
+					protocols::jd2::output_intermediate_pose( input_pose, outfilename_n_rlx );
 
 
 				}
 
 			}
-
-
-			protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( std::string() );
-
 
 		}
 

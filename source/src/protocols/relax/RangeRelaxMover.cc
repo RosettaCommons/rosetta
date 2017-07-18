@@ -54,8 +54,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -333,11 +332,8 @@ void RangeRelaxMover::apply( Pose & pose ) {
 	SuperimposeMoverOP super( new SuperimposeMover( *native_, 1, nres, 1, nres, true ) );
 	super->apply( pose );
 
-	// get job for adding rmsd to scorefile
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
 	// calculate and store the rmsd in the score file
-	job->add_string_real_pair("rms", core::scoring::bb_rmsd( pose, *native_ ));
+	protocols::jd2::add_string_real_pair_to_current_job("rms", core::scoring::bb_rmsd( pose, *native_ ));
 
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );

@@ -7,26 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/membrane_relax.cc
+/// @file   src/apps/pilot/ralford/membrane_relax.cc
 ///
-/// @brief 		Membrane Protein-Protein Docking Application
+/// @brief   Membrane Protein-Protein Docking Application
 /// @details    Docking application for protein partners in membranes. Currently
-///				using a naive application which just plugs in scoring components and makes
-///				no other modifications
+///    using a naive application which just plugs in scoring components and makes
+///    no other modifications
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified: 6/8/14
 
 // Unit Headers
 #include <devel/init.hh>
 
 // Package Headers
-#include <protocols/membrane/CreateMembranePoseMover.hh> 
+#include <protocols/membrane/CreateMembranePoseMover.hh>
 #include <protocols/docking/DockingProtocol.hh>
 
-#include <protocols/jd2/util.hh> 
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
-#include <utility/pointer/owning_ptr.hh> 
+#include <utility/pointer/owning_ptr.hh>
 
 // Project Headers
 #include <basic/options/option.hh>
@@ -47,7 +48,7 @@ using utility::vector1;
 /// @brief Membrane Relax Mover: Create a Membrane Pose and Apply Relax Protocol
 class MembraneDockingxMover : public moves::Mover {
 
-public: 
+public:
 
 	/// @brief Get Mover Name
 	std::string get_name() const { return "MembraneDockingMover"; }
@@ -56,8 +57,8 @@ public:
 	void apply( Pose & pose ) {
 
 		using namespace protocols::membrane;
-		using namespace protocols::moves; 
-		using namespace protocols::relax; 
+		using namespace protocols::moves;
+		using namespace protocols::relax;
 		using namespace core::scoring;
 
 		// Create a membrane pose
@@ -75,13 +76,13 @@ public:
 		ScoreFunctionOP mpdocking_high = ScoreFunctionFactory::create_score_function("mpframework_fa_2007");
 
 		// Setup Relax Base Protocol
-		DockingProtocolOP docking = DockingProtocol( 1, false, true, true, mpdocking_low, mpdocking_high ); 
-		docking->apply(pose); 
+		DockingProtocolOP docking = DockingProtocol( 1, false, true, true, mpdocking_low, mpdocking_high );
+		docking->apply(pose);
 
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneDockingMover > MembraneDockingMoverOP; 
+typedef utility::pointer::owning_ptr< MembraneDockingMover > MembraneDockingMoverOP;
 
 /// @brief Main method
 int
@@ -100,7 +101,7 @@ main( int argc, char * argv [] )
 		// Create and kick off a new relax mover
 		jd2::JobDistributor::get_instance()->go( new MembraneDockingMover() );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

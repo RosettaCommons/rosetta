@@ -178,7 +178,10 @@ void MedalMover::apply(core::pose::Pose& pose) {
 	using namespace protocols::nonlocal;
 
 	// Information about the current set of inputs
-	ThreadingJob const * const job = protocols::nonlocal::current_job();
+	ThreadingJob const * const job = ThreadingJob::current_job();
+	if ( ! job ) {
+		utility_exit_with_message("MedalMover must be used with the ThreadingJobInputter");
+	}
 	const unsigned num_residues = pose.size();
 
 	// Load the native structure (if available) to compute trajectory analytics

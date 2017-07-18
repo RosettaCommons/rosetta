@@ -45,8 +45,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <iostream>
@@ -151,12 +150,12 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 
 	if ( CenScore > centroidscore_filter_ || CstScore > hotspotcst_filter_ ) {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
-		TR<< protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() <<
+		TR<< protocols::jd2::current_input_tag() <<
 			" Did not pass filter CentoridScore ( " << centroidscore_filter_ <<  " ): " << CenScore <<
 			"HotspotCstScore ( " << hotspotcst_filter_ << " ): " << CstScore << std::endl;
 		return;
 	}
-	TR << protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() <<
+	TR << protocols::jd2::current_input_tag() <<
 		" Succeed Centorid Interaction: "<< CenScore << " HotspotCstScore: " << CstScore <<std::endl;
 	set_last_move_status( protocols::moves::MS_SUCCESS);
 }

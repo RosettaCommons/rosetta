@@ -15,6 +15,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 
@@ -78,7 +79,7 @@ public:
 		return new MyScoreMover( *this );
 	}
 
-	virtual	MoverOP	fresh_instance() const {
+	virtual MoverOP fresh_instance() const {
 		return new MyScoreMover;
 	}
 
@@ -94,22 +95,22 @@ private:
 MyScoreMover::MyScoreMover():
 	keep_scores_flag_(false),
 	skip_scoring_(false)
- {
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
 
 	// get scorefxn and add constraints if defined
 	sfxn_ = core::scoring::get_score_function();
-	if ( option[ in::file::keep_input_scores ]() ){
+	if ( option[ in::file::keep_input_scores ]() ) {
 		set_keep_input_scores();
 	}
-	if ( option[ rescore::skip ]() ){
+	if ( option[ rescore::skip ]() ) {
 		set_skip_scoring();
 	}
 
 	// add cst scores from cmd line
-	if( option[ in::file::fullatom ]() ) {
+	if ( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *sfxn_ );
 	} else {
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *sfxn_ );
@@ -122,14 +123,14 @@ MyScoreMover::MyScoreMover():
 }
 
 void MyScoreMover::apply( core::pose::Pose& pose ) {
-	if( !keep_scores_flag_ ){
+	if ( !keep_scores_flag_ ) {
 		pose.energies().clear();
 		pose.data().clear();
 	}
 	sfxn_->set_weight( core::scoring::linear_chainbreak, 4.0/3.0 );
 	sfxn_->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
-	if( ! skip_scoring_ ){
+	if ( ! skip_scoring_ ) {
 		(*sfxn_)( pose );
 	}
 }
@@ -138,64 +139,64 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using namespace protocols;
-	using namespace protocols::jd2;
+		using namespace protocols;
+		using namespace protocols::jd2;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
 
-	jd2::register_options();
+		jd2::register_options();
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
 
-	//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
-	if( option[ broker::setup ].user() ){
-		protocols::topology_broker::TopologyBrokerOP top_bro_OP = new  topology_broker::TopologyBroker();
+		//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
+		if ( option[ broker::setup ].user() ) {
+			protocols::topology_broker::TopologyBrokerOP top_bro_OP = new  topology_broker::TopologyBroker();
+			try{
+				add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
+			}
+catch ( utility::excn::EXCN_Exception &excn )  {
+	excn.show( TR.Error );
+	utility_exit();
+}
+		}
+
+		//MyScoreMover* scoremover = new MyScoreMover;
+		//MoverOP scoremover = new MyScoreMover;
+		//protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+		protocols::moves::CompositionMoverOP container( new CompositionMover );
+		container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );
+		container->add_mover( new MyScoreMover );
+
+		using namespace protocols::jd2;
+
+		//rayyrw: when rescoring ignore those residues which were being defined as replsive energy only
+
+
+		// Make sure the default JobOutputter is SilentJobOutputter to ensure that when score_jd2
+		// is called with default arguments is prints a proper scorefile and not the hacky thing that
+		// the  JobOutputter scorefile() function produces (which for example skips Evaluators!!)
+
+		// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
+		SilentFileJobOutputterOP jobout = new SilentFileJobOutputter;
+		jobout->set_write_no_structures();
+		jobout->set_write_separate_scorefile(true);
+
+		// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
+		// file and nothing else.
+		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
+
 		try{
-			add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
+			JobDistributor::get_instance()->go( container );
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			std::cerr << "Exception: " << std::endl;
+			excn.show( std::cerr );
+			std::cout << "Exception: " << std::endl;
+			excn.show( std::cout ); //so its also seen in a >LOG file
 		}
-		catch ( utility::excn::EXCN_Exception &excn )  {
-			excn.show( TR.Error );
-			utility_exit();
-		}
-	}
-
-	//MyScoreMover* scoremover = new MyScoreMover;
-	//MoverOP scoremover = new MyScoreMover;
-	//protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-	protocols::moves::CompositionMoverOP container( new CompositionMover );
-	container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );
-	container->add_mover( new MyScoreMover );
-
-	using namespace protocols::jd2;
-
-	//rayyrw: when rescoring ignore those residues which were being defined as replsive energy only
-
-
-	// Make sure the default JobOutputter is SilentJobOutputter to ensure that when score_jd2
-	// is called with default arguments is prints a proper scorefile and not the hacky thing that
-	// the  JobOutputter scorefile() function produces (which for example skips Evaluators!!)
-
-	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	SilentFileJobOutputterOP jobout = new SilentFileJobOutputter;
-	jobout->set_write_no_structures();
-	jobout->set_write_separate_scorefile(true);
-
-	// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
-	// file and nothing else.
-	protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
-
-	try{
-		JobDistributor::get_instance()->go( container );
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
-	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

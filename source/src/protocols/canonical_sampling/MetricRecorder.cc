@@ -29,8 +29,6 @@
 #include <core/id/AtomID.hh>
 //End gabe testing
 #include <core/scoring/Energies.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/TemperingBase.hh>
@@ -313,14 +311,13 @@ MetricRecorder::update_after_boltzmann(
 	if ( recorder_stream_.filename() == "" ) {
 		std::ostringstream file_name_stream;
 		if ( prepend_output_name_ && !metropolis_hastings_mover ) {
-			file_name_stream << protocols::jd2::JobDistributor::get_instance()->current_output_name() << '_';
+			file_name_stream << protocols::jd2::current_output_name() << '_';
 		}
 		file_name_stream << file_name_;
 		recorder_stream_.open(file_name_stream.str());
 	}
 
-	protocols::jd2::JobCOP job( protocols::jd2::get_current_job() );
-	core::Size nstruct_index( job ? job->nstruct_index() : 1 );
+	core::Size nstruct_index( protocols::jd2::jd2_used() ? protocols::jd2::current_nstruct_index() : 1 );
 	std::string output_name( metropolis_hastings_mover ? metropolis_hastings_mover->output_name() : "" );
 
 	core::Size replica = protocols::jd2::current_replica();

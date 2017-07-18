@@ -94,7 +94,6 @@
 #include <numeric/xyzVector.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/PairingLibrary.hh>
 #include <protocols/jumping/PairingLibrary.fwd.hh>

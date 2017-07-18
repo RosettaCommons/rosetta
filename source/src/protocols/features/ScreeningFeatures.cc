@@ -13,9 +13,7 @@
 
 #include <protocols/features/ScreeningFeatures.hh>
 
-
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -123,17 +121,11 @@ ScreeningFeatures::report_features(
 	std::string descriptor_string(utility::json_spirit::write(utility::json_spirit::Value(descriptor_json_data)));
 	RowDataBaseOP descriptor_data_column( new RowData<std::string>("descriptor_data",descriptor_string) );
 
-	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
-	jd2::JobCOP current_job = job_distributor->current_job();
 	std::string group_name;
 
-	auto string_string_begin = current_job->output_string_string_pairs_begin();
-	auto string_string_end = current_job->output_string_string_pairs_end();
-
-	for ( auto it = string_string_begin; it != string_string_end; ++it ) {
-		if ( it->first == "input_group_name" ) {
-			group_name = it->second;
-		}
+	std::map<  std::string, std::string > const & sspairmap( protocols::jd2::get_string_string_pairs_from_current_job() );
+	if ( sspairmap.count( "input_group_name" ) ) {
+		group_name = sspairmap.at( "input_group_name" );
 	}
 
 	RowDataBaseOP group_name_data( new RowData<std::string>("group_name",group_name) );
@@ -195,29 +187,18 @@ ScreeningFeatures::parse_my_tag(
 
 std::vector<utility::json_spirit::Pair>  ScreeningFeatures::get_desriptor_data() const
 {
-	using jd2::Job;
-
-	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
-	jd2::JobCOP current_job = job_distributor->current_job();
-
-	auto string_string_begin = current_job->output_string_string_pairs_begin();
-	auto string_string_end = current_job->output_string_string_pairs_end();
-
-	auto string_real_begin = current_job->output_string_real_pairs_begin();
-	auto string_real_end = current_job->output_string_real_pairs_end();
-
 	std::vector<utility::json_spirit::Pair>  descriptor_data;
 
-	for ( auto it = string_string_begin; it != string_string_end; ++it ) {
-		if ( std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end() ) {
-			utility::json_spirit::Pair data_pair(it->first,it->second);
+	for ( std::pair< std::string, std::string > const & sspair: protocols::jd2::get_string_string_pairs_from_current_job() ) {
+		if ( std::find(descriptors_.begin(),descriptors_.end(),sspair.first) != descriptors_.end() ) {
+			utility::json_spirit::Pair data_pair(sspair.first,sspair.second);
 			descriptor_data.push_back(data_pair);
 		}
 	}
 
-	for ( auto it = string_real_begin; it != string_real_end; ++it ) {
-		if ( std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end() ) {
-			utility::json_spirit::Pair data_pair(it->first,it->second);
+	for ( std::pair< std::string, core::Real > const & srpair: protocols::jd2::get_string_real_pairs_from_current_job()  ) {
+		if ( std::find(descriptors_.begin(),descriptors_.end(),srpair.first) != descriptors_.end() ) {
+			utility::json_spirit::Pair data_pair(srpair.first,srpair.second);
 			descriptor_data.push_back(data_pair);
 		}
 	}

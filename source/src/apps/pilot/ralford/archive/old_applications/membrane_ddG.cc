@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/membrane_ddG.cc
+/// @file   src/apps/pilot/ralford/membrane_ddG.cc
 ///
-/// @brief 		C++ Version of Computing ddGs in Membranes
+/// @brief   C++ Version of Computing ddGs in Membranes
 /// @details    waiting on Pyrosetta
 ///
-/// @author 	Rebecca Alford (rflford12@gmail.com)
+/// @author  Rebecca Alford (rflford12@gmail.com)
 /// @note       Last Modified: 6/24/14
 
 // Unit Headers
@@ -20,22 +20,23 @@
 
 // Package Headers
 #include <protocols/membrane/ddG/MembraneDDGMover.hh>
-#include <protocols/membrane/ddG/Mutation.hh>   
+#include <protocols/membrane/ddG/Mutation.hh>
 
-#include <core/scoring/ScoreFunction.hh> 
-#include <core/scoring/ScoreFunctionFactory.hh> 
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Project Headers
-#include <protocols/jd2/JobDistributor.hh> 
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
-#include <core/chemical/AA.hh> 
+#include <core/chemical/AA.hh>
 
-#include <core/pose/Pose.hh> 
-#include <core/types.hh> 
+#include <core/pose/Pose.hh>
+#include <core/types.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh> 
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iostream>
@@ -48,11 +49,11 @@ using protocols::membrane::ddG::MutationOP;
 utility::vector1< MutationOP >
 ompLA_task() {
 
-	using namespace protocols::membrane::ddG; 
+	using namespace protocols::membrane::ddG;
 
 	// Create a new list of mutations
-	utility::vector1< MutationOP > mutations; 
-	mutations.resize(20);  
+	utility::vector1< MutationOP > mutations;
+	mutations.resize(20);
 
 	// Append a list
 	mutations[1] = MutationOP( new Mutation( 181, core::chemical::aa_ala ) );
@@ -76,7 +77,7 @@ ompLA_task() {
 	mutations[19] = MutationOP( new Mutation( 181, core::chemical::aa_trp ) );
 	mutations[20] = MutationOP( new Mutation( 181, core::chemical::aa_tyr ) );
 
-	return mutations; 
+	return mutations;
 }
 
 /// @brief Lukas Tamm - Aromatic residues at the interface regions task
@@ -84,11 +85,11 @@ ompLA_task() {
 utility::vector1< MutationOP >
 ompA_task() {
 
-	using namespace protocols::membrane::ddG; 
+	using namespace protocols::membrane::ddG;
 
 	// Create a new list of mutations
-	utility::vector1< MutationOP > mutations; 
-	mutations.resize(12);  
+	utility::vector1< MutationOP > mutations;
+	mutations.resize(12);
 
 	// Append a list
 	mutations[1] = MutationOP( new Mutation( 7, core::chemical::aa_ala ) );
@@ -104,7 +105,7 @@ ompA_task() {
 	mutations[11] = MutationOP( new Mutation( 123, core::chemical::aa_ala ) );
 	mutations[12] = MutationOP( new Mutation( 170, core::chemical::aa_ala ) );
 
-	return mutations; 
+	return mutations;
 }
 
 /// @brief Bowie - Bacteriorhodopsin B Helix Mutations
@@ -112,11 +113,11 @@ ompA_task() {
 utility::vector1< MutationOP >
 bacteriorhodpsin_task() {
 
-	using namespace protocols::membrane::ddG; 
+	using namespace protocols::membrane::ddG;
 
 	// Create a new list of mutations
-	utility::vector1< MutationOP > mutations; 
-	mutations.resize(12);  
+	utility::vector1< MutationOP > mutations;
+	mutations.resize(12);
 
 	// Append a list
 	mutations[1] = MutationOP( new Mutation( 31, core::chemical::aa_ala ) );
@@ -152,7 +153,7 @@ int
 main( int argc, char * argv [] )
 {
 
-	using namespace core::scoring; 
+	using namespace core::scoring;
 	using namespace protocols::membrane::ddG;
 	using namespace protocols::jd2;
 
@@ -168,15 +169,15 @@ main( int argc, char * argv [] )
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "fa_menv_pHmode_2014" );
 
 		// Load in mutants for the appropriate task
-		utility::vector1< MutationOP > ompA_mutations = ompA_task(); 
-		utility::vector1< MutationOP > ompLA_mutations = ompLA_task(); 
+		utility::vector1< MutationOP > ompA_mutations = ompA_task();
+		utility::vector1< MutationOP > ompLA_mutations = ompLA_task();
 		utility::vector1< MutationOP > bacteriorhodopsin_mutations = bacteriorhodpsin_task();
 
 		// Make ddG calculation
-		MembraneDDGMoverOP ddG( new MembraneDDGMover( 0.0001, sfxn, ompLA_mutations ) ); 
+		MembraneDDGMoverOP ddG( new MembraneDDGMover( 0.0001, sfxn, ompLA_mutations ) );
 		JobDistributor::get_instance()->go( ddG );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

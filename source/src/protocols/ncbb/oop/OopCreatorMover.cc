@@ -32,8 +32,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 // Mover headers
 #include <protocols/moves/Mover.hh>

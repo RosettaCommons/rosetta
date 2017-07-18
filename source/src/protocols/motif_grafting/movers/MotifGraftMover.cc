@@ -60,11 +60,6 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/superimpose.hh>
 
-//Include Rosetta Job distributor engine
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-
 //Include Rosetta scripts
 #include <protocols/rosetta_scripts/util.hh>
 

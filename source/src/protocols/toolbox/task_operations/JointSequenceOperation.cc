@@ -188,7 +188,11 @@ JointSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 
 	if ( tag->getOption< bool >( "use_starting_as_native", false ) ) {
 		core::pose::PoseCOP pose (protocols::jd2::get_current_jobs_starting_pose());
-		add_native_pose( pose );
+		if ( pose ) {
+			add_native_pose( pose );
+		} else {
+			TR.Warning << "Unable to obtain a starting pose for use_starting_as_native" << std::endl;
+		}
 	}
 
 	if ( tag->hasOption("filename") ) {

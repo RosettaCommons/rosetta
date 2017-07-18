@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/transform_into_mem.cc
+/// @file   src/apps/pilot/ralford/transform_into_mem.cc
 ///
-/// @brief 		needs to update docs on this one
-/// @details	needs to update docs on this one
+/// @brief   needs to update docs on this one
+/// @details needs to update docs on this one
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified: 6/18/14
 
 // Unit Headers
@@ -40,6 +40,7 @@
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -96,10 +97,10 @@ public:
 		MembranePositionFromTopologyMoverOP initialize_memb( new MembranePositionFromTopologyMover() );
 		initialize_memb->apply( pose );
 
-	//	Vector center = pose.conformation().membrane_info()->membrane_center(pose.conformation());
-	//	Vector normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+		// Vector center = pose.conformation().membrane_info()->membrane_center(pose.conformation());
+		// Vector normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 
-//		SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 1 );
+		//  SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 1 );
 
 		pose.conformation().membrane_info()->show();
 

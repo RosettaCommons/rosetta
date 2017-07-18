@@ -55,8 +55,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -483,9 +482,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// score the pose again
 	( *sfxn_hires_ )( pose );
 
-	// get job
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
 	TR << "native: " << native_.size() << std::endl;
 	TR << "jumps: " << jumps_[1] << std::endl;
 	TR << "sfxn: " << sfxn_hires_->get_name() << std::endl;
@@ -497,7 +493,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	pose.dump_pdb("before_rmsd_pose.pdb");
 
 	// compute interface score again
-	job->add_string_real_pair( "intf_score", calc_intf_score( pose, sfxn_hires_, jump_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "intf_score", calc_intf_score( pose, sfxn_hires_, jump_ ) );
 
 	// get start and end residue of downstream chain
 	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
@@ -512,38 +508,38 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	TR << "ligand RMSD: " << Lrmsd << std::endl;
 
 	// calculate and store the rmsd in the score file
-	job->add_string_real_pair( "Lrms", Lrmsd );
+	protocols::jd2::add_string_real_pair_to_current_job( "Lrms", Lrmsd );
 
-	// job->add_string_real_pair( "Lrms", protocols::docking::calc_Lrmsd( pose, native_, jumps_ ) );
-	job->add_string_real_pair( "P1rms", protocols::docking::calc_P1rmsd( pose, native_, jumps_ ) );
-	job->add_string_real_pair( "P2rms", protocols::docking::calc_P2rmsd( pose, native_, jumps_ ) );
-	job->add_string_real_pair( "Irms", protocols::docking::calc_Irmsd( pose, native_, sfxn_hires_, jumps_ ) );
+	// protocols::jd2::add_string_real_pair_to_current_job( "Lrms", protocols::docking::calc_Lrmsd( pose, native_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "P1rms", protocols::docking::calc_P1rmsd( pose, native_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "P2rms", protocols::docking::calc_P2rmsd( pose, native_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "Irms", protocols::docking::calc_Irmsd( pose, native_, sfxn_hires_, jumps_ ) );
 
 	// get interface
 	Interface interface = Interface( jump_ );
 	interface.calculate( pose );
 
-	job->add_string_real_pair( "Ncntct", interface.interface_nres() );
-	// job->add_string_real_pair( "SASA", sasa->compute( pose ) );
-	// job->add_string_real_pair( "intSASA", calculate_interface_SASA( pose, interface ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "Ncntct", interface.interface_nres() );
+	// protocols::jd2::add_string_real_pair_to_current_job( "SASA", sasa->compute( pose ) );
+	// protocols::jd2::add_string_real_pair_to_current_job( "intSASA", calculate_interface_SASA( pose, interface ) );
 
-	job->add_string_real_pair( "Fnat", protocols::docking::calc_Fnat( pose, native_, sfxn_hires_, jumps_ ) );
-	job->add_string_real_pair( "Fnonnat", protocols::docking::calc_Fnonnat( pose, native_, sfxn_hires_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "Fnat", protocols::docking::calc_Fnat( pose, native_, sfxn_hires_, jumps_ ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "Fnonnat", protocols::docking::calc_Fnonnat( pose, native_, sfxn_hires_, jumps_ ) );
 
 	if ( pose.residue( nres_protein( pose ) ).atom("CA").xyz().z() > 0.0 ) {
-		job->add_string_real_pair( "in/out", 0.0 );
+		protocols::jd2::add_string_real_pair_to_current_job( "in/out", 0.0 );
 	} else {
-		job->add_string_real_pair( "in/out", 1.0 );
+		protocols::jd2::add_string_real_pair_to_current_job( "in/out", 1.0 );
 	}
 
 	// surface complementarity
 	core::scoring::sc::ShapeComplementarityCalculator shape;
 	shape.Init();
-	job->add_string_real_pair( "Shape", shape.CalcSc( pose, jump_, 1 ) );
+	protocols::jd2::add_string_real_pair_to_current_job( "Shape", shape.CalcSc( pose, jump_, 1 ) );
 
 	// difference of fractions of small residues in the interface
 	core::Real small_frct_diff = fractions_small_residues( pose, interface).first - fractions_small_residues( pose, interface).second;
-	job->add_string_real_pair( "small_res", small_frct_diff );
+	protocols::jd2::add_string_real_pair_to_current_job( "small_res", small_frct_diff );
 
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );

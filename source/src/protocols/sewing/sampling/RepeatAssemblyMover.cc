@@ -39,9 +39,7 @@
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <protocols/toolbox/task_operations/LinkResidues.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -456,14 +454,12 @@ RepeatAssemblyMover::output_base_stats(
 	AssemblyOP const & assembly
 ) {
 
-	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job());
-
 	core::Real base_score = assembly_scorefxn_->score(assembly);
 	utility::vector1< std::pair< std::string, core::Real > > assembly_scores = assembly_scorefxn_->get_all_scores(assembly);
 	for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
-		job_me->add_string_real_pair("Base"+assembly_scores[i].first, assembly_scores[i].second);
+		protocols::jd2::add_string_real_pair_to_current_job("Base"+assembly_scores[i].first, assembly_scores[i].second);
 	}
-	job_me->add_string_real_pair( "BaseScore", base_score );
+	protocols::jd2::add_string_real_pair_to_current_job( "BaseScore", base_score );
 
 }
 
@@ -509,8 +505,7 @@ void RepeatAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefi
 // AssemblyMover::output_stats(assembly, pose);
 //
 // ///Add new information
-//        protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job());
-// job_me->add_string_real_pair( "1RepeatScore", single_score );
+// protocols::jd2::add_string_real_pair_to_current_job( "1RepeatScore", single_score );
 
 //}
 

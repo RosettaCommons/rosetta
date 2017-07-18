@@ -34,7 +34,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <fstream>
 
 // Parser headers
@@ -149,11 +149,11 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
 	std::string resfile_to_write = resfile_name();
 
 	if ( resfile_suffix() == "" && resfile_prefix() == "" && resfile_to_write == "" ) {
-		resfile_to_write = protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".resfile";
+		resfile_to_write = protocols::jd2::current_output_name() + ".resfile";
 	}
 
 	if ( (resfile_suffix() != "" || resfile_prefix() != "") && resfile_to_write == "" ) {
-		resfile_to_write = resfile_prefix() + protocols::jd2::JobDistributor::get_instance()->current_output_name() + resfile_suffix() + ".resfile";
+		resfile_to_write = resfile_prefix() + protocols::jd2::current_output_name() + resfile_suffix() + ".resfile";
 	}
 
 	runtime_assert( resfile_to_write != "" );

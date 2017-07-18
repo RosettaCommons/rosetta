@@ -61,9 +61,6 @@
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMover.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
-
 #include <utility/tag/Tag.hh>
 
 // Numeric Headers

@@ -21,8 +21,7 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <core/pose/Pose.hh>
@@ -60,7 +59,6 @@ using core::pose::Pose;
 using cppdb::statement;
 using cppdb::cppdb_error;
 using protocols::filters::Filters_map;
-using protocols::jd2::JobDistributor;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using std::endl;
@@ -151,7 +149,7 @@ FeaturesReporter::find_tag(
 			name = static_cast< basic::datacache::CacheableString const & >
 				(pose.data().get(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG)).str();
 		} else {
-			name = JobDistributor::get_instance()->current_output_name();
+			name = protocols::jd2::current_output_name();
 		}
 	}
 	return name;

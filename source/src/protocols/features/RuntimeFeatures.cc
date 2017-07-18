@@ -17,6 +17,7 @@
 #include <core/pose/Pose.hh>
 
 // Protocol headers
+#include <protocols/jd2/util.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
@@ -96,10 +97,14 @@ Size RuntimeFeatures::report_features( // {{{1
 	StructureID struct_id,
 	sessionOP db_session) {
 
-	using protocols::jd2::JobCOP;
-	using protocols::jd2::JobDistributor;
+	std::string timestamp( "NoData" );
+	core::Size elapsed_time( 0 );
 
-	JobCOP job = JobDistributor::get_instance()->current_job();
+	if ( protocols::jd2::jd2_used() ) {
+		protocols::jd2::JobCOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
+		timestamp = job->timestamp();
+		elapsed_time = job->elapsed_time();
+	}
 
 	string statement_string =
 		"INSERT INTO runtimes (struct_id, timestamp, elapsed_time) VALUES (?,?,?);";
@@ -107,8 +112,8 @@ Size RuntimeFeatures::report_features( // {{{1
 		statement_string, db_session);
 
 	statement.bind(1, struct_id);
-	statement.bind(2, job->timestamp());
-	statement.bind(3, job->elapsed_time());
+	statement.bind(2, timestamp );
+	statement.bind(3, elapsed_time );
 
 	basic::database::safely_write_to_database(statement);
 	return 0;

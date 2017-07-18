@@ -43,8 +43,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -204,7 +203,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 	}
 	if ( v ) {
 		select_clashing_pos.erase(select_clashing_pos.end()-2,select_clashing_pos.end());
-		TR << select_clashing_pos << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() << std::endl;
+		TR << select_clashing_pos << ") and " << protocols::jd2::current_output_name() << std::endl;
 	}
 	if ( w ) {
 		write_pymol_string_to_pdb( select_clashing_pos );
@@ -215,7 +214,6 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 void ClashCheckFilter::write_to_pdb( core::pose::Pose const & pose, std::string const & residue_name, core::Size const residue, std::string const & atom_name ) const
 {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
 	core::Size output_resi = residue;
@@ -223,17 +221,16 @@ void ClashCheckFilter::write_to_pdb( core::pose::Pose const & pose, std::string 
 		output_resi = pose.pdb_info()->number( residue );
 	}
 	std::string unsat_pols_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(output_resi) + " " + atom_name ;
-	job->add_string(unsat_pols_string);
+	protocols::jd2::add_string_to_current_job(unsat_pols_string);
 }
 
 void ClashCheckFilter::write_pymol_string_to_pdb( std::string const & pymol_selection ) const
 {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
-	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " + protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
-	job->add_string(pymol_string);
+	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " + protocols::jd2::current_output_name() ;
+	protocols::jd2::add_string_to_current_job(pymol_string);
 }
 
 // @brief returns true if the set of residues defined by the TaskOperations have a no clashes. False otherwise.

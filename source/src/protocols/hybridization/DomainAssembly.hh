@@ -13,7 +13,6 @@
 #define INCLUDED_protocols_hybridization_DomainAssembly_hh
 
 // libRosetta headers
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/loops/loops_main.hh>
 #include <core/pose/Pose.hh>
 #include <core/fragment/FragSet.hh>

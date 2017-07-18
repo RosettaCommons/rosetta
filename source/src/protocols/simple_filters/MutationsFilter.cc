@@ -23,8 +23,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -259,7 +258,6 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 void
 MutationsFilter::write_to_pdb( core::pose::Pose const & pose, std::map< core::Size, std::string > const & res_names1, std::map< core::Size, std::string > const & res_names2 ) const {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string user_name = this->get_user_defined_name();
 	auto it_name1 = res_names1.begin();
 	auto it_name2 = res_names2.begin();
@@ -269,7 +267,7 @@ MutationsFilter::write_to_pdb( core::pose::Pose const & pose, std::map< core::Si
 			output_resi = pose.pdb_info()->number( it_name1->first );
 		}
 		std::string output_string = "MutationsFilter " + user_name + ": " + it_name2->second + ObjexxFCL::string_of( output_resi ) + it_name1->second;
-		job->add_string( output_string );
+		protocols::jd2::add_string_to_current_job( output_string );
 		++it_name1; ++it_name2;
 	}
 

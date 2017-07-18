@@ -226,13 +226,6 @@ ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job 
 }
 
 void
-ParsedProtocol::report_filters_to_job( Pose const & pose ) const {
-	using protocols::jd2::JobDistributor;
-	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
-	add_values_to_job( pose, *job_me );
-}
-
-void
 ParsedProtocol::report_filters_to_pose( Pose & pose ) {
 	for ( utility::vector1< MoverFilterPair >::const_iterator mover_it = movers_.begin();
 			mover_it!=movers_.end(); ++mover_it ) {
@@ -494,8 +487,6 @@ ParsedProtocol::get_additional_output( )
 	protocols::moves::Mover::set_last_move_status( protocols::moves::MS_SUCCESS ); // tell jobdistributor to save pose
 	TR<<"setting status to success"<<std::endl;
 
-	// report filter values to the job object as string_real_pair
-	//report_filters_to_job( *pose );
 	// report filter values to pose DataCache
 	report_filters_to_pose( *pose );
 	// report filter values to tracer output
@@ -543,10 +534,8 @@ ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
 	bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.filter().apply( pose ) );
 	if ( !mover_pair.report_filter_at_end_ ) { //report filter now
-		using namespace protocols::jd2;
-		protocols::jd2::JobOP job( JobDistributor::get_instance()->current_job() );
 		core::Real const filter_value(  mover_pair.filter().report_sm( pose ) );
-		job->add_string_real_pair( mover_pair.filter().get_user_defined_name(), filter_value );
+		protocols::jd2::add_string_real_pair_to_current_job( mover_pair.filter().get_user_defined_name(), filter_value );
 		TR_report << "============Begin report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
 		mover_pair.filter().report( TR_report, pose );
 		TR_report << "============End report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
@@ -571,16 +560,12 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	protocols::moves::Mover::set_last_move_status( protocols::moves::MS_SUCCESS ); // tell jobdistributor to save pose
 	TR.Info << "setting status to success" << std::endl; // JRP/OFL that sounds like a debug statement to me...
 
-	// report filter values to the job object as string_real_pair
-	//report_filters_to_job( pose );
 	// report filter values to pose DataCache
 	report_filters_to_pose( pose );
 	// report filter values to tracer output
 	report_all( pose );
 
-	using namespace protocols::jd2;
-	protocols::jd2::JobOP job2( jd2::JobDistributor::get_instance()->current_job() );
-	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
+	std::string job_name ( protocols::jd2::current_output_name() );
 	if ( report_call_order() ) {
 		TR_call_order << job_name<<" ";
 		for ( MoverFilterPair const & p : movers_ ) {

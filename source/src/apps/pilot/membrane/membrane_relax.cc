@@ -32,6 +32,7 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>

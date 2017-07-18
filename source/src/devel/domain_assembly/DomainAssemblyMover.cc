@@ -65,8 +65,6 @@
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -142,7 +140,7 @@ DomainAssemblyMover::evaluate_pose( core::pose::Pose const & pose) const {
 	core::Real sum_sq = target_rmsd( pose );
 
 	TR << "input, job, env, pair, cbeta, vdw, rg, cenpack, hs_pair, sheet, total, rms" << std::endl;
-	TR << pose.pdb_info()->name() << ", "  << protocols::jd2::get_current_job()->nstruct_index()
+	TR << pose.pdb_info()->name() << ", "  << protocols::jd2::current_nstruct_index()
 		<< ", " << pose.energies().total_energies()[core::scoring::env]
 		<< ", " << pose.energies().total_energies()[core::scoring::pair]
 		<< ", " << pose.energies().total_energies()[core::scoring::cbeta]

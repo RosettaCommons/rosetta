@@ -59,11 +59,6 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 
-// //JD headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
-
 // Utility Headers
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>

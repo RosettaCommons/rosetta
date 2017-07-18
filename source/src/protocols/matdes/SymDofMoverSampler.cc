@@ -15,7 +15,7 @@
 #include <protocols/matdes/SymDofMoverSampler.hh>
 
 // Project headers
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -110,7 +110,7 @@ SymDofMoverSampler::step() {
 	TR << "Performing step:" << std::endl;
 	utility::vector1<Real> new_angles;
 	utility::vector1<Real> new_radial_disps;
-	std::string current_values = "\t" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb:";
+	std::string current_values = "\t" + protocols::jd2::current_output_name() + ".pdb:";
 	for ( Size i = 1; i <= radial_disp_steps_.size(); i++ ) {
 		current_values.append(" [radial_disp " + ObjexxFCL::string_of(i) + " = " + ObjexxFCL::string_of(current_radial_disps_[i]) + "] [angle " + ObjexxFCL::string_of(i) + " = " + ObjexxFCL::string_of(current_angles_[i]) + "]");
 		new_angles.push_back(current_angles_[i] + angle_steps_[i]);

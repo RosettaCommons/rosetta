@@ -42,10 +42,7 @@
 #include <protocols/analysis/LoopAnalyzerMover.hh>
 #include <protocols/loops/loops_main.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-
+#include <protocols/jd2/util.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
@@ -200,8 +197,7 @@ LoopCreationMover::apply(
 	}
 	TR.Debug << "Fold tree prior to LoopCreationMover: " << pose.fold_tree() << endl;
 
-	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
+	std::string const job_name ( protocols::jd2::current_output_name() );
 
 	//If not loop anchors were given, get the single anchor from the loop inserter
 	if ( loop_anchors_.size()==0 ) {
@@ -322,11 +318,11 @@ LoopCreationMover::apply(
 							loop_passed=true;
 							pose=edit_pose;
 							last_created_loop_=created_loop;
-							job_me->add_string_real_pair("total_loop_score", total_loop_score);
-							job_me->add_string_real_pair("max_loop_rama", max_rama);
-							job_me->add_string_real_pair("max_loop_omega", max_omega);
-							job_me->add_string_real_pair("max_loop_pbond", max_pbond);
-							job_me->add_string_real_pair("max_loop_chainbreak", max_chainbreak);
+							protocols::jd2::add_string_real_pair_to_current_job("total_loop_score", total_loop_score);
+							protocols::jd2::add_string_real_pair_to_current_job("max_loop_rama", max_rama);
+							protocols::jd2::add_string_real_pair_to_current_job("max_loop_omega", max_omega);
+							protocols::jd2::add_string_real_pair_to_current_job("max_loop_pbond", max_pbond);
+							protocols::jd2::add_string_real_pair_to_current_job("max_loop_chainbreak", max_chainbreak);
 						}
 					} else {
 						//done with this anchor!

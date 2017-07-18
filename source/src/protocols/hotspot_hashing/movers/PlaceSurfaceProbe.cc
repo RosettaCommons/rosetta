@@ -28,10 +28,6 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>

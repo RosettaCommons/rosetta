@@ -25,9 +25,7 @@
 */
 
 // Unit headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <devel/splice/Splice.hh>
 #include <devel/splice/SpliceSegment.hh>
 #include <devel/splice/TailSegmentMover.hh>
@@ -2548,9 +2546,8 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using protocols::jd2::JobDistributor;
 
-	std::string pdb_tag = JobDistributor::get_instance()->current_job()->inner_job()->input_tag();
+	std::string pdb_tag = protocols::jd2::current_input_tag();
 
 	// std::string temp_pdb_name = pdb_tag.erase(pdb_tag.size() - 5); //JD adds "_0001" to input name, we need to erase it
 	//pdb_tag = temp_pdb_name +".pdb";

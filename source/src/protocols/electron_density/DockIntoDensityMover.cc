@@ -63,8 +63,7 @@
 #include <protocols/electron_density/DockIntoDensityMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/electron_density/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -1009,7 +1008,7 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 	std::string base_name = tag_;
 	if ( base_name.size() == 0 ) {
 		// get output name ... assumes jd2 ... anything that doesn't use jd2 must call setTag
-		base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+		base_name = protocols::jd2::current_input_tag();
 		utility::vector1< std::string > temp_out_names= utility::split( base_name );
 		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 		base_name = out_name.base();

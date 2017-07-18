@@ -25,8 +25,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/types.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 
 
@@ -71,7 +70,6 @@ using core::Size;
 using core::Real;
 using core::conformation::Residue;
 using core::pose::Pose;
-using protocols::jd2::JobDistributor;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
 using utility::vector1;
@@ -453,7 +451,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 		struct1_name = static_cast< CacheableString const & >
 			( pose1.data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
 	} else {
-		struct1_name = JobDistributor::get_instance()->current_job()->input_tag();
+		struct1_name = protocols::jd2::current_input_tag();
 	}
 
 	string struct2_name = "No_Name_Found";
@@ -463,7 +461,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 		struct2_name = static_cast< CacheableString const & >
 			( pose2.data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
 	} else {
-		struct2_name = JobDistributor::get_instance()->current_job()->input_tag();
+		struct2_name = protocols::jd2::current_input_tag();
 	}
 
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
@@ -552,10 +550,10 @@ RRReporterSQLite::report_predicted_features(
 	predicted_pose_copy.update_residue_neighbors();
 
 	report_to_db_->set_structure_input_tag(
-		protocols::jd2::JobDistributor::get_instance()->current_output_name());
+		protocols::jd2::current_output_name());
 	std::stringstream structure_tag;
 	structure_tag
-		<< protocols::jd2::JobDistributor::get_instance()->current_output_name()
+		<< protocols::jd2::current_output_name()
 		<< "_" << predicted_residue.seqpos();
 	report_to_db_->set_structure_tag(structure_tag.str());
 

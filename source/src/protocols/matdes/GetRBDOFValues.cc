@@ -32,8 +32,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <iostream>
 #include <utility/exit.hh>
 
@@ -147,7 +146,7 @@ core::Real GetRBDOFValues::compute(
 		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump);
 	}
 
-	std::string design_id = protocols::jd2::JobDistributor::get_instance()->current_output_name();
+	std::string design_id = protocols::jd2::current_output_name();
 	std::ostringstream val_string;
 	Real value;
 	std::string fn;

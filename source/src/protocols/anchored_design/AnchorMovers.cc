@@ -71,9 +71,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <basic/options/option.hh>
@@ -132,9 +130,8 @@ void debug_dump_pose(
 	std::string const & tag,
 	protocols::moves::MoverOP mover)
 {
-	using namespace protocols::jd2;
 	mover->apply(*posecopy);
-	JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), *posecopy, tag);
+	protocols::jd2::output_intermediate_pose( *posecopy, tag );
 	*posecopy = pose;
 }
 
@@ -310,8 +307,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 				|| randomize_input_sequence_
 				|| delete_interface_native_sidechains_
 				|| interface_->get_anchor_noise_constraints_mode() ) {
-			using namespace protocols::jd2;
-			JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), pose, "preprocessed");
+			protocols::jd2::output_intermediate_pose(pose, "preprocessed");
 		}
 
 		//processing
@@ -331,7 +327,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 		LAM.apply( pose );
 
 		//load sequence into Job output
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string("SEQUENCE: " + pose.sequence());
+		protocols::jd2::add_string_to_current_job("SEQUENCE: " + pose.sequence());
 
 		//load interface analysis info
 		IAM_->apply( pose );
@@ -341,7 +337,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 			pose.constraint_set()->show_definition(T_design, pose);
 			core::pose::Pose nocstcopy(pose);
 			nocstcopy.remove_constraints();
-			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("no_cst_total", ((*interface_->get_fullatom_scorefunction())(nocstcopy)));
+			protocols::jd2::add_string_real_pair_to_current_job("no_cst_total", ((*interface_->get_fullatom_scorefunction())(nocstcopy)));
 		}
 
 		clock_t stoptime = clock();
@@ -362,7 +358,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 	if ( rmsd_ ) {
 		core::Real const rmsd(core::scoring::CA_rmsd(pose, *start_pose));
 		T_design << "CA_sup_RMSD for this trajectory: " << rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("CA_sup_RMSD", rmsd);
+		protocols::jd2::add_string_real_pair_to_current_job("CA_sup_RMSD", rmsd);
 
 		std::list<core::Size> loops_for_rmsd;
 		for ( core::Size i(1), num_loops(interface_->num_loops()); i <= num_loops; ++i ) {
@@ -380,17 +376,17 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 
 		core::Real const loop_rmsd(core::scoring::CA_rmsd(pose, *start_pose, loops_for_rmsd));
 		T_design << "loop_CA_sup_RMSD for this trajectory: " << loop_rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("loop_CA_sup_RMSD", loop_rmsd);
+		protocols::jd2::add_string_real_pair_to_current_job("loop_CA_sup_RMSD", loop_rmsd);
 
 		//chain 1 RMSD
 		core::Real const ch1_sup_rmsd(core::scoring::CA_rmsd(pose, *start_pose, pose.conformation().chain_begin(1), pose.conformation().chain_end(1)));
 		T_design << "chain 1 sup_RMSD for this trajectory: " << ch1_sup_rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("ch1_CA_sup_RMSD", ch1_sup_rmsd);
+		protocols::jd2::add_string_real_pair_to_current_job("ch1_CA_sup_RMSD", ch1_sup_rmsd);
 
 		//chain 2 RMSD
 		core::Real const ch2_sup_rmsd(core::scoring::CA_rmsd(pose, *start_pose, pose.conformation().chain_begin(2), pose.conformation().chain_end(2)));
 		T_design << "chain 2 sup_RMSD for this trajectory: " << ch2_sup_rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("ch2_CA_sup_RMSD", ch2_sup_rmsd);
+		protocols::jd2::add_string_real_pair_to_current_job("ch2_CA_sup_RMSD", ch2_sup_rmsd);
 
 		//also need no-superimpose RMSDs for chain1/2 to get lever arm effect
 		ObjexxFCL::FArray1D_bool ch1(pose.size(), false), ch2(pose.size(), false);
@@ -399,13 +395,13 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 		//chain 1 RMSD
 		core::Real const ch1_rmsd(core::scoring::rmsd_no_super_subset(pose, *start_pose, ch1, core::scoring::is_protein_CA));
 		T_design << "chain 1 RMSD for this trajectory: " << ch1_rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("ch1_CA_RMSD", ch1_rmsd);
+		protocols::jd2::add_string_real_pair_to_current_job("ch1_CA_RMSD", ch1_rmsd);
 
 		for ( core::Size i(pose.conformation().chain_begin(2)), end(pose.conformation().chain_end(2)); i<=end; ++i ) ch2(i)=true;
 		//chain 2 RMSD
 		core::Real const ch2_rmsd(core::scoring::rmsd_no_super_subset(pose, *start_pose, ch2, core::scoring::is_protein_CA));
 		T_design << "chain 2 RMSD for this trajectory: " << ch2_rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("ch2_CA_RMSD", ch2_rmsd);
+		protocols::jd2::add_string_real_pair_to_current_job("ch2_CA_RMSD", ch2_rmsd);
 
 		//This next section is meant purely for benchmarking purposes.  It assumes the moving chain is chain 2, and that the interface-definition calculator created by the standard AnchorClass default TaskFactory exists.  It will use rmsd_with_super_subset on interface backbone atoms, because that's what docking does.
 		//chain 2 interface RMSD
@@ -431,7 +427,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 			//ready to calculate
 			core::Real const I_sup_bb_rmsd(core::scoring::rmsd_with_super_subset(pose, *start_pose, is_interface, core::scoring::is_protein_backbone));
 			T_design << "interface backbone RMSD for this trajectory: " << I_sup_bb_rmsd << std::endl;
-			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("I_sup_bb_RMSD", I_sup_bb_rmsd);
+			protocols::jd2::add_string_real_pair_to_current_job("I_sup_bb_RMSD", I_sup_bb_rmsd);
 
 		}
 
@@ -1094,8 +1090,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	mc -> recover_low( pose );
 
 	if ( perturb_show_ ) {
-		using namespace protocols::jd2;
-		JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), pose, "perturbed_centroid_final");
+		protocols::jd2::output_intermediate_pose(pose, "perturbed_centroid_final");
 	}
 
 	//show centroid score (duplicates last line above)
@@ -1105,8 +1100,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	T_perturb << std::flush; //show doesn't flush the buffer
 
 	if ( debug_ ) {
-		using namespace protocols::jd2;
-		JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), pose, "perturbed_prerefullatom");
+		protocols::jd2::output_intermediate_pose(pose, "perturbed_prerefullatom");
 	}
 	protocols::simple_moves::ReturnSidechainMover return_sidechains( saved_input_pose );
 	return_sidechains.apply( pose );

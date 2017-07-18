@@ -50,9 +50,7 @@
 #include <core/conformation/Conformation.hh>
 
 // Protocol Includes
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -1004,11 +1002,9 @@ catch ( utility::excn::EXCN_Base& excn ) {
 	TR << "caught exception.  skipping graft. printing structures." << std::endl;
 
 	//Attempt output of structures for debugging.
-	using namespace protocols::jd2;
 
 	TR << pose << std::endl;
 	TR << pose.fold_tree() << std::endl;
-	JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
 
 	//std::string graft_id = utility::to_string(index)+"_"+ab_info_->get_cluster_name(cdr_pose.cluster)+"_"+cdr_pose.pdb;
 	//std::string cdr_prefix = "excn_cdr_out_"+graft_id;
@@ -1016,9 +1012,9 @@ catch ( utility::excn::EXCN_Base& excn ) {
 	std::string grafted_prefix = "excn_grafted_out_"+graft_id;
 	TR << grafted_prefix << std::endl;
 
-	//JobDistributor::get_instance()->job_outputter()->other_pose(job, *cdr_pose.pose, cdr_prefix);
-	//JobDistributor::get_instance()->job_outputter()->other_pose(job, original_pose, original_prefix);
-	JobDistributor::get_instance()->job_outputter()->other_pose(job, pose, grafted_prefix);
+	//protocols::jd2::output_intermediate_pose( *cdr_pose.pose, cdr_prefix);
+	//protocols::jd2::output_intermediate_pose( original_pose, original_prefix);
+	protocols::jd2::output_intermediate_pose( pose, grafted_prefix);
 
 	pose = original_pose;
 	return false;
@@ -1274,9 +1270,8 @@ AntibodyDesignMover::setup_random_start_pose(core::pose::Pose& pose, vector1<CDR
 
 	//JAB - removed 8/18/16.  I still have yet to use this pose for any benchmarking.
 	/*
-	protocols::jd2::JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
 	std::string prefix = "initial_benchmark_perturbation";
-	protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(job, pose, prefix);
+	protocols::jd2::output_intermediate_pose( pose, prefix );
 	*/
 
 

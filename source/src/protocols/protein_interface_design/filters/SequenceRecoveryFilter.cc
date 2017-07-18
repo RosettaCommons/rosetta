@@ -24,8 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <core/pose/util.hh>
@@ -258,13 +257,12 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 void
 SequenceRecoveryFilter::write_to_pdb( std::map< core::Size, std::string > const & res_names1, std::map< core::Size, std::string > const & res_names2 ) const {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string user_name = this->get_user_defined_name();
 	std::map< Size, std::string >::const_iterator it_name1 = res_names1.begin();
 	std::map< Size, std::string >::const_iterator it_name2 = res_names2.begin();
 	while ( it_name1 != res_names1.end() ) {
 		std::string output_string = "SequenceRecoveryFilter " + user_name + ": " + it_name2->second + ObjexxFCL::string_of( it_name1->first ) + it_name1->second;
-		job->add_string( output_string );
+		protocols::jd2::add_string_to_current_job( output_string );
 		++it_name1; ++it_name2;
 	}
 

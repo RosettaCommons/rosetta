@@ -19,7 +19,7 @@
 #include <protocols/simple_filters/BatchNrEvaluator.hh>
 
 // Package Headers
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
@@ -42,13 +42,11 @@ core::Size
 BatchNrEvaluator::apply(
 	pose::Pose&
 ) const {
-	using namespace protocols::jd2;
-	return JobDistributor::get_instance()->current_batch_id();
+	return protocols::jd2::current_batch_id();
 }
 
 void BatchEvaluator::apply( core::pose::Pose&, std::string, core::io::silent::SilentStruct &pss ) const {
-	using namespace protocols::jd2;
-	pss.add_string_value( name( 1 ), JobDistributor::get_instance()->get_current_batch() );
+	pss.add_string_value( name( 1 ), protocols::jd2::current_batch() );
 }
 
 

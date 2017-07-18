@@ -20,8 +20,6 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/jd2/Job.fwd.hh>
-//#include <protocols/jd2/Parser.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.fwd.hh>
 
@@ -340,4 +338,4 @@ private: //Varaibles
 } // namespace rosetta_scripts
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd2_RosettaScriptsParser_HH
+#endif // INCLUDE GUARD

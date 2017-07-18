@@ -54,8 +54,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <algorithm>
@@ -397,9 +396,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 
 	//Just uses lowest poses to save time
 
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
-	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("spearman", correlation_after);
+	protocols::jd2::add_string_real_pair_to_current_job("spearman", correlation_after);
 
 	for ( core::Size i=1; i<=rosetta_lowest_poses_.size(); ++i ) {
 
@@ -408,7 +405,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 
 		// core::Size jump = core::pose::get_jump_id_from_chain(chain, rosetta_lowest_poses_[i]);
 
-		core::Size nstruct = protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
+		core::Size nstruct = protocols::jd2::current_nstruct_index();
 		std::string tag( name_of_chain + "_" + utility::to_string(nstruct) + ".pdb" );
 
 		//output individual poses
@@ -423,11 +420,11 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 		ligand_scores[ name_of_chain ] = rosetta_lowest_scores_[i].second;
 
 		for ( auto const & entry : ligand_scores ) {
-			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( entry.first, entry.second );
+			protocols::jd2::add_string_real_pair_to_current_job( entry.first, entry.second );
 		}
 	}
 
-	std::map<std::string, core::Real> job_outputs = protocols::jd2::JobDistributor::get_instance()->current_job()->get_string_real_pairs();
+	std::map<std::string, core::Real> job_outputs = protocols::jd2::get_string_real_pairs_from_current_job();
 	core::Real mean_interface_score = 0;
 
 	//Calculate average interface energy from job output
@@ -444,7 +441,7 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 
 	mean_interface_score = (mean_interface_score / (core::Real)(rosetta_chars_.size()));
 
-	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("mean_interface", mean_interface_score);
+	protocols::jd2::add_string_real_pair_to_current_job("mean_interface", mean_interface_score);
 
 	//Set pose equal to first pose (temporary benchmark purposes)
 	pose = rosetta_lowest_poses_[1];

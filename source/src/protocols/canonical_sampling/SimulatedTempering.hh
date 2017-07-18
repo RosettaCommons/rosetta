@@ -24,7 +24,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
-#include <protocols/jd2/Job.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>

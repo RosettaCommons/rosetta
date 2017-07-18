@@ -28,9 +28,6 @@
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
@@ -737,7 +734,6 @@ HBNetStapleInterface::prepare_output()
 	}
 	if ( get_extend_existing_networks() ) std::sort( get_net_vec().begin(), get_net_vec().end(), compare_net_vec() ); //sort all networks to put extended first
 	if ( max_networks_per_pose_ > 1 ) { //add multiple network sets to output vector
-		//use_jd2_out_num_=0;
 		for ( std::vector< HBondNetStructOP >::const_iterator netit = get_net_vec().begin(); netit != get_net_vec().end(); ++netit ) {
 			//std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), **netit) ) : (print_list_to_string( **netit) ) );
 			//if ( TR.visible() ) TR << "combining networks " << (*netit)->id << ": " << network;

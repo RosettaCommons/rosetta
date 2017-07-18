@@ -44,8 +44,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/loop_build/LoopBuildMover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/grafting/simple_movers/DeleteRegionMoverCreator.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
@@ -180,11 +179,9 @@ IndelOptimizationMover::apply(
 
 	TR << "Finished first structure. Score is: " << ( *score_fxn )( pose ) << std::endl;
 
-	jd2::JobOP job( jd2::JobDistributor::get_instance()->current_job() );
-
 	if ( dump_initial_results_ ) {
 		std::stringstream fn;
-		fn << "pose_" << job->nstruct_index() << "_firstpass_1.pdb";
+		fn << "pose_" << protocols::jd2::current_nstruct_index() << "_firstpass_1.pdb";
 		pose.dump_pdb( fn.str() );
 	}
 	// If there is a jump, we may want to reoptimize the jump!
@@ -207,7 +204,7 @@ IndelOptimizationMover::apply(
 
 			if ( dump_initial_results_ ) {
 				std::stringstream fn;
-				fn << "pose_" << job->nstruct_index() << "_firstpass_" << i << ".pdb";
+				fn << "pose_" << protocols::jd2::current_nstruct_index() << "_firstpass_" << i << ".pdb";
 				temp_pose.dump_pdb( fn.str() );
 			}
 		}

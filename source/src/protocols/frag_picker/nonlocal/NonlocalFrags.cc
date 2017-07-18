@@ -41,9 +41,7 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 
@@ -275,7 +273,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 
 #ifdef BOINC_GRAPHICS
 	core::Size step_cnt = 0;
-	std::string input_tag = protocols::jd2::get_current_job()->input_tag();
+	std::string input_tag = protocols::jd2::current_input_tag();
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
 

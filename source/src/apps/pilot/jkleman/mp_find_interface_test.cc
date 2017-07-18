@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/jkleman/mp_find_interface_test.cc
-/// @author 	JKLeman (julia.koehler1982@gmail.com)
+/// @file   src/apps/pilot/jkleman/mp_find_interface_test.cc
+/// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // Unit Headers
 #include <devel/init.hh>
@@ -17,6 +17,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -130,7 +131,7 @@ public:
 		// before move
 		pose.dump_pdb("before_addmem.pdb");
 
-////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 
 		// MPFindInterfaceMover
 
@@ -148,12 +149,12 @@ public:
 		core::pose::Pose native_;
 
 		// get partners
-		if( option[ OptionKeys::docking::partners ].user() ) {
+		if ( option[ OptionKeys::docking::partners ].user() ) {
 			partners_ = option[ OptionKeys::docking::partners ]();
 		}
 
 		// read in native and superimpose the first partner of the pose with the native
-		if( option[ OptionKeys::in::file::native ].user() ) {
+		if ( option[ OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( native_, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 
 			// call AddMembraneMover on native for RMSD calculation
@@ -166,18 +167,18 @@ public:
 
 			// get residue range for superposition: get start
 			Size start(0);
-			for ( Size i = 1; i <= pose.size(); ++i ){
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				if ( start == 0 &&
-					partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ){
+						partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
 					start = i;
 				}
 			}
 
 			// get end
 			Size end(0);
-			for ( Size j = pose.size(); j >= 1; --j ){
+			for ( Size j = pose.size(); j >= 1; --j ) {
 				if ( end == 0 &&
-					partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ){
+						partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
 					end = j;
 				}
 			}
@@ -223,11 +224,9 @@ public:
 		// setup lowres scorefunction
 		if ( option[ OptionKeys::mp::dock::lowres ].user() ) {
 			sfxn_lowres_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
-		}
-		else if ( option[ OptionKeys::mp::dock::highres ].user() ) {
+		} else if ( option[ OptionKeys::mp::dock::highres ].user() ) {
 			sfxn_lowres_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
-		}
-		else {
+		} else {
 			utility_exit_with_message( "Have to specify score function: either use -mp::dock:lowres or -mp::dock:highres flag!" );
 		}
 
@@ -246,7 +245,7 @@ public:
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_lowres_, 1.0 ) );
 
 		// do this for a certain number of iterations
-		for ( Size i = 1; i <= 10; ++i ){
+		for ( Size i = 1; i <= 10; ++i ) {
 
 			// SPIN MOVER
 			// get a random spin angle between 0 and 360 degrees
@@ -258,7 +257,7 @@ public:
 			emb_up = compute_structure_based_embedding( pose, *topo_up_ );
 			emb_down = compute_structure_based_embedding( pose, *topo_down_ );
 			RigidBodyDeterministicSpinMoverOP spin( new RigidBodyDeterministicSpinMover(
-							jump_, emb_down->normal(), emb_down->center(), spin_angle ) );
+				jump_, emb_down->normal(), emb_down->center(), spin_angle ) );
 			spin->apply( pose );
 
 			// slide into contact
@@ -325,132 +324,132 @@ public:
 	} // apply
 
 
-//////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////
 
-//			pose.dump_pdb( out + ".pdb" );
-//			pose.dump_scored_pdb( out + ".pdb", *sfxn_lowres_ );
+	//   pose.dump_pdb( out + ".pdb" );
+	//   pose.dump_scored_pdb( out + ".pdb", *sfxn_lowres_ );
 
-			// FOURTH MOVER: MPDOCKINGMOVER IN LOWRES ONLY
-//			TR << "=========================DOCK MOVER==========================" << std::endl;
-//			protocols::docking::membrane::MPDockingMoverOP mpdock( new protocols::docking::membrane::MPDockingMover( true, false ) );
-//			mpdock->set_cycles_inner( 1 );
-//			mpdock->set_cycles_outer( 1 );
-//			mpdock->apply( pose );
-//			out += "d";
-////			pose.dump_pdb( out + ".pdb" );
-//			pose.dump_scored_pdb( out + ".pdb", *sfxn_lowres_ );
+	// FOURTH MOVER: MPDOCKINGMOVER IN LOWRES ONLY
+	//   TR << "=========================DOCK MOVER==========================" << std::endl;
+	//   protocols::docking::membrane::MPDockingMoverOP mpdock( new protocols::docking::membrane::MPDockingMover( true, false ) );
+	//   mpdock->set_cycles_inner( 1 );
+	//   mpdock->set_cycles_outer( 1 );
+	//   mpdock->apply( pose );
+	//   out += "d";
+	////   pose.dump_pdb( out + ".pdb" );
+	//   pose.dump_scored_pdb( out + ".pdb", *sfxn_lowres_ );
 
-			// add all movers into random mover = Mover container
-//			randmover->add_mover( spin, 0.4 );
-//	//		randmover->add_mover( tilt, 0.4 );
-//			randmover->add_mover( flip, 0.2 );
+	// add all movers into random mover = Mover container
+	//   randmover->add_mover( spin, 0.4 );
+	// //  randmover->add_mover( tilt, 0.4 );
+	//   randmover->add_mover( flip, 0.2 );
 
-			// slide into contact
-	//		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( jump_ ) );
-	//		slide->apply( pose );
+	// slide into contact
+	//  DockingSlideIntoContactOP slide( new DockingSlideIntoContact( jump_ ) );
+	//  slide->apply( pose );
 
-//			// evaluate boltzmann criterion and print scores
-//			mc->boltzmann( pose );
-//			TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-//		}
+	//   // evaluate boltzmann criterion and print scores
+	//   mc->boltzmann( pose );
+	//   TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
+	//  }
 
-		// visualize embedding
-//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-//		vis_emb->apply( pose );
-//		pose.dump_pdb("after1.pdb");
+	// visualize embedding
+	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+	//  vis_emb->apply( pose );
+	//  pose.dump_pdb("after1.pdb");
 
 
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 
-//		MPDockingSetupMoverOP setup( new MPDockingSetupMover() );
-//		setup->apply( pose );
+	//  MPDockingSetupMoverOP setup( new MPDockingSetupMover() );
+	//  setup->apply( pose );
 
-// TRIALS FOR FINDING INTERFACE USING EXISTING DOCKING MOVERS
+	// TRIALS FOR FINDING INTERFACE USING EXISTING DOCKING MOVERS
 
-//		DockingInitialPerturbationOP initial( new DockingInitialPerturbation( 1, true ) );
-//		initial->set_randomize1( true );
-//		initial->set_randomize2( false );
+	//  DockingInitialPerturbationOP initial( new DockingInitialPerturbation( 1, true ) );
+	//  initial->set_randomize1( true );
+	//  initial->set_randomize2( false );
 
-// slide together
-//		Vector axis = membrane_axis( pose, 1 );
-//		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( 1, axis ) );
-//		slide->apply( pose );
+	// slide together
+	//  Vector axis = membrane_axis( pose, 1 );
+	//  DockingSlideIntoContactOP slide( new DockingSlideIntoContact( 1, axis ) );
+	//  slide->apply( pose );
 
-//		ScoreFunctionOP lowres_scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
-//
-//		DockingLowResOP lowresdocking( new DockingLowRes( lowres_scorefxn, 1 ) );
-//		lowresdocking->set_trans_magnitude( 100 );
-//		lowresdocking->set_rot_magnitude( 360 );
-//		lowresdocking->apply( pose );
+	//  ScoreFunctionOP lowres_scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
+	//
+	//  DockingLowResOP lowresdocking( new DockingLowRes( lowres_scorefxn, 1 ) );
+	//  lowresdocking->set_trans_magnitude( 100 );
+	//  lowresdocking->set_rot_magnitude( 360 );
+	//  lowresdocking->apply( pose );
 
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 
-		// VECTORS
-		// set new center and normal
-//		Vector new_center( 0, 5, 10 );
-//		Vector new_normal( 0, 15, 0 );
-//		Vector new_center (0, 0, 0);
-//		Vector new_normal (0, 0, 15);
+	// VECTORS
+	// set new center and normal
+	//  Vector new_center( 0, 5, 10 );
+	//  Vector new_normal( 0, 15, 0 );
+	//  Vector new_center (0, 0, 0);
+	//  Vector new_normal (0, 0, 15);
 
-		// SPANNING TOPOLOGY
-//		std::string spanfile("protocols/membrane/1AFO_AB.span");
-		// get topology
-//		SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
-//		pose.conformation().membrane_info()->show();
+	// SPANNING TOPOLOGY
+	//  std::string spanfile("protocols/membrane/1AFO_AB.span");
+	// get topology
+	//  SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
+	//  pose.conformation().membrane_info()->show();
 
-		// EMBEDDING
-//		// get EmbeddingDef
-//		EmbeddingOP embedding( new Embedding( topo, pose ) );
-//		embedding->show();
-//		embedding->invert();
-//		embedding->show();
+	// EMBEDDING
+	//  // get EmbeddingDef
+	//  EmbeddingOP embedding( new Embedding( topo, pose ) );
+	//  embedding->show();
+	//  embedding->invert();
+	//  embedding->show();
 
-		// get embedding object from pose and topology
-////		PoseOP pose1( new Pose( pose ) );
-//		EmbeddingOP embedding( new Embedding( topo, pose ) );
-//		embedding->show();
+	// get embedding object from pose and topology
+	////  PoseOP pose1( new Pose( pose ) );
+	//  EmbeddingOP embedding( new Embedding( topo, pose ) );
+	//  embedding->show();
 
-//		EmbeddingDefOP embedding( compute_structure_based_embedding(pose) );
-//		embedding->show();
+	//  EmbeddingDefOP embedding( compute_structure_based_embedding(pose) );
+	//  embedding->show();
 
-		// FOLDTREE
-		// reorder foldtree
-//		pose.fold_tree().show(std::cout);
-//		core::kinematics::FoldTree foldtree = pose.fold_tree();
-//		foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
-//		pose.fold_tree( foldtree );
-//		TR << "foldtree reordered" << std::endl;
-//		pose.fold_tree().show(std::cout);
+	// FOLDTREE
+	// reorder foldtree
+	//  pose.fold_tree().show(std::cout);
+	//  core::kinematics::FoldTree foldtree = pose.fold_tree();
+	//  foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+	//  pose.fold_tree( foldtree );
+	//  TR << "foldtree reordered" << std::endl;
+	//  pose.fold_tree().show(std::cout);
 
-		// VISUALIZE EMBEDDING
-//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
-//		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-//		vis_emb->apply( pose );
+	// VISUALIZE EMBEDDING
+	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
+	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
+	//  vis_emb->apply( pose );
 
-		// MOVERS
-//		SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
-//		rt->apply( pose );
+	// MOVERS
+	//  SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
+	//  rt->apply( pose );
 
-//		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
-//		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
-//		rt->apply( pose );
+	//  TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
+	//  TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
+	//  rt->apply( pose );
 
-//		TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
-//		trans->apply( pose );
+	//  TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
+	//  trans->apply( pose );
 
-//		RotationMoverOP rot = new RotationMover( old_normal, new_normal, old_center, jumpnum );
-//		rot->apply( pose );
+	//  RotationMoverOP rot = new RotationMover( old_normal, new_normal, old_center, jumpnum );
+	//  rot->apply( pose );
 
-//		TranslationRotationMoverOP rt = new TranslationRotationMover( old_center, old_normal, new_center, new_normal, jumpnum );
-//		rt->apply( pose );
+	//  TranslationRotationMoverOP rt = new TranslationRotationMover( old_center, old_normal, new_center, new_normal, jumpnum );
+	//  rt->apply( pose );
 
-//		FlipMoverOP flip( new FlipMover(2, axis, 45) );
-//		flip->apply( pose );
+	//  FlipMoverOP flip( new FlipMover(2, axis, 45) );
+	//  flip->apply( pose );
 
-//		RigidBodyRandomizeMoverOP random( new RigidBodyRandomizeMover( pose, 1, partner_downstream, 180, 360, true ) );
-//		random->apply( pose );
+	//  RigidBodyRandomizeMoverOP random( new RigidBodyRandomizeMover( pose, 1, partner_downstream, 180, 360, true ) );
+	//  random->apply( pose );
 
-////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
 
 };
 

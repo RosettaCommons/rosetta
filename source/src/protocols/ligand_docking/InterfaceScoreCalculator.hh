@@ -24,7 +24,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Project Headers
-//#include <protocols/jd2/Job.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>

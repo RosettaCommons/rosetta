@@ -35,8 +35,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -54,7 +53,6 @@
 #include <numeric/xyzVector.hh>
 
 
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
@@ -69,7 +67,6 @@ using namespace protocols::docking;
 using namespace protocols::moves;
 using namespace core;
 using namespace pack::task;
-using protocols::jd2::JobDistributor;
 using namespace protocols::membrane;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingPrepackProtocol" );
@@ -141,16 +138,10 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 {
 	using namespace core::scoring;
 
-	// Creating a job compatible with JD2
-	static protocols::jd2::JobOP job = jd2::JobDistributor::get_instance()->current_job();
-	//job_ = jd2::JobDistributor::get_instance()->current_job();
-
 	core::Real score_pose  = ( *scorefxn() )( pose ); // scoring the pose
 
-	// Getting the name of current job
-	//std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job ) );
-	job->add_string_real_pair("E"+outfilename, score_pose);
-	JobDistributor::get_instance()->job_outputter()->other_pose( job, pose, outfilename+"_");
+	protocols::jd2::add_string_real_pair_to_current_job("E"+outfilename, score_pose);
+	protocols::jd2::output_intermediate_pose( pose, outfilename+"_" );
 
 }
 

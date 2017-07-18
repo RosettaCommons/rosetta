@@ -32,12 +32,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -372,13 +370,11 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 				residue_id_map[ resi ].insert( target_aa );
 			}
 			if ( dump_pdb() ) {
-				using namespace protocols::jd2;
-				JobOP job( JobDistributor::get_instance()->current_job() );
 				std::stringstream fname;
 				if ( dump_pdb_name_ != "" ) {
 					fname << dump_pdb_name();
 				} else {
-					fname << job->input_tag();
+					fname << protocols::jd2::current_input_tag();
 				}
 				fname << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
 				TR<<"Saving pose "<<fname.str();

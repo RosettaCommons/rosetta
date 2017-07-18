@@ -7,15 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd2/JobDistributor.cc
-/// @brief  August 2008 job distributor as planned at RosettaCon08 - Base class
-/// @author Oliver Lange
+/// @file   protocols/jd2/util.cc
+/// @brief  Utilities for JD2, which are somewhat safe to use outside of the JD2 system itself
+/// @details For utilities internal to the jd2 system, see internal_util.hh
 
 // Unit Headers
-
-#ifdef USEMPI
-#include <mpi.h>
-#endif
 
 #include <protocols/jd2/util.hh>
 
@@ -26,6 +22,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <basic/mpi/MessageListenerFactory.hh>
 
 #include <protocols/evaluation/util.hh>
@@ -40,6 +37,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -52,7 +50,6 @@
 #include <core/import_pose/import_pose.hh>
 
 // Utility headers
-#include <utility/mpi_util.hh>
 #include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
@@ -61,23 +58,240 @@
 namespace protocols {
 namespace jd2 {
 
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.util" );
 
-void register_options() {
-	evaluation::register_options();
-	using namespace basic::options::OptionKeys;
-	OPT( in::file::silent );
-	OPT( in::file::s );
-	OPT( in::file::l );
-	OPT( in::file::native );
-	OPT( in::file::silent_read_through_errors );
-	OPT( out::file::silent );
-	OPT( out::file::scorefile );
-	OPT( run::batches );
-	OPT( run::archive );
+bool jd2_used() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	return ( jd && jd->job_outputter() && jd->current_job() && jd->current_job()->inner_job() != JD2_BOGUS_JOB->inner_job());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string current_input_tag() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		return jd->current_job()->input_tag(); // Should defer to the inner job
+	} else return "UnknownInput";
+
+}
+
+core::Size current_nstruct_index() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		return jd->current_job()->nstruct_index();
+	} else return 0;
+
+}
+
+core::Size max_nstruct_index() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		return jd->current_job()->nstruct_max(); // Should defer to the inner job
+	} else return basic::options::option[ basic::options::OptionKeys::out::nstruct ]();
 }
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobDistributor" );
+std::string current_output_name() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->job_outputter() && jd->current_job() ) {
+		return jd->job_outputter()->output_name( jd->current_job() );
+	} else return "NoTag";
+}
+
+std::string current_output_filename() {
+	jd2::JobDistributor* jd  = jd2::JobDistributor::get_instance();
+	if ( jd && jd->job_outputter() ) {
+		JobOP job = jd->current_job();
+		if ( job ) {
+			return jd->job_outputter()->filename( job );
+		}
+	}
+	return "JD2_OUTPUT_FILE_UNKNOWN"; //else
+}
+
+std::string current_batch() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd ) {
+		return jd->get_current_batch();
+	} else return "NoJD2";
+}
+
+core::Size current_batch_id() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd ) {
+		return jd->current_batch_id();
+	} else return 0;
+}
+
+core::Size current_replica() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd ) {
+		MPIMultiCommJobDistributor* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
+		if ( mpi_jd ) {
+			return mpi_jd->sub_rank()+1;
+		}
+	}
+	return 0;
+}
+
+core::pose::PoseCOP get_current_jobs_starting_pose() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	core::pose::PoseCOP pose( nullptr );
+	if ( jd && jd->job_outputter() && jd->job_inputter() && jd->current_job() ) {
+		JobOP job = jd->current_job();
+		core::pose::PoseOP aPose( new core::pose::Pose );
+		jd->job_inputter()->pose_from_job( *aPose, job);
+		pose = aPose;
+	}
+	return pose;
+}
+
+
+//multithreaded case requires specia
+///end parser interface, start Job Distributor interface/////////////
+void output_intermediate_pose(
+	core::pose::Pose const & pose,
+	std::string const & stage_tag,
+	int copy_count,
+	bool score_only
+) {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->job_outputter() && jd->current_job() ) {
+		jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag, copy_count, score_only );
+	} else {
+		TR.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
+	}
+}
+
+/// @brief add output string
+void add_string_to_current_job( std::string const & string_in ) {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		jd->current_job()->add_string( string_in );
+	} else {
+		// Do nothing ... for now
+	}
+}
+
+/// @brief add output strings
+void add_strings_to_current_job( std::list< std::string > const & strings) {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		jd->current_job()->add_strings( strings );
+	} else {
+		// Do nothing ... for now
+	}
+}
+
+/// @brief add a string/string pair
+void add_string_string_pair_to_current_job( std::string const & string1, std::string const & string2 ) {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		jd->current_job()->add_string_string_pair( string1, string2 );
+	} else {
+		// Do nothing ... for now
+	}
+}
+
+/// @brief add a string/real pair
+void add_string_real_pair_to_current_job( std::string const & string_in, core::Real const real_in ) {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		jd->current_job()->add_string_real_pair( string_in, real_in );
+	} else {
+		// Do nothing ... for now
+	}
+}
+
+std::list< std::string > get_strings_from_current_job() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		return jd->current_job()->get_strings();
+	} else {
+		return {}; // return empty object
+	}
+}
+
+
+std::map< std::string, std::string > get_string_string_pairs_from_current_job() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		return jd->current_job()->get_string_string_pairs();
+	} else {
+		return {}; // return empty object
+	}
+}
+
+std::map< std::string, core::Real > get_string_real_pairs_from_current_job() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		return jd->current_job()->get_string_real_pairs();
+	} else {
+		return {}; // return empty object
+	}
+}
+
+void
+add_current_job_data_to_ss( core::io::silent::SilentStructOP ss ) {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->current_job() ) {
+		protocols::jd2::add_job_data_to_ss( ss, jd->current_job() );
+	} else {
+		// Do nothing, currently.
+	}
+}
+
+void
+write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
+	basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
+
+	if ( !tr_score.visible() ) return;
+
+	using core::io::silent::SilentStructFactory;
+	core::io::silent::SilentStructOP ss;
+	core::io::silent::SilentFileOptions opts;
+	ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score", opts);
+	std::string tag( protocols::jd2::current_output_name() );
+	ss->fill_struct( pose_in, tag );
+	add_current_job_data_to_ss( ss );
+
+	core::pose::Pose pose( pose_in );
+	if ( protocols::jd2::jd2_used() ) {
+		JobDistributor* jd = JobDistributor::get_instance();
+		debug_assert( jd );
+		debug_assert( jd->job_outputter() );
+		jd->job_outputter()->evaluate( pose, tag, *ss );
+	}
+
+	ss->add_string_value("tracer_point", tracer_point );
+
+	core::io::silent::SilentFileData sfd( opts );
+	if ( !basic::options::option[ basic::options::OptionKeys::out::file::silent_print_all_score_headers ]() ) {
+		ss->print_header( tr_score );
+	}
+	sfd.write_silent_struct( *ss, tr_score, true /*write scores only*/ );
+	tr_score.flush();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< utility::file::FileName >
 input_pdb_files_from_command_line()
@@ -120,131 +334,6 @@ input_pdb_files_from_command_line()
 	return pdb_file_names;
 }
 
-//multithreaded case requires specia
-///end parser interface, start Job Distributor interface/////////////
-void output_intermediate_pose(
-	core::pose::Pose const & pose,
-	std::string const & stage_tag,
-	int copy_count,
-	bool score_only
-) {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	if ( jd && jd->job_outputter() && jd->current_job() ) {
-		jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag, copy_count, score_only );
-	} else {
-		TR.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
-	}
-}
-
-std::string current_output_name() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	if ( jd && jd->job_outputter() && jd->current_job() ) {
-		return jd->job_outputter()->output_name( jd->current_job() );
-	} else return "NoTag";
-}
-
-std::string current_batch() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	if ( jd ) {
-		return jd->get_current_batch();
-	} else return "NoJD2";
-}
-
-bool jd2_used() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	return ( jd && jd->job_outputter() && jd->current_job()->inner_job() != JD2_BOGUS_JOB->inner_job());
-}
-
-std::string current_output_filename() {
-	jd2::JobDistributor* jd  = jd2::JobDistributor::get_instance();
-	if ( jd && jd->job_outputter() ) {
-		JobOP job = jd->current_job();
-		if ( job ) {
-			return jd->job_outputter()->filename( job );
-		}
-	}
-	return "JD2_OUTPUT_FILE_UNKNOWN"; //else
-}
-
-void
-write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
-	basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
-
-	if ( !tr_score.visible() ) return;
-
-	JobDistributor* jd = JobDistributor::get_instance();
-
-	if ( !jd || !jd->job_outputter() ) {
-		tr_score.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
-		return;
-	}
-
-	using core::io::silent::SilentStructFactory;
-	core::io::silent::SilentStructOP ss;
-	core::io::silent::SilentFileOptions opts;
-	ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score", opts);
-	JobCOP job( get_current_job() );
-	std::string tag( jd->job_outputter()->output_name( job ) );
-	ss->fill_struct( pose_in, tag );
-	add_job_data_to_ss( ss, job );
-
-	core::pose::Pose pose( pose_in );
-	jd->job_outputter()->evaluate( pose, tag, *ss );
-
-	ss->add_string_value("tracer_point", tracer_point );
-
-	core::io::silent::SilentFileData sfd( opts );
-	if ( !basic::options::option[ basic::options::OptionKeys::out::file::silent_print_all_score_headers ]() ) {
-		ss->print_header( tr_score );
-	}
-	sfd.write_silent_struct( *ss, tr_score, true /*write scores only*/ );
-	tr_score.flush();
-}
-
-JobOP get_current_job() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	if ( jd && jd->job_inputter() ) {
-		return jd->current_job();
-	} else return nullptr;
-}
-
-core::pose::PoseCOP get_current_jobs_starting_pose() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	core::pose::PoseCOP pose( nullptr );
-	if ( jd && jd->job_outputter() && jd->job_inputter() && jd->current_job() ) {
-		JobOP job = jd->current_job();
-		core::pose::PoseOP aPose( new core::pose::Pose );
-		jd->job_inputter()->pose_from_job( *aPose, job);
-		pose = aPose;
-	}
-	return pose;
-}
-
-void add_job_data_to_ss( core::io::silent::SilentStructOP ss, JobCOP job_op ) {
-	using namespace core::pose;
-
-	for ( auto iter = job_op->output_string_string_pairs_begin(),
-			end = job_op->output_string_string_pairs_end();
-			iter != end; ++iter
-			) {
-		ss->add_string_value(iter->first, iter->second );
-	}
-
-	for ( auto iter = job_op->output_string_real_pairs_begin(),
-			end = job_op->output_string_real_pairs_end();
-			iter != end; ++iter
-			) {
-		ss->add_energy( iter->first, iter->second, 1.0 );
-	}
-}
-
-
 void set_native_in_mover( protocols::moves::Mover &mover ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -261,40 +350,6 @@ void set_native_in_mover( protocols::moves::Mover &mover ){
 		core::import_pose::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		mover.set_native_pose( native_pose );
 	}
-}
-
-
-#ifdef USEMPI
-/// @brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
-MPI_Comm const& current_mpi_comm() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	if ( jd ) {
-		MPIMultiCommJobDistributor* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
-		if ( mpi_jd ) {
-			return mpi_jd->current_mpi_comm();
-		}
-	}
-	//return MPI_COMM_WORLD; //causes warning: returning reference to temporary
-	//workaround to avoid warning ( MPI_COMM_WORLD is actually a macro )
-	TR.Trace << "Requested jd2::current_mpi_comm() but apparently flag -run:n_replica was not set.";
-	TR.Trace << "Returning MPI_COMM_WORLD" << std::endl;
-	static MPI_Comm my_mpi_comm_world = MPI_COMM_NULL;
-	MPI_Comm_dup( MPI_COMM_WORLD, &my_mpi_comm_world );
-	return my_mpi_comm_world;
-}
-#endif
-
-core::Size current_replica() {
-	JobDistributor* jd
-		= JobDistributor::get_instance();
-	if ( jd ) {
-		MPIMultiCommJobDistributor* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
-		if ( mpi_jd ) {
-			return mpi_jd->sub_rank()+1;
-		}
-	}
-	return 0;
 }
 
 } // jd2

@@ -40,12 +40,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -859,8 +854,7 @@ apply(
 		scorefxn_->show_line(TR,pose);
 	}
 
-	// for dubug name, grab the out tag from jd2
-	std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+	std::string base_name = protocols::jd2::current_input_tag();
 	utility::vector1< std::string > temp_out_names= utility::split( base_name );
 	utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 	base_name = out_name.base();

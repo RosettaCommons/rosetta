@@ -15,6 +15,7 @@
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <devel/init.hh>
 #include <core/types.hh>
@@ -50,18 +51,18 @@ main( int argc, char * argv [] )
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
-//	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
+	// core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	core::scoring::ScoreFunctionOP highres_scorefxn = core::scoring::get_score_function();
 
-//	DockingProtocolOP dp = new DockingProtocol( utility::tools::make_vector1<core::SSize>(1), false, false, true, NULL, highres_scorefxn );
+	// DockingProtocolOP dp = new DockingProtocol( utility::tools::make_vector1<core::SSize>(1), false, false, true, NULL, highres_scorefxn );
 	DockingProtocolOP dp = new DockingProtocol( 1, false, true, true, NULL, highres_scorefxn );
 
 	if ( option[ OptionKeys::docking::multibody ].user() ) {
-			utility::vector1< core::Size > const movable_jumps(
-				option[ OptionKeys::docking::multibody ]()
-			);
-			dp->set_movable_jumps( movable_jumps );
+		utility::vector1< core::Size > const movable_jumps(
+			option[ OptionKeys::docking::multibody ]()
+		);
+		dp->set_movable_jumps( movable_jumps );
 	}
 
 	JobDistributor::get_instance()->go(dp);

@@ -7,41 +7,42 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/translate_membrane_pose.cc
+/// @file   src/apps/pilot/ralford/translate_membrane_pose.cc
 ///
-/// @brief 		Transform Structure into membrane center/normal
-/// @details	Given an existing center and normal describing the position of the membrane, transform
-///				the structure into a new membrane (where the transform mover is constructed with such normal and center
-///				and the default new normal/center is center = (0, 0, 0) and normal = (0, 0, 1))
+/// @brief   Transform Structure into membrane center/normal
+/// @details Given an existing center and normal describing the position of the membrane, transform
+///    the structure into a new membrane (where the transform mover is constructed with such normal and center
+///    and the default new normal/center is center = (0, 0, 0) and normal = (0, 0, 1))
 ///
-/// 			Last Modified: 6/27/14
-///				Note: Part of the Membrane Framework Applications Suite
-///				Versioning: 1.0
+///    Last Modified: 6/27/14
+///    Note: Part of the Membrane Framework Applications Suite
+///    Versioning: 1.0
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <devel/init.hh>
 
 // Package Headers
-#include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/TransformIntoMembraneMover.hh> 
+#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/TransformIntoMembraneMover.hh>
 
 // Project Headers
-#include <protocols/jd2/JobDistributor.hh> 
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
-#include <core/pose/Pose.hh> 
-#include <core/conformation/Conformation.hh> 
+#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/random/random.hh> 
-#include <utility/pointer/owning_ptr.hh> 
+#include <numeric/random/random.hh>
+#include <utility/pointer/owning_ptr.hh>
 
-#include <basic/Tracer.hh> 
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iostream>
@@ -53,7 +54,7 @@ using namespace protocols::moves;
 /// @brief Membrane Transform Mover: Transform a pose into a new mover
 class MembraneTransformMover : public Mover {
 
-public: 
+public:
 
 	MembraneTransformMover() {}
 
@@ -63,25 +64,25 @@ public:
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
-		using namespace core::scoring; 
-		using namespace core::kinematics; 
+		using namespace core::scoring;
+		using namespace core::kinematics;
 		using namespace protocols::membrane;
-	 	using namespace numeric; 
+		using namespace numeric;
 
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
-		add_memb->apply(pose); 
+		AddMembraneMoverOP add_memb = new AddMembraneMover();
+		add_memb->apply(pose);
 
 		// Apply Transformation Move
-		TransformIntoMembraneMoverOP transform = new TransformIntoMembraneMover(); 
-		transform->apply( pose ); 
+		TransformIntoMembraneMoverOP transform = new TransformIntoMembraneMover();
+		transform->apply( pose );
 
-		// Done! 
+		// Done!
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneTransformMover > MembraneTransformMoverOP; 
-typedef utility::pointer::owning_ptr< MembraneTransformMover const > MembraneTransformMoverCOP; 
+typedef utility::pointer::owning_ptr< MembraneTransformMover > MembraneTransformMoverOP;
+typedef utility::pointer::owning_ptr< MembraneTransformMover const > MembraneTransformMoverCOP;
 
 /// @brief Main method
 int
@@ -99,7 +100,7 @@ main( int argc, char * argv [] )
 		MembraneTransformMoverOP mptrans = new MembraneTransformMover();
 		protocols::jd2::JobDistributor::get_instance()->go( mptrans );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

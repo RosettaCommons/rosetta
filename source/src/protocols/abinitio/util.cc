@@ -22,12 +22,10 @@
 
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <core/scoring/func/FuncFactory.hh>
 
 //archive headers
 #include <protocols/abinitio/IterativeAbrelax.hh>
-#include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers

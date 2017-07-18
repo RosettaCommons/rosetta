@@ -24,8 +24,7 @@
 #include <cstdio>
 #include <fstream>
 #include <protocols/simple_filters/StemFinderFilter.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -99,8 +98,7 @@ aa_sequence( pose::Pose const & pose ){
 
 std::string
 input_file_name(){
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	std::string const input_file_name( job->input_tag() );
+	std::string const input_file_name( protocols::jd2::current_input_tag() );
 	core::Size const wheres_period( input_file_name.find_last_of( "." ) );
 	std::string const pdb_name( input_file_name.substr(0, wheres_period ) );
 	return pdb_name;

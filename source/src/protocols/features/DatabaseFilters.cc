@@ -13,12 +13,13 @@
 
 // Unit Headers
 #include <protocols/features/DatabaseFilters.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/features/DatabaseStatements.hh>
 
 //External
 
 // Project Headers
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/JobDistributor.hh> // for total_nr_jobs
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
@@ -40,7 +41,6 @@
 // C++ Headers
 #include <string>
 
-#include <protocols/jd2/Job.hh>
 
 //Auto Headers
 #include <utility/excn/EXCN_Base.hh>
@@ -124,15 +124,9 @@ WriteDeletePair get_write_delete_pair(
 
 	} else {
 		//get the current score out of the job data map
-		protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-		//The job data is stored as a list instead of a map so we have to actually iterate over the whole thing
-		//In order to pull out one particular item
-		auto it(job->output_string_real_pairs_begin());
-		for ( ; it != job->output_string_real_pairs_end(); ++it ) {
-			if ( it->first == score_term ) {
-				current_model_score = it->second;
-				break;
-			}
+		std::map< std::string, core::Real > const & srpairmap( protocols::jd2::get_string_real_pairs_from_current_job() );
+		if ( srpairmap.count( score_term ) ) {
+			current_model_score = srpairmap.at( score_term );
 		}
 
 		struct_id = get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, count,protocol_id, current_input);
@@ -190,9 +184,13 @@ TopPercentOfAllInputs::TopPercentOfAllInputs(utility::vector1<std::string> argum
 	top_count_of_all_inputs_.score_term_ = arguments[1];
 
 	core::Real percent = utility::from_string(arguments[2], core::Real());
-	core::Size total_nr_jobs = protocols::jd2::JobDistributor::get_instance()->total_nr_jobs();
-	core::Size percentile_count = static_cast<core::Size>(floor(percent*total_nr_jobs));
-	top_count_of_all_inputs_.count_ = percentile_count;
+	if ( protocols::jd2::jd2_used() ) {
+		core::Size total_nr_jobs = protocols::jd2::JobDistributor::get_instance()->total_nr_jobs();
+		core::Size percentile_count( floor(percent*total_nr_jobs) );
+		top_count_of_all_inputs_.count_ = percentile_count;
+	} else {
+		top_count_of_all_inputs_.count_ = 0;
+	}
 }
 
 WriteDeletePair
@@ -225,7 +223,7 @@ TopCountOfEachInput::operator()(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & protocol_id
 ){
-	std::string current_input(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	std::string current_input( protocols::jd2::current_input_tag() );
 	return get_write_delete_pair(pose, db_session, protocol_id, count_, score_term_, current_input);
 }
 

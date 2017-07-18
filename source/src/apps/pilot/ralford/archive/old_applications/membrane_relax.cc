@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/membrane_relax.cc
+/// @file   src/apps/pilot/ralford/membrane_relax.cc
 ///
-/// @brief 		Membrane Relax Application
+/// @brief   Membrane Relax Application
 /// @details    High resolution FastRelax using a custom set of settings & modifications
-///				for refinement of membrane protein structure. Adaptation of the current FastRelax
-///				protocol
-///				Last Modified: 7/21/14
+///    for refinement of membrane protein structure. Adaptation of the current FastRelax
+///    protocol
+///    Last Modified: 7/21/14
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <devel/init.hh>
@@ -31,6 +31,7 @@
 
 // Project Headers
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -96,7 +97,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		option.add_relevant( OptionKeys::in::file::fullatom );
-    	option.add_relevant( OptionKeys::in::file::movemap );
+		option.add_relevant( OptionKeys::in::file::movemap );
 		option.add_relevant( OptionKeys::relax::fast );
 
 		devel::init(argc, argv);

@@ -34,8 +34,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
@@ -243,9 +242,9 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 
 
 	if ( !tracer_ ) {
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(results_oss.str());
+		protocols::jd2::add_string_to_current_job(results_oss.str());
 		//store the loop_total where jd2 silent file can get it
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("LAM_total", total_score_);
+		protocols::jd2::add_string_real_pair_to_current_job("LAM_total", total_score_);
 	}
 
 	return;

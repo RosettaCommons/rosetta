@@ -22,9 +22,7 @@
 #include <protocols/backrub/BackrubMover.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -133,11 +131,6 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	// std::string const traj_file_tag( jd2::current_output_name() );
 	//  counters_.reset();
 
-	jd2::JobOP job;
-	if ( jd2::jd2_used() ) {
-		job = jd2::get_current_job();
-	}
-
 	//ek for fast sidechain sampling and internal mc trials
 	utility::vector1< conformation::ResidueOP > current;
 	// utility::vector1< conformation::ResidueOP > previous;
@@ -199,13 +192,11 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 			if ( score < nonconst_monte_carlo().lowest_score() ) {
 				nonconst_monte_carlo().set_lowest_score_pose( pose );
 			}
-			if ( job ) {
-				job->add_string_real_pair( "prop_density", move->last_proposal_density_ratio() );
-				job->add_string_real_pair( "prop_density_accept", last_accepted_prop_density );
-				job->add_string_real_pair( "move_dE", delta_energy );
-				job->add_string_real_pair( "move_dE_accept", last_accepted_dE );
-				job->add_string_string_pair( "move_type", move->type() );
-			}
+			protocols::jd2::add_string_real_pair_to_current_job( "prop_density", move->last_proposal_density_ratio() );
+			protocols::jd2::add_string_real_pair_to_current_job( "prop_density_accept", last_accepted_prop_density );
+			protocols::jd2::add_string_real_pair_to_current_job( "move_dE", delta_energy );
+			protocols::jd2::add_string_real_pair_to_current_job( "move_dE_accept", last_accepted_dE );
+			protocols::jd2::add_string_string_pair_to_current_job( "move_type", move->type() );
 		}
 
 		for ( Size i = 1; i <= observers().size(); ++i ) {

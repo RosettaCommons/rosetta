@@ -22,14 +22,11 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/file/file_sys_util.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <core/chemical/sdf/mol_writer.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <core/pose/util.hh>
 #include <map>
 #include <basic/Tracer.hh>
@@ -125,24 +122,19 @@ void WriteLigandMolFile::parse_my_tag(
 
 void WriteLigandMolFile::apply(core::pose::Pose & pose)
 {
-
-
-	jd2::JobDistributor* job_dist(jd2::JobDistributor::get_instance());
-	jd2::JobOP current_job(job_dist->current_job());
-
 	core::chemical::sdf::MolWriter mol_writer("V2000");
 
-	jd2::Job::StringStringPairs string_string_data(job_dist->current_job()->get_string_string_pairs());
-	jd2::Job::StringRealPairs string_real_data(job_dist->current_job()->get_string_real_pairs());
+	std::map< std::string, std::string > string_string_data( protocols::jd2::get_string_string_pairs_from_current_job() );
+	std::map< std::string, core::Real > string_real_data( protocols::jd2::get_string_real_pairs_from_current_job() );
 
 	std::map<std::string,std::string> job_data;
 
-	for ( jd2::Job::StringStringPairs::const_iterator it = string_string_data.begin(); it != string_string_data.end(); ++it ) {
-		job_data.insert(std::make_pair(it->first,it->second));
+	for ( auto const & entry: string_string_data ) {
+		job_data.insert( entry );
 	}
 
-	for ( jd2::Job::StringRealPairs::const_iterator it = string_real_data.begin(); it != string_real_data.end(); ++it ) {
-		job_data.insert(std::make_pair(it->first,utility::to_string(it->second)));
+	for ( auto const & entry: string_real_data ) {
+		job_data.insert( std::make_pair( entry.first, utility::to_string(entry.second) ) );
 	}
 
 	mol_writer.set_job_data(job_data);
@@ -156,8 +148,8 @@ void WriteLigandMolFile::apply(core::pose::Pose & pose)
 #ifdef USEMPI
 	int mpi_rank;
 	MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);/* get current process id */
-    std::string mpi_rank_string(utility::to_string(mpi_rank));
-    std::string output_file = directory_+"/"+prefix_+"_"+mpi_rank_string+".sdf.gz";
+	std::string mpi_rank_string(utility::to_string(mpi_rank));
+	std::string output_file = directory_+"/"+prefix_+"_"+mpi_rank_string+".sdf.gz";
 #else
 	std::string output_file = directory_+"/"+prefix_+".sdf.gz";
 #endif

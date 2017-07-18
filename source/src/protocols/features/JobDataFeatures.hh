@@ -20,7 +20,6 @@
 //External
 
 //platform headers
-#include <protocols/jd2/Job.fwd.hh>
 
 #include <utility/vector1.hh>
 // XSD XRW Includes
@@ -81,11 +80,11 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	void insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+	void insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session) const;
 
-	void insert_string_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+	void insert_string_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session) const;
 
-	void insert_string_real_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+	void insert_string_real_rows(StructureID struct_id, utility::sql_database::sessionOP db_session) const;
 
 	void load_string_data(utility::sql_database::sessionOP  db_session, StructureID struct_id, core::pose::Pose & pose);
 

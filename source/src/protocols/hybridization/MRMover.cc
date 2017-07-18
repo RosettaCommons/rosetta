@@ -164,7 +164,6 @@ MRMover::init(){
 // apply()
 void MRMover::apply( Pose &pose ) {
 	using namespace protocols::loops;
-	using namespace protocols::jd2;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -172,7 +171,7 @@ void MRMover::apply( Pose &pose ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 
 	bool threaded = true;
-	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( JobDistributor::get_instance()->current_job()->inner_job() );
+	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job() );
 	if ( !job ) {
 		if ( option[ OptionKeys::in::file::fasta ].user() ) {
 			utility_exit_with_message(

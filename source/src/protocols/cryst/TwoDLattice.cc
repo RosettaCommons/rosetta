@@ -63,7 +63,6 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/relax/FastRelax.hh>
 
 

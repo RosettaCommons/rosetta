@@ -13,6 +13,7 @@
 
 
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/exit.hh>
 
@@ -94,7 +95,7 @@ typedef utility::pointer::owning_ptr< HemaggTrimer > HemaggTrimerOP;
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
 		protocols::jd2::register_options();
 
@@ -104,10 +105,10 @@ main( int argc, char * argv [] )
 		HemaggTrimerOP hemagg_trimer = new HemaggTrimer;
 		protocols::jd2::JobDistributor::get_instance()->go( hemagg_trimer );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 

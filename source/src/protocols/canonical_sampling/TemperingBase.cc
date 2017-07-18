@@ -25,9 +25,7 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 
-//#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 // core headers
 #include <basic/options/option_macros.hh>
@@ -114,7 +112,6 @@ TemperingBase::TemperingBase( TemperingBase const & other ) :
 	stats_silent_output_ = other.stats_silent_output_;
 	stats_file_ = other.stats_file_;
 
-	job_ = other.job_;
 	instance_initialized_ = other.instance_initialized_;
 	current_temp_ = other.current_temp_;
 	temp_trial_count_ = other.temp_trial_count_;
@@ -213,14 +210,9 @@ void TemperingBase::initialize_simulation(
 	if ( !instance_initialized_ ) init_from_options();
 	current_temp_=temperatures_.size();
 	monte_carlo()->set_temperature( temperatures_[ current_temp_ ] );
-	if ( jd2::jd2_used() ) {
-		job_ = jd2::get_current_job();
-	}
 	tr.Debug << std::setprecision(2);
-	if ( job_ ) {
-		job_->add_string_real_pair( "temperature", monte_carlo()->temperature() );
-		job_->add_string_real_pair( "temp_level", current_temp_ );
-	}
+	protocols::jd2::add_string_real_pair_to_current_job( "temperature", monte_carlo()->temperature() );
+	protocols::jd2::add_string_real_pair_to_current_job( "temp_level", current_temp_ );
 	temp_trial_count_ = 0;
 	tr.Trace << "initialized Tempering Base!!!" << std::endl;
 	trial_counter_.set_temperature_observer( this );
@@ -265,7 +257,6 @@ TemperingBase::finalize_simulation(
 	tr.Trace << "write statistics to " << stats_file_ << "..." << std::endl;
 	trial_counter_.write_to_file( stats_file_, mhm.output_name() );
 	tr.Trace << "done" << stats_file_ << std::endl;
-	job_ = nullptr;
 }
 
 bool TemperingBase::check_temp_consistency() {
@@ -444,10 +435,8 @@ void TemperingBase::set_current_temp( Size new_temp ) {
 	if ( monte_carlo() ) {
 		monte_carlo()->set_temperature( real_temp );
 	}
-	if ( job_ ) {
-		job_->add_string_real_pair( "temperature", real_temp );
-		job_->add_string_real_pair( "temp_level", new_temp );
-	}
+	protocols::jd2::add_string_real_pair_to_current_job( "temperature", real_temp );
+	protocols::jd2::add_string_real_pair_to_current_job( "temp_level", new_temp );
 }
 
 

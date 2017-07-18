@@ -63,9 +63,7 @@
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/util.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/util.hh>
 #include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -380,7 +378,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	finalize_setup(pose);
 
 	basic::prof_reset();
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
 	pose::set_ss_from_phipsi( pose );
@@ -513,7 +510,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	( *loop_scorefxn_highres_ )( pose );
 
 	// Finish
-	echo_metrics_to_jd2(pose,job);
+	echo_metrics_to_output(pose);
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 
 
@@ -528,7 +525,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 }// end apply
 
 
-void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, protocols::jd2::JobOP job) {
+void AntibodyModelerProtocol::echo_metrics_to_output(core::pose::Pose & pose) {
 
 	// align pose to native pose
 	pose::Pose native_pose = *get_native_pose();
@@ -548,41 +545,41 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	TR << "                    total_score = " << total_score << std::endl;
 	TR << "            unconstrained_score = " << unconstrained_score << std::endl;
 
-	job->add_string_real_pair( "unconstr_score", unconstrained_score );
+	protocols::jd2::add_string_real_pair_to_current_job( "unconstr_score", unconstrained_score );
 
 	align_to_native( pose, native_pose, ab_info_, native_ab_info, "H" );
-	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
-	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
-	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
+	protocols::jd2::add_string_real_pair_to_current_job("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
+	protocols::jd2::add_string_real_pair_to_current_job("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
+	protocols::jd2::add_string_real_pair_to_current_job("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
 	//pose.dump_pdb("aligned_H.pdb");
 	if ( ab_info_->is_camelid() == false ) {
 		align_to_native( pose, native_pose, ab_info_, native_ab_info, "L" );
-		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
-		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
-		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
+		protocols::jd2::add_string_real_pair_to_current_job("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
+		protocols::jd2::add_string_real_pair_to_current_job("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
+		protocols::jd2::add_string_real_pair_to_current_job("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
 		//pose.dump_pdb("aligned_L.pdb");
 	}
 
-	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
-	job->add_string_real_pair("VL_VH_distance", vl_vh_orientation_coords( pose, *ab_info_ )[1]);
-	job->add_string_real_pair("VL_VH_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[2]);
-	job->add_string_real_pair("VL_VH_opposite_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[3]);
-	job->add_string_real_pair("VL_VH_packing_angle", vl_vh_orientation_coords( pose, *ab_info_ )[4]);
+	//protocols::jd2::add_string_real_pair_to_current_job("AP_constraint", atom_pair_constraint_score);
+	protocols::jd2::add_string_real_pair_to_current_job("VL_VH_distance", vl_vh_orientation_coords( pose, *ab_info_ )[1]);
+	protocols::jd2::add_string_real_pair_to_current_job("VL_VH_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[2]);
+	protocols::jd2::add_string_real_pair_to_current_job("VL_VH_opposite_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[3]);
+	protocols::jd2::add_string_real_pair_to_current_job("VL_VH_packing_angle", vl_vh_orientation_coords( pose, *ab_info_ )[4]);
 
 	//kink metrics
-	job->add_string_real_pair( "kink_RD_HB", kink_RD_Hbond( pose, *ab_info_ ));
-	job->add_string_real_pair( "kink_bb_HB", kink_bb_Hbond( pose, *ab_info_ ));
-	job->add_string_real_pair( "kink_Trp_HB", kink_Trp_Hbond( pose, *ab_info_ ));
+	protocols::jd2::add_string_real_pair_to_current_job( "kink_RD_HB", kink_RD_Hbond( pose, *ab_info_ ));
+	protocols::jd2::add_string_real_pair_to_current_job( "kink_bb_HB", kink_bb_Hbond( pose, *ab_info_ ));
+	protocols::jd2::add_string_real_pair_to_current_job( "kink_Trp_HB", kink_Trp_Hbond( pose, *ab_info_ ));
 
 	std::pair<core::Real,core::Real> q = kink_dihedral( pose, *ab_info_);
-	job->add_string_real_pair( "kink_q", q.first );
-	job->add_string_real_pair( "kink_qbase", q.second );
+	protocols::jd2::add_string_real_pair_to_current_job( "kink_q", q.first );
+	protocols::jd2::add_string_real_pair_to_current_job( "kink_qbase", q.second );
 
 	std::pair<ParatopeMetric< core::Real >, ParatopeMetric<core::Real> > sasa = paratope_sasa( pose, *ab_info_);
 	ParatopeMetric< core::SSize> p_charge = paratope_charge( pose, *ab_info_ );
-	job->add_string_real_pair( "CDR_SASA", sasa.first.paratope );
-	job->add_string_real_pair( "CDR_SASA_HP", sasa.second.paratope);
-	job->add_string_real_pair( "CDR_charge", Real(p_charge.paratope));
+	protocols::jd2::add_string_real_pair_to_current_job( "CDR_SASA", sasa.first.paratope );
+	protocols::jd2::add_string_real_pair_to_current_job( "CDR_SASA_HP", sasa.second.paratope);
+	protocols::jd2::add_string_real_pair_to_current_job( "CDR_charge", Real(p_charge.paratope));
 }
 
 

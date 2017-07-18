@@ -17,6 +17,7 @@
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <devel/init.hh>
@@ -56,11 +57,11 @@ main( int argc, char * argv [] )
 	// initialize core
 	devel::init(argc, argv);
 
-	if (option[ OptionKeys::in::file::s ].user()){
+	if ( option[ OptionKeys::in::file::s ].user() ) {
 		pdb_name = option[ OptionKeys::in::file::s ]()[1];
 	}
 
-	if (option[ OptionKeys::in::file::native ].user()){
+	if ( option[ OptionKeys::in::file::native ].user() ) {
 		native_pdb_name = option[ OptionKeys::in::file::native ]();
 	}
 
@@ -69,17 +70,17 @@ main( int argc, char * argv [] )
 	core::import_pose::pose_from_file(pose, pdb_name, core::import_pose::PDB_file);
 	core::import_pose::pose_from_file(native_pose, native_pdb_name, core::import_pose::PDB_file);
 
-/*	Size align_residue_list [] = {10,20,30,40};
+	/* Size align_residue_list [] = {10,20,30,40};
 	Size rmsd_residue_list [] = {50,60,70,80};
 	for (Size i=0; i<=1; i++){
-		temp_residues.assign(align_residue_list+2*i,align_residue_list+2*(i+1));
-		align_residues.push_back(temp_residues);
-		temp_residues.clear();
+	temp_residues.assign(align_residue_list+2*i,align_residue_list+2*(i+1));
+	align_residues.push_back(temp_residues);
+	temp_residues.clear();
 	}
 	for (Size j=0; j<=1; j++){
-		temp_residues.assign(rmsd_residue_list+2*j,rmsd_residue_list+2*(j+1));
-		rmsd_residues.push_back(temp_residues);
-		temp_residues.clear();
+	temp_residues.assign(rmsd_residue_list+2*j,rmsd_residue_list+2*(j+1));
+	rmsd_residues.push_back(temp_residues);
+	temp_residues.clear();
 	}*/
 
 	align_residues.push_back(10);
@@ -90,15 +91,15 @@ main( int argc, char * argv [] )
 	core::Real rmsd = align_segment_with_native_and_calc_rmsd_over_req_res(pose,native_pose,align_residues,rmsd_residues);
 	TR << "Alignment RMSD is " << rmsd << std::endl;
 
-//	AntibodyInfoOP ab_info = new AntibodyInfo();
-//	core::kinematics::FoldTreeOP my_foldtree ( ab_info->LA_H_foldtree(pose) );
-//	my_foldtree->show(std::cout);
-//	pose.fold_tree(*my_foldtree);
-//
-//	protocols::rigid::RigidBodyTransMoverOP translate_away ( new protocols::rigid::RigidBodyTransMover( pose, 1 ) );
-//	translate_away->step_size( 100 );
-//	translate_away->apply( pose );
-//	exit(-1);
+	// AntibodyInfoOP ab_info = new AntibodyInfo();
+	// core::kinematics::FoldTreeOP my_foldtree ( ab_info->LA_H_foldtree(pose) );
+	// my_foldtree->show(std::cout);
+	// pose.fold_tree(*my_foldtree);
+	//
+	// protocols::rigid::RigidBodyTransMoverOP translate_away ( new protocols::rigid::RigidBodyTransMover( pose, 1 ) );
+	// translate_away->step_size( 100 );
+	// translate_away->apply( pose );
+	// exit(-1);
 }
 
 

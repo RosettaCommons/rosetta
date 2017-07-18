@@ -16,6 +16,7 @@
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 

@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/membrane_sampling.cc
+/// @file   src/apps/pilot/ralford/membrane_sampling.cc
 ///
-/// @brief 		Pilot Application for Testing Membrane & Non membrane movers
+/// @brief   Pilot Application for Testing Membrane & Non membrane movers
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified: 7/10/14
 
 // Unit Headers
@@ -19,39 +19,40 @@
 
 // Package Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/rigid/RigidBodyMover.hh> 
+#include <protocols/rigid/RigidBodyMover.hh>
 
-#include <protocols/jd2/JobDistributor.hh> 
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
-#include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
+#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
-#include <core/scoring/ScoreFunction.hh> 
-#include <core/scoring/ScoreFunctionFactory.hh> 
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh> 
-#include <core/optimization/MinimizerOptions.hh> 
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
 
-#include <core/conformation/Conformation.hh> 
-#include <core/conformation/membrane/MembraneInfo.hh> 
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
-#include <core/pose/Pose.hh> 
-#include <core/types.hh> 
+#include <core/pose/Pose.hh>
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/xyz.functions.hh> 
-#include <numeric/xyzVector.hh> 
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.hh>
 
-#include <numeric/random/random.hh> 
+#include <numeric/random/random.hh>
 
-#include <utility/pointer/owning_ptr.hh> 
+#include <utility/pointer/owning_ptr.hh>
 
-#include <basic/Tracer.hh> 
+#include <basic/Tracer.hh>
 
 using namespace protocols::moves;
 
@@ -60,7 +61,7 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_sampling" );
 /// @brief View membrane planes based on normal/center
 class MembraneSampleMover : public Mover {
 
-public: 
+public:
 
 	MembraneSampleMover() {}
 
@@ -70,52 +71,52 @@ public:
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
-		using namespace numeric; 
-		using namespace core; 
-		using namespace core::scoring; 
+		using namespace numeric;
+		using namespace core;
+		using namespace core::scoring;
 		using namespace core::kinematics;
 		using namespace protocols::membrane;
 
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb = new AddMembraneMover();
 		add_memb->apply( pose );
 
-	
+
 		// Setup the Membrane Energy Function
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_fa_2007" );
 
 		// Set up a movemap - bb, chi and jump are all moveable
-		MoveMapOP movemap = new MoveMap(); 
-		movemap->set_bb( true ); 
-		movemap->set_chi( true ); 
+		MoveMapOP movemap = new MoveMap();
+		movemap->set_bb( true );
+		movemap->set_chi( true );
 		movemap->set_jump( true ); // will need to play with this one
 
 		// Apply the Min Mover
 		core::optimization::MinimizerOptions min_opts( "lbfgs_armijo_nonmonotone", 0.1, true );
-	 	core::optimization::AtomTreeMinimizer atm;
-	 	atm.run( pose, *movemap, *sfxn, min_opts ); 
+		core::optimization::AtomTreeMinimizer atm;
+		atm.run( pose, *movemap, *sfxn, min_opts );
 
 		// Make 5 random phi/psi moves
-	/*	for ( Size i = 1; i <= 20; ++i ) {
+		/* for ( Size i = 1; i <= 20; ++i ) {
 
-			core::Size randres = numeric::random::random_range( 1, pose.size() );
+		core::Size randres = numeric::random::random_range( 1, pose.size() );
 
-   		 	core::Real phi = pose.phi( randres ) + numeric::random::gaussian() * 4;
-    	 	core::Real psi = pose.psi( randres ) + numeric::random::gaussian() * 4;
+		core::Real phi = pose.phi( randres ) + numeric::random::gaussian() * 4;
+		core::Real psi = pose.psi( randres ) + numeric::random::gaussian() * 4;
 
-		    pose.set_phi( randres, phi );
-    		pose.set_psi( randres, psi );
+		pose.set_phi( randres, phi );
+		pose.set_psi( randres, psi );
 
-    		
+
 		}
 
-	*/
+		*/
 	}
 
 };
 
 typedef utility::pointer::owning_ptr< MembraneSampleMover > MembraneSampleMoverOP;
-typedef utility::pointer::owning_ptr< MembraneSampleMover const > MembraneSampleMoverCOP; 
+typedef utility::pointer::owning_ptr< MembraneSampleMover const > MembraneSampleMoverCOP;
 
 /// @brief Main method
 int
@@ -133,7 +134,7 @@ main( int argc, char * argv [] )
 		MembraneSampleMoverOP mp = new MembraneSampleMover();
 		protocols::jd2::JobDistributor::get_instance()->go( mp );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

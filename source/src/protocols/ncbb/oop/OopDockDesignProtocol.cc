@@ -31,8 +31,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Mover headers
 #include <protocols/moves/Mover.hh>
@@ -461,8 +460,6 @@ OopDockDesignProtocol::apply(
 
 	TR << "Main loop..." << std::endl;
 
-	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
 	if ( pymol_ ) {
 		protocols::moves::PyMOLObserverOP pymover = protocols::moves::AddPyMOLObserver(pose, keep_history_ );
 	}
@@ -481,15 +478,15 @@ OopDockDesignProtocol::apply(
 		for ( Size j = 1; j <= Size( pert_num_ ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
-			curr_job->add_string_real_pair( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
+			protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
 		}
 		pert_mc->recover_low( pose );
-		curr_job->add_string_real_pair( "ENERGY_PERT (pert score) recovered low", (*pert_score_fxn)(pose) );
+		protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT (pert score) recovered low", (*pert_score_fxn)(pose) );
 
 		// design
 		TR << "DESIGN: " << k << std::endl;
 		desn_sequence->apply( pose );
-		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn_)(pose) );
+		protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_DESN (hard score)", (*score_fxn_)(pose) );
 
 		//kdrew: reset mc after first cycle if not considering initial pose
 		if ( !mc_initial_pose_  && k == 1 ) {
@@ -508,8 +505,8 @@ OopDockDesignProtocol::apply(
 
 	mc->recover_low( pose );
 
-	curr_job->add_string_real_pair( "ENERGY_FINAL (pert score) ", (*pert_score_fxn)(pose) );
-	curr_job->add_string_real_pair( "ENERGY_FINAL (hard score) ", (*score_fxn_)(pose) );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL (pert score) ", (*pert_score_fxn)(pose) );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL (hard score) ", (*score_fxn_)(pose) );
 
 	TR << "Ending main loop..." << std::endl;
 	TR << "Checking pose energy..." << std::endl;
@@ -523,7 +520,7 @@ OopDockDesignProtocol::apply(
 		final_design_min( pose, score_fxn_, desn_tf );
 	}
 
-	calculate_statistics( curr_job, pose, score_fxn_ );
+	calculate_statistics( pose, score_fxn_ );
 
 }
 

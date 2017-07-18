@@ -7,67 +7,68 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/membrane_relax2.cc
+/// @file   src/apps/pilot/ralford/membrane_relax2.cc
 ///
-/// @brief 		Membrane Protein Structure - FastRelax Protocol (Structure Refinement)
-/// @details	Custom version of FastRelax - sample local conformational change of protein
-///	     	    structure in the membrane. Steps: (1) membrane insertion and (2) execting cycles of repulsive 
-///  			upweighting, repack and minimization of structure with respect to the membrane.
+/// @brief   Membrane Protein Structure - FastRelax Protocol (Structure Refinement)
+/// @details Custom version of FastRelax - sample local conformational change of protein
+///           structure in the membrane. Steps: (1) membrane insertion and (2) execting cycles of repulsive
+///     upweighting, repack and minimization of structure with respect to the membrane.
 ///
-/// 			Last Modified: 6/28/14
-///				Note: Part of the Membrane Framework Applications Suite
-///				Versioning: 1.0
+///    Last Modified: 6/28/14
+///    Note: Part of the Membrane Framework Applications Suite
+///    Versioning: 1.0
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <devel/init.hh>
 
 // Package Headers
-#include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
+#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 // Project Headers
-#include <protocols/jd2/JobDistributor.hh> 
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/scoring/ScoreFunction.hh> 
-#include <core/scoring/ScoreFunctionFactory.hh>  
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/kinematics/MoveMap.hh> 
+#include <core/kinematics/MoveMap.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/AtomTreeMinimizer.hh> 
+#include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <protocols/simple_moves/MinMover.hh> 
+#include <protocols/simple_moves/MinMover.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/random/random.hh> 
-#include <utility/pointer/owning_ptr.hh> 
+#include <numeric/random/random.hh>
+#include <utility/pointer/owning_ptr.hh>
 
-#include <numeric/conversions.hh> 
+#include <numeric/conversions.hh>
 
-#include <basic/Tracer.hh> 
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iostream>
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_relax2" );
 
-using namespace core; 
+using namespace core;
 using namespace protocols::moves;
 
 /// @brief Membrane Transform Mover: Transform a pose into a new mover
 class MembraneRelaxMover : public Mover {
 
-public: 
+public:
 
 	MembraneRelaxMover() {}
 
@@ -77,18 +78,18 @@ public:
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
-		using namespace core::scoring; 
-		using namespace core::kinematics; 
-		using namespace core::optimization; 
+		using namespace core::scoring;
+		using namespace core::kinematics;
+		using namespace core::optimization;
 		using namespace protocols::membrane;
 
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
-		add_memb->apply(pose); 
+		AddMembraneMoverOP add_memb = new AddMembraneMover();
+		add_memb->apply(pose);
 
 		// Initialize Membrane Position
-		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover(); 
-		init_memb->apply( pose ); 
+		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover();
+		init_memb->apply( pose );
 
 		// Setup Membrane Energy Function as is
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_fa_2007" );
@@ -96,36 +97,36 @@ public:
 		// Setup a MoveMap
 		MoveMapOP movemap = new MoveMap();
 		movemap->set_bb( 1, 222 );
-		movemap->set_chi( true ); 
+		movemap->set_chi( true );
 		movemap->set_jump( true );
 
 		// Setup minimizer options
 		core::optimization::MinimizerOptions min_opts( "lbfgs_armijo_nonmonotone", 0.1, true );
-		min_opts.max_iter( 200 ); 
+		min_opts.max_iter( 200 );
 
 		// Setup Minimizer
 		AtomTreeMinimizer at_min;
 		(*sfxn)(pose);
 
 		// Grab jump CA anchors
-		core::Vector atom1a = pose.residue( 1 ).xyz( 2 ); 
-		core::Vector atom2a = pose.residue( 223 ).xyz( 2 ); 
+		core::Vector atom1a = pose.residue( 1 ).xyz( 2 );
+		core::Vector atom2a = pose.residue( 223 ).xyz( 2 );
 
 		TR << "Initial Membrnae Position: " << std::endl;
-		show_membrane_position( pose ); 
+		show_membrane_position( pose );
 
 		TR << "Initial Distance: " << atom1a.distance( atom2a ) << std::endl;
 
 		// Minimize in Rounds
-		//cart_min.run( pose, *movemap, *sfxn, min_opts ); 
-		at_min.run( pose, *movemap, *sfxn, min_opts ); 
+		//cart_min.run( pose, *movemap, *sfxn, min_opts );
+		at_min.run( pose, *movemap, *sfxn, min_opts );
 
 		TR << "Final Membrane Position: " << std::endl;
-		show_membrane_position( pose ); 
+		show_membrane_position( pose );
 
 		// Compute Jump Distance
-		core::Vector atom1b = pose.residue( 1 ).xyz( 2 ); 
-		core::Vector atom2b = pose.residue( 223 ).xyz( 2 ); 
+		core::Vector atom1b = pose.residue( 1 ).xyz( 2 );
+		core::Vector atom2b = pose.residue( 223 ).xyz( 2 );
 
 		TR << "Final distance: " << atom1b.distance( atom2b ) << std::endl;
 	}
@@ -133,7 +134,7 @@ public:
 	void
 	show_membrane_position( Pose & pose ) {
 
-		Vector center( pose.conformation().membrane_info()->membrane_center(pose.conformation()) ); 
+		Vector center( pose.conformation().membrane_info()->membrane_center(pose.conformation()) );
 		Vector normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
 
 		TR << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
@@ -141,8 +142,8 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneRelaxMover > MembraneRelaxMoverOP; 
-typedef utility::pointer::owning_ptr< MembraneRelaxMover const > MembraneRelaxMoverCOP; 
+typedef utility::pointer::owning_ptr< MembraneRelaxMover > MembraneRelaxMoverOP;
+typedef utility::pointer::owning_ptr< MembraneRelaxMover const > MembraneRelaxMoverCOP;
 
 /// @brief Main method
 int
@@ -160,7 +161,7 @@ main( int argc, char * argv [] )
 		MembraneRelaxMoverOP mprelax = new MembraneRelaxMover();
 		protocols::jd2::JobDistributor::get_instance()->go( mprelax );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

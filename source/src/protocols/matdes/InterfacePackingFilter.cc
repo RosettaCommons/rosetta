@@ -35,7 +35,6 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/io/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
@@ -177,8 +176,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			sub_pose_resis = core::pose::symmetry::get_intracomponent_and_neighbor_resis(pose, sym_dof_name_list[i], contact_dist_);
 			core::io::pose_from_pose(sub_pose, pose, sub_pose_resis);
 
-			//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-			//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+			//pose.dump_pdb("pose_" + protocols::jd2::current_output_name() + ".pdb");
+			//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::current_output_name() + ".pdb");
 
 			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 			TR << "computed_holes" << std::endl;

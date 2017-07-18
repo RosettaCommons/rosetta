@@ -35,7 +35,6 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
@@ -81,8 +80,7 @@ ConstraintScoreCutoffFilter::set_constraints( core::scoring::constraints::Constr
 bool
 ConstraintScoreCutoffFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real cur_score = get_score( pose );
-	jd2::JobOP job( jd2::get_current_job() );
-	if ( job ) job->add_string_real_pair( get_user_defined_name(), cur_score );
+	if ( protocols::jd2::jd2_used() ) protocols::jd2::add_string_real_pair_to_current_job( get_user_defined_name(), cur_score );
 	if ( cur_score <= cutoff() ) return true;
 	return false;
 } // apply_filter

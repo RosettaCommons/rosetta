@@ -20,8 +20,7 @@
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/ligand_docking/grid_functions.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -392,7 +391,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 			+(core::Real)rejected_moves);
 		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
 
-		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Transform_accept_ratio", accept_ratio);
+		protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
 
 		std::string transform_ensemble = "TransformEnsemble";
 
@@ -423,8 +422,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 
 		transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
 
-		protocols::jd2::JobOP job = protocols::jd2::JobDistributor::get_instance()->current_job();
-		job->add_string_real_pair("Grid_score", best_score);
+		protocols::jd2::add_string_real_pair_to_current_job("Grid_score", best_score);
 
 
 		std::map< std::string, core::Real > grid_scores;
@@ -436,7 +434,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		}
 
 		for ( auto const & entry : grid_scores ) {
-			job->add_string_real_pair( entry.first, entry.second );
+			protocols::jd2::add_string_real_pair_to_current_job( entry.first, entry.second );
 		}
 
 	}

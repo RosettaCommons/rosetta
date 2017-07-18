@@ -100,11 +100,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
-// only needed for intermediate output
-//#include <protocols/jd2/JobDistributor.hh>
-//#include <protocols/jd2/JobOutputter.hh>
-//#include <protocols/jd2/Job.hh>
-
 // numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>

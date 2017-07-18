@@ -53,8 +53,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Unit Headers
 #include <protocols/filters/Filter.hh>
@@ -941,7 +940,6 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						TR.flush();
 
 						// Experimental: add residue position of successful stub placement to the score.sc file
-						protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 						//std::string column_header = this->get_user_defined_name();
 
 						//convert residue number into a string
@@ -953,7 +951,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						std::string column_header = user_defined_name_;
 
 						//job->add_string_real_pair(column_header, res);
-						job->add_string_string_pair(column_header, convert.str());
+						protocols::jd2::add_string_string_pair_to_current_job(column_header, convert.str());
 
 						return;
 					} else { //final_filter_pass

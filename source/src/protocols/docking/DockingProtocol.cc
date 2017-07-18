@@ -56,7 +56,6 @@
 #include <basic/datacache/DataMap.hh>
 
 #include <core/io/raw_data/ScoreMap.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -89,7 +88,6 @@
 #include <algorithm>
 
 #include <core/import_pose/import_pose.hh>
-#include <protocols/jd2/Job.hh>
 //#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -932,7 +930,6 @@ DockingProtocol::apply( pose::Pose & pose )
 	show(TR);
 
 	basic::prof_reset();
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	// Low resolution docking
 	if ( docking_lowres_mover_ ) {
@@ -956,7 +953,7 @@ DockingProtocol::apply( pose::Pose & pose )
 		}
 
 		// add scores to jd2 output
-		if ( reporting_ && get_native_pose() ) job->add_string_real_pair("st_rmsd", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
+		if ( reporting_ && get_native_pose() ) protocols::jd2::add_string_real_pair_to_current_job("st_rmsd", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
 
 		docking_lowres_mover_->apply( pose );
 
@@ -967,12 +964,12 @@ DockingProtocol::apply( pose::Pose & pose )
 
 		// add scores to jd2 output
 		if ( reporting_ ) {
-			if ( ensemble1_ ) job->add_string_real_pair("conf_num1", ensemble1_->get_current_confnum() );
-			if ( ensemble2_ ) job->add_string_real_pair("conf_num2", ensemble2_->get_current_confnum() );
+			if ( ensemble1_ ) protocols::jd2::add_string_real_pair_to_current_job("conf_num1", ensemble1_->get_current_confnum() );
+			if ( ensemble2_ ) protocols::jd2::add_string_real_pair_to_current_job("conf_num2", ensemble2_->get_current_confnum() );
 			if ( get_native_pose() ) {
 				// calculate and store the rms no matter which mode was used
-				job->add_string_real_pair("rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
-				job->add_string_real_pair("cen_rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
+				protocols::jd2::add_string_real_pair_to_current_job("rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
+				protocols::jd2::add_string_real_pair_to_current_job("cen_rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
 			}
 			// store the low res scores for output
 			core::io::raw_data::ScoreMap::score_map_from_scored_pose( lowres_scores, pose );
@@ -1021,21 +1018,21 @@ DockingProtocol::apply( pose::Pose & pose )
 		if ( reporting_ ) {
 			// calculate and store the rms no matter which mode was used
 			// this will overwrite the "rms" column from low res if it was calculated
-			if ( get_native_pose() ) job->add_string_real_pair("rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ) );
+			if ( get_native_pose() ) protocols::jd2::add_string_real_pair_to_current_job("rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ) );
 
 			// output low res scores if low res was run
 			if ( !lowres_scores.empty() ) { //size() > 0 ) {
 				for ( std::map< std::string, core::Real >::const_iterator pair=lowres_scores.begin(); pair!=lowres_scores.end(); ++pair ) {
-					if ( pair->first == "dock_ens_conf" ) job->add_string_real_pair( "cen_dock_ens_conf", pair->second );
-					else if ( pair->first != "total_score" ) job->add_string_real_pair( pair->first, pair->second );
+					if ( pair->first == "dock_ens_conf" ) protocols::jd2::add_string_real_pair_to_current_job( "cen_dock_ens_conf", pair->second );
+					else if ( pair->first != "total_score" ) protocols::jd2::add_string_real_pair_to_current_job( pair->first, pair->second );
 				}
 			}
 
 			// TODO: metrics doesn't need to always take scorefunctions (for example, not necessary for irms or fnat)
-			job->add_string_real_pair("I_sc", calc_interaction_energy( pose, docking_scorefxn_output_, movable_jumps_ ) );
+			protocols::jd2::add_string_real_pair_to_current_job("I_sc", calc_interaction_energy( pose, docking_scorefxn_output_, movable_jumps_ ) );
 			if ( get_native_pose() ) {
-				job->add_string_real_pair("Irms", calc_Irmsd(pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
-				job->add_string_real_pair("Fnat", calc_Fnat( pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
+				protocols::jd2::add_string_real_pair_to_current_job("Irms", calc_Irmsd(pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
+				protocols::jd2::add_string_real_pair_to_current_job("Fnat", calc_Fnat( pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
 			}
 
 			// pose.energies().show_total_headers( std::cout );
@@ -1044,7 +1041,7 @@ DockingProtocol::apply( pose::Pose & pose )
 			// TR << pose.energies().total_energies()[ core::scoring::dock_ens_conf ] << std::endl;
 
 			if ( ensemble1_ && ensemble2_ ) {
-				job->add_string_real_pair("conf_score",
+				protocols::jd2::add_string_real_pair_to_current_job("conf_score",
 					pose.energies().total_energies()[ core::scoring::total_score ]
 					- ensemble1_->highres_reference_energy()
 					- ensemble2_->highres_reference_energy() );

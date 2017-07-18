@@ -53,8 +53,6 @@
 #include <protocols/simple_moves/ddGCreator.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -333,7 +331,6 @@ void ddG::apply(Pose & pose)
 		average_per_residue_ddg.second /= repeats_;
 	}
 
-	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
 	setPoseExtraScore(pose, "ddg",average_ddg);
 	if ( per_residue_ddg_ ) {
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
@@ -676,7 +673,7 @@ ddG::define_ddG_schema() {
 		"This mover is useful for reporting the total or per-residue "
 		"ddgs in cases where you don't want to use the ddG filter for "
 		"some reason. (also, the ddg filter can't currently do per-residue "
-		"ddgs). Ddg scores are reported as string-real pairs in the job. "
+		"ddgs). Ddg scores are reported as string-real pairs in the output scorefile. "
 		"The total ddg score has the tag \"ddg\" and the each per residue ddg has the tag "
 		"\"residue_ddg_n\" where n is the residue number.")
 		.add_attributes( attlist )

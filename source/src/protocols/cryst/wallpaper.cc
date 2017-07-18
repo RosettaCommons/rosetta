@@ -29,8 +29,6 @@
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>

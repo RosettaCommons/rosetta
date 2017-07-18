@@ -36,8 +36,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -217,7 +216,6 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 void OligomericAverageDegreeFilter::write_to_pdb( Pose const & pose, core::Size const residue, std::string const & residue_name, core::Size const neighbors ) const
 {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
 	core::Size output_resi = residue;
@@ -225,7 +223,7 @@ void OligomericAverageDegreeFilter::write_to_pdb( Pose const & pose, core::Size 
 		output_resi = pose.pdb_info()->number( residue );
 	}
 	std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(output_resi) + " = " + ObjexxFCL::string_of(neighbors);
-	job->add_string(output_string);
+	protocols::jd2::add_string_to_current_job(output_string);
 
 }
 

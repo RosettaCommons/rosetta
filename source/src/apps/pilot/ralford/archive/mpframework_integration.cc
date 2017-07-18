@@ -7,23 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/membrane/mpframework_integration.cc
+/// @file   src/apps/pilot/membrane/mpframework_integration.cc
 ///
-/// @brief 		Membrane Framework Integration
+/// @brief   Membrane Framework Integration
 /// @details    Relax with membrane highres sfxn modifications and over
-///				detailed embeddings
+///    detailed embeddings
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified: 6/15/14
 
 // Unit Headers
 #include <devel/init.hh>
 
 // Package Headers
-#include <protocols/membrane/AddMembraneMover.hh> 
+#include <protocols/membrane/AddMembraneMover.hh>
 
 // Project Headers
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Utility Headers
@@ -44,13 +45,13 @@ main( int argc, char * argv [] )
 		using namespace protocols::membrane;
 
 		protocols::jd2::register_options();
-	
+
 		devel::init(argc, argv);
 
-		AddMembraneMoverOP add_mem( new AddMembraneMover() ); 
+		AddMembraneMoverOP add_mem( new AddMembraneMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( add_mem );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

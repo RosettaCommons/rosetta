@@ -34,10 +34,9 @@
 
 #include <utility/string_util.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -77,8 +76,6 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 	RotamerTracer << "IG: " <<ig->getTotalMemoryUsage() << " bytes"<<std::endl;
 
-	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
-
 	std::list<std::string> job_data;
 
 	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::one_body].user() ) {
@@ -97,7 +94,7 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 		RotamerTracer <<"Running Annealer" <<std::endl;
 		job_data.push_back(get_annealer_pick_table(ig,rotamer_sets,pose,packer_task));
 	}
-	job->add_strings(job_data);
+	protocols::jd2::add_strings_to_current_job(job_data);
 	//RotamerTracer <<two_body_energy <<std::endl;
 	//RotamerTracer << one_body_energy <<std::endl;
 }

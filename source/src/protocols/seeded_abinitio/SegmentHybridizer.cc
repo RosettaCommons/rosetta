@@ -41,7 +41,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/idealize/IdealizeMover.hh>

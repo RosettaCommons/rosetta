@@ -18,9 +18,6 @@
 
 // protocols headers
 #include <protocols/backrub/BackrubMover.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <protocols/kinematic_closure/BalancedKicMover.hh>
@@ -115,7 +112,6 @@ MetropolisHastingsMover::MetropolisHastingsMover() :
 	using namespace basic::options::OptionKeys;
 	if ( option[ run::checkpoint_interval ].user() ) {
 		protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
-		job_outputter_ = jd2::SilentFileJobOutputterOP( new jd2::SilentFileJobOutputter() ); // only required when writing out checkpoints
 	}
 }
 
@@ -128,7 +124,6 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 	ntrials_(metropolis_hastings_mover.ntrials_),
 	output_name_(metropolis_hastings_mover.output_name_),
 	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_),
-	job_outputter_(metropolis_hastings_mover.job_outputter_),
 	checkpoint_count_(metropolis_hastings_mover.checkpoint_count_)
 {
 	for ( core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i ) {
@@ -156,7 +151,7 @@ MetropolisHastingsMover::~MetropolisHastingsMover()= default;
 core::Size
 MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if ( output_name() == "" ) {
-		set_output_name(protocols::jd2::JobDistributor::get_instance()->current_output_name());
+		set_output_name( protocols::jd2::current_output_name() );
 		tr.Info  << " obtained output name from JobDistributor " << std::endl;
 		output_name_from_job_distributor_ = true;
 	} else {
@@ -307,10 +302,8 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 		//  core::pose::add_comment( tmp_pose, "BIASENERGY", str );
 		pss->add_comment("BIASENERGY", str);
 	}
-	// write out snapshots for the replica, with joboutputter, the comment in pose will be not outputted
-	//  job_outputter_->other_pose( jd2::get_current_job(), tmp_pose, checkpoint_id, current_trial_, false );
 
-	protocols::jd2::add_job_data_to_ss( pss, jd2::get_current_job() );
+	protocols::jd2::add_current_job_data_to_ss( pss );
 	pss->print_header( out );
 	pss->print_scores( out );
 	pss->print_conformation( out );
@@ -471,7 +464,6 @@ MetropolisHastingsMover::parse_my_tag(
 	if ( tag->hasOption("checkpoint_interval") ) {
 		core::Size const checkpoint_interval( tag->getOption< core::Size >( "checkpoint_interval")); // every 6 minutes
 		protocols::checkpoint::checkpoint_with_interval( checkpoint_interval );
-		job_outputter_ = jd2::SilentFileJobOutputterOP( new jd2::SilentFileJobOutputter() );
 	}
 
 	//monte-carlo

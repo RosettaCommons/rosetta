@@ -31,8 +31,7 @@
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Numeric header
 #include <numeric/random/random.hh>
@@ -196,7 +195,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 		utility::vector1<core::Vector> possible_centroids;
 
 		// If we've already stored a startfrom, add that to the values to use.
-		jd2::Job::StringRealPairs string_real_data(jd2::JobDistributor::get_instance()->current_job()->get_string_real_pairs());
+		std::map< std::string, core::Real > string_real_data(protocols::jd2::get_string_real_pairs_from_current_job());
 		if ( string_real_data.find("start_x") != string_real_data.end() ) {
 			core::Vector start_coords;
 			start_coords.x(string_real_data["start_x"]);
@@ -222,7 +221,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 
 		// Now add all the job-tagged data.
 		if ( ! starting_positions_.empty() && ! specific_tag_found ) {
-			std::string const job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
+			std::string const job_tag( protocols::jd2::current_input_tag());
 			utility::vector1<std::string> const input_filenames(utility::split(job_tag));
 			for ( std::string filename : input_filenames ) {
 				position_id = starting_positions_.find(filename);

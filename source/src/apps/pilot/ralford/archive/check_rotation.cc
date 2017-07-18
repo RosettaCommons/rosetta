@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		src/apps/pilot/ralford/transform_into_mem.cc
+/// @file   src/apps/pilot/ralford/transform_into_mem.cc
 ///
-/// @brief 		needs to update docs on this one
-/// @details	needs to update docs on this one
+/// @brief   needs to update docs on this one
+/// @details needs to update docs on this one
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified: 6/18/14
 
 // Unit Headers
 #include <devel/init.hh>
 
 // Package Headers
-#include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/TransformIntoMembraneMover.hh> 
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
-#include <protocols/membrane/visualize/VisualizeMembraneMover.hh> 
-#include <protocols/membrane/visualize/ShowMembranePlanesMover.hh> 
-#include <protocols/membrane/SetMembranePositionMover.hh> 
+#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/TransformIntoMembraneMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
+#include <protocols/membrane/visualize/VisualizeMembraneMover.hh>
+#include <protocols/membrane/visualize/ShowMembranePlanesMover.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
 
-#include <core/kinematics/Stub.hh> 
-#include <core/kinematics/Jump.hh> 
+#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Jump.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -35,28 +35,29 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/kinematics/FoldTree.hh> 
-#include <core/kinematics/Edge.hh> 
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
 
 // Project Headers
-#include <protocols/jd2/JobDistributor.hh> 
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
-#include <core/pose/Pose.hh> 
-#include <core/conformation/Conformation.hh> 
-#include <core/conformation/membrane/MembraneInfo.hh> 
+#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/xyz.functions.hh> 
-#include <numeric/xyzVector.hh> 
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.hh>
 
-#include <numeric/random/random.hh> 
-#include <utility/pointer/owning_ptr.hh> 
+#include <numeric/random/random.hh>
+#include <utility/pointer/owning_ptr.hh>
 
-#include <basic/Tracer.hh> 
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iostream>
@@ -68,7 +69,7 @@ using namespace protocols::moves;
 /// @brief View membrane planes based on normal/center
 class MembraneViewMover : public Mover {
 
-public: 
+public:
 
 	MembraneViewMover() {}
 
@@ -79,13 +80,13 @@ public:
 	void apply( Pose & pose ) {
 
 		using namespace protocols::membrane;
-		using namespace protocols::membrane::visualize; 
-		using namespace numeric; 
+		using namespace protocols::membrane::visualize;
+		using namespace numeric;
 		using namespace core::kinematics;
 
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
-		add_memb->apply(pose); 
+		AddMembraneMoverOP add_memb = new AddMembraneMover();
+		add_memb->apply(pose);
 
 		// Rotate a bit
 
@@ -94,23 +95,23 @@ public:
 
 		Vector center( 0, 5, 0 ); //= pose.conformation().membrane_info()->membrane_center(pose.conformation());
 		Vector normal( 0, 0, 10 );
-		//SetMembranePositionMoverOP transform_memb2 = new SetMembranePositionMover( center, normal, 1 ); 
-		//transform_memb2->apply( pose ); 
-
- 
-		SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 2 ); 
-		transform_memb->apply( pose ); 
+		//SetMembranePositionMoverOP transform_memb2 = new SetMembranePositionMover( center, normal, 1 );
+		//transform_memb2->apply( pose );
 
 
-		//MembranePositionFromTopologyMoverOP initialize_memb = new MembranePositionFromTopologyMover(); 
-		//initialize_memb->apply( pose ); 
+		SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 2 );
+		transform_memb->apply( pose );
 
-	
-	//	Vector normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 
-		//SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 1 ); 
+		//MembranePositionFromTopologyMoverOP initialize_memb = new MembranePositionFromTopologyMover();
+		//initialize_memb->apply( pose );
+
+
+		// Vector normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+
+		//SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 1 );
 		//TransformIntoMembraneMoverOP transform_memb = new TransformIntoMembraneMover( 2, center, normal );
-		//transform_memb->apply( pose ); 
+		//transform_memb->apply( pose );
 
 
 		pose.conformation().membrane_info()->show();
@@ -118,8 +119,8 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneViewMover > MembraneViewMoverOP; 
-typedef utility::pointer::owning_ptr< MembraneViewMover const > MembraneViewMoverCOP; 
+typedef utility::pointer::owning_ptr< MembraneViewMover > MembraneViewMoverOP;
+typedef utility::pointer::owning_ptr< MembraneViewMover const > MembraneViewMoverCOP;
 
 /// @brief Main method
 int
@@ -137,7 +138,7 @@ main( int argc, char * argv [] )
 		MembraneViewMoverOP mpview = new MembraneViewMover();
 		protocols::jd2::JobDistributor::get_instance()->go( mpview );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

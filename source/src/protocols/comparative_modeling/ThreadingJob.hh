@@ -64,6 +64,13 @@ public:
 	utility::vector1< core::Size > const & extra_residues_to_steal() const;
 	void extra_residues_to_steal( utility::vector1< core::Size > const & res );
 
+public:
+
+	/// @brief Convenience function to get the current ThreadingJob from JD2
+	/// Will return a nullptr if we can't get a ThreadingJob from JD2
+	static ThreadingJob const * current_job();
+
+
 	//NOTE:
 	//get_pose() will give you the parent_pdb and not the starting model, the starting model is created from the ThreadingJobInputter
 	// i have done it like this, since we can have multiple parent decoys for a given alignment read in via a silent file.

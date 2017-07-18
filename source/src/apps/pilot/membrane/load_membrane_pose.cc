@@ -30,6 +30,7 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <protocols/moves/Mover.hh>
 

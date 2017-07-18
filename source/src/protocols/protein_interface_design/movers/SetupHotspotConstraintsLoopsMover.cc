@@ -79,7 +79,6 @@
 
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/MoverContainer.hh>
 // C++ headers
 //#include <cstdlib>

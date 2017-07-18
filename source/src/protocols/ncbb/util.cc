@@ -26,7 +26,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
@@ -269,7 +269,7 @@ final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pac
 }
 
 void
-calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, core::scoring::ScoreFunctionOP score_fxn ) {
+calculate_statistics( core::pose::Pose const & pose, core::scoring::ScoreFunctionOP score_fxn ) {
 
 	// create  MetricValues
 	basic::MetricValue<  Real  > mv_sasa_complex;
@@ -351,29 +351,29 @@ calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, cor
 	repack_hbond_ener_sum_seperated = repack_seperated_emap[ hbond_sr_bb ] + repack_seperated_emap[ hbond_lr_bb ] + repack_seperated_emap[ hbond_bb_sc ] + repack_seperated_emap[ hbond_sc ];
 
 	// add values to job so that they will be output in the pdb
-	curr_job->add_string_real_pair( "ENERGY_COMPLEX:\t\t", energy_complex );
-	curr_job->add_string_real_pair( "ENERGY_SEPERATE:\t\t", energy_seperated );
-	curr_job->add_string_real_pair( "ENERGY_DIFF:\t\t", energy_complex - energy_seperated );
-	curr_job->add_string_real_pair( "REPACK_ENERGY_SEPERATE:\t\t", repack_energy_seperated );
-	curr_job->add_string_real_pair( "REPACK_ENERGY_DIFF:\t\t", energy_complex - repack_energy_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_COMPLEX:\t\t", energy_complex );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_SEPERATE:\t\t", energy_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_DIFF:\t\t", energy_complex - energy_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_ENERGY_SEPERATE:\t\t", repack_energy_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_ENERGY_DIFF:\t\t", energy_complex - repack_energy_seperated );
 
-	curr_job->add_string_real_pair( "SASA_COMPLEX:\t\t", mv_sasa_complex.value() );
-	curr_job->add_string_real_pair( "SASA_SEPERATE:\t\t", mv_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_SASA_SEPERATE:\t\t", mv_repack_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_repack_sasa_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "SASA_COMPLEX:\t\t", mv_sasa_complex.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "SASA_SEPERATE:\t\t", mv_sasa_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_sasa_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_SASA_SEPERATE:\t\t", mv_repack_sasa_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_repack_sasa_seperated.value() );
 
-	curr_job->add_string_real_pair( "HB_ENER_COMPLEX:\t\t", hbond_ener_sum_complex );
-	curr_job->add_string_real_pair( "HB_ENER_SEPERATE:\t\t", hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "REPACK_HB_ENER_SEPERATE:\t\t", repack_hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "REPACK_HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - repack_hbond_ener_sum_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "HB_ENER_COMPLEX:\t\t", hbond_ener_sum_complex );
+	protocols::jd2::add_string_real_pair_to_current_job( "HB_ENER_SEPERATE:\t\t", hbond_ener_sum_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - hbond_ener_sum_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_HB_ENER_SEPERATE:\t\t", repack_hbond_ener_sum_seperated );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - repack_hbond_ener_sum_seperated );
 
-	curr_job->add_string_real_pair( "PACK_COMPLEX:\t\t", mv_pack_complex.value() );
-	curr_job->add_string_real_pair( "PACK_SEPERATE:\t\t", mv_pack_seperated.value() );
-	curr_job->add_string_real_pair( "PACK_DIFF:\t\t", mv_pack_complex.value() - mv_pack_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_PACK_SEPERATE:\t\t", mv_repack_pack_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "PACK_COMPLEX:\t\t", mv_pack_complex.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "PACK_SEPERATE:\t\t", mv_pack_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "PACK_DIFF:\t\t", mv_pack_complex.value() - mv_pack_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_PACK_SEPERATE:\t\t", mv_repack_pack_seperated.value() );
+	protocols::jd2::add_string_real_pair_to_current_job( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
 }
 
 // this only works for two chains and assumes the protein is first and the peptide is second

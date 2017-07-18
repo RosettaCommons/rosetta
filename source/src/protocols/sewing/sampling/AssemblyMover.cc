@@ -55,9 +55,7 @@
 
 #include <protocols/filters/Filter.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 
@@ -315,11 +313,7 @@ AssemblyMover::output_stats(
 
 		TR << "Base class output stats!" << std::endl;
 
-		protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
-		job_me->input_tag();
-		std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
-
-
+		std::string const job_name ( protocols::jd2::current_output_name() );
 
 		/**************** Dump multi chain pose and NativeRotamersMap ******************/
 		//Dump the multichain pose
@@ -333,11 +327,11 @@ AssemblyMover::output_stats(
 
 		/************** Assembly-only Statistics ****************/
 		std::string path = assembly->string_path();
-		job_me->add_string_string_pair("path", path);
+		protocols::jd2::add_string_string_pair_to_current_job("path", path);
 
 		utility::vector1< std::pair< std::string, core::Real > > assembly_scores = assembly_scorefxn_->get_all_scores(assembly);
 		for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
-			job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
+			protocols::jd2::add_string_real_pair_to_current_job(assembly_scores[i].first, assembly_scores[i].second);
 		}
 
 		/************** Centroid Statistics ****************/
@@ -348,28 +342,28 @@ AssemblyMover::output_stats(
 		core::Real env_score = cen_pose.energies().total_energies()[core::scoring::cen_env_smooth];
 		core::Real rg_score = cen_pose.energies().total_energies()[core::scoring::rg];
 		core::Real pair_score = cen_pose.energies().total_energies()[core::scoring::cen_pair_smooth];
-		job_me->add_string_real_pair( "cen_env_smooth",  env_score );
-		job_me->add_string_real_pair( "cen_rg",  rg_score );
-		job_me->add_string_real_pair( "cen_pair_smooth",  pair_score );
+		protocols::jd2::add_string_real_pair_to_current_job( "cen_env_smooth",  env_score );
+		protocols::jd2::add_string_real_pair_to_current_job( "cen_rg",  rg_score );
+		protocols::jd2::add_string_real_pair_to_current_job( "cen_pair_smooth",  pair_score );
 
 		/************** Full-Atom Statistics ****************/
 
 		//Write a residue-normalized score to the score file
-		job_me->add_string_real_pair( "nres", pose.size());
-		job_me->add_string_real_pair( "norm_tot_score", fa_scorefxn_->score(pose)/pose.size());
-		job_me->add_string_real_pair( "percent_native", assembly->percent_native(pose));
+		protocols::jd2::add_string_real_pair_to_current_job( "nres", pose.size());
+		protocols::jd2::add_string_real_pair_to_current_job( "norm_tot_score", fa_scorefxn_->score(pose)/pose.size());
+		protocols::jd2::add_string_real_pair_to_current_job( "percent_native", assembly->percent_native(pose));
 
 		//Write RMS data to the score file by generating pose from the Assembly, and comparing it to the refined pose
 		core::pose::Pose unrefined_pose = get_fullatom_pose(assembly);
 		if ( unrefined_pose.size() == pose.size() ) {
 			core::Real rms = core::scoring::bb_rmsd_including_O(unrefined_pose, pose);
-			job_me->add_string_real_pair( "bb_rmsd",  rms );
+			protocols::jd2::add_string_real_pair_to_current_job( "bb_rmsd",  rms );
 		} else {
 			TR << "NOT THE SAME NUMBER OF RESIDUES" << std::endl;
 			TR << "pose: " << pose.size() << std::endl;
 			TR << "unrefined pose: " << unrefined_pose.size() << std::endl;
 			core::Real rms = pose.size() - unrefined_pose.size();
-			job_me->add_string_real_pair( "bb_rmsd",  rms );
+			protocols::jd2::add_string_real_pair_to_current_job( "bb_rmsd",  rms );
 		}
 
 		//Print a PyMOL selection for 'native' positions

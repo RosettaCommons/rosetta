@@ -17,8 +17,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/pose_length_moves/AnalyzeLoopModeling.hh>
 #include <protocols/pose_length_moves/AnalyzeLoopModelingCreator.hh>
@@ -212,7 +211,7 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 		Size loopStart=pose_loops[ii].start();
 		Size loopEnd=pose_loops[ii].stop();
 		Size loopLength = loopEnd-loopStart+1;
-		std::string tag = jd2::JobDistributor::get_instance()->current_job()->input_tag();
+		std::string tag = protocols::jd2::current_input_tag();
 		if ( loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_ ) {
 			core::pose::PoseOP kicPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPoseOP = pose.clone();

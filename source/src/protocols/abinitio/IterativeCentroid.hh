@@ -32,7 +32,6 @@
 #include <protocols/abinitio/IterativeFullatom.hh>
 
 // Project Headers
-#include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 

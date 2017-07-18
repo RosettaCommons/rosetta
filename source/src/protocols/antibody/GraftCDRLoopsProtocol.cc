@@ -33,9 +33,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
@@ -332,7 +329,6 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
 
 	basic::prof_reset();
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
 	pose::set_ss_from_phipsi( frame_pose );

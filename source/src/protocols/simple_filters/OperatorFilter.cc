@@ -21,9 +21,6 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 //JD2 headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 //Project Headers
 #include <basic/Tracer.hh>
@@ -221,13 +218,11 @@ Operator::report_sm( core::pose::Pose const & pose ) const {
 	core::Real const val( compute( pose ) );
 	if ( report_subvalues() ) {
 		//add sigmoid values to the scroring file
-		using protocols::jd2::JobDistributor;
-		protocols::jd2::JobOP job_me( protocols::jd2::JobDistributor::get_instance()->current_job() );
 		TR<<"reporting operator subvalues for: ";
 		for ( FilterOP filter : filters_ ) {
 			core::Real const val_local( filter->report_sm( pose ) );
 			TR<<filter->get_user_defined_name()<<" with value "<<val_local<<std::endl;
-			job_me->add_string_real_pair(filter->get_user_defined_name(), val_local);
+			protocols::jd2::add_string_real_pair_to_current_job(filter->get_user_defined_name(), val_local);
 		}
 	}//fi report_subvalues
 	TR<<"Operator returning: "<<val<<std::endl;

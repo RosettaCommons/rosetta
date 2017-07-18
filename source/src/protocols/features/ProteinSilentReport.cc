@@ -34,7 +34,7 @@
 #include <protocols/features/DatabaseFilters.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <protocols/features/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <basic/options/option.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -54,8 +54,6 @@
 
 // C++ Headers
 #include <string>
-
-#include <protocols/jd2/Job.hh>
 
 namespace protocols {
 namespace features {
@@ -171,7 +169,7 @@ ProteinSilentReport::apply(
 
 	initialize(db_session);
 
-	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	std::string input_tag( protocols::jd2::current_input_tag() );
 	structure_features_->mark_structure_as_sampled(batch_id_,tag,input_tag,db_session);
 
 	if ( !database_filter_ ) {
@@ -265,7 +263,7 @@ ProteinSilentReport::write_full_report(
 	vector1< bool > relevant_residues(pose.size(), true);
 
 	db_session->begin_transaction();
-	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	std::string input_tag( protocols::jd2::current_input_tag() );
 
 	StructureID struct_id = structure_features_->report_features(
 		batch_id_, db_session, tag, input_tag);

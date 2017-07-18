@@ -38,8 +38,6 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // util
 #include <utility/vector1.hh>

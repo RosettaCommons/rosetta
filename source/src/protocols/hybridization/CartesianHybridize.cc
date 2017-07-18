@@ -25,7 +25,6 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
 

@@ -18,9 +18,6 @@
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/util.hh>
 
-//#include <protocols/jd2/JobDistributor.hh>
-//#include <protocols/jd2/util.hh>
-
 #include <devel/init.hh>
 #include <core/types.hh>
 

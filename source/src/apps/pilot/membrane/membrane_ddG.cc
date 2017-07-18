@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file		apps/pilot/membrane/membrane_ddG.cc
+/// @file  apps/pilot/membrane/membrane_ddG.cc
 ///
-/// @brief		Membrane Framework Application: ddG of Mutation in Membranes
-/// @details	The membrane framework currently supports computing ddG of mutations:
-///				Uses membrane representation, energ functions, and current tools for Rosetta
-///				design for computing ddGs.
-///				Last Modified: 7/26/14
+/// @brief  Membrane Framework Application: ddG of Mutation in Membranes
+/// @details The membrane framework currently supports computing ddG of mutations:
+///    Uses membrane representation, energ functions, and current tools for Rosetta
+///    design for computing ddGs.
+///    Last Modified: 7/26/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <devel/init.hh>
@@ -27,6 +27,7 @@
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -46,13 +47,13 @@ static basic::Tracer TR( "apps.pilot.ralford.membrane_ddG" );
 /// @brief ompLA Task
 utility::vector1< MutationOP >
 ompLA_task() {
-	
+
 	using namespace protocols::membrane::ddG;
-	
+
 	// Create a new list of mutations
 	utility::vector1< MutationOP > mutations;
 	mutations.resize(20);
-	
+
 	// Append a list
 	mutations[1] = new Mutation( 181, core::chemical::aa_ala );
 	mutations[2] = new Mutation( 181, core::chemical::aa_cys );
@@ -74,7 +75,7 @@ ompLA_task() {
 	mutations[18] = new Mutation( 181, core::chemical::aa_val );
 	mutations[19] = new Mutation( 181, core::chemical::aa_trp );
 	mutations[20] = new Mutation( 181, core::chemical::aa_tyr );
-	
+
 	return mutations;
 }
 
@@ -82,13 +83,13 @@ ompLA_task() {
 /// @remarks protein name = ompA
 utility::vector1< MutationOP >
 ompA_task() {
-	
+
 	using namespace protocols::membrane::ddG;
-	
+
 	// Create a new list of mutations
 	utility::vector1< MutationOP > mutations;
 	mutations.resize(12);
-	
+
 	// Append a list
 	mutations[1] = new Mutation( 7, core::chemical::aa_ala );
 	mutations[2] = new Mutation( 15, core::chemical::aa_ala );
@@ -102,7 +103,7 @@ ompA_task() {
 	mutations[10] = new Mutation( 51, core::chemical::aa_ala );
 	mutations[11] = new Mutation( 123, core::chemical::aa_ala );
 	mutations[12] = new Mutation( 170, core::chemical::aa_ala );
-	
+
 	return mutations;
 }
 
@@ -110,13 +111,13 @@ ompA_task() {
 /// @remarks PDBID = 1PY6
 utility::vector1< MutationOP >
 bacteriorhodpsin_task() {
-	
+
 	using namespace protocols::membrane::ddG;
-	
+
 	// Create a new list of mutations
 	utility::vector1< MutationOP > mutations;
 	mutations.resize(12);
-	
+
 	// Append a list
 	mutations[1] = new Mutation( 31, core::chemical::aa_ala );
 	mutations[2] = new Mutation( 32, core::chemical::aa_ala );
@@ -142,7 +143,7 @@ bacteriorhodpsin_task() {
 	mutations[10] = new Mutation( 56, core::chemical::aa_ala );
 	mutations[11] = new Mutation( 57, core::chemical::aa_ala );
 	mutations[12] = new Mutation( 58, core::chemical::aa_ala );
-	
+
 	return mutations;
 }
 
@@ -150,30 +151,30 @@ bacteriorhodpsin_task() {
 int
 main( int argc, char * argv [] )
 {
-	
+
 	using namespace core::scoring;
 	using namespace protocols::membrane::ddG;
 	using namespace protocols::jd2;
-	
+
 	try {
-		
+
 		// Devel init factories
 		devel::init(argc, argv);
-		
+
 		// Register JD2 options
 		protocols::jd2::register_options();
-		
+
 		// Load in mutants for the appropriate task
 		utility::vector1< MutationOP > ompA_mutations = ompA_task();
 		utility::vector1< MutationOP > ompLA_mutations = ompLA_task();
 		utility::vector1< MutationOP > bacteriorhodopsin_mutations = bacteriorhodpsin_task();
-		
+
 		// Make ddG calculation
 		MembraneDDGMoverOP ddG = new MembraneDDGMover( ompLA_mutations );
 		JobDistributor::get_instance()->go( ddG );
-		
+
 		return 0;
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

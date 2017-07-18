@@ -32,8 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -157,8 +156,7 @@ InterfaceScoreCalculator::parse_my_tag(
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 
 	// This is less than ideal, but at the least it should gracefully degrade if we're not under JD2
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	protocols::jd2::Job::StringStringPairs string_string_pairs(job->get_string_string_pairs());
+	std::map< std::string, std::string > string_string_pairs( protocols::jd2::get_string_string_pairs_from_current_job() );
 	if ( string_string_pairs.find("native_path") != string_string_pairs.end() ) {
 		std::string native_string(string_string_pairs.find("native_path")->second);
 		native_ = core::pose::PoseOP( new core::pose::Pose );
@@ -174,7 +172,7 @@ void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	// For now, keep current behavior of appending things into the Job.
 	// Ideally, these would be attached to the Pose extra scores, rather than the Job.
 	for ( auto const & entry: allscores ) {
-		job->add_string_real_pair( entry.first, entry.second );
+		protocols::jd2::add_string_real_pair_to_current_job( entry.first, entry.second );
 	}
 
 }

@@ -29,7 +29,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/types.hh>
-#include <protocols/jd2/JobDistributor.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -59,7 +58,6 @@ using core::pack::dunbrack::RotVector;
 using core::pack::dunbrack::rotamer_from_chi;
 using core::pose::Pose;
 using core::pose::tag_from_pose;
-using protocols::jd2::JobDistributor;
 using utility::vector1;
 using numeric::statistics::mean;
 using numeric::statistics::std_dev_with_provided_mean;

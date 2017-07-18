@@ -12,6 +12,7 @@
 
 // libRosetta headers
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 

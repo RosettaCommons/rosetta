@@ -56,8 +56,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 // XSD XRW Includes
@@ -210,10 +209,8 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 				core::io::RemarkInfo remark;
 				std::stringstream oss;
 
-				protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-
 				oss << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36);
-				job->add_string(oss.str());
+				protocols::jd2::add_string_to_current_job(oss.str());
 
 			}
 		}

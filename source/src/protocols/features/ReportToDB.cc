@@ -46,8 +46,7 @@
 #include <protocols/features/BatchFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
@@ -118,7 +117,6 @@ using core::pose::symmetry::is_symmetric;
 using cppdb::cppdb_error;
 using cppdb::statement;
 using cppdb::result;
-using protocols::jd2::JobDistributor;
 using protocols::moves::MoverOP;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
@@ -750,7 +748,7 @@ ReportToDB::apply( Pose& pose ){
 		<< accumulate(relevant_residues.begin(), relevant_residues.end(), 0)
 		<< " of the " << pose.size()
 		<< " total residues in the pose "
-		<< JobDistributor::get_instance()->current_output_name()
+		<< protocols::jd2::current_output_name()
 		<< " for batch '" << batch_name_ << "'." << endl;
 
 
@@ -788,11 +786,11 @@ void
 ReportToDB::ensure_structure_tags_are_ready()
 {
 	if ( (!custom_structure_tag_) || (structure_tag_ == "") ) {
-		structure_tag_ = JobDistributor::get_instance()->current_output_name();
+		structure_tag_ = protocols::jd2::current_output_name();
 	}
 
 	if ( (!custom_structure_input_tag_) || (structure_input_tag_ == "") ) {
-		structure_input_tag_ = JobDistributor::get_instance()->current_job()->input_tag();
+		structure_input_tag_ = protocols::jd2::current_input_tag();
 	}
 }
 

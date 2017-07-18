@@ -82,8 +82,6 @@
 
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/symmetric_docking/SymDockingHiRes.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -710,8 +708,8 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 	//fa_sfxn->show( TR, p );
 	//TR << std::endl;
 
-	//std::string tag = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
-	//std::string nstruct_tag = utility::to_string( protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index() );
+	//std::string tag = protocols::jd2::current_input_tag();
+	//std::string nstruct_tag = utility::to_string( protocols::jd2::current_nstruct_index() );
 	//p.dump_pdb( tag + "_" + nstruct_tag + "_before_min.pdb" );
 
 }
@@ -776,8 +774,8 @@ ZNCoordinationConstraintPlacerMover::minimize_zinc_coordination( core::pose::Pos
 	//fa_sfxn->show( TR, p  );
 	//TR << std::endl;
 
-	//std::string tag = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
-	//std::string nstruct_tag = utility::to_string( protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index() );
+	//std::string tag = protocols::jd2::current_nput_tag();
+	//std::string nstruct_tag = utility::to_string( protocols::jd2::current_nstruct_index() );
 	//p.dump_pdb( tag + "_" + nstruct_tag + "_after_min.pdb" );
 
 

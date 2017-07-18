@@ -48,7 +48,7 @@
 // MPI headers
 #ifdef USEMPI
 #include <mpi.h>
-#include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #endif
 
 // External headers
@@ -127,14 +127,14 @@ class NativeEnsemble : public Mover {
 
 public:
 	NativeEnsemble()
-		: loop_(0, 0),
-		  algorithm_("rama"),
-			iterations_(1000),
-			temperature_(1),
-			backbone_weight_(1),
-			sidechain_weight_(1),
-			dump_frequency_(1),
-			quiet_(false) {}
+	: loop_(0, 0),
+		algorithm_("rama"),
+		iterations_(1000),
+		temperature_(1),
+		backbone_weight_(1),
+		sidechain_weight_(1),
+		dump_frequency_(1),
+		quiet_(false) {}
 
 	void apply(Pose & pose);
 	string get_name() const { return "Native Ensemble"; }
@@ -195,9 +195,9 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 	canonical_mc->set_ntrials(iterations_);
 	canonical_mc->set_monte_carlo(monte_carlo);
 	canonical_mc->set_tempering(
-			new FixedTemperatureController(temperature_));
+		new FixedTemperatureController(temperature_));
 
-	if (loop_.start() <= 1) loop_ = Loop(2, pose.size() - 1);
+	if ( loop_.start() <= 1 ) loop_ = Loop(2, pose.size() - 1);
 	pose.update_residue_neighbors();
 
 	// Setup the standard backbone and sidechain moves.
@@ -208,11 +208,11 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 	TaskFactoryOP task_factory = new TaskFactory;
 	PreventRepackingOP prevent_repacking = new PreventRepacking();
 
-	utility::vector1<bool> is_near_loop = 
+	utility::vector1<bool> is_near_loop =
 		protocols::loops::select_loop_residues(pose, loop_, true, 10.0);
 
-	for (Size i = 1; i <= pose.size(); i++) {
-		if (not is_near_loop[i]) prevent_repacking->include_residue(i);
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( not is_near_loop[i] ) prevent_repacking->include_residue(i);
 	}
 
 	task_factory->push_back(new RestrictToRepacking);
@@ -226,28 +226,22 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 
 	// Customize the backbone and tempering moves.
 
-	if (algorithm_ == "rama") {
+	if ( algorithm_ == "rama" ) {
 		backbone_mover->add_perturber(new RamaPerturber);
-	}
-	else if (algorithm_ == "walking") {
+	} else if ( algorithm_ == "walking" ) {
 		backbone_mover->add_perturber(new WalkingPerturber(5));
-	}
-	else if (algorithm_ == "rama/para-temp") {
+	} else if ( algorithm_ == "rama/para-temp" ) {
 		canonical_mc->set_tempering(new MpiParallelTempering);
-	}
-	else if (algorithm_ == "walking/para-temp") {
+	} else if ( algorithm_ == "walking/para-temp" ) {
 		canonical_mc->set_tempering(new MpiParallelTempering);
 		backbone_mover->add_perturber(new WalkingPerturber(5));
-	}
-	else if (algorithm_ == "rama/bond-angle") {
+	} else if ( algorithm_ == "rama/bond-angle" ) {
 		backbone_mover->add_perturber(new RamaPerturber);
 		backbone_mover->add_perturber(new WalkingBondAnglePerturber);
-	}
-	else if (algorithm_ == "walking/bond-angle") {
+	} else if ( algorithm_ == "walking/bond-angle" ) {
 		backbone_mover->add_perturber(new WalkingPerturber(5));
 		backbone_mover->add_perturber(new WalkingBondAnglePerturber);
-	}
-	else {
+	} else {
 		utility_exit_with_message("Unknown algorithm: " + algorithm_);
 	}
 
@@ -296,7 +290,7 @@ void NativeEnsemble::show_header() const { // {{{1
 }
 
 void NativeEnsemble::show_progress(Size current_iteration) const { // {{{1
-	if (quiet_ == true) return;
+	if ( quiet_ == true ) return;
 	cerr << "\r[" << current_iteration << "/" << iterations_ << "]";
 }
 
@@ -308,12 +302,12 @@ void NativeEnsemble::write_schema_to_db() const { // {{{1
 	using utility::sql_database::sessionOP;
 	using namespace basic::database::schema_generator;
 
-	if (not ok_to_use_db()) return;
+	if ( not ok_to_use_db() ) return;
 
 	sessionOP db_session = basic::database::get_db_session();
 
 	// Define the jobs table.
-	// Strictly speaking, the loop_begin and loop_end fields should be in their 
+	// Strictly speaking, the loop_begin and loop_end fields should be in their
 	// own table.  As it is, this schema cannot support multiple loop regions.
 	{
 		Column id("id", new DbBigInt, false, true);
@@ -383,17 +377,17 @@ Size NativeEnsemble::write_job_to_db() const { // {{{1
 
 	Size job_id = 0;
 
-	if (ok_to_use_db()) {
+	if ( ok_to_use_db() ) {
 		sessionOP db_session = basic::database::get_db_session();
 		db_session->begin_transaction();
 
-		// Create a new entry in the jobs table, fill it in with all the 
+		// Create a new entry in the jobs table, fill it in with all the
 		// information that's available right now, and return the job id.
 
 		string const insert_string =
 			"INSERT INTO jobs ("
-				"command, revision, algorithm, start_time, input_file, "
-				"loop_begin, loop_end, iterations, frames, description) "
+			"command, revision, algorithm, start_time, input_file, "
+			"loop_begin, loop_end, iterations, frames, description) "
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
 		string const command = option.get_argv();
@@ -420,8 +414,8 @@ Size NativeEnsemble::write_job_to_db() const { // {{{1
 		db_session->force_commit_transaction();
 	}
 
-	// If MPI is being used, broadcast the job id from the root node.  It is 
-	// assumed that the root node also inserted the job into the database and 
+	// If MPI is being used, broadcast the job id from the root node.  It is
+	// assumed that the root node also inserted the job into the database and
 	// received a valid id.  This is enforced by ok_to_use_db().
 
 #ifdef USEMPI
@@ -436,7 +430,7 @@ void NativeEnsemble::write_stop_time_to_db(Size id) const { // {{{1
 	using basic::database::safely_prepare_statement;
 	using basic::database::safely_write_to_database;
 
-	if (not ok_to_use_db()) return;
+	if ( not ok_to_use_db() ) return;
 
 	// Record the stop time in the jobs table.
 
@@ -458,21 +452,21 @@ void NativeEnsemble::write_stop_time_to_db(Size id) const { // {{{1
 }
 
 void NativeEnsemble::write_temperatures_to_db( // {{{1
-		Size id, TemperatureControllerCOP temp_controller) const {
+	Size id, TemperatureControllerCOP temp_controller) const {
 
 	using utility::sql_database::sessionOP;
 	using basic::database::safely_prepare_statement;
 	using basic::database::safely_write_to_database;
 
-	if (not ok_to_use_db()) return;
+	if ( not ok_to_use_db() ) return;
 
 	sessionOP db_session = basic::database::get_db_session();
 
-	string const insert_string = 
+	string const insert_string =
 		"INSERT INTO temperatures (job_id, level, temperature) "
 		"VALUES (?, ?, ?);";
 
-	for (Size level = 1; level <= temp_controller->n_temp_levels(); level++) {
+	for ( Size level = 1; level <= temp_controller->n_temp_levels(); level++ ) {
 		cppdb::statement insert_statement =
 			safely_prepare_statement(insert_string, db_session);
 
@@ -485,16 +479,16 @@ void NativeEnsemble::write_temperatures_to_db( // {{{1
 }
 
 void NativeEnsemble::write_stats_to_db( // {{{1
-		Size id, MultiTempTrialCounterCOP counter) const {
+	Size id, MultiTempTrialCounterCOP counter) const {
 
 	using utility::sql_database::sessionOP;
 	using basic::database::safely_prepare_statement;
 	using basic::database::safely_write_to_database;
 	using protocols::moves::TrialCounter;
 
-	if (not ok_to_use_db()) return;
+	if ( not ok_to_use_db() ) return;
 
-	// Create a new entry in the moves table with information about which moves 
+	// Create a new entry in the moves table with information about which moves
 	// were used in this simulation and how effective they each were.
 
 	sessionOP db_session = basic::database::get_db_session();
@@ -503,13 +497,13 @@ void NativeEnsemble::write_stats_to_db( // {{{1
 		"INSERT INTO moves (job_id, type, temp_level, num_trials, num_accepted) "
 		"VALUES (?, ?, ?, ?, ?);";
 
-	for (Size temp_level = 1;
-	     temp_level <= counter->num_temp_levels();
-	     temp_level++) {
+	for ( Size temp_level = 1;
+			temp_level <= counter->num_temp_levels();
+			temp_level++ ) {
 
 		TrialCounter const & temp_counter = counter->temp_level(temp_level);
 
-		for (string const & tag : temp_counter.tags()) {
+		for ( string const & tag : temp_counter.tags() ) {
 			Size num_trials = temp_counter.trial(tag);
 			Size num_accepted = temp_counter.accepted(tag);
 
@@ -528,11 +522,11 @@ void NativeEnsemble::write_stats_to_db( // {{{1
 }
 
 bool NativeEnsemble::ok_to_use_db() const { // {{{1
-	// This script should only ever access the database from one thread at a 
-	// time.  The reason is that this everything this script writes to the 
-	// database is metadata about a job, and is doesn't make sense to write that 
-	// information from each child node.  This function simply returns true in 
-	// only one thread per job.  If MPI is being used, it will return true in the 
+	// This script should only ever access the database from one thread at a
+	// time.  The reason is that this everything this script writes to the
+	// database is metadata about a job, and is doesn't make sense to write that
+	// information from each child node.  This function simply returns true in
+	// only one thread per job.  If MPI is being used, it will return true in the
 	// root node.  Otherwise it will always return true.
 
 #ifdef USEMPI
@@ -563,17 +557,17 @@ int main(int argc, char * argv[]) { // {{{1
 
 	NativeEnsembleOP app = new NativeEnsemble;
 
-	if (not option[OptionKeys::in::file::s].active()) {
+	if ( not option[OptionKeys::in::file::s].active() ) {
 		utility_exit_with_message("Specify an input PDB using the '-s' flag.");
 	}
-	if (not option[OptionKeys::inout::dbms::database_name].user()) {
+	if ( not option[OptionKeys::inout::dbms::database_name].user() ) {
 		option[OptionKeys::inout::dbms::database_name].value("sandbox.db");
 	}
 
 	Pose pose;
 	pose_from_file(pose, option[OptionKeys::in::file::s][1].name(), core::import_pose::PDB_file);
 
-	if (option[OptionKeys::native_ensemble::loop].active()) {
+	if ( option[OptionKeys::native_ensemble::loop].active() ) {
 		app->set_loop(option[OptionKeys::native_ensemble::loop]());
 	}
 

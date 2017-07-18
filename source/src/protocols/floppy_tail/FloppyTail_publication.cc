@@ -23,9 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 //JD headers
-#include <protocols/jd2/JobDistributor.hh>
-//#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 namespace protocols {
 namespace floppy_tail {
@@ -49,17 +47,14 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
 	core::pose::PoseOP E2 = pose.split_by_chain(E2_chain);
 	core::Real const E2_score((*score_fxn)(*E2));
 
-	//print Job
-	using protocols::jd2::JobDistributor;
-	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
 	//debugging - check these pdbs
-	//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, E2, "E2");
-	//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, E3_RING, "E3_RING");
+	//protocols::jd2::output_intermediate_pose( E2, "E2");
+	//protocols::jd2::output_intermediate_pose( E3_RING, "E3_RING");
 
 	//print Binding_Energy
 	core::Real const BE(full_score - E3_RING_score - E2_score);
-	job_me->add_string("Binding_Energy = Complex - E2 alone - E3/RING alone");
-	job_me->add_string_real_pair("Binding energy", BE);
+	protocols::jd2::add_string_to_current_job("Binding_Energy = Complex - E2 alone - E3/RING alone");
+	protocols::jd2::add_string_real_pair_to_current_job("Binding energy", BE);
 	//print crosslink distance
 	//magic numbers: crosslink experiment tested these residues
 	bool const NEDD8(E2_chain == 4);
@@ -67,8 +62,8 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
 	core::Size const cl_tail(pose.pdb_info()->pdb2pose('C', 223));
 
 	core::Real const cl_dist(pose.residue(cl_base).atom("CA").xyz().distance( pose.residue(cl_tail).atom("CA").xyz() ));
-	job_me->add_string("Crosslink = distance between atom CA on residues (chain A, K679/K1676; chain C, 223)");
-	job_me->add_string_real_pair("crosslink distance", cl_dist);
+	protocols::jd2::add_string_to_current_job("Crosslink = distance between atom CA on residues (chain A, K679/K1676; chain C, 223)");
+	protocols::jd2::add_string_real_pair_to_current_job("crosslink distance", cl_dist);
 
 	//std::cout << full_score << " " << E3_RING_score << " " << E2_score << std::endl;
 

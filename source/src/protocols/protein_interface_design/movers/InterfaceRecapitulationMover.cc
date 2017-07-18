@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
@@ -42,7 +42,6 @@
 #include <map>
 #include <string>
 
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -133,9 +132,8 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 		if ( task->being_designed( i ) ) ++designable_positions;
 	}
 
-	protocols::jd2::JobDistributor* jd = protocols::jd2::JobDistributor::get_instance();
 	ReportPSSMDifferences rsd;
-	if ( pssm_ && !rsd.load_pssm_data( jd->current_job()->input_tag() ) ) {
+	if ( pssm_ && !rsd.load_pssm_data( protocols::jd2::current_input_tag() ) ) {
 		pssm_ = false;
 	}
 

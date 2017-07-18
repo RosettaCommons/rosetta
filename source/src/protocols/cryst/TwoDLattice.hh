@@ -51,7 +51,6 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 
 

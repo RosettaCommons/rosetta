@@ -37,8 +37,6 @@
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 
 //JD2:
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
 //Auto Headers
@@ -192,10 +190,7 @@ BundleReporterFilter::apply( core::pose::Pose const & pose ) const {
 
 	/// Write out a full report:
 	if ( TRReport.visible() ) {
-		core::Size jobno(0);
-		if ( protocols::jd2::jd2_used() ) { //If this is a JD2 job
-			jobno=protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index(); //Get the current job number.
-		}
+		core::Size jobno( protocols::jd2::current_nstruct_index() ); //Get the current job number.
 		TRReport << generate_full_tracer_report( jobno, score, pose ) << std::endl;
 		TRReport.flush();
 	}

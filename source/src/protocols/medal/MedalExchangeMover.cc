@@ -203,7 +203,10 @@ void MedalExchangeMover::apply(Pose& pose) {
 	using protocols::simple_moves::rational_mc::RationalMonteCarlo;
 	using protocols::star::Extender;
 
-	ThreadingJob const * const job = protocols::nonlocal::current_job();
+	ThreadingJob const * const job = ThreadingJob::current_job();
+	if ( ! job ) {
+		utility_exit_with_message("MedalExchangeMover must be used with the ThreadingJobInputter");
+	}
 	to_centroid(&pose);
 
 	Extender extender(job->alignment().clone(), pose.size());

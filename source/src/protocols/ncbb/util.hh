@@ -17,8 +17,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <protocols/jd2/Job.fwd.hh>
-
 // Mover headers
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
@@ -69,8 +67,9 @@ ncbb_design_main_loop(
 	protocols::moves::MonteCarloOP mc
 );
 
+/// @brief Calculate various statistics, and add them to the current JD2 job
 void
-calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, core::scoring::ScoreFunctionOP score_fxn  );
+calculate_statistics( core::pose::Pose const & pose, core::scoring::ScoreFunctionOP score_fxn  );
 
 void
 setup_pert_foldtree( core::pose::Pose & pose );

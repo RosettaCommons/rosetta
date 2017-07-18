@@ -42,8 +42,7 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/datacache/DataMap.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -109,11 +108,10 @@ void ComputeLigandRDF::apply( core::pose::Pose & pose )
 	compute_rdf_tracer << "Done computing RDF, appending data to job" <<std::endl;
 
 	std::map<std::string, utility::vector1<core::Real> >::iterator it;
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	for ( it = rdf_map.begin(); it != rdf_map.end(); ++it ) {
 		std::string rdf_string(utility::join(it->second," "));
 		std::string rdf_tag(it->first+"_"+mode_+"_rdf");
-		job->add_string_string_pair(rdf_tag, rdf_string);
+		protocols::jd2::add_string_string_pair_to_current_job(rdf_tag, rdf_string);
 	}
 }
 

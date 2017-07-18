@@ -70,9 +70,7 @@
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 
 // //JD headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <basic/options/option.hh>
@@ -556,9 +554,7 @@ void FloppyTailMover::low_res( core::pose::Pose & pose ) {
 
 	//dump centroid-stage result pose
 	if ( basic::options::option[basic::options::OptionKeys::FloppyTail::perturb_show ].value() ) {
-		using namespace protocols::jd2;
-		JobOP job_me( JobDistributor::get_instance()->current_job() );
-		JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "centroid");
+		protocols::jd2::output_intermediate_pose( pose, "centroid");
 	}
 
 	//show centroid score (duplicates last line above)

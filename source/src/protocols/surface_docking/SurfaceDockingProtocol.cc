@@ -23,9 +23,7 @@
 
 // Project headers
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -113,9 +111,6 @@ void SurfaceDockingProtocol::apply(pose::Pose & pose)
 	set_surface_parameters( pose );
 	setup_movers ( pose, first_protein_residue );
 
-	// Grabbing the job from JD2 for appending job specific information to the pdb
-	protocols::jd2::JobOP job = jd2::JobDistributor::get_instance()->current_job();
-
 	TR<<"Reorienting protein above the surface..."<<std::endl;
 	surface_orient_->apply(pose);
 
@@ -144,10 +139,10 @@ void SurfaceDockingProtocol::apply(pose::Pose & pose)
 	TR<<"Outputting decoy..."<<std::endl;
 	surface_orient_->apply(pose);
 	pack_rotamers_fullatom_->apply(pose);
-	job->add_string_real_pair("Total weighted score: ", pose.energies().total_energy());
-	job->add_string_string_pair("SolState_SecondaryStructure:",fullatom_relax_->get_sol_secondary_struct());
-	job->add_string_string_pair("Adsorbed_SecondaryStructure:",fullatom_relax_->get_ads_secondary_struct());
-	jd2::JobDistributor::get_instance()->job_outputter()->other_pose( job,pose, "Surface_");
+	protocols::jd2::add_string_real_pair_to_current_job("Total weighted score: ", pose.energies().total_energy());
+	protocols::jd2::add_string_string_pair_to_current_job("SolState_SecondaryStructure:",fullatom_relax_->get_sol_secondary_struct());
+	protocols::jd2::add_string_string_pair_to_current_job("Adsorbed_SecondaryStructure:",fullatom_relax_->get_ads_secondary_struct());
+	protocols::jd2::output_intermediate_pose( pose, "Surface_" );
 }
 
 std::string SurfaceDockingProtocol::get_name() const

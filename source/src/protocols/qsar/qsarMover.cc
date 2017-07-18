@@ -18,8 +18,7 @@
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -121,11 +120,10 @@ void qsarMover::apply(core::pose::Pose & pose)
 	core::Real total_score(grid_set->total_score(*residue));
 	TR.Debug << "total score is " << total_score <<std::endl;
 
-	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
 	for ( scoring_grid::GridSet::ScoreMap::value_type const & pair: grid_scores ) {
-		job->add_string_real_pair( "grid_"+pair.first, pair.second );
+		protocols::jd2::add_string_real_pair_to_current_job( "grid_"+pair.first, pair.second );
 	}
-	job->add_string_real_pair( "grid_total", total_score );
+	protocols::jd2::add_string_real_pair_to_current_job( "grid_total", total_score );
 
 	//grid_manager->write_grids("test_");
 

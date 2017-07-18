@@ -41,9 +41,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 
@@ -447,8 +445,7 @@ void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 
 void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 	if ( use_jobname_ ) {
-		protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-		posename_base_ = protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name( current_job );
+		posename_base_ = protocols::jd2::current_output_name();
 	} else {
 		posename_ = pose.pdb_info()->name();
 		posename_base_ = posename_.base();
@@ -1547,8 +1544,6 @@ void InterfaceAnalyzerMover::setup_score_data() {
 /// @details reports all the cool stuff we calculate to tracer output OR puts it into the job object.
 void InterfaceAnalyzerMover::report_data(){
 	//make output
-	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	//std::string const posename(protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name( current_job ) );
 	//std::ostringstream results_oss;
 	//std::ostream & results = which_ostream(T(posename_base_), results_oss, tracer_); //easy swap between tracer/job output
 
@@ -1588,7 +1583,7 @@ void InterfaceAnalyzerMover::report_data(){
 	} else {
 		//or report to job
 		for ( auto & it : score_data_ ) {
-			current_job->add_string_real_pair(it.first, it.second);
+			protocols::jd2::add_string_real_pair_to_current_job(it.first, it.second);
 		}
 	}
 }
@@ -1609,8 +1604,6 @@ void InterfaceAnalyzerMover::add_score_info_to_pose( core::pose::Pose & pose ){
 /// @details prints tracer output of pymol selction of interface residues, also builds a pymol selection that can be used from a file.
 void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const & interface_set )
 {
-	//make output
-	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	//for tracer or job output
 	std::ostringstream interface_oss;
 	std::ostream & pymol_interface = which_ostream( TRinterface, interface_oss, tracer_ );
@@ -1658,7 +1651,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 	data_.pymol_sel_interface =  interface_sele.str() ;
 	//job output if wanted
 	if ( !tracer_ ) {
-		current_job->add_string( interface_oss.str() );
+		protocols::jd2::add_string_to_current_job( interface_oss.str() );
 	}
 	return;
 }//end
@@ -1667,8 +1660,6 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 /// @details This function reports a few things: a pymol sytle selection of the unstat atoms and reports to the tracer or job what these atoms are.  The app InterfaceAnalyzer gets the multi-line string to write a file or print the selection.  Unsat hbonds to be shown as Spheres
 void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::Pose & pose, utility::vector1< core::id::AtomID > delta_unsat_hbond_atid_vector )
 {
-	//make output
-	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	//for tracer or job output
 	std::ostringstream results_oss, unsathbond_oss;
 	std::ostream & results = which_ostream( T( posename_base_ ), results_oss, tracer_); //easy swap between tracer/job output
@@ -1721,8 +1712,8 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 
 	//if we're not doing tracer output report this stuff to the job
 	if ( !tracer_ ) {
-		current_job->add_string( results_oss.str() );
-		current_job->add_string( unsathbond_oss.str() );
+		protocols::jd2::add_string_to_current_job( results_oss.str() );
+		protocols::jd2::add_string_to_current_job( unsathbond_oss.str() );
 	}
 	return;
 }

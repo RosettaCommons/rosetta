@@ -27,9 +27,7 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 
-//#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 // core headers
 #include <basic/options/option_macros.hh>

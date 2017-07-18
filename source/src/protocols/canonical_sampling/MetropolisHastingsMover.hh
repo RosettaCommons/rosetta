@@ -22,7 +22,6 @@
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
-#include <protocols/jd2/SilentFileJobOutputter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 
@@ -346,7 +345,6 @@ private:
 	// Internal book keeping
 	bool output_name_from_job_distributor_;
 
-	protocols::jd2::SilentFileJobOutputterOP job_outputter_;
 	core::Size checkpoint_count_;
 	std::vector< std::string > checkpoint_ids_;
 

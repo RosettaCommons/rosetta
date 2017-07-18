@@ -16,8 +16,7 @@
 #include <protocols/ligand_docking/Transform.hh>
 
 #include <protocols/ligand_docking/grid_functions.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
@@ -353,7 +352,7 @@ void Transform::apply(core::pose::Pose & pose)
 			}
 		}
 
-		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Transform_accept_ratio", accept_ratio);
+		protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
 		best_ligand.update_conformation(best_pose.conformation());
 	}
 
@@ -363,7 +362,7 @@ void Transform::apply(core::pose::Pose & pose)
 	pose = best_pose;
 
 	TR << "Accepted pose with grid score: " << best_score << std::endl;
-	jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Grid_score", best_score);
+	protocols::jd2::add_string_real_pair_to_current_job("Grid_score", best_score);
 }
 
 

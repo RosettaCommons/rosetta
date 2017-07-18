@@ -49,7 +49,6 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/util.hh>
 
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/JumpSample.hh>
@@ -750,7 +749,7 @@ void AbscriptMover::StageTracker::begin_stage( std::string const& stagename,
 
 	if ( stagename_ == "I" &&
 			basic::options::option[ basic::options::OptionKeys::run::intermediate_structures ]() ) {
-		jd2::output_intermediate_pose( pose, "stage0" );
+		protocols::jd2::output_intermediate_pose( pose, "stage0" );
 	}
 
 	// part X ----------------------------------------
@@ -769,16 +768,16 @@ void AbscriptMover::StageTracker::do_step( core::pose::Pose& pose,
 	//std::string checkpoint_id = "stage_"+stagename_+"_it_"+utility::to_string( iterations_ );
 
 	//  Checkpointing goes here, but doesn't work with ProtectedConformation yet, and so isn't implemented.
-	//  if ( !checkpointer_.recover_checkpoint( pose, jd2::current_output_name(), checkpoint_id,
+	//  if ( !checkpointer_.recover_checkpoint( pose, protocols::jd2::current_output_name(), checkpoint_id,
 	//                                          false /* fullatom */, true /* fold_tree */ ) ) {
 	if ( mover.setup_stage( pose, progress ) ) {
 		mover.apply( pose );
 	} else {
 		tr.Info << "Stage " << stagename_ << " step at " << progress << "% skipped." << std::endl;
 	}
-	//    checkpointer_.checkpoint( pose, jd2::current_output_name(), checkpoint_id, true /*fold tree */ );
+	//    checkpointer_.checkpoint( pose, protocols::jd2::current_output_name(), checkpoint_id, true /*fold tree */ );
 	//  }
-	//  checkpointer_.debug( jd2::current_output_name(), checkpoint_id, pose.energies().total_energy() );
+	//  checkpointer_.debug( protocols::jd2::current_output_name(), checkpoint_id, pose.energies().total_energy() );
 }
 
 void AbscriptMover::StageTracker::end_stage( core::pose::Pose& pose ){
@@ -801,7 +800,7 @@ void AbscriptMover::StageTracker::end_stage( core::pose::Pose& pose ){
 
 	if ( basic::options::option[ basic::options::OptionKeys::run::intermediate_structures ]() &&
 			iterations_ > 0 ) {
-		jd2::output_intermediate_pose( pose, "stage"+stagename_ );
+		protocols::jd2::output_intermediate_pose( pose, "stage"+stagename_ );
 	}
 }
 

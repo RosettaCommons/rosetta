@@ -26,9 +26,6 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerJob.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -477,7 +474,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 
 	bool custom_fold_tree = false;
-	std::string input_tag = protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job()->input_tag();
+	std::string input_tag = protocols::jd2::current_input_tag();
 	if ( pose.is_centroid() ) {
 		TR.Warning << "*** This is untested with centroid mode! ***" << std::endl;
 		//core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() , core::import_pose::PDB_file);

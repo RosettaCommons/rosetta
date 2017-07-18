@@ -42,10 +42,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-//JD2:
-#include <protocols/jd2/JobDistributor.fwd.hh>
-#include <protocols/jd2/Job.fwd.hh>
-
 // Project Headers
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>

@@ -14,8 +14,8 @@
 /// @author Tim Jacobs
 
 // Unit Headers
-#include <devel/sewing/sampling/LoophashAssemblyMover.hh>
-#include <devel/sewing/sampling/LoophashAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/LoophashAssemblyMover.hh>
+#include <protocols/sewing/sampling/LoophashAssemblyMoverCreator.hh>
 
 //Protocol headers
 #include <core/chemical/ChemicalManager.hh>
@@ -50,9 +50,7 @@
 #include <protocols/sic_dock/loophash_util.hh>
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
@@ -143,8 +141,7 @@ LoophashAssemblyMover::init(){
 	if ( ResourceManager::get_instance()->has_resource_with_description("LoopHashLibrary") ) {
 		TR << "Retrieving lh library from resource manager." << std::endl;
 		lh_library_ = get_resource<LoopHashLibrary>( "LoopHashLibrary" );
-	}
-	else{
+	} else {
 		utility::vector1<core::Size> loop_sizes = option[ OptionKeys::lh::loopsizes ].value();
 		TR << "Initializing lh library from command line" << std::endl;
 		lh_library_ = new LoopHashLibrary( loop_sizes );
@@ -158,16 +155,16 @@ LoophashAssemblyMover::init(){
 	loop_refine_scorefxn_ = new ScoreFunction();
 	//loop_refine_scorefxn_->set_weight(coordinate_constraint,  0.5 );
 	loop_refine_scorefxn_->set_weight( cart_bonded,  0.5 );
-	loop_refine_scorefxn_->set_weight( env			, 1.0);
-	loop_refine_scorefxn_->set_weight( pair		 , 1.0);
-	loop_refine_scorefxn_->set_weight( cbeta		, 1.0);
-	loop_refine_scorefxn_->set_weight( vdw			, 1.0);
-	loop_refine_scorefxn_->set_weight( rg			 , 3.0);
-	loop_refine_scorefxn_->set_weight( cenpack	, 1.0);
-	loop_refine_scorefxn_->set_weight( hs_pair	, 1.0);
-	loop_refine_scorefxn_->set_weight( ss_pair	, 1.0);
-	loop_refine_scorefxn_->set_weight( rsigma	 , 1.0);
-	loop_refine_scorefxn_->set_weight( sheet		, 1.0);
+	loop_refine_scorefxn_->set_weight( env   , 1.0);
+	loop_refine_scorefxn_->set_weight( pair   , 1.0);
+	loop_refine_scorefxn_->set_weight( cbeta  , 1.0);
+	loop_refine_scorefxn_->set_weight( vdw   , 1.0);
+	loop_refine_scorefxn_->set_weight( rg    , 3.0);
+	loop_refine_scorefxn_->set_weight( cenpack , 1.0);
+	loop_refine_scorefxn_->set_weight( hs_pair , 1.0);
+	loop_refine_scorefxn_->set_weight( ss_pair , 1.0);
+	loop_refine_scorefxn_->set_weight( rsigma  , 1.0);
+	loop_refine_scorefxn_->set_weight( sheet  , 1.0);
 }
 
 
@@ -179,14 +176,14 @@ LoophashAssemblyMover::complete_assembly(
 
 	//First filter using base-class filters
 	bool complete = AssemblyMover::complete_assembly(assembly);
-	if(!complete) {
+	if ( !complete ) {
 		return false;
 	}
 
 	//Now check for connectability and add loops
-	if( ! basic::options::option[ basic::options::OptionKeys::sewing::skip_loop_generation ].value() ) {
+	if ( ! basic::options::option[ basic::options::OptionKeys::sewing::skip_loop_generation ].value() ) {
 		bool succesfully_rearranged = rearrange_assembly(assembly);
-		if(!succesfully_rearranged) { return false; }
+		if ( !succesfully_rearranged ) { return false; }
 
 		core::pose::Pose cen_pose = assembly->to_pose(core::chemical::CENTROID);
 
@@ -195,11 +192,11 @@ LoophashAssemblyMover::complete_assembly(
 		//connect_jumps->jump2(2);
 		//connect_jumps->apply(cen_pose);
 		//if(basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs]) {
-		//	cen_pose.dump_pdb("reordered_assembly.pdb");
+		// cen_pose.dump_pdb("reordered_assembly.pdb");
 		//}
 
 		built_loops_ = add_loophash_segments(assembly, cen_pose);
-		if(built_loops_.empty()) {
+		if ( built_loops_.empty() ) {
 			TR << "Failed to find loops for Assembly" << std::endl;
 			return false;
 		}
@@ -222,15 +219,14 @@ LoophashAssemblyMover::output_stats(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
+	std::string const job_name ( protocols::jd2::current_output_name() );
 
-	job_me->add_string_real_pair( "n_loops", built_loops_.num_loop());
+	protocols::jd2::add_string_real_pair_to_current_job( "n_loops", built_loops_.num_loop());
 
 	protocols::analysis::LoopAnalyzerMoverOP loop_analyzer = new protocols::analysis::LoopAnalyzerMover(built_loops_, true);
 	//loop_analyzer->apply(pose);
 	core::Real total_loops_score = loop_analyzer->get_total_score();
-	job_me->add_string_real_pair( "loops_score", total_loops_score);
+	protocols::jd2::add_string_real_pair_to_current_job( "loops_score", total_loops_score);
 }
 
 
@@ -245,14 +241,14 @@ LoophashAssemblyMover::rearrange_assembly(
 	TR << "Permuting " << orders.size() << " valid assembly orders" << std::endl;
 
 	AssemblyOP reordered_assembly = assembly->clone();
-	for(core::Size i=1; i<=orders.size(); ++i) {
+	for ( core::Size i=1; i<=orders.size(); ++i ) {
 		reordered_assembly = assembly->clone();
 		reordered_assembly->reorder(orders[i]);
 		core::pose::Pose assembly_pose = reordered_assembly->to_pose(core::chemical::CENTROID);
 		//core::Size num_lh_frags = count_loophash_fragments(reordered_assembly, assembly_pose);
 		//if((int)num_lh_frags >= basic::options::option[ basic::options::OptionKeys::sewing::min_lh_fragments].value()) {
-			assembly = reordered_assembly;
-			return true;
+		assembly = reordered_assembly;
+		return true;
 		//}
 	}
 	TR << "Assembly could not be rearranged in a connectable way." << std::endl;
@@ -279,32 +275,32 @@ LoophashAssemblyMover::count_loophash_fragments(
 	TR << "Checking lh fragments for " << loop_anchors.size() << " jumps." << std::endl;
 
 	core::Size min_total = 100000000;
-	for(core::Size i=1; i<=loop_anchors.size(); ++i ) {
+	for ( core::Size i=1; i<=loop_anchors.size(); ++i ) {
 		core::Size anchor_total = 0;
 
-		for(core::Size n_overlapping_n = min_flanking_residues_; n_overlapping_n <= max_flanking_residues_; ++n_overlapping_n) {
-			for(core::Size n_overlapping_c = min_flanking_residues_; n_overlapping_c <= max_flanking_residues_; ++n_overlapping_c) {
+		for ( core::Size n_overlapping_n = min_flanking_residues_; n_overlapping_n <= max_flanking_residues_; ++n_overlapping_n ) {
+			for ( core::Size n_overlapping_c = min_flanking_residues_; n_overlapping_c <= max_flanking_residues_; ++n_overlapping_c ) {
 
 				numeric::geometry::hashing::Real6 loop_transform;
-				if(!get_rt_over_leap_without_foldtree_bs( pose, loop_anchors[i]-n_overlapping_n, loop_anchors[i]+1+n_overlapping_c, loop_transform )){
+				if ( !get_rt_over_leap_without_foldtree_bs( pose, loop_anchors[i]-n_overlapping_n, loop_anchors[i]+1+n_overlapping_c, loop_transform ) ) {
 					utility_exit_with_message("Unable to find rigid body transform over jump");
 				}
 
 				core::Real dist_sq = pose.residue(loop_anchors[i]).atom("CA").xyz().distance_squared(pose.residue(loop_anchors[i]+1).atom("CA").xyz());
-				if(TR.Debug.visible()) {
+				if ( TR.Debug.visible() ) {
 					TR.Debug << "Loop anchor " << loop_anchors[i] << " distance sq " << dist_sq << std::endl;
 				}
 
-				for(core::Size j=1; j<=loop_sizes.size(); ++j) {
+				for ( core::Size j=1; j<=loop_sizes.size(); ++j ) {
 					//If this distance is too far, don't evaluate linker
-					if( dist_sq >= (10.0*core::Real(loop_sizes[j])*core::Real(loop_sizes[j])) ) continue;
+					if ( dist_sq >= (10.0*core::Real(loop_sizes[j])*core::Real(loop_sizes[j])) ) continue;
 					LoopHashMap hashmap = lh_library_->gethash( loop_sizes[j] );
 					anchor_total += hashmap.radial_count(max_radius, loop_transform);
 				}
 			}
 		}
 		TR << "Loop anchor " << loop_anchors[i] << " has " << anchor_total << " LH fragments" << std::endl;
-		if(anchor_total == 0){
+		if ( anchor_total == 0 ) {
 			return 0;
 		}
 		min_total = std::min(min_total, anchor_total);
@@ -329,7 +325,7 @@ LoophashAssemblyMover::add_loophash_segments(
 	utility::vector1<core::Size> disconnected_segments = assembly->disconnected_segments();
 	runtime_assert(loop_anchors.size() == disconnected_segments.size());
 
-	for(core::Size i=1; i<=loop_anchors.size(); ++i) {
+	for ( core::Size i=1; i<=loop_anchors.size(); ++i ) {
 		TR.Debug << "building loop after residue " << loop_anchors[i] << std::endl;
 
 
@@ -340,18 +336,18 @@ LoophashAssemblyMover::add_loophash_segments(
 		protocols::loops::Loop new_loop = add_single_loop(pose, loop_anchors[i], n_segment_start, c_segment_end);
 
 		//If we failed to create this loop, then return an empty loops set
-		if(new_loop.start() == 0 || new_loop.length() == 0) {
+		if ( new_loop.start() == 0 || new_loop.length() == 0 ) {
 			loophash_loops.clear();
 			return loophash_loops;
 		}
 
-		if(basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs]) {
+		if ( basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs] ) {
 			pose.dump_pdb("best_loop_" + utility::to_string(i) + ".pdb");
 		}
 
 		assembly->add_loop_segment(pose, new_loop, disconnected_segments[i]);
 		assembly->update_coords_from_pose(pose);
-		for(core::Size j=i+1; j<=loop_anchors.size(); ++j) {
+		for ( core::Size j=i+1; j<=loop_anchors.size(); ++j ) {
 			loop_anchors[j]+=new_loop.length();
 			++disconnected_segments[j];
 		}
@@ -376,32 +372,32 @@ LoophashAssemblyMover::add_single_loop(
 	core::pose::Pose best_pose;
 
 	core::Size attempt = 0;
-	for(core::Size n_overlapping_n = max_flanking_residues_; n_overlapping_n >= min_flanking_residues_; --n_overlapping_n) {
-		for(core::Size n_overlapping_c = max_flanking_residues_; n_overlapping_c >= min_flanking_residues_; --n_overlapping_c) {
+	for ( core::Size n_overlapping_n = max_flanking_residues_; n_overlapping_n >= min_flanking_residues_; --n_overlapping_n ) {
+		for ( core::Size n_overlapping_c = max_flanking_residues_; n_overlapping_c >= min_flanking_residues_; --n_overlapping_c ) {
 
-			if(TR.Debug.visible()) {
+			if ( TR.Debug.visible() ) {
 				TR.Debug << "Number of overlappign residues N-terminal of loop: " << n_overlapping_n << std::endl;
 				TR.Debug << "Number of overlappign residues C-terminal of loop: " << n_overlapping_c << std::endl;
 			}
 
 			int loophash_fragment_start = (int)loop_anchor - (int)n_overlapping_n;
 			int loophash_fragment_end = (int)loop_anchor + (int)n_overlapping_c;
-			if(loophash_fragment_start < (int)n_segment_start || loophash_fragment_end > (int)c_segment_end){ continue; }
+			if ( loophash_fragment_start < (int)n_segment_start || loophash_fragment_end > (int)c_segment_end ) { continue; }
 
 			utility::vector1< std::pair< protocols::loophash::BackboneSegment, std::string > > bb_segs =
 				get_backbone_segments(pose, loophash_fragment_start, loophash_fragment_end);
 			numeric::random::random_permutation(bb_segs, numeric::random::rg());
 
-			if(check_flanking_rms_) {
+			if ( check_flanking_rms_ ) {
 				trim_bb_segs(pose, loop_anchor, n_overlapping_n, n_overlapping_c, bb_segs);
 			}
 
 			core::scoring::ScoreFunctionOP loop_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
 			loop_scorefxn->set_weight(core::scoring::cart_bonded, 1.0);
 
-			for(core::Size i=1; i<=bb_segs.size(); ++i) {
+			for ( core::Size i=1; i<=bb_segs.size(); ++i ) {
 				++attempt;
-				if(attempt > max_loop_segments_to_build_) break;
+				if ( attempt > max_loop_segments_to_build_ ) break;
 
 				core::Size loop_size = bb_segs[i].first.length() - n_overlapping_n - n_overlapping_c - 1;
 
@@ -412,7 +408,7 @@ LoophashAssemblyMover::add_single_loop(
 				core::pose::Pose loop_pose = build_results.first;
 				core::Real insertion_rms = build_results.second;
 
-				if(basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs]) {
+				if ( basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs] ) {
 					loop_pose.dump_pdb("loop_pose_" + utility::to_string(attempt) + ".pdb");
 				}
 
@@ -424,10 +420,10 @@ LoophashAssemblyMover::add_single_loop(
 				core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)loop_pose.size());
 				loop_pose.fold_tree(simple_ft);
 
-				if(TR.Debug.visible()) {
+				if ( TR.Debug.visible() ) {
 					TR.Debug << "Loop score for loop (" << loop << ") build: " << attempt << ": " << loop_score << " RMS: " << insertion_rms << std::endl;
 				}
-				if(insertion_rms < max_insertion_rms_ && loop_score < best_score) {
+				if ( insertion_rms < max_insertion_rms_ && loop_score < best_score ) {
 					best_score = loop_score;
 					best_loop = loop;
 					best_pose = loop_pose;
@@ -455,11 +451,11 @@ LoophashAssemblyMover::trim_bb_segs(
 	core::Size loophash_fragment_end = loop_anchor + n_overlapping_c;
 
 	BackboneSegments::iterator it = bb_segs.begin();
-	while(it != bb_segs.end()) {
+	while ( it != bb_segs.end() ) {
 		protocols::loophash::BackboneSegment backbone_seg = it->first;
 
 		int loop_size = backbone_seg.length() - n_overlapping_n - n_overlapping_c - 1;
-		if(loop_size < 1) {
+		if ( loop_size < 1 ) {
 			it = bb_segs.erase(it);
 			continue;
 		}
@@ -472,75 +468,74 @@ LoophashAssemblyMover::trim_bb_segs(
 		core::Real sumsqr = 0;
 		core::Real diff = 0;
 		core::Size count = 0;
-		for(core::Size i=0; i<n_overlapping_n+1; ++i) {
+		for ( core::Size i=0; i<n_overlapping_n+1; ++i ) {
 			core::Real pose_phi = pose.phi(loophash_fragment_start+i);
 			core::Real pose_psi = pose.psi(loophash_fragment_start+i);
 			core::Real pose_omega = pose.omega(loophash_fragment_start+i);
 
-			if(TR.Debug.visible()) {
+			if ( TR.Debug.visible() ) {
 				TR.Debug << loophash_fragment_start+i << ": " << pose_phi << " " << pose_psi << " " << pose_omega << std::endl;
 			}
 
 			diff = phi[i] - pose_phi;
-			while( diff > 180  ) diff -= 360;
-			while( diff < -180  ) diff += 360;
+			while ( diff > 180  ) diff -= 360;
+			while ( diff < -180  ) diff += 360;
 			sumsqr += diff*diff;
 			++count;
 
-			if(i < n_overlapping_n) {
+			if ( i < n_overlapping_n ) {
 				diff = psi[i] - pose_psi;
-				while( diff > 180  ) diff -= 360;
-				while( diff < -180  ) diff += 360;
+				while ( diff > 180  ) diff -= 360;
+				while ( diff < -180  ) diff += 360;
 				sumsqr += diff*diff;
 				++count;
 
 				diff = omega[i] - pose_omega;
-				while( diff > 180  ) diff -= 360;
-				while( diff < -180  ) diff += 360;
+				while ( diff > 180  ) diff -= 360;
+				while ( diff < -180  ) diff += 360;
 				sumsqr += diff*diff;
 				++count;
 			}
 		}
 
-		for(core::Size i=0; i<n_overlapping_c; ++i) {
+		for ( core::Size i=0; i<n_overlapping_c; ++i ) {
 			core::Real pose_phi = pose.phi(loophash_fragment_end-i);
 			core::Real pose_psi = pose.psi(loophash_fragment_end-i);
 			core::Real pose_omega = pose.omega(loophash_fragment_end-i);
 
-			if(TR.Debug.visible()) {
+			if ( TR.Debug.visible() ) {
 				TR.Debug << loophash_fragment_end-i << ": " << pose_phi << " " << pose_psi << " " << pose_omega << std::endl;
 			}
 
-			if(i < n_overlapping_c - 1) {
+			if ( i < n_overlapping_c - 1 ) {
 				diff = phi[phi.size()-1-i] - pose_phi;
-				while( diff > 180  ) diff -= 360;
-				while( diff < -180  ) diff += 360;
+				while ( diff > 180  ) diff -= 360;
+				while ( diff < -180  ) diff += 360;
 				sumsqr += diff*diff;
 				++count;
 			}
 
 			diff = psi[psi.size()-1-i] - pose_psi;
-			while( diff > 180  ) diff -= 360;
-			while( diff < -180  ) diff += 360;
+			while ( diff > 180  ) diff -= 360;
+			while ( diff < -180  ) diff += 360;
 			sumsqr += diff*diff;
 			++count;
 
 			diff = omega[omega.size()-1-i] - pose_omega;
-			while( diff > 180  ) diff -= 360;
-			while( diff < -180  ) diff += 360;
+			while ( diff > 180  ) diff -= 360;
+			while ( diff < -180  ) diff += 360;
 			sumsqr += diff*diff;
 			++count;
 		}
 
 		core::Real rms = std::sqrt(sumsqr/(core::Real)count);
-		if(TR.Debug.visible()) {
+		if ( TR.Debug.visible() ) {
 			TR.Debug << "RMS: " << rms << std::endl;
 		}
 
-		if(rms > flanking_rms_cutoff_) {
+		if ( rms > flanking_rms_cutoff_ ) {
 			it = bb_segs.erase(it);
-		}
-		else {
+		} else {
 			++it;
 		}
 	}
@@ -565,13 +560,13 @@ LoophashAssemblyMover::get_backbone_segments(
 
 	//Get the loop transform
 	numeric::geometry::hashing::Real6 loop_transform;
-	if(!get_rt_over_leap_without_foldtree_bs( pose, loophash_fragment_start, loophash_fragment_end+1, loop_transform )){
+	if ( !get_rt_over_leap_without_foldtree_bs( pose, loophash_fragment_start, loophash_fragment_end+1, loop_transform ) ) {
 		utility_exit_with_message("Unable to find rigid body transform over jump");
 	}
 
 	//Save all backbone segments from this transform
 	BackboneSegments bb_segs;
-	for(core::Size size_ind = 1; size_ind <= loop_sizes.size(); ++size_ind) {
+	for ( core::Size size_ind = 1; size_ind <= loop_sizes.size(); ++size_ind ) {
 		core::Size fragment_size = loop_sizes[size_ind];
 		LoopHashMap hashmap = lh_library_->gethash( fragment_size );
 
@@ -579,7 +574,7 @@ LoophashAssemblyMover::get_backbone_segments(
 		hashmap.radial_lookup( core::Size(4/*max radius*/), loop_transform, leap_index_bucket);
 
 		TR << "Leap index bucket size (" << fragment_size << " residues): " << leap_index_bucket.size() << std::endl;
-		for(core::Size i=0; i<leap_index_bucket.size(); ++i) {
+		for ( core::Size i=0; i<leap_index_bucket.size(); ++i ) {
 			BackboneSegment backbone_seg;
 			LeapIndex cp = hashmap.get_peptide( leap_index_bucket[i] );
 			lh_library_->backbone_database().get_backbone_segment( cp.index, cp.offset , fragment_size , backbone_seg );
@@ -624,16 +619,16 @@ LoophashAssemblyMover::build_loop_pose(
 
 	core::pose::Pose combined_pose = pose;
 
-	if( basic::options::option[ basic::options::OptionKeys::sewing::dump_pdbs ] ) {
+	if ( basic::options::option[ basic::options::OptionKeys::sewing::dump_pdbs ] ) {
 		combined_pose.dump_pdb("start_pose.pdb");
 	}
 
 	//Append new loop residues to the pose
 	core::chemical::ResidueTypeSetCOP rs = pose.residue_type_set_for_pose(core::chemical::CENTROID_t);
-	for(core::Size i=0; i<num_new_residues; ++i) {
+	for ( core::Size i=0; i<num_new_residues; ++i ) {
 		core::conformation::ResidueOP new_rsd( NULL );
 		core::chemical::ResidueTypeCOP type = rs->aa_map(core::chemical::aa_from_oneletter_code(loop_sequence[i+1+n_overlapping_n]))[1];
-		if(TR.Debug.visible()) {
+		if ( TR.Debug.visible() ) {
 			TR.Debug << "Appending loophash residue " << type->name() << " (" << loop_sequence[i+1+n_overlapping_n] << ")" << std::endl;
 		}
 		new_rsd = core::conformation::ResidueFactory::create_residue( *type );
@@ -641,113 +636,113 @@ LoophashAssemblyMover::build_loop_pose(
 	}
 	core::pose::Pose unmodified_pose = combined_pose;
 
-	if( basic::options::option[ basic::options::OptionKeys::sewing::dump_pdbs ] ) {
+	if ( basic::options::option[ basic::options::OptionKeys::sewing::dump_pdbs ] ) {
 		combined_pose.dump_pdb("after_insertion.pdb");
 	}
 
 	TR << complete_loop_start << " " << complete_loop_end << " " << fragment_size << " " << n_overlapping_n << " " << n_overlapping_c << std::endl;
-  LocalInserterOP inserter = new LocalInserter_SimpleMin();
+	LocalInserterOP inserter = new LocalInserter_SimpleMin();
 	core::Real insertion_rmsd = inserter->make_local_bb_change_close_gaps(combined_pose, unmodified_pose, bb_seg, complete_loop_start);
 
-	if( basic::options::option[ basic::options::OptionKeys::sewing::dump_pdbs ] ) {
+	if ( basic::options::option[ basic::options::OptionKeys::sewing::dump_pdbs ] ) {
 		combined_pose.dump_pdb("after_apply.pdb");
 	}
 
 	//Build the pose
-//
-//	//Setup fold tree to create break
-//	core::kinematics::FoldTree break_ft;
-//	break_ft.add_edge(1, (int)complete_loop_end, core::kinematics::Edge::PEPTIDE);
-//	break_ft.add_edge(1, (int)complete_loop_end+1, 1);
-//	break_ft.add_edge((int)complete_loop_end+1, (int)combined_pose.size(), core::kinematics::Edge::PEPTIDE);
-//	combined_pose.fold_tree(break_ft);
-//
-//	//Add an extra residue such that torsions can be properly applied
-//	TR << "Adding extra residue after position " << complete_loop_end << std::endl;
-//	core::chemical::ResidueTypeCOP type = rs->aa_map(core::chemical::aa_from_oneletter_code('A'))[1];
-//	core::conformation::ResidueOP extra_rsd = core::conformation::ResidueFactory::create_residue( *type );
-//	combined_pose.conformation().safely_append_polymer_residue_after_seqpos(*extra_rsd, complete_loop_end, true);
-//
-//	//core::conformation::idealize_position(loop_anchor+num_new_residues, combined_pose.conformation());
-//	for(core::Size i=complete_loop_start; i <= complete_loop_end; ++i) {
-//		core::conformation::idealize_position(i, combined_pose.conformation());
-//	}
-//
-//	//Apply loophash torsion angles
+	//
+	// //Setup fold tree to create break
+	// core::kinematics::FoldTree break_ft;
+	// break_ft.add_edge(1, (int)complete_loop_end, core::kinematics::Edge::PEPTIDE);
+	// break_ft.add_edge(1, (int)complete_loop_end+1, 1);
+	// break_ft.add_edge((int)complete_loop_end+1, (int)combined_pose.size(), core::kinematics::Edge::PEPTIDE);
+	// combined_pose.fold_tree(break_ft);
+	//
+	// //Add an extra residue such that torsions can be properly applied
+	// TR << "Adding extra residue after position " << complete_loop_end << std::endl;
+	// core::chemical::ResidueTypeCOP type = rs->aa_map(core::chemical::aa_from_oneletter_code('A'))[1];
+	// core::conformation::ResidueOP extra_rsd = core::conformation::ResidueFactory::create_residue( *type );
+	// combined_pose.conformation().safely_append_polymer_residue_after_seqpos(*extra_rsd, complete_loop_end, true);
+	//
+	// //core::conformation::idealize_position(loop_anchor+num_new_residues, combined_pose.conformation());
+	// for(core::Size i=complete_loop_start; i <= complete_loop_end; ++i) {
+	//  core::conformation::idealize_position(i, combined_pose.conformation());
+	// }
+	//
+	// //Apply loophash torsion angles
 	std::vector<core::Real> phi   = bb_seg.phi();
 	std::vector<core::Real> psi   = bb_seg.psi();
 	std::vector<core::Real> omega = bb_seg.omega();
-//	for ( core::Size i = 0; i < fragment_size; i++) {
-//		core::Size pres = complete_loop_start+i;
-//		if(TR.Debug.visible()) {
-//			TR << "Updating res " << pres << " torsions:" << std::endl;
-//			TR << "phi: " << combined_pose.phi(pres) << "->" << phi[i] << std::endl;
-//			TR << "psi: " << combined_pose.psi(pres) << "->" << psi[i] << std::endl;
-//			TR << "omega: " << combined_pose.omega(pres) << "->" << omega[i] << std::endl;
-//		}
-//		combined_pose.set_phi(pres, phi[i]);
-//		combined_pose.set_psi(pres, psi[i]);
-//		combined_pose.set_omega(pres, omega[i]);
-//	}
-//
-//	//Now remove the extra residue
-//	core::Size extra_resnum = complete_loop_end + 1;
-//	TR << "Removing extra residue " << extra_resnum << std::endl;
-//	combined_pose.conformation().delete_residue_slow(extra_resnum);
-//
-//	core::kinematics::FoldTree saved_ft = combined_pose.fold_tree();
-//	core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)combined_pose.size());
-//	combined_pose.fold_tree(simple_ft);
-//
-//	//setup coordinate constraints
-////	protocols::loops::Loops exclude_region;
-////	exclude_region.add_loop( protocols::loops::Loop( complete_loop_start, res_pos + new_bs.length() ) );
-////	transfer_phi_psi( original_pose, newpose );
-////	add_coordinate_constraints_to_pose( newpose, original_pose, exclude_region );
-//		protocols::relax::AtomCoordinateCstMover coord_cst_mover;
-//		coord_cst_mover.apply(combined_pose);
-//
-//
-//	core::kinematics::MoveMapOP move_map = new core::kinematics::MoveMap();
-//	for(core::Size i=n_segment_start; i<=c_segment_end; ++i) {
-//		TR << "Minimizing residue " << i << std::endl;
-//		move_map->set_bb(i, true);
-//		core::chemical::AtomIndices const & bb_indices = combined_pose.residue(i).mainchain_atoms();
-//		for ( core::Size j = 1; j <= bb_indices.size(); ++j ) {
-//			move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::D ), true );
-//			move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::THETA ), true );
-//			move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::PHI ), true );
-//		}
-//
-//		if(i<pose.size()-1){
-//			TR.Debug << i << " bonded to " << i+1 << ": " << pose.residue(i).is_bonded(pose.residue(i+1)) << std::endl;
-//		}
-//	}
-//
-//	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover();
-//	min_mover->score_function(loop_scorefxn_);
-//	min_mover->movemap(move_map);
-//	min_mover->cartesian(true);
+	// for ( core::Size i = 0; i < fragment_size; i++) {
+	//  core::Size pres = complete_loop_start+i;
+	//  if(TR.Debug.visible()) {
+	//   TR << "Updating res " << pres << " torsions:" << std::endl;
+	//   TR << "phi: " << combined_pose.phi(pres) << "->" << phi[i] << std::endl;
+	//   TR << "psi: " << combined_pose.psi(pres) << "->" << psi[i] << std::endl;
+	//   TR << "omega: " << combined_pose.omega(pres) << "->" << omega[i] << std::endl;
+	//  }
+	//  combined_pose.set_phi(pres, phi[i]);
+	//  combined_pose.set_psi(pres, psi[i]);
+	//  combined_pose.set_omega(pres, omega[i]);
+	// }
+	//
+	// //Now remove the extra residue
+	// core::Size extra_resnum = complete_loop_end + 1;
+	// TR << "Removing extra residue " << extra_resnum << std::endl;
+	// combined_pose.conformation().delete_residue_slow(extra_resnum);
+	//
+	// core::kinematics::FoldTree saved_ft = combined_pose.fold_tree();
+	// core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)combined_pose.size());
+	// combined_pose.fold_tree(simple_ft);
+	//
+	// //setup coordinate constraints
+	//// protocols::loops::Loops exclude_region;
+	//// exclude_region.add_loop( protocols::loops::Loop( complete_loop_start, res_pos + new_bs.length() ) );
+	//// transfer_phi_psi( original_pose, newpose );
+	//// add_coordinate_constraints_to_pose( newpose, original_pose, exclude_region );
+	//  protocols::relax::AtomCoordinateCstMover coord_cst_mover;
+	//  coord_cst_mover.apply(combined_pose);
+	//
+	//
+	// core::kinematics::MoveMapOP move_map = new core::kinematics::MoveMap();
+	// for(core::Size i=n_segment_start; i<=c_segment_end; ++i) {
+	//  TR << "Minimizing residue " << i << std::endl;
+	//  move_map->set_bb(i, true);
+	//  core::chemical::AtomIndices const & bb_indices = combined_pose.residue(i).mainchain_atoms();
+	//  for ( core::Size j = 1; j <= bb_indices.size(); ++j ) {
+	//   move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::D ), true );
+	//   move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::THETA ), true );
+	//   move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::PHI ), true );
+	//  }
+	//
+	//  if(i<pose.size()-1){
+	//   TR.Debug << i << " bonded to " << i+1 << ": " << pose.residue(i).is_bonded(pose.residue(i+1)) << std::endl;
+	//  }
+	// }
+	//
+	// protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover();
+	// min_mover->score_function(loop_scorefxn_);
+	// min_mover->movemap(move_map);
+	// min_mover->cartesian(true);
 
-//	min_mover->score_function(loop_refine_scorefxn_);
-//	min_mover->apply(combined_pose);
+	// min_mover->score_function(loop_refine_scorefxn_);
+	// min_mover->apply(combined_pose);
 
-//	combined_pose.fold_tree(saved_ft);
+	// combined_pose.fold_tree(saved_ft);
 
-	if(basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs]) {
+	if ( basic::options::option[basic::options::OptionKeys::sewing::dump_pdbs] ) {
 		Pose tmp;
 
-		for(Size i = 1; i <= fragment_size+2; ++i) {
+		for ( Size i = 1; i <= fragment_size+2; ++i ) {
 			core::conformation::ResidueOP new_rsd( NULL );
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
-			if(1==i) tmp.append_residue_by_jump( *new_rsd, 1 );
+			if ( 1==i ) tmp.append_residue_by_jump( *new_rsd, 1 );
 			else     tmp.append_residue_by_bond( *new_rsd, true );
 			tmp.set_phi  ( tmp.size(), 180.0 );
 			tmp.set_psi  ( tmp.size(), 180.0 );
 			tmp.set_omega( tmp.size(), 180.0 );
 		}
 
-		for ( Size i = 0; i < fragment_size; i++) {
+		for ( Size i = 0; i < fragment_size; i++ ) {
 			Size ires = 2+i;//due to the use of std:vector i has to start from 0, but positions offset by 1.
 			tmp.set_phi  ( ires, phi[i]  );
 			tmp.set_psi  ( ires, psi[i]  );
@@ -757,11 +752,11 @@ LoophashAssemblyMover::build_loop_pose(
 		core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
 		core::pose::initialize_atomid_map( atom_map, tmp, core::id::BOGUS_ATOM_ID );
 
-//		atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("N"), 2), core::id::AtomID( pose.residue(complete_loop_start).atom_index("N"), complete_loop_start ) );
-//		atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("CA"), 2 ), core::id::AtomID( pose.residue(complete_loop_start).atom_index("CA"), complete_loop_start ) );
-//		atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("C"), 2 ), core::id::AtomID( pose.residue(complete_loop_start).atom_index("C"), complete_loop_start ) );
+		//  atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("N"), 2), core::id::AtomID( pose.residue(complete_loop_start).atom_index("N"), complete_loop_start ) );
+		//  atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("CA"), 2 ), core::id::AtomID( pose.residue(complete_loop_start).atom_index("CA"), complete_loop_start ) );
+		//  atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("C"), 2 ), core::id::AtomID( pose.residue(complete_loop_start).atom_index("C"), complete_loop_start ) );
 
-		for(core::Size i=0; i<n_overlapping_n+1; ++i) {
+		for ( core::Size i=0; i<n_overlapping_n+1; ++i ) {
 			core::Size frag_pos = 2+i;
 			core::Size pose_pos = complete_loop_start+i;
 			TR << "Aligning: " << frag_pos << " with " << pose_pos << std::endl;
@@ -770,7 +765,7 @@ LoophashAssemblyMover::build_loop_pose(
 			atom_map.set( core::id::AtomID(tmp.residue( frag_pos ).atom_index("C"), frag_pos ), core::id::AtomID( pose.residue(pose_pos).atom_index("C"), pose_pos ) );
 		}
 
-		for(core::Size i=0; i<n_overlapping_c; ++i) {
+		for ( core::Size i=0; i<n_overlapping_c; ++i ) {
 			core::Size frag_pos = fragment_size+1-i;
 			core::Size pose_pos = complete_loop_end-i;
 			TR << "Aligning: " << frag_pos << " with " << pose_pos << std::endl;
@@ -805,15 +800,15 @@ LoophashAssemblyMover::parse_my_tag(
 
 	AssemblyMover::parse_my_tag(tag, data, filters, movers, pose);
 
-	if(tag->hasOption("max_loop_segments_to_build")) {
+	if ( tag->hasOption("max_loop_segments_to_build") ) {
 		max_loop_segments_to_build_ = tag->getOption<core::Size>("max_loop_segments_to_build");
 	}
 
-	if(tag->hasOption("max_loop_distance")) {
+	if ( tag->hasOption("max_loop_distance") ) {
 		max_loop_distance_ = tag->getOption<core::Real>("max_loop_distance");
 	}
 
-	if(tag->hasOption("max_insertion_rms")) {
+	if ( tag->hasOption("max_insertion_rms") ) {
 		max_insertion_rms_ = tag->getOption<core::Real>("max_insertion_rms");
 	}
 }

@@ -36,7 +36,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
@@ -291,11 +291,10 @@ HbsDesignMover::apply(
 	TR << "Ending main loop..." << std::endl;
 
 	TR << "Checking pose energy..." << std::endl;
-	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-	curr_job->add_string_real_pair( "ENERGY_FINAL ", (*score_fxn)(pose) );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL ", (*score_fxn)(pose) );
 
-	calculate_statistics( curr_job, pose, score_fxn );
+	calculate_statistics( pose, score_fxn );
 
 }
 

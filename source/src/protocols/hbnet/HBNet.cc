@@ -102,8 +102,7 @@
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_moves/MakePolyXMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -2305,7 +2304,7 @@ HBNet::write_network_pdb( HBondNetStructOP p ) // better to pass object pointer 
 	//place_waters_on_pose( ala_copy, p );
 	//place_rots_on_pose( ala_copy, *p, p->is_native, bridging_waters_, p->waterrots.empty() );
 	place_rots_on_pose( ala_copy, *p, p->is_native );
-	std::string current_out_tag = protocols::jd2::JobDistributor::get_instance()->current_output_name();
+	std::string current_out_tag = protocols::jd2::current_output_name();
 	//from jd2 output_tag; 1st pose will be _0001_1.pdb, 0001.pdb if only 1 pose; additional poses with MPM are _0001_2.pdb, _0001_3.pdb...
 
 	std::string net_prefix("");
@@ -2415,7 +2414,7 @@ HBNet::set_constraints( Pose & pose, core::scoring::constraints::ConstraintSet &
 std::string
 HBNet::get_file_name( Size id, std::string net_prefix, std::string extension )
 {
-	std::string current_out_tag = protocols::jd2::JobDistributor::get_instance()->current_output_name();
+	std::string current_out_tag = protocols::jd2::current_output_name();
 	std::string fname = current_out_tag+(basic::options::option[ basic::options::OptionKeys::out::suffix ]())+"_"+net_prefix+"network_"+utility::to_string( id )+extension;
 	utility::file::FileName outfile(fname);
 	std::ostringstream oss;

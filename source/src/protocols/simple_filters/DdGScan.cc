@@ -45,8 +45,6 @@
 #include <map>
 #include <numeric/random/random.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -62,7 +60,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 #include <protocols/simple_filters/DdGScan.hh>
 #include <protocols/simple_filters/DdGScanCreator.hh>
@@ -295,12 +292,11 @@ void DdGScan::write_to_pdb(
 	core::Real const & ddG
 ) const {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
 
 	std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(output_resi) + pose.residue( residue ).name3() + " = " + ObjexxFCL::format::F (9,4,ddG);
-	job->add_string(output_string);
+	protocols::jd2::add_string_to_current_job(output_string);
 
 }
 

@@ -24,7 +24,6 @@
 #include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
-#include <protocols/jd2/Job.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -242,9 +241,6 @@ protected:
 
 	/// @brief Name of the silent file used for writing statistics.
 	std::string stats_file_;
-
-	/// @brief Job object to report on temperatures.
-	protocols::jd2::JobOP job_;
 
 	/// @brief If false, init_from_options() will be called before the simulation
 	/// starts.

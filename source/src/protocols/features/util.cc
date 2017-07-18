@@ -24,7 +24,6 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
-#include <protocols/jd2/util.hh>
 #include <basic/mpi/MessageListenerFactory.hh>
 #include <basic/mpi/MessageListener.hh>
 #include <basic/mpi/DbMoverMessageListener.hh>

@@ -42,9 +42,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/jd2/PDBJobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/DeleteChainsMover.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
@@ -356,7 +354,6 @@ AntibodyDesignProtocol::reorder_poses(utility::vector1<core::pose::PoseOP>& pose
 void
 AntibodyDesignProtocol::output_ensemble(vector1<core::pose::PoseOP> ensemble, core::Size range_start, core::Size range_end, std::string prefix){
 
-	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job());
 	for ( core::Size i = range_start; i <= range_end; ++i ) {
 		//Filter here
 		std::string tag = prefix+"_"+utility::to_string(i);
@@ -372,7 +369,7 @@ AntibodyDesignProtocol::output_ensemble(vector1<core::pose::PoseOP> ensemble, co
 			converter.apply(*(ensemble[i]));
 		}
 
-		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(current_job, *(ensemble[i]), tag);
+		protocols::jd2::output_intermediate_pose( *(ensemble[i]), tag );
 	}
 }
 

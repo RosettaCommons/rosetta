@@ -25,8 +25,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <protocols/rpc/rpc.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <core/init/init.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
@@ -240,7 +238,6 @@ void JSON_RPC::run(){
 			utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 			provider->add_input_file( "script.xml", xmlscript_ );
 			protocols::rosetta_scripts::RosettaScriptsParser rsp;
-			protocols::jd2::JobCOP job;
 			protocols::moves::MoverOP protocol;
 			rsp.generate_mover_from_pose( outputpose_ , protocol, true, "script.xml" );
 			protocol->apply( outputpose_ );

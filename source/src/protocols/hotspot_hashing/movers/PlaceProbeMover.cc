@@ -38,9 +38,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -90,7 +88,7 @@ void PlaceProbeMover::apply(core::pose::Pose & pose)
 	check_and_initialize(pose);
 
 	if ( current_mode_ == OnePerStruct ) {
-		core::Size nstruct = jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
+		core::Size nstruct = protocols::jd2::current_nstruct_index();
 
 		core::Size search_index = nstruct % search_points_.size();
 		if ( search_index == 0 ) {
@@ -120,7 +118,7 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 		std::stringstream sstream;
 		stub_to_points(sstream, transform);
 
-		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+		protocols::jd2::add_string_string_pair_to_current_job(
 			"placeprobe_prerefine_centroid_stub", sstream.str());
 	}
 
@@ -133,7 +131,7 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 		std::stringstream sstream;
 		stub_to_points(sstream, post_refinement_centroid_transform);
 
-		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+		protocols::jd2::add_string_string_pair_to_current_job(
 			"placeprobe_postrefine_centroid_stub", sstream.str());
 	}
 
@@ -142,14 +140,14 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 		std::stringstream sstream;
 		stub_to_points(sstream, post_refinement_orient_transform);
 
-		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+		protocols::jd2::add_string_string_pair_to_current_job(
 			"placeprobe_postrefine_orient_stub", sstream.str());
 	}
 
-	jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+	protocols::jd2::add_string_string_pair_to_current_job(
 		"placeprobe_residue_name", post_refinement_residue->name());
 
-	jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+	protocols::jd2::add_string_string_pair_to_current_job(
 		"placeprobe_residue_number", boost::lexical_cast<std::string>(residueindex));
 }
 
@@ -171,14 +169,12 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
 
 	TR.Info << "Initialized search pattern. Size: " << search_points_.size() << std::endl;
 
-	protocols::jd2::JobOP current_job(jd2::JobDistributor::get_instance()->current_job());
-
-	if ( current_job->nstruct_max() < search_points_.size() ) {
-		TR.Error << "Current job nstruct_max: " << current_job->nstruct_max() << " less than search pattern size: " << search_points_.size() << std::endl;
+	if ( protocols::jd2::max_nstruct_index() < search_points_.size() ) {
+		TR.Error << "Current job nstruct_max: " << protocols::jd2::max_nstruct_index() << " less than search pattern size: " << search_points_.size() << std::endl;
 	}
 
-	if ( current_job->nstruct_max() > search_points_.size() ) {
-		TR.Warning << "Current job nstruct_max: " << current_job->nstruct_max() << " greater than search pattern size: " << search_points_.size() << " (Search points will be repeated.)" << std::endl;
+	if ( protocols::jd2::max_nstruct_index() > search_points_.size() ) {
+		TR.Warning << "Current job nstruct_max: " << protocols::jd2::max_nstruct_index() << " greater than search pattern size: " << search_points_.size() << " (Search points will be repeated.)" << std::endl;
 	}
 }
 

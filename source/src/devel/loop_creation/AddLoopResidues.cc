@@ -25,10 +25,7 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-
+#include <protocols/jd2/util.hh>
 
 //Basic
 #include <basic/Tracer.hh>
@@ -139,8 +136,7 @@ AddLoopResidues::apply( pose::Pose & pose ) {
 		all_loops.push_back(duplicate_loops[i]);
 	}
 
-	protocols::jd2::JobOP const job_me = protocols::jd2::JobDistributor::get_instance()->current_job();
-	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
+	std::string const job_name ( protocols::jd2::current_output_name() );
 	dump_loops_file(job_name + ".loops", all_loops);
 
 	//revert back to saved anchors.

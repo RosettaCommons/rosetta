@@ -23,8 +23,7 @@
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -58,7 +57,6 @@ using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
 using cppdb::result;
 using cppdb::statement;
-using protocols::jd2::JobDistributor;
 using std::endl;
 using std::string;
 using std::stringstream;
@@ -107,7 +105,7 @@ TaskOperationOP ReadResfileFromDB::clone() const {
 void
 ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 
-	string tag(JobDistributor::get_instance()->current_job()->input_tag());
+	string tag(protocols::jd2::current_input_tag());
 
 	stringstream sql_stmt;
 	sql_stmt

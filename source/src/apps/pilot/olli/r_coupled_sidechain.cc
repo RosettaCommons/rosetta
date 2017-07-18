@@ -14,6 +14,7 @@
 // Rosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 #include <devel/coupled_sidechains/CoupledSidechainProtocol.hh>
 
 #include <devel/init.hh>
@@ -32,17 +33,17 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  using namespace basic::options;
-  using namespace protocols::docking;
-  using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace protocols::docking;
+		using namespace protocols::jd2;
 
-  protocols::jd2::register_options();
+		protocols::jd2::register_options();
 
-  // initialize core
-  devel::init(argc, argv);
-  //	devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
+		// initialize core
+		devel::init(argc, argv);
+		// devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
-  JobDistributor::get_instance()->go( new CoupledSidechainProtocol() );
+		JobDistributor::get_instance()->go( new CoupledSidechainProtocol() );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

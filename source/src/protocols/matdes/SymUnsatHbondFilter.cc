@@ -35,8 +35,7 @@
 #include <utility/tag/Tag.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -288,7 +287,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	if ( (mode_ == "all") || (mode_ == "bound_vs_unbound") ) {
 		select_uhb_bound_vs_unbound.erase(select_uhb_bound_vs_unbound.end()-2,select_uhb_bound_vs_unbound.end());
 		if ( verb ) {
-			TR << select_uhb_bound_vs_unbound << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
+			TR << select_uhb_bound_vs_unbound << ") and " << protocols::jd2::current_output_name() ;
 			TR << std::endl;
 		}
 		if ( write ) {
@@ -298,7 +297,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	if ( (mode_ == "all") || (mode_ == "unbound_design_vs_reference") ) {
 		select_uhb_unbound_design_vs_reference.erase(select_uhb_unbound_design_vs_reference.end()-2,select_uhb_unbound_design_vs_reference.end());
 		if ( verb ) {
-			TR << select_uhb_unbound_design_vs_reference << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
+			TR << select_uhb_unbound_design_vs_reference << ") and " << protocols::jd2::current_output_name() ;
 			TR << std::endl;
 		}
 		if ( write ) {
@@ -308,7 +307,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	if ( (mode_ == "all") || (mode_ == "unbound_mutated_sidechains") ) {
 		select_uhb_unbound_mutated_sidechains.erase(select_uhb_unbound_mutated_sidechains.end()-2,select_uhb_unbound_mutated_sidechains.end());
 		if ( verb ) {
-			TR << select_uhb_unbound_mutated_sidechains << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
+			TR << select_uhb_unbound_mutated_sidechains << ") and " << protocols::jd2::current_output_name() ;
 			TR << std::endl;
 		}
 		if ( write ) {
@@ -318,7 +317,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	if ( (mode_ == "all") ) {
 		select_uhb_all.erase(select_uhb_all.end()-2,select_uhb_all.end());
 		if ( verb ) {
-			TR << select_uhb_all << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
+			TR << select_uhb_all << ") and " << protocols::jd2::current_output_name() ;
 			TR << std::endl;
 		}
 		if ( write ) {
@@ -334,7 +333,6 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 void SymUnsatHbondFilter::write_to_pdb( core::pose::Pose const & pose, std::string const mode, std::string const residue_name, core::Size const residue, std::string const atom_name ) const
 {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
 	core::Size output_resi = residue;
@@ -342,16 +340,15 @@ void SymUnsatHbondFilter::write_to_pdb( core::pose::Pose const & pose, std::stri
 		output_resi = pose.pdb_info()->number( residue );
 	}
 	std::string unsat_pols_string = filter_name + " " + user_name + " " + mode + " mode: " + residue_name + ObjexxFCL::string_of(output_resi) + " " + atom_name ;
-	job->add_string(unsat_pols_string);
+	protocols::jd2::add_string_to_current_job(unsat_pols_string);
 }
 
 void SymUnsatHbondFilter::write_pymol_string_to_pdb( std::string const pymol_selection ) const
 {
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
-	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " + protocols::jd2::JobDistributor::get_instance()->current_output_name();
-	job->add_string(pymol_string);
+	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " + protocols::jd2::current_output_name();
+	protocols::jd2::add_string_to_current_job(pymol_string);
 }
 
 bool

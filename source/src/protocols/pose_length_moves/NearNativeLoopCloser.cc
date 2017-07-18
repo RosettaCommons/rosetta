@@ -17,10 +17,8 @@
 #include <protocols/pose_length_moves/NearNativeLoopCloserCreator.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/SwitchChainOrderMover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/util.hh>
 
 // Core Headers
 #include <core/chemical/AA.hh>
@@ -846,7 +844,7 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	} else if ( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 		pose_name_ = static_cast< basic::datacache::CacheableString const & >( pose.data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
 	} else {
-		pose_name_ = jd2::JobDistributor::get_instance()->current_job()->input_tag();
+		pose_name_ = protocols::jd2::current_input_tag();
 	}
 	//do actual closer
 	//-------deal with multiple chains-for easier indexing-----------

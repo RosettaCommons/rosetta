@@ -16,6 +16,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/NullMover.hh>
@@ -49,33 +50,33 @@ using namespace basic::options;
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace protocols;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace utility::file;
+	try {
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility::file;
 
-	// scoring should by default not produce output files - that's so annoying
-	// unless of coures the user insists.
+		// scoring should by default not produce output files - that's so annoying
+		// unless of coures the user insists.
 
-	// initialize core
-	devel::init(argc, argv);
-	jd2::register_options();
-	if( !option[ out::output ].user() ){
-		option[ out::nooutput ].value( true );
+		// initialize core
+		devel::init(argc, argv);
+		jd2::register_options();
+		if ( !option[ out::output ].user() ) {
+			option[ out::nooutput ].value( true );
+		}
+
+		protocols::cluster::EnsembleConstraints_Simple *cec = new protocols::cluster::EnsembleConstraints_Simple( 1.0 );
+		MoverOP mover = cec;
+		protocols::jd2::JobDistributor::get_instance()->go( mover );
+		cec->createConstraints( std::cout );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	protocols::cluster::EnsembleConstraints_Simple *cec = new protocols::cluster::EnsembleConstraints_Simple( 1.0 );
-	MoverOP mover = cec;
-	protocols::jd2::JobDistributor::get_instance()->go( mover );
-	cec->createConstraints( std::cout );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }
 

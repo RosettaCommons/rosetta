@@ -107,6 +107,7 @@ protected:
 	static bool options_registered_;
 
 private:
+	// TODO: Make this more generalized with silent file output, and not directly contingent on the JD2 outputter implementation
 	protocols::jd2::JobOutputterOP job_outputter_;
 }; // SilentTrajectoryRecorder
 

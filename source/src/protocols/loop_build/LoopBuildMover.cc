@@ -22,8 +22,7 @@
 #include <protocols/evaluation/util.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -115,9 +114,8 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 	std::string const refine       ( basic::options::option[ basic::options::OptionKeys::loops::refine ]() );
 	std::string const remodel      ( basic::options::option[ basic::options::OptionKeys::loops::remodel ]() );
 	bool const keep_time      ( basic::options::option[ basic::options::OptionKeys::loops::timer ]() );
-	protocols::jd2::JobOP job = jd2::JobDistributor::get_instance()->current_job();
-	std::string curr_job_tag = job->input_tag();
-	core::Size curr_nstruct = job->nstruct_index();
+	std::string curr_job_tag = protocols::jd2::current_input_tag();
+	core::Size curr_nstruct = protocols::jd2::current_nstruct_index();
 	clock_t starttime = clock();
 
 	loop_relax_mover_.set_current_tag(curr_job_tag);
@@ -175,14 +173,14 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 				if ( remodel == "perturb_kic_refactor" ) {
 					core::Real rebuild_looprms=0.0;
 					getPoseExtraScore( pose, "rebuild_looprms", rebuild_looprms );
-					job->add_string_real_pair("loop_rebuildrms ",rebuild_looprms );
+					protocols::jd2::add_string_real_pair_to_current_job("loop_rebuildrms ",rebuild_looprms );
 					// mirror to tracer
 					TR << "loop_rebuildrms: " << rebuild_looprms << std::endl;
 				}
 
 				core::Real cen_looprms=0.0;
 				getPoseExtraScore( pose, "cen_looprms", cen_looprms );
-				job->add_string_real_pair("loop_cenrms ",cen_looprms );
+				protocols::jd2::add_string_real_pair_to_current_job("loop_cenrms ",cen_looprms );
 				// mirror to tracer
 				TR << "loop_cenrms: " << cen_looprms << std::endl;
 			}
@@ -193,9 +191,9 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 				getPoseExtraScore( pose, "looprms", final_looprms );
 				getPoseExtraScore( pose, "final_looprelax_score", final_score );
 				getPoseExtraScore( pose, "final_chainbreak", final_chainbreak );
-				job->add_string_real_pair("loop_rms ", final_looprms);
-				job->add_string_real_pair("total_energy ", final_score);
-				job->add_string_real_pair("chainbreak ", final_chainbreak);
+				protocols::jd2::add_string_real_pair_to_current_job("loop_rms ", final_looprms);
+				protocols::jd2::add_string_real_pair_to_current_job("total_energy ", final_score);
+				protocols::jd2::add_string_real_pair_to_current_job("chainbreak ", final_chainbreak);
 				// mirror to tracer
 				TR << "loop_rms " << final_looprms << std::endl;
 				TR << "total_energy " << final_score << std::endl;

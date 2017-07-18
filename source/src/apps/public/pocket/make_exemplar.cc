@@ -57,6 +57,7 @@
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>

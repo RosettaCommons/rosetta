@@ -48,9 +48,6 @@
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/MoverContainer.hh>

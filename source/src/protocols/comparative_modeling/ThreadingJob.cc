@@ -22,6 +22,8 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
 
 #include <basic/Tracer.hh>
 
@@ -113,6 +115,20 @@ utility::vector1< core::Size > const & ThreadingJob::extra_residues_to_steal() c
 void ThreadingJob::extra_residues_to_steal( utility::vector1< core::Size > const & res ) {
 	extra_residues_to_steal_ = res;
 }
+
+protocols::comparative_modeling::ThreadingJob const *
+ThreadingJob::current_job() {
+	using protocols::jd2::InnerJobCOP;
+	using protocols::jd2::JobDistributor;
+	using protocols::comparative_modeling::ThreadingJob;
+
+	JobDistributor* jd2 = JobDistributor::get_instance();
+	if ( jd2 == nullptr ) { return nullptr; }
+	InnerJobCOP inner = jd2->current_job()->inner_job();
+	if ( inner == nullptr ) { return nullptr; }
+	return dynamic_cast< protocols::comparative_modeling::ThreadingJob const * >( inner.get() );
+}
+
 
 } // namespace comparative_modeling
 } // namespace protocols

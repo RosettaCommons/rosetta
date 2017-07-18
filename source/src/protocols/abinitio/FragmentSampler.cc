@@ -175,7 +175,7 @@ void FragmentSampler::checkpointed_cycle_block(
 	clock_t endtime = clock();
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 		tr.Info << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
-		jd2::output_intermediate_pose( pose, id2string( stage_id ) );
+		protocols::jd2::output_intermediate_pose( pose, id2string( stage_id ) );
 	}
 }
 
@@ -198,7 +198,7 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 	total_trials_ = 0;
 	current_scorefxn()(pose);
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] || option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-		jd2::output_intermediate_pose( pose, "stage0" );
+		protocols::jd2::output_intermediate_pose( pose, "stage0" );
 	}
 
 	if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
@@ -436,18 +436,18 @@ void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ) ), stage1_cycles() ).apply( pose );
 	mc().reset( pose ); // make sure that we keep the final structure
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
-		jd2::output_intermediate_pose( pose, "stage1_cycles" );
+		protocols::jd2::output_intermediate_pose( pose, "stage1_cycles" );
 	}
-	//jd2::output_intermediate_pose( pose, "stage1_cycles" );
+	//protocols::jd2::output_intermediate_pose( pose, "stage1_cycles" );
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-		jd2::output_intermediate_pose( pose, "stage1_cycles" );
+		protocols::jd2::output_intermediate_pose( pose, "stage1_cycles" );
 	}
 }
 
 void FragmentSampler::do_stage2_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ) ), stage2_cycles() ).apply( pose );
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
-		jd2::output_intermediate_pose( pose, "stage2_cycles" );
+		protocols::jd2::output_intermediate_pose( pose, "stage2_cycles" );
 	}
 }
 
@@ -502,7 +502,7 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 		} // loop 2
 	} // loop 1
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
-		jd2::output_intermediate_pose( pose, "stage3_cycles" );
+		protocols::jd2::output_intermediate_pose( pose, "stage3_cycles" );
 	}
 }
 
@@ -525,7 +525,7 @@ void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
 		//don't store last structure since it will be exactly the same as the final structure delivered back via apply
 	}  // loop kk
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
-		jd2::output_intermediate_pose( pose, "stage4_cycles" );
+		protocols::jd2::output_intermediate_pose( pose, "stage4_cycles" );
 	}
 }
 

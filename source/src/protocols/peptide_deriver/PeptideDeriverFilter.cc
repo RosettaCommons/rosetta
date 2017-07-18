@@ -59,8 +59,6 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/cyclic_peptide/PeptideCyclizeMover.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -492,8 +490,7 @@ void PeptideDeriverMarkdownStreamOutputter::end_receptor_partner_pair() {
 void PeptideDeriverPoseOutputter::output_pose( core::pose::Pose & pose, std::string const & pose_name ) {
 	(*scorefxn_)(pose);
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose( current_job, pose, pose_name );
+		protocols::jd2::output_intermediate_pose(pose, pose_name );
 	} else {
 		std::string const file_name(pose_name + ".pdb");
 		utility::io::ozstream out_stream( file_name );
@@ -822,7 +819,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	utility::io::ozstream file_out;
 	utility::io::ocstream log_out( out );
 
-	std::string const pose_name = ( protocols::jd2::jd2_used()? protocols::jd2::JobDistributor::get_instance()->current_output_name() : "" );
+	std::string const pose_name = ( protocols::jd2::jd2_used()? protocols::jd2::current_output_name() : "" );
 
 	//std::string prefix;
 	if ( is_dump_report_file_ ) {

@@ -17,7 +17,7 @@
 //platform headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -39,7 +39,6 @@
 
 #include <string>
 
-#include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 // XSD XRW Includes
@@ -114,10 +113,9 @@ JobDataFeatures::report_features(
 	utility::sql_database::sessionOP db_session
 )
 {
-	protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-	insert_string_rows(struct_id,db_session,job);
-	insert_string_string_rows(struct_id,db_session,job);
-	insert_string_real_rows(struct_id,db_session,job);
+	insert_string_rows(struct_id,db_session);
+	insert_string_string_rows(struct_id,db_session);
+	insert_string_real_rows(struct_id,db_session);
 	return 0;
 }
 
@@ -155,19 +153,17 @@ void JobDataFeatures::delete_record(
 
 }
 
-void JobDataFeatures::insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session ) const
 {
 
 	InsertGenerator string_insert("job_string_data");
 	string_insert.add_column("struct_id");
 	string_insert.add_column("data_key");
 
-	auto it(job->output_strings_begin());
-
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for ( ; it != job->output_strings_end(); ++it ) {
+	for ( std::string const & str: protocols::jd2::get_strings_from_current_job() ) {
 
-		RowDataBaseOP string_data( new RowData<std::string>("data_key",*it) );
+		RowDataBaseOP string_data( new RowData<std::string>("data_key",str) );
 
 		string_insert.add_row(utility::tools::make_vector(struct_id_data,string_data));
 	}
@@ -198,12 +194,11 @@ JobDataFeatures::load_string_data(
 	while ( res.next() ) {
 		std::string data_key;
 		res >> data_key;
-		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-		job->add_string(data_key);
+		protocols::jd2::add_string_to_current_job( data_key );
 	}
 }
 
-void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session ) const
 {
 
 	InsertGenerator string_string_insert("job_string_string_data");
@@ -211,14 +206,12 @@ void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::
 	string_string_insert.add_column("data_key");
 	string_string_insert.add_column("data_value");
 
-	auto it(job->output_string_string_pairs_begin());
-
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( ; it != job->output_string_string_pairs_end(); ++it ) {
+	for ( std::pair< std::string, std::string > const & sspair: protocols::jd2::get_string_string_pairs_from_current_job() ) {
 
-		RowDataBaseOP key_data( new RowData<std::string>("data_key",it->first) );
-		RowDataBaseOP value_data( new RowData<std::string>("data_value",it->second) );
+		RowDataBaseOP key_data( new RowData<std::string>("data_key",sspair.first) );
+		RowDataBaseOP value_data( new RowData<std::string>("data_value",sspair.second) );
 
 		string_string_insert.add_row(utility::tools::make_vector(struct_id_data,key_data,value_data));
 	}
@@ -249,12 +242,11 @@ JobDataFeatures::load_string_string_data(
 	while ( res.next() ) {
 		std::string data_key, data_value;
 		res >> data_key >> data_value;
-		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-		job->add_string_string_pair(data_key, data_value);
+		protocols::jd2::add_string_string_pair_to_current_job( data_key, data_value );
 	}
 }
 
-void JobDataFeatures::insert_string_real_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_real_rows( StructureID struct_id, utility::sql_database::sessionOP db_session ) const
 {
 
 	InsertGenerator string_real_insert("job_string_real_data");
@@ -264,12 +256,10 @@ void JobDataFeatures::insert_string_real_rows(StructureID struct_id, utility::sq
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	auto it(job->output_string_real_pairs_begin());
+	for ( std::pair< std::string, core::Real > const & srpair: protocols::jd2::get_string_real_pairs_from_current_job() ) {
 
-	for ( ; it != job->output_string_real_pairs_end(); ++it ) {
-
-		RowDataBaseOP key_data( new RowData<std::string>("data_key",it->first) );
-		RowDataBaseOP value_data( new RowData<core::Real>("data_value",it->second) );
+		RowDataBaseOP key_data( new RowData<std::string>("data_key",srpair.first) );
+		RowDataBaseOP value_data( new RowData<core::Real>("data_value",srpair.second) );
 
 		string_real_insert.add_row(utility::tools::make_vector(struct_id_data,key_data,value_data));
 	}
@@ -300,8 +290,7 @@ JobDataFeatures::load_string_real_data(
 		std::string data_key;
 		core::Real data_value;
 		res >> data_key >> data_value;
-		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-		job->add_string_real_pair(data_key, data_value);
+		protocols::jd2::add_string_real_pair_to_current_job( data_key, data_value );
 	}
 }
 

@@ -314,7 +314,7 @@ namespace protocols {
 namespace abinitio {
 
 
-using namespace jd2::archive;
+using jd2::archive::EXCN_Archive;
 
 
 void fix_chainbreak_patch( scoring::ScoreFunctionOP scorefxn, std::string const& patch_name ) {
@@ -578,7 +578,7 @@ void IterativeBase::idle() {
 ///  ----------------- stage control ----------------------
 // ---> outsource to extra class ?  --- might be reused by other protocols
 /// @brief batch is expired ?
-bool IterativeBase::still_interested( Batch const& batch ) const {
+bool IterativeBase::still_interested( jd2::archive::Batch const& batch ) const {
 	return Parent::still_interested( batch ) && batch.id() >= first_batch_this_stage_;
 }
 
@@ -586,7 +586,7 @@ bool IterativeBase::still_interested( Batch const& batch ) const {
 void IterativeBase::read_structures(
 	core::io::silent::SilentFileData& sfd,
 	core::io::silent::SilentFileData& alternative_decoys,
-	Batch const& batch
+	jd2::archive::Batch const& batch
 ) {
 	basic::show_time( tr,  "read structures into "+name()+"..." );
 	Parent::read_structures( sfd, alternative_decoys, batch );
@@ -662,7 +662,7 @@ void  IterativeBase::rescore() {
 }
 
 
-void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, Batch const& batch ) {
+void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, jd2::archive::Batch const& batch ) {
 	// if ( !evaluate_local() ) return;
 	if ( !hedge_archive_ ) {
 		hedge_archive_ = HedgeArchiveOP( new HedgeArchive( name()+"_hedge" ) );
@@ -676,7 +676,7 @@ void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP e
 bool IterativeBase::add_structure(
 	core::io::silent::SilentStructOP new_decoy,
 	core::io::silent::SilentStructOP alternative_decoy,
-	Batch const& batch
+	jd2::archive::Batch const& batch
 ) {
 
 	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( new_decoy );
@@ -813,7 +813,7 @@ void IterativeBase::generate_batch() {
 	mem_tr << "IterativeBase::start_new_batch " << std::endl;
 	Size repeat=1;
 	while ( repeat ) {
-		Batch& batch( manager().start_new_batch() );
+		jd2::archive::Batch& batch( manager().start_new_batch() );
 		if ( basic::options::option[ basic::options::OptionKeys::iterative::nolazy_noesy_reassign ]() ) {
 			reassign_noesy_data( batch );
 		}
@@ -905,7 +905,7 @@ void IterativeBase::gen_dynamic_patches( jd2::archive::Batch& batch ) {
 }
 
 
-void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
+void IterativeBase::gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom ) {
 	tr.Info << "gen_evaluation_output in " << name() << std::endl;
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 	flags << "-evaluation:jump_nr" << std::endl; //add JumpNrEvaluator
@@ -1011,7 +1011,7 @@ void IterativeBase::gen_diversity_pool( jd2::archive::Batch& batch, bool ) {
 }
 /// @brief in the comp. modelling protocol the topo-resampling stage might also contain a RigidChunkClaimer...
 /// provide start-structures for this as -in:file:silent
-void IterativeBase::gen_start_structures( Batch& /*batch*/ ) {
+void IterativeBase::gen_start_structures( jd2::archive::Batch& /*batch*/ ) {
 	// OBSOLETE
 	//  batch.set_has_silent_in();
 	//  io::silent::SilentFileData sfd;
@@ -1031,7 +1031,7 @@ void IterativeBase::gen_start_structures( Batch& /*batch*/ ) {
 }
 
 //creation of the random-ss samplign stage
-void IterativeBase::gen_enumerate_pairings( Batch& batch ) {
+void IterativeBase::gen_enumerate_pairings( jd2::archive::Batch& batch ) {
 
 	//after Naccept accepted structures stop doing the enumerated pairing.
 	//sounds OBSOLETE TO ME: if ( (int) total_accepts() > option[ iterative::enumerate::Naccept ]() ) return;
@@ -1076,7 +1076,7 @@ void IterativeBase::gen_enumerate_pairings( Batch& batch ) {
 }
 
 /// @brief figure out beta-sheet topologies from pooled decoys and run with jumping
-void IterativeBase::gen_resample_topologies( Batch& batch) {
+void IterativeBase::gen_resample_topologies( jd2::archive::Batch& batch) {
 	if ( !bDoBetaJumping_ ) return;
 	tr.Info << "resample topologies\n";
 
@@ -1204,7 +1204,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 }
 
 
-void IterativeBase::gen_resample_fragments( Batch& batch ) {
+void IterativeBase::gen_resample_fragments( jd2::archive::Batch& batch ) {
 	using namespace core::fragment;
 	ConstantLengthFragSet frags_9mer( 9 ); //steal good old 9mers
 	ConstantLengthFragSet frags_3mer( 3 ); //steal good old 9mers
@@ -1270,7 +1270,7 @@ void IterativeBase::update_noesy_filter_files(
 }
 
 //generate ConstraintClaimer files for NOE restraints
-void IterativeBase::gen_noe_assignments( Batch& batch ) {
+void IterativeBase::gen_noe_assignments( jd2::archive::Batch& batch ) {
 	tr.Info << "gen_noe_assignments in " << name() << std::endl;
 	if ( !noesy_assign::NoesyModule::cmdline_options_activated() ) return;
 	bool bCombine( bCombineNoesyCst_ );
@@ -1380,7 +1380,7 @@ void IterativeBase::gen_noe_assignments( Batch& batch ) {
 }
 
 
-void IterativeBase::gen_cen2fullatom( Batch& batch ) {
+void IterativeBase::gen_cen2fullatom( jd2::archive::Batch& batch ) {
 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 	broker << "\nUSE_INPUT_POSE\n"
 		<< "CLAIMER StartStructClaimer\n"
@@ -1413,7 +1413,7 @@ void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 
 
 void IterativeBase::collect_hedgeing_decoys_from_batches(
-	Batch const& batch,
+	jd2::archive::Batch const& batch,
 	core::io::silent::SilentStructOPs& start_decoys,
 	Real score_cut_per_batch
 ) {
@@ -1485,7 +1485,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 	basic::show_time( tr,  "generate safety_hatch: done collecting");
 }
 
-void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
+void IterativeBase::gen_cen2fullatom_non_pool_decoys( jd2::archive::Batch& batch ) {
 	using namespace core::io::silent;
 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 	broker << "\nUSE_INPUT_POSE\n"
@@ -1534,7 +1534,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 ///         END gen_xxx ( batch ) methods
 /// ==============================================================================
 
-void IterativeBase::reassign_noesy_data( Batch& batch ) {
+void IterativeBase::reassign_noesy_data( jd2::archive::Batch& batch ) {
 	if ( !noesy_assign::NoesyModule::cmdline_options_activated() ) return;
 	Size const n_decoys( option[ iterative::limit_decoys_for_noe_assign ] );
 	if ( batch.id() == 1 || ( total_proposed() < delay_noesy_reassign_ && stage() < CEN2FULLATOM )
@@ -2142,7 +2142,7 @@ void IterativeBase::score( pose::Pose & pose ) const {
 
 
 void
-IterativeBase::test_broker_settings( Batch const& batch ) {
+IterativeBase::test_broker_settings( jd2::archive::Batch const& batch ) {
 	tr.Debug << "test broker settings...." << std::endl;
 	OptionCollection vanilla_options( option );
 	option.load_options_from_file( batch.flag_file() );

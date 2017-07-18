@@ -31,7 +31,6 @@
 //#include <protocols/abinitio/TMHTopologySampler.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jumping/util.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/loops/Loops.hh>
@@ -381,7 +380,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	basic::mem_tr << "AbrelaxMover::apply fullatom switch" << std::endl;
 	if ( relax_protocol() || b_return_unrelaxed_fullatom_ ) {
 		tr << "AbrelaxMover: switch to fullatom" << std::endl;
-		jd2::get_current_job()->add_string_real_pair( "prefa_centroid_score",  ((sampling_protocol()->current_scorefxn())( pose ) ) );
+		jd2::add_string_real_pair_to_current_job( "prefa_centroid_score",  ((sampling_protocol()->current_scorefxn())( pose ) ) );
 		tr.Info << "prefa_centroid_score:\n ";
 		(sampling_protocol()->current_scorefxn()).show( tr.Info, pose );
 		tr.Info << std::endl;
@@ -389,7 +388,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		clean_score3->set_weight( scoring::linear_chainbreak, 1.33 );
 		clean_score3->set_weight( scoring::overlap_chainbreak, 1.0 );
 		//  clean_score3->set_weight( scoring::chainbreak, 1.0 );
-		jd2::get_current_job()->add_string_real_pair( "prefa_clean_score3", ((*clean_score3)(pose)) );
+		jd2::add_string_real_pair_to_current_job( "prefa_clean_score3", ((*clean_score3)(pose)) );
 		tr.Info << "prefa_clean_score3:\n ";
 		clean_score3->show( tr.Info, pose );
 		tr.Info << std::endl;

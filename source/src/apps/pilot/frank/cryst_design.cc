@@ -1530,7 +1530,7 @@ public:
 			utility::vector1<core::kinematics::RT> const &rts = sh.sg.symmops();
 
 			// Treat tags as file names so that we put the number before the extension.
-			std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+			std::string base_name = protocols::jd2::current_input_tag();
 			utility::vector1< std::string > temp_out_names= utility::split( base_name );
 			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 			base_name = out_name.base();
@@ -3056,7 +3056,7 @@ CrystFFTDock::apply( Pose & pose) {
 	TR << "Have " << nhits_after_cluster << " after clustering." << std::endl;
 
 	//////////////////////////////////////
-	std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+	std::string base_name = protocols::jd2::current_input_tag();
 	utility::vector1< std::string > temp_out_names= utility::split( base_name );
 	utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 	base_name = out_name.base();

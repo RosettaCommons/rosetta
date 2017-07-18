@@ -24,8 +24,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/toolbox/superimpose.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -274,8 +272,8 @@ bool Pool_ConvergenceCheck::operator() ( core::pose::Pose const & fit_pose, move
 	rmsd_pool_->evaluate( fit_pose, best_decoy, best_rmsd );
 
 	//store in Job-Object:
-	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
-	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
+	protocols::jd2::add_string_string_pair_to_current_job( "pool_converged_tag", best_decoy );
+	protocols::jd2::add_string_real_pair_to_current_job( "pool_converged_rmsd", best_rmsd );
 	if ( best_rmsd <= threshold_ ) throw EXCN_Pool_Converged();
 	return best_rmsd >= threshold_;
 }
@@ -290,8 +288,8 @@ void Pool_Evaluator::apply( core::pose::Pose& fit_pose, std::string, core::io::s
 	pss.add_string_value( name( 1 ), best_decoy );
 	pss.add_energy( name( 2 ), best_rmsd );
 	// //store in Job-Object:
-	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
-	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
+	//  protocols::jd2::add_string_string_pair_to_current_job( "pool_converged_tag", best_decoy );
+	//  protocols::jd2::add_string_real_pair_to_current_job( "pool_converged_rmsd", best_rmsd );
 
 }
 
@@ -305,8 +303,8 @@ void Pool_Evaluator::apply( core::io::silent::SilentStruct &pss) const {
 	pss.add_string_value( name( 1 ), best_decoy );
 	pss.add_energy( name( 2 ), best_rmsd );
 	// //store in Job-Object:
-	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
-	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
+	//  protocols::jd2::add_string_string_pair_to_current_job( "pool_converged_tag", best_decoy );
+	//  protocols::jd2::add_string_real_pair_to_current_job( "pool_converged_rmsd", best_rmsd );
 
 }
 

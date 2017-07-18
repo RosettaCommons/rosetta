@@ -34,8 +34,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -316,7 +315,6 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 void TaskAwareScoreTypeFilter::write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const & residue_name, core::Real const score ) const
 {
 
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
 	core::Size output_resi = residue;
@@ -324,7 +322,7 @@ void TaskAwareScoreTypeFilter::write_to_pdb( core::pose::Pose const & pose, core
 		output_resi = pose.pdb_info()->number( residue );
 	}
 	std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(output_resi) + " = " + ObjexxFCL::string_of(score);
-	job->add_string(output_string);
+	protocols::jd2::add_string_to_current_job(output_string);
 
 }
 

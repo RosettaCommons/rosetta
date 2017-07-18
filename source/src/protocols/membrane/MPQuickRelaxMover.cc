@@ -34,8 +34,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 #include <protocols/membrane/OptimizeMembranePositionMover.hh>
@@ -378,11 +377,8 @@ void MPQuickRelaxMover::apply( core::pose::Pose & pose ) {
 	SuperimposeMoverOP super( new SuperimposeMover( *native_, 1, nres, 1, nres, true ) );
 	super->apply( pose );
 
-	// get job for adding rmsd to scorefile
-	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
 	// calculate and store the rmsd in the score file
-	job->add_string_real_pair("rms", core::scoring::bb_rmsd( pose, *native_ ));
+	protocols::jd2::add_string_real_pair_to_current_job("rms", core::scoring::bb_rmsd( pose, *native_ ));
 
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );

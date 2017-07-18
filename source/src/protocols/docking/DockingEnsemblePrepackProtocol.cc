@@ -50,14 +50,12 @@
 
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <protocols/jd2/JobDistributor.fwd.hh>
 
 
 using basic::T;
 using namespace protocols::moves;
 using namespace core;
 using namespace pack::task;
-using protocols::jd2::JobDistributor;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingEnsemblePrepackProtocol" );
 

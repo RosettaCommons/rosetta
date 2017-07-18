@@ -40,8 +40,6 @@
 #include <core/chemical/VariantType.hh>
 
 //JD2:
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
 // Auto Headers
@@ -259,13 +257,8 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 			utility_exit_with_message(
 				"In protocols::helical_bundle::BackboneGridSampler::apply() function: The nstruct_mode option was used, but the current application is not using JD2.");
 		}
-		protocols::jd2::JobCOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-		if ( !job || job==protocols::jd2::JD2_BOGUS_JOB ) {
-			utility_exit_with_message(
-				"In protocols::helical_bundle::BackboneGridSampler::apply() function: The nstruct_mode option was used, but we could not get a valid JD2-style job object!");
-		}
-		core::Size curjob( job->nstruct_index() );
-		core::Size totaljobs( job->nstruct_max() );
+		core::Size curjob( protocols::jd2::current_nstruct_index() );
+		core::Size totaljobs( protocols::jd2::max_nstruct_index() );
 		if ( curjob==0 || totaljobs==0 ) {
 			utility_exit_with_message(
 				"In protocols::helical_bundle::BackboneGridSampler::apply() function: The nstruct_mode option was used, but invalid values were obtained for the current job index or the total number of jobs.");

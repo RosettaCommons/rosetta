@@ -155,8 +155,7 @@ Real
 SelectRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	core::pose::PoseCOP target_pose = rmsd_pose_;
 	if ( !target_pose ) {
-		runtime_assert( jd2::jd2_used() );
-		target_pose = jd2::get_current_jobs_starting_pose();
+		target_pose = protocols::jd2::get_current_jobs_starting_pose();
 	}
 	if ( !target_pose ) utility_exit_with_message(" no target pose for rmsd simple_filters "+tag_ );
 	core::Real rmsd;
@@ -216,8 +215,7 @@ SelectGdtEvaluator::apply( core::pose::Pose& pose ) const {
 	core::pose::PoseCOP target_pose = rmsd_pose_;
 	core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 	if ( !target_pose ) {
-		runtime_assert( jd2::jd2_used() );
-		target_pose = jd2::get_current_jobs_starting_pose();
+		target_pose = protocols::jd2::get_current_jobs_starting_pose();
 	}
 	if ( !target_pose ) utility_exit_with_message(" no target pose for rmsd simple_filters "+tag_ );
 
@@ -310,9 +308,8 @@ LoopRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	core::pose::PoseCOP target_pose = rmsd_pose_;
 	bool temp_pose=false;
 	if ( !target_pose ) {
-		runtime_assert( jd2::jd2_used() );
 		temp_pose=true;
-		target_pose = jd2::get_current_jobs_starting_pose();
+		target_pose = protocols::jd2::get_current_jobs_starting_pose();
 	}
 	if ( !target_pose ) utility_exit_with_message(" no target pose for rmsd simple_filters "+name(0) );
 	core::Real rmsd;

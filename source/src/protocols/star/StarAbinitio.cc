@@ -245,7 +245,10 @@ void StarAbinitio::apply(Pose& pose) {
 	using protocols::nonlocal::PolicyFactory;
 	using protocols::nonlocal::PolicyOP;
 
-	ThreadingJob const * const job = protocols::nonlocal::current_job();
+	ThreadingJob const * const job = ThreadingJob::current_job();
+	if ( ! job ) {
+		utility_exit_with_message( "StarAbinitio must be used with the ThreadingJobInputter." );
+	}
 
 	to_centroid(pose);
 	emit_intermediate(pose, "star_initial.out");

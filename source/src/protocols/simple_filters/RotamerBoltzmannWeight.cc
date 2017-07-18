@@ -42,8 +42,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <ObjexxFCL/format.hh>
 
 // Jacob headers 120423/120817
@@ -540,11 +539,9 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 /// @brief Output per-residue Boltzmann weights to the output pdb file if desired
 void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string const & residue_name, core::Real const boltzmann_weight ) const
 {
-
-	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string user_name = this->get_user_defined_name();
 	std::string output_string = "RotamerBoltzmannWeight " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " = " + ObjexxFCL::string_of(boltzmann_weight);
-	job->add_string(output_string);
+	protocols::jd2::add_string_to_current_job(output_string);
 
 }
 

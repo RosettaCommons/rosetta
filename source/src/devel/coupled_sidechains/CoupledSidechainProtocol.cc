@@ -55,7 +55,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
 #include <utility/tag/Tag.hh>
@@ -76,7 +75,7 @@
 #include <utility/fixedsizearray1.hh>
 
 #ifdef WIN_PYROSETTA
-	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
 
@@ -100,10 +99,10 @@ OPT_1GRP_KEY(Real,rotamers,pert_magnitude)
 bool devel::coupled_sidechains::CoupledSidechainProtocol::options_registered_( false );
 
 void devel::coupled_sidechains::CoupledSidechainProtocol::register_options() {
-  using namespace basic::options;
-  using namespace OptionKeys;
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	using namespace basic::options;
+	using namespace OptionKeys;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 	protocols::canonical_sampling::SimulatedTemperingObserver::register_options();
 	//protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
 	OPT( score::weights );
@@ -123,17 +122,17 @@ namespace coupled_sidechains {
 /*
 std::string
 CoupledSidechainProtocolCreator::keyname() const {
-	return CoupledSidechainProtocolCreator::mover_name();
+return CoupledSidechainProtocolCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 CoupledSidechainProtocolCreator::create_mover() const {
-	return new CoupledSidechainProtocol;
+return new CoupledSidechainProtocol;
 }
 
 std::string
 CoupledSidechainProtocolCreator::mover_name() {
-	return "SidechainMC";
+return "SidechainMC";
 }
 */
 CoupledSidechainProtocol::CoupledSidechainProtocol():
@@ -151,7 +150,7 @@ CoupledSidechainProtocol::CoupledSidechainProtocol():
 	score_pre_apply_(0),
 	score_post_apply_(0)
 {
-	//	set_defaults();
+	// set_defaults();
 	init_from_options();
 	setup_objects();
 }
@@ -173,7 +172,7 @@ CoupledSidechainProtocol::CoupledSidechainProtocol(
 	score_pre_apply_(0),
 	score_post_apply_(0)
 {
-	//	set_defaults();
+	// set_defaults();
 	init_from_options();
 	setup_objects();
 }
@@ -195,7 +194,7 @@ CoupledSidechainProtocol::show_counters( std::ostream & out){
 
 protocols::moves::MoverOP
 CoupledSidechainProtocol::clone() const {
-  return( protocols::moves::MoverOP( new CoupledSidechainProtocol( *this ) ) );
+	return( protocols::moves::MoverOP( new CoupledSidechainProtocol( *this ) ) );
 }
 
 protocols::moves::MoverOP
@@ -261,12 +260,6 @@ CoupledSidechainProtocol::apply(
 
 	counters_.reset();
 
-	jd2::JobOP job;
-	if ( jd2::jd2_used() ) {
-		job = jd2::get_current_job();
-	}
-
-
 	current_.resize(pose.size());
 	previous_.resize(pose.size());
 	best_.resize(pose.size());
@@ -277,7 +270,7 @@ CoupledSidechainProtocol::apply(
 	runtime_assert(packed_residues().size() > 0);
 	runtime_assert( ig_ );
 
-	for ( core::Size i = 1; i <= pose.size(); i++ ){
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		current_[ i ] = new core::conformation::Residue(pose.residue( i ));
 		update_rotamers( i );
 	}
@@ -290,7 +283,7 @@ CoupledSidechainProtocol::apply(
 
 	ig_->initialize( pose );
 
-	for( core::Size ct = 1; ct <= ntrials_; ct++){
+	for ( core::Size ct = 1; ct <= ntrials_; ct++ ) {
 		core::Size resid;
 		do { //pick residue, respecting underlying packer task
 			resid = packed_residues()[Rg.random_range(1, packed_residues().size())];
@@ -306,7 +299,7 @@ CoupledSidechainProtocol::apply(
 			current_energy -= delta_energy;
 			current_[ resid ] = new_state;
 			update_rotamers( resid );
-			if( ( current_energy ) <  best_energy_ ) {
+			if ( ( current_energy ) <  best_energy_ ) {
 				best_[ resid ] = new_state;
 				best_energy_ = current_energy;
 			}
@@ -324,15 +317,13 @@ CoupledSidechainProtocol::apply(
 
 		core::Size model_count( output_count( ct ) );
 		if ( model_count ) {
-			for( core::Size res_i = 1; res_i <= current_.size(); res_i++ ){
+			for ( core::Size res_i = 1; res_i <= current_.size(); res_i++ ) {
 				pose.replace_residue( res_i, (*current_[ res_i ]), true );
 			}
 			(*sfxn_)( pose );
-			if ( job ) {
-				job->add_string_real_pair( "prop_density", last_proposal_density_ratio() );
-				job->add_string_string_pair( "move_type",type() );
-			}
-			jd2::output_intermediate_pose( pose, traj_file_tag, model_count, ( model_count % traj_stride_ ) != 0 && model_count > 1 ); //write always first a structure
+			protocols::jd2::add_string_real_pair_to_current_job( "prop_density", last_proposal_density_ratio() );
+			protocols::jd2::add_string_string_pair_to_current_job( "move_type",type() );
+			protocols::jd2::output_intermediate_pose( pose, traj_file_tag, model_count, ( model_count % traj_stride_ ) != 0 && model_count > 1 ); //write always first a structure
 		}
 	} //for ntrials
 
@@ -350,7 +341,7 @@ void CoupledSidechainProtocol::observe_rotamers( core::Size ct, std::string cons
 
 	if ( ct % rotamer_stride_ != 0 ) return;
 	std::string filename( traj_file_tag+".rotamers");
-	if (rotamer_stream_.filename() != filename) rotamer_stream_.open( filename );
+	if ( rotamer_stream_.filename() != filename ) rotamer_stream_.open( filename );
 
 	//format::F output
 	Size const w( 8 );
@@ -367,7 +358,7 @@ void CoupledSidechainProtocol::observe_rotamers( core::Size ct, std::string cons
 		}
 		rotamer_stream_ << format::I( w, ct );
 		if ( tempering_ ) rotamer_stream_ << " " << format::F( w, d, tempering_->temperature() );
-		rotamer_stream_	<< std::endl;
+		rotamer_stream_ << std::endl;
 	}
 }
 

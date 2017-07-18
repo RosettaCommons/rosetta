@@ -19,7 +19,6 @@
 #include <protocols/cryst/cryst_movers_creator.hh>
 
 //#include <protocols/comparative_modeling/coord_util.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
 #include <core/util/cryst_util.hh>
@@ -1155,7 +1154,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	pose.pdb_info()->remarks().push_back( remark );
 
 	if ( dump_pose_ ) {
-		std::string out_name = protocols::jd2::JobDistributor::get_instance()->current_output_name() + "_" + tag_ + ".pdb";
+		std::string out_name = protocols::jd2::current_output_name() + "_" + tag_ + ".pdb";
 		pose_asu.dump_pdb( out_name );
 	}
 }

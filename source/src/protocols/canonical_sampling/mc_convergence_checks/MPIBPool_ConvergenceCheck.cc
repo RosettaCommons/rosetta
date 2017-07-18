@@ -18,7 +18,6 @@
 #include <basic/Tracer.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/superimpose.hh>
-#include <protocols/jd2/util.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
 #include <basic/prof.hh>
@@ -193,7 +192,6 @@ void MPIBPool_RMSD::reformat( core::pose::Pose const& pose, std::string & new_ta
 }
 
   void MPIBPool_RMSD::assign_tag( std::string& new_tag, core::Size optional_id_num ){
-  //std::string jobname = protocols::jd2::current_output_name();
   if( rank_ == master_node_ ){
     if( tracer_visible_ ){
       tr.Debug << "assigning a tag with value " << lead_zero_string_of( ( pool_size_ + new_structures_ ) , 8 ) << std::endl;

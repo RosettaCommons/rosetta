@@ -18,7 +18,6 @@
 // Protocol Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // Core headers
 #include <core/conformation/Residue.hh>
