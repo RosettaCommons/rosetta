@@ -87,6 +87,7 @@ public:
 	bool renumber_pdb() const;
 	bool suppress_zero_occ_pdb_output() const;
 	bool auto_detect_glycan_connections() const;
+	bool write_glycan_pdb_codes() const;
 	core::Real max_bond_length() const;
 	core::Real min_bond_length() const;
 	bool use_pdb_format_HETNAM_records() const;
@@ -134,6 +135,7 @@ public:
 	void set_renumber_pdb( bool const setting );
 	void set_suppress_zero_occ_pdb_output( bool const setting );
 	void set_auto_detect_glycan_connections( bool const auto_detect_glycan_connections );
+	void set_write_glycan_pdb_codes( bool const write_glycan_pdb_codes );
 	void set_max_bond_length( core::Real const max_bond_length );
 	void set_min_bond_length( core::Real const min_bond_length );
 	void set_use_pdb_format_HETNAM_records( bool const setting );
@@ -203,6 +205,7 @@ private:
 	bool renumber_pdb_;
 	bool suppress_zero_occ_pdb_output_;
 	bool auto_detect_glycan_connections_;
+	bool write_glycan_pdb_codes_;
 	core::Real max_bond_length_;
 	core::Real min_bond_length_;
 	bool use_pdb_format_HETNAM_records_;

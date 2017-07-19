@@ -52,6 +52,7 @@ read_alternative_3_letter_codes_from_database_file( std::string const & filename
 		string key;  // The map key is an alternative 3-letter code.
 		string name3;  // This is the Rosetta 3-letter code.
 		string hetnam( "" );  // This is the (optional) default HETNAM information.
+		utility::vector1< std::string > patches;
 
 		// The first two columns must be present.
 		line_word_by_word >> key >> name3;
@@ -60,9 +61,19 @@ read_alternative_3_letter_codes_from_database_file( std::string const & filename
 		} else {
 			continue;
 		}
+		std::string patch;
+		while ( ! line_word_by_word.fail() ) {
+			line_word_by_word >> patch;
+			//break on # comments
+			if ( !patch.compare(0,1,"#") || !patch.compare(0,1,"\n") || !patch.compare(0,1,"") ) {
+				break;
+			}
+			patches.push_back(patch);
+		}
 
-		code_map[ key ] = make_pair( name3, hetnam );
+		code_map[ key ] = make_tuple( name3, hetnam, patches );
 	}
+
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Read " << code_map.size() << " 3-letter code mappings from " << filename << '.' << endl;

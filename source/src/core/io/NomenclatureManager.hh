@@ -46,6 +46,9 @@ public:  // Static constant data access ///////////////////////////////////////
 	static std::pair< std::string, std::string >
 	rosetta_names_from_pdb_code( std::string const & pdb_code );
 
+	std::string
+	pdb_code_from_rosetta_name(std::string const & rosetta_name );
+
 	static bool is_NA( std::string const & name3 );
 	static bool is_old_RNA( std::string const & name3 );
 	static bool is_old_DNA( std::string const & name3 );

@@ -89,6 +89,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_renumber_pdb( tag->getOption< bool >( "renumber_pdb", 0 ) );
 	set_suppress_zero_occ_pdb_output( tag->getOption< bool >( "suppress_zero_occ_pdb_output", 0 ) );
 	set_auto_detect_glycan_connections( tag->getOption< bool >( "auto_detect_glycan_connections", 0) );
+	set_write_glycan_pdb_codes( tag->getOption< bool >( "write_glycan_pdb_codes", 0) );
 	set_max_bond_length( tag->getOption< core::Real >( "max_bond_length", 1.6) );
 	set_min_bond_length( tag->getOption< core::Real >( "min_bond_length", 1.3) );
 	set_use_pdb_format_HETNAM_records( tag->getOption< bool >( "use_pdb_format_HETNAM_records", 0 ) );
@@ -142,6 +143,7 @@ bool StructFileRepOptions::remember_unrecognized_water() const { return remember
 bool StructFileRepOptions::renumber_pdb() const { return renumber_pdb_; }
 bool StructFileRepOptions::suppress_zero_occ_pdb_output() const { return suppress_zero_occ_pdb_output_; }
 bool StructFileRepOptions::auto_detect_glycan_connections() const { return auto_detect_glycan_connections_; }
+bool StructFileRepOptions::write_glycan_pdb_codes() const { return write_glycan_pdb_codes_; }
 core::Real StructFileRepOptions::max_bond_length() const { return max_bond_length_; }
 core::Real StructFileRepOptions::min_bond_length() const { return min_bond_length_; }
 bool StructFileRepOptions::use_pdb_format_HETNAM_records() const { return use_pdb_format_HETNAM_records_; }
@@ -257,6 +259,9 @@ void StructFileRepOptions::set_suppress_zero_occ_pdb_output( bool const setting 
 void StructFileRepOptions::set_auto_detect_glycan_connections( bool const auto_detect_glycan_connections )
 { auto_detect_glycan_connections_ = auto_detect_glycan_connections; }
 
+void StructFileRepOptions::set_write_glycan_pdb_codes( bool const write_glycan_pdb_codes )
+{ write_glycan_pdb_codes_ = write_glycan_pdb_codes; }
+
 void StructFileRepOptions::set_max_bond_length( core::Real const max_bond_length )
 { max_bond_length_ = max_bond_length; }
 
@@ -339,6 +344,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ out::file::output_pose_energies_table
 		+ out::file::output_pose_cache_data
 		+ out::file::output_pose_fold_tree
+		+ out::file::write_glycan_pdb_codes
 		+ in::auto_detect_glycan_connections
 		+ in::max_bond_length
 		+ in::min_bond_length;
@@ -410,6 +416,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_renumber_pdb( options[ OptionKeys::out::file::renumber_pdb ].value() );
 	set_suppress_zero_occ_pdb_output( options[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() );
 	set_auto_detect_glycan_connections( options[ in::auto_detect_glycan_connections ]() );
+	set_write_glycan_pdb_codes( options[ out::file::write_glycan_pdb_codes ]() );
 	set_max_bond_length( options[ in::max_bond_length ]() );
 	set_min_bond_length( options[ in::min_bond_length ]() );
 	set_use_pdb_format_HETNAM_records( options[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
@@ -470,6 +477,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( show_all_fixes_                                        != other.show_all_fixes_                                       ) return false;
 	if ( constraints_from_link_records_                         != other.constraints_from_link_records_                        ) return false;
 	if ( auto_detect_glycan_connections_                        != other.auto_detect_glycan_connections_                       ) return false;
+	if ( write_glycan_pdb_codes_                                != other.write_glycan_pdb_codes_                               ) return false;
 	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
 
@@ -557,6 +565,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	//if ( constraints_from_link_records_                         != other.constraints_from_link_records_                        ) return false;
 	if ( auto_detect_glycan_connections_                        <  other.auto_detect_glycan_connections_                       ) return true;
 	if ( auto_detect_glycan_connections_                        != other.auto_detect_glycan_connections_                       ) return false;
+	if ( write_glycan_pdb_codes_                                <  other.write_glycan_pdb_codes_                               ) return true;
+	if ( write_glycan_pdb_codes_                                != other.write_glycan_pdb_codes_                               ) return false;
 	if ( max_bond_length_                                       <  other.max_bond_length_                                      ) return true;
 	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
 	if ( min_bond_length_                                       <  other.min_bond_length_                                      ) return true;

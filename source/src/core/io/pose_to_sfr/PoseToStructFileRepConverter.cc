@@ -26,6 +26,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/io/NomenclatureManager.hh>
 
 #include <core/io/HeaderInformation.hh>
 #include <core/io/ResidueInformation.hh>
@@ -329,7 +330,7 @@ void PoseToStructFileRepConverter::append_residue_info_to_sfr(
 
 		String const text = resID + " " + base_name;
 
-		if ( ! sfr_->heterogen_names().count( hetID ) ) {
+		if ( ! sfr_->heterogen_names().count( hetID ) && !options_.write_glycan_pdb_codes() ) {
 			sfr_->heterogen_names()[ hetID ] = base_name;
 		}
 		sfr_->residue_type_base_names()[ res_info.resid() ] = std::make_pair( hetID, base_name );
@@ -374,6 +375,9 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	ai.serial = new_atom_num;
 	ai.name = rsd.atom_name( atom_index );
 	ai.resName = rsd.name3();
+	if ( options_.write_glycan_pdb_codes() && rsd.is_carbohydrate() ) {
+		ai.resName = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( rsd.name() );
+	}
 	ai.x = atom.xyz()(1);
 	ai.y = atom.xyz()(2);
 	ai.z = atom.xyz()(3);

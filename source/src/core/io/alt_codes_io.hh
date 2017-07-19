@@ -19,11 +19,14 @@
 #include <map>
 #include <string>
 
+//Utility header
+#include <utility/io/util.hh>
+
 
 namespace core {
 namespace io {
 
-typedef std::map< std::string, std::pair< std::string, std::string > > AltCodeMap;
+typedef std::map< std::string, std::tuple< std::string, std::string, utility::vector1< std::string> > > AltCodeMap;
 
 /// @brief  Return a mapping of alternative PDB 3-letter codes to a paired set including the Rosetta 3-letter code and,
 /// optionally, any HETNAM information for the residue desired.

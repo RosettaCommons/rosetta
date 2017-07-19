@@ -53,10 +53,10 @@ public: // Tests //////////////////////////////////////////////////////////////
 			basic::database::full_name( "input_output/3-letter_codes/sentence_case.codes" ) ) );
 
 		TS_ASSERT_EQUALS( alt_codes.size(), 24 );  // 20 canonical and 4 NCAAs
-		TS_ASSERT_EQUALS( alt_codes[ "Ala" ].first, "ALA" );
-		TS_ASSERT_EQUALS( alt_codes[ "Ala" ].second, "" );
-		TS_ASSERT_EQUALS( alt_codes[ "Hcy" ].first, "HCY" );
-		TS_ASSERT_EQUALS( alt_codes[ "Hcy" ].second, "HOMOCYSTEINE" );
-		TS_ASSERT_EQUALS( alt_codes[ "Val" ].first, "VAL" );
+		TS_ASSERT_EQUALS( std::get<0>(alt_codes[ "Ala" ]), "ALA" );
+		TS_ASSERT_EQUALS( std::get<1>(alt_codes[ "Ala" ]), "" );
+		TS_ASSERT_EQUALS( std::get<0>(alt_codes[ "Hcy" ]), "HCY" );
+		TS_ASSERT_EQUALS( std::get<1>(alt_codes[ "Hcy" ]), "HOMOCYSTEINE" );
+		TS_ASSERT_EQUALS( std::get<0>(alt_codes[ "Val" ]), "VAL" );
 	}
 };  // class AltCodesIOTests

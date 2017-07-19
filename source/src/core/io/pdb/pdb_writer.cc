@@ -316,7 +316,7 @@ create_records_from_sfr(
 			R[ "text" ].value = elem.second;
 			VR.push_back( R );
 		}
-	} else {  // Use the Rosetta HETNAM format, which specifies base ResidueTypes.
+	} else if ( !options->write_glycan_pdb_codes() ) {  // Use the Rosetta HETNAM format, which specifies base ResidueTypes.
 		for ( auto const & elem : sfr.residue_type_base_names() ) {
 			// The 6-character resID key for the map has a fixed format.
 			std::string const & chainID( elem.first.substr( 5, 1 ) );  // 6th character

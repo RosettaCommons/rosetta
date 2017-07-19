@@ -35,6 +35,7 @@
 
 // C++ headers
 #include <string>
+#include <boost/algorithm/string.hpp>
 
 // Construct tracer.
 static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
@@ -55,15 +56,104 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 
 	if ( option[ OptionKeys::in::alternate_3_letter_codes ].active() ) {  // Are alternate codes allowed?
 		AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
-		auto alt_code_pair( alt_codes.find( pdb_code ) );
-		if ( alt_code_pair != alt_codes.end() ) {  // Is there an alternate for this code?
-			// Get the value of this key/value pair.
-			pair< string, string > const & rosetta_names( alt_code_pair->second );
+		auto alt_code_tuple( alt_codes.find( pdb_code ) );
+		if ( alt_code_tuple != alt_codes.end() ) {  // Is there an alternate for this code?
+			// Get the value of this key/value pair. This function now converts to a pair from the tuple in order to maintain backward compatability. BF.
+			std::string name3 = std::get<0>(alt_code_tuple->second);
+			std::string base_name = std::get<1>(alt_code_tuple->second);
+			pair< string, string > const & rosetta_names = std::make_pair( name3, base_name );
 			TR << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
 			return rosetta_names;
 		}
 	}
 	return std::make_pair( pdb_code, "" );
+}
+
+//This function returns the pdb code that corresponds to the residue name. It will fail if no match can be found. If this happens add the patches
+//you want to match to the pdb_codes database.
+std::string
+NomenclatureManager::pdb_code_from_rosetta_name(std::string const & rosetta_name ){
+	utility::vector1<std::string> split_vect;
+	boost::split(split_vect, rosetta_name, [](char c){return c == ':';});
+	utility::vector1<std::string> patches;
+	//start at 2 since #1 is the base name
+	for ( core::Size i=2; i<=split_vect.size(); i++ ) {
+		patches.push_back(split_vect[i]);
+	}
+	std::string base_name;
+	utility::vector1<std::string> base_name_vect;
+	boost::split(base_name_vect, split_vect[1], [](char c){ return c == ')';});
+	base_name = base_name_vect[2];
+	//Add all patches that don't code for sugars here
+	utility::vector1<std::string> base_patches;
+	base_patches.push_back("non-reducing_end");
+	base_patches.push_back("branch_lower_terminus");
+	for ( core::Size i=1; i<=patches.size(); i++ ) {
+		if ( patches[i].find("branch") != std::string::npos ) {
+			base_patches.push_back(patches[i]);
+		}
+	}
+
+	//loop over the alt code map
+	AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
+	core::Size max_patches_matched = 0;
+	std::string best_match = "";
+	utility::vector1<std::string> best_patch_match;
+	for ( auto it=alt_codes.begin(); it!=alt_codes.end(); ++it ) {
+		//determine whether the linkage number is related to the name
+		bool match_all = false;
+		if ( std::get<1>(it->second).find("->?") != std::string::npos ) {
+			match_all = true;
+		}
+		utility::vector1<std::string> matching_patches = std::get<2>(it->second);
+
+		//find the base name
+		std::string base_tag;
+		if ( match_all ) {
+			utility::vector1<std::string> base_tag_vect;
+			boost::split(base_tag_vect, std::get<1>(it->second), [](char c){ return c == ')';});
+			base_tag = base_tag_vect[2];
+		} else {
+			base_tag = split_vect[1];
+		}
+
+		if ( base_name == base_tag ) {
+			bool has_all = true;
+			core::Size match_count = 0;
+			for ( core::Size i=1; i<=matching_patches.size(); i++ ) {
+				if ( matching_patches[i] == "default" ) continue;
+				if ( !patches.has_value(matching_patches[i]) ) {
+					has_all = false;
+				} else {
+					match_count+=1;
+				}
+			}
+			if ( has_all == false ) break;
+			if ( match_count > max_patches_matched ) {
+				max_patches_matched = match_count;
+				best_match = it->first;
+				best_patch_match = matching_patches;
+			}
+			if ( best_match == "" && matching_patches.has_value("default") ) {
+				best_match = it->first;
+			}
+		}
+	}
+	//kill the dump if any patches aren't recognized
+	bool no_match = false;
+	for ( core::Size i=1; i<=patches.size(); i++ ) {
+		if ( !best_patch_match.has_value(patches[i]) && !base_patches.has_value(patches[i]) ) {
+			no_match = true;
+		}
+	}
+	if ( best_match == "" ) {
+		no_match = true;
+	}
+	if ( no_match ) {
+		TR.Warning << "Could not match " << rosetta_name << " to pdb code. Please turn off the write_glycan_pdb_code flag. Developers should add the full patch name to the pdb codes database" << std::endl;
+		runtime_assert(no_match == false);
+	}
+	return best_match;
 }
 
 std::string

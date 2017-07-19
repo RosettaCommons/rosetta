@@ -24,7 +24,7 @@
 
 # Aldotrioses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   3GR   Gly           ->?)-D-Gly
   G3H   Gly           ->2)-D-Gly
   GXV   Gly           ->?)-L-Gly
@@ -32,13 +32,13 @@
 
 # Aldotetroses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   E4P   Ery           ->?)-D-Ery
 
 
 # Aldopentoses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   RIB   Rib           ->?)-alpha-D-Ribf
   3DR   Rib           ->?)-D-Ribf
   AAB   Rib           ->?)-beta-D-Ribf
@@ -61,11 +61,11 @@
 
 # Aldohexoses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   ALL   All           ->?)-beta-D-Allp
   DSR   All           ->?)-beta-D-Allp
 
-  GLC   Glc           ->?)-alpha-D-Glcp
+  GLC   Glc           ->?)-alpha-D-Glcp default
   AGL   Glc           ->?)-alpha-D-Glcp
   BG6   Glc           ->?)-beta-D-Glcp
   BGC   Glc           ->?)-beta-D-Glcp
@@ -89,12 +89,12 @@
   NDG   Glc           ->?)-alpha-D-Glcp
   TOA   Glc           ->?)-alpha-D-Glcp
   TOC   Glc           ->?)-alpha-D-Glcp
-  NAG   Glc           ->?)-beta-D-Glcp
+  NAG   Glc           ->?)-beta-D-Glcp  2-AcNH
   MUR   Mur           ->?)-beta-D-Murp  # trivial name for ->?)-beta-D-GlcpNAc, lactic acid derivative
   G6D   Qui           ->?)-alpha-D-Quip # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
 
-  MAN   Man           ->?)-alpha-D-Manp
-  BMA   Man           ->?)-beta-D-Manp
+  MAN   Man           ->?)-alpha-D-Manp default
+  BMA   Man           ->?)-beta-D-Manp  default
   M1P   Man           ->?)-alpha-D-Manp
   M6D   Man           ->?)-beta-D-Manp
   M6P   Man           ->?)-alpha-D-Manp
@@ -105,7 +105,7 @@
   RHA   Man           ->?)-alpha-L-Manp
   RNS   Man           ->?)-L-Man
 
-  GAL   Gal           ->?)-beta-D-Galp
+  GAL   Gal           ->?)-beta-D-Galp default
   GLA   Gal           ->?)-alpha-D-Galp
   1GN   Gal           ->?)-beta-D-Galp
   2DG   Gal           ->?)-beta-D-Galp
@@ -132,20 +132,20 @@
 
 # Ketotrioses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   2HA   DHA           ->3)-DHA
   13P   DHA           ->1)-DHA
 
 
 # Ketotetroses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   DE2   Eul           ->?)-L-Eul
 
 
 # Ketopentoses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   0VR   Rul           ->?)-D-Rul
   137   Rul           ->?)-D-Rul
   5RP   Rul           ->?)-D-Rul
@@ -163,7 +163,7 @@
 
 # Ketohexoses
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   PSJ   Psi           ->?)-D-Psi
   LPK   Psi           ->?)-L-Psi
 
@@ -189,13 +189,13 @@
 
 # Ketooctose
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   KDO   Kdo           ->?)-D-alpha-Kdop
 
 
 # Ketononoses (e.g., Sialic Acids)
 
-# Code  Rosetta Code  Default HETNAM
+# Code  Rosetta Code  Default HETNAM  PATCHES
   AMN   Neu           ->?)-alpha-Neup
   ANA   Neu           ->?)-alpha-Neup
   GNA   Neu           ->?)-alpha-Neup
@@ -206,4 +206,4 @@
   SI3   Neu           ->?)-Neu
   SID   Neu           ->?)-alpha-Neup
   SLB   Neu           ->?)-beta-Neup
-  SIA   Neu           ->?)-alpha-Neup
+  SIA   Neu           ->?)-alpha-Neup 5-Ac

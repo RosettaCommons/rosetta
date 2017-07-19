@@ -749,6 +749,11 @@ Options = Option_Group( '',
 					default='false'),
 			Option( 'write_pdb_parametric_info', 'Boolean', desc='If true, parametric poses have their parameter info included in the REMARK lines of the output PDB file.  True by default.',
 					short= 'Write parametric info?', legal=['true', 'false'], default='true'),
+			Option('write_glycan_pdb_codes', 'Boolean',
+					desc='If true glycans will be written based on the pdb codes rather than the rosetta names',
+					short='Use PDB codes for glycan residues',
+					legal=['true', 'false'],
+					default='false'),
 
 			# General oputput options
 			Option( 'output_pose_energies_table', 'Boolean', default = 'true', desc='Output the pose energies table.  This can be overridden'),
