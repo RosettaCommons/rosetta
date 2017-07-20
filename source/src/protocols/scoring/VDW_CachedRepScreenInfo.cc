@@ -29,6 +29,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -126,10 +127,16 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepSc
 void
 VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_command_line() const
 {
+	read_in_VDW_rep_screen_pose_from_options( basic::options::option );
+}
+
+void
+VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_options( utility::options::OptionCollection const & options ) const
+{
 	using namespace basic::options;
 
-	if ( !option[ OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) return;
-	utility::vector1< std::string > const & All_VDW_rep_screen_pose_info = option[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
+	if ( !options[ OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) return;
+	utility::vector1< std::string > const & All_VDW_rep_screen_pose_info = options[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
 
 	bool align_res_specified = false;
 	if ( All_VDW_rep_screen_pose_info.size() > 1 ) {
@@ -207,9 +214,9 @@ vdw_cached_rep_screen_info_is_setup( core::pose::Pose const & pose )
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-option_vdw_rep_screen_info_user()
+option_vdw_rep_screen_info_user( utility::options::OptionCollection const & options )
 {
-	return basic::options::option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user();
+	return options[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user();
 }
 
 
@@ -223,7 +230,7 @@ set_vdw_cached_rep_screen_info( core::pose::Pose & pose, VDW_CachedRepScreenInfo
 //////////////////////////////////////////////////////////////////////////////
 void
 set_vdw_cached_rep_screen_info_from_pose( core::pose::Pose & new_pose, core::pose::Pose const & pose ){
-	if ( !option_vdw_rep_screen_info_user() ) return;
+	if ( !option_vdw_rep_screen_info_user( basic::options::option ) ) return;
 	VDW_CachedRepScreenInfoOP vdw_cached_rep_screen_info( new VDW_CachedRepScreenInfo( pose ) );
 	set_vdw_cached_rep_screen_info( new_pose, vdw_cached_rep_screen_info );
 }
@@ -232,7 +239,11 @@ set_vdw_cached_rep_screen_info_from_pose( core::pose::Pose & new_pose, core::pos
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_vdw_cached_rep_screen_info_from_command_line( core::pose::Pose & pose ) {
-	if ( !option_vdw_rep_screen_info_user() ) return;
+	fill_vdw_cached_rep_screen_info_from_options( pose, basic::options::option );
+}
+void
+fill_vdw_cached_rep_screen_info_from_options( core::pose::Pose & pose, utility::options::OptionCollection const & options ) {
+	if ( !option_vdw_rep_screen_info_user( options ) ) return;
 	make_sure_vdw_cached_rep_screen_info_is_setup( pose );
 }
 
@@ -240,9 +251,13 @@ fill_vdw_cached_rep_screen_info_from_command_line( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose::Pose * > & pose_pointers ) {
-	if ( !option_vdw_rep_screen_info_user() ) return;
+	fill_vdw_cached_rep_screen_info_from_options( pose_pointers, basic::options::option );
+}
+void
+fill_vdw_cached_rep_screen_info_from_options( utility::vector1< core::pose::Pose * > & pose_pointers, utility::options::OptionCollection const & options ) {
+	if ( !option_vdw_rep_screen_info_user( options ) ) return;
 	for ( auto const & poseop : pose_pointers ) {
-		fill_vdw_cached_rep_screen_info_from_command_line( *poseop );
+		fill_vdw_cached_rep_screen_info_from_options( *poseop, options );
 	}
 }
 

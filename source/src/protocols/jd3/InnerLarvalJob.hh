@@ -20,7 +20,7 @@
 
 // Package headers
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
-#include <protocols/jd3/PoseInputSource.fwd.hh>
+#include <protocols/jd3/InputSource.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -70,7 +70,7 @@ public:
 
 	~InnerLarvalJob() override;
 
-	/// @brief Determine if two jobs are defined with the same set of PoseInputSources
+	/// @brief Determine if two jobs are defined with the same set of InputSources
 	bool sources_same( InnerLarvalJob const & other ) const;
 
 	/// @brief Mutual comparison of this inner job to the other inner job
@@ -101,14 +101,14 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const InnerLarvalJob & inner_job );
 
-	/// @brief Set the single PoseInputSource for this job
-	void input_source( PoseInputSourceCOP setting );
+	/// @brief Set the single InputSource for this job
+	void input_source( InputSourceCOP setting );
 
-	/// @brief Clear the vector of PoseInputSources
+	/// @brief Clear the vector of InputSources
 	void clear_input_sources();
 
-	/// @brief Append a PoseInputSource to the vector of them
-	void append_input_source( PoseInputSourceCOP setting );
+	/// @brief Append a InputSource to the vector of them
+	void append_input_source( InputSourceCOP setting );
 
 	/// @brief Return the input tag -- a string that describes the input structure, but that
 	/// is in no way a complete description of the job.  The job_tag instead should be looked
@@ -116,7 +116,7 @@ public:
 	/// may be used for multiple jobs.
 	std::string input_tag() const;
 
-	/// @brief Set the input tag -- if it is not set, then the PoseInputSources will be used,
+	/// @brief Set the input tag -- if it is not set, then the InputSources will be used,
 	/// the file names / tags being concatenated together, separated by underscores.
 	void input_tag( std::string const & setting );
 
@@ -149,13 +149,13 @@ public:
 	/// @brief Return the number of pose input sources for this job.
 	core::Size n_input_sources() const;
 
-	/// @brief Read access to the PoseInputSource object that describes how the Pose for
-	/// this job should be constructed.  Requires that there is only a single PoseInputSource
+	/// @brief Read access to the InputSource object that describes how the Pose for
+	/// this job should be constructed.  Requires that there is only a single InputSource
 	/// for this job.
-	PoseInputSource const & input_source() const;
+	InputSource const & input_source() const;
 
-	/// @brief Retrieve a particular PoseInputSource
-	PoseInputSource const & input_source( Size index ) const;
+	/// @brief Retrieve a particular InputSource
+	InputSource const & input_source( Size index ) const;
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs
@@ -190,7 +190,7 @@ private:
 	std::string job_tag_;
 	std::string outputter_;
 
-	utility::vector1< PoseInputSourceCOP > input_sources_;
+	utility::vector1< InputSourceCOP > input_sources_;
 
 	core::Size nstruct_;
 

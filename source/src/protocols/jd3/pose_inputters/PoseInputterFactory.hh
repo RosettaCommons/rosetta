@@ -20,7 +20,7 @@
 // Package headers
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh>
-#include <protocols/jd3/PoseInputSource.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>

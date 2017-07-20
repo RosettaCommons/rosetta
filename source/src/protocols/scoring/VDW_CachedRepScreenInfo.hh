@@ -23,7 +23,8 @@
 #include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 
@@ -61,6 +62,9 @@ public:
 	void
 	read_in_VDW_rep_screen_pose_from_command_line() const;
 
+	void
+	read_in_VDW_rep_screen_pose_from_options( utility::options::OptionCollection const & options ) const;
+
 	utility::vector1< core::pose::rna::VDW_RepScreenInfo > &
 	VDW_rep_screen_info_list() const;
 
@@ -94,7 +98,7 @@ bool
 vdw_cached_rep_screen_info_is_setup( core::pose::Pose const & pose );
 
 bool
-option_vdw_rep_screen_info_user();
+option_vdw_rep_screen_info_user( utility::options::OptionCollection const & options );
 
 void
 set_vdw_cached_rep_screen_info( core::pose::Pose & pose, VDW_CachedRepScreenInfoOP & vdw_cached_rep_screen_info );
@@ -106,7 +110,13 @@ void
 fill_vdw_cached_rep_screen_info_from_command_line( core::pose::Pose & pose );
 
 void
+fill_vdw_cached_rep_screen_info_from_options( core::pose::Pose & pose, utility::options::OptionCollection const & options );
+
+void
 fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose::Pose * > & pose_pointers );
+
+void
+fill_vdw_cached_rep_screen_info_from_options( utility::vector1< core::pose::Pose * > & pose_pointers, utility::options::OptionCollection const & options );
 
 
 } //scoring

@@ -7,32 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/PoseInputSource.fwd.hh
-/// @brief  Forward declaration of the %PoseInputSource class
+/// @file   protocols/jd3/full_model_inputters/FullModelInputterFactory.fwd.hh
+/// @brief  FullModelInputterFactory class that holds the list of classes able to create Poses from inputs
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-
-#ifndef INCLUDED_protocols_jd3_PoseInputSource_HH
-#define INCLUDED_protocols_jd3_PoseInputSource_HH
-
-//unit headers
-#include <protocols/jd3/PoseInputSource.fwd.hh>
-
-//project headers
-#include <core/pose/Pose.fwd.hh>
-
+#ifndef INCLUDED_protocols_jd3_full_model_inputters_FullModelInputterFactory_FWD_HH
+#define INCLUDED_protocols_jd3_full_model_inputters_FullModelInputterFactory_FWD_HH
 
 namespace protocols {
 namespace jd3 {
+namespace full_model_inputters {
 
-class PoseInputSource;
+class FullModelInputterFactory;
 
-typedef utility::pointer::shared_ptr< PoseInputSource > PoseInputSourceOP;
-typedef utility::pointer::shared_ptr< PoseInputSource const > PoseInputSourceCOP;
-
-typedef utility::vector1< PoseInputSourceOP > PoseInputSources;
-
+} // namespace full_model_inputters
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_PoseInputSource_HH
+#endif //INCLUDED_protocols_jd3_full_model_inputters_FullModelInputterFactory_FWD_HH

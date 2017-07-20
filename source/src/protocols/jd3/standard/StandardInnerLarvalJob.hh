@@ -20,7 +20,7 @@
 #include <protocols/jd3/standard/StandardInnerLarvalJob.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/PoseInputSource.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 
 // Project headers
 #include <core/types.hh>

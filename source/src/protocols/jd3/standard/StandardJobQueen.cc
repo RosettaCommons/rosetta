@@ -20,7 +20,7 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
@@ -939,6 +939,7 @@ StandardJobQueen::pose_for_job(
 	utility::options::OptionCollection const & options
 )
 {
+	using namespace pose_inputters;
 	// either read the Pose in using the pose_inputter (and then keep a copy
 	// in the resource manager), or retrieve the Pose from the resource manager
 	// initial version: just read the pose in for each job.
@@ -946,7 +947,7 @@ StandardJobQueen::pose_for_job(
 	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
-	PoseInputSource const & input_source = inner_job->input_source();
+	PoseInputSource const & input_source = dynamic_cast< PoseInputSource const & >( inner_job->input_source() );
 	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
 		core::pose::PoseOP pose( new core::pose::Pose );
 		// Why does the standard job queen use detached_copy? Because it is important in multithreaded
@@ -1179,6 +1180,7 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace utility::tag;
+	using namespace pose_inputters;
 
 	preliminary_larval_jobs_determined_ = true;
 

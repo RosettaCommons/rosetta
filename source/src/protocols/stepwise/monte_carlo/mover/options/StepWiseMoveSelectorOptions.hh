@@ -21,6 +21,8 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>
@@ -62,6 +64,12 @@ public:
 
 	void
 	initialize_from_command_line();
+
+	void
+	initialize_from_options_collection( utility::options::OptionCollection const & options );
+
+	static void
+	list_options_read( utility::options::OptionKeyList & opts );
 
 	void set_allow_internal_hinge_moves( bool const & setting ){ allow_internal_hinge_moves_ = setting; }
 	bool allow_internal_hinge_moves() const{ return allow_internal_hinge_moves_; }

@@ -923,10 +923,8 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 		} );
 }
 
-/////////////////////////////////////////////////////////////////////
 void
-add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
-{
+get_number_base_pairs( pose::Pose const & pose, Size & nwc, Size & nnwc, Size & bs ) {
 	using namespace pose::rna;
 	using namespace conformation;
 	using namespace core::chemical::rna;
@@ -961,16 +959,48 @@ add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
 			N_NWC++;
 		}
 	}
-
-	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
-	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
-	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
+	nwc = N_WC;
+	nnwc = N_NWC;
+	bs = core::pose::rna::get_number_base_stacks( pose );
 }
 
 /////////////////////////////////////////////////////////////////////
 void
-add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, io::silent::SilentStruct & s )
+add_number_base_pairs( pose::Pose & pose )
 {
+	Size N_WC, N_NWC, N_BS;
+	get_number_base_pairs( pose, N_WC, N_NWC, N_BS );
+
+	setPoseExtraScore( pose, "N_WC",  N_WC );
+	setPoseExtraScore( pose, "N_NWC", N_NWC );
+	setPoseExtraScore( pose, "N_BS",  N_BS );
+}
+
+/////////////////////////////////////////////////////////////////////
+void
+add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
+{
+	Size N_WC, N_NWC, N_BS;
+	get_number_base_pairs( pose, N_WC, N_NWC, N_BS );
+
+	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC ) );
+	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
+	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, N_BS ) );
+}
+
+/////////////////////////////////////////////////////////////////////
+void
+get_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose,
+	Size & pN_WC,
+	Size & pN_NWC,
+	Size & pN_BP,
+	Size & pnatWC,
+	Size & pnatNWC,
+	Size & pnatBP,
+	Real & pf_natWC,
+	Real & pf_natNWC,
+	Real & pf_natBP
+) {
 	// This is fundamentally comparative. When it was developed for FARFAR,
 	// there was a guarantee that pose and native_pose would have the same
 	// residues. Not so now.
@@ -1059,19 +1089,68 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 
 	// Adding these here helps control for false positives found in the other function
 	// (Which might count as 'recovered' BPs not found in the native model.
+	pN_WC = N_WC;
+	pN_NWC = N_NWC;
+	pN_BP = N_WC + N_NWC;
+	pnatWC = N_WC_NATIVE;
+	pnatNWC = N_NWC_NATIVE;
+	pnatBP = N_WC_NATIVE + N_NWC_NATIVE;
+	pf_natWC = f_natWC;
+	pf_natNWC = f_natNWC;
+	pf_natBP = f_natBP;
+}
+
+/////////////////////////////////////////////////////////////////////
+void
+add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, io::silent::SilentStruct & s )
+{
+	Size N_WC, N_NWC, N_BP, natWC, natNWC, natBP;
+	Real f_natWC, f_natNWC, f_natBP;
+
+	get_number_native_base_pairs( pose, native_pose, N_WC, N_NWC, N_BP, natWC, natNWC, natBP, f_natWC, f_natNWC, f_natBP );
+
+	// Adding these here helps control for false positives found in the other function
+	// (Which might count as 'recovered' BPs not found in the native model.
 	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
-	s.add_string_value( "N_BP",  ObjexxFCL::format::I( 9, N_WC+N_NWC ) );
+	s.add_string_value( "N_BP",  ObjexxFCL::format::I( 9, N_BP ) );
 
 	// I would personally like to see the native number esp. of NWC because
 	// otherwise the fraction could be deflated by false 0s.
-	s.add_string_value( "natWC" , ObjexxFCL::format::I( 9, N_WC_NATIVE ) );
-	s.add_string_value( "natNWC", ObjexxFCL::format::I( 9, N_NWC_NATIVE ) );
-	s.add_string_value( "natBP" , ObjexxFCL::format::I( 9, N_WC_NATIVE + N_NWC_NATIVE ) );
+	s.add_string_value( "natWC" , ObjexxFCL::format::I( 9, natWC ) );
+	s.add_string_value( "natNWC", ObjexxFCL::format::I( 9, natNWC ) );
+	s.add_string_value( "natBP" , ObjexxFCL::format::I( 9, natBP ) );
 
 	s.add_energy( "f_natWC" , f_natWC );
 	s.add_energy( "f_natNWC", f_natNWC );
 	s.add_energy( "f_natBP" , f_natBP );
+}
+
+
+/////////////////////////////////////////////////////////////////////
+void
+add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose )
+{
+	Size N_WC, N_NWC, N_BP, natWC, natNWC, natBP;
+	Real f_natWC, f_natNWC, f_natBP;
+
+	get_number_native_base_pairs( pose, native_pose, N_WC, N_NWC, N_BP, natWC, natNWC, natBP, f_natWC, f_natNWC, f_natBP );
+
+	// Adding these here helps control for false positives found in the other function
+	// (Which might count as 'recovered' BPs not found in the native model.
+	setPoseExtraScore( pose, "N_WC",  N_WC );
+	setPoseExtraScore( pose, "N_NWC", N_NWC );
+	setPoseExtraScore( pose, "N_BP",  N_BP );
+
+	// I would personally like to see the native number esp. of NWC because
+	// otherwise the fraction could be deflated by false 0s.
+	setPoseExtraScore( pose, "natWC" , natWC );
+	setPoseExtraScore( pose, "natNWC", natNWC );
+	setPoseExtraScore( pose, "natBP" , natBP );
+
+	setPoseExtraScore( pose, "f_natWC" , f_natWC );
+	setPoseExtraScore( pose, "f_natNWC", f_natNWC );
+	setPoseExtraScore( pose, "f_natBP" , f_natBP );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

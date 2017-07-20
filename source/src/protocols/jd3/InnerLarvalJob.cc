@@ -15,7 +15,7 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 
 // Project headers
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/InputSource.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -146,7 +146,7 @@ operator<< ( std::ostream & out, const InnerLarvalJob & inner_job )
 	return out;
 }
 
-void InnerLarvalJob::input_source( PoseInputSourceCOP setting )
+void InnerLarvalJob::input_source( InputSourceCOP setting )
 {
 	input_sources_.clear();
 	input_sources_.push_back( setting );
@@ -159,7 +159,7 @@ InnerLarvalJob::clear_input_sources()
 }
 
 void
-InnerLarvalJob::append_input_source( PoseInputSourceCOP setting )
+InnerLarvalJob::append_input_source( InputSourceCOP setting )
 {
 	input_sources_.push_back( setting );
 }
@@ -242,16 +242,16 @@ core::Size InnerLarvalJob::n_input_sources() const
 	return input_sources_.size();
 }
 
-/// @brief Read access to the PoseInputSource object that describes how the Pose for
+/// @brief Read access to the InputSource object that describes how the Pose for
 /// this job should be constructed.
-PoseInputSource const &
+InputSource const &
 InnerLarvalJob::input_source() const
 {
 	debug_assert( input_sources_.size() == 1 );
 	return *input_sources_[1];
 }
 
-PoseInputSource const &
+InputSource const &
 InnerLarvalJob::input_source( Size index ) const
 {
 	return *input_sources_[ index ];
@@ -326,7 +326,7 @@ protocols::jd3::InnerLarvalJob::save( Archive & arc ) const {
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
 	arc( CEREAL_NVP( job_tag_ ) ); // std::string
 	arc( CEREAL_NVP( outputter_ ) ); // std::string
-	arc( CEREAL_NVP( input_sources_ ) ); // utility::vector1<PoseInputSourceCOP>
+	arc( CEREAL_NVP( input_sources_ ) ); // utility::vector1<InputSourceCOP>
 	arc( CEREAL_NVP( nstruct_ ) ); // core::Size
 	arc( CEREAL_NVP( input_job_result_indices_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( bad_ ) ); // _Bool
@@ -341,8 +341,8 @@ protocols::jd3::InnerLarvalJob::load( Archive & arc ) {
 	arc( input_tag_ ); // std::string
 	arc( job_tag_ ); // std::string
 	arc( outputter_ ); // std::string
-	utility::vector1< std::shared_ptr< protocols::jd3::PoseInputSource > > local_input_sources;
-	arc( local_input_sources ); // utility::vector1<PoseInputSourceCOP>
+	utility::vector1< std::shared_ptr< protocols::jd3::InputSource > > local_input_sources;
+	arc( local_input_sources ); // utility::vector1<InputSourceCOP>
 	input_sources_ = local_input_sources; // copy the non-const pointer(s) into the const pointer(s)
 	arc( nstruct_ ); // core::Size
 	arc( input_job_result_indices_ ); // utility::vector1<core::Size>

@@ -102,8 +102,8 @@ initialize_native_and_align_pose( PoseOP & native_pose,
 		align_pose = start_pose->clone();
 	}
 	if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ) { // could generalize to proteins
-		if ( native_pose != 0 )  modeler::rna::virtualize_free_rna_moieties( *native_pose );
-		if ( align_pose  != 0 ) modeler::rna::virtualize_free_rna_moieties( *align_pose );
+		if ( native_pose != nullptr )  modeler::rna::virtualize_free_rna_moieties( *native_pose );
+		if ( align_pose  != nullptr ) modeler::rna::virtualize_free_rna_moieties( *align_pose );
 	}
 
 	// really? -- this results in rms and rms_fill calculation even without native -- confusing. rhiju, dec. 2016

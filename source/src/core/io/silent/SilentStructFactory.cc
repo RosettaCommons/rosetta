@@ -21,6 +21,7 @@
 
 // Project headers
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -53,11 +54,8 @@ SilentStructFactory::show_available_silent_struct_types(
 	std::ostream & out
 ) {
 	out << "Available silent struct types:" << std::endl;
-	for (
-			std::map< std::string, io::silent::SilentStructCreatorCOP >::const_iterator
-			it = ss_types_.begin(), ite = ss_types_.end(); it != ite; ++it
-			) {
-		out << "\t" << it->first << std::endl;
+	for ( auto const & elem : ss_types_ ) {
+		out << "\t" << elem.first << std::endl;
 	}
 }
 
@@ -85,8 +83,8 @@ SilentStructFactory::get_silent_struct( std::string const & type_name, SilentFil
 			"check spelling or register new SilentStruct type in SilentStructFactory!";
 		msg += "known types are:\n";
 		vector1< string > types = get_ss_names();
-		for ( vector1< string >::const_iterator it = types.begin(), end = types.end(); it != end; ++it ) {
-			msg += *it + "\n";
+		for ( string const & type : types ) {
+			msg += type + "\n";
 		}
 		msg += "If you were using binary_rna, switch to binary\n";
 
@@ -125,8 +123,8 @@ SilentStructFactory::get_creator( std::string const & type_name )
 
 		msg += "known types are:\n";
 		vector1< string > types = get_ss_names();
-		for ( vector1< string >::const_iterator it = types.begin(), end = types.end(); it != end; ++it ) {
-			msg += *it + "\n";
+		for ( string const & elem : types ) {
+			msg += elem + "\n";
 		}
 
 		utility_exit_with_message( msg );
@@ -155,6 +153,11 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 		return get_silent_struct( opts.out_silent_struct_type(), opts ) ;
 	}
 
+	// if pose has RNA, OR a full_model_info, can't use protein silent struct.
+	if ( core::pose::full_model_info::full_model_info_defined( pose ) ) {
+		return get_silent_struct( "binary", opts );
+	}
+
 	// if not, decide for the user or use the default
 	if ( !score_only && !score_jump && !already_binary && !core::pose::is_ideal_pose(pose) ) {
 		std::string binary_string( "binary" );
@@ -164,6 +167,17 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 		tr.Info << "detected attempt to write non-ideal pose to silent-file..."
 			<< "Automatically switching to " << binary_string << " silent-struct type" << std::endl;
 		return get_silent_struct( binary_string, opts );
+	}
+
+	bool has_RNA = false;
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		if ( pose.residue_type( ii ).is_RNA() ) {
+			has_RNA = true;
+			break;
+		}
+	}
+	if ( has_RNA ) {
+		return get_silent_struct( "binary", opts );
 	}
 
 	// use default

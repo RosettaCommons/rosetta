@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/PoseInputSource.cc
-/// @brief  Definition of the %PoseInputSource class
+/// @file   protocols/jd3/FullModelInputSource.cc
+/// @brief  Definition of the %FullModelInputSource class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 //unit headers
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -32,20 +32,13 @@
 
 namespace protocols {
 namespace jd3 {
+namespace full_model_inputters {
 
-PoseInputSource::PoseInputSource() :
-	origin_( "unknown" ),
-	pose_id_( 0 )
+FullModelInputSource::FullModelInputSource( std::string origin ) :
+	InputSource( origin )
 {}
 
-PoseInputSource::PoseInputSource( std::string origin ) :
-	origin_(std::move( origin )),
-	pose_id_( 0 )
-{}
-
-PoseInputSource::~PoseInputSource() = default;
-
-bool PoseInputSource::operator == ( PoseInputSource const & rhs ) const
+bool FullModelInputSource::operator == ( FullModelInputSource const & rhs ) const
 {
 	return
 		origin_ == rhs.origin_ &&
@@ -54,12 +47,12 @@ bool PoseInputSource::operator == ( PoseInputSource const & rhs ) const
 		pose_id_ == rhs.pose_id_;
 }
 
-bool PoseInputSource::operator != ( PoseInputSource const & rhs ) const
+bool FullModelInputSource::operator != ( FullModelInputSource const & rhs ) const
 {
 	return ! ( *this == rhs );
 }
 
-bool PoseInputSource::operator < ( PoseInputSource const & rhs ) const
+bool FullModelInputSource::operator < ( FullModelInputSource const & rhs ) const
 {
 	if ( origin_ <  rhs.origin_ ) return true;
 	if ( origin_ != rhs.origin_ ) return false;
@@ -72,17 +65,11 @@ bool PoseInputSource::operator < ( PoseInputSource const & rhs ) const
 	return false;
 }
 
-std::string const & PoseInputSource::input_tag() const { return input_tag_; }
-PoseInputSource::StringStringMap const &
-PoseInputSource::string_string_map() const { return string_string_map_; }
-std::string const & PoseInputSource::origin() const { return origin_; }
-core::Size PoseInputSource::pose_id() const { return pose_id_; }
+FullModelInputSource::StringStringMap const &
+FullModelInputSource::string_string_map() const { return string_string_map_; }
+void FullModelInputSource::store_string_pair( std::string const & key, std::string const & value ) { string_string_map_[ key ].push_back( value ); }
 
-void PoseInputSource::input_tag( std::string const & setting ) { input_tag_ = setting; }
-void PoseInputSource::store_string_pair( std::string const & key, std::string const & value ) { string_string_map_[ key ] = value; }
-void PoseInputSource::origin( std::string const & setting ) { origin_ = setting; }
-void PoseInputSource::pose_id( core::Size setting ) { pose_id_ = setting; }
-
+} // namespace full_model_inputters
 } // namespace jd3
 } // namespace protocols
 
@@ -91,7 +78,7 @@ void PoseInputSource::pose_id( core::Size setting ) { pose_id_ = setting; }
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::PoseInputSource::save( Archive & arc ) const {
+protocols::jd3::full_model_inputters::FullModelInputSource::save( Archive & arc ) const {
 	arc( CEREAL_NVP( origin_ ) ); // std::string
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
 	arc( CEREAL_NVP( string_string_map_ ) ); // StringStringMap
@@ -101,15 +88,15 @@ protocols::jd3::PoseInputSource::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::PoseInputSource::load( Archive & arc ) {
+protocols::jd3::full_model_inputters::FullModelInputSource::load( Archive & arc ) {
 	arc( origin_ ); // std::string
 	arc( input_tag_ ); // std::string
 	arc( string_string_map_ ); // StringStringMap
 	arc( pose_id_ ); // core::Size
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::PoseInputSource );
-CEREAL_REGISTER_TYPE( protocols::jd3::PoseInputSource )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::full_model_inputters::FullModelInputSource );
+CEREAL_REGISTER_TYPE( protocols::jd3::full_model_inputters::FullModelInputSource )
 
-CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_PoseInputSource )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_full_model_inputters_FullModelInputSource )
 #endif // SERIALIZATION

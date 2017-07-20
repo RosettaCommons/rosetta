@@ -18,6 +18,7 @@
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -90,7 +91,18 @@ StepWiseMonteCarlo::~StepWiseMonteCarlo()
 void
 StepWiseMonteCarlo::initialize() {
 	initialize_scorefunction();
-	master_mover_->set_native_pose( get_native_pose() );
+
+	// This is the best place to delineate the possible behaviors.
+	// If there is a native, that should be passed down. Otherwise, align.
+	// NOTE: should check an align run to make sure it isn't 'too good'
+	// -- may need extra flags and to figure out all the times that
+	// we mean align_pose but say native_pose.
+	// OH! No, no, the reverse. If we can, send on the align_pose (as before)
+	// otherwise, send on native.
+	if ( align_pose_ ) master_mover_->set_native_pose( align_pose_ );
+	else if ( get_native_pose() ) master_mover_->set_native_pose( get_native_pose() );
+	else master_mover_->set_native_pose( nullptr );
+
 	master_mover_->initialize( scorefxn_, options_ );
 	start_time_ = clock();
 }
@@ -192,6 +204,39 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 	clearPoseExtraScores( pose );
 	if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time_ ) / CLOCKS_PER_SEC );
+
+
+
+	// Done with sampling.
+	// What we used to add to a silent struct in preparation, we now add to the pose.
+
+	setPoseExtraScore( pose, "missing", core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) );
+	Real rms( 0.0 ), rms_fill( 0.0 );
+	using namespace protocols::stepwise::modeler::align;
+	if ( get_native_pose() ) {
+
+		// if built from scratch, make sure to superimpose over everything.
+		bool superimpose_over_all_instantiated_ = options_->superimpose_over_all() || core::pose::full_model_info::check_all_residues_sampled( pose );
+		rms = superimpose_with_stepwise_aligner( pose, *get_native_pose(), superimpose_over_all_instantiated_ );
+
+		//if ( do_rms_fill_calculation ) {
+		TR <<  "Generating filled-in model for rms_fill... " << std::endl;
+		core::pose::PoseOP full_model_pose = build_full_model( pose );
+		rms_fill = superimpose_with_stepwise_aligner( *full_model_pose, *get_native_pose(), superimpose_over_all_instantiated_ );
+		//}
+		setPoseExtraScore(pose, "rms", rms );
+		/*if ( do_rms_fill_calculation )*/ setPoseExtraScore( pose, "rms_fill", rms_fill );
+
+	}
+
+	if ( get_native_pose() ) {
+		if ( options_->eval_base_pairs() ) {
+			core::pose::rna::add_number_native_base_pairs( pose, *get_native_pose() );
+		}
+	} else {
+		// Only use the garden-variety BP function if we can't look at the native pose as a point of reference.
+		if ( options_->eval_base_pairs()  ) core::pose::rna::add_number_base_pairs( pose );
+	}
 }
 
 // AMW: no need to have k in there because we only want latest
@@ -345,7 +390,7 @@ StepWiseMonteCarlo::set_submotif_library( monte_carlo::submotif::SubMotifLibrary
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseMonteCarlo::set_native_pose( PoseCOP pose ){
+StepWiseMonteCarlo::set_native_pose( PoseCOP pose ) {
 	Mover::set_native_pose( pose );
 	master_mover_->set_native_pose( pose );
 }

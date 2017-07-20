@@ -19,7 +19,7 @@
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/PoseInputSource.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>

@@ -88,6 +88,12 @@ VDW_GridEnergy::clone() const
 // methods for WholeStructureEnergies
 /////////////////////////////////////////////////////////////////////////////
 
+
+void
+VDW_GridEnergy::setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
+	protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( pose );
+}
+
 // The whole scoring method is going in finalize to ensure that alignment happens only once per time scoring
 // And to make sure that we're comparing residues from the aligned pose to the grid
 void

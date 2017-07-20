@@ -24,6 +24,9 @@
 
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
+
 #ifdef WIN32
 #include <utility/tag/Tag.hh>
 #endif
@@ -74,6 +77,12 @@ public:
 
 	void
 	initialize_from_command_line();
+	void
+	initialize_from_options_collection( utility::options::OptionCollection const & options );
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & opts );
 
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP setup_modeler_options() const;
 
@@ -215,6 +224,11 @@ public:
 	bool continue_until_none_missing() const { return continue_until_none_missing_; }
 	void set_continue_until_none_missing( bool const setting ){ continue_until_none_missing_ = setting; }
 
+	bool eval_base_pairs() const { return eval_base_pairs_; }
+	void set_eval_base_pairs( bool const setting ){ eval_base_pairs_ = setting; }
+
+	bool superimpose_over_all() const { return superimpose_over_all_; }
+	void set_superimpose_over_all( bool const setting ) { superimpose_over_all_ = setting; }
 
 private:
 
@@ -264,6 +278,8 @@ private:
 	bool checkpoint_;
 	core::Size checkpointing_frequency_;
 	bool continue_until_none_missing_;
+	bool eval_base_pairs_;
+	bool superimpose_over_all_;
 
 };
 

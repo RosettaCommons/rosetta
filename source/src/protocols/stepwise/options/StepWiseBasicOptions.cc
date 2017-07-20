@@ -24,10 +24,13 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
 
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
+
 #include <basic/Tracer.hh>
 
 using namespace basic::options;
-using namespace basic::options::OptionKeys;
+using namespace OptionKeys;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.options.StepWiseBasicOptions" );
 
@@ -96,43 +99,87 @@ StepWiseBasicOptions::clone() const
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseBasicOptions::initialize_from_command_line(){
-	sampler_silent_file_ = option[ basic::options::OptionKeys::stepwise::sampler_silent_file ]();
-	num_random_samples_ = option[ basic::options::OptionKeys::stepwise::num_random_samples ]();
-	max_tries_multiplier_for_ccd_ = option[ basic::options::OptionKeys::stepwise::max_tries_multiplier_for_ccd ]();
-	sampler_num_pose_kept_ = option[ basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept ]();
-	if ( option[ basic::options::OptionKeys::cluster::radius ].user() ) cluster_rmsd_ = option[ basic::options::OptionKeys::cluster::radius ]();
-	atr_rep_screen_ = option[ basic::options::OptionKeys::stepwise::atr_rep_screen ]();
-	atr_rep_screen_for_docking_ = option[ basic::options::OptionKeys::stepwise::atr_rep_screen_for_docking ]();
-	rmsd_screen_ = option[ basic::options::OptionKeys::stepwise::rmsd_screen ]();
-	VDW_rep_screen_info_ = option[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
-	if ( option[ basic::options::OptionKeys::stepwise::num_pose_minimize ].user() ) num_pose_minimize_ = option[ basic::options::OptionKeys::stepwise::num_pose_minimize ]();
-	min_type_ = option[ basic::options::OptionKeys::stepwise::min_type ]();
-	min_tolerance_ = option[ basic::options::OptionKeys::stepwise::min_tolerance ]();
-	vary_rna_bond_geometry_ = option[ basic::options::OptionKeys::rna::vary_geometry ]();
-	vary_polar_hydrogen_geometry_ = option[ basic::options::OptionKeys::stepwise::polar_hydrogens::vary_polar_hydrogen_geometry ]();
-	disallow_pack_polar_hydrogens_ = option[ basic::options::OptionKeys::stepwise::polar_hydrogens::disallow_pack_polar_hydrogens ]();
-	use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
-	output_minimized_pose_list_ = option[ basic::options::OptionKeys::stepwise::output_minimized_pose_list ]();
-	output_cluster_size_ = option[ basic::options::OptionKeys::stepwise::output_cluster_size ]();
-	mapfile_activated_ = option[ basic::options::OptionKeys::edensity::mapfile ].user();
+	initialize_from_options_collection( option );
+}
 
-	lores_ = option[ basic::options::OptionKeys::stepwise::lores ]();
-	verbose_sampler_ = option[ basic::options::OptionKeys::stepwise::verbose_sampler ]();
-	minimize_waters_ = option[ basic::options::OptionKeys::stepwise::minimize_waters ]();
-	hydrate_magnesiums_ = option[ basic::options::OptionKeys::magnesium::hydrate ]();
-	test_all_mg_hydration_frames_ = option[ magnesium::all_hydration_frames ]();
+void
+StepWiseBasicOptions::initialize_from_options_collection( utility::options::OptionCollection const & the_options ) {
+	using namespace basic::options;
 
-	if ( option[ basic::options::OptionKeys::stepwise::minimizer_mode ]() == "THERMAL_SAMPLER" ) {
+	sampler_silent_file_ = the_options[ OptionKeys::stepwise::sampler_silent_file ]();
+	num_random_samples_ = the_options[ OptionKeys::stepwise::num_random_samples ]();
+	max_tries_multiplier_for_ccd_ = the_options[ OptionKeys::stepwise::max_tries_multiplier_for_ccd ]();
+	sampler_num_pose_kept_ = the_options[ OptionKeys::stepwise::rna::sampler_num_pose_kept ]();
+	if ( the_options[ OptionKeys::cluster::radius ].user() ) cluster_rmsd_ = the_options[ OptionKeys::cluster::radius ]();
+	atr_rep_screen_ = the_options[ OptionKeys::stepwise::atr_rep_screen ]();
+	atr_rep_screen_for_docking_ = the_options[ OptionKeys::stepwise::atr_rep_screen_for_docking ]();
+	rmsd_screen_ = the_options[ OptionKeys::stepwise::rmsd_screen ]();
+	VDW_rep_screen_info_ = the_options[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
+	if ( the_options[ OptionKeys::stepwise::num_pose_minimize ].user() ) num_pose_minimize_ = the_options[ OptionKeys::stepwise::num_pose_minimize ]();
+	min_type_ = the_options[ OptionKeys::stepwise::min_type ]();
+	min_tolerance_ = the_options[ OptionKeys::stepwise::min_tolerance ]();
+	vary_rna_bond_geometry_ = the_options[ OptionKeys::rna::vary_geometry ]();
+	vary_polar_hydrogen_geometry_ = the_options[ OptionKeys::stepwise::polar_hydrogens::vary_polar_hydrogen_geometry ]();
+	disallow_pack_polar_hydrogens_ = the_options[ OptionKeys::stepwise::polar_hydrogens::disallow_pack_polar_hydrogens ]();
+	use_packer_instead_of_rotamer_trials_ = the_options[ OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
+	output_minimized_pose_list_ = the_options[ OptionKeys::stepwise::output_minimized_pose_list ]();
+	output_cluster_size_ = the_options[ OptionKeys::stepwise::output_cluster_size ]();
+	mapfile_activated_ = the_options[ OptionKeys::edensity::mapfile ].user();
+
+	lores_ = the_options[ OptionKeys::stepwise::lores ]();
+	verbose_sampler_ = the_options[ OptionKeys::stepwise::verbose_sampler ]();
+	minimize_waters_ = the_options[ OptionKeys::stepwise::minimize_waters ]();
+	hydrate_magnesiums_ = the_options[ OptionKeys::magnesium::hydrate ]();
+	test_all_mg_hydration_frames_ = the_options[ magnesium::all_hydration_frames ]();
+
+	if ( the_options[ OptionKeys::stepwise::minimizer_mode ]() == "THERMAL_SAMPLER" ) {
 		minimizer_mode_ = modeler::THERMAL_SAMPLER;
 	} else {
 		minimizer_mode_ = modeler::TRADITIONAL_MINIMIZER;
 	}
-	n_cycles_ = option[ basic::options::OptionKeys::recces::n_cycle ]();
-	auto temps = option[ basic::options::OptionKeys::recces::temps ]();
+	n_cycles_ = the_options[ OptionKeys::recces::n_cycle ]();
+	auto temps = the_options[ OptionKeys::recces::temps ]();
 	thermal_sampler_temperature_ = ( temps.size() > 0 )  ? temps[ 1 ] : 0.5;
-	thermal_sampler_output_min_pose_ = option[ basic::options::OptionKeys::recces::output_min_pose ]();
-	sample_pH_ = option[ basic::options::OptionKeys::pH::pH_mode ]();
+	thermal_sampler_output_min_pose_ = the_options[ OptionKeys::recces::output_min_pose ]();
+	sample_pH_ = the_options[ OptionKeys::pH::pH_mode ]();
 }
+
+void
+StepWiseBasicOptions::list_options_read( utility::options::OptionKeyList & opt ) {
+
+	using namespace basic::options;
+
+	opt + OptionKeys::stepwise::sampler_silent_file
+		+ OptionKeys::stepwise::num_random_samples
+		+ OptionKeys::stepwise::max_tries_multiplier_for_ccd
+		+ OptionKeys::stepwise::rna::sampler_num_pose_kept
+		+ OptionKeys::cluster::radius
+		+ OptionKeys::stepwise::atr_rep_screen
+		+ OptionKeys::stepwise::atr_rep_screen_for_docking
+		+ OptionKeys::stepwise::rmsd_screen
+		+ OptionKeys::stepwise::rna::VDW_rep_screen_info
+		+ OptionKeys::stepwise::num_pose_minimize
+		+ OptionKeys::stepwise::min_type
+		+ OptionKeys::stepwise::min_tolerance
+		+ OptionKeys::rna::vary_geometry
+		+ OptionKeys::stepwise::polar_hydrogens::vary_polar_hydrogen_geometry
+		+ OptionKeys::stepwise::polar_hydrogens::disallow_pack_polar_hydrogens
+		+ OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials
+		+ OptionKeys::stepwise::output_minimized_pose_list
+		+ OptionKeys::stepwise::output_cluster_size
+		+ OptionKeys::edensity::mapfile
+		+ OptionKeys::stepwise::lores
+		+ OptionKeys::stepwise::verbose_sampler
+		+ OptionKeys::stepwise::minimize_waters
+		+ OptionKeys::magnesium::hydrate
+		+ magnesium::all_hydration_frames
+		+ OptionKeys::stepwise::minimizer_mode
+		+ OptionKeys::recces::n_cycle
+		+ OptionKeys::recces::temps
+		+ OptionKeys::recces::output_min_pose
+		+ OptionKeys::pH::pH_mode;
+}
+
 
 
 } //options

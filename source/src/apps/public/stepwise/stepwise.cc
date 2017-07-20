@@ -7,8 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file swa_monte_carlo.cc
+/// @file stepwise.cc
 /// @author Rhiju Das (rhiju@stanford.edu)
+/// @author Andrew Watkins (amw579@stanford.edu)
 
 // libRosetta headers
 #include <core/types.hh>
@@ -37,9 +38,19 @@
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 #include <protocols/viewer/viewers.hh>
 
+#include <protocols/jd3/full_model/FullModelJobQueen.hh>
+#include <protocols/jd3/full_model/MoverAndFullModelJob.hh>
+#include <protocols/jd3/full_model_inputters/PDBFullModelInputter.hh>
+#include <protocols/jd3/JobDistributor.hh>
+#include <protocols/jd3/JobDistributorFactory.hh>
+#include <protocols/jd3/Job.fwd.hh>
+#include <protocols/jd3/LarvalJob.fwd.hh>
+#include <protocols/jd3/JobResult.fwd.hh>
+
 //////////////////////////////////////////////////
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
@@ -64,17 +75,148 @@
 #include <list>
 
 using namespace core;
+using namespace pose;
 using namespace protocols;
+using namespace protocols::jd3;
+using namespace protocols::jd3::full_model;
+using namespace protocols::jd3::full_model_inputters;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace basic::options::OptionKeys::stepwise::monte_carlo;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.stepwise.stepwise" );
+
+OPT_KEY( Boolean, use_legacy_stepwise_job_distributor )
+
+class StepWiseJobQueen : public FullModelJobQueen {
+
+public:
+	StepWiseJobQueen():
+		FullModelJobQueen()
+	{
+		utility::options::OptionKeyList opts;
+		//protocols::stepwise::options::StepWiseBasicOptions::list_options_read( opts );
+		//protocols::stepwise::options::StepWiseMoveSelectorOptions::list_options_read( opts );
+		protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions::list_options_read( opts );
+		PDBFullModelInputter::list_options_read( opts );
+		core::scoring::list_read_options_in_get_score_function( opts );
+		add_options( opts );
+
+		//add_option( basic::options::OptionKeys::score::weights );
+		add_option( basic::options::OptionKeys::stepwise::monte_carlo::csa::csa_bank_size );
+		add_option( basic::options::OptionKeys::stepwise::lores );
+		add_option( basic::options::OptionKeys::rna::denovo::minimize_rna );
+		add_option( basic::options::OptionKeys::constraints::cst_file );
+		add_option( basic::options::OptionKeys::stepwise::move );
+		add_option( basic::options::OptionKeys::out::file::silent );
+		add_option( basic::options::OptionKeys::out::nstruct );
+		add_option( basic::options::OptionKeys::out::overwrite );
+		add_option( basic::options::OptionKeys::stepwise::superimpose_over_all );
+	}
+
+	virtual
+	JobOP
+	complete_larval_job_maturation(
+		protocols::jd3::LarvalJobCOP larval_job,
+		utility::options::OptionCollectionCOP job_options,
+		utility::vector1< JobResultCOP > const & // input_job_results
+	) {
+		using namespace core::scoring;
+		using namespace core::pose;
+		using namespace core::chemical;
+		using namespace core::pose::full_model_info;
+		using namespace core::import_pose;
+		using namespace protocols::stepwise;
+		using namespace protocols::stepwise::setup;
+		using namespace protocols::stepwise::modeler;
+		using namespace protocols::stepwise::monte_carlo::submotif;
+		using namespace protocols::stepwise::monte_carlo;
+		using namespace protocols::stepwise::monte_carlo::mover;
+		using namespace protocols::stepwise::monte_carlo::options;
+
+		MoverAndFullModelJobOP mature_job( new MoverAndFullModelJob );
+
+		core::pose::PoseOP pose = pose_for_job( larval_job, *job_options );
+		mature_job->pose( pose );
+
+		utility::options::OptionCollection const & jo = *job_options;
+
+		bool const just_RNA = just_modeling_RNA( jo[ in::file::fasta ]() );
+		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+
+		// AMW: pass this scorefunction to the JQ
+		ScoreFunctionOP scorefxn;
+		if ( jo[ score::weights ].user() ) scorefxn = get_score_function();
+		else if ( jo[ OptionKeys::stepwise::lores ]() && !jo[ OptionKeys::rna::denovo::minimize_rna ]() ) {
+			scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
+		} else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+		else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
+		if ( jo[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
+
+		// If we care about the 'viewability' of the pose, center it -- obviously this
+		// isn't super-useful unless we have a BIG starting pose where residue 1 is
+		// likely far from the COM.
+#ifdef GL_GRAPHICS
+		pose->center();
+#endif
+		PoseOP native_pose, align_pose;
+		initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose );
+		// temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
+		core::io::rna::get_rna_data_info( *pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );
+
+		// setup test move specified via -stepwise:move option
+		StepWiseMove const test_move( jo[ OptionKeys::stepwise::move ](), const_full_model_info( *pose ).full_model_parameters() );
+
+		// actual pose to be sampled... do not score pose is user has specified a move
+		if ( pose->size() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( *pose );
+		Vector center_vector = ( align_pose != nullptr ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
+		protocols::viewer::add_conformation_viewer ( pose->conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
+
+		StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
+		stepwise_monte_carlo->set_align_pose( align_pose ); //allows for alignment to be to non-native
+		stepwise_monte_carlo->set_move( test_move );
+
+		StepWiseMonteCarloOptionsOP options( new StepWiseMonteCarloOptions );
+		options->initialize_from_options_collection( *job_options );
+		stepwise_monte_carlo->set_options( options );
+		if ( ( options->from_scratch_frequency() > 0.0 || const_full_model_info( *pose ).other_pose_list().size() > 0 ) && !scorefxn->has_nonzero_weight( other_pose ) ) scorefxn->set_weight( other_pose, 1.0 ); // critical if more than one pose shows up and focus switches...
+
+		std::string const silent_file = jo[ out::file::silent ]();
+		if ( jo[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
+		stepwise_monte_carlo->set_out_path( utility::file::FileName( silent_file ).path() );
+		stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) ) );
+
+		// used to just be the stepwise job distributor that got this.
+		// did we have behavior that relied on these two having a different
+		// sense? yes... if align was null we made it -s! THIS native was never
+		// meant for rms fill calculations before.
+		stepwise_monte_carlo->set_native_pose( native_pose );
+
+		mature_job->pose( pose );
+
+		// It takes a mover and pose, but the pose must have a FullModelInfo.
+		// Don't worry about the latter check for now.
+		mature_job->mover( stepwise_monte_carlo );
+
+		return mature_job;
+	}
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 stepwise_monte_carlo()
+{
+	// AMW: THIS will determine whether it's MPI vs serial etc.
+	// Elsewhere, in the DAG setup, we will decide MC vs CSA
+	protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
+	protocols::jd3::JobQueenOP queen( new StepWiseJobQueen );
+	jd->go( queen );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+stepwise_monte_carlo_legacy()
 {
 	using namespace core::pose;
 	using namespace core::scoring;
@@ -95,12 +237,18 @@ stepwise_monte_carlo()
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
-	else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::denovo::minimize_rna ]() ) {
+	if ( option[ score::weights ].user() ) {
+		scorefxn = get_score_function();
+	} else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::denovo::minimize_rna ]() ) {
 		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
-	} else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
-	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
-	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
+	} else if ( just_RNA ) {
+		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+	} else {
+		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
+	}
+	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) {
+		scorefxn->set_weight( atom_pair_constraint, 1.0 );
+	}
 
 	PoseOP native_pose, align_pose;
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -136,10 +284,14 @@ stepwise_monte_carlo()
 	StepWiseMonteCarloOptionsOP options( new StepWiseMonteCarloOptions );
 	options->initialize_from_command_line();
 	stepwise_monte_carlo->set_options( options );
-	if ( ( options->from_scratch_frequency() > 0.0 || const_full_model_info( *pose_op ).other_pose_list().size() > 0 ) && !scorefxn->has_nonzero_weight( other_pose ) ) scorefxn->set_weight( other_pose, 1.0 ); // critical if more than one pose shows up and focus switches...
+	if ( ( options->from_scratch_frequency() > 0.0 || const_full_model_info( *pose_op ).other_pose_list().size() > 0 ) && !scorefxn->has_nonzero_weight( other_pose ) ) {
+		scorefxn->set_weight( other_pose, 1.0 ); // critical if more than one pose shows up and focus switches...
+	}
 
 	std::string const silent_file = option[ out::file::silent ]();
-	if ( option[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
+	if ( option[ out::overwrite ]() ) {
+		core::io::silent::remove_silent_file_if_it_exists( silent_file );
+	}
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
 	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) ) );
 
@@ -155,7 +307,6 @@ stepwise_monte_carlo()
 	while ( stepwise_job_distributor->has_another_job() ) {
 		stepwise_job_distributor->apply( pose );
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////
@@ -163,7 +314,11 @@ void*
 my_main( void* )
 {
 	clock_t const my_main_time_start( clock() );
-	stepwise_monte_carlo();
+	if ( option[ use_legacy_stepwise_job_distributor ].value() ) {
+		stepwise_monte_carlo_legacy();
+	} else {
+		stepwise_monte_carlo();
+	}
 	protocols::viewer::clear_conformation_viewers();
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	exit( 0 );
@@ -175,6 +330,8 @@ int
 main( int argc, char * argv [] )
 {
 	try {
+		NEW_OPT( use_legacy_stepwise_job_distributor, "Use the legacy RNA_MonteCarloJobDistributor", false );
+
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -fasta <fasta file with sequence> -s <start pdb> -input_res <input pdb1> [ -native <native pdb file> ] " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 

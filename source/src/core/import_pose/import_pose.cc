@@ -835,15 +835,19 @@ void build_pose_as_is2(
 ///////////////////////////////////////////////////////////////////////////////////////
 pose::PoseOP
 initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set ) {
+	return initialize_pose_and_other_poses_from_options( rsd_set, basic::options::option );
+}
 
-	using namespace basic::options;
+PoseOP
+initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set, utility::options::OptionCollection const & options ) {
+
 	using namespace basic::options::OptionKeys;
 	using namespace core::io::silent;
 	using namespace core::pose;
 	using namespace utility;
 
-	utility::vector1< std::string > const & input_pdb_files    = option[ in::file::s ]();
-	utility::vector1< std::string > const & input_silent_files = option[ in::file::silent ]();
+	utility::vector1< std::string > const & input_pdb_files    = options[ in::file::s ]();
+	utility::vector1< std::string > const & input_silent_files = options[ in::file::silent ]();
 
 	utility::vector1< pose::PoseOP > input_poses;
 	for ( Size n = 1; n <= input_pdb_files.size(); n++ ) {
@@ -859,7 +863,7 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 		input_poses.push_back( pose );
 	}
 
-	std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = option[ in::file::input_res ].resnum_and_chain();
+	std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = options[ in::file::input_res ].resnum_and_chain();
 	vector1< Size > const & input_res_list = input_resnum_and_chain.first;
 	if ( input_res_list.size() ) {
 		vector1< char > input_chain_list = input_resnum_and_chain.second;
@@ -885,11 +889,11 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 
 	if ( input_poses.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
 
-	if ( option[ full_model::other_poses ].user() ) {
-		get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
+	if ( options[ full_model::other_poses ].user() ) {
+		get_other_poses( input_poses, options[ full_model::other_poses ](), rsd_set );
 	}
 
-	fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
+	fill_full_model_info_from_options( input_poses, options );  //FullModelInfo (minimal object needed for add/delete)
 	return input_poses[1];
 }
 
@@ -907,20 +911,31 @@ get_other_poses( utility::vector1< pose::PoseOP > & other_poses,
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_full_model_info_from_command_line( pose::Pose & pose ) {
+	fill_full_model_info_from_options( pose, basic::options::option );
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void
+fill_full_model_info_from_options( pose::Pose & pose, utility::options::OptionCollection const & options ) {
 	utility::vector1< PoseOP > other_pose_ops; // dummy
-	fill_full_model_info_from_command_line( pose, other_pose_ops );
+	fill_full_model_info_from_options( pose, other_pose_ops, options );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_full_model_info_from_command_line( vector1< PoseOP > & pose_ops ) {
+	fill_full_model_info_from_options( pose_ops, basic::options::option );
+}
+
+void
+fill_full_model_info_from_options( vector1< PoseOP > & pose_ops, utility::options::OptionCollection const & options ) {
 
 	runtime_assert( pose_ops.size() > 0 );
 
 	utility::vector1< PoseOP > other_pose_ops;
 	for ( Size n = 2; n <= pose_ops.size(); n++ ) other_pose_ops.push_back( pose_ops[n] );
 
-	fill_full_model_info_from_command_line( *(pose_ops[1]), other_pose_ops );
+	fill_full_model_info_from_options( *(pose_ops[1]), other_pose_ops, options );
 }
 
 
@@ -928,12 +943,17 @@ fill_full_model_info_from_command_line( vector1< PoseOP > & pose_ops ) {
 // this is needed so that first pose holds pointers to other poses.
 void
 fill_full_model_info_from_command_line( pose::Pose & pose, vector1< PoseOP > & other_pose_ops ) {
+	fill_full_model_info_from_options( pose, other_pose_ops, basic::options::option );
+}
+
+void
+fill_full_model_info_from_options( pose::Pose & pose, vector1< PoseOP > & other_pose_ops, utility::options::OptionCollection const & options ) {
 
 	utility::vector1< Pose * > pose_pointers;
 	pose_pointers.push_back( & pose );
 	for ( Size n = 1; n <= other_pose_ops.size(); n++ ) pose_pointers.push_back( & (*other_pose_ops[ n ]) );
 
-	fill_full_model_info_from_command_line( pose_pointers );
+	fill_full_model_info_from_options( pose_pointers, options );
 
 	core::pose::full_model_info::nonconst_full_model_info( pose ).set_other_pose_list( other_pose_ops );
 }
@@ -941,6 +961,10 @@ fill_full_model_info_from_command_line( pose::Pose & pose, vector1< PoseOP > & o
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
+	fill_full_model_info_from_options( pose_pointers, basic::options::option );
+}
+void
+fill_full_model_info_from_options( vector1< Pose * > & pose_pointers, utility::options::OptionCollection const & options ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -971,40 +995,40 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		}
 	}
 
-	if ( option[ full_model::cutpoint_open ].user() ) {
+	if ( options[ full_model::cutpoint_open ].user() ) {
 		cutpoint_open_in_full_model =
-			full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
+			full_model_parameters->conventional_to_full( options[ full_model::cutpoint_open ].resnum_and_chain() );
 	}
 
 	vector1< Size > extra_minimize_res =
-		full_model_parameters->conventional_to_full( option[ full_model::extra_min_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::extra_min_res ].resnum_and_chain() );
 	vector1< Size > sample_res         =
-		full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
+		full_model_parameters->conventional_to_full( options[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
 	vector1< Size > working_res        =
-		full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
+		full_model_parameters->conventional_to_full( options[ full_model::working_res ].resnum_and_chain() ); //all working stuff
 	vector1< Size > terminal_res       =
-		full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::rna::terminal_res ].resnum_and_chain() );
 	vector1< Size > block_stack_above_res  =
-		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
 	vector1< Size > block_stack_below_res  =
-		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
 	vector1< Size > preferred_root_res =
-		full_model_parameters->conventional_to_full( option[ full_model::root_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::root_res ].resnum_and_chain() );
 	vector1< Size > jump_res           =
-		full_model_parameters->conventional_to_full( option[ full_model::jump_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::jump_res ].resnum_and_chain() );
 	vector1< Size > const cutpoint_closed          =
-		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
-	if ( option[ full_model::cyclize ].user() ) utility_exit_with_message( "Cannot handle cyclize yet in stepwise." );
+		full_model_parameters->conventional_to_full( options[ full_model::cutpoint_closed ].resnum_and_chain() );
+	if ( options[ full_model::cyclize ].user() ) utility_exit_with_message( "Cannot handle cyclize yet in stepwise." );
 	vector1< Size > const fiveprime_res  =
-		full_model_parameters->conventional_to_full( option[ full_model::fiveprime_cap ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::fiveprime_cap ].resnum_and_chain() );
 	vector1< Size > const bulge_res                =
-		full_model_parameters->conventional_to_full( option[ full_model::rna::bulge_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::rna::bulge_res ].resnum_and_chain() );
 	vector1< Size > const extra_minimize_jump_res  =
-		full_model_parameters->conventional_to_full( option[ full_model::extra_min_jump_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::extra_min_jump_res ].resnum_and_chain() );
 	vector1< Size > const virtual_sugar_res        =
-		full_model_parameters->conventional_to_full( option[ full_model::virtual_sugar_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ full_model::virtual_sugar_res ].resnum_and_chain() );
 	vector1< Size > const alignment_anchor_res     =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::stepwise::alignment_anchor_res ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( options[ OptionKeys::stepwise::alignment_anchor_res ].resnum_and_chain() );
 	update_jump_res( jump_res, extra_minimize_jump_res );
 
 	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
@@ -1102,11 +1126,11 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
 	full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
 	full_model_parameters->set_parameter_as_res_list_in_pairs( FIVEPRIME_CAP,  fiveprime_res );
-	full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
-	if ( option[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );
+	full_model_parameters->read_disulfides( options[ OptionKeys::stepwise::protein::disulfide_file]() );
+	if ( options[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( options[ constraints::cst_file ]()[ 1 ] );
 
 	// move this code block somewhere else when ready.
-	if ( option[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
+	if ( options[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
 		// placeholder -- testing if loops can be 'evaporated'.
 		vector1< Size > full_model_res_no_loops;
 		for ( Size n = 1; n <= desired_nres; ++n ) {

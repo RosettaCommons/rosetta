@@ -98,9 +98,8 @@ PoseOutputterFactory::new_pose_outputter( std::string const & pose_outputter_typ
 		return iter->second->create_outputter();
 	} else {
 		TR<<"Available PoseOutputters: ";
-		for ( PoseOutputterMap::const_iterator pose_outputter_it = pose_outputter_creator_map_.begin();
-				pose_outputter_it != pose_outputter_creator_map_.end(); ++pose_outputter_it ) {
-			TR << pose_outputter_it->first << ", ";
+		for ( auto const & elem : pose_outputter_creator_map_ ) {
+			TR << elem.first << ", ";
 		}
 		TR << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( pose_outputter_type + " is not known to the PoseOutputterFactory."
@@ -121,9 +120,8 @@ PoseOutputterFactory::new_secondary_outputter( std::string const & secondary_out
 		return iter->second->create_outputter();
 	} else {
 		TR<<"Available SecondaryPoseOutputters: ";
-		for ( SecondaryOutputterMap::const_iterator secondary_pose_outputter_it = secondary_pose_outputter_creator_map_.begin();
-				secondary_pose_outputter_it != secondary_pose_outputter_creator_map_.end(); ++secondary_pose_outputter_it ) {
-			TR << secondary_pose_outputter_it->first << ", ";
+		for ( auto const & elem : secondary_pose_outputter_creator_map_ ) {
+			TR << elem.first << ", ";
 		}
 		TR << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( secondary_outputter_type + " is not known to the PoseOutputterFactory."
@@ -137,10 +135,9 @@ PoseOutputterFactory::new_secondary_outputter( std::string const & secondary_out
 PoseOutputterOP
 PoseOutputterFactory::pose_outputter_from_command_line() const
 {
-	for ( PoseOutputterMap::const_iterator pose_outputter_it = pose_outputter_creator_map_.begin();
-			pose_outputter_it != pose_outputter_creator_map_.end(); ++pose_outputter_it ) {
-		if ( pose_outputter_it->second->outputter_specified_by_command_line() ) {
-			return pose_outputter_it->second->create_outputter();
+	for ( auto const & elem : pose_outputter_creator_map_ ) {
+		if ( elem.second->outputter_specified_by_command_line() ) {
+			return elem.second->create_outputter();
 		}
 	}
 	// having reached here, no pose outputter is explicity set on the command line, and so
@@ -154,10 +151,9 @@ std::list< SecondaryPoseOutputterOP >
 PoseOutputterFactory::secondary_pose_outputters_from_command_line() const
 {
 	std::list< SecondaryPoseOutputterOP > secondary_outputters;
-	for ( SecondaryOutputterMap::const_iterator secondary_pose_outputter_it = secondary_pose_outputter_creator_map_.begin();
-			secondary_pose_outputter_it != secondary_pose_outputter_creator_map_.end(); ++secondary_pose_outputter_it ) {
-		if ( secondary_pose_outputter_it->second->outputter_specified_by_command_line() ) {
-			secondary_outputters.push_back( secondary_pose_outputter_it->second->create_outputter() );
+	for ( auto const & elem : secondary_pose_outputter_creator_map_ ) {
+		if ( elem.second->outputter_specified_by_command_line() ) {
+			secondary_outputters.push_back( elem.second->create_outputter() );
 		}
 	}
 	return secondary_outputters;
@@ -197,16 +193,15 @@ void PoseOutputterFactory::define_secondary_pose_outputter_xml_schema( utility::
 
 void PoseOutputterFactory::list_outputter_options_read( utility::options::OptionKeyList & read_options ) const
 {
-	for ( CreatorList::const_iterator iter = creator_list_.begin(); iter != creator_list_.end(); ++iter ) {
-		(*iter)->list_options_read( read_options );
+	for ( auto const & elem : creator_list_ ) {
+		elem->list_options_read( read_options );
 	}
 }
 
 void PoseOutputterFactory::list_secondary_outputter_options_read( utility::options::OptionKeyList & read_options ) const
 {
-	for ( SecondaryCreatorList::const_iterator iter = secondary_creator_list_.begin();
-			iter != secondary_creator_list_.end(); ++iter ) {
-		(*iter)->list_options_read( read_options );
+	for ( auto const & elem : secondary_creator_list_ ) {
+		elem->list_options_read( read_options );
 	}
 }
 

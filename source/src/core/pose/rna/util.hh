@@ -146,10 +146,36 @@ bool
 has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
 
 void
+get_number_base_pairs(pose::Pose const & pose,
+	Size & N_WC,
+	Size & N_NWC,
+	Size & N_BP
+);
+
+void
 add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s );
 
 void
+add_number_base_pairs( pose::Pose & pose );
+
+void
+get_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose,
+	Size & pN_WC,
+	Size & pN_NWC,
+	Size & pN_BP,
+	Size & pnatWC,
+	Size & pnatNWC,
+	Size & pnatBP,
+	Real & pf_natWC,
+	Real & pf_natNWC,
+	Real & pf_natBP
+);
+
+void
 add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, io::silent::SilentStruct & s );
+
+void
+add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose );
 
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n );

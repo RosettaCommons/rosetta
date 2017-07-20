@@ -46,9 +46,6 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log
 
-cat swm_rebuild_rnareslevel4_2kcycles_RPT2.out | sed s'/S_00000/S_000/g' > foo
-mv foo swm_rebuild_rnareslevel4_2kcycles_RPT2.out
-
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 

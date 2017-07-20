@@ -127,7 +127,6 @@ BinarySilentStruct::fill_struct(
 	core::pose::Pose const & pose,
 	std::string tag
 ) {
-
 	Parent::fill_struct( pose, tag );
 
 	fullatom( pose.is_fullatom() );

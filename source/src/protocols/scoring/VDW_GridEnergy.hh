@@ -58,6 +58,10 @@ public:
 	// methods for WholeStructureEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
+	virtual void
+	setup_for_scoring( core::pose::Pose &, core::scoring::ScoreFunction const & ) const;
+
+
 	virtual
 	void
 	finalize_total_energy(

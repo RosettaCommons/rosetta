@@ -16,7 +16,7 @@
 #include <protocols/jd3/pose_inputters/SilentFilePoseInputterCreator.hh>
 
 // Package headers
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_inputters/pose_inputter_schemas.hh>
 

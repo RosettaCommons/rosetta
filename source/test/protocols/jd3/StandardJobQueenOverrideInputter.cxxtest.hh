@@ -23,11 +23,12 @@
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/InputSource.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/pose_inputters/pose_inputter_schemas.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
 
@@ -247,7 +248,7 @@ public:
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 1 );
-		PoseInputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
+		InputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "dummy_from_cl" );
 	}
@@ -295,7 +296,7 @@ public:
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
-		PoseInputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
+		InputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "dummy_from_tag" );
 
@@ -339,13 +340,13 @@ public:
 
 		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs1.size(), 1 );
-		PoseInputSource const & input_source_1 = jobs1.front()->inner_job()->input_source();
+		InputSource const & input_source_1 = jobs1.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "PDB" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "1ubq" );
 
 		LarvalJobs jobs2 = djq3.determine_job_list( 2, 100 );
 		TS_ASSERT_EQUALS( jobs2.size(), 1 );
-		PoseInputSource const & input_source_2 = jobs2.front()->inner_job()->input_source();
+		InputSource const & input_source_2 = jobs2.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_2.origin(), "Dummy" );
 		TS_ASSERT_EQUALS( input_source_2.input_tag(), "dummy_from_cl" );
 	}
@@ -393,7 +394,7 @@ public:
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
-		PoseInputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
+		InputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "dummy_from_tag" );
 	}
@@ -424,13 +425,13 @@ public:
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 2 );
 		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs1.size(), 5 );
-		PoseInputSource const & input_source_1 = jobs1.front()->inner_job()->input_source();
+		InputSource const & input_source_1 = jobs1.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "dummy_from_tag" );
 
 		LarvalJobs jobs2 = djq3.determine_job_list( 2, 100 );
 		TS_ASSERT_EQUALS( jobs2.size(), 5 );
-		PoseInputSource const & input_source_2 = jobs2.front()->inner_job()->input_source();
+		InputSource const & input_source_2 = jobs2.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_2.origin(), "PDB" );
 		TS_ASSERT_EQUALS( input_source_2.input_tag(), "1ubq" );
 

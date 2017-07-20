@@ -78,9 +78,8 @@ PoseInputterFactory::new_pose_inputter( std::string const & pose_inputter_type )
 		return iter->second->create_inputter();
 	} else {
 		TR<<"Available PoseInputters: ";
-		for ( PoseInputterMap::const_iterator pose_inputter_it = pose_inputter_creator_map_.begin();
-				pose_inputter_it != pose_inputter_creator_map_.end(); ++pose_inputter_it ) {
-			TR << pose_inputter_it->first << ", ";
+		for ( auto const & pose_inputter_elem : pose_inputter_creator_map_ ) {
+			TR << pose_inputter_elem.first << ", ";
 		}
 		TR << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( pose_inputter_type + " is not known to the PoseInputterFactory."

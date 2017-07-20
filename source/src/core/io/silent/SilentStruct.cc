@@ -1023,7 +1023,7 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
 ///////////////////////////////////////////////////////////////////////////
 void
-SilentStruct::fill_other_struct_list( pose::Pose const & pose ){
+SilentStruct::fill_other_struct_list( pose::Pose const & pose ) {
 	using namespace core::pose::full_model_info;
 	if ( !full_model_info_defined( pose ) ) return;
 

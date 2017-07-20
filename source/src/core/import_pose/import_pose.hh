@@ -34,6 +34,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>
+#include <utility/options/OptionCollection.hh>
 
 #include <utility/vector1.hh>
 
@@ -363,21 +364,32 @@ get_other_poses(  utility::vector1< core::pose::PoseOP > & other_poses,
 core::pose::PoseOP
 initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set );
 
+core::pose::PoseOP
+initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set, utility::options::OptionCollection const & options );
+
 void
 cleanup( core::pose::Pose & pose,
 	bool const force_cut_at_rna_chainbreak = false );
 
 void
 fill_full_model_info_from_command_line( core::pose::Pose & pose );
+void
+fill_full_model_info_from_options( core::pose::Pose & pose, utility::options::OptionCollection const & options );
 
 void
 fill_full_model_info_from_command_line( utility::vector1< core::pose::PoseOP > & pose_ops );
+void
+fill_full_model_info_from_options( utility::vector1< core::pose::PoseOP > & pose_ops, utility::options::OptionCollection const & options );
 
 void
 fill_full_model_info_from_command_line( core::pose::Pose & pose, utility::vector1< core::pose::PoseOP > & other_pose_ops );
+void
+fill_full_model_info_from_options( core::pose::Pose & pose, utility::vector1< core::pose::PoseOP > & other_pose_ops, utility::options::OptionCollection const & options );
 
 void
 fill_full_model_info_from_command_line( utility::vector1< core::pose::Pose * > & pose_pointers );
+void
+fill_full_model_info_from_options( utility::vector1< core::pose::Pose * > & pose_pointers, utility::options::OptionCollection const & options );
 
 
 core::pose::full_model_info::FullModelParametersOP

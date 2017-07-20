@@ -141,7 +141,7 @@ sources = {
 		"JobResult",
 		"JobSummary",
 		"LarvalJob",
-		"PoseInputSource",
+		"InputSource",
 	],
 	"protocols/jd3/deallocation": [
 		"DeallocationMessage",
@@ -156,9 +156,18 @@ sources = {
 	"protocols/jd3/pose_inputters": [
 		"pose_inputter_schemas",
 		"PoseInputter",
+		"PoseInputSource",
 		"PoseInputterFactory",
 		"PDBPoseInputter",
 		"SilentFilePoseInputter",
+	],
+	"protocols/jd3/full_model_inputters": [
+		"FullModelInputter",
+		"FullModelInputSource",
+		"full_model_inputter_schemas",
+		"FullModelInputterFactory",
+		"PDBFullModelInputter",
+		"SilentFileFullModelInputter",
 	],
 	"protocols/jd3/pose_outputters": [
 		"pose_outputter_schemas",
@@ -168,6 +177,11 @@ sources = {
 		"ScoreFileOutputter",
 		"SecondaryPoseOutputter",
 		"SilentFilePoseOutputter",
+	],
+	"protocols/jd3/full_model": [
+		"MoverAndFullModelJob",
+		"FullModelInnerLarvalJob",
+		"FullModelJobQueen",
 	],
 	"protocols/jd3/standard": [
 		"MoverAndPoseJob",

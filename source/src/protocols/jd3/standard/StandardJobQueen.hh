@@ -21,7 +21,7 @@
 #include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
-#include <protocols/jd3/PoseInputSource.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>

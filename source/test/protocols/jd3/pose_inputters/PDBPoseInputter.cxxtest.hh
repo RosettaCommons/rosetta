@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 
 #include <basic/options/util.hh>
 
@@ -32,8 +32,8 @@ typename T::mapped_type get(T const& map, typename T::key_type const& key)
 	return iter != map.end() ? iter->second : typename T::mapped_type();
 }
 
-using protocols::jd3::PoseInputSources;
-using protocols::jd3::PoseInputSourceOP;
+using protocols::jd3::pose_inputters::PoseInputSources;
+using protocols::jd3::pose_inputters::PoseInputSourceOP;
 using protocols::jd3::pose_inputters::PDBPoseInputter;
 
 class JD3PDBPoseInputterTests : public CxxTest::TestSuite {

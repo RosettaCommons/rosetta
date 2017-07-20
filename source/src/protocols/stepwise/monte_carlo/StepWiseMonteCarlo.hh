@@ -55,6 +55,7 @@ public:
 
 	/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
 	virtual void set_native_pose( core::pose::PoseCOP pose );
+	void set_align_pose( core::pose::PoseCOP pose ) { align_pose_ = pose; }
 
 	void
 	set_options( options::StepWiseMonteCarloOptionsCOP options );
@@ -124,6 +125,8 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	options::StepWiseMonteCarloOptionsCOP options_;
 	mover::StepWiseMasterMoverOP master_mover_;
+
+	core::pose::PoseCOP align_pose_ = nullptr;
 
 	// are these really in use anymore?
 	core::Real const max_missing_weight_;

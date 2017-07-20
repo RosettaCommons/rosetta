@@ -120,12 +120,10 @@ SilentFilePoseOutputter::write_output_pose(
 	core::pose::Pose const & pose
 )
 {
-
 	if ( ! opts_ ) {
 		initialize_sf_options( job_options, tag );
 	}
-
-	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *opts_ );
+	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, *opts_ );
 	std::string output_tag = ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
 		+ job.nstruct_suffixed_job_tag();
 	if ( pose_ind_of_total.second != 1 ) {
@@ -149,9 +147,17 @@ void SilentFilePoseOutputter::flush()
 		return;
 	}
 
+	// Here or in SilentFileData, we also need to EXPLICITLY output OTHER_STRUCTs
 	core::io::silent::SilentFileData sfd( *opts_ );
-	for ( auto iter : buffered_structs_ ) {
+	for ( auto const & iter : buffered_structs_ ) {
 		sfd.add_structure( *iter );
+		// One must explicitly add these because of the structure of
+		// SilentFileData. Maybe it can or should change! Because then on
+		// the other side, it has to change whether the struct being
+		// added is an other_struct. This perturbs the code less though.
+		for ( auto const & other_struct : iter->other_struct_list() ) {
+			sfd.add_structure( *other_struct );
+		}
 	}
 	sfd.write_all( fname_out_ );
 	buffered_structs_.clear();

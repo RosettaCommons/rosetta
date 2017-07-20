@@ -122,11 +122,13 @@ PDBPoseOutputter::outputter_for_job(
 bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const
 {
 	using namespace basic::options::OptionKeys;
-
 	InnerLarvalJobCOP inner_job( job.inner_job() );
+
 	utility::tag::TagCOP jobdef_tag( inner_job->jobdef_tag() );
+
+	//TR << "jobdef_tag " << jobdef_tag << std::endl;
 	utility::tag::TagCOP pdb_output_tag;
-	if ( jobdef_tag->hasTag( "Output" ) && jobdef_tag->getTag( "Output" )->hasTag( keyname() ) ) {
+	if ( jobdef_tag && jobdef_tag->hasTag( "Output" ) && jobdef_tag->getTag( "Output" )->hasTag( keyname() ) ) {
 		pdb_output_tag = jobdef_tag->getTag( "Output" )->getTag( keyname() );
 	}
 

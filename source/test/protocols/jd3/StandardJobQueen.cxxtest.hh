@@ -22,7 +22,7 @@
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/PoseInputSource.hh>
+#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
@@ -50,6 +50,7 @@
 using namespace utility::tag;
 using namespace protocols::jd3;
 using namespace protocols::jd3::standard;
+using namespace protocols::jd3::pose_inputters;
 
 //local options
 namespace basic { namespace options { namespace OptionKeys {
@@ -264,10 +265,10 @@ public:
 	}
 
 	bool tag_has_subtag_w_name( TagCOP tag, std::string const & tag_name, std::string const & name_attribute ) {
-		for ( Tag::tags_t::const_iterator iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
-			if ( (*iter)->getName() != tag_name ) continue;
-			if ( (*iter)->hasOption( "name" ) ) {
-				if ( (*iter)->getOption< std::string >( "name" ) == name_attribute ) {
+		for ( auto const & subtag : tag->getTags() ) {
+			if ( subtag->getName() != tag_name ) continue;
+			if ( subtag->hasOption( "name" ) ) {
+				if ( subtag->getOption< std::string >( "name" ) == name_attribute ) {
 					return true;
 				}
 			}
@@ -277,11 +278,11 @@ public:
 
 	TagCOP
 	subtag_w_name( TagCOP tag, std::string const & tag_name, std::string const & name_attribute ) {
-		for ( Tag::tags_t::const_iterator iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
-			if ( (*iter)->getName() != tag_name ) continue;
-			if ( (*iter)->hasOption( "name" ) ) {
-				if ( (*iter)->getOption< std::string >( "name" ) == name_attribute ) {
-					return *iter;
+		for ( auto const & subtag : tag->getTags() ) {
+			if ( subtag->getName() != tag_name ) continue;
+			if ( subtag->hasOption( "name" ) ) {
+				if ( subtag->getOption< std::string >( "name" ) == name_attribute ) {
+					return subtag;
 				}
 			}
 		}
@@ -322,6 +323,7 @@ public:
 	static
 	void job_tag_xsd1( utility::tag::XMLSchemaDefinition &, utility::tag::XMLSchemaComplexTypeGenerator & ctgen )
 	{
+
 		using namespace utility::tag;
 		AttributeList attributes;
 		attributes + XMLSchemaAttribute( "foo", xs_string , "" ) + XMLSchemaAttribute( "bar", xs_integer , "" );

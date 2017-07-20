@@ -23,6 +23,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/options/OptionCollection.fwd.hh>
+
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>
 #endif
@@ -147,10 +149,15 @@ public:
 	void set_sample_pH( bool const setting ){ sample_pH_ = setting; }
 	bool sample_pH() const{ return sample_pH_; }
 
+	static void
+	list_options_read( utility::options::OptionKeyList & opt );
+
 protected:
 
 	void
 	initialize_from_command_line();
+	void
+	initialize_from_options_collection( utility::options::OptionCollection const & options );
 
 	void
 	initialize_variables();

@@ -67,17 +67,15 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 	job_queen_ = queen;
 	job_dag_ = job_queen_->initial_job_dag();
 
-
 	while ( true ) {
+
 		std::pair< SizeList, bool > job_total_order_pair = topological_sort( *job_dag_ );
 		if ( ! job_total_order_pair.second ) {
 			job_queen_->flush();
 			throw utility::excn::EXCN_Msg_Exception( "JobQueen produced a non-DAG job graph." );
 		}
 		SizeList job_total_order = job_total_order_pair.first;
-		for ( SizeList::const_iterator node_iter = job_total_order.begin();
-				node_iter != job_total_order.end(); ++node_iter ) {
-			Size job_node = *node_iter;
+		for ( Size const job_node : job_total_order ) {
 			run_jobs_for_dag_node( job_node );
 		}
 
@@ -102,8 +100,7 @@ VanillaJobDistributor::run_jobs_for_dag_node( core::Size job_node )
 		LarvalJobs jobs_for_node = job_queen_->determine_job_list( job_node, 1000 );
 		if ( jobs_for_node.empty() ) break;
 
-		for ( LarvalJobs::const_iterator job_iter = jobs_for_node.begin(); job_iter != jobs_for_node.end(); ++job_iter ) {
-			LarvalJobOP larval_job = *job_iter;
+		for ( LarvalJobOP larval_job : jobs_for_node ) {
 			// Check if this job has already been completed -- or perhaps already been started
 			// with a temporary file having been written to the file system -- so that this
 			// job can be skipped.  Not all JobQueens will want to allow already-performed jobs
@@ -112,13 +109,11 @@ VanillaJobDistributor::run_jobs_for_dag_node( core::Size job_node )
 				job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
 				continue;
 			}
-
 			utility::vector1< JobResultCOP > input_job_results =
 				construct_job_result_input_list( larval_job );
 
 			// OK -- now turn the larval job into a full-fledged Job
 			JobOP mature_job = job_queen_->mature_larval_job( larval_job, input_job_results );
-
 			CompletedJobOutput job_output = run_mature_job( larval_job, mature_job );
 
 			// Inform the JobQueen that the job has run and give her the JobStatus
@@ -144,7 +139,7 @@ VanillaJobDistributor::construct_job_result_input_list( LarvalJobCOP larval_job 
 	// construct the (possibly empty) list of job results needed to mature this larval job
 	utility::vector1< JobResultCOP > input_job_results;
 	input_job_results.reserve( larval_job->input_job_result_indices().size() );
-	for ( auto result_id : larval_job->input_job_result_indices() ) {
+	for ( auto const result_id : larval_job->input_job_result_indices() ) {
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
 			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
@@ -185,7 +180,7 @@ VanillaJobDistributor::potentially_output_some_job_results()
 {
 	// ask the job queen if she wants to output any results
 	JobResultIDList jobs_to_output = job_queen_->jobs_that_should_be_output();
-	for ( auto result_id : jobs_to_output ) {
+	for ( auto const result_id : jobs_to_output ) {
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
 			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
@@ -206,7 +201,7 @@ VanillaJobDistributor::potentially_discard_some_job_results()
 {
 	// ask the job queen if she wants to discard any results
 	JobResultIDList jobs_to_discard = job_queen_->job_results_that_should_be_discarded();
-	for ( auto result_id : jobs_to_discard ) {
+	for ( auto const result_id : jobs_to_discard ) {
 		auto result_iter = job_results_.find( result_id );
 
 		if ( result_iter == job_results_.end() ) {

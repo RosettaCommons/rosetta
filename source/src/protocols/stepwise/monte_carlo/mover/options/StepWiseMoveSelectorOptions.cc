@@ -19,6 +19,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -69,29 +71,53 @@ StepWiseMoveSelectorOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 StepWiseMoveSelectorOptions::initialize_from_command_line() {
-	set_allow_internal_hinge_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
-	set_allow_internal_local_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
-	set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
-	set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
+	initialize_from_options_collection( option );
+}
 
-	set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
-	if ( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ) {
+void
+StepWiseMoveSelectorOptions::initialize_from_options_collection( utility::options::OptionCollection const & the_options ) {
+	set_allow_internal_hinge_moves( the_options[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
+	set_allow_internal_local_moves( the_options[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
+	set_add_delete_frequency( the_options[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
+	set_from_scratch_frequency( the_options[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
+
+	set_docking_frequency( the_options[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
+	if ( the_options[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ) {
 		TR << TR.Red << "Use -docking_frequency instead of -intermolecular_frequency -- will be deprecated soon." << TR.Reset << std::endl;
-		set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
+		set_docking_frequency( the_options[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
 	}
-	if ( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ].user() ) { // old option.
-		set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ? 0.2 : 0.0 );
+	if ( the_options[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ].user() ) { // old option.
+		set_skip_bulge_frequency( the_options[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ? 0.2 : 0.0 );
 	}
 
-	set_submotif_frequency( option[ OptionKeys::stepwise::monte_carlo::submotif_frequency ]() );
-	set_switch_focus_frequency( option[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
-	if ( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ].user() ) set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ]() );
-	set_vary_loop_length_frequency( option[ OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ]() );
+	set_submotif_frequency( the_options[ OptionKeys::stepwise::monte_carlo::submotif_frequency ]() );
+	set_switch_focus_frequency( the_options[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
+	if ( the_options[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ].user() ) set_skip_bulge_frequency( the_options[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ]() );
+	set_vary_loop_length_frequency( the_options[ OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ]() );
 
 	// hey what about force_unique_moves?
 	filter_complex_cycles_ = !basic::options::option[ basic::options::OptionKeys::score::loop_close::allow_complex_loop_graph ]();
-	allow_submotif_split_ = option[ OptionKeys::stepwise::monte_carlo::allow_submotif_split ]();
-	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
+	allow_submotif_split_ = the_options[ OptionKeys::stepwise::monte_carlo::allow_submotif_split ]();
+	force_submotif_without_intervening_bulge_ = the_options[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
+}
+
+void
+StepWiseMoveSelectorOptions::list_options_read( utility::options::OptionKeyList & opts ) {
+	using namespace basic::options;
+	opts + OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves
+		+ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves
+		+ OptionKeys::stepwise::monte_carlo::add_delete_frequency
+		+ OptionKeys::stepwise::monte_carlo::from_scratch_frequency
+		+ OptionKeys::stepwise::monte_carlo::docking_frequency
+		+ OptionKeys::stepwise::monte_carlo::intermolecular_frequency
+		+ OptionKeys::stepwise::monte_carlo::allow_skip_bulge
+		+ OptionKeys::stepwise::monte_carlo::submotif_frequency
+		+ OptionKeys::stepwise::monte_carlo::switch_focus_frequency
+		+ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency
+		+ OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency
+		+ OptionKeys::score::loop_close::allow_complex_loop_graph
+		+ OptionKeys::stepwise::monte_carlo::allow_submotif_split
+		+ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge;
 }
 
 } //options

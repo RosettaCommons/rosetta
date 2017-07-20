@@ -23,6 +23,9 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
+
 #include <basic/Tracer.hh>
 
 using namespace basic::options;
@@ -80,7 +83,9 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	designing_with_noncanonicals_( false ),
 	checkpoint_( false ),
 	checkpointing_frequency_( 0 ),
-	continue_until_none_missing_( false )
+	continue_until_none_missing_( false ),
+	eval_base_pairs_( false ),
+	superimpose_over_all_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
@@ -106,67 +111,128 @@ StepWiseMonteCarloOptions::clone() const
 	return StepWiseMonteCarloOptionsOP( new StepWiseMonteCarloOptions( *this ) );
 }
 
-///////////////////////////////////////////////////////////////////
 void
-StepWiseMonteCarloOptions::initialize_from_command_line() {
+StepWiseMonteCarloOptions::initialize_from_options_collection( utility::options::OptionCollection const & options ) {
 
-	StepWiseBasicOptions::initialize_from_command_line();
-	StepWiseMoveSelectorOptions::initialize_from_command_line();
+	StepWiseBasicOptions::initialize_from_options_collection( options );
+	StepWiseMoveSelectorOptions::initialize_from_options_collection( options );
 
-	set_silent_file( option[ OptionKeys::out::file::silent ]() );
-	set_verbose_scores( option[ OptionKeys::stepwise::monte_carlo::verbose_scores ]() );
-	set_integration_test_mode( option[ OptionKeys::stepwise::rna::integration_test ]() );
-	set_skip_deletions( option[ OptionKeys::stepwise::monte_carlo::skip_deletions ]() );
-	set_num_pose_minimize( option[ OptionKeys::stepwise::num_pose_minimize ]() );
-	set_erraser( option[ OptionKeys::stepwise::rna::erraser ]() );
-	set_cycles( option[ OptionKeys::stepwise::monte_carlo::cycles ]() );
-	set_add_proposal_density_factor( option[ OptionKeys::stepwise::monte_carlo::add_proposal_density_factor ]() );
-	set_minimize_single_res_frequency( option[ OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency ]() );
-	set_just_min_after_mutation_frequency( option[ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency ]() );
+	set_silent_file( options[ OptionKeys::out::file::silent ]() );
+	set_verbose_scores( options[ OptionKeys::stepwise::monte_carlo::verbose_scores ]() );
+	set_integration_test_mode( options[ OptionKeys::stepwise::rna::integration_test ]() );
+	set_skip_deletions( options[ OptionKeys::stepwise::monte_carlo::skip_deletions ]() );
+	set_num_pose_minimize( options[ OptionKeys::stepwise::num_pose_minimize ]() );
+	set_erraser( options[ OptionKeys::stepwise::rna::erraser ]() );
+	set_cycles( options[ OptionKeys::stepwise::monte_carlo::cycles ]() );
+	set_add_proposal_density_factor( options[ OptionKeys::stepwise::monte_carlo::add_proposal_density_factor ]() );
+	set_minimize_single_res_frequency( options[ OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency ]() );
+	set_just_min_after_mutation_frequency( options[ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency ]() );
 
-	set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
-	set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
-	set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
-	if ( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ].user() ) {
-		set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
+	set_allow_split_off( options[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
+	set_temperature( options[ OptionKeys::stepwise::monte_carlo::temperature ]() );
+	set_virtual_sugar_keep_base_fixed( options[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
+	if ( options[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ].user() ) {
+		set_virtual_sugar_do_minimize( options[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
 	}
 	force_centroid_interaction_ = true; // note default is different from stepwise enumeration
-	if ( option[ OptionKeys::stepwise::rna::force_centroid_interaction ].user() ) set_force_centroid_interaction( option[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
-	sampler_max_centroid_distance_ = option[ OptionKeys::stepwise::rna::sampler_max_centroid_distance ]();
-	set_use_phenix_geo(  option[ OptionKeys::rna::corrected_geo ] );
-	set_make_movie( option[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
-	sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
-	force_phosphate_instantiation_ = option[ OptionKeys::stepwise::rna::force_phosphate_instantiation ]();
-	rebuild_bulge_mode_ = option[ OptionKeys::stepwise::rna::rebuild_bulge_mode ]();
-	tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
-	o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
-	recover_low_ = option[ OptionKeys::stepwise::monte_carlo::recover_low ]();
-	enumerate_ = option[ OptionKeys::stepwise::enumerate ]();
-	preminimize_ = option[ OptionKeys::stepwise::preminimize ]();
-	skip_preminimize_ = option[ OptionKeys::stepwise::skip_preminimize ]();
-	new_move_selector_ = option[ OptionKeys::stepwise::new_move_selector ]();
-	test_all_moves_ = option[ OptionKeys::stepwise::test_all_moves ]();
-	save_times_ = option[ OptionKeys::out::save_times ]();
-	use_precomputed_library_ = option[ OptionKeys::stepwise::monte_carlo::use_precomputed_library ]();
-	local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
-	skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
-	filter_native_big_bins_ = option[ OptionKeys::stepwise::protein::filter_native_big_bins ]();
-	allow_virtual_o2prime_hydrogens_ = option[ OptionKeys::stepwise::rna::allow_virtual_o2prime_hydrogens ]();
-	allow_virtual_side_chains_ = option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]();
-	n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
-	protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
-	virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
-	use_first_jump_for_submotif_ = option[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
-	exclude_submotifs_ = option[ OptionKeys::stepwise::monte_carlo::exclude_submotifs ]();
-	designing_with_noncanonicals_ = option[ OptionKeys::stepwise::monte_carlo::designing_with_noncanonicals ]();
-	checkpoint_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]() != 0;
-	checkpointing_frequency_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]();
-	continue_until_none_missing_ = option[ OptionKeys::stepwise::monte_carlo::continue_until_none_missing ]();
+	if ( options[ OptionKeys::stepwise::rna::force_centroid_interaction ].user() ) set_force_centroid_interaction( options[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
+	sampler_max_centroid_distance_ = options[ OptionKeys::stepwise::rna::sampler_max_centroid_distance ]();
+	set_use_phenix_geo(  options[ OptionKeys::rna::corrected_geo ] );
+	set_make_movie( options[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
+	sampler_perform_phosphate_pack_ = options[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
+	force_phosphate_instantiation_ = options[ OptionKeys::stepwise::rna::force_phosphate_instantiation ]();
+	rebuild_bulge_mode_ = options[ OptionKeys::stepwise::rna::rebuild_bulge_mode ]();
+	tether_jump_ = options[ OptionKeys::stepwise::rna::tether_jump ]();
+	o2prime_legacy_mode_ = options[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
+	recover_low_ = options[ OptionKeys::stepwise::monte_carlo::recover_low ]();
+	enumerate_ = options[ OptionKeys::stepwise::enumerate ]();
+	preminimize_ = options[ OptionKeys::stepwise::preminimize ]();
+	skip_preminimize_ = options[ OptionKeys::stepwise::skip_preminimize ]();
+	new_move_selector_ = options[ OptionKeys::stepwise::new_move_selector ]();
+	test_all_moves_ = options[ OptionKeys::stepwise::test_all_moves ]();
+	save_times_ = options[ OptionKeys::out::save_times ]();
+	use_precomputed_library_ = options[ OptionKeys::stepwise::monte_carlo::use_precomputed_library ]();
+	local_redock_only_ = options[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
+	skip_coord_constraints_ = options[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
+	filter_native_big_bins_ = options[ OptionKeys::stepwise::protein::filter_native_big_bins ]();
+	allow_virtual_o2prime_hydrogens_ = options[ OptionKeys::stepwise::rna::allow_virtual_o2prime_hydrogens ]();
+	allow_virtual_side_chains_ = options[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]();
+	n_sample_ = options[ OptionKeys::stepwise::protein::n_sample ]();
+	protein_prepack_ = options[ OptionKeys::stepwise::protein::protein_prepack ]();
+	virtualize_packable_moieties_in_screening_pose_ = options[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
+	use_first_jump_for_submotif_ = options[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
+	exclude_submotifs_ = options[ OptionKeys::stepwise::monte_carlo::exclude_submotifs ]();
+	designing_with_noncanonicals_ = options[ OptionKeys::stepwise::monte_carlo::designing_with_noncanonicals ]();
+	checkpoint_ = options[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]() != 0;
+	checkpointing_frequency_ = options[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]();
+	continue_until_none_missing_ = options[ OptionKeys::stepwise::monte_carlo::continue_until_none_missing ]();
+	eval_base_pairs_ = options[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();
+	superimpose_over_all_ = options[ basic::options::OptionKeys::stepwise::superimpose_over_all ]();
 
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );
 		set_minimize_after_delete( false );
 	}
+}
+
+void
+StepWiseMonteCarloOptions::list_options_read( utility::options::OptionKeyList & opts ) {
+
+	StepWiseBasicOptions::list_options_read( opts );
+	StepWiseMoveSelectorOptions::list_options_read( opts );
+
+	opts + OptionKeys::out::file::silent
+		+ OptionKeys::stepwise::monte_carlo::verbose_scores
+		+ OptionKeys::stepwise::rna::integration_test
+		+ OptionKeys::stepwise::monte_carlo::skip_deletions
+		+ OptionKeys::stepwise::num_pose_minimize
+		+ OptionKeys::stepwise::rna::erraser
+		+ OptionKeys::stepwise::monte_carlo::cycles
+		+ OptionKeys::stepwise::monte_carlo::add_proposal_density_factor
+		+ OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency
+		+ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency
+		+ OptionKeys::stepwise::monte_carlo::allow_split_off
+		+ OptionKeys::stepwise::monte_carlo::temperature
+		+ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed
+		+ OptionKeys::stepwise::rna::virtual_sugar_do_minimize
+		+ OptionKeys::stepwise::rna::force_centroid_interaction
+		+ OptionKeys::stepwise::rna::sampler_max_centroid_distance
+		+ OptionKeys::rna::corrected_geo
+		+ OptionKeys::stepwise::monte_carlo::make_movie
+		+ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack
+		+ OptionKeys::stepwise::rna::force_phosphate_instantiation
+		+ OptionKeys::stepwise::rna::rebuild_bulge_mode
+		+ OptionKeys::stepwise::rna::tether_jump
+		+ OptionKeys::stepwise::rna::o2prime_legacy_mode
+		+ OptionKeys::stepwise::monte_carlo::recover_low
+		+ OptionKeys::stepwise::enumerate
+		+ OptionKeys::stepwise::preminimize
+		+ OptionKeys::stepwise::skip_preminimize
+		+ OptionKeys::stepwise::new_move_selector
+		+ OptionKeys::stepwise::test_all_moves
+		+ OptionKeys::out::save_times
+		+ OptionKeys::stepwise::monte_carlo::use_precomputed_library
+		+ OptionKeys::stepwise::monte_carlo::local_redock_only
+		+ OptionKeys::stepwise::protein::skip_coord_constraints
+		+ OptionKeys::stepwise::protein::filter_native_big_bins
+		+ OptionKeys::stepwise::rna::allow_virtual_o2prime_hydrogens
+		+ OptionKeys::stepwise::protein::allow_virtual_side_chains
+		+ OptionKeys::stepwise::protein::n_sample
+		+ OptionKeys::stepwise::protein::protein_prepack
+		+ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose
+		+ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif
+		+ OptionKeys::stepwise::monte_carlo::exclude_submotifs
+		+ OptionKeys::stepwise::monte_carlo::designing_with_noncanonicals
+		+ OptionKeys::stepwise::monte_carlo::checkpointing_frequency
+		+ OptionKeys::stepwise::monte_carlo::continue_until_none_missing
+		+ OptionKeys::rna::evaluate_base_pairs
+		+ OptionKeys::stepwise::superimpose_over_all;
+}
+
+///////////////////////////////////////////////////////////////////
+void
+StepWiseMonteCarloOptions::initialize_from_command_line() {
+	initialize_from_options_collection( option );
 }
 
 
