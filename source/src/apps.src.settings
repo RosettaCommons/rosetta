@@ -70,6 +70,7 @@ sources = {
                 "ensemble_analysis",
                 "fast_clustering",
 		"InterfaceAnalyzer",
+		"interface_energy",
 		"PeptideDeriver",
 		"per_residue_energies",
 		"residue_energy_breakdown",

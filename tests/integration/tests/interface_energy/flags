@@ -1,0 +1,4 @@
+-s input/4lgs.pdb
+-face1 input/face1.txt
+-face2 input/face2.txt
+-score:hbond_bb_per_residue_energy
