@@ -75,14 +75,14 @@ PDBFullModelInputter::full_model_input_sources_from_command_line()
 	FullModelInputSources input_sources;
 	input_sources.emplace_back( new FullModelInputSource( keyname() ) );
 	input_sources[ 1 ]->input_tag( "S" );
-	
+
 	// 'just fasta' from_scratch case: we must provide a dummy filename
 	// that signals we are truly reading in nothing, but the command line
 	// writ large is still 'one job'
 	if ( filenames_from_command_line.empty() ) {
 		input_sources[ 1 ]->store_string_pair( "filename", "fasta" );
 	}
-	
+
 	// otherwise, mimic the PoseInputter, but we store all our filenames
 	// into a single input source
 	for ( utility::file::FileName const & ii_filename : filenames_from_command_line ) {

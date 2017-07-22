@@ -82,7 +82,7 @@ FullModelInputSources SilentFileFullModelInputter::full_model_input_sources_from
 	// This sounds counterintuitive. It's not the way it's done in rna_denovo! But this is necessary
 	// for some silent file formats / integration tests... for now.
 	// AMW TODO: investigate how this does for inputting a vector of silent files....
-	
+
 	FullModelInputSources input_sources;
 	input_sources.emplace_back( new FullModelInputSource( keyname() ) );
 
@@ -149,12 +149,12 @@ SilentFileFullModelInputter::full_model_from_input_source(
 	silent_struct.fill_pose( *pose );
 	return pose;
 	*/
-	
-	
+
+
 	// AMW EDIT HERE!!!
 	//debug_assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
 	//core::import_pose::ImportPoseOptions import_opts( options );
-	
+
 	return core::import_pose::initialize_pose_and_other_poses_from_options( rsd_set, options );
 
 }
