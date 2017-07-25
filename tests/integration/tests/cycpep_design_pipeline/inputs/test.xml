@@ -1,0 +1,107 @@
+<ROSETTASCRIPTS>
+	# The SCOREFXNS section defines scoring functions that will be used later in the script:
+	<SCOREFXNS>
+		# The current Rosetta default scorefunction:
+		<ScoreFunction name="ref" weights="ref2015" />
+		# The default scorefunction with increased hydrogen bond weights, and with the aa_composition,
+		# aspartimide_penalty, and constraint score terms activated.
+		<ScoreFunction name="ref_highhbond" weights="ref2015" >
+			<Reweight scoretype="hbond_lr_bb" weight="5.0" />
+			<Reweight scoretype="hbond_sr_bb" weight="5.0" />
+			<Reweight scoretype="atom_pair_constraint" weight="1.0" />
+			<Reweight scoretype="dihedral_constraint" weight="1.0" />
+			<Reweight scoretype="angle_constraint" weight="1.0" />
+			<Reweight scoretype="aa_composition" weight="1.0" />
+			<Reweight scoretype="aspartimide_penalty" weight="1.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	# The RESIDUE_SELECTORS section allows users to configure tools to select residues,
+	# which are used when setting up other Rosetta modules.
+	<RESIDUE_SELECTORS>
+		# Select residues with mainchain phi torsion values greater than zero.  These positions
+		# will be restricted to becoming D-amino acids during design:
+		<Phi name="posPhi" select_positive_phi="true" />
+		# Select residues with mainchain phi torsion values less than zero.  These positions
+		# will be restricted to becoming L-amino acids during design:
+		<Phi name="negPhi" select_positive_phi="false" />
+	</RESIDUE_SELECTORS>
+	# The FILTERS section allows users to configure filters.  These measure properties of a
+	# structure and make decisions, based on the measured properties, about whether to discard
+	# the current structure.
+	<FILTERS>
+		# Filter to avoid score function artifact of having more than two hydrogen bonds to carbonyls:
+		<OversaturatedHbondAcceptorFilter name="oversat" scorefxn="ref" max_allowed_oversaturated="0" consider_mainchain_only="false"/>
+	</FILTERS>
+	# The TASKOPERATIONS section allows users to configure task operations, which are Rosetta modules that control the
+	# behavior of Rosetta's "Packer" module.  The Packer, in turn, is used for side-chain identity and rotamer optimization.
+	# (As such, it is the primary tool used for sequence design.):
+	<TASKOPERATIONS>
+		# Task operation to read a resfile defining the D-amino acids, which will be used for design at positions with
+		# mainchain phi torsion values greater than zero:
+		<ReadResfile name="d_res" filename="inputs/d_res.txt" selector="posPhi"/>
+		# Task operation to read a resfile defining the L-amino acids, which will be used for design at positions with
+		# mainchain phi torsion values less than zero:
+		<ReadResfile name="l_res" filename="inputs/l_res.txt" selector="negPhi"/>
+	</TASKOPERATIONS>
+	# The MOVERS section allows users to define movers, which are Rosetta modules that modify a structure in some way:
+	<MOVERS>
+		# A mover to declare a bond connecting the termini (i.e. to cyclize the peptide).  In the context of Rosetta, declaring
+		# a bond tells Rosetta that two atoms should not have Van der Waals interactions computed, but does not constrain the
+		# bond geometry in any way.  Note that the variable %%Nres%%, specified on the command line, is used to specify the index
+		# of the C-terminal residue:
+		<DeclareBond name="peptide_bond1" res1="1" atom1="N" atom2="C" res2="%%Nres%%" add_termini="true" />
+		# The following three movers are used to set up torsion, angle, and length constraints for the terminal peptide bond, ensuring that
+		# good bond geometry is preserved during relaxation.  Again, the command-line variable %%Nres%% is used to specify the index of the
+		# C-terminal residue:
+		<CreateTorsionConstraint name="peptide_torsion_constraint">
+			<Add res1="%%Nres%%" res2="%%Nres%%" res3="1" res4="1" atom1="CA" atom2="C" atom3="N" atom4="CA" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
+		</CreateTorsionConstraint>
+		<CreateAngleConstraint name="peptide_angle_constraints">
+			<Add res1="%%Nres%%" atom1="CA" res_center="%%Nres%%" atom_center="C" res2="1" atom2="N" cst_func="CIRCULARHARMONIC 2.02807247 0.005" />
+			<Add res1="%%Nres%%" atom1="C" res_center="1" atom_center="N" res2="1" atom2="CA" cst_func="CIRCULARHARMONIC 2.12406565 0.005" />
+		</CreateAngleConstraint>
+		<CreateDistanceConstraint name="N_To_C_dist_cst">
+			<Add res1="%%Nres%%" res2="1" atom1="C" atom2="N" cst_func="HARMONIC 1.32865 0.01" />
+		</CreateDistanceConstraint>
+		# Composition constraints are used with the aa_composition score term in order to add a nonlinearly-ramping penality for
+		# deviation from a desired amino acid composition.  In this case, we use them to require at least two proline residues (L- or D-),
+		# at least one L-aspartate or L-glutamate, and at least one positively-charged residue.
+		<AddCompositionConstraintMover name="addcompcsts" filename="inputs/desired_makeup.comp" />
+		# The FastDesign mover performs alternating rounds of sequence design and torsion-space energy minimization, while ramping the
+		# repulsive term in the scorefunction (fa_rep).  We use it here with a modified scorefunction with constraints and aa_composition
+		# energy terms activated:
+		<FastDesign name="fdes" scorefxn="ref_highhbond" repeats="1" task_operations="d_res,l_res" ramp_down_constraints="false" >
+			# A MoveMap is used to specify which degrees of freedom can move and which are fixed during energy minimization.  Here,
+			# we indicate that all mainchain torsions (bb) and all sidechain torsions (chi) can move:
+			<MoveMap name="fdes_mm" >
+				<Chain number="1" chi="true" bb="true" />
+			</MoveMap>
+		</FastDesign>
+		# A final relaxation is performed with the regular energy function (i.e. without the increased hydrogen
+		# bond weight.
+		<FastRelax name="frlx" scorefxn="ref" repeats="1" ramp_down_constraints="false" >
+			<MoveMap name="frlx_mm" >
+				<Chain number="1" chi="true" bb="true" />
+			</MoveMap>
+		</FastRelax>
+	</MOVERS>
+	# The PROTOCOLS section is the section in which the user invokes the modules defined above in linear sequence
+	# to define a protocol:
+	<PROTOCOLS>
+		 <Add mover="peptide_bond1" />
+		 <Add mover="peptide_torsion_constraint" />
+		 <Add mover="peptide_angle_constraints" />
+		 <Add mover="N_To_C_dist_cst" />
+		 <Add mover="addcompcsts"/>
+		 <Add mover="fdes" />
+		 # A side-effect of the DeclareBond mover is the correction of positions of H and O atoms that depend on the peptide
+		 # bond.  We re-invoke it here for that purpose:
+		 <Add mover="peptide_bond1" />
+		 <Add mover="frlx" />
+		 <Add mover="peptide_bond1" />
+		 <Add filter="oversat" />
+	</PROTOCOLS>
+	# The OUTPUT section allows the user to define output settings.  Here, we specify the scoring function that will be used
+	# to score the output structure for the score written in the output PDB file.
+	<OUTPUT scorefxn="ref"/>
+</ROSETTASCRIPTS>

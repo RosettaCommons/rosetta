@@ -1,0 +1,5 @@
+-in:file:s inputs/test.pdb
+-in:file:fullatom
+-parser:protocol inputs/test.xml
+-write_all_connect_info
+-parser:script_vars Nres=7
