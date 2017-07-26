@@ -10,22 +10,52 @@
 from __future__ import print_function
 
 from collections import defaultdict
+from os import path
 import argparse
-import os
+import gzip
 import sys
+
+
+def _fill_chain_data(fdata, cd):
+    {cd[l[21]].append(l) for l in fdata if l.startswith('ATOM')}
+
+
+def _read_gzipped_pdb_file(fname, cd):
+    with gzip.open(fname, 'rb') as f:
+        _fill_chain_data([l.decode('utf-8') for l in f.readlines()], cd)
+
+
+def _read_pdb_file(fname, cd):
+    with open(fname, 'r') as f:
+        _fill_chain_data(f.readlines(), cd)
+
+
+def _write_output_file(fname, cd, chains, gzip_results=False):
+    open_fxn = gzip.open if gzip_results else open
+    with open_fxn(fname, 'w') as f:
+        for chain in chains:
+            if gzip_results:
+                f.writelines([l.encode('utf-8') for l in cd[chain]])
+            else:
+                f.writelines(cd[chain])
 
 
 def reorder_chains(in_file, out_file, chains):
     """This function reads a PDB formatted file, reorders the chains as
     requested by the user, and writes the new PDB file to disk.
     """
-    _, file_extension = os.path.splitext(in_file)
+    fbase, file_extension = path.splitext(in_file)
+
+    open_fxn = _read_pdb_file
+    if file_extension == '.gz':
+        open_fxn = _read_gzipped_pdb_file
+        _, file_extension = path.splitext(fbase)
+
     if file_extension != '.pdb':
         sys.exit('Input file must be PDB-formatted file. Exiting.')
 
     chain_data = defaultdict(list)
-    with open(in_file, 'r') as f:
-        {chain_data[l[21]].append(l) for l in f.readlines() if l.startswith('ATOM')}
+    open_fxn(in_file, chain_data)
 
     # we'll iterate over the list of chains twice to separate error checking
     # from file writing while only opening the file one time.
@@ -33,9 +63,8 @@ def reorder_chains(in_file, out_file, chains):
         if chain not in chain_data.keys():
             sys.exit('Chain "{}" not in input. Exiting.'.format(chain))
 
-    with open(out_file, 'w') as f:
-        for chain in chains:
-            f.writelines(chain_data[chain])
+    _, file_extension = path.splitext(out_file)
+    _write_output_file(out_file, chain_data, chains, file_extension == '.gz')
 
 
 def main(argv):
