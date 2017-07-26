@@ -22,7 +22,7 @@
 	</SCOREFXNS>
 	<MOVERS>
         <SetupForDensityScoring name="setup_dens"/>
-        <FragmentExtension name="ext" fasta="t20sA.fasta" scorefxn="dens" censcorefxn="cendens" beamwidth="32" fragtrials="3" masterbeamwidth="250" masterbeamcutoff="3.0" dumpbeam="0" samplesheets="1" 
+        <FragmentExtension name="ext" fasta="t20sA.fasta" scorefxn="dens" censcorefxn="cendens" beamwidth="32" fragtrials="200" masterbeamwidth="250" masterbeamcutoff="3.0" dumpbeam="0" samplesheets="1" 
             sheetcriteria="2" continuous_sheets="0" sheetbonus=".5" sheet_tolerance=".7" greedy="1" read_from_file="0" comparatorrounds="100"
             chainbreak="1.5" continuous_weight="0.3" windowdensweight="30" rmscutoff="1.2" rmswindow="20" beamscorecutoff="0.85"
             pack_min_cycles="2" fafilter="1" minimize="1" fragmelt="2" minmelt="15" looporder="1" direction="1"
