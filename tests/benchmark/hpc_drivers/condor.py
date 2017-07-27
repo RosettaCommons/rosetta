@@ -21,6 +21,8 @@ request_memory = {memory}
 
 GetEnv       = True
 
+Requirements = (Machine <= "rosetta012.graylab.jhu.edu")
+
 # Target: {name}
 Output  = {log_dir}/.hpc.{name}.output.$(Process).log
 Error   = {log_dir}/.hpc.{name}.errors.$(Process).log
