@@ -205,6 +205,46 @@ public:
 		}
 	}
 
+	void test_NeighborhoodResidueSelector_code_level_acces() {
+
+
+		NeighborhoodResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
+		utility::vector1< core::Size > testFocus(trpcage.size(), false);
+		testFocus[2] = true;
+		testFocus[3] = true;
+		testFocus[5] = true;
+
+		neighbor_rs->set_focus(testFocus);
+
+
+		utility::vector1< core::Real > distances;
+		distances.push_back(2.0);
+		distances.push_back(4.0);
+		distances.push_back(6.0);
+		distances.push_back(8.0);
+		distances.push_back(10.0);
+		distances.push_back(12.0);
+
+
+		neighbor_rs->set_include_focus_in_subset(false);
+		for ( core::Real d : distances ) {
+			//TR << "Testing distance " << d << " no focus in subset " << std::endl;
+			neighbor_rs->set_distance(d);
+			ResidueSubset subset = neighbor_rs->apply( trpcage );
+			TS_ASSERT( check_calculation( trpcage, subset, testFocus, d, false ) );
+		}
+
+		neighbor_rs->set_include_focus_in_subset(true);
+		for ( core::Real d : distances ) {
+			//TR << "Testing distance "  << d << " focus in subset " << std::endl;
+			neighbor_rs->set_distance(d);
+			ResidueSubset subset = neighbor_rs->apply( trpcage );
+			TS_ASSERT( check_calculation( trpcage, subset, testFocus, d, true ) );
+		}
+
+
+	}
+
 	bool
 	check_calculation( core::pose::Pose const & pose,
 		ResidueSubset const & subset,
