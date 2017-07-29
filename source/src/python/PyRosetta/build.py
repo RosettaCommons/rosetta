@@ -391,7 +391,7 @@ def generate_bindings(rosetta_source_path):
     skip_extensions = (".fwd.hh", ".impl.hh", ".py.hh")
 
     all_includes, serialization_instantiation = [], []
-    for path in 'ObjexxFCL utility numeric core protocols'.split():
+    for path in 'ObjexxFCL utility numeric basic core protocols'.split():
         for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
             for f in sorted(files):
                 if not is_dir_banned(dir_name):
