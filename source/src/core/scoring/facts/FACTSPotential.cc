@@ -148,6 +148,10 @@ FACTSPotential::set_default()
 //This function "pre-calculates" all the atomic contents (Born radius, sasa,...) and energy values
 void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	Size res1;
 
 	PROF_START( basic::FACTS_GET_ALL_BORN_RADII );
@@ -292,6 +296,10 @@ void FACTSPotential::res_res_burial(
 	FACTSResidueInfo const & facts2
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	bool const same_res( rsd1.seqpos() == rsd2.seqpos() );
 	Size natoms1 = rsd1.natoms();
 	Size natoms2 = rsd2.natoms();
@@ -354,6 +362,10 @@ void FACTSPotential::res_res_burial_for_scoring(
 	FACTSResidueInfo & facts2
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	bool const same_res( rsd1.seqpos() == rsd2.seqpos() );
 
 	Real thetaij, theta_sqrt;
@@ -440,6 +452,10 @@ void FACTSPotential::get_self_terms(
 	bool const packing
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	for ( Size atm1 = 1; atm1<=factstype1->natoms(); atm1++ ) {
 		if ( factstype1->not_using(atm1) ) continue;
 
@@ -510,6 +526,10 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 	bool const same_res,
 	bool const adjacent ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	// Default definitions
 	scale_solv = 1.0;
 	scale_elec = 1.0;
@@ -610,6 +630,10 @@ void FACTSPotential::calculate_GBpair_exact(
 	FACTSResidueInfo & facts2
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	using namespace core::scoring::etable::count_pair;
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
@@ -796,6 +820,10 @@ void FACTSPotential::calculate_GBpair_fast(
 	FACTSResidueInfo & facts1,
 	FACTSResidueInfo & facts2
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	using namespace core::scoring::etable::count_pair;
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
@@ -972,6 +1000,10 @@ void FACTSPotential::calculate_GBpair_v1trunk(
 	FACTSResidueInfo & facts2
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	using namespace core::scoring::etable::count_pair;
 
 	Real const min_dis(1.5);
@@ -1133,6 +1165,10 @@ void FACTSPotential::calculate_GBpair_v1trunk(
 
 void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	FACTSPoseInfoOP facts_info;
 	Vector virtualcrd;
 	Vector cross_v;
@@ -1244,6 +1280,10 @@ FACTSPotential::atom_atom_context_derivative( FACTSResidueInfo & facts1,
 	Vector const & dxyz,
 	bool const full_update
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 	FACTSRsdTypeInfoCOP factstype2 = facts2.restypeinfo();
 
@@ -1361,6 +1401,9 @@ void FACTSPotential::evaluate_polar_energy(Residue const & rsd1,
 	Real & E_solv_self,
 	Real & E_solv_pair
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
 
 	E_elec = facts1.E_elec( rsd2.seqpos() );
 	E_solv_self = facts1.E_solv_self( rsd2.seqpos() );
@@ -1410,6 +1453,10 @@ void FACTSPotential::eval_atom_polar_derivative(
 	Vector & F2
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	FACTSPoseInfo const & facts_info( static_cast< FACTSPoseInfo const & >
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
@@ -1439,6 +1486,10 @@ void FACTSPotential::eval_atom_nonpolar_derivative(
 	Vector & F2
 ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	FACTSPoseInfo const & facts_info( static_cast< FACTSPoseInfo const & >
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
@@ -1461,6 +1512,10 @@ void FACTSPotential::setup_for_packing(
 	pose::Pose & pose,
 	utility::vector1< bool > const & repacking_residues ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	PROF_START( basic::FACTS_SETUP_FOR_PACKING );
 
 	FACTSPoseInfoOP facts_info;
@@ -1479,7 +1534,14 @@ void FACTSPotential::setup_for_packing(
 	PROF_STOP( basic::FACTS_SETUP_FOR_PACKING );
 }
 
-void FACTSPotential::get_template_born_radii(pose::Pose const & pose, FACTSPoseInfo & facts_info) const{
+void FACTSPotential::get_template_born_radii(
+	pose::Pose const & pose,
+	FACTSPoseInfo & facts_info
+) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	Size const nres( pose.size() );
 	runtime_assert( facts_info.size() == nres );
 
@@ -1501,6 +1563,10 @@ void FACTSPotential::get_template_born_radii(pose::Pose const & pose, FACTSPoseI
 /// called eg after a rotamer substitution is accepted during rotamer trials
 void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seqpos) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	FACTSPoseInfo & facts_info( static_cast< FACTSPoseInfo & >
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) );
 	FACTSResidueInfo & facts( facts_info.residue_info( seqpos ) );
@@ -1514,6 +1580,9 @@ void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seq
 }
 
 void FACTSPotential::get_rotamers_born_radii(pose::Pose const & pose, conformation::RotamerSetBase & rotamer_set) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
 
 	FACTSPoseInfo const & facts_info_pose( static_cast< FACTSPoseInfo const & >
 		(pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
@@ -1536,6 +1605,10 @@ void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
 	FACTSPoseInfo const & facts_info,
 	FACTSResidueInfo & facts1)  const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
+
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
 	debug_assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
@@ -1554,6 +1627,9 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 	Real & E_solv_self,
 	Real & E_solv_pair
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
+#endif
 
 	// Initialize
 	E_elec = 0.0; E_solv_pair = 0.0; E_solv_self = 0.0;

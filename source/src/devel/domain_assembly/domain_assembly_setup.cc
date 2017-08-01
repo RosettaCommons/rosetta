@@ -62,7 +62,7 @@ using namespace chemical;
 //  //IntegerOptionKey const da_nruns( "DomainAssembly::da_nruns" );
 // }
 
-static THREAD_LOCAL basic::Tracer TR_da( "DomainAssemblySetup" );
+//static THREAD_LOCAL basic::Tracer TR_da( "DomainAssemblySetup" );
 
 /// @brief adds linkers and/or truncates a domain
 ///  instructions are contained in the DomainInfo member variables
@@ -235,7 +235,7 @@ assemble_domains_setup()
 	std::string option_filename = option[ DomainAssembly::da_setup_option_file ]();
 	parse_da_option_file( domains, option_filename );
 
-	TR_da << "This many domains will be connected " << domains.size() << std::endl;
+	//TR_da << "This many domains will be connected " << domains.size() << std::endl;
 
 	// add linkers and/or truncate domains
 	process_domains( domains );

@@ -118,9 +118,6 @@ private:
 	utility::vector1< numeric::interpolation::spline::BicubicSpline  > DOA_orb_orb_splines_;
 	utility::vector1< numeric::interpolation::spline::BicubicSpline  > ACO_AOH_orb_Hpol_splines_;
 
-	// unused mutable core::Real scOrb_scHpol_weight_;
-	// unused mutable core::Real scOrb_scOrb_weight_;
-
 };
 
 

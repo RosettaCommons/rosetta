@@ -28,7 +28,6 @@
 namespace protocols {
 namespace jobdist {
 
-static THREAD_LOCAL basic::Tracer jobs_tracer( "protocol.jobdist.jobs.hh" );
 
 /// @brief Each Job object describes a particular input to Rosetta.
 ///

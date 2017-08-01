@@ -51,6 +51,20 @@ enum Rama_Table_Type {
 	// 2. Add an option to basic/options/options_rosetta.py for the file that corresponds to this rama table.
 	// 3. Add the option name and this enum to get_custom_rama_table_filename().
 	// 4. If you're adding a D-amino acid type, be sure to update all the functions that check for flat_d_aa_ramatable and substitute the appropriate L-amino acid tables.
+	// NOTE NOTE NOTE NOTE NOTE!!! (Added 5 July 2017 by V.K. Mulligan):
+	//    The Ramachandran score term is now a legacy score term.  It should not be necessary to add any additional custom Rama tables to this list.
+	// Indeed, multi-threading support has been added with the assumption that these are the ONLY custom Rama tables.  Although these are lazily
+	// loaded in the non-multithreaded compilations of Rosetta, all of these are loaded on Ramachandran object creation in the multi-threaded
+	// compilation (due to the complexity of implementing a more finely-grained locking scheme for lazily loading each table individually in a
+	// thread-safe manner).  This means that, in the multi-threaded compilations of Rosetta, additional maps added here add to Rosetta's memory
+	// footprint.
+	//    The RamaPrePro score term is the succcessor to Ramachandran, and it supports threadsafe lazy loading of an arbitrary number of custom
+	// mainchain potentials (with finely-grained locking).  It also supports potentials of arbitrary dimensionality, and addtion of new potentials
+	// simply by specifying them in params files (so that it's not necessary to make code changes to load new potentials).  I strongly recommend
+	// using RamaPrePro for future work involving custom Ramachandran maps.
+	//    If ever it should become necessary to expand the list below, I recommend transferring control over the lazy loading of custom Rama maps to
+	// the ScoringManager, and implementing a finely-grained locking scheme to ensure thread-safety.  Hopefully this will never be necessary, though.
+	//    In short, PLEASE DON'T ADD ANY ADDITIONAL CUSTOM RAMA TABLES BELOW, unless strictly necessary.  Contact vmullig@uw.edu for more information.
 	flat_l_aa_ramatable=1,
 	flat_d_aa_ramatable,
 	flat_symm_dl_aa_ramatable,
@@ -265,9 +279,14 @@ public:
 	) const;
 
 	/// @brief Pick a random phi, psi value from a custom Rama table.
-	/// @details The custom Rama table is lazily loaded, so this function
-	/// is necessarily non-const.  By default, only the 20 canonical Rama
+	/// @details The custom Rama table is lazily loaded, so the custom
+	/// tables must be mutable data.  By default, only the 20 canonical Rama
 	/// tables are loaded.
+	/// @note The lazy loading is not threadsafe.  However, there are only a
+	/// few custom CDFs, which contribute negligibly to the Rosetta memory
+	/// footprint.  As such, to ensure threadsafety, I'm going to have all of
+	/// these load when the Ramachandran object is initialized in multi-threaded
+	/// mode. --VK Mulligan, 4 July 2017.
 	/// @param[in] type The type of custom rama table (an enum value).
 	/// @param[out] phi Randomly-drawn phi value, biased by the custom rama
 	/// table.
@@ -279,7 +298,7 @@ public:
 		Rama_Table_Type const type,
 		Real & phi,
 		Real & psi
-	);
+	) const;
 
 	/// @brief Get whether we're using the rama_power option, which scales rama values over 0.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu) and Brian Koepnick.
@@ -310,7 +329,7 @@ private:
 	/// @details Intended for sampling with alternative Ramachandran distributions.  Custom
 	/// tables are lazily loaded so as not to add to total Rosetta memory footprint.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void load_custom_rama_table( Rama_Table_Type const type );
+	void load_custom_rama_table( Rama_Table_Type const type ) const;
 
 	/// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
 	/// @details By default, the gly table is asymmetric because it is based on statistics from the PDB (which disproportionately put glycine
@@ -375,7 +394,7 @@ private:
 	/// @brief Generate a custom Rama cumulative distribution function from the corresponding energy table.
 	/// @details This is generated from the ENERGY table, not from the COUNTS.  If the energy table has not been
 	/// loaded, this function loads the energy table first.
-	void generate_custom_rama_cdf( Rama_Table_Type const type );
+	void generate_custom_rama_cdf( Rama_Table_Type const type ) const;
 
 	/// @brief Get a custom (extra) cumulative distribution function (CDF).
 	/// @details This function is const.  The CDF must already have been generated.
@@ -407,7 +426,7 @@ private: // data
 
 	/// @brief Extra Ramachandran count tables.
 	/// @details This is a map of (energy table type -> 2D array of probabilities by phi, psi).
-	std::map< Rama_Table_Type, utility::vector1< utility::vector1 < core::Real > > > extra_ram_probabil_;
+	mutable std::map< Rama_Table_Type, utility::vector1< utility::vector1 < core::Real > > > extra_ram_probabil_;
 
 	/// @brief The Ramachandran count tables.
 	/// @details  This is a FORTRAN-style 4D array.  The first two dimensions are for
@@ -418,7 +437,7 @@ private: // data
 
 	/// @brief Extra Ramachandran count tables.
 	/// @details This is a map of (energy table type -> 2D array of counts by phi, psi).
-	std::map< Rama_Table_Type, utility::vector1< utility::vector1 < core::Size > > > extra_ram_counts_;
+	mutable std::map< Rama_Table_Type, utility::vector1< utility::vector1 < core::Size > > > extra_ram_counts_;
 
 	/// @brief The Ramachandran energy tables.
 	/// @details  This is a FORTRAN-style 4D array.  The first two dimensions are for
@@ -429,7 +448,7 @@ private: // data
 
 	/// @brief Extra Ramachandran energy tables.
 	/// @details This is a map of (energy table type -> 2D array of energies by phi, psi).
-	std::map< Rama_Table_Type, utility::vector1< utility::vector1 < core::Real > > > extra_ram_energ_;
+	mutable std::map< Rama_Table_Type, utility::vector1< utility::vector1 < core::Real > > > extra_ram_energ_;
 
 	ObjexxFCL::FArray2D< Real > ram_entropy_;
 
@@ -451,7 +470,7 @@ private: // data
 	/// @brief Additional cumulative distribution functions (CDFs).
 	/// @details Used for several things.  For example, for storing CDFs for flat L-alpha amino acid
 	/// sampling.
-	std::map< Rama_Table_Type, utility::vector1< Real > > extra_cdf_;
+	mutable std::map< Rama_Table_Type, utility::vector1< Real > > extra_cdf_;
 
 	// The CDF for all phi/psi bins given the left AA, the center AA, and the secondary-structure classification
 	// (ABEGO or ABEGX?).  "Torsion bin" here means the ABEGO classification.  This classification is encoded

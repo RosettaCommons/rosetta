@@ -22,6 +22,7 @@
 
 #include <basic/datacache/CacheableData.hh>
 #include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -679,6 +680,9 @@ public:
 		read_in_multipole_parameters();
 	}
 
+	/// @brief Options constructor.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	MultipoleElecPotential( methods::EnergyMethodOptions const & options );
 
 	/// read in parameters for amoeba and mappings between
 	/// Rosetta residues/atoms and Amoeba types
@@ -869,7 +873,7 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-public:
+private:
 	// Dielectric constants for protein (Ep) and for solvent (Ew)
 	Real Ep;
 	Real Ew;
@@ -877,7 +881,7 @@ public:
 	Real const bohr;
 	bool use_polarization;
 	bool use_gen_kirkwood;
-private:
+
 
 	std::map< std::string, Size > type_lookup_;
 	std::string const default_variant_;

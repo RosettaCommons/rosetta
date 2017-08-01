@@ -13,6 +13,7 @@
 
 #include <utility/io/izstream.hh>
 #include <protocols/jobdist/JobDistributors.hh>
+#include <protocols/jobdist/Jobs.hh>
 #include <basic/Tracer.hh>
 
 #include <core/svn_version.hh>

@@ -17,7 +17,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#include <protocols/jobdist/Jobs.hh>
+#include <protocols/jobdist/Jobs.fwd.hh>
 
 namespace protocols {
 namespace jobdist {

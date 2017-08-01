@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_scoring_dna_DNA_EnvPairPotential_HH
 #define INCLUDED_core_scoring_dna_DNA_EnvPairPotential_HH
 
+#include <core/scoring/dna/DNA_EnvPairPotential.fwd.hh>
+
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>

@@ -172,6 +172,25 @@ settings = {
         },
     },
 
+
+    # GCC 4.8 did not have std::atomic_lock(std::shared_ptr) or std:atomic_lock(std::shared_ptr) defined.
+    # So we need to define OLDER_GCC to allow some special-case logic.
+    "gcc, 4.8" : {
+	"appends" : {
+	    "defines" : [ "OLDER_GCC" ],
+	},
+    },
+
+
+    # GCC 4.9 did not have std::atomic_lock(std::shared_ptr) or std:atomic_lock(std::shared_ptr) defined.
+    # So we need to define OLDER_GCC to allow some special-case logic.
+    "gcc, 4.9" : {
+	"appends" : {
+	    "defines" : [ "OLDER_GCC" ],
+	},
+    },
+
+
     # OSs & architecures ######################################################
 
     "gcc, linux" : {
@@ -2039,6 +2058,16 @@ settings = {
 
 
     # extras ##################################################################
+
+    "clang, cxx11thread" : {
+        "appends" : {
+            "defines" : [
+                "MULTI_THREADED"
+            ],
+            "libraries" : [ "pthread" ]
+        },
+    },
+
 
     "clang, serialization" : {
         "appends" : {

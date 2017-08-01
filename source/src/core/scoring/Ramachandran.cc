@@ -132,6 +132,17 @@ Ramachandran::Ramachandran() :
 			basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_map]().name(),
 			basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
 	}
+
+#ifdef MULTI_THREADED
+	// If this is a multi-threaded compilation of Rosetta, load all custom CDFs when the Ramachandran
+	// object is initialized.  These are finite in number and contribute negligibly to Rosetta's memory
+	// footprint, so this is the simplest way to get around the fact that lazy loading is not threadsafe.
+	// --VK Mulligan, 4 July 2017.
+	for ( core::Size i(1); i < end_of_ramatable_type_list; ++i ) {
+		if ( i == flat_d_aa_ramatable || i == flat_d_aa_ramatable_stringent ) continue; //Use the L-tables for D-amino acids
+		generate_custom_rama_cdf( static_cast<Rama_Table_Type>(i) );
+	}
+#endif
 }
 
 Ramachandran::Ramachandran(
@@ -716,9 +727,14 @@ Ramachandran::cdf_for_aa_for_torsion_bin(
 }
 
 /// @brief Pick a random phi, psi value from a custom Rama table.
-/// @details The custom Rama table is lazily loaded, so this function
-/// is necessarily non-const.  By default, only the 20 canonical Rama
+/// @details The custom Rama table is lazily loaded, so the custom
+/// tables must be mutable data.  By default, only the 20 canonical Rama
 /// tables are loaded.
+/// @note The lazy loading is not threadsafe.  However, there are only a
+/// few custom CDFs, which contribute negligibly to the Rosetta memory
+/// footprint.  As such, to ensure threadsafety, I'm going to have all of
+/// these load when the Ramachandran object is initialized in multi-threaded
+/// mode. --VK Mulligan, 4 July 2017.
 /// @param[in] type The type of custom rama table (an enum value).
 /// @param[out] phi Randomly-drawn phi value, biased by the custom rama
 /// table.
@@ -730,7 +746,7 @@ Ramachandran::draw_random_phi_psi_from_extra_cdf(
 	Rama_Table_Type const type,
 	Real & phi,
 	Real & psi
-) {
+) const {
 	bool is_d(false); //Are we dealing with a D-amino acid table?
 	Rama_Table_Type type2(type);
 
@@ -1024,7 +1040,7 @@ Ramachandran::read_rama(
 void
 Ramachandran::load_custom_rama_table(
 	Rama_Table_Type const type
-) {
+) const {
 	runtime_assert_string_msg( !has_custom_rama_energy_table(type) && !has_custom_rama_probability_table(type) && !has_custom_rama_count_table(type),
 		"Error in core::scoring::Ramachandran::load_custom_rama_table(): the tables for type " + get_ramatable_name_by_type(type) + " have already been loaded!" );
 
@@ -1231,7 +1247,7 @@ Ramachandran::draw_random_phi_psi_from_cdf(
 void
 Ramachandran::generate_custom_rama_cdf(
 	Rama_Table_Type const type
-) {
+) const {
 	//Check that type refers to something sensible:
 	runtime_assert_string_msg( type >= 1 && type < unknown_ramatable_type, "Error in core::scoring::Ramachandran::generate_custom_rama_cdf(): The type of Ramachandran table is not in the known types list." );
 

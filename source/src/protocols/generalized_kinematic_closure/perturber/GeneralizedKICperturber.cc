@@ -865,7 +865,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 
 	runtime_assert_string_msg( residues.size() > 0 , "Residues must be specified for the randomize_alpha_backbone_by_rama generalized kinematic closure perturber." );
 
-	core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Must be nonconst to allow lazy loading of custom rama tables.
+	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 
 	core::Size nres = original_pose.size();
 

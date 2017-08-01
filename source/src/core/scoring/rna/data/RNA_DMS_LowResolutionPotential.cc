@@ -105,6 +105,9 @@ RNA_DMS_LowResolutionPotential::initialize_DMS_low_resolution_potential() {
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_LowResolutionPotential::initialize( core::pose::Pose & pose, bool const rna_base_pair_computed /* = false */ ) {
+#ifdef MULTI_THREADED
+	utility_exit_with_message("The RNA_DMS_LowResolutionPotential is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.");
+#endif
 	get_rna_base_pairing_status( pose, wc_edge_paired_, hoog_edge_paired_, sugar_edge_paired_, is_bulged_, rna_base_pair_computed );
 }
 
@@ -191,6 +194,10 @@ RNA_DMS_LowResolutionPotential::figure_out_low_resolution_potential( numeric::Ma
 Real
 RNA_DMS_LowResolutionPotential::evaluate( core::pose::Pose const & pose,
 	pose::rna::RNA_Reactivity const & rna_reactivity ) {
+
+#ifdef MULTI_THREADED
+	utility_exit_with_message("The RNA_DMS_LowResolutionPotential is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.");
+#endif
 
 	using namespace core::pose::full_model_info;
 

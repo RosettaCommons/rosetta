@@ -19,6 +19,7 @@
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -231,7 +232,24 @@ MultipoleElecRotamerSetInfo::initialize( RotamerSetBase const & rotamer_set )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Options constructor.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+MultipoleElecPotential::MultipoleElecPotential(
+	methods::EnergyMethodOptions const & options
+) :
+	Ep(options.protein_dielectric()),
+	Ew(options.water_dielectric()),
+	bohr( 0.52917721092 ), //Yuck -- magic numbers.
+	use_polarization(options.use_polarization()),
+	use_gen_kirkwood(options.use_gen_kirkwood()),
+	default_variant_("NONE")
+{
+	read_in_amoeba_parameters();
+	read_in_multipole_parameters();
+}
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 MultipoleElecPotential::read_in_amoeba_parameters() {
 
@@ -1434,6 +1452,10 @@ void
 MultipoleElecPotential::calculate_induced_fields_for_polarization(
 	pose::Pose & pose
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The MultipPoleElecPotential caches pose information to global data.  This is fundamentally non-threadsafe.  As such, the score term cannot be used in a multi-threaded context." );
+#endif
+
 	PROF_START( basic::MULTIPOLE_SETUP );
 	Size const nres( pose.size() );
 
@@ -2356,6 +2378,10 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 	Residue const & rsd2,
 	MultipoleElecResidueInfo & mp2
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The MultipPoleElecPotential caches pose information to global data.  This is fundamentally non-threadsafe.  As such, the score term cannot be used in a multi-threaded context." );
+#endif
+
 	using namespace etable::count_pair;
 
 	Size natoms1 = rsd1.natoms();
@@ -2588,6 +2614,10 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 	Residue const & rsd2,
 	MultipoleElecResidueInfo & mp2
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The MultipPoleElecPotential caches pose information to global data.  This is fundamentally non-threadsafe.  As such, the score term cannot be used in a multi-threaded context." );
+#endif
+
 	using namespace etable::count_pair;
 
 	Size natoms1 = rsd1.natoms();
@@ -2725,6 +2755,10 @@ void
 MultipoleElecPotential::calculate_and_store_all_derivs(
 	pose::Pose const & pose
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The MultipPoleElecPotential caches pose information to global data.  This is fundamentally non-threadsafe.  As such, the score term cannot be used in a multi-threaded context." );
+#endif
+
 	using namespace etable::count_pair;
 
 	// TR << "Precalculating all of the derivatives" << std::endl;
@@ -2732,6 +2766,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
 
 	// Make sure the cache for the derivs is correctly sized
+	// DANGER DANGER DANGER DANGER
+	// THIS IS NOT THREADSAFE!!!
 	cached_atom_derivs_.resize( pose.size() );
 	for ( Size ires = 1 ; ires <= pose.size() ; ++ires ) {
 		Size const num_atoms( pose.residue( ires ).natoms() );

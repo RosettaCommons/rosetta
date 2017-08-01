@@ -51,23 +51,37 @@ public:
 		using namespace basic::options;
 
 		core_init_with_additional_options( "-include_sugars");
-
-		pose_from_file( pose_, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
-
 	}
 
 	void test_fa_to_virt(){
 		using namespace protocols::simple_moves;
 
+		core::pose::Pose pose;
+#ifdef MULTI_THREADED
+		try {
+#else
+		{
+#endif
+			pose_from_file( pose, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
+#ifdef MULTI_THREADED
+		} catch( utility::excn::EXCN_Base& excn )  {
+			TR << excn.msg() << std::endl;
+			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
+			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
+		}
+		return;
+#else
+		}
+#endif
 		ConvertRealToVirtualMover fa_to_virt = ConvertRealToVirtualMover();
 
 		//Convert whole pose to virtual.  Score should be zero.
-		fa_to_virt.apply(pose_);
+		fa_to_virt.apply(pose);
 
-		for ( core::Size i = 1; i <= pose_.total_residue(); ++i ) {
-			TS_ASSERT_EQUALS( pose_.residue( i ).is_virtual_residue(), true );
-			for ( core::Size xx = 1; xx <= pose_.residue( i ).natoms(); ++xx ) {
-				TS_ASSERT_EQUALS(pose_.residue( i ).is_virtual( xx ), true);
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			TS_ASSERT_EQUALS( pose.residue( i ).is_virtual_residue(), true );
+			for ( core::Size xx = 1; xx <= pose.residue( i ).natoms(); ++xx ) {
+				TS_ASSERT_EQUALS(pose.residue( i ).is_virtual( xx ), true);
 			}
 		}
 
@@ -76,21 +90,39 @@ public:
 	void test_virt_to_fa() {
 		using namespace protocols::simple_moves;
 
+		core::pose::Pose pose;
+#ifdef MULTI_THREADED
+		try {
+#else
+		{
+#endif
+			pose_from_file( pose, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
+#ifdef MULTI_THREADED
+		} catch( utility::excn::EXCN_Base& excn )  {
+			TR << excn.msg() << std::endl;
+			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
+			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
+		}
+		return;
+#else
+		}
+#endif
+
 		ConvertRealToVirtualMover fa_to_virt = ConvertRealToVirtualMover();
 		ConvertVirtualToRealMover virt_to_fa = ConvertVirtualToRealMover();
 
 		//Convert whole pose to virtual.  Score should be zero.
-		fa_to_virt.apply( pose_ );
+		fa_to_virt.apply( pose );
 
 		//Convert back, make sure all residues and atoms are now real.
-		virt_to_fa.apply( pose_ );
+		virt_to_fa.apply( pose );
 
-		for ( core::Size i = 1; i <= pose_.total_residue(); ++i ) {
-			TS_ASSERT_EQUALS( pose_.residue( i ).is_virtual_residue(), false );
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			TS_ASSERT_EQUALS( pose.residue( i ).is_virtual_residue(), false );
 
 			// Can't be tested, as some virtual atoms exist for carbohydrates, etc.
-			//for ( core::Size xx = 1; xx <= pose_.residue( i ).natoms(); ++xx ){
-			// TS_ASSERT_EQUALS(pose_.residue( i ).is_virtual( xx ), false);
+			//for ( core::Size xx = 1; xx <= pose.residue( i ).natoms(); ++xx ){
+			// TS_ASSERT_EQUALS(pose.residue( i ).is_virtual( xx ), false);
 			//}
 		}
 	}
@@ -99,35 +131,52 @@ public:
 		using namespace protocols::simple_moves;
 		using namespace core::select::residue_selector;
 
+		core::pose::Pose pose;
+#ifdef MULTI_THREADED
+		try {
+#else
+		{
+#endif
+			pose_from_file( pose, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
+#ifdef MULTI_THREADED
+		} catch( utility::excn::EXCN_Base& excn )  {
+			TR << excn.msg() << std::endl;
+			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
+			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
+		}
+		return;
+#else
+		}
+#endif
 		core::Real tol = 1e-6;
 
 		ConvertRealToVirtualMover fa_to_virt = ConvertRealToVirtualMover();
 		ConvertVirtualToRealMover virt_to_fa = ConvertVirtualToRealMover();
 
 		core::scoring::ScoreFunctionOP scorefxn  = core::scoring::get_score_function();
-		//fa_to_virt.apply( pose_ );
+		//fa_to_virt.apply( pose );
 
-		core::Real score1 = scorefxn->score(pose_);
+		core::Real score1 = scorefxn->score(pose);
 
 
-		utility::vector1< bool > subset( pose_.total_residue(), false);
-		for ( core::Size i = 6; i <= pose_.total_residue(); ++i ) {
+		utility::vector1< bool > subset( pose.total_residue(), false);
+		for ( core::Size i = 6; i <= pose.total_residue(); ++i ) {
 			subset[ i ] = true;
 		}
 
 		ReturnResidueSubsetSelectorOP subset_selector = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(subset) );
 
-		//pose_.real_to_virtual(3);
+		//pose.real_to_virtual(3);
 
 		fa_to_virt.set_residue_selector(subset_selector);
 
-		fa_to_virt.apply(pose_);
+		fa_to_virt.apply(pose);
 
-		core::Real score2 = scorefxn->score(pose_);
+		core::Real score2 = scorefxn->score(pose);
 
-		virt_to_fa.apply(pose_);
+		virt_to_fa.apply(pose);
 
-		core::Real score3 = scorefxn->score(pose_);
+		core::Real score3 = scorefxn->score(pose);
 
 		//TR << "Score3: " << score3 << std::endl;
 
@@ -143,17 +192,4 @@ public:
 
 	}
 
-private:
-
-	core::pose::Pose pose_;
-
-
-
-
-
-
-
 };
-
-
-

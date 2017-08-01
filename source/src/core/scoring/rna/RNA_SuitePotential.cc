@@ -171,6 +171,10 @@ RNA_SuitePotential::eval_score(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
+#endif
+
 	using namespace core::chemical::rna;
 	using namespace core::pose::rna;
 	using namespace core::id;
@@ -220,6 +224,10 @@ RNA_SuitePotential::eval_score(
 void RNA_SuitePotential::eval_score(
 	utility::fixedsizearray1<Real, 7> const & torsions
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
+#endif
+
 	if ( calculate_suiteness_bonus_ ) {
 		eval_suiteness_bonus( torsions );
 	} else {
@@ -231,6 +239,10 @@ void RNA_SuitePotential::eval_score(
 void RNA_SuitePotential::eval_suiteness_bonus(
 	utility::fixedsizearray1<Real, 7> const & torsions
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
+#endif
+
 	runtime_assert( rna_suite_name_ != 0 );
 	pose::rna::RNA_SuiteAssignment assignment( rna_suite_name_->assign( torsions, deriv_ ) );
 
@@ -245,6 +257,9 @@ void RNA_SuitePotential::eval_suiteness_bonus(
 void RNA_SuitePotential::eval_likelihood_potential(
 	utility::fixedsizearray1<Real, 7> const & torsions_in
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
+#endif
 
 	ublas::vector<Real> torsions( n_torsions_);
 	for ( Size n = 1; n <= n_torsions_; n++ ) {
@@ -287,6 +302,10 @@ void RNA_SuitePotential::eval_likelihood_potential(
 void RNA_SuitePotential::regularize_torsions(
 	ublas::vector<Real> & torsions
 ) const {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
+#endif
+
 	for ( Size i = 0; i != torsions.size(); ++i ) {
 		torsions(i) = numeric::principal_angle_degrees( torsions(i) );
 	}
@@ -298,6 +317,10 @@ void RNA_SuitePotential::regularize_torsions(
 // and offset_ variable if still not in use in 2015.
 void
 RNA_SuitePotential::figure_out_offset() {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
+#endif
+
 	Real max( 0 );
 	for ( Size i = 1; i <= weights_.size(); ++i ) {
 		if ( weights_[i] > max ) max = weights_[i];

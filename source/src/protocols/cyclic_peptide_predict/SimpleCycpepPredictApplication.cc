@@ -1784,7 +1784,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 	core::Size const nres(sequence_length());
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
 		if ( pose->residue(i).type().is_alpha_aa() ) {
-			core::scoring::Ramachandran & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst() ); //Get the Rama scoring function; must be nonconst to allow lazy loading
+			core::scoring::Ramachandran const & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran() ); //Get the Rama scoring function
 			core::scoring::RamaPrePro const & ramaprepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
 			core::Real phi(0.0), psi(0.0);
 			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME

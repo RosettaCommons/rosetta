@@ -84,6 +84,10 @@ Membrane_FAEmbed::Membrane_FAEmbed( Membrane_FAEmbed const & src ) :
 /// @brief Initialize Mmebrane Fullatom Embedding from Options
 void Membrane_FAEmbed::initialize(pose::Pose const & pose)
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The Membrane_FAPotential is fundamentally non-threadsafe, and cannot be used in a multithreaded context.  Please contact Rebecca Faye Alford (rfalford12@gmail.com) if you need to use this scoring term in a multi-threaded environment." );
+#endif
+
 	thickness_ = basic::options::option[ basic::options::OptionKeys::membrane::thickness ]();
 	steepness_ = 10.0;
 	Fa_Membed_update_ = basic::options::option[ basic::options::OptionKeys::membrane::Fa_Membed_update ]();
@@ -93,6 +97,10 @@ void Membrane_FAEmbed::initialize(pose::Pose const & pose)
 /// @brief Setup Data Members for Appropriate Sizing
 void Membrane_FAEmbed::allocate_appropriate_memory(pose::Pose const & pose) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The Membrane_FAPotential is fundamentally non-threadsafe, and cannot be used in a multithreaded context.  Please contact Rebecca Faye Alford (rfalford12@gmail.com) if you need to use this scoring term in a multi-threaded environment." );
+#endif
+
 	fa_center_ = 0.0;
 	Size const nres( pose.size() );
 	fa_proj_.resize( nres );
@@ -120,6 +128,9 @@ void Membrane_FAEmbed::allocate_appropriate_memory(pose::Pose const & pose) cons
 /// @brief Finalize Setup of MP Potential
 void Membrane_FAPotential::finalize( pose::Pose & pose ) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The Membrane_FAPotential is fundamentally non-threadsafe, and cannot be used in a multithreaded context.  Please contact Rebecca Faye Alford (rfalford12@gmail.com) if you need to use this scoring term in a multi-threaded environment." );
+#endif
 	CenListInfo & cenlist( nonconst_cenlist_from_pose( pose ));
 	cenlist.calculated() = true; //pba
 
@@ -132,6 +143,10 @@ void Membrane_FAPotential::finalize( pose::Pose & pose ) const
 /// @brief Compute FullAtom TM projection
 void Membrane_FAPotential::compute_fa_projection(pose::Pose & pose) const
 {
+#ifdef MULTI_THREADED
+	utility_exit_with_message( "The Membrane_FAPotential is fundamentally non-threadsafe, and cannot be used in a multithreaded context.  Please contact Rebecca Faye Alford (rfalford12@gmail.com) if you need to use this scoring term in a multi-threaded environment." );
+#endif
+
 	core::scoring::MembraneEmbed & membrane_embed(core::scoring::nonconst_MembraneEmbed_from_pose( pose ));
 	Membrane_FAEmbed & membrane_faembed(nonconst_Membrane_FAEmbed_from_pose( pose ));
 

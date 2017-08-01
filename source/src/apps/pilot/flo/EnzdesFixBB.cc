@@ -29,6 +29,7 @@
 //#include <devel/enzdes/DesignSilentStruct.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/JobDistributors.hh>
+#include <protocols/jobdist/Jobs.hh>
 
 #include <utility/string_util.hh>
 

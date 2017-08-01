@@ -366,6 +366,9 @@ RNA_DMS_Potential::figure_out_potential(){
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_Potential::initialize( core::pose::Pose const & pose ) {
+#ifdef MULTI_THREADED
+	utility_exit_with_message("The RNA_DMS_Potential is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.");
+#endif
 
 	// calculate H-bonds -- this is currently very inefficient, as we
 	// really only need to look at Hbond status of adenosine N1's.
@@ -427,6 +430,10 @@ RNA_DMS_Potential::get_features( pose::Pose const & pose,
 Real
 RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
 	pose::rna::RNA_Reactivity const & rna_reactivity ) {
+
+#ifdef MULTI_THREADED
+	utility_exit_with_message("The RNA_DMS_Potential is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.");
+#endif
 
 	using namespace core::pose::full_model_info;
 

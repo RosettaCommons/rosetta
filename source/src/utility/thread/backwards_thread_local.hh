@@ -12,6 +12,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- modified for clang 3.7.0 case.
 
+#ifndef INCLUDED_utility_thread_backwards_thread_local_HH
+#define INCLUDED_utility_thread_backwards_thread_local_HH
 
 #ifdef MULTI_THREADED
 
@@ -24,5 +26,7 @@
 // To avoid issues with compilers which don't support thread_local, don't use it
 // if we don't need it.
 #define THREAD_LOCAL
+
+#endif
 
 #endif

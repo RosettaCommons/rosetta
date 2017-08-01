@@ -76,7 +76,7 @@ private:
 
 private:
 
-	mutable disulfides::DisulfideMatchingDatabase matching_database_; //HACK!
+	disulfides::DisulfideMatchingDatabase matching_database_; //HACK!
 
 }; // DisulfideMatchingPotential
 

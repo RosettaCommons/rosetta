@@ -201,7 +201,7 @@ void SetTorsion::apply( Pose & pose ) {
 		TR.flush();
 	}
 
-	core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Must be nonconst to allow lazy loading of custom rama tables.
+	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 	Size picked_set(1);
 	if ( random_set_ ) {
 		picked_set = numeric::random::rg().random_range(1, n_torsion_sets());

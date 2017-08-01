@@ -15,6 +15,7 @@
 #define INCLUDED_core_scoring_dna_DNA_DihedralPotential_HH
 
 //#include <core/scoring/dna/DNABFormPotential.hh>
+#include <core/scoring/dna/DNA_DihedralPotential.fwd.hh>
 
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
