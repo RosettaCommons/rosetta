@@ -63,6 +63,7 @@
 #include <protocols/toolbox/task_operations/ProteinCoreResFilterCreator.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ReadResfileFromDBCreator.hh>
+#include <protocols/toolbox/task_operations/ResidueProbDesignOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>

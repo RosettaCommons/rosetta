@@ -59,9 +59,9 @@ public:
 
 	virtual ~ResidueProbDesignOperation();
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
+	void parse_tag( TagCOP tag , DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "ResidueProbDesignOperation"; }
 
@@ -80,6 +80,10 @@ public:
 	/// @brief Sets aa probabilities for a particular resnum
 	void
 	set_aa_probabilities( core::Size const resnum, AAProbabilities aa_probs );
+
+	/// @brief Reads weights for each posenum and residue type. Format for each line in the file is: POSENUM RESIDUETYPE WEIGHT. With weight as a real between 0 and 1
+	void
+	set_aa_probabilities_from_file( const std::string& weights_file);
 
 	/// @brief Set the probability for a particular aa @ a particular resnum.
 	//set_aa_probability( Size resnum, core::chemical::AA const amino_acid, Real probability );
@@ -140,7 +144,7 @@ public:
 
 
 	/// @brief Add the aa types chosen from the probabilities to the  allowed aa at the position instead of overwriting it.
-	/// @details  Will result in very different results.
+	/// @details Will result in very different results.
 	void
 	set_keep_task_allowed_aas(bool setting);
 
@@ -162,11 +166,9 @@ public:
 public:
 	//ResidueProbDesignOperation & operator =( ResidueProbDesignOperation const & rhs);
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	void set_defaults();
-
-	//virtual void parse_tag( TagCOP, DataMap & );  //Not implemented - Not currently a general way to load data from a file or db.
 
 private:
 

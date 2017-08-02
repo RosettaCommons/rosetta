@@ -7,34 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/antibody_design/ResidueProbDesignOperationCreator.hh
-/// @brief
-/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @brief Sample a set of mutations each time packer is generated.
+/// @author Samuel Schmitz (Samuel.Schmitz@vanderbilt.edu)
 
+#ifndef INCLUDED_protocols_toolbox_task_operations_ResidueProbDesignOperationCreator_hh
+#define INCLUDED_protocols_toolbox_task_operations_ResidueProbDesignOperationCreator_hh
 
-#ifndef INCLUDED_protocols_antibody_design_ResidueProbDesignOperationCreator_hh
-#define INCLUDED_protocols_antibody_design_ResidueProbDesignOperationCreator_hh
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
 #include <string>
 
-
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-// Undefined, commenting out to fix PyRosetta build
-/*
 class ResidueProbDesignOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-virtual std::string keyname() const { return "ResidueProbDesignOperation"; }
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
-*/
 
-} //namespace protocols
-} //namespace toolbox
 } //namespace task_operations
+} //namespace toolbox
+} //namespace protocols
+#endif
 
-#endif //INCLUDED_protocols_antibody_design_ResidueProbDesignOperationCreator_hh

@@ -58,6 +58,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventCha
 static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationCreator > PreventResiduesFromRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ProteinInterfaceDesignOperationCreator > ProteinInterfaceDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ReadResfileFromDBCreator > ReadResfileFromDBCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::ResidueProbDesignOperationCreator > ResidueProbDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictByCalculatorsOperationCreator > RestrictByCalculatorsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictChainToRepackingOperationCreator > RestrictChainToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictConservedLowDdgOperationCreator > RestrictConservedLowDdgOperationCreator_registrator;

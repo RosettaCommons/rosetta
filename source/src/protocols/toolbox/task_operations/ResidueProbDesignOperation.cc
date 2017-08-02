@@ -20,6 +20,9 @@
 #include <core/chemical/AA.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/random/random.hh>
+#include <utility/io/util.hh>
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
@@ -42,18 +45,21 @@ using utility::vector1;
 typedef std::map< core::chemical::AA, Real > AAProbabilities; //Map of an amino acid and it's probability.
 typedef std::map< Size, AAProbabilities > PerResidueAAProbSet; //Amino acid probabilities for a particular residue number.
 
-/* AMW: prior to my intervention, this Creator was commented in the hh
-file to fix the PyRosetta build (undefined)
+core::pack::task::operation::TaskOperationOP
+ResidueProbDesignOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new ResidueProbDesignOperation );
+}
+
 void ResidueProbDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-ResidueProbDesignOperation::provide_xml_schema( xsd );
+	ResidueProbDesignOperation::provide_xml_schema( xsd );
 }
 
 std::string ResidueProbDesignOperationCreator::keyname() const
 {
-return ResidueProbDesignOperation::keyname();
+	return ResidueProbDesignOperation::keyname();
 }
-*/
 
 
 ResidueProbDesignOperation::ResidueProbDesignOperation() : core::pack::task::operation::TaskOperation()
@@ -125,6 +131,36 @@ ResidueProbDesignOperation::set_overall_aa_probabilities(AAProbabilities aa_prob
 	overall_prob_set_ = aa_probs;
 }
 
+void
+ResidueProbDesignOperation::set_aa_probabilities_from_file( const std::string& weights_file) {
+	auto lines = utility::io::get_lines_from_file_data(weights_file);
+
+	PerResidueAAProbSet prob_set;
+
+	// FIXME: assign all weights
+	for ( std::string const& line : lines ) {
+		auto columns = utility::split(line);
+		if ( line[0] == '#' ) continue;
+		if ( columns.size() < 3 ) {
+			utility_exit_with_message("Weights has to be specified in the following format: POSNUM RESIDUETYPE WEIGHT");
+		}
+
+		core::Size resi = 0;
+		resi = utility::from_string(columns[1], resi);
+		auto resn = columns[2];
+		core::Real weight = 0.0;
+		weight = utility::from_string(columns[3], weight);
+		TR << resi << " " << resn << " " << weight << std::endl;
+		auto aa = core::chemical::aa_from_one_or_three(resn);
+
+		if ( prob_set.find(resi) == prob_set.end() ) {
+			prob_set.insert(std::make_pair(resi, AAProbabilities()));
+		}
+		prob_set[resi][aa] = weight;
+	}
+
+	set_aa_probability_set(prob_set);
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // Reset Probabilities
@@ -221,8 +257,8 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 	vector1<bool > design_positions = task.designing_residues();
 
 	//Copy class variables to keep function const.
-	std::map< Size, std::map< AA, Real > > prob_set(prob_set_);
-	std::map< AA, Real > overall_prob_set(overall_prob_set_);
+	PerResidueAAProbSet prob_set(prob_set_);
+	AAProbabilities overall_prob_set(overall_prob_set_);
 
 
 	numeric::random::WeightedSampler sampler;
@@ -232,6 +268,22 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		TR << "Overall AA Probability set found.  Using." << std::endl;
 		vector1<Real> aa_weights = get_weights(overall_prob_set);
 		sampler.weights(aa_weights);
+	} else {
+		// Fill potentially missing weights
+		for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+			AAProbabilities probs;
+			if ( prob_set.find(resi) != prob_set.end() ) {
+				probs = prob_set[resi];
+			}
+			for ( core::Size aai = core::chemical::first_l_aa;
+					aai <= core::chemical::num_canonical_aas; ++aai ) {
+				auto aa = static_cast<core::chemical::AA>(aai);
+				if ( probs.find(aa) == probs.end() ) {
+					probs[aa] = 1.0;
+				}
+			}
+			prob_set[resi] = probs;
+		}
 	}
 
 	for ( core::Size i = 1; i <=pose.size(); ++i ) {
@@ -274,12 +326,42 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 	}
 }
 
-// AMW: No parse_tag...
-void ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
-{
-	task_op_schema_empty( xsd, keyname() );
+void
+ResidueProbDesignOperation::parse_tag( TagCOP tag , DataMap & ) {
+	set_aa_probabilities_from_file(tag->getOption<std::string>("weights_file"));
+	set_keep_task_allowed_aas(tag->getOption<bool>("keep_task_allowed_aas"));
+	set_include_native_restype(tag->getOption<bool>("include_native_restype"));
+	set_sample_zero_probs_at(tag->getOption<core::Real>("sample_zero_probs"));
+	set_picking_rounds(tag->getOption<core::Size>("picking_rounds"));
 }
 
-} //task_operations
+// AMW: No parse_tag...
+void
+ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	AttributeList attributes;
+
+	attributes
+		+ XMLSchemaAttribute::required_attribute(
+		"weights_file", xs_string,
+		"Path to a file containting weights for each residue type at each position in the following format:\nPOSNUM RESIDUETYPE WEIGHT\nWith weight as a real number between 0.0 and 1.0. Unspecified residues and/or residue types will automatically default to a weight of 1.0.")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"include_native_restype", xsct_rosetta_bool,
+		"The native residue type is always an allowed residue type.", "true")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"keep_task_allowed_aas", xsct_rosetta_bool,
+		"If set to true, the sampled residue types will not replace all other previously allowed residue types.", "false")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"sample_zero_probs", xsct_real,
+		"Overwrite the sampling probability for all residue types with a weight of zero with the given weight. For example, if you have a probability of zero, you can sample this instead at like .3 or .5 or whatever you want. The idea is that you don't need to go and change your input data to add some variability in the data - useful if you have a very low sampling rate of the input data.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"picking_rounds", xsct_positive_integer,
+		"Allowed residue types can be sampled multiple times. Especially of interest in combination with the option 'keep_task_allowed_aas'.",
+		"1");
+
+	task_op_schema_w_attributes(xsd, keyname(), attributes, "Randomly adds allowed residue types to the PackerTask. Based on the user specified weights [0.0-1.0] for each residue type per position this operation will add the residue type to the list of allowed design residues in a non-deterministic manner.");
+}
+
+} //task_operation
 } //toolbox
 } //protocols
