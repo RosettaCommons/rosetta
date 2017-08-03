@@ -38,6 +38,7 @@
 //#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 // option key includes
@@ -330,27 +331,38 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 		graft_resnum = resnum2; // copy over everything in pose2.
 	}
 
-	std::list< std::pair< Size, char > > resnum_seq_list; // need to use a list, since we can sort it.
+	std::list< std::pair< Size, std::string > > resnum_seq_list; // need to use a list, since we can sort it.
 
 	for ( Size n = 1; n <= pose1.size(); n++ ) {
 		if ( !find_index( resnum1[n], graft_resnum ) ) {
-			resnum_seq_list.push_back( std::make_pair( resnum1[n], pose1.sequence()[ n-1 ] ) );
+			if ( pose1.sequence()[ n-1 ] == 'X' ) {
+				std::stringstream ss;
+				ss << "X[" <<  pose1.residue_type( n ).name() << "]";
+				resnum_seq_list.push_back( std::make_pair( resnum1[n], ss.str() ) );
+			} else {
+				resnum_seq_list.push_back( std::make_pair( resnum1[n], std::string(1,pose1.sequence()[ n-1]) ) );
+			}
 		}
 	}
 
 	for ( Size n = 1; n <= pose2.size(); n++ ) {
 		if ( find_index( resnum2[n], graft_resnum ) ) {
-			resnum_seq_list.push_back( std::make_pair( resnum2[n], pose2.sequence()[ n-1 ] ) );
+			if ( pose2.sequence()[ n-1 ] == 'X' ) {
+				std::stringstream ss;
+				ss << "X[" <<  pose2.residue_type( n ).name() << "]";
+				resnum_seq_list.push_back( std::make_pair( resnum2[n], ss.str() ) );
+			} else {
+				resnum_seq_list.push_back( std::make_pair( resnum2[n], std::string(1,pose2.sequence()[ n-1]) ) );
+			}
 		}
 	}
 
 	resnum_seq_list.sort();
 
 	std::string sequence_target;
-	for ( std::list< std::pair< Size, char > >::const_iterator iter = resnum_seq_list.begin(),
-			end = resnum_seq_list.end(); iter != end; ++iter ) {
-		resnum_target.push_back( iter->first );
-		sequence_target += iter->second;
+	for ( auto const & elem : resnum_seq_list ) {
+		resnum_target.push_back( elem.first );
+		sequence_target += elem.second;
 	}
 
 	ResidueTypeSetCOP rsd_set;

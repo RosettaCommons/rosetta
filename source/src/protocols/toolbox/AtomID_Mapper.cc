@@ -119,8 +119,13 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		using namespace core::conformation;
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( !pose.residue( ii ).is_protein() ) {
-				ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue_type_set_for_pose( pose.residue_type(ii).mode() )->name_map( pose.residue_type( ii ).base_name() ) );
-				pose_without_variants.replace_residue( ii, *new_rsd, true );
+				// If this residue type does not havea base name, just use the name.
+				// With any luck, these will mostly be CCD-generated residues... which
+				// may have few variants anyway!
+				if ( pose.residue_type( ii ).base_name() != "" ) {
+					ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue_type_set_for_pose( pose.residue_type(ii).mode() )->name_map( pose.residue_type( ii ).base_name() ) );
+					pose_without_variants.replace_residue( ii, *new_rsd, true );
+				}
 			}
 		}
 		initialize_from_pose( pose_without_variants );

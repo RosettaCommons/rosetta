@@ -7258,6 +7258,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'output_cluster_size', 'Boolean', desc="Output cluster_size in StepWiseClusterer as an extra score in the pose", default='false' ),
 		Option( 'lores', 'Boolean', desc="Use coarse-grained energy function to sample; no minimize.", default='false' ),
 		Option( 'verbose_sampler', 'Boolean', desc="verbose output from StepWiseConnectionSampler sample-and-screen.", default='false' ),
+		Option( 'definitely_virtualize', 'IntegerVector', desc="definitely virtualize these residues (by seqpos)", default=[]),
 
 		Option_Group( 'monte_carlo',
 			Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),

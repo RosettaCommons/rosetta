@@ -158,18 +158,21 @@ RNA_SecStruct::set_basepairs_from_secstruct() {
 	for ( char const single_char : single_chars ) {
 
 		// Obtain set of all occurrences of each character.
-		std::set< Size > occurrences;
+		utility::vector1< Size > occurrences;
 		for ( Size i = 0; i < secstruct_.size(); i++ ) {
 			if ( secstruct_[i] == single_char ) {
-				occurrences.insert( i + 1 );
+				occurrences.push_back( i + 1 );
 			}
 		}
+		if ( occurrences.empty() ) continue;
 
 		// Iterate inward, pairing first with last, second with penultimate, etc.
-		auto bp1 = occurrences.begin(), bp2 = occurrences.end();
-		while ( std::distance( bp1, bp2 ) > 0 ) {
-			base_pairs_.emplace_back( *bp1, *bp2 );
-			++bp1; --bp2;
+		//auto bp1 = occurrences.begin(), bp2 = occurrences.end();
+		//--bp2;
+		for ( Size ii = 1; ii < occurrences.size() - ii; ++ii ) {
+			//while ( std::distance( bp1, bp2 ) > 0 ) {
+			base_pairs_.emplace_back( occurrences[ ii ], occurrences[ occurrences.size() - ii + 1 ] );
+			//++bp1; --bp2;
 		}
 	}
 }

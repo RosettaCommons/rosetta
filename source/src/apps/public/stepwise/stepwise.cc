@@ -317,6 +317,11 @@ my_main( void* )
 	if ( option[ use_legacy_stepwise_job_distributor ].value() ) {
 		stepwise_monte_carlo_legacy();
 	} else {
+		// Check that the user is not supplying an -out:file:silent with a path
+		std::string out_file_silent = option[ out::file::silent ].value();
+		if ( out_file_silent.find( '/' ) != std::string::npos ) {
+			utility_exit_with_message( "Error: you are trying to specify -out:file:silent in a way that specifies a path, which is not compatible with the new job distributor. Either use -out:file:path as well as -out:file:silent, or pass -use_legacy_stepwise_job_distributor." );
+		}
 		stepwise_monte_carlo();
 	}
 	protocols::viewer::clear_conformation_viewers();

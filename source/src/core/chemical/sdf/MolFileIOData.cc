@@ -156,6 +156,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	// aa_, rotamer_aa_, <properties suite>, variant_types_,
 
 	restype->name( name_ );
+	restype->base_name( name_ );
 	restype->name3( name_.substr(0,3) );
 	restype->interchangeability_group( restype->name3() );
 	restype->name1( 'Z' );

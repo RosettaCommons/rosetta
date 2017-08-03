@@ -70,6 +70,8 @@
 #include <numeric/random/random.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
+#include <basic/options/option.hh> //
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh> // Will want to kill this once in FMI
 
 #include <iostream>
 #include <fstream>
@@ -1801,6 +1803,12 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 	utility::vector1< bool > phosphate_makes_contact = rna::phosphate::detect_phosphate_contacts( pose );
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
+		// Todo: take into the FMP so we can use resnum-chain
+		if ( basic::options::option[ basic::options::OptionKeys::stepwise::definitely_virtualize ].value().contains( i ) ) {
+			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
+			continue;
+		}
+
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		if ( base_makes_contact[ i ] ) continue;
 

@@ -63,6 +63,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 // utility
 #include <utility/vector1.hh>
@@ -75,7 +76,6 @@
 using namespace core;
 using namespace protocols;
 using namespace basic::options;
-using namespace basic::options::OptionKeys;
 using namespace protocols::rna::denovo::options;
 using namespace protocols::rna::denovo::setup;
 using namespace core::scoring;
@@ -138,11 +138,11 @@ public:
 
 private:
 	protocols::rna::denovo::RNA_DeNovoProtocolOP rna_de_novo_protocol_ = nullptr;
-	core::pose::PoseCOP native_pose_ = nullptr;
+	core::pose::PoseOP native_pose_ = nullptr;
 };
 
 BuildFullModel::BuildFullModel() {
-
+	using namespace OptionKeys;
 	// 1. Setup RNA_DeNovoProtocol
 
 	std::string const silent_file_rna_denovo_out = option[ out::file::silent ]() + ".rna_denovo.out";
@@ -167,6 +167,7 @@ BuildFullModel::BuildFullModel() {
 	if ( option[ in::file::native ].user() ) {
 		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		native_pose_ = core::import_pose::get_pdb_with_full_model_info( option[ in::file::native ], rsd_set ); //import_pose::pose_from_file( option[ in::file::native ] );
+		protocols::stepwise::modeler::rna::virtualize_free_rna_moieties( *native_pose_ );
 	}
 }
 
@@ -246,6 +247,8 @@ void BuildFullModel::make_built_residues_virtual(
 	Pose & full_model_pose,
 	utility::vector1< PoseOP > const & other_ops
 ) {
+	using namespace OptionKeys;
+
 	FullModelInfo const & start_info = const_full_model_info( start_pose );
 	FullModelInfo const & full_model_info = const_full_model_info( full_model_pose );
 	utility::vector1< Size > const & full_model_cutpoint_open = const_full_model_info( start_pose ).cutpoint_open_in_full_model();
@@ -301,6 +304,7 @@ BuildFullModel::fill_and_sample_full_model(
 	Pose & start_pose, // because of show() and score
 	utility::vector1< PoseOP > const & other_ops
 ) {
+	using namespace OptionKeys;
 	// setup score function
 	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" );
 
@@ -330,7 +334,7 @@ BuildFullModel::fill_and_sample_full_model(
 	// BUILD IN MISSING RESIDUES
 
 	Pose full_model_pose;
-	stepwise::monte_carlo::build_full_model( start_pose, full_model_pose );
+	protocols::stepwise::monte_carlo::build_full_model( start_pose, full_model_pose );
 
 	if ( option[ fragment_assembly_mode ]() && ! option[ caleb_legacy ]() ) {
 
@@ -420,7 +424,7 @@ BuildFullModel::fill_and_sample_full_model(
 	// Note that we re-call 'build_full_model' to get rms_fill in this function below.
 	// This is fine, since we have no missing residues at this point. It's a
 	// no-op.
-	stepwise::monte_carlo::output_to_silent_file( tag, option[ out::file::silent ](), full_model_pose, native_pose_, false, true );
+	protocols::stepwise::monte_carlo::output_to_silent_file( tag, option[ out::file::silent ](), full_model_pose, native_pose_, option[ OptionKeys::stepwise::superimpose_over_all ].value(), true );
 
 	protocols::viewer::clear_conformation_viewers();
 }
@@ -428,6 +432,8 @@ BuildFullModel::fill_and_sample_full_model(
 void
 build_full_model_test()
 {
+	using namespace OptionKeys;
+
 	// setup residue types
 	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
@@ -476,7 +482,7 @@ build_full_model_test()
 					TR << "Switching focus to other pose at idx: " << TR.Cyan << idx << TR.Reset << "  (pose.nres=" << TR.Magenta << start_pose.total_residue() << TR.Reset << ", other.nres=" << TR.Magenta << other_ops[idx]->total_residue() << TR.Reset << ")" << std::endl;
 					TR.Debug << "Start Pose N Residues: " << TR.Cyan << start_pose.total_residue() << TR.Reset << std::endl;
 					TR.Debug << "Other Pose N Residues: " << TR.Cyan << other_ops[idx]->total_residue() << TR.Reset << std::endl;
-					stepwise::modeler::switch_focus_to_other_pose( start_pose, idx /*scorefxn = 0 */);
+					protocols::stepwise::modeler::switch_focus_to_other_pose( start_pose, idx /*scorefxn = 0 */);
 					tag_into_pose( start_pose, tag );
 					other_ops = nonconst_full_model_info( start_pose ).other_pose_list();
 					break;

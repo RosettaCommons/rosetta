@@ -1,9 +1,10 @@
 -fasta 2jof.fasta 
 -native 2jof.pdb 
 -score:weights stepwise/protein/protein_res_level_energy.wts
--silent swm_rebuild.out
 -out:overwrite
 -cycles 5
 -nstruct 1
 # integration test exposes an issue with local moves, due to movement of 2 rather than 1 protein residues; violates single-residue assumption of transient_cutpoint_handler
 -allow_internal_local_moves false
+-use_legacy_stepwise_job_distributor true
+-out:file:silent output/swm_rebuild.out
