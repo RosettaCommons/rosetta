@@ -13,15 +13,16 @@
 #include <string>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/thread/backwards_thread_local.hh>
+
 namespace core {
 namespace chemical {
 namespace element {
 
-
-utility::vector0< std::string > & element2name() {
+utility::vector0< std::string > const & element2name() {
 	// static initialization only happens once
-	static utility::vector0< std::string > * element2name_ = new utility::vector0< std::string >( setup_element2name() );
-	return *element2name_;
+	static const utility::vector0< std::string > element2name_( setup_element2name() );
+	return element2name_;
 }
 
 std::string
@@ -43,10 +44,10 @@ elements_from_name(std::string name) {
 }
 
 
-std::map< std::string, Elements > & name2element() {
+std::map< std::string, Elements > const & name2element() {
 	// static initialization only happens once
-	static std::map< std::string, Elements > * name2element_ = new std::map< std::string, Elements >( setup_name2element() );
-	return *name2element_;
+	static const std::map< std::string, Elements > name2element_( setup_name2element() );
+	return name2element_;
 }
 
 /// @brief setup the map that converts string name to AA enum

@@ -1043,6 +1043,9 @@ private:
 	/// @brief dimensioned as num_jump, see setup_edge_counts for more info
 	mutable utility::vector1<int> jump_edge_count;
 
+	/// @brief Used as scratch space by a couple of functions.
+	mutable ObjexxFCL::FArray1D_bool linked_, seen_;
+
 	/// @brief computes fixed-size identifier for a string input
 	boost::hash<std::string> hasher;
 #ifdef    SERIALIZATION

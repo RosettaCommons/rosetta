@@ -20,6 +20,7 @@
 
 #include <utility/numbers.hh>
 #include <utility/tools/make_vector.hh>
+#include <utility/thread/backwards_thread_local.hh>
 
 #include <string>
 
@@ -32,7 +33,7 @@ using core::Size;
 
 std::vector<std::string> const & ElectronConfiguration::PrincipalQuantumNumber_strings()
 {
-	static std::vector<std::string> PrincipalQuantumNumber_strings_ =
+	static const std::vector<std::string> PrincipalQuantumNumber_strings_ =
 		make_vector<std::string> (
 		"1",
 		"2",
@@ -48,7 +49,7 @@ std::vector<std::string> const & ElectronConfiguration::PrincipalQuantumNumber_s
 
 std::vector<std::string> const & ElectronConfiguration::AngularMomentumQuantumNumber_strings()
 {
-	static std::vector<std::string> AngularMomentumQuantumNumber_strings_ =
+	static const std::vector<std::string> AngularMomentumQuantumNumber_strings_ =
 		make_vector<std::string> (
 		"s",
 		"p",
@@ -108,7 +109,7 @@ ElectronConfiguration::AngularMomentumQuantumNumber ElectronConfiguration::get_a
 // core::Size [ 7][ 4];
 std::vector< std::vector<Size> > const & ElectronConfiguration::s_MaxElectronsInOrbital()
 {
-	static std::vector< std::vector<Size> > s_MaxElectronsInOrbital_ =
+	static const std::vector< std::vector<Size> > s_MaxElectronsInOrbital_ =
 		make_vector< std::vector<Size> > (
 		make_vector< Size > ( 2, 0, 0, 0),
 		make_vector< Size > ( 2, 6, 0, 0),

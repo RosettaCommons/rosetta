@@ -177,7 +177,7 @@ PossibleAtomTypesForAtom::FindPossibleAtomTypesForAtom
 	// create maps from atomic environment to possible types
 	typedef std::map< std::string, PossibleAtomTypesForAtom> EnvTypesMap;
 	typedef std::map< GasteigerAtomTypeSetCOP, EnvTypesMap > SetToEnvTypesMap;
-	static SetToEnvTypesMap non_aro_typing, aro_typing;
+	static THREAD_LOCAL SetToEnvTypesMap non_aro_typing, aro_typing;
 
 	// The less than and equivalent semantics for owning pointers are for the underlying raw pointers,
 	// so this should key on object identity

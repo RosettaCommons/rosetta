@@ -24,6 +24,7 @@
 #include <utility/numbers.hh>
 #include <utility/exit.hh>
 #include <utility/tools/make_vector.hh>
+#include <utility/thread/backwards_thread_local.hh>
 
 namespace core {
 namespace chemical {
@@ -33,7 +34,7 @@ using utility::tools::make_vector;
 
 std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strings()
 {
-	static std::vector<std::string> AtomicOrbitalTypes_strings_ =
+	static const std::vector<std::string> AtomicOrbitalTypes_strings_ =
 		make_vector<std::string> (
 		"S",
 		"Px",
@@ -590,7 +591,7 @@ core::Real GasteigerAtomTypeData::calculate_stability_metric() const
 //! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for neutral atoms vs. anions
 core::Real GasteigerAtomTypeData::get_average_neutral_sigma_ip_to_anion_ip_ratio()
 {
-	static core::Real s_Data( utility::get_undefined_real() );
+	static const core::Real s_Data( utility::get_undefined_real() );
 	return s_Data;
 }
 
@@ -598,7 +599,7 @@ core::Real GasteigerAtomTypeData::get_average_neutral_sigma_ip_to_anion_ip_ratio
 //! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for neutral atoms vs. anions
 core::Real GasteigerAtomTypeData::get_average_neutral_pi_ip_to_anion_ip_ratio()
 {
-	static core::Real s_Data( utility::get_undefined_real() );
+	static const core::Real s_Data( utility::get_undefined_real() );
 	return s_Data;
 }
 
@@ -606,7 +607,7 @@ core::Real GasteigerAtomTypeData::get_average_neutral_pi_ip_to_anion_ip_ratio()
 //! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for cations vs. neutral atoms
 core::Real GasteigerAtomTypeData::get_average_cation_sigma_ip_to_neutral_ip_ratio()
 {
-	static core::Real s_Data( utility::get_undefined_real() );
+	static const core::Real s_Data( utility::get_undefined_real() );
 	return s_Data;
 }
 
@@ -614,7 +615,7 @@ core::Real GasteigerAtomTypeData::get_average_cation_sigma_ip_to_neutral_ip_rati
 //! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for cations vs. neutral atoms
 core::Real GasteigerAtomTypeData::get_average_cation_pi_ip_to_neutral_ip_ratio()
 {
-	static core::Real s_Data( utility::get_undefined_real() );
+	static const core::Real s_Data( utility::get_undefined_real() );
 	return s_Data;
 }
 //! @brief type difference as string

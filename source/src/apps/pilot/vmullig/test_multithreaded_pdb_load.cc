@@ -47,6 +47,8 @@
 
 static THREAD_LOCAL basic::Tracer TR("test_multithreaded_pdb_load");
 
+#define NUM_THREADS 30
+
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -82,10 +84,10 @@ main( int argc, char * argv [] )
 		}
 
 		utility::vector1< std::thread > threads;
-		for ( core::Size i(1); i<=6; ++i ) {
+		for ( core::Size i(1); i<=NUM_THREADS; ++i ) {
 			threads.push_back( std::thread( boost::bind( &thread_fxn, i ) ) );
 		}
-		for ( core::Size i(1); i<=6; ++i ) {
+		for ( core::Size i(1); i<=NUM_THREADS; ++i ) {
 			threads[i].join();
 		}
 

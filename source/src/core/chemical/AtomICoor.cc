@@ -133,7 +133,7 @@ ICoorAtomID::xyz(
 	Conformation const & conformation
 ) const
 {
-	static Vector NullVector( 0, 0, 0 );
+	static const Vector NullVector( 0, 0, 0 );
 
 	switch ( type_ ) {
 	case INTERNAL :
@@ -176,7 +176,7 @@ ICoorAtomID::xyz(
 	}
 
 	// to appease the compiler
-	static Vector NullVector( 0, 0, 0 );
+	static const Vector NullVector( 0, 0, 0 );
 	return NullVector;
 }
 

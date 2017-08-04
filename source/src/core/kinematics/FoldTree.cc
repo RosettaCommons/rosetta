@@ -26,7 +26,6 @@
 // ObjexxFCL formating
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // C++ Headers
@@ -1189,18 +1188,17 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 {
 	if ( new_topology ) update_nres(); // need nres
 
-	// static FArray ==> only re-allocate upon changes of nres
-	static FArray1D_bool linked;
-	if ( nres_ != int( linked.size1() ) ) {
-		linked.dimension( nres_ );
+	// Scratch FArray1D -- only re-allocate upon changes of nres
+	if ( nres_ != int( linked_.size1() ) ) {
+		linked_.dimension( nres_ );
 	}
 
 	EdgeList new_edge_list_;
 
 	// keep track of which residues have been added to the new list
-	linked = false;
+	linked_ = false;
 
-	linked( start_residue) = true;
+	linked_( start_residue) = true;
 
 	bool new_member (true);
 
@@ -1210,15 +1208,15 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 				it_end = edge_list_.end(); it != it_end; ++it ) {
 			Edge const& old_edge( *it );
 			Edge edge( old_edge ); //makes sure everything in Edge gets copied !!!
-			if ( linked( edge.start() ) && !linked( edge.stop() ) ) {
+			if ( linked_( edge.start() ) && !linked_( edge.stop() ) ) {
 				new_edge_list_.push_back( edge );
 				if ( !edge.is_polymer() ) {
-					linked( edge.stop() ) = true;
+					linked_( edge.stop() ) = true;
 				} else {
-					for ( core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i ) linked( i ) = true;
+					for ( core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i ) linked_( i ) = true;
 				}
 				new_member = true;
-			} else if ( linked( edge.stop() ) && !linked( edge.start() ) ) {
+			} else if ( linked_( edge.stop() ) && !linked_( edge.start() ) ) {
 				//switch start / stop information
 				edge.start() = old_edge.stop();
 				edge.stop() = old_edge.start();
@@ -1226,9 +1224,9 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 				edge.stop_atom() = old_edge.start_atom();
 				new_edge_list_.push_back( edge );
 				if ( !edge.is_polymer() ) {
-					linked( edge.stop() ) = true;
+					linked_( edge.stop() ) = true;
 				} else {
-					for ( core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i ) linked( i ) = true;
+					for ( core::Size i=std::min(edge.start(),edge.stop()), i_end=std::max(edge.start(),edge.stop()); i<=i_end; ++i ) linked_( i ) = true;
 				}
 				new_member = true;
 			}
@@ -1816,20 +1814,19 @@ FoldTree::renumber_jumps_ordered()
 bool
 FoldTree::connected() const
 {
-	static FArray1D_bool linked;
 	if ( new_topology ) update_nres();
-	if ( int( linked.size1() ) != nres_ ) linked.dimension( nres_ );
+	if ( int( linked_.size1() ) != nres_ ) linked_.dimension( nres_ );
 
 	if ( edge_list_.size() <1 ) return true;
 
-	linked = false;
+	linked_ = false;
 
 	// grow out a single connected component from the start vertex:
 	const_iterator const it_begin ( edge_list_.begin() );
 	const_iterator const it_end ( edge_list_.end() );
 
 	// mark start vertex as linked:
-	linked( it_begin->start() ) = true;
+	linked_( it_begin->start() ) = true;
 
 	bool new_member ( true );
 
@@ -1837,18 +1834,18 @@ FoldTree::connected() const
 		new_member = false;
 		for ( const_iterator it = it_begin; it != it_end; ++it ) {
 			if ( it->label() == 0 ) continue;
-			if ( linked( it->start() ) && ! linked( it->stop()) ) {
-				linked(it->stop()) = true;
+			if ( linked_( it->start() ) && ! linked_( it->stop()) ) {
+				linked_(it->stop()) = true;
 				new_member = true;
-			} else if ( linked( it->stop() ) && ! linked( it->start() ) ) {
-				linked( it->start() ) = true;
+			} else if ( linked_( it->stop() ) && ! linked_( it->start() ) ) {
+				linked_( it->start() ) = true;
 				new_member = true;
 			}
 		}
 	}
 
 	for ( const_iterator it = it_begin; it != it_end; ++it ) {
-		if ( ! linked( it->start() ) || ! linked( it->stop() ) ) {
+		if ( ! linked_( it->start() ) || ! linked_( it->stop() ) ) {
 			// it's disconnected!
 			return false;
 		}
@@ -2187,11 +2184,14 @@ void
 FoldTree::setup_edge_counts() const
 {
 	// redimension?
-	if ( (int)edge_count.size() != nres_ ) {
+	if ( static_cast<int>(edge_count.size()) != nres_ ) {
 		edge_count = utility::vector1<int>(nres_, 0);
 	}
 	if ( (int)jump_edge_count.size() != num_jump_ ) {
 		jump_edge_count = utility::vector1<int>(num_jump_, -1);
+	}
+	if ( nres_ != static_cast<int>( linked_.size1() ) ) {
+		linked_.dimension( nres_ );
 	}
 
 	std::fill( edge_count.begin(), edge_count.end(), 0 );
@@ -2201,13 +2201,12 @@ FoldTree::setup_edge_counts() const
 
 	const_iterator const it_begin ( edge_list_.begin() );
 	const_iterator const it_end   ( edge_list_.end()   );
-	FArray1D_bool linked(nres_);
 
 	for ( const_iterator it = it_begin; it != it_end; ++it ) {
-		linked = false;
+		linked_ = false;
 		int const begin_res ( std::min( it->start(), it->stop()) );
 		int link_count (0);
-		linked( begin_res ) = true;
+		linked_( begin_res ) = true;
 
 		// find all the residues linked to begin_res, when we arent allowed
 		// to traverse the edge *it
@@ -2220,14 +2219,14 @@ FoldTree::setup_edge_counts() const
 				int const start ( std::min( it2->start(), it2->stop() ) );
 				int const stop  ( std::max( it2->start(), it2->stop() ) );
 				int new_link(0);
-				if ( linked(start) && !linked(stop) ) {
+				if ( linked_(start) && !linked_(stop) ) {
 					new_link = stop;
-				} else if ( linked(stop) && !linked(start) ) {
+				} else if ( linked_(stop) && !linked_(start) ) {
 					new_link = start;
 				}
 				if ( new_link > 0 ) {
 					new_member = true;
-					linked(new_link) = true;
+					linked_(new_link) = true;
 					// how many new residues does this edge add?
 					link_count +=
 						( it2->is_jump() ) ? 1 : stop - start;
@@ -2591,35 +2590,34 @@ bool
 FoldTree::check_fold_tree() const
 {
 	if ( edge_list_.size() <= 0 ) return false;
-	static FArray1D_bool seen;
 	check_topology();
 	//if ( new_topology ) update_nres(); // largest vertex
-	if ( int( seen.size1() ) != nres_ ) seen.dimension( nres_ );
+	if ( int( seen_.size1() ) != nres_ ) seen_.dimension( nres_ );
 
-	seen = false;
-	seen( root() ) = true; // Root is first to build
+	seen_ = false;
+	seen_( root() ) = true; // Root is first to build
 	for ( Edge const & edge: edge_list_ ) {
 		int const start( edge.start() );
 		int const stop ( edge.stop() );
-		if ( ! seen( start ) ) {
+		if ( ! seen_( start ) ) {
 			TR.Error << "Bad fold tree at edge " << edge << std::endl;
 			TR.Error << "Start residue " << start << " not built yet. " << std::endl;
 			TR.Error << *this << std::endl;
 			return false;
 		}
 		if ( start == stop ) continue;
-		if ( seen( stop ) ) {
+		if ( seen_( stop ) ) {
 			TR.Error << "Bad fold tree at edge " << edge << std::endl;
 			TR.Error << "Stop residue " << stop << " has already been built. " << std::endl;
 			TR.Error << *this << std::endl;
 			return false;
 		}
 		if ( ! edge.is_polymer() ) {
-			seen( stop ) = true;
+			seen_( stop ) = true;
 		} else {
 			int const dir( start < stop ? 1 : -1 );
 			for ( int i=start + dir; i!= stop + dir; i+= dir ) {
-				if ( seen( i ) ) {
+				if ( seen_( i ) ) {
 					TR.Error << "Bad fold tree at edge " << edge << std::endl;
 					TR.Error << "Residue " << i << " is in a polymeric edge, but has already been built from another edge." << std::endl;
 					TR.Error << *this << std::endl;
@@ -2628,12 +2626,12 @@ FoldTree::check_fold_tree() const
 				// for debugging purposes, do not uncomment unless you want it to
 				// print out very often!
 				//std::cout << "i=" << i << std::endl;
-				seen( i ) = true;
+				seen_( i ) = true;
 			}
 		}
 	}
 	for ( int i=1; i<= nres_; ++i ) {
-		if ( !seen(i) ) {
+		if ( !seen_(i) ) {
 			TR.Error << "Bad fold tree!" << std::endl;
 			TR.Error << "Residue " << i << " is not built by any edge." << std::endl;
 			TR.Error << *this << std::endl;
@@ -2889,6 +2887,8 @@ core::kinematics::FoldTree::save( Archive & arc ) const {
 	arc( CEREAL_NVP( edge_count ) ); // utility::vector1<int>
 	arc( CEREAL_NVP( min_edge_count ) ); // int
 	arc( CEREAL_NVP( jump_edge_count ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( linked_ ) );
+	arc( CEREAL_NVP( seen_ ) );
 	// turns out the "hasher" is never written to, it just hashes
 	// strings as needed; it probably doesn't need to be a member
 	// variable!
@@ -2915,6 +2915,8 @@ core::kinematics::FoldTree::load( Archive & arc ) {
 	arc( edge_count ); // utility::vector1<int>
 	arc( min_edge_count ); // int
 	arc( jump_edge_count ); // utility::vector1<int>
+	arc( linked_ );
+	arc( seen_ );
 	// hasher is not serialized/deserialized; see above note
 	// arc( hasher ); // boost::hash<std::string>
 	// EXEMPT hasher

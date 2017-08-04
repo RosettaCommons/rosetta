@@ -64,9 +64,7 @@ public:
 	std::string
 	keyname() const;
 
-	static
-	std::string
-	library_name();
+	static std::string library_name();
 
 private:
 

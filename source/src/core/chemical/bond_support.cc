@@ -36,7 +36,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.chemical.bond_support" );
 /// @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic
 gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core::Size &BOND_ORDER_OR_AROMATIC)
 {
-	static gasteiger::GasteigerAtomTypeData::Properties properties[ 5] =
+	static const gasteiger::GasteigerAtomTypeData::Properties properties[ 5] =
 		{
 		gasteiger::GasteigerAtomTypeData::VdWaalsRadiusCSD,
 		gasteiger::GasteigerAtomTypeData::CovalentRadiusSingleBond,

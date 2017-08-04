@@ -304,7 +304,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 
 bool
 ChemicalManager::has_residue_type_set( std::string const & tag ) {
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	utility::thread::ReadLockGuard lock( restype_mutex_ );
 #endif
 	return( residue_type_sets_.find( tag )  != residue_type_sets_.end() );

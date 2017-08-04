@@ -22,6 +22,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
+#include <utility/thread/backwards_thread_local.hh>
 #include <sstream>
 
 
@@ -197,19 +198,19 @@ std::map< char, AA > setup_oneletter2aa() {
 
 /// @brief map that converts string name to AA enum
 inline
-std::map< std::string, AA > & name2aa() {
+std::map< std::string, AA > const & name2aa() {
 	// static initialization only happens once
-	static std::map< std::string, AA > * name2aa_ = new std::map< std::string, AA >( setup_name2aa() );
-	return *name2aa_;
+	static const std::map< std::string, AA > name2aa_( setup_name2aa() );
+	return name2aa_;
 }
 
 
 /// @brief map that converts one letter char to AA enum
 inline
-std::map< char, AA > & oneletter2aa() {
+std::map< char, AA > const & oneletter2aa() {
 	// static initialization only happens once
-	static std::map< char, AA > * oneletter2aa_ = new std::map< char, AA >( setup_oneletter2aa() );
-	return *oneletter2aa_;
+	static const std::map< char, AA > oneletter2aa_( setup_oneletter2aa() );
+	return oneletter2aa_;
 }
 
 
@@ -229,10 +230,10 @@ utility::vector1< std::string > setup_aa2name() {
 
 /// @brief vector that maps AA enum to string name
 inline
-utility::vector1< std::string > & aa2name() {
+utility::vector1< std::string > const & aa2name() {
 	// static initialization only happens once
-	static utility::vector1< std::string > * aa2name_ = new utility::vector1< std::string >( setup_aa2name() );
-	return *aa2name_;
+	static const utility::vector1< std::string > aa2name_( setup_aa2name() );
+	return aa2name_;
 }
 
 
@@ -252,10 +253,10 @@ utility::vector1< char > setup_aa2oneletter() {
 
 /// @brief vector that maps AA enum to one letter char
 inline
-utility::vector1< char > & aa2oneletter() {
+utility::vector1< char > const & aa2oneletter() {
 	// static initialization only happens once
-	static utility::vector1< char > * aa2oneletter_ = new utility::vector1< char >( setup_aa2oneletter() );
-	return *aa2oneletter_;
+	static const utility::vector1< char > aa2oneletter_( setup_aa2oneletter() );
+	return aa2oneletter_;
 }
 
 

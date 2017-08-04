@@ -54,9 +54,7 @@ public:
 	std::string
 	cache_tag(core::chemical::ResidueType const &) const { return pdb_rotamers_file_; }
 
-	static
-	std::string
-	library_name();
+	static std::string library_name();
 
 private:
 

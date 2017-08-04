@@ -97,9 +97,7 @@ public:
 	std::string
 	cache_tag(core::chemical::ResidueType const &) const;
 
-	static
-	std::string
-	library_name();
+	static std::string library_name();
 
 private:
 

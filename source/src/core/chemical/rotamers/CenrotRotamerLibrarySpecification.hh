@@ -66,9 +66,7 @@ public:
 
 	/// @brief Static function for access to type_name, to have a single string which is used for both
 	/// this class and for the SingleResidueRotamerLibraryCreator.
-	static
-	std::string
-	library_name();
+	static std::string library_name();
 
 private:
 	AA aa_;
