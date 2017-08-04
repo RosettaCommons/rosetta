@@ -1540,11 +1540,11 @@ get_derivs_from_cycle(
 		// Maybe should store this.
 
 		arc_num++;
-		Size arc_num_m1( arc_num - 1 );
-		if ( arc_num_m1 == 0 ) arc_num_m1 = cycle.size();
-		Size arc_num_p1( arc_num + 1 );
-		if ( arc_num_p1 > cycle.size() ) arc_num_p1 = 1;
 
+		//Size arc_num_m1( arc_num - 1 );
+		//if ( arc_num_m1 == 0 ) arc_num_m1 = cycle.size();
+		//Size arc_num_p1( arc_num + 1 );
+		//if ( arc_num_p1 > cycle.size() ) arc_num_p1 = 1;
 		//  TR << "Working indices are " << arc_num << " and " << arc_num_m1 << std::endl;
 
 		PDsphereCOP other_atom( cycle[ arc_num ].other_atom() );

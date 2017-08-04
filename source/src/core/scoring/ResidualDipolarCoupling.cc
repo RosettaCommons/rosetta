@@ -519,8 +519,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	} //cycle over atoms
 
 	/* Now we have all the data we can calculate S */
-	runtime_assert( nex_ < 200 );
-	Real Smax[200];
+	utility::vector1<Real> Smax(nex_);
 	for ( Size ex = 0; ex < nex_; ex++ ) {
 		/* Correct corrfac and copy one half of T to the other half */
 		//  std::cout << " T_[ex][j][i]: ";
@@ -924,8 +923,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	Size prelen=0;
 
 	//optional weighting provided by user
-	runtime_assert( nex_ < 200 );
-	Real Smax[200];
+	utility::vector1<Real> Smax(nex_);
 
 	//experimental data array
 	for ( Size ex = 0; ex < nex_; ex++ ) {

@@ -372,8 +372,6 @@ Minimizer::dfpmin_armijo(
 		XI[i] = -G[i];
 	}
 
-	Real FAC, FAE, FAD, FAF;
-
 	for ( int ITER = 1; ITER <= ITMAX; ++ITER ) {
 		line_min->_deriv_sum = 0.0;
 		Real Gmax = 0.0;
@@ -499,6 +497,8 @@ Minimizer::dfpmin_armijo(
 		//   std::cout << " line_min->_last_accepted_step = 0.0! " << std::endl; //diagnostic
 		//  }
 
+		Real FAF( 0.0 );
+
 		if ( HOPT == 1 || DRVNEW > 0.95*line_min->_deriv_sum ) { //needed if HOPT = 2
 			for ( int i = 1; i <= N; ++i ) {
 				HDG[i] = 0.0;
@@ -506,9 +506,7 @@ Minimizer::dfpmin_armijo(
 					HDG[i] += HESSIN(j,i)*DG[j];
 				}
 			}
-			FAC = 0.0;
-			FAE = 0.0;
-			FAF = 0.0;
+			Real FAC( 0.0 ), FAD( 0.0 ), FAE( 0.0 );
 			for ( int i = 1; i <= N; ++i ) {
 				FAC += DG[i]*XI[i];
 				FAE += DG[i]*HDG[i];

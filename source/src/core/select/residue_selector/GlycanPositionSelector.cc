@@ -294,11 +294,13 @@ GlycanPositionSelector::apply(
 	} else {
 
 		Size end_residue;
-		if ( to_residue_ <= 0 ) {
-			end_residue = to_residue_;
-		}
 		if ( from_residue_ <= 0 ) {
 			end_residue = pose.glycan_tree_set()->get_largest_glycan_tree_length();
+		} else if ( to_residue_ <= 0 ) {
+			end_residue = to_residue_;
+		} else {
+			TR.Error << "Can't find end residue in GlycanPositionSelector! FromResidue="<<from_residue_<<" ToResidue="<<to_residue_ << std::endl;
+			utility_exit_with_message("Can't find end residue.");
 		}
 
 		for ( Size i = 1; i <= end_residue; ++i ) {

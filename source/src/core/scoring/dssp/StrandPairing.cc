@@ -844,7 +844,6 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 	// work out how many pairings we have.. then read pleatings
 	utility::vector1< Size >::iterator regit = regs.begin(), eregit = regs.end();
 	utility::vector1< Size >::iterator bulgeit = bulges.begin(), ebulgeit = bulges.end();
-	Size reg = *regit;
 	int dir = sp.antipar ? -1 : 1;
 	Size bulge = 0;
 	for ( Size pos1 = sp.begin1_,
@@ -852,7 +851,7 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 		Size pleat;
 		is >> pleat;
 		runtime_assert( ( sp.antipar ? sp.end2_ - pos2 : pos2 - sp.begin2_ ) == sp.pairing2.size() );
-		reg = *regit;
+		Size reg = *regit;
 		if ( bulgeit != ebulgeit ) bulge = *bulgeit;
 		else bulge = 0;
 		tr.Trace << " pos1 " << pos1 << " next bulge " << bulge << " pos2 " << pos2 << std::endl;

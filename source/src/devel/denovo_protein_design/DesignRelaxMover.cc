@@ -111,7 +111,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 
 	// set up variables to control designrelaxcycles
 	core::Size designrelaxcycles(1);
-	core::Energy CurrentEnergy = (*relaxfxn_)( pose );
+	//core::Energy CurrentEnergy = (*relaxfxn_)( pose );
 	core::Energy BestEnergy( 0 );
 	core::Energy energychange( 0 );
 	core::pose::Pose bestpose;
@@ -200,7 +200,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 			core::io::pdb::dump_pdb( pose, relax_tag);
 		}
 
-		CurrentEnergy = (*relaxfxn_)( pose ); // update current energy
+		core::Energy CurrentEnergy = (*relaxfxn_)( pose );
 
 		// if CurrentEnergy is less than BestEnergy - read better -
 		// so energychange is negative and we need to upate

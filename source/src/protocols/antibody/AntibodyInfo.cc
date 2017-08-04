@@ -969,7 +969,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 			( (cdr_h3_sequence[1] == 'K') ||
 			(cdr_h3_sequence[1] == 'R') ) && (is_H3 != true) ) {
 		extended_H3 = true;
-		is_H3 = true;
+		//is_H3 = true; // Value stored to 'is_H3' is never read
 	}
 
 	if ( kinked_H3 ) predicted_H3_base_type_ = Kinked;
@@ -1973,8 +1973,6 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 	int lenl1 = 0, lenl2 = 0, lenl3 = 0, lenh1 = 0, lenh2 = 0, lenh3 = 0;
 	int posl1_s = 0, posl1_e = 0, posl2_s = 0, posl2_e = 0, posl3_s = 0, posl3_e = 0;
 	int posh1_s = 0, posh1_e = 0, posh2_s = 0, posh2_e = 0, posh3_s = 0, posh3_e = 0;
-	// int i = 0, // Unused variable causes warning.
-	int k = 0, l = 0, m = 0, n = 0;
 
 	int pos_fr1_s = 0, pos_fr1_e = 0, pos_fr2_s = 0, pos_fr2_e = 0;
 	int pos_fr3_s = 0, pos_fr3_e = 0, pos_fr4_s = 0, pos_fr4_e = 0;
@@ -2104,10 +2102,10 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 	//string p2_l3[] = {"G","A","E","V"};
 	//string p3_l3[] = {"G","A","P","C","D","E","Q","N","R","K","H","W","Y","F","M","T","V","I","S","L"};
 	//string p4_l3[] = {"G","Y"};
-	for ( l = 0; l < 3; ++l ) {
-		for ( m = 0; m < 4; ++m ) {
-			for ( n = 0; n < 2; ++n ) {
-				for ( k = 0; k < 20; ++k ) {
+	for ( int l = 0; l < 3; ++l ) {
+		for ( int m = 0; m < 4; ++m ) {
+			for ( int n = 0; n < 2; ++n ) {
+				for ( int k = 0; k < 20; ++k ) {
 					//frl3 = "FG" + p3_l3[k] + "G";
 					//frl3 = p1_l3[l] + "G" + p3_l3[k] + "G";   //[VF]GXG
 					frl3 = p1_l3[l] + p2_l3[m] + p3_l3[k] + p4_l3[n]; //[VF][AG]XG
@@ -2142,7 +2140,7 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 				l = 3;
 				m = 4;
 				n = 2;
-				k = 20;
+				//k = 20;
 			}
 		}
 	}
@@ -2157,10 +2155,10 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 		//string p2_h1[] = {"I","V","F","Y","A","M","L","N","G","E"};
 		//string p3_h1[] = {"R","K","Q","V","N","C"};
 		//string p4_h1[] = {"Q","K","H","E","L","R"};
-		for ( n = 0; n < 2; ++n ) {
-			for ( l = 0; l < 6; ++l ) {
-				for ( m = 0; m < 6; ++m ) {
-					for ( k = 0; k < 10; ++k ) {
+		for ( int n = 0; n < 2; ++n ) {
+			for ( int l = 0; l < 6; ++l ) {
+				for ( int m = 0; m < 6; ++m ) {
+					for ( int k = 0; k < 10; ++k ) {
 						//frh1 = "W" + p2_h1[k] + p3_h1[l] + p4_h1[m];
 						frh1 = p1_h1[n] + p2_h1[k] + p3_h1[l] + p4_h1[m];
 
@@ -2194,9 +2192,9 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 		//string p2_h3[] = {"G","A","C"};
 		//string p3_h3[] = {"A","P","C","D","E","Q","N","R","K","H","W","Y","F","M","T","V","I","S","L","G"};
 		//string p4_h3[] = {"G","R","D","Q","V"};
-		for ( m = 0; m < 3; ++m ) {
-			for ( l = 0; l < 5; ++l ) {
-				for ( k = 0; k < 20; ++k ) {
+		for ( int m = 0; m < 3; ++m ) {
+			for ( int l = 0; l < 5; ++l ) {
+				for ( int k = 0; k < 20; ++k ) {
 					//frh3 = "WG" + p3_h3[k] + p4_h3[l];
 					frh3 = "W" + p2_h3[m] + p3_h3[k] + p4_h3[l];
 

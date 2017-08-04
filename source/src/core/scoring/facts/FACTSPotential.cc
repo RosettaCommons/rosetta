@@ -744,10 +744,9 @@ void FACTSPotential::calculate_GBpair_exact(
 			}
 
 			// 3. Derivative stuffs
-			Real g1, g2;
+			Real g1( 0.0 );
 			Real dsolv_drij;
 			if ( fully_exposed ) {
-				g1 = 0.0; g2 = 0.0;
 				if ( dis > 1.0 ) {
 					dsolv_drij = -fsolv/dis2;
 				} else {
@@ -755,7 +754,7 @@ void FACTSPotential::calculate_GBpair_exact(
 				}
 			} else {
 				g1 = 0.5*fsolv/tmp3;
-				g2 = 2.0 - 2.0*tmp2/Kappa(); // for original GB formula and Way2
+				Real g2 = 2.0 - 2.0*tmp2/Kappa(); // for original GB formula and Way2
 				dsolv_drij = -g1*g2;
 			}
 

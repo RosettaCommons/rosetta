@@ -180,7 +180,7 @@ MPEnvEnergy::compute_mpenv_score(
 
 	int s2 = 14;
 	int s3 = 14;
-	int layer1, layer2, layer;
+	int layer1, layer2;
 	Real f, z, zn, low;
 
 	// Setup Weights
@@ -198,7 +198,7 @@ MPEnvEnergy::compute_mpenv_score(
 	// Score in the Pure Water Layer
 	if ( ( z_position < -19.0 ) || ( z_position > 19.0 ) ) {
 
-		layer = 3;
+		int layer = 3;
 		Real score6( env6_weight * mpdata_.mem_env_log6()( aa, layer, static_cast< int >( fcen6 ) ) );
 		Real score10( env10_weight * mpdata_.mem_env_log10()( aa, layer, static_cast< int >( fcen10 ) ) );
 		menv_score = score6 + score10;
@@ -228,16 +228,16 @@ MPEnvEnergy::compute_mpenv_score(
 		// Increment Score
 		menv_score = f * ( score6_layer2 + score10_layer2 ) + ( 1 - f ) * ( score6_layer1 + score10_layer1 );
 
-		if ( z_position <= -18.0 || z_position >= 18.0 ) {
-			layer = 2;
-		} else {
-			layer = 3;
-		}
+		//if ( z_position <= -18.0 || z_position >= 18.0 ) {
+		// layer = 2;
+		//} else {
+		// layer = 3;
+		//}
 
 		// Pure Interface Phase
 	} else if ( ( z_position > -17.0 && z_position < -13.0 ) || ( z_position > 13.0 && z_position < 17.0 ) ) {
 
-		layer = 2; //interface layer
+		int layer = 2; //interface layer
 
 		Real score6 ( env6_weight * mpdata_.mem_env_log6()( aa, layer, static_cast< int >( fcen6 ) ) );
 		Real score10 ( env10_weight * mpdata_.mem_env_log10()( aa, layer, static_cast< int >( fcen10 ) ) );
@@ -267,14 +267,14 @@ MPEnvEnergy::compute_mpenv_score(
 		// Update Score
 		menv_score = f * ( score6_layer2  + score10_layer2 ) + ( 1 - f ) * ( score6_layer1 + score10_layer1 );
 
-		// recompute layer
-		if ( z_position <= -12.0 || z_position >= 12.0 ) layer = 2;
-		else layer = 1;
+		//// recompute layer
+		//if ( z_position <= -12.0 || z_position >= 12.0 ) layer = 2;
+		//else layer = 1;
 
 		// Pure Hydrophobic Phase
 	} else {
 
-		layer = 1;
+		int layer = 1;
 
 		Real score6( env6_weight * mpdata_.mem_env_log6()(  aa, layer, static_cast< int >( fcen6  ) ) );
 		Real score10( env10_weight * mpdata_.mem_env_log10()( aa, layer, static_cast< int >( fcen10 ) ) );

@@ -148,7 +148,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 		utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
 		pveci = 1;
 		while ( pveci <= pvec.size() ) {
-			tried=true;
+			// tried=true; // last time around - don't set as it will never be used.
 			dir_name = pvec[ pveci ].name();
 			full_path = dir_name + file_name;
 			rotlib_in.open( full_path );

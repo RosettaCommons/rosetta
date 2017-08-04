@@ -128,26 +128,12 @@ get_base_step_params(
 	utility::vector1< Real > & params // output
 );
 
-void
-get_base_pucker(
-	conformation::Residue const & rsd,
-	std::pair< std::string, int > & pucker,
-	Real & pseudorotation,
-	Real & amplitude
-);
-
 kinematics::Stub
 get_base_pair_stub_slow(
 	conformation::Residue const & rsd1, // on strand I
 	conformation::Residue const & rsd2  // on strand II
 );
 
-
-kinematics::Stub
-get_midstep_stub(
-	kinematics::Stub const & in_stub1,
-	kinematics::Stub const & in_stub2
-);
 
 
 } // namespace dna

@@ -660,7 +660,7 @@ get_stub_stub_params(
 	using numeric::conversions::degrees;
 	using numeric::arccos;
 
-	bool const local_debug( true ); // PBHACK!!!!!!!!!!!!!!!!!!!!!!
+	// bool const local_debug( true ); // PBHACK!!!!!!!!!!!!!!!!!!!!!!
 	params.resize(6);
 
 	// copy matrices
@@ -670,11 +670,11 @@ get_stub_stub_params(
 	debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 #ifndef NDEBUG
-	bool base_flipped = false;
+	//bool base_flipped = false;
 #endif
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 #ifndef NDEBUG
-		base_flipped = true;
+		//base_flipped = true;
 #endif
 		basic::T("core.scoring.base_geometry") << "get_stub_stub_params: base flip!!!\n";
 		for ( Size i = 1; i <= 6; ++i ) {
@@ -722,7 +722,8 @@ get_stub_stub_params(
 	params[1] = std::atan2( dot( M1.col_z(), M2.col_x() ),
 		dot( M1.col_z(), M2.col_z() ) );
 
-	debug_assert( !local_debug || ( std::fabs( std::fabs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 ) );
+	debug_assert( //!local_debug ||
+		( std::fabs( std::fabs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 ) );
 
 	// buckle:
 	params[2] = gamma * dot( bo, MBT.col_x() );
@@ -737,49 +738,49 @@ get_stub_stub_params(
 	params[5] = dot( displacement, MBT.col_y() );
 	params[6] = dot( displacement, MBT.col_z() );
 
-	/////////////
-	// remove this debugging stuff, preserved in old code at the end of the file
-	if ( local_debug ) {
-		{ // sin gamma version of params[2] is a simple dot product:
-			//Real const tmp1 = (sin( gamma ) * params[2] / gamma);
-			//Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
-			debug_assert( std::fabs( (sin( gamma ) * params[2] / gamma) -
-				dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
-		}
+	// /////////////
+	// // remove this debugging stuff
+	// if ( local_debug ) {
+	//  { // sin gamma version of params[2] is a simple dot product:
+	//   //Real const tmp1 = (sin( gamma ) * params[2] / gamma);
+	//   //Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
+	//   debug_assert( std::fabs( (sin( gamma ) * params[2] / gamma) -
+	//    dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
+	//  }
 
-		{ // sin gamma version of params[3] is a simple dot product:
-			//Real const tmp1( sin( gamma ) * params[3] / gamma );
-			//Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
-			debug_assert( std::fabs( ( sin( gamma ) * params[3] / gamma ) -
-				dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) ) < 1e-2 );
-		}
+	//  { // sin gamma version of params[3] is a simple dot product:
+	//   //Real const tmp1( sin( gamma ) * params[3] / gamma );
+	//   //Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
+	//   debug_assert( std::fabs( ( sin( gamma ) * params[3] / gamma ) -
+	//    dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) ) < 1e-2 );
+	//  }
 
-		// check sign conventions
-		Real phi_prime( arccos( dot( bo, MBT.col_x() ) ) );
-		if ( dot( cross( bo, MBT.col_x() ), MBT.col_y() ) < 0.0f ) {
-			phi_prime *= -1.0f;
-		}
+	//  // check sign conventions
+	//  Real phi_prime( arccos( dot( bo, MBT.col_x() ) ) );
+	//  if ( dot( cross( bo, MBT.col_x() ), MBT.col_y() ) < 0.0f ) {
+	//   phi_prime *= -1.0f;
+	//  }
 
-		Vector tmp( cross( M2.col_z(), M1.col_z() ) );
-		debug_assert( cross( tmp, MBT.col_y() ).length() <1e-2 );
+	//  Vector tmp( cross( M2.col_z(), M1.col_z() ) );
+	//  debug_assert( cross( tmp, MBT.col_y() ).length() <1e-2 );
 
-		//Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
-		//Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
-		debug_assert( ( base_flipped ) ||
-			( std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
-			std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
-		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
-		// std::endl;
+	//  //Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
+	//  //Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
+	//  debug_assert( ( base_flipped ) ||
+	//   ( std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
+	//   std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
+	//  //std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
+	//  // std::endl;
 
-		//Real const p2 = gamma * cos( phi_prime );
-		//Real const p3 = gamma * sin( phi_prime );
-		//Real const dev( std::fabs( p2 - params[2] ) + std::fabs( p3 - params[3] ) );
-		//std::cout << "dev: " << dev << std::endl;
-		debug_assert( std::fabs( gamma * cos( phi_prime ) - params[2] ) + std::fabs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
+	//  //Real const p2 = gamma * cos( phi_prime );
+	//  //Real const p3 = gamma * sin( phi_prime );
+	//  //Real const dev( std::fabs( p2 - params[2] ) + std::fabs( p3 - params[3] ) );
+	//  //std::cout << "dev: " << dev << std::endl;
+	//  debug_assert( std::fabs( gamma * cos( phi_prime ) - params[2] ) + std::fabs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
-		// check sign conventions
-		debug_assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
-	}
+	//  // check sign conventions
+	//  debug_assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
+	// }
 
 	// convert to degrees
 	params[1] = degrees( params[1] );
@@ -1079,157 +1080,7 @@ lsf_normal(
 	normal_f.normalize();
 	return normal_f;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/// saved for comparison and debugging purposes
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-get_base_pair_params_old(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	Params & params // output
-)
-{
-	using numeric::conversions::degrees;
-	using numeric::arccos;
-
-	bool const local_debug( false );
-
-	params.resize(6);
-
-	kinematics::Stub const stub1( get_base_stub( rsd1, 1 /*strand*/ )), stub2( get_base_stub( rsd2, 2 /*strand*/ ) );
-
-	// copy matrices
-	Matrix M1( stub1.M ), M2( stub2.M );
-
-	debug_assert( is_orthonormal( M1, 1e-3 ) );
-	debug_assert( is_orthonormal( M2, 1e-3 ) );
-
-#ifndef NDEBUG
-	bool base_flipped = false;
-#endif
-	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
-#ifndef NDEBUG
-		base_flipped = true;
-#endif
-		basic::T("core.scoring.base_geometry") << "base_pair_params: base flip!!!\n";
-		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-	}
-
-	// get angle between the y-axes
-	Real const gamma( arccos( dot( M1.col_y(), M2.col_y() ) ) );
-
-	Vector const bo( ( cross( M2.col_y(), M1.col_y() ) ).normalized() );
-
-	Matrix R_gamma_2( rotation_matrix( bo, gamma/2.0f ) );
-
-	M2 = R_gamma_2 * M2;
-	M1 = R_gamma_2.transposed() * M1;
-
-	debug_assert( is_orthonormal( M1, 1e-3 ) );
-	debug_assert( is_orthonormal( M2, 1e-3 ) );
-
-	// build mid-base-pair triad
-	debug_assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-	debug_assert( std::fabs( dot( bo, M1.col_y() ) ) < 1e-3 );
-
-	Matrix MBT;
-	MBT.col_y( M1.col_y() );
-
-	debug_assert( std::fabs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
-	debug_assert( std::fabs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
-	debug_assert( std::fabs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
-	debug_assert( std::fabs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
-
-	// get
-	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
-	MBT.col_z( ( 0.5f * ( M1.col_z() + M2.col_z() ) ).normalized() );
-
-	debug_assert( is_orthonormal( MBT, 1e-3 ) );
-
-	// angular params
-
-	// propellor
-	// z,x,y make rh coord system
-	params[1] = std::atan2( dot( M1.col_z(), M2.col_x() ),
-		dot( M1.col_z(), M2.col_z() ) );
-
-	if ( local_debug ) {
-		debug_assert( std::fabs( std::fabs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 );
-	}
-
-	// buckle:
-	params[2] = gamma * dot( bo, MBT.col_x() );
-
-	// opening
-	params[3] = gamma * dot( bo, MBT.col_z() );
-
-	// translational params
-	Vector const displacement( stub1.v - stub2.v );
-
-	params[4] = dot( displacement, MBT.col_x() );
-	params[5] = dot( displacement, MBT.col_y() );
-	params[6] = dot( displacement, MBT.col_z() );
-
-	/////////////
-	// debugging:
-	if ( local_debug ) {
-		{ // sin gamma version of params[2] is a simple dot product:
-			//Real const tmp1 = sin( gamma ) * params[2] / gamma;
-			//Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
-			debug_assert( std::fabs(sin( gamma ) * params[2] / gamma -
-				dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
-		}
-
-		{ // sin gamma version of params[3] is a simple dot product:
-			//Real const tmp1( sin( gamma ) * params[3] / gamma );
-			//Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
-			debug_assert( std::fabs(sin( gamma ) * params[3] / gamma -
-				dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() )) < 1e-2 );
-		}
-
-		// check sign conventions
-		Real phi_prime( arccos( dot( bo, MBT.col_x() ) ) );
-		if ( dot( cross( bo, MBT.col_x() ), MBT.col_y() ) < 0.0f ) {
-			phi_prime *= -1.0f;
-		}
-
-		Vector tmp( cross( M2.col_z(), M1.col_z() ) );
-		debug_assert( cross( tmp, MBT.col_y() ).length() <1e-2 );
-
-		//Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
-		//Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
-		debug_assert( ( base_flipped ) ||
-			( std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
-			std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
-		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
-		// std::endl;
-
-		//Real const p2 = gamma * cos( phi_prime );
-		//Real const p3 = gamma * sin( phi_prime );
-		//Real const dev( std::fabs( p2 - params[2] ) + std::fabs( p3 - params[3] ) );
-		//std::cout << "dev: " << dev << std::endl;
-		debug_assert( std::fabs( gamma * cos( phi_prime ) - params[2] ) + std::fabs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
-
-		// check sign conventions
-		debug_assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
-	}
-
-	// convert to degrees
-	params[1] = degrees( params[1] );
-	params[2] = degrees( params[2] );
-	params[3] = degrees( params[3] );
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -1369,151 +1220,7 @@ get_base_step_params(
 }
 
 
-////////////////////////////////////////////////////////////////////////////
-void
-get_base_pucker(
-	conformation::Residue const & rsd,
-	std::pair< std::string, int > & pucker,
-	Real & pseudorotation,
-	Real & amplitude
-)
-{
-	using numeric::conversions::radians;
-	using numeric::conversions::degrees;
-
-	utility::vector1< std::string > names;
-	names.push_back( "C1'" );
-	names.push_back( "C2'" );
-	names.push_back( "C3'" );
-	names.push_back( "C4'" );
-	names.push_back( "O4'" );
-
-	utility::vector1< Vector > atoms;
-	for ( int i=1; i<= 5; ++i ) {
-		atoms.push_back( rsd.xyz( names[i] ) );
-	}
-
-	Real mindot = 1000.0;
-	bool exxo( false );
-	utility::vector1< Real > torsions(5, 0.0);
-	for ( int ii=1; ii<= 5; ++ii ) {
-
-		torsions[ ii ] = dihedral_radians(
-			atoms[ 4 ],
-			atoms[ 5 ],
-			atoms[ 1 ],
-			atoms[ 2 ]
-		);
-
-		Vector n12 = (( atoms[2]-atoms[1] ).cross( atoms[3]-atoms[2] ) ).normalized();
-		Real dot = std::fabs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
-		if ( dot < mindot ) {
-			// get pucker
-			//Real pucker_dot = n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() );
-
-			mindot = dot;
-			pucker.first = names[5];
-			exxo = ( n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() ) > 0.0 );
-		}
-
-		atoms.push_back( atoms[1] );
-		atoms.erase( atoms.begin() );
-
-		names.push_back( names[1] );
-		names.erase( names.begin() );
-
-	}
-
-	pseudorotation = atan(
-		( ( torsions[2] + torsions[5] ) - ( torsions[1] + torsions[4] ) ) /
-		( 2.0 * torsions[3] * ( sin( radians(36.0) ) + sin( radians(72.0)) ) )
-	);
-
-	pseudorotation = degrees( pseudorotation );
-	if ( torsions[3] < 0.0 ) pseudorotation += 180.0;
-
-	pseudorotation = basic::periodic_range( pseudorotation, 360.0 );
-
-	amplitude = degrees( torsions[3] / ( cos( radians( pseudorotation ) ) + 1.0e-20 ) );
-
-	// additional integer for scannability
-	{
-		int const atom_index( std::find( names.begin(), names.end(), pucker.first ) - names.begin() );
-		int const sign_index( exxo ? 0 : 1 );
-		if ( atom_index%2 == sign_index ) pucker.second = atom_index+1;
-		else                              pucker.second = atom_index-4;
-	}
-
-	if ( exxo ) pucker.first += " exxo";
-	else pucker.first += " endo";
-}
-
-///////////////////////////////////////////////////////////////////////////////
-kinematics::Stub
-get_midstep_stub(
-	kinematics::Stub const & in_stub1,
-	kinematics::Stub const & in_stub2
-)
-{
-	using numeric::conversions::degrees;
-	using numeric::arccos;
-
-	// Reordering as Phil did
-	kinematics::Stub stub1( kinematics::Stub::Matrix::cols( in_stub2.M.col_y(), in_stub2.M.col_z(), in_stub2.M.col_x() ), in_stub2.v );
-	kinematics::Stub stub2( kinematics::Stub::Matrix::cols( in_stub1.M.col_y(), in_stub1.M.col_z(), in_stub1.M.col_x() ), in_stub1.v );
-
-	// copy matrices
-	Matrix M1( stub1.M ), M2( stub2.M );
-
-	debug_assert( is_orthonormal( M1, 1e-3 ) );
-	debug_assert( is_orthonormal( M2, 1e-3 ) );
-
-	//bool base_flipped = false;  // unused ~Labonte
-	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
-		//base_flipped = true;  // unused ~Labonte
-		basic::T("core.scoring.base_geometry") << "get_midstep_stub: base flip!!!\n";
-		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-	}
-
-	// The nomenclature for the angles is the base pair convention (buckle, opening)
-	// but the math is the same as for base steps, and the code in get_stub_stub_params works
-	// for both.
-	//
-	// get angle between the y-axes
-	Real const gamma( arccos( dot( M1.col_y(), M2.col_y() ) ) );
-
-	Vector const bo( ( cross( M2.col_y(), M1.col_y() ) ).normalized() );
-
-	Matrix R_gamma_2( rotation_matrix( bo, gamma/2.0f ) );
-
-	M2 = R_gamma_2 * M2;
-	M1 = R_gamma_2.transposed() * M1;
-
-	debug_assert( is_orthonormal( M1, 1e-3 ) );
-	debug_assert( is_orthonormal( M2, 1e-3 ) );
-
-	// build mid-stub triad
-	debug_assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-	debug_assert( std::fabs( dot( bo, M1.col_y() ) ) < 1e-3 );
-
-	Matrix MBT;
-	MBT.col_y( M1.col_y() );
-
-	debug_assert( std::fabs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
-	debug_assert( std::fabs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
-	debug_assert( std::fabs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
-	debug_assert( std::fabs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
-
-	// get
-	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
-	MBT.col_z( ( 0.5f * ( M1.col_z() + M2.col_z() ) ).normalized() );
-
-	debug_assert( is_orthonormal( MBT, 1e-3 ) );
-
-	return kinematics::Stub( MBT, 0.5f*( stub1.v + stub2.v ) );
-
-}
-
 
 } // namespace dna
-}} // scoring core
+} // namespace scoring
+} // namespace core

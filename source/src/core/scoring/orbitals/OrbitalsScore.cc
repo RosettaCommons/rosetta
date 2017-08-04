@@ -417,7 +417,7 @@ void OrbitalsScore::compute_orb_orb_E(
 	orb_orb_E=0.0;
 	lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
 	scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
-	orb_orb_E=0.0;
+	//orb_orb_E=0.0;
 }
 
 //TODO This function duplicates code from the one directly below it.  The function below could

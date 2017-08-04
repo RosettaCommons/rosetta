@@ -420,7 +420,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 
 	Real thickness = 2.0;
 	int  slope = 14;
-	int  layer1,layer2,layer;
+	int  layer1,layer2;
 	Real f,z,zn,layer_edge;
 
 	Real const env10_weight=1.0;
@@ -428,7 +428,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 	if ( high_bin < 41.0 ) {
 		if ( ( z_position < -19.0 ) || ( z_position > 19.0 ) ) {
 			//pure water layer
-			layer = 3;
+			int layer = 3;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
 				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
@@ -462,16 +462,16 @@ FaMPEnvSmoothEnergy::calc_energy(
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, high_bin ) -
 				env10_weight * mem_env_log10_( aa, layer1, low_bin ) );
 
-			if ( z_position <= -18.0 || z_position >= 18.0 ) {
-				layer = 2;
-			} else {
-				layer = 3;
-			}
+			//if ( z_position <= -18.0 || z_position >= 18.0 ) {
+			// layer = 2;
+			//} else {
+			// layer = 3;
+			//}
 
 		} else if ( ( z_position > -17.0 && z_position < -13.0 ) || ( z_position > 13.0 && z_position < 17.0 ) ) {
 
 			//pure interface phase
-			layer = 2;
+			int layer = 2;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
 				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
@@ -507,7 +507,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 
 		} else {
 			//pure hydrophobic phase
-			layer = 1;
+			int layer = 1;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
 				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
@@ -522,7 +522,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 
 		if ( ( z_position < -19.0 ) || ( z_position > 19.0 ) ) {
 			//pure water layer
-			layer = 3;
+			int layer = 3;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 
@@ -545,15 +545,15 @@ FaMPEnvSmoothEnergy::calc_energy(
 			score = f * ( env10_weight * mem_env_log10_( aa, layer2, 40 ) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, 40 ) );
 
-			if ( z_position <= -18.0 || z_position >= 18.0 ) {
-				layer = 2;
-			} else {
-				layer = 3;
-			}
+			//if ( z_position <= -18.0 || z_position >= 18.0 ) {
+			// layer = 2;
+			//} else {
+			// layer = 3;
+			//}
 
 		} else if ( ( z_position > -17.0 && z_position < -13.0 ) || ( z_position > 13.0 && z_position < 17.0 ) ) {
 			//pure interface phase
-			layer = 2;
+			int layer = 2;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 
@@ -577,7 +577,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 
 		} else {
 			//pure hydrophobic phase
-			layer = 1;
+			int layer = 1;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 

@@ -307,16 +307,15 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 ) const
 {
 	//U    USES pythag
-	Size i,its,j,jj,k,l,nm;
+	Size i,its,j,jj,k,nm;
 	ObjexxFCL::FArray1D< core::Real > rv1( row_length );
 	Real anorm, c, f, g, h, s, scale, x, y, z;
 	g = 0.0;
 	scale = 0.0;
 	anorm = 0.0;
-	l = 0;
 	nm = 0;
 	for ( i = 1; i <= row_length; ++i ) {
-		l = i+1;
+		Size l = i+1;
 		rv1(i) = scale*g;
 		g = 0.0;
 		s = 0.0;
@@ -387,7 +386,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 	}
 	v(i,i) = 1.0;
 	g = rv1(i);
-	l = i;
+	Size l = i;
 	for ( i = row_length-1; i >= 1; --i ) {
 		if ( g != 0.0 ) {
 			for ( j = l; j <= row_length; ++j ) {

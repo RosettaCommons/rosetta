@@ -400,7 +400,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 
 	Real thickness = 2.0;
 	int  slope = 14;
-	int  layer1,layer2,layer;
+	int  layer1,layer2;
 	Real f,z,zn,layer_edge;
 
 	Real const env10_weight=1.0;
@@ -408,7 +408,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 	if ( high_bin < 41 ) {
 		if ( ( MembraneDepth < 11.0 ) || ( MembraneDepth > 49.0 ) ) {
 			//pure water layer
-			layer = 3;
+			int layer = 3;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
 				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
@@ -440,15 +440,15 @@ MembraneEnvSmoothEnergy::calc_energy(
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, high_bin ) -
 				env10_weight * mem_env_log10_( aa, layer1, low_bin ) );
 
-			if ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) {
-				layer = 2;
-			} else {
-				layer = 3;
-			}
+			//if ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) {
+			// layer = 2;
+			//} else {
+			// layer = 3;
+			//}
 
 		} else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
 			//pure interface phase
-			layer = 2;
+			int layer = 2;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
 				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
@@ -482,7 +482,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 
 		} else {
 			//pure hydrophobic phase
-			layer = 1;
+			int layer = 1;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
 				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
@@ -497,7 +497,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 
 		if ( ( MembraneDepth < 11.0 ) || ( MembraneDepth > 49.0 ) ) {
 			//pure water layer
-			layer = 3;
+			int layer = 3;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 
@@ -518,15 +518,15 @@ MembraneEnvSmoothEnergy::calc_energy(
 			score = f * ( env10_weight * mem_env_log10_( aa, layer2, 40 ) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, 40 ) );
 
-			if ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) {
-				layer = 2;
-			} else {
-				layer = 3;
-			}
+			//if ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) {
+			// layer = 2;
+			//} else {
+			// layer = 3;
+			//}
 
 		} else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
 			//pure interface phase
-			layer = 2;
+			int layer = 2;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 
@@ -549,7 +549,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 
 		} else {
 			//pure hydrophobic phase
-			layer = 1;
+			int layer = 1;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 		}

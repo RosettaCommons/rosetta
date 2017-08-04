@@ -290,13 +290,13 @@ void PoseBalls::compute_smooth_nb() {
 	for ( core::Size i = 1; i <= nballs_; i++ ) smooth_nb_[i] = 0.0;
 	for ( core::Size i = 1; i <= nballs_; i++ ) {
 		xyzVector<Real> const & ixyz( balls_[i].xyz() );
-		core::Size atype = atom_type_[i];
-		if ( atype >= 18 ) {
-			if ( 'E'==secstruct_[i] ) atype = 18+3*(atype-18)+0;
-			else if ( 'H'==secstruct_[i] ) atype = 18+3*(atype-18)+1;
-			else if ( 'L'==secstruct_[i] ) atype = 18+3*(atype-18)+2;
-			else atype = 999;//std::cerr << "secstruct other than H E or L!!!! " << secstruct_[i] << std::endl;
-		}
+		//core::Size atype = atom_type_[i];
+		//if ( atype >= 18 ) {
+		// if ( 'E'==secstruct_[i] ) atype = 18+3*(atype-18)+0;
+		// else if ( 'H'==secstruct_[i] ) atype = 18+3*(atype-18)+1;
+		// else if ( 'L'==secstruct_[i] ) atype = 18+3*(atype-18)+2;
+		// else atype = 999;//std::cerr << "secstruct other than H E or L!!!! " << secstruct_[i] << std::endl;
+		//}
 		for ( core::Size j = 1; j <= nballs_; j++ ) {
 			if ( !is_heavy_[j] ) continue;
 			xyzVector<Real> const & jxyz( balls_[j].xyz() );

@@ -1550,7 +1550,7 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 
 	utility::vector1 < std::string > atom_names;
 	//loop over residues
-	Size atmn ( 1 );
+	//Size atmn ( 1 );
 	for ( Size seq_num_tmp = 1; seq_num_tmp <= pose.size(); seq_num_tmp++ ) {
 		core::conformation::Residue const & curr_rsd_tmp = pose.residue( seq_num_tmp );
 		//std::string const curr_rsd_name_tmp( chemical::name_from_aa( curr_rsd_tmp.aa() ) );
@@ -1560,7 +1560,7 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 			std::string const curr_atom_name_tmp( ( curr_rsd_tmp.atom_name( atom_num_tmp) ) );
 			atom_names.push_back( curr_atom_name_tmp );
 			//std::cout << "Outside " << atmn << " " << atom_names[ atmn ] << std::endl;
-			atmn++;
+			//atmn++;
 		}
 	}
 
@@ -1575,7 +1575,6 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 
 			if ( ( !( nuchemics_mode_ ) || CS_data.atom_name.find ( "H" ) == std::string::npos ) && ( is_source_atom || is_neighbor_atom ) ) {
 				if ( curr_active != CS_data.atom_name ) {
-					atmn = 1;
 					curr_active = CS_data.atom_name;
 				}
 				get_deriv_for_chemical_shift( atom_id, CS_data, pose, f1, f2, atom_names, atom_name, atom_name_whitespace, is_source_atom, is_neighbor_atom );

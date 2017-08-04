@@ -127,22 +127,22 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 
 	center_ = numeric::center_of_mass(coords_);
 
-	//Calculate RMSD and compare
+	// //Calculate RMSD and compare
 
-	core::Real deviation = 0;
-	//core::Real heavy = 0;
+	// core::Real deviation = 0;
+	// //core::Real heavy = 0;
 
-	for ( core::Size i=1; i <= coords_.size(); ++i ) {
-		core::Real deviation_x = ((coords_[i][0]-reference_coords[i][0]) * (coords_[i][0]-reference_coords[i][0]));
-		core::Real deviation_y = ((coords_[i][1]-reference_coords[i][1]) * (coords_[i][1]-reference_coords[i][1]));
-		core::Real deviation_z = ((coords_[i][2]-reference_coords[i][2]) * (coords_[i][2]-reference_coords[i][2]));
+	// for ( core::Size i=1; i <= coords_.size(); ++i ) {
+	//  core::Real deviation_x = ((coords_[i][0]-reference_coords[i][0]) * (coords_[i][0]-reference_coords[i][0]));
+	//  core::Real deviation_y = ((coords_[i][1]-reference_coords[i][1]) * (coords_[i][1]-reference_coords[i][1]));
+	//  core::Real deviation_z = ((coords_[i][2]-reference_coords[i][2]) * (coords_[i][2]-reference_coords[i][2]));
 
-		core::Real total_dev = deviation_x + deviation_y + deviation_z;
-		deviation += total_dev;
-	}
+	//  core::Real total_dev = deviation_x + deviation_y + deviation_z;
+	//  deviation += total_dev;
+	// }
 
-	deviation /= (core::Real)coords_.size();
-	deviation = sqrt(deviation);
+	// deviation /= (core::Real)coords_.size();
+	// deviation = sqrt(deviation);
 
 	// std::cout<<"Deviation after conformer change is: " << deviation << std::endl;
 
@@ -157,7 +157,6 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 	// heavy = sqrt(heavy);
 
 	//  std::cout<<"heavy atom Deviation after conformer change is: " << heavy << std::endl;
-
 
 }
 
