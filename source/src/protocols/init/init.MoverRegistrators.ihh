@@ -542,6 +542,7 @@ static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMin
 static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
+static MoverRegistrator< simple_moves::WriteFiltersToPoseCreator > reg_WriteFiltersToPoseCreator;
 
 static MoverRegistrator< stepwise::monte_carlo::mover::AddMoverCreator > reg_AddMoverCreator;
 

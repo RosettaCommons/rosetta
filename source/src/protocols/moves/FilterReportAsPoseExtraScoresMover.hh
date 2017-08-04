@@ -34,6 +34,7 @@ namespace protocols {
 namespace moves {
 
 ///@brief This Mover runs a Filter and dumps the report_sm value to Pose's extra scores (for later JD reporting)
+/// To do the same for all filters, use WriteFiltersToPose.
 class FilterReportAsPoseExtraScoresMover : public protocols::moves::Mover {
 
 public:

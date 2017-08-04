@@ -522,6 +522,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/TaskAwareSymMinMoverCreator.hh>
+#include <protocols/simple_moves/WriteFiltersToPoseCreator.hh>
 
 #include <protocols/stepwise/monte_carlo/mover/AddMoverCreator.hh>
 
