@@ -95,6 +95,49 @@ public:
 	/// on which THIS helix depends.
 	void update_control_dependencies_given_helix_to_be_removed( core::Size const helix_to_remove );
 
+	/// @brief Is a custom params file currently selected?
+	bool custom_params_file_selected() const;
+
+	/// @brief Get the custom params file.
+	std::string const & custom_params_file() const;
+
+	/// @brief Set r0.
+	void set_r0( core::Real const &setting );
+
+	/// @brief Set omega0.
+	void set_omega0( core::Real const &setting );
+
+	/// @brief Set delta_omega0.
+	void set_delta_omega0( core::Real const &setting );
+
+	/// @brief Set delta_omega1.
+	void set_delta_omega1( core::Real const &setting );
+
+	/// @brief Set delta_t.
+	void set_delta_t( core::Real const &setting );
+
+	/// @brief Set z1_offset.
+	void set_z1_offset( core::Real const &setting );
+
+	/// @brief Set z0_offset.
+	void set_z0_offset( core::Real const &setting );
+
+	/// @brief Set epsilon.
+	void set_epsilon( core::Real const &setting );
+
+	/// @brief Set everything except delta_omega0 to copy helix 1.
+	/// @details Does nothing if this is helix 1.
+	void set_everything_except_delta_omega0_copies_helix1();
+
+	/// @brief Set whether this helix is inverted.
+	void set_invert( bool const inverted );
+
+	/// @brief Set the length of this helix.
+	void set_helix_length( core::Size const length );
+
+	/// @brief Set that this "helix" is actually a beta-strand.
+	void set_to_beta_strand();
+
 Q_SIGNALS:
 
 	/// @brief One of the controls has changed; signal that this object has changed.
@@ -106,13 +149,16 @@ Q_SIGNALS:
 	/// @brief This helix has been removed.  Signal to remove it!
 	void helix_has_been_removed( core::Size const helix_index );
 
+public Q_SLOTS:
+
+	/// @brief What to do when the "remove helix" button is clicked.
+	/// @details This is public to allow other things to remove helices.
+	void on_remove_button_clicked();
+
 private Q_SLOTS:
 
 	/// @brief Sub-control has signaled that it has changed.  What should I do?  (Fire a control_has_changed() signal).
 	void on_control_changed();
-
-	/// @brief The helix length spin box value has changed.
-	void on_helix_length_spin_box_valueChanged(int arg1);
 
 	/// @brief The first radio button has been toggled.
 	void on_radioButton_l_alpha_helix_toggled(bool checked);
@@ -123,8 +169,10 @@ private Q_SLOTS:
 	/// @brief The invert button has been toggled.
 	void on_invert_checkbox_clicked();
 
-	/// @brief What to do when the "remove helix" button is clicked.
-	void on_remove_button_clicked();
+	/// @brief The helix length spin box value has changed.
+	void on_helix_length_spin_box_valueChanged(int arg1);
+
+	void on_radioButton_custom_helix_clicked();
 
 private:
 	Ui::HelicalBundleDialogueWidget *ui;
@@ -155,6 +203,9 @@ private:
 
 	/// @brief Controls for setting epsilon.
 	HelixOptionWidget* epsilon_widget_;
+
+	/// @brief Name of a custom params file to use.
+	std::string custom_params_file_;
 
 };
 

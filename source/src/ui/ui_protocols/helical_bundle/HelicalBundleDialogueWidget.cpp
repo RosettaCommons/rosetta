@@ -20,8 +20,16 @@
 //Rosetta utility headers
 #include <utility/vector1.hh>
 
+//Rosetta basic headers
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 //C++ headers
 #include <sstream>
+
+//Qt headers
+#include <QFileDialog>
+#include <QFileInfo>
 
 namespace ui {
 namespace ui_protocols {
@@ -38,7 +46,8 @@ HelicalBundleDialogueWidget::HelicalBundleDialogueWidget(QWidget *parent) :
 	delta_t_widget_( new HelixOptionWidget(this) ),
 	z0_offset_widget_( new HelixOptionWidget(this) ),
 	z1_offset_widget_( new HelixOptionWidget(this) ),
-	epsilon_widget_( new HelixOptionWidget(this) )
+	epsilon_widget_( new HelixOptionWidget(this) ),
+	custom_params_file_( "14_helix" )
 {
 	ui->setupUi(this);
 
@@ -54,7 +63,7 @@ HelicalBundleDialogueWidget::HelicalBundleDialogueWidget(QWidget *parent) :
 	r0_widget_->configure( "Radius from z-axis (r0)", 0, 30, false );
 	r0_widget_->show();
 	r0_widget_->set_value(5.0);
-	omega0_widget_->configure( "Twist per residue about z-axis (omega0)", -10.0, 10.0, true );
+	omega0_widget_->configure( "Twist per residue about z-axis (omega0)", -25.0, 25.0, true );
 	omega0_widget_->show();
 	omega0_widget_->set_value(0.0);
 	delta_omega0_widget_->configure( "Rotation about z-axis (delta_omega0)", 0, 360, false );
@@ -186,6 +195,7 @@ std::string
 HelicalBundleDialogueWidget::params_file() const {
 	if( ui->radioButton_l_alpha_helix->isChecked() ) { return "alpha_helix.crick_params"; }
 	else if( ui->radioButton_beta_strand->isChecked() ) { return "beta_strand.crick_params"; }
+	else if( ui->radioButton_custom_helix->isChecked() ) { return custom_params_file_; }
 
 	return("alpha_helix.crick_params"); //Default
 }
@@ -255,6 +265,133 @@ HelicalBundleDialogueWidget::reset_controls_dependent_on_other_helix(
 	if( epsilon_widget_->widget_mode() == HOW_copy_value && epsilon_widget_->helix_to_copy() == other_index) {
 		epsilon_widget_->set_value(1.0, true);
 	}
+}
+
+/// @brief Is a custom params file currently selected?
+bool
+HelicalBundleDialogueWidget::custom_params_file_selected() const {
+	return ui->radioButton_custom_helix->isChecked();
+}
+
+/// @brief Get the custom params file.
+std::string const &
+HelicalBundleDialogueWidget::custom_params_file() const {
+	return custom_params_file_;
+}
+
+/// @brief Set r0.
+void
+HelicalBundleDialogueWidget::set_r0(
+	core::Real const &setting
+) {
+	r0_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set omega0.
+void
+HelicalBundleDialogueWidget::set_omega0(
+	core::Real const &setting
+) {
+	omega0_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set delta_omega0.
+void
+HelicalBundleDialogueWidget::set_delta_omega0(
+	core::Real const &setting
+) {
+	delta_omega0_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set delta_omega1.
+void
+HelicalBundleDialogueWidget::set_delta_omega1(
+	core::Real const &setting
+) {
+	delta_omega1_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set delta_t.
+void
+HelicalBundleDialogueWidget::set_delta_t(
+	core::Real const &setting
+) {
+	delta_t_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set z1_offset.
+void
+HelicalBundleDialogueWidget::set_z1_offset(
+	core::Real const &setting
+) {
+	z1_offset_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set z0_offset.
+void
+HelicalBundleDialogueWidget::set_z0_offset(
+	core::Real const &setting
+) {
+	z0_offset_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set epsilon.
+void
+HelicalBundleDialogueWidget::set_epsilon(
+	core::Real const &setting
+) {
+	epsilon_widget_->set_value( setting );
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set everything except delta_omega0 to copy helix 1.
+/// @details Does nothing if this is helix 1.
+void
+HelicalBundleDialogueWidget::set_everything_except_delta_omega0_copies_helix1() {
+	if( helix_index_ == 1 ) return;
+	r0_widget_->set_copies_helix1();
+	omega0_widget_->set_copies_helix1_pitch();
+	delta_omega1_widget_->set_copies_helix1();
+	delta_t_widget_->set_copies_helix1();
+	z1_offset_widget_->set_copies_helix1();
+	z0_offset_widget_->set_copies_helix1();
+	epsilon_widget_->set_copies_helix1();
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set whether this helix is inverted.
+void
+HelicalBundleDialogueWidget::set_invert(
+	bool const inverted
+) {
+	ui->invert_checkbox->setChecked(inverted);
+	ui->invert_checkbox->update();
+	Q_EMIT control_has_changed();
+}
+
+/// @brief Set the length of this helix.
+void
+HelicalBundleDialogueWidget::set_helix_length(
+	core::Size const length
+) {
+	ui->helix_length_spin_box->setValue(length);
+	ui->helix_length_spin_box->update();
+	Q_EMIT control_has_changed_requiring_pose_rebuild();
+}
+
+/// @brief Set that this "helix" is actually a beta-strand.
+void
+HelicalBundleDialogueWidget::set_to_beta_strand() {
+	ui->radioButton_beta_strand->setChecked(true);
+	ui->radioButton_beta_strand->update();
+	Q_EMIT control_has_changed_requiring_pose_rebuild();
 }
 
 /// @brief Given the index of a helix that is to be removed, decrement the indices of helices PAST that helix
@@ -327,7 +464,22 @@ void ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget::on_invert_ch
 }
 
 /// @brief What to do when the "remove helix" button is clicked.
+/// @details This is public to allow other things to remove helices.
 void ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget::on_remove_button_clicked()
 {
 	Q_EMIT helix_has_been_removed( helix_index() );
+}
+
+void ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget::on_radioButton_custom_helix_clicked()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	QString const filename( QFileDialog::getOpenFileName(this, "Load crick params file", QString( (option[ in::path::database ](1).name() + "/protocol_data/crick_parameters/").c_str() ), "Crick params file (*.crick_params)") );
+	if( filename.isEmpty() ) return;
+	QFileInfo fileinfo(filename);
+
+	custom_params_file_ = fileinfo.baseName().toStdString();
+	ui->radioButton_custom_helix->setText( QString( std::string( "Custom: " + custom_params_file_ ).c_str() ) );
+
+	Q_EMIT control_has_changed_requiring_pose_rebuild();
 }

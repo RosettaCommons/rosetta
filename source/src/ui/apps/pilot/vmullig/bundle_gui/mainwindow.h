@@ -134,6 +134,9 @@ private Q_SLOTS:
 	/// @brief When the user indicates that the nonparametric geometry has moved.
 	void on_nonparametric_geometry_moved();
 
+	/// @brief The user has selected a preset in the drop-down list.
+	void on_presets_comboBox_currentIndexChanged(const QString &arg1);
+
 private: //DATA:
 
     Ui::MainWindow *ui;

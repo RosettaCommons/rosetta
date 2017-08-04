@@ -82,6 +82,13 @@ public:
 	/// copy by one.
 	void decrement_copy_from_helix();
 
+	/// @brief Set this widget to copy helix 1.
+	void set_copies_helix1();
+
+	/// @brief Set this widget to copy pitch from helix 1.
+	/// @details Assumes that this is an omega0 widget.
+	void set_copies_helix1_pitch();
+
 Q_SIGNALS:
 
 	/// @brief Emitted when a control is changed.

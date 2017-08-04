@@ -133,6 +133,27 @@ HelixOptionWidget::decrement_copy_from_helix() {
 	ui->spinBox->update();
 }
 
+/// @brief Set this widget to copy helix 1.
+void
+HelixOptionWidget::set_copies_helix1() {
+	ui->radioButton_2->setChecked(true);
+	ui->spinBox->setValue(1);
+	ui->radioButton_2->update();
+	ui->spinBox->update();
+	on_radioButton_2_clicked();
+}
+
+
+/// @brief Set this widget to copy pitch from helix 1.
+/// @details Assumes that this is an omega0 widget.
+void
+HelixOptionWidget::set_copies_helix1_pitch() {
+	ui->radioButton_3->setChecked(true);
+	ui->spinBox->setValue(1);
+	ui->radioButton_3->update();
+	ui->spinBox->update();
+	on_radioButton_3_clicked();
+}
 
 /// @brief Update the slider from the spinner or the spinner from the slider.
 void

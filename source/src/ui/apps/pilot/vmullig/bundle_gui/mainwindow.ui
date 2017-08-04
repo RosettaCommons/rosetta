@@ -22,7 +22,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,5,0">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="3,0">
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="4,0">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -61,7 +61,7 @@
           <item>
            <widget class="QPushButton" name="clearimported_button">
             <property name="text">
-             <string>Clear imported geometry</string>
+             <string>Clear imported</string>
             </property>
            </widget>
           </item>
@@ -71,6 +71,9 @@
              <string>Add helix</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="presets_comboBox"/>
           </item>
           <item>
            <widget class="QPushButton" name="pushButton">

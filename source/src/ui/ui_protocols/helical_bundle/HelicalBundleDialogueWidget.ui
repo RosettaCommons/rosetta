@@ -265,6 +265,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_custom_helix">
+              <property name="text">
+               <string>Custom: &lt;select&gt;</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>

@@ -87,6 +87,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	pose_draw_widget_->set_residue_selector(residue_selector_);
 	pose_draw_widget_->show();
 
+	ui->presets_comboBox->addItem(QString("Select preset"));
+	ui->presets_comboBox->addItem(QString("3-helix bundle"));
+	ui->presets_comboBox->addItem(QString("Antiparallel beta-barrel"));
+
 	connect( pose_draw_widget_, SIGNAL(nonparametric_geometry_has_moved()), this, SLOT(on_nonparametric_geometry_moved()) );
 
 	timer_->start(50);
@@ -189,6 +193,22 @@ MainWindow::rebuild_pose_from_scratch() {
 		mkbundle.add_helix();
 
 		protocols::helical_bundle::MakeBundleHelix &helix( *(mkbundle.helix(nhelices)) );
+
+		if( curwidget.custom_params_file_selected() ) {
+			if( curwidget.custom_params_file() == "14_helix" ) {
+				utility::vector1< std::string> B3Avec(1, "B3A");
+				helix.set_residue_name(B3Avec);
+			} else if ( curwidget.custom_params_file() == "L_alpha_helix" ) {
+				utility::vector1< std::string> B3Avec(1, "DALA");
+				helix.set_residue_name(B3Avec);
+			} else {
+				utility::vector1<std::string> ALAvec(1, "ALA");
+				helix.set_residue_name(ALAvec);
+			}
+		} else {
+			utility::vector1<std::string> ALAvec(1, "ALA");
+			helix.set_residue_name(ALAvec);
+		}
 
 		helix.set_helix_length(curwidget.helix_length());
 		helix.set_minor_helix_params_from_file(curwidget.params_file()); //NEED TO SET UP CACHING FOR THIS!
@@ -586,4 +606,59 @@ MainWindow::on_nonparametric_geometry_moved() {
 	}
 
 	pose_draw_widget_->update_pose_draw();
+}
+
+/// @brief The user has selected a preset in the drop-down list.
+void MainWindow::on_presets_comboBox_currentIndexChanged(const QString &arg1)
+{
+	if( arg1 == "Select preset" ) { return; } //Do nothing if a preset wasn't picked.
+
+	//Clear current geometry:
+	core::Size const tabcount( ui->tabWidget->count() );
+	if( tabcount > 0 ) {
+		for(core::Size i(1); i<=tabcount; ++i) {
+			QScrollArea* curscrollarea( dynamic_cast< QScrollArea*>( ui->tabWidget->widget(0) ) );
+			ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* curwidget_ptr(  dynamic_cast< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* >( curscrollarea->widget() ) );
+			curwidget_ptr->on_remove_button_clicked();
+		}
+	}
+
+	//Apply the presets:
+	if( arg1 == "3-helix bundle" ) {
+		//Add three helices:
+		for(core::Size i(0); i<3; ++i) {
+			on_add_helix_button_clicked();
+			QScrollArea* curscrollarea( dynamic_cast< QScrollArea*>( ui->tabWidget->widget(i) ) );
+			ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* curwidget_ptr(  dynamic_cast< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* >( curscrollarea->widget() ) );
+			curwidget_ptr->set_delta_omega0( static_cast<core::Real>( i * 120 ) );
+			if(i > 0) { curwidget_ptr->set_everything_except_delta_omega0_copies_helix1(); }
+			else {
+				curwidget_ptr->set_r0(6.5);
+				curwidget_ptr->set_omega0(3.0);
+			}
+			curwidget_ptr->set_invert( i % 2 == 1 );
+		}
+	}
+	else if( arg1 == "Antiparallel beta-barrel" ) {
+		//Add eight strands:
+		for(core::Size i(0); i<8; ++i) {
+			on_add_helix_button_clicked();
+			QScrollArea* curscrollarea( dynamic_cast< QScrollArea*>( ui->tabWidget->widget(i) ) );
+			ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* curwidget_ptr(  dynamic_cast< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* >( curscrollarea->widget() ) );
+			curwidget_ptr->set_delta_omega0( static_cast<core::Real>( i * 45 ) );
+			curwidget_ptr->set_helix_length(7);
+			curwidget_ptr->set_to_beta_strand();
+			if(i > 0) { curwidget_ptr->set_everything_except_delta_omega0_copies_helix1(); }
+			else {
+				curwidget_ptr->set_r0(6.5);
+				curwidget_ptr->set_omega0(16.0);
+				curwidget_ptr->set_delta_omega1(81.0);
+			}
+			curwidget_ptr->set_invert( i % 2 == 1 );
+		}
+	}
+
+
+	ui->presets_comboBox->setCurrentIndex(0);
+	ui->presets_comboBox->update();
 }
