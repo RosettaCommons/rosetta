@@ -444,10 +444,12 @@ sources = {
     ],
 	"protocols/residue_selectors": [
 	        "HBondSelector",
+	        "LigandMetalContactSelector",
 		"StoredResidueSubsetSelector",
 		"StoreResidueSubsetMover",
 		"TaskSelector",
 		"UnsatSelector",
+
 	],
 	"protocols/pb_potential": [
 		"SetupPoissonBoltzmannPotential",

@@ -23,7 +23,8 @@
 
 #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
-
+#include <map>
+#include <set>
 namespace core {
 namespace util {
 
@@ -45,6 +46,41 @@ add_covalent_linkage(
 	Size const resB_At,
 	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed?
 );
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///@brief: Set of element strings used to identify metal ions.
+std::set< std::string > const METALS = { "NA", "K", "MG", "LI", "CA", "CU", "CO", "NI", "FE", "ZN", "CR", "MN", "MO", "PD", "PT", "AG", "HG", "LA", "FE2"};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///@brief Function that can find contacts to metal ions that are part of a larger complex.
+///@details Identifies metal ions based on the METALS set defined in this file and passes
+///those atoms to find_metalbinding_atoms_helper.
+///@author Sharon Guffy (guffy@email.unc.edu )
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::map< core::Size, utility::vector1< core::id::AtomID > >
+find_metalbinding_atoms_for_complex(
+	core::pose::Pose const &pose,
+	core::Size const metal_position,
+	core::Real const dist_cutoff_multiplier
+);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///@brief Helper function that finds contacts for metal atoms specified by AtomID
+///@details Code modified from Vikram's code originally in find_metalbinding_atoms
+///@author Sharon Guffy (guffy@email.unc.edu )
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< core::id::AtomID >
+find_metalbinding_atoms_helper(
+	core::pose::Pose const &pose,
+	core::id::AtomID const & metal_atom,
+	core::Real const dist_cutoff_multiplier
+);
+
+
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

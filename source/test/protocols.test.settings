@@ -87,6 +87,7 @@ sources = {
 		"ConstraintGeneratorFactory",
 		"HydrogenBondConstraintGenerator",
                 "ResidueTypeConstraintGenerator",
+                "MetalContactsConstraintGenerator",
 	],
 
 	"contact_map": [
@@ -482,6 +483,7 @@ sources = {
 		"StoredResidueSubsetSelector",
 		"TaskSelector",
                 "HBondSelector",
+                "LigandMetalContactSelector",
 	],
 
 	"rigid" : [

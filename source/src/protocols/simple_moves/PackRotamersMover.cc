@@ -296,6 +296,8 @@ void PackRotamersMover::setup( Pose & pose )
 	note_packertask_settings( pose );
 
 	pack_rotamers_setup( pose, *scorefxn_, task_, rotamer_sets_, ig_ );
+
+	//task_->show(TR);
 }
 
 core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > rot_to_pack ) const

@@ -124,7 +124,8 @@ add_covalent_linkage_helper(
 	for ( core::Size at_ct = 1, at_ctmax = old_res.natoms(); at_ct <= at_ctmax; ++at_ct ) {
 		// BOTH residues must have it.
 		if ( new_res.has( old_res.atom_name( at_ct ) ) ) {
-			pose.set_xyz( id::AtomID( at_ct, res_pos ), old_res.xyz( old_res.atom_name( at_ct ) ) );
+			//We have to make sure were accesssing the right atom within new_res in case atom numbering has changed!
+			pose.set_xyz( id::AtomID( new_res.atom_index( old_res.atom_name(at_ct ) ), res_pos ), old_res.xyz( old_res.atom_name( at_ct ) ) );
 		}
 	}
 
@@ -167,6 +168,67 @@ add_covalent_linkage(
 } //add_covalent_linkage
 
 
+std::map< core::Size, utility::vector1< core::id::AtomID > >
+find_metalbinding_atoms_for_complex(
+	core::pose::Pose const &pose,
+	core::Size const metal_position,
+	core::Real const dist_cutoff_multiplier
+)
+{
+	std::map< core::Size, utility::vector1< core::id::AtomID > > return_values;
+	for ( core::Size i = 1; i <= pose.residue( metal_position ).natoms(); ++i ) {
+		std::string ligand_atom_type = pose.residue( metal_position ).atom_type( i ).element();
+		if ( core::util::METALS.count( ligand_atom_type ) == 0 ) {
+			continue;
+		}
+		return_values[ i ] = find_metalbinding_atoms_helper( pose, core::id::AtomID( i, metal_position ), dist_cutoff_multiplier );
+	}
+	return return_values;
+}
+
+
+
+utility::vector1< core::id::AtomID >
+find_metalbinding_atoms_helper(
+	core::pose::Pose const &pose,
+	core::id::AtomID const & metal_atom,
+	core::Real const dist_cutoff_multiplier
+)
+{
+	core::Size metal_position = metal_atom.rsd();
+	core::Size metal_atom_number = metal_atom.atomno();
+	utility::vector1< id::AtomID > coordinating_atoms;
+	//Find any metal atoms in the ligand
+	//For each metal atom in the ligand:
+	numeric::xyzVector< core::Real > const & metal_xyz = pose.residue( metal_position ).xyz( metal_atom_number );
+	core::Size nres = pose.total_residue();
+	// Loop through all metalbinding residues, skipping the metal itself
+	// AMW: does not necessarily avoid ALL metal positions, just the one in question
+	for ( Size ir = 1; ir <= nres; ++ir ) {
+		if ( ir == metal_position ) continue;
+		if ( ! pose.residue( ir ).is_metalbinding() ) continue;
+		utility::vector1< Size > binding_atom_list;
+		pose.residue( ir ).get_metal_binding_atoms( binding_atom_list );
+		for ( Size const binding_atom : binding_atom_list ) {
+			numeric::xyzVector< Real > binding_atom_xyz = pose.residue( ir ).xyz( binding_atom );
+			Real distsq = metal_xyz.distance_squared( binding_atom_xyz );
+			Real metal_rad = pose.residue( metal_position ).atom_type( metal_atom_number ).lj_radius();
+			Real lig_rad = pose.residue( ir ).atom_type( binding_atom ).lj_radius();
+			Real distcutoffsq = dist_cutoff_multiplier * ( metal_rad + lig_rad )
+				* dist_cutoff_multiplier * ( metal_rad + lig_rad );
+			if ( distsq > distcutoffsq ) {
+				continue;
+			}
+			TR.Debug << "Residue " << ir << " atom " << pose.residue( ir ).atom_name( binding_atom ) << " binds the residue " << metal_position << " metal." << std::endl;
+			id::AtomID curatom( binding_atom, ir );
+			coordinating_atoms.push_back( curatom );
+		}
+	}
+	return coordinating_atoms;
+}
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function that generates a list of metal-binding atoms that coordinate a metal in a protein.
 /// @details This function generates the list by looping through all residues and checking all metal-binding atoms of all
@@ -191,43 +253,14 @@ find_metalbinding_atoms (
 	}
 
 	// Metal residues have a single atom
-	numeric::xyzVector< core::Real > const & metal_xyz = pose.residue( metal_position ).xyz( 1 );
+	//numeric::xyzVector< core::Real > const & metal_xyz = pose.residue( metal_position ).xyz( 1 );
 
 	Size const nres = pose.size();
-
 	if ( ( metal_position < 1 ) || ( metal_position > nres ) ) {
 		utility_exit_with_message( "Error!  Asked to find metal-binding atoms coordinating a residue that's not in the pose (metal_position < 1 or > n_residue." );
 	}
 
-	utility::vector1< id::AtomID > coordinating_atoms;
-
-	// Loop through all metalbinding residues, skipping the metal itself
-	// AMW: does not necessarily avoid ALL metal positions, just the one in question
-	for ( Size ir = 1; ir <= nres; ++ir ) {
-		if ( ir == metal_position ) continue;
-		if ( ! pose.residue( ir ).is_metalbinding() ) continue;
-
-		utility::vector1< Size > binding_atom_list;
-		pose.residue( ir ).get_metal_binding_atoms( binding_atom_list );
-
-		for ( Size const binding_atom : binding_atom_list ) {
-			numeric::xyzVector< Real > binding_atom_xyz = pose.residue( ir ).xyz( binding_atom );
-			Real distsq = metal_xyz.distance_squared( binding_atom_xyz );
-			Real metal_rad = pose.residue( metal_position ).atom_type( 1 ).lj_radius();
-			Real lig_rad = pose.residue( ir ).atom_type( binding_atom ).lj_radius();
-			Real distcutoffsq = dist_cutoff_multiplier * ( metal_rad + lig_rad )
-				* dist_cutoff_multiplier * ( metal_rad + lig_rad );
-
-			if ( distsq > distcutoffsq ) continue;
-
-			TR.Debug << "Residue " << ir << " atom " << pose.residue( ir ).atom_name( binding_atom ) << " binds the residue " << metal_position << " metal." << std::endl;
-			id::AtomID curatom( binding_atom, ir );
-			coordinating_atoms.push_back( curatom );
-
-		}
-	}
-
-	return coordinating_atoms;
+	return find_metalbinding_atoms_helper( pose, core::id::AtomID( 1, metal_position ), dist_cutoff_multiplier );
 
 } //find_metalbinding_atoms
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
