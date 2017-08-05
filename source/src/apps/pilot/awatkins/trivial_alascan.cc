@@ -102,7 +102,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("TrivialAlascanMover");
+static THREAD_LOCAL basic::Tracer TR("TrivialAlascanMover");
 
 class TrivialAlascanMover : public Mover {
 

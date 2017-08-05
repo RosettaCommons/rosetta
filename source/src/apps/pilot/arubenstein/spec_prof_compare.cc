@@ -32,7 +32,7 @@
 #include <basic/options/keys/mean_field.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-static basic::Tracer TR("apps.pilot.arubenstein.spec_prof_compare") ;
+static THREAD_LOCAL basic::Tracer TR("apps.pilot.arubenstein.spec_prof_compare") ;
 
 utility::vector1< std::string >
 tokenize_line( std::istream & inputstream )

@@ -87,7 +87,7 @@ using basic::database::insert_or_ignore;
 using utility::tag::TagPtr;
 using boost::assign::list_of;
 
-static Tracer TR("protocols.features.TaskOperationFeatures");
+static THREAD_LOCAL Tracer TR("protocols.features.TaskOperationFeatures");
 
 TaskOperationFeatures::TaskOperationFeatures()
 // : run_once_(true)

@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static basic::Tracer TR( "apps.pilot.vmullig.test_makebundlehelix_mover" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.test_makebundlehelix_mover" );
 
 //Options (ugh -- global variables):
 OPT_KEY (Real, r0)
@@ -103,7 +103,7 @@ main( int argc, char * argv [] )
 		register_options();
 		devel::init(argc, argv);
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Starting test_makebundlehelix_mover.cc" << std::endl;
 			TR << "Pilot app created 28 October 2014 by Vikram K. Mulligan, Ph.D., Baker laboratory." << std::endl;
 			TR << "For questions, contact vmullig@uw.edu." << std::endl << std::endl;
@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 		utility::vector1 < core::Real > r1vals = option[r1]();
 
 		utility::vector1 < core::Real > delta_omega1vals = option[delta_omega1_per_atom]();
-		for(core::Size i=1, imax=delta_omega1vals.size(); i<=imax; ++i) delta_omega1vals[i] += option[delta_omega1]();
+		for ( core::Size i=1, imax=delta_omega1vals.size(); i<=imax; ++i ) delta_omega1vals[i] += option[delta_omega1]();
 
 		utility::vector1 < core::Real > delta_z1vals = option[delta_z1_per_atom]();
 
@@ -135,7 +135,7 @@ main( int argc, char * argv [] )
 
 		pose.dump_pdb("output.pdb");
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Finished test_makebundlehelix_mover.cc.  Exiting." << std::endl;
 			TR.flush();
 		}

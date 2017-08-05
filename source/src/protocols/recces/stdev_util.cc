@@ -29,7 +29,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.recces.stdev_util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.stdev_util" );
 
 using namespace core;
 using namespace utility;

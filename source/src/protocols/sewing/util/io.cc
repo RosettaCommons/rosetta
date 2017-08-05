@@ -35,7 +35,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR( "protocols.sewing.io" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sewing.io" );
 
 void
 write_native_residue_file(

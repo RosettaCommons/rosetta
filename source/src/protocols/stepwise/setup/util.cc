@@ -21,7 +21,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.setup.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.setup.util" );
 
 namespace protocols {
 namespace stepwise {

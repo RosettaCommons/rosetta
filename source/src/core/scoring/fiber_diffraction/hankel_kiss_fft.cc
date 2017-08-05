@@ -30,7 +30,7 @@
 #include <math.h>
 #endif
 
-static basic::Tracer TR("core.scoring.fiber_diffraction.hankel_kiss_fft");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.hankel_kiss_fft");
 
 namespace core {
 namespace scoring {

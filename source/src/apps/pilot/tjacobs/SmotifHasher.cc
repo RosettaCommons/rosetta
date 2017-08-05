@@ -44,13 +44,13 @@
 //C++ headers
 #include <map>
 
-static basic::Tracer TR("SmotifHasher");
+static THREAD_LOCAL basic::Tracer TR("SmotifHasher");
 
 namespace SmotifHasher {
-	basic::options::IntegerOptionKey const num_bundles( "num_bundles" );
-	basic::options::IntegerOptionKey const mode( "mode" ); //1 is hash all smotifs, 2 is score smotifs
-	basic::options::IntegerOptionKey const query_id( "query_id" );
-	basic::options::IntegerOptionKey const min_score( "min_score" );
+basic::options::IntegerOptionKey const num_bundles( "num_bundles" );
+basic::options::IntegerOptionKey const mode( "mode" ); //1 is hash all smotifs, 2 is score smotifs
+basic::options::IntegerOptionKey const query_id( "query_id" );
+basic::options::IntegerOptionKey const min_score( "min_score" );
 }
 
 std::map< core::Size, utility::vector1<protocols::sewing::ResidueHash> >
@@ -81,10 +81,10 @@ get_models(
 	core::Size last_smotif, last_seqpos=0;
 
 	protocols::sewing::ResidueHash cur_residue;
-	while(coords_res.next()) {
+	while ( coords_res.next() ) {
 		coords_res >> smotif_id >> seqpos >> atomno >> x >> y >> z;
 
-		if(seqpos != last_seqpos && last_seqpos != 0) {
+		if ( seqpos != last_seqpos && last_seqpos != 0 ) {
 			runtime_assert(cur_residue.atoms.size() == 3);
 			models_to_hash[last_smotif].push_back(cur_residue);
 			cur_residue = protocols::sewing::ResidueHash();
@@ -110,9 +110,9 @@ void
 trim_pdb(core::pose::Pose & pose, std::set<core::Size> const & residue_numbers) {
 	core::Size total_res=pose.size();
 	int num_removed_residues=0;
-	for(core::Size i=1; i<=total_res; ++i){
+	for ( core::Size i=1; i<=total_res; ++i ) {
 		//if the residue wasn't specified, delete it
-		if(residue_numbers.find(i)==residue_numbers.end()){
+		if ( residue_numbers.find(i)==residue_numbers.end() ) {
 			pose.conformation().delete_residue_slow(i-num_removed_residues);
 			++num_removed_residues;
 		}
@@ -149,7 +149,7 @@ superimpose_smotifs(
 	std::set<core::Size> query_resnums;
 	protocols::features::StructureID struct_id;
 	core::Size smotif_id, seqpos;
-	while(query_coords_res.next()) {
+	while ( query_coords_res.next() ) {
 		query_coords_res >> struct_id >> smotif_id >> seqpos;
 		query_resnums.insert(seqpos);
 	}
@@ -160,8 +160,8 @@ superimpose_smotifs(
 	trim_pdb(trimmed_query, query_resnums);
 	trimmed_query.dump_pdb("query_" + utility::to_string(smotif_id) + ".pdb");
 
-	for(std::map< std::pair< HashValue, HashValue >, core::Size>::const_iterator it=scores.begin(); it!=scores.end(); ++it) {
-		if(it->second >= score_cutoff) {
+	for ( std::map< std::pair< HashValue, HashValue >, core::Size>::const_iterator it=scores.begin(); it!=scores.end(); ++it ) {
+		if ( it->second >= score_cutoff ) {
 			HashValue const & query = it->first.first;
 			HashValue const & hit = it->first.second;
 			TR << "Superimposing query " << query.model_id << "(resnum " << query.resnum << ") with hit " << hit.model_id << " (resnum " << hit.resnum << "). Score is " << it->second << std::endl;
@@ -170,7 +170,7 @@ superimpose_smotifs(
 			cppdb::result coords_res=basic::database::safely_read_from_database(coords_select_stmt);
 
 			std::set<core::Size> resnums;
-			while(coords_res.next()) {
+			while ( coords_res.next() ) {
 				coords_res >> struct_id >> smotif_id >> seqpos;
 				resnums.insert(seqpos);
 			}
@@ -218,17 +218,16 @@ main( int argc, char * argv [] ) {
 	TR << "\tQuery ID: " << query_id << std::endl;
 	TR << "\tMinimum Score: " << min_score << std::endl;
 
-	if(mode == 1) {
-		for(std::map<core::Size, utility::vector1< protocols::sewing::ResidueHash > >::const_iterator it = models.begin(); it!=models.end(); ++it) {
-//			TR << "About to hash model: " << it->first << std::endl;
-//			for(core::Size i=1; i<=it->second.size(); ++i) {
-//				TR << "Residue " << it->second[i].resnum << std::endl;
-//			}
+	if ( mode == 1 ) {
+		for ( std::map<core::Size, utility::vector1< protocols::sewing::ResidueHash > >::const_iterator it = models.begin(); it!=models.end(); ++it ) {
+			//   TR << "About to hash model: " << it->first << std::endl;
+			//   for(core::Size i=1; i<=it->second.size(); ++i) {
+			//    TR << "Residue " << it->second[i].resnum << std::endl;
+			//   }
 			hasher.insert(it->first, it->second);
 		}
 		hasher.write_to_disk("smotifs.hashtable");
-	}
-	else if(mode ==2) {
+	} else if ( mode ==2 ) {
 		hasher.read_from_disk("smotifs.hashtable");
 		TR << "Finished reading hash table from disk" << std::endl;
 
@@ -236,23 +235,21 @@ main( int argc, char * argv [] ) {
 
 		core::Size counter=0;
 		core::Size ten_percent=models.size()/10;
-		for(std::map<core::Size, utility::vector1< protocols::sewing::ResidueHash > >::const_iterator it = models.begin(); it!=models.end(); ++it) {
-			if(query_id==0) {
+		for ( std::map<core::Size, utility::vector1< protocols::sewing::ResidueHash > >::const_iterator it = models.begin(); it!=models.end(); ++it ) {
+			if ( query_id==0 ) {
 				++counter;
-				if(counter % ten_percent == 0) {
+				if ( counter % ten_percent == 0 ) {
 					TR << "Completed " << counter << " of " << models.size() << std::endl;;
 				}
 				std::map< std::pair<protocols::sewing::HashValue, protocols::sewing::HashValue>, core::Size > temp_scores = hasher.score(it->first, it->second);
 				scores.insert(temp_scores.begin(), temp_scores.end());
-			}
-			else if (it->first == query_id) {
+			} else if ( it->first == query_id ) {
 				scores = hasher.score(it->first, it->second);
 			}
 		}
 
 		superimpose_smotifs(db_session, scores, min_score);
-	}
-	else {
+	} else {
 		utility_exit_with_message("Unrecognized mode");
 	}
 

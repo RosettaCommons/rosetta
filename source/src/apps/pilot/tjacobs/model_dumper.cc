@@ -38,7 +38,7 @@
 //C++ headers
 #include <map>
 
-static basic::Tracer TR("ModelDumper");
+static THREAD_LOCAL basic::Tracer TR("ModelDumper");
 
 int
 main( int argc, char * argv [] ) {
@@ -50,24 +50,23 @@ main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 	std::string model_file_name = option[sewing::model_file_name];
 	core::Size num_models_to_dump = option[sewing::num_models_to_dump].def(10);
-	
+
 	std::map< int, Model > models = read_model_file(model_file_name);
 	TR << "Done reading " << models.size() << " models from file: " << model_file_name << std::endl;
 
-	if(!option[sewing::score_file_name].user()) {
-		if(option[sewing::models_to_dump].user()) {
+	if ( !option[sewing::score_file_name].user() ) {
+		if ( option[sewing::models_to_dump].user() ) {
 			utility::vector1<core::Size> model_ids = option[sewing::models_to_dump].value();
-			for(core::Size i=1; i<=model_ids.size(); ++i) {
-				if(models.find(model_ids[i]) == models.end()){
+			for ( core::Size i=1; i<=model_ids.size(); ++i ) {
+				if ( models.find(model_ids[i]) == models.end() ) {
 					utility_exit_with_message("Couldn't find model with id: " + utility::to_string(model_ids[i]));
 				}
 				AssemblyOP model_assembly(new ContinuousAssembly());
 				model_assembly->add_model(0, models.find(model_ids[i])->second, false);
 				model_assembly->to_pose(core::chemical::FA_STANDARD).dump_pdb("model_" + utility::to_string(model_ids[i]) + ".pdb");
 			}
-		}
-		else {
-			for(core::Size i=1; i<=num_models_to_dump; ++i) {
+		} else {
+			for ( core::Size i=1; i<=num_models_to_dump; ++i ) {
 				core::Size rand = numeric::random::random_range(0, models.size()-1);
 				std::map< int, Model >::const_iterator it = models.begin();
 				std::advance(it, rand);
@@ -76,29 +75,27 @@ main( int argc, char * argv [] ) {
 				model_assembly->to_pose(core::chemical::FA_STANDARD).dump_pdb("model_" + utility::to_string(it->second.model_id_) + ".pdb");
 			}
 		}
-	}
-	else {
+	} else {
 		std::string score_file_name = option[sewing::score_file_name];
 		TR << "Done reading scores from file: " << score_file_name << std::endl;
 
 		SewGraphOP graph;
 		AssemblyOP two_model_assembly;
-		if(option[ sewing::assembly_type ].value() == "discontinuous") {
+		if ( option[ sewing::assembly_type ].value() == "discontinuous" ) {
 			graph = SewGraphOP(new SewGraph(models, 2));
 			two_model_assembly = AssemblyOP(new DisembodiedAssembly());
-		}
-		else if(option[ sewing::assembly_type ].value() == "continuous") {
+		} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
 			graph = SewGraphOP(new SewGraph(models, 1));
 			two_model_assembly = AssemblyOP(new ContinuousAssembly());
 		}
-		
+
 		//pick a random node
 		ModelNode const * reference_node = graph->get_random_node();
 		graph->add_edges_from_binary(score_file_name, reference_node->get_node_index());
 		two_model_assembly->add_model(graph, reference_node->model());
 		core::Size num_edges = reference_node->num_edges();
 		TR << "Found " << num_edges << " for node " << reference_node->get_node_index() << " " << reference_node->model().model_id_ << std::endl;
-		if(num_edges > 0) {
+		if ( num_edges > 0 ) {
 			utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 			HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 			TR << "Following edge " << *cur_edge << std::endl;

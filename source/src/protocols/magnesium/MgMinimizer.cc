@@ -27,7 +27,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.magnesium.MgMinimizer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.MgMinimizer" );
 
 using namespace core;
 using utility::vector1;

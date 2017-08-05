@@ -25,7 +25,7 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/file/FileName.hh>
 
-static basic::Tracer TR( "protocols.rna.setup.RNA_MonteCarloJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.setup.RNA_MonteCarloJobDistributor" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

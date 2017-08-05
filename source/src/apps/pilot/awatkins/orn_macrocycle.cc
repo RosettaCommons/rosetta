@@ -108,7 +108,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("OrnMacrocycle");
+static THREAD_LOCAL basic::Tracer TR("OrnMacrocycle");
 
 void
 add_orn_cst(

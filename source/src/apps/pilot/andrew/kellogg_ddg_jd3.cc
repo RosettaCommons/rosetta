@@ -81,7 +81,7 @@ basic::options::BooleanOptionKey const off_rotamer_pack("off_rotamer_pack");
 }}}//basic::options::OptionKeys
 
 
-static basic::Tracer TR( "apps.pilot.andrew.fixbb_jd3" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.andrew.fixbb_jd3" );
 
 class FixbbJobQueen : public protocols::jd3::StandardJobQueen
 {
@@ -180,7 +180,7 @@ public:
 
 
 		TagCOP job_tag;
-		if ( larval_job->inner_job()->jobdef_tag())  {
+		if ( larval_job->inner_job()->jobdef_tag() )  {
 			job_tag = larval_job->inner_job()->jobdef_tag();
 		}
 		SequenceMoverOP seq( new SequenceMover );
@@ -194,7 +194,7 @@ public:
 			parse_sfxns_and_taskops( *pose,    job_tag, datamap );
 
 			MoverOP pack_mover;
-			if ( job_tag->hasTag( PackRotamersMoverCreator::mover_name() )) {
+			if ( job_tag->hasTag( PackRotamersMoverCreator::mover_name() ) ) {
 				pack_mover = MoverOP( new PackRotamersMover( *job_options ));
 				TR << "Calling PRM::parse_my_tag" << std::endl;
 				pack_mover->parse_my_tag(
@@ -218,7 +218,7 @@ public:
 			seq->add_mover( pack_mover );
 
 			MoverOP min_mover;
-			if ( job_tag->hasTag( MinMoverCreator::mover_name() )) {
+			if ( job_tag->hasTag( MinMoverCreator::mover_name() ) ) {
 				min_mover = MoverOP( new MinMover );
 				min_mover->parse_my_tag(
 					job_tag->getTag( MinMoverCreator::mover_name()),
@@ -283,11 +283,11 @@ public:
 	//virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
 
 	//virtual void completed_job_result( protocols::jd3::LarvalJobCOP job, protocols::jd3::JobResultOP result ) {
-	//	using namespace protocols::jd3;
-	//	PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( result );
-	//	core::pose::PoseOP pose = pose_result->pose();
-	//	utility::options::OptionCollectionCOP job_options = options_for_job( *job->inner_job() );
-	//	pose_outputter_for_job( *job->inner_job() )->write_output_pose( *job, *job_options, *pose );
+	// using namespace protocols::jd3;
+	// PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( result );
+	// core::pose::PoseOP pose = pose_result->pose();
+	// utility::options::OptionCollectionCOP job_options = options_for_job( *job->inner_job() );
+	// pose_outputter_for_job( *job->inner_job() )->write_output_pose( *job, *job_options, *pose );
 	//}
 
 	virtual bool more_jobs_remain() { return false; }

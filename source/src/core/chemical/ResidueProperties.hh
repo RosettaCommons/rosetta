@@ -242,25 +242,25 @@ public:  // FIXME: Reset this to private; I made it public to work as a temp fix
 
 
 private:  // Private data /////////////////////////////////////////////////////
-	// Back pointer to the owning ResidueType
-	// (Luki made this a const * during the switch to smart pointers, because get_self_weak_ptr() is not available
-	// within ResidueType's constructors.)
+	/// @brief Back pointer to the owning ResidueType
+	/// @details (Luki made this a const * during the switch to smart pointers, because get_self_weak_ptr() is not available
+	/// within ResidueType's constructors.)
 	ResidueType const * residue_type_;  // useful for tracer output
 
-	// Storage of general properties.
+	/// @brief Storage of general properties.
 	utility::vector1< bool > general_property_status_;  // indexed by ResidueProperty
 
-	// The patch operations/variant types that describe this residue.
+	/// @brief The patch operations/variant types that describe this residue.
 	utility::vector1< bool > variant_type_status_;  // indexed by VariantType
 
-	// "Custom" variants as strings are permitted for the enzdes and metalloproteins cases.
+	/// @brief "Custom" variants as strings are permitted for the enzdes and metalloproteins cases.
 	bool has_custom_variant_types_;
 	utility::vector1< std::string > custom_variant_types_;
 
-	// Arbitrary numeric properties with string names.
+	/// @brief Arbitrary numeric properties with string names.
 	std::map<std::string,core::Real> numeric_properties_;
 
-	// Arbitrary string properties with string names.
+	/// @brief Arbitrary string properties with string names.
 	std::map<std::string,std::string> string_properties_;
 #ifdef    SERIALIZATION
 	friend class cereal::access;

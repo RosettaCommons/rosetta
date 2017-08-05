@@ -35,7 +35,7 @@
 namespace core {
 namespace scoring {
 
-static basic::Tracer TR("core.scoring.HydroxylTorsionPotential");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.HydroxylTorsionPotential");
 
 /// ctor
 HydroxylTorsionPotential::HydroxylTorsionPotential()

@@ -35,7 +35,7 @@ namespace protocols {
 namespace sewing  {
 namespace scoring {
 
-static basic::Tracer TR("protocols.sewing.scoring.MotifScorer");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.scoring.MotifScorer");
 
 MotifScorer::MotifScorer():
 	mman_(*core::scoring::motif::MotifHashManager::get_instance()),

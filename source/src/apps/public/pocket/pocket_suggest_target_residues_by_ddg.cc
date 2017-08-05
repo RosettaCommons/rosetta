@@ -70,7 +70,7 @@ OPT_KEY( String, ddg_list )
 OPT_KEY( String, target_chain_list )
 //OPT_KEY( Integer, num_angles )
 
-static basic::Tracer TR( "apps.pilot.david_choose_target_residues.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.david_choose_target_residues.main" );
 core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resno);
 bool is_interface_residue (const char chain, const int resno);
 

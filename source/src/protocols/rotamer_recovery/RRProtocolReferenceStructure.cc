@@ -46,7 +46,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.rotamer_recovery.RRProtocolReferenceStructure");
+static THREAD_LOCAL Tracer TR("protocol.rotamer_recovery.RRProtocolReferenceStructure");
 
 RRProtocolReferenceStructure::RRProtocolReferenceStructure() :
 	reference_pose_(/* NULL */)

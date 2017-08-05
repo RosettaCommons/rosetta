@@ -65,7 +65,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::pose;
 
-static basic::Tracer TR("grower_prep");
+static THREAD_LOCAL basic::Tracer TR("grower_prep");
 
 utility::vector1<protocols::loops::Loop>
 get_unaligned( core::id::SequenceMapping const & sequencemap )

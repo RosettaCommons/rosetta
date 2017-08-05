@@ -29,7 +29,7 @@ ReadWriteMutex::ReadWriteMutex() :
 
 void ReadWriteMutex::obtain_read_lock()
 {
-	std::lock_guard< std::recursive_mutex > lock( read_lock_ );
+	std::lock_guard< std::mutex > lock( read_lock_ );
 	++read_counter_;
 }
 
@@ -38,15 +38,15 @@ void ReadWriteMutex::release_read_lock()
 	assert( read_counter_ > 0 );
 	--read_counter_;
 	if ( read_counter_ == 0 ) {
-		std::lock_guard< std::recursive_mutex > lock( write_lock_ );
+		std::lock_guard< std::mutex > lock( write_lock_ );
 		not_being_read_.notify_one();
 	}
 }
 
 void ReadWriteMutex::obtain_write_lock()
 {
-	std::unique_lock< std::recursive_mutex > prevent_more_reads( read_lock_ );
-	std::unique_lock< std::recursive_mutex > no_more_readers( write_lock_ );
+	std::unique_lock< std::mutex > prevent_more_reads( read_lock_ );
+	std::unique_lock< std::mutex > no_more_readers( write_lock_ );
 
 	not_being_read_.wait( no_more_readers, [ this ]() { return this->read_counter_.load() == 0; } );
 

@@ -54,7 +54,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "protocols.membrane.TiltMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.TiltMover" );
 
 namespace protocols {
 namespace membrane {

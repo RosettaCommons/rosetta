@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 
 #include <protocols/viewer/viewers.hh>
 
-static thread_local basic::Tracer tr( "r_fold_cst" );
+static THREAD_LOCAL basic::Tracer tr( "r_fold_cst" );
 
 using namespace core;
 using namespace protocols;
@@ -169,10 +169,10 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-#define OPT(akey)																					\
+#define OPT(akey)                     \
 	basic::options::option.add_relevant( akey )
 
-#define NEW_OPT(akey,help,adef)								      		  \
+#define NEW_OPT(akey,help,adef)                  \
 	basic::options::option.add( akey , help ).def( adef ); 	\
 	OPT( akey )
 
@@ -216,7 +216,7 @@ void ThisApplication::register_options() {
 	OPT( in::file::frag9 );
 	OPT( in::file::fasta );
 	OPT( constraints::cst_file );
-	//	OPT( constraints::cst_weight );
+	// OPT( constraints::cst_weight );
 	OPT( out::nstruct );
 	NEW_OPT( OptionKeys::rerun, "go through intput structures and evaluate ( pca, rmsd, cst-energy )", false );
 	NEW_OPT( steal, "use fragments of native (starting) structure", true);
@@ -229,7 +229,7 @@ void ThisApplication::register_options() {
 	NEW_OPT( viol_level, "how much detail for violation output", 1 );
 	NEW_OPT( viol_type, "work only on these types of constraints", "");
 	NEW_OPT( tag_selector, "work only on these tag(s)","");
-	//	NEW_OPT( integrin_jump, "use beta-sheet jumps for integrin", false );
+	// NEW_OPT( integrin_jump, "use beta-sheet jumps for integrin", false );
 	NEW_OPT( perturb, "add some perturbation (gaussian) to phi/psi of native", 0.0);
 	NEW_OPT( jumps, "read jump_file", "" );
 	NEW_OPT( jump_lib, "read jump_library_file for automatic jumps", "" );
@@ -281,11 +281,11 @@ private:
 
 void
 PcaEvaluator::apply( pose::Pose& pose, std::string , io::silent::ProteinSilentStruct &pss ) const {
-		PCA::ProjectionVector proj;
-		pca_->eval( pose, proj );
-		// tr.Info << "PCAEvaluator:  " << proj[1] << " " << proj[2] << std::endl;
-		pss.add_energy ( "pca1", proj[1] );
-		pss.add_energy ( "pca2", proj[2] );
+	PCA::ProjectionVector proj;
+	pca_->eval( pose, proj );
+	// tr.Info << "PCAEvaluator:  " << proj[1] << " " << proj[2] << std::endl;
+	pss.add_energy ( "pca1", proj[1] );
+	pss.add_energy ( "pca2", proj[2] );
 }
 
 void ThisApplication::setup() {
@@ -307,10 +307,10 @@ void ThisApplication::setup() {
 	}
 
 	// set rmsd native
-	if ( option[ rmsd_residues ].user() ){
-			Size start = option[ rmsd_residues ]()[ 1 ];
-			Size end = option[ rmsd_residues ]()[ 2 ];
-			evaluator_->add_evaluation( new RmsdEvaluator( native_pose_, start, end,  "_native", option[ bGDT ]() ) );
+	if ( option[ rmsd_residues ].user() ) {
+		Size start = option[ rmsd_residues ]()[ 1 ];
+		Size end = option[ rmsd_residues ]()[ 2 ];
+		evaluator_->add_evaluation( new RmsdEvaluator( native_pose_, start, end,  "_native", option[ bGDT ]() ) );
 	} else {
 		evaluator_->add_evaluation( new RmsdEvaluator( native_pose_, "_native", option[ bGDT ]() ) );
 	}
@@ -460,13 +460,13 @@ void ThisApplication::fold() {
 	fragset3mer->read_fragment_file( option [ in::file::frag3 ]);
 	fragset9mer->read_fragment_file( option [ in::file::frag9 ], 25 );
 
-	if ( option [ steal ] || ( option[ steal_3mers ] && option[ steal_9mers ] )) {
+	if ( option [ steal ] || ( option[ steal_3mers ] && option[ steal_9mers ] ) ) {
 		if ( option[ steal_3mers ] ) steal_constant_length_frag_set_from_pose( *native_pose_, *fragset3mer );
 		if ( option[ steal_9mers ] ) steal_constant_length_frag_set_from_pose( *native_pose_, *fragset9mer );
 	};
 
 	pose::Pose extended_pose;
-	core::pose::make_pose_from_sequence( 	extended_pose, sequence_,
+	core::pose::make_pose_from_sequence(  extended_pose, sequence_,
 		*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
 	);
 
@@ -513,7 +513,7 @@ void ThisApplication::fold() {
 		if ( native_pose_ ) pp->set_native_pose( *native_pose_ ); //to steal native jumps
 		if ( option[ early_chainbreak_penalty ]() ) pp->set_defeat_purpose( true );
 		prot_ptr = pp;
-	}	else {
+	} else {
 		tr.Info << "run FoldConstraints.....\n";
 		prot_ptr = new FoldConstraints( fragset3mer, fragset9mer, movemap );
 	}
@@ -602,7 +602,7 @@ void ThisApplication::fold() {
 void ThisApplication::run() {
 	setup();
 
-	if (option [ rerun ]) {
+	if ( option [ rerun ] ) {
 		do_rerun();
 		return;
 	};
@@ -622,10 +622,10 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	ThisApplication::register_options();
-	//FoldConstraint::register_options()
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( my_main );
+		ThisApplication::register_options();
+		//FoldConstraint::register_options()
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

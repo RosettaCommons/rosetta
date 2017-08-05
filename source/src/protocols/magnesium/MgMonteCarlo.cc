@@ -28,7 +28,7 @@
 #include <numeric/UniformRotationSampler.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.magnesium.MgMonteCarlo" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.MgMonteCarlo" );
 
 ///////////////////////////////////////////////////////////////
 // QUICK HACK! Does not obey detailed balance! Although

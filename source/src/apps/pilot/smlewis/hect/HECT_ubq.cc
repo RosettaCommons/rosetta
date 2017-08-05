@@ -23,7 +23,7 @@
 #include <core/pose/util.hh>
 
 
-//static basic::Tracer TR("apps.pilot.smlewis.HECT");
+//static THREAD_LOCAL basic::Tracer TR("apps.pilot.smlewis.HECT");
 
 
 /// @brief HECT mover
@@ -51,7 +51,7 @@ public:
 
 		//set up starting pose
 		//first: mutate catalytic residues back to cysteine
-		if(debug) pose.dump_pdb("test0.pdb");
+		if ( debug ) pose.dump_pdb("test0.pdb");
 		core::Real const chi1(pose.residue(e2_catalytic_res_).chi(1));
 
 		using namespace core::chemical;
@@ -61,29 +61,29 @@ public:
 		core::conformation::Residue cyz_rsd( *(ResidueFactory::create_residue(fa_standard->name_map("CYZ"))) );
 		pose.replace_residue(e2_catalytic_res_, cyx_rsd, true); //we need to fix the fold tree to account for this
 		pose.replace_residue(e3_catalytic_res_, cyz_rsd, true); //not a trivial change, but not fold-tree related
-		if(debug) pose.dump_pdb("test1.pdb");
+		if ( debug ) pose.dump_pdb("test1.pdb");
 
 		//next, reset chi angle on new cysteine to match original serine as best as possible (this is mostly cosmetic, since this is variable later, but it makes the "test" structures much easier to examine since it prevents huge eclipsing)
 		pose.set_chi(1, e2_catalytic_res_, chi1);
-		if(debug) pose.dump_pdb("test2.pdb");
+		if ( debug ) pose.dump_pdb("test2.pdb");
 
 		//Prepare C-terminal glycine for modification by removing terminus variant (and extra oxygen!)
 		core::pose::remove_upper_terminus_type_from_pose_residue(pose, ubqchain_end_);
-		if(debug) pose.dump_pdb("test3.pdb");
+		if ( debug ) pose.dump_pdb("test3.pdb");
 
 		//set up the chemical bond - this handles the conn_id details
 		pose.conformation().declare_chemical_bond(e2_catalytic_res_, "SG", ubqchain_end_, "C");
-		if(debug) pose.dump_pdb("test4.pdb");
+		if ( debug ) pose.dump_pdb("test4.pdb");
 
 		//set up fold tree
 		set_up_foldtree(pose);
-		if(debug) pose.dump_pdb("test5.pdb");
+		if ( debug ) pose.dump_pdb("test5.pdb");
 
 		//set ideal geometry for new bond
 		core::id::AtomID const e2_cys_S(pose.residue_type(e2_catalytic_res_).atom_index("SG"), e2_catalytic_res_);
 		core::id::AtomID const UBQ_G_C(pose.residue_type(ubqchain_end_).atom_index("C"), ubqchain_end_);
 		pose.conformation().insert_ideal_geometry_at_residue_connection( e2_catalytic_res_, 3 );
-		if(debug) pose.dump_pdb("test6.pdb");
+		if ( debug ) pose.dump_pdb("test6.pdb");
 
 		//ok, there is an improper dihedral remaining - the O atom.  thanks to Andrew for helping with the math here!
 		//the xyz of the carbonyl carbon and its bonded atoms (except O)
@@ -102,13 +102,13 @@ public:
 		//new bond is in direction of sum of other two bond vectors, normalized, times old distance
 		core::Vector const newCOpos( ((C_SG + C_CA).normalize() * COdist ) + Cxyz );
 		pose.set_xyz(UBQ_G_CO, newCOpos);
-		if(debug) pose.dump_pdb("test7.pdb");
+		if ( debug ) pose.dump_pdb("test7.pdb");
 
 		//repair the thioester dihedral to trans (it was not for ester; esters have little double bond character)
 		core::id::AtomID const e2_cys_CB(pose.residue_type(e2_catalytic_res_).atom_index("CB"), e2_catalytic_res_);
 		core::id::AtomID const UBQ_G_CA(pose.residue_type(ubqchain_end_).atom_index("CA"), ubqchain_end_);
 		pose.conformation().set_torsion_angle( e2_cys_CB, e2_cys_S, UBQ_G_C, UBQ_G_CA, numeric::conversions::radians(180.0) );
-		if(debug) pose.dump_pdb("test8.pdb");
+		if ( debug ) pose.dump_pdb("test8.pdb");
 
 		//setup of TaskFactory
 		set_up_taskfactory();
@@ -118,7 +118,7 @@ public:
 
 		//initial state: all false
 		//set UBQ tail flexible - last residue is not part of this; scorefunction mishandles (not a terminus, wrong rama)
-		for( core::Size i(utail_start_); i<=ubqchain_end_-1; ++i) movemap_->set_bb(i, true);
+		for ( core::Size i(utail_start_); i<=ubqchain_end_-1; ++i ) movemap_->set_bb(i, true);
 		//do not set UBQ chemical linkage flexible - scorefunction mishandles
 		//do not set hinge flexible for this processing
 		//set jump NOT flexible

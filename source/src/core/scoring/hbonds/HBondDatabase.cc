@@ -76,7 +76,7 @@ using utility::string_split;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 
-static Tracer tr("core.scoring.hbonds.HBondDatabase");
+static THREAD_LOCAL Tracer tr("core.scoring.hbonds.HBondDatabase");
 // Initialize private static data
 map< const string, HBondDatabaseCOP > HBondDatabase::initialized_databases_;
 

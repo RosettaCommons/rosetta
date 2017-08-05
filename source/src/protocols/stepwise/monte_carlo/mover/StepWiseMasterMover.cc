@@ -36,7 +36,7 @@
 #include <basic/Tracer.hh>
 #include <fstream>
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMover" );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

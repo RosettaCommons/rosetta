@@ -35,7 +35,7 @@ namespace protocols {
 namespace sewing  {
 namespace scoring {
 
-static basic::Tracer TR("protocols.sewing.scoring.ClashScorer");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.scoring.ClashScorer");
 
 ClashScorer::ClashScorer(){}
 

@@ -80,7 +80,7 @@ basic::options::BooleanOptionKey const off_rotamer_pack("off_rotamer_pack");
 }}}//basic::options::OptionKeys
 
 
-static basic::Tracer TR( "apps.pilot.andrew.fixbb_jd3" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.andrew.fixbb_jd3" );
 
 class FixbbJobQueen : public protocols::jd3::standard::StandardJobQueen
 {

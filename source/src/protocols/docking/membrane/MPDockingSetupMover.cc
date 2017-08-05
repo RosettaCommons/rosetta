@@ -64,7 +64,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR( "protocols.docking.membrane.MPDockingSetupMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.docking.membrane.MPDockingSetupMover" );
 
 namespace protocols {
 namespace docking {

@@ -53,7 +53,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.moves.RRProtocolRTMin");
+static THREAD_LOCAL Tracer TR("protocol.moves.RRProtocolRTMin");
 
 RRProtocolRTMin::RRProtocolRTMin() :
 	nonideal_(false),

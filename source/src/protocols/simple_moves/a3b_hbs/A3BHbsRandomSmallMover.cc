@@ -40,16 +40,16 @@
 
 // C++ Headers
 
-/* 
- TODO:
- 
- rename to HbsSmallMover, and make the codebase okay with that
- because this isn't actually random, since we have only one HBS position per pose.
- UNLESS we have a vector of HBS positions in the macrocycle... but this seems designed for different OOPs (since you can put an OOP ring anywhere)
- rather than for "randomly choose either OOP_pre_pos or OOP_post_pos to fiddle with
- so the question of how to move different positions on the HBS helix differently
- seems to have a solution not found here.
- 
+/*
+TODO:
+
+rename to HbsSmallMover, and make the codebase okay with that
+because this isn't actually random, since we have only one HBS position per pose.
+UNLESS we have a vector of HBS positions in the macrocycle... but this seems designed for different OOPs (since you can put an OOP ring anywhere)
+rather than for "randomly choose either OOP_pre_pos or OOP_post_pos to fiddle with
+so the question of how to move different positions on the HBS helix differently
+seems to have a solution not found here.
+
 */
 
 using basic::T;
@@ -57,7 +57,7 @@ using basic::Error;
 using basic::Warning;
 
 static numeric::random::RandomGenerator RG(953732);
-static basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsRandomSmallMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsRandomSmallMover" );
 
 
 using namespace core;
@@ -74,11 +74,11 @@ void A3BHbsRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	
+
 	TR<< "in A3BHbsRandomSmallMover::apply" << std::endl;
 	//kdrew: input assertion check
 	Size hbs_pre_pos = hbs_seq_position_;
-	Size hbs_post_pos = hbs_pre_pos+2;                   
+	Size hbs_post_pos = hbs_pre_pos+2;
 	TR<< "hbs_pre_pos:" << hbs_pre_pos << " hbs_post_pos:" << hbs_post_pos << std::endl;
 
 	//runtime_assert ( pose.residue(hbs_pre_pos).has_variant_type(chemical::HBS_PRE) == 1) ;
@@ -91,27 +91,26 @@ void A3BHbsRandomSmallMover::apply( core::pose::Pose & pose ){
 	//kdrew: randomly choose position from hbs_seq_positions
 	//core::Size random_pos = hbs_post_pos + int(RG.uniform()*(hbs_length_-3))+1;
 	core::Size random_pos = hbs_pre_pos+int(RG.uniform()*(hbs_length_-1))+1;
-	
+
 	hbs::HbsMoverOP hbs_mover ( new hbs::HbsMover( random_pos ) );
 	Real small_angle = max_small_angle_/2.0; ///< this is max_angle/2, which is the deviation from the angle input
 	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + RG.uniform() * max_small_angle_, 360.0 );
 	//kdrew: no phi angle for n-terms, angle that gets changed is CYH-N-Ca-C
-	if( pose.residue_type( random_pos ).is_lower_terminus() )
-	{ 
+	if ( pose.residue_type( random_pos ).is_lower_terminus() ) {
 		AtomID aidCYH( pose.residue(random_pos).atom_index("CYH"), random_pos );
 		AtomID aidN( pose.residue(random_pos).atom_index("N"), random_pos );
 		AtomID aidCA( pose.residue(random_pos).atom_index("CA"), random_pos );
 		AtomID aidC( pose.residue(random_pos).atom_index("C"), random_pos );
 
-		Real CYH_N_Ca_C_angle = degrees( pose.conformation().torsion_angle( aidCYH, aidN, aidCA, aidC ) ); 
-        phi_angle = basic::periodic_range( CYH_N_Ca_C_angle - small_angle + RG.uniform() * max_small_angle_, 360.0 ) - 180.0; 
+		Real CYH_N_Ca_C_angle = degrees( pose.conformation().torsion_angle( aidCYH, aidN, aidCA, aidC ) );
+		phi_angle = basic::periodic_range( CYH_N_Ca_C_angle - small_angle + RG.uniform() * max_small_angle_, 360.0 ) - 180.0;
 	}
 
 	Real psi_angle = basic::periodic_range( pose.psi( random_pos ) - small_angle + RG.uniform() * max_small_angle_, 360.0 );
 	hbs_mover->set_phi( phi_angle );
 	hbs_mover->set_psi( psi_angle );
 	hbs_mover->apply( pose );
-	
+
 }//apply
 
 std::string

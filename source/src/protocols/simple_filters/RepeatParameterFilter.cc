@@ -44,7 +44,7 @@ using namespace core;
 using namespace core::scoring;
 using core::Real;
 
-static basic::Tracer TR( "protocols.simple_filters.RepeatParameterFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.RepeatParameterFilter" );
 
 // XRW TEMP protocols::filters::FilterOP RepeatParameterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RepeatParameterFilter ); }
 

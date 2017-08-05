@@ -34,7 +34,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static basic::Tracer TR( "protocols.canonical_sampling.ThermodynamicObserver" );
+//static THREAD_LOCAL basic::Tracer TR( "protocols.canonical_sampling.ThermodynamicObserver" );
 
 namespace protocols {
 namespace canonical_sampling {

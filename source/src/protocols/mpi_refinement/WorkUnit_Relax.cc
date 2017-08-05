@@ -93,7 +93,7 @@
 namespace protocols {
 namespace mpi_refinement {
 
-static basic::Tracer TR("WorkUnit_Sampler.Relax");
+static THREAD_LOCAL basic::Tracer TR("WorkUnit_Sampler.Relax");
 
 ////////////////////////////////////////////
 //////// WorkUnit bbGauss

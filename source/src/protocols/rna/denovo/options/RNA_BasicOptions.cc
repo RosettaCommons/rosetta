@@ -21,7 +21,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.rna.denovo.options.RNA_BasicOptions" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.options.RNA_BasicOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

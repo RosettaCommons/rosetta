@@ -28,7 +28,7 @@
 
 using basic::T;
 using basic::Tracer;
-static basic::Tracer TR("core.scoring.fiber_diffraction.xray_scattering");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.xray_scattering");
 
 
 #ifdef    SERIALIZATION

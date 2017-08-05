@@ -111,7 +111,7 @@ using utility::file::FileName;
 //kdrew: this app adds hbs patches to the given pdb strucure
 
 // tracer - used to replace cout
-static basic::Tracer TR("MacrocycleCreator");
+static THREAD_LOCAL basic::Tracer TR("MacrocycleCreator");
 
 // application specific options
 namespace macrocycles {

@@ -70,7 +70,7 @@ OPT_1GRP_KEY(Boolean, ddg, fd_mode)
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.wendao.ddg");
+static THREAD_LOCAL basic::Tracer TR("apps.pilot.wendao.ddg");
 
 using namespace core;
 using namespace pose;

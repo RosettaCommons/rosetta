@@ -82,7 +82,7 @@ using numeric::Xforms;
 
 
 /************************************************* types ************************************************/
-static basic::Tracer TR("core.scoring.motif");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.motif");
 
 using core::pose::PoseCoordPickMode_BB;
 using core::pose::PoseCoordPickMode_N_C_O;

@@ -59,11 +59,9 @@ public:
 	int read_counter() const { return read_counter_.load(); }
 
 private:
-	// Despite the use of std::recursive_mutex here, the current implementation cannot handle
-	// recursive locking of ReadWriteMutex
-	std::recursive_mutex read_lock_;
+	std::mutex read_lock_;
 	std::atomic< int > read_counter_;
-	std::recursive_mutex write_lock_;
+	std::mutex write_lock_;
 	std::condition_variable_any not_being_read_;
 };
 

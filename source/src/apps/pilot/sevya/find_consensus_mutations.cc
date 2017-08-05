@@ -49,28 +49,28 @@
 #include <core/scoring/ScoreType.hh>
 
 
-namespace basic{ namespace options{ namespace OptionKeys{ namespace msd
+namespace basic { namespace options { namespace OptionKeys { namespace msd
 {
-  basic::options::StringVectorOptionKey positive_states( "msd:positive_states" );
-  basic::options::StringVectorOptionKey negative_states( "msd:negative_states" );
-  basic::options::StringOptionKey upper_chains( "msd:upper_chains" );
-  basic::options::StringOptionKey lower_chains( "msd:lower_chains" );
-  basic::options::StringOptionKey corr( "msd:corr" );
+basic::options::StringVectorOptionKey positive_states( "msd:positive_states" );
+basic::options::StringVectorOptionKey negative_states( "msd:negative_states" );
+basic::options::StringOptionKey upper_chains( "msd:upper_chains" );
+basic::options::StringOptionKey lower_chains( "msd:lower_chains" );
+basic::options::StringOptionKey corr( "msd:corr" );
 }}}}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR("msd_pilot.main");
+static THREAD_LOCAL basic::Tracer TR("msd_pilot.main");
 
 std::string
 get_out_number(core::Size in) {
 	std::stringstream num ("");
-	if (in < 10) {
+	if ( in < 10 ) {
 		num << "000" << in;
-	} else if (in < 100) {
+	} else if ( in < 100 ) {
 		num << "00" << in;
-	} else if (in < 1000) {
+	} else if ( in < 1000 ) {
 		num << "0" << in;
 	} else {
 		num << in;
@@ -83,7 +83,7 @@ parse_resfile ( core::pack::task::PackerTaskCOP design_task )
 {
 	utility::vector1< core::Size > vector;
 	utility::vector1<bool> designing = design_task->designing_residues();
-	for (core::Size i = 1; i <= designing.size(); ++i ) {
+	for ( core::Size i = 1; i <= designing.size(); ++i ) {
 		if ( designing[ i ] ) {
 			vector.push_back( i );
 		}
@@ -119,10 +119,10 @@ main( int argc, char * argv [] )
 		//Poses plus bool representing whether it's a positive state
 		utility::vector1<std::pair < core::pose::PoseOP, bool > > poses;
 
-		for (core::Size i = 1; i <= pdb_positive.size(); ++i) {
+		for ( core::Size i = 1; i <= pdb_positive.size(); ++i ) {
 			poses.push_back(std::make_pair( core::import_pose::pose_from_file( pdb_positive[ i ], false), 1 ) , core::import_pose::PDB_file);
 		}
-		for (core::Size i = 1; i <= pdb_negative.size(); ++i) {
+		for ( core::Size i = 1; i <= pdb_negative.size(); ++i ) {
 			poses.push_back(std::make_pair( core::import_pose::pose_from_file( pdb_negative[ i ], false), 0 ) , core::import_pose::PDB_file);
 		}
 
@@ -167,91 +167,91 @@ main( int argc, char * argv [] )
 
 
 		utility::vector1< std::pair < core::pose::PoseOP, bool > > modifiable_poses;
-		for (core::Size n = 1; n <= nstruct; ++n) {
+		for ( core::Size n = 1; n <= nstruct; ++n ) {
 			modifiable_poses.clear();
 
 			/* Create copy of each pose so original list stays unchanged */
-			for (core::Size i = 1; i <= poses.size(); ++i) {
+			for ( core::Size i = 1; i <= poses.size(); ++i ) {
 				modifiable_poses.push_back( std::make_pair( poses[i].first->clone(), poses[i].second ) );
 			}
 
 			TR << "finding consensus mutations" << std::endl;
 			/* Revert mutations to find the best aa at each spot */
 			core::Real scaling_factor = ( (core::Real) pdb_positive.size() )/pdb_negative.size();
-				TR << "scaling factor: " << scaling_factor << std::endl;
-				for (core::Size i = 1; i <= resfile_res_links.size(); ++i ) {
-					core::Size seqpos = resfile_res_links[ i ];
-					TR << seqpos << std::endl;
-					//check to see if they are all the same
-					bool diff = false;
-					TR << modifiable_poses[ 1 ].first->residue( seqpos ).name3() << std::endl;
-					for (core::Size j = 2; j <= modifiable_poses.size(); ++j ) {
-						TR << modifiable_poses[ j ].first->residue( seqpos ).name3() << std::endl;
-						if ( modifiable_poses[ j ].first->residue( seqpos ).aa() != modifiable_poses[ 1 ].first->residue( seqpos ).aa() ) {
-							diff = true;
-							break;
+			TR << "scaling factor: " << scaling_factor << std::endl;
+			for ( core::Size i = 1; i <= resfile_res_links.size(); ++i ) {
+				core::Size seqpos = resfile_res_links[ i ];
+				TR << seqpos << std::endl;
+				//check to see if they are all the same
+				bool diff = false;
+				TR << modifiable_poses[ 1 ].first->residue( seqpos ).name3() << std::endl;
+				for ( core::Size j = 2; j <= modifiable_poses.size(); ++j ) {
+					TR << modifiable_poses[ j ].first->residue( seqpos ).name3() << std::endl;
+					if ( modifiable_poses[ j ].first->residue( seqpos ).aa() != modifiable_poses[ 1 ].first->residue( seqpos ).aa() ) {
+						diff = true;
+						break;
+					}
+				}
+				TR << diff << std::endl;
+				if ( diff ) {
+					TR << "position " << seqpos << " is different" << std::endl;
+					core::Size min_index = 0;
+					core::Real min_score = 0;
+					utility::vector1< core::Real > scores ( modifiable_poses.size(), 0 );
+					for ( core::Size ref = 1; ref <= modifiable_poses.size(); ++ref ) {
+						for ( core::Size comp = 1; comp <= modifiable_poses.size(); ++comp ) {
+							TR << "comparing " << modifiable_poses[ ref ].first->residue( seqpos ).name3() << " to " << modifiable_poses[ comp ].first->residue( seqpos ).name3() << std::endl;
+							if ( modifiable_poses[ ref ].first->residue( seqpos ).aa() ==
+									modifiable_poses[ comp ].first->residue( seqpos ).aa() ) {
+								scores[ ref ] += (modifiable_poses[ comp ].second ?
+									modifiable_poses[ comp ].first->energies().total_energy() :
+									scaling_factor*-modifiable_poses[ comp ].first->energies().total_energy() );
+								//         continue;
+							} else {
+								core::pose::PoseOP mutpose = modifiable_poses[ comp ].first->clone();
+								mutpose->replace_residue( seqpos, modifiable_poses[ ref ].first->residue( seqpos ), true );
+								rp->apply( *mutpose );
+								scores[ ref ] += (modifiable_poses[ comp ].second ?
+									mutpose->energies().total_energy() :
+									scaling_factor*-mutpose->energies().total_energy() );
+							}
+
+						}
+						if ( scores[ ref ] < min_score || ref == 1 ) {
+							min_index = ref;
+							min_score = scores[ ref ];
 						}
 					}
-					TR << diff << std::endl;
-					if ( diff ) {
-						TR << "position " << seqpos << " is different" << std::endl;
-						core::Size min_index = 0;
-						core::Real min_score = 0;
-						utility::vector1< core::Real > scores ( modifiable_poses.size(), 0 );
-						for (core::Size ref = 1; ref <= modifiable_poses.size(); ++ref ) {
-							for (core::Size comp = 1; comp <= modifiable_poses.size(); ++comp ) {
-								TR << "comparing " << modifiable_poses[ ref ].first->residue( seqpos ).name3() << " to " << modifiable_poses[ comp ].first->residue( seqpos ).name3() << std::endl;
-								if ( modifiable_poses[ ref ].first->residue( seqpos ).aa() ==
-										modifiable_poses[ comp ].first->residue( seqpos ).aa()) {
-									scores[ ref ] += (modifiable_poses[ comp ].second ?
-											modifiable_poses[ comp ].first->energies().total_energy() :
-											scaling_factor*-modifiable_poses[ comp ].first->energies().total_energy() );
-//									continue;
-								} else {
-									core::pose::PoseOP mutpose = modifiable_poses[ comp ].first->clone();
-									mutpose->replace_residue( seqpos, modifiable_poses[ ref ].first->residue( seqpos ), true );
-									rp->apply( *mutpose );
-									scores[ ref ] += (modifiable_poses[ comp ].second ?
-										mutpose->energies().total_energy() :
-										scaling_factor*-mutpose->energies().total_energy() );
-								}
-
-							}
-							if ( scores[ ref ] < min_score || ref == 1 ) {
-								min_index = ref;
-								min_score = scores[ ref ];
-							}
-						}
-						for (core::Size k = 1; k <= scores.size(); ++k) TR << scores[ k ] << std::endl;
-						TR << "best residue at position " << seqpos << ": " << modifiable_poses[ min_index ].first->residue( seqpos ).name3() << std::endl;
-						for ( core::Size pose = 1; pose <= modifiable_poses.size(); ++pose ) {
-							if ( modifiable_poses[ pose ].first->residue( seqpos ).aa() !=
-									modifiable_poses[ min_index ].first->residue( seqpos ).aa() ) {
-								modifiable_poses[ pose ].first->replace_residue( seqpos, modifiable_poses[ min_index ].first->residue( seqpos ), true );
-								rp->apply( *modifiable_poses[ pose ].first );
-							}
+					for ( core::Size k = 1; k <= scores.size(); ++k ) TR << scores[ k ] << std::endl;
+					TR << "best residue at position " << seqpos << ": " << modifiable_poses[ min_index ].first->residue( seqpos ).name3() << std::endl;
+					for ( core::Size pose = 1; pose <= modifiable_poses.size(); ++pose ) {
+						if ( modifiable_poses[ pose ].first->residue( seqpos ).aa() !=
+								modifiable_poses[ min_index ].first->residue( seqpos ).aa() ) {
+							modifiable_poses[ pose ].first->replace_residue( seqpos, modifiable_poses[ min_index ].first->residue( seqpos ), true );
+							rp->apply( *modifiable_poses[ pose ].first );
 						}
 					}
 				}
+			}
 
 
 			/* Finished - dump out the scored pdbs to the output file */
 			core::Size j = 1;
-			for (core::Size i = 1; i <= pdb_positive.size(); ++i) {
+			for ( core::Size i = 1; i <= pdb_positive.size(); ++i ) {
 				std::string file_name = pdb_positive[ i ];
 				file_name = file_name.substr(0, file_name.length()-4);
 				std::string out_name = (suffix=="") ?
-						file_name + "_" + get_out_number(n) + ".consensus.pdb" :
-						file_name + "_" + suffix + "_" + get_out_number(n) + ".consensus.pdb";
+					file_name + "_" + get_out_number(n) + ".consensus.pdb" :
+					file_name + "_" + suffix + "_" + get_out_number(n) + ".consensus.pdb";
 				modifiable_poses[ j ].first->dump_scored_pdb( out_name, *sfxn_clean );
 				j++;
 			}
-			for (core::Size i = 1; i <= pdb_negative.size(); ++i) {
+			for ( core::Size i = 1; i <= pdb_negative.size(); ++i ) {
 				std::string file_name = pdb_negative[i];
 				file_name = file_name.substr(0, file_name.length()-4);
 				std::string out_name = (suffix=="") ?
-						file_name + "_" + get_out_number(n) + ".consensus.pdb" :
-						file_name + "_" + suffix + "_" + get_out_number(n) + ".consensus.pdb";
+					file_name + "_" + get_out_number(n) + ".consensus.pdb" :
+					file_name + "_" + suffix + "_" + get_out_number(n) + ".consensus.pdb";
 				modifiable_poses[ j ].first->dump_scored_pdb( out_name, *sfxn_clean );
 				j++;
 			}

@@ -99,7 +99,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("test_d_l_readin" );
+static THREAD_LOCAL basic::Tracer TR("test_d_l_readin" );
 
 int
 main( int argc, char* argv[] )

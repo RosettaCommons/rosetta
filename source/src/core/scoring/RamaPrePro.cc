@@ -56,7 +56,7 @@
 namespace core {
 namespace scoring {
 
-static basic::Tracer TR("core.scoring.RamaPrePro");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.RamaPrePro");
 
 RamaPrePro::RamaPrePro() :
 	canonical_score_tables_(),

@@ -55,39 +55,39 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 
-namespace basic{ namespace options{ namespace OptionKeys{ namespace msd
+namespace basic { namespace options { namespace OptionKeys { namespace msd
 {
-  basic::options::StringVectorOptionKey positive_states( "msd:positive_states" );
-  basic::options::StringVectorOptionKey negative_states( "msd:negative_states" );
-  basic::options::StringOptionKey upper_chains( "msd:upper_chains" );
-  basic::options::StringOptionKey lower_chains( "msd:lower_chains" );
-  basic::options::IntegerOptionKey n_iterations( "msd:n_iterations" );
-  basic::options::BooleanOptionKey find_consensus( "msd:find_consensus" );
-  basic::options::BooleanOptionKey debug( "msd:debug" );
-  basic::options::BooleanOptionKey restrict_design_to_interface( "msd:restrict_design_to_interface" );
-  basic::options::BooleanOptionKey restrict_min_to_interface( "msd:restrict_min_to_interface" );
-  basic::options::IntegerOptionKey design_rounds( "msd:design_rounds" );
-  basic::options::StringOptionKey ramp( "msd:weight_ramp");
-  basic::options::RealOptionKey favor_native( "msd:favor_native" );
-  basic::options::BooleanOptionKey soft_design( "msd:soft_design" );
-  basic::options::BooleanOptionKey fixed_bb( "msd:fixed_bb" );
-  basic::options::FileVectorOptionKey multiple_resfiles(" msd:multiple_resfiles");
-  basic::options::FileVectorOptionKey multiple_constraints(" msd:multiple_constraints" );
+basic::options::StringVectorOptionKey positive_states( "msd:positive_states" );
+basic::options::StringVectorOptionKey negative_states( "msd:negative_states" );
+basic::options::StringOptionKey upper_chains( "msd:upper_chains" );
+basic::options::StringOptionKey lower_chains( "msd:lower_chains" );
+basic::options::IntegerOptionKey n_iterations( "msd:n_iterations" );
+basic::options::BooleanOptionKey find_consensus( "msd:find_consensus" );
+basic::options::BooleanOptionKey debug( "msd:debug" );
+basic::options::BooleanOptionKey restrict_design_to_interface( "msd:restrict_design_to_interface" );
+basic::options::BooleanOptionKey restrict_min_to_interface( "msd:restrict_min_to_interface" );
+basic::options::IntegerOptionKey design_rounds( "msd:design_rounds" );
+basic::options::StringOptionKey ramp( "msd:weight_ramp");
+basic::options::RealOptionKey favor_native( "msd:favor_native" );
+basic::options::BooleanOptionKey soft_design( "msd:soft_design" );
+basic::options::BooleanOptionKey fixed_bb( "msd:fixed_bb" );
+basic::options::FileVectorOptionKey multiple_resfiles(" msd:multiple_resfiles");
+basic::options::FileVectorOptionKey multiple_constraints(" msd:multiple_constraints" );
 }}}}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR("msd_pilot.main");
+static THREAD_LOCAL basic::Tracer TR("msd_pilot.main");
 
 std::string
 get_out_number(core::Size in) {
 	std::stringstream num ("");
-	if (in < 10) {
+	if ( in < 10 ) {
 		num << "000" << in;
-	} else if (in < 100) {
+	} else if ( in < 100 ) {
 		num << "00" << in;
-	} else if (in < 1000) {
+	} else if ( in < 1000 ) {
 		num << "0" << in;
 	} else {
 		num << in;
@@ -97,11 +97,10 @@ get_out_number(core::Size in) {
 
 void
 add_fnr_constraints( core::pose::PoseOP pose,
-		core::pose::PoseOP reference_pose,
-		utility::vector1< core::Size > corr_pairs,
-		core::Real penalty, bool positive ) {
-	for (core::Size k = 1; k <= corr_pairs.size(); ++k)
-	{
+	core::pose::PoseOP reference_pose,
+	utility::vector1< core::Size > corr_pairs,
+	core::Real penalty, bool positive ) {
+	for ( core::Size k = 1; k <= corr_pairs.size(); ++k ) {
 		pose->add_constraint( new core::scoring::constraints::ResidueTypeConstraint(
 			*pose,
 			corr_pairs[ k ],
@@ -112,18 +111,16 @@ add_fnr_constraints( core::pose::PoseOP pose,
 
 void
 apply_linked_constraints(utility::vector1< std::pair< core::pose::PoseOP, bool > > poses,
-		utility::vector1< utility::vector1< core::Size > > corr_pairs,
-		core::Real positive_penalty, core::Real negative_penalty,
-		core::Size current_pose )
+	utility::vector1< utility::vector1< core::Size > > corr_pairs,
+	core::Real positive_penalty, core::Real negative_penalty,
+	core::Size current_pose )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	/* Iterate through poses in the outer loop */
-	for (core::Size i = 1; i <= poses.size(); ++i)
-	{
+	for ( core::Size i = 1; i <= poses.size(); ++i ) {
 		/* Iterate through residues to be linked */
-		for (core::Size k = 1; k <= corr_pairs[ current_pose ].size(); ++k)
-		{
+		for ( core::Size k = 1; k <= corr_pairs[ current_pose ].size(); ++k ) {
 			if ( i == current_pose ) continue;
 
 			poses[ current_pose ].first->add_constraint(new core::scoring::constraints::ResidueTypeConstraint(
@@ -147,7 +144,7 @@ parse_resfile ( core::pack::task::PackerTaskCOP design_task, core::pose::Pose & 
 	utility::vector1< core::Size > vector;
 	utility::vector1<bool> designing = design_task->designing_residues();
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	for (core::Size i = 1; i <= designing.size(); ++i ) {
+	for ( core::Size i = 1; i <= designing.size(); ++i ) {
 		if ( designing[ i ] ) {
 			vector.push_back( i );
 		}
@@ -163,7 +160,7 @@ parse_resfiles ( utility::vector1< core::pack::task::TaskFactoryOP > task_factor
 	for ( core::Size i = 1; i <= task_factories.size(); ++i ) {
 		core::pack::task::PackerTaskOP design_task = task_factories[i]->create_task_and_apply_taskoperations( *(poses[i].first) );
 		return_vector.push_back( parse_resfile( design_task, *( poses[1].first ) ) );
-		if ( i == 1)  designable_residues = return_vector[ 1 ].size();
+		if ( i == 1 )  designable_residues = return_vector[ 1 ].size();
 		else {
 			if ( return_vector[ i ].size() != designable_residues ) {
 				utility_exit_with_message( "All resfiles must have the same number of designable residues");
@@ -175,12 +172,12 @@ parse_resfiles ( utility::vector1< core::pack::task::TaskFactoryOP > task_factor
 
 void
 update_constraints( utility::vector1< std::pair< core::pose::PoseOP, bool > > poses,
-		utility::vector1< std::pair< core::pose::PoseOP, bool > > reference_poses,
-		utility::vector1< utility::vector1< core::Size > > res_links,
-		core::Real positive_linked_penalty,
-		core::Real negative_linked_penalty,
-		core::Real fnr_penalty,
-		core::Size current_pose) {
+	utility::vector1< std::pair< core::pose::PoseOP, bool > > reference_poses,
+	utility::vector1< utility::vector1< core::Size > > res_links,
+	core::Real positive_linked_penalty,
+	core::Real negative_linked_penalty,
+	core::Real fnr_penalty,
+	core::Size current_pose) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -206,7 +203,7 @@ update_constraints( utility::vector1< std::pair< core::pose::PoseOP, bool > > po
 utility::vector1< core::Size >
 parse_chains ( std::string chains ) {
 	utility::vector1< core::Size > ret;
-	for (core::Size i = 1; i <= chains.size(); ++i) {
+	for ( core::Size i = 1; i <= chains.size(); ++i ) {
 		ret.push_back( static_cast<core::Size>( atoi( chains.substr( i-1, 1 ).c_str() ) ) );
 	}
 	return ret;
@@ -257,10 +254,10 @@ main( int argc, char * argv [] )
 		//Poses plus bool representing whether it's a positive state
 		utility::vector1<std::pair < core::pose::PoseOP, bool > > poses;
 
-		for (core::Size i = 1; i <= pdb_positive.size(); ++i) {
+		for ( core::Size i = 1; i <= pdb_positive.size(); ++i ) {
 			poses.push_back(std::make_pair( core::import_pose::pose_from_file( pdb_positive[ i ], false), 1 ) , core::import_pose::PDB_file);
 		}
-		for (core::Size i = 1; i <= pdb_negative.size(); ++i) {
+		for ( core::Size i = 1; i <= pdb_negative.size(); ++i ) {
 			poses.push_back(std::make_pair( core::import_pose::pose_from_file( pdb_negative[ i ], false), 0 ) , core::import_pose::PDB_file);
 		}
 
@@ -287,7 +284,7 @@ main( int argc, char * argv [] )
 			}
 			for ( core::Size current_pose = 1; current_pose <= constraint_files.size(); ++current_pose ) {
 				core::scoring::constraints::ConstraintSetOP cstset_ = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints(
-						constraint_files[ current_pose ], new core::scoring::constraints::ConstraintSet, *poses[ current_pose ].first );
+					constraint_files[ current_pose ], new core::scoring::constraints::ConstraintSet, *poses[ current_pose ].first );
 				poses[ current_pose ].first->constraint_set( cstset_ );
 			}
 
@@ -321,7 +318,7 @@ main( int argc, char * argv [] )
 		core::pack::task::operation::RestrictToRepackingOP rtr = new core::pack::task::operation::RestrictToRepacking;
 
 		utility::vector1< core::pack::task::operation::ReadResfileOP > rrf_vector;
-		for (core::Size i = 1; i <= poses.size(); ++i ) {
+		for ( core::Size i = 1; i <= poses.size(); ++i ) {
 			if ( resfiles.size() > 1 ) {
 				rrf_vector.push_back( new core::pack::task::operation::ReadResfile( resfiles[ i ] ) );
 			} else {
@@ -339,7 +336,7 @@ main( int argc, char * argv [] )
 		rtiv->lower_chain(lower_chains);
 
 		utility::vector1< core::pack::task::TaskFactoryOP > design_task_factories;
-		for (core::Size i = 1; i <= rrf_vector.size(); ++i) {
+		for ( core::Size i = 1; i <= rrf_vector.size(); ++i ) {
 			core::pack::task::TaskFactoryOP design_task_factory = new core::pack::task::TaskFactory;
 			design_task_factory->push_back( ifcl );
 			if ( option[ msd::restrict_design_to_interface ] ) design_task_factory->push_back( rtiv );
@@ -378,7 +375,7 @@ main( int argc, char * argv [] )
 
 		/* Create movers to do the design */
 		utility::vector1< protocols::simple_moves::PackRotamersMoverOP > soft_des_vector;
-		for (core::Size i = 1; i <= rrf_vector.size(); ++i ) {
+		for ( core::Size i = 1; i <= rrf_vector.size(); ++i ) {
 			protocols::simple_moves::PackRotamersMoverOP soft_des = new protocols::simple_moves::PackRotamersMover;
 			soft_des->score_function( soft_rep_design );
 			soft_des->task_factory( design_task_factories[i] );
@@ -386,7 +383,7 @@ main( int argc, char * argv [] )
 		}
 
 		utility::vector1< protocols::simple_moves::NegativePackRotamersMoverOP > neg_design_vector;
-		for (core::Size i = 1; i <= rrf_vector.size(); ++i ) {
+		for ( core::Size i = 1; i <= rrf_vector.size(); ++i ) {
 			protocols::simple_moves::NegativePackRotamersMoverOP neg_design = new protocols::simple_moves::NegativePackRotamersMover;
 			neg_design->score_function ( sfxn_design );
 			neg_design->task_factory ( design_task_factories[i] );
@@ -395,7 +392,7 @@ main( int argc, char * argv [] )
 		}
 
 		utility::vector1< protocols::simple_moves::PackRotamersMoverOP > pos_design_vector;
-		for (core::Size i = 1; i <= rrf_vector.size(); ++i ) {
+		for ( core::Size i = 1; i <= rrf_vector.size(); ++i ) {
 			protocols::simple_moves::PackRotamersMoverOP pos_design = new protocols::simple_moves::PackRotamersMover;
 			pos_design->score_function( sfxn_design );
 			pos_design->task_factory( design_task_factories[ i ] );
@@ -421,7 +418,7 @@ main( int argc, char * argv [] )
 		soft_min_mover->score_function( soft_rep_clean );
 
 		protocols::simple_moves::TaskAwareMinMoverOP soft_min = new protocols::simple_moves::TaskAwareMinMover(
-				soft_min_mover, min_task_factory );
+			soft_min_mover, min_task_factory );
 		soft_min->chi(1);
 		soft_min->bb(1);
 		soft_min->jump(1);
@@ -432,7 +429,7 @@ main( int argc, char * argv [] )
 		soft_min_mover->score_function( soft_rep_clean );
 
 		protocols::simple_moves::TaskAwareMinMoverOP soft_min_sc = new protocols::simple_moves::TaskAwareMinMover(
-				soft_min_sc_mover, min_task_factory );
+			soft_min_sc_mover, min_task_factory );
 		soft_min_sc->chi(1);
 		soft_min_sc->bb(0);
 		soft_min_sc->jump(0);
@@ -443,7 +440,7 @@ main( int argc, char * argv [] )
 		soft_min_mover->score_function( sfxn_clean );
 
 		protocols::simple_moves::TaskAwareMinMoverOP min_sc = new protocols::simple_moves::TaskAwareMinMover(
-				min_sc_mover, min_task_factory );
+			min_sc_mover, min_task_factory );
 		min_sc->chi(1);
 		min_sc->bb(0);
 		min_sc->jump(0);
@@ -454,7 +451,7 @@ main( int argc, char * argv [] )
 		min_mover->score_function( sfxn_clean );
 
 		protocols::simple_moves::TaskAwareMinMoverOP min = new protocols::simple_moves::TaskAwareMinMover(
-				min_mover, min_task_factory );
+			min_mover, min_task_factory );
 		min->chi(1);
 		min->bb(1);
 		min->jump(1);
@@ -464,50 +461,50 @@ main( int argc, char * argv [] )
 		// Where the magic happens
 
 		utility::vector1< std::pair < core::pose::PoseOP, bool > > modifiable_poses;
-		for (core::Size n = 1; n <= nstruct; ++n) {
+		for ( core::Size n = 1; n <= nstruct; ++n ) {
 			modifiable_poses.clear();
 
 			/* Create copy of each pose so original list stays unchanged */
-			for (core::Size i = 1; i <= poses.size(); ++i) {
+			for ( core::Size i = 1; i <= poses.size(); ++i ) {
 				modifiable_poses.push_back( std::make_pair( poses[i].first->clone(), poses[i].second ) );
 			}
 
 			/* Perform round of soft design if requested */
 			if ( option [ msd::soft_design ] ) {
-				for (core::Size i = 1; i <= modifiable_poses.size(); ++i) {
+				for ( core::Size i = 1; i <= modifiable_poses.size(); ++i ) {
 					if ( debug ) TR << "applying constraints round 1 for pose " << i << std::endl;
 					update_constraints( modifiable_poses, poses, residue_links, ramp[ 1 ], -1.0, option[ msd::favor_native ], i);
 
 					if ( modifiable_poses[ i ].second ) {
 						if ( debug ) TR << "design round 1 - pose " << i << std::endl;
-							soft_des_vector[ i ]->apply( *modifiable_poses[ i ].first );
-							//add minimize parsed protocol mover
-							if ( !option[ msd::fixed_bb] ) {
-								if ( debug ) TR << "minimize round 1 - pose " << i << std::endl;
-								if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
-								soft_rp->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize softminsc round 1 - pose " << i << std::endl;
-								soft_min_sc->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
-								soft_rp->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize softmin round 1 - pose " << i << std::endl;
-								soft_min->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
-								soft_rp->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize minsc round 1 - pose " << i << std::endl;
-								min_sc->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
-								soft_rp->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize min round 1 - pose " << i << std::endl;
-								min->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize rp round 1 - pose " << i << std::endl;
-								rp->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize minsc round 1 - pose " << i << std::endl;
-								min_sc->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize rp round 1 - pose " << i << std::endl;
-								rp->apply( *modifiable_poses[ i ].first );
-								if ( debug ) TR << "minimize min round 1 - pose " << i << std::endl;
-								min->apply( *modifiable_poses[ i ].first );
+						soft_des_vector[ i ]->apply( *modifiable_poses[ i ].first );
+						//add minimize parsed protocol mover
+						if ( !option[ msd::fixed_bb] ) {
+							if ( debug ) TR << "minimize round 1 - pose " << i << std::endl;
+							if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
+							soft_rp->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize softminsc round 1 - pose " << i << std::endl;
+							soft_min_sc->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
+							soft_rp->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize softmin round 1 - pose " << i << std::endl;
+							soft_min->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
+							soft_rp->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize minsc round 1 - pose " << i << std::endl;
+							min_sc->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize softrp round 1 - pose " << i << std::endl;
+							soft_rp->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize min round 1 - pose " << i << std::endl;
+							min->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize rp round 1 - pose " << i << std::endl;
+							rp->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize minsc round 1 - pose " << i << std::endl;
+							min_sc->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize rp round 1 - pose " << i << std::endl;
+							rp->apply( *modifiable_poses[ i ].first );
+							if ( debug ) TR << "minimize min round 1 - pose " << i << std::endl;
+							min->apply( *modifiable_poses[ i ].first );
 						}
 					} else {
 						neg_design_vector[ i ]->apply( *modifiable_poses[ i ].first );
@@ -515,9 +512,9 @@ main( int argc, char * argv [] )
 				}
 			}
 
-			for ( core::Size j = 1; j <= (core::Size) option[ msd::design_rounds ]; ++j ){
+			for ( core::Size j = 1; j <= (core::Size) option[ msd::design_rounds ]; ++j ) {
 				/* Perform subsequent rounds of design */
-				for (core::Size i = 1; i <= modifiable_poses.size(); ++i) {
+				for ( core::Size i = 1; i <= modifiable_poses.size(); ++i ) {
 					core::Real linking_wt = ( option[ msd::soft_design ] ? ramp[ j+1 ] : ramp[ j ] );
 					if ( debug ) TR << "applying constraints round "<< j << " for pose " << i << std::endl;
 					update_constraints( modifiable_poses, poses, residue_links, linking_wt, -2, option[ msd::favor_native ], i);
@@ -554,11 +551,11 @@ main( int argc, char * argv [] )
 				TR << "finding consensus mutations" << std::endl;
 				/* Revert mutations to find the best aa at each spot */
 				core::Real scaling_factor = ( (core::Real) pdb_positive.size() )/pdb_negative.size();
-				for (core::Size i = 1; i <= residue_links[ 1 ].size(); ++i ) {
+				for ( core::Size i = 1; i <= residue_links[ 1 ].size(); ++i ) {
 					core::Size seqpos1 = residue_links[ 1 ][ i ];
 					//check to see if they are all the same
 					bool diff = false;
-					for (core::Size j = 2; j <= modifiable_poses.size(); ++j ) {
+					for ( core::Size j = 2; j <= modifiable_poses.size(); ++j ) {
 						core::Size seqpos2 = residue_links[ j ][ i ];
 						if ( modifiable_poses[ j ].first->residue( seqpos2 ).aa() != modifiable_poses[ 1 ].first->residue( seqpos1 ).aa() ) {
 							diff = true;
@@ -569,14 +566,14 @@ main( int argc, char * argv [] )
 						core::Size min_index = 0;
 						core::Real min_score = 0;
 						utility::vector1< core::Real > scores ( modifiable_poses.size(), 0 );
-						for (core::Size ref = 1; ref <= modifiable_poses.size(); ++ref ) {
-							for (core::Size comp = 1; comp <= modifiable_poses.size(); ++comp ) {
+						for ( core::Size ref = 1; ref <= modifiable_poses.size(); ++ref ) {
+							for ( core::Size comp = 1; comp <= modifiable_poses.size(); ++comp ) {
 								//if residues at this position are same
 								if ( modifiable_poses[ ref ].first->residue( residue_links[ ref ][ i ] ).aa() ==
-										modifiable_poses[ comp ].first->residue( residue_links[ comp ][ i ] ).aa()) {
+										modifiable_poses[ comp ].first->residue( residue_links[ comp ][ i ] ).aa() ) {
 									scores[ ref ] += (modifiable_poses[ comp ].second ?
-											modifiable_poses[ comp ].first->energies().total_energy() :
-											std::min( scaling_factor*-modifiable_poses[ comp ].first->energies().total_energy(), 0.0) );
+										modifiable_poses[ comp ].first->energies().total_energy() :
+										std::min( scaling_factor*-modifiable_poses[ comp ].first->energies().total_energy(), 0.0) );
 									continue;
 								} else { //if they're different
 
@@ -598,8 +595,8 @@ main( int argc, char * argv [] )
 							if ( modifiable_poses[ pose ].first->residue( residue_links[ pose ][ i ] ).aa() !=
 									modifiable_poses[ min_index ].first->residue( residue_links[ min_index ][ i ] ).aa() ) {
 								modifiable_poses[ pose ].first->replace_residue( residue_links[ pose ][ i ],
-										modifiable_poses[ min_index ].first->residue( residue_links[ min_index ][ i ] ),
-										true );
+									modifiable_poses[ min_index ].first->residue( residue_links[ min_index ][ i ] ),
+									true );
 								rp->apply( *modifiable_poses[ pose ].first );
 							}
 						}
@@ -610,21 +607,21 @@ main( int argc, char * argv [] )
 
 			/* Finished - dump out the scored pdbs to the output file */
 			core::Size j = 1;
-			for (core::Size i = 1; i <= pdb_positive.size(); ++i) {
+			for ( core::Size i = 1; i <= pdb_positive.size(); ++i ) {
 				std::string file_name = pdb_positive[ i ];
 				file_name = file_name.substr(0, file_name.length()-4);
 				std::string out_name = (option[ out::suffix ]()=="") ?
-						file_name + "_" + get_out_number(n) + ".pdb" :
-						file_name + "_" + option[ out::suffix ]() + "_" + get_out_number(n) + ".pdb";
+					file_name + "_" + get_out_number(n) + ".pdb" :
+					file_name + "_" + option[ out::suffix ]() + "_" + get_out_number(n) + ".pdb";
 				modifiable_poses[ j ].first->dump_scored_pdb( out_name, *sfxn_clean );
 				j++;
 			}
-			for (core::Size i = 1; i <= pdb_negative.size(); ++i) {
+			for ( core::Size i = 1; i <= pdb_negative.size(); ++i ) {
 				std::string file_name = pdb_negative[i];
 				file_name = file_name.substr(0, file_name.length()-4);
 				std::string out_name = (option[ out::suffix ]()=="") ?
-						file_name + "_" + get_out_number(n) + ".pdb" :
-						file_name + "_" + option[ out::suffix ]() + "_" + get_out_number(n) + ".pdb";
+					file_name + "_" + get_out_number(n) + ".pdb" :
+					file_name + "_" + option[ out::suffix ]() + "_" + get_out_number(n) + ".pdb";
 				modifiable_poses[ j ].first->dump_scored_pdb( out_name, *sfxn_clean );
 				j++;
 			}

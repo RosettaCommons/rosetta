@@ -60,7 +60,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("TorsionScoring");
+static THREAD_LOCAL basic::Tracer TR("TorsionScoring");
 
 OPT_KEY( String, resname )
 

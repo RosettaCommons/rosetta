@@ -92,7 +92,7 @@
 #undef small
 #endif
 
-static basic::Tracer TR( "protocols.membrane.MPFindInterfaceMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.MPFindInterfaceMover" );
 
 namespace protocols {
 namespace docking {

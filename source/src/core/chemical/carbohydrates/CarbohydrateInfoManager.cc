@@ -10,7 +10,7 @@
 /// @file    core/chemical/carbohydrates/CarbohydrateInfoManager.cc
 /// @brief   Method definitions for CarbohydrateInfoManager.
 /// @author  Labonte <JWLabonte@jhu.edu>
-
+/// @author  Vikram K. Mulligan (vmullig@uw.edu) -- Made the CarbohydrateInfoManager threadsafe.
 
 // Unit headers
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
@@ -189,11 +189,26 @@ CarbohydrateInfoManager::CarbohydrateInfoManager() {}
 std::map< std::string, std::pair< std::string, char > > const &
 CarbohydrateInfoManager::code_to_root_map()
 {
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(code_to_root_map_mutex_);
+		isempty = code_to_root_map_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(code_to_root_map_mutex_);
+		if ( code_to_root_map_.empty() ) {
+			code_to_root_map_ = read_codes_and_roots_from_database_file( basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
+		}
+	}
+#else
 	// Only create map one time, as needed.
 	if ( code_to_root_map_.empty() ) {
 		code_to_root_map_ = read_codes_and_roots_from_database_file(
 			basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
 	}
+#endif
 	return code_to_root_map_;
 }
 
@@ -204,11 +219,27 @@ CarbohydrateInfoManager::code_to_root_map()
 std::map< core::Size, std::pair< char, std::string > > const &
 CarbohydrateInfoManager::ring_size_to_morphemes_map()
 {
+
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(ring_size_to_morphemes_mutex_);
+		isempty = ring_size_to_morphemes_map_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(ring_size_to_morphemes_mutex_);
+		if ( ring_size_to_morphemes_map_.empty() ) {
+			ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file( basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+		}
+	}
+#else
 	// Only create map one time, as needed.
 	if ( ring_size_to_morphemes_map_.empty() ) {
 		ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file(
 			basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
 	}
+#endif
 	return ring_size_to_morphemes_map_;
 }
 
@@ -217,7 +248,26 @@ utility::vector1< char > const &
 CarbohydrateInfoManager::ring_affixes()
 {
 	typedef map< Size, pair< char, string > > Map;
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(ring_affixes_mutex_);
+		isempty = ring_affixes_.empty();
+	}
 
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(ring_affixes_mutex_);
+		if ( ring_affixes_.empty() ) {
+			Map const & map( ring_size_to_morphemes_map() );
+			for ( Map::const_iterator it( map.begin() ), it_end( map.end() ); it != it_end; ++it ) {
+				char affix( it->second.first );
+				if ( affix != '\0' ) {
+					ring_affixes_.push_back( affix );
+				}
+			}
+		}
+	}
+#else
 	// Only create list one time, as needed.
 	if ( ring_affixes_.empty() ) {
 		Map const & map( ring_size_to_morphemes_map() );
@@ -228,6 +278,7 @@ CarbohydrateInfoManager::ring_affixes()
 			}
 		}
 	}
+#endif
 	return ring_affixes_;
 }
 
@@ -236,11 +287,27 @@ CarbohydrateInfoManager::ring_affixes()
 SugarModificationsNomenclatureTable const &
 CarbohydrateInfoManager::nomenclature_table()
 {
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(nomenclature_table_mutex_);
+		isempty = nomenclature_table_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(nomenclature_table_mutex_);
+		if ( nomenclature_table_.empty() ) {
+			nomenclature_table_ = read_nomenclature_table_from_database_file(
+				basic::database::full_name( "chemical/carbohydrates/sugar_modifications.table" ) );
+		}
+	}
+#else
 	// Only create table one time, as needed.
 	if ( nomenclature_table_.empty() ) {
 		nomenclature_table_ = read_nomenclature_table_from_database_file(
 			basic::database::full_name( "chemical/carbohydrates/sugar_modifications.table" ) );
 	}
+#endif
 	return nomenclature_table_;
 }
 
@@ -248,6 +315,24 @@ CarbohydrateInfoManager::nomenclature_table()
 std::map< std::string, std::string > const &
 CarbohydrateInfoManager::affix_to_patch_map()
 {
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(affix_to_patch_mutex_);
+		isempty = affix_to_patch_map_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(affix_to_patch_mutex_);
+		if ( affix_to_patch_map_.empty() ) {
+			SugarModificationsNomenclatureTable const & table( nomenclature_table() );
+			for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
+					it != it_end; ++it ) {
+				affix_to_patch_map_[ it->second.short_affix ] = it->second.patch_name;
+			}
+		}
+	}
+#else
 	// Only create map one time, as needed.
 	if ( affix_to_patch_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
@@ -256,6 +341,7 @@ CarbohydrateInfoManager::affix_to_patch_map()
 			affix_to_patch_map_[ it->second.short_affix ] = it->second.patch_name;
 		}
 	}
+#endif
 	return affix_to_patch_map_;
 }
 
@@ -263,6 +349,25 @@ CarbohydrateInfoManager::affix_to_patch_map()
 std::map< std::string, core::uint > const &
 CarbohydrateInfoManager::affix_to_position_map()
 {
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(affix_to_position_mutex_);
+		isempty = affix_to_position_map_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(affix_to_position_mutex_);
+		// Only create map one time, as needed.
+		if ( affix_to_position_map_.empty() ) {
+			SugarModificationsNomenclatureTable const & table( nomenclature_table() );
+			for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
+					it != it_end; ++it ) {
+				affix_to_position_map_[ it->second.short_affix ] = it->second.default_position;
+			}
+		}
+	}
+#else
 	// Only create map one time, as needed.
 	if ( affix_to_position_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
@@ -271,6 +376,7 @@ CarbohydrateInfoManager::affix_to_position_map()
 			affix_to_position_map_[ it->second.short_affix ] = it->second.default_position;
 		}
 	}
+#endif
 	return affix_to_position_map_;
 }
 
@@ -279,6 +385,25 @@ CarbohydrateInfoManager::affix_to_position_map()
 std::map< std::string, bool > const &
 CarbohydrateInfoManager::affix_to_position_inherency_map()
 {
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(affix_to_position_inherency_mutex_);
+		isempty = affix_to_position_inherency_map_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(affix_to_position_inherency_mutex_);
+		// Only create map one time, as needed.
+		if ( affix_to_position_inherency_map_.empty() ) {
+			SugarModificationsNomenclatureTable const & table( nomenclature_table() );
+			for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
+					it != it_end; ++it ) {
+				affix_to_position_inherency_map_[ it->second.short_affix ] = it->second.has_inherent_position;
+			}
+		}
+	}
+#else
 	// Only create map one time, as needed.
 	if ( affix_to_position_inherency_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
@@ -287,6 +412,7 @@ CarbohydrateInfoManager::affix_to_position_inherency_map()
 			affix_to_position_inherency_map_[ it->second.short_affix ] = it->second.has_inherent_position;
 		}
 	}
+#endif
 	return affix_to_position_inherency_map_;
 }
 
@@ -296,13 +422,30 @@ LinkageConformers const &
 CarbohydrateInfoManager::linkage_conformers_map()
 {
 	using namespace basic::options;
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(linkage_conformers_mutex_);
+		isempty = linkage_conformers_map_.empty();
+	}
 
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(linkage_conformers_mutex_);
+		// Only create map one time, as needed.
+		if ( linkage_conformers_map_.empty() ) {
+			string const filename( find_linkage_conformer_data_file(
+				option[ OptionKeys::carbohydrates::linkage_conformer_data_file ]() ) );  // default is "default.table"
+			linkage_conformers_map_ = read_linkage_conformers_from_database_file( filename );
+		}
+	}
+#else
 	// Only create map one time, as needed.
 	if ( linkage_conformers_map_.empty() ) {
 		string const filename( find_linkage_conformer_data_file(
 			option[ OptionKeys::carbohydrates::linkage_conformer_data_file ]() ) );  // default is "default.table"
 		linkage_conformers_map_ = read_linkage_conformers_from_database_file( filename );
 	}
+#endif
 	return linkage_conformers_map_;
 }
 
@@ -316,6 +459,25 @@ CarbohydrateInfoManager::get_short_name_to_iupac_strings_map(){
 
 std::map< std::string, std::string > const &
 CarbohydrateInfoManager::short_name_to_iupac_strings_map(){
+#ifdef MULTI_THREADED
+	bool isempty(false);
+	{
+		utility::thread::ReadLockGuard readlock(short_name_to_iupac_strings_mutex_);
+		isempty = short_name_to_iupac_strings_map_.empty();
+	}
+
+	if ( isempty ) {
+		utility::thread::WriteLockGuard writelock(short_name_to_iupac_strings_mutex_);
+		if ( short_name_to_iupac_strings_map_.empty() ) {
+			std::string dir = "chemical/carbohydrates/common_glycans/";
+			std::string filename = "common_names";
+			std::string ext = ".txt";
+			std::string path = basic::database::find_database_path(dir, filename, ext);
+			short_name_to_iupac_strings_map_ = read_short_names_to_iupac_format_string( dir, path );
+
+		}
+	}
+#else
 	if ( short_name_to_iupac_strings_map_.empty() ) {
 		std::string dir = "chemical/carbohydrates/common_glycans/";
 		std::string filename = "common_names";
@@ -324,6 +486,7 @@ CarbohydrateInfoManager::short_name_to_iupac_strings_map(){
 		short_name_to_iupac_strings_map_ = read_short_names_to_iupac_format_string( dir, path );
 
 	}
+#endif
 
 	return short_name_to_iupac_strings_map_;
 }

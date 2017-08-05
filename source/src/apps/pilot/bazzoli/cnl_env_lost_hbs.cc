@@ -88,7 +88,7 @@ using utility::vector1;
 using numeric::xyzVector;
 using core::chemical::oneletter_code_from_aa;
 
-static basic::Tracer TR( "apps.pilot.cnl_env_lost_hbs" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.cnl_env_lost_hbs" );
 
 
 // data structure holding the set of h-bond partners for each atom

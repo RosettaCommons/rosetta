@@ -54,7 +54,7 @@ using protocols::relax::generate_relax_from_cmd;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.moves.RRProtocolRelax");
+static THREAD_LOCAL Tracer TR("protocol.moves.RRProtocolRelax");
 
 RRProtocolRelax::RRProtocolRelax() :
 	nonideal_(false),

@@ -45,7 +45,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR( "protocols.sewing.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sewing.util" );
 
 std::map<core::id::AtomID, core::id::AtomID>
 largest_continuous_atom_map(

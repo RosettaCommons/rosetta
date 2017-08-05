@@ -56,7 +56,7 @@
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "apps.public.membrane.mp_transform" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.membrane.mp_transform" );
 
 ///////////////////////////////////////////////////////////////////
 

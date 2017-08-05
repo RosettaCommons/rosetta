@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.recces.params.RECCES_Parameters" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.params.RECCES_Parameters" );
 
 namespace protocols {
 namespace recces {

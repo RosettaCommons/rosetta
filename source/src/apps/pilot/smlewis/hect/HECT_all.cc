@@ -24,7 +24,7 @@
 #include <core/pose/util.hh>
 
 
-//static basic::Tracer TR("apps.pilot.smlewis.HECT");
+//static THREAD_LOCAL basic::Tracer TR("apps.pilot.smlewis.HECT");
 
 
 /// @brief HECT mover
@@ -51,7 +51,7 @@ public:
 
 		//set up starting pose
 		//first: mutate catalytic residues back to cysteine
-		if(debug) pose.dump_pdb("test0.pdb");
+		if ( debug ) pose.dump_pdb("test0.pdb");
 
 		using namespace core::chemical;
 		using namespace core::conformation;
@@ -60,19 +60,19 @@ public:
 
 		//this should not be necessary, but it seems to be!
 		pose.replace_residue(e3_catalytic_res_, cyz_rsd, true); //not a trivial change, but not fold-tree related
-		if(debug) pose.dump_pdb("test1.pdb");
+		if ( debug ) pose.dump_pdb("test1.pdb");
 
 		//Mini will put this terminus on automatically, so we need to kill it
 		core::pose::remove_upper_terminus_type_from_pose_residue(pose, ubqchain_end_);
-		if(debug) pose.dump_pdb("test2.pdb");
+		if ( debug ) pose.dump_pdb("test2.pdb");
 
 		//make the bond?
 		pose.conformation().declare_chemical_bond(e2_catalytic_res_, "SG", ubqchain_end_, "C");
-		if(debug) pose.dump_pdb("test3.pdb");
+		if ( debug ) pose.dump_pdb("test3.pdb");
 
 		//set up fold tree
 		set_up_foldtree(pose);
-		if(debug) pose.dump_pdb("test4.pdb");
+		if ( debug ) pose.dump_pdb("test4.pdb");
 
 		//setup of TaskFactory
 		set_up_taskfactory();
@@ -82,10 +82,10 @@ public:
 
 		//initial state: all false
 		//set UBQ tail flexible - last residue is not part of this; scorefunction mishandles (not a terminus, wrong rama)
-		for( core::Size i(utail_start_);    i<=ubqchain_end_-1;    ++i) movemap_->set_bb(i, true);
+		for ( core::Size i(utail_start_);    i<=ubqchain_end_-1;    ++i ) movemap_->set_bb(i, true);
 		//do not set UBQ chemical linkage flexible - scorefunction mishandles
 		//set hinge flexible
-		for( core::Size i(e3_hinge_start_); i<=e3_hinge_stop_;  ++i) movemap_->set_bb(i, true);
+		for ( core::Size i(e3_hinge_start_); i<=e3_hinge_stop_;  ++i ) movemap_->set_bb(i, true);
 		//set jump NOT flexible
 		movemap_->set_jump(false);
 

@@ -38,7 +38,7 @@ using std::endl;
 using std::istream;
 using basic::Tracer;
 
-static Tracer TR("basic.resource_manager.locator.NullResourceLocator");
+static THREAD_LOCAL Tracer TR("basic.resource_manager.locator.NullResourceLocator");
 
 
 ///// NullResourceLocatorCreator /////

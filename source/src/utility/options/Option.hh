@@ -23,9 +23,13 @@
 // Package headers
 #include <utility/options/keys/OptionKey.hh>
 #include <utility/excn/Exceptions.hh>
+
 // C++ headers
 #include <cstddef>
 #include <string>
+#ifdef MULTI_THREADED
+#include <atomic>
+#endif
 
 
 namespace utility {
@@ -106,7 +110,11 @@ protected: // Assignment
 	{
 		if ( this != &option ) {
 			is_group_ = option.is_group_;
+#ifdef MULTI_THREADED
+			been_accessed_ = option.been_accessed_.load();
+#else
 			been_accessed_ = option.been_accessed_;
+#endif
 			restricted_access_ = option.restricted_access_;
 		}
 		return *this;
@@ -473,7 +481,11 @@ private: // Private data members
 	/// @brief flag, will be true if application was trying to anyhow access/check option value.
 	///        Used to create option usage reports.
 	///        False by default, any access functions ie: user(), active(), value(), operator()() will set it to true.
+#ifdef MULTI_THREADED
+	mutable std::atomic_bool been_accessed_;
+#else
 	mutable bool  been_accessed_;
+#endif
 
 	/// @brief Is directly accessing this option deprecated in favor of
 	/// accessing it through the resource manager?

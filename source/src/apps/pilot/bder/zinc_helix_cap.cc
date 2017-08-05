@@ -53,28 +53,28 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.bder.zinc_helix_cap");
+static THREAD_LOCAL basic::Tracer TR("apps.pilot.bder.zinc_helix_cap");
 
 
 using namespace core;
 
-namespace local{
+namespace local {
 basic::options::RealOptionKey const hsasa_residue_cutoff("hsasa_residue_cutoff");
 }//local
 
 /// @brief
 class zinc_helix_cap : public protocols::moves::Mover {
 public:
-  zinc_helix_cap()
-  {
-  }
-  virtual ~zinc_helix_cap(){};
+	zinc_helix_cap()
+	{
+	}
+	virtual ~zinc_helix_cap(){};
 
 
 
-  virtual
-  void
-  apply( core::pose::Pose & pose ){
+	virtual
+	void
+	apply( core::pose::Pose & pose ){
 
 		utility::file::FileName input_pdbname( pose.pdb_info()->name() );
 
@@ -90,15 +90,15 @@ public:
 		using namespace core::pose::metrics;
 
 		TR << "Registering SASA Calculator" << std::endl;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ) {
 			CalculatorFactory::Instance().register_calculator( "sasa_calc_name", new pose::metrics::simple_calculators::SasaCalculator() );
 		}
 		TR << "Registering num_Hbond Calculator" << std::endl;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "num_hbonds_calc_name" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "num_hbonds_calc_name" ) ) {
 			CalculatorFactory::Instance().register_calculator( "num_hbonds_calc_name", new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
 		}
 		TR << "Registering BurUnsatPolar Calculator" << std::endl;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_name" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_name" ) ) {
 			CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_name", new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa_calc_name", "num_hbonds_calc_name", 0.01 /*sasa=0 is buried*/) );
 		}
 
@@ -120,12 +120,12 @@ public:
 
 		TR << "Now via DSSP" << std::endl;
 		TR << "select resi ";
-		for (Size res = 5; res <= pose.size() - 5; res++) {
+		for ( Size res = 5; res <= pose.size() - 5; res++ ) {
 
 
 			core::scoring::dssp::Dssp dssp( pose );
 			char dssp_i = dssp.get_dssp_secstruct(res);
-			if (dssp_i != 'H') {
+			if ( dssp_i != 'H' ) {
 				//TR << res << "+";
 				loop_positions.insert(res - 3);
 				loop_positions.insert(res - 2);
@@ -141,18 +141,18 @@ public:
 		utility::vector1< core::id::AtomID > buried_unsat_atom_ids;
 
 
-		for( std::set< Size >::const_iterator it(loop_positions.begin()), end(loop_positions.end()); it!=end; ++it){
+		for ( std::set< Size >::const_iterator it(loop_positions.begin()), end(loop_positions.end()); it!=end; ++it ) {
 			//TR << *it << "+";
 
 			//check for buried unsat of NH and O
 
 			conformation::Residue const & rsd = pose.residue( *it );
 
-			for( Size at = 1; at <= 4; ++at){ //mainchain atoms are 1 through 4
+			for ( Size at = 1; at <= 4; ++at ) { //mainchain atoms are 1 through 4
 				core::id::AtomID atid( at, *it );
 
 
-				if( bur_unsat_atomid_map.value()[atid] /*bool*/) {
+				if ( bur_unsat_atomid_map.value()[atid] /*bool*/ ) {
 
 					buried_unsat_atom_ids.push_back( atid );
 					TR << pose.pdb_info()->name() << " buried_unsat " << atid << "  SASA: " << atom_sasa.value()[atid] << "  HBOND: " << atom_hbonds.value()[atid] << std::endl;
@@ -171,17 +171,16 @@ public:
 		std::string pymol_bunsat_selection = "bunsat_" + pdbname_base;
 		TR << "PYMOL_SELECTION: select " << pymol_bunsat_selection << ",";
 
-		for(Size i(1); i <= buried_unsat_atom_ids.size(); ++i) {
+		for ( Size i(1); i <= buried_unsat_atom_ids.size(); ++i ) {
 			Size rosetta_resnum = buried_unsat_atom_ids[i].rsd();
 			std::string atom_name = pose.residue(rosetta_resnum).atom_name( buried_unsat_atom_ids[i].atomno() );
 
 			Size pdb_resnum = pose.pdb_info()->number( rosetta_resnum );
 			char chain = pose.pdb_info()->chain( rosetta_resnum );
 
-			if( i != buried_unsat_atom_ids.size() ) {
+			if ( i != buried_unsat_atom_ids.size() ) {
 				TR << " resi " << pdb_resnum << " and name " << atom_name << " and chain " << chain << " in " << pdbname_base << " +";
-			}
-			else {
+			} else {
 				TR << " resi " << pdb_resnum << " and name " << atom_name << " and chain " << chain << " in " << pdbname_base;
 			}
 
@@ -192,8 +191,8 @@ public:
 
 
 
-    return;
-  }
+		return;
+	}
 
 
 	virtual
@@ -215,59 +214,59 @@ int main( int argc, char* argv[] )
 	option.add( local::hsasa_residue_cutoff, "hydrophobic sasa per residue").def(50);
 
 
-  devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go(new zinc_helix_cap);
+	devel::init(argc, argv);
+	protocols::jd2::JobDistributor::get_instance()->go(new zinc_helix_cap);
 
 	TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
 
-  TR << "************************d**o**n**e**************************************" << std::endl;
+	TR << "************************d**o**n**e**************************************" << std::endl;
 
-  return 0;
+	return 0;
 }
 
 
 
-		// //compute set of hbonds
-		// core::scoring::hbonds::HBondSet hbond_set;
-		// hbond_set.setup_for_residue_pair_energies( pose, false, false );
+// //compute set of hbonds
+// core::scoring::hbonds::HBondSet hbond_set;
+// hbond_set.setup_for_residue_pair_energies( pose, false, false );
 
 
 
-		// TR << "select resi ";
+// TR << "select resi ";
 
 
-		// for (Size res = 1; res <= pose.size(); res++) {
-		// 	bool is_helix( false );
+// for (Size res = 1; res <= pose.size(); res++) {
+//  bool is_helix( false );
 
-		// 		for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
-		// 			core::scoring::hbonds::HBondCOP hbond(hbond_set.hbond(i));
+//   for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
+//    core::scoring::hbonds::HBondCOP hbond(hbond_set.hbond(i));
 
-		// 			if(hbond->energy() > -0.5) { // arbitrary value for hbond strength cutoff
-		// 				continue;
-		// 			}
+//    if(hbond->energy() > -0.5) { // arbitrary value for hbond strength cutoff
+//     continue;
+//    }
 
-		// 			if( hbond->don_res() == res + 4 && hbond->don_hatm_is_backbone() ) {
-		// 				//this is a helical residue
-		// 				//TR << "res " << res << " don_res: " << hbond->don_res() << std::endl;
-		// 				is_helix = true;
-		// 				break;
-		// 			}
+//    if( hbond->don_res() == res + 4 && hbond->don_hatm_is_backbone() ) {
+//     //this is a helical residue
+//     //TR << "res " << res << " don_res: " << hbond->don_res() << std::endl;
+//     is_helix = true;
+//     break;
+//    }
 
-		// 			else if( hbond->acc_res() == res - 4 && hbond->acc_atm_is_protein_backbone() ) {
-		// 				//this is a helical residue
-		// 				//TR << "res " << res << " acc_res: " << hbond->acc_res() << std::endl;
-		// 				is_helix = true;
-		// 				break;
-		// 			}
+//    else if( hbond->acc_res() == res - 4 && hbond->acc_atm_is_protein_backbone() ) {
+//     //this is a helical residue
+//     //TR << "res " << res << " acc_res: " << hbond->acc_res() << std::endl;
+//     is_helix = true;
+//     break;
+//    }
 
-		// 		}
+//   }
 
-		// 		if( is_helix ) {
-		// 			//TR << "Residue " << res << " is helical" << std::endl;
-		// 		}
-		// 		else {
-		// 			TR << res << "+";
-		// 		}
+//   if( is_helix ) {
+//    //TR << "Residue " << res << " is helical" << std::endl;
+//   }
+//   else {
+//    TR << res << "+";
+//   }
 
-		// }
-		// TR << std::endl;
+// }
+// TR << std::endl;

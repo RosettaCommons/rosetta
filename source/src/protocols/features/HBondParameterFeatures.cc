@@ -74,7 +74,7 @@ using cppdb::statement;
 using cppdb::result;
 using basic::Tracer;
 
-static Tracer TR("protocols.features.HBondParameterFeatures");
+static THREAD_LOCAL Tracer TR("protocols.features.HBondParameterFeatures");
 
 HBondParameterFeatures::HBondParameterFeatures() :
 	FeaturesReporter(),

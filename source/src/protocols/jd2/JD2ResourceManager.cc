@@ -82,7 +82,7 @@ using utility::tag::Tag;
 using utility::tag::TagOP;
 using utility::tag::TagCOP;
 
-static Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
+static THREAD_LOCAL Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
 
 JD2ResourceManagerCreator::~JD2ResourceManagerCreator() = default;
 

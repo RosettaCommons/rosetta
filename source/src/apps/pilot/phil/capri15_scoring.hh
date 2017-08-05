@@ -139,7 +139,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-//static basic::Tracer TR( "apps.pilot.phil.loop_model"  );
+//static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.loop_model"  );
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
@@ -226,23 +226,23 @@ retrieve_capri_data_from_pose( pose::Pose const & pose )
 
 /**
 
-	 centroid score for docking / loop building:
+centroid score for docking / loop building:
 
-	 "cyan" experimental data
-	 reward RNA contacts to conserved residues in protein
+"cyan" experimental data
+reward RNA contacts to conserved residues in protein
 
-	 for the latter, seems like we need an alignment to t033_.fasta ? In case we've done some trimming??
+for the latter, seems like we need an alignment to t033_.fasta ? In case we've done some trimming??
 
-	 K/R     centroid contacts to phosphate backbone OP2/OP1
-	 S/T/N/Q centroid contacts to phosphate backbone OP2/OP1
-	 D/E/H   centroid contacts to O2'
+K/R     centroid contacts to phosphate backbone OP2/OP1
+S/T/N/Q centroid contacts to phosphate backbone OP2/OP1
+D/E/H   centroid contacts to O2'
 
-	 vdw/hybrid vdw
+vdw/hybrid vdw
 
-	 backbone O to O2'
-	 backbone N to OP2, OP1
+backbone O to O2'
+backbone N to OP2, OP1
 
-	 distance between SAM CE and rGU N1
+distance between SAM CE and rGU N1
 
 **/
 
@@ -284,23 +284,23 @@ public:
 	virtual
 	void
 	eval_atom_derivative(
-											 id::AtomID const &,
-											 pose::Pose const &,
-											 kinematics::DomainMap const &,
-											 ScoreFunction const &,
-											 EnergyMap const &,
-											 Vector &,
-											 Vector &
-											 ) const {}
+		id::AtomID const &,
+		pose::Pose const &,
+		kinematics::DomainMap const &,
+		ScoreFunction const &,
+		EnergyMap const &,
+		Vector &,
+		Vector &
+	) const {}
 
 	virtual
 	void
 	eval_intrares_energy(
-											 conformation::Residue const &,
-											 pose::Pose const &,
-											 ScoreFunction const &,
-											 EnergyMap &
-											 ) const {}
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const {}
 
 
 	virtual
@@ -350,7 +350,7 @@ CapriTwoBodyEnergy::residue_pair_energy(
 		return;
 
 	} else if ( ( rsd1.is_RNA() && rsd2.is_protein() ) ||
-							( rsd2.is_RNA() && rsd1.is_protein() ) ) {
+			( rsd2.is_RNA() && rsd1.is_protein() ) ) {
 		// protein-rna
 
 		Residue const & protein_rsd( rsd1.is_protein() ? rsd1 : rsd2 );
@@ -430,15 +430,15 @@ CapriTwoBodyEnergy::residue_pair_energy(
 
 /**
 
-	 Updated version of experimental constraints scoring, plus distance score between SAM CE and rGU N1 and conservation
-	 scoring.
+Updated version of experimental constraints scoring, plus distance score between SAM CE and rGU N1 and conservation
+scoring.
 
-	 Color code:
+Color code:
 
-	 Blue == "must" make an atomic contact with protein
-	 Cyan == would be nice to hace protein nearby (say within 8-10 Angstroms)
-	 Pink == no protein within 8-10 A
-	 Red == no protein in atomic contact.
+Blue == "must" make an atomic contact with protein
+Cyan == would be nice to hace protein nearby (say within 8-10 Angstroms)
+Pink == no protein within 8-10 A
+Red == no protein in atomic contact.
 
 **/
 
@@ -476,10 +476,10 @@ public:
 	virtual
 	void
 	finalize_total_energy(
-												pose::Pose & pose,
-												ScoreFunction const &,
-												EnergyMap & emap
-												) const;
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
 	virtual
 	Distance
@@ -551,9 +551,9 @@ CapriTotalEnergy::read_datafile()
 
 void
 CapriTotalEnergy::setup_rna_atoms_for_pose(
-																					 pose::Pose const & pose,
-																					 utility::vector1< utility::vector1< AtomID > > & rna_atoms
-																					 ) const
+	pose::Pose const & pose,
+	utility::vector1< utility::vector1< AtomID > > & rna_atoms
+) const
 {
 	rna_atoms.clear();
 	rna_atoms.resize( n_experimental_constraint_scores );
@@ -578,10 +578,10 @@ CapriTotalEnergy::setup_rna_atoms_for_pose(
 /// @details  Calculates the cyan score and the conservation score
 void
 CapriTotalEnergy::finalize_total_energy(
-																				pose::Pose & pose,
-																				ScoreFunction const &,
-																				EnergyMap & emap
-																				) const
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const
 {
 	// total guesses
 	Real const conservation_bonus( -1.0 );
@@ -619,16 +619,16 @@ CapriTotalEnergy::finalize_total_energy(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	for ( CapriData::ConservedResidues::const_iterator it= capri_data.conserved_residues.begin();
-				it != capri_data.conserved_residues.end(); ++it ) {
+			it != capri_data.conserved_residues.end(); ++it ) {
 		Size const seqpos( it->first );
 		if ( pose.residue( seqpos ).name1() != it->second ) {
 			utility_exit_with_message( "sequence mismath in capri15 conservation score" );
 		}
 		Size rna_nbr_count(0);
 		for ( utility::graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
-						irue = energy_graph.get_node( seqpos )->const_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
+				irue = energy_graph.get_node( seqpos )->const_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const other_pos( edge->get_other_ind( seqpos ) );
 			if ( pose.residue( other_pos ).is_RNA() ) ++rna_nbr_count;
@@ -649,16 +649,16 @@ CapriTotalEnergy::finalize_total_energy(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 CapriTotalEnergy::score_experimental_constraints(
-																								 pose::Pose const & pose,
-																								 //bool const protein_is_fullatom,
-																								 EnergyMap & emap
-																								 ) const
+	pose::Pose const & pose,
+	//bool const protein_is_fullatom,
+	EnergyMap & emap
+) const
 {
 	/**
-		 Blue == "must" make an atomic contact with protein
-		 Cyan == would be nice to hace protein nearby (say within 8-10 Angstroms)
-		 Pink == no protein within 8-10 A
-		 Red == no protein in atomic contact.
+	Blue == "must" make an atomic contact with protein
+	Cyan == would be nice to hace protein nearby (say within 8-10 Angstroms)
+	Pink == no protein within 8-10 A
+	Red == no protein in atomic contact.
 	**/
 
 	utility::vector1< Real > constraint_distance_by_capri_score_type( n_experimental_constraint_scores, 0.0 );
@@ -706,7 +706,7 @@ CapriTotalEnergy::score_experimental_constraints(
 				if ( rsd.is_protein() ) {
 					Real const nbr_dis2( rna_atom_xyz.distance_squared( rsd.nbr_atom_xyz() ) );
 					Real const nbr_dis2_threshold( ( rsd.nbr_radius() + constraint_distance ) *
-																				 ( rsd.nbr_radius() + constraint_distance ) );
+						( rsd.nbr_radius() + constraint_distance ) );
 					Real const nbr_dis2_dev( std::max( 0.0, nbr_dis2 - nbr_dis2_threshold ) );
 					mindev  = std::min( mindev , nbr_dis2_dev );
 					mindis2 = std::min( mindis2, nbr_dis2 );
@@ -806,28 +806,28 @@ setup_capri_data( pose::Pose & pose, std::string const & pssm_file, id::Sequence
 }
 
 
-// 	/// first fill in the cyan constraint data
-// 	{
-// 		Size sam_pos( 0 );
-// 		for ( Size i=1; i<= pose.size(); ++i ) {
-// 			if ( pose.residue(i).name3() == "SAM" ) {
-// 				sam_pos = i;
-// 				break;
-// 			}
-// 		}
-// 		if ( !sam_pos ) utility_exit_with_message("no sam in pose!" );
+//  /// first fill in the cyan constraint data
+//  {
+//   Size sam_pos( 0 );
+//   for ( Size i=1; i<= pose.size(); ++i ) {
+//    if ( pose.residue(i).name3() == "SAM" ) {
+//     sam_pos = i;
+//     break;
+//    }
+//   }
+//   if ( !sam_pos ) utility_exit_with_message("no sam in pose!" );
 
-// 		capri_data->cyan_atom_map[ sam_pos +  8 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos +  9 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 10 ] = "N3";
-// 		capri_data->cyan_atom_map[ sam_pos + 15 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 17 ] = "N3";
-// 		capri_data->cyan_atom_map[ sam_pos + 18 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 30 ] = "N3";
-// 		capri_data->cyan_atom_map[ sam_pos + 45 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 46 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 59 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 60 ] = "N3";
-// 		capri_data->cyan_atom_map[ sam_pos + 61 ] = "N1";
-// 		capri_data->cyan_atom_map[ sam_pos + 71 ] = "N3";
-// 	}
+//   capri_data->cyan_atom_map[ sam_pos +  8 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos +  9 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 10 ] = "N3";
+//   capri_data->cyan_atom_map[ sam_pos + 15 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 17 ] = "N3";
+//   capri_data->cyan_atom_map[ sam_pos + 18 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 30 ] = "N3";
+//   capri_data->cyan_atom_map[ sam_pos + 45 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 46 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 59 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 60 ] = "N3";
+//   capri_data->cyan_atom_map[ sam_pos + 61 ] = "N1";
+//   capri_data->cyan_atom_map[ sam_pos + 71 ] = "N3";
+//  }

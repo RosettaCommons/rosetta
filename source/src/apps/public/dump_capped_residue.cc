@@ -96,7 +96,7 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-static basic::Tracer TR("DumpCapped");
+static THREAD_LOCAL basic::Tracer TR("DumpCapped");
 
 // application specific options
 namespace dumper {

@@ -147,7 +147,7 @@ using namespace basic::options::OptionKeys;
 using namespace core::pose;
 using namespace core;
 
-static basic::Tracer TR("denovo_density");
+static THREAD_LOCAL basic::Tracer TR("denovo_density");
 
 // helper function: read CAs from a PDB
 void

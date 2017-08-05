@@ -53,7 +53,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "protocols.membrane.SpinAroundPartnerMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.SpinAroundPartnerMover" );
 
 namespace protocols {
 namespace membrane {

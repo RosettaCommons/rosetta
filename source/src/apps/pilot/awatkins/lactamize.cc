@@ -119,7 +119,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("Lactamize");
+static THREAD_LOCAL basic::Tracer TR("Lactamize");
 
 void
 find_lactams( Pose & pose ) {

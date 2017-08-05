@@ -89,7 +89,7 @@ using basic::database::safely_prepare_statement;
 using ObjexxFCL::FArray3D;
 using cppdb::statement;
 
-static Tracer TR("protocols.features.AtomAtomPairFeatures");
+static THREAD_LOCAL Tracer TR("protocols.features.AtomAtomPairFeatures");
 
 AtomAtomPairFeatures::AtomAtomPairFeatures() :
 	min_dist_(0.0),

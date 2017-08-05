@@ -35,7 +35,7 @@
 // C++ headers
 #include <cmath>
 
-static basic::Tracer TR( "core.pose.rna.RNA_SuiteName" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_SuiteName" );
 
 namespace core {
 namespace pose {

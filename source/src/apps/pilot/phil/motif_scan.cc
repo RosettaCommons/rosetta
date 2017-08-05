@@ -112,7 +112,7 @@ using utility::vector1;
 using std::string;
 
 static THREAD_LOCAL basic::Tracer tw( "demo.phil.motif_scan", basic::t_warning );
-//static basic::Tracer td( "demo.phil.motif_scan", basic::t_debug );
+//static THREAD_LOCAL basic::Tracer td( "demo.phil.motif_scan", basic::t_debug );
 static THREAD_LOCAL basic::Tracer tt( "demo.phil.motif_scan", basic::t_trace );
 
 
@@ -218,9 +218,9 @@ make_dna_only_pose( pose::Pose const & pose, Pose & dna_pose )//, vector1< Size 
 			} else {
 				dna_pose.append_residue_by_bond( rsd );
 			}
-// 			old2new[ i ] = dna_pose.size();
-// 		} else {
-// 			old2new[ i ] = 0;
+			//    old2new[ i ] = dna_pose.size();
+			//   } else {
+			//    old2new[ i ] = 0;
 		}
 	}
 }
@@ -229,13 +229,13 @@ make_dna_only_pose( pose::Pose const & pose, Pose & dna_pose )//, vector1< Size 
 class MotifScanMover : public moves::Mover {
 public:
 
-// 	MotifScanMover( Size const seqpos, string const & mode, ScoreFunctionCOP scorefxn ):
-// 		seqpos_( seqpos ),
-// 		mode_( mode ),
-// 		scorefxn_( scorefxn )
-// 	{
-// 		type( "mscan_"+mode );
-// 	}
+	//  MotifScanMover( Size const seqpos, string const & mode, ScoreFunctionCOP scorefxn ):
+	//   seqpos_( seqpos ),
+	//   mode_( mode ),
+	//   scorefxn_( scorefxn )
+	//  {
+	//   type( "mscan_"+mode );
+	//  }
 
 	MotifScanMover( string const & mode, ScoreFunctionCOP scorefxn ):
 		seqpos_( 0 ),
@@ -278,16 +278,16 @@ private:
 
 void
 single_position_motif_scan(
-													 Pose const & start_pose,
-													 ScoreFunction const & scorefxn,
-													 Size const seqpos,
-													 protocols::moves::Mover & complex_mover,
-													 protocols::moves::Mover & dna_mover,
-													 std::string const & tag,
-													 Real const KT,
-													 bool const dump_pdbs,
-													 MotifColumn & prob
-													 )
+	Pose const & start_pose,
+	ScoreFunction const & scorefxn,
+	Size const seqpos,
+	protocols::moves::Mover & complex_mover,
+	protocols::moves::Mover & dna_mover,
+	std::string const & tag,
+	Real const KT,
+	bool const dump_pdbs,
+	MotifColumn & prob
+)
 {
 	prob.clear();
 
@@ -318,7 +318,7 @@ single_position_motif_scan(
 
 		if ( dump_pdbs ) {
 			pose.dump_scored_pdb( tag+"motif_scan_"+lead_zero_string_of( seqpos, 4 )+pose.residue(seqpos).name1()+".pdb",
-														scorefxn );
+				scorefxn );
 		}
 		// make dna-only pose, optimize as requested
 		Pose dna_pose;
@@ -376,7 +376,7 @@ contact_model_prediction( Pose const & pose, Size const seqpos )
 		assert( rsd1.is_DNA() );
 		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
-			if ( rsd2.is_protein( )) {
+			if ( rsd2.is_protein( ) ) {
 				for ( Size ii=rsd1.first_sidechain_atom(); ii<= rsd1.nheavyatoms(); ++ii ) {
 					for ( Size jj=1; jj<= rsd2.nheavyatoms(); ++jj ) {
 						if ( rsd1.xyz(ii).distance_squared( rsd2.xyz(jj) ) < dis2_cutoff ) ++N;
@@ -595,10 +595,10 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

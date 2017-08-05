@@ -38,7 +38,7 @@
 #include <apps/pilot/rayyrw/rms_util.hh>
 #include <apps/pilot/rayyrw/util.hh>
 
-static basic::Tracer TR("cal_nonoverlap_score");
+static THREAD_LOCAL basic::Tracer TR("cal_nonoverlap_score");
 
 using namespace ObjexxFCL::format;
 

@@ -104,7 +104,7 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-static basic::Tracer TR("PeptoidHBS");
+static THREAD_LOCAL basic::Tracer TR("PeptoidHBS");
 
 int
 main( int argc, char* argv[] )

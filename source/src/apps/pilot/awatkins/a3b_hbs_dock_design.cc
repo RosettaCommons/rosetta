@@ -129,7 +129,7 @@ using utility::file::FileName;
 //
 
 // tracer - used to replace cout
-static basic::Tracer TR("A3BHDDM");
+static THREAD_LOCAL basic::Tracer TR("A3BHDDM");
 
 // application specific options
 namespace a3b_hddm {

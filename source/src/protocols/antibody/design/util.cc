@@ -50,7 +50,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static basic::Tracer TR("protocols.antibody.design.util");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.util");
 
 namespace protocols {
 namespace antibody {

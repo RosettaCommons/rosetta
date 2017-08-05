@@ -156,7 +156,7 @@ namespace loop_grower {
 
 using namespace core;
 
-static basic::Tracer TR("protocols.loop_grower.FragmentExtension");
+static THREAD_LOCAL basic::Tracer TR("protocols.loop_grower.FragmentExtension");
 //static numeric::random::RandomGenerator RG(8403178);
 
 /////////////

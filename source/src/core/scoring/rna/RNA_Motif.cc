@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.scoring.rna.RNA_Motif" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_Motif" );
 
 namespace core {
 namespace scoring {

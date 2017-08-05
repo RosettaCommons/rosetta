@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.scoring.methods.FreeDOF_Options" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.FreeDOF_Options" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

@@ -43,7 +43,7 @@ namespace sewing  {
 namespace sampling {
 namespace requirements {
 
-static basic::Tracer tr("protocols.sewing.sampling.requirements.RequirementFactory");
+static THREAD_LOCAL basic::Tracer tr("protocols.sewing.sampling.requirements.RequirementFactory");
 
 /// @details Private constructor insures correctness of singleton.
 RequirementFactory::RequirementFactory() {}

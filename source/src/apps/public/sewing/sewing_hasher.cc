@@ -46,7 +46,7 @@
 #include <set>
 #include <iterator>
 
-static basic::Tracer TR("sewing_hasher");
+static THREAD_LOCAL basic::Tracer TR("sewing_hasher");
 
 int
 main( int argc, char * argv [] ) {

@@ -55,7 +55,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "protocols.membrane.MPMutateRelaxMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.MPMutateRelaxMover" );
 
 namespace protocols {
 namespace membrane {

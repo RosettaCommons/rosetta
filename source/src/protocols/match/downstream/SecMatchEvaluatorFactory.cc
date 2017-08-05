@@ -29,7 +29,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-//static basic::Tracer TR( "protocols.match.downstream.SecMatchEvaluatorFactory" );
+//static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.SecMatchEvaluatorFactory" );
 
 
 SecMatchResiduePairEvaluatorOP

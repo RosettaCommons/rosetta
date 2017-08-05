@@ -59,24 +59,24 @@
 //Protocol headers
 #include <protocols/features/ProteinSilentReport.hh>
 
-static basic::Tracer TR("BundleDumper");
+static THREAD_LOCAL basic::Tracer TR("BundleDumper");
 
 namespace BundleDumper {
-	basic::options::FileOptionKey const pair_list( "pair_list" );
-	basic::options::IntegerOptionKey const num_bundles( "num_bundles" );
+basic::options::FileOptionKey const pair_list( "pair_list" );
+basic::options::IntegerOptionKey const num_bundles( "num_bundles" );
 }
 
 typedef utility::vector1< std::pair<protocols::features::StructureID, core::Size> > BundleKeys;
 
 BundleKeys
 get_pair_keys_from_list(
-		std::string const & filename
+	std::string const & filename
 ){
 	utility::io::izstream stream(filename);
 	std::string line;
 
 	BundleKeys keys;
-	while( getline( stream, line ) ) {
+	while ( getline( stream, line ) ) {
 		utility::vector1<std::string> tokens = utility::split(line);
 		runtime_assert(tokens.size() == 2);
 		protocols::features::StructureID struct_id = utility::string2int(tokens[1]);
@@ -105,8 +105,8 @@ get_random_bundle_ids(
 	protocols::features::StructureID struct_id;
 	core::Size bundle_id;
 	BundleKeys ids;
-	while(struct_id_res.next())
-	{
+	while ( struct_id_res.next() )
+			{
 		struct_id_res >> struct_id >> bundle_id;
 		ids.push_back(std::make_pair(struct_id, bundle_id));
 	}
@@ -124,22 +124,22 @@ dump_bundle_pose(
 		"SELECT h.residue_begin, h.residue_end\n"
 		"FROM bundle_helices h\n"
 		"WHERE\n"
-		"	h.struct_id = ? AND"
-		"	h.bundle_id = ?;";
+		"\th.struct_id = ? AND"
+		"\th.bundle_id = ?;";
 
 	cppdb::statement select_resnums_stmt =
 		basic::database::safely_prepare_statement(select_resnums, db_session);
-	
+
 	protocols::features::ProteinSilentReportOP protein_silent_report = new protocols::features::ProteinSilentReport();
-	
+
 	select_resnums_stmt.bind(1, struct_id);
 	select_resnums_stmt.bind(2, bundle_id);
 	cppdb::result res = basic::database::safely_read_from_database(select_resnums_stmt);
 	std::set<core::Size> resnums;
-	while(res.next()){
+	while ( res.next() ) {
 		core::Size residue_begin, residue_end;
 		res >> residue_begin >> residue_end;
-		for(core::Size i=std::min(residue_begin, residue_end); i<=std::max(residue_begin, residue_end); ++i){
+		for ( core::Size i=std::min(residue_begin, residue_end); i<=std::max(residue_begin, residue_end); ++i ) {
 			resnums.insert(i);
 		}
 	}
@@ -163,25 +163,25 @@ dump_pair_pose(
 		"SELECT bh.residue_begin, bh.residue_end\n"
 		"FROM helices bh\n"
 		"JOIN helix_pairs hp\n"
-		"	ON hp.helix_id_1 = bh.helix_id OR\n"
-		"	hp.helix_id_2 = bh.helix_id\n"
+		"\tON hp.helix_id_1 = bh.helix_id OR\n"
+		"\thp.helix_id_2 = bh.helix_id\n"
 		"WHERE\n"
-		"	bh.struct_id = ? AND"
-		"	hp.pair_id = ?;";
+		"\tbh.struct_id = ? AND"
+		"\thp.pair_id = ?;";
 
 	cppdb::statement select_resnums_stmt =
 		basic::database::safely_prepare_statement(select_resnums, db_session);
-	
+
 	protocols::features::ProteinSilentReportOP protein_silent_report = new protocols::features::ProteinSilentReport();
-	
+
 	select_resnums_stmt.bind(1, struct_id);
 	select_resnums_stmt.bind(2, pair_id);
 	cppdb::result res = basic::database::safely_read_from_database(select_resnums_stmt);
 	std::set<core::Size> resnums;
-	while(res.next()){
+	while ( res.next() ) {
 		core::Size residue_begin, residue_end;
 		res >> residue_begin >> residue_end;
-		for(core::Size i=std::min(residue_begin, residue_end); i<=std::max(residue_begin, residue_end); ++i){
+		for ( core::Size i=std::min(residue_begin, residue_end); i<=std::max(residue_begin, residue_end); ++i ) {
 			resnums.insert(i);
 		}
 	}
@@ -221,15 +221,14 @@ main( int argc, char * argv [] )
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
 
 	BundleKeys keys;
-	if(option[BundleDumper::pair_list].user()) {
+	if ( option[BundleDumper::pair_list].user() ) {
 		keys = get_pair_keys_from_list(option[BundleDumper::pair_list]());
-		for(core::Size i=1; i<=keys.size(); ++i){
+		for ( core::Size i=1; i<=keys.size(); ++i ) {
 			dump_pair_pose(db_session, keys[i].first, keys[i].second);
 		}
-	}
-	else {
+	} else {
 		keys = get_random_bundle_ids(db_session, num_bundles);
-		for(core::Size i=1; i<=keys.size(); ++i){
+		for ( core::Size i=1; i<=keys.size(); ++i ) {
 			dump_bundle_pose(db_session, keys[i].first, keys[i].second);
 		}
 	}

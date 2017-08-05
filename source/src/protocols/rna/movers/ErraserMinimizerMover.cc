@@ -113,7 +113,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR( "protocols.rna.movers.ErraserMinimizerMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.movers.ErraserMinimizerMover" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

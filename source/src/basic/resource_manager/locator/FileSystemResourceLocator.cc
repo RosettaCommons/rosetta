@@ -42,7 +42,7 @@ using std::endl;
 using std::istream;
 using basic::Tracer;
 
-static Tracer TR("basic.resource_manager.locator.FileSystemResourceLocator");
+static THREAD_LOCAL Tracer TR("basic.resource_manager.locator.FileSystemResourceLocator");
 
 
 ///// FileSystemResourceLocatorCreator /////

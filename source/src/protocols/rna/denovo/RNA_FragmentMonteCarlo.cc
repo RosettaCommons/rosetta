@@ -55,7 +55,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tools/make_vector.hh>
 
-static basic::Tracer TR( "protocols.rna.denovo.RNA_FragmentMonteCarlo" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.RNA_FragmentMonteCarlo" );
 
 using namespace core;
 using namespace ObjexxFCL::format; // AUTO USING NS

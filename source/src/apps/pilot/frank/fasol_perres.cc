@@ -102,7 +102,7 @@ using namespace core::scoring::etable;
 using namespace core::scoring::etable::count_pair;
 using namespace core::scoring::methods;
 
-static basic::Tracer TR("fasol_refit");
+static THREAD_LOCAL basic::Tracer TR("fasol_refit");
 
 OPT_1GRP_KEY(Real, fasol, del_ddg)
 OPT_1GRP_KEY(Real, fasol, max_sasa)

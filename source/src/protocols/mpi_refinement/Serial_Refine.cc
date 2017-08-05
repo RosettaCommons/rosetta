@@ -66,7 +66,7 @@ namespace mpi_refinement {
 using namespace protocols::wum;
 using namespace core;
 
-static basic::Tracer TR("protocols.mpi_refinement.SerialRefine");
+static THREAD_LOCAL basic::Tracer TR("protocols.mpi_refinement.SerialRefine");
 
 
 Serial_Refine::Serial_Refine()

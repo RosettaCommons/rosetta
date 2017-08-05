@@ -99,7 +99,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR( "MESM" );
+static THREAD_LOCAL basic::Tracer TR( "MESM" );
 
 // application specific options
 namespace mesm {

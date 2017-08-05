@@ -49,7 +49,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR( "protocols.sewing.AssemblyConstraintsMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sewing.AssemblyConstraintsMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////// ReadNativeRotamersFile TaskOperation  Functions   ////////////////////

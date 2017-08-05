@@ -25,36 +25,36 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/util/Tracer.hh>
+#include <basic/Tracer.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 using namespace core;
 
-static core::util::Tracer trFilteredAbrelax("FilteredAbrelax");
+static THREAD_LOCAL basic::Tracer trFilteredAbrelax("FilteredAbrelax");
 
 
 int main( int argc, char * argv [] ) {
-    try {
-    using namespace protocols;
-    using namespace protocols::jobdist;
-    using namespace protocols::moves;
-    using namespace core::options;
-    using namespace core::options::OptionKeys;
+	try {
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace core::options;
+		using namespace core::options::OptionKeys;
 
-//    register_options();
-    devel::init(argc, argv);
+		//    register_options();
+		devel::init(argc, argv);
 
-    try {
-        protocols::abinitio::AbrelaxMover runMe;
-	not_universal_main( runMe );
-    } catch ( utility::excn::EXCN_Base &excn ) {
-    	std::cerr<< excn.msg() <<std::endl;
-    }
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		try {
+			protocols::abinitio::AbrelaxMover runMe;
+			not_universal_main( runMe );
+		} catch ( utility::excn::EXCN_Base &excn ) {
+			std::cerr<< excn.msg() <<std::endl;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
+	}
 
-    return 0;
+	return 0;
 }

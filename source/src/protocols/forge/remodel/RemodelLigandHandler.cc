@@ -75,7 +75,7 @@ namespace remodel {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static basic::Tracer TR( "protocols.forge.remodel.RemodelLigandHandler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelLigandHandler" );
 
 // RNG
 //static numeric::random::RandomGenerator RG( 342342 ); // magic number, don't change

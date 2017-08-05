@@ -10,9 +10,9 @@
 /// @brief Computes a ligand's buried polar unsatisfied atoms
 ///
 /// @param[in] -s <PDBFIL>, where <PDBFIL> is the path to the PDB file
-/// 	containing the pose
+///  containing the pose
 /// @param[in] -extra_res_fa <PARFIL>, where <PARFIL> is the path to the params
-/// 	file describing the ligand
+///  file describing the ligand
 ///
 /// @details It is assumed that the ligand is the last residue of the pose
 ///
@@ -41,7 +41,7 @@
 #include <set>
 #include <string>
 
-static basic::Tracer TR( "apps.pilot.list_accpt_pos" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.list_accpt_pos" );
 
 using core::Size;
 using core::Real;
@@ -86,7 +86,7 @@ int main( int argc, char * argv [] )
 	string burunsat_calc_name = "burunsat";
 	core::pose::metrics::PoseMetricCalculatorOP burunsat_calc =
 		new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(
-			sasa_calc_name, hbond_calc_name, lig);
+		sasa_calc_name, hbond_calc_name, lig);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator(
 		burunsat_calc_name, burunsat_calc );
 

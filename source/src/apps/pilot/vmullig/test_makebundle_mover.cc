@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static basic::Tracer TR( "apps.pilot.vmullig.test_makebundle_mover" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.test_makebundle_mover" );
 
 //Options (ugh -- global variables):
 OPT_KEY (Integer, animation_frames)
@@ -159,7 +159,7 @@ main( int argc, char * argv [] )
 		register_options();
 		devel::init(argc, argv);
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Starting test_makebundle_mover.cc" << std::endl;
 			TR << "Pilot app created 30 October 2014 by Vikram K. Mulligan, Ph.D., Baker laboratory." << std::endl;
 			TR << "For questions, contact vmullig@uw.edu." << std::endl << std::endl;
@@ -169,15 +169,15 @@ main( int argc, char * argv [] )
 
 		runtime_assert_string_msg( option[residue_repeats]().size() >= helixcount, "A value must be provided with the -residue_repeats flag for EACH helix." );
 		runtime_assert_string_msg( option[r0]().size() >= helixcount, "A value must be provided with the -r0 flag for EACH helix." );
-		if(option[r0_end].user()) runtime_assert_string_msg( option[r0_end]().size() >= helixcount, "A value must be provided with the -r0_end flag for EACH helix if this flag is used." );
-		if(option[delta_omega0_end].user()) runtime_assert_string_msg( option[delta_omega0_end]().size() >= helixcount, "A value must be provided with the -delta_omega0_end flag for EACH helix if this flag is used." );
-		if(option[delta_omega1_end].user()) runtime_assert_string_msg( option[delta_omega1_end]().size() >= helixcount, "A value must be provided with the -delta_omega1_end flag for EACH helix if this flag is used." );
-		if(option[delta_t_end].user()) runtime_assert_string_msg( option[delta_t_end]().size() >= helixcount, "A value must be provided with the -delta_t_end flag for EACH helix if this flag is used." );
-		if(option[z0_offset_end].user()) runtime_assert_string_msg( option[z0_offset_end]().size() >= helixcount, "A value must be provided with the -z0_offset_end flag for EACH helix if this flag is used." );
-		if(option[epsilon_end].user()) runtime_assert_string_msg( option[epsilon_end]().size() >= helixcount, "A value must be provided with the -epsilon_end flag for EACH helix if this flag is used." );
-		if(option[z1_offset_end].user()) runtime_assert_string_msg( option[z1_offset_end]().size() >= helixcount, "A value must be provided with the -z1_offset_end flag for EACH helix if this flag is used." );
+		if ( option[r0_end].user() ) runtime_assert_string_msg( option[r0_end]().size() >= helixcount, "A value must be provided with the -r0_end flag for EACH helix if this flag is used." );
+		if ( option[delta_omega0_end].user() ) runtime_assert_string_msg( option[delta_omega0_end]().size() >= helixcount, "A value must be provided with the -delta_omega0_end flag for EACH helix if this flag is used." );
+		if ( option[delta_omega1_end].user() ) runtime_assert_string_msg( option[delta_omega1_end]().size() >= helixcount, "A value must be provided with the -delta_omega1_end flag for EACH helix if this flag is used." );
+		if ( option[delta_t_end].user() ) runtime_assert_string_msg( option[delta_t_end]().size() >= helixcount, "A value must be provided with the -delta_t_end flag for EACH helix if this flag is used." );
+		if ( option[z0_offset_end].user() ) runtime_assert_string_msg( option[z0_offset_end]().size() >= helixcount, "A value must be provided with the -z0_offset_end flag for EACH helix if this flag is used." );
+		if ( option[epsilon_end].user() ) runtime_assert_string_msg( option[epsilon_end]().size() >= helixcount, "A value must be provided with the -epsilon_end flag for EACH helix if this flag is used." );
+		if ( option[z1_offset_end].user() ) runtime_assert_string_msg( option[z1_offset_end]().size() >= helixcount, "A value must be provided with the -z1_offset_end flag for EACH helix if this flag is used." );
 		runtime_assert_string_msg( option[omega0]().size() >= helixcount, "A value must be provided with the -omega0 flag for EACH helix." );
-		if(option[omega0_end].user()) runtime_assert_string_msg( option[omega0_end]().size() >= helixcount, "A value must be provided with the -omega0_end flag for EACH helix if this flag is used." );
+		if ( option[omega0_end].user() ) runtime_assert_string_msg( option[omega0_end]().size() >= helixcount, "A value must be provided with the -omega0_end flag for EACH helix if this flag is used." );
 		runtime_assert_string_msg( option[delta_omega0]().size() >= helixcount, "A value must be provided with the -delta_omega0 flag for EACH helix." );
 		runtime_assert_string_msg( option[invert_helix]().size() >= helixcount, "A value must be provided with the -invert_helix flag for EACH helix." );
 		runtime_assert_string_msg( option[delta_t]().size() >= helixcount, "A value must be provided with the -delta_t flag for EACH helix." );
@@ -185,14 +185,14 @@ main( int argc, char * argv [] )
 		runtime_assert_string_msg( option[z0_offset]().size() >= helixcount, "A value must be provided with the -z0_offset flag for EACH helix." );
 		runtime_assert_string_msg( option[epsilon]().size() >= helixcount, "A value must be provided with the -epsilon flag for EACH helix." );
 		runtime_assert_string_msg( option[z1_offset]().size() >= helixcount, "A value must be provided with the -z1_offset flag for EACH helix." );
-		if(option[animation_cyclic].user()) runtime_assert_string_msg( option[animation_frames]() >= 2, "If the -animation_cyclic flag is used, the animation must be at least 2 frames long." );
+		if ( option[animation_cyclic].user() ) runtime_assert_string_msg( option[animation_frames]() >= 2, "If the -animation_cyclic flag is used, the animation must be at least 2 frames long." );
 
 		core::Size const nframes = (option[animation_frames]() > 2 ? static_cast<core::Size>(option[animation_frames]()) : 1);
 		core::Real cur_frame_time(0.0);
 
-		for(core::Size iframe=1; iframe<=nframes; ++iframe) {
+		for ( core::Size iframe=1; iframe<=nframes; ++iframe ) {
 			cur_frame_time = static_cast<core::Real>(iframe-1) / static_cast<core::Real>(nframes-1); //Will run from 0 to 1
-			if(option[animation_cyclic].user()) {
+			if ( option[animation_cyclic].user() ) {
 				cur_frame_time = static_cast<core::Real>(iframe-1) / static_cast<core::Real>(nframes); //Will run from 0 to 1-(1/nframes)
 				cur_frame_time = -0.5*cos(cur_frame_time*numeric::constants::d::pi_2)+0.5; //Will sinusoidally oscillate from 0 to 1 and back to (almost) 0
 			}
@@ -204,23 +204,23 @@ main( int argc, char * argv [] )
 			makebundle.set_default_allow_bondangles( option[set_bondangles]() );
 			makebundle.set_default_allow_dihedrals( option[set_dihedrals]() );
 
-			for(core::Size ihelix=1; ihelix<=helixcount; ++ihelix) {
+			for ( core::Size ihelix=1; ihelix<=helixcount; ++ihelix ) {
 				core::Real r0val = option[r0]()[ihelix];
-				if(option[animation_frames]()>2 && option[r0_end].user()) r0val = (1.0-cur_frame_time)*option[r0]()[ihelix] + cur_frame_time*option[r0_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[r0_end].user() ) r0val = (1.0-cur_frame_time)*option[r0]()[ihelix] + cur_frame_time*option[r0_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real omega0val = option[omega0]()[ihelix];
-				if(option[animation_frames]()>2 && option[omega0_end].user()) omega0val = (1.0-cur_frame_time)*option[omega0]()[ihelix] + cur_frame_time*option[omega0_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[omega0_end].user() ) omega0val = (1.0-cur_frame_time)*option[omega0]()[ihelix] + cur_frame_time*option[omega0_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real deltaomega0val = option[delta_omega0]()[ihelix];
-				if(option[animation_frames]()>2 && option[delta_omega0_end].user()) deltaomega0val = (1.0-cur_frame_time)*option[delta_omega0]()[ihelix] + cur_frame_time*option[delta_omega0_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[delta_omega0_end].user() ) deltaomega0val = (1.0-cur_frame_time)*option[delta_omega0]()[ihelix] + cur_frame_time*option[delta_omega0_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real deltaomega1val = option[delta_omega1]()[ihelix];
-				if(option[animation_frames]()>2 && option[delta_omega1_end].user()) deltaomega1val = (1.0-cur_frame_time)*option[delta_omega1]()[ihelix] + cur_frame_time*option[delta_omega1_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[delta_omega1_end].user() ) deltaomega1val = (1.0-cur_frame_time)*option[delta_omega1]()[ihelix] + cur_frame_time*option[delta_omega1_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real deltatval = option[delta_t]()[ihelix];
-				if(option[animation_frames]()>2 && option[delta_t_end].user()) deltatval = (1.0-cur_frame_time)*option[delta_t]()[ihelix] + cur_frame_time*option[delta_t_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[delta_t_end].user() ) deltatval = (1.0-cur_frame_time)*option[delta_t]()[ihelix] + cur_frame_time*option[delta_t_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real z0offsetval = option[z0_offset]()[ihelix];
-				if(option[animation_frames]()>2 && option[z0_offset_end].user()) z0offsetval = (1.0-cur_frame_time)*option[z0_offset]()[ihelix] + cur_frame_time*option[z0_offset_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[z0_offset_end].user() ) z0offsetval = (1.0-cur_frame_time)*option[z0_offset]()[ihelix] + cur_frame_time*option[z0_offset_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real epsilonval = option[epsilon]()[ihelix];
-				if(option[animation_frames]()>2 && option[epsilon_end].user()) epsilonval = (1.0-cur_frame_time)*option[epsilon]()[ihelix] + cur_frame_time*option[epsilon_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[epsilon_end].user() ) epsilonval = (1.0-cur_frame_time)*option[epsilon]()[ihelix] + cur_frame_time*option[epsilon_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real z1offsetval = option[z1_offset]()[ihelix];
-				if(option[animation_frames]()>2 && option[z1_offset_end].user()) z1offsetval = (1.0-cur_frame_time)*option[z1_offset]()[ihelix] + cur_frame_time*option[z1_offset_end]()[ihelix]; //Linearly interpolate start and end values.
+				if ( option[animation_frames]()>2 && option[z1_offset_end].user() ) z1offsetval = (1.0-cur_frame_time)*option[z1_offset]()[ihelix] + cur_frame_time*option[z1_offset_end]()[ihelix]; //Linearly interpolate start and end values.
 
 				makebundle.add_helix();
 
@@ -242,7 +242,7 @@ main( int argc, char * argv [] )
 
 				utility::vector1 < core::Real > delta_z1vals = option[delta_z1_per_atom]();
 
-				if( option[minor_helix_params].user()) {
+				if ( option[minor_helix_params].user() ) {
 					makebundle.helix(ihelix)->set_minor_helix_params_from_file( option[minor_helix_params]() );
 				} else {
 					makebundle.helix(ihelix)->set_minor_helix_params( r1vals, option[omega1](), option[z1](), delta_omega1vals, delta_z1vals );
@@ -258,7 +258,7 @@ main( int argc, char * argv [] )
 			TR << "Wrote " << charbuffer << "." << std::endl;
 		}
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Finished test_makebundle_mover.cc.  Exiting." << std::endl;
 			TR.flush();
 		}

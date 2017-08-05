@@ -103,7 +103,7 @@ using namespace basic;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("CovDD");
+static THREAD_LOCAL basic::Tracer TR("CovDD");
 
 class CovalentPeptidomimeticDockDesign : public Mover {
 

@@ -66,7 +66,7 @@
 // C++ headers
 #include <iostream>
 
-static basic::Tracer TR("core.scoring.elec.GroupElec");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.elec.GroupElec");
 
 namespace core {
 namespace scoring {

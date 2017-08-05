@@ -37,7 +37,7 @@ using namespace core;
 namespace protocols {
 namespace mpi_refinement {
 
-static basic::Tracer TR("MPI.LHR.StructAvrger");
+static THREAD_LOCAL basic::Tracer TR("MPI.LHR.StructAvrger");
 
 // Constructor
 StructAvrgMover::StructAvrgMover( pose::Pose const &pose,

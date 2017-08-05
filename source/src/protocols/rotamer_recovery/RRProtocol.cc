@@ -37,7 +37,7 @@ namespace rotamer_recovery {
 /// @details Auto-generated virtual destructor
 RRProtocol::~RRProtocol() = default;
 
-static Tracer TR("protocol.moves.RRProtocol");
+static THREAD_LOCAL Tracer TR("protocol.moves.RRProtocol");
 
 bool
 RRProtocol::measure_rotamer_recovery(

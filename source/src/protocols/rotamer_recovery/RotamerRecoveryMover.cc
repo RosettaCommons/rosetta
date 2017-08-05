@@ -126,7 +126,7 @@ using protocols::rosetta_scripts::parse_score_function;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.rotamer_recovery.RotamerRecoveryMover");
+static THREAD_LOCAL Tracer TR("protocol.rotamer_recovery.RotamerRecoveryMover");
 
 RotamerRecoveryMover::RotamerRecoveryMover() :
 	rotamer_recovery_( /* NULL */ ),

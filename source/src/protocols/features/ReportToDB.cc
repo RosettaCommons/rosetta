@@ -135,7 +135,7 @@ using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::session;
 using utility::sql_database::sessionOP;
 
-static Tracer TR("protocols.features.ReportToDB");
+static THREAD_LOCAL Tracer TR("protocols.features.ReportToDB");
 
 ReportToDB::ReportToDB():
 	Mover("ReportToDB"),

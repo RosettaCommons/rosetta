@@ -108,7 +108,7 @@ using namespace basic;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("Vancomycin");
+static THREAD_LOCAL basic::Tracer TR("Vancomycin");
 
 void add_constraints(
 	core::pose::Pose & vancomycin

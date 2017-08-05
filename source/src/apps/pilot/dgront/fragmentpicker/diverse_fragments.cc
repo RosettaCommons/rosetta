@@ -1,7 +1,7 @@
 #include <devel/init.hh>
 
 #include <core/sequence/Sequence.hh>
-#include <core/util/Tracer.hh>
+#include <basic/Tracer.hh>
 
 // option key includes
 #include <core/options/option.hh>
@@ -33,7 +33,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static core::util::Tracer trace("fragmentpicker_integration_demo");
+static THREAD_LOCAL basic::Tracer trace("fragmentpicker_integration_demo");
 
 using namespace core;
 using namespace core::fragment;
@@ -57,67 +57,67 @@ void setup_nnmake_style_quota() {
 }
 
 int main(int argc, char * argv[]) {
-    try {
-	using namespace core;
-	using namespace core::sequence;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	try {
+		using namespace core;
+		using namespace core::sequence;
+		using namespace core::options;
+		using namespace core::options::OptionKeys;
 
-	register_options();
-	devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-//------------ CREATE A PICKER OBJECT
-//	FragmentPickerOP my_picker = new FragmentPicker("PValuedFragmentScoreManager");
-	FragmentPickerOP my_picker = new FragmentPicker();
+		//------------ CREATE A PICKER OBJECT
+		// FragmentPickerOP my_picker = new FragmentPicker("PValuedFragmentScoreManager");
+		FragmentPickerOP my_picker = new FragmentPicker();
 
-//------------ PLUG-IN SEQUENCE PROFILE
-	SequenceProfileOP q_prof(new SequenceProfile);
-	q_prof->read_from_checkpoint(option[in::file::checkpoint]());
-	my_picker->set_query_profile(q_prof);
+		//------------ PLUG-IN SEQUENCE PROFILE
+		SequenceProfileOP q_prof(new SequenceProfile);
+		q_prof->read_from_checkpoint(option[in::file::checkpoint]());
+		my_picker->set_query_profile(q_prof);
 
-//------------ LOAD SECONDARY STRUCTURE(s) - it is possible to load more than one
-//------------ TWO PARAMETERS: SS_FILE AND A TAG
-//----------- THE TAG MUST BE CONSISTENT WITH THE ONE GIVEN IN THE SCORE CONFIG FILE!!!!!
-	my_picker->read_ss_file(option[in::file::psipred_ss2](),"johny");
+		//------------ LOAD SECONDARY STRUCTURE(s) - it is possible to load more than one
+		//------------ TWO PARAMETERS: SS_FILE AND A TAG
+		//----------- THE TAG MUST BE CONSISTENT WITH THE ONE GIVEN IN THE SCORE CONFIG FILE!!!!!
+		my_picker->read_ss_file(option[in::file::psipred_ss2](),"johny");
 
-//------------ READ VALL  AND PLUG IT INTO THE PICKER
-	VallProviderOP chunks = new VallProvider();
-	chunks->vallChunksFromLibrary(option[in::file::vall]()[1]);
-	my_picker->set_vall(chunks);
+		//------------ READ VALL  AND PLUG IT INTO THE PICKER
+		VallProviderOP chunks = new VallProvider();
+		chunks->vallChunksFromLibrary(option[in::file::vall]()[1]);
+		my_picker->set_vall(chunks);
 
-//------------ FRAGMENT SIZE: WE NEED 9-MERS AND 3-MERS
-	my_picker->frag_sizes_.push_back(3);
-	my_picker->frag_sizes_.push_back(9);
+		//------------ FRAGMENT SIZE: WE NEED 9-MERS AND 3-MERS
+		my_picker->frag_sizes_.push_back(3);
+		my_picker->frag_sizes_.push_back(9);
 
-//------------ HOW MANY CANDIDATES, HOW MANY FRAGMENTS
-	my_picker->n_candidates_ = option[frags::n_candidates]();
-	my_picker->n_frags_ = option[frags::n_frags]();
-	trace.Info << "Picking " << my_picker->n_frags_ << " fragments based on "<<
-				my_picker->n_candidates_ << " candidates" << std::endl;
+		//------------ HOW MANY CANDIDATES, HOW MANY FRAGMENTS
+		my_picker->n_candidates_ = option[frags::n_candidates]();
+		my_picker->n_frags_ = option[frags::n_frags]();
+		trace.Info << "Picking " << my_picker->n_frags_ << " fragments based on "<<
+			my_picker->n_candidates_ << " candidates" << std::endl;
 
-//----------- SETUP SCORING SYSTEM
-	FragmentScoreManagerOP scoring = my_picker->get_score_manager();
-	scoring->create_scores(option[frags::scoring::config](), my_picker);
+		//----------- SETUP SCORING SYSTEM
+		FragmentScoreManagerOP scoring = my_picker->get_score_manager();
+		scoring->create_scores(option[frags::scoring::config](), my_picker);
 
-//----------- SETUP COLLECTOR (for candidates) AND SELECTOR (for final fragments)
-	//- this comparator is used for collecting
-	CompareTotalScore comparator( my_picker->get_score_manager() );
-	CandidatesCollectorOP collector = new BoundedCollector<CompareTotalScore> (
-		q_prof->length(), 	  // collector must know the size of query
-		my_picker->n_candidates_, // how many candidates to collect
-		comparator);		  // yes, here the comparator comes to sort fragments within the collector
-	my_picker->set_candidates_collector(3, collector);
-	my_picker->set_candidates_collector(9, collector);
-	my_picker->selector_ = new BestTotalScoreSelector(my_picker->n_frags_, scoring);
+		//----------- SETUP COLLECTOR (for candidates) AND SELECTOR (for final fragments)
+		//- this comparator is used for collecting
+		CompareTotalScore comparator( my_picker->get_score_manager() );
+		CandidatesCollectorOP collector = new BoundedCollector<CompareTotalScore> (
+			q_prof->length(),    // collector must know the size of query
+			my_picker->n_candidates_, // how many candidates to collect
+			comparator);    // yes, here the comparator comes to sort fragments within the collector
+		my_picker->set_candidates_collector(3, collector);
+		my_picker->set_candidates_collector(9, collector);
+		my_picker->selector_ = new BestTotalScoreSelector(my_picker->n_frags_, scoring);
 
-	my_picker->prefix_ = "div";
+		my_picker->prefix_ = "div";
 
-//----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
-//----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
-	my_picker->bounded_protocol();
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		//----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
+		//----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
+		my_picker->bounded_protocol();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 }

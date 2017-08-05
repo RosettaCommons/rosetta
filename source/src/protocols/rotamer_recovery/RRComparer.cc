@@ -55,7 +55,7 @@ RRComparer::parse_attributes_from_tag(
 )
 {}
 
-static Tracer TR("protocol.moves.RRComparer");
+static THREAD_LOCAL Tracer TR("protocol.moves.RRComparer");
 
 RRComparerRotBins::RRComparerRotBins() :
 	recovery_threshold_(0)

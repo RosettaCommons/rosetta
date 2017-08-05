@@ -37,14 +37,14 @@
 #include <set>
 #include <iterator>
 
-static basic::Tracer TR("SewAssembler");
+static THREAD_LOCAL basic::Tracer TR("SewAssembler");
 
 namespace SewAssembler {
-	basic::options::FileOptionKey const model_file( "model_file" );
-	basic::options::FileOptionKey const score_file( "score_file" );
-	basic::options::FileOptionKey const starting_pdb( "starting_pdb" );
-	basic::options::IntegerOptionKey const num_assemblies( "num_assemblies" );
-	basic::options::IntegerOptionKey const path_size( "path_size" );
+basic::options::FileOptionKey const model_file( "model_file" );
+basic::options::FileOptionKey const score_file( "score_file" );
+basic::options::FileOptionKey const starting_pdb( "starting_pdb" );
+basic::options::IntegerOptionKey const num_assemblies( "num_assemblies" );
+basic::options::IntegerOptionKey const path_size( "path_size" );
 }
 
 int
@@ -74,10 +74,10 @@ main( int argc, char * argv [] ) {
 	SewGraph sew_graph(models);
 	sew_graph.generate_from_scores(scores);
 
-	for(core::Size index=1; index <= num_assemblies; ++index) {
+	for ( core::Size index=1; index <= num_assemblies; ++index ) {
 		utility::vector1<Edge> random_path = sew_graph.random_path(path_size);
 		TR << "Found path!" << std::endl;
-		for(core::Size i=1; i<=random_path.size(); ++i) {
+		for ( core::Size i=1; i<=random_path.size(); ++i ) {
 			TR << random_path[i].source_model() << "-->" << random_path[i].target_model() << std::endl;
 		}
 

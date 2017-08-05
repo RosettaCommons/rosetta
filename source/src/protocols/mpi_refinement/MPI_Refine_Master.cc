@@ -86,7 +86,7 @@ namespace mpi_refinement {
 
 using namespace protocols::wum;
 
-static basic::Tracer TR("MPI.LHR.M");
+static THREAD_LOCAL basic::Tracer TR("MPI.LHR.M");
 
 void
 MPI_Refine_Master::set_defaults(){

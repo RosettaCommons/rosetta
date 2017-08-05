@@ -33,6 +33,7 @@
 #include <utility/vector1.hh>             // for vector1
 #include <utility/vectorL.hh>             // for vectorL
 #include <vector>                         // for vector, vector<>::iterator
+#include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
 
 #ifndef WIN32
 #include <unistd.h>
@@ -62,10 +63,10 @@ std::string Tracer::output_prefix_;
 /// booleal need to be carefully locked so that multiple threads do not try to
 /// initialize Tracers simultaneously, or try to inialize a Tracer while another thread
 /// is calling calculate_tracer_visibilities().
-std::recursive_mutex & tracer_static_data_mutex() {
+std::mutex & tracer_static_data_mutex() {
 	// Construct On First Use Idiom, to avoid static initialization order fiasco with static tracers.
 	// In C++11, static locals are constructed only once, in a threadsafe manner.
-	static std::recursive_mutex * mutex = new std::recursive_mutex;
+	static std::mutex * mutex = new std::mutex;
 	return *mutex;
 }
 
@@ -175,7 +176,7 @@ Tracer::TracerProxy::~TracerProxy()
 void Tracer::flush_all_tracers()
 {
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 
 	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
@@ -190,7 +191,7 @@ void
 Tracer::calculate_tracer_visibilities()
 {
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 	initial_tracers_visibility_calculated_ = true;
 	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
@@ -243,7 +244,7 @@ void Tracer::init(std::string const & channel, utility::CSI_Sequence const & cha
 	channel_name_color_ = channel_name_color;
 
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 
 	if ( initial_tracers_visibility_calculated_ ) {
@@ -284,7 +285,7 @@ Tracer::~Tracer()
 #endif
 
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 
 	// EXTREMELY important: As the destructor for (static) Tracers attempt to
@@ -313,7 +314,7 @@ void Tracer::init( Tracer const & tr )
 	visibility_calculated_ = false;
 
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 
 	if ( initial_tracers_visibility_calculated_ ) {
@@ -326,7 +327,7 @@ void Tracer::init( Tracer const & tr )
 void Tracer::output_prefix(std::string const &new_output_prefix)
 {
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 
 	output_prefix_ = new_output_prefix;
@@ -335,7 +336,7 @@ void Tracer::output_prefix(std::string const &new_output_prefix)
 std::string Tracer::output_prefix()
 {
 #ifdef MULTI_THREADED
-	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex() );
+	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
 	return output_prefix_;
 }
@@ -611,7 +612,7 @@ void Tracer::t_flush(std::string const &str)
 Tracer &
 T(std::string const & channel, TracerPriority priority)
 {
-	static Tracer t;
+	static THREAD_LOCAL Tracer t;
 	t.channel_ = channel;
 	t.priority_ = priority;
 	t.calculate_visibility();

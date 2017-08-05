@@ -86,7 +86,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("protocols.moves.PeriodicBoxMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.moves.PeriodicBoxMover");
 
 #include <utility/tag/Tag.hh>
 

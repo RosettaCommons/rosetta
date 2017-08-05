@@ -54,7 +54,7 @@ using basic::options::option;
 using core::Size;
 
 
-static basic::Tracer TR( "interface_energy.main" );
+static THREAD_LOCAL basic::Tracer TR( "interface_energy.main" );
 
 
 OPT_KEY( String, face1 )

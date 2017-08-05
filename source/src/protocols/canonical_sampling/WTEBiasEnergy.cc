@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 
-//static basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
+//static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
 
 namespace protocols {
 namespace canonical_sampling {

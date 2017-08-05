@@ -58,7 +58,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "protocols.membrane.OptimizeMembranePositionMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.OptimizeMembranePositionMover" );
 
 namespace protocols {
 namespace membrane {

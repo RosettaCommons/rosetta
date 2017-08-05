@@ -29,7 +29,7 @@
 #include <cmath>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR( "protocols.recces.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.util" );
 
 using namespace core;
 

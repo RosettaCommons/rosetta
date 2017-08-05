@@ -38,7 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
-static basic::Tracer TR("protocols.matdes.SchemePlaceMotifsMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.matdes.SchemePlaceMotifsMover");
 
 //static numeric::random::RandomGenerator::RandomGenerator() ;
 

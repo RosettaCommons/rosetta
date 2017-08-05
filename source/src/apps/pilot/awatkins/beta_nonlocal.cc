@@ -110,7 +110,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("BetaNonlocal");
+static THREAD_LOCAL basic::Tracer TR("BetaNonlocal");
 
 int
 main( int argc, char* argv[] )

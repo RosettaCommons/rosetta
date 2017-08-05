@@ -54,7 +54,7 @@ namespace loops {
 namespace loops_definers {
 
 
-static Tracer TR("protocols.loops.loops_definers.LoopsExplicitDefiner");
+static THREAD_LOCAL Tracer TR("protocols.loops.loops_definers.LoopsExplicitDefiner");
 
 
 LoopsExplicitDefiner::LoopsExplicitDefiner() :

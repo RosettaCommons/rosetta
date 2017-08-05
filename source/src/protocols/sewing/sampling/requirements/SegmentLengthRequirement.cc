@@ -25,7 +25,7 @@ namespace sewing  {
 namespace sampling {
 namespace requirements {
 
-static basic::Tracer TR("protocols.sewing.sampling.requirements.SegmentLengthRequirement");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.sampling.requirements.SegmentLengthRequirement");
 
 //////Creator methods/////
 IntraSegmentRequirementOP

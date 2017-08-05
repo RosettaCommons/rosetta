@@ -73,7 +73,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR( "protocols.symmetric_docking.membrane.MPSymDockMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.symmetric_docking.membrane.MPSymDockMover" );
 
 namespace protocols {
 namespace symmetric_docking {

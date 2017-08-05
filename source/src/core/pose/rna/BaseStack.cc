@@ -16,7 +16,7 @@
 #include <core/pose/rna/BaseStack.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.pose.rna.BaseStack" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.BaseStack" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

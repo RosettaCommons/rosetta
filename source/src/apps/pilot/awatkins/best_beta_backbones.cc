@@ -110,7 +110,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("BestBetaBackbones");
+static THREAD_LOCAL basic::Tracer TR("BestBetaBackbones");
 
 // application specific options
 

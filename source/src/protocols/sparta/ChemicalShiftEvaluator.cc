@@ -36,7 +36,7 @@
 
 // C++ headers
 
-//static basic::Tracer tr("protocols.evaluation.ChemicalShiftEvaluator");
+//static THREAD_LOCAL basic::Tracer tr("protocols.evaluation.ChemicalShiftEvaluator");
 using basic::mem_tr;
 
 namespace protocols {

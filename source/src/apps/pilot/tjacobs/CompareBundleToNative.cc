@@ -58,12 +58,12 @@
 //Protocol headers
 #include <protocols/features/ProteinSilentReport.hh>
 
-static basic::Tracer TR("BundleDumper");
+static THREAD_LOCAL basic::Tracer TR("BundleDumper");
 
 static int BLOCK_SIZE = 512;
 
 namespace BundleDumper {
-	basic::options::IntegerOptionKey const num_bundles( "num_bundles" ); // fraction to run
+basic::options::IntegerOptionKey const num_bundles( "num_bundles" ); // fraction to run
 }
 
 typedef utility::vector1< std::pair<protocols::features::StructureID, core::Size> > BundleKeys;
@@ -87,8 +87,8 @@ get_random_bundle_ids(
 	protocols::features::StructureID struct_id;
 	core::Size bundle_id;
 	BundleKeys ids;
-	while(struct_id_res.next())
-	{
+	while ( struct_id_res.next() )
+			{
 		struct_id_res >> struct_id >> bundle_id;
 		ids.push_back(std::make_pair(struct_id, bundle_id));
 	}
@@ -106,22 +106,22 @@ dump_bundle_pose(
 		"SELECT residue_begin, residue_end\n"
 		"FROM bundle_helices r\n"
 		"WHERE\n"
-		"	struct_id = ? AND"
-		"	bundle_id = ?;";
+		"\tstruct_id = ? AND"
+		"\tbundle_id = ?;";
 
 	cppdb::statement select_resnums_stmt =
 		basic::database::safely_prepare_statement(select_resnums, db_session);
-	
+
 	protocols::features::ProteinSilentReportOP protein_silent_report = new protocols::features::ProteinSilentReport();
-	
+
 	select_resnums_stmt.bind(1, struct_id);
 	select_resnums_stmt.bind(2, bundle_id);
 	cppdb::result res = basic::database::safely_read_from_database(select_resnums_stmt);
 	std::set<core::Size> resnums;
-	while(res.next()){
+	while ( res.next() ) {
 		core::Size residue_begin, residue_end;
 		res >> residue_begin >> residue_end;
-		for(core::Size i=std::min(residue_begin, residue_end); i<=std::max(residue_begin, residue_end); ++i){
+		for ( core::Size i=std::min(residue_begin, residue_end); i<=std::max(residue_begin, residue_end); ++i ) {
 			resnums.insert(i);
 		}
 	}
@@ -158,9 +158,9 @@ main( int argc, char * argv [] )
 
 	// Initialize DB
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
-	
+
 	BundleKeys keys = get_random_bundle_ids(db_session, num_bundles);
-	for(core::Size i=1; i<=keys.size(); ++i){
+	for ( core::Size i=1; i<=keys.size(); ++i ) {
 		dump_bundle_pose(db_session, keys[i].first, keys[i].second);
 	}
 }

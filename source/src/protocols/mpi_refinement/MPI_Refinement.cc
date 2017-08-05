@@ -81,7 +81,7 @@ namespace mpi_refinement {
 
 using namespace protocols::wum;
 
-static basic::Tracer TR("MPI.LHR.A");
+static THREAD_LOCAL basic::Tracer TR("MPI.LHR.A");
 
 MPI_Refinement::MPI_Refinement( char machine_letter ):
 	MPI_WorkUnitManager( machine_letter ),

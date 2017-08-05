@@ -81,7 +81,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 using namespace basic::options::OptionKeys;
 using namespace basic::options;
 
-static basic::Tracer TR( "protocols.toolbox.sample_around.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.sample_around.util" );
 
 /////////////////////////////////////////////////////////////////////////////
 //

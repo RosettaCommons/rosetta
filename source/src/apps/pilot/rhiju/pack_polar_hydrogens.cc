@@ -44,7 +44,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-static basic::Tracer TR( "apps.pilot.rhiju.pack_polar_hydrogens" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.pack_polar_hydrogens" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

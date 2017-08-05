@@ -43,14 +43,14 @@
 #include <numeric/random/random.hh>
 
 static numeric::random::RandomGenerator RG(1365422);
-static basic::Tracer TR("GraftingTest");
+static THREAD_LOCAL basic::Tracer TR("GraftingTest");
 
 
 namespace myspace {
 
 
-	using namespace protocols::antibody;
-	using namespace protocols::antibody::design;
+using namespace protocols::antibody;
+using namespace protocols::antibody::design;
 
 class GraftTester : public protocols::moves::Mover{
 
@@ -78,10 +78,9 @@ public:
 		//tearDown();
 
 		init(pose);
-		if (mode_ == "rb_min"){
+		if ( mode_ == "rb_min" ) {
 			test_rb_min_graft(pose);
-		}
-		else if (mode_ == "cart"){
+		} else if ( mode_ == "cart" ) {
 			test_cart_graft(pose);
 		}
 	}
@@ -93,13 +92,13 @@ public:
 
 	void
 	test_cart_graft(core::pose::Pose & start_pose) {
-		for (core::Size i = 1; i <= rounds_; ++i){
+		for ( core::Size i = 1; i <= rounds_; ++i ) {
 
 			core::pose::Pose pose = start_pose;
 			TR << "Graft round: " << i <<std::endl;
 
 			CDRNameEnum cdr = cdrs_[RG.random_range(1, cdrs_.size())];
-			if (cdr_set_[cdr].size() ==0){
+			if ( cdr_set_[cdr].size() ==0 ) {
 				continue;
 			}
 			core::Size cdr_index = RG.random_range(1, cdr_set_[cdr].size());
@@ -131,7 +130,7 @@ public:
 		core::pose::Pose pose = start_pose;
 
 		CDRNameEnum cdr = cdrs_[RG.random_range(1, cdrs_.size())];
-		if (cdr_set_[cdr].size() ==0){
+		if ( cdr_set_[cdr].size() ==0 ) {
 			utility_exit_with_message("NO cdrs in CDR set!");
 		}
 		core::Size cdr_index = RG.random_range(1, cdr_set_[cdr].size());
@@ -151,7 +150,7 @@ public:
 		core::Size start = ab_info_->get_CDR_start(cdr, pose);
 		core::Size end = ab_info_->get_CDR_end(cdr, pose);
 
-		for (core::Size i = start; i <= end; ++i){
+		for ( core::Size i = start; i <= end; ++i ) {
 			movemap->set_bb(i, true);
 			//movemap->set_chi(i, true);
 		}
@@ -204,9 +203,9 @@ private:
 		cdr_set_ = manager_->load_cdr_poses(cdr_options_, start_pose, true /*use light chain type*/);
 		TR<< "CDRs loaded" << std::endl;
 		utility::vector1<CDRNameEnum> cdrs;
-		for (core::Size i = 1; i <= 6; ++i){
+		for ( core::Size i = 1; i <= 6; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-			if (cdr_set_[cdr].size() >=1){
+			if ( cdr_set_[cdr].size() >=1 ) {
 				cdrs_.push_back(cdr);
 			}
 		}

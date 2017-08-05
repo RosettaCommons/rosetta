@@ -40,7 +40,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR("protocols.sewing.Hasher");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.Hasher");
 
 Hasher::Hasher(){
 	hash_map_.clear();

@@ -80,7 +80,7 @@
 namespace protocols {
 namespace cryst {
 
-static basic::Tracer TSW("WallpaperGroup");
+static THREAD_LOCAL basic::Tracer TSW("WallpaperGroup");
 ///
 ///
 ///

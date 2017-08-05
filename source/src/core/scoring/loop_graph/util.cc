@@ -30,7 +30,7 @@
 #include <basic/database/open.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static basic::Tracer TR( "core.scoring.loop_graph.util" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.util" );
 
 using namespace core::scoring::loop_graph::evaluator;
 

@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static basic::Tracer TR( "apps.pilot.vmullig.symmetrize_new_ramamap" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.symmetrize_new_ramamap" );
 
 //Options (ugh -- global variables):
 OPT_KEY (String, rama_file)
@@ -84,7 +84,7 @@ symmetrize_map(
 	runtime_assert_string_msg( instream.good(), "Error in symmetrize_new_ramamap application: could not open " + input_filename + " for read." );
 
 	outstream.open( output_filename );
-	
+
 	utility::vector1< utility::vector1< core::Real > > negvals_list;
 	utility::vector1< std::string > aa_identifiers;
 
@@ -92,14 +92,14 @@ symmetrize_map(
 		char line[2048];
 		instream.getline( line, 2048 );
 		if ( instream.eof() ) break;
-		
-		if( line[0] == '#' || line[0] == '@' ) {
+
+		if ( line[0] == '#' || line[0] == '@' ) {
 			outstream << line << std::endl;
 			continue;
 		}
 
 		std::stringstream linestream( line );
-		
+
 		std::string aa_identifier;
 		core::Real phi_bin, psi_bin;
 		core::Real pval, eval;
@@ -112,7 +112,7 @@ symmetrize_map(
 		char outtemp[2048];
 		sprintf( outtemp, "%s\t%.0f\t%.0f\t%0.12g\t%0.12g", aa_identifier.c_str(), phi_bin, psi_bin, pval, eval );
 		outstream << outtemp << std::endl;
-		
+
 		utility::vector1< core::Real > posvals(4);
 		posvals[1] = -1.0*phi_bin - 10.0;
 		posvals[2] = -1.0*psi_bin - 10.0;
@@ -122,13 +122,13 @@ symmetrize_map(
 		aa_identifiers.push_back( aa_identifier );
 
 	} while( true );
-	
-	for(core::Size i=1, imax=negvals_list.size(); i<=imax; ++i) {
+
+	for ( core::Size i=1, imax=negvals_list.size(); i<=imax; ++i ) {
 		char outtemp[2048];
 		sprintf( outtemp, "%s\t%.0f\t%.0f\t%0.12g\t%0.12g", aa_identifiers[i].c_str(), negvals_list[i][1], negvals_list[i][2], negvals_list[i][3], negvals_list[i][4] );
-		outstream << outtemp << std::endl;		
+		outstream << outtemp << std::endl;
 	}
-	
+
 	instream.close();
 	outstream.close();
 }

@@ -18,7 +18,7 @@
 #ifndef apps_pilot_rayyrw_FragMonteCarlo_hh
 #define apps_pilot_rayyrw_FragMonteCarlo_hh
 
-static basic::Tracer tr("FragMonteCarlo");
+static THREAD_LOCAL basic::Tracer tr("FragMonteCarlo");
 
 using namespace ObjexxFCL::format;
 

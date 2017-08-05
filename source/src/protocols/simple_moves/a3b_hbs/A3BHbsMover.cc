@@ -39,7 +39,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsMover" );
 
 
 using namespace core;
@@ -81,17 +81,17 @@ A3BHbsMover::get_name() const {
 
 /// @brief
 A3BHbsMover::A3BHbsMover(
-		core::Size seq_position 
-	): Mover(), seq_pos_(seq_position)
+	core::Size seq_position
+): Mover(), seq_pos_(seq_position)
 {
 	Mover::type( "A3BHbsMover" );
 }
 
 A3BHbsMover::A3BHbsMover(
-		core::Size seq_position, 
-		core::Real phi_angle,
-		core::Real psi_angle
-	): Mover(), seq_pos_(seq_position), phi_angle_(phi_angle), psi_angle_(psi_angle)
+	core::Size seq_position,
+	core::Real phi_angle,
+	core::Real psi_angle
+): Mover(), seq_pos_(seq_position), phi_angle_(phi_angle), psi_angle_(psi_angle)
 {
 	Mover::type( "A3BHbsMover" );
 

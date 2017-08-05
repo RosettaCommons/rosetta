@@ -50,7 +50,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.moves.RRProtocolRotamerTrials");
+static THREAD_LOCAL Tracer TR("protocol.moves.RRProtocolRotamerTrials");
 
 RRProtocolRotamerTrials::RRProtocolRotamerTrials() {}
 

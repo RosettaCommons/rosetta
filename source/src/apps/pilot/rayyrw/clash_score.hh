@@ -12,7 +12,7 @@
 #ifndef apps_pilot_rayyrw_clash_score_hh
 #define apps_pilot_rayyrw_clash_score_hh
 
-static basic::Tracer tr_clash_score("clash_score");
+static THREAD_LOCAL basic::Tracer tr_clash_score("clash_score");
 
 
 

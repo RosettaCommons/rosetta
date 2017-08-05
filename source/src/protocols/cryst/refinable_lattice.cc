@@ -127,7 +127,7 @@ using basic::Warning;
 namespace protocols {
 namespace cryst {
 
-static basic::Tracer TR("protocols.cryst.refinable_lattice");
+static THREAD_LOCAL basic::Tracer TR("protocols.cryst.refinable_lattice");
 
 using namespace protocols;
 using namespace core;

@@ -126,7 +126,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR("TDDM");
+static THREAD_LOCAL basic::Tracer TR("TDDM");
 
 // application specific options
 namespace tddm {

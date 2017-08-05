@@ -85,7 +85,7 @@ OPT_KEY( Boolean, minimize_output_complex )
 OPT_KEY( Boolean, calculate_thetaLig )
 OPT_KEY( Real, cst_force_constant )
 
-static basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
 
 int main( int argc, char * argv [] ) {
 

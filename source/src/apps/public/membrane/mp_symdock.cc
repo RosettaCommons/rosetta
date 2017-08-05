@@ -36,7 +36,7 @@
 // C++ headers
 #include <iostream>
 
-static basic::Tracer TR( "apps.public.membrane.mp_symdock" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.membrane.mp_symdock" );
 
 /// @brief Main method
 int

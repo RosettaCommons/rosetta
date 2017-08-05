@@ -59,7 +59,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.bder.ZincMinimize");
+static THREAD_LOCAL basic::Tracer TR("apps.pilot.bder.ZincMinimize");
 
 typedef numeric::xyzVector<Real> point;
 typedef point axis;
@@ -68,7 +68,7 @@ using namespace core;
 
 
 //local options
-namespace local{
+namespace local {
 basic::options::BooleanOptionKey const zn_minimize("zn_minimize");
 basic::options::BooleanOptionKey const bb_min("bb_min");
 basic::options::BooleanOptionKey const zn_min_pack("zn_min_pack");
@@ -81,10 +81,10 @@ basic::options::RealOptionKey const zn_constraint_weight("zn_constraint_weight")
 /// @brief
 class ZincMinimize : public protocols::moves::Mover {
 public:
-  ZincMinimize()
-  {
-  }
-  virtual ~ZincMinimize(){};
+	ZincMinimize()
+	{
+	}
+	virtual ~ZincMinimize(){};
 
 
 
@@ -95,9 +95,9 @@ public:
 		pdbname_ = pose.pdb_info()->name();
 		pose_filename_ = pdbname_; // not sure if this is correct
 
-		for(Size i(1); i <= pose.size(); ++i) {
+		for ( Size i(1); i <= pose.size(); ++i ) {
 			std::string name3 = pose.residue(i).name3();
-			if ( name3 == "ZNX" || name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "HIZ") {
+			if ( name3 == "ZNX" || name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "HIZ" ) {
 
 				TR << "ADDING CONSTRAINTS FOR ZINC RESIDUE: " << i << std::endl;
 				//only partly set up for multiple zincs: all constraints should be added, but msr_ is only the most recent msr
@@ -105,7 +105,7 @@ public:
 				find_zinc->set_expecting_n_ligands(2);
 				utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr( find_zinc->find_zinc_site( pose ) );
 				msr_ = msr;
-				for(Size i(1); i <= msr_.size(); i++) {
+				for ( Size i(1); i <= msr_.size(); i++ ) {
 					TR << i << " " << msr_[i]->get_seqpos() << " " << msr_[i]->get_ligand_atom_name() << " " << msr_[i]->get_ligand_atom_xyz() << std::endl;
 				}
 
@@ -182,7 +182,7 @@ public:
 		packrot_mover->score_function( scorefxn_zn_ );
 		packrot_mover->task_factory( task_factory );
 
-		for(Size i(1); i <= basic::options::option[local::zn_min_pack_cycles]; ++i) {
+		for ( Size i(1); i <= basic::options::option[local::zn_min_pack_cycles]; ++i ) {
 			TR << "Iteration " << i << std::endl;
 			TR << "Score before pack: " << scorefxn_zn_->score(pose) << std::endl << std::endl;
 			packrot_mover->apply( pose );
@@ -199,9 +199,9 @@ public:
 
 
 
-  virtual
-  void
-  apply( core::pose::Pose & pose ){
+	virtual
+	void
+	apply( core::pose::Pose & pose ){
 
 		add_zinc_constraints( pose );
 
@@ -210,9 +210,9 @@ public:
 		set_min_mover();
 
 
-		if( basic::options::option[local::zn_minimize] ) {
+		if ( basic::options::option[local::zn_minimize] ) {
 			min_mover_->apply( pose );
-			if( basic::options::option[local::bb_min] ) {
+			if ( basic::options::option[local::bb_min] ) {
 				movemap_->set_bb(true);
 				movemap_->set_jump(true);
 				min_mover_->apply( pose );
@@ -223,12 +223,12 @@ public:
 		}
 
 
-		if( basic::options::option[local::zn_min_pack] ) {
+		if ( basic::options::option[local::zn_min_pack] ) {
 			zn_min_pack( pose );
 		}
 
 		return;
-  }
+	}
 
 
 	virtual
@@ -259,10 +259,10 @@ int main( int argc, char* argv[] )
 	option.add( local::zn_constraint_weight, "zinc constraint weight").def(1.0);
 
 	devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go(new ZincMinimize);
+	protocols::jd2::JobDistributor::get_instance()->go(new ZincMinimize);
 
-  TR << "************************d**o**n**e**************************************" << std::endl;
+	TR << "************************d**o**n**e**************************************" << std::endl;
 
-  return 0;
+	return 0;
 }
 

@@ -10,6 +10,7 @@
 /// @file    core/chemical/carbohydrates/CarbohydrateInfoManager.hh
 /// @brief   Method declarations for CarbohydrateInfoManager.
 /// @author  Labonte <JWLabonte@jhu.edu>
+/// @author  Vikram K. Mulligan (vmullig@uw.edu) -- Made the CarbohydrateInfoManager threadsafe.
 
 
 #ifndef INCLUDED_core_chemical_carbohydrates_CarbohydrateInfoManager_HH
@@ -30,6 +31,9 @@
 // Utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
 
 // C++ header
 #include <string>
@@ -143,7 +147,20 @@ private:  // Private methods //////////////////////////////////////////////////
 	std::map< std::string, std::string> const & short_name_to_iupac_strings_map();
 
 private:  // Private data /////////////////////////////////////////////////////
+#ifdef MULTI_THREADED
+	utility::thread::ReadWriteMutex code_to_root_map_mutex_;
+	utility::thread::ReadWriteMutex ring_size_to_morphemes_mutex_;
+	utility::thread::ReadWriteMutex ring_affixes_mutex_;
+	utility::thread::ReadWriteMutex nomenclature_table_mutex_;
+	utility::thread::ReadWriteMutex affix_to_patch_mutex_;
+	utility::thread::ReadWriteMutex affix_to_position_mutex_;
+	utility::thread::ReadWriteMutex affix_to_position_inherency_mutex_;
+	utility::thread::ReadWriteMutex linkage_conformers_mutex_;
+	utility::thread::ReadWriteMutex short_name_to_iupac_strings_mutex_;
+#endif
+
 	std::map< std::string, std::pair< std::string, char > > code_to_root_map_;  // also stores default stereochemistry
+
 	std::map< core::Size, std::pair< char, std::string > > ring_size_to_morphemes_map_;
 	utility::vector1< char > ring_affixes_;
 

@@ -79,7 +79,7 @@ namespace scoring {
 namespace fiber_diffraction {
 
 // tracer
-static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergyDens");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergyDens");
 
 ScoreTypes FiberDiffractionEnergyDensCreator::score_types_for_method() const {
 	ScoreTypes sts;

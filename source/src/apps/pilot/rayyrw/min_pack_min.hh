@@ -81,10 +81,10 @@ private:
 
 }; // class declaration
 
-static basic::Tracer tr("MinPackMin");
-static basic::Tracer rbmin("MinPackMin.rigid_body_minimization");
-static basic::Tracer bbmin("MinPackMin.backbone_minimization");
-static basic::Tracer pack_sc("MinPackMin.pack_sidechains");
+static THREAD_LOCAL basic::Tracer tr("MinPackMin");
+static THREAD_LOCAL basic::Tracer rbmin("MinPackMin.rigid_body_minimization");
+static THREAD_LOCAL basic::Tracer bbmin("MinPackMin.backbone_minimization");
+static THREAD_LOCAL basic::Tracer pack_sc("MinPackMin.pack_sidechains");
 
 
 MinPackMin::MinPackMin(){

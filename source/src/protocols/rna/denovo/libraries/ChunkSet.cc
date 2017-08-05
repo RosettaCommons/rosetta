@@ -30,7 +30,7 @@
 #include <core/chemical/AA.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.rna.denovo.libraries.ChunkSet" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.libraries.ChunkSet" );
 
 using namespace core::pose;
 using namespace core;

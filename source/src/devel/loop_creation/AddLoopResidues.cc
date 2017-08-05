@@ -39,7 +39,7 @@ namespace loop_creation {
 using namespace std;
 using namespace core;
 
-static basic::Tracer TR( "devel.loop_creation.AddLoopResidues" );
+static THREAD_LOCAL basic::Tracer TR( "devel.loop_creation.AddLoopResidues" );
 
 /****CREATOR FUNCTIONS*****/
 protocols::moves::MoverOP

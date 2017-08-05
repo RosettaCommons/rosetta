@@ -83,7 +83,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "protocols.relax.RangeRelaxMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.relax.RangeRelaxMover" );
 
 namespace protocols {
 namespace relax {

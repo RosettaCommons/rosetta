@@ -752,6 +752,7 @@ static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator >
 #endif
 
 static THREAD_LOCAL basic::Tracer TR( "core.init" );
+static THREAD_LOCAL basic::Tracer TR_random( "core.init.random" );
 
 using namespace numeric::random;
 using namespace basic::options;
@@ -1059,7 +1060,7 @@ init_random_number_generators(){
 /// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
 void init_random_generators(int const start_seed, std::string const & RGtype)
 {
-	T("core.init.random") << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
+	TR_random << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
 		" RG_type=" << RGtype << std::endl;
 
 	numeric::random::rg().set_seed( RGtype, start_seed );

@@ -48,7 +48,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsPatcher" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsPatcher" );
 
 
 using namespace core;

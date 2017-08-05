@@ -18,7 +18,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.pose.copydofs.CopyDofsInfo" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.copydofs.CopyDofsInfo" );
 
 namespace core {
 namespace pose {

@@ -139,7 +139,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-static basic::Tracer tr("closability_measurement_class");
+static THREAD_LOCAL basic::Tracer tr("closability_measurement_class");
 
 
 void

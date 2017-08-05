@@ -60,7 +60,7 @@
 
 #include <utility/io/izstream.hh>
 
-static basic::Tracer TR( "protocols.rna.denovo.setup.RNA_DeNovoSetup" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.setup.RNA_DeNovoSetup" );
 using utility::vector1;
 using utility::tools::make_vector1;
 using ObjexxFCL::format::I;

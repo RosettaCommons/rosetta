@@ -109,7 +109,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("EvaluateBetaMutants");
+static THREAD_LOCAL basic::Tracer TR("EvaluateBetaMutants");
 
 // application specific options
 namespace evaluate_beta_mutants {

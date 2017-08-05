@@ -58,7 +58,7 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using basic::Tracer;
 
-static Tracer TR("protocols.features.ResidueSecondaryStructureFeatures");
+static THREAD_LOCAL Tracer TR("protocols.features.ResidueSecondaryStructureFeatures");
 
 ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures() {}
 

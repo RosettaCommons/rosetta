@@ -48,7 +48,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.rotamer_recovery.RRProtocolMover");
+static THREAD_LOCAL Tracer TR("protocol.rotamer_recovery.RRProtocolMover");
 
 RRProtocolMover::RRProtocolMover() :
 	mover_(/* NULL */)

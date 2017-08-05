@@ -34,7 +34,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/util/Tracer.hh>
+#include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/options/util.hh>
 #include <devel/init.hh>
@@ -62,19 +62,19 @@
 
 // C++ headers
 
-using core::util::T;
-using core::util::Error;
-using core::util::Warning;
+using basic::T;
+using basic::Error;
+using basic::Warning;
 
 
-static core::util::Tracer TR( "PeptideDeriver" );
+static THREAD_LOCAL basic::Tracer TR( "PeptideDeriver" );
 
 using namespace core;
 using namespace core::options;
 using namespace OptionKeys;
 
 core::pose::PoseOP get_subPose(core::pose::PoseCOP, core::pose::PoseCOP,
-														 core::Size,core::Size,char);
+	core::Size,core::Size,char);
 Real calculateInterfaceScore (core::pose::Pose&, core::scoring::ScoreFunctionCOP );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -101,13 +101,13 @@ main( int argc, char * argv [] )
 		ConstraintSetOP cst_set( new ConstraintSet() );
 		HarmonicFuncOP spring = new HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/);
 		conformation::Conformation const & conformation( pose.conformation() );
-		for (Size i=1; i <= pose.size(); ++i) {
-				Residue const  & reside = pose.residue( i );
-				id::AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
-				cst_set->add_constraint
-						(  new CoordinateConstraint
-							 ( CAi, CAi, conformation.xyz( CAi ), spring )
-							 );
+		for ( Size i=1; i <= pose.size(); ++i ) {
+			Residue const  & reside = pose.residue( i );
+			id::AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
+			cst_set->add_constraint
+				(  new CoordinateConstraint
+				( CAi, CAi, conformation.xyz( CAi ), spring )
+			);
 		}
 		pose.constraint_set( cst_set );
 		scorefxn->set_weight(coordinate_constraint, 1.0);
@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
 		//////////////////////!!!!!!!!!!!!1111
 		/////////////!!!!!!!!!!!!!!!!
 		/////////////////********   FOR DEBUG THIS IS COMMENTED OUT
-		//		minimizer.apply(pose);
+		//  minimizer.apply(pose);
 
 		//pose.dump_pdb("./after_minimize.pdb");
 
@@ -157,35 +157,35 @@ main( int argc, char * argv [] )
 		Real isc;
 		pose::PoseOP curr_pose;
 
-		for (Size pep_length=5; pep_length<=10; ++pep_length) {
-				if (pep_length > b_end) break;
-				maxIsc = 1000.0;
-				for (Size i=b_start; i<=b_end-pep_length+1; ++i) {
-						curr_pose = get_subPose(chainA,chainB,i,i+pep_length-1,'B');
-						TR << "let's score chainA first time:" << std::endl;
-						(*scorefxn)(*chainA);
-						TR << "let's score chainA second time:" << std::endl;
-						(*scorefxn)(*chainA);
-						TR << "let's score chainB first time:" << std::endl;
-						(*scorefxn)(*chainB);
-						TR << "let's score chainB second time:" << std::endl;
-						(*scorefxn)(*chainB);
-						TR << "let's score first time:" << std::endl;
-						(*scorefxn)(*curr_pose);
-						TR << "let's score second time:" << std::endl;
-						(*scorefxn)(*curr_pose);
-						TR << "let's calc intrf score:" << std::endl;
-						isc = calculateInterfaceScore(*curr_pose,scorefxn);
-						//debug
-						TR << "after Isc calc .. " << std::endl;
-						if (isc < maxIsc ) {
-								maxIsc = isc;
-								best_pose = *new pose::Pose(*curr_pose);
-								best_posb=i;
-						}
+		for ( Size pep_length=5; pep_length<=10; ++pep_length ) {
+			if ( pep_length > b_end ) break;
+			maxIsc = 1000.0;
+			for ( Size i=b_start; i<=b_end-pep_length+1; ++i ) {
+				curr_pose = get_subPose(chainA,chainB,i,i+pep_length-1,'B');
+				TR << "let's score chainA first time:" << std::endl;
+				(*scorefxn)(*chainA);
+				TR << "let's score chainA second time:" << std::endl;
+				(*scorefxn)(*chainA);
+				TR << "let's score chainB first time:" << std::endl;
+				(*scorefxn)(*chainB);
+				TR << "let's score chainB second time:" << std::endl;
+				(*scorefxn)(*chainB);
+				TR << "let's score first time:" << std::endl;
+				(*scorefxn)(*curr_pose);
+				TR << "let's score second time:" << std::endl;
+				(*scorefxn)(*curr_pose);
+				TR << "let's calc intrf score:" << std::endl;
+				isc = calculateInterfaceScore(*curr_pose,scorefxn);
+				//debug
+				TR << "after Isc calc .. " << std::endl;
+				if ( isc < maxIsc ) {
+					maxIsc = isc;
+					best_pose = *new pose::Pose(*curr_pose);
+					best_posb=i;
 				}
-				TR << "Best B len: " << pep_length << " pos: " << best_posb <<" isc: "
-					 << maxIsc << " %tot " << maxIsc/total_isc << std::endl;
+			}
+			TR << "Best B len: " << pep_length << " pos: " << best_posb <<" isc: "
+				<< maxIsc << " %tot " << maxIsc/total_isc << std::endl;
 		}
 
 		TR << "Best pep from B at pos: "<<best_posb<<" length: "<<best_lenb<<" w/ isc: "<<maxIsc<< std::endl;
@@ -197,20 +197,20 @@ main( int argc, char * argv [] )
 		Size best_lena = 0;
 		Size best_posa = 0;
 
-		for (Size pep_length=5; pep_length<=10; ++pep_length) {
-				if (pep_length > a_end) break;
-				maxIsc = 1000.0;
-				for (Size i=a_start; i<=a_end-pep_length+1; ++i) {
-						curr_pose = get_subPose(chainA,chainB,i,i+pep_length-1,'A');
-						isc = calculateInterfaceScore(*curr_pose,scorefxn);
-						if (isc < maxIsc /*normalize by length - pep_length + 5 */) {
-								maxIsc = isc;
-								best_pose = *new pose::Pose(*curr_pose);
-								best_posa=i;
-						}
+		for ( Size pep_length=5; pep_length<=10; ++pep_length ) {
+			if ( pep_length > a_end ) break;
+			maxIsc = 1000.0;
+			for ( Size i=a_start; i<=a_end-pep_length+1; ++i ) {
+				curr_pose = get_subPose(chainA,chainB,i,i+pep_length-1,'A');
+				isc = calculateInterfaceScore(*curr_pose,scorefxn);
+				if ( isc < maxIsc /*normalize by length - pep_length + 5 */ ) {
+					maxIsc = isc;
+					best_pose = *new pose::Pose(*curr_pose);
+					best_posa=i;
 				}
-				TR << "Best A len: " << pep_length << " pos: " << best_posa <<" isc: "
-					 << maxIsc << " %tot " << maxIsc/total_isc << std::endl;
+			}
+			TR << "Best A len: " << pep_length << " pos: " << best_posa <<" isc: "
+				<< maxIsc << " %tot " << maxIsc/total_isc << std::endl;
 		}
 
 		TR << "Best pep from A at pos: "<<best_posa<<" length: "<<best_lena<<" w/ isc: "<<maxIsc<< std::endl;
@@ -228,62 +228,61 @@ main( int argc, char * argv [] )
 // Given a pose and a score function - calculate the interface score by seperating the monomers
 // and calculating the scores of the complex and unbound monomers.
 Real calculateInterfaceScore ( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn ){
-		//debug
-		pose.dump_pdb("./beforeIsc.pdb");
-		TR << "calculating Isc " << std::endl;
+	//debug
+	pose.dump_pdb("./beforeIsc.pdb");
+	TR << "calculating Isc " << std::endl;
 
-    //make a new pose in which the monomers are far apart from one another
-    core::pose::Pose unbound_pose = pose;
-    float trans_magnitude = 1000; // 1000A
-    Size rb_jump = 1;     //rigid-body jump number is assumed to be 1 - this will work for two monomers.
-		protocols::rigid::RigidBodyTransMoverOP translate_away (
-		                new protocols::rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
-		translate_away->step_size( trans_magnitude );
+	//make a new pose in which the monomers are far apart from one another
+	core::pose::Pose unbound_pose = pose;
+	float trans_magnitude = 1000; // 1000A
+	Size rb_jump = 1;     //rigid-body jump number is assumed to be 1 - this will work for two monomers.
+	protocols::rigid::RigidBodyTransMoverOP translate_away (
+		new protocols::rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
+	translate_away->step_size( trans_magnitude );
 
-		//calculate scores
-    float bound_energy, unbound_energy;
-		bound_energy = (*scorefxn)( unbound_pose ); // before the move - as a complex.
-		translate_away->apply( unbound_pose );
-		unbound_energy = (*scorefxn)( unbound_pose ); // after the move - unbound monomers.
-		TR << "after " << bound_energy << " " << unbound_energy << std::endl;
-    //answer
-    return (bound_energy - unbound_energy);
+	//calculate scores
+	float bound_energy, unbound_energy;
+	bound_energy = (*scorefxn)( unbound_pose ); // before the move - as a complex.
+	translate_away->apply( unbound_pose );
+	unbound_energy = (*scorefxn)( unbound_pose ); // after the move - unbound monomers.
+	TR << "after " << bound_energy << " " << unbound_energy << std::endl;
+	//answer
+	return (bound_energy - unbound_energy);
 }
 
 
 core::pose::PoseOP get_subPose(
-				 core::pose::PoseCOP chainA,
-  			 core::pose::PoseCOP chainB,
-	  		 core::Size pep_start,
-				 core::Size pep_end,
-				 char pep_chain )
+	core::pose::PoseCOP chainA,
+	core::pose::PoseCOP chainB,
+	core::Size pep_start,
+	core::Size pep_end,
+	char pep_chain )
 {
-		using namespace core;
-		using namespace core::chemical;
+	using namespace core;
+	using namespace core::chemical;
 
-		pose::PoseOP pose = NULL;
-		pose::PoseCOP other;
+	pose::PoseOP pose = NULL;
+	pose::PoseCOP other;
 
-		if (pep_chain == 'A') {
-				pose = new pose::Pose(*chainB);
-				other = chainA;
-		}
-		else {//pep_chain == B
-				pose = new pose::Pose(*chainA);
-				other = chainB;
-		}
+	if ( pep_chain == 'A' ) {
+		pose = new pose::Pose(*chainB);
+		other = chainA;
+	} else { //pep_chain == B
+		pose = new pose::Pose(*chainA);
+		other = chainB;
+	}
 
-		pose->append_residue_by_jump(other->residue(pep_start), 1, "", "", true);
-		add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS, pose->size() );
+	pose->append_residue_by_jump(other->residue(pep_start), 1, "", "", true);
+	add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS, pose->size() );
 
-		for (core::Size i=pep_start+1; i<=pep_end; ++i){
+	for ( core::Size i=pep_start+1; i<=pep_end; ++i ) {
 
-				pose->append_residue_by_bond(other->residue(i),false,0,0,0,false);
-		}
-		add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS, pose->size() );
-		pose->conformation().detect_disulfides();
+		pose->append_residue_by_bond(other->residue(i),false,0,0,0,false);
+	}
+	add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS, pose->size() );
+	pose->conformation().detect_disulfides();
 
-		return pose;
+	return pose;
 }
 
 

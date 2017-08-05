@@ -46,7 +46,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR( "protocols.ncbb.SecStructMinimizeMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ncbb.SecStructMinimizeMover" );
 
 using namespace core;
 using namespace core::id;

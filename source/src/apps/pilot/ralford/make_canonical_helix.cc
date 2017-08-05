@@ -35,7 +35,7 @@
 // Utility Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "apps.pilot.ralford.make_canonical_helix" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.make_canonical_helix" );
 
 class MakeCanonicalHelix : public protocols::moves::Mover {
 

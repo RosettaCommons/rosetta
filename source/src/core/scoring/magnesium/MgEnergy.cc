@@ -51,7 +51,7 @@ using namespace basic::options::OptionKeys;
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.scoring.magnesium.MgEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.magnesium.MgEnergy" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //

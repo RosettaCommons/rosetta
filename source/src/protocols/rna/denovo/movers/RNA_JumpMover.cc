@@ -30,7 +30,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_JumpMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.movers.RNA_JumpMover" );
 
 using namespace core;
 using namespace core::pose::rna;

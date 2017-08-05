@@ -34,7 +34,7 @@
 
 #include <utility/io/ozstream.hh>
 
-static basic::Tracer TR( "protocols.recces.setup_util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.setup_util" );
 
 using namespace core;
 using namespace core::chemical;

@@ -43,7 +43,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-static basic::Tracer TR("antibody.constraints.util");
+static THREAD_LOCAL basic::Tracer TR("antibody.constraints.util");
 
 namespace protocols {
 namespace antibody {

@@ -56,7 +56,7 @@ bool antibody_grafting_usable() {
 #include <map>
 #include <fstream>
 
-static basic::Tracer TR("protocols.antibody.grafting.util");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting.util");
 
 namespace protocols {
 namespace antibody {

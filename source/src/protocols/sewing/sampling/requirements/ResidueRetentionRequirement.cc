@@ -30,7 +30,7 @@ namespace sewing  {
 namespace sampling {
 namespace requirements {
 
-static basic::Tracer TR("protocols.sewing.sampling.requirements.ResidueRetentionRequirement");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.sampling.requirements.ResidueRetentionRequirement");
 
 //////Creator methods/////
 GlobalRequirementOP

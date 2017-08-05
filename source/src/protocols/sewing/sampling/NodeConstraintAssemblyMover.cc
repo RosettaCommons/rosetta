@@ -64,7 +64,7 @@
 namespace devel {
 namespace sewing {
 
-static basic::Tracer TR( "devel.sewing.NodeConstraintAssemblyMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.sewing.NodeConstraintAssemblyMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  Mover Creator Functions   ////////////////////////////////

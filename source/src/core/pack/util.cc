@@ -37,7 +37,7 @@ namespace pack {
 using namespace core;
 using namespace core::pose;
 
-static basic::Tracer TR( "core.pack.util" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.util" );
 
 ////////////////////////////////////////////////////////////////////////////////
 

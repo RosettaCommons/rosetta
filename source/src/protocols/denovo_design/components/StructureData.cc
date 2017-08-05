@@ -70,7 +70,7 @@
 // C++ Headers
 #include <algorithm>
 
-static basic::Tracer TR( "protocols.denovo_design.components.StructureData" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.StructureData" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

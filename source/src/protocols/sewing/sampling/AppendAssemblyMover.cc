@@ -64,7 +64,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR( "protocols.sewing.AppendAssemblyMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sewing.AppendAssemblyMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////

@@ -50,7 +50,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR( "protocols.sewing.AddStartnodeFragments" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sewing.AddStartnodeFragments" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////

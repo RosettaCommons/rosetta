@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.recces.sampler.MC_Loop" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.MC_Loop" );
 
 namespace protocols {
 namespace recces {

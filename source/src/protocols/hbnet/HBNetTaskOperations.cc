@@ -43,7 +43,7 @@
 namespace protocols {
 namespace hbnet {
 
-static basic::Tracer TR("protocols.hbnet.HBNetTaskOperations");
+static THREAD_LOCAL basic::Tracer TR("protocols.hbnet.HBNetTaskOperations");
 
 /// @brief sets allowed residue types to constrain HBNet residues in downstream design;
 ///         add this Taskop to any design movers downstream of HBNet

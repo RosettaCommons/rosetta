@@ -44,7 +44,7 @@
 namespace protocols {
 namespace jd2 {
 
-static basic::Tracer TR ("protocols.jd2.MSDJobDistributor");
+static THREAD_LOCAL basic::Tracer TR ("protocols.jd2.MSDJobDistributor");
 
 MSDJobDistributor::~MSDJobDistributor() = default;
 

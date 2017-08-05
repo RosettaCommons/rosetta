@@ -24,7 +24,7 @@
 
 #include <set>
 
-static basic::Tracer TR("protocols.interface");
+static THREAD_LOCAL basic::Tracer TR("protocols.interface");
 
 namespace protocols {
 namespace interface {

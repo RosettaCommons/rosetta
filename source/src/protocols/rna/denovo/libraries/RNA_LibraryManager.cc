@@ -20,7 +20,7 @@
 #include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.rna.denovo.libraries.RNA_LibraryManager" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.libraries.RNA_LibraryManager" );
 
 using namespace protocols::rna::denovo::options;
 using namespace protocols::rna::denovo::fragments;

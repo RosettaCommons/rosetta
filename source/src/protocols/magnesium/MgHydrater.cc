@@ -31,7 +31,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.magnesium.MgHydrater" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.MgHydrater" );
 
 using namespace core;
 using utility::vector1;

@@ -79,7 +79,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR("protocols.sewing.Assembly");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.Assembly");
 
 Assembly::Assembly(){}
 

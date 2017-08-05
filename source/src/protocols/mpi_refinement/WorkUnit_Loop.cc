@@ -86,7 +86,7 @@
 namespace protocols {
 namespace mpi_refinement {
 
-static basic::Tracer TR("WorkUnit_Sampler.LoopType");
+static THREAD_LOCAL basic::Tracer TR("WorkUnit_Sampler.LoopType");
 
 /// Currently registered samplers:
 // LoopHash, FragInsert, KicCloser, PartialAbinitio

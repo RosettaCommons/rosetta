@@ -38,7 +38,7 @@ using core::pose::Pose;
 using core::conformation::Residue;
 using basic::Tracer;
 
-static Tracer TR("protocol.rotamer_recovery.RRReporter");
+static THREAD_LOCAL Tracer TR("protocol.rotamer_recovery.RRReporter");
 
 RRReporterSimple::RRReporterSimple() :
 	residues_considered_( 0 ),

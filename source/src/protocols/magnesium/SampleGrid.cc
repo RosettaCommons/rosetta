@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.magnesium.SampleGrid" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.SampleGrid" );
 
 using namespace core;
 

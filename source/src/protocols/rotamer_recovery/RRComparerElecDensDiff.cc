@@ -62,7 +62,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.moves.RRComparerElecDensDiff");
+static THREAD_LOCAL Tracer TR("protocol.moves.RRComparerElecDensDiff");
 
 RRComparerElecDensDiff::RRComparerElecDensDiff() :
 	recovery_threshold_( 0.12 ),

@@ -108,7 +108,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("DiversifyConotoxin");
+static THREAD_LOCAL basic::Tracer TR("DiversifyConotoxin");
 
 utility::vector1< utility::vector1< Size > >
 power_set( utility::vector1< Size > thiol_positions ) {

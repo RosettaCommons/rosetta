@@ -32,7 +32,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-//static basic::Tracer TR("apps.jscore");
+//static THREAD_LOCAL basic::Tracer TR("apps.jscore");
 
 std::string get_env_var( std::string const & key ) {
 	char * val;

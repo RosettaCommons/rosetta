@@ -76,7 +76,7 @@ using namespace basic;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("PeptidomimeticEnsembles");
+static THREAD_LOCAL basic::Tracer TR("PeptidomimeticEnsembles");
 
 // application specific options
 namespace peptidomimetic_ensembles {

@@ -109,7 +109,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("test_metapatch" );
+static THREAD_LOCAL basic::Tracer TR("test_metapatch" );
 
 namespace metapatch {
 // pert options

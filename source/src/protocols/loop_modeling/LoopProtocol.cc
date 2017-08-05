@@ -71,7 +71,7 @@ using protocols::moves::Movers_map;
 namespace protocols {
 namespace loop_modeling {
 
-static basic::Tracer TR("protocols.loop_modeling.LoopProtocol");
+static THREAD_LOCAL basic::Tracer TR("protocols.loop_modeling.LoopProtocol");
 
 // XRW TEMP MoverOP LoopProtocolCreator::create_mover() const { // {{{1
 // XRW TEMP  return MoverOP( new LoopProtocol );

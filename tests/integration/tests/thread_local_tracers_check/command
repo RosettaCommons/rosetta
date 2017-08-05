@@ -1,0 +1,26 @@
+
+cd %(workdir)s
+
+touch nonlocal_tracers.txt
+
+cd %(bin)s/../
+
+#Find static tracers which aren't properly thread local, (and aren't commented out) and sort for run-to-run consistency
+
+grep -R --include '*.hh' --include '*.cc' 'static.*Tracer[^A-Za-z_]' src | \
+	grep -v 'static.*THREAD_LOCAL.*Tracer' | \
+	grep -v '[^A-Za-z]*//' | \
+	sort > %(workdir)s/nonlocal_tracers.txt
+
+cd %(workdir)s
+
+# Label by date so they get represented as changes in the diff.
+sed -i "s/^/[`date`] /" nonlocal_tracers.txt
+
+if [ -s nonlocal_tracers.txt ]; then
+   echo ">>> Inappropriate use of a non-thread-local static Tracer detected"
+   exit -1;
+fi
+
+# File is empty - we're fine.
+exit 0

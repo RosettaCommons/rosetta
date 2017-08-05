@@ -39,16 +39,16 @@
 #include <set>
 #include <iterator>
 
-static basic::Tracer TR("SewAppend");
+static THREAD_LOCAL basic::Tracer TR("SewAppend");
 
 namespace SewAppend {
-	basic::options::FileOptionKey const model_file( "model_file" );
-	basic::options::FileOptionKey const starting_pdb( "starting_pdb" );
-	basic::options::IntegerOptionKey const num_assemblies( "num_assemblies" );
-	basic::options::IntegerVectorOptionKey const segment_starts( "segment_starts" );
-	basic::options::IntegerVectorOptionKey const segment_ends( "segment_ends" );
-	basic::options::IntegerVectorOptionKey const match_segments( "match_segments" );
-	basic::options::BooleanOptionKey const generate_pdb_model_only( "generate_pdb_model_only" );
+basic::options::FileOptionKey const model_file( "model_file" );
+basic::options::FileOptionKey const starting_pdb( "starting_pdb" );
+basic::options::IntegerOptionKey const num_assemblies( "num_assemblies" );
+basic::options::IntegerVectorOptionKey const segment_starts( "segment_starts" );
+basic::options::IntegerVectorOptionKey const segment_ends( "segment_ends" );
+basic::options::IntegerVectorOptionKey const match_segments( "match_segments" );
+basic::options::BooleanOptionKey const generate_pdb_model_only( "generate_pdb_model_only" );
 }
 
 int
@@ -69,36 +69,35 @@ main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 
 	//Check for valid starting pdb
-	if(!option[SewAppend::starting_pdb].user()) {
+	if ( !option[SewAppend::starting_pdb].user() ) {
 		utility_exit_with_message("You must supply a starting pdb file to the SewAppend app using the -starting_pdb flag");
 	}
 	std::string starting_pdb = option[SewAppend::starting_pdb];
 
 	//Get all the models from the file
-	if(!option[SewAppend::model_file].user()) {
+	if ( !option[SewAppend::model_file].user() ) {
 		utility_exit_with_message("You must supply a model file to the SewAppend app using the -model_file flag.");
 	}
 	std::string model_filename = option[SewAppend::model_file];
 
-	if(!option[SewAppend::segment_starts].user() || !option[SewAppend::segment_ends].user()) {
+	if ( !option[SewAppend::segment_starts].user() || !option[SewAppend::segment_ends].user() ) {
 		utility_exit_with_message("You must supply segment starts and ends to the SewAppend app using the -segments_starts and -segment_ends flags");
 	}
 	utility::vector1<int> segment_starts = option[SewAppend::segment_starts];
 	utility::vector1<int> segment_ends = option[SewAppend::segment_ends];
-	if(segment_starts.size() != segment_ends.size()) {
+	if ( segment_starts.size() != segment_ends.size() ) {
 		utility_exit_with_message("You must supply the same number of segment starts and ends");
 	}
 
 	//Figure out which segments from the starting PDB we need to match
 	std::set<core::Size> segments_to_match;
-	if(!option[SewAppend::match_segments].user()) {
-		for(core::Size i=1; i<=segment_starts.size(); ++i){
+	if ( !option[SewAppend::match_segments].user() ) {
+		for ( core::Size i=1; i<=segment_starts.size(); ++i ) {
 			segments_to_match.insert(i);
 		}
-	}
-	else {
+	} else {
 		utility::vector1<int> temp = option[SewAppend::match_segments];
-		for(core::Size i=1; i<=temp.size(); ++i){
+		for ( core::Size i=1; i<=temp.size(); ++i ) {
 			segments_to_match.insert(core::Size(temp[i]));
 		}
 	}
@@ -107,7 +106,7 @@ main( int argc, char * argv [] ) {
 	std::map< int, Model > models;
 
 	utility::vector1< std::pair<core::Size, core::Size> > segments;
-	for(core::Size i=1; i<=segment_starts.size(); ++i) {
+	for ( core::Size i=1; i<=segment_starts.size(); ++i ) {
 		segments.push_back(std::make_pair(segment_starts[i], segment_ends[i]));
 	}
 	core::pose::Pose pose;
@@ -116,7 +115,7 @@ main( int argc, char * argv [] ) {
 	models.insert(std::make_pair(pdb_model.model_id_, pdb_model));
 
 	//If we are just dumping the model pdb, do it here and exit
-	if(!option[SewAppend::generate_pdb_model_only].user() || option[SewAppend::generate_pdb_model_only]) {
+	if ( !option[SewAppend::generate_pdb_model_only].user() || option[SewAppend::generate_pdb_model_only] ) {
 		write_model_file(models, model_filename);
 		TR << "Finished writing model file, Exiting!" << std::endl;
 		std::exit(0);
@@ -129,7 +128,7 @@ main( int argc, char * argv [] ) {
 
 	//Insert all the models into the hash table
 	Hasher hasher;
-	for(std::map< int, Model >::const_iterator it = models.begin(); it != models.end(); ++it) {
+	for ( std::map< int, Model >::const_iterator it = models.begin(); it != models.end(); ++it ) {
 		hasher.insert(it->second);
 	}
 	TR << "Hashing complete" << std::endl;
@@ -146,10 +145,10 @@ main( int argc, char * argv [] ) {
 	utility::vector1< utility::vector1< SewSegment > > test = assembly.find_possible_orders(20.0);
 
 	TR << "Found " << test.size() << " possible orders" << std::endl;
-	for(core::Size i=1; i<=test.size(); ++i) {
+	for ( core::Size i=1; i<=test.size(); ++i ) {
 		TR << "Order # " << i << std::endl;
 		assembly.reorder(test[i]);
-		for(core::Size j=1; j<=test[i].size(); ++j) {
+		for ( core::Size j=1; j<=test[i].size(); ++j ) {
 			TR << test[i][j]->residues_[1].resnum_ << "-" << test[i][j]->residues_[test[i][j]->residues_.size()].resnum_ << " ";
 		}
 		TR << std::endl;

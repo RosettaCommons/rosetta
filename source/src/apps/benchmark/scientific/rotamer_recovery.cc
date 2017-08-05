@@ -61,7 +61,7 @@ using protocols::rotamer_recovery::RotamerRecoveryMoverOP;
 using protocols::jd2::JobDistributor;
 using utility::excn::EXCN_Base;
 
-static Tracer TR("apps.benchmark.scientific.rotamer_recovery");
+static THREAD_LOCAL Tracer TR("apps.benchmark.scientific.rotamer_recovery");
 
 OPT_1GRP_KEY( String, rotamer_recovery, protocol )
 OPT_1GRP_KEY( String, rotamer_recovery, comparer )

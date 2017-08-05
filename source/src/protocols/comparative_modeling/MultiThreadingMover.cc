@@ -121,7 +121,7 @@ void MultiThreadingMover::apply(
 	using core::Size;
 	using core::pose::Pose;
 	using core::sequence::SequenceAlignment;
-	static basic::Tracer tr(
+	static THREAD_LOCAL basic::Tracer tr(
 		"protocols.comparative_modeling.MultiThreadingMover.apply"
 	);
 

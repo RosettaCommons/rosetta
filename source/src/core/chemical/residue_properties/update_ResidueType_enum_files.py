@@ -257,6 +257,9 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('// Utility header\n')
     lines.append('#include <utility/vector1.hh>\n')
     lines.append('#include <utility/excn/Exceptions.hh>\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('#include <utility/thread/ReadWriteMutex.hh>\n')
+    lines.append('#endif\n')
     lines.append("\n")
     lines.append('// C++ headers\n')
     lines.append('#include <map>\n')
@@ -288,29 +291,49 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('\tusing namespace std;\n')
     lines.append('\tusing namespace utility::excn;\n')
     lines.append("\n")
-    lines.append('\t// This line is only executed once.\n')
+    lines.append('\t// These lines are only executed once.\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('\tstatic utility::thread::ReadWriteMutex mut;\n')
+    lines.append('#endif\n')
     lines.append('\tstatic map< string, ' + enum_info.name + ' > * ' +
-                                                        map_name + ' = NULL;\n')
+                                                        map_name + ' = nullptr;\n')
     lines.append("\n")
-    lines.append('\t// If statement ensures that the data is only created '
-                                                   'once, i.e., is constant.\n')
-    lines.append('\tif ( ! ' + map_name + ' ) {\n')
-    lines.append('\t\t// A map of ' + enum_info.name +
+    lines.append('\tbool needs_init(false);\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('\t{\n')
+    lines.append('\t\tutility::thread::ReadLockGuard readlock( mut );\n')
+    lines.append('\t\tneeds_init = ( ' + map_name + ' == nullptr );\n')
+    lines.append('\t}\n')
+    lines.append('#else\n')
+    lines.append('\tneeds_init = ( ' + map_name + ' == nullptr );\n')
+    lines.append('#endif\n')
+    lines.append('\n')
+    lines.append('\tif ( needs_init ) {\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('\t\tutility::thread::WriteLockGuard writelock( mut );\n')
+    lines.append('\t\tif( ' + map_name + ' == nullptr ) {\n')
+    lines.append('#else\n')
+    lines.append('\t\t{ //To keep beautifier happy\n')
+    lines.append('#endif\n')
+
+    lines.append("\n")
+    lines.append('\t\t\t// A map of ' + enum_info.name +
                                 ' enum values keyed by corresponding string.\n')
-    lines.append('\t\t' + map_name + ' = new map< string, ' + enum_info.name +
+    lines.append('\t\t\t' + map_name + ' = new map< string, ' + enum_info.name +
                                                                         ' >;\n')
     lines.append("\n")
 
 
     if ( enum_info.short_name == "variant" ):
          # quick hack -- could probably do this for PROPERTY also -- rhiju
-        lines.append( '\t\tVARIANT_MAP->insert( make_pair( "NO_VARIANT", NO_VARIANT ) );\n' )
+        lines.append( '\t\t\tVARIANT_MAP->insert( make_pair( "NO_VARIANT", NO_VARIANT ) );\n' )
 
     for enum_def in enum_defs:
-        line = '\t\t' + map_name + '->insert( make_pair( "'
+        line = '\t\t\t' + map_name + '->insert( make_pair( "'
         line += enum_def + '", ' + enum_def + ' ) );\n'
         lines.append(line)
 
+    lines.append('\t\t}\n')
     lines.append('\t}\n')
     lines.append("\n")
     lines.append('\tif ( ! ( *' + map_name + ' ).count( ' +
@@ -350,24 +373,42 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('\tusing namespace std;\n')
     lines.append('\tusing namespace utility;\n')
     lines.append("\n")
-    lines.append('\t// This line is only executed once.\n')
-    lines.append('\tstatic vector1< string > * STRING_LIST = NULL;\n')
+    lines.append('\t// These lines are only executed once.\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('\tstatic utility::thread::ReadWriteMutex mut;\n')
+    lines.append('#endif\n')
+    lines.append('\tstatic vector1< string > * STRING_LIST = nullptr;\n')
     lines.append("\n")
-    lines.append('\t// If statement ensures that the data is only created '
-                                                   'once, i.e., is constant.\n')
-    lines.append('\tif ( ! STRING_LIST ) {\n')
-    lines.append('\t\t// A vector mapping ' + enum_info.name +
+    lines.append('\tbool needs_init(false);\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('\t{\n')
+    lines.append('\t\tutility::thread::ReadLockGuard readlock( mut );\n')
+    lines.append('\t\tneeds_init = ( STRING_LIST == nullptr );\n')
+    lines.append('\t}\n')
+    lines.append('#else\n')
+    lines.append('\tneeds_init = ( STRING_LIST == nullptr );\n')
+    lines.append('#endif\n')
+    lines.append('\n')
+    lines.append('\tif ( needs_init ) {\n')
+    lines.append('#ifdef MULTI_THREADED\n')
+    lines.append('\t\tutility::thread::WriteLockGuard writelock( mut );\n')
+    lines.append('\t\tif( STRING_LIST == nullptr ) {\n')
+    lines.append('#else\n')
+    lines.append('\t\t{ //To keep beautifier happy\n')
+    lines.append('#endif\n')
+
+    lines.append('\t\t\t// A vector mapping ' + enum_info.name +
                                ' enum values to their corresponding strings.\n')
-    lines.append('\t\tSTRING_LIST = new vector1< string >;\n')
-    lines.append('\t\tSTRING_LIST->resize( N_' +
+    lines.append('\t\t\tSTRING_LIST = new vector1< string >;\n')
+    lines.append('\t\t\tSTRING_LIST->resize( N_' +
                               enum_info.short_name_plural.upper() + ', "" );\n')
     lines.append("\n")
 
     for enum_def in enum_defs:
-        line = '\t\t( *STRING_LIST )[ '
+        line = '\t\t\t( *STRING_LIST )[ '
         line += enum_def + ' ] = "' + enum_def + '";\n'
         lines.append(line)
-
+    lines.append('\t\t}\n')
     lines.append('\t}\n')
     lines.append("\n")
     lines.append('\treturn ( *STRING_LIST )[ ' + enum_info.short_name + ' ];\n')

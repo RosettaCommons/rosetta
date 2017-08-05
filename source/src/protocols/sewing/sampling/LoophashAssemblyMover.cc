@@ -73,7 +73,7 @@
 namespace devel {
 namespace sewing {
 
-static basic::Tracer TR( "devel.sewing.LoophashAssemblyMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.sewing.LoophashAssemblyMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////

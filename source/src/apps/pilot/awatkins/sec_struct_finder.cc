@@ -105,7 +105,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR( "SecStructFinder" );
+static THREAD_LOCAL basic::Tracer TR( "SecStructFinder" );
 
 // application specific options
 namespace ss_finder {

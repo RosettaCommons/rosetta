@@ -54,7 +54,7 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR("protocols.sewing.ContinuousAssembly");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.ContinuousAssembly");
 
 ContinuousAssembly::ContinuousAssembly():
 	Assembly()

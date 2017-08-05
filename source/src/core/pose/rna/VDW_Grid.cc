@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.pose.rna.VDW_Grid" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.VDW_Grid" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

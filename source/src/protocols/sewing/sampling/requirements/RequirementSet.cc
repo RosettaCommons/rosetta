@@ -26,7 +26,7 @@ namespace sewing  {
 namespace sampling {
 namespace requirements {
 
-static basic::Tracer TR("protocols.sewing.sampling.requirements.RequirementSet");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.sampling.requirements.RequirementSet");
 
 RequirementSet::RequirementSet():
 	min_segments_(0),

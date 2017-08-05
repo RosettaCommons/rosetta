@@ -87,7 +87,7 @@ using namespace core::id;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR( "SecStructFinder" );
+static THREAD_LOCAL basic::Tracer TR( "SecStructFinder" );
 
 namespace protocols {
 namespace ncbb {

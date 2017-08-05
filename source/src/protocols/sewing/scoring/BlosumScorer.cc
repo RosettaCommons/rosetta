@@ -25,7 +25,7 @@ namespace protocols {
 namespace sewing  {
 namespace scoring {
 
-static basic::Tracer TR("protocols.sewing.scoring.BlosumScorer");
+static THREAD_LOCAL basic::Tracer TR("protocols.sewing.scoring.BlosumScorer");
 
 BlosumScorer::BlosumScorer() {}
 

@@ -43,7 +43,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.fldsgn.filters.SecondaryStructureHasResidueFilter");
+static THREAD_LOCAL basic::Tracer tr("protocols.fldsgn.filters.SecondaryStructureHasResidueFilter");
 
 namespace protocols {
 namespace fldsgn {

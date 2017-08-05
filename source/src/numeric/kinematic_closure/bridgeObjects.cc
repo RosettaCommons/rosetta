@@ -32,7 +32,7 @@
 #define pidegs 180.0
 
 using numeric::Real;
-//static basic::Tracer std::cout( "numeric.kinematic_closure.bridgeObjects" );
+//static THREAD_LOCAL basic::Tracer std::cout( "numeric.kinematic_closure.bridgeObjects" );
 
 namespace numeric {
 namespace kinematic_closure {

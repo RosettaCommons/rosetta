@@ -85,7 +85,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static basic::Tracer TR("test_terpenes" );
+static THREAD_LOCAL basic::Tracer TR("test_terpenes" );
 
 int
 main( int argc, char* argv[] )

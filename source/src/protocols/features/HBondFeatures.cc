@@ -137,7 +137,7 @@ using utility::vector1;
 using basic::Tracer;
 using basic::database::insert_or_ignore;
 
-static Tracer TR("protocols.features.HBondFeatures");
+static THREAD_LOCAL Tracer TR("protocols.features.HBondFeatures");
 
 HBondFeatures::HBondFeatures() :
 	scfxn_(get_score_function()),
