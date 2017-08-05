@@ -10,6 +10,7 @@
 /// @file protocols/simple_moves/CoupledMover.hh
 /// @brief definition of CoupledMover class and functions
 /// @author Noah Ollikainen (nollikai@gmail.com)
+/// @author Anum Glasgow (anumazam@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_CoupledMover_hh
 #define INCLUDED_protocols_simple_moves_CoupledMover_hh
@@ -19,7 +20,6 @@
 
 // Project headers
 #include <core/types.hh>
-
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ShortBackrubMover.hh>
@@ -38,9 +38,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@brief JAB - This mover has NO documentation.  If you know what this mover does and how it works, please put the info HERE!
-///@details Noted on 5/16/16
-///
+///@brief This mover is called by CoupledMovesProtocol to make a single coupled move.
 class CoupledMover : public protocols::moves::Mover {
 
 public:
@@ -57,11 +55,11 @@ public:
 		core::pack::task::PackerTaskOP packer_task
 	);
 
-	/// @brief constructor that sets input pose, score function and packer task and ligand residue number
+	/// @brief constructor that sets input pose, score function, packer task and ligand residue number
 	CoupledMover(
 		core::pose::PoseOP pose,
 		core::scoring::ScoreFunctionOP score_fxn,
-		core::pack::task::PackerTaskOP packer_task_,
+		core::pack::task::PackerTaskOP packer_task,
 		core::Size ligand_resnum
 	);
 
@@ -96,10 +94,9 @@ public:
 	void set_rotation_magnitude( core::Real rotation_magnitude );
 	void set_translation_magnitude( core::Real translation_magnitude );
 	void set_short_backrub_mover( protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover );
-	void set_boltzmann_rotamer_mover( protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover );
+	// void set_boltzmann_rotamer_mover( protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover );
 	void set_rigid_body_mover( protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover );
 	void set_score_fxn( core::scoring::ScoreFunctionOP score_fxn );
-	void set_packer_task( core::pack::task::PackerTaskOP packer_task );
 
 	// getters
 	core::Size get_resnum() const;
@@ -116,7 +113,7 @@ public:
 	core::Real get_rotation_magnitude() const;
 	core::Real get_translation_magnitude() const;
 	protocols::simple_moves::ShortBackrubMoverOP get_short_backrub_mover() const;
-	protocols::simple_moves::BoltzmannRotamerMoverOP get_boltzmann_rotamer_mover() const;
+	//protocols::simple_moves::BoltzmannRotamerMoverOP get_boltzmann_rotamer_mover() const;
 	protocols::rigid::RigidBodyPerturbMoverOP get_rigid_body_mover() const;
 	core::scoring::ScoreFunctionOP get_score_fxn() const;
 	core::pack::task::PackerTaskOP get_packer_task() const;
@@ -185,7 +182,7 @@ private:
 	protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover_;
 
 	/// @brief mover used for side-chain moves
-	protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
+	//protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
 
 	/// @brief mover used for rigid body rotation and translation
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
@@ -193,7 +190,7 @@ private:
 	/// @brief score function needed for the BoltzmannRotamerMover
 	core::scoring::ScoreFunctionOP score_fxn_;
 
-	/// @brief packer task needed for the BoltzmannRotamerMover
+	/// @brief task factory needed to generate packer task
 	core::pack::task::PackerTaskOP packer_task_;
 
 };  // class CoupledMover

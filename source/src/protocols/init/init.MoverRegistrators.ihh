@@ -80,6 +80,7 @@ static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_Simp
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
+static MoverRegistrator< coupled_moves::CoupledMovesProtocolCreator> reg_CoupledMovesProtocolCreator;
 
 static MoverRegistrator< cryst::ReportGradientsMoverCreator > reg_ReportGradientsMoverCreator;
 static MoverRegistrator< cryst::SetCrystWeightMoverCreator > reg_SetCrystWeightMoverCreator;

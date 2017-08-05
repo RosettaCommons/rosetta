@@ -76,6 +76,7 @@
 #include <protocols/constraint_generator/RemoveConstraintsCreator.hh>
 
 #include <protocols/contact_map/ContactMapCreator.hh>
+#include <protocols/coupled_moves/CoupledMovesProtocolCreator.hh>
 
 #include <protocols/cryst/cryst_movers_creator.hh>
 #include <protocols/cryst/refinable_lattice_creator.hh>

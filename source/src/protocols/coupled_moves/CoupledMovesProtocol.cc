@@ -10,11 +10,20 @@
 /// @file protocols/coupled_moves/CoupledMovesProtocol.cc
 /// @brief Mover that implements the CoupledMovesProtocol
 /// @author Noah <nollikai@gmail.com>, refactored by Steven Lewis smlewi@gmail.com
+/// @author Anum Glasgow
 
 #include <protocols/coupled_moves/CoupledMovesProtocol.hh>
+#include <protocols/coupled_moves/CoupledMovesProtocolCreator.hh>
 
 #include <basic/Tracer.hh>
 
+//adding #include lines
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.hh>
+
+//
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -211,7 +220,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 
 	// add constraints if supplied by via constraints::cst_file option
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(*pose_copy);
-
+	// create a PackerTask, task, which is modified directly in the following section and fed to coupled_mover
 	core::pack::task::PackerTaskOP task( main_task_factory_->create_task_and_apply_taskoperations( *pose_copy ) );
 
 	utility::vector1<core::Size> move_positions;
@@ -257,7 +266,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight ) );
 		task->set_IGEdgeReweights()->add_reweighter( reweight_ligand );
 	} else {
-		coupled_mover = protocols::simple_moves::CoupledMoverOP( new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task) );
+		coupled_mover = protocols::simple_moves::CoupledMoverOP( new protocols::simple_moves::CoupledMover( pose_copy, score_fxn_, task ) );
 	}
 
 	coupled_mover->set_fix_backbone( option[OptionKeys::coupled_moves::fix_backbone] );
@@ -440,6 +449,75 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 			}
 		}
 	}
+
+}
+
+
+/// additional methods for RosettaScripts
+
+protocols::moves::MoverOP CoupledMovesProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CoupledMovesProtocol );
+}
+
+std::string CoupledMovesProtocolCreator::keyname() const {
+	return CoupledMovesProtocol::mover_name();
+}
+
+protocols::moves::MoverOP CoupledMovesProtocol::clone() const {
+	return protocols::moves::MoverOP( new CoupledMovesProtocol( *this ) );
+}
+
+protocols::moves::MoverOP CoupledMovesProtocol::fresh_instance() const {
+	return protocols::moves::MoverOP( new CoupledMovesProtocol );
+}
+
+std::string CoupledMovesProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string CoupledMovesProtocol::mover_name() {
+	return "CoupledMovesProtocol";
+}
+
+void CoupledMovesProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoupledMovesProtocol::provide_xml_schema( xsd );
+}
+
+void
+CoupledMovesProtocol::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data_map,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+)
+{
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+
+	main_task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
+	score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
+
+}
+
+void CoupledMovesProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute(
+		"main_task_factory_", xs_string,
+		"packer task");
+	attlist + XMLSchemaAttribute(
+		"score_fxn_", xs_string,
+		"score function");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Small backbone and side chain movements",
+		attlist );
 
 }
 

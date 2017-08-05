@@ -10,6 +10,7 @@
 /// @file protocols/coupled_moves/CoupledMovesProtocol.hh
 /// @brief Mover that implements the CoupledMovesProtocol
 /// @author Noah <nollikai@gmail.com>, refactored into header by Steven Lewis smlewi@gmail.com
+/// @author Anum Glasgow
 
 #ifndef INCLUDED_protocols_coupled_moves_CoupledMovesProtocol_hh
 #define INCLUDED_protocols_coupled_moves_CoupledMovesProtocol_hh
@@ -31,20 +32,26 @@ public:
 	CoupledMovesProtocol(CoupledMovesProtocol const & cmp);
 
 	virtual void apply( core::pose::Pose& pose );
-	std::string get_name() const { return "CoupledMovesProtocol"; }
-
-	virtual protocols::moves::MoverOP clone() const {
-		return protocols::moves::MoverOP( new CoupledMovesProtocol( *this ) );
-	}
-
-	virtual protocols::moves::MoverOP fresh_instance() const {
-		return protocols::moves::MoverOP( new CoupledMovesProtocol );
-	}
+	std::string get_name() const;
+	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const;
 
 	core::Real compute_ligand_score_bonus(
 		core::pose::PoseOP pose,
 		utility::vector1<core::Size> ligand_resnums,
 		core::Real ligand_weight);
+
+	void parse_my_tag(
+		TagCOP,
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & ) /*override*/;
+
+	static std::string mover_name();
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;

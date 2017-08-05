@@ -102,11 +102,13 @@ bool ClashBasedRepackShellSelector::is_sc_sc_clash(
 	core::conformation::Residue const & rsd2
 ) const
 {
-	core::Size max_res1_heavyatoms = rsd1.nheavyatoms();
-	core::Size max_res2_heavyatoms = rsd2.nheavyatoms();
-	for ( core::Size m=5; m <= max_res1_heavyatoms; ++m ) {
+	const core::Size first_sidechain_atom = 5;
+	const core::Size last_res1_sidechain_atom = rsd1.nheavyatoms();
+	const core::Size last_res2_sidechain_atom = rsd2.nheavyatoms();
+
+	for ( core::Size m = first_sidechain_atom; m <= last_res1_sidechain_atom; ++m ) {
 		core::Vector const & atom1_coords( rsd1.xyz( m ) );
-		for ( core::Size n=5; n <= max_res2_heavyatoms; ++n ) {
+		for ( core::Size n = first_sidechain_atom; n <= last_res2_sidechain_atom; ++n ) {
 			core::Vector const & atom2_coords( rsd2.xyz( n ) );
 			// use the sum of the LJ radii as the distance cutoff with a bump overlap factor
 			core::Real lj_sum = (rsd1.atom_type( m ).lj_radius() + rsd2.atom_type( n ).lj_radius());
@@ -124,10 +126,15 @@ bool ClashBasedRepackShellSelector::is_sc_bb_clash(
 	core::conformation::Residue const & rsd2
 ) const
 {
-	core::Size max_res1_heavyatoms = rsd1.nheavyatoms();
-	for ( core::Size m=5; m <= max_res1_heavyatoms; ++m ) {
+	const core::Size first_sidechain_atom = 5;
+	const core::Size last_sidechain_atom = rsd1.nheavyatoms();
+	const core::Size first_backbone_atom = 1;
+	// Don't crash if we get a residue (e.g. water) that doesn't have 4 backbone atoms.
+	const core::Size last_backbone_atom = std::min<int>(4, rsd2.nheavyatoms());
+
+	for ( core::Size m = first_sidechain_atom; m <= last_sidechain_atom; ++m ) {
 		core::Vector const & atom1_coords( rsd1.xyz( m ) );
-		for ( core::Size n=1; n <= 4; ++n ) {
+		for ( core::Size n = first_backbone_atom; n <= last_backbone_atom; ++n ) {
 			core::Vector const & atom2_coords( rsd2.xyz( n ) );
 			// use the sum of the LJ radii as the distance cutoff with a bump overlap factor
 			core::Real lj_sum = (rsd1.atom_type( m ).lj_radius() + rsd2.atom_type( n ).lj_radius());
