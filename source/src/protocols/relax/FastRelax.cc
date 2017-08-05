@@ -176,12 +176,14 @@ endrepeat
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/md/CartesianMD.hh>
+#include <protocols/hydrate/Hydrate.hh>
 
 //Basic Headers
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
@@ -756,7 +758,22 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			chk_counter++;
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
 			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
-				pack_full_repack_->apply( pose );
+				// hydrate/SPaDES protocol
+				if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
+					//if ( option[ OptionKeys::relax::enforce_waters_during_relax ]() == true ) {
+					//	// keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
+					//	// below code overwrites the enforce_all_waters option
+					//	if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
+					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
+					//	} else { // last ramping step
+					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
+					//	}
+					//}
+					protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate( local_scorefxn ) );
+					hydrate_protocol->apply( pose );
+				} else {
+					pack_full_repack_->apply( pose );
+				}
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
 			if ( dumpall_ ) {
@@ -868,7 +885,22 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			chk_counter++;
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
 			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
-				pack_full_repack_->apply( pose );
+				// hydrate/SPaDES protocol
+				if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
+					//if ( option[ OptionKeys::relax::enforce_waters_during_relax ]() == true ) {
+					//	// keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
+					//	// below code overwrites the enforce_all_waters option
+					//	if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
+					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
+					//	} else { // last ramping step
+					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
+					//	}
+					//}
+					protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate( local_scorefxn ) );
+					hydrate_protocol->apply( pose );
+				} else {
+					pack_full_repack_->apply( pose );
+				}
 				do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}

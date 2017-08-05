@@ -25,11 +25,12 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 // // Utility headers
 #include <utility/io/izstream.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 
 namespace core {
 namespace pack {
@@ -91,6 +92,17 @@ create_oriented_water_rotamer(
 	conformation::Residue const & tp5 // for the approx geometry of the lone pairs
 );
 
+/// @brief builds water molecule rotamers on top of cubic lattice in hydrate/SPaDES protocol
+void
+build_anchorless_water_rotamers(
+	Size const seqpos,
+	chemical::ResidueType const & h2o_type,
+	pose::Pose const & pose,
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
+);
 
 void
 build_independent_water_rotamers(
@@ -99,7 +111,8 @@ build_independent_water_rotamers(
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	scoring::ScoreFunction const & scorefxn
 );
 
 void
@@ -115,9 +128,9 @@ build_dependent_water_rotamers(
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	scoring::ScoreFunction const & scorefxn
 );
-
 
 } // namespace rotamer_set
 } // namespace pack

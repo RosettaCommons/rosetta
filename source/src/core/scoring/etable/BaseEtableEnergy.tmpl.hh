@@ -1235,6 +1235,7 @@ BaseEtableEnergy< Derived >::residue_pair_energy_ext(
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
 		conformation::Atom const & atom1( rsd1.atom( neighbs[ ii ].atomno1() ) );
 		conformation::Atom const & atom2( rsd2.atom( neighbs[ ii ].atomno2() ) );
+
 		static_cast< Derived const & > (*this).interres_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
 #ifdef APL_TEMP_DEBUG
 		++mingraph_n_atpairE_evals();

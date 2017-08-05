@@ -58,6 +58,12 @@ public:
 	/// setter
 	void is_hydrogen( bool setting );
 
+	/// hydrate/SPaDES protocol
+	bool is_wat() const { return is_wat_; }
+
+	/// hydrate/SPaDES protocol
+	void is_wat( bool setting ) { is_wat_ = setting; }
+
 	/// @brief send a description of the atom to standard out
 	void print() const;
 
@@ -110,6 +116,7 @@ private:
 	Vector xyz_;
 	int is_hydrogen_;
 	int atom_type_;
+	bool is_wat_; // hydrate/SPaDES protocol
 
 };
 

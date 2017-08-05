@@ -1,0 +1,19 @@
+-restore_pre_talaris_2013_behavior
+
+-in:file:s 1BRS_wet.pdb
+
+-score
+ -water_hybrid_sf true
+ -weights spades.wts
+
+-hydrate
+ -just_score true
+ -ignore_fa_sol_at_positions 85 137 147
+
+-inout
+ -skip_connect_info true
+ -write_all_connect_info false
+
+-out
+ -prefix score_
+ -nstruct 1

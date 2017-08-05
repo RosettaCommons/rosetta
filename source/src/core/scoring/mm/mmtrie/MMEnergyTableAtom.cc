@@ -42,12 +42,13 @@ namespace mm {
 namespace mmtrie {
 
 
-MMEnergyTableAtom::MMEnergyTableAtom() : parent(), is_hydrogen_( false ) {}
+MMEnergyTableAtom::MMEnergyTableAtom() : parent(), is_hydrogen_( false ), is_wat_( false ) {}
 
 MMEnergyTableAtom::MMEnergyTableAtom( conformation::Residue const & res, Size atom_index )
 :
 	parent( res.atom( atom_index ) ),
-	is_hydrogen_( false )
+	is_hydrogen_( false ),
+	is_wat_( false ) // hydrate/SPaDES protocol
 {}
 
 MMEnergyTableAtom::~MMEnergyTableAtom() {}
@@ -86,6 +87,7 @@ void
 core::scoring::mm::mmtrie::MMEnergyTableAtom::save( Archive & arc ) const {
 	arc( cereal::base_class< core::conformation::Atom >( this ) );
 	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+	arc( CEREAL_NVP( is_wat_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -94,6 +96,7 @@ void
 core::scoring::mm::mmtrie::MMEnergyTableAtom::load( Archive & arc ) {
 	arc( cereal::base_class< core::conformation::Atom >( this ) );
 	arc( is_hydrogen_ ); // _Bool
+	arc( is_wat_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::mm::mmtrie::MMEnergyTableAtom );

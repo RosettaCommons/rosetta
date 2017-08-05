@@ -228,6 +228,10 @@ sources = {
         "protocols/indexed_structure_store/filters": [
             "FragmentLookupFilter"
         ],
+    "protocols/hydrate" : [
+        "Hydrate",
+        "hydrate_functions",
+    ],
         "protocols/kinematic_closure" : [
             "internal",
             "KicMover",

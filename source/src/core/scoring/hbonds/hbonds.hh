@@ -37,6 +37,12 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
+bool
+residue_near_water(
+	pose::Pose const & pose,
+	Size ii
+);
+
 //fpd ss-len-dep weight parameters
 struct SSWeightParameters {
 	SSWeightParameters() : ssdep_(false), l_(0.5), h_(2.0), len_l_(4), len_h_(17) {}
@@ -192,7 +198,8 @@ identify_hbonds_1way(
 	bool const exclude_acc_sc,
 	// output
 	HBondSet & hbond_set,
-	Real ssdep_weight_factor = 1.0
+	Real ssdep_weight_factor = 1.0,
+	bool bond_near_wat = false
 );
 
 void
@@ -210,7 +217,8 @@ identify_hbonds_1way(
 	HBondOptions const & options,
 	// output
 	EnergyMap & emap,
-	Real ssdep_weight_factor = 1.0
+	Real ssdep_weight_factor = 1.0,
+	bool bond_near_wat = false
 );
 
 void
@@ -229,7 +237,8 @@ identify_hbonds_1way(
 	// output
 	EnergyMap & emap,
 	boost::unordered_map<core::Size, core::Size> & num_hbonds,
-	Real ssdep_weight_factor = 1.0
+	Real ssdep_weight_factor = 1.0,
+	bool bond_near_wat = false  // jag
 );
 
 /// @brief Returns the energy for the hydrogen bond between a given don/acceptor
@@ -253,7 +262,8 @@ identify_hbonds_1way_AHdist(
 	Size const don_nb,
 	Size const acc_nb,
 	Real const AHdist_threshold,
-	HBondSet & hbond_set
+	HBondSet & hbond_set,
+	bool bond_near_wat = false
 );
 
 void
@@ -338,7 +348,8 @@ identify_hbonds_1way_membrane(
 	bool const exclude_acc_scb,
 	bool const exclude_acc_sc,
 	HBondSet & hbond_set,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool bond_near_wat = false
 );
 
 void
@@ -355,7 +366,8 @@ identify_hbonds_1way_membrane(
 	bool const exclude_acc_sc,
 	HBondOptions const & options,
 	EnergyMap & emap,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool bond_near_wat = false
 );
 
 Real

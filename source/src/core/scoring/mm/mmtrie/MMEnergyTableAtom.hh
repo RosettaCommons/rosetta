@@ -68,6 +68,15 @@ public:
 	inline
 	void is_hydrogen( bool setting ) { is_hydrogen_ = setting; }
 
+	/// @brief hydrate/SPaDES protocol
+	inline
+	bool is_wat() const { return is_wat_; }
+
+	/// @brief hydrate/SPaDES protocol
+	inline
+	void is_wat( bool setting ) { is_wat_ = setting; }
+
+	/// @brief send a description of the atom to standard out
 	/// @brief send a description of the atom to standard out
 	void print() const;
 
@@ -119,6 +128,8 @@ public:
 private:
 
 	bool is_hydrogen_;
+
+	bool is_wat_; // hydrate/SPaDES protocol
 
 #ifdef    SERIALIZATION
 public:

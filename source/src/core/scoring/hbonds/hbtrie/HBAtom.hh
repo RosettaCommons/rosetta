@@ -85,6 +85,18 @@ public:
 	inline
 	void is_dna( bool setting ) { is_dna_ = setting; }
 
+	inline
+	bool is_wat() const { return is_wat_; } // hydrate/SPaDES protocol
+
+	inline
+	void is_wat( bool setting ) { is_wat_ = setting; } // hydrate/SPaDES protocol
+
+	inline
+	bool near_wat() const { return near_wat_; } // hydrate/SPaDES protocol
+
+	inline
+	void near_wat( bool setting ) { near_wat_ = setting; } // hydrate/SPaDES protocol
+
 	/// @brief send a description of the atom to standard out
 	void print() const;
 
@@ -188,6 +200,9 @@ private:
 
 	bool is_protein_;
 	bool is_dna_;
+
+	bool is_wat_; // hydrate/SPaDES protocol
+	bool near_wat_; // hydrate/SPaDES protocol
 
 	int hb_chem_type_; // an integer either representing an HBDonChemType or an HBAccChemType
 	//int seqpos_; // for hbe_classify_BB_by_separation

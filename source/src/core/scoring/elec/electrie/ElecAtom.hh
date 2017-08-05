@@ -123,6 +123,14 @@ public:
 	inline
 	void is_hydrogen( bool setting ) { is_hydrogen_ = setting; }
 
+	/// @brief check if atom is a water atom in hydrate/SPaDES protocol
+	inline
+	bool is_wat() const { return is_wat_; }
+
+	/// @brief check if atom is a water atom in hydrate/SPaDES protocol
+	inline
+	void is_wat( bool setting ) { is_wat_ = setting; }
+
 	/// @brief equality operator for shared-prefix detection
 	inline
 	bool operator == ( ElecAtom const & other ) const
@@ -149,6 +157,7 @@ private:
 	Real frac_;
 	bool isbb_;
 	bool is_hydrogen_;
+	bool is_wat_; // hydrate/SPaDES protocol
 	Real charge_;
 };
 

@@ -42,7 +42,7 @@ namespace electrie {
 
 
 
-ElecAtom::ElecAtom() : frac_(0.0), isbb_( false ), is_hydrogen_( false ), charge_( 0.0 ) {}
+ElecAtom::ElecAtom() : frac_(0.0), isbb_( false ), is_hydrogen_( false ), is_wat_( false ), charge_( 0.0 ) {}
 
 ElecAtom::ElecAtom( conformation::Residue const & res, Size atom_index )
 :
@@ -50,6 +50,7 @@ ElecAtom::ElecAtom( conformation::Residue const & res, Size atom_index )
 	frac_(0.0),
 	isbb_( res.atom_is_backbone( atom_index ) ),
 	is_hydrogen_( false ),
+	is_wat_( false ), // hydrate/SPaDES protocol
 	charge_( res.atomic_charge( atom_index ) )
 {}
 
@@ -91,6 +92,7 @@ core::scoring::elec::electrie::ElecAtom::save( Archive & arc ) const {
 	arc( CEREAL_NVP( frac_ ) ); // Real
 	arc( CEREAL_NVP( isbb_ ) ); // _Bool
 	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+	arc( CEREAL_NVP( is_wat_ ) ); // _Bool
 	arc( CEREAL_NVP( charge_ ) ); // Real
 }
 
@@ -103,6 +105,7 @@ core::scoring::elec::electrie::ElecAtom::load( Archive & arc ) {
 	arc( frac_ ); // Real
 	arc( isbb_ ); // _Bool
 	arc( is_hydrogen_ ); // _Bool
+	arc( is_wat_ ); // _Bool
 	arc( charge_ ); // Real
 }
 

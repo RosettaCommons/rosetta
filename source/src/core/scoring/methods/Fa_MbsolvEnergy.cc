@@ -40,6 +40,10 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
+
 
 namespace core {
 namespace scoring {
@@ -121,6 +125,39 @@ Fa_MbsolvEnergy::residue_pair_energy(
 	Real fa_mbsolv_score( 0.0 );
 
 	get_residue_pair_energy( rsd1, rsd2, pose, fa_mbsolv_score);
+
+	// hydrate/SPaDES protocol
+	// track if we should ignore fa_sol
+	bool no_fa_sol = false;
+
+	// hydrate/SPaDES protocol
+	// check to make sure water_hybrid_sf and ignore_fa_sol_at_positions is on
+	if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		if ( basic::options::option[ basic::options::OptionKeys::hydrate::ignore_fa_sol_at_positions ].user() ) {
+
+			// get the vector of positions to ignore
+			utility::vector1< Size > const ignore_positions = basic::options::option[ basic::options::OptionKeys::hydrate::ignore_fa_sol_at_positions ]();
+
+			// check if the current residues are supposed to be ignored
+			for ( Size pos = 1; pos <= ignore_positions.size(); pos++ ) {
+				Size ignore_fa_sol_pos = ignore_positions[ pos ];
+				if ( rsd1.seqpos() == ignore_fa_sol_pos || rsd2.seqpos() == ignore_fa_sol_pos ) {
+					no_fa_sol = true;
+					break;
+				}
+			}
+
+			// if current residues are to be ignored, set fa_sol to zero
+			if ( no_fa_sol ) {
+				fa_mbsolv_score = 0.0;
+			}
+		}
+
+		// waters should also not have fa_mbsolv
+		if ( rsd1.name() == "TP3" || rsd2.name() == "TP3" ) {
+			fa_mbsolv_score = 0.0;
+		}
+	}
 
 	emap[ fa_mbsolv ] += fa_mbsolv_score;
 }
@@ -409,6 +446,39 @@ Fa_MbsolvEnergy::eval_intrares_energy(
 	Real fa_mbsolv_score( 0.0 );
 
 	get_residue_pair_energy( rsd, rsd, pose, fa_mbsolv_score);
+
+	// hydrate/SPaDES protocol
+	// track if we should ignore fa_sol
+	bool no_fa_sol = false;
+
+	// hydrate/SPaDES protocol
+	// check to make sure water_hybrid_sf and ignore_fa_sol_at_positions is on
+	if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		if ( basic::options::option[ basic::options::OptionKeys::hydrate::ignore_fa_sol_at_positions ].user() ) {
+
+			// get the vector of positions to ignore
+			utility::vector1< Size > const ignore_positions = basic::options::option[ basic::options::OptionKeys::hydrate::ignore_fa_sol_at_positions ]();
+
+			// check if the current residues are supposed to be ignored
+			for ( Size pos = 1; pos <= ignore_positions.size(); pos++ ) {
+				Size ignore_fa_sol_pos = ignore_positions[ pos ];
+				if ( rsd.seqpos() == ignore_fa_sol_pos ) {
+					no_fa_sol = true;
+					break;
+				}
+			}
+
+			// if current residues are to be ignored, set fa_sol to zero
+			if ( no_fa_sol ) {
+				fa_mbsolv_score = 0.0;
+			}
+		}
+
+		// waters should also not have fa_mbsolv
+		if ( rsd.name() == "TP3" ) {
+			fa_mbsolv_score = 0.0;
+		}
+	}
 
 	emap[ fa_mbsolv ] += fa_mbsolv_score;
 

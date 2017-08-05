@@ -184,6 +184,7 @@
 #include <core/scoring/methods/SplitUnfoldedTwoBodyEnergyCreator.hh>
 #include <core/scoring/methods/WaterAdductHBondEnergyCreator.hh>
 #include <core/scoring/methods/WaterAdductIntraEnergyCreator.hh>
+#include <core/scoring/methods/WaterSpecificEnergyCreator.hh>
 #include <core/scoring/nv/NVscoreCreator.hh>
 #include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
 #include <core/scoring/interface_/DDPscoreCreator.hh>
@@ -541,6 +542,7 @@ static EnergyMethodRegistrator< scoring::methods::UnfoldedStateEnergyCreator > U
 static EnergyMethodRegistrator< scoring::methods::SplitUnfoldedTwoBodyEnergyCreator > SplitUnfoldedTwoBodyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::WaterAdductHBondEnergyCreator > WaterAdductHBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::WaterAdductIntraEnergyCreator > WaterAdductIntraEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::WaterSpecificEnergyCreator > WaterSpecificEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::packing::HolesEnergyCreator > HolesEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::packing::SurfVolEnergyCreator > SurfVolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::packing::SurfEnergyCreator > SurfEnergyCreator_registrator;

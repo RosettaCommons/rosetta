@@ -60,6 +60,10 @@ create_trie(
 			AT newatom( *ii_rotamer, jj );
 			newatom.is_hydrogen( false );
 
+			// hydrate/SPaDES protocol
+			if ( ii_rotamer->name() == "TP3" ) newatom.is_wat( true );
+			else newatom.is_wat( false );
+
 			CPDAT cpdata;
 			initialize_cpdata_for_atom( cpdata, jj, *ii_rotamer, cpdata_map );
 
@@ -72,6 +76,10 @@ create_trie(
 
 				AT newhatom( *ii_rotamer, kk );
 				newhatom.is_hydrogen( true );
+
+				// hydrate/SPaDES protocol
+				if ( ii_rotamer->name() == "TP3" ) newhatom.is_wat( true );
+				else newhatom.is_wat( false );
 
 				CPDAT cpdata;
 				initialize_cpdata_for_atom( cpdata, kk, *ii_rotamer, cpdata_map );
@@ -116,6 +124,10 @@ create_trie(
 		AT newatom( res, jj );
 		newatom.is_hydrogen( false );
 
+		// hydrate/SPaDES protocol
+		if ( res.name() == "TP3" ) newatom.is_wat( true ); // hybrid solvation scoring function
+		else newatom.is_wat( false );
+
 		CPDAT cpdata;
 		initialize_cpdata_for_atom( cpdata, jj, res, cpdata_map );
 
@@ -128,6 +140,10 @@ create_trie(
 
 			AT newhatom( res, kk );
 			newhatom.is_hydrogen( true );
+
+			// hydrate/SPaDES protocol
+			if ( res.name() == "TP3" ) newhatom.is_wat( true ); // hybrid solvation scoring function
+			else newhatom.is_wat( false );
 
 			CPDAT cpdata;
 			initialize_cpdata_for_atom( cpdata, kk, res, cpdata_map );

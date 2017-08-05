@@ -1,4 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// s
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -68,6 +69,15 @@ public:
 	inline
 	void is_hydrogen( bool setting ) { is_hydrogen_ = setting; }
 
+	/// @brief checks if is water atom in hydrate/SPaDES protocol
+	inline
+	bool is_wat() const { return is_wat_; }
+
+	/// @brief checks if is water atom in hydrate/SPaDES protocol
+	inline
+	void is_wat( bool setting ) { is_wat_ = setting;}
+
+	/// @brief send a description of the atom to standard out
 	/// @brief send a description of the atom to standard out
 	void print() const;
 
@@ -119,6 +129,7 @@ public:
 private:
 
 	bool is_hydrogen_;
+	bool is_wat_; // hydrate/SPaDES protocol
 
 #ifdef    SERIALIZATION
 public:

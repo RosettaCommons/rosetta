@@ -39,6 +39,7 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
+#include <core/pack/rotamer_set/WaterAnchorInfo.hh> // wym
 
 
 #ifdef    SERIALIZATION
@@ -86,7 +87,6 @@ public:
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph
 	);
-
 
 	virtual
 	void
@@ -266,6 +266,20 @@ protected:
 	);
 
 
+	/// @brief, Filter water rotamers by eliminating rotamers with overlaps
+	/// and uniformly only keeping a maximum number of rotamers
+	/// (water_rotamers_cap, def=500)
+	void
+	filter_water_rotamers(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		task::PackerTask const & task,
+		utility::graph::GraphCOP packer_neighbor_graph,
+		utility::vector1< conformation::ResidueOP > const & new_rotamers,
+		utility::vector1< conformation::ResidueOP > & filtered_rotamers
+	);
+
+
 	/// @brief  Build rotamers of a specific type that depend on positions of rotamers built in a previous pass
 	/// Use an input "existing residue" which may or may not reflect the coordinates of the residue at
 	/// pose.residue( resid_ );
@@ -288,8 +302,10 @@ protected:
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue,
-		utility::graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph,
+		scoring::ScoreFunction const & scorefxn
 	);
+
 
 public:
 	/// @brief Pushes standard-deviation multiples that should be sampled
@@ -330,6 +346,16 @@ private:
 	/// @brief logic for building TP3 water rotamers
 	void build_tp3_water_rotamers(
 		pose::Pose const & pose,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue,
+		utility::graph::GraphCOP packer_neighbor_graph,
+		scoring::ScoreFunction const & scorefxn
+	);
+
+	void build_filtered_tp3_water_rotamers(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue,

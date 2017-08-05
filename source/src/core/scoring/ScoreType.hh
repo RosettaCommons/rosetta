@@ -262,6 +262,8 @@ enum ScoreType {
 	hbond_lr_bb_sc,
 	hbond_sc,
 	hbond_intra,  //Currently affects only RNA & ligands, but can be turned on for protein, DNA.
+	hbond_wat, // hybrid solvation explicit waters in hydrate/SPaDES protocol
+	wat_entropy, // hybrid solvation explicit waters in hydrate/SPaDES protocol
 	hbond, // all hbonds summed together with same weight.
 
 	npd_hbond_sr_bb,
@@ -605,6 +607,9 @@ enum ScoreType {
 	hpatch,
 	//membrane environment smooth
 	Menv_smooth,
+
+	// hydrate/SPaDES protocol
+	wat_desolv,
 
 	ring_close, //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
 	aa_repeat, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).

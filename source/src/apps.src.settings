@@ -188,6 +188,9 @@ sources = {
 		"BuildPeptide",
 		"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
 	],
+	"public/hydrate": [
+		"hydrate",
+	],
 	"public/interface_design/anchored_design": [
 		"AnchoredDesign", # /* Steven Lewis, doc/apps/pilot/smlewis/anchored_design.dox, test/integration/tests/anchored_design/ */
 		"AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */

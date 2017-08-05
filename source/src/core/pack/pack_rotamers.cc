@@ -51,7 +51,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
 using namespace ObjexxFCL;
 
 namespace core {
@@ -156,6 +155,7 @@ pack_rotamers_loop(
 		Real bestenergy( pack_rotamers_run( pose, task, rotsets, ig ) );
 
 		Real const final_score( scfxn( pose ) );
+
 		// show the resulting sequence
 		std::string final_seq;
 		for ( Size i=1; i<= pose.size(); ++i ) {
@@ -214,7 +214,6 @@ pack_rotamers_setup(
 
 	ig = InteractionGraphFactory::create_and_initialize_annealing_graph(*task, *rotsets, pose, scfxn, packer_neighbor_graph );
 }
-
 
 // PyRosetta compatible version
 interaction_graph::AnnealableGraphBaseOP

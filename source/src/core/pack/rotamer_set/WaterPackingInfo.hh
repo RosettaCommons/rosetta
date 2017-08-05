@@ -50,6 +50,10 @@ public:
 
 	basic::datacache::CacheableDataOP
 	clone() const;
+	//clone() const override
+	//{
+	// return basic::datacache::CacheableDataOP( new WaterPackingInfo( *this ) );
+	//}
 
 	WaterAnchorInfo &
 	operator[] ( Size const seqpos );

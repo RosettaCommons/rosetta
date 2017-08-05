@@ -24,10 +24,10 @@
 // Package headers
 #include <core/scoring/etable/BaseEtableEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-
 #include <core/scoring/EnergyMap.hh>
-
 #include <utility/vector1.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #ifdef    SERIALIZATION
 #include <cereal/types/polymorphic.fwd.hpp>
@@ -91,6 +91,24 @@ public:
 			sol_weight_ * solv;
 	}
 
+	// special case for hydrate/SPaDES protocol
+	inline
+	Energy
+	sum_energies_wat_wat( Real atr, Real rep ) const {
+		return
+			atr_weight_ * atr +
+			rep_weight_ * rep;
+	}
+
+	// special case for hydrate/SPaDES protocol
+	inline
+	Energy
+	sum_energies_wat_res( Real atr, Real rep ) const {
+		return
+			atr_weight_ * atr +
+			rep_weight_ * rep;
+	}
+
 	inline
 	Real
 	hydrogen_interaction_cutoff2() const
@@ -132,10 +150,11 @@ public:
 		Real & d2
 	) const {
 		Real atr(0),rep(0),solv(0);
+
 		atom_pair_energy_v( atom1, atom2, weight, atr, rep, solv, d2 );
 		emap[st_atr()]+=atr;
 		emap[st_rep()]+=rep;
-		emap[st_sol()]+=solv;
+		emap[ st_sol() ] += solv;
 	}
 
 	virtual
@@ -266,10 +285,12 @@ public:
 	) const
 	{
 		Real atr(0),rep(0),solv(0);
+
 		atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 );
-		emap[st_atr()]+=atr;
-		emap[st_rep()]+=rep;
-		emap[st_sol()]+=solv;
+		emap[ st_atr() ] += atr;
+		emap[ st_rep() ] += rep;
+		emap[ st_sol() ] += solv;
+
 	}
 
 	virtual
@@ -341,6 +362,7 @@ public:
 	) const
 	{
 		Real atr(0), rep(0), sol(0), d2(0);
+
 		atom_pair_energy( atom1, atom2, weight, atr, rep, sol, d2 );
 		emap[ st_atr() ] += atr;
 		emap[ st_rep() ] += rep;
@@ -380,6 +402,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2 );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -392,6 +424,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -404,6 +446,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -416,6 +468,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -537,10 +599,11 @@ public:
 	) const
 	{
 		Real atr(0),rep(0),solv(0);
+
 		atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 );
-		emap[st_atr()]+=atr;
-		emap[st_rep()]+=rep;
-		emap[st_sol()]+=solv;
+		emap[ st_atr() ] += atr;
+		emap[ st_rep() ] += rep;
+		emap[ st_sol() ] += solv;
 	}
 
 	virtual
@@ -604,6 +667,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2 );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -616,6 +689,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -628,6 +711,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -640,6 +733,16 @@ public:
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
+
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( at1.is_wat() && at2.is_wat() ) {
+				return sum_energies_wat_wat( atr, rep );
+			} else if ( at1.is_wat() || at2.is_wat() ) {
+				return sum_energies_wat_res( atr, rep );
+			}
+		}
+
 		return sum_energies( atr, rep, solv );
 	}
 
@@ -664,6 +767,7 @@ public:
 	) const
 	{
 		Real atr(0), rep(0), sol(0);
+
 		pair_energy_H( atom1, atom2, weight, atr, rep, sol );
 		emap[ st_atr() ] += atr;
 		emap[ st_rep() ] += rep;

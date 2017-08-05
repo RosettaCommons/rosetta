@@ -940,6 +940,7 @@ hbond_compute_energy(
 	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0),  FxH2(0.0); // values of fading intervals
 	double dFSr(0.0), dFLr(0.0), dFxD(0.0), dFxH(0.0), dFxH2(0.0); // derivatives of fading intervals
 
+
 	database.AHdist_short_fade_lookup( hbe )->value_deriv(AHdis, FSr, dFSr);
 	database.AHdist_long_fade_lookup( hbe )->value_deriv(AHdis, FLr, dFLr);
 	database.cosBAH_fade_lookup( hbe )->value_deriv(xH, FxH, dFxH);
@@ -1006,11 +1007,10 @@ hbond_compute_energy(
 		(*database.cosAHD_long_poly_lookup( hbe ))(AHD, PLxD, dPLxD);
 	}
 
-	//  double fade_factor = 1.0; // larger == stiffer fade
+	//double fade_factor = 1.0; // larger == stiffer fade
 	double exp1,exp2;
 	double fade_factor = basic::options::option[ basic::options::OptionKeys::score::hbond_fade ].value();
 	if ( !use_softmax ) {
-		//old version
 		energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
 	} else {
 		// fade between both angles

@@ -17,6 +17,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
@@ -47,6 +48,7 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/hbonds/HBondTypeManager.hh>
 
 #include <utility/graph/Graph.hh>
 
@@ -61,6 +63,9 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/database/open.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -84,7 +89,6 @@
 namespace core {
 namespace pack {
 namespace rotamer_set {
-
 
 static THREAD_LOCAL basic::Tracer tt( "core.pack.rotamer_set.rotamer_building_functions", basic::t_info );
 
@@ -168,7 +172,7 @@ build_lib_dna_rotamers(
 	bool const simple_way( existing_residue.is_terminus() );
 
 	// a residue of the correct type aligned to the existing backbone
-	ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
+	conformation::ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
 	rot->set_chi( 1, existing_residue.chi(1) );
 
 	if ( simple_way ) {
@@ -748,9 +752,11 @@ create_oriented_water_rotamer(
 
 	conformation::ResidueOP rot( conformation::ResidueFactory::create_residue( h2o_type ) );
 	debug_assert( rot->natoms() == 3 );
+
 	rot->set_xyz(  "O", xyz_O );
 	rot->set_xyz( "H1", xyz_stub.local2global( tp5_stub.global2local( tp5.xyz("H1") ) ) );
 	rot->set_xyz( "H2", xyz_stub.local2global( tp5_stub.global2local( tp5.xyz("H2") ) ) );
+
 	return rot;
 }
 
@@ -817,7 +823,7 @@ build_fixed_O_water_rotamers_independent(
 	} // i=1,nres
 
 
-	ResidueOP tp5( conformation::ResidueFactory::create_residue( residue_set->name_map("TP5") ) );
+	conformation::ResidueOP tp5( conformation::ResidueFactory::create_residue( residue_set->name_map("TP5") ) );
 
 	for ( Size i=1; i<= donors.size(); ++i ) {
 		Vector const & xyz1( donors[i] );
@@ -877,6 +883,24 @@ build_fixed_O_water_rotamers_independent(
 
 }
 
+
+Vector
+build_water_O_on_donor(
+	Vector const & hxyz,
+	Vector const & dxyz,
+	Real phi,
+	Real theta
+)
+{
+	Vector const reference(10.0, 0.0, 0.0);
+
+	Vector parallel ( ( hxyz - dxyz ).normalize() );
+	Vector perpendicular_1 ( parallel.cross(reference).normalize() );
+	Vector perpendicular_2 ( parallel.cross(perpendicular_1).normalize() );
+	return ( hxyz + 1.8*( perpendicular_1*sin(phi)*sin(theta) + perpendicular_2*cos(phi)*sin(theta) + parallel*cos(theta) ) );
+}
+
+
 Vector
 build_optimal_water_O_on_donor(
 	Vector const & hxyz,
@@ -888,6 +912,44 @@ build_optimal_water_O_on_donor(
 
 	return ( dxyz + distance * ( hxyz - dxyz ).normalized() );
 }
+
+
+
+Vector
+build_optimal_hyp_H_for_donor(
+	Vector const & o1,
+	Vector const & hatm1_xyz,
+	Vector const & reference,
+	Real angle
+)
+{
+	Vector parallel ((o1 - hatm1_xyz).normalize());
+	Vector perpendicular_1 ( parallel.cross(reference).normalize()  );
+	Vector perpendicular_2 ( parallel.cross(perpendicular_1).normalize()  );
+	Vector new_h ( o1 + (perpendicular_1*sin(angle) + perpendicular_2*cos(angle))*1.650 + parallel*0.5833 );
+	// The numbers above build it at a 1.75 A distance from o1 to new_h and a 109.47 degree angle
+	// the angle between EP1 and EP2
+
+	return new_h;
+}
+
+
+Vector
+build_optimal_hyp_H_for_acceptor(
+	Vector const & o2,
+	Vector const & aatm2_xyz,
+	Vector const & reference,
+	Real angle
+){
+	Vector parallel ((o2 - aatm2_xyz).normalize());
+	Vector perpendicular_1 ( parallel.cross(reference).normalize()  );
+	Vector perpendicular_2 ( parallel.cross(perpendicular_1).normalize()  );
+	Vector new_h ( o2 + (perpendicular_1*sin(angle) + perpendicular_2*cos(angle))*1.637 + parallel*0.6186 );
+	// The numbers above build it at a 1.75 A distance from o2 to new_h and a 110.7 degree angle
+
+	return new_h;
+}
+
 
 void
 build_optimal_water_Os_on_acceptor(
@@ -947,8 +1009,40 @@ build_optimal_water_Os_on_acceptor(
 	}
 }
 
+
+// pre-bumpE filter for hydrate/SPaDES protocol
+core::PackerEnergy
+pre_bump_check(
+	Size const & seqpos_water,
+	conformation::ResidueOP rot,
+	scoring::ScoreFunction const & score_fxn,
+	pose::Pose const & pose,
+	task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph
+)
+{
+	scoring::EnergyMap emap;
+	scoring::ScoreFunctionOP full_rep_scorefxn = score_fxn.clone();
+	full_rep_scorefxn->set_weight( scoring::fa_rep, 1.0);
+	for ( utility::graph::Graph::EdgeListConstIter
+			ir  = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_begin(),
+			ire = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_end();
+			ir != ire; ++ir ) {
+		int const neighbor_id( (*ir)->get_other_ind( seqpos_water ) );
+		conformation::Residue const & neighbor( pose.residue( neighbor_id ) );
+
+		if ( ! task.pack_residue( neighbor_id ) ) {
+			(*full_rep_scorefxn).bump_check_full( *rot, neighbor, pose, emap);
+		} else {
+			(*full_rep_scorefxn).bump_check_backbone( *rot, neighbor, pose, emap);
+		}
+	}
+	return static_cast< core::PackerEnergy > ((*full_rep_scorefxn).weights().dot( emap ));
+}
+
 void
 build_donor_donor_waters(
+	Size const & seqpos_water,
 	conformation::Residue const & rsd1,
 	Size const hatm1,
 	conformation::Residue const & rsd2,
@@ -956,15 +1050,22 @@ build_donor_donor_waters(
 	chemical::ResidueType const & h2o_type,
 	conformation::Residue const & tp5,
 	Size const nstep,
-	utility::vector1< conformation::ResidueOP > & new_waters
+	utility::vector1< conformation::ResidueOP > & new_waters,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
 )
 {
 	using namespace scoring::hbonds;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database() );
 	HBondOptions hbondopts; // default ctor, reads from command line
 
 	Real const o12_dis2_cutoff( 25.0 ); // wild guess
-	Real const hbond_energy_threshold( -0.10 );
+	Real const hbond_energy_threshold( option[ hbond_threshold ]() );
 
 	Vector const & hatm1_xyz( rsd1.xyz( hatm1 ) );
 	Vector const & datm1_xyz( rsd1.xyz( rsd1.atom_base( hatm1 ) ) );
@@ -974,14 +1075,14 @@ build_donor_donor_waters(
 	Vector const o1( build_optimal_water_O_on_donor( hatm1_xyz, datm1_xyz ) );
 	Vector const o2( build_optimal_water_O_on_donor( hatm2_xyz, datm2_xyz ) );
 
-	Real const o12_dis2( o1.distance_squared( o2 ) );
 	if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) return;
 
 	debug_assert( nstep >= 2 && nstep%2 == 0 );
+
 	for ( Size step=0; step<= nstep; ++step ) {
 
 		// calculate an intermediate water position
-		Vector const xyz_O( o1 + ( Real(step)/nstep) * ( o2 - o1 ) );
+		Vector const xyz_O ( o1 + ( Real(step)/nstep) * ( o2 - o1 ) );
 
 		conformation::ResidueOP
 			rot( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, hatm2_xyz, "EP1", "EP2", tp5 ) );
@@ -995,8 +1096,6 @@ build_donor_donor_waters(
 		hb_energy_deriv( *hb_database, hbondopts, hbe1, datm1_xyz, hatm1_xyz,
 			rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
 
-		//if ( energy1 > hbond_energy_threshold ) return;
-
 		HBEvalTuple hbe2(
 			get_hb_don_chem_type(rsd2.atom_base(hatm2),rsd2),
 			hbacc_H2O,
@@ -1007,18 +1106,175 @@ build_donor_donor_waters(
 		if ( energy1 > hbond_energy_threshold ) return;
 		if ( energy2 > hbond_energy_threshold ) return;
 
-		tt << "hbenergies: dd step= " << step << " nstep= " << nstep <<
-			" E1= " << ObjexxFCL::format::F(9,3,energy1) << " E2= " << ObjexxFCL::format::F(9,3,energy2) <<
-			" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
-
+		// bumpE filter in hydrate/SPaDES protocol
+		if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+			core::PackerEnergy bumpenergy = pre_bump_check(seqpos_water, rot, score_fxn, pose, task, packer_neighbor_graph);
+			if ( bumpenergy >= 0 ) {
+				continue;
+			}
+		}
 
 		// accept this rotamer
 		new_waters.push_back( rot );
 	}
 }
 
+
+// single-edge waters (sew) for hydrate/SPaDES protocol
+void
+build_sew_waters_to_donor(
+	Size const & seqpos_water,
+	conformation::Residue const & rsd,
+	Size const hatm,
+	chemical::ResidueType const & h2o_type,
+	conformation::Residue const & tp5,
+	utility::vector1< conformation::ResidueOP > & new_waters,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
+)
+{
+	using namespace scoring::hbonds;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
+	const Real PI = numeric::NumericTraits<Real>::pi();
+	Real const PHI_STEPS = 3;
+
+	HBondDatabaseCOP hb_database( HBondDatabase::get_database() );
+	HBondOptions hbondopts;
+	Real const hbond_energy_threshold( option[ hbond_threshold]() );
+
+	Vector const & hatm1_xyz( rsd.xyz( hatm ) );
+	Vector const & datm1_xyz( rsd.xyz( rsd.atom_base( hatm ) ) );
+
+	// Angle to locate the new water oxygen with respect to its donor and its hydrogen
+	for ( Real cos_theta = 0.7; cos_theta<=1; cos_theta+=0.1 ) { // limited to angles that could have a hb
+		Real theta_O ( acos( cos_theta ) );
+		for ( Real phi_O_step = 1; phi_O_step <= PHI_STEPS; ++phi_O_step ) {
+
+			if ( theta_O == 0 && phi_O_step > 1 ) continue;
+
+			Real phi_O = 2*PI*phi_O_step/PHI_STEPS;
+			Vector const o1( build_water_O_on_donor( hatm1_xyz, datm1_xyz, phi_O, theta_O ) );
+			Vector const reference( 100.0, 0.0, 0.0 );
+
+			for ( Real angle_step=1; angle_step<= 5; ++angle_step ) {     // Water rotates around ts O
+				for ( Real step_l=0; step_l<= 2; ++step_l ) {   // Distance between water's O and donor's H
+
+					Real angle = angle_step/5*2*PI;
+					Vector const xyz_O ( o1 + (step_l/3) * ( o1 - hatm1_xyz )*0.4 ); // from optimal o1 to o1 + 0.4 A
+
+					// We need a hypothetical donor hydrogen atom to orient the water molecule
+					Vector const & hatm2_xyz( build_optimal_hyp_H_for_donor( xyz_O, hatm1_xyz, reference, angle) );
+
+					conformation::ResidueOP rot( create_oriented_water_rotamer(
+						h2o_type, hatm1_xyz, xyz_O, hatm2_xyz, "EP1", "EP2", tp5 ) );
+
+					// evaluate the energy of the hbonds
+					Real energy1(0.0);
+					HBEvalTuple const hbe_type( get_hb_don_chem_type( rsd.atom_base( hatm ), rsd ), hbacc_H2O, seq_sep_other );
+					hb_energy_deriv( *hb_database, hbondopts, hbe_type, datm1_xyz, hatm1_xyz,
+						rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
+
+					if ( energy1 > hbond_energy_threshold && !option[ OptionKeys::hydrate::short_residence_time_mode]() ) continue;
+
+					// pre bumpE filter
+					if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+						core::PackerEnergy bumpenergy = pre_bump_check( seqpos_water, rot, score_fxn, pose, task, packer_neighbor_graph );
+						if ( bumpenergy >= 0 ) {
+							continue;
+						}
+					}
+
+					new_waters.push_back( rot );
+				} // step_l
+			} // angle_step
+
+		}   //phi_O_step
+	} // cos_theta
+}
+
+
+// single-edge waters (SEW) for hydrate/SPaDES protocol
+void
+build_sew_waters_to_acceptor(
+	Size const & seqpos_water,
+	conformation::Residue const & rsd,
+	Size const aatm,
+	chemical::ResidueType const & h2o_type,
+	conformation::Residue const & tp5,
+	utility::vector1< conformation::ResidueOP > & new_waters,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
+)
+{
+	using namespace scoring::hbonds;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
+	const Real PI = numeric::NumericTraits<Real>::pi();
+
+	HBondDatabaseCOP hb_database( HBondDatabase::get_database() );
+	HBondOptions hbondopts;
+	Real const hbond_energy_threshold( option[ hbond_threshold]() );
+
+	Vector const & aatm_xyz( rsd.xyz( aatm ) );
+	Vector const & aatm_base_xyz( rsd.xyz( rsd.atom_base( aatm ) ) );
+	Vector const & aatm_base2_xyz( rsd.xyz( rsd.abase2( aatm ) ) );
+
+	utility::vector1< Vector > o2_pos_list;
+	chemical::Hybridization const & hybrid( rsd.atom_type(aatm).hybridization() );
+	build_optimal_water_Os_on_acceptor( aatm_xyz, aatm_base_xyz, aatm_base2_xyz, hybrid, o2_pos_list );
+
+	core::Real angle (0.0);
+	Vector const reference(100.0, 0.0, 0.0);
+	for ( Size jj=1; jj<= o2_pos_list.size(); ++jj ) {
+		Vector const & o2( o2_pos_list[jj] );
+
+		for ( Real angle_step=1; angle_step<= 5; ++angle_step ) {
+			for ( Real step_l=0; step_l<= 2; ++step_l ) {
+
+				angle = angle_step/5*2*PI;
+				Vector const xyz_O = ( o2 + ( step_l/3) * ( o2 - aatm_xyz )*0.4 );    // from optimal o2 to o2 + 0.4 A
+
+				// We need a hypothetical donor hydrogen atom to orient the water molecule
+				Vector const & hatm1_xyz( build_optimal_hyp_H_for_acceptor( xyz_O, aatm_xyz, reference, angle) );
+
+				conformation::ResidueOP rot
+					( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm_xyz, "EP1", "H1", tp5 ) );
+
+				Real energy2(0.0);
+				{
+					using namespace chemical;
+					HBEvalTuple const hbe_type
+						( hbdon_H2O, get_hb_acc_chem_type( aatm, rsd ) , seq_sep_other);
+					hb_energy_deriv( *hb_database, hbondopts, hbe_type, rot->xyz("O"), rot->xyz("H1"),
+						aatm_xyz, aatm_base_xyz, aatm_base2_xyz, energy2 );
+				}
+				if ( energy2 > hbond_energy_threshold && !option[ short_residence_time_mode]() ) continue;
+
+				// pre bumpE filter
+				if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+					core::PackerEnergy bumpenergy = pre_bump_check(seqpos_water, rot, score_fxn, pose, task, packer_neighbor_graph);
+					if ( bumpenergy >= 0 ) {
+						continue;
+					}
+				}
+
+				new_waters.push_back( rot );
+			} // step_l
+		} // angle_step
+
+	} // os_pos_list(jj)
+}
+
 void
 build_donor_acceptor_waters(
+	Size const & seqpos_water, // needed for pre-bump check
 	conformation::Residue const & rsd1,
 	Size const hatm1,
 	conformation::Residue const & rsd2,
@@ -1026,15 +1282,22 @@ build_donor_acceptor_waters(
 	chemical::ResidueType const & h2o_type,
 	conformation::Residue const & tp5,
 	Size const nstep,
-	utility::vector1< conformation::ResidueOP > & new_waters
+	utility::vector1< conformation::ResidueOP > & new_waters,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
 )
 {
 	using namespace scoring::hbonds;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database());
 	HBondOptions hbondopts; // default ctor, reads from command line
 
 	Real const o12_dis2_cutoff( 25.0 ); // wild guess
-	Real const hbond_energy_threshold( -0.10 );
+	Real const hbond_energy_threshold( option[ hbond_threshold ]() );
 
 	Vector const & hatm1_xyz( rsd1.xyz( hatm1 ) );
 	Vector const & datm1_xyz( rsd1.xyz( rsd1.atom_base( hatm1 ) ) );
@@ -1050,7 +1313,6 @@ build_donor_acceptor_waters(
 	for ( Size jj=1; jj<= o2_pos_list.size(); ++jj ) {
 		Vector const & o2( o2_pos_list[jj] );
 
-		Real const o12_dis2( o1.distance_squared( o2 ) );
 		if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) continue;
 
 		debug_assert( nstep>= 2 && nstep%2 == 0 );
@@ -1058,7 +1320,7 @@ build_donor_acceptor_waters(
 		for ( Size step=0; step<= nstep; ++step ) {
 
 			// calculate an intermediate water position
-			Vector const xyz_O( o1 + ( Real(step)/nstep) * ( o2 - o1 ) );
+			Vector const xyz_O = ( o1 + ( Real(step)/nstep) * ( o2 - o1 ) );
 
 			conformation::ResidueOP rot
 				( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm2_xyz, "EP1", "H1", tp5 ) );
@@ -1070,8 +1332,6 @@ build_donor_acceptor_waters(
 			HBEvalTuple const hbe_type( get_hb_don_chem_type( rsd1.atom_base( hatm1 ), rsd1 ), hbacc_H2O, seq_sep_other);
 			hb_energy_deriv( *hb_database, hbondopts, hbe_type, datm1_xyz, hatm1_xyz,
 				rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
-
-			//if ( energy1 > hbond_energy_threshold ) continue;
 
 			Real energy2(0.0);
 			{ // water to acceptor
@@ -1085,31 +1345,26 @@ build_donor_acceptor_waters(
 			if ( energy1 > hbond_energy_threshold ) continue;
 			if ( energy2 > hbond_energy_threshold ) continue;
 
-			tt << "hbenergies: da step= " << step << " nstep= " << nstep <<
-				" E1= " << ObjexxFCL::format::F(9,3,energy1) << " E2= " << ObjexxFCL::format::F(9,3,energy2) <<
-				" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
+			// bumpE filter
+			if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
 
+				core::PackerEnergy bumpenergy1 = pre_bump_check(seqpos_water, rot, score_fxn, pose, task, packer_neighbor_graph);
+				if ( bumpenergy1 < 0 ) {
+					new_waters.push_back( rot );
+				} else { }
 
-			// accept this rotamer
-			new_waters.push_back( rot );
-			new_waters.push_back( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm2_xyz,
-				"EP1", "H2", tp5 ) );
-			//    {
-			//     using namespace ObjexxFCL;
-			//     using namespace ObjexxFCL::format;
+				conformation::ResidueOP rot2 (create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm2_xyz, "EP1", "H2", tp5 ) );
+				core::PackerEnergy bumpenergy2 = pre_bump_check(seqpos_water, rot2, score_fxn, pose, task, packer_neighbor_graph);
+				if ( bumpenergy2 < 0 ) {
+					new_waters.push_back( rot2 );
+				} else { }
 
-			//     std::string const filename( "donor_acceptor_test_"+lead_zero_string_of(counter,4)+"_"+
-			//                   lead_zero_string_of(step,4)+".pdb" );
-
-			//     tt << "hbenergy_da: step " << I(4,step) << F(9,3,energy1) << F(9,3,energy2) <<
-			//      F(9,3,std::sqrt(o12_dis2)) << ' '<< filename << '\n';
-
-			//     pose::Pose pose;
-			//     pose.append_residue_by_jump( rsd1, 1 );
-			//     pose.append_residue_by_jump( rsd2, 1 );
-			//     pose.append_residue_by_jump( *rot, 1 );
-			//     pose.dump_pdb( filename );
-			//    }
+			} else { // original behavior
+				// accept this rotamer
+				new_waters.push_back( rot );
+				new_waters.push_back( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm2_xyz,
+					"EP1", "H2", tp5 ) );
+			}
 
 		}
 	}
@@ -1117,6 +1372,7 @@ build_donor_acceptor_waters(
 
 void
 build_acceptor_acceptor_waters(
+	Size const & seqpos_water, // needed for pre-bump check
 	conformation::Residue const & rsd1,
 	Size const aatm1,
 	conformation::Residue const & rsd2,
@@ -1124,15 +1380,22 @@ build_acceptor_acceptor_waters(
 	chemical::ResidueType const & h2o_type,
 	conformation::Residue const & tp5,
 	Size const nstep,
-	utility::vector1< conformation::ResidueOP > & new_waters
+	utility::vector1< conformation::ResidueOP > & new_waters,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
 )
 {
 	using namespace scoring::hbonds;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database());
 	HBondOptions hbondopts; // default ctor, reads from command line
 
 	Real const o12_dis2_cutoff( 25.0 ); // wild guess
-	Real const hbond_energy_threshold( -0.10 );
+	Real const hbond_energy_threshold( option[ hbond_threshold ]() );
 
 	Vector const & aatm1_xyz( rsd1.xyz( aatm1 ) );
 	Vector const & aatm1_base_xyz( rsd1.xyz( rsd1.atom_base( aatm1 ) ) );
@@ -1156,7 +1419,6 @@ build_acceptor_acceptor_waters(
 		for ( Size jj=1; jj<= o2_pos_list.size(); ++jj ) {
 			Vector const & o2( o2_pos_list[jj] );
 
-			Real const o12_dis2( o1.distance_squared( o2 ) );
 			if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) continue;
 
 			debug_assert( nstep>= 2 && nstep%2 == 0 );
@@ -1164,14 +1426,13 @@ build_acceptor_acceptor_waters(
 			for ( Size step=0; step<= nstep; ++step ) {
 
 				// calculate an intermediate water position
-				Vector const xyz_O( o1 + ( Real(step)/nstep) * ( o2 - o1 ) );
-
+				Vector const xyz_O = ( o1 + ( Real(step)/nstep) * ( o2 - o1 ) );
 
 				conformation::ResidueOP rot
 					( create_oriented_water_rotamer( h2o_type, aatm1_xyz, xyz_O, aatm2_xyz, "H1", "H2", tp5 ) );
 
 				/// evaluate the energy of the two hbonds
-				Real energy1(0.0), energy2( 0.0 );
+				Real energy1( 0.0 ), energy2( 0.0 );
 
 				{ // water to acceptor1
 					using namespace chemical;
@@ -1191,36 +1452,87 @@ build_acceptor_acceptor_waters(
 				if ( energy1 > hbond_energy_threshold ) continue;
 				if ( energy2 > hbond_energy_threshold ) continue;
 
-				tt << "hbenergies: aa step= " << step << " nstep= " << nstep <<
-					" E1= " << ObjexxFCL::format::F(9,3,energy1) << " E2= " << ObjexxFCL::format::F(9,3,energy2) <<
-					" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
-
+				// bumpE filter
+				if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+					core::PackerEnergy bumpenergy1 = pre_bump_check(seqpos_water, rot, score_fxn, pose, task, packer_neighbor_graph);
+					if ( bumpenergy1 >= 0 ) {
+						continue;
+					}
+				}
 
 				// accept this rotamer
 				new_waters.push_back( rot );
+
 			} // step=0,nstep
 		}
 	}
 }
 
+
+// hydrate/SPaDES protocol
+void
+build_single_edge_waters(
+	Size const & seqpos_water,  // needed for pre-bump check
+	conformation::Residue const & rsd,
+	Size anchor_atom,
+	chemical::ResidueType const & h2o_type,
+	conformation::Residue const & tp5,
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
+)
+{
+	// tt << "Building single edge water molecules" << std::endl;
+
+	// Hack to be able to use HIS_D
+	if ( rsd.name() == "HIS_D" && anchor_atom == 7 ) anchor_atom = 15;
+	if ( rsd.name() == "HIS" && anchor_atom == 10 ) anchor_atom = 17;
+	if ( rsd.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 7 ) anchor_atom = 17;
+	if ( rsd.name() == "HIS_p:NtermProteinFull" && anchor_atom == 10 ) anchor_atom = 19;
+
+	if ( rsd.atom_type( anchor_atom ).is_polar_hydrogen() ) {
+		build_sew_waters_to_donor( seqpos_water, rsd, anchor_atom, h2o_type, tp5, new_rotamers, pose, task, packer_neighbor_graph, score_fxn );
+	} else {
+		build_sew_waters_to_acceptor( seqpos_water, rsd, anchor_atom, h2o_type, tp5, new_rotamers, pose, task, packer_neighbor_graph, score_fxn );
+	}
+
+	// Reversing the hack to be able to use HIS_D
+	if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
+	if ( rsd.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
+	if ( rsd.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
+	if ( rsd.name() == "HIS_p:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
+}
+
+
 void
 build_moving_O_bridge_waters(
+	Size const & seqpos_water,  // needed for pre-bump check
 	conformation::Residue const & rsd1,
-	Size const anchor_atom,
+	Size anchor_atom,
 	conformation::Residue const & rsd2,
 	chemical::ResidueType const & h2o_type,
 	conformation::Residue const & tp5,
 	Size const nstep,
 	//  utility::vector1< id::AtomID > & atom_ids,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & scorefxn,
+	bool is_first_rsd
 )
 {
 	Real const dis2_cutoff( 36.0 );
 
 	utility::vector1< id::AtomID > atom_ids;
 
-	tt << "build_moving_O_bridge_waters " << rsd1.seqpos() << ' ' << rsd1.name() << ' ' << rsd2.seqpos() <<
-		' ' << rsd2.name() << '\n';
+	// Hack to be able to use HIS_D
+	if ( rsd1.name() == "HIS_D" && anchor_atom == 7 ) anchor_atom = 15;
+	if ( rsd1.name() == "HIS" && anchor_atom == 10 ) anchor_atom = 17;
+	if ( rsd1.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 7 ) anchor_atom = 17;
+	if ( rsd1.name() == "HIS_p:NtermProteinFull" && anchor_atom == 10 ) anchor_atom = 19;
 
 	// get info about the anchor atom
 	bool const anchor_is_donor( rsd1.atom_type( anchor_atom ).is_polar_hydrogen() );
@@ -1235,19 +1547,18 @@ build_moving_O_bridge_waters(
 		Size const hatm( *hnum );
 
 		if ( rsd2.xyz( hatm ).distance_squared( anchor_xyz ) > dis2_cutoff ) continue;
+		if ( rsd1.seqpos() == rsd2.seqpos() && anchor_atom == hatm ) continue; // Both anchors can't be the same atom
+		if ( !is_first_rsd && rsd2.atom_is_backbone(hatm) ) continue; // not the first bb, ignore because it has been built previous using the first aa backbone atom
 
 		Size const old_size( new_rotamers.size() );
 
 		if ( anchor_is_donor ) {
-			build_donor_donor_waters( rsd1, anchor_atom, rsd2, hatm, h2o_type, tp5, nstep, new_rotamers );
+			build_donor_donor_waters( seqpos_water, rsd1, anchor_atom, rsd2, hatm, h2o_type, tp5, nstep, new_rotamers, pose, task, packer_neighbor_graph, scorefxn );
 		} else {
-			build_donor_acceptor_waters( rsd2, hatm, rsd1, anchor_atom, h2o_type, tp5, nstep, new_rotamers );
+			build_donor_acceptor_waters( seqpos_water, rsd2, hatm, rsd1, anchor_atom, h2o_type, tp5, nstep, new_rotamers, pose, task, packer_neighbor_graph, scorefxn );
 		}
 
 		if ( new_rotamers.size() > old_size ) {
-			tt << "built " << new_rotamers.size() - old_size << " rotamers between " <<
-				rsd1.seqpos() << ' ' << rsd1.name() << ' ' << rsd1.atom_name( anchor_atom ) << " and " <<
-				rsd2.seqpos() << ' ' << rsd2.name() << ' ' << rsd2.atom_name( hatm ) << '\n';
 			atom_ids.push_back( id::AtomID( hatm, rsd2.seqpos() ) );
 		}
 	}
@@ -1259,34 +1570,41 @@ build_moving_O_bridge_waters(
 		Size const aatm( *anum );
 
 		if ( rsd2.xyz( aatm ).distance_squared( anchor_xyz ) > dis2_cutoff ) continue;
+		if ( rsd1.seqpos() == rsd2.seqpos() && anchor_atom == aatm ) continue; // Both anchors can't be the same atom
+		if ( !is_first_rsd && rsd2.atom_is_backbone(aatm) ) continue;
 
 		Size const old_size( new_rotamers.size() );
 
 		if ( anchor_is_donor ) {
-			build_donor_acceptor_waters( rsd1, anchor_atom, rsd2, aatm, h2o_type, tp5, nstep, new_rotamers );
+			build_donor_acceptor_waters( seqpos_water, rsd1, anchor_atom, rsd2, aatm, h2o_type, tp5, nstep, new_rotamers, pose, task, packer_neighbor_graph, scorefxn );
 		} else {
-			build_acceptor_acceptor_waters( rsd1, anchor_atom, rsd2, aatm, h2o_type, tp5, nstep, new_rotamers );
+			build_acceptor_acceptor_waters( seqpos_water, rsd1, anchor_atom, rsd2, aatm, h2o_type, tp5, nstep, new_rotamers, pose, task, packer_neighbor_graph, scorefxn );
 		}
 
 		if ( new_rotamers.size() > old_size ) {
-			tt << "built " << new_rotamers.size() - old_size << " rotamers between " <<
-				rsd1.seqpos() << ' ' << rsd1.name() << ' ' << rsd1.atom_name( anchor_atom ) << " and " <<
-				rsd2.seqpos() << ' ' << rsd2.name() << ' ' << rsd2.atom_name( aatm ) << '\n';
 			atom_ids.push_back( id::AtomID( aatm, rsd2.seqpos() ) );
 		}
 	}
+
+	// Reversing the hack to be able to use HIS_D
+	if ( rsd1.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
+	if ( rsd1.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
+	if ( rsd1.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
+	if ( rsd1.name() == "HIS_p:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
+
 }
 
 void
 build_moving_O_water_rotamers_dependent(
 	RotamerSets const & rotsets,
-	//Size const seqpos_water,
+	Size const seqpos_water,
 	WaterAnchorInfo const & water_info,
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	scoring::ScoreFunction const & scorefxn
 )
 {
 	using conformation::Residue;
@@ -1304,12 +1622,10 @@ build_moving_O_water_rotamers_dependent(
 
 	Size const i( water_info.anchor_residue() );
 
-	tt << "build_moving_O_water_rotamers_dependent: anchor_pos=  " << i << '\n';
-
 	// build a tp5 water for geometry calculations below
-	ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
+	conformation::ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
 
-	// build a list of residue/rotamers at this dna position to loop over
+	// build a list of residue/rotamers at this position to loop over
 	utility::vector1< conformation::ResidueCOP > rsd1_list;
 	if ( task.pack_residue(i) ) {
 		// get the rotamerset
@@ -1331,7 +1647,6 @@ build_moving_O_water_rotamers_dependent(
 			jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
 			jr != jre; ++jr ) {
 		Size const j( (*jr)->get_other_ind( i ) );
-		debug_assert( i != j );
 
 		//if ( !pose.residue(j).is_protein() ) continue; // first just protein-DNA bridges
 		if ( pose.residue(j).name() == "TP3" ) continue;
@@ -1350,30 +1665,167 @@ build_moving_O_water_rotamers_dependent(
 			rsd2_list.push_back( pose.residue(j).get_self_ptr() );
 		}
 
-
 		/// now loop over residue pairs
 
 		/// now build the waters
+		//Size const & rotset_size_rsd1 ( rsd1_list.size() );
+		std::string rsd1_name( (*rsd1_list[1]).name() ); // first rsd1 name in the rotamer list
+		std::string rsd2_name( (*rsd2_list[1]).name() ); // first rsd2 name in the rotamer list
+
 		for ( Size ii=1; ii<= rsd1_list.size(); ++ii ) {
 			Residue const & rsd1( *rsd1_list[ii] );
-			if ( ! water_info.attaches_to_residue_type( rsd1.type() ) ) continue;
-			Size const anchor_atom( water_info.anchor_atom( rsd1.type() ) );
+			bool not_first_rot_bb_res1 (true); // whether is bb anchor atom of the second to the last rotamer
+			Size anchor_atom(0);
+			if ( water_info.anchor_atom() == "DESIGN" ) { // Not input rds1 type, Design behavior
+				Size des_indx (0);
+				for ( Size atm_indx = 1; atm_indx <= rsd1.natoms() ; ++atm_indx ) {
+					if ( rsd1.atom_is_polar_hydrogen( atm_indx ) || rsd1.heavyatom_is_an_acceptor(atm_indx) ) {
+						++des_indx;
+						if ( des_indx == water_info.design_anchor_index() ) {
+							anchor_atom = atm_indx;
+							//std::cout << "Anchor: " << i << " " << rsd1.name() << "->" << rsd1.atom_name( anchor_atom ) << " , " << atm_indx << " , " << des_indx << "\n";
+							break;
+						}
+					}
+				}
+				if ( rsd1_name != rsd1.name() && rsd1.atom_is_backbone(anchor_atom) ) {  // only need to build the very first residue bb anchored water
+					not_first_rot_bb_res1 = false;
+				}
+			} else {
+				anchor_atom = water_info.anchor_atom( rsd1.type() ); // Non design behavior (straight fwd)
+				if ( rsd1_name != rsd1.name() && rsd1.atom_is_backbone(anchor_atom) ) {  // only need to build the very first reside bb anchored water
+					not_first_rot_bb_res1 = false;
+				}
+			}
+			if ( anchor_atom == 0 ) continue; // it's a design atom with no polar atom in the specific residue.
 
-			for ( Size jj=1; jj<= rsd2_list.size(); ++jj ) {
-				build_moving_O_bridge_waters( rsd1, anchor_atom, *( rsd2_list[jj] ), h2o_type, *tp5, nstep, new_rotamers );
+			//debug
+			//tt << "Anchor res: " << i << " " << rsd1.name() << "->" << rsd1.atom_name( anchor_atom ) << " need build? " << not_first_rot_bb_res1 << std::endl;
+
+			if ( not_first_rot_bb_res1 ) {
+				bool is_first_rot (false);
+				for ( Size jj=1; jj<= rsd2_list.size(); ++jj ) { // passing pose task and neighbor graph
+					if ( rsd2_name == (*rsd2_list[jj]).name() ) is_first_rot = true;
+					build_moving_O_bridge_waters( seqpos_water, rsd1, anchor_atom, *( rsd2_list[jj] ), h2o_type, *tp5, nstep, new_rotamers, pose, task, packer_neighbor_graph, scorefxn, is_first_rot );
+				}
 			}
 		}
+
 	} // nbrs of anchor_pos
 }
 
+// hydrate/SPaDES protocol
+void
+build_anchorless_water_rotamers(
+	Size const seqpos,
+	chemical::ResidueType const & h2o_type,
+	pose::Pose const & pose,
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
+)
+{
+	using namespace core::conformation;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
+	const Real PI = numeric::NumericTraits<Real>::pi();
+
+	assert( h2o_type.natoms() == 3 ); // only works for this guy now
+	conformation::ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
+
+	// Make a cubic lattice around  the starting oxygen
+	Vector const & current_O( pose.residue( seqpos ).nbr_atom_xyz() );
+
+	Real const & grid_size( option[ water_packing_radius]() );
+	Real const & SP_RES( option[ water_space_resolution]() );
+	Real const & ANG_RES( option[ water_angular_resolution]() );
+	Vector const ref_x(1.0, 0.0, 0.0);
+	Vector const ref_y(0.0, 1.0, 0.0);
+	Vector const ref_z(0.0, 0.0, 1.0);
+	Vector step_x(grid_size/SP_RES, 0, 0);
+	Vector step_y(0, grid_size/SP_RES, 0);
+	Vector step_z(0, 0, grid_size/SP_RES);
+
+	for ( Real ix = -SP_RES; ix <= SP_RES; ++ix ) { //  Building cubic grid
+		for ( Real iy = -SP_RES; iy <= SP_RES; ++iy ) {
+			for ( Real iz = -SP_RES; iz <= SP_RES; ++iz ) {
+
+				// Placing oxygen in lattice point
+				Vector xyz_O (current_O + ix*step_x + iy*step_y + iz*step_z);
+				if ( SP_RES == 0 ) xyz_O = current_O;
+
+				// Orienting hydrogens
+				for ( Real theta_step = 1; theta_step <= ANG_RES; ++theta_step ) {
+					Real const & cos_theta = -1 + (theta_step - 0.5)*2/ANG_RES; // -0.5 to be in the center of the step
+					Real const & theta = acos(cos_theta);
+					for ( Real phi_step = 1; phi_step <= 2*ANG_RES; ++phi_step ) {
+						Real const & phi = phi_step/ANG_RES*PI;
+
+						// These are the two positions of hypothetical hydrogen acceptors positions
+						Vector const & xyz_H1 (2.95*(ref_x*cos(phi)*sin(theta) + ref_y*sin(phi)*sin(theta) + ref_z*cos(theta)));
+						Vector const & xyz_H2 (2.95*(ref_x*cos(phi)*sin(theta + 1.9106)
+							+ ref_y*sin(phi)*sin(theta + 1.9106) + ref_z*cos(theta + 1.9106) ));
+
+						Vector const & xyz1 ( xyz_O + xyz_H1);
+						Vector const & xyz2 ( xyz_O + xyz_H2);
+
+						// pre bumpE filter
+						conformation::ResidueOP
+							rot1( create_oriented_water_rotamer( h2o_type, xyz1, xyz_O, xyz2, "H1", "H2", *tp5 ) );
+						if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+							core::PackerEnergy bumpenergy1 = pre_bump_check(seqpos, rot1, score_fxn, pose, task, packer_neighbor_graph);
+							if ( bumpenergy1 < 0 ) {
+								new_rotamers.push_back( rot1 );
+							} else { }
+						} else {
+							new_rotamers.push_back( rot1 ); // directly push without check
+						}
+						// These vectors are to generate a second rotamer with the same oxygen position, but the hydrogens
+						// are oriented perpendicular to the hydrogens of the first rotamer generated.
+						Vector const & betweenH ( (xyz_H1 + xyz_H2).normalized() );
+						Vector const & perp_1 (betweenH.cross(xyz_H1).normalized() );
+						Vector const & perp_2 (betweenH.cross(perp_1).normalized() );
+
+						// betweenH has the direction in between the two hydrogens
+						// perp_2 is perpendicular to betweenH, and in the 2d remaining has the direction of H1
+						// perp_1 is perpendicular to perp_2 and betweenH; all normalized
+						Vector const & xyz1b (xyz_O + betweenH.dot(xyz_H1)*betweenH + perp_2.dot(xyz_H1)*perp_1 );
+						Vector const & xyz2b (xyz_O + betweenH.dot(xyz_H1)*betweenH - perp_2.dot(xyz_H1)*perp_1 );
+
+						// pre bumpE filter
+						conformation::ResidueOP
+							rot2( create_oriented_water_rotamer( h2o_type, xyz1b, xyz_O, xyz2b, "H1", "H2", *tp5 ) );
+
+						if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+							core::PackerEnergy bumpenergy2 = pre_bump_check( seqpos, rot2, score_fxn, pose, task, packer_neighbor_graph);
+							if ( bumpenergy2 < 0 ) {
+								new_rotamers.push_back( rot2 );
+							} else { }
+						} else {
+							new_rotamers.push_back( rot2 ); // directly push without check
+						}
+
+					} // phi
+				} // theta
+
+			} // Cubic lattice
+		}
+	}
+}
+
+
 void
 build_moving_O_water_rotamers_independent(
+	Size const & seqpos_water,
 	WaterAnchorInfo const & water_info,
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	scoring::ScoreFunction const & scorefxn
 )
 {
 	using conformation::Residue;
@@ -1388,16 +1840,29 @@ build_moving_O_water_rotamers_independent(
 
 	Size const i( water_info.anchor_residue() );
 
-	tt << "build_moving_O_water_rotamers_independent: anchor_pos=  " << i << '\n';
-
 	if ( task.pack_residue(i) ) return; // have to wait
 
 	Residue const & rsd1( pose.residue(i) );
-	if ( ! water_info.attaches_to_residue_type( rsd1.type() ) ) return;
-	Size const anchor_atom( water_info.anchor_atom( rsd1.type() ) );
+
+	Size anchor_atom(0);
+	if ( water_info.anchor_atom() == "DESIGN" ) { // Not input rds1 type, Design behavior
+		Size des_indx (0);
+		for ( Size atm_indx = 1; atm_indx <= rsd1.natoms() ; ++atm_indx ) {
+			if ( rsd1.atom_is_polar_hydrogen( atm_indx ) || rsd1.heavyatom_is_an_acceptor(atm_indx) ) {
+				++des_indx;
+				if ( des_indx == water_info.design_anchor_index() ) {
+					anchor_atom = atm_indx;
+					break;
+				}
+			}
+		}
+	} else {
+		anchor_atom = water_info.anchor_atom( rsd1.type() ); // Non design behavior (straight fwd)
+	}
+	if ( anchor_atom == 0 ) return; // it's a design atom with no polar atom in the specific residue.
 
 	// build a tp5 water for geometry calculations below
-	ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
+	conformation::ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
 
 	// here we assume that the two residues bridged by water must be neighbors...
 	// this may not be completely true: D-O + A-O could be bigger than 5.5, but prob not much
@@ -1416,10 +1881,52 @@ build_moving_O_water_rotamers_independent(
 
 		if ( task.pack_residue( j ) ) continue;
 
-		build_moving_O_bridge_waters( rsd1, anchor_atom, pose.residue(j), h2o_type, *tp5, nstep, new_rotamers );
+		build_moving_O_bridge_waters( seqpos_water, rsd1, anchor_atom, pose.residue(j), h2o_type, *tp5, nstep, new_rotamers, pose, task, packer_neighbor_graph, scorefxn, true ); // passing pose task and neighbor graph
 
 	} // nbrs of anchor_pos
 }
+
+
+// hydrate/SPaDES protocol
+void
+build_single_anchor_water_rotamers_independet(
+	Size const & seqpos_water, // needed for pre-bump check
+	WaterAnchorInfo const & water_info,
+	chemical::ResidueType const & h2o_type,
+	pose::Pose const & pose,
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	pack::task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & score_fxn
+)
+{
+	assert( h2o_type.natoms() == 3 ); // only works for this guy now
+
+	Size const anchor_residue( water_info.anchor_residue() );
+
+	Size anchor_atom(0);
+	conformation::Residue const & rsd1( pose.residue( anchor_residue ) );
+	if ( water_info.anchor_atom() == "DESIGN" ) { // Not input rds1 type, Design behavior
+		Size des_indx (0);
+		for ( Size atm_indx = 1; atm_indx <= rsd1.natoms() ; ++atm_indx ) {
+			if ( rsd1.atom_is_polar_hydrogen( atm_indx ) || rsd1.heavyatom_is_an_acceptor(atm_indx) ) {
+				++des_indx;
+				if ( des_indx == water_info.design_anchor_index() ) {
+					anchor_atom = atm_indx;
+					break;
+				}
+			}
+		}
+	} else {
+		anchor_atom = water_info.anchor_atom( rsd1.type() ); // Non design behavior (straight fwd)
+	}
+	if ( anchor_atom == 0 ) return; // it's a design atom with no polar atom in the specific residue.
+
+	conformation::ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
+
+	build_single_edge_waters( seqpos_water, pose.residue(anchor_residue), anchor_atom, h2o_type, *tp5, new_rotamers, pose, task, packer_neighbor_graph, score_fxn);
+}
+
 
 void
 build_independent_water_rotamers(
@@ -1428,7 +1935,8 @@ build_independent_water_rotamers(
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	scoring::ScoreFunction const & scorefxn
 )
 {
 	//using core::pose::datacache::CacheableDataType::WATER_PACKING_INFO;
@@ -1449,8 +1957,23 @@ build_independent_water_rotamers(
 		WaterPackingInfo const & water_info
 			( static_cast< WaterPackingInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
-		build_moving_O_water_rotamers_independent( water_info[ seqpos_water], h2o_type, task, pose,
-			packer_neighbor_graph, new_rotamers );
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( water_info[seqpos_water].anchor_atom() == "NONE" ) {
+				build_anchorless_water_rotamers(seqpos_water, h2o_type, pose, new_rotamers, task, packer_neighbor_graph, scorefxn);
+			} else {
+				if ( water_info[seqpos_water].rotamer_bonds() == "SINGLE" ) {
+					build_single_anchor_water_rotamers_independet( seqpos_water, water_info[ seqpos_water], h2o_type, pose, new_rotamers, task, packer_neighbor_graph, scorefxn );
+				} else { // then rotamer_bonds are double (rotamers with two hb anchors)
+					build_moving_O_water_rotamers_independent( seqpos_water, water_info[ seqpos_water], h2o_type, task, pose,
+						packer_neighbor_graph, new_rotamers, scorefxn ); // default behavior
+				}
+			}
+		} else { // default behavior
+			build_moving_O_water_rotamers_independent( seqpos_water, water_info[ seqpos_water], h2o_type, task, pose,
+				packer_neighbor_graph, new_rotamers, scorefxn );
+		}
+
 	} else {
 
 		build_fixed_O_water_rotamers_independent( seqpos_water, h2o_type, pose, packer_neighbor_graph, new_rotamers );
@@ -1466,17 +1989,23 @@ build_dependent_water_rotamers(
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers
+	utility::vector1< conformation::ResidueOP > & new_rotamers,
+	scoring::ScoreFunction const & scorefxn
 )
 {
-	//using core::pose::datacache::CacheableDataType::WATER_PACKING_INFO;
-
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) {
+
 		WaterPackingInfo const & water_info
 			( static_cast< WaterPackingInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
-		build_moving_O_water_rotamers_dependent( rotsets, /*seqpos_water,*/ water_info[ seqpos_water], h2o_type, task, pose,
-			packer_neighbor_graph, new_rotamers );
+		// hydrate/SPaDES protocol
+		// if anchor_atom is NONE, they only build independent rotamers
+		//   SINGLE rotamer_bond rotamers in all protocols so far, only build independent rotamers
+		if ( water_info[seqpos_water].anchor_atom() != "NONE" && water_info[seqpos_water].rotamer_bonds() != "SINGLE" ) {
+			build_moving_O_water_rotamers_dependent( rotsets, seqpos_water, water_info[ seqpos_water], h2o_type, task, pose,
+				packer_neighbor_graph, new_rotamers, scorefxn );
+		}
+
 	} else {
 
 		// doesnt exist yet
@@ -1484,8 +2013,6 @@ build_dependent_water_rotamers(
 		// new_rotamers );
 
 	}
-
-
 }
 
 

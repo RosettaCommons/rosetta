@@ -28,6 +28,10 @@
 #include <core/pack/interaction_graph/SurfacePotential.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/rotamers/SingleBasicRotamerLibrary.hh>
+#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
+#include <core/pack/rotamer_set/WaterPackingInfo.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 // Project Headers
 #include <core/conformation/Atom.hh>
@@ -48,6 +52,9 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -234,7 +241,7 @@ RotamerSet_::build_rotamers_for_concrete(
 	prepare_for_new_residue_type( *concrete_residue );
 
 	if ( task.residue_task( resid() ).optimize_h() ) {
-		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
+		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph, scorefxn );
 		// The behavior depends on the residue type.  This should be refactored -- at least into several separate methods
 		// that this one switches between....
 	} else if ( concrete_residue->is_DNA() ) { // DNA /////////////////////////////////////////////////////////////////
@@ -301,7 +308,12 @@ RotamerSet_::build_rotamers_for_concrete(
 		}
 
 	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
-		build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::hydrate::water_rotamers_cap].user() ) {
+			build_filtered_tp3_water_rotamers( pose, scorefxn, task, concrete_residue, existing_residue, packer_neighbor_graph );
+		} else {
+			build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph, scorefxn );
+		}
 
 	} else if ( concrete_residue->has_variant_type( chemical::SC_BRANCH_POINT ) ) { // Single-sc branch point residues /
 		// At no point do we want to sample rotamers at a branch point, because
@@ -407,7 +419,8 @@ RotamerSet_::build_optimize_H_rotamers(
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
-	utility::graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & scorefxn
 )
 {
 	using namespace chemical;
@@ -505,7 +518,7 @@ RotamerSet_::build_optimize_H_rotamers(
 
 		push_back_rotamer( example_rotamer );
 	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
-		build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
+		build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph, scorefxn );
 	} else {
 		/// Rotatable proton chi
 		utility::vector1< ResidueOP > suggested_rotamers;
@@ -647,6 +660,10 @@ RotamerSet_::compute_one_body_energies(
 		sf.eval_ci_1b( *rotamers_[ ii ], pose, emap );
 		sf.eval_cd_1b( *rotamers_[ ii ], pose, emap );
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap )); // precision loss here.
+
+		if ( basic::options::option[ basic::options::OptionKeys::hydrate::bias_design_search_to_native ] ) {
+			if ( rotamers_[ ii ]->name() == pose.residue(theresid).name() ) energies[ ii ] -= 1000;
+		}
 	}
 
 	sf.evaluate_rotamer_intrares_energies( *this, pose, energies );
@@ -1090,19 +1107,61 @@ RotamerSet_::build_tp3_water_rotamers(
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
-	utility::graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph,
+	scoring::ScoreFunction const & scorefxn
 )
 {
 
 	// build rotamers for water
 	utility::vector1< ResidueOP > new_rotamers;
 
-	build_independent_water_rotamers( resid(), *concrete_residue, task, pose, packer_neighbor_graph, new_rotamers );
+	build_independent_water_rotamers( resid(), *concrete_residue, task, pose, packer_neighbor_graph, new_rotamers, scorefxn );
 
 	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
 		new_rotamers[ii]->seqpos( resid() );
 		new_rotamers[ii]->chain( existing_residue.chain() );
 		push_back_rotamer( new_rotamers[ii] );
+	}
+
+	if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
+		ResidueOP rot = existing_residue.create_rotamer();
+		push_back_rotamer( rot );
+		id_for_current_rotamer_ = num_rotamers();
+	}
+}
+
+// hydrate/SPaDES protocol
+void
+RotamerSet_::build_filtered_tp3_water_rotamers(
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scorefxn,
+	task::PackerTask const & task,
+	chemical::ResidueTypeCOP concrete_residue,
+	conformation::Residue const & existing_residue,
+	utility::graph::GraphCOP packer_neighbor_graph
+)
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
+	// build rotamers for water
+	utility::vector1< ResidueOP > new_rotamers;
+
+	build_independent_water_rotamers( resid(), *concrete_residue, task, pose, packer_neighbor_graph, new_rotamers, scorefxn );
+	if ( option[ show_pre_filtered_water_rotamers_count ] ) {
+		tt << "Built " << new_rotamers.size() << " pre-filtered independent rotamers for " << resid() << std::endl;
+	}
+
+	// if we construct more rotamers than -water_rotamers_cap, we filter them
+	if ( !new_rotamers.empty() ) {
+		utility::vector1< ResidueOP > filtered_rotamers;
+		filter_water_rotamers( pose, scorefxn, task, packer_neighbor_graph, new_rotamers, filtered_rotamers );
+
+		for ( Size ii=1; ii<= filtered_rotamers.size(); ++ii ) {
+			filtered_rotamers[ii]->seqpos( resid() );
+			filtered_rotamers[ii]->chain( existing_residue.chain() );
+			push_back_rotamer( filtered_rotamers[ii] );
+		}
 	}
 
 	if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
@@ -1181,6 +1240,87 @@ RotamerSet_::push_back_rotamer( conformation::ResidueOP rotamer )
 	++n_rotamers_for_resgroup_[ n_residue_groups_ ];
 }
 
+
+// hydrate/SPaDES protocol
+void
+RotamerSet_::filter_water_rotamers(
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scorefxn,
+	task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	utility::vector1< conformation::ResidueOP > const & new_rotamers,
+	utility::vector1< conformation::ResidueOP > & filtered_rotamers
+){
+	WaterPackingInfo const & water_info
+		( static_cast< WaterPackingInfo const & >(
+		pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::hydrate;
+
+	scoring::ScoreFunctionOP full_rep_scorefxn = scorefxn.clone() ;
+	full_rep_scorefxn->set_weight( scoring::fa_rep, 1.0);
+
+	Size ratio(0);
+	Size originally_accepted(0);    // filter rotamers first by bump_check
+	Size water_rotamers_cap( option[ OptionKeys::hydrate::water_rotamers_cap]() );
+	Size accept_every(1);
+	utility::vector1<bool> accepted_rot(new_rotamers.size());
+	if ( option[ basic::options::OptionKeys::hydrate::pre_bump_check ] ) {
+		originally_accepted = new_rotamers.size(); // already passed the bumpE filter
+		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
+			accepted_rot[ii] = true;
+		}
+	} else { // no pre_bump_check
+		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
+			PackerEnergy bumpenergy = bump_check( new_rotamers[ii], *full_rep_scorefxn, pose, task, packer_neighbor_graph );
+			if ( bumpenergy < 0 ) {
+				++originally_accepted;
+				accepted_rot[ii] = true;
+			}
+		}
+	}
+
+	if ( originally_accepted > water_rotamers_cap ) { // have more cluster than cap
+		accept_every = originally_accepted/water_rotamers_cap;
+	}
+
+	Size accepted(0);
+	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
+		if ( accepted_rot[ii] == true ) {
+			++accepted;
+
+			if ( option[ show_pre_post_filter_water_rotamers ] ) {
+				std::cout << "pre_" << resid() << "_" << water_info[int(resid())].rotamer_bonds() << "\t";
+				std::cout << new_rotamers[ii]->xyz(1)[0] << "\t";
+				std::cout << new_rotamers[ii]->xyz(1)[1] << "\t" << new_rotamers[ii]->xyz(1)[2] << "\n";
+			}
+			if ( accepted%accept_every == 0 ) {
+				++ratio;
+				//filtered_rotamers.push_back( new_rotamers[ii] );  // commented by wym, move after rotamer cluster
+				if ( option[ show_pre_post_filter_water_rotamers ] ) {
+					//std::cout << "post_" << resid() << "_" << water_info[int(resid())].rotamer_bonds() << "\t";
+					//std::cout << new_rotamers[ii]->xyz(1)[0] << "\t";
+					//std::cout << new_rotamers[ii]->xyz(1)[1] << "\t" << new_rotamers[ii]->xyz(1)[2] << "\n";
+				}
+			} else accepted_rot[ii] = false;
+		}
+	}
+
+	// push cluster centers to filtered rotamers
+	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
+		if ( accepted_rot[ii] == true ) {
+			filtered_rotamers.push_back( new_rotamers[ii] );
+			if ( option[ show_pre_post_filter_water_rotamers ] ) {
+				std::cout << "post_" << resid() << "_" << water_info[int(resid())].rotamer_bonds() << "\t";
+				std::cout << new_rotamers[ii]->xyz(1)[0] << "\t";
+				std::cout << new_rotamers[ii]->xyz(1)[1] << "\t" << new_rotamers[ii]->xyz(1)[2] << "\n";
+			}
+		}
+	}
+}
+
+
 void
 RotamerSet_::push_back_rotamers( Rotamers const & new_rotamers )
 {
@@ -1209,6 +1349,40 @@ RotamerSet_::build_dependent_rotamers(
 		build_dependent_rotamers_for_concrete( rotamer_sets, pose, scorefxn, the_task,
 			existing_residue, *allowed_iter, packer_neighbor_graph);
 	}
+
+	// hydrate/SPaDES protocol
+	if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		WaterPackingInfo const & water_info
+			( static_cast< WaterPackingInfo const & >(
+			pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
+
+		// case when the water molecule is not enforced
+		if ( pose.residue(resid()).name() == "TP3" && water_info[ resid() ].enforced()  == false ) {
+			using namespace basic::options;
+			using namespace basic::options::OptionKeys::hydrate;
+
+			numeric::xyzVector < Real > awayO( 0, 0, 0 );
+			numeric::xyzVector < Real > awayH1( 0.9572, 0, 0 );
+			numeric::xyzVector < Real > awayH2( -0.2399872, 0.92662721, 0 );
+			numeric::xyzVector < Real > far_away( 1000, 1000, 1000 );
+
+			conformation::ResidueOP away_rot( pose.residue( resid() ).create_rotamer() );
+			away_rot->set_xyz( "O", resid()*far_away + awayO );
+			away_rot->set_xyz( "H1", resid()*far_away + awayH1 );   // Creating away rotamer
+			away_rot->set_xyz( "H2", resid()*far_away + awayH2 );
+
+			Size away_rotamers = num_rotamers();  // we build as many away rotamers as rotamers near the protein
+			if ( option[ single_away_rotamer ]() ) away_rotamers = 1;
+			for ( Size ii = 1; ii <= away_rotamers; ++ii ) {
+				id_for_current_rotamer_ = num_rotamers();
+				push_back_rotamer( away_rot );
+			}
+
+		}
+		if ( basic::options::option[ basic::options::OptionKeys::hydrate::show_rotamer_count ]() ) {
+			tt << "Built " << num_rotamers() << " total rotamers for residue " << resid() << "->" << pose.residue(resid()).name() << std::endl;
+		}
+	}
 }
 
 
@@ -1216,7 +1390,7 @@ void
 RotamerSet_::build_dependent_rotamers_for_concrete(
 	RotamerSets const & rotamer_sets,
 	pose::Pose const & pose,
-	scoring::ScoreFunction const &,// scorefxn,
+	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & task,
 	conformation::Residue const & existing_residue,
 	chemical::ResidueTypeCOP concrete_residue,
@@ -1236,16 +1410,29 @@ RotamerSet_::build_dependent_rotamers_for_concrete(
 		build_dependent_water_rotamers(
 			rotamer_sets, resid(), *concrete_residue,
 			task, pose, packer_neighbor_graph,
-			new_rotamers );
+			new_rotamers, scorefxn );
 
 		if ( new_rotamers.empty() ) return;
 
 		prepare_for_new_residue_type( *concrete_residue );
 
-		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-			new_rotamers[ii]->seqpos( resid() );
-			new_rotamers[ii]->chain( existing_residue.chain() );
-			push_back_rotamer( new_rotamers[ii] );
+		// hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			// if we construct more rotamers than "water_rotamers_cap" we filter them
+			utility::vector1< ResidueOP > filtered_rotamers;
+			filter_water_rotamers( pose, scorefxn, task, packer_neighbor_graph, new_rotamers, filtered_rotamers );
+
+			for ( Size ii=1; ii<= filtered_rotamers.size(); ++ii ) {
+				filtered_rotamers[ii]->seqpos( resid() );
+				filtered_rotamers[ii]->chain( existing_residue.chain() );
+				push_back_rotamer( filtered_rotamers[ii] );
+			}
+		} else { // default behavior
+			for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
+				new_rotamers[ii]->seqpos( resid() );
+				new_rotamers[ii]->chain( existing_residue.chain() );
+				push_back_rotamer( new_rotamers[ii] );
+			}
 		}
 
 	} else {

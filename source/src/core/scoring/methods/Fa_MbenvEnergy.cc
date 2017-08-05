@@ -33,6 +33,8 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh> //pba
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //#include <ObjexxFCL/formatted.o.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
@@ -99,7 +101,14 @@ Fa_MbenvEnergy::residue_energy(
 	EnergyMap & emap ) const {
 
 	for ( Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
-		emap[ fa_mbenv ] += eval_fa_mbenv( rsd.atom(i), Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd.seqpos(),i));
+		// TP3 waters should also not have fa_mbenv in hydrate/SPaDES protocol
+		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+			if ( rsd.name() != "TP3" ) {
+				emap[ fa_mbenv ] += eval_fa_mbenv( rsd.atom(i), Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd.seqpos(),i));
+			}
+		} else { // default behavior
+			emap[ fa_mbenv ] += eval_fa_mbenv( rsd.atom(i), Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd.seqpos(),i));
+		}
 
 	}
 }

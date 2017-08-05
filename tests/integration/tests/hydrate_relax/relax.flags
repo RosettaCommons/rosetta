@@ -1,0 +1,32 @@
+-restore_pre_talaris_2013_behavior
+
+-in:file:s 1BRS_dry.pdb
+
+-score
+ -water_hybrid_sf true
+ -weights spades.wts
+
+-relax
+ -quick true
+ -default_repeats 1
+ -constrain_relax_to_start_coords
+ -use_explicit_water true
+
+-hydrate
+ -water_rotamers_cap 500
+ -hbond_threshold -0.5
+ -ignore_fa_sol_at_positions 85 137 147
+ -hyfile hydrate.hyfile
+
+-inout
+ -skip_connect_info true
+ -write_all_connect_info false
+
+-out
+ -prefix relax_
+ -nstruct 1
+
+-use_input_sc
+
+-cst_weight 1.0
+-cst_fa_weight 1.0

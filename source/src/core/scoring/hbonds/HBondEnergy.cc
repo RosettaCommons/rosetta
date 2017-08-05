@@ -63,6 +63,8 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/CacheableData.hh>
 
+#include <core/scoring/func/SmoothStepFunc.hh>
+
 // Numeric Headers
 #include <numeric/numeric.functions.hh>
 
@@ -182,6 +184,8 @@ HBondEnergyCreator::score_types_for_method() const {
 	sts.push_back( hbond_sr_bb_sc );
 	sts.push_back( hbond_lr_bb_sc );
 	sts.push_back( hbond_sc );
+	sts.push_back( hbond_wat ); // hydrate/SPaDES protocol
+	sts.push_back( wat_entropy ); // hydrate/SPaDES protocol
 	sts.push_back( hbond_intra ); //Currently affects only RNA.
 	sts.push_back( hbond );
 	return sts;
@@ -369,6 +373,12 @@ HBondEnergy::residue_pair_energy(
 		( static_cast< hbonds::HBondSet const & >
 		( pose.energies().data().get( HBOND_SET )));
 
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false;
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) bond_near_wat = true;
+	}
+
 	// this only works because we have already called
 	// hbond_set->setup_for_residue_pair_energies( pose )
 
@@ -405,7 +415,8 @@ HBondEnergy::residue_pair_energy(
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
 			emap,
-			pose);
+			pose,
+			bond_near_wat);
 
 		exclude_bsc = exclude_scb = false;
 		if ( rsd2.is_protein() ) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
@@ -418,7 +429,8 @@ HBondEnergy::residue_pair_energy(
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
 			emap,
-			pose);
+			pose,
+			bond_near_wat);
 
 	} else {
 
@@ -437,7 +449,7 @@ HBondEnergy::residue_pair_energy(
 			false /*calculate_derivative*/,
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
-			emap, num_hbonds_, ssdep_weight_factor);
+			emap, num_hbonds_, ssdep_weight_factor, bond_near_wat );
 
 		exclude_bsc = exclude_scb = false;
 		if ( rsd2.is_protein() ) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
@@ -449,7 +461,7 @@ HBondEnergy::residue_pair_energy(
 			false /*calculate_derivative*/,
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
-			emap, num_hbonds_, ssdep_weight_factor);
+			emap, num_hbonds_, ssdep_weight_factor, bond_near_wat );
 	}
 
 	//std::cout << std::endl << num_hbonds_.size() << std::endl;
@@ -496,6 +508,17 @@ HBondEnergy::residue_pair_energy_ext(
 	debug_assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( pairdata.get_data( hbond_respair_data ) ));
 	HBondResPairMinData const & hb_pair_dat( static_cast< HBondResPairMinData const & > ( pairdata.get_data_ref( hbond_respair_data ) ));
 
+	using EnergiesCacheableDataType::HBOND_SET; // jklai
+	hbonds::HBondSet const & hbond_set
+		( static_cast< hbonds::HBondSet const & >
+		( pose.energies().data().get( HBOND_SET ))); // jklai
+
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false;
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) bond_near_wat = true;
+	}
+
 	// Adjust hydrogen bonding potential to accomodate stronger hbonding in the
 	// membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
 	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
@@ -513,7 +536,7 @@ HBondEnergy::residue_pair_energy_ext(
 				false /*calculate_derivative*/,
 				false, exclude_bsc, exclude_scb, false,
 				*options_,
-				emap, pose);
+				emap, pose, bond_near_wat);
 		}
 
 		{ // scope
@@ -530,7 +553,7 @@ HBondEnergy::residue_pair_energy_ext(
 				false /*calculate_derivative*/,
 				false, exclude_bsc, exclude_scb, false,
 				*options_,
-				emap, pose);
+				emap, pose, bond_near_wat);
 		}
 
 	} else {
@@ -558,7 +581,7 @@ HBondEnergy::residue_pair_energy_ext(
 				false /*calculate_derivative*/,
 				false, exclude_bsc, exclude_scb, false,
 				*options_,
-				emap, ssdep_weight_factor);
+				emap, ssdep_weight_factor, bond_near_wat);
 		}
 
 		{ // scope
@@ -575,7 +598,7 @@ HBondEnergy::residue_pair_energy_ext(
 				false /*calculate_derivative*/,
 				false, exclude_bsc, exclude_scb, false,
 				*options_,
-				emap, ssdep_weight_factor);
+				emap, ssdep_weight_factor, bond_near_wat);
 		}
 	}
 }
@@ -672,7 +695,8 @@ HBondEnergy::hbond_derivs_1way(
 	Real const ssdep_weight_factor,
 	// output
 	utility::vector1< DerivVectorPair > & don_atom_derivs,
-	utility::vector1< DerivVectorPair > & acc_atom_derivs
+	utility::vector1< DerivVectorPair > & acc_atom_derivs,
+	bool bond_near_wat
 ) const
 {
 	EnergyMap emap;
@@ -724,6 +748,12 @@ HBondEnergy::hbond_derivs_1way(
 				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
 			weighted_energy *= ssdep_weight_factor;
 
+			// hydrate/SPaDES protocol
+			// don't consider hb env dependency if hybrid hb env dependency and hb is near wat
+			if ( hbond_set.hbond_options().water_hybrid_sf() && bond_near_wat ) {
+				weighted_energy = hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
+			}
+
 			// Readjust hydrogen bonding depth dependent weight based on z positions
 			// Relying on nonzero thickness which should really be true here!!!
 			if ( thickness_ != 0 || options_->Mbhbond() || options_->mphbond()  ) {
@@ -765,7 +795,14 @@ HBondEnergy::eval_intrares_derivatives(
 	using EnergiesCacheableDataType::HBOND_SET;
 	HBondSet const & hbond_set = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
 	bool const exclude_scb( false );
-	hbond_derivs_1way( weights, hbond_set, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs );
+
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false; // used for water hybrid sf
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd.seqpos() )  ) bond_near_wat = true;
+	}
+
+	hbond_derivs_1way( weights, hbond_set, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs, bond_near_wat );
 }
 
 void
@@ -806,6 +843,12 @@ HBondEnergy::eval_residue_pair_derivatives(
 	ssdep.len_h_ = options_->length_dependent_srbb_maxlength();
 	Real ssdep_weight_factor = get_ssdep_weight(rsd1, rsd2, pose, ssdep);
 
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false; // water hybrid sf
+	if ( hbondset.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) bond_near_wat = true;
+	}
+
 	{ // scope
 		/// 1st == find hbonds with donor atoms on rsd1
 		/// case A: sc is acceptor, bb is donor && res2 is the acceptor residue -> look at the donor availability of residue 1
@@ -813,7 +856,7 @@ HBondEnergy::eval_residue_pair_derivatives(
 		/// case B: bb is acceptor, sc is donor && res2 is the acceptor residue -> look at the acceptor availability of residue 2
 		bool exclude_bsc( ! hb_pair_dat.res2_data().bb_acc_avail() );
 
-		hbond_derivs_1way( weights, hbondset, database_, rsd1, rsd2, rsd1nneighbs, rsd2nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r1_atom_derivs, r2_atom_derivs );
+		hbond_derivs_1way( weights, hbondset, database_, rsd1, rsd2, rsd1nneighbs, rsd2nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r1_atom_derivs, r2_atom_derivs, bond_near_wat );
 	}
 
 	{ // scope
@@ -823,7 +866,7 @@ HBondEnergy::eval_residue_pair_derivatives(
 		/// case B: bb is acceptor, sc is donor && res1 is the acceptor residue -> look at the acceptor availability of residue 1
 		bool exclude_bsc( ! hb_pair_dat.res1_data().bb_acc_avail() );
 
-		hbond_derivs_1way( weights, hbondset, database_, rsd2, rsd1, rsd2nneighbs, rsd1nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r2_atom_derivs, r1_atom_derivs );
+		hbond_derivs_1way( weights, hbondset, database_, rsd2, rsd1, rsd2nneighbs, rsd1nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r2_atom_derivs, r1_atom_derivs, bond_near_wat );
 	}
 }
 
@@ -851,6 +894,12 @@ HBondEnergy::backbone_backbone_energy(
 	hbonds::HBondSet const & hbond_set
 		( static_cast< hbonds::HBondSet const & >( pose.energies().data().get( HBOND_SET )));
 
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false; // water hybrid sf
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) bond_near_wat = true;
+	}
+
 	// Adjust hydrogen bonding potential to accomodate stronger hbonding in the
 	// membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
 	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
@@ -861,7 +910,7 @@ HBondEnergy::backbone_backbone_energy(
 			false /*calculate_derivative*/,
 			false, true, true, true, /* calc bb_bb, don't calc bb_sc, sc_bb, or sc_sc */
 			*options_,
-			emap, pose);
+			emap, pose, bond_near_wat);
 
 		identify_hbonds_1way_membrane(
 			*database_,
@@ -869,7 +918,7 @@ HBondEnergy::backbone_backbone_energy(
 			false /*calculate_derivative*/,
 			false, true, true, true, /* calc bb_bb, don't calc bb_sc, sc_bb, or sc_sc */
 			*options_,
-			emap, pose);
+			emap, pose, bond_near_wat);
 
 	} else {
 
@@ -879,7 +928,7 @@ HBondEnergy::backbone_backbone_energy(
 			false /*calculate_derivative*/,
 			false, true, true, true, /* calc bb_bb, don't calc bb_sc, sc_bb, or sc_sc */
 			*options_,
-			emap);
+			emap, 1.0, bond_near_wat);
 
 		identify_hbonds_1way(
 			*database_,
@@ -887,7 +936,7 @@ HBondEnergy::backbone_backbone_energy(
 			false /*calculate_derivative*/,
 			false, true, true, true, /* calc bb_bb, don't calc bb_sc, sc_bb, or sc_sc */
 			*options_,
-			emap);
+			emap, 1.0, bond_near_wat);
 
 	}
 }
@@ -913,6 +962,12 @@ HBondEnergy::backbone_sidechain_energy(
 	// this only works because we have already called
 	// hbond_set->setup_for_residue_pair_energies( pose )
 
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false; // water hybrid sf
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) bond_near_wat = true;
+	}
+
 	// Adjust hydrogen bonding potential to accomodate stronger hbonding in the
 	// membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
 	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
@@ -926,7 +981,7 @@ HBondEnergy::backbone_sidechain_energy(
 				false /*calculate_derivative*/,
 				true, true, false, true,
 				*options_,
-				emap, pose);
+				emap, pose, bond_near_wat);
 		}
 
 		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-acceptor group
@@ -938,7 +993,7 @@ HBondEnergy::backbone_sidechain_energy(
 				false /*calculate_derivative*/,
 				true, false, true, true,
 				*options_,
-				emap, pose);
+				emap, pose, bond_near_wat);
 		}
 
 	} else {
@@ -951,7 +1006,7 @@ HBondEnergy::backbone_sidechain_energy(
 				false /*calculate_derivative*/,
 				true, true, false, true,
 				*options_,
-				emap);
+				emap, 1.0, bond_near_wat);
 		}
 
 		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-acceptor group
@@ -963,7 +1018,7 @@ HBondEnergy::backbone_sidechain_energy(
 				false /*calculate_derivative*/,
 				true, false, true, true,
 				*options_,
-				emap);
+				emap, 1.0, bond_near_wat);
 		}
 	}
 }
@@ -980,6 +1035,17 @@ HBondEnergy::sidechain_sidechain_energy(
 	Size nbrs1 = pose.energies().tenA_neighbor_graph().get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 	Size nbrs2 = pose.energies().tenA_neighbor_graph().get_node( rsd2.seqpos() )->num_neighbors_counting_self_static();
 
+	using EnergiesCacheableDataType::HBOND_SET; // jklai
+	hbonds::HBondSet const & hbond_set
+		( static_cast< hbonds::HBondSet const & >
+		( pose.energies().data().get( HBOND_SET ))); // jklai
+
+	// hydrate/SPaDES protocol
+	bool bond_near_wat = false; // water hybrid sf
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) bond_near_wat = true;
+	}
+
 	// Adjust hydrogen bonding potential to accomodate stronger hbonding in the
 	// membrane hydrophobic core. Incorporating automatic deteciton for membrane poses (mpframework)
 	if ( pose.conformation().is_membrane() || options_->Mbhbond() || options_->mphbond() ) {
@@ -989,13 +1055,13 @@ HBondEnergy::sidechain_sidechain_energy(
 			rsd1, rsd2, nbrs1, nbrs2,
 			false /*calculate_derivative*/,
 			true, true, true, false, *options_, emap,
-			pose);
+			pose, bond_near_wat);
 		identify_hbonds_1way_membrane(
 			*database_,
 			rsd2, rsd1, nbrs2, nbrs1,
 			false /*calculate_derivative*/,
 			true, true, true, false, *options_, emap,
-			pose);
+			pose, bond_near_wat);
 
 	} else {
 
@@ -1003,12 +1069,12 @@ HBondEnergy::sidechain_sidechain_energy(
 			*database_,
 			rsd1, rsd2, nbrs1, nbrs2,
 			false /*calculate_derivative*/,
-			true, true, true, false, *options_, emap);
+			true, true, true, false, *options_, emap, 1.0, bond_near_wat);
 		identify_hbonds_1way(
 			*database_,
 			rsd2, rsd1, nbrs2, nbrs1,
 			false /*calculate_derivative*/,
-			true, true, true, false, *options_, emap);
+			true, true, true, false, *options_, emap, 1.0, bond_near_wat);
 	}
 }
 
@@ -1177,6 +1243,8 @@ HBondEnergy::finalize_total_energy(
 	Real original_sr_bb_sc = totals[ hbond_sr_bb_sc ];
 	Real original_lr_bb_sc = totals[ hbond_lr_bb_sc ];
 	Real original_sc       = totals[ hbond_sc ];
+	Real original_wat      = totals[ hbond_wat ]; // hydrate/SPaDES scoring function
+	Real original_ent      = totals[ wat_entropy ]; // hydrate/SPaDES scoring function
 	Real original_intra    = totals[ hbond_intra ];
 	// end replicate
 
@@ -1187,6 +1255,8 @@ HBondEnergy::finalize_total_energy(
 	totals[ hbond_sr_bb_sc ] = original_sr_bb_sc;
 	totals[ hbond_lr_bb_sc ] = original_lr_bb_sc;
 	totals[ hbond_sc ]       = original_sc;
+	totals[ hbond_wat ]      = original_wat; // hydrate/SPaDES scoring function
+	totals[ wat_entropy ]    = original_ent; // hydrate/SPaDES scoring function
 	totals[ hbond_intra ]    = original_intra;
 	// end replicate
 
@@ -1251,7 +1321,9 @@ create_rotamer_descriptor(
 	conformation::Residue const & res,
 	hbonds::HBondOptions const & options,
 	hbonds::HBondSet const & hbond_set,
-	trie::RotamerDescriptor< hbtrie::HBAtom, hbtrie::HBCPData > & rotamer_descriptor
+	trie::RotamerDescriptor< hbtrie::HBAtom, hbtrie::HBCPData > & rotamer_descriptor,
+	bool near_wat = false,
+	bool is_wat = false
 )
 {
 	using namespace trie;
@@ -1304,6 +1376,10 @@ create_rotamer_descriptor(
 		newatom.is_protein( res.is_protein() );
 		newatom.is_dna( res.is_DNA() );
 
+		// hydrate/SPaDES protocol
+		newatom.near_wat( near_wat );
+		newatom.is_wat( is_wat );
+
 		if ( res.atom_type_set()[ res.atom( jj ).type() ].is_acceptor() ) {
 
 			newatom.hb_chem_type( get_hb_acc_chem_type( jj, res ));
@@ -1340,6 +1416,10 @@ create_rotamer_descriptor(
 			newhatom.is_protein( res.is_protein() );
 			newhatom.is_dna( res.is_DNA() );
 
+			// hydrate/SPaDES protocol
+			newhatom.near_wat( near_wat );
+			newhatom.is_wat( is_wat );
+
 			HBCPData hcpdata;
 			hcpdata.is_sc( ! res.type().atom_is_backbone( kk ) );
 
@@ -1373,9 +1453,25 @@ HBondEnergy::create_rotamer_trie(
 
 	utility::vector1< RotamerDescriptor< HBAtom, HBCPData > > rotamer_descriptors( rotset.num_rotamers() );
 
+	// hydrate/SPaDES protocol
+	bool near_wat = false; // hybrid dependency on hb env weight
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, rotset.resid() ) ) {
+			near_wat = true;
+		}
+	}
+
+	// hydrate/SPaDES protocol
+	bool is_wat = false; // hybrid water specific scoring
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( rotset.rotamer( 1 )->name() == "TP3" ) {
+			is_wat = true;
+		}
+	}
+
 	for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
 		conformation::ResidueCOP ii_rotamer( rotset.rotamer( ii ) );
-		create_rotamer_descriptor( *ii_rotamer, *options_, hbond_set, rotamer_descriptors[ ii ] );
+		create_rotamer_descriptor( *ii_rotamer, *options_, hbond_set, rotamer_descriptors[ ii ] , near_wat, is_wat );
 		rotamer_descriptors[ ii ].rotamer_id( ii );
 	}
 
@@ -1400,7 +1496,23 @@ HBondEnergy::create_rotamer_trie(
 
 	utility::vector1< RotamerDescriptor< HBAtom, HBCPData > > rotamer_descriptors( 1 );
 
-	create_rotamer_descriptor( res, *options_, hbond_set, rotamer_descriptors[ 1 ] );
+	// hydrate/SPaDES protocol
+	bool near_wat = false; // hybrid dependency on hb env weight
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( residue_near_water( pose, res.seqpos() ) ) {
+			near_wat = true;
+		}
+	}
+
+	// hydrate/SPaDES protocol
+	bool is_wat = false; // hybrid water specific scoring
+	if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+		if ( res.name() == "TP3" ) {
+			is_wat = true;
+		}
+	}
+
+	create_rotamer_descriptor( res, *options_, hbond_set, rotamer_descriptors[ 1 ], near_wat, is_wat );
 	rotamer_descriptors[ 1 ].rotamer_id( 1 );
 
 	return hbtrie::HBondRotamerTrieOP( new RotamerTrie< HBAtom, HBCPData >( rotamer_descriptors, atomic_interaction_cutoff()) );
@@ -1440,6 +1552,12 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 		envweight = ( flipped ? get_environment_dependent_weight( hbe_type, res2_nb_, res1_nb_, *options_ ) :
 			get_environment_dependent_weight( hbe_type, res1_nb_, res2_nb_, *options_ ));
 	}
+
+	// hydrate/SPaDES protocol
+	if ( options_->water_hybrid_sf() && ( at1.near_wat() || at2.near_wat() ) ) {
+		envweight = 1.0;
+	}
+
 	//pba membrane specific correction
 	if ( options_->Mbhbond() && options_->mphbond() ) {
 
@@ -1451,9 +1569,24 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 		envweight = membrane_depth_dependent_weight;
 	}
 
-	Real weighted_energy(hb_eval_type_weight(hbe_type.eval_type(), weights_, res1_==res2_) * hbenergy * envweight);
+	Real weighted_energy(0.0);
+
+	// hydrate/SPaDES protocol
+	if ( ( at1.is_wat() || at2.is_wat() ) && options_->water_hybrid_sf() ) {
+		if ( res1_ == res2_ ) weighted_energy = weights_[ hbond_intra ] * hbenergy * envweight;
+		else  weighted_energy = weights_[ hbond_wat ] * hbenergy * envweight;
+	} else {
+		weighted_energy = hb_eval_type_weight(hbe_type.eval_type(), weights_, res1_==res2_) * hbenergy * envweight;
+	}
+
+	// hydrate/SPaDES protocol
+	if ( ( at1.is_wat() && !at2.is_wat() ) || ( !at1.is_wat() && at2.is_wat() ) ) {
+		static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
+		weighted_energy += (1.0 - smoothed_step->func( hbenergy )) * weights_[ wat_entropy ];
+	}
 
 	//std::cout << "weighted energy: " << weighted_energy << " " << hbenergy << " " << envweight << std::endl;
+
 	return weighted_energy;
 }
 

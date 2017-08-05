@@ -42,6 +42,10 @@
 #include <core/scoring/ScoreType.hh>
 #include <utility/vector1.hh>
 
+#include <core/scoring/Energies.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 
 namespace core {
 namespace scoring {
@@ -165,6 +169,40 @@ inline_residue_atom_pair_energy(
 	vect r2hbegin( res2.attached_H_begin() );
 	vect r2hend(   res2.attached_H_end()   );
 
+	// hydrate/SPaDES protocol
+	// store the original weights to restore later
+	Real const original_fa_sol = emap.get( fa_sol );
+	bool no_fa_sol = false;
+
+	// hydrate/SPaDES protocol
+	// check to make sure water_hybrid_sf and ignore_fa_sol_at_positions is on
+	if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		if ( basic::options::option[ basic::options::OptionKeys::hydrate::ignore_fa_sol_at_positions ].user() ) {
+
+			// get the vector of positions to ignore
+			utility::vector1< Size > const ignore_positions = basic::options::option[ basic::options::OptionKeys::hydrate::ignore_fa_sol_at_positions ]();
+
+			// check if the current residues are supposed to be ignored
+			for ( Size pos = 1; pos <= ignore_positions.size(); pos++ ) {
+				Size ignore_fa_sol_pos = ignore_positions[ pos ];
+				if ( res1.seqpos() == ignore_fa_sol_pos || res2.seqpos() == ignore_fa_sol_pos ) {
+					no_fa_sol = true;
+					break;
+				}
+			}
+		}
+
+		// always turn off fa_sol for waters
+		if ( res1.name() == "TP3" || res2.name() == "TP3" ) {
+			no_fa_sol = true;
+		}
+
+		// if current residues are to be ignored, set fa_sol to zero
+		if ( no_fa_sol ) {
+			emap.set( fa_sol, 0.0 );
+		}
+	}
+
 	// Atom pairs
 	for ( int i = res1_start, i_end = res1_end; i <= i_end; ++i ) {
 		Atom const & atom1( res1.atom(i) );
@@ -181,6 +219,7 @@ inline_residue_atom_pair_energy(
 			} else {
 				if ( count_pair( i, j, weight, path_dist ) ) {
 					//       std::cout << "Atom Pair Energy: " << i << " with " << j << "   ";
+
 					etable_energy.atom_pair_energy( atom1, atom2, weight, emap, dsq );
 					//     std::cout << "atr: " << emap[ coarse_fa_atr ] << " ";
 					//     std::cout << "rep: " << emap[ coarse_fa_rep ] << " ";
@@ -202,8 +241,34 @@ inline_residue_atom_pair_energy(
 
 				}
 			}
+			if ( basic::options::option[ basic::options::OptionKeys::score::show_etable_contributions ] ) {
+				std::cout << "res_" << res1.seqpos() << " res_" << res2.seqpos() << "   ";
+				std::cout << "Atom_Pair_Energy: " << i << " with " << j << "   ";
+				std::cout << "atr: " << emap[ fa_atr ] << " ";
+				std::cout << "rep: " << emap[ fa_rep ] << " ";
+				std::cout << "sol: " << emap[ fa_sol ] << " ";
+				std::cout << std::endl;
+			}
+
 		}
 	}
+
+
+	if ( basic::options::option[ basic::options::OptionKeys::score::show_etable_contributions ] ) {
+		if ( res1.name() == "TP3" || res2.name() == "TP3" ) {
+			std::cout << "RES_" << res1.seqpos() << " RES_" << res2.seqpos() << "   ";
+			std::cout << "atr: " << emap[ fa_atr ] << " ";
+			std::cout << "rep: " << emap[ fa_rep ] << " ";
+			std::cout << "sol: " << emap[ fa_sol ] << std::endl;
+		}
+	}
+
+	// hydrate/SPaDES protocol
+	// restore fa_sol (which was temporarily set it to zero)
+	if ( no_fa_sol ) {
+		emap.set( fa_sol, original_fa_sol );
+	}
+
 }
 
 /// @brief intraresidue atom pair energy evaluations

@@ -134,6 +134,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "dna_pair" ] = dna_pair;
 	name2score_type_[ "pro_close" ] = pro_close;
 	name2score_type_[ "vdw" ] = vdw;
+
+	name2score_type_[ "wat_desolv" ] = wat_desolv; // hydrate/SPaDES protocol
+
 	name2score_type_[ "cen_hb" ] = cen_hb;
 	name2score_type_[ "cenpack" ] = cenpack;
 	name2score_type_[ "hybrid_vdw" ] = hybrid_vdw;
@@ -176,6 +179,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hbond_sr_bb_sc" ] = hbond_sr_bb_sc;
 	name2score_type_[ "hbond_lr_bb_sc" ] = hbond_lr_bb_sc;
 	name2score_type_[ "hbond_sc"    ] = hbond_sc;
+	name2score_type_[ "hbond_wat" ] = hbond_wat; // hydrate/SPaDES protocol
+	name2score_type_[ "wat_entropy" ] = wat_entropy; // hydrate/SPaDES protocol
 	name2score_type_[ "hbond"    ] = hbond;
 
 	name2score_type_[ "npd_hbond_sr_bb" ] = npd_hbond_sr_bb;
@@ -361,6 +366,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_["pcsTs4"]=pcsTs4;
 	name2score_type_[ "pcs2" ] = pcs2;
 	name2score_type_[ "dock_ens_conf" ] = dock_ens_conf;
+
+	// hydrate/SPaDES protocol
+	name2score_type_[ "wat_desolv" ] = wat_desolv;
 
 	//fpd smooth (differentiable) centroid terms
 	name2score_type_[ "cen_hb" ] = cen_hb;

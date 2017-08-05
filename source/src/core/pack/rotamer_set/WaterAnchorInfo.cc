@@ -36,8 +36,11 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-/// @details Auto-generated virtual destructor
-WaterAnchorInfo::~WaterAnchorInfo() {}
+/// @details
+WaterAnchorInfo::~WaterAnchorInfo() {
+	enforced_ = false;
+	rotamer_bonds_ = "DOUBLE";
+}
 
 Size
 WaterAnchorInfo::anchor_residue() const {
@@ -68,6 +71,21 @@ WaterAnchorInfo::anchor_atom( std::string const & name
 	anchor_atom_name_ = name;
 }
 
+std::string
+WaterAnchorInfo::anchor_atom() const {
+	return anchor_atom_name_;
+}
+
+void
+WaterAnchorInfo::design_anchor_index( Size const & ii){
+	design_anchor_index_ = ii;
+}
+
+Size
+WaterAnchorInfo::design_anchor_index() const {
+	return design_anchor_index_;
+}
+
 void
 WaterAnchorInfo::aa( AA const & aa_in ) {
 	aa_ = aa_in;
@@ -83,6 +101,26 @@ WaterAnchorInfo::nstep( Size const nstep_in ) {
 	nstep_ = nstep_in;
 }
 
+bool
+WaterAnchorInfo::enforced() const{
+	return enforced_;
+}
+
+void
+WaterAnchorInfo::enforced( bool enf ) {
+	enforced_ = enf;
+}
+
+std::string
+WaterAnchorInfo::rotamer_bonds() const{
+	return rotamer_bonds_;
+}
+
+void
+WaterAnchorInfo::rotamer_bonds( std::string bonds ) {
+	rotamer_bonds_ = bonds;
+}
+
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
@@ -95,8 +133,11 @@ void
 core::pack::rotamer_set::WaterAnchorInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( anchor_residue_ ) ); // Size
 	arc( CEREAL_NVP( anchor_atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( design_anchor_index_ ) ); // Size
 	arc( CEREAL_NVP( aa_ ) ); // AA
 	arc( CEREAL_NVP( nstep_ ) ); // Size
+	arc( CEREAL_NVP( enforced_ ) ); // Bool
+	arc( CEREAL_NVP( rotamer_bonds_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -105,8 +146,11 @@ void
 core::pack::rotamer_set::WaterAnchorInfo::load( Archive & arc ) {
 	arc( anchor_residue_ ); // Size
 	arc( anchor_atom_name_ ); // std::string
+	arc( design_anchor_index_ ); // Size
 	arc( aa_ ); // AA
 	arc( nstep_ ); // Size
+	arc( enforced_ ); // Bool
+	arc( rotamer_bonds_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::WaterAnchorInfo );

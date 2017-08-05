@@ -42,12 +42,13 @@ namespace etable {
 namespace etrie {
 
 
-EtableAtom::EtableAtom() : parent(), is_hydrogen_( false ) {}
+EtableAtom::EtableAtom() : parent(), is_hydrogen_( false ), is_wat_( false ) {}
 
 EtableAtom::EtableAtom( conformation::Residue const & res, Size atom_index )
 :
 	parent( res.atom( atom_index ) ),
-	is_hydrogen_( false )
+	is_hydrogen_( false ),
+	is_wat_( false )
 {}
 
 EtableAtom::~EtableAtom() {}
@@ -86,6 +87,7 @@ void
 core::scoring::etable::etrie::EtableAtom::save( Archive & arc ) const {
 	arc( cereal::base_class< core::conformation::Atom >( this ) );
 	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+	arc( CEREAL_NVP( is_wat_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -94,6 +96,7 @@ void
 core::scoring::etable::etrie::EtableAtom::load( Archive & arc ) {
 	arc( cereal::base_class< core::conformation::Atom >( this ) );
 	arc( is_hydrogen_ ); // _Bool
+	arc( is_wat_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::etrie::EtableAtom );

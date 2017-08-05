@@ -45,6 +45,8 @@ HBAtom::HBAtom() :
 	is_backbone_( false ),
 	is_protein_( false ),
 	is_dna_( false ),
+	is_wat_( false ), // hydrate/SPaDES protocol
+	near_wat_( false ), // hydrate/SPaDES protocol
 	hb_chem_type_( 0 )
 	//,seqpos_( 0 )
 {}
@@ -97,6 +99,8 @@ core::scoring::hbonds::hbtrie::HBAtom::save( Archive & arc ) const {
 	arc( CEREAL_NVP( is_backbone_ ) ); // _Bool
 	arc( CEREAL_NVP( is_protein_ ) ); // _Bool
 	arc( CEREAL_NVP( is_dna_ ) ); // _Bool
+	arc( CEREAL_NVP( is_wat_ ) ); // _Bool
+	arc( CEREAL_NVP( near_wat_ ) ); // _Bool
 	arc( CEREAL_NVP( hb_chem_type_ ) ); // int
 }
 
@@ -111,6 +115,8 @@ core::scoring::hbonds::hbtrie::HBAtom::load( Archive & arc ) {
 	arc( is_backbone_ ); // _Bool
 	arc( is_protein_ ); // _Bool
 	arc( is_dna_ ); // _Bool
+	arc( is_wat_ ); // _Bool
+	arc( near_wat_ ); // _Bool
 	arc( hb_chem_type_ ); // int
 }
 

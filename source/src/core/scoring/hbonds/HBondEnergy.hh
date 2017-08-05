@@ -269,7 +269,8 @@ public:
 		Real const ssdep_weight_factor,
 		// output
 		utility::vector1< DerivVectorPair > & don_atom_derivs,
-		utility::vector1< DerivVectorPair > & acc_atom_derivs
+		utility::vector1< DerivVectorPair > & acc_atom_derivs,
+		bool bond_near_wat = false
 	) const;
 
 

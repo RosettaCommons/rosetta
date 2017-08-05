@@ -1,0 +1,26 @@
+-restore_pre_talaris_2013_behavior
+
+-in:file:s 1BRS_dry.pdb
+
+-score
+ -water_hybrid_sf true
+ -weights spades.wts
+ 
+-packing
+ -resfile pack.resfile
+
+-hydrate
+ -water_rotamers_cap 500
+ -hbond_threshold -0.5
+ -ignore_fa_sol_at_positions 85 137 147
+ -hyfile hydrate.hyfile
+
+-inout
+ -skip_connect_info true
+ -write_all_connect_info false
+
+-out
+ -prefix hydrate_
+ -nstruct 1
+
+-use_input_sc

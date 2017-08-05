@@ -37,6 +37,7 @@
 #include <core/chemical/AtomType.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/chemical/rna/RNA_Info.hh>
+#include <core/scoring/func/SmoothStepFunc.hh>
 
 //pba membrane specific hbond
 #include <core/scoring/Membrane_FAPotential.hh>
@@ -49,6 +50,8 @@
 
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 
 // Boost Headers
 #include <boost/unordered_map.hpp>
@@ -72,6 +75,27 @@ namespace scoring {
 namespace hbonds {
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.hbonds.hbonds" );
+
+// for hydrate/SPaDES protocol
+bool
+residue_near_water(
+	pose::Pose const & pose,
+	Size ii
+){
+	Real near_water_threshold = option[ OptionKeys::hydrate::near_water_threshold]();
+	for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+		if ( ii == jj ) continue;
+		if ( pose.residue(jj).name() == "TP3" ) {
+			Vector water_oxygen_xyz ( pose.residue(jj).xyz(1) );
+			for ( Size kk = 1; kk <= pose.residue(ii).nheavyatoms(); ++kk ) {
+				Vector atom_heavy_xyz ( pose.residue(ii).xyz(kk) );
+				if ( atom_heavy_xyz.distance( water_oxygen_xyz ) <= near_water_threshold ) return true;
+			}
+		}
+	}
+	return false;
+}
+
 
 /**
 This routine fills an hbond-set with hbonds. All hbonds are included,
@@ -212,12 +236,23 @@ fill_hbond_set(
 		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
 		conformation::Residue const & rsd1( pose.residue( res1 ) );
 
+		// hydrate/SPaDES protocol check if near water
+		bool bond_near_wat = false;
+		if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+			if ( residue_near_water( pose, res1 ) ) bond_near_wat = true;
+		}
+
 		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(res1)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(res1)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 
 			int const res2( (*iru)->get_second_node_ind() );
+
+			// hydrate/SPaDES protocol check if near water
+			if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+				if ( residue_near_water( pose, res2 ) ) bond_near_wat = true;
+			}
 
 			conformation::Residue const & rsd2( pose.residue( res2 ) );
 			if ( hbond_set.hbond_options().exclude_DNA_DNA() && rsd1.is_DNA() && rsd2.is_DNA() ) continue;
@@ -229,24 +264,24 @@ fill_hbond_set(
 				identify_hbonds_1way_membrane(
 					database,
 					rsd1, rsd2, nb1, nb2, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose );
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose, bond_near_wat);
 
 				identify_hbonds_1way_membrane(
 					database,
 					rsd2, rsd1, nb2, nb1, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose, bond_near_wat);
 			} else {
 				core::Real ssdep_weight = get_ssdep_weight(rsd1, rsd2, pose, sswt);
 
 				identify_hbonds_1way(
 					database,
 					rsd1, rsd2, nb1, nb2, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight, bond_near_wat);
 
 				identify_hbonds_1way(
 					database,
 					rsd2, rsd1, nb2, nb1, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight, bond_near_wat);
 
 			}
 		} // nbrs of res1
@@ -256,12 +291,12 @@ fill_hbond_set(
 				identify_hbonds_1way_membrane(
 					database,
 					rsd1, rsd1, nb1, nb1, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose, bond_near_wat);
 			} else {
 				identify_hbonds_1way(
 					database,
 					rsd1, rsd1, nb1, nb1, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, 1.0, bond_near_wat);
 			}
 		}
 	} // res1
@@ -379,8 +414,14 @@ fill_hbond_set_by_AHdist_threshold(
 			if ( hbond_set.hbond_options().exclude_DNA_DNA() &&
 					rsd1.is_DNA() && rsd2.is_DNA() ) continue;
 
-			identify_hbonds_1way_AHdist(database, rsd1, rsd2, nb1, nb2, AHdist_threshold, hbond_set);
-			identify_hbonds_1way_AHdist(database, rsd2, rsd1, nb1, nb2, AHdist_threshold, hbond_set);
+			// hydrate/SPaDES protocol check if near water
+			bool bond_near_wat = false;
+			if ( hbond_set.hbond_options().water_hybrid_sf() ) {
+				if ( residue_near_water( pose, res1 ) || residue_near_water( pose, res2 ) ) bond_near_wat = true;
+			}
+
+			identify_hbonds_1way_AHdist(database, rsd1, rsd2, nb1, nb2, AHdist_threshold, hbond_set, bond_near_wat);
+			identify_hbonds_1way_AHdist(database, rsd2, rsd1, nb1, nb2, AHdist_threshold, hbond_set, bond_near_wat);
 		}
 	}
 
@@ -405,7 +446,8 @@ identify_hbonds_1way(
 	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
 	// output
 	HBondSet & hbond_set,
-	Real ssdep_weight_factor
+	Real ssdep_weight_factor,
+	bool bond_near_wat
 )
 {
 	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -470,6 +512,9 @@ identify_hbonds_1way(
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
 
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( hbond_set.hbond_options().water_hybrid_sf() && bond_near_wat ) environmental_weight = 1;
+
 			Real ssdep_weight = (get_hbond_weight_type(hbe_type.eval_type())==hbw_SR_BB) ?  ssdep_weight_factor : 1.0;
 
 			//////
@@ -498,7 +543,8 @@ identify_hbonds_1way(
 	HBondOptions const & options,
 	// output
 	EnergyMap & emap,
-	Real ssdep_weight_factor
+	Real ssdep_weight_factor,
+	bool bond_near_wat
 )
 {
 	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -561,12 +607,27 @@ identify_hbonds_1way(
 			Real environmental_weight
 				(!options.use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( options.water_hybrid_sf() && bond_near_wat ) environmental_weight = 1;
 
 			////////
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-			emap[hbond] += hbE;
+
+			// hydrate/SPaDES protocol scoring function
+			if ( options.water_hybrid_sf() ) {
+				if ( ( don_rsd.name() == "TP3" && acc_rsd.name() != "TP3") || ( acc_rsd.name() == "TP3" && don_rsd.name() != "TP3" ) ) {
+					static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
+					emap[ wat_entropy ] += 1.0 - smoothed_step->func( unweighted_energy );
+				}
+				if ( (don_rsd.name() == "TP3" || acc_rsd.name() == "TP3") ) {
+					emap[ hbond_wat ] += hbE;
+					continue;
+				}
+			}
+
+			emap[ hbond ] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB :
@@ -611,7 +672,8 @@ identify_hbonds_1way(
 	// output
 	EnergyMap & emap,
 	boost::unordered_map<core::Size, core::Size> & num_hbonds,
-	Real ssdep_weight_factor
+	Real ssdep_weight_factor,
+	bool bond_near_wat
 )
 {
 	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -678,12 +740,27 @@ identify_hbonds_1way(
 			Real environmental_weight
 				(!options.use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( options.water_hybrid_sf() && bond_near_wat ) environmental_weight = 1;
 
 			////////
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-			emap[hbond] += hbE;
+
+			// hydrate/SPaDES protocol scoring function
+			if ( options.water_hybrid_sf() ) {
+				if ( ( don_rsd.name() == "TP3" && acc_rsd.name() != "TP3") || ( acc_rsd.name() == "TP3" && don_rsd.name() != "TP3" ) ) {
+					static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
+					emap[ wat_entropy ] += 1.0 - smoothed_step->func( unweighted_energy );
+				}
+				if ( (don_rsd.name() == "TP3" || acc_rsd.name() == "TP3") ) {
+					emap[ hbond_wat ] += hbE;
+					continue;
+				}
+			}
+
+			emap[ hbond ] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB :
@@ -761,7 +838,8 @@ identify_hbonds_1way_AHdist(
 	Size const don_nb,
 	Size const acc_nb,
 	Real const AHdist_threshold,
-	HBondSet & hbond_set
+	HBondSet & hbond_set,
+	bool bond_near_wat
 )
 {
 	for ( Size const hatm : don_rsd.Hpos_polar() ) {
@@ -787,6 +865,9 @@ identify_hbonds_1way_AHdist(
 			Real environmental_weight
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
+
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( hbond_set.hbond_options().water_hybrid_sf() && bond_near_wat ) environmental_weight = 1;
 
 			hbond_set.append_hbond(
 				hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
@@ -1211,7 +1292,8 @@ identify_hbonds_1way_membrane(
 	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
 	// output
 	HBondSet & hbond_set,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool bond_near_wat
 ){
 	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
@@ -1275,6 +1357,9 @@ identify_hbonds_1way_membrane(
 				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz()));
 
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( hbond_set.hbond_options().water_hybrid_sf() && bond_near_wat ) environmental_weight = 1;
+
 			/// Add Membrane hbonds to the hydrogen bonds set
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
 				hbe_type, unweighted_energy, environmental_weight, derivs );
@@ -1297,7 +1382,8 @@ identify_hbonds_1way_membrane(
 	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
 	HBondOptions const & options,
 	EnergyMap & emap,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	bool bond_near_wat
 )
 {
 	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -1363,10 +1449,27 @@ identify_hbonds_1way_membrane(
 				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz()));
 
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( options.water_hybrid_sf() && bond_near_wat ) environmental_weight = 1;
+
 			////////
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+
+			// hydrate/SPaDES protocol scoring function
+			if ( options.water_hybrid_sf() ) {
+				if ( ( don_rsd.name() == "TP3" && acc_rsd.name() != "TP3") || ( acc_rsd.name() == "TP3" && don_rsd.name() != "TP3" ) ) {
+					static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
+					emap[ wat_entropy ] += 1.0 - smoothed_step->func( unweighted_energy );
+				}
+				if ( (don_rsd.name() == "TP3" || acc_rsd.name() == "TP3") ) {
+					emap[ hbond_wat ] += hbE;
+					continue;
+				}
+			}
+
+			///////////
 			increment_hbond_energy( hbe_type.eval_type(), emap, hbE );
 
 		} // loop over acceptors

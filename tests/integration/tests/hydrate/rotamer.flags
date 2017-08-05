@@ -1,0 +1,27 @@
+-restore_pre_talaris_2013_behavior
+
+-in:file:s 1BRS_dry.pdb
+
+-score
+ -water_hybrid_sf
+ -weights spades.wts
+
+-packing
+ -dump_rotamer_sets true
+ -resfile pack.resfile
+
+-hydrate
+ -show_rotamer_count true
+ -ignore_fa_sol_at_positions 85 137 147
+ -hyfile hydrate.hyfile
+
+-inout
+ -skip_connect_info true
+ -write_all_connect_info false
+
+-out
+ -prefix rotamer_
+ -nstruct 1
+ -nooutput
+
+-use_input_sc

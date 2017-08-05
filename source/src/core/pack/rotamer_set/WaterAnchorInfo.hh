@@ -39,7 +39,8 @@ public:
 	WaterAnchorInfo():
 		anchor_residue_(0), // Does this make sense?
 		aa_( core::chemical::aa_unk ),
-		nstep_(0) // Does this make sense?
+		nstep_(0), // Does this make sense?
+		enforced_( false ) // hydrate/SPaDES protocol
 	{}
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
@@ -64,6 +65,9 @@ public:
 	void
 	anchor_atom( std::string const & name );
 
+	std::string
+	anchor_atom() const; // hydrate/SPaDES protocol
+
 	void
 	aa( AA const & aa_in );
 
@@ -73,11 +77,32 @@ public:
 	void
 	nstep( Size const nstep_in );
 
+	bool
+	enforced() const; // hydrate/SPaDES protocol
+
+	void
+	enforced( bool enf ); // hydrate/SPaDES protocol
+
+	std::string
+	rotamer_bonds() const; // hydrate/SPaDES protocol
+
+	void
+	rotamer_bonds( std::string bonds ); // hydrate/SPaDES protocol
+
+	void
+	design_anchor_index( Size const & ii); // hydrate/SPaDES protocol
+
+	Size
+	design_anchor_index() const; // hydrate/SPaDES protocol
+
 private:
 	Size anchor_residue_;
 	std::string anchor_atom_name_;
 	AA aa_;
 	Size nstep_;
+	bool enforced_;     // If true, the water molecule is forced to stay near the protein (present)
+	std::string rotamer_bonds_;   // Describes the number of hbonds the rotamers it builds will have with the protein
+	Size design_anchor_index_; // Local hydratable atom index (1 to 5)
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

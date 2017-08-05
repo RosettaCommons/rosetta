@@ -90,7 +90,8 @@ HBondOptions::HBondOptions(
 	ldsrbb_low_scale_( 0.5 ),
 	ldsrbb_high_scale_( 2.0 ),
 	ldsrbb_minlength_( 4 ),
-	ldsrbb_maxlength_( 17 )
+	ldsrbb_maxlength_( 17 ),
+	water_hybrid_sf_ ( true ) // hydrate/SPaDES protocol
 {
 	initialize_from_options( options );
 }
@@ -170,7 +171,8 @@ HBondOptions::list_options_read( utility::options::OptionKeyList & option_list )
 		+ OptionKeys::score::ldsrbb_low_scale
 		+ OptionKeys::score::ldsrbb_maxlength
 		+ OptionKeys::score::ldsrbb_minlength
-		+ OptionKeys::score::length_dep_srbb;
+		+ OptionKeys::score::length_dep_srbb
+		+ OptionKeys::score::water_hybrid_sf; // hydrate/SPaDES protocol
 }
 
 /// copy constructor
@@ -210,6 +212,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	ldsrbb_high_scale_ = src.ldsrbb_high_scale_;
 	ldsrbb_minlength_ = src.ldsrbb_minlength_;
 	ldsrbb_maxlength_ = src.ldsrbb_maxlength_;
+	water_hybrid_sf_ = src.water_hybrid_sf_; // hydrate/SPaDES protocol
 
 	return *this;
 }
@@ -230,6 +233,9 @@ HBondOptions::parse_my_tag(
 	}
 	if ( tag->hasOption( "use_hb_env_dep" ) ) {
 		use_hb_env_dep( tag->getOption<bool>( "use_hb_env_dep" ) );
+	}
+	if ( tag->hasOption( "water_hybrid_sf" ) ) { // hydrate/SPaDES protocol
+		water_hybrid_sf( tag->getOption<bool>( "water_hybrid_sf" ) );
 	}
 	if ( tag->hasOption( "smooth_hb_env_dep" ) ) {
 		smooth_hb_env_dep( tag->getOption<bool>( "smooth_hb_env_dep" ) );
@@ -429,6 +435,21 @@ HBondOptions::use_hb_env_dep( bool const setting )
 
 
 bool
+HBondOptions::water_hybrid_sf() const
+{
+	return water_hybrid_sf_; // hydrate/SPaDES protocol
+}
+
+
+void
+HBondOptions::water_hybrid_sf( bool const setting )
+{
+	water_hybrid_sf_ = setting; // hydrate/SPaDES protocol
+}
+
+
+
+bool
 HBondOptions::smooth_hb_env_dep() const
 {
 	return smooth_hb_env_dep_;
@@ -577,7 +598,8 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.ldsrbb_low_scale_ == b.ldsrbb_low_scale_) &&
 		( a.ldsrbb_high_scale_ == b.ldsrbb_high_scale_) &&
 		( a.ldsrbb_minlength_ == b.ldsrbb_minlength_) &&
-		( a.ldsrbb_maxlength_ == b.ldsrbb_maxlength_) );
+		( a.ldsrbb_maxlength_ == b.ldsrbb_maxlength_) &&
+		( a.water_hybrid_sf_ == b.water_hybrid_sf_ ) ); // hydrate/SPaDES protocol
 }
 
 bool
@@ -633,6 +655,8 @@ HBondOptions::show( std::ostream & out ) const
 	out << "HbondOptions::show: mphbond: "
 		<<( mphbond_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: hbond_energy_shift: " << hbond_energy_shift_ << std::endl;
+	out <<"HBondOptions::show: water_hybrid_sf: "
+		<<( water_hybrid_sf_ ? "true" : "false" ) << std::endl; // hydrate/SPaDES protocol
 }
 
 }
@@ -669,6 +693,7 @@ core::scoring::hbonds::HBondOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( ldsrbb_high_scale_ ) ); // Real
 	arc( CEREAL_NVP( ldsrbb_minlength_ ) ); // Size
 	arc( CEREAL_NVP( ldsrbb_maxlength_ ) ); // Size
+	arc( CEREAL_NVP( water_hybrid_sf_ ) ); // Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -699,6 +724,7 @@ core::scoring::hbonds::HBondOptions::load( Archive & arc ) {
 	arc( ldsrbb_high_scale_ ); // Real
 	arc( ldsrbb_minlength_ ); // Size
 	arc( ldsrbb_maxlength_ ); // Size
+	arc( water_hybrid_sf_ ); // Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondOptions );

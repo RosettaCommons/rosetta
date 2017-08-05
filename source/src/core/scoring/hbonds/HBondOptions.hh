@@ -151,6 +151,14 @@ public:
 
 
 	bool
+	water_hybrid_sf() const; // hydrate/SPaDES protocol
+
+
+	void
+	water_hybrid_sf( bool const setting ); // hydrate/SPaDES protocol
+
+
+	bool
 	smooth_hb_env_dep() const;
 
 
@@ -285,6 +293,7 @@ private:
 	bool length_dependent_srbb_;
 	Real ldsrbb_low_scale_, ldsrbb_high_scale_; // linear scaling based on helix length from minlength->maxlength residues
 	Size ldsrbb_minlength_, ldsrbb_maxlength_;
+	bool water_hybrid_sf_; // hydrate/SPaDES protocol
 
 #ifdef    SERIALIZATION
 public:

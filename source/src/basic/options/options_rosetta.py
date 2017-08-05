@@ -1316,6 +1316,9 @@ Options = Option_Group( '',
 		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='ref2015_params'),
 		Option( 'hbond_bb_per_residue_energy', 'Boolean', desc="In score tables, separate out backbone hydrogens bond energies per residue. By default, bb hbonds are included in the total energy, but not per residue energies",default='false'),
 		Option( 'hbond_disable_bbsc_exclusion_rule', 'Boolean', desc="Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded", default='false' ),
+		Option( 'use_hb_env_dep', 'Boolean', desc="Use hydrogen bond environment dependency. Smaller in the surface of the protein.", default='true' ),
+		Option( 'water_hybrid_sf', 'Boolean', desc="Use a hybrid scoring function, which includes energy terms hbond_wat and wat_entropy.", default='false' ), # hydrate/SPaDES protocol
+		Option( 'show_etable_contributions', 'Boolean', desc="Shows atom-atom and res-res contributions to Lennard-Jones and solvation energies when scoring.", default='false' ), # hydrate/SPaDES protocol
 		Option( 'symE_units', 'Integer', desc="Number of symmetric Units in design for use with symE scoring",default='-1'),
 		Option( 'symE_bonus', 'Real', desc="Energy bonus per match for use with symE scoring",default='0.0'),
 		Option( 'symmetric_gly_tables', 'Boolean', desc="If true, the Ramachandran and P_AA_PP tables for glycine will be symmetrized on load.  If false (the default), then the statistical tables will be used, which are asymmetric due to the contribution of chiral amino acids.", default='false'),
@@ -6664,6 +6667,45 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'default_movement_params', 'RealVector', desc='default-rotation, default-translation' , default = 'utility::vector1<float>(2,0.0)' ),
 		Option( 'cst_seqwidth', 'Integer', desc='sequence width on constraints', default = '0' ),
 	), # -RBSegmentRelax
+	
+	############################################################################
+	# Hydrate (SPaDES) protocol with hybrid solvation options
+  Option_Group( 'hydrate',
+    Option( 'hyfile', 'File', desc='This file defines which residues to hydrate; add waters de novo around their polar atoms.', ),
+    Option( 'hydrate_all', 'Boolean', desc='Add de novo water molecules to the entire structure, not compatible with design.', default='false' ),
+		Option( 'ignore_fa_sol_at_positions', 'IntegerVector', desc='Set all implicit solvation contributions to zero when involving the position numbers in the given IntegerVector.', default=[] ),
+    Option( 'attempt_all_polar', 'Boolean', desc='Attempt to hydrate all polar atoms regardless of them having room or not.', default='false' ),
+    Option( 'partial_hydrate_dew', 'Real', desc='During the first round of packing when using double edge water (dew) molecules, only this fraction of de novo waters will be considered.', default='0.75' ),
+		Option( 'water_energy_threshold', 'Real', desc='Water molecules with energy above this threshold will be removed after packing.', default='5.0' ),
+		Option( 'water_rotamers_cap', 'Integer', desc='Limits the maximum number of water rotamers.', default='500' ),
+		Option( 'water_packing_radius', 'Real', desc='Defines the radius a water molecule is allowed to explore during packing', default='1.0' ),
+		Option( 'water_angular_resolution', 'Real', desc='Defines the angular resolution for water rotamers. As a corollary, it also defines the number of rotamers for each water molecule ((2*space_res+1)^3 * 2 * 2*ang_res^2).', default='3' ),
+		Option( 'water_space_resolution', 'Real', desc='Defines the spacial resolution for water rotamers. As a corollary, it also defines the number of rotamers for each water molecule ((2*space_res+1)^3 * 2 * 2*ang_res^2).', default='2' ),
+		Option( 'hbond_threshold', 'Real', desc='Hydrogen bond threshold. New water rotamers must make hbond of at least this value.', default='-0.1' ),
+		Option( 'hbond_entropy_threshold', 'Real', desc='Threshold for water hbonds to contribute to entropy.', default='-0.5' ),
+    Option( 'water_desolvation', 'Real', desc='Desolvation energy of a water molecule. Energy difference between a molecule in bulk water and near a protein. This value will be scaled by the scoring function weight for wat_desolv', default='4.8' ),
+		Option( 'pack_nloop', 'Integer', desc='How many times to repack', default='25' ),
+		Option( 'pre_bump_check', 'Boolean', desc='Do bump check before store them in memory', default='true' ),
+    Option( 'bias_design_search_to_native', 'Boolean', desc='It gives an artificially large negative energy to any native rotamer during packing. It was implemented to test the use of design waters.', default='false' ),
+		Option( 'show_derivatives_check', 'Boolean', desc='Show derivatives check when minimizing in the hydrate protocol.', default='false' ),
+		Option( 'keep_non_buried_waters', 'Boolean', desc='Keep non buried waters in the final structure (not recommended).', default='false' ),
+		Option( 'display_water_hb_network', 'Boolean', desc='Shows the water hydrogen bonds connections.', default='true' ),
+		Option( 'show_pre_post_filter_water_rotamers', 'Boolean', desc='Shows the exigen location of the post and pre filtered water rotamers.', default='false' ),
+    Option( 'show_pre_filtered_water_rotamers_count', 'Boolean', desc='Shows the total number of pre-filtered water rotamers; Helps assessing the memory requirements.', default='false' ),
+		Option( 'show_residues_near_water', 'Boolean', desc='Print out the residues that are near hydratable water after water packing and placement.', default='false' ),
+		Option( 'only_remove_non_buried_waters', 'Boolean', desc='Remove non-buried waters from input, then exit.', default='false' ),
+		Option( 'just_score', 'Boolean', desc='Just score the input structures with the hybrid solvation protocol.', default='false' ),
+		Option( 'show_rotamer_count', 'Boolean', desc='Output the rotamer counts for each water and amino acid, then exit.', default='false' ),
+		# development and debugging options
+		Option( 'protein_flexibility', 'String', desc='Defines the protein flexibility during the run', legal=['not','all','resfile','near_water'], default='not' ),
+    Option( 'near_water_threshold', 'Real', desc='Threshold for res to be considered flexible when using the near_water option in -hydrate:protein_flexibility', default='4.0' ),
+    Option( 'minimize_bb_where_packing', 'Boolean', desc='Allow backbone to move when minimizing.', default='false' ),
+    Option( 'dont_hydrate_hb_engaged_bb_O', 'Boolean', desc='Avoid hydrating hydrogen bond engaged backbone oxygens, even if it is just one hb. The purpose is to avoid disrupting atable structures (helices and sheets).', default='true' ),
+    Option( 'short_residence_time_mode', 'Boolean', desc='A faster mode to capture short residence time water molecules. Not good for energy predictions, and the results are better analyzed as an ensamble rather than a single structure.', default='false' ),
+		Option( 'min_backbone_file', 'File', desc='This file defines whether the backbone is allowed to move for a specific residue.', ),
+		Option( 'single_away_rotamer', 'Boolean', desc='Use single away water rotamer. The sampling gets biased towards keeping more water present.', default='false' ),
+		Option( 'force_enforce_all_waters', 'Boolean', desc='Keep water molecules enforced throughout hybrid solvation protocol.', default='false' ),
+  ), 
 
 	############################################################################
 	# CS-Rosetta options
@@ -6735,6 +6777,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
 		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
 		Option( 'respect_resfile', 'Boolean', desc = "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.", default="false"),
+        
+    ## Options for hybrid solvation (hydrate/SPaDES protocol)
+    Option( 'use_explicit_water', 'Boolean', default='false', desc='Consider explicit waters (part of the hybrid solvation protocol) during relax'),
+    #Option( 'enforce_waters_during_relax', 'Boolean', default='false', desc='Enforce waters during the initial relaxation cycles until ramp step is reached as defined by -enforce_until_ramp_step'),
+    #Option( 'enforce_until_ramp_step', 'Real', default='0.4', desc='Enforce explicit waters until the ramp step reaches this value if -enforce_waters_during_relax is true'),
 
 		## Options to manipulate the movemap
 		Option( 'bb_move', 'Boolean', default='true', desc='allow backbone to move during relax'),
