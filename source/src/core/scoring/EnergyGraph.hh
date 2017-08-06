@@ -120,6 +120,9 @@ public:
 	/// @brief Compute the weighted energy for the components stored on this edge
 	inline Real dot( EnergyMap const & weights ) const;
 
+	/// @brief Compute the weighted energy for the absolute value of the components stored on this edge
+	inline Real dot_abs( EnergyMap const & weights ) const;
+
 	//EnergyMap & energy_map() { return energy_map_;}
 	//EnergyMap const & energy_map() const { return energy_map_;}
 
@@ -367,6 +370,20 @@ EnergyEdge::dot( EnergyMap const & weights ) const
 	return weighted_sum;
 }
 
+/// @brief Compute the weighted energy for the components stored on this edge
+inline
+Real
+EnergyEdge::dot_abs( EnergyMap const & weights ) const
+{
+	Real weighted_sum( 0.0 );
+	ScoreTypes const & active( get_energy_owner()->active_2b_score_types() );
+
+	for ( Size ii = 1, iilag = 0; ii <= active.size(); ++ii, ++iilag ) {
+		core::Real e = weights[ active[ ii ] ] * array_[ iilag ];
+		weighted_sum += ( e > 0.0 ? e : -e );
+	}
+	return weighted_sum;
+}
 
 EnergyGraph const *
 EnergyEdge::get_energy_owner() const {

@@ -133,6 +133,11 @@ sources = {
 		"EnzymaticMover",
 		"GlycosyltransferaseMover",
 	],
+	"protocols/evolution": [
+		"AlignmentAAFinderFilter",
+		"AlignmentGapInserterFilter",
+		"AlignmentCleanerTools",
+	],
 	"protocols/fibril": [
 		"fibril_util",
 		"SetupForFibrilMover",

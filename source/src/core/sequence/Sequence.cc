@@ -160,6 +160,15 @@ void Sequence::insert_char( Size pos, char new_char ) {
 	sequence( new_seq );
 } // insert_char
 
+void Sequence::replace_char( Size pos, char new_char ) {
+	runtime_assert( pos <= length() + 1 );
+
+	std::string new_seq = sequence();
+	new_seq[ pos - 1 ] = new_char;
+
+	sequence( new_seq );
+} // replace_char
+
 void Sequence::delete_position( core::Size pos ) {
 
 	std::string new_seq( "" );

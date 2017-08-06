@@ -1,0 +1,14 @@
+>1stn_short.pdb
+------DTVKL-MY----KG--QPMTFR----
+>mutation_strand
+------DTVKI-MY----KG--QPMTFR----
+>mutation_loop        
+------DTVKL-MY----RG--QPMTFR----
+>no_added_info
+WWWWWWDTVKLWMYWWWWKGWWQPMTFRWWWW
+>insertion_loop                
+------DTVKI-MYGVDFKG--QPMTFR----
+>deletion_loop                  
+------DTVKI-M-----KG--QPMTFR----
+>insertion_tails                
+PPPPPPDTVKI-MY----KG--QPMTFRPPPP

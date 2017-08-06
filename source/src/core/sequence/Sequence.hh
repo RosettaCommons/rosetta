@@ -80,6 +80,9 @@ public: // virtual functions
 
 	virtual void insert_char( core::Size pos, char new_char );
 
+	virtual void replace_char( core::Size pos, char new_char );
+
+
 	/// @brief Deletes the given position from the Sequence and shifts
 	/// everything else back by one.
 	virtual void delete_position( core::Size pos );

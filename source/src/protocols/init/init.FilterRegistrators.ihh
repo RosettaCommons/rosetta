@@ -31,6 +31,9 @@ static FilterRegistrator< protocols::enzdes::LigInterfaceEnergyFilterCreator > r
 static FilterRegistrator< protocols::enzdes::RepackWithoutLigandFilterCreator > reg_RepackWithoutLigandFilterCreator;
 static FilterRegistrator< protocols::enzdes::RemoveLigandFilterCreator > reg_RemoveLigandFilterCreator;
 
+static FilterRegistrator< protocols::evolution::AlignmentAAFinderFilterCreator > reg_AlignmentAAFinderFilterCreator;
+static FilterRegistrator< protocols::evolution::AlignmentGapInserterFilterCreator > reg_AlignmentGapInserterFilterCreator;
+
 static FilterRegistrator< protocols::filters::CalculatorFilterCreator > reg_CalculatorFilterCreator;
 static FilterRegistrator< protocols::filters::CombinedFilterCreator > reg_CombinedFilterCreator;
 static FilterRegistrator< protocols::filters::CompoundFilterCreator > reg_CompoundFilterCreator;

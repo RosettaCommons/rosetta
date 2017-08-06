@@ -1,0 +1,43 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>				
+		<ScoreFunction name="beta_nov16_coordcst" weights="beta_nov16">
+			<Reweight scoretype="coordinate_constraint" weight="0.06"/>
+		</ScoreFunction>
+		
+		<ScoreFunction name="beta_nov16" weights="beta_nov16"/>
+		
+	</SCOREFXNS>
+	
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="rtr"/>
+	</TASKOPERATIONS>
+	
+	<MOVERS>
+		<PackRotamersMover name="repack" scorefxn="beta_nov16" task_operations="rtr"/>
+		<TaskAwareCsts name="add_constraints"/> 
+		<ClearConstraintsMover name="remove_constraints"/> 
+		
+		<TaskAwareMinMover name="hard_min" bb="1" chi="1" jump="1" scorefxn="beta_nov16_coordcst"/>
+		
+		<ParsedProtocol name="mini_relax">
+			<Add mover="add_constraints"/>
+			<Add mover="hard_min"/>
+			<Add mover="repack"/>
+			<Add mover="hard_min"/>
+			<Add mover="remove_constraints"/>
+		</ParsedProtocol>
+			
+	</MOVERS>
+	
+	<FILTERS>
+		<AlignmentAAFinder name="findAvailAAs" alignment_file="1stn_short.fasta.aln" relax_mover="mini_relax" scorefxn="beta_nov16" loop_seqid_threshold="0.65" exclude_AA_threshold="20" available_AAs_file="out/1stn_short.avail_aas.out"/>
+		<AlignmentGapInserter name="insertGaps" alignment_file="1stn_short.fasta.aln" nbr_e_threshold="0.1" max_score_diffs="1.0,2.0" loop_seqid_thresholds="0.65,0.80" indel_motif_radius="2" scorefxn="beta_nov16"  available_AAs_file="out/1stn_short.avail_aas.out" cleaned_alignment_file="out/cleaned_aln.out"/>
+	</FILTERS>
+	
+	
+	<PROTOCOLS>
+		Add mover="mini_relax"/>
+		<Add filter="findAvailAAs"/>
+		<Add filter="insertGaps"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

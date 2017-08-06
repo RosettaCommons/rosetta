@@ -20,6 +20,9 @@
 #include <protocols/enzdes/EnzFilterCreators.hh>
 #include <protocols/enzdes/RemoveLigandFilterCreator.hh>
 
+#include <protocols/evolution/AlignmentAAFinderFilterCreator.hh>
+#include <protocols/evolution/AlignmentGapInserterFilterCreator.hh>
+
 #include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/CalculatorFilterCreator.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
