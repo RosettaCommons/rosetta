@@ -91,8 +91,9 @@ HBondSelector::clone() const{
 core::select::residue_selector::ResidueSubset
 HBondSelector::apply( core::pose::Pose const & pose ) const{
 	//Initialize input set
+	core::pose::PoseOP copy_pose = pose.clone();
 	std::set< Size > input_set;
-	compute_input_set(pose, input_set);
+	compute_input_set( pose, input_set );
 
 	//Make sure the score function is correctly initialized
 	//Sorry, you're on your own!
@@ -100,10 +101,10 @@ HBondSelector::apply( core::pose::Pose const & pose ) const{
 	core::scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 	scorefxn_->set_energy_method_options( energymethodoptions );
-	scorefxn_->score( *pose.clone() );
+	scorefxn_->score( *copy_pose );
 	//Now we'll find the hydrogen bonds
 	core::scoring::hbonds::HBondSet hbond_set;
-	hbond_set.setup_for_residue_pair_energies( pose, false, false );
+	hbond_set.setup_for_residue_pair_energies( *copy_pose, false, false );
 
 	//Initialize return value
 	core::select::residue_selector::ResidueSubset subset( pose.total_residue(), false );
