@@ -91,7 +91,7 @@ HBondOptions::HBondOptions(
 	ldsrbb_high_scale_( 2.0 ),
 	ldsrbb_minlength_( 4 ),
 	ldsrbb_maxlength_( 17 ),
-	water_hybrid_sf_ ( true ) // hydrate/SPaDES protocol
+	water_hybrid_sf_ ( false ) // hydrate/SPaDES protocol
 {
 	initialize_from_options( options );
 }
