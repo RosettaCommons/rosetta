@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   protocols/helical_bundle/MakeBundle.hh
-/// @brief  Headers for MakeBundle.cc.  Builds a helical bundle using the Crick parameters.
+/// @brief Headers for MakeBundle.cc.  Builds a helical bundle using the Crick parameters.
 /// @details The bundle is centred on the origin, with the outer helix axis pointing along the
 /// global z-axis.  This mover calls the MakeBundleHelix mover.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
