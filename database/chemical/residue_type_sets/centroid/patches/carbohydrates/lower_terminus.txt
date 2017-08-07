@@ -25,6 +25,9 @@ SET_ATOMIC_CHARGE HO1 0.21
 ADD_ATOM_ALIAS  O1   O  
 ADD_ATOM_ALIAS  HO1  HO 
 
+# Since the .params files use LOWER to define the position of H1, we redefine it here.
+SET_ICOOR  H1  -120.00    71.0    1.10   C1    O1    C2
+
 ADD_CHI_ROTAMER 1   60 0
 ADD_CHI_ROTAMER 1  180 0
 ADD_CHI_ROTAMER 1  300 0

@@ -1,3 +1,7 @@
+# THIS IS A NONSENSICAL .PARAMS FILE!
+# It's a 3-deoxy sugar; it cannot possibly have a ->3 connection.
+# This will cause many seg. faults. ~Labonte
+
 NAME ->3)-beta-Neup        # ->3)-beta-neuraminic acid
 IO_STRING Neu Z            # Note lower case!
 TYPE POLYMER

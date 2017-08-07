@@ -130,17 +130,17 @@ ICOOR_INTERNAL    O2  -118.752843   70.407066    1.412885   C2    C1    C3
 ICOOR_INTERNAL    O4    60.757385   71.947456    1.426777   C4    C3    C2
 ICOOR_INTERNAL    C6   179.668388   70.383005    1.533552   C5    C4    C3
 ICOOR_INTERNAL    O6   -60.6917     70.477       1.5        C6    C5    C4
-# now all the Hs
-ICOOR_INTERNAL    H1   179.933353   70.700908    1.100522   C1    C2    C3
-ICOOR_INTERNAL    HO1  176.807659   69.501633    0.997367   O1    C1    C2
-ICOOR_INTERNAL    H2   120.074193   70.358772    1.102392   C2    C1    C3
-ICOOR_INTERNAL    HO2  -59.457497   69.456519    0.995553   O2    C2    C1
-ICOOR_INTERNAL    H3  -119.680834   70.673321    1.100370   C3    C2    C4
-ICOOR_INTERNAL    HO3  -60.505804   70.627378    0.998936   O3    C3    C2
-ICOOR_INTERNAL    H4  -120.200382   69.914591    1.105146   C4    C3    C5
-ICOOR_INTERNAL    HO4  178.447377   70.021905    1.0        O4    C4    C3
-ICOOR_INTERNAL    H5   119.859568   70.747407    1.101312   C5    C4    C6
-ICOOR_INTERNAL   1H6    59.284029   70.506426    1.090324   C6    C5    C4
-ICOOR_INTERNAL   2H6   119.966277   70.529010    1.089967   C6    C5   1H6
-ICOOR_INTERNAL   3H6   120.057998   70.477416    1.089801   C6    C5   2H6
-ICOOR_INTERNAL    HO6  -60.0026     70.501       1.0        O6    C6    C5
+# now all the Hs (improper torsions used for hydrogens to ensure good placement no matter the backbone conformation)
+ICOOR_INTERNAL    H1  -120.0        71.0         1.10       C1  LOWER   C2
+ICOOR_INTERNAL    HO1   60.0        70.5         0.98       O1    C1    C2
+ICOOR_INTERNAL    H2   120.0        71.0         1.10       C2    C1    C3
+ICOOR_INTERNAL    HO2  180.0        70.5         0.98       O2    C2    C1
+ICOOR_INTERNAL    H3  -120.0        71.0         1.10       C3    C2    C4
+ICOOR_INTERNAL    HO3  180.0        70.5         0.98       O3    C3    C2
+ICOOR_INTERNAL    H4  -120.0        71.0         1.10       C4    C3    C5
+ICOOR_INTERNAL    HO4  -60.0        70.5         0.98       O4    C4    C3
+ICOOR_INTERNAL    H5   120.0        71.0         1.10       C5    C4    C6
+ICOOR_INTERNAL   1H6   120.0        71.0         1.10       C6    C5    O6
+ICOOR_INTERNAL   2H6  -120.0        71.0         1.10       C6    C5    O6
+ICOOR_INTERNAL   3H6     0.0        71.0         1.10       C6    C5    O6
+ICOOR_INTERNAL    HO6  180.0        70.5         0.98       O6    C6    C5

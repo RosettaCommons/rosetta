@@ -20,6 +20,9 @@ END_SELECTOR
 
 ADD_CONNECT C1 ICOOR -63.396951   71.218273    1.456186   C1    C2    C3
 
+# Since the .params files use LOWER to define the position of H1, we redefine it here.
+SET_ICOOR  H1  -120.00    71.0    1.10   C1    O1    C2
+
 SET_POLYMER_CONNECT LOWER NONE
 
 ADD_PROPERTY BRANCH_LOWER_TERMINUS
@@ -34,6 +37,9 @@ PROPERTY BETA_SUGAR
 END_SELECTOR
 
 ADD_CONNECT C1 ICOOR -178.882118   73.093678    1.393201   C1    C2    C3
+
+# Since the .params files use LOWER to define the position of H1, we redefine it here.
+SET_ICOOR  H1  -120.00    71.0    1.10   C1    O1    C2
 
 SET_POLYMER_CONNECT LOWER NONE
 
@@ -50,6 +56,9 @@ PROPERTY L_SUGAR
 END_SELECTOR
 
 ADD_CONNECT C1 ICOOR   60.684714   71.626803    1.429806   C1    C2    C3
+
+# Since the .params files use LOWER to define the position of H1, we redefine it here.
+SET_ICOOR  H1  -120.00    71.0    1.10   C1    O1    C2
 
 SET_POLYMER_CONNECT LOWER NONE
 

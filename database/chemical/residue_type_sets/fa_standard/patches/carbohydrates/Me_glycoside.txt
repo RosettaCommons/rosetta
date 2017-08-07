@@ -40,6 +40,9 @@ SET_ICOOR 1HC1   33.119  70.479  1.099  CO1  O1   C1
 SET_ICOOR 2HC1  -84.152  70.479  1.099  CO1  O1   C1
 SET_ICOOR 3HC1  157.255  70.479  1.099  CO1  O1   C1
 
+# Since the .params files use LOWER to define the position of H1, we redefine it here.
+SET_ICOOR  H1  -120.00    71.0    1.10   C1    O1    C2
+
 SET_POLYMER_CONNECT LOWER NONE
 
 ADD_PROPERTY LOWER_TERMINUS

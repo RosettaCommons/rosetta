@@ -29,6 +29,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+// Numeric header
+#include <numeric/angle.functions.hh>
+
 static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo.cxxtest");
 
 class CarbohydrateInfoTests : public CxxTest::TestSuite {
@@ -128,11 +131,14 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		TR << "Testing chi() method of Pose with polysaccharide chains."  << std::endl;
 		//TS_ASSERT_DELTA( maltotriose_.chi( 1, 2 ), 0.000, 0.02 );
-		TS_ASSERT_DELTA( maltotriose_.chi( 2, 2 ), -179.959, 0.02 );
-		TS_ASSERT_DELTA( maltotriose_.chi( 3, 2 ), 175.924, 0.02 );
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees ( maltotriose_.chi( 2, 2 ) ),
+			180.00, 0.02 );  // H-placement is idealized.
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees ( maltotriose_.chi( 3, 2 ) ),
+			180.00, 0.02 );  // H-placement is idealized.
 		TS_ASSERT_DELTA( maltotriose_.chi( 4, 2 ), maltotriose_.psi( 3 ), 0.02 );
 		TS_ASSERT_DELTA( maltotriose_.chi( 5, 2 ), -161.7, 0.02 );
-		TS_ASSERT_DELTA( maltotriose_.chi( 6, 2 ), -178.781, 0.02 );
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees ( maltotriose_.chi( 6, 2 ) ),
+			180.00, 0.02 );  // H-placement is idealized.
 	}
 
 	// Confirm that branches are handled properly.

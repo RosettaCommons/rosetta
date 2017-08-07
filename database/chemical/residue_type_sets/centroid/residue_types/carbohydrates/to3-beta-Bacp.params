@@ -1,4 +1,4 @@
-NAME ->3)-beta-Bacp        # ->3)-beta-bacillosamine
+NAME ->3)-beta-Bacp        # ->3)-beta-bacillosamine [->3)-beta-D-2,4,6-tridexoy-2,4-diaminoglucopyranosyl]
 IO_STRING Bac Z            # Note lower case!
 TYPE POLYMER
 VARIANT C2_AMINO_SUGAR C4_AMINO_SUGAR C6_DEOXY_SUGAR  # Bacillosamine is a common modified sugar.
@@ -139,23 +139,24 @@ ICOOR_INTERNAL    N2  -178.933      67.028       1.417      C2    C3    C4
 ICOOR_INTERNAL    N4  -178.911      71.649       1.476      C4    C3    C2
 ICOOR_INTERNAL    C6   179.973      70.036       1.536      C5    C4    C3
 ICOOR_INTERNAL    O6    60.0026     70.501       1.493      C6    C5    C4
-# now all the Hs
-ICOOR_INTERNAL    H1   -59.7058     70.264       1.099      C1    C2    C3
-ICOOR_INTERNAL    HO1  179.46       68.94        1.05       O1    C1    C2
-ICOOR_INTERNAL    H2    58.4635     69.907       1.101      C2    C3    C4
+# now all the Hs (improper torsions used for hydrogens to ensure good placement no matter the backbone conformation)
+ICOOR_INTERNAL    H1  -120.0        71.0         1.10       C1  LOWER   C2
+ICOOR_INTERNAL    HO1   60.0        70.5         0.98       O1    C1    C2
+ICOOR_INTERNAL    H2  -120.0        71.0         1.10       C2    C1    C3
 ICOOR_INTERNAL   1HN2  -60.         70.629       1.029      N2    C2    C1
 ICOOR_INTERNAL   2HN2  180.         70.629       1.029      N2    C2    C1
 ICOOR_INTERNAL   3HN2   60          70.629       1.029      N2    C2    C1
 
-ICOOR_INTERNAL    H3    57.7675     69.901       1.097      C3    C2    C1
-ICOOR_INTERNAL    HO3  -66.5867     67.748       1.05       O3    C3    C2
-ICOOR_INTERNAL    H4   -59.692      69.682       1.102      C4    C3    C2
+ICOOR_INTERNAL    H3   120.0        71.0         1.10       C3    C2    C4
+ICOOR_INTERNAL    HO3  180.0        70.5         0.98       O3    C3    C2
+ICOOR_INTERNAL    H4  -120.0        71.0         1.10       C4    C3    C5
 ICOOR_INTERNAL   1HN4  -60.         70.4         1.029      N4    C4    C3
 ICOOR_INTERNAL   2HN4  180.         70.4         1.029      N4    C4    C3
 ICOOR_INTERNAL   3HN4   60.         70.4         1.029      N4    C4    C3
 
 ICOOR_INTERNAL    H5    59.9641     70.597       1.098      C5    C4    C3
-ICOOR_INTERNAL   1H6    60.         70.501       1.09       C6    C5    C4
-ICOOR_INTERNAL   2H6   -60.         70.501       1.09       C6    C5    C4
-ICOOR_INTERNAL   3H6   180.         70.501       1.09       C6    C5    C4
-ICOOR_INTERNAL    HO6  180.         70.501       1.05       O6    C6    C5
+ICOOR_INTERNAL    H5  -120.0        71.0         1.10       C5    C4    C6
+ICOOR_INTERNAL   1H6  -120.0        71.0         1.10       C6    C5    O6
+ICOOR_INTERNAL   2H6   120.0        71.0         1.10       C6    C5    O6
+ICOOR_INTERNAL   3H6     0.0        71.0         1.10       C6    C5    O6
+ICOOR_INTERNAL    HO6  180.0        70.5         0.98       O6    C6    C5

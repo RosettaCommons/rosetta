@@ -772,8 +772,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		for ( core::uint i( 1 ); i <= n_rings; ++i ) {
 			if ( ii_rsd->ring_conformer( i ) != ii_rsd_type.ring_conformer_set( i )->get_lowest_energy_conformer() ) {
 				TR.Warning << ii_rsd_type.name3() << ii << " has an unfavorable ring conformation; ";
-				TR.Warning << "the coordinates for this input structure may have been poorly assigned. ";
-				TR.Warning << "Hydrogen placement will likewise potentially be poor." << std::endl;
+				TR.Warning << "the coordinates for this input structure may have been poorly assigned." << std::endl;
 				TR.Debug << "  Measured: " << ii_rsd->ring_conformer( i ).specific_name << "  Expected: ";
 				TR.Debug << ii_rsd_type.ring_conformer_set( i )->get_lowest_energy_conformer().specific_name << std::endl;
 

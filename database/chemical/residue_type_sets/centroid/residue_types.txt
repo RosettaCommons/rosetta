@@ -90,6 +90,7 @@ residue_types/carbohydrates/to4-alpha-D-Manp.params
 residue_types/carbohydrates/to4-beta-D-Manp.params
 residue_types/carbohydrates/to4-beta-L-Manp.params
 residue_types/carbohydrates/to6-beta-D-Manp.params
+residue_types/carbohydrates/to6-alpha-D-Manp.params
 residue_types/carbohydrates/to3-alpha-L-Rhap.params
 residue_types/carbohydrates/to4-alpha-L-Rhap.params
 #### Idoses
@@ -106,7 +107,6 @@ residue_types/carbohydrates/to5-beta-D-Psip.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
 residue_types/carbohydrates/to8-alpha-Neup.params
-residue_types/carbohydrates/to3-beta-Neup.params
 
 ## Membrane Types
 residue_types/membrane/EMB.params
