@@ -170,7 +170,7 @@ public:
 		scorefxn_->set_weight( fa_sol, 0.65 );
 		scorefxn_->set_weight( fa_intra_rep, 0.004 );
 		scorefxn_->set_weight( fa_pair, 0.49 );
-		scorefxn_->set_weight( fa_plane, 0 );
+		//scorefxn_->set_weight( fa_plane, 0 );
 		scorefxn_->set_weight( fa_dun, 0.56 );
 		scorefxn_->set_weight( ref, 1 );
 		scorefxn_->set_weight( hbond_lr_bb, 1.17 );
@@ -206,7 +206,7 @@ public:
 		scorefxn_->set_weight( fa_sol, 0.65 );
 		scorefxn_->set_weight( fa_intra_rep, 0.004 );
 		scorefxn_->set_weight( fa_pair, 0.49 );
-		scorefxn_->set_weight( fa_plane, 0 );
+		//scorefxn_->set_weight( fa_plane, 0 );
 		scorefxn_->set_weight( fa_dun, 0.56 );
 		scorefxn_->set_weight( ref, 1 );
 		scorefxn_->set_weight( hbond_lr_bb, 1.17 );
@@ -232,7 +232,7 @@ public:
 		scorefxn_->set_weight( fa_sol, 0.65 );
 		scorefxn_->set_weight( fa_intra_rep, 0.004 );
 		scorefxn_->set_weight( fa_pair, 0.49 );
-		scorefxn_->set_weight( fa_plane, 0 );
+		//scorefxn_->set_weight( fa_plane, 0 );
 		scorefxn_->set_weight( fa_dun, 0.56 );
 		scorefxn_->set_weight( ref, 1 );
 		scorefxn_->set_weight( hbond_lr_bb, 1.17 );
@@ -295,7 +295,7 @@ public:
 		scorefxn_->set_weight( fa_sol, 0.65 );
 		scorefxn_->set_weight( fa_intra_rep, 0.004 );
 		scorefxn_->set_weight( fa_pair, 0.49 );
-		scorefxn_->set_weight( fa_plane, 0 );
+		//scorefxn_->set_weight( fa_plane, 0 );
 		scorefxn_->set_weight( fa_dun, 0.56 );
 		scorefxn_->set_weight( ref, 1 );
 		scorefxn_->set_weight( hbond_lr_bb, 1.17 );
