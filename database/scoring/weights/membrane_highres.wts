@@ -10,7 +10,6 @@ fa_rep 0.43
 fa_sol 0.00
 fa_intra_rep 0.004
 fa_pair 0.48
-fa_plane 0
 fa_dun 0.56
 fa_mbenv 0.48
 fa_mbsolv 0.60

@@ -5,7 +5,6 @@ fa_rep 0.3054
 fa_sol 0.5559
 fa_intra_rep 0
 fa_pair -0.3502
-fa_plane 0
 fa_dun 0.4545
 ref 1
 hbond_lr_bb 1.075
