@@ -8,4 +8,3 @@
 -in:file:native input/MBP-G4_prepacked.pdb
 -nstruct 1
 -n_cycles 25
--restore_talaris_behavior

@@ -10,9 +10,9 @@
 /// @file    dock_glycans.cc
 /// @brief   This application performs a bound-bound dock between an oligosaccharide and a carbohydrate-binding protein.
 /// @note    The ligand must be the final chain (or chains, if it has branches).
-/// @example TODO: fill in later
+/// @example ./dock_glycans.<extension> -include_sugars -lock_rings -s MBP-G4_prepacked.pdb -cst_fa_file constraints.cst
+/// -nstruct 5000 -n_cycles 100 -in:file:native MBP-G4_native.pdb
 /// @author  Labonte <JWLabonte@jhu.edu>
-/// @remarks This is an attempt to port dock_glycans.py to C++.
 
 
 // Project headers
@@ -220,6 +220,7 @@ public:  // Standard Rosetta methods
 		torsion_mm_->set_jump( JUMP_NUM, true );
 		torsion_mm_->set_bb_true_range( first_ligand_residue_ + 1, n_residues );
 		torsion_mm_->set_chi_true_range( first_ligand_residue_, n_residues );
+		torsion_mm_->set_branches( true );
 		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
 
 		randomizerA_ = RigidBodyRandomizeMoverOP(
@@ -274,7 +275,7 @@ public:  // Standard Rosetta methods
 			// Ligand torsion moves
 			ring_mover_->apply( pose );
 			small_mover_->apply( pose );
-			shear_mover_->apply( pose );
+			//shear_mover_->apply( pose );
 			slider_->apply( pose );
 			packer_->apply( pose );
 			torsion_minimizer_->apply( pose );
@@ -490,12 +491,14 @@ private:  // Private methods
 	{
 		using namespace scoring;
 
-		//sf_ = get_score_function();
-		vector1< string > const patches( 1, "docking" );
-		sf_ = ScoreFunctionFactory::create_score_function( "talaris2014", patches );
+		sf_ = get_score_function();
+		//vector1< string > const patches( 1, "docking" );
+		//sf_ = ScoreFunctionFactory::create_score_function( "talaris2014", patches );
 
 		sf_->set_weight( sugar_bb, 1.0 );
 		sf_->set_weight( atom_pair_constraint, 1.0 );
+
+		sf_->set_weight( fa_intra_rep_nonprotein, sf_->get_weight( scoring::fa_rep ) );
 
 		sf_->set_weight( hbond_sr_bb, sf_->get_weight( hbond_sr_bb ) * Hbond_mult_ );
 		sf_->set_weight( hbond_lr_bb, sf_->get_weight( hbond_lr_bb ) * Hbond_mult_ );
@@ -508,7 +511,7 @@ private:  // Private methods
 		target_rep_ = sf_->get_weight( fa_rep ) * rep_mult_;
 
 		sf_->set_weight( fa_atr, target_atr_ );
-		sf_->set_weight( fa_rep, target_rep_ );;
+		sf_->set_weight( fa_rep, target_rep_ );
 	}
 
 	// Set the weight for the given method within this Mover's ScoreFunction using the appropriate ramping factor and

@@ -93,6 +93,9 @@ sources = {
 		"minirosetta",
 		"minirosetta_graphics",
 	],
+	"public/carbohydrates": [	
+		"dock_glycans",
+	],
 	"public/clustering": [
 		"calibur",
 		"cluster",
