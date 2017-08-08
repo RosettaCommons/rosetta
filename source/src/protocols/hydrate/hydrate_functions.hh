@@ -62,8 +62,6 @@
 namespace protocols {
 namespace hydrate {
 
-using namespace core;
-
 // Read hyfile;
 // Hyfile should be a list with two columns:
 // 1st with one of the keywords://      "HYD" to hydrate that residue (only residues)
@@ -103,7 +101,7 @@ set_water_info_and_add_de_novo_water(
 bool
 atom_is_hydratable(
 	pose::Pose const & pose,
-	Size const & residue,
+	core::Size const residue,
 	std::string const & atom
 );
 
@@ -112,8 +110,8 @@ atom_is_hydratable(
 bool
 atom_is_hydratable(
 	pose::Pose const & pose,
-	Size const & residue,
-	Size const & atom
+	core::Size const residue,
+	core::Size const atom
 );
 
 // This function adds de novo water molecules to all cavities with a potential anchor atom (polar, not engaed in hb)
@@ -143,7 +141,7 @@ set_dew_waters_not_to_be_included(
 bool  // yumeng
 residue_near_water(
 	pose::Pose const & pose,
-	Size const & ii
+	core::Size const ii
 );
 
 // This function sets the task to be used with the packer, and the movemap to be used with the minimizer
@@ -153,7 +151,7 @@ set_task_and_movemap(
 	std::string const & protein_flexibility,
 	pack::task::PackerTaskOP & task,
 	kinematics::MoveMap & mm,
-	bool const & minimize_bb_where_packing
+	bool const minimize_bb_where_packing
 );
 
 // Removes water molecules with high energy. It accounts for water specific energy corrections

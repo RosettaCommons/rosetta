@@ -3,7 +3,6 @@ fa_atr 0.8
 fa_rep 0.44
 fa_sol 0.65
 fa_intra_rep 0.004
-fa_plane 0
 fa_dun 0.56
 ref 1
 hbond_lr_bb 1.17

@@ -206,7 +206,7 @@ is_inside(
 bool
 atom_is_hydratable(
 	pose::Pose const & pose,
-	Size const & residue,
+	Size const residue,
 	std::string const & atom
 )
 {
@@ -268,8 +268,8 @@ atom_is_hydratable(
 bool
 atom_is_hydratable(
 	pose::Pose const & pose,
-	Size const & residue,
-	Size const & atom
+	Size const residue,
+	Size const atom
 )
 {
 	return atom_is_hydratable(pose, residue, pose.residue(residue).atom_name(atom));
@@ -403,7 +403,7 @@ set_water_info_and_add_de_novo_water(
 	core::scoring::ScoreFunction const & scorefxn
 ){
 	(scorefxn)(pose);
-	Size const & total_input_residues ( pose.total_residue() );
+	Size const total_input_residues ( pose.total_residue() );
 	utility::vector1< bool > enforced_V( total_input_residues, false );
 	utility::vector1< bool > hydrate_V( total_input_residues, false );
 
@@ -578,7 +578,7 @@ set_dew_waters_not_to_be_included(
 bool
 residue_near_water(
 	pose::Pose const & pose,
-	Size const & ii
+	Size const ii
 ){
 	Real near_water_threshold ( option[ OptionKeys::hydrate::near_water_threshold ]() );
 	for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
@@ -603,7 +603,7 @@ set_task_and_movemap(
 	std::string const & protein_flexibility, // Determines the options for regions to pack and minimize
 	pack::task::PackerTaskOP & task,
 	kinematics::MoveMap & mm,
-	bool const & minimize_bb_where_packing
+	bool const minimize_bb_where_packing
 ){
 	TR << "Setting task and movemap with protein flexibility: " << protein_flexibility << std::endl;
 
@@ -915,7 +915,7 @@ remove_all_anchors_and_ENF(
 // Used when setting bb minimization
 void  // yumeng
 read_header(
-	Size const & total_res,
+	Size const total_res,
 	std::string const & line,
 	kinematics::MoveMap & mm
 ){
@@ -934,7 +934,7 @@ read_header(
 // Used when setting bb minimization
 void // yumeng
 read_body(
-	Size const & total_res,
+	Size const total_res,
 	std::string const line,
 	kinematics::MoveMap & mm
 ){
