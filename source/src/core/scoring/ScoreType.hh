@@ -254,7 +254,7 @@ enum ScoreType {
 	fa_pair_aro_aro,
 	fa_pair_aro_pol,
 	fa_pair_pol_pol,
-	fa_plane,
+	//fa_plane,
 	hbond_sr_bb,
 	hbond_lr_bb,
 	hbond_bb_sc,

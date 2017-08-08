@@ -171,7 +171,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_pair_aro_aro" ] = fa_pair_aro_aro;
 	name2score_type_[ "fa_pair_aro_pol" ] = fa_pair_aro_pol;
 	name2score_type_[ "fa_pair_pol_pol" ] = fa_pair_pol_pol;
-	name2score_type_[ "fa_plane" ] = fa_plane;
+	//name2score_type_[ "fa_plane" ] = fa_plane;
 
 	name2score_type_[ "hbond_sr_bb" ] = hbond_sr_bb;
 	name2score_type_[ "hbond_lr_bb" ] = hbond_lr_bb;
