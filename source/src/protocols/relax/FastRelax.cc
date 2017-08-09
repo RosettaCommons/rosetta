@@ -761,13 +761,13 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				// hydrate/SPaDES protocol
 				if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
 					//if ( option[ OptionKeys::relax::enforce_waters_during_relax ]() == true ) {
-					//	// keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
-					//	// below code overwrites the enforce_all_waters option
-					//	if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
-					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
-					//	} else { // last ramping step
-					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
-					//	}
+					// // keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
+					// // below code overwrites the enforce_all_waters option
+					// if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
+					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
+					// } else { // last ramping step
+					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
+					// }
 					//}
 					protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate( local_scorefxn ) );
 					hydrate_protocol->apply( pose );
@@ -888,13 +888,13 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				// hydrate/SPaDES protocol
 				if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
 					//if ( option[ OptionKeys::relax::enforce_waters_during_relax ]() == true ) {
-					//	// keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
-					//	// below code overwrites the enforce_all_waters option
-					//	if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
-					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
-					//	} else { // last ramping step
-					//		basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
-					//	}
+					// // keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
+					// // below code overwrites the enforce_all_waters option
+					// if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
+					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
+					// } else { // last ramping step
+					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
+					// }
 					//}
 					protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate( local_scorefxn ) );
 					hydrate_protocol->apply( pose );
