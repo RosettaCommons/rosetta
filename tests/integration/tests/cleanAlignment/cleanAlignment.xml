@@ -30,8 +30,8 @@
 	</MOVERS>
 	
 	<FILTERS>
-		<AlignmentAAFinder name="findAvailAAs" alignment_file="1stn_short.fasta.aln" relax_mover="mini_relax" scorefxn="beta_nov16" loop_seqid_threshold="0.65" exclude_AA_threshold="20" available_AAs_file="out/1stn_short.avail_aas.out"/>
-		<AlignmentGapInserter name="insertGaps" alignment_file="1stn_short.fasta.aln" nbr_e_threshold="0.1" max_score_diffs="1.0,2.0" loop_seqid_thresholds="0.65,0.80" indel_motif_radius="2" scorefxn="beta_nov16"  available_AAs_file="out/1stn_short.avail_aas.out" cleaned_alignment_file="out/cleaned_aln.out"/>
+		<AlignmentAAFinder name="findAvailAAs" alignment_file="1stn_short.fasta.aln" relax_mover="mini_relax" scorefxn="beta_nov16" loop_seqid_threshold="0.65" exclude_AA_threshold="20" available_AAs_file="1stn_short.avail_aas.out"/>
+		<AlignmentGapInserter name="insertGaps" alignment_file="1stn_short.fasta.aln" nbr_e_threshold="0.1" max_score_diffs="1.0,2.0" loop_seqid_thresholds="0.65,0.80" indel_motif_radius="2" scorefxn="beta_nov16"  available_AAs_file="1stn_short.avail_aas.out" cleaned_alignment_file="cleaned_aln.out"/>
 	</FILTERS>
 	
 	
