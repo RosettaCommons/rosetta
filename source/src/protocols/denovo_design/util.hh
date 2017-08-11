@@ -110,7 +110,7 @@ void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi );
 /// @brief helper function that looks for the given residue in a fold tree and returns the jump that controls its 6D-DoFs
 int find_jump_rec(
 	core::kinematics::FoldTree const & ft,
-	int const residue );
+	core::Size const residue );
 
 /// @brief inserts the peptide edges to accomodate the new jump edge given
 void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Edge const & jedge );

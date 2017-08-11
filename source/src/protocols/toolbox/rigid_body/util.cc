@@ -103,7 +103,7 @@ figure_out_reference_res_for_jump( pose::Pose const & pose,
 	Size const moving_res ){
 	kinematics::FoldTree const & fold_tree = pose.fold_tree();
 	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-		if ( fold_tree.downstream_jump_residue( n ) == static_cast< int >( moving_res ) ) {
+		if ( fold_tree.downstream_jump_residue( n ) == moving_res ) {
 			Size const reference_res = fold_tree.upstream_jump_residue( n );
 			return reference_res;
 		}
@@ -119,8 +119,8 @@ figure_out_moving_partition_res( pose::Pose const & pose,
 	Size jump_number( 0 );
 	kinematics::FoldTree const & fold_tree = pose.fold_tree();
 	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-		if ( fold_tree.downstream_jump_residue( n ) == static_cast< int >( moving_res ) &&
-				fold_tree.upstream_jump_residue( n ) == static_cast< int >( reference_res ) ) {
+		if ( fold_tree.downstream_jump_residue( n ) == moving_res &&
+				fold_tree.upstream_jump_residue( n ) == reference_res ) {
 			jump_number = n;
 			break;
 		}

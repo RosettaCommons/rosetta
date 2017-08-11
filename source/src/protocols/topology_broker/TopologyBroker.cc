@@ -396,9 +396,9 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	std::copy( negotiable_jumps.begin(), negotiable_jumps.end(), std::back_inserter( sorted_jumps ) );
 
 	//Build these dumb ObjexxFCL arrays
-	ObjexxFCL::FArray2D_int jumps( 2, sorted_jumps.size() );
+	ObjexxFCL::FArray2D< Size > jumps( 2, sorted_jumps.size() );
 	ObjexxFCL::FArray2D< std::string > jump_atoms( 2, sorted_jumps.size() );
-	ObjexxFCL::FArray2D_int after_loops_jumps( 2, sorted_jumps.size() );
+	ObjexxFCL::FArray2D< Size > after_loops_jumps( 2, sorted_jumps.size() );
 	ObjexxFCL::FArray2D< std::string > after_loops_jump_atoms( 2, sorted_jumps.size() );
 
 	Size i = 0;
@@ -423,12 +423,12 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 
 	//there might be cutpoints in the starting points these are added for sampling...
 	//but not for final fold-tree
-	std::vector< int > obligate_sampling_cut_points;
+	std::vector< Size > obligate_sampling_cut_points;
 	std::copy( start_pose_cuts_.begin(), start_pose_cuts_.end(), std::back_inserter( obligate_sampling_cut_points ) );
 	for ( Size i=1; i <= must_cut.size(); ++i ) {
 		if ( std::find( obligate_sampling_cut_points.begin(), obligate_sampling_cut_points.end(),
-				(int) must_cut.at(i).second ) == obligate_sampling_cut_points.end() ) {
-			obligate_sampling_cut_points.push_back( (int) must_cut.at(i).second );
+				must_cut.at(i).second ) == obligate_sampling_cut_points.end() ) {
+			obligate_sampling_cut_points.push_back( must_cut.at(i).second );
 		}
 	}
 
@@ -482,9 +482,9 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 
 	fold_tree_->show( tr.Info );
 
-	std::vector< int > obligate_cut_points;
+	std::vector< Size > obligate_cut_points;
 	for ( Size i=1; i <= must_cut.size(); i++ ) {
-		obligate_cut_points.push_back( (int) must_cut.at(i).second );
+		obligate_cut_points.push_back( must_cut.at(i).second );
 	}
 	final_fold_tree_ = core::kinematics::FoldTreeOP( new kinematics::FoldTree );
 	bool bValidFinalTree =

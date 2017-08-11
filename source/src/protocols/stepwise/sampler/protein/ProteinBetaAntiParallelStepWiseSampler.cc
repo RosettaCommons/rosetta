@@ -56,7 +56,7 @@ ProteinBetaAntiParallelStepWiseSampler::~ProteinBetaAntiParallelStepWiseSampler(
 
 /////////////////////////////////////////////////////////////////////////////////////
 Size
-ProteinBetaAntiParallelStepWiseSampler::get_antiparallel_beta_jumps( pose::Pose const & pose, int const sample_res ){
+ProteinBetaAntiParallelStepWiseSampler::get_antiparallel_beta_jumps( pose::Pose const & pose, Size const sample_res ){
 
 	using namespace core::kinematics;
 	using ObjexxFCL::strip_whitespace;

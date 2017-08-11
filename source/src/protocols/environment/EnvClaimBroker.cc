@@ -323,7 +323,7 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 
 core::Size inherit_cuts( utility::vector1< core::Size > const & cycle,
 	core::kinematics::FoldTree const & input_ft ) {
-	for ( int i = 1; i <= input_ft.num_cutpoint(); ++i ) {
+	for ( Size i = 1; i <= input_ft.num_cutpoint(); ++i ) {
 		if ( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ) {
 			return input_ft.cutpoint( i );
 		} else {

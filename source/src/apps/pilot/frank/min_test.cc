@@ -307,7 +307,7 @@ public:
 
 		utility::vector1< core::Size > cuts;
 		utility::vector1< std::pair<core::Size,core::Size> > jumps;
-		utility::vector1< int > cuts_in = f_in.cutpoints();
+		utility::vector1< Size > cuts_in = f_in.cutpoints();
 		std::sort( cuts_in.begin(), cuts_in.end() );
 		for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 			core::Size seg_start = (i==1) ? 1 : cuts_in[i-1]+1;
@@ -317,8 +317,8 @@ public:
 			jumps.push_back( std::pair<core::Size,core::Size>( vrtid, jump_end ) );
 		}
 
-		ObjexxFCL::FArray2D_int fjumps( 2, jumps.size() );
-		ObjexxFCL::FArray1D_int fcuts ( cuts.size() );
+		ObjexxFCL::FArray2D< Size > fjumps( 2, jumps.size() );
+		ObjexxFCL::FArray1D< Size > fcuts ( cuts.size() );
 		for ( Size i=1; i<=jumps.size(); ++i ) {
 			fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
 			fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );

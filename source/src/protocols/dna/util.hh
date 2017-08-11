@@ -242,7 +242,7 @@ not_already_connected(
 	core::Size const num_jumps,
 	char const this_chain,
 	char const other_chain,
-	ObjexxFCL::FArray2D_int & jump_pairs
+	ObjexxFCL::FArray2D< core::Size > & jump_pairs
 );
 
 

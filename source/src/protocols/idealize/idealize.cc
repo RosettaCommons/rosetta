@@ -207,7 +207,7 @@ basic_idealize(
 
 	bool const lastjumpmin (
 		pose.residue( nres ).aa() == core::chemical::aa_vrt &&
-		pose.fold_tree().upstream_jump_residue( njump ) == int(nres)
+		pose.fold_tree().upstream_jump_residue( njump ) == nres
 	);
 
 	TR.Info << "lastjumpmin: " << lastjumpmin << std::endl;

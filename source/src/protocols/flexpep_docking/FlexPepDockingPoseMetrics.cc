@@ -81,9 +81,9 @@ FlexPepDockingPoseMetrics::calc_frac_native_contacts(
 		return 0.0;
 	}
 	//iterate over the peptide
-	for ( int i=flags_->peptide_first_res(); i<=flags_->peptide_last_res(); ++i ) {
+	for ( Size i=flags_->peptide_first_res(); i<=flags_->peptide_last_res(); ++i ) {
 		//iterate over the protein
-		for ( int j=flags_->receptor_first_res(); j<=flags_->receptor_last_res(); ++j ) {
+		for ( Size j=flags_->receptor_first_res(); j<=flags_->receptor_last_res(); ++j ) {
 			if ( isInContact(native.residue(i),native.residue(j),threashold) ) {
 				numOfNativeContacts++;
 				if ( isInContact(final.residue(i),final.residue(j),threashold) ) {
@@ -389,7 +389,7 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 	unbound_pose.metric(hbond_calc_name,"residue_Hbonds",unbound_hb_per_res_mval);
 	unbound_pose.metric(burunsat_calc_name,"residue_bur_unsat_polars",unbound_unsat_per_res_mval);
 
-	for ( int i=flags_->peptide_first_res();
+	for ( Size i=flags_->peptide_first_res();
 			i < flags_->peptide_first_res() + flags_->peptide_nres(); i++ ) {
 		TR << i
 			<< " bsa: " << unbound_sasa_per_res_mval.value()[i] - bound_sasa_per_res_mval.value()[i]
@@ -414,7 +414,7 @@ FlexPepDockingPoseMetrics::calc_pep_scores
 	pepScore = 0.0;
 	pepScore_noref = 0.0;
 
-	for ( int i=flags_->peptide_first_res(); i <= flags_->peptide_last_res(); ++i ) {
+	for ( Size i=flags_->peptide_first_res(); i <= flags_->peptide_last_res(); ++i ) {
 		using namespace core::scoring;
 		Real ienergy = pose.energies().residue_total_energy(i);
 		Real ifa_ref = pose.energies().residue_total_energies(i)[ref];

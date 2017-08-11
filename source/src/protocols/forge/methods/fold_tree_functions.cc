@@ -870,8 +870,8 @@ merge(
 core::kinematics::FoldTree
 replace(
 	core::kinematics::FoldTree const & original_tree,
-	int const replace_begin,
-	int const replace_end,
+	core::Size const replace_begin,
+	core::Size const replace_end,
 	core::kinematics::MoveMap const & movemap,
 	core::kinematics::FoldTree const & replacement_tree
 )
@@ -897,7 +897,7 @@ replace(
 
 	// create altered fold tree and delete the section to be replaced
 	FoldTree aft = original_tree;
-	for ( int r = replace_begin; r <= replace_end; ++r ) {
+	for ( Size r = replace_begin; r <= replace_end; ++r ) {
 		aft.delete_seqpos( replace_begin );
 	}
 

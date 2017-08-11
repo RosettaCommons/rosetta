@@ -204,21 +204,21 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
 	aligned.center_of_mass(pose, &center);
 	core::pose::addVirtualResAsRoot(center, pose);
 
-	vector1<std::pair<int, int> > jumps;
+	vector1<std::pair<Size, Size> > jumps;
 	for ( Size i = 1; i <= aligned.num_loop(); ++i ) {
 		jumps.push_back(std::make_pair(vres, aligned[i].midpoint()));
 	}
 
-	vector1<int> cuts(interior_cuts);
+	vector1<Size> cuts(interior_cuts);
 	cuts.push_back(num_residues);
 
-	ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
+	ObjexxFCL::FArray2D< Size > ft_jumps(2, jumps.size());
 	for ( Size i = 1; i <= jumps.size(); ++i ) {
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
-	ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
+	ObjexxFCL::FArray1D< Size > ft_cuts(cuts.size());
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 		ft_cuts(i) = cuts[i];
 	}

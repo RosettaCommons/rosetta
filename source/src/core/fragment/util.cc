@@ -510,8 +510,8 @@ void make_simple_fold_tree_from_jump_frame( Frame const& frame, Size total_resid
 			++i;
 		}
 	}
-	ObjexxFCL::FArray2D_int jump_point( 2, ups.size(), 0 );
-	ObjexxFCL::FArray1D_int cut_point( ups.size() );
+	ObjexxFCL::FArray2D< Size > jump_point( 2, ups.size() );
+	ObjexxFCL::FArray1D< Size > cut_point( ups.size() );
 	for ( Size i = 1; i <= ups.size() ; ++i ) {
 		jump_point( 1, i ) = ups[ i ];
 		jump_point( 2, i ) = downs[ i ];

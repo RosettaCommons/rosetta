@@ -33,7 +33,7 @@ typedef utility::vector1<double> Probabilities;
 
 /// @brief Computes per-residue alignment probabilities. To minimize assumptions
 /// about the fold tree, the number of residues in the pose is an explicit input.
-void alignment_probabilities(const unsigned num_residues,
+void alignment_probabilities(core::Size const num_residues,
 	const core::sequence::SequenceAlignment& alignment,
 	Probabilities* p);
 
@@ -43,12 +43,12 @@ void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p
 
 /// @brief Computes per-residue cutpoint probabilities. Sampling is biased
 /// toward residues proximal to a cutpoint.
-void cutpoint_probabilities(const unsigned num_residues,
+void cutpoint_probabilities(core::Size const num_residues,
 	const core::kinematics::FoldTree& tree,
 	Probabilities* p);
 
 /// @brief Biases sampling away from termini
-void end_bias_probabilities(const unsigned num_residues, Probabilities* p);
+void end_bias_probabilities(core::Size const num_residues, Probabilities* p);
 
 /// @brief Zeroes out the probability of residues for which fragment insertion
 /// would cross cutpoint boundaries.

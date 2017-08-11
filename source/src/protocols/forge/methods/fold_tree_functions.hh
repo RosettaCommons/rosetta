@@ -422,8 +422,8 @@ merge(
 core::kinematics::FoldTree
 replace(
 	core::kinematics::FoldTree const & original_tree,
-	int const replace_begin,
-	int const replace_end,
+	core::Size const replace_begin,
+	core::Size const replace_end,
 	core::kinematics::MoveMap const & movemap,
 	core::kinematics::FoldTree const & replacement_tree
 );

@@ -175,14 +175,14 @@ get_component_contiguous_foldtree(
 	core::kinematics::FoldTree const & f_orig,
 	std::map<char,std::pair<Size,Size> > const & /*chain2range*/ // maybe use later
 ) {
-	if ( f_orig.num_cutpoint() != (int)f_orig.num_jump() ) utility_exit_with_message("FoldTree ISANITY!!!!!!!");
-	ObjexxFCL::FArray1D_int cuts( f_orig.num_cutpoint() );
-	ObjexxFCL::FArray2D_int jumps( 2, f_orig.num_jump() );
+	if ( f_orig.num_cutpoint() != f_orig.num_jump() ) utility_exit_with_message("FoldTree ISANITY!!!!!!!");
+	ObjexxFCL::FArray1D< Size > cuts( f_orig.num_cutpoint() );
+	ObjexxFCL::FArray2D< Size > jumps( 2, f_orig.num_jump() );
 	// utility::vector1<std::string> upatom(f_orig.num_jump() );
 	utility::vector1<std::string> dnatom(f_orig.num_jump() );
 
-	utility::vector1<int> cutpoints(f_orig.num_cutpoint());
-	for ( int i = 1; i <= f_orig.num_cutpoint(); ++i ) {
+	utility::vector1< Size > cutpoints(f_orig.num_cutpoint());
+	for ( Size i = 1; i <= f_orig.num_cutpoint(); ++i ) {
 		cutpoints[i] = f_orig.cutpoint(i);
 	}
 	std::sort(cutpoints.begin(),cutpoints.end());
@@ -486,9 +486,9 @@ set_fold_tree_from_symm_data(
 		Size total_num_jumps( num_jumps_subunit*subunits + num_edges_subunit*subunits + num_virtual_connects );
 
 		// store information from subunit foldtree
-		utility::vector1< int > cuts_subunit( f_orig.cutpoints() );
-		ObjexxFCL::FArray1D_int cuts( total_num_cuts );
-		ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit+num_edges_subunit ),
+		utility::vector1< Size > cuts_subunit( f_orig.cutpoints() );
+		ObjexxFCL::FArray1D< Size > cuts( total_num_cuts );
+		ObjexxFCL::FArray2D< Size > jump_points_subunit( 2, num_jumps_subunit+num_edges_subunit ),
 			jumps( 2, total_num_jumps );
 
 		for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
@@ -621,8 +621,8 @@ set_fold_tree_from_symm_data(
 		Size njumps( 0 ), ncuts(0);
 		Size total_num_cuts( num_cuts_subunit*subunits + subunits + num_virtuals - 1 );
 		Size total_num_jumps( num_jumps_subunit*subunits + num_virtual_connects );
-		utility::vector1< int > cuts_subunit( f_orig.cutpoints() );
-		ObjexxFCL::FArray2D_int jumps( 2, total_num_jumps );
+		utility::vector1< Size > cuts_subunit( f_orig.cutpoints() );
+		ObjexxFCL::FArray2D< Size > jumps( 2, total_num_jumps );
 
 		// TR << "NUM COMPONENTS: " << symmdata.get_num_components() << std::endl;
 		ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit );
@@ -673,9 +673,9 @@ set_fold_tree_from_symm_data(
 		// for(map<char,pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i) {
 		//  TR << "get_chain2range " << i->first << " " << i->second.first << "-" << i->second.second << endl;
 		// }
-		for ( map<string,char>::const_iterator it = virtual_id_to_subunit_chain.begin(); it != virtual_id_to_subunit_chain.end(); ++it ) {
-			string virt =  it->first;
-			char chain = it->second;
+		for ( auto const & elem : virtual_id_to_subunit_chain ) {
+			string const & virt = elem.first;
+			char chain = elem.second;
 			if ( chain == (char)0 ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : 'A';
 			if ( chain2range.find(chain)==chain2range.end() ) {
 				std::cerr << "missing chain in pdb: " << chain << std::endl;
@@ -691,10 +691,8 @@ set_fold_tree_from_symm_data(
 			// TR << "SUBUNIT chain: " << virt << " " << chain << " " << resi << endl;
 		}
 
-		std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_start = virtual_connect.begin();
-		std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_end = virtual_connect.end();
-		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
-			std::pair< std::string, std::string > connect( it->second );
+		for ( auto const & elem : virtual_connect ) {
+			std::pair< std::string, std::string > connect( elem.second );
 			std::string pos_id1( connect.first );
 			std::string pos_id2( connect.second );
 			if ( pos_id2 == "SUBUNIT" ) {
@@ -722,8 +720,8 @@ set_fold_tree_from_symm_data(
 		// Read the virtual connect data and add the new connections. They are stored in virtual_connects. We also need to
 		// know the mapping between mapping between name of virtual residues and the jump number
 		Size pos( 0 );
-		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
-			std::pair< std::string, std::string > connect( it->second );
+		for ( auto const & elem : virtual_connect ) {
+			std::pair< std::string, std::string > connect( elem.second );
 			std::string pos_id1( connect.first );
 			std::string pos_id2( connect.second );
 			// We have already added the jumps from virtual residues to their corresponding subunits
@@ -737,7 +735,7 @@ set_fold_tree_from_symm_data(
 			jumps(2, njumps ) = num_res_real + std::max(pos1,pos2);
 		}
 
-		ObjexxFCL::FArray1D_int cuts( total_num_cuts );
+		ObjexxFCL::FArray1D< Size > cuts( total_num_cuts );
 		for ( Size i = 0; i < subunits; ++i ) {
 			for ( Size j = 1; j <= f_orig.num_jump(); ++j ) {
 				cuts( ++ncuts ) = i*num_res_subunit + cuts_subunit.at(j);
@@ -879,9 +877,9 @@ get_asymm_unit_fold_tree( core::conformation::Conformation const &conf ) {
 	Size nres_subunit ( symm_info->num_independent_residues() );
 
 	for ( core::kinematics::FoldTree::const_iterator it=f.begin(), eit=f.end(); it != eit; ++it ) {
-		if ( it->start() <= (int)nres_subunit && it->stop() <=(int)nres_subunit ) {
+		if ( it->start() <= nres_subunit && it->stop() <= nres_subunit ) {
 			f_new.add_edge( *it );
-		} else if ( it->stop() <= (int)nres_subunit ) { // this is the jump to the subunit
+		} else if ( it->stop() <= nres_subunit ) { // this is the jump to the subunit
 			core::kinematics::Edge e_new = *it;
 			e_new.start() = nres_subunit + 1;
 			f_new.add_edge( e_new );
@@ -988,17 +986,17 @@ symmetrize_fold_tree(
 	}
 
 	// 3 - combine
-	ObjexxFCL::FArray1D_int cuts( new_cuts.size() );
-	ObjexxFCL::FArray2D_int jumps( 2, new_jumps.size() );
+	ObjexxFCL::FArray1D< Size > cuts( new_cuts.size() );
+	ObjexxFCL::FArray2D< Size > jumps( 2, new_jumps.size() );
 	// Initialize jumps
 	for ( Size i = 1; i<= new_jumps.size(); ++i ) {
-		jumps(1,i) = std::min( (int)new_jumps[i].first, (int)new_jumps[i].second);
-		jumps(2,i) = std::max( (int)new_jumps[i].first, (int)new_jumps[i].second);
+		jumps(1,i) = std::min( new_jumps[i].first, new_jumps[i].second);
+		jumps(2,i) = std::max( new_jumps[i].first, new_jumps[i].second);
 		// DEBUG -- PRINT JUMPS AND CUTS
 		//TR.Error << " jump " << i << " : " << jumps(1,i) << " , " << jumps(2,i) << std::endl;
 	}
 	for ( Size i = 1; i<= new_cuts.size(); ++i ) {
-		cuts(i) = (int)new_cuts[i];
+		cuts(i) = new_cuts[i];
 		//TR.Error << " cut " << i << " : " << cuts(i) << std::endl;
 	}
 

@@ -249,8 +249,8 @@ RNA_JumpMover::sample_alternative_chain_connection( pose::Pose & pose, Size cons
 
 	// Get ready for a new fold-tree
 	Size const num_jumps( fold_tree.num_jump() );
-	ObjexxFCL::FArray2D <int> jump_points( 2, num_jumps );
-	ObjexxFCL::FArray1D <int> cuts( num_jumps );
+	ObjexxFCL::FArray2D< Size > jump_points( 2, num_jumps );
+	ObjexxFCL::FArray1D< Size > cuts( num_jumps );
 	for ( Size n = 1; n <= num_jumps; n++ ) {
 		jump_points( 1, n ) = fold_tree.jump_point( 1, n );
 		jump_points( 2, n ) = fold_tree.jump_point( 2, n );

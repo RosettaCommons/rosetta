@@ -71,7 +71,7 @@ private:
 	void update_chunks();
 
 	/// @brief Having selected chunk i, compute the chainbreak-biased translation vector
-	void compute_bias(unsigned i, const core::pose::Pose& pose, numeric::xyzVector<double>* cb_deltas) const;
+	void compute_bias( core::Size i, const core::pose::Pose& pose, numeric::xyzVector<double>* cb_deltas) const;
 
 	/// @brief Input fold tree
 	core::kinematics::FoldTree tree_;

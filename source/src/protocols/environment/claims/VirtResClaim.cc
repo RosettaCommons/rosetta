@@ -122,9 +122,9 @@ void VirtResClaim::yield_elements( core::pose::Pose const& pose, DOFElements& el
 	core::Size vrt_pos = static_cast< ProtectedConformation const* >( &pose.conformation() )->annotations()->resolve_seq( vrt_label() )[1];
 	core::kinematics::FoldTree const& ft = pose.conformation().fold_tree();
 
-	for ( int j_num = 1; j_num <= (int) ft.num_jump(); ++j_num ) {
-		if ( ft.upstream_jump_residue( j_num ) == (int) vrt_pos ||
-				ft.downstream_jump_residue( j_num ) == (int) vrt_pos ) {
+	for ( Size j_num = 1; j_num <= ft.num_jump(); ++j_num ) {
+		if ( ft.upstream_jump_residue( j_num ) == vrt_pos ||
+				ft.downstream_jump_residue( j_num ) == vrt_pos ) {
 			for ( core::Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ) {
 				DOFElement e = Parent::wrap_dof_id( core::id::DOF_ID( pose.conformation().jump_atom_id( j_num ),
 					core::id::DOF_Type( rb_i ) ) );

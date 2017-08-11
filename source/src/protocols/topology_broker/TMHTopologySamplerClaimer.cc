@@ -218,10 +218,10 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 	debug_assert(njumps_==num_cut_loops);
 
 	//put all residues in spans in a one-dimensional array that is nres long, and 0=not in span, 1-3=is in span
-	ObjexxFCL::FArray1D_int span(nres_,0);
-	for ( int i=1; i<=nres_; ++i ) {
+	ObjexxFCL::FArray1D< core::Size > span(nres_);
+	for ( core::Size i=1; i<=nres_; ++i ) {
 		for ( core::Size j=1; j<=nspan; ++j ) {
-			if ( static_cast<core::Size>(i) >= membrane_topology->span_begin(j) && static_cast<core::Size>(i) <= membrane_topology->span_end(j) ) {
+			if ( i >= membrane_topology->span_begin(j) && i <= membrane_topology->span_end(j) ) {
 				span(i)=j;
 			}
 		}
@@ -388,7 +388,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 	for ( Size jump_num = 1; jump_num <= njumps_; ++jump_num ) {
 		dof_claims.push_back( claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) ) );
 	}
-	for ( int i=1; i<=nres_; ++i ) {
+	for ( core::Size i=1; i<=nres_; ++i ) {
 		for ( core::Size cut_index = 1; cut_index <= cuts_.size(); ++cut_index ) {
 			if ( cuts_(cut_index)==i ) {
 				dof_claims.push_back( claims::DofClaimOP( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ) );

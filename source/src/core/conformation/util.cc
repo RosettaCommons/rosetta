@@ -1011,9 +1011,9 @@ build_residue_tree(
 	// determine root_atomno and whether root_atom is a jump_atom
 
 	bool root_atom_is_jump_atom( false );
-	int root_atomno(0);
+	Size root_atomno(0);
 
-	int const seqpos( rsd.seqpos() );
+	Size const seqpos( rsd.seqpos() );
 
 	if ( seqpos == fold_tree.root() ) {
 		root_atom_is_jump_atom = true;

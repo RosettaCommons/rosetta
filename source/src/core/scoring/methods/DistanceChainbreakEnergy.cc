@@ -75,7 +75,7 @@ DistanceChainbreakEnergy::finalize_total_energy(
 	Real total_dev(0.0);
 	Real const dist_target( 1.32 ); //square root of dist2_target from r++ jumping_loops.cc
 	tr.Trace << "called! cuts: " << pose.fold_tree().num_cutpoint() << std::endl;
-	for ( int n=1; n<= pose.fold_tree().num_cutpoint(); ++n ) {
+	for ( Size n=1; n<= pose.fold_tree().num_cutpoint(); ++n ) {
 		int const cutpoint( pose.fold_tree().cutpoint( n ) );
 		Residue const & lower_rsd( pose.residue( cutpoint ) );
 		if ( !lower_rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) continue;

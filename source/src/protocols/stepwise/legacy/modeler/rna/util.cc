@@ -155,7 +155,7 @@ void
 output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const & pose_name, std::ostream & outstream /* = std::cout */ ){
 
 	outstream << "fold tree of " << pose_name << ": " << std::endl;
-	for ( int i = 1; i <= fold_tree.num_cutpoint(); i++ ) {
+	for ( Size i = 1; i <= fold_tree.num_cutpoint(); i++ ) {
 		outstream << std::setw( 30 ) << "jump_point_num = " << i;
 		outstream << "   cutpoint = " << fold_tree.cutpoint( i );
 		outstream << "   5' jump_point = " << fold_tree.jump_point( 1, i ) << ", " << fold_tree.upstream_atom( i );

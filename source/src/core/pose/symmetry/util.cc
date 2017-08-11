@@ -792,14 +792,14 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 	Size num_jumps( f.num_jump() );
 	Size num_cuts( f.num_cutpoint() );
 
-	utility::vector1< int > cuts_vector( f.cutpoints() );
-	ObjexxFCL::FArray1D_int cuts( num_cuts );
-	ObjexxFCL::FArray2D_int jumps( 2, num_jumps );
+	utility::vector1< Size > cuts_vector( f.cutpoints() );
+	ObjexxFCL::FArray1D< Size > cuts( num_cuts );
+	ObjexxFCL::FArray2D< Size > jumps( 2, num_jumps );
 
 	// Initialize jumps
 	for ( Size i = 1; i<= num_jumps; ++i ) {
-		int down ( f.downstream_jump_residue(i) );
-		int up ( f.upstream_jump_residue(i) );
+		Size down ( f.downstream_jump_residue(i) );
+		Size up ( f.upstream_jump_residue(i) );
 		if ( down < up ) {
 			jumps(1,i) = down;
 			jumps(2,i) = up;
@@ -822,9 +822,9 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 	}
 
 	// This is the basejump
-	int root ( f.root() );
-	int const jump_number ( f.get_jump_that_builds_residue( anchor_start ) );
-	int residue_that_builds_anchor( f.upstream_jump_residue( jump_number ) );
+	Size root ( f.root() );
+	Size const jump_number ( f.get_jump_that_builds_residue( anchor_start ) );
+	Size residue_that_builds_anchor( f.upstream_jump_residue( jump_number ) );
 
 	jumps(1, jump_number ) = anchor;
 	jumps(2, jump_number ) = residue_that_builds_anchor;
@@ -839,10 +839,10 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 			clone     = symm_info->bb_clones( anchor_start ).begin(),
 			clone_end = symm_info->bb_clones( anchor_start ).end();
 			clone != clone_end; ++clone ) {
-		int jump_clone ( f.get_jump_that_builds_residue( *clone ) );
-		int takeoff_pos ( f.upstream_jump_residue( jump_clone ) );
-		int new_anchor ( anchor - anchor_start + *clone );
-		if ( try_assert ) runtime_assert( jumps(1,jump_clone) == int( *clone ) && jumps(2,jump_clone) == takeoff_pos );
+		Size jump_clone ( f.get_jump_that_builds_residue( *clone ) );
+		Size takeoff_pos ( f.upstream_jump_residue( jump_clone ) );
+		Size new_anchor ( anchor - anchor_start + *clone );
+		if ( try_assert ) runtime_assert( jumps(1,jump_clone) == *clone && jumps(2,jump_clone) == takeoff_pos );
 		jumps(1, jump_clone ) = new_anchor;
 		jumps(2, jump_clone ) = takeoff_pos;
 		//std::cout<<"new_anchor "<<new_anchor<< " " <<anchor<<" "<<anchor_start<<" "<< takeoff_pos <<std::endl;
@@ -1529,8 +1529,8 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 	// scan for ligands
 
 	// 3 - put them in FArrays
-	ObjexxFCL::FArray1D_int cuts( new_cuts.size() );
-	ObjexxFCL::FArray2D_int jumps( 2, new_jumps.size() );
+	ObjexxFCL::FArray1D< Size > cuts( new_cuts.size() );
+	ObjexxFCL::FArray2D< Size > jumps( 2, new_jumps.size() );
 	// Initialize jumps
 	for ( Size i = 1; i<= new_jumps.size(); ++i ) {
 		jumps(1,i) = std::min( (int)new_jumps[i].first, (int)new_jumps[i].second);

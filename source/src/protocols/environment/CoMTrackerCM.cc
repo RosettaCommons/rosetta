@@ -175,21 +175,21 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 	// TODO: throw an excpetion here instead of using an assert
 	// Make sure only virutal residues are being used as tracking residues
 	debug_assert( pose.residue( tracking_residue_id ).name() == "VRT" );
-	debug_assert( pose.fold_tree().root() != (int)tracking_residue_id );
+	debug_assert( pose.fold_tree().root() != tracking_residue_id );
 
 	// By definition, the virtual residue we are placing must be the downstream partner in exactly one jump.
 	// We refer to this jump as the "positioning_jump".
 	// It can be the upstream partner in zero or more jumps, so the first thing we are going to do is list the jumps
 	// in which the virtual residue is participating.
 	// We refer to these jumps as "positioned_jumps".
-	vector1< int > positioned_jump_ids;
-	int positioning_jump_id = 0;
+	vector1< Size > positioned_jump_ids;
+	Size positioning_jump_id = 0;
 
-	for ( int i = 1; i <= (int)pose.fold_tree().num_jump(); ++i ) {
-		if ( pose.fold_tree().downstream_jump_residue( i ) == (int)tracking_residue_id ) {
+	for ( Size i = 1; i <= pose.fold_tree().num_jump(); ++i ) {
+		if ( pose.fold_tree().downstream_jump_residue( i ) == tracking_residue_id ) {
 			debug_assert( positioning_jump_id == 0 );
 			positioning_jump_id = i;
-		} else if ( pose.fold_tree().upstream_jump_residue( i ) == (int)tracking_residue_id ) {
+		} else if ( pose.fold_tree().upstream_jump_residue( i ) == tracking_residue_id ) {
 			positioned_jump_ids.push_back( i );
 		}
 	}
@@ -208,7 +208,7 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 	// Update all of the jumps the tracking residue positions.
 	// It is critical that this is done prior to actually adjusting the position of the tracking residue so the
 	// downstream stubs are still in the correct positions.
-	for ( vector1< int >::const_iterator it = positioned_jump_ids.begin(); it != positioned_jump_ids.end(); ++it ) {
+	for ( vector1< Size >::const_iterator it = positioned_jump_ids.begin(); it != positioned_jump_ids.end(); ++it ) {
 		if ( passport()->has_jump_access( *it ) ) {
 			//We don't nessecarily always have access to all jumps that are built by this guy, and sometimes that's ok.
 			pose.set_jump( *it, Jump( RT( tracking_res_stub, pose.conformation().downstream_jump_stub( *it ) ) ) );

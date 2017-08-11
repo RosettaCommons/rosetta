@@ -442,9 +442,9 @@ is_membrane_moveable_by_itself( core::pose::Pose & pose ) {
 			// but has a start or end point that is the membrane rsd,
 			// the memrbane rsd is not 'independently moveable'
 			if ( ( it.label() > 0 ) && (
-					( it.label() != int(membrane_jump) ) &&
-					( it.start() == int(membrane_rsd) ||
-					it.stop() == int(membrane_rsd) ) ) ) {
+					( it.label() != int( membrane_jump ) ) &&
+					( it.start() == membrane_rsd ||
+					it.stop() == membrane_rsd ) ) ) {
 				return false;
 			}
 		}

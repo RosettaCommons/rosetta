@@ -1220,7 +1220,7 @@ void LoopComparator::fill_pose(core::pose::Pose & pose){
 	for ( core::Size i=1; i<=solutionsets_.size(); i++ ) {
 		LoopPartialSolutionStore loop = solutionsets_[i];
 		for ( int j=1; j<=(int)pose.fold_tree().num_jump(); j++ ) {
-			if ( pose.fold_tree().cutpoint_by_jump(j) == (int)loop.get_cutpoint() ) {
+			if ( pose.fold_tree().cutpoint_by_jump(j) == loop.get_cutpoint() ) {
 				core::kinematics::FoldTree ft_closed = pose.fold_tree();
 				ft_closed.delete_jump_and_intervening_cutpoint(j);
 				pose.fold_tree(ft_closed);

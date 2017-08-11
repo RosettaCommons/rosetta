@@ -387,7 +387,7 @@ find_bound_waters_that_are_daughters_in_fold_tree( pose::Pose const & pose, Size
 	vector1< Size > water_res;
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue_type( i ).aa() != core::chemical::aa_h2o ) continue;
-		if ( pose.fold_tree().get_parent_residue( i ) != int( mg_res ) ) continue;
+		if ( pose.fold_tree().get_parent_residue( i ) != mg_res ) continue;
 		if ( ( pose.residue( mg_res ).xyz( "MG  " ) - pose.residue( i ).xyz(" O  " ) ).length() > MG_LIGAND_DISTANCE_CUTOFF ) continue;
 		water_res.push_back( i );
 	}

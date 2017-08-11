@@ -820,8 +820,8 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 	// Allocate the FArrays to call FoldTree::tree_from_cuts_and_jumps
 	Size num_cuts( num_chains - 1 );
-	ObjexxFCL::FArray1D_int cut_positions( num_cuts, 0 );
-	ObjexxFCL::FArray2D_int jump_pairs( 2, num_cuts, 0 );
+	ObjexxFCL::FArray1D< Size > cut_positions( num_cuts );
+	ObjexxFCL::FArray2D< Size > jump_pairs( 2, num_cuts );
 	Size jump_pair_count( 1 );
 
 	// We can fill the cut info now
@@ -1039,7 +1039,7 @@ not_already_connected(
 	Size const num_jumps,
 	char const this_chain,
 	char const other_chain,
-	ObjexxFCL::FArray2D_int & jump_pairs
+	ObjexxFCL::FArray2D< Size > & jump_pairs
 )
 {
 

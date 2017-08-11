@@ -124,10 +124,9 @@ make_cut_at_moving_suite( pose::Pose & pose, Size const & moving_suite ){
 Size
 find_jump_number_at_suite( kinematics::FoldTree const & fold_tree, Size const & moving_suite ){
 
-	int const i( moving_suite ), j( moving_suite + 1 );
 	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-		if ( fold_tree.upstream_jump_residue( n ) == i && fold_tree.downstream_jump_residue( n ) == j ) return n;
-		if ( fold_tree.upstream_jump_residue( n ) == j && fold_tree.downstream_jump_residue( n ) == i ) return n;
+		if ( fold_tree.upstream_jump_residue( n ) == moving_suite && fold_tree.downstream_jump_residue( n ) == moving_suite + 1 ) return n;
+		if ( fold_tree.upstream_jump_residue( n ) == moving_suite + 1 && fold_tree.downstream_jump_residue( n ) == moving_suite ) return n;
 	}
 
 	utility_exit_with_message( "Problem with jump number" );
@@ -140,7 +139,7 @@ Size
 look_for_unique_jump_to_moving_res( kinematics::FoldTree const & fold_tree, Size const & i ){
 
 	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-		if ( fold_tree.downstream_jump_residue( n ) == int( i )  ) {
+		if ( fold_tree.downstream_jump_residue( n ) == i  ) {
 			return n;
 		}
 	}
@@ -148,7 +147,7 @@ look_for_unique_jump_to_moving_res( kinematics::FoldTree const & fold_tree, Size
 
 	Size num_jump( 0 ), jump_idx( 0 );
 	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-		if ( fold_tree.upstream_jump_residue( n ) == int( i ) || fold_tree.downstream_jump_residue( n ) == int( i ) ) {
+		if ( fold_tree.upstream_jump_residue( n ) == i || fold_tree.downstream_jump_residue( n ) == i ) {
 			jump_idx = n;
 			num_jump++;
 		}
@@ -729,8 +728,8 @@ slice( pose::Pose & sliced_out_pose,
 	runtime_assert( num_cuts == jump_partners1.size() );
 
 	FoldTree f_slice;
-	ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
-	ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
+	ObjexxFCL::FArray2D< Size > jump_point_( 2, num_cuts );
+	ObjexxFCL::FArray1D< Size > cuts_( num_cuts );
 	for ( Size i = 1; i <= num_cuts; i++ ) {
 		jump_point_( 1, i ) = std::min( jump_partners1[ i ], jump_partners2[ i ] );
 		jump_point_( 2, i ) = std::max( jump_partners1[ i ], jump_partners2[ i ] );
@@ -1345,7 +1344,7 @@ revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that th
 		Size const reference_res = pose.fold_tree().get_parent_residue( moving_res );
 		moving_res = reference_res;
 		reroot_based_on_full_model_info( pose, moving_partition_res /* new root_parition_res*/  );
-		runtime_assert( pose.fold_tree().get_parent_residue( moving_res ) == static_cast<int>( moving_res_original ) );
+		runtime_assert( pose.fold_tree().get_parent_residue( moving_res ) == moving_res_original );
 	} else {
 		reroot_based_on_full_model_info( pose, root_partition_res );
 	}
@@ -1456,10 +1455,10 @@ fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const & at
 	if ( !pose.residue_type( res ).is_protein() ) return;
 	FoldTree f = pose.fold_tree();
 	for ( Size n = 1; n <= f.num_jump(); n++ ) {
-		if ( f.upstream_jump_residue( n ) == static_cast<int>( res ) ) {
+		if ( f.upstream_jump_residue( n ) == res ) {
 			f.set_jump_atoms( n, atom_name, f.downstream_atom( n ), false /*intra_residue_stubs*/ );
 		}
-		if ( f.downstream_jump_residue( n ) == static_cast<int>( res ) ) {
+		if ( f.downstream_jump_residue( n ) == res ) {
 			f.set_jump_atoms( n, f.upstream_atom( n ), atom_name, false /*intra_residue_stubs*/ );
 		}
 	}
@@ -1523,10 +1522,10 @@ get_domain_boundary_res( pose::Pose const & pose ){
 	utility::vector1< core::Size > domain_boundary_res;
 	for ( Size n = 1; n <= domain_boundary_suites.size(); n++ ) {
 		Size const & i = domain_boundary_suites[ n ];
-		if ( pose.fold_tree().get_parent_residue( i ) == int(i+1) ) {
+		if ( pose.fold_tree().get_parent_residue( i ) == i + 1 ) {
 			domain_boundary_res.push_back( i );
 		} else {
-			runtime_assert( pose.fold_tree().get_parent_residue( i+1 ) == int(i) );
+			runtime_assert( pose.fold_tree().get_parent_residue( i+1 ) == i );
 			domain_boundary_res.push_back( i+1 );
 		}
 	}

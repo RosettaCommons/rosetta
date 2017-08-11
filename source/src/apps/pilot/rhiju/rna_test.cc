@@ -2277,8 +2277,8 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCOP & rs
 
 	//Crazy fold tree.
 	Size const num_jumps( nres_real );
-	ObjexxFCL::FArray2D <int> jump_points( 2, num_jumps );
-	ObjexxFCL::FArray1D <int> cuts( num_jumps );
+	ObjexxFCL::FArray2D< Size > jump_points( 2, num_jumps );
+	ObjexxFCL::FArray1D< Size > cuts( num_jumps );
 	for ( Size n = 1; n <= num_jumps; n++ ) {
 		jump_points( 1, n ) = n;
 		jump_points( 2, n ) = nres_real+1;

@@ -429,10 +429,10 @@ void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi )
 /// @brief helper function that looks for the given residue in a fold tree and returns the jump that controls its 6D-DoFs
 int find_jump_rec(
 	core::kinematics::FoldTree const & ft,
-	int const residue )
+	core::Size const residue )
 {
 	debug_assert( residue > 0 );
-	debug_assert( residue <= static_cast<int>(ft.nres()) );
+	debug_assert( residue <= ft.nres() );
 
 	// if this residue is root, jump is 0
 	if ( ft.root() == residue ) {
@@ -462,8 +462,8 @@ int find_jump_rec(
 void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Edge const & jedge )
 {
 	debug_assert( jedge.label() > 0 );
-	int pos1 = jedge.start();
-	int pos2 = jedge.stop();
+	core::Size pos1 = jedge.start();
+	core::Size pos2 = jedge.stop();
 	utility::vector1< core::kinematics::Edge > new_edges;
 	utility::vector1< core::kinematics::Edge > remove_edges;
 	core::kinematics::FoldTree const & ft_const = ft; // ugly hack needed to prevent gcc from trying to use the protected non-const FoldTree::begin() method...

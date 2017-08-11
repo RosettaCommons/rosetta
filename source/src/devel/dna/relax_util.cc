@@ -437,11 +437,11 @@ delete_unpaired_bases( pose::Pose & pose )
 	FoldTree new_f;
 	{
 		Size const num_jump( f.num_jump() );
-		FArray2D_int jumps(2,num_jump);
-		FArray1D_int cuts(num_jump);
+		FArray2D< Size > jumps(2,num_jump);
+		FArray1D< Size > cuts(num_jump);
 		for ( Size i=1; i<= num_jump; ++i ) {
-			int pos1( f.jump_point(1,i) );
-			int pos2( f.jump_point(2,i) );
+			Size pos1( f.jump_point(1,i) );
+			Size pos2( f.jump_point(2,i) );
 			if ( delete_me[pos1] ) pos1 = closest[pos1];
 			if ( delete_me[pos2] ) pos2 = closest[pos2];
 			jumps(1,i) = pos1;

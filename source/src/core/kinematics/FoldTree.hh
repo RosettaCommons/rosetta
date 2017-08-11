@@ -186,16 +186,16 @@ public:
 	/// @brief Adds an edge from  <start>  to  <stop>
 	void
 	add_edge(
-		int const start,
-		int const stop,
+		core::Size const start,
+		core::Size const stop,
 		int const label
 	);
 
 	/// @brief Especially useful version of add_edge for chemical edge construction
 	void
 	add_edge(
-		int const start,
-		int const stop,
+		Size const start,
+		Size const stop,
 		std::string const & start_atom,
 		std::string const & stop_atom
 	);
@@ -236,16 +236,16 @@ public:
 	void delete_edge( Edge const & edge );
 
 	/// @brief Find an edge in fold tree and delete it
-	void delete_unordered_edge( int const start, int const stop,int const label);
+	void delete_unordered_edge( Size const start, Size const stop,int const label);
 
 	/// @brief Changes the label of an edge in fold tree
-	void update_edge_label( int const start, int const stop, int const old_label, int const new_label );
+	void update_edge_label( Size const start, Size const stop, int const old_label, int const new_label );
 
 	/// @brief Returns the edge label of the edge from  <start>  to  <stop>
-	int edge_label( int const start, int const stop );
+	int edge_label( Size const start, Size const stop );
 
 	/// @brief Splits an edge into two at a specified position.
-	void split_existing_edge_at_residue( int const resNo );
+	void split_existing_edge_at_residue( Size const resNo );
 
 	/// @brief Deletes all edge in the FoldTree
 	///
@@ -290,7 +290,7 @@ public:
 	///     FoldTree.new_jump
 	///     FoldTree.nres
 	///     FoldTree.simple_tree
-	void delete_segment( int const seg_begin, int const seg_end );
+	void delete_segment( Size const seg_begin, Size const seg_end );
 
 	/// @brief Deletes the residue  <seqpos>  from the FoldTree.
 	/// Will rearrange topology if necessary.
@@ -306,13 +306,13 @@ public:
 	///     FoldTree.num_jump
 	///     FoldTree.simple_tree
 	void
-	delete_seqpos( int const seqpos );
+	delete_seqpos( Size const seqpos );
 
 	/// @brief Inserts a polymer residue at position  <seqpos>
 	/// How?
 	void
 	insert_polymer_residue(
-		int const seqpos,
+		Size const seqpos,
 		bool const join_lower,
 		bool const join_upper
 	);
@@ -320,8 +320,8 @@ public:
 	/// @brief Inserts a bonded residue at position  <seqpos>
 	void
 	insert_residue_by_chemical_bond(
-		int const seqpos,
-		int const anchor_residue,
+		Size const seqpos,
+		Size const anchor_residue,
 		std::string const& anchor_atom,
 		std::string const& root_atom
 	);
@@ -333,8 +333,8 @@ public:
 	///
 	void
 	insert_residue_by_jump(
-		int const seqpos,
-		int anchor_pos,
+		Size const seqpos,
+		Size anchor_pos,
 		std::string const& anchor_atom = "",
 		std::string const& root_atomno = ""
 	);
@@ -346,10 +346,10 @@ public:
 	void
 	insert_fold_tree_by_jump(
 		FoldTree const & subtree,
-		int const insert_seqpos,               // rsd 1 in subtree goes here
-		int const insert_jumppos,              // jump 1 in subtree goes here
-		int const anchor_pos,                  // in the old numbering system
-		int anchor_jump_number = 0,            // in the new jump numbering system, default=0
+		Size const insert_seqpos,               // rsd 1 in subtree goes here
+		Size const insert_jumppos,              // jump 1 in subtree goes here
+		Size const anchor_pos,                  // in the old numbering system
+		Size anchor_jump_number = 0,            // in the new jump numbering system, default=0
 		std::string const & anchor_atom = "",  // could be ""
 		std::string const & root_atom   = ""   // ditto
 	);
@@ -362,15 +362,15 @@ public:
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	int new_jump( int const jump_pos1, int const jump_pos2, int const cutpoint );
+	core::Size new_jump( Size const jump_pos1, Size const jump_pos2, Size const cutpoint );
 
 	void
 	new_chemical_bond(
-		int const anchor_pos,
-		int const root_pos,
+		Size const anchor_pos,
+		Size const root_pos,
 		std::string const & anchor_atom,
 		std::string const & root_atom,
-		int const new_cutpoint
+		Size const new_cutpoint
 	);
 
 	// ways to build an entire tree:
@@ -391,7 +391,7 @@ public:
 	///     FoldTree.nres
 	///     FoldTree.num_jump
 	///     FoldTree.size
-	void simple_tree( int const nres_in ); // makes a 1-->total_residue tree
+	void simple_tree( Size const nres_in ); // makes a 1-->total_residue tree
 
 	/// @brief Returns true if the FoldTree has 1-edge (non-jump)
 	///
@@ -408,10 +408,10 @@ public:
 	/// points based on some biased probability
 	/// Returns bool about success
 	bool random_tree_from_jump_points(
-		int const nres_in, int const num_jump_in,
-		ObjexxFCL::FArray2D_int const & jump_point,
+		Size const nres_in, Size const num_jump_in,
+		ObjexxFCL::FArray2D< Size > const & jump_point,
 		ObjexxFCL::FArray1D_float const & cut_bias,
-		int const root_in=1,
+		Size const root_in=1,
 		bool const allow_jump_at_1_or_NRES = false
 	);
 
@@ -419,20 +419,20 @@ public:
 	/// points based on some biased probability and any user-defined obligate cutpoints
 	/// Returns bool about success
 	bool random_tree_from_jump_points(
-		int const nres_in, int const num_jump_in,
-		ObjexxFCL::FArray2D_int const & jump_point,
-		std::vector< int > const & obligate_cut_points,
+		Size const nres_in, Size const num_jump_in,
+		ObjexxFCL::FArray2D< Size > const & jump_point,
+		std::vector< Size > const & obligate_cut_points,
 		ObjexxFCL::FArray1D_float const & cut_bias,
-		int const root_in = 1,
+		Size const root_in = 1,
 		bool const allow_jump_at_1_or_NRES = false );
 
 	/// @brief Constructs a FoldTree from listed  <jump point>  and  <cuts>
 	/// Returns bool about success
 	bool tree_from_jumps_and_cuts(
-		int const nres_in, int const num_jump_in,
-		ObjexxFCL::FArray2D_int const & jump_point,
-		ObjexxFCL::FArray1D_int const & cuts,
-		int const root_in = 1,
+		Size const nres_in, Size const num_jump_in,
+		ObjexxFCL::FArray2D< Size > const & jump_point,
+		ObjexxFCL::FArray1D< Size > const & cuts,
+		Size const root_in = 1,
 		bool const verbose = false
 	);
 
@@ -440,7 +440,7 @@ public:
 	void
 	append_residue(
 		bool const attach_by_jump = false,
-		int const jump_anchor_residue = 0,
+		core::Size const jump_anchor_residue = 0,
 		std::string const& jump_upstream_atom = "",
 		std::string const&  jump_downstream_atom = ""
 	);
@@ -448,14 +448,14 @@ public:
 	/// @brief Appends a new residue to the tree using a chemical (APL-style) connection
 	void
 	append_residue_by_chemical_bond(
-		int const anchor_residue,
+		core::Size const anchor_residue,
 		std::string const& anchor_atom,
 		std::string const& root_atom
 	);
 
 
 	/// @brief Reorders the FoldTree to start at residue  <start_residue>
-	bool reorder( int const start_residue, bool const verbose_if_fail = true );
+	bool reorder( Size const start_residue, bool const verbose_if_fail = true );
 
 
 	// check status ////////////////////////////////////////////////////////
@@ -484,13 +484,13 @@ public:
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	int upstream_jump_residue( int const jump_number ) const;
+	Size upstream_jump_residue( Size const jump_number ) const;
 
 	/// @brief the stopping residue for this jump
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	int downstream_jump_residue( int const jump_number ) const;
+	Size downstream_jump_residue( Size const jump_number ) const;
 
 	/// @brief partition into two foldtrees by cutting at jump= jump_number
 	///
@@ -498,7 +498,7 @@ public:
 	///
 	void
 	partition_by_jump(
-		int const jump_number,
+		Size const jump_number,
 		FoldTree & f1, //contains N-terminal vertex in jump, like partner1 in partition_by_jump below
 		FoldTree & f2
 	) const;
@@ -508,7 +508,7 @@ public:
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
 	void
-	partition_by_jump( int const jump_number, ObjexxFCL::FArray1D_bool & partner1 ) const ;
+	partition_by_jump( Size const jump_number, ObjexxFCL::FArray1D_bool & partner1 ) const ;
 
 	/// @brief partition the fold tree in two parts if the jump is disconnected.
 	///
@@ -527,7 +527,7 @@ public:
 	/// @brief partition the fold tree in two parts if a cut would be introduced between seqpos and seqpos+1
 	void
 	partition_by_residue(
-		int const seqpos,
+		Size const seqpos,
 		ObjexxFCL::FArray1D_bool & partner1
 	) const ;
 
@@ -538,8 +538,8 @@ public:
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	int
-	cutpoint_by_jump( int const jump_number ) const;
+	Size
+	cutpoint_by_jump( Size const jump_number ) const;
 
 	// these routines are for storing extra information about the jumps
 	// you can specify which atoms should be the up/downstream atoms for
@@ -550,24 +550,24 @@ public:
 
 	/// @brief the jump atom on the staring side
 	std::string
-	upstream_atom( int const jump_number ) const;
+	upstream_atom( Size const jump_number ) const;
 
 	/// @brief the jump atom on the stopping side
 	std::string
-	downstream_atom( int const jump_number ) const;
+	downstream_atom( Size const jump_number ) const;
 
 	/// @brief Returns the direction (n2c, c2n) in which the given (peptide) residue is built during folding.
 	int
-	get_polymer_residue_direction( int const seqpos ) const;
+	get_polymer_residue_direction( Size const seqpos ) const;
 
 	/// @brief Returns the edge that builds the residue  <seqpos>
 	/// Does not work for root atom (will fail)
 	Edge const &
-	get_residue_edge( int const seqpos ) const;
+	get_residue_edge( Size const seqpos ) const;
 
 	/// @brief Returns all edges that build a residue directly off of  <seqpos>
 	utility::vector1< Edge >
-	get_outgoing_edges( int const seqpos ) const;
+	get_outgoing_edges( Size const seqpos ) const;
 
 	/// @brief Return all jump Edges from the FoldTree
 	///
@@ -585,16 +585,16 @@ public:
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	int
-	get_jump_that_builds_residue( int const seqpos ) const;
+	core::Size
+	get_jump_that_builds_residue( Size const seqpos ) const;
 
 	/// @brief  Get the residue that is immediately upstream of this residue (and tell us whether connection is jump or bond).
-	int
-	get_parent_residue( int const seqpos, bool & connected_by_jump ) const;
+	core::Size
+	get_parent_residue( Size const seqpos, bool & connected_by_jump ) const;
 
 	/// @brief  Get the residue that is immediately upstream of this residue.
-	int
-	get_parent_residue( int const seqpos ) const;
+	core::Size
+	get_parent_residue( Size const seqpos ) const;
 
 	/// @brief define the specific atoms that should be connected by this jump
 	/**
@@ -604,7 +604,7 @@ public:
 	*/
 	void
 	set_jump_atoms(
-		int const jump_number,
+		Size const jump_number,
 		std::string const& upstream_atom,
 		std::string const& downstream_atom,
 		bool bKeepStubInResidue = false
@@ -613,7 +613,7 @@ public:
 	//version of above but makes it permutation safe!
 	void
 	set_jump_atoms(
-		int const jump_number,
+		Size const jump_number,
 		core::Size res1,
 		std::string const&  atom1,
 		core::Size res2,
@@ -681,7 +681,7 @@ public:
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
-	int jump_point( int const lower_higher, int const jump_number ) const;
+	Size jump_point( Size const lower_higher, Size const jump_number ) const;
 
 	/// @brief Returns true if  <seqpos>  is a starting or stopping residue of a jump edge
 	///
@@ -694,7 +694,7 @@ public:
 	///     FoldTree.is_cutpoint
 	///     FoldTree.new_jump
 	///     FoldTree.num_jump
-	inline bool is_jump_point( int const seqpos ) const;
+	inline bool is_jump_point( Size const seqpos ) const;
 
 	/// @brief Returns the cutpoint position of jump number  <cut>
 	///
@@ -707,7 +707,7 @@ public:
 	///     FoldTree.is_jump_point
 	///     FoldTree.num_cutpoint
 	///     FoldTree.num_jump
-	inline int cutpoint( int const cut ) const;
+	inline Size cutpoint( Size const cut ) const;
 
 	/// @brief Returns the number of cutpoints in the FoldTree
 	///
@@ -719,7 +719,7 @@ public:
 	///     FoldTree.is_cutpoint
 	///     FoldTree.nres
 	///     FoldTree.num_jump
-	inline int num_cutpoint() const;
+	inline Size num_cutpoint() const;
 
 	/// @brief Returns true is position  <seqpos>  is a cutpoint
 	///
@@ -732,10 +732,10 @@ public:
 	///     FoldTree.nres
 	///     FoldTree.num_cutpoint
 	///     FoldTree.num_jump
-	inline bool is_cutpoint( int const seqpos ) const;
+	inline bool is_cutpoint( Size const seqpos ) const;
 
 	/// @brief cutpoint number for this residue
-	inline int cutpoint_map( int const seqpos ) const;
+	inline Size cutpoint_map( Size const seqpos ) const;
 
 	/// @brief Returns the jump edge with jump number  <jump_number>  (const)
 	///
@@ -745,10 +745,10 @@ public:
 	///     FoldTree
 	///     FoldTree.new_jump
 	///     FoldTree.num_jump
-	Edge const & jump_edge( int const jump_number ) const;
+	Edge const & jump_edge( Size const jump_number ) const;
 
 	/// @brief Returns the jump edge with jump number  <jump_number>  (non-const)
-	Edge & jump_edge( int const jump_number );
+	Edge & jump_edge( Size const jump_number );
 
 	/// @brief get the jump_nr connected to jump upstream->downstream, returns 0 if not found
 	///
@@ -787,7 +787,7 @@ public:
 	///     FoldTree.nres
 	inline
 	bool
-	is_root( int const seqpos ) const
+	is_root( Size const seqpos ) const
 	{
 		return ( !edge_list_.empty() && seqpos == begin()->start() );
 	}
@@ -816,7 +816,7 @@ public:
 	///     FoldTree.clear
 	///     FoldTree.simple_tree
 	inline
-	int
+	Size
 	root() const
 	{
 		debug_assert( !empty() );
@@ -836,7 +836,7 @@ public:
 	///     FoldTree.nres
 	inline
 	bool
-	jump_exists( int const pos1, int const pos2 ) const
+	jump_exists( Size const pos1, Size const pos2 ) const
 	{
 		for ( int i=1; i<= static_cast<int>( num_jump()); ++i ) {
 			if ( ( ( pos1 == jump_point(1,i) && pos2 == jump_point(2,i) ) ||
@@ -857,7 +857,7 @@ public:
 	// more routines for getting derived data
 	// slow: creates vector each time, just for convenience
 	/// @brief get all cutpoints
-	utility::vector1< int >
+	utility::vector1< Size >
 	cutpoints() const;
 
 	/// @brief equal to operator
@@ -887,22 +887,22 @@ public:
 	/// @brief  Useful for removing a loop modeling jump+cut
 	void
 	delete_jump_and_intervening_cutpoint(
-		int jump_begin,
-		int jump_end,
+		Size jump_begin,
+		Size jump_end,
 		Size cut = 0
 	);
 
 	/// @brief  Useful for removing a loop modeling jump+cut
 	void
 	delete_jump_and_intervening_cutpoint(
-		int const jump_number
+		Size const jump_number
 	);
 
 	// AMW: I am elevating this to public - this is a concise and
 	// helpful transformation when you don't want to destroy
 	// your current FT state
 	/// @brief helper function to try cutting an edge in a tree.
-	bool cut_edge( int const cut_point );
+	bool cut_edge( Size const cut_point );
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -915,11 +915,11 @@ private:
 
 	/// @brief delete a polymer residue (non-jump,non-root)
 	void
-	delete_seqpos_simple( int const seqpos );
+	delete_seqpos_simple( Size const seqpos );
 
 	/// @brief delete a root/jump_point residue
 	void
-	delete_jump_seqpos( int const seqpos );
+	delete_jump_seqpos( Size const seqpos );
 
 
 	/// @brief non-const begin iterator of edge_list
@@ -940,7 +940,7 @@ private:
 
 	/// @brief  Helper function
 	void
-	add_vertex( int const v );
+	add_vertex( Size const v );
 
 	///////////////////////////// internal book-keeping /////////////
 	// maintain things that depend on both topology and/or order
@@ -978,7 +978,7 @@ private:
 	bool
 	cut_random_edge(
 		ObjexxFCL::FArray1D_float const & cut_bias_sum,
-		int const nres_in
+		Size const nres_in
 	);
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -1007,41 +1007,41 @@ private:
 	// edge_list_ on the fly inside "const" access methods
 
 	/// @brief just the largest vertex in edge_list_
-	mutable int nres_;
+	mutable Size nres_;
 
 	/// @brief number of jump edges (edges in edge_list_ with label>0)
-	mutable int num_jump_;
+	mutable Size num_jump_;
 
 	/// @brief number of cutpoints in the fold tree.
 	/// @note number_cutpoint_ == num_jump_ (if a connected tree)
-	mutable int num_cutpoint_;
+	mutable Size num_cutpoint_;
 
 	/// @brief jump number to jump residue number. dimensioned as (2,num_jump_)
-	mutable utility::vector1< std::pair< int, int > > jump_point_;
+	mutable utility::vector1< std::pair< Size, Size > > jump_point_;
 
 	/// @brief whehter a residue is a jump_point, dimensioned as nres_
 	mutable utility::vector1<bool> is_jump_point_;
 
 	/// @brief cutpoint number to cutpoint residue number, dimesioned as num_cutpoint_.
-	mutable utility::vector1<int> cutpoint_;
+	mutable utility::vector1<Size> cutpoint_;
 
 	/// @brief residue number of cutpoint number, 0 if it is not a cutpoint. dimensioned as nres_.
-	mutable utility::vector1<int> cutpoint_map_;
+	mutable utility::vector1<Size> cutpoint_map_;
 
 	/// @brief whether a residue is a cutpoint, dimensioned as nres_
 	mutable ObjexxFCL::FArray1D_bool is_cutpoint_; // nres
 
 	/// @brief jump number to edge index number in the edge_list_, dimensioned as num_jump_.
-	mutable utility::vector1<int> jump_edge_;
+	mutable utility::vector1<Size> jump_edge_;
 
 	/// @brief dimensioned as nres_, see setup_edge_counts for more info
-	mutable utility::vector1<int> edge_count;
+	mutable utility::vector1<Size> edge_count;
 
 	/// @brief the minimum number in edge_count and jump_edge_count.
-	mutable int min_edge_count;
+	mutable Size min_edge_count;
 
 	/// @brief dimensioned as num_jump, see setup_edge_counts for more info
-	mutable utility::vector1<int> jump_edge_count;
+	mutable utility::vector1<Size> jump_edge_count;
 
 	/// @brief Used as scratch space by a couple of functions.
 	mutable ObjexxFCL::FArray1D_bool linked_, seen_;
@@ -1127,7 +1127,7 @@ FoldTree::num_jump() const
 /// @brief is seqpos a jump-point?
 inline
 bool
-FoldTree::is_jump_point( int const seqpos ) const
+FoldTree::is_jump_point( Size const seqpos ) const
 {
 	check_topology();
 	return is_jump_point_[seqpos];
@@ -1136,8 +1136,8 @@ FoldTree::is_jump_point( int const seqpos ) const
 
 ///////////////////////////////////////////////////////////////////////////////
 inline
-int
-FoldTree::cutpoint( int const cut ) const
+Size
+FoldTree::cutpoint( Size const cut ) const
 {
 	check_topology();
 	return cutpoint_[cut];
@@ -1147,7 +1147,7 @@ FoldTree::cutpoint( int const cut ) const
 ///////////////////////////////////////////////////////////////////////////////
 // number of cutpoints
 inline
-int
+Size
 FoldTree::num_cutpoint() const
 {
 	check_topology();
@@ -1159,11 +1159,11 @@ inline
 core::Size
 FoldTree::jump_nr( core::Size const pos1, core::Size const pos2 ) const
 {
-	for ( int i=1; i<= static_cast<int>( num_jump()); ++i ) {
-		if ( ( ( pos1 == (Size)jump_point(1,i) && pos2 == (Size)jump_point(2,i) ) ||
-				( pos1 == (Size)jump_point(2,i) && pos2 == (Size)jump_point(1,i) ) ) ) return Size( i );
+	for ( Size i=1; i<= num_jump(); ++i ) {
+		if ( ( ( pos1 == jump_point(1,i) && pos2 == jump_point(2,i) ) ||
+				( pos1 == jump_point(2,i) && pos2 == jump_point(1,i) ) ) ) return i;
 	}
-	return Size( 0 );
+	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1172,8 +1172,8 @@ FoldTree::jump_nr( core::Size const pos1, core::Size const pos2 ) const
 /// associated with that cutpoint (cutpoints are numbered in increasing
 /// residue number from the beginning of the chain)
 inline
-int
-FoldTree::cutpoint_map( int const seqpos ) const
+Size
+FoldTree::cutpoint_map( Size const seqpos ) const
 {
 	check_topology();
 	// sanity
@@ -1187,7 +1187,7 @@ FoldTree::cutpoint_map( int const seqpos ) const
 ///////////////////////////////////////////////////////////////////////////////
 inline
 bool
-FoldTree::is_cutpoint( int const seqpos ) const
+FoldTree::is_cutpoint( Size const seqpos ) const
 {
 	check_topology();
 

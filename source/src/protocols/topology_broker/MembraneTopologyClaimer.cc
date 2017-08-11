@@ -149,7 +149,7 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 
 	if ( TR.Trace.visible() ) { pose.fold_tree().show(TR.Trace);}
 	for ( core::Size i=1; i<=pose.fold_tree().nres(); ++i ) {
-		if ( static_cast<int>(i) == pose.fold_tree().root() ) {
+		if ( i == pose.fold_tree().root() ) {
 			dof_claims.push_back(claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 		} else if ( pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT" ) {

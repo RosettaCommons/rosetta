@@ -843,9 +843,9 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
 		for ( auto const & e : f_const ) {
-			bool contains_attach_pt = (( e.start() < int(attach_pt) && int(attach_pt) < e.stop() )
-				|| ( e.stop() < int(attach_pt) && int(attach_pt) < e.start() ));
-			if ( e.label() == (int) jump_id ) {
+			bool contains_attach_pt = (( e.start() < attach_pt && attach_pt < e.stop() )
+				|| ( e.stop() < attach_pt && attach_pt < e.start() ));
+			if ( e.label() == int( jump_id ) ) {
 				f_new.add_edge( attach_pt, lig_id, jump_id );
 			} else if ( e.label() == Edge::PEPTIDE && contains_attach_pt ) {
 				f_new.add_edge( e.start(), attach_pt, Edge::PEPTIDE );

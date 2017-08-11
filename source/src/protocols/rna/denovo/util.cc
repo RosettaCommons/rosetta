@@ -667,7 +667,7 @@ remove_cutpoint_closed( pose::Pose & pose, Size const i ) {
 	//  remove_cutpoint( i, f );
 	//  pose.fold_tree( f );
 
-	utility::vector1< int > const & cutpoints = pose.fold_tree().cutpoints();
+	utility::vector1< Size > const & cutpoints = pose.fold_tree().cutpoints();
 
 	Size const num_jump =  pose.fold_tree().num_jump();
 	utility::vector1< Size > upstream_pos, downstream_pos;
@@ -676,10 +676,10 @@ remove_cutpoint_closed( pose::Pose & pose, Size const i ) {
 		downstream_pos.push_back( pose.fold_tree().downstream_jump_residue( n ) );
 	}
 
-	ObjexxFCL::FArray1D<int> cuts( num_jump-1 );
+	ObjexxFCL::FArray1D< Size > cuts( num_jump-1 );
 	Size count( 0 );
 	for ( Size n = 1; n <= num_jump; n++ ) {
-		if ( cutpoints[n] == static_cast<int>( i ) ) continue;
+		if ( cutpoints[n] == i ) continue;
 		count++;
 		cuts( count ) = cutpoints[ n ];
 	}
@@ -698,7 +698,7 @@ remove_cutpoint_closed( pose::Pose & pose, Size const i ) {
 
 	bool success( false );
 
-	ObjexxFCL::FArray2D<int> jump_point( 2, num_jump-1 );
+	ObjexxFCL::FArray2D< Size > jump_point( 2, num_jump-1 );
 
 	count = 0;
 	for ( Size n = 1; n <= num_jump; n++ ) {
@@ -836,8 +836,8 @@ get_rigid_body_jumps( core::pose::Pose const & pose ) {
 
 	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
 		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
-		if ( pose.fold_tree().upstream_jump_residue( n ) == (int)pose.size()  ||
-				pose.fold_tree().downstream_jump_residue( n ) == (int)pose.size()  ) {
+		if ( pose.fold_tree().upstream_jump_residue( n ) == pose.size()  ||
+				pose.fold_tree().downstream_jump_residue( n ) == pose.size()  ) {
 			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
 
 			rigid_body_jumps.push_back( n );

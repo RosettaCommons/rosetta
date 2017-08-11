@@ -81,8 +81,8 @@ public:
 		using core::kinematics::FoldTree;
 		FoldTree ft;
 
-		ObjexxFCL::FArray2D_int ft_jumps(2,2);
-		ObjexxFCL::FArray1D_int ft_cuts(2);
+		ObjexxFCL::FArray2D< Size > ft_jumps(2,2);
+		ObjexxFCL::FArray1D< Size > ft_cuts(2);
 		ft_jumps(1,1) = 1;
 		ft_jumps(2,1) = 30;
 		ft_jumps(1,2) = 1;

@@ -104,7 +104,7 @@ public:
 	void    ex2     (Real    _ex2     );
 	void    ex3     (Real    _ex3     );
 	void    ex4     (Real    _ex4     );
-	void insert(core::pose::Pose & pose,  utility::vector1<Xfres> const & xfres, int lowres, int highres) const;
+	void insert(core::pose::Pose & pose,  utility::vector1<Xfres> const & xfres, Size lowres, Size highres) const;
 };
 std::ostream & operator << (std::ostream & out, Xfrag const & x);
 std::istream & operator >> (std::istream & in , Xfrag       & x);

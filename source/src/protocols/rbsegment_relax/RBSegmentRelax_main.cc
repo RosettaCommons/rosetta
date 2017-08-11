@@ -102,10 +102,10 @@ void RBSegmentRelaxImpl::apply( core::pose::Pose & pose ){
 	protocols::loops::Loops loops;
 	std::string rbfilename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
 
-	for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
+	for ( core::Size i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
 		cutpts.push_back( pose.fold_tree().cutpoint(i) );
 	}
-	int last_peptide_res = pose.size();
+	core::Size last_peptide_res = pose.size();
 	while ( !pose.residue( last_peptide_res ).is_protein() )
 			last_peptide_res--;
 	read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );

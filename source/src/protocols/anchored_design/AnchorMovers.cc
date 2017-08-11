@@ -733,8 +733,8 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 
 	//convert the vectors into FArrays
 	debug_assert(cuts.size() == num_jumps);
-	ObjexxFCL::FArray2D<int> Fjumps(2, num_jumps);
-	ObjexxFCL::FArray1D<int> Fcuts(num_jumps);
+	ObjexxFCL::FArray2D< Size > Fjumps(2, num_jumps);
+	ObjexxFCL::FArray1D< Size > Fcuts(num_jumps);
 	for ( core::Size i(1); i<=num_jumps; ++i ) {
 		Fjumps(1, i) = jump_starts[i];
 		Fjumps(2, i) = jump_stops[i];

@@ -57,7 +57,7 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 	user_set_receptor_chain_ = false;
 	user_set_peptide_chain_ = false;
 	valid_ref_start_struct_ = false;
-	receptor_anchor_pos = -1; // -1 == invalid
+	receptor_anchor_pos = 0; // 0 == invalid
 
 	pep_fold_only = option[ OptionKeys::flexPepDocking::pep_fold_only ]();
 	if ( option[ OptionKeys::flexPepDocking::ref_startstruct].user() ) {
@@ -213,7 +213,7 @@ char FlexPepDockingFlags::peptide_chain() const
 	exit(-1);
 }
 
-int FlexPepDockingFlags::receptor_first_res() const
+core::Size FlexPepDockingFlags::receptor_first_res() const
 {
 	if ( valid_chain_info() && !pep_fold_only ) return receptor_first_res_;
 	TR.Error << "chain bounds invalid: receptor_first " << std::endl;
@@ -221,7 +221,7 @@ int FlexPepDockingFlags::receptor_first_res() const
 }
 
 
-int FlexPepDockingFlags::receptor_last_res() const
+core::Size FlexPepDockingFlags::receptor_last_res() const
 {
 	if ( valid_chain_info() && !pep_fold_only ) {
 		return receptor_first_res_ + receptor_nres_ - 1;
@@ -231,7 +231,7 @@ int FlexPepDockingFlags::receptor_last_res() const
 }
 
 
-int FlexPepDockingFlags::receptor_nres() const
+core::Size FlexPepDockingFlags::receptor_nres() const
 {
 	if ( valid_chain_info() ) return receptor_nres_;
 	if ( pep_fold_only ) return 0;
@@ -240,7 +240,7 @@ int FlexPepDockingFlags::receptor_nres() const
 }
 
 
-int FlexPepDockingFlags::peptide_first_res() const
+core::Size FlexPepDockingFlags::peptide_first_res() const
 {
 	if ( valid_chain_info() ) return peptide_first_res_;
 	TR.Error << "chain bounds invalid: pep_first " << std::endl;
@@ -248,7 +248,7 @@ int FlexPepDockingFlags::peptide_first_res() const
 }
 
 
-int FlexPepDockingFlags::peptide_last_res() const
+core::Size FlexPepDockingFlags::peptide_last_res() const
 {
 	if ( valid_chain_info() ) {
 		return peptide_first_res_ + peptide_nres_ - 1;
@@ -258,7 +258,7 @@ int FlexPepDockingFlags::peptide_last_res() const
 }
 
 
-int FlexPepDockingFlags::peptide_nres() const
+core::Size FlexPepDockingFlags::peptide_nres() const
 {
 	if ( valid_chain_info() ) return peptide_nres_;
 	TR.Error << "chain bounds invalid: pep_nres " << std::endl;
@@ -422,10 +422,10 @@ FlexPepDockingFlags::updateChainsAndAnchors_fromParamsFile
 	valid_chain_bounds_ = false;
 	valid_receptor_chain_ = false;
 	valid_peptide_chain_ = false;
-	receptor_nres_ = -1;
-	peptide_first_res_ = -1;
-	peptide_nres_ = -1;
-	receptor_anchor_pos = -1;
+	receptor_nres_ = 0;
+	peptide_first_res_ = 0;
+	peptide_nres_ = 0;
+	receptor_anchor_pos = 0;
 
 
 	// TODO: read params file somewhere else, move to XML?
@@ -459,7 +459,7 @@ FlexPepDockingFlags::updateChainsAndAnchors_fromParamsFile
 	TR << "# finished reading params" << endl;
 
 	// offset peptide anchors / cuts residues, by peptide_first_res_
-	std::map<int,int>::iterator iter, end;
+	std::map< Size, Size >::iterator iter, end;
 	for ( iter = peptide_anchors.begin(), end = peptide_anchors.end(); iter != end; ++iter ) {
 		iter->second += (peptide_first_res_ - 1);
 	}
@@ -468,10 +468,10 @@ FlexPepDockingFlags::updateChainsAndAnchors_fromParamsFile
 	}
 
 	// check results validity
-	if ( receptor_first_res_ != -1 &&
-			receptor_nres_ != -1 &&
-			peptide_first_res_ != -1 &&
-			peptide_nres_ != -1 ) {
+	if ( receptor_first_res_ != 0 &&
+			receptor_nres_ != 0 &&
+			peptide_first_res_ != 0 &&
+			peptide_nres_ != 0 ) {
 		valid_chain_bounds_ = true;
 	}
 

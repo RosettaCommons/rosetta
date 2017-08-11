@@ -1230,7 +1230,7 @@ Size
 get_anchor_res( Size const rebuild_res, pose::Pose const & pose ){
 	kinematics::FoldTree const & f = pose.fold_tree();
 	Size const jump_nr = look_for_unique_jump_to_moving_res( f, rebuild_res );
-	return ( f.upstream_jump_residue( jump_nr ) == static_cast<int>(rebuild_res) ) ?
+	return ( f.upstream_jump_residue( jump_nr ) == rebuild_res ) ?
 		f.downstream_jump_residue( jump_nr ) : f.upstream_jump_residue( jump_nr );
 }
 ////////////////////////////////////////////////////////////////////////

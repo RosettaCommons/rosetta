@@ -956,8 +956,8 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 	Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
 	Size const num_cuts( cuts_.size() );
 
-	ObjexxFCL::FArray2D < int > jump_point( 2, num_cuts, 0 );
-	ObjexxFCL::FArray1D < int > cuts( num_cuts, 0 );
+	ObjexxFCL::FArray2D< Size > jump_point( 2, num_cuts );
+	ObjexxFCL::FArray1D< Size > cuts( num_cuts );
 
 	for ( Size i = 1; i <= num_cuts; i++ ) {
 		jump_point( 1, i ) = std::min( jump_partners_[i].first, jump_partners_[i].second );

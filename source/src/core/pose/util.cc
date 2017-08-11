@@ -4051,7 +4051,7 @@ reroot( pose::Pose & pose,
 	runtime_assert( new_root > 0 );
 
 	FoldTree f = pose.fold_tree();
-	if ( static_cast<int>(new_root) == f.root() ) return;
+	if ( new_root == f.root() ) return;
 	f.reorder( new_root );
 	pose.fold_tree( f );
 }

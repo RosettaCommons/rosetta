@@ -46,7 +46,7 @@ public:
 private:
 
 	Size
-	get_antiparallel_beta_jumps( core::pose::Pose const & pose, int const sample_res );
+	get_antiparallel_beta_jumps( core::pose::Pose const & pose, Size const sample_res );
 
 };
 

@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_flexpep_docking_FlexPepDockingFlags_hh
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
@@ -77,7 +78,7 @@ public:
 		return
 			( !peptide_anchors.empty() &&
 			peptide_anchors.size() == peptide_cuts.size() + 1 &&
-			(receptor_anchor_pos != -1 || pep_fold_only) );
+			(receptor_anchor_pos != 0 || pep_fold_only) );
 	}
 
 
@@ -119,17 +120,17 @@ public:
 	}
 
 
-	int receptor_first_res() const;
+	core::Size receptor_first_res() const;
 
-	int receptor_last_res() const;
+	core::Size receptor_last_res() const;
 
-	int receptor_nres() const;
+	core::Size receptor_nres() const;
 
-	int peptide_first_res() const;
+	core::Size peptide_first_res() const;
 
-	int peptide_last_res() const;
+	core::Size peptide_last_res() const;
 
-	int peptide_nres() const;
+	core::Size peptide_nres() const;
 
 	std::string ref_start_struct() const;
 
@@ -137,14 +138,14 @@ public:
 
 
 private:
-	// TODO: change all ints to Size, and add access to basic::options::user() to check validity
+	// TODO: change all ints to core::Size, and add access to basic::options::user() to check validity
 	// chain info fields
 	std::string receptor_chain_;
 	char peptide_chain_;
-	int receptor_first_res_;
-	int receptor_nres_;
-	int peptide_first_res_;
-	int peptide_nres_;
+	core::Size receptor_first_res_;
+	core::Size receptor_nres_;
+	core::Size peptide_first_res_;
+	core::Size peptide_nres_;
 	bool valid_receptor_chain_;
 	bool valid_peptide_chain_;
 	bool valid_chain_bounds_; // refers to fields above
@@ -154,9 +155,9 @@ private:
 	bool user_set_peptide_chain_;
 public:
 	bool pep_fold_only;
-	int receptor_anchor_pos; // anchor position within the receptor protein
-	std::map<int,int> peptide_cuts; // peptide internal cuts
-	std::map<int,int> peptide_anchors; // anchors for peptide fragments
+	core::Size receptor_anchor_pos; // anchor position within the receptor protein
+	std::map< core::Size, core::Size > peptide_cuts; // peptide internal cuts
+	std::map< core::Size, core::Size > peptide_anchors; // anchors for peptide fragments
 	std::string params_file; // parameters for describing the complex, anchor residues, etc.
 	bool lowres_abinitio;
 	bool lowres_preoptimize;

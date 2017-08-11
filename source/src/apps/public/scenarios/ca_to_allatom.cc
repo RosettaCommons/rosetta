@@ -170,7 +170,7 @@ CaToAllAtom::~CaToAllAtom(){}
 void CaToAllAtom::apply( core::pose::Pose & pose ){
 	// load rbsegs
 	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
-	utility::vector1< int > cutpts;
+	utility::vector1< Size > cutpts;
 	protocols::loops::Loops loops;
 	//std::string filename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
 
@@ -185,7 +185,7 @@ void CaToAllAtom::apply( core::pose::Pose & pose ){
 		protocols::loops::read_loop_fragments( frag_libs );
 	}
 
-	for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
+	for ( Size i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
 		cutpts.push_back( pose.fold_tree().cutpoint(i) );
 	}
 	int last_peptide_res = pose.size();

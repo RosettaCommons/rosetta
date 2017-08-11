@@ -1977,8 +1977,8 @@ EnzdesFlexibleRegion::minimize_region(
 	//find the edge that spans the end of this segment
 	//tr << "regmindebug setting foldtree for region from " << this->start() << " to " << this->end() << std::endl;
 	for ( auto const & e : f_const ) {
-		bool is_jump( e.is_jump() ), backward( e.start() > e.stop() ), start_in_seg( e.start() >= (int)this->start() && e.start() <= (int)this->end() ), stop_in_seg( e.stop() >= (int)this->start() && e.stop() <= (int)this->end() );
-		bool span( backward ? ( (e.start() > (int)this->end()) && (e.stop() < (int)this->start()) ) : ( (e.start() < (int)this->start()) && (e.stop() > (int)this->end()) ) );
+		bool is_jump( e.is_jump() ), backward( e.start() > e.stop() ), start_in_seg( e.start() >= this->start() && e.start() <= this->end() ), stop_in_seg( e.stop() >= this->start() && e.stop() <= this->end() );
+		bool span( backward ? ( (e.start() > this->end()) && (e.stop() < this->start()) ) : ( (e.start() < this->start()) && (e.stop() > this->end()) ) );
 		//tr << "regmindebug dealing with edge from " << e->start() << " to " << e->stop() << " with label " << e->label() << " backward is " << backward << ", span is " << span << ", start_in_seg is " << start_in_seg << ", stop in seg is " << stop_in_seg << ", is_jump is " << is_jump << std::endl;
 
 		//edges only in the segment will be discarded

@@ -449,7 +449,7 @@ MgHydrater::setup_virtual_waters_around_magnesiums( pose::Pose & pose )
 		// now go through each mg(2+), and fix up fold tree for waters bound to it already.
 		vector1< Size > const & water_ligands = mg_water_map[ mg_res ];
 		for ( Size const water_res : water_ligands ) {
-			if ( pose.fold_tree().get_parent_residue( water_res ) != int( mg_res ) ) {
+			if ( pose.fold_tree().get_parent_residue( water_res ) != mg_res ) {
 				fix_water_jump( pose, mg_res, water_res );
 			}
 		}

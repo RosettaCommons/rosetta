@@ -328,44 +328,44 @@ void    Xfrag::ex1     (Real    _ex1     ) { ex1_      = real_to_uint8(_ex1,   0
 void    Xfrag::ex2     (Real    _ex2     ) { ex2_      = real_to_uint8(_ex2,   0.0, 1.0 ); }
 void    Xfrag::ex3     (Real    _ex3     ) { ex3_      = real_to_uint8(_ex3,   0.0, 1.0 ); }
 void    Xfrag::ex4     (Real    _ex4     ) { ex4_      = real_to_uint8(_ex4,   0.0, 1.0 ); }
-void    Xfrag::insert (Pose & pose, vector1<Xfres> const & xfres, int lowres, int highres) const {
-	int cutres=0;
-	for ( int ic=1; ic <= pose.fold_tree().num_cutpoint(); ++ic ) {
-		int c = pose.fold_tree().cutpoint(ic);
+void    Xfrag::insert (Pose & pose, vector1<Xfres> const & xfres, Size lowres, Size highres) const {
+	Size cutres=0;
+	for ( Size ic=1; ic <= pose.fold_tree().num_cutpoint(); ++ic ) {
+		Size c = pose.fold_tree().cutpoint(ic);
 		if ( c < lowres || c >= highres ) continue;
 		if ( cutres ) utility_exit_with_message("more than one cutpoint in insertion");
 		cutres = c;
 	}
 	if ( !cutres ) utility_exit_with_message("must be a cutpoint in inertion");
 	core::kinematics::FoldTree ft( pose.fold_tree() );
-	for ( int ij=1; ij <= (int)pose.num_jump(); ++ij ) {
-		int ur = pose.fold_tree().upstream_jump_residue(ij);
-		int dr = pose.fold_tree().downstream_jump_residue(ij);
+	for ( Size ij=1; ij <= pose.num_jump(); ++ij ) {
+		Size ur = pose.fold_tree().upstream_jump_residue(ij);
+		Size dr = pose.fold_tree().downstream_jump_residue(ij);
 		if ( lowres < ur && ur <= cutres  ) { ft.slide_jump(ij, lowres, dr);      cout << "ft.slide_jump("<<ij<<", "<<lowres   <<", "<<dr<<");" << endl; }
 		if ( lowres < dr && dr <= cutres  ) { ft.slide_jump(ij, ur, lowres);      cout << "ft.slide_jump("<<ij<<", "<<ur       <<", "<<lowres<<");" << endl; }
 		if ( cutres < ur && ur <= highres ) { ft.slide_jump(ij, highres+1, dr);   cout << "ft.slide_jump("<<ij<<", "<<highres+1<<", "<<dr<<");" << endl; }
 		if ( cutres < dr && dr <= highres ) { ft.slide_jump(ij, ur, highres+1);   cout << "ft.slide_jump("<<ij<<", "<<ur       <<", "<<highres+1<<");" << endl; }
 		cout << ft;
-		for ( int i=1; i<=(int)ft.nres(); ++i ) cout << i << " " << ft.is_jump_point(i) << endl;
+		for ( Size i=1; i<=ft.nres(); ++i ) cout << i << " " << ft.is_jump_point(i) << endl;
 	}
 	ft.slide_cutpoint(cutres, highres);
 	ft.reorder(1);
 	cout << ft;
-	for ( int i=1; i<=(int)ft.nres(); ++i ) cout << i << " " << ft.is_jump_point(i) << endl;
+	for ( Size i=1; i<= ft.nres(); ++i ) cout << i << " " << ft.is_jump_point(i) << endl;
 	cout << "OLD " << pose.fold_tree();
 	pose.fold_tree(ft);
 	cout << "NEW " << pose.fold_tree();
 
-	for ( int ir=lowres+1; ir <= highres; ++ir ) {
+	for ( Size ir=lowres+1; ir <= highres; ++ir ) {
 		cout << pose.fold_tree();
 		cout << "delete " << lowres+1 << endl;
 		pose.delete_polymer_residue(lowres+1);
 	}
 	core::conformation::ResidueOP dummyres = core::conformation::ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "GLY" ) );
-	for ( int ir=2; ir <= (int)size(); ++ir ) pose.append_polymer_residue_after_seqpos(*dummyres,lowres-2+ir,true);
+	for ( Size ir=2; ir <= size(); ++ir ) pose.append_polymer_residue_after_seqpos(*dummyres,lowres-2+ir,true);
 	vector1<Xfres>::const_iterator ifrag = xfres.begin() + position();
-	for ( int ir=1; ir <= (int)size(); ++ir,++ifrag ) {
-		int resno = lowres+ir-1;
+	for ( Size ir=1; ir <= size(); ++ir,++ifrag ) {
+		Size resno = lowres+ir-1;
 		pose.set_phi  (resno,ifrag->phi());
 		pose.set_psi  (resno,ifrag->psi());
 		pose.set_omega(resno,ifrag->omg());

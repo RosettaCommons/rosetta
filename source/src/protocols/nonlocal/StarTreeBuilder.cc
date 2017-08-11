@@ -77,8 +77,8 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	virtual_res_ = pose->size();
 
 	// Define jumps, cuts
-	vector1<int> cuts;
-	vector1<std::pair<int, int> > jumps;
+	vector1< Size > cuts;
+	vector1<std::pair<Size, Size> > jumps;
 	for ( auto const & chunk : chunks ) {
 		const Size cut_point  = chunk.stop();
 		const Size jump_point = choose_anchor_position(chunk);
@@ -91,13 +91,13 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	// (before the virtual residue)
 	cuts.push_back(num_residues);
 
-	ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
+	ObjexxFCL::FArray2D< Size > ft_jumps(2, jumps.size());
 	for ( Size i = 1; i <= jumps.size(); ++i ) {
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
-	ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
+	ObjexxFCL::FArray1D< Size > ft_cuts(cuts.size());
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 		ft_cuts(i) = cuts[i];
 	}

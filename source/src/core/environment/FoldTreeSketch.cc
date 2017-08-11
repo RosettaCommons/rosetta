@@ -199,22 +199,22 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 	}
 
 	// Populate the stupid FCL arrays for use in the fold tree constructor thing.
-	ObjexxFCL::FArray1D_int cut_array( (int) cuts.size() );
-	ObjexxFCL::FArray2D_int jump_array( 2, (int) jumps.size() );
+	ObjexxFCL::FArray1D< Size > cut_array( cuts.size() );
+	ObjexxFCL::FArray2D< Size > jump_array( 2, jumps.size() );
 
 	auto jump_it = jumps.begin();
 	auto cut_it = cuts.begin();
-	for ( int i = 1; i <= (int) jumps.size(); ++i ) {
-		cut_array(i) = (int) *cut_it;
-		jump_array( 1, i ) = (int) jump_it->first;
-		jump_array( 2, i ) = (int) jump_it->second;
+	for ( Size i = 1; i <= jumps.size(); ++i ) {
+		cut_array(i) = *cut_it;
+		jump_array( 1, i ) = jump_it->first;
+		jump_array( 2, i ) = jump_it->second;
 
 		++cut_it;
 		++jump_it;
 	}
 
 	// With everything set up, now the fold tree method can be used.
-	bool success = ft.tree_from_jumps_and_cuts( (int) nodes_.size(), (int) jumps.size(),
+	bool success = ft.tree_from_jumps_and_cuts( nodes_.size(), jumps.size(),
 		jump_array, cut_array);
 	if ( !success ) {
 		throw EXCN_FTSketchGraph( "FoldTree generation was not successful." );

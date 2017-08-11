@@ -18,6 +18,7 @@
 
 // Unit headers
 #include <core/kinematics/Edge.fwd.hh>
+#include <core/types.hh>
 
 // In a perfect world, I would ifdef for Windows PyRosetta. A perfect world this isn't.
 #include <string>
@@ -53,7 +54,7 @@ public:
 
 	/// @brief start vertex, return by value
 	inline
-	int
+	core::Size
 	start() const
 	{
 		return start_;
@@ -61,7 +62,7 @@ public:
 
 	/// @brief start vertex, return by reference
 	inline
-	int &
+	core::Size &
 	start()
 	{
 		return start_;
@@ -70,7 +71,7 @@ public:
 
 	/// @brief stop vertex, return by value
 	inline
-	int
+	core::Size
 	stop() const
 	{
 		return stop_;
@@ -78,7 +79,7 @@ public:
 
 	/// @brief stop vertex, return by reference
 	inline
-	int &
+	core::Size &
 	stop()
 	{
 		return stop_;
@@ -259,7 +260,7 @@ public:
 	{}
 
 	/// @brief constructor without atomno info
-	Edge( int const start_in, int const stop_in, int const label_in):
+	Edge( core::Size const start_in, core::Size const stop_in, int const label_in):
 		start_( start_in ),
 		stop_( stop_in ),
 		label_( label_in ),
@@ -271,7 +272,7 @@ public:
 
 	/// @brief CHEMICAL Edge constructor (requires atomno info) -- note: a chemical
 	/// edge may be built from any constructor, this one is for convenience only
-	Edge( int const start_in, int const stop_in, std::string  start_atom, std::string  stop_atom ):
+	Edge( core::Size const start_in, core::Size const stop_in, std::string  start_atom, std::string  stop_atom ):
 		start_( start_in ),
 		stop_( stop_in ),
 		label_( CHEMICAL ),
@@ -282,7 +283,7 @@ public:
 
 	/// @brief JUMP Edge constructor (requires atomno info) -- note: a chemical
 	/// edge may be built from any constructor, this one is for convenience only
-	Edge( int const start_in, int const stop_in, int label,
+	Edge( core::Size const start_in, core::Size const stop_in, int label,
 		std::string  start_atom, std::string  stop_atom,
 		bool bKeepStubInResidue ):
 		start_( start_in ),
@@ -317,9 +318,9 @@ private:
 	// data
 
 	/// start vertex (residue)
-	int start_;
+	core::Size start_;
 	/// stop vertex (residue)
-	int stop_;
+	core::Size stop_;
 	/// type of the edge, continuous segement(-1) or rigid-body jump(1,2,...)
 	int label_;
 	/// start atom

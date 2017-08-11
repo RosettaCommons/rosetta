@@ -358,7 +358,7 @@ void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 		if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
 
 			bool is_cut = false;
-			for ( int ic=1; ic<=pose.fold_tree().num_cutpoint() ; ++ic ) {
+			for ( core::Size ic=1; ic<=pose.fold_tree().num_cutpoint() ; ++ic ) {
 				core::Size cutpoint = pose.fold_tree().cutpoint(ic);
 				if ( ir == cutpoint ) {
 					is_cut = true;
@@ -579,14 +579,14 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	TR.Debug << "jump size: " << jumps.size() << " cut size: " << cuts.size() << std::endl;
 
-	ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
+	ObjexxFCL::FArray2D< Size > ft_jumps(2, jumps.size());
 	for ( Size i = 1; i <= jumps.size(); ++i ) {
 		TR.Debug << "jump " << i << " " << jumps[i].first << " " << jumps[i].second << std::endl;
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
-	ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
+	ObjexxFCL::FArray1D< Size > ft_cuts(cuts.size());
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 		TR.Debug << "cut " << i << " " << cuts[i] << std::endl;
 		ft_cuts(i) = cuts[i];
@@ -634,7 +634,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		utility::vector1< core::Size > jump_points;
 		core::kinematics::FoldTree const const_tree( tree );
 		for ( auto const & it : const_tree ) {
-			if ( it.start() == (int)jump_root ) jump_points.push_back(it.stop());
+			if ( it.start() == jump_root ) jump_points.push_back(it.stop());
 		}
 		for ( core::Size i=1; i<=jump_points.size(); ++i ) {
 			std::set< std::pair< core::Size, core::Size > > remove; // keep track of edges to replace
@@ -642,12 +642,12 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			core::kinematics::FoldTree const const_new_tree( tree );
 			for ( auto it = const_new_tree.begin(), it_end = const_new_tree.end(); it != it_end; ++it ) {
 				std::set< std::pair< core::Size, core::Size > > remove_tmp;
-				if ( it->start() == (int)jump_points[i] && it->label() == core::kinematics::Edge::PEPTIDE ) {
+				if ( it->start() == jump_points[i] && it->label() == core::kinematics::Edge::PEPTIDE ) {
 					core::Size start = it->start();
 					core::Size stop = it->stop();
 					remove_tmp.insert(std::pair< core::Size, core::Size >( start, stop ));
 					for ( auto jt = it+1, jt_end = const_new_tree.end(); jt != jt_end; ++jt ) {
-						if ( jt->start() == (int)stop && jt->label() == core::kinematics::Edge::PEPTIDE ) {
+						if ( jt->start() == stop && jt->label() == core::kinematics::Edge::PEPTIDE ) {
 							stop = jt->stop();
 							remove_tmp.insert(std::pair< core::Size, core::Size >( jt->start(), jt->stop() ));
 						}

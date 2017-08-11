@@ -144,11 +144,11 @@ private:
 	core::Real translation_mag_;
 	core::Real rb_mover_stage1_weight_;
 	core::pose::Pose current_pose_;
-	int nres_;
+	core::Size nres_;
 	core::Size njumps_;
-	ObjexxFCL::FArray2D_int jump_array_;
-	ObjexxFCL::FArray1D_int cuts_;
-	int topology_root_res_;
+	ObjexxFCL::FArray2D< Size > jump_array_;
+	ObjexxFCL::FArray1D< Size > cuts_;
+	core::Size topology_root_res_;
 	core::Size tmhelix_;
 };
 } // namespace topology_broker

@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
 		using namespace basic::options::OptionKeys;
 		using basic::options::option;
-
+		using core::Size;
 
 		//pose is read in from PDB for now
 		utility::vector0<std::string> pdbs;
@@ -168,13 +168,13 @@ int main(int argc, char* argv[])
 			//Make an array of start and end points of loops where we can cut. Needed by FoldTree::random_tree_from_jump_points();
 			// initialize some variables for setting up loops array
 			core::Size span_index = 1;
-			ObjexxFCL::FArray1D_int previous_span_begin((nspan-1),0);
-			ObjexxFCL::FArray1D_int previous_span_end((nspan-1),0);
-			ObjexxFCL::FArray1D_int span_begin((nspan-1),0);
-			ObjexxFCL::FArray1D_int span_end((nspan-1),0);
-			ObjexxFCL::FArray2D_int cut_loops(2,num_cut_loops);
-			ObjexxFCL::FArray1D_int loop_begin(num_cut_loops,0);
-			ObjexxFCL::FArray1D_int loop_end(num_cut_loops,0);
+			ObjexxFCL::FArray1D< Size > previous_span_begin((nspan-1));
+			ObjexxFCL::FArray1D< Size > previous_span_end((nspan-1));
+			ObjexxFCL::FArray1D< Size > span_begin((nspan-1));
+			ObjexxFCL::FArray1D< Size > span_end((nspan-1));
+			ObjexxFCL::FArray2D< Size > cut_loops(2,num_cut_loops);
+			ObjexxFCL::FArray1D< Size > loop_begin(num_cut_loops);
+			ObjexxFCL::FArray1D< Size > loop_end(num_cut_loops);
 
 			// set up cut loops array
 			for ( span_index = 1; span_index <= nspan-1; ++span_index ) {

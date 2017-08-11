@@ -90,8 +90,8 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	core::kinematics::FoldTree f(nres);
 	Size tries(0);
 	core::scoring::MembraneTopology const & topology(*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
-	FArray1D_int tmh(pose.size());
-	FArray1D_int tmh2(pose.size(),0);
+	FArray1D< Size > tmh(pose.size());
+	FArray1D< Size > tmh2(pose.size());
 	Size total_tmhelix(topology.tmhelix());
 	FArray1D_bool tmh_involved_in_jump(total_tmhelix,false);
 
@@ -118,7 +118,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	}
 
 	while ( selected_pairings_.size()<njumps && tries < 10 ) {
-		Size index=static_cast< int >(numeric::random::rg().uniform()*pairings_.size()+1);
+		Size index = numeric::random::rg().uniform()*pairings_.size()+1;
 		std::cout << "Tries : " << tries << " " << index << ' ' << pairings_[index].Pos1()  << ' ' << tmh(pairings_[index].Pos1()) << ' ' << pairings_[index].Pos2() << ' ' << tmh(pairings_[index].Pos2()) <<std::endl;
 		bool check_compatible=true;
 
@@ -145,7 +145,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	if ( selected_pairings_.size()<njumps ) {
 		tr.Warning << "Only picked " << selected_pairings_.size() << " given number was " << njumps << " only allow one jump between any two TMHs " << std::endl;
 	}
-	FArray2D_int jumps(2,selected_pairings_.size());
+	FArray2D< Size > jumps(2,selected_pairings_.size());
 	for ( Size i=1; i<=selected_pairings_.size(); ++i ) {
 		jumps(1,i)=selected_pairings_[i].Pos1();
 		jumps(2,i)=selected_pairings_[i].Pos2();
@@ -157,7 +157,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 		}
 	}
 
-	int num_jumps_in=selected_pairings_.size();
+	Size num_jumps_in=selected_pairings_.size();
 	f.random_tree_from_jump_points(nres,num_jumps_in,jumps,cut_bias);
 	f.put_jump_stubs_intra_residue();
 

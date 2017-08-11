@@ -1784,8 +1784,8 @@ get_tree( Size const nres,
 	Size const num_cuts = cuts.size();
 
 	FoldTree f;
-	ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
-	ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
+	ObjexxFCL::FArray2D< Size > jump_point_( 2, num_cuts );
+	ObjexxFCL::FArray1D< Size > cuts_( num_cuts );
 	for ( Size i = 1; i <= num_cuts; i++ ) {
 		jump_point_( 1, i ) = std::min( jump_partners1[ i ], jump_partners2[ i ] );
 		jump_point_( 2, i ) = std::max( jump_partners1[ i ], jump_partners2[ i ] );

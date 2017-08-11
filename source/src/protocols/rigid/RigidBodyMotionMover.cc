@@ -83,7 +83,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 		return;
 	}
 
-	unsigned i = numeric::random::random_range(1, chunks_.size());
+	Size i = numeric::random::random_range(1, chunks_.size());
 	Jump jump = pose.jump(i);
 
 	// rotation
@@ -108,7 +108,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 	pose.set_jump(i, jump);
 }
 
-void RigidBodyMotionMover::compute_bias(unsigned i, const core::pose::Pose& pose, numeric::xyzVector<double>* bias) const {
+void RigidBodyMotionMover::compute_bias(Size i, const core::pose::Pose& pose, numeric::xyzVector<double>* bias) const {
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
 	using protocols::loops::Loop;
@@ -150,9 +150,9 @@ void RigidBodyMotionMover::compute_bias(unsigned i, const core::pose::Pose& pose
 void RigidBodyMotionMover::update_chunks() {
 	chunks_.clear();
 
-	unsigned start = 1;
-	for ( int i = 1; i <= tree_.num_cutpoint(); ++i ) {
-		unsigned stop = tree_.cutpoint(i);
+	Size start = 1;
+	for ( Size i = 1; i <= tree_.num_cutpoint(); ++i ) {
+		Size stop = tree_.cutpoint(i);
 		chunks_.add_loop(protocols::loops::Loop(start, stop));
 		start = stop + 1;
 	}

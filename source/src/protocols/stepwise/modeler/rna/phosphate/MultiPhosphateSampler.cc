@@ -142,7 +142,7 @@ MultiPhosphateSampler::initialize_phosphate_move_list( pose::Pose & pose ){
 					!cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) &&
 					!pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) &&
 					!pose.residue_type( n ).has_variant_type( "VIRTUAL_PHOSPHATE" ) ) {
-				if ( static_cast<int>( n ) == pose.fold_tree().root() ) {
+				if ( n == pose.fold_tree().root() ) {
 					// Note -- how to fix this? The only way would be to have the fold tree start inside the residue, e.g.
 					// at the base, rather than at phosphate. In current Rosetta, the only way to do that is to create a
 					// separate virtual residue, and have a jump into this 'root' residue. Sigh.

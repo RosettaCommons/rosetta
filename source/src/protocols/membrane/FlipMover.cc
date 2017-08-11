@@ -237,8 +237,8 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 	TR << "membrane res: " << pose.conformation().membrane_info()->membrane_rsd_num() << std::endl;
 
 	// if jump is not membrane jump
-	if ( foldtree.upstream_jump_residue( jump_num_ ) != int( mem_rsd ) &&
-			foldtree.downstream_jump_residue( jump_num_ ) != int( mem_rsd ) ) {
+	if ( foldtree.upstream_jump_residue( jump_num_ ) != mem_rsd &&
+			foldtree.downstream_jump_residue( jump_num_ ) != mem_rsd ) {
 
 		TR << "jump is not membrane jump" << std::endl;
 

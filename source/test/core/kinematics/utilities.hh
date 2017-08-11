@@ -21,6 +21,7 @@
 
 // Core headers
 #include <core/kinematics/FoldTree.hh>
+#include <core/types.hh>
 
 // C++ headers
 #include <iostream>
@@ -28,7 +29,7 @@
 #include <iomanip>
 
 void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1
-	core::kinematics::FoldTree const & tree, int start, int stop, bool jump=false) {
+	core::kinematics::FoldTree const & tree, core::Size start, core::Size stop, bool jump=false) {
 
 	for ( core::kinematics::Edge const & edge : tree ) {
 		bool start_matches = (edge.start() == start);
@@ -36,7 +37,7 @@ void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1
 		bool jump_matches = (edge.is_jump() == jump);
 
 		// If all these conditions are met, the edge was found and the test passes.
-		if ( start_matches and stop_matches and jump_matches ) return;
+		if ( start_matches && stop_matches && jump_matches ) return;
 	}
 
 	// If no matching edge was found, the test fails.
@@ -51,7 +52,7 @@ void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1
 }
 
 void TS_ASSERT_FOLD_TREE_HAS_JUMP( // {{{1
-	core::kinematics::FoldTree const & tree, int start, int stop) {
+	core::kinematics::FoldTree const & tree, core::Size start, core::Size stop) {
 
 	TS_ASSERT_FOLD_TREE_HAS_EDGE(tree, start, stop, true);
 }

@@ -240,7 +240,7 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 
 		// if start and stop are jump-residues this is an internal peptide edge!
 		if ( my_start > 0 && my_stop > 0 ) {
-			Size dd = node_dist_( my_start, my_stop ) = std::abs( it.start() - it.stop() );
+			Size dd = node_dist_( my_start, my_stop ) = std::abs( int( it.start() ) - int( it.stop() ) );
 			node_dist_( my_stop, my_start ) = dd;
 		};
 	} // for fold-tree edges
@@ -303,7 +303,7 @@ ShortestPathInFoldTree::build_peptide_table( core::kinematics::FoldTree const& f
 		if ( start_jump < 0 ) leaves.push_back( it->start() );
 		if ( stop_jump < 0 ) leaves.push_back( it->stop() );
 		if ( !it->is_jump() ) { // a peptide edge
-			for ( int seqpos = std::min(it->start(),it->stop()); seqpos<=std::max( it->stop(),it->start() ); seqpos++ ) {
+			for ( Size seqpos = std::min(it->start(),it->stop()); seqpos<=std::max( it->stop(),it->start() ); seqpos++ ) {
 				res2jumps_( seqpos, 1 ) = edge_nr;
 				res2jumps_( seqpos, 2 ) = start_jump;
 				res2jumps_( seqpos, 3 ) = std::abs( (int) seqpos - (int) it->start() );

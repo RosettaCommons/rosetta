@@ -279,7 +279,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, cutpt);
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, cutpt + 1);
 
-		if ( static_cast<int>(stop) == edge.stop() ) break; // cast the stop as an int
+		if ( stop == edge.stop() ) break; // cast the stop as an int
 		start= interface.find_start_of_next_interface_region(stop+1,  edge.stop());
 	}
 	return loops;

@@ -78,7 +78,7 @@ void BiasedFragmentMover::initialize_probabilities() {
 void BiasedFragmentMover::verify_probabilities_or_die(const core::kinematics::FoldTree& tree) const {
 	const unsigned fragment_len = fragments_->max_frag_length();
 
-	for ( int i = 1; i <= tree.num_cutpoint(); ++i ) {
+	for ( Size i = 1; i <= tree.num_cutpoint(); ++i ) {
 		const unsigned cutpoint = tree.cutpoint(i);
 
 		// In order to avoid folding across the cut, certain residues must have zero probability of selection

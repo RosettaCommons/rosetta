@@ -307,7 +307,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		ncuts +=1;
 	}
 
-	ObjexxFCL::FArray1D_int fcuts ( ncuts );
+	ObjexxFCL::FArray1D< Size > fcuts ( ncuts );
 	for ( int i=1; i<=(int)f_in.num_cutpoint(); ++i ) {
 		fcuts(i) = f_in.cutpoint(i);
 	}
@@ -315,7 +315,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		fcuts(ncuts) = resstart_;
 	}
 	// reshuffle the foldtree
-	ObjexxFCL::FArray2D_int fjumps( 2, ncuts );
+	ObjexxFCL::FArray2D< Size > fjumps( 2, ncuts );
 	for ( int i=1; i<=ncuts; ++i ) {
 		int cut_i = (int) fcuts(i);
 
@@ -330,10 +330,10 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 				fjumps(2,i) = cut_i+minmelt_right+1;
 			}
 		}
-		if ( fjumps(1,i) >resstart_-(int)minmelt_left && fjumps(1,i)<=resstart_ ) fjumps(1,i)=resstart_-(int)minmelt_left;
-		if ( fjumps(2,i) >resstart_-(int)minmelt_left && fjumps(2,i)<=resstart_ ) fjumps(2,i)=resstart_-(int)minmelt_left;
-		if ( fjumps(1,i) >resstart_ && fjumps(1,i)<resstart_+(int)minmelt_right+1 ) fjumps(1,i)=resstart_+(int)minmelt_right;
-		if ( fjumps(2,i) >resstart_ && fjumps(2,i)<resstart_+(int)minmelt_right+1 ) fjumps(2,i)=resstart_+(int)minmelt_right;
+		if ( int(fjumps(1,i)) >resstart_-(int)minmelt_left && int(fjumps(1,i))<=resstart_ ) fjumps(1,i)=resstart_-(int)minmelt_left;
+		if ( int(fjumps(2,i)) >resstart_-(int)minmelt_left && int(fjumps(2,i))<=resstart_ ) fjumps(2,i)=resstart_-(int)minmelt_left;
+		if ( int(fjumps(1,i)) >resstart_ && int(fjumps(1,i))<resstart_+(int)minmelt_right+1 ) fjumps(1,i)=resstart_+(int)minmelt_right;
+		if ( int(fjumps(2,i)) >resstart_ && int(fjumps(2,i))<resstart_+(int)minmelt_right+1 ) fjumps(2,i)=resstart_+(int)minmelt_right;
 
 		// fcuts(i) = f_in.cutpoint(i);
 		TRACER << "fjumps and fcuts " << i << " " << fjumps(1,i) << "," << fjumps(2,i) << "," << fcuts(i) << std::endl;
@@ -350,7 +350,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	int tgt_jump = 0;
 	if ( !is_nterm && !is_cterm ) {
 		for ( int i=1; i<=(int)pose.fold_tree().num_jump() && tgt_jump==0; ++i ) {
-			if ( pose.fold_tree().cutpoint_by_jump(i) == resstart_ ) tgt_jump=i;
+			if ( pose.fold_tree().cutpoint_by_jump(i) == Size( resstart_ ) ) tgt_jump=i;
 		}
 		runtime_assert (tgt_jump != 0);
 	}

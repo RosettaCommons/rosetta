@@ -135,8 +135,8 @@ get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< boo
 	FoldTree new_fold_tree( fold_tree.nres() );
 	new_fold_tree.clear();
 
-	int original_root( fold_tree.root() ); // The root of the original fold_tree
-	int other_root(0); // The root for the other side
+	Size original_root( fold_tree.root() ); // The root of the original fold_tree
+	Size other_root(0); // The root for the other side
 
 	bool root_color( residues[ original_root ] );
 	core::Size dividing_jump(0); // The jump which connects the two sets
@@ -237,10 +237,10 @@ get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< boo
 			} else {
 				// Have to make new edges
 				int dir = ( edge.start() <= edge.stop() ) ? 1 : -1;
-				int new_edge_start( edge.start() );
-				int off_edge_end( 0 );
+				Size new_edge_start( edge.start() );
+				Size off_edge_end( 0 );
 				// We've already built the start with the jump here. Figure out the rest of the items
-				for ( int ii( edge.start() + dir ); ii != (edge.stop() + dir); ii += dir ) {
+				for ( Size ii( edge.start() + dir ); ii != (edge.stop() + dir); ii += dir ) {
 					if ( residues[ ii ] == residues[ ii - dir ] ) { // Same side as previous residue
 						if ( ii == edge.stop() && ii != new_edge_start ) {
 							// One last peptide edge
@@ -250,7 +250,7 @@ get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< boo
 						continue;
 					}
 					// Transition. Need to make an edge so far, and then a jump to the new residue
-					int new_edge_end( ii - dir );
+					Size new_edge_end( ii - dir );
 					if ( new_edge_end != new_edge_start  ) { // Don't make peptide edge for single residue
 						TR << "Making new peptide edge " << edge << std::endl;
 						new_fold_tree.add_edge( new_edge_start, new_edge_end, Edge::PEPTIDE );
@@ -576,7 +576,7 @@ struct TreeVizBuilder {
 	get_ft_node_bounds( Size res, Size & out_lb, Size & out_ub ) {
 		if ( lb_[ res ] == 0 ) {
 			lb_[ res ] = 1, ub_[ res ] = ft.nres();
-			for ( int i = 1; i <= ft.num_cutpoint(); ++i ) {
+			for ( Size i = 1; i <= ft.num_cutpoint(); ++i ) {
 				Size c = ( Size ) ft.cutpoint( i );
 				if ( c <  res ) lb_[ res ] = std::max( lb_[ res ], c + 1 );
 				if ( c >= res ) ub_[ res ] = std::min( ub_[ res ], c     );

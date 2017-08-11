@@ -235,8 +235,8 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 		}
 	}
 
-	ObjexxFCL::FArray2D_int fjumps( 2, jumps.size() );
-	ObjexxFCL::FArray1D_int fcuts ( cuts.size() );
+	ObjexxFCL::FArray2D< Size > fjumps( 2, jumps.size() );
+	ObjexxFCL::FArray1D< Size > fcuts ( cuts.size() );
 	for ( Size i=1; i<=jumps.size(); ++i ) {
 		fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
 		fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );
@@ -353,8 +353,8 @@ setup_disconnected( core::pose::Pose & pose ) {
 		}
 	}
 
-	ObjexxFCL::FArray2D_int fjumps( 2, jumps.size() );
-	ObjexxFCL::FArray1D_int fcuts ( cuts.size() );
+	ObjexxFCL::FArray2D< Size > fjumps( 2, jumps.size() );
+	ObjexxFCL::FArray1D< Size > fcuts ( cuts.size() );
 	for ( Size i=1; i<=jumps.size(); ++i ) {
 		fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
 		fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );

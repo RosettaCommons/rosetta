@@ -333,8 +333,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		num_cuts_total );
 
 	////////////////////////////////////////////////////////////////////////
-	ObjexxFCL::FArray2D <int> jump_points( 2, num_pairings_to_force );
-	ObjexxFCL::FArray1D <int> cuts( num_pairings_to_force );
+	ObjexxFCL::FArray2D< Size > jump_points( 2, num_pairings_to_force );
+	ObjexxFCL::FArray1D< Size > cuts( num_pairings_to_force );
 
 	//////////////////////////////////////////////////////////////////////
 	// If a cut needs to be randomly chosen, will generally try to
@@ -442,7 +442,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		////////////////////////////////////////////////////////////////////////////////
 		// Do it, get the fold tree. and set up the pose.
 		////////////////////////////////////////////////////////////////////////////////
-		std::vector< int > obligate_cut_points_reformat;
+		std::vector< Size > obligate_cut_points_reformat;
 		for ( Size q = 1; q <= obligate_cut_points.size(); q++ ) obligate_cut_points_reformat.push_back( obligate_cut_points[q] );
 
 		// TR << TR.Cyan << "Making attempt " << ntries << std::endl;

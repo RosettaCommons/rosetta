@@ -573,8 +573,8 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 	debug_assert( cuts_.size() == jump_partners_.size() );
 	Size const num_cuts( cuts_.size() );
 
-	ObjexxFCL::FArray2D< int > jump_point( 2, num_cuts, 0 );
-	ObjexxFCL::FArray1D< int > cuts( num_cuts, 0 );
+	ObjexxFCL::FArray2D< Size > jump_point( 2, num_cuts );
+	ObjexxFCL::FArray1D< Size > cuts( num_cuts );
 
 	for ( Size i = 1; i <= num_cuts; i++ ) {
 		TR.Debug << "Upstream   jump_point= " << jump_partners_[i].first;

@@ -206,11 +206,11 @@ public:
 		return njump_;
 	}
 
-	ObjexxFCL::FArray2D_int const& jumps() const {
+	ObjexxFCL::FArray2D< core::Size > const& jumps() const {
 		return jumps_;
 	}
 
-	ObjexxFCL::FArray1D_int const& cuts() const {
+	ObjexxFCL::FArray1D< core::Size > const& cuts() const {
 		return cuts_;
 	}
 
@@ -256,10 +256,10 @@ private:
 
 	// the latter two contain redundant information
 	core::scoring::dssp::PairingsList jump_pairings_;
-	ObjexxFCL::FArray2D_int jumps_;
+	ObjexxFCL::FArray2D< core::Size > jumps_;
 	ObjexxFCL::FArray2D< std::string > jump_atoms_;
 
-	ObjexxFCL::FArray1D_int cuts_;
+	ObjexxFCL::FArray1D< core::Size > cuts_;
 	core::kinematics::FoldTreeOP fold_tree_;
 	bool bValidTree_;
 

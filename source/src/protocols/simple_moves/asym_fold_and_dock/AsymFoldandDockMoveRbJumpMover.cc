@@ -106,9 +106,9 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 	Size num_jumps( f.num_jump() );
 	Size num_cuts( f.num_cutpoint() );
 
-	utility::vector1< int > cuts_vector( f.cutpoints() );
-	ObjexxFCL::FArray1D_int cuts( num_cuts );
-	ObjexxFCL::FArray2D_int jumps( 2, num_jumps );
+	utility::vector1< Size > cuts_vector( f.cutpoints() );
+	ObjexxFCL::FArray1D< Size > cuts( num_cuts );
+	ObjexxFCL::FArray2D< Size > jumps( 2, num_jumps );
 
 	// Initialize jumps
 	for ( Size i = 1; i<= num_jumps; ++i ) {

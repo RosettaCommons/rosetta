@@ -719,7 +719,7 @@ FoldTreeHybridize::add_strand_pairings() {
 
 	// 2. identify templates with incorrect pairings
 	utility::vector1< core::scoring::dssp::Pairing > pairings_to_add;
-	ObjexxFCL::FArray2D_int jumps = jump_sample_.jumps();
+	ObjexxFCL::FArray2D< Size > jumps = jump_sample_.jumps();
 	for ( core::Size i = 1; i <= jump_sample_.size(); ++i ) {
 		core::Size jumpres1 = jumps(1,i), jumpres2 = jumps(2,i);
 		core::scoring::dssp::Pairing pairing = jump_sample_.get_pairing( jumpres1, jumpres2 );
@@ -770,10 +770,10 @@ FoldTreeHybridize::add_strand_pairing(
 	m.apply(*pairing_pose);
 	pairing_pose->fold_tree( jump_sample_.fold_tree() );
 	jump_mover->apply_at_all_positions( *pairing_pose );
-	ObjexxFCL::FArray2D_int jumps( 2, 1 );
+	ObjexxFCL::FArray2D< Size > jumps( 2, 1 );
 	jumps(1, 1) = 1;
 	jumps(2, 1) = 2;
-	ObjexxFCL::FArray1D_int cuts(1);
+	ObjexxFCL::FArray1D< Size > cuts(1);
 	cuts(1) = 1;
 	core::kinematics::FoldTree pairing_fold_tree;
 	if ( !pairing_fold_tree.tree_from_jumps_and_cuts( 2, 1, jumps, cuts, 1, true /* verbose */ ) ) {

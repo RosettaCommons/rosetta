@@ -724,8 +724,8 @@ void
 ErraserMinimizerMover::setup_fold_tree( pose::Pose & pose ) {
 	Size const nres( pose.size() );
 	Size const num_jumps( cutpoint_list_.size() );
-	ObjexxFCL::FArray2D< int > jump_points( 2, num_jumps );
-	ObjexxFCL::FArray1D< int > cuts( num_jumps );
+	ObjexxFCL::FArray2D< Size > jump_points( 2, num_jumps );
+	ObjexxFCL::FArray1D< Size > cuts( num_jumps );
 
 	for ( Size n = 1; n <= cutpoint_list_.size(); n++ ) {
 		jump_points( 1, n ) = cutpoint_list_[n];

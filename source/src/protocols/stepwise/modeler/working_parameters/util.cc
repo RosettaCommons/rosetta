@@ -321,8 +321,8 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 
 	// if the rebuild_res is connected to anything by a jump, better not virtualize it.
 	for ( Size n = 1; n <= f.num_jump(); n++ ) {
-		if ( f.upstream_jump_residue( n )   == static_cast<int>(rebuild_res) ) return false;
-		if ( f.downstream_jump_residue( n ) == static_cast<int>(rebuild_res) ) return false;
+		if ( f.upstream_jump_residue( n )   == rebuild_res ) return false;
+		if ( f.downstream_jump_residue( n ) == rebuild_res ) return false;
 	}
 
 	if ( rebuild_res > 1 &&

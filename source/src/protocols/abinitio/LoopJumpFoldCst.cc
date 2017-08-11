@@ -316,7 +316,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 	}
 
 	Size total_njump( rigid_jumps.size() + flex_jumps.size() );
-	ObjexxFCL::FArray2D_int jumps( 2, total_njump );
+	ObjexxFCL::FArray2D< Size > jumps( 2, total_njump );
 	Size ct = 1;
 	for ( auto it = rigid_jumps.begin(), eit = rigid_jumps.end(); it !=eit; ++it, ++ct ) {
 		jumps( 1, ct ) = it->start_;

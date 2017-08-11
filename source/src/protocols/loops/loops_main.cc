@@ -423,8 +423,8 @@ void remove_cutpoint_variants(
 		}
 	} else {
 
-		for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
-			int cutpoint = pose.fold_tree().cutpoint(i);
+		for ( Size i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
+			Size cutpoint = pose.fold_tree().cutpoint(i);
 			if ( pose.residue(cutpoint).has_variant_type(CUTPOINT_LOWER) ) {
 				pose_changed = true;
 				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint );
@@ -465,7 +465,7 @@ void remove_cutpoint_variants(
 void
 add_cutpoint_variants( core::pose::Pose & pose )
 {
-	for ( int i = 1; i <= pose.fold_tree().num_cutpoint() ; ++i ) {
+	for ( Size i = 1; i <= pose.fold_tree().num_cutpoint() ; ++i ) {
 		core::uint cutpoint = pose.fold_tree().cutpoint( i );
 		add_single_cutpoint_variant( pose, cutpoint );
 	}
@@ -989,7 +989,7 @@ apply_sequence_mapping(
 		Size const nres( pose.size() );
 
 		Size segment(1);
-		utility::vector1< int > seg_anchor( num_jump+1, 0 ), seg_end;
+		utility::vector1< Size > seg_anchor( num_jump+1, 0 ), seg_end;
 		for ( Size i=1; i<= nres; ++i ) {
 			if ( mapping[i] ) {
 				if ( seg_anchor[ segment ] == 0 ) {
@@ -1002,8 +1002,8 @@ apply_sequence_mapping(
 			}
 		}
 
-		FArray2D_int jumps( 2, num_jump );
-		FArray1D_int cuts ( num_jump );
+		FArray2D< Size > jumps( 2, num_jump );
+		FArray1D< Size > cuts ( num_jump );
 		for ( Size i=1; i<= num_jump; ++i ) {
 			jumps(1,i) = seg_anchor[1];
 			jumps(2,i) = seg_anchor[i+1];

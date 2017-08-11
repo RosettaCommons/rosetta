@@ -805,8 +805,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		//debug
 		//std::cout << "num cuts: " << cuts.size() << " num jumps: " << jumps.size() << std::endl;
 		//translate:
-		ObjexxFCL::FArray1D_int Fcuts( num_jumps_pre_processing);
-		ObjexxFCL::FArray2D_int Fjumps(2, num_jumps_pre_processing);
+		ObjexxFCL::FArray1D< Size > Fcuts( num_jumps_pre_processing);
+		ObjexxFCL::FArray2D< Size > Fjumps(2, num_jumps_pre_processing);
 
 		for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
 			//std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
