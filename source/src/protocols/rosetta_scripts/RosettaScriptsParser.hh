@@ -19,6 +19,7 @@
 // Unit Headers
 #include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
+#include <protocols/rosetta_scripts/XmlObjects.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.fwd.hh>
@@ -91,51 +92,50 @@ public:
 
 	~RosettaScriptsParser() override;
 
-	///@brief
-	///  Main, Basic XML to Mover Function.
-	///
+	/// @brief Convenience function to construct a ParsedProtocol from a file
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
+	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
 	generate_mover_and_apply_to_pose(core::pose::Pose & pose, std::string const & xml_fname);
 
-	///@brief
-	///  Main, Basic XML to Mover Function.
-	///
-	///@details
-	///  Use XML file passed in, set modified pose variable. Use any passed in script_vars to substitute.
-	///
-	///
+	/// @brief Convenience function to construct a ParsedProtocol from a file
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
+	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
 	generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname);
 
-	///@brief
-	///  Main, Basic XML to Mover Function.
-	///
-	///@details
-	///  Use XML file passed in, set modified pose variable. Use any passed in script_vars to substitute.
-	///  Script Vars is a list of "xx=yy" to repace XML script syntax %%xx%%.
-	///
+	/// @brief Convenience function to construct a ParsedProtocol from a file
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
+	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
 	generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname,
 		utility::vector1< std::string > const & script_vars);
 
-	///@brief
-	/// Main XML to Mover function.
-	///
-	/// @details
-	///   Read XML-file from LOCAL options collection, set modified pose varialbe, and returned full ParsedProtocol Mover.
-	///
+	/// @brief Convenience function to construct a ParsedProtocol from a file
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
+	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
 	generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose);
 
-	///@brief
-	/// Main XML to Mover function.
-	///
-	/// @details
-	///   Use XML file passed in, set modified pose varialbe, and returned full ParsedProtocol Mover.
-	///
+	/// @brief Convenience function to construct a ParsedProtocol from a file
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
+	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose, std::string const & xml_fname);
+	generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose, std::string const & xml_fname,
+		XmlObjectsOP xml_objects = nullptr );
 
+	/// @brief Convenience function to construct a ParsedProtocol from a string
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
+	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	///   See also protocols::rosetta_scripts::XmlObjects
+	ParsedProtocolOP
+	generate_mover_and_apply_to_pose_xml_string(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose,
+		std::string const & xml_text, XmlObjectsOP xml_objects /* = nullptr */ );
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////
@@ -153,6 +153,17 @@ public:
 	create_tag_from_xml( std::string const & xml_fname, utility::vector1< std::string > const & script_vars );
 
 	///@brief
+	///  Create a tag from an XML string.  Read from Script Vars options from a local options collection.
+	TagCOP
+	create_tag_from_xml_string( std::string const & xml_text, utility::options::OptionCollection const & options);
+
+	///@brief
+	///  Create a tag from an XML string.  Use Script Vars bariable to do any substitutions.
+	///  Script Var String: "xx=yy" for %xx% replacement in XML script.
+	TagCOP
+	create_tag_from_xml_string( std::string const & xml_text, utility::vector1< std::string > const & script_vars );
+
+	///@brief
 	///
 	/// Create the ParsedProtocolMover for the protocol using a tag.  Set modified pose variable.
 	/// Apply to pose if needed.
@@ -168,7 +179,8 @@ public:
 		core::pose::Pose & pose,
 		bool & modified_pose,
 		utility::tag::TagCOP protocol_tag,
-		utility::options::OptionCollection const & options
+		utility::options::OptionCollection const & options,
+		XmlObjectsOP xml_objects = nullptr
 	);
 
 
@@ -184,6 +196,8 @@ public:
 	/// DELIBERATELY.  This is so that it remains a list of parent files, so that only
 	/// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
 	/// detected.
+	/// If xml_text_for_top_level is set the filename passed will not be read and instead
+	/// xml_text_for_top_level will be used as though it was the contents of the first file.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	/// @author Rocco Moretti (rmorettiase@gmail.com)
 	void
@@ -192,7 +206,8 @@ public:
 		std::string & substituted_contents, // Return-by-reference
 		utility::vector1 < std::string > filenames_encountered,
 		core::Size const recursion_level,
-		bool const do_not_recurse = false
+		bool const do_not_recurse = false,
+		std::string const & xml_text_for_top_level = ""
 	) const;
 
 
@@ -322,6 +337,15 @@ private: //Methods
 		std::string const &str,
 		core::Size const endpos
 	) const;
+
+
+	/// @brief To be called after the full xml tree has been loaded into a string from create_tag_from_xml*
+	/// @details xml_fname only used for tracer output.
+	TagCOP
+	finish_creating_tag(
+		std::string const & xml_fname,
+		utility::vector1< std::string > const & script_vars,
+		std::string const & substituted_contents ) const;
 
 
 private: //Varaibles

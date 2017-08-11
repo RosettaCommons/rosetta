@@ -495,6 +495,7 @@ sources = {
 	"rosetta_scripts" : [
 		"MultiplePoseMover",
         "RosettaScriptsParser",
+        "XmlObjects",
 	],
 
 	"rotamer_recovery" : [
@@ -931,6 +932,8 @@ testinputfiles = [
 	"rosetta_scripts/include1.xml",
 	"rosetta_scripts/include2.xml",
 	"rosetta_scripts/include3.xml",
+	"rosetta_scripts/modern_include2.xml",
+	"rosetta_scripts/modern_test1.xml",
 	"rosetta_scripts/permitted1.xml",
 	"rosetta_scripts/permitted2.xml",
 	"rosetta_scripts/prohibited1.xml",

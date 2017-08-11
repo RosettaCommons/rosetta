@@ -32,6 +32,12 @@ class MoveBeforeFilter;
 class IfThenFilter;
 
 // Types
+typedef utility::pointer::shared_ptr< TrueFilter > TrueFilterOP;
+typedef utility::pointer::shared_ptr< TrueFilter const >  TrueFilterCOP;
+
+typedef utility::pointer::shared_ptr< CompoundFilter > FalseFilterOP;
+typedef utility::pointer::shared_ptr< CompoundFilter const >  FalseFilterCOP;
+
 typedef utility::pointer::shared_ptr< CompoundFilter > CompoundFilterOP;
 typedef utility::pointer::shared_ptr< CompoundFilter const >  CompoundFilterCOP;
 

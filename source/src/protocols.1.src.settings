@@ -262,6 +262,7 @@ sources = {
 		"RosettaScriptsParser",
 		"SavePoseMover",
 		"util",
+		"XmlObjects"
 	],
 	"protocols/sasa_scores": [
 		"sasapack",

@@ -33,6 +33,8 @@ typedef utility::pointer::weak_ptr< Mover > MoverAP;
 typedef utility::pointer::weak_ptr< Mover const > MoverCAP;
 
 typedef std::map< std::string const, MoverOP > Movers_map;
+typedef utility::pointer::shared_ptr< Movers_map > Movers_mapOP;
+typedef utility::pointer::shared_ptr< Movers_map const > Movers_mapCOP;
 
 typedef std::map< std::string, std::string > MoverCache;
 typedef utility::pointer::shared_ptr< MoverCache > MoverCacheOP;
