@@ -140,6 +140,10 @@ BranchEnergy::eval_atom_derivative(
 	Vector xyz_fixed;  // where the moving atom should superimpose if the chain is no longer broken
 	bool match( false );
 
+
+	// We should catch problems below but somehow it doesn't? explicit here.
+	if ( branch_connection.res1 == 0 ) return;
+
 	// There are only 6 cases we care about; check for a match with one of them.
 
 	// If the moving atom is on the upstream (lower) side of the cutpoint,...

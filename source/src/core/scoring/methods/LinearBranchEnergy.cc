@@ -145,6 +145,8 @@ void LinearBranchEnergy::eval_atom_derivative(
 	ResidueAtomOverlaps branch_connection;
 	find_relevant_connections_onersd( pose, id.rsd(), branch_connection );
 
+	if ( branch_connection.res1 == 0 ) return;
+
 	// CASE 1: left-hand side of branch_conn (CUTPOINT_LOWER)
 	Size const residue = id.rsd();
 	if ( branch_connection.res1 == residue ) {

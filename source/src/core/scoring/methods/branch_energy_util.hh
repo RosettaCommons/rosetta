@@ -29,13 +29,13 @@ namespace methods {
 
 struct ResidueAtomOverlaps {
 
-	Size res1;
-	Size res2;
+	Size res1 = 0;
+	Size res2 = 0;
 
-	std::string res1_ovl1_overlaps;
-	std::string res1_ovl2_overlaps;
+	std::string res1_ovl1_overlaps = "";
+	std::string res1_ovl2_overlaps = "";
 
-	std::string res2_ovu1_overlaps;
+	std::string res2_ovu1_overlaps = "";
 };
 
 void
