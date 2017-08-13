@@ -94,7 +94,7 @@
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
-static basic::Tracer TR("protocols.hydrate.hydrate_functions");
+static THREAD_LOCAL basic::Tracer TR( "protocols.hydrate.hydrate_functions" );
 
 namespace protocols {
 namespace hydrate {

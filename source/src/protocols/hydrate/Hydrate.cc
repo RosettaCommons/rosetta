@@ -46,7 +46,7 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 
 // Construct tracer.
-static basic::Tracer TR("protocols.hydrate.Hydrate");
+static THREAD_LOCAL basic::Tracer TR( "protocols.hydrate.Hydrate" );
 
 namespace protocols {
 namespace hydrate {

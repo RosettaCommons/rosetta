@@ -23,15 +23,27 @@
 
 // Core Headers
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
+
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR( "apps.public.hydrate.Hydrate" );
 
 int
 main( int argc, char * argv [] )
 {
-	// initialize Rosetta
-	devel::init(argc, argv);
+	try {
 
-	protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate );
-	protocols::jd2::JobDistributor::get_instance()->go( hydrate_protocol );
+		// initialize Rosetta
+		devel::init(argc, argv);
+
+		protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate );
+		protocols::jd2::JobDistributor::get_instance()->go( hydrate_protocol );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 	return 0;
 }
