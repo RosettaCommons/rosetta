@@ -73,6 +73,8 @@ public:
 	void set_error_out_on_complex_cycles( bool const & setting ){ error_out_on_complex_cycles_ = setting; }
 	bool has_just_simple_cycles() const { return has_just_simple_cycles_; }
 
+	void set_use_6D_potential( bool const & setting ){ use_6D_potential_ = setting; }
+
 	void
 	check_loop_cycles_are_disjoint( bool const verbose = false );
 

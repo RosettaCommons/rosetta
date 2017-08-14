@@ -24,6 +24,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
 #include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -42,9 +43,9 @@ namespace loop_graph {
 /// never an instance already in use
 methods::EnergyMethodOP
 LoopCloseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new LoopCloseEnergy );
+	return methods::EnergyMethodOP( new LoopCloseEnergy( options ) );
 }
 
 ScoreTypes
@@ -56,15 +57,22 @@ LoopCloseEnergyCreator::score_types_for_method() const {
 
 
 /// c-tor
-LoopCloseEnergy::LoopCloseEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new LoopCloseEnergyCreator ) )
+LoopCloseEnergy::LoopCloseEnergy( methods::EnergyMethodOptions const & options ) :
+	parent( methods::EnergyMethodCreatorOP( new LoopCloseEnergyCreator ) ),
+	options_( options )
+{}
+
+/// copy ctor
+LoopCloseEnergy::LoopCloseEnergy( LoopCloseEnergy const & src ):
+	WholeStructureEnergy( src ),
+	options_( src.options_ )
 {}
 
 /// clone
 methods::EnergyMethodOP
 LoopCloseEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new LoopCloseEnergy );
+	return methods::EnergyMethodOP( new LoopCloseEnergy( *this ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -87,6 +95,7 @@ LoopCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 void
 LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
 	if ( !loop_graph_ ) loop_graph_ = core::scoring::loop_graph::LoopGraphOP( new scoring::loop_graph::LoopGraph );
+	loop_graph_->set_use_6D_potential( options_.loop_close_use_6D_potential() );
 	loop_graph_->update( pose );
 }
 

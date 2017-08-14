@@ -395,8 +395,9 @@ enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & a
 
 //////////////////////////////////////
 // rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA
-// this is a wrapper around another function to avoid copying code, including
-// Fang's choice of the enlarged_lj_wdepth parameter.
+//  this is a wrapper around another function to avoid copying code, including
+//  Fang's choice of the enlarged_lj_wdepth parameter.
+// NOTE: can also set through tag ENLARGE_H_LJ_WDEPTH in .wts file.
 void
 enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set ) {
 	utility::vector1< Real > lj_wdepth;
@@ -411,7 +412,7 @@ enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set ) {
 // those are ethers and probably not great hydrogen bond acceptors (except maybe in
 // catalytic transition states)
 void
-turn_off_hbonds_to_ether_oxygens( AtomTypeSet & atom_type_set ) {
+unset_acceptor_ether_oxygens( AtomTypeSet & atom_type_set ) {
 	utility::vector1< Real > lj_wdepth;
 	utility::vector1< std::string > const Oet_names = utility::tools::make_vector1( "Oet2", "Oet3" );
 	std::string property; // have to set through a string since set_property() accepts property by reference.

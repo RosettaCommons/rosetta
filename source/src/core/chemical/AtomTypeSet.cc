@@ -78,9 +78,7 @@ AtomTypeSet::AtomTypeSet( std::string const & directory ):
 	}
 	data.close();
 
-	// post processing from command-line
-	if ( option[ OptionKeys::chemical::enlarge_H_lj ] ) enlarge_h_lj_wdepth( *this );
-	if ( option[ OptionKeys::chemical::no_hbonds_to_ether_oxygens ] ) turn_off_hbonds_to_ether_oxygens( *this );
+	legacy_command_line_post_processing();
 
 	clone_atom_types_from_commandline();
 }
@@ -563,6 +561,22 @@ AtomTypeSet::read_atom_type_extra_parameters_table(
 		atom_type.set_extra_parameter(parameter_index, value);
 		++parameter_index;
 	}
+}
+
+
+/// @details Do not add anything here.
+///     These options are largely deprecated in favor of options that fine tune
+///       score terms (EnergyMethodOptions), which are better controlled than
+///       changing AtomTypeSet, which is almost a
+///       global setting in Rosetta.
+void
+AtomTypeSet::legacy_command_line_post_processing()
+{
+	if ( option[ OptionKeys::chemical::enlarge_H_lj ] ) enlarge_h_lj_wdepth( *this ); // better set
+	if ( option[ OptionKeys::chemical::no_hbonds_to_ether_oxygens ] ) {
+		utility_exit_with_message( "-no_hbonds_to_ether_oxygens is deprecated. Instead use -score:hb_exclude_ether_oxygens or, less preferred, -chemical:unset_acceptor_ether_oxygens." );
+	}
+	if ( option[ OptionKeys::chemical::unset_acceptor_ether_oxygens ] ) unset_acceptor_ether_oxygens( *this );
 }
 
 

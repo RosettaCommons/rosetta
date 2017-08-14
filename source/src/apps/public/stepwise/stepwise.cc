@@ -89,6 +89,24 @@ static THREAD_LOCAL basic::Tracer TR( "apps.public.stepwise.stepwise" );
 
 OPT_KEY( Boolean, use_legacy_stepwise_job_distributor )
 
+core::scoring::ScoreFunctionOP
+get_stepwise_score_function( OptionCollection const & option ) {
+	using namespace core::scoring;
+	ScoreFunctionOP scorefxn;
+	if ( option[ score::weights ].user() ) {
+		scorefxn = get_score_function();
+	} else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::denovo::minimize_rna ]() ) {
+		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
+	} else {
+		// force user to make a conscious choice.
+		utility_exit_with_message( "Please specify scorefunction.\n\n  Current release for RNA     : -score:weights stepwise/rna/rna_res_level_energy7beta.wts\n  Last published for RNA      : -score:weights stepwise/rna/rna_res_level_energy4.wts -restore_talaris_behavior\n  Current test for RNA/protein: -score:weights stepwise/stepwise_res_level_energy.wts\n" );
+	}
+	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) {
+		scorefxn->set_weight( atom_pair_constraint, 1.0 );
+	}
+	return scorefxn;
+}
+
 class StepWiseJobQueen : public FullModelJobQueen {
 
 public:
@@ -142,17 +160,11 @@ public:
 
 		utility::options::OptionCollection const & jo = *job_options;
 
-		bool const just_RNA = just_modeling_RNA( jo[ in::file::fasta ]() );
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 		// AMW: pass this scorefunction to the JQ
-		ScoreFunctionOP scorefxn;
+		ScoreFunctionOP scorefxn = get_stepwise_score_function( jo );
 		if ( jo[ score::weights ].user() ) scorefxn = get_score_function();
-		else if ( jo[ OptionKeys::stepwise::lores ]() && !jo[ OptionKeys::rna::denovo::minimize_rna ]() ) {
-			scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
-		} else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
-		else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
-		if ( jo[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 		// If we care about the 'viewability' of the pose, center it -- obviously this
 		// isn't super-useful unless we have a BIG starting pose where residue 1 is
@@ -233,22 +245,9 @@ stepwise_monte_carlo_legacy()
 	using namespace protocols::stepwise::monte_carlo::options;
 	using namespace utility::file;
 
-	bool const just_RNA = just_modeling_RNA( option[ in::file::fasta ]() );
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ) {
-		scorefxn = get_score_function();
-	} else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::denovo::minimize_rna ]() ) {
-		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
-	} else if ( just_RNA ) {
-		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
-	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
-	}
-	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) {
-		scorefxn->set_weight( atom_pair_constraint, 1.0 );
-	}
+	ScoreFunctionOP scorefxn = get_stepwise_score_function( option );
 
 	PoseOP native_pose, align_pose;
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -335,7 +334,7 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		NEW_OPT( use_legacy_stepwise_job_distributor, "Use the legacy RNA_MonteCarloJobDistributor", false );
+		NEW_OPT( use_legacy_stepwise_job_distributor, "Use the legacy RNA_MonteCarloJobDistributor", true );
 
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -fasta <fasta file with sequence> -s <start pdb> -input_res <input pdb1> [ -native <native pdb file> ] " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;

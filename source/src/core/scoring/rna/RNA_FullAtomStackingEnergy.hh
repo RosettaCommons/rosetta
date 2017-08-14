@@ -23,6 +23,7 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -43,7 +44,9 @@ public:
 
 public:
 
-	RNA_FullAtomStackingEnergy();
+	RNA_FullAtomStackingEnergy( methods::EnergyMethodOptions const & options );
+
+	RNA_FullAtomStackingEnergy( RNA_FullAtomStackingEnergy const & src );
 
 	/// clone
 	virtual

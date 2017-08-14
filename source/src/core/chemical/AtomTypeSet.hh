@@ -201,6 +201,10 @@ private: // helper methods for creating an atom type set from a database
 		chemical::AtomType & atom_type,
 		utility::sql_database::sessionOP db_session);
 
+	/// @brief  post processing from command-line -- deprecated, but here for backwards compatibility -- rhiju.
+	void
+	legacy_command_line_post_processing();
+
 	void
 	clone_atom_types_from_commandline();
 

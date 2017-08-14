@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/loop_graph/LoopGraph.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -44,7 +45,10 @@ public:
 public:
 
 	/// @brief Defines a loop closure energy based on FullModelInfo and pose geometry.
-	LoopCloseEnergy();
+	LoopCloseEnergy( methods::EnergyMethodOptions const & options );
+
+	/// copy ctor
+	LoopCloseEnergy( LoopCloseEnergy const & src );
 
 	/// clone
 	virtual
@@ -99,6 +103,8 @@ private:
 
 	virtual
 	core::Size version() const;
+
+	methods::EnergyMethodOptions const & options_;
 
 	mutable core::scoring::loop_graph::LoopGraphOP loop_graph_;
 

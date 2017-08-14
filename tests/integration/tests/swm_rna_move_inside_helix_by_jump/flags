@@ -9,3 +9,4 @@
 #-integration_test # leads to coarse sampling of bond & no solutions found.
 -enumerate
 -num_pose_minimize 2
+-score:weights stepwise/rna/rna_res_level_energy.wts

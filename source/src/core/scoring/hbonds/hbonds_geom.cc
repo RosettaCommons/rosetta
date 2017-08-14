@@ -915,6 +915,12 @@ hbond_compute_energy(
 		return;
 	}
 
+	// rhiju -- prevent O4', O3', O5' hbonds that aren't really seen in RNA structures. may want to separate RNA vs. DNA?
+	if ( hbondoptions.exclude_ether_oxygens() ) {
+		if ( hbt.acc_type() == hbacc_PES_DNA || hbt.acc_type() == hbacc_PES_RNA ||
+				hbt.acc_type() == hbacc_RRI_DNA || hbt.acc_type() == hbacc_RRI_RNA ) return;
+	}
+
 	// fpd -- use softmax for sp3 acceptors?
 	bool use_softmax = false;
 	if ( hbondoptions.measure_sp3acc_BAH_from_hvy() ) {

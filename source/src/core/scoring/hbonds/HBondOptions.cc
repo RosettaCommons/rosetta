@@ -83,6 +83,7 @@ HBondOptions::HBondOptions(
 	sp2_outer_width_( 0.357 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
+	exclude_ether_oxygens_( false ),
 	Mbhbond_( false ), //pba
 	mphbond_( false ), // membrane framework hbond option
 	hbond_energy_shift_( 0.0 ),
@@ -145,6 +146,7 @@ void HBondOptions::initialize_from_options( utility::options::OptionCollection c
 
 	measure_sp3acc_BAH_from_hvy_ = options[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
 	fade_energy_ = options[ OptionKeys::corrections::score::hb_fade_energy ];
+	exclude_ether_oxygens_ = options[ OptionKeys::corrections::score::hb_exclude_ether_oxygens ];
 
 	if ( options.has( OptionKeys::corrections::score::hbond_energy_shift) ) {
 		hbond_energy_shift_ = options[ OptionKeys::corrections::score::hbond_energy_shift ];
@@ -156,6 +158,7 @@ HBondOptions::list_options_read( utility::options::OptionKeyList & option_list )
 	using namespace basic::options;
 	option_list
 		+ OptionKeys::corrections::score::hb_fade_energy
+		+ OptionKeys::corrections::score::hb_exclude_ether_oxygens
 		+ OptionKeys::corrections::score::hbond_energy_shift
 		+ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy
 		+ OptionKeys::corrections::score::hb_sp2_BAH180_rise
@@ -204,6 +207,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	sp2_outer_width_ = src.sp2_outer_width_;
 	measure_sp3acc_BAH_from_hvy_ = src.measure_sp3acc_BAH_from_hvy_;
 	fade_energy_ = src.fade_energy_;
+	exclude_ether_oxygens_ = src.exclude_ether_oxygens_;
 	Mbhbond_ = src.Mbhbond_; //pba
 	mphbond_ = src.mphbond_;
 	hbond_energy_shift_ = src.hbond_energy_shift_;
@@ -295,6 +299,9 @@ HBondOptions::parse_my_tag(
 	if ( tag->hasOption( "hbonds__fade_energy" ) ) {
 		fade_energy( tag->getOption<bool>( "hbonds__fade_energy" ) );
 	}
+	if ( tag->hasOption( "hbonds__exclude_ether_oxygens" ) ) {
+		exclude_ether_oxygens( tag->getOption<bool>( "hbonds__exclude_ether_oxygens" ) );
+	}
 	if ( tag->hasOption( "hbonds__Mbhbond" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__Mbhbond" ) );
 	}
@@ -330,6 +337,7 @@ HBondOptions::append_schema_attributes( utility::tag::AttributeList & attributes
 		+ XMLSchemaAttribute( "hbonds__sp2_outer_width", xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__measure_sp3acc_BAH_from_hvy", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__fade_energy", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "hbonds__exclude_ether_oxygens", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__Mbhbond", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__mphbond", xsct_rosetta_bool , "XRW TO DO" );
 
@@ -554,6 +562,9 @@ void HBondOptions::measure_sp3acc_BAH_from_hvy( bool setting ) { measure_sp3acc_
 bool HBondOptions::fade_energy() const { return fade_energy_; }
 void HBondOptions::fade_energy( bool setting ) { fade_energy_ = setting; }
 
+bool HBondOptions::exclude_ether_oxygens() const { return exclude_ether_oxygens_; }
+void HBondOptions::exclude_ether_oxygens( bool setting ) { exclude_ether_oxygens_ = setting; }
+
 Real HBondOptions::hbond_energy_shift() const { return hbond_energy_shift_; }
 void HBondOptions::hbond_energy_shift( Real setting ) { hbond_energy_shift_ = setting; }
 
@@ -591,6 +602,7 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.sp2_outer_width_ == b.sp2_outer_width_ ) &&
 		( a.measure_sp3acc_BAH_from_hvy_ == b.measure_sp3acc_BAH_from_hvy_ ) &&
 		( a.fade_energy_ == b.fade_energy_ ) &&
+		( a.exclude_ether_oxygens_ == b.exclude_ether_oxygens_ ) &&
 		( a.Mbhbond_ == b.Mbhbond_ ) && //pba
 		( a.mphbond_ == b.mphbond_ ) &&
 		( a.hbond_energy_shift_ == b.hbond_energy_shift_ ) &&
@@ -650,6 +662,8 @@ HBondOptions::show( std::ostream & out ) const
 		<<( measure_sp3acc_BAH_from_hvy_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: fade_energy_: "
 		<< fade_energy_ << std::endl;
+	out <<"HBondOptions::show: exclude_ether_oxygens_: "
+		<< exclude_ether_oxygens_ << std::endl;
 	out <<"HBondOptions::show: Mbhbond: "
 		<<( Mbhbond_ ? "true" : "false " ) << std::endl; //pba
 	out << "HbondOptions::show: mphbond: "
@@ -685,6 +699,7 @@ core::scoring::hbonds::HBondOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( sp2_outer_width_ ) ); // Real
 	arc( CEREAL_NVP( measure_sp3acc_BAH_from_hvy_ ) ); // _Bool
 	arc( CEREAL_NVP( fade_energy_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_ether_oxygens_ ) ); // _Bool
 	arc( CEREAL_NVP( Mbhbond_ ) ); // _Bool
 	arc( CEREAL_NVP( mphbond_ ) ); // _Bool
 	arc( CEREAL_NVP( hbond_energy_shift_ ) ); // Real
@@ -716,6 +731,7 @@ core::scoring::hbonds::HBondOptions::load( Archive & arc ) {
 	arc( sp2_outer_width_ ); // Real
 	arc( measure_sp3acc_BAH_from_hvy_ ); // _Bool
 	arc( fade_energy_ ); // _Bool
+	arc( exclude_ether_oxygens_ ); // _Bool
 	arc( Mbhbond_ ); // _Bool
 	arc( mphbond_ ); // _Bool
 	arc( hbond_energy_shift_ ); // Real

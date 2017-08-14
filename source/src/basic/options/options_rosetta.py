@@ -2155,7 +2155,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'set_atomic_charge', 'StringVector', desc="Modify atomic charge from the command line. Happens at time of params file reading, so changes will propagate to patched versions of the residue type. Format is: -chemical:set_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-charge> <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-charge>  ... For example: '-chemical:set_atomic_charge fa_standard:ARG:NE:-1' " ),
 		Option( 'set_patch_atomic_charge', 'StringVector', desc="Modify patch atomic charge from the command line. Happens at time of patch file reading, so changes will propagate to patched versions of the residue type.  Uses a simplified version of the residue selector so will probably not work for patches with complex selector logic.   format should be::  -chemical:set_patch_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<patch-name>:<atom1-name>:<new-charge> ... For example: '-chemical:set_atomic_charge fa_standard:PRO:NtermProteinFull:1H:-1' " ),
 		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
-		Option( 'no_hbonds_to_ether_oxygens', 'Boolean', desc="no H-bonds to nucleic acid ether oxygens O3', O4', O5'", default='false'),
+		Option( 'no_hbonds_to_ether_oxygens', 'Boolean', desc="no H-bonds to nucleic acid ether oxygens O3', O4', O5' -- deprecated", default='false'),
+		Option( 'unset_acceptor_ether_oxygens', 'Boolean', desc="nucleic acid ether oxygens O3', O4', O5' are not counted as acceptors", default='false'),
 	), #-chemical
 
 	# Coarse options
@@ -2301,6 +2302,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'hb_sp2_chipen', 'Boolean', desc="Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%", default="true" ),
 			Option( 'hbond_measure_sp3acc_BAH_from_hvy', 'Boolean', desc="If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen", default="true" ),
 			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="true"),
+		  Option( 'hb_exclude_ether_oxygens', 'Boolean', desc="no H-bonds to nucleic acid ether oxygens O3', O4', O5'", default='false'),
 			Option( 'hb_cen_soft', 'Boolean', desc="Use softer version of cen_hb term", default="false"),
 			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
 			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),

@@ -10,5 +10,4 @@
 -out:file:silent swm_fourwayjunction.out
 -out:overwrite
 -superimpose_over_all false
-
- 
+-score:weights stepwise/rna/rna_res_level_energy.wts

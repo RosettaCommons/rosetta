@@ -13,12 +13,11 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <protocols/stepwise/modeler/polar_hydrogens/util.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -53,7 +52,7 @@ pack_polar_hydrogens()
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::chemical;
-	using namespace protocols::stepwise::setup;
+	using namespace core::import_pose;
 	using namespace utility::file;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );

@@ -8,3 +8,4 @@
 -num_random_samples 5
 # for speed:
 -virtualize_free_moieties_in_native false 
+-score:weights stepwise/rna/rna_res_level_energy.wts

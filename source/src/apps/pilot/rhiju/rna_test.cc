@@ -2771,6 +2771,7 @@ print_hbonds_test()
 
 		(*scorefxn)(pose);
 		hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
+		hbond_options->initialize_from_options( basic::options::option );
 		hbond_options->use_hb_env_dep( false );
 		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *hbond_options ) );
 

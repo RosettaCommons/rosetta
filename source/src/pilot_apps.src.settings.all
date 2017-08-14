@@ -800,6 +800,7 @@ sources = {
 	        "screen_phosphates",
 	        "rb_entropy", #hey I've added a demo do not delete.
 	        "homolog_finder_farna",
+	        "pack_polar_hydrogens",
 	        #"rna_protein_test",
 		#"pdbstats_test"
 	],

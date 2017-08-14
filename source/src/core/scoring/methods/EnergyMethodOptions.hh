@@ -411,6 +411,12 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void symmetric_gly_tables( bool const setting );
 
+	bool loop_close_use_6D_potential() const;
+	void loop_close_use_6D_potential( bool const setting );
+
+	bool fa_stack_base_all() const;
+	void fa_stack_base_all( bool const setting );
+
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -588,6 +594,8 @@ private:
 	std::string pb_unbound_tag_;
 	utility::vector1< core::Real > fastdens_perres_weights_;
 	bool symmetric_gly_tables_;
+	bool loop_close_use_6D_potential_;
+	bool fa_stack_base_all_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

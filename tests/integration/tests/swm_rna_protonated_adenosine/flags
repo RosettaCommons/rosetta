@@ -11,3 +11,4 @@
 -value_pH 4.0
 -set_weights e_pH 1.0
 -superimpose_over_all false
+-score:weights stepwise/rna/rna_res_level_energy.wts

@@ -27,6 +27,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 
 // Project headers
@@ -102,9 +103,9 @@ namespace rna {
 /// never an instance already in use
 methods::EnergyMethodOP
 RNA_FullAtomStackingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy );
+	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy( options ) );
 }
 
 ScoreTypes
@@ -123,7 +124,7 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 
 
 /// c-tor
-RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
+RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( methods::EnergyMethodOptions const & options ) :
 	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomStackingEnergyCreator ) ),
 	//Parameters are totally arbitrary and made up!
 	prefactor_    ( -0.2 ),
@@ -137,14 +138,30 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
 	lr_prefactor_       ( option[ fa_stack_lr_prefactor ]()    /*-0.05*/ ), // water-mediated stacking
 	lr_stack_cutoff_    ( option[ fa_stack_lr_stack_cutoff ]() /*6.5*/   ), //
 	lr_dist_cutoff_     ( option[ fa_stack_lr_dist_cutoff ]()  /*7.5*/  ),//
-	base_base_only_( option[ fa_stack_base_base_only ]() /* true */ )
+	base_base_only_( !options.fa_stack_base_all() /* !false --> true */ )
 {}
+
+/// copy c-tor
+RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( RNA_FullAtomStackingEnergy const & src ):
+	ContextDependentTwoBodyEnergy( src ),
+	prefactor_    ( src.prefactor_ ),
+	stack_cutoff_ ( src.stack_cutoff_ ), //Encompass next base stack
+	dist_cutoff_  ( src.dist_cutoff_ ), //  (Do not go to next-nearest base stack!)
+	sol_prefactor_      ( src.sol_prefactor_     ), // Penalize displacement of water that was stacked
+	sol_stack_cutoff_   ( src.sol_stack_cutoff_  ), //
+	sol_dist_cutoff_    ( src.sol_dist_cutoff_   ), // how far to penalize displacement
+	lr_prefactor_       ( src.lr_prefactor_      ), // water-mediated stacking
+	lr_stack_cutoff_    ( src.lr_stack_cutoff_     ), //
+	lr_dist_cutoff_     ( src.lr_dist_cutoff_     ),//
+	base_base_only_( src.base_base_only_ )
+{
+}
 
 //clone
 methods::EnergyMethodOP
 RNA_FullAtomStackingEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy );
+	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy( *this ) );
 }
 
 

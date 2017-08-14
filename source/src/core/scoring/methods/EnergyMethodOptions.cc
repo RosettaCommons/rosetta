@@ -125,6 +125,8 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
 	symmetric_gly_tables_(false),
+	loop_close_use_6D_potential_(false),
+	fa_stack_base_all_(false),
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options( options );
@@ -198,6 +200,8 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		pb_unbound_tag_ = src.pb_unbound_tag_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
+		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
+		fa_stack_base_all_ = src.fa_stack_base_all_;
 	}
 	return *this;
 }
@@ -244,6 +248,8 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	eval_intrares_elec_ST_only_ = options[ basic::options::OptionKeys::score::eval_intrares_elec_ST_only]();
 	envsmooth_zero_negatives_ = options[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
 	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
+	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
+	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -297,6 +303,8 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::put_intra_into_total
 		+ basic::options::OptionKeys::score::smooth_fa_elec
 		+ basic::options::OptionKeys::score::symmetric_gly_tables
+		+ basic::options::OptionKeys::score::loop_close::use_6D_potential
+		+ basic::options::OptionKeys::score::fa_stack_base_base_only
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
 		+ basic::options::OptionKeys::score::water_dielectric
@@ -739,6 +747,26 @@ EnergyMethodOptions::symmetric_gly_tables() const {
 void
 EnergyMethodOptions::symmetric_gly_tables( bool const setting ) {
 	symmetric_gly_tables_ = setting;
+}
+
+bool
+EnergyMethodOptions::loop_close_use_6D_potential() const {
+	return loop_close_use_6D_potential_;
+}
+
+void
+EnergyMethodOptions::loop_close_use_6D_potential( bool const setting ) {
+	loop_close_use_6D_potential_ = setting;
+}
+
+bool
+EnergyMethodOptions::fa_stack_base_all() const {
+	return fa_stack_base_all_;
+}
+
+void
+EnergyMethodOptions::fa_stack_base_all( bool const setting ) {
+	fa_stack_base_all_ = setting;
 }
 
 
@@ -1261,6 +1289,8 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( pb_unbound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( fastdens_perres_weights_ ) ); // utility::vector1<core::Real>
 	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
+	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
+	arc( CEREAL_NVP( fa_stack_base_all_ ) ); // _Bool
 	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 }
@@ -1321,6 +1351,8 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( pb_unbound_tag_ ); // std::string
 	arc( fastdens_perres_weights_ ); // utility::vector1<core::Real>
 	arc( symmetric_gly_tables_ ); // _Bool
+	arc( loop_close_use_6D_potential_ ); // _Bool
+	arc( fa_stack_base_all_ ); // _Bool
 	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 }

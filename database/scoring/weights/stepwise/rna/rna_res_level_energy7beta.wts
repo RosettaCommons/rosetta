@@ -1,0 +1,41 @@
+# Rosetta Lennard-Jones
+fa_atr          0.21
+fa_rep          0.20
+fa_intra_rep    0.0029
+fa_stack        0.13
+
+# H-bonds & solvation
+lk_nonpolar     0.25
+geom_sol_fast   0.17
+hbond_sc        0.96
+hbond_sr_bb_sc  0.96
+hbond_lr_bb_sc  0.96
+
+# RNA torsion terms
+rna_torsion     1.0
+rna_sugar_close 0.82
+suiteness_bonus 1.0
+
+# electrostatics (not in H-bonds )
+stack_elec      0.76
+fa_elec_rna_phos_phos 1.7
+
+# bonuses/costs for free/instantiated moieties
+intermol        1.0 # should be 1.0 to maintain kT scale
+loop_close      1.0 # should be 1.0 to maintain kT scale
+free_suite      2.0 # should be less than each ref
+free_2HOprime   1.0 # should be 1.0 to maintain kT scale
+ref             1.0 # should be 1.0, apply METHOD_WEIGHTS without scaling.
+other_pose      1.0 # should be 1.0: contribution of 'sister' poses
+linear_chainbreak 5.0 # strong enough to force chainbreaks
+
+# first 20 reference weights are protein; then four for DNA; then four for RNA [G,A,C,U]
+NO_HB_ENV_DEP                              # no hydrogen-bond dependence on burial -- nucleic acid bonds get too weak.
+METHOD_WEIGHTS ref 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0   0 0 0 0    4.14  3.58  2.82  3.76
+RNA_TORSION_POTENTIAL      RNA11_based_new # Fang's latest, derived from Richardson RNA11 set.
+RNA_SYN_G_POTENTIAL_BONUS  -1.5            # RNA11 penalized syn-G too much.
+RNA_SUITENESS_BONUS        test/1z_6n_2[_bonus # helps favor correct conformation for UUCG. Example of torsion corrections.
+ENLARGE_H_LJ_WDEPTH                        # turns on stronger repulsion between hydrogens
+LOOP_CLOSE_USE_6D_POTENTIAL                # models orientation dependence in loop_close implicit potential for RNA
+FA_STACK_BASE_ALL                          # compute RNA fa_stack over not just base-base but base-anything.
+HB_EXCLUDE_ETHER_OXYGENS                   # turn off h-bonds to nucleic acid O3', O5', O4' 

@@ -7,3 +7,4 @@
 -out:file:silent swm_rebuild.out
 -out:overwrite
 #-enumerate
+-score:weights stepwise/rna/rna_res_level_energy.wts

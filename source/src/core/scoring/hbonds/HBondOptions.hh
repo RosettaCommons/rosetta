@@ -237,6 +237,10 @@ public:
 	bool fade_energy() const;
 	void fade_energy( bool setting );
 
+	/// @brief No H-bonds to ether oxygens, like O4' in DNA or DNA. Replaces -chemical::no_hbond_to_ether_oxygens.
+	bool exclude_ether_oxygens() const;
+	void exclude_ether_oxygens( bool setting );
+
 	/// @brief Enable helix-length-dependent sr bb hbonds
 	/// Default: false
 	bool length_dependent_srbb() const;
@@ -252,6 +256,7 @@ public:
 
 	Real hbond_energy_shift() const;
 	void hbond_energy_shift( Real );
+
 
 	friend
 	bool
@@ -287,6 +292,7 @@ private:
 	Real sp2_outer_width_;
 	bool measure_sp3acc_BAH_from_hvy_;
 	bool fade_energy_;
+	bool exclude_ether_oxygens_;
 	bool Mbhbond_; //pba
 	bool mphbond_; // membrane framework: hydrogen bonding correction
 	Real hbond_energy_shift_; // a penalty applied to all hydrogen bonds; raises the well depth without changing the shape of the funnel

@@ -381,6 +381,12 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 			energy_method_options_->elec_max_dis( real_value );
 		} else if ( tag == "FA_ELEC_NO_DIS_DEP_DIE" ) {
 			energy_method_options_->elec_no_dis_dep_die( true );
+		} else if ( tag == "LOOP_CLOSE_USE_6D_POTENTIAL" ) {
+			energy_method_options_->loop_close_use_6D_potential( true );
+		} else if ( tag == "FA_STACK_BASE_ALL" ) {
+			energy_method_options_->fa_stack_base_all( true );
+		} else if ( tag == "HB_EXCLUDE_ETHER_OXYGENS" ) {
+			energy_method_options_->hbond_options().exclude_ether_oxygens( true );
 		} else if ( ( tag == "NO_LK_POLAR_DESOLVATION" ) || ( tag == "NO_LK_POLAR_DESOLVATION_EXCEPT_PROLINE_N" ) ) {
 			if ( tag == "NO_LK_POLAR_DESOLVATION_EXCEPT_PROLINE_N" ) {
 				energy_method_options_->etable_options().proline_N_is_lk_nonpolar = true;
