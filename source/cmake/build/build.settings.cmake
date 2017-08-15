@@ -48,7 +48,7 @@ if( ${COMPILER} STREQUAL "gcc" )
 			-Wall
 			-Wextra
 			-pedantic
-			-Werror
+			-Werror  # REMOVE FOR RELEASE
 			-Wno-long-long
 			-Wno-strict-aliasing
 	)
@@ -218,7 +218,7 @@ if( ${COMPILER} STREQUAL "clang" )
 			-Wextra
 			-pedantic
 			#-Weverything
-			-Werror
+			-Werror # REMOVE FOR RELEASE
 			-Wno-long-long
 			-Wno-strict-aliasing
 			#-Wno-documentation

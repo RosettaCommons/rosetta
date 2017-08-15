@@ -164,7 +164,7 @@ settings = {
                     "Wall",
                     "Wextra",
                     "pedantic",
-                    "Werror",
+                    "Werror", # REMOVE FOR RELEASE
                     "Wno-long-long",
                     "Wno-strict-aliasing",
                 ],
@@ -1738,7 +1738,7 @@ settings = {
                     "Wextra",
                     "pedantic",
                     #"Weverything",
-                    "Werror",
+                    "Werror", # REMOVE FOR RELEASE
                     "Wno-long-long",
                     "Wno-strict-aliasing",
                     #"Winconsistent-missing-override", -- 3.5 doesn't like this one
