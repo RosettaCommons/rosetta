@@ -48,6 +48,11 @@ pose_fs = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE")
 pose_fs.delete_polymer_residue(2)  # Testing that attached PDB info have right size...
 
 
+poses = pyrosetta.poses_from_silent('../test/data/test_in.silent')
+for pose in poses:
+    scorefxn = rosetta.core.scoring.get_score_function()
+    scorefxn(pose)
+
 import pyrosetta.toolbox
 
 pyrosetta.toolbox.pose_from_rcsb('1brs')

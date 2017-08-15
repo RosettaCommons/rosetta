@@ -368,6 +368,22 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     return pose
 
 
+def poses_from_silent(silent_filename):
+    """
+    Returns an Iterator object which is composed of Pose objects from a silent
+    file.
+
+    @atom-moyer
+    """
+    sfd = rosetta.core.io.silent.SilentFileData(rosetta.core.io.silent.SilentFileOptions())
+    sfd.read_file(silent_filename)
+    for tag in sfd.tags():
+        ss = sfd.get_structure(tag)
+        pose = Pose()
+        ss.fill_pose(pose)
+        yield pose
+
+
 # By Michael Pacella
 def etable_atom_pair_energies(atom1, atom2, sfxn):
     """
