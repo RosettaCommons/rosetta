@@ -80,15 +80,7 @@ namespace mover {
 //constructor!
 AddMover::AddMover( scoring::ScoreFunctionCOP scorefxn ):
 	scorefxn_( scorefxn ),
-	presample_added_residue_( true ),
-	presample_by_swa_( false ),
-	minimize_single_res_( false ),
-	start_added_residue_in_aform_( false ),
-	internal_cycles_( 50 ),
-	rna_torsion_mover_( rna::RNA_TorsionMoverOP( new rna::RNA_TorsionMover ) ),
-	sample_range_small_( 5.0 ),
-	sample_range_large_( 40.0 ),
-	kT_( 0.5 )
+	rna_torsion_mover_( rna::RNA_TorsionMoverOP( new rna::RNA_TorsionMover ) )
 {}
 
 //////////////////////////////////////////////////////////////////////////

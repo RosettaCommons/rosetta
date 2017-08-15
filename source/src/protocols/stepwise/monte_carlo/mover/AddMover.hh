@@ -141,23 +141,23 @@ private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	bool presample_added_residue_;
-	bool presample_by_swa_;
-	bool minimize_single_res_;
-	bool start_added_residue_in_aform_;
-	bool designing_with_noncanonicals_;
-	core::Size internal_cycles_;
+	bool presample_added_residue_ = true;
+	bool presample_by_swa_ = false;
+	bool minimize_single_res_ = false;
+	bool start_added_residue_in_aform_ = false;
+	bool designing_with_noncanonicals_ = false; // ??
+	core::Size internal_cycles_ = 50;
 	bool sample_pH_ = false;
 
 	rna::RNA_TorsionMoverOP rna_torsion_mover_;
-	core::Real sample_range_small_;
-	core::Real sample_range_large_;
-	core::Real kT_;
+	core::Real sample_range_small_ = 5.0;
+	core::Real sample_range_large_ = 40.0;
+	core::Real kT_ = 0.5;
 
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 
-	core::Size suite_num_, nucleoside_num_;
-	core::Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;
+	core::Size suite_num_ = 0, nucleoside_num_ = 0;
+	core::Size res_to_add_in_full_model_numbering_ = 0, res_to_build_off_in_full_model_numbering_ = 0;
 	StepWiseMove swa_move_;
 
 };

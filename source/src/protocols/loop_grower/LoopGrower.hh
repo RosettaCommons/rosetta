@@ -259,7 +259,7 @@ private:
 	utility::vector1 < std::pair<core::Size,core::Size> > fragmenthistory_;
 	numeric::xyzVector<core::Real> centerofmass_;
 	core::Real score_;
-	core::Real bonus_score_, RMS_, GDT_ = 0;
+	core::Real bonus_score_ = 0, RMS_ = 0, GDT_ = 0;
 	std::string id_;
 };
 
@@ -273,7 +273,7 @@ struct RMSComparator {
 
 class LoopPartialSolutionStore {
 public:
-	LoopPartialSolutionStore(){}
+	LoopPartialSolutionStore() = default;
 
 	LoopPartialSolutionStore( core::Size N, core::Real rmscutoff, core::Size master_beam_width, core::Real master_beam_cutoff ) { maxelts_=N; rmscutoff_ = rmscutoff; master_beam_width_ = master_beam_width;
 		master_beam_cutoff_ = master_beam_cutoff; }
@@ -400,85 +400,51 @@ public:
 	}
 
 private:
-	core::Real rmscutoff_, master_beam_cutoff_, beamscorecutoff_;
-	core::Size maxelts_, master_beam_width_, upper_fasta_, lower_fasta_, lower_pose_, upper_pose_, cutpoint_, fragmelt_, rmswindow_, parallelcount_, rank_;
+	core::Real rmscutoff_ = 0.0; // or 1.2 ??
+	core::Real master_beam_cutoff_ = 3.0;
+	core::Real beamscorecutoff_ = 0.85;
+	core::Size maxelts_ = 1; // ??
+	core::Size master_beam_width_ = 1;
+	core::Size upper_fasta_ = 0; // ??
+	core::Size lower_fasta_ = 0; // ??
+	core::Size lower_pose_ = 0; // ??
+	core::Size upper_pose_ = 0; // ??
+	core::Size cutpoint_ = 0; // ??
+	core::Size fragmelt_ = 1;
+	core::Size rmswindow_ = 1;
+	core::Size parallelcount_ = 0;
+	core::Size rank_ = 0; // ??
 	utility::vector1<LoopPartialSolution> solutions_, old_solutions_, filteronly_solutions_;
-	bool dump_errors_, dump_beam_, writebeams_, clustercheck_, fafilter_, famin_, samplesheets_, filterprevious_, checksymm_, asymmdump_, dumpfinalbeam_ ;
+	bool dump_errors_ = false;
+	bool dump_beam_ = false;
+	bool writebeams_ = false;
+	bool clustercheck_ = false;
+	bool fafilter_ = true;
+	bool famin_ = false;
+	bool samplesheets_ = true;
+	bool filterprevious_ = false;
+	bool checksymm_ = false;
+	bool asymmdump_ = true;
+	bool dumpfinalbeam_ = false;
 };
 
 class LoopGrower: public protocols::moves::Mover {
 public:
-	LoopGrower() : beamwidth_(1), fragtrials_(10), fragmelt_(1), minmelt_(1), storelow_(0), storehi_(0), debug_(false), resstart_(0),resstop_(0),chainbreak_(1.5),continuous_weight_(0.3),
-		rmscutoff_(0.0), beamscorecutoff_(0.85), master_beam_cutoff_(3.0), windowdensweight_(30), startingscore_(0.0), censtartingscore_(0.0), sheetbonus_(0.5), sheet_tolerance_(0.7), sc_scale_(1),
-		pack_min_cycles_(1), fafilter_pmcycles_(1), direction_(0), master_beam_width_(1), rmswindow_(1), steps_(1e4), parallelcount_(0), sheetcriteria_(2),
-		loopnumber_(0), sheetsize_(4), dumpbeam_(false), dumpfinalbeam_(false), dumprms_(false), dumperrors_(false), minimize_(true), nativegrow_(false), greedy_(true), parametercheck_(false),
-		cenrot_(false), writebeams_(false), readbeams_(false),clustercheck_(false), rescorebeams_(false), writelps_(false), fafilter_(true), famin_(false), samplesheets_(true), trackfragments_(false),
-		cenrotfilter_(false), filterprevious_(false), rephasemap_(false), checksymm_(false), continuous_sheets_(true), auto_stop_(false), asymmdump_(true), storedbeams_(""), filterbeams_(""),
-		coordfile_(""), skeleton_file_(""), native_(nullptr) {}
+	LoopGrower() = default; // Default values for member variables set at declaration.
 
 	LoopGrower(core::sequence::SequenceOP seq, protocols::loops::Loop loop, int resstart, int resstop,  utility::vector1<core::fragment::FragSetOP> const &fragments ) :
 		seq_(seq), loop_(loop), resstart_(resstart), resstop_(resstop), fragments_(fragments) {
-		beamwidth_ = 1;
-		fragtrials_ = 10;
-		debug_ = false;
+
+		// Should these be the general defaults?
 		pack_min_cycles_ = 2;
 		fafilter_pmcycles_ = 2;
-		dumpbeam_ = false;
-		dumpfinalbeam_ = false;
-		dumprms_ = false;
-		dumperrors_ = false;
-		minimize_ = true;
-		nativegrow_ = false;
-		native_ = nullptr;
-		greedy_ = true;
-		parametercheck_ = false;
-		cenrot_ = false;
-		writebeams_ = false;
-		readbeams_ = false;
-		clustercheck_ = false;
-		rescorebeams_ = false;
-		writelps_ = false;
-		fafilter_ = true;
-		famin_ = false;
-		samplesheets_ = true;
-		cenrotfilter_ = false;
-		filterprevious_ = false;
-		rephasemap_ = false;
-		checksymm_ = false;
-		continuous_sheets_ = false;
-		auto_stop_ = false;
-		asymmdump_ = true;
-		storedbeams_ = "";
-		filterbeams_ = "";
-		coordfile_ = "";
-		skeleton_file_ = "";
-		storelow_ = 0;
-		storehi_ = 0;
-		chainbreak_ = 1.5;
-		continuous_weight_ = 0.3;
 		rmscutoff_  = 1.2;
-		master_beam_cutoff_ = 3.0;
-		windowdensweight_ = 30;
-		startingscore_ = 0.0;
-		censtartingscore_ = 0.0;
-		sheetbonus_ = 0.5;
-		sheet_tolerance_ = 0.7;
-		sc_scale_ = 1;
-		beamscorecutoff_ = 0.85;
-		master_beam_width_ = beamwidth_;
-		rmswindow_ = 1;
-		steps_ = 1e4;
-		parallelcount_ = 0;
-		sheetcriteria_ = 2;
-		loopnumber_ = 0;
-		sheetsize_ = 4;
+
 		sf_ = core::scoring::get_score_function();
 		cen_sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 		cenrot_sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_relax");
 		update_fragment_library_pointers();
 		native_ = nullptr;
-
-
 	}
 
 	// run the protocol
@@ -620,19 +586,76 @@ public:
 	protocols::moves::MoverOP fresh_instance() const;
 
 private:
-	core::Size beamwidth_, fragtrials_, fragmelt_, minmelt_, lowest_ranked_native_, storelow_, storehi_;
+	core::Size beamwidth_ = 1;
+	core::Size fragtrials_ = 10;
+	core::Size fragmelt_ = 1;
+	core::Size minmelt_ = 1;
+	core::Size lowest_ranked_native_ = 0; // arbitrary init
+	core::Size storelow_ = 0;
+	core::Size storehi_ = 0;
 	core::scoring::ScoreFunctionOP sf_, cen_sf_, cenrot_sf_; //sf_soft,
 
-	bool debug_;
+	bool debug_ = false;
 	core::sequence::SequenceOP seq_;
 	protocols::loops::Loop loop_;
-	int resstart_, resstop_, upper_fasta_, lower_fasta_, rmsrangelo_, rmsrangehi_;
-	core::Real chainbreak_, continuous_weight_, rmscutoff_, beamscorecutoff_, master_beam_cutoff_, windowdensweight_, startingscore_, censtartingscore_, sheetbonus_, sheet_tolerance_, sc_scale_;
+	int resstart_ = 0;
+	int resstop_ = 0;
+	int upper_fasta_ = 0; // arbitrary init
+	int lower_fasta_ = 0; // arbitrary init
+	int rmsrangelo_ = 0; // arbitrary init
+	int rmsrangehi_ = 0; // arbitrary init
+	core::Real chainbreak_ = 1.5;
+	core::Real continuous_weight_ = 0.3;
+	core::Real rmscutoff_ = 0.0; // or 1.2 ??
+	core::Real beamscorecutoff_ = 0.85;
+	core::Real master_beam_cutoff_ = 3.0;
+	core::Real windowdensweight_ = 30;
+	core::Real startingscore_ = 0.0;
+	core::Real censtartingscore_ = 0.0;
+	core::Real sheetbonus_ = 0.5;
+	core::Real sheet_tolerance_ = 0.7;
+	core::Real sc_scale_ = 1;
 	utility::vector1<core::fragment::FragSetOP> fragments_;
 	utility::vector1<boost::unordered_map<core::Size, core::fragment::Frame> > library_;
-	core::Size pack_min_cycles_, fafilter_pmcycles_, direction_, master_beam_width_, rmswindow_, steps_, parallelcount_,sheetcriteria_, loopnumber_, sheetsize_, total_residues_, insert_pose_, maxfrag_, numjumps_;
-	bool dumpbeam_, dumpfinalbeam_, dumprms_, dumperrors_, minimize_, nativegrow_, greedy_, parametercheck_, cenrot_, writebeams_, readbeams_, clustercheck_, rescorebeams_, writelps_, fafilter_,
-		famin_, samplesheets_, trackfragments_, cenrotfilter_, filterprevious_, rephasemap_, checksymm_, continuous_sheets_, auto_stop_, asymmdump_;
+	core::Size pack_min_cycles_ = 1; // or 2??
+	core::Size fafilter_pmcycles_ = 1; // or 2??
+	core::Size direction_ = 0;
+	core::Size master_beam_width_ = 1;
+	core::Size rmswindow_ = 1;
+	core::Size steps_ = 1e4;
+	core::Size parallelcount_ = 0;
+	core::Size sheetcriteria_ = 2;
+	core::Size loopnumber_ = 0;
+	core::Size sheetsize_ = 4;
+	core::Size total_residues_ = 0;
+	core::Size insert_pose_ = 0; // arbitrary init
+	core::Size maxfrag_ = 0; // arbitrary init
+	core::Size numjumps_ = 0;
+	bool dumpbeam_ = false;
+	bool dumpfinalbeam_ = false;
+	bool dumprms_ = false;
+	bool dumperrors_ = false;
+	bool minimize_ = true;
+	bool nativegrow_ = false;
+	bool greedy_ = true;
+	bool parametercheck_ = false;
+	bool cenrot_ = false;
+	bool writebeams_ = false;
+	bool readbeams_ = false;
+	bool clustercheck_ = false;
+	bool rescorebeams_ = false;
+	bool writelps_ = false;
+	bool fafilter_ = true;
+	bool famin_ = false;
+	bool samplesheets_ = true;
+	bool trackfragments_ = false;
+	bool cenrotfilter_ = false;
+	bool filterprevious_ = false;
+	bool rephasemap_ = false;
+	bool checksymm_ = false;
+	bool continuous_sheets_ = true;
+	bool auto_stop_ = false;
+	bool asymmdump_ = true;
 	std::string storedbeams_, filterbeams_, coordfile_, skeleton_file_;
 	std::map< std::pair< core::Size, core::Size >, utility::vector1< numeric::xyzVector< core::Real > > > scoringcoords_;
 
