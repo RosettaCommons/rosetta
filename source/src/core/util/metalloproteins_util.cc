@@ -341,7 +341,8 @@ add_constraints_to_metal(
 	core::pose::Pose &pose,
 	core::Size const metal_position,
 	core::Real const distance_constraint_multiplier,
-	core::Real const angle_constraint_multiplier
+	core::Real const angle_constraint_multiplier,
+	utility::vector1< core::id::AtomID > const & binders
 )
 {
 	using namespace core;
@@ -384,6 +385,15 @@ add_constraints_to_metal(
 		conformation::Residue const & jr_res = pose.residue( conn_res );
 		Size const conn_res_conid = jr_conn.connid(); //The other residue's connection id for the bond to the metal.
 		Size const conn_res_atomno = jr_res.residue_connection(conn_res_conid).atomno(); //The atom index of the atom to which this metal is bonded.
+
+
+		if ( binders.size() != 0 ) {
+			//Check if we actually want to constrain this connection
+			if ( std::find( binders.begin(), binders.end(), core::id::AtomID( conn_res_atomno, conn_res ) ) == binders.end() ) {
+				continue;
+			}
+		}
+
 		std::string const conn_res_atom = jr_res.atom_name( conn_res_atomno ); //The atom index of the atom to which this metal is bonded.
 		std::string const conn_res_atom_parent = jr_res.atom_name( jr_res.type().atom_base( conn_res_atomno ) ); //The atom index of the parent of the atom to which this metal is bonded in the other residue.
 
@@ -468,7 +478,8 @@ auto_setup_all_metal_constraints(
 	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		//conformation::Residue const & ir_res = pose.residue( ir );
 		if ( ! pose.residue( ir ).is_metal() ) continue;
-		add_constraints_to_metal( pose, ir, distance_constraint_multiplier, angle_constraint_multiplier );
+		utility::vector1< core::id::AtomID > binders;
+		add_constraints_to_metal( pose, ir, distance_constraint_multiplier, angle_constraint_multiplier, binders );
 		/*
 		Size const ir_nconn = ir_res.n_possible_residue_connections();
 

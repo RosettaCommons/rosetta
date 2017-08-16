@@ -48,6 +48,7 @@ SetupMetalsMover::SetupMetalsMover():
 	metal_resnums_string_ = "";
 	remove_hydrogens_ = true;
 	constraints_only_ = false;
+	add_constraints_ = true;
 	this->set_defaults_from_command_line();
 }
 /// @brief Copy constructor
@@ -62,6 +63,9 @@ SetupMetalsMover::SetupMetalsMover( SetupMetalsMover const & src ):
 	metal_resnums_string_ = src.get_metal_resnums_string();
 	remove_hydrogens_ = src.get_remove_hydrogens();
 	constraints_only_ = src.get_constraints_only();
+	add_constraints_ = src.add_constraints_;
+	contact_selector_ = src.contact_selector_;
+	contact_resnums_string_ = src.contact_resnums_string_;
 }
 
 SetupMetalsMover::~SetupMetalsMover(){}
@@ -80,14 +84,28 @@ SetupMetalsMover::apply( core::pose::Pose & pose ){
 		//This takes the provided selector/resnums into account
 		utility::vector1< core::Size > metals = find_metal_resnums( pose );
 		for ( core::Size resn: metals ) {
+			//Get contacts
+			utility::vector1< core::id::AtomID > binders;
+			utility::vector1< core::id::AtomID > binders_pre = core::util::find_metalbinding_atoms( pose, resn, metals_detection_LJ_multiplier_ );
+			std::set< core::Size > contact_resnums = find_contact_resnums( pose );
+			if ( contact_resnums.size() == 0 ) {
+				binders = binders_pre;
+			} else {
+				for ( core::id::AtomID id: binders_pre ) {
+					if ( contact_resnums.count( id.rsd() ) != 0 ) {
+						binders.push_back( id );
+					}
+				}
+			}
 			if ( !constraints_only_ ) {
-				//Get contacts
-				utility::vector1< core::id::AtomID > binders = core::util::find_metalbinding_atoms( pose, resn, metals_detection_LJ_multiplier_ );
 				//Make chemical bonds
 				core::util::add_covalent_linkages_to_metal( pose, resn, binders, remove_hydrogens_ );
 			}
 			//Add constraints
-			core::util::add_constraints_to_metal( pose, resn, metals_distance_constraint_multiplier_, metals_angle_constraint_multiplier_ );
+			if ( add_constraints_ ) {
+				//TODO!!
+				core::util::add_constraints_to_metal( pose, resn, metals_distance_constraint_multiplier_, metals_angle_constraint_multiplier_, binders );
+			}
 		}
 	}
 }
@@ -126,29 +144,30 @@ SetupMetalsMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {
-	//Tag should be able to take either a named selector or a subtag selector
-	if ( tag->hasOption("residue_selector" ) ) {
-		if ( tag->hasOption("resnums") ) {
+	//Tag should be able to take either a named selector or resnum string for metal or contact
+	if ( tag->hasOption("metal_residue_selector" ) ) {
+		if ( tag->hasOption("metal_resnums") ) {
 			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover takes EITHER a residue selector or resnum list, not both!\n" );
 		}
-		if ( tag->size() > 1 ) { // 1 if no subtags exist
-			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover can only have one ResidueSelector loaded!\n" );
-		}
-		metal_selector_ = core::select::residue_selector::parse_residue_selector( tag, data, "residue_selector" );
-	} else if ( tag->size() > 1 ) { //Selector is provided as a subtag
-		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover takes EITHER a residue selector subtag or resnum list, not both!\n" );
-		}
-		if ( tag->getTags().size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover can only take a single residue selector as a subtag!" );
-		}
-		metal_selector_ = core::select::residue_selector::get_embedded_residue_selector( tag, data );
-	} else if ( tag->hasOption( "resnums" ) ) {
-		metal_resnums_string_ = tag->getOption< std::string >( "resnums", "" );
+		metal_selector_ = core::select::residue_selector::parse_residue_selector( tag, data, "metal_residue_selector" );
+	} else if ( tag->hasOption( "metal_resnums" ) ) {
+		metal_resnums_string_ = tag->getOption< std::string >( "metal_resnums", "" );
 	}
+
+
+	if ( tag->hasOption("contact_residue_selector" ) ) {
+		if ( tag->hasOption("contact_resnums") ) {
+			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover takes EITHER a residue selector or resnum list, not both!\n" );
+		}
+		contact_selector_ = core::select::residue_selector::parse_residue_selector( tag, data, "contact_residue_selector" );
+	} else if ( tag->hasOption( "contact_resnums" ) ) {
+		contact_resnums_string_ = tag->getOption< std::string >( "contact_resnums", "" );
+	}
+
 	//Now set other options from tag
 	remove_hydrogens_ = tag->getOption< bool >( "remove_hydrogens", true );
 	constraints_only_ = tag->getOption< bool >( "constraints_only", false );
+	add_constraints_ = tag->getOption< bool >( "add_constraints", true );
 	//Defaults for these options are taken from the command line
 	//this->set_defaults_from_command_line(); Moved to constructor
 	if ( tag->hasOption( "metals_detection_LJ_multiplier" ) ) {
@@ -168,35 +187,28 @@ void
 SetupMetalsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	using namespace utility::tag;
 
-	XMLSchemaSimpleSubelementList subelement;
-	subelement.add_group_subelement( & core::select::residue_selector::ResidueSelectorFactory::residue_selector_xml_schema_group_name );
-
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "remove_hydrogens", xsct_rosetta_bool, "Should hydrogens on metal binding atoms be removed?", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "constraints_only", xsct_rosetta_bool, "Should we ONLY add the constraints to the metal and not set up covalent bonds? Useful for repeated applications of the mover if constraints are deleted.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "add_constraints", xsct_rosetta_bool, "Should we add constraints to the pose? May be used if, for example, the user wants to add their own custom constraints elsewhere.", "true" )
 		//+ XMLSchemaAttribute::attribute_w_default( "prevent_setup_metal_bb_variants", xsct_rosetta_bool, "Should we prevent the setup of variant types for all possible residue types in cases where backbone atoms coordinate the metal? False indicates that the residue types WILL be set up.", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "metals_detection_LJ_multiplier", xsct_real, "Multiplier for the distance cutoff for contact detection, which is based on the Lennard-Jones radii of the two atoms. This option overrides default value set through the command line.", "1.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "metals_distance_constraint_multiplier", xsct_real, "Multiplier for distance constraints between metal and metal-binding atoms. This option overrides default value set through the command line.", "1.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "metals_angle_constraint_multiplier", xsct_real, "Multiplier for angle constraints between metal and metal-binding atoms. This option overrides default value set through the command line.", "1.0" )
 		+ utility::tag::optional_name_attribute();
-	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "Selector used to indicate which metal residues should be set up. If no selector or resnum string is provided, all metals will be set up." );
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "resnums" );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "metal_residue_selector", "Selector used to indicate which metal residues should be set up. If no selector or resnum string is provided, all metals will be set up." );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "contact_residue_selector", "Selector used to indicate which metal contacts should be set up. If no selector or resnum string is provided, all contacts for the specified metals will be set up." );
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "metal_resnums" );
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "contact_resnums" );
 	//We can provide 0 or 1 subselector
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
 		.element_name( SetupMetalsMover::mover_name() )
 		.description( "Mover that adds chemical bonds and distance/angle constraints between metal ions and their coordinating atoms. If a residue selector or resnum list are provided, only sets up the specified metals. Otherwise, sets up all metals."  )
 		.add_attributes( attlist )
-		.set_subelements_repeatable( subelement, 0, 1)
 		.write_complex_type_to_schema( xsd );
 }
-
-
-
-
-//END TODO
-
 
 
 std::string
@@ -247,6 +259,23 @@ SetupMetalsMover::get_remove_hydrogens() const{
 	return remove_hydrogens_;
 }
 
+bool
+SetupMetalsMover::get_add_constraints() const{
+	return add_constraints_;
+}
+
+core::select::residue_selector::ResidueSelectorCOP
+SetupMetalsMover::get_contact_selector() const{
+	return contact_selector_;
+}
+
+std::string
+SetupMetalsMover::get_contact_resnums_string() const{
+	return contact_resnums_string_;
+}
+
+
+
 //Setters
 /*
 void
@@ -289,6 +318,25 @@ void
 SetupMetalsMover::set_remove_hydrogens( bool input ){
 	remove_hydrogens_ = input;
 }
+
+void
+SetupMetalsMover::set_add_constraints( bool input){
+	add_constraints_ = input;
+}
+
+void
+SetupMetalsMover::set_contact_selector( core::select::residue_selector::ResidueSelectorCOP input){
+	contact_selector_ = input;
+}
+
+void
+SetupMetalsMover::set_contact_resnums_string(std::string input){
+	contact_resnums_string_ = input;
+}
+
+
+//Begin protected methods
+
 ///@brief If a residue selector or resnum string is provided, returns any metal ions within the selection.
 ///Otherwise returns an empty vector (it shouldn't be called in this situation, though)
 utility::vector1< core::Size >
@@ -309,6 +357,27 @@ SetupMetalsMover::find_metal_resnums( core::pose::Pose const & pose ){
 	}
 	return metals;
 }
+
+std::set< core::Size >
+SetupMetalsMover::find_contact_resnums( core::pose::Pose const & pose ){
+	std::set< core::Size > contacts;
+	core::select::residue_selector::ResidueSubset residues( pose.total_residue(), false );
+	if ( contact_selector_ ) {
+		residues = contact_selector_->apply( pose );
+	}
+	std::set< core::Size > str_residues;
+	if ( contact_resnums_string_ != "" ) {
+		str_residues = core::pose::get_resnum_list( contact_resnums_string_, pose );
+	}
+
+	for ( core::Size resn=1; resn<=pose.size(); ++resn ) { //Loop through all residues.
+		if ( residues[ resn ] || ( str_residues.count( resn ) != 0 ) ) {
+			contacts.insert( resn );
+		}
+	}
+	return contacts;
+}
+
 
 void
 SetupMetalsMover::set_defaults_from_command_line(){

@@ -151,7 +151,8 @@ add_constraints_to_metal(
 	core::pose::Pose &pose,
 	core::Size const metal_position,
 	core::Real const distance_constraint_multiplier,
-	core::Real const angle_constraint_multiplier
+	core::Real const angle_constraint_multiplier,
+	utility::vector1< core::id::AtomID > const & binders
 );
 
 

@@ -7,19 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/util/metalloprotein_import_test.cxxtest.hh
-/// @brief  Test suite for import of metalloproteins using the -in:auto_setup_metals flag.
-/// @details  The -in:auto_setup_metals flag is intended for automatic setup of covalent bonds and
-/// distance and angle constraints between metal-binding residues and metals in metalloprotein
-/// structures.  Failure of this unit test means that something has been changed which prevents
-/// this automatic setup.  Relevant files include:
-///    -- src/core/util/metalloproteins_util.cc
-///    -- src/core/util/metalloproteins_util.hh
-///    -- src/core/conformation/Residue.cc
-///    -- src/core/conformation/Residue.hh
-///    -- src/core/conformation/ResidueType.cc
-///    -- src/core/conformation/ResidueType.hh
-/// @author Vikram K. Mulligan
+/// @file   protocols/simple_moves/SetupMetalsMoverTests.cxxtest.hh
+/// @brief  Test suite for SetupMetalsMover, which applies -auto_setup_metals in mover form
+/// @author Sharon Guffy
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
@@ -154,14 +144,16 @@ public:
 		protocols::moves::Movers_map mm;
 		core::pose::PoseOP pose_ = ref_pose_->clone();
 
+		/*
 		//Try to provide both a selector and a resnum string
 		std::stringstream ss_string_and_selector;
-		ss_string_and_selector << "<SetupMetalsMover name=\"metal\" resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\"><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
+		ss_string_and_selector << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\"><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_string_and_selector );
 		TS_TRACE( "Tag with embedded selector and resnums" );
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
-
+		*/
+		/*
 		//Try to provide two embedded selectors
 		std::stringstream ss_two_embedded;
 		ss_two_embedded << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\"><Index resnums=\"154,155\" /><Chain chains=\"A\" /></SetupMetalsMover>" << std::endl;
@@ -169,11 +161,11 @@ public:
 		tag->read( ss_two_embedded );
 		TS_TRACE( "Tag with two embedded selectors" );
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
-
+		*/
 		//Provide a selector that isn't in the data map
 		std::stringstream ss_bad_selector;
-		ss_bad_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"dummy\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		ss_bad_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_bad_selector );
 		TS_TRACE( "Tag with undefined residue selector" );
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -184,203 +176,29 @@ public:
 		dm.add( "ResidueSelector", "dummy", dummy );
 		//Confirm that the above tag would work once the selector was added
 		std::stringstream ss_good_selector;
-		ss_good_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"dummy\" />" << std::endl;
+		ss_good_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_good_selector );
 		TS_TRACE( "Tag with defined residue selector" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
+		/*
 		//Try to provide a selector string and an embedded selector
 		std::stringstream ss_selector_two_ways;
-		ss_selector_two_ways << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"dummy\" ><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
+		ss_selector_two_ways << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" ><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_selector_two_ways );
 		TS_TRACE( "Tag with selector two ways" );
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
+		*/
 		//Try to provide a selector string and a resnum string
 		std::stringstream ss_select_string_and_resnum_string;
-		ss_select_string_and_resnum_string << "<SetupMetalsMover name=\"metal\" resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"dummy\" />" << std::endl;
+		ss_select_string_and_resnum_string << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_select_string_and_resnum_string );
 		TS_TRACE( "Tag with selector string and resnum string" );
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 	}
-	void test_parse_tag_embedded_selector(){
-		//This should only set up metal ions specified by the selector
-		//Select all metals
-		protocols::simple_moves::SetupMetalsMover new_mover;
-		core::pose::PoseOP pose_ = ref_pose_->clone();
-		//This should behave like above except it should override default values, including command line options
-		std::stringstream ss_all;
-		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" ><Index resnums=\"154,155,309,310\" /></SetupMetalsMover>" << std::endl;
-		utility::tag::TagOP tag( new utility::tag::Tag() );
-		tag->read( ss_all );
-		TS_TRACE( "Tag with embedded selector to select all metals" );
-		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
-		//Check all default values
-		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
-		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
 
-		//The following should have been set from command line values in the constructor
-		TS_ASSERT_DELTA( new_mover.get_metals_detection_LJ_multiplier(), 1.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_distance_constraint_multiplier(), 2.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_angle_constraint_multiplier(), 5.0, 1e-6 );
-		//Apply the mover
-		new_mover.apply( *pose_ );
-		//Check that all bonds were created
-		TS_ASSERT( pose_->residue(46).is_bonded(154) );
-		TS_ASSERT( pose_->residue(48).is_bonded(154) );
-		TS_ASSERT( pose_->residue(63).is_bonded(154) );
-		TS_ASSERT( pose_->residue(120).is_bonded(154) );
-
-		TS_ASSERT( pose_->residue(63).is_bonded(155) );
-		TS_ASSERT( pose_->residue(71).is_bonded(155) );
-		TS_ASSERT( pose_->residue(80).is_bonded(155) );
-		TS_ASSERT( pose_->residue(83).is_bonded(155) );
-
-		TS_ASSERT( pose_->residue(201).is_bonded(309) );
-		TS_ASSERT( pose_->residue(203).is_bonded(309) );
-		TS_ASSERT( pose_->residue(218).is_bonded(309) );
-		TS_ASSERT( pose_->residue(275).is_bonded(309) );
-
-		TS_ASSERT( pose_->residue(218).is_bonded(310) );
-		TS_ASSERT( pose_->residue(226).is_bonded(310) );
-		TS_ASSERT( pose_->residue(235).is_bonded(310) );
-		TS_ASSERT( pose_->residue(238).is_bonded(310) );
-		//Check that the pose has the proper number of constraints (should have 18 per metal)
-		TS_ASSERT_EQUALS( pose_->constraint_set()->get_all_constraints().size(), 72 );
-
-		//Select metals only on chain A
-		pose_ = ref_pose_->clone();
-		new_mover = protocols::simple_moves::SetupMetalsMover();
-		//This should behave like above except it should override default values, including command line options
-		std::stringstream ss_a;
-		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" ><Chain chains=\"A\" /></SetupMetalsMover>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		tag->read( ss_a );
-		TS_TRACE( "Tag with embedded selector to select chain A" );
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
-		//Check all default values
-		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
-		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
-
-		//The following should have been set from command line values in the constructor
-		TS_ASSERT_DELTA( new_mover.get_metals_detection_LJ_multiplier(), 1.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_distance_constraint_multiplier(), 2.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_angle_constraint_multiplier(), 5.0, 1e-6 );
-		//Apply the mover
-		new_mover.apply( *pose_ );
-		//Check that all bonds were created
-		TS_ASSERT( pose_->residue(46).is_bonded(154) );
-		TS_ASSERT( pose_->residue(48).is_bonded(154) );
-		TS_ASSERT( pose_->residue(63).is_bonded(154) );
-		TS_ASSERT( pose_->residue(120).is_bonded(154) );
-
-		TS_ASSERT( pose_->residue(63).is_bonded(155) );
-		TS_ASSERT( pose_->residue(71).is_bonded(155) );
-		TS_ASSERT( pose_->residue(80).is_bonded(155) );
-		TS_ASSERT( pose_->residue(83).is_bonded(155) );
-
-		TS_ASSERT( !pose_->residue(201).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(203).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(218).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(275).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(218).is_bonded(310) );
-		TS_ASSERT( !pose_->residue(226).is_bonded(310) );
-		TS_ASSERT( !pose_->residue(235).is_bonded(310) );
-		TS_ASSERT( !pose_->residue(238).is_bonded(310) );
-		//Check that the pose has the proper number of constraints (should have 18 per setup metal)
-		TS_ASSERT_EQUALS( pose_->constraint_set()->get_all_constraints().size(), 36 );
-
-		//Select only zinc ions
-		pose_ = ref_pose_->clone();
-		new_mover = protocols::simple_moves::SetupMetalsMover();
-		//This should behave like above except it should override default values, including command line options
-		std::stringstream ss_zn;
-		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" ><ResidueName residue_name3=\" ZN\" /></SetupMetalsMover>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		tag->read( ss_zn );
-		TS_TRACE( "Tag with embedded selector to select zinc ions" );
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
-		//Check all default values
-		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
-		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
-
-		//The following should have been set from command line values in the constructor
-		TS_ASSERT_DELTA( new_mover.get_metals_detection_LJ_multiplier(), 1.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_distance_constraint_multiplier(), 2.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_angle_constraint_multiplier(), 5.0, 1e-6 );
-		//Apply the mover
-		new_mover.apply( *pose_ );
-		//Check that all bonds were created
-		TS_ASSERT( !pose_->residue(46).is_bonded(154) );
-		TS_ASSERT( !pose_->residue(48).is_bonded(154) );
-		TS_ASSERT( !pose_->residue(63).is_bonded(154) );
-		TS_ASSERT( !pose_->residue(120).is_bonded(154) );
-
-		TS_ASSERT( pose_->residue(63).is_bonded(155) );
-		TS_ASSERT( pose_->residue(71).is_bonded(155) );
-		TS_ASSERT( pose_->residue(80).is_bonded(155) );
-		TS_ASSERT( pose_->residue(83).is_bonded(155) );
-
-		TS_ASSERT( !pose_->residue(201).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(203).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(218).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(275).is_bonded(309) );
-
-		TS_ASSERT( pose_->residue(218).is_bonded(310) );
-		TS_ASSERT( pose_->residue(226).is_bonded(310) );
-		TS_ASSERT( pose_->residue(235).is_bonded(310) );
-		TS_ASSERT( pose_->residue(238).is_bonded(310) );
-		//Check that the pose has the proper number of constraints (should have 18 per setup metal)
-		TS_ASSERT_EQUALS( pose_->constraint_set()->get_all_constraints().size(), 36 );
-
-		//Select none of the metals (none of the metals are in the selection)
-		pose_ = ref_pose_->clone();
-		new_mover = protocols::simple_moves::SetupMetalsMover();
-		//This should behave like above except it should override default values, including command line options
-		std::stringstream ss_none;
-		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" ><Index resnums=\"1,2,3\" /></SetupMetalsMover>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
-		//Check all default values
-		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
-		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
-
-		//The following should have been set from command line values in the constructor
-		TS_ASSERT_DELTA( new_mover.get_metals_detection_LJ_multiplier(), 1.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_distance_constraint_multiplier(), 2.0, 1e-6 );
-		TS_ASSERT_DELTA( new_mover.get_metals_angle_constraint_multiplier(), 5.0, 1e-6 );
-		//Apply the mover
-		new_mover.apply( *pose_ );
-		//Check that all bonds were created
-		TS_ASSERT( !pose_->residue(46).is_bonded(154) );
-		TS_ASSERT( !pose_->residue(48).is_bonded(154) );
-		TS_ASSERT( !pose_->residue(63).is_bonded(154) );
-		TS_ASSERT( !pose_->residue(120).is_bonded(154) );
-
-		TS_ASSERT( !pose_->residue(63).is_bonded(155) );
-		TS_ASSERT( !pose_->residue(71).is_bonded(155) );
-		TS_ASSERT( !pose_->residue(80).is_bonded(155) );
-		TS_ASSERT( !pose_->residue(83).is_bonded(155) );
-
-		TS_ASSERT( !pose_->residue(201).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(203).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(218).is_bonded(309) );
-		TS_ASSERT( !pose_->residue(275).is_bonded(309) );
-
-		TS_ASSERT( !pose_->residue(218).is_bonded(310) );
-		TS_ASSERT( !pose_->residue(226).is_bonded(310) );
-		TS_ASSERT( !pose_->residue(235).is_bonded(310) );
-		TS_ASSERT( !pose_->residue(238).is_bonded(310) );
-		//Check that the pose has the proper number of constraints (should have 18 per setup metal)
-		TS_ASSERT_EQUALS( pose_->constraint_set()->get_all_constraints().size(), 0 );
-
-	}
 	void test_parse_tag_named_selector(){
 		//This should only set up metal ions specified by the selector
 		basic::datacache::DataMap dm;
@@ -408,10 +226,10 @@ public:
 		protocols::simple_moves::SetupMetalsMover new_mover;
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_all;
-		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"all\" />" << std::endl;
+		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"all\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with embedded selector to select all metals" );
+		TS_TRACE( "Tag with selector to select all metals" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -451,10 +269,10 @@ public:
 		new_mover = protocols::simple_moves::SetupMetalsMover();
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
-		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"chain\" />" << std::endl;
+		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"chain\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with embedded selector to select chain A" );
+		TS_TRACE( "Tag with selector to select chain A" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -493,10 +311,10 @@ public:
 		new_mover = protocols::simple_moves::SetupMetalsMover();
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
-		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"zinc\" />" << std::endl;
+		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"zinc\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with embedded selector to select zinc ions" );
+		TS_TRACE( "Tag with selector to select zinc ions" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -536,10 +354,10 @@ public:
 		new_mover = protocols::simple_moves::SetupMetalsMover();
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
-		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" residue_selector=\"none\" />" << std::endl;
+		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"none\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TS_TRACE( "Tag with selector that should not include any of the metal ions" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -583,10 +401,10 @@ public:
 		protocols::simple_moves::SetupMetalsMover new_mover;
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_all;
-		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" resnums=\"154,155,309,310\" />" << std::endl;
+		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"154,155,309,310\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with embedded selector to select all metals" );
+		TS_TRACE( "Tag with resnums to select all metals" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -626,10 +444,10 @@ public:
 		new_mover = protocols::simple_moves::SetupMetalsMover();
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
-		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" resnums=\"1-155\" />" << std::endl;
+		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"1-155\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with embedded selector to select chain A" );
+		TS_TRACE( "Tag with resnums to select chain A" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -668,10 +486,10 @@ public:
 		new_mover = protocols::simple_moves::SetupMetalsMover();
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
-		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" resnums=\"155,310\" />" << std::endl;
+		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"155,310\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with embedded selector to select zinc ions" );
+		TS_TRACE( "Tag with resnums to select zinc ions" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -711,10 +529,10 @@ public:
 		new_mover = protocols::simple_moves::SetupMetalsMover();
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
-		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" resnums=\"1,2,3\" />" << std::endl;
+		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"1,2,3\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TS_TRACE( "Tag with selection that should not include any of the metal ions" );
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -748,6 +566,48 @@ public:
 		TS_ASSERT( !pose_->residue(238).is_bonded(310) );
 		//Check that the pose has the proper number of constraints (should have 18 per setup metal)
 		TS_ASSERT_EQUALS( pose_->constraint_set()->get_all_constraints().size(), 0 );
+
+	}
+
+	void test_contact_selection(){
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::PoseOP pose_ = ref_pose_->clone();
+		//Select all metals
+		protocols::simple_moves::SetupMetalsMover new_mover;
+		//This should behave like above except it should override default values, including command line options
+		std::stringstream ss_all;
+		ss_all << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155,309,310\" metals_detection_LJ_multiplier=\"1.0\" add_constraints=\"false\" contact_resnums=\"46,71,218\" />" << std::endl;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
+		tag->read( ss_all );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
+
+		//Apply the mover
+		new_mover.apply( *pose_ );
+		//Check that all bonds were created
+		TS_ASSERT( pose_->residue(46).is_bonded(154) );
+		TS_ASSERT( !pose_->residue(48).is_bonded(154) );
+		TS_ASSERT( !pose_->residue(63).is_bonded(154) );
+		TS_ASSERT( !pose_->residue(120).is_bonded(154) );
+
+		TS_ASSERT( !pose_->residue(63).is_bonded(155) );
+		TS_ASSERT( pose_->residue(71).is_bonded(155) );
+		TS_ASSERT( !pose_->residue(80).is_bonded(155) );
+		TS_ASSERT( !pose_->residue(83).is_bonded(155) );
+
+		TS_ASSERT( !pose_->residue(201).is_bonded(309) );
+		TS_ASSERT( !pose_->residue(203).is_bonded(309) );
+		TS_ASSERT( pose_->residue(218).is_bonded(309) );
+		TS_ASSERT( !pose_->residue(275).is_bonded(309) );
+
+		TS_ASSERT( pose_->residue(218).is_bonded(310) );
+		TS_ASSERT( !pose_->residue(226).is_bonded(310) );
+		TS_ASSERT( !pose_->residue(235).is_bonded(310) );
+		TS_ASSERT( !pose_->residue(238).is_bonded(310) );
+		//Check that the pose has the proper number of constraints (should have 18 per setup metal)
+		TS_ASSERT_EQUALS( pose_->constraint_set()->get_all_constraints().size(), 0 );
+
 
 	}
 

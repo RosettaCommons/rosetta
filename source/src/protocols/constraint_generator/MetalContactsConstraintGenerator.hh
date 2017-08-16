@@ -109,6 +109,9 @@ public:
 	core::Real
 	get_dist_cutoff_multiplier() const;
 
+	bool
+	get_constrain_to_closest() const;
+
 	//SETTERS
 
 	void
@@ -161,6 +164,9 @@ public:
 
 	void
 	set_dist_cutoff_multiplier( core::Real );
+
+	void
+	set_constrain_to_closest( bool );
 private:
 	//Private methods
 
@@ -200,6 +206,9 @@ private:
 
 	//Should we also score dihedrals/angles about metal against internal contacts?
 	bool score_against_internal_contacts_=false;
+	bool constrain_to_closest_=true;
+
+
 };
 
 } //protocols

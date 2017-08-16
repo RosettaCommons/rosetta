@@ -30,6 +30,8 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <set>
+
 namespace protocols {
 namespace simple_moves {
 
@@ -92,6 +94,15 @@ public:
 	bool
 	get_remove_hydrogens() const;
 
+	bool
+	get_add_constraints() const;
+
+	core::select::residue_selector::ResidueSelectorCOP
+	get_contact_selector() const;
+
+	std::string
+	get_contact_resnums_string() const;
+
 	//Setters
 	//void
 	//set_prevent_setup_metal_bb_variants( bool );
@@ -117,11 +128,22 @@ public:
 	void
 	set_remove_hydrogens( bool );
 
+	void
+	set_add_constraints( bool );
+
+	void
+	set_contact_selector( core::select::residue_selector::ResidueSelectorCOP );
+
+	void
+	set_contact_resnums_string(std::string);
 protected:
 	///@brief If a residue selector or resnum string is provided, returns any metal ions within the selection.
 	///Otherwise returns an empty vector
 	utility::vector1< core::Size >
 	find_metal_resnums( core::pose::Pose const & );
+
+	std::set< core::Size >
+	find_contact_resnums( core::pose::Pose const & );
 
 	void
 	set_defaults_from_command_line();
@@ -131,13 +153,18 @@ private:
 	//bool prevent_setup_metal_bb_variants_ = false; //default false
 	bool remove_hydrogens_ = true;
 	bool constraints_only_ = false;
+	bool add_constraints_ = true;
 	core::Real metals_detection_LJ_multiplier_ = 1.0; //default 1.0
 	core::Real metals_distance_constraint_multiplier_ = 1.0; //default 1.0
 	core::Real metals_angle_constraint_multiplier_ = 1.0; //default 1.0
 
-	//TODO: Use residue selector/metal resnums option to only set up specified metal ions
 	core::select::residue_selector::ResidueSelectorCOP metal_selector_ = nullptr;
 	std::string metal_resnums_string_ = "";
+
+	//TODO: Use residue selector/metal resnums option to only set up specified contacts
+	core::select::residue_selector::ResidueSelectorCOP contact_selector_ = nullptr;
+	std::string contact_resnums_string_ = "";
+
 };
 
 std::ostream &operator<< (std::ostream &os, SetupMetalsMover const &mover);
