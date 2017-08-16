@@ -12,7 +12,12 @@
 /// @details  This application predicts structures of simple backbone-cyclized peptides made of alpha-, beta-, or gamma-amino acids (of any chirality)
 /// using generalized kinematic closure (GenKIC) for cyclization, and enforcing user-defined requiresments for numbers of mainchain hydrogen bonds.  This
 /// version uses MPI for cross-communication with parallel processes.
+/// On 4 Aug 2017, work commenced to make this appliction compatible with a job distribution scheme in which the last level of the hierarchy splits
+/// jobs over many threads (hierarchical process-level parallelism plus thread-level parallelism).
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+
+//#define USEMPI //DELETE ME -- this is temporarily here for my IDE
+//#define MULTI_THREADED //DELETE ME -- this is temporarily here for my IDE
 
 #ifdef USEMPI
 
@@ -42,6 +47,10 @@
 // C++ headers
 #include <stdio.h>
 #include <time.h>
+
+#ifdef MULTI_THREADED
+#include <mutex>
+#endif
 
 namespace protocols {
 namespace cyclic_peptide_predict {
@@ -89,7 +98,8 @@ public:
 		core::Real const &output_fraction,
 		std::string const &output_filename,
 		core::Real const &lambda,
-		core::Real const &kbt
+		core::Real const &kbt,
+		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 	);
 
 	/// @brief Explicit virtual destructor.
@@ -99,6 +109,12 @@ public:
 	/// @brief Explicit copy constructor.
 	///
 	SimpleCycpepPredictApplication_MPI( SimpleCycpepPredictApplication_MPI const &src );
+
+#ifdef MULTI_THREADED
+	/// @brief Initialize private member variables related to thread random seeds from the options
+	/// system.  Does nothing if this isn't a multi-threaded compilation.
+	void init_random_info_from_options();
+#endif
 
 	/// @brief Actually run the application.
 	/// @details On slave nodes, this creates an instance of SimpleCycpepPredictApplication and runs that.  Nodes higher
@@ -117,11 +133,11 @@ public:
 	/// @brief Set the sort type, by enum.
 	///	
 	void set_sort_type( SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE const sort_type );
-	
+
 	/// @brief Set the ouput fraction.
 	/// @details Checks that this is between 0 and 1.
 	void set_output_fraction( core::Real const &val );
-	
+
 
 private:
 	/// ------------- Methods ----------------------------
@@ -133,7 +149,7 @@ private:
 	/// @brief The Boltzmann temperature used for calculating PNear (the
 	/// funnel quality metric).
 	inline core::Real const & kbt() const { return kbt_; }
-	
+
 	/// @brief Check the current time and determine whether it's past the timeout time.
 	///
 	bool halting_condition( clock_t const start_time, core::Size const timeout ) const;
@@ -143,25 +159,25 @@ private:
 	/// some checks to make sure that data_in[1] is 1, that data_in[n] >= data_in[n-1], and that the sum of entries
 	/// equals the total number of processes.  The total number of hierarchy levels must also match total_hierarchy_levels.
 	void set_procs_per_hierarchy_level( utility::vector1 < core::Size > const &data_in );
-	
+
 	/// @brief Sets the batch size for this proc.
 	/// @details The total_hierarchy_levels, MPI_rank, MPI_n_procs, my_children_, my_parent_, and hierarchy_level_ variables
 	/// must be set first.  This does some checks to ensure that the batch sizes of subsequent levels are smaller and previous
 	/// levels are larger.
 	void set_batchsize( utility::vector1< core::Size > const &sizes_in );
-	
+
 	/// @brief Figure out which processes are my children, and which is my parent.  Also, figure out the level in the
 	/// communications hierarchy that I'm in.
 	/// @details This must be done AFTER the MPI_rank_, MPI_n_procs_, total_hierarchy_levels_, and procs_per_hierarchy_level_,
 	/// variables are set.
 	void assign_level_children_and_parent();
-	
+
 	/// @brief Get the amino acid sequence of the peptide we're going to predict; set the sequence_ private member variable.
 	/// @details The emperor reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	/// @note This function necessarily uses new and delete[].
 	void get_sequence();
-	
+
 	/// @brief Get the native structure of the peptide we're going to predict (if the user has specified one with the -in:file:native flag).
 	/// @details The emperor reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
@@ -171,11 +187,11 @@ private:
 	/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	void get_design_settings();
-	
+
 	/// @brief Given a map of indicies to lists of residue names, broadcast it to all MPI ranks.
 	/// @note This necessarily uses new and delete for the data sent via MPI_Bcast.
 	void broadcast_res_list( std::map< core::Size, utility::vector1 < std::string > > &res_list) const;
-	
+
 	/// @brief The emperor sends a message to everyone letting them know it's time to start.
 	/// @details Following the go signal, slaves send requests for jobs upward.
 	void go_signal() const;
@@ -183,7 +199,7 @@ private:
 	/// @brief The emperor sends a message to everyone letting them know it's time to stop.
 	/// @details Following the stop signal, SimpleCycpepPredictApplication_MPI::run() terminates.
 	void stop_signal() const;
-	
+
 	/// @brief Any non-slave node can wait for a node, above or below in the hierarchy, to send it some sort of request.
 	/// @details Only messags with tag GENERAL_REQUEST.
 	/// @param[out] requesting_node The node from which the request came.
@@ -193,40 +209,40 @@ private:
 	/// @brief Send a signal to stop job distribution to a set of intermediate masters.
 	///
 	void send_halt_signal( utility::vector1 < int > const &ranks_to_target ) const;
-	
+
 	/// @brief Any node can send some sort of request to a specific node in the hierarchy (parent or child).
 	/// @details Sends messags with tag GENERAL_REQUEST.
 	/// @param[in] target_node The node to which we're sending the request.
 	/// @param[in] message The type of request to send.
 	void send_request( int const target_node, SIMPLE_CYCPEP_PREDICT_MPI_COMMUNICATION_TYPE const message ) const;
-	
+
 	/// @brief Send an integer to a child indicating that the child is now holding this number of jobs.
 	/// @details Sends messags with tag NEW_JOBS_DOWNWARD.  Sends zero if no jobs remain to send.
 	/// @param[in] target_node The rank of the node to which we're sending the request.
 	/// @param[in,out] structures_remaining_to_send The number of structures remaining in the send buffer.  Decremented by this operation to a minimum of zero.
 	/// @param[in] number_to_send How many jobs should I send down?
 	void send_new_jobs_downward( int const target_node, core::Size &structures_remaining_to_send, core::Size const number_to_send ) const;
-	
+
 	/// @brief Receive an integer from my parent indicating that I should add N jobs to my set to carry out or to pass to my children.
 	/// @details Recieves message with tag NEW_JOBS_DOWNARD.  Receives zero if no jobs remain in parent to send.
 	/// @param[in,out] njobs The number of jobs held on this node that are to be done.  Incremented by this function with however many are recieved from above.
 	void receive_njobs_from_above( core::Size &njobs ) const;
-	
+
 	/// @brief Non-emperor nodes must call this when the emperor calls emperor_broadcast_silent_struct.
 	/// @details This will build a pose and return an owning pointer to it.
 	/// @note This function necessarily uses new and delete[].
 	core::pose::PoseCOP receive_broadcast_silent_struct_and_build_pose() const;
-	
+
 	/// @brief Convert a vector of silent structs into a character string and send it to a node.
 	/// @details Intended to be used with receive_pose_batch_as_string() to allow another node to receive the transmission.
 	/// Message is tagged with SILENT_STRUCT_TRANSMISSION
 	/// @note This function necessarily uses new and delete[].
 	void send_silent_structs( utility::vector1 < core::io::silent::SilentStructOP > const &ss_vect, int const target_node) const;
-	
+
 	/// @brief Receive a transmitted set of poses (as silent strings).
 	/// @details Appends received information to results_string.
 	void receive_pose_batch_as_string( int const originating_node, std::string &results_string ) const;
-	
+
 	/// @brief Receive the number of jobs attempted by all of the nodes below a child node, and add this to the total.
 	///
 	void receive_jobs_attempted_count( core::Size &total_jobs_attempted,	int const originating_node ) const;
@@ -256,30 +272,30 @@ private:
 	/// @brief Recieve a short list of job summaries from above.
 	/// @param[out] summary_shortlist The job summaries list, cleared and populated by this function.
 	void receive_pose_requests_from_above( utility::vector1< SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > &summary_shortlist ) const;
-	
+
 	/// @brief Given a string on the emperor node, send it to all nodes.
 	/// @details The "mystring" string is the input on the emperor node, and the output on all other nodes.
 	void broadcast_string_from_emperor( std::string &mystring ) const;
 
 	/// ------------- Emperor Methods --------------------
-	
+
 	/// @brief Is this an emperor (root) node?
 	/// @details The emperor is responsible for sending out and retrieving all jobs, and for all file output.
 	bool i_am_emperor() const;
-	
+
 	/// @brief The jobs done by the emperor during parallel execution.
 	/// @details The emperor is responsible for sending out and retrieving all jobs, and for all file output.
 	void run_emperor() const;
-	
+
 	/// @brief Convert a silent struct into a character string and broadcast it to all nodes.
 	/// @details Intended to be used with receive_broadcast_silent_struct_and_build_pose() to allow all other nodes to receive the broadcast.
 	/// @note This function necessarily uses new and delete[].
 	void emperor_broadcast_silent_struct( core::io::silent::SilentStructOP ss ) const;
-	
+
 	/// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
 	///
 	void emperor_write_summaries_to_tracer( utility::vector1< SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > const &summary_list ) const;
-	
+
 	/// @brief Based on the sorted list of summaries, populate a short list of jobs, the results of which will be collected from below for output to disk.
 	/// @param[out] summary_shortlist The short list of job summaries populated by this function.
 	/// @param[in] summary_full_sorted_list The full list of job summaries collected from below, sorted.
@@ -295,7 +311,7 @@ private:
 	/// @brief Write all the collected results from below to disk.
 	/// @details Assumes silent output.
 	void emperor_write_to_disk( std::string const &output ) const;
-	
+
 	/// ------------- Intermediate Master Methods --------
 
 	/// @brief Is this an intermediate master node?
@@ -317,14 +333,36 @@ private:
 	/// @brief Is this a slave (or worker) node?
 	/// @details The slaves receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
 	bool i_am_slave() const;
-	
+
 	/// @brief The jobs done by the slaves during parallel execution.
 	/// @details The slaves receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
+	/// @note In multi-threaded mode, if threads_per_slave_process_ is greater than 1, then the slaves launch threads
+	/// to do the work.  Only the master thread does MPI calls.
 	void run_slave() const;
-	
+
 	/// @brief Actually carry out the jobs.  This is where SimpleCycpepPredictApplication is created and invoked.
 	///
 	void slave_carry_out_njobs( core::Size &njobs_from_above, utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > &jobsummaries, utility::vector1 < core::io::silent::SilentStructOP > &all_output ) const;
+
+#ifdef MULTI_THREADED
+	/// @brief Decrement the job counter.  Return true if the job counter was greater than zero.
+	/// @details Does this with proper locking to prevent threads from stepping on one another.
+	bool slave_decrement_jobcount_multithreaded( core::Size * available_job_count, core::Size &already_completed_job_count, core::Size const jobs_in_this_batch, core::Size const thread_index ) const;
+
+	/// @brief Actually carry out the jobs.  This is where SimpleCycpepPredictApplication is created and invoked.
+	/// @details This is the multi-threaded version, which locks the job count to decrement it, and locks the jobsummaries and all_output vectors to add to them.
+	void slave_carry_out_njobs_in_thread(
+		core::Size const thread_index,
+		core::Size * njobs_from_above,
+		core::Size const jobs_in_this_batch,
+		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * jobsummaries,
+		utility::vector1 < core::io::silent::SilentStructOP > * all_output,
+		core::scoring::ScoreFunctionOP sfxn,
+		core::pose::PoseOP native,
+		std::string const sequence, /*deliberately passed by copy*/
+		core::Size const batch_index //Number of batches that have been sent out on this proc.
+	) const;
+#endif
 
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
 	/// @details Throws an error if any jbo was completed on a different node than this slave.
@@ -342,25 +380,25 @@ private:
 	/// @brief The total number of processes.
 	///
 	int MPI_n_procs_;
-	
+
 	/// @brief The number of jobs that have been assigned to this process and completed, if it is a slave process.
 	/// @details Must be mutable since it's incremented as jobs are assigned.
 	mutable core::Size slave_job_count_;
-	
+
 	/// @brief The default scorefunction to use.
 	/// @details The high-hbond version is constructed from this one. 
 	/// If necessary, the aa_composition score term will be turned on
 	/// in that one; it needn't be turned on in this one.
 	core::scoring::ScoreFunctionOP scorefxn_;
-	
+
 	/// @brief The level in the communications hierarchy of this process.
 	/// @details One-based: the emperor is level 1, and the slaves are level total_hierarchy_levels_.
 	core::Size hierarchy_level_;
-	
+
 	/// @brief The total number of levels in the communication.
 	/// @details Note that the slaves are total_hierarchy_levels_, and the emperor is level 1.
 	core::Size total_hierarchy_levels_;
-	
+
 	/// @brief The number of processes at each level of the communications hierarchy.
 	///
 	utility::vector1 < core::Size > procs_per_hierarchy_level_;
@@ -372,33 +410,33 @@ private:
 	/// @brief The process indices of the children of the current process.
 	/// @details Will be empty for slave processes.	
 	utility::vector1 < int > my_children_;
-	
+
 	/// @brief The process index of the parent of the current process.
 	/// @details Will be 0 for emperor.
 	core::Size my_parent_;
-	
+
 	/// @brief The amino acid sequence.
 	/// @details Read by emperor and transmitted to all other processes.
 	std::string sequence_;
-	
+
 	/// @brief The native pose.
 	/// @details Will be null if one is not provided.  Read by emperor and transmitted to all
 	/// other processes.
 	core::pose::PoseCOP native_;
-	
+
 	/// @brief What criterion should be used to sort solutions?
 	/// @details Defaults to energy.  The SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE enum is defined in protocols/cyclic_peptide_predict/util.hh.
 	SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE sort_type_;
-	
+
 	/// @brief When selecting the top N% to output, should we select the highest-scoring (true) or lowest-scoring (false) of the metric
 	/// used to sort?
 	/// @details Defalut false (lowest-scoring).
 	bool select_highest_;
-	
+
 	/// @brief What fraction of total output structures should be written to disk?
 	/// @details If less than 1.0, then the top N% of structures are written out based on the sort_type_ sort criterion.
 	core::Real output_fraction_;
-	
+
 	/// @brief Filename for silent output.
 	///
 	std::string output_filename_;
@@ -434,7 +472,7 @@ private:
 	/// @brief Storage for the composition constraint setup for the D-alpha helix region of Ramachandran space.
 	/// @details Cached to prevent repeated read from disk.
 	std::string comp_file_contents_D_alpha_;
-	
+
 	/// @brief Storage for the composition constraint setup for the L-beta strand region of Ramachandran space.
 	/// @details Cached to prevent repeated read from disk.
 	std::string comp_file_contents_L_beta_;
@@ -442,7 +480,7 @@ private:
 	/// @brief Storage for the composition constraint setup for the D-beta strand region of Ramachandran space.
 	/// @details Cached to prevent repeated read from disk.
 	std::string comp_file_contents_D_beta_;
-	
+
 	/// @brief Storage for a bin definition file.
 	/// @details Cached to prevent repeated read from disk.
 	std::string abba_bins_;
@@ -454,7 +492,39 @@ private:
 	/// @brief The Boltzmann temperature, kB*T, used for calculating funnel quality (PNear).
 	/// @details Read from options system; default 1.0.
 	core::Real kbt_;
-	
+
+
+#ifdef MULTI_THREADED
+// Private member variables only used in multi-threaded build.
+private:
+
+	/// @brief The number of threads per slave process.  Setting this to 1 (the default)
+	/// reproduces the same behaviour as the non-threaded build.
+	core::Size threads_per_slave_proc_;
+
+	/// @brief Lock the results list for read or for write.
+	mutable std::mutex results_mutex_;
+
+	/// @brief Lock the available jobs list and next job counter for read or for write.
+	mutable std::mutex joblist_mutex_;
+
+	/// @brief Are we using a constant random seed?
+	/// @details If false, time is used as seed.
+	bool use_const_random_seed_;
+
+	/// @brief The random seed offset to use.
+	/// @details Different threads will be offset by 1, and different processes, by the
+	/// number of threads.  This value will be added as well.
+	int random_seed_offset_;
+
+	/// @brief The random seed to use.
+	int random_seed_;
+
+	/// @brief What type of random generator to use?
+	std::string rgtype_;
+
+#endif //ifdef MULTI_THREADED
+
 };
 
 } //cyclic_peptide

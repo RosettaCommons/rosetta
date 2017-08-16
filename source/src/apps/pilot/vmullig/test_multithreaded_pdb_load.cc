@@ -37,6 +37,12 @@
 #include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
+#include <core/init/init.hh>
+#include <protocols/relax/FastRelax.hh>
+
 #include <boost/bind.hpp>
 
 #ifdef MULTI_THREADED
@@ -61,10 +67,19 @@ void
 thread_fxn( core::Size const thread_index ) {
 	TR << "Launching thread " << thread_index << std::endl;
 
+	core::init::init_random_generators( 111111, "standard" );
+
 	core::pose::PoseOP pose( core::import_pose::pose_from_file( basic::options::option[basic::options::OptionKeys::in::file::s]()[1], false, core::import_pose::PDB_file ) );
 
 	TR << "Thread " << thread_index << " reports that the pose has " << pose->total_residue() << " residues." << std::endl;
 
+	TR << "Thread " << thread_index << " attempting FastRelax." << std::endl;
+
+	core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
+	protocols::relax::FastRelax frlx( sfxn, 3 );
+	frlx.apply(*pose);
+
+	TR << "Thread " << thread_index << " reports post-relax energy of " << pose->energies().total_energy() << "." << std::endl;
 	TR << "Thread " << thread_index << " terminated." << std::endl;
 }
 

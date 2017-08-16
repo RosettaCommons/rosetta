@@ -404,7 +404,7 @@ ScoringManager::get_HydroxylTorsionPotential() const
 MultipoleElecPotential const &
 ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const
 {
-	boost::function< MultipoleElecPotentialOP () > creator( boost::bind( &ScoringManager::create_multipole_elec_instance, options ) );
+	boost::function< MultipoleElecPotentialOP () > creator( boost::bind( &ScoringManager::create_multipole_elec_instance, boost::cref( options ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, multipole_elec_potential_, SAFELY_PASS_MUTEX(multipole_elec_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(multipole_elec_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	//if ( multipole_elec_potential_ == nullptr ) {
 	// multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
@@ -639,7 +639,7 @@ ScoringManager::get_SecondaryStructurePotential() const
 AtomVDW const &
 ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 {
-	boost::function< AtomVDWOP () > creator( boost::bind( &ScoringManager::create_atomvdw_instance, atom_type_set_name ) );
+	boost::function< AtomVDWOP () > creator( boost::bind( &ScoringManager::create_atomvdw_instance, boost::cref( atom_type_set_name ) ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( atomvdw_mutex_ ), atom_type_set_name, atom_vdw_ ) );
 }
 
@@ -662,7 +662,7 @@ ScoringManager::get_RNA_AtomVDW() const
 geometric_solvation::DatabaseOccSolEne const &
 ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, Real const & min_occ_energy ) const
 {
-	boost::function< geometric_solvation::DatabaseOccSolEneOP () > creator( boost::bind( &ScoringManager::create_database_occsolene_instance, atom_type_set_name, min_occ_energy ) );
+	boost::function< geometric_solvation::DatabaseOccSolEneOP () > creator( boost::bind( &ScoringManager::create_database_occsolene_instance, boost::cref( atom_type_set_name ), boost::cref( min_occ_energy ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, occ_hbond_sol_database_, SAFELY_PASS_MUTEX( database_occ_sol_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( database_occ_sol_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *occ_hbond_sol_database_;
 }
@@ -685,7 +685,7 @@ rna::RNA_SuitePotentialCOP
 ScoringManager::get_rna_suite_potential( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus ) const
 {
 	std::pair< bool, std::string > const key = std::make_pair( calculate_suiteness_bonus, suiteness_bonus );
-	boost::function< rna::RNA_SuitePotentialOP () > creator( boost::bind( &ScoringManager::create_rna_suitepotential_instance, calculate_suiteness_bonus, suiteness_bonus ) );
+	boost::function< rna::RNA_SuitePotentialOP () > creator( boost::bind( &ScoringManager::create_rna_suitepotential_instance, calculate_suiteness_bonus, boost::cref( suiteness_bonus ) ) );
 	return rna::RNA_SuitePotentialCOP(
 		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( rna_suite_mutex_ ), key, rna_suite_potential_ )
 	);
@@ -697,7 +697,7 @@ ScoringManager::get_rna_suite_potential( bool const & calculate_suiteness_bonus,
 loop_graph::evaluator::SixDTransRotPotentialCOP
 ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) const
 {
-	boost::function< loop_graph::evaluator::SixDTransRotPotentialOP () > creator( boost::bind( &ScoringManager::create_sixdtransrotpotential_instance, database_file ) );
+	boost::function< loop_graph::evaluator::SixDTransRotPotentialOP () > creator( boost::bind( &ScoringManager::create_sixdtransrotpotential_instance, boost::cref( database_file ) ) );
 	return loop_graph::evaluator::SixDTransRotPotentialCOP(
 		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( loopclose_sixdtransrot_mutex_ ), database_file, loop_close_six_d_potential_ )
 	);
@@ -876,7 +876,7 @@ ScoringManager::get_DDPLookupTable() const
 UnfoldedStatePotential const &
 ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 {
-	boost::function< UnfoldedStatePotentialOP () > creator( boost::bind( &ScoringManager::create_unfolded_state_potential_instance, type ) );
+	boost::function< UnfoldedStatePotentialOP () > creator( boost::bind( &ScoringManager::create_unfolded_state_potential_instance, boost::cref( type ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  unf_state_, SAFELY_PASS_MUTEX( unfoldedstate_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( unfoldedstate_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *unf_state_;
 }
@@ -954,7 +954,7 @@ ScoringManager::get_PoissonBoltzmannPotential() const
 SplitUnfoldedTwoBodyPotential const &
 ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type, std::string const & score_func_type) const
 {
-	boost::function< SplitUnfoldedTwoBodyPotentialOP () > creator( boost::bind( &ScoringManager::create_split_unfolded_2body_potential_instance, label_type, value_type, score_func_type ) );
+	boost::function< SplitUnfoldedTwoBodyPotentialOP () > creator( boost::bind( &ScoringManager::create_split_unfolded_2body_potential_instance, boost::cref( label_type ), boost::cref( value_type ), boost::cref( score_func_type ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, sutbp_, SAFELY_PASS_MUTEX( splitunfolded_2body_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( splitunfolded_2body_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *sutbp_;
 }
@@ -1097,7 +1097,7 @@ ScoringManager::add_memb_etable( std::string const & name, etable::MembEtableOP 
 etable::MembEtableCAP
 ScoringManager::memb_etable( std::string const & table_id ) const //pba
 {
-	boost::function< etable::MembEtableOP () > builder( boost::bind( &ScoringManager::create_memb_etable_instance, table_id ) ); //Note that this calls the non-silly version of the function.
+	boost::function< etable::MembEtableOP () > builder( boost::bind( &ScoringManager::create_memb_etable_instance, boost::cref( table_id ) ) ); //Note that this calls the non-silly version of the function.
 	return ( utility::thread::safely_check_map_for_key_and_insert_if_absent(builder, SAFELY_PASS_MUTEX(memb_etable_mutex_), table_id, memb_etables_ ) );
 }
 
@@ -1233,7 +1233,7 @@ ScoringManager::get_cloned_aa_comp_setup_helpers(
 
 	// Load the data if necessary (once, in a threadsafe manner), and populate the return vector:
 	for ( core::Size i(1); i<=n_setup_helpers; ++i ) {
-		boost::function< core::scoring::aa_composition_energy::AACompositionEnergySetupOP () > creator( boost::bind( &ScoringManager::create_aa_composition_energy_setup_instance, options.aa_composition_setup_file(i) ) );
+		boost::function< core::scoring::aa_composition_energy::AACompositionEnergySetupOP () > creator( boost::bind( &ScoringManager::create_aa_composition_energy_setup_instance, boost::cref( options.aa_composition_setup_file(i) ) ) );
 		return_vect.push_back( ( utility::thread::safely_check_map_for_key_and_insert_if_absent(creator, SAFELY_PASS_MUTEX(aa_comp_mutex_), options.aa_composition_setup_file(i), aa_composition_setup_helpers_) )->clone() );
 	}
 

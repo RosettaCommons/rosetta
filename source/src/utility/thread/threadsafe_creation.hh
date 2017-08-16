@@ -195,13 +195,13 @@ create_and_insert(
 	typename std::map< L, utility::pointer::shared_ptr< T > > & tmap
 )
 {
+	utility::pointer::shared_ptr< T > newT = builder();
 	utility::thread::WriteLockGuard lock( wrm );
 	typename std::map< L, utility::pointer::shared_ptr< T > >::const_iterator iter;
 
 	iter = tmap.find( tname );
 	if ( iter == tmap.end() ) {
-		utility::pointer::shared_ptr< T > newT = builder();
-		iter = tmap.insert( std::make_pair( tname, newT )).first;
+		iter = tmap.insert( std::make_pair( tname, newT ) ).first;
 	}
 	return iter;
 }

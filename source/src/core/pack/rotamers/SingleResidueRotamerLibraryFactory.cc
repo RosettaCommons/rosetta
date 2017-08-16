@@ -29,6 +29,7 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
+#include <utility/thread/threadsafe_creation.hh>
 #include <basic/Tracer.hh>
 
 namespace core {
@@ -36,10 +37,6 @@ namespace pack {
 namespace rotamers {
 
 static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibraryFactory");
-
-#ifdef MULTI_THREADED
-std::mutex SingleResidueRotamerLibraryFactory::cache_mutex_{};
-#endif
 
 void
 SingleResidueRotamerLibraryFactory::factory_register( SingleResidueRotamerLibraryCreatorOP creator )
@@ -92,6 +89,8 @@ SingleResidueRotamerLibraryFactory::get_cachetag( core::chemical::ResidueType co
 	}
 }
 
+/// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType.
+/// If forcebasic is true, a SingleBasicRotamerLibrary will be returned instead of a null pointer.
 /// @details For thread safety in accessing the cache, we use a "Software Transactional Memory"-type approach.
 /// We lock the cache to see if we have something cached. If not, we release the lock and build the new SRRL.
 /// This allows other threads to potentially access the shared cache for other residue types in the meantime.
@@ -99,6 +98,11 @@ SingleResidueRotamerLibraryFactory::get_cachetag( core::chemical::ResidueType co
 /// If another thread got in before us, we discard the work we did and use the previously made one.
 /// (The cache is write-once.) This should work so long as cacheable SRRLs made from SRRLSpecifications with the
 /// same type tag and cache string are functionally identical.
+/// @note This was updated on 14 Aug 2017 to use the more efficient ReadWriteMutex scheme used to access maps managed
+/// by the ScoringManager.  This allows multiple threads to be performing reads from the cache_ object simultaneously,
+/// and ensures that it is only ever locked entirely when adding a new rotamer library.
+/// @author Rocco Moretti
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- implemented more efficient locking scheme.
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & restype, bool forcebasic /* false */ ) const {
 	std::string type( type_for_residuetype( restype ) );
@@ -114,7 +118,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	std::pair< std::string, std::string > cachepair(type,cachetag);
 	if ( cachetag.size() ) {
 #ifdef MULTI_THREADED
-		std::lock_guard<std::mutex> lock(cache_mutex_); // mutex will release when this scope exits
+		utility::thread::ReadLockGuard readlock(cache_mutex_); // mutex will release when this scope exits
 #endif
 		if ( cache_.count( cachepair ) ) {
 			if ( ! cache_[ cachepair ] && forcebasic ) {
@@ -133,23 +137,27 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	// We can cache a null pointer (don't cache a SingleBasicRotamerLibrary, as not all calls will forcebasic)
 
 	if ( cachetag.size() ) {
+		{
 #ifdef MULTI_THREADED
-		std::lock_guard<std::mutex> lock(cache_mutex_); // mutex will release when this scope exits
+			utility::thread::WriteLockGuard writelock(cache_mutex_); // mutex will release when this scope exits
 #endif
-		if ( ! cache_.count( cachepair ) ) {
-			cache_[ cachepair ] = library;
-		}
+			if ( ! cache_.count( cachepair ) ) {
+				cache_[ cachepair ] = library;
+			}
+		} //Release write lock, if present
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock(cache_mutex_); // mutex will release when this scope exits
+#endif
 		if ( ! cache_[ cachepair ] && forcebasic ) {
 			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
 		} else {
 			return cache_[ cachepair ]; // Catch case where another thread already assigned cachepair
 		}
-	}
+	} //Release read lock, if present.
 	if ( ! library && forcebasic ) {
 		return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
-	} else {
-		return library;
 	}
+	return library;
 }
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
@@ -165,7 +173,13 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	return entry->second->create( restype, residue );
 }
 
-SingleResidueRotamerLibraryFactory::SingleResidueRotamerLibraryFactory()
+SingleResidueRotamerLibraryFactory::SingleResidueRotamerLibraryFactory() :
+	creator_map_(),
+#ifdef MULTI_THREADED
+	cache_mutex_(),
+#endif
+	cache_()
+	//TODO: init vars here.
 {}
 
 } //namespace rotamers

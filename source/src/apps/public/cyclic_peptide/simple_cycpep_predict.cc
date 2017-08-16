@@ -12,6 +12,9 @@
 /// @details
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
+//#define USEMPI //DELETE ME -- this is temporarily here for my IDE
+//#define MULTI_THREADED //DELETE ME -- this is temporarily here for my IDE
+
 #ifdef BOINC
 #include <utility/boinc/boinc_util.hh>
 #include <protocols/boinc/boinc.hh>
@@ -99,7 +102,8 @@ set_MPI_vars(
 	core::Real &output_fraction,
 	std::string &output_filename,
 	core::Real &lambda,
-	core::Real &kbt
+	core::Real &kbt,
+	core::Size &threads_per_slave
 );
 #endif
 
@@ -133,7 +137,8 @@ set_MPI_vars(
 	core::Real &output_fraction,
 	std::string &output_filename,
 	core::Real &lambda,
-	core::Real &kbt
+	core::Real &kbt,
+	core::Size &threads_per_slave
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -206,6 +211,12 @@ set_MPI_vars(
 		runtime_assert_string_msg( kbt > 0, errormsg + "The -cyclic_peptide:MPI_pnear_kbt option must be greater than zero." );
 	}
 
+#ifdef MULTI_THREADED
+	runtime_assert_string_msg( option[cyclic_peptide::threads_per_slave]() > 0, errormsg + "The -cyclic_peptide:threads_per_slave option's value must be greater than zero." );
+	threads_per_slave = static_cast<core::Size>( option[cyclic_peptide::threads_per_slave]() );
+#else
+	threads_per_slave = 1;
+#endif
 	wait_for_proc_zero();
 }
 #endif
@@ -235,7 +246,8 @@ main( int argc, char * argv [] )
 		std::string output_filename("");
 		core::Real lambda( 0.5 );
 		core::Real kbt( 1.0 );
-		set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt ); //Get the values of these vars (only used in MPI mode).
+		core::Size threads_per_slave(1);
+		set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave ); //Get the values of these vars (only used in MPI mode).
 #endif
 
 		if ( TR.visible() ) {
@@ -262,7 +274,7 @@ main( int argc, char * argv [] )
 		}
 
 #ifdef USEMPI
-		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt );
+		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave );
 #else
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication this_app;
 #endif

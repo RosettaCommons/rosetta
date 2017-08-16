@@ -10,6 +10,7 @@
 /// @file   core/scoring/hbonds/HBondTypeManager.hh
 /// @brief  HBond enumeration type manager
 /// @author Matthew O'Meara
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- made initialization threadsafe
 
 
 #ifndef INCLUDED_core_scoring_hbonds_HBondTypeManager_hh
@@ -25,6 +26,11 @@
 // C++ headers
 #include <string>
 #include <map>
+
+#ifdef MULTI_THREADED
+#include <mutex>
+#include <atomic>
+#endif
 
 namespace core {
 namespace scoring {
@@ -143,7 +149,15 @@ private:
 	static void setup_type_names();
 
 private:
+#ifdef MULTI_THREADED
+	static std::mutex initialization_mutex_;
+#endif
+
+#ifdef MULTI_THREADED
+	static std::atomic_bool initialized_;
+#else
 	static bool initialized_;
+#endif
 
 	/// lookup map from string name to enum type
 	static std::map< std::string, HBondWeightType > name2weight_type_;

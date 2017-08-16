@@ -10,6 +10,7 @@
 /// @file core/scoring/hbonds/HBondTypeManager.hh
 /// @brief HBond enumeration type manager
 /// @author Matthew O'Meara
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- made initialization threadsafe
 
 // Unit headers
 #include <core/scoring/hbonds/HBondTypeManager.hh>
@@ -38,7 +39,12 @@ using namespace std;
 using utility::vector1;
 using namespace chemical;
 
+#ifdef MULTI_THREADED
+std::mutex HBondTypeManager::initialization_mutex_;
+std::atomic_bool HBondTypeManager::initialized_( false );
+#else
 bool HBondTypeManager::initialized_( false );
+#endif
 
 map< string, HBondWeightType > HBondTypeManager::name2weight_type_;
 vector1< string > HBondTypeManager::weight_type2name_;
@@ -69,8 +75,16 @@ vector1< string > HBondTypeManager::geo_dim_type2name_;
 void
 HBondTypeManager::setup_type_names()
 {
+#ifdef MULTI_THREADED
+	if ( initialized_.load() ) return;
+#else
 	if ( initialized_ ) return;
-	initialized_ = true;
+#endif
+
+#ifdef MULTI_THREADED
+	std::lock_guard < std::mutex > lock( initialization_mutex_ );
+	if ( initialized_.load() ) return;
+#endif
 
 	name2weight_type_["hbw_NONE"] = hbw_NONE;
 	name2weight_type_["hbw_SR_BB"] = hbw_SR_BB;
@@ -193,6 +207,12 @@ HBondTypeManager::setup_type_names()
 			iter_end = name2geo_dim_type_.end(); iter != iter_end; ++iter ) {
 		geo_dim_type2name_[ iter->second ] = iter->first;
 	}
+
+#ifdef MULTI_THREADED
+	initialized_.store(true);
+#else
+	initialized_ = true;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////

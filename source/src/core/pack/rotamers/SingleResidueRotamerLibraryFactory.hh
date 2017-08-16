@@ -34,6 +34,7 @@
 #ifdef MULTI_THREADED
 #include <mutex>
 #include <thread>
+#include <utility/thread/ReadWriteMutex.hh>
 #endif
 
 namespace core {
@@ -50,10 +51,22 @@ public:
 
 	std::string type_for_residuetype( core::chemical::ResidueType const & restype ) const;
 
-	/// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType
-	/// If forcebasic is true, a SingleBasicRotamerLibrary will be returned instead of a null pointer
+	/// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType.
+	/// If forcebasic is true, a SingleBasicRotamerLibrary will be returned instead of a null pointer.
+	/// @details For thread safety in accessing the cache, we use a "Software Transactional Memory"-type approach.
+	/// We lock the cache to see if we have something cached. If not, we release the lock and build the new SRRL.
+	/// This allows other threads to potentially access the shared cache for other residue types in the meantime.
+	/// We then re-lock the cache, check that the generated library is still needed, and then put it in the cache.
+	/// If another thread got in before us, we discard the work we did and use the previously made one.
+	/// (The cache is write-once.) This should work so long as cacheable SRRLs made from SRRLSpecifications with the
+	/// same type tag and cache string are functionally identical.
+	/// @note This was updated on 14 Aug 2017 to use the more efficient ReadWriteMutex scheme used to access maps managed
+	/// by the ScoringManager.  This allows multiple threads to be performing reads from the cache_ object simultaneously,
+	/// and ensures that it is only ever locked entirely when adding a new rotamer library.
+	/// @author Rocco Moretti
+	/// @author Vikram K. Mulligan (vmullig@uw.edu) -- implemented more efficient locking scheme.
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP
-	get( core::chemical::ResidueType const & , bool forcebasic = false) const;
+	get( core::chemical::ResidueType const & , bool const forcebasic = false) const;
 
 	/// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP
@@ -74,7 +87,9 @@ private:
 #ifdef MULTI_THREADED
 	/// @brief The mutex for the cache_ - aquire the mutex prior to reading/writing to the cache.
 	/// In practice, you shouldn't be touching the cache outside the get(ResidueType) method.
-	static std::mutex cache_mutex_;
+	/// @details This has been updated to be a ReadWriteMutex, allowing concurent read from the cache_
+	/// object, and only locking it entirely for writes.
+	mutable utility::thread::ReadWriteMutex cache_mutex_;
 #endif
 	mutable std::map< std::pair< std::string, std::string >, core::pack::rotamers::SingleResidueRotamerLibraryCOP > cache_;
 };

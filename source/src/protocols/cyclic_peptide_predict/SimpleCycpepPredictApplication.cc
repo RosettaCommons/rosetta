@@ -196,9 +196,12 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_choose_highest                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_output_fraction                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time                  );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_lambda );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_kbt );
-#endif
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_lambda                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_kbt                        );
+#ifdef MULTI_THREADED //Options that are only needed in the MPI+threads version:
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::threads_per_slave                    );
+#endif //ifdef MULTI_THREADED
+#endif //ifdef USEMPI
 	return;
 }
 
