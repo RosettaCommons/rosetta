@@ -1609,6 +1609,7 @@ Options = Option_Group( '',
 			desc="number of neighbors a residue must have before extra rotamers are used. default: 18",
 			),
 		Option( 'resfile', 'FileVector', default=['resfile'], desc="resfile filename(s).  Most protocols use only the first and will ignore the rest; it does not track against -s or -l automatically."),
+		Option( 'sc_branch_rotamers', 'Boolean', default=['false'], desc="construct rotamers for conjugated side chains. Warning: results in deformation of the conjugation bond length and angles, so should be followed by some correction"),
 
 		# Are below option is packing options? -----------------------------------
 		# ----------

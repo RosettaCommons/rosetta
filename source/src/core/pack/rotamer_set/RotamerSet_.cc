@@ -51,6 +51,9 @@
 #include <core/pose/util.hh>
 
 // Basic headers
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
@@ -315,13 +318,15 @@ RotamerSet_::build_rotamers_for_concrete(
 			build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph, scorefxn );
 		}
 
-	} else if ( concrete_residue->has_variant_type( chemical::SC_BRANCH_POINT ) ) { // Single-sc branch point residues /
+	} else if ( concrete_residue->has_variant_type( chemical::SC_BRANCH_POINT ) &&
+			! basic::options::option[ basic::options::OptionKeys::packing::sc_branch_rotamers ].value()==true ) { // Single-sc branch point residues //////////////////////////
 		// At no point do we want to sample rotamers at a branch point, because
 		// A) doing so does not move the downstream branch chain, thus ripping apart the molecule and
 		// B) rotamer library data does not include conjugated residues, so the rotamers selected would not be valid
 		// anyway.
 		// In other words, the side chain of a branch point residue must be treated as part of the main chain of the
 		// branch.
+		// This sampling might make sense only in cases where the next step corrects for the ripped side chain, enabled by the sc_branch_rotamers flag - use with caution (Orly)
 		return;
 
 	} else { // All other residues ///////////////////////////////////////////////////////////////////////
