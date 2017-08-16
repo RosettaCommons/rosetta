@@ -134,17 +134,17 @@ def numpy_to_rosetta(np_arr):
     elif dim == 2:
         # handle the 2D case
         ros_container = rosetta.numeric.xyzMatrix_double_t(0.)
-        ros_container.xx(np_arr[0, 0])
-        ros_container.xy(np_arr[0, 1])
-        ros_container.xz(np_arr[0, 2])
+        ros_container.xx = np_arr[0, 0]
+        ros_container.xy = np_arr[0, 1]
+        ros_container.xz = np_arr[0, 2]
 
-        ros_container.yx(np_arr[1, 0])
-        ros_container.yy(np_arr[1, 1])
-        ros_container.yz(np_arr[1, 2])
+        ros_container.yx = np_arr[1, 0]
+        ros_container.yy = np_arr[1, 1]
+        ros_container.yz = np_arr[1, 2]
 
-        ros_container.zx(np_arr[2, 0])
-        ros_container.zy(np_arr[2, 1])
-        ros_container.zz(np_arr[2, 2])
+        ros_container.zx = np_arr[2, 0]
+        ros_container.zy = np_arr[2, 1]
+        ros_container.zz = np_arr[2, 2]
 
         return ros_container
 
@@ -220,8 +220,8 @@ def rotate_pose(p, R):
         for j in range(1, p.residue(i).natoms() + 1):
             v = p.residue(i).atom(j).xyz()
 
-            x = R.xx() * v.x + R.xy() * v.y + R.xz() * v.z
-            y = R.yx() * v.x + R.yy() * v.y + R.yz() * v.z
-            z = R.zx() * v.x + R.zy() * v.y + R.zz() * v.z
+            x = R.xx * v.x + R.xy * v.y + R.xz * v.z
+            y = R.yx * v.x + R.yy * v.y + R.yz * v.z
+            z = R.zx * v.x + R.zy * v.y + R.zz * v.z
 
-            p.residue(i).atom(j).xyz(numeric.xyzVector_double_t(x, y, z))
+            p.residue(i).atom(j).xyz(rosetta.numeric.xyzVector_double_t(x, y, z))
