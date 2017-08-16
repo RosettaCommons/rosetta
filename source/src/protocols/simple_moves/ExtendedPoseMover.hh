@@ -44,7 +44,6 @@ public:
 	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	// XRW TEMP  string get_name() const override;
 
 	/// @brief Returns true if this instance is valid (i.e. contains a sequence).
 	/// Since RosettaScripts mandates the existence of a no-argument constructor,

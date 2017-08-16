@@ -25,12 +25,8 @@ namespace perturb {
 /// @brief creator for the LoopMover_Perturb_KICCreator class
 class LoopMover_Perturb_KICCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  LoopMover_Perturb_KICCreator() {}
-	// XRW TEMP  virtual ~LoopMover_Perturb_KICCreator();
 
-	// XRW TEMP  virtual moves::MoverOP create_mover() const;
 
-	// XRW TEMP  virtual std::string keyname() const;
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

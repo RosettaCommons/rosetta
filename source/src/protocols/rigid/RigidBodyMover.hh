@@ -266,7 +266,6 @@ public:
 	~RigidBodyPerturbNoCenterMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
 
@@ -422,7 +421,6 @@ public:
 	void tilt2_center(core::Size const tilt2_center_in ){tilt2_center_ =tilt2_center_in;}
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -507,7 +505,6 @@ public:
 	void vary_stepsize( bool vary ) { vary_stepsize_ = vary; }
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,

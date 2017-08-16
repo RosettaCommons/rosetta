@@ -48,7 +48,6 @@ public:
 		Pose const & pose) override;
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const { return "MinimizationRefiner"; }
 
 	/// @brief Specify whether or not Cartesian minimization should be used.
 	void use_cartesian(bool setting);

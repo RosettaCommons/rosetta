@@ -71,7 +71,6 @@ public:
 	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const;
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover ); }
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

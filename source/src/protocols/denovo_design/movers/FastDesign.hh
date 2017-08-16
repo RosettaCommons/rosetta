@@ -73,8 +73,6 @@ public:
 	/// @brief virtual constructor to allow derivation
 	virtual ~FastDesign();
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name();
 
 	/// @brief Create the default task factory.  Must be called before design can occur.
 	void set_up_default_task_factory();
@@ -90,8 +88,6 @@ public:
 	) override;
 
 	/// @brief Return the name of this mover.
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP

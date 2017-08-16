@@ -83,7 +83,6 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
 	//PackerTaskMover/RotamerTrialsMover needs to have a parent class that implements this?

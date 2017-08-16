@@ -61,7 +61,6 @@ public:
 		core::pose::Pose const & pose ) override;
 
 	/// @brief Return the name of this mover.
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const override;

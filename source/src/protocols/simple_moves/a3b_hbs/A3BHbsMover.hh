@@ -40,7 +40,7 @@ public:
 	virtual ~A3BHbsMover();
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	
+
 	virtual void set_phi( core::Real angle ) { phi_angle_ = angle; }
 	virtual void set_psi( core::Real angle ) { psi_angle_ = angle; }
 
@@ -60,4 +60,4 @@ private:
 #endif // INCLUDED_protocols_simple_moves_hbs_HbsMover_hh
 
 #endif
- 
+

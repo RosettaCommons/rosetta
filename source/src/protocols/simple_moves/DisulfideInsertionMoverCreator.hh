@@ -28,10 +28,6 @@ namespace simple_moves {
 
 class DisulfideInsertionMoverCreator : public protocols::moves::MoverCreator {
 public:
-	// XRW TEMP  DisulfideInsertionMoverCreator() { }
-	// XRW TEMP  ~DisulfideInsertionMoverCreator() override = default;
-	// XRW TEMP  protocols::moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

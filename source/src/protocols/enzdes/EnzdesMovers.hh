@@ -149,7 +149,6 @@ public:
 	apply(
 		core::pose::Pose &pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	void
 	set_ligand(core::Size res_no);
@@ -275,7 +274,6 @@ public:
 	void
 	apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 

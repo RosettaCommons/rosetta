@@ -77,8 +77,6 @@ public:
 
 	/// @brief Return the name of this mover.
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP

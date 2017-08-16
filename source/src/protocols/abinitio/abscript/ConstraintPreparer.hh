@@ -72,7 +72,6 @@ public:
 	utility::vector1< bool > const& combine_exclude_res() const { return combine_exclude_res_; }
 	void combine_exclude_file( std::string const& filename );
 
-	// XRW TEMP  std::string get_name() const;
 
 	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ConstraintPreparer() ); }
 

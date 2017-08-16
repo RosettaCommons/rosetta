@@ -37,11 +37,7 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name() { return "SheetCstGenerator"; }
 
 	void
 	parse_my_tag(

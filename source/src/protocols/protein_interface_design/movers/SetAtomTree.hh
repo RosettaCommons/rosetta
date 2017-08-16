@@ -38,7 +38,6 @@ public :
 	/// Commenting out to fix PyRosetta build  void fold_tree( core::kinematics::FoldTreeOP ft );
 	/// Commenting out to fix PyRosetta build  core::kinematics::FoldTreeOP fold_tree() const;
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new SetAtomTree ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

@@ -42,7 +42,6 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	virtual ~HotspotHasherMover();
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new HotspotHasherMover ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 

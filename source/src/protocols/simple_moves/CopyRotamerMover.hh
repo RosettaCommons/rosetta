@@ -59,15 +59,11 @@ public:
 	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Show the contents of the Mover
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name();
 
 	void
 	show( std::ostream & output = std::cout ) const override;
 
 	/// @brief Get the name of the Mover
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///

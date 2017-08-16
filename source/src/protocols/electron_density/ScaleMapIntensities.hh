@@ -36,7 +36,6 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	// XRW TEMP  std::string get_name() const override { return "ScaleMapIntensities"; }
 
 	moves::MoverOP clone() const override { return moves::MoverOP( new ScaleMapIntensities( *this ) ); }
 	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ScaleMapIntensities ); }

@@ -86,8 +86,6 @@ public:
 	apply(
 		core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	void
 	set_ligres(

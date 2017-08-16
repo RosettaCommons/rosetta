@@ -39,8 +39,6 @@ public:
 
 
 	/// @brief return string with class name
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const override;
 
 	void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;

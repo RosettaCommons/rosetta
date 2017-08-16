@@ -67,7 +67,6 @@ public: // constructor/destructor
 
 	/// @brief create this type of objectt
 	MoverOP fresh_instance() const override;
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief apply MonteCarloReset (Mover)
 	void apply( Pose & pose ) override;

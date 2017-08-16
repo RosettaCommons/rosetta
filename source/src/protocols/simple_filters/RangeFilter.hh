@@ -89,7 +89,6 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	// XRW TEMP  std::string name() const override { return "RangeFilter"; }
 
 
 public:// parser

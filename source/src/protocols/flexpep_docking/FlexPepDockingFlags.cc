@@ -135,7 +135,7 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 	mcm_cycles =
 		option[ OptionKeys::flexPepDocking::mcm_cycles ](); //8 default
 	score_only = option[ OptionKeys::flexPepDocking::flexpep_score_only ]();
-	use_cen_score = option[ OptionKeys::flexPepDocking::use_cen_score ]();
+	//use_cen_score = option[ OptionKeys::flexPepDocking::use_cen_score ]();
 	min_receptor_bb = option[ OptionKeys::flexPepDocking::min_receptor_bb ];
 	ppk_only = option[ OptionKeys::flexPepDocking::flexpep_prepack ]();
 	no_prepack1 = option[ OptionKeys::flexPepDocking::flexpep_noprepack1 ]();

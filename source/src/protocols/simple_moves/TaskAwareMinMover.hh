@@ -50,7 +50,6 @@ public:
 	~TaskAwareMinMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP fresh_instance() const override;
 	protocols::moves::MoverOP clone() const override;

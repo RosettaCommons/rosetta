@@ -46,7 +46,6 @@ public:
 	ProteinInterfaceMultiStateDesignMover();
 	virtual ~ProteinInterfaceMultiStateDesignMover();
 	void apply( Pose & ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	void output_results( Pose & );
 
 	virtual void parse_my_tag(

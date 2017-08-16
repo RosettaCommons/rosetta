@@ -106,7 +106,6 @@ public:
 	void
 	apply( Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Sets the list of residue positions to idealize.
 	void set_pos_list( utility::vector1< Size > pos_list ) {

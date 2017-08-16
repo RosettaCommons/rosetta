@@ -45,7 +45,6 @@ public:
 public:
 	PlacementMinimizationMover();
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	void refresh_bbstub_constraints( core::pose::Pose & pose );
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;

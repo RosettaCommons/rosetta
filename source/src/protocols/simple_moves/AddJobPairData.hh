@@ -32,7 +32,6 @@ public:
 	AddJobPairData(AddJobPairData const & src);
 	~AddJobPairData() override;
 	void apply( Pose & ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;

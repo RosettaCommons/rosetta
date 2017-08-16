@@ -30,7 +30,6 @@ class RotamerTrialsRefiner : public LoopMover {
 public:
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const { return "RotamerTrialsRefiner"; }
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(

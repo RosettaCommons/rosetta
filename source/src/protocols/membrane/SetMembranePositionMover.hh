@@ -70,7 +70,6 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Apply Rotation/Translation to Membrane
 	/// @brief Translate the membrane position in this pose

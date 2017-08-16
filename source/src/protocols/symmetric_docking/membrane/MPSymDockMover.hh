@@ -93,9 +93,6 @@ public:
 	//////////////////////
 
 	/// @brief Return the name of this mover (MPSymDockMover)
-	// XRW TEMP  virtual
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 	/// @brief Apply Method: Symmetric Docking in the membrane
 	/// @details Setup pose for symmetry, add the membrane components to the total pose,

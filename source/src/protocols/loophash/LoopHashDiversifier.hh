@@ -63,7 +63,6 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	// core::pose::PoseOP get_additional_output();
 
-	// XRW TEMP  std::string get_name() const override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,

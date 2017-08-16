@@ -71,9 +71,6 @@ public:
 		max_allowed_conserved_pos_mutations_ = value;
 	}
 
-	// XRW TEMP  std::string name() const override {
-	// XRW TEMP   return "ConservedPosMutationFilter";
-	// XRW TEMP  }
 
 	std::string
 	name() const override;

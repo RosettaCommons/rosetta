@@ -36,7 +36,6 @@ class FavorSequenceProfile : public protocols::moves::Mover
 {
 public:
 	FavorSequenceProfile();
-	// XRW TEMP  std::string get_name() const override { return "FavorSequenceProfile"; }
 	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new protocols::simple_moves::FavorSequenceProfile( *this ) ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FavorSequenceProfile ); }
 	void set_sequence( core::sequence::Sequence & seq, std::string matrix);

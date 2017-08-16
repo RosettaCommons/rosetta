@@ -78,7 +78,6 @@ public:// virtual constructor
 
 public:// accessor
 	// @brief get name of this filter
-	// XRW TEMP  std::string name() const override { return "ShapeComplementarity"; }
 
 public:// mutator
 	void filtered_sc( Real const & filtered_sc );

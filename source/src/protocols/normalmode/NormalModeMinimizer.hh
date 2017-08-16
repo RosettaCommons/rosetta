@@ -76,7 +76,6 @@ public:
 		Pose const & ) override;
 
 
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new NormalModeMinimizer( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new NormalModeMinimizer ); }
 

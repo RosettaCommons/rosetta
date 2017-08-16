@@ -96,10 +96,6 @@ public:
 	void
 	set_defaults();
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const {
-	// XRW TEMP   return "ParatopeSiteConstraintMover";
-	// XRW TEMP  }
 
 	std::string
 	get_name() const override;

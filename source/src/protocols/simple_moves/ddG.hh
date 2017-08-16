@@ -65,7 +65,6 @@ public :
 	protocols::moves::MoverOP clone() const override;
 	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
 	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }
 	protocols::filters::FilterOP filter() const;

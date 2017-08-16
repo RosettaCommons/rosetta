@@ -197,10 +197,6 @@ public:
 	protocols::moves::MoverOP clone() const override;
 
 	/**@brief Header only mover get_name**/
-	// XRW TEMP  virtual std::string get_name() const
-	// XRW TEMP  {
-	// XRW TEMP   return "MotifGraft";
-	// XRW TEMP  }
 
 	/** @brief As the name suggests in generates all the permutations of a vector of vectors of pairs (Alex: we should templatize this! Maybe alrready there?)**/
 	void permutate_n_vv_of_pairs(

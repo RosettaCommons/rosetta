@@ -42,7 +42,6 @@ public:
 
 	moves::MoverOP clone() const override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	virtual void mask( protocols::loops::Loops const & loops );
 

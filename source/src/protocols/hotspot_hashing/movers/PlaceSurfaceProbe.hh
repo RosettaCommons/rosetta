@@ -64,7 +64,6 @@ public:
 	PlaceSurfaceProbeOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<PlaceSurfaceProbe>( PlaceProbeMover::shared_from_this() ); }
 
 
-	// XRW TEMP  virtual std::string get_name() const { return "PlaceSurfaceProbe"; }
 
 	protocols::moves::MoverOP clone() const override;
 

@@ -90,7 +90,6 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	// XRW TEMP  std::string name() const override { return "SSElementMotifContactFilter"; }
 
 
 public:// virtual main operation

@@ -46,7 +46,6 @@ public:
 
 	~TrialCounterObserver() override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 

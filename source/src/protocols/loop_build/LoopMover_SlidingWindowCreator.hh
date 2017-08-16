@@ -24,13 +24,9 @@ namespace loop_build {
 /// @brief creator for the LoopMover_SlidingWindowCreator class
 class LoopMover_SlidingWindowCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  LoopMover_SlidingWindowCreator() {}
 
-	// XRW TEMP  ~LoopMover_SlidingWindowCreator() override;
 
-	// XRW TEMP  moves::MoverOP create_mover() const override;
 
-	// XRW TEMP  std::string keyname() const override;
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

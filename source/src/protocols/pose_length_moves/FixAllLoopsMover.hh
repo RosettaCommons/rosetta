@@ -45,7 +45,6 @@ class FixAllLoopsMover : public protocols::moves::Mover {
 public:
 	FixAllLoopsMover();
 	void apply( Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	moves::MoverOP clone() const override { return moves::MoverOP( new FixAllLoopsMover( *this ) ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 

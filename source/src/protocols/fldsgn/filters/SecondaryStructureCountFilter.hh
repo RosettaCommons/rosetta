@@ -79,7 +79,6 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	// XRW TEMP  virtual std::string name() const { return "SecondaryStructureCountFilter"; }
 
 
 public:// parser

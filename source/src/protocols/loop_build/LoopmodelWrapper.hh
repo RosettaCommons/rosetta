@@ -28,7 +28,6 @@ class LoopmodelWrapper : public protocols::moves::Mover {
 public:
 
 	/// @copydoc protocols::moves::Mover::get_name
-	// XRW TEMP  std::string get_name() const override { return "LoopmodelWrapper"; }
 
 	/// @copydoc {parent}::parse_my_tag
 	void parse_my_tag(

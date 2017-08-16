@@ -89,7 +89,6 @@ public:
 	void apply( Pose & pose ) override;
 
 	/// @brief Get the name of this mover
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Anchor membrane at residue 1, default is true
 	void anchor_at_res1( bool truefalse );

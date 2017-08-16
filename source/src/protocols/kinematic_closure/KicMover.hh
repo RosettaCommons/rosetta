@@ -80,7 +80,6 @@ public:
 	~KicMover() override;
 
 	/// @brief Return the name of this mover.
-	// XRW TEMP  std::string get_name() const override { return "KicMover"; }
 
 public:
 

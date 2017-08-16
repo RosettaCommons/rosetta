@@ -59,7 +59,6 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new CartesianMD() ); };
 	protocols::moves::MoverOP clone() const override;
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	// From MDbase
 	//void set_movemap(

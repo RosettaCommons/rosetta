@@ -107,7 +107,6 @@ public:
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	// getters/setters
 	void set_bb( bool bb_in ) { bb_ = bb_in; }

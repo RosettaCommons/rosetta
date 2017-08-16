@@ -40,8 +40,6 @@ public:
 	/// @brief virtual constructor to allow derivation
 	virtual ~ExtendChainMover();
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name() { return "ExtendChain"; }
 
 	// mover virtuals
 public:
@@ -57,8 +55,6 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const override;

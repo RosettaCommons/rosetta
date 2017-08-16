@@ -96,7 +96,6 @@ public:
 
 	/// @brief Get name (MPFastRelaxMover)
 	/// @details Get the name of this mover
-	// XRW TEMP  virtual std::string get_name() const;
 
 	std::string
 	get_name() const override;

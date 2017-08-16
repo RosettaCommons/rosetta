@@ -69,7 +69,6 @@ public:
 	protocols::moves::MoverOP clone() const override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	void show(std::ostream & output=std::cout) const override;
 
 	/// @brief update the vector of movemaps, one for each loop in loops_

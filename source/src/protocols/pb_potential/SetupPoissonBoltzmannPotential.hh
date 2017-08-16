@@ -55,7 +55,6 @@ public:
 	SetupPoissonBoltzmannPotential();
 	~SetupPoissonBoltzmannPotential() override;
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void parse_my_tag( utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,

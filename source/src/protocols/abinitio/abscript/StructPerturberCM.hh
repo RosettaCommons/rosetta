@@ -49,7 +49,6 @@ public:
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void apply( core::pose::Pose& ) override;
 

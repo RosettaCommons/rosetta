@@ -50,7 +50,6 @@ public:
 	Symmetrizer();
 
 	// --- virtual functions from mover ---
-	// XRW TEMP  std::string get_name() const override { return "Symmetrizer"; }
 	void apply(Pose& pose) override;
 
 	// --- virtual copy constructors

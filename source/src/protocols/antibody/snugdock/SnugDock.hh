@@ -65,7 +65,6 @@ public: // boiler plate / virtuals
 	virtual ~SnugDock();
 
 	void apply( Pose & ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;

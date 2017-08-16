@@ -71,7 +71,6 @@ public:
 		core::Size conf_num
 	);
 
-	// XRW TEMP  std::string get_name() const override;
 	void set_temperature( core::Real temp_in );
 
 	void set_random_confomer( bool rand ) { random_conformer_ = rand; }

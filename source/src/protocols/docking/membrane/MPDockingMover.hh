@@ -111,7 +111,6 @@ public: // methods
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPDockingMover)
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Setters for the DockingProtocol
 	/// @details These are set here because the mover doesn't inherit from

@@ -172,7 +172,7 @@ void OperateOnCertainResidues::provide_xml_schema( utility::tag::XMLSchemaDefini
 	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
 	ct_gen.element_name( keyname() )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
-		.description( "XRW TO DO" )
+		.description( "Applies the specified residue-level task operations to residues selected in the provided residue selectors." )
 		.set_subelements_single_appearance_required_and_ordered( subelements )
 		.add_attribute( optional_name_attribute() )
 		.write_complex_type_to_schema( xsd );

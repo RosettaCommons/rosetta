@@ -60,7 +60,6 @@ public :
 	void initialize();
 
 	// @brief get name of this filter
-	// XRW TEMP  std::string name() const override { return "DdGScan"; }
 
 	// Setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );

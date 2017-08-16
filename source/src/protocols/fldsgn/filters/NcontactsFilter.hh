@@ -93,7 +93,6 @@ public:// accessor
 
 
 	/// @brief get name of this filter
-	// XRW TEMP  virtual std::string name() const { return "Ncontacts"; }
 
 
 public:// main calculator

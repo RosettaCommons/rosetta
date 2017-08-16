@@ -44,7 +44,6 @@ public:
 	MapHotspot();
 	// for direct access
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	/// @brief this is the recursive function where the functionality takes place
 	void GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose & curr_pose, core::Size const jump_number );
 	/// @brief minimizes rb and sc dofs for all of the hotspots

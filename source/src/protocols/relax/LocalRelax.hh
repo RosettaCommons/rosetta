@@ -54,7 +54,6 @@ private:
 public:
 	LocalRelax();
 
-	// XRW TEMP  std::string get_name() const override { return "LocalRelax"; }
 
 	/// @brief one cycle of local optimization
 	void

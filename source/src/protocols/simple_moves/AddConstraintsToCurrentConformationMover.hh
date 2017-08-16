@@ -39,7 +39,6 @@ public:
 	virtual core::scoring::constraints::ConstraintCOPs
 	generate_constraints( Pose const & pose );
 
-	// XRW TEMP  std::string get_name() const override;
 
 	void task_factory( TaskFactoryOP tf );
 	void residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );

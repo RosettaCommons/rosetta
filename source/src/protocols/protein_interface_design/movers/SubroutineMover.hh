@@ -34,7 +34,6 @@ class SubroutineMover : public protocols::moves::Mover
 public:
 	SubroutineMover();
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	virtual void parse_my_tag( utility::tag::TagCOP tag,

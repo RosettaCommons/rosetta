@@ -57,8 +57,6 @@ public:
 	end() const;
 
 public:
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	protocols::moves::MoverOP
 	clone() const override;

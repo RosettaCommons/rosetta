@@ -60,7 +60,6 @@ public:
 	virtual ~DisulfideMover();
 
 	virtual void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new DisulfideMover( *this ) ) );
 	}

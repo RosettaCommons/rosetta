@@ -59,7 +59,6 @@ public:
 
 	// @brief virtual main operation
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & ) override;
 

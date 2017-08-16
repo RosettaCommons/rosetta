@@ -57,7 +57,6 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Scores and outputs the pose - jd2 compatible.
 	void score_and_output(std::string filename,core::pose::Pose &);

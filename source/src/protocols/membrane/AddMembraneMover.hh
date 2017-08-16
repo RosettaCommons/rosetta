@@ -125,7 +125,6 @@ public: // Constructors & General Setup
 public: // Mover methods, getters & setters
 
 	/// @brief Get the name of this Mover (AddMembraneMover)
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Initialize the RosettaMP elements with this pose
 	void apply( core::pose::Pose & pose ) override;

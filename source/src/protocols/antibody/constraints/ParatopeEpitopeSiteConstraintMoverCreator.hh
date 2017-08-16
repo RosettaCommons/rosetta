@@ -23,9 +23,6 @@ namespace constraints {
 class ParatopeEpitopeSiteConstraintMoverCreator : public protocols::moves::MoverCreator {
 public:
 
-	// XRW TEMP  virtual protocols::moves::MoverOP create_mover() const;
-	// XRW TEMP  virtual std::string keyname() const;
-	// XRW TEMP  static std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

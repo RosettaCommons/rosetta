@@ -86,7 +86,6 @@ public:
 
 	// Getters/Setters
 	std::string name() override { return "TrajectoryReportToDB"; }
-	// XRW TEMP  std::string get_name() const override { return "TrajectoryReportToDB"; }
 
 	void
 	set_stride(

@@ -55,7 +55,6 @@ public:
 	//SymDofMover(const SymDofMover& rval);
 
 	// --- virtual functions from mover ---
-	// XRW TEMP  std::string get_name() const override { return "SymDofMover"; }
 	void apply(Pose& pose) override;
 	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );

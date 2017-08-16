@@ -51,8 +51,6 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~FilterReportAsPoseExtraScoresMover() override;
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name();
 
 public:
 	// mover virtual API
@@ -62,8 +60,6 @@ public:
 	void
 	show( std::ostream & output = std::cout ) const override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void

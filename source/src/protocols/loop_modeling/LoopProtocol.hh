@@ -69,7 +69,6 @@ public:
 	~LoopProtocol() override;
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const override { return "LoopProtocol"; }
 
 protected:
 

@@ -55,7 +55,6 @@ public:
 
 	TaskAwareSymMinMover(const TaskAwareSymMinMover& rval);
 
-	// XRW TEMP  virtual std::string get_name() const { return "TaskAwareSymMinMover"; }
 	void apply( core::pose::Pose & pose ) override;
 
 	protocols::moves::MoverOP clone() const override;

@@ -75,8 +75,6 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -90,8 +88,6 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name();
 
 public:
 	std::string const &

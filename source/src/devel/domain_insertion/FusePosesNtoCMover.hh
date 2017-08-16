@@ -64,8 +64,6 @@ public:
 	clone() const override;
 
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 
 	void
@@ -251,8 +249,6 @@ public:
 	~SetupCoiledCoilFoldTreeMover() override;
 
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;

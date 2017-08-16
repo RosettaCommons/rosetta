@@ -48,7 +48,6 @@ public:
 		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
 	}
 
-	// XRW TEMP  std::string get_name() const override { return OptimizeThreadingMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new OptimizeThreadingMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;

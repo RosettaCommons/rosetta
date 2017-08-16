@@ -72,7 +72,6 @@ public:
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
 	void apply_body(core::pose::Pose & pose, core::Size jump_number );
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Calls set_dault, register_from_options and init_from_options
 	void init();

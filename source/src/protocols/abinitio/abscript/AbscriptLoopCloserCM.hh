@@ -62,7 +62,6 @@ public:
 
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void apply( core::pose::Pose& ) override;
 

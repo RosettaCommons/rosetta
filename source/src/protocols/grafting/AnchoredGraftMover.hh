@@ -196,8 +196,6 @@ public:
 		return *loops_;
 	};
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	std::string
 	get_name() const override;

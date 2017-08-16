@@ -46,7 +46,6 @@ public:
 	~SeparateDnaFromNonDna() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	numeric::xyzVector< core::Real > translation() const { return translation_; }
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)

@@ -79,7 +79,6 @@ public:
 	/// @brief Apply Rotamer-Trials with minimization to pose, using the score function
 	///       and tasks provided by the constructor
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
 	//PackerTaskMover/RotamerTrialsMinMover needs to have a parent class that implements this?

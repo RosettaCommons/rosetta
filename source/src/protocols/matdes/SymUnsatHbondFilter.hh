@@ -62,7 +62,6 @@ public:// virtual constructor
 
 public:// accessor
 	// @brief get name of this filter
-	// XRW TEMP  std::string name() const override { return "SymUnsatHbond"; }
 
 public:// setters
 	void upper_threshold( core::Size const upper_cutoff );

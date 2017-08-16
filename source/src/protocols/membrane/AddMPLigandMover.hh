@@ -100,7 +100,6 @@ public: // constructors
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Show the name of this mvoer
-	// XRW TEMP  std::string get_name() const override;
 
 	std::string
 	get_name() const override;

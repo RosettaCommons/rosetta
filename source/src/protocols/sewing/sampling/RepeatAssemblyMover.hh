@@ -55,8 +55,6 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 	std::pair< bool, AssemblyOP >
 	dfs_cycle_finder(

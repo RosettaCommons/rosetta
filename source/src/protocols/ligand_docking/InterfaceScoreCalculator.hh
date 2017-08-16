@@ -49,7 +49,6 @@ public:
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void chains(std::vector<std::string> const & chains);
 

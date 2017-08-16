@@ -64,7 +64,6 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	// XRW TEMP  std::string get_name() const override { return "VoxelSpacingRefinement"; }
 
 	moves::MoverOP clone() const override { return moves::MoverOP( new VoxelSpacingRefinementMover( *this ) ); }
 	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new VoxelSpacingRefinementMover ); }

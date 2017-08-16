@@ -287,7 +287,6 @@ public:
 	~InsertZincCoordinationRemarkLines() override;
 
 	protocols::moves::MoverOP clone() const override;
-	// XRW TEMP  std::string get_name() const override;
 	void apply( core::pose::Pose & p ) override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -376,7 +375,6 @@ public:
 	~LoadZnCoordNumHbondCalculatorMover() override;
 
 	protocols::moves::MoverOP clone() const override;
-	// XRW TEMP  std::string get_name() const override;
 	void apply( core::pose::Pose & p ) override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)

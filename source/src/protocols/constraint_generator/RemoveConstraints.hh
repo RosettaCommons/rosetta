@@ -44,15 +44,11 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~RemoveConstraints() override;
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name() { return "RemoveConstraints"; }
 
 	void
 	apply( core::pose::Pose & pose ) override;
 
 public:
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(

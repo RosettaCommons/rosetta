@@ -42,7 +42,6 @@ class PlaceOnLoop : public simple_moves::DesignRepackMover
 public:
 	PlaceOnLoop();
 	void apply( Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

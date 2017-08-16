@@ -35,7 +35,6 @@ class MakeStarTopologyMover : public moves::Mover {
 public:
 	MakeStarTopologyMover() : Mover(), mode_(""), restore_(false) {}
 
-	// XRW TEMP  std::string get_name() const override { return MakeStarTopologyMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new MakeStarTopologyMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;

@@ -121,7 +121,6 @@ public:// virtual constructor
 public:
 
 	// @brief Filter Name
-	// XRW TEMP  virtual std::string name() const { return "FragmentLookupFilter"; }
 
 	// @brief False if any pose fragment is outside the fragment lookup radius.
 	//

@@ -46,9 +46,6 @@ public:
 		return filters::FilterOP( new MotifScoreFilter() );
 	}
 
-	// XRW TEMP  std::string name() const override {
-	// XRW TEMP   return "MotifScoreFilter";
-	// XRW TEMP  }
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 

@@ -55,7 +55,6 @@ public:
 	Environment& env() { return *env_; }
 
 
-	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 

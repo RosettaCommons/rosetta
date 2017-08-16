@@ -65,8 +65,6 @@ public: // functional interface
 	apply( core::pose::Pose & pose ) override;
 
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	/// @brief make a copy
 	moves::MoverOP clone() const override;

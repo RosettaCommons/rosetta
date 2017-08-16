@@ -49,7 +49,6 @@ public:
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Set the topology using a topology file.
 	void set_topology( std::string const& topology_file );

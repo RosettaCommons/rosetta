@@ -59,8 +59,6 @@ public:
 	don_dist_cutoff(core::Real d) { don_dist_cutoff_ = d; }
 
 	/// @brief return string with class name
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void

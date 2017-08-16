@@ -39,7 +39,6 @@ public:
 	DnaInterfaceMinMover( DnaInterfaceFinderOP );
 
 	void apply( core::pose::Pose & ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void use_interface( DnaInterfaceFinderOP );
 	void chi( bool value ) { chi_ = value; }

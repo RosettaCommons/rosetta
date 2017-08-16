@@ -22,9 +22,6 @@ namespace cryst {
 
 class ReportGradientsMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -32,9 +29,6 @@ public:
 
 class SetCrystWeightMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -42,9 +36,6 @@ public:
 
 class RecomputeDensityMapMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -52,9 +43,6 @@ public:
 
 class LoadDensityMapMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -62,9 +50,6 @@ public:
 
 class FitBfactorsMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -72,9 +57,6 @@ public:
 
 class UpdateSolventMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -82,9 +64,6 @@ public:
 
 class TagPoseWithRefinementStatsMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -92,9 +71,6 @@ public:
 
 class SetRefinementOptionsMoverCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  moves::MoverOP create_mover() const override;
-	// XRW TEMP  std::string keyname() const override;
-	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

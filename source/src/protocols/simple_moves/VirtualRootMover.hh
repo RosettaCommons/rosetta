@@ -32,7 +32,6 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	void apply( Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 
 	void parse_my_tag(

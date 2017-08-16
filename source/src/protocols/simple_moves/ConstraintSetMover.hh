@@ -47,7 +47,6 @@ public:
 	ConstraintSetCOP constraint_set() const;
 
 	void apply( Pose & ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;

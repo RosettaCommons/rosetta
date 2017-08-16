@@ -54,7 +54,6 @@ public:
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	// setter
 	void slide_into_contact(bool val) { slide_ = val; }
@@ -116,7 +115,6 @@ public:
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 public:
 	/// @brief if keep_virtual_residues is true, virtual residues will remain in the pose, otherwise
@@ -174,7 +172,6 @@ public:
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 public:
 	/// @brief if true, clears symmetry_definition option from pose.

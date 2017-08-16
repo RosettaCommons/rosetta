@@ -57,7 +57,6 @@ public:
 	protocols::moves::MoverOP
 	clone() const override { return protocols::moves::MoverOP( new NormalModeRelaxMover(*this) ); }
 
-	// XRW TEMP  std::string get_name() const override; //{ return NormalModeMinimizerCreator::mover_name(); }
 
 	void apply( core::pose::Pose & pose ) override;
 

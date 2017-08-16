@@ -51,7 +51,6 @@ public:  //Constructor / Destructor
 public:
 
 	protocols::moves::MoverOP clone() const override;
-	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP fresh_instance() const override;
 

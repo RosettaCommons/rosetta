@@ -47,7 +47,6 @@ public:
 	DnaInterfaceMultiStateDesign();
 	~DnaInterfaceMultiStateDesign() override;
 	void apply( Pose & ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void copy_dna_chains( DnaChainsOP );
 	void copy_targeted_dna( DnaDesignDefOPs const & );
 	void output_results( Pose & );

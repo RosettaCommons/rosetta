@@ -81,7 +81,6 @@ public:
 		ChiVector&  new_chi
 	) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	core::Real
 	compute_proposal_density(

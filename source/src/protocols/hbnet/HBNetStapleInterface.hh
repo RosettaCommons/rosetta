@@ -74,7 +74,6 @@ public:
 		bool only_extend=false
 	);
 
-	// XRW TEMP  virtual std::string get_name() const { return "HBNetStapleInterface"; }
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 

@@ -76,7 +76,6 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	// setters
 	void set_resnum( core::Size resnum );

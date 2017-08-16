@@ -57,7 +57,6 @@ public:
 
 	// mover interface
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override { return "DisulfideInsertionMover"; }
 
 	/// @brief checks if two residues in a pose are near enough in space
 	///         and geometrically similar enough to existing disulfide forming cys

@@ -74,7 +74,6 @@ public:
 
 	moves::MoverOP fresh_instance() const override;
 	moves::MoverOP clone() const override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void apply( Pose & ) override;
 

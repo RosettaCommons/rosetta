@@ -58,8 +58,6 @@ public:
 	fresh_instance() const override;
 
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 
 	void

@@ -45,7 +45,6 @@ public:
 
 	ExtractSubposeMover(const ExtractSubposeMover& rval);
 
-	// XRW TEMP  std::string get_name() const override { return "ExtractSubposeMover"; }
 	void apply( core::pose::Pose & pose ) override;
 
 	protocols::moves::MoverOP clone() const override;

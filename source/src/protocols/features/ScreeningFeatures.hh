@@ -35,7 +35,6 @@ public:
 
 	~ScreeningFeatures() override;
 
-	// XRW TEMP  std::string type_name() const override;
 
 	void write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 

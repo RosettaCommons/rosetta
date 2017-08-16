@@ -59,8 +59,6 @@ public:
 
 	void initialize( core::pose::Pose& ) override {}
 
-	// XRW TEMP  virtual
-	// XRW TEMP  std::string get_name() const;
 
 	std::string
 	get_name() const override;

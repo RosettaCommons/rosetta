@@ -133,7 +133,6 @@ public: // virtual main methods
 
 	void apply( Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 public: //parser
 

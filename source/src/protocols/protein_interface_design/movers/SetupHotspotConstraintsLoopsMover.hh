@@ -53,7 +53,6 @@ public:
 
 	core::Size generate_csts( core::pose::Pose const& pose,  core::scoring::constraints::ConstraintCOPs& constraints );
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	~SetupHotspotConstraintsLoopsMover();

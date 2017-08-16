@@ -303,7 +303,6 @@ public:
 	/// @brief dtor
 	~PyMOLMover() override;
 
-	// XRW TEMP  std::string get_name() const override;
 	void apply( Pose & ) override;
 
 	using protocols::moves::Mover::apply;

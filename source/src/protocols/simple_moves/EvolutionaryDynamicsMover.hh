@@ -96,7 +96,6 @@ public:
 	/// @brief apply GenericMonteCarloMover (Mover)
 	void apply( Pose & pose ) override;
 
-	// XRW TEMP  String get_name() const override;
 
 	/// @brief core of MC -- evaulates a pose based on the scores/filters + temperatures. random_num is a vector of random numbers between 0 and 1 with size equal to the number of MC criteria
 	bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums ) override;

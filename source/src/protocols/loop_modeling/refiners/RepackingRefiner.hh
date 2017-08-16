@@ -39,7 +39,6 @@ public:
 	RepackingRefiner(Size repack_period=1);
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const { return "RepackingRefiner"; }
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(

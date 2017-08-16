@@ -186,7 +186,7 @@ public:
 	int mcm_cycles; // TODO: spearate rigid-body and torsion cycles #
 	bool min_receptor_bb;
 	bool score_only;
-	bool use_cen_score;
+	//bool use_cen_score;
 	bool ppk_only;
 	bool no_prepack1;
 	bool no_prepack2;

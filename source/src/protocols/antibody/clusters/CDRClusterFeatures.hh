@@ -37,8 +37,6 @@ public:
 
 	virtual ~CDRClusterFeatures();
 
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const;
 
 	//Required
 	void

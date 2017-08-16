@@ -67,7 +67,6 @@ public:
 	}
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	/// @brief minimize towards clouds of stubs made up of all the stub sets
 	/// @brief if bb_cst score is 0 return false, o/w true
 	bool minimize_no_bb( core::pose::Pose & pose ) const;

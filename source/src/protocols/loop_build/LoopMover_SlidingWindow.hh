@@ -66,7 +66,6 @@ public: // construct/destruct
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 
-	// XRW TEMP  std::string get_name() const override;
 
 public: // virtual constructors
 

@@ -42,7 +42,6 @@ class InterfaceRecapitulationMover : public protocols::moves::Mover
 public:
 	InterfaceRecapitulationMover();
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void set_reference_pose( core::pose::PoseOP );

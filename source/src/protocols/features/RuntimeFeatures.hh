@@ -47,7 +47,6 @@ public:
 	~RuntimeFeatures() override;
 
 	/// @copydoc FeaturesReporter::get_name
-	// XRW TEMP  std::string type_name() const override { return "RuntimeFeatures"; }
 
 	/// @brief The runtime features links to a structure ID, so the
 	/// StructureFeatures reporter must also be present.

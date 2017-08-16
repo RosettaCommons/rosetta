@@ -84,8 +84,6 @@ public:
 	//////////////// Mover Methods /////////////////////////////////////////////
 
 public:
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	moves::MoverOP
 	clone() const override;

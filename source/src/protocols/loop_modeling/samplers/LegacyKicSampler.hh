@@ -43,7 +43,6 @@ public:
 	LegacyKicSampler();
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const { return "LegacyKicSampler"; }
 
 	std::string
 	get_name() const override;

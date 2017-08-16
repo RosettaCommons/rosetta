@@ -79,8 +79,6 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const override;

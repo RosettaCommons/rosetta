@@ -41,7 +41,6 @@ public:
 	~SuperimposeMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=0);
 	// Undefined, commenting out to fix PyRosetta build  void set_target_pose( Size start=1, Size end=-1);

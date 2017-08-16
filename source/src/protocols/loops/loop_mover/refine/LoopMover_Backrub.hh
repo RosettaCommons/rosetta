@@ -48,7 +48,6 @@ public:
 	//destructor
 	~LoopMover_Refine_Backrub();
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void set_default_settings(){
 		redesign_loop = false;

@@ -38,7 +38,6 @@ public:
 	//  void get_interface_info( core::pose::Pose & pose ) const;
 	protocols::scoring::InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,

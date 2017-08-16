@@ -328,7 +328,6 @@ public:
 	virtual ~HBNet();
 
 	//virtuals derived from Mover class
-	// XRW TEMP  virtual std::string get_name() const { return "HBNet"; }
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &,

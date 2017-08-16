@@ -47,7 +47,6 @@ public:
 
 	~UniformRigidBodyMover() override = default;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	void apply( core::pose::Pose& ) override;
 

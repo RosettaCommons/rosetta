@@ -140,9 +140,6 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override {
-	// XRW TEMP   return "MakeLayerMover";
-	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLayerMover(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLayerMover()); }

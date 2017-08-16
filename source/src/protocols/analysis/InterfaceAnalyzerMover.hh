@@ -249,8 +249,6 @@ public:
 	virtual void
 	apply_const(core::pose::Pose const & pose);
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	///Print data to tracer or scorefile if tracer is not set (default).
 	virtual void

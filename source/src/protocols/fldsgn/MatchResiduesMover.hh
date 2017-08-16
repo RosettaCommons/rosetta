@@ -69,7 +69,6 @@ public:// constructor/destructor
 	MoverOP fresh_instance() const override;
 
 	// @brief get name of this mover
-	// XRW TEMP  std::string get_name() const override { return "MatchResiduesMover"; }
 
 
 	void parse_my_tag( TagCOP tag,

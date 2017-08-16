@@ -94,7 +94,6 @@ public:
 
 	protocols::moves::MoverOP fresh_instance() const override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	std::string
 	get_name() const override;

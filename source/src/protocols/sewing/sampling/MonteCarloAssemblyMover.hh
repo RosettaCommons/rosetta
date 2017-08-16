@@ -48,8 +48,6 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 	AssemblyOP
 	generate_assembly() override;

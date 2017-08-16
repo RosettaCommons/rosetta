@@ -49,7 +49,6 @@ public:
 	/// @note: a single protocols::moves::Mover only converts in ONE direction e.g. to centroid
 	void apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
 	void type_set_tag( std::string const & type_set_tag_in ) { type_set_tag_ = type_set_tag_in; }

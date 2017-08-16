@@ -26,13 +26,9 @@ class CDRClusterFeaturesCreator: public features::FeaturesReporterCreator {
 
 
 public:
-	// XRW TEMP  CDRClusterFeaturesCreator();
 
-	// XRW TEMP  virtual ~CDRClusterFeaturesCreator();
 
-	// XRW TEMP  virtual features::FeaturesReporterOP create_features_reporter() const;
 
-	// XRW TEMP  virtual std::string type_name() const;
 	protocols::features::FeaturesReporterOP create_features_reporter() const override;
 	std::string type_name() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

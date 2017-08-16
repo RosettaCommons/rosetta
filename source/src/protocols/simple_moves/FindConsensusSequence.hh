@@ -57,7 +57,6 @@ public:
 	std::string
 	resfile_at ( core::Size index );
 
-	// XRW TEMP  std::string get_name() const override;
 
 	core::scoring::ScoreFunctionOP score_function() const;
 

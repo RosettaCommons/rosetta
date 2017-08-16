@@ -68,7 +68,6 @@ public:
 
 	static std::string
 	stage_complex_namer( std::string );
-	// XRW TEMP  virtual std::string get_name() const;
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

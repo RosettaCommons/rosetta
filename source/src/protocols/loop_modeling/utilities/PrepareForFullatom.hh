@@ -57,7 +57,6 @@ public:
 		Pose const & pose) override;
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const { return "PrepareForFullatom"; }
 
 	/// @brief Set the original pose.  This must be called before apply().
 	void set_original_pose(Pose const & pose);

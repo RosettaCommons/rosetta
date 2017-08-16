@@ -92,7 +92,6 @@ public:
 	void apply(Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Creates a new instance using the copy constructor
 	MoverOP clone() const override;

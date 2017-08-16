@@ -97,7 +97,6 @@ public:
 	/// i.e. res+insertioncode+chain ) will be resolved. Until this point, the Loops object
 	/// in the LoopRelaxMover cannot be used.
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	// getters and setters
 	void scorefxns( core::scoring::ScoreFunctionOP cen_scorefxn, core::scoring::ScoreFunctionOP fa_scorefxn );

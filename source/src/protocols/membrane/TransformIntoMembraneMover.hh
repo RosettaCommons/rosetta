@@ -116,7 +116,6 @@ public:
 	void use_default_membrane( bool truefalse );
 
 	/// @brief Get the name of this Mover (TransformIntoMembraneMover)
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Move the pose into membrane coordinate frame
 	void apply( core::pose::Pose & pose ) override;

@@ -85,7 +85,6 @@ public:
 
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	void set_move_map(core::kinematics::MoveMapOP movemap );
 	void set_second_cycle(Size const & num);

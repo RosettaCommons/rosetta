@@ -126,8 +126,6 @@ public:
 
 public:
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 
 

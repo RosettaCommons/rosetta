@@ -28,7 +28,6 @@ public:
 	PSSM2BfactorMover(core::Real const min_in , core::Real const max_in);
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;

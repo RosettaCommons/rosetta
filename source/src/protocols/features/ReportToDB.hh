@@ -79,7 +79,6 @@ public:
 	moves::MoverOP clone() const override;
 
 	virtual std::string name() { return "ReportToDB"; }
-	// XRW TEMP  std::string get_name() const override { return "ReportToDB"; }
 
 	void
 	set_batch_name(

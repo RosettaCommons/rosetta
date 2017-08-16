@@ -168,7 +168,6 @@ public:
 	/// @brief returns the docking partners chain identifiers
 	std::string partners() const { return partners_;}
 
-	// XRW TEMP  std::string get_name() const override { return "DockingProtocol"; }
 
 	/// @brief returns ref to the jumps vector for docking
 	DockJumps & movable_jumps(){ return movable_jumps_;}

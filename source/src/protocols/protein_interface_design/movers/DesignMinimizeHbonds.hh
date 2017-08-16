@@ -52,7 +52,6 @@ public:
 		bool const repack_partner1=true, bool const repack_partner2=false, bool const repack_non_ala=true );
 	virtual ~DesignMinimizeHbonds();
 	void apply( Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DesignMinimizeHbonds ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

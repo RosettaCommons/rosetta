@@ -65,7 +65,6 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override { return "SecStructMinimizeMover"; }
 
 	void set_scorefunction( core::scoring::ScoreFunctionOP const & score_fxn ) {
 		score_fxn_ = score_fxn;

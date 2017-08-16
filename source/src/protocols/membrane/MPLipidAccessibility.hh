@@ -64,8 +64,6 @@ public:
 	show( std::ostream & output = std::cout ) const override;
 
 	/// @brief Get the name of the Mover
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///

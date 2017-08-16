@@ -60,7 +60,6 @@ public:
 
 	void setup_mover ( Pose & pose );
 
-	// XRW TEMP  std::string get_name() const override;
 
 	utility::vector1< core::scoring::constraints::ConstraintCOP >
 	apply_linked_constraints( core::pose::Pose & pose );

@@ -106,8 +106,6 @@ public:
 
 public:
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;

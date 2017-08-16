@@ -45,7 +45,6 @@ public:
 	virtual ~AtomicContactCountFilter();
 
 	// @brief Filter name
-	// XRW TEMP  virtual std::string name() const { return "AtomicContactCountFilter"; }
 
 	void initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
 

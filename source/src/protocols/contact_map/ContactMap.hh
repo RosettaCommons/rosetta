@@ -62,7 +62,6 @@ public:
 
 	void apply( Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 	void test_move( Pose & pose ) override{
 		apply(pose);
 	}

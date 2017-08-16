@@ -228,7 +228,7 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + optional_name_attribute();
 	attlist + XMLSchemaAttribute(
 		"selector", xs_string,
-		"XSD XRW: TO DO");
+		"Residue selector that indicates to which residues the operation will be applied.");
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	XMLSchemaSimpleSubelementList subelements;

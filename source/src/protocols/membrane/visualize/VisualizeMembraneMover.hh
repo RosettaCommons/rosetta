@@ -104,7 +104,6 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief   Return the name of this mover
-	// XRW TEMP  virtual std::string get_name() const;
 
 	std::string
 	get_name() const override;

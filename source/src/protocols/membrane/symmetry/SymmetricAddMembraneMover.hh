@@ -121,9 +121,6 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this Mover (SymmetricAddMembraneMover)
-	// XRW TEMP  virtual
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 	/// @brief Add a membrane virtual residue to the pose by inserting by jump
 	/// @details Adds a virtual residue to the pose by selecting the VRT_0_Base

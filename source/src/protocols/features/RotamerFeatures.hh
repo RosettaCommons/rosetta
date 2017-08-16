@@ -137,8 +137,6 @@ public:
 	features_reporter_dependencies() const override;
 
 	/// @brief return string with class name
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const override;
 
 	/// @brief collect all the feature data for the pose
 	core::Size

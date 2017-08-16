@@ -67,7 +67,6 @@ public:
 
 	/// @brief Get the mover name.
 	///
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Makea  copy of this mover, and return an owning pointer to the copy.
 	///

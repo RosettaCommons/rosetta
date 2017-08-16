@@ -54,7 +54,6 @@ public:
 	core::pose::PoseOP get_additional_output() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;

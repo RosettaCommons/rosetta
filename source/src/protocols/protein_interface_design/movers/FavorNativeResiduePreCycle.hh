@@ -37,7 +37,6 @@ public:
 	void apply( core::pose::Pose & pose ) override {
 		FavorNativeResidue fnr( pose, bonus_ );
 	}
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new FavorNativeResiduePreCycle( bonus_ ) ) );
 	}

@@ -62,7 +62,6 @@ public:
 	~LoopModeler() override;
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const override { return "LoopModeler"; }
 
 	/// @brief Return a shallow copy of this object.
 	moves::MoverOP clone() const override;

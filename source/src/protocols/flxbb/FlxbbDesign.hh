@@ -135,7 +135,6 @@ public: // virtual main operation
 	/// @brief mover apply
 	void apply( Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 public:// mutators
 

@@ -44,7 +44,6 @@ public:
 	~TotalScoreFeatures() override;
 
 	/// @copydoc FeaturesReporter::type_name
-	// XRW TEMP  std::string type_name() const override;
 
 	/// @brief Get the score function being reported by this object.
 	core::scoring::ScoreFunctionCOP scorefxn() const;

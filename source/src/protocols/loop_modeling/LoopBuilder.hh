@@ -73,7 +73,6 @@ public:
 	~LoopBuilder() override;
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const override { return "LoopBuilder"; }
 
 public:
 

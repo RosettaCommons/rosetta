@@ -25,7 +25,6 @@ namespace simple_moves {
 class ResetFoldTree : public moves::Mover {
 public:
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;

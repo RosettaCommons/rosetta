@@ -38,8 +38,6 @@ public:
 class FalseFilterCreator : public FilterCreator
 {
 public:
-	// XRW TEMP  FilterOP create_filter() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -48,8 +46,6 @@ public:
 class StochasticFilterCreator : public FilterCreator
 {
 public:
-	// XRW TEMP  FilterOP create_filter() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -58,8 +54,6 @@ public:
 class CompoundFilterCreator : public FilterCreator
 {
 public:
-	// XRW TEMP  FilterOP create_filter() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -68,8 +62,6 @@ public:
 class CombinedFilterCreator : public FilterCreator
 {
 public:
-	// XRW TEMP  FilterOP create_filter() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -78,8 +70,6 @@ public:
 class MoveBeforeFilterCreator : public FilterCreator
 {
 public:
-	// XRW TEMP  FilterOP create_filter() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -88,8 +78,6 @@ public:
 class IfThenFilterCreator : public FilterCreator
 {
 public:
-	// XRW TEMP  FilterOP create_filter() const override;
-	// XRW TEMP  std::string keyname() const override;
 	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

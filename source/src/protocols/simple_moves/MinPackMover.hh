@@ -73,7 +73,6 @@ public:
 
 	// methods
 	void apply( Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)

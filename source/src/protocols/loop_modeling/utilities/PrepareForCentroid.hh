@@ -31,7 +31,6 @@ public:
 	PrepareForCentroid();
 
 	/// @copydoc LoopMover::get_name
-	// XRW TEMP  string get_name() const { return "PrepareForCentroid"; }
 
 	std::string
 	get_name() const override;

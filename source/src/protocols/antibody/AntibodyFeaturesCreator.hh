@@ -29,11 +29,7 @@ namespace antibody {
 class AntibodyFeaturesCreator : public features::FeaturesReporterCreator
 {
 public:
-	// XRW TEMP  AntibodyFeaturesCreator();
-	// XRW TEMP  ~AntibodyFeaturesCreator() override;
 
-	// XRW TEMP  features::FeaturesReporterOP create_features_reporter() const override;
-	// XRW TEMP  std::string type_name() const override;
 	protocols::features::FeaturesReporterOP create_features_reporter() const override;
 	std::string type_name() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

@@ -63,7 +63,6 @@ public:
 	void
 	init();
 
-	// XRW TEMP  std::string get_name() const override;
 
 	void
 	apply(

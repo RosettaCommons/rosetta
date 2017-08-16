@@ -235,7 +235,6 @@ public:
 
 public:
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void
 	show(std::ostream & output=std::cout) const override;

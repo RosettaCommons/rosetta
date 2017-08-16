@@ -25,12 +25,8 @@ namespace refine {
 /// @brief creator for the RepackTrial class
 class RepackTrialCreator : public moves::MoverCreator {
 public:
-	// XRW TEMP  RepackTrialCreator() {}
-	// XRW TEMP  virtual ~RepackTrialCreator();
 
-	// XRW TEMP  virtual moves::MoverOP create_mover() const;
 
-	// XRW TEMP  virtual std::string keyname() const;
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

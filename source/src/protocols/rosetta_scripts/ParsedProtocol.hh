@@ -78,7 +78,6 @@ public:
 	~ParsedProtocol() override;
 	void apply( Pose & pose ) override;
 	core::pose::PoseOP get_additional_output( ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;

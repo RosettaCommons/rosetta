@@ -89,7 +89,6 @@ public: // methods
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPDockingSetupMover)
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Reads in 2 poses and 2 spanfiles, concatenates the poses and
 	///   spanfiles and prints them out

@@ -85,7 +85,6 @@ public:
 		core::pose::Pose & pose
 	) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void
 	set_ntrials( core::Size ntrial ){

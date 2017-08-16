@@ -107,10 +107,6 @@ public:
 	void
 	set_defaults();
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const {
-	// XRW TEMP   return "ParatopeEpitopeSiteConstraintMover";
-	// XRW TEMP  }
 
 	utility::vector1<bool>
 	get_epitope_residues() const {

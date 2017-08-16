@@ -49,7 +49,6 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 	void set_min_max_angles( core::Real min_angle, core::Real max_angle );
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP fresh_instance() const override;

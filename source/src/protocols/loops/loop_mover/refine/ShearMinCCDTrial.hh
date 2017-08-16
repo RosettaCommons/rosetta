@@ -66,7 +66,6 @@ public: // boiler plate / virtuals
 	~ShearMinCCDTrial();
 
 	void apply( Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 	bool reinitialize_for_new_input() const override;

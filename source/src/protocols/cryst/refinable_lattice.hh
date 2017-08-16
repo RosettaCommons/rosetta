@@ -84,9 +84,6 @@ class UpdateCrystInfo : public protocols::moves::Mover {
 public:
 	void apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override {
-	// XRW TEMP   return "UpdateCrystInfo";
-	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new UpdateCrystInfo(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new UpdateCrystInfo()); }
@@ -155,9 +152,6 @@ public:
 
 	void set_temp(core::Real val) { temp_=val; }
 
-	// XRW TEMP  std::string get_name() const override {
-	// XRW TEMP   return "DockLatticeMover";
-	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new DockLatticeMover(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new DockLatticeMover()); }
@@ -267,9 +261,6 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override {
-	// XRW TEMP   return "MakeLatticeMover";
-	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLatticeMover(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLatticeMover()); }

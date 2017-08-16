@@ -41,7 +41,6 @@ public:
 	void fold_tree(core::kinematics::FoldTreeOP ft );
 	core::kinematics::FoldTreeOP fold_tree() const;
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 

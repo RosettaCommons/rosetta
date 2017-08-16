@@ -106,7 +106,6 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this Mover (FlipMover)
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Flip the downstream partner in the membrane
 	void apply( core::pose::Pose & pose ) override;

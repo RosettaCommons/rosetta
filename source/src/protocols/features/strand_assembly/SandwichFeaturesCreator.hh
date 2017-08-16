@@ -29,11 +29,7 @@ namespace strand_assembly {
 class SandwichFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-	// XRW TEMP  SandwichFeaturesCreator();
-	// XRW TEMP  virtual ~SandwichFeaturesCreator();
 
-	// XRW TEMP  virtual FeaturesReporterOP create_features_reporter() const;
-	// XRW TEMP  virtual std::string type_name() const;
 	protocols::features::FeaturesReporterOP create_features_reporter() const override;
 	std::string type_name() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

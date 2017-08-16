@@ -88,14 +88,7 @@ StoreTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 }
 
 // @brief Identification
-// XRW TEMP std::string StoreTaskMoverCreator::keyname() const { return StoreTaskMover::mover_name(); }
-// XRW TEMP std::string StoreTaskMover::mover_name() { return "StoreTaskMover"; }
-// XRW TEMP std::string StoreTaskMover::get_name() const { return "StoreTaskMover"; }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StoreTaskMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new StoreTaskMover );
-// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreTaskMover::clone() const {

@@ -70,7 +70,6 @@ public:
 	// set the fullatom scorefunction (only used for some option sets)
 	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
 
-	// XRW TEMP  std::string get_name() const override { return "CartesianSampler"; }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,

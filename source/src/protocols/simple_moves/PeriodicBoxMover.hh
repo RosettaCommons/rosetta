@@ -97,7 +97,6 @@ public:
 	//utility::vector1<core::Real> RDF( Pose & pose, core::Real, core::Real, core::Size );
 	//core::Real dist( Pose & pose, core::Size, std::string, core::Size, std::string);
 
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 

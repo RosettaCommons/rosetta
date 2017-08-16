@@ -46,8 +46,6 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~AlignResiduesMover();
 
-	// XRW TEMP  static std::string
-	// XRW TEMP  class_name();
 
 public:
 	// mover virtual API
@@ -57,8 +55,6 @@ public:
 	void
 	show( std::ostream & output = std::cout ) const override;
 
-	// XRW TEMP  virtual std::string
-	// XRW TEMP  get_name() const;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void

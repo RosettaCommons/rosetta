@@ -60,7 +60,6 @@ public:
 
 	/// @brief Returns the name of this mover ("AddCompositionConstraintMover").
 	///
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Actually apply the mover to a pose.
 	///

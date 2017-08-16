@@ -55,7 +55,6 @@ public:
 
 	~ErraserMinimizerMover() override = default;
 
-	// XRW TEMP  std::string get_name() const override { return "ErraserMinimizerMover"; }
 
 	void pyrimidine_flip_trial( Pose & pose );
 	void setup_fold_tree( Pose & pose );

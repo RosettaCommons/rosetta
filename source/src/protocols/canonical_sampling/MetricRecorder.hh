@@ -71,8 +71,6 @@ public: // Methods
 
 	/// @brief Return the name of this mover.
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const override;
 
 	/// @brief Use a RosettaScripts tag to configure this mover.
 

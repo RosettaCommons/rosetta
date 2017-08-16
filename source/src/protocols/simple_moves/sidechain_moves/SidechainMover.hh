@@ -101,7 +101,6 @@ public:
 		core::pose::Pose & pose
 	) override;
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	core::Real
 	proposal_density(

@@ -50,8 +50,6 @@ public:
 	~TaskOperationFeatures() override;
 
 	/// @brief return string with class name
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void

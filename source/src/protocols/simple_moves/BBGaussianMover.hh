@@ -102,7 +102,6 @@ public:
 
 	using moves::Mover::last_proposal_density_ratio;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief get the ratio of proposal densities for the last move
 	Real last_proposal_density_ratio() override;

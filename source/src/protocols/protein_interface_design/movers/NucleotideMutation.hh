@@ -42,7 +42,6 @@ public:
 	//std::vector<std::string> aa_2_nt( std::string const aa ) const;
 	void add_nt_seq_to_pose( core::pose::Pose & pose ); // get the segment names for those segments that are constant in this splice function
 	void apply( Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new NucleotideMutation ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

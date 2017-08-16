@@ -99,7 +99,6 @@ public:  // Standard Rosetta methods //////////////////////////////////////////
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	// XRW TEMP  virtual std::string get_name() const;
 
 	protocols::moves::MoverOP clone() const override;
 

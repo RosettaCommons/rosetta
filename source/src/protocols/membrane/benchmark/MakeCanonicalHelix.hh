@@ -50,8 +50,6 @@ public:
 	void
 	show( std::ostream & output=std::cout ) const override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(

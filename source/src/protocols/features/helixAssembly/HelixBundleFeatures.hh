@@ -75,11 +75,6 @@ public:
 
 	HelixBundleFeatures();
 
-	// XRW TEMP  virtual
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const  {
-	// XRW TEMP   return "HelixBundleFeatures";
-	// XRW TEMP  };
 
 	/// @brief generate the table schemas and write them to the database
 	void

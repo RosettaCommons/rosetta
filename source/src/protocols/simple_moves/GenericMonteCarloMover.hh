@@ -134,7 +134,6 @@ public:
 	/// @brief apply GenericMonteCarloMover (Mover)
 	void apply( Pose & pose ) override;
 
-	// XRW TEMP  String get_name() const override;
 
 	/// @brief reset MC iterations, with pose used for the last & best structures
 	void reset( Pose & pose );

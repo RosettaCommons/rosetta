@@ -47,7 +47,6 @@ public:
 	DnaDesignDefOPs const & targeted_dna() const;
 
 	void apply( Pose & ) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	void parse_my_tag(

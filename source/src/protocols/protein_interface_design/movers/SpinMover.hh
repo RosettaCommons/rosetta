@@ -39,7 +39,6 @@ public:
 	/// @note Pass everything through the final filter (True Filter)
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	//std::string protocols::moves::Mover::get_name() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,

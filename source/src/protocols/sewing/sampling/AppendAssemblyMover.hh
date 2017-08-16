@@ -46,8 +46,6 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	// XRW TEMP  std::string
-	// XRW TEMP  get_name() const;
 
 	///@brief The starting node for the Assembly from the append mover
 	///will always be the input PDB

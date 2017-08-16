@@ -73,7 +73,6 @@ public:
 	//destructor
 	~LoopMover_Perturb_CCD();
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void show(std::ostream & output=std::cout) const override;
 

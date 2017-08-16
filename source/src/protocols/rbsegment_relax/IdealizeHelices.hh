@@ -39,7 +39,6 @@ public:
 		scorefxn_->set_weight( core::scoring::coordinate_constraint , cst_weight_ );
 	}
 
-	// XRW TEMP  std::string get_name() const override { return IdealizeHelicesMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new IdealizeHelicesMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;

@@ -52,7 +52,6 @@ public:
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override {

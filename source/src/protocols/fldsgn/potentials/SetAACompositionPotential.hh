@@ -102,8 +102,6 @@ public: // virtual main methods
 	/// @brief apply defined moves to given Pose
 	void apply( Pose & ) override;
 
-	// XRW TEMP  virtual
-	// XRW TEMP  std::string get_name() const;
 
 
 public: //parser

@@ -402,7 +402,6 @@ public:
 
 	// NOTE : I have no idea why this virtual method exists together with the get_type() method, which
 	//        returns the type_ member initialized upon construction (see constructor).
-	// XRW TEMP  std::string name() const override { return "PeptideDeriverFilter"; }
 
 	// accessors
 	utility::vector1<core::Size> get_pep_lengths() const { return pep_lengths_; }

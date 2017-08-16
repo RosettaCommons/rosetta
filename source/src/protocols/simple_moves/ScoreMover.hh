@@ -72,7 +72,6 @@ public:
 	void insert_rms( core::Real rms ) { score_map_["rms"] = rms; }
 
 	void apply( Pose & pose ) override;
-	// XRW TEMP  std::string get_name() const override;
 	void test_move( Pose & pose ) override
 	{
 		apply(pose);

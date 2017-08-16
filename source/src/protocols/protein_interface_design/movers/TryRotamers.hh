@@ -79,7 +79,6 @@ public:
 
 	void setup_rotamer_set(core::pose::Pose & pose);
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,

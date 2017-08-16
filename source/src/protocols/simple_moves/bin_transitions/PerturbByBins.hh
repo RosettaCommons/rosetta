@@ -67,7 +67,6 @@ public:
 	///
 	virtual ~PerturbByBins();
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Clone -- i.e. create a new object copying this one and return an owning pointer to the copy.
 	///

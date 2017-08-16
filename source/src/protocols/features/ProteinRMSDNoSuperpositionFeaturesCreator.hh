@@ -31,11 +31,7 @@ namespace features {
 class ProteinRMSDNoSuperpositionFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-	// XRW TEMP  ProteinRMSDNoSuperpositionFeaturesCreator();
-	// XRW TEMP  ~ProteinRMSDNoSuperpositionFeaturesCreator() override;
 
-	// XRW TEMP  FeaturesReporterOP create_features_reporter() const override;
-	// XRW TEMP  std::string type_name() const override;
 	protocols::features::FeaturesReporterOP create_features_reporter() const override;
 	std::string type_name() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

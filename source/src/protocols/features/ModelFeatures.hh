@@ -82,10 +82,6 @@ public:
 	ModelFeatures();
 
 
-	// XRW TEMP  std::string
-	// XRW TEMP  type_name() const override  {
-	// XRW TEMP   return "ModelFeatures";
-	// XRW TEMP  };
 
 
 	/// @brief return the set of features reporters that are required to

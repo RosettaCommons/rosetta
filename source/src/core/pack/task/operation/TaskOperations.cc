@@ -622,7 +622,7 @@ void InitializeFromOptionCollection::provide_xml_schema( utility::tag::XMLSchema
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes + XMLSchemaAttribute::attribute_w_default(  "option_collection", xs_string, "Options in datamap.",  "job_options"  );
-	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO: No documentation online. Initialize from option collection." );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Initializes task operations from an option collection. Similar to InitializeFromCommandLine, but uses a specified option collection object instead of basic::option::options." );
 }
 
 TaskOperationOP InitializeFromOptionCollectionCreator::create_task_operation() const
@@ -657,7 +657,7 @@ InitializeExtraRotsFromCommandline::apply( pose::Pose const &, PackerTask & task
 std::string InitializeExtraRotsFromCommandline::keyname() { return "InitializeExtraRotsFromCommandline"; }
 
 void InitializeExtraRotsFromCommandline::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Under development and untested. Use at your own risk." );
+	task_op_schema_empty( xsd, keyname(), "Creates extra rotamer operations from command line options. Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP InitializeExtraRotsFromCommandlineCreator::create_task_operation() const
@@ -886,25 +886,25 @@ rotamer_sampling_data_xml_schema_attributes( XMLSchemaDefinition & xsd )
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex3", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex4", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed", xsct_rosetta_bool, "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1", xsct_rosetta_bool, "Use extra chi1 sub-rotamers for all residues that pass the extrachi_cutof",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2", xsct_rosetta_bool, "Use extra chi2 sub-rotamers for all residues that pass the extrachi_cutoff",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex3", xsct_rosetta_bool, "Use extra chi3 sub-rotamers for all residues that pass the extrachi_cutoff",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex4", xsct_rosetta_bool, "Use extra chi4 sub-rotamers for all residues that pass the extrachi_cutoff",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro", xsct_rosetta_bool, "Use extra chi1 sub-rotamers for aromatic residues that pass the extrachi_cutoff",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro", xsct_rosetta_bool, "Use extra chi2 sub-rotamers for aromatic residues that pass the extrachi_cutoff",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed", xsct_rosetta_bool, "Use extra chi1 sub-rotamers for all aromatic residues",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed", xsct_rosetta_bool, "Use extra chi2 sub-rotamers for all aromatic residues",  "0"  )
 
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex3_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex4_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1_sample_level", "exchi_sample_level", "Sampling level for chi1 sampling; all include the current chi dihedral. There are currently 8 options: NO_EXTRA_CHI_SAMPLES (0) (original only); EX_ONE_STDDEV (1) (default, +- one sd, 3 samples); EX_ONE_HALF_STEP_STDDEV (2)(+- 0.5 sd, 3 samples); EX_TWO_FULL_STEP_STDDEVS(3) ( +- 1 and 2 sd, 5 samples); EX_TWO_HALF_STEP_STDDEVS(4) ( +- 0.5 and +- 1 sd, 5 samples); EX_FOUR_HALF_STEP_STDDEVS(5) ( +- 0.5, 1, 1.5, 2 sd, 9 samples); EX_THREE_THIRD_STEP_STDDEVS (6) ( +- 0.33, 0.67, 1 sd; 7 samples); EX_SIX_QUARTER_STEP_STDDEVS (7) ( += 0.25, 0.5, 0.75, 1.25, 1.5 sd; 13 samples)",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2_sample_level", "exchi_sample_level", "Sampling level for chi2 sampling; see ex1_sample_level for available options.",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex3_sample_level", "exchi_sample_level", "Sampling level for chi3 sampling; see ex1_sample_level for available options",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex4_sample_level", "exchi_sample_level", "Sampling level for chi4 sampling; see ex1_sample_level for available options",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_sample_level", "exchi_sample_level", "Sampling level for aromatic chi1 sampling; see ex1_sample_level for available options",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_sample_level", "exchi_sample_level", "Sampling level for aromatic chi2 sampling; see ex1_sample_level for available options",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed_sample_level", "exchi_sample_level", "Sampling level for aromatic chi1 sampling; see ex1_sample_level for available options",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed_sample_level", "exchi_sample_level",  "Sampling level for aromatic chi1 sampling; see ex1_sample_level for available options",  "1"  )
 
-		+ XMLSchemaAttribute::attribute_w_default(  "extrachi_cutoff", xsct_non_negative_integer, "XRW TO DO",  utility::to_string( EXTRACHI_CUTOFF_LIMIT  ));
+		+ XMLSchemaAttribute::attribute_w_default(  "extrachi_cutoff", xsct_non_negative_integer, "Number of neighbors a residue must have before extra rotamers are used. Default 18",  utility::to_string( EXTRACHI_CUTOFF_LIMIT  ));
 
 	return attributes;
 }
@@ -1339,7 +1339,7 @@ SetRotamerCouplings::set_couplings( rotamer_set::RotamerCouplingsOP couplings )
 std::string SetRotamerCouplings::keyname() { return "SetRotamerCouplings"; }
 
 void SetRotamerCouplings::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname(), "XRW TO DO:Under development and untested. Use at your own risk." );
+	task_op_schema_empty( xsd, keyname(), "Rotamer couplings cannot currently be provided through the RosettaScripts interface. Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP SetRotamerCouplingsCreator::create_task_operation() const
@@ -1398,7 +1398,7 @@ SetRotamerLinks::set_links( rotamer_set::RotamerLinksOP links )
 std::string SetRotamerLinks::keyname() { return "SetRotamerLinks"; }
 
 void SetRotamerLinks::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Set rotamer links" );
+	task_op_schema_empty( xsd, keyname(), "Rotamer links cannot currently be specified through the RosettaScripts interface (C++/PyRosetta only). Sets rotamer links" );
 }
 
 TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
@@ -1454,7 +1454,7 @@ AppendRotamer::set_rotamer_operation(
 std::string AppendRotamer::keyname() { return "AppendRotamer"; }
 
 void AppendRotamer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Under development and untested. Use at your own risk." );
+	task_op_schema_empty( xsd, keyname(), "Appends a rotamer opteration to the packer task (cannot currently be specified through RosettaScripts). Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP AppendRotamerCreator::create_task_operation() const
@@ -1510,7 +1510,7 @@ AppendRotamerSet::set_rotamer_set_operation(
 std::string AppendRotamerSet::keyname() { return "AppendRotamerSet"; }
 
 void AppendRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Under development and untested. Use at your own risk." );
+	task_op_schema_empty( xsd, keyname(), "Appends a rotamer set operation to the packer task (cannot currently be specified through RosettaScripts).  Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP AppendRotamerSetCreator::create_task_operation() const
@@ -1577,7 +1577,7 @@ AppendResidueRotamerSet::set_rotamer_set_operation( rotamer_set::RotamerSetOpera
 std::string AppendResidueRotamerSet::keyname() { return "AppendResidueRotamerSet"; }
 
 void AppendResidueRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname(), "XRW TO DO: no documentation online" );
+	task_op_schema_empty( xsd, keyname(), "Appends a rotamer set operation to the packer task for the specified residue. Cannot currently be specified through RosettaScripts." );
 }
 
 TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
@@ -1668,8 +1668,8 @@ std::string PreventRepacking::keyname() { return "PreventRepacking"; }
 
 void PreventRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "resnum", xs_string, "Residues numbers to apply PreventRepacking on.",  "0"  ); //XRW TO DO: maybe this shouldn't be a string
-	task_op_schema_w_attributes( xsd, keyname(), attributes , "Do not allow repacking at all for the specified residue. Freezes residues." );
+	core::pose::attributes_for_get_resnum_list( attributes, xsd, "resnum" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes , "Do not allow repacking at all for the specified residues. Freezes residues." );
 }
 
 TaskOperationOP PreventRepackingCreator::create_task_operation() const

@@ -49,7 +49,6 @@ public:
 		core::Real const sidechain_move_prob,
 		std::vector< core::Size > const & residues );
 	void apply( Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new BackrubDDMover ); }
 	virtual ~BackrubDDMover();

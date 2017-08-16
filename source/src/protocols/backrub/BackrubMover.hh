@@ -89,7 +89,6 @@ public:
 	apply(
 		Pose & pose
 	) override;
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief get the segment ID for a given starting and ending atom
 	/// @details

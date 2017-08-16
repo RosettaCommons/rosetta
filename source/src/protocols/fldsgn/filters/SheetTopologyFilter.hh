@@ -113,7 +113,6 @@ public:// mutator
 public:// accessor
 
 	// @brief get name of this filter
-	// XRW TEMP  virtual std::string name() const { return "SheetTopologyFilter"; }
 
 
 public:// parser

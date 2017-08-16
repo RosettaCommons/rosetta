@@ -58,7 +58,6 @@ public:
 	/// @brief Minimizes the DOFs of pose specified in the MoveMap
 	void apply( core::pose::Pose & pose ) override;
 
-	// XRW TEMP  std::string get_name() const override;
 
 	std::string
 	get_name() const override;

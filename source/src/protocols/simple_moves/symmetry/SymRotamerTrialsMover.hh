@@ -59,7 +59,6 @@ public:
 	~SymRotamerTrialsMover();
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 
 	void
 	make_symmetric_task(

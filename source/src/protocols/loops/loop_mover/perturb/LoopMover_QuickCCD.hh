@@ -77,7 +77,6 @@ public: // construct/destruct
 	//destructor
 	~LoopMover_Perturb_QuickCCD();
 
-	// XRW TEMP  virtual std::string get_name() const;
 
 public: // virtual constructors
 

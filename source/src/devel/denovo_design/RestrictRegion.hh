@@ -67,7 +67,6 @@ public:
 	) override;
 
 	/// @brief Return the name of this mover.
-	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP clone() const override;

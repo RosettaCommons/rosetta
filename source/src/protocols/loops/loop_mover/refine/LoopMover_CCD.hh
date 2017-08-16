@@ -81,7 +81,6 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	void apply( core::pose::Pose & pose ) override;
-	// XRW TEMP  virtual std::string get_name() const;
 	void show(std::ostream & output=std::cout) const override;
 
 	void outer_cycles( core::Size value ) { outer_cycles_ = value; }
