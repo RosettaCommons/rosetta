@@ -398,7 +398,6 @@ sources = {
 	],
 	"pilot/jadolfbr/antibody_design" : [
 		#"graft_design_cdrs",
-		"antibody_designer",
 	],
 	"pilot/jadolfbr/testing" : [
 		#"class_tests",

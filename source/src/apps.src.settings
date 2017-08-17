@@ -80,6 +80,7 @@ sources = {
 	],
 	"public/antibody": [
 		"antibody",
+		"antibody_designer",
 		"antibody_legacy",
 		"antibody_graft",
 		"antibody_H3",
