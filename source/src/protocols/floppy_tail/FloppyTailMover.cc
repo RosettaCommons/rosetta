@@ -368,7 +368,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	//flexible regions are included in two subsequent groups, ensuring that they'll pack at all times (as their own neighbors)
 	bool previous_state(false); //assume we start with a non-flexible region; new regions are triggered on flexiblity
 	utility::vector1< std::set < core::Size > > regions; //a set of regions to turn into groups for comparison
-	std::set < core::Size > const empty; //easier to add empty sets to the vector than construct-then-add
+	std::set < core::Size > const empty{}; //easier to add empty sets to the vector than construct-then-add
 	core::Size current_group(1);
 	regions.push_back(empty);
 
