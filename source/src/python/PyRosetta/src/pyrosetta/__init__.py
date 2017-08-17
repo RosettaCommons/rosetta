@@ -21,9 +21,7 @@ import pyrosetta.logging_support as logging_support
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
-from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
 from pyrosetta.rosetta.core.kinematics import FoldTree, MoveMap
-from pyrosetta.rosetta.core.import_pose import pose_from_file
 from pyrosetta.rosetta.core.io.pdb import dump_pdb
 from pyrosetta.rosetta.core.id import AtomID
 from pyrosetta.rosetta.core.scoring import ScoreFunction
@@ -31,6 +29,8 @@ from pyrosetta.rosetta.core.scoring import ScoreFunction
 from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatMover, TrialMover, MonteCarlo
 from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
 from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
+
+from pyrosetta.io import *
 
 get_score_function = rosetta.core.scoring.get_score_function
 create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
@@ -326,62 +326,6 @@ def standard_packer_task(pose):
 #     rosetta.protocols.abinitio.AbrelaxApplication.register_options()
 #     rosetta.protocols.abinitio.IterativeAbrelax.register_options()
 #     rosetta.protocols.abinitio.register_options_broker()
-
-
-# for backward-compatibility
-# This needs to be here because of all the people using the Workshops and
-# because otherwise, it wrecks a lot of people's scripts.  ~Labonte
-def pose_from_pdb(filename):
-    return pose_from_file(filename)
-
-
-def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
-    """
-    Returns a pose generated from a single-letter sequence of amino acid
-    residues in <seq> using the <res_type> ResidueType and creates N- and C-
-    termini if <auto_termini> is set to True.
-
-    Unlike make_pose_from_sequence(), this method generates a default PDBInfo
-    and sets all torsion angles to 180 degrees.
-
-    Example:
-        pose = pose_from_sequence("THANKSEVAN")
-    See also:
-        Pose
-        make_pose_from_sequence()
-        pose_from_file()
-        pose_from_rcsb()
-    """
-    pose = Pose()
-    make_pose_from_sequence(pose, seq, res_type, auto_termini)
-    #print 'Setting phi, psi, omega...'
-    for i in range(0, pose.total_residue()):
-        pose.set_phi(i + 1, 180)
-        pose.set_psi(i + 1, 180)
-        pose.set_omega(i + 1, 180)
-    #print 'Attaching PDBInfo...'
-    # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here;
-    # we have to reserve space for atoms....
-    pose.pdb_info(rosetta.core.pose.PDBInfo(pose))
-    pose.pdb_info().name(seq[:8])
-    #print pose
-    return pose
-
-
-def poses_from_silent(silent_filename):
-    """
-    Returns an Iterator object which is composed of Pose objects from a silent
-    file.
-
-    @atom-moyer
-    """
-    sfd = rosetta.core.io.silent.SilentFileData(rosetta.core.io.silent.SilentFileOptions())
-    sfd.read_file(silent_filename)
-    for tag in sfd.tags():
-        ss = sfd.get_structure(tag)
-        pose = Pose()
-        ss.fill_pose(pose)
-        yield pose
 
 
 # By Michael Pacella

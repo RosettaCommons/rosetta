@@ -68,6 +68,11 @@ public:
 	virtual void add_msg( std::string const& str ) {
 		msg_ = msg_+"\n"+str;
 	}
+
+	virtual const char * what() const noexcept override {
+		return msg_.c_str();
+	}
+
 protected:
 	EXCN_Msg_Exception() {};
 private:

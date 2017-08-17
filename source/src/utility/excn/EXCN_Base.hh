@@ -24,6 +24,8 @@
 #include <ostream>
 #include <sstream>
 
+#include <exception>
+
 namespace utility {
 namespace excn {
 
@@ -46,7 +48,8 @@ Matthew O'Meara <mattjomeara@gmail.com>
 ************************************************************************************************************
 ************************************************************************************************************
 */
-class EXCN_Base {
+class EXCN_Base : public std::exception
+{
 protected:
 	EXCN_Base() {
 		//would like to add an option run:no_exceptions
@@ -74,6 +77,11 @@ public:
 		msg = os.str();
 		return msg;
 	};
+
+	virtual const char * what() const noexcept override {
+		const char * msg = "EXCN_Base::what()";
+		return msg;
+	}
 };
 
 inline std::ostream& operator << ( std::ostream& os, EXCN_Base const & excn ) {

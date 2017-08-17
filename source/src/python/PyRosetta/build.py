@@ -561,7 +561,7 @@ def main(args):
 
     binding_build_root = get_binding_build_root(rosetta_source_path)
 
-    if Options.print_build_root: print(binding_build_root, end=''); sys.exit(0)
+    if Options.print_build_root: print(binding_build_root, end=('\n' if sys.stdout.isatty() else '') ); sys.exit(0)
 
     print('Creating PyRosetta in "{}" mode in: {}'.format(Options.type, binding_build_root))
 
