@@ -54,6 +54,10 @@
   ARB   Ara           ->?)-beta-L-Arap
   LAI   Ara           ->?)-L-Ara
   PAN   Ara           ->?)-D-Ara
+  64K   Ara           ->?)-alpha-D-Arap
+  ABF   Ara           ->?)-beta-D-Araf
+  AHR   Ara           ->?)-alpha-L-Araf
+  ARW   Ara           ->?)-beta-D-Arap
 
   LXC   Xyl           ->?)-beta-L-Xylp
   XLS   Xyl           ->?)-D-Xyl

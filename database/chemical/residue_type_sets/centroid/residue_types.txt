@@ -55,6 +55,8 @@ residue_types/staple/08B.params
 ## Saccharide Types (require -include_sugars flag to be loaded in)
 ## **These are currently exact copies of the fa .params.**
 ### Aldopentoses
+#### Arabanoses
+residue_types/carbohydrates/to5-alpha-L-Araf.params
 #### Xyloses
 residue_types/carbohydrates/to3-beta-D-Xylp.params
 residue_types/carbohydrates/to4-alpha-D-Xylp.params
