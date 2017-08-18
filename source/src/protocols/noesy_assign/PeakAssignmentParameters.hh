@@ -9,6 +9,10 @@
 
 /// @file PeakAssignmentParametersList.hh
 /// @author Oliver Lange
+/// @note Someone has clearly made some attempt at thread-safety, here,
+/// but unfortunately there exist "atomic" operations that are not truly
+/// atomic.  If this protocol actually needs to be thread-safe, it will
+/// have to be refactored.  -- VKM, 15 Aug 2017.
 
 #ifndef INCLUDED_protocols_noesy_assign_PeakAssignmentParameters_HH
 #define INCLUDED_protocols_noesy_assign_PeakAssignmentParameters_HH

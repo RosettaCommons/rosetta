@@ -313,6 +313,7 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 			-I src/platform/macos/64/clang/6.1
 			-I src/platform/macos/64/clang
 			-I src/platform/macos/64
+			-stdlib=libstdc++
 	)
 	list( APPEND compile
 			-I ../../external/boost_1_55_0
@@ -322,6 +323,28 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 			#-I /usr/local/include
 			-I ../../src/platform/linux
 			-O3
+			-stdlib=libc++
+	)
+	list( REMOVE_ITEM cxx
+			-stdlib=libstdc++
+	)
+	set( cxx
+			-std=c++11
+			-stdlib=libc++
+	)
+	list( REMOVE_ITEM link
+			-stdlib=libstdc++
+	)
+	list( APPEND link
+			-lpthread
+			-stdlib=libc++
+	)
+	list( REMOVE_ITEM shlink
+			-stdlib=libstdc++
+	)
+	list( APPEND shlink
+			-lpthread
+			-stdlib=libc++
 	)
 	list ( APPEND warn
 			-Wno-tautological-constant-out-of-range-compare

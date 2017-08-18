@@ -26,6 +26,7 @@ LINK_DIRECTORIES(
 
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEMPI)
+ADD_DEFINITIONS(-DMULTI_THREADED)
 ADD_DEFINITIONS(-DMPICH_IGNORE_CXX_SEEK)
 SET(COMPILE_FLAGS "-O3")
 
@@ -100,23 +101,23 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 ##### Top level binaries
 # just loophash stuff for now
 ### loophash_createfiltereddb 
-#ADD_EXECUTABLE(loophash_createfiltereddb.mpi.linuxgccrelease ../../src/apps/pilot/kenjung/loophash_createfiltereddb.cc)
-#TARGET_LINK_LIBRARIES(loophash_createfiltereddb.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-#SET_TARGET_PROPERTIES(loophash_createfiltereddb.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-#SET_TARGET_PROPERTIES(loophash_createfiltereddb.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+#ADD_EXECUTABLE(loophash_createfiltereddb.cxx11threadmpi.linuxbgclangrelease ../../src/apps/pilot/kenjung/loophash_createfiltereddb.cc)
+#TARGET_LINK_LIBRARIES(loophash_createfiltereddb.cxx11threadmpi.linuxbgclangrelease ${LINK_ALL_LIBS})
+#SET_TARGET_PROPERTIES(loophash_createfiltereddb.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+#SET_TARGET_PROPERTIES(loophash_createfiltereddb.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-#ADD_DEPENDENCIES(loophash_createfiltereddb.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
+#ADD_DEPENDENCIES(loophash_createfiltereddb.cxx11threadmpi.linuxbgclangrelease ObjexxFCL utility numeric basic 
 #	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel)
 
 ### design_cycpeptide_MPI
-#ADD_EXECUTABLE(design_cycpeptide_MPI.mpi.linuxgccrelease ../../src/apps/pilot/vmullig/design_cycpeptide_MPI.cc)
-#TARGET_LINK_LIBRARIES(design_cycpeptide_MPI.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-#SET_TARGET_PROPERTIES(design_cycpeptide_MPI.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-#SET_TARGET_PROPERTIES(design_cycpeptide_MPI.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+#ADD_EXECUTABLE(design_cycpeptide_MPI.cxx11threadmpi.linuxbgclangrelease ../../src/apps/pilot/vmullig/design_cycpeptide_MPI.cc)
+#TARGET_LINK_LIBRARIES(design_cycpeptide_MPI.cxx11threadmpi.linuxbgclangrelease ${LINK_ALL_LIBS})
+#SET_TARGET_PROPERTIES(design_cycpeptide_MPI.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+#SET_TARGET_PROPERTIES(design_cycpeptide_MPI.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-#ADD_DEPENDENCIES(design_cycpeptide_MPI.mpi.linuxgccrelease cifparse libxml2 ObjexxFCL utility numeric
+#ADD_DEPENDENCIES(design_cycpeptide_MPI.cxx11threadmpi.linuxbgclangrelease cifparse libxml2 ObjexxFCL utility numeric
 #basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
 #protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 #protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
@@ -124,14 +125,14 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 #protocols.6 protocols.7 devel)
 
 ### simple_cycpep_predict
-ADD_EXECUTABLE(simple_cycpep_predict.mpi.linuxgccrelease
+ADD_EXECUTABLE(simple_cycpep_predict.cxx11threadmpi.linuxbgclangrelease
 ../../src/apps/public/cyclic_peptide/simple_cycpep_predict.cc)
-TARGET_LINK_LIBRARIES(simple_cycpep_predict.mpi.linuxgccrelease "${LINK_ALL_LIBS}" )
-SET_TARGET_PROPERTIES(simple_cycpep_predict.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-SET_TARGET_PROPERTIES(simple_cycpep_predict.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+TARGET_LINK_LIBRARIES(simple_cycpep_predict.cxx11threadmpi.linuxbgclangrelease "${LINK_ALL_LIBS}" )
+SET_TARGET_PROPERTIES(simple_cycpep_predict.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+SET_TARGET_PROPERTIES(simple_cycpep_predict.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(simple_cycpep_predict.mpi.linuxgccrelease ObjexxFCL cifparse libxml2 utility numeric
+ADD_DEPENDENCIES(simple_cycpep_predict.cxx11threadmpi.linuxbgclangrelease ObjexxFCL cifparse libxml2 utility numeric
 basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
@@ -139,13 +140,13 @@ protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
 protocols.6 protocols.7 devel)
 
 ### rosetta_scripts
-ADD_EXECUTABLE(rosetta_scripts.mpi.linuxgccrelease ../../src/apps/public/rosetta_scripts/rosetta_scripts.cc)
-TARGET_LINK_LIBRARIES(rosetta_scripts.mpi.linuxgccrelease "${LINK_ALL_LIBS}" )
-SET_TARGET_PROPERTIES(rosetta_scripts.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-SET_TARGET_PROPERTIES(rosetta_scripts.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+ADD_EXECUTABLE(rosetta_scripts.cxx11threadmpi.linuxbgclangrelease ../../src/apps/public/rosetta_scripts/rosetta_scripts.cc)
+TARGET_LINK_LIBRARIES(rosetta_scripts.cxx11threadmpi.linuxbgclangrelease "${LINK_ALL_LIBS}" )
+SET_TARGET_PROPERTIES(rosetta_scripts.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+SET_TARGET_PROPERTIES(rosetta_scripts.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(rosetta_scripts.mpi.linuxgccrelease ObjexxFCL cifparse libxml2 utility numeric
+ADD_DEPENDENCIES(rosetta_scripts.cxx11threadmpi.linuxbgclangrelease ObjexxFCL cifparse libxml2 utility numeric
 basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
@@ -153,20 +154,20 @@ protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
 protocols.6 protocols.7 devel)
 
 ### loophash_mpi 
-#ADD_EXECUTABLE(loophash_mpi.mpi.linuxgccrelease ../../src/apps/pilot/mike/loophash_mpi.cc)
-#TARGET_LINK_LIBRARIES(loophash_mpi.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-#SET_TARGET_PROPERTIES(loophash_mpi.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-#SET_TARGET_PROPERTIES(loophash_mpi.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+#ADD_EXECUTABLE(loophash_mpi.cxx11threadmpi.linuxbgclangrelease ../../src/apps/pilot/mike/loophash_mpi.cc)
+#TARGET_LINK_LIBRARIES(loophash_mpi.cxx11threadmpi.linuxbgclangrelease ${LINK_ALL_LIBS})
+#SET_TARGET_PROPERTIES(loophash_mpi.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+#SET_TARGET_PROPERTIES(loophash_mpi.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-#ADD_DEPENDENCIES(loophash_mpi.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
+#ADD_DEPENDENCIES(loophash_mpi.cxx11threadmpi.linuxbgclangrelease ObjexxFCL utility numeric basic 
 #	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel)
 
 #### minirosetta 
-#ADD_EXECUTABLE(minirosetta.mpi.linuxgccrelease ../../src/apps/public/boinc/minirosetta.cc)
-#TARGET_LINK_LIBRARIES(minirosetta.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-#SET_TARGET_PROPERTIES(minirosetta.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-#SET_TARGET_PROPERTIES(minirosetta.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+#ADD_EXECUTABLE(minirosetta.cxx11threadmpi.linuxbgclangrelease ../../src/apps/public/boinc/minirosetta.cc)
+#TARGET_LINK_LIBRARIES(minirosetta.cxx11threadmpi.linuxbgclangrelease ${LINK_ALL_LIBS})
+#SET_TARGET_PROPERTIES(minirosetta.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+#SET_TARGET_PROPERTIES(minirosetta.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 ## Dependencies are set so that binaries are created after rosetta libraries
 ## are built
-#ADD_DEPENDENCIES(minirosetta.mpi.linuxgccrelease ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)
+#ADD_DEPENDENCIES(minirosetta.cxx11threadmpi.linuxbgclangrelease ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)

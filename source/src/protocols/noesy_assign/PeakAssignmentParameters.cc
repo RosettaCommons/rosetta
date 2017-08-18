@@ -14,6 +14,10 @@
 ///
 ///
 /// @author Oliver Lange
+/// @note Someone has clearly made some attempt at thread-safety, here,
+/// but unfortunately there exist "atomic" operations that are not truly
+/// atomic.  If this protocol actually needs to be thread-safe, it will
+/// have to be refactored.  -- VKM, 15 Aug 2017.
 
 // Unit Headers
 #define DEFINE_OPTIONS_NOW
@@ -83,8 +87,13 @@ PeakAssignmentParameters * PeakAssignmentParameters::instance_( nullptr );
 /// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
 void
 PeakAssignmentParameters::reset() {
+#ifdef MULTI_THREADED
+	if ( instance_.load() ) delete (instance_.load()); //Not truly threadsafe.
+	instance_.store( nullptr );
+#else
 	if ( instance_ ) delete instance_;
 	instance_ = nullptr;
+#endif
 }
 
 /// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
@@ -102,7 +111,11 @@ PeakAssignmentParameters::get_nonconst_instance() {
 
 /// @details DANGER DANGER DNAGER: Completely thread unsafe.
 void PeakAssignmentParameters::set_cycle( core::Size cycle ) {
+#ifdef MULTI_THREADED
+	if ( instance_.load() ) delete (instance_.load()); //Not truly threadsafe.
+#else
 	if ( instance_ ) delete instance_;
+#endif
 	instance_ = new PeakAssignmentParameters;
 #if defined MULTI_THREADED
 	instance_.load()->set_options_from_cmdline( cycle );
