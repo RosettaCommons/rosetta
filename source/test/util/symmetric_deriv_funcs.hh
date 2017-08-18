@@ -35,6 +35,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
+static THREAD_LOCAL basic::Tracer TR_derivtest("util.symmetric_deriv_funcs");
 
 class SymmetricAtomDerivValidator
 {
@@ -80,7 +81,7 @@ public:
 		TS_ASSERT( sfxn_ );
 		TS_ASSERT( move_map_ );
 		if ( ! pose_ || ! sfxn_ || ! move_map_ ) {
-			std::cout << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
+			TR_derivtest << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
 			return;
 		}
 
@@ -123,9 +124,9 @@ public:
 				}
 			}
 			if ( f1bad ) {
-				std::cout << "Derivative evaluation for atom " << id.atomno() << " on residue " << id.rsd() << " failed: " << std::endl;
-				std::cout << "Gold F1: (" << iter->f1()[ 0 ] << " " << iter->f1()[ 1 ] << " " << iter->f1()[ 2 ] << " )" << std::endl;
-				std::cout << "Curr F1: (" << F1[ 0 ] << " " << F1[ 1 ] << " " << F1[ 2 ] << " )" << std::endl;
+				TR_derivtest << "Derivative evaluation for atom " << id.atomno() << " on residue " << id.rsd() << " failed: " << std::endl;
+				TR_derivtest << "Gold F1: (" << iter->f1()[ 0 ] << " " << iter->f1()[ 1 ] << " " << iter->f1()[ 2 ] << " )" << std::endl;
+				TR_derivtest << "Curr F1: (" << F1[ 0 ] << " " << F1[ 1 ] << " " << F1[ 2 ] << " )" << std::endl;
 			}
 
 			for ( int ii = 0; ii < 3; ++ii ) {
@@ -135,9 +136,9 @@ public:
 				}
 			}
 			if ( f2bad ) {
-				std::cout << "Derivative evaluation for atom " << id.atomno() << " on residue " << id.rsd() << " failed: " << std::endl;
-				std::cout << "Gold F2: (" << iter->f2()[ 0 ] << " " << iter->f2()[ 1 ] << " " << iter->f2()[ 2 ] << " )" << std::endl;
-				std::cout << "Curr F2: (" << F2[ 0 ] << " " << F2[ 1 ] << " " << F2[ 2 ] << " )" << std::endl;
+				TR_derivtest << "Derivative evaluation for atom " << id.atomno() << " on residue " << id.rsd() << " failed: " << std::endl;
+				TR_derivtest << "Gold F2: (" << iter->f2()[ 0 ] << " " << iter->f2()[ 1 ] << " " << iter->f2()[ 2 ] << " )" << std::endl;
+				TR_derivtest << "Curr F2: (" << F2[ 0 ] << " " << F2[ 1 ] << " " << F2[ 2 ] << " )" << std::endl;
 			}
 		}
 	}
@@ -159,7 +160,7 @@ public:
 		TS_ASSERT( sfxn_ );
 		TS_ASSERT( move_map_ );
 		if ( ! pose_ || ! sfxn_ || ! move_map_ ) {
-			std::cout << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
+			TR_derivtest << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
 			return;
 		}
 
@@ -185,12 +186,12 @@ public:
 		sfxn_->setup_for_minimizing( *pose_, sym_min_map );
 		sfxn_->setup_for_derivatives( *pose_ );
 
-		int precision_original = std::cout.precision();
-		std::cout.precision( 16 ); // write out at high precision.
+		int precision_original = TR_derivtest.precision();
+		TR_derivtest.precision( 16 ); // write out at high precision.
 
-		std::cout << "using namespace core;" << std::endl;
-		std::cout << "using namespace core::id;" << std::endl;
-		std::cout << "AtomDerivList adl;" << std::endl;
+		TR_derivtest << "using namespace core;" << std::endl;
+		TR_derivtest << "using namespace core::id;" << std::endl;
+		TR_derivtest << "AtomDerivList adl;" << std::endl;
 
 		if ( res_for_derivs_list_.empty() ) {
 			for ( core::Size ii = 1; ii <= pose_->size(); ++ii ) {
@@ -208,18 +209,18 @@ public:
 				if ( nonzero_deriv_only_ ) {
 					if ( F1.length() == 0.0 && F2.length() == 0.0 ) continue;
 				}
-				std::cout << "adl.add( AtomDeriv( AtomID( " << jj << ", " << ii << "), ";
+				TR_derivtest << "adl.add( AtomDeriv( AtomID( " << jj << ", " << ii << "), ";
 				for ( int ii = 0; ii < 3; ++ii ) {
-					std::cout << F1[ ii ] << ",";
+					TR_derivtest << F1[ ii ] << ",";
 				}
 				for ( int ii = 0; ii < 2; ++ii ) {
-					std::cout << F2[ ii ] << ",";
+					TR_derivtest << F2[ ii ] << ",";
 				}
-				std::cout << F2[2] << "));" << std::endl;
+				TR_derivtest << F2[2] << "));" << std::endl;
 			}
 		}
 		// restore the precision before leaving this function
-		std::cout.precision( precision_original );
+		TR_derivtest.precision( precision_original );
 	}
 
 	void validate_start_func_matches_start_score() {
@@ -230,8 +231,8 @@ public:
 		core::Real start_func = start_score_func.second;
 		TS_ASSERT_DELTA( start_score, start_func, 1e-12 );
 		if ( std::abs( start_score - start_func ) > 1e-12 ) {
-			std::cout << "Failed to match start_score and start_func in AtomDerivValidator::validate_start_func_matches_start_score()" << std::endl;
-			std::cout << "Start score: " << start_score << " Start func: " << start_func << std::endl;
+			TR_derivtest << "Failed to match start_score and start_func in AtomDerivValidator::validate_start_func_matches_start_score()" << std::endl;
+			TR_derivtest << "Start score: " << start_score << " Start func: " << start_func << std::endl;
 		}
 
 	}
@@ -243,17 +244,17 @@ public:
 		core::Real start_score = start_score_func.first;
 		TS_ASSERT_DELTA( start_score_gold, start_score, 1e-12 );
 		if ( output_start_score ) {
-			int precision_original = std::cout.precision();
-			std::cout.precision( 16 ); // write out at high precision.
-			std::cout << "START SCORE: " << start_score << std::endl;
-			std::cout.precision( precision_original );
+			int precision_original = TR_derivtest.precision();
+			TR_derivtest.precision( 16 ); // write out at high precision.
+			TR_derivtest << "START SCORE: " << start_score << std::endl;
+			TR_derivtest.precision( precision_original );
 		}
 
 		core::Real start_func = start_score_func.second;
 		TS_ASSERT_DELTA( start_score, start_func, 1e-12 );
 		if ( std::abs( start_score - start_func ) > 1e-12 ) {
-			std::cout << "Failed to match start_score and start_func in AtomDerivValidator::validate_start_func_matches_start_score()" << std::endl;
-			std::cout << "Start score: " << start_score << " Start func: " << start_func << std::endl;
+			TR_derivtest << "Failed to match start_score and start_func in AtomDerivValidator::validate_start_func_matches_start_score()" << std::endl;
+			TR_derivtest << "Start score: " << start_score << " Start func: " << start_func << std::endl;
 		}
 
 	}
@@ -290,8 +291,8 @@ public:
 			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 
 			EnergyMap respair_weight_scaled = sfxn_->weights();
-			if (sym_min_map.new_sym_min()) {
-				if (minedge.weight() == 0) continue;
+			if ( sym_min_map.new_sym_min() ) {
+				if ( minedge.weight() == 0 ) continue;
 				respair_weight_scaled *= minedge.weight();
 			} else {
 				respair_weight_scaled *= minedge.dweight();
@@ -309,7 +310,7 @@ public:
 				sym_min_map.atom_derivatives( rsd1ind ), sym_min_map.atom_derivatives( rsd2ind ));
 		}
 		/// 2b. eval inter-residue derivatives
-		if (!sym_min_map.new_sym_min()) {
+		if ( !sym_min_map.new_sym_min() ) {
 			for ( utility::graph::Node::EdgeListConstIter
 					edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
 					edgeit != edgeit_end; ++edgeit ) {
@@ -365,38 +366,38 @@ public:
 
 			TS_ASSERT_DELTA( result.step_data( ii, 1 ).num_deriv(), result.step_data( ii, 1 ).ana_deriv(), tolerance );
 			if ( false ) { /// re-enable to look at all derivatives
-				std::cout << "dof  " << ii << " " << (*dof_iterator)->dof_id() << std::endl;
-				std::cout << "    F1: " << (*dof_iterator)->F1().x() << " " <<
+				TR_derivtest << "dof  " << ii << " " << (*dof_iterator)->dof_id() << std::endl;
+				TR_derivtest << "    F1: " << (*dof_iterator)->F1().x() << " " <<
 					(*dof_iterator)->F1().y() << " " <<
 					(*dof_iterator)->F1().z() << std::endl;
-				std::cout << "    F2: " << (*dof_iterator)->F2().x() << " " <<
+				TR_derivtest << "    F2: " << (*dof_iterator)->F2().x() << " " <<
 					(*dof_iterator)->F2().y() << " " <<
 					(*dof_iterator)->F2().z() << std::endl;
 				for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
 					core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
-					std::cout << "    Atom: " << id.rsd() << " " << id.atomno() << " " <<
+					TR_derivtest << "    Atom: " << id.rsd() << " " << id.atomno() << " " <<
 						pose_->residue( id.rsd() ).name() << " " <<
 						pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
 				}
-				std::cout << "    Numeric deriv: " << result.step_data( ii, 1 ).num_deriv() <<
+				TR_derivtest << "    Numeric deriv: " << result.step_data( ii, 1 ).num_deriv() <<
 					" analytic deriv: " << result.step_data( ii, 1 ).ana_deriv() << std::endl;
 			}
 			if ( std::abs( result.step_data( ii, 1 ).num_deriv() - result.step_data( ii, 1 ).ana_deriv() ) > tolerance ) {
 				full_success = false;
 				core::id::DOF_ID dofid( (*dof_iterator)->dof_id() );
-				core::Size precision_old( std::cout.precision() );
-				std::cout.precision( 16 );
-				std::cout << "Minmap dof " << ii << " incorrectly computed for DOF: " << dofid.rsd() << " " <<
+				core::Size precision_old( TR_derivtest.precision() );
+				TR_derivtest.precision( 16 );
+				TR_derivtest << "Minmap dof " << ii << " incorrectly computed for DOF: " << dofid.rsd() << " " <<
 					dofid.atomno() << " " << dofid.type();
 				if ( (*dof_iterator)->torsion_id().valid() ) {
-					std::cout << "( " << (*dof_iterator)->torsion_id() << " )";
+					TR_derivtest << "( " << (*dof_iterator)->torsion_id() << " )";
 				}
-				std::cout << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
-				std::cout << std::endl;
-				std::cout.precision( precision_old );
+				TR_derivtest << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
+				TR_derivtest << std::endl;
+				TR_derivtest.precision( precision_old );
 				for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
 					core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
-					std::cout << "  Atom: " << id.rsd() << " " << id.atomno() << " " <<
+					TR_derivtest << "  Atom: " << id.rsd() << " " << id.atomno() << " " <<
 						pose_->residue( id.rsd() ).name() << " " <<
 						pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
 				}
@@ -451,46 +452,46 @@ public:
 
 			TS_ASSERT_DELTA( result.step_data( ii, 1 ).num_deriv(), result.step_data( ii, 1 ).ana_deriv(), tolerance );
 			//if ( false ) { /// re-enable to look at all derivatives
-			//	std::cout << "dof  " << ii << " " << (*dof_iterator)->dof_id() << std::endl;
-			//	std::cout << "    F1: " << (*dof_iterator)->F1().x() << " " <<
-			//		(*dof_iterator)->F1().y() << " " <<
-			//		(*dof_iterator)->F1().z() << std::endl;
-			//	std::cout << "    F2: " << (*dof_iterator)->F2().x() << " " <<
-			//		(*dof_iterator)->F2().y() << " " <<
-			//		(*dof_iterator)->F2().z() << std::endl;
-			//	for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
-			//		core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
-			//		std::cout << "    Atom: " << id.rsd() << " " << id.atomno() << " " <<
-			//			pose_->residue( id.rsd() ).name() << " " <<
-			//			pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
-			//	}
-			//	std::cout << "    Numeric deriv: " << result.step_data( ii, 1 ).num_deriv() <<
-			//		" analytic deriv: " << result.step_data( ii, 1 ).ana_deriv() << std::endl;
+			// TR_derivtest << "dof  " << ii << " " << (*dof_iterator)->dof_id() << std::endl;
+			// TR_derivtest << "    F1: " << (*dof_iterator)->F1().x() << " " <<
+			//  (*dof_iterator)->F1().y() << " " <<
+			//  (*dof_iterator)->F1().z() << std::endl;
+			// TR_derivtest << "    F2: " << (*dof_iterator)->F2().x() << " " <<
+			//  (*dof_iterator)->F2().y() << " " <<
+			//  (*dof_iterator)->F2().z() << std::endl;
+			// for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
+			//  core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
+			//  TR_derivtest << "    Atom: " << id.rsd() << " " << id.atomno() << " " <<
+			//   pose_->residue( id.rsd() ).name() << " " <<
+			//   pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
+			// }
+			// TR_derivtest << "    Numeric deriv: " << result.step_data( ii, 1 ).num_deriv() <<
+			//  " analytic deriv: " << result.step_data( ii, 1 ).ana_deriv() << std::endl;
 			//}
 			if ( std::abs( result.step_data( ii, 1 ).num_deriv() - result.step_data( ii, 1 ).ana_deriv() ) > tolerance ) {
 				full_success = false;
 				core::Size ii_atom_index = (ii-1) / 3 + 1;
 				core::id::AtomID ii_atom_id = min_map.get_atom( ii_atom_index );
-				//core::Size precision_old( std::cout.precision() );
-				//std::cout.precision( 16 );
-				std::cout << "Minmap dof " << ii << " incorrectly computed for DOF: " << ii_atom_id.rsd() << " " <<
+				//core::Size precision_old( TR_derivtest.precision() );
+				//TR_derivtest.precision( 16 );
+				TR_derivtest << "Minmap dof " << ii << " incorrectly computed for DOF: " << ii_atom_id.rsd() << " " <<
 					ii_atom_id.atomno() << " " << (ii-1)%3 + 1;
-				std::cout << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
-				std::cout << std::endl;
-				//std::cout.precision( precision_old );
+				TR_derivtest << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
+				TR_derivtest << std::endl;
+				//TR_derivtest.precision( precision_old );
 				//for ( core::Size jj = 1; jj <= (*dof_iterator)->atoms().size(); ++jj ) {
-				//	core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
-				//	std::cout << "  Atom: " << id.rsd() << " " << id.atomno() << " " <<
-				//		pose_->residue( id.rsd() ).name() << " " <<
-				//		pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
+				// core::id::AtomID const & id( (*dof_iterator)->atoms()[ jj ] );
+				// TR_derivtest << "  Atom: " << id.rsd() << " " << id.atomno() << " " <<
+				//  pose_->residue( id.rsd() ).name() << " " <<
+				//  pose_->residue( id.rsd() ).atom_name( id.atomno() ) << std::endl;
 				//}
 			} else {
 				core::Size ii_atom_index = (ii-1) / 3 + 1;
 				core::id::AtomID ii_atom_id = min_map.get_atom( ii_atom_index );
-				std::cout << "Derivative matches: " << ii << ": " << ii_atom_id.rsd() << " " <<
+				TR_derivtest << "Derivative matches: " << ii << ": " << ii_atom_id.rsd() << " " <<
 					ii_atom_id.atomno() << " " << (ii-1)%3+1;
-				std::cout << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
-				std::cout << std::endl;
+				TR_derivtest << " num_deriv: " << result.step_data( ii, 1 ).num_deriv() << " ana_deriv: " << result.step_data( ii, 1 ).ana_deriv();
+				TR_derivtest << std::endl;
 			}
 		}
 		return full_success;
