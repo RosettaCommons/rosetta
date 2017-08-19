@@ -135,7 +135,7 @@ def _rosetta_database_from_env():
 #def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
 
 # rosetta.init()
-def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, notebook=os.getenv('JPY_PARENT_PID')):
+def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, notebook=os.getenv('JPY_PARENT_PID')):
     """Initialize Rosetta.  Includes core data and global options.
 
     options string with default Rosetta command-line options args.
@@ -144,7 +144,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, not
         extra_options - Extra command line options to pass rosetta init.
                         (default None)
         set_logging_handler - Route rosetta tracing through logging logger 'rosetta'.
-                        (default True)
+                        (default None)
 
     Examples:
         init()                     # uses default flags
@@ -159,8 +159,10 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, not
     #utility.py_xinc_ref(_python_py_exit_callback)
     #utility.py.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
 
-    # FIXME
-    #if set_logging_handler: logging_support.set_logging_handler(notebook=notebook)
+    # Only set the logging handler if a notebook is detected or if requested
+    if (( set_logging_handler is None) and notebook) or set_logging_handler:
+        logging_support.set_logging_handler(notebook=notebook)
+                    
 
     args = ['PyRosetta'] + options.split() + extra_options.split()
 

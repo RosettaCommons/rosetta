@@ -17,24 +17,30 @@ def initialize_logging():
         _logger.addHandler(logging.StreamHandler(sys.stdout))
         _logger.setLevel(logging.INFO)
 
-def _logging_callback(logstring):
-    """Logging callback which pushs non-blank logstrings to the logging module."""
-    logstring = logstring.strip()
-    if logstring is not "":
-        _logger.info(logstring)
-
 
 def _notebook_logging_callback(logstring):
     """Logging callback which pring Rosetta output on Jupyter notenook."""
     sys.stdout.write(logstring)
 
 
+# Added because the new bindings have an issues setting the _logging_tracer.output_callback to a python function
+# 
+
+class CustomJupyterTracer( rosetta.basic.PyTracer ):
+    def __init__(self):
+        super( CustomJupyterTracer, self).__init__()
+        self.set_ios_hook = rosetta.basic.Tracer.set_ios_hook
+        
+    def output_callback(self, logstring):
+        return _notebook_logging_callback(logstring)
+
+    def __del__(self):
+        self.set_ios_hook(None,'')
+            
 def set_logging_handler(notebook):
     """Redirect all rosetta trace output through the logging.Logger 'rosetta'."""
-    #global _logging_tracer
-    _logging_tracer = rosetta.basic.PyTracer()
-    rosetta.utility.py_xinc_ref(_logging_tracer)
-    _logging_tracer.output_callback = _notebook_logging_callback if notebook else _logging_callback
+    global _logging_tracer
+    _logging_tracer = CustomJupyterTracer()
 
     # Set the tracer hook, do not enable 'raw' in order to
     # allow rosetta's tracing settings to have priority.
