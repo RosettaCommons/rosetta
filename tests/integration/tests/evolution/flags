@@ -1,0 +1,10 @@
+-overwrite
+-corrections:beta_nov16
+-s 1stn_short.pdb
+-parser:protocol evolve.xml
+-mute core.pack core.scoring protocols.rosetta_scripts.ParsedProtocol protocols.protein_interface_design.movers.TaskAwareCsts  protocols.relax.FastRelax protocols::checkpoint protocols.simple_filters.Sigmoid core.optimization.LineMinimizer
+-nstruct 1
+-constant_seed 1
+-pdb_comments true
+-ignore_unrecognized_res
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

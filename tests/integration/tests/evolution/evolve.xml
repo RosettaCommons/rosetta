@@ -1,0 +1,22 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="beta_nov15_cart" weights="beta_nov15_cart"/>		
+	</SCOREFXNS>
+	
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	
+	<FILTERS>
+		<ScoreType name="total_score" scorefxn="beta_nov15_cart" score_type="total_score" confidence="0" threshold="100000"/>
+		<Sigmoid name="stability" filter="total_score" steepness="0.6" offset="0" negate="0"/>
+	</FILTERS>
+	
+	<MOVERS>
+		<NucleotideMutation name="mut" flexbb="0" bbnbrs="0" scorefxn="beta_nov15_cart"/> 
+    	<EvolutionaryDynamics name="evolve" reset_baselines="0" mover_name="mut" recover_low="0" preapply="0" drift="1" progress_file="trajectory_out.txt" filter_name="stability" trials="3" scorefxn_name="beta_nov15_cart" population_size="10000"/> 
+	</MOVERS>
+	
+	<PROTOCOLS>
+    	<Add mover="evolve"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

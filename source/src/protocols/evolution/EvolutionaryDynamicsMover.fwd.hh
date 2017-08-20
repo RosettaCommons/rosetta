@@ -10,22 +10,22 @@
 /// @brief
 /// @author Christoffer Norn ( chnorn@gmail.com )
 
-#ifndef INCLUDED_protocols_simple_moves_EvolutionaryDynamicsMover_fwd_hh
-#define INCLUDED_protocols_simple_moves_EvolutionaryDynamicsMover_fwd_hh
+#ifndef INCLUDED_protocols_evolution_EvolutionaryDynamicsMover_fwd_hh
+#define INCLUDED_protocols_evolution_EvolutionaryDynamicsMover_fwd_hh
 
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace evolution {
 
 class EvolutionaryDynamicsMover;
 typedef utility::pointer::shared_ptr< EvolutionaryDynamicsMover >  EvolutionaryDynamicsMoverOP;
 typedef utility::pointer::shared_ptr< EvolutionaryDynamicsMover const >  EvolutionaryDynamicsMoverCOP;
 
 
-} // namespace simple_moves
+} // namespace evolution
 } // namespace protocols
 
 #endif

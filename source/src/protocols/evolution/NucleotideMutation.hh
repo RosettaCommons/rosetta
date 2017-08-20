@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/NucleotideMutation.hh
+/// @file protocols/evolution/NucleotideMutation.hh
 /// @author Christoffer Norn (ch.norn@gmail.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_NucleotideMutation_hh
-#define INCLUDED_protocols_protein_interface_design_movers_NucleotideMutation_hh
-#include <protocols/protein_interface_design/movers/NucleotideMutation.fwd.hh>
+#ifndef INCLUDED_protocols_evolution_NucleotideMutation_hh
+#define INCLUDED_protocols_evolution_NucleotideMutation_hh
+#include <protocols/evolution/NucleotideMutation.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -27,8 +27,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace evolution {
 
 /// @brief designs alanine residues in place of the residue identities at the interface. Retains interface glycines and prolines.
 class NucleotideMutation : public protocols::moves::Mover
@@ -41,6 +40,19 @@ public:
 	//std::string aa2randomCodon( char const aa ) const;
 	//std::vector<std::string> aa_2_nt( std::string const aa ) const;
 	void add_nt_seq_to_pose( core::pose::Pose & pose ); // get the segment names for those segments that are constant in this splice function
+
+	void find_neighbors(utility::vector1< bool > const & is_mutated,
+		core::pose::Pose const & pose,
+		utility::vector1< bool > & is_flexible,
+		core::Real const heavyatom_distance_threshold );
+
+	void compute_folding_energies(core::scoring::ScoreFunctionOP fa_scorefxn,
+		core::pose::Pose & pose,
+		utility::vector1< bool > const & is_flexible,
+		utility::vector1< bool > const & is_mutpos,
+		core::Size bbnbrs,
+		bool flexbb);
+
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new NucleotideMutation ); }
@@ -56,6 +68,12 @@ public:
 
 	bool continue_if_silent() const{ return continue_if_silent_; }
 	void continue_if_silent( bool const c ){ continue_if_silent_ = c; };
+
+	bool flexbb() const{ return flexbb_; }
+	void flexbb( bool const f ){ flexbb_ = f; };
+
+	core::Size bbnbrs() const{ return bbnbrs_; }
+	void bbnbrs( core::Size const n ){ bbnbrs_ = n; };
 
 	//core::pose::PoseOP reference_pose() const{ return reference_pose_; }
 	//void reference_pose( core::pose::PoseOP const p ){ reference_pose_ = p; };
@@ -79,15 +97,16 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	std::string init_sequence_;
 	bool continue_if_silent_;
+	bool flexbb_;
+	core::Size bbnbrs_;
 	core::pose::PoseOP reference_pose_;
 	bool cache_task_;
 	core::pack::task::PackerTaskCOP task_;
 };
 
 
-} // movers
-} // protein_interface_design
+} // evolution
 } // protocols
 
 
-#endif /*INCLUDED_protocols_protein_interface_design_movers_NucleotideMutation_HH*/
+#endif /*INCLUDED_protocols_evolution_NucleotideMutation_HH*/

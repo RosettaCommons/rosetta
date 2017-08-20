@@ -283,7 +283,6 @@ sources = {
 		"LoopOver",
 		"LoopRemodel",
 		"MapHotspot",
-		"NucleotideMutation",
 		"PatchdockTransform",
 		"PeptideStapleDesignMover",
 		"PlacementAuctionMover",

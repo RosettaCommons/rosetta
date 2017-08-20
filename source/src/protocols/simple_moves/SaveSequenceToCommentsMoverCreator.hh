@@ -7,30 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/movers/NucleotideMutationCreator.hh
-/// @brief  Declaration of the MoverCreator class for the NucleotideMutation
-/// @author Sarel Fleishman (sarelf@uw.edu)
+/// @file   protocols/simple_moves/SaveSequenceToCommentsMoverCreator.hh
+/// @brief  Declaration of the MoverCreator class for the SaveSequenceToCommentsMover
+/// @author Christoffer Norn (chnorn@gmail.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_NucleotideMutationCreator_hh
-#define INCLUDED_protocols_protein_interface_design_movers_NucleotideMutationCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_SaveSequenceToCommentsMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_SaveSequenceToCommentsMoverCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace simple_moves {
 
-class NucleotideMutationCreator : public moves::MoverCreator
+class SaveSequenceToCommentsMoverCreator : public moves::MoverCreator
 {
 public:
+	// XRW TEMP  virtual moves::MoverOP create_mover() const;
+	// XRW TEMP  virtual std::string keyname() const;
+	// XRW TEMP  static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 
-}
 }
 }
 

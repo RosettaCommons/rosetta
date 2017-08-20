@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/NucleotideMutation.cc
+/// @file protocols/evolution/NucleotideMutation.cc
 /// @brief Substitutes amino acids in pose based on mutations in nucleotide space
 /// @details Translate amino acid sequence to nucleotide sequence, introduce
 /// random mutation, and affectuates the amino acid substitution in pose. Stop
@@ -16,12 +16,16 @@
 /// @author Christoffer Norn (ch.norn@gmail.com)
 
 // Unit headers
-#include <protocols/protein_interface_design/movers/NucleotideMutation.hh>
-#include <protocols/protein_interface_design/movers/NucleotideMutationCreator.hh>
+#include <protocols/evolution/NucleotideMutation.hh>
+#include <protocols/evolution/NucleotideMutationCreator.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <core/kinematics/MoveMap.hh>
+
+
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -34,6 +38,7 @@
 #include <numeric/random/random_permutation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/NucleotideTools.hh>
+
 
 #include <utility/vector1.hh>
 #include <basic/datacache/DataMap.hh>
@@ -50,6 +55,8 @@
 #include <map>
 #include <math.h>
 
+#include <time.h>
+
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
@@ -59,13 +66,16 @@
 
 
 namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace evolution {
 
 using namespace std;
 using namespace core::scoring;
+using namespace core::kinematics;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.NucleotideMutation" );
+typedef utility::vector1< bool > bools;
+
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.NucleotideMutation" );
 
 // XRW TEMP std::string
 // XRW TEMP NucleotideMutationCreator::keyname() const
@@ -89,7 +99,9 @@ NucleotideMutation::NucleotideMutation() :
 	task_factory_( /* NULL */ ),
 	scorefxn_( /* NULL */ ),
 	init_sequence_(""),
-	continue_if_silent_( true ),
+	continue_if_silent_( false ),
+	flexbb_( true ),
+	bbnbrs_( 0 ),
 	reference_pose_( /* NULL */ )
 {
 }
@@ -119,6 +131,67 @@ NucleotideMutation::add_nt_seq_to_pose( core::pose::Pose & pose ){
 }
 
 void
+NucleotideMutation::find_neighbors(
+	bools const & is_mutated,
+	core::pose::Pose const & pose,
+	bools & is_flexible,
+	core::Real const heavyatom_distance_threshold = 6.0 )
+{
+	Size const nres( pose.size() );
+	is_flexible = is_mutated;
+
+	for ( Size i=1; i<= nres; ++i ) {
+		core::conformation::Residue const & rsd1( pose.residue(i) );
+		if ( rsd1.is_virtual_residue() ) continue;
+		for ( Size j=1; j<= nres; ++j ) {
+			if ( !is_mutated[j] ) continue;
+			if ( is_flexible[i] ) break;
+			core::conformation::Residue const & rsd2( pose.residue(j) );
+			if ( rsd2.is_virtual_residue() ) continue;
+			if ( rsd1.nbr_atom_xyz().distance_squared( rsd2.nbr_atom_xyz() ) <=
+					numeric::square( rsd1.nbr_radius() + rsd2.nbr_radius() + heavyatom_distance_threshold ) ) {
+				is_flexible[i] = true;
+			}
+		}
+	}
+}
+
+void
+NucleotideMutation::compute_folding_energies(
+	ScoreFunctionOP fa_scorefxn,
+	Pose & pose,
+	bools const & is_flexible,
+	bools const & is_mutpos,
+	Size bbnbrs=1,
+	bool flexbb=true)
+{
+	protocols::relax::FastRelax fastrelax( fa_scorefxn, 0 );
+	fastrelax.cartesian( true );
+	MoveMapOP movemap(new MoveMap);
+	movemap->set_bb( false );
+	movemap->set_chi( false );
+	movemap->set_jump( false );
+
+	for ( Size i=1; i<= pose.size(); ++i ) {
+		if ( is_flexible[i] ) {
+			movemap->set_chi( i, true );
+			if ( flexbb > 0 ) {
+				for ( Size j=0; j<=bbnbrs; j++ ) {
+					if ( is_mutpos[i] || ( i+j <= pose.size() && is_mutpos[i+j] ) || ( j < i && is_mutpos[i-j] ) ) {
+						movemap->set_bb ( i, true );
+					}
+				}
+			}
+		}
+	}
+
+	fastrelax.set_movemap( movemap );
+	fastrelax.apply(pose);
+}
+
+
+
+void
 NucleotideMutation::apply( core::pose::Pose & pose )
 {
 
@@ -135,7 +208,7 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 	if ( !has_nt_sequence ) {
 		add_nt_seq_to_pose( pose );
 	} else {
-		TR << "Nucleotide sequence initialized from comments " << std::endl;
+		TR << "Nucleotide sequence will be initialized from comments " << std::endl;
 	}
 
 	/////////////////////////////////////////////////////////////////
@@ -274,82 +347,112 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 		string new_aa_seq = pose.sequence().replace( target_aa_no - 1, 1, new_aa);
 		core::pose::add_comment(pose, "aa_seq", new_aa_seq);
 
-		if ( (new_aa != "Stop") && ( new_aa == old_aa ) ) {
-			nt_sequence.replace( ( target_aa_no - 1 ) * 3, 3, new_codon);
-			core::pose::add_comment(pose, "nt_seq", nt_sequence);
-			core::pose::add_comment(pose, "last_nt_mut_was_non_silent", "false");
-			core::pose::add_comment(pose, "mutation", mutation.str());
-			if ( continue_if_silent() == true ) {
+		// Write the energy of the current pose
+		std::ostringstream e_curr;
+		e_curr.precision(16);
+		core::Real energy_current = (*scorefxn())(pose);
+		e_curr << energy_current;
+		core::pose::add_comment(pose, "energy_current", e_curr.str()); //TR << "score current is " << score_current << std::endl;
+
+		nt_sequence.replace( ( target_aa_no - 1 ) * 3, 3, new_codon);
+		core::pose::add_comment(pose, "nt_seq", nt_sequence);
+		core::pose::add_comment(pose, "mutation", mutation.str());
+
+
+		if ( new_aa == "*" ) {
+			// EvolutionaryDynamicsMover looks for stop_codon and sets fitness to 0 if found.
+			core::pose::add_comment(pose, "stop_codon", "1");
+			core::pose::add_comment(pose, "silent_mutation", "0");
+
+			// Also, for analysis, it will probably be useful to set the energy of stops to something high.
+			std::ostringstream e_proposed;
+			e_proposed.precision(16);
+			core::Real energy_proposed = 10000.0; // energy for chain break
+			e_proposed << energy_proposed;
+			core::pose::add_comment(pose, "energy_proposed", e_proposed.str());
+
+			cont = false;
+		} else if ( new_aa == old_aa ) { // silent mutation
+			core::pose::add_comment(pose, "stop_codon", "0");
+			core::pose::add_comment(pose, "silent_mutation", "1");
+
+			core::pose::add_comment(pose, "energy_proposed", e_curr.str()); // if silent the energy is just the same as the current.
+
+			if ( continue_if_silent() == false ) {
 				TR << "Made a silent mutation and will attempt another mutation." << std::endl;
 				cont = true;
 			} else {
 				TR << "Made a silent mutation" << std::endl;
 				cont = false;
 			}
-		} else if ( new_aa != "Stop" ) { // then make the mutation
-			nt_sequence.replace( ( target_aa_no - 1 ) * 3, 3, new_codon);
-			core::pose::add_comment(pose, "nt_seq", nt_sequence);
-			core::pose::add_comment(pose, "last_nt_mut_was_non_silent", "true");
-			core::pose::add_comment(pose, "mutation", mutation.str());
+		} else { // non-silent, non-stop codon, then make the mutation
+			core::pose::add_comment(pose, "stop_codon", "0");
+			core::pose::add_comment(pose, "silent_mutation", "0");
 			TR << "Made a mutation resulting in an amino acid substitution." << std::endl;
 			cont = false;
 
-			std::map<std::string, std::string> final_comments = core::pose::get_all_comments( pose );
+			// std::map<std::string, std::string> final_comments = core::pose::get_all_comments( pose );
 
-			// It is important to reset the pose to the reference pose here,
-			// instead of carrying on the minimized pose... otherwise the pose
-			// get more and more minimized throughout the trajectory. That
-			// would cause a bunch of wierd artifacts including locked
-			// trajectories, where mutations can't be accepted for long streches...
-			// Also, in evolution, the new sequence does not remember
-			// the conformation of ancestral structure (it folds anew).
-			pose = *reference_pose_;
 
-			// First add back the comments
-			for ( std::map<string, string>::const_iterator i = final_comments.begin(); i != final_comments.end(); ++i ) {
-				std::string const key(i->first);
-				std::string const val(i->second);
-				core::pose::add_comment(pose, key, val);
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Let's mutate the residue in question
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			AA const target_aa( core::chemical::aa_from_oneletter_code( new_aa[0] ) );
+			utility::vector1< bool > allowed_aas;
+			allowed_aas.clear();
+			allowed_aas.assign( num_canonical_aas, false );
+			allowed_aas[ target_aa ] = true;
+
+			PackerTaskOP mutate_residue( task->clone() );
+			mutate_residue->initialize_from_command_line().or_include_current( true );
+			for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+				if ( resi != target_aa_no ) {
+					mutate_residue->nonconst_residue_task( resi ).prevent_repacking(); // We could also do restrict_to_repacking instead of prevent_repacking
+				} else {
+					mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
+				}
 			}
-
-			// Now thread on the sequence we have in comments.
-			using namespace protocols::toolbox::task_operations;
-			using namespace core::pack::task;
-			using namespace core::pack::task::operation;
-
-			ThreadSequenceOperationOP tso( new ThreadSequenceOperation );
-			tso->target_sequence( final_comments["aa_seq"] );
-			tso->allow_design_around(false);
-
-			TaskFactoryOP tf;
-			tf = TaskFactoryOP( new TaskFactory );
-			tf->push_back(tso);
-			PackerTaskOP ptask = tf->create_task_and_apply_taskoperations(pose);
-
 			TR<<"Effectuating mutation of residue " << pose.residue( target_aa_no ).name3() << " " << target_aa_no <<" to ";
 			protocols::simple_moves::PackRotamersMoverOP pack;
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), ptask ) );
+				pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 			} else {
-				pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), ptask ) );
+				pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
 			}
 			pack->apply( pose );
 			TR << pose.residue( target_aa_no ).name3() << " in pose. " << std::endl;
-			(*scorefxn())(pose);
-		} else {
-			TR << "Mutation resulted in stop codon. Retrying. " << std::endl;
+
+
+
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Now lets relax the pose
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// suboptions:
+			// It can be full bb flexibility then bbnbrs just needs to be > pose length. Takes 80 seconds per trial (87 residues, cutoff=8).
+			// It can be with localized bb flex (bbnbrs = 1). Takes 20 seconds per trial (87 residues, cutoff=8).
+			// It can be without bb flexi then flexbb=false, and no definition for bbnbrs. Takes 1.6 second per trial (87 residues, cutoff=8).
+
+
+			bools is_mutated( pose.size(), false );   //mutated position
+			bools is_flexible( pose.size(), false );  //repackable
+			is_mutated[ target_aa_no ] = true;
+			core::Real cutoff = 8.0;
+			find_neighbors( is_mutated, pose, is_flexible, cutoff );
+
+			NucleotideMutation::compute_folding_energies( scorefxn(), pose, is_flexible, is_mutated, bbnbrs(), flexbb() ); // this takes 33 seconds for 1PTF (87 residues), with bbnbr=1
+
+			std::ostringstream e_prop;
+			e_prop.precision(16);
+			core::Real score_proposed = (*scorefxn())(pose);
+			e_prop << score_proposed;
+			core::pose::add_comment(pose, "energy_proposed", e_prop.str()); //TR << "score_proposed is " << score_proposed << std::endl;
+
 		}
 	}
 
 	TR << "nt seq after mut " << core::pose::get_all_comments(pose)[ "nt_seq" ] << std::endl;
 	TR << "aa seq after mut " << core::pose::get_all_comments(pose)[ "aa_seq" ] << std::endl;
-
-	if ( pose.sequence() != core::pose::get_all_comments(pose)[ "aa_seq" ] ) {
-		TR << "The pose sequence is different from the target sequence. This shouldn't happen." << std::endl;
-		TR << "Pose seq " << pose.sequence() << std::endl;
-		TR << "target seq" << core::pose::get_all_comments(pose)[ "aa_seq" ] << std::endl;
-		utility_exit_with_message("This should not be happening!");
-	}
 }
 
 // XRW TEMP std::string
@@ -363,18 +466,10 @@ NucleotideMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &d
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	init_sequence( tag->getOption< std::string >( "init_sequence", "" ) );
-	continue_if_silent( tag->getOption< bool >( "continue_if_silent", true ) );
-
-	// read the reference pose only if it doesn't exist already
-	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose( tag, data );
-	} else throw utility::excn::EXCN_RosettaScriptsOption("Need to specify name under which to save pose.");
-
-	if ( ( reference_pose_ != NULL /* if already read, don't reread */) && ( tag->hasOption( "reference_pdb_file" )) ) {
-		std::string const template_pdb_fname( tag->getOption< std::string >( "reference_pdb_file" ));
-		core::import_pose::pose_from_file( *reference_pose_, template_pdb_fname , core::import_pose::PDB_file);
-		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->size() <<" residues"<<std::endl;
-	}
+	continue_if_silent( tag->getOption< bool >( "continue_if_silent", false ) );
+	flexbb( tag->getOption< bool >("flexbb", true ) );
+	bbnbrs( tag->getOption< Size >("bbnbrs", 0 ) );
+	runtime_assert_string_msg( !(bbnbrs()>0 && flexbb()==false), "You have bbnbrs>0, but flexbb=false?! The bbnbrs sets which backbone neighbor residues that should be flexible" );
 
 	cache_task_ = tag->getOption< bool >( "cache_task", false );
 }
@@ -429,10 +524,12 @@ void NucleotideMutation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 	attlist + XMLSchemaAttribute( "init_sequence", xs_string, "Initial sequence" )
-		+ XMLSchemaAttribute::attribute_w_default( "continue_if_silent", xsct_rosetta_bool, "Make another mutation if the first mutation is silent", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "continue_if_silent", xsct_rosetta_bool, "Make another mutation if the first mutation is silent", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "flexbb", xsct_rosetta_bool, "Let backbone atoms be flexible during relax", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "bbnbrs", xsct_non_negative_integer, "Let the +/- n (dflt=1) residues from the mutated residue be bb flexible", "1" )
 		// AMW XRW TODO: do we have a helper for reference pose parsing?
-		+ XMLSchemaAttribute( "reference_name", xs_string, "Saved reference pose" )
-		+ XMLSchemaAttribute( "reference_pdb_file", xs_string, "Saved reference pdb" )
+		//+ XMLSchemaAttribute( "reference_name", xs_string, "Saved reference pose" )
+		//+ XMLSchemaAttribute( "reference_pdb_file", xs_string, "Saved reference pdb" )
 		+ XMLSchemaAttribute::attribute_w_default( "cache_task", xsct_rosetta_bool, "Cache the initially calculated packer task", "false" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
@@ -453,6 +550,5 @@ void NucleotideMutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 }
 
 
-} //movers
-} //protein_interface_design
+} //evolution
 } //protocols

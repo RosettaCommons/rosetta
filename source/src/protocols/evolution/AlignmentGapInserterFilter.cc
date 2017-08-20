@@ -191,7 +191,7 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 	}
 
 	// Slim down alignment with two criteria:
-	// (1)  User-specified focus
+	// (1)  User-specified focus on one alignment sequence (only_clean_seq_num)
 	// (2)  We don't want to add sequences that cannot add
 	//      information. For example
 	//      target_seq   HWIFSAH--IFFA

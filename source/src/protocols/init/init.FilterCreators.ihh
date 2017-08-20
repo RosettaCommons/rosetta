@@ -20,6 +20,7 @@
 #include <protocols/enzdes/EnzFilterCreators.hh>
 #include <protocols/enzdes/RemoveLigandFilterCreator.hh>
 
+#include <protocols/evolution/AASynthesisFitnessCostFilterCreator.hh>
 #include <protocols/evolution/AlignmentAAFinderFilterCreator.hh>
 #include <protocols/evolution/AlignmentGapInserterFilterCreator.hh>
 
@@ -102,13 +103,13 @@
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
 
-
 #include <protocols/simple_filters/AlaScanCreator.hh>
 #include <protocols/simple_filters/AtomicContactFilterCreator.hh>
 #include <protocols/simple_filters/AtomicDistanceFilterCreator.hh>
 #include <protocols/simple_filters/AveragePathLengthFilterCreator.hh>
 #include <protocols/simple_filters/BuriedSurfaceAreaFilterCreator.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
+#include <protocols/simple_filters/ChainBreakFilterCreator.hh>
 #include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_filters/ConstraintScoreFilterCreator.hh>
 #include <protocols/simple_filters/DdgFilterCreator.hh>
@@ -157,6 +158,7 @@
 #include <protocols/simple_filters/SaveResfileToDiskFilterCreator.hh>
 #include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
 #include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
+#include <protocols/simple_filters/SequenceDistanceFilterCreator.hh>
 #include <protocols/simple_filters/SigmoidFilterCreator.hh>
 #include <protocols/simple_filters/SimpleHbondsToAtomFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>

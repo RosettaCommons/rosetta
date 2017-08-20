@@ -60,6 +60,9 @@ public:
 	std::string available_AAs_file() const { return available_AAs_file_; }
 	void available_AAs_file( std::string const & a ) { available_AAs_file_ = a; }
 
+	core::Size indel_motif_radius() const { return indel_motif_radius_; }
+	void indel_motif_radius( core::Size const & r ) { indel_motif_radius_ = r; }
+
 	core::Real loop_seqid_threshold() const { return loop_seqid_threshold_; }
 	void loop_seqid_threshold( core::Real const & t ) { loop_seqid_threshold_ = t; }
 
@@ -85,6 +88,7 @@ private:
 	core::Real exclude_AA_threshold_;
 	std::string alignment_file_;
 	std::string available_AAs_file_;
+	core::Size indel_motif_radius_;
 	core::Real loop_seqid_threshold_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	protocols::moves::MoverOP relax_mover_;

@@ -160,6 +160,9 @@ static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzd
 
 static MoverRegistrator< enzymatic_movers::GlycosyltransferaseMoverCreator > reg_GlycosyltransferaseMoverCreator;
 
+static MoverRegistrator< evolution::EvolutionaryDynamicsMoverCreator > reg_EvolutionaryDynamicsMoverCreator;
+static MoverRegistrator< evolution::NucleotideMutationCreator > reg_NucleotideMutationCreator;
+
 // F //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< rna::movers::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
 static MoverRegistrator< rna::movers::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
@@ -365,7 +368,6 @@ static MoverRegistrator< protein_interface_design::movers::LoopMoverFromCommandL
 static MoverRegistrator< protein_interface_design::movers::LoopOverCreator > reg_LoopOverCreator;
 static MoverRegistrator< protein_interface_design::movers::LoopRemodelCreator > reg_LoopRemodelCreator;
 static MoverRegistrator< protein_interface_design::movers::MapHotspotCreator > reg_MapHotspotCreator;
-static MoverRegistrator< protein_interface_design::movers::NucleotideMutationCreator > reg_NucleotideMutationCreator;
 static MoverRegistrator< protein_interface_design::movers::PatchdockTransformCreator > reg_PatchdockTransformCreator;
 static MoverRegistrator< protein_interface_design::movers::PeptideStapleDesignMoverCreator > reg_PeptideStapleDesignMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlacementAuctionMoverCreator > reg_PlacementAuctionMoverCreator;
@@ -465,7 +467,6 @@ static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_DisulfideInsertionMoverCreator;
 static MoverRegistrator< simple_moves::DumpSingleResidueRotamersCreator > reg_DumpSingleResidueRotamersCreator;
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
-static MoverRegistrator< simple_moves::EvolutionaryDynamicsMoverCreator > reg_EvolutionaryDynamicsMoverCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 
 static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;
@@ -507,6 +508,7 @@ static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingCo
 static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
 static MoverRegistrator< simple_moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;
+static MoverRegistrator< simple_moves::SaveSequenceToCommentsMoverCreator > reg_SaveSequenceToCommentsMoverCreator;
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;
 static MoverRegistrator< simple_moves::SetTorsionCreator > reg_SetTorsionCreator;

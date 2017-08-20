@@ -80,6 +80,7 @@ AlignmentAAFinder::AlignmentAAFinder() :
 	exclude_AA_threshold_( 10.0 ),
 	alignment_file_(""),
 	available_AAs_file_(""),
+	indel_motif_radius_( 2 ),
 	loop_seqid_threshold_( 0.50 ),
 	scorefxn_( /* NULL */ ),
 	relax_mover_( /* NULL */ )
@@ -96,6 +97,7 @@ AlignmentAAFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	loop_seqid_threshold( tag->getOption< core::Real >( "loop_seqid_threshold", 0.50 ) );
 	alignment_file( tag->getOption< std::string >( "alignment_file", "" ) );
 	available_AAs_file( tag->getOption< std::string >( "available_AAs_file", "" ) );
+	indel_motif_radius( tag->getOption< core::Size >( "indel_motif_radius", 2 ) );
 	if ( available_AAs_file() == "" ) {
 		utility_exit_with_message( "Outfile pathname not found" );;
 	}
@@ -200,7 +202,6 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 		++pos_gapped;
 	}
 
-	core::Size const indel_motif_radius = 2;
 	// First we find the available amino acids choices to each site
 	utility::vector0< std::string > available_aa_identities_vector;
 	for ( core::Size aln_resi = 0; aln_resi < target_sequence.length(); ++aln_resi ) {
@@ -223,8 +224,8 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 			// 4) If the aln_seq_resi_type is a gap
 			std::string aa_indel_motif_target, binary_indel_motif_target;
 			std::string aa_indel_motif_aln_seq, binary_indel_motif_aln_seq;
-			std::tie(aa_indel_motif_target, binary_indel_motif_target) = AlignmentCleanerTools::indel_motif(target_sequence, indel_motif_radius, aln_resi, pose_ss_aln );
-			std::tie(aa_indel_motif_aln_seq, binary_indel_motif_aln_seq) = AlignmentCleanerTools::indel_motif(aln_seq->sequence(), indel_motif_radius, aln_resi, pose_ss_aln );
+			std::tie(aa_indel_motif_target, binary_indel_motif_target) = AlignmentCleanerTools::indel_motif(target_sequence, indel_motif_radius(), aln_resi, pose_ss_aln );
+			std::tie(aa_indel_motif_aln_seq, binary_indel_motif_aln_seq) = AlignmentCleanerTools::indel_motif(aln_seq->sequence(), indel_motif_radius(), aln_resi, pose_ss_aln );
 			bool const is_non_matching_indel_motif = ( binary_indel_motif_target != binary_indel_motif_aln_seq );
 			bool const is_tested = ( std::find(tested_aa_identities.begin(), tested_aa_identities.end(), aln_seq_resi_type ) != tested_aa_identities.end() );
 			bool const is_gap = ( aln_seq_resi_type == '-' );

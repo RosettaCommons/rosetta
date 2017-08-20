@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/simple_moves/EvolutionaryDynamicsMover.hh
+/// @file src/protocols/evolution/EvolutionaryDynamicsMover.hh
 /// @brief perform a given mover and sample structures by MonteCarlo
 /// @details The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
@@ -15,11 +15,11 @@
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDED_protocols_simple_moves_EvolutionaryDynamicsMover_hh
-#define INCLUDED_protocols_simple_moves_EvolutionaryDynamicsMover_hh
+#ifndef INCLUDED_protocols_evolution_EvolutionaryDynamicsMover_hh
+#define INCLUDED_protocols_evolution_EvolutionaryDynamicsMover_hh
 
 // Unit header
-#include <protocols/simple_moves/EvolutionaryDynamicsMover.fwd.hh>
+#include <protocols/evolution/EvolutionaryDynamicsMover.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
 
@@ -49,7 +49,7 @@
 #include <protocols/simple_moves/GenericMonteCarloMover.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace evolution {
 
 /// @brief Trigger API definition
 typedef boost::function<bool(core::Size,
@@ -93,7 +93,7 @@ public:
 	/// @brief create this type of objectt
 	MoverOP fresh_instance() const override;
 
-	/// @brief apply GenericMonteCarloMover (Mover)
+	/// @brief apply EvolutionaryDynamicsMover (Mover)
 	void apply( Pose & pose ) override;
 
 
@@ -117,6 +117,18 @@ public: // mutators
 	void disable_fitness_evaluation( bool const d ){ disable_fitness_evaluation_ = d; };
 	bool disable_fitness_evaluation() const{ return disable_fitness_evaluation_; }
 
+	void n_nucleotide_mut_trials_corrected( core::Real const n ){ n_nucleotide_mut_trials_corrected_ = n; };
+	core::Real n_nucleotide_mut_trials_corrected() const{ return n_nucleotide_mut_trials_corrected_; }
+
+	void mutation_rate( core::Real const m ){ mutation_rate_ = m; };
+	core::Real mutation_rate() const{ return mutation_rate_; }
+
+	void branch_length( core::Real const m ){ branch_length_ = m; };
+	core::Real branch_length() const{ return branch_length_; }
+
+	void total_trials( core::Real const m ){ total_trials_ = m; };
+	core::Real total_trials() const{ return total_trials_; }
+
 	std::string
 	get_name() const override;
 
@@ -132,9 +144,13 @@ public: // mutators
 private:
 	core::Real population_size_; // dlft 10^6
 	bool disable_fitness_evaluation_; // dlft false, this is used for benchmarks only
+	core::Real n_nucleotide_mut_trials_corrected_;
+	core::Real branch_length_;
+	core::Real mutation_rate_;
+	core::Real total_trials_;
 };
 
-} // namespace simple_moves
+} // namespace evolution
 } // namespace protocols
 
 #endif

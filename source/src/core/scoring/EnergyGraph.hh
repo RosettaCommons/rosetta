@@ -370,7 +370,7 @@ EnergyEdge::dot( EnergyMap const & weights ) const
 	return weighted_sum;
 }
 
-/// @brief Compute the weighted energy for the components stored on this edge
+/// @brief Compute the weighted energy for the absolute value of the components stored on this edge
 inline
 Real
 EnergyEdge::dot_abs( EnergyMap const & weights ) const

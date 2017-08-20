@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/moves/EvolutionaryDynamicsMover.cc
+/// @file src/protocols/evolution/EvolutionaryDynamicsMover.cc
 /// @brief Overwrites the boltzmann function in GenericMonteCarloMover to sample according to
 /// evolutionary dynamics instead.
 /// @author Christoffer Norn ( chnorn@gmail.com )
 
 
 // Unit Headers
-#include <protocols/simple_moves/EvolutionaryDynamicsMover.hh>
-#include <protocols/simple_moves/EvolutionaryDynamicsMoverCreator.hh>
+#include <protocols/evolution/EvolutionaryDynamicsMover.hh>
+#include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
 
@@ -66,14 +66,14 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 ///////////////////////////////////////////////////
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.EvolutionaryDynamicsMover" );
-static THREAD_LOCAL basic::Tracer TR_energies( "protocols.simple_moves.EvolutionaryDynamicsMover.individual_energies" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.EvolutionaryDynamicsMover" );
+static THREAD_LOCAL basic::Tracer TR_energies( "protocols.evolution.EvolutionaryDynamicsMover.individual_energies" );
 
 using namespace core;
 using namespace protocols::moves;
 
 namespace protocols {
-namespace simple_moves {
+namespace evolution {
 
 using namespace ObjexxFCL::format;
 
@@ -98,7 +98,9 @@ using namespace ObjexxFCL::format;
 EvolutionaryDynamicsMover::EvolutionaryDynamicsMover():
 	Super(),
 	population_size_( 1000000 ),
-	disable_fitness_evaluation_( false )
+	disable_fitness_evaluation_( false ),
+	n_nucleotide_mut_trials_corrected_( 0.0 ),
+	total_trials_( 0 )
 {
 	Super::initialize();
 }
@@ -129,7 +131,6 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 
 	core::Real filter_val(0.0);
 
-	runtime_assert( filters().size() == temperatures().size() );
 	runtime_assert( filters().size() == sample_types().size() );
 	runtime_assert( filters().size() == num_rejections().size() );
 	runtime_assert( filters().size() == random_nums.size() );
@@ -141,18 +142,20 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 		runtime_assert( random_nums[ index ] <= 1.0 );
 		TR.Debug <<"Filter #"<<index<<std::endl;
 		protocols::filters::FilterCOP filter( filters()[ index ] );
-		Real const temp( temperatures()[ index ] );
 		Real const flip( sample_types()[ index ] == "high" ? -1 : 1 );
 		filter_val = filter->report_sm( pose );
 		TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores()[index]<<"; last="<<last_accepted_scores()[index]<<" )"<<std::endl;
 
-		provisional_scores.push_back( flip * filter_val );
+		std::map< std::string, std::string > comments = get_all_comments( pose );
+		std::string key = "stop_codon";
+		bool is_stop_codon = ( "1" == comments[ key ] );
 
-		Real const boltz_factor = ( last_accepted_scores()[ index ] - provisional_scores[ index ] ) / temp;
-
+		if ( is_stop_codon ) {
+			provisional_scores.push_back( 0.0 );
+		} else {
+			provisional_scores.push_back( flip * filter_val );
+		}
 		TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores()[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
-		TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores()[ index ]<<" "<<boltz_factor<<std::endl;
-
 
 		bool reject_filter;
 
@@ -165,7 +168,7 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 
 #if __cplusplus>=201103L
 		Real const selection_coefficient = ( provisional_scores[ index ] -  last_accepted_scores()[ index ]) / last_accepted_scores()[ index ];
-		Real const x1 = -2 * selection_coefficient ;
+		Real const x1 = -2 * selection_coefficient;
 		Real const numerator = -expm1(x1);
 		Real const x2 = -4 * selection_coefficient * population_size_;
 		Real const denominator = -expm1(x2);
@@ -179,11 +182,28 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 		Real const max_denominator = -expm1( max_x2 );
 		Real const fix_p_max = max_numerator / max_denominator;
 
-		Real const fix_p_normalizer = 1/fix_p_max;
+		Real fix_p_normalizer;
+		if ( total_trials_ != 0 ) { // branch length and mutation_rate is provided by the user and is respected in the below
+			core::Real remaining_trials = total_trials_ - n_nucleotide_mut_trials_corrected_;
+			if ( 1/fix_p_max < remaining_trials ) { // we cant do more trials than we have remaining.
+				fix_p_normalizer = 1/fix_p_max;
+			} else {
+				fix_p_normalizer = remaining_trials;
+				// Here we need to communicate to the MC mover that it is time to stop the trajectory
+				set_stop_sampling( true ); // This will stop the MC trajectory
+			}
+		} else { // We are running a trajectory with a certain number of target accepts
+			fix_p_normalizer = 1/fix_p_max;
+		}
+		n_nucleotide_mut_trials_corrected_ += fix_p_normalizer;
+
+		std::ostringstream ntrials_out;
+		ntrials_out.precision(16);
+		ntrials_out << n_nucleotide_mut_trials_corrected_;
+		pose::add_comment(pose, "elapsed_nt_trials_corrected", ntrials_out.str());
+
 #else
         utility_exit_with_message( "this code relies on expm1, which is not implemented in C98 currently (Aug 2016) used for building PyRosetta in windows");
-
-
         Real const fix_p_normalizer = 0.0;
         Real const fixation_probability = 0.0;
         Real const max_selection_coefficient = 0.0;
@@ -191,7 +211,6 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 
 
 #endif
-
 		if ( max_selection_coefficient == 0.0 ) {
 			utility_exit_with_message( "The current sequence is perfectly fit! Some weird stuff might be going on. Check if the implementation is fit to handle this situation!" );
 		}
@@ -199,12 +218,12 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 		std::ostringstream curr_score;
 		curr_score.precision(16);
 		curr_score << last_accepted_scores()[ index ];
-		pose::add_comment(pose, "curr_score", curr_score.str());
+		pose::add_comment(pose, "fitness_current_seq", curr_score.str());
 
 		std::ostringstream proposed_score;
 		proposed_score.precision(16);
 		proposed_score << provisional_scores[ index ];
-		pose::add_comment(pose, "proposed_score", proposed_score.str());
+		pose::add_comment(pose, "fitness_proposed_seq", proposed_score.str());
 
 		std::ostringstream fixp;
 		fixp.precision(16);
@@ -254,9 +273,8 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 			stringed_comments += comment.first + ":" + comment.second + " ";
 		}
 
-		core::Real energy = scoring(pose);
 		data.precision(12);
-		data << trial_counter() << " " << accepted << " " << filter_val << " " << energy << " " << stringed_comments << " " <<pose_sequence<<'\n';
+		data << "trial:" << trial_counter() << " accept:" << accepted << " " << stringed_comments <<'\n';
 
 		data.flush();
 	}
@@ -292,9 +310,19 @@ void
 EvolutionaryDynamicsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & pose )
 {
 	set_keep_filters( true );
+
 	Super::parse_my_tag( tag, data, filters, movers, pose );
 	population_size( tag->getOption< core::Size >( "population_size", 1000000 ) );
 	disable_fitness_evaluation( tag->getOption< bool >( "disable_fitness_evaluation", false ) );
+	if ( tag->hasOption("branch_length") && tag->hasOption("mutation_rate") ) {
+		branch_length( tag->getOption< core::Real >( "branch_length", 100000.0 ) );
+		mutation_rate( tag->getOption< core::Real >( "mutation_rate", 0.001 ) );
+		total_trials( branch_length() / mutation_rate() ); // This is to total nt substitution trials we need to try to simulate the expected branch length
+		TR << "Branch length " << branch_length() << " mutation rate " << mutation_rate() << " Total nt substitution attempts: " << total_trials_  << std::endl;;
+		set_maxtrials( total_trials_ ); // here we overwrite whatever was given for trials for the MC mover.
+		set_max_accepted_trials( total_trials_ );
+		TR << "If sequences are near perfectly fit you can expect " << total_trials_ / ( Real (2*population_size()) ) << " trials." << std::endl;
+	}
 }
 
 std::string EvolutionaryDynamicsMover::get_name() const {
@@ -311,7 +339,9 @@ void EvolutionaryDynamicsMover::provide_xml_schema( utility::tag::XMLSchemaDefin
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default("population_size", xsct_positive_integer, "Set population size. Default = 1000000", "1000000")
-		+ XMLSchemaAttribute::attribute_w_default("disable_fitness_evaluation", xsct_rosetta_bool, "Disable fitness evaluation. Default = false", "false");
+		+ XMLSchemaAttribute::attribute_w_default("disable_fitness_evaluation", xsct_rosetta_bool, "Disable fitness evaluation. Default = false", "false")
+		+ XMLSchemaAttribute::attribute_w_default("branch_length", xsct_real, "Set branch_length. ", "1000000")
+		+ XMLSchemaAttribute::attribute_w_default("mutation_rate", xsct_real, "Set mutation_rate. ", "0.001");
 
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
 	ct_gen->element_name( mover_name() )
@@ -337,5 +367,5 @@ void EvolutionaryDynamicsMoverCreator::provide_xml_schema( utility::tag::XMLSche
 
 
 
-} // ns simple_moves
+} // ns evolution
 } // ns protocols

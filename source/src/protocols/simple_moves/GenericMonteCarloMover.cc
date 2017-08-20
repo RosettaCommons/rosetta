@@ -101,7 +101,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	mover_(std::move( mover )),
 	temperature_( temperature ),
 	sample_type_(std::move( sample_type )),
-	drift_( drift )
+	drift_( drift ),
+	stop_sampling_( false )
 {
 	initialize();
 }
@@ -307,6 +308,12 @@ GenericMonteCarloMover::set_sampletype( String const & type )
 void
 GenericMonteCarloMover::set_drift( bool const drift ){
 	drift_ = drift;
+}
+
+/// @brief if set to true, the MC mover will stop sampling
+void
+GenericMonteCarloMover::set_stop_sampling( bool const stop_sampling ){
+	stop_sampling_ = stop_sampling;
 }
 
 /// @brief if preapply=true, auto-accept the first application of the submover,
@@ -868,13 +875,15 @@ GenericMonteCarloMover::apply( Pose & pose )
 		}
 
 		pose.energies().clear();
-		// check stopping condition
+
+		//check stopping condition
 		bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
 			( stopping_condition() && stopping_condition()->apply( pose ) ) ||
-			( max_accepted_trials() != 0 && max_accepted_trials() == accept ) );
+			( max_accepted_trials() != maxtrials_ && max_accepted_trials() == accept ) ||
+			stop_sampling() );
 		if ( stop ) {
 			TR<<"MC stopping condition met at trial "<<i;
-			if ( max_accepted_trials() != 0 && max_accepted_trials() == accept ) {
+			if ( max_accepted_trials() != maxtrials_ && max_accepted_trials() == accept ) {
 				TR << " because maximum number of accepted moves was achieved";
 			}
 			TR << std::endl;
@@ -1279,6 +1288,9 @@ GenericMonteCarloMover::define_composition_schema( utility::tag::XMLSchemaDefini
 		"recovery by checkpointing. Note that different processes would need to "
 		"work from different directories or somehow control the checkpointing "
 		"file name, else confusion will reign." )
+		+ Attr("max_accepted_trials", xsct_non_negative_integer,
+		"The maximum number of accepted trials. "
+		"If not set max_accepted_trials=trials" )
 		+ Attr(
 		"saved_trial_number_file", xs_string,
 		"Checkpointing file for the current trial number. "

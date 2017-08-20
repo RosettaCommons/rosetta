@@ -244,6 +244,9 @@ public: // mutators
 	/// Of course, this is not MC sampling.
 	void set_drift( bool const drift );
 
+	/// @brief if set to true, the MC mover will stop sampling
+	void set_stop_sampling( bool const stop_sampling );
+
 	/// @brief if preapply=true, auto-accept the first application of the submover,
 	/// ignoring boltzman criteria.
 	void set_preapply( bool const preapply=false );
@@ -324,6 +327,7 @@ public: // mutators
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > mover_stopping_condition() const { return mover_stopping_condition_; }
 	bool preapply() const { return preapply_; }
 	bool drift() const { return drift_; }
+	bool stop_sampling() const { return stop_sampling_; }
 	bool boltz_rank() const { return boltz_rank_; }
 	utility::vector1< String > const & sample_types() const { return sample_types_; }
 	utility::vector1< core::Real > const & last_accepted_scores() const { return last_accepted_scores_; }
@@ -427,6 +431,9 @@ private:
 	/// @brief if drift=false, the pose is set back to the initial pose at each MC trial
 	/// Of course, this is not MC sampling.
 	bool drift_ = true;
+
+	/// @brief if set to true, the MC mover will stop sampling
+	bool stop_sampling_ = false;
 
 	/// @brief Should we apply (and accept) the first application of the mover
 	/// regardless of boltzman criteria? (Defaults true for historical reasons.)

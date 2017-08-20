@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_moves/EvolutionaryDynamicsMoverEvolutionaryDynamicsMoverCreator.hh
+/// @file protocols/evolution/EvolutionaryDynamicsMoverEvolutionaryDynamicsMoverCreator.hh
 /// @brief This class will create instances of Mover EvolutionaryDynamicsMover for the MoverFactory
 /// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_moves_EvolutionaryDynamicsMoverCreator_hh
-#define INCLUDED_protocols_simple_moves_EvolutionaryDynamicsMoverCreator_hh
+#ifndef INCLUDED_protocols_evolution_EvolutionaryDynamicsMoverCreator_hh
+#define INCLUDED_protocols_evolution_EvolutionaryDynamicsMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace evolution {
 
 class EvolutionaryDynamicsMoverCreator : public protocols::moves::MoverCreator {
 public:

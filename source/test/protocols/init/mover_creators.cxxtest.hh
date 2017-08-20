@@ -124,6 +124,8 @@
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
+#include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
+#include <protocols/evolution/NucleotideMutationCreator.hh>
 #include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
 #include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
 #include <protocols/features/ReportToDBCreator.hh>
@@ -245,7 +247,6 @@
 #include <protocols/protein_interface_design/movers/LoopOverCreator.hh>
 #include <protocols/protein_interface_design/movers/LoopRemodelCreator.hh>
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
-#include <protocols/protein_interface_design/movers/NucleotideMutationCreator.hh>
 #include <protocols/protein_interface_design/movers/PatchdockTransformCreator.hh>
 #include <protocols/protein_interface_design/movers/PeptideStapleDesignMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMoverCreator.hh>
@@ -312,7 +313,6 @@
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
-#include <protocols/simple_moves/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
@@ -715,6 +715,12 @@ public:
 	void test_protocols_enzdes_UpdateEnzdesHeaderMoverCreator_name()
 	{ protocols::enzdes::UpdateEnzdesHeaderMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "UpdateEnzdesHeader" ); }
 
+	void test_protocols_evolution_EvolutionaryDynamicsMoverCreator_name()
+	{ protocols::evolution::EvolutionaryDynamicsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "EvolutionaryDynamics" ); }
+
+	void test_protocols_evolution_NucleotideMutationCreator_name()
+	{ protocols::evolution::NucleotideMutationCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "NucleotideMutation" ); }
+
 	void test_protocols_farna_ErraserMinimizerMoverCreator_name()
 	{ protocols::rna::movers::ErraserMinimizerMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ErraserMinimizerMover" ); }
 
@@ -1078,9 +1084,6 @@ public:
 	void test_protocols_protein_interface_design_movers_MapHotspotCreator_name()
 	{ protocols::protein_interface_design::movers::MapHotspotCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MapHotspot" ); }
 
-	void test_protocols_protein_interface_design_movers_NucleotideMutationCreator_name()
-	{ protocols::protein_interface_design::movers::NucleotideMutationCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "NucleotideMutation" ); }
-
 	void test_protocols_protein_interface_design_movers_PatchdockTransformCreator_name()
 	{ protocols::protein_interface_design::movers::PatchdockTransformCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PatchdockTransform" ); }
 
@@ -1278,9 +1281,6 @@ public:
 
 	void test_protocols_simple_moves_DisulfideInsertionMoverCreator_name()
 	{ protocols::simple_moves::DisulfideInsertionMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DisulfideInsertion" ); }
-
-	void test_protocols_simple_moves_EvolutionaryDynamicsMoverCreator_name()
-	{ protocols::simple_moves::EvolutionaryDynamicsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "EvolutionaryDynamics" ); }
 
 	void test_protocols_simple_moves_ExtendedPoseMoverCreator_name()
 	{ protocols::simple_moves::ExtendedPoseMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ExtendedPoseMover" ); }
@@ -2233,8 +2233,8 @@ public:
 	// void test_protocols_protein_interface_design_movers_MapHotspotCreator()
 	// { protocols::protein_interface_design::movers::MapHotspotCreator cr; std::cout << "protocols::protein_interface_design::movers::MapHotspotCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_protein_interface_design_movers_NucleotideMutationCreator()
-	// { protocols::protein_interface_design::movers::NucleotideMutationCreator cr; std::cout << "protocols::protein_interface_design::movers::NucleotideMutationCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_evolution_NucleotideMutationCreator()
+	// { protocols::evolution::NucleotideMutationCreator cr; std::cout << "protocols::evolution::NucleotideMutationCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_protein_interface_design_movers_PatchdockTransformCreator()
 	// { protocols::protein_interface_design::movers::PatchdockTransformCreator cr; std::cout << "protocols::protein_interface_design::movers::PatchdockTransformCreator " << cr.keyname() << std::endl; }
@@ -2434,8 +2434,8 @@ public:
 	// void test_protocols_simple_moves_DisulfideInsertionMoverCreator()
 	// { protocols::simple_moves::DisulfideInsertionMoverCreator cr; std::cout << "protocols::simple_moves::DisulfideInsertionMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_simple_moves_EvolutionaryDynamicsMoverCreator()
-	// { protocols::simple_moves::EvolutionaryDynamicsMoverCreator cr; std::cout << "protocols::simple_moves::EvolutionaryDynamicsMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_evolution_EvolutionaryDynamicsMoverCreator()
+	// { protocols::evolution::EvolutionaryDynamicsMoverCreator cr; std::cout << "protocols::evolution::EvolutionaryDynamicsMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ExtendedPoseMoverCreator()
 	// { protocols::simple_moves::ExtendedPoseMoverCreator cr; std::cout << "protocols::simple_moves::ExtendedPoseMoverCreator " << cr.keyname() << std::endl; }

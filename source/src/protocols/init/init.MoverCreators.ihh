@@ -144,6 +144,10 @@
 
 #include <protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh>
 
+#include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
+#include <protocols/evolution/NucleotideMutationCreator.hh>
+
+
 // F //////////////////////////////////////////////////////////////////////////
 #include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
 #include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
@@ -352,7 +356,6 @@
 #include <protocols/protein_interface_design/movers/LoopOverCreator.hh>
 #include <protocols/protein_interface_design/movers/LoopRemodelCreator.hh>
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
-#include <protocols/protein_interface_design/movers/NucleotideMutationCreator.hh>
 #include <protocols/protein_interface_design/movers/PatchdockTransformCreator.hh>
 #include <protocols/protein_interface_design/movers/PeptideStapleDesignMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMoverCreator.hh>
@@ -454,7 +457,6 @@
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 #include <protocols/simple_moves/DumpSingleResidueRotamersCreator.hh>
 #include <protocols/simple_moves/DumpPdbCreator.hh>
-#include <protocols/simple_moves/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
@@ -491,6 +493,7 @@
 #include <protocols/simple_moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/SaneMinMoverCreator.hh>
+#include <protocols/simple_moves/SaveSequenceToCommentsMoverCreator.hh>
 #include <protocols/simple_moves/ScoreMoverCreator.hh>
 #include <protocols/simple_moves/SequenceProfileMoverCreator.hh>
 #include <protocols/simple_moves/SetTorsionCreator.hh>

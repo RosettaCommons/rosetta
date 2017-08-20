@@ -31,6 +31,7 @@ static FilterRegistrator< protocols::enzdes::LigInterfaceEnergyFilterCreator > r
 static FilterRegistrator< protocols::enzdes::RepackWithoutLigandFilterCreator > reg_RepackWithoutLigandFilterCreator;
 static FilterRegistrator< protocols::enzdes::RemoveLigandFilterCreator > reg_RemoveLigandFilterCreator;
 
+static FilterRegistrator< protocols::evolution::AASynthesisFitnessCostFilterCreator > reg_AASynthesisFitnessCostFilterCreator;
 static FilterRegistrator< protocols::evolution::AlignmentAAFinderFilterCreator > reg_AlignmentAAFinderFilterCreator;
 static FilterRegistrator< protocols::evolution::AlignmentGapInserterFilterCreator > reg_AlignmentGapInserterFilterCreator;
 
@@ -124,6 +125,7 @@ static FilterRegistrator< protocols::simple_filters::AtomicDistanceFilterCreator
 static FilterRegistrator< protocols::simple_filters::AveragePathLengthFilterCreator > reg_AveragePathLengthFilterCreator;
 static FilterRegistrator< protocols::simple_filters::BuriedSurfaceAreaFilterCreator > reg_BuriedSurfaceAreaFilterCreator;
 static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ChainBreakFilterCreator > reg_ChainBreakFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ConstraintScoreFilterCreator > reg_ConstraintScoreFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
@@ -172,6 +174,7 @@ static FilterRegistrator< protocols::simple_filters::SSElementBisectddGFilterCre
 static FilterRegistrator< protocols::simple_filters::SaveResfileToDiskFilterCreator > reg_SaveResfileToDiskFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ScoreCutoffFilterCreator > reg_ScoreCutoffFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SequenceDistanceFilterCreator > reg_SequenceDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SigmoidFilterCreator > reg_SigmoidFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SimpleHbondsToAtomFilterCreator > reg_SimpleHbondsToAtomFilterCreator;
