@@ -385,7 +385,7 @@ read_binary(core::pose::Pose & pose, BUFFER & buf)
 			ResidueTypeSetCOP target_residue_type_set( ChemicalManager::get_instance()->residue_type_set( type_set ) );
 			ResidueOP new_rsd = ResidueFactory::create_residue( target_residue_type_set->name_map( type_name ) ); //, residue, pose.conformation() );
 			new_rsd->chain(chainid);
-			if ( j > 1 && (is_lower_terminus || !new_rsd->is_polymer() || !pose.residue_type(j-1).is_polymer() ) ) {
+			if ( j > 1 && (is_lower_terminus || !new_rsd->is_polymer() || !pose.residue_type(j-1).is_polymer() || new_rsd->type().is_disulfide_bonded() ) ) {
 				pose.append_residue_by_jump( *new_rsd, 1 );
 			} else {
 				pose.append_residue_by_bond( *new_rsd ); // pose.append_residue_by_jump( *new_rsd, j-1,"", "", true );
