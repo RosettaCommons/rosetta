@@ -16,7 +16,7 @@
 
 from __future__ import print_function
 
-import sys, time, os, re, os.path, subprocess
+import sys, time, os, re, os.path, subprocess, json
 
 def update_file_if_changed(filename, contents):
     changed = False
@@ -38,10 +38,18 @@ def update_file_if_changed(filename, contents):
             f.close()
 
 def retrieve_version_information():
-    ver = ""
-    url = ""
-    commit_date = ""
-    if subprocess.call("git rev-parse --show-toplevel", shell=True, stdout=subprocess.PIPE) is 0:
+    if os.path.isfile('./../.release.json'):
+        print('Release package detected, using rosetta/main/.release.json to acquire version information...')
+        info = json.load( open('./../.release.json') )
+        ver = info['source']['main']
+        url = "http://www.rosettacommons.org"
+        commit_date = info['date']
+        commit_id = info['version']
+
+    else:
+        ver = ""
+        url = ""
+        commit_date = ""
 
         try:
             ver = subprocess.check_output("git rev-parse HEAD", shell=True).strip()
@@ -55,32 +63,27 @@ def retrieve_version_information():
             ver = "unknown"
         if not url:
             url = "unknown"
-    else:
-        # We're probably a release version
-        ver = "exported"
-        url = "http://www.rosettacommons.org"
-        commit_date = ""
 
-    # get_commit_id.sh is not in the standard repository, but is added by PyRosetta?
-    # See commit log for  dbbff5655669f41af0dfa7c9421fc89e36b2a227
-    commit_id = 'unknown'
-    if os.path.isfile('get_commit_id.sh'):
-        try:
-            res = 0
-            output = subprocess.check_output(['./get_commit_id.sh {}'.format(ver)])
-        except subprocess.CalledProcessError as err:
-            res = err.returncode
-            output = err.output
+        # get_commit_id.sh is not in the standard repository, but is added by PyRosetta?
+        # See commit log for  dbbff5655669f41af0dfa7c9421fc89e36b2a227
+        commit_id = 'unknown'
+        if os.path.isfile('get_commit_id.sh'):
+            try:
+                res = 0
+                output = subprocess.check_output(['./get_commit_id.sh {}'.format(ver)])
+            except subprocess.CalledProcessError as err:
+                res = err.returncode
+                output = err.output
 
-        print('Asked Testing server for commit id, got reply:', repr(output))
+            print('Asked Testing server for commit id, got reply:', repr(output))
 
-        if (res  or  not output  or not output.isdigit() ):
-            commit_id = 'failed_to_get_id' # simple validation
-        else:
-            commit_id = str(int(output))
+            if (res  or  not output  or not output.isdigit() ):
+                commit_id = 'failed_to_get_id' # simple validation
+            else:
+                commit_id = str(int(output))
 
-    if commit_id != 'unknown':
-        ver = commit_id + ':' + ver
+        if commit_id != 'unknown':
+            ver = commit_id + ':' + ver
 
     return dict( commit_id = commit_id, ver = ver, url = url, commit_date = commit_date)
 

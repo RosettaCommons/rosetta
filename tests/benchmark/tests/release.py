@@ -12,7 +12,7 @@
 ## @brief  Rosetta and PyRosetta release scripts
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil, tarfile, distutils.dir_util
+import os, os.path, json, commands, shutil, tarfile, distutils.dir_util, datetime
 import codecs
 
 import imp
@@ -100,6 +100,32 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
 
+
+
+def convert_to_release(rosetta_dir, working_dir, config, git_repository_name, release_name, tracer):
+    ''' Convert Rosetta repostiroty into release mode. This include removing all devel files, checking out submodules and so on...
+    '''
+    versions = {}
+    for repository in 'main tools demos documentation'.split():
+        versions[repository] = execute('Getting Git commit SHA1 for rosetta {repository}...',  'cd {rosetta_dir}/../{repository} && git rev-parse HEAD'.format(**vars()), return_='output')
+
+    versions['binder'] = execute('Getting Binder submodule SHA1...', "cd {rosetta_dir} && git ls-tree HEAD source/src/python/PyRosetta/binder | awk '{{print $3}}'".format(**vars()), return_='output')
+
+    execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+
+    execute('Clonning Binder...', 'cd {working_dir}/{git_repository_name}/main/source/src/python/PyRosetta && git clone https://github.com/RosettaCommons/binder.git && cd binder && git checkout {} && rm -rf .git'.format(versions["binder"], **vars()))
+
+    today = datetime.datetime.now()
+    with file('{working_dir}/{git_repository_name}/main/.release.json'.format(**vars()), 'w') as f: # we placing this into rosetta/main/ instead of rosetta/ so Rosetta developers could not accidently trigger this unnoticed
+        json.dump(dict(release=config['revision'],
+                       version=release_name,
+                       date=str(today),
+                       year=today.isocalendar()[0],
+                       week=today.isocalendar()[1],
+                       source=versions,
+        ), f, sort_keys=True, indent=2)
+
+
 def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
     compiler = platform['compiler']
@@ -131,17 +157,21 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
 
     # DANGER DANGER DANGER     DEBUG ONLY, REMOVE LINES BELOW BEFORE COMMITING!!!!!
-    #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
-    #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/detect_itest_exes.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
+    # execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
+    # execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/detect_itest_exes.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
 
-    execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+    #execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+    convert_to_release(rosetta_dir, working_dir, config, git_repository_name, release_name, TR)
 
     # Creating tar.bz2 archive with sources
     with tarfile.open(archive, "w:bz2") as t: t.add(working_dir+'/'+git_repository_name, arcname=release_name)
     release_path = '{}/rosetta/archive/{}/source/'.format(config['release_root'], config['branch'])  # , platform['os']
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
-    execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git . && git add * && git ci -a -m "{release_name}"'.format(**vars()))
+    execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git . && git add *'.format(**vars()))
+    #execute('Adding Binder submodule...', 'cd {working_dir}/{git_repository_name} && git submodule add https://github.com/RosettaCommons/binder.git main/source/src/python/PyRosetta/binder && git submodule update --init --recursive'.format(**vars()))
+    #execute('Setting Binder submodule SHA1...', 'cd {working_dir}/{git_repository_name}/main/source/src/python/PyRosetta/binder && git checkout {binder_sha1}'.format(**vars()))
+    execute('Commiting new release...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{release_name}"'.format(**vars()))
 
     execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
     execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
@@ -203,7 +233,8 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
     #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/detect_itest_exes.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
 
-    execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+    #execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+    convert_to_release(rosetta_dir, working_dir, config, git_repository_name, release_name, TR)
 
     execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
 

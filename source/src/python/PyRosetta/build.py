@@ -572,9 +572,11 @@ def main(args):
     else:
         if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
         if not Options.binder:
-            execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
-            output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
-            if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
+            if os.path.isfile(rosetta_source_path + '/../.release.json'): print('Release package detected, skipping Binder submodule update...')
+            else:
+                execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
+                output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
+                if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
             Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
 
         generate_bindings(rosetta_source_path)

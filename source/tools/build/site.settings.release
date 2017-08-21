@@ -21,12 +21,12 @@ settings = {
     "site" : {
         "prepends" : {
 # Allows detection of the default compiler on your normal path
-            "program_path" : os.environ["PATH"].split(":"),
-# Allows finding system libraries in non-standard locations 
-            "library_path" : os.environ["LD_LIBRARY_PATH"].split(":"),
+            "program_path" : os.environ["PATH"].split(":") if "PATH" in os.environ else [],
+# Allows finding system libraries in non-standard locations
+            "library_path" : os.environ["LD_LIBRARY_PATH"].split(":") if "LD_LIBRARY_PATH" in os.environ else [],
 ## Uncomment the following line if you have non-standard include paths in your $INCLUDE environment variable
 ## (Commented out because $INCLUDE is not normally set
-#            "include_path" : os.environ["INCLUDE"].split(":"),
+#            "include_path" : os.environ["INCLUDE"].split(":") if "INCLUDE" in os.environ else [],
         },
         "appends" : {
         },

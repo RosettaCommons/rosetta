@@ -53,6 +53,7 @@ PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-proc
 
 class BenchmarkError(Exception):
     def __init__(self, value): self.value = value
+    def __repr__(self): return self.value
     def __str__(self): return self.value
 
 
@@ -95,7 +96,9 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
     if res and terminate_on_failure:
         TR("\nEncounter error while executing: " + commandline)
         if return_==True: return True
-        else: raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)
+        else:
+            print("\nEncounter error while executing: " + commandline + '\n' + output);
+            raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)
 
     if return_ == 'output': return output
     else: return False

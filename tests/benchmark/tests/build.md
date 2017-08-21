@@ -42,3 +42,10 @@ Test will fail if there are any level-prohibited includes used.
 ### cppcheck
 Run the Cppcheck code quality analyzer on Rosetta. Test will fail if a code quality issue identified by Cppcheck is introduced.
 Test will *continue* to fail for future tests until the issue is dealt with.
+
+-----
+### Variants
+Vanilla debug and release tests could be executed on various platforms that will enable certain add-on functionality.
+ - PostgreSQL, enable support for PostgreSQL database
+ - MySQL, enable support for PostgreSQL database
+ - MPI, build Rosetta with MPI support
