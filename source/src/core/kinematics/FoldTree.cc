@@ -295,7 +295,6 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	// AMW: root moved here...
 
 	/// <
-	TR << *this << std::endl;
 	Edge const new_jump_edge( pos1, pos2, jump_number );
 	delete_edge( old_jump_edge );
 	if ( (core::Size)new_jump_edge.start() == original_root ) {
@@ -305,7 +304,6 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	}
 	delete_extra_vertices();
 	delete_self_edges();
-	TR << *this << std::endl;
 
 	/// >
 	// AMW: This runtime_assert may fail in at least ONE case that is legitimate:
