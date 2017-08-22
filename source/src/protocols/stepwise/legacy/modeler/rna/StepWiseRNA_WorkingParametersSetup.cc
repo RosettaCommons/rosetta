@@ -1532,6 +1532,11 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 				}
 			}
 		}
+
+		// We must have hit at least one of the above branches, or else actual_working_moving_res is garbage
+		runtime_assert( partition_definition( possible_working_res_1 ) != partition_definition( root_res ) ||
+			partition_definition( possible_working_res_2 ) != partition_definition( root_res ) );
+
 		if ( actual_working_moving_res_list[1] != actual_working_moving_res ) {
 			TR.Debug << "actual_working_moving_res = " << actual_working_moving_res << std::endl;
 			stepwise::modeler::rna::output_seq_num_list( "actual_working_moving_res_list = ", actual_working_moving_res_list, TR.Debug );

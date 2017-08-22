@@ -110,6 +110,7 @@ read_tensor_from_file( std::string const & filename_input,
 	}
 
 	tensor = numeric::MathNTensor< double, 6 >( nbinsarray, data );
+	delete[] data;
 
 	if ( !use_binary ) {
 		// try to create a binary variant -- should allow for fast i/o next time.

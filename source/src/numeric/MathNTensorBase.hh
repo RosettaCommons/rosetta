@@ -74,7 +74,7 @@ protected:
 private:
 	/// @brief The dimensionality of the MathNTensor/
 	///
-	Size dimensionality_=0;
+	Size dimensionality_ = 0;
 
 };
 

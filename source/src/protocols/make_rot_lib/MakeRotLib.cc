@@ -203,7 +203,7 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 
 
-		Real current_ener( orig_ener), previous_ener( orig_ener );
+		Real current_ener( orig_ener), previous_ener;
 		Size iter(0);
 		do {
 			previous_ener = current_ener;

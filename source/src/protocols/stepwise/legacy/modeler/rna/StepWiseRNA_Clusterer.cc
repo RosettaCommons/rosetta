@@ -1752,7 +1752,7 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 			in_delete_range = false;
 
 			delete_res_range_list_.push_back( std::make_pair( range_begin, range_end ) );
-			range_end = 0;
+			//range_end = 0;
 			range_begin = 0;
 		}
 	}

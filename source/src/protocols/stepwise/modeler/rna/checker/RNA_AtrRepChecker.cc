@@ -145,7 +145,7 @@ RNA_AtrRepChecker::get_base_atr_rep_score( core::pose::Pose const & pose ){
 
 	// I think this should work... push apart different parts of the structure so that whatever fa_atr, fa_rep is left is
 	// due to "intra-domain" interactions.
-	if ( separate_moving_residue_to_estimate_baseline_ ) jump_at_moving_suite = split_pose( base_pose_screen, moving_res_, reference_res_ );
+	if ( separate_moving_residue_to_estimate_baseline_ ) /*jump_at_moving_suite = */split_pose( base_pose_screen, moving_res_, reference_res_ );
 
 	( *atr_rep_screening_scorefxn_ )( base_pose_screen );
 	EnergyMap const & energy_map = base_pose_screen.energies().total_energies();

@@ -80,14 +80,14 @@ public:
 		utility::fixedsizearray1< Size, N > const & n_bins,
 		T    const & value = T()
 	) :
-		parent(N),
+		parent( N ),
 		n_bins_( n_bins )
 	{
 		size_ = 1;
 		for ( Size i = 1; i <= N; ++i ) {
 			size_ *= n_bins[ i ];
 		}
-		if ( size_ == 0 ) data_ = 0;
+		if ( size_ == 0 ) data_ = nullptr;
 		else data_ = new T[ size_ ];
 		std::fill( data_, data_ + size_, value );
 	}
@@ -110,7 +110,7 @@ public:
 			size_ *= n_bins[ i ];
 		}
 		n_bins_ = nbinsarray;
-		if ( size_ == 0 ) data_ = 0;
+		if ( size_ == 0 ) data_ = nullptr;
 		else data_ = new T[ size_ ];
 		std::fill( data_, data_ + size_, value );
 	}
@@ -136,7 +136,7 @@ public:
 				parent::set_dimensionality( rhs.num_dimensions() );
 				n_bins_ = rhs.n_bins_;
 				size_ = rhs.size_;
-				data_ = new T[size_];
+				data_ = new T[ size_ ];
 			}
 			std::copy( rhs.data_, rhs.data_ + rhs.size_, data_ );
 		}
@@ -146,7 +146,7 @@ public:
 	/// @brief Destructor.
 	///
 	~MathNTensor() {
-		delete[] data_;
+		if ( data_ ) delete[] data_;
 	}
 
 	T sum() const

@@ -292,6 +292,10 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	}
 	runtime_assert( (core::Size)root() == original_root );
 
+	// AMW: root moved here...
+
+	/// <
+	TR << *this << std::endl;
 	Edge const new_jump_edge( pos1, pos2, jump_number );
 	delete_edge( old_jump_edge );
 	if ( (core::Size)new_jump_edge.start() == original_root ) {
@@ -301,7 +305,14 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	}
 	delete_extra_vertices();
 	delete_self_edges();
-	runtime_assert( (core::Size)root() == original_root );
+	TR << *this << std::endl;
+
+	/// >
+	// AMW: This runtime_assert may fail in at least ONE case that is legitimate:
+	// you delete self edges and in the result you turn a JEDGE 2 1 1 into 
+	// EDGE 1 2 1. That is not bad -- the two trees are 'the same' so we should
+	// catch at least that case.
+	runtime_assert( (core::Size)root() == original_root || ( pos1 == 1 && pos2 == 2 ) );
 	TR.Debug << "slide_jump: final tree= " << *this << std::endl;
 }
 

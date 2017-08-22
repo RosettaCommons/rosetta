@@ -496,7 +496,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 
 	// perform minimization until we are stabilized ( delta 0.001 ) or we reach 100 steps
 	// should probably make these magic numbers options
-	Real current_ener( orig_ener ), previous_ener( orig_ener );
+	Real current_ener( orig_ener ), previous_ener;
 	Size iter( 0 );
 	do {
 		previous_ener = current_ener;
