@@ -245,17 +245,7 @@ pose_from_pose(
 /// One eneighbpr will be considered as the mainchain continuations. All others are branches.
 /// @author Sebastian Rämisch, raemisch@scripps.edu
 void
-find_branch_points( Size const & seqpos, chemical::ResidueTypeCOP & RT,
-	bool & is_branch_point,
-	utility::vector1< std::string > & branch_points_on_this_residue,
-	utility::vector1< std::string > const & rosetta_residue_name3s,
-	Size mainchain_neighbor,
-	utility::vector1< core::io::ResidueInformation > & rinfos,
-	core::io::StructFileRep::Strings & branch_lower_termini,
-	utility::vector1< Size >& glycan_positions,
-	StructFileRepOptions const & options,
-	StructFileRep const & sfr
-){
+find_branch_points( Size const & seqpos, chemical::ResidueTypeCOP & RT, bool & is_branch_point, utility::vector1< std::string > & branch_points_on_this_residue, utility::vector1< std::string > const & rosetta_residue_name3s, Size mainchain_neighbor, utility::vector1< core::io::ResidueInformation > & rinfos, core::io::StructFileRep::Strings & branch_lower_termini, utility::vector1< Size >& glycan_positions, StructFileRepOptions const & options ) {
 	std::string const name3 = rosetta_residue_name3s[ seqpos ];
 	TR.Trace << "Find branch point at this residue" << std::endl;
 	TR.Trace << "It's name3 is >" << name3 << "<" << std::endl;
@@ -272,24 +262,8 @@ find_branch_points( Size const & seqpos, chemical::ResidueTypeCOP & RT,
 			if ( ( is_carbohydrate && atom_name.find(" O") != std::string::npos ) || ( atom_name == " ND2" || atom_name == " OG1" || atom_name == " OG ") ) {
 				TR.Trace << "Check for branch point at atom: " << atom_name << std::endl;
 				Vector const xyz = XYZs_it->second;
-				//check existing link records for connection
-				std::string const & resid = rinfos[seqpos].resid();
-				std::map< std::string, utility::vector1< LinkInformation > >::const_iterator it = sfr.link_map().find(resid);
-				for ( core::Size i=1; i<=it->second.size(); i++ ) {
-					if ( it->second[i].name1 == atom_name ) {
-						for ( core::Size ii=1; ii<=rinfos.size(); ii++ ) {
-							if ( rinfos[ii].resSeq() == it->second[i].resSeq2 && rinfos[ii].iCode() == it->second[i].iCode2 && rinfos[ii].chainID() == it->second[i].chainID2 ) {
-								neighbor = std::make_pair(ii, it->second[i].name2);
-								TR.Trace << " link for neighbor found. neighbor is " << neighbor << std::endl;
-							}
-						}
-					}
-				}
 				/////////////   Do it!  //////////////////////////////
-				if ( neighbor.first == 0 && neighbor.second == "C0" ) {
-					find_downstream_neighbor( seqpos,xyz,neighbor,rinfos, glycan_positions, rosetta_residue_name3s, options );
-				}
-
+				find_downstream_neighbor( seqpos,xyz,neighbor,rinfos, glycan_positions, rosetta_residue_name3s, options );
 				/////////////////////////////////////////////////////
 				if ( neighbor.first != 0 || neighbor.second != "C0" ) {
 					TR.Trace << "New branch found" << std::endl;
