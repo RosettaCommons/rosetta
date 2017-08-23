@@ -151,6 +151,11 @@ void HBondOptions::initialize_from_options( utility::options::OptionCollection c
 	if ( options.has( OptionKeys::corrections::score::hbond_energy_shift) ) {
 		hbond_energy_shift_ = options[ OptionKeys::corrections::score::hbond_energy_shift ];
 	}
+
+	if ( options.has( OptionKeys::score::water_hybrid_sf ) ) {
+		water_hybrid_sf_ = options[ OptionKeys::score::water_hybrid_sf ];
+	}
+
 }
 
 void

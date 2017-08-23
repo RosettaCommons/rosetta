@@ -1580,9 +1580,11 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	}
 
 	// hydrate/SPaDES protocol
-	if ( ( at1.is_wat() && !at2.is_wat() ) || ( !at1.is_wat() && at2.is_wat() ) ) {
-		static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
-		weighted_energy += (1.0 - smoothed_step->func( hbenergy )) * weights_[ wat_entropy ];
+	if ( options_->water_hybrid_sf() ) {
+		if ( ( at1.is_wat() && !at2.is_wat() ) || ( !at1.is_wat() && at2.is_wat() ) ) {
+			static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
+			weighted_energy += (1.0 - smoothed_step->func( hbenergy )) * weights_[ wat_entropy ];
+		}
 	}
 
 	//std::cout << "weighted energy: " << weighted_energy << " " << hbenergy << " " << envweight << std::endl;

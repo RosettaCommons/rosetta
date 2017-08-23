@@ -1,0 +1,26 @@
+#To use this energy function with the defaults for which it was optimized, the option -restore_pre_talaris_2013_behavior must be passed.
+#
+#Reoptimized for the Hydrate/SPaDES protocol which introduces new scoring terms
+METHOD_WEIGHTS ref  0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
+fa_atr 0.8
+fa_rep 0.44
+fa_sol 0.65
+fa_intra_rep 0.004
+fa_pair 0.49
+fa_dun 0.56
+ref 1
+hbond_lr_bb 1.17
+hbond_sr_bb 0.585
+hbond_bb_sc 2.427
+hbond_sc 1.251
+hbond_wat 1.027
+p_aa_pp 0.32
+dslf_ss_dst 1.0
+dslf_cs_ang 1.0
+dslf_ss_dih 1.0
+dslf_ca_dih 1.0
+pro_close 1.0
+omega 0.5
+rama 0.2
+wat_entropy 0.529
+wat_desolv 0.436

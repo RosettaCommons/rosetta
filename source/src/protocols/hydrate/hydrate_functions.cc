@@ -19,7 +19,7 @@
 #include <protocols/jd2/Job.hh>
 
 // Core
-#include <core/chemical/AA.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
@@ -335,10 +335,12 @@ hydrate_hyfile(
 						if ( !option[ OptionKeys::hydrate::attempt_all_polar ]() && !atom_is_hydratable(pose,ii,jj) ) continue;
 						Size anchor_atom = jj;
 						// Hack to be able to use HIS_D
-						if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
-						if ( rsd.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
-						if ( rsd.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
-						if ( rsd.name() == "HIS_p:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
+						if ( rsd.type().aa() == chemical::aa_his ) {
+							if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
+							if ( rsd.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
+							if ( rsd.name() == "HIS_D:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
+							if ( rsd.name() == "HIS:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
+						}
 
 						tp3->set_xyz( "O", rsd.xyz(jj) ); // for neighbor calculation
 						pose.append_residue_by_jump( *tp3, 1 );
@@ -517,10 +519,12 @@ hydrate_cavities(
 
 				Size anchor_atom = jj;
 				// Hack to be able to use HIS_D
-				if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
-				if ( rsd.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
-				if ( rsd.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
-				if ( rsd.name() == "HIS_p:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
+				if ( rsd.type().aa() == chemical::aa_his ) {
+					if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
+					if ( rsd.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
+					if ( rsd.name() == "HIS_D:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
+					if ( rsd.name() == "HIS:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
+				}
 
 				(*water_info)[ pos1 ].anchor_residue( ii );
 				(*water_info)[ pos1 ].anchor_atom( rsd.atom_name(anchor_atom) );
@@ -530,7 +534,6 @@ hydrate_cavities(
 				(*water_info)[ pos1 ].rotamer_bonds( "DOUBLE" );
 				TR << "Water: " << pos1 << " appended to residue: " << ii << " " << rsd.name();
 				TR << " -> " << rsd.atom_name(anchor_atom) << std::endl;
-
 			}
 		}
 	}

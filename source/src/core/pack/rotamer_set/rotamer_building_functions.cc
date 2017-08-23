@@ -1487,10 +1487,12 @@ build_single_edge_waters(
 	// tt << "Building single edge water molecules" << std::endl;
 
 	// Hack to be able to use HIS_D
-	if ( rsd.name() == "HIS_D" && anchor_atom == 7 ) anchor_atom = 15;
-	if ( rsd.name() == "HIS" && anchor_atom == 10 ) anchor_atom = 17;
-	if ( rsd.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 7 ) anchor_atom = 17;
-	if ( rsd.name() == "HIS_p:NtermProteinFull" && anchor_atom == 10 ) anchor_atom = 19;
+	if ( rsd.type().aa() == chemical::aa_his ) {
+		if ( rsd.name() == "HIS_D" && anchor_atom == 7 ) anchor_atom = 15;
+		if ( rsd.name() == "HIS" && anchor_atom == 10 ) anchor_atom = 17;
+		if ( rsd.name() == "HIS_D:NtermProteinFull" && anchor_atom == 7 ) anchor_atom = 17;
+		if ( rsd.name() == "HIS:NtermProteinFull" && anchor_atom == 10 ) anchor_atom = 19;
+	}
 
 	if ( rsd.atom_type( anchor_atom ).is_polar_hydrogen() ) {
 		build_sew_waters_to_donor( seqpos_water, rsd, anchor_atom, h2o_type, tp5, new_rotamers, pose, task, packer_neighbor_graph, score_fxn );
@@ -1498,11 +1500,6 @@ build_single_edge_waters(
 		build_sew_waters_to_acceptor( seqpos_water, rsd, anchor_atom, h2o_type, tp5, new_rotamers, pose, task, packer_neighbor_graph, score_fxn );
 	}
 
-	// Reversing the hack to be able to use HIS_D
-	if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
-	if ( rsd.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
-	if ( rsd.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
-	if ( rsd.name() == "HIS_p:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
 }
 
 
@@ -1529,10 +1526,12 @@ build_moving_O_bridge_waters(
 	utility::vector1< id::AtomID > atom_ids;
 
 	// Hack to be able to use HIS_D
-	if ( rsd1.name() == "HIS_D" && anchor_atom == 7 ) anchor_atom = 15;
-	if ( rsd1.name() == "HIS" && anchor_atom == 10 ) anchor_atom = 17;
-	if ( rsd1.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 7 ) anchor_atom = 17;
-	if ( rsd1.name() == "HIS_p:NtermProteinFull" && anchor_atom == 10 ) anchor_atom = 19;
+	if ( rsd1.type().aa() == chemical::aa_his ) {
+		if ( rsd1.name() == "HIS_D" && anchor_atom == 7 ) anchor_atom = 15;
+		if ( rsd1.name() == "HIS" && anchor_atom == 10 ) anchor_atom = 17;
+		if ( rsd1.name() == "HIS_D:NtermProteinFull" && anchor_atom == 7 ) anchor_atom = 17;
+		if ( rsd1.name() == "HIS:NtermProteinFull" && anchor_atom == 10 ) anchor_atom = 19;
+	}
 
 	// get info about the anchor atom
 	bool const anchor_is_donor( rsd1.atom_type( anchor_atom ).is_polar_hydrogen() );
@@ -1585,12 +1584,6 @@ build_moving_O_bridge_waters(
 			atom_ids.push_back( id::AtomID( aatm, rsd2.seqpos() ) );
 		}
 	}
-
-	// Reversing the hack to be able to use HIS_D
-	if ( rsd1.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
-	if ( rsd1.name() == "HIS" && anchor_atom == 17 ) anchor_atom = 10;
-	if ( rsd1.name() == "HIS_D_p:NtermProteinFull" && anchor_atom == 17 ) anchor_atom = 7;
-	if ( rsd1.name() == "HIS_p:NtermProteinFull" && anchor_atom == 19 ) anchor_atom = 10;
 
 }
 
@@ -1941,7 +1934,9 @@ build_independent_water_rotamers(
 {
 	//using core::pose::datacache::CacheableDataType::WATER_PACKING_INFO;
 
-	{
+	// not neccessary to print out this information with hydrate/SPaDES protocol
+	// however, keeping the code here since other protocols apparently do use it
+	if ( !basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 		tt << "water " << seqpos_water << " nbrs:";
 		for ( utility::graph::Graph::EdgeListConstIter
 				jr  = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_begin(),
